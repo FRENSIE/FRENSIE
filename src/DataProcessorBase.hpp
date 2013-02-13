@@ -53,22 +53,40 @@ protected:
 
   //! Close an HDF5 file
   void closeHDF5File( hid_t file_id );
-  
-  //! Write Data in 2D array to HDF5 file
-  // \param file_id HDF5 identifier for the binary file to write to
-  // \param data[2] 2D data array to write to HDF5 file
-  // \param location_in_file location in HDF5 file where data will be written
-  template<typename T>
-  void writeDataToHDF5File( const hid_t file_id, 
-			    const Teuchos::Array<T>& data[2],
-			    const std::string &location_in_file );
 
-  //! Write atomic weight attribute to HDF5 file
-  // \brief All data files have a top level attribute that is the atomic weight
+//! Write data in 1D array to HDF5 file
   // \param file_id HDF5 identifier for the binary file to write to
-  // \param atomic_weight Atomic weight of the element of interest
-  void writeAtomicWeightAttributToHDF5File( const hid_t file_id,
-					    const double atomic_weight );
+  // \param data 1xM data array to write to HDF5 file
+  // \param location_in_file location in HDF5 file where data will be written
+  template<typname T>
+  void writeArrayToHDF5File( const hid_t file_id,
+			     const Teuchos::Array<double>& data,
+			     const std::string &location_in_file );
+  
+  //! Write data in 2D array to HDF5 file
+  // \param file_id HDF5 identifier for the binary file to write to
+  // \param data[N] NxM data array to write to HDF5 file
+  // \param location_in_file location in HDF5 file where data will be written
+  template<typename T, int N=2>
+  void write2DArrayToHDF5File( const hid_t file_id, 
+			       const Teuchos::Array<T>& data[N],
+			       const std::string &location_in_file );
+
+  //! Write a multi value attribute to HDF5 file ( 1xN array )
+  // \param file_id HDF5 identifier for the binary file to write to
+  template<typename T, int N=2>
+  void writeMultiValueAttributToHDF5File( const hid_t file_id,
+					  const T data[N],
+					  const std::string &location_in_file,
+					  const std::string &attribute_name );
+
+  //! Write a single value attribute to HDF5 file
+  // \param file_id HDF5 identifier for the binary file to write to
+  template<typename T>
+  void writeSingleValueAttributeToHDF5File( const hid_t file_id,
+					    const T data,
+					    const std::string &location_in_file,
+					    const std::string &attribute_name );
 
   //! Read the first table header
   // \brief Read the first EPDL, EADL or EEDL table header and extract info
@@ -105,6 +123,20 @@ protected:
   template<typename DataProcessingPolicy>
   void readTwoColumnTable( FILE* datafile,
 			   Teuchos::Array<double> &data[2] );
+
+  //! Skip three column table in EPDL file
+  void skipThreeColumnTable( FILE* datafile );
+
+  //! Read three column table in EPDL file
+  void readThreeColumnTable( FILE* datafile,
+			     Teuchos::Array<double> &data[3] );
+
+  //! Skip four column table in EPDL file
+  void skipFourColumnTable( FILE* datafile );
+  
+  //! Read four column table in EPDL file
+  void readFourColumnTable( FILE* datafile,
+			    Teuchos::Array<double> &data[4] );
 
   /*! 
    * \brief Create the desired type from a printed fortran style fixed-width 

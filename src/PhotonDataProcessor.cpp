@@ -6,11 +6,13 @@
 
 // Std Lib Includes
 #include <cmath>
+#include <assert>
 
 // FACEMC Includes
 #include "PhotonDataProcessor.hpp"
 #include "Exception.hpp"
 #include "HDF5ScalarTraits.hpp"
+#include "DataFileNames.hpp"
 
 namespace FACEMC{
 
@@ -26,7 +28,10 @@ PhotonDataProcessor::PhotonDataProcessor( const std::string epdl_file_name,
     d_compton_file_prefix(compton_file_prefix), 
     d_energy_min(energy_min),
     d_energy_max(energy_max)
-{ /* ... */ }
+{ 
+  assert( d_energy_min > 0.0 );
+  assert( d_energy_min < d_enegy_max );
+}
   
 //! Process Photon Data Files
 void PhotonDataProcessor::processDataFiles()
@@ -86,8 +91,10 @@ void PhotonDataProcessor::processEPDLFile()
 					  DATA_FILE_PREFIX );
 
       // Create a top level attribute to store the atomic weight
-      writeAtomicWeightAttributeToHDF5File( file_id,
-					    atomic_weight );
+      writeSingleValueAttributeToHDF5File<double>( file_id,
+						   atomic_weight,
+						   "Atomic_Weight",
+						   "Weight" );
     }
 
     // Read second table header and determine the reaction type
@@ -114,9 +121,9 @@ void PhotonDataProcessor::processEPDLFile()
 							     data,
 							     d_energy_min,
 							     d_energy_max );
-      writeDataToHDF5File<double>( file_id,
-				   data,
-				   "/Basic_Data/Coherent_Cross_Section" );
+      write2DArrayToHDF5File<double>( file_id,
+				      data,
+				      COHERENT_CROSS_SECTION_LOC );
       break;
 
     case 71010:
@@ -139,9 +146,9 @@ void PhotonDataProcessor::processEPDLFile()
 							     data,
 							     d_energy_min,
 							     d_energy_max );
-      writeDataToHDF5File<double>( file_id,
-				   data,
-				   "/Basic_Data/Incoherent_Cross_Section" );
+      write2DArrayToHDF5File<double>( file_id,
+				      data,
+				      INCOHERENT_CROSS_SECTION_LOC );
       break;
 
     case 72010:
@@ -167,9 +174,9 @@ void PhotonDataProcessor::processEPDLFile()
 							       data,
 							       d_energy_min,
 							       d_energy_max );
-	writeDataToHDF5File<double>( file_id,
-				     data,
-				     "/Basic_Data/Photoelectric_Cross_Section" );
+	write2DArrayToHDF5File<double>( file_id,
+					data,
+					PHOTOELECTRIC_CROSS_SECTION_LOC );
       }
       // Read the total integrated photoelectric cross section for a subshell
       else
@@ -183,13 +190,9 @@ void PhotonDataProcessor::processEPDLFile()
 							       data,
 							       d_energy_min,
 							       d_energy_max );
-	std::string location = 
-	  "/Fluorescence_Data/Photoelectric_Cross_Section/";
-	location += intToShellStr( electron_shell );
-	location += intToShellStr( electron_shell );
-	writeDataToHDF5File<double>( file_id,
-				     data,
-				     location );
+	write2DArrayToHDF5File<double>( file_id,
+					data,
+					PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + intToShellStr( electron_shell ) );
       }
       break;
 
@@ -222,9 +225,9 @@ void PhotonDataProcessor::processEPDLFile()
 							     data,
 							     d_energy_min,
 							     d_energy_max );
-      writeDataToHDF5File<double>( file_id,
-				   data,
-				   "/Basic_Data/Pair_Production_Cross_Section" );
+      write2DArrayToHDF5File<double>( file_id,
+				      data,
+				      PAIR_PRODUCTION_CROSS_SECTION_LOC );
       break;
 
     case 74010:
@@ -248,9 +251,9 @@ void PhotonDataProcessor::processEPDLFile()
 							     data,
 							     d_energy_min,
 							     d_energy_max );
-      writeDataToHDF5File<double>( file_id,
-				   data,
-				   "/Basic_Data/Triplet_Production_Cross_Section" );
+      write2DArrayToHDF5File<double>( file_id,
+				      data,
+				      TRIPLET_PRODUCTION_CROSS_SECTION_LOC );
       break;
 
     case 75010:
@@ -316,9 +319,9 @@ void PhotonDataProcessor::processEPDLFile()
 	data[1][i] = log( integrated_squared_ff[i] );
       }
       
-      writeDataToHDF5File<double>( file_id,
-				   data,
-				   "/Basic_Data/Atomic_Form_Factor" );
+      write2DArrayToHDF5File<double>( file_id,
+				      data,
+				      ATOMIC_FORM_FACTOR_LOC );
       break;
 
     case 93942:
@@ -331,9 +334,9 @@ void PhotonDataProcessor::processEPDLFile()
       readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							     data );
 							     
-      writeDataToHDF5File<double>( file_id,
-				   data,
-				   "/Basic_Data/Scattering_Function" );
+      write2DArrayToHDF5File<double>( file_id,
+				      data,
+				      SCATTERING_FUNCTION_LOC );
       break;
 
     case 93943:
@@ -367,7 +370,7 @@ void PhotonDataProcessor::processEPDLFile()
 }
 
 //! Process EADL file 
-void PhotonDataProcessor::processEADLFile() const
+void PhotonDataProcessor::processEADLFile()
 {
   // EPDL file
   FILE* eadl;
@@ -433,12 +436,6 @@ void PhotonDataProcessor::processEADLFile() const
       readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
 							    data );
       
-      // If atomic_number >= 36 there is a chance that the first electron
-      // in a p, d or f shell will be split between two subshells (- or +).
-      // The compton profile will only be given for the lower subshell
-      // so the fraction of the electron in the upper shell must be given
-      // to the lower subshell
-      
       // Create the electron shell cdf
       double tmp_sum = 0.0;
       for( int i = 0; i < data[0].size(); i++ )
@@ -448,18 +445,869 @@ void PhotonDataProcessor::processEADLFile() const
       }
 
       // Normalize the cdf
+      Teuchos::Array<double> electron_shell_cdf;
       for( int i = 0; i < data[0].size(); i++ )
-	data[1][i] \= tmp_sum;
+	electron_shell_cdf.push_back( data[1][i]/tmp_sum );
       
-      writeDataToHDF5File<double>( file_id,
-				   data,
-				   "/Doppler_Data/Electron_Shell_CDF" );
+      writeArrayToHDF5File<double>( file_id,
+				    electron_shell_cdf,
+				    ELECTRON_SHELL_CDF_LOC );
+
+      // Create the Electron Shell Index Map
+      Teuchos::Array<int> electron_shell_index_map[2];      
+      createElectronShellIndexMap( atomic_number,
+				   electron_shell_index_map );
+
+      write2DArrayToHDF5File<int>( file_id,
+				   electron_shell_index_map,
+				   ELECTRON_SHELL_INDEX_MAP_LOC );      
       break;
+
+    case 91913:
+      // Read binding energy per subshell
+      
+      Teuchos::Array data[2];
+      
+      readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
+							    data );
+
+      write2DArrayToHDF5File<double>( file_id,
+				      data,
+				      ELECTRON_SHELL_BINDING_ENERGY_LOC );
+      break;
+
+    case 91914:
+      // Read kinetic energy per subshell
+      
+      Teuchos::Array data[2];
+      
+      readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
+							    data );
+
+      writeArrayToHDF5File<double>( file_id,
+				    data,
+				    ELECTRON_SHELL_KINETIC_ENERGY_LOC );
+      break;
+
+    case 92931:
+      // Read radiative transition probability per subshell
+      
+      Teuchos::Array data[3];
+
+      readThreeColumnTable( eadl,
+			    data );
+
+      // Calculate the total radiative transition probability for
+      // this subshell
+      double total_radiative_trans_prob = 0.0;
+      for( int i = 0; i < data[0].size(); i++ )
+	total_radiative_trans_prob += data[1][i];
+
+      writeSingleValueAttribute<double>( file_id,
+					 total_radiative_trans_prob,
+					 RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ),
+					 "Total_Radiative_Transition_Probability"
+					 );
+
+      write2DArrayToHDF5File<double, 3>( file_id,
+					 data,
+					 RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell )
+					 );
+					 
+      break;
+
+    case 92932:
+      // Read nonradiative transition probability per subshell
+      
+      Teuchos::Array<double> data[4];
+
+      readFourColumnTable( eadl,
+			   data );
+
+      write2DArrayToHDF5File<double, 4>( file_id,
+					 data,
+					 NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell )
+					 );
+					 
+      break;
+
+    case 91915:
+      // Average radius of subshell ignored
+      
+      skipTwoColumnTable( eadl );
+
+      break;
+
+    case 91921:
+      // Radiative level width ignored
+      
+      skipTwoColumnTable( eadl );
+      
+      break;
+
+    case 91922:
+      // Nonradiative level width ignored
+
+      skipTwoColumnTable( eadl );
+
+      break;
+
+    case 92933:
+      // Average number of photons emitted per initial vacancy ignored 
+      // ( Yo == 7 )
+      // Average number of electrons emitted per initial vacancy ignored
+      // ( Yo == 9 )
+      
+      skipTwoColumnTable( eadl );
+      
+      break;
+      
+    case 92934:
+      // Average energy of photons emitted per initial vacancy ignored
+      // ( Yo == 7 )
+      // Average energy of electrons emitted per initial vacancy ignored
+      // ( Yo == 9 )
+      
+      skipTwoColumnTable( eadl );
+
+      break;
+
+    case 92935:
+      // Average energy to residual atom per initial vacancy ignored
+
+      skipTwoColumnTable( eadl );
+
+      break;
+
+    case 93941:
+      // Atomic form factor ignored
+      
+      skipTwoColumnTable( eadl );
+      
+      break;
+
+    case 93942:
+      // Scattering function ignored
+      
+      skipTwoColumnTable( eadl );
+
+      break;
+      
+    case 93943:
+      // Imaginary anomalous scattering factor ignored
+      
+      skipTwoColumnTable( eadl );
+
+      break;
+
+    case 93944:
+      // Real anomalous scattering factor ignored
+      
+      skipTwoColumnTable( eadl );
+
+      break;
+
+    default:
+      // Unknown reaction type found
+      std::cerr << "Unknown reaction type ( " << reaction_type << " )" 
+		<< std::endl;
+      exit(1);
+      break;
+    }
+  }
+
+  // Close the last HDF5 file
+  closeHDF5File( file_id );
+
+  // Close the EPDL data file
+  fclose( epdl );
 }
 
 //! Process Compton files
-void PhotonDataProcessor::processComptonFiles() const
+void PhotonDataProcessor::processComptonFiles()
 {}
+
+//! Create the Electron Shell Index Map
+void PhotonDataProcessor::createElectronShellIndexMap( int atomic_number,
+						       Teuchos::Array<int>
+						       map[2] )
+{
+  // Non-Relativistic profiles are given for atomic numbers < 36
+  if( atomic_number < 36 )
+  {
+    // Z = 1 or 2
+    map[0].push_back( 1 );
+    
+    map[1].push_back( 0 );
+    
+    // Z = 3 or 4
+    if( atomic_number > 2 )
+    {
+      map[0].push_back( 3 );
+      
+      map[1].push_back( 1 );
+    }  
+    // Z = 5, 6, 7, 8, 9 or 10
+    if( atomic_number > 4 )
+    {
+      map[0].push_back( 5 );
+      map[0].push_back( 6 );
+
+      map[1].push_back( 2 );
+      map[1].push_back( 2 );
+    }
+    // Z = 11 or 12
+    if( atomic_number > 10 )
+    {
+      map[0].push_back( 8 );
+    
+      map[1].push_back( 3 );
+    }
+    // Z = 13, 14, 15, 16, 17, 18
+    if( atomic_number > 12 )
+    {
+      map[0].push_back( 10 );
+      map[0].push_back( 11 );
+
+      map[1].push_back( 4 );
+      map[1].push_back( 4 );
+    }
+    
+    // Filling order changes for Z=19 and 20 (4s1/2 before 3d)
+    // Need to keep shell indices monotonically increasing  
+    if( atomic_number == 19 ||
+	atomic_number == 20 )
+    {
+      map[0].push_back( 16 );
+      
+      map[1].push_back( 5 );
+    }
+    // Z = 20, 21, 22, 23, 24, 25, 26, 27, 28, 29 or 30
+    if( atomic_number > 20 )
+    {
+      map[0].push_back( 13 );
+      map[0].push_back( 14 );
+      map[0].push_back( 16 );
+      
+      map[1].push_back( 5 );
+      map[1].push_back( 5 );
+      map[1].push_back( 6 );
+    }
+    // Z = 31, 32, 33, 34, 35
+    if( atomic_number > 30 )
+    {
+      map[0].push_back( 18 );
+      map[0].push_back( 19 );
+
+      map[1].push_back( 7 );
+      map[1].push_back( 7 );
+    }
+  }
+  // Relativistic profiles are given for atomic numbers >= 36
+  else
+  {
+    map[0].push_back( 1 );
+    map[0].push_back( 3 );
+    map[0].push_back( 5 );
+    map[0].push_back( 6 );
+    map[0].push_back( 8 );
+    map[0].push_back( 10 );
+    map[0].push_back( 11 );
+    map[0].push_back( 13 );
+    map[0].push_back( 14 );
+    map[0].push_back( 16 );
+    map[0].push_back( 18 );
+    map[0].push_back( 19 );
+
+    map[1].push_back( 0 );
+    map[1].push_back( 1 );
+    map[1].push_back( 2 );
+    map[1].push_back( 3 );
+    map[1].push_back( 4 );
+    map[1].push_back( 5 );
+    map[1].push_back( 6 );
+    map[1].push_back( 7 );
+    map[1].push_back( 8 );
+    map[1].push_back( 9 );
+    map[1].push_back( 10 );
+    map[1].push_back( 11 );
+    
+    // Filling order changes for Z=37 and 38 (5s1/2 before 4d)
+    // Need to keep shell indices monotonically increasing 
+    if( atomic_number == 37 ||
+	atomic_number == 38 )
+    {
+      map[0].push_back( 27 );
+      
+      map[1].push_back( 12 );
+    }
+    else if( atomic_number == 39 ||
+	     atomic_number == 40 ||
+	     atomic_number == 41 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 27 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+    }
+    else if( atomic_number == 42 ||
+	     atomic_number == 43 ||
+	     atomic_number == 44 ||
+	     atomic_number == 45 ||
+	     atomic_number == 47 ||
+	     atomic_number == 48 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 27 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+    }
+    else if( atomic_number == 46 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+    }
+    else if( atomic_number == 49 ||
+	     atomic_number == 50 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 15 );
+    }
+    else if( atomic_number == 51 ||
+	     atomic_number == 52 ||
+	     atomic_number == 53 ||
+	     atomic_number == 54 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+    }
+    else if( atomic_number == 55 ||
+	     atomic_number == 56 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 41 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+    }
+    else if( atomic_number == 57 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 32 );
+      map[0].push_back( 33 );
+      map[0].push_back( 41 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+    }
+    else if( atomic_number == 58 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 41 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 19 );
+    }
+    else if( atomic_number == 59 ||
+	     atomic_number == 60 ||
+	     atomic_number == 61 ||
+	     atomic_number == 62 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 41 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+    }
+    else if( atomic_number == 63 ||
+	     atomic_number == 65 ||
+	     atomic_number == 66 ||
+	     atomic_number == 67 ||
+	     atomic_number == 68 ||
+	     atomic_number == 69 ||
+	     atomic_number == 70 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 41 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+      map[1].push_back( 19 );
+    }
+    else if( atomic_number == 64 ||
+	     atomic_number == 71 ||
+	     atomic_number == 72 ||
+	     atomic_number == 73 ||
+	     atomic_number == 74 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 32 );
+      map[0].push_back( 33 );
+      map[0].push_back( 41 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+      map[1].push_back( 19 );
+      map[1].push_back( 19 );
+      map[1].push_back( 20 );
+    }
+    else if( atomic_number == 75 ||
+	     atomic_number == 76 ||
+	     atomic_number == 78 ||
+	     atomic_number == 79 ||
+	     atomic_number == 80 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 32 );
+      map[0].push_back( 33 );
+      map[0].push_back( 41 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+      map[1].push_back( 19 );
+      map[1].push_back( 20 );
+      map[1].push_back( 21 );
+    }
+    else if( atomic_number == 77 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 32 );
+      map[0].push_back( 33 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+      map[1].push_back( 19 );
+      map[1].push_back( 20 );
+    }
+    else if( atomic_number == 81 ||
+	     atomic_number == 82 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 32 );
+      map[0].push_back( 33 );
+      map[0].push_back( 41 );
+      map[0].push_back( 43 );
+      map[0].push_back( 44 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+      map[1].push_back( 19 );
+      map[1].push_back( 20 );
+      map[1].push_back( 21 );
+      map[1].push_back( 22 );
+      map[1].push_back( 22 );
+    }
+    else if( atomic_number == 83 ||
+	     atomic_number == 84 ||
+	     atomic_number == 85 ||
+	     atomic_number == 86 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 32 );
+      map[0].push_back( 33 );
+      map[0].push_back( 41 );
+      map[0].push_back( 43 );
+      map[0].push_back( 44 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+      map[1].push_back( 19 );
+      map[1].push_back( 20 );
+      map[1].push_back( 21 );
+      map[1].push_back( 22 );
+      map[1].push_back( 23 );
+    }
+    else if( atomic_number == 87 ||
+	     atomic_number == 88 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 32 );
+      map[0].push_back( 33 );
+      map[0].push_back( 41 );
+      map[0].push_back( 43 );
+      map[0].push_back( 44 );
+      map[0].push_back( 58 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+      map[1].push_back( 19 );
+      map[1].push_back( 20 );
+      map[1].push_back( 21 );
+      map[1].push_back( 22 );
+      map[1].push_back( 23 );
+      map[1].push_back( 24 );
+    }
+    else if( atomic_number == 89 ||
+	     atomic_number == 90 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 32 );
+      map[0].push_back( 33 );
+      map[0].push_back( 41 );
+      map[0].push_back( 43 );
+      map[0].push_back( 44 );
+      map[0].push_back( 46 );
+      map[0].push_back( 47 );
+      map[0].push_back( 58 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+      map[1].push_back( 19 );
+      map[1].push_back( 20 );
+      map[1].push_back( 21 );
+      map[1].push_back( 22 );
+      map[1].push_back( 23 );
+      map[1].push_back( 24 );
+      map[1].push_back( 24 );
+      map[1].push_back( 25 );
+    }
+    else if( atomic_number == 91 ||
+	     atomic_number == 92 ||
+	     atomic_number == 93 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 32 );
+      map[0].push_back( 33 );
+      map[0].push_back( 35 );
+      map[0].push_back( 36 );
+      map[0].push_back( 41 );
+      map[0].push_back( 43 );
+      map[0].push_back( 44 );
+      map[0].push_back( 46 );
+      map[0].push_back( 47 );
+      map[0].push_back( 58 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+      map[1].push_back( 19 );
+      map[1].push_back( 20 );
+      map[1].push_back( 21 );
+      map[1].push_back( 21 );
+      map[1].push_back( 22 );
+      map[1].push_back( 23 );
+      map[1].push_back( 24 );
+      map[1].push_back( 25 );
+      map[1].push_back( 25 );
+      map[1].push_back( 26 );
+    }
+    else if( atomic_number == 94 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 32 );
+      map[0].push_back( 33 );
+      map[0].push_back( 35 );
+      map[0].push_back( 36 );
+      map[0].push_back( 41 );
+      map[0].push_back( 43 );
+      map[0].push_back( 44 );
+      map[0].push_back( 58 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+      map[1].push_back( 19 );
+      map[1].push_back( 20 );
+      map[1].push_back( 21 );
+      map[1].push_back( 21 );
+      map[1].push_back( 22 );
+      map[1].push_back( 23 );
+      map[1].push_back( 24 );
+      map[1].push_back( 25 );
+    }
+    else if( atomic_number == 95 ||
+	     atomic_number == 98 ||
+	     atomic_number == 99 ||
+	     atomic_number == 100 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 32 );
+      map[0].push_back( 33 );
+      map[0].push_back( 35 );
+      map[0].push_back( 36 );
+      map[0].push_back( 41 );
+      map[0].push_back( 43 );
+      map[0].push_back( 44 );
+      map[0].push_back( 58 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+      map[1].push_back( 19 );
+      map[1].push_back( 20 );
+      map[1].push_back( 21 );
+      map[1].push_back( 22 );
+      map[1].push_back( 23 );
+      map[1].push_back( 24 );
+      map[1].push_back( 25 );
+      map[1].push_back( 26 );
+    }
+    else if( atomic_number == 96 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 32 );
+      map[0].push_back( 33 );
+      map[0].push_back( 35 );
+      map[0].push_back( 36 );
+      map[0].push_back( 41 );
+      map[0].push_back( 43 );
+      map[0].push_back( 44 );
+      map[0].push_back( 46 );
+      map[0].push_back( 47 );
+      map[0].push_back( 58 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+      map[1].push_back( 19 );
+      map[1].push_back( 20 );
+      map[1].push_back( 21 );
+      map[1].push_back( 22 );
+      map[1].push_back( 23 );
+      map[1].push_back( 24 );
+      map[1].push_back( 25 );
+      map[1].push_back( 26 );
+      map[1].push_back( 26 );
+      map[1].push_back( 27 );
+    }
+    // WARNING: No Hartree-Fock Compton Profile data for 6d3/2 or 6d5/2
+    // map these shells to the 6p+ shell for now...
+    else if( atomic_number == 97 )
+    {
+      map[0].push_back( 21 );
+      map[0].push_back( 22 );
+      map[0].push_back( 24 );
+      map[0].push_back( 25 );
+      map[0].push_back( 27 );
+      map[0].push_back( 29 );
+      map[0].push_back( 30 );
+      map[0].push_back( 32 );
+      map[0].push_back( 33 );
+      map[0].push_back( 35 );
+      map[0].push_back( 36 );
+      map[0].push_back( 41 );
+      map[0].push_back( 43 );
+      map[0].push_back( 44 );
+      map[0].push_back( 46 );
+      map[0].push_back( 47 );
+      map[0].push_back( 58 );
+
+      map[1].push_back( 12 );
+      map[1].push_back( 13 );
+      map[1].push_back( 14 );
+      map[1].push_back( 15 );
+      map[1].push_back( 16 );
+      map[1].push_back( 17 );
+      map[1].push_back( 18 );
+      map[1].push_back( 19 );
+      map[1].push_back( 20 );
+      map[1].push_back( 21 );
+      map[1].push_back( 22 );
+      map[1].push_back( 23 );
+      map[1].push_back( 24 );
+      map[1].push_back( 25 );
+      map[1].push_back( 25 );
+      map[1].push_back( 26 );
+    }
+  }
+}
 
 } // end FACEMC namespace
 

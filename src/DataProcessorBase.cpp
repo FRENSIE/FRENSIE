@@ -41,44 +41,6 @@ void DataProcessorBase::closeHDF5File( hid_t file_id )
 		  "HDF5 file close error" );
 }
 
-//! Write atomic weight attribute to HDF5 file
-void DataProcessorBase::writeAtomicWeightAttributeToHDF5File( const hid_t 
-							      file_id,
-							      const double 
-							      atomic_weight )
-{
-  hid_t dataset_id, attribute_id, dataspace_id;
-  hsize_t attribute_dim = 1;
-  dataset_id = H5Dopen( file_id,
-			"/Atomic_Weight",
-			H5P_DEFAULT );
-  dataspace_id = H5Screate_simple(1, &attribute_dim, NULL);
-  attribute_id = H5Acreate( dataset_id, 
-			    "Weight",
-			    HDF5ScalarTraits<double>::fileTypeBE,
-			    dataspace_id,
-			    H5P_DEFAULT,
-			    H5P_DEFAULT );
-  status = H5Awrite( attribute_id,
-		     HDF5ScalarTraits<double>::memoryType,
-		     &atomic_weight );
-  testHDF5( status == SUCCEED,
-	    "HDF5 atomic weight attribute write error" );
-  
-  // Close the current attribute, dataspace and dataset
-  status = H5Aclose( attribute_id );
-  testHDF5( status == SUCCEED,
-	    "HDF5 attribute close error" );
-  
-  status = H5Sclose( dataspace_id );
-  testHDF5( status == SUCCEED,
-	    "HDF5 dataspace close error" );
-  
-  status = H5Dclose( dataset_id );
-  testHDF5( status == SUCCEED,
-	    "HDF5 dataset close error" );
-}
-
 //! Read the first table header
 void DataProcessorBase::readFirstTableHeader( FILE* datafile,
 					      int &atomic_number,
@@ -165,10 +127,151 @@ void DataProcessorBase::skipTwoColumnTable( FILE* datafile )
   int rv; // dummy return value for file reading
 
   while( strcmp( line, test ) != 0 )
-    rv = fscanf( datafile, "%23c", line);
+    rv = fscanf( datafile, "%23c", line );
 
   // Read rest of end of table line
   rv = fscanf( datafile, "%50c", end_of_table );
+}
+
+//! Skip three column table in EPDL file
+void DataProcessorBase::skipThreeColumnTable( FILE* datafile )
+{
+  char line[35];
+  line[0] = 'n';
+  line[34] = '\0';
+  char test[] = "                                  ";
+  char end_of_table[40];
+  end_of_table[39] = '\0';
+  int rv; // dummy return value for file reading
+  
+  while( strcmp( line, test ) != 0 )
+    rv = fscanf( datafile, "%34c", line );
+
+  // Read rest of end of table line
+  rv = fscanf( datafile, "%39c", end_of_table );
+}
+
+//! Read three column table in EPDL file
+void DataProcessorBase::readThreeColumnTable( FILE* datafile,
+					      Teuchos::Array<double> &data[3] )
+{
+  char data1_l [10];
+  data1_l[9] = '\0';
+  data1_l[0] = 'n';
+  char data1_r [3];
+  data1_r[2] = '\0';
+  char data2_l [10];
+  data2_l[9] = '\0';
+  char data2_r [3];
+  data2_r[2] = '\0';
+  char data3_l [10];
+  data3_l[9] = '\0';
+  char data3_r [3];
+  data3_r[2] = '\0';
+  char nwln [2];
+  nwln[1] = '\0';
+  char end_of_table [40];
+  end_of_table[39] = '\0';
+  char test []=  "         ";
+  int rv;
+
+  // Make sure that the data array is empty
+  data[0].clear();
+  data[1].clear();
+  data[2].clear();
+
+  // Read the table one line at a time
+  while( strcmp( data1_l, test ) != 0 )
+  {
+    rv = fscanf( datafile, "%9c%2c%9c%2c%9c%2c%1c", data1_l, data1_r, data2_l,
+		 data2_r, data3_l, data3_r, nwln);
+    if( strcmp( data1_l, test ) != 0 )
+    {
+      data[0].push_back( extractValue<double>( data1_l,
+					       data1_r ) );
+      data[1].push_back( extractValue<double>( data2_l,
+					       data2_r ) );
+      data[2].push_back( extractValue<double>( data3_l,
+					       data3_r ) );
+    }
+  }
+
+  // Read rest of end of table line
+  rv = fscanf( datafile, "%39c", end_of_table );
+}
+
+//! Skip four column table in EPDL file
+void DataProcessorBase::skipFourColumnTable( FILE* datafile )
+{
+  char line[46];
+  line[0] = 'n';
+  line[45] = '\0';
+  char test[] = "                                             ";
+  char end_of_table[29];
+  end_of_table[28] = '\0';
+  int rv; // dummy return value for file reading
+  
+  while( strcmp( line, test ) != 0 )
+    rv = fscanf( datafile, "%45c", line );
+
+  // Read rest of end of table line
+  rv = fscanf( datafile, "%28c", end_of_table );
+}
+
+//! Read four column table in EPDL file
+void DataProcessorBase::skipFourColumnTable( FILE* datafile,
+					     Teuchos::Array<double> &data[3] )
+{
+  char data1_l [10];
+  data1_l[9] = '\0';
+  data1_l[0] = 'n';
+  char data1_r [3];
+  data1_r[2] = '\0';
+  char data2_l [10];
+  data2_l[9] = '\0';
+  char data2_r [3];
+  data2_r[2] = '\0';
+  char data3_l [10];
+  data3_l[9] = '\0';
+  char data3_r [3];
+  data3_r[2] = '\0';
+  char data4_l [10];
+  data3_l[9] = '\0';
+  char data4_r [3];
+  data3_r[2] = '\0';
+  char nwln [2];
+  nwln[1] = '\0';
+  char end_of_table [29];
+  end_of_table[28] = '\0';
+  char test []=  "         ";
+  int rv;
+
+  // Make sure that the data array is empty
+  data[0].clear();
+  data[1].clear();
+  data[2].clear();
+  data[3].clear();
+
+  // Read the table one line at a time
+  while( strcmp( data1_l, test ) != 0 )
+  {
+    rv = fscanf( datafile, "%9c%2c%9c%2c%9c%2c%9c%2c%1c", data1_l, data1_r, 
+		 data2_l, data2_r, data3_l, data3_r, data4_l, data4_r, nwln);
+    if( strcmp( data1_l, test ) != 0 )
+    {
+      data[0].push_back( extractValue<double>( data1_l,
+					       data1_r ) );
+      data[1].push_back( extractValue<double>( data2_l,
+					       data2_r ) );
+      data[2].push_back( extractValue<double>( data3_l,
+					       data3_r ) );
+      data[3].push_back( extractValue<double>( data4_l,
+					       data4_r ) );
+    }
+  }
+
+  // Read rest of end of table line
+  rv = fscanf( datafile, "%28c", end_of_table );
 }
 
 //! Convert an EPDL shell integer to a shell name

@@ -24,18 +24,150 @@
 
 namespace FAPMC{
 
-//! Write Data in 2D array to HDF5 file
+//! Write attribute to HDF5 file
+// \brief Warning, N should never be set to a value < 2 - runtime errors will
+// result because the HDF5 function calls expect a pointer.
+template<typename T, int N=2>
+void DataProcessorBase::writeMultiValueAttributeToHDF5File( const hid_t file_id,
+							    const T data[N],
+							    const std::string 
+							    &location_in_file,
+							    const std::string
+							    &attribute_name )
+{
+  hid_t dataset_id, attribute_id, dataspace_id;
+  hsize_t attribute_dim = N;
+  herr_t status;
+  
+  dataset_id = H5Dopen( file_id,
+			loation_in_file.c_str(),
+			H5P_DEFAULT );
+  dataspace_id = H5create_simple( 1, &attribute_dim, NULL );
+  attribute_id = H5Acreate( dataset_id,
+			    attribute_name.c_str(),
+			    HDF5ScalarTraits<T>::fileTypeBE,
+			    dataspace_id,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT );
+  status = H5Awrite( attribute_id,
+		     HDF5ScalarTraits<T>::memoryType,
+		     data );
+  testHDF5( status == SUCCEED,
+	    "HDF5 attribute write error" );
+
+  // Close the current attribute, dataspace and dataset
+  status = H5Aclose( attribute_id );
+  testHDF5( status == SUCCEED,
+	    "HDF5 attribute close error" );
+  
+  status = H5Sclose( dataspace_id );
+  testHDF5( status == SUCCEED,
+	    "HDF5 dataspace close error" );
+  
+  status = H5Dclose( dataset_id );
+  testHDF5( status == SUCCEED,
+	    "HDF5 dataset close error" );
+}
+
+//! Write attribute to HDF5 file
 template<typename T>
-void DataProcessorBase::writeDataToHDF5File( const hid_t file_id,
-					     const Teuchos::Array<T>& data[2],
+void DataProcessorBase<double, 1>::writeSingleValueAttributeToHDF5File( 
+						        const hid_t file_id,
+							const T data,
+							const std::string 
+							&location_in_file,
+							const std::string
+							&attribute_name )
+{
+  hid_t dataset_id, attribute_id, dataspace_id;
+  hsize_t attribute_dim = 1;
+  herr_t status;
+  
+  dataset_id = H5Dopen( file_id,
+			loation_in_file.c_str(),
+			H5P_DEFAULT );
+  dataspace_id = H5create_simple( 1, &attribute_dim, NULL );
+  attribute_id = H5Acreate( dataset_id,
+			    attribute_name.c_str(),
+			    HDF5ScalarTraits<T>::fileTypeBE,
+			    dataspace_id,
+			    H5P_DEFAULT,
+			    H5P_DEFAULT );
+  status = H5Awrite( attribute_id,
+		     HDF5ScalarTraits<T>::memoryType,
+		     &data );
+  testHDF5( status == SUCCEED,
+	    "HDF5 attribute write error" );
+
+  // Close the current attribute, dataspace and dataset
+  status = H5Aclose( attribute_id );
+  testHDF5( status == SUCCEED,
+	    "HDF5 attribute close error" );
+  
+  status = H5Sclose( dataspace_id );
+  testHDF5( status == SUCCEED,
+	    "HDF5 dataspace close error" );
+  
+  status = H5Dclose( dataset_id );
+  testHDF5( status == SUCCEED,
+	    "HDF5 dataset close error" );
+}
+
+//! Write data in 1D array to HDF5 file
+template<typename T>
+void DataProcessorBase::writeArrayToHDF5File( 
+					     const hid_t file_id,
+					     const Teuchos::Array<T>& data,
 					     const std::string &location_in_file
-					     );
+					      )
+{
+  hid_t dataset_id, dataspace_id;
+  hsize_t dims;
+  herr_t status;
+  
+  dims = data.size();
+
+  dataspace_id = H5Screate_simple( 1, dims, NULL );
+  dataset_id = H5Dcreate( file_id, 
+			  location_in_file.c_str(),
+			  HDF5ScalarTraits<T>::fileTypeBE,
+			  dataspace_id,
+			  H5P_DEFAULT,
+			  H5P_DEFAULT,
+			  H5P_DEFAULT );
+  
+  status = H5Dwrite( dataset_id,
+		     HDF5ScalarTraits<T>::memoryType,
+		     H5S_ALL,
+		     H5S_ALL,
+		     H5P_DEFAULT,
+		     &data[0] );
+  testHDF5( status == SUCCEED,
+	    "HDF5 dataset write error" );
+  
+  status = H5Sclose( dataspace_id );
+  testHDF5Status( status == SUCCEED,
+		  "HDF5 dataspace close error" );
+  
+  status = H5Dclose( dataset_id );
+  testHDF5Status( status == SUCCEED,
+		  "HDF5 dataset close error" );
+}
+  
+
+//! Write Data in NxM array to HDF5 file
+template<typename T, int N=2>
+void DataProcessorBase::write2DArrayToHDF5File( 
+					     const hid_t file_id,
+					     const Teuchos::Array<T>& data[N],
+					     const std::string &location_in_file
+						)
 {
   hid_t dataset_id, dataspace_id;
   hsize_t dims[2];
   herr_t status;
   
-  dims[0] = 2;
+  dims[0] = N;
   dims[1] = data[0].size();
   
   dataspace_id = H5Screate_simple( 2, dims, NULL );
@@ -73,7 +205,6 @@ void DataProcessorBase::readTwoColumnTableInRange( FILE* datafile,
 						   const double indep_var_min,
 						   const double indep_var_max )
 {
-  // assert dep_var_min < dep_var_max
   // Variables for reading in a two column table
   char data1_l [10];
   data1_l[9] = '\0';
