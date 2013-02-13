@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 // \file DataProcessorBase.hpp
 // \author Alex Robinson
-// \brief Data Processor Base Class member function definitions
+// \brief Data Processor Base Class non-template member function definitions
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
@@ -37,7 +37,7 @@ hid_t DataProcessorBase::openHDF5FileAndAppend( const std::string &file_name )
 void DataProcessorBase::closeHDF5File( hid_t file_id )
 {
   herr_t status = H5Fclose( file_id );
-  testHDF5Status( status == SUCCEED,
+  assertAlways( status == SUCCEED,
 		  "HDF5 file close error" );
 }
 

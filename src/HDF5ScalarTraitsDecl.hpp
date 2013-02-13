@@ -8,7 +8,7 @@
 #define HDF5_SCALAR_TRAITS_DECL_HPP
 
 // HDF5 includes
-#include "hdf5.h"
+#include <hdf5.h>
 
 namespace FACEMC{
 

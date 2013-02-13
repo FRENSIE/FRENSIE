@@ -6,13 +6,13 @@
 
 // Std Lib Includes
 #include <cmath>
-#include <assert>
+#include <fstream>
 
 // FACEMC Includes
 #include "PhotonDataProcessor.hpp"
-#include "Exception.hpp"
+#include "FACEMC_Assertion.hpp"
 #include "HDF5ScalarTraits.hpp"
-#include "DataFileNames.hpp"
+#include "HDF5DataFileNames.hpp"
 
 namespace FACEMC{
 
@@ -29,11 +29,17 @@ PhotonDataProcessor::PhotonDataProcessor( const std::string epdl_file_name,
     d_energy_min(energy_min),
     d_energy_max(energy_max)
 { 
-  assert( d_energy_min > 0.0 );
-  assert( d_energy_min < d_enegy_max );
+  assertAlways( d_energy_min > 0.0 );
+  assertAlways( d_energy_min < d_enegy_max );
 }
   
-//! Process Photon Data Files
+/*! Process Photon Data Files
+ * \brief Unfortunately, the data file processing must be done in this order.
+ * This is because when an HDF5 file is opened, one must specify if the file
+ * will be overwritten, appended and/or read. The processEPDLFile() member 
+ * function will overwrite an existing HDF5 file while the two other member
+ * functions will only append to an existing HDF5 file.
+ */
 void PhotonDataProcessor::processDataFiles()
 {
   processEPDLFile();
@@ -47,8 +53,7 @@ void PhotonDataProcessor::processEPDLFile()
   // EPDL file
   FILE* epdl;
   epdl = fopen( d_epdl_file_name.c_str() );
-  testFileOpen( epdl,
-		"Could not open file " + d_epdl_file_name );
+  assertAlways( epdl );
 
   // HDF5 file information
   hid_t file_id;
@@ -112,8 +117,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read in the integrated coherent cross section data
       
       // The interpolation flag should be log-log (5)
-      testInterpFlagException( interpolation_flag == 5,
-			       "Unexpected interpolation flag for integrated coherent cross section data" );
+      assertAlways( interpolation_flag == 5 );
       
       Teuchos::Array<double> data[2];
       
@@ -137,8 +141,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read in the integrated incoherent cross section data
       
       // The interpolation flag should be log-log (5)
-      testInterpFlagException( interpolation_flag == 5,
-			       "Unexpected interpolation flag for integrated incoherent cross section data" );
+      assertAlways( interpolation_flag == 5 );
 
       Teuchos::Array<double> data[2];
 
@@ -165,8 +168,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read the total integrated photoelectric cross section
       if( electron_shell == 0 )
       {
-	testInterpFlagException( interpolation_flag == 5,
-				 "Unexpected interpolation flag for total integrated photoelectric cross section data" );
+	assertAlways( interpolation_flag == 5 );
 	
 	Teuchos::Array<double> data[2];
 	
@@ -181,8 +183,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read the total integrated photoelectric cross section for a subshell
       else
       {
-	testInterpFlagException( interpolation_flag == 5,
-				 "Unexpected interpolation flag for subshell integrated photoelectric cross section data" );
+	assertAlways( interpolation_flag == 5 );
 	
 	Teuchos::Array<double> data[2];
 	
@@ -216,8 +217,7 @@ void PhotonDataProcessor::processEPDLFile()
 
     case 74000:
       // Read the integrated pair production cross section
-      testInterpFlagException( interpolation_flag == 5,
-			       "Unexpected interpolation flag for integrated pair production cross section" );
+      assertAlways( interpolation_flag == 5 );
 
       Teuchos::Array<double> data[2];
 	
@@ -242,8 +242,7 @@ void PhotonDataProcessor::processEPDLFile()
 
     case 75000:
       // Read the integrated triplet production cross section
-      testInterpFlagException( interpolation_flag == 5,
-			       "Unexpected interpolation flag for integrated triplet production cross section" );
+      assertAlways( interpolation_flag == 5 );
 
       Teuchos::Array<double> data[2];
 	
@@ -268,8 +267,7 @@ void PhotonDataProcessor::processEPDLFile()
 
     case 93941:
       // Read the atomic form factor
-      testInterpFlagException( interpolation_flag == 5,
-			       "Unexpected interpolation flag for atomic form factor" );
+      assertAlways( interpolation_flag == 5 );
 
       Teuchos::Array<double> data[2];
 	
@@ -291,7 +289,7 @@ void PhotonDataProcessor::processEPDLFile()
       double exponent;
       double indep_begin, indep_end;
       double dep_begin, dep_end;
-      for( int i = 2; i < data[0].size(); i++ )
+      for( int i = 2; i < data[0].size(); ++i )
       {
 	indep_begin = data[0][i-1]*data[0][i-1];
 	indep_end = data[0][i]*data[0][i];
@@ -309,7 +307,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Update data array
       data[0][0] = log( std::numeric_limits<double>::min() );
       data[1][0] = log( std::numeric_limits<double>::min() );
-      for( int i = 1; i < data[0].size(); i++ )
+      for( int i = 1; i < data[0].size(); ++i )
       {
 	// square the argument
 	data[0][i] = log( data[0][i]*data[0][i] );
@@ -326,8 +324,7 @@ void PhotonDataProcessor::processEPDLFile()
 
     case 93942:
       // Read the scattering function
-      testInterpFlagException( interpolation_flag == 5,
-			       "Unexpected interpolation flag for scattering function" );
+      assertAlways( interpolation_flag == 5 );
 
       Teuchos::Array<double> data[2];
 	
@@ -355,9 +352,8 @@ void PhotonDataProcessor::processEPDLFile()
 
     default:
       // Unknown reaction type found
-      std::cerr << "Unknown reaction type ( " << reaction_type << " )" 
-		<< std::endl;
-      exit(1);
+      bool known_reaction_type = false
+      assertAlways( known_reaction_type );
       break;
     }
   }
@@ -375,8 +371,7 @@ void PhotonDataProcessor::processEADLFile()
   // EPDL file
   FILE* eadl;
   eadl = fopen( d_eadl_file_name.c_str() );
-  testFileOpen( eadl,
-		"Could not open file " + d_eadl_file_name );
+  assertAlways( eadl );
 
   // HDF5 file information
   hid_t file_id;
@@ -438,7 +433,7 @@ void PhotonDataProcessor::processEADLFile()
       
       // Create the electron shell cdf
       double tmp_sum = 0.0;
-      for( int i = 0; i < data[0].size(); i++ )
+      for( int i = 0; i < data[0].size(); ++i )
       {
 	tmp_sum += data[1][i];
 	data[1][i] = tmp_sum;
@@ -446,7 +441,7 @@ void PhotonDataProcessor::processEADLFile()
 
       // Normalize the cdf
       Teuchos::Array<double> electron_shell_cdf;
-      for( int i = 0; i < data[0].size(); i++ )
+      for( int i = 0; i < data[0].size(); ++i )
 	electron_shell_cdf.push_back( data[1][i]/tmp_sum );
       
       writeArrayToHDF5File<double>( file_id,
@@ -500,7 +495,7 @@ void PhotonDataProcessor::processEADLFile()
       // Calculate the total radiative transition probability for
       // this subshell
       double total_radiative_trans_prob = 0.0;
-      for( int i = 0; i < data[0].size(); i++ )
+      for( int i = 0; i < data[0].size(); ++i )
 	total_radiative_trans_prob += data[1][i];
 
       writeSingleValueAttribute<double>( file_id,
@@ -625,7 +620,115 @@ void PhotonDataProcessor::processEADLFile()
 
 //! Process Compton files
 void PhotonDataProcessor::processComptonFiles()
-{}
+{
+  // Compton file information
+  std::ifstream compton_file_stream;
+  std::string compton_file_name;
+
+  // HDF5 file information
+  hid_t file_id;
+  
+  // Compton Profile Q values
+  double q_values[] = { 0.00,
+			0.05,
+			0.10,
+			0.15,
+			0.20,
+			0.30,
+			0.40,
+			0.50,
+			0.60,
+			0.70,
+			0.80,
+			1.00,
+			1.20,
+			1.40,
+			1.60,
+			1.80,
+			2.00,
+			2.40,
+			3.00,
+			4.00,
+			5.00,
+			6.00,
+			7.00,
+			8.00,
+			10.00,
+			15.00,
+			20.00,
+			30.00,
+			40.00,
+			60.00,
+			100.00 };
+
+  for( int atomic_number = 1; atomic_number <= 100; ++atomic_number )
+  {
+    std::ostringstream file_number << atomic_number;
+    file_id = openHDF5FileAndAppend( PHOTON_DATA_FILE_PREFIX + 
+				       file_number.str() + 
+				       DATA_FILE_PREFIX );
+    
+    compton_file_name = d_compton_file_prefix + file_number.str() + ".dat";
+    compton_file_stream.open( compton_file_name.c_str() );
+    assertAlways( compton_file_stream.is_open() );
+
+    Teuchos::Array<double> data[31];
+    while( !comton_file_stream.eof() )
+    {
+      //each block of data has 31 evaluated data points
+      double data_point;
+      for( int i = 0; i < 31; ++i )
+      {
+	compton_file_stream >> data_point;
+	data[i].push_back( data_point );
+      }
+    }
+
+    Teuchos::Array<double> compton_profile_cdfs[31];
+    
+    double tmp_integral = 0.0;
+    double exponent;
+    double indep_begin, indep_end;
+    double dep_begin, dep_end;
+    // Create the Compton Profile CDFs
+    for( int i = 0; i < data[0].size(); ++i )
+    {
+      compton_profile_cdfs[0][i].push_back( 0.0 );
+      tmp_integral = 0.5*( q_values[1]-q_values[0] )*( data[1][i] + data[0][i]);
+      compton_profile_cdfs[1].push_back( tmp_integral );
+      for( int j = 2; j < 31; ++j )
+      {
+	indep_begin = q_values[j-1];
+	indep_end = q_values[j];
+	dep_begin = data[j-1][i];
+	dep_end = data[j][i];
+	exponent = log( dep_end/dep_begin )/log( indep_begin/indep_end );
+	
+	tmp_integral = dep_begin/((exponent+1)*pow( indep_begin, exponent ))*
+	  (pow( indep_end, exponent+1 ) - pow( indep_begin, exponent+1 ));
+
+	compton_profile_cdfs[j].push_back( compton_profile_cdf.back() +
+					  tmp_integral );
+      }
+      
+      // Normalize the CDF
+      compton_profile_cdfs[0][i] /= compton_profile_cdf[30][i];
+      for( int j = 1; j < 31; ++j )
+	compton_profile_cdfs[j][i] = log( compton_profile_cdfs[j][i]/
+					  compton_profile_cdf[30][i] );
+    }
+
+    write2DArrayToHDF5File<double, 31>( file_id,
+					compton_profile_cdfs,
+					COMPTON_PROFILE_CDF_LOC );
+
+    // Close the Compton Profile stream
+    compton_profile_stream.close();
+
+    // Close the HDF5 file
+    closeHDF5File( file_id );
+  }
+}
 
 //! Create the Electron Shell Index Map
 void PhotonDataProcessor::createElectronShellIndexMap( int atomic_number,

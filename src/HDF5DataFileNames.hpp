@@ -56,6 +56,9 @@
 // Define the HDF5 photon data file nonradiative transition probability root
 #define NONRADIATIVE_TRANSITION_PROBABILITY_ROOT "Fluorescence_Data/Nonradiative_Transition_Probability/"
 
+// Define the HDF5 photon data file compton profile cdf location
+#define COMPTON_PROFILE_CDF_LOC "Doppler_Data/Compton_Profile_CDF"
+
 //---------------------------------------------------------------------------//
 // Adjoint Photon data file
 //---------------------------------------------------------------------------//

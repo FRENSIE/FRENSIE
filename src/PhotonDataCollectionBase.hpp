@@ -1,19 +1,24 @@
+//---------------------------------------------------------------------------//
+// \file PhotonDataCollectionBase.hpp
+// \author Alex Robinson
+// \brief Photon Data Collection base class declaration.
+//---------------------------------------------------------------------------//
+
 #ifndef PHOTON_DATA_COLLECTION_BASE_HPP
 #define PHOTON_DATA_COLLECTION_BASE_HPP
-
-#include "AtomicShell.hpp"
-#include "PhotonReactionType.hpp"
-#include "PhotonDataCollectionBase_def.hpp"
-
-//Trilinos Includes
-#include "Teuchos_Array.hpp"
-#include "Teuchos_Map.hpp"
-#include "Teuchos_TestForException.hpp"
 
 //Std Lib Includes
 #include <string>
 
-namespace FAPMC{
+//Trilinos Includes
+#include <Teuchos_Array.hpp>
+#include <Teuchos_Map.hpp>
+
+// FACEMC Includes
+#include "ElectronShell.hpp"
+#include "PhotonReactionType.hpp"
+
+namespace FACEMC{
 
 class PhotonDataCollectionBase
 {
@@ -196,40 +201,17 @@ private:
   //    array[1] contains the cross section values
   PDCBfloatarray d_integrated_triplet_production_cross_section[2];
   
-  //-------------------------------------------------------------------------//
-  // Unsupported Feature enforcement function
-  //-------------------------------------------------------------------------//
-
-  //! Ensure that only supported features are used
-#define UNSUPPORTED_FEATURE_EXCEPTION(function_name, msg) \
-  { \
-    std::ostringstream omsg; \
-    omsg		     \
-      << __FILE__ << ":" << __LINE__ << ":\n\n" \
-      << "Unsupported Feature: " << function_name << "\n"	\
-      << msg; \
-    const std::string &omsgstr = omsg.str(); \
-    TEUCHOS_STORE_STACKTRACE(); \
-    Teuchos::TestForException_break(omsgstr); \
-    throw UnsupportedFeatureError(omsgstr); \
-  }  
-  
-  //! Interpolate between stored data points
-  inline double interpolate( const double argument,
-			     const double left_independent,
-			     const double right_independent,
-			     const double left_dependent,
-			     const double right_dependent );
-
-  //! Unsupported Feature Exception
-  //  This inherets from the Teuchos_Exception base class
-  class UnsupportedFeatureError : public ExceptionBase
-  {public:UnsupportedFeatureError(const std::string& what_arg) : ExceptionBase(what_arg) {}};
-};
-
 //---------------------------------------------------------------------------//
 
-} // end namespace FAPMC
+} // end namespace FACEMC
+
+//---------------------------------------------------------------------------//
+// Template includes.
+//---------------------------------------------------------------------------//
+
+#include "PhotonDataCollectionBase_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end PHOTON_DATA_COLLECTION_BASE_HPP
 

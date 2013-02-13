@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 // \file DataProcessorBase_def.hpp
 // \author Alex Robinson
-// \brief Data Processor Base template definitions
+// \brief Data Processor Base Class template member function definitions
 //---------------------------------------------------------------------------//
 
 #ifndef DATA_PROCESSOR_BASE_DEF_HPP
@@ -13,16 +13,16 @@
 #include <string>
 
 // Trilinos Includes
-#include "Teuchos_Array.hpp"
+#include <Teuchos_Array.hpp>
 
 // HDF5 includes
-#include "hdf5.h"
+#include <hdf5.h>
 
 // FACEMC includes
 #include "HDF5ScalarTraits.hpp"
-#include "Exception.hpp"
+#include "FACEMC_Assertion.hpp"
 
-namespace FAPMC{
+namespace FACEMC{
 
 //! Write attribute to HDF5 file
 // \brief Warning, N should never be set to a value < 2 - runtime errors will
@@ -41,7 +41,7 @@ void DataProcessorBase::writeMultiValueAttributeToHDF5File( const hid_t file_id,
   
   dataset_id = H5Dopen( file_id,
 			loation_in_file.c_str(),
-			H5P_DEFAULT );
+			H5P_DEFULT );
   dataspace_id = H5create_simple( 1, &attribute_dim, NULL );
   attribute_id = H5Acreate( dataset_id,
 			    attribute_name.c_str(),
@@ -52,21 +52,17 @@ void DataProcessorBase::writeMultiValueAttributeToHDF5File( const hid_t file_id,
   status = H5Awrite( attribute_id,
 		     HDF5ScalarTraits<T>::memoryType,
 		     data );
-  testHDF5( status == SUCCEED,
-	    "HDF5 attribute write error" );
+  assertAlways( status == SUCCEED );
 
   // Close the current attribute, dataspace and dataset
   status = H5Aclose( attribute_id );
-  testHDF5( status == SUCCEED,
-	    "HDF5 attribute close error" );
+  assertAlways( status == SUCCEED );
   
   status = H5Sclose( dataspace_id );
-  testHDF5( status == SUCCEED,
-	    "HDF5 dataspace close error" );
+  assertAlways( status == SUCCEED );
   
   status = H5Dclose( dataset_id );
-  testHDF5( status == SUCCEED,
-	    "HDF5 dataset close error" );
+  assertAlways( status == SUCCEED );
 }
 
 //! Write attribute to HDF5 file
@@ -96,21 +92,17 @@ void DataProcessorBase<double, 1>::writeSingleValueAttributeToHDF5File(
   status = H5Awrite( attribute_id,
 		     HDF5ScalarTraits<T>::memoryType,
 		     &data );
-  testHDF5( status == SUCCEED,
-	    "HDF5 attribute write error" );
+  assertAlways( status == SUCCEED );
 
   // Close the current attribute, dataspace and dataset
   status = H5Aclose( attribute_id );
-  testHDF5( status == SUCCEED,
-	    "HDF5 attribute close error" );
+  assertAlways( status == SUCCEED );
   
   status = H5Sclose( dataspace_id );
-  testHDF5( status == SUCCEED,
-	    "HDF5 dataspace close error" );
+  assertAlways( status == SUCCEED );
   
   status = H5Dclose( dataset_id );
-  testHDF5( status == SUCCEED,
-	    "HDF5 dataset close error" );
+  assertAlways( status == SUCCEED );
 }
 
 //! Write data in 1D array to HDF5 file
@@ -142,16 +134,13 @@ void DataProcessorBase::writeArrayToHDF5File(
 		     H5S_ALL,
 		     H5P_DEFAULT,
 		     &data[0] );
-  testHDF5( status == SUCCEED,
-	    "HDF5 dataset write error" );
+  assertAlways( status == SUCCEED );
   
   status = H5Sclose( dataspace_id );
-  testHDF5Status( status == SUCCEED,
-		  "HDF5 dataspace close error" );
+  assertAlways( status == SUCCEED );
   
   status = H5Dclose( dataset_id );
-  testHDF5Status( status == SUCCEED,
-		  "HDF5 dataset close error" );
+  assertAlways( status == SUCCEED );
 }
   
 
@@ -185,16 +174,13 @@ void DataProcessorBase::write2DArrayToHDF5File(
 		     H5S_ALL,
 		     H5P_DEFAULT,
 		     &data[0][0] );
-  testHDF5( status == SUCCEED,
-	    "HDF5 dataset write error" );
+  assertAlways( status == SUCCEED );
   
   status = H5Sclose( dataspace_id );
-  testHDF5Status( status == SUCCEED,
-		  "HDF5 dataspace close error" );
+  assertAlways( status == SUCCEED );
   
   status = H5Dclose( dataset_id );
-  testHDF5Status( status == SUCCEED,
-		  "HDF5 dataset close error" );
+  assertAlways( status == SUCCEED );
 }
 
 //! Read two column table in EPDL file within specified range

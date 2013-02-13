@@ -1,14 +1,21 @@
+//---------------------------------------------------------------------------//
+// \file PhotonDataCollectionBase.hpp
+// \author Alex Robinson
+// \brief Photon Data Collection class declaration.
+//---------------------------------------------------------------------------//
+
 #ifndef PHOTON_DATA_COLLECTION_HPP
 #define PHOTON_DATA_COLLECTION_HPP
 
+// Trilinos Includes
+#include <Teuchos_RCP.hpp>
+
+// FACEMC Includes
 #include "PhotonDataCollectionBase.hpp"
 #include "ParticleType.hpp"
 
-// Trilinos Includes
-#include "Teuchos_RCP.hpp"
 
-
-namespace FAPMC{
+namespace FACEMC{
 
 class PhotonDataCollection : public PhotonDataCollectionBase
 {
@@ -54,4 +61,14 @@ public:
   template<>
   inline double totalCrossSection<PHOTON>( const double energy )
   { return getTotalCrossSection( energy ) }
-    
+   
+}
+
+} // end FACEMC namespace
+
+#endif // end PHOTON_DATA_COLLECTION_HPP
+
+//---------------------------------------------------------------------------//
+// end PhotonDataCollection.hpp
+//---------------------------------------------------------------------------//
+ 
