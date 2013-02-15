@@ -15,11 +15,8 @@
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
-// HDF5 includes
-#include <hdf5.h>
-
-// FACEMC includes
-
+// FACEMC Includes
+#include "HDF5FileHandler.hpp"
 
 namespace FACEMC{
 
@@ -44,49 +41,6 @@ public:
   virtual void processDataFiles() = 0;
 
 protected:
-
-  //! Open an HDF5 file and overwrite any existing data
-  hid_t openHDF5FileAndOverwrite( const std::string &file_name );
-
-  //! Open an HDF5 file and append to any existing data
-  hid_t openHDF5FileAndAppend( const std::string &file_name );
-
-  //! Close an HDF5 file
-  void closeHDF5File( hid_t file_id );
-
-//! Write data in 1D array to HDF5 file
-  // \param file_id HDF5 identifier for the binary file to write to
-  // \param data 1xM data array to write to HDF5 file
-  // \param location_in_file location in HDF5 file where data will be written
-  template<typname T>
-  void writeArrayToHDF5File( const hid_t file_id,
-			     const Teuchos::Array<double>& data,
-			     const std::string &location_in_file );
-  
-  //! Write data in 2D array to HDF5 file
-  // \param file_id HDF5 identifier for the binary file to write to
-  // \param data[N] NxM data array to write to HDF5 file
-  // \param location_in_file location in HDF5 file where data will be written
-  template<typename T, int N=2>
-  void write2DArrayToHDF5File( const hid_t file_id, 
-			       const Teuchos::Array<T>& data[N],
-			       const std::string &location_in_file );
-
-  //! Write a multi value attribute to HDF5 file ( 1xN array )
-  // \param file_id HDF5 identifier for the binary file to write to
-  template<typename T, int N=2>
-  void writeMultiValueAttributToHDF5File( const hid_t file_id,
-					  const T data[N],
-					  const std::string &location_in_file,
-					  const std::string &attribute_name );
-
-  //! Write a single value attribute to HDF5 file
-  // \param file_id HDF5 identifier for the binary file to write to
-  template<typename T>
-  void writeSingleValueAttributeToHDF5File( const hid_t file_id,
-					    const T data,
-					    const std::string &location_in_file,
-					    const std::string &attribute_name );
 
   //! Read the first table header
   // \brief Read the first EPDL, EADL or EEDL table header and extract info
@@ -202,6 +156,9 @@ protected:
     //! Process Dependent Variable
     static inline double processDependentVar( const double dep_var );
   };
+
+  // HDF5 File Handler
+  HDF5FileHandler d_hdf5_file_handler;
     
 };
 

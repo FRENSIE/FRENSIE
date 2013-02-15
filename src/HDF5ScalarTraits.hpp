@@ -15,30 +15,27 @@ namespace FACEMC{
 template<>
 struct HDF5ScalarTraits<double>
 {
-  typedef H5T_NATIVE_DOUBLE memoryType;
-  typedef H5T_IEEE_F64BE fileTypeBE;
-  typedef H5T_IEEE_F64LE fileTypeLE;
-
+  static inline hid_t memoryType() { return H5T_NATIVE_DOUBLE }
+  static inline hid_t fileTypeBE() { return H5T_IEEE_F64BE }
+  static inline hid_t fileTypeLE() { return H5T_IEEE_F64LE }
   static inline std::string name() { return "double"; }
 };
 
 template<>
 struct HDF5ScalarTraits<int>
 {
-  typedef H5T_NATIVE_INT memoryType;
-  typedef H5T_STD_I32BE fileTypeBE;
-  typedef H5T_STD_I32LE fileTypeLE;
-  
+  static inline hid_t memoryType() { return H5T_NATIVE_INT }
+  static inline hid_t fileTypeBE() { return H5T_STD_I32BE }
+  static inline hid_t fileTypeLE() { return H5T_STD_I32LE }
   static inline std::string name() { return "int"; }
 };
 
 template<>
 struct HDF5ScalarTraits<unsigned int>
 {
-  typedef H5T_NATIVE_UINT memoryType;
-  typedef H5T_STD_U32BE fileTypeBE;
-  typedef H5T_STD_U32LE fileTypeLE;
-
+  static inline hid_t memoryType() { return H5T_NATIVE_UINT }
+  static inline hid_t fileTypeBE() { return H5T_STD_U32BE }
+  static inline hid_t fileTypeLE() { return H5T_STD_U32LE }
   static inline std::string name() { return "unsigned int"; }
 };
 

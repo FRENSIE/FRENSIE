@@ -40,10 +40,12 @@ struct UndefinedScalarTraits
 template<typename T>
 struct HDF5ScalarTraits
 { 
-  typedef H5T_NATIVE_ memoryType;
-  typedef H5T_BE_      fileTypeBE;
-  typedef H5T_LE_      fileTypeLE;
-  
+  //! returns the memory type of the scalar type
+  static inline hid_t memoryType() { (void)UndefinedScalarTraits<T>::notDefined(); return 0 }
+  //! returns the Big-Endian file scalar type
+  static inline hid_t fileTypeBE() { (void)UndefinedScalarTraits<T>::notDefined(); return 0 }
+  //! returns the Little-Endian file scalar type
+  static inline hid_t fileTypeLE() { (void)UndefinedScalarTraits<T>::notDefined(); return 0 }
   //! Returns the name of this scalar type
   static inline std::string name() { (void)UndefinedScalarTraits<T>::notDefined(); return 0 }
 }

@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-// \file DataProcessorBase.hpp
+// \file DataProcessorBase.cpp
 // \author Alex Robinson
 // \brief Data Processor Base Class non-template member function definitions
 //---------------------------------------------------------------------------//
@@ -10,36 +10,9 @@
 // FACEMC Includes
 #include "DataProcessorBase.hpp"
 #include "ElectronShell.hpp"
-#include "Exception.hpp"
+#include "FACEMC_assertion.hpp"
 
 namespace FACEMC{
-
-//! Open an HDF5 file and overwrite any existing data
-hid_t DataProcessorBase::openHDF5FileAndOverwrite( const std::string 
-						   &file_name )
-{
-  return H5Fcreate( file_name.c_str(),
-		    H5F_ACC_TRUNC,
-		    H5P_DEFAULT,
-		    H5P_DEFAULT );
-}
-
-//! Open an HDF5 file and append to any existing data
-hid_t DataProcessorBase::openHDF5FileAndAppend( const std::string &file_name )
-{
-  return H5Fcreate( file_name.c_str(),
-		    H5F_ACC_RDWR,
-		    H5P_DEFAULT,
-		    H5P_DEFAULT );
-}
-
-//! Close an HDF5 file
-void DataProcessorBase::closeHDF5File( hid_t file_id )
-{
-  herr_t status = H5Fclose( file_id );
-  assertAlways( status == SUCCEED,
-		  "HDF5 file close error" );
-}
 
 //! Read the first table header
 void DataProcessorBase::readFirstTableHeader( FILE* datafile,
@@ -277,8 +250,7 @@ void DataProcessorBase::skipFourColumnTable( FILE* datafile,
 //! Convert an EPDL shell integer to a shell name
 std::string DataProcessorBase::intToShellStr( const int shell )
 {
-  testInvalidShell( shell > 0, 
-		    "Invalid shell detected" );
+  assertAlways( shell > 0 );
   return ElectronShellStr[shell];
 }
 

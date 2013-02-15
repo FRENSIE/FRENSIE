@@ -55,9 +55,6 @@ void PhotonDataProcessor::processEPDLFile()
   epdl = fopen( d_epdl_file_name.c_str() );
   assertAlways( epdl );
 
-  // HDF5 file information
-  hid_t file_id;
-
   // Atomic number of element currently being processed
   int atomic_number = 0;
 
@@ -91,15 +88,15 @@ void PhotonDataProcessor::processEPDLFile()
 
       // Open a new HDF5 file
       std::ostringstream file_number << atomic_number;
-      file_id = openHDF5FileAndOverwrite( PHOTON_DATA_FILE_PREFIX + 
-					  file_number.str() + 
-					  DATA_FILE_PREFIX );
+      d_hdf5_file_handler.openHDF5FileAndOverwrite( PHOTON_DATA_FILE_PREFIX + 
+						    file_number.str() + 
+						    DATA_FILE_PREFIX );
 
       // Create a top level attribute to store the atomic weight
-      writeSingleValueAttributeToHDF5File<double>( file_id,
-						   atomic_weight,
-						   "Atomic_Weight",
-						   "Weight" );
+      d_hdf5_file_handler.writeSingleValueAttributeToHDF5File<double>( 
+								atomic_weight,
+								"Atomic_Weight",
+								"Weight" );
     }
 
     // Read second table header and determine the reaction type
@@ -125,9 +122,9 @@ void PhotonDataProcessor::processEPDLFile()
 							     data,
 							     d_energy_min,
 							     d_energy_max );
-      write2DArrayToHDF5File<double>( file_id,
-				      data,
-				      COHERENT_CROSS_SECTION_LOC );
+      d_hdf5_file_handler.write2DArrayToHDF5File<double>( 
+						  data,
+						  COHERENT_CROSS_SECTION_LOC );
       break;
 
     case 71010:
