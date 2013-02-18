@@ -11,8 +11,8 @@
 // FACEMC Includes
 #include "PhotonDataProcessor.hpp"
 #include "FACEMC_Assertion.hpp"
-#include "HDF5ScalarTraits.hpp"
 #include "HDF5DataFileNames.hpp"
+#include "DataPoint.hpp"
 
 namespace FACEMC{
 
@@ -82,7 +82,7 @@ void PhotonDataProcessor::processEPDLFile()
     if( atomic_number != atomic_number_in_table )
     {
       if( atomic_number != 0 )
-	closeHDF5File( file_id );
+	d_hdf5_file_handler.closeHDF5File();
       
       ++atomic_number;
 
@@ -91,12 +91,13 @@ void PhotonDataProcessor::processEPDLFile()
       d_hdf5_file_handler.openHDF5FileAndOverwrite( PHOTON_DATA_FILE_PREFIX + 
 						    file_number.str() + 
 						    DATA_FILE_PREFIX );
-
+      
       // Create a top level attribute to store the atomic weight
-      d_hdf5_file_handler.writeSingleValueAttributeToHDF5File<double>( 
-								atomic_weight,
-								"Atomic_Weight",
-								"Weight" );
+      Teuchos::Array<double> atomic_weight_arr(1, atomic_weight); // :(
+      d_hdf5_file_handler.writeArrayToGroupAttribute<double>( 
+							     atomic_weight_arr,
+							     "/",
+							     "Atomic_Weight" );
     }
 
     // Read second table header and determine the reaction type
@@ -115,16 +116,18 @@ void PhotonDataProcessor::processEPDLFile()
       
       // The interpolation flag should be log-log (5)
       assertAlways( interpolation_flag == 5 );
+      {
+	Teuchos::Array<DataPoint<double,double> > data;
+	
+	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
+							       data,
+							       d_energy_min,
+							       d_energy_max );
+	
+	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,double> >( data,
+									    COHERENT_CROSS_SECTION_LOC );
+      }
       
-      Teuchos::Array<double> data[2];
-      
-      readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
-							     data,
-							     d_energy_min,
-							     d_energy_max );
-      d_hdf5_file_handler.write2DArrayToHDF5File<double>( 
-						  data,
-						  COHERENT_CROSS_SECTION_LOC );
       break;
 
     case 71010:
@@ -139,16 +142,17 @@ void PhotonDataProcessor::processEPDLFile()
       
       // The interpolation flag should be log-log (5)
       assertAlways( interpolation_flag == 5 );
-
-      Teuchos::Array<double> data[2];
-
-      readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
-							     data,
-							     d_energy_min,
-							     d_energy_max );
-      write2DArrayToHDF5File<double>( file_id,
-				      data,
-				      INCOHERENT_CROSS_SECTION_LOC );
+      {
+	Teuchos::Array<DataPoint<double,double> > data;
+	
+	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
+							       data,
+							       d_energy_min,
+							       d_energy_max );
+	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,double> >( data,
+									    INCOHERENT_CROSS_SECTION_LOC );
+      }
+      
       break;
 
     case 72010:
@@ -163,34 +167,30 @@ void PhotonDataProcessor::processEPDLFile()
 
     case 73000:
       // Read the total integrated photoelectric cross section
+      assertAlways( interpolation_flag == 5 );
+      
       if( electron_shell == 0 )
-      {
-	assertAlways( interpolation_flag == 5 );
-	
-	Teuchos::Array<double> data[2];
+      {	
+	Teuchos::Array<DataPoint<double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
 							       d_energy_min,
 							       d_energy_max );
-	write2DArrayToHDF5File<double>( file_id,
-					data,
-					PHOTOELECTRIC_CROSS_SECTION_LOC );
+	d_hdf5_file_handler.writeArrayDataSet<DataPoint<double,double> >( data,
+									  PHOTOELECTRIC_CROSS_SECTION_LOC );
       }
       // Read the total integrated photoelectric cross section for a subshell
       else
-      {
-	assertAlways( interpolation_flag == 5 );
-	
-	Teuchos::Array<double> data[2];
+      {	
+	Teuchos::Array<DataPoint<double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
 							       d_energy_min,
 							       d_energy_max );
-	write2DArrayToHDF5File<double>( file_id,
-					data,
-					PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + intToShellStr( electron_shell ) );
+	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double> >( data,
+								     PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + intToShellStr( electron_shell ) );
       }
       break;
 
@@ -215,16 +215,23 @@ void PhotonDataProcessor::processEPDLFile()
     case 74000:
       // Read the integrated pair production cross section
       assertAlways( interpolation_flag == 5 );
-
-      Teuchos::Array<double> data[2];
+      {
+	Teuchos::Array<DataPoint<double,double> > data;
 	
-      readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
-							     data,
-							     d_energy_min,
-							     d_energy_max );
-      write2DArrayToHDF5File<double>( file_id,
-				      data,
-				      PAIR_PRODUCTION_CROSS_SECTION_LOC );
+	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
+							       data,
+							       d_energy_min,
+							       d_energy_max );
+      
+	// The first data point needs to be removed since it is always
+	// (1.022, 0.0)
+	if( d_energy_min < 1.022 )
+	  data.erase( data.begin() );
+	
+	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,double> >( data,
+									    PAIR_PRODUCTION_CROSS_SECTION_LOC );
+      }
+      
       break;
 
     case 74010:
@@ -240,16 +247,23 @@ void PhotonDataProcessor::processEPDLFile()
     case 75000:
       // Read the integrated triplet production cross section
       assertAlways( interpolation_flag == 5 );
-
-      Teuchos::Array<double> data[2];
+      {
+	Teuchos::Array<DataPoint<double,double> > data;
 	
-      readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
-							     data,
-							     d_energy_min,
-							     d_energy_max );
-      write2DArrayToHDF5File<double>( file_id,
-				      data,
-				      TRIPLET_PRODUCTION_CROSS_SECTION_LOC );
+	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
+							       data,
+							       d_energy_min,
+							       d_energy_max );
+	
+	// The first data point needs to be removed since it is always
+	// (2.044, 0.0)
+	if( d_energy_min < 2.044 )
+	  data.erase( data.begin() );
+	
+	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,double> >( data,
+									    TRIPLET_PRODUCTION_CROSS_SECTION_LOC );
+      }
+      
       break;
 
     case 75010:
@@ -265,72 +279,86 @@ void PhotonDataProcessor::processEPDLFile()
     case 93941:
       // Read the atomic form factor
       assertAlways( interpolation_flag == 5 );
-
-      Teuchos::Array<double> data[2];
-	
-      readTwoColumnTable<LinearLinearDataProcessingPolicy>( epdl,
-							    data );
-      // For efficient sampling, the atomic form factor must be squared and
-      // integrated over its squared argument
-      double tmp_integral;
-      Teuchos::Array<double> integrated_squared_ff;
-      integrated_squared_ff.push_back( 0.0 );
-      
-      // The form factor has a linear region between the first two arguments
-      tmp_integral = 0.5*(data[0][1]*data[0][1]-data[0][0]*data[0][0])*
-	(data[1][0]*data[1][0]+data[1][1]*data[1][1]);
-      integrated_squared_ff.push_back( tmp_integral );
-
-      // Integrate between data points assuming a functional form of
-      // dep = dep_0*indep^exponent
-      double exponent;
-      double indep_begin, indep_end;
-      double dep_begin, dep_end;
-      for( int i = 2; i < data[0].size(); ++i )
       {
-	indep_begin = data[0][i-1]*data[0][i-1];
-	indep_end = data[0][i]*data[0][i];
-	dep_begin = data[1][i-1]*data[1][i-1];
-	dep_end = data[1][i]*data[1][i];
-	exponent = log( dep_end/dep_begin )/log( indep_begin/indep_end );
+	Teuchos::Array<DataPoint<double,double> > data;
 	
-	tmp_integral = dep_begin/((exponent+1)*pow( indep_begin, exponent ))*
-	  (pow( indep_end, exponent+1 ) - pow( indep_begin, exponent+1 ));
-
-	integrated_squared_ff.push_back( integrated_squared_ff.back() +
-					 tmp_integral );
+	readTwoColumnTable<LinearLinearDataProcessingPolicy>( epdl,
+							      data );
+	// For efficient sampling, the atomic form factor must be squared and
+	// integrated over its squared argument
+	double tmp_integral;
+	
+	Teuchos::Array<DataPoint<double,double> > integrated_squared_ff;
+	DataPoint<double,double> data_point;
+	double indep_begin, indep_end;
+	double dep_begin, dep_end;
+	
+	// The form factor has a linear region between the first two arguments:
+	// Do not add the first data point since this linear region needs
+	// a different interpolation policy ( integrated_sq_ff(x) = x*Z^2 )
+	indep_end = data[1].value1*data[1].value1;
+	dep_end = data[1].value2*data[1].value2;
+	tmp_integral = indep_end*dep_end;
+	
+	data_point.value1 = indep_end;
+	data_point.value2 = tmp_integral;
+	
+	integrated_squared_ff.push_back( tmp_integral );
+	
+	// Integrate between data points assuming a functional form of
+	// dep = dep_0*indep^exponent
+	double exponent;
+	for( int i = 2; i < data.size(); ++i )
+	  {
+	    indep_begin = data[i-1].value1*data[i-1].value1;
+	    indep_end = data[i].value1*data[i].value1;
+	    dep_begin = data[i-1].value2*data[i-1].value2;
+	    dep_end = data[i].value2*data[i].value2;
+	    exponent = log( dep_end/dep_begin )/log( indep_begin/indep_end );
+	    
+	    tmp_integral = dep_begin/((exponent+1)*pow( indep_begin, exponent ))*
+	      (pow( indep_end, exponent+1 ) - pow( indep_begin, exponent+1 ));
+	    
+	    data_point.value1 = indep_end;
+	    data_point.value2 += tmp_integral;
+	    
+	    integrated_squared_ff.push_back( data_point );
+	  }
+	
+	
+	// Process the integrated squared form factor for log-log interpolation
+	for( int i = 0; i < integrated_squared_ff.size(); ++i )
+	  {
+	    integrated_squared_ff[i].value1 = 
+	      log( integrated_squared_ff[i].value1 );
+	    
+	    integrated_squared_ff[i].value2 = 
+	      log( integrated_squared_ff[i].value2 );
+	  }
+	
+	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,double> >( integrated_squared_ff,
+									    ATOMIC_FORM_FACTOR_LOC );
       }
       
-      // Update data array
-      data[0][0] = log( std::numeric_limits<double>::min() );
-      data[1][0] = log( std::numeric_limits<double>::min() );
-      for( int i = 1; i < data[0].size(); ++i )
-      {
-	// square the argument
-	data[0][i] = log( data[0][i]*data[0][i] );
-
-	// replace the form factor with the squared form factor integrated
-	// over the squared argument
-	data[1][i] = log( integrated_squared_ff[i] );
-      }
-      
-      write2DArrayToHDF5File<double>( file_id,
-				      data,
-				      ATOMIC_FORM_FACTOR_LOC );
       break;
 
     case 93942:
       // Read the scattering function
       assertAlways( interpolation_flag == 5 );
-
-      Teuchos::Array<double> data[2];
+      {
+	Teuchos::Array<DataPoint<double,double> > data;
 	
-      readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
-							     data );
-							     
-      write2DArrayToHDF5File<double>( file_id,
-				      data,
-				      SCATTERING_FUNCTION_LOC );
+	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
+							       data );
+	
+	// The first data point needs to be erased since it is always
+	// (0.0, 0.0)
+	data.erase( data.begin() );
+	
+	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,double> >( data,
+									    SCATTERING_FUNCTION_LOC );
+      }
+      
       break;
 
     case 93943:
@@ -349,14 +377,16 @@ void PhotonDataProcessor::processEPDLFile()
 
     default:
       // Unknown reaction type found
-      bool known_reaction_type = false
-      assertAlways( known_reaction_type );
+      {
+	bool known_reaction_type = false;
+	assertAlways( known_reaction_type );
+      }
       break;
     }
   }
   
   // Close the last HDF5 file
-  closeHDF5File( file_id );
+  d_hdf5_file_handler.closeHDF5File();
 
   // Close the EPDL data file
   fclose( epdl );
@@ -369,9 +399,6 @@ void PhotonDataProcessor::processEADLFile()
   FILE* eadl;
   eadl = fopen( d_eadl_file_name.c_str() );
   assertAlways( eadl );
-
-  // HDF5 file information
-  hid_t file_id;
 
   // Atomic number of element currently being processed
   int atomic_number = 0;
@@ -400,15 +427,15 @@ void PhotonDataProcessor::processEADLFile()
     if( atomic_number != atomic_number_in_table )
     {
       if( atomic_number != 0 )
-	closeHDF5File( file_id );
+	d_hdf5_file_handler.closeHDF5File();
       
       ++atomic_number;
 
       // Open a new HDF5 file
       std::ostringstream file_number << atomic_number;
-      file_id = openHDF5FileAndAppend( PHOTON_DATA_FILE_PREFIX + 
-				       file_number.str() + 
-				       DATA_FILE_PREFIX );
+      d_hdf5_file_handler.openHDF5FileAndAppend( PHOTON_DATA_FILE_PREFIX + 
+						 file_number.str() + 
+						 DATA_FILE_PREFIX );
     }
 
     // Read second table header and determine the reaction type
@@ -422,105 +449,125 @@ void PhotonDataProcessor::processEADLFile()
     {
     case 91912:
       // Read number of electrons per subshell
-      
-      Teuchos::Array<double> data[2];
-	
-      readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
-							    data );
-      
-      // Create the electron shell cdf
-      double tmp_sum = 0.0;
-      for( int i = 0; i < data[0].size(); ++i )
       {
-	tmp_sum += data[1][i];
-	data[1][i] = tmp_sum;
+	Teuchos::Array<DataPoint<double,double> > data;
+	
+	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
+							      data );
+	
+	// Create the electron shell cdf
+	double tmp_sum = 0.0;
+	for( int i = 0; i < data.size(); ++i )
+	  {
+	    tmp_sum += data[i].value2;
+	    data[i].value2 = tmp_sum;
+	  }
+	
+	// Normalize the cdf
+	for( int i = 0; i < data.size(); ++i )
+	  data[i].value2 /= tmp_sum;
+	
+	// Create the Electron Shell Index Map
+	Teuchos::Array<int> electron_shell_index_map[2];      
+	createElectronShellIndexMap( atomic_number,
+				     electron_shell_index_map );
+	
+	// Create the complete data array
+	Teuchos::Array<DataPoint<double,int,int> > complete_data;
+	DataPoint<double,int,int> data_point;
+	
+	for( int i = 0; i < data.size(); ++i )
+	  {
+	    data_point.value1 = data[i].value2;
+	    data_point.value2 = static_cast<int>(data[i].value1);
+	    data_point.value3 = electron_shell_index_map[1][i];
+	    
+	    complete_data.push_back( data_point );
+	  }
+	
+	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,int,int> >( 
+									    complete_data,
+									    ELECTRON_SHELL_INDEX_MAP_LOC );
       }
-
-      // Normalize the cdf
-      Teuchos::Array<double> electron_shell_cdf;
-      for( int i = 0; i < data[0].size(); ++i )
-	electron_shell_cdf.push_back( data[1][i]/tmp_sum );
       
-      writeArrayToHDF5File<double>( file_id,
-				    electron_shell_cdf,
-				    ELECTRON_SHELL_CDF_LOC );
-
-      // Create the Electron Shell Index Map
-      Teuchos::Array<int> electron_shell_index_map[2];      
-      createElectronShellIndexMap( atomic_number,
-				   electron_shell_index_map );
-
-      write2DArrayToHDF5File<int>( file_id,
-				   electron_shell_index_map,
-				   ELECTRON_SHELL_INDEX_MAP_LOC );      
       break;
 
     case 91913:
       // Read binding energy per subshell
+      {
+	Teuchos::Array<DataPoint<double,double> > data;
+	
+	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
+							      data );
+	
+	// Strip off shell identifiers
+	Teuchos::Array<double> simple_data;
+	for( int i = 0; i < data.size(); ++i )
+	  simple_data.push_back( data[i].value2 );
+	
+	d_hdf5_file_handler.writeArrayToDataSet<double>( simple_data,
+							 ELECTRON_SHELL_BINDING_ENERGY_LOC );
+      }
       
-      Teuchos::Array data[2];
-      
-      readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
-							    data );
-
-      write2DArrayToHDF5File<double>( file_id,
-				      data,
-				      ELECTRON_SHELL_BINDING_ENERGY_LOC );
       break;
 
     case 91914:
       // Read kinetic energy per subshell
+      {
+	Teuchos::Array<DataPoint<double,double> > data;
+	
+	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
+							      data );
+	
+	// Strip off shell identifiers
+	Teuchos::Array<double> simple_data;
+	for( int i = 0; i < data.size(); ++i )
+	  simple_data.push_back( data[i].value2 );
+	
+	d_hdf5_file_handler.writeArrayToDataSet<double>( data,
+							 ELECTRON_SHELL_KINETIC_ENERGY_LOC );
+      }
       
-      Teuchos::Array data[2];
-      
-      readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
-							    data );
-
-      writeArrayToHDF5File<double>( file_id,
-				    data,
-				    ELECTRON_SHELL_KINETIC_ENERGY_LOC );
       break;
 
     case 92931:
       // Read radiative transition probability per subshell
+      {
+	Teuchos::Array<int,double,double> data;
+	
+	readThreeColumnTable( eadl,
+			      data );
+	
+	// Calculate the total radiative transition probability for
+	// this subshell
+	Teuchos::Array<double> total_radiative_trans_prob(1, 0.0);
+	for( int i = 0; i < data[0].size(); ++i )
+	  total_radiative_trans_prob[0] += data[i].value2;
+	
+	d_hdf5_file_handler.writeArrayToGroupAttribute<double>( total_radiative_trans_prob,
+								RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ),
+								"Total_Radiative_Transition_Probability" );
+	
+	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<int,double,double> >( 
+									data,
+									RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ) );
+      }
       
-      Teuchos::Array data[3];
-
-      readThreeColumnTable( eadl,
-			    data );
-
-      // Calculate the total radiative transition probability for
-      // this subshell
-      double total_radiative_trans_prob = 0.0;
-      for( int i = 0; i < data[0].size(); ++i )
-	total_radiative_trans_prob += data[1][i];
-
-      writeSingleValueAttribute<double>( file_id,
-					 total_radiative_trans_prob,
-					 RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ),
-					 "Total_Radiative_Transition_Probability"
-					 );
-
-      write2DArrayToHDF5File<double, 3>( file_id,
-					 data,
-					 RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell )
-					 );
-					 
       break;
 
     case 92932:
       // Read nonradiative transition probability per subshell
+      {
+	Teuchos::Array<DataPoint<int,int,double,double> > data;
+	
+	readFourColumnTable( eadl,
+			     data );
+	
+	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<int,int,double,double>(
+								       data,
+								       NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ) );
+      }
       
-      Teuchos::Array<double> data[4];
-
-      readFourColumnTable( eadl,
-			   data );
-
-      write2DArrayToHDF5File<double, 4>( file_id,
-					 data,
-					 NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell )
-					 );
-					 
       break;
 
     case 91915:
@@ -601,15 +648,17 @@ void PhotonDataProcessor::processEADLFile()
 
     default:
       // Unknown reaction type found
-      std::cerr << "Unknown reaction type ( " << reaction_type << " )" 
-		<< std::endl;
-      exit(1);
+      {
+	bool known_reaction_type = false;
+	assertAlways( known_reaction_type );
+      }
+      
       break;
     }
   }
 
   // Close the last HDF5 file
-  closeHDF5File( file_id );
+  d_hdf5_file_handler.closeHDF5File();
 
   // Close the EPDL data file
   fclose( epdl );
@@ -621,9 +670,6 @@ void PhotonDataProcessor::processComptonFiles()
   // Compton file information
   std::ifstream compton_file_stream;
   std::string compton_file_name;
-
-  // HDF5 file information
-  hid_t file_id;
   
   // Compton Profile Q values
   double q_values[] = { 0.00,
@@ -669,61 +715,55 @@ void PhotonDataProcessor::processComptonFiles()
     compton_file_stream.open( compton_file_name.c_str() );
     assertAlways( compton_file_stream.is_open() );
 
-    Teuchos::Array<double> data[31];
+    Teuchos::Array<double> compton_profile_cdfs;
     while( !comton_file_stream.eof() )
     {
       //each block of data has 31 evaluated data points
+      Teuchos::Array<double> data(31, 0.0);
       double data_point;
       for( int i = 0; i < 31; ++i )
       {
 	compton_file_stream >> data_point;
-	data[i].push_back( data_point );
+	data[i] = data_point;
       }
-    }
-
-    Teuchos::Array<double> compton_profile_cdfs[31];
-    
-    double tmp_integral = 0.0;
-    double exponent;
-    double indep_begin, indep_end;
-    double dep_begin, dep_end;
-    // Create the Compton Profile CDFs
-    for( int i = 0; i < data[0].size(); ++i )
-    {
-      compton_profile_cdfs[0][i].push_back( 0.0 );
-      tmp_integral = 0.5*( q_values[1]-q_values[0] )*( data[1][i] + data[0][i]);
-      compton_profile_cdfs[1].push_back( tmp_integral );
-      for( int j = 2; j < 31; ++j )
+       
+      double tmp_integral = 0.0;
+      double exponent;
+      double indep_begin, indep_end;
+      double dep_begin, dep_end;
+      // Create the Compton Profile CDFs
+      compton_profile_cdfs.push_back( 0.0 );
+      tmp_integral = 0.5*( q_values[1]-q_values[0] )*( data[1] + data[0]);
+      compton_profile_cdfs.push_back( tmp_integral );
+      for( int i = 2; i < 31; ++i )
       {
 	indep_begin = q_values[j-1];
 	indep_end = q_values[j];
-	dep_begin = data[j-1][i];
-	dep_end = data[j][i];
+	dep_begin = data[i-1];
+	dep_end = data[i];
 	exponent = log( dep_end/dep_begin )/log( indep_begin/indep_end );
 	
 	tmp_integral = dep_begin/((exponent+1)*pow( indep_begin, exponent ))*
 	  (pow( indep_end, exponent+1 ) - pow( indep_begin, exponent+1 ));
 
-	compton_profile_cdfs[j].push_back( compton_profile_cdf.back() +
-					  tmp_integral );
+	compton_profile_cdfs.push_back( compton_profile_cdf.back() +
+					tmp_integral );
       }
       
       // Normalize the CDF
-      compton_profile_cdfs[0][i] /= compton_profile_cdf[30][i];
-      for( int j = 1; j < 31; ++j )
-	compton_profile_cdfs[j][i] = log( compton_profile_cdfs[j][i]/
-					  compton_profile_cdf[30][i] );
+      for( int i = compton_profile_cdfs.size()-31-1; 
+	   i < compton_profile_cdfs.size(); ++i )
+	compton_profile_cdfs[i] /= compton_profile_cdf.back();
+      
     }
 
-    write2DArrayToHDF5File<double, 31>( file_id,
-					compton_profile_cdfs,
-					COMPTON_PROFILE_CDF_LOC );
-
+    d_hdf5_file_handler.writeArrayToDataSet<double>( compton_profile_cdfs,
+						     COMPTON_PROFILE_CDF_LOC );
     // Close the Compton Profile stream
     compton_profile_stream.close();
 
     // Close the HDF5 file
-    closeHDF5File( file_id );
+    d_hdf5_file_handler.closeHDF5File();
   }
 }
 

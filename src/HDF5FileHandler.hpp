@@ -12,9 +12,10 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_RCP.hpp>
 
 // HDF5 Inludes
-#include <hdf5.h>
+#include <H5Cpp.h>
 
 // FACEMC Includes
 
@@ -29,7 +30,8 @@ public:
   HDF5FileHandler();
 
   //! Destructor
-  ~HDF5FileHandler();
+  ~HDF5FileHandler()
+  { /* ... */ }
   
   //! Open an HDF5 file and overwrite any existing data
   void openHDF5FileAndOverwrite( const std::string &file_name );
@@ -40,25 +42,36 @@ public:
   //! Close an HDF5 file
   void closeHDF5File();
 
-  //! Write data in array to HDF5 file
-  // \param file_id HDF5 identifier for the binary file to write to
-  // \param data NxM data array to write to HDF5 file
+  //! Write data in array to HDF5 file data set
+  // \param data data array to write to HDF5 file dataset
   // \param location_in_file location in HDF5 file where data will be written
   template<typename T, int N=2>
-  void writeArrayToHDF5File( const Teuchos::Array<T> &data,
-			     const std::string &location_in_file );
+  void writeArrayToDataSet( const Teuchos::Array<T> &data,
+			    const std::string &location_in_file );
 
-  //! Write a multi value attribute to HDF5 file ( 1xN array )
-  // \param file_id HDF5 identifier for the binary file to write to
+  //! Write an attribute to an HDF5 file data set
+  // \param data attribute data array to write to HDF5 file dataset
+  // \param dataset_location location and name of the HDF5 file data set that
+  // the attribute will be written to
+  // \param attribute_name name that will be given to the attribute
   template<typename T>
-  void writeAttributToHDF5File( const Teuchos::Array<T>& data,
-				const std::string &location_in_file,
-				const std::string &attribute_name );
+  void writeArrayToDataSetAttribute( const Teuchos::Array<T> &data,
+				     const std::string &dataset_location,
+				     const std::string &attribute_name );
 
+  //! Write an attribute to an HDF5 file group
+  // \param data attribute data array to write to HDF5 file group
+  // \param group_location location and name of the HDF5 file group that
+  // the attribute will be written to
+  // \param attribute_name name that will be given to the attribute
+  template<typename T>
+  void writeArrayToGroupAttribute( const Teuchos::Array<T> &data,
+				   const std::string &group_location,
+				   const std::string &attribute_name );
 private:
   
   // HDF5 file identifier
-  hid_t d_file_id;
+  Teuchos::RCP<H5File> d_hdf5_file;
 
 };
 

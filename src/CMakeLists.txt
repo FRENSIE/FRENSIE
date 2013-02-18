@@ -1,0 +1,56 @@
+# Add Design-by-Contract
+IF($PROJECT_NAME}_ENABLE_DBC)
+  SET(HAVE_${PROJECT_NAME}_DBC "1")
+ELSE()
+  SET(HAVE_${PROJECT_NAME}_DBC "0")
+ENDIF()
+
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dbc_config.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+
+SET(HEADERS
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_config.hpp
+  ${HEADERS}
+  )
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+SET(HEADERS
+  DataPoint.hpp
+  DefaultParameterValues.hpp
+  EPDL97DataProcessor.hpp
+  FACEMC_Assertion.hpp
+  HDF5DataFileNames.hpp
+  HDF5ExceptionCatchMacro.hpp
+  HDF5FileHandler.hpp
+  HDF5TypeTraits.hpp
+  PhotoDataCollection.hpp
+  SimulationBase.hpp
+  ${HEADERS}
+  )
+
+SET(SOURCES
+  EPDL97DataProcessor.cpp
+  HDF5FileHandler.cpp
+  PhotonDataProcessor.cpp
+  Types.cpp
+  ${SOURCES}
+  )
+
+INCLUDE_DIRECTORIES(types)
+
+SET(TARGETS
+  ${TARGETS}
+  )
+
+IF(CMAKE_VERBOSE_CONFIGURE)
+  MESSAGE("HEADERS = ${HEADERS}")
+  MESSAGE("SOURCES = ${SOURCES}")
+  MESSAGE("TARGETS = ${TARGETS}")
+ENDIF()
+
+INSTALL(TARGETS ${TARGETS}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+INSTALL(FILES ${HEADERS}
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/include)

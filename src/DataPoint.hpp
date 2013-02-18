@@ -8,10 +8,12 @@
 #define DATA_POINT_HPP
 
 // HDF5 Includes
-#include <hdf5.h>
+#include <H5Cpp.h>
 
 // FACEMC Includes
 #include "FACEMC_assertion.hpp"
+#include "HDF5TypeTraits.hpp"
+#include "HDF5ExceptionCatchMacro.hpp"
 
 namespace FACEMC{
 
@@ -56,132 +58,45 @@ struct DataPoint
 }
 
 //---------------------------------------------------------------------------//
-// Specialize the HDF5ScalarTraits class for the DataPoint Struct
+// Specialize the HDF5TypeTraits class for the DataPoint Struct
 //---------------------------------------------------------------------------//
 template<>
-struct HDF5ScalarTraits<DataPoint>
+struct HDF5TypeTraits<DataPoint>
 {
-  static hid_t memoryType()
+  static H5::CompType dataType()
   {
-    herr_t status;
-    hid_t memtype;
     
-    memtype = H5Tcreate( H5T_COMPOUND, 
-			 sizeof(DataPoint) );
+    H5::CompType memtype( sizeof(DataPoint) );
     
-    status = H5Tinsert( memtype, 
-			"value1",
-			HOFFSET( DataPoint, value1 ),
-			HDF5ScalarTraits<DataPoint::type1>::memoryType() );
-    assertAlways( status == SUCCEED );
+    // the insertMember function can throw H5::DataTypeIException exceptions
+    try{
+      
+      memtype.insertMember( "value1",
+			    HOFFSET( DataPoint, value1 ),
+			    HDF5TypeTraits<DataPoint::type1>::dataType() );
+      
+      memtype.insertMember( "value2",
+			    HOFFSET( DataPoint, value2 ),
+			    HDF5TypeTraits<DataPoint::type2>::dataType() );
     
-    status = H5Tinsert( memtype,
-			"value2"
-			HOFFSET( DataPoint, value2 ),
-			HDF5ScalarTraits<DataPoint::type2>::memoryType() );
-    assertAlways( status == SUCCEED );
-    
-    if( DataPoint::size > 2 )
+      if( DataPoint::size > 2 )
       {
-	status = H5Tinsert( memtype,
-			    "value3",
-			    HOFFSET( DataPoint, value3 ),
-			    HDF5ScalarTraits<DataPoint::type3>::memoryType() );
-	assertAlways( status == SUCCEED );
+	memtype.insertMember( "value3",
+			      HOFFSET( DataPoint, value3 ),
+			      HDF5TypeTraits<DataPoint::type3>::dataType() );
       }
     
-    if( DataPoint::size > 3 )
+      if( DataPoint::size > 3 )
       {
-	status = H5Tinsert( memtype,
-			    "value4",
-			    HOFFSET( DataPoint, value4 ),
-			    HDF5ScalarTraits<DataPoint::type4>::memoryType() );
-	assertAlways( status == SUCCEED );
+	memtype.insertMember( "value4",
+			      HOFFSET( DataPoint, value4 ),
+			      HDF5TypeTraits<DataPoint::type4>::dataType() );
       }
+    }
+    
+    HDF5_EXCEPTION_CATCH_AND_EXIT();
     
     return memtype;
-  }
-
-  static hid_t fileTypeBE()
-  {
-    herr_t status;
-    hid_t filetype;
-    
-    filetype = H5Tcreate( H5T_COMPOUND,
-			  sizeof(DataPoint) );
-    
-    status = H5Tinsert( filetype,
-			"value1",
-			HOFFSET( DataPoint, value1 ),
-			HDF5ScalarTraits<DataPoint::type1>::fileTypeBE() );
-    assertAlways( status == SUCCEED );
-    
-    status = H5Tinsert( filetype,
-			"value2",
-			HOFFSET( DataPoint, value2 ),
-			HDF5ScalarTraits<DataPoint::type2>::fileTypeBE() );
-    assertAlways( status == SUCCEED );
-    
-    if( DataPoint::size > 2 )
-      {
-	status = H5Tinsert( filetype,
-			    "value3",
-			    HOFFSET( DataPoint, value3 ),
-			    HDF5ScalarTraits<DataPoint::type3>::fileTypeBE() );
-	assertAlways( status == SUCCEED );
-      }
-    
-    if( DataPoint::size > 3 )
-      {
-	status = H5Tinsert( filetype,
-			    "value4",
-			    HOFFSET( DataPoint, value4 ),
-			    HDF5ScalarTraits<DataPoint::type4>::fileTypeBE() );
-	assertAlways( status == SUCCEED );
-      }
-    
-    return filetype;
-  }
-
-  static hid_t fileTypeLE()
-  {
-    herr_t status;
-    hid_t filetype;
-    
-    filetype = H5Tcreate( H5T_COMPOUND,
-			  sizeof(DataPoint) );
-    
-    status = H5Tinsert( filetype,
-			"value1",
-			HOFFSET( DataPoint, value1 ),
-			HDF5ScalarTraits<DataPoint::type1>::fileTypeLE() );
-    assertAlways( status == SUCCEED );
-    
-    status = H5Tinsert( filetype,
-			"value2",
-			HOFFSET( DataPoint, value2 ),
-			HDF5ScalarTraits<DataPoint::type2>::fileTypeLE() );
-    assertAlways( status == SUCCEED );
-    
-    if( DataPoint::size > 2 )
-      {
-	status = H5Tinsert( filetype,
-			    "value3",
-			    HOFFSET( DataPoint, value3 ),
-			    HDF5ScalarTraits<DataPoint::type3>::fileTypeLE() );
-	assertAlways( status == SUCCEED );
-      }
-    
-    if( DataPoint::size > 3 )
-      {
-	status = H5Tinsert( filetype,
-			    "value4",
-			    HOFFSET( DataPoint, value4 ),
-			    HDF5ScalarTraits<DataPoint::type4>::fileTypeLE() );
-	assertAlways( status == SUCCEED );
-      }
-    
-    return filetype;
   }
   
   static inline std::string name() 

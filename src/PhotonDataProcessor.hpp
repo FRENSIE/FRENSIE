@@ -8,12 +8,12 @@
 #define PHOTON_DATA_PROCESSOR_HPP
 
 // FACEMC includes
-#include "DataProcessorBase.hpp"
+#include "EPDL97DataProcessor.hpp"
 #include "DefaultParameterValues.hpp"
 
 namespace FACEMC{
 
-class PhotonDataProcessor : public DataProcessorBase
+class PhotonDataProcessor : public EPDL97DataProcessor
 {
 
 public:

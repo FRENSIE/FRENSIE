@@ -28,7 +28,7 @@ namespace FACEMC
  * \brief Exception class to be thrown when function contract is not met
  * met.
  */
-class ContractException : public std::runtime_error
+class ContractException : public std::logic_error
 {
 public:
   ContractException( const std::string &msg )

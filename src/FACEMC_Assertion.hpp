@@ -17,14 +17,22 @@
 namespace FACEMC
 {
 
-class Assertion : public std::runtime_error
+class Assertion : public std::logic_error
 {
 public:
   Assertion( const std::string& msg )
-    : std::runtime_error( msg )
+    : std::logic_error( msg )
   { /* ... */ }
 
   virtual ~Assertion()
+  { /* ... */ }
+};
+
+class CriticalAssertion : public std::runtime_error
+{
+public:
+  CriticalAssertion( const std::string& msg )
+    : std::logic_error( msg )
   { /* ... */ }
 };
 
@@ -50,7 +58,7 @@ public:
 
 #define assertAlways(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),		\
-                              Assertion,	\
+                              CriticalAssertion,	\
                               "FACEMC critical assertion failed" << std::endl )
 
 #if NDEBUG
