@@ -79,30 +79,30 @@ struct HDF5TypeTraits<Pair<double,double> >
 };
 
 template<>
-struct HDF5TypeTraits<Trip<int,double,double> >
+struct HDF5TypeTraits<Trip<unsigned int,double,double> >
 {
   static H5::CompType dataType()
   {
-    return Trip<int,double,double>::createHDF5DataType();
+    return Trip<unsigned int,double,double>::createHDF5DataType();
   }
   
   static inline std::string name() 
   { 
-    return Trip<int,double,double>::name();
+    return Trip<unsigned int,double,double>::name();
   }
 };
 
 template<>
-struct HDF5TypeTraits<Quad<int,int,double,double> >
+struct HDF5TypeTraits<Quad<unsigned int,unsigned int,double,double> >
 {
   static H5::CompType dataType()
   {
-    return Quad<int,int,double,double>::createHDF5DataType();
+    return Quad<unsigned int,unsigned int,double,double>::createHDF5DataType();
   }
   
   static inline std::string name() 
   { 
-    return Quad<int,int,double,double>::name();
+    return Quad<unsigned int,unsigned int,double,double>::name();
   }
 };
 

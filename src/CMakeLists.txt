@@ -7,7 +7,7 @@ SET(HEADERS
   HDF5ExceptionCatchMacro.hpp
   HDF5FileHandler.hpp
   HDF5TypeTraits.hpp
-  PhotoDataCollection.hpp
+  PhotonDataCollection.hpp
   SimulationBase.hpp
   ${HEADERS}
   )

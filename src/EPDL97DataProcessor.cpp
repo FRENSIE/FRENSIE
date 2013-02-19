@@ -8,6 +8,8 @@
 // Std Lib Includes
 #include <cmath>
 #include <limits>
+#include <fstream>
+#include <iostream>
 
 // FACEMC Includes
 #include "EPDL97DataProcessor.hpp"
@@ -18,39 +20,37 @@
 namespace FACEMC{
 
 //! Read the first table header
-void EPDL97DataProcessor::readFirstTableHeader( FILE* datafile,
-						int &atomic_number,
-						int &outgoing_particle_designator,
-						int &atomic_weight,
-						int &interpolation_flag )
+void EPDL97DataProcessor::readFirstTableHeader( std::ifstream& datafile,
+						unsigned int &atomic_number,
+						unsigned int &outgoing_particle_designator,
+						double &atomic_weight,
+						unsigned int &interpolation_flag )
 {
   // Variables for reading in EPDL data file header 1
-  //  the variable names are consistent with the names in the EPDL docs
+  //  the variable names are consistent with the names in the EPDL docs,
+  //  the variables are one char longer than needed to account for the '\0' char
   char zaid[7];
-  zaid[6] = '\0';
   char space[2];
-  space[1] = '\0';
-  char Yi[2];
-  Yi[1] = '\0';
+  char Yi[3];
   char Yo[3];
-  Yo[2] = '\0';
   char Al[10];
-  Al[9] = '\0';
   char Ar[3];
-  Ar[2] = '\0';
   char date[7];
-  date[6] = '\0';
   char iflag[2];
-  iflag[1] = '\0';
   char extra[40];
-  extra[39] = '\0';
 
-  // File read return value dummy
-  int rv;
-
-  // Read first header
-  rv = fscanf( datafile, "%6c%1c%2c%1c%2c%1c%9c%2c%1c%6c%1c%39c", zaid, space, 
-	       Yi, space, Yo, space, Al, Ar, space, date, iflag, extra ); 
+  datafile.get( zaid, 7 );
+  datafile.get( space, 2 );
+  datafile.get( Yi, 3 );
+  datafile.get( space, 2 );
+  datafile.get( Yo, 3 );
+  datafile.get( space, 2 );
+  datafile.get( Al, 10 );
+  datafile.get( Ar, 3 );
+  datafile.get( space, 2 );
+  datafile.get( date, 7 );
+  datafile.get( iflag, 2 );
+  datafile.getline( extra, 40 );
 
   atomic_number = atoi(zaid)/1000;
   outgoing_particle_designator = atoi(Yo);
@@ -59,77 +59,66 @@ void EPDL97DataProcessor::readFirstTableHeader( FILE* datafile,
 }
 
 //! Read the second table header
-void EPDL97DataProcessor::readSecondTableHeader( FILE* datafile, 
-						 int &reaction_type,
-						 int &electron_shell )
+void EPDL97DataProcessor::readSecondTableHeader( std::ifstream& datafile, 
+						 unsigned int &reaction_type,
+						 unsigned int &electron_shell )
 {
   // Variables for reading in the EPDL data file header 2
-  //  the variable names are consistent with the names in the EPDL docs
+  //  the variable names are consistent with the names in the EPDL docs,
+  //  the variables are one char longer than needed to account for the '\0' char
   char C [3];
-  C[2] = '\0';
   char I [4];
-  I[3] = '\0';
   char S [4];
-  S[3] = '\0';
   char garbage [14];
-  garbage[13] = '\0';
   char X1l [10];
-  X1l[9] = '\0';
   char X1r [3];
-  X1r[2] = '\0';
   char extra [38];
-  extra[37] = '\0';
 
-  // File read return value dummy
-  int rv;
-  
-  // Read second header
-  rv = fscanf( datafile, "%2c%3c%3c%13c%9c%2c%37c", C, I, S, garbage, X1l, X1r, 
-	       extra );
+  datafile.get( C, 3 );
+  datafile.get( I, 4 );
+  datafile.get( S, 4 );
+  datafile.get( garbage, 14 );
+  datafile.get( X1l, 10 );
+  datafile.get( X1r, 3 );
+  datafile.getline( extra, 38 );
   
   reaction_type = atoi(C)*1000 + atoi(I);
-  electron_shell = extractValue<int>( X1l, X1r );  
+  electron_shell = extractValue<unsigned int>( X1l, X1r );  
 }
 
 //! Skip two column table in EPDL file
-void EPDL97DataProcessor::skipTwoColumnTable( FILE* datafile )
+void EPDL97DataProcessor::skipTwoColumnTable( std::ifstream &datafile )
 {
   char line[24];
   line[0] = 'n';
-  line[23] = '\0';
   char test[] = "                       ";
   char end_of_table[51];
-  end_of_table[50] = '\0';
-  int rv; // dummy return value for file reading
 
   while( strcmp( line, test ) != 0 )
-    rv = fscanf( datafile, "%23c", line );
+    datafile.getline( line, 24 );
 
   // Read rest of end of table line
-  rv = fscanf( datafile, "%50c", end_of_table );
+  datafile.getline( end_of_table, 51 );
 }
 
 //! Skip three column table in EPDL file
-void EPDL97DataProcessor::skipThreeColumnTable( FILE* datafile )
+  void EPDL97DataProcessor::skipThreeColumnTable( std::ifstream &datafile )
 {
   char line[35];
   line[0] = 'n';
-  line[34] = '\0';
   char test[] = "                                  ";
   char end_of_table[40];
-  end_of_table[39] = '\0';
-  int rv; // dummy return value for file reading
   
   while( strcmp( line, test ) != 0 )
-    rv = fscanf( datafile, "%34c", line );
+    datafile.getline( line, 35 );
 
   // Read rest of end of table line
-  rv = fscanf( datafile, "%39c", end_of_table );
+  datafile.getline( end_of_table, 40 );
 }
 
 //! Read three column table in EPDL file
-void EPDL97DataProcessor::readThreeColumnTable( FILE* datafile,
-						Teuchos::Array<Trip<int,double,double> > &data )
+void EPDL97DataProcessor::readThreeColumnTable( FILE** datafile,
+						Teuchos::Array<Trip<unsigned int,double,double> > &data )
 {
   char data1_l [10];
   data1_l[9] = '\0';
@@ -155,16 +144,16 @@ void EPDL97DataProcessor::readThreeColumnTable( FILE* datafile,
   data.clear();
 
   // Data point from table
-  Trip<int,double,double> data_point;
+  Trip<unsigned int,double,double> data_point;
 
   // Read the table one line at a time
   while( strcmp( data1_l, test ) != 0 )
   {
-    rv = fscanf( datafile, "%9c%2c%9c%2c%9c%2c%1c", data1_l, data1_r, data2_l,
+    rv = fscanf( *datafile, "%9c%2c%9c%2c%9c%2c%1c", data1_l, data1_r, data2_l,
 		 data2_r, data3_l, data3_r, nwln);
     if( strcmp( data1_l, test ) != 0 )
     {
-      data_point.first = extractValue<int>( data1_l, data1_r );
+      data_point.first = extractValue<unsigned int>( data1_l, data1_r );
       data_point.second = extractValue<double>( data2_l, data2_r );
       data_point.third = extractValue<double>( data3_l, data3_r );
       
@@ -173,30 +162,27 @@ void EPDL97DataProcessor::readThreeColumnTable( FILE* datafile,
   }
 
   // Read rest of end of table line
-  rv = fscanf( datafile, "%39c", end_of_table );
+  rv = fscanf( *datafile, "%39c", end_of_table );
 }
 
 //! Skip four column table in EPDL file
-void EPDL97DataProcessor::skipFourColumnTable( FILE* datafile )
+void EPDL97DataProcessor::skipFourColumnTable( std::ifstream &datafile )
 {
   char line[46];
   line[0] = 'n';
-  line[45] = '\0';
   char test[] = "                                             ";
   char end_of_table[29];
-  end_of_table[28] = '\0';
-  int rv; // dummy return value for file reading
   
   while( strcmp( line, test ) != 0 )
-    rv = fscanf( datafile, "%45c", line );
+    datafile.getline( line, 46 );
 
   // Read rest of end of table line
-  rv = fscanf( datafile, "%28c", end_of_table );
+  datafile.getline( end_of_table, 29 );
 }
 
 //! Read four column table in EPDL file
-void EPDL97DataProcessor::readFourColumnTable( FILE* datafile,
-					       Teuchos::Array<Quad<int,int,double,double> > &data )
+void EPDL97DataProcessor::readFourColumnTable( FILE** datafile,
+					       Teuchos::Array<Quad<unsigned int,unsigned int,double,double> > &data )
 {
   char data1_l [10];
   data1_l[9] = '\0';
@@ -226,17 +212,17 @@ void EPDL97DataProcessor::readFourColumnTable( FILE* datafile,
   data.clear();
 
   // Data point from table
-  Quad<int,int,double,double> data_point;
+  Quad<unsigned int,unsigned int,double,double> data_point;
 
   // Read the table one line at a time
   while( strcmp( data1_l, test ) != 0 )
   {
-    rv = fscanf( datafile, "%9c%2c%9c%2c%9c%2c%9c%2c%1c", data1_l, data1_r, 
+    rv = fscanf( *datafile, "%9c%2c%9c%2c%9c%2c%9c%2c%1c", data1_l, data1_r, 
 		 data2_l, data2_r, data3_l, data3_r, data4_l, data4_r, nwln);
     if( strcmp( data1_l, test ) != 0 )
     {
-      data_point.first = extractValue<int>( data1_l, data1_r );
-      data_point.second = extractValue<int>( data2_l, data2_r );
+      data_point.first = extractValue<unsigned int>( data1_l, data1_r );
+      data_point.second = extractValue<unsigned int>( data2_l, data2_r );
       data_point.third = extractValue<double>( data3_l, data3_r );
       data_point.fourth = extractValue<double>( data4_l, data4_r );
 
@@ -245,11 +231,11 @@ void EPDL97DataProcessor::readFourColumnTable( FILE* datafile,
   }
 
   // Read rest of end of table line
-  rv = fscanf( datafile, "%28c", end_of_table );
+  rv = fscanf( *datafile, "%28c", end_of_table );
 }
 
 //! Convert an EPDL shell integer to a shell name
-std::string EPDL97DataProcessor::intToShellStr( const int shell )
+std::string EPDL97DataProcessor::uintToShellStr( const unsigned int shell )
 {
   FACEMC_ASSERT_ALWAYS( shell > 0 );
   return ElectronShellStr[shell];

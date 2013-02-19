@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
+#include <fstream>
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -22,7 +23,7 @@ namespace FACEMC{
 
 //! Read two column table in EPDL file within specified range
 template<typename DataProcessingPolicy>
-void EPDL97DataProcessor::readTwoColumnTableInRange( FILE* datafile,
+void EPDL97DataProcessor::readTwoColumnTableInRange( FILE** datafile,
 						     Teuchos::Array<Pair<double,double> >  &data,
 						     const double indep_var_min,
 						     const double indep_var_max )
@@ -57,7 +58,7 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( FILE* datafile,
   // Read the table one line at a time
   while( strcmp( data1_l, test ) != 0 )
   {
-    rv = fscanf( datafile, "%9c%2c%9c%2c%1c", data1_l, data1_r, data2_l,
+    rv = fscanf( *datafile, "%9c%2c%9c%2c%1c", data1_l, data1_r, data2_l,
 		 data2_r, nwln);
     if( strcmp( data1_l, test ) != 0 )
     {
@@ -102,12 +103,12 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( FILE* datafile,
   }
 
   // Read rest of end of table line
-  rv = fscanf( datafile, "%50c", end_of_table );
+  rv = fscanf( *datafile, "%50c", end_of_table );
 }
 
 //! Read two column table in EPDL file
 template<typename DataProcessingPolicy>
-void EPDL97DataProcessor::readTwoColumnTable( FILE* datafile,
+void EPDL97DataProcessor::readTwoColumnTable( FILE** datafile,
 					      Teuchos::Array<Pair<double,double> > &data )
 {
   // Variables for reading in a two column table
@@ -140,7 +141,7 @@ void EPDL97DataProcessor::readTwoColumnTable( FILE* datafile,
   // Read the table one line at a time
   while( strcmp( data1_l, test ) != 0 )
   {
-    rv = fscanf( datafile, "%9c%2c%9c%2c%1c", data1_l, data1_r, data2_l,
+    rv = fscanf( *datafile, "%9c%2c%9c%2c%1c", data1_l, data1_r, data2_l,
 		 data2_r, nwln);
     if( strcmp( data1_l, test ) != 0 )
     {
@@ -156,7 +157,7 @@ void EPDL97DataProcessor::readTwoColumnTable( FILE* datafile,
   }
 
   // Read rest of end of table line
-  rv = fscanf( datafile, "%50c", end_of_table );
+  rv = fscanf( *datafile, "%50c", end_of_table );
 }
 
 template<typename T>
