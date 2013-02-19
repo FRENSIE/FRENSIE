@@ -25,7 +25,7 @@ namespace FACEMC{
 
 //! Write Data in array to HDF5 file dataset
 template<typename T>
-void HDF5FileHandler::writeArrayToDataSet( const Teuchos::Array<T> data,
+void HDF5FileHandler::writeArrayToDataSet( const Teuchos::Array<T> &data,
 					   const std::string &location_in_file
 					   )
 {
@@ -38,7 +38,7 @@ void HDF5FileHandler::writeArrayToDataSet( const Teuchos::Array<T> data,
     H5::DataSet dataset(d_hdf5_file->createDataSet( 
 						 location_in_file,
 						 HDF5TypeTraits<T>::dataType(),
-						 space ) ) );
+						 space ) );
     dataset.write( &data[0], 
 		   HDF5TypeTraits<T>::dataType() );
   }
@@ -60,13 +60,13 @@ void HDF5FileHandler::writeArrayToDataSetAttribute(
   try
   {
     hsize_t dim = data.size();
-    DataSpace space( 1, dim );
-    H5::DataSet dataset(d_hdf5_file->openDataSet( dataset_location ) ) ); 
+    H5::DataSpace space( 1, dim );
+    H5::DataSet dataset(d_hdf5_file->openDataSet( dataset_location ) ); 
     H5::Attribute attribute(dataset.createAttribute( 
 					  attribute_name, 
-					  HDF5TypeTraits<T>::dataType() ) ) );
+					  HDF5TypeTraits<T>::dataType() ) );
     
-    attribute.write( H5DTypeTraits<T>::dataType(),
+    attribute.write( HDF5TypeTraits<T>::dataType(),
 		     &data[0] );  
   }
 
@@ -86,13 +86,13 @@ void HDF5FileHandler::writeArrayToGroupAttribute( const Teuchos::Array<T> &data,
   try
   {
     hsize_t dim = data.size();
-    DataSpace space( 1, dim );
-    H5::Group group(d_hdf5_file->openGroup( group_location ) ) ); 
+    H5::DataSpace space( 1, dim );
+    H5::Group group(d_hdf5_file->openGroup( group_location ) ); 
     H5::Attribute attribute(group.createAttribute( 
 					  attribute_name, 
-					  HDF5TypeTraits<T>::dataType() ) ) );
+					  HDF5TypeTraits<T>::dataType() ) );
     
-    attribute.write( H5DTypeTraits<T>::dataType(),
+    attribute.write( HDF5TypeTraits<T>::dataType(),
 		     &data[0] );  
   }
 

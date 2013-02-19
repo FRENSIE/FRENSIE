@@ -4,9 +4,12 @@
 // \brief HDF5 file handler non-template member function definitions
 //---------------------------------------------------------------------------//
 
+// HDF5 Includes
+#include <H5Cpp.h>
+
 // FACEMC Includes
 #include "HDF5FileHandler.hpp"
-#include "HDF5ExcpetionCatchMacro.hpp"
+#include "HDF5ExceptionCatchMacro.hpp"
 
 namespace FACEMC{
 
@@ -24,33 +27,33 @@ HDF5FileHandler::HDF5FileHandler()
 }
 
 //! Open an HDF5 file and overwrite any existing data
-hid_t HDF5FileHandler::openHDF5FileAndOverwrite( const std::string &file_name )
+void HDF5FileHandler::openHDF5FileAndOverwrite( const std::string &file_name )
 {
   // The H5File contructor can throw a H5::FileIException exception
   try
   {
-    d_hdf5_file.reset( new H5File( file_name, HF5_ACC_TRUNC ) );
+    d_hdf5_file.reset( new H5::H5File( file_name, H5F_ACC_TRUNC ) );
   }
   
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
 //! Open an HDF5 file and append to any existing data
-hid_t HDF5FileHandler::openHDF5FileAndAppend( const std::string &file_name )
+void HDF5FileHandler::openHDF5FileAndAppend( const std::string &file_name )
 {
   // The H5File constructor can throw a H5::FileIException exception
   try
   {
-    d_hdf5_file.reset( new H5File( file_name, HF5_ACC_RDWR ) );
+    d_hdf5_file.reset( new H5::H5File( file_name, H5F_ACC_RDWR ) );
   }
   
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
 //! Close an HDF5 file
-void HDF5FileHandler::closeHDF5File( hid_t file_id )
+void HDF5FileHandler::closeHDF5File()
 {
-  d_hdf5_file_reset();
+  d_hdf5_file.reset();
 }
 
 } // end FACEMC namespace

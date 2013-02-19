@@ -40,10 +40,10 @@ template<typename T>
 struct HDF5TypeTraits
 { 
   //! returns the data type object of the type
-  static inline H5::DataType dataType() { (void)UndefinedTypeTraits<T>::notDefined(); return 0 }
+  static inline H5::DataType dataType() { (void)UndefinedTypeTraits<T>::notDefined(); return 0; }
   //! Returns the name of this scalar type
-  static inline std::string name() { (void)UndefinedTypeTraits<T>::notDefined(); return 0 }
-}
+  static inline std::string name() { (void)UndefinedTypeTraits<T>::notDefined(); return 0; }
+};
 
 } // end FACEMC namespace
 

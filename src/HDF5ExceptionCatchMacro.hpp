@@ -9,6 +9,8 @@
 
 // Std Lib Includes
 #include <stdlib.h>
+#include <iostream>
+#include <sstream>
 
 // Trilinos Includes
 #include "Teuchos_FancyOStream.hpp"
@@ -29,15 +31,15 @@
 #define HDF5_EXCEPTION_CATCH_AND_EXIT()	\
   catch( const H5::Exception &exception )	\
   {						\
-    std::ostringstream oss;
-    oss << " *** Caught HDF5 H5::Exception *** \n\n" \
+    std::ostringstream oss;			     \
+    oss << " *** Caught HDF5 H5::Exception *** \n\n";	\
     Teuchos::OSTab scsi_tab(oss); \
     scsi_tab.o() << TEUCHOS_GET_STORED_STACKTRACE(); \
     scsi_tab.o() << exception.getFuncName() << "\n";	\
-    scsi_tab.o() << exception.getDetailedMsg() << "\n"; \
+    scsi_tab.o() << exception.getDetailMsg() << "\n"; \
     std::cerr << std::flush; \
     std::cerr << oss.str(); \
-    exit(EXIT_FAILURE);
+    exit(EXIT_FAILURE); \
   } \
 
 #endif // end HDF5_EXCEPTION_CATCH_MACRO_HPP

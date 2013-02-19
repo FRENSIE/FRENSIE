@@ -7,12 +7,13 @@
 
 // Std Lib Includes
 #include <cmath>
+#include <limits>
 
 // FACEMC Includes
 #include "EPDL97DataProcessor.hpp"
 #include "ElectronShell.hpp"
-#include "FACEMC_assertion.hpp"
-#include "DataPoint.hpp"
+#include "FACEMC_Assertion.hpp"
+#include "Tuple.hpp"
 
 namespace FACEMC{
 
@@ -30,15 +31,15 @@ void EPDL97DataProcessor::readFirstTableHeader( FILE* datafile,
   char space[2];
   space[1] = '\0';
   char Yi[2];
-  yi[1] = '\0';
+  Yi[1] = '\0';
   char Yo[3];
-  yo[2] = '\0';
+  Yo[2] = '\0';
   char Al[10];
-  AWl[9] = '\0';
+  Al[9] = '\0';
   char Ar[3];
-  AWr[2] = '\0';
+  Ar[2] = '\0';
   char date[7];
-  data[6] = '\0';
+  date[6] = '\0';
   char iflag[2];
   iflag[1] = '\0';
   char extra[40];
@@ -48,8 +49,8 @@ void EPDL97DataProcessor::readFirstTableHeader( FILE* datafile,
   int rv;
 
   // Read first header
-  rv = fscanf( epdl, "%6c%1c%2c%1c%2c%1c%9c%2c%1c%6c%1c%39c", zaid, space, Yi, 
-	       space, Yo, space, Al, Ar, space, date, iflag, extra ); 
+  rv = fscanf( datafile, "%6c%1c%2c%1c%2c%1c%9c%2c%1c%6c%1c%39c", zaid, space, 
+	       Yi, space, Yo, space, Al, Ar, space, date, iflag, extra ); 
 
   atomic_number = atoi(zaid)/1000;
   outgoing_particle_designator = atoi(Yo);
@@ -67,9 +68,9 @@ void EPDL97DataProcessor::readSecondTableHeader( FILE* datafile,
   char C [3];
   C[2] = '\0';
   char I [4];
-  Ic[3] = '\0';
+  I[3] = '\0';
   char S [4];
-  Sc[3] = '\0';
+  S[3] = '\0';
   char garbage [14];
   garbage[13] = '\0';
   char X1l [10];
@@ -83,7 +84,7 @@ void EPDL97DataProcessor::readSecondTableHeader( FILE* datafile,
   int rv;
   
   // Read second header
-  rv = fscanf( epdl, "%2c%3c%3c%13c%9c%2c%37c", C, I, S, garbage, X1l, X1r, 
+  rv = fscanf( datafile, "%2c%3c%3c%13c%9c%2c%37c", C, I, S, garbage, X1l, X1r, 
 	       extra );
   
   reaction_type = atoi(C)*1000 + atoi(I);
@@ -128,7 +129,7 @@ void EPDL97DataProcessor::skipThreeColumnTable( FILE* datafile )
 
 //! Read three column table in EPDL file
 void EPDL97DataProcessor::readThreeColumnTable( FILE* datafile,
-						Teuchos::Array<DataPoint<int,double,double> > data )
+						Teuchos::Array<Trip<int,double,double> > &data )
 {
   char data1_l [10];
   data1_l[9] = '\0';
@@ -154,7 +155,7 @@ void EPDL97DataProcessor::readThreeColumnTable( FILE* datafile,
   data.clear();
 
   // Data point from table
-  DataPoint<int,double,double> data_point;
+  Trip<int,double,double> data_point;
 
   // Read the table one line at a time
   while( strcmp( data1_l, test ) != 0 )
@@ -163,9 +164,9 @@ void EPDL97DataProcessor::readThreeColumnTable( FILE* datafile,
 		 data2_r, data3_l, data3_r, nwln);
     if( strcmp( data1_l, test ) != 0 )
     {
-      data_point.value1 = extractValue<int>( data1_l, data1_r );
-      data_point.value2 = extractValue<double>( data2_l, data2_r );
-      data_point.value3 = extractValue<double>( data3_l, data3_r );
+      data_point.first = extractValue<int>( data1_l, data1_r );
+      data_point.second = extractValue<double>( data2_l, data2_r );
+      data_point.third = extractValue<double>( data3_l, data3_r );
       
       data.push_back( data_point );
     }
@@ -195,7 +196,7 @@ void EPDL97DataProcessor::skipFourColumnTable( FILE* datafile )
 
 //! Read four column table in EPDL file
 void EPDL97DataProcessor::readFourColumnTable( FILE* datafile,
-					       Teuchos::Array<DataPoint<int,int,double,double> &data )
+					       Teuchos::Array<Quad<int,int,double,double> > &data )
 {
   char data1_l [10];
   data1_l[9] = '\0';
@@ -225,7 +226,7 @@ void EPDL97DataProcessor::readFourColumnTable( FILE* datafile,
   data.clear();
 
   // Data point from table
-  DataPoint<int,int,double,double> data_point;
+  Quad<int,int,double,double> data_point;
 
   // Read the table one line at a time
   while( strcmp( data1_l, test ) != 0 )
@@ -234,10 +235,10 @@ void EPDL97DataProcessor::readFourColumnTable( FILE* datafile,
 		 data2_l, data2_r, data3_l, data3_r, data4_l, data4_r, nwln);
     if( strcmp( data1_l, test ) != 0 )
     {
-      data_point.value1 = extractValue<int>( data1_l, data1_r );
-      data_point.value2 = extractValue<int>( data2_l, data2_r );
-      data_point.value3 = extractValue<double>( data3_l, data3_r );
-      data_point.value4 = extractValue<double>( data4_l, data4_r );
+      data_point.first = extractValue<int>( data1_l, data1_r );
+      data_point.second = extractValue<int>( data2_l, data2_r );
+      data_point.third = extractValue<double>( data3_l, data3_r );
+      data_point.fourth = extractValue<double>( data4_l, data4_r );
 
       data.push_back( data_point );
     }
@@ -250,7 +251,7 @@ void EPDL97DataProcessor::readFourColumnTable( FILE* datafile,
 //! Convert an EPDL shell integer to a shell name
 std::string EPDL97DataProcessor::intToShellStr( const int shell )
 {
-  assertAlways( shell > 0 );
+  FACEMC_ASSERT_ALWAYS( shell > 0 );
   return ElectronShellStr[shell];
 }
 
@@ -259,7 +260,7 @@ std::string EPDL97DataProcessor::intToShellStr( const int shell )
 //---------------------------------------------------------------------------//
 
 //! Process Independent Variable
-static inline double EPDL97DataProcessor::LogLogDataProcessingPolicy::processIndependentVar( const double indep_var )
+inline double EPDL97DataProcessor::LogLogDataProcessingPolicy::processIndependentVar( const double indep_var )
 {
   if( indep_var > 0.0 )
     return log( indep_var );
@@ -268,7 +269,7 @@ static inline double EPDL97DataProcessor::LogLogDataProcessingPolicy::processInd
 }
 
 //! Process Dependent Variable
-static inline double EPDL97DataProcessor::LogLogDataProcessingPolicy::processDependentVar( const double dep_var )
+inline double EPDL97DataProcessor::LogLogDataProcessingPolicy::processDependentVar( const double dep_var )
 {
   if( dep_var > 0.0 )
     return log( dep_var );
@@ -281,13 +282,13 @@ static inline double EPDL97DataProcessor::LogLogDataProcessingPolicy::processDep
 //---------------------------------------------------------------------------//
 
 //! Process Independent Variable
-static inline double EPDL97DataProcessor::LinearLogDataProcessingPolicy::processIndependentVar( const double indep_var )
+inline double EPDL97DataProcessor::LinearLogDataProcessingPolicy::processIndependentVar( const double indep_var )
 {
   return indep_var;
 }
 
 //! Process Dependent Variable
-static inline double EPDL97DataProcessor::LinearLogDataProcessingPolicy::processDependentVar( const double dep_var )
+inline double EPDL97DataProcessor::LinearLogDataProcessingPolicy::processDependentVar( const double dep_var )
 {
   if( dep_var > 0.0 )
     return log( dep_var );
@@ -300,16 +301,16 @@ static inline double EPDL97DataProcessor::LinearLogDataProcessingPolicy::process
 //---------------------------------------------------------------------------//
 
 //! Process Independent Variable
-static inline double EPDL97DataProcessor::LogLinearDataProcessingPolicy::processIndependentVar( const double indep_var )
+inline double EPDL97DataProcessor::LogLinearDataProcessingPolicy::processIndependentVar( const double indep_var )
 {
   if( indep_var > 0.0 )
-    return log( dep_var );
+    return log( indep_var );
   else
-    return log( std::numberic_limits<double>::min() );
+    return log( std::numeric_limits<double>::min() );
 }
 
 //! Process Dependent Variable
-static inline double EPDL97DataProcessor::LogLinearDataProcessingPolicy::processDependentVar( const double dep_var )
+inline double EPDL97DataProcessor::LogLinearDataProcessingPolicy::processDependentVar( const double dep_var )
 {
   return dep_var;
 }
@@ -319,13 +320,13 @@ static inline double EPDL97DataProcessor::LogLinearDataProcessingPolicy::process
 //---------------------------------------------------------------------------//
 
 //! Process Independent Variable
-static inline double EPDL97DataProcessor::LinearLinearDataProcessingPolicy::processIndependentVar( const double indep_var )
+ inline double EPDL97DataProcessor::LinearLinearDataProcessingPolicy::processIndependentVar( const double indep_var )
 {
   return indep_var;
 }
 
 //! Process Dependent Variable
-static inline double EPDL97DataProcessor::LinearLinearDataProcessingPolicy::processDependentVar( const double dep_var )
+inline double EPDL97DataProcessor::LinearLinearDataProcessingPolicy::processDependentVar( const double dep_var )
 {
   return dep_var;
 }

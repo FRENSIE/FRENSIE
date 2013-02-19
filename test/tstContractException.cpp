@@ -49,7 +49,7 @@ TEUCHOS_UNIT_TEST( ContractException, message_test )
   }
   catch( const FACEMC::ContractException& exception )
   {
-    mesage = std::string( exception.what() );
+    message = std::string( exception.what() );
   }
   catch( ... )
   {
@@ -71,7 +71,7 @@ TEUCHOS_UNIT_TEST( ContractException, teuchos_throw_test )
 				FACEMC::ContractException,
 				"FACEMC assertion failed" << std::endl );
   }
-  catch( const FACEMC::Assertion& assertion )
+  catch( const FACEMC::ContractException& assertion )
   {
     TEST_ASSERT( 1 );
   }

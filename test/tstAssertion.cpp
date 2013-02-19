@@ -23,7 +23,7 @@ TEUCHOS_UNIT_TEST( Assertion, differentiation_test )
 {
   try
   {
-    throw FACEMC::Assertion( "FACEMC logic error" )
+    throw FACEMC::Assertion( "FACEMC logic error" );
   }
   catch( const std::runtime_error& assertion )
   {
@@ -85,7 +85,7 @@ TEUCHOS_UNIT_TEST( Assertion, assert_throw_test )
 {
   try
   {
-    assert( false );
+    FACEMC_ASSERT( false );
   }
   catch( const FACEMC::Assertion& assertion )
   {
@@ -104,7 +104,7 @@ TEUCHOS_UNIT_TEST( CriticalAssertion, differentiation_test )
 {
   try
   {
-    throw FACEMC::CriticalAssertion( "FACEMC runtime error" )
+    throw FACEMC::CriticalAssertion( "FACEMC runtime error" );
   }
   catch( const std::logic_error& assertion )
   {
@@ -166,7 +166,7 @@ TEUCHOS_UNIT_TEST( CriticalAssertion, assert_throw_test )
 {
   try
   {
-    assertAlways( false );
+    FACEMC_ASSERT_ALWAYS( false );
   }
   catch( const FACEMC::CriticalAssertion& assertion )
   {

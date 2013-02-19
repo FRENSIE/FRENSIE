@@ -12,7 +12,7 @@
 #include "PhotonDataProcessor.hpp"
 #include "FACEMC_Assertion.hpp"
 #include "HDF5DataFileNames.hpp"
-#include "DataPoint.hpp"
+#include "Tuple.hpp"
 
 namespace FACEMC{
 
@@ -117,14 +117,14 @@ void PhotonDataProcessor::processEPDLFile()
       // The interpolation flag should be log-log (5)
       assertAlways( interpolation_flag == 5 );
       {
-	Teuchos::Array<DataPoint<double,double> > data;
+	Teuchos::Array<Pair<double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
 							       d_energy_min,
 							       d_energy_max );
 	
-	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,double> >( data,
+	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,double> >( data,
 									    COHERENT_CROSS_SECTION_LOC );
       }
       
@@ -143,13 +143,13 @@ void PhotonDataProcessor::processEPDLFile()
       // The interpolation flag should be log-log (5)
       assertAlways( interpolation_flag == 5 );
       {
-	Teuchos::Array<DataPoint<double,double> > data;
+	Teuchos::Array<Pair<double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
 							       d_energy_min,
 							       d_energy_max );
-	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,double> >( data,
+	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,double> >( data,
 									    INCOHERENT_CROSS_SECTION_LOC );
       }
       
@@ -171,25 +171,25 @@ void PhotonDataProcessor::processEPDLFile()
       
       if( electron_shell == 0 )
       {	
-	Teuchos::Array<DataPoint<double,double> > data;
+	Teuchos::Array<Pair<double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
 							       d_energy_min,
 							       d_energy_max );
-	d_hdf5_file_handler.writeArrayDataSet<DataPoint<double,double> >( data,
+	d_hdf5_file_handler.writeArrayDataSet<Pair<double,double> >( data,
 									  PHOTOELECTRIC_CROSS_SECTION_LOC );
       }
       // Read the total integrated photoelectric cross section for a subshell
       else
       {	
-	Teuchos::Array<DataPoint<double> > data;
+	Teuchos::Array<Pair<double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
 							       d_energy_min,
 							       d_energy_max );
-	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double> >( data,
+	d_hdf5_file_handler.writeArrayToDataSet<Pair<double> >( data,
 								     PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + intToShellStr( electron_shell ) );
       }
       break;
@@ -216,7 +216,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read the integrated pair production cross section
       assertAlways( interpolation_flag == 5 );
       {
-	Teuchos::Array<DataPoint<double,double> > data;
+	Teuchos::Array<Pair<double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
@@ -228,7 +228,7 @@ void PhotonDataProcessor::processEPDLFile()
 	if( d_energy_min < 1.022 )
 	  data.erase( data.begin() );
 	
-	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,double> >( data,
+	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,double> >( data,
 									    PAIR_PRODUCTION_CROSS_SECTION_LOC );
       }
       
@@ -248,7 +248,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read the integrated triplet production cross section
       assertAlways( interpolation_flag == 5 );
       {
-	Teuchos::Array<DataPoint<double,double> > data;
+	Teuchos::Array<Pair<double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
@@ -260,7 +260,7 @@ void PhotonDataProcessor::processEPDLFile()
 	if( d_energy_min < 2.044 )
 	  data.erase( data.begin() );
 	
-	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,double> >( data,
+	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,double> >( data,
 									    TRIPLET_PRODUCTION_CROSS_SECTION_LOC );
       }
       
@@ -280,7 +280,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read the atomic form factor
       assertAlways( interpolation_flag == 5 );
       {
-	Teuchos::Array<DataPoint<double,double> > data;
+	Teuchos::Array<Pair<double,double> > data;
 	
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( epdl,
 							      data );
@@ -288,8 +288,8 @@ void PhotonDataProcessor::processEPDLFile()
 	// integrated over its squared argument
 	double tmp_integral;
 	
-	Teuchos::Array<DataPoint<double,double> > integrated_squared_ff;
-	DataPoint<double,double> data_point;
+	Teuchos::Array<Pair<double,double> > integrated_squared_ff;
+	Pair<double,double> data_point;
 	double indep_begin, indep_end;
 	double dep_begin, dep_end;
 	
@@ -336,7 +336,7 @@ void PhotonDataProcessor::processEPDLFile()
 	      log( integrated_squared_ff[i].value2 );
 	  }
 	
-	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,double> >( integrated_squared_ff,
+	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,double> >( integrated_squared_ff,
 									    ATOMIC_FORM_FACTOR_LOC );
       }
       
@@ -346,7 +346,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read the scattering function
       assertAlways( interpolation_flag == 5 );
       {
-	Teuchos::Array<DataPoint<double,double> > data;
+	Teuchos::Array<Pair<double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data );
@@ -355,7 +355,7 @@ void PhotonDataProcessor::processEPDLFile()
 	// (0.0, 0.0)
 	data.erase( data.begin() );
 	
-	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,double> >( data,
+	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,double> >( data,
 									    SCATTERING_FUNCTION_LOC );
       }
       
@@ -450,7 +450,7 @@ void PhotonDataProcessor::processEADLFile()
     case 91912:
       // Read number of electrons per subshell
       {
-	Teuchos::Array<DataPoint<double,double> > data;
+	Teuchos::Array<Pair<double,double> > data;
 	
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
 							      data );
@@ -473,8 +473,8 @@ void PhotonDataProcessor::processEADLFile()
 				     electron_shell_index_map );
 	
 	// Create the complete data array
-	Teuchos::Array<DataPoint<double,int,int> > complete_data;
-	DataPoint<double,int,int> data_point;
+	Teuchos::Array<Trip<double,int,int> > complete_data;
+	Pair<double,int,int> data_point;
 	
 	for( int i = 0; i < data.size(); ++i )
 	  {
@@ -485,7 +485,7 @@ void PhotonDataProcessor::processEADLFile()
 	    complete_data.push_back( data_point );
 	  }
 	
-	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<double,int,int> >( 
+	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,int,int> >( 
 									    complete_data,
 									    ELECTRON_SHELL_INDEX_MAP_LOC );
       }
@@ -495,7 +495,7 @@ void PhotonDataProcessor::processEADLFile()
     case 91913:
       // Read binding energy per subshell
       {
-	Teuchos::Array<DataPoint<double,double> > data;
+	Teuchos::Array<Pair<double,double> > data;
 	
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
 							      data );
@@ -514,7 +514,7 @@ void PhotonDataProcessor::processEADLFile()
     case 91914:
       // Read kinetic energy per subshell
       {
-	Teuchos::Array<DataPoint<double,double> > data;
+	Teuchos::Array<Pair<double,double> > data;
 	
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
 							      data );
@@ -533,7 +533,7 @@ void PhotonDataProcessor::processEADLFile()
     case 92931:
       // Read radiative transition probability per subshell
       {
-	Teuchos::Array<int,double,double> data;
+	Teuchos::Array<Trip<int,double,double> > data;
 	
 	readThreeColumnTable( eadl,
 			      data );
@@ -548,7 +548,7 @@ void PhotonDataProcessor::processEADLFile()
 								RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ),
 								"Total_Radiative_Transition_Probability" );
 	
-	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<int,double,double> >( 
+	d_hdf5_file_handler.writeArrayToDataSet<Trip<int,double,double> >( 
 									data,
 									RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ) );
       }
@@ -558,12 +558,12 @@ void PhotonDataProcessor::processEADLFile()
     case 92932:
       // Read nonradiative transition probability per subshell
       {
-	Teuchos::Array<DataPoint<int,int,double,double> > data;
+	Teuchos::Array<Quad<int,int,double,double> > data;
 	
 	readFourColumnTable( eadl,
 			     data );
 	
-	d_hdf5_file_handler.writeArrayToDataSet<DataPoint<int,int,double,double>(
+	d_hdf5_file_handler.writeArrayToDataSet<Quad<int,int,double,double>(
 								       data,
 								       NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ) );
       }

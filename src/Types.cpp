@@ -1,4 +1,13 @@
+//---------------------------------------------------------------------------//
+// \file   Types.cpp
+// \author Alex Robinson
+// \brief  Char arrays for converting enums to strings
+//---------------------------------------------------------------------------//
+
+// FACEMC Includes
 #include "ElectronShell.hpp"
+
+namespace FACEMC{
 
 const char* const ElectronShellStr[] = {
   "INVALID_SHELL",
@@ -64,3 +73,9 @@ const char* const ElectronShellStr[] = {
   "Q2_SHELL",
   "Q3_SHELL"
 };
+
+} // end FACEMC namespace
+
+//---------------------------------------------------------------------------//
+// end Types.cpp
+//---------------------------------------------------------------------------//

@@ -1,0 +1,2 @@
+/* Define if we want to use Design-by-Contract functionality. */
+#cmakedefine HAVE_${PROJECT_NAME}_DBC 

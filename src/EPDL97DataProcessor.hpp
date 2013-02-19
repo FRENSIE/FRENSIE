@@ -17,7 +17,7 @@
 
 // FACEMC Includes
 #include "HDF5FileHandler.hpp"
-#include "DataPoint.hpp"
+#include "Tuple.hpp"
 
 namespace FACEMC{
 
@@ -70,7 +70,7 @@ protected:
   //! Read two column table in EPDL file within specified range
   template<typename DataProcessingPolicy>
   void readTwoColumnTableInRange( FILE* datafile,
-				  Teuchos::Array<DataPoint<double,double> > 
+				  Teuchos::Array<Pair<double,double> > 
 				   &data,
 				  const double indep_var_min,
 				  const double indep_var_max );
@@ -78,21 +78,21 @@ protected:
   //! Read two column table in EPDL file 
   template<typename DataProcessingPolicy>
   void readTwoColumnTable( FILE* datafile,
-			   Teuchos::Array<DataPoint<double,double> &data );
+			   Teuchos::Array<Pair<double,double> > &data );
 
   //! Skip three column table in EPDL file
   void skipThreeColumnTable( FILE* datafile );
 
   //! Read three column table in EPDL file
   void readThreeColumnTable( FILE* datafile,
-			     Teuchos::Array<DataPoint<int,double,double> &data );
+			     Teuchos::Array<Trip<int,double,double> > &data );
 
   //! Skip four column table in EPDL file
   void skipFourColumnTable( FILE* datafile );
   
   //! Read four column table in EPDL file
   void readFourColumnTable( FILE* datafile,
-			    Teuchos::Array<DataPoint<int,int,double,double> > 
+			    Teuchos::Array<Quad<int,int,double,double> > 
 			     &data );
 
   /*! 

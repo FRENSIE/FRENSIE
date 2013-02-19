@@ -16,14 +16,14 @@
 #include <Teuchos_Array.hpp>
 
 // FACEMC includes
-#include "DataPoint.hpp"
+#include "Tuple.hpp"
 
 namespace FACEMC{
 
 //! Read two column table in EPDL file within specified range
 template<typename DataProcessingPolicy>
 void EPDL97DataProcessor::readTwoColumnTableInRange( FILE* datafile,
-						     Teuchos::Array<DataPoint<double,double> >  &data,
+						     Teuchos::Array<Pair<double,double> >  &data,
 						     const double indep_var_min,
 						     const double indep_var_max )
 {
@@ -49,7 +49,7 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( FILE* datafile,
   double dep_prev = 0.0, dep = 0.0;
   
   // Data point extracted from the table
-  DataPoint<double, double> data_point;
+  Pair<double, double> data_point;
 
   // Make sure that the data array is empty
   data.clear();
@@ -70,8 +70,8 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( FILE* datafile,
       if( (indep > indep_var_min && indep_prev > indep_var_min) &&
 	  (indep_prev < indep_var_max && indep < indep_var_max) )
       {
-	data_point.value1 = DataProcessingPolicy::processIndependentVar(indep);
-	data_point.value2 = DataProcessingPolicy::processDependentVar(dep);
+	data_point.first = DataProcessingPolicy::processIndependentVar(indep);
+	data_point.second = DataProcessingPolicy::processDependentVar(dep);
 	data.push_back( data_point );
 	
 	indep_prev = indep;
@@ -82,12 +82,12 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( FILE* datafile,
       {
 	if( indep_prev > 0.0 )
 	{
-	  data_point.value1 = DataProcessingPolicy::processIndependentVar(indep_prev);
-	  data_point.value2 = DataProcessingPolicy::processDependentVar(dep_prev);
+	  data_point.first = DataProcessingPolicy::processIndependentVar(indep_prev);
+	  data_point.second = DataProcessingPolicy::processDependentVar(dep_prev);
 	  data.push_back( data_point );
 	}
-	data_point.value1 = DataProcessingPolicy::processIndependentVar(indep);
-	data_point.value2 = DataProcessingPolicy::processDependentVar(dep);
+	data_point.first = DataProcessingPolicy::processIndependentVar(indep);
+	data_point.second = DataProcessingPolicy::processDependentVar(dep);
 	data.push_back( data_point );
 	
 	indep_prev = indep;
@@ -108,7 +108,7 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( FILE* datafile,
 //! Read two column table in EPDL file
 template<typename DataProcessingPolicy>
 void EPDL97DataProcessor::readTwoColumnTable( FILE* datafile,
-					      Teuchos::Array<DataPoint<double,double> > &data )
+					      Teuchos::Array<Pair<double,double> > &data )
 {
   // Variables for reading in a two column table
   char data1_l [10];
@@ -132,7 +132,7 @@ void EPDL97DataProcessor::readTwoColumnTable( FILE* datafile,
   double dep = 0.0;
 
   // Data point extracted from the table
-  DataPoint<double, double> data_point;
+  Pair<double, double> data_point;
 
   // Make sure that the data array is empty
   data.clear();
@@ -149,8 +149,8 @@ void EPDL97DataProcessor::readTwoColumnTable( FILE* datafile,
       dep = extractValue<double>( data2_l,
 				  data2_r );
       
-      data_point.value1 = DataProcessingPolicy::processIndependentVar(indep);
-      data_point.value2 = DataProcessingPolicy::processDependentVar(dep);
+      data_point.first = DataProcessingPolicy::processIndependentVar(indep);
+      data_point.second = DataProcessingPolicy::processDependentVar(dep);
       data.push_back( data_point );
     }
   }
@@ -194,7 +194,7 @@ inline T EPDL97DataProcessor::extractValue( std::string mantissa,
     
     string_value += exponent;
     
-    double_value = atof( string_value.c_str() );
+    double double_value = atof( string_value.c_str() );
     
     return static_cast<T>(double_value);
   }

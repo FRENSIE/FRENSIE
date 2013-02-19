@@ -8,7 +8,7 @@
 #define CONTRACT_EXCEPTION_HPP
 
 // Std Lib Includes
-#include <stdexcept>
+#include <exception>
 #include <string>
 
 // Trilinos Includes
@@ -32,10 +32,10 @@ class ContractException : public std::logic_error
 {
 public:
   ContractException( const std::string &msg )
-    : std::runtime_error( msg )
+    : std::logic_error( msg )
   { /* ... */ }
   
-  virtual ~ContractException()
+  virtual ~ContractException() throw()
   { /* ... */ }
 };
 
@@ -68,15 +68,15 @@ public:
 
 #define testPrecondition(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),					\
-			      ContractException,			\
+			      FACEMC::ContractException,		\
 			      "Precondition exception" << std::endl ) 
 #define testPostcondition(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),					\
-			      ContractException,			\
+			      FACEMC::ContractException,		\
 			      "Postcondition exception" << std::endl ) 
 #define testInvariant(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),					\
-                              ContractException,			\
+                              FACEMC::ContractException,		\
 			      "Invariant exception" << std::endl )
 #define remember(c) c
 

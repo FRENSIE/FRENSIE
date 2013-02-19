@@ -45,7 +45,7 @@ public:
   //! Write data in array to HDF5 file data set
   // \param data data array to write to HDF5 file dataset
   // \param location_in_file location in HDF5 file where data will be written
-  template<typename T, int N=2>
+  template<typename T>
   void writeArrayToDataSet( const Teuchos::Array<T> &data,
 			    const std::string &location_in_file );
 
@@ -71,7 +71,7 @@ public:
 private:
   
   // HDF5 file identifier
-  Teuchos::RCP<H5File> d_hdf5_file;
+  Teuchos::RCP<H5::H5File> d_hdf5_file;
 
 };
 

@@ -8,7 +8,7 @@
 #define FACEMC_ASSERTION_HPP
 
 // Std Lib Includes
-#include <stdexcpt>
+#include <exception>
 #include <string>
 
 // Trilinos Includes
@@ -24,7 +24,7 @@ public:
     : std::logic_error( msg )
   { /* ... */ }
 
-  virtual ~Assertion()
+  virtual ~Assertion() throw()
   { /* ... */ }
 };
 
@@ -32,7 +32,10 @@ class CriticalAssertion : public std::runtime_error
 {
 public:
   CriticalAssertion( const std::string& msg )
-    : std::logic_error( msg )
+    : std::runtime_error( msg )
+  { /* ... */ }
+
+  virtual ~CriticalAssertion() throw()
   { /* ... */ }
 };
 
@@ -56,20 +59,20 @@ public:
   correct user input is extremely critical to the execution of the program.
 */
 
-#define assertAlways(c) \
+#define FACEMC_ASSERT_ALWAYS(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),		\
-                              CriticalAssertion,	\
+                              FACEMC::CriticalAssertion,		\
                               "FACEMC critical assertion failed" << std::endl )
 
 #if NDEBUG
 
-#define assert(c)
+#define FACEMC_ASSERT(c)
 
 #else
 
-#define assert(c) \
+#define FACEMC_ASSERT(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),		\
-			      Assertion,        \
+			      FACEMC::Assertion,			\
 			      "FACEMC assertion failed" << std::endl )
 
 #endif

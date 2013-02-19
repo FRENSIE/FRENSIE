@@ -1,23 +1,5 @@
-# Add Design-by-Contract
-IF($PROJECT_NAME}_ENABLE_DBC)
-  SET(HAVE_${PROJECT_NAME}_DBC "1")
-ELSE()
-  SET(HAVE_${PROJECT_NAME}_DBC "0")
-ENDIF()
-
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dbc_config.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
-
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-
 SET(HEADERS
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_config.hpp
-  ${HEADERS}
-  )
-
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-
-SET(HEADERS
-  DataPoint.hpp
+  Tuple.hpp
   DefaultParameterValues.hpp
   EPDL97DataProcessor.hpp
   FACEMC_Assertion.hpp
@@ -37,8 +19,6 @@ SET(SOURCES
   Types.cpp
   ${SOURCES}
   )
-
-INCLUDE_DIRECTORIES(types)
 
 SET(TARGETS
   ${TARGETS}
