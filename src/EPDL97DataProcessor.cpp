@@ -117,28 +117,18 @@ void EPDL97DataProcessor::skipThreeColumnTable( std::ifstream &datafile )
 }
 
 //! Read three column table in EPDL file
-void EPDL97DataProcessor::readThreeColumnTable( FILE** datafile,
+void EPDL97DataProcessor::readThreeColumnTable( std::ifstream &datafile,
 						Teuchos::Array<Trip<unsigned int,double,double> > &data )
 {
   char data1_l [10];
-  data1_l[9] = '\0';
   data1_l[0] = 'n';
   char data1_r [3];
-  data1_r[2] = '\0';
   char data2_l [10];
-  data2_l[9] = '\0';
   char data2_r [3];
-  data2_r[2] = '\0';
   char data3_l [10];
-  data3_l[9] = '\0';
-  char data3_r [3];
-  data3_r[2] = '\0';
-  char nwln [2];
-  nwln[1] = '\0';
+  char data3_r [4];
   char end_of_table [40];
-  end_of_table[39] = '\0';
   char test []=  "         ";
-  int rv;
 
   // Make sure that the data array is empty
   data.clear();
@@ -149,8 +139,13 @@ void EPDL97DataProcessor::readThreeColumnTable( FILE** datafile,
   // Read the table one line at a time
   while( strcmp( data1_l, test ) != 0 )
   {
-    rv = fscanf( *datafile, "%9c%2c%9c%2c%9c%2c%1c", data1_l, data1_r, data2_l,
-		 data2_r, data3_l, data3_r, nwln);
+    datafile.get( data1_l, 10 );
+    datafile.get( data1_r, 3 );
+    datafile.get( data2_l, 10 );
+    datafile.get( data2_r, 3 );
+    datafile.get( data3_l, 10 );
+    datafile.getline( data3_r, 4 );
+    
     if( strcmp( data1_l, test ) != 0 )
     {
       data_point.first = extractValue<unsigned int>( data1_l, data1_r );
@@ -162,7 +157,7 @@ void EPDL97DataProcessor::readThreeColumnTable( FILE** datafile,
   }
 
   // Read rest of end of table line
-  rv = fscanf( *datafile, "%39c", end_of_table );
+  datafile.getline( end_of_table, 40 );
 }
 
 //! Skip four column table in EPDL file
@@ -181,32 +176,20 @@ void EPDL97DataProcessor::skipFourColumnTable( std::ifstream &datafile )
 }
 
 //! Read four column table in EPDL file
-void EPDL97DataProcessor::readFourColumnTable( FILE** datafile,
+void EPDL97DataProcessor::readFourColumnTable( std::ifstream &datafile,
 					       Teuchos::Array<Quad<unsigned int,unsigned int,double,double> > &data )
 {
   char data1_l [10];
-  data1_l[9] = '\0';
   data1_l[0] = 'n';
   char data1_r [3];
-  data1_r[2] = '\0';
   char data2_l [10];
-  data2_l[9] = '\0';
   char data2_r [3];
-  data2_r[2] = '\0';
   char data3_l [10];
-  data3_l[9] = '\0';
   char data3_r [3];
-  data3_r[2] = '\0';
   char data4_l [10];
-  data3_l[9] = '\0';
-  char data4_r [3];
-  data3_r[2] = '\0';
-  char nwln [2];
-  nwln[1] = '\0';
+  char data4_r [4];
   char end_of_table [29];
-  end_of_table[28] = '\0';
   char test []=  "         ";
-  int rv;
 
   // Make sure that the data array is empty
   data.clear();
@@ -217,8 +200,15 @@ void EPDL97DataProcessor::readFourColumnTable( FILE** datafile,
   // Read the table one line at a time
   while( strcmp( data1_l, test ) != 0 )
   {
-    rv = fscanf( *datafile, "%9c%2c%9c%2c%9c%2c%9c%2c%1c", data1_l, data1_r, 
-		 data2_l, data2_r, data3_l, data3_r, data4_l, data4_r, nwln);
+    datafile.get( data1_l, 10 );
+    datafile.get( data1_r, 3 );
+    datafile.get( data2_l, 10 );
+    datafile.get( data2_r, 3 );
+    datafile.get( data3_l, 10 );
+    datafile.get( data3_r, 3 );
+    datafile.get( data4_l, 10 );
+    datafile.getline( data4_r, 4 );
+    
     if( strcmp( data1_l, test ) != 0 )
     {
       data_point.first = extractValue<unsigned int>( data1_l, data1_r );
@@ -231,7 +221,7 @@ void EPDL97DataProcessor::readFourColumnTable( FILE** datafile,
   }
 
   // Read rest of end of table line
-  rv = fscanf( *datafile, "%28c", end_of_table );
+  datafile.getline( end_of_table, 29 );
 }
 
 //! Convert an EPDL shell integer to a shell name

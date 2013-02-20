@@ -23,30 +23,23 @@ namespace FACEMC{
 
 //! Read two column table in EPDL file within specified range
 template<typename DataProcessingPolicy>
-void EPDL97DataProcessor::readTwoColumnTableInRange( FILE** datafile,
+void EPDL97DataProcessor::readTwoColumnTableInRange( std::ifstream &datafile,
 						     Teuchos::Array<Pair<double,double> >  &data,
 						     const double indep_var_min,
 						     const double indep_var_max )
 {
   // Variables for reading in a two column table
   char data1_l [10];
-  data1_l[9] = '\0';
   data1_l[0] = 'n';
   char data1_r [3];
-  data1_r[2] = '\0';
   char data2_l [10];
-  data2_l[9] = '\0';
-  char data2_r [3];
-  data2_r[2] = '\0';
-  char nwln [2];
-  nwln[1] = '\0';
+  char data2_r [4];
   char end_of_table [51];
-  end_of_table[50] = '\0';
   char test []=  "         ";
-  int rv;
   
   // Values extracted from the table
-  double indep_prev = 0.0, indep = 0.0;
+  double indep_impossible_min = std::numeric_limits<double>::infinity()*-1;
+  double indep_prev = indep_impossible_min, indep = 0.0;
   double dep_prev = 0.0, dep = 0.0;
   
   // Data point extracted from the table
@@ -58,8 +51,11 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( FILE** datafile,
   // Read the table one line at a time
   while( strcmp( data1_l, test ) != 0 )
   {
-    rv = fscanf( *datafile, "%9c%2c%9c%2c%1c", data1_l, data1_r, data2_l,
-		 data2_r, nwln);
+    datafile.get( data1_l, 10 );
+    datafile.get( data1_r, 3 );
+    datafile.get( data2_l, 10 );
+    datafile.getline( data2_r, 4 );
+    
     if( strcmp( data1_l, test ) != 0 )
     {
       indep = extractValue<double>( data1_l, 
@@ -69,7 +65,7 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( FILE** datafile,
       
       // Remove values outside of independent variable range
       if( (indep > indep_var_min && indep_prev > indep_var_min) &&
-	  (indep_prev < indep_var_max && indep < indep_var_max) )
+	  (indep_prev < indep_var_max && indep <= indep_var_max) )
       {
 	data_point.first = DataProcessingPolicy::processIndependentVar(indep);
 	data_point.second = DataProcessingPolicy::processDependentVar(dep);
@@ -78,15 +74,32 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( FILE** datafile,
 	indep_prev = indep;
 	dep_prev = dep;
       }
-      else if( (indep > indep_var_min && indep_prev < indep_var_min) ||
-	       (indep_prev < indep_var_max && indep > indep_var_max) )
+      else if( indep > indep_var_min && indep_prev <= indep_var_min &&
+	       indep_prev > indep_impossible_min )
       {
-	if( indep_prev > 0.0 )
-	{
-	  data_point.first = DataProcessingPolicy::processIndependentVar(indep_prev);
-	  data_point.second = DataProcessingPolicy::processDependentVar(dep_prev);
-	  data.push_back( data_point );
-	}
+	
+	data_point.first = DataProcessingPolicy::processIndependentVar(indep_prev);
+	data_point.second = DataProcessingPolicy::processDependentVar(dep_prev);
+	data.push_back( data_point );
+
+	data_point.first = DataProcessingPolicy::processIndependentVar(indep);
+	data_point.second = DataProcessingPolicy::processDependentVar(dep);
+	data.push_back( data_point );
+	
+	indep_prev = indep;
+	dep_prev = dep;
+      }
+      else if( indep_prev < indep_var_max && indep > indep_var_max)
+      {
+	data_point.first = DataProcessingPolicy::processIndependentVar(indep);
+	data_point.second = DataProcessingPolicy::processDependentVar(dep);
+	data.push_back( data_point );
+	
+	indep_prev = indep;
+	dep_prev = dep;
+      }
+      else if( indep > indep_var_min && indep_prev == indep_impossible_min )
+      {
 	data_point.first = DataProcessingPolicy::processIndependentVar(indep);
 	data_point.second = DataProcessingPolicy::processDependentVar(dep);
 	data.push_back( data_point );
@@ -103,7 +116,7 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( FILE** datafile,
   }
 
   // Read rest of end of table line
-  rv = fscanf( *datafile, "%50c", end_of_table );
+  datafile.getline( end_of_table, 51 );
 }
 
 //! Read two column table in EPDL file

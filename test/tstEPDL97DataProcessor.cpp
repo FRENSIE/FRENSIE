@@ -576,3 +576,1563 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_read_test )
   test_tablefile.close();
 }
 
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// log-log format
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_log_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTable<TestDataProcessor::LogLogDataProcessingPolicy>( test_tablefile,
+    data );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = log( 1.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 3.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 5.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 6.0 );
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+  
+  data_point.first = log( 8.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 10.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 11.0 );
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 13.0 );
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 14.0 );
+  data_point.second = log( 6.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 16.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 18.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 19.0 );
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// linear-log format
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_log_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTable<TestDataProcessor::LinearLogDataProcessingPolicy>( test_tablefile,
+        data );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = 1.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 3.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 5.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 14.0;
+  data_point.second = log( 6.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 16.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 18.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 19.0;
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// log-linear format
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_lin_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTable<TestDataProcessor::LogLinearDataProcessingPolicy>( test_tablefile,
+       data );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = log( 1.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 3.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 5.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 6.0 );
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = log( 8.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 10.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 11.0 );
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 13.0 );
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 14.0 );
+  data_point.second = 6.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 16.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 18.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 19.0 );
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// linear-linear format in the given independent variable range
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_eq_eq_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTableInRange<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+	       	 data,
+		 1.0,
+		 19.0 );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = 1.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 3.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 5.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 14.0;
+  data_point.second = 6.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 16.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 18.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 19.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// log-log format in the given independent variable range
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_log_range_eq_eq_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTableInRange<TestDataProcessor::LogLogDataProcessingPolicy>( test_tablefile,
+	   data,
+	   1.0,
+	   19.0 );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = log( 1.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 3.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 5.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 6.0 );
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+  
+  data_point.first = log( 8.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 10.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 11.0 );
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 13.0 );
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 14.0 );
+  data_point.second = log( 6.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 16.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 18.0 );
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = log( 19.0 );
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// linear-log format in the given independent variable range
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_log_range_eq_eq_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTableInRange<TestDataProcessor::LinearLogDataProcessingPolicy>( test_tablefile,
+	      data,
+	      1.0,
+	      19.0 );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = 1.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 3.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 5.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 14.0;
+  data_point.second = log( 6.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 16.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 18.0;
+  data_point.second = log( 2.0 );
+  data_true.push_back( data_point );
+
+  data_point.first = 19.0;
+  data_point.second = log( 4.0 );
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// log-linear format in the given independent variable range
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_lin_range_eq_eq_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTableInRange<TestDataProcessor::LogLinearDataProcessingPolicy>( test_tablefile,
+	      data,
+	      1.0,
+	      19.0 );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = log( 1.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 3.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 5.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 6.0 );
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = log( 8.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 10.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 11.0 );
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 13.0 );
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 14.0 );
+  data_point.second = 6.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 16.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 18.0 );
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = log( 19.0 );
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// linear-linear format in the given independent variable range
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_lt_gt_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTableInRange<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+	       	 data,
+		 0.0,
+		 20.0 );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = 1.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 3.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 5.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 14.0;
+  data_point.second = 6.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 16.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 18.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 19.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// linear-linear format in the given independent variable range
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_eq_gt_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTableInRange<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+	       	 data,
+		 1.0,
+		 20.0 );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = 1.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 3.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 5.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 14.0;
+  data_point.second = 6.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 16.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 18.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 19.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// linear-linear format in the given independent variable range
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_lt_eq_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTableInRange<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+	       	 data,
+		 0.0,
+		 19.0 );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = 1.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 3.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 5.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 14.0;
+  data_point.second = 6.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 16.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 18.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 19.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// linear-linear format in the given independent variable range
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_lt_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTableInRange<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+	       	 data,
+		 5.5,
+		 13.5 );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = 5.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 14.0;
+  data_point.second = 6.0;
+  data_true.push_back( data_point );
+ 
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// linear-linear format in the given independent variable range
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_eq_lt_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTableInRange<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+	       	 data,
+		 1.0,
+		 13.0 );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = 1.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 3.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 5.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// linear-linear format in the given independent variable range
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_lt_lt_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTableInRange<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+	       	 data,
+		 0.0,
+		 13.0 );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = 1.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 3.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 5.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// linear-linear format in the given independent variable range
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_eq_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTableInRange<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+	       	 data,
+		 5.0,
+		 19.0 );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = 5.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 14.0;
+  data_point.second = 6.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 16.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 18.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 19.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point ); 
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table in 
+// linear-linear format in the given independent variable range
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_gt_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTableInRange<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+	       	 data,
+		 5.5,
+		 20.0 );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = 5.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 14.0;
+  data_point.second = 6.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 16.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 18.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 19.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point ); 
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a three column table 
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_three_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Trip<unsigned int,double,double> > data, data_true;
+
+  data_processor.readThreeColumnTable( test_tablefile,
+				       data );
+  
+  FACEMC::Trip<unsigned int,double,double> data_point;
+  
+  data_point.first = 5;
+  data_point.second = 0.296149;
+  data_point.third = 0.113103;
+  data_true.push_back( data_point );
+
+  data_point.first = 6;
+  data_point.second = 0.455508;
+  data_point.third = 0.118701;
+  data_true.push_back( data_point );
+
+  data_point.first = 10;
+  data_point.second = 0.0534468;
+  data_point.third = 0.132545;
+  data_true.push_back( data_point );
+
+  data_point.first = 11;
+  data_point.second = 0.105850;
+  data_point.third = 0.133863;
+  data_true.push_back( data_point );
+
+  data_point.first = 13;
+  data_point.second = 0.00218629;
+  data_point.third = 0.134485;
+  data_true.push_back( data_point );
+
+  data_point.first = 14;
+  data_point.second = 0.00237699;
+  data_point.third = 0.134740;
+  data_true.push_back( data_point );
+
+  data_point.first = 18;
+  data_point.second = 0.0136579;
+  data_point.third = 0.137436;
+  data_true.push_back( data_point );
+
+  data_point.first = 19;
+  data_point.second = 0.0284889;
+  data_point.third = 0.137794;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a four column table 
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_four_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Quad<unsigned int,unsigned int,double,double> > data, 
+    data_true;
+
+  data_processor.readFourColumnTable( test_tablefile,
+				      data );
+  
+  FACEMC::Quad<unsigned int,unsigned int,double,double> data_point;
+  
+  data_point.first = 27;
+  data_point.second = 27;
+  data_point.third = 0.380318;
+  data_point.fourth = 0.00000671000;
+  data_true.push_back( data_point );
+
+  data_point.first = 27;
+  data_point.second = 29;
+  data_point.third = 0.281669;
+  data_point.fourth = 0.0000138200;
+  data_true.push_back( data_point );
+
+  data_point.first = 27;
+  data_point.second = 30;
+  data_point.third = 0.244679;
+  data_point.fourth = 0.0000143300;
+  data_true.push_back( data_point );
+
+  data_point.first = 29;
+  data_point.second = 30;
+  data_point.third = 0.0883536;
+  data_point.fourth = 0.0000214400;
+  data_true.push_back( data_point );
+
+  data_point.first = 30;
+  data_point.second = 30;
+  data_point.third = 0.00498008;
+  data_point.fourth = 0.0000219500;
+  data_true.push_back( data_point );
+  
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}

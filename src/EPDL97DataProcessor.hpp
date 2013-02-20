@@ -70,7 +70,7 @@ protected:
 
   //! Read two column table in EPDL file within specified range
   template<typename DataProcessingPolicy>
-  void readTwoColumnTableInRange( FILE** datafile,
+  void readTwoColumnTableInRange( std::ifstream &datafile,
 				  Teuchos::Array<Pair<double,double> > 
 				   &data,
 				  const double indep_var_min,
@@ -85,14 +85,14 @@ protected:
   void skipThreeColumnTable( std::ifstream &datafile );
 
   //! Read three column table in EPDL file
-  void readThreeColumnTable( FILE** datafile,
+  void readThreeColumnTable( std::ifstream &datafile,
 			     Teuchos::Array<Trip<unsigned int,double,double> > &data );
 
   //! Skip four column table in EPDL file
   void skipFourColumnTable( std::ifstream &datafile );
   
   //! Read four column table in EPDL file
-  void readFourColumnTable( FILE** datafile,
+  void readFourColumnTable( std::ifstream &datafile,
 			    Teuchos::Array<Quad<unsigned int,unsigned int,double,double> > 
 			     &data );
 
