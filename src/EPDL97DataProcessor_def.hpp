@@ -108,25 +108,17 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( FILE** datafile,
 
 //! Read two column table in EPDL file
 template<typename DataProcessingPolicy>
-void EPDL97DataProcessor::readTwoColumnTable( FILE** datafile,
+void EPDL97DataProcessor::readTwoColumnTable( std::ifstream &datafile,
 					      Teuchos::Array<Pair<double,double> > &data )
 {
   // Variables for reading in a two column table
   char data1_l [10];
-  data1_l[9] = '\0';
   data1_l[0] = 'n';
   char data1_r [3];
-  data1_r[2] = '\0';
   char data2_l [10];
-  data2_l[9] = '\0';
-  char data2_r [3];
-  data2_r[2] = '\0';
-  char nwln [2];
-  nwln[1] = '\0';
+  char data2_r [4];
   char end_of_table [51];
-  end_of_table[50] = '\0';
   char test []=  "         ";
-  int rv;
   
   // Values extracted from the table
   double indep = 0.0;
@@ -141,8 +133,10 @@ void EPDL97DataProcessor::readTwoColumnTable( FILE** datafile,
   // Read the table one line at a time
   while( strcmp( data1_l, test ) != 0 )
   {
-    rv = fscanf( *datafile, "%9c%2c%9c%2c%1c", data1_l, data1_r, data2_l,
-		 data2_r, nwln);
+    datafile.get( data1_l, 10 );
+    datafile.get( data1_r, 3 );
+    datafile.get( data2_l, 10 );
+    datafile.getline( data2_r, 4 );
     if( strcmp( data1_l, test ) != 0 )
     {
       indep = extractValue<double>( data1_l, 
@@ -157,7 +151,7 @@ void EPDL97DataProcessor::readTwoColumnTable( FILE** datafile,
   }
 
   // Read rest of end of table line
-  rv = fscanf( *datafile, "%50c", end_of_table );
+  datafile.getline( end_of_table, 51 );
 }
 
 template<typename T>

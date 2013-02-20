@@ -9,9 +9,11 @@
 #include <stdio.h>
 #include <fstream>
 #include <iostream>
+#include <sstream>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
+#include <Teuchos_toString.hpp>
 
 // FACEMC Includes
 #include "EPDL97DataProcessor.hpp"
@@ -46,6 +48,68 @@ public:
   using FACEMC::EPDL97DataProcessor::LogLinearDataProcessingPolicy;
   using FACEMC::EPDL97DataProcessor::LinearLinearDataProcessingPolicy;
 };  
+
+//---------------------------------------------------------------------------//
+// Helper Functions.
+//---------------------------------------------------------------------------//
+namespace Teuchos{
+
+// Stream operator for Tuple
+// this must be defined in the Teuchos namespace to work properly with the
+// Teuchos Unit Test Harness.
+template<typename T1, typename T2>
+std::ostream& operator<<(std::ostream &out, const FACEMC::Pair<T1,T2> &p)
+{
+  out << "{ " << p.first << ", " << p.second << " }";
+  return out;
+}
+
+template<typename T1, typename T2, typename T3>
+std::ostream& operator<<(std::ostream &out, const FACEMC::Trip<T1,T2,T3> &p)
+{
+  out << "{ " << p.first << ", " << p.second << ", " << p.third << " }";
+  return out;
+}
+
+template<typename T1, typename T2, typename T3, typename T4>
+std::ostream& operator<<(std::ostream &out, const FACEMC::Quad<T1,T2,T3,T4> &p)
+{
+  out << "{ " << p.first << ", " << p.second << ", " << p.third 
+      << ", " << p.fourth << " }";
+  return out;
+}
+
+}
+
+namespace FACEMC{
+
+template<typename T1, typename T2>
+inline bool operator==( const FACEMC::Pair<T1,T2> &left,
+			const FACEMC::Pair<T1,T2> &right )
+{
+  return ( (left.first == right.first) && (left.second == right.second) );
+}
+
+template<typename T1, typename T2, typename T3>
+inline bool operator==( const FACEMC::Trip<T1,T2,T3> &left,
+			const FACEMC::Trip<T1,T2,T3> &right )
+{
+  return ( (left.first == right.first) && 
+	   (left.second == right.second) &&
+	   (left.third == right.third) );
+}
+
+template<typename T1, typename T2, typename T3, typename T4>
+inline bool operator==( const FACEMC::Quad<T1,T2,T3,T4> &left,
+			const FACEMC::Quad<T1,T2,T3,T4> &right )
+{
+  return ( (left.first == right.first) &&
+	   (left.second == right.second) &&
+	   (left.third == right.third) &&
+	   (left.fourth == right.fourth) );
+}
+
+}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -419,34 +483,96 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_skip_test )
 //---------------------------------------------------------------------------//
 // Check that the EPDL97DataProcessor can read a two column table in 
 // linear-linear format
-//TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_log_read_test )
-//{
-//  std::ifstream test_tablefile;
-//  test_tablefile.open( "test_full_two_column_table.txt", std::fstream::in );
-//  TEST_ASSERT( test_tablefile.is_open() );
-//
-//  TestDataProcessor data_processor;
-//
-//  unsigned int atomic_number;
-//  unsigned int outgoing_particle_designator;
-//  double atomic_weight;
-//  unsigned int interpolation_flag;
-//  unsigned int reaction_type;
-//  unsigned int electron_shell;
-//
-//  data_processor.readFirstTableHeader( test_tablefile,
-//				       atomic_number,
-//				       outgoint_particle_designator,
-//				       atomic_weight,
-//				       interpolation_flag );
-//
-//  data_processor.readSecondTableHeader( test_tablefile,
-//					reaction_type,
-//					electron_shell );
-//  
-//  Teuchos::Array<Pair<double,double> > data, data_true;
-//
-//  data_processor.readTwoColumnTable<FACEMC::EPDL97DataProcessor::LinearLinearProcessingPolicy>( test_tablefile,
-//		data );
-//}
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTable<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+      data );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = 1.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 3.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 5.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 14.0;
+  data_point.second = 6.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 16.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 18.0;
+  data_point.second = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 19.0;
+  data_point.second = 4.0;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
 

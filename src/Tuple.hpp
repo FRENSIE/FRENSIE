@@ -7,6 +7,9 @@
 #ifndef FACEMC_TUPLE_HPP
 #define FACEMC_TUPLE_HPP
 
+// Std Lib Includes
+#include <iostream>
+
 // HDF5 Includes
 #include <H5Cpp.h>
 

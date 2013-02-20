@@ -78,7 +78,7 @@ protected:
 
   //! Read two column table in EPDL file 
   template<typename DataProcessingPolicy>
-  void readTwoColumnTable( FILE** datafile,
+  void readTwoColumnTable( std::ifstream &datafile,
 			   Teuchos::Array<Pair<double,double> > &data );
 
   //! Skip three column table in EPDL file

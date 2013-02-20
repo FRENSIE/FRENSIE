@@ -20,19 +20,20 @@ namespace FACEMC{
 template<typename T1, typename T2>
 inline H5::CompType Pair<T1,T2>::createHDF5DataType()
 {
-    
-  H5::CompType memtype( sizeof(Pair) );
+  typedef Pair<T1,T2> Tuple;
+  
+  H5::CompType memtype( sizeof(Tuple) );
   
   // the insertMember function can throw H5::DataTypeIException exceptions
   try
   {
     
     memtype.insertMember( "first",
-			  HOFFSET( Pair, first ),
+			  HOFFSET( Tuple , first ),
 			  HDF5TypeTraits<T1>::dataType() );
     
     memtype.insertMember( "second",
-			  HOFFSET( Pair, second ),
+			  HOFFSET( Tuple, second ),
 			  HDF5TypeTraits<T2>::dataType() );
     
   }
@@ -54,23 +55,24 @@ inline std::string Pair<T1,T2>::name()
 template<typename T1, typename T2, typename T3>
 inline H5::CompType Trip<T1,T2,T3>::createHDF5DataType()
 {
+  typedef Trip<T1,T2,T3> Tuple;
     
-  H5::CompType memtype( sizeof(Trip) );
+  H5::CompType memtype( sizeof(Tuple) );
   
   // the insertMember function can throw H5::DataTypeIException exceptions
   try
   {
     
     memtype.insertMember( "first",
-			  HOFFSET( Trip, first ),
+			  HOFFSET( Tuple, first ),
 			  HDF5TypeTraits<T1>::dataType() );
     
     memtype.insertMember( "second",
-			  HOFFSET( Trip, second ),
+			  HOFFSET( Tuple, second ),
 			  HDF5TypeTraits<T2>::dataType() );
     
     memtype.insertMember( "third",
-			  HOFFSET( Trip, third ),
+			  HOFFSET( Tuple, third ),
 			  HDF5TypeTraits<T3>::dataType() );
   }
   
@@ -88,31 +90,32 @@ inline std::string Trip<T1,T2,T3>::name()
     HDF5TypeTraits<T3>::name() + ">";
 }
 
-  //! Create an HDF5 type that represents the quadruplet struct.
+//! Create an HDF5 type that represents the quadruplet struct.
 template<typename T1, typename T2, typename T3, typename T4>
 inline H5::CompType Quad<T1,T2,T3,T4>::createHDF5DataType()
 {
+  typedef Quad<T1,T2,T3,T4> Tuple;
     
-  H5::CompType memtype( sizeof(Quad) );
+  H5::CompType memtype( sizeof(Tuple) );
   
   // the insertMember function can throw H5::DataTypeIException exceptions
   try
   {
     
     memtype.insertMember( "first",
-			  HOFFSET( Quad, first ),
+			  HOFFSET( Tuple, first ),
 			  HDF5TypeTraits<T1>::dataType() );
     
     memtype.insertMember( "second",
-			  HOFFSET( Quad, second ),
+			  HOFFSET( Tuple, second ),
 			  HDF5TypeTraits<T2>::dataType() );
     
     memtype.insertMember( "third",
-			  HOFFSET( Quad, third ),
+			  HOFFSET( Tuple, third ),
 			  HDF5TypeTraits<T3>::dataType() );
     
     memtype.insertMember( "fourth",
-			  HOFFSET( Quad, fourth ),
+			  HOFFSET( Tuple, fourth ),
 			  HDF5TypeTraits<T4>::dataType() );
   }
   
