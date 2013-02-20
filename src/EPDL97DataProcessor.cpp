@@ -102,7 +102,7 @@ void EPDL97DataProcessor::skipTwoColumnTable( std::ifstream &datafile )
 }
 
 //! Skip three column table in EPDL file
-  void EPDL97DataProcessor::skipThreeColumnTable( std::ifstream &datafile )
+void EPDL97DataProcessor::skipThreeColumnTable( std::ifstream &datafile )
 {
   char line[35];
   line[0] = 'n';
@@ -239,82 +239,6 @@ std::string EPDL97DataProcessor::uintToShellStr( const unsigned int shell )
 {
   FACEMC_ASSERT_ALWAYS( shell > 0 );
   return ElectronShellStr[shell];
-}
-
-//---------------------------------------------------------------------------//
-// LogLogDataProcessingPolicy definitions
-//---------------------------------------------------------------------------//
-
-//! Process Independent Variable
-inline double EPDL97DataProcessor::LogLogDataProcessingPolicy::processIndependentVar( const double indep_var )
-{
-  if( indep_var > 0.0 )
-    return log( indep_var );
-  else
-    return log( std::numeric_limits<double>::min() );
-}
-
-//! Process Dependent Variable
-inline double EPDL97DataProcessor::LogLogDataProcessingPolicy::processDependentVar( const double dep_var )
-{
-  if( dep_var > 0.0 )
-    return log( dep_var );
-  else
-    return log( std::numeric_limits<double>::min() );
-}
-
-//---------------------------------------------------------------------------//
-// LinearLogDataProcessingPolicy definitions
-//---------------------------------------------------------------------------//
-
-//! Process Independent Variable
-inline double EPDL97DataProcessor::LinearLogDataProcessingPolicy::processIndependentVar( const double indep_var )
-{
-  return indep_var;
-}
-
-//! Process Dependent Variable
-inline double EPDL97DataProcessor::LinearLogDataProcessingPolicy::processDependentVar( const double dep_var )
-{
-  if( dep_var > 0.0 )
-    return log( dep_var );
-  else
-    return log( std::numeric_limits<double>::min() );
-}
-
-//---------------------------------------------------------------------------//
-// LogLinearDataProcessingPolicy definitions
-//---------------------------------------------------------------------------//
-
-//! Process Independent Variable
-inline double EPDL97DataProcessor::LogLinearDataProcessingPolicy::processIndependentVar( const double indep_var )
-{
-  if( indep_var > 0.0 )
-    return log( indep_var );
-  else
-    return log( std::numeric_limits<double>::min() );
-}
-
-//! Process Dependent Variable
-inline double EPDL97DataProcessor::LogLinearDataProcessingPolicy::processDependentVar( const double dep_var )
-{
-  return dep_var;
-}
-
-//---------------------------------------------------------------------------//
-// LinearLinearDataProcessingPolicy definitions
-//---------------------------------------------------------------------------//
-
-//! Process Independent Variable
- inline double EPDL97DataProcessor::LinearLinearDataProcessingPolicy::processIndependentVar( const double indep_var )
-{
-  return indep_var;
-}
-
-//! Process Dependent Variable
-inline double EPDL97DataProcessor::LinearLinearDataProcessingPolicy::processDependentVar( const double dep_var )
-{
-  return dep_var;
 }
 
 } // end FACEMC namespace

@@ -200,6 +200,82 @@ inline T EPDL97DataProcessor::extractValue( std::string mantissa,
     return static_cast<T>(double_value);
   }
 
+//---------------------------------------------------------------------------//
+// LogLogDataProcessingPolicy definitions
+//---------------------------------------------------------------------------//
+
+//! Process Independent Variable
+inline double EPDL97DataProcessor::LogLogDataProcessingPolicy::processIndependentVar( const double indep_var )
+{
+  if( indep_var > 0.0 )
+    return log( indep_var );
+  else
+    return log( std::numeric_limits<double>::min() );
+}
+
+//! Process Dependent Variable
+inline double EPDL97DataProcessor::LogLogDataProcessingPolicy::processDependentVar( const double dep_var )
+{
+  if( dep_var > 0.0 )
+    return log( dep_var );
+  else
+    return log( std::numeric_limits<double>::min() );
+}
+
+//---------------------------------------------------------------------------//
+// LinearLogDataProcessingPolicy definitions
+//---------------------------------------------------------------------------//
+
+//! Process Independent Variable
+inline double EPDL97DataProcessor::LinearLogDataProcessingPolicy::processIndependentVar( const double indep_var )
+{
+  return indep_var;
+}
+
+//! Process Dependent Variable
+inline double EPDL97DataProcessor::LinearLogDataProcessingPolicy::processDependentVar( const double dep_var )
+{
+  if( dep_var > 0.0 )
+    return log( dep_var );
+  else
+    return log( std::numeric_limits<double>::min() );
+}
+
+//---------------------------------------------------------------------------//
+// LogLinearDataProcessingPolicy definitions
+//---------------------------------------------------------------------------//
+
+//! Process Independent Variable
+inline double EPDL97DataProcessor::LogLinearDataProcessingPolicy::processIndependentVar( const double indep_var )
+{
+  if( indep_var > 0.0 )
+    return log( indep_var );
+  else
+    return log( std::numeric_limits<double>::min() );
+}
+
+//! Process Dependent Variable
+inline double EPDL97DataProcessor::LogLinearDataProcessingPolicy::processDependentVar( const double dep_var )
+{
+  return dep_var;
+}
+
+//---------------------------------------------------------------------------//
+// LinearLinearDataProcessingPolicy definitions
+//---------------------------------------------------------------------------//
+
+//! Process Independent Variable
+ inline double EPDL97DataProcessor::LinearLinearDataProcessingPolicy::processIndependentVar( const double indep_var )
+{
+  return indep_var;
+}
+
+//! Process Dependent Variable
+inline double EPDL97DataProcessor::LinearLinearDataProcessingPolicy::processDependentVar( const double dep_var )
+{
+  return dep_var;
+}
+
 } // end FACEMC namespace
 
 #endif // end EPDL97_DATA_PROCESSOR_DEF_HPP

@@ -28,7 +28,6 @@ public:
   
   void processDataFiles()
   { /* ... */ }
-
   
   // Allow public access to EPDL97DataProcessor protected member functions
   using FACEMC::EPDL97DataProcessor::readFirstTableHeader;

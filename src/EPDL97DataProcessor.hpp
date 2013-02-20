@@ -103,7 +103,7 @@ protected:
    * entire EPDL Library it has been inlined.
    */
   template<typename T>
-  inline T extractValue( std::string mantissa,
+  T extractValue( std::string mantissa,
 			 std::string exponent );
 
   //! Convert an EPDL shell integer to a shell name
@@ -115,11 +115,12 @@ protected:
    */
   class LogLogDataProcessingPolicy
   {
+  public:
     //! Process Independent Variable
-    static inline double processIndependentVar( const double indep_var );
+    static double processIndependentVar( const double indep_var );
     
     //! Process Dependent Variable
-    static inline double processDependentVar( const double dep_var );
+    static double processDependentVar( const double dep_var );
   };
 
   /*!
@@ -128,11 +129,12 @@ protected:
    */
    class LinearLogDataProcessingPolicy
    {
+   public:
      //! Process Independent Variable
-     static inline double processIndependentVar( const double indep_var );
+     static double processIndependentVar( const double indep_var );
      
      //! Process Dependent Variable
-     static inline double processDependentVar( const double dep_var );
+     static double processDependentVar( const double dep_var );
    };
 
   /*!
@@ -141,11 +143,12 @@ protected:
    */
   class LogLinearDataProcessingPolicy
   {
+  public:
     //! Process Independent Variable
-    static inline double processIndependentVar( const double indep_var );
+    static double processIndependentVar( const double indep_var );
     
     //! Process Dependent Variable
-    static inline double processDependentVar( const double dep_var );
+    static double processDependentVar( const double dep_var );
   };
 
   /*!
@@ -154,11 +157,12 @@ protected:
    */
   class LinearLinearDataProcessingPolicy
   {
+  public:
     //! Process Independent Variable
-    static inline double processIndependentVar( const double indep_var );
+    static double processIndependentVar( const double indep_var );
     
     //! Process Dependent Variable
-    static inline double processDependentVar( const double dep_var );
+    static double processDependentVar( const double dep_var );
   };
 
   // HDF5 File Handler

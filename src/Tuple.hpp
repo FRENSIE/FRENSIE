@@ -21,8 +21,8 @@ template<typename T1, typename T2>
 struct Pair
 {
   static const int size = 2;
-  static inline H5::CompType createHDF5DataType();
-  static inline std::string name();
+  static H5::CompType createHDF5DataType();
+  static std::string name();
   typedef T1 first_type;
   typedef T2 second_type;
   T1 first;
@@ -34,8 +34,8 @@ template<typename T1, typename T2, typename T3>
 struct Trip
 {
   static const int size = 3;
-  static inline H5::CompType createHDF5DataType();
-  static inline std::string name();
+  static H5::CompType createHDF5DataType();
+  static std::string name();
   typedef T1 first_type;
   typedef T2 second_type;
   typedef T3 third_type;
@@ -49,8 +49,8 @@ template<typename T1, typename T2, typename T3, typename T4>
 struct Quad
 {
   static const int size = 4;
-  static inline H5::CompType createHDF5DataType();
-  static inline std::string name();
+  static H5::CompType createHDF5DataType();
+  static std::string name();
   typedef T1 first_type;
   typedef T2 second_type;
   typedef T3 third_type;
