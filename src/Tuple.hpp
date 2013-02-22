@@ -67,45 +67,45 @@ struct Quad
 //---------------------------------------------------------------------------//
 // Specialize the HDF5TypeTraits class for the Tuple Structs
 //---------------------------------------------------------------------------//
-template<>
-struct HDF5TypeTraits<Pair<double,double> >
+template<typename T, typename T2>
+struct HDF5TypeTraits<Pair<T,T2> >
 {
   static H5::CompType dataType()
   {
-    return Pair<double,double>::createHDF5DataType();
+    return Pair<T,T2>::createHDF5DataType();
   }
   
   static inline std::string name() 
   {
-    return Pair<double,double>::name();
+    return Pair<T,T2>::name();
   }
 };
 
-template<>
-struct HDF5TypeTraits<Trip<unsigned int,double,double> >
+template<typename T, typename T2, typename T3>
+struct HDF5TypeTraits<Trip<T,T2,T3> >
 {
   static H5::CompType dataType()
   {
-    return Trip<unsigned int,double,double>::createHDF5DataType();
+    return Trip<T,T2,T3>::createHDF5DataType();
   }
   
   static inline std::string name() 
   { 
-    return Trip<unsigned int,double,double>::name();
+    return Trip<T,T2,T3>::name();
   }
 };
 
-template<>
-struct HDF5TypeTraits<Quad<unsigned int,unsigned int,double,double> >
+template<typename T, typename T2, typename T3, typename T4>
+struct HDF5TypeTraits<Quad<T,T2,T3,T4> >
 {
   static H5::CompType dataType()
   {
-    return Quad<unsigned int,unsigned int,double,double>::createHDF5DataType();
+    return Quad<T,T2,T3,T4>::createHDF5DataType();
   }
   
   static inline std::string name() 
   { 
-    return Quad<unsigned int,unsigned int,double,double>::name();
+    return Quad<T,T2,T3,T4>::name();
   }
 };
 

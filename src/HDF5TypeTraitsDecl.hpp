@@ -24,6 +24,12 @@ struct UndefinedTypeTraits
 };
 
 /*!
+ * \brief This is an empty class used for default template parameters in
+ * the HDF5TypeTraits struct
+ */
+struct Empty{};
+
+/*!
  * \brief This structure defines some basic traits for types to be used in 
  * HDF5. The HDF5 C++ API function calls request a DataType object 
  * corresponding to the type to write to an HDF5 file. A C++ type will map to 
@@ -36,7 +42,11 @@ struct UndefinedTypeTraits
  * \c double
  * </ol>
  */
-template<typename T>
+  template<typename T, 
+	   typename T2 = Empty, 
+	   typename T3 = Empty,
+	   typename T4 = Empty,
+	   typename T5 = Empty>
 struct HDF5TypeTraits
 { 
   //! returns the data type object of the type
