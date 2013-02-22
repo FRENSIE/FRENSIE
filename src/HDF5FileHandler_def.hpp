@@ -13,33 +13,41 @@
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
+#include <Teuchos_ArrayView.hpp>
+#include <Teuchos_TwoDArray.hpp>
 
 // HDF5 includes
 #include <H5Cpp.h>
 
 // FACEMC includes
 #include "HDF5TypeTraits.hpp"
+#include "HDF5ArrayTraits.hpp"
 #include "HDF5ExceptionCatchMacro.hpp"
+#include "FACEMC_Assertion.hpp"
 
 namespace FACEMC{
 
 //! Write Data in array to HDF5 file dataset
-template<typename T>
-void HDF5FileHandler::writeArrayToDataSet( const Teuchos::Array<T> &data,
+template<typename T, template<typename> class Array>
+void HDF5FileHandler::writeArrayToDataSet( const Array<T> &data,
 					   const std::string &location_in_file
 					   )
 {
+  FACEMC_ASSERT_ALWAYS( location_in_file.compare( 0, 1, "/" ) == 0 ); 
+  // Create any parent groups that do not exist yet in the location path
+  createParentGroups( location_in_file );
+  
   // HDF5 exceptions can be thrown when creating a dataset or writing to a 
   // dataset
   try
   {
-    hsize_t dim = data.size();
-    H5::DataSpace space( 1, dim );
+    hsize_t dim = HDF5ArrayTraits<T,Array>::size(data);
+    H5::DataSpace space( 1, &dim );
     H5::DataSet dataset(d_hdf5_file->createDataSet( 
 						 location_in_file,
 						 HDF5TypeTraits<T>::dataType(),
 						 space ) );
-    dataset.write( &data[0], 
+    dataset.write( HDF5ArrayTraits<T,Array>::getRawPtr(data), 
 		   HDF5TypeTraits<T>::dataType() );
   }
   
@@ -47,19 +55,20 @@ void HDF5FileHandler::writeArrayToDataSet( const Teuchos::Array<T> &data,
 }
 
 //! Write attribute to HDF5 file group
-template<typename T>
-void HDF5FileHandler::writeArrayToDataSetAttribute( 
-						 const Teuchos::Array<T> &data,
-						 const std::string 
-						   &dataset_location,
-						 const std::string
-						   &attribute_name )
+template<typename T, template<typename> class Array>
+void HDF5FileHandler::writeArrayToDataSetAttribute( const Array<T> &data,
+						    const std::string 
+						      &dataset_location,
+						    const std::string
+						      &attribute_name )
 {
+  FACEMC_ASSERT_ALWAYS( (dataset_location.compare( 0, 1, "/" ) == 0) );
+  
   // HDF5 exceptions can be thrown when opening a group, creating an attribute,
   // or writing an attribute to a group
   try
   {
-    hsize_t dim = data.size();
+    hsize_t dim = HDF5ArrayTraits<T,Array>::size(data);
     H5::DataSpace space( 1, dim );
     H5::DataSet dataset(d_hdf5_file->openDataSet( dataset_location ) ); 
     H5::Attribute attribute(dataset.createAttribute( 
@@ -67,25 +76,27 @@ void HDF5FileHandler::writeArrayToDataSetAttribute(
 					  HDF5TypeTraits<T>::dataType() ) );
     
     attribute.write( HDF5TypeTraits<T>::dataType(),
-		     &data[0] );  
+		     HDF5ArrayTraits<T,Array>::getRawPointer(data) );  
   }
 
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
 //! Write attribute to HDF5 file group
-template<typename T>
-void HDF5FileHandler::writeArrayToGroupAttribute( const Teuchos::Array<T> &data,
+template<typename T, template<typename> class Array>
+void HDF5FileHandler::writeArrayToGroupAttribute( const Array<T> &data,
 						  const std::string 
 						    &group_location,
 						  const std::string
 						    &attribute_name )
 {
+  FACEMC_ASSERT_ALWAYS( (group_location.compare( 0, 1, "/" ) == 0) );
+  
   // HDF5 exceptions can be thrown when opening a group, creating an attribute,
   // or writing an attribute to a group
   try
   {
-    hsize_t dim = data.size();
+    hsize_t dim = HDF5ArrayTraits<T,Array>::size(data);
     H5::DataSpace space( 1, dim );
     H5::Group group(d_hdf5_file->openGroup( group_location ) ); 
     H5::Attribute attribute(group.createAttribute( 
@@ -93,7 +104,7 @@ void HDF5FileHandler::writeArrayToGroupAttribute( const Teuchos::Array<T> &data,
 					  HDF5TypeTraits<T>::dataType() ) );
     
     attribute.write( HDF5TypeTraits<T>::dataType(),
-		     &data[0] );  
+		     HDF5ArrayTraits<T,Array>::getRawPointer(data) );  
   }
 
   HDF5_EXCEPTION_CATCH_AND_EXIT();

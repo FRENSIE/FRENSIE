@@ -2136,3 +2136,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_read_test )
   // Close the test table file
   test_tablefile.close();
 }
+
+//---------------------------------------------------------------------------//
+// end tstEPDL97DataProcessor.cpp
+//---------------------------------------------------------------------------//

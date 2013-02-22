@@ -45,8 +45,8 @@ public:
   //! Write data in array to HDF5 file data set
   // \param data data array to write to HDF5 file dataset
   // \param location_in_file location in HDF5 file where data will be written
-  template<typename T>
-  void writeArrayToDataSet( const Teuchos::Array<T> &data,
+  template<typename T, template<typename> class Array>
+  void writeArrayToDataSet( const Array<T> &data,
 			    const std::string &location_in_file );
 
   //! Write an attribute to an HDF5 file data set
@@ -54,8 +54,8 @@ public:
   // \param dataset_location location and name of the HDF5 file data set that
   // the attribute will be written to
   // \param attribute_name name that will be given to the attribute
-  template<typename T>
-  void writeArrayToDataSetAttribute( const Teuchos::Array<T> &data,
+  template<typename T, template<typename> class Array>
+  void writeArrayToDataSetAttribute( const Array<T> &data,
 				     const std::string &dataset_location,
 				     const std::string &attribute_name );
 
@@ -64,10 +64,16 @@ public:
   // \param group_location location and name of the HDF5 file group that
   // the attribute will be written to
   // \param attribute_name name that will be given to the attribute
-  template<typename T>
-  void writeArrayToGroupAttribute( const Teuchos::Array<T> &data,
+  template<typename T, template<typename> class Array>
+  void writeArrayToGroupAttribute( const Array<T> &data,
 				   const std::string &group_location,
 				   const std::string &attribute_name );
+
+protected:
+
+  //! Create the parent groups, if necessary, for the dataset
+  void createParentGroups( const std::string &dataset_name );
+
 private:
   
   // HDF5 file identifier
