@@ -23,11 +23,11 @@ struct UndefinedArrayTraits
 
 /*!
  * \brief This structure defines some basic traits for Arrays to be used in 
- * FACEMC. This struct should allow use any Teuchos::Array except the 
- * ArrayView anywhere in FACEMC. Any other arrays will not be supported.
- * The functions in the templated base unspecialized struct are designed not
- * to compile (giving a nice compile-time error message) and therefore
- * specializations must be written for each array type
+ * FACEMC. This struct should allow use of any Teuchos::Array anywhere in 
+ * FACEMC. Any other arrays will not be supported. The functions in the 
+ * templated base unspecialized struct are designed not to compile (giving a 
+ * nice compile-time error message) and therefore specializations must be 
+ * written for each array type.
  * \note <ol>
  * <li> The default defined specializations are provided for \c Teuchos::Array,  * \c Teuchos::ArrayRCP, \c Teuchos::ArrayView, \c Teuchos::TwoDArray
  * </ol>
