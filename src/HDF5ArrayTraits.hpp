@@ -26,38 +26,42 @@ namespace FACEMC{
 template<typename T>
 struct HDF5ArrayTraits<T,Teuchos::Array>
 {
-  static inline T* getRawPtr(Teuchos::Array<T> array) { return array.getRawPtr(); }
-  static inline void resize(Teuchos::Array<T> array, typename Teuchos::Array<T>::size_type n) { array.resize( n ); }
-  static inline typename Teuchos::Array<T>::size_type size(Teuchos::Array<T> array) { return array.size(); }
+  static inline T* getRawPtr(Teuchos::Array<T> &array) { return array.getRawPtr(); }
+  static inline const T* getRawPtr(const Teuchos::Array<T> &array) { return array.getRawPtr(); }
+  static inline void resize(Teuchos::Array<T> &array, typename Teuchos::Array<T>::size_type n) { array.resize( n ); }
+  static inline typename Teuchos::Array<T>::size_type size(const Teuchos::Array<T> &array) { return array.size(); }
 };
 
 template<typename T>
 struct HDF5ArrayTraits<T,Teuchos::ArrayRCP>
 {
-  static inline T* getRawPtr(Teuchos::ArrayRCP<T> array) { return array.getRawPtr(); }
-  static inline void resize(Teuchos::ArrayRCP<T> array, typename Teuchos::ArrayRCP<T>::size_type n) { array.resize( n ); }
-  static inline typename Teuchos::ArrayRCP<T>::size_type size(Teuchos::ArrayRCP<T> array) { return array.size(); } 
+  static inline T* getRawPtr(Teuchos::ArrayRCP<T> &array) { return array.getRawPtr(); }
+  static inline const T* getRawPtr(const Teuchos::ArrayRCP<T> &array) { return array.getRawPtr(); }
+  static inline void resize(Teuchos::ArrayRCP<T> &array, typename Teuchos::ArrayRCP<T>::size_type n) { array.resize( n ); }
+  static inline typename Teuchos::ArrayRCP<T>::size_type size(const Teuchos::ArrayRCP<T> &array) { return array.size(); } 
 };
 
 template<typename T>
 struct HDF5ArrayTraits<T,Teuchos::ArrayView>
 {
-  static inline T* getRawPtr(Teuchos::ArrayView<T> array) { return array.getRawPtr(); }
-  static inline void resize(Teuchos::ArrayView<T> array, typename Teuchos::ArrayView<T>::size_type n) { array.resize( n ); }
-  static inline typename Teuchos::ArrayView<T>::size_type size(Teuchos::ArrayView<T> array) { return array.size(); } 
+  static inline T* getRawPtr(Teuchos::ArrayView<T> &array) { return array.getRawPtr(); }
+  static inline const T* getRawPtr(const Teuchos::ArrayView<T> &array) { return array.getRawPtr(); }
+  static inline void resize(Teuchos::ArrayView<T> &array, typename Teuchos::ArrayView<T>::size_type n) { /* Can't resize ArrayView */ }
+  static inline typename Teuchos::ArrayView<T>::size_type size(const Teuchos::ArrayView<T> &array) { return array.size(); } 
 };
 
 template<typename T>
 struct HDF5ArrayTraits<T,Teuchos::TwoDArray>
 {
-  static inline T* getRawPtr(Teuchos::TwoDArray<T> array) { return array[0].getRawPtr(); }
+  static inline T* getRawPtr(Teuchos::TwoDArray<T> &array) { return array[0].getRawPtr(); }
+  static inline const T* getRawPtr(const Teuchos::TwoDArray<T> &array) { return array.getDataArray().getRawPtr(); }
   // Assumes that the number of columns is > 0
-  static void resize(Teuchos::TwoDArray<T> array, typename Teuchos::TwoDArray<T>::size_type n) 
+  static void resize(Teuchos::TwoDArray<T> &array, typename Teuchos::TwoDArray<T>::size_type n) 
   { 
     FACEMC_ASSERT_ALWAYS( array.getNumCols() > 0 );
     array.resizeRows( ceil( n/array.getNumCols() ) ); 
   }
-  static inline typename Teuchos::TwoDArray<T>::size_type size(Teuchos::TwoDArray<T> array) { return array.getNumRows()*array.getNumCols(); };
+  static inline typename Teuchos::TwoDArray<T>::size_type size(const Teuchos::TwoDArray<T> &array) { return array.getNumRows()*array.getNumCols(); };
 };
 
 } // end FACEMC namespace

@@ -36,11 +36,13 @@ template<typename T, template<typename> class Array>
 struct HDF5ArrayTraits
 {
   //! Return a raw pointer to the head of the array
-  static inline T* getRawPtr(Array<T> array) { (void)UndefinedArrayTraits<T,Array>::notDefined(); return 0; }
+  static inline T* getRawPtr(Array<T> &array) { (void)UndefinedArrayTraits<T,Array>::notDefined(); return 0; }
+  //! Return a const raw pointer to the head of the array
+  static inline const T* getRawPtr(const Array<T> &array) { (void)UndefinedArrayTraits<T,Array>::notDefined(); return 0; }
   //! Resize the array
-  static inline void resize(Array<T> array, typename Array<T>::size_type n) { (void)UndefinedArrayTraits<T,Array>::notDefined(); return 0; }
+  static inline void resize(Array<T> &array, typename Array<T>::size_type n) { (void)UndefinedArrayTraits<T,Array>::notDefined(); return 0; }
   //! Return the size of the array
-  static inline typename Array<T>::size_type size(Array<T> array){ (void)UndefinedArrayTraits<T,Array>::notDefined(); return 0; }
+  static inline typename Array<T>::size_type size(const Array<T> &array){ (void)UndefinedArrayTraits<T,Array>::notDefined(); return 0; }
 };
 
 } // end FACEMC namespace
