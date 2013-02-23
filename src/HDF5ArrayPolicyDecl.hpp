@@ -1,11 +1,11 @@
 //---------------------------------------------------------------------------//
-// \file   HDF5ArrayTraitsDecl.hpp
+// \file   HDF5ArrayPolicyDecl.hpp
 // \author Alex Robinson
-// \brief  HDF5 Array Traits declaration
+// \brief  HDF5 Array Policy declaration
 //---------------------------------------------------------------------------//
 
-#ifndef HDF5_ARRAY_TRAITS_DECL_HPP
-#define HDF5_ARRAY_TRAITS_DECL_HPP
+#ifndef HDF5_ARRAY_POLICY_DECL_HPP
+#define HDF5_ARRAY_POLICY_DECL_HPP
 
 namespace FACEMC{
 
@@ -15,7 +15,7 @@ namespace FACEMC{
  * Array
  */
 template<typename T, template<typename> class Array>
-struct UndefinedArrayTraits
+struct UndefinedArrayPolicy
 {
   //! This function should not compile if there is any attempt to instantiate!
   static inline T notDefined() { return Array<T>::this_type_is_missing_a_specialization(); }
@@ -29,27 +29,28 @@ struct UndefinedArrayTraits
  * nice compile-time error message) and therefore specializations must be 
  * written for each array type.
  * \note <ol>
- * <li> The default defined specializations are provided for \c Teuchos::Array,  * \c Teuchos::ArrayRCP, \c Teuchos::ArrayView, \c Teuchos::TwoDArray
+ * <li> The default defined specializations are provided for \c Teuchos::Array,
+ * \c Teuchos::ArrayRCP, \c Teuchos::ArrayView, \c Teuchos::TwoDArray
  * </ol>
  */
 template<typename T, template<typename> class Array>
-struct HDF5ArrayTraits
+struct HDF5ArrayPolicy
 {
   //! Return a raw pointer to the head of the array
-  static inline T* getRawPtr(Array<T> &array) { (void)UndefinedArrayTraits<T,Array>::notDefined(); return 0; }
+  static inline T* getRawPtr(Array<T> &array) { (void)UndefinedArrayPolicy<T,Array>::notDefined(); return 0; }
   //! Return a const raw pointer to the head of the array
-  static inline const T* getRawPtr(const Array<T> &array) { (void)UndefinedArrayTraits<T,Array>::notDefined(); return 0; }
+  static inline const T* getRawPtr(const Array<T> &array) { (void)UndefinedArrayPolicy<T,Array>::notDefined(); return 0; }
   //! Resize the array
-  static inline void resize(Array<T> &array, typename Array<T>::size_type n) { (void)UndefinedArrayTraits<T,Array>::notDefined(); return 0; }
+  static inline void resize(Array<T> &array, typename Array<T>::size_type n) { (void)UndefinedArrayPolicy<T,Array>::notDefined(); return 0; }
   //! Return the size of the array
-  static inline typename Array<T>::size_type size(const Array<T> &array){ (void)UndefinedArrayTraits<T,Array>::notDefined(); return 0; }
+  static inline typename Array<T>::size_type size(const Array<T> &array){ (void)UndefinedArrayPolicy<T,Array>::notDefined(); return 0; }
 };
 
 } // end FACEMC namespace
 
-#endif // end HDF5_ARRAY_TRAITS_DECL_HPP
+#endif // end HDF5_ARRAY_POLICY_DECL_HPP
 
 //---------------------------------------------------------------------------//
-// end HDF5ArrayTraitsDecl.hpp
+// end HDF5ArrayPolicyDecl.hpp
 //---------------------------------------------------------------------------//
 

@@ -67,11 +67,11 @@ private:
    * Hartree-Fock Compton Profile. Unfortunately, this will potentially be
    * different for every element.
    * \param atomic_number Atomic number of element the map will be made for
-   * \param map[2] An empty 2D integer array where the index mapping will be
+   * \param map An empty Pair array where the index mapping will be
    * stored
    */
   void createElectronShellIndexMap( int atomic_number,
-				    Teuchos::Array<int> map[2] );
+				    Teuchos::Array<Pair<unsigned int,unsigned int> > &map );
 
 };
 

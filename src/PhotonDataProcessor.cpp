@@ -51,9 +51,8 @@ void PhotonDataProcessor::processDataFiles()
 void PhotonDataProcessor::processEPDLFile()
 { 
   // EPDL file
-  FILE* epdl;
-  epdl = fopen( d_epdl_file_name.c_str() );
-  assertAlways( epdl );
+  std::ifstream epdl( "d_epdl_file_name", std::fstream::in );
+  FACEMC_ASSERT_ALWAYS( epdl.is_open() );
 
   // Atomic number of element currently being processed
   int atomic_number = 0;
@@ -69,7 +68,7 @@ void PhotonDataProcessor::processEPDLFile()
   int electron_shell = 0;
   
   // Process every element (Z=1-100) in the EPDL file
-  while( !feof(epdl) )
+  while( !epdl.eof() )
   {
     // Read first table header and determine which element is being processed
     readFirstTableHeader( epdl,
@@ -93,11 +92,9 @@ void PhotonDataProcessor::processEPDLFile()
 						    DATA_FILE_PREFIX );
       
       // Create a top level attribute to store the atomic weight
-      Teuchos::Array<double> atomic_weight_arr(1, atomic_weight); // :(
-      d_hdf5_file_handler.writeArrayToGroupAttribute<double>( 
-							     atomic_weight_arr,
-							     "/",
-							     "Atomic_Weight" );
+      d_hdf5_file_handler.writeValueToGroupAttribute( atomic_weight,
+						      "/",
+						      "Atomic_Weight" );
     }
 
     // Read second table header and determine the reaction type
@@ -124,8 +121,8 @@ void PhotonDataProcessor::processEPDLFile()
 							       d_energy_min,
 							       d_energy_max );
 	
-	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,double> >( data,
-									    COHERENT_CROSS_SECTION_LOC );
+	d_hdf5_file_handler.writeArrayToDataSet( data,
+						 COHERENT_CROSS_SECTION_LOC );
       }
       
       break;
@@ -149,8 +146,8 @@ void PhotonDataProcessor::processEPDLFile()
 							       data,
 							       d_energy_min,
 							       d_energy_max );
-	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,double> >( data,
-									    INCOHERENT_CROSS_SECTION_LOC );
+	d_hdf5_file_handler.writeArrayToDataSet( data,
+						 INCOHERENT_CROSS_SECTION_LOC );
       }
       
       break;
@@ -177,8 +174,8 @@ void PhotonDataProcessor::processEPDLFile()
 							       data,
 							       d_energy_min,
 							       d_energy_max );
-	d_hdf5_file_handler.writeArrayDataSet<Pair<double,double> >( data,
-									  PHOTOELECTRIC_CROSS_SECTION_LOC );
+	d_hdf5_file_handler.writeArrayToDataSet( data,
+						 PHOTOELECTRIC_CROSS_SECTION_LOC );
       }
       // Read the total integrated photoelectric cross section for a subshell
       else
@@ -189,8 +186,8 @@ void PhotonDataProcessor::processEPDLFile()
 							       data,
 							       d_energy_min,
 							       d_energy_max );
-	d_hdf5_file_handler.writeArrayToDataSet<Pair<double> >( data,
-								     PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + intToShellStr( electron_shell ) );
+	d_hdf5_file_handler.writeArrayToDataSet( data,
+						 PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + intToShellStr( electron_shell ) );
       }
       break;
 
@@ -228,8 +225,8 @@ void PhotonDataProcessor::processEPDLFile()
 	if( d_energy_min < 1.022 )
 	  data.erase( data.begin() );
 	
-	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,double> >( data,
-									    PAIR_PRODUCTION_CROSS_SECTION_LOC );
+	d_hdf5_file_handler.writeArrayToDataSet( data,
+						 PAIR_PRODUCTION_CROSS_SECTION_LOC );
       }
       
       break;
@@ -260,8 +257,8 @@ void PhotonDataProcessor::processEPDLFile()
 	if( d_energy_min < 2.044 )
 	  data.erase( data.begin() );
 	
-	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,double> >( data,
-									    TRIPLET_PRODUCTION_CROSS_SECTION_LOC );
+	d_hdf5_file_handler.writeArrayToDataSet( data,
+						 TRIPLET_PRODUCTION_CROSS_SECTION_LOC );
       }
       
       break;
@@ -336,8 +333,8 @@ void PhotonDataProcessor::processEPDLFile()
 	      log( integrated_squared_ff[i].value2 );
 	  }
 	
-	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,double> >( integrated_squared_ff,
-									    ATOMIC_FORM_FACTOR_LOC );
+	d_hdf5_file_handler.writeArrayToDataSet( integrated_squared_ff,
+						 ATOMIC_FORM_FACTOR_LOC );
       }
       
       break;
@@ -355,8 +352,8 @@ void PhotonDataProcessor::processEPDLFile()
 	// (0.0, 0.0)
 	data.erase( data.begin() );
 	
-	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,double> >( data,
-									    SCATTERING_FUNCTION_LOC );
+	d_hdf5_file_handler.writeArrayToDataSet( data,
+						 SCATTERING_FUNCTION_LOC );
       }
       
       break;
@@ -379,7 +376,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Unknown reaction type found
       {
 	bool known_reaction_type = false;
-	assertAlways( known_reaction_type );
+	FACEMC_ASSERT_ALWAYS( known_reaction_type );
       }
       break;
     }
@@ -389,16 +386,15 @@ void PhotonDataProcessor::processEPDLFile()
   d_hdf5_file_handler.closeHDF5File();
 
   // Close the EPDL data file
-  fclose( epdl );
+  epdl.close();
 }
 
 //! Process EADL file 
 void PhotonDataProcessor::processEADLFile()
 {
   // EPDL file
-  FILE* eadl;
-  eadl = fopen( d_eadl_file_name.c_str() );
-  assertAlways( eadl );
+  std::ifstream eadl( "d_eadl_file_name", std::fstream::in );
+  FACEMC_ASSERT_ALWAYS( eadl );
 
   // Atomic number of element currently being processed
   int atomic_number = 0;
@@ -414,7 +410,7 @@ void PhotonDataProcessor::processEADLFile()
   int electron_shell = 0;
   
   // Process every element (Z=1-100) in the EPDL file
-  while( !feof(eadl) )
+  while( !eadl.eof() )
   {
     // Read first table header and determine which element is being processed
     readFirstTableHeader( eadl,
@@ -468,26 +464,25 @@ void PhotonDataProcessor::processEADLFile()
 	  data[i].value2 /= tmp_sum;
 	
 	// Create the Electron Shell Index Map
-	Teuchos::Array<int> electron_shell_index_map[2];      
+	Teuchos::Array<unsigned int> electron_shell_index_map[2];      
 	createElectronShellIndexMap( atomic_number,
 				     electron_shell_index_map );
 	
 	// Create the complete data array
-	Teuchos::Array<Trip<double,int,int> > complete_data;
-	Pair<double,int,int> data_point;
+	Teuchos::Array<Trip<double,unsigned int,unsigned int> > complete_data;
+	Trip<double,unsigned int,unsigned int> data_point;
 	
 	for( int i = 0; i < data.size(); ++i )
 	  {
 	    data_point.value1 = data[i].value2;
-	    data_point.value2 = static_cast<int>(data[i].value1);
+	    data_point.value2 = static_cast<unsigned int>(data[i].value1);
 	    data_point.value3 = electron_shell_index_map[1][i];
 	    
 	    complete_data.push_back( data_point );
 	  }
 	
-	d_hdf5_file_handler.writeArrayToDataSet<Pair<double,int,int> >( 
-									    complete_data,
-									    ELECTRON_SHELL_INDEX_MAP_LOC );
+	d_hdf5_file_handler.writeArrayToDataSet( complete_data,
+						 ELECTRON_SHELL_INDEX_MAP_LOC );
       }
       
       break;
@@ -500,13 +495,8 @@ void PhotonDataProcessor::processEADLFile()
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
 							      data );
 	
-	// Strip off shell identifiers
-	Teuchos::Array<double> simple_data;
-	for( int i = 0; i < data.size(); ++i )
-	  simple_data.push_back( data[i].value2 );
-	
-	d_hdf5_file_handler.writeArrayToDataSet<double>( simple_data,
-							 ELECTRON_SHELL_BINDING_ENERGY_LOC );
+	d_hdf5_file_handler.writeArrayToDataSet( data,
+						 ELECTRON_SHELL_BINDING_ENERGY_LOC );
       }
       
       break;
@@ -519,13 +509,8 @@ void PhotonDataProcessor::processEADLFile()
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
 							      data );
 	
-	// Strip off shell identifiers
-	Teuchos::Array<double> simple_data;
-	for( int i = 0; i < data.size(); ++i )
-	  simple_data.push_back( data[i].value2 );
-	
-	d_hdf5_file_handler.writeArrayToDataSet<double>( data,
-							 ELECTRON_SHELL_KINETIC_ENERGY_LOC );
+	d_hdf5_file_handler.writeArrayToDataSet( data,
+						 ELECTRON_SHELL_KINETIC_ENERGY_LOC );
       }
       
       break;
@@ -533,24 +518,23 @@ void PhotonDataProcessor::processEADLFile()
     case 92931:
       // Read radiative transition probability per subshell
       {
-	Teuchos::Array<Trip<int,double,double> > data;
+	Teuchos::Array<Trip<unsigned int,double,double> > data;
 	
 	readThreeColumnTable( eadl,
 			      data );
 	
 	// Calculate the total radiative transition probability for
 	// this subshell
-	Teuchos::Array<double> total_radiative_trans_prob(1, 0.0);
-	for( int i = 0; i < data[0].size(); ++i )
-	  total_radiative_trans_prob[0] += data[i].value2;
+	double total_radiative_trans_prob = 0.0;
+	for( int i = 0; i < data.size(); ++i )
+	  total_radiative_trans_prob += data[i].value2;
 	
-	d_hdf5_file_handler.writeArrayToGroupAttribute<double>( total_radiative_trans_prob,
-								RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ),
-								"Total_Radiative_Transition_Probability" );
+	d_hdf5_file_handler.writeValueToGroupAttribute( total_radiative_trans_prob,
+							RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ),
+							"Total_Radiative_Transition_Probability" );
 	
-	d_hdf5_file_handler.writeArrayToDataSet<Trip<int,double,double> >( 
-									data,
-									RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ) );
+	d_hdf5_file_handler.writeArrayToDataSet( data,
+						 RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ) );
       }
       
       break;
@@ -558,14 +542,13 @@ void PhotonDataProcessor::processEADLFile()
     case 92932:
       // Read nonradiative transition probability per subshell
       {
-	Teuchos::Array<Quad<int,int,double,double> > data;
+	Teuchos::Array<Quad<unsigned int,unsigned int,double,double> > data;
 	
 	readFourColumnTable( eadl,
 			     data );
 	
-	d_hdf5_file_handler.writeArrayToDataSet<Quad<int,int,double,double>(
-								       data,
-								       NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ) );
+	d_hdf5_file_handler.writeArrayToDataSet( data,
+						 NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ) );
       }
       
       break;
@@ -650,7 +633,7 @@ void PhotonDataProcessor::processEADLFile()
       // Unknown reaction type found
       {
 	bool known_reaction_type = false;
-	assertAlways( known_reaction_type );
+        FACEMC_ASSERT_ALWAYS( known_reaction_type );
       }
       
       break;
@@ -661,7 +644,7 @@ void PhotonDataProcessor::processEADLFile()
   d_hdf5_file_handler.closeHDF5File();
 
   // Close the EPDL data file
-  fclose( epdl );
+  eadl.close();
 }
 
 //! Process Compton files
@@ -707,19 +690,19 @@ void PhotonDataProcessor::processComptonFiles()
   for( int atomic_number = 1; atomic_number <= 100; ++atomic_number )
   {
     std::ostringstream file_number << atomic_number;
-    file_id = openHDF5FileAndAppend( PHOTON_DATA_FILE_PREFIX + 
-				       file_number.str() + 
-				       DATA_FILE_PREFIX );
+    d_hdf5_file_handler.openHDF5FileAndAppend( PHOTON_DATA_FILE_PREFIX + 
+					       file_number.str() + 
+					       DATA_FILE_PREFIX );
     
     compton_file_name = d_compton_file_prefix + file_number.str() + ".dat";
     compton_file_stream.open( compton_file_name.c_str() );
-    assertAlways( compton_file_stream.is_open() );
+    FACEMC_ASSERT_ALWAYS( compton_file_stream.is_open() );
 
     Teuchos::Array<double> compton_profile_cdfs;
     while( !comton_file_stream.eof() )
     {
       //each block of data has 31 evaluated data points
-      Teuchos::Array<double> data(31, 0.0);
+      Teuchos::Array<double> data( 31, 0.0 );
       double data_point;
       for( int i = 0; i < 31; ++i )
       {
@@ -757,8 +740,8 @@ void PhotonDataProcessor::processComptonFiles()
       
     }
 
-    d_hdf5_file_handler.writeArrayToDataSet<double>( compton_profile_cdfs,
-						     COMPTON_PROFILE_CDF_LOC );
+    d_hdf5_file_handler.writeArrayToDataSet( compton_profile_cdfs,
+					     COMPTON_PROFILE_CDF_LOC );
     // Close the Compton Profile stream
     compton_profile_stream.close();
 
@@ -768,49 +751,55 @@ void PhotonDataProcessor::processComptonFiles()
 }
 
 //! Create the Electron Shell Index Map
-void PhotonDataProcessor::createElectronShellIndexMap( int atomic_number,
-						       Teuchos::Array<int>
-						       map[2] )
+void PhotonDataProcessor::createElectronShellIndexMap( 
+			       unsigned int atomic_number,
+			       Teuchos::Array<Pair<unsigned int,unsigned int> >
+			         &map )
 {
+  Pair<unsigned int, unsigned int> data_point
   // Non-Relativistic profiles are given for atomic numbers < 36
   if( atomic_number < 36 )
   {
     // Z = 1 or 2
-    map[0].push_back( 1 );
-    
-    map[1].push_back( 0 );
+    data_point.first = 1;
+    data_point.second = 0;
+    map.push_back( data_point );
     
     // Z = 3 or 4
     if( atomic_number > 2 )
     {
-      map[0].push_back( 3 );
-      
-      map[1].push_back( 1 );
+      data_point.first = 3;    
+      data_point.second = 1;
+      map.push_back( data_point );
     }  
     // Z = 5, 6, 7, 8, 9 or 10
     if( atomic_number > 4 )
     {
-      map[0].push_back( 5 );
-      map[0].push_back( 6 );
-
-      map[1].push_back( 2 );
-      map[1].push_back( 2 );
+      data_point.first = 5;
+      data_point.second = 2;
+      map.push_back( data_point );
+      
+      data_point.first = 6;
+      data_point.second = 2;
+      map.push_back( data_point );
     }
     // Z = 11 or 12
     if( atomic_number > 10 )
     {
-      map[0].push_back( 8 );
-    
-      map[1].push_back( 3 );
+      data_point.first = 8;
+      data_point.second = 3;
+      map.push_back( data_point );
     }
     // Z = 13, 14, 15, 16, 17, 18
     if( atomic_number > 12 )
     {
-      map[0].push_back( 10 );
-      map[0].push_back( 11 );
-
-      map[1].push_back( 4 );
-      map[1].push_back( 4 );
+      data_point.first = 10;
+      data_point.second = 4;
+      map.push_back( data_point );
+      
+      data_point.first = 11;
+      data_point.second = 4;
+      map.push_back( data_point );
     }
     
     // Filling order changes for Z=19 and 20 (4s1/2 before 3d)
@@ -818,80 +807,112 @@ void PhotonDataProcessor::createElectronShellIndexMap( int atomic_number,
     if( atomic_number == 19 ||
 	atomic_number == 20 )
     {
-      map[0].push_back( 16 );
-      
-      map[1].push_back( 5 );
+      data_point.first = 16;
+      data_point.second = 5;
+      map.push_back( data_point );
     }
     // Z = 20, 21, 22, 23, 24, 25, 26, 27, 28, 29 or 30
     if( atomic_number > 20 )
     {
-      map[0].push_back( 13 );
-      map[0].push_back( 14 );
-      map[0].push_back( 16 );
+      data_point.first = 13;
+      data_point.second = 5;
+      map.push_back( data_point );
       
-      map[1].push_back( 5 );
-      map[1].push_back( 5 );
-      map[1].push_back( 6 );
+      data_point.first = 14;
+      data_point.second = 5;
+      map.push_back( data_point );
+      
+      data_point.first = 16;
+      data_point.second = 6;
+      map.push_back( data_point );
     }
     // Z = 31, 32, 33, 34, 35
     if( atomic_number > 30 )
     {
-      map[0].push_back( 18 );
-      map[0].push_back( 19 );
-
-      map[1].push_back( 7 );
-      map[1].push_back( 7 );
+      data_point.first = 18;
+      data_point.second = 7;
+      map.push_back( data_point );
+      
+      data_point.first = 19;
+      data_point.second = 7;
+      map.push_back( data_point );
     }
   }
   // Relativistic profiles are given for atomic numbers >= 36
   else
   {
-    map[0].push_back( 1 );
-    map[0].push_back( 3 );
-    map[0].push_back( 5 );
-    map[0].push_back( 6 );
-    map[0].push_back( 8 );
-    map[0].push_back( 10 );
-    map[0].push_back( 11 );
-    map[0].push_back( 13 );
-    map[0].push_back( 14 );
-    map[0].push_back( 16 );
-    map[0].push_back( 18 );
-    map[0].push_back( 19 );
-
-    map[1].push_back( 0 );
-    map[1].push_back( 1 );
-    map[1].push_back( 2 );
-    map[1].push_back( 3 );
-    map[1].push_back( 4 );
-    map[1].push_back( 5 );
-    map[1].push_back( 6 );
-    map[1].push_back( 7 );
-    map[1].push_back( 8 );
-    map[1].push_back( 9 );
-    map[1].push_back( 10 );
-    map[1].push_back( 11 );
+    data_point.first = 1;
+    data_point.second = 0;
+    map.push_back( data_point );
+    
+    data_point.first = 3;
+    data_point.second = 1;
+    map.push_back( data_point );
+    
+    data_point.first = 5;
+    data_point.second = 2;
+    map.push_back( data_point );
+    
+    data_point.first = 6;
+    data_point.second = 3;
+    map.push_back( data_point );
+    
+    data_point.first = 8;
+    data_point.second = 4;
+    map.push_back( data_point );
+    
+    data_point.first = 10;
+    data_point.second = 5;
+    map.push_back( data_point );
+    
+    data_point.first = 11;
+    data_point.second = 6;
+    map.push_back( data_point );
+    
+    data_point.first = 13;
+    data_point.second = 7;
+    map.push_back( data_point );
+    
+    data_point.first = 14;
+    data_point.second = 8;
+    map.push_back( data_point );
+    
+    data_point.first = 16;
+    data_point.second = 9;
+    map.push_back( data_point );
+    
+    data_point.first = 18;
+    data_point.second = 10;
+    map.push_back( data_point );
+    
+    data_point.first = 19;
+    data_point.second = 11;
+    map.push_back( data_point );
     
     // Filling order changes for Z=37 and 38 (5s1/2 before 4d)
     // Need to keep shell indices monotonically increasing 
     if( atomic_number == 37 ||
 	atomic_number == 38 )
     {
-      map[0].push_back( 27 );
-      
-      map[1].push_back( 12 );
+      data_point.first = 27; 
+      data_point.second = 12;
+      map.push_back( data_point );
     }
     else if( atomic_number == 39 ||
 	     atomic_number == 40 ||
 	     atomic_number == 41 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 27 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 13;
+      map.push_back( data_point );
     }
     else if( atomic_number == 42 ||
 	     atomic_number == 43 ||
@@ -900,133 +921,207 @@ void PhotonDataProcessor::createElectronShellIndexMap( int atomic_number,
 	     atomic_number == 47 ||
 	     atomic_number == 48 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 27 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 14;
+      map.push_back( data_point );
     }
     else if( atomic_number == 46 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
     }
     else if( atomic_number == 49 ||
 	     atomic_number == 50 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 15 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 15;
+      map.push_back( data_point );
     }
     else if( atomic_number == 51 ||
 	     atomic_number == 52 ||
 	     atomic_number == 53 ||
 	     atomic_number == 54 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 16;
+      map.push_back( data_point );
     }
     else if( atomic_number == 55 ||
 	     atomic_number == 56 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 41 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 17;
+      map.push_back( data_point );
     }
     else if( atomic_number == 57 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 32 );
-      map[0].push_back( 33 );
-      map[0].push_back( 41 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 32;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 33;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 18;
+      map.push_back( data_point );
     }
     else if( atomic_number == 58 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 41 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 19 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 19;
+      map.push_back( data_point );
     }
     else if( atomic_number == 59 ||
 	     atomic_number == 60 ||
 	     atomic_number == 61 ||
 	     atomic_number == 62 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 41 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 18;
+      map.push_back( data_point );
     }
     else if( atomic_number == 63 ||
 	     atomic_number == 65 ||
@@ -1036,23 +1131,37 @@ void PhotonDataProcessor::createElectronShellIndexMap( int atomic_number,
 	     atomic_number == 69 ||
 	     atomic_number == 70 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 41 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
-      map[1].push_back( 19 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 18;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 19;
+      map.push_back( data_point );
     }
     else if( atomic_number == 64 ||
 	     atomic_number == 71 ||
@@ -1060,27 +1169,45 @@ void PhotonDataProcessor::createElectronShellIndexMap( int atomic_number,
 	     atomic_number == 73 ||
 	     atomic_number == 74 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 32 );
-      map[0].push_back( 33 );
-      map[0].push_back( 41 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
-      map[1].push_back( 19 );
-      map[1].push_back( 19 );
-      map[1].push_back( 20 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 18;
+      map.push_back( data_point );
+      
+      data_point.first = 32;
+      data_point.second = 19;
+      map.push_back( data_point );
+      
+      data_point.first = 33;
+      data_point.second = 19;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 20;
+      map.push_back( data_point );
     }
     else if( atomic_number == 75 ||
 	     atomic_number == 76 ||
@@ -1088,363 +1215,629 @@ void PhotonDataProcessor::createElectronShellIndexMap( int atomic_number,
 	     atomic_number == 79 ||
 	     atomic_number == 80 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 32 );
-      map[0].push_back( 33 );
-      map[0].push_back( 41 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
-      map[1].push_back( 19 );
-      map[1].push_back( 20 );
-      map[1].push_back( 21 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 18;
+      map.push_back( data_point );
+      
+      data_point.first = 32;
+      data_point.second = 19;
+      map.push_back( data_point );
+      
+      data_point.first = 33;
+      data_point.second = 20;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 21;
+      map.push_back( data_point );
     }
     else if( atomic_number == 77 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 32 );
-      map[0].push_back( 33 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
-      map[1].push_back( 19 );
-      map[1].push_back( 20 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 18;
+      map.push_back( data_point );
+      
+      data_point.first = 32;
+      data_point.second = 19;
+      map.push_back( data_point );
+      
+      data_point.first = 33;
+      data_point.second = 20;
+      map.push_back( data_point );
     }
     else if( atomic_number == 81 ||
 	     atomic_number == 82 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 32 );
-      map[0].push_back( 33 );
-      map[0].push_back( 41 );
-      map[0].push_back( 43 );
-      map[0].push_back( 44 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
-      map[1].push_back( 19 );
-      map[1].push_back( 20 );
-      map[1].push_back( 21 );
-      map[1].push_back( 22 );
-      map[1].push_back( 22 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 18;
+      map.push_back( data_point );
+      
+      data_point.first = 32;
+      data_point.second = 19;
+      map.push_back( data_point );
+      
+      data_point.first = 33;
+      data_point.second = 20;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 21;
+      map.push_back( data_point );
+      
+      data_point.first = 43;
+      data_point.second = 22;
+      map.push_back( data_point );
+      
+      data_point.first = 44;
+      data_point.second = 22;
+      map.push_back( data_point );
     }
     else if( atomic_number == 83 ||
 	     atomic_number == 84 ||
 	     atomic_number == 85 ||
 	     atomic_number == 86 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 32 );
-      map[0].push_back( 33 );
-      map[0].push_back( 41 );
-      map[0].push_back( 43 );
-      map[0].push_back( 44 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
-      map[1].push_back( 19 );
-      map[1].push_back( 20 );
-      map[1].push_back( 21 );
-      map[1].push_back( 22 );
-      map[1].push_back( 23 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 18;
+      map.push_back( data_point );
+      
+      data_point.first = 32;
+      data_point.second = 19;
+      map.push_back( data_point );
+      
+      data_point.first = 33;
+      data_point.second = 20;
+      map.push_back( data_point );
+     
+      data_point.first = 41;
+      data_point.second = 21;
+      map.push_back( data_point );
+      
+      data_point.first = 43;
+      data_point.second = 22;
+      map.push_back( data_point );
+      
+      data_point.first = 44;
+      data_point.second = 23;
+      map.push_back( data_point );
     }
     else if( atomic_number == 87 ||
 	     atomic_number == 88 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 32 );
-      map[0].push_back( 33 );
-      map[0].push_back( 41 );
-      map[0].push_back( 43 );
-      map[0].push_back( 44 );
-      map[0].push_back( 58 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
-      map[1].push_back( 19 );
-      map[1].push_back( 20 );
-      map[1].push_back( 21 );
-      map[1].push_back( 22 );
-      map[1].push_back( 23 );
-      map[1].push_back( 24 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 18;
+      map.push_back( data_point );
+      
+      data_point.first = 32;
+      data_point.second = 19;
+      map.push_back( data_point );
+      
+      data_point.first = 33;
+      data_point.second = 20;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 21;
+      map.push_back( data_point );
+      
+      data_point.first = 43;
+      data_point.second = 22;
+      map.push_back( data_point );
+      
+      data_point.first = 44;
+      data_point.second = 23;
+      map.push_back( data_point );
+      
+      data_point.first = 58;
+      data_point.second = 24;
+      map.push_back( data_point );
     }
     else if( atomic_number == 89 ||
 	     atomic_number == 90 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 32 );
-      map[0].push_back( 33 );
-      map[0].push_back( 41 );
-      map[0].push_back( 43 );
-      map[0].push_back( 44 );
-      map[0].push_back( 46 );
-      map[0].push_back( 47 );
-      map[0].push_back( 58 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
-      map[1].push_back( 19 );
-      map[1].push_back( 20 );
-      map[1].push_back( 21 );
-      map[1].push_back( 22 );
-      map[1].push_back( 23 );
-      map[1].push_back( 24 );
-      map[1].push_back( 24 );
-      map[1].push_back( 25 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 18;
+      map.push_back( data_point );
+      
+      data_point.first = 32;
+      data_point.second = 19;
+      map.push_back( data_point );
+      
+      data_point.first = 33;
+      data_point.second = 20;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 21;
+      map.push_back( data_point );
+      
+      data_point.first = 43;
+      data_point.second = 22;
+      map.push_back( data_point );
+      
+      data_point.first = 44;
+      data_point.second = 23;
+      map.push_back( data_point );
+      
+      data_point.first = 46;
+      data_point.second = 24;
+      map.push_back( data_point );
+      
+      data_point.first = 47;
+      data_point.second = 24;
+      map.push_back( data_point );
+      
+      data_point.first = 58;
+      data_point.second = 25;
+      map.push_back( data_point );
     }
     else if( atomic_number == 91 ||
 	     atomic_number == 92 ||
 	     atomic_number == 93 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 32 );
-      map[0].push_back( 33 );
-      map[0].push_back( 35 );
-      map[0].push_back( 36 );
-      map[0].push_back( 41 );
-      map[0].push_back( 43 );
-      map[0].push_back( 44 );
-      map[0].push_back( 46 );
-      map[0].push_back( 47 );
-      map[0].push_back( 58 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
-      map[1].push_back( 19 );
-      map[1].push_back( 20 );
-      map[1].push_back( 21 );
-      map[1].push_back( 21 );
-      map[1].push_back( 22 );
-      map[1].push_back( 23 );
-      map[1].push_back( 24 );
-      map[1].push_back( 25 );
-      map[1].push_back( 25 );
-      map[1].push_back( 26 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 18;
+      map.push_back( data_point );
+      
+      data_point.first = 32;
+      data_point.second = 19;
+      map.push_back( data_point );
+      
+      data_point.first = 33;
+      data_point.second = 20;
+      map.push_back( data_point );
+      
+      data_point.first = 35;
+      data_point.second = 21;
+      map.push_back( data_point );
+      
+      data_point.first = 36;
+      data_point.second = 21;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 22;
+      map.push_back( data_point );
+      
+      data_point.first = 43;
+      data_point.second = 23;
+      map.push_back( data_point );
+      
+      data_point.first = 44;
+      data_point.second = 24;
+      map.push_back( data_point );
+      
+      data_point.first = 46;
+      data_point.second = 25;
+      map.push_back( data_point );
+      
+      data_point.first = 47;
+      data_point.second = 25;
+      map.push_back( data_point );
+      
+      data_point.first = 58;
+      data_point.second = 26;
+      map.push_back( data_point );
     }
     else if( atomic_number == 94 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 32 );
-      map[0].push_back( 33 );
-      map[0].push_back( 35 );
-      map[0].push_back( 36 );
-      map[0].push_back( 41 );
-      map[0].push_back( 43 );
-      map[0].push_back( 44 );
-      map[0].push_back( 58 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
-      map[1].push_back( 19 );
-      map[1].push_back( 20 );
-      map[1].push_back( 21 );
-      map[1].push_back( 21 );
-      map[1].push_back( 22 );
-      map[1].push_back( 23 );
-      map[1].push_back( 24 );
-      map[1].push_back( 25 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 18;
+      map.push_back( data_point );
+      
+      data_point.first = 32;
+      data_point.second = 19;
+      map.push_back( data_point );
+      
+      data_point.first = 33;
+      data_point.second = 20;
+      map.push_back( data_point );
+      
+      data_point.first = 35;
+      data_point.second = 21;
+      map.push_back( data_point );
+      
+      data_point.first = 36;
+      data_point.second = 21;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 22;
+      map.push_back( data_point );
+      
+      data_point.first = 43;
+      data_point.second = 23;
+      map.push_back( data_point );
+      
+      data_point.first = 44;
+      data_point.second = 24;
+      map.push_back( data_point );
+      
+      data_point.first = 58;
+      data_point.second = 25;
+      map.push_back( data_point );
     }
     else if( atomic_number == 95 ||
 	     atomic_number == 98 ||
 	     atomic_number == 99 ||
 	     atomic_number == 100 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 32 );
-      map[0].push_back( 33 );
-      map[0].push_back( 35 );
-      map[0].push_back( 36 );
-      map[0].push_back( 41 );
-      map[0].push_back( 43 );
-      map[0].push_back( 44 );
-      map[0].push_back( 58 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
-      map[1].push_back( 19 );
-      map[1].push_back( 20 );
-      map[1].push_back( 21 );
-      map[1].push_back( 22 );
-      map[1].push_back( 23 );
-      map[1].push_back( 24 );
-      map[1].push_back( 25 );
-      map[1].push_back( 26 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 18;
+      map.push_back( data_point );
+      
+      data_point.first = 32;
+      data_point.second = 19;
+      map.push_back( data_point );
+      
+      data_point.first = 33;
+      data_point.second = 20;
+      map.push_back( data_point );
+      
+      data_point.first = 35;
+      data_point.second = 21;
+      map.push_back( data_point );
+      
+      data_point.first = 36;
+      data_point.second = 22;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 23;
+      map.push_back( data_point );
+      
+      data_point.first = 43;
+      data_point.second = 24;
+      map.push_back( data_point );
+      
+      data_point.first = 44;
+      data_point.second = 25;
+      map.push_back( data_point );
+      
+      data_point.first = 58;
+      data_point.second = 26;
+      map.push_back( data_point );
     }
     else if( atomic_number == 96 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 32 );
-      map[0].push_back( 33 );
-      map[0].push_back( 35 );
-      map[0].push_back( 36 );
-      map[0].push_back( 41 );
-      map[0].push_back( 43 );
-      map[0].push_back( 44 );
-      map[0].push_back( 46 );
-      map[0].push_back( 47 );
-      map[0].push_back( 58 );
-
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
-      map[1].push_back( 19 );
-      map[1].push_back( 20 );
-      map[1].push_back( 21 );
-      map[1].push_back( 22 );
-      map[1].push_back( 23 );
-      map[1].push_back( 24 );
-      map[1].push_back( 25 );
-      map[1].push_back( 26 );
-      map[1].push_back( 26 );
-      map[1].push_back( 27 );
+      data_point.first = 21;
+      data_point.second = 12;
+      map.push_back( data_point );
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      map.push_back( data_point );
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      map.push_back( data_point );
+      
+      data_point.first = 25;
+      data_point.second = 15;
+      map.push_back( data_point );
+      
+      data_point.first = 27;
+      data_point.second = 16;
+      map.push_back( data_point );
+      
+      data_point.first = 29;
+      data_point.second = 17;
+      map.push_back( data_point );
+      
+      data_point.first = 30;
+      data_point.second = 18;
+      map.push_back( data_point );
+      
+      data_point.first = 32;
+      data_point.second = 19;
+      map.push_back( data_point );
+      
+      data_point.first = 33;
+      data_point.second = 20;
+      map.push_back( data_point );
+      
+      data_point.first = 35;
+      data_point.second = 21;
+      map.push_back( data_point );
+      
+      data_point.first = 36;
+      data_point.second = 22;
+      map.push_back( data_point );
+      
+      data_point.first = 41;
+      data_point.second = 23;
+      map.push_back( data_point );
+      
+      data_point.first = 43;
+      data_point.second = 24;
+      map.push_back( data_point );
+      
+      data_point.first = 44;
+      data_point.second = 25;
+      map.push_back( data_point );
+      
+      data_point.first = 46;
+      data_point.second = 26;
+      map.push_back( data_point );
+      
+      data_point.first = 47;
+      data_point.second = 26;
+      map.push_back( data_point );
+      
+      data_point.first = 58;
+      data_point.second = 27;
+      map.push_back( data_point );
     }
     // WARNING: No Hartree-Fock Compton Profile data for 6d3/2 or 6d5/2
     // map these shells to the 6p+ shell for now...
     else if( atomic_number == 97 )
     {
-      map[0].push_back( 21 );
-      map[0].push_back( 22 );
-      map[0].push_back( 24 );
-      map[0].push_back( 25 );
-      map[0].push_back( 27 );
-      map[0].push_back( 29 );
-      map[0].push_back( 30 );
-      map[0].push_back( 32 );
-      map[0].push_back( 33 );
-      map[0].push_back( 35 );
-      map[0].push_back( 36 );
-      map[0].push_back( 41 );
-      map[0].push_back( 43 );
-      map[0].push_back( 44 );
-      map[0].push_back( 46 );
-      map[0].push_back( 47 );
-      map[0].push_back( 58 );
+      data_point.first = 21;
+      data_point.second = 12;
+      
+      data_point.first = 22;
+      data_point.second = 13;
+      
+      data_point.first = 24;
+      data_point.second = 14;
+      
+      data_point.first = 25;
+      data_point.second = 15;
+      
+      data_point.first = 27;
+      data_point.second = 16;
+      
+      data_point.first = 29;
+      data_point.second = 17;
+      
+      data_point.first = 30;
+      data_point.second = 18;
+      
+      data_point.first = 32;
+      data_point.second = 19;
+      
+      data_point.first = 33;
+      data_point.second = 20;
+      
+      data_point.first = 35;
+      data_point.second = 21;
+      
+      data_point.first = 36;
+      data_point.second = 22;
+      
+      data_point.first = 41;
+      data_point.second = 23;
+      
+      data_point.first = 43;
+      data_point.second = 24;
+      
+      data_point.first = 44;
+      data_point.second = 25;
+      
+      data_point.first = 46;
+      data_point.second = 25;
 
-      map[1].push_back( 12 );
-      map[1].push_back( 13 );
-      map[1].push_back( 14 );
-      map[1].push_back( 15 );
-      map[1].push_back( 16 );
-      map[1].push_back( 17 );
-      map[1].push_back( 18 );
-      map[1].push_back( 19 );
-      map[1].push_back( 20 );
-      map[1].push_back( 21 );
-      map[1].push_back( 22 );
-      map[1].push_back( 23 );
-      map[1].push_back( 24 );
-      map[1].push_back( 25 );
-      map[1].push_back( 25 );
-      map[1].push_back( 26 );
+      data_point.first = 47;
+      data_point.second = 25;
+      
+      data_point.first = 58;
+      data_point.second = 26;
     }
   }
 }

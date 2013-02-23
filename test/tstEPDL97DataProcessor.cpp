@@ -256,9 +256,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, first_table_header_read_test )
 
   // Close the test header file
   test_headerfile.close();
-
-  // Close the test header file
-  test_headerfile.close();
 }
 
 //---------------------------------------------------------------------------//
@@ -292,9 +289,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, second_table_header_read_test )
   std::getline( test_headerfile, eof );
 
   TEST_EQUALITY_CONST( eof.size(), 0 );
-
-  // Close the test header file
-  test_headerfile.close();
 
   // Close the test header file
   test_headerfile.close();

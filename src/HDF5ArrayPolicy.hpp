@@ -1,11 +1,11 @@
 //---------------------------------------------------------------------------//
-// \file   HDF5ArrayTraits.hpp
+// \file   HDF5ArrayPolicy.hpp
 // \author Alex Robinson
-// \brief  HDF5 Array Traits specializations
+// \brief  HDF5 Array Policy specializations
 //---------------------------------------------------------------------------//
 
-#ifndef HDF5_ARRAY_TRAITS_HPP
-#define HDF5_ARRAY_TRAITS_HPP
+#ifndef HDF5_ARRAY_POLICY_HPP
+#define HDF5_ARRAY_POLICY_HPP
 
 // Std Lib Includes
 #include <vector>
@@ -17,14 +17,14 @@
 #include <Teuchos_TwoDArray.hpp>
 
 // FACEMC Includes
-#include "HDF5ArrayTraitsDecl.hpp"
+#include "HDF5ArrayPolicyDecl.hpp"
 #include "FACEMC_Assertion.hpp"
 
 
 namespace FACEMC{
 
 template<typename T>
-struct HDF5ArrayTraits<T,Teuchos::Array>
+struct HDF5ArrayPolicy<T,Teuchos::Array>
 {
   static inline T* getRawPtr(Teuchos::Array<T> &array) { return array.getRawPtr(); }
   static inline const T* getRawPtr(const Teuchos::Array<T> &array) { return array.getRawPtr(); }
@@ -33,7 +33,7 @@ struct HDF5ArrayTraits<T,Teuchos::Array>
 };
 
 template<typename T>
-struct HDF5ArrayTraits<T,Teuchos::ArrayRCP>
+struct HDF5ArrayPolicy<T,Teuchos::ArrayRCP>
 {
   static inline T* getRawPtr(Teuchos::ArrayRCP<T> &array) { return array.getRawPtr(); }
   static inline const T* getRawPtr(const Teuchos::ArrayRCP<T> &array) { return array.getRawPtr(); }
@@ -42,7 +42,7 @@ struct HDF5ArrayTraits<T,Teuchos::ArrayRCP>
 };
 
 template<typename T>
-struct HDF5ArrayTraits<T,Teuchos::ArrayView>
+struct HDF5ArrayPolicy<T,Teuchos::ArrayView>
 {
   static inline T* getRawPtr(Teuchos::ArrayView<T> &array) { return array.getRawPtr(); }
   static inline const T* getRawPtr(const Teuchos::ArrayView<T> &array) { return array.getRawPtr(); }
@@ -51,7 +51,7 @@ struct HDF5ArrayTraits<T,Teuchos::ArrayView>
 };
 
 template<typename T>
-struct HDF5ArrayTraits<T,Teuchos::TwoDArray>
+struct HDF5ArrayPolicy<T,Teuchos::TwoDArray>
 {
   static inline T* getRawPtr(Teuchos::TwoDArray<T> &array) { return array[0].getRawPtr(); }
   static inline const T* getRawPtr(const Teuchos::TwoDArray<T> &array) { return array.getDataArray().getRawPtr(); }
@@ -66,8 +66,8 @@ struct HDF5ArrayTraits<T,Teuchos::TwoDArray>
 
 } // end FACEMC namespace
 
-#endif // end HDF5_ARRAY_TRAITS_HPP
+#endif // end HDF5_ARRAY_POLICY_HPP
 
 //---------------------------------------------------------------------------//
-// end HDF5ArrayTraits.hpp
+// end HDF5ArrayPolicy.hpp
 //---------------------------------------------------------------------------//

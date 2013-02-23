@@ -21,7 +21,7 @@
 
 // FACEMC includes
 #include "HDF5TypeTraits.hpp"
-#include "HDF5ArrayTraits.hpp"
+#include "HDF5ArrayPolicy.hpp"
 #include "HDF5ExceptionCatchMacro.hpp"
 #include "FACEMC_Assertion.hpp"
 
@@ -43,13 +43,13 @@ void HDF5FileHandler::writeArrayToDataSet( const Array<T> &data,
   // dataset
   try
   {
-    hsize_t dim = HDF5ArrayTraits<T,Array>::size(data);
+    hsize_t dim = HDF5ArrayPolicy<T,Array>::size(data);
     H5::DataSpace space( 1, &dim );
     H5::DataSet dataset(d_hdf5_file->createDataSet( 
 						 location_in_file,
 						 HDF5TypeTraits<T>::dataType(),
 						 space ) );
-    dataset.write( HDF5ArrayTraits<T,Array>::getRawPtr(data), 
+    dataset.write( HDF5ArrayPolicy<T,Array>::getRawPtr(data), 
 		   HDF5TypeTraits<T>::dataType() );
   }
   
@@ -85,10 +85,10 @@ void HDF5FileHandler::readArrayFromDataSet( Array<T> &data,
     for( unsigned int i = 1; i < rank; ++i )
       size *= dims[i];
     
-    HDF5ArrayTraits<T,Array>::resize( data, size );
+    HDF5ArrayPolicy<T,Array>::resize( data, size );
     
     // Read the data in the dataset and save it to the output array
-    dataset.read( HDF5ArrayTraits<T,Array>::getRawPtr(data),
+    dataset.read( HDF5ArrayPolicy<T,Array>::getRawPtr(data),
 		  HDF5TypeTraits<T>::dataType() );
   }
   
@@ -112,7 +112,7 @@ void HDF5FileHandler::writeArrayToDataSetAttribute( const Array<T> &data,
   // or writing an attribute to a group
   try
   {
-    hsize_t dim = HDF5ArrayTraits<T,Array>::size(data);
+    hsize_t dim = HDF5ArrayPolicy<T,Array>::size(data);
     H5::DataSpace space( 1, &dim );
     H5::DataSet dataset(d_hdf5_file->openDataSet( dataset_location ) ); 
     H5::Attribute attribute(dataset.createAttribute( 
@@ -121,7 +121,7 @@ void HDF5FileHandler::writeArrayToDataSetAttribute( const Array<T> &data,
 					  space ) );
     
     attribute.write( HDF5TypeTraits<T>::dataType(),
-		     HDF5ArrayTraits<T,Array>::getRawPtr(data) );  
+		     HDF5ArrayPolicy<T,Array>::getRawPtr(data) );  
   }
 
   HDF5_EXCEPTION_CATCH_AND_EXIT();
@@ -163,11 +163,11 @@ void HDF5FileHandler::readArrayFromDataSetAttribute( Array<T> &data,
     for( unsigned int i = 1; i < rank; ++i )
       size *= dims[i];
     
-    HDF5ArrayTraits<T,Array>::resize( data, size );
+    HDF5ArrayPolicy<T,Array>::resize( data, size );
     
     // Read the data in the dataset and save it to the output array
     attribute.read( HDF5TypeTraits<T>::dataType(),
-		    HDF5ArrayTraits<T,Array>::getRawPtr(data) );
+		    HDF5ArrayPolicy<T,Array>::getRawPtr(data) );
   }
   
   HDF5_EXCEPTION_CATCH_AND_EXIT();
@@ -263,7 +263,7 @@ void HDF5FileHandler::writeArrayToGroupAttribute( const Array<T> &data,
   // or writing an attribute to a group
   try
   {
-    hsize_t dim = HDF5ArrayTraits<T,Array>::size(data);
+    hsize_t dim = HDF5ArrayPolicy<T,Array>::size(data);
     H5::DataSpace space( 1, &dim );
     H5::Group group(d_hdf5_file->openGroup( group_location ) ); 
     H5::Attribute attribute(group.createAttribute( 
@@ -272,7 +272,7 @@ void HDF5FileHandler::writeArrayToGroupAttribute( const Array<T> &data,
 					  space ) );
     
     attribute.write( HDF5TypeTraits<T>::dataType(),
-		     HDF5ArrayTraits<T,Array>::getRawPtr(data) );  
+		     HDF5ArrayPolicy<T,Array>::getRawPtr(data) );  
   }
 
   HDF5_EXCEPTION_CATCH_AND_EXIT();
@@ -314,11 +314,11 @@ void HDF5FileHandler::readArrayFromGroupAttribute( Array<T> &data,
     for( unsigned int i = 1; i < rank; ++i )
       size *= dims[i];
     
-    HDF5ArrayTraits<T,Array>::resize( data, size );
+    HDF5ArrayPolicy<T,Array>::resize( data, size );
     
     // Read the data in the dataset and save it to the output array
     attribute.read( HDF5TypeTraits<T>::dataType(),
-		    HDF5ArrayTraits<T,Array>::getRawPtr(data) );
+		    HDF5ArrayPolicy<T,Array>::getRawPtr(data) );
   }
   
   HDF5_EXCEPTION_CATCH_AND_EXIT();
