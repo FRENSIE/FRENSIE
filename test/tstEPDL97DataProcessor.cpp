@@ -17,6 +17,17 @@
 
 // FACEMC Includes
 #include "EPDL97DataProcessor.hpp"
+#include "TestingHelperFunctions.hpp"
+
+//---------------------------------------------------------------------------//
+// Test File Names.
+//---------------------------------------------------------------------------//
+#define FIRST_HEADER_TEST_FILE "test_first_header.txt"
+#define SECOND_HEADER_TEST_FILE "test_second_header.txt"
+#define FULL_HEADER_TEST_FILE "test_full_header.txt"
+#define TWO_COLUMN_TABLE_TEST_FILE "test_two_column_table.txt"
+#define THREE_COLUMN_TABLE_TEST_FILE "test_three_column_table.txt"
+#define FOUR_COLUMN_TABLE_TEST_FILE "test_four_column_table.txt"
 
 //---------------------------------------------------------------------------//
 // Testing Stucts.
@@ -48,68 +59,6 @@ public:
   using FACEMC::EPDL97DataProcessor::LogLinearDataProcessingPolicy;
   using FACEMC::EPDL97DataProcessor::LinearLinearDataProcessingPolicy;
 };  
-
-//---------------------------------------------------------------------------//
-// Helper Functions.
-//---------------------------------------------------------------------------//
-namespace Teuchos{
-
-// Stream operator for Tuple
-// this must be defined in the Teuchos namespace to work properly with the
-// Teuchos Unit Test Harness.
-template<typename T1, typename T2>
-std::ostream& operator<<(std::ostream &out, const FACEMC::Pair<T1,T2> &p)
-{
-  out << "{ " << p.first << ", " << p.second << " }";
-  return out;
-}
-
-template<typename T1, typename T2, typename T3>
-std::ostream& operator<<(std::ostream &out, const FACEMC::Trip<T1,T2,T3> &p)
-{
-  out << "{ " << p.first << ", " << p.second << ", " << p.third << " }";
-  return out;
-}
-
-template<typename T1, typename T2, typename T3, typename T4>
-std::ostream& operator<<(std::ostream &out, const FACEMC::Quad<T1,T2,T3,T4> &p)
-{
-  out << "{ " << p.first << ", " << p.second << ", " << p.third 
-      << ", " << p.fourth << " }";
-  return out;
-}
-
-}
-
-namespace FACEMC{
-
-template<typename T1, typename T2>
-inline bool operator==( const FACEMC::Pair<T1,T2> &left,
-			const FACEMC::Pair<T1,T2> &right )
-{
-  return ( (left.first == right.first) && (left.second == right.second) );
-}
-
-template<typename T1, typename T2, typename T3>
-inline bool operator==( const FACEMC::Trip<T1,T2,T3> &left,
-			const FACEMC::Trip<T1,T2,T3> &right )
-{
-  return ( (left.first == right.first) && 
-	   (left.second == right.second) &&
-	   (left.third == right.third) );
-}
-
-template<typename T1, typename T2, typename T3, typename T4>
-inline bool operator==( const FACEMC::Quad<T1,T2,T3,T4> &left,
-			const FACEMC::Quad<T1,T2,T3,T4> &right )
-{
-  return ( (left.first == right.first) &&
-	   (left.second == right.second) &&
-	   (left.third == right.third) &&
-	   (left.fourth == right.fourth) );
-}
-
-}
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -218,7 +167,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, first_table_header_read_test )
 {
   
   std::ifstream test_headerfile;
-  test_headerfile.open( "test_first_header.txt", std::fstream::in );
+  test_headerfile.open( FIRST_HEADER_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_headerfile.is_open() );
 
   TestDataProcessor data_processor;
@@ -264,7 +213,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, second_table_header_read_test )
 {
 
   std::ifstream test_headerfile;
-  test_headerfile.open( "test_second_header.txt", std::fstream::in );
+  test_headerfile.open( SECOND_HEADER_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_headerfile.is_open() );
 
   TestDataProcessor data_processor;
@@ -301,7 +250,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, full_table_header_read_test )
 {
   
   std::ifstream test_headerfile;
-  test_headerfile.open( "test_full_header.txt", std::fstream::in );
+  test_headerfile.open( FULL_HEADER_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_headerfile.is_open() );
 
   TestDataProcessor data_processor;
@@ -357,7 +306,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, full_table_header_read_test )
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_skip_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -397,7 +346,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_skip_test )
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_skip_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_three_column_table.txt", std::fstream::in );
+  test_tablefile.open( THREE_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -438,7 +387,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_skip_test )
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_skip_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_four_column_table.txt", std::fstream::in );
+  test_tablefile.open( FOUR_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -480,7 +429,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_skip_test )
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -576,7 +525,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_read_test )
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_log_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -672,7 +621,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_log_read_test )
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_log_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -768,7 +717,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_log_read_test )
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_lin_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -864,7 +813,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_lin_read_test )
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_eq_eq_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -962,7 +911,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_eq_eq_rea
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_log_range_eq_eq_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -1060,7 +1009,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_log_range_eq_eq_rea
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_log_range_eq_eq_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -1158,7 +1107,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_log_range_eq_eq_rea
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_lin_range_eq_eq_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -1256,7 +1205,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_lin_range_eq_eq_rea
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_lt_gt_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -1354,7 +1303,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_lt_gt_rea
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_eq_gt_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -1452,7 +1401,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_eq_gt_rea
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_lt_eq_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -1550,7 +1499,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_lt_eq_rea
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_lt_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -1628,7 +1577,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_lt_rea
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_eq_lt_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -1710,7 +1659,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_eq_lt_rea
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_lt_lt_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -1792,7 +1741,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_lt_lt_rea
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_eq_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -1882,7 +1831,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_eq_rea
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_gt_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_two_column_table.txt", std::fstream::in );
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -1971,7 +1920,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_gt_rea
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_three_column_table.txt", std::fstream::in );
+  test_tablefile.open( THREE_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -2058,7 +2007,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_read_test )
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_read_test )
 {
   std::ifstream test_tablefile;
-  test_tablefile.open( "test_four_column_table.txt", std::fstream::in );
+  test_tablefile.open( FOUR_COLUMN_TABLE_TEST_FILE, std::fstream::in );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;

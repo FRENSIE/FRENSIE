@@ -17,8 +17,11 @@
 // FACEMC Includes
 #include "HDF5FileHandler.hpp"
 #include "Tuple.hpp"
+#include "TestingHelperFunctions.hpp"
 
-// HDF5 Test File Names
+//---------------------------------------------------------------------------//
+// HDF5 Test File Names.
+//---------------------------------------------------------------------------//
 #define HDF5_TEST_FILE_NAME "hdf5_test_file.h5"
 #define DOUBLE_ARRAY_DATASET_NAME "/simple_types/double_array"
 #define INT_ARRAY_DATASET_NAME "/simple_types/int_array"
@@ -28,7 +31,9 @@
 #define QUAD_UINT_UINT_DOUBLE_DOUBLE_ARRAY_DATASET_NAME "/compound_types/quad_uint_uint_double_double_array"
 #define QUAD_QUAD_QUAD_TRIP_PAIR_ARRAY_DATASET_NAME "/compound_types/quad_quad_quad_trip_pair_array"
 
-// Test Values
+//---------------------------------------------------------------------------//
+// Test Values.
+//---------------------------------------------------------------------------//
 #define DOUBLE_TEST_VALUE 1.1
 #define INT_TEST_VALUE 1
 #define UINT_TEST_VALUE 2
@@ -49,68 +54,6 @@ public:
   using FACEMC::HDF5FileHandler::createParentGroups;
 
 };
-
-//---------------------------------------------------------------------------//
-// Helper Functions.
-//---------------------------------------------------------------------------//
-namespace Teuchos{
-
-// Stream operator for Tuple
-// this must be defined in the Teuchos namespace to work properly with the
-// Teuchos Unit Test Harness.
-template<typename T1, typename T2>
-std::ostream& operator<<(std::ostream &out, const FACEMC::Pair<T1,T2> &p)
-{
-  out << "{ " << p.first << ", " << p.second << " }";
-  return out;
-}
-
-template<typename T1, typename T2, typename T3>
-std::ostream& operator<<(std::ostream &out, const FACEMC::Trip<T1,T2,T3> &p)
-{
-  out << "{ " << p.first << ", " << p.second << ", " << p.third << " }";
-  return out;
-}
-
-template<typename T1, typename T2, typename T3, typename T4>
-std::ostream& operator<<(std::ostream &out, const FACEMC::Quad<T1,T2,T3,T4> &p)
-{
-  out << "{ " << p.first << ", " << p.second << ", " << p.third 
-      << ", " << p.fourth << " }";
-  return out;
-}
-
-}
-
-namespace FACEMC{
-
-template<typename T1, typename T2>
-inline bool operator==( const FACEMC::Pair<T1,T2> &left,
-			const FACEMC::Pair<T1,T2> &right )
-{
-  return ( (left.first == right.first) && (left.second == right.second) );
-}
-
-template<typename T1, typename T2, typename T3>
-inline bool operator==( const FACEMC::Trip<T1,T2,T3> &left,
-			const FACEMC::Trip<T1,T2,T3> &right )
-{
-  return ( (left.first == right.first) && 
-	   (left.second == right.second) &&
-	   (left.third == right.third) );
-}
-
-template<typename T1, typename T2, typename T3, typename T4>
-inline bool operator==( const FACEMC::Quad<T1,T2,T3,T4> &left,
-			const FACEMC::Quad<T1,T2,T3,T4> &right )
-{
-  return ( (left.first == right.first) &&
-	   (left.second == right.second) &&
-	   (left.third == right.third) &&
-	   (left.fourth == right.fourth) );
-}
-
-}
 
 //---------------------------------------------------------------------------//
 // Tests.

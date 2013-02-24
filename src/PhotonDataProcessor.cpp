@@ -12,7 +12,7 @@
 #include "PhotonDataProcessor.hpp"
 #include "FACEMC_Assertion.hpp"
 #include "HDF5DataFileNames.hpp"
-#include "Tuple.hpp"
+#include "Tuple.hpp" 
 
 namespace FACEMC{
 
@@ -20,17 +20,17 @@ namespace FACEMC{
 PhotonDataProcessor::PhotonDataProcessor( const std::string epdl_file_name,
 					  const std::string eadl_file_name,
 					  const std::string compton_file_prefix,
-					  const double energy_min = 0.001,
-					  const double energy_max = 20.0 )
-  : DataProcessorBase(), 
+					  const double energy_min = MIN_ENERGY_DEFAULT,
+					  const double energy_max = MAX_ENERGY_DEFAULT )
+  : EPDL97DataProcessor(), 
     d_epdl_file_name(epdl_file_name), 
     d_eadl_file_name(eadl_file_name),
     d_compton_file_prefix(compton_file_prefix), 
     d_energy_min(energy_min),
     d_energy_max(energy_max)
 { 
-  assertAlways( d_energy_min > 0.0 );
-  assertAlways( d_energy_min < d_enegy_max );
+  FACEMC_ASSERT_ALWAYS( d_energy_min > 0.0 );
+  FACEMC_ASSERT_ALWAYS( d_energy_min < d_energy_max );
 }
   
 /*! Process Photon Data Files
@@ -55,17 +55,17 @@ void PhotonDataProcessor::processEPDLFile()
   FACEMC_ASSERT_ALWAYS( epdl.is_open() );
 
   // Atomic number of element currently being processed
-  int atomic_number = 0;
+  unsigned int atomic_number = 0;
 
   // Information in first header of the EPDL file
-  int atomic_number_in_table = 0;
-  int outgoing_particle_designator = 0;
+  unsigned int atomic_number_in_table = 0;
+  unsigned int outgoing_particle_designator = 0;
   double atomic_weight = 0.0;
-  int interpolation_flag = 0;
+  unsigned int interpolation_flag = 0;
 
   // Information in the second header of the EPDL file
-  int reaction_type = 0;
-  int electron_shell = 0;
+  unsigned int reaction_type = 0;
+  unsigned int electron_shell = 0;
   
   // Process every element (Z=1-100) in the EPDL file
   while( !epdl.eof() )
@@ -86,10 +86,11 @@ void PhotonDataProcessor::processEPDLFile()
       ++atomic_number;
 
       // Open a new HDF5 file
-      std::ostringstream file_number << atomic_number;
+      std::ostringstream file_number;
+      file_number << atomic_number;
       d_hdf5_file_handler.openHDF5FileAndOverwrite( PHOTON_DATA_FILE_PREFIX + 
 						    file_number.str() + 
-						    DATA_FILE_PREFIX );
+						    DATA_FILE_SUFFIX );
       
       // Create a top level attribute to store the atomic weight
       d_hdf5_file_handler.writeValueToGroupAttribute( atomic_weight,
@@ -112,7 +113,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read in the integrated coherent cross section data
       
       // The interpolation flag should be log-log (5)
-      assertAlways( interpolation_flag == 5 );
+      FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       {
 	Teuchos::Array<Pair<double,double> > data;
 	
@@ -138,7 +139,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read in the integrated incoherent cross section data
       
       // The interpolation flag should be log-log (5)
-      assertAlways( interpolation_flag == 5 );
+      FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       {
 	Teuchos::Array<Pair<double,double> > data;
 	
@@ -164,7 +165,7 @@ void PhotonDataProcessor::processEPDLFile()
 
     case 73000:
       // Read the total integrated photoelectric cross section
-      assertAlways( interpolation_flag == 5 );
+      FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       
       if( electron_shell == 0 )
       {	
@@ -180,14 +181,14 @@ void PhotonDataProcessor::processEPDLFile()
       // Read the total integrated photoelectric cross section for a subshell
       else
       {	
-	Teuchos::Array<Pair<double> > data;
+	Teuchos::Array<Pair<double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
 							       d_energy_min,
 							       d_energy_max );
 	d_hdf5_file_handler.writeArrayToDataSet( data,
-						 PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + intToShellStr( electron_shell ) );
+						 PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + uintToShellStr( electron_shell ) );
       }
       break;
 
@@ -211,7 +212,7 @@ void PhotonDataProcessor::processEPDLFile()
 
     case 74000:
       // Read the integrated pair production cross section
-      assertAlways( interpolation_flag == 5 );
+      FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       {
 	Teuchos::Array<Pair<double,double> > data;
 	
@@ -243,7 +244,7 @@ void PhotonDataProcessor::processEPDLFile()
 
     case 75000:
       // Read the integrated triplet production cross section
-      assertAlways( interpolation_flag == 5 );
+      FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       {
 	Teuchos::Array<Pair<double,double> > data;
 	
@@ -275,7 +276,7 @@ void PhotonDataProcessor::processEPDLFile()
 
     case 93941:
       // Read the atomic form factor
-      assertAlways( interpolation_flag == 5 );
+      FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       {
 	Teuchos::Array<Pair<double,double> > data;
 	
@@ -293,31 +294,31 @@ void PhotonDataProcessor::processEPDLFile()
 	// The form factor has a linear region between the first two arguments:
 	// Do not add the first data point since this linear region needs
 	// a different interpolation policy ( integrated_sq_ff(x) = x*Z^2 )
-	indep_end = data[1].value1*data[1].value1;
-	dep_end = data[1].value2*data[1].value2;
+	indep_end = data[1].first*data[1].first;
+	dep_end = data[1].second*data[1].second;
 	tmp_integral = indep_end*dep_end;
 	
-	data_point.value1 = indep_end;
-	data_point.value2 = tmp_integral;
+	data_point.first = indep_end;
+	data_point.second = tmp_integral;
 	
-	integrated_squared_ff.push_back( tmp_integral );
+	integrated_squared_ff.push_back( data_point );
 	
 	// Integrate between data points assuming a functional form of
 	// dep = dep_0*indep^exponent
 	double exponent;
 	for( int i = 2; i < data.size(); ++i )
 	  {
-	    indep_begin = data[i-1].value1*data[i-1].value1;
-	    indep_end = data[i].value1*data[i].value1;
-	    dep_begin = data[i-1].value2*data[i-1].value2;
-	    dep_end = data[i].value2*data[i].value2;
+	    indep_begin = data[i-1].first*data[i-1].first;
+	    indep_end = data[i].first*data[i].first;
+	    dep_begin = data[i-1].second*data[i-1].second;
+	    dep_end = data[i].second*data[i].second;
 	    exponent = log( dep_end/dep_begin )/log( indep_begin/indep_end );
 	    
 	    tmp_integral = dep_begin/((exponent+1)*pow( indep_begin, exponent ))*
 	      (pow( indep_end, exponent+1 ) - pow( indep_begin, exponent+1 ));
 	    
-	    data_point.value1 = indep_end;
-	    data_point.value2 += tmp_integral;
+	    data_point.first = indep_end;
+	    data_point.second += tmp_integral;
 	    
 	    integrated_squared_ff.push_back( data_point );
 	  }
@@ -326,11 +327,11 @@ void PhotonDataProcessor::processEPDLFile()
 	// Process the integrated squared form factor for log-log interpolation
 	for( int i = 0; i < integrated_squared_ff.size(); ++i )
 	  {
-	    integrated_squared_ff[i].value1 = 
-	      log( integrated_squared_ff[i].value1 );
+	    integrated_squared_ff[i].first = 
+	      log( integrated_squared_ff[i].first );
 	    
-	    integrated_squared_ff[i].value2 = 
-	      log( integrated_squared_ff[i].value2 );
+	    integrated_squared_ff[i].second = 
+	      log( integrated_squared_ff[i].second );
 	  }
 	
 	d_hdf5_file_handler.writeArrayToDataSet( integrated_squared_ff,
@@ -341,12 +342,12 @@ void PhotonDataProcessor::processEPDLFile()
 
     case 93942:
       // Read the scattering function
-      assertAlways( interpolation_flag == 5 );
+      FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       {
 	Teuchos::Array<Pair<double,double> > data;
 	
-	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
-							       data );
+	readTwoColumnTable<LogLogDataProcessingPolicy>( epdl,
+							data );
 	
 	// The first data point needs to be erased since it is always
 	// (0.0, 0.0)
@@ -397,17 +398,17 @@ void PhotonDataProcessor::processEADLFile()
   FACEMC_ASSERT_ALWAYS( eadl );
 
   // Atomic number of element currently being processed
-  int atomic_number = 0;
+  unsigned int atomic_number = 0;
 
   // Information in first header of the EPDL file
-  int atomic_number_in_table = 0;
-  int outgoing_particle_designator = 0;
+  unsigned int atomic_number_in_table = 0;
+  unsigned int outgoing_particle_designator = 0;
   double atomic_weight = 0.0;
-  int interpolation_flag = 0;
+  unsigned int interpolation_flag = 0;
 
   // Information in the second header of the EPDL file
-  int reaction_type = 0;
-  int electron_shell = 0;
+  unsigned int reaction_type = 0;
+  unsigned int electron_shell = 0;
   
   // Process every element (Z=1-100) in the EPDL file
   while( !eadl.eof() )
@@ -428,10 +429,11 @@ void PhotonDataProcessor::processEADLFile()
       ++atomic_number;
 
       // Open a new HDF5 file
-      std::ostringstream file_number << atomic_number;
+      std::ostringstream file_number; 
+      file_number << atomic_number;
       d_hdf5_file_handler.openHDF5FileAndAppend( PHOTON_DATA_FILE_PREFIX + 
 						 file_number.str() + 
-						 DATA_FILE_PREFIX );
+						 DATA_FILE_SUFFIX );
     }
 
     // Read second table header and determine the reaction type
@@ -455,16 +457,17 @@ void PhotonDataProcessor::processEADLFile()
 	double tmp_sum = 0.0;
 	for( int i = 0; i < data.size(); ++i )
 	  {
-	    tmp_sum += data[i].value2;
-	    data[i].value2 = tmp_sum;
+	    tmp_sum += data[i].second;
+	    data[i].second = tmp_sum;
 	  }
 	
 	// Normalize the cdf
 	for( int i = 0; i < data.size(); ++i )
-	  data[i].value2 /= tmp_sum;
+	  data[i].second /= tmp_sum;
 	
 	// Create the Electron Shell Index Map
-	Teuchos::Array<unsigned int> electron_shell_index_map[2];      
+	Teuchos::Array<Pair<unsigned int,unsigned int > >
+	  electron_shell_index_map;      
 	createElectronShellIndexMap( atomic_number,
 				     electron_shell_index_map );
 	
@@ -474,9 +477,9 @@ void PhotonDataProcessor::processEADLFile()
 	
 	for( int i = 0; i < data.size(); ++i )
 	  {
-	    data_point.value1 = data[i].value2;
-	    data_point.value2 = static_cast<unsigned int>(data[i].value1);
-	    data_point.value3 = electron_shell_index_map[1][i];
+	    data_point.first = data[i].second;
+	    data_point.second = electron_shell_index_map[i].first;
+	    data_point.third = electron_shell_index_map[i].second;
 	    
 	    complete_data.push_back( data_point );
 	  }
@@ -527,14 +530,14 @@ void PhotonDataProcessor::processEADLFile()
 	// this subshell
 	double total_radiative_trans_prob = 0.0;
 	for( int i = 0; i < data.size(); ++i )
-	  total_radiative_trans_prob += data[i].value2;
+	  total_radiative_trans_prob += data[i].second;
 	
 	d_hdf5_file_handler.writeValueToGroupAttribute( total_radiative_trans_prob,
-							RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ),
+							RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ),
 							"Total_Radiative_Transition_Probability" );
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
-						 RADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ) );
+						 RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ) );
       }
       
       break;
@@ -548,7 +551,7 @@ void PhotonDataProcessor::processEADLFile()
 			     data );
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
-						 NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + intToShellStr( electron_shell ) );
+						 NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ) );
       }
       
       break;
@@ -689,17 +692,18 @@ void PhotonDataProcessor::processComptonFiles()
 
   for( int atomic_number = 1; atomic_number <= 100; ++atomic_number )
   {
-    std::ostringstream file_number << atomic_number;
+    std::ostringstream file_number;
+    file_number << atomic_number;
     d_hdf5_file_handler.openHDF5FileAndAppend( PHOTON_DATA_FILE_PREFIX + 
 					       file_number.str() + 
-					       DATA_FILE_PREFIX );
+					       DATA_FILE_SUFFIX );
     
     compton_file_name = d_compton_file_prefix + file_number.str() + ".dat";
     compton_file_stream.open( compton_file_name.c_str() );
     FACEMC_ASSERT_ALWAYS( compton_file_stream.is_open() );
 
     Teuchos::Array<double> compton_profile_cdfs;
-    while( !comton_file_stream.eof() )
+    while( !compton_file_stream.eof() )
     {
       //each block of data has 31 evaluated data points
       Teuchos::Array<double> data( 31, 0.0 );
@@ -720,8 +724,8 @@ void PhotonDataProcessor::processComptonFiles()
       compton_profile_cdfs.push_back( tmp_integral );
       for( int i = 2; i < 31; ++i )
       {
-	indep_begin = q_values[j-1];
-	indep_end = q_values[j];
+	indep_begin = q_values[i-1];
+	indep_end = q_values[i];
 	dep_begin = data[i-1];
 	dep_end = data[i];
 	exponent = log( dep_end/dep_begin )/log( indep_begin/indep_end );
@@ -729,21 +733,21 @@ void PhotonDataProcessor::processComptonFiles()
 	tmp_integral = dep_begin/((exponent+1)*pow( indep_begin, exponent ))*
 	  (pow( indep_end, exponent+1 ) - pow( indep_begin, exponent+1 ));
 
-	compton_profile_cdfs.push_back( compton_profile_cdf.back() +
+	compton_profile_cdfs.push_back( compton_profile_cdfs.back() +
 					tmp_integral );
       }
       
       // Normalize the CDF
       for( int i = compton_profile_cdfs.size()-31-1; 
 	   i < compton_profile_cdfs.size(); ++i )
-	compton_profile_cdfs[i] /= compton_profile_cdf.back();
+	compton_profile_cdfs[i] /= compton_profile_cdfs.back();
       
     }
 
     d_hdf5_file_handler.writeArrayToDataSet( compton_profile_cdfs,
 					     COMPTON_PROFILE_CDF_LOC );
     // Close the Compton Profile stream
-    compton_profile_stream.close();
+    compton_file_stream.close();
 
     // Close the HDF5 file
     d_hdf5_file_handler.closeHDF5File();
@@ -756,7 +760,7 @@ void PhotonDataProcessor::createElectronShellIndexMap(
 			       Teuchos::Array<Pair<unsigned int,unsigned int> >
 			         &map )
 {
-  Pair<unsigned int, unsigned int> data_point
+  Pair<unsigned int, unsigned int> data_point;
   // Non-Relativistic profiles are given for atomic numbers < 36
   if( atomic_number < 36 )
   {
@@ -1790,54 +1794,71 @@ void PhotonDataProcessor::createElectronShellIndexMap(
     {
       data_point.first = 21;
       data_point.second = 12;
+      map.push_back( data_point );
       
       data_point.first = 22;
       data_point.second = 13;
+      map.push_back( data_point );
       
       data_point.first = 24;
       data_point.second = 14;
+      map.push_back( data_point );
       
       data_point.first = 25;
       data_point.second = 15;
+      map.push_back( data_point );
       
       data_point.first = 27;
       data_point.second = 16;
+      map.push_back( data_point );
       
       data_point.first = 29;
       data_point.second = 17;
+      map.push_back( data_point );
       
       data_point.first = 30;
       data_point.second = 18;
+      map.push_back( data_point );
       
       data_point.first = 32;
       data_point.second = 19;
+      map.push_back( data_point );
       
       data_point.first = 33;
       data_point.second = 20;
+      map.push_back( data_point );
       
       data_point.first = 35;
       data_point.second = 21;
+      map.push_back( data_point );
       
       data_point.first = 36;
       data_point.second = 22;
+      map.push_back( data_point );
       
       data_point.first = 41;
       data_point.second = 23;
+      map.push_back( data_point );
       
       data_point.first = 43;
       data_point.second = 24;
+      map.push_back( data_point );
       
       data_point.first = 44;
       data_point.second = 25;
+      map.push_back( data_point );
       
       data_point.first = 46;
       data_point.second = 25;
+      map.push_back( data_point );
 
       data_point.first = 47;
       data_point.second = 25;
+      map.push_back( data_point );
       
       data_point.first = 58;
       data_point.second = 26;
+      map.push_back( data_point );
     }
   }
 }
