@@ -22,9 +22,11 @@
 namespace FACEMC{
 
 //! Read two column table in EPDL file within specified range
-template<typename DataProcessingPolicy>
+template<typename DataProcessingPolicy,
+	 typename T,
+	 template<typename> class Array>
 void EPDL97DataProcessor::readTwoColumnTableInRange( std::ifstream &datafile,
-						     Teuchos::Array<Pair<double,double> >  &data,
+						     Array<T>  &data,
 						     const double indep_var_min,
 						     const double indep_var_max )
 {
@@ -43,7 +45,7 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( std::ifstream &datafile,
   double dep_prev = 0.0, dep = 0.0;
   
   // Data point extracted from the table
-  Pair<double, double> data_point;
+  T data_point;
 
   // Make sure that the data array is empty
   data.clear();
@@ -58,10 +60,10 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( std::ifstream &datafile,
     
     if( strcmp( data1_l, test ) != 0 )
     {
-      indep = extractValue<double>( data1_l, 
-				    data1_r );
-      dep = extractValue<double>( data2_l,
-				  data2_r );
+      indep = extractValue<typename T::first_type>( data1_l, 
+					   data1_r );
+      dep = extractValue<typename T::second_type>( data2_l,
+					  data2_r );
       
       // Remove values outside of independent variable range
       if( (indep > indep_var_min && indep_prev > indep_var_min) &&
@@ -111,6 +113,13 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( std::ifstream &datafile,
       {
 	indep_prev = indep;
 	dep_prev = dep;
+	continue;
+      }
+      // calculate the slope between the previous and the current data point
+      if( data.size() > 1 )
+      {
+	SlopeCalculationPolicy<T>::calculateSlope( data[data.size()-2],
+						  data[data.size()-1] );
       }
     }
   }
@@ -120,9 +129,11 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( std::ifstream &datafile,
 }
 
 //! Read two column table in EPDL file
-template<typename DataProcessingPolicy>
+  template<typename DataProcessingPolicy,
+	   typename T,
+	   template<typename> class Array>
 void EPDL97DataProcessor::readTwoColumnTable( std::ifstream &datafile,
-					      Teuchos::Array<Pair<double,double> > &data )
+					      Array<T> &data )
 {
   // Variables for reading in a two column table
   char data1_l [10];
@@ -138,7 +149,7 @@ void EPDL97DataProcessor::readTwoColumnTable( std::ifstream &datafile,
   double dep = 0.0;
 
   // Data point extracted from the table
-  Pair<double, double> data_point;
+  T data_point;
 
   // Make sure that the data array is empty
   data.clear();
@@ -152,14 +163,21 @@ void EPDL97DataProcessor::readTwoColumnTable( std::ifstream &datafile,
     datafile.getline( data2_r, 4 );
     if( strcmp( data1_l, test ) != 0 )
     {
-      indep = extractValue<double>( data1_l, 
-				    data1_r );
-      dep = extractValue<double>( data2_l,
-				  data2_r );
+      indep = extractValue<typename T::first_type>( data1_l, 
+					   data1_r );
+      dep = extractValue<typename T::second_type>( data2_l,
+					  data2_r );
       
       data_point.first = DataProcessingPolicy::processIndependentVar(indep);
       data_point.second = DataProcessingPolicy::processDependentVar(dep);
       data.push_back( data_point );
+
+      // calculate the slope between the previous and the current data point
+      if( data.size() > 1 )
+      {
+	SlopeCalculationPolicy<T>::calculateSlope( data[data.size()-2],
+						  data[data.size()-1] );
+      }
     }
   }
 
@@ -282,6 +300,24 @@ inline double EPDL97DataProcessor::LinearLinearDataProcessingPolicy::processDepe
 {
   return dep_var;
 }
+
+//---------------------------------------------------------------------------//
+// SlopeCalculationPolicy specialization
+//---------------------------------------------------------------------------//
+template<>
+struct EPDL97DataProcessor::SlopeCalculationPolicy<Trip<double,double,double> >
+{
+  static inline void calculateSlope( Trip<double,double,double> 
+				       &first_data_point,
+				     Trip<double,double,double>
+				       &second_data_point )
+  {
+    first_data_point.third = 
+      (second_data_point.second - first_data_point.second)/
+      (second_data_point.first - first_data_point.first);
+    second_data_point.third = 0.0;
+  }
+};
 
 } // end FACEMC namespace
 

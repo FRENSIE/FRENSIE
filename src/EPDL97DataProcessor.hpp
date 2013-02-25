@@ -69,17 +69,22 @@ protected:
   void skipTwoColumnTable( std::ifstream &datafile );
 
   //! Read two column table in EPDL file within specified range
-  template<typename DataProcessingPolicy>
+  // \brief T is assumed to be a FACEMC::Tuple struct
+  template<typename DataProcessingPolicy, 
+	   typename T, 
+	   template<typename> class Array>
   void readTwoColumnTableInRange( std::ifstream &datafile,
-				  Teuchos::Array<Pair<double,double> > 
-				   &data,
+				  Array<T> &data,
 				  const double indep_var_min,
 				  const double indep_var_max );
 
   //! Read two column table in EPDL file 
-  template<typename DataProcessingPolicy>
+  // \brief T is assumed to be a FACEMC::Tuple struct
+  template<typename DataProcessingPolicy,
+	   typename T,
+	   template<typename> class Array>
   void readTwoColumnTable( std::ifstream &datafile,
-			   Teuchos::Array<Pair<double,double> > &data );
+			   Array<T> &data );
 
   //! Skip three column table in EPDL file
   void skipThreeColumnTable( std::ifstream &datafile );
@@ -104,7 +109,7 @@ protected:
    */
   template<typename T>
   T extractValue( std::string mantissa,
-			 std::string exponent );
+		  std::string exponent );
 
   //! Convert an EPDL shell integer to a shell name
   std::string uintToShellStr( const unsigned int shell );
@@ -167,6 +172,19 @@ protected:
 
   // HDF5 File Handler
   HDF5FileHandler d_hdf5_file_handler;
+
+  /*!
+   * \brief Policy stuct for computing the slope between data points
+   * while processing a table. The only specialization that is provided
+   * is for the Trip<double,double,double> struct. Any other type will
+   * use an empty function
+   */
+  template<typename T>
+  struct SlopeCalculationPolicy
+  {
+    static inline void calculateSlope( T &first_data_point,
+				       T &second_data_point ) {}
+  };
     
 };
 

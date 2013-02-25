@@ -51,7 +51,7 @@ void PhotonDataProcessor::processDataFiles()
 void PhotonDataProcessor::processEPDLFile()
 { 
   // EPDL file
-  std::ifstream epdl( "d_epdl_file_name", std::fstream::in );
+  std::ifstream epdl( d_epdl_file_name.c_str(), std::fstream::in );
   FACEMC_ASSERT_ALWAYS( epdl.is_open() );
 
   // Atomic number of element currently being processed
@@ -96,6 +96,14 @@ void PhotonDataProcessor::processEPDLFile()
       d_hdf5_file_handler.writeValueToGroupAttribute( atomic_weight,
 						      "/",
 						      "Atomic_Weight" );
+
+      // Create a top level attribute to store the energy limits
+      Teuchos::Array<double> energy_limits( 2 );
+      energy_limits[0] = d_energy_min;
+      energy_limits[1] = d_energy_max;
+      d_hdf5_file_handler.writeArrayToGroupAttribute( energy_limits,
+						      "/",
+						      "Energy_Limits" );
     }
 
     // Read second table header and determine the reaction type
@@ -115,7 +123,7 @@ void PhotonDataProcessor::processEPDLFile()
       // The interpolation flag should be log-log (5)
       FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       {
-	Teuchos::Array<Pair<double,double> > data;
+	Teuchos::Array<Trip<double,double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
@@ -141,7 +149,7 @@ void PhotonDataProcessor::processEPDLFile()
       // The interpolation flag should be log-log (5)
       FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       {
-	Teuchos::Array<Pair<double,double> > data;
+	Teuchos::Array<Trip<double,double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
@@ -169,7 +177,7 @@ void PhotonDataProcessor::processEPDLFile()
       
       if( electron_shell == 0 )
       {	
-	Teuchos::Array<Pair<double,double> > data;
+	Teuchos::Array<Trip<double,double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
@@ -181,7 +189,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read the total integrated photoelectric cross section for a subshell
       else
       {	
-	Teuchos::Array<Pair<double,double> > data;
+	Teuchos::Array<Trip<double,double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
@@ -214,7 +222,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read the integrated pair production cross section
       FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       {
-	Teuchos::Array<Pair<double,double> > data;
+	Teuchos::Array<Trip<double,double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
@@ -246,7 +254,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read the integrated triplet production cross section
       FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       {
-	Teuchos::Array<Pair<double,double> > data;
+	Teuchos::Array<Trip<double,double,double> > data;
 	
 	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
 							       data,
@@ -286,8 +294,8 @@ void PhotonDataProcessor::processEPDLFile()
 	// integrated over its squared argument
 	double tmp_integral;
 	
-	Teuchos::Array<Pair<double,double> > integrated_squared_ff;
-	Pair<double,double> data_point;
+	Teuchos::Array<Trip<double,double,double> > integrated_squared_ff;
+	Trip<double,double,double> data_point;
 	double indep_begin, indep_end;
 	double dep_begin, dep_end;
 	
@@ -312,10 +320,10 @@ void PhotonDataProcessor::processEPDLFile()
 	    indep_end = data[i].first*data[i].first;
 	    dep_begin = data[i-1].second*data[i-1].second;
 	    dep_end = data[i].second*data[i].second;
-	    exponent = log( dep_end/dep_begin )/log( indep_begin/indep_end );
+	    exponent = log( dep_end/dep_begin )/log( indep_end/indep_begin );
 	    
-	    tmp_integral = dep_begin/((exponent+1)*pow( indep_begin, exponent ))*
-	      (pow( indep_end, exponent+1 ) - pow( indep_begin, exponent+1 ));
+	    tmp_integral = dep_begin/((exponent+1)*pow( indep_begin, exponent ))
+	      *(pow( indep_end, exponent+1 ) - pow( indep_begin, exponent+1 ));
 	    
 	    data_point.first = indep_end;
 	    data_point.second += tmp_integral;
@@ -332,6 +340,18 @@ void PhotonDataProcessor::processEPDLFile()
 	    
 	    integrated_squared_ff[i].second = 
 	      log( integrated_squared_ff[i].second );
+
+	    if( i > 0 )
+	    {
+	      // invert the slope because the squared argument will be treated 
+	      // as the dependent variable ( not the cdf )
+	      integrated_squared_ff[i-1].third = 
+		(integrated_squared_ff[i].first - 
+		 integrated_squared_ff[i-1].first)/
+		(integrated_squared_ff[i].second -
+		 integrated_squared_ff[i-1].second);
+	      integrated_squared_ff[i].third = 0.0;
+	    }
 	  }
 	
 	d_hdf5_file_handler.writeArrayToDataSet( integrated_squared_ff,
@@ -344,7 +364,7 @@ void PhotonDataProcessor::processEPDLFile()
       // Read the scattering function
       FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       {
-	Teuchos::Array<Pair<double,double> > data;
+	Teuchos::Array<Trip<double,double,double> > data;
 	
 	readTwoColumnTable<LogLogDataProcessingPolicy>( epdl,
 							data );
@@ -394,7 +414,7 @@ void PhotonDataProcessor::processEPDLFile()
 void PhotonDataProcessor::processEADLFile()
 {
   // EPDL file
-  std::ifstream eadl( "d_eadl_file_name", std::fstream::in );
+  std::ifstream eadl( d_eadl_file_name.c_str(), std::fstream::in );
   FACEMC_ASSERT_ALWAYS( eadl );
 
   // Atomic number of element currently being processed
@@ -448,7 +468,7 @@ void PhotonDataProcessor::processEADLFile()
     case 91912:
       // Read number of electrons per subshell
       {
-	Teuchos::Array<Pair<double,double> > data;
+	Teuchos::Array<Pair<unsigned int,double> > data;
 	
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
 							      data );
@@ -493,7 +513,7 @@ void PhotonDataProcessor::processEADLFile()
     case 91913:
       // Read binding energy per subshell
       {
-	Teuchos::Array<Pair<double,double> > data;
+	Teuchos::Array<Pair<unsigned int,double> > data;
 	
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
 							      data );
@@ -507,7 +527,7 @@ void PhotonDataProcessor::processEADLFile()
     case 91914:
       // Read kinetic energy per subshell
       {
-	Teuchos::Array<Pair<double,double> > data;
+	Teuchos::Array<Pair<unsigned int,double> > data;
 	
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
 							      data );

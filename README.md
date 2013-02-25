@@ -1,4 +1,4 @@
-FAPMC
+FACEMC
 =====
 
-Forward-Adjoint Photon Monte Carlo
+Forward-Adjoint Continuous Energy Monte Carlo
