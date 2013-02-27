@@ -61,9 +61,9 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( std::ifstream &datafile,
     if( strcmp( data1_l, test ) != 0 )
     {
       indep = extractValue<typename T::first_type>( data1_l, 
-					   data1_r );
+						    data1_r );
       dep = extractValue<typename T::second_type>( data2_l,
-					  data2_r );
+						   data2_r );
       
       // Remove values outside of independent variable range
       if( (indep > indep_var_min && indep_prev > indep_var_min) &&
@@ -113,13 +113,6 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( std::ifstream &datafile,
       {
 	indep_prev = indep;
 	dep_prev = dep;
-	continue;
-      }
-      // calculate the slope between the previous and the current data point
-      if( data.size() > 1 )
-      {
-	SlopeCalculationPolicy<T>::calculateSlope( data[data.size()-2],
-						  data[data.size()-1] );
       }
     }
   }
@@ -164,20 +157,13 @@ void EPDL97DataProcessor::readTwoColumnTable( std::ifstream &datafile,
     if( strcmp( data1_l, test ) != 0 )
     {
       indep = extractValue<typename T::first_type>( data1_l, 
-					   data1_r );
+						    data1_r );
       dep = extractValue<typename T::second_type>( data2_l,
-					  data2_r );
+						   data2_r );
       
       data_point.first = DataProcessingPolicy::processIndependentVar(indep);
       data_point.second = DataProcessingPolicy::processDependentVar(dep);
       data.push_back( data_point );
-
-      // calculate the slope between the previous and the current data point
-      if( data.size() > 1 )
-      {
-	SlopeCalculationPolicy<T>::calculateSlope( data[data.size()-2],
-						  data[data.size()-1] );
-      }
     }
   }
 
@@ -188,42 +174,172 @@ void EPDL97DataProcessor::readTwoColumnTable( std::ifstream &datafile,
 template<typename T>
 inline T EPDL97DataProcessor::extractValue( std::string mantissa,
 					    std::string exponent )
+{
+  std::string string_value;
+  
+  // test for all possible output cases
+  if( strncmp( &mantissa[8], "+", 1 ) == 0 )
   {
-    std::string string_value;
-    
-    // test for all possible output cases
-    if( strncmp( &mantissa[8], "+", 1 ) == 0 )
-    {
-      mantissa[8] = '0';
-      string_value = mantissa + "e+";
-    }
-    else if( strncmp( &mantissa[8], "-", 1 ) == 0 )
-    {
-      mantissa[8] = '0';
-      string_value = mantissa + "e-";
-    }
-    else
-      string_value = mantissa;
-    
-    if( strncmp( &exponent[0], " ", 1 ) == 0 )
-      exponent[0] = '0';
-    else if( strncmp( &exponent[0], "+", 1 ) == 0 )
-    {
-      exponent[0] = '0';
-      string_value += "e+";
-    }
-    else if( strncmp( &exponent[0], "-", 1 ) == 0 )
-    {
-      exponent[0] = '0';
-      string_value += "e-";
-    }
-    
-    string_value += exponent;
-    
-    double double_value = atof( string_value.c_str() );
-    
-    return static_cast<T>(double_value);
+    mantissa[8] = '0';
+    string_value = mantissa + "e+";
   }
+  else if( strncmp( &mantissa[8], "-", 1 ) == 0 )
+  {
+    mantissa[8] = '0';
+    string_value = mantissa + "e-";
+  }
+  else
+    string_value = mantissa;
+  
+  if( strncmp( &exponent[0], " ", 1 ) == 0 )
+    exponent[0] = '0';
+  else if( strncmp( &exponent[0], "+", 1 ) == 0 )
+  {
+    exponent[0] = '0';
+    string_value += "e+";
+  }
+  else if( strncmp( &exponent[0], "-", 1 ) == 0 )
+  {
+    exponent[0] = '0';
+    string_value += "e-";
+  }
+  
+  string_value += exponent;
+  
+  double double_value = atof( string_value.c_str() );
+  
+  return static_cast<T>(double_value);
+}
+
+//! Create a cdf from an array of data using a taylor series expansion to O(2)
+template<typename T,template<typename> class Array>
+void EPDLDataProcessor::createContinuousCDFAtFourthTupleLoc( Array<T> &data )
+{
+  typename Array<T>::iterator data_point_1, data_point_2;
+  typename Array<T>::iterator end = data.end();
+
+  data_point_1 = data.begin();
+  data_point_2 = data_point_1 + 1;
+
+  // Make sure that the array is not empty
+  FACEMC_ASSERT_ALWAYS( (data_point_1 != end) );
+
+  // Make sure that the array has more than one entry
+  FACEMC_ASSERT_ALWAYS( (data_point_2 != end) );
+
+  // Initialize the CDF
+  data_point_1->fourth = 0.0;
+  
+  // Calculate the CDF
+  // CDF(x) = CDF(x1)+PDF(x1)*(x-x1)+0.5*(PDF(x)-PDF(x1))/(x2-x1)*(x-x1)^2
+  while( data_point_2 != end )
+  {
+    data_point_2->fourth = data_point_1->fourth;
+    data_point_2->fourth += data_point_1->second*
+      (data_point_2->first - data_point_1->first) +
+      0.5*(data_point_2->second - data_point_1->second)*
+      (data_point_2->first - data_point_1->first);
+
+    ++data_point_1;
+    ++data_point_2;
+  }
+
+  // Normalize the CDF
+  data_point_1 = data.begin() + 1;
+  while( data_point_1 != end )
+    data_point_1->fourth /= data.back().fourth;
+}
+
+//! Create a discrete CDF in place (second tuple location) from an array of 
+// data.
+template<typename T,template<typename> class Array>
+void EPDLDataProcessor::createDiscreteCDFAtSecondTupleLoc( Array<T> &data )
+{
+  typename Array<T>::iterator data_point_1, data_point_2;
+  typename Array<T>::iterator end = data.end();
+
+  data_point_1 = data.begin();
+  data_point_2 = data_point_1 + 1;
+
+  // Make sure that the array is not empty
+  FACEMC_ASSERT_ALWAYS( (data_point_1 != end) );
+
+  // Make sure that the array has more than one entry
+  FACEMC_ASSERT_ALWAYS( (data_point_2 != end) );
+
+  // Create the discrete CDF
+  while( data_point_2 != end )
+  {
+    data_point_2->second += data_point_1->second;
+    
+    ++data_point_1;
+    ++data_point_2;
+  }
+
+  // Normalize the CDF
+  data_point_1 = data.begin();
+  while( data_point_1 != end )
+    data_point_1->second /= data.back().second;
+}
+
+//! Create a discrete CDF in place (third tuple location) from an array of 
+// data.
+template<typename T,template<typename> class Array>
+void EPDLDataProcessor::createDiscreteCDFAtThirdTupleLoc( Array<T> &data )
+{
+  typename Array<T>::iterator data_point_1, data_point_2;
+  typename Array<T>::iterator end = data.end();
+
+  data_point_1 = data.begin();
+  data_point_2 = data_point_1 + 1;
+
+  // Make sure that the array is not empty
+  FACEMC_ASSERT_ALWAYS( (data_point_1 != end) );
+
+  // Make sure that the array has more than one entry
+  FACEMC_ASSERT_ALWAYS( (data_point_2 != end) );
+
+  // Create the discrete CDF
+  while( data_point_2 != end )
+  {
+    data_point_2->third += data_point_1->third;
+    
+    ++data_point_1;
+    ++data_point_2;
+  }
+
+  // Normalize the CDF
+  data_point_1 = data.begin();
+  while( data_point_1 != end )
+    data_point_1->third /= data.back().third;
+}
+
+//! Calculate the slope between each pair of data points.
+template<typename T, template<typename> class Array>
+void EPDL97DataProcessor::calculateSlopesAndAddToThirdTupleLoc( Array<T> &data  )
+{
+  typename Array<T>::iterator data_point_1, data_point_2;
+  typename Array<T>::iterator end = data.end();
+
+  data_point_1 = data.begin();
+  data_point_2 = data_point_1 + 1;
+
+  // Make sure that the array is not empty
+  FACEMC_ASSERT_ALWAYS( (data_point_1 != end) );
+
+  // Make sure that the array has more than one entry
+  FACEMC_ASSERT_ALWAYS( (data_point_2 != end) );
+
+  while( data_point_2 != end )
+  {
+    data_point_1->third = (data_point_2->second - data_point_1->second)/
+      (data_point_2->first - data_point_1->first);
+    data_point_2->third = 0.0;
+
+    ++data_point_1;
+    ++data_point_2;
+  }
+}
 
 //---------------------------------------------------------------------------//
 // LogLogDataProcessingPolicy definitions
@@ -300,24 +416,6 @@ inline double EPDL97DataProcessor::LinearLinearDataProcessingPolicy::processDepe
 {
   return dep_var;
 }
-
-//---------------------------------------------------------------------------//
-// SlopeCalculationPolicy specialization
-//---------------------------------------------------------------------------//
-template<>
-struct EPDL97DataProcessor::SlopeCalculationPolicy<Trip<double,double,double> >
-{
-  static inline void calculateSlope( Trip<double,double,double> 
-				       &first_data_point,
-				     Trip<double,double,double>
-				       &second_data_point )
-  {
-    first_data_point.third = 
-      (second_data_point.second - first_data_point.second)/
-      (second_data_point.first - first_data_point.first);
-    second_data_point.third = 0.0;
-  }
-};
 
 } // end FACEMC namespace
 

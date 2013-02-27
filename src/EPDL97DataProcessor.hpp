@@ -111,6 +111,39 @@ protected:
   T extractValue( std::string mantissa,
 		  std::string exponent );
 
+  /*!
+   * \brief Create a continuous CDF from an array of data using a Taylor 
+   * Series expansion to second order. The second derivative is approximated as 
+   * (/_\pdf)/(/_\indep). The cdf values will be stored in the fourth tuple
+   * position.
+   */
+  template<typename T,template<typename> class Array>
+  void createContinuousCDFAtFourthTupleLoc( Array<T> &data );
+
+  /*!
+   * \brief Create a discrete CDF from an array of data. The CDF will
+   * be calculated in place (second tuple location).
+   */
+  template<typename T,template<typename> class Array>
+  void createDiscreteCDFAtSecondTupleLoc( Array<T> &data );
+
+  /*!
+   * \brief Create a discrete CDF from an array of data. The CDF will
+   * be calculated in place (third tuple location).
+   */
+  template<typename T,template<typename> class Array>
+  void createDiscreteCDFAtThirdTupleLoc( Array<T> &data );
+  
+  /*!
+   * \brief Calculate the slope between each pair of data points.
+   * This function will only compile if the FACEMC::Trip<double,double,double>
+   * or the FACEMC::Quad<double,double,double,double> structs are used as 
+   * the first template parameter. The slope values will be stored in the 
+   * third tuple position.
+   */
+  template<typename T,template<typename> class Array>
+  void calculateSlopesAndAddToThirdTupleLoc( Array<T> &data );
+
   //! Convert an EPDL shell integer to a shell name
   std::string uintToShellStr( const unsigned int shell );
 
@@ -171,21 +204,7 @@ protected:
   };
 
   // HDF5 File Handler
-  HDF5FileHandler d_hdf5_file_handler;
-
-  /*!
-   * \brief Policy stuct for computing the slope between data points
-   * while processing a table. The only specialization that is provided
-   * is for the Trip<double,double,double> struct. Any other type will
-   * use an empty function
-   */
-  template<typename T>
-  struct SlopeCalculationPolicy
-  {
-    static inline void calculateSlope( T &first_data_point,
-				       T &second_data_point ) {}
-  };
-    
+  HDF5FileHandler d_hdf5_file_handler;    
 };
 
 } // end FACEMC namespace

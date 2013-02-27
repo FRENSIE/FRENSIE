@@ -129,6 +129,8 @@ void PhotonDataProcessor::processEPDLFile()
 							       data,
 							       d_energy_min,
 							       d_energy_max );
+
+	calculateSlopesAndAddToThirdTupleLoc( data );
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 COHERENT_CROSS_SECTION_LOC );
@@ -155,6 +157,9 @@ void PhotonDataProcessor::processEPDLFile()
 							       data,
 							       d_energy_min,
 							       d_energy_max );
+
+	calculateSlopesAndAddToThirdTupleLoc( data );
+	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 INCOHERENT_CROSS_SECTION_LOC );
       }
@@ -183,6 +188,9 @@ void PhotonDataProcessor::processEPDLFile()
 							       data,
 							       d_energy_min,
 							       d_energy_max );
+
+	calculateSlopesAndAddToThirdTupleLoc( data );
+	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 PHOTOELECTRIC_CROSS_SECTION_LOC );
       }
@@ -233,6 +241,8 @@ void PhotonDataProcessor::processEPDLFile()
 	// (1.022, 0.0)
 	if( d_energy_min < 1.022 )
 	  data.erase( data.begin() );
+
+	calculateSlopesAndAddToThirdTupleLoc( data );
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 PAIR_PRODUCTION_CROSS_SECTION_LOC );
@@ -265,6 +275,8 @@ void PhotonDataProcessor::processEPDLFile()
 	// (2.044, 0.0)
 	if( d_energy_min < 2.044 )
 	  data.erase( data.begin() );
+
+	calculateSlopesAndAddToThirdTupleLoc( data );
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 TRIPLET_PRODUCTION_CROSS_SECTION_LOC );
@@ -286,75 +298,23 @@ void PhotonDataProcessor::processEPDLFile()
       // Read the atomic form factor
       FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       {
-	Teuchos::Array<Pair<double,double> > data;
+	Teuchos::Array<Quad<double,double,double,double> > data;
 	
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( epdl,
 							      data );
 	// For efficient sampling, the atomic form factor must be squared and
 	// integrated over its squared argument
-	double tmp_integral;
-	
-	Teuchos::Array<Trip<double,double,double> > integrated_squared_ff;
-	Trip<double,double,double> data_point;
-	double indep_begin, indep_end;
-	double dep_begin, dep_end;
-	
-	// The form factor has a linear region between the first two arguments:
-	// Do not add the first data point since this linear region needs
-	// a different interpolation policy ( integrated_sq_ff(x) = x*Z^2 )
-	indep_end = data[1].first*data[1].first;
-	dep_end = data[1].second*data[1].second;
-	tmp_integral = indep_end*dep_end;
-	
-	data_point.first = indep_end;
-	data_point.second = tmp_integral;
-	
-	integrated_squared_ff.push_back( data_point );
-	
-	// Integrate between data points assuming a functional form of
-	// dep = dep_0*indep^exponent
-	double exponent;
-	for( int i = 2; i < data.size(); ++i )
-	  {
-	    indep_begin = data[i-1].first*data[i-1].first;
-	    indep_end = data[i].first*data[i].first;
-	    dep_begin = data[i-1].second*data[i-1].second;
-	    dep_end = data[i].second*data[i].second;
-	    exponent = log( dep_end/dep_begin )/log( indep_end/indep_begin );
-	    
-	    tmp_integral = dep_begin/((exponent+1)*pow( indep_begin, exponent ))
-	      *(pow( indep_end, exponent+1 ) - pow( indep_begin, exponent+1 ));
-	    
-	    data_point.first = indep_end;
-	    data_point.second += tmp_integral;
-	    
-	    integrated_squared_ff.push_back( data_point );
-	  }
-	
-	
-	// Process the integrated squared form factor for log-log interpolation
-	for( int i = 0; i < integrated_squared_ff.size(); ++i )
-	  {
-	    integrated_squared_ff[i].first = 
-	      log( integrated_squared_ff[i].first );
-	    
-	    integrated_squared_ff[i].second = 
-	      log( integrated_squared_ff[i].second );
+	for( unsigned int i; i < data.size(); i++ )
+	{
+	  data.first *= data.first;
+	  data.second *= data.second;
+	}
 
-	    if( i > 0 )
-	    {
-	      // invert the slope because the squared argument will be treated 
-	      // as the dependent variable ( not the cdf )
-	      integrated_squared_ff[i-1].third = 
-		(integrated_squared_ff[i].first - 
-		 integrated_squared_ff[i-1].first)/
-		(integrated_squared_ff[i].second -
-		 integrated_squared_ff[i-1].second);
-	      integrated_squared_ff[i].third = 0.0;
-	    }
-	  }
+	createContinuousCDFAtFourthTupleLoc( data );
 	
-	d_hdf5_file_handler.writeArrayToDataSet( integrated_squared_ff,
+	calculateSlopesAndAddToThirdTupleLoc( data );
+
+	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 ATOMIC_FORM_FACTOR_LOC );
       }
       
@@ -372,6 +332,8 @@ void PhotonDataProcessor::processEPDLFile()
 	// The first data point needs to be erased since it is always
 	// (0.0, 0.0)
 	data.erase( data.begin() );
+
+	calculateSlopesAndAddToThirdTupleLoc( data );
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 SCATTERING_FUNCTION_LOC );
@@ -473,17 +435,7 @@ void PhotonDataProcessor::processEADLFile()
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
 							      data );
 	
-	// Create the electron shell cdf
-	double tmp_sum = 0.0;
-	for( int i = 0; i < data.size(); ++i )
-	  {
-	    tmp_sum += data[i].second;
-	    data[i].second = tmp_sum;
-	  }
-	
-	// Normalize the cdf
-	for( int i = 0; i < data.size(); ++i )
-	  data[i].second /= tmp_sum;
+	createDiscreteCDFAtSecondTupleLoc( data );
 	
 	// Create the Electron Shell Index Map
 	Teuchos::Array<Pair<unsigned int,unsigned int > >
@@ -491,18 +443,23 @@ void PhotonDataProcessor::processEADLFile()
 	createElectronShellIndexMap( atomic_number,
 				     electron_shell_index_map );
 	
+	FACEMC_ASSERT( (electron_shell_index_map.size() == 
+			data.size()) );
+	FACEMC_ASSERT( (electron_shell_index_map[0].first ==
+			data[0].first) );
+	FACEMC_ASSERT( (electron_shell_index_map.back().first ==
+			data.back().first) );
+
 	// Create the complete data array
-	Teuchos::Array<Trip<double,unsigned int,unsigned int> > complete_data;
-	Trip<double,unsigned int,unsigned int> data_point;
+	Teuchos::Array<Trip<double,unsigned int,unsigned int> > 
+	  complete_data( data.size() );
 	
 	for( int i = 0; i < data.size(); ++i )
-	  {
-	    data_point.first = data[i].second;
-	    data_point.second = electron_shell_index_map[i].first;
-	    data_point.third = electron_shell_index_map[i].second;
-	    
-	    complete_data.push_back( data_point );
-	  }
+	{
+	  complete_data[i].first = data[i].second;
+	  complete_data[i].second = electron_shell_index_map[i].first;
+	  complete_data[i].third = electron_shell_index_map[i].second;
+	}
 	
 	d_hdf5_file_handler.writeArrayToDataSet( complete_data,
 						 ELECTRON_SHELL_INDEX_MAP_LOC );
@@ -547,10 +504,12 @@ void PhotonDataProcessor::processEADLFile()
 			      data );
 	
 	// Calculate the total radiative transition probability for
-	// this subshell
+	// this subshell and store it in an attribute
 	double total_radiative_trans_prob = 0.0;
 	for( int i = 0; i < data.size(); ++i )
 	  total_radiative_trans_prob += data[i].second;
+
+	createDiscreteCDFAtSecondTupleLoc( data );
 	
 	d_hdf5_file_handler.writeValueToGroupAttribute( total_radiative_trans_prob,
 							RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ),
@@ -569,6 +528,8 @@ void PhotonDataProcessor::processEADLFile()
 	
 	readFourColumnTable( eadl,
 			     data );
+
+	createDiscreteCDFAtThirdTupleLoc( data );
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ) );
@@ -678,37 +639,38 @@ void PhotonDataProcessor::processComptonFiles()
   std::string compton_file_name;
   
   // Compton Profile Q values
-  double q_values[] = { 0.00,
-			0.05,
-			0.10,
-			0.15,
-			0.20,
-			0.30,
-			0.40,
-			0.50,
-			0.60,
-			0.70,
-			0.80,
-			1.00,
-			1.20,
-			1.40,
-			1.60,
-			1.80,
-			2.00,
-			2.40,
-			3.00,
-			4.00,
-			5.00,
-			6.00,
-			7.00,
-			8.00,
-			10.00,
-			15.00,
-			20.00,
-			30.00,
-			40.00,
-			60.00,
-			100.00 };
+  Teuchos::Array q_values( 31 );
+  q_values[0] = 0.00;
+  q_values[1] = 0.05;
+  q_values[2] = 0.10;
+  q_values[3] = 0.15;
+  q_values[4] = 0.20;
+  q_values[5] = 0.30;
+  q_values[6] = 0.40;
+  q_values[7] = 0.50;
+  q_values[8] = 0.60;
+  q_values[9] = 0.70;
+  q_values[10] = 0.80;
+  q_values[11] = 1.00;
+  q_values[12] = 1.20;
+  q_values[13] = 1.40;
+  q_values[14] = 1.60;
+  q_values[15] = 1.80;
+  q_values[16] = 2.00;
+  q_values[17] = 2.40;
+  q_values[18] = 3.00;
+  q_values[19] = 4.00;
+  q_values[20] = 5.00;
+  q_values[21] = 6.00;
+  q_values[22] = 7.00;
+  q_values[23] = 8.00;
+  q_values[24] = 10.00;
+  q_values[25] = 15.00;
+  q_values[26] = 20.00;
+  q_values[27] = 30.00;
+  q_values[28] = 40.00;
+  q_values[29] = 60.00;
+  q_values[30] = 100.00;
 
   for( int atomic_number = 1; atomic_number <= 100; ++atomic_number )
   {
@@ -718,54 +680,54 @@ void PhotonDataProcessor::processComptonFiles()
 					       file_number.str() + 
 					       DATA_FILE_SUFFIX );
     
-    compton_file_name = d_compton_file_prefix + file_number.str() + ".dat";
+    compton_file_name = d_compton_file_prefix + file_number.str() + ".txt";
     compton_file_stream.open( compton_file_name.c_str() );
     FACEMC_ASSERT_ALWAYS( compton_file_stream.is_open() );
 
-    Teuchos::Array<double> compton_profile_cdfs;
+    Teuchos::Array<Quad<double,double,double,double> > compton_profile_cdfs;
+    Teuchos::Array<double> compton_profile_data;
+    double compton_profile_data_point;
     while( !compton_file_stream.eof() )
     {
-      //each block of data has 31 evaluated data points
-      Teuchos::Array<double> data( 31, 0.0 );
-      double data_point;
-      for( int i = 0; i < 31; ++i )
-      {
-	compton_file_stream >> data_point;
-	data[i] = data_point;
-      }
-       
-      double tmp_integral = 0.0;
-      double exponent;
-      double indep_begin, indep_end;
-      double dep_begin, dep_end;
-      // Create the Compton Profile CDFs
-      compton_profile_cdfs.push_back( 0.0 );
-      tmp_integral = 0.5*( q_values[1]-q_values[0] )*( data[1] + data[0]);
-      compton_profile_cdfs.push_back( tmp_integral );
-      for( int i = 2; i < 31; ++i )
-      {
-	indep_begin = q_values[i-1];
-	indep_end = q_values[i];
-	dep_begin = data[i-1];
-	dep_end = data[i];
-	exponent = log( dep_end/dep_begin )/log( indep_begin/indep_end );
-	
-	tmp_integral = dep_begin/((exponent+1)*pow( indep_begin, exponent ))*
-	  (pow( indep_end, exponent+1 ) - pow( indep_begin, exponent+1 ));
-
-	compton_profile_cdfs.push_back( compton_profile_cdfs.back() +
-					tmp_integral );
-      }
-      
-      // Normalize the CDF
-      for( int i = compton_profile_cdfs.size()-31-1; 
-	   i < compton_profile_cdfs.size(); ++i )
-	compton_profile_cdfs[i] /= compton_profile_cdfs.back();
-      
+      compton_file_stream >> compton_profile_data_point;
+      compton_profile_data.push_back( compton_profile_data_point );
     }
 
-    d_hdf5_file_handler.writeArrayToDataSet( compton_profile_cdfs,
+    compton_profile_cdfs.resize( compton_profile_data.size() );
+
+    // Each shell has a Compton Profile with 31 data points
+    for( unsigned int i = 0; i < compton_profile_data.size()/31; ++j )
+    {
+      for( unsigned int j = 0; j < 31; ++j )
+      {
+	compton_profile_cdfs[i*31+j].first = q_values[j];
+	compton_profile_cdfs[i*31+j].second = compton_profile_data[i*31+j];
+      }
+      
+      Teuchos::ArrayView<Quad<double,double,double,double> > 
+	compton_profile_shell_cdf = compton_profile_cdfs( i*31, 31 );
+
+      createContinuousCDFAtFourthTupleLoc( compton_profile_shell_cdf );
+      
+      createSlopesAndAddToThirdTupleLoc( compton_profile_shell_cdf );
+    }
+
+    // To save memory, the q_values will be extracted from the array
+    Teuchos::Array<Trip<double,double,double> > 
+      compton_profile_cdfs_reduced( compton_profile_cdfs.size() );
+    for( unsigned int i = 0; i < compton_profile_cdfs.size(); ++i )
+    {
+      compton_profile_cdfs_reduced[i].first = compton_profile_cdfs[i].second;
+      compton_profile_cdfs_reduced[i].second = compton_profile_cdfs[i].third;
+      compton_profile_cdfs_reduced[i].third = compton_profile_cdfs[i].fourth;
+    }
+
+    d_hdf5_file_handler.writeArrayToDataSet( compton_profile_cdfs_reduced,
 					     COMPTON_PROFILE_CDF_LOC );
+
+    d_hdf5_file_handler.writeArrayToDataSetAttribute( q_values,
+						      COMPTON_PROFILE_CDF_LOC );
+    
     // Close the Compton Profile stream
     compton_file_stream.close();
 
