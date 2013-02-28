@@ -112,6 +112,16 @@ protected:
 		  std::string exponent );
 
   /*!
+   * \brief Calculate the slope between each pair of data points.
+   * This function will only compile if the FACEMC::Trip<double,double,double>
+   * or the FACEMC::Quad<double,double,double,double> structs are used as 
+   * the first template parameter. The slope values will be stored in the 
+   * third tuple position.
+   */
+  template<typename T,template<typename> class Array>
+  void calculateSlopesAtThirdTupleLoc( Array<T> &data );
+
+  /*!
    * \brief Create a continuous CDF from an array of data using a Taylor 
    * Series expansion to second order. The second derivative is approximated as 
    * (/_\pdf)/(/_\indep). The cdf values will be stored in the fourth tuple
@@ -133,16 +143,6 @@ protected:
    */
   template<typename T,template<typename> class Array>
   void createDiscreteCDFAtThirdTupleLoc( Array<T> &data );
-  
-  /*!
-   * \brief Calculate the slope between each pair of data points.
-   * This function will only compile if the FACEMC::Trip<double,double,double>
-   * or the FACEMC::Quad<double,double,double,double> structs are used as 
-   * the first template parameter. The slope values will be stored in the 
-   * third tuple position.
-   */
-  template<typename T,template<typename> class Array>
-  void calculateSlopesAndAddToThirdTupleLoc( Array<T> &data );
 
   //! Convert an EPDL shell integer to a shell name
   std::string uintToShellStr( const unsigned int shell );

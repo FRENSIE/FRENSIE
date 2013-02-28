@@ -53,6 +53,10 @@ public:
   using FACEMC::EPDL97DataProcessor::skipFourColumnTable;
   using FACEMC::EPDL97DataProcessor::readFourColumnTable;
   using FACEMC::EPDL97DataProcessor::extractValue;
+  using FACEMC::EPDL97DataProcessor::calculateSlopesAtThirdTupleLoc;
+  using FACEMC::EPDL97DataProcessor::createContinuousCDFAtFourthTupleLoc;
+  using FACEMC::EPDL97DataProcessor::createDiscreteCDFAtSecondTupleLoc;
+  using FACEMC::EPDL97DataProcessor::createDiscreteCDFAtThirdTupleLoc;
   using FACEMC::EPDL97DataProcessor::uintToShellStr;
   using FACEMC::EPDL97DataProcessor::LogLogDataProcessingPolicy;
   using FACEMC::EPDL97DataProcessor::LinearLogDataProcessingPolicy;
@@ -1000,423 +1004,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_uint_double_read_test )
   // Close the test table file
   test_tablefile.close();
 }
-
-//---------------------------------------------------------------------------//
-// Check that the EPDL97DataProcessor can read a two column table in  
-// linear-linear and compute the slope between each data point
-TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_slope_read_test )
-{
-  std::ifstream test_tablefile;
-  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
-  TEST_ASSERT( test_tablefile.is_open() );
-
-  TestDataProcessor data_processor;
-
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  data_processor.readFirstTableHeader( test_tablefile,
-				       atomic_number,
-				       outgoing_particle_designator,
-				       atomic_weight,
-				       interpolation_flag );
-
-  data_processor.readSecondTableHeader( test_tablefile,
-					reaction_type,
-					electron_shell );
-  
-  Teuchos::Array<FACEMC::Trip<double,double,double> > data, data_true;
-
-  data_processor.readTwoColumnTable<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
-	  data );
-  
-  FACEMC::Trip<double,double,double> data_point;
-
-  data_point.first = 1.0;
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 3.0;
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 5.0;
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 6.0;
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-  
-  data_point.first = 8.0;
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 10.0;
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 11.0;
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 13.0;
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 14.0;
-  data_point.second = 6.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 16.0;
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 18.0;
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 19.0;
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-
-  // calculate the slopes
-  for( unsigned int i = 1; i < data_true.size(); ++i )
-  {
-    data_true[i-1].third = (data_true[i].second - data_true[i-1].second)/
-      (data_true[i].first - data_true[i-1].first);
-    data_true[i].third = 0.0;
-  }
-
-  TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
-  // Close the test table file
-  test_tablefile.close();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the EPDL97DataProcessor can read a two column table in  
-// log-log format and compute the slope between each data point
-TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_log_slope_read_test )
-{
-  std::ifstream test_tablefile;
-  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
-  TEST_ASSERT( test_tablefile.is_open() );
-
-  TestDataProcessor data_processor;
-
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  data_processor.readFirstTableHeader( test_tablefile,
-				       atomic_number,
-				       outgoing_particle_designator,
-				       atomic_weight,
-				       interpolation_flag );
-
-  data_processor.readSecondTableHeader( test_tablefile,
-					reaction_type,
-					electron_shell );
-  
-  Teuchos::Array<FACEMC::Trip<double,double,double> > data, data_true;
-
-  data_processor.readTwoColumnTable<TestDataProcessor::LogLogDataProcessingPolicy>( test_tablefile,
-    data );
-  
-  FACEMC::Trip<double,double,double> data_point;
-
-  data_point.first = log( 1.0 );
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-  
-  data_point.first = log( 3.0 );
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 5.0 );
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 6.0 );
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-  
-  data_point.first = log( 8.0 );
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 10.0 );
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 11.0 );
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 13.0 );
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 14.0 );
-  data_point.second = log( 6.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 16.0 );
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 18.0 );
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 19.0 );
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-
-  // calculate the slopes
-  for( unsigned int i = 1; i < data_true.size(); ++i )
-  {
-    data_true[i-1].third = (data_true[i].second - data_true[i-1].second)/
-      (data_true[i].first - data_true[i-1].first);
-    data_true[i].third = 0.0;
-  }
-
-  TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
-  // Close the test table file
-  test_tablefile.close();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the EPDL97DataProcessor can read a two column table in  
-// linear-log format and compute the slope between each data point
-TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_log_slope_read_test )
-{
-  std::ifstream test_tablefile;
-  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
-  TEST_ASSERT( test_tablefile.is_open() );
-
-  TestDataProcessor data_processor;
-
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  data_processor.readFirstTableHeader( test_tablefile,
-				       atomic_number,
-				       outgoing_particle_designator,
-				       atomic_weight,
-				       interpolation_flag );
-
-  data_processor.readSecondTableHeader( test_tablefile,
-					reaction_type,
-					electron_shell );
-  
-  Teuchos::Array<FACEMC::Trip<double,double,double> > data, data_true;
-
-  data_processor.readTwoColumnTable<TestDataProcessor::LinearLogDataProcessingPolicy>( test_tablefile,
-       data );
-  
-  FACEMC::Trip<double,double,double> data_point;
-
-  data_point.first = 1.0;
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-  
-  data_point.first = 3.0;
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 5.0;
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 6.0;
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-  
-  data_point.first = 8.0;
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 10.0;
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 11.0;
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 13.0;
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 14.0;
-  data_point.second = log( 6.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 16.0;
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 18.0;
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 19.0;
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-
-  // calculate the slopes
-  for( unsigned int i = 1; i < data_true.size(); ++i )
-  {
-    data_true[i-1].third = (data_true[i].second - data_true[i-1].second)/
-      (data_true[i].first - data_true[i-1].first);
-    data_true[i].third = 0.0;
-  }
-
-  TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
-  // Close the test table file
-  test_tablefile.close();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the EPDL97DataProcessor can read a two column table in  
-// log-linear format and compute the slope between each data point
-TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_lin_slope_read_test )
-{
-  std::ifstream test_tablefile;
-  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
-  TEST_ASSERT( test_tablefile.is_open() );
-
-  TestDataProcessor data_processor;
-
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  data_processor.readFirstTableHeader( test_tablefile,
-				       atomic_number,
-				       outgoing_particle_designator,
-				       atomic_weight,
-				       interpolation_flag );
-
-  data_processor.readSecondTableHeader( test_tablefile,
-					reaction_type,
-					electron_shell );
-  
-  Teuchos::Array<FACEMC::Trip<double,double,double> > data, data_true;
-
-  data_processor.readTwoColumnTable<TestDataProcessor::LogLinearDataProcessingPolicy>( test_tablefile,
-       data );
-  
-  FACEMC::Trip<double,double,double> data_point;
-
-  data_point.first = log( 1.0 );
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 3.0 );
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 5.0 );
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 6.0 );
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-  
-  data_point.first = log( 8.0 );
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 10.0 );
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 11.0 );
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 13.0 );
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 14.0 );
-  data_point.second = 6.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 16.0 );
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 18.0 );
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 19.0 );
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-
-  // calculate the slopes
-  for( unsigned int i = 1; i < data_true.size(); ++i )
-  {
-    data_true[i-1].third = (data_true[i].second - data_true[i-1].second)/
-      (data_true[i].first - data_true[i-1].first);
-    data_true[i].third = 0.0;
-  }
-
-  TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
-  // Close the test table file
-  test_tablefile.close();
-}
-
 
 //---------------------------------------------------------------------------//
 // Check that the EPDL97DataProcessor can read a two column table in 
@@ -2527,354 +2114,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_gt_rea
 }
 
 //---------------------------------------------------------------------------//
-// Check that the EPDL97DataProcessor can read a two column table in  
-// linear-linear format in the given independent variable range and compute
-// the slope between each data point
-TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_lt_slope_read_test )
-{
-  std::ifstream test_tablefile;
-  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
-  TEST_ASSERT( test_tablefile.is_open() );
-
-  TestDataProcessor data_processor;
-
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  data_processor.readFirstTableHeader( test_tablefile,
-				       atomic_number,
-				       outgoing_particle_designator,
-				       atomic_weight,
-				       interpolation_flag );
-
-  data_processor.readSecondTableHeader( test_tablefile,
-					reaction_type,
-					electron_shell );
-  
-  Teuchos::Array<FACEMC::Trip<double,double,double> > data, data_true;
-
-  data_processor.readTwoColumnTableInRange<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
-	         data,
-	         5.0,
-	         14.0 );
-  
-  FACEMC::Trip<double,double,double> data_point;
-
-  data_point.first = 5.0;
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 6.0;
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-  
-  data_point.first = 8.0;
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 10.0;
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 11.0;
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 13.0;
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-
-  data_point.first = 14.0;
-  data_point.second = 6.0;
-  data_true.push_back( data_point );
-
-  // calculate the slopes
-  for( unsigned int i = 1; i < data_true.size(); ++i )
-  {
-    data_true[i-1].third = (data_true[i].second - data_true[i-1].second)/
-      (data_true[i].first - data_true[i-1].first);
-    data_true[i].third = 0.0;
-  }
-
-  TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
-  // Close the test table file
-  test_tablefile.close();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the EPDL97DataProcessor can read a two column table in  
-// linear-log format in the given independent variable range and compute
-// the slope between each data point
-TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_log_range_gt_lt_slope_read_test )
-{
-  std::ifstream test_tablefile;
-  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
-  TEST_ASSERT( test_tablefile.is_open() );
-
-  TestDataProcessor data_processor;
-
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  data_processor.readFirstTableHeader( test_tablefile,
-				       atomic_number,
-				       outgoing_particle_designator,
-				       atomic_weight,
-				       interpolation_flag );
-
-  data_processor.readSecondTableHeader( test_tablefile,
-					reaction_type,
-					electron_shell );
-  
-  Teuchos::Array<FACEMC::Trip<double,double,double> > data, data_true;
-
-  data_processor.readTwoColumnTableInRange<TestDataProcessor::LinearLogDataProcessingPolicy>( test_tablefile,
-	      data,
-	      5.0,
-	      14.0 );
-  
-  FACEMC::Trip<double,double,double> data_point;
-
-  data_point.first = 5.0;
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 6.0;
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-  
-  data_point.first = 8.0;
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 10.0;
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 11.0;
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 13.0;
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = 14.0;
-  data_point.second = log( 6.0 );
-  data_true.push_back( data_point );
-
-  // calculate the slopes
-  for( unsigned int i = 1; i < data_true.size(); ++i )
-  {
-    data_true[i-1].third = (data_true[i].second - data_true[i-1].second)/
-      (data_true[i].first - data_true[i-1].first);
-    data_true[i].third = 0.0;
-  }
-
-  TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
-  // Close the test table file
-  test_tablefile.close();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the EPDL97DataProcessor can read a two column table in  
-// log-linear format in the given independent variable range and compute
-// the slope between each data point
-TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_lin_range_gt_lt_slope_read_test )
-{
-  std::ifstream test_tablefile;
-  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
-  TEST_ASSERT( test_tablefile.is_open() );
-
-  TestDataProcessor data_processor;
-
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  data_processor.readFirstTableHeader( test_tablefile,
-				       atomic_number,
-				       outgoing_particle_designator,
-				       atomic_weight,
-				       interpolation_flag );
-
-  data_processor.readSecondTableHeader( test_tablefile,
-					reaction_type,
-					electron_shell );
-  
-  Teuchos::Array<FACEMC::Trip<double,double,double> > data, data_true;
-
-  data_processor.readTwoColumnTableInRange<TestDataProcessor::LogLinearDataProcessingPolicy>( test_tablefile,
-	      data,
-	      5.0,
-	      14.0 );
-  
-  FACEMC::Trip<double,double,double> data_point;
-
-  data_point.first = log( 5.0 );
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 6.0 );
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-  
-  data_point.first = log( 8.0 );
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 10.0 );
-  data_point.second = 2.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 11.0 );
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 13.0 );
-  data_point.second = 4.0;
-  data_true.push_back( data_point );
-
-  data_point.first = log( 14.0 );
-  data_point.second = 6.0;
-  data_true.push_back( data_point );
-
-  // calculate the slopes
-  for( unsigned int i = 1; i < data_true.size(); ++i )
-  {
-    data_true[i-1].third = (data_true[i].second - data_true[i-1].second)/
-      (data_true[i].first - data_true[i-1].first);
-    data_true[i].third = 0.0;
-  }
-
-  TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
-  // Close the test table file
-  test_tablefile.close();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the EPDL97DataProcessor can read a two column table in  
-// log-log format in the given independent variable range and compute
-// the slope between each data point
-TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_log_range_gt_lt_slope_read_test )
-{
-  std::ifstream test_tablefile;
-  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
-  TEST_ASSERT( test_tablefile.is_open() );
-
-  TestDataProcessor data_processor;
-
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  data_processor.readFirstTableHeader( test_tablefile,
-				       atomic_number,
-				       outgoing_particle_designator,
-				       atomic_weight,
-				       interpolation_flag );
-
-  data_processor.readSecondTableHeader( test_tablefile,
-					reaction_type,
-					electron_shell );
-  
-  Teuchos::Array<FACEMC::Trip<double,double,double> > data, data_true;
-
-  data_processor.readTwoColumnTableInRange<TestDataProcessor::LogLogDataProcessingPolicy>( test_tablefile,
-	      data,
-	      5.0,
-	      14.0 );
-  
-  FACEMC::Trip<double,double,double> data_point;
-
-  data_point.first = log( 5.0 );
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 6.0 );
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-  
-  data_point.first = log( 8.0 );
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 10.0 );
-  data_point.second = log( 2.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 11.0 );
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 13.0 );
-  data_point.second = log( 4.0 );
-  data_true.push_back( data_point );
-
-  data_point.first = log( 14.0 );
-  data_point.second = log( 6.0 );
-  data_true.push_back( data_point );
-
-  // calculate the slopes
-  for( unsigned int i = 1; i < data_true.size(); ++i )
-  {
-    data_true[i-1].third = (data_true[i].second - data_true[i-1].second)/
-      (data_true[i].first - data_true[i-1].first);
-    data_true[i].third = 0.0;
-  }
-
-  TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
-  // Close the test table file
-  test_tablefile.close();
-}
-
-//---------------------------------------------------------------------------//
 // Check that the EPDL97DataProcessor can read a three column table 
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_read_test )
 {
@@ -3038,6 +2277,436 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_read_test )
   // Close the test table file
   test_tablefile.close();
 }
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table and 
+// calculate the slope between each pair of data points
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_slope_calc_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Trip<double,double,double> > data, data_true;
+
+  data_processor.readTwoColumnTable<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+          data );
+
+  data_processor.calculateSlopesAtThirdTupleLoc( data );
+  
+  FACEMC::Trip<double,double,double> data_point;
+  
+  data_point.first = 1.0;
+  data_point.second = 2.0;
+  data_point.third = 0.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 3.0;
+  data_point.second = 2.0;
+  data_point.third = 0.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 5.0;
+  data_point.second = 2.0;
+  data_point.third = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = 4.0;
+  data_point.third = -1.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = 2.0;
+  data_point.third = 0.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = 2.0;
+  data_point.third = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = 4.0;
+  data_point.third = 0.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = 4.0;
+  data_point.third = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 14.0;
+  data_point.second = 6.0;
+  data_point.third = -2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 16.0;
+  data_point.second = 2.0;
+  data_point.third = 0.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 18.0;
+  data_point.second = 2.0;
+  data_point.third = 2.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 19.0;
+  data_point.second = 4.0;
+  data_point.third = 0.0;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table, create
+// a continuous cdf of the data and calculate the slope between each pair of 
+// pdf data points.
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_cdf_slope_calc_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Quad<double,double,double,double> > data, data_true;
+
+  data_processor.readTwoColumnTable<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+          data );
+
+  data_processor.calculateSlopesAtThirdTupleLoc( data );
+
+  data_processor.createContinuousCDFAtFourthTupleLoc( data );
+  
+  FACEMC::Quad<double,double,double,double> data_point;
+  
+  data_point.first = 1.0;
+  data_point.second = 2.0;
+  data_point.third = 0.0;
+  data_point.fourth = 0.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 3.0;
+  data_point.second = 2.0;
+  data_point.third = 0.0;
+  data_point.fourth = 4.0/52.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 5.0;
+  data_point.second = 2.0;
+  data_point.third = 2.0;
+  data_point.fourth = 8.0/52.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = 4.0;
+  data_point.third = -1.0;
+  data_point.fourth = 11.0/52.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = 2.0;
+  data_point.third = 0.0;
+  data_point.fourth = 17.0/52.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = 2.0;
+  data_point.third = 2.0;
+  data_point.fourth = 21.0/52.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = 4.0;
+  data_point.third = 0.0;
+  data_point.fourth = 24.0/52.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = 4.0;
+  data_point.third = 2.0;
+  data_point.fourth = 32.0/52.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 14.0;
+  data_point.second = 6.0;
+  data_point.third = -2.0;
+  data_point.fourth = 37.0/52.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 16.0;
+  data_point.second = 2.0;
+  data_point.third = 0.0;
+  data_point.fourth = 45.0/52.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 18.0;
+  data_point.second = 2.0;
+  data_point.third = 2.0;
+  data_point.fourth = 49.0/52.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 19.0;
+  data_point.second = 4.0;
+  data_point.third = 0.0;
+  data_point.fourth = 52.0/52.0;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table and 
+// calculate a discrete cdf from the data
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_discrete_cdf_calc_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( TWO_COLUMN_TABLE_TEST_FILE, std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
+
+  data_processor.readTwoColumnTable<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+          data );
+
+  data_processor.createDiscreteCDFAtSecondTupleLoc( data );
+  
+  FACEMC::Pair<double,double> data_point;
+  
+  data_point.first = 1.0;
+  data_point.second = 2.0/36.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 3.0;
+  data_point.second = 4.0/36.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 5.0;
+  data_point.second = 6.0/36.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 6.0;
+  data_point.second = 10.0/36.0;
+  data_true.push_back( data_point );
+  
+  data_point.first = 8.0;
+  data_point.second = 12.0/36.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 10.0;
+  data_point.second = 14.0/36.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 11.0;
+  data_point.second = 18.0/36.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 13.0;
+  data_point.second = 22.0/36.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 14.0;
+  data_point.second = 28.0/36.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 16.0;
+  data_point.second = 30.0/36.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 18.0;
+  data_point.second = 32.0/36.0;
+  data_true.push_back( data_point );
+
+  data_point.first = 19.0;
+  data_point.second = 36.0/36.0;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_ARRAYS( data, data_true );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a three column table and 
+// calculate a discrete cdf from the data
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_lin_lin_discrete_cdf_calc_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( THREE_COLUMN_TABLE_TEST_FILE, std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Trip<unsigned int,double,double> > data, data_true;
+
+  data_processor.readThreeColumnTable( test_tablefile,
+				       data );
+
+  data_processor.createDiscreteCDFAtSecondTupleLoc( data );
+  
+  FACEMC::Trip<unsigned int,double,double> data_point;
+  
+  data_point.first = 5;
+  data_point.second = 0.296149/0.95766388;
+  data_point.third = 0.113103;
+  data_true.push_back( data_point );
+
+  data_point.first = 6;
+  data_point.second = 0.751657/0.95766388;
+  data_point.third = 0.118701;
+  data_true.push_back( data_point );
+
+  data_point.first = 10;
+  data_point.second = 0.8051038/0.95766388;
+  data_point.third = 0.132545;
+  data_true.push_back( data_point );
+
+  data_point.first = 11;
+  data_point.second = 0.9109538/0.95766388;
+  data_point.third = 0.133863;
+  data_true.push_back( data_point );
+
+  data_point.first = 13;
+  data_point.second = 0.91314009/0.95766388;
+  data_point.third = 0.134485;
+  data_true.push_back( data_point );
+
+  data_point.first = 14;
+  data_point.second = 0.91551708/0.95766388;
+  data_point.third = 0.134740;
+  data_true.push_back( data_point );
+
+  data_point.first = 18;
+  data_point.second = 0.92917498/0.95766388;
+  data_point.third = 0.137436;
+  data_true.push_back( data_point );
+
+  data_point.first = 19;
+  data_point.second = 0.95766388/0.95766388;
+  data_point.third = 0.137794;
+  data_true.push_back( data_point );
+
+  if( FACEMC::Trip<unsigned int,double,double>::size > 2 )
+    std::cout << "YES" << std::endl;
+  if( FACEMC::Trip<unsigned int,double,double>::size > 3 )
+    std::cout << "YES" << std::endl;
+
+  //TEST_COMPARE_FLOATING_TUPLE_ARRAYS( data, data_true, 1e-12 );
+
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+
 
 //---------------------------------------------------------------------------//
 // end tstEPDL97DataProcessor.cpp

@@ -130,7 +130,7 @@ void PhotonDataProcessor::processEPDLFile()
 							       d_energy_min,
 							       d_energy_max );
 
-	calculateSlopesAndAddToThirdTupleLoc( data );
+	calculateSlopesAtThirdTupleLoc( data );
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 COHERENT_CROSS_SECTION_LOC );
@@ -158,7 +158,7 @@ void PhotonDataProcessor::processEPDLFile()
 							       d_energy_min,
 							       d_energy_max );
 
-	calculateSlopesAndAddToThirdTupleLoc( data );
+	calculateSlopesAtThirdTupleLoc( data );
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 INCOHERENT_CROSS_SECTION_LOC );
@@ -189,7 +189,7 @@ void PhotonDataProcessor::processEPDLFile()
 							       d_energy_min,
 							       d_energy_max );
 
-	calculateSlopesAndAddToThirdTupleLoc( data );
+	calculateSlopesAtThirdTupleLoc( data );
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 PHOTOELECTRIC_CROSS_SECTION_LOC );
@@ -242,7 +242,7 @@ void PhotonDataProcessor::processEPDLFile()
 	if( d_energy_min < 1.022 )
 	  data.erase( data.begin() );
 
-	calculateSlopesAndAddToThirdTupleLoc( data );
+	calculateSlopesAtThirdTupleLoc( data );
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 PAIR_PRODUCTION_CROSS_SECTION_LOC );
@@ -276,7 +276,7 @@ void PhotonDataProcessor::processEPDLFile()
 	if( d_energy_min < 2.044 )
 	  data.erase( data.begin() );
 
-	calculateSlopesAndAddToThirdTupleLoc( data );
+	calculateSlopesAtThirdTupleLoc( data );
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 TRIPLET_PRODUCTION_CROSS_SECTION_LOC );
@@ -306,13 +306,13 @@ void PhotonDataProcessor::processEPDLFile()
 	// integrated over its squared argument
 	for( unsigned int i; i < data.size(); i++ )
 	{
-	  data.first *= data.first;
-	  data.second *= data.second;
+	  data[i].first *= data[i].first;
+	  data[i].second *= data[i].second;
 	}
 
 	createContinuousCDFAtFourthTupleLoc( data );
 	
-	calculateSlopesAndAddToThirdTupleLoc( data );
+	calculateSlopesAtThirdTupleLoc( data );
 
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 ATOMIC_FORM_FACTOR_LOC );
@@ -333,7 +333,7 @@ void PhotonDataProcessor::processEPDLFile()
 	// (0.0, 0.0)
 	data.erase( data.begin() );
 
-	calculateSlopesAndAddToThirdTupleLoc( data );
+	calculateSlopesAtThirdTupleLoc( data );
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 SCATTERING_FUNCTION_LOC );
@@ -639,7 +639,7 @@ void PhotonDataProcessor::processComptonFiles()
   std::string compton_file_name;
   
   // Compton Profile Q values
-  Teuchos::Array q_values( 31 );
+  Teuchos::Array<double> q_values( 31 );
   q_values[0] = 0.00;
   q_values[1] = 0.05;
   q_values[2] = 0.10;
@@ -696,7 +696,7 @@ void PhotonDataProcessor::processComptonFiles()
     compton_profile_cdfs.resize( compton_profile_data.size() );
 
     // Each shell has a Compton Profile with 31 data points
-    for( unsigned int i = 0; i < compton_profile_data.size()/31; ++j )
+    for( unsigned int i = 0; i < compton_profile_data.size()/31; ++i )
     {
       for( unsigned int j = 0; j < 31; ++j )
       {
@@ -709,7 +709,7 @@ void PhotonDataProcessor::processComptonFiles()
 
       createContinuousCDFAtFourthTupleLoc( compton_profile_shell_cdf );
       
-      createSlopesAndAddToThirdTupleLoc( compton_profile_shell_cdf );
+      calculateSlopesAtThirdTupleLoc( compton_profile_shell_cdf );
     }
 
     // To save memory, the q_values will be extracted from the array
@@ -726,7 +726,8 @@ void PhotonDataProcessor::processComptonFiles()
 					     COMPTON_PROFILE_CDF_LOC );
 
     d_hdf5_file_handler.writeArrayToDataSetAttribute( q_values,
-						      COMPTON_PROFILE_CDF_LOC );
+						      COMPTON_PROFILE_CDF_LOC,
+						      "Momentum_Projections" );
     
     // Close the Compton Profile stream
     compton_file_stream.close();

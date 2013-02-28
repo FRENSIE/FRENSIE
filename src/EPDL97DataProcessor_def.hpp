@@ -60,9 +60,9 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( std::ifstream &datafile,
     
     if( strcmp( data1_l, test ) != 0 )
     {
-      indep = extractValue<typename T::first_type>( data1_l, 
+      indep = extractValue<typename T::firstType>( data1_l, 
 						    data1_r );
-      dep = extractValue<typename T::second_type>( data2_l,
+      dep = extractValue<typename T::secondType>( data2_l,
 						   data2_r );
       
       // Remove values outside of independent variable range
@@ -156,9 +156,9 @@ void EPDL97DataProcessor::readTwoColumnTable( std::ifstream &datafile,
     datafile.getline( data2_r, 4 );
     if( strcmp( data1_l, test ) != 0 )
     {
-      indep = extractValue<typename T::first_type>( data1_l, 
+      indep = extractValue<typename T::firstType>( data1_l, 
 						    data1_r );
-      dep = extractValue<typename T::second_type>( data2_l,
+      dep = extractValue<typename T::secondType>( data2_l,
 						   data2_r );
       
       data_point.first = DataProcessingPolicy::processIndependentVar(indep);
@@ -213,13 +213,13 @@ inline T EPDL97DataProcessor::extractValue( std::string mantissa,
 
 //! Create a cdf from an array of data using a taylor series expansion to O(2)
 template<typename T,template<typename> class Array>
-void EPDLDataProcessor::createContinuousCDFAtFourthTupleLoc( Array<T> &data )
+void EPDL97DataProcessor::createContinuousCDFAtFourthTupleLoc( Array<T> &data )
 {
   typename Array<T>::iterator data_point_1, data_point_2;
   typename Array<T>::iterator end = data.end();
 
   data_point_1 = data.begin();
-  data_point_2 = data_point_1 + 1;
+  data_point_2 = data.begin() + 1;
 
   // Make sure that the array is not empty
   FACEMC_ASSERT_ALWAYS( (data_point_1 != end) );
@@ -245,21 +245,24 @@ void EPDLDataProcessor::createContinuousCDFAtFourthTupleLoc( Array<T> &data )
   }
 
   // Normalize the CDF
-  data_point_1 = data.begin() + 1;
+  data_point_1 = data.begin();
   while( data_point_1 != end )
+  {
     data_point_1->fourth /= data.back().fourth;
+    ++data_point_1;
+  }
 }
 
 //! Create a discrete CDF in place (second tuple location) from an array of 
 // data.
 template<typename T,template<typename> class Array>
-void EPDLDataProcessor::createDiscreteCDFAtSecondTupleLoc( Array<T> &data )
+void EPDL97DataProcessor::createDiscreteCDFAtSecondTupleLoc( Array<T> &data )
 {
   typename Array<T>::iterator data_point_1, data_point_2;
   typename Array<T>::iterator end = data.end();
 
   data_point_1 = data.begin();
-  data_point_2 = data_point_1 + 1;
+  data_point_2 = data.begin() + 1;
 
   // Make sure that the array is not empty
   FACEMC_ASSERT_ALWAYS( (data_point_1 != end) );
@@ -279,19 +282,22 @@ void EPDLDataProcessor::createDiscreteCDFAtSecondTupleLoc( Array<T> &data )
   // Normalize the CDF
   data_point_1 = data.begin();
   while( data_point_1 != end )
+  {
     data_point_1->second /= data.back().second;
+    ++data_point_1;
+  }
 }
 
 //! Create a discrete CDF in place (third tuple location) from an array of 
 // data.
 template<typename T,template<typename> class Array>
-void EPDLDataProcessor::createDiscreteCDFAtThirdTupleLoc( Array<T> &data )
+void EPDL97DataProcessor::createDiscreteCDFAtThirdTupleLoc( Array<T> &data )
 {
   typename Array<T>::iterator data_point_1, data_point_2;
   typename Array<T>::iterator end = data.end();
 
   data_point_1 = data.begin();
-  data_point_2 = data_point_1 + 1;
+  data_point_2 = data.begin() + 1;
 
   // Make sure that the array is not empty
   FACEMC_ASSERT_ALWAYS( (data_point_1 != end) );
@@ -311,12 +317,15 @@ void EPDLDataProcessor::createDiscreteCDFAtThirdTupleLoc( Array<T> &data )
   // Normalize the CDF
   data_point_1 = data.begin();
   while( data_point_1 != end )
+  {
     data_point_1->third /= data.back().third;
+    ++data_point_1;
+  }
 }
 
 //! Calculate the slope between each pair of data points.
 template<typename T, template<typename> class Array>
-void EPDL97DataProcessor::calculateSlopesAndAddToThirdTupleLoc( Array<T> &data  )
+void EPDL97DataProcessor::calculateSlopesAtThirdTupleLoc( Array<T> &data  )
 {
   typename Array<T>::iterator data_point_1, data_point_2;
   typename Array<T>::iterator end = data.end();

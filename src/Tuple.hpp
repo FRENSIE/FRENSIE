@@ -26,8 +26,8 @@ struct Pair
   static const int size = 2;
   static H5::CompType createHDF5DataType();
   static std::string name();
-  typedef T1 first_type;
-  typedef T2 second_type;
+  typedef T1 firstType;
+  typedef T2 secondType;
   T1 first;
   T2 second;
 };
@@ -39,9 +39,9 @@ struct Trip
   static const int size = 3;
   static H5::CompType createHDF5DataType();
   static std::string name();
-  typedef T1 first_type;
-  typedef T2 second_type;
-  typedef T3 third_type;
+  typedef T1 firstType;
+  typedef T2 secondType;
+  typedef T3 thirdType;
   T1 first;
   T2 second;
   T3 third;
@@ -54,10 +54,10 @@ struct Quad
   static const int size = 4;
   static H5::CompType createHDF5DataType();
   static std::string name();
-  typedef T1 first_type;
-  typedef T2 second_type;
-  typedef T3 third_type;
-  typedef T4 fourth_type;
+  typedef T1 firstType;
+  typedef T2 secondType;
+  typedef T3 thirdType;
+  typedef T4 fourthType;
   T1 first;
   T2 second;
   T3 third;
