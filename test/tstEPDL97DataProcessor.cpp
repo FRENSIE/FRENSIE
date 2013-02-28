@@ -2614,7 +2614,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_discrete_cdf_ca
 //---------------------------------------------------------------------------//
 // Check that the EPDL97DataProcessor can read a three column table and 
 // calculate a discrete cdf from the data
-TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_lin_lin_discrete_cdf_calc_test )
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_discrete_cdf_calc_test )
 {
   std::ifstream test_tablefile;
   test_tablefile.open( THREE_COLUMN_TABLE_TEST_FILE, std::fstream::in );
@@ -2688,12 +2688,88 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_lin_lin_discrete_cdf_
   data_point.third = 0.137794;
   data_true.push_back( data_point );
 
-  if( FACEMC::Trip<unsigned int,double,double>::size > 2 )
-    std::cout << "YES" << std::endl;
-  if( FACEMC::Trip<unsigned int,double,double>::size > 3 )
-    std::cout << "YES" << std::endl;
+  TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, data_true, 1e-12 );
 
-  //TEST_COMPARE_FLOATING_TUPLE_ARRAYS( data, data_true, 1e-12 );
+  // Test that the entire table was read
+  //  the EOF bit doesn't seem to be getting set so try reading from the stream
+  std::string eof;
+  std::getline( test_tablefile, eof );
+
+  TEST_EQUALITY_CONST( eof.size(), 0 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a four column table and 
+// calculate a discrete cdf from the data
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_discrete_cdf_calc_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( FOUR_COLUMN_TABLE_TEST_FILE, std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number,
+				       outgoing_particle_designator,
+				       atomic_weight,
+				       interpolation_flag );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type,
+					electron_shell );
+  
+  Teuchos::Array<FACEMC::Quad<unsigned int,unsigned int,double,double> > 
+    data, data_true;
+
+  data_processor.readFourColumnTable( test_tablefile,
+				      data );
+
+  data_processor.createDiscreteCDFAtThirdTupleLoc( data );
+  
+  FACEMC::Quad<unsigned int, unsigned int,double,double> data_point;
+  
+  data_point.first = 27;
+  data_point.second = 27;
+  data_point.third = 0.380318/0.99999968;
+  data_point.fourth = 0.00000671000;
+  data_true.push_back( data_point );
+
+  data_point.first = 27;
+  data_point.second = 29;
+  data_point.third = 0.661987/0.99999968;
+  data_point.fourth = 0.0000138200;
+  data_true.push_back( data_point );
+
+  data_point.first = 27;
+  data_point.second = 30;
+  data_point.third = 0.906666/0.99999968;
+  data_point.fourth = 0.0000143300;
+  data_true.push_back( data_point );
+
+  data_point.first = 29;
+  data_point.second = 30;
+  data_point.third = 0.9950196/0.99999968;
+  data_point.fourth = 0.0000214400;
+  data_true.push_back( data_point );
+
+  data_point.first = 30;
+  data_point.second = 30;
+  data_point.third = 0.99999968/0.99999968;
+  data_point.fourth = 0.0000219500;
+  data_true.push_back( data_point );
+
+  TEST_COMPARE_FLOATING_QUAD_ARRAYS( data, data_true, 1e-12 );
 
   // Test that the entire table was read
   //  the EOF bit doesn't seem to be getting set so try reading from the stream

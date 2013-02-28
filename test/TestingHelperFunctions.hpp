@@ -18,11 +18,30 @@
 
 
 // Define a new Macro for the Teuchos Unit Test Harness for comparing arrays
-// of Tuples of floating point data types
-#define TEST_COMPARE_FLOATING_TUPLE_ARRAYS( a1, a2, tol ) \
-  { \
-    const bool result = compareFloatingTupleArrays(a1,#a1,a2,#a2,tol,out); \
-    if( !result ) success = false; \
+// of Pairs of floating point data types
+#define TEST_COMPARE_FLOATING_PAIR_ARRAYS( a1, a2, tol ) \
+  {									\
+    const bool result =							\
+      Teuchos::compareFloatingPairArrays(a1,#a1,a2,#a2,tol,out);	\
+    if( !result ) success = false;					\
+  }
+
+// Define a new Macro for the Teuchos Unit Test Harness for comparing arrays
+// of Triplets of floating point data types
+#define TEST_COMPARE_FLOATING_TRIP_ARRAYS( a1, a2, tol ) \
+  {									\
+    const bool result =							\
+      Teuchos::compareFloatingTripArrays(a1,#a1,a2,#a2,tol,out);	\
+    if( !result ) success = false;					\
+  }
+
+// Define a new Macro for the Teuchos Unit Test Harness for comparing arrays
+// of Quadruplets of floating point data types
+#define TEST_COMPARE_FLOATING_QUAD_ARRAYS( a1, a2, tol ) \
+  {									\
+    const bool result =							\
+      Teuchos::compareFloatingQuadArrays(a1,#a1,a2,#a2,tol,out);	\
+    if( !result ) success = false;					\
   }
 
 namespace Teuchos{
@@ -52,17 +71,25 @@ std::ostream& operator<<(std::ostream &out, const FACEMC::Quad<T1,T2,T3,T4> &p)
   return out;
 }
 
-// function for comparing tuples with floating point values
+// Function for getting the size of a tuple held in an array
+template<typename T,
+	 template<typename> class Array>
+int getTupleSize( Array<T> &a1 )
+{
+  return T::size;
+}
+
+// Function for comparing arrays of pairs with floating point values
 // this function is based off of the compareFloatingArrays function in Teuchos
 template<typename T,
 	 template<typename> class Array1,
 	 template<typename> class Array2>
-bool compareFloatingTupleArrays( const Array1<T> &a1,
-				 const std::string &a1_name,
-				 const Array2<T> &a2,
-				 const std::string &a2_name,
-				 const double &tol,
-				 Teuchos::FancyOStream &out )
+bool compareFloatingPairArrays( const Array1<T> &a1,
+				const std::string &a1_name,
+				const Array2<T> &a2,
+				const std::string &a2_name,
+				const double &tol,
+				Teuchos::FancyOStream &out )
 {
   bool success = true;
 
@@ -83,102 +110,155 @@ bool compareFloatingTupleArrays( const Array1<T> &a1,
   for( int i = 0; i < n; ++i )
   {
     // Compare the first element
-    success = compareFirstTupleElements( a1[i], a2[i] );
+    success = compareFirstTupleElements( a1[i], a1_name, 
+					 a2[i], a2_name,
+					 i,
+					 tol,
+					 out );
+    if( !success )
+      return false;
 
     // Compare the second element
-    {
-      typedef ScalarTraits<typename T::secondType> ST;
-      if( ST::isOrdinal )
-      {
-	if( a1[i].second != a2[i].second )
-	{
-	  out << "\nError, " << a1_name << "[" << i << "].second = "
-	      << a1[i].second << " == " << a2_name << "[" << i 
-	      << "].second = " << a2[i].second << ": failed!\n";
-	  return false;
-	}
-      }
-      else
-      {
-	const typename ST::magnitudeType err = ST::magnitude( a1[i].second - 
-							      a2[i].second )/
-	  std::max( ST::magnitude( a1[i].second ), 
-		    ST::magnitude( a2[i].second ) );
+    success = compareSecondTupleElements( a1[i], a1_name,
+					  a2[i], a2_name,
+					  i,
+					  tol,
+					  out );
+    if( !success )
+      return false;
+  }
   
-	if( err > tol )
-	{
-	    out << "\nError, relErr(" << a1_name << "[" << i << "].second,"
-		<< a2_name << "[" << i << "].second) = relErr("
-		<< a1[i].second << "," << a2[i].second << ") = "
-		<< err << " <= tol = " << tol << ": failed!\n";
-	    return false;
-	}
-      }
-    }
-    
-    if( T::size > 2 )
-    {
-      // Compare the third element
-      typedef ScalarTraits<typename T::thirdType> ST;
-      if( ST::isOrdinal )
-      {
-	if( a1[i].third != a2[i].third )
-	{
-	  out << "\nError, " << a1_name << "[" << i << "].third = "
-	      << a1[i].third << " == " << a2_name << "[" << i 
-	      << "].third = " << a2[i].third << ": failed!\n";
-	  return false;
-	}
-      }
-      else
-      {
-	const typename ST::magnitudeType err = ST::magnitude( a1[i].third - 
-							      a2[i].third )/
-	  std::max( ST::magnitude( a1[i].third ), 
-		    ST::magnitude( a2[i].third ) );
-      
-	if( err > tol )
-	  {
-	    out << "\nError, relErr(" << a1_name << "[" << i << "].third,"
-		<< a2_name << "[" << i << "].third) = relErr("
-		<< a1[i].third << ","  << a2[i].third << ") = "
-		<< err << " <= tol = " << tol << ": failed!\n";
-	    return false;
-	  }
-      }
-    }
+  if( success ) 
+    out << "passed\n";
+}
 
-    if( T::size > 10 )
-    {
-      // Compare the fourth element
-      typedef ScalarTraits<typename T::fourthType> ST;
-      if( ST::isOrdinal )
-      {
-	if( a1[i].fourth != a2[i].fourth )
-	{
-	  out << "\nError, " << a1_name << "[" << i << "].fourth = "
-	      << a1[i].fourth << " == " << a2_name << "[" << i 
-	      << "].fourth = " << a2[i].fourth << ": failed!\n";
-	  return false;
-	}
-      }
-      else
-      {
-	const typename ST::magnitudeType err = ST::magnitude( a1[i].fourth - 
-							      a2[i].fourth )/
-	  std::max( ST::magnitude( a1[i].fourth ), 
-		    ST::magnitude( a2[i].fourth ) );
-	
-	if( err > tol )
-	  {
-	    out << "\nError, relErr(" << a1_name << "[" << i << "].fourth,"
-		<< a2_name << "[" << i << "].fourth) = relErr("
-		<< a1[i].fourth << "," << a2[i].fourth << ") = "
-		<< err << " <= tol = " << tol << ": failed!\n";
-	    return false;
-	  }
-      }
-    }
+// Function for comparing arrays of tiplets with floating point values
+// this function is based off of the compareFloatingArrays function in Teuchos
+template<typename T,
+	 template<typename> class Array1,
+	 template<typename> class Array2>
+bool compareFloatingTripArrays( const Array1<T> &a1,
+				const std::string &a1_name,
+				const Array2<T> &a2,
+				const std::string &a2_name,
+				const double &tol,
+				Teuchos::FancyOStream &out )
+{
+  bool success = true;
+
+  out << "Comparing " << a1_name << " == " << a2_name << " ... ";
+
+  const int n = a1.size();
+  const int m = a2.size();
+  
+  // Compare sizes
+  if( m != n )
+  {
+    out << "\nError, " << a1_name << ".size() = " << n << " == "
+	<< a2_name << ".size() = " << m << " : failed!\n";
+    return false;
+  }
+
+  // Compare Elements
+  for( int i = 0; i < n; ++i )
+  {
+    // Compare the first element
+    success = compareFirstTupleElements( a1[i], a1_name, 
+					 a2[i], a2_name,
+					 i,
+					 tol,
+					 out );
+    if( !success )
+      return false;
+
+    // Compare the second element
+    success = compareSecondTupleElements( a1[i], a1_name,
+					  a2[i], a2_name,
+					  i,
+					  tol,
+					  out );
+    if( !success )
+      return false;
+    
+    // Compare the third element
+    success = compareThirdTupleElements( a1[i], a1_name,
+					 a2[i], a2_name,
+					 i, 
+					 tol,
+					 out );
+    if( !success )
+      return false;
+  }
+  
+  if( success ) 
+    out << "passed\n";
+}
+
+// Function for comparing arrays of quadruplets with floating point values
+// this function is based off of the compareFloatingArrays function in Teuchos
+template<typename T,
+	 template<typename> class Array1,
+	 template<typename> class Array2>
+bool compareFloatingQuadArrays( const Array1<T> &a1,
+				const std::string &a1_name,
+				const Array2<T> &a2,
+				const std::string &a2_name,
+				const double &tol,
+				Teuchos::FancyOStream &out )
+{
+  bool success = true;
+
+  out << "Comparing " << a1_name << " == " << a2_name << " ... ";
+
+  const int n = a1.size();
+  const int m = a2.size();
+  
+  // Compare sizes
+  if( m != n )
+  {
+    out << "\nError, " << a1_name << ".size() = " << n << " == "
+	<< a2_name << ".size() = " << m << " : failed!\n";
+    return false;
+  }
+
+  // Compare Elements
+  for( int i = 0; i < n; ++i )
+  {
+    // Compare the first element
+    success = compareFirstTupleElements( a1[i], a1_name, 
+					 a2[i], a2_name,
+					 i,
+					 tol,
+					 out );
+    if( !success )
+      return false;
+
+    // Compare the second element
+    success = compareSecondTupleElements( a1[i], a1_name,
+					  a2[i], a2_name,
+					  i,
+					  tol,
+					  out );
+    if( !success )
+      return false;
+    
+    // Compare the third element
+    success = compareThirdTupleElements( a1[i], a1_name,
+					 a2[i], a2_name,
+					 i, 
+					 tol,
+					 out );
+    if( !success )
+      return false;
+      
+    // Compare the fourth element
+    success = compareFourthTupleElements( a1[i], a1_name,
+					  a2[i], a2_name,
+					  i,
+					  tol,
+					  out );
+    if( !success )
+      return false;
   }
   
   if( success ) 
@@ -187,34 +267,39 @@ bool compareFloatingTupleArrays( const Array1<T> &a1,
 
 // function for comparing first tuple element 
 template<typename T>
-bool compareFirstTupleElements( T &tuple1,
-				T &tuple2 )
+bool compareFirstTupleElements( const T &tuple1,
+				const std::string &a1_name,
+				const T &tuple2,
+				const std::string &a2_name,
+				const int i,
+				const double tol,
+				Teuchos::FancyOStream &out)
 {
   bool success = true;
   
   typedef ScalarTraits<typename T::firstType> ST;
   if( ST::isOrdinal )
   {
-    if( a1[i].first != a2[i].first )
+    if( tuple1.first != tuple2.first )
       {
 	out << "\nError, " << a1_name << "[" << i << "].first = "
-	    << a1[i].first << " == " << a2_name << "[" << i 
-	    << "].first = " << a2[i].first << ": failed!\n";
+	    << tuple1.first << " == " << a2_name << "[" << i 
+	    << "].first = " << tuple2.first << ": failed!\n";
 	return false;
       }
   }
   else
   {
-    const typename ST::magnitudeType err = ST::magnitude( a1[i].first - 
-							  a2[i].first )/
-      std::max( ST::magnitude( a1[i].first ), 
-		ST::magnitude( a2[i].first ) );
+    const typename ST::magnitudeType err = ST::magnitude( tuple1.first - 
+							  tuple2.first )/
+      std::max( ST::magnitude( tuple1.first ), 
+		ST::magnitude( tuple2.first ) );
     
     if( err > tol )
     {
       out << "\nError, relErr(" << a1_name << "[" << i << "].first,"
 	  << a2_name << "[" << i << "].first) = relErr("
-	  << a1[i].first << ","  << a2[i].first << ") = "
+	  << tuple1.first << ","  << tuple2.first << ") = "
 	  << err << " <= tol = " << tol << ": failed!\n";
       return false;
     }
@@ -222,6 +307,139 @@ bool compareFirstTupleElements( T &tuple1,
  
   return success;
 }
+
+// function for comparing second tuple element 
+template<typename T>
+bool compareSecondTupleElements( const T &tuple1,
+				 const std::string &a1_name,
+				 const T &tuple2,
+				 const std::string &a2_name,
+				 const int i,
+				 const double tol,
+				 Teuchos::FancyOStream &out)
+{
+  bool success = true;
+
+  typedef ScalarTraits<typename T::secondType> ST;
+  if( ST::isOrdinal )
+  {
+    if( tuple1.second != tuple2.second )
+    {
+      out << "\nError, " << a1_name << "[" << i << "].second = "
+	  << tuple1.second << " == " << a2_name << "[" << i 
+	  << "].second = " << tuple2.second << ": failed!\n";
+      return false;
+    }
+  }
+  else
+  {
+    const typename ST::magnitudeType err = ST::magnitude( tuple1.second - 
+							  tuple2.second )/
+      std::max( ST::magnitude( tuple1.second ), 
+		ST::magnitude( tuple2.second ) );
+    
+    if( err > tol )
+    {
+      out << "\nError, relErr(" << a1_name << "[" << i << "].second,"
+	  << a2_name << "[" << i << "].second) = relErr("
+	  << tuple1.second << "," << tuple2.second << ") = "
+	  << err << " <= tol = " << tol << ": failed!\n";
+      return false;
+    }
+  }
+  
+  return success;
+}
+
+// function for comparing third tuple element 
+template<typename T>
+bool compareThirdTupleElements( const T &tuple1,
+				const std::string &a1_name,
+				const T &tuple2,
+				const std::string &a2_name,
+				const int i,
+				const double tol,
+				Teuchos::FancyOStream &out)
+{
+  
+  bool success = true;
+
+  typedef ScalarTraits<typename T::thirdType> ST;
+  if( ST::isOrdinal )
+  {
+    if( tuple1.third != tuple2.third )
+      {
+	out << "\nError, " << a1_name << "[" << i << "].third = "
+	    << tuple1.third << " == " << a2_name << "[" << i 
+	    << "].third = " << tuple2.third << ": failed!\n";
+	return false;
+      }
+  }
+  else
+  {
+    const typename ST::magnitudeType err = ST::magnitude( tuple1.third - 
+							  tuple2.third )/
+      std::max( ST::magnitude( tuple1.third ), 
+		ST::magnitude( tuple2.third ) );
+    
+    if( err > tol )
+    {
+      out << "\nError, relErr(" << a1_name << "[" << i << "].third,"
+	  << a2_name << "[" << i << "].third) = relErr("
+	  << tuple1.third << ","  << tuple2.third << ") = "
+	  << err << " <= tol = " << tol << ": failed!\n";
+      return false;
+    }
+  }
+
+  return success;
+}
+
+// function for comparing fourth tuple element 
+template<typename T>
+bool compareFourthTupleElements( const T &tuple1,
+				 const std::string &a1_name,
+				 const T &tuple2,
+				 const std::string &a2_name,
+				 const int i,
+				 const double tol,
+				 Teuchos::FancyOStream &out)
+{
+  
+  bool success = true;
+
+  typedef ScalarTraits<typename T::fourthType> ST;
+  if( ST::isOrdinal )
+  {
+    if( tuple1.fourth != tuple2.fourth )
+    {
+      out << "\nError, " << a1_name << "[" << i << "].fourth = "
+	  << tuple1.fourth << " == " << a2_name << "[" << i 
+	  << "].fourth = " << tuple2.fourth << ": failed!\n";
+      return false;
+    }
+  }
+  else
+  {
+    const typename ST::magnitudeType err = ST::magnitude( tuple1.fourth - 
+							  tuple2.fourth )/
+      std::max( ST::magnitude( tuple1.fourth ), 
+		ST::magnitude( tuple2.fourth ) );
+    
+    if( err > tol )
+    {
+      out << "\nError, relErr(" << a1_name << "[" << i << "].fourth,"
+	  << a2_name << "[" << i << "].fourth) = relErr("
+	  << tuple1.fourth << "," << tuple2.fourth << ") = "
+	  << err << " <= tol = " << tol << ": failed!\n";
+      return false;
+    }
+  }
+  
+  return success;
+}
+
+} // end Teuchos namespace
 
 namespace FACEMC{
 
@@ -251,7 +469,7 @@ inline bool operator==( const FACEMC::Quad<T1,T2,T3,T4> &left,
 	   (left.fourth == right.fourth) );
 }
 
-}
+} // end FACEMC namespace
 
 #endif // end TESTING_HELPER_FUNCTIONS_HPP
 
