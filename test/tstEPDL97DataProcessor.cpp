@@ -57,7 +57,6 @@ public:
   using FACEMC::EPDL97DataProcessor::createContinuousCDFAtFourthTupleLoc;
   using FACEMC::EPDL97DataProcessor::createDiscreteCDFAtSecondTupleLoc;
   using FACEMC::EPDL97DataProcessor::createDiscreteCDFAtThirdTupleLoc;
-  using FACEMC::EPDL97DataProcessor::uintToShellStr;
   using FACEMC::EPDL97DataProcessor::LogLogDataProcessingPolicy;
   using FACEMC::EPDL97DataProcessor::LinearLogDataProcessingPolicy;
   using FACEMC::EPDL97DataProcessor::LogLinearDataProcessingPolicy;

@@ -13,6 +13,17 @@
 #define ${PROJECT_NAME}_DATA_DIRECTORY "${${PROJECT_NAME}_DATA_DIRECTORY}"
 
 //---------------------------------------------------------------------------//
+// HDF5 Root Group and Root Group Attributes
+//---------------------------------------------------------------------------//
+#define ROOT "/"
+
+// Define the HDF5 root group atomic weight attribute name
+#define ATOMIC_WEIGHT_ATTRIBUTE "Atomic_Weight"
+
+// Define the HDF5 root group energy limits attribute name
+#define ENERGY_LIMITS_ATTRIBUTE "Energy_Limits"
+
+//---------------------------------------------------------------------------//
 // Photon data file
 //---------------------------------------------------------------------------//
 
@@ -31,6 +42,9 @@
 // Define the HDF5 photon data file subshell photoelectric cross section root
 #define PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT "/Fluorescence_Data/Photoelectric_Cross_Section/"
 
+// Define the HDF5 photon data file Photoelectric shell attribute name
+#define PHOTOELECTRIC_SHELL_ATTRIBUTE "Photoelectric_Shells"
+
 // Define the HDF5 photon data file pair production cross section location
 #define PAIR_PRODUCTION_CROSS_SECTION_LOC "/Basic_Data/Pair_Production_Cross_Section"
 
@@ -41,28 +55,36 @@
 #define ATOMIC_FORM_FACTOR_LOC "/Basic_Data/Atomic_Form_Factor"
 
 // Define the HDF5 photon data file scattering function location
-#define SCATTERING_FUNCTION_LOC "Basic_Data/Scattering_Function"
+#define SCATTERING_FUNCTION_LOC "/Basic_Data/Scattering_Function"
 
 // Define the HDF5 photon data file electron shell cdf location
-#define ELECTRON_SHELL_CDF_LOC "Doppler_Data/Electron_Shell_CDF"
-
-// Define the HDF5 photon data file electron shell index map location
-#define ELECTRON_SHELL_INDEX_MAP_LOC "Doppler_Data/Electron_Shell_Index_Map"
+#define ELECTRON_SHELL_CDF_LOC "/Doppler_Data/Electron_Shell_CDF"
 
 // Define the HDF5 photon data file electron shell binding energy location
-#define ELECTRON_SHELL_BINDING_ENERGY_LOC "Doppler_Data/Electron_Shell_Binding_Energy"
+#define ELECTRON_SHELL_BINDING_ENERGY_LOC "/Doppler_Data/Electron_Shell_Binding_Energy"
 
 // Define the HDF5 photon data file electron shell kinetic energy location
-#define ELECTRON_SHELL_KINETIC_ENERGY_LOC "Doppler_Data/Electron_Shell_Kinetic_Energy"
+#define ELECTRON_SHELL_KINETIC_ENERGY_LOC "/Doppler_Data/Electron_Shell_Kinetic_Energy"
 
 // Define the HDF5 photon data file radiative transition probability root
-#define RADIATIVE_TRANSITION_PROBABILITY_ROOT "Fluorescence_Data/Radiative_Transition_Probability/"
+#define RADIATIVE_TRANSITION_PROBABILITY_ROOT "/Fluorescence_Data/Relaxation/Radiative_Transition_Probability/"
 
 // Define the HDF5 photon data file nonradiative transition probability root
-#define NONRADIATIVE_TRANSITION_PROBABILITY_ROOT "Fluorescence_Data/Nonradiative_Transition_Probability/"
+#define NONRADIATIVE_TRANSITION_PROBABILITY_ROOT "/Fluorescence_Data/Relaxation//Nonradiative_Transition_Probability/"
+
+// Define the HDF5 photon data file atomic relaxation shell attribute name
+#define ATOMIC_RELAXATION_SHELL_ATTRIBUTE "Atomic_Relaxation_Shells"
+
+// Define the HDF5 photon data file total radiative transition probabililty 
+// attribute name
+#define TOTAL_RAD_TRANS_PROB_ATTRIBUTE "Total_Radiative_Transition_Probability"
 
 // Define the HDF5 photon data file compton profile cdf location
-#define COMPTON_PROFILE_CDF_LOC "Doppler_Data/Compton_Profile_CDF"
+#define COMPTON_PROFILE_CDF_LOC "/Doppler_Data/Compton_Profile_CDF"
+
+// Define the HDF5 photon data file compton profile momentum projections 
+// attribute name
+#define COMPTON_PROFILE_MOMENTUM_PROJECTIONS_ATTRIBUTE "Momentum_Projections"
 
 //---------------------------------------------------------------------------//
 // Adjoint Photon data file

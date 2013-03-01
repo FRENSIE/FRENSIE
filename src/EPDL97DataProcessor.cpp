@@ -13,7 +13,7 @@
 
 // FACEMC Includes
 #include "EPDL97DataProcessor.hpp"
-#include "ElectronShell.hpp"
+#include "ElectronShells.hpp"
 #include "FACEMC_Assertion.hpp"
 #include "Tuple.hpp"
 
@@ -224,12 +224,11 @@ void EPDL97DataProcessor::readFourColumnTable( std::ifstream &datafile,
   datafile.getline( end_of_table, 29 );
 }
 
-//! Convert an EPDL shell integer to a shell name
-std::string EPDL97DataProcessor::uintToShellStr( const unsigned int shell )
+//! Convert an unsigned int to an electron shell string
+std::string EPDL97DataProcessor::uintToShellStr( unsigned int shell )
 {
-  FACEMC_ASSERT_ALWAYS( shell > 0 );
-  return ElectronShellStr[shell];
-}
+  return ELECTRON_SHELL_STR( shell );
+}  
 
 } // end FACEMC namespace
 

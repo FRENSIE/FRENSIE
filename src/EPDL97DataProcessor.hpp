@@ -144,8 +144,10 @@ protected:
   template<typename T,template<typename> class Array>
   void createDiscreteCDFAtThirdTupleLoc( Array<T> &data );
 
-  //! Convert an EPDL shell integer to a shell name
-  std::string uintToShellStr( const unsigned int shell );
+  /*!
+   * \brief Convert an unsigned int to an electron shell string
+   */
+  std::string uintToShellStr( unsigned int shell );
 
   /*!
    * \brief Policy class for processing data tables that require log-log

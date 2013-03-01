@@ -13,6 +13,7 @@
 #include "FACEMC_Assertion.hpp"
 #include "HDF5DataFileNames.hpp"
 #include "Tuple.hpp" 
+#include "ElectronShells.hpp"
 
 namespace FACEMC{
 
@@ -66,6 +67,9 @@ void PhotonDataProcessor::processEPDLFile()
   // Information in the second header of the EPDL file
   unsigned int reaction_type = 0;
   unsigned int electron_shell = 0;
+
+  // Electron shells with Photoelectric data
+  Teuchos::Array<unsigned int> photoelectric_shells;
   
   // Process every element (Z=1-100) in the EPDL file
   while( !epdl.eof() )
@@ -81,7 +85,19 @@ void PhotonDataProcessor::processEPDLFile()
     if( atomic_number != atomic_number_in_table )
     {
       if( atomic_number != 0 )
+      {
+	// add the Photoelectric shell attribute
+	if( photoelectric_shells.size() == 0)
+	  photoelectric_shells.push_back( 0 );
+	  
+	d_hdf5_file_handler.writeArrayToGroupAttribute( photoelectric_shells,
+							PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT,
+							PHOTOELECTRIC_SHELL_ATTRIBUTE
+							);
+	photoelectric_shells.clear();
+	  
 	d_hdf5_file_handler.closeHDF5File();
+      }
       
       ++atomic_number;
 
@@ -94,16 +110,16 @@ void PhotonDataProcessor::processEPDLFile()
       
       // Create a top level attribute to store the atomic weight
       d_hdf5_file_handler.writeValueToGroupAttribute( atomic_weight,
-						      "/",
-						      "Atomic_Weight" );
+						      ROOT,
+						      ATOMIC_WEIGHT_ATTRIBUTE );
 
       // Create a top level attribute to store the energy limits
       Teuchos::Array<double> energy_limits( 2 );
       energy_limits[0] = d_energy_min;
       energy_limits[1] = d_energy_max;
       d_hdf5_file_handler.writeArrayToGroupAttribute( energy_limits,
-						      "/",
-						      "Energy_Limits" );
+						      ROOT,
+						      ENERGY_LIMITS_ATTRIBUTE );
     }
 
     // Read second table header and determine the reaction type
@@ -205,6 +221,8 @@ void PhotonDataProcessor::processEPDLFile()
 							       d_energy_max );
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + uintToShellStr( electron_shell ) );
+
+	photoelectric_shells.push_back( electron_shell );
       }
       break;
 
@@ -391,6 +409,9 @@ void PhotonDataProcessor::processEADLFile()
   // Information in the second header of the EPDL file
   unsigned int reaction_type = 0;
   unsigned int electron_shell = 0;
+
+  // Electron Shells with relaxation data
+  Teuchos::Array<unsigned int> relaxation_shells;
   
   // Process every element (Z=1-100) in the EPDL file
   while( !eadl.eof() )
@@ -406,7 +427,18 @@ void PhotonDataProcessor::processEADLFile()
     if( atomic_number != atomic_number_in_table )
     {
       if( atomic_number != 0 )
+      {
+	if( relaxation_shells.size() == 0 )
+	  relaxation_shells.push_back( 0 );
+	
+	d_hdf5_file_handler.writeArrayToGroupAttribute( relaxation_shells,
+							RADIATIVE_TRANSITION_PROBABILITY_ROOT,
+							ATOMIC_RELAXATION_SHELL_ATTRIBUTE
+							);
+	relaxation_shells.clear();
+	
 	d_hdf5_file_handler.closeHDF5File();
+      }
       
       ++atomic_number;
 
@@ -462,7 +494,7 @@ void PhotonDataProcessor::processEADLFile()
 	}
 	
 	d_hdf5_file_handler.writeArrayToDataSet( complete_data,
-						 ELECTRON_SHELL_INDEX_MAP_LOC );
+						 ELECTRON_SHELL_CDF_LOC );
       }
       
       break;
@@ -511,12 +543,14 @@ void PhotonDataProcessor::processEADLFile()
 
 	createDiscreteCDFAtSecondTupleLoc( data );
 	
-	d_hdf5_file_handler.writeValueToGroupAttribute( total_radiative_trans_prob,
-							RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ),
-							"Total_Radiative_Transition_Probability" );
-	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ) );
+
+	d_hdf5_file_handler.writeValueToDataSetAttribute( total_radiative_trans_prob,
+							  RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ),
+							  TOTAL_RAD_TRANS_PROB_ATTRIBUTE );
+
+	relaxation_shells.push_back( electron_shell );
       }
       
       break;
@@ -727,7 +761,7 @@ void PhotonDataProcessor::processComptonFiles()
 
     d_hdf5_file_handler.writeArrayToDataSetAttribute( q_values,
 						      COMPTON_PROFILE_CDF_LOC,
-						      "Momentum_Projections" );
+						      COMPTON_PROFILE_MOMENTUM_PROJECTIONS_ATTRIBUTE );
     
     // Close the Compton Profile stream
     compton_file_stream.close();

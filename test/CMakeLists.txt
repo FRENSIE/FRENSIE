@@ -10,13 +10,11 @@ ADD_EXECUTABLE(tstEPDL97ProcessingPolicy
   tstEPDL97ProcessingPolicy.cpp
   ${SRC}/EPDL97DataProcessor.cpp
   ${SRC}/HDF5FileHandler.cpp
-  ${SRC}/Types.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstEPDL97DataProcessor
   tstEPDL97DataProcessor.cpp
   ${SRC}/EPDL97DataProcessor.cpp
   ${SRC}/HDF5FileHandler.cpp
-  ${SRC}/Types.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstHDF5FileHandler
   tstHDF5FileHandler.cpp
@@ -27,7 +25,6 @@ ADD_EXECUTABLE(tstPhotonDataProcessor
   ${SRC}/EPDL97DataProcessor.cpp
   ${SRC}/HDF5FileHandler.cpp
   ${SRC}/PhotonDataProcessor.cpp
-  ${SRC}/Types.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 
 TARGET_LINK_LIBRARIES(tstAssertion ${TEUCHOS})

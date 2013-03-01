@@ -10,6 +10,7 @@ SET(HEADERS
   HDF5ArrayPolicy.hpp
   PhotonDataCollection.hpp
   SimulationBase.hpp
+  ElectronShells.hpp
   ${HEADERS}
   )
 
@@ -17,7 +18,6 @@ SET(SOURCES
   EPDL97DataProcessor.cpp
   HDF5FileHandler.cpp
   PhotonDataProcessor.cpp
-  Types.cpp
   ${SOURCES}
   )
 
