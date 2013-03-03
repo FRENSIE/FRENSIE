@@ -1,11 +1,11 @@
 //---------------------------------------------------------------------------//
-// \file HDF5ExceptionCatchMacro.hpp
+// \file   ExceptionCatchMacros.hpp
 // \author Alex Robinson
-// \brief Macro for catching HDF5 Exceptions
+// \brief  Macros for catching Exceptions
 //---------------------------------------------------------------------------//
 
-#ifndef HDF5_EXCEPTION_CATCH_MACRO_HPP
-#define HDF5_EXCEPTION_CATCH_MACRO_HPP
+#ifndef EXCEPTION_CATCH_MACROS_HPP
+#define EXCEPTION_CATCH_MACROS_HPP
 
 // Std Lib Includes
 #include <stdlib.h>
@@ -44,9 +44,26 @@
     exit(EXIT_FAILURE); \
   } \
 
-#endif // end HDF5_EXCEPTION_CATCH_MACRO_HPP
+//! Catch statement macro for catching std::exception Exceptions
+// \brief This macro is based off of the Teuchos_StandardCatchMacro
+#define STD_EXCEPTION_CATCH_AND_EXIT() \
+  catch( const std::exception &exception )	\
+  {						\
+    std::ostringstream oss;			\
+    oss << " *** Caught std::exception Exception *** \n\n"; \
+    oss << "File: " << __FILE__ << "\n"; \
+    oss << "Line: " << __LINE__ << "\n"; \
+    Teuchos::OSTab scsi_tab(oss); \
+    scsi_tab.o() << TEUCHOS_GET_STORED_STACKTRACE(); \
+    scsi_tab.o() << exception.what() << "\n"; \
+    std::cerr << std::flush; \
+    std::cerr << oss.str(); \
+    exit(EXIT_FAILURE); \
+  } \
+
+#endif // end EXCEPTION_CATCH_MACROS_HPP
 
 //---------------------------------------------------------------------------//
-// end HDF5ExceptionCatchMacro.hpp
+// end ExceptionCatchMacros.hpp
 //---------------------------------------------------------------------------//
 

@@ -12,7 +12,7 @@
 
 // FACEMC Includes
 #include "HDF5TypeTraits.hpp"
-#include "HDF5ExceptionCatchMacro.hpp"
+#include "ExceptionCatchMacros.hpp"
 
 namespace FACEMC{
 

@@ -22,7 +22,7 @@
 // FACEMC includes
 #include "HDF5TypeTraits.hpp"
 #include "HDF5ArrayPolicy.hpp"
-#include "HDF5ExceptionCatchMacro.hpp"
+#include "ExceptionCatchMacros.hpp"
 #include "FACEMC_Assertion.hpp"
 
 namespace FACEMC{

@@ -35,11 +35,13 @@ public:
   TestingPhotonDataProcessor( const std::string epdl_file_name,
 			      const std::string eadl_file_name,
 			      const std::string compton_file_prefix,
-			      const double energy_min = MIN_ENERGY_DEFAULT,
-			      const double energy_max = MAX_ENERGY_DEFAULT)
+			      const std::string output_directory,
+			      const double energy_min,
+			      const double energy_max)
     : FACEMC::PhotonDataProcessor( epdl_file_name,
 				   eadl_file_name,
 				   compton_file_prefix,
+				   output_directory,
 				   energy_min,
 				   energy_max )
   { /* ... */ }
@@ -61,6 +63,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_epdl_file_test )
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
 						    COMPTON_TEST_FILE_PREFIX,
+						    "",
 						    1e-7,
 						    1e5 );
 
@@ -77,6 +80,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_eadl_file_test )
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
 						    COMPTON_TEST_FILE_PREFIX,
+						    "",
 						    1e-7,
 						    1e5 );
 
@@ -85,6 +89,24 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_eadl_file_test )
   photon_data_processor.processEADLFile();
 
 }
+
+//---------------------------------------------------------------------------//
+// Check that the PhotonDataProcessor can process a Compton Profile data file
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_compton_file_test )
+{
+  TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
+						    EADL_TEST_FILE,
+						    COMPTON_TEST_FILE_PREFIX,
+						    "",
+						    1e-7,
+						    1e5 );
+
+  // This member function will throw an exception and exit if an error occurs
+  // so no TEST macro is needed.
+  photon_data_processor.processComptonFiles( 5, 6 );
+
+}
+
 
 //---------------------------------------------------------------------------//
 // end tstPhotonDataProcessor.cpp

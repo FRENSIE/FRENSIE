@@ -35,11 +35,13 @@ public:
   TestingPhotonDataProcessor( const std::string epdl_file_name,
 			      const std::string eadl_file_name,
 			      const std::string compton_file_prefix,
+			      const std::string output_directory,
 			      const double energy_min = MIN_ENERGY_DEFAULT,
 			      const double energy_max = MAX_ENERGY_DEFAULT)
     : FACEMC::PhotonDataProcessor( epdl_file_name,
 				   eadl_file_name,
 				   compton_file_prefix,
+				   output_directory,
 				   energy_min,
 				   energy_max )
   { /* ... */ }
@@ -60,7 +62,8 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_1 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX,
+						    "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -84,7 +87,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_2 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -108,7 +111,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_3 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -136,7 +139,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_4 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -164,7 +167,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_5 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -200,7 +203,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_6 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -236,7 +239,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_7 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -272,7 +275,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_8 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -308,7 +311,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_9 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -344,7 +347,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_10 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -380,7 +383,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_11 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -420,7 +423,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_12 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -460,7 +463,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_13 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -508,7 +511,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_14 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -556,7 +559,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_15 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -604,7 +607,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_16 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -652,7 +655,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_17 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -700,7 +703,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_18 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -748,7 +751,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_19 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -800,7 +803,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_20 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -852,7 +855,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_21 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -912,7 +915,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_22 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -972,7 +975,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_23 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1032,7 +1035,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_24 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1092,7 +1095,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_25 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1152,7 +1155,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_26 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1212,7 +1215,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_27 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1272,7 +1275,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_28 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1332,7 +1335,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_29 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1392,7 +1395,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_30 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1452,7 +1455,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_31 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1520,7 +1523,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_32 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1588,7 +1591,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_34 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1656,7 +1659,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_35 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1724,7 +1727,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_36 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1792,7 +1795,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_37 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1864,7 +1867,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_38 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -1936,7 +1939,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_39 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -2016,7 +2019,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_40 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -2096,7 +2099,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_41 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -2176,7 +2179,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_42 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -2256,7 +2259,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_43 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -2336,7 +2339,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_44 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -2416,7 +2419,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_45 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -2496,7 +2499,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_46 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -2572,7 +2575,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_47 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -2652,7 +2655,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_48 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -2732,7 +2735,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_49 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -2820,7 +2823,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_50 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -2908,7 +2911,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_51 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -2996,7 +2999,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_52 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -3084,7 +3087,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_53 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -3172,7 +3175,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_54 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -3260,7 +3263,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_55 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -3352,7 +3355,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_56 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -3444,7 +3447,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_57 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -3544,7 +3547,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_58 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -3644,7 +3647,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_59 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -3744,7 +3747,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_60 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -3844,7 +3847,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_61 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -3944,7 +3947,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_62 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -4044,7 +4047,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_63 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -4144,7 +4147,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_64 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -4252,7 +4255,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_65 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -4352,7 +4355,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_66 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -4452,7 +4455,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_67 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -4552,7 +4555,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_68 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -4652,7 +4655,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_69 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -4752,7 +4755,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_70 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -4852,7 +4855,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_71 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -4960,7 +4963,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_72 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -5068,7 +5071,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_73 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -5176,7 +5179,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_74 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -5284,7 +5287,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_75 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -5392,7 +5395,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_76 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -5500,7 +5503,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_77 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -5604,7 +5607,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_78 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -5712,7 +5715,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_79 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -5820,7 +5823,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_80 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -5928,7 +5931,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_81 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -6044,7 +6047,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_82 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -6160,7 +6163,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_83 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -6276,7 +6279,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_84 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -6392,7 +6395,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_85 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -6508,7 +6511,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_86 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -6624,7 +6627,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_87 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -6744,7 +6747,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_88 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -6864,7 +6867,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_89 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -6992,7 +6995,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_90 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -7120,7 +7123,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_91 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -7256,7 +7259,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_92 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -7392,7 +7395,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_93 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -7528,7 +7531,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_94 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -7656,7 +7659,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_95 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -7784,7 +7787,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_96 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -7920,7 +7923,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_97 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -8056,7 +8059,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_98 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -8184,7 +8187,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_99 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
@@ -8312,7 +8315,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_100 )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
-						    COMPTON_TEST_FILE_PREFIX );
+						    COMPTON_TEST_FILE_PREFIX, "" );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 

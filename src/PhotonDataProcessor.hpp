@@ -7,9 +7,10 @@
 #ifndef PHOTON_DATA_PROCESSOR_HPP
 #define PHOTON_DATA_PROCESSOR_HPP
 
-// FACEMC includes
+// FACEMC Includes
 #include "EPDL97DataProcessor.hpp"
 #include "DefaultParameterValues.hpp"
+#include "HDF5DataFileNames.hpp"
 
 namespace FACEMC{
 
@@ -22,8 +23,9 @@ public:
   PhotonDataProcessor( const std::string epdl_file_name,
 		       const std::string eadl_file_name,
 		       const std::string compton_file_prefix,
-		       const double energy_min,
-		       const double energy_max );
+		       const std::string output_directory = FACEMC_DATA_DIRECTORY,
+		       const double energy_min = MIN_ENERGY_DEFAULT,
+		       const double energy_max = MAX_ENERGY_DEFAULT );
 
   //! Destructor
   virtual ~PhotonDataProcessor()
@@ -41,7 +43,8 @@ protected:
   void processEADLFile();
   
   //! Process Compton files
-  void processComptonFiles();
+  void processComptonFiles( unsigned int atomic_number_start = 1,
+			    unsigned int atomic_number_end = 100 );
 
   //! Create the Electron Shell Index Map
   /* \brief The Hartree-Fock Compton Profiles were compiled in the 1970s. The
@@ -68,6 +71,9 @@ private:
 
   // Compton profile file name prefix including absolute path to files
   const std::string d_compton_file_prefix;
+
+  // Directory where the HDF5 files will be stored
+  const std::string d_output_directory;
 
   // Minimum energy to read in from data tables
   const double d_energy_min;

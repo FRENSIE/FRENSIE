@@ -9,7 +9,7 @@
 
 // FACEMC Includes
 #include "HDF5FileHandler.hpp"
-#include "HDF5ExceptionCatchMacro.hpp"
+#include "ExceptionCatchMacros.hpp"
 
 namespace FACEMC{
 

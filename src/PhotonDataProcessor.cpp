@@ -21,12 +21,14 @@ namespace FACEMC{
 PhotonDataProcessor::PhotonDataProcessor( const std::string epdl_file_name,
 					  const std::string eadl_file_name,
 					  const std::string compton_file_prefix,
-					  const double energy_min = MIN_ENERGY_DEFAULT,
-					  const double energy_max = MAX_ENERGY_DEFAULT )
+					  const std::string output_directory,
+					  const double energy_min,
+					  const double energy_max )
   : EPDL97DataProcessor(), 
     d_epdl_file_name(epdl_file_name), 
     d_eadl_file_name(eadl_file_name),
     d_compton_file_prefix(compton_file_prefix), 
+    d_output_directory( output_directory ),
     d_energy_min(energy_min),
     d_energy_max(energy_max)
 { 
@@ -52,8 +54,8 @@ void PhotonDataProcessor::processDataFiles()
 void PhotonDataProcessor::processEPDLFile()
 { 
   // EPDL file
-  std::ifstream epdl( d_epdl_file_name.c_str(), std::fstream::in );
-  FACEMC_ASSERT_ALWAYS( epdl.is_open() );
+  std::ifstream epdl( d_epdl_file_name.c_str() );
+  FACEMC_ASSERT_ALWAYS( epdl );
 
   // Atomic number of element currently being processed
   unsigned int atomic_number = 0;
@@ -82,16 +84,12 @@ void PhotonDataProcessor::processEPDLFile()
 			  atomic_weight,
 			  interpolation_flag );
     
-    // Check that the EPDL file is still valid (eof has not been reached)
-    if( epdl.eof() )
-      continue;
-    
     // If a new element is found, close the current HDF5 file and open a new one
     if( atomic_number != atomic_number_in_table )
     {
       if( atomic_number != 0 )
       {
-	// add the Photoelectric shell attribute
+	// Create an attribute for the shells with Photoelectric data
 	if( photoelectric_shells.size() == 0)
 	  photoelectric_shells.push_back( 0 );
 	  
@@ -103,15 +101,19 @@ void PhotonDataProcessor::processEPDLFile()
 	  
 	d_hdf5_file_handler.closeHDF5File();
       }
+
+      // Check that the EPDL file is still valid (eof has not been reached)
+      if( epdl.eof() )
+	continue;
       
       atomic_number = atomic_number_in_table;
 
       // Open a new HDF5 file
       std::ostringstream file_number;
       file_number << atomic_number;
-      d_hdf5_file_handler.openHDF5FileAndOverwrite( PHOTON_DATA_FILE_PREFIX + 
-						    file_number.str() + 
-						    DATA_FILE_SUFFIX );
+      std::string hdf5_file_name = d_output_directory + 
+	PHOTON_DATA_FILE_PREFIX + file_number.str() + DATA_FILE_SUFFIX;
+      d_hdf5_file_handler.openHDF5FileAndOverwrite( hdf5_file_name );
       
       // Create a top level attribute to store the atomic weight
       d_hdf5_file_handler.writeValueToGroupAttribute( atomic_weight,
@@ -437,14 +439,16 @@ void PhotonDataProcessor::processEADLFile()
     {
       if( atomic_number != 0 )
       {
-	if( relaxation_shells.size() == 0 )
-	  relaxation_shells.push_back( 0 );
-	
-	d_hdf5_file_handler.writeArrayToGroupAttribute( relaxation_shells,
-							RADIATIVE_TRANSITION_PROBABILITY_ROOT,
-							ATOMIC_RELAXATION_SHELL_ATTRIBUTE
-							);
-	relaxation_shells.clear();
+	// Create an attribute for the shells with atomic relaxation data
+	// Note: only Z=6 and above have data
+	if( relaxation_shells.size() > 0 )
+	{
+	  d_hdf5_file_handler.writeArrayToGroupAttribute( relaxation_shells,
+							  RADIATIVE_TRANSITION_PROBABILITY_ROOT,
+							  ATOMIC_RELAXATION_SHELL_ATTRIBUTE
+							  );
+	  relaxation_shells.clear();
+	}
 	
 	d_hdf5_file_handler.closeHDF5File();
       }
@@ -454,9 +458,9 @@ void PhotonDataProcessor::processEADLFile()
       // Open a new HDF5 file
       std::ostringstream file_number; 
       file_number << atomic_number;
-      d_hdf5_file_handler.openHDF5FileAndAppend( PHOTON_DATA_FILE_PREFIX + 
-						 file_number.str() + 
-						 DATA_FILE_SUFFIX );
+      std::string hdf5_file_name = d_output_directory + 
+	PHOTON_DATA_FILE_PREFIX + file_number.str() + DATA_FILE_SUFFIX;
+      d_hdf5_file_handler.openHDF5FileAndAppend( hdf5_file_name );
     }
 
     // Read second table header and determine the reaction type
@@ -476,7 +480,11 @@ void PhotonDataProcessor::processEADLFile()
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
 							      data );
 	
-	createDiscreteCDFAtSecondTupleLoc( data );
+	// Z = 1 and Z = 2 only have one electron shell
+	if( data.size() > 1 )
+	  createDiscreteCDFAtSecondTupleLoc( data );
+	else
+	  data[0].second = 1.0;
 	
 	// Create the Electron Shell Index Map
 	Teuchos::Array<Pair<unsigned int,unsigned int > >
@@ -550,7 +558,11 @@ void PhotonDataProcessor::processEADLFile()
 	for( int i = 0; i < data.size(); ++i )
 	  total_radiative_trans_prob += data[i].second;
 
-	createDiscreteCDFAtSecondTupleLoc( data );
+	// Only create the cdf if more than one data point is present
+	if( data.size() > 1 )
+	  createDiscreteCDFAtSecondTupleLoc( data );
+	else
+	  data[0].second = 1.0;
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ) );
@@ -572,7 +584,11 @@ void PhotonDataProcessor::processEADLFile()
 	readFourColumnTable( eadl,
 			     data );
 
-	createDiscreteCDFAtThirdTupleLoc( data );
+	// Only create the cdf if more than one data point is present
+	if( data.size() > 1 )
+	  createDiscreteCDFAtThirdTupleLoc( data );
+	else
+	  data[0].third = 1.0;
 	
 	d_hdf5_file_handler.writeArrayToDataSet( data,
 						 NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ) );
@@ -675,7 +691,8 @@ void PhotonDataProcessor::processEADLFile()
 }
 
 //! Process Compton files
-void PhotonDataProcessor::processComptonFiles()
+void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
+					       unsigned int atomic_number_end )
 {
   // Compton file information
   std::ifstream compton_file_stream;
@@ -715,17 +732,18 @@ void PhotonDataProcessor::processComptonFiles()
   q_values[29] = 60.00;
   q_values[30] = 100.00;
 
-  for( int atomic_number = 1; atomic_number <= 100; ++atomic_number )
+  for( unsigned int atomic_number = atomic_number_start; 
+       atomic_number <= atomic_number_end; ++atomic_number )
   {
     std::ostringstream file_number;
     file_number << atomic_number;
-    d_hdf5_file_handler.openHDF5FileAndAppend( PHOTON_DATA_FILE_PREFIX + 
-					       file_number.str() + 
-					       DATA_FILE_SUFFIX );
+    std::string hdf5_file_name = d_output_directory + 
+	PHOTON_DATA_FILE_PREFIX + file_number.str() + DATA_FILE_SUFFIX;
+    d_hdf5_file_handler.openHDF5FileAndAppend( hdf5_file_name );
     
     compton_file_name = d_compton_file_prefix + file_number.str() + ".txt";
     compton_file_stream.open( compton_file_name.c_str() );
-    FACEMC_ASSERT_ALWAYS( compton_file_stream.is_open() );
+    FACEMC_ASSERT_ALWAYS( compton_file_stream );
 
     Teuchos::Array<Quad<double,double,double,double> > compton_profile_cdfs;
     Teuchos::Array<double> compton_profile_data;
