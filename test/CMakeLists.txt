@@ -20,6 +20,12 @@ ADD_EXECUTABLE(tstHDF5FileHandler
   tstHDF5FileHandler.cpp
   ${SRC}/HDF5FileHandler.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstPhotonDataProcessorShellMap
+  tstPhotonDataProcessorShellMap.cpp
+  ${SRC}/EPDL97DataProcessor.cpp
+  ${SRC}/HDF5FileHandler.cpp
+  ${SRC}/PhotonDataProcessor.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstPhotonDataProcessor
   tstPhotonDataProcessor.cpp
   ${SRC}/EPDL97DataProcessor.cpp
@@ -32,6 +38,7 @@ TARGET_LINK_LIBRARIES(tstContractException ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstEPDL97ProcessingPolicy ${TEUCHOS} ${HDF5})
 TARGET_LINK_LIBRARIES(tstEPDL97DataProcessor ${TEUCHOS} ${HDF5})
 TARGET_LINK_LIBRARIES(tstHDF5FileHandler ${TEUCHOS} ${HDF5})
+TARGET_LINK_LIBRARIES(tstPhotonDataProcessorShellMap ${TEUCHOS} ${HDF5})
 TARGET_LINK_LIBRARIES(tstPhotonDataProcessor ${TEUCHOS} ${HDF5})
 
 ADD_TEST(Assertion_test tstAssertion)
@@ -39,6 +46,7 @@ ADD_TEST(ContractException_test tstContractException)
 ADD_TEST(EPDL97ProcessingPolicy_test tstEPDL97ProcessingPolicy)
 ADD_TEST(EPDL97DataProcessor_test tstEPDL97DataProcessor)
 ADD_TEST(HDF5FileHandler_test tstHDF5FileHandler)
+ADD_TEST(PhotonDataProcessorShellMap_test tstPhotonDataProcessorShellMap)
 ADD_TEST(PhotonDataProcessor_test tstPhotonDataProcessor)
 
 # Install test files for the EPDL97DataProcessor_test

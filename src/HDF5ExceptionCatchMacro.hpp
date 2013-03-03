@@ -33,6 +33,8 @@
   {						\
     std::ostringstream oss;			     \
     oss << " *** Caught HDF5 H5::Exception *** \n\n";	\
+    oss << "File: " << __FILE__ << "\n"; \
+    oss << "Line: " << __LINE__ << "\n"; \
     Teuchos::OSTab scsi_tab(oss); \
     scsi_tab.o() << TEUCHOS_GET_STORED_STACKTRACE(); \
     scsi_tab.o() << exception.getFuncName() << "\n";	\

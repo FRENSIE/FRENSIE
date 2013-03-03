@@ -72,15 +72,20 @@ void PhotonDataProcessor::processEPDLFile()
   Teuchos::Array<unsigned int> photoelectric_shells;
   
   // Process every element (Z=1-100) in the EPDL file
-  while( !epdl.eof() )
+  while( epdl )
   {
+    
     // Read first table header and determine which element is being processed
     readFirstTableHeader( epdl,
 			  atomic_number_in_table,
 			  outgoing_particle_designator,
 			  atomic_weight,
 			  interpolation_flag );
-
+    
+    // Check that the EPDL file is still valid (eof has not been reached)
+    if( epdl.eof() )
+      continue;
+    
     // If a new element is found, close the current HDF5 file and open a new one
     if( atomic_number != atomic_number_in_table )
     {
@@ -99,7 +104,7 @@ void PhotonDataProcessor::processEPDLFile()
 	d_hdf5_file_handler.closeHDF5File();
       }
       
-      ++atomic_number;
+      atomic_number = atomic_number_in_table;
 
       // Open a new HDF5 file
       std::ostringstream file_number;
@@ -414,7 +419,7 @@ void PhotonDataProcessor::processEADLFile()
   Teuchos::Array<unsigned int> relaxation_shells;
   
   // Process every element (Z=1-100) in the EPDL file
-  while( !eadl.eof() )
+  while( eadl )
   {
     // Read first table header and determine which element is being processed
     readFirstTableHeader( eadl,
@@ -422,6 +427,10 @@ void PhotonDataProcessor::processEADLFile()
 			  outgoing_particle_designator,
 			  atomic_weight,
 			  interpolation_flag );
+    
+    // Check that the EPDL file is still valid (eof has not been reached)
+    if( eadl.eof() )
+      continue;
 
     // If a new element is found, close the current HDF5 file and open a new one
     if( atomic_number != atomic_number_in_table )
@@ -440,7 +449,7 @@ void PhotonDataProcessor::processEADLFile()
 	d_hdf5_file_handler.closeHDF5File();
       }
       
-      ++atomic_number;
+      atomic_number = atomic_number_in_table;
 
       // Open a new HDF5 file
       std::ostringstream file_number; 

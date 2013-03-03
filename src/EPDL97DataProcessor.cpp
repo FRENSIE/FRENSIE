@@ -26,6 +26,9 @@ void EPDL97DataProcessor::readFirstTableHeader( std::ifstream& datafile,
 						double &atomic_weight,
 						unsigned int &interpolation_flag )
 {
+  // The datafile must be valid
+  testPrecondition( datafile );
+  
   // Variables for reading in EPDL data file header 1
   //  the variable names are consistent with the names in the EPDL docs,
   //  the variables are one char longer than needed to account for the '\0' char
@@ -56,6 +59,9 @@ void EPDL97DataProcessor::readFirstTableHeader( std::ifstream& datafile,
   outgoing_particle_designator = atoi(Yo);
   atomic_weight = extractValue<double>( Al, Ar );
   interpolation_flag = atoi(iflag);
+
+  // The data file must still be valid (or the eof bit is set)
+  testPostcondition( (datafile || datafile.eof()) );
 }
 
 //! Read the second table header
@@ -63,6 +69,9 @@ void EPDL97DataProcessor::readSecondTableHeader( std::ifstream& datafile,
 						 unsigned int &reaction_type,
 						 unsigned int &electron_shell )
 {
+  // The datafile must be valid
+  testPrecondition( datafile );
+  
   // Variables for reading in the EPDL data file header 2
   //  the variable names are consistent with the names in the EPDL docs,
   //  the variables are one char longer than needed to account for the '\0' char
@@ -83,35 +92,54 @@ void EPDL97DataProcessor::readSecondTableHeader( std::ifstream& datafile,
   datafile.getline( extra, 38 );
   
   reaction_type = atoi(C)*1000 + atoi(I);
-  electron_shell = extractValue<unsigned int>( X1l, X1r );  
+  electron_shell = extractValue<unsigned int>( X1l, X1r ); 
+
+  // The data file must still be valid
+  testPostcondition( datafile );
 }
 
 //! Skip two column table in EPDL file
 void EPDL97DataProcessor::skipTwoColumnTable( std::ifstream &datafile )
 {
-  char line[24];
-  line[0] = 'n';
-  char test[] = "                       ";
-  char end_of_table[51];
+  // The datafile must be valid
+  testPrecondition( datafile );
+  
+  char line[23];
+  char test[] = "                      ";
+  char end_of_table[50];
 
-  while( strcmp( line, test ) != 0 )
-    datafile.getline( line, 24 );
+  do
+  {
+    datafile.get( line, 23 );
+    datafile.ignore();
+  }
+  while( strcmp( line, test ) != 0 );
+    
 
   // Read rest of end of table line
-  datafile.getline( end_of_table, 51 );
+  datafile.getline( end_of_table, 50 );
+
+  // The data file must still be valid
+  testPostcondition( datafile );
 }
 
 //! Skip three column table in EPDL file
 void EPDL97DataProcessor::skipThreeColumnTable( std::ifstream &datafile )
 {
-  char line[35];
-  line[0] = 'n';
-  char test[] = "                                  ";
+  // The datafile must be valid
+  testPrecondition( datafile.is_open() );
+  
+  char line[34];
+  char test[] = "                                 ";
   char end_of_table[40];
   
-  while( strcmp( line, test ) != 0 )
-    datafile.getline( line, 35 );
-
+  do
+  {
+    datafile.get( line, 34 );
+    datafile.ignore();
+  }
+  while( strcmp( line, test ) != 0 );
+    
   // Read rest of end of table line
   datafile.getline( end_of_table, 40 );
 }
@@ -120,13 +148,15 @@ void EPDL97DataProcessor::skipThreeColumnTable( std::ifstream &datafile )
 void EPDL97DataProcessor::readThreeColumnTable( std::ifstream &datafile,
 						Teuchos::Array<Trip<unsigned int,double,double> > &data )
 {
+  // The datafile must be valid
+  testPrecondition( datafile );
+  
   char data1_l [10];
-  data1_l[0] = 'n';
   char data1_r [3];
   char data2_l [10];
   char data2_r [3];
   char data3_l [10];
-  char data3_r [4];
+  char data3_r [3];
   char end_of_table [40];
   char test []=  "         ";
 
@@ -137,14 +167,15 @@ void EPDL97DataProcessor::readThreeColumnTable( std::ifstream &datafile,
   Trip<unsigned int,double,double> data_point;
 
   // Read the table one line at a time
-  while( strcmp( data1_l, test ) != 0 )
+  do
   {
     datafile.get( data1_l, 10 );
     datafile.get( data1_r, 3 );
     datafile.get( data2_l, 10 );
     datafile.get( data2_r, 3 );
     datafile.get( data3_l, 10 );
-    datafile.getline( data3_r, 4 );
+    datafile.get( data3_r, 3 );
+    datafile.ignore();
     
     if( strcmp( data1_l, test ) != 0 )
     {
@@ -155,40 +186,55 @@ void EPDL97DataProcessor::readThreeColumnTable( std::ifstream &datafile,
       data.push_back( data_point );
     }
   }
+  while( strcmp( data1_l, test ) != 0 );
 
   // Read rest of end of table line
   datafile.getline( end_of_table, 40 );
+
+  // The data file must still be valid
+  testPostcondition( datafile );
 }
 
 //! Skip four column table in EPDL file
 void EPDL97DataProcessor::skipFourColumnTable( std::ifstream &datafile )
 {
-  char line[46];
-  line[0] = 'n';
-  char test[] = "                                             ";
-  char end_of_table[29];
+  // The datafile must be valid
+  testPrecondition( datafile );
   
-  while( strcmp( line, test ) != 0 )
-    datafile.getline( line, 46 );
-
+  char line[45];
+  char test[] = "                                            ";
+  char end_of_table[28];
+  
+  do
+  {
+    datafile.get( line, 45 );
+    datafile.ignore();
+  }
+  while( strcmp( line, test ) != 0 );
+    
   // Read rest of end of table line
-  datafile.getline( end_of_table, 29 );
+  datafile.getline( end_of_table, 28 );
+
+  // The data file must still be valid
+  testPostcondition( datafile );
 }
 
 //! Read four column table in EPDL file
 void EPDL97DataProcessor::readFourColumnTable( std::ifstream &datafile,
 					       Teuchos::Array<Quad<unsigned int,unsigned int,double,double> > &data )
 {
+  // The datafile must be valid
+  testPrecondition( datafile );
+  
   char data1_l [10];
-  data1_l[0] = 'n';
   char data1_r [3];
   char data2_l [10];
   char data2_r [3];
   char data3_l [10];
   char data3_r [3];
   char data4_l [10];
-  char data4_r [4];
-  char end_of_table [29];
+  char data4_r [3];
+  char end_of_table [28];
   char test []=  "         ";
 
   // Make sure that the data array is empty
@@ -198,7 +244,7 @@ void EPDL97DataProcessor::readFourColumnTable( std::ifstream &datafile,
   Quad<unsigned int,unsigned int,double,double> data_point;
 
   // Read the table one line at a time
-  while( strcmp( data1_l, test ) != 0 )
+  do
   {
     datafile.get( data1_l, 10 );
     datafile.get( data1_r, 3 );
@@ -207,7 +253,8 @@ void EPDL97DataProcessor::readFourColumnTable( std::ifstream &datafile,
     datafile.get( data3_l, 10 );
     datafile.get( data3_r, 3 );
     datafile.get( data4_l, 10 );
-    datafile.getline( data4_r, 4 );
+    datafile.get( data4_r, 3 );
+    datafile.ignore();
     
     if( strcmp( data1_l, test ) != 0 )
     {
@@ -219,15 +266,21 @@ void EPDL97DataProcessor::readFourColumnTable( std::ifstream &datafile,
       data.push_back( data_point );
     }
   }
+  while( strcmp( data1_l, test ) != 0 );
 
   // Read rest of end of table line
-  datafile.getline( end_of_table, 29 );
+  datafile.getline( end_of_table, 28 );
+
+  // The data file must still be valid
+  testPostcondition( datafile );
 }
 
 //! Convert an unsigned int to an electron shell string
 std::string EPDL97DataProcessor::uintToShellStr( unsigned int shell )
 {
-  return ELECTRON_SHELL_STR( shell );
+  std::stringstream shell_str;
+  shell_str << shell;
+  return shell_str.str();
 }  
 
 } // end FACEMC namespace

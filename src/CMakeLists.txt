@@ -3,7 +3,6 @@ SET(HEADERS
   DefaultParameterValues.hpp
   EPDL97DataProcessor.hpp
   FACEMC_Assertion.hpp
-  HDF5DataFileNames.hpp
   HDF5ExceptionCatchMacro.hpp
   HDF5FileHandler.hpp
   HDF5TypeTraits.hpp

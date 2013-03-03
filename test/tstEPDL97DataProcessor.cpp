@@ -28,6 +28,9 @@
 #define TWO_COLUMN_TABLE_TEST_FILE "test_two_column_table.txt"
 #define THREE_COLUMN_TABLE_TEST_FILE "test_three_column_table.txt"
 #define FOUR_COLUMN_TABLE_TEST_FILE "test_four_column_table.txt"
+#define TWO_TWO_COLUMN_TABLES_TEST_FILE "test_two_two_column_tables.txt"
+#define TWO_THREE_COLUMN_TABLES_TEST_FILE "test_two_three_column_tables.txt"
+#define TWO_FOUR_COLUMN_TABLES_TEST_FILE "test_two_four_column_tables.txt"
 
 //---------------------------------------------------------------------------//
 // Testing Stucts.
@@ -199,13 +202,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, first_table_header_read_test )
 
   TEST_EQUALITY( interpolation_flag, interpolation_flag_true );
 
-  // Test that the entire header was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_headerfile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test header file
   test_headerfile.close();
 }
@@ -234,13 +230,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, second_table_header_read_test )
   TEST_EQUALITY( reaction_type, reaction_type_true );
 
   TEST_EQUALITY( electron_shell, electron_shell_true );
-
-  // Test that the entire header was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_headerfile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
 
   // Close the test header file
   test_headerfile.close();
@@ -293,13 +282,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, full_table_header_read_test )
 
   TEST_EQUALITY( electron_shell, electron_shell_true );
 
-  // Test that the entire header was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_headerfile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test header file
   test_headerfile.close();
 }
@@ -333,13 +315,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_skip_test )
 
   data_processor.skipTwoColumnTable( test_tablefile );
   
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -414,13 +389,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_skip_test )
 
 
   data_processor.skipFourColumnTable( test_tablefile );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
 
   // Close the test table file
   test_tablefile.close();
@@ -511,13 +479,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_read_test )
 
   TEST_COMPARE_ARRAYS( data, data_true );
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -606,13 +567,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_log_read_test )
   data_true.push_back( data_point );
 
   TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
 
   // Close the test table file
   test_tablefile.close();
@@ -703,13 +657,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_log_read_test )
 
   TEST_COMPARE_ARRAYS( data, data_true );
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -798,13 +745,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_lin_read_test )
   data_true.push_back( data_point );
 
   TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
 
   // Close the test table file
   test_tablefile.close();
@@ -896,13 +836,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_int_double_read_test )
 
   TEST_COMPARE_ARRAYS( data, data_true );
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -992,13 +925,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_uint_double_read_test )
   data_true.push_back( data_point );
 
   TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
 
   // Close the test table file
   test_tablefile.close();
@@ -1091,13 +1017,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_eq_eq_rea
 
   TEST_COMPARE_ARRAYS( data, data_true );
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -1188,13 +1107,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_log_range_eq_eq_rea
   data_true.push_back( data_point );
 
   TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
 
   // Close the test table file
   test_tablefile.close();
@@ -1287,13 +1199,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_log_range_eq_eq_rea
 
   TEST_COMPARE_ARRAYS( data, data_true );
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -1384,13 +1289,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_log_lin_range_eq_eq_rea
   data_true.push_back( data_point );
 
   TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
 
   // Close the test table file
   test_tablefile.close();
@@ -1483,13 +1381,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_lt_gt_rea
 
   TEST_COMPARE_ARRAYS( data, data_true );
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -1580,13 +1471,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_eq_gt_rea
   data_true.push_back( data_point );
 
   TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
 
   // Close the test table file
   test_tablefile.close();
@@ -1679,13 +1563,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_lt_eq_rea
 
   TEST_COMPARE_ARRAYS( data, data_true );
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -1756,13 +1633,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_lt_rea
   data_true.push_back( data_point );
  
   TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
 
   // Close the test table file
   test_tablefile.close();
@@ -1839,13 +1709,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_eq_lt_rea
 
   TEST_COMPARE_ARRAYS( data, data_true );
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -1920,13 +1783,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_lt_lt_rea
   data_true.push_back( data_point );
 
   TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
 
   // Close the test table file
   test_tablefile.close();
@@ -2011,13 +1867,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_eq_rea
 
   TEST_COMPARE_ARRAYS( data, data_true );
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -2101,13 +1950,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_range_gt_gt_rea
 
   TEST_COMPARE_ARRAYS( data, data_true );
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -2188,13 +2030,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_read_test )
 
   TEST_COMPARE_ARRAYS( data, data_true );
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -2265,13 +2100,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_read_test )
   data_true.push_back( data_point );
   
   TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
 
   // Close the test table file
   test_tablefile.close();
@@ -2375,13 +2203,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_slope_calc_test
   data_true.push_back( data_point );
 
   TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
 
   // Close the test table file
   test_tablefile.close();
@@ -2501,13 +2322,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_cdf_slope_calc_
 
   TEST_COMPARE_ARRAYS( data, data_true );
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -2599,13 +2413,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_discrete_cdf_ca
 
   TEST_COMPARE_ARRAYS( data, data_true );
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
-
   // Close the test table file
   test_tablefile.close();
 }
@@ -2615,8 +2422,7 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_lin_lin_discrete_cdf_ca
 // calculate a discrete cdf from the data
 TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_discrete_cdf_calc_test )
 {
-  std::ifstream test_tablefile;
-  test_tablefile.open( THREE_COLUMN_TABLE_TEST_FILE, std::fstream::in );
+  std::ifstream test_tablefile( THREE_COLUMN_TABLE_TEST_FILE );
   TEST_ASSERT( test_tablefile.is_open() );
 
   TestDataProcessor data_processor;
@@ -2688,13 +2494,6 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_discrete_cdf_calc_tes
   data_true.push_back( data_point );
 
   TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, data_true, 1e-12 );
-
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
-
-  TEST_EQUALITY_CONST( eof.size(), 0 );
 
   // Close the test table file
   test_tablefile.close();
@@ -2769,19 +2568,714 @@ TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_discrete_cdf_calc_test
   data_true.push_back( data_point );
 
   TEST_COMPARE_FLOATING_QUAD_ARRAYS( data, data_true, 1e-12 );
+  
+  // Close the test table file
+  test_tablefile.close();
+}
 
-  // Test that the entire table was read
-  //  the EOF bit doesn't seem to be getting set so try reading from the stream
-  std::string eof;
-  std::getline( test_tablefile, eof );
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can skip a two column table and then
+// skip a two column table
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_skip_skip_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( TWO_TWO_COLUMN_TABLES_TEST_FILE, std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
 
-  TEST_EQUALITY_CONST( eof.size(), 0 );
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number_1, atomic_number_2;
+  unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
+  double atomic_weight_1, atomic_weight_2;
+  unsigned int interpolation_flag_1, interpolation_flag_2;
+  unsigned int reaction_type_1, reaction_type_2;
+  unsigned int electron_shell_1, electron_shell_2;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_1,
+				       outgoing_particle_designator_1,
+				       atomic_weight_1,
+				       interpolation_flag_1 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_1,
+					electron_shell_1 );
+
+  // Skip the first table
+  data_processor.skipTwoColumnTable( test_tablefile );
+  
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_2,
+				       outgoing_particle_designator_2,
+				       atomic_weight_2,
+				       interpolation_flag_2 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_2,
+					electron_shell_2 );
+  // Check that the header info from both tables matches
+  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
+  TEST_EQUALITY( outgoing_particle_designator_1,
+		 outgoing_particle_designator_2 );
+  TEST_EQUALITY( atomic_weight_1, atomic_weight_2 );
+  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
+  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
+  
+  // Skip the second table
+  data_processor.skipTwoColumnTable( test_tablefile );
 
   // Close the test table file
   test_tablefile.close();
 }
 
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can skip a two column table and then
+// read a two column table
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_skip_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( TWO_TWO_COLUMN_TABLES_TEST_FILE, std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
 
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number_1, atomic_number_2;
+  unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
+  double atomic_weight_1, atomic_weight_2;
+  unsigned int interpolation_flag_1, interpolation_flag_2;
+  unsigned int reaction_type_1, reaction_type_2;
+  unsigned int electron_shell_1, electron_shell_2;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_1,
+				       outgoing_particle_designator_1,
+				       atomic_weight_1,
+				       interpolation_flag_1 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_1,
+					electron_shell_1 );
+
+  // Skip the first table
+  data_processor.skipTwoColumnTable( test_tablefile );
+  
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_2,
+				       outgoing_particle_designator_2,
+				       atomic_weight_2,
+				       interpolation_flag_2 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_2,
+					electron_shell_2 );
+  // Check that the header info from both tables matches
+  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
+  TEST_EQUALITY( outgoing_particle_designator_1,
+		 outgoing_particle_designator_2 );
+  TEST_EQUALITY( atomic_weight_1, atomic_weight_2 );
+  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
+  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
+  
+  Teuchos::Array<FACEMC::Pair<double,double> > data;
+  
+  // Read the second table
+  data_processor.readTwoColumnTable<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+      data );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table and then
+// skip a two column table
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_read_skip_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( TWO_TWO_COLUMN_TABLES_TEST_FILE, std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number_1, atomic_number_2;
+  unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
+  double atomic_weight_1, atomic_weight_2;
+  unsigned int interpolation_flag_1, interpolation_flag_2;
+  unsigned int reaction_type_1, reaction_type_2;
+  unsigned int electron_shell_1, electron_shell_2;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_1,
+				       outgoing_particle_designator_1,
+				       atomic_weight_1,
+				       interpolation_flag_1 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_1,
+					electron_shell_1 );
+
+  // Read the first table
+  Teuchos::Array<FACEMC::Pair<double,double> > data;
+  
+  data_processor.readTwoColumnTable<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+          data );
+  
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_2,
+				       outgoing_particle_designator_2,
+				       atomic_weight_2,
+				       interpolation_flag_2 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_2,
+					electron_shell_2 );
+
+  // Skip the second table
+  data_processor.skipTwoColumnTable( test_tablefile );
+  
+  // Check that the header info from both tables matches
+  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
+  TEST_EQUALITY( outgoing_particle_designator_1,
+		 outgoing_particle_designator_2 );
+  TEST_EQUALITY( atomic_weight_1, atomic_weight_2 );
+  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
+  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a two column table and then
+// read a two column table
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, two_column_table_read_read_test )
+{
+  std::ifstream test_tablefile;
+  test_tablefile.open( TWO_TWO_COLUMN_TABLES_TEST_FILE, std::fstream::in );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number_1, atomic_number_2;
+  unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
+  double atomic_weight_1, atomic_weight_2;
+  unsigned int interpolation_flag_1, interpolation_flag_2;
+  unsigned int reaction_type_1, reaction_type_2;
+  unsigned int electron_shell_1, electron_shell_2;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_1,
+				       outgoing_particle_designator_1,
+				       atomic_weight_1,
+				       interpolation_flag_1 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_1,
+					electron_shell_1 );
+
+  // Read the first table
+  Teuchos::Array<FACEMC::Pair<double,double> > data;
+  
+  data_processor.readTwoColumnTable<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+          data );
+  
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_2,
+				       outgoing_particle_designator_2,
+				       atomic_weight_2,
+				       interpolation_flag_2 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_2,
+					electron_shell_2 );
+
+  // Read the second table
+  data_processor.readTwoColumnTable<TestDataProcessor::LinearLinearDataProcessingPolicy>( test_tablefile,
+          data );
+  
+  // Check that the header info from both tables matches
+  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
+  TEST_EQUALITY( outgoing_particle_designator_1,
+		 outgoing_particle_designator_2 );
+  TEST_EQUALITY( atomic_weight_1, atomic_weight_2 );
+  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
+  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can skip a three column table and then
+// skip a three column table
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_skip_skip_test )
+{
+  std::ifstream test_tablefile( TWO_THREE_COLUMN_TABLES_TEST_FILE  );
+  TEST_ASSERT( test_tablefile.is_open() );
+  
+  TestDataProcessor data_processor;
+  
+  unsigned int atomic_number_1, atomic_number_2;
+  unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
+  double atomic_weight_1, atomic_weight_2;
+  unsigned int interpolation_flag_1, interpolation_flag_2;
+  unsigned int reaction_type_1, reaction_type_2;
+  unsigned int electron_shell_1, electron_shell_2;
+  
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_1,
+				       outgoing_particle_designator_1,
+				       atomic_weight_1,
+				       interpolation_flag_1 );
+  
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_1,
+					electron_shell_1 );
+  
+  // Skip the first table
+  data_processor.skipThreeColumnTable( test_tablefile );
+  
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_2,
+				       outgoing_particle_designator_2,
+				       atomic_weight_2,
+				       interpolation_flag_2 );
+  
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_2,
+					electron_shell_2 );
+  
+  // Skip the second table
+  data_processor.skipThreeColumnTable( test_tablefile );
+  
+  // Check that the header info from both tables matches
+  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
+  TEST_EQUALITY( outgoing_particle_designator_1,
+		 outgoing_particle_designator_2 );
+  TEST_EQUALITY( atomic_weight_1, atomic_weight_2 );
+  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
+  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can skip a three column table and then
+// read a three column table
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_skip_read_test )
+{
+  std::ifstream test_tablefile( TWO_THREE_COLUMN_TABLES_TEST_FILE  );
+  TEST_ASSERT( test_tablefile.is_open() );
+  
+  TestDataProcessor data_processor;
+  
+  unsigned int atomic_number_1, atomic_number_2;
+  unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
+  double atomic_weight_1, atomic_weight_2;
+  unsigned int interpolation_flag_1, interpolation_flag_2;
+  unsigned int reaction_type_1, reaction_type_2;
+  unsigned int electron_shell_1, electron_shell_2;
+  
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_1,
+				       outgoing_particle_designator_1,
+				       atomic_weight_1,
+				       interpolation_flag_1 );
+  
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_1,
+					electron_shell_1 );
+  
+  // Skip the first table
+  data_processor.skipThreeColumnTable( test_tablefile );
+  
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_2,
+				       outgoing_particle_designator_2,
+				       atomic_weight_2,
+				       interpolation_flag_2 );
+  
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_2,
+					electron_shell_2 );
+  
+  // Read the second table
+  Teuchos::Array<FACEMC::Trip<unsigned int,double,double> > data;
+
+  data_processor.readThreeColumnTable( test_tablefile,
+				       data );
+
+  // Check that the header info from both tables matches
+  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
+  TEST_EQUALITY( outgoing_particle_designator_1,
+		 outgoing_particle_designator_2 );
+  TEST_EQUALITY( atomic_weight_1, atomic_weight_2 );
+  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
+  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a three column table and then
+// skip a three column table
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_read_skip_test )
+{
+  std::ifstream test_tablefile( TWO_THREE_COLUMN_TABLES_TEST_FILE  );
+  TEST_ASSERT( test_tablefile.is_open() );
+  
+  TestDataProcessor data_processor;
+  
+  unsigned int atomic_number_1, atomic_number_2;
+  unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
+  double atomic_weight_1, atomic_weight_2;
+  unsigned int interpolation_flag_1, interpolation_flag_2;
+  unsigned int reaction_type_1, reaction_type_2;
+  unsigned int electron_shell_1, electron_shell_2;
+  
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_1,
+				       outgoing_particle_designator_1,
+				       atomic_weight_1,
+				       interpolation_flag_1 );
+  
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_1,
+					electron_shell_1 );
+  
+  // Read the first table
+  Teuchos::Array<FACEMC::Trip<unsigned int,double,double> > data;
+
+  data_processor.readThreeColumnTable( test_tablefile,
+				       data );
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_2,
+				       outgoing_particle_designator_2,
+				       atomic_weight_2,
+				       interpolation_flag_2 );
+  
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_2,
+					electron_shell_2 );
+  
+  // Skip the second table
+  data_processor.skipThreeColumnTable( test_tablefile );
+  
+  // Check that the header info from both tables matches
+  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
+  TEST_EQUALITY( outgoing_particle_designator_1,
+		 outgoing_particle_designator_2 );
+  TEST_EQUALITY( atomic_weight_1, atomic_weight_2 );
+  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
+  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a three column table and then
+// read a three column table
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, three_column_table_read_read_test )
+{
+  std::ifstream test_tablefile( TWO_THREE_COLUMN_TABLES_TEST_FILE  );
+  TEST_ASSERT( test_tablefile.is_open() );
+  
+  TestDataProcessor data_processor;
+  
+  unsigned int atomic_number_1, atomic_number_2;
+  unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
+  double atomic_weight_1, atomic_weight_2;
+  unsigned int interpolation_flag_1, interpolation_flag_2;
+  unsigned int reaction_type_1, reaction_type_2;
+  unsigned int electron_shell_1, electron_shell_2;
+  
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_1,
+				       outgoing_particle_designator_1,
+				       atomic_weight_1,
+				       interpolation_flag_1 );
+  
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_1,
+					electron_shell_1 );
+  
+  // Read the first table
+  Teuchos::Array<FACEMC::Trip<unsigned int,double,double> > data;
+
+  data_processor.readThreeColumnTable( test_tablefile,
+				       data );
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_2,
+				       outgoing_particle_designator_2,
+				       atomic_weight_2,
+				       interpolation_flag_2 );
+  
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_2,
+					electron_shell_2 );
+  
+  // Read the second table
+  data_processor.readThreeColumnTable( test_tablefile,
+				       data );
+  
+  // Check that the header info from both tables matches
+  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
+  TEST_EQUALITY( outgoing_particle_designator_1,
+		 outgoing_particle_designator_2 );
+  TEST_EQUALITY( atomic_weight_1, atomic_weight_2 );
+  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
+  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can skip a four column table and then 
+// skip a four column table
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_skip_skip_test )
+{
+  std::ifstream test_tablefile( TWO_FOUR_COLUMN_TABLES_TEST_FILE );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number_1, atomic_number_2;
+  unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
+  double atomic_weight_1, atomic_weight_2;
+  unsigned int interpolation_flag_1, interpolation_flag_2;
+  unsigned int reaction_type_1, reaction_type_2;
+  unsigned int electron_shell_1, electron_shell_2;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_1,
+				       outgoing_particle_designator_1,
+				       atomic_weight_1,
+				       interpolation_flag_1 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_1,
+					electron_shell_1 );
+  
+  // Skip the first table
+  data_processor.skipFourColumnTable( test_tablefile );
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_2,
+				       outgoing_particle_designator_2,
+				       atomic_weight_2,
+				       interpolation_flag_2 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_2,
+					electron_shell_2 );
+ 
+  // Skip the second table
+  data_processor.skipFourColumnTable( test_tablefile );
+
+  // Check that the header info from both tables matches
+  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
+  TEST_EQUALITY( outgoing_particle_designator_1,
+		 outgoing_particle_designator_2 );
+  TEST_EQUALITY( atomic_weight_1, atomic_weight_2 );
+  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
+  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can skip a four column table and then 
+// read a four column table
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_skip_read_test )
+{
+  std::ifstream test_tablefile( TWO_FOUR_COLUMN_TABLES_TEST_FILE );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number_1, atomic_number_2;
+  unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
+  double atomic_weight_1, atomic_weight_2;
+  unsigned int interpolation_flag_1, interpolation_flag_2;
+  unsigned int reaction_type_1, reaction_type_2;
+  unsigned int electron_shell_1, electron_shell_2;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_1,
+				       outgoing_particle_designator_1,
+				       atomic_weight_1,
+				       interpolation_flag_1 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_1,
+					electron_shell_1 );
+  
+  // Skip the first table
+  data_processor.skipFourColumnTable( test_tablefile );
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_2,
+				       outgoing_particle_designator_2,
+				       atomic_weight_2,
+				       interpolation_flag_2 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_2,
+					electron_shell_2 );
+  
+  Teuchos::Array<FACEMC::Quad<unsigned int,unsigned int,double,double> > data;
+  
+  // Read the second table
+  data_processor.readFourColumnTable( test_tablefile,
+				      data );
+
+  // Check that the header info from both tables matches
+  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
+  TEST_EQUALITY( outgoing_particle_designator_1,
+		 outgoing_particle_designator_2 );
+  TEST_EQUALITY( atomic_weight_1, atomic_weight_2 );
+  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
+  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a four column table and then 
+// skip a four column table
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_read_skip_test )
+{
+  std::ifstream test_tablefile( TWO_FOUR_COLUMN_TABLES_TEST_FILE );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number_1, atomic_number_2;
+  unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
+  double atomic_weight_1, atomic_weight_2;
+  unsigned int interpolation_flag_1, interpolation_flag_2;
+  unsigned int reaction_type_1, reaction_type_2;
+  unsigned int electron_shell_1, electron_shell_2;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_1,
+				       outgoing_particle_designator_1,
+				       atomic_weight_1,
+				       interpolation_flag_1 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_1,
+					electron_shell_1 );
+  
+  // Read the first table
+  Teuchos::Array<FACEMC::Quad<unsigned int,unsigned int,double,double> > data;
+  
+  data_processor.readFourColumnTable( test_tablefile,
+				      data );
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_2,
+				       outgoing_particle_designator_2,
+				       atomic_weight_2,
+				       interpolation_flag_2 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_2,
+					electron_shell_2 );
+  
+  // Skip the second table
+  data_processor.skipFourColumnTable( test_tablefile );
+
+  // Check that the header info from both tables matches
+  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
+  TEST_EQUALITY( outgoing_particle_designator_1,
+		 outgoing_particle_designator_2 );
+  TEST_EQUALITY( atomic_weight_1, atomic_weight_2 );
+  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
+  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+
+  // Close the test table file
+  test_tablefile.close();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the EPDL97DataProcessor can read a four column table and then 
+// read a four column table
+TEUCHOS_UNIT_TEST( EPDL97DataProcessor, four_column_table_read_read_test )
+{
+  std::ifstream test_tablefile( TWO_FOUR_COLUMN_TABLES_TEST_FILE );
+  TEST_ASSERT( test_tablefile.is_open() );
+
+  TestDataProcessor data_processor;
+
+  unsigned int atomic_number_1, atomic_number_2;
+  unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
+  double atomic_weight_1, atomic_weight_2;
+  unsigned int interpolation_flag_1, interpolation_flag_2;
+  unsigned int reaction_type_1, reaction_type_2;
+  unsigned int electron_shell_1, electron_shell_2;
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_1,
+				       outgoing_particle_designator_1,
+				       atomic_weight_1,
+				       interpolation_flag_1 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_1,
+					electron_shell_1 );
+  
+  // Read the first table
+  Teuchos::Array<FACEMC::Quad<unsigned int,unsigned int,double,double> > data;
+  
+  data_processor.readFourColumnTable( test_tablefile,
+				      data );
+
+  data_processor.readFirstTableHeader( test_tablefile,
+				       atomic_number_2,
+				       outgoing_particle_designator_2,
+				       atomic_weight_2,
+				       interpolation_flag_2 );
+
+  data_processor.readSecondTableHeader( test_tablefile,
+					reaction_type_2,
+					electron_shell_2 );
+  
+  // Read the second table
+  data_processor.readFourColumnTable( test_tablefile,
+				      data );
+
+  // Check that the header info from both tables matches
+  TEST_EQUALITY( atomic_number_1, atomic_number_2 );
+  TEST_EQUALITY( outgoing_particle_designator_1,
+		 outgoing_particle_designator_2 );
+  TEST_EQUALITY( atomic_weight_1, atomic_weight_2 );
+  TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
+  TEST_EQUALITY( reaction_type_1, reaction_type_2 );
+  TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
+
+  // Close the test table file
+  test_tablefile.close();
+}
 
 //---------------------------------------------------------------------------//
 // end tstEPDL97DataProcessor.cpp

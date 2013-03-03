@@ -9,7 +9,7 @@
 
 // Std Lib Includes
 #include <stdlib.h>
-#include <stdio.h>
+#include <iostream>
 #include <string>
 #include <fstream>
 
@@ -18,6 +18,7 @@
 
 // FACEMC includes
 #include "Tuple.hpp"
+#include "ContractException.hpp"
 
 namespace FACEMC{
 
@@ -30,13 +31,15 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( std::ifstream &datafile,
 						     const double indep_var_min,
 						     const double indep_var_max )
 {
+  // The datafile must be valid
+  testPrecondition( datafile );
+  
   // Variables for reading in a two column table
   char data1_l [10];
-  data1_l[0] = 'n';
   char data1_r [3];
   char data2_l [10];
-  char data2_r [4];
-  char end_of_table [51];
+  char data2_r [3];
+  char end_of_table [50];
   char test []=  "         ";
   
   // Values extracted from the table
@@ -51,19 +54,20 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( std::ifstream &datafile,
   data.clear();
 
   // Read the table one line at a time
-  while( strcmp( data1_l, test ) != 0 )
+  do
   {
     datafile.get( data1_l, 10 );
     datafile.get( data1_r, 3 );
     datafile.get( data2_l, 10 );
-    datafile.getline( data2_r, 4 );
+    datafile.get( data2_r, 3 );
+    datafile.ignore();
     
     if( strcmp( data1_l, test ) != 0 )
     {
       indep = extractValue<typename T::firstType>( data1_l, 
-						    data1_r );
+						   data1_r );
       dep = extractValue<typename T::secondType>( data2_l,
-						   data2_r );
+						  data2_r );
       
       // Remove values outside of independent variable range
       if( (indep > indep_var_min && indep_prev > indep_var_min) &&
@@ -116,9 +120,14 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( std::ifstream &datafile,
       }
     }
   }
+  while( strcmp( data1_l, test ) != 0 );
+    
 
   // Read rest of end of table line
-  datafile.getline( end_of_table, 51 );
+  datafile.getline( end_of_table, 50 );
+
+  // The data file must still be valid
+  testPostcondition( datafile );
 }
 
 //! Read two column table in EPDL file
@@ -128,13 +137,15 @@ void EPDL97DataProcessor::readTwoColumnTableInRange( std::ifstream &datafile,
 void EPDL97DataProcessor::readTwoColumnTable( std::ifstream &datafile,
 					      Array<T> &data )
 {
+  // The datafile must be valid
+  testPrecondition( datafile );
+  
   // Variables for reading in a two column table
   char data1_l [10];
-  data1_l[0] = 'n';
   char data1_r [3];
   char data2_l [10];
-  char data2_r [4];
-  char end_of_table [51];
+  char data2_r [3];
+  char end_of_table [50];
   char test []=  "         ";
   
   // Values extracted from the table
@@ -148,12 +159,14 @@ void EPDL97DataProcessor::readTwoColumnTable( std::ifstream &datafile,
   data.clear();
 
   // Read the table one line at a time
-  while( strcmp( data1_l, test ) != 0 )
+  do
   {
     datafile.get( data1_l, 10 );
     datafile.get( data1_r, 3 );
     datafile.get( data2_l, 10 );
-    datafile.getline( data2_r, 4 );
+    datafile.get( data2_r, 3 );
+    datafile.ignore();
+    
     if( strcmp( data1_l, test ) != 0 )
     {
       indep = extractValue<typename T::firstType>( data1_l, 
@@ -166,9 +179,13 @@ void EPDL97DataProcessor::readTwoColumnTable( std::ifstream &datafile,
       data.push_back( data_point );
     }
   }
+  while( strcmp( data1_l, test ) != 0 );    
 
   // Read rest of end of table line
-  datafile.getline( end_of_table, 51 );
+  datafile.getline( end_of_table, 50 );
+
+  // The data file must still be valid
+  testPostcondition( datafile );
 }
 
 template<typename T>
@@ -215,17 +232,14 @@ inline T EPDL97DataProcessor::extractValue( std::string mantissa,
 template<typename T,template<typename> class Array>
 void EPDL97DataProcessor::createContinuousCDFAtFourthTupleLoc( Array<T> &data )
 {
+  // Make sure that the array has more than one element
+  testPrecondition( (data.size() > 1) );
+  
   typename Array<T>::iterator data_point_1, data_point_2;
   typename Array<T>::iterator end = data.end();
 
   data_point_1 = data.begin();
   data_point_2 = data.begin() + 1;
-
-  // Make sure that the array is not empty
-  FACEMC_ASSERT_ALWAYS( (data_point_1 != end) );
-
-  // Make sure that the array has more than one entry
-  FACEMC_ASSERT_ALWAYS( (data_point_2 != end) );
 
   // Initialize the CDF
   data_point_1->fourth = 0.0;
@@ -258,17 +272,14 @@ void EPDL97DataProcessor::createContinuousCDFAtFourthTupleLoc( Array<T> &data )
 template<typename T,template<typename> class Array>
 void EPDL97DataProcessor::createDiscreteCDFAtSecondTupleLoc( Array<T> &data )
 {
+  // Make sure that the array has more than one element
+  testPrecondition( (data.size() > 1) );
+  
   typename Array<T>::iterator data_point_1, data_point_2;
   typename Array<T>::iterator end = data.end();
 
   data_point_1 = data.begin();
   data_point_2 = data.begin() + 1;
-
-  // Make sure that the array is not empty
-  FACEMC_ASSERT_ALWAYS( (data_point_1 != end) );
-
-  // Make sure that the array has more than one entry
-  FACEMC_ASSERT_ALWAYS( (data_point_2 != end) );
 
   // Create the discrete CDF
   while( data_point_2 != end )
@@ -293,17 +304,14 @@ void EPDL97DataProcessor::createDiscreteCDFAtSecondTupleLoc( Array<T> &data )
 template<typename T,template<typename> class Array>
 void EPDL97DataProcessor::createDiscreteCDFAtThirdTupleLoc( Array<T> &data )
 {
+  // Make sure that the array has more than one element
+  testPrecondition( (data.size() > 1) );
+  
   typename Array<T>::iterator data_point_1, data_point_2;
   typename Array<T>::iterator end = data.end();
 
   data_point_1 = data.begin();
   data_point_2 = data.begin() + 1;
-
-  // Make sure that the array is not empty
-  FACEMC_ASSERT_ALWAYS( (data_point_1 != end) );
-
-  // Make sure that the array has more than one entry
-  FACEMC_ASSERT_ALWAYS( (data_point_2 != end) );
 
   // Create the discrete CDF
   while( data_point_2 != end )
@@ -327,17 +335,14 @@ void EPDL97DataProcessor::createDiscreteCDFAtThirdTupleLoc( Array<T> &data )
 template<typename T, template<typename> class Array>
 void EPDL97DataProcessor::calculateSlopesAtThirdTupleLoc( Array<T> &data  )
 {
+  // Make sure that the array has more than one element
+  testPrecondition( (data.size() > 1) );
+  
   typename Array<T>::iterator data_point_1, data_point_2;
   typename Array<T>::iterator end = data.end();
 
   data_point_1 = data.begin();
   data_point_2 = data_point_1 + 1;
-
-  // Make sure that the array is not empty
-  FACEMC_ASSERT_ALWAYS( (data_point_1 != end) );
-
-  // Make sure that the array has more than one entry
-  FACEMC_ASSERT_ALWAYS( (data_point_2 != end) );
 
   while( data_point_2 != end )
   {

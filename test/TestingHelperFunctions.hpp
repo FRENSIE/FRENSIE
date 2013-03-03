@@ -71,14 +71,6 @@ std::ostream& operator<<(std::ostream &out, const FACEMC::Quad<T1,T2,T3,T4> &p)
   return out;
 }
 
-// Function for getting the size of a tuple held in an array
-template<typename T,
-	 template<typename> class Array>
-int getTupleSize( Array<T> &a1 )
-{
-  return T::size;
-}
-
 // Function for comparing arrays of pairs with floating point values
 // this function is based off of the compareFloatingArrays function in Teuchos
 template<typename T,
@@ -115,8 +107,6 @@ bool compareFloatingPairArrays( const Array1<T> &a1,
 					 i,
 					 tol,
 					 out );
-    if( !success )
-      return false;
 
     // Compare the second element
     success = compareSecondTupleElements( a1[i], a1_name,
@@ -124,12 +114,12 @@ bool compareFloatingPairArrays( const Array1<T> &a1,
 					  i,
 					  tol,
 					  out );
-    if( !success )
-      return false;
   }
   
   if( success ) 
     out << "passed\n";
+
+  return success;
 }
 
 // Function for comparing arrays of tiplets with floating point values
@@ -168,17 +158,13 @@ bool compareFloatingTripArrays( const Array1<T> &a1,
 					 i,
 					 tol,
 					 out );
-    if( !success )
-      return false;
-
+    
     // Compare the second element
     success = compareSecondTupleElements( a1[i], a1_name,
 					  a2[i], a2_name,
 					  i,
 					  tol,
 					  out );
-    if( !success )
-      return false;
     
     // Compare the third element
     success = compareThirdTupleElements( a1[i], a1_name,
@@ -186,12 +172,12 @@ bool compareFloatingTripArrays( const Array1<T> &a1,
 					 i, 
 					 tol,
 					 out );
-    if( !success )
-      return false;
   }
   
   if( success ) 
     out << "passed\n";
+
+  return success;
 }
 
 // Function for comparing arrays of quadruplets with floating point values
@@ -230,17 +216,13 @@ bool compareFloatingQuadArrays( const Array1<T> &a1,
 					 i,
 					 tol,
 					 out );
-    if( !success )
-      return false;
-
+    
     // Compare the second element
     success = compareSecondTupleElements( a1[i], a1_name,
 					  a2[i], a2_name,
 					  i,
 					  tol,
 					  out );
-    if( !success )
-      return false;
     
     // Compare the third element
     success = compareThirdTupleElements( a1[i], a1_name,
@@ -248,21 +230,19 @@ bool compareFloatingQuadArrays( const Array1<T> &a1,
 					 i, 
 					 tol,
 					 out );
-    if( !success )
-      return false;
-      
+     
     // Compare the fourth element
     success = compareFourthTupleElements( a1[i], a1_name,
 					  a2[i], a2_name,
 					  i,
 					  tol,
 					  out );
-    if( !success )
-      return false;
   }
   
   if( success ) 
     out << "passed\n";
+  
+  return success;
 }
 
 // function for comparing first tuple element 
