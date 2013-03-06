@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 // \file   SearchAlgorithms.hpp
 // \author Alex Robinson
-// \brief  Functions declarations for doing searches
+// \brief  Functions declarations for searching algorithms.
 //---------------------------------------------------------------------------//
 
 #ifndef SEARCH_ALGORITHMS_HPP

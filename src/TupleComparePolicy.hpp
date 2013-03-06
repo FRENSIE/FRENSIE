@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------//
-// \file   TupleIteratorComparePolicy.hpp
+// \file   TupleComparePolicy.hpp
 // \author Alex Robinson
 // \brief  Tuple Compare Policy specializations
 //---------------------------------------------------------------------------//
