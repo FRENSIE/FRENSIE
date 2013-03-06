@@ -15,7 +15,6 @@
 #include <Teuchos_ArrayRCP.hpp>
 
 // FACEMC Includes
-#include "PhotonReactionType.hpp"
 #include "Tuple.hpp"
 
 namespace FACEMC{
@@ -26,7 +25,9 @@ class PhotonDataBasic
 protected:
 
   //! Constructor
-  PhotonDataBasic( unsigned int atomic_number );
+  PhotonDataBasic( unsigned int atomic_number,
+		   double energy_min,
+		   double energy_max );
 
   //! Destructor
   ~PhotonDataBasic()
@@ -40,6 +41,9 @@ protected:
 
   //! Return the integrated coherent cross section for a given energy
   double getCoherentCrossSection( const double energy ) const;
+
+  //! Return the form factor cdf value for a given argument
+  double getFormFactorCDF( const double argument ) const;
 
   //! Return the form factor argument for a given cdf value
   double getFormFactorArgument( const double cdf_value ) const;
@@ -124,7 +128,7 @@ private:
   //--------------------------------------------------------------------------//
   
   // Integrated triplet production cross section
-  CrossSectionArray d_integrated_triple_production_cross_section;
+  CrossSectionArray d_integrated_triplet_production_cross_section;
 
   //--------------------------------------------------------------------------//
   // Electron Shell Data

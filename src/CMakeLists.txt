@@ -21,6 +21,7 @@ SET(SOURCES
   HDF5FileHandler.cpp
   PhotonDataProcessor.cpp
   process_data.cpp
+  PhotonDataBasic.cpp
   ${SOURCES}
   )
 

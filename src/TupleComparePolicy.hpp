@@ -17,28 +17,28 @@ template<typename T>
 struct TupleComparePolicy<T,FIRST>
 {
   typedef typename T::firstType tupleMemberType;
-  static inline tupleMemberType value(T &tuple) { return tuple.first; }
+  static inline tupleMemberType value(const T &tuple) { return tuple.first; }
 };
 
 template<typename T>
 struct TupleComparePolicy<T,SECOND>
 {
   typedef typename T::secondType tupleMemberType;
-  static inline tupleMemberType value(T &tuple) { return tuple.second; }
+  static inline tupleMemberType value(const T &tuple) { return tuple.second; }
 };
 
 template<typename T>
 struct TupleComparePolicy<T,THIRD>
 {
   typedef typename T::thirdType tupleMemberType;
-  static inline tupleMemberType value(T &tuple) { return tuple.third; }
+  static inline tupleMemberType value(const T &tuple) { return tuple.third; }
 };
 
 template<typename T>
 struct TupleComparePolicy<T,FOURTH>
 {
   typedef typename T::fourthType tupleMemberType;
-  static inline tupleMemberType value(T &tuple) { return tuple.fourth; }
+  static inline tupleMemberType value(const T &tuple) { return tuple.fourth; }
 };
   
 } // end FACEMC namespace

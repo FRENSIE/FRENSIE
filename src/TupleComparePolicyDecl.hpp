@@ -42,7 +42,7 @@ struct TupleComparePolicy
   typedef typename T::type tupleMemberType;
   
   //! Return the value of the desired tuple member
-  static inline typename T::type value(T &tuple){ (void)UndefinedTupleComparePolicy<T,member>::notDefined(); return 0; }
+  static inline typename T::type value(const T &tuple){ (void)UndefinedTupleComparePolicy<T,member>::notDefined(); return 0; }
 };
 
 } // end FACEMC namespace

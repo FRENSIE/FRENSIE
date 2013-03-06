@@ -67,7 +67,7 @@ public:
 #define FACEMC_ASSERT_ALWAYS_MSG( c, msg ) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c), \
 			      FACEMC::CriticalAssertion, \
-			      msg << std:endl )
+			      msg << std::endl )
 
 #if NDEBUG
 
