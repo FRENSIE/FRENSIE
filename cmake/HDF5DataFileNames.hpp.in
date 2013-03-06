@@ -61,10 +61,10 @@
 #define ELECTRON_SHELL_CDF_LOC "/Doppler_Data/Electron_Shell_CDF"
 
 // Define the HDF5 photon data file electron shell binding energy location
-#define ELECTRON_SHELL_BINDING_ENERGY_LOC "/Doppler_Data/Electron_Shell_Binding_Energy"
+#define ELECTRON_SHELL_BINDING_ENERGY_LOC "/Basic_Data/Electron_Shell_Binding_Energy"
 
 // Define the HDF5 photon data file electron shell kinetic energy location
-#define ELECTRON_SHELL_KINETIC_ENERGY_LOC "/Doppler_Data/Electron_Shell_Kinetic_Energy"
+#define ELECTRON_SHELL_KINETIC_ENERGY_LOC "/Basic_Data/Electron_Shell_Kinetic_Energy"
 
 // Define the HDF5 photon data file radiative transition probability root
 #define RADIATIVE_TRANSITION_PROBABILITY_ROOT "/Fluorescence_Data/Relaxation/Radiative_Transition_Probability/"

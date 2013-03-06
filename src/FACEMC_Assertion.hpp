@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
-// \file FACEMC_Assertion.hpp
+// \file   FACEMC_Assertion.hpp
 // \author Alex Robinson
-// \brief FACEMC assertion and assertion policy declaration
+// \brief  FACEMC assertion and assertion policy declaration
 //---------------------------------------------------------------------------//
 
 #ifndef FACEMC_ASSERTION_HPP
@@ -63,6 +63,11 @@ public:
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),		\
                               FACEMC::CriticalAssertion,		\
                               "FACEMC critical assertion failed" << std::endl )
+
+#define FACEMC_ASSERT_ALWAYS_MSG( c, msg ) \
+  TEUCHOS_TEST_FOR_EXCEPTION( !(c), \
+			      FACEMC::CriticalAssertion, \
+			      msg << std:endl )
 
 #if NDEBUG
 

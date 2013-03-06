@@ -17,7 +17,6 @@
 #include <Teuchos_Array.hpp>
 
 // FACEMC Includes
-#include "HDF5FileHandler.hpp"
 #include "Tuple.hpp"
 
 namespace FACEMC{
@@ -204,9 +203,7 @@ protected:
     //! Process Dependent Variable
     static double processDependentVar( const double dep_var );
   };
-
-  // HDF5 File Handler
-  HDF5FileHandler d_hdf5_file_handler;    
+    
 };
 
 } // end FACEMC namespace

@@ -50,6 +50,18 @@ void HDF5FileHandler::openHDF5FileAndAppend( const std::string &file_name )
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
+//! Open an HDF5 file and read data
+void HDF5FileHandler::openHDF5FileAndReadOnly( const std::string &file_name )
+{
+  // The H5File constructor can throw a H5::FileIException exception
+  try
+  {
+    d_hdf5_file.reset( new H5::H5File( file_name, H5F_ACC_RDONLY ) );
+  }
+
+  HDF5_EXCEPTION_CATCH_AND_EXIT();
+}
+
 //! Close an HDF5 file
 void HDF5FileHandler::closeHDF5File()
 {

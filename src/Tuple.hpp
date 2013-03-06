@@ -64,6 +64,14 @@ struct Quad
   T4 fourth;
 };
 
+//! Enum for refering to tuple members
+enum TupleMember{
+  FIRST,
+  SECOND,
+  THIRD,
+  FOURTH
+};
+
 //---------------------------------------------------------------------------//
 // Specialize the HDF5TypeTraits class for the Tuple Structs
 //---------------------------------------------------------------------------//
@@ -118,7 +126,6 @@ struct HDF5TypeTraits<Quad<T,T2,T3,T4> >
 #include "Tuple_def.hpp"
 
 //---------------------------------------------------------------------------//
-
 
 #endif // end FACEMC_TUPLE_HPP
 

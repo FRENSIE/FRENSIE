@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
-// \file PhotonDataProcessor.hpp
+// \file   PhotonDataProcessor.hpp
 // \author Alex Robinson
-// \brief Photon Data Processor declaration
+// \brief  Photon Data Processor declaration
 //---------------------------------------------------------------------------//
 
 #ifndef PHOTON_DATA_PROCESSOR_HPP
@@ -9,6 +9,7 @@
 
 // FACEMC Includes
 #include "EPDL97DataProcessor.hpp"
+#include "HDF5FileHandler.hpp"
 #include "DefaultParameterValues.hpp"
 #include "HDF5DataFileNames.hpp"
 

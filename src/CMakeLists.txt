@@ -10,6 +10,9 @@ SET(HEADERS
   PhotonDataCollection.hpp
   SimulationBase.hpp
   ElectronShells.hpp
+  SearchAlgorithms.hpp
+  TupleComparePolicy.hpp
+  PhotonDataBasic.hpp
   ${HEADERS}
   )
 

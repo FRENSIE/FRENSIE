@@ -57,6 +57,9 @@ void PhotonDataProcessor::processEPDLFile()
   std::ifstream epdl( d_epdl_file_name.c_str() );
   FACEMC_ASSERT_ALWAYS( epdl );
 
+  // HDF5 File Handler
+  HDF5FileHandler hdf5_file_handler;
+
   // Atomic number of element currently being processed
   unsigned int atomic_number = 0;
 
@@ -93,13 +96,13 @@ void PhotonDataProcessor::processEPDLFile()
 	if( photoelectric_shells.size() == 0)
 	  photoelectric_shells.push_back( 0 );
 	  
-	d_hdf5_file_handler.writeArrayToGroupAttribute( photoelectric_shells,
+	hdf5_file_handler.writeArrayToGroupAttribute( photoelectric_shells,
 							PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT,
 							PHOTOELECTRIC_SHELL_ATTRIBUTE
 							);
 	photoelectric_shells.clear();
 	  
-	d_hdf5_file_handler.closeHDF5File();
+	hdf5_file_handler.closeHDF5File();
       }
 
       // Check that the EPDL file is still valid (eof has not been reached)
@@ -113,10 +116,10 @@ void PhotonDataProcessor::processEPDLFile()
       file_number << atomic_number;
       std::string hdf5_file_name = d_output_directory + 
 	PHOTON_DATA_FILE_PREFIX + file_number.str() + DATA_FILE_SUFFIX;
-      d_hdf5_file_handler.openHDF5FileAndOverwrite( hdf5_file_name );
+      hdf5_file_handler.openHDF5FileAndOverwrite( hdf5_file_name );
       
       // Create a top level attribute to store the atomic weight
-      d_hdf5_file_handler.writeValueToGroupAttribute( atomic_weight,
+      hdf5_file_handler.writeValueToGroupAttribute( atomic_weight,
 						      ROOT,
 						      ATOMIC_WEIGHT_ATTRIBUTE );
 
@@ -124,7 +127,7 @@ void PhotonDataProcessor::processEPDLFile()
       Teuchos::Array<double> energy_limits( 2 );
       energy_limits[0] = d_energy_min;
       energy_limits[1] = d_energy_max;
-      d_hdf5_file_handler.writeArrayToGroupAttribute( energy_limits,
+      hdf5_file_handler.writeArrayToGroupAttribute( energy_limits,
 						      ROOT,
 						      ENERGY_LIMITS_ATTRIBUTE );
     }
@@ -155,7 +158,7 @@ void PhotonDataProcessor::processEPDLFile()
 
 	calculateSlopesAtThirdTupleLoc( data );
 	
-	d_hdf5_file_handler.writeArrayToDataSet( data,
+	hdf5_file_handler.writeArrayToDataSet( data,
 						 COHERENT_CROSS_SECTION_LOC );
       }
       
@@ -183,7 +186,7 @@ void PhotonDataProcessor::processEPDLFile()
 
 	calculateSlopesAtThirdTupleLoc( data );
 	
-	d_hdf5_file_handler.writeArrayToDataSet( data,
+	hdf5_file_handler.writeArrayToDataSet( data,
 						 INCOHERENT_CROSS_SECTION_LOC );
       }
       
@@ -214,7 +217,7 @@ void PhotonDataProcessor::processEPDLFile()
 
 	calculateSlopesAtThirdTupleLoc( data );
 	
-	d_hdf5_file_handler.writeArrayToDataSet( data,
+	hdf5_file_handler.writeArrayToDataSet( data,
 						 PHOTOELECTRIC_CROSS_SECTION_LOC );
       }
       // Read the total integrated photoelectric cross section for a subshell
@@ -226,7 +229,10 @@ void PhotonDataProcessor::processEPDLFile()
 							       data,
 							       d_energy_min,
 							       d_energy_max );
-	d_hdf5_file_handler.writeArrayToDataSet( data,
+
+	calculateSlopesAtThirdTupleLoc( data );
+	
+	hdf5_file_handler.writeArrayToDataSet( data,
 						 PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + uintToShellStr( electron_shell ) );
 
 	photoelectric_shells.push_back( electron_shell );
@@ -269,7 +275,7 @@ void PhotonDataProcessor::processEPDLFile()
 
 	calculateSlopesAtThirdTupleLoc( data );
 	
-	d_hdf5_file_handler.writeArrayToDataSet( data,
+	hdf5_file_handler.writeArrayToDataSet( data,
 						 PAIR_PRODUCTION_CROSS_SECTION_LOC );
       }
       
@@ -303,7 +309,7 @@ void PhotonDataProcessor::processEPDLFile()
 
 	calculateSlopesAtThirdTupleLoc( data );
 	
-	d_hdf5_file_handler.writeArrayToDataSet( data,
+	hdf5_file_handler.writeArrayToDataSet( data,
 						 TRIPLET_PRODUCTION_CROSS_SECTION_LOC );
       }
       
@@ -339,7 +345,7 @@ void PhotonDataProcessor::processEPDLFile()
 	
 	calculateSlopesAtThirdTupleLoc( data );
 
-	d_hdf5_file_handler.writeArrayToDataSet( data,
+	hdf5_file_handler.writeArrayToDataSet( data,
 						 ATOMIC_FORM_FACTOR_LOC );
       }
       
@@ -360,7 +366,7 @@ void PhotonDataProcessor::processEPDLFile()
 
 	calculateSlopesAtThirdTupleLoc( data );
 	
-	d_hdf5_file_handler.writeArrayToDataSet( data,
+	hdf5_file_handler.writeArrayToDataSet( data,
 						 SCATTERING_FUNCTION_LOC );
       }
       
@@ -391,7 +397,7 @@ void PhotonDataProcessor::processEPDLFile()
   }
   
   // Close the last HDF5 file
-  d_hdf5_file_handler.closeHDF5File();
+  hdf5_file_handler.closeHDF5File();
 
   // Close the EPDL data file
   epdl.close();
@@ -401,8 +407,11 @@ void PhotonDataProcessor::processEPDLFile()
 void PhotonDataProcessor::processEADLFile()
 {
   // EPDL file
-  std::ifstream eadl( d_eadl_file_name.c_str(), std::fstream::in );
+  std::ifstream eadl( d_eadl_file_name.c_str() );
   FACEMC_ASSERT_ALWAYS( eadl );
+
+  // HDF5 file handler
+  HDF5FileHandler hdf5_file_handler;
 
   // Atomic number of element currently being processed
   unsigned int atomic_number = 0;
@@ -429,10 +438,6 @@ void PhotonDataProcessor::processEADLFile()
 			  outgoing_particle_designator,
 			  atomic_weight,
 			  interpolation_flag );
-    
-    // Check that the EPDL file is still valid (eof has not been reached)
-    if( eadl.eof() )
-      continue;
 
     // If a new element is found, close the current HDF5 file and open a new one
     if( atomic_number != atomic_number_in_table )
@@ -443,15 +448,19 @@ void PhotonDataProcessor::processEADLFile()
 	// Note: only Z=6 and above have data
 	if( relaxation_shells.size() > 0 )
 	{
-	  d_hdf5_file_handler.writeArrayToGroupAttribute( relaxation_shells,
+	  hdf5_file_handler.writeArrayToGroupAttribute( relaxation_shells,
 							  RADIATIVE_TRANSITION_PROBABILITY_ROOT,
 							  ATOMIC_RELAXATION_SHELL_ATTRIBUTE
 							  );
 	  relaxation_shells.clear();
 	}
 	
-	d_hdf5_file_handler.closeHDF5File();
+	hdf5_file_handler.closeHDF5File();
       }
+
+      // Check that the EPDL file is still valid (eof has not been reached)
+      if( eadl.eof() )
+	continue;
       
       atomic_number = atomic_number_in_table;
 
@@ -460,7 +469,7 @@ void PhotonDataProcessor::processEADLFile()
       file_number << atomic_number;
       std::string hdf5_file_name = d_output_directory + 
 	PHOTON_DATA_FILE_PREFIX + file_number.str() + DATA_FILE_SUFFIX;
-      d_hdf5_file_handler.openHDF5FileAndAppend( hdf5_file_name );
+      hdf5_file_handler.openHDF5FileAndAppend( hdf5_file_name );
     }
 
     // Read second table header and determine the reaction type
@@ -510,7 +519,7 @@ void PhotonDataProcessor::processEADLFile()
 	  complete_data[i].third = electron_shell_index_map[i].second;
 	}
 	
-	d_hdf5_file_handler.writeArrayToDataSet( complete_data,
+	hdf5_file_handler.writeArrayToDataSet( complete_data,
 						 ELECTRON_SHELL_CDF_LOC );
       }
       
@@ -524,7 +533,7 @@ void PhotonDataProcessor::processEADLFile()
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
 							      data );
 	
-	d_hdf5_file_handler.writeArrayToDataSet( data,
+	hdf5_file_handler.writeArrayToDataSet( data,
 						 ELECTRON_SHELL_BINDING_ENERGY_LOC );
       }
       
@@ -538,7 +547,7 @@ void PhotonDataProcessor::processEADLFile()
 	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
 							      data );
 	
-	d_hdf5_file_handler.writeArrayToDataSet( data,
+	hdf5_file_handler.writeArrayToDataSet( data,
 						 ELECTRON_SHELL_KINETIC_ENERGY_LOC );
       }
       
@@ -564,10 +573,10 @@ void PhotonDataProcessor::processEADLFile()
 	else
 	  data[0].second = 1.0;
 	
-	d_hdf5_file_handler.writeArrayToDataSet( data,
+	hdf5_file_handler.writeArrayToDataSet( data,
 						 RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ) );
 
-	d_hdf5_file_handler.writeValueToDataSetAttribute( total_radiative_trans_prob,
+	hdf5_file_handler.writeValueToDataSetAttribute( total_radiative_trans_prob,
 							  RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ),
 							  TOTAL_RAD_TRANS_PROB_ATTRIBUTE );
 
@@ -590,7 +599,7 @@ void PhotonDataProcessor::processEADLFile()
 	else
 	  data[0].third = 1.0;
 	
-	d_hdf5_file_handler.writeArrayToDataSet( data,
+	hdf5_file_handler.writeArrayToDataSet( data,
 						 NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ) );
       }
       
@@ -684,7 +693,7 @@ void PhotonDataProcessor::processEADLFile()
   }
 
   // Close the last HDF5 file
-  d_hdf5_file_handler.closeHDF5File();
+  hdf5_file_handler.closeHDF5File();
 
   // Close the EPDL data file
   eadl.close();
@@ -697,6 +706,9 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
   // Compton file information
   std::ifstream compton_file_stream;
   std::string compton_file_name;
+
+  // HDF5 file handler
+  HDF5FileHandler hdf5_file_handler;
   
   // Compton Profile Q values
   Teuchos::Array<double> q_values( 31 );
@@ -739,7 +751,7 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
     file_number << atomic_number;
     std::string hdf5_file_name = d_output_directory + 
 	PHOTON_DATA_FILE_PREFIX + file_number.str() + DATA_FILE_SUFFIX;
-    d_hdf5_file_handler.openHDF5FileAndAppend( hdf5_file_name );
+    hdf5_file_handler.openHDF5FileAndAppend( hdf5_file_name );
     
     compton_file_name = d_compton_file_prefix + file_number.str() + ".txt";
     compton_file_stream.open( compton_file_name.c_str() );
@@ -783,10 +795,10 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
       compton_profile_cdfs_reduced[i].third = compton_profile_cdfs[i].fourth;
     }
 
-    d_hdf5_file_handler.writeArrayToDataSet( compton_profile_cdfs_reduced,
+    hdf5_file_handler.writeArrayToDataSet( compton_profile_cdfs_reduced,
 					     COMPTON_PROFILE_CDF_LOC );
 
-    d_hdf5_file_handler.writeArrayToDataSetAttribute( q_values,
+    hdf5_file_handler.writeArrayToDataSetAttribute( q_values,
 						      COMPTON_PROFILE_CDF_LOC,
 						      COMPTON_PROFILE_MOMENTUM_PROJECTIONS_ATTRIBUTE );
     
@@ -794,7 +806,7 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
     compton_file_stream.close();
 
     // Close the HDF5 file
-    d_hdf5_file_handler.closeHDF5File();
+    hdf5_file_handler.closeHDF5File();
   }
 }
 

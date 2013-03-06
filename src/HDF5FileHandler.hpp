@@ -39,6 +39,9 @@ public:
   //! Open an HDF5 file and append to any existing data
   void openHDF5FileAndAppend( const std::string &file_name );
 
+  //! Open an HDF5 file and read data
+  void openHDF5FileAndReadOnly( const std::string &file_name );
+
   //! Close an HDF5 file
   void closeHDF5File();
 
