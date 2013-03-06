@@ -132,10 +132,10 @@ double PhotonDataBasic::getCoherentCrossSection( const double energy ) const
   lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
 								  end,
 								  log_energy );
-  
-  return exp( (*lower_bin_boundary).second +
-	      (*lower_bin_boundary).third*
-	      (log_energy - (*lower_bin_boundary).first) );
+  double indep_var = (*lower_bin_boundary).first;
+  double dep_var = (*lower_bin_boundary).second;
+  double slope = (*lower_bin_boundary).third;
+  return exp( dep_var + slope*(log_energy - indep_var) );
 }
 
 //! Return the form factor for a given argument
@@ -168,9 +168,11 @@ double PhotonDataBasic::getIncoherentCrossSection( const double energy) const
   lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
 								  end,
 								  log_energy );
-  return exp( (*lower_bin_boundary).second +
-	      (*lower_bin_boundary).third*
-	      (log_energy - (*lower_bin_boundary).first) );
+
+  double indep_var = (*lower_bin_boundary).first;
+  double dep_var = (*lower_bin_boundary).second;
+  double slope = (*lower_bin_boundary).third;
+  return exp( dep_var + slope*(log_energy - indep_var) );
 }
 
 //! Return the scattering function for a given argument
@@ -185,9 +187,11 @@ double PhotonDataBasic::getScatteringFunction( const double argument ) const
   lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
 								  end,
 								  log_argument );
-  return exp( (*lower_bin_boundary).second +
-	      (*lower_bin_boundary).third*
-	      (log_energy - (*lower_bin_boundary).first) );
+  
+  double indep_var = (*lower_bin_boundary).first;
+  double dep_var = (*lower_bin_boundary).second;
+  double slope = (*lower_bin_boundary).third;
+  return exp( dep_var + slope*(log_argument - indep_var) );
 }
 
 //! Return the integrated photoelectric cross section for a given energy
@@ -202,9 +206,11 @@ double PhotonDataBasic::getPhotoelectricCrossSection( const double energy ) cons
   lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
 								  end,
 								  log_energy );
-  return exp( (*lower_bin_boundary).second +
-	      (*lower_bin_boundary).third*
-	      (log_energy - (*lower_bin_boundary).first) );
+  
+  double indep_var = (*lower_bin_boundary).first;
+  double dep_var = (*lower_bin_boundary).second;
+  double slope = (*lower_bin_boundary).third;
+  return exp( dep_var + slope*(log_energy - indep_var) );
 }
 
 //! Return the integrated pair production cross section for a given energy
@@ -219,9 +225,11 @@ double PhotonDataBasic::getPairProductionCrossSection( const double energy ) con
   lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
 								  end,
 								  log_energy );
-  return exp( (*lower_bin_boundary).second +
-	      (*lower_bin_boundary).third*
-	      (log_energy - (*lower_bin_boundary).first) );
+
+  double indep_var = (*lower_bin_boundary).first;
+  double dep_var = (*lower_bin_boundary).second;
+  double slope = (*lower_bin_boundary).third;
+  return exp( dep_var + slope*(log_energy - indep_var) );
 }
 
 //! Return the integrated triplet production cross section for a given energy
@@ -236,9 +244,11 @@ double PhotonDataBasic::getTripletProductionCrossSection( const double energy ) 
   lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
 								  end,
 								  log_energy );
-  return exp( (*lower_bin_boundary).second +
-	      (*lower_bin_boundary).third*
-	      (log_energy - (*lower_bin_boundary).first) );
+
+  double indep_var = (*lower_bin_boundary).first;
+  double dep_var = (*lower_bin_boundary).second;
+  double slope = (*lower_bin_boundary).third;
+  return exp( dep_var + slope*(log_energy - indep_var) );
 }
 
 //! Return the total cross section for a given energy
