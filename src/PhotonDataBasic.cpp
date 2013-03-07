@@ -49,9 +49,9 @@ PhotonDataBasic::PhotonDataBasic( unsigned int atomic_number,
   hdf5_file_handler.readArrayFromGroupAttribute( energy_limits,
 						 ROOT,
 						 ENERGY_LIMITS_ATTRIBUTE );
-  FACEMC_ASSERT_ALWAYS_MSG( (energy_limits[0] > energy_min),
+  FACEMC_ASSERT_ALWAYS_MSG( (energy_limits[0] >= energy_min),
 			    "Fatal Error: The minimum problem energy is less than the minimum data file energy. Reprocess the data files." );
-  FACEMC_ASSERT_ALWAYS_MSG( (energy_limits[1] < energy_max),
+  FACEMC_ASSERT_ALWAYS_MSG( (energy_limits[1] <= energy_max),
 			    "Fatal Error: The maximum problem energy is greater than the maximum data file energy. Reprocess the data files." );
   
   // Load the integrated coherent cross section data
@@ -185,7 +185,7 @@ double PhotonDataBasic::getIncoherentCrossSection( const double energy) const
 
   CrossSectionArray::iterator start, end, lower_bin_boundary;
   start = d_integrated_incoherent_cross_section.begin();
-  end = d_integrated_coherent_cross_section.end();
+  end = d_integrated_incoherent_cross_section.end();
 
   lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
 								  end,
@@ -237,20 +237,21 @@ double PhotonDataBasic::getPhotoelectricCrossSection( const double energy ) cons
 
 //! Return the integrated pair production cross section for a given energy
 double PhotonDataBasic::getPairProductionCrossSection( const double energy ) const
-{
+{  
   double log_energy = log( energy );
 
   CrossSectionArray::iterator start, end, lower_bin_boundary;
   start = d_integrated_pair_production_cross_section.begin();
   end = d_integrated_pair_production_cross_section.end();
-
+  
   lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
 								  end,
 								  log_energy );
-
+  
   double indep_var = (*lower_bin_boundary).first;
   double dep_var = (*lower_bin_boundary).second;
   double slope = (*lower_bin_boundary).third;
+  
   return exp( dep_var + slope*(log_energy - indep_var) );
 }
 
@@ -258,18 +259,19 @@ double PhotonDataBasic::getPairProductionCrossSection( const double energy ) con
 double PhotonDataBasic::getTripletProductionCrossSection( const double energy ) const
 {
   double log_energy = log( energy );
-  
+
   CrossSectionArray::iterator start, end, lower_bin_boundary;
   start = d_integrated_triplet_production_cross_section.begin();
   end = d_integrated_triplet_production_cross_section.end();
-
+  
   lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
 								  end,
 								  log_energy );
-
+  
   double indep_var = (*lower_bin_boundary).first;
   double dep_var = (*lower_bin_boundary).second;
   double slope = (*lower_bin_boundary).third;
+  
   return exp( dep_var + slope*(log_energy - indep_var) );
 }
 
@@ -281,12 +283,12 @@ double PhotonDataBasic::getTotalCrossSection( const double energy ) const
   total_cross_section += getCoherentCrossSection( energy );
   total_cross_section += getIncoherentCrossSection( energy );
   total_cross_section += getPhotoelectricCrossSection( energy );
-  if( energy > 2.048 )
+  if( energy > 2.044 )
   {
     total_cross_section += getPairProductionCrossSection( energy );
     total_cross_section += getTripletProductionCrossSection( energy );
   }
-  else if( energy > 1.024 )
+  else if( energy > 1.022 )
     total_cross_section += getPairProductionCrossSection( energy );
   
   return total_cross_section;
@@ -302,12 +304,12 @@ double PhotonDataBasic::getNonAbsorptionProbability( const double energy ) const
   total_cross_section += getCoherentCrossSection( energy );
   total_cross_section += getIncoherentCrossSection( energy );
   total_cross_section += absorption_cross_section;
-  if( energy > 2.048 )
+  if( energy > 2.044 )
   {
     total_cross_section += getPairProductionCrossSection( energy );
     total_cross_section += getTripletProductionCrossSection( energy );
   }
-  else if( energy > 1.024 )
+  else if( energy > 1.022 )
     total_cross_section += getPairProductionCrossSection( energy );
   
   return 1.0 - absorption_cross_section/total_cross_section;

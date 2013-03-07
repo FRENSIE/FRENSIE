@@ -36,6 +36,7 @@ ADD_EXECUTABLE(tstBinarySearch
   tstBinarySearch.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstPhotonDataBasic
+  tstPhotonDataBasic.cpp
   ${SRC}/PhotonDataBasic.cpp
   ${SRC}/HDF5FileHandler.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

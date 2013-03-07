@@ -1,7 +1,8 @@
 SET(HEADERS
   Tuple.hpp
   DefaultParameterValues.hpp
-  EPDL97DataProcessor.hpp
+  ENDLIB97FileHandler.hpp
+  DataProcessor.hpp
   FACEMC_Assertion.hpp
   ExceptionCatchMacros.hpp
   HDF5FileHandler.hpp
@@ -17,7 +18,8 @@ SET(HEADERS
   )
 
 SET(SOURCES
-  EPDL97DataProcessor.cpp
+  ENDLIB97FileHandler.cpp
+  DataProcessor.cpp
   HDF5FileHandler.cpp
   PhotonDataProcessor.cpp
   process_data.cpp
@@ -38,7 +40,8 @@ ENDIF()
 
 ADD_EXECUTABLE(process_data
   process_data.cpp
-  EPDL97DataProcessor.cpp
+  ENDLIB97FileHandler.cpp
+  DataProcessor.cpp
   PhotonDataProcessor.cpp
   HDF5FileHandler.cpp)
 

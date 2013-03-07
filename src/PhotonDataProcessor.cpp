@@ -268,10 +268,10 @@ void PhotonDataProcessor::processEPDLFile()
 							       d_energy_min,
 							       d_energy_max );
       
-	// The first data point needs to be removed since it is always
-	// (1.022, 0.0)
+	// Approximate the cross section as constant in the first bin 
+	// (not linear)
 	if( d_energy_min < 1.022 )
-	  data.erase( data.begin() );
+	  data[0].second = data[1].second;
 
 	calculateSlopesAtThirdTupleLoc( data );
 	
@@ -302,10 +302,10 @@ void PhotonDataProcessor::processEPDLFile()
 							       d_energy_min,
 							       d_energy_max );
 	
-	// The first data point needs to be removed since it is always
-	// (2.044, 0.0)
+	// Approximate the cross section as constant in the first bin 
+	// (not linear)
 	if( d_energy_min < 2.044 )
-	  data.erase( data.begin() );
+	  data[0].second = data[1].second;
 
 	calculateSlopesAtThirdTupleLoc( data );
 	
