@@ -12,7 +12,7 @@ SET(HEADERS
   SimulationBase.hpp
   ElectronShells.hpp
   SearchAlgorithms.hpp
-  TupleComparePolicy.hpp
+  TupleGetSetMemberPolicy.hpp
   PhotonDataBasic.hpp
   ${HEADERS}
   )

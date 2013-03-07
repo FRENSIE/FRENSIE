@@ -8,19 +8,27 @@
 #define PHOTON_DATA_PROCESSOR_HPP
 
 // FACEMC Includes
-#include "EPDL97DataProcessor.hpp"
-#include "HDF5FileHandler.hpp"
+#include "DataProcessor.hpp"
 #include "DefaultParameterValues.hpp"
 #include "HDF5DataFileNames.hpp"
+#include "HDF5FileHandler.hpp"
+#include "ENDLIB97FileHandler.hpp"
 
 namespace FACEMC{
 
-class PhotonDataProcessor : public EPDL97DataProcessor
+class PhotonDataProcessor : public DataProcessor
 {
 
 public:
 
   //! Constructor
+  // \param epdl_file_name EPDL file name including absolute path to file
+  // \param eadl_file_name EADL file name including absolute path to file
+  // \param compton_file_prefix Compton Profile file name prefix including 
+  // absolute path to file
+  // \param output_directory Director where the HDF5 files will be stored
+  // \param energy_min Minimum energy to extract from tables
+  // \param energy_max Maximum energy to extract from tables
   PhotonDataProcessor( const std::string epdl_file_name,
 		       const std::string eadl_file_name,
 		       const std::string compton_file_prefix,
@@ -39,9 +47,48 @@ protected:
 
   //! Process EPDL file
   void processEPDLFile();
+
+  //! Process the integrated coherent cross section data
+  void processCoherentCrossSectionData();
+
+  //! Process the integrated incoherent cross section data
+  void processIncoherentCrossSectionData();
+
+  //! Process the total integrated photoelectric cross section data
+  void processTotalPhotoelectricCrossSectionData();
+  
+  //! Process shell integrated photoelectric cross section data
+  void processShellPhotoelectricCrossSectionData( const unsigned int shell );
+
+  //! Process the integrated pair production cross section data
+  void processPairProductionCrossSectionData();
+
+  //! Process the integrated triplet production cross section
+  void processTripletProductionCrossSectionData();
+  
+  //! Process the atomic form factor data
+  void processFormFactorData();
+
+  //! Process the scattering function data
+  void processScatteringFunctionData();
   
   //! Process EADL file
   void processEADLFile();
+
+  //! Process the electron shell occupancy data
+  void processElectronShellOccupancyData();
+
+  //! Process the electron shell binding energy data
+  void processElectronShellBindingEnergyData();
+
+  //! Process the electron shell kinetic energy data
+  void processElectronShellKineticEnergyData();
+
+  //! Process the shell radiative transition probability data
+  void processElectronShellRadiativeTransitionData( const unsigned int shell );
+
+  //! Process the shell nonradiative transition probability data
+  void processElectronShellNonradiativeTransitionData( const unsigned int shell );
   
   //! Process Compton files
   void processComptonFiles( unsigned int atomic_number_start = 1,
@@ -50,9 +97,9 @@ protected:
   //! Create the Electron Shell Index Map
   /* \brief The Hartree-Fock Compton Profiles were compiled in the 1970s. The
    * shell filling that is done in the tables is out-of-date and not consistent
-   * with the shell filling that is done in the 1997 EADL data file. To use the 
-   * 1997 EADL data file with the Hartree-Fock Compton Profiles a map must be
-   * made that relates the electron shell in the EADL data file to the correct
+   * with the shell filling that is done in the ENDLIB-97 data file. To use the 
+   * ENDLIB-97 data file with the Hartree-Fock Compton Profiles a map must be
+   * made that relates the electron shell in the ENDLIB data file to the correct
    * Hartree-Fock Compton Profile. Unfortunately, this will potentially be
    * different for every element.
    * \param atomic_number Atomic number of element the map will be made for
@@ -64,12 +111,12 @@ protected:
 
 private:
   
-  // EPDL file name including absolute path to file
-  const std::string d_epdl_file_name;
+  // EPDL file handler
+  ENDLIB97FileHandler d_epdl_file_handler;
 
-  // EADL file name including absolute path to file
-  const std::string d_eadl_file_name;
-
+  // EADL file handler
+  ENDLIB97FileHandler d_eadl_file_handler;
+  
   // Compton profile file name prefix including absolute path to files
   const std::string d_compton_file_prefix;
 
@@ -81,6 +128,9 @@ private:
 
   // Maximum energy to read in from data tables
   const double d_energy_max;
+
+  // HDF5 file handler
+  HDF5FileHandler d_hdf5_file_handler;
 };
 
 } // end FACEMC namespace

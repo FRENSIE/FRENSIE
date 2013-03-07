@@ -1,19 +1,25 @@
 //---------------------------------------------------------------------------//
-// \file PhotonDataProcessor.cpp
+// \file   PhotonDataProcessor.cpp
 // \author Alex Robinson
-// \brief Photon Data Processor definitions
+// \brief   Photon data processor definitions
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
 #include <cmath>
 #include <fstream>
 
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
+
 // FACEMC Includes
 #include "PhotonDataProcessor.hpp"
+#include "DataProcessor.hpp"
+#include "HDF5FileHandler.hpp"
+#include "ENDLIB97Filehandler.hpp"
+#include "ContractException.hpp"
 #include "FACEMC_Assertion.hpp"
 #include "HDF5DataFileNames.hpp"
 #include "Tuple.hpp" 
-#include "ElectronShells.hpp"
 
 namespace FACEMC{
 
@@ -25,15 +31,18 @@ PhotonDataProcessor::PhotonDataProcessor( const std::string epdl_file_name,
 					  const double energy_min,
 					  const double energy_max )
   : EPDL97DataProcessor(), 
-    d_epdl_file_name(epdl_file_name), 
-    d_eadl_file_name(eadl_file_name),
+    d_epdl_file_handler(epdl_file_name), 
+    d_eadl_file_handler(eadl_file_name),
     d_compton_file_prefix(compton_file_prefix), 
     d_output_directory( output_directory ),
     d_energy_min(energy_min),
     d_energy_max(energy_max)
 { 
-  FACEMC_ASSERT_ALWAYS( d_energy_min > 0.0 );
-  FACEMC_ASSERT_ALWAYS( d_energy_min < d_energy_max );
+  // A valid minimum energy must be given
+  testPrecondition( d_energy_min > 0.0 );
+
+  // A valid energy range must be given
+  testPrecondition( d_energy_min < d_energy_max );
 }
   
 /*! Process Photon Data Files
@@ -52,14 +61,7 @@ void PhotonDataProcessor::processDataFiles()
 
 //! Process EPDL file
 void PhotonDataProcessor::processEPDLFile()
-{ 
-  // EPDL file
-  std::ifstream epdl( d_epdl_file_name.c_str() );
-  FACEMC_ASSERT_ALWAYS( epdl );
-
-  // HDF5 File Handler
-  HDF5FileHandler hdf5_file_handler;
-
+{   
   // Atomic number of element currently being processed
   unsigned int atomic_number = 0;
 
@@ -77,15 +79,14 @@ void PhotonDataProcessor::processEPDLFile()
   Teuchos::Array<unsigned int> photoelectric_shells;
   
   // Process every element (Z=1-100) in the EPDL file
-  while( epdl )
+  while( d_epdl_file_handler.validFile() )
   {
     
     // Read first table header and determine which element is being processed
-    readFirstTableHeader( epdl,
-			  atomic_number_in_table,
-			  outgoing_particle_designator,
-			  atomic_weight,
-			  interpolation_flag );
+    d_epdl_file_handler.readFirstTableHeader( atomic_number_in_table,
+					      outgoing_particle_designator,
+					      atomic_weight,
+					      interpolation_flag );
     
     // If a new element is found, close the current HDF5 file and open a new one
     if( atomic_number != atomic_number_in_table )
@@ -96,17 +97,17 @@ void PhotonDataProcessor::processEPDLFile()
 	if( photoelectric_shells.size() == 0)
 	  photoelectric_shells.push_back( 0 );
 	  
-	hdf5_file_handler.writeArrayToGroupAttribute( photoelectric_shells,
+	d_hdf5_file_handler.writeArrayToGroupAttribute( photoelectric_shells,
 							PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT,
 							PHOTOELECTRIC_SHELL_ATTRIBUTE
 							);
 	photoelectric_shells.clear();
 	  
-	hdf5_file_handler.closeHDF5File();
+	d_hdf5_file_handler.closeHDF5File();
       }
 
       // Check that the EPDL file is still valid (eof has not been reached)
-      if( epdl.eof() )
+      if( d_epdl_file_handler.endOfFile() )
 	continue;
       
       atomic_number = atomic_number_in_table;
@@ -116,10 +117,10 @@ void PhotonDataProcessor::processEPDLFile()
       file_number << atomic_number;
       std::string hdf5_file_name = d_output_directory + 
 	PHOTON_DATA_FILE_PREFIX + file_number.str() + DATA_FILE_SUFFIX;
-      hdf5_file_handler.openHDF5FileAndOverwrite( hdf5_file_name );
+      d_hdf5_file_handler.openHDF5FileAndOverwrite( hdf5_file_name );
       
       // Create a top level attribute to store the atomic weight
-      hdf5_file_handler.writeValueToGroupAttribute( atomic_weight,
+      d_hdf5_file_handler.writeValueToGroupAttribute( atomic_weight,
 						      ROOT,
 						      ATOMIC_WEIGHT_ATTRIBUTE );
 
@@ -127,15 +128,14 @@ void PhotonDataProcessor::processEPDLFile()
       Teuchos::Array<double> energy_limits( 2 );
       energy_limits[0] = d_energy_min;
       energy_limits[1] = d_energy_max;
-      hdf5_file_handler.writeArrayToGroupAttribute( energy_limits,
+      d_hdf5_file_handler.writeArrayToGroupAttribute( energy_limits,
 						      ROOT,
 						      ENERGY_LIMITS_ATTRIBUTE );
     }
 
     // Read second table header and determine the reaction type
-    readSecondTableHeader( epdl,
-			   reaction_type,
-			   electron_shell );
+    d_epdl_file_handler.readSecondTableHeader( reaction_type,
+					       electron_shell );
 
     // Read and process the data in the current table, then store in the HDF5
     // file
@@ -148,26 +148,15 @@ void PhotonDataProcessor::processEPDLFile()
       
       // The interpolation flag should be log-log (5)
       FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
-      {
-	Teuchos::Array<Trip<double,double,double> > data;
-	
-	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
-							       data,
-							       d_energy_min,
-							       d_energy_max );
-
-	calculateSlopesAtThirdTupleLoc( data );
-	
-	hdf5_file_handler.writeArrayToDataSet( data,
-						 COHERENT_CROSS_SECTION_LOC );
-      }
+      
+      processCoherentCrossSectionData();
       
       break;
 
     case 71010:
       // Average energy of scattered photon from coherent scattering ignored
       
-      skipTwoColumnTable( epdl );
+      d_epdl_file_handler.skipTwoColumnTable();
       
       break;
 
@@ -176,19 +165,8 @@ void PhotonDataProcessor::processEPDLFile()
       
       // The interpolation flag should be log-log (5)
       FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
-      {
-	Teuchos::Array<Trip<double,double,double> > data;
-	
-	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
-							       data,
-							       d_energy_min,
-							       d_energy_max );
 
-	calculateSlopesAtThirdTupleLoc( data );
-	
-	hdf5_file_handler.writeArrayToDataSet( data,
-						 INCOHERENT_CROSS_SECTION_LOC );
-      }
+      processIncoherentCrossSectionData();
       
       break;
 
@@ -198,52 +176,33 @@ void PhotonDataProcessor::processEPDLFile()
       // Average energy of scattered electron from incoherent scattering
       // currently ignored ( Yo == 9 )
       
-      skipTwoColumnTable( epdl );
+      d_epdl_file_handler.skipTwoColumnTable();
 
       break;
 
     case 73000:
-      // Read the total integrated photoelectric cross section
+      // Read the integrated photoelectric cross section
       FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
       
+      // Read the total integrated photoelectric cross section
       if( electron_shell == 0 )
-      {	
-	Teuchos::Array<Trip<double,double,double> > data;
-	
-	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
-							       data,
-							       d_energy_min,
-							       d_energy_max );
-
-	calculateSlopesAtThirdTupleLoc( data );
-	
-	hdf5_file_handler.writeArrayToDataSet( data,
-						 PHOTOELECTRIC_CROSS_SECTION_LOC );
-      }
-      // Read the total integrated photoelectric cross section for a subshell
+	processTotalPhotoelectricCrossSectionData();
+      
+      // Read the integrated photoelectric cross section for a subshell
       else
-      {	
-	Teuchos::Array<Trip<double,double,double> > data;
+      {
+	processShellPhotoelectricCrossSectionData( electron_shell );
 	
-	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
-							       data,
-							       d_energy_min,
-							       d_energy_max );
-
-	calculateSlopesAtThirdTupleLoc( data );
-	
-	hdf5_file_handler.writeArrayToDataSet( data,
-						 PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + uintToShellStr( electron_shell ) );
-
 	photoelectric_shells.push_back( electron_shell );
       }
+      
       break;
 
     case 73011:
       // Average energy to residual atom from photoelectric effect currently
       // ignored.
       
-      skipTwoColumnTable( epdl );
+      d_epdl_file_handler.skipTwoColumnTable();
 
       break;
 
@@ -253,31 +212,15 @@ void PhotonDataProcessor::processEPDLFile()
       // Average energy of secondary electron from photoelectric effect ignored
       // ( Yo == 9 )
 
-      skipTwoColumnTable( epdl );
+      d_epdl_file_handler.skipTwoColumnTable();
 
       break;
 
     case 74000:
       // Read the integrated pair production cross section
       FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
-      {
-	Teuchos::Array<Trip<double,double,double> > data;
-	
-	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
-							       data,
-							       d_energy_min,
-							       d_energy_max );
-      
-	// Approximate the cross section as constant in the first bin 
-	// (not linear)
-	if( d_energy_min < 1.022 )
-	  data[0].second = data[1].second;
 
-	calculateSlopesAtThirdTupleLoc( data );
-	
-	hdf5_file_handler.writeArrayToDataSet( data,
-						 PAIR_PRODUCTION_CROSS_SECTION_LOC );
-      }
+      processPairProductionCrossSectionData();
       
       break;
 
@@ -287,31 +230,15 @@ void PhotonDataProcessor::processEPDLFile()
       // Average energy of secondary electron from pair production ignored
       // ( Yo == 9 )
       
-      skipTwoColumnTable( epdl );
+      d_epdl_file_handler.skipTwoColumnTable();
 
       break;
 
     case 75000:
       // Read the integrated triplet production cross section
       FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
-      {
-	Teuchos::Array<Trip<double,double,double> > data;
-	
-	readTwoColumnTableInRange<LogLogDataProcessingPolicy>( epdl,
-							       data,
-							       d_energy_min,
-							       d_energy_max );
-	
-	// Approximate the cross section as constant in the first bin 
-	// (not linear)
-	if( d_energy_min < 2.044 )
-	  data[0].second = data[1].second;
 
-	calculateSlopesAtThirdTupleLoc( data );
-	
-	hdf5_file_handler.writeArrayToDataSet( data,
-						 TRIPLET_PRODUCTION_CROSS_SECTION_LOC );
-      }
+      processTripletProductionCrossSectionData();
       
       break;
 
@@ -321,68 +248,37 @@ void PhotonDataProcessor::processEPDLFile()
       // Average energy of secondary electron from triplet production ignored
       // ( Yo == 9 )
 
-      skipTwoColumnTable( epdl );
+      d_epdl_file_handler.skipTwoColumnTable();
 
       break;
 
     case 93941:
       // Read the atomic form factor
       FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
-      {
-	Teuchos::Array<Quad<double,double,double,double> > data;
-	
-	readTwoColumnTable<LinearLinearDataProcessingPolicy>( epdl,
-							      data );
-	// For efficient sampling, the atomic form factor must be squared and
-	// integrated over its squared argument
-	for( unsigned int i; i < data.size(); i++ )
-	{
-	  data[i].first *= data[i].first;
-	  data[i].second *= data[i].second;
-	}
 
-	createContinuousCDFAtFourthTupleLoc( data );
-	
-	calculateSlopesAtThirdTupleLoc( data );
-
-	hdf5_file_handler.writeArrayToDataSet( data,
-						 ATOMIC_FORM_FACTOR_LOC );
-      }
+      processFormFactorData();
       
       break;
 
     case 93942:
       // Read the scattering function
       FACEMC_ASSERT_ALWAYS( interpolation_flag == 5 );
-      {
-	Teuchos::Array<Trip<double,double,double> > data;
-	
-	readTwoColumnTable<LogLogDataProcessingPolicy>( epdl,
-							data );
-	
-	// The first data point needs to be erased since it is always
-	// (0.0, 0.0)
-	data.erase( data.begin() );
 
-	calculateSlopesAtThirdTupleLoc( data );
-	
-	hdf5_file_handler.writeArrayToDataSet( data,
-						 SCATTERING_FUNCTION_LOC );
-      }
+      processScatteringFunctionData();
       
       break;
 
     case 93943:
       // Imaginary anomalous scattering factor ignored
        
-      skipTwoColumnTable( epdl );
+      d_epdl_file_handler.skipTwoColumnTable();
 
       break;
 
     case 93944:
       // Real anomalous scattering factor ignored
       
-      skipTwoColumnTable( epdl );
+      d_epdl_file_handler.skipTwoColumnTable();
 
       break;
 
@@ -390,29 +286,179 @@ void PhotonDataProcessor::processEPDLFile()
       // Unknown reaction type found
       {
 	bool known_reaction_type = false;
-	FACEMC_ASSERT_ALWAYS( known_reaction_type );
+	FACEMC_ASSERT_ALWAYS_MSG( known_reaction_type,
+				  "Fatal Error: An unknown reaction type was encountered while processing the EPDL file.");
       }
       break;
     }
   }
   
   // Close the last HDF5 file
-  hdf5_file_handler.closeHDF5File();
+  d_hdf5_file_handler.closeHDF5File();
 
-  // Close the EPDL data file
-  epdl.close();
+  // Close the EPDL file
+  d_epdl_file_handler.closeENDLIB97File();
+}
+
+//! Process the integrated coherent cross section data
+void PhotonDataProcessor::processCoherentCrossSectionData()
+{
+  Teuchos::Array<Trip<double,double,double> > data;
+  
+  d_epdl_file_handler.readTwoColumnTableInRange( data,
+						 d_energy_min,
+						 d_energy_max );
+  
+  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+  
+  calculateSlopes<FIRST,SECOND,THIRD>( data );
+  
+  d_hdf5_file_handler.writeArrayToDataSet( data,
+					   COHERENT_CROSS_SECTION_LOC );
+}
+
+//! Process the integrated incoherent cross section data
+void PhotonDataProcessor::processIncoherentCrossSectionData()
+{
+  Teuchos::Array<Trip<double,double,double> > data;
+  
+  d_epdl_file_handler.readTwoColumnTableInRange( data,
+						 d_energy_min,
+						 d_energy_max );
+  
+  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );	       
+  
+  calculateSlopes<FIRST,SECOND,THIRD>( data );
+  
+  d_hdf5_file_handler.writeArrayToDataSet( data,
+					   INCOHERENT_CROSS_SECTION_LOC );
+}
+
+//! Process the total integrated photoelectric cross section data
+void PhotonDataProcessor::processTotalPhotoelectricCrossSectionData()
+{	
+  Teuchos::Array<Trip<double,double,double> > data;
+  
+  d_epdl_file_handler.readTwoColumnTableInRange( data,
+						 d_energy_min,
+						 d_energy_max );
+  
+  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );       
+  
+  calculateSlopes<FIRST,SECOND,THIRD>( data );
+  
+  d_hdf5_file_handler.writeArrayToDataSet( data,
+					   PHOTOELECTRIC_CROSS_SECTION_LOC );
+}
+  
+//! Process shell integrated photoelectric cross section data
+void processShellPhotoelectricCrossSectionData( unsigned int shell )
+{	
+  Teuchos::Array<Trip<double,double,double> > data;
+  
+  d_epdl_file_handler.readTwoColumnTableInRange( data,
+						 d_energy_min,
+						 d_energy_max );
+  
+  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+  
+  calculateSlopes<FIRST,SECOND,THIRD>( data );
+  
+  d_hdf5_file_handler.writeArrayToDataSet( data,
+					   PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + uintToShellStr( shell ) );
+}
+
+//! Process the integrated pair production cross section data
+void PhotonDataProcessor::processPairProductionCrossSectionData()
+{
+  Teuchos::Array<Trip<double,double,double> > data;
+  
+  d_epdl_file_handler.readTwoColumnTableInRange( data,
+						 d_energy_min,
+						 d_energy_max );
+  
+  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+  
+  
+  // Approximate the cross section as constant in the first bin 
+  // (not linear)
+  if( d_energy_min < 1.022 )
+    data[0].second = data[1].second;
+  
+  calculateSlopes<FIRST,SECOND,THIRD>( data );
+  
+  d_hdf5_file_handler.writeArrayToDataSet( data,
+					   PAIR_PRODUCTION_CROSS_SECTION_LOC );
+}     
+
+//! Process the integrated triplet production cross section
+void PhotonDataProcessor::processTripletProductionCrossSectionData()
+{
+  Teuchos::Array<Trip<double,double,double> > data;
+  
+  d_epdl_file_handler.readTwoColumnTableInRange( data,
+						 d_energy_min,
+						 d_energy_max );
+  
+  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+  
+  
+  // Approximate the cross section as constant in the first bin 
+  // (not linear)
+  if( d_energy_min < 2.044 )
+    data[0].second = data[1].second;
+  
+  calculateSlopes<FIRST,SECOND,THIRD>( data );
+  
+  d_hdf5_file_handler.writeArrayToDataSet( data,
+					   TRIPLET_PRODUCTION_CROSS_SECTION_LOC );
+}    
+  
+//! Process the atomic form factor data
+void PhotonDataProcessor::processFormFactorData()
+{
+  Teuchos::Array<Quad<double,double,double,double> > data;
+  
+  d_epdl_file_handler.readTwoColumnTable( data );
+  
+  // For efficient sampling, the atomic form factor must be squared and
+  // integrated over its squared argument
+  processData<SquareSquareDataProcessingPolicy,FIRST,SECOND>( data );
+  
+  calculateContinuousCDF<FIRST,SECOND,THIRD>( data );
+  
+  calculateSlopes<FIRST,SECOND,FOURTH>( data );
+  
+  // Move the CDF data to the second tuple member and the PDF data
+  // to the third tuple member
+  swapMemberData<SECOND,THIRD>( data );
+  
+  d_hdf5_file_handler.writeArrayToDataSet( data,
+					   ATOMIC_FORM_FACTOR_LOC );
+}
+      
+//! Process the scattering function data
+void PhotonDataProcessor::processScatteringFunctionData()
+{
+  Teuchos::Array<Trip<double,double,double> > data;
+  
+  d_epdl_file_handler.readTwoColumnTable( data );
+  
+  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );	       
+  
+  // The first data point needs to be erased since it is always
+  // (0.0, 0.0)
+  data.erase( data.begin() );
+  
+  calculateSlopes<FIRST,SECOND,THIRD>( data );
+  
+  d_hdf5_file_handler.writeArrayToDataSet( data,
+					   SCATTERING_FUNCTION_LOC );
 }
 
 //! Process EADL file 
 void PhotonDataProcessor::processEADLFile()
 {
-  // EPDL file
-  std::ifstream eadl( d_eadl_file_name.c_str() );
-  FACEMC_ASSERT_ALWAYS( eadl );
-
-  // HDF5 file handler
-  HDF5FileHandler hdf5_file_handler;
-
   // Atomic number of element currently being processed
   unsigned int atomic_number = 0;
 
@@ -430,14 +476,13 @@ void PhotonDataProcessor::processEADLFile()
   Teuchos::Array<unsigned int> relaxation_shells;
   
   // Process every element (Z=1-100) in the EPDL file
-  while( eadl )
+  while( d_eadl_file_handler.validFile() )
   {
     // Read first table header and determine which element is being processed
-    readFirstTableHeader( eadl,
-			  atomic_number_in_table,
-			  outgoing_particle_designator,
-			  atomic_weight,
-			  interpolation_flag );
+    d_eadl_file_handler.readFirstTableHeader( atomic_number_in_table,
+					      outgoing_particle_designator,
+					      atomic_weight,
+					      interpolation_flag );
 
     // If a new element is found, close the current HDF5 file and open a new one
     if( atomic_number != atomic_number_in_table )
@@ -448,18 +493,18 @@ void PhotonDataProcessor::processEADLFile()
 	// Note: only Z=6 and above have data
 	if( relaxation_shells.size() > 0 )
 	{
-	  hdf5_file_handler.writeArrayToGroupAttribute( relaxation_shells,
+	  d_hdf5_file_handler.writeArrayToGroupAttribute( relaxation_shells,
 							  RADIATIVE_TRANSITION_PROBABILITY_ROOT,
 							  ATOMIC_RELAXATION_SHELL_ATTRIBUTE
 							  );
 	  relaxation_shells.clear();
 	}
 	
-	hdf5_file_handler.closeHDF5File();
+	d_hdf5_file_handler.closeHDF5File();
       }
 
       // Check that the EPDL file is still valid (eof has not been reached)
-      if( eadl.eof() )
+      if( d_eadl_file_handler.endOfFile() )
 	continue;
       
       atomic_number = atomic_number_in_table;
@@ -469,13 +514,12 @@ void PhotonDataProcessor::processEADLFile()
       file_number << atomic_number;
       std::string hdf5_file_name = d_output_directory + 
 	PHOTON_DATA_FILE_PREFIX + file_number.str() + DATA_FILE_SUFFIX;
-      hdf5_file_handler.openHDF5FileAndAppend( hdf5_file_name );
+      d_hdf5_file_handler.openHDF5FileAndAppend( hdf5_file_name );
     }
 
     // Read second table header and determine the reaction type
-    readSecondTableHeader( eadl,
-			   reaction_type,
-			   electron_shell );
+    d_eadl_file_handler.readSecondTableHeader( reaction_type,
+					       electron_shell );
 
     // Read and process the data in the current table, then store in the HDF5
     // file
@@ -483,146 +527,59 @@ void PhotonDataProcessor::processEADLFile()
     {
     case 91912:
       // Read number of electrons per subshell
-      {
-	Teuchos::Array<Pair<unsigned int,double> > data;
-	
-	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
-							      data );
-	
-	// Z = 1 and Z = 2 only have one electron shell
-	if( data.size() > 1 )
-	  createDiscreteCDFAtSecondTupleLoc( data );
-	else
-	  data[0].second = 1.0;
-	
-	// Create the Electron Shell Index Map
-	Teuchos::Array<Pair<unsigned int,unsigned int > >
-	  electron_shell_index_map;      
-	createElectronShellIndexMap( atomic_number,
-				     electron_shell_index_map );
-	
-	FACEMC_ASSERT( (electron_shell_index_map.size() == 
-			data.size()) );
-	FACEMC_ASSERT( (electron_shell_index_map[0].first ==
-			data[0].first) );
-	FACEMC_ASSERT( (electron_shell_index_map.back().first ==
-			data.back().first) );
 
-	// Create the complete data array
-	Teuchos::Array<Trip<double,unsigned int,unsigned int> > 
-	  complete_data( data.size() );
-	
-	for( int i = 0; i < data.size(); ++i )
-	{
-	  complete_data[i].first = data[i].second;
-	  complete_data[i].second = electron_shell_index_map[i].first;
-	  complete_data[i].third = electron_shell_index_map[i].second;
-	}
-	
-	hdf5_file_handler.writeArrayToDataSet( complete_data,
-						 ELECTRON_SHELL_CDF_LOC );
-      }
+      processElectronShellOccupancyData();
       
       break;
 
     case 91913:
       // Read binding energy per subshell
-      {
-	Teuchos::Array<Pair<unsigned int,double> > data;
-	
-	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
-							      data );
-	
-	hdf5_file_handler.writeArrayToDataSet( data,
-						 ELECTRON_SHELL_BINDING_ENERGY_LOC );
-      }
+
+      processElectronShellBindingEnergyData();
       
       break;
 
     case 91914:
       // Read kinetic energy per subshell
-      {
-	Teuchos::Array<Pair<unsigned int,double> > data;
-	
-	readTwoColumnTable<LinearLinearDataProcessingPolicy>( eadl,
-							      data );
-	
-	hdf5_file_handler.writeArrayToDataSet( data,
-						 ELECTRON_SHELL_KINETIC_ENERGY_LOC );
-      }
+
+      processElectronShellKineticEnergyData();
       
       break;
 
     case 92931:
       // Read radiative transition probability per subshell
-      {
-	Teuchos::Array<Trip<unsigned int,double,double> > data;
-	
-	readThreeColumnTable( eadl,
-			      data );
-	
-	// Calculate the total radiative transition probability for
-	// this subshell and store it in an attribute
-	double total_radiative_trans_prob = 0.0;
-	for( int i = 0; i < data.size(); ++i )
-	  total_radiative_trans_prob += data[i].second;
 
-	// Only create the cdf if more than one data point is present
-	if( data.size() > 1 )
-	  createDiscreteCDFAtSecondTupleLoc( data );
-	else
-	  data[0].second = 1.0;
-	
-	hdf5_file_handler.writeArrayToDataSet( data,
-						 RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ) );
+      processElectronShellRadiativeTransitionData( electron_shell );
 
-	hdf5_file_handler.writeValueToDataSetAttribute( total_radiative_trans_prob,
-							  RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ),
-							  TOTAL_RAD_TRANS_PROB_ATTRIBUTE );
-
-	relaxation_shells.push_back( electron_shell );
-      }
+      relaxation_shells.push_back( electron_shell );
       
       break;
 
     case 92932:
       // Read nonradiative transition probability per subshell
-      {
-	Teuchos::Array<Quad<unsigned int,unsigned int,double,double> > data;
-	
-	readFourColumnTable( eadl,
-			     data );
 
-	// Only create the cdf if more than one data point is present
-	if( data.size() > 1 )
-	  createDiscreteCDFAtThirdTupleLoc( data );
-	else
-	  data[0].third = 1.0;
-	
-	hdf5_file_handler.writeArrayToDataSet( data,
-						 NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ) );
-      }
+      processElectronShellNonradiativeTransitionData( electron_shell );
       
       break;
 
     case 91915:
       // Average radius of subshell ignored
       
-      skipTwoColumnTable( eadl );
+      d_eadl_file_handler.skipTwoColumnTable();
 
       break;
 
     case 91921:
       // Radiative level width ignored
       
-      skipTwoColumnTable( eadl );
+      d_eadl_file_handler.skipTwoColumnTable();
       
       break;
 
     case 91922:
       // Nonradiative level width ignored
 
-      skipTwoColumnTable( eadl );
+      d_eadl_file_handler.skipTwoColumnTable();
 
       break;
 
@@ -632,7 +589,7 @@ void PhotonDataProcessor::processEADLFile()
       // Average number of electrons emitted per initial vacancy ignored
       // ( Yo == 9 )
       
-      skipTwoColumnTable( eadl );
+      d_eadl_file_handler.skipTwoColumnTable();
       
       break;
       
@@ -642,42 +599,42 @@ void PhotonDataProcessor::processEADLFile()
       // Average energy of electrons emitted per initial vacancy ignored
       // ( Yo == 9 )
       
-      skipTwoColumnTable( eadl );
+      d_eadl_file_handler.skipTwoColumnTable();
 
       break;
 
     case 92935:
       // Average energy to residual atom per initial vacancy ignored
 
-      skipTwoColumnTable( eadl );
+      d_eadl_file_handler.skipTwoColumnTable();
 
       break;
 
     case 93941:
       // Atomic form factor ignored
       
-      skipTwoColumnTable( eadl );
+      d_eadl_file_handler.skipTwoColumnTable();
       
       break;
 
     case 93942:
       // Scattering function ignored
       
-      skipTwoColumnTable( eadl );
+      d_eadl_file_handler.skipTwoColumnTable();
 
       break;
       
     case 93943:
       // Imaginary anomalous scattering factor ignored
       
-      skipTwoColumnTable( eadl );
+      d_eadl_file_handler.skipTwoColumnTable();
 
       break;
 
     case 93944:
       // Real anomalous scattering factor ignored
       
-      skipTwoColumnTable( eadl );
+      d_eadl_file_handler.skipTwoColumnTable();
 
       break;
 
@@ -685,7 +642,8 @@ void PhotonDataProcessor::processEADLFile()
       // Unknown reaction type found
       {
 	bool known_reaction_type = false;
-        FACEMC_ASSERT_ALWAYS( known_reaction_type );
+        FACEMC_ASSERT_ALWAYS_MSG( known_reaction_type,
+				  "Fatal Error: An unknown reaction type was encountered while processing the EADL file.");
       }
       
       break;
@@ -693,11 +651,118 @@ void PhotonDataProcessor::processEADLFile()
   }
 
   // Close the last HDF5 file
-  hdf5_file_handler.closeHDF5File();
+  d_hdf5_file_handler.closeHDF5File();
 
-  // Close the EPDL data file
-  eadl.close();
+  // Close the EPDL file
+  d_eadl_file_handler.closeENDLIB97File();
 }
+
+//! Process the electron shell occupancy data
+void PhotonDataProcessor::processElectronShellOccupancyData()
+{
+  Teuchos::Array<Pair<unsigned int,double> > data;
+  
+  d_eadl_file_handler.readTwoColumnTable( data );
+  
+  // Z = 1 and Z = 2 only have one electron shell
+  if( data.size() > 1 )
+    calculateDiscreteCDF<SECOND>( data );
+  else
+    data[0].second = 1.0;
+  
+  // Create the Electron Shell Index Map
+  Teuchos::Array<Pair<unsigned int,unsigned int > >
+    electron_shell_index_map;      
+  createElectronShellIndexMap( atomic_number,
+			       electron_shell_index_map );
+  
+  FACEMC_ASSERT( (electron_shell_index_map.size() == 
+		  data.size()) );
+  FACEMC_ASSERT( (electron_shell_index_map[0].first ==
+		  data[0].first) );
+  FACEMC_ASSERT( (electron_shell_index_map.back().first ==
+		  data.back().first) );
+  
+  // Create the complete data array
+  Teuchos::Array<Trip<double,unsigned int,unsigned int> > 
+    complete_data( data.size() );
+  
+  for( int i = 0; i < data.size(); ++i )
+    {
+      complete_data[i].first = data[i].second;
+      complete_data[i].second = electron_shell_index_map[i].first;
+      complete_data[i].third = electron_shell_index_map[i].second;
+    }
+  
+  d_hdf5_file_handler.writeArrayToDataSet( complete_data,
+					   ELECTRON_SHELL_CDF_LOC );
+}      
+
+//! Process the electron shell binding energy data
+void PhotonDataProcessor::processElectronShellBindingEnergyData()
+{
+  Teuchos::Array<Pair<unsigned int,double> > data;
+  
+  d_eadl_file_handler.readTwoColumnTable( data );
+  
+  d_hdf5_file_handler.writeArrayToDataSet( data,
+					   ELECTRON_SHELL_BINDING_ENERGY_LOC );
+}      
+
+//! Process the electron shell kinetic energy data
+void processElectronShellKineticEnergyData()
+{
+  Teuchos::Array<Pair<unsigned int,double> > data;
+  
+  d_eadl_file_handler.readTwoColumnTable( data );
+  
+  d_hdf5_file_handler.writeArrayToDataSet( data,
+					   ELECTRON_SHELL_KINETIC_ENERGY_LOC );
+}      
+
+//! Process the shell radiative transition probability data
+void PhotonDataProcessor::processElectronShellRadiativeTransitionData( const unsigned int shell )
+{
+  Teuchos::Array<Trip<unsigned int,double,double> > data;
+  
+  d_eadl_file_handler.readThreeColumnTable( data );
+  
+  // Calculate the total radiative transition probability for
+  // this subshell and store it in an attribute
+  double total_radiative_trans_prob = 0.0;
+  for( int i = 0; i < data.size(); ++i )
+    total_radiative_trans_prob += data[i].second;
+  
+  // Only create the cdf if more than one data point is present
+  if( data.size() > 1 )
+    calculateDiscreteCDF<SECOND>( data );
+  else
+    data[0].second = 1.0;
+  
+  d_hdf5_file_handler.writeArrayToDataSet( data,
+					   RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( shell ) );
+
+  d_hdf5_file_handler.writeValueToDataSetAttribute( total_radiative_trans_prob,
+						    RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ),
+						    TOTAL_RAD_TRANS_PROB_ATTRIBUTE );
+}
+      
+//! Process the shell nonradiative transition probability data
+void processElectronShellNonradiativeTransitionData( const unsigned int shell )
+{
+  Teuchos::Array<Quad<unsigned int,unsigned int,double,double> > data;
+  
+  d_eadl_file_handler.readFourColumnTable( data );
+  
+  // Only create the cdf if more than one data point is present
+  if( data.size() > 1 )
+    createDiscreteCDF<THIRD>( data );
+  else
+    data[0].third = 1.0;
+  
+  d_hdf5_file_handler.writeArrayToDataSet( data,
+					   NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( shell ) );
+}      
 
 //! Process Compton files
 void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
@@ -707,9 +772,6 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
   std::ifstream compton_file_stream;
   std::string compton_file_name;
 
-  // HDF5 file handler
-  HDF5FileHandler hdf5_file_handler;
-  
   // Compton Profile Q values
   Teuchos::Array<double> q_values( 31 );
   q_values[0] = 0.00;
@@ -751,15 +813,17 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
     file_number << atomic_number;
     std::string hdf5_file_name = d_output_directory + 
 	PHOTON_DATA_FILE_PREFIX + file_number.str() + DATA_FILE_SUFFIX;
-    hdf5_file_handler.openHDF5FileAndAppend( hdf5_file_name );
+    d_hdf5_file_handler.openHDF5FileAndAppend( hdf5_file_name );
     
     compton_file_name = d_compton_file_prefix + file_number.str() + ".txt";
     compton_file_stream.open( compton_file_name.c_str() );
-    FACEMC_ASSERT_ALWAYS( compton_file_stream );
+    FACEMC_ASSERT_ALWAYS_MSG( compton_file_stream,
+			      "Fatal Error: The requested Compton file cannot be opened. Please verify the file name and/or path.");
 
     Teuchos::Array<Quad<double,double,double,double> > compton_profile_cdfs;
     Teuchos::Array<double> compton_profile_data;
     double compton_profile_data_point;
+    
     while( !compton_file_stream.eof() )
     {
       compton_file_stream >> compton_profile_data_point;
@@ -780,9 +844,13 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
       Teuchos::ArrayView<Quad<double,double,double,double> > 
 	compton_profile_shell_cdf = compton_profile_cdfs( i*31, 31 );
 
-      createContinuousCDFAtFourthTupleLoc( compton_profile_shell_cdf );
+      calculateContinuousCDF<FIRST,SECOND,THIRD>( compton_profile_shell_cdf );
       
-      calculateSlopesAtThirdTupleLoc( compton_profile_shell_cdf );
+      calculateSlopes<FIRST,SECOND,FOURTH>( compton_profile_shell_cdf );
+
+      // Move the CDF data to the second tuple member and the PDF data
+      // to the third tuple member
+      swapMemberData<SECOND,THIRD>( data );
     }
 
     // To save memory, the q_values will be extracted from the array
@@ -795,10 +863,10 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
       compton_profile_cdfs_reduced[i].third = compton_profile_cdfs[i].fourth;
     }
 
-    hdf5_file_handler.writeArrayToDataSet( compton_profile_cdfs_reduced,
+    d_hdf5_file_handler.writeArrayToDataSet( compton_profile_cdfs_reduced,
 					     COMPTON_PROFILE_CDF_LOC );
 
-    hdf5_file_handler.writeArrayToDataSetAttribute( q_values,
+    d_hdf5_file_handler.writeArrayToDataSetAttribute( q_values,
 						      COMPTON_PROFILE_CDF_LOC,
 						      COMPTON_PROFILE_MOMENTUM_PROJECTIONS_ATTRIBUTE );
     
@@ -806,7 +874,7 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
     compton_file_stream.close();
 
     // Close the HDF5 file
-    hdf5_file_handler.closeHDF5File();
+    d_hdf5_file_handler.closeHDF5File();
   }
 }
 

@@ -4,6 +4,9 @@
 // \brief  Data Processor base class template definitions
 //---------------------------------------------------------------------------//
 
+#ifndef DATA_PROCESSOR_DEF_HPP
+#define DATA_PROCESSOR_DEF_HPP
+
 // Std Lib Includes
 #include <cmath>
 #include <limits>
@@ -12,30 +15,73 @@
 // FACEMC Includes
 #include "Tuple.hpp"
 #include "TupleMemberSwapPolicy.hpp"
+#include "TupleGetSetMemberPolicy.hpp"
 
 namespace FACEMC{
 
+//! Process the data points
+template<typename DataProcessingPolicy,
+	   TupleMember indepMember,
+	   TupleMember depMember,
+	   typename Tuple,
+	   template<typename> Array>
+void processData( Array<Tuple> &data )
+{
+  // Make sure that the array is valid
+  testPrecondition( data.size() > 0 );
+
+  typename Array<Tuple>::iterator data_point = data.begin();
+  typename Array<Tuple>::iterator end = data.end();
+
+  typedef TupleGetSetMemberPolicy<Tuple,indepMember> indepTGSMP;
+  typedef TupleGetSetMemberPolicy<Tuple,depMember> depTGSMP;
+
+  typename indepTGSMP::tupleMemberType indep_value;
+  typename depTGSMP::tupleMemberType dep_value;
+
+  while( data_point != end )
+  {
+    indep_value = DataProcessingPolicy::processIndependentVar( indepTGSMP::get( *data_point ) );
+    dep_value = DataProcessingPolicy::processDependentVar( depTGSMP::get( *data_point ) );
+
+    indepTGSMP::set( *data_point, indep_value );
+    depTGSMP::set( *data_point, dep_value );
+
+    ++data_point;
+  }
+}
+
 //! Calculate the slope between each pair of data points and store at the
 // desired tuple member.
-template<TupleMember member, 
-	 typename T, 
+template<TupleMember indepMember, 
+	 TupleMember depMember,
+	 TupleMember slopeMember,
+	 typename Tuple, 
 	 template<typename> class Array>
-void DataProcessor::calculateSlopesAtTupleMember( Array<T> &data  )
+void DataProcessor::calculateSlopes( Array<Tuple> &data  )
 {
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
   
-  typename Array<T>::iterator data_point_1, data_point_2;
-  typename Array<T>::iterator end = data.end();
+  typename Array<Tuple>::iterator data_point_1, data_point_2;
+  typename Array<Tuple>::iterator end = data.end();
 
   data_point_1 = data.begin();
   data_point_2 = data_point_1 + 1;
 
+  typedef TupleGetSetMemberPolicy<Tuple,indepMember> indepTGSMP;
+  typedef TupleGetSetMemberPolicy<Tuple,depMember> depTGSMP;
+  typedef TupleGetSetMemberPolicy<Tuple,slopeMember> slopeTGSMP;
+  
+  typename slopeTGSMP::tupleMemberType slope;
+  
   while( data_point_2 != end )
   {
-    data_point_1->fourth = (data_point_2->second - data_point_1->second)/
-      (data_point_2->first - data_point_1->first);
-    data_point_2->third = 0.0;
+    slope = (depTGSMP::get( *data_point_2 ) - depTGSMP::get( *data_point_1 ))/
+      (indepTGSMP::get( *data_point_2 ) - indepTGSMP::get( *data_point_1 ));
+    
+    slopeTGSMP::set( *data_point_1, slope );
+    slopeTGSMP::set( *data_point_2, 0 );
 
     ++data_point_1;
     ++data_point_2;
@@ -43,95 +89,123 @@ void DataProcessor::calculateSlopesAtTupleMember( Array<T> &data  )
 }
 
 //! Create a cdf from an array of data using a taylor series expansion to O(2)
-template<TupleMember member, 
-	 typename T, 
+template<TupleMember indepMember,
+	 TupleMember pdfMember,
+	 TupleMember cdfMember,
+	 typename Tuple, 
 	 template<typename> class Array>
-void DataProcessor::createContinuousCDFAtTupleMember( Array<T> &data )
+void DataProcessor::createContinuousCDF( Array<Tuple> &data )
 {
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
   
-  typename Array<T>::iterator data_point_1, data_point_2;
-  typename Array<T>::iterator end = data.end();
+  typename Array<Tuple>::iterator data_point_1, data_point_2;
+  typename Array<Tuple>::iterator end = data.end();
 
   data_point_1 = data.begin();
   data_point_2 = data.begin() + 1;
 
+  typedef TupleGetSetMemberPolicy<Tuple,indepMember> indepTGSMP;
+  typedef TupleGetSetMemberPolicy<Tuple,pdfMember> pdfTGSMP;
+  typedef TupleGetSetMemberPolicy<Tuple,cdfMember> cdfTGSMP;
+
+  typename cdfTGSMP::tupleMemberType cdf_value;
+
   // Initialize the CDF
-  data_point_1->third = 0.0;
+  cdfTGSMP::set( *data_point_1, 0 );
   
   // Calculate the CDF
   // CDF(x) = CDF(x1)+PDF(x1)*(x-x1)+0.5*(PDF(x)-PDF(x1))/(x2-x1)*(x-x1)^2
   while( data_point_2 != end )
   {
-    data_point_2->third = data_point_1->third;
-    data_point_2->third += data_point_1->second*
-      (data_point_2->first - data_point_1->first) +
-      0.5*(data_point_2->second - data_point_1->second)*
-      (data_point_2->first - data_point_1->first);
-
-    ++data_point_1;
-    ++data_point_2;
-  }
-
-  // Normalize the CDF and PDF
-  data_point_1 = data.begin();
-  while( data_point_1 != end )
-  {
-    data_point_1->third /= data.back().third;
-    data_point_1->second /= data.back().third;
-    ++data_point_1;
-  }
-}
-
-//! Create a discrete CDF in place from an array of data.
-template<typename T,template<typename> class Array>
-void DataProcessor::createDiscreteCDFInPlaceAtTupleMember( Array<T> &data )
-{
-  // Make sure that the array has more than one element
-  testPrecondition( (data.size() > 1) );
-  
-  typename Array<T>::iterator data_point_1, data_point_2;
-  typename Array<T>::iterator end = data.end();
-
-  data_point_1 = data.begin();
-  data_point_2 = data.begin() + 1;
-
-  // Create the discrete CDF
-  while( data_point_2 != end )
-  {
-    data_point_2->second += data_point_1->second;
+    cdf_value = cdfTGSMP::get( *data_point_1 ) +
+      pdfTGSMP::get( *data_point_1 )*
+      (indepTGSMP::get( *data_point_2 ) - indepTGSMP::get( *data_point_1 )) +
+      0.5*(pdfTGSMP::get( *data_point_2 ) - pdfTGSMP::get( *data_point_1 ))*
+      (indepTGSMP::get( *data_point_2) - indepTGSMP::get( *data_point_1 ));
+    
+    cdfTGSMP::set( *data_point_2, cdf_value );
     
     ++data_point_1;
     ++data_point_2;
   }
 
-  // Normalize the CDF
+  // Normalize the CDF and PDF
+  typename cdfTGSMP::tupleMemberType cdf_norm_value;
+  typename pdfTGSMP::tupleMemberType pdf_norm_value
   data_point_1 = data.begin();
+  
   while( data_point_1 != end )
   {
-    data_point_1->second /= data.back().second;
+    cdf_norm_value = cdfTGSMP::get( *data_point_1 )/
+      cdfTGSMP::get( data.back() );
+    cdfTGSMP::set( *data_point_1, norm_value );
+
+    pdf_norm_value = pdfTGSMP::get( *data_point_1 )/
+      cdfTGSMP::get( data.back() );
+    pdfTGSMP::set( *data_point_1, norm_value );
+    
     ++data_point_1;
+  }
+}
+
+//! Create a discrete CDF from an array of data.
+template<TupleMember pdfMember,
+	 TupleMember cdfMember,
+	 typename Tuple,
+	 template<typename> class Array>
+void DataProcessor::createDiscreteCDF( Array<Tuple> &data )
+{
+  // Make sure that the array has more than one element
+  testPrecondition( (data.size() > 1) );
+  
+  typename Array<Tuple>::iterator data_point;
+  typename Array<Tuple>::iterator end = data.end();
+
+  data_point = data.begin();
+
+  typedef TupleGetSetMemberPolicy<Tuple,pdfMember> pdfTGSMP;
+  typedef TupleGetSetMemberPolicy<Tuple,cdfMember> cdfTGSMP;
+
+  typename cdfTGSMP::tupleMemberType cdf_value = 0;
+
+  // Create the discrete CDF
+  while( data_point != end )
+  {
+    cdf_value += pdfTGSMP::get( *data_point );
+    cdfTGSMP::set( *data_point, cdf_value );
+    
+    ++data_point;
+  }
+
+  // Normalize the CDF
+  data_point = data.begin();
+  while( data_point != end )
+  {
+    cdf_value = cdfTGSM::get( *data_point )/cdfTGSM::get( data.back() );
+    cdfTGSM::set( *data_point, cdf_value );
+    
+    ++data_point;
   }
 }
 
 //! Swap the data in the desired tuple members.
 template<TupleMember member1, 
 	 TupleMember member2,
-	 typename T,
+	 typename Tuple,
 	 template<typename> class Array>
-void swapDataAtTupleMembers( Array<T> & data )
+void swapMemberData( Array<Tuple> & data )
 {
   // Make sure that the array is valid
   testPrecondition( (data.size() > 0) );
   
-  typename Array<T>::iterator data_point, end;
+  typename Array<Tuple>::iterator data_point, end;
   data_point = data.begin();
   end = data.end();
 
   while( data_point != end )
   {
-    TupleMemberSwapPolicy<std::iterator_traits<typename Array<T>::iterator>::value_type,member1,member2>::swap( *data_point );
+    TupleMemberSwapPolicy<std::iterator_traits<typename Array<Tuple>::iterator>::value_type,member1,member2>::swap( *data_point );
     
     ++data_point;
   }
@@ -198,17 +272,26 @@ inline double DataProcessor::LogLinearDataProcessingPolicy::processDependentVar(
 }
 
 //---------------------------------------------------------------------------//
-// LinearLinearDataProcessingPolicy definitions
+// SquareSquareDataProcessingPolicy definitions
 //---------------------------------------------------------------------------//
 
 //! Process Independent Variable
- inline double DataProcessor::LinearLinearDataProcessingPolicy::processIndependentVar( const double indep_var )
+ inline double DataProcessor::SquareSquareDataProcessingPolicy::processIndependentVar( const double indep_var )
 {
-  return indep_var;
+  return indep_var*indep_var;
 }
 
 //! Process Dependent Variable
-inline double DataProcessor::LinearLinearDataProcessingPolicy::processDependentVar( const double dep_var )
+inline double DataProcessor::SquareSquareDataProcessingPolicy::processDependentVar( const double dep_var )
 {
-  return dep_var;
+  return dep_var*dep_var;
 }
+
+} // end FACEMC namespace
+
+#endif // end DATA_PROCESSOR_DEF_HPP
+
+//---------------------------------------------------------------------------//
+// end DataProcessor_def.hpp
+//---------------------------------------------------------------------------//
+

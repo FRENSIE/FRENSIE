@@ -13,16 +13,28 @@
 
 // FACEMC Includes
 #include "ENDLIB97FileHandler.hpp"
-#include "ElectronShells.hpp"
+#include "ContractException.hpp"
 #include "FACEMC_Assertion.hpp"
 #include "Tuple.hpp"
 
 namespace FACEMC{
 
+//! Constructor
+ENDLIB97FileHandler::ENDLIB97FileHandler( const std::string &file_name )
+{
+  d_endlib_file.open( file_name.c_str() );
+
+  // The file name must refer to a valid file
+  testPostCondition( d_endlib_file );
+}
+
 //! Open an ENDLIB-97 data file
 void ENDLIB97FileHandler::openENDLIB97File( const std::string &file_name )
 {
   d_endlib_file.open( file_name.c_str() );
+
+  // The file name must refer to a valid file
+  testPostCondition( d_endlib_file );
 }
 
 //! Close an ENDLIB-97 data file

@@ -22,6 +22,9 @@ public:
   ENDLIB97FileHandler()
   { /* ... */ }
 
+  //! Constructor
+  ENDLIB97FileHandler( const std::string &file_name );
+
   //! Destructor
   virtual ~ENDLIB97FileHandler()
   { /* ... */ }

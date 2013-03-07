@@ -30,43 +30,61 @@ public:
 protected:
 
   /*!
-   * \brief Calculate the slope between each pair of data points and store
-   * at the desired tuple member. This function will only compile if the desired
-   * tuple member is actually available in tuple T.
+   * \brief Process the indepMember and the depMember using the desired 
+   * processing policy. This function will only compile if the desired
+   * tuple members are actually available in tuple Tuple.
    */
-  template<TupleMember member, 
-	   typename T, 
+  template<typename DataProcessingPolicy,
+	   TupleMember indepMember,
+	   TupleMember depMember,
+	   typename Tuple,
+	   template<typename> Array>
+  void processData( Array<Tuple> &data );
+
+  /*!
+   * \brief Calculate the slope between indepMember and depMember and store
+   * at the slopeMember. This function will only compile if the desired
+   * tuple members are actually available in tuple Tuple.
+   */
+  template<TupleMember indepMember, 
+	   TupleMember depMember,
+	   TupleMember slopeMember,
+	   typename Tuple, 
 	   template<typename> class Array>
-  void calculateSlopesAtTupleMember( Array<T> &data );
+  void calculateSlopes( Array<Tuple> &data );
 
   /*!
    * \brief Create a continuous CDF from an array of data and store at the 
    * desired tuple member. This function will only compile if the desired 
    * tuple member is actually available in tuple T.
    */
-  template<TupleMember member,
-	   typename T,
+  template<TupleMember indepMember,
+	   TupleMember pdfMember,
+	   TupleMember cdfMember,
+	   typename Tuple,
 	   template<typename> class Array>
-  void calculateContinuousCDFAtTupleMember( Array<T> &data );
+  void calculateContinuousCDF( Array<Tuple> &data );
 
   /*!
-   * \brief Create a discrete CDF IN PLACE from an array of data and store at 
-   * the desired tuple member. This function will only compile if the desired 
-   * tuple member is actually available in tuple T.
+   * \brief Create a discrete CDF from an array of data and store at 
+   * the desired tuple member. By default, this function will calculate the CDF
+   * in place. This function will only compile if the desired tuple member is 
+   * actually available in tuple T.
    */
-  template<TupleMember member,
-	   typename T,
+  template<TupleMember pdfMember,
+	   TupleMember cdfMember = pdfMember,
+	   typename Tuple,
 	   template<typename> class Array>
-  void calculateDiscreteCDFInPlaceAtTupleMember( Array<T> &data );
+  void calculateDiscreteCDF( Array<Tuple> &data );
 
   /*!
    * \brief Swap the data in the desired tuple members.
    */
   template<TupleMember member1, 
 	   TupleMember member2,
-	   typename T,
+	   typename Tuple,
 	   template<typename> class Array>
-  void swapDataAtTupleMembers( Array<T> &data );
+  void swapMemberData( Array<Tuple> &data );
 
   /*!
    * \brief Convert an unsigned int to an electron shell string
@@ -116,10 +134,10 @@ protected:
   };
 
   /*!
-   * \brief Policy class for processing data tables that require linear-linear
-   * interpolation between data pointns.
+   * \brief Policy class for processing data tables that require square-square
+   * interpolation between data points.
    */
-  class LinearLinearDataProcessingPolicy
+  class SquareSquareDataProcessingPolicy
   {
   public:
     //! Process Independent Variable

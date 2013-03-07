@@ -11,7 +11,7 @@
 #include <iterator>
 
 // FACEMC Includes
-#include "TupleComparePolicy.hpp"
+#include "TupleGetSetMemberPolicy.hpp"
 
 namespace FACEMC{
 
@@ -21,13 +21,13 @@ namespace Search{
 template<TupleMember member, typename Iterator>
 Iterator binarySearchContinuousData( Iterator start,
 				     Iterator end,
-				     const typename TupleComparePolicy<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value );
+				     const typename TupleGetSetMemberPolicy<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value );
 
 //! Binary search on an array of discrete data
 template<TupleMember member, typename Iterator>
 Iterator binarySearchDiscreteData( Iterator start,
 				   Iterator end,
-				   const typename TupleComparePolicy<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value);
+				   const typename TupleGetSetMemberPolicy<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value);
 
 } // end Search namespace
 

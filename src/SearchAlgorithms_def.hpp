@@ -14,7 +14,7 @@
 // FACEMC Includes
 #include "ContractException.hpp"
 #include "SearchAlgorithms.hpp"
-#include "TupleComparePolicy.hpp"
+#include "TupleGetSetMemberPolicy.hpp"
 
 namespace FACEMC{
 
@@ -24,14 +24,14 @@ namespace Search{
 template<TupleMember member, typename Iterator>
 Iterator binarySearchContinuousData( Iterator start,
 				     Iterator end,
-				     const typename TupleComparePolicy<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+				     const typename TupleGetSetMemberPolicy<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
 {
   // The iterators must be from a valid container (size > 0)
   testPrecondition( (start != end) );
   
   // The value used for the search must be within the limits of the data
-  testPrecondition( (value >= TupleComparePolicy<typename std::iterator_traits<Iterator>::value_type,member>::value( *start )) );
-  testPrecondition( (value <= TupleComparePolicy<typename std::iterator_traits<Iterator>::value_type,member>::value( *(end-1) )) );
+  testPrecondition( (value >= TupleGetSetMemberPolicy<typename std::iterator_traits<Iterator>::value_type,member>::get( *start )) );
+  testPrecondition( (value <= TupleGetSetMemberPolicy<typename std::iterator_traits<Iterator>::value_type,member>::get( *(end-1) )) );
 
   // Remember the end iterator for the Postcondition check
   remember( Iterator invalid = end );
@@ -41,7 +41,7 @@ Iterator binarySearchContinuousData( Iterator start,
   
   while( distance > 1 )
   {
-    if( value >= TupleComparePolicy<typename std::iterator_traits<Iterator>::value_type,member>::value( *(start+distance/2) ) )
+    if( value >= TupleGetSetMemberPolicy<typename std::iterator_traits<Iterator>::value_type,member>::get( *(start+distance/2) ) )
       start += distance/2;
     else
       end = start+distance/2;
@@ -59,14 +59,14 @@ Iterator binarySearchContinuousData( Iterator start,
 template<TupleMember member, typename Iterator>
 Iterator binarySearchDiscreteData( Iterator start,
 				   Iterator end,
-				   const typename TupleComparePolicy<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+				   const typename TupleGetSetMemberPolicy<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
 {
   // The iterators must be from a valid container (size > 0)
   testPrecondition( (start != end) );
   
   // The value used for the search must be within the limits of the data
   testPrecondition( (value >= 0) );
-  testPrecondition( (value <= TupleComparePolicy<typename std::iterator_traits<Iterator>::value_type,member>::value( *(end-1) )) );
+  testPrecondition( (value <= TupleGetSetMemberPolicy<typename std::iterator_traits<Iterator>::value_type,member>::get( *(end-1) )) );
   
   // Remember the end iterator for the Postcondition check
   remember( Iterator invalid = end );
@@ -75,7 +75,7 @@ Iterator binarySearchDiscreteData( Iterator start,
   
   while( distance > 1 )
   {
-    if( value >= TupleComparePolicy<typename std::iterator_traits<Iterator>::value_type,member>::value( *(start+distance/2) ) )
+    if( value >= TupleGetSetMemberPolicy<typename std::iterator_traits<Iterator>::value_type,member>::get( *(start+distance/2) ) )
       start += distance/2;
     else
       end = start+distance/2;
@@ -87,7 +87,7 @@ Iterator binarySearchDiscreteData( Iterator start,
   // the value falls in
   if( distance == 1 )
   {
-    if( value > TupleComparePolicy<typename std::iterator_traits<Iterator>::value_type,member>::value( *(start) ) )
+    if( value > TupleGetSetMemberPolicy<typename std::iterator_traits<Iterator>::value_type,member>::get( *(start) ) )
       start = end;
   }
   
