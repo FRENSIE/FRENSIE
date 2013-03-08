@@ -51,7 +51,7 @@ struct TupleMemberSwapPolicy<T,FIRST,FOURTH>
   {
     tupleMemberType1 copy = tuple.first;
     tuple.first = static_cast<tupleMemberType1>( tuple.fourth );
-    tuple.fourth = static_cast<tupleMemberTyp2>( copy );
+    tuple.fourth = static_cast<tupleMemberType2>( copy );
   }
 };
 
@@ -93,7 +93,7 @@ struct TupleMemberSwapPolicy<T,THIRD,FOURTH>
   {
     tupleMemberType1 copy = tuple.third;
     tuple.third = static_cast<tupleMemberType1>( tuple.fourth );
-    tuple.fourth = static_cast<tupleMemberTyp2>( copy );
+    tuple.fourth = static_cast<tupleMemberType2>( copy );
   }
 };
 

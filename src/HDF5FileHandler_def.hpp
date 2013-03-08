@@ -24,6 +24,7 @@
 #include "HDF5ArrayPolicy.hpp"
 #include "ExceptionCatchMacros.hpp"
 #include "FACEMC_Assertion.hpp"
+#include "ContractException.hpp"
 
 namespace FACEMC{
 
@@ -34,7 +35,7 @@ void HDF5FileHandler::writeArrayToDataSet( const Array<T> &data,
 					   )
 {
   // The dataset_location must be absolute (start with /)
-  FACEMC_ASSERT_ALWAYS( location_in_file.compare( 0, 1, "/" ) == 0 ); 
+  testPrecondition( location_in_file.compare( 0, 1, "/" ) == 0 ); 
   
   // Create any parent groups that do not exist yet in the location path
   createParentGroups( location_in_file );
@@ -63,7 +64,7 @@ void HDF5FileHandler::readArrayFromDataSet( Array<T> &data,
 					    )
 {
   // The dataset_location must be absolute (start with /)
-  FACEMC_ASSERT_ALWAYS( location_in_file.compare( 0, 1, "/" ) == 0 ); 
+  testPrecondition( location_in_file.compare( 0, 1, "/" ) == 0 ); 
   
   // HDF5 exceptions can be thrown when opening and reading from datasets
   try
@@ -104,9 +105,9 @@ void HDF5FileHandler::writeArrayToDataSetAttribute( const Array<T> &data,
 						      &attribute_name )
 {
   // The dataset_location must be absolute (start with /)
-  FACEMC_ASSERT_ALWAYS( (dataset_location.compare( 0, 1, "/" ) == 0) );
+  testPrecondition( (dataset_location.compare( 0, 1, "/" ) == 0) );
   // The attribute name can contain any character except /
-  FACEMC_ASSERT_ALWAYS( (attribute_name.find( "/" ) == std::string::npos ) );
+  testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
     
   // HDF5 exceptions can be thrown when opening a group, creating an attribute,
   // or writing an attribute to a group
@@ -136,9 +137,9 @@ void HDF5FileHandler::readArrayFromDataSetAttribute( Array<T> &data,
 						       &attribute_name )
 {
   // The dataset_location must be absolute (start with /)
-  FACEMC_ASSERT_ALWAYS( (dataset_location.compare( 0, 1, "/" ) == 0) );
+  testPrecondition( (dataset_location.compare( 0, 1, "/" ) == 0) );
   // The attribute name can contain any character except /
-  FACEMC_ASSERT_ALWAYS( (attribute_name.find( "/" ) == std::string::npos ) );
+  testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
   
   // HDF5 exceptions can be thrown when opening and reading from datasets
   try
@@ -182,9 +183,9 @@ void HDF5FileHandler::writeValueToDataSetAttribute( const T &value,
 						      &attribute_name )
 {
   // The dataset_location must be absolute (start with /)
-  FACEMC_ASSERT_ALWAYS( (dataset_location.compare( 0, 1, "/" ) == 0) );
+  testPrecondition( (dataset_location.compare( 0, 1, "/" ) == 0) );
   // The attribute name can contain any character except /
-  FACEMC_ASSERT_ALWAYS( (attribute_name.find( "/" ) == std::string::npos ) );
+  testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
   
   // HDF5 exceptions can be thrown when opening a group, creating an attribute,
   // or writing an attribute to a group
@@ -214,9 +215,9 @@ void HDF5FileHandler::readValueFromDataSetAttribute( T &value,
 						       &attribute_name )
 {
   // The dataset_location must be absolute (start with /)
-  FACEMC_ASSERT_ALWAYS( (dataset_location.compare( 0, 1, "/" ) == 0) );
+  testPrecondition( (dataset_location.compare( 0, 1, "/" ) == 0) );
   // The attribute name can contain any character except /
-  FACEMC_ASSERT_ALWAYS( (attribute_name.find( "/" ) == std::string::npos ) );
+  testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
   
   // HDF5 exceptions can be thrown when opening and reading from datasets
   try
@@ -255,9 +256,12 @@ void HDF5FileHandler::writeArrayToGroupAttribute( const Array<T> &data,
 						    &attribute_name )
 {
   // The dataset_location must be absolute (start with /)
-  FACEMC_ASSERT_ALWAYS( (group_location.compare( 0, 1, "/" ) == 0) );
+  testPrecondition( (group_location.compare( 0, 1, "/" ) == 0) );
   // The attribute name can contain any character except /
-  FACEMC_ASSERT_ALWAYS( (attribute_name.find( "/" ) == std::string::npos ) );
+  testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
+
+  // Create any parent groups that do not exist yet in the location path
+  createParentGroups( group_location );
     
   // HDF5 exceptions can be thrown when opening a group, creating an attribute,
   // or writing an attribute to a group
@@ -287,9 +291,9 @@ void HDF5FileHandler::readArrayFromGroupAttribute( Array<T> &data,
 						     &attribute_name )
 {
   // The group_location must be absolute (start with /)
-  FACEMC_ASSERT_ALWAYS( (group_location.compare( 0, 1, "/" ) == 0) );
+  testPrecondition( (group_location.compare( 0, 1, "/" ) == 0) );
   // The attribute name can contain any character except /
-  FACEMC_ASSERT_ALWAYS( (attribute_name.find( "/" ) == std::string::npos ) );
+  testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
   
   // HDF5 exceptions can be thrown when opening and reading from datasets
   try
@@ -333,9 +337,12 @@ void HDF5FileHandler::writeValueToGroupAttribute( const T &value,
 						    &attribute_name )
 {
   // The dataset_location must be absolute (start with /)
-  FACEMC_ASSERT_ALWAYS( (group_location.compare( 0, 1, "/" ) == 0) );
+  testPrecondition( (group_location.compare( 0, 1, "/" ) == 0) );
   // The attribute name can contain any character except /
-  FACEMC_ASSERT_ALWAYS( (attribute_name.find( "/" ) == std::string::npos ) );
+  testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
+
+  // Create any parent groups that do not exist yet in the location path
+  createParentGroups( group_location );
     
   // HDF5 exceptions can be thrown when opening a group, creating an attribute,
   // or writing an attribute to a group
@@ -365,9 +372,9 @@ void HDF5FileHandler::readValueFromGroupAttribute( T &value,
 						     &attribute_name )
 {
   // The group_location must be absolute (start with /)
-  FACEMC_ASSERT_ALWAYS( (group_location.compare( 0, 1, "/" ) == 0) );
+  testPrecondition( (group_location.compare( 0, 1, "/" ) == 0) );
   // The attribute name can contain any character except /
-  FACEMC_ASSERT_ALWAYS( (attribute_name.find( "/" ) == std::string::npos ) );
+  testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
   
   // HDF5 exceptions can be thrown when opening and reading from datasets
   try
@@ -387,7 +394,8 @@ void HDF5FileHandler::readValueFromGroupAttribute( T &value,
     hsize_t dims[rank];
     int ndims = dataspace.getSimpleExtentDims( dims, NULL );
     
-    FACEMC_ASSERT_ALWAYS( (rank == 1 && dims[0] == 1) );
+    FACEMC_ASSERT_ALWAYS_MSG( (rank == 1 && dims[0] == 1),
+			      "Fatal Error: Cannot read a single value from an attribute array.");
 
     // Read the data in the dataset and save it to the output array
     attribute.read( HDF5TypeTraits<T>::dataType(),

@@ -84,6 +84,7 @@ bool compareFloatingPairArrays( const Array1<T> &a1,
 				Teuchos::FancyOStream &out )
 {
   bool success = true;
+  bool local_success = true;
 
   out << "Comparing " << a1_name << " == " << a2_name << " ... ";
 
@@ -102,18 +103,22 @@ bool compareFloatingPairArrays( const Array1<T> &a1,
   for( int i = 0; i < n; ++i )
   {
     // Compare the first element
-    success = compareFirstTupleElements( a1[i], a1_name, 
-					 a2[i], a2_name,
-					 i,
-					 tol,
-					 out );
+    local_success = compareFirstTupleElements( a1[i], a1_name, 
+					       a2[i], a2_name,
+					       i,
+					       tol,
+					       out );
+    if( !local_success )
+      success = false;
 
     // Compare the second element
-    success = compareSecondTupleElements( a1[i], a1_name,
-					  a2[i], a2_name,
-					  i,
-					  tol,
-					  out );
+    local_success = compareSecondTupleElements( a1[i], a1_name,
+						a2[i], a2_name,
+						i,
+						tol,
+						out );
+    if( !local_success )
+      success = false;
   }
   
   if( success ) 
@@ -135,6 +140,7 @@ bool compareFloatingTripArrays( const Array1<T> &a1,
 				Teuchos::FancyOStream &out )
 {
   bool success = true;
+  bool local_success = true;
 
   out << "Comparing " << a1_name << " == " << a2_name << " ... ";
 
@@ -153,25 +159,31 @@ bool compareFloatingTripArrays( const Array1<T> &a1,
   for( int i = 0; i < n; ++i )
   {
     // Compare the first element
-    success = compareFirstTupleElements( a1[i], a1_name, 
-					 a2[i], a2_name,
-					 i,
-					 tol,
-					 out );
+    local_success = compareFirstTupleElements( a1[i], a1_name, 
+					       a2[i], a2_name,
+					       i,
+					       tol,
+					       out );
+    if( !local_success )
+      success = false;
     
     // Compare the second element
-    success = compareSecondTupleElements( a1[i], a1_name,
-					  a2[i], a2_name,
-					  i,
-					  tol,
-					  out );
+    local_success = compareSecondTupleElements( a1[i], a1_name,
+						a2[i], a2_name,
+						i,
+						tol,
+						out );
+    if( !local_success )
+      success = false;
     
     // Compare the third element
-    success = compareThirdTupleElements( a1[i], a1_name,
-					 a2[i], a2_name,
-					 i, 
-					 tol,
-					 out );
+    local_success = compareThirdTupleElements( a1[i], a1_name,
+					       a2[i], a2_name,
+					       i, 
+					       tol,
+					       out );
+    if( !local_success )
+      success = false;
   }
   
   if( success ) 
@@ -193,6 +205,7 @@ bool compareFloatingQuadArrays( const Array1<T> &a1,
 				Teuchos::FancyOStream &out )
 {
   bool success = true;
+  bool local_success = true;
 
   out << "Comparing " << a1_name << " == " << a2_name << " ... ";
 
@@ -211,32 +224,40 @@ bool compareFloatingQuadArrays( const Array1<T> &a1,
   for( int i = 0; i < n; ++i )
   {
     // Compare the first element
-    success = compareFirstTupleElements( a1[i], a1_name, 
-					 a2[i], a2_name,
-					 i,
-					 tol,
-					 out );
+    local_success = compareFirstTupleElements( a1[i], a1_name, 
+					       a2[i], a2_name,
+					       i,
+					       tol,
+					       out );
+    if( !local_success )
+      success = false;
     
     // Compare the second element
-    success = compareSecondTupleElements( a1[i], a1_name,
-					  a2[i], a2_name,
-					  i,
-					  tol,
-					  out );
+    local_success = compareSecondTupleElements( a1[i], a1_name,
+						a2[i], a2_name,
+						i,
+						tol,
+						out );
+    if( !local_success )
+      success = false;
     
     // Compare the third element
-    success = compareThirdTupleElements( a1[i], a1_name,
-					 a2[i], a2_name,
-					 i, 
-					 tol,
-					 out );
+    local_success = compareThirdTupleElements( a1[i], a1_name,
+					       a2[i], a2_name,
+					       i, 
+					       tol,
+					       out );
+    if( !local_success )
+      success = false;
      
     // Compare the fourth element
-    success = compareFourthTupleElements( a1[i], a1_name,
-					  a2[i], a2_name,
-					  i,
-					  tol,
-					  out );
+    local_success = compareFourthTupleElements( a1[i], a1_name,
+						a2[i], a2_name,
+						i,
+						tol,
+						out );
+    if( !local_success )
+      success = false;
   }
   
   if( success ) 

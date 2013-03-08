@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
-// \file PhotonDataCollectionBase.hpp
+// \file   PhotonDataCollection.hpp
 // \author Alex Robinson
-// \brief Photon Data Collection class declaration.
+// \brief  Photon Data Collection class declaration.
 //---------------------------------------------------------------------------//
 
 #ifndef PHOTON_DATA_COLLECTION_HPP

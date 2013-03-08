@@ -22,8 +22,8 @@ namespace FACEMC{
 //! Read two column table in ENDLIB file within specified range
 template<typename T, template<typename> class Array>
 void ENDLIB97FileHandler::readTwoColumnTableInRange( Array<T>  &data,
-						     const T::firstType indep_var_min,
-						     const T::firstType indep_var_max )
+						     const typename T::firstType indep_var_min,
+						     const typename T::firstType indep_var_max )
 {
   // The datafile must be valid
   testPrecondition( d_endlib_file );
@@ -37,10 +37,10 @@ void ENDLIB97FileHandler::readTwoColumnTableInRange( Array<T>  &data,
   char test []=  "         ";
   
   // Values extracted from the table
-  T::firstType indep_impossible_min = 
+  typename T::firstType indep_impossible_min = 
     std::numeric_limits<double>::infinity()*-1;
-  T::firstType indep_prev = indep_impossible_min, indep = 0.0;
-  T::firstSecond dep_prev = 0.0, dep = 0.0;
+  typename T::firstType indep_prev = indep_impossible_min, indep = 0.0;
+  typename T::secondType dep_prev = 0.0, dep = 0.0;
   
   // Data point extracted from the table
   T data_point;
@@ -141,8 +141,8 @@ void ENDLIB97FileHandler::readTwoColumnTable( Array<T> &data )
   char test []=  "         ";
   
   // Values extracted from the table
-  T::firstType indep = 0.0;
-  T::secondType dep = 0.0;
+  typename T::firstType indep = 0.0;
+  typename T::secondType dep = 0.0;
 
   // Data point extracted from the table
   T data_point;
@@ -200,9 +200,9 @@ void ENDLIB97FileHandler::readThreeColumnTable(	Array<T> &data )
   data.clear();
   
   // Values extracted from the table
-  T::firstType first_val;
-  T::secondType second_val;
-  T::thirdType third_val;
+  typename T::firstType first_val;
+  typename T::secondType second_val;
+  typename T::thirdType third_val;
 
   // Data point from table
   T data_point;
@@ -262,10 +262,10 @@ void ENDLIB97FileHandler::readFourColumnTable( Array<T> &data )
   data.clear();
 
   // Values extracted from the table
-  T::firstType first_val;
-  T::secondType second_val;
-  T::thirdType third_val;
-  T::fourthType fourth_val;
+  typename T::firstType first_val;
+  typename T::secondType second_val;
+  typename T::thirdType third_val;
+  typename T::fourthType fourth_val;
 
   // Data point from table
   T data_point;

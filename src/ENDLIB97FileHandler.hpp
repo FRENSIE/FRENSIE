@@ -26,8 +26,7 @@ public:
   ENDLIB97FileHandler( const std::string &file_name );
 
   //! Destructor
-  virtual ~ENDLIB97FileHandler()
-  { /* ... */ }
+  virtual ~ENDLIB97FileHandler();
 
   //! Open an ENDLIB-97 data file
   void openENDLIB97File( const std::string &file_name );
@@ -36,10 +35,10 @@ public:
   void closeENDLIB97File();
 
   //! Check if the file is valid
-  bool validFile();
+  bool validFile() const;
 
   //! Check if the entire file has been read
-  bool endOfFile();
+  bool endOfFile() const;
 
   //! Read the first table header
   // \brief Read the first ENDLIB table header and extract info
@@ -66,8 +65,8 @@ public:
   // FACEMC::Quad struct
   template<typename T, template<typename> class Array>
   void readTwoColumnTableInRange( Array<T> &data,
-				  const double indep_var_min,
-				  const double indep_var_max );
+				  const typename T::firstType indep_var_min,
+				  const typename T::firstType indep_var_max );
 
   //! Read two column table in ENDLIB file 
   // \brief T is assumed to be a FACEMC::Pair, FACEMC::Trip or

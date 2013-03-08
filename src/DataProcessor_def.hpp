@@ -16,6 +16,7 @@
 #include "Tuple.hpp"
 #include "TupleMemberSwapPolicy.hpp"
 #include "TupleGetSetMemberPolicy.hpp"
+#include "ContractException.hpp"
 
 namespace FACEMC{
 
@@ -24,8 +25,8 @@ template<typename DataProcessingPolicy,
 	   TupleMember indepMember,
 	   TupleMember depMember,
 	   typename Tuple,
-	   template<typename> Array>
-void processData( Array<Tuple> &data )
+	   template<typename> class Array>
+void DataProcessor::processData( Array<Tuple> &data )
 {
   // Make sure that the array is valid
   testPrecondition( data.size() > 0 );
@@ -94,7 +95,7 @@ template<TupleMember indepMember,
 	 TupleMember cdfMember,
 	 typename Tuple, 
 	 template<typename> class Array>
-void DataProcessor::createContinuousCDF( Array<Tuple> &data )
+void DataProcessor::calculateContinuousCDF( Array<Tuple> &data )
 {
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
@@ -131,19 +132,18 @@ void DataProcessor::createContinuousCDF( Array<Tuple> &data )
   }
 
   // Normalize the CDF and PDF
-  typename cdfTGSMP::tupleMemberType cdf_norm_value;
-  typename pdfTGSMP::tupleMemberType pdf_norm_value
+  typename cdfTGSMP::tupleMemberType cdf_max, cdf_norm_value;
+  cdf_max = cdfTGSMP::get( data.back() );
+  typename pdfTGSMP::tupleMemberType pdf_norm_value;
   data_point_1 = data.begin();
   
   while( data_point_1 != end )
   {
-    cdf_norm_value = cdfTGSMP::get( *data_point_1 )/
-      cdfTGSMP::get( data.back() );
-    cdfTGSMP::set( *data_point_1, norm_value );
+    cdf_norm_value = cdfTGSMP::get( *data_point_1 )/cdf_max;
+    cdfTGSMP::set( *data_point_1, cdf_norm_value );
 
-    pdf_norm_value = pdfTGSMP::get( *data_point_1 )/
-      cdfTGSMP::get( data.back() );
-    pdfTGSMP::set( *data_point_1, norm_value );
+    pdf_norm_value = pdfTGSMP::get( *data_point_1 )/cdf_max;
+    pdfTGSMP::set( *data_point_1, pdf_norm_value );
     
     ++data_point_1;
   }
@@ -154,7 +154,7 @@ template<TupleMember pdfMember,
 	 TupleMember cdfMember,
 	 typename Tuple,
 	 template<typename> class Array>
-void DataProcessor::createDiscreteCDF( Array<Tuple> &data )
+void DataProcessor::calculateDiscreteCDF( Array<Tuple> &data )
 {
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
@@ -182,8 +182,8 @@ void DataProcessor::createDiscreteCDF( Array<Tuple> &data )
   data_point = data.begin();
   while( data_point != end )
   {
-    cdf_value = cdfTGSM::get( *data_point )/cdfTGSM::get( data.back() );
-    cdfTGSM::set( *data_point, cdf_value );
+    cdf_value = cdfTGSMP::get( *data_point )/cdfTGSMP::get( data.back() );
+    cdfTGSMP::set( *data_point, cdf_value );
     
     ++data_point;
   }
@@ -194,7 +194,7 @@ template<TupleMember member1,
 	 TupleMember member2,
 	 typename Tuple,
 	 template<typename> class Array>
-void swapMemberData( Array<Tuple> & data )
+void DataProcessor::swapTupleMemberData( Array<Tuple> & data )
 {
   // Make sure that the array is valid
   testPrecondition( (data.size() > 0) );
@@ -205,7 +205,7 @@ void swapMemberData( Array<Tuple> & data )
 
   while( data_point != end )
   {
-    TupleMemberSwapPolicy<std::iterator_traits<typename Array<Tuple>::iterator>::value_type,member1,member2>::swap( *data_point );
+    TupleMemberSwapPolicy<Tuple,member1,member2>::swap( *data_point );
     
     ++data_point;
   }
@@ -216,59 +216,23 @@ void swapMemberData( Array<Tuple> & data )
 //---------------------------------------------------------------------------//
 
 //! Process Independent Variable
-inline double DataProcessor::LogLogDataProcessingPolicy::processIndependentVar( const double indep_var )
+template<typename T>
+inline T DataProcessor::LogLogDataProcessingPolicy::processIndependentVar( const T indep_var )
 {
-  if( indep_var > 0.0 )
-    return log( indep_var );
+  if( indep_var > 0 )
+    return static_cast<T>( log( static_cast<double>(indep_var) ) );
   else
-    return log( std::numeric_limits<double>::min() );
+    return 0;
 }
 
 //! Process Dependent Variable
-inline double DataProcessor::LogLogDataProcessingPolicy::processDependentVar( const double dep_var )
+template<typename T>
+inline T DataProcessor::LogLogDataProcessingPolicy::processDependentVar( const T dep_var )
 {
-  if( dep_var > 0.0 )
-    return log( dep_var );
+  if( dep_var > 0 )
+    return static_cast<T>( log( static_cast<double>(dep_var) ) );
   else
-    return log( std::numeric_limits<double>::min() );
-}
-
-//---------------------------------------------------------------------------//
-// LinearLogDataProcessingPolicy definitions
-//---------------------------------------------------------------------------//
-
-//! Process Independent Variable
-inline double DataProcessor::LinearLogDataProcessingPolicy::processIndependentVar( const double indep_var )
-{
-  return indep_var;
-}
-
-//! Process Dependent Variable
-inline double DataProcessor::LinearLogDataProcessingPolicy::processDependentVar( const double dep_var )
-{
-  if( dep_var > 0.0 )
-    return log( dep_var );
-  else
-    return log( std::numeric_limits<double>::min() );
-}
-
-//---------------------------------------------------------------------------//
-// LogLinearDataProcessingPolicy definitions
-//---------------------------------------------------------------------------//
-
-//! Process Independent Variable
-inline double DataProcessor::LogLinearDataProcessingPolicy::processIndependentVar( const double indep_var )
-{
-  if( indep_var > 0.0 )
-    return log( indep_var );
-  else
-    return log( std::numeric_limits<double>::min() );
-}
-
-//! Process Dependent Variable
-inline double DataProcessor::LogLinearDataProcessingPolicy::processDependentVar( const double dep_var )
-{
-  return dep_var;
+    return 0;
 }
 
 //---------------------------------------------------------------------------//
@@ -276,13 +240,15 @@ inline double DataProcessor::LogLinearDataProcessingPolicy::processDependentVar(
 //---------------------------------------------------------------------------//
 
 //! Process Independent Variable
- inline double DataProcessor::SquareSquareDataProcessingPolicy::processIndependentVar( const double indep_var )
+template<typename T>
+inline T DataProcessor::SquareSquareDataProcessingPolicy::processIndependentVar( const T indep_var )
 {
   return indep_var*indep_var;
 }
 
 //! Process Dependent Variable
-inline double DataProcessor::SquareSquareDataProcessingPolicy::processDependentVar( const double dep_var )
+template<typename T>
+inline T DataProcessor::SquareSquareDataProcessingPolicy::processDependentVar( const T dep_var )
 {
   return dep_var*dep_var;
 }

@@ -44,6 +44,10 @@ public:
   void processDataFiles();
   
 protected:
+  
+  //--------------------------------------------------------------------------//
+  // EPDL file processing member functions
+  //--------------------------------------------------------------------------//
 
   //! Process EPDL file
   void processEPDLFile();
@@ -71,12 +75,16 @@ protected:
 
   //! Process the scattering function data
   void processScatteringFunctionData();
-  
+
+  //--------------------------------------------------------------------------//
+  // EADL file processing member functions
+  //--------------------------------------------------------------------------//
+
   //! Process EADL file
   void processEADLFile();
 
   //! Process the electron shell occupancy data
-  void processElectronShellOccupancyData();
+  void processElectronShellOccupancyData( const unsigned int atomic_number );
 
   //! Process the electron shell binding energy data
   void processElectronShellBindingEnergyData();
@@ -89,10 +97,19 @@ protected:
 
   //! Process the shell nonradiative transition probability data
   void processElectronShellNonradiativeTransitionData( const unsigned int shell );
+
+  //--------------------------------------------------------------------------//
+  // Compton Profile file processing member functions
+  //--------------------------------------------------------------------------//
+
   
   //! Process Compton files
   void processComptonFiles( unsigned int atomic_number_start = 1,
 			    unsigned int atomic_number_end = 100 );
+
+  //--------------------------------------------------------------------------//
+  // Extras
+  //--------------------------------------------------------------------------//
 
   //! Create the Electron Shell Index Map
   /* \brief The Hartree-Fock Compton Profiles were compiled in the 1970s. The

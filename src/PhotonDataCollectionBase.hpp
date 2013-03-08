@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
-// \file PhotonDataCollectionBase.hpp
+// \file   PhotonDataCollectionBase.hpp
 // \author Alex Robinson
-// \brief Photon Data Collection base class declaration.
+// \brief  Photon Data Collection base class declaration.
 //---------------------------------------------------------------------------//
 
 #ifndef PHOTON_DATA_COLLECTION_BASE_HPP
@@ -23,10 +23,10 @@ namespace FACEMC{
 class PhotonDataCollectionBase
 {
 
-public:
+protected:
 
   //------------------------------------------------------------------------//
-  // Standard Photon Physics Member Functions
+  // Basic Photon Physics Member Functions
   //------------------------------------------------------------------------//
 
   //! Return the atomic number of the element stored

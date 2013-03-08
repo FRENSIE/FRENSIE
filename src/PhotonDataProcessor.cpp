@@ -15,7 +15,7 @@
 #include "PhotonDataProcessor.hpp"
 #include "DataProcessor.hpp"
 #include "HDF5FileHandler.hpp"
-#include "ENDLIB97Filehandler.hpp"
+#include "ENDLIB97FileHandler.hpp"
 #include "ContractException.hpp"
 #include "FACEMC_Assertion.hpp"
 #include "HDF5DataFileNames.hpp"
@@ -30,7 +30,7 @@ PhotonDataProcessor::PhotonDataProcessor( const std::string epdl_file_name,
 					  const std::string output_directory,
 					  const double energy_min,
 					  const double energy_max )
-  : EPDL97DataProcessor(), 
+  : DataProcessor(), 
     d_epdl_file_handler(epdl_file_name), 
     d_eadl_file_handler(eadl_file_name),
     d_compton_file_prefix(compton_file_prefix), 
@@ -352,7 +352,7 @@ void PhotonDataProcessor::processTotalPhotoelectricCrossSectionData()
 }
   
 //! Process shell integrated photoelectric cross section data
-void processShellPhotoelectricCrossSectionData( unsigned int shell )
+void PhotonDataProcessor::processShellPhotoelectricCrossSectionData( unsigned int shell )
 {	
   Teuchos::Array<Trip<double,double,double> > data;
   
@@ -431,7 +431,7 @@ void PhotonDataProcessor::processFormFactorData()
   
   // Move the CDF data to the second tuple member and the PDF data
   // to the third tuple member
-  swapMemberData<SECOND,THIRD>( data );
+  swapTupleMemberData<SECOND,THIRD>( data );
   
   d_hdf5_file_handler.writeArrayToDataSet( data,
 					   ATOMIC_FORM_FACTOR_LOC );
@@ -491,14 +491,14 @@ void PhotonDataProcessor::processEADLFile()
       {
 	// Create an attribute for the shells with atomic relaxation data
 	// Note: only Z=6 and above have data
-	if( relaxation_shells.size() > 0 )
-	{
-	  d_hdf5_file_handler.writeArrayToGroupAttribute( relaxation_shells,
-							  RADIATIVE_TRANSITION_PROBABILITY_ROOT,
-							  ATOMIC_RELAXATION_SHELL_ATTRIBUTE
-							  );
-	  relaxation_shells.clear();
-	}
+	if( relaxation_shells.size() == 0 )
+	  relaxation_shells.push_back( 0 );
+	
+	d_hdf5_file_handler.writeArrayToGroupAttribute( relaxation_shells,
+							RADIATIVE_TRANSITION_PROBABILITY_ROOT,
+							ATOMIC_RELAXATION_SHELL_ATTRIBUTE
+							);
+	relaxation_shells.clear();
 	
 	d_hdf5_file_handler.closeHDF5File();
       }
@@ -528,7 +528,7 @@ void PhotonDataProcessor::processEADLFile()
     case 91912:
       // Read number of electrons per subshell
 
-      processElectronShellOccupancyData();
+      processElectronShellOccupancyData( atomic_number );
       
       break;
 
@@ -658,7 +658,7 @@ void PhotonDataProcessor::processEADLFile()
 }
 
 //! Process the electron shell occupancy data
-void PhotonDataProcessor::processElectronShellOccupancyData()
+void PhotonDataProcessor::processElectronShellOccupancyData( const unsigned int atomic_number )
 {
   Teuchos::Array<Pair<unsigned int,double> > data;
   
@@ -666,7 +666,7 @@ void PhotonDataProcessor::processElectronShellOccupancyData()
   
   // Z = 1 and Z = 2 only have one electron shell
   if( data.size() > 1 )
-    calculateDiscreteCDF<SECOND>( data );
+    calculateDiscreteCDF<SECOND,SECOND>( data );
   else
     data[0].second = 1.0;
   
@@ -710,7 +710,7 @@ void PhotonDataProcessor::processElectronShellBindingEnergyData()
 }      
 
 //! Process the electron shell kinetic energy data
-void processElectronShellKineticEnergyData()
+void PhotonDataProcessor::processElectronShellKineticEnergyData()
 {
   Teuchos::Array<Pair<unsigned int,double> > data;
   
@@ -735,7 +735,7 @@ void PhotonDataProcessor::processElectronShellRadiativeTransitionData( const uns
   
   // Only create the cdf if more than one data point is present
   if( data.size() > 1 )
-    calculateDiscreteCDF<SECOND>( data );
+    calculateDiscreteCDF<SECOND,SECOND>( data );
   else
     data[0].second = 1.0;
   
@@ -743,12 +743,12 @@ void PhotonDataProcessor::processElectronShellRadiativeTransitionData( const uns
 					   RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( shell ) );
 
   d_hdf5_file_handler.writeValueToDataSetAttribute( total_radiative_trans_prob,
-						    RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( electron_shell ),
+						    RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( shell ),
 						    TOTAL_RAD_TRANS_PROB_ATTRIBUTE );
 }
       
 //! Process the shell nonradiative transition probability data
-void processElectronShellNonradiativeTransitionData( const unsigned int shell )
+void PhotonDataProcessor::processElectronShellNonradiativeTransitionData( const unsigned int shell )
 {
   Teuchos::Array<Quad<unsigned int,unsigned int,double,double> > data;
   
@@ -756,7 +756,7 @@ void processElectronShellNonradiativeTransitionData( const unsigned int shell )
   
   // Only create the cdf if more than one data point is present
   if( data.size() > 1 )
-    createDiscreteCDF<THIRD>( data );
+    calculateDiscreteCDF<THIRD,THIRD>( data );
   else
     data[0].third = 1.0;
   
@@ -850,7 +850,7 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
 
       // Move the CDF data to the second tuple member and the PDF data
       // to the third tuple member
-      swapMemberData<SECOND,THIRD>( data );
+      swapTupleMemberData<SECOND,THIRD>( compton_profile_shell_cdf );
     }
 
     // To save memory, the q_values will be extracted from the array

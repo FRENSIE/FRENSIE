@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 // \file   ENDLIB97FileHandler.cpp
 // \author Alex Robinson
-// \brief EPDL97 data processor base class non-template member function 
+// \brief  EPDL97 data processor base class non-template member function 
 // definitions
 //---------------------------------------------------------------------------//
 
@@ -25,16 +25,27 @@ ENDLIB97FileHandler::ENDLIB97FileHandler( const std::string &file_name )
   d_endlib_file.open( file_name.c_str() );
 
   // The file name must refer to a valid file
-  testPostCondition( d_endlib_file );
+  testPostcondition( d_endlib_file );
+}
+
+//! Destructor
+ENDLIB97FileHandler::~ENDLIB97FileHandler()
+{
+  if( d_endlib_file.is_open() )
+    d_endlib_file.close();
 }
 
 //! Open an ENDLIB-97 data file
 void ENDLIB97FileHandler::openENDLIB97File( const std::string &file_name )
 {
+  // Make sure that a previously opened file is closed before opening a new one
+  if( d_endlib_file )
+    d_endlib_file.close();
+  
   d_endlib_file.open( file_name.c_str() );
 
   // The file name must refer to a valid file
-  testPostCondition( d_endlib_file );
+  testPostcondition( d_endlib_file );
 }
 
 //! Close an ENDLIB-97 data file
@@ -44,13 +55,13 @@ void ENDLIB97FileHandler::closeENDLIB97File()
 }
 
 //! Check if the file is valid
-inline bool ENDLIB97FileHandler::validFile()
+bool ENDLIB97FileHandler::validFile() const
 {
   return d_endlib_file;
 }
 
 //! Check if the entire file has been read
-inline bool ENDLIB97FileHandler::endOfFile()
+bool ENDLIB97FileHandler::endOfFile() const
 {
   return d_endlib_file.eof();
 }

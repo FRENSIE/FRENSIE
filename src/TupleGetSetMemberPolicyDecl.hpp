@@ -46,7 +46,7 @@ struct TupleGetSetMemberPolicy
   static inline typename T::type get(const T &tuple){ (void)UndefinedTupleGetSetMemberPolicy<T,member>::notDefined(); return 0; }
 
   //! Set the value of the desired tuple member
-  static inline typename void set(T &tuple, tupleMemberType value){ (void)UndefinedTupleGetSetMemberPolicy<T,member>::notDefined(); return 0; }
+  static inline void set(T &tuple, tupleMemberType value){ (void)UndefinedTupleGetSetMemberPolicy<T,member>::notDefined(); return 0; }
 };
 
 } // end FACEMC namespace
