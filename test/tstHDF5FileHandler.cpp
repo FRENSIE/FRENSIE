@@ -102,7 +102,7 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, open_and_read_only_file_test )
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can create the necessary parent groups
 // for a dataset
-TEUCHOS_UNIT_TEST( HDF5FileHandler, create_parent_groups_test )
+TEUCHOS_UNIT_TEST( HDF5FileHandler, create_parent_groups_dataset_test )
 {
   TestingHDF5FileHandler hdf5_file_handler;
 
@@ -113,6 +113,24 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, create_parent_groups_test )
   // Therefore, no TEST macro is needed.
   
   hdf5_file_handler.createParentGroups( "/group1/group2/group3/dataset" );
+
+  hdf5_file_handler.closeHDF5File();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the HDF5FileHandler can create the necessary parent groups
+// for a group
+TEUCHOS_UNIT_TEST( HDF5FileHandler, create_parent_groups_group_test )
+{
+  TestingHDF5FileHandler hdf5_file_handler;
+
+  hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
+  
+  // If the groups are not made successfully, an exception will be thrown
+  // and caught inside of the member function, causing a program exit.
+  // Therefore, no TEST macro is needed.
+  
+  hdf5_file_handler.createParentGroups( "/group1/group2/group3/group4/" );
 
   hdf5_file_handler.closeHDF5File();
 }

@@ -494,9 +494,10 @@ void PhotonDataProcessor::processEADLFile()
 	if( relaxation_shells.size() == 0 )
 	  relaxation_shells.push_back( 0 );
 	
-	d_hdf5_file_handler.writeArrayToGroupAttribute( relaxation_shells,
-							RADIATIVE_TRANSITION_PROBABILITY_ROOT,
-							ATOMIC_RELAXATION_SHELL_ATTRIBUTE
+	d_hdf5_file_handler.writeArrayToGroupAttribute( 
+					      relaxation_shells,
+					      TRANSITION_PROBABILITY_ROOT,
+					      ATOMIC_RELAXATION_SHELL_ATTRIBUTE
 							);
 	relaxation_shells.clear();
 	
@@ -528,28 +529,28 @@ void PhotonDataProcessor::processEADLFile()
     case 91912:
       // Read number of electrons per subshell
 
-      processElectronShellOccupancyData( atomic_number );
+      processShellOccupancyData( atomic_number );
       
       break;
 
     case 91913:
       // Read binding energy per subshell
 
-      processElectronShellBindingEnergyData();
+      processBindingEnergyData();
       
       break;
 
     case 91914:
       // Read kinetic energy per subshell
 
-      processElectronShellKineticEnergyData();
+      processKineticEnergyData();
       
       break;
 
     case 92931:
       // Read radiative transition probability per subshell
 
-      processElectronShellRadiativeTransitionData( electron_shell );
+      processShellRadiativeTransitionData( electron_shell );
 
       relaxation_shells.push_back( electron_shell );
       
@@ -558,7 +559,7 @@ void PhotonDataProcessor::processEADLFile()
     case 92932:
       // Read nonradiative transition probability per subshell
 
-      processElectronShellNonradiativeTransitionData( electron_shell );
+      processShellNonradiativeTransitionData( electron_shell );
       
       break;
 
@@ -658,7 +659,7 @@ void PhotonDataProcessor::processEADLFile()
 }
 
 //! Process the electron shell occupancy data
-void PhotonDataProcessor::processElectronShellOccupancyData( const unsigned int atomic_number )
+void PhotonDataProcessor::processShellOccupancyData( const unsigned int atomic_number )
 {
   Teuchos::Array<Pair<unsigned int,double> > data;
   
@@ -673,7 +674,7 @@ void PhotonDataProcessor::processElectronShellOccupancyData( const unsigned int 
   // Create the Electron Shell Index Map
   Teuchos::Array<Pair<unsigned int,unsigned int > >
     electron_shell_index_map;      
-  createElectronShellIndexMap( atomic_number,
+  createShellIndexMap( atomic_number,
 			       electron_shell_index_map );
   
   FACEMC_ASSERT( (electron_shell_index_map.size() == 
@@ -699,7 +700,7 @@ void PhotonDataProcessor::processElectronShellOccupancyData( const unsigned int 
 }      
 
 //! Process the electron shell binding energy data
-void PhotonDataProcessor::processElectronShellBindingEnergyData()
+void PhotonDataProcessor::processBindingEnergyData()
 {
   Teuchos::Array<Pair<unsigned int,double> > data;
   
@@ -710,7 +711,7 @@ void PhotonDataProcessor::processElectronShellBindingEnergyData()
 }      
 
 //! Process the electron shell kinetic energy data
-void PhotonDataProcessor::processElectronShellKineticEnergyData()
+void PhotonDataProcessor::processKineticEnergyData()
 {
   Teuchos::Array<Pair<unsigned int,double> > data;
   
@@ -721,7 +722,7 @@ void PhotonDataProcessor::processElectronShellKineticEnergyData()
 }      
 
 //! Process the shell radiative transition probability data
-void PhotonDataProcessor::processElectronShellRadiativeTransitionData( const unsigned int shell )
+void PhotonDataProcessor::processShellRadiativeTransitionData( const unsigned int shell )
 {
   Teuchos::Array<Trip<unsigned int,double,double> > data;
   
@@ -740,15 +741,21 @@ void PhotonDataProcessor::processElectronShellRadiativeTransitionData( const uns
     data[0].second = 1.0;
   
   d_hdf5_file_handler.writeArrayToDataSet( data,
-					   RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( shell ) );
+					   TRANSITION_PROBABILITY_ROOT + 
+					   (RADIATIVE_TRANSITION_SUB_ROOT +
+					    uintToShellStr( shell )) );
 
-  d_hdf5_file_handler.writeValueToDataSetAttribute( total_radiative_trans_prob,
-						    RADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( shell ),
-						    TOTAL_RAD_TRANS_PROB_ATTRIBUTE );
+  d_hdf5_file_handler.writeValueToDataSetAttribute( 
+						total_radiative_trans_prob,
+						TRANSITION_PROBABILITY_ROOT + 
+						(RADIATIVE_TRANSITION_SUB_ROOT +
+						 uintToShellStr( shell )),
+						TOTAL_RAD_TRANS_PROB_ATTRIBUTE
+						    );
 }
       
 //! Process the shell nonradiative transition probability data
-void PhotonDataProcessor::processElectronShellNonradiativeTransitionData( const unsigned int shell )
+void PhotonDataProcessor::processShellNonradiativeTransitionData( const unsigned int shell )
 {
   Teuchos::Array<Quad<unsigned int,unsigned int,double,double> > data;
   
@@ -761,7 +768,9 @@ void PhotonDataProcessor::processElectronShellNonradiativeTransitionData( const 
     data[0].third = 1.0;
   
   d_hdf5_file_handler.writeArrayToDataSet( data,
-					   NONRADIATIVE_TRANSITION_PROBABILITY_ROOT + uintToShellStr( shell ) );
+					   TRANSITION_PROBABILITY_ROOT + 
+					   (NONRADIATIVE_TRANSITION_SUB_ROOT +
+					    uintToShellStr( shell )) );
 }      
 
 //! Process Compton files
@@ -879,7 +888,7 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
 }
 
 //! Create the Electron Shell Index Map
-void PhotonDataProcessor::createElectronShellIndexMap( 
+void PhotonDataProcessor::createShellIndexMap( 
 			       unsigned int atomic_number,
 			       Teuchos::Array<Pair<unsigned int,unsigned int> >
 			         &map )

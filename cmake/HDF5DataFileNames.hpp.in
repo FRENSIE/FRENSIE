@@ -66,11 +66,14 @@
 // Define the HDF5 photon data file electron shell kinetic energy location
 #define ELECTRON_SHELL_KINETIC_ENERGY_LOC "/Basic_Data/Electron_Shell_Kinetic_Energy"
 
-// Define the HDF5 photon data file radiative transition probability root
-#define RADIATIVE_TRANSITION_PROBABILITY_ROOT "/Fluorescence_Data/Relaxation/Radiative_Transition_Probability/"
+// Define the HDF5 photon data file transition probability root
+#define TRANSITION_PROBABILITY_ROOT "/Fluorescence_Data/Transition_Probability/"
 
-// Define the HDF5 photon data file nonradiative transition probability root
-#define NONRADIATIVE_TRANSITION_PROBABILITY_ROOT "/Fluorescence_Data/Relaxation//Nonradiative_Transition_Probability/"
+// Define the HDF5 photon data file radiative transition sub root
+#define RADIATIVE_TRANSITION_SUB_ROOT "Radiative/"
+
+// Define the HDF5 photon data file nonradiative transition sub root
+#define NONRADIATIVE_TRANSITION_SUB_ROOT "Nonradiative/"
 
 // Define the HDF5 photon data file atomic relaxation shell attribute name
 #define ATOMIC_RELAXATION_SHELL_ATTRIBUTE "Atomic_Relaxation_Shells"

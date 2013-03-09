@@ -49,7 +49,7 @@ public:
   virtual ~TestingPhotonDataProcessor()
   { /* ... */ }
 
-  using FACEMC::PhotonDataProcessor::createElectronShellIndexMap;
+  using FACEMC::PhotonDataProcessor::createShellIndexMap;
   
 };
 
@@ -67,7 +67,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_1 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 1,
+  photon_data_processor.createShellIndexMap( 1,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -91,7 +91,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_2 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 2,
+  photon_data_processor.createShellIndexMap( 2,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -115,7 +115,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_3 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 3,
+  photon_data_processor.createShellIndexMap( 3,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -143,7 +143,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_4 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 4,
+  photon_data_processor.createShellIndexMap( 4,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -171,7 +171,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_5 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 5,
+  photon_data_processor.createShellIndexMap( 5,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -207,7 +207,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_6 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 6,
+  photon_data_processor.createShellIndexMap( 6,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -243,7 +243,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_7 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 7,
+  photon_data_processor.createShellIndexMap( 7,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -279,7 +279,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_8 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 8,
+  photon_data_processor.createShellIndexMap( 8,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -315,7 +315,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_9 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 9,
+  photon_data_processor.createShellIndexMap( 9,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -351,7 +351,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_10 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 10,
+  photon_data_processor.createShellIndexMap( 10,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -387,7 +387,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_11 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 11,
+  photon_data_processor.createShellIndexMap( 11,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -427,7 +427,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_12 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 12,
+  photon_data_processor.createShellIndexMap( 12,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -467,7 +467,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_13 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 13,
+  photon_data_processor.createShellIndexMap( 13,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -515,7 +515,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_14 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 14,
+  photon_data_processor.createShellIndexMap( 14,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -563,7 +563,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_15 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 15,
+  photon_data_processor.createShellIndexMap( 15,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -611,7 +611,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_16 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 16,
+  photon_data_processor.createShellIndexMap( 16,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -659,7 +659,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_17 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 17,
+  photon_data_processor.createShellIndexMap( 17,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -707,7 +707,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_18 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 18,
+  photon_data_processor.createShellIndexMap( 18,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -755,7 +755,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_19 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 19,
+  photon_data_processor.createShellIndexMap( 19,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -807,7 +807,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_20 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 20,
+  photon_data_processor.createShellIndexMap( 20,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -859,7 +859,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_21 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 21,
+  photon_data_processor.createShellIndexMap( 21,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -919,7 +919,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_22 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 22,
+  photon_data_processor.createShellIndexMap( 22,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -979,7 +979,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_23 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 23,
+  photon_data_processor.createShellIndexMap( 23,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1039,7 +1039,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_24 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 24,
+  photon_data_processor.createShellIndexMap( 24,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1099,7 +1099,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_25 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 25,
+  photon_data_processor.createShellIndexMap( 25,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1159,7 +1159,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_26 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 26,
+  photon_data_processor.createShellIndexMap( 26,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1219,7 +1219,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_27 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 27,
+  photon_data_processor.createShellIndexMap( 27,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1279,7 +1279,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_28 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 28,
+  photon_data_processor.createShellIndexMap( 28,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1339,7 +1339,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_29 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 29,
+  photon_data_processor.createShellIndexMap( 29,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1399,7 +1399,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_30 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 30,
+  photon_data_processor.createShellIndexMap( 30,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1459,7 +1459,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_31 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 31,
+  photon_data_processor.createShellIndexMap( 31,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1527,7 +1527,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_32 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 32,
+  photon_data_processor.createShellIndexMap( 32,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1595,7 +1595,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_34 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 34,
+  photon_data_processor.createShellIndexMap( 34,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1663,7 +1663,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_35 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 35,
+  photon_data_processor.createShellIndexMap( 35,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1731,7 +1731,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_36 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 36,
+  photon_data_processor.createShellIndexMap( 36,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1799,7 +1799,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_37 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 37,
+  photon_data_processor.createShellIndexMap( 37,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1871,7 +1871,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_38 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 38,
+  photon_data_processor.createShellIndexMap( 38,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -1943,7 +1943,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_39 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 39,
+  photon_data_processor.createShellIndexMap( 39,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -2023,7 +2023,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_40 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 40,
+  photon_data_processor.createShellIndexMap( 40,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -2103,7 +2103,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_41 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 41,
+  photon_data_processor.createShellIndexMap( 41,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -2183,7 +2183,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_42 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 42,
+  photon_data_processor.createShellIndexMap( 42,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -2263,7 +2263,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_43 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 43,
+  photon_data_processor.createShellIndexMap( 43,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -2343,7 +2343,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_44 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 44,
+  photon_data_processor.createShellIndexMap( 44,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -2423,7 +2423,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_45 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 45,
+  photon_data_processor.createShellIndexMap( 45,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -2503,7 +2503,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_46 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 46,
+  photon_data_processor.createShellIndexMap( 46,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -2579,7 +2579,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_47 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 47,
+  photon_data_processor.createShellIndexMap( 47,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -2659,7 +2659,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_48 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 48,
+  photon_data_processor.createShellIndexMap( 48,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -2739,7 +2739,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_49 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 49,
+  photon_data_processor.createShellIndexMap( 49,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -2827,7 +2827,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_50 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 50,
+  photon_data_processor.createShellIndexMap( 50,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -2915,7 +2915,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_51 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 51,
+  photon_data_processor.createShellIndexMap( 51,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -3003,7 +3003,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_52 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 52,
+  photon_data_processor.createShellIndexMap( 52,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -3091,7 +3091,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_53 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 53,
+  photon_data_processor.createShellIndexMap( 53,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -3179,7 +3179,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_54 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 54,
+  photon_data_processor.createShellIndexMap( 54,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -3267,7 +3267,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_55 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 55,
+  photon_data_processor.createShellIndexMap( 55,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -3359,7 +3359,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_56 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 56,
+  photon_data_processor.createShellIndexMap( 56,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -3451,7 +3451,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_57 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 57,
+  photon_data_processor.createShellIndexMap( 57,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -3551,7 +3551,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_58 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 58,
+  photon_data_processor.createShellIndexMap( 58,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -3651,7 +3651,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_59 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 59,
+  photon_data_processor.createShellIndexMap( 59,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -3751,7 +3751,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_60 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 60,
+  photon_data_processor.createShellIndexMap( 60,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -3851,7 +3851,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_61 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 61,
+  photon_data_processor.createShellIndexMap( 61,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -3951,7 +3951,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_62 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 62,
+  photon_data_processor.createShellIndexMap( 62,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -4051,7 +4051,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_63 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 63,
+  photon_data_processor.createShellIndexMap( 63,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -4151,7 +4151,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_64 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 64,
+  photon_data_processor.createShellIndexMap( 64,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -4259,7 +4259,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_65 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 65,
+  photon_data_processor.createShellIndexMap( 65,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -4359,7 +4359,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_66 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 66,
+  photon_data_processor.createShellIndexMap( 66,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -4459,7 +4459,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_67 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 67,
+  photon_data_processor.createShellIndexMap( 67,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -4559,7 +4559,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_68 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 68,
+  photon_data_processor.createShellIndexMap( 68,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -4659,7 +4659,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_69 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 69,
+  photon_data_processor.createShellIndexMap( 69,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -4759,7 +4759,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_70 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 70,
+  photon_data_processor.createShellIndexMap( 70,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -4859,7 +4859,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_71 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 71,
+  photon_data_processor.createShellIndexMap( 71,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -4967,7 +4967,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_72 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 72,
+  photon_data_processor.createShellIndexMap( 72,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -5075,7 +5075,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_73 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 73,
+  photon_data_processor.createShellIndexMap( 73,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -5183,7 +5183,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_74 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 74,
+  photon_data_processor.createShellIndexMap( 74,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -5291,7 +5291,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_75 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 75,
+  photon_data_processor.createShellIndexMap( 75,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -5399,7 +5399,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_76 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 76,
+  photon_data_processor.createShellIndexMap( 76,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -5507,7 +5507,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_77 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 77,
+  photon_data_processor.createShellIndexMap( 77,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -5611,7 +5611,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_78 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 78,
+  photon_data_processor.createShellIndexMap( 78,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -5719,7 +5719,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_79 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 79,
+  photon_data_processor.createShellIndexMap( 79,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -5827,7 +5827,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_80 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 80,
+  photon_data_processor.createShellIndexMap( 80,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -5935,7 +5935,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_81 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 81,
+  photon_data_processor.createShellIndexMap( 81,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -6051,7 +6051,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_82 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 82,
+  photon_data_processor.createShellIndexMap( 82,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -6167,7 +6167,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_83 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 83,
+  photon_data_processor.createShellIndexMap( 83,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -6283,7 +6283,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_84 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 84,
+  photon_data_processor.createShellIndexMap( 84,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -6399,7 +6399,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_85 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 85,
+  photon_data_processor.createShellIndexMap( 85,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -6515,7 +6515,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_86 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 86,
+  photon_data_processor.createShellIndexMap( 86,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -6631,7 +6631,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_87 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 87,
+  photon_data_processor.createShellIndexMap( 87,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -6751,7 +6751,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_88 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 88,
+  photon_data_processor.createShellIndexMap( 88,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -6871,7 +6871,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_89 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 89,
+  photon_data_processor.createShellIndexMap( 89,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -6999,7 +6999,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_90 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 90,
+  photon_data_processor.createShellIndexMap( 90,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -7127,7 +7127,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_91 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 91,
+  photon_data_processor.createShellIndexMap( 91,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -7263,7 +7263,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_92 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 92,
+  photon_data_processor.createShellIndexMap( 92,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -7399,7 +7399,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_93 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 93,
+  photon_data_processor.createShellIndexMap( 93,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -7535,7 +7535,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_94 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 94,
+  photon_data_processor.createShellIndexMap( 94,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -7663,7 +7663,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_95 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 95,
+  photon_data_processor.createShellIndexMap( 95,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -7791,7 +7791,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_96 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 96,
+  photon_data_processor.createShellIndexMap( 96,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -7927,7 +7927,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_97 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 97,
+  photon_data_processor.createShellIndexMap( 97,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -8063,7 +8063,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_98 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 98,
+  photon_data_processor.createShellIndexMap( 98,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -8191,7 +8191,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_99 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 99,
+  photon_data_processor.createShellIndexMap( 99,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;
@@ -8319,7 +8319,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_100 )
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map;
 
-  photon_data_processor.createElectronShellIndexMap( 100,
+  photon_data_processor.createShellIndexMap( 100,
 						     map );
 
   Teuchos::Array<FACEMC::Pair<unsigned int, unsigned int> > map_true;

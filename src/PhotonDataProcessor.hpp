@@ -62,6 +62,7 @@ protected:
   void processTotalPhotoelectricCrossSectionData();
   
   //! Process shell integrated photoelectric cross section data
+  // \param shell shell being processed for HDF5 group creation
   void processShellPhotoelectricCrossSectionData( const unsigned int shell );
 
   //! Process the integrated pair production cross section data
@@ -84,25 +85,27 @@ protected:
   void processEADLFile();
 
   //! Process the electron shell occupancy data
-  void processElectronShellOccupancyData( const unsigned int atomic_number );
+  //! \param atomic_number atomic number being processed for shell map func.
+  void processShellOccupancyData( const unsigned int atomic_number );
 
   //! Process the electron shell binding energy data
-  void processElectronShellBindingEnergyData();
+  void processBindingEnergyData();
 
   //! Process the electron shell kinetic energy data
-  void processElectronShellKineticEnergyData();
+  void processKineticEnergyData();
 
   //! Process the shell radiative transition probability data
-  void processElectronShellRadiativeTransitionData( const unsigned int shell );
+  //! \param shell shell being processed for HDF5 group creation
+  void processShellRadiativeTransitionData( const unsigned int shell );
 
   //! Process the shell nonradiative transition probability data
-  void processElectronShellNonradiativeTransitionData( const unsigned int shell );
+  //! \param shell shell being processed for HDF5 group creation
+  void processShellNonradiativeTransitionData( const unsigned int shell );
 
   //--------------------------------------------------------------------------//
   // Compton Profile file processing member functions
   //--------------------------------------------------------------------------//
 
-  
   //! Process Compton files
   void processComptonFiles( unsigned int atomic_number_start = 1,
 			    unsigned int atomic_number_end = 100 );
@@ -123,8 +126,11 @@ protected:
    * \param map An empty Pair array where the index mapping will be
    * stored
    */
-  void createElectronShellIndexMap( unsigned int atomic_number,
-				    Teuchos::Array<Pair<unsigned int,unsigned int> > &map );
+  void createShellIndexMap( unsigned int atomic_number,
+			    Teuchos::Array<Pair<unsigned int,unsigned int> > &map );
+
+  // HDF5 file handler ( This is only protected for testing purposes :( )
+  HDF5FileHandler d_hdf5_file_handler;
 
 private:
   
@@ -146,8 +152,6 @@ private:
   // Maximum energy to read in from data tables
   const double d_energy_max;
 
-  // HDF5 file handler
-  HDF5FileHandler d_hdf5_file_handler;
 };
 
 } // end FACEMC namespace

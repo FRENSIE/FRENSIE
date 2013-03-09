@@ -126,7 +126,7 @@ public:
   // \param attribute_name name that will be given to the attribute
   template<typename T>
   void writeValueToGroupAttribute( const T &value,
-				   const std::string &dataset_location,
+				   const std::string &group_location,
 				   const std::string &attribute_name );
 
   //! Read in HDF5 file group attribute and save the single value
@@ -141,8 +141,8 @@ public:
 
 protected:
 
-  //! Create the parent groups, if necessary, for the dataset
-  void createParentGroups( const std::string &dataset_name );
+  //! Create the parent groups, if necessary, for the specified path
+  void createParentGroups( const std::string &path_name );
 
 private:
   

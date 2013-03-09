@@ -68,17 +68,17 @@ void HDF5FileHandler::closeHDF5File()
   d_hdf5_file.reset();
 }
 
-//! Create the parent groups, if necessary, for the dataset
-void HDF5FileHandler::createParentGroups( const std::string &dataset_name )
+//! Create the parent groups, if necessary, for the specified path
+void HDF5FileHandler::createParentGroups( const std::string &path_name )
 {
   // Separate the group names from the dataset name
   Teuchos::Array<std::string> group_names;
-  unsigned int loc = dataset_name.find( "/", 1 );
+  unsigned int loc = path_name.find( "/", 1 );
   
-  while( loc < dataset_name.size() )
+  while( loc < path_name.size() )
   {
-    group_names.push_back( dataset_name.substr( 0, loc ) );
-    loc = dataset_name.find( "/", loc+1 );
+    group_names.push_back( path_name.substr( 0, loc ) );
+    loc = path_name.find( "/", loc+1 );
   }
   
   // Check that each of the groups has been created and create the group if it 

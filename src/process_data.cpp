@@ -47,8 +47,8 @@ int main( int argc, char* argv[] )
   STD_EXCEPTION_CATCH_AND_EXIT();
   
   // Create the DataProcessor Array
-  Teuchos::Array<Teuchos::RCP<FACEMC::EPDL97DataProcessor> > data_processors;
-  Teuchos::RCP<FACEMC::EPDL97DataProcessor> processor;
+  Teuchos::Array<Teuchos::RCP<FACEMC::DataProcessor> > data_processors;
+  Teuchos::RCP<FACEMC::DataProcessor> processor;
 
   // Create the Photon Data Processor
   if( min_photon_energy == 0.0 )

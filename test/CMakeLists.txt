@@ -25,20 +25,21 @@ ADD_EXECUTABLE(tstPhotonDataProcessorShellMap
   ${SRC}/HDF5FileHandler.cpp
   ${SRC}/PhotonDataProcessor.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-#ADD_EXECUTABLE(tstPhotonDataProcessor
-#  tstPhotonDataProcessor.cpp
-#  ${SRC}/EPDL97DataProcessor.cpp
-#  ${SRC}/HDF5FileHandler.cpp
-#  ${SRC}/PhotonDataProcessor.cpp
-#  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstPhotonDataProcessor
+  tstPhotonDataProcessor.cpp
+  ${SRC}/DataProcessor.cpp
+  ${SRC}/ENDLIB97FileHandler.cpp
+  ${SRC}/HDF5FileHandler.cpp
+  ${SRC}/PhotonDataProcessor.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstBinarySearch
   tstBinarySearch.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-#ADD_EXECUTABLE(tstPhotonDataBasic
-#  tstPhotonDataBasic.cpp
-#  ${SRC}/PhotonDataBasic.cpp
-#  ${SRC}/HDF5FileHandler.cpp
-#  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstPhotonDataBasic
+  tstPhotonDataBasic.cpp
+  ${SRC}/PhotonDataBasic.cpp
+  ${SRC}/HDF5FileHandler.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 
 TARGET_LINK_LIBRARIES(tstAssertion ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstContractException ${TEUCHOS})
@@ -46,9 +47,9 @@ TARGET_LINK_LIBRARIES(tstENDLIB97FileHandler ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstHDF5FileHandler ${TEUCHOS} ${HDF5})
 TARGET_LINK_LIBRARIES(tstDataProcessor ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstPhotonDataProcessorShellMap ${TEUCHOS} ${HDF5})
-#TARGET_LINK_LIBRARIES(tstPhotonDataProcessor ${TEUCHOS} ${HDF5})
+TARGET_LINK_LIBRARIES(tstPhotonDataProcessor ${TEUCHOS} ${HDF5})
 TARGET_LINK_LIBRARIES(tstBinarySearch ${TEUCHOS})
-#TARGET_LINK_LIBRARIES(tstPhotonDataBasic ${TEUCHOS} ${HDF5})
+TARGET_LINK_LIBRARIES(tstPhotonDataBasic ${TEUCHOS} ${HDF5})
 
 ADD_TEST(Assertion_test tstAssertion)
 ADD_TEST(ContractException_test tstContractException)
@@ -56,9 +57,9 @@ ADD_TEST(ENDLIB97FileHandler_test tstENDLIB97FileHandler)
 ADD_TEST(HDF5FileHandler_test tstHDF5FileHandler)
 ADD_TEST(DataProcessor_test tstDataProcessor)
 ADD_TEST(PhotonDataProcessorShellMap_test tstPhotonDataProcessorShellMap)
-#ADD_TEST(PhotonDataProcessor_test tstPhotonDataProcessor)
+ADD_TEST(PhotonDataProcessor_test tstPhotonDataProcessor)
 ADD_TEST(BinarySearch_test tstBinarySearch)
-#ADD_TEST(PhotonDataBasic_test tstPhotonDataBasic)
+ADD_TEST(PhotonDataBasic_test tstPhotonDataBasic)
 
 # Install test files for the EPDL97DataProcessor_test
 FILE(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test_files/*.txt)

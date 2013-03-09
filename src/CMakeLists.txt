@@ -28,7 +28,7 @@ SET(SOURCES
   )
 
 SET(TARGETS
-  #process_data
+  process_data
   ${TARGETS}
   )
 
@@ -38,14 +38,14 @@ IF(CMAKE_VERBOSE_CONFIGURE)
   MESSAGE("TARGETS = ${TARGETS}")
 ENDIF()
 
-#ADD_EXECUTABLE(process_data
-#  process_data.cpp
-#  ENDLIB97FileHandler.cpp
-#  DataProcessor.cpp
-#  PhotonDataProcessor.cpp
-#  HDF5FileHandler.cpp)
+ADD_EXECUTABLE(process_data
+  process_data.cpp
+  ENDLIB97FileHandler.cpp
+  DataProcessor.cpp
+  PhotonDataProcessor.cpp
+  HDF5FileHandler.cpp)
 
-#TARGET_LINK_LIBRARIES(process_data ${TEUCHOS} ${HDF5})
+TARGET_LINK_LIBRARIES(process_data ${TEUCHOS} ${HDF5})
 
 INSTALL(TARGETS ${TARGETS}
   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

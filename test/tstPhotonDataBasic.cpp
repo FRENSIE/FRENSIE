@@ -119,14 +119,14 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, coherent_cross_section_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct form factor cdf
 // value
-TEUCHOS_UNIT_TEST( PhotonDataBasic, form_factor_cdf_test )
-{
-  testingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
-						 ENERGY_MIN,
-						 ENERGY_MAX );
+//TEUCHOS_UNIT_TEST( PhotonDataBasic, form_factor_cdf_test )
+//{
+//  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
+//						 ENERGY_MIN,
+//						 ENERGY_MAX );
     
-  double form_factor_cdf = 
-    test_photon_data_basic.getFormFactorCDF
+//  double form_factor_cdf = 
+//    test_photon_data_basic.getFormFactorCDF
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct incoherent cross
