@@ -154,9 +154,9 @@ double PhotonDataBasic::getFormFactorCDF( const double argument ) const
 								  squared_argument );
   
   double argument_diff = squared_argument - (*lower_bin_boundary).first;
-  double pdf = (*lower_bin_boundary).second;
-  double cdf = (*lower_bin_boundary).fourth;
-  double slope = (*lower_bin_boundary).third;
+  double cdf = (*lower_bin_boundary).second;
+  double pdf = (*lower_bin_boundary).third;
+  double slope = (*lower_bin_boundary).fourth;
   return cdf + pdf*argument_diff + 0.5*slope*argument_diff*argument_diff;
 }
 
@@ -167,15 +167,15 @@ double PhotonDataBasic::getFormFactorArgument( const double cdf_value ) const
   start = d_form_factor.begin();
   end = d_form_factor.end();
 
-  lower_bin_boundary = Search::binarySearchContinuousData<FOURTH>( start,
+  lower_bin_boundary = Search::binarySearchContinuousData<SECOND>( start,
 								   end,
 								   cdf_value );
 
   double argument = (*lower_bin_boundary).first;
-  double pdf = (*lower_bin_boundary).second;
-  double cdf_diff = cdf_value - (*lower_bin_boundary).fourth;
-  double slope = (*lower_bin_boundary).third;
-  return sqrt( argument + (sqrt( pdf*pdf + 2*slope*cdf_diff ))/slope );
+  double cdf_diff = cdf_value - (*lower_bin_boundary).second;
+  double pdf = (*lower_bin_boundary).third;
+  double slope = (*lower_bin_boundary).fourth;
+  return sqrt( argument + (sqrt( pdf*pdf + 2*slope*cdf_diff ) - pdf)/slope );
 }
 
 //! Return the integrated incoherent cross section for a given energy
@@ -295,7 +295,7 @@ double PhotonDataBasic::getTotalCrossSection( const double energy ) const
 }
 
 //! Return the non absoption probability for a given energy
-double PhotonDataBasic::getNonAbsorptionProbability( const double energy ) const
+double PhotonDataBasic::getNonabsorptionProbability( const double energy ) const
 {
   double total_cross_section = 0.0, absorption_cross_section;
   
@@ -316,7 +316,7 @@ double PhotonDataBasic::getNonAbsorptionProbability( const double energy ) const
 }
 
 //! Return the binding energy of electrons in a given shell
-double PhotonDataBasic::getElectronBe( const unsigned int shell ) const
+double PhotonDataBasic::getShellBindingEnergy( const unsigned int shell ) const
 {
   // The shell must be valid
   testPrecondition( d_electron_shell_binding_energy.count( shell ) > 0 );
@@ -325,7 +325,7 @@ double PhotonDataBasic::getElectronBe( const unsigned int shell ) const
 }
 
 //! Return the kinetic energy of electrons in a given shell
-double PhotonDataBasic::getElectronKe( const unsigned int shell ) const
+double PhotonDataBasic::getShellKineticEnergy( const unsigned int shell ) const
 {
   // The shell must be valid
   testPrecondition( d_electron_shell_kinetic_energy.count( shell ) > 0 );

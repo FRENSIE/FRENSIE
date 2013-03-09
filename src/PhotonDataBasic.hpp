@@ -67,13 +67,13 @@ protected:
   double getTotalCrossSection( const double energy ) const;
 
   //! Return the non absorption probability for a given energy
-  double getNonAbsorptionProbability( const double energy ) const;
+  double getNonabsorptionProbability( const double energy ) const;
 
   //! Return the binding energy of electrons in a given shell 
-  double getElectronBe( const unsigned int shell ) const;
+  double getShellBindingEnergy( const unsigned int shell ) const;
   
   //! Return the kinetic energy of electrons in a given shell
-  double getElectronKe( const unsigned int shell ) const;
+  double getShellKineticEnergy( const unsigned int shell ) const;
   
 private:
 
@@ -82,6 +82,7 @@ private:
   typedef Teuchos::ArrayRCP<Trip<double,double,double> > CrossSectionArray;
   typedef Teuchos::ArrayRCP<Quad<double,double,double,double> > FormFactorArray;
   typedef std::map<unsigned int,double> ShellMap;
+  //@}
   
   // Atomic Number
   unsigned int d_atomic_number;

@@ -22,11 +22,22 @@
 #define ENERGY_MIN MIN_ENERGY_DEFAULT
 #define ENERGY_MAX MAX_ENERGY_DEFAULT
 #define ENERGY 5.0
-#define ARGUMENT 4500.0
-#define COHERENT_CROSS_SECTION 1.8504629649156e-7
-#define FORM_FACTOR_CDF 
-#define INCOHERENT_CROSS_SECTION 0.082823442217664
-#define TOL 1e-12
+#define ARGUMENT 1.025e6
+#define CDF_VALUE 0.25
+#define SHELL 1
+#define COHERENT_CROSS_SECTION_REF 1.8504629649156e-7
+#define FORM_FACTOR_CDF_REF 0.0034700244171004
+#define FORM_FACTOR_ARGUMENT_REF 9.5512334317395e6
+#define INCOHERENT_CROSS_SECTION_REF 0.082823442217664
+#define SCATTERING_FUNCTION_REF 4.6319662375216e-3
+#define PHOTOELECTRIC_CROSS_SECTION_REF 1.8676047778121e-10
+#define PAIR_PRODUCTION_CROSS_SECTION_REF 1.102e-3
+#define TRIPLET_PRODUCTION_CROSS_SECTION_REF 3.283e-4
+#define TOTAL_CROSS_SECTION_REF .08425392745072
+#define NONABSORPTION_PROB_REF 0.99999999778336
+#define BINDING_ENERGY_REF 1.3610e-5
+#define KINETIC_ENERGY_REF 1.3610e-5
+#define TOL 1e-11
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -56,9 +67,9 @@ public:
   using FACEMC::PhotonDataBasic::getPairProductionCrossSection;
   using FACEMC::PhotonDataBasic::getTripletProductionCrossSection;
   using FACEMC::PhotonDataBasic::getTotalCrossSection;
-  using FACEMC::PhotonDataBasic::getNonAbsorptionProbability;
-  using FACEMC::PhotonDataBasic::getElectronBe;
-  using FACEMC::PhotonDataBasic::getElectronKe;
+  using FACEMC::PhotonDataBasic::getNonabsorptionProbability;
+  using FACEMC::PhotonDataBasic::getShellBindingEnergy;
+  using FACEMC::PhotonDataBasic::getShellKineticEnergy;
 };
 
 //---------------------------------------------------------------------------//
@@ -112,21 +123,43 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, coherent_cross_section_test )
     test_photon_data_basic.getCoherentCrossSection( ENERGY );
   
   TEST_FLOATING_EQUALITY( coherent_cross_section,
-			  COHERENT_CROSS_SECTION,
+			  COHERENT_CROSS_SECTION_REF,
 			  TOL );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct form factor cdf
 // value
-//TEUCHOS_UNIT_TEST( PhotonDataBasic, form_factor_cdf_test )
-//{
-//  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
-//						 ENERGY_MIN,
-//						 ENERGY_MAX );
+TEUCHOS_UNIT_TEST( PhotonDataBasic, form_factor_cdf_test )
+{
+  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
+						 ENERGY_MIN,
+						 ENERGY_MAX );
     
-//  double form_factor_cdf = 
-//    test_photon_data_basic.getFormFactorCDF
+  double form_factor_cdf = 
+    test_photon_data_basic.getFormFactorCDF( ARGUMENT );
+
+  TEST_FLOATING_EQUALITY( form_factor_cdf,
+			  FORM_FACTOR_CDF_REF,
+			  TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the PhotonDataBasic class returns the correct form factor 
+// argument value
+TEUCHOS_UNIT_TEST( PhotonDataBasic, form_factor_argument_test )
+{
+  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
+						 ENERGY_MIN,
+						 ENERGY_MAX );
+    
+  double form_factor_argument = 
+    test_photon_data_basic.getFormFactorArgument( CDF_VALUE );
+
+  TEST_FLOATING_EQUALITY( form_factor_argument,
+			  FORM_FACTOR_ARGUMENT_REF,
+			  TOL );
+}
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct incoherent cross
@@ -141,7 +174,141 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, incoherent_cross_section_test )
     test_photon_data_basic.getIncoherentCrossSection( ENERGY );
 
   TEST_FLOATING_EQUALITY( incoherent_cross_section,
-			  INCOHERENT_CROSS_SECTION,
+			  INCOHERENT_CROSS_SECTION_REF,
+			  TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the PhotonDataBasic class returns the correct scattering function
+// value
+TEUCHOS_UNIT_TEST( PhotonDataBasic, scattering_function_test )
+{
+  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
+						 ENERGY_MIN,
+						 ENERGY_MAX );
+  
+  double scattering_function_value = 
+    test_photon_data_basic.getScatteringFunction( ARGUMENT );
+
+  TEST_FLOATING_EQUALITY( scattering_function_value,
+			  SCATTERING_FUNCTION_REF,
+			  TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the PhotonDataBasic class returns the correct photoelectric cross
+// section
+TEUCHOS_UNIT_TEST( PhotonDataBasic, photoelectric_cross_section_test )
+{
+  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
+						 ENERGY_MIN,
+						 ENERGY_MAX );
+  
+  double photoelectric_cross_section = 
+    test_photon_data_basic.getPhotoelectricCrossSection( ENERGY );
+
+  TEST_FLOATING_EQUALITY( photoelectric_cross_section,
+			  PHOTOELECTRIC_CROSS_SECTION_REF,
+			  TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the PhotonDataBasic class returns the correct pair production 
+// cross section
+TEUCHOS_UNIT_TEST( PhotonDataBasic, pair_production_cross_section_test )
+{
+  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
+						 ENERGY_MIN,
+						 ENERGY_MAX );
+  
+  double pair_production_cross_section = 
+    test_photon_data_basic.getPairProductionCrossSection( ENERGY );
+
+  TEST_FLOATING_EQUALITY( pair_production_cross_section,
+			  PAIR_PRODUCTION_CROSS_SECTION_REF,
+			  TOL );
+}
+
+
+//---------------------------------------------------------------------------//
+// Check that the PhotonDataBasic class returns the correct triplet production 
+// cross section
+TEUCHOS_UNIT_TEST( PhotonDataBasic, triplet_production_cross_section_test )
+{
+  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
+						 ENERGY_MIN,
+						 ENERGY_MAX );
+  
+  double triplet_production_cross_section = 
+    test_photon_data_basic.getTripletProductionCrossSection( ENERGY );
+
+  TEST_FLOATING_EQUALITY( triplet_production_cross_section,
+			  TRIPLET_PRODUCTION_CROSS_SECTION_REF,
+			  TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the PhotonDataBasic class returns the correct total cross section
+TEUCHOS_UNIT_TEST( PhotonDataBasic, total_cross_section_test )
+{
+  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
+						 ENERGY_MIN,
+						 ENERGY_MAX );
+  
+  double total_cross_section = 
+    test_photon_data_basic.getTotalCrossSection( ENERGY );
+
+  TEST_FLOATING_EQUALITY( total_cross_section,
+			  TOTAL_CROSS_SECTION_REF,
+			  TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the PhotonDataBasic class returns the correct nonabsorption
+// probability
+TEUCHOS_UNIT_TEST( PhotonDataBasic, nonabsoprtion_probability_test )
+{
+  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
+						 ENERGY_MIN,
+						 ENERGY_MAX );
+  
+  double nonabsorption_probability = 
+    test_photon_data_basic.getNonabsorptionProbability( ENERGY );
+
+  TEST_FLOATING_EQUALITY( nonabsorption_probability,
+			  NONABSORPTION_PROB_REF,
+			  TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the PhotonDataBasic class returns the correct binding energy
+TEUCHOS_UNIT_TEST( PhotonDataBasic, binding_energy_test )
+{
+  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
+						 ENERGY_MIN,
+						 ENERGY_MAX );
+  
+  double binding_energy = 
+    test_photon_data_basic.getShellBindingEnergy( SHELL );
+
+  TEST_FLOATING_EQUALITY( binding_energy,
+			  BINDING_ENERGY_REF,
+			  TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the PhotonDataBasic class returns the correct kinetic energy
+TEUCHOS_UNIT_TEST( PhotonDataBasic, kinetic_energy_test )
+{
+  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
+						 ENERGY_MIN,
+						 ENERGY_MAX );
+  
+  double kinetic_energy = 
+    test_photon_data_basic.getShellKineticEnergy( SHELL );
+
+  TEST_FLOATING_EQUALITY( kinetic_energy,
+			  KINETIC_ENERGY_REF,
 			  TOL );
 }
 
