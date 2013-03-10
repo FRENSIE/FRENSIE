@@ -19,6 +19,7 @@
 // FACEMC Includes
 #include "HDF5ArrayPolicyDecl.hpp"
 #include "FACEMC_Assertion.hpp"
+#include "ContractException.hpp"
 
 
 namespace FACEMC{
@@ -54,11 +55,11 @@ template<typename T>
 struct HDF5ArrayPolicy<T,Teuchos::TwoDArray>
 {
   static inline T* getRawPtr(Teuchos::TwoDArray<T> &array) { return array[0].getRawPtr(); }
-  static inline const T* getRawPtr(const Teuchos::TwoDArray<T> &array) { return array.getDataArray().getRawPtr(); }
+  static inline const T* getRawPtr(const Teuchos::TwoDArray<T> &array) { return array[0].getRawPtr(); }
   // Assumes that the number of columns is > 0
   static void resize(Teuchos::TwoDArray<T> &array, typename Teuchos::TwoDArray<T>::size_type n) 
   { 
-    FACEMC_ASSERT_ALWAYS( array.getNumCols() > 0 );
+    testPrecondition( array.getNumCols() > 0 );
     array.resizeRows( ceil( n/array.getNumCols() ) ); 
   }
   static inline typename Teuchos::TwoDArray<T>::size_type size(const Teuchos::TwoDArray<T> &array) { return array.getNumRows()*array.getNumCols(); };

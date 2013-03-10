@@ -23,6 +23,7 @@
 #define ENERGY_MAX MAX_ENERGY_DEFAULT
 #define ENERGY 5.0
 #define ARGUMENT 1.025e6
+#define ARGUMENT_2 5.0
 #define CDF_VALUE 0.25
 #define SHELL 1
 #define COHERENT_CROSS_SECTION_REF 1.8504629649156e-7
@@ -191,6 +192,11 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, scattering_function_test )
   TEST_FLOATING_EQUALITY( scattering_function_value,
 			  SCATTERING_FUNCTION_REF,
 			  TOL );
+
+  scattering_function_value = 
+    test_photon_data_basic.getScatteringFunction( ARGUMENT_2 );
+  
+  TEST_EQUALITY( scattering_function_value, 0.0 );
 }
 
 //---------------------------------------------------------------------------//

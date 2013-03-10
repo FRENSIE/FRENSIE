@@ -85,10 +85,6 @@
 // Define the HDF5 photon data file compton profile cdf location
 #define COMPTON_PROFILE_CDF_LOC "/Doppler_Data/Compton_Profile_CDF"
 
-// Define the HDF5 photon data file compton profile momentum projections 
-// attribute name
-#define COMPTON_PROFILE_MOMENTUM_PROJECTIONS_ATTRIBUTE "Momentum_Projections"
-
 //---------------------------------------------------------------------------//
 // Adjoint Photon data file
 //---------------------------------------------------------------------------//

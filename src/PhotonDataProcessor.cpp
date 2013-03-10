@@ -445,13 +445,13 @@ void PhotonDataProcessor::processScatteringFunctionData()
   
   d_epdl_file_handler.readTwoColumnTable( data );
   
-  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );	       
-  
-  // The first data point needs to be erased since it is always
-  // (0.0, 0.0)
-  data.erase( data.begin() );
+  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
   
   calculateSlopes<FIRST,SECOND,THIRD>( data );
+  
+  // The first data point is always (0.0, 0.0). The slope will not
+  // be calculated correctly on the log-log scale.
+  data[0].third = 0.0;
   
   d_hdf5_file_handler.writeArrayToDataSet( data,
 					   SCATTERING_FUNCTION_LOC );
@@ -805,38 +805,39 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
   std::string compton_file_name;
 
   // Compton Profile Q values
+  double fine_structure_const = 7.2973525698e-3; // 2010 CODATA Recommendation
   Teuchos::Array<double> q_values( 31 );
-  q_values[0] = 0.00;
-  q_values[1] = 0.05;
-  q_values[2] = 0.10;
-  q_values[3] = 0.15;
-  q_values[4] = 0.20;
-  q_values[5] = 0.30;
-  q_values[6] = 0.40;
-  q_values[7] = 0.50;
-  q_values[8] = 0.60;
-  q_values[9] = 0.70;
-  q_values[10] = 0.80;
-  q_values[11] = 1.00;
-  q_values[12] = 1.20;
-  q_values[13] = 1.40;
-  q_values[14] = 1.60;
-  q_values[15] = 1.80;
-  q_values[16] = 2.00;
-  q_values[17] = 2.40;
-  q_values[18] = 3.00;
-  q_values[19] = 4.00;
-  q_values[20] = 5.00;
-  q_values[21] = 6.00;
-  q_values[22] = 7.00;
-  q_values[23] = 8.00;
-  q_values[24] = 10.00;
-  q_values[25] = 15.00;
-  q_values[26] = 20.00;
-  q_values[27] = 30.00;
-  q_values[28] = 40.00;
-  q_values[29] = 60.00;
-  q_values[30] = 100.00;
+  q_values[0] = 0.00*fine_structure_const;
+  q_values[1] = 0.05*fine_structure_const;
+  q_values[2] = 0.10*fine_structure_const;
+  q_values[3] = 0.15*fine_structure_const;
+  q_values[4] = 0.20*fine_structure_const;
+  q_values[5] = 0.30*fine_structure_const;
+  q_values[6] = 0.40*fine_structure_const;
+  q_values[7] = 0.50*fine_structure_const;
+  q_values[8] = 0.60*fine_structure_const;
+  q_values[9] = 0.70*fine_structure_const;
+  q_values[10] = 0.80*fine_structure_const;
+  q_values[11] = 1.00*fine_structure_const;
+  q_values[12] = 1.20*fine_structure_const;
+  q_values[13] = 1.40*fine_structure_const;
+  q_values[14] = 1.60*fine_structure_const;
+  q_values[15] = 1.80*fine_structure_const;
+  q_values[16] = 2.00*fine_structure_const;
+  q_values[17] = 2.40*fine_structure_const;
+  q_values[18] = 3.00*fine_structure_const;
+  q_values[19] = 4.00*fine_structure_const;
+  q_values[20] = 5.00*fine_structure_const;
+  q_values[21] = 6.00*fine_structure_const;
+  q_values[22] = 7.00*fine_structure_const;
+  q_values[23] = 8.00*fine_structure_const;
+  q_values[24] = 10.00*fine_structure_const;
+  q_values[25] = 15.00*fine_structure_const;
+  q_values[26] = 20.00*fine_structure_const;
+  q_values[27] = 30.00*fine_structure_const;
+  q_values[28] = 40.00*fine_structure_const;
+  q_values[29] = 60.00*fine_structure_const;
+  q_values[30] = 100.00*fine_structure_const;
 
   for( unsigned int atomic_number = atomic_number_start; 
        atomic_number <= atomic_number_end; ++atomic_number )
@@ -886,22 +887,8 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
 					 compton_profile_shell_cdf );
     }
 
-    // To save memory, the q_values will be extracted from the array
-    Teuchos::Array<Trip<double,double,double> > 
-      compton_profile_cdfs_reduced( compton_profile_cdfs.size() );
-    for( unsigned int i = 0; i < compton_profile_cdfs.size(); ++i )
-    {
-      compton_profile_cdfs_reduced[i].first = compton_profile_cdfs[i].second;
-      compton_profile_cdfs_reduced[i].second = compton_profile_cdfs[i].third;
-      compton_profile_cdfs_reduced[i].third = compton_profile_cdfs[i].fourth;
-    }
-
-    d_hdf5_file_handler.writeArrayToDataSet( compton_profile_cdfs_reduced,
+    d_hdf5_file_handler.writeArrayToDataSet( compton_profile_cdfs,
 					     COMPTON_PROFILE_CDF_LOC );
-
-    d_hdf5_file_handler.writeArrayToDataSetAttribute( q_values,
-						      COMPTON_PROFILE_CDF_LOC,
-						      COMPTON_PROFILE_MOMENTUM_PROJECTIONS_ATTRIBUTE );
     
     // Close the Compton Profile stream
     compton_file_stream.close();

@@ -15,6 +15,7 @@ SET(HEADERS
   TupleGetSetMemberPolicy.hpp
   PhotonDataBasic.hpp
   PhotonDataFluorescence.hpp
+  PhotonDataDopplerBroadening.hpp
   ${HEADERS}
   )
 
@@ -26,6 +27,7 @@ SET(SOURCES
   process_data.cpp
   PhotonDataBasic.cpp
   PhotonDataFluorescence.cpp
+  PhotonDataDopplerBroadening.cpp
   ${SOURCES}
   )
 

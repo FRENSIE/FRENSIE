@@ -507,22 +507,26 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_scattering_function_data )
   // Fill the reference data array
   Teuchos::Array<FACEMC::Trip<double,double,double> > ref_data;
   ref_data.resize( data.size() );
+
+  ref_data[0].first = std::numeric_limits<double>::infinity()*-1;
+  ref_data[0].second = std::numeric_limits<double>::infinity()*-1;
+  ref_data[0].third = 0.0;
   
-  ref_data[0].first = 2.302585092994;
-  ref_data[0].second = -27.183135291936;
-  ref_data[0].third = 1.9999999999999;
+  ref_data[1].first = 2.302585092994;
+  ref_data[1].second = -27.183135291936;
+  ref_data[1].third = 1.9999999999999;
 
-  ref_data[1].first = 4.6051701859881;
-  ref_data[1].second = -22.577965105948;
-  ref_data[1].third = 2.0;
+  ref_data[2].first = 4.6051701859881;
+  ref_data[2].second = -22.577965105948;
+  ref_data[2].third = 2.0;
 
-  ref_data[2].first = 6.9077552789821;
-  ref_data[2].second = -17.97279491996;
-  ref_data[2].third = 1.9999999999999;
+  ref_data[3].first = 6.9077552789821;
+  ref_data[3].second = -17.97279491996;
+  ref_data[3].third = 1.9999999999999;
 
-  ref_data[3].first = 9.2103403719762;
-  ref_data[3].second = -13.367624733972;
-  ref_data[3].third = 0.0;
+  ref_data[4].first = 9.2103403719762;
+  ref_data[4].second = -13.367624733972;
+  ref_data[4].third = 0.0;
 
   TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, ref_data, TOL );
 }

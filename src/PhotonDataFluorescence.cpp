@@ -24,10 +24,10 @@ namespace FACEMC{
 
 //! Constructor
 PhotonDataFluorescence::PhotonDataFluorescence( unsigned int atomic_number,
-					       double energy_min,
-					       double energy_max )
+						double energy_min,
+						double energy_max )
 {
-  HDF5FileHandler hdf5_file_handler;
+  HDF5FileHandler photon_data_file;
 
   // Open the HDF5 data file
   std::ostringstream file_number;
@@ -35,29 +35,29 @@ PhotonDataFluorescence::PhotonDataFluorescence( unsigned int atomic_number,
   std::string file_name = FACEMC_DATA_DIRECTORY;
   file_name += PHOTON_DATA_FILE_PREFIX + file_number.str() + DATA_FILE_SUFFIX;
 
-  hdf5_file_handler.openHDF5FileAndReadOnly( file_name );
+  photon_data_file.openHDF5FileAndReadOnly( file_name );
 
   // Load the energy limits of the data file and check them against the problem
   // energy limits
   Teuchos::Array<double> energy_limits;
-  hdf5_file_handler.readArrayFromGroupAttribute( energy_limits,
-						 ROOT,
-						 ENERGY_LIMITS_ATTRIBUTE );
+  photon_data_file.readArrayFromGroupAttribute( energy_limits,
+						ROOT,
+						ENERGY_LIMITS_ATTRIBUTE );
   FACEMC_ASSERT_ALWAYS_MSG( (energy_limits[0] >= energy_min),
 			    "Fatal Error: The minimum problem energy is less than the minimum data file energy. Reprocess the data files." );
   FACEMC_ASSERT_ALWAYS_MSG( (energy_limits[1] <= energy_max),
 			    "Fatal Error: The maximum problem energy is greater than the maximum data file energy. Reprocess the data files." );
 
   // Load the integrated photoelectric cross section data
-  hdf5_file_handler.readArrayFromDataSet( 
+  photon_data_file.readArrayFromDataSet( 
 				 d_total_integrated_photoelectric_cross_section,
 				 PHOTOELECTRIC_CROSS_SECTION_LOC );
   
   // Load the photoelectric shell attribute
   Teuchos::Array<unsigned int> photoelectric_shells;
-  hdf5_file_handler.readArrayFromGroupAttribute( photoelectric_shells,
-						 PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT,
-						 PHOTOELECTRIC_SHELL_ATTRIBUTE );
+  photon_data_file.readArrayFromGroupAttribute( photoelectric_shells,
+						PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT,
+						PHOTOELECTRIC_SHELL_ATTRIBUTE );
 
   // Load the photoelectric shell data
   CrossSectionArray photoelectric_cross_section_shell;
@@ -65,8 +65,8 @@ PhotonDataFluorescence::PhotonDataFluorescence( unsigned int atomic_number,
   {
     std::ostringstream shell;
     shell << photoelectric_shells[i];
-    hdf5_file_handler.readArrayFromDataSet( photoelectric_cross_section_shell,
-					    PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + shell.str() );
+    photon_data_file.readArrayFromDataSet( photoelectric_cross_section_shell,
+					   PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + shell.str() );
     
     d_shell_integrated_photoelectric_cross_section[photoelectric_shells[i]] =
       photoelectric_cross_section_shell;
@@ -76,9 +76,9 @@ PhotonDataFluorescence::PhotonDataFluorescence( unsigned int atomic_number,
 
   // Load the atomic relaxation shell attribute
   Teuchos::Array<unsigned int> atomic_relaxation_shells;
-  hdf5_file_handler.readArrayFromGroupAttribute( atomic_relaxation_shells,
-						 TRANSITION_PROBABILITY_ROOT,
-						 ATOMIC_RELAXATION_SHELL_ATTRIBUTE );
+  photon_data_file.readArrayFromGroupAttribute( atomic_relaxation_shells,
+						TRANSITION_PROBABILITY_ROOT,
+						ATOMIC_RELAXATION_SHELL_ATTRIBUTE );
 
   // Load the radiative transition data if there is any
   // ( data will only be present if atomic_number >= 6 )
@@ -90,18 +90,18 @@ PhotonDataFluorescence::PhotonDataFluorescence( unsigned int atomic_number,
     {
       std::ostringstream shell;
       shell << atomic_relaxation_shells[i];
-      hdf5_file_handler.readValueFromDataSetAttribute( total_rad_trans_prob_shell,
-						       TRANSITION_PROBABILITY_ROOT +
-						       (RADIATIVE_TRANSITION_SUB_ROOT + shell.str()),
-						       TOTAL_RAD_TRANS_PROB_ATTRIBUTE );
+      photon_data_file.readValueFromDataSetAttribute( total_rad_trans_prob_shell,
+						      TRANSITION_PROBABILITY_ROOT +
+						      (RADIATIVE_TRANSITION_SUB_ROOT + shell.str()),
+						      TOTAL_RAD_TRANS_PROB_ATTRIBUTE );
       
       d_total_radiative_transition_probability[atomic_relaxation_shells[i]] =
 	total_rad_trans_prob_shell;
       
-      hdf5_file_handler.readArrayFromDataSet( radiative_transition_shell,
-					      TRANSITION_PROBABILITY_ROOT +
-					      (RADIATIVE_TRANSITION_SUB_ROOT +
-					       shell.str()) );
+      photon_data_file.readArrayFromDataSet( radiative_transition_shell,
+					     TRANSITION_PROBABILITY_ROOT +
+					     (RADIATIVE_TRANSITION_SUB_ROOT +
+					      shell.str()) );
 
       d_radiative_transitions[atomic_relaxation_shells[i]] = 
 	radiative_transition_shell;
@@ -119,9 +119,9 @@ PhotonDataFluorescence::PhotonDataFluorescence( unsigned int atomic_number,
     {
       std::ostringstream shell;
       shell << atomic_relaxation_shells[i];
-      hdf5_file_handler.readArrayFromDataSet( nonradiative_transition_shell,
-					      TRANSITION_PROBABILITY_ROOT +
-					      (NONRADIATIVE_TRANSITION_SUB_ROOT +
+      photon_data_file.readArrayFromDataSet( nonradiative_transition_shell,
+					     TRANSITION_PROBABILITY_ROOT +
+					     (NONRADIATIVE_TRANSITION_SUB_ROOT +
 					       shell.str()) );
 
       d_nonradiative_transitions[atomic_relaxation_shells[i]] = 
@@ -134,15 +134,15 @@ PhotonDataFluorescence::PhotonDataFluorescence( unsigned int atomic_number,
   // Load the electron shell binding energy
   Teuchos::Array<Pair<unsigned int,double> > 
     raw_electron_shell_binding_energy;
-  hdf5_file_handler.readArrayFromDataSet( raw_electron_shell_binding_energy,
-					  ELECTRON_SHELL_BINDING_ENERGY_LOC );
+  photon_data_file.readArrayFromDataSet( raw_electron_shell_binding_energy,
+					 ELECTRON_SHELL_BINDING_ENERGY_LOC );
   for( unsigned int i = 0; i < raw_electron_shell_binding_energy.size(); ++i )
   {
     d_electron_shell_binding_energy[raw_electron_shell_binding_energy[i].first]
       = raw_electron_shell_binding_energy[i].second;
   }
 
-  hdf5_file_handler.closeHDF5File();
+  photon_data_file.closeHDF5File();
 }
 
 //! Return the shell with a vacancy after a photoelectric event
@@ -150,6 +150,11 @@ unsigned int PhotonDataFluorescence::getPhotoelectricVacancyShell(
 						  const double energy,
 						  const double cdf_value ) const
 {
+  // The energy must be valid
+  testPrecondition( energy > 0.0 );
+  // The cdf value must be valid
+  testPrecondition( cdf_value >= 0.0 && cdf_value <= 1.0 );
+  
   double log_energy = log( energy );
   unsigned int shell = 0;
 
@@ -232,6 +237,8 @@ Pair<unsigned int, double> PhotonDataFluorescence::getShellRadiativeTransitionDa
 {
   // The shell must be valid
   testPrecondition( d_electron_shell_binding_energy.count( shell ) > 0 );
+  // The cdf value must be valid
+  testPrecondition( cdf_value >= 0.0 && cdf_value <= 1.0 );
 
   Pair<unsigned int, double> transition_data;
 
@@ -272,6 +279,8 @@ Trip<unsigned int, unsigned int, double> PhotonDataFluorescence::getShellNonradi
 {
   // The shell must be valid
   testPrecondition( d_nonradiative_transitions.count( shell ) > 0 );
+  // The cdf value must be valid
+  testPrecondition( cdf_value >= 0.0 && cdf_value <= 1.0 );
 
   Trip<unsigned int, unsigned int, double> transition_data;
 

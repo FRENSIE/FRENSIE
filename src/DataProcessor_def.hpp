@@ -226,7 +226,7 @@ void DataProcessor::swapTupleMemberData( const Array<Tuple1> &data,
 template<typename T>
 inline T DataProcessor::LogLogDataProcessingPolicy::processIndependentVar( const T indep_var )
 {
-  if( indep_var > 0 )
+  if( indep_var >= 0 )
     return static_cast<T>( log( static_cast<double>(indep_var) ) );
   else
     return 0;
@@ -236,7 +236,7 @@ inline T DataProcessor::LogLogDataProcessingPolicy::processIndependentVar( const
 template<typename T>
 inline T DataProcessor::LogLogDataProcessingPolicy::processDependentVar( const T dep_var )
 {
-  if( dep_var > 0 )
+  if( dep_var >= 0 )
     return static_cast<T>( log( static_cast<double>(dep_var) ) );
   else
     return 0;

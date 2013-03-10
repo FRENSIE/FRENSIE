@@ -52,8 +52,8 @@ public:
 				      energy_max )
   { /* ... */ }
 
-  //~TestingPhotonDataFluoresence()
-  //{ /* ... */ }
+  virtual ~TestingPhotonDataFluorescence()
+  { /* ... */ }
 
   using FACEMC::PhotonDataFluorescence::getPhotoelectricVacancyShell;
   using FACEMC::PhotonDataFluorescence::getShellRadiativeTransitionProbability;

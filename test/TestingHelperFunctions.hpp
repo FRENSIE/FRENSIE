@@ -16,6 +16,30 @@
 // FACEMC Includes
 #include "Tuple.hpp"
 
+// Define a new Macro for the Teuchos Unit Test Harness for comparing
+// Pairs of ordinal data types
+#define TEST_PAIR_EQUALITY( t1, t2 )					\
+  {									\
+    const bool result = Teuchos::comparePairs(t1,#t1,t2,#t2,0.0,out);	\
+    if( !result ) success = false;					\
+  }
+
+// Define a new Macro for the Teuchos Unit Test Harness for comparing
+// Triplets of ordinal data types
+#define TEST_TRIP_EQUALITY( t1, t2 )					\
+  {									\
+    const bool result = Teuchos::compareTrips(t1,#t1,t2,#t2,0.0,out);	\
+    if( !result) success = false;					\
+  }
+
+// Define a new Macro for the Teuchos Unit Test Harness for comparing
+// Quadruplets of ordinal data types
+#define TEST_QUAD_EQUALITY( t1, t2 )					\
+  {									\
+    const bool result = Teuchos::compareQuads(t1,#t1,t2,#t2,0.0,out);	\
+    if( !result) success = false;					\
+  }
+
 // Define a new Macro for the Teuchos Unit Test Harness for comparing 
 // Pairs of floating point data types
 #define TEST_FLOATING_PAIR_EQUALITY( t1, t2, tol )		      \
