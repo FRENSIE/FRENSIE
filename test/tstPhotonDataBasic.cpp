@@ -36,8 +36,6 @@
 #define TRIPLET_PRODUCTION_CROSS_SECTION_REF 3.283e-4
 #define TOTAL_CROSS_SECTION_REF .08425392745072
 #define NONABSORPTION_PROB_REF 0.99999999778336
-#define BINDING_ENERGY_REF 1.3610e-5
-#define KINETIC_ENERGY_REF 1.3610e-5
 #define TOL 1e-11
 
 //---------------------------------------------------------------------------//
@@ -59,14 +57,6 @@ public:
 
   using FACEMC::PhotonDataBasic::getAtomicNumber;
   using FACEMC::PhotonDataBasic::getAtomicWeight;
-  using FACEMC::PhotonDataBasic::getCoherentCrossSection;
-  using FACEMC::PhotonDataBasic::getFormFactorCDF;
-  using FACEMC::PhotonDataBasic::getFormFactorArgument;
-  using FACEMC::PhotonDataBasic::getIncoherentCrossSection;
-  using FACEMC::PhotonDataBasic::getScatteringFunction;
-  using FACEMC::PhotonDataBasic::getPhotoelectricCrossSection;
-  using FACEMC::PhotonDataBasic::getPairProductionCrossSection;
-  using FACEMC::PhotonDataBasic::getTripletProductionCrossSection;
   using FACEMC::PhotonDataBasic::getTotalCrossSection;
   using FACEMC::PhotonDataBasic::getNonabsorptionProbability;
 };

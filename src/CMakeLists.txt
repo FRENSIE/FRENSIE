@@ -16,6 +16,7 @@ SET(HEADERS
   PhotonDataBasic.hpp
   PhotonDataFluorescence.hpp
   PhotonDataDopplerBroadening.hpp
+  PhotonData.hpp
   ${HEADERS}
   )
 

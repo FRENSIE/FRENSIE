@@ -44,14 +44,19 @@ ADD_EXECUTABLE(tstPhotonDataFluorescence
   tstPhotonDataFluorescence.cpp
   ${SRC}/PhotonDataFluorescence.cpp
   ${SRC}/HDF5FileHandler.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN}
-)
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstPhotonDataDopplerBroadening
   tstPhotonDataDopplerBroadening.cpp
   ${SRC}/PhotonDataDopplerBroadening.cpp
   ${SRC}/HDF5FileHandler.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN}
-)
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstPhotonData
+  tstPhotonData.cpp
+  ${SRC}/PhotonDataBasic.cpp
+  ${SRC}/PhotonDataFluorescence.cpp
+  ${SRC}/PhotonDataDopplerBroadening.cpp
+  ${SRC}/HDF5FileHandler.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 
 TARGET_LINK_LIBRARIES(tstAssertion ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstContractException ${TEUCHOS})
@@ -64,6 +69,7 @@ TARGET_LINK_LIBRARIES(tstBinarySearch ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstPhotonDataBasic ${TEUCHOS} ${HDF5})
 TARGET_LINK_LIBRARIES(tstPhotonDataFluorescence ${TEUCHOS} ${HDF5})
 TARGET_LINK_LIBRARIES(tstPhotonDataDopplerBroadening ${TEUCHOS} ${HDF5})
+TARGET_LINK_LIBRARIES(tstPhotonData ${TEUCHOS} ${HDF5})
 
 ADD_TEST(Assertion_test tstAssertion)
 ADD_TEST(ContractException_test tstContractException)
@@ -76,6 +82,7 @@ ADD_TEST(BinarySearch_test tstBinarySearch)
 ADD_TEST(PhotonDataBasic_test tstPhotonDataBasic)
 ADD_TEST(PhotonDataFluorescence_test tstPhotonDataFluorescence)
 ADD_TEST(PhotonDataDopplerBroadening_test tstPhotonDataDopplerBroadening)
+ADD_TEST(PhotonData_test tstPhotonData)
 
 # Install test files for the EPDL97DataProcessor_test
 FILE(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test_files/*.txt)

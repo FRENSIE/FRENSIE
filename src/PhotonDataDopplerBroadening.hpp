@@ -34,6 +34,8 @@ protected:
   ~PhotonDataDopplerBroadening()
   { /* ... */ }
 
+public:
+
   //! Return the data corresponding to the shell with a vacancy after an 
   // incoherent scattering event
   Pair<unsigned int, unsigned int> getIncoherentScatteringVacancyShellData( 
@@ -52,7 +54,6 @@ protected:
 
   //! Return the kinetic energy of electrons in a given shell
   double getShellKineticEnergy( const unsigned int shell ) const;
-
 
 private:
 

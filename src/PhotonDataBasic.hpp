@@ -39,6 +39,14 @@ protected:
   //! Return the atomic weight of the element stored
   double getAtomicWeight() const;
 
+  //! Return the total cross section for a given energy
+  double getTotalCrossSection( const double energy ) const;
+
+  //! Return the non absorption probability for a given energy
+  double getNonabsorptionProbability( const double energy ) const;
+
+public:
+  
   //! Return the integrated coherent cross section for a given energy
   double getCoherentCrossSection( const double energy ) const;
 
@@ -62,12 +70,6 @@ protected:
 
   //! Return the integrated triplet production cross section for a given energy
   double getTripletProductionCrossSection( const double energy ) const;
-
-  //! Return the total cross section for a given energy
-  double getTotalCrossSection( const double energy ) const;
-
-  //! Return the non absorption probability for a given energy
-  double getNonabsorptionProbability( const double energy ) const;
 
 private:
 

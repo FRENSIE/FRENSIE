@@ -33,6 +33,8 @@ protected:
   ~PhotonDataFluorescence()
   { /* ... */ }
 
+public:
+
   //! Return the shell with a vacancy after a photoelectric event
   unsigned int getPhotoelectricVacancyShell( const double energy,
 					     const double cdf_value ) const;
@@ -53,7 +55,6 @@ protected:
 						 const unsigned int shell,
 						 const double cdf_value ) const;
 
-  
 private:
 
   //@{
