@@ -18,8 +18,8 @@ namespace FACEMC{
  * \brief This is the default PhotonData class. All photon physics is
  * available.
  */
-template<bool fluorescence_physics,
-	 bool doppler_physics>
+template<bool fluorescence_physics = true,
+	 bool doppler_physics = true>
 class PhotonData : public PhotonDataBasic, 
 		   public PhotonDataFluorescence,
 		   public PhotonDataDopplerBroadening
