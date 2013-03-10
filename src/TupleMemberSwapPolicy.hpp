@@ -13,87 +13,155 @@
 
 namespace FACEMC{
 
-template<typename T>
-struct TupleMemberSwapPolicy<T,FIRST,SECOND>
+template<typename Tuple1, typename Tuple2>
+struct TupleMemberSwapPolicy<Tuple1,Tuple2,FIRST,FIRST>
 {
-  typedef typename T::firstType tupleMemberType1;
-  typedef typename T::secondType tupleMemberType2;
+  typedef typename Tuple1::firstType tupleMemberType1;
+  typedef typename Tuple1::firstType tupleMemberType2;
+  typedef typename Tuple2::firstType swapTupleMemberType1;
+  typedef typename Tuple2::firstType swapTupleMemberType2;
   
-  static inline void swap(T &tuple)
+  static inline void swap(const Tuple1 &tuple, Tuple2 &swap_tuple)
   {
-    tupleMemberType1 copy = tuple.first;
-    tuple.first = static_cast<tupleMemberType1>( tuple.second );
-    tuple.second = static_cast<tupleMemberType2>( copy );
+    swap_tuple.first = static_cast<swapTupleMemberType1>( tuple.first );
   }
 };
 
-template<typename T>
-struct TupleMemberSwapPolicy<T,FIRST,THIRD>
+template<typename Tuple1, typename Tuple2>
+struct TupleMemberSwapPolicy<Tuple1,Tuple2,FIRST,SECOND>
 {
-  typedef typename T::firstType tupleMemberType1;
-  typedef typename T::thirdType tupleMemberType2;
-
-  static inline void swap(T &tuple)
+  typedef typename Tuple1::firstType tupleMemberType1;
+  typedef typename Tuple1::secondType tupleMemberType2;
+  typedef typename Tuple2::firstType swapTupleMemberType1;
+  typedef typename Tuple2::secondType swapTupleMemberType2;
+  
+  static inline void swap(const Tuple1 &tuple, Tuple2 &swap_tuple)
   {
     tupleMemberType1 copy = tuple.first;
-    tuple.first = static_cast<tupleMemberType1>( tuple.third );
-    tuple.third = static_cast<tupleMemberType2>( copy );
+    swap_tuple.first = static_cast<swapTupleMemberType1>( tuple.second );
+    swap_tuple.second = static_cast<swapTupleMemberType2>( copy );
   }
 };
 
-template<typename T>
-struct TupleMemberSwapPolicy<T,FIRST,FOURTH>
+template<typename Tuple1, typename Tuple2>
+struct TupleMemberSwapPolicy<Tuple1,Tuple2,FIRST,THIRD>
 {
-  typedef typename T::firstType tupleMemberType1;
-  typedef typename T::fourthType tupleMemberType2;
+  typedef typename Tuple1::firstType tupleMemberType1;
+  typedef typename Tuple1::thirdType tupleMemberType2;
+  typedef typename Tuple2::firstType swapTupleMemberType1;
+  typedef typename Tuple2::thirdType swapTupleMemberType2;
 
-  static inline void swap(T &tuple)
+  static inline void swap(const Tuple1 &tuple, Tuple2 &swap_tuple)
   {
     tupleMemberType1 copy = tuple.first;
-    tuple.first = static_cast<tupleMemberType1>( tuple.fourth );
-    tuple.fourth = static_cast<tupleMemberType2>( copy );
+    swap_tuple.first = static_cast<swapTupleMemberType1>( tuple.third );
+    swap_tuple.third = static_cast<swapTupleMemberType2>( copy );
   }
 };
 
-template<typename T>
-struct TupleMemberSwapPolicy<T,SECOND,THIRD>
+template<typename Tuple1, typename Tuple2>
+struct TupleMemberSwapPolicy<Tuple1,Tuple2,FIRST,FOURTH>
 {
-  typedef typename T::secondType tupleMemberType1;
-  typedef typename T::thirdType tupleMemberType2;
+  typedef typename Tuple1::firstType tupleMemberType1;
+  typedef typename Tuple1::fourthType tupleMemberType2;
+  typedef typename Tuple2::firstType swapTupleMemberType1;
+  typedef typename Tuple2::fourthType swapTupleMemberType2;
 
-  static inline void swap(T &tuple)
+  static inline void swap(const Tuple1 &tuple, Tuple2 &swap_tuple )
+  {
+    tupleMemberType1 copy = tuple.first;
+    swap_tuple.first = static_cast<swapTupleMemberType1>( tuple.fourth );
+    swap_tuple.fourth = static_cast<swapTupleMemberType2>( copy );
+  }
+};
+
+template<typename Tuple1, typename Tuple2>
+struct TupleMemberSwapPolicy<Tuple1,Tuple2,SECOND,SECOND>
+{
+  typedef typename Tuple1::secondType tupleMemberType1;
+  typedef typename Tuple1::secondType tupleMemberType2;
+  typedef typename Tuple2::secondType swapTupleMemberType1;
+  typedef typename Tuple2::secondType swapTupleMemberType2;
+  
+  static inline void swap(const Tuple1 &tuple, Tuple2 &swap_tuple)
+  {
+    swap_tuple.second = static_cast<swapTupleMemberType1>( tuple.second );
+  }
+};
+
+template<typename Tuple1, typename Tuple2>
+struct TupleMemberSwapPolicy<Tuple1,Tuple2,SECOND,THIRD>
+{
+  typedef typename Tuple1::secondType tupleMemberType1;
+  typedef typename Tuple1::thirdType tupleMemberType2;
+  typedef typename Tuple2::secondType swapTupleMemberType1;
+  typedef typename Tuple2::thirdType swapTupleMemberType2;
+
+  static inline void swap(const Tuple1 &tuple, Tuple2 &swap_tuple)
   {
     tupleMemberType1 copy = tuple.second;
-    tuple.second = static_cast<tupleMemberType1>( tuple.third );
-    tuple.third = static_cast<tupleMemberType2>( copy );
+    swap_tuple.second = static_cast<swapTupleMemberType1>( tuple.third );
+    swap_tuple.third = static_cast<swapTupleMemberType2>( copy );
   }
 };
 
-template<typename T>
-struct TupleMemberSwapPolicy<T,SECOND,FOURTH>
+template<typename Tuple1, typename Tuple2>
+struct TupleMemberSwapPolicy<Tuple1,Tuple2,SECOND,FOURTH>
 {
-  typedef typename T::secondType tupleMemberType1;
-  typedef typename T::fourthType tupleMemberType2;
+  typedef typename Tuple1::secondType tupleMemberType1;
+  typedef typename Tuple1::fourthType tupleMemberType2;
+  typedef typename Tuple2::secondType swapTupleMemberType1;
+  typedef typename Tuple2::fourthType swapTupleMemberType2;
 
-  static inline void swap(T &tuple)
+  static inline void swap(const Tuple1 &tuple, Tuple2 &swap_tuple)
   {
     tupleMemberType1 copy = tuple.second;
-    tuple.second = static_cast<tupleMemberType1>( tuple.fourth );
-    tuple.fourth = static_cast<tupleMemberType2>( copy );
+    swap_tuple.second = static_cast<swapTupleMemberType1>( tuple.fourth );
+    swap_tuple.fourth = static_cast<swapTupleMemberType2>( copy );
   }
 };
 
-template<typename T>
-struct TupleMemberSwapPolicy<T,THIRD,FOURTH>
+template<typename Tuple1, typename Tuple2>
+struct TupleMemberSwapPolicy<Tuple1,Tuple2,THIRD,THIRD>
 {
-  typedef typename T::thirdType tupleMemberType1;
-  typedef typename T::fourthType tupleMemberType2;
+  typedef typename Tuple1::thirdType tupleMemberType1;
+  typedef typename Tuple1::thirdType tupleMemberType2;
+  typedef typename Tuple2::thirdType swapTupleMemberType1;
+  typedef typename Tuple2::thirdType swapTupleMemberType2;
+  
+  static inline void swap(const Tuple1 &tuple, Tuple2 &swap_tuple)
+  {
+    swap_tuple.third = static_cast<swapTupleMemberType1>( tuple.third );
+  }
+};
 
-  static inline void swap(T &tuple)
+template<typename Tuple1, typename Tuple2>
+struct TupleMemberSwapPolicy<Tuple1,Tuple2,THIRD,FOURTH>
+{
+  typedef typename Tuple1::thirdType tupleMemberType1;
+  typedef typename Tuple1::fourthType tupleMemberType2;
+  typedef typename Tuple2::thirdType swapTupleMemberType1;
+  typedef typename Tuple2::fourthType swapTupleMemberType2;
+
+  static inline void swap(const Tuple1 &tuple, Tuple2 &swap_tuple)
   {
     tupleMemberType1 copy = tuple.third;
-    tuple.third = static_cast<tupleMemberType1>( tuple.fourth );
-    tuple.fourth = static_cast<tupleMemberType2>( copy );
+    swap_tuple.third = static_cast<swapTupleMemberType1>( tuple.fourth );
+    swap_tuple.fourth = static_cast<swapTupleMemberType2>( copy );
+  }
+};
+
+template<typename Tuple1, typename Tuple2>
+struct TupleMemberSwapPolicy<Tuple1,Tuple2,FOURTH,FOURTH>
+{
+  typedef typename Tuple1::fourthType tupleMemberType1;
+  typedef typename Tuple1::fourthType tupleMemberType2;
+  typedef typename Tuple2::fourthType swapTupleMemberType1;
+  typedef typename Tuple2::fourthType swapTupleMemberType2;
+  
+  static inline void swap(const Tuple1 &tuple, Tuple2 &swap_tuple)
+  {
+    swap_tuple.fourth = static_cast<swapTupleMemberType1>( tuple.fourth );
   }
 };
 

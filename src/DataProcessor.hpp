@@ -86,13 +86,16 @@ protected:
   void calculateDiscreteCDF( Array<Tuple> &data );
 
   /*!
-   * \brief Swap the data in the desired tuple members.
+   * \brief Swap the data in the desired tuple members. If the desired tuple
+   * members have the same type, pass the same data array as the swap_data.
    */
   template<TupleMember member1, 
 	   TupleMember member2,
-	   typename Tuple,
+	   typename Tuple1,
+	   typename Tuple2,
 	   template<typename> class Array>
-  void swapTupleMemberData( Array<Tuple> &data );
+  void swapTupleMemberData( const Array<Tuple1> &data,
+			    Array<Tuple2> &swap_data );
 
   /*!
    * \brief Convert an unsigned int to an electron shell string

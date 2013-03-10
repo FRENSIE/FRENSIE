@@ -431,7 +431,8 @@ void PhotonDataProcessor::processFormFactorData()
   
   // Move the CDF data to the second tuple member and the PDF data
   // to the third tuple member
-  swapTupleMemberData<SECOND,THIRD>( data );
+  swapTupleMemberData<SECOND,THIRD>( data,
+				     data );
   
   d_hdf5_file_handler.writeArrayToDataSet( data,
 					   ATOMIC_FORM_FACTOR_LOC );
@@ -739,8 +740,17 @@ void PhotonDataProcessor::processShellRadiativeTransitionData( const unsigned in
     calculateDiscreteCDF<SECOND,SECOND>( data );
   else
     data[0].second = 1.0;
+
+  // Move the cdf to the first tuple member
+  Teuchos::Array<Trip<double, unsigned int, double> > 
+    processed_data( data.size() );
+
+  swapTupleMemberData<THIRD,THIRD>( data,
+				    processed_data );
+  swapTupleMemberData<FIRST,SECOND>( data,
+				     processed_data );
   
-  d_hdf5_file_handler.writeArrayToDataSet( data,
+  d_hdf5_file_handler.writeArrayToDataSet( processed_data,
 					   TRANSITION_PROBABILITY_ROOT + 
 					   (RADIATIVE_TRANSITION_SUB_ROOT +
 					    uintToShellStr( shell )) );
@@ -766,8 +776,21 @@ void PhotonDataProcessor::processShellNonradiativeTransitionData( const unsigned
     calculateDiscreteCDF<THIRD,THIRD>( data );
   else
     data[0].third = 1.0;
+
+  // Move the cdf to the first tuple member and shift the other tuple members
+  Teuchos::Array<Quad<double,unsigned int,unsigned int,double> >
+    processed_data( data.size() );
   
-  d_hdf5_file_handler.writeArrayToDataSet( data,
+  swapTupleMemberData<SECOND,SECOND>( data,
+				      processed_data );
+  swapTupleMemberData<FOURTH,FOURTH>( data,
+				      processed_data );
+  swapTupleMemberData<FIRST,THIRD>( data,
+				    processed_data );
+  swapTupleMemberData<SECOND,THIRD>( processed_data,
+				     processed_data );  
+  
+  d_hdf5_file_handler.writeArrayToDataSet( processed_data,
 					   TRANSITION_PROBABILITY_ROOT + 
 					   (NONRADIATIVE_TRANSITION_SUB_ROOT +
 					    uintToShellStr( shell )) );
@@ -859,7 +882,8 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
 
       // Move the CDF data to the second tuple member and the PDF data
       // to the third tuple member
-      swapTupleMemberData<SECOND,THIRD>( compton_profile_shell_cdf );
+      swapTupleMemberData<SECOND,THIRD>( compton_profile_shell_cdf,
+					 compton_profile_shell_cdf );
     }
 
     // To save memory, the q_values will be extracted from the array

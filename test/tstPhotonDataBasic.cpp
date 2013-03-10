@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 // \file   tstPhotonDataBasic.cpp
 // \author Alex Robinson
-// \brief  Photon Data Basic class unit tests
+// \brief  PhotonDataBasic class unit tests
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
@@ -68,8 +68,6 @@ public:
   using FACEMC::PhotonDataBasic::getTripletProductionCrossSection;
   using FACEMC::PhotonDataBasic::getTotalCrossSection;
   using FACEMC::PhotonDataBasic::getNonabsorptionProbability;
-  using FACEMC::PhotonDataBasic::getShellBindingEnergy;
-  using FACEMC::PhotonDataBasic::getShellKineticEnergy;
 };
 
 //---------------------------------------------------------------------------//
@@ -277,38 +275,6 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, nonabsoprtion_probability_test )
 
   TEST_FLOATING_EQUALITY( nonabsorption_probability,
 			  NONABSORPTION_PROB_REF,
-			  TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the PhotonDataBasic class returns the correct binding energy
-TEUCHOS_UNIT_TEST( PhotonDataBasic, binding_energy_test )
-{
-  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
-						 ENERGY_MIN,
-						 ENERGY_MAX );
-  
-  double binding_energy = 
-    test_photon_data_basic.getShellBindingEnergy( SHELL );
-
-  TEST_FLOATING_EQUALITY( binding_energy,
-			  BINDING_ENERGY_REF,
-			  TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the PhotonDataBasic class returns the correct kinetic energy
-TEUCHOS_UNIT_TEST( PhotonDataBasic, kinetic_energy_test )
-{
-  TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
-						 ENERGY_MIN,
-						 ENERGY_MAX );
-  
-  double kinetic_energy = 
-    test_photon_data_basic.getShellKineticEnergy( SHELL );
-
-  TEST_FLOATING_EQUALITY( kinetic_energy,
-			  KINETIC_ENERGY_REF,
 			  TOL );
 }
 

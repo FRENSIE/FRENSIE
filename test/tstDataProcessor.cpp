@@ -692,7 +692,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_fourth_tuple_member_test )
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can swap data in one member of a tuple with
 // data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_first_second_tuple_member_test )
+TEUCHOS_UNIT_TEST( DataProcessor, swap_first_second_tuple_member_in_place_test )
 {
   TestDataProcessor data_processor;
 
@@ -709,9 +709,69 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_first_second_tuple_member_test )
 
   // Process the array
   data_processor.swapTupleMemberData<FACEMC::FIRST,
-				     FACEMC::SECOND>( processed_data );
+				     FACEMC::SECOND>( processed_data,
+						      processed_data );
 
   TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, swap_data, TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can swap data in one member of a tuple with
+// data in another member (for all tuples in an array)
+TEUCHOS_UNIT_TEST( DataProcessor, swap_first_second_tuple_member_test )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  FACEMC::Pair<unsigned int,double> data_point;
+  data_point.first = SHELL;
+  data_point.second = DEP_VAR;
+  Teuchos::Array<FACEMC::Pair<unsigned int,double> > data( 10, data_point );
+
+  // Load the reference array
+  FACEMC::Pair<double, unsigned int> swap_data_point;
+  swap_data_point.first = DEP_VAR;
+  swap_data_point.second = SHELL;
+  Teuchos::Array<FACEMC::Pair<double,unsigned int> > 
+    swap_data( 10, swap_data_point );
+
+  // Process the array
+  Teuchos::Array<FACEMC::Pair<double,unsigned int> > processed_data( 10 );
+  data_processor.swapTupleMemberData<FACEMC::FIRST,
+				     FACEMC::SECOND>( data,
+						      processed_data );
+
+  TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, swap_data, TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can swap data in one member of a tuple with
+// data in another member (for all tuples in an array)
+TEUCHOS_UNIT_TEST( DataProcessor, swap_first_third_tuple_member_in_place_test )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  FACEMC::Trip<double,double,double> data_point;
+  data_point.first = INDEP_VAR;
+  data_point.second = ZERO;
+  data_point.third = DEP_VAR;
+  Teuchos::Array<FACEMC::Trip<double,double,double> > 
+    processed_data( 10, data_point );
+
+  // Load the reference array
+  data_point.first = DEP_VAR;
+  data_point.second = ZERO;
+  data_point.third = INDEP_VAR;
+  Teuchos::Array<FACEMC::Trip<double,double,double> > 
+    swap_data( 10, data_point );
+
+  // Process the array
+  data_processor.swapTupleMemberData<FACEMC::FIRST,
+				     FACEMC::THIRD>( processed_data,
+						     processed_data );
+
+  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, swap_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -722,25 +782,61 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_first_third_tuple_member_test )
   TestDataProcessor data_processor;
 
   // Load the array to be processed
-  FACEMC::Trip<double,double,double> data_point;
-  data_point.first = INDEP_VAR;
+  FACEMC::Trip<unsigned int,double,double> data_point;
+  data_point.first = SHELL;
   data_point.second = ZERO;
   data_point.third = DEP_VAR;
-  Teuchos::Array<FACEMC::Trip<double,double,double> > 
+  Teuchos::Array<FACEMC::Trip<unsigned int,double,double> > 
+    data( 10, data_point );
+
+  // Load the reference array
+  FACEMC::Trip<double,double,unsigned int> swap_data_point;
+  swap_data_point.first = DEP_VAR;
+  swap_data_point.second = ZERO;
+  swap_data_point.third = SHELL;
+  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> > 
+    swap_data( 10, swap_data_point );
+
+  // Process the array
+  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> > 
+    processed_data( 10 );
+  data_processor.swapTupleMemberData<FACEMC::FIRST,
+				     FACEMC::THIRD>( data,
+						     processed_data );
+
+  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, swap_data, TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can swap data in one member of a tuple with
+// data in another member (for all tuples in an array)
+TEUCHOS_UNIT_TEST( DataProcessor, swap_first_fourth_tuple_member_in_place_test )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  FACEMC::Quad<double,double,double,double> data_point;
+  data_point.first = INDEP_VAR;
+  data_point.second = ZERO;
+  data_point.third = ZERO;
+  data_point.fourth = DEP_VAR;
+  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
     processed_data( 10, data_point );
 
   // Load the reference array
   data_point.first = DEP_VAR;
   data_point.second = ZERO;
-  data_point.third = INDEP_VAR;
-  Teuchos::Array<FACEMC::Trip<double,double,double> > 
+  data_point.third = ZERO;
+  data_point.fourth = INDEP_VAR;
+  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
     swap_data( 10, data_point );
 
   // Process the array
   data_processor.swapTupleMemberData<FACEMC::FIRST,
-				     FACEMC::THIRD>( processed_data );
+				     FACEMC::FOURTH>( processed_data,
+						      processed_data );
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, swap_data, TOL );
+  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, swap_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -751,25 +847,29 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_first_fourth_tuple_member_test )
   TestDataProcessor data_processor;
 
   // Load the array to be processed
-  FACEMC::Quad<double,double,double,double> data_point;
-  data_point.first = INDEP_VAR;
+  FACEMC::Quad<unsigned int,double,double,double> data_point;
+  data_point.first = SHELL;
   data_point.second = ZERO;
   data_point.third = ZERO;
   data_point.fourth = DEP_VAR;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    processed_data( 10, data_point );
+  Teuchos::Array<FACEMC::Quad<unsigned int,double,double,double> > 
+    data( 10, data_point );
 
   // Load the reference array
-  data_point.first = DEP_VAR;
-  data_point.second = ZERO;
-  data_point.third = ZERO;
-  data_point.fourth = INDEP_VAR;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    swap_data( 10, data_point );
+  FACEMC::Quad<double,double,double,unsigned int> swap_data_point;
+  swap_data_point.first = DEP_VAR;
+  swap_data_point.second = ZERO;
+  swap_data_point.third = ZERO;
+  swap_data_point.fourth = SHELL;
+  Teuchos::Array<FACEMC::Quad<double,double,double,unsigned int> > 
+    swap_data( 10, swap_data_point );
 
   // Process the array
+  Teuchos::Array<FACEMC::Quad<double,double,double,unsigned int> >
+    processed_data( 10 );
   data_processor.swapTupleMemberData<FACEMC::FIRST,
-				     FACEMC::FOURTH>( processed_data );
+				     FACEMC::FOURTH>( data,
+						      processed_data );
 
   TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, swap_data, TOL );
 }
@@ -777,7 +877,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_first_fourth_tuple_member_test )
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can swap data in one member of a tuple with
 // data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_second_third_tuple_member_test )
+TEUCHOS_UNIT_TEST( DataProcessor, swap_second_third_tuple_member_in_place_test )
 {
   TestDataProcessor data_processor;
 
@@ -798,7 +898,8 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_second_third_tuple_member_test )
 
   // Process the array
   data_processor.swapTupleMemberData<FACEMC::SECOND,
-				     FACEMC::THIRD>( processed_data );
+				     FACEMC::THIRD>( processed_data,
+						     processed_data );
 
   TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, swap_data, TOL );
 }
@@ -806,7 +907,40 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_second_third_tuple_member_test )
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can swap data in one member of a tuple with
 // data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_second_fourth_tuple_member_test )
+TEUCHOS_UNIT_TEST( DataProcessor, swap_second_third_tuple_member_test )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  FACEMC::Trip<double,unsigned int,double> data_point;
+  data_point.first = ZERO;
+  data_point.second = SHELL;
+  data_point.third = DEP_VAR;
+  Teuchos::Array<FACEMC::Trip<double,unsigned int,double> > 
+    data( 10, data_point );
+
+  // Load the reference array
+  FACEMC::Trip<double,double,unsigned int> swap_data_point;
+  swap_data_point.first = ZERO;
+  swap_data_point.second = DEP_VAR;
+  swap_data_point.third = SHELL;
+  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> > 
+    swap_data( 10, swap_data_point );
+
+  // Process the array
+  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> >
+    processed_data ( 10 );
+  data_processor.swapTupleMemberData<FACEMC::SECOND,
+				     FACEMC::THIRD>( data,
+						     processed_data );
+
+  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, swap_data, TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can swap data in one member of a tuple with
+// data in another member (for all tuples in an array)
+TEUCHOS_UNIT_TEST( DataProcessor, swap_second_fourth_tuple_member_in_place_test )
 {
   TestDataProcessor data_processor;
 
@@ -829,7 +963,8 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_second_fourth_tuple_member_test )
 
   // Process the array
   data_processor.swapTupleMemberData<FACEMC::SECOND,
-				     FACEMC::FOURTH>( processed_data );
+				     FACEMC::FOURTH>( processed_data,
+						      processed_data );
 
   TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, swap_data, TOL );
 } 
@@ -837,7 +972,42 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_second_fourth_tuple_member_test )
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can swap data in one member of a tuple with
 // data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_third_fourth_tuple_member_test )
+TEUCHOS_UNIT_TEST( DataProcessor, swap_second_fourth_tuple_member_test )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  FACEMC::Quad<double,unsigned int,double,double> data_point;
+  data_point.first = ZERO;
+  data_point.second = SHELL;
+  data_point.third = ZERO;
+  data_point.fourth = DEP_VAR;
+  Teuchos::Array<FACEMC::Quad<double,unsigned int,double,double> > 
+    data( 10, data_point );
+
+  // Load the reference array
+  FACEMC::Quad<double,double,double,unsigned int> swap_data_point;
+  swap_data_point.first = ZERO;
+  swap_data_point.second = DEP_VAR;
+  swap_data_point.third = ZERO;
+  swap_data_point.fourth = SHELL;
+  Teuchos::Array<FACEMC::Quad<double,double,double,unsigned int> > 
+    swap_data( 10, swap_data_point );
+
+  // Process the array
+  Teuchos::Array<FACEMC::Quad<double,double,double,unsigned int> >
+    processed_data( 10 );
+  data_processor.swapTupleMemberData<FACEMC::SECOND,
+				     FACEMC::FOURTH>( data,
+						      processed_data );
+
+  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, swap_data, TOL );
+} 
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can swap data in one member of a tuple with
+// data in another member (for all tuples in an array)
+TEUCHOS_UNIT_TEST( DataProcessor, swap_third_fourth_tuple_member_in_place_test )
 {
   TestDataProcessor data_processor;
 
@@ -860,9 +1030,160 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_third_fourth_tuple_member_test )
 
   // Process the array
   data_processor.swapTupleMemberData<FACEMC::THIRD,
-				     FACEMC::FOURTH>( processed_data );
+				     FACEMC::FOURTH>( processed_data,
+						      processed_data );
 
   TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, swap_data, TOL );
+} 
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can swap data in one member of a tuple with
+// data in another member (for all tuples in an array)
+TEUCHOS_UNIT_TEST( DataProcessor, swap_third_fourth_tuple_member_test )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  FACEMC::Quad<double,double,unsigned int,double> data_point;
+  data_point.first = ZERO;
+  data_point.second = ZERO;
+  data_point.third = SHELL;
+  data_point.fourth = DEP_VAR;
+  Teuchos::Array<FACEMC::Quad<double,double,unsigned int,double> > 
+    data( 10, data_point );
+
+  // Load the reference array
+  FACEMC::Quad<double,double,double,unsigned int> swap_data_point;
+  swap_data_point.first = ZERO;
+  swap_data_point.second = ZERO;
+  swap_data_point.third = DEP_VAR;
+  swap_data_point.fourth = SHELL;
+  Teuchos::Array<FACEMC::Quad<double,double,double,unsigned int> > 
+    swap_data( 10, swap_data_point );
+
+  // Process the array
+  Teuchos::Array<FACEMC::Quad<double,double,double,unsigned int> >
+    processed_data( 10 );
+  data_processor.swapTupleMemberData<FACEMC::THIRD,
+				     FACEMC::FOURTH>( data,
+						      processed_data );
+
+  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, swap_data, TOL );
+} 
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can copy data in one member of a tuple to
+// the same member in another tuple (for all tuples in an array)
+TEUCHOS_UNIT_TEST( DataProcessor, copy_first_tuple_member_test )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  FACEMC::Pair<double,double> data_point;
+  data_point.first = INDEP_VAR;
+  data_point.second = ZERO;
+  Teuchos::Array<FACEMC::Pair<double,double> > 
+    data( 10, data_point );
+
+  // Load the reference array
+  Teuchos::Array<FACEMC::Pair<double,double> > 
+    copy_data( 10, data_point );
+
+  // Process the array
+  Teuchos::Array<FACEMC::Pair<double,double> >
+    processed_data( 10 );
+  data_processor.swapTupleMemberData<FACEMC::FIRST,
+				     FACEMC::FIRST>( data,
+						     processed_data );
+
+  TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, copy_data, TOL );
+} 
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can copy data in one member of a tuple to
+// the same member in another tuple (for all tuples in an array)
+TEUCHOS_UNIT_TEST( DataProcessor, copy_second_tuple_member_test )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  FACEMC::Pair<double,double> data_point;
+  data_point.first = ZERO;
+  data_point.second = INDEP_VAR;
+  Teuchos::Array<FACEMC::Pair<double,double> > 
+    data( 10, data_point );
+
+  // Load the reference array
+  Teuchos::Array<FACEMC::Pair<double,double> > 
+    copy_data( 10, data_point );
+
+  // Process the array
+  Teuchos::Array<FACEMC::Pair<double,double> >
+    processed_data( 10 );
+  data_processor.swapTupleMemberData<FACEMC::SECOND,
+				     FACEMC::SECOND>( data,
+						     processed_data );
+
+  TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, copy_data, TOL );
+} 
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can copy data in one member of a tuple to
+// the same member in another tuple (for all tuples in an array)
+TEUCHOS_UNIT_TEST( DataProcessor, copy_third_tuple_member_test )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  FACEMC::Trip<double,double,unsigned int> data_point;
+  data_point.first = ZERO;
+  data_point.second = ZERO;
+  data_point.third = SHELL;
+  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> > 
+    data( 10, data_point );
+
+  // Load the reference array
+  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> > 
+    copy_data( 10, data_point );
+
+  // Process the array
+  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> >
+    processed_data( 10 );
+  data_processor.swapTupleMemberData<FACEMC::THIRD,
+				     FACEMC::THIRD>( data,
+						     processed_data );
+
+  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, copy_data, TOL );
+} 
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can copy data in one member of a tuple to
+// the same member in another tuple (for all tuples in an array)
+TEUCHOS_UNIT_TEST( DataProcessor, copy_fourth_tuple_member_test )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  FACEMC::Quad<double,double,unsigned int,unsigned int> data_point;
+  data_point.first = ZERO;
+  data_point.second = ZERO;
+  data_point.third = ZERO;
+  data_point.fourth = SHELL;
+  Teuchos::Array<FACEMC::Quad<double,double,unsigned int,unsigned int> > 
+    data( 10, data_point );
+
+  // Load the reference array
+  Teuchos::Array<FACEMC::Quad<double,double,unsigned int,unsigned int> > 
+    copy_data( 10, data_point );
+
+  // Process the array
+  Teuchos::Array<FACEMC::Quad<double,double,unsigned int,unsigned int> >
+    processed_data( 10 );
+  data_processor.swapTupleMemberData<FACEMC::FOURTH,
+				     FACEMC::FOURTH>( data,
+						      processed_data );
+
+  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, copy_data, TOL );
 } 
 
 //---------------------------------------------------------------------------//
@@ -880,4 +1201,3 @@ TEUCHOS_UNIT_TEST( DataProcessor, uint_to_string_test )
 //---------------------------------------------------------------------------//
 // end tstDataProcessor.cpp
 //---------------------------------------------------------------------------//
-

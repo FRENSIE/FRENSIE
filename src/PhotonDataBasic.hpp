@@ -10,7 +10,7 @@
 //Std Lib Includes
 #include <map>
 
-//Trilinos Includes
+// Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_ArrayRCP.hpp>
 
@@ -69,12 +69,6 @@ protected:
   //! Return the non absorption probability for a given energy
   double getNonabsorptionProbability( const double energy ) const;
 
-  //! Return the binding energy of electrons in a given shell 
-  double getShellBindingEnergy( const unsigned int shell ) const;
-  
-  //! Return the kinetic energy of electrons in a given shell
-  double getShellKineticEnergy( const unsigned int shell ) const;
-  
 private:
 
   //@{
@@ -130,16 +124,6 @@ private:
   
   // Integrated triplet production cross section
   CrossSectionArray d_integrated_triplet_production_cross_section;
-
-  //--------------------------------------------------------------------------//
-  // Electron Shell Data
-  //--------------------------------------------------------------------------//
-
-  // Electron shell binding energy
-  ShellMap d_electron_shell_binding_energy;
-
-  // Electron shell kinetic energy
-  ShellMap d_electron_shell_kinetic_energy;
 
 };
 

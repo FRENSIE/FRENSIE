@@ -4,13 +4,13 @@
 // \brief  PhotonDataBasic class definition
 //---------------------------------------------------------------------------//
 
-//Std Lib Includes
+// Std Lib Includes
 #include <string>
 #include <sstream>
 #include <map>
 #include <cmath>
 
-//Trilinos Includes
+// Trilinos Includes
 #include <Teuchos_Array.hpp>
 
 // FACEMC Includes
@@ -45,7 +45,7 @@ PhotonDataBasic::PhotonDataBasic( unsigned int atomic_number,
 
   // Load the energy limits of the data file and check them against the problem
   // energy limits
-  Teuchos::Array<double> energy_limits( 2 );
+  Teuchos::Array<double> energy_limits;
   hdf5_file_handler.readArrayFromGroupAttribute( energy_limits,
 						 ROOT,
 						 ENERGY_LIMITS_ATTRIBUTE );
@@ -84,28 +84,6 @@ PhotonDataBasic::PhotonDataBasic( unsigned int atomic_number,
   hdf5_file_handler.readArrayFromDataSet( 
 				 d_integrated_triplet_production_cross_section,
 				 TRIPLET_PRODUCTION_CROSS_SECTION_LOC );
-
-  // Load the electron shell binding energy
-  Teuchos::Array<Pair<unsigned int,double> > 
-    raw_electron_shell_binding_energy;
-  hdf5_file_handler.readArrayFromDataSet( raw_electron_shell_binding_energy,
-					  ELECTRON_SHELL_BINDING_ENERGY_LOC );
-  for( unsigned int i = 0; i < raw_electron_shell_binding_energy.size(); ++i )
-  {
-    d_electron_shell_binding_energy[raw_electron_shell_binding_energy[i].first]
-      = raw_electron_shell_binding_energy[i].second;
-  }
-
-  // Load the electron shell kinetic energy
-  Teuchos::Array<Pair<unsigned int,double> >
-    raw_electron_shell_kinetic_energy;
-  hdf5_file_handler.readArrayFromDataSet( raw_electron_shell_kinetic_energy,
-					  ELECTRON_SHELL_KINETIC_ENERGY_LOC );
-  for( unsigned int i = 0; i < raw_electron_shell_kinetic_energy.size(); ++i)
-  {
-    d_electron_shell_kinetic_energy[raw_electron_shell_kinetic_energy[i].first]
-      = raw_electron_shell_kinetic_energy[i].second;
-  }
   
   hdf5_file_handler.closeHDF5File();
 }
@@ -127,7 +105,7 @@ double PhotonDataBasic::getCoherentCrossSection( const double energy ) const
 {
   double log_energy = log( energy );
   
-  CrossSectionArray::iterator start, end, lower_bin_boundary;
+  CrossSectionArray::const_iterator start, end, lower_bin_boundary;
   start = d_integrated_coherent_cross_section.begin();
   end = d_integrated_coherent_cross_section.end();
 
@@ -145,7 +123,7 @@ double PhotonDataBasic::getFormFactorCDF( const double argument ) const
 {
   double squared_argument = argument*argument;
   
-  FormFactorArray::iterator start, end, lower_bin_boundary;
+  FormFactorArray::const_iterator start, end, lower_bin_boundary;
   start = d_form_factor.begin();
   end = d_form_factor.end();
 
@@ -163,7 +141,7 @@ double PhotonDataBasic::getFormFactorCDF( const double argument ) const
 //! Return the form factor for a given argument
 double PhotonDataBasic::getFormFactorArgument( const double cdf_value ) const
 { 
-  FormFactorArray::iterator start, end, lower_bin_boundary;
+  FormFactorArray::const_iterator start, end, lower_bin_boundary;
   start = d_form_factor.begin();
   end = d_form_factor.end();
 
@@ -183,7 +161,7 @@ double PhotonDataBasic::getIncoherentCrossSection( const double energy) const
 {
   double log_energy = log( energy );
 
-  CrossSectionArray::iterator start, end, lower_bin_boundary;
+  CrossSectionArray::const_iterator start, end, lower_bin_boundary;
   start = d_integrated_incoherent_cross_section.begin();
   end = d_integrated_incoherent_cross_section.end();
 
@@ -202,7 +180,7 @@ double PhotonDataBasic::getScatteringFunction( const double argument ) const
 {
   double log_argument = log( argument );
 
-  CrossSectionArray::iterator start, end, lower_bin_boundary;
+  CrossSectionArray::const_iterator start, end, lower_bin_boundary;
   start = d_scattering_function.begin();
   end = d_scattering_function.end();
 
@@ -221,7 +199,7 @@ double PhotonDataBasic::getPhotoelectricCrossSection( const double energy ) cons
 {
   double log_energy = log( energy );
   
-  CrossSectionArray::iterator start, end, lower_bin_boundary;
+  CrossSectionArray::const_iterator start, end, lower_bin_boundary;
   start = d_integrated_photoelectric_cross_section.begin();
   end = d_integrated_photoelectric_cross_section.end();
 
@@ -240,7 +218,7 @@ double PhotonDataBasic::getPairProductionCrossSection( const double energy ) con
 {  
   double log_energy = log( energy );
 
-  CrossSectionArray::iterator start, end, lower_bin_boundary;
+  CrossSectionArray::const_iterator start, end, lower_bin_boundary;
   start = d_integrated_pair_production_cross_section.begin();
   end = d_integrated_pair_production_cross_section.end();
   
@@ -260,7 +238,7 @@ double PhotonDataBasic::getTripletProductionCrossSection( const double energy ) 
 {
   double log_energy = log( energy );
 
-  CrossSectionArray::iterator start, end, lower_bin_boundary;
+  CrossSectionArray::const_iterator start, end, lower_bin_boundary;
   start = d_integrated_triplet_production_cross_section.begin();
   end = d_integrated_triplet_production_cross_section.end();
   
@@ -313,24 +291,6 @@ double PhotonDataBasic::getNonabsorptionProbability( const double energy ) const
     total_cross_section += getPairProductionCrossSection( energy );
   
   return 1.0 - absorption_cross_section/total_cross_section;
-}
-
-//! Return the binding energy of electrons in a given shell
-double PhotonDataBasic::getShellBindingEnergy( const unsigned int shell ) const
-{
-  // The shell must be valid
-  testPrecondition( d_electron_shell_binding_energy.count( shell ) > 0 );
-
-  return d_electron_shell_binding_energy.find( shell )->second;
-}
-
-//! Return the kinetic energy of electrons in a given shell
-double PhotonDataBasic::getShellKineticEnergy( const unsigned int shell ) const
-{
-  // The shell must be valid
-  testPrecondition( d_electron_shell_kinetic_energy.count( shell ) > 0 );
-  
-  return d_electron_shell_kinetic_energy.find( shell )->second;
 }
 
 } // end FACEMC namespace

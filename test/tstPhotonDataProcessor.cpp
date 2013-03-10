@@ -739,7 +739,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_radiative_transition_data 
   FACEMC::HDF5FileHandler hdf5_file_handler;
   hdf5_file_handler.openHDF5FileAndReadOnly( HDF5_TEST_FILE );
 
-  Teuchos::Array<FACEMC::Trip<unsigned int, double, double> > data;
+  Teuchos::Array<FACEMC::Trip<double, unsigned int, double> > data;
 
   std::stringstream shell_number;
   shell_number << SHELL;
@@ -749,18 +749,18 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_radiative_transition_data 
 					   shell_number.str()) );
 
   // Fill the reference data array
-  Teuchos::Array<FACEMC::Trip<unsigned int, double, double> > ref_data;
+  Teuchos::Array<FACEMC::Trip<double, unsigned int, double> > ref_data;
   ref_data.resize( data.size() );
   
-  ref_data[0].first = 5;
-  ref_data[0].second = 0.3338041767137;
+  ref_data[0].first = 0.3338041767137;
+  ref_data[0].second = 5;
   ref_data[0].third = 2.82020e-4;
 
-  ref_data[1].first = 6;
-  ref_data[1].second = 1.0;
+  ref_data[1].first = 1.0;
+  ref_data[1].second = 6;
   ref_data[1].third = 2.82030e-4;
 
-  TEST_COMPARE_FLOATING_PAIR_ARRAYS( data, ref_data, TOL );
+  TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, ref_data, TOL );
 
   // Read in the total radiative transition probability attribute
   double total_rad_trans_prob;
@@ -794,7 +794,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_nonradiative_transition_da
   FACEMC::HDF5FileHandler hdf5_file_handler;
   hdf5_file_handler.openHDF5FileAndReadOnly( HDF5_TEST_FILE );
 
-  Teuchos::Array<FACEMC::Quad<unsigned int, unsigned int, double, double> > 
+  Teuchos::Array<FACEMC::Quad<double, unsigned int, unsigned int, double> > 
     data;
 
   std::stringstream shell_number;
@@ -805,41 +805,41 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_nonradiative_transition_da
 					   shell_number.str()) );
 
   // Fill the reference data array
-  Teuchos::Array<FACEMC::Quad<unsigned int, unsigned int, double, double> > 
+  Teuchos::Array<FACEMC::Quad<double, unsigned int, unsigned int, double> > 
     ref_data;
   ref_data.resize( data.size() );
   
-  ref_data[0].first = 3;
+  ref_data[0].first = 0.4143057462596;
   ref_data[0].second = 3;
-  ref_data[0].third = 0.4143057462596;
+  ref_data[0].third = 3;
   ref_data[0].fourth = 2.55890e-4;
 
-  ref_data[1].first = 3;
-  ref_data[1].second = 5;
-  ref_data[1].third = 0.55072516552537;
+  ref_data[1].first = 0.55072516552537;
+  ref_data[1].second = 3;
+  ref_data[1].third = 5;
   ref_data[1].fourth = 2.64460e-4;
 
-  ref_data[2].first = 3;
-  ref_data[2].second = 6;
-  ref_data[2].third = 0.82228084614458;
+  ref_data[2].first = 0.82228084614458;
+  ref_data[2].second = 3;
+  ref_data[2].third = 6;
   ref_data[2].fourth = 2.64470e-4;
 
-  ref_data[3].first = 5;
+  ref_data[3].first = 0.82649541386741;
   ref_data[3].second = 5;
-  ref_data[3].third = 0.82649541386741;
+  ref_data[3].third = 5;
   ref_data[3].fourth = 2.73030e-4;
 
-  ref_data[4].first = 5;
-  ref_data[4].second = 6;
-  ref_data[4].third = 0.93669273490615;
+  ref_data[4].first = 0.93669273490615;
+  ref_data[4].second = 5;
+  ref_data[4].third = 6;
   ref_data[4].fourth = 2.73040e-4;
 
-  ref_data[5].first = 6;
+  ref_data[5].first = 1.0;
   ref_data[5].second = 6;
-  ref_data[5].third = 1.0;
+  ref_data[5].third = 6;
   ref_data[5].fourth = 2.73050e-4;
 
-  TEST_COMPARE_FLOATING_PAIR_ARRAYS( data, ref_data, TOL );
+  TEST_COMPARE_FLOATING_QUAD_ARRAYS( data, ref_data, TOL );
 }
 
 //---------------------------------------------------------------------------//

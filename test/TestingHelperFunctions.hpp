@@ -16,6 +16,29 @@
 // FACEMC Includes
 #include "Tuple.hpp"
 
+// Define a new Macro for the Teuchos Unit Test Harness for comparing 
+// Pairs of floating point data types
+#define TEST_FLOATING_PAIR_EQUALITY( t1, t2, tol )		      \
+  {								      \
+    const bool result = Teuchos::comparePairs(t1,#t1,t2,#t2,tol,out); \
+    if( !result ) success = false;				      \
+  } 
+
+// Define a new Macro for the Teuchos Unit Test Harness for comparing
+// Triplets of floating point data types
+#define TEST_FLOATING_TRIP_EQUALITY( t1, t2, tol )			\
+  {									\
+    const bool result = Teuchos::compareTrips(t1,#t1,t2,#t2,tol,out);	\
+    if( !result ) success = false;					\
+  }
+
+// Define a new Macro for the Teuchos Unit Test Harness for comparing
+// Quadruplets of floating point data types
+#define TEST_FLOATING_QUAD_EQUALITY( t1, t2, tol )			\
+  {									\
+    const bool result = Teuchos::compareQuads(t1,#t1,t2,#t2,tol,out);	\
+    if( !result) success = false;					\
+  }
 
 // Define a new Macro for the Teuchos Unit Test Harness for comparing arrays
 // of Pairs of floating point data types
@@ -71,6 +94,147 @@ std::ostream& operator<<(std::ostream &out, const FACEMC::Quad<T1,T2,T3,T4> &p)
   return out;
 }
 
+// Function for comparing pairs with floating point values.
+template<typename T>
+bool comparePairs( const T &t1,
+		   const std::string &t1_name,
+		   const T &t2,
+		   const std::string &t2_name,
+		   const double &tol,
+		   Teuchos::FancyOStream &out )
+{
+  bool success = true;
+  bool local_success = true;
+  
+  {
+    // Compare the first member
+    local_success = compareFirstTupleMembers( t1, t1_name, 
+					      t2, t2_name,
+					      -1,
+					      tol,
+					      out );
+    if( !local_success )
+      success = false;
+    
+    // Compare the second member
+    local_success = compareSecondTupleMembers( t1, t1_name,
+					       t2, t2_name,
+					       -1,
+					       tol,
+					       out );
+    if( !local_success )
+      success = false;
+  }
+
+  if( success ) 
+    out << "passed\n";
+
+  return success;
+}
+
+// Function for comparing triplets with floating point values.
+template<typename T>
+bool compareTrips( const T &t1,
+		   const std::string &t1_name,
+		   const T &t2,
+		   const std::string &t2_name,
+		   const double &tol,
+		   Teuchos::FancyOStream &out )
+{
+  bool success = true;
+  bool local_success = true;
+  
+  {
+    // Compare the first member
+    local_success = compareFirstTupleMembers( t1, t1_name, 
+					      t2, t2_name,
+					      -1,
+					      tol,
+					      out );
+    if( !local_success )
+      success = false;
+    
+    // Compare the second member
+    local_success = compareSecondTupleMembers( t1, t1_name,
+					       t2, t2_name,
+					       -1,
+					       tol,
+					       out );
+    if( !local_success )
+      success = false;
+
+    // Compare the third member
+    local_success = compareThirdTupleMembers( t1, t1_name,
+					      t2, t2_name,
+					      -1,
+					      tol,
+					      out );
+    if( !local_success )
+      success = false;
+  }
+
+  if( success ) 
+    out << "passed\n";
+
+  return success;
+}
+
+// Function for comparing quadruplets with floating point values.
+template<typename T>
+bool compareQuads( const T &t1,
+		   const std::string &t1_name,
+		   const T &t2,
+		   const std::string &t2_name,
+		   const double &tol,
+		   Teuchos::FancyOStream &out )
+{
+  bool success = true;
+  bool local_success = true;
+  
+  {
+    // Compare the first member
+    local_success = compareFirstTupleMembers( t1, t1_name, 
+					      t2, t2_name,
+					      -1,
+					      tol,
+					      out );
+    if( !local_success )
+      success = false;
+    
+    // Compare the second member
+    local_success = compareSecondTupleMembers( t1, t1_name,
+					       t2, t2_name,
+					       -1,
+					       tol,
+					       out );
+    if( !local_success )
+      success = false;
+
+    // Compare the third member
+    local_success = compareThirdTupleMembers( t1, t1_name,
+					      t2, t2_name,
+					      -1,
+					      tol,
+					      out );
+    if( !local_success )
+      success = false;
+
+    // Compare the fourth member
+    local_success = compareFourthTupleMembers( t1, t1_name,
+					       t2, t2_name,
+					       -1,
+					       tol,
+					       out );
+    if( !local_success )
+      success = false;
+  }
+
+  if( success ) 
+    out << "passed\n";
+
+  return success;
+}
+
 // Function for comparing arrays of pairs with floating point values
 // this function is based off of the compareFloatingArrays function in Teuchos
 template<typename T,
@@ -85,6 +249,8 @@ bool compareFloatingPairArrays( const Array1<T> &a1,
 {
   bool success = true;
   bool local_success = true;
+
+  // Compare the first 
 
   out << "Comparing " << a1_name << " == " << a2_name << " ... ";
 
@@ -102,21 +268,21 @@ bool compareFloatingPairArrays( const Array1<T> &a1,
   // Compare Elements
   for( int i = 0; i < n; ++i )
   {
-    // Compare the first element
-    local_success = compareFirstTupleElements( a1[i], a1_name, 
+    // Compare the first member
+    local_success = compareFirstTupleMembers( a1[i], a1_name, 
+					      a2[i], a2_name,
+					      i,
+					      tol,
+					      out );
+    if( !local_success )
+      success = false;
+
+    // Compare the second member
+    local_success = compareSecondTupleMembers( a1[i], a1_name,
 					       a2[i], a2_name,
 					       i,
 					       tol,
 					       out );
-    if( !local_success )
-      success = false;
-
-    // Compare the second element
-    local_success = compareSecondTupleElements( a1[i], a1_name,
-						a2[i], a2_name,
-						i,
-						tol,
-						out );
     if( !local_success )
       success = false;
   }
@@ -158,8 +324,8 @@ bool compareFloatingTripArrays( const Array1<T> &a1,
   // Compare Elements
   for( int i = 0; i < n; ++i )
   {
-    // Compare the first element
-    local_success = compareFirstTupleElements( a1[i], a1_name, 
+    // Compare the first member
+    local_success = compareFirstTupleMembers( a1[i], a1_name, 
 					       a2[i], a2_name,
 					       i,
 					       tol,
@@ -167,8 +333,8 @@ bool compareFloatingTripArrays( const Array1<T> &a1,
     if( !local_success )
       success = false;
     
-    // Compare the second element
-    local_success = compareSecondTupleElements( a1[i], a1_name,
+    // Compare the second member
+    local_success = compareSecondTupleMembers( a1[i], a1_name,
 						a2[i], a2_name,
 						i,
 						tol,
@@ -176,8 +342,8 @@ bool compareFloatingTripArrays( const Array1<T> &a1,
     if( !local_success )
       success = false;
     
-    // Compare the third element
-    local_success = compareThirdTupleElements( a1[i], a1_name,
+    // Compare the third member
+    local_success = compareThirdTupleMembers( a1[i], a1_name,
 					       a2[i], a2_name,
 					       i, 
 					       tol,
@@ -223,8 +389,8 @@ bool compareFloatingQuadArrays( const Array1<T> &a1,
   // Compare Elements
   for( int i = 0; i < n; ++i )
   {
-    // Compare the first element
-    local_success = compareFirstTupleElements( a1[i], a1_name, 
+    // Compare the first member
+    local_success = compareFirstTupleMembers( a1[i], a1_name, 
 					       a2[i], a2_name,
 					       i,
 					       tol,
@@ -232,8 +398,8 @@ bool compareFloatingQuadArrays( const Array1<T> &a1,
     if( !local_success )
       success = false;
     
-    // Compare the second element
-    local_success = compareSecondTupleElements( a1[i], a1_name,
+    // Compare the second member
+    local_success = compareSecondTupleMembers( a1[i], a1_name,
 						a2[i], a2_name,
 						i,
 						tol,
@@ -241,8 +407,8 @@ bool compareFloatingQuadArrays( const Array1<T> &a1,
     if( !local_success )
       success = false;
     
-    // Compare the third element
-    local_success = compareThirdTupleElements( a1[i], a1_name,
+    // Compare the third member
+    local_success = compareThirdTupleMembers( a1[i], a1_name,
 					       a2[i], a2_name,
 					       i, 
 					       tol,
@@ -250,8 +416,8 @@ bool compareFloatingQuadArrays( const Array1<T> &a1,
     if( !local_success )
       success = false;
      
-    // Compare the fourth element
-    local_success = compareFourthTupleElements( a1[i], a1_name,
+    // Compare the fourth member
+    local_success = compareFourthTupleMembers( a1[i], a1_name,
 						a2[i], a2_name,
 						i,
 						tol,
@@ -266,9 +432,9 @@ bool compareFloatingQuadArrays( const Array1<T> &a1,
   return success;
 }
 
-// function for comparing first tuple element 
+// function for comparing first tuple member 
 template<typename T>
-bool compareFirstTupleElements( const T &tuple1,
+bool compareFirstTupleMembers( const T &tuple1,
 				const std::string &a1_name,
 				const T &tuple2,
 				const std::string &a2_name,
@@ -283,9 +449,21 @@ bool compareFirstTupleElements( const T &tuple1,
   {
     if( tuple1.first != tuple2.first )
       {
-	out << "\nError, " << a1_name << "[" << i << "].first = "
-	    << tuple1.first << " == " << a2_name << "[" << i 
-	    << "].first = " << tuple2.first << ": failed!\n";
+	// Array output
+	if( i >= 0 )
+	{
+	  out << "\nError, " << a1_name << "[" << i << "].first = "
+	      << tuple1.first << " == " << a2_name << "[" << i 
+	      << "].first = " << tuple2.first << ": failed!\n";
+	}
+	// Single Tuple output
+	else
+	{
+	  out << "\nError, " << a1_name << ".first = "
+	      << tuple1.first << " == " << a2_name << ".first = "
+	      << tuple2.first << ": failed!\n";
+	}
+
 	return false;
       }
   }
@@ -298,10 +476,23 @@ bool compareFirstTupleElements( const T &tuple1,
     
     if( err > tol )
     {
-      out << "\nError, relErr(" << a1_name << "[" << i << "].first,"
-	  << a2_name << "[" << i << "].first) = relErr("
-	  << tuple1.first << ","  << tuple2.first << ") = "
-	  << err << " <= tol = " << tol << ": failed!\n";
+      // Array output
+      if( i >= 0 )
+      {
+	out << "\nError, relErr(" << a1_name << "[" << i << "].first,"
+	    << a2_name << "[" << i << "].first) = relErr("
+	    << tuple1.first << ","  << tuple2.first << ") = "
+	    << err << " <= tol = " << tol << ": failed!\n";
+      }
+      // Single Tuple output
+      else
+      {
+	out << "\nError, relErr(" << a1_name << ".first = ,"
+	    << a2_name << ".first) = relErr("
+	    << tuple1.first << "," << tuple2.first << ") = "
+	    << err << " <= tol = " << tol << ": failed!\n";
+      }
+      
       return false;
     }
   }
@@ -309,9 +500,9 @@ bool compareFirstTupleElements( const T &tuple1,
   return success;
 }
 
-// function for comparing second tuple element 
+// function for comparing second tuple member 
 template<typename T>
-bool compareSecondTupleElements( const T &tuple1,
+bool compareSecondTupleMembers( const T &tuple1,
 				 const std::string &a1_name,
 				 const T &tuple2,
 				 const std::string &a2_name,
@@ -326,9 +517,21 @@ bool compareSecondTupleElements( const T &tuple1,
   {
     if( tuple1.second != tuple2.second )
     {
-      out << "\nError, " << a1_name << "[" << i << "].second = "
-	  << tuple1.second << " == " << a2_name << "[" << i 
-	  << "].second = " << tuple2.second << ": failed!\n";
+      // Array output
+      if( i >= 0 )
+      {
+	out << "\nError, " << a1_name << "[" << i << "].second = "
+	    << tuple1.second << " == " << a2_name << "[" << i 
+	    << "].second = " << tuple2.second << ": failed!\n";
+      }
+      // Single Tuple output
+      else
+      {
+	out << "\nError, " << a1_name << ".second = "
+	    << tuple1.second << " == " << a2_name
+	    << ".second = " << tuple2.second << ": failed!\n";
+      }
+      
       return false;
     }
   }
@@ -341,10 +544,23 @@ bool compareSecondTupleElements( const T &tuple1,
     
     if( err > tol )
     {
-      out << "\nError, relErr(" << a1_name << "[" << i << "].second,"
-	  << a2_name << "[" << i << "].second) = relErr("
-	  << tuple1.second << "," << tuple2.second << ") = "
-	  << err << " <= tol = " << tol << ": failed!\n";
+      // Array output
+      if( i >= 0 )
+      {
+	out << "\nError, relErr(" << a1_name << "[" << i << "].second,"
+	    << a2_name << "[" << i << "].second) = relErr("
+	    << tuple1.second << "," << tuple2.second << ") = "
+	    << err << " <= tol = " << tol << ": failed!\n";
+      }
+      // Single Tuple output
+      else
+      {
+	out << "\nError, relErr(" << a1_name << ".second,"
+	    << a2_name << ".second) = relErr("
+	    << tuple1.second << "," << tuple2.second << ") = "
+	    << err << " <= tol = " << tol << ": failed!\n";
+      }
+      
       return false;
     }
   }
@@ -352,9 +568,9 @@ bool compareSecondTupleElements( const T &tuple1,
   return success;
 }
 
-// function for comparing third tuple element 
+// function for comparing third tuple member 
 template<typename T>
-bool compareThirdTupleElements( const T &tuple1,
+bool compareThirdTupleMembers( const T &tuple1,
 				const std::string &a1_name,
 				const T &tuple2,
 				const std::string &a2_name,
@@ -370,9 +586,21 @@ bool compareThirdTupleElements( const T &tuple1,
   {
     if( tuple1.third != tuple2.third )
       {
-	out << "\nError, " << a1_name << "[" << i << "].third = "
-	    << tuple1.third << " == " << a2_name << "[" << i 
-	    << "].third = " << tuple2.third << ": failed!\n";
+	// Array output
+	if( i >= 0 )
+	{
+	  out << "\nError, " << a1_name << "[" << i << "].third = "
+	      << tuple1.third << " == " << a2_name << "[" << i 
+	      << "].third = " << tuple2.third << ": failed!\n";
+	}
+	// Single Tuple output
+	else
+	{
+	  out << "\nError, " << a1_name << ".third = "
+	      << tuple1.third << " == " << a2_name  
+	      << ".third = " << tuple2.third << ": failed!\n";
+	}
+
 	return false;
       }
   }
@@ -385,10 +613,23 @@ bool compareThirdTupleElements( const T &tuple1,
     
     if( err > tol )
     {
-      out << "\nError, relErr(" << a1_name << "[" << i << "].third,"
-	  << a2_name << "[" << i << "].third) = relErr("
-	  << tuple1.third << ","  << tuple2.third << ") = "
-	  << err << " <= tol = " << tol << ": failed!\n";
+      // Array output
+      if( i >= 0 )
+      {
+	out << "\nError, relErr(" << a1_name << "[" << i << "].third,"
+	    << a2_name << "[" << i << "].third) = relErr("
+	    << tuple1.third << ","  << tuple2.third << ") = "
+	    << err << " <= tol = " << tol << ": failed!\n";
+      }
+      // Single Tuple output
+      else
+      {
+	out << "\nError, relErr(" << a1_name << ".third,"
+	    << a2_name << ".third) = relErr("
+	    << tuple1.third << ","  << tuple2.third << ") = "
+	    << err << " <= tol = " << tol << ": failed!\n";
+      }
+      
       return false;
     }
   }
@@ -396,9 +637,9 @@ bool compareThirdTupleElements( const T &tuple1,
   return success;
 }
 
-// function for comparing fourth tuple element 
+// function for comparing fourth tuple member 
 template<typename T>
-bool compareFourthTupleElements( const T &tuple1,
+bool compareFourthTupleMembers( const T &tuple1,
 				 const std::string &a1_name,
 				 const T &tuple2,
 				 const std::string &a2_name,
@@ -414,9 +655,21 @@ bool compareFourthTupleElements( const T &tuple1,
   {
     if( tuple1.fourth != tuple2.fourth )
     {
-      out << "\nError, " << a1_name << "[" << i << "].fourth = "
-	  << tuple1.fourth << " == " << a2_name << "[" << i 
-	  << "].fourth = " << tuple2.fourth << ": failed!\n";
+      // Array output
+      if( i >= 0 )
+      {
+	out << "\nError, " << a1_name << "[" << i << "].fourth = "
+	    << tuple1.fourth << " == " << a2_name << "[" << i 
+	    << "].fourth = " << tuple2.fourth << ": failed!\n";
+      }
+      // Single Tuple output
+      else
+      {
+	out << "\nError, " << a1_name << ".fourth = "
+	    << tuple1.fourth << " == " << a2_name 
+	    << ".fourth = " << tuple2.fourth << ": failed!\n";
+      }
+      
       return false;
     }
   }
@@ -429,10 +682,23 @@ bool compareFourthTupleElements( const T &tuple1,
     
     if( err > tol )
     {
-      out << "\nError, relErr(" << a1_name << "[" << i << "].fourth,"
-	  << a2_name << "[" << i << "].fourth) = relErr("
-	  << tuple1.fourth << "," << tuple2.fourth << ") = "
-	  << err << " <= tol = " << tol << ": failed!\n";
+      // Array output
+      if( i >= 0 )
+      {
+	out << "\nError, relErr(" << a1_name << "[" << i << "].fourth,"
+	    << a2_name << "[" << i << "].fourth) = relErr("
+	    << tuple1.fourth << "," << tuple2.fourth << ") = "
+	    << err << " <= tol = " << tol << ": failed!\n";
+      }
+      // Single Tuple output
+      else
+      {
+	out << "\nError, relErr(" << a1_name << ".fourth,"
+	    << a2_name << ".fourth) = relErr("
+	    << tuple1.fourth << "," << tuple2.fourth << ") = "
+	    << err << " <= tol = " << tol << ": failed!\n";
+      }
+      
       return false;
     }
   }

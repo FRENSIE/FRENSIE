@@ -189,25 +189,32 @@ void DataProcessor::calculateDiscreteCDF( Array<Tuple> &data )
   }
 }
 
-//! Swap the data in the desired tuple members.
+//! Swap the data in the desired tuple members. 
 template<TupleMember member1, 
 	 TupleMember member2,
-	 typename Tuple,
+	 typename Tuple1,
+	 typename Tuple2,
 	 template<typename> class Array>
-void DataProcessor::swapTupleMemberData( Array<Tuple> & data )
+void DataProcessor::swapTupleMemberData( const Array<Tuple1> &data,
+					 Array<Tuple2> &swap_data )
 {
-  // Make sure that the array is valid
+  // Make sure that the arrays are valid
   testPrecondition( (data.size() > 0) );
+  testPrecondition( (data.size() == swap_data.size()) );
   
-  typename Array<Tuple>::iterator data_point, end;
+  typename Array<Tuple1>::const_iterator data_point, end;
+  typename Array<Tuple2>::iterator swap_data_point;
   data_point = data.begin();
+  swap_data_point = swap_data.begin();
   end = data.end();
 
   while( data_point != end )
   {
-    TupleMemberSwapPolicy<Tuple,member1,member2>::swap( *data_point );
+    TupleMemberSwapPolicy<Tuple1,Tuple2,member1,member2>::swap( *data_point,
+								*swap_data_point);
     
     ++data_point;
+    ++swap_data_point;
   }
 }
 
