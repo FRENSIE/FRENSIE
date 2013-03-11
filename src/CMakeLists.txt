@@ -8,9 +8,7 @@ SET(HEADERS
   HDF5FileHandler.hpp
   HDF5TypeTraits.hpp
   HDF5ArrayPolicy.hpp
-  PhotonDataCollection.hpp
   SimulationBase.hpp
-  ElectronShells.hpp
   SearchAlgorithms.hpp
   TupleGetSetMemberPolicy.hpp
   PhotonDataBasic.hpp

@@ -26,7 +26,7 @@ template<typename DataProcessingPolicy,
 	   TupleMember depMember,
 	   typename Tuple,
 	   template<typename> class Array>
-void DataProcessor::processData( Array<Tuple> &data )
+void DataProcessor::processContinuousData( Array<Tuple> &data )
 {
   // Make sure that the array is valid
   testPrecondition( data.size() > 0 );
@@ -51,6 +51,44 @@ void DataProcessor::processData( Array<Tuple> &data )
     ++data_point;
   }
 }
+
+//! Search the data array for constant regions in the desired tuple member
+// and reduce the number of bins in these regions to one.
+template<TupleMember member,
+	 typename Tuple>
+void DataProcessor::coarsenConstantRegions( Teuchos::Array<Tuple> &data )
+{
+  // Make sure that the array is valid
+  testPrecondition( data.size() > 2 );
+
+  // Use bidirectional iterator in reverse to improve performance
+  // when the constant region is at the end of the array
+  typename Teuchos::Array<Tuple>::iterator data_point_1 = data.end()-1;
+  typename Teuchos::Array<Tuple>::iterator data_point_2, data_point_3;
+  typename Teuchos::Array<Tuple>::iterator end = data.begin()-1;
+
+  typedef TupleGetSetMemberPolicy<Tuple,member> dataTGSMP;
+
+  data_point_2 = data_point_1-1;
+  data_point_3 = data_point_2-1;
+  while( data_point_3 != end )
+  {
+    if( dataTGSMP::get( *data_point_1 ) == dataTGSMP::get( *data_point_2 ) &&
+	dataTGSMP::get( *data_point_1 ) == dataTGSMP::get( *data_point_3 ) )
+    {
+      data_point_2 = data.erase( data_point_2 );
+
+      --data_point_2;
+      --data_point_3;
+    }
+    else
+    {
+      --data_point_1;
+      --data_point_2;
+      --data_point_3;
+    }
+  }
+}    
 
 //! Calculate the slope between each pair of data points and store at the
 // desired tuple member.

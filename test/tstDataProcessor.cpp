@@ -50,7 +50,8 @@ public:
   { /* ... */ }
 
   // Allow public access to the DataProcessor protected member functions
-  using FACEMC::DataProcessor::processData;
+  using FACEMC::DataProcessor::processContinuousData;
+  using FACEMC::DataProcessor::coarsenConstantRegions;
   using FACEMC::DataProcessor::calculateSlopes;
   using FACEMC::DataProcessor::calculateContinuousCDF;
   using FACEMC::DataProcessor::calculateDiscreteCDF;
@@ -109,9 +110,9 @@ TEUCHOS_UNIT_TEST( DataProcessor, process_pair_array_log_log_test )
   Teuchos::Array<FACEMC::Pair<double,double> > log_log_data( 10, data_point );
 
   // Process the array
-  data_processor.processData<TestDataProcessor::LogLogDataProcessingPolicy,
-			     FACEMC::FIRST,
-			     FACEMC::SECOND>( processed_data );
+  data_processor.processContinuousData<TestDataProcessor::LogLogDataProcessingPolicy,
+				       FACEMC::FIRST,
+				       FACEMC::SECOND>( processed_data );
 
   TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, log_log_data, TOL );
 }
@@ -135,9 +136,9 @@ TEUCHOS_UNIT_TEST( DataProcessor, process_pair_array_square_square_test )
   Teuchos::Array<FACEMC::Pair<double,double> > sqr_sqr_data( 10, data_point );
 
   // Process the array
-  data_processor.processData<TestDataProcessor::SquareSquareDataProcessingPolicy,
-			     FACEMC::FIRST,
-			     FACEMC::SECOND>( processed_data );
+  data_processor.processContinuousData<TestDataProcessor::SquareSquareDataProcessingPolicy,
+				       FACEMC::FIRST,
+				       FACEMC::SECOND>( processed_data );
 
   TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, sqr_sqr_data, TOL );
 }
@@ -164,9 +165,9 @@ TEUCHOS_UNIT_TEST( DataProcessor, process_trip_array_log_log_test )
     log_log_data( 10, data_point );
 
   // Process the array
-  data_processor.processData<TestDataProcessor::LogLogDataProcessingPolicy,
-			     FACEMC::FIRST,
-			     FACEMC::SECOND>( processed_data );
+  data_processor.processContinuousData<TestDataProcessor::LogLogDataProcessingPolicy,
+				       FACEMC::FIRST,
+				       FACEMC::SECOND>( processed_data );
 
   TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, log_log_data, TOL );
 }
@@ -193,9 +194,9 @@ TEUCHOS_UNIT_TEST( DataProcessor, process_trip_array_square_square_test )
     sqr_sqr_data( 10, data_point );
 
   // Process the array
-  data_processor.processData<TestDataProcessor::SquareSquareDataProcessingPolicy,
-			     FACEMC::FIRST,
-			     FACEMC::SECOND>( processed_data );
+  data_processor.processContinuousData<TestDataProcessor::SquareSquareDataProcessingPolicy,
+				       FACEMC::FIRST,
+				       FACEMC::SECOND>( processed_data );
 
   TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, sqr_sqr_data, TOL );
 }
@@ -223,9 +224,9 @@ TEUCHOS_UNIT_TEST( DataProcessor, process_quad_array_log_log_test )
     log_log_data( 10, data_point );
 
   // Process the array
-  data_processor.processData<TestDataProcessor::LogLogDataProcessingPolicy,
-			     FACEMC::FIRST,
-			     FACEMC::SECOND>( processed_data );
+  data_processor.processContinuousData<TestDataProcessor::LogLogDataProcessingPolicy,
+				       FACEMC::FIRST,
+				       FACEMC::SECOND>( processed_data );
 
   TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, log_log_data, TOL );
 }
@@ -253,11 +254,38 @@ TEUCHOS_UNIT_TEST( DataProcessor, process_quad_array_square_square_test )
     sqr_sqr_data( 10, data_point );
 
   // Process the array
-  data_processor.processData<TestDataProcessor::SquareSquareDataProcessingPolicy,
-			     FACEMC::FIRST,
-			     FACEMC::SECOND>( processed_data );
+  data_processor.processContinuousData<TestDataProcessor::SquareSquareDataProcessingPolicy,
+				       FACEMC::FIRST,
+				       FACEMC::SECOND>( processed_data );
 
   TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, sqr_sqr_data, TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can coarsen constant regions in an array
+TEUCHOS_UNIT_TEST( DataProcessor, coarsen_constant_regions_test )
+{
+  TestDataProcessor data_processor;
+  
+  // Load the array to be processed
+  FACEMC::Quad<double,double,double,double> data_point;
+  data_point.first = INDEP_VAR;
+  data_point.second = DEP_VAR;
+  data_point.third = ZERO;
+  data_point.fourth = ZERO;
+  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
+    coarsened_data( 10, data_point );
+
+  // Load the reference array
+  data_point.first = INDEP_VAR;
+  data_point.second = DEP_VAR;
+  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
+    reference_data( 2, data_point );
+
+  // Coarsen the array
+  data_processor.coarsenConstantRegions<FACEMC::SECOND>( coarsened_data );
+
+  TEST_COMPARE_FLOATING_QUAD_ARRAYS( coarsened_data, reference_data, TOL );
 }
 
 //---------------------------------------------------------------------------//

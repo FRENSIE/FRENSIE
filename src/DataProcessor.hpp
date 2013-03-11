@@ -10,6 +10,9 @@
 // Std Lib Includes
 #include <string>
 
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
+
 // FACEMC Includes
 #include "Tuple.hpp"
 
@@ -47,7 +50,16 @@ protected:
 	   TupleMember depMember,
 	   typename Tuple,
 	   template<typename> class Array>
-  void processData( Array<Tuple> &data );
+  void processContinuousData( Array<Tuple> &data );
+
+  /*!
+   * \brief Search the data array for constant regions and reduce the number
+   * of bins in these regions to one. Only the Teuchos::Array can be used 
+   * because the erase member function is needed.
+   */
+  template<TupleMember member,
+	   typename Tuple>
+  void coarsenConstantRegions( Teuchos::Array<Tuple> &data );
 
   /*!
    * \brief Calculate the slope between indepMember and depMember and store
