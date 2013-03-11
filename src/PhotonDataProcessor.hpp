@@ -7,12 +7,16 @@
 #ifndef PHOTON_DATA_PROCESSOR_HPP
 #define PHOTON_DATA_PROCESSOR_HPP
 
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
+
 // FACEMC Includes
 #include "DataProcessor.hpp"
 #include "DefaultParameterValues.hpp"
 #include "HDF5DataFileNames.hpp"
 #include "HDF5FileHandler.hpp"
 #include "ENDLIB97FileHandler.hpp"
+#include "Tuple.hpp"
 
 namespace FACEMC{
 
@@ -86,10 +90,11 @@ protected:
 
   //! Process the electron shell occupancy data
   //! \param atomic_number atomic number being processed for shell map func.
-  void processShellOccupancyData( const unsigned int atomic_number );
+  void processShellOccupancyData( const unsigned int atomic_number,
+				  Teuchos::Array<Quad<double,unsigned int,unsigned int,double> > &occupancy_data );
 
   //! Process the electron shell binding energy data
-  void processBindingEnergyData();
+  void processBindingEnergyData( Teuchos::Array<Quad<double,unsigned int,unsigned int,double> > &occupancy_data );
 
   //! Process the electron shell kinetic energy data
   void processKineticEnergyData();

@@ -32,8 +32,8 @@
 #define CDF_VALUE_REF_2 0.86513264660383
 #define MOMENTUM_REF_1 0.010993509157487
 #define MOMENTUM_REF_2 0.0020168889091593
-#define BINDING_ENERGY_REF 0.00019561
-#define KINETIC_ENERGY_REF 0.00030623
+#define BINDING_ENERGY_REF 1.2580e-5
+#define KINETIC_ENERGY_REF 3.06230e-4
 #define TOL 1e-12
 
 //---------------------------------------------------------------------------//
@@ -56,7 +56,6 @@ public:
   using FACEMC::PhotonDataDopplerBroadening::getIncoherentScatteringVacancyShellData;
   using FACEMC::PhotonDataDopplerBroadening::getComptonProfileCDF;
   using FACEMC::PhotonDataDopplerBroadening::getComptonProfileMomentum;
-  using FACEMC::PhotonDataDopplerBroadening::getShellBindingEnergy;
   using FACEMC::PhotonDataDopplerBroadening::getShellKineticEnergy;
 };
 
@@ -82,12 +81,13 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, incoherent_scattering_vacancy_sh
 							  ENERGY_MIN,
 							  ENERGY_MAX );
 
-  FACEMC::Pair<unsigned int, unsigned int> shell_data =
+  FACEMC::Trip<unsigned int, unsigned int, double> shell_data =
     test_photon_data_db.getIncoherentScatteringVacancyShellData( CDF_VALUE );
 
-  FACEMC::Pair<unsigned int, unsigned int> shell_data_ref;
+  FACEMC::Trip<unsigned int, unsigned int, double> shell_data_ref;
   shell_data_ref.first = 3;
   shell_data_ref.second = 1;
+  shell_data_ref.third = BINDING_ENERGY_REF;
   
   TEST_PAIR_EQUALITY( shell_data, shell_data_ref );
 }
@@ -141,23 +141,6 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, compton_profile_momentum_test )
   
   TEST_FLOATING_EQUALITY( momentum, 
 			  MOMENTUM_REF_2, 
-			  TOL );
-}
-  
-//---------------------------------------------------------------------------//
-// Check that the PhotonDataDopplerBroadening class returns the correct 
-// binding energy
-TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, binding_energy_test )
-{
-  TestingPhotonDataDopplerBroadening test_photon_data_db( ATOMIC_NUMBER,
-							  ENERGY_MIN,
-							  ENERGY_MAX );
-  
-  double binding_energy = 
-    test_photon_data_db.getShellBindingEnergy( SHELL_1 );
-  
-  TEST_FLOATING_EQUALITY( binding_energy, 
-			  BINDING_ENERGY_REF, 
 			  TOL );
 }
 

@@ -54,18 +54,6 @@ PhotonDataDopplerBroadening::PhotonDataDopplerBroadening(
   // Load the shell occupancy data
   photon_data_file.readArrayFromDataSet( d_shell_occupancy,
 					 ELECTRON_SHELL_CDF_LOC );
-					
-
-  // Load the electron shell binding energy
-  Teuchos::Array<Pair<unsigned int,double> > 
-    raw_electron_shell_binding_energy;
-  photon_data_file.readArrayFromDataSet( raw_electron_shell_binding_energy,
-					 ELECTRON_SHELL_BINDING_ENERGY_LOC );
-  for( unsigned int i = 0; i < raw_electron_shell_binding_energy.size(); ++i )
-  {
-    d_electron_shell_binding_energy[raw_electron_shell_binding_energy[i].first]
-      = raw_electron_shell_binding_energy[i].second;
-  }
 
   // Load the electron shell kinetic energy
   Teuchos::Array<Pair<unsigned int,double> >
@@ -87,7 +75,9 @@ PhotonDataDopplerBroadening::PhotonDataDopplerBroadening(
 
 //! Return the data corresponding to the shell with a vacancy after an
 // incoherent scattering event
-Pair<unsigned int, unsigned int> PhotonDataDopplerBroadening::getIncoherentScatteringVacancyShellData( const double cdf_value ) const
+Trip<unsigned int, unsigned int, double> 
+PhotonDataDopplerBroadening::getIncoherentScatteringVacancyShellData( 
+						  const double cdf_value ) const
 {
   // The cdf value must be valid
   testPrecondition( cdf_value >= 0.0 && cdf_value <= 1.0 );
@@ -100,9 +90,10 @@ Pair<unsigned int, unsigned int> PhotonDataDopplerBroadening::getIncoherentScatt
 						 end,
 						 cdf_value );
 
-  Pair<unsigned int, unsigned int> shell_data;
+  Trip<unsigned int, unsigned int, double> shell_data;
   shell_data.first = bin->second;
   shell_data.second = bin->third;
+  shell_data.third = bin->fourth;
 
   return shell_data;
 }
@@ -155,16 +146,6 @@ double PhotonDataDopplerBroadening::getComptonProfileMomentum(
   double pdf = (*lower_bin_boundary).third;
   double slope = (*lower_bin_boundary).fourth;
   return momentum + (sqrt( pdf*pdf + 2*slope*cdf_diff ) - pdf)/slope;
-}
-
-//! Return the binding energy of electrons in a given shell
-double PhotonDataDopplerBroadening::getShellBindingEnergy( 
-					        const unsigned int shell ) const
-{
-  // The shell must be valid
-  testPrecondition( d_electron_shell_binding_energy.count( shell ) > 0 );
-
-  return d_electron_shell_binding_energy.find( shell )->second;
 }
 
 //! Return the kinetic energy of electrons in a given shell

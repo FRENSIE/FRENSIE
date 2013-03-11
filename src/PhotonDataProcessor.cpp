@@ -309,7 +309,7 @@ void PhotonDataProcessor::processCoherentCrossSectionData()
 						 d_energy_min,
 						 d_energy_max );
   
-  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
   
   calculateSlopes<FIRST,SECOND,THIRD>( data );
   
@@ -326,7 +326,7 @@ void PhotonDataProcessor::processIncoherentCrossSectionData()
 						 d_energy_min,
 						 d_energy_max );
   
-  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );	       
+  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );	       
   
   calculateSlopes<FIRST,SECOND,THIRD>( data );
   
@@ -343,7 +343,7 @@ void PhotonDataProcessor::processTotalPhotoelectricCrossSectionData()
 						 d_energy_min,
 						 d_energy_max );
   
-  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );       
+  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );       
   
   calculateSlopes<FIRST,SECOND,THIRD>( data );
   
@@ -360,7 +360,7 @@ void PhotonDataProcessor::processShellPhotoelectricCrossSectionData( unsigned in
 						 d_energy_min,
 						 d_energy_max );
   
-  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
   
   calculateSlopes<FIRST,SECOND,THIRD>( data );
   
@@ -377,7 +377,7 @@ void PhotonDataProcessor::processPairProductionCrossSectionData()
 						 d_energy_min,
 						 d_energy_max );
   
-  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
   
   
   // Approximate the cross section as constant in the first bin 
@@ -400,7 +400,7 @@ void PhotonDataProcessor::processTripletProductionCrossSectionData()
 						 d_energy_min,
 						 d_energy_max );
   
-  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
   
   
   // Approximate the cross section as constant in the first bin 
@@ -423,7 +423,7 @@ void PhotonDataProcessor::processFormFactorData()
   
   // For efficient sampling, the atomic form factor must be squared and
   // integrated over its squared argument
-  processData<SquareSquareDataProcessingPolicy,FIRST,SECOND>( data );
+  processContinuousData<SquareSquareDataProcessingPolicy,FIRST,SECOND>( data );
   
   calculateContinuousCDF<FIRST,SECOND,THIRD>( data );
   
@@ -444,13 +444,16 @@ void PhotonDataProcessor::processScatteringFunctionData()
   Teuchos::Array<Trip<double,double,double> > data;
   
   d_epdl_file_handler.readTwoColumnTable( data );
+
+  coarsenConstantRegions<SECOND>( data );
   
-  processData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
-  
+  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+
   calculateSlopes<FIRST,SECOND,THIRD>( data );
   
-  // The first data point is always (0.0, 0.0). The slope will not
-  // be calculated correctly on the log-log scale.
+  // The first data point is always (0.0, 0.0), which is (-INF,-INF) on a 
+  // log-log scale. The slope will not be calculated correctly on the log-log 
+  // scale. A value of 0.0 must be returned so set the slope to 0.0
   data[0].third = 0.0;
   
   d_hdf5_file_handler.writeArrayToDataSet( data,
@@ -475,6 +478,9 @@ void PhotonDataProcessor::processEADLFile()
 
   // Electron Shells with relaxation data
   Teuchos::Array<unsigned int> relaxation_shells;
+
+  // Electron Shell occupancy data
+  Teuchos::Array<Quad<double,unsigned int,unsigned int,double> > occupancy_data;
   
   // Process every element (Z=1-100) in the EPDL file
   while( d_eadl_file_handler.validFile() )
@@ -530,14 +536,16 @@ void PhotonDataProcessor::processEADLFile()
     case 91912:
       // Read number of electrons per subshell
 
-      processShellOccupancyData( atomic_number );
+      processShellOccupancyData( atomic_number,
+				 occupancy_data );
       
       break;
 
     case 91913:
       // Read binding energy per subshell
 
-      processBindingEnergyData();
+      processBindingEnergyData( occupancy_data );
+      occupancy_data.clear();
       
       break;
 
@@ -660,7 +668,9 @@ void PhotonDataProcessor::processEADLFile()
 }
 
 //! Process the electron shell occupancy data
-void PhotonDataProcessor::processShellOccupancyData( const unsigned int atomic_number )
+void PhotonDataProcessor::processShellOccupancyData( 
+					       const unsigned int atomic_number,
+		                               Teuchos::Array<Quad<double,unsigned int,unsigned int,double> > &occupancy_data )
 {
   Teuchos::Array<Pair<unsigned int,double> > data;
   
@@ -676,7 +686,7 @@ void PhotonDataProcessor::processShellOccupancyData( const unsigned int atomic_n
   Teuchos::Array<Pair<unsigned int,unsigned int > >
     electron_shell_index_map;      
   createShellIndexMap( atomic_number,
-			       electron_shell_index_map );
+		       electron_shell_index_map );
   
   FACEMC_ASSERT( (electron_shell_index_map.size() == 
 		  data.size()) );
@@ -686,29 +696,37 @@ void PhotonDataProcessor::processShellOccupancyData( const unsigned int atomic_n
 		  data.back().first) );
   
   // Create the complete data array
-  Teuchos::Array<Trip<double,unsigned int,unsigned int> > 
-    complete_data( data.size() );
+  occupancy_data.clear();
+  occupancy_data.resize( data.size() );
   
   for( int i = 0; i < data.size(); ++i )
-    {
-      complete_data[i].first = data[i].second;
-      complete_data[i].second = electron_shell_index_map[i].first;
-      complete_data[i].third = electron_shell_index_map[i].second;
-    }
+  {
+    occupancy_data[i].first = data[i].second;
+    occupancy_data[i].second = electron_shell_index_map[i].first;
+    occupancy_data[i].third = electron_shell_index_map[i].second;
+  }
   
-  d_hdf5_file_handler.writeArrayToDataSet( complete_data,
-					   ELECTRON_SHELL_CDF_LOC );
+  // This data will not be written to the HDF5 file until the binding energy
+  // data has been added.
 }      
 
 //! Process the electron shell binding energy data
-void PhotonDataProcessor::processBindingEnergyData()
+void PhotonDataProcessor::processBindingEnergyData( Teuchos::Array<Quad<double,unsigned int,unsigned int,double> > &occupancy_data )
 {
   Teuchos::Array<Pair<unsigned int,double> > data;
   
   d_eadl_file_handler.readTwoColumnTable( data );
+
+  for( int i = 0; i < data.size(); ++i )
+    occupancy_data[i].fourth = data[i].second;
   
+  // The isolated binding energy data still needs to be written to the file
   d_hdf5_file_handler.writeArrayToDataSet( data,
 					   ELECTRON_SHELL_BINDING_ENERGY_LOC );
+
+  // Write the occupancy data to the file here too
+  d_hdf5_file_handler.writeArrayToDataSet( occupancy_data,
+					   ELECTRON_SHELL_CDF_LOC );
 }      
 
 //! Process the electron shell kinetic energy data

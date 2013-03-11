@@ -23,7 +23,7 @@
 #define ENERGY_MAX MAX_ENERGY_DEFAULT
 #define SHELL 1
 #define RAD_TRANS_PROB_REF 1.0
-#define BINDING_ENERGY_REF 1.3610e-5
+#define KINETIC_ENERGY_REF 1.3610e-5
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -75,8 +75,8 @@ TEUCHOS_UNIT_TEST( PhotonData, doppler_physics_constructor_test )
   unsigned int atomic_number = photon_data.getAtomicNumber();
   TEST_EQUALITY_CONST( atomic_number, ATOMIC_NUMBER );
 
-  double binding_energy = photon_data.getShellBindingEnergy( SHELL );
-  TEST_EQUALITY_CONST( binding_energy, BINDING_ENERGY_REF );
+  double kinetic_energy = photon_data.getShellKineticEnergy( SHELL );
+  TEST_EQUALITY_CONST( kinetic_energy, KINETIC_ENERGY_REF );
 }
 
 //---------------------------------------------------------------------------//
@@ -97,8 +97,8 @@ TEUCHOS_UNIT_TEST( PhotonData, all_physics_constructor_test )
      photon_data.getShellRadiativeTransitionProbability( SHELL );
    TEST_EQUALITY_CONST( rad_trans_prob, RAD_TRANS_PROB_REF );
 
-  double binding_energy = photon_data.getShellBindingEnergy( SHELL );
-  TEST_EQUALITY_CONST( binding_energy, BINDING_ENERGY_REF );
+  double kinetic_energy = photon_data.getShellKineticEnergy( SHELL );
+  TEST_EQUALITY_CONST( kinetic_energy, KINETIC_ENERGY_REF );
 }
 
 //---------------------------------------------------------------------------//

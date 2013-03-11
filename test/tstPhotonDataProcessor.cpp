@@ -32,8 +32,7 @@
 #define FORM_FACTOR_DATA_TEST_FILE "test_form_factor_data.txt"
 #define SCAT_FUNC_DATA_TEST_FILE "test_scattering_function_data.txt"
 #define EPDL_TEST_FILE "test_epdl_file.txt"
-#define SHELL_OCCUP_DATA_TEST_FILE "test_shell_occupancy_data.txt"
-#define BINDING_ENERGY_DATA_TEST_FILE "test_shell_binding_energy_data.txt"
+#define SHELL_OCCUP_BIND_DATA_TEST_FILE "test_shell_occupancy_binding_energy_data.txt"
 #define KINETIC_ENERGY_DATA_TEST_FILE "test_shell_kinetic_energy_data.txt"
 #define SHELL_RAD_TRANS_DATA_TEST_FILE "test_shell_radiative_transition_data.txt"
 #define SHELL_NONRAD_TRANS_DATA_TEST_FILE "test_shell_nonradiative_transition_data.txt"
@@ -585,18 +584,24 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_epdl_file_test )
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process shell occupancy data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_occupancy_data )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_occupancy_data_binding_energy_data_test )
 {
   TestingPhotonDataProcessor photon_data_processor( IGNORE,
-						    SHELL_OCCUP_DATA_TEST_FILE,
+						    SHELL_OCCUP_BIND_DATA_TEST_FILE,
 						    IGNORE,
 						    OUTPUT_DIRECTORY,
 						    ENERGY_MIN,
 						    ENERGY_MAX );
 
   photon_data_processor.d_hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE );
+  
+  Teuchos::Array<FACEMC::Quad<double,unsigned int,unsigned int,double> > 
+    data;
 
-  photon_data_processor.processShellOccupancyData( ATOMIC_NUMBER );
+  photon_data_processor.processShellOccupancyData( ATOMIC_NUMBER,
+						   data );
+
+  photon_data_processor.processBindingEnergyData( data );
 
   photon_data_processor.d_hdf5_file_handler.closeHDF5File();
   
@@ -604,82 +609,70 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_occupancy_data )
   FACEMC::HDF5FileHandler hdf5_file_handler;
   hdf5_file_handler.openHDF5FileAndReadOnly( HDF5_TEST_FILE );
 
-  Teuchos::Array<FACEMC::Trip<double,unsigned int, unsigned int> > data;
+  Teuchos::Array<FACEMC::Pair<unsigned int, double> > binding_energy_data;
 
-  hdf5_file_handler.readArrayFromDataSet( data,
-					  ELECTRON_SHELL_CDF_LOC );
-
-  // Fill the reference data array
-  Teuchos::Array<FACEMC::Trip<double,unsigned int, unsigned int> > ref_data;
-  ref_data.resize( data.size() );
-  
-  ref_data[0].first = 0.4;
-  ref_data[0].second = 1;
-  ref_data[0].third = 0;
-
-  ref_data[1].first = 0.8;
-  ref_data[1].second = 3;
-  ref_data[1].third = 1;
-
-  ref_data[2].first = 0.866;
-  ref_data[2].second = 5;
-  ref_data[2].third = 2;
-
-  ref_data[3].first = 1.0;
-  ref_data[3].second = 6;
-  ref_data[3].third = 2;
-
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, ref_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the PhotonDataProcessor can process binding energy data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_binding_energy_data )
-{
-  TestingPhotonDataProcessor photon_data_processor( IGNORE,
-						    BINDING_ENERGY_DATA_TEST_FILE,
-						    IGNORE,
-						    OUTPUT_DIRECTORY,
-						    ENERGY_MIN,
-						    ENERGY_MAX );
-
-  photon_data_processor.d_hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE );
-
-  photon_data_processor.processBindingEnergyData();
-
-  photon_data_processor.d_hdf5_file_handler.closeHDF5File();
-  
-  // Read the processed data back in
-  FACEMC::HDF5FileHandler hdf5_file_handler;
-  hdf5_file_handler.openHDF5FileAndReadOnly( HDF5_TEST_FILE );
-
-  Teuchos::Array<FACEMC::Pair<unsigned int, double> > data;
-
-  hdf5_file_handler.readArrayFromDataSet( data,
+  hdf5_file_handler.readArrayFromDataSet( binding_energy_data,
 					  ELECTRON_SHELL_BINDING_ENERGY_LOC );
 
-  // Fill the reference data array
-  Teuchos::Array<FACEMC::Pair<unsigned int, double> > ref_data;
-  ref_data.resize( data.size() );
+  Teuchos::Array<FACEMC::Quad<double,unsigned int,unsigned int,double> >
+    occupancy_data;
+
+  hdf5_file_handler.readArrayFromDataSet( occupancy_data,
+					  ELECTRON_SHELL_CDF_LOC );
+
+  // Fill the reference binding energy data array
+  Teuchos::Array<FACEMC::Pair<unsigned int, double> > ref_binding_energy_data;
+  ref_binding_energy_data.resize( binding_energy_data.size() );
   
-  ref_data[0].first = 1;
-  ref_data[0].second = 1.95610e-4;
+  ref_binding_energy_data[0].first = 1;
+  ref_binding_energy_data[0].second = 1.95610e-4;
 
-  ref_data[1].first = 3;
-  ref_data[1].second = 1.2580e-5;
+  ref_binding_energy_data[1].first = 3;
+  ref_binding_energy_data[1].second = 1.2580e-5;
 
-  ref_data[2].first = 5;
-  ref_data[2].second = 6.670e-6;
+  ref_binding_energy_data[2].first = 5;
+  ref_binding_energy_data[2].second = 6.670e-6;
 
-  ref_data[3].first = 6;
-  ref_data[3].second = 6.660e-6;
+  ref_binding_energy_data[3].first = 6;
+  ref_binding_energy_data[3].second = 6.660e-6;
 
-  TEST_COMPARE_FLOATING_PAIR_ARRAYS( data, ref_data, TOL );
+  TEST_COMPARE_FLOATING_PAIR_ARRAYS( binding_energy_data, 
+				     ref_binding_energy_data, 
+				     TOL );
+
+  // Fill the reference occupancy data array
+  Teuchos::Array<FACEMC::Quad<double,unsigned int, unsigned int,double> > 
+    ref_occupancy_data;
+  ref_occupancy_data.resize( occupancy_data.size() );
+  
+  ref_occupancy_data[0].first = 0.4;
+  ref_occupancy_data[0].second = 1;
+  ref_occupancy_data[0].third = 0;
+  ref_occupancy_data[0].fourth = 1.95610e-4;
+
+  ref_occupancy_data[1].first = 0.8;
+  ref_occupancy_data[1].second = 3;
+  ref_occupancy_data[1].third = 1;
+  ref_occupancy_data[1].fourth = 1.2580e-5;
+
+  ref_occupancy_data[2].first = 0.866;
+  ref_occupancy_data[2].second = 5;
+  ref_occupancy_data[2].third = 2;
+  ref_occupancy_data[2].fourth = 6.670e-6;
+
+  ref_occupancy_data[3].first = 1.0;
+  ref_occupancy_data[3].second = 6;
+  ref_occupancy_data[3].third = 2;
+  ref_occupancy_data[3].fourth = 6.660e-6;
+
+  TEST_COMPARE_FLOATING_QUAD_ARRAYS( occupancy_data, 
+				     ref_occupancy_data, 
+				     TOL );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process kinetic energy data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_kinetic_energy_data )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_kinetic_energy_data_test )
 {
   TestingPhotonDataProcessor photon_data_processor( IGNORE,
 						    KINETIC_ENERGY_DATA_TEST_FILE,
@@ -724,7 +717,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_kinetic_energy_data )
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process radiative transition data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_radiative_transition_data )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_radiative_transition_data_test )
 {
   TestingPhotonDataProcessor photon_data_processor( IGNORE,
 						    SHELL_RAD_TRANS_DATA_TEST_FILE,
@@ -779,7 +772,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_radiative_transition_data 
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process radiative transition data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_nonradiative_transition_data )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_nonradiative_transition_data_test )
 {
   TestingPhotonDataProcessor photon_data_processor( IGNORE,
 						    SHELL_NONRAD_TRANS_DATA_TEST_FILE,

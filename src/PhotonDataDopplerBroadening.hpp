@@ -38,8 +38,8 @@ public:
 
   //! Return the data corresponding to the shell with a vacancy after an 
   // incoherent scattering event
-  Pair<unsigned int, unsigned int> getIncoherentScatteringVacancyShellData( 
-						 const double cdf_value ) const;
+  Trip<unsigned int, unsigned int, double> 
+  getIncoherentScatteringVacancyShellData( const double cdf_value ) const;
 
   //! Return the Compton Profile cdf value for a given momentum projection value
   double getComptonProfileCDF( const unsigned int compton_profile_index,
@@ -49,9 +49,6 @@ public:
   double getComptonProfileMomentum( const unsigned int compton_profile_index,
 				    const double cdf_value ) const;
 
-  //! Return the binding energy of electrons in a given shell
-  double getShellBindingEnergy( const unsigned int shell ) const;
-
   //! Return the kinetic energy of electrons in a given shell
   double getShellKineticEnergy( const unsigned int shell ) const;
 
@@ -59,7 +56,7 @@ private:
 
   //@{
   //! Typedefs
-  typedef Teuchos::ArrayRCP<Trip<double, unsigned int, unsigned int> > ShellOccupancyArray;
+  typedef Teuchos::ArrayRCP<Quad<double, unsigned int, unsigned int, double> > ShellOccupancyArray;
   typedef Teuchos::TwoDArray<Quad<double,double,double,double> > ComptonProfileArray;
   typedef Teuchos::ArrayView<Quad<double,double,double,double> > ComptonProfileSubArray;
   typedef Teuchos::ArrayRCP<double> MomentumProjectionArray;
