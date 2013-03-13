@@ -89,7 +89,7 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, incoherent_scattering_vacancy_sh
   shell_data_ref.second = 1;
   shell_data_ref.third = BINDING_ENERGY_REF;
   
-  TEST_PAIR_EQUALITY( shell_data, shell_data_ref );
+  FACEMC_TEST_EQUALITY( shell_data, shell_data_ref );
 }
 
 //---------------------------------------------------------------------------//

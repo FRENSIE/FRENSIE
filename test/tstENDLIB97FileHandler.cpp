@@ -566,7 +566,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_double_double_read_test
   
   fillTwoColumnTestingArray( data_true );
 
-  TEST_COMPARE_ARRAYS( data, data_true );
+  FACEMC_TEST_COMPARE_ARRAYS( data, data_true );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -609,7 +609,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_uint_double_read_test )
   
   fillTwoColumnTestingArray( data_true );
 
-  TEST_COMPARE_ARRAYS( data, data_true );
+  FACEMC_TEST_COMPARE_ARRAYS( data, data_true );
   
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -653,7 +653,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_eq_eq_read_test )
   
   fillTwoColumnTestingArray( data_true );
 
-  TEST_COMPARE_ARRAYS( data, data_true );
+  FACEMC_TEST_COMPARE_ARRAYS( data, data_true );
   
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -697,7 +697,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_lt_gt_read_test )
   
   fillTwoColumnTestingArray( data_true );
 
-  TEST_COMPARE_ARRAYS( data, data_true );
+  FACEMC_TEST_COMPARE_ARRAYS( data, data_true );
   
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -741,7 +741,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_eq_gt_read_test )
   
   fillTwoColumnTestingArray( data_true );
 
-  TEST_COMPARE_ARRAYS( data, data_true );
+  FACEMC_TEST_COMPARE_ARRAYS( data, data_true );
   
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -785,7 +785,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_lt_eq_read_test )
   
   fillTwoColumnTestingArray( data_true );
 
-  TEST_COMPARE_ARRAYS( data, data_true );
+  FACEMC_TEST_COMPARE_ARRAYS( data, data_true );
   
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -829,7 +829,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_gt_lt_read_test )
   
   fillTwoColumnTestingArray( data_true );
 
-  TEST_COMPARE_ARRAYS( data, data_true( 2, 7 ) );
+  FACEMC_TEST_COMPARE_ARRAYS( data, data_true( 2, 7 ) );
   
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -873,7 +873,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_eq_lt_read_test )
   
   fillTwoColumnTestingArray( data_true );
 
-  TEST_COMPARE_ARRAYS( data, data_true( 0, 8 ) );
+  FACEMC_TEST_COMPARE_ARRAYS( data, data_true( 0, 8 ) );
   
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -917,7 +917,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_lt_lt_read_test )
   
   fillTwoColumnTestingArray( data_true );
 
-  TEST_COMPARE_ARRAYS( data, data_true( 0, 8 ) );
+  FACEMC_TEST_COMPARE_ARRAYS( data, data_true( 0, 8 ) );
   
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -961,7 +961,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_gt_eq_read_test )
   
   fillTwoColumnTestingArray( data_true );
 
-  TEST_COMPARE_ARRAYS( data, data_true( 2, 10 ) );
+  FACEMC_TEST_COMPARE_ARRAYS( data, data_true( 2, 10 ) );
   
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1005,7 +1005,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_gt_gt_read_test )
   
   fillTwoColumnTestingArray( data_true );
 
-  TEST_COMPARE_ARRAYS( data, data_true( 2, 10 ) );
+  FACEMC_TEST_COMPARE_ARRAYS( data, data_true( 2, 10 ) );
   
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1046,7 +1046,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_read_test )
 
   fillThreeColumnTestingArray( data_true );
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, data_true, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( data, data_true, TOL );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1088,7 +1088,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_read_test )
 
   fillFourColumnTestingArray( data_true );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( data, data_true, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( data, data_true, TOL );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1321,7 +1321,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_read_read_test )
   TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
   TEST_EQUALITY( reaction_type_1, reaction_type_2 );
   TEST_EQUALITY( electron_shell_1, electron_shell_2 );
-  TEST_COMPARE_ARRAYS( data_1, data_2 );
+  FACEMC_TEST_COMPARE_ARRAYS( data_1, data_2 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1555,7 +1555,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_read_read_test )
   TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
   TEST_EQUALITY( reaction_type_1, reaction_type_2 );
   TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
-  TEST_COMPARE_ARRAYS( data_1, data_2 );
+  FACEMC_TEST_COMPARE_ARRAYS( data_1, data_2 );
   
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
@@ -1790,7 +1790,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_read_read_test )
   TEST_EQUALITY( interpolation_flag_1, interpolation_flag_2 );
   TEST_EQUALITY( reaction_type_1, reaction_type_2 );
   TEST_EQUALITY( electron_shell_1, electron_shell_2 );  
-  TEST_COMPARE_ARRAYS( data_1, data_2 );
+  FACEMC_TEST_COMPARE_ARRAYS( data_1, data_2 );
 
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit

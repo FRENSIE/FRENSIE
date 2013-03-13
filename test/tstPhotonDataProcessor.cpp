@@ -145,7 +145,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_coherent_xs_data )
   ref_data[4].second = -5.3441227994627;
   ref_data[4].third = 0.0;
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, ref_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( data, ref_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -198,7 +198,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_incoherent_xs_data )
   ref_data[4].second = -13.052137932515;
   ref_data[4].third = 0.0;
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, ref_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( data, ref_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -252,7 +252,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_total_photoelectric_xs_data )
   ref_data[4].second = 16.191559844502;
   ref_data[4].third = 0.0;
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, ref_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( data, ref_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -308,7 +308,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_photoelectric_xs_data )
   ref_data[4].second = 16.191559844502;
   ref_data[4].third = 0.0;
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, ref_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( data, ref_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -362,7 +362,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_pair_production_xs_data )
   ref_data[4].second = -13.898771522007;
   ref_data[4].third = 0.0;
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, ref_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( data, ref_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -416,7 +416,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_triplet_production_xs_data )
   ref_data[4].second = -13.309657275825;
   ref_data[4].third = 0.0;
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, ref_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( data, ref_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -474,7 +474,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_form_factor_data )
   ref_data[4].third = 9.9775531144824e-13;
   ref_data[4].fourth = 0.0;
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( data, ref_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( data, ref_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -527,7 +527,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_scattering_function_data )
   ref_data[4].second = -13.367624733972;
   ref_data[4].third = 0.0;
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, ref_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( data, ref_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -636,7 +636,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_occupancy_data_binding_ene
   ref_binding_energy_data[3].first = 6;
   ref_binding_energy_data[3].second = 6.660e-6;
 
-  TEST_COMPARE_FLOATING_PAIR_ARRAYS( binding_energy_data, 
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( binding_energy_data, 
 				     ref_binding_energy_data, 
 				     TOL );
 
@@ -665,7 +665,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_occupancy_data_binding_ene
   ref_occupancy_data[3].third = 2;
   ref_occupancy_data[3].fourth = 6.660e-6;
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( occupancy_data, 
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( occupancy_data, 
 				     ref_occupancy_data, 
 				     TOL );
 }
@@ -712,7 +712,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_kinetic_energy_data_test )
   ref_data[3].first = 6;
   ref_data[3].second = 2.1710e-5;
 
-  TEST_COMPARE_FLOATING_PAIR_ARRAYS( data, ref_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( data, ref_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -757,7 +757,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_radiative_transition_data_
   ref_data[1].second = 6;
   ref_data[1].third = 2.82030e-4;
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( data, ref_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( data, ref_data, TOL );
 
   // Read in the total radiative transition probability attribute
   double total_rad_trans_prob;
@@ -836,7 +836,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_nonradiative_transition_da
   ref_data[5].third = 6;
   ref_data[5].fourth = 2.73050e-4;
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( data, ref_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( data, ref_data, TOL );
 }
 
 //---------------------------------------------------------------------------//

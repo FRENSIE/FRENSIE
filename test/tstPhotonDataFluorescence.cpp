@@ -136,21 +136,21 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, radiative_transition_data_test )
 							     CDF_VALUE_1 );
   transition_data_ref.first = 5;
   transition_data_ref.second = 0.00102758;
-  TEST_FLOATING_PAIR_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
+  FACEMC_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
 
   transition_data =
     test_photon_data_fluoro.getShellRadiativeTransitionData( SHELL_2,
 							     CDF_VALUE_1 );
   transition_data_ref.first = 6;
   transition_data_ref.second = 2.826e-5;
-  TEST_FLOATING_PAIR_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
+  FACEMC_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
 
   transition_data =
     test_photon_data_fluoro.getShellRadiativeTransitionData( SHELL_3,
 							     CDF_VALUE_1 );
   transition_data_ref.first = 0;
   transition_data_ref.second = 3.642e-5;
-  TEST_FLOATING_PAIR_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
+  FACEMC_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -170,7 +170,7 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, nonradiative_transition_data_test )
   transition_data_ref.first = 3;
   transition_data_ref.second = 6;
   transition_data_ref.third = 0.0009633;
-  TEST_FLOATING_TRIP_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
+  FACEMC_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
 
   transition_data =
     test_photon_data_fluoro.getShellNonradiativeTransitionData( SHELL_2,
@@ -178,7 +178,7 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, nonradiative_transition_data_test )
   transition_data_ref.first = 5;
   transition_data_ref.second = 8;
   transition_data_ref.third = 2.291e-5;
-  TEST_FLOATING_TRIP_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
+  FACEMC_TEST_FLOATING_EQUALITY( transition_data, transition_data_ref, HARD_TOL );
 }
 
 //---------------------------------------------------------------------------//

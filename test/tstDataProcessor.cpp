@@ -113,8 +113,8 @@ TEUCHOS_UNIT_TEST( DataProcessor, process_pair_array_log_log_test )
   data_processor.processContinuousData<TestDataProcessor::LogLogDataProcessingPolicy,
 				       FACEMC::FIRST,
 				       FACEMC::SECOND>( processed_data );
-
-  TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, log_log_data, TOL );
+  
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, log_log_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -140,7 +140,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, process_pair_array_square_square_test )
 				       FACEMC::FIRST,
 				       FACEMC::SECOND>( processed_data );
 
-  TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, sqr_sqr_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, sqr_sqr_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -169,7 +169,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, process_trip_array_log_log_test )
 				       FACEMC::FIRST,
 				       FACEMC::SECOND>( processed_data );
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, log_log_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, log_log_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -198,7 +198,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, process_trip_array_square_square_test )
 				       FACEMC::FIRST,
 				       FACEMC::SECOND>( processed_data );
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, sqr_sqr_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, sqr_sqr_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -228,7 +228,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, process_quad_array_log_log_test )
 				       FACEMC::FIRST,
 				       FACEMC::SECOND>( processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, log_log_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, log_log_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -258,7 +258,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, process_quad_array_square_square_test )
 				       FACEMC::FIRST,
 				       FACEMC::SECOND>( processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, sqr_sqr_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, sqr_sqr_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -285,7 +285,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, coarsen_constant_regions_test )
   // Coarsen the array
   data_processor.coarsenConstantRegions<FACEMC::SECOND>( coarsened_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( coarsened_data, reference_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( coarsened_data, reference_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -322,7 +322,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, calc_slopes_in_third_tuple_member_test )
 				 FACEMC::SECOND,
 				 FACEMC::THIRD>( processed_data );
   
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, slope_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, slope_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -362,7 +362,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, calc_slopes_in_fourth_tuple_member_test )
 				 FACEMC::SECOND,
 				 FACEMC::FOURTH>( processed_data );
   
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, slope_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, slope_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -405,7 +405,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, calc_contin_cdf_in_third_tuple_member_test )
 					FACEMC::SECOND,
 					FACEMC::THIRD>( processed_data );
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, cdf_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -451,7 +451,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, calc_contin_cdf_in_fourth_tuple_member_test )
 					FACEMC::SECOND,
 					FACEMC::FOURTH>( processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, cdf_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -486,7 +486,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_in_place_first_tuple_member_test
   data_processor.calculateDiscreteCDF<FACEMC::FIRST,
 				      FACEMC::FIRST>( processed_data );
 
-  TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, cdf_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -521,7 +521,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_in_place_second_tuple_member_tes
   data_processor.calculateDiscreteCDF<FACEMC::SECOND,
 				      FACEMC::SECOND>( processed_data );
 
-  TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, cdf_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -558,7 +558,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_in_place_third_tuple_member_test
   data_processor.calculateDiscreteCDF<FACEMC::THIRD,
 				      FACEMC::THIRD>( processed_data );
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, cdf_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -597,7 +597,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_in_place_fourth_tuple_member_tes
   data_processor.calculateDiscreteCDF<FACEMC::FOURTH,
 				      FACEMC::FOURTH>( processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, cdf_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -636,7 +636,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_second_tuple_member_test )
   data_processor.calculateDiscreteCDF<FACEMC::FIRST,
 				      FACEMC::SECOND>( processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, cdf_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -675,7 +675,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_third_tuple_member_test )
   data_processor.calculateDiscreteCDF<FACEMC::FIRST,
 				      FACEMC::THIRD>( processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, cdf_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -714,7 +714,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_fourth_tuple_member_test )
   data_processor.calculateDiscreteCDF<FACEMC::FIRST,
 				      FACEMC::FOURTH>( processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, cdf_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -740,7 +740,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_first_second_tuple_member_in_place_test )
 				     FACEMC::SECOND>( processed_data,
 						      processed_data );
 
-  TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, swap_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -769,7 +769,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_first_second_tuple_member_test )
 				     FACEMC::SECOND>( data,
 						      processed_data );
 
-  TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, swap_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -799,7 +799,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_first_third_tuple_member_in_place_test )
 				     FACEMC::THIRD>( processed_data,
 						     processed_data );
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, swap_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -832,7 +832,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_first_third_tuple_member_test )
 				     FACEMC::THIRD>( data,
 						     processed_data );
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, swap_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -864,7 +864,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_first_fourth_tuple_member_in_place_test )
 				     FACEMC::FOURTH>( processed_data,
 						      processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, swap_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -899,7 +899,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_first_fourth_tuple_member_test )
 				     FACEMC::FOURTH>( data,
 						      processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, swap_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -929,7 +929,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_second_third_tuple_member_in_place_test )
 				     FACEMC::THIRD>( processed_data,
 						     processed_data );
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, swap_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -962,7 +962,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_second_third_tuple_member_test )
 				     FACEMC::THIRD>( data,
 						     processed_data );
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, swap_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
 }
 
 //---------------------------------------------------------------------------//
@@ -994,7 +994,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_second_fourth_tuple_member_in_place_test 
 				     FACEMC::FOURTH>( processed_data,
 						      processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, swap_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
 } 
 
 //---------------------------------------------------------------------------//
@@ -1029,7 +1029,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_second_fourth_tuple_member_test )
 				     FACEMC::FOURTH>( data,
 						      processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, swap_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
 } 
 
 //---------------------------------------------------------------------------//
@@ -1061,7 +1061,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_third_fourth_tuple_member_in_place_test )
 				     FACEMC::FOURTH>( processed_data,
 						      processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, swap_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
 } 
 
 //---------------------------------------------------------------------------//
@@ -1096,7 +1096,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, swap_third_fourth_tuple_member_test )
 				     FACEMC::FOURTH>( data,
 						      processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, swap_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
 } 
 
 //---------------------------------------------------------------------------//
@@ -1124,7 +1124,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, copy_first_tuple_member_test )
 				     FACEMC::FIRST>( data,
 						     processed_data );
 
-  TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, copy_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, copy_data, TOL );
 } 
 
 //---------------------------------------------------------------------------//
@@ -1152,7 +1152,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, copy_second_tuple_member_test )
 				     FACEMC::SECOND>( data,
 						     processed_data );
 
-  TEST_COMPARE_FLOATING_PAIR_ARRAYS( processed_data, copy_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, copy_data, TOL );
 } 
 
 //---------------------------------------------------------------------------//
@@ -1181,7 +1181,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, copy_third_tuple_member_test )
 				     FACEMC::THIRD>( data,
 						     processed_data );
 
-  TEST_COMPARE_FLOATING_TRIP_ARRAYS( processed_data, copy_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, copy_data, TOL );
 } 
 
 //---------------------------------------------------------------------------//
@@ -1211,7 +1211,7 @@ TEUCHOS_UNIT_TEST( DataProcessor, copy_fourth_tuple_member_test )
 				     FACEMC::FOURTH>( data,
 						      processed_data );
 
-  TEST_COMPARE_FLOATING_QUAD_ARRAYS( processed_data, copy_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, copy_data, TOL );
 } 
 
 //---------------------------------------------------------------------------//
