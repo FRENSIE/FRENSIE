@@ -56,11 +56,15 @@ struct HDF5ArrayPolicy<T,Teuchos::TwoDArray>
 {
   static inline T* getRawPtr(Teuchos::TwoDArray<T> &array) { return array[0].getRawPtr(); }
   static inline const T* getRawPtr(const Teuchos::TwoDArray<T> &array) { return array[0].getRawPtr(); }
-  // Assumes that the number of columns is > 0
   static void resize(Teuchos::TwoDArray<T> &array, typename Teuchos::TwoDArray<T>::size_type n) 
   { 
-    testPrecondition( array.getNumCols() > 0 );
-    array.resizeRows( ceil( n/array.getNumCols() ) ); 
+    if( array.getNumCols() == 0 )
+    {
+      array.resizeRows( 1 );
+      array.resizeCols( n );
+    }
+    else
+      array.resizeRows( ceil( n/array.getNumCols() ) ); 
   }
   static inline typename Teuchos::TwoDArray<T>::size_type size(const Teuchos::TwoDArray<T> &array) { return array.getNumRows()*array.getNumCols(); };
 };

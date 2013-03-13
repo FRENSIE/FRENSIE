@@ -42,11 +42,11 @@ struct Empty{};
  * \c double
  * </ol>
  */
-  template<typename T, 
-	   typename T2 = Empty, 
-	   typename T3 = Empty,
-	   typename T4 = Empty,
-	   typename T5 = Empty>
+template<typename T, 
+	 typename T2 = Empty, 
+	 typename T3 = Empty,
+	 typename T4 = Empty,
+	 typename T5 = Empty>
 struct HDF5TypeTraits
 { 
   //! returns the data type object of the type
