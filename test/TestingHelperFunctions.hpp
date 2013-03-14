@@ -29,10 +29,10 @@
   public:								\
     TEST_GROUP##_##TEST_NAME##_UnitTest(				\
       const std::string& type1Name,					\
-      const std::string& type2Name					\
+      const std::string& arrayName					\
     )                                                                   \
     : Teuchos::UnitTestBase(						\
-	std::string(#TEST_GROUP)+"_Teuchos::"+type2Name+"<"+type1Name+">", #TEST_NAME ) \
+	std::string(#TEST_GROUP)+"_Teuchos::"+arrayName+"<"+type1Name+">", #TEST_NAME ) \
     {}									\
     void runUnitTestImpl( Teuchos::FancyOStream &out, bool &success ) const; \
     virtual std::string unitTestFile() const { return __FILE__; }	\
@@ -49,6 +49,37 @@
   template class TEST_GROUP##_##TEST_NAME##_UnitTest<TYPE1, Teuchos::ARRAY >; \
   TEST_GROUP##_##TEST_NAME##_UnitTest<TYPE1, Teuchos::ARRAY >		\
   instance_##TEST_GROUP##_##TYPE1##_##ARRAY##_##TEST_NAME##_UnitTest(#TYPE1,#ARRAY);
+
+// Define a new Macro for the Teuchos Unit Test Harness for creating a
+// templated unit test on two types and one template template parameter
+#define FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_DECL(TEST_GROUP, TEST_NAME, MEMBER, TYPE1, ARRAY) \
+  template<FACEMC::TupleMember MEMBER, typename TYPE1, template<typename> class ARRAY> \
+  class TEST_GROUP##_##TEST_NAME##_UnitTest : public Teuchos::UnitTestBase \
+  {									\
+  public:								\
+    TEST_GROUP##_##TEST_NAME##_UnitTest(				\
+      const std::string& MemberName,	                                \
+      const std::string& type1Name,                                     \
+      const std::string& arrayName					\
+    )                                                                   \
+    : Teuchos::UnitTestBase(						\
+	std::string(#TEST_GROUP)+"_Teuchos::"+arrayName+"<"+type1Name+">_"+MemberName, #TEST_NAME ) \
+    {}									\
+    void runUnitTestImpl( Teuchos::FancyOStream &out, bool &success ) const; \
+    virtual std::string unitTestFile() const { return __FILE__; }	\
+    virtual long int unitTestFileLineNumber() const { return __LINE__; } \
+  };									\
+									\
+  template<FACEMC::TupleMember MEMBER, typename TYPE1, template<typename> class ARRAY> \
+  void TEST_GROUP##_##TEST_NAME##_UnitTest<MEMBER,TYPE1,ARRAY>::runUnitTestImpl(\
+                      Teuchos::FancyOStream &out, bool &success ) const \
+
+// Define a new Macro for the Teuchos Unit Test Harness for instantiating a
+// templated unit test on two type and one template template parameter
+#define FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT(TEST_GROUP, TEST_NAME, MEMBER, TYPE1, ARRAY) \
+  template class TEST_GROUP##_##TEST_NAME##_UnitTest<FACEMC::MEMBER, TYPE1, Teuchos::ARRAY >; \
+  TEST_GROUP##_##TEST_NAME##_UnitTest<FACEMC::MEMBER, TYPE1, Teuchos::ARRAY > \
+  instance_##TEST_GROUP##_##MEMBER##_##TYPE1##_##ARRAY##_##TEST_NAME##_UnitTest(#MEMBER,#TYPE1,#ARRAY);
 
 // Define a new Macro for the Teuchos Unit Test Harness for comparing
 // Tuples of ordinal data types or ordinal data types

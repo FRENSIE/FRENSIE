@@ -23,12 +23,13 @@ struct ArrayTestingPolicy<T,Teuchos::Array>
 {
   static inline Teuchos::ArrayView<T> view( Teuchos::Array<T> &array ) { return array(); }
   static inline Teuchos::ArrayView<const T> view( const Teuchos::Array<T> &array ) { return array(); }
-  static inline void initialize( Teuchos::Array<T> &array, const T &data ) 
+  static inline Teuchos::Array<T> createArrayFromView( const Teuchos::ArrayView<T> &array_view ) 
   { 
-    array.clear(); 
-    array.resize( 10, data );
+    Teuchos::Array<T> dummy_array( array_view );
+    return dummy_array;
   }
   static inline void resize( Teuchos::Array<T> &array, const typename Teuchos::Array<T>::size_type size ) { array.resize( size ); }
+  static inline typename Teuchos::Array<T>::size_type size( const Teuchos::Array<T> &array ) { return array.size(); }
 };
 
 template<typename T>
@@ -36,13 +37,9 @@ struct ArrayTestingPolicy<T,Teuchos::ArrayRCP>
 {
   static inline Teuchos::ArrayView<T> view( Teuchos::ArrayRCP<T> &array ) { return array(); }
   static inline Teuchos::ArrayView<const T> view( const Teuchos::ArrayRCP<T> &array ) { return array(); }
-  static inline void initialize( Teuchos::ArrayRCP<T> &array, const T &data )
-  {
-    array.clear();
-    array.resize( 10, data );
-  }
-  static inline void resize( Teuchos::Array<T> &array, const typename Teuchos::ArrayRCP<T>::size_type size ) { array.resize( size ); }    
-    
+  static inline Teuchos::ArrayRCP<T> createArrayFromView( const Teuchos::ArrayView<T> &array_view ) { return arcpFromArrayView( array_view ); }
+  static inline void resize( Teuchos::ArrayRCP<T> &array, const typename Teuchos::ArrayRCP<T>::size_type size ) { array.resize( size ); }    
+  static inline typename Teuchos::ArrayRCP<T>::size_type size( const Teuchos::ArrayRCP<T> &array ) { return array.size(); }
 };
 
 template<typename T>
@@ -50,17 +47,9 @@ struct ArrayTestingPolicy<T,Teuchos::ArrayView>
 {
   static inline Teuchos::ArrayView<T> view( Teuchos::ArrayView<T> &array ) { return array(); }
   static inline Teuchos::ArrayView<const T> view( const Teuchos::ArrayView<T> &array ) { return array(); }
-  static inline void initialize( Teuchos::ArrayView<T> &array, const T &data )
-  {
-    Teuchos::ArrayRCP<T> dummy_array( 10, data );
-    array = dummy_array();
-  }
-  static inline void resize( Teuchos::ArrayView<T> &array, const typename Teuchos::ArrayView<T>::size_type size )
-  {
-    Teuchos::Array<T> dummy_array( array );
-    dummy_array.resize( size );
-    array = dummy_array();
-  }
+  static inline Teuchos::ArrayView<T> createArrayFromView( const Teuchos::ArrayView<T> &array_view ) { return array_view; }
+  static inline void resize( Teuchos::ArrayRCP<T> &array, const typename Teuchos::ArrayRCP<T>::size_type size ) { array.resize( size ); }    
+  static inline typename Teuchos::ArrayRCP<T>::size_type size( const Teuchos::ArrayRCP<T> &array ) { return array.size(); }
 };
 
 template<typename T>
@@ -68,16 +57,18 @@ struct ArrayTestingPolicy<T,Teuchos::TwoDArray>
 {
   static inline Teuchos::ArrayView<const T> view( Teuchos::TwoDArray<T> &array ) { return array.getDataArray()(); }
   static inline Teuchos::ArrayView<const T> view( const Teuchos::TwoDArray<T> &array ) { return array.getDataArray()(); }
-  static inline void initialize( Teuchos::TwoDArray<T> &array, const T &data )
+  static inline Teuchos::TwoDArray<T> createArrayFromView( const Teuchos::ArrayView<T> &array_view )
   {
-    Teuchos::TwoDArray<T> dummy_array( 2, 5, data );
-    array = dummy_array;
+    Teuchos::TwoDArray<T> dummy_array( 1, array_view.size() );
+    dummy_array[0] = array_view;
+    return dummy_array;
   }
   static inline void resize( Teuchos::TwoDArray<T> &array, const typename Teuchos::TwoDArray<T>::size_type size )
   {
     array.resizeRows( 1 );
     array.resizeCols( size );
   }
+  static inline typename Teuchos::TwoDArray<T>::size_type size( const Teuchos::TwoDArray<T> &array ) { return array.getNumRows()*array.getNumCols(); }
 };
 
 } // end FACEMC namespace

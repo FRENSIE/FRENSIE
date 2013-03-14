@@ -18,7 +18,7 @@
 #include "HDF5FileHandler.hpp"
 #include "Tuple.hpp"
 #include "TestingHelperFunctions.hpp"
-#include "HDF5FileHandlerTestingTypedefs.hpp"
+#include "TupleTestingTypedefs.hpp"
 
 //---------------------------------------------------------------------------//
 // HDF5 Test File Names.
@@ -187,7 +187,7 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, createParentGroups )
 FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler, 
 						writeArrayToDataSet,
 						Type,
-						Array )
+						array )
 {
   FACEMC::HDF5FileHandler hdf5_file_handler;
 
@@ -196,8 +196,9 @@ FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler,
   Type test_value;
   FACEMC::TypeTestingPolicy<Type>::initialize( test_value );
 
-  Array<Type> data;
-  FACEMC::ArrayTestingPolicy<Type,Array>::initialize( data, test_value );
+  Teuchos::Array<Type> raw_data( 100, test_value );
+  array<Type> data = 
+    FACEMC::ArrayTestingPolicy<Type,array>::createArrayFromView( raw_data() );
 
   // If the dataset is not written successfuly, an exception will be thrown
   // and caught inside of the member function, causing a program exit.
@@ -219,7 +220,7 @@ UNIT_TEST_INSTANTIATION_ARRAY( HDF5FileHandler, writeArrayToDataSet, TwoDArray )
 FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler, 
 						readArrayFromDataSet,
 						Type,
-						Array )
+						array )
 {
   FACEMC::HDF5FileHandler hdf5_file_handler;
 
@@ -228,16 +229,14 @@ FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler,
   Type test_value;
   FACEMC::TypeTestingPolicy<Type>::initialize( test_value );
 
-  Array<Type> data_original;
-  FACEMC::ArrayTestingPolicy<Type,Array>::initialize( data_original,
-						      test_value );
+  Teuchos::Array<Type> raw_data( 100, test_value );
+  array<Type> data_original = 
+    FACEMC::ArrayTestingPolicy<Type,array>::createArrayFromView( raw_data() );
 
   hdf5_file_handler.writeArrayToDataSet( data_original,
 					 DATASET_NAME );
 
-  Array<Type> data;
-  //FACEMC::ArrayTestingPolicy<Type,Array>::resize( data, 
-  //						  data_original.size() );
+  array<Type> data;
   hdf5_file_handler.readArrayFromDataSet( data,
   					  DATASET_NAME );
 
@@ -256,7 +255,7 @@ UNIT_TEST_INSTANTIATION_ARRAY( HDF5FileHandler, readArrayFromDataSet, TwoDArray 
 FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler, 
 						writeArrayToDataSetAttribute,
 						Type,
-						Array )
+						array )
 {
   FACEMC::HDF5FileHandler hdf5_file_handler;
 
@@ -265,14 +264,15 @@ FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler,
   Type test_value;
   FACEMC::TypeTestingPolicy<Type>::initialize( test_value );
 
-  Array<Type> set_data;
-  FACEMC::ArrayTestingPolicy<Type,Array>::initialize( set_data, test_value );
+  Teuchos::Array<Type> raw_data( 100, test_value );
+  array<Type> set_data = 
+    FACEMC::ArrayTestingPolicy<Type,array>::createArrayFromView( raw_data() );
 
   hdf5_file_handler.writeArrayToDataSet( set_data,
 					 DATASET_NAME );
 
-  Array<Type> data;
-  FACEMC::ArrayTestingPolicy<Type,Array>::initialize( data, test_value );
+  array<Type> data = 
+    FACEMC::ArrayTestingPolicy<Type,array>::createArrayFromView( raw_data() );
 
   // If the dataset attribute is not written successfuly, an exception will be 
   // thrown and caught inside of the member function, causing a program exit.
@@ -295,7 +295,7 @@ UNIT_TEST_INSTANTIATION_ARRAY( HDF5FileHandler, writeArrayToDataSetAttribute, Tw
 FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler, 
 						readArrayFromDataSetAttribute,
 						Type,
-						Array )
+						array )
 {
   FACEMC::HDF5FileHandler hdf5_file_handler;
 
@@ -304,21 +304,21 @@ FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler,
   Type test_value;
   FACEMC::TypeTestingPolicy<Type>::initialize( test_value );
 
-  Array<Type> set_data;
-  FACEMC::ArrayTestingPolicy<Type,Array>::initialize( set_data, test_value );
+  Teuchos::Array<Type> raw_data( 100, test_value );
+  array<Type> set_data = 
+    FACEMC::ArrayTestingPolicy<Type,array>::createArrayFromView( raw_data() );
 
   hdf5_file_handler.writeArrayToDataSet( set_data,
 					 DATASET_NAME );
 
-  Array<Type> data_original;
-  FACEMC::ArrayTestingPolicy<Type,Array>::initialize( data_original, 
-						      test_value );
+  array<Type> data_original = 
+    FACEMC::ArrayTestingPolicy<Type,array>::createArrayFromView( raw_data() );
 
   hdf5_file_handler.writeArrayToDataSetAttribute( data_original,
 						  DATASET_NAME,
 						  ATTRIBUTE_NAME );
 
-  Array<Type> data;
+  array<Type> data;
   hdf5_file_handler.readArrayFromDataSetAttribute( data,
 						   DATASET_NAME,
 						   ATTRIBUTE_NAME );
@@ -344,10 +344,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, writeValueToDataSetAttribute
   Type test_value;
   FACEMC::TypeTestingPolicy<Type>::initialize( test_value );
 
-  Teuchos::Array<Type> data; 
-  FACEMC::ArrayTestingPolicy<Type,Teuchos::Array>::initialize( data, 
-							       test_value );
-
+  Teuchos::Array<Type> data( 100, test_value ); 
+  
   hdf5_file_handler.writeArrayToDataSet( data,
 					 DATASET_NAME );
 
@@ -375,9 +373,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, readValueFromDataSetAttribut
   Type test_value_original;
   FACEMC::TypeTestingPolicy<Type>::initialize( test_value_original );
 
-  Teuchos::Array<Type> data; 
-  FACEMC::ArrayTestingPolicy<Type,Teuchos::Array>::initialize( data, 
-							       test_value_original );
+  Teuchos::Array<Type> data( 100, test_value_original ); 
 
   hdf5_file_handler.writeArrayToDataSet( data,
 					 DATASET_NAME );
@@ -404,7 +400,7 @@ UNIT_TEST_INSTANTIATION( HDF5FileHandler, readValueFromDataSetAttribute );
 FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler, 
 						writeArrayToGroupAttribute,
 						Type,
-						Array )
+						array )
 {
   FACEMC::HDF5FileHandler hdf5_file_handler;
 
@@ -413,8 +409,9 @@ FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler,
   Type test_value;
   FACEMC::TypeTestingPolicy<Type>::initialize( test_value );
 
-  Array<Type> data; 
-  FACEMC::ArrayTestingPolicy<Type,Array>::initialize( data, test_value );
+  Teuchos::Array<Type> raw_data( 100, test_value );
+  array<Type> data = 
+    FACEMC::ArrayTestingPolicy<Type,array>::createArrayFromView( raw_data() );
 
   // If the group attribute is not written successfuly, an exception will be 
   // thrown and caught inside of the member function, causing a program exit.
@@ -437,7 +434,7 @@ UNIT_TEST_INSTANTIATION_ARRAY( HDF5FileHandler, writeArrayToGroupAttribute, TwoD
 FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler, 
 						readArrayFromGroupAttribute,
 						Type,
-						Array )
+						array )
 {
   FACEMC::HDF5FileHandler hdf5_file_handler;
 
@@ -446,15 +443,15 @@ FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler,
   Type test_value;
   FACEMC::TypeTestingPolicy<Type>::initialize( test_value );
 
-  Array<Type> data_original; 
-  FACEMC::ArrayTestingPolicy<Type,Array>::initialize( data_original, 
-						      test_value );
+  Teuchos::Array<Type> raw_data( 100, test_value );
+  array<Type> data_original = 
+    FACEMC::ArrayTestingPolicy<Type,array>::createArrayFromView( raw_data() );
 
   hdf5_file_handler.writeArrayToGroupAttribute( data_original,
 						CHILD_GROUP,
 						ATTRIBUTE_NAME );
 
-  Array<Type> data;
+  array<Type> data;
   hdf5_file_handler.readArrayFromGroupAttribute( data,
 						 CHILD_GROUP,
 						 ATTRIBUTE_NAME );

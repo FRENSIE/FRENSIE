@@ -1,11 +1,11 @@
 //---------------------------------------------------------------------------//
-// \file   HDF5FileHandlerTestingTypedefs.hpp
+// \file   TupleTestingTypedefs.hpp
 // \author Alex Robinson
-// \brief  Typdefs for HDF5FileHandler template unit test
+// \brief  Typdefs for template unit tests with tuple types
 //---------------------------------------------------------------------------//
 
-#ifndef HDF5_FILE_HANDLER_TESTING_TYPEDEFS_HPP
-#define HDF5_FILE_HANDLER_TESTING_TYPEDEFS_HPP
+#ifndef TUPLE_TESTING_TYPEDEFS_HPP
+#define TUPLE_TESTING_TYPEDEFS_HPP
 				
 typedef FACEMC::Pair<int,int> pair_int_int;	
 typedef FACEMC::Pair<unsigned int,unsigned int> pair_uint_uint; 
@@ -100,7 +100,7 @@ typedef FACEMC::Quad<unsigned int,int,double,double> quad_uint_int_double_double
 typedef FACEMC::Quad<unsigned int,int,int,int> quad_uint_int_int_int; 
 typedef FACEMC::Quad<double,double,double,unsigned int> quad_double_double_double_uint; 
 typedef FACEMC::Quad<double,double,double,int> quad_double_double_double_int; 
-typedef FACEMC::Quad<double,double,unsigned int,double> quad_doulbe_double_uint_int; 
+typedef FACEMC::Quad<double,double,unsigned int,double> quad_double_double_uint_double; 
 typedef FACEMC::Quad<double,double,int,double> quad_double_double_int_double; 
 typedef FACEMC::Quad<double,unsigned int,double,double> quad_double_uint_double_double; 
 typedef FACEMC::Quad<double,int,double,double> quad_double_int_double_double; 
@@ -125,8 +125,8 @@ typedef FACEMC::Quad<double,unsigned int,int,int> quad_double_uint_int_int;
 typedef FACEMC::Quad<double,int,int,int> quad_double_int_int_int; 
 typedef FACEMC::Quad<FACEMC::Pair<unsigned int,unsigned int>,FACEMC::Pair<unsigned int,unsigned int>,FACEMC::Trip<double,double,double>,FACEMC::Quad<unsigned int,unsigned int,double,double> > quad_pair_pair_trip_quad; 
 
-#endif // end HDF5_FILE_HANDLER_TESTING_TYPEDEFS_HPP
+#endif // end TUPLE_TESTING_TYPEDEFS_HPP
 
 //---------------------------------------------------------------------------//
-// end HDF5FileHandlerTestingTypedefs.hpp
+// end TupleTestingTypedefs.hpp
 //---------------------------------------------------------------------------//
