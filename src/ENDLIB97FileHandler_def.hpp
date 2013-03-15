@@ -13,6 +13,9 @@
 #include <string>
 #include <fstream>
 
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
+
 // FACEMC includes
 #include "Tuple.hpp"
 #include "ContractException.hpp"
@@ -20,13 +23,16 @@
 namespace FACEMC{
 
 //! Read two column table in ENDLIB file within specified range
-template<typename T, template<typename> class Array>
-void ENDLIB97FileHandler::readTwoColumnTableInRange( Array<T>  &data,
-						     const typename T::firstType indep_var_min,
-						     const typename T::firstType indep_var_max )
+template<typename T>
+void ENDLIB97FileHandler::readTwoColumnTableInRange( 
+				     Teuchos::Array<T>  &data,
+				     const typename T::firstType indep_var_min,
+				     const typename T::firstType indep_var_max )
 {
   // The datafile must be valid
   testPrecondition( d_endlib_file );
+  // The data array must be valid
+  testPrecondition( data.size() == 0 );
   
   // Variables for reading in a two column table
   char data1_l [10];
@@ -45,9 +51,6 @@ void ENDLIB97FileHandler::readTwoColumnTableInRange( Array<T>  &data,
   // Data point extracted from the table
   T data_point;
 
-  // Make sure that the data array is empty
-  data.clear();
-
   // Read the table one line at a time
   do
   {
@@ -59,10 +62,8 @@ void ENDLIB97FileHandler::readTwoColumnTableInRange( Array<T>  &data,
     
     if( strcmp( data1_l, test ) != 0 )
     {
-      indep = extractValue<typename T::firstType>( data1_l, 
-						   data1_r );
-      dep = extractValue<typename T::secondType>( data2_l,
-						  data2_r );
+      indep = extractValue<typename T::firstType>( data1_l, data1_r );
+      dep = extractValue<typename T::secondType>( data2_l, data2_r );
       
       // Remove values outside of independent variable range
       if( (indep > indep_var_min && indep_prev > indep_var_min) &&
@@ -126,11 +127,13 @@ void ENDLIB97FileHandler::readTwoColumnTableInRange( Array<T>  &data,
 }
 
 //! Read two column table in ENDLIB file
-template<typename T, template<typename> class Array>
-void ENDLIB97FileHandler::readTwoColumnTable( Array<T> &data )
+template<typename T>
+void ENDLIB97FileHandler::readTwoColumnTable( Teuchos::Array<T> &data )
 {
   // The datafile must be valid
   testPrecondition( d_endlib_file );
+  // The data array must be valid
+  testPrecondition( data.size() == 0 );
   
   // Variables for reading in a two column table
   char data1_l [10];
@@ -147,9 +150,6 @@ void ENDLIB97FileHandler::readTwoColumnTable( Array<T> &data )
   // Data point extracted from the table
   T data_point;
 
-  // Make sure that the data array is empty
-  data.clear();
-
   // Read the table one line at a time
   do
   {
@@ -161,10 +161,8 @@ void ENDLIB97FileHandler::readTwoColumnTable( Array<T> &data )
     
     if( strcmp( data1_l, test ) != 0 )
     {
-      indep = extractValue<typename T::firstType>( data1_l, 
-						    data1_r );
-      dep = extractValue<typename T::secondType>( data2_l,
-						   data2_r );
+      indep = extractValue<typename T::firstType>( data1_l, data1_r );
+      dep = extractValue<typename T::secondType>( data2_l, data2_r );
       
       data_point.first = indep;
       data_point.second = dep;
@@ -181,11 +179,13 @@ void ENDLIB97FileHandler::readTwoColumnTable( Array<T> &data )
 }
 
 //! Read three column table in ENDLIB file
-template<typename T, template<typename> class Array>
-void ENDLIB97FileHandler::readThreeColumnTable(	Array<T> &data )
+template<typename T>
+void ENDLIB97FileHandler::readThreeColumnTable(	Teuchos::Array<T> &data )
 {
   // The datafile must be valid
   testPrecondition( d_endlib_file );
+  // The data array must be valid
+  testPrecondition( data.size() == 0 );
   
   char data1_l [10];
   char data1_r [3];
@@ -241,11 +241,13 @@ void ENDLIB97FileHandler::readThreeColumnTable(	Array<T> &data )
 }
 
 //! Read four column table in EPDL file
-template<typename T, template<typename> class Array>
-void ENDLIB97FileHandler::readFourColumnTable( Array<T> &data )
+template<typename T>
+void ENDLIB97FileHandler::readFourColumnTable( Teuchos::Array<T> &data )
 {
   // The datafile must be valid
   testPrecondition( d_endlib_file );
+  // The data array must be valid
+  testPrecondition( data.size() == 0 );
   
   char data1_l [10];
   char data1_r [3];
@@ -257,9 +259,6 @@ void ENDLIB97FileHandler::readFourColumnTable( Array<T> &data )
   char data4_r [3];
   char end_of_table [28];
   char test []=  "         ";
-
-  // Make sure that the data array is empty
-  data.clear();
 
   // Values extracted from the table
   typename T::firstType first_val;

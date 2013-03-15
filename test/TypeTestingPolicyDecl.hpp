@@ -36,6 +36,7 @@ struct EmptyStruct{};
 struct TypeTestingPolicy
 {
   static inline void initialize( T &data ) { (void)UndefinedTypeTestingPolicy<T>::notDefined(); }
+  static inline void zero( T &data ) { (void)UndefinedTypeTestingPolicy<T>::notDefined(); }
 };
 
 } // end FACEMC namespace

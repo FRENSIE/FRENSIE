@@ -11,6 +11,12 @@
 #include <string>
 #include <fstream>
 
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
+
+// FACEMC Includes
+#include "Tuple.hpp"
+
 namespace FACEMC{
 
 class ENDLIB97FileHandler
@@ -61,34 +67,34 @@ public:
   void skipTwoColumnTable();
 
   //! Read two column table in ENDLIB file within specified range
-  // \brief T is assumed to be a FACEMC::Pair, FACEMC::Trip or 
-  // FACEMC::Quad struct
-  template<typename T, template<typename> class Array>
-  void readTwoColumnTableInRange( Array<T> &data,
+  // \brief T is assumed to be a FACEMC::Pair, FACEMC::Trip, or FACEMC::Quad
+  // struct
+  template<typename T>
+  void readTwoColumnTableInRange( Teuchos::Array<T> &data,
 				  const typename T::firstType indep_var_min,
 				  const typename T::firstType indep_var_max );
 
   //! Read two column table in ENDLIB file 
-  // \brief T is assumed to be a FACEMC::Pair, FACEMC::Trip or
-  // FACEMC::Quad struct
-  template<typename T, template<typename> class Array>
-  void readTwoColumnTable( Array<T> &data );
+  // \brief T is assumed to be a FACEMC::Pair, FACEMC::Trip, or FACEMC::Quad
+  // struct
+  template<typename T>
+  void readTwoColumnTable( Teuchos::Array<T> &data );
 
   //! Skip three column table in ENDLIB file
   void skipThreeColumnTable();
 
   //! Read three column table in ENDLIB file
   // \brief T is assumed to be a FACEMC::Trip or FACEMC::Quad struct
-  template<typename T, template<typename> class Array>
-  void readThreeColumnTable( Array<T> &data );
+  template<typename T>
+  void readThreeColumnTable( Teuchos::Array<T> &data );
 
   //! Skip four column table in ENDLIB file
   void skipFourColumnTable();
   
   //! Read four column table in ENDLIB file
   // \brief T is assumed to be a FACEMC::Quad struct
-  template<typename T, template<typename> class Array>
-  void readFourColumnTable( Array<T> &data );
+  template<typename T>
+  void readFourColumnTable( Teuchos::Array<T> &data );
 
 protected:
 

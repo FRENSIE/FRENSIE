@@ -12,10 +12,13 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_Array.hpp>
 #include <Teuchos_ArrayView.hpp>
+#include <Teuchos_ScalarTraits.hpp>
 
 // FACEMC Includes
 #include "ENDLIB97FileHandler.hpp"
 #include "TestingHelperFunctions.hpp"
+#include "TupleTestingTypedefs.hpp"
+#include "TypeTestingPolicy.hpp"
 
 //---------------------------------------------------------------------------//
 // Test File Names.
@@ -34,6 +37,19 @@
 // Testing Parameters
 //---------------------------------------------------------------------------//
 #define TOL 1e-12
+
+//---------------------------------------------------------------------------//
+// Instantiation Macros.
+//---------------------------------------------------------------------------//
+#define UNIT_TEST_INSTANTIATION( type, name )		     \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, unsigned )	\
+
+#define UNIT_TEST_INSTANTIATION_TUPLE( type, name )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_double_double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_uint_double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_double_double_double )\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_double_double_double_double ) \
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -204,7 +220,7 @@ public:
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can open a file when constructed
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, constructor_open_file_test )
+TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, constructor )
 {
   // If DBC is turned on, the constructor will throw an exception and exit
   // if this file does not exist. No Testing Macro is needed.
@@ -213,7 +229,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, constructor_open_file_test )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can open a file after being contructed
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, open_file_test )
+TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, openENDLIB97File )
 {
   FACEMC::ENDLIB97FileHandler endlib_file_handler;
   
@@ -224,7 +240,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, open_file_test )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can indicate that a file is valid
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, valid_file_test )
+TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, validFile )
 {
   FACEMC::ENDLIB97FileHandler endlib_file_handler;
 
@@ -234,107 +250,60 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, valid_file_test )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can extract a double from a FORTRAN
+// Check that the ENDLIB97FileHandler can extract a double from a FORTRAN 
 // fixed width float
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, extract_double_test )
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ENDLIB97FileHandler, extractValue, Type )
 {
   std::string mantissa_with_pos(" 1.00000+");
   std::string mantissa_with_neg(" 1.00000-");
   std::string exponent("10");
 
-  std::string mantissa(" 1.000000");
+  std::string mantissa(" 1.00000");
   std::string exponent_with_pos("+2");
   std::string exponent_with_neg("-2");
+  std::string exponent_zero(" 0");
   
   TestENDLIB97FileHandler test_file_handler;
   
   // test all possible mantissa, exponent combinations
-  double combination_1;
-  double combination_2;
-  double combination_3;
-  double combination_4;
+  Type combination_1;
+  Type combination_2;
+  Type combination_3;
+  Type combination_4;
+  Type combination_5;
   
-  combination_1 = test_file_handler.extractValue<double>( mantissa_with_pos,
-							  exponent );
-  combination_2 = test_file_handler.extractValue<double>( mantissa_with_neg,
-							  exponent );
-  combination_3 = test_file_handler.extractValue<double>( mantissa,
-							  exponent_with_pos );
-  combination_4 = test_file_handler.extractValue<double>( mantissa,
-							  exponent_with_neg );
+  combination_1 = test_file_handler.extractValue<Type>( mantissa_with_pos,
+							exponent );
+  combination_2 = test_file_handler.extractValue<Type>( mantissa_with_neg,
+							exponent );
+  combination_3 = test_file_handler.extractValue<Type>( mantissa,
+							exponent_with_pos );
+  combination_4 = test_file_handler.extractValue<Type>( mantissa,
+							exponent_with_neg );
+  combination_5 = test_file_handler.extractValue<Type>( mantissa,
+							exponent_zero );
 
-  double true_value_1 = 1e10;
-  double true_value_2 = 1e-10;
-  double true_value_3 = 1e2;
-  double true_value_4 = 1e-2;
+  Type true_value_1 = static_cast<Type>( 1.0e10 );
+  Type true_value_2 = static_cast<Type>( 1.0e-10 );
+  Type true_value_3 = static_cast<Type>( 1.0e2 );
+  Type true_value_4 = static_cast<Type>( 1.0e-2 );
+  Type true_value_5 = static_cast<Type>( 1.0 );
   
-  TEST_FLOATING_EQUALITY( combination_1, true_value_1, 1e-12 );
-  TEST_FLOATING_EQUALITY( combination_2, true_value_2, 1e-12 );
-  TEST_FLOATING_EQUALITY( combination_3, true_value_3, 1e-12 );
-  TEST_FLOATING_EQUALITY( combination_4, true_value_4, 1e-12 );
-}
+  // The first combination will be too large for an ordinal type
+  if( !Teuchos::ScalarTraits<Type>::isOrdinal )
+    TEST_EQUALITY( combination_1, true_value_1 );
 
-//---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can extract an int from a FORTRAN
-// fixed width float
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, extract_int_test )
-{
-  std::string mantissa_with_pos(" 1.00000+");
-  std::string exponent(" 0");
-
-  std::string mantissa(" 1.100000");
-  std::string exponent_with_pos("+1");
-  
-  TestENDLIB97FileHandler test_file_handler;
-  
-  // test all possible mantissa, exponent combinations
-  double combination_1;
-  double combination_2;
-  
-  combination_1 = test_file_handler.extractValue<int>( mantissa_with_pos,
-						       exponent );
-  combination_2 = test_file_handler.extractValue<int>( mantissa,
-						       exponent_with_pos );
-
-  int true_value_1 = 1;
-  int true_value_2 = 11;
-  
-  TEST_EQUALITY( combination_1, true_value_1 );
   TEST_EQUALITY( combination_2, true_value_2 );
+  TEST_EQUALITY( combination_3, true_value_3 );
+  TEST_EQUALITY( combination_4, true_value_4 );
+  TEST_EQUALITY( combination_5, true_value_5 );
 }
 
-//---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can extract an unsigned int from a FORTRAN
-// fixed width float
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, extract_uint_test )
-{
-  std::string mantissa_with_pos(" 1.00000+");
-  std::string exponent(" 0");
-
-  std::string mantissa(" 1.100000");
-  std::string exponent_with_pos("+1");
-  
-  TestENDLIB97FileHandler test_file_handler;
-  
-  // test all possible mantissa, exponent combinations
-  double combination_1;
-  double combination_2;
-  
-  combination_1 = test_file_handler.extractValue<unsigned int>( mantissa_with_pos,
-								exponent );
-  combination_2 = test_file_handler.extractValue<unsigned int>( mantissa,
-								exponent_with_pos );
-
-  unsigned int true_value_1 = 1;
-  unsigned int true_value_2 = 11;
-  
-  TEST_EQUALITY( combination_1, true_value_1 );
-  TEST_EQUALITY( combination_2, true_value_2 );
-}
+UNIT_TEST_INSTANTIATION( ENDLIB97FileHandler, extractValue );
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can read the first header of a table
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, first_table_header_read_test )
+TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, readFirstTableHeader )
 {
   FACEMC::ENDLIB97FileHandler endlib_file_handler( FIRST_HEADER_TEST_FILE );
 
@@ -367,7 +336,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, first_table_header_read_test )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can read the second header of a table
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, second_table_header_read_test )
+TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, readSecondTableHeader )
 {
   FACEMC::ENDLIB97FileHandler endlib_file_handler( SECOND_HEADER_TEST_FILE );
 
@@ -391,7 +360,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, second_table_header_read_test )
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can read the first header and
 // second header of a table consecutively
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, full_table_header_read_test )
+TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, read_full_header_test )
 {
   FACEMC::ENDLIB97FileHandler endlib_file_handler( FULL_HEADER_TEST_FILE );
   
@@ -434,7 +403,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, full_table_header_read_test )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can skip a two column table
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_skip_test )
+TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, skipTwoColumnTable )
 {
   FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
   
@@ -469,7 +438,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_skip_test )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can skip a three column table
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_skip_test )
+TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, skipThreeColumnTable )
 {
   FACEMC::ENDLIB97FileHandler endlib_file_handler( THREE_COLUMN_TABLE_TEST_FILE );
   
@@ -505,7 +474,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_skip_test )
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can skip a four column table
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_skip_test )
+TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, skipFourColumnTable )
 {
   FACEMC::ENDLIB97FileHandler endlib_file_handler( FOUR_COLUMN_TABLE_TEST_FILE );
   
@@ -539,52 +508,10 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_skip_test )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can read a two column table of double
-// and double 
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_double_double_read_test )
-{
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
-  
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-				       outgoing_particle_designator,
-				       atomic_weight,
-				       interpolation_flag );
-
-  endlib_file_handler.readSecondTableHeader( reaction_type,
-					electron_shell );
-  
-  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
-
-  endlib_file_handler.readTwoColumnTable( data );
-  
-  fillTwoColumnTestingArray( data_true );
-
-  FACEMC_TEST_COMPARE_ARRAYS( data, data_true );
-
-  // Check that the entire table was read - attempting to read the first
-  // header again will set the eof bit
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-  TEST_ASSERT( endlib_file_handler.endOfFile() );
-
-  // Close the test table file
-  endlib_file_handler.closeENDLIB97File();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can read a two column table in of 
-// unsigned int and double
-//---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_uint_double_read_test )
+// Check that the ENDLIB97FileHandler can read a two column table
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ENDLIB97FileHandler,
+				   readTwoColumnTable,
+				   Type )
 {
   FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
   
@@ -599,18 +526,18 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_uint_double_read_test )
 					    outgoing_particle_designator,
 					    atomic_weight,
 					    interpolation_flag );
-
+  
   endlib_file_handler.readSecondTableHeader( reaction_type,
 					     electron_shell );
-  
-  Teuchos::Array<FACEMC::Pair<unsigned int,double> > data, data_true;
-  
+
+  Teuchos::Array<Type> data, data_true;
+
   endlib_file_handler.readTwoColumnTable( data );
-  
+
   fillTwoColumnTestingArray( data_true );
 
   FACEMC_TEST_COMPARE_ARRAYS( data, data_true );
-  
+
   // Check that the entire table was read - attempting to read the first
   // header again will set the eof bit
   endlib_file_handler.readFirstTableHeader( atomic_number,
@@ -622,6 +549,8 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_uint_double_read_test )
   // Close the test table file
   endlib_file_handler.closeENDLIB97File();
 }
+
+UNIT_TEST_INSTANTIATION_TUPLE( ENDLIB97FileHandler, readTwoColumnTable );
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can read a two column table in the 

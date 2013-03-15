@@ -23,6 +23,7 @@ namespace FACEMC{
 template<typename T1, typename T2>
 struct Pair
 {
+  Pair() : first(), second() { /* ... */ }
   static const int size = 2;
   static H5::CompType createHDF5DataType();
   static std::string name();
@@ -36,6 +37,7 @@ struct Pair
 template<typename T1, typename T2, typename T3>
 struct Trip
 {
+  Trip() : first(), second(), third() { /* ... */ }
   static const int size = 3;
   static H5::CompType createHDF5DataType();
   static std::string name();
@@ -51,6 +53,7 @@ struct Trip
 template<typename T1, typename T2, typename T3, typename T4>
 struct Quad
 {
+  Quad() : first(), second(), third(), fourth() { /* ... */ }
   static const int size = 4;
   static H5::CompType createHDF5DataType();
   static std::string name();
