@@ -66,14 +66,6 @@ public:
   //! Skip two column table in ENDLIB file
   void skipTwoColumnTable();
 
-  //! Read two column table in ENDLIB file within specified range
-  // \brief T is assumed to be a FACEMC::Pair, FACEMC::Trip, or FACEMC::Quad
-  // struct
-  template<typename T>
-  void readTwoColumnTableInRange( Teuchos::Array<T> &data,
-				  const typename T::firstType indep_var_min,
-				  const typename T::firstType indep_var_max );
-
   //! Read two column table in ENDLIB file 
   // \brief T is assumed to be a FACEMC::Pair, FACEMC::Trip, or FACEMC::Quad
   // struct

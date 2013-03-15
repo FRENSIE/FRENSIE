@@ -24,15 +24,14 @@ namespace FACEMC{
 template<typename DataProcessingPolicy,
 	   TupleMember indepMember,
 	   TupleMember depMember,
-	   typename Tuple,
-	   template<typename> class Array>
-void DataProcessor::processContinuousData( Array<Tuple> &data )
+	   typename Tuple>
+void DataProcessor::processContinuousData( Teuchos::Array<Tuple> &data )
 {
   // Make sure that the array is valid
   testPrecondition( data.size() > 0 );
 
-  typename Array<Tuple>::iterator data_point = data.begin();
-  typename Array<Tuple>::iterator end = data.end();
+  typename Teuchos::Array<Tuple>::iterator data_point = data.begin();
+  typename Teuchos::Array<Tuple>::iterator end = data.end();
 
   typedef TupleGetSetMemberPolicy<Tuple,indepMember> indepTGSMP;
   typedef TupleGetSetMemberPolicy<Tuple,depMember> depTGSMP;
@@ -50,6 +49,79 @@ void DataProcessor::processContinuousData( Array<Tuple> &data )
 
     ++data_point;
   }
+}
+
+//! Remove elements with a tuple member that is less than the specified value
+template<TupleMember member,
+	 typename Tuple>
+void DataProcessor::removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
+						 const double value )
+{
+  // Make sure that the array is valid
+  testPrecondition( data.size() > 1 );
+  // Make sure that array is sorted (need a check for this)
+  
+  typename Teuchos::Array<Tuple>::iterator data_point_1 = data.begin();
+  typename Teuchos::Array<Tuple>::iterator data_point_2 = data_point_1 + 1;
+  typename Teuchos::Array<Tuple>::iterator end = data.end();
+
+  typedef TupleGetSetMemberPolicy<Tuple,member> dataTGSMP;
+  
+  // Loop through the array and find the element range to remove
+  typename Teuchos::Array<Tuple>::size_type max_index = 0;
+  while( data_point_2 != end )
+  {
+    if( dataTGSMP::get( *data_point_1 ) < value &&
+	dataTGSMP::get( *data_point_2 ) < value )
+      ++max_index;
+    else
+      break;
+
+    ++data_point_1;
+    ++data_point_2;
+  }
+
+  // Remove the elements from the array
+  data_point_1 = data.begin();
+  data_point_2 = data.begin() + max_index;
+  data.erase( data_point_1, data_point_2 );
+}
+
+//! Remove elements with a tuple member that is greater than the specified value
+template<TupleMember member,
+	 typename Tuple>
+void DataProcessor::removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
+						    const double value )
+{
+  // Make sure that the array is valid
+  testPrecondition( data.size() > 1 );
+  // Make sure that array is sorted (need a check for this)
+  
+  // Use bidirectional iterator in reverse to improve performance
+  typename Teuchos::Array<Tuple>::iterator data_point_1 = data.end() - 1;
+  typename Teuchos::Array<Tuple>::iterator data_point_2 = data_point_1 - 1;
+  typename Teuchos::Array<Tuple>::iterator end = data.begin() - 1;
+
+  typedef TupleGetSetMemberPolicy<Tuple,member> dataTGSMP;
+  
+  // Loop through the array and find the element range to remove
+  typename Teuchos::Array<Tuple>::size_type max_index = 0;
+  while( data_point_2 != end )
+  {
+    if( dataTGSMP::get( *data_point_1 ) > value &&
+	dataTGSMP::get( *data_point_2 ) > value )
+      ++max_index;
+    else
+      break;
+
+    --data_point_1;
+    --data_point_2;
+  }
+
+  // Remove the elements from the array
+  data_point_2 = data.end() - 1;
+  data_point_1 = data_point_2 - max_index;
+  data.erase( data_point_1, data_point_2 );
 }
 
 //! Search the data array for constant regions in the desired tuple member
@@ -95,7 +167,7 @@ void DataProcessor::coarsenConstantRegions( Teuchos::Array<Tuple> &data )
 template<TupleMember indepMember, 
 	 TupleMember depMember,
 	 TupleMember slopeMember,
-	 typename Tuple, 
+	 typename Tuple,
 	 template<typename> class Array>
 void DataProcessor::calculateSlopes( Array<Tuple> &data  )
 {
@@ -131,7 +203,7 @@ void DataProcessor::calculateSlopes( Array<Tuple> &data  )
 template<TupleMember indepMember,
 	 TupleMember pdfMember,
 	 TupleMember cdfMember,
-	 typename Tuple, 
+	 typename Tuple,
 	 template<typename> class Array>
 void DataProcessor::calculateContinuousCDF( Array<Tuple> &data )
 {
@@ -190,15 +262,14 @@ void DataProcessor::calculateContinuousCDF( Array<Tuple> &data )
 //! Create a discrete CDF from an array of data.
 template<TupleMember pdfMember,
 	 TupleMember cdfMember,
-	 typename Tuple,
-	 template<typename> class Array>
-void DataProcessor::calculateDiscreteCDF( Array<Tuple> &data )
+	 typename Tuple>
+void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
 {
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
   
-  typename Array<Tuple>::iterator data_point;
-  typename Array<Tuple>::iterator end = data.end();
+  typename Teuchos::Array<Tuple>::iterator data_point;
+  typename Teuchos::Array<Tuple>::iterator end = data.end();
 
   data_point = data.begin();
 

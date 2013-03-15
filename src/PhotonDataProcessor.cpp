@@ -305,9 +305,13 @@ void PhotonDataProcessor::processCoherentCrossSectionData()
 {
   Teuchos::Array<Trip<double,double,double> > data;
   
-  d_epdl_file_handler.readTwoColumnTableInRange( data,
-						 d_energy_min,
-						 d_energy_max );
+  d_epdl_file_handler.readTwoColumnTable( data );
+
+  removeElementsLessThanValue<FIRST>( data,
+				      d_energy_min );
+
+  removeElementsGreaterThanValue<FIRST>( data,
+					 d_energy_max );
   
   processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
   
@@ -322,9 +326,13 @@ void PhotonDataProcessor::processIncoherentCrossSectionData()
 {
   Teuchos::Array<Trip<double,double,double> > data;
   
-  d_epdl_file_handler.readTwoColumnTableInRange( data,
-						 d_energy_min,
-						 d_energy_max );
+  d_epdl_file_handler.readTwoColumnTable( data );
+  
+  removeElementsLessThanValue<FIRST>( data,
+				      d_energy_min );
+
+  removeElementsGreaterThanValue<FIRST>( data,
+					 d_energy_max );
   
   processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );	       
   
@@ -339,9 +347,13 @@ void PhotonDataProcessor::processTotalPhotoelectricCrossSectionData()
 {	
   Teuchos::Array<Trip<double,double,double> > data;
   
-  d_epdl_file_handler.readTwoColumnTableInRange( data,
-						 d_energy_min,
-						 d_energy_max );
+  d_epdl_file_handler.readTwoColumnTable( data );
+  
+  removeElementsLessThanValue<FIRST>( data,
+				      d_energy_min );
+
+  removeElementsGreaterThanValue<FIRST>( data,
+					 d_energy_max );
   
   processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );       
   
@@ -356,9 +368,13 @@ void PhotonDataProcessor::processShellPhotoelectricCrossSectionData( unsigned in
 {	
   Teuchos::Array<Trip<double,double,double> > data;
   
-  d_epdl_file_handler.readTwoColumnTableInRange( data,
-						 d_energy_min,
-						 d_energy_max );
+  d_epdl_file_handler.readTwoColumnTable( data );
+
+  removeElementsLessThanValue<FIRST>( data,
+				      d_energy_min );
+
+  removeElementsGreaterThanValue<FIRST>( data,
+					 d_energy_max );
   
   processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
   
@@ -373,9 +389,13 @@ void PhotonDataProcessor::processPairProductionCrossSectionData()
 {
   Teuchos::Array<Trip<double,double,double> > data;
   
-  d_epdl_file_handler.readTwoColumnTableInRange( data,
-						 d_energy_min,
-						 d_energy_max );
+  d_epdl_file_handler.readTwoColumnTable( data );
+
+  removeElementsLessThanValue<FIRST>( data,
+				      d_energy_min );
+
+  removeElementsGreaterThanValue<FIRST>( data,
+					 d_energy_max );
   
   processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
   
@@ -396,9 +416,13 @@ void PhotonDataProcessor::processTripletProductionCrossSectionData()
 {
   Teuchos::Array<Trip<double,double,double> > data;
   
-  d_epdl_file_handler.readTwoColumnTableInRange( data,
-						 d_energy_min,
-						 d_energy_max );
+  d_epdl_file_handler.readTwoColumnTable( data );
+
+  removeElementsLessThanValue<FIRST>( data,
+				      d_energy_min );
+
+  removeElementsGreaterThanValue<FIRST>( data,
+					 d_energy_max );
   
   processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
   

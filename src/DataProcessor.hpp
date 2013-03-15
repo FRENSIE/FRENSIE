@@ -48,9 +48,28 @@ protected:
   template<typename DataProcessingPolicy,
 	   TupleMember indepMember,
 	   TupleMember depMember,
-	   typename Tuple,
-	   template<typename> class Array>
-  void processContinuousData( Array<Tuple> &data );
+	   typename Tuple>
+  void processContinuousData( Teuchos::Array<Tuple> &data );
+
+  /*!
+   * \brief Remove elements with a tuple member that is less than the specified
+   * value. The element closest to the specified value will be kept to allow
+   * for interpolation.
+   */
+  template<TupleMember member,
+	   typename Tuple>
+  void removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
+				    const double value );
+
+  /*!
+   * \brief Remove elements with a tuple member that is greater than the 
+   * specified value. The element closest to the specified value will be kept
+   * to allow for interpolation
+   */
+  template<TupleMember member,
+	   typename Tuple>
+  void removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
+				       const double value );
 
   /*!
    * \brief Search the data array for constant regions and reduce the number
@@ -64,19 +83,21 @@ protected:
   /*!
    * \brief Calculate the slope between indepMember and depMember and store
    * at the slopeMember. This function will only compile if the desired
-   * tuple members are actually available in tuple Tuple.
+   * tuple members are actually available in tuple Tuple. This function will
+   * compile for Teuchos::Array and Teuchos::ArrayView.
    */
   template<TupleMember indepMember, 
 	   TupleMember depMember,
 	   TupleMember slopeMember,
-	   typename Tuple, 
+	   typename Tuple,
 	   template<typename> class Array>
   void calculateSlopes( Array<Tuple> &data );
 
   /*!
    * \brief Create a continuous CDF from an array of data and store at the 
    * desired tuple member. This function will only compile if the desired 
-   * tuple member is actually available in tuple Tuple.
+   * tuple member is actually available in tuple Tuple. This function will
+   * compile for Teuchos::Array and Teuchos::ArrayView.
    */
   template<TupleMember indepMember,
 	   TupleMember pdfMember,
@@ -93,13 +114,13 @@ protected:
    */
   template<TupleMember pdfMember,
 	   TupleMember cdfMember,
-	   typename Tuple,
-	   template<typename> class Array>
-  void calculateDiscreteCDF( Array<Tuple> &data );
+	   typename Tuple>
+  void calculateDiscreteCDF( Teuchos::Array<Tuple> &data );
 
   /*!
    * \brief Swap the data in the desired tuple members. If the desired tuple
    * members have the same type, pass the same data array as the swap_data.
+   * This function will compile for Teuchos::Array and Teuchos::ArrayView.
    */
   template<TupleMember member1, 
 	   TupleMember member2,

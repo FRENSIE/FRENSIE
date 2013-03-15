@@ -41,15 +41,21 @@
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
 //---------------------------------------------------------------------------//
-#define UNIT_TEST_INSTANTIATION( type, name )		     \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double ) \
+#define UNIT_TEST_INSTANTIATION( type, name )			\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, unsigned )	\
 
-#define UNIT_TEST_INSTANTIATION_TUPLE( type, name )	\
+#define UNIT_TEST_INSTANTIATION_PAIR( type, name )			\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_double_double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_uint_double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_double_double_double )\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_uint_double )	\
+
+#define UNIT_TEST_INSTANTIATION_TRIP( type, name )			\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_double_double_double )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_uint_double_double ) \
+
+#define UNIT_TEST_INSTANTIATION_QUAD( type, name )			\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_double_double_double_double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_uint_uint_double_double ) \
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -511,7 +517,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, skipFourColumnTable )
 // Check that the ENDLIB97FileHandler can read a two column table
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ENDLIB97FileHandler,
 				   readTwoColumnTable,
-				   Type )
+				   Tuple )
 {
   FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
   
@@ -530,7 +536,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ENDLIB97FileHandler,
   endlib_file_handler.readSecondTableHeader( reaction_type,
 					     electron_shell );
 
-  Teuchos::Array<Type> data, data_true;
+  Teuchos::Array<Tuple> data, data_true;
 
   endlib_file_handler.readTwoColumnTable( data );
 
@@ -550,407 +556,15 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ENDLIB97FileHandler,
   endlib_file_handler.closeENDLIB97File();
 }
 
-UNIT_TEST_INSTANTIATION_TUPLE( ENDLIB97FileHandler, readTwoColumnTable );
-
-//---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can read a two column table in the 
-// given independent variable range
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_eq_eq_read_test )
-{
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
-  
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-
-  endlib_file_handler.readSecondTableHeader( reaction_type,
-					     electron_shell );
-  
-  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
-
-  endlib_file_handler.readTwoColumnTableInRange( data,
-						 1.0,
-						 19.0 );
-  
-  fillTwoColumnTestingArray( data_true );
-
-  FACEMC_TEST_COMPARE_ARRAYS( data, data_true );
-  
-  // Check that the entire table was read - attempting to read the first
-  // header again will set the eof bit
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-  TEST_ASSERT( endlib_file_handler.endOfFile() );
-
-  // Close the test table file
-  endlib_file_handler.closeENDLIB97File();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can read a two column table in the 
-// given independent variable range
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_lt_gt_read_test )
-{
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
-  
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-
-  endlib_file_handler.readSecondTableHeader( reaction_type,
-					     electron_shell );
-  
-  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
-
-  endlib_file_handler.readTwoColumnTableInRange( data,
-						 0.0,
-						 20.0 );
-  
-  fillTwoColumnTestingArray( data_true );
-
-  FACEMC_TEST_COMPARE_ARRAYS( data, data_true );
-  
-  // Check that the entire table was read - attempting to read the first
-  // header again will set the eof bit
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-  TEST_ASSERT( endlib_file_handler.endOfFile() );
-
-  // Close the test table file
-  endlib_file_handler.closeENDLIB97File();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can read a two column table in the 
-// given independent variable range
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_eq_gt_read_test )
-{
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
-  
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-
-  endlib_file_handler.readSecondTableHeader( reaction_type,
-					     electron_shell );
-  
-  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
-
-  endlib_file_handler.readTwoColumnTableInRange( data,
-						 1.0,
-						 20.0 );
-  
-  fillTwoColumnTestingArray( data_true );
-
-  FACEMC_TEST_COMPARE_ARRAYS( data, data_true );
-  
-  // Check that the entire table was read - attempting to read the first
-  // header again will set the eof bit
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-  TEST_ASSERT( endlib_file_handler.endOfFile() );
-
-  // Close the test table file
-  endlib_file_handler.closeENDLIB97File();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can read a two column table in the 
-// given independent variable range
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_lt_eq_read_test )
-{
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
-  
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-
-  endlib_file_handler.readSecondTableHeader( reaction_type,
-					     electron_shell );
-  
-  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
-
-  endlib_file_handler.readTwoColumnTableInRange( data,
-						 0.0,
-						 19.0 );
-  
-  fillTwoColumnTestingArray( data_true );
-
-  FACEMC_TEST_COMPARE_ARRAYS( data, data_true );
-  
-  // Check that the entire table was read - attempting to read the first
-  // header again will set the eof bit
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-  TEST_ASSERT( endlib_file_handler.endOfFile() );
-
-  // Close the test table file
-  endlib_file_handler.closeENDLIB97File();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can read a two column table in the 
-// given independent variable range
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_gt_lt_read_test )
-{
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
-  
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-
-  endlib_file_handler.readSecondTableHeader( reaction_type,
-					     electron_shell );
-  
-  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
-
-  endlib_file_handler.readTwoColumnTableInRange( data,
-						 5.5,
-						 13.5 );
-  
-  fillTwoColumnTestingArray( data_true );
-
-  FACEMC_TEST_COMPARE_ARRAYS( data, data_true( 2, 7 ) );
-  
-  // Check that the entire table was read - attempting to read the first
-  // header again will set the eof bit
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-  TEST_ASSERT( endlib_file_handler.endOfFile() );
-
-  // Close the test table file
-  endlib_file_handler.closeENDLIB97File();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can read a two column table in the 
-// given independent variable range
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_eq_lt_read_test )
-{
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
-  
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-
-  endlib_file_handler.readSecondTableHeader( reaction_type,
-					     electron_shell );
-  
-  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
-
-  endlib_file_handler.readTwoColumnTableInRange( data,
-						 1.0,
-						 13.0 );
-  
-  fillTwoColumnTestingArray( data_true );
-
-  FACEMC_TEST_COMPARE_ARRAYS( data, data_true( 0, 8 ) );
-  
-  // Check that the entire table was read - attempting to read the first
-  // header again will set the eof bit
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-  TEST_ASSERT( endlib_file_handler.endOfFile() );
-
-  // Close the test table file
-  endlib_file_handler.closeENDLIB97File();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can read a two column table in the 
-// given independent variable range
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_lt_lt_read_test )
-{
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
-  
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-
-  endlib_file_handler.readSecondTableHeader( reaction_type,
-					     electron_shell );
-  
-  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
-
-  endlib_file_handler.readTwoColumnTableInRange( data,
-						 0.0,
-						 13.0 );
-  
-  fillTwoColumnTestingArray( data_true );
-
-  FACEMC_TEST_COMPARE_ARRAYS( data, data_true( 0, 8 ) );
-  
-  // Check that the entire table was read - attempting to read the first
-  // header again will set the eof bit
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-  TEST_ASSERT( endlib_file_handler.endOfFile() );
-
-  // Close the test table file
-  endlib_file_handler.closeENDLIB97File();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can read a two column table in the 
-// given independent variable range
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_gt_eq_read_test )
-{
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
-  
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-
-  endlib_file_handler.readSecondTableHeader( reaction_type,
-					     electron_shell );
-  
-  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
-
-  endlib_file_handler.readTwoColumnTableInRange( data,
-						 5.0,
-						 19.0 );
-  
-  fillTwoColumnTestingArray( data_true );
-
-  FACEMC_TEST_COMPARE_ARRAYS( data, data_true( 2, 10 ) );
-  
-  // Check that the entire table was read - attempting to read the first
-  // header again will set the eof bit
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-  TEST_ASSERT( endlib_file_handler.endOfFile() );
-
-  // Close the test table file
-  endlib_file_handler.closeENDLIB97File();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the ENDLIB97FileHandler can read a two column table in the 
-// given independent variable range
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_range_gt_gt_read_test )
-{
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
-  
-  unsigned int atomic_number;
-  unsigned int outgoing_particle_designator;
-  double atomic_weight;
-  unsigned int interpolation_flag;
-  unsigned int reaction_type;
-  unsigned int electron_shell;
-
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-
-  endlib_file_handler.readSecondTableHeader( reaction_type,
-					     electron_shell );
-  
-  Teuchos::Array<FACEMC::Pair<double,double> > data, data_true;
-
-  endlib_file_handler.readTwoColumnTableInRange( data,
-						 5.5,
-						 20.0 );
-  
-  fillTwoColumnTestingArray( data_true );
-
-  FACEMC_TEST_COMPARE_ARRAYS( data, data_true( 2, 10 ) );
-  
-  // Check that the entire table was read - attempting to read the first
-  // header again will set the eof bit
-  endlib_file_handler.readFirstTableHeader( atomic_number,
-					    outgoing_particle_designator,
-					    atomic_weight,
-					    interpolation_flag );
-  TEST_ASSERT( endlib_file_handler.endOfFile() );
-
-  // Close the test table file
-  endlib_file_handler.closeENDLIB97File();
-}
+UNIT_TEST_INSTANTIATION_PAIR( ENDLIB97FileHandler, readTwoColumnTable );
+UNIT_TEST_INSTANTIATION_TRIP( ENDLIB97FileHandler, readTwoColumnTable );
+UNIT_TEST_INSTANTIATION_QUAD( ENDLIB97FileHandler, readTwoColumnTable );
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can read a three column table 
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_read_test )
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ENDLIB97FileHandler, 
+				   readThreeColumnTable,
+				   Tuple )
 {
   FACEMC::ENDLIB97FileHandler endlib_file_handler( THREE_COLUMN_TABLE_TEST_FILE );
   
@@ -969,7 +583,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_read_test )
   endlib_file_handler.readSecondTableHeader( reaction_type,
 					     electron_shell );
   
-  Teuchos::Array<FACEMC::Trip<unsigned int,double,double> > data, data_true;
+  Teuchos::Array<Tuple> data, data_true;
 
   endlib_file_handler.readThreeColumnTable( data );
 
@@ -989,9 +603,14 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_read_test )
   endlib_file_handler.closeENDLIB97File();
 }
 
+UNIT_TEST_INSTANTIATION_TRIP( ENDLIB97FileHandler, readThreeColumnTable );
+UNIT_TEST_INSTANTIATION_QUAD( ENDLIB97FileHandler, readThreeColumnTable );
+
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can read a four column table 
-TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_read_test )
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ENDLIB97FileHandler, 
+				   readFourColumnTable,
+				   Tuple )
 {
   FACEMC::ENDLIB97FileHandler endlib_file_handler( FOUR_COLUMN_TABLE_TEST_FILE );
   
@@ -1010,8 +629,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_read_test )
   endlib_file_handler.readSecondTableHeader( reaction_type,
 					     electron_shell );
   
-  Teuchos::Array<FACEMC::Quad<unsigned int,unsigned int,double,double> > data, 
-    data_true;
+  Teuchos::Array<Tuple> data, data_true;
 
   endlib_file_handler.readFourColumnTable( data );
 
@@ -1030,6 +648,8 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_read_test )
   // Close the test table file
   endlib_file_handler.closeENDLIB97File();
 }
+
+UNIT_TEST_INSTANTIATION_QUAD( ENDLIB97FileHandler, readFourColumnTable );
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can skip a two column table and then
