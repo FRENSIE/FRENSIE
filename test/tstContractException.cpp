@@ -14,6 +14,7 @@
 // FACEMC Includes
 #include "FACEMC_config.hpp"
 #include "ContractException.hpp"
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.

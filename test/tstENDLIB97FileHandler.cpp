@@ -11,14 +11,11 @@
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayView.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
 // FACEMC Includes
 #include "ENDLIB97FileHandler.hpp"
-#include "TestingHelperFunctions.hpp"
-#include "TupleTestingTypedefs.hpp"
-#include "TypeTestingPolicy.hpp"
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Test File Names.

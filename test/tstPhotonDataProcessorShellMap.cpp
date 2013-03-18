@@ -17,7 +17,7 @@
 #include "HDF5FileHandler.hpp"
 #include "Tuple.hpp"
 #include "HDF5DataFileNames.hpp"
-#include "TestingHelperFunctions.hpp"
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Test File Names.

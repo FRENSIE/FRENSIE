@@ -14,7 +14,7 @@
 #include "PhotonDataFluorescence.hpp"
 #include "Tuple.hpp"
 #include "DefaultParameterValues.hpp"
-#include "TestingHelperFunctions.hpp"
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Data File Info.
@@ -77,7 +77,7 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, constructor_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataFluorescence class returns the correct 
 // photoelectric shell vacancy
-TEUCHOS_UNIT_TEST( PhotonDataFluorescence, photoelectric_vacancy_shell_test )
+TEUCHOS_UNIT_TEST( PhotonDataFluorescence, getPhotoelectricVacancyShell )
 {
   TestingPhotonDataFluorescence test_photon_data_fluoro( ATOMIC_NUMBER,
 							 ENERGY_MIN,
@@ -102,7 +102,7 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, photoelectric_vacancy_shell_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataFluorescence class returns the correct 
 // probability of a radiative transition for a vacancy in a shell
-TEUCHOS_UNIT_TEST( PhotonDataFluorescence, radiative_transition_probability_test )
+TEUCHOS_UNIT_TEST( PhotonDataFluorescence, getShellRadiativeTransitionProbability )
 {
   TestingPhotonDataFluorescence test_photon_data_fluoro( ATOMIC_NUMBER,
 							 ENERGY_MIN,
@@ -124,7 +124,7 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, radiative_transition_probability_test
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataFluorescence class returns the correct
 // radiative transition data for a vacancy and cdf value
-TEUCHOS_UNIT_TEST( PhotonDataFluorescence, radiative_transition_data_test )
+TEUCHOS_UNIT_TEST( PhotonDataFluorescence, getShellRadiativeTransitionData )
 {
   TestingPhotonDataFluorescence test_photon_data_fluoro( ATOMIC_NUMBER,
 							 ENERGY_MIN,
@@ -156,7 +156,7 @@ TEUCHOS_UNIT_TEST( PhotonDataFluorescence, radiative_transition_data_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataFluorescence class returns the correct
 // nonradiative transition data for a vacancy and cdf value
-TEUCHOS_UNIT_TEST( PhotonDataFluorescence, nonradiative_transition_data_test )
+TEUCHOS_UNIT_TEST( PhotonDataFluorescence, getShellNonradiativeTransitionData )
 {
   TestingPhotonDataFluorescence test_photon_data_fluoro( ATOMIC_NUMBER,
 							 ENERGY_MIN,

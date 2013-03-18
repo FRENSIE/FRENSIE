@@ -10,12 +10,13 @@
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_Array.hpp>
-#include <Teuchos_ArrayRCP.hpp>
+#include <Teuchos_ArrayView.hpp>
 
 // FACEMC Includes
-#include "TestingHelperFunctions.hpp"
 #include "DataProcessor.hpp"
+#include "TupleGetSetMemberPolicy.hpp"
 #include "Tuple.hpp"
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Data.
@@ -34,6 +35,65 @@
 #define TOL 1e-12
 
 //---------------------------------------------------------------------------//
+// Instantiation Macros.
+//---------------------------------------------------------------------------//
+#define UNIT_TEST_INSTANTIATION_POLICY( type, name )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LogLogDataProcessingPolicy ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, SquareSquareDataProcessingPolicy ) \
+
+#define UNIT_TEST_INSTANTIATION_POLICY_TUPLE( type, name )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, LogLogDataProcessingPolicy, pair_double_double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, LogLogDataProcessingPolicy, trip_double_double_double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, LogLogDataProcessingPolicy, quad_double_double_double_double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, SquareSquareDataProcessingPolicy, pair_double_double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, SquareSquareDataProcessingPolicy, trip_double_double_double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, SquareSquareDataProcessingPolicy, quad_double_double_double_double ) \
+
+#define UNIT_TEST_INSTANTIATION_TUPLE( type, name )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_double_double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_double_double_double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_double_double_double_double ) \
+
+#define UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( type, name, array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, trip_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_double_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_double_double_double_double, array ) \
+
+#define UNIT_TEST_INSTANTIATION_MEMBER_TUPLE( type, name )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, pair_double_double ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, pair_uint_double ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, trip_double_double_double ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, trip_uint_double_double ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, THIRD, quad_double_double_double_double ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, THIRD, quad_uint_uint_double_double ) \
+
+#define UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_2_ARRAY( type, name, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, FIRST, pair_double_uint, trip_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, SECOND, pair_double_uint, pair_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, THIRD, trip_double_double_uint, trip_uint_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, FOURTH, quad_uint_double_double_double, quad_double_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, FIRST, pair_double_uint, pair_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, SECOND, trip_uint_uint_double, trip_double_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, THIRD, trip_double_uint_double, trip_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, FOURTH, quad_uint_uint_double_double, quad_uint_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, FIRST, trip_double_double_uint, trip_uint_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, SECOND, trip_double_uint_double, trip_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, THIRD, trip_double_double_double, trip_uint_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, FOURTH, quad_double_double_double_double, quad_uint_uint_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, FIRST, quad_uint_double_double_double, quad_double_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH,SECOND, quad_uint_uint_double_double, quad_uint_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, THIRD, quad_double_double_double_double, quad_uint_uint_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, FOURTH, quad_double_double_double_uint, quad_uint_uint_uint_uint, array ) \
+
+#define UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_1_ARRAY( type, name, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, SECOND, pair_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, THIRD, trip_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, FOURTH, quad_double_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, THIRD, trip_uint_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, FOURTH, quad_uint_double_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, FOURTH, quad_double_double_uint_uint, array ) \
+  
+//---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
 
@@ -51,10 +111,13 @@ public:
 
   // Allow public access to the DataProcessor protected member functions
   using FACEMC::DataProcessor::processContinuousData;
+  using FACEMC::DataProcessor::removeElementsLessThanValue;
+  using FACEMC::DataProcessor::removeElementsGreaterThanValue;
   using FACEMC::DataProcessor::coarsenConstantRegions;
   using FACEMC::DataProcessor::calculateSlopes;
   using FACEMC::DataProcessor::calculateContinuousCDF;
   using FACEMC::DataProcessor::calculateDiscreteCDF;
+  using FACEMC::DataProcessor::copyTupleMemberData;
   using FACEMC::DataProcessor::swapTupleMemberData;
   using FACEMC::DataProcessor::uintToShellStr;
   
@@ -63,224 +126,258 @@ public:
   using FACEMC::DataProcessor::SquareSquareDataProcessingPolicy;
 };
 
+// Allow for easier access to the DataProcessor structs
+typedef TestDataProcessor::LogLogDataProcessingPolicy LogLogDataProcessingPolicy;
+typedef TestDataProcessor::SquareSquareDataProcessingPolicy SquareSquareDataProcessingPolicy;
+
+template<typename ProcessingPolicy>
+struct ProcessingPolicyTestingTraits
+{
+  static const double referenceIndepValue = 0.0;
+  static const double referenceDepValue = 0.0;
+};
+
+template<>
+struct ProcessingPolicyTestingTraits<LogLogDataProcessingPolicy>
+{
+  static const double referenceIndepValue = LOG_INDEP_VAR;
+  static const double referenceDepValue = LOG_DEP_VAR;
+};
+
+template<>
+struct ProcessingPolicyTestingTraits<SquareSquareDataProcessingPolicy>
+{
+  static const double referenceIndepValue = SQR_INDEP_VAR;
+  static const double referenceDepValue = SQR_DEP_VAR;
+};
+
+//---------------------------------------------------------------------------//
+// Helper functions.
+//---------------------------------------------------------------------------//
+template<FACEMC::TupleMember member, typename T, template<typename> class Array>
+void fillArrayOneTupleMemberData( Array<T> &array )
+{
+  typedef FACEMC::TupleGetSetMemberPolicy<T,member> localTGSMP;
+  typename Array<T>::size_type size = 
+    FACEMC::ArrayTestingPolicy<T,Array>::size( array );
+
+  if( size > 0 )
+  {
+    for( unsigned int i = 1; i <= size; ++i )
+    {
+      localTGSMP::set( array[i-1],
+		       static_cast<typename localTGSMP::tupleMemberType>( i ) );
+    }
+  }
+}
+
+template<FACEMC::TupleMember indepMember,
+	 FACEMC::TupleMember depMember,
+	 typename T,
+	 template<typename> class Array>
+void fillArrayTwoTupleMemberData( Array<T> &array )
+{
+  typedef FACEMC::TupleGetSetMemberPolicy<T,indepMember> indepTGSMP;
+  typedef FACEMC::TupleGetSetMemberPolicy<T,depMember> depTGSMP;
+  typename Array<T>::size_type size = 
+    FACEMC::ArrayTestingPolicy<T,Array>::size( array );
+
+  if( size > 0 )
+  {
+    for( unsigned int i = 0; i < size; ++i )
+    {
+      indepTGSMP::set( array[i],
+		       static_cast<typename indepTGSMP::tupleMemberType>( i*INDEP_VAR ) );
+      depTGSMP::set( array[i],
+		     static_cast<typename depTGSMP::tupleMemberType>( i*DEP_VAR ) );
+    }
+  }
+}
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the LogLogDataProcessingPolicy correctly processes data
-TEUCHOS_UNIT_TEST( DataProcessingPolicy, log_log_test )
+// Check that the DataProcessingPolicies correctly process data
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor, 
+				   DataProcessingPolicy,
+				   Policy )
 {
   double processed_indep_var, processed_dep_var;
+  processed_indep_var = Policy::processIndependentVar( INDEP_VAR );
+  processed_dep_var = Policy::processDependentVar( DEP_VAR );
 
-  processed_indep_var = TestDataProcessor::LogLogDataProcessingPolicy::processIndependentVar( INDEP_VAR );
-  processed_dep_var = TestDataProcessor::LogLogDataProcessingPolicy::processDependentVar( DEP_VAR );
+  double ref_indep_var, ref_dep_var;
+  ref_indep_var = ProcessingPolicyTestingTraits<Policy>::referenceIndepValue;
+  ref_dep_var = ProcessingPolicyTestingTraits<Policy>::referenceDepValue;
 
-  TEST_FLOATING_EQUALITY( processed_indep_var, LOG_INDEP_VAR, TOL );
-  TEST_FLOATING_EQUALITY( processed_dep_var, LOG_DEP_VAR, TOL );
+  TEST_FLOATING_EQUALITY( processed_indep_var, ref_indep_var, TOL );
+  TEST_FLOATING_EQUALITY( processed_dep_var, ref_dep_var, TOL );
 }
 
-//---------------------------------------------------------------------------//
-// Check that the SquareSquareDataProcessingPolicy correctly process data
-TEUCHOS_UNIT_TEST( DataProcessingPolicy, square_square_test )
-{
-  double processed_indep_var, processed_dep_var;
-
-  processed_indep_var = TestDataProcessor::SquareSquareDataProcessingPolicy::processIndependentVar( INDEP_VAR );
-  processed_dep_var = TestDataProcessor::SquareSquareDataProcessingPolicy::processDependentVar( DEP_VAR );
-
-  TEST_FLOATING_EQUALITY( processed_indep_var, SQR_INDEP_VAR, TOL );
-  TEST_FLOATING_EQUALITY( processed_dep_var, SQR_DEP_VAR, TOL );
-}
+UNIT_TEST_INSTANTIATION_POLICY( DataProcessor, DataProcessingPolicy );
 
 //---------------------------------------------------------------------------//
-// Check that the DataProcessor can process an array of FACEMC::Pair structs
-// in log-log format
-TEUCHOS_UNIT_TEST( DataProcessor, process_pair_array_log_log_test )
+// Check that the DataProcessor can processes an array of FACEMC Tuple structs
+// in the desired format
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( DataProcessor, 
+				   processContinuousData,
+				   Policy,
+				   Tuple )
 {
   TestDataProcessor data_processor;
-  
+
   // Load the array to be processed
-  FACEMC::Pair<double,double> data_point;
+  Tuple data_point;
   data_point.first = INDEP_VAR;
   data_point.second = DEP_VAR;
-  Teuchos::Array<FACEMC::Pair<double,double> > processed_data( 10, data_point );
+  Teuchos::Array<Tuple> processed_data( 10, data_point );
 
   // Load the reference array
-  data_point.first = LOG_INDEP_VAR;
-  data_point.second = LOG_DEP_VAR;
-  Teuchos::Array<FACEMC::Pair<double,double> > log_log_data( 10, data_point );
+  data_point.first = ProcessingPolicyTestingTraits<Policy>::referenceIndepValue;
+  data_point.second = ProcessingPolicyTestingTraits<Policy>::referenceDepValue;
+  Teuchos::Array<Tuple> ref_data( 10, data_point );
 
-  // Process the array
-  data_processor.processContinuousData<TestDataProcessor::LogLogDataProcessingPolicy,
-				       FACEMC::FIRST,
-				       FACEMC::SECOND>( processed_data );
-  
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, log_log_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can process an array of FACEMC::Pair structs
-// in square-square format
-TEUCHOS_UNIT_TEST( DataProcessor, process_pair_array_square_square_test )
-{
-  TestDataProcessor data_processor;
-  
-  // Load the array to be processed
-  FACEMC::Pair<double,double> data_point;
-  data_point.first = INDEP_VAR;
-  data_point.second = DEP_VAR;
-  Teuchos::Array<FACEMC::Pair<double,double> > processed_data( 10, data_point );
-
-  // Load the reference array
-  data_point.first = SQR_INDEP_VAR;
-  data_point.second = SQR_DEP_VAR;
-  Teuchos::Array<FACEMC::Pair<double,double> > sqr_sqr_data( 10, data_point );
-
-  // Process the array
-  data_processor.processContinuousData<TestDataProcessor::SquareSquareDataProcessingPolicy,
+  // Process the Array
+  data_processor.processContinuousData<Policy,
 				       FACEMC::FIRST,
 				       FACEMC::SECOND>( processed_data );
 
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, sqr_sqr_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, ref_data, TOL );
 }
+
+UNIT_TEST_INSTANTIATION_POLICY_TUPLE( DataProcessor, processContinuousData );
 
 //---------------------------------------------------------------------------//
-// Check that the DataProcessor can process an array of FACEMC::Trip structs
-// in log-log format
-TEUCHOS_UNIT_TEST( DataProcessor, process_trip_array_log_log_test )
+// Check that the DataProcessor can remove elements with a tuple member less
+// than a specified value
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
+				   removeElementsLessThanValue,
+				   Tuple )
 {
   TestDataProcessor data_processor;
+
+  Teuchos::Array<Tuple> ref_data( 10 ), clipped_data( 10 );
   
-  // Load the array to be processed
-  FACEMC::Trip<double,double,double> data_point;
-  data_point.first = INDEP_VAR;
-  data_point.second = DEP_VAR;
-  data_point.third = ZERO;
-  Teuchos::Array<FACEMC::Trip<double,double,double> > 
-    processed_data( 10, data_point );
-
   // Load the reference array
-  data_point.first = LOG_INDEP_VAR;
-  data_point.second = LOG_DEP_VAR;
-  Teuchos::Array<FACEMC::Trip<double,double,double> > 
-    log_log_data( 10, data_point );
+  fillArrayOneTupleMemberData<FACEMC::FIRST>( ref_data );
 
-  // Process the array
-  data_processor.processContinuousData<TestDataProcessor::LogLogDataProcessingPolicy,
-				       FACEMC::FIRST,
-				       FACEMC::SECOND>( processed_data );
+  // Load the clipped array
+  clipped_data = ref_data;
 
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, log_log_data, TOL );
+  typedef FACEMC::TupleGetSetMemberPolicy<Tuple,FACEMC::FIRST> localTGSMP;
+  
+  // Set the lower bound to the min value in the array and clip the array
+  double lower_bound = localTGSMP::get( ref_data.front() );
+  data_processor.removeElementsLessThanValue<FACEMC::FIRST>( clipped_data,
+							     lower_bound );
+  
+  FACEMC_TEST_COMPARE_ARRAYS( clipped_data, ref_data );
+
+  // Set the lower bound to a value less than the min value in the array and
+  // clip the array
+  clipped_data = ref_data;
+  lower_bound = 0.0;
+  data_processor.removeElementsLessThanValue<FACEMC::FIRST>( clipped_data,
+							     lower_bound );
+
+  FACEMC_TEST_COMPARE_ARRAYS( clipped_data, ref_data );
+
+  // Set the lower bound to a value greater than the min value but between
+  // two bin boundaries and clip the array
+  clipped_data = ref_data;
+  lower_bound = (localTGSMP::get( ref_data[2] ) + 
+		 localTGSMP::get( ref_data[1] ) )/2.0;
+  data_processor.removeElementsLessThanValue<FACEMC::FIRST>( clipped_data,
+							     lower_bound );
+
+  FACEMC_TEST_COMPARE_ARRAYS( clipped_data, ref_data( 1, ref_data.size()-1 ) );
+
+  // Set the lower bound to a value greater than the min value but on
+  // a bin boundary and clip the array
+  clipped_data = ref_data;
+  lower_bound = localTGSMP::get( ref_data[2] );
+  data_processor.removeElementsLessThanValue<FACEMC::FIRST>( clipped_data,
+							     lower_bound );
+  
+  FACEMC_TEST_COMPARE_ARRAYS( clipped_data, ref_data( 2, ref_data.size()-2 ) );
 }
+
+UNIT_TEST_INSTANTIATION_TUPLE( DataProcessor, removeElementsLessThanValue );
 
 //---------------------------------------------------------------------------//
-// Check that the DataProcessor can process an array of FACEMC::Trip structs
-// in square-square format
-TEUCHOS_UNIT_TEST( DataProcessor, process_trip_array_square_square_test )
+// Check that the DataProcessor can remove elements with a tuple member greater
+// than a specified value
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
+				   removeElementsGreaterThanValue,
+				   Tuple )
 {
   TestDataProcessor data_processor;
+
+  Teuchos::Array<Tuple> ref_data( 10 ), clipped_data( 10 );
   
-  // Load the array to be processed
-  FACEMC::Trip<double,double,double> data_point;
-  data_point.first = INDEP_VAR;
-  data_point.second = DEP_VAR;
-  data_point.third = ZERO;
-  Teuchos::Array<FACEMC::Trip<double,double,double> > 
-    processed_data( 10, data_point );
-
   // Load the reference array
-  data_point.first = SQR_INDEP_VAR;
-  data_point.second = SQR_DEP_VAR;
-  Teuchos::Array<FACEMC::Trip<double,double,double> > 
-    sqr_sqr_data( 10, data_point );
+  fillArrayOneTupleMemberData<FACEMC::FIRST>( ref_data );
 
-  // Process the array
-  data_processor.processContinuousData<TestDataProcessor::SquareSquareDataProcessingPolicy,
-				       FACEMC::FIRST,
-				       FACEMC::SECOND>( processed_data );
+  // Load the clipped array
+  clipped_data = ref_data;
 
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, sqr_sqr_data, TOL );
+  typedef FACEMC::TupleGetSetMemberPolicy<Tuple,FACEMC::FIRST> localTGSMP;
+  
+  // Set the upper bound to the max value in the array and clip the array
+  double upper_bound = localTGSMP::get( ref_data.back() );
+  data_processor.removeElementsGreaterThanValue<FACEMC::FIRST>( clipped_data,
+								upper_bound );
+  
+  FACEMC_TEST_COMPARE_ARRAYS( clipped_data, ref_data );
+
+  // Set the upper bound to a value greater than the max value in the array and
+  // clip the array
+  clipped_data = ref_data;
+  upper_bound = localTGSMP::get( ref_data.back() ) + 1.0;
+  data_processor.removeElementsGreaterThanValue<FACEMC::FIRST>( clipped_data,
+								upper_bound );
+
+  FACEMC_TEST_COMPARE_ARRAYS( clipped_data, ref_data );
+
+  // Set the upper bound to a value less than the max value but between
+  // two bin boundaries and clip the array
+  clipped_data = ref_data;
+  upper_bound = (localTGSMP::get( ref_data[ref_data.size()-2] ) + 
+		 localTGSMP::get( ref_data[ref_data.size()-3] ) )/2.0;
+  data_processor.removeElementsGreaterThanValue<FACEMC::FIRST>( clipped_data,
+								upper_bound );
+  FACEMC_TEST_COMPARE_ARRAYS( clipped_data, ref_data( 0, ref_data.size()-1 ) );
+
+  // Set the upper bound to a value less than the max value but on
+  // a bin boundary and clip the array
+  clipped_data = ref_data;
+  upper_bound = localTGSMP::get( ref_data[ref_data.size()-3] );
+  data_processor.removeElementsGreaterThanValue<FACEMC::FIRST>( clipped_data,
+								upper_bound );
+  FACEMC_TEST_COMPARE_ARRAYS( clipped_data, ref_data( 0, ref_data.size()-2 ) );
 }
 
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can process an array of FACEMC::Quad structs
-// in log-log format
-TEUCHOS_UNIT_TEST( DataProcessor, process_quad_array_log_log_test )
-{
-  TestDataProcessor data_processor;
-  
-  // Load the array to be processed
-  FACEMC::Quad<double,double,double,double> data_point;
-  data_point.first = INDEP_VAR;
-  data_point.second = DEP_VAR;
-  data_point.third = ZERO;
-  data_point.fourth = ZERO;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    processed_data( 10, data_point );
+UNIT_TEST_INSTANTIATION_TUPLE( DataProcessor, removeElementsGreaterThanValue );
 
-  // Load the reference array
-  data_point.first = LOG_INDEP_VAR;
-  data_point.second = LOG_DEP_VAR;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    log_log_data( 10, data_point );
-
-  // Process the array
-  data_processor.processContinuousData<TestDataProcessor::LogLogDataProcessingPolicy,
-				       FACEMC::FIRST,
-				       FACEMC::SECOND>( processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, log_log_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can process an array of FACEMC::Quad structs
-// in square-square format
-TEUCHOS_UNIT_TEST( DataProcessor, process_quad_array_square_square_test )
-{
-  TestDataProcessor data_processor;
-  
-  // Load the array to be processed
-  FACEMC::Quad<double,double,double,double> data_point;
-  data_point.first = INDEP_VAR;
-  data_point.second = DEP_VAR;
-  data_point.third = ZERO;
-  data_point.fourth = ZERO;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    processed_data( 10, data_point );
-
-  // Load the reference array
-  data_point.first = SQR_INDEP_VAR;
-  data_point.second = SQR_DEP_VAR;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    sqr_sqr_data( 10, data_point );
-
-  // Process the array
-  data_processor.processContinuousData<TestDataProcessor::SquareSquareDataProcessingPolicy,
-				       FACEMC::FIRST,
-				       FACEMC::SECOND>( processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, sqr_sqr_data, TOL );
-}
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can coarsen constant regions in an array
-TEUCHOS_UNIT_TEST( DataProcessor, coarsen_constant_regions_test )
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor, 
+				   coarsenConstantRegions,
+				   Tuple )
 {
   TestDataProcessor data_processor;
   
   // Load the array to be processed
-  FACEMC::Quad<double,double,double,double> data_point;
+  Tuple data_point;
   data_point.first = INDEP_VAR;
   data_point.second = DEP_VAR;
-  data_point.third = ZERO;
-  data_point.fourth = ZERO;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    coarsened_data( 10, data_point );
+  Teuchos::Array<Tuple> coarsened_data( 10, data_point );
 
   // Load the reference array
   data_point.first = INDEP_VAR;
   data_point.second = DEP_VAR;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    reference_data( 2, data_point );
+  Teuchos::Array<Tuple> reference_data( 2, data_point );
 
   // Coarsen the array
   data_processor.coarsenConstantRegions<FACEMC::SECOND>( coarsened_data );
@@ -288,931 +385,213 @@ TEUCHOS_UNIT_TEST( DataProcessor, coarsen_constant_regions_test )
   FACEMC_TEST_COMPARE_FLOATING_ARRAYS( coarsened_data, reference_data, TOL );
 }
 
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can calculate the slopes between all pairs
-// of data points in an array and store in the third tuple member
-TEUCHOS_UNIT_TEST( DataProcessor, calc_slopes_in_third_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Trip<double,double,double> data_point;
-  Teuchos::Array<FACEMC::Trip<double,double,double> > processed_data( 10 );
-  for( unsigned int i = 0; i < processed_data.size(); ++i )
-  {
-    data_point.first = i*INDEP_VAR;
-    data_point.second = i*DEP_VAR;
-    data_point.third = ZERO;
-    processed_data[i] = data_point;
-  }
-
-  // Load the reference array
-  Teuchos::Array<FACEMC::Trip<double,double,double> > slope_data( 10 );
-  for( unsigned int i = 0; i < slope_data.size(); ++i )
-  {
-    data_point.first = i*INDEP_VAR;
-    data_point.second = i*DEP_VAR;
-    data_point.third = SLOPE;
-    slope_data[i] = data_point;
-  }
-  slope_data.back().third = 0;
-  
-  // Process the array
-  data_processor.calculateSlopes<FACEMC::FIRST,
-				 FACEMC::SECOND,
-				 FACEMC::THIRD>( processed_data );
-  
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, slope_data, TOL );
-}
+UNIT_TEST_INSTANTIATION_TUPLE( DataProcessor, coarsenConstantRegions );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can calculate the slopes between all pairs
-// of data points in an array and store in the fourth tuple member
-TEUCHOS_UNIT_TEST( DataProcessor, calc_slopes_in_fourth_tuple_member_test )
+// of data points in an array and store in the desired tuple member
+FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
+						       calculateSlopes,
+						       member,
+						       Tuple,
+						       array )
 {
   TestDataProcessor data_processor;
 
   // Load the array to be processed
-  FACEMC::Quad<double,double,double,double> data_point;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    processed_data( 10 );
-  for( unsigned int i = 0; i < processed_data.size(); ++i )
-  {
-    data_point.first = i*INDEP_VAR;
-    data_point.second = i*DEP_VAR;
-    data_point.third = ZERO;
-    data_point.fourth = ZERO;
-    processed_data[i] = data_point;
-  }
+  Teuchos::Array<Tuple> raw_data( 10 );
+  fillArrayTwoTupleMemberData<FACEMC::FIRST,FACEMC::SECOND>( raw_data );
+  array<Tuple> processed_data = 
+  FACEMC::ArrayTestingPolicy<Tuple,array>::createArrayFromView( raw_data() );
 
   // Load the reference array
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > slope_data( 10 );
-  for( unsigned int i = 0; i < slope_data.size(); ++i )
+  Teuchos::Array<Tuple> ref_data( 10 );
+  fillArrayTwoTupleMemberData<FACEMC::FIRST,FACEMC::SECOND>( ref_data );
+  typedef FACEMC::TupleGetSetMemberPolicy<Tuple,member> localTGSMP;
+  double slope = 0.0;
+  for( unsigned int i = 0; i < ref_data.size(); ++i )
   {
-    data_point.first = i*INDEP_VAR;
-    data_point.second = i*DEP_VAR;
-    data_point.third = ZERO;
-    data_point.fourth = SLOPE;
-    slope_data[i] = data_point;
+    if( i != ref_data.size() - 1 )
+    {
+      slope = (ref_data[i+1].second - ref_data[i].second)/
+	(ref_data[i+1].first - ref_data[i].first);
+      localTGSMP::set( ref_data[i], slope );
+    }
+    else
+      localTGSMP::set( ref_data[i], 0.0 );
   }
-  slope_data.back().fourth = 0;
-  
-  // Process the array
+
+  // Processes the array
   data_processor.calculateSlopes<FACEMC::FIRST,
 				 FACEMC::SECOND,
-				 FACEMC::FOURTH>( processed_data );
+				 member>( processed_data );
+
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, ref_data, TOL );
+}
+
+UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateSlopes, Array );
+UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateSlopes, ArrayView );
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can calculate a continuous cdf from an array
+// of data and store in the desired tuple member
+FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
+						       calculateContinuousCDF,
+						       member,
+						       Tuple,
+						       array )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  Teuchos::Array<Tuple> raw_data( 10 );
+  fillArrayTwoTupleMemberData<FACEMC::FIRST,FACEMC::SECOND>( raw_data );
+  array<Tuple> processed_data = 
+  FACEMC::ArrayTestingPolicy<Tuple,array>::createArrayFromView( raw_data() );
+
+  // Load the reference array
+  Teuchos::Array<Tuple> ref_data( 10 );
+  fillArrayTwoTupleMemberData<FACEMC::FIRST,FACEMC::SECOND>( ref_data );
+  double cdf_value;
+  typedef FACEMC::TupleGetSetMemberPolicy<Tuple,member> localTGSMP;
+  for( unsigned int i = 0; i < ref_data.size(); ++i )
+  {    
+    if( i != 0 )
+    {
+      cdf_value += 0.5*(ref_data[i].first - ref_data[i-1].first)*
+	(ref_data[i].second + ref_data[i-1].second);
+    }
+    else
+      cdf_value = 0.0;
+      
+    localTGSMP::set( ref_data[i], cdf_value );
+  }
   
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, slope_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can calculate a continuous cdf from an array
-// of data and store in the third tuple member
-TEUCHOS_UNIT_TEST( DataProcessor, calc_contin_cdf_in_third_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Trip<double,double,double> data_point;
-  Teuchos::Array<FACEMC::Trip<double,double,double> > processed_data( 10 );
-  for( unsigned int i = 0; i < processed_data.size(); ++i )
+  double norm_value = localTGSMP::get( ref_data.back() );
+  for( unsigned int i = 0; i < ref_data.size(); ++i )
   {
-    data_point.first = i*INDEP_VAR;
-    data_point.second = i*DEP_VAR;
-    data_point.third = ZERO;
-    processed_data[i] = data_point;
+    ref_data[i].second /= norm_value;
+    localTGSMP::set( ref_data[i], localTGSMP::get( ref_data[i] )/norm_value );
   }
-
-  // Load the reference array
-  Teuchos::Array<FACEMC::Trip<double,double,double> > cdf_data( 10 );
-  double cdf_value = 0;
-  for( unsigned int i = 0; i < cdf_data.size(); ++i )
-  {
-    data_point.first = i*INDEP_VAR;
-    data_point.second = i*DEP_VAR/CDF_NORM;
-    
-    if( i == 0 )
-      cdf_value = 0.0;
-    else
-      cdf_value += 0.5*(INDEP_VAR)*(i*DEP_VAR + (i-1)*DEP_VAR)/CDF_NORM;
-    
-    data_point.third = cdf_value;
-    cdf_data[i] = data_point;
-  }
-
-  // Process the array
+  
+  // Processes the array
   data_processor.calculateContinuousCDF<FACEMC::FIRST,
 					FACEMC::SECOND,
-					FACEMC::THIRD>( processed_data );
+					member>( processed_data );
 
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, ref_data, TOL );
 }
 
+UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousCDF, Array );
+UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( DataProcessor, calculateContinuousCDF, ArrayView );
+
 //---------------------------------------------------------------------------//
-// Check that the DataProcessor can calculate a continuous cdf from an array
-// of data and store in the fourth tuple member
-TEUCHOS_UNIT_TEST( DataProcessor, calc_contin_cdf_in_fourth_tuple_member_test )
+// Check that the DataProcessor can calculate a discrete cdf from an array
+// of data in place
+FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( DataProcessor,
+						 calculateDiscreteCDF,
+						 member,
+						 Tuple )
 {
   TestDataProcessor data_processor;
 
   // Load the array to be processed
-  FACEMC::Quad<double,double,double,double> data_point;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    processed_data( 10 );
-  for( unsigned int i = 0; i < processed_data.size(); ++i )
-  {
-    data_point.first = i*INDEP_VAR;
-    data_point.second = i*DEP_VAR;
-    data_point.third = ZERO;
-    data_point.fourth = ZERO;
-    processed_data[i] = data_point;
-  }
-
+  Teuchos::Array<Tuple> processed_data( 10 );
+  fillArrayOneTupleMemberData<member>( processed_data );
+  
   // Load the reference array
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > cdf_data( 10 );
-  double cdf_value = 0;
-  for( unsigned int i = 0; i < cdf_data.size(); ++i )
+  Teuchos::Array<Tuple> ref_data( 10 );
+  fillArrayOneTupleMemberData<member>( ref_data );
+  
+  typedef FACEMC::TupleGetSetMemberPolicy<Tuple,member> localTGSMP;
+  for( unsigned int i = 1; i < ref_data.size(); ++i )
   {
-    data_point.first = i*INDEP_VAR;
-    data_point.second = i*DEP_VAR/CDF_NORM;
-    data_point.third = ZERO;
+    localTGSMP::set( ref_data[i], localTGSMP::get( ref_data[i-1] ) +
+  		     localTGSMP::get( ref_data[i] ) );
+  }
+  
+  for( unsigned int i = 0; i < ref_data.size(); ++i )
+  {
+    localTGSMP::set( ref_data[i], localTGSMP::get( ref_data[i] )/
+  		     localTGSMP::get( ref_data.back() ) );
+  }
+  
+  // Processes the array
+  data_processor.calculateDiscreteCDF<member,
+  				      member>( processed_data );
+  
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, ref_data, TOL );
+}
+
+UNIT_TEST_INSTANTIATION_MEMBER_TUPLE( DataProcessor, calculateDiscreteCDF );
+
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can swap data in one member of a tuple with
+// data in another member (for all tuples in an array)
+FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_DECL( DataProcessor,
+						       copyTupleMemberData,
+						       Member1,
+						       Member2,
+						       Tuple1,
+						       Tuple2,
+						       array )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  Teuchos::Array<Tuple1> raw_original_data( 10 );
+  fillArrayOneTupleMemberData<Member1>( raw_original_data );
+  array<Tuple1>  original_data = 
+    FACEMC::ArrayTestingPolicy<Tuple1,array>::createArrayFromView( raw_original_data() );
+
+  Teuchos::Array<Tuple2> raw_processed_data( raw_original_data.size() );
+  array<Tuple2> processed_data = 
+    FACEMC::ArrayTestingPolicy<Tuple2,array>::createArrayFromView( raw_processed_data() );
+  
+  // Load the reference array
+  Teuchos::Array<Tuple2> ref_data( 10 );
+  fillArrayOneTupleMemberData<Member2>( ref_data );
+  
+  // Process the array
+  data_processor.copyTupleMemberData<Member1,Member2>( original_data,
+						       processed_data );
+  
+  FACEMC_TEST_COMPARE_ARRAYS( processed_data, ref_data );
+}
     
-    if( i == 0 )
-      cdf_value = 0.0;
-    else
-      cdf_value += 0.5*(INDEP_VAR)*(i*DEP_VAR + (i-1)*DEP_VAR)/CDF_NORM;
-    
-    data_point.fourth = cdf_value;
-    cdf_data[i] = data_point;
-  }
+UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_2_ARRAY( DataProcessor, copyTupleMemberData, Array );
+UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_2_ARRAY( DataProcessor, copyTupleMemberData, ArrayView );
 
+//---------------------------------------------------------------------------//
+// Check that the DataProcessor can swap data in one member with data in 
+// another member (for all tuples in an array)
+FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
+						       swapTupleMemberData,
+						       Member1,
+						       Member2,
+						       Tuple,
+						       array )
+{
+  TestDataProcessor data_processor;
+
+  // Load the array to be processed
+  Teuchos::Array<Tuple> raw_data( 10 );
+  fillArrayOneTupleMemberData<Member1>( raw_data );
+  array<Tuple>  processed_data = 
+    FACEMC::ArrayTestingPolicy<Tuple,array>::createArrayFromView( raw_data() );
+
+  // Load the reference array
+  Teuchos::Array<Tuple> ref_data( 10 );
+  fillArrayOneTupleMemberData<Member2>( ref_data );
+  
   // Process the array
-  data_processor.calculateContinuousCDF<FACEMC::FIRST,
-					FACEMC::SECOND,
-					FACEMC::FOURTH>( processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
+  data_processor.swapTupleMemberData<Member1,Member2>( processed_data );
+  
+  FACEMC_TEST_COMPARE_ARRAYS( processed_data, ref_data );
 }
 
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can calculate a discrete cdf from an array
-// of data in place
-TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_in_place_first_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Pair<double,double> data_point;
-  Teuchos::Array<FACEMC::Pair<double,double> > processed_data( 10 );
-  for( unsigned int i = 0; i < processed_data.size(); ++i )
-  {
-    data_point.first = i+1;
-    data_point.second = ZERO;
-    processed_data[i] = data_point;
-  }
-
-  // Load the reference array
-  Teuchos::Array<FACEMC::Pair<double,double> > cdf_data( 10 );
-  double cdf_max = cdf_data.size()*(cdf_data.size()+1)/2;
-  for( unsigned int i = 0; i < cdf_data.size(); ++i )
-  {
-    // Fun with series :)
-    data_point.first = ((i+1)*(i+2)/2)/cdf_max;
-    data_point.second = ZERO;
-    cdf_data[i] = data_point;
-  }
-
-  // Process the array
-  data_processor.calculateDiscreteCDF<FACEMC::FIRST,
-				      FACEMC::FIRST>( processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can calculate a discrete cdf from an array
-// of data in place
-TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_in_place_second_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Pair<double,double> data_point;
-  Teuchos::Array<FACEMC::Pair<double,double> > processed_data( 10 );
-  for( unsigned int i = 0; i < processed_data.size(); ++i )
-  {
-    data_point.first = ZERO;
-    data_point.second = i+1;
-    processed_data[i] = data_point;
-  }
-
-  // Load the reference array
-  Teuchos::Array<FACEMC::Pair<double,double> > cdf_data( 10 );
-  double cdf_max = cdf_data.size()*(cdf_data.size()+1)/2;
-  for( unsigned int i = 0; i < cdf_data.size(); ++i )
-  {
-    // Fun with series :)
-    data_point.first = ZERO;
-    data_point.second = ((i+1)*(i+2)/2)/cdf_max;
-    cdf_data[i] = data_point;
-  }
-
-  // Process the array
-  data_processor.calculateDiscreteCDF<FACEMC::SECOND,
-				      FACEMC::SECOND>( processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can calculate a discrete cdf from an array
-// of data in place
-TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_in_place_third_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Trip<double,double,double> data_point;
-  Teuchos::Array<FACEMC::Trip<double,double,double> > processed_data( 10 );
-  for( unsigned int i = 0; i < processed_data.size(); ++i )
-  {
-    data_point.first = ZERO;
-    data_point.second = ZERO;
-    data_point.third = i+1;
-    processed_data[i] = data_point;
-  }
-
-  // Load the reference array
-  Teuchos::Array<FACEMC::Trip<double,double,double> > cdf_data( 10 );
-  double cdf_max = cdf_data.size()*(cdf_data.size()+1)/2;
-  for( unsigned int i = 0; i < cdf_data.size(); ++i )
-  {
-    // Fun with series :)
-    data_point.first = ZERO;
-    data_point.second = ZERO;
-    data_point.third = ((i+1)*(i+2)/2)/cdf_max;
-    cdf_data[i] = data_point;
-  }
-
-  // Process the array
-  data_processor.calculateDiscreteCDF<FACEMC::THIRD,
-				      FACEMC::THIRD>( processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can calculate a discrete cdf from an array
-// of data in place
-TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_in_place_fourth_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Quad<double,double,double,double> data_point;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > processed_data( 10 );
-  for( unsigned int i = 0; i < processed_data.size(); ++i )
-  {
-    data_point.first = ZERO;
-    data_point.second = ZERO;
-    data_point.third = ZERO;
-    data_point.fourth = i+1;
-    processed_data[i] = data_point;
-  }
-
-  // Load the reference array
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > cdf_data( 10 );
-  double cdf_max = cdf_data.size()*(cdf_data.size()+1)/2;
-  for( unsigned int i = 0; i < cdf_data.size(); ++i )
-  {
-    // Fun with series :)
-    data_point.first = ZERO;
-    data_point.second = ZERO;
-    data_point.third = ZERO;
-    data_point.fourth = ((i+1)*(i+2)/2)/cdf_max;
-    cdf_data[i] = data_point;
-  }
-
-  // Process the array
-  data_processor.calculateDiscreteCDF<FACEMC::FOURTH,
-				      FACEMC::FOURTH>( processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can calculate a discrete cdf from an array
-// of data
-TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_second_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Quad<double,double,double,double> data_point;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > processed_data( 10 );
-  for( unsigned int i = 0; i < processed_data.size(); ++i )
-  {
-    data_point.first = i+1;
-    data_point.second = ZERO;
-    data_point.third = ZERO;
-    data_point.fourth = ZERO;
-    processed_data[i] = data_point;
-  }
-
-  // Load the reference array
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > cdf_data( 10 );
-  double cdf_max = cdf_data.size()*(cdf_data.size()+1)/2;
-  for( unsigned int i = 0; i < cdf_data.size(); ++i )
-  {
-    // Fun with series :)
-    data_point.first = i+1;
-    data_point.second = ((i+1)*(i+2)/2)/cdf_max;
-    data_point.third = ZERO;
-    data_point.fourth = ZERO;
-    cdf_data[i] = data_point;
-  }
-
-  // Process the array
-  data_processor.calculateDiscreteCDF<FACEMC::FIRST,
-				      FACEMC::SECOND>( processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can calculate a discrete cdf from an array
-// of data
-TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_third_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Quad<double,double,double,double> data_point;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > processed_data( 10 );
-  for( unsigned int i = 0; i < processed_data.size(); ++i )
-  {
-    data_point.first = i+1;
-    data_point.second = ZERO;
-    data_point.third = ZERO;
-    data_point.fourth = ZERO;
-    processed_data[i] = data_point;
-  }
-
-  // Load the reference array
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > cdf_data( 10 );
-  double cdf_max = cdf_data.size()*(cdf_data.size()+1)/2;
-  for( unsigned int i = 0; i < cdf_data.size(); ++i )
-  {
-    // Fun with series :)
-    data_point.first = i+1;
-    data_point.second = ZERO;
-    data_point.third = ((i+1)*(i+2)/2)/cdf_max;
-    data_point.fourth = ZERO;
-    cdf_data[i] = data_point;
-  }
-
-  // Process the array
-  data_processor.calculateDiscreteCDF<FACEMC::FIRST,
-				      FACEMC::THIRD>( processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can calculate a discrete cdf from an array
-// of data
-TEUCHOS_UNIT_TEST( DataProcessor, calc_disc_cdf_fourth_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Quad<double,double,double,double> data_point;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > processed_data( 10 );
-  for( unsigned int i = 0; i < processed_data.size(); ++i )
-  {
-    data_point.first = i+1;
-    data_point.second = ZERO;
-    data_point.third = ZERO;
-    data_point.fourth = ZERO;
-    processed_data[i] = data_point;
-  }
-
-  // Load the reference array
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > cdf_data( 10 );
-  double cdf_max = cdf_data.size()*(cdf_data.size()+1)/2;
-  for( unsigned int i = 0; i < cdf_data.size(); ++i )
-  {
-    // Fun with series :)
-    data_point.first = i+1;
-    data_point.second = ZERO;
-    data_point.third = ZERO;
-    data_point.fourth = ((i+1)*(i+2)/2)/cdf_max;
-    cdf_data[i] = data_point;
-  }
-
-  // Process the array
-  data_processor.calculateDiscreteCDF<FACEMC::FIRST,
-				      FACEMC::FOURTH>( processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, cdf_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member of a tuple with
-// data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_first_second_tuple_member_in_place_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Pair<double,double> data_point;
-  data_point.first = INDEP_VAR;
-  data_point.second = DEP_VAR;
-  Teuchos::Array<FACEMC::Pair<double,double> > processed_data( 10, data_point );
-
-  // Load the reference array
-  data_point.first = DEP_VAR;
-  data_point.second = INDEP_VAR;
-  Teuchos::Array<FACEMC::Pair<double,double> > swap_data( 10, data_point );
-
-  // Process the array
-  data_processor.swapTupleMemberData<FACEMC::FIRST,
-				     FACEMC::SECOND>( processed_data,
-						      processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member of a tuple with
-// data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_first_second_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Pair<unsigned int,double> data_point;
-  data_point.first = SHELL;
-  data_point.second = DEP_VAR;
-  Teuchos::Array<FACEMC::Pair<unsigned int,double> > data( 10, data_point );
-
-  // Load the reference array
-  FACEMC::Pair<double, unsigned int> swap_data_point;
-  swap_data_point.first = DEP_VAR;
-  swap_data_point.second = SHELL;
-  Teuchos::Array<FACEMC::Pair<double,unsigned int> > 
-    swap_data( 10, swap_data_point );
-
-  // Process the array
-  Teuchos::Array<FACEMC::Pair<double,unsigned int> > processed_data( 10 );
-  data_processor.swapTupleMemberData<FACEMC::FIRST,
-				     FACEMC::SECOND>( data,
-						      processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member of a tuple with
-// data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_first_third_tuple_member_in_place_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Trip<double,double,double> data_point;
-  data_point.first = INDEP_VAR;
-  data_point.second = ZERO;
-  data_point.third = DEP_VAR;
-  Teuchos::Array<FACEMC::Trip<double,double,double> > 
-    processed_data( 10, data_point );
-
-  // Load the reference array
-  data_point.first = DEP_VAR;
-  data_point.second = ZERO;
-  data_point.third = INDEP_VAR;
-  Teuchos::Array<FACEMC::Trip<double,double,double> > 
-    swap_data( 10, data_point );
-
-  // Process the array
-  data_processor.swapTupleMemberData<FACEMC::FIRST,
-				     FACEMC::THIRD>( processed_data,
-						     processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member of a tuple with
-// data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_first_third_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Trip<unsigned int,double,double> data_point;
-  data_point.first = SHELL;
-  data_point.second = ZERO;
-  data_point.third = DEP_VAR;
-  Teuchos::Array<FACEMC::Trip<unsigned int,double,double> > 
-    data( 10, data_point );
-
-  // Load the reference array
-  FACEMC::Trip<double,double,unsigned int> swap_data_point;
-  swap_data_point.first = DEP_VAR;
-  swap_data_point.second = ZERO;
-  swap_data_point.third = SHELL;
-  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> > 
-    swap_data( 10, swap_data_point );
-
-  // Process the array
-  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> > 
-    processed_data( 10 );
-  data_processor.swapTupleMemberData<FACEMC::FIRST,
-				     FACEMC::THIRD>( data,
-						     processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member of a tuple with
-// data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_first_fourth_tuple_member_in_place_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Quad<double,double,double,double> data_point;
-  data_point.first = INDEP_VAR;
-  data_point.second = ZERO;
-  data_point.third = ZERO;
-  data_point.fourth = DEP_VAR;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    processed_data( 10, data_point );
-
-  // Load the reference array
-  data_point.first = DEP_VAR;
-  data_point.second = ZERO;
-  data_point.third = ZERO;
-  data_point.fourth = INDEP_VAR;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    swap_data( 10, data_point );
-
-  // Process the array
-  data_processor.swapTupleMemberData<FACEMC::FIRST,
-				     FACEMC::FOURTH>( processed_data,
-						      processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member of a tuple with
-// data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_first_fourth_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Quad<unsigned int,double,double,double> data_point;
-  data_point.first = SHELL;
-  data_point.second = ZERO;
-  data_point.third = ZERO;
-  data_point.fourth = DEP_VAR;
-  Teuchos::Array<FACEMC::Quad<unsigned int,double,double,double> > 
-    data( 10, data_point );
-
-  // Load the reference array
-  FACEMC::Quad<double,double,double,unsigned int> swap_data_point;
-  swap_data_point.first = DEP_VAR;
-  swap_data_point.second = ZERO;
-  swap_data_point.third = ZERO;
-  swap_data_point.fourth = SHELL;
-  Teuchos::Array<FACEMC::Quad<double,double,double,unsigned int> > 
-    swap_data( 10, swap_data_point );
-
-  // Process the array
-  Teuchos::Array<FACEMC::Quad<double,double,double,unsigned int> >
-    processed_data( 10 );
-  data_processor.swapTupleMemberData<FACEMC::FIRST,
-				     FACEMC::FOURTH>( data,
-						      processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member of a tuple with
-// data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_second_third_tuple_member_in_place_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Trip<double,double,double> data_point;
-  data_point.first = ZERO;
-  data_point.second = INDEP_VAR;
-  data_point.third = DEP_VAR;
-  Teuchos::Array<FACEMC::Trip<double,double,double> > 
-    processed_data( 10, data_point );
-
-  // Load the reference array
-  data_point.first = ZERO;
-  data_point.second = DEP_VAR;
-  data_point.third = INDEP_VAR;
-  Teuchos::Array<FACEMC::Trip<double,double,double> > 
-    swap_data( 10, data_point );
-
-  // Process the array
-  data_processor.swapTupleMemberData<FACEMC::SECOND,
-				     FACEMC::THIRD>( processed_data,
-						     processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member of a tuple with
-// data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_second_third_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Trip<double,unsigned int,double> data_point;
-  data_point.first = ZERO;
-  data_point.second = SHELL;
-  data_point.third = DEP_VAR;
-  Teuchos::Array<FACEMC::Trip<double,unsigned int,double> > 
-    data( 10, data_point );
-
-  // Load the reference array
-  FACEMC::Trip<double,double,unsigned int> swap_data_point;
-  swap_data_point.first = ZERO;
-  swap_data_point.second = DEP_VAR;
-  swap_data_point.third = SHELL;
-  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> > 
-    swap_data( 10, swap_data_point );
-
-  // Process the array
-  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> >
-    processed_data ( 10 );
-  data_processor.swapTupleMemberData<FACEMC::SECOND,
-				     FACEMC::THIRD>( data,
-						     processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member of a tuple with
-// data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_second_fourth_tuple_member_in_place_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Quad<double,double,double,double> data_point;
-  data_point.first = ZERO;
-  data_point.second = INDEP_VAR;
-  data_point.third = ZERO;
-  data_point.fourth = DEP_VAR;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    processed_data( 10, data_point );
-
-  // Load the reference array
-  data_point.first = ZERO;
-  data_point.second = DEP_VAR;
-  data_point.third = ZERO;
-  data_point.fourth = INDEP_VAR;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    swap_data( 10, data_point );
-
-  // Process the array
-  data_processor.swapTupleMemberData<FACEMC::SECOND,
-				     FACEMC::FOURTH>( processed_data,
-						      processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
-} 
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member of a tuple with
-// data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_second_fourth_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Quad<double,unsigned int,double,double> data_point;
-  data_point.first = ZERO;
-  data_point.second = SHELL;
-  data_point.third = ZERO;
-  data_point.fourth = DEP_VAR;
-  Teuchos::Array<FACEMC::Quad<double,unsigned int,double,double> > 
-    data( 10, data_point );
-
-  // Load the reference array
-  FACEMC::Quad<double,double,double,unsigned int> swap_data_point;
-  swap_data_point.first = ZERO;
-  swap_data_point.second = DEP_VAR;
-  swap_data_point.third = ZERO;
-  swap_data_point.fourth = SHELL;
-  Teuchos::Array<FACEMC::Quad<double,double,double,unsigned int> > 
-    swap_data( 10, swap_data_point );
-
-  // Process the array
-  Teuchos::Array<FACEMC::Quad<double,double,double,unsigned int> >
-    processed_data( 10 );
-  data_processor.swapTupleMemberData<FACEMC::SECOND,
-				     FACEMC::FOURTH>( data,
-						      processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
-} 
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member of a tuple with
-// data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_third_fourth_tuple_member_in_place_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Quad<double,double,double,double> data_point;
-  data_point.first = ZERO;
-  data_point.second = ZERO;
-  data_point.third = INDEP_VAR;
-  data_point.fourth = DEP_VAR;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    processed_data( 10, data_point );
-
-  // Load the reference array
-  data_point.first = ZERO;
-  data_point.second = ZERO;
-  data_point.third = DEP_VAR;
-  data_point.fourth = INDEP_VAR;
-  Teuchos::Array<FACEMC::Quad<double,double,double,double> > 
-    swap_data( 10, data_point );
-
-  // Process the array
-  data_processor.swapTupleMemberData<FACEMC::THIRD,
-				     FACEMC::FOURTH>( processed_data,
-						      processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
-} 
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can swap data in one member of a tuple with
-// data in another member (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, swap_third_fourth_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Quad<double,double,unsigned int,double> data_point;
-  data_point.first = ZERO;
-  data_point.second = ZERO;
-  data_point.third = SHELL;
-  data_point.fourth = DEP_VAR;
-  Teuchos::Array<FACEMC::Quad<double,double,unsigned int,double> > 
-    data( 10, data_point );
-
-  // Load the reference array
-  FACEMC::Quad<double,double,double,unsigned int> swap_data_point;
-  swap_data_point.first = ZERO;
-  swap_data_point.second = ZERO;
-  swap_data_point.third = DEP_VAR;
-  swap_data_point.fourth = SHELL;
-  Teuchos::Array<FACEMC::Quad<double,double,double,unsigned int> > 
-    swap_data( 10, swap_data_point );
-
-  // Process the array
-  Teuchos::Array<FACEMC::Quad<double,double,double,unsigned int> >
-    processed_data( 10 );
-  data_processor.swapTupleMemberData<FACEMC::THIRD,
-				     FACEMC::FOURTH>( data,
-						      processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, swap_data, TOL );
-} 
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can copy data in one member of a tuple to
-// the same member in another tuple (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, copy_first_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Pair<double,double> data_point;
-  data_point.first = INDEP_VAR;
-  data_point.second = ZERO;
-  Teuchos::Array<FACEMC::Pair<double,double> > 
-    data( 10, data_point );
-
-  // Load the reference array
-  Teuchos::Array<FACEMC::Pair<double,double> > 
-    copy_data( 10, data_point );
-
-  // Process the array
-  Teuchos::Array<FACEMC::Pair<double,double> >
-    processed_data( 10 );
-  data_processor.swapTupleMemberData<FACEMC::FIRST,
-				     FACEMC::FIRST>( data,
-						     processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, copy_data, TOL );
-} 
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can copy data in one member of a tuple to
-// the same member in another tuple (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, copy_second_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Pair<double,double> data_point;
-  data_point.first = ZERO;
-  data_point.second = INDEP_VAR;
-  Teuchos::Array<FACEMC::Pair<double,double> > 
-    data( 10, data_point );
-
-  // Load the reference array
-  Teuchos::Array<FACEMC::Pair<double,double> > 
-    copy_data( 10, data_point );
-
-  // Process the array
-  Teuchos::Array<FACEMC::Pair<double,double> >
-    processed_data( 10 );
-  data_processor.swapTupleMemberData<FACEMC::SECOND,
-				     FACEMC::SECOND>( data,
-						     processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, copy_data, TOL );
-} 
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can copy data in one member of a tuple to
-// the same member in another tuple (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, copy_third_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Trip<double,double,unsigned int> data_point;
-  data_point.first = ZERO;
-  data_point.second = ZERO;
-  data_point.third = SHELL;
-  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> > 
-    data( 10, data_point );
-
-  // Load the reference array
-  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> > 
-    copy_data( 10, data_point );
-
-  // Process the array
-  Teuchos::Array<FACEMC::Trip<double,double,unsigned int> >
-    processed_data( 10 );
-  data_processor.swapTupleMemberData<FACEMC::THIRD,
-				     FACEMC::THIRD>( data,
-						     processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, copy_data, TOL );
-} 
-
-//---------------------------------------------------------------------------//
-// Check that the DataProcessor can copy data in one member of a tuple to
-// the same member in another tuple (for all tuples in an array)
-TEUCHOS_UNIT_TEST( DataProcessor, copy_fourth_tuple_member_test )
-{
-  TestDataProcessor data_processor;
-
-  // Load the array to be processed
-  FACEMC::Quad<double,double,unsigned int,unsigned int> data_point;
-  data_point.first = ZERO;
-  data_point.second = ZERO;
-  data_point.third = ZERO;
-  data_point.fourth = SHELL;
-  Teuchos::Array<FACEMC::Quad<double,double,unsigned int,unsigned int> > 
-    data( 10, data_point );
-
-  // Load the reference array
-  Teuchos::Array<FACEMC::Quad<double,double,unsigned int,unsigned int> > 
-    copy_data( 10, data_point );
-
-  // Process the array
-  Teuchos::Array<FACEMC::Quad<double,double,unsigned int,unsigned int> >
-    processed_data( 10 );
-  data_processor.swapTupleMemberData<FACEMC::FOURTH,
-				     FACEMC::FOURTH>( data,
-						      processed_data );
-
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( processed_data, copy_data, TOL );
-} 
+UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_1_ARRAY( DataProcessor, swapTupleMemberData, Array );
+UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_1_ARRAY( DataProcessor, swapTupleMemberData, ArrayView );
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can convert an unsigned int to a string

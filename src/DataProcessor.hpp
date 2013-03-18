@@ -118,17 +118,29 @@ protected:
   void calculateDiscreteCDF( Teuchos::Array<Tuple> &data );
 
   /*!
-   * \brief Swap the data in the desired tuple members. If the desired tuple
-   * members have the same type, pass the same data array as the swap_data.
-   * This function will compile for Teuchos::Array and Teuchos::ArrayView.
+   * \brief Copy the data in the desired tuple member of the original tuple to 
+   * the desired tuple member of the copy tuple. The two arrays references must
+   * refer to the same array (no in place copying). This function will compile 
+   * for Teuchos::Array and Teuchos::ArrayView.
    */
-  template<TupleMember member1, 
-	   TupleMember member2,
-	   typename Tuple1,
-	   typename Tuple2,
+  template<TupleMember origMember, 
+	   TupleMember copyMember,
+	   typename origTuple,
+	   typename copyTuple,
 	   template<typename> class Array>
-  void swapTupleMemberData( const Array<Tuple1> &data,
-			    Array<Tuple2> &swap_data );
+  void copyTupleMemberData( const Array<origTuple> &orig_data,
+			    Array<copyTuple> &copy_data );
+
+  /*!
+   * \brief Swap the data in a desired tuple member with the data in another
+   * tuple member. This function will compile for Teuchos::Array and 
+   * Teuchos::ArrayView.
+   */
+  template<TupleMember member1,
+	   TupleMember member2,
+	   typename Tuple,
+	   template<typename> class Array>
+  void swapTupleMemberData( Array<Tuple> &data );
 
   /*!
    * \brief Convert an unsigned int to an electron shell string

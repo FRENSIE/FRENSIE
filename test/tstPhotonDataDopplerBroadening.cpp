@@ -14,7 +14,7 @@
 #include "PhotonDataDopplerBroadening.hpp"
 #include "Tuple.hpp"
 #include "DefaultParameterValues.hpp"
-#include "TestingHelperFunctions.hpp"
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Data File Info
@@ -75,7 +75,7 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, constructor_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataDopplerBroadening class returns the correct
 // shell data after an incoherent scattering event
-TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, incoherent_scattering_vacancy_shell_test )
+TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, getIncoherentScatteringVacancyShellData )
 {
   TestingPhotonDataDopplerBroadening test_photon_data_db( ATOMIC_NUMBER,
 							  ENERGY_MIN,
@@ -95,7 +95,7 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, incoherent_scattering_vacancy_sh
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataDopplerBroadening class returns the correct
 // compton profile cdf value
-TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, compton_profile_cdf_test )
+TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, getComptonProfileCDF )
 {
   TestingPhotonDataDopplerBroadening test_photon_data_db( ATOMIC_NUMBER,
 							  ENERGY_MIN,
@@ -121,7 +121,7 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, compton_profile_cdf_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataDopplerBroadening class returns the correct
 // compton profile momentum
-TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, compton_profile_momentum_test )
+TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, getComptonProfileMomentum )
 {
   TestingPhotonDataDopplerBroadening test_photon_data_db( ATOMIC_NUMBER,
 							  ENERGY_MIN,
@@ -147,7 +147,7 @@ TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, compton_profile_momentum_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataDopplerBroadening class returns the correct 
 // kinetic energy
-TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, kinetic_energy_test )
+TEUCHOS_UNIT_TEST( PhotonDataDopplerBroadening, getShellKineticEnergy )
 {
   TestingPhotonDataDopplerBroadening test_photon_data_db( ATOMIC_NUMBER,
 							  ENERGY_MIN,

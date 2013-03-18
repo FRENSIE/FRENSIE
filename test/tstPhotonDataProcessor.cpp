@@ -19,7 +19,7 @@
 #include "HDF5FileHandler.hpp"
 #include "Tuple.hpp"
 #include "HDF5DataFileNames.hpp"
-#include "TestingHelperFunctions.hpp"
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Test File Names and Info.
@@ -97,7 +97,7 @@ public:
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process coherent cross section data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_coherent_xs_data )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processCoherentCrossSectionData )
 {
   TestingPhotonDataProcessor photon_data_processor( COHERENT_DATA_TEST_FILE,
 						    IGNORE,
@@ -150,7 +150,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_coherent_xs_data )
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process incoherent cross section data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_incoherent_xs_data )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processIncoherentCrossSectionData )
 {
   TestingPhotonDataProcessor photon_data_processor( INCOHERENT_DATA_TEST_FILE,
 						    IGNORE,
@@ -204,7 +204,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_incoherent_xs_data )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process photoelectric cross section 
 // data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_total_photoelectric_xs_data )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processTotalPhotoelectricCrossSectionData )
 {
   TestingPhotonDataProcessor photon_data_processor( PHOTOELECTRIC_DATA_TEST_FILE,
 						    IGNORE,
@@ -258,7 +258,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_total_photoelectric_xs_data )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process photoelectric cross section 
 // data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_photoelectric_xs_data )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processShellPhotoelectricCrossSectionData )
 {
   TestingPhotonDataProcessor photon_data_processor( PHOTOELECTRIC_DATA_TEST_FILE,
 						    IGNORE,
@@ -314,7 +314,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_photoelectric_xs_data )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process pair production cross section 
 // data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_pair_production_xs_data )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processPairProductionCrossSectionData )
 {
   TestingPhotonDataProcessor photon_data_processor( PAIR_PROD_DATA_TEST_FILE,
 						    IGNORE,
@@ -368,7 +368,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_pair_production_xs_data )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process triplet production cross 
 // section data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_triplet_production_xs_data )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processTripletProductionCrossSectionData )
 {
   TestingPhotonDataProcessor photon_data_processor( TRIPLET_PROD_DATA_TEST_FILE,
 						    IGNORE,
@@ -421,7 +421,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_triplet_production_xs_data )
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process form factor data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_form_factor_data )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processFormFactorData )
 {
   TestingPhotonDataProcessor photon_data_processor( FORM_FACTOR_DATA_TEST_FILE,
 						    IGNORE,
@@ -479,7 +479,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_form_factor_data )
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process scattering function data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_scattering_function_data )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processScatteringFunctionData )
 {
   TestingPhotonDataProcessor photon_data_processor( SCAT_FUNC_DATA_TEST_FILE,
 						    IGNORE,
@@ -532,7 +532,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_scattering_function_data )
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process an EPDL data file
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_epdl_file_test )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processEPDLFile )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    IGNORE,
@@ -584,7 +584,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_epdl_file_test )
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process shell occupancy data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_occupancy_data_binding_energy_data_test )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processShellOccupancyData_processBindingEnergyData )
 {
   TestingPhotonDataProcessor photon_data_processor( IGNORE,
 						    SHELL_OCCUP_BIND_DATA_TEST_FILE,
@@ -672,7 +672,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_occupancy_data_binding_ene
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process kinetic energy data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_kinetic_energy_data_test )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processKineticEnergyData )
 {
   TestingPhotonDataProcessor photon_data_processor( IGNORE,
 						    KINETIC_ENERGY_DATA_TEST_FILE,
@@ -717,7 +717,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_kinetic_energy_data_test )
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process radiative transition data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_radiative_transition_data_test )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processShellRadiativeTransitionData )
 {
   TestingPhotonDataProcessor photon_data_processor( IGNORE,
 						    SHELL_RAD_TRANS_DATA_TEST_FILE,
@@ -772,7 +772,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_radiative_transition_data_
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process radiative transition data
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_nonradiative_transition_data_test )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processShellNonradiativeTransitionData )
 {
   TestingPhotonDataProcessor photon_data_processor( IGNORE,
 						    SHELL_NONRAD_TRANS_DATA_TEST_FILE,
@@ -841,7 +841,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_shell_nonradiative_transition_da
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process an EADL data file
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_eadl_file_test )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processEADLFile )
 {
   TestingPhotonDataProcessor photon_data_processor( EPDL_TEST_FILE,
 						    EADL_TEST_FILE,
@@ -870,7 +870,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_eadl_file_test )
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataProcessor can process a Compton Profile data file
-TEUCHOS_UNIT_TEST( PhotonDataProcessor, process_compton_file_test )
+TEUCHOS_UNIT_TEST( PhotonDataProcessor, processComptonFiles )
 {
   TestingPhotonDataProcessor photon_data_processor( IGNORE,
 						    IGNORE,

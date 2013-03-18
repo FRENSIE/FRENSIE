@@ -13,6 +13,7 @@
 // FACEMC Includes
 #include "PhotonData.hpp"
 #include "DefaultParameterValues.hpp"
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Data File Info.

@@ -13,6 +13,7 @@
 
 // FACEMC Includes
 #include "FACEMC_Assertion.hpp"
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.

@@ -17,8 +17,7 @@
 // FACEMC Includes
 #include "HDF5FileHandler.hpp"
 #include "Tuple.hpp"
-#include "TestingHelperFunctions.hpp"
-#include "TupleTestingTypedefs.hpp"
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // HDF5 Test File Names.
@@ -38,36 +37,36 @@
 // Instantiation macros.
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION_ARRAY( type, name, array )		\
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, unsigned, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, pair_uint_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, pair_double_double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, pair_uint_double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, pair_double_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, trip_uint_uint_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, trip_double_double_double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, trip_uint_uint_double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, trip_uint_double_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, trip_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, trip_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, trip_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, trip_double_uint_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_uint_uint_uint_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_double_double_double_double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_uint_uint_uint_double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_uint_uint_double_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_uint_double_uint_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_uint_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_uint_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_uint_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_uint_double_double_double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_double_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_double_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_double_double_uint_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_double_uint_double_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_double_uint_uint_double, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_double_uint_uint_uint, array ) \
-  FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, quad_pair_pair_trip_quad, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, unsigned, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, pair_uint_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, pair_double_double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, pair_uint_double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, pair_double_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, trip_uint_uint_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, trip_double_double_double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, trip_uint_uint_double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, trip_uint_double_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, trip_uint_double_double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, trip_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, trip_double_uint_double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, trip_double_uint_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_uint_uint_uint_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_double_double_double_double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_uint_uint_uint_double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_uint_uint_double_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_uint_double_uint_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_uint_uint_double_double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_uint_double_uint_double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_uint_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_uint_double_double_double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_double_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_double_uint_double_double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_double_double_uint_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_double_uint_double_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_double_uint_uint_double, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_double_uint_uint_uint, array ) \
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type, name, quad_pair_pair_trip_quad, array ) \
 
 #define UNIT_TEST_INSTANTIATION( type, name )				\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )	\
@@ -184,10 +183,10 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, createParentGroups )
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can write an Array of Type to a dataset in 
 // an HDF5 file
-FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler, 
-						writeArrayToDataSet,
-						Type,
-						array )
+FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( HDF5FileHandler, 
+					     writeArrayToDataSet,
+					     Type,
+					     array )
 {
   FACEMC::HDF5FileHandler hdf5_file_handler;
 
@@ -217,10 +216,10 @@ UNIT_TEST_INSTANTIATION_ARRAY( HDF5FileHandler, writeArrayToDataSet, TwoDArray )
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can read an Array of Type from a dataset
 // in an HDF5 file
-FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler, 
-						readArrayFromDataSet,
-						Type,
-						array )
+FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( HDF5FileHandler, 
+					     readArrayFromDataSet,
+					     Type,
+					     array )
 {
   FACEMC::HDF5FileHandler hdf5_file_handler;
 
@@ -252,10 +251,10 @@ UNIT_TEST_INSTANTIATION_ARRAY( HDF5FileHandler, readArrayFromDataSet, TwoDArray 
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can write an Array of Type to a dataset
 // attribute in an HDF5 file
-FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler, 
-						writeArrayToDataSetAttribute,
-						Type,
-						array )
+FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( HDF5FileHandler, 
+					     writeArrayToDataSetAttribute,
+					     Type,
+					     array )
 {
   FACEMC::HDF5FileHandler hdf5_file_handler;
 
@@ -292,10 +291,10 @@ UNIT_TEST_INSTANTIATION_ARRAY( HDF5FileHandler, writeArrayToDataSetAttribute, Tw
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can read an Array of Type from a dataset
 // attribute in an HDF5 file
-FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler, 
-						readArrayFromDataSetAttribute,
-						Type,
-						array )
+FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( HDF5FileHandler, 
+					     readArrayFromDataSetAttribute,
+					     Type,
+					     array )
 {
   FACEMC::HDF5FileHandler hdf5_file_handler;
 
@@ -397,10 +396,10 @@ UNIT_TEST_INSTANTIATION( HDF5FileHandler, readValueFromDataSetAttribute );
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can write an Array of Type to a group
 // attribute in an HDF5 file
-FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler, 
-						writeArrayToGroupAttribute,
-						Type,
-						array )
+FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( HDF5FileHandler, 
+					     writeArrayToGroupAttribute,
+					     Type,
+					     array )
 {
   FACEMC::HDF5FileHandler hdf5_file_handler;
 
@@ -431,10 +430,10 @@ UNIT_TEST_INSTANTIATION_ARRAY( HDF5FileHandler, writeArrayToGroupAttribute, TwoD
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can read an Array of Type from a group
 // attribute in an HDF5 file
-FACEMC_UNIT_TEST_TEUCHOS_ARRAY_TEMPLATE_1_DECL( HDF5FileHandler, 
-						readArrayFromGroupAttribute,
-						Type,
-						array )
+FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( HDF5FileHandler, 
+					     readArrayFromGroupAttribute,
+					     Type,
+					     array )
 {
   FACEMC::HDF5FileHandler hdf5_file_handler;
 

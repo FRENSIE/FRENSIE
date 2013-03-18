@@ -18,61 +18,59 @@
 #include "SearchAlgorithms.hpp"
 #include "Tuple.hpp"
 #include "TupleGetSetMemberPolicy.hpp"
-#include "TestingHelperFunctions.hpp"
-#include "ArrayTestingPolicy.hpp"
-#include "TupleTestingTypedefs.hpp"
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation macros.
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION_ARRAY( type, name, array )	\
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FIRST, pair_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FIRST, pair_double_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, pair_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, pair_uint_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FIRST, trip_double_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FIRST, trip_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FIRST, trip_double_uint_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, trip_double_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, trip_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, trip_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, trip_uint_double_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, THIRD, trip_double_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, THIRD, trip_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, THIRD, trip_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, THIRD, trip_uint_uint_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FIRST, quad_double_double_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FIRST, quad_double_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FIRST, quad_double_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FIRST, quad_double_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FIRST, quad_double_double_uint_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FIRST, quad_double_uint_double_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FIRST, quad_double_uint_uint_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FIRST, quad_double_uint_uint_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, quad_double_double_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, quad_double_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, quad_double_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, quad_uint_double_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, quad_double_double_uint_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, quad_uint_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, quad_uint_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, SECOND, quad_uint_double_uint_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, THIRD, quad_double_double_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, THIRD, quad_double_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, THIRD, quad_double_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, THIRD, quad_uint_double_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, THIRD, quad_double_uint_double_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, THIRD, quad_uint_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, THIRD, quad_uint_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, THIRD, quad_uint_uint_double_uint, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FOURTH, quad_double_double_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FOURTH, quad_double_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FOURTH, quad_double_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FOURTH, quad_uint_double_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FOURTH, quad_double_uint_uint_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FOURTH, quad_uint_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FOURTH, quad_uint_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_INSTANT( type, name, FOURTH, quad_uint_uint_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, pair_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, pair_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, pair_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, pair_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, trip_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, trip_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, trip_double_uint_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, trip_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, trip_uint_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, trip_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, trip_uint_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, trip_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, trip_uint_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, trip_double_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, trip_uint_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_double_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_uint_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_double_uint_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_uint_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_uint_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_uint_uint_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_double_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_double_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_double_double_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_uint_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_double_double_uint_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_uint_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_uint_double_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_uint_double_uint_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_double_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_double_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_double_uint_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_uint_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_double_uint_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_uint_double_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_uint_uint_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_uint_uint_double_uint, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_double_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_double_double_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_double_uint_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_uint_double_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_double_uint_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_uint_double_uint_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_uint_uint_double_double, array ) \
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_uint_uint_uint_double, array ) \
 
 //---------------------------------------------------------------------------//
 // Helper functions.
@@ -116,7 +114,7 @@ void fillArrayTupleMembersDiscreteData( Array<T> &array )
 //---------------------------------------------------------------------------//
 // Check that the binarySearchContinuousData function can search tuple elements
 // correctly.
-FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_DECL( 
+FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( 
 						Search,
 						binarySearchContinuousData,
 						member,
@@ -296,12 +294,11 @@ UNIT_TEST_INSTANTIATION_ARRAY( Search, binarySearchContinuousData, ArrayView );
 //---------------------------------------------------------------------------//
 // Check that the binarySearchDiscreteData function can search tuple elements
 // correctly.
-FACEMC_UNIT_TEST_TUPLE_MEMBER_TEUCHOS_ARRAY_TEMPLATE_1_DECL( 
-						Search,
-						binarySearchDiscreteData,
-						member,
-						type,
-						array )
+FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
+						       binarySearchDiscreteData,
+						       member,
+						       type,
+						       array )
 {
   Teuchos::Array<type> raw_data( 10 );
   fillArrayTupleMembersDiscreteData<member>( raw_data );

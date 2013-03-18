@@ -455,8 +455,7 @@ void PhotonDataProcessor::processFormFactorData()
   
   // Move the CDF data to the second tuple member and the PDF data
   // to the third tuple member
-  swapTupleMemberData<SECOND,THIRD>( data,
-				     data );
+  swapTupleMemberData<SECOND,THIRD>( data );
   
   d_hdf5_file_handler.writeArrayToDataSet( data,
 					   ATOMIC_FORM_FACTOR_LOC );
@@ -787,9 +786,11 @@ void PhotonDataProcessor::processShellRadiativeTransitionData( const unsigned in
   Teuchos::Array<Trip<double, unsigned int, double> > 
     processed_data( data.size() );
 
-  swapTupleMemberData<THIRD,THIRD>( data,
+  copyTupleMemberData<THIRD,THIRD>( data,
 				    processed_data );
-  swapTupleMemberData<FIRST,SECOND>( data,
+  copyTupleMemberData<FIRST,SECOND>( data,
+				     processed_data );
+  copyTupleMemberData<SECOND,FIRST>( data,
 				     processed_data );
   
   d_hdf5_file_handler.writeArrayToDataSet( processed_data,
@@ -823,14 +824,14 @@ void PhotonDataProcessor::processShellNonradiativeTransitionData( const unsigned
   Teuchos::Array<Quad<double,unsigned int,unsigned int,double> >
     processed_data( data.size() );
   
-  swapTupleMemberData<SECOND,SECOND>( data,
-				      processed_data );
-  swapTupleMemberData<FOURTH,FOURTH>( data,
-				      processed_data );
-  swapTupleMemberData<FIRST,THIRD>( data,
+  copyTupleMemberData<FIRST,SECOND>( data,
+				     processed_data );
+  copyTupleMemberData<SECOND,THIRD>( data,
+				     processed_data );
+  copyTupleMemberData<THIRD,FIRST>( data,
 				    processed_data );
-  swapTupleMemberData<SECOND,THIRD>( processed_data,
-				     processed_data );  
+  copyTupleMemberData<FOURTH,FOURTH>( data,
+				      processed_data );  
   
   d_hdf5_file_handler.writeArrayToDataSet( processed_data,
 					   TRANSITION_PROBABILITY_ROOT + 
@@ -925,8 +926,7 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
 
       // Move the CDF data to the second tuple member and the PDF data
       // to the third tuple member
-      swapTupleMemberData<SECOND,THIRD>( compton_profile_shell_cdf,
-					 compton_profile_shell_cdf );
+      swapTupleMemberData<SECOND,THIRD>( compton_profile_shell_cdf );
     }
 
     d_hdf5_file_handler.writeArrayToDataSet( compton_profile_cdfs,

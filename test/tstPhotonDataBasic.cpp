@@ -13,6 +13,7 @@
 // FACEMC Includes
 #include "PhotonDataBasic.hpp"
 #include "DefaultParameterValues.hpp"
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Data File Info.
@@ -76,7 +77,7 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, constructor_test )
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct atomic number
-TEUCHOS_UNIT_TEST( PhotonDataBasic, atomic_number_test )
+TEUCHOS_UNIT_TEST( PhotonDataBasic, getAtomicNumber )
 {
 
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
@@ -89,7 +90,7 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, atomic_number_test )
   
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct atomic weight
-TEUCHOS_UNIT_TEST( PhotonDataBasic, atomic_weight_test )
+TEUCHOS_UNIT_TEST( PhotonDataBasic, getAtomicWeight )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
@@ -102,7 +103,7 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, atomic_weight_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct coherent cross 
 // section
-TEUCHOS_UNIT_TEST( PhotonDataBasic, coherent_cross_section_test )
+TEUCHOS_UNIT_TEST( PhotonDataBasic, getCoherentCrossSection )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
@@ -119,7 +120,7 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, coherent_cross_section_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct form factor cdf
 // value
-TEUCHOS_UNIT_TEST( PhotonDataBasic, form_factor_cdf_test )
+TEUCHOS_UNIT_TEST( PhotonDataBasic, getFormFactorCDF )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
@@ -136,7 +137,7 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, form_factor_cdf_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct form factor 
 // argument value
-TEUCHOS_UNIT_TEST( PhotonDataBasic, form_factor_argument_test )
+TEUCHOS_UNIT_TEST( PhotonDataBasic, getFormFactorArgument )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
@@ -153,7 +154,7 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, form_factor_argument_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct incoherent cross
 // section
-TEUCHOS_UNIT_TEST( PhotonDataBasic, incoherent_cross_section_test )
+TEUCHOS_UNIT_TEST( PhotonDataBasic, getIncoherentCrossSection )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
@@ -170,7 +171,7 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, incoherent_cross_section_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct scattering function
 // value
-TEUCHOS_UNIT_TEST( PhotonDataBasic, scattering_function_test )
+TEUCHOS_UNIT_TEST( PhotonDataBasic, getScatteringFunction )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
@@ -192,7 +193,7 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, scattering_function_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct photoelectric cross
 // section
-TEUCHOS_UNIT_TEST( PhotonDataBasic, photoelectric_cross_section_test )
+TEUCHOS_UNIT_TEST( PhotonDataBasic, getPhotoelectricCrossSection )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
@@ -209,7 +210,7 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, photoelectric_cross_section_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct pair production 
 // cross section
-TEUCHOS_UNIT_TEST( PhotonDataBasic, pair_production_cross_section_test )
+TEUCHOS_UNIT_TEST( PhotonDataBasic, getPairProductionCrossSection )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
@@ -227,7 +228,7 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, pair_production_cross_section_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct triplet production 
 // cross section
-TEUCHOS_UNIT_TEST( PhotonDataBasic, triplet_production_cross_section_test )
+TEUCHOS_UNIT_TEST( PhotonDataBasic, getTripletProductionCrossSection )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
@@ -243,7 +244,7 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, triplet_production_cross_section_test )
 
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct total cross section
-TEUCHOS_UNIT_TEST( PhotonDataBasic, total_cross_section_test )
+TEUCHOS_UNIT_TEST( PhotonDataBasic, getTotalCrossSection )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,
@@ -260,7 +261,7 @@ TEUCHOS_UNIT_TEST( PhotonDataBasic, total_cross_section_test )
 //---------------------------------------------------------------------------//
 // Check that the PhotonDataBasic class returns the correct nonabsorption
 // probability
-TEUCHOS_UNIT_TEST( PhotonDataBasic, nonabsoprtion_probability_test )
+TEUCHOS_UNIT_TEST( PhotonDataBasic, getNonabsorptionProbability )
 {
   TestingPhotonDataBasic test_photon_data_basic( ATOMIC_NUMBER,
 						 ENERGY_MIN,

@@ -14,7 +14,6 @@
 
 // FACEMC Includes
 #include "Tuple.hpp"
-#include "TupleMemberSwapPolicy.hpp"
 #include "TupleGetSetMemberPolicy.hpp"
 #include "ContractException.hpp"
 
@@ -22,9 +21,9 @@ namespace FACEMC{
 
 //! Process the data points
 template<typename DataProcessingPolicy,
-	   TupleMember indepMember,
-	   TupleMember depMember,
-	   typename Tuple>
+	 TupleMember indepMember,
+	 TupleMember depMember,
+	 typename Tuple>
 void DataProcessor::processContinuousData( Teuchos::Array<Tuple> &data )
 {
   // Make sure that the array is valid
@@ -72,7 +71,7 @@ void DataProcessor::removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
   while( data_point_2 != end )
   {
     if( dataTGSMP::get( *data_point_1 ) < value &&
-	dataTGSMP::get( *data_point_2 ) < value )
+	dataTGSMP::get( *data_point_2 ) <= value )
       ++max_index;
     else
       break;
@@ -109,7 +108,7 @@ void DataProcessor::removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
   while( data_point_2 != end )
   {
     if( dataTGSMP::get( *data_point_1 ) > value &&
-	dataTGSMP::get( *data_point_2 ) > value )
+	dataTGSMP::get( *data_point_2 ) >= value )
       ++max_index;
     else
       break;
@@ -119,7 +118,7 @@ void DataProcessor::removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
   }
 
   // Remove the elements from the array
-  data_point_2 = data.end() - 1;
+  data_point_2 = data.end();
   data_point_1 = data_point_2 - max_index;
   data.erase( data_point_1, data_point_2 );
 }
@@ -298,32 +297,65 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
   }
 }
 
-//! Swap the data in the desired tuple members. 
-template<TupleMember member1, 
-	 TupleMember member2,
-	 typename Tuple1,
-	 typename Tuple2,
+//! Copy the data in the desired tuple member of the original tuple to the 
+// desired tuple member of the copy tuple
+template<TupleMember origMember, 
+	 TupleMember copyMember,
+	 typename origTuple,
+	 typename copyTuple,
 	 template<typename> class Array>
-void DataProcessor::swapTupleMemberData( const Array<Tuple1> &data,
-					 Array<Tuple2> &swap_data )
+void DataProcessor::copyTupleMemberData( const Array<origTuple> &orig_data,
+					 Array<copyTuple> &copy_data )
 {
   // Make sure that the arrays are valid
-  testPrecondition( (data.size() > 0) );
-  testPrecondition( (data.size() == swap_data.size()) );
+  testPrecondition( (orig_data.size() > 0) );
+  testPrecondition( (orig_data.size() == copy_data.size()) );
+  testPrecondition( &orig_data[0] != 
+		    reinterpret_cast<origTuple*>( &copy_data[0] ) );
   
-  typename Array<Tuple1>::const_iterator data_point, end;
-  typename Array<Tuple2>::iterator swap_data_point;
+  typename Array<origTuple>::const_iterator orig_data_point, end;
+  typename Array<copyTuple>::iterator copy_data_point;
+  orig_data_point = orig_data.begin();
+  copy_data_point = copy_data.begin();
+  end = orig_data.end();
+  
+  typedef TupleGetSetMemberPolicy<origTuple,origMember> origTGSMP;
+  typedef TupleGetSetMemberPolicy<copyTuple,copyMember> copyTGSMP;
+  while( orig_data_point != end )
+  {
+    copyTGSMP::set( *copy_data_point, origTGSMP::get( *orig_data_point ) );
+    
+    ++orig_data_point;
+    ++copy_data_point;
+  }
+}
+
+//! Swap the data in a desired tuple member with the data in another tuple 
+// member
+template<TupleMember member1,
+	 TupleMember member2,
+	 typename Tuple,
+	 template<typename> class Array>
+void DataProcessor::swapTupleMemberData( Array<Tuple> &data )
+{
+  // Make sure that the members are valid
+  testPrecondition( member1 != member2 );
+  // Make sure that the arrays are valid
+  testPrecondition( (data.size() > 0) );
+  
+  typename Array<Tuple>::iterator data_point, end;
   data_point = data.begin();
-  swap_data_point = swap_data.begin();
   end = data.end();
 
+  typedef TupleGetSetMemberPolicy<Tuple,member1> TGSMP_1;
+  typedef TupleGetSetMemberPolicy<Tuple,member2> TGSMP_2;
   while( data_point != end )
   {
-    TupleMemberSwapPolicy<Tuple1,Tuple2,member1,member2>::swap( *data_point,
-								*swap_data_point);
-    
+    typename TGSMP_1::tupleMemberType copy = TGSMP_1::get( *data_point );
+    TGSMP_1::set( *data_point, TGSMP_2::get( *data_point ) );
+    TGSMP_2::set( *data_point, copy );
+
     ++data_point;
-    ++swap_data_point;
   }
 }
 
