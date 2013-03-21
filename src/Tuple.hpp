@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
-// \file Tuple.hpp
+// \file   Tuple.hpp
 // \author Alex Robinson
-// \brief Simple structs for storing several objects of arbitrary type
+// \brief  Simple structs for storing several objects of arbitrary type
 //---------------------------------------------------------------------------//
 
 #ifndef FACEMC_TUPLE_HPP

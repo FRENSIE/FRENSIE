@@ -15,6 +15,8 @@ SET(HEADERS
   PhotonDataFluorescence.hpp
   PhotonDataDopplerBroadening.hpp
   PhotonData.hpp
+  Surface.hpp
+  LinearAlgebraAlgorithms.hpp
   ${HEADERS}
   )
 
@@ -27,6 +29,7 @@ SET(SOURCES
   PhotonDataBasic.cpp
   PhotonDataFluorescence.cpp
   PhotonDataDopplerBroadening.cpp
+  LinearAlgebraAlgorithms.cpp
   ${SOURCES}
   )
 

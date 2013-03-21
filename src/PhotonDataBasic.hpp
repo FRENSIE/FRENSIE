@@ -7,7 +7,7 @@
 #ifndef PHOTON_DATA_BASIC_HPP
 #define PHOTON_DATA_BASIC_HPP
 
-//Std Lib Includes
+// Std Lib Includes
 #include <map>
 
 // Trilinos Includes
