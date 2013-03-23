@@ -61,6 +61,11 @@ ADD_EXECUTABLE(tstLinearAlgebra
   tstLinearAlgebra.cpp
   ${SRC}/LinearAlgebraAlgorithms.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstSurface
+  tstSurface.cpp
+  ${SRC}/Surface.cpp
+  ${SRC}/LinearAlgebraAlgorithms.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 
 TARGET_LINK_LIBRARIES(tstAssertion ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstContractException ${TEUCHOS})
@@ -75,6 +80,7 @@ TARGET_LINK_LIBRARIES(tstPhotonDataFluorescence ${TEUCHOS} ${HDF5})
 TARGET_LINK_LIBRARIES(tstPhotonDataDopplerBroadening ${TEUCHOS} ${HDF5})
 TARGET_LINK_LIBRARIES(tstPhotonData ${TEUCHOS} ${HDF5})
 TARGET_LINK_LIBRARIES(tstLinearAlgebra ${TEUCHOS})
+TARGET_LINK_LIBRARIES(tstSurface ${TEUCHOS})
 
 ADD_TEST(Assertion_test tstAssertion)
 ADD_TEST(ContractException_test tstContractException)
@@ -89,6 +95,7 @@ ADD_TEST(PhotonDataFluorescence_test tstPhotonDataFluorescence)
 ADD_TEST(PhotonDataDopplerBroadening_test tstPhotonDataDopplerBroadening)
 ADD_TEST(PhotonData_test tstPhotonData)
 ADD_TEST(LinearAlgebra_test tstLinearAlgebra)
+ADD_TEST(Surface_test tstSurface)
 
 # Install test files for the EPDL97DataProcessor_test
 FILE(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test_files/*.txt)

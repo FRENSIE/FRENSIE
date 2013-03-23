@@ -23,6 +23,25 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the sum of two vectors can be calculated
+TEUCHOS_UNIT_TEST( LinearAlgebra, vector_addition )
+{
+  Teuchos::Tuple<double,3> vector_1 = Teuchos::tuple( 1.0, 1.0, 1.0 );
+  Teuchos::Tuple<double,3> vector_2 = Teuchos::tuple( 2.0, 2.0, 2.0 );
+
+  Teuchos::Tuple<double,3> ref_vector = Teuchos::tuple( 3.0, 3.0, 3.0 );
+  
+  // Addition
+  Teuchos::Tuple<double,3> add_vector = vector_1 + vector_2;
+
+  // Reassignment
+  vector_1 += vector_2;
+
+  TEST_COMPARE_ARRAYS( add_vector, ref_vector );
+  TEST_COMPARE_ARRAYS( vector_1, ref_vector );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the product of a scalar and a vector can be calculated
 TEUCHOS_UNIT_TEST( LinearAlgebra, scalar_vector_multiply )
 {
@@ -218,6 +237,103 @@ TEUCHOS_UNIT_TEST( LinearAlgebra, matrixInverse )
     FACEMC::LinearAlgebra::matrixInverse( inverse_matrix );
   
   TEST_COMPARE_FLOATING_ARRAYS( matrix, inverse_inverse_matrix, TOL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the correct rotation matrix can be calculated from two unit
+// vectors
+TEUCHOS_UNIT_TEST( LinearAlgebra, generateRotationMatrixFromUnitVectors )
+{
+  // x-axis to z-axis rotation
+  Teuchos::Tuple<double,3> initial_direction = Teuchos::tuple( 1.0, 0.0, 0.0 );
+  Teuchos::Tuple<double,3> final_direction = Teuchos::tuple( 0.0, 0.0, 1.0 );
+
+  Teuchos::Tuple<double,9> ref_rotation_matrix = 
+    Teuchos::tuple(  0.0, 0.0, -1.0,
+		     0.0, 1.0,  0.0,
+		     1.0, 0.0,  0.0 );
+
+  Teuchos::Tuple<double,9> rotation_matrix = 
+    FACEMC::LinearAlgebra::generateRotationMatrixFromUnitVectors(
+							      initial_direction,
+							      final_direction );
+
+  TEST_COMPARE_ARRAYS( rotation_matrix, ref_rotation_matrix );
+
+  // x-axis to neg-z-axis rotation
+  final_direction = Teuchos::tuple( 0.0, 0.0, -1.0 );
+  
+  ref_rotation_matrix = Teuchos::tuple( 0.0, 0.0, 1.0,
+					0.0, 1.0, 0.0,
+				       -1.0, 0.0, 0.0 );
+  rotation_matrix = 
+    FACEMC::LinearAlgebra::generateRotationMatrixFromUnitVectors(
+							      initial_direction,
+							      final_direction );
+  TEST_COMPARE_ARRAYS( rotation_matrix, ref_rotation_matrix );
+
+  // x-axis to y-axis rotation
+  final_direction = Teuchos::tuple( 0.0, 1.0, 0.0 );
+
+  ref_rotation_matrix = Teuchos::tuple( 0.0, -1.0, 0.0,
+					1.0,  0.0, 0.0,
+					0.0,  0.0, 1.0 );
+  rotation_matrix = 
+    FACEMC::LinearAlgebra::generateRotationMatrixFromUnitVectors(
+							      initial_direction,
+							      final_direction );
+  TEST_COMPARE_ARRAYS( rotation_matrix, ref_rotation_matrix );
+
+  // x-axis to neg-y-axis rotation
+  final_direction = Teuchos::tuple( 0.0, -1.0, 0.0 );
+
+  ref_rotation_matrix = Teuchos::tuple( 0.0, 1.0, 0.0,
+				       -1.0, 0.0, 0.0,
+					0.0, 0.0, 1.0 );
+  rotation_matrix = 
+    FACEMC::LinearAlgebra::generateRotationMatrixFromUnitVectors(
+							      initial_direction,
+							      final_direction );
+  TEST_COMPARE_ARRAYS( rotation_matrix, ref_rotation_matrix );
+
+  // z-axis to x-axis rotation
+  initial_direction = Teuchos::tuple( 0.0, 0.0, 1.0 );
+  final_direction = Teuchos::tuple( 1.0, 0.0, 0.0 );
+
+  ref_rotation_matrix = Teuchos::tuple( 0.0, 0.0, 1.0,
+					0.0, 1.0, 0.0,
+				       -1.0, 0.0, 0.0 );
+  rotation_matrix = 
+    FACEMC::LinearAlgebra::generateRotationMatrixFromUnitVectors(
+							      initial_direction,
+							      final_direction );
+  TEST_COMPARE_ARRAYS( rotation_matrix, ref_rotation_matrix );
+
+  // neg-z-axis to x-axis rotation
+  initial_direction = Teuchos::tuple( 0.0, 0.0, -1.0 );
+  final_direction = Teuchos::tuple( 1.0, 0.0, 0.0 );
+
+  ref_rotation_matrix = Teuchos::tuple( 0.0, 0.0, -1.0,
+					0.0, 1.0,  0.0,
+				        1.0, 0.0,  0.0 );
+  rotation_matrix = 
+    FACEMC::LinearAlgebra::generateRotationMatrixFromUnitVectors(
+							      initial_direction,
+							      final_direction );
+  TEST_COMPARE_ARRAYS( rotation_matrix, ref_rotation_matrix );
+
+  // y-axis to x-axis rotation
+  initial_direction = Teuchos::tuple( 0.0, 1.0, 0.0 );
+  final_direction = Teuchos::tuple( 1.0, 0.0, 0.0 );
+
+  ref_rotation_matrix = Teuchos::tuple( 0.0, 1.0, 0.0,
+				       -1.0, 0.0, 0.0,
+				        0.0, 0.0, 1.0 );
+  rotation_matrix = 
+    FACEMC::LinearAlgebra::generateRotationMatrixFromUnitVectors(
+							      initial_direction,
+							      final_direction );
+  TEST_COMPARE_ARRAYS( rotation_matrix, ref_rotation_matrix );
 }
 
 //---------------------------------------------------------------------------//

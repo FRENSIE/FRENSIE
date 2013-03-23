@@ -86,6 +86,127 @@ matrixInverse( const Teuchos::Tuple<double,9> &matrix )
 			      g_value, h_value, j_value );
 }
 
+//! Generate a rotation matrix for rotation about the x-axis
+Teuchos::Tuple<double,9>
+generateXAxisRotationMatrix( const double rotation_angle )
+{
+  // The rotation angle must be between -pi and pi
+  remember( double pi = acos(-1.0) );
+  testPrecondition( rotation_angle > -pi && rotation_angle <= pi );
+  
+  double cos_angle = cos( rotation_angle );
+  double sin_angle = sin( rotation_angle );
+  
+  return Teuchos::tuple( 1.0, 0.0,       0.0,
+			 0.0, cos_angle, -sin_angle,
+			 0.0, sin_angle, cos_angle );
+}
+
+//! Generate a rotation matrix for rotation about the y-axis
+Teuchos::Tuple<double,9>
+generateYAxisRotationMatrix( const double rotation_angle )
+{
+  // The rotation angle must be between -pi and pi
+  remember( double pi = acos(-1.0) );
+  testPrecondition( rotation_angle > -pi && rotation_angle <= pi );
+  
+  double cos_angle = cos( rotation_angle );
+  double sin_angle = sin( rotation_angle );
+
+  return Teuchos::tuple( cos_angle,  0.0, sin_angle,
+			 0.0,        1.0, 0.0,
+			 -sin_angle, 0.0, cos_angle );
+}
+
+//! Generate a rotation matrix for rotation about the z-axis
+Teuchos::Tuple<double,9>
+generateZAxisRotationMatrix( const double rotation_angle )
+{
+  // The rotation angle must be between -pi and pi
+  remember( double pi = acos(-1.0) );
+  testPrecondition( rotation_angle > -pi && rotation_angle <= pi );
+  
+  double cos_angle = cos( rotation_angle );
+  double sin_angle = sin( rotation_angle );
+
+  return Teuchos::tuple( cos_angle, -sin_angle, 0.0,
+			 sin_angle, cos_angle,  0.0,
+			 0.0,       0.0,        1.0 );
+}
+
+//! Generate a rotation matrix that will rotate a unit vector with a given
+// direction to a unit vector with a desired direction
+Teuchos::Tuple<double,9>
+generateRotationMatrixFromUnitVectors( 
+			      const Teuchos::Tuple<double,3> &initial_direction,
+			      const Teuchos::Tuple<double,3> &final_direction )
+{
+  // The initial direction must be a unit vector
+  testPrecondition( fabs(vectorMagnitude( initial_direction ) - 1.0) < 1e-12 );
+  // The final direction must be a unit vector
+  testPrecondition( fabs(vectorMagnitude( final_direction ) - 1.0) < 1e-12 );
+
+  double u_i = initial_direction[0];
+  double v_i = initial_direction[1];
+  double w_i = initial_direction[2];
+  double arg_i = sqrt( 1 - w_i*w_i );
+  Teuchos::Tuple<double,9> initial_to_zaxis_matrix;
+
+  double u_f = final_direction[0];
+  double v_f = final_direction[1];
+  double w_f = final_direction[2];
+  double arg_f = sqrt( 1 - w_f*w_f );
+  Teuchos::Tuple<double,9> zaxis_to_final_matrix;
+
+  // Rotation matrix for rotating the initial direction to the z-axis
+  if( fabs(fabs(w_i) - 1.0) > 1e-12 )
+  {
+    initial_to_zaxis_matrix =
+      Teuchos::tuple( u_i*w_i/arg_i, v_i*w_i/arg_i, -arg_i,
+		      -v_i/arg_i,    u_i/arg_i,     0.0,
+		      u_i,           v_i,           w_i );
+  }
+  else if( w_i > 0.0 )
+  {
+    initial_to_zaxis_matrix = 
+      Teuchos::tuple( 1.0, 0.0, 0.0,
+		      0.0, 1.0, 0.0,
+		      0.0, 0.0, 1.0 );
+  }
+  else
+  {
+    initial_to_zaxis_matrix =
+      Teuchos::tuple( -1.0, 0.0,  0.0,
+		       0.0, 1.0,  0.0,
+		       0.0, 0.0, -1.0 );
+  }
+
+  // Rotation matrix for rotating the z-axis to the final direction
+  if( fabs(fabs(w_f) - 1.0) > 1e-12 )
+  {
+    zaxis_to_final_matrix =
+      Teuchos::tuple( u_f*w_f/arg_f, -v_f/arg_f, u_f,
+		      v_f*w_f/arg_f, u_f/arg_f,  v_f,
+		      -arg_f,        0.0,        w_f );
+  }
+  else if( w_f > 0.0 )
+  {
+    zaxis_to_final_matrix = 
+      Teuchos::tuple( 1.0, 0.0, 0.0,
+		      0.0, 1.0, 0.0,
+		      0.0, 0.0, 1.0 );
+  }
+  else
+  {
+    zaxis_to_final_matrix =
+      Teuchos::tuple( -1.0, 0.0,  0.0,
+		       0.0, 1.0,  0.0,
+		       0.0, 0.0, -1.0 );
+  }
+  
+  return zaxis_to_final_matrix*initial_to_zaxis_matrix;
+}
+
 //! Solve a 3x3 linear system
 Teuchos::Tuple<double,3>
 solveSystem( const Teuchos::Tuple<double,9> &matrix,
@@ -121,6 +242,27 @@ solveSystem( const Teuchos::Tuple<double,9> &matrix,
 
 } // end FACEMC namespace
 
+//! Define the addition of two vectors
+Teuchos::Tuple<double,3> operator+( const Teuchos::Tuple<double,3> &left_vector,
+				    const Teuchos::Tuple<double,3> &right_vector )
+{
+  double x_value = left_vector[0] + right_vector[0];
+  double y_value = left_vector[1] + right_vector[1];
+  double z_value = left_vector[2] + right_vector[2];
+
+  return Teuchos::tuple( x_value, y_value, z_value );
+}
+
+// Define the addition of two vectors (in place) 
+void operator+=( Teuchos::Tuple<double,3> &left_vector,
+		 const Teuchos::Tuple<double,3> &right_vector )
+{
+  left_vector[0] += right_vector[0];
+  left_vector[1] += right_vector[1];
+  left_vector[2] += right_vector[2];
+}
+
+
 //! Define the product of a scalar and a vector (premultiply)
 Teuchos::Tuple<double,3> operator*( const double multiplier,
 				    const Teuchos::Tuple<double,3> &vector )
@@ -144,8 +286,8 @@ Teuchos::Tuple<double,3> operator*( const Teuchos::Tuple<double,3> &vector,
 }
 
 //! Define the product of a scalara and a vector (in place )
-Teuchos::Tuple<double,3> operator*=( Teuchos::Tuple<double,3> &vector,
-				     const double multiplier )
+void operator*=( Teuchos::Tuple<double,3> &vector,
+		 const double multiplier )
 {
   vector[0] *= multiplier;
   vector[1] *= multiplier;
@@ -191,8 +333,8 @@ Teuchos::Tuple<double,9> operator*( const Teuchos::Tuple<double,9> &matrix,
 }
 
 //! Define the product of a scalar and a matrix (in place)
-Teuchos::Tuple<double,9> operator*=( Teuchos::Tuple<double,9> &matrix,
-				     const double multiplier )
+void operator*=( Teuchos::Tuple<double,9> &matrix,
+		 const double multiplier )
 {
   matrix[0] *= multiplier;
   matrix[1] *= multiplier;

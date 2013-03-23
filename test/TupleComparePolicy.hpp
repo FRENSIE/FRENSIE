@@ -25,6 +25,26 @@ namespace FACEMC{
 // TupleComparePolicy Helper Functions.
 //---------------------------------------------------------------------------//
 
+// Relative error of two values
+double relError( const double first_value, const double second_value )
+{
+  typedef Teuchos::ScalarTraits<double> ST;
+  ST::magnitudeType err;
+  if( first_value != 0.0 && second_value != 0.0 )
+  {
+    err = ST::magnitude( first_value - second_value )/
+      std::max( ST::magnitude( first_value ),
+		ST::magnitude( second_value ) );
+  }
+  else
+  {
+    err = std::max( ST::magnitude( first_value ),
+		    ST::magnitude( second_value ) );
+  }
+
+  return err;
+}
+
 // Compare the first tuple members
 template<typename T>
 bool compareFirstTupleMembers( const T &first_value,
@@ -228,10 +248,7 @@ struct TupleComparePolicy<double>
     }
     else
     {
-      typedef Teuchos::ScalarTraits<double> ST;
-      ST::magnitudeType err = ST::magnitude( first_double - second_double )/
-	std::max( ST::magnitude( first_double ),
-		  ST::magnitude( second_double ) );
+      double err = relError( first_double, second_double );
       
       if( err > tol )
       {

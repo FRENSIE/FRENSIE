@@ -31,11 +31,31 @@ matrixTranspose( const Teuchos::Tuple<double,9> &matrix );
 Teuchos::Tuple<double,9> 
 matrixInverse( const Teuchos::Tuple<double,9> &matrix );
 
+//! Generate a rotation matrix for rotation about the x-axis
+Teuchos::Tuple<double,9>
+generateXAxisRotationMatrix( const double rotation_angle );
+
+//! Generate a rotation matrix for rotation about the y-axis
+Teuchos::Tuple<double,9>
+generateYAxisRotationMatrix( const double rotation_angle );
+
+//! Generate a rotation matrix for rotation about the z-axis
+Teuchos::Tuple<double,9>
+generateZAxisRotationMatrix( const double rotation_angle );
+
+//! Generate a rotation matrix that will rotate a unit vector with a given
+// direction to a unit vector with a desired direction
+Teuchos::Tuple<double,9>
+generateRotationMatrixFromUnitVectors( 
+			      const Teuchos::Tuple<double,3> &initial_direction,
+			      const Teuchos::Tuple<double,3> &final_direction );
+
 //! Solve a 3x3 linear system
 Teuchos::Tuple<double,3> 
 solveSystem( const Teuchos::Tuple<double,9> &matrix,
 	     const Teuchos::Tuple<double,3> &solution );
 
+  
 //! Compute the eigenvalues of a 3x3 matrix
 //Teuchos::Tuple<double,3>
 //eigenvalues( const Teuchos::Tuple<double,9> &matrix );
@@ -48,6 +68,14 @@ solveSystem( const Teuchos::Tuple<double,9> &matrix,
 
 } // end FACEMC namespace
 
+//! Define the addition of two vectors
+Teuchos::Tuple<double,3> operator+( const Teuchos::Tuple<double,3> &left_vector,
+				    const Teuchos::Tuple<double,3> &right_vector );
+
+//! Define the addition of two vectors (in place)
+void operator+=( Teuchos::Tuple<double,3> &left_vector,
+		 const Teuchos::Tuple<double,3> &right_vector );
+
 //! Define the product of a scalar and a vector (premultiply)
 Teuchos::Tuple<double,3> operator*( const double multiplier,
 				    const Teuchos::Tuple<double,3> &vector );
@@ -57,8 +85,8 @@ Teuchos::Tuple<double,3> operator*( const Teuchos::Tuple<double,3> &vector,
 				    const double multiplier );
 
 //! Define the product of a scalara and a vector (in place)
-Teuchos::Tuple<double,3> operator*=( Teuchos::Tuple<double,3> &vector,
-				     const double multiplier );
+void operator*=( Teuchos::Tuple<double,3> &vector,
+		 const double multiplier );
 
 //! Define the product of a scalar and a matrix (premultiply)
 Teuchos::Tuple<double,9> operator*( const double multiplier,
@@ -69,8 +97,8 @@ Teuchos::Tuple<double,9> operator*( const Teuchos::Tuple<double,9> &matrix,
 				    const double multiplier );
 
 //! Define the product of a scalar and a matrix (in place)
-Teuchos::Tuple<double,9> operator*=( Teuchos::Tuple<double,9> &matrix,
-				     const double multiplier );
+void operator*=( Teuchos::Tuple<double,9> &matrix,
+		 const double multiplier );
 
 //! Define the dot product of a 1x3 row vector and a 3x1 column vector
 double operator*( const Teuchos::Tuple<double,3> &left_vector,

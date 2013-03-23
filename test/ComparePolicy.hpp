@@ -96,10 +96,7 @@ struct ComparePolicy<double>
     }
     else
     {
-      typedef Teuchos::ScalarTraits<double> ST;
-      ST::magnitudeType err = ST::magnitude( first_value - second_value )/
-	std::max( ST::magnitude( first_value ),
-		  ST::magnitude( second_value ) );
+      double err = relError( first_value, second_value );
       
       if( err > tol )
       {
