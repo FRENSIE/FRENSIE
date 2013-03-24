@@ -49,7 +49,7 @@ protected:
   void renameVariables( std::string &cell_definition ) const;
   
   //! Determine the number of variables present in the cell definition
-  unsigned getNumberOfVariables( const std::string &cell_definition );
+  unsigned getNumVariables( const std::string &cell_definition );
 
   //! Determine the variable range in the string
   // \brief The string is not passed by reference so that a copy will be made
