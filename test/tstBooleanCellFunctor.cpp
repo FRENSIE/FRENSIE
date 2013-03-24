@@ -52,7 +52,7 @@ public:
   // Allow public access to the BooleanCellFunctor protected member functions
   using FACEMC::BooleanCellFunctor::removeWhiteSpace;
   using FACEMC::BooleanCellFunctor::renameVariables;
-  using FACEMC::BooleanCellFunctor::getNumberOfVariables;
+  using FACEMC::BooleanCellFunctor::getNumVariables;
   using FACEMC::BooleanCellFunctor::getVariableRange;
   using FACEMC::BooleanCellFunctor::constructChildFunctors;
   using FACEMC::BooleanCellFunctor::reduceDefinition;
@@ -134,7 +134,7 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, renameVariables )
 //---------------------------------------------------------------------------//
 // Check that the BooleanCellFunctor can determine the number of variables in 
 // the cell definition string
-TEUCHOS_UNIT_TEST( BooleanCellFunctor, getNumberOfVariables )
+TEUCHOS_UNIT_TEST( BooleanCellFunctor, getNumVariables )
 {
   TestBooleanCellFunctor cell_functor;
 
@@ -144,7 +144,7 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, getNumberOfVariables )
   
   cell_functor.removeWhiteSpace( cell_definition );
   cell_functor.renameVariables( cell_definition );
-  number_of_variables = cell_functor.getNumberOfVariables( cell_definition );
+  number_of_variables = cell_functor.getNumVariables( cell_definition );
 
   TEST_EQUALITY( number_of_variables, ref_number_of_variables );
 
@@ -153,7 +153,7 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, getNumberOfVariables )
 
   cell_functor.removeWhiteSpace( cell_definition );
   cell_functor.renameVariables( cell_definition );
-  number_of_variables = cell_functor.getNumberOfVariables( cell_definition );
+  number_of_variables = cell_functor.getNumVariables( cell_definition );
 
   TEST_EQUALITY( number_of_variables, ref_number_of_variables );
 
@@ -162,7 +162,7 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, getNumberOfVariables )
 
   cell_functor.removeWhiteSpace( cell_definition );
   cell_functor.renameVariables( cell_definition );
-  number_of_variables = cell_functor.getNumberOfVariables( cell_definition );
+  number_of_variables = cell_functor.getNumVariables( cell_definition );
 
   TEST_EQUALITY( number_of_variables, ref_number_of_variables );
 }

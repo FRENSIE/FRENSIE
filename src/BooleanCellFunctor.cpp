@@ -28,7 +28,7 @@ BooleanCellFunctor::BooleanCellFunctor( std::string &cell_definition )
 {
   removeWhiteSpace( cell_definition );
   renameVariables( cell_definition );
-  d_number_of_variables = getNumberOfVariables( cell_definition );
+  d_number_of_variables = getNumVariables( cell_definition );
   constructChildFunctors( cell_definition );
   reduceDefinition( cell_definition );
   assignSetOperationFunctors( cell_definition );
@@ -167,7 +167,7 @@ void BooleanCellFunctor::renameVariables( std::string &cell_definition ) const
 
 //! Determine the number of variables present in the cell definition
 unsigned 
-BooleanCellFunctor::getNumberOfVariables( const std::string &cell_definition )
+BooleanCellFunctor::getNumVariables( const std::string &cell_definition )
 {
   // The cell definition must be free of white space
   testPrecondition( cell_definition.find( " " ) > cell_definition.size() );
