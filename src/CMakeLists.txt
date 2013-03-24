@@ -17,6 +17,8 @@ SET(HEADERS
   PhotonData.hpp
   LinearAlgebraAlgorithms.hpp
   Surface.hpp
+  SetOperationFunctor.hpp
+  BooleanCellFunctor.hpp
   ${HEADERS}
   )
 
@@ -31,6 +33,7 @@ SET(SOURCES
   PhotonDataDopplerBroadening.cpp
   LinearAlgebraAlgorithms.cpp
   Surface.cpp
+  BooleanCellFunctor.cpp
   ${SOURCES}
   )
 

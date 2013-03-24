@@ -24,6 +24,9 @@ template<typename T1, typename T2>
 struct Pair
 {
   Pair() : first(), second() { /* ... */ }
+  Pair( T1 value1, T2 value2 ) : first(value1), second(value2) 
+  { /* ... */ }
+  void operator()( T1 value1, T2 value2 ) { first = value1; second = value2; }
   static const int size = 2;
   static H5::CompType createHDF5DataType();
   static std::string name();
@@ -38,6 +41,10 @@ template<typename T1, typename T2, typename T3>
 struct Trip
 {
   Trip() : first(), second(), third() { /* ... */ }
+  Trip( T1 value1, T2 value2, T3 value3 ) : first(value1), second(value2),
+					    third(value3) 
+  { /* ... */ }
+  void operator()( T1 value1, T2 value2, T3 value3 ) { first = value1; second = value2; third = value3; }
   static const int size = 3;
   static H5::CompType createHDF5DataType();
   static std::string name();
@@ -54,6 +61,12 @@ template<typename T1, typename T2, typename T3, typename T4>
 struct Quad
 {
   Quad() : first(), second(), third(), fourth() { /* ... */ }
+  Quad( T1 value1, T2 value2, T3 value3, T4 value4 ) : first(value1),
+						       second(value2),
+						       third(value3),
+						       fourth(value4) 
+  { /* ... */ }
+  void operator()( T1 value1, T2 value2, T3 value3, T4 value4 ) { first = value1; second = value2; third = value3; fourth = value4; }
   static const int size = 4;
   static H5::CompType createHDF5DataType();
   static std::string name();
