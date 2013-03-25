@@ -23,7 +23,7 @@ public:
   { /* ... */ }
 
   //! Function evaluation operator
-  virtual bool operator()( bool first, bool second ) = 0;
+  virtual bool operator()( const bool first, const bool second ) = 0;
 };
 
 class IntersectionFunctor : public SetOperationFunctor
@@ -41,7 +41,7 @@ public:
   { /* ... */ }
   
   //! Function evaluation operator
-  bool operator()( bool first, bool second ) { return first && second; }
+  bool operator()( const bool first, const bool second ) { return first && second; }
 };
 
 class UnionFunctor : public SetOperationFunctor
@@ -59,7 +59,7 @@ public:
   { /* ... */ }
 
   //! Function evaluation operator
-  bool operator()( bool first, bool second ) { return first || second; }
+  bool operator()( const bool first, const bool second ) { return first || second; }
 
 };
 

@@ -10,6 +10,7 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
+#include <Teuchos_Array.hpp>
 
 // FACEMC Includes
 #include "BooleanCellFunctor.hpp"
@@ -341,130 +342,124 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, operator )
   Teuchos::RCP<FACEMC::BooleanCellFunctor> 
     cell_functor( new FACEMC::BooleanCellFunctor( cell_definition ) );
 
-  std::list<bool> argument_list;
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
+  Teuchos::ArrayRCP<bool> arguments( 9 );
+  arguments[0] = true;
+  arguments[1] = true;
+  arguments[2] = true;
+  arguments[3] = true;
+  arguments[4] = true;
+  arguments[5] = true;
+  arguments[6] = true;
+  arguments[7] = true;
+  arguments[8] = true;
 
-  TEST_ASSERT( (*cell_functor)( argument_list ) );
-  
-  argument_list.clear();
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( false );
-  argument_list.push_back( true );
-  argument_list.push_back( false );
-  argument_list.push_back( false );
-  argument_list.push_back( true );
-  argument_list.push_back( false );
+  TEST_ASSERT( (*cell_functor)( arguments ) );
 
-  TEST_ASSERT( (*cell_functor)( argument_list ) );
+  arguments[0] = true;
+  arguments[1] = true;
+  arguments[2] = true;
+  arguments[3] = false;
+  arguments[4] = true;
+  arguments[5] = false;
+  arguments[6] = false;
+  arguments[7] = true;
+  arguments[8] = false;
 
-  argument_list.clear();
-  argument_list.push_back( false );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( false );
-  argument_list.push_back( true );
-  argument_list.push_back( false );
-  argument_list.push_back( false );
-  argument_list.push_back( true );
-  argument_list.push_back( false );
+  TEST_ASSERT( (*cell_functor)( arguments ) );
 
-  TEST_ASSERT( !(*cell_functor)( argument_list ) );
+  arguments[0] = false;
+  arguments[1] = true;
+  arguments[2] = true;
+  arguments[3] = false;
+  arguments[4] = true;
+  arguments[5] = false;
+  arguments[6] = false;
+  arguments[7] = true;
+  arguments[8] = false;
+
+  TEST_ASSERT( !(*cell_functor)( arguments ) );
 
   cell_definition = CELL_DEFINITION_2;
   
   cell_functor.reset( new FACEMC::BooleanCellFunctor( cell_definition ) );
+  
+  arguments.resize( 8 );
+  arguments[0] = true;
+  arguments[1] = true;
+  arguments[2] = true;
+  arguments[3] = true;
+  arguments[4] = true;
+  arguments[5] = true;
+  arguments[6] = true;
+  arguments[7] = true;
 
-  argument_list.clear();
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
+  TEST_ASSERT( (*cell_functor)( arguments ) );
 
-  TEST_ASSERT( (*cell_functor)( argument_list ) );
+  arguments[0] = true;
+  arguments[1] = false;
+  arguments[2] = false;
+  arguments[3] = true;
+  arguments[4] = true;
+  arguments[5] = false;
+  arguments[6] = false;
+  arguments[7] = true;
 
-  argument_list.clear();
-  argument_list.push_back( true );
-  argument_list.push_back( false );
-  argument_list.push_back( false );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( false );
-  argument_list.push_back( false );
-  argument_list.push_back( true );
+  TEST_ASSERT( (*cell_functor)( arguments ) );
 
-  TEST_ASSERT( (*cell_functor)( argument_list ) );
+  arguments[0] = false;
+  arguments[1] = false;
+  arguments[2] = false;
+  arguments[3] = true;
+  arguments[4] = true;
+  arguments[5] = false;
+  arguments[6] = false;
+  arguments[7] = true;
 
-  argument_list.clear();
-  argument_list.push_back( false );
-  argument_list.push_back( false );
-  argument_list.push_back( false );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( false );
-  argument_list.push_back( false );
-  argument_list.push_back( true );
-
-  TEST_ASSERT( !(*cell_functor)( argument_list ) );
+  TEST_ASSERT( !(*cell_functor)( arguments ) );
 
   cell_definition = CELL_DEFINITION_3;
   
   cell_functor.reset( new FACEMC::BooleanCellFunctor( cell_definition ) );
 
-  argument_list.clear();
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
+  arguments.resize( 10 );
+  arguments[0] = true;
+  arguments[1] = true;
+  arguments[2] = true;
+  arguments[3] = true;
+  arguments[4] = true;
+  arguments[5] = true;
+  arguments[6] = true;
+  arguments[7] = true;
+  arguments[8] = true;
+  arguments[9] = true;
 
-  TEST_ASSERT( (*cell_functor)( argument_list ) );
+  TEST_ASSERT( (*cell_functor)( arguments ) );
 
-  argument_list.clear();
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( false );
-  argument_list.push_back( true );
-  argument_list.push_back( false );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
+  arguments[0] = true;
+  arguments[1] = true;
+  arguments[2] = true;
+  arguments[3] = true;
+  arguments[4] = true;
+  arguments[5] = false;
+  arguments[6] = true;
+  arguments[7] = false;
+  arguments[8] = true;
+  arguments[9] = true;
 
-  TEST_ASSERT( (*cell_functor)( argument_list ) );
+  TEST_ASSERT( (*cell_functor)( arguments ) );
 
-  argument_list.clear();
-  argument_list.push_back( false );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
-  argument_list.push_back( false );
-  argument_list.push_back( true );
-  argument_list.push_back( false );
-  argument_list.push_back( true );
-  argument_list.push_back( true );
+  arguments[0] = false;
+  arguments[1] = true;
+  arguments[2] = true;
+  arguments[3] = true;
+  arguments[4] = true;
+  arguments[5] = false;
+  arguments[6] = true;
+  arguments[7] = false;
+  arguments[8] = true;
+  arguments[9] = true;
 
-  TEST_ASSERT( !(*cell_functor)( argument_list ) );
+  TEST_ASSERT( !(*cell_functor)( arguments ) );
 }
   
 

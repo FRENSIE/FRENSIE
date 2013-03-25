@@ -9,7 +9,6 @@
 
 // Std Lib Includes
 #include <string>
-#include <list>
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -34,7 +33,9 @@ public:
   { /* ... */ }
   
   //! Function evaluation operator
-  bool operator()( const std::list<bool> &argument_list );
+  // \brief Bool can be either a bool or a const bool
+  template<typename Bool, template<typename> class Array>
+  bool operator()( const Array<Bool> &arguments ) const;
 
 protected:
 
@@ -92,6 +93,14 @@ private:
 };
 
 } // end FACEMC namespace
+
+//---------------------------------------------------------------------------//
+// Template includes.
+//---------------------------------------------------------------------------//
+
+#include "BooleanCellFunctor_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end BOOLEAN_CELL_FUNCTOR_HPP
 

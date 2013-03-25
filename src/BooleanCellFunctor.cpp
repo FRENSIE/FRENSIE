@@ -19,7 +19,6 @@
 #include "Tuple.hpp"
 #include "SetOperationFunctor.hpp"
 #include "ContractException.hpp"
-#include "FACEMC_Assertion.hpp"
 
 namespace FACEMC{
 
@@ -34,85 +33,7 @@ BooleanCellFunctor::BooleanCellFunctor( std::string &cell_definition )
   assignSetOperationFunctors( cell_definition );
 }
 
-//! Function evaluation operator
-bool BooleanCellFunctor::operator()( const std::list<bool> &argument_list )
-{
-  // The argument list must have the expected number of arguments
-  testPrecondition( d_number_of_variables == argument_list.size() );
-  
-  std::list<bool>::const_iterator range_start, range_end;
-  range_start = argument_list.begin();
-  
-  std::list<bool> reduced_argument_list;
-  std::list<bool>::iterator reduced_argument_list_pos = 
-    reduced_argument_list.end();
-
-  unsigned advance_distance;
-  
-  // Call the child functors and reduce the argument list
-  for( unsigned i = 0; i < d_child_functors.size(); ++i )
-  {
-    // Add the non-child variable arguments to the reduced argument list
-    if( i > 0 )
-    {
-      advance_distance = d_child_functor_variables[i].first -
-	d_child_functor_variables[i-1].second - 1;
-      
-      std::advance( range_end, 
-		    advance_distance);
-    }
-    else
-    {
-      range_end = argument_list.begin();
-      advance_distance = d_child_functor_variables[i].first;
-      std::advance( range_end,
-		    advance_distance );
-    }
-  
-    reduced_argument_list.insert( reduced_argument_list_pos,
-				  range_start,
-				  range_end );
-    
-    // Create a sublist to pass to the child functor
-    range_start = range_end;
-    
-    std::advance( range_end,
-		  d_child_functor_variables[i].second+1 - 
-		  d_child_functor_variables[i].first );
-
-    std::list<bool> sub_list( range_start, range_end );
-    bool child_argument = d_child_functors[i]( sub_list );
-    
-    // Add the result from the child functor to the reduced argument list
-    reduced_argument_list.push_back( child_argument );
-
-    range_start = range_end;
-    
-    reduced_argument_list_pos = reduced_argument_list.end();
-  }
-
-  // Add the rest of the non-child variable arguments to the reduced argument 
-  // list
-  range_end = argument_list.end();
-  
-  reduced_argument_list.insert( reduced_argument_list_pos,
-				range_start,
-				range_end );
-
-  // Evaluate the cell function  
-  bool success = reduced_argument_list.front();
-  reduced_argument_list.pop_front();
-  
-  for( unsigned i = 0; i < d_function_definition.size(); ++i )
-  {
-    success = (*d_function_definition[i])( success, 
-					   reduced_argument_list.front() );
-    reduced_argument_list.pop_front(); 
-  }  
-
-  return success;
-}  
-
+//! Remove white space from the cell definition string
 void BooleanCellFunctor::removeWhiteSpace( std::string &cell_definition ) const
 {
   unsigned white_space_loc = cell_definition.find( " " );
@@ -125,6 +46,7 @@ void BooleanCellFunctor::removeWhiteSpace( std::string &cell_definition ) const
   }
 }
 
+//! Rename the cell definition variables
 void BooleanCellFunctor::renameVariables( std::string &cell_definition ) const
 {
   // The cell definition must be free of white space
