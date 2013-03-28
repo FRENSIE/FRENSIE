@@ -73,6 +73,13 @@ ADD_EXECUTABLE(tstBooleanCellFunctor
   tstBooleanCellFunctor.cpp
   ${SRC}/BooleanCellFunctor.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstCell
+  tstCell.cpp
+  ${SRC}/Cell.cpp
+  ${SRC}/BooleanCellFunctor.cpp
+  ${SRC}/Surface.cpp
+  ${SRC}/LinearAlgebraAlgorithms.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 
 TARGET_LINK_LIBRARIES(tstAssertion ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstContractException ${TEUCHOS})
@@ -90,6 +97,7 @@ TARGET_LINK_LIBRARIES(tstLinearAlgebra ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstSurface ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstSetOperationFunctor ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstBooleanCellFunctor ${TEUCHOS})
+TARGET_LINK_LIBRARIES(tstCell ${TEUCHOS})
 
 ADD_TEST(Assertion_test tstAssertion)
 ADD_TEST(ContractException_test tstContractException)
@@ -107,6 +115,7 @@ ADD_TEST(LinearAlgebra_test tstLinearAlgebra)
 ADD_TEST(Surface_test tstSurface)
 ADD_TEST(SetOperationFunctor_test tstSetOperationFunctor)
 ADD_TEST(BooleanCellFunctor_test tstBooleanCellFunctor)
+ADD_TEST(Cell_test tstCell)
 
 # Install test files for the EPDL97DataProcessor_test
 FILE(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test_files/*.txt)

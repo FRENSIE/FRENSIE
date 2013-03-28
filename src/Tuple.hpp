@@ -88,6 +88,25 @@ enum TupleMember{
   FOURTH
 };
 
+//! Non-member tuple comparison operators
+template<typename T1, typename T2>
+bool operator!=( const Pair<T1,T2> &left, const Pair<T1,T2> &right ) { return (left.first != right.first) || (left.second != right.second); }
+
+template<typename T1, typename T2>
+bool operator==( const Pair<T1,T2> &left, const Pair<T1,T2> &right ) { return (left.first == right.first) && (left.second == right.second); }
+
+template<typename T1, typename T2, typename T3>
+bool operator!=( const Trip<T1,T2,T3> &left, const Trip<T1,T2,T3> &right ) { return (left.first != right.first) || (left.second != right.second) || (left.third != right.third); }
+
+template<typename T1, typename T2, typename T3>
+bool operator==( const Trip<T1,T2,T3> &left, const Trip<T1,T2,T3> &right ) { return (left.first == right.first) && (left.second == right.second) && (left.third == right.third); }
+
+template<typename T1, typename T2, typename T3, typename T4>
+bool operator!=( const Quad<T1,T2,T3,T4> &left, const Quad<T1,T2,T3,T4> &right ) { return (left.first != right.first) || (left.second != right.second) || (left.third != right.third) || (left.fourth != right.fourth); }
+
+template<typename T1, typename T2, typename T3, typename T4>
+bool operator==( const Quad<T1,T2,T3,T4> &left, const Quad<T1,T2,T3,T4> &right ) { return (left.first == right.first) && (left.second == right.second) && (left.third == right.third) && (left.fourth == right.fourth); }
+
 //---------------------------------------------------------------------------//
 // Specialize the HDF5TypeTraits class for the Tuple Structs
 //---------------------------------------------------------------------------//

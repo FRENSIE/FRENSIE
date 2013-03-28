@@ -43,6 +43,38 @@ TEUCHOS_UNIT_TEST( Surface, isOn )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a surface returns if it is planar or not
+TEUCHOS_UNIT_TEST( Surface, isPlanar )
+{
+  // Generic surface
+  FACEMC::Surface surface( 0, 
+			   1, 2, 3,
+			   4, 5, 6,
+			   7, 8, 9,
+			   10 );
+  
+  TEST_ASSERT( !surface.isPlanar() );
+
+  // Spherical surface centered at (-10,-10,-10) with radius 10
+  FACEMC::Surface sphere( 0,
+			  1, 1, 1,
+			  0, 0, 0,
+			  20, 20, 20,
+			  10*10+10*10+10*10 - 10*10 );
+
+  TEST_ASSERT( !sphere.isPlanar() );
+
+  // Planar surface
+  FACEMC::Surface plane( 0,
+			 0, 0, 0,
+			 0, 0, 0,
+			 1, 2, 3,
+			 4 );
+
+  TEST_ASSERT( plane.isPlanar() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a surface can return the correct sense of a point
 TEUCHOS_UNIT_TEST( Surface, getSense )
 {

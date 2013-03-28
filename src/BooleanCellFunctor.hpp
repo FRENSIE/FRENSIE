@@ -26,7 +26,8 @@ class BooleanCellFunctor
 public:
   
   //! Constructor
-  BooleanCellFunctor( std::string &cell_definition );
+  // \brief The string is not passed by reference so that a copy will be made
+  BooleanCellFunctor( std::string cell_definition );
 
   //! Destructor
   ~BooleanCellFunctor()

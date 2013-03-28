@@ -19,7 +19,7 @@
 namespace FACEMC{
 
 //! Constructor
-Surface::Surface( unsigned int id,
+Surface::Surface( unsigned id,
 		  double a,
 		  double b,
 		  double c,
@@ -37,7 +37,13 @@ Surface::Surface( unsigned int id,
     d_linear_term_vector( Teuchos::tuple( g, h, j ) ),
     d_constant_term( k )
 { 
+  // The surface coefficients must be valid
+  testPrecondition( a != 0.0 || b != 0.0 || c != 0.0 || g != 0.0 || h != 0.0 ||
+		    j != 0.0 );
+		    
   double max = 0.0;
+  double tolerance_ratio = 1e-12;
+  
   for( unsigned int i = 0; i < 9; ++i )
   {
     if( fabs(d_quadratic_form_matrix[i]) > max )
@@ -51,7 +57,14 @@ Surface::Surface( unsigned int id,
   if( fabs(d_constant_term) > max )
     max = fabs(d_constant_term);
   
-  d_tolerance = 1e-12*max;
+  d_tolerance = tolerance_ratio*max;
+  
+  d_planar = fabs( a ) < tolerance_ratio &&
+    fabs( b ) < tolerance_ratio &&
+    fabs( c ) < tolerance_ratio &&
+    fabs( d ) < tolerance_ratio &&
+    fabs( e ) < tolerance_ratio &&
+    fabs( f ) < tolerance_ratio;
 }
 
 //! Return if the point is on the surface
@@ -63,7 +76,7 @@ bool Surface::isOn( const Vector &point ) const
 }
 
 //! Return the sense of a point with respect to the surface
-short Surface::getSense( const Vector &point ) const
+Surface::Sense Surface::getSense( const Vector &point ) const
 {
   double value = point*d_quadratic_form_matrix*point + 
     d_linear_term_vector*point +
@@ -75,6 +88,18 @@ short Surface::getSense( const Vector &point ) const
     return -1;
   else 
     return 0;
+}
+
+//! Return the surface id
+unsigned Surface::getId() const
+{
+  return d_id;
+}
+
+//! Return if the surface is planar
+bool Surface::isPlanar() const
+{
+  return d_planar;
 }
 
 //! Return the unit normal from the surface at a point on the surface,

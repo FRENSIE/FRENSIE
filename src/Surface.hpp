@@ -21,11 +21,12 @@ public:
   //! Typedefs
   typedef Teuchos::Tuple<double,9> Matrix;
   typedef Teuchos::Tuple<double,3> Vector;
+  typedef short Sense;
   //@}
 
   //! Constructor
   // \brief ax^2+by^2+cz^2+dxy+eyz+fxz+gx+hy+jz+k = 0
-  Surface( unsigned int id,
+  Surface( unsigned id,
 	   double a,
 	   double b, 
 	   double c,
@@ -44,8 +45,14 @@ public:
   //! Return if the point is on the surface
   bool isOn( const Vector &point ) const;
 
+  //! Return if the surface is planar
+  bool isPlanar() const;
+
   //! Return the sense of a point with respect to the surface
-  short getSense( const Vector &point ) const;
+  Sense getSense( const Vector &point ) const;
+
+  //! Return the surface id
+  unsigned getId() const;
 
   //! Return the unit normal from the surface at a point on the surface,
   // pointing in the direction of the desired sense
@@ -73,7 +80,7 @@ protected:
 private:
 
   // Surface ID
-  unsigned int d_id;
+  unsigned d_id;
 
   // Matrix storing the quadratic form matrix of the surface
   Matrix d_quadratic_form_matrix;
@@ -86,6 +93,9 @@ private:
 
   // Tolerance used for performing tests
   double d_tolerance;
+
+  // Boolean that indicates whether the surface is planar or not
+  bool d_planar;
   
 };
 

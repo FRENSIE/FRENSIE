@@ -9,6 +9,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <list>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -22,8 +23,10 @@
 
 namespace Teuchos{
 
-// Stream operator for Tuple: this must be defined in the Teuchos namespace to 
-// work properly with the Teuchos Unit Test Harness.
+} // end Teuchos namespace 
+
+
+// Stream operator for Pair
 template<typename T1, typename T2>
 std::ostream& operator<<(std::ostream &out, const FACEMC::Pair<T1,T2> &p)
 {
@@ -31,6 +34,7 @@ std::ostream& operator<<(std::ostream &out, const FACEMC::Pair<T1,T2> &p)
   return out;
 }
 
+// Stream operator for Trip
 template<typename T1, typename T2, typename T3>
 std::ostream& operator<<(std::ostream &out, const FACEMC::Trip<T1,T2,T3> &p)
 {
@@ -38,15 +42,39 @@ std::ostream& operator<<(std::ostream &out, const FACEMC::Trip<T1,T2,T3> &p)
   return out;
 }
 
+// Stream operator for Quad
 template<typename T1, typename T2, typename T3, typename T4>
 std::ostream& operator<<(std::ostream &out, const FACEMC::Quad<T1,T2,T3,T4> &p)
 {
   out << "{ " << p.first << ", " << p.second << ", " << p.third 
       << ", " << p.fourth << " }";
   return out;
-}  
+}
 
-} // end Teuchos namespace
+// Stream operator for std::list
+template<typename T, template<typename,typename> class List>
+std::ostream& operator<<( std::ostream &out, 
+			  List<T,std::allocator<T> > &list)
+{
+  typename List<T,std::allocator<T> >::const_iterator element, end_element;
+  element = list.begin();
+  end_element = list.end();
+
+  out << "{";
+
+  while( element != end_element )
+  {
+    out << *element;
+    
+    ++element;
+    if( element != end_element )
+      out << ", ";
+  }
+
+  out << "}";
+  
+  return out;
+}
 
 namespace FACEMC{
 
@@ -121,34 +149,6 @@ bool compareArrays( const Array1<T> &a1,
     out << "passed\n";
 
   return success;
-}
-
-// Simple equality operator for comparing tuples. Avoid using these since
-// they will not give as much info when a test fails.
-template<typename T1, typename T2>
-inline bool operator==( const FACEMC::Pair<T1,T2> &left,
-			const FACEMC::Pair<T1,T2> &right )
-{
-  return ( (left.first == right.first) && (left.second == right.second) );
-}
-
-template<typename T1, typename T2, typename T3>
-inline bool operator==( const FACEMC::Trip<T1,T2,T3> &left,
-			const FACEMC::Trip<T1,T2,T3> &right )
-{
-  return ( (left.first == right.first) && 
-	   (left.second == right.second) &&
-	   (left.third == right.third) );
-}
-
-template<typename T1, typename T2, typename T3, typename T4>
-inline bool operator==( const FACEMC::Quad<T1,T2,T3,T4> &left,
-			const FACEMC::Quad<T1,T2,T3,T4> &right )
-{
-  return ( (left.first == right.first) &&
-	   (left.second == right.second) &&
-	   (left.third == right.third) &&
-	   (left.fourth == right.fourth) );
 }
 
 } // end FACEMC namespace

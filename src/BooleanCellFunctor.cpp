@@ -23,7 +23,7 @@
 namespace FACEMC{
 
 //! Constructor
-BooleanCellFunctor::BooleanCellFunctor( std::string &cell_definition )
+BooleanCellFunctor::BooleanCellFunctor( std::string cell_definition )
 {
   removeWhiteSpace( cell_definition );
   renameVariables( cell_definition );
@@ -36,6 +36,10 @@ BooleanCellFunctor::BooleanCellFunctor( std::string &cell_definition )
 //! Remove white space from the cell definition string
 void BooleanCellFunctor::removeWhiteSpace( std::string &cell_definition ) const
 {
+  // The cell definition must be valid
+  testPrecondition( cell_definition.find_first_not_of( "0123456789-nu() ", 0 ) 
+		    == std::string::npos );
+  
   unsigned white_space_loc = cell_definition.find( " " );
 
   while( white_space_loc < cell_definition.size() )
@@ -141,9 +145,8 @@ BooleanCellFunctor::getVariableRange( std::string sub_string ) const
 					      operation_loc+1 );
   }
 
-  std::stringstream processed_sub_string;
-  processed_sub_string << sub_string;
-
+  std::stringstream processed_sub_string( sub_string );
+  
   unsigned start_variable, end_variable;
   processed_sub_string >> start_variable;
   end_variable = start_variable;

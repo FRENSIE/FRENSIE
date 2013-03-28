@@ -19,6 +19,7 @@ SET(HEADERS
   Surface.hpp
   SetOperationFunctor.hpp
   BooleanCellFunctor.hpp
+  Cell.hpp
   ${HEADERS}
   )
 
@@ -34,6 +35,7 @@ SET(SOURCES
   LinearAlgebraAlgorithms.cpp
   Surface.cpp
   BooleanCellFunctor.cpp
+  Cell.cpp
   ${SOURCES}
   )
 
