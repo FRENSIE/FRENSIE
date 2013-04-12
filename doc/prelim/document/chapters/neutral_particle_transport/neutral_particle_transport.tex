@@ -1,0 +1,103 @@
+\chapter{Monte Carlo Methods for Neutral Particle Transport}
+\label{ch:neutral_particle_transport}
+In any Monte Carlo process, information collected from samples of the parent 
+population will only be useful if the probability laws governing the sampling
+are an accurate represention of a physical process. In this chapter, the 
+probability laws governing the sampling of neutral particle histories (i.e. 
+neutrons and photons) will be derived for the forward process. After a 
+discussion of the various probability laws is given, the probability laws
+governing the sampling of neutral particle histories will be derived for the
+reverse process. In addition, the methods used to calculate the adjoint
+cross section data will be discussed.
+
+\section{Derivation of Probability Laws for the Forward Process}
+\label{sec:der_prob_laws_for_proc}
+A natural starting point for deriving the probability laws for the forward 
+radiation transport process is the time-independent Boltzmann equation. 
+The Boltzmann equation, 
+though technically a balance equation, characterizes the transport of neutral 
+radiation (i.e. neutrons and photons) through a medium. The integro-differential
+form of the equation is the following:
+\begin{equation}
+  \begin{split}
+    \hat{\Omega} \cdot \vec{\bigtriangledown} \varphi(\vec{r},E,\hat{\Omega})
+    & + \Sigma_T(\vec{r},E) \varphi(\vec{r},E,\hat{\Omega}) = 
+    S(\vec{r},E,\hat{\Omega}) + \\
+    & \int\int \Sigma_S(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
+  \varphi(\vec{r},E,\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}
+  \end{split}
+  \label{eq:integro_diff_boltzman_eqn}
+\end{equation}
+In equation \ref{eq:integro_diff_boltzman_eqn} $\varphi(\vec{r},E,\hat{\Omega})$
+is the flux of particles at position $\vec{r}$ with energy $E$ and direction
+$\hat{\Omega}$. $S(\vec{r},E,\hat{\Omega})$ is the source density. The first
+step in gleaning information about the probability laws from this equation is
+to convert it into its integral form. 
+
+The streaming term in equation \ref{eq:integro_diff_boltzman_eqn} can be 
+rewritten in terms of a directional derivative. Assume that $\vec{r}$ is a 
+fixed point. If a new variable $R$ is introduced, a
+new point $\vec{r^{'}}$ relative to the fixed point can be constructed: 
+$\vec{r^{'}} = \vec{r} - R\hat{\Omega}$. The variable $R$ is sometimes refered
+to as a characteristic in the literature (ref). The derivative of the flux
+with respect to this characteristic must be determined.
+\begin{eqnarray*}
+  \frac{d\varphi(\vec{r^{'}},E,\hat{\Omega})}{dR} & = & \frac{dx^{'}}{dR}
+  \frac{\partial\varphi}{\partial x^{'}} + \frac{dy^{'}}{dR} 
+  \frac{\partial\varphi}{\partial y^{'}} + \frac{dz^{'}}{dR}
+  \frac{\partial\varphi}{\partial z^{'}} \nonumber \\
+  & = & -\Omega_{x^{'}}\frac{\partial\varphi}{\partial x^{'}} -
+  \Omega_{y^{'}}\frac{\partial\varphi}{\partial y^{'}} -
+  \Omega_{z^{'}}\frac{\partial\varphi}{\partial z^{'}} \nonumber \\
+  & = & -\hat{\Omega} \cdot 
+  \vec{\bigtriangledown}\varphi(\vec{r},E) \nonumber
+\end{eqnarray*}
+Finally, this new equation for the streaming term must be subsituted back into
+equation \ref{eq:integro_diff_boltzman_eqn} and the resulting equation must be
+multiplied by the integrating factor $exp\left[\beta(\vec{r},R,E)\right]$. 
+The exponent of the integrating factor is often refered to as the optical 
+distance, which is the distance in the number of mean free paths (ref). 
+Equation \ref{eq:optical_distance} gives the optical distance in terms of the 
+total macroscopic cross section.
+\begin{equation}
+  \beta(\vec{r},R,E) = \int_0^R \Sigma_T(\vec{r}-R^{'}\hat{\Omega},E)dR^{'}
+  \label{eq:optical_distance}
+\end{equation}
+\begin{equation*}
+  \begin{split}
+    &\left[-\frac{d\varphi(\vec{r^{'}},E,\hat{\Omega})}{dR}
+    + \Sigma_T(\vec{r^{'}},E)\varphi(\vec{r^{'}},E,\hat{\Omega}) \right]
+    exp\left[\beta(\vec{r},R,E)\right] \\
+    & \quad = \left[S(\vec{r^{'}},E,\hat{\Omega}) + \int\int 
+      \Sigma_S(\vec{r^{'}},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
+      \varphi(\vec{r^{'}},E,\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}\right] \\
+    & \quad\quad\quad
+    exp\left[\beta(\vec{r},R,E)\right] 
+  \end{split}
+\end{equation*}
+\begin{equation*}
+  \begin{split}
+    &-\frac{d}{dR}\left[\varphi(\vec{r^{'}},E,\hat{\Omega})
+    exp\left[\beta(\vec{r},R,E)\right]\right]\\
+    & \quad = \left[S(\vec{r^{'}},E,\hat{\Omega}) + \int\int 
+      \Sigma_S(\vec{r^{'}},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
+      \varphi(\vec{r^{'}},E,\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}\right] \\
+    & \quad\quad\quad
+    exp\left[\beta(\vec{r},R,E)\right] 
+  \end{split}
+\end{equation*}
+By integrating the above equation with respect to $R$ from $0$ to $\infty$, the
+integral form of the Boltzmann equation for the particle flux can be obtained. 
+It is assumed that the flux goes to zero at $\infty$. 
+\begin{equation}
+  \begin{split}
+    \varphi(\vec{r},&E,\hat{\Omega}) = \int_0^{\infty} 
+    exp\left[\beta(\vec{r},R,E)\right]
+    \Big[S(\vec{r}-R\hat{\Omega},E,\hat{\Omega}) + \\
+    & \int\int 
+    \Sigma_S(\vec{r}-R\hat{\Omega},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
+    \varphi(\vec{r}-R\hat{\Omega},E,\hat{\Omega^{'}}) 
+    dE^{'}d\hat{\Omega^{'}}\Big] dR
+  \end{split}
+  \label{eq:integral_boltzmann_eqn}
+\end{equation}

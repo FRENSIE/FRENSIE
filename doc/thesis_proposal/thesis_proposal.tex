@@ -1,0 +1,146 @@
+%        File: thesis_proposal.tex
+%
+\documentclass[letterpaper,12pt]{article}
+\usepackage[top=1.0in,bottom=1.0in,left=1.25in,right=1.25in]{geometry}
+\usepackage{verbatim}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage[usenames]{color}
+\usepackage[
+naturalnames = true, 
+colorlinks = true, 
+linkcolor = black,
+anchorcolor = black,
+citecolor = black,
+menucolor = black,
+urlcolor = blue
+]{hyperref}
+
+%%---------------------------------------------------------------------------%%
+\author{Alex P. Robinson
+\\ \href{mailto:aprobinson@wisc.edu}{\texttt{aprobinson@wisc.edu}}
+}
+
+\date{\today}
+\title{Thesis Proposal:\\
+  Monte Carlo Methods for the Solution of the Adjoint Transport Equation}
+\begin{document}
+\maketitle
+
+%%---------------------------------------------------------------------------%%
+\section{Introduction}
+The Monte Carlo method was originally developed by Fermi, Ulam and von Neumann with the first successful application coinciding with the construction of the first digital computers \cite{lux_monte_1991}. Because computational resources were relatively scarce and expensive, the computer codes implementing the Monte Carlo method up through the 1980s were full of approximations to both the physical models and the cross section data. As the availability of computer resources increased in the 90s, it became feasible to do high fidelity Monte Carlo simulations with regard to both the physical models and the cross section data \cite{chucas_preparing_1994}. Today, Monte Carlo codes are regarded as the gold standard of computational methods for solving the particle transport equation because they can treat particle energy and direction on a continuous scale and because the problem geometry can be modeled completely. 
+
+Most work on the Monte Carlo method to date has focused on the solution of the forward particle transport equation. During a simulation to solve the forward transport equation, particles are created in a source region, transported through the problem geometry, and recorded in a detector region. These simulations are most effective when the detector region is relatively large compared to the source region. As the size of the detector region decreases, the efficacy of the simulation goes down until, for a point detector, the simulation becomes ineffective. For the case of a point detector, special point detector tallies can be used to force particle histories to enter the point of interest \cite{li_research_2008}. For the class of problems where the detector region is small compared to the source region, simulation of the adjoint particle transport equation is more effective. During a simulation to solve the adjoint transport equation, adjoint particles are created in a detector region, transported through the problem geometry, and recorded in the source region. Because adjoint particles have no physical analog, the cross sections governing their transport through materials cannot be measured directly or calculated easily and are therefore not readily available. This has been one of the major deterrents to implementing high fidelity adjoint Monte Carlo models in most current Monte Carlo codes. Fortunately, several researchers have shown that both the total and differential adjoint cross sections can be derived from the forward cross sections. The calculation of these cross sections is costly, but only needs to be done once \cite{hoogenboom_adjoint_1977}. 
+
+Currently there are no codes available that can do high fidelity coupled Monte Carlo simulations of adjoint neutrons, photons and electrons. Many codes such as MCNP5 and MORSE can model multigroup adjoint transport \cite{wagner_mcnp:_1994, taylor_morse-h:_1982}. GEANT4 was the first code to implement a continuous energy model of coupled adjoint photon and charged particle transport using the Monte Carlo method \cite{desorgher_implementation_2010}. However, the implementation still has some approximations that can be eliminated. FOCUS, a research code written by Hoogenboom, was the first code to implement continuous energy neutron transport via the Monte Carlo method \cite{hoogenboom_adjoint_1977}. This code was not able to model coupled adjoint neutron and photon transport though. Today only the commercial United Kingdom code MCBEND can model continuous energy adjoint neutron transport \cite{grimstone_extension_1998}. However, this code uses a simplified treatment for thermal adjoint neutrons that can be improved upon. It also cannot model coupled adjoint neutron and photon transport. Table 1 summarizes the continuous energy modeling capabilities of the codes available today. Please note that two of the most powerful and popular codes, MCNP5 and MCBEND are not open source codes. The only open source software that has some continuous energy adjoint capabilities is GEANT4.
+
+\begin{table}[ht]
+  \caption{Continuous Energy Capabilities of Monte Carlo Codes Available Today}
+  \centering
+  \begin{tabular}{c c c c c c c c c}
+    \hline\hline
+    Code & $n$ & $\gamma$ & $e^-$ & $p$ & $n^{\dagger}$ & $\gamma^{\dagger}$ & $e^{-\dagger}$ & $p^{\dagger}$ \\ [0.5ex]
+    \hline
+    EGS4 & - & $\surd$ & $\surd$ & - & - & - & - & - \\
+    EGSnrc & - & $\surd$ & $\surd$ & - & - & - & - & - \\
+    ITS6 & - & $\surd$ & $\surd$ & - & - & - & - & - \\
+    PENELOPE & - & $\surd$ & $\surd$ & - & - & - & - & - \\
+    MORSE & - & - & - & - & - & - & - & - \\
+    TART2005 & $\surd$ & $\surd$ & - & - & - & - & - & - \\
+    MCNP5/6 & $\surd$ & $\surd$ & $\surd$ & - & - & - & - & - \\
+    MCNPX & $\surd$ & $\surd$ & $\surd$ & $\surd$ & - & - & - & - \\
+    GEANT4 & $\surd$ & $\surd$ & $\surd$ & $\surd$ & - & $\surd$ & $\surd$ & $\surd$ \\
+    MCBEND & $\surd$ & $\surd$ & $\surd$ & - & $\surd$ & - & - & - \\ [1ex]
+    \hline
+    FACEMC & $\surd$ & $\surd$ & $\surd$ & $\surd$ & $\surd$ & $\surd$ & $\surd$ & $\surd$ \\ [1ex]
+    \hline
+  \end{tabular}
+  \label{table:mccodes}
+\end{table}
+
+To address the limitations of current Monte Carlo codes and to bring adjoint simulations up to the standard expected for forward simulations, the Forward-Adjoint Continuous Energy Monte Carlo (FACEMC) code is proposed as a new open source code that will be able to perform continuous energy forward and adjoint calculations over a modest energy range. In addition, fully coupled transport of neutrons, photons, electrons, and protons or adjoint neutrons, adjoint photons, adjoint electrons, and adjoint protons will be available. For charged particles and photons, a heavy emphasis will be placed on medical physics applications. In particular, a new class of treatment planning optimization schemes that rely on adjoint flux data could benefit greatly from the high fidelity adjoint capability \cite{yoo_optimization_2003, chaswal_adjoint_2007, wang_adjoint_2005}. For neutrons and photons, a heavy emphasis will be placed on fusion applications. In particular, the calculation of shutdown dose rates due to neutron activation of a fusion device could also benefit greatly from the high fidelity adjoint photon transport capability \cite{robinson_rigorous_2011}. 
+
+\section{Limitations of the GEANT4 continuous energy adjoint electromagnetic model}
+As mentioned before, the GEANT4 tool-kit is the first software to implement a continuous energy model for the simulation of adjoint charged particles. Several approximations are made in the model that cause noticeable discrepancies in results compared to the forward model. In the first approximation, the mean angular deviation after a multiple scattering step is computed at a smaller energy than in the equivalent forward case. This is because the multiple scattering effect is computed at the energy that a particle has at the beginning of the adjoint step, which corresponds to the end of the forward step. Another approximation is made in the adjoint bremsstrahlung cross section. This cross section is obtained by numerical derivation of the forward cross section over the energy of the secondary photon. This procedure is incorrect because the secondaries in the forward bremsstrahlung model are not sampled from the differential cross section. Instead, a different parameterization is used to sample the secondaries \cite{desorgher_implementation_2010}.
+
+\section{Limitations of the MCBEND continuous energy adjoint neutron model}
+While MCBEND is not the first code to implement a continuous energy model for the simulation of adjoint neutrons, it is the only code currently available that has. The biggest limitation of the continuous energy adjoint neutron model is the one group thermal treatment of adjoint neutrons. Both MCNP5 and MCBEND use a detailed treatment of thermal neutron scattering where the velocity of the target atom is sampled so that the scattering cross section at the relative energy can be calculated \cite{grimstone_extension_1998}. Not incorporating this same treatment in the model of thermal adjoint neutrons is not ideal since simpler treatments have been found to result in noticeable errors for thermal neutrons \cite{x-5_monte_carlo_team_mcnp_2003}. In addition, coupled adjoint neutron and photon calculations cannot be done.
+
+\section{Deliverables}
+This work will deliver the following items:
+\begin{itemize}
+  \item Develop an open source framework for Monte Carlo simulations.
+  \item Implement the coupled models for neutrons, photon, electrons and protons that are described in the literature.
+  \item Compute the adjoint cross sections for adjoint neutrons, photons, electrons and protons.
+  \item Implement the coupled models for adjoint neutrons, photons, electrons and protons that are described in the literature.
+  \item Develop improvements to the adjoint models so that adjoint simulations are as accurate as forward simulations.
+  \item Compare the accuracy and performance of the new code to existing codes where appropriate.
+\end{itemize}
+    
+This work will only focus on the development and implementation of neutron models in the energy range of 1E-5 eV to 20 MeV. The development and implementation of photon, electron and proton models will only be done in the energy range of 1 keV to 20 MeV. This energy range will be sufficient to model a large range of problems important to both the nuclear engineering community and the medical physics community. Several such problems will be used to test the final version of the code. 
+
+\section{Dissertation Outline}
+Based on the above work, the dissertation can be outlined in seven distinct parts, complete with several sub parts as well:
+
+\begin{enumerate}
+    \item Monte Carlo methods for neutral particle transport (forward and adjoint).
+      \begin{enumerate}
+        \item Derivation of Monte Carlo method from the forward transport equation.
+        \item Photon reactions and sampling methods.
+        \item Neutron reactions and sampling methods.
+        \item Derivation of Monte Carlo method from the adjoint transport equation.
+        \item Computation of adjoint cross sections.
+        \item Adjoint photon reactions and sampling methods.
+        \item Adjoint neutron reactions and sampling methods.
+      \end{enumerate}
+
+    \item Monte Carlo methods for charged particle transport (forward and adjoint)
+      \begin{enumerate}
+        \item Derivation of Monte Carlo method from the forward transport equation.
+        \item Electron reactions and sampling methods.
+        \item Positron reactions and sampling methods.
+        \item Proton reactions and sampling methods.
+        \item Derivation of Monte Carlo method from the adjoint transport equation.
+        \item Computation of adjoint cross sections.
+        \item Adjoint electron reactions and sampling methods.
+        \item Adjoint positron reactions and sampling methods.
+        \item Adjoint protons reactions and sampling methods.
+      \end{enumerate}
+
+    \item Monte Carlo methods for coupled neutral particle transport.
+    \item Monte Carlo methods for coupled neutral particle and charged particle transport.
+    \item General Monte Carlo code system background
+      \begin{enumerate}
+        \item Geometry modeling using surfaces and sets or CAD.
+        \item Performing tallies on geometric entities.
+        \item Variance reduction techniques.
+      \end{enumerate}
+      
+    \item Results from example problems.
+      \begin{enumerate}
+        \item Calculating the adjoint photon flux for Brachytherapy treatment planning.
+        \item Calculating the adjoint photon flux for external beam treatment planning.
+        \item Calculating the adjoint neutron flux for an appropriate problem.
+        \item Calculating the adjoint electron flux for an appropriate problem.
+        \item Calculating the adjoint proton flux for external proton beam treatment planning.
+      \end{enumerate}
+\end{enumerate}
+
+\section{Committee}
+\begin{itemize}
+  \item Douglass Henderson (advisor): Professor, Department of Engineering Physics
+  \item Paul Wilson: Associate Professor, Department of Engineering Physics
+  \item Greg Moses: Professor, Department of Engineering Physics
+  \item Bruce Thomadsen: Professor, Department of Medical Physics
+  \item ????
+\end{itemize}        
+
+%%---------------------------------------------------------------------------%%
+\pagebreak
+\bibliographystyle{ieeetr}
+\bibliography{references}
+\end{document}

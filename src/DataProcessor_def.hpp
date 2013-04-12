@@ -147,17 +147,12 @@ void DataProcessor::coarsenConstantRegions( Teuchos::Array<Tuple> &data )
     if( dataTGSMP::get( *data_point_1 ) == dataTGSMP::get( *data_point_2 ) &&
 	dataTGSMP::get( *data_point_1 ) == dataTGSMP::get( *data_point_3 ) )
     {
-      data_point_2 = data.erase( data_point_2 );
-
-      --data_point_2;
-      --data_point_3;
+      data_point_1 = data.erase( data_point_1 );
     }
-    else
-    {
-      --data_point_1;
-      --data_point_2;
-      --data_point_3;
-    }
+    
+    --data_point_1;
+    data_point_2 = data_point_1-1;
+    data_point_3 = data_point_2-1;
   }
 }    
 

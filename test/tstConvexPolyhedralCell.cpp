@@ -23,6 +23,7 @@
 //---------------------------------------------------------------------------//
 #define CELL_DEFINITION_1 "-1 n 2 n -3 n 4 n -5 n 6 "
 #define SIMPLIFIED_CELL_DEFINITION_1 "-1   2   -3   4   -5   6"
+#define CELL_DEFINITION_2 "-1 n 2 n 3 n (4 u -5) n -6 n 7"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -810,18 +811,18 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
 				      1 ) );
   global_surface_map[6] = surface;
 
-  FACEMC::Cell cell( 1,
-		     cell_definition,
-		     global_surface_map,
-		     true );
+  Teuchos::RCP<FACEMC::Cell> cell( new FACEMC::Cell( 1,
+						     cell_definition,
+						     global_surface_map,
+						     true ) );
 
-  TEST_EQUALITY_CONST( cell.getVolume(), 8.0 );
-  TEST_EQUALITY_CONST( cell.getSurfaceArea( 1 ), 4.0 );
-  TEST_EQUALITY_CONST( cell.getSurfaceArea( 2 ), 4.0 );
-  TEST_EQUALITY_CONST( cell.getSurfaceArea( 3 ), 4.0 );
-  TEST_EQUALITY_CONST( cell.getSurfaceArea( 4 ), 4.0 );
-  TEST_EQUALITY_CONST( cell.getSurfaceArea( 5 ), 4.0 );
-  TEST_EQUALITY_CONST( cell.getSurfaceArea( 6 ), 4.0 );
+  TEST_EQUALITY_CONST( cell->getVolume(), 8.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 1 ), 4.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 2 ), 4.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 3 ), 4.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 4 ), 4.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 5 ), 4.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 6 ), 4.0 );
 }
 
 //---------------------------------------------------------------------------//

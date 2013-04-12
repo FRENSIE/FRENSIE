@@ -17,6 +17,10 @@
 *.vrb
 *.pdf
 *.h5
+*.png
+*.gif
+*.ico
+*.js
 EPDL
 EADL
 EEDL

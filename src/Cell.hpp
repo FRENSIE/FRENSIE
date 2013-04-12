@@ -63,7 +63,7 @@ protected:
 	   d_geometric_data_calculated(true)
   { /* ... */ }
 
-  //! Simply Constructor
+  //! Simple Constructor
   Cell( std::string &cell_definition ) 
     : d_cell_definition_evaluator( cell_definition ), 
       d_geometric_data_calculated(true)
