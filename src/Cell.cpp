@@ -130,6 +130,41 @@ bool Cell::isOn( const Vector &point ) const
   return d_cell_definition_evaluator( sense_tests );
 }
 
+//! Return if the point is on the cell
+bool Cell::isOn( const Vector &point,
+		 const Teuchos::Array<Pair<Surface,Surface::Sense> > 
+		 &surfaces ) const
+{
+  Teuchos::Array<Pair<Surface,Surface::Sense> >::const_iterator
+    surface, end_surface;
+  surface = surfaces.begin();
+  end_surface = surfaces.end();
+
+  // Sense of the point with respect to the surface of interest
+  short sense;
+
+  // If the sense matches the cell surface sense, true is added to this array
+  // else false is added (The surface ordering is the same as in the d_surfaces
+  // array)
+  Teuchos::ArrayRCP<bool> sense_tests( surfaces.size() );
+  Teuchos::ArrayRCP<bool>::iterator test = sense_tests.begin();
+
+  while( surface != end_surface )
+  {
+    sense = surface->first.getSense( point );
+    
+    if( sense == surface->second || sense == 0 )
+      *test = true;
+    else
+      *test = false;
+    
+    ++surface;
+    ++test;
+  }
+
+  return d_cell_definition_evaluator( sense_tests );
+}
+
 //! Return the volume of the cell
 double Cell::getVolume() const
 {
@@ -375,7 +410,8 @@ void Cell::calculatePolyhedralCellVolumeAndSurfaceAreas()
 	  
     // Determine the intersection points with the master surface (z=0 plane)
     std::list<Quad<double,double,unsigned,unsigned> > intersection_points;
-    calculatePolygonIntersectionPoints( copy_surfaces,
+    calculatePolygonIntersectionPoints( master_surface->first.getId(),
+					copy_surfaces,
 					intersection_points );
 
     // Organize the points into a polygon (polygons)
@@ -398,6 +434,7 @@ void Cell::calculatePolyhedralCellVolumeAndSurfaceAreas()
 
 //! Calculate the intersection points of planes with the z-axis
 void Cell::calculatePolygonIntersectionPoints(
+			    const unsigned xy_plane_surface_id,
 			    const Teuchos::Array<Pair<Surface,Surface::Sense> > 
 			    &surfaces,
 			    std::list<Quad<double,double,unsigned,unsigned> > 
@@ -450,34 +487,20 @@ void Cell::calculatePolygonIntersectionPoints(
 	continue;
       }
 
-      // Check if the slave surface is parallel to the z=0 plane
+      // Check if an intersection occurs on the z=0 plane
       Surface::Vector slave_normal = 
 	slave_surface->first.getLinearTermVector();
       
-      if( fabs(slave_normal[0]) < 1e-12 &&
-	  fabs(slave_normal[1]) < 1e-12 )
+      if( fabs( master_normal[0]*slave_normal[1] - 
+		master_normal[1]*slave_normal[0] ) < 1e-12 )
       {
 	++slave_surface;
 	continue;
-      }
-
-      // Check if the slave surface is parallel to the master surface
-      LinearAlgebra::normalizeVector( master_normal );
-      LinearAlgebra::normalizeVector( slave_normal );
-
-      double mu = master_normal*slave_normal;
-
-      if( fabs(fabs(mu) - 1.0 ) < 1e-12 )
-      {
-	++slave_surface;
-	continue;
-      }
+      }	  
 
       // Calculate the intersection point
       Quad<double,double,unsigned,unsigned> intersection_point;
       
-      master_normal = master_surface->first.getLinearTermVector();
-      slave_normal = slave_surface->first.getLinearTermVector();
       double master_constant_term = master_surface->first.getConstantTerm();
       double slave_constant_term = slave_surface->first.getConstantTerm();
 
@@ -505,9 +528,24 @@ void Cell::calculatePolygonIntersectionPoints(
       intersection_point.third = master_surface->first.getId();
       intersection_point.fourth = slave_surface->first.getId();
 
+      // Test if the intersection point is on the cell
+      bool possible_intersection =
+	isOn( Teuchos::tuple( intersection_point.first,
+			      intersection_point.second,
+			      0.0 ),
+	      surfaces );
+
       // Test if the intersection point is real
-      bool true_intersection = testIntersectionPoint( surfaces,
-						      intersection_point );
+      bool true_intersection;
+      if( possible_intersection )
+      {
+	true_intersection = testIntersectionPoint( surfaces,
+						   intersection_point,
+						   xy_plane_surface_id );
+      }
+      else
+	true_intersection = false;
+      
       if( true_intersection )
 	intersection_points.push_back( intersection_point );
 
@@ -523,36 +561,69 @@ bool Cell::testIntersectionPoint(
 			    const Teuchos::Array<Pair<Surface,Surface::Sense> > 
 			    &surfaces,
 			    const Quad<double,double,unsigned,unsigned>
-			    &intersection_point) const
+			    &intersection_point,
+			    const unsigned third_surface_id ) const
 {
   unsigned short delta_value;
 
   unsigned test_function_value = 0.0;
 
-  for( unsigned int i = 0; i < 4; ++i )
+  for( unsigned int i = 0; i < 8; ++i )
   {
     bool first_surface_boolean_parameter;
     bool second_surface_boolean_parameter;
+    bool third_surface_boolean_parameter;
 	
+    // Note: Assigning the booleans in this order assures that the
+    // eighth spaces are evaluated in counter-clockwise order w.r.t.
+    // the first surface associated with this intersection point
     if( i == 0 )
     {
       first_surface_boolean_parameter = true;
       second_surface_boolean_parameter = true;
+      third_surface_boolean_parameter = true;
     }
     else if( i == 1 )
     {
       first_surface_boolean_parameter = false;
       second_surface_boolean_parameter = true;
+      third_surface_boolean_parameter = true;
     }
     else if( i == 2 )
     {
+      first_surface_boolean_parameter = false;
+      second_surface_boolean_parameter = false;
+      third_surface_boolean_parameter = true;
+    }
+    else if( i == 3 )
+    {
       first_surface_boolean_parameter = true;
       second_surface_boolean_parameter = false;
+      third_surface_boolean_parameter = true;
     }
-    else
+    else if( i == 4 )
+    {
+      first_surface_boolean_parameter = false;
+      second_surface_boolean_parameter = true;
+      third_surface_boolean_parameter = false;
+    }
+    else if( i == 5 )
     {
       first_surface_boolean_parameter = false;
       second_surface_boolean_parameter = false;
+      third_surface_boolean_parameter = false;
+    }
+    else if( i == 6 )
+    {
+      first_surface_boolean_parameter = true;
+      second_surface_boolean_parameter = false;
+      third_surface_boolean_parameter = false;
+    }
+    else
+    {
+      first_surface_boolean_parameter = true;
+      second_surface_boolean_parameter = true;
+      third_surface_boolean_parameter = false;
     }
 
     Surface::Vector point = Teuchos::tuple( intersection_point.first,
@@ -573,6 +644,8 @@ bool Cell::testIntersectionPoint(
 	*test = first_surface_boolean_parameter;
       else if( surface->first.getId() == intersection_point.fourth )
 	*test = second_surface_boolean_parameter;
+      else if( surface->first.getId() == third_surface_id )
+	*test = third_surface_boolean_parameter;
       else
       {
 	Surface::Sense sense = surface->first.getSense( point );
@@ -600,8 +673,16 @@ bool Cell::testIntersectionPoint(
       multiplier = 2;
     else if( i == 2 )
       multiplier = 4;
-    else
+    else if( i == 3 )
       multiplier = 8;
+    else if( i == 4 )
+      multiplier = 16;
+    else if( i == 5 )
+      multiplier = 32;
+    else if( i == 6 )
+      multiplier = 64;
+    else
+      multiplier = 128;
     
     // Test function value: SUM( delta_i*2^(i-1); i=0..3 )
     test_function_value += delta_value*multiplier;

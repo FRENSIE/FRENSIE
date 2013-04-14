@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
-// \file   tstConvexPolyhedralCell.cpp
+// \file   tstConcavePolyhedralCell.cpp
 // \author Alex Robinson
-// \brief  Cell class unit tests
+// \brief  Cell class unit test
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
@@ -26,8 +26,8 @@
 //---------------------------------------------------------------------------//
 // Testing Info.
 //---------------------------------------------------------------------------//
-#define CELL_DEFINITION_1 "-1 n 2 n -3 n 4 n -5 n 6 "
-#define SIMPLIFIED_CELL_DEFINITION_1 "-1   2   -3   4   -5   6"
+#define CELL_DEFINITION_1 "-1 n 2 n 3 n (-4 u -5) n -6 n 7"
+#define SIMPLIFIED_CELL_DEFINITION_1 "-1   2   3    -4   -5    -6   7"
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -46,9 +46,9 @@ TEUCHOS_UNIT_TEST( Cell, testIntersectionPoint )
 							      0, 0, 0,
 							      0, 0, 0,
 							      1, 0, 0,
-							      -1 ) );
+							      -2 ) );
 
-  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> 
+  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense>
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -56,7 +56,8 @@ TEUCHOS_UNIT_TEST( Cell, testIntersectionPoint )
 				      0, 0, 0,
 				      0, 0, 0,
 				      1, 0, 0,
-				      1 ) );
+				      2 ) );
+
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -64,23 +65,26 @@ TEUCHOS_UNIT_TEST( Cell, testIntersectionPoint )
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 1, 0,
-				      -1 ) );
-  copy_surface( *surface, -1 );
+				      1 ) );
+
+  copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 4,
 				      0, 0, 0,
-				      0, 0, 0, 
-				      0, 1, 0,
-				      1 ) );
-  copy_surface( *surface, 1 );
+				      0, 0, 0,
+				      -1, 1, 0,
+				      0 ) );
+
+  copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
 				      0, 0, 0,
-				      0, 0, 1,
-				      -2 ) );
+				      0, 0, 0,
+				      1, 1, 0,
+				      0 ) );
+  
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -88,34 +92,74 @@ TEUCHOS_UNIT_TEST( Cell, testIntersectionPoint )
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 0, 1,
+				      -4 ) );
+
+  copy_surface( *surface, -1 );
+  copy_cell_surfaces.push_back( copy_surface );
+
+  surface.reset( new FACEMC::Surface( 7,
+				      0, 0, 0,
+				      0, 0, 0,
+				      0, 0, 1,
 				      0 ) );
+
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  FACEMC::Quad<double,double,unsigned,unsigned> 
-    intersection_point( -1.0, -1.0, 2, 4 );
+  FACEMC::Quad<double,double,unsigned,unsigned>
+    intersection_point( -2.0, -1.0, 2, 3 );
 
   TEST_ASSERT( cell.testIntersectionPoint( copy_cell_surfaces,
 					   intersection_point,
-					   6 ) );
+					   7 ) );
 
-  intersection_point( 1.0, -1.0, 1, 4 );
-  
+  intersection_point( -1.0, -1.0, 3, 4 );
+
+  TEST_ASSERT( !cell.testIntersectionPoint( copy_cell_surfaces,
+					    intersection_point,
+					    7 ) );
+
+  intersection_point( -1.0, -1.0, 4, 3 );
+
+  TEST_ASSERT( !cell.testIntersectionPoint( copy_cell_surfaces,
+					    intersection_point,
+					    7 ) );
+
+  intersection_point( 1.0, -1.0, 3, 5 );
+
+  TEST_ASSERT( !cell.testIntersectionPoint( copy_cell_surfaces,
+					    intersection_point,
+					    7 ) );
+
+  intersection_point( 1.0, -1.0, 5, 3 );
+
+  TEST_ASSERT( !cell.testIntersectionPoint( copy_cell_surfaces,
+					    intersection_point,
+					    7 ) );
+
+  intersection_point( 2.0, -1.0, 1, 3 );
+
   TEST_ASSERT( cell.testIntersectionPoint( copy_cell_surfaces,
 					   intersection_point,
-					   6 ) );
+					   7 ) );
 
-  intersection_point( 1.0, 1.0, 1, 3 );
+  intersection_point( 2.0, 2.0, 1, 4 );
+
+  TEST_ASSERT( cell.testIntersectionPoint( copy_cell_surfaces,
+					   intersection_point, 
+					   7 ) );
+
+  intersection_point( 0.0, 0.0, 4, 5 );
 
   TEST_ASSERT( cell.testIntersectionPoint( copy_cell_surfaces,
 					   intersection_point,
-					   6 ) );
-  
-  intersection_point( -1.0, 1.0, 2, 3 );
-  
+					   7 ) );
+
+  intersection_point( -2.0, 2.0, 2, 5 );
+
   TEST_ASSERT( cell.testIntersectionPoint( copy_cell_surfaces,
 					   intersection_point,
-					   6 ) );
+					   7 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -133,9 +177,9 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonIntersectionPoints )
 							      0, 0, 0,
 							      0, 0, 0,
 							      1, 0, 0,
-							      -1 ) );
+							      -2 ) );
 
-  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> 
+  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense>
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -143,7 +187,8 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonIntersectionPoints )
 				      0, 0, 0,
 				      0, 0, 0,
 				      1, 0, 0,
-				      1 ) );
+				      2 ) );
+
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -151,23 +196,26 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonIntersectionPoints )
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 1, 0,
-				      -1 ) );
-  copy_surface( *surface, -1 );
+				      1 ) );
+
+  copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 4,
 				      0, 0, 0,
-				      0, 0, 0, 
-				      0, 1, 0,
-				      1 ) );
-  copy_surface( *surface, 1 );
+				      0, 0, 0,
+				      -1, 1, 0,
+				      0 ) );
+
+  copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
 				      0, 0, 0,
-				      0, 0, 1,
-				      -2 ) );
+				      0, 0, 0,
+				      1, 1, 0,
+				      0 ) );
+  
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -175,45 +223,60 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonIntersectionPoints )
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 0, 1,
+				      -4 ) );
+
+  copy_surface( *surface, -1 );
+  copy_cell_surfaces.push_back( copy_surface );
+
+  surface.reset( new FACEMC::Surface( 7,
+				      0, 0, 0,
+				      0, 0, 0,
+				      0, 0, 1,
 				      0 ) );
+
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   std::list<FACEMC::Quad<double,double,unsigned,unsigned> > intersection_points;
 
-  cell.calculatePolygonIntersectionPoints( 6,
+  cell.calculatePolygonIntersectionPoints( 7,
 					   copy_cell_surfaces,
 					   intersection_points );
 
-  TEST_EQUALITY_CONST( intersection_points.size(), 4 );
-
-  FACEMC::Quad<double,double,unsigned,unsigned> 
-    ref_intersection_point( 1.0, 1.0, 1, 3 );
+  TEST_EQUALITY_CONST( intersection_points.size(), 5 );
 
   std::list<FACEMC::Quad<double,double,unsigned,unsigned> >::const_iterator
     point = intersection_points.begin();
 
-  FACEMC_TEST_EQUALITY( *point, ref_intersection_point );
-
-  ref_intersection_point( 1.0, -1.0, 1, 4 );
-  ++point;
+  FACEMC::Quad<double,double,unsigned,unsigned>
+    ref_intersection_point( 2.0, -1.0, 1, 3 );
 
   FACEMC_TEST_EQUALITY( *point, ref_intersection_point );
 
-  ref_intersection_point( -1.0, 1.0, 2, 3 );
   ++point;
+  ref_intersection_point( 2.0, 2.0, 1, 4 );
 
   FACEMC_TEST_EQUALITY( *point, ref_intersection_point );
 
-  ref_intersection_point( -1.0, -1.0, 2, 4 );
   ++point;
+  ref_intersection_point( -2.0, -1.0, 2, 3 );
+
+  FACEMC_TEST_EQUALITY( *point, ref_intersection_point );
+
+  ++point;
+  ref_intersection_point( -2.0, 2.0, 2, 5 );
+  
+  FACEMC_TEST_EQUALITY( *point, ref_intersection_point );
+
+  ++point;
+  ref_intersection_point( 0.0, 0.0, 4, 5 );
   
   FACEMC_TEST_EQUALITY( *point, ref_intersection_point );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the cell can initialize a polygon from a list of intersection 
-// points 
+// points
 TEUCHOS_UNIT_TEST( Cell, initializePolygon )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
@@ -227,9 +290,9 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
 							      0, 0, 0,
 							      0, 0, 0,
 							      1, 0, 0,
-							      -1 ) );
+							      -2 ) );
 
-  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> 
+  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense>
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -237,7 +300,8 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
 				      0, 0, 0,
 				      0, 0, 0,
 				      1, 0, 0,
-				      1 ) );
+				      2 ) );
+
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -245,23 +309,26 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 1, 0,
-				      -1 ) );
-  copy_surface( *surface, -1 );
+				      1 ) );
+
+  copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 4,
 				      0, 0, 0,
-				      0, 0, 0, 
-				      0, 1, 0,
-				      1 ) );
-  copy_surface( *surface, 1 );
+				      0, 0, 0,
+				      -1, 1, 0,
+				      0 ) );
+
+  copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
 				      0, 0, 0,
-				      0, 0, 1,
-				      -2 ) );
+				      0, 0, 0,
+				      1, 1, 0,
+				      0 ) );
+  
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -269,14 +336,24 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 0, 1,
+				      -4 ) );
+
+  copy_surface( *surface, -1 );
+  copy_cell_surfaces.push_back( copy_surface );
+
+  surface.reset( new FACEMC::Surface( 7,
+				      0, 0, 0,
+				      0, 0, 0,
+				      0, 0, 1,
 				      0 ) );
+
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   std::list<FACEMC::Quad<double,double,unsigned,unsigned> > 
-    intersection_points, polygon;    
+    intersection_points, polygon;
 
-  cell.calculatePolygonIntersectionPoints( 6,
+  cell.calculatePolygonIntersectionPoints( 7,
 					   copy_cell_surfaces,
 					   intersection_points );
 
@@ -288,37 +365,31 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
 					  current_surface_id );
 
   TEST_EQUALITY_CONST( polygon.size(), 3 );
-  TEST_EQUALITY_CONST( intersection_points.size(), 1 );
-  TEST_EQUALITY_CONST( current_surface_id, 2 );
-  
-  FACEMC::Quad<double,double,unsigned,unsigned> 
-    ref_corner_point( 1.0, -1.0, 1, 4 );
+  TEST_EQUALITY_CONST( intersection_points.size(), 2 );
+  TEST_EQUALITY_CONST( current_surface_id, 5 );
 
   std::list<FACEMC::Quad<double,double,unsigned,unsigned> >::const_iterator
     point = polygon.begin();
 
+  FACEMC::Quad<double,double,unsigned,unsigned> 
+    ref_corner_point( 2.0, -1.0, 1, 3 );
+
   FACEMC_TEST_EQUALITY( *start_point, ref_corner_point );
   FACEMC_TEST_EQUALITY( *point, ref_corner_point );
 
-  ref_corner_point( 1.0, 1.0, 1, 3 );
   ++point;
-  
-  FACEMC_TEST_EQUALITY( *point, ref_corner_point );
+  ref_corner_point( 2.0, 2.0, 1, 4 );
 
-  ref_corner_point( -1.0, 1.0, 2, 3 );
+  FACEMC_TEST_EQUALITY( *point, ref_corner_point );
+  
   ++point;
-  
+  ref_corner_point( 0.0, 0.0, 4, 5 );
+
   FACEMC_TEST_EQUALITY( *point, ref_corner_point );
-
-  ref_corner_point( -1.0, -1.0, 2, 4 );
-  point = intersection_points.begin();
-
-  FACEMC_TEST_EQUALITY( *point, ref_corner_point );  
 }
 
 //---------------------------------------------------------------------------//
-// Check that the cell can create a polygon from a list of intersection 
-// points 
+// Check that the cell can create a polygon from a list of intersection points
 TEUCHOS_UNIT_TEST( Cell, createPolygon )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
@@ -332,9 +403,9 @@ TEUCHOS_UNIT_TEST( Cell, createPolygon )
 							      0, 0, 0,
 							      0, 0, 0,
 							      1, 0, 0,
-							      -1 ) );
+							      -2 ) );
 
-  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> 
+  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense>
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -342,7 +413,8 @@ TEUCHOS_UNIT_TEST( Cell, createPolygon )
 				      0, 0, 0,
 				      0, 0, 0,
 				      1, 0, 0,
-				      1 ) );
+				      2 ) );
+
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -350,23 +422,26 @@ TEUCHOS_UNIT_TEST( Cell, createPolygon )
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 1, 0,
-				      -1 ) );
-  copy_surface( *surface, -1 );
+				      1 ) );
+
+  copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 4,
 				      0, 0, 0,
-				      0, 0, 0, 
-				      0, 1, 0,
-				      1 ) );
-  copy_surface( *surface, 1 );
+				      0, 0, 0,
+				      -1, 1, 0,
+				      0 ) );
+
+  copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
 				      0, 0, 0,
-				      0, 0, 1,
-				      -2 ) );
+				      0, 0, 0,
+				      1, 1, 0,
+				      0 ) );
+  
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -374,47 +449,68 @@ TEUCHOS_UNIT_TEST( Cell, createPolygon )
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 0, 1,
+				      -4 ) );
+
+  copy_surface( *surface, -1 );
+  copy_cell_surfaces.push_back( copy_surface );
+
+  surface.reset( new FACEMC::Surface( 7,
+				      0, 0, 0,
+				      0, 0, 0,
+				      0, 0, 1,
 				      0 ) );
+
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  std::list<FACEMC::Quad<double,double,unsigned,unsigned> > intersection_points;
+  std::list<FACEMC::Quad<double,double,unsigned,unsigned> > 
+    intersection_points, polygon;
 
-  cell.calculatePolygonIntersectionPoints( 6,
+  cell.calculatePolygonIntersectionPoints( 7,
 					   copy_cell_surfaces,
 					   intersection_points );
 
   cell.createPolygon( intersection_points,
 		      copy_cell_surfaces );
 
-  TEST_EQUALITY_CONST( intersection_points.size(), 5 );
-
-  FACEMC::Quad<double,double,unsigned,unsigned> 
-    ref_corner_point( 1.0, -1.0, 1, 4 );
+  TEST_EQUALITY_CONST( intersection_points.size(), 6 );
 
   std::list<FACEMC::Quad<double,double,unsigned,unsigned> >::const_iterator
     point = intersection_points.begin();
-
-  FACEMC_TEST_EQUALITY( *point, ref_corner_point );
-
-  ref_corner_point( 1.0, 1.0, 1, 3 );
-  ++point;
   
+  FACEMC::Quad<double,double,unsigned,unsigned> 
+    ref_corner_point( 2.0, -1.0, 1, 3 );
+
   FACEMC_TEST_EQUALITY( *point, ref_corner_point );
 
-  ref_corner_point( -1.0, 1.0, 2, 3 );
   ++point;
-  
+  ref_corner_point( 2.0, 2.0, 1, 4 );
+
   FACEMC_TEST_EQUALITY( *point, ref_corner_point );
 
-  ref_corner_point( -1.0, -1.0, 2, 4 );
   ++point;
+  ref_corner_point( 0.0, 0.0, 4, 5 );
 
-  FACEMC_TEST_EQUALITY( *point, ref_corner_point );  
+  FACEMC_TEST_EQUALITY( *point, ref_corner_point );
+
+  ++point;
+  ref_corner_point( -2.0, 2.0, 2, 5 );
+
+  FACEMC_TEST_EQUALITY( *point, ref_corner_point );
+
+  ++point;
+  ref_corner_point( -2.0, -1.0, 2, 3 );
+
+  FACEMC_TEST_EQUALITY( *point, ref_corner_point );
+
+  ++point;
+  ref_corner_point( 2.0, -1.0, 1, 3 );
+
+  FACEMC_TEST_EQUALITY( *point, ref_corner_point );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the cell can calculate the area of the polygon created from
+// Check that the cell can calculate the area of the polygon created from the
 // intersection points
 TEUCHOS_UNIT_TEST( Cell, calculatePolygonArea )
 {
@@ -429,9 +525,9 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonArea )
 							      0, 0, 0,
 							      0, 0, 0,
 							      1, 0, 0,
-							      -1 ) );
+							      -2 ) );
 
-  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> 
+  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense>
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -439,7 +535,8 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonArea )
 				      0, 0, 0,
 				      0, 0, 0,
 				      1, 0, 0,
-				      1 ) );
+				      2 ) );
+
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -447,23 +544,26 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonArea )
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 1, 0,
-				      -1 ) );
-  copy_surface( *surface, -1 );
+				      1 ) );
+
+  copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 4,
 				      0, 0, 0,
-				      0, 0, 0, 
-				      0, 1, 0,
-				      1 ) );
-  copy_surface( *surface, 1 );
+				      0, 0, 0,
+				      -1, 1, 0,
+				      0 ) );
+
+  copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
 				      0, 0, 0,
-				      0, 0, 1,
-				      -2 ) );
+				      0, 0, 0,
+				      1, 1, 0,
+				      0 ) );
+  
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -471,13 +571,24 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonArea )
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 0, 1,
+				      -4 ) );
+
+  copy_surface( *surface, -1 );
+  copy_cell_surfaces.push_back( copy_surface );
+
+  surface.reset( new FACEMC::Surface( 7,
+				      0, 0, 0,
+				      0, 0, 0,
+				      0, 0, 1,
 				      0 ) );
+
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  std::list<FACEMC::Quad<double,double,unsigned,unsigned> > intersection_points;
+  std::list<FACEMC::Quad<double,double,unsigned,unsigned> > 
+    intersection_points, polygon;
 
-  cell.calculatePolygonIntersectionPoints( 6,
+  cell.calculatePolygonIntersectionPoints( 7,
 					   copy_cell_surfaces,
 					   intersection_points );
 
@@ -486,11 +597,11 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonArea )
 
   std::list<double> polygon_areas;
 
-  cell.calculatePolygonArea( 6,
+  cell.calculatePolygonArea( 7,
 			     intersection_points,
 			     polygon_areas );
 
-  TEST_EQUALITY_CONST( polygon_areas.front(), 4.0 );
+  TEST_EQUALITY_CONST( polygon_areas.front(), 8.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -509,9 +620,9 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonVolumeContribution )
 							      0, 0, 0,
 							      0, 0, 0,
 							      1, 0, 0,
-							      -1 ) );
+							      -2 ) );
 
-  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense> 
+  FACEMC::Pair<FACEMC::Surface,FACEMC::Surface::Sense>
     copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -519,7 +630,8 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonVolumeContribution )
 				      0, 0, 0,
 				      0, 0, 0,
 				      1, 0, 0,
-				      1 ) );
+				      2 ) );
+
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -527,23 +639,26 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonVolumeContribution )
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 1, 0,
-				      -1 ) );
-  copy_surface( *surface, -1 );
+				      1 ) );
+
+  copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 4,
 				      0, 0, 0,
-				      0, 0, 0, 
-				      0, 1, 0,
-				      1 ) );
-  copy_surface( *surface, 1 );
+				      0, 0, 0,
+				      -1, 1, 0,
+				      0 ) );
+
+  copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
 				      0, 0, 0,
-				      0, 0, 1,
-				      -2 ) );
+				      0, 0, 0,
+				      1, 1, 0,
+				      0 ) );
+  
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
@@ -551,13 +666,24 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonVolumeContribution )
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 0, 1,
+				      -4 ) );
+
+  copy_surface( *surface, -1 );
+  copy_cell_surfaces.push_back( copy_surface );
+
+  surface.reset( new FACEMC::Surface( 7,
+				      0, 0, 0,
+				      0, 0, 0,
+				      0, 0, 1,
 				      0 ) );
+
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
-  std::list<FACEMC::Quad<double,double,unsigned,unsigned> > intersection_points;
+  std::list<FACEMC::Quad<double,double,unsigned,unsigned> > 
+    intersection_points, polygon;
 
-  cell.calculatePolygonIntersectionPoints( 6,
+  cell.calculatePolygonIntersectionPoints( 7,
 					   copy_cell_surfaces,
 					   intersection_points );
 
@@ -566,21 +692,21 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonVolumeContribution )
 
   std::list<double> polygon_areas;
 
-  cell.calculatePolygonArea( 6,
+  cell.calculatePolygonArea( 7,
 			     intersection_points,
 			     polygon_areas );
 
-  FACEMC::Surface reference_surface( 0,
+  FACEMC::Surface reference_surface( 0, 
 				     0, 0, 0,
 				     0, 0, 0,
-				     0, 0, 1,
+				     0, 0, 1, 
 				     -1 );
-
+  
   cell.calculatePolygonVolumeContribution( reference_surface,
 					   intersection_points,
 					   polygon_areas );
 
-  TEST_EQUALITY_CONST( cell.getVolume(), 4.0 );
+  TEST_EQUALITY_CONST( cell.getVolume(), 8.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -598,123 +724,65 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolyhedralCellVolumeAndSurfaceAreas )
 							      0, 0, 0,
 							      0, 0, 0,
 							      1, 0, 0,
-							      -1 ) );
+							      -2 ) );
+
   global_surface_map[1] = surface;
 
   surface.reset( new FACEMC::Surface( 2,
 				      0, 0, 0,
 				      0, 0, 0,
 				      1, 0, 0,
-				      1 ) );
-  global_surface_map[2] = surface;
+				      2 ) );
 
+  global_surface_map[2] = surface;
+  
   surface.reset( new FACEMC::Surface( 3,
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 1, 0,
-				      -1 ) );
-  global_surface_map[3] = surface;
+				      1 ) );
 
+  global_surface_map[3] = surface;
+  
   surface.reset( new FACEMC::Surface( 4,
 				      0, 0, 0,
-				      0, 0, 0, 
-				      0, 1, 0,
-				      1 ) );
-  global_surface_map[4] = surface;
-
-  surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
 				      0, 0, 0,
-				      0, 0, 1,
-				      -1 ) );
-  global_surface_map[5] = surface;
+				      -1, 1, 0,
+				      0 ) );
 
+  global_surface_map[4] = surface;
+  
+  surface.reset( new FACEMC::Surface( 5,
+				      0, 0, 0,
+				      0, 0, 0,
+				      1, 1, 0,
+				      0 ) );
+  
+  global_surface_map[5] = surface;
+  
   surface.reset( new FACEMC::Surface( 6,
 				      0, 0, 0,
 				      0, 0, 0,
 				      0, 0, 1,
-				      1 ) );
-  global_surface_map[6] = surface;				 
+				      -4 ) );
+
+  global_surface_map[6] = surface;
+  
+  surface.reset( new FACEMC::Surface( 7,
+				      0, 0, 0,
+				      0, 0, 0,
+				      0, 0, 1,
+				      0 ) );
+  global_surface_map[7] = surface;
 
   cell.simplifyCellDefinitionString( cell_definition );
   cell.assignSurfaces( cell_definition,
 		       global_surface_map );
   cell.calculatePolyhedralCellVolumeAndSurfaceAreas();
 
-  TEST_EQUALITY_CONST( cell.getVolume(), 8.0 );
-  TEST_EQUALITY_CONST( cell.getSurfaceArea( 1 ), 4.0 );
-  TEST_EQUALITY_CONST( cell.getSurfaceArea( 2 ), 4.0 );
-  TEST_EQUALITY_CONST( cell.getSurfaceArea( 3 ), 4.0 );
-  TEST_EQUALITY_CONST( cell.getSurfaceArea( 4 ), 4.0 );
-  TEST_EQUALITY_CONST( cell.getSurfaceArea( 5 ), 4.0 );
-  TEST_EQUALITY_CONST( cell.getSurfaceArea( 6 ), 4.0 );
+  TEST_FLOATING_EQUALITY( cell.getVolume(), 32.0, 1e-12 );
 }
-
 //---------------------------------------------------------------------------//
-// Check that a cell can be instantiated correctly
-TEUCHOS_UNIT_TEST( Cell, constructor )
-{
-  std::string cell_definition( CELL_DEFINITION_1 );
-  
-  std::map<unsigned,Teuchos::RCP<FACEMC::Surface> > global_surface_map;
-
-  Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
-							      0, 0, 0,
-							      0, 0, 0,
-							      1, 0, 0,
-							      -1 ) );
-  global_surface_map[1] = surface;
-
-  surface.reset( new FACEMC::Surface( 2,
-				      0, 0, 0,
-				      0, 0, 0,
-				      1, 0, 0,
-				      1 ) );
-  global_surface_map[2] = surface;
-
-  surface.reset( new FACEMC::Surface( 3,
-				      0, 0, 0,
-				      0, 0, 0,
-				      0, 1, 0,
-				      -1 ) );
-  global_surface_map[3] = surface;
-
-  surface.reset( new FACEMC::Surface( 4,
-				      0, 0, 0,
-				      0, 0, 0, 
-				      0, 1, 0,
-				      1 ) );
-  global_surface_map[4] = surface;
-
-  surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
-				      0, 0, 0,
-				      0, 0, 1,
-				      -1 ) );
-  global_surface_map[5] = surface;
-
-  surface.reset( new FACEMC::Surface( 6,
-				      0, 0, 0,
-				      0, 0, 0,
-				      0, 0, 1,
-				      1 ) );
-  global_surface_map[6] = surface;
-
-  Teuchos::RCP<FACEMC::Cell> cell( new FACEMC::Cell( 1,
-						     cell_definition,
-						     global_surface_map,
-						     true ) );
-
-  TEST_EQUALITY_CONST( cell->getVolume(), 8.0 );
-  TEST_EQUALITY_CONST( cell->getSurfaceArea( 1 ), 4.0 );
-  TEST_EQUALITY_CONST( cell->getSurfaceArea( 2 ), 4.0 );
-  TEST_EQUALITY_CONST( cell->getSurfaceArea( 3 ), 4.0 );
-  TEST_EQUALITY_CONST( cell->getSurfaceArea( 4 ), 4.0 );
-  TEST_EQUALITY_CONST( cell->getSurfaceArea( 5 ), 4.0 );
-  TEST_EQUALITY_CONST( cell->getSurfaceArea( 6 ), 4.0 );
-}
-
-//---------------------------------------------------------------------------//
-// end tstConvexPolyhedralCell.cpp
+// end tstConcavePolyhedralCell.cpp
 //---------------------------------------------------------------------------//
 

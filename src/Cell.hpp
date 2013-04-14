@@ -68,6 +68,11 @@ protected:
     : d_cell_definition_evaluator( cell_definition ), 
       d_geometric_data_calculated(true)
   { /* ... */ }
+  
+  //! Return if the point is on the cell
+  bool isOn( const Vector &point,
+	     const Teuchos::Array<Pair<Surface,Surface::Sense> > 
+	     &surfaces ) const;
 
   //! Strip the cell definition of set operation characters
   void simplifyCellDefinitionString( std::string &cell_definition );
@@ -84,6 +89,7 @@ protected:
 
   //! Calculate the intersection points of planes with the z-axis
   void calculatePolygonIntersectionPoints( 
+			    const unsigned xy_plane_surface_id,
 			    const Teuchos::Array<Pair<Surface,Surface::Sense> > 
 			    &surfaces,
 			    std::list<Quad<double,double,unsigned,unsigned> > 
@@ -94,7 +100,8 @@ protected:
 			    const Teuchos::Array<Pair<Surface,Surface::Sense> > 
 			    &surfaces,
 			    const Quad<double,double,unsigned,unsigned>
-			    &intersection_point ) const;
+			    &intersection_point,
+			    const unsigned third_surface_id ) const;
 
   //! Create a polygon from intersection points
   void createPolygon( std::list<Quad<double,double,unsigned,unsigned> > 
