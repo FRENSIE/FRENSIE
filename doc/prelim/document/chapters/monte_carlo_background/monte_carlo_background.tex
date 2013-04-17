@@ -24,15 +24,16 @@ state to state is commonly refered to as a random walk processes. However,
 the random walk process can also refer to the set of probability functions
 that govern the movement of the entity. The derivation of this Monte Carlo
 process is outside the scope of this report. It will only be proven that this
-process does indeed recover the solution to the equation of interest. For
-a detailed derivation of the process from a mathematical and probabilistic
-point of view, please refer to ref. \cite{spanier_monte_1969}. 
+process does indeed recover the solution to the equation of interest given an
+appropriate random variable. For a detailed derivation of the process from a 
+mathematical and probabilistic point of view, please refer to ref. 
+\cite{spanier_monte_1969}. 
 
 Assume that the the solution to equation \ref{eq:fredholm_int_eqn} is desired.
 The random walk process for the solution of a Fredholm integral equation of
 the second kind is completely specified by the following probability
-distribution functions (PDFs). The variable $x$ represents one point, which 
-is also refered to as a state, in continuous phase space $\Gamma$. The 
+distribution functions (PDFs) \citep{spanier_monte_1969}. The variable $x$ 
+represents one point, or state, in continuous phase space $\Gamma$. The 
 variable $\alpha = (x_1,\ldots,x_{k-1},x_k)$ represents a typical random walk 
 with $k$ equal to the number of events that have occured to termination. The 
 PDF $p^1(x)$ characterizes the probability that the first event of a random 
@@ -98,7 +99,7 @@ as $p^1(x)$ and $p(y \to x)$ respectively.
   & = & p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=2}^{\infty} P^{n-1}(y)dy \nonumber\\
   & = & p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=1}^{\infty} P^{n}(y)dy \nonumber\\
   & = & p^1(x) + \int_{\Gamma} p(y \to x) P(y)dy \nonumber \\
-  P(x) & = & S(x) + \int_{\Gamma} K(y \to x) P(y)dy \nonumber \\
+  & = & S(x) + \int_{\Gamma} K(y \to x) P(y)dy \nonumber \\
   P(x) & = & F(x) \nonumber
 \end{eqnarray}
 
@@ -106,7 +107,7 @@ From the Fredholm integral equation of the second kind shown in equation
 \ref{eq:fredholm_int_eqn}, it is clear that $S(x)$ acts as a source term.
 However, the exact interpretation of this source term is ambiguous. The
 source term can either characterize the birth states of entities or the
-states where the first non-birth event occurs. Depending on the interpretation 
+states where the first non-birth events occur. Depending on the interpretation 
 of the source term, one must follow a set of steps to simulate a random walk.
 Figure \ref{fig:random_walk_process_1} shows the steps that one would follow
 to simulate a random walk if the source term is interpreted as characterizing
@@ -135,7 +136,7 @@ ordering of the steps.
   \label{fig:random_walk_process_2}
 \end{figure}
 
-\section{Monte Carlo Integral Equation Estimators}
+\section{Monte Carlo Inner Product Estimators}
 \label{sec:mc_int_eqn_estimators}
 In the previous section, it was mentioned that the Monte Carlo random walk
 process will only recover the solution to a Fredholm integral equation of 
@@ -184,15 +185,15 @@ unbiased \citep{spanier_monte_1969}.
   \cdots K(x_{k-1} \to x_k)g(x_k) \nonumber \\
   & = & \int_{\Gamma} g(x)F(x)dx \nonumber  
 \end{eqnarray}
-If the function g(x) is only non-zero in some finite volume $V$, which will be 
-the case for most practicle problems, only the random walks that terminate in 
-the volume $V$ will contribute to the estimation of $I$. Another more efficient
-estimator exists, which estimates $I$ every time a random walk has an event in 
-volume $V$. This estimator, defined in equation \ref{eq:collision_estimator_2},
-is sometimes called the event estimator since every event can potentially
-contribute to the estimation of the value of interest. The value $W_m(\alpha)$
-can be interpreted as the weight of the entity after the $m^{th}$ event
-of the random walk.
+If the function g(x) is only non-zero in some finite portion of the phase space
+$\Gamma_p$, which will be the case for most practicle problems, only the random
+walks that terminate in the phase space $\Gamma_p$ will contribute to the 
+estimation of $I$. Another more efficient estimator exists, which estimates $I$
+every time a random walk has an event in the phase space $\Gamma_p$. This 
+estimator, defined in equation \ref{eq:collision_estimator_2}, is sometimes 
+called the event estimator since every event can potentially contribute to the 
+estimation of the value of interest. The value $W_m(\alpha)$ can be interpreted 
+as the weight of the entity after the $m^{th}$ event of the random walk.
 \begin{eqnarray}
   \eta(\alpha) & = & \sum_m^k \frac{S(x_1)}{p(x_1)}w(x_1 \to x_2) \cdots 
   w(x_{m-1} \to x_m) g(x_m) \nonumber \\
@@ -202,33 +203,35 @@ of the random walk.
 The proof that this estimator is an unbiased random variable is quite lengthy 
 and requires a more in-depth knowledge of probability theory. Therefore, 
 reference \cite{spanier_monte_1969} should be consulted for details on this 
-proof. As the volume $V$ decreases, the event estimator will perform slightly
-better than the first estimator because each random walk will have more 
-opportunities to contribute to the estimate of the inner product $I$. 
+proof. As the size of the phase space $\Gamma_p$ decreases, the event estimator 
+will perform slightly better than the first estimator because each random walk 
+will have more opportunities to contribute to the estimate of the inner product
+$I$. 
 
 One final estimator that will be discussed is the track length estimator.
 Unlike the previous two estimators, contributions to the inner product $I$
 are not made at event points but instead along a path between events points.
 Therefore, this estimator will have the best performance of the three
-estimators as the volume $V$ becomes small. In this estimator, defined in 
-equation \ref{eq:track_length_estimator}, the function $W_m(\alpha)$ is the 
-same that was defined in the event estimator. The function $h(x_m)$ is related 
-to the function $g(x_m)$, however the exact relationship is problem dependent. 
-The value $d_m$ is the length of the $m^{th}$ entity track (distance between 
-event points) that lies within the volume $V$.
+estimators as the size of the phase space $\Gamma_p$ becomes small. In this 
+estimator, defined in equation \ref{eq:track_length_estimator}, the function 
+$W_m(\alpha)$ is the same that was defined in the event estimator. The function 
+$h(x_m)$ is related to the function $g(x_m)$, however the exact relationship is 
+problem dependent. The value $d_m$ is the length of the $m^{th}$ entity track 
+(distance between states $x_m$ and $x_{m+1}$) that lies within the phase space 
+$\Gamma_p$.
 \begin{equation}
   \tau(\alpha) = \sum_{m=1}^k W_m(\alpha)h(x_m)d_m
   \label{eq:track_length_estimator}
 \end{equation}
 
-Note that as the volume of interest $V$ decreases to a point, the function
-$g(x)$ becomes a delta function. All three of the previous estimators will 
-be ineffective at estimating the value $I$ when that is the case. In the next
-section, this problem will be addressed specifically.
+Note that as the size of the phase space $\Gamma_p$ decreases to a point, the 
+function $g(x)$ becomes a delta function. All three of the previous estimators 
+will be ineffective at estimating the value $I$ when that is the case. In the 
+next section, this problem will be addressed specifically.
 
-When the Monte Carlo random walk process is used to calculate the value $I$ of
-the inner product, only a finite number of random walks can be simulated and
-therefore, only an estimate of the value $I$ can be obtained. The estimate will
+When the Monte Carlo random walk process is used to calculate the inner product
+$I$, only a finite number of random walks can be simulated and therefore, only 
+an estimate of the value $I$ can be obtained. The estimate will
 correspond to the following equation, where $N$ is the number of random walks
 conducted and $f(\alpha_i)$ is the value of the estimator used for random
 walk $\alpha_i$.
@@ -265,22 +268,25 @@ Before moving on, an assumption that was made, which has not been mentioned
 until now, must be discussed. In order for any of the above estimators to 
 converge to the value $I$, they must be bounded \citep{spanier_monte_1969}. This
 means that the random walks must terminate after $k < \infty$ events with 
-probability $1$. If an integral operator $\hat{K} = \int_{\Gamma} K(y \to x)dy$ 
-is defined, then random walks will be finite if and only if the spectrum of
-$\hat{K}$ is contained on the open unit disk \citep{spanier_monte_1969}. 
-In the context of neutron transport problems, this means that only subcritical
-problems can be handled. This is an acceptable limitation since this report 
-will not address criticality problems.
+probability unity. If an integral operator $\hat{K} = \int_{\Gamma} K(y \to x)dy$
+\footnote{$\hat{K} \cdot f = \int_{\Gamma} K(y \to x)f(y)dy$} is defined, then 
+random walks will be finite if and only if the spectrum of $\hat{K}$ is 
+contained on the open unit disk \citep{spanier_monte_1969}. In the context of 
+neutron transport problems, this means that only subcritical problems can be 
+handled. This is an acceptable limitation since this report will not address 
+criticality problems.
 
-\section{Dual Problems for Solving Integrals Over Small Volumes}
+\section{The Dual Problem for Calculating Inner Products Over Small Phase 
+  Spaces}
 \label{sec:dual_problems}
 In the previous section, a problem arose when the value of an inner product
-in a small volume was desired. In the limit that the volume becomes a point,
-the estimators become ineffective at obtaining the value of the inner product.
-In this section, a dual problem will be introduced in which the same Monte
-Carlo random walk process can be used but a different inner product is made.
-However, the value of this new inner product will have the same value as the
-original inner product. 
+in a small portion of the phase space was desired. In the limit that this 
+portion of the phase space becomes a point, the estimators become ineffective 
+at obtaining the value of the inner product. In this section, a dual problem 
+will be introduced in which the same Monte Carlo random walk process can be 
+used but a different inner product is estimated. Because of the way that this
+dual problem is formulated the value of this new inner product will have the 
+same value as the original inner product. 
 
 First consider an operator $H$ with the following property when operating
 on the function P(x), where x again is a state in the continuous phase space
@@ -291,9 +297,9 @@ $\Gamma$.
 \end{equation}
 Based on equation \ref{eq:fredholm_int_eqn}, $H \cdot P(x)$ is equal to $S(x)$.
 If we assume that $P(x)$ is a real-valued function, the adjoint operator 
-$H^{\dagger}$ is defined by the following identity \citep{lewis+miller}. The
-function $P^{\dagger}(x)$ is the solution of a dual Fredholm integral equation 
-of the second kind. 
+$H^{\dagger}$ is defined by the following identity 
+\citep{lewis_computational_1993}. The function $P^{\dagger}(x)$ is the solution 
+of a dual Fredholm integral equation of the second kind. 
 \begin{equation}
   \langle P^{\dagger}H \cdot P \rangle = 
   \langle PH^{\dagger} \cdot P^{\dagger} \rangle
@@ -308,7 +314,7 @@ be created.
   \int_{\Gamma}K(y \to x)P^{\dagger}(x)P(y)dy \right]dx \nonumber \\
   & = & \int_{\Gamma} P(x)P^{\dagger}(x)dx - 
   \int_{\Gamma}P(y)\int_{\Gamma}K(y \to x)P^{\dagger}(x)dxdy \nonumber \\
-  & = & \langle PH^{\dagger} \cdot P^{\dagger} \rangle
+  & = & \langle PH^{\dagger} \cdot P^{\dagger} \rangle \nonumber
 \end{eqnarray}
 \begin{equation}
   H^{\dagger} \cdot P^{\dagger}(x) = P^{\dagger}(x) - 
@@ -330,8 +336,17 @@ be defined.
   & = & \langle P^{\dagger}H \cdot P \rangle \nonumber \\
   & = & \langle P^{\dagger}S \rangle
 \end{eqnarray}
-Now, in the limiting case where g(x) is a delta function, the dual problem 
-can efficiently estimate the value of the inner product, assuming that the 
-source is not also a delta function. This dual problem will be the primary
-focus of this report.
+Now, in the limiting case where g(x) is a delta function, the Monte Carlo
+random walk process for the dual equation, combined with any of the estimators 
+described in the previous section, will be able to estimate the inner product. 
+This is because delta functions can be handled easily as source terms but
+are very challenging to handle with estimators. In general, if the portion of 
+the phase space in which the source is defined is larger than the the portion 
+of the phase space in which the function $g(x)$ is defined, the dual problem
+will be be able to take advantage of estimators with higher figures of merrit. 
+This is one of the primary motivations for studying the dual problem in this
+report. It should also be noted that for the dual problem, the same state 
+transition kernel is used, but the integration is over final states. This 
+property of the dual problem will cause many interesting issues, which will be 
+discussed in much more detail in the coming chapters.
 
