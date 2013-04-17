@@ -1,0 +1,337 @@
+\chapter{Monte Carlo Methods for Fredholm Integral Equations}
+\label{ch:mc_methods}
+Monte Carlo processes are often used to solve quadrature problems. This is 
+because a probability interpretation of integrals is quite natural, which in
+turn allows one to develop statistical estimators for integrals rather easily
+\citep{spanier_monte_1969}.
+In this report, the focus will fall solely on the specific Monte Carlo
+process that is used to estimate the solutions of Fredholm integral
+equations of the second kind because, as will be shown in the following 
+chapters, the transport equation can be written this way. Equation
+\ref{eq:fredholm_int_eqn} is an example of a Fredholm integral equation
+of the second kind.
+\begin{equation}
+  F(x) = S(x) + \int K(y \to x) F(y)dy
+\label{eq:fredholm_int_eqn}
+\end{equation}
+
+\section{Monte Carlo Random Walk Process}
+\label{sec:mc_random_walk_process}
+The Monte Carlo process that is used to determine the solution of a Fredholm
+integral equation of the second kind simulates the movement of entities from
+state to state in some phase space. The process of moving some entity from
+state to state is commonly refered to as a random walk processes. However,
+the random walk process can also refer to the set of probability functions
+that govern the movement of the entity. The derivation of this Monte Carlo
+process is outside the scope of this report. It will only be proven that this
+process does indeed recover the solution to the equation of interest. For
+a detailed derivation of the process from a mathematical and probabilistic
+point of view, please refer to ref. \cite{spanier_monte_1969}. 
+
+Assume that the the solution to equation \ref{eq:fredholm_int_eqn} is desired.
+The random walk process for the solution of a Fredholm integral equation of
+the second kind is completely specified by the following probability
+distribution functions (PDFs). The variable $x$ represents one point, which 
+is also refered to as a state, in continuous phase space $\Gamma$. The 
+variable $\alpha = (x_1,\ldots,x_{k-1},x_k)$ represents a typical random walk 
+with $k$ equal to the number of events that have occured to termination. The 
+PDF $p^1(x)$ characterizes the probability that the first event of a random 
+walk will occur in state $x$. The PDF $p(y \to x)$ characterizes the probability
+of a transition from state $y$ to state $x$. Finally, the probability $p(x)$
+characterizes the probability of termination in state $x$. 
+\begin{equation}
+  \text{Random Walk: }
+  \begin{cases}
+    p^1(x) & = P(x_1 = x) \\
+    p(y \to x) & = P(x_{n+1} = x \quad|\quad x_n = y, k > n)  \\
+    p(x) & = P(k = n \quad|\quad x_n = x) 
+  \end{cases}
+  \label{eq:mc_random_walk_pdfs}
+\end{equation}
+The PDFs that define the random walk process have the following properties:
+\begin{enumerate}
+  \item $p^1(x) \geq 0$
+  \item $\int_{\Gamma} p^1(x)dx = 1$
+  \item $p(y \to x) \geq 0$
+  \item $\int_{\Gamma} p(y \to x)dx = 1 - p(y) \leq 1 \quad \forall y \in\Gamma$
+\end{enumerate}
+The PDF $p^1(x)$ can be generalized to a PDF that characterizes the
+probability of an entity having its $n^{th}$ event in state $x$. 
+\begin{equation}
+  P^n(x) = 
+  \begin{cases} 
+    P(x_n = x \quad|\quad k > n-1) & \text{if } n >= 2 \\
+    P(x_1 = x) = p^1(x) & \text{if } n = 1 
+  \end{cases}
+  \label{eq:pn_pdf}
+\end{equation}
+To calculate the PDF in equation \ref{eq:pn_pdf}, the following recursion
+relation may be used.
+\begin{equation}
+  P^n(x) = \int_{\Gamma} p(y \to x) P^{n-1}(y)dy
+  \label{eq:pn_recursion_rel}
+\end{equation}
+
+A discrete random variable $X(x)$ can now be defined on the space of continuous
+random walks, which represents the number density of events that happen in 
+state $x$. The expected value of this discrete random variable can be calculated
+easily.
+\begin{eqnarray}
+  E[X(x)] & = & 1 \cdot P^1(x) + 1 \cdot P^2(x) + \ldots \nonumber \\
+  & = & \sum_{n=1}^{\infty} P^n(x)
+  \label{eq:expec_coll_dens}
+\end{eqnarray}
+
+Finally, a continuous random variable $P(x)$ can be defined, which is equal to
+$E[X(x)]$. This new random variable is called the continuous event density 
+at $x$, though it is more commonly refered to simply as the event density.
+Using this random variable for the event density, and equation
+\ref{eq:pn_recursion_rel}, a proof will be shown that the Monte Carlo random
+walk process outlined in equation \ref{eq:mc_random_walk_pdfs} will indeed
+recover the solution of a Fredholm integral equation, which has the form shown
+in equation \ref{eq:fredholm_int_eqn}. This proof assumes that $S(x)$ and
+$K(y \to x)$ from equation \ref{eq:fredholm_int_eqn} have the same properties 
+as $p^1(x)$ and $p(y \to x)$ respectively. 
+\begin{eqnarray}
+  P(x) & = & \sum_{n=1}^{\infty} P^n(x) \nonumber \\
+  & = & p^1(x) + \sum_{n=2}^{\infty} \int_{\Gamma} p(y \to x) P^{n-1}(y)dy \nonumber\\
+  & = & p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=2}^{\infty} P^{n-1}(y)dy \nonumber\\
+  & = & p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=1}^{\infty} P^{n}(y)dy \nonumber\\
+  & = & p^1(x) + \int_{\Gamma} p(y \to x) P(y)dy \nonumber \\
+  P(x) & = & S(x) + \int_{\Gamma} K(y \to x) P(y)dy \nonumber \\
+  P(x) & = & F(x) \nonumber
+\end{eqnarray}
+
+From the Fredholm integral equation of the second kind shown in equation
+\ref{eq:fredholm_int_eqn}, it is clear that $S(x)$ acts as a source term.
+However, the exact interpretation of this source term is ambiguous. The
+source term can either characterize the birth states of entities or the
+states where the first non-birth event occurs. Depending on the interpretation 
+of the source term, one must follow a set of steps to simulate a random walk.
+Figure \ref{fig:random_walk_process_1} shows the steps that one would follow
+to simulate a random walk if the source term is interpreted as characterizing
+the birth states of entites, while figure \ref{fig:random_walk_process_2}
+shows the steps that one would follow to simulate a random walk if the
+source term is interpreted as characterizing the first non-birth states of
+entities. Note that the only difference between the two procedures is the
+ordering of the steps.
+\begin{figure}[t!]
+  \begin{center}
+    \scalebox{0.5}{\includegraphics{chapters/monte_carlo_background/Monte_Carlo_Process_Emission.pdf} }
+  \end{center}
+  \caption{\textbf{Monte Carlo random walk simulation proceedure.} \textit{This
+      procedure must be followed if the source term characterizes the birth
+      states of entities.} }
+  \label{fig:random_walk_process_1}
+\end{figure}
+\begin{figure}[t!]
+  \begin{center}
+    \scalebox{0.5}{
+      \includegraphics{chapters/monte_carlo_background/Monte_Carlo_Process_Collision.pdf} }
+  \end{center}
+  \caption{\textbf{Monte Carlo random walk simulation procedure.} \textit{This
+      procedure must be followed if the source term characterizes the first
+      collision states of entities.} }
+  \label{fig:random_walk_process_2}
+\end{figure}
+
+\section{Monte Carlo Integral Equation Estimators}
+\label{sec:mc_int_eqn_estimators}
+In the previous section, it was mentioned that the Monte Carlo random walk
+process will only recover the solution to a Fredholm integral equation of 
+the second kind when the function $S(x)$ and $K(y \to x)$ have specific
+properties. These properties can be relaxed if a new problem is defined. 
+Instead of seeking a solution to a Fredholm integral equation of the second 
+kind, the inner product $I$ defined in equation \ref{eq:inner_product} is 
+sought. The function g(x) is a known function and the function F(x) is a 
+solution to equation \ref{eq:fredholm_int_eqn}. 
+\begin{equation}
+  I = \int_{\Gamma} g(x)F(x)dx
+  \label{eq:inner_product}
+\end{equation}
+
+The random walk procedure outlined in the previous section can be used to
+estimate the value of this integral. The PDFs $p^1(x)$ and $p(y \to x)$ can be 
+constructed by normalizing $S(x)$ and $K(y \to x)$ respectively. By using the
+following random variable or estimator, the value of the inner product can 
+be recovered. The variable $\alpha$ is a random walk beginning at $x_1$ and 
+ending at $x_k$.
+\begin{equation}
+  \varepsilon(\alpha) = \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_w)\cdots 
+  w(x_{k-1} \to w_k)\frac{g(x_k)}{p(x_k)}
+  \label{eq:collision_estimator_1}
+\end{equation}
+The weight function $w(y \to x)$ is defined in the following equation.
+\begin{equation}
+  w(y \to x) = 
+  \begin{cases}
+    \frac{K(y \to x)}{p(y \to x)} & \text{if } p(y \to x) \neq 0 \\
+    0 & \text{o.w.}
+  \end{cases}
+\end{equation}
+This estimator reintroduces the magnitude of both the source and the transition
+kernel. It will now be shown that the expected value of this estimator is 
+equal to the value of the inner product. This will prove that this estimator is
+unbiased \citep{spanier_monte_1969}.
+\begin{eqnarray}
+  E\left[\varepsilon(\alpha)\right] & = & \sum_{\alpha} 
+  P(\alpha)\varepsilon(\alpha) \nonumber \\
+  & = & \sum_{k=1}^{\infty} \int \cdots \int dx_1 \cdots dx_k p^1(x_1)
+  p(x_1 \to x_2) \cdots p(x_{k-1} \to x_k)p(x_k) \cdot \nonumber \\
+  & & \qquad \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_w)\cdots 
+  w(x_{k-1} \to w_k)\frac{g(x_k)}{p(x_k)} \nonumber \\
+  & = & \sum_{k=1}^{\infty} \int \cdots \int dx_1 \cdots dx_k S(x_1)K(x_1 \to x_2)
+  \cdots K(x_{k-1} \to x_k)g(x_k) \nonumber \\
+  & = & \int_{\Gamma} g(x)F(x)dx \nonumber  
+\end{eqnarray}
+If the function g(x) is only non-zero in some finite volume $V$, which will be 
+the case for most practicle problems, only the random walks that terminate in 
+the volume $V$ will contribute to the estimation of $I$. Another more efficient
+estimator exists, which estimates $I$ every time a random walk has an event in 
+volume $V$. This estimator, defined in equation \ref{eq:collision_estimator_2},
+is sometimes called the event estimator since every event can potentially
+contribute to the estimation of the value of interest. The value $W_m(\alpha)$
+can be interpreted as the weight of the entity after the $m^{th}$ event
+of the random walk.
+\begin{eqnarray}
+  \eta(\alpha) & = & \sum_m^k \frac{S(x_1)}{p(x_1)}w(x_1 \to x_2) \cdots 
+  w(x_{m-1} \to x_m) g(x_m) \nonumber \\
+  & = & \sum_m^k W_m(\alpha) g(x_m)
+  \label{eq:collision_estimator_2}
+\end{eqnarray}
+The proof that this estimator is an unbiased random variable is quite lengthy 
+and requires a more in-depth knowledge of probability theory. Therefore, 
+reference \cite{spanier_monte_1969} should be consulted for details on this 
+proof. As the volume $V$ decreases, the event estimator will perform slightly
+better than the first estimator because each random walk will have more 
+opportunities to contribute to the estimate of the inner product $I$. 
+
+One final estimator that will be discussed is the track length estimator.
+Unlike the previous two estimators, contributions to the inner product $I$
+are not made at event points but instead along a path between events points.
+Therefore, this estimator will have the best performance of the three
+estimators as the volume $V$ becomes small. In this estimator, defined in 
+equation \ref{eq:track_length_estimator}, the function $W_m(\alpha)$ is the 
+same that was defined in the event estimator. The function $h(x_m)$ is related 
+to the function $g(x_m)$, however the exact relationship is problem dependent. 
+The value $d_m$ is the length of the $m^{th}$ entity track (distance between 
+event points) that lies within the volume $V$.
+\begin{equation}
+  \tau(\alpha) = \sum_{m=1}^k W_m(\alpha)h(x_m)d_m
+  \label{eq:track_length_estimator}
+\end{equation}
+
+Note that as the volume of interest $V$ decreases to a point, the function
+$g(x)$ becomes a delta function. All three of the previous estimators will 
+be ineffective at estimating the value $I$ when that is the case. In the next
+section, this problem will be addressed specifically.
+
+When the Monte Carlo random walk process is used to calculate the value $I$ of
+the inner product, only a finite number of random walks can be simulated and
+therefore, only an estimate of the value $I$ can be obtained. The estimate will
+correspond to the following equation, where $N$ is the number of random walks
+conducted and $f(\alpha_i)$ is the value of the estimator used for random
+walk $\alpha_i$.
+\begin{equation}
+  \bar{I} = \frac{1}{N} \sum_{i=1}^N f(\alpha_i)
+  \label{eq:inner_product_estimate}
+\end{equation}
+Because there will only be a finite number of random walks simulated, there
+will also be a standard deviation associated with this estimate of $I$. The 
+standard deviation of the estimate is shown below
+\begin{equation}
+  s = \sqrt{\frac{1}{N-1}\sum_{i=1}^N f(\alpha_i)^2 - \frac{N}{N-1}\bar{I}}
+  \label{eq:inner_product_stddev}
+\end{equation}
+
+One last quantity must be discussed, which characterizes the efficacy of
+an estimator at obtaining estimates of the value $I$. This quantity, defined
+in equation \ref{eq:fom}, is often refered to as the figure of merrit. The
+basic theoretical problem of Monte Carlo methods is to select the best
+estimators for a specific problem, which are unbiased and whose associated
+variances are as small as possible \citep{spanier_monte_1969}. However, the 
+computer time needed to evaluate the estimator is also an important 
+consideration. The figure of merrit takes into account both of these factors
+and can therefore be used to evaluate the efficacy of a particular estimator
+with regard to a particular problem. Because the value $s^2/\bar{I}^2$ is
+proportional to $N^{-1}$ and the computer time is proportional to $N$, the
+figure of merrit is a constant.
+\begin{equation}
+  FOM = \frac{\bar{I}}{s^2t}
+  \label{eq:fom}
+\end{equation}
+
+Before moving on, an assumption that was made, which has not been mentioned
+until now, must be discussed. In order for any of the above estimators to 
+converge to the value $I$, they must be bounded \citep{spanier_monte_1969}. This
+means that the random walks must terminate after $k < \infty$ events with 
+probability $1$. If an integral operator $\hat{K} = \int_{\Gamma} K(y \to x)dy$ 
+is defined, then random walks will be finite if and only if the spectrum of
+$\hat{K}$ is contained on the open unit disk \citep{spanier_monte_1969}. 
+In the context of neutron transport problems, this means that only subcritical
+problems can be handled. This is an acceptable limitation since this report 
+will not address criticality problems.
+
+\section{Dual Problems for Solving Integrals Over Small Volumes}
+\label{sec:dual_problems}
+In the previous section, a problem arose when the value of an inner product
+in a small volume was desired. In the limit that the volume becomes a point,
+the estimators become ineffective at obtaining the value of the inner product.
+In this section, a dual problem will be introduced in which the same Monte
+Carlo random walk process can be used but a different inner product is made.
+However, the value of this new inner product will have the same value as the
+original inner product. 
+
+First consider an operator $H$ with the following property when operating
+on the function P(x), where x again is a state in the continuous phase space
+$\Gamma$. 
+\begin{equation}
+  H \cdot P(x) = P(x) - \int_{\Gamma} K(y \to x)P(y)dy
+  \label{eq:forward_operator}
+\end{equation}
+Based on equation \ref{eq:fredholm_int_eqn}, $H \cdot P(x)$ is equal to $S(x)$.
+If we assume that $P(x)$ is a real-valued function, the adjoint operator 
+$H^{\dagger}$ is defined by the following identity \citep{lewis+miller}. The
+function $P^{\dagger}(x)$ is the solution of a dual Fredholm integral equation 
+of the second kind. 
+\begin{equation}
+  \langle P^{\dagger}H \cdot P \rangle = 
+  \langle PH^{\dagger} \cdot P^{\dagger} \rangle
+  \label{eq:forward_adjoint_ops}
+\end{equation}
+From this identity the dual Fredholm integral equation of the second kind can
+be created.
+\begin{eqnarray}
+  \langle P^{\dagger}H \cdot P \rangle & = & \int_{\Gamma} \left[P^{\dagger}(x)P(x) -
+  P^{\dagger}(x)\int_{\Gamma}K(y \to x)P(y)dy \right]dx \nonumber \\
+  & = & \int_{\Gamma} \left[P^{\dagger}(x)P(x) -
+  \int_{\Gamma}K(y \to x)P^{\dagger}(x)P(y)dy \right]dx \nonumber \\
+  & = & \int_{\Gamma} P(x)P^{\dagger}(x)dx - 
+  \int_{\Gamma}P(y)\int_{\Gamma}K(y \to x)P^{\dagger}(x)dxdy \nonumber \\
+  & = & \langle PH^{\dagger} \cdot P^{\dagger} \rangle
+\end{eqnarray}
+\begin{equation}
+  H^{\dagger} \cdot P^{\dagger}(x) = P^{\dagger}(x) - 
+  \int_{\Gamma}K(x \to y)P^{\dagger}(y)dy
+  \label{eq:adjoint_operator}
+\end{equation}
+If the function $H^{\dagger} \cdot P^{\dagger}(x)$ is set equal to the function
+$g(x)$ from equation \ref{eq:inner_product}, the dual Fredholm integral
+equation can be defined.
+\begin{equation}
+  P^{\dagger}(x) = g(x) + \int_{\Gamma}K(x \to y)P^{\dagger}(y)dy
+  \label{eq:dual_fredholm_int_eqn}
+\end{equation}
+With the dual equation defined in this way, the new inner product can also
+be defined.
+\begin{eqnarray}
+  I & = & \langle PH^{\dagger} \cdot P^{\dagger} \rangle \nonumber \\
+  & = & \langle Pg \rangle \nonumber \\
+  & = & \langle P^{\dagger}H \cdot P \rangle \nonumber \\
+  & = & \langle P^{\dagger}S \rangle
+\end{eqnarray}
+Now, in the limiting case where g(x) is a delta function, the dual problem 
+can efficiently estimate the value of the inner product, assuming that the 
+source is not also a delta function. This dual problem will be the primary
+focus of this report.
+
