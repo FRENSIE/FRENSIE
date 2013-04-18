@@ -85,14 +85,16 @@ easily.
 
 Finally, a continuous random variable $P(x)$ can be defined, which is equal to
 $E[X(x)]$. This new random variable is called the continuous event density 
-at $x$, though it is more commonly refered to simply as the event density.
-Using this random variable for the event density, and equation
-\ref{eq:pn_recursion_rel}, a proof will be shown that the Monte Carlo random
-walk process outlined in equation \ref{eq:mc_random_walk_pdfs} will indeed
-recover the solution of a Fredholm integral equation, which has the form shown
-in equation \ref{eq:fredholm_int_eqn}. This proof assumes that $S(x)$ and
-$K(y \to x)$ from equation \ref{eq:fredholm_int_eqn} have the same properties 
-as $p^1(x)$ and $p(y \to x)$ respectively. 
+at $x$, or simply the event density
+\footnote{The collision density is the name given in most texts but for the
+sake of generality, event density has been chosen.}. Using this random variable 
+for the event density, and equation \ref{eq:pn_recursion_rel}, a proof will be 
+shown that the Monte Carlo random walk process outlined in equation 
+\ref{eq:mc_random_walk_pdfs} will indeed recover the solution of a Fredholm 
+integral equation, which has the form shown in equation 
+\ref{eq:fredholm_int_eqn}. This proof assumes that $S(x)$ and $K(y \to x)$ from 
+equation \ref{eq:fredholm_int_eqn} have the same properties as $p^1(x)$ and 
+$p(y \to x)$ respectively. 
 \begin{eqnarray}
   P(x) & = & \sum_{n=1}^{\infty} P^n(x) \nonumber \\
   & = & p^1(x) + \sum_{n=2}^{\infty} \int_{\Gamma} p(y \to x) P^{n-1}(y)dy \nonumber\\
@@ -103,19 +105,30 @@ as $p^1(x)$ and $p(y \to x)$ respectively.
   P(x) & = & F(x) \nonumber
 \end{eqnarray}
 
-From the Fredholm integral equation of the second kind shown in equation
-\ref{eq:fredholm_int_eqn}, it is clear that $S(x)$ acts as a source term.
-However, the exact interpretation of this source term is ambiguous. The
-source term can either characterize the birth states of entities or the
-states where the first non-birth events occur. Depending on the interpretation 
-of the source term, one must follow a set of steps to simulate a random walk.
-Figure \ref{fig:random_walk_process_1} shows the steps that one would follow
-to simulate a random walk if the source term is interpreted as characterizing
-the birth states of entites, while figure \ref{fig:random_walk_process_2}
-shows the steps that one would follow to simulate a random walk if the
-source term is interpreted as characterizing the first non-birth states of
-entities. Note that the only difference between the two procedures is the
-ordering of the steps.
+The random variables $X(x)$ and $P(x)$ are purely mathematical contrivances
+used to motivate the use of the random walk process. They will never be used 
+to actually estimate values of interest in a problem. While one could count the
+number of events that occur at a particular point in phase space, given the 
+continuous nature of the phase space, the probability of any one event 
+occuring at exactly the point of interest is zero. In the next section, more 
+practicle random variables will be discussed that allow one to estimate 
+solution of equation \ref{eq:fredholm_int_eqn} in some finite portion of the 
+phase space. An additional property of these random variables is that the 
+conditions on $S(x)$ and $K(y \to x)$ can be relaxed slightly.
+
+Based on the random walk process that has been outlined, it is clear that 
+$S(x)$ from equation \ref{eq:fredholm_int_eqn} acts as a source term for
+the random walks. However, the exact interpretation of this source term is 
+ambiguous. The source term can either characterize the birth states of entities
+or the states where the first non-birth events occur. Depending on the 
+interpretation of the source term, one must follow a set of steps to simulate a
+random walk. Figure \ref{fig:random_walk_process_1} shows the steps that one 
+would follow to simulate a random walk if the source term is interpreted as 
+characterizing the birth states of entites, while figure 
+\ref{fig:random_walk_process_2} shows the steps that one would follow to 
+simulate a random walk if the source term is interpreted as characterizing the 
+first non-birth states of entities. Note that the only difference between the 
+two procedures is the ordering of the steps.
 \begin{figure}[t!]
   \begin{center}
     \scalebox{0.5}{\includegraphics{chapters/monte_carlo_background/Monte_Carlo_Process_Emission.pdf} }
@@ -138,25 +151,36 @@ ordering of the steps.
 
 \section{Monte Carlo Inner Product Estimators}
 \label{sec:mc_int_eqn_estimators}
-In the previous section, it was mentioned that the Monte Carlo random walk
-process will only recover the solution to a Fredholm integral equation of 
-the second kind when the function $S(x)$ and $K(y \to x)$ have specific
-properties. These properties can be relaxed if a new problem is defined. 
-Instead of seeking a solution to a Fredholm integral equation of the second 
-kind, the inner product $I$ defined in equation \ref{eq:inner_product} is 
-sought. The function g(x) is a known function and the function F(x) is a 
-solution to equation \ref{eq:fredholm_int_eqn}. 
+In most problems where Monte Carlo is used, the value of the inner product
+between two functions is desired. One function will be a known function and
+the other will be the solution to a Fredholm integral equation of the second
+kind, which is unknown. In equation \ref{eq:inner_product}, $g(x)$ is the known
+function and $F(x)$ is a solution to equation \ref{eq:fredholm_int_eqn}.
 \begin{equation}
   I = \int_{\Gamma} g(x)F(x)dx
   \label{eq:inner_product}
 \end{equation}
 
-The random walk procedure outlined in the previous section can be used to
-estimate the value of this integral. The PDFs $p^1(x)$ and $p(y \to x)$ can be 
-constructed by normalizing $S(x)$ and $K(y \to x)$ respectively. By using the
-following random variable or estimator, the value of the inner product can 
-be recovered. The variable $\alpha$ is a random walk beginning at $x_1$ and 
-ending at $x_k$.
+In the previous section, two random variables were introduced to prove that
+the Monte Carlo random walk process would recover the solution to a Fredholm
+integral equation of the second kind. Because the phase space where the random
+walks take place is continuous, these two random variables were useless from
+a practicle stand point. In this section, several random variables, often 
+refered to as estimators, will be introduced that can be used to gather 
+information from the random walks to estimate the value $I$. These estimators
+are defined over the entire phase space instead of one particular point, 
+which makes them quite useful. In addition, they allow the necessary properties
+of $S(x)$ and $K(y \to x)$ to be relaxed slightly, which will be shown shortly.
+
+
+The first estimator that will be discussed gathers information about every
+event of the random walk, but only contributes to the estimation of $I$ when
+the random walk terminates. To conduct the random walks using the procedure
+described in the previous section, the PDFs $p^1(x)$ and $p(y \to x)$ must be 
+constructed by normalizing $S(x)$ and $K(y \to x)$ respectively. This random
+variable will then reincorporate the magnitude of these functions into
+the estimate of $I$. In equation \ref{eq:collision_estimator_1}, the variable 
+$\alpha$ is a random walk beginning at $x_1$ and ending at $x_k$.
 \begin{equation}
   \varepsilon(\alpha) = \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_w)\cdots 
   w(x_{k-1} \to w_k)\frac{g(x_k)}{p(x_k)}
@@ -170,10 +194,9 @@ The weight function $w(y \to x)$ is defined in the following equation.
     0 & \text{o.w.}
   \end{cases}
 \end{equation}
-This estimator reintroduces the magnitude of both the source and the transition
-kernel. It will now be shown that the expected value of this estimator is 
-equal to the value of the inner product. This will prove that this estimator is
-unbiased \citep{spanier_monte_1969}.
+It will now be shown that the expected value of this estimator is equal to the 
+value of the inner product, which will prove that this estimator is unbiased 
+\citep{spanier_monte_1969}.
 \begin{eqnarray}
   E\left[\varepsilon(\alpha)\right] & = & \sum_{\alpha} 
   P(\alpha)\varepsilon(\alpha) \nonumber \\
@@ -185,15 +208,18 @@ unbiased \citep{spanier_monte_1969}.
   \cdots K(x_{k-1} \to x_k)g(x_k) \nonumber \\
   & = & \int_{\Gamma} g(x)F(x)dx \nonumber  
 \end{eqnarray}
+
 If the function g(x) is only non-zero in some finite portion of the phase space
-$\Gamma_p$, which will be the case for most practicle problems, only the random
-walks that terminate in the phase space $\Gamma_p$ will contribute to the 
+$\Gamma_p$, which will be the case for most problems, only the random walks 
+that terminate in the phase space $\Gamma_p$ will contribute to the 
 estimation of $I$. Another more efficient estimator exists, which estimates $I$
 every time a random walk has an event in the phase space $\Gamma_p$. This 
-estimator, defined in equation \ref{eq:collision_estimator_2}, is sometimes 
-called the event estimator since every event can potentially contribute to the 
-estimation of the value of interest. The value $W_m(\alpha)$ can be interpreted 
-as the weight of the entity after the $m^{th}$ event of the random walk.
+estimator, defined in equation \ref{eq:collision_estimator_2}, is called the 
+event estimator since every event can potentially contribute to the estimation 
+of the value of interest \footnote{The collision estimator is the name given
+in most texts but for the sake of generality, event estimator has been 
+chosen.}. The value $W_m(\alpha)$ can be interpreted as the weight of the 
+entity after the $m^{th}$ event of the random walk.
 \begin{eqnarray}
   \eta(\alpha) & = & \sum_m^k \frac{S(x_1)}{p(x_1)}w(x_1 \to x_2) \cdots 
   w(x_{m-1} \to x_m) g(x_m) \nonumber \\
@@ -218,7 +244,8 @@ $W_m(\alpha)$ is the same that was defined in the event estimator. The function
 $h(x_m)$ is related to the function $g(x_m)$, however the exact relationship is 
 problem dependent. The value $d_m$ is the length of the $m^{th}$ entity track 
 (distance between states $x_m$ and $x_{m+1}$) that lies within the phase space 
-$\Gamma_p$.
+$\Gamma_p$. For a proof that this estimator is also unbiased, please refer to
+reference \cite{spanier_monte_1969} once again.
 \begin{equation}
   \tau(\alpha) = \sum_{m=1}^k W_m(\alpha)h(x_m)d_m
   \label{eq:track_length_estimator}
@@ -249,16 +276,16 @@ standard deviation of the estimate is shown below
 
 One last quantity must be discussed, which characterizes the efficacy of
 an estimator at obtaining estimates of the value $I$. This quantity, defined
-in equation \ref{eq:fom}, is often refered to as the figure of merrit. The
-basic theoretical problem of Monte Carlo methods is to select the best
-estimators for a specific problem, which are unbiased and whose associated
-variances are as small as possible \citep{spanier_monte_1969}. However, the 
-computer time needed to evaluate the estimator is also an important 
-consideration. The figure of merrit takes into account both of these factors
-and can therefore be used to evaluate the efficacy of a particular estimator
-with regard to a particular problem. Because the value $s^2/\bar{I}^2$ is
-proportional to $N^{-1}$ and the computer time is proportional to $N$, the
-figure of merrit is a constant.
+in equation \ref{eq:fom}, is often refered to as the figure of merrit. While it
+can be tempting to base ones decision for using a particular estimator solely
+on the characteristics of its variance, the computer time needed to evaluate 
+the estimator is also an important consideration. The figure of merrit takes
+ into account both of these factors and can therefore be used to evaluate the 
+efficacy of a particular estimator with regard to a particular problem. 
+Because the value $s^2/\bar{I}^2$ is proportional to $N^{-1}$ and the computer 
+time is proportional to $N$, the figure of merrit is a constant. For more one
+the variance properties of estimators, please refer to reference 
+\cite{spanier_monte_1969}.
 \begin{equation}
   FOM = \frac{\bar{I}}{s^2t}
   \label{eq:fom}
@@ -305,8 +332,7 @@ of a dual Fredholm integral equation of the second kind.
   \langle PH^{\dagger} \cdot P^{\dagger} \rangle
   \label{eq:forward_adjoint_ops}
 \end{equation}
-From this identity the dual Fredholm integral equation of the second kind can
-be created.
+From this identity the adjoint operator $H^{\dagger}$ can be determined.
 \begin{eqnarray}
   \langle P^{\dagger}H \cdot P \rangle & = & \int_{\Gamma} \left[P^{\dagger}(x)P(x) -
   P^{\dagger}(x)\int_{\Gamma}K(y \to x)P(y)dy \right]dx \nonumber \\
@@ -331,10 +357,10 @@ equation can be defined.
 With the dual equation defined in this way, the new inner product can also
 be defined.
 \begin{eqnarray}
-  I & = & \langle PH^{\dagger} \cdot P^{\dagger} \rangle \nonumber \\
-  & = & \langle Pg \rangle \nonumber \\
-  & = & \langle P^{\dagger}H \cdot P \rangle \nonumber \\
-  & = & \langle P^{\dagger}S \rangle
+  I & = & \langle PH^{\dagger} \cdot P^{\dagger} \rangle = 
+  \langle P^{\dagger}H \cdot P \rangle \nonumber \\
+  & = & \langle Pg \rangle \nonumber = \langle P^{\dagger}S \rangle \nonumber \\
+  I & = & \langle P^{\dagger}S \rangle
 \end{eqnarray}
 Now, in the limiting case where g(x) is a delta function, the Monte Carlo
 random walk process for the dual equation, combined with any of the estimators 
@@ -350,3 +376,11 @@ transition kernel is used, but the integration is over final states. This
 property of the dual problem will cause many interesting issues, which will be 
 discussed in much more detail in the coming chapters.
 
+One final piece of terminology must be defined before moving on to the next 
+chapter. The detector will be defined as the portion of the phase space where
+the function $g(x)$ is non-zero. When discussing radiation transport problems,
+it is very common to refer to the region where particles are born as the source
+and the region where particles information is recorded as the detector. However,
+in the dual problem the opposite will be true; particles will be born in the
+detector region (where $g(x)$ is non-zero) and particle information will be 
+recorded in the source region (where $S(x)$ is non-zero).

@@ -1,31 +1,32 @@
 \chapter{Applying Monte Carlo Methods to Neutral Particle Transport 
   Problems}
 \label{ch:neutral_particle_transport}
-In any Monte Carlo process, information collected from samples of the parent 
-population will only be useful if the probability laws governing the sampling
-are an accurate represention of a physical process. In this chapter, the 
-probability laws governing the sampling of neutral particle histories (i.e. 
-neutrons and photons) will be derived for the forward process. After a 
-discussion of the various probability laws is given, the probability laws
-governing the sampling of neutral particle histories will be derived for the
-reverse process. In addition, the methods used to calculate the adjoint
-cross section data will be discussed.
+In the previous chapter, the Monte Carlo process was discussed in a very
+general mathematical sense. In this chapter, it will be shown how to apply
+the general Monte Carlo random walk process to neutral particle transport 
+problems. This will require the derivation of the PDFs that govern the random 
+walk process from the transport equation. This derivation will be done in
+some detail so that each step of the derivation is very clear. The level of
+detail will likely seem unnecessary because the PDFs that will be derived
+will be very intuitive. However, PDFs for the dual problem, which will be
+derived from the adjoint transport equation, will not be intuitive. 
+Fortunately, because the adjoint transport equation has a similar form to the
+transport equation, the derivation will look almost identical. 
 
-\section{Derivation of Random Walk PDFs for the Forward Process}
+\section{Derivation of Monte Carlo Random Walk PDFs from the Transport Equation}
 \label{sec:der_prob_laws_for_proc}
-To use the Monte Carlo process that was discussed in the previous section to
-estimate a solution to the transport equation, the transport equation must
-be written as a Fredholm integral equation of the second kind. A commonly
-referenced form of the transport equation is the integro-differential 
-Boltzmann equation. It will be shown how to derive the integral form of the
-transport equation. Similar derivations to the one that will be shown can also
+The equation that describes the transport of radiation through a medium is
+the Boltzmann equation, which is sometimes refered to simply as the transport
+equation in the context of radiation problems. The transport equation is often
+given in an integro-differential form, as seen in equation 
+\ref{eq:integro_diff_boltzmann_eqn}. In order to use the Monte Carlo random
+walk process that was discussed in the previous chapter, the 
+integro-differential form of the transport equation must be converted to a 
+Fredholm integral equation of the second kind. Once it is in the appropriate
+form the PDFs that govern the random walk process for neutral particles can be 
+determined. Similar derivations to the one that will be shown can also
 be found in several references \citep{lewis, hoogenboom, irving}.
-
-Equation \ref{eq:integro_diff_boltzmann_eqn} is the time dependent Boltzmann
-equation, which is a balance equation that describes the transport of fluid
-in a medium. The fluid is assumed to have a continuous distribution throughout
-the medium. For the purposes of this report, the fluid of interest is a
-population of particles (neutrons or photons). 
+ 
 \begin{equation}
   \begin{split}
     \frac{1}{v}&\frac{\partial \varphi(\vec{r},E,\hat{\Omega},t)}{\partial t} +
@@ -135,12 +136,12 @@ $exp\left[-\int_0^R \Sigma_T(\vec{r}-R^{'}\hat{\Omega},E)dR^{'} \right]$.
     exp\left[-\int_0^R \Sigma_T(\vec{r}-R^{'}\hat{\Omega},E)dR^{'} \right] dR
   \end{split}
 \end{equation*}
+
+\vspace{0.5cm}
 \begin{equation}
-  \begin{split}
-    \varphi(\vec{r},E,&\hat{\Omega}) = \\ 
-    & \int_0^{\infty} \chi(\vec{r} - R\hat{\Omega},E,\hat{\Omega})
+    \varphi(\vec{r},E,\hat{\Omega}) = 
+    \int_0^{\infty} \chi(\vec{r} - R\hat{\Omega},E,\hat{\Omega})
     exp\left[-\int_0^R \Sigma_T(\vec{r}-R^{'}\hat{\Omega},E)dR^{'} \right] dR
-  \end{split}
   \label{eq:line_integral_transport_eqn}
 \end{equation}
 To get to equation \ref{eq:line_integral_transport_eqn} it was assumed that the
@@ -153,11 +154,11 @@ $\hat{\Omega} = \frac{\vec{r} - \vec{r^{'}}}{|\vec{r} - \vec{r^{'}}}|$ and
 $dV^{'} = R^2dRd\hat{\Omega^{'}}$.
 \begin{equation}
   \begin{split}
-    \varphi(\vec{r},E,&\hat{\Omega}) = 
-    \int\int \chi(\vec{r^{'}},E,\hat{\Omega^{'}}) \\
-    & exp\left[-\int_0^{|\vec{r} - \vec{r^{'}}|} 
-      \Sigma_T(\vec{r}-R^{'}\hat{\Omega^{'}},E)dR^{'} \right] 
-    \frac{\delta \left(\Omega^{'} - \left[\frac{\vec{r} - \vec{r^{'}}}
+    \varphi(\vec{r},E,\hat{\Omega}) = 
+    \int\int \chi(\vec{r^{'}},E,\hat{\Omega^{'}})
+    exp\Big[-\int_0^{|\vec{r} - \vec{r^{'}}|} 
+      &\Sigma_T(\vec{r}-R^{'}\hat{\Omega^{'}},E)dR^{'} \Big] \\
+    &\cdot \frac{\delta \left(\Omega^{'} - \left[\frac{\vec{r} - \vec{r^{'}}}
         {|\vec{r} - \vec{r^{'}}|}\right]\right)}
     {|\vec{r} - \vec{r^{'}}|^2} dV^{'}
   \end{split}
@@ -178,6 +179,7 @@ emission density only.
     {|\vec{r} - \vec{r^{'}}|^2} dV^{''}dE^{'}d\hat{\Omega^{'}}
   \end{split}
 \end{equation*}
+
 \begin{equation}
   \begin{split}
     \chi(\vec{r},&E,\hat{\Omega}) = S(\vec{r},E,\hat{\Omega}) + \\
@@ -193,31 +195,25 @@ kernel, which is defined in the next equation.
 \begin{equation}
   \begin{split}
     T(\vec{r^{'}} \to \vec{r},&E,\hat{\Omega}) = \Sigma_T(\vec{r},E) \\
-    &exp\left[-\int_0^{|\vec{r} - \vec{r^{'}}|} 
+    &\cdot exp\left[-\int_0^{|\vec{r} - \vec{r^{'}}|} 
       \Sigma_T(\vec{r}-R^{'}\hat{\Omega^{'}},E)dR^{'} \right] 
     \frac{\delta \left(\Omega^{'} - \left[\frac{\vec{r} - \vec{r^{'}}}
         {|\vec{r} - \vec{r^{'}}|}\right]\right)}
     {|\vec{r} - \vec{r^{'}}|^2} 
   \end{split}
 \end{equation}
-The quantity $T(\vec{r^{'}} \to \vec{r},E,\hat{\Omega})dV^{'}$ can be interpreted
+The quantity $T(\vec{r^{'}} \to \vec{r},E,\hat{\Omega})dV$ can be interpreted
 as the probability that a particle at $\vec{r^{'}}$ with energy $E$ and 
 direction $\hat{\Omega}$ will have its next collision in volume element $dV$
 at $\vec{r}$.
 
 The kernel $C(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})$ is called
 the collision kernel, which is defined in the next equation.
-\begin{eqnarray}
-  C(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) & = & 
+\begin{equation}
+  C(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) = 
   \frac{\Sigma_S(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})}
-       {\Sigma_T(\vec{r},E^{'})} \\
-  & = & \frac{\Sigma_S(\vec{r},E^{'})}{\Sigma_T(\vec{r},E^{'})}
-       \frac{\Sigma_S(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})}
-            {\Sigma_S(\vec{r},E^{'})} \nonumber \\
-  & = & \frac{\Sigma_S(\vec{r},E^{'})}{\Sigma_T(\vec{r},E^{'})} \sum_i
-        \frac{\Sigma_{S,i}(\vec{r},E^{'})}{\Sigma_S(\vec{r},E^{'})}
-        f_i(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) \nonumber
-\end{eqnarray}
+       {\Sigma_T(\vec{r},E^{'})}
+\end{equation}
 
 The transition and collision kernels can be combined to create a kernel that
 characterizes the transition of a particle from a state 
@@ -234,12 +230,11 @@ The integral equation of the emission density shown in equation
 \begin{equation*}
   \chi(x) = S(x) + \int_{\Gamma} K(y \to x)\chi(y)dy,
 \end{equation*}
-which is a Fredholm integral equation of the second kind. Using the Monte Carlo
-random walk process outlined in the previous section, the emission density
-can be estimated. 
+which is a Fredholm integral equation of the second kind. 
 
-Another quantity of interest, which is directly related to both the flux and 
-the emission density is the collision density. It is defined simply as
+Before we take a closer look at the kernel $K(y \to x)$, another quantity of 
+interest must be discussed: the collision density. It is related to the
+flux and the emission density by the following equations.
 \begin{eqnarray}
   \psi(\vec{r},E,\hat{\Omega}) & = & \Sigma_T(\vec{r},E)
   \varphi(\vec{r},E,\hat{\Omega}) \\
@@ -269,3 +264,135 @@ following equations.
   C(\vec{r'},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
 \end{equation}
 
+Before the PDFs that govern the random walk process are derived, the transport
+and collision kernels must be investigated a bit further. First, note that
+for an infinite medium, the transport kernel is normalized. However, if the
+domain of interest in a problem is finite, the transport kernel will no longer
+be normalized. Fortunately, this is taken care of by terminating histories 
+that exit the domain of interest \citep{irving_adjoint_1971}.
+\begin{equation}
+  \int T(\vec{r^{'}} \to \vec{r},E,\hat{\Omega})dV^{'} \leq 1
+\end{equation}
+The collision kernel can be expanded, which will provided some additional 
+information. 
+\begin{eqnarray}
+  C(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) & = & 
+  \frac{\Sigma_S(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})}
+       {\Sigma_T(\vec{r},E^{'})} \nonumber \\
+  & = & \frac{\Sigma_S(\vec{r},E^{'})}{\Sigma_T(\vec{r},E^{'})}
+       \frac{\Sigma_S(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})}
+            {\Sigma_S(\vec{r},E^{'})} \nonumber \\
+  & = & \frac{\Sigma_S(\vec{r},E^{'})}{\Sigma_T(\vec{r},E^{'})} \sum_i
+        \frac{\Sigma_{S,i}(\vec{r},E^{'})}{\Sigma_S(\vec{r},E^{'})}
+        f_i(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) \nonumber
+\end{eqnarray}
+In the expansion of the scattering kernel, the subscript i denotes a particular
+type of scattering reaction. The function 
+$f_i(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})$ is a PDF that 
+characterizes the outgoing particle direction and energy ($E$,$\hat{\Omega}$) 
+given an initial energy and direction ($E$,$\hat{\Omega}$) for scattering 
+reaction i. This PDF has the following property:
+\begin{equation}
+  \int\int f_i(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) 
+  dEd\hat{\Omega} = 1
+\end{equation}
+Therefore, the collision operator has the following property. The right-hand 
+side of equation \ref{eq:collision_op_prop} is often refered to as the 
+non-absorption probability ($P_{NA}(E)$).
+\begin{eqnarray}
+  \int\int C(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) 
+  dEd\hat{\Omega} & = & \frac{\Sigma_S(\vec{r},E^{'})}{\Sigma_T(\vec{r},E^{'})}
+  \label{eq:collision_op_prop} \\
+  & = & P_{NA}(E^{'}) \nonumber 
+\end{eqnarray}
+Because all materials have a non-zero absorption and scattering reaction
+at all energies, the non-absorption probability and consequently the 
+collision kernel has the following property.
+\begin{equation*}
+  0 < P_{NA} < 1
+\end{equation*}
+Now, it is trivial to show that the state transition kernels $K(y \to x)$ and
+$L(y \to x)$ have the following properties.
+\begin{enumerate}
+  \item $K(y \to x) > 0$ \\
+    $L(y \to x) > 0$
+  \item $\int K(y \to x)dx = P_{NA}(y) < 1 \quad \forall y \in \Gamma$ \\
+    $\int L(y \to x)dx = P_{NA}(y) < 1 \quad \forall y \in \Gamma$
+\end{enumerate}
+
+With the state transition kernels $K(y \to x)$ and $L(y \to x)$ fully 
+characterized, the Monte Carlo random walk process for neutral particle 
+transport problems can be completely specified.
+\begin{equation}
+  \chi(x)\text{ Random Walk:}
+  \begin{cases}
+    p^1(x) & = \frac{S(x)}{\int_{\Gamma} S(x)dx} \\
+    p(y \to x) &  = K(y \to x) \\
+    p(x) & = 1 - P_{NA}(x)
+  \end{cases}
+  \label{eq:mc_random_walk_emission_dens}
+\end{equation}
+\begin{equation}
+  \psi(x)\text{ Random Walk:}
+  \begin{cases}
+    p^1(x) & = \frac{\psi_1(x)}{\int_{\Gamma}\psi_1(x)dx} \\
+    p(y \to x) & = L(y \to x) \\
+    p(x) & = 1 - P_{NA}(x)
+  \end{cases}
+  \label{eq:mc_random_walk_collision_dens}
+\end{equation}
+To actually simulate the random walks for the emission density, the procedure
+outlined in figure \ref{fig:random_walk_process_1} would be used. To
+actually simulate the random walks for the collision density, the procedure
+outlined in figure \ref{fig:random_walk_process_2} would be used. However,
+because the kernels $K(y \to x)$ and $L(y \to x)$ only differ in the ordering
+of the collision and transport kernels and because of the relationship between
+the emmision density and the collision density, both of these quantities can
+be estimated during the same random walk process. Figure 
+\ref{fig:combined_random_walk_process} illustrates the new combined random
+walk process. In this new process, particles always start in the true source
+and not the first collided source, which is advantageous because the first 
+collided source would be challenging to calculate. Before a collision occurs,
+the collision density can be estimated. Once a particle undergoes a scattering
+reaction characterized by the collision kernel, the emmision density can be
+estimated. The transport kernel will then be sampled to determine the new
+position of the particle, at which point the collision density can again be
+estimated, etc. While this might seem like an interesting property of the 
+transport equation, it will actually prove to be quite useful when the value
+of an inner product is estimted.
+
+In typical neutral particle transport problems, the inner product of some 
+function $a(x)$ and the flux $\varphi(x)$ is desired. Because it is challenging
+to get the flux in terms of a Fredholm integral equation of the second kind,
+equivalent inner products must be constructed that are either in terms of the
+collision density or the emission density. 
+\begin{eqnarray}
+  I & = & \int a(\vec{r},E,\hat{\Omega}) \varphi(\vec{r},E,\hat{\Omega}) 
+  dVdEd\hat{\Omega} \\
+  & = & \int_{\Gamma} b(\vec{r},E,\hat{\Omega}) \psi(\vec{r},E,\hat{\Omega})  
+  dVdEd\hat{\Omega} \\
+  & = & \int_{\Gamma} c(\vec{r},E,\hat{\Omega}) \chi(\vec{r},E,\hat{\Omega}) 
+  dVdEd\hat{\Omega}
+\end{eqnarray}
+Based on the relationship between the collision density and the flux, $b(x)$
+must be defined as follows, where $\Sigma_T(x)$ is the total cross section.
+\begin{equation}
+  b(\vec{r},E,\hat{\Omega}) = \frac{a(\vec{r},E,\hat{\Omega})}
+  {\Sigma_T(\vec{r},E)}
+  \label{eq:collision_response_function}
+\end{equation}
+Similarly, the function $c(x)$ must be defined as follows.
+\begin{equation}
+  c(\vec{r},E,\hat{\Omega}) = \int \frac{a(\vec{r^{'}},E,\hat{\Omega})}
+  {\Sigma_T(\vec{r^{'}},E)} T(\vec{r} \to \vec{r^{'}},E,\Omega^{'})dV'
+  \label{eq:emission_response_function}
+\end{equation}
+
+Clearly, the function $b(x)$ will be easier to evaluate, which presents an 
+interesting tradeoff. Estimators will be easier to use if the random walk 
+process for the collision density is used. However, the random walk process
+for the collision density will be harder to conduct than the random walk 
+process for the emission density because of the difficulty in evaluating the 
+first collided source. Fortunately, the combined random walk process allows 
+one to take advanted of the function $b(x)$ without ever having to evaluate
+the first collided source.
