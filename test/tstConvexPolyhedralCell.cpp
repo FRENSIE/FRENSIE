@@ -43,8 +43,6 @@ TEUCHOS_UNIT_TEST( Cell, testIntersectionPoint )
     copy_cell_surfaces;
 
   Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
-							      0, 0, 0,
-							      0, 0, 0,
 							      1, 0, 0,
 							      -1 ) );
 
@@ -53,40 +51,30 @@ TEUCHOS_UNIT_TEST( Cell, testIntersectionPoint )
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 2,
-				      0, 0, 0,
-				      0, 0, 0,
 				      1, 0, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 3,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 1, 0,
 				      -1 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 4,
-				      0, 0, 0,
-				      0, 0, 0, 
 				      0, 1, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
-				      0, 0, 0,
 				      0, 0, 1,
 				      -2 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 6,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 0, 1,
 				      0 ) );
   copy_surface( *surface, 1 );
@@ -130,8 +118,6 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonIntersectionPoints )
     copy_cell_surfaces;
 
   Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
-							      0, 0, 0,
-							      0, 0, 0,
 							      1, 0, 0,
 							      -1 ) );
 
@@ -140,40 +126,30 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonIntersectionPoints )
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 2,
-				      0, 0, 0,
-				      0, 0, 0,
 				      1, 0, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 3,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 1, 0,
 				      -1 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 4,
-				      0, 0, 0,
-				      0, 0, 0, 
 				      0, 1, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
-				      0, 0, 0,
 				      0, 0, 1,
 				      -2 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 6,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 0, 1,
 				      0 ) );
   copy_surface( *surface, 1 );
@@ -224,8 +200,6 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
     copy_cell_surfaces;
 
   Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
-							      0, 0, 0,
-							      0, 0, 0,
 							      1, 0, 0,
 							      -1 ) );
 
@@ -234,40 +208,30 @@ TEUCHOS_UNIT_TEST( Cell, initializePolygon )
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 2,
-				      0, 0, 0,
-				      0, 0, 0,
 				      1, 0, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 3,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 1, 0,
 				      -1 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 4,
-				      0, 0, 0,
-				      0, 0, 0, 
 				      0, 1, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
-				      0, 0, 0,
 				      0, 0, 1,
 				      -2 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 6,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 0, 1,
 				      0 ) );
   copy_surface( *surface, 1 );
@@ -329,8 +293,6 @@ TEUCHOS_UNIT_TEST( Cell, createPolygon )
     copy_cell_surfaces;
 
   Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
-							      0, 0, 0,
-							      0, 0, 0,
 							      1, 0, 0,
 							      -1 ) );
 
@@ -339,40 +301,30 @@ TEUCHOS_UNIT_TEST( Cell, createPolygon )
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 2,
-				      0, 0, 0,
-				      0, 0, 0,
 				      1, 0, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 3,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 1, 0,
 				      -1 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 4,
-				      0, 0, 0,
-				      0, 0, 0, 
 				      0, 1, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
-				      0, 0, 0,
 				      0, 0, 1,
 				      -2 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 6,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 0, 1,
 				      0 ) );
   copy_surface( *surface, 1 );
@@ -426,8 +378,6 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonArea )
     copy_cell_surfaces;
 
   Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
-							      0, 0, 0,
-							      0, 0, 0,
 							      1, 0, 0,
 							      -1 ) );
 
@@ -436,40 +386,30 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonArea )
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 2,
-				      0, 0, 0,
-				      0, 0, 0,
 				      1, 0, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 3,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 1, 0,
 				      -1 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 4,
-				      0, 0, 0,
-				      0, 0, 0, 
 				      0, 1, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
-				      0, 0, 0,
 				      0, 0, 1,
 				      -2 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 6,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 0, 1,
 				      0 ) );
   copy_surface( *surface, 1 );
@@ -506,8 +446,6 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonVolumeContribution )
     copy_cell_surfaces;
 
   Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
-							      0, 0, 0,
-							      0, 0, 0,
 							      1, 0, 0,
 							      -1 ) );
 
@@ -516,40 +454,30 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonVolumeContribution )
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 2,
-				      0, 0, 0,
-				      0, 0, 0,
 				      1, 0, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 3,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 1, 0,
 				      -1 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 4,
-				      0, 0, 0,
-				      0, 0, 0, 
 				      0, 1, 0,
 				      1 ) );
   copy_surface( *surface, 1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
-				      0, 0, 0,
 				      0, 0, 1,
 				      -2 ) );
   copy_surface( *surface, -1 );
   copy_cell_surfaces.push_back( copy_surface );
 
   surface.reset( new FACEMC::Surface( 6,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 0, 1,
 				      0 ) );
   copy_surface( *surface, 1 );
@@ -571,16 +499,16 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolygonVolumeContribution )
 			     polygon_areas );
 
   FACEMC::Surface reference_surface( 0,
-				     0, 0, 0,
-				     0, 0, 0,
 				     0, 0, 1,
-				     -1 );
+				     -2 );
 
   cell.calculatePolygonVolumeContribution( reference_surface,
 					   intersection_points,
-					   polygon_areas );
+					   polygon_areas,
+					   -1,
+					   1 );
 
-  TEST_EQUALITY_CONST( cell.getVolume(), 4.0 );
+  TEST_EQUALITY_CONST( cell.getVolume(), 8.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -595,43 +523,31 @@ TEUCHOS_UNIT_TEST( Cell, calculatePolyhedralCellVolumeAndSurfaceAreas )
   std::map<unsigned,Teuchos::RCP<FACEMC::Surface> > global_surface_map;
 
   Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
-							      0, 0, 0,
-							      0, 0, 0,
 							      1, 0, 0,
 							      -1 ) );
   global_surface_map[1] = surface;
 
   surface.reset( new FACEMC::Surface( 2,
-				      0, 0, 0,
-				      0, 0, 0,
 				      1, 0, 0,
 				      1 ) );
   global_surface_map[2] = surface;
 
   surface.reset( new FACEMC::Surface( 3,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 1, 0,
 				      -1 ) );
   global_surface_map[3] = surface;
 
   surface.reset( new FACEMC::Surface( 4,
-				      0, 0, 0,
-				      0, 0, 0, 
 				      0, 1, 0,
 				      1 ) );
   global_surface_map[4] = surface;
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
-				      0, 0, 0,
 				      0, 0, 1,
 				      -1 ) );
   global_surface_map[5] = surface;
 
   surface.reset( new FACEMC::Surface( 6,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 0, 1,
 				      1 ) );
   global_surface_map[6] = surface;				 
@@ -659,43 +575,31 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
   std::map<unsigned,Teuchos::RCP<FACEMC::Surface> > global_surface_map;
 
   Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
-							      0, 0, 0,
-							      0, 0, 0,
 							      1, 0, 0,
 							      -1 ) );
   global_surface_map[1] = surface;
 
   surface.reset( new FACEMC::Surface( 2,
-				      0, 0, 0,
-				      0, 0, 0,
 				      1, 0, 0,
 				      1 ) );
   global_surface_map[2] = surface;
 
   surface.reset( new FACEMC::Surface( 3,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 1, 0,
 				      -1 ) );
   global_surface_map[3] = surface;
 
   surface.reset( new FACEMC::Surface( 4,
-				      0, 0, 0,
-				      0, 0, 0, 
 				      0, 1, 0,
 				      1 ) );
   global_surface_map[4] = surface;
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
-				      0, 0, 0,
 				      0, 0, 1,
 				      -1 ) );
   global_surface_map[5] = surface;
 
   surface.reset( new FACEMC::Surface( 6,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 0, 1,
 				      1 ) );
   global_surface_map[6] = surface;

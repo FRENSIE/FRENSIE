@@ -69,43 +69,31 @@ TEUCHOS_UNIT_TEST( Cell, assignSurfaces )
   std::map<unsigned,Teuchos::RCP<FACEMC::Surface> > global_surface_map;
 
   Teuchos::RCP<FACEMC::Surface> surface( new FACEMC::Surface( 1,
-							      0, 0, 0,
-							      0, 0, 0,
 							      1, 0, 0,
 							      -1 ) );
   global_surface_map[1] = surface;
 
   surface.reset( new FACEMC::Surface( 2,
-				      0, 0, 0,
-				      0, 0, 0,
 				      1, 0, 0,
 				      1 ) );
   global_surface_map[2] = surface;
 
   surface.reset( new FACEMC::Surface( 3,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 1, 0,
 				      -1 ) );
   global_surface_map[3] = surface;
 
   surface.reset( new FACEMC::Surface( 4,
-				      0, 0, 0,
-				      0, 0, 0, 
 				      0, 1, 0,
 				      1 ) );
   global_surface_map[4] = surface;
 
   surface.reset( new FACEMC::Surface( 5,
-				      0, 0, 0, 
-				      0, 0, 0,
 				      0, 0, 1,
 				      -1 ) );
   global_surface_map[5] = surface;
 
   surface.reset( new FACEMC::Surface( 6,
-				      0, 0, 0,
-				      0, 0, 0,
 				      0, 0, 1,
 				      1 ) );
   global_surface_map[6] = surface;				 

@@ -94,6 +94,13 @@ ADD_EXECUTABLE(tstConcavePolyhedralCell
   ${SRC}/Surface.cpp
   ${SRC}/LinearAlgebraAlgorithms.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstCompoundConvexPolyhedralCell
+  tstCompoundConvexPolyhedralCell.cpp
+  ${SRC}/Cell.cpp
+  ${SRC}/BooleanCellFunctor.cpp
+  ${SRC}/Surface.cpp
+  ${SRC}/LinearAlgebraAlgorithms.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 
 TARGET_LINK_LIBRARIES(tstAssertion ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstContractException ${TEUCHOS})
@@ -114,6 +121,7 @@ TARGET_LINK_LIBRARIES(tstBooleanCellFunctor ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstCell ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstConvexPolyhedralCell ${TEUCHOS})
 TARGET_LINK_LIBRARIES(tstConcavePolyhedralCell ${TEUCHOS})
+TARGET_LINK_LIBRARIES(tstCompoundConvexPolyhedralCell ${TEUCHOS})
 
 ADD_TEST(Assertion_test tstAssertion)
 ADD_TEST(ContractException_test tstContractException)
@@ -134,6 +142,7 @@ ADD_TEST(BooleanCellFunctor_test tstBooleanCellFunctor)
 ADD_TEST(Cell_test tstCell)
 ADD_TEST(ConvexPolyhedralCell_test tstConvexPolyhedralCell)
 ADD_TEST(ConcavePolyhedralCell_test tstConcavePolyhedralCell)
+ADD_TEST(CompoundConvexPolyhedralCell tstCompoundConvexPolyhedralCell)
 
 # Install test files for the EPDL97DataProcessor_test
 FILE(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test_files/*.txt)

@@ -131,11 +131,20 @@ protected:
 	       const std::list<Quad<double,double,unsigned,unsigned> > &polygon,
 	       std::list<double> &polygon_areas );
 
+  //! Assign the correct sign to the polygon areas
+  // \brief If the largest polygon area is negative, this feature lies
+  // inside of the cell. To calculate the correct volume contribution
+  // the largest polygon area must always be positive. If the largest
+  // polygon area is negative, multiply all polygon areas by -1.
+  void assignPolygonAreaSign( std::list<double> &polygon_areas );
+
   //! Calculate the volume contribution from a surface bounding this cell
   void calculatePolygonVolumeContribution( 
 	       const Surface &reference_surface,
 	       const std::list<Quad<double,double,unsigned,unsigned> > &polygon,
-	       const std::list<double> &polygon_areas );
+	       const std::list<double> &polygon_areas,
+	       const Surface::Sense reference_surface_sense,
+	       const Surface::Sense current_surface_sense );
   
   //! Calculate the rotationally symmetric cell volume and surface areas
   // \brief If the cell is indeed rotationally symmetric, true will be returned

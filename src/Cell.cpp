@@ -249,6 +249,8 @@ void Cell::assignSurfaces( std::string &cell_definition,
   int surface_sense_id;
   unsigned surface_id;
   Surface::Sense surface_sense;
+  
+  bool surface_exists = true;
 
   while( simplified_cell_definition )
   {
@@ -263,9 +265,12 @@ void Cell::assignSurfaces( std::string &cell_definition,
 
     // Pull the surface from the global map
     global_surface = global_surface_map.find( surface_id );
+
+    if( global_surface == global_end_surface )
+      surface_exists = false;
     
     // If the surface was not found exit the program
-    FACEMC_ASSERT_ALWAYS_MSG( global_surface != global_end_surface, "Fatal Error: Surface " << surface_id << " requested by Cell " << d_id << " does not exist." );
+    FACEMC_ASSERT_ALWAYS_MSG( surface_exists, "Fatal Error: Surface " << surface_id << " requested by Cell " << d_id << " does not exist." );
 
     // Store this surface
     local_surface.first = global_surface->second;
@@ -318,6 +323,7 @@ void Cell::calculatePolyhedralCellVolumeAndSurfaceAreas()
 {
   // Reference surface for calculating volume of polyhedron 
   Surface reference_surface = *d_surfaces[0].first;
+  Surface::Sense reference_surface_sense = d_surfaces[0].second;
   
   // Z-axis unit normal
   Surface::Vector z_axis = Teuchos::tuple( 0.0, 0.0, 1.0 );
@@ -425,10 +431,15 @@ void Cell::calculatePolyhedralCellVolumeAndSurfaceAreas()
 			  intersection_points,
 			  polygon_areas );
 
+    // Assign the correct sign to the polygon areas
+    assignPolygonAreaSign( polygon_areas );
+
     // Calculate the volume contribution from the master surface
     calculatePolygonVolumeContribution( copy_reference_surface,
 					intersection_points,
-					polygon_areas );
+					polygon_areas,
+					reference_surface_sense,
+					master_surface->second );
   }
 }
 
@@ -1028,14 +1039,48 @@ void Cell::calculatePolygonArea(
   }
   
   // Record this surfaces area relative to this cell
-  d_surface_areas[surface_id] = area;
+  d_surface_areas[surface_id] = fabs( area );
 }
+
+//! Assign the correct sign to the polygon areas
+void Cell::assignPolygonAreaSign( std::list<double> &polygon_areas )
+{
+  // There must be at least one polygon area
+  testPrecondition( polygon_areas.size() > 0 );
+  
+  std::list<double>::iterator area, max_area, end_area;
+  max_area = polygon_areas.begin();
+  area = polygon_areas.begin();
+  ++area;
+  end_area = polygon_areas.end();
+
+  while( area != end_area )
+  {
+    if( fabs(*area) > fabs(*max_area) )
+      max_area = area;
+
+    ++area;
+  }
+
+  if( *max_area < 0.0 )
+  {
+    area = polygon_areas.begin();
+    
+    while( area != end_area )
+    {
+      *area *= -1.0;
+      ++area;
+    }
+  }
+} 
 
 //! Calculate the volume contribution from a surface bounding this cell
 void Cell::calculatePolygonVolumeContribution(
 	       const Surface &reference_surface,
 	       const std::list<Quad<double,double,unsigned,unsigned> > &polygon,
-	       const std::list<double> &polygon_areas )
+	       const std::list<double> &polygon_areas,
+	       const Surface::Sense reference_surface_sense,
+	       const Surface::Sense current_surface_sense )
 {
   std::list<double>::const_iterator polygon_area = polygon_areas.begin();
   
@@ -1054,6 +1099,9 @@ void Cell::calculatePolygonVolumeContribution(
   double ref_normal_magnitude = 
     LinearAlgebra::vectorMagnitude( ref_unit_normal );
   LinearAlgebra::normalizeVector( ref_unit_normal );
+  // Make sure the reference surface is pointing out of the cell and the 
+  // current surface is pointing in to the cell
+  ref_unit_normal *= (reference_surface_sense*-1)*current_surface_sense;
   double mu = ref_unit_normal[2];
 
   while( next_point != end_point )
@@ -1095,9 +1143,7 @@ void Cell::calculatePolygonVolumeContribution(
 			   ref_unit_normal[1]*centroid.second +
 			   reference_surface.getConstantTerm()/
 			   ref_normal_magnitude);
-
-    // If the polygon area is negative, its volume contribution will
-    // be subtracted off
+    
     d_volume += distance*(*polygon_area)*mu;
     
     if( next_point != end_point )

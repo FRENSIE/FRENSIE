@@ -24,7 +24,7 @@ public:
   typedef short Sense;
   //@}
 
-  //! Constructor
+  //! General Surface Constructor
   // \brief ax^2+by^2+cz^2+dxy+eyz+fxz+gx+hy+jz+k = 0
   Surface( unsigned id,
 	   double a,
@@ -33,6 +33,23 @@ public:
 	   double d,
 	   double e,
 	   double f,
+	   double g,
+	   double h,
+	   double j,
+	   double k );
+
+  //! Symmetric 2nd order surface constructor
+  Surface( unsigned id,
+	   double a,
+	   double b,
+	   double c,
+	   double g,
+	   double h,
+	   double j,
+	   double k );
+
+  //! Planar Surface constructor
+  Surface( unsigned id,
 	   double g,
 	   double h,
 	   double j,
@@ -93,6 +110,9 @@ private:
 
   // Tolerance used for performing tests
   double d_tolerance;
+
+  // Boolean that indicates whether the surface is symmetric or not
+  bool d_symmetric;
 
   // Boolean that indicates whether the surface is planar or not
   bool d_planar;

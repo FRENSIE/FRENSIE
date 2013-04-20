@@ -31,7 +31,6 @@ TEUCHOS_UNIT_TEST( Surface, isOn )
   // Spherical surface centered at (-10,-10,-10) with radius 10
   FACEMC::Surface sphere( 0,
 			  1, 1, 1,
-			  0, 0, 0,
 			  20, 20, 20,
 			  10*10+10*10+10*10 - 10*10 );
 
@@ -58,7 +57,6 @@ TEUCHOS_UNIT_TEST( Surface, isPlanar )
   // Spherical surface centered at (-10,-10,-10) with radius 10
   FACEMC::Surface sphere( 0,
 			  1, 1, 1,
-			  0, 0, 0,
 			  20, 20, 20,
 			  10*10+10*10+10*10 - 10*10 );
 
@@ -66,8 +64,6 @@ TEUCHOS_UNIT_TEST( Surface, isPlanar )
 
   // Planar surface
   FACEMC::Surface plane( 0,
-			 0, 0, 0,
-			 0, 0, 0,
 			 1, 2, 3,
 			 4 );
 
@@ -81,7 +77,6 @@ TEUCHOS_UNIT_TEST( Surface, getSense )
   // Spherical surface centered at (-10,-10,-10) with radius 10
   FACEMC::Surface sphere( 0,
 			  1, 1, 1,
-			  0, 0, 0,
 			  20, 20, 20,
 			  10*10+10*10+10*10 - 10*10 );
 
@@ -105,7 +100,6 @@ TEUCHOS_UNIT_TEST( Surface, getUnitNormal )
   // Spherical surface centered at (-10,-10,-10) with radius 10
   FACEMC::Surface sphere( 0,
 			  1, 1, 1,
-			  0, 0, 0,
 			  20, 20, 20,
 			  10*10+10*10+10*10 - 10*10 );
 
@@ -147,7 +141,6 @@ TEUCHOS_UNIT_TEST( Surface, transformSurface )
   Teuchos::RCP<FACEMC::Surface> surface_ptr( 
 			     new FACEMC::Surface( 0,
 						  1, 1, 1,
-						  0, 0, 0,
 						  20, 20, 20,
 						  10*10+10*10+10*10 - 10*10 ) 
 					  );
@@ -194,7 +187,6 @@ TEUCHOS_UNIT_TEST( Surface, transformSurface )
   // Spherical surface centered at (-10,-10,-10) with radius 10
   surface_ptr.reset( new FACEMC::Surface( 0,
 					  1, 1, 1,
-					  0, 0, 0,
 					  20, 20, 20,
 					  10*10+10*10+10*10 - 10*10 ) 
 		     );
@@ -249,7 +241,6 @@ TEUCHOS_UNIT_TEST( Surface, transformSurface )
   surface_ptr.reset( 
 		    new FACEMC::Surface( 0,
 					 1, 1, 0,
-					 0, 0, 0,
 					 20, 20, 0,
 					 10*10+10*10 - 10*10 ) 
 		     );
@@ -297,7 +288,6 @@ TEUCHOS_UNIT_TEST( Surface, transformSurface )
   surface_ptr.reset( 
 		    new FACEMC::Surface( 0,
 					 1, 1, 0,
-					 0, 0, 0,
 					 0, 20, 0,
 					 10*10 - 10*10 ) 
 		     );
@@ -344,8 +334,6 @@ TEUCHOS_UNIT_TEST( Surface, transformSurface )
   // planar surface 
   surface_ptr.reset( 
 		    new FACEMC::Surface( 0,
-					 0, 0, 0,
-					 0, 0, 0,
 					 6, 5, 4,
 					 3 ) 
 		     );
@@ -393,9 +381,7 @@ TEUCHOS_UNIT_TEST( Surface, transformSurface )
 			  ref_constant_term,
 			  TOL );
 
-}
-
-  
+}  
 	   
 //---------------------------------------------------------------------------//
 // end tstSurface.cpp
