@@ -1,0 +1,204 @@
+\chapter{Deriving the Monte Carlo Random Walk Process for Adjoint Neutral Particle Transport Problems}
+\label{ch:adjoint_neutral_particle_transport}
+In chapter \ref{ch:mc_methods}, the dual problem for calculating inner products
+over small sphase spaces was introduced. In this chapter, it will be shown how
+the dual problem can be solved in the context of neutral particle transport 
+problems. This will require both the derivation of the dual problems of interest
+and their associated Monte Carlo random walk processes. Since, in the previous
+chapter, the FEISKs that described the event densities were shown to have 
+ideal random walk PDFs, their dual problems will be evaluated first. The 
+random walk process for the more general dual problem, which is characterized
+by the adjoint transport equation, will then be determined. 
+
+\section{The Adjoint Emission Density FIESK}
+Using the procedure outlined in chapter \ref{ch:mc_methods}, the dual emission
+density FIESK will be constructed. The function that will solve this dual 
+equation will be called the adjoint of the emission density. It is not called
+the adjoint emission density because, as will be shown, this function does
+not behave like an emission density (or in general an event density). First, 
+a linear operator will be constructed from equation 
+\ref{eq:emission_density_integral_eqn}, which is the emission density FIESK. 
+\begin{equation}
+  \begin{split}
+    H_{\chi} \cdot &\chi(\vec{r},E,\hat{\Omega}) = 
+    \chi(\vec{r},E,\hat{\Omega}) - \\
+    & \int\int\int C(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
+    T(\vec{r^{'}} \to \vec{r},E^{'},\hat{\Omega^{'}}) 
+    \chi(\vec{r^{'}},E',\hat{\Omega^{'}}) dV^{'}dE^{'}E\hat{\Omega^{'}}
+  \end{split}
+\end{equation}
+With the operator $H_{\chi}$ defined in this way it is clear from equation
+\ref{eq:emission_density_integral_eqn} that 
+$H_{\chi} = S(\vec{r},E,\hat{\Omega})$.
+
+To define the adjoint operator, the following equality must hold. Where the 
+brackets indicate integration over all phase space.
+\begin{equation*}
+  \langle \chi^{\dagger}H_{\chi} \cdot \chi \rangle = 
+  \langle \chi H_{\chi}^{\dagger} \cdot \chi^{\dagger} \rangle
+\end{equation*}
+Since the operator $H_{\chi}$ is known, the left bracket will be expanded.
+\begin{equation*}
+  \begin{split}
+    \langle &\chi^{\dagger}H_{\chi} \cdot \chi \rangle =
+    \int\int\int \
+    \chi^{\dagger}(\vec{r},E,\hat{\Omega}) \chi(\vec{r},E,\hat{\Omega})
+    dV dE d\hat{\Omega} - \int\int\int \chi^{\dagger}(\vec{r},E,\hat{\Omega}) \\
+    & \cdot \int\int\int 
+    C(\vec{r},E^{'} \to E, \hat{\Omega^{'}} \to \hat{\Omega^{'}})
+    T(\vec{r^{'}} \to \vec{r},E^{'},\hat{\Omega^{'}})
+    \chi(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
+    dV dE d\hat{\Omega}
+  \end{split}
+\end{equation*}
+\begin{equation*}
+  \begin{split}
+    & \qquad \qquad = \int\int\int \
+    \chi^{\dagger}(\vec{r},E,\hat{\Omega}) \chi(\vec{r},E,\hat{\Omega})
+    dV dE d\hat{\Omega} - \int\int\int \chi(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) \\
+    & \cdot \int\int\int 
+    C(\vec{r},E^{'} \to E, \hat{\Omega^{'}} \to \hat{\Omega^{'}})
+    T(\vec{r^{'}} \to \vec{r},E^{'},\hat{\Omega^{'}})
+    \chi^{\dagger}(\vec{r},E,\hat{\Omega}) dV dE d\hat{\Omega}
+    dV^{'}dE^{'}d\hat{\Omega^{'}}
+  \end{split}
+\end{equation*}
+From this last manipulation, the adjoint operator can be deduced, which is 
+shown in the following equation.
+\begin{equation}
+  \begin{split}
+    H_{\chi}^{\dagger} \cdot &\chi^{\dagger}(\vec{r},E,\hat{\Omega}) = 
+    \chi^{\dagger}(\vec{r},E,\hat{\Omega}) - \\
+    & \int\int\int T(\vec{r} \to \vec{r^{'}},E,\hat{\Omega}) 
+    C(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
+    \chi(\vec{r^{'}},E',\hat{\Omega^{'}}) dE^{'}E\hat{\Omega^{'}}dV^{'}
+  \end{split}
+\end{equation}
+
+In the previous chapter, the function $c(\vec{r},E,\hat{\Omega})$ was defined 
+in equation \ref{eq:emission_response_function}, which should be used with 
+the collision density to calculate a response. By forcing the adjoint 
+operator acting on the adjoint of the emission density to equal the 
+function $c(\vec{r},E,\hat{\Omega})$, the dual equation, or simply the adjoint
+of the emission density FIESK can be created.
+\begin{equation}
+  \begin{split}
+    \chi^{\dagger}(\vec{r},&E,\hat{\Omega}) = c(\vec{r},E,\hat{\Omega}) + \\
+    &\int\int\int T(\vec{r} \to \vec{r^{'}},E,\hat{\Omega}) 
+    C(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
+    \chi^{\dagger}(\vec{r^{'}},E',\hat{\Omega^{'}}) dE^{'}E\hat{\Omega^{'}}dV^{'}
+  \end{split}
+  \label{eq:adjoint_of_emission_density_integral_eqn}
+\end{equation}
+
+Unfortunately, in the integral in equation 
+\ref{eq:adjoint_of_emission_density_integral_eqn}, the transport and collision 
+kernels are integrated over what was previously the final states. Therefore,
+the properties that were defined for these kernels in the previous chapter are 
+no longer valid. In particular, the transport kernel is not normalized anymore
+and the collision kernel is not equal to the non-absorption probability when
+integrated over all final states (which were previously the initial states). In
+general, the collision kernel is not even strictly less than or equal to one 
+anymore when integrated over all final states. To try and simplify these 
+kernels, the $\Sigma_T(\vec{r^{'}},E)$ terms in both the transport and collision
+operators will be allowed to cancel each other out. The modified tranpsport
+kernel will now be examined.
+\begin{equation}
+  \frac{T(\vec{r} \to \vec{r^{'}},E,\hat{\Omega})}{\Sigma_T(\vec{r^{'}},E)} = 
+  exp\left[-\int_0^{|\vec{r^{'}} - \vec{r}|} 
+    \Sigma_T(\vec{r^{'}} - R^{'} \hat{\Omega},E)dR^{'} \right]
+  \frac{\delta \left(\Omega - \left[\frac{\vec{r^{'}} - \vec{r}}
+      {|\vec{r^{'}} - \vec{r}|}\right]\right)}
+       {|\vec{r^{'}} - \vec{r}|^2}
+  \label{eq:unnormalized_adjoint_transport_kernel}
+\end{equation}
+Based on the argument of the delta function, 
+$\hat{\Omega} = \frac{\vec{r^{'}} - \vec{r}}{|\vec{r^{'}} - \vec{r}|}$ and 
+therefore, $\vec{r^{'}} = \vec{r} + \hat{\Omega}|\vec{r^{'}} - \vec{r}|$. This
+equation for $\vec{r^{'}}$ can be substituted back into the equation
+\ref{eq:unnormalized_adjoint_transport_kernel}.
+\begin{equation*}
+  \frac{T(\vec{r} \to \vec{r^{'}},E,\hat{\Omega})}{\Sigma_T(\vec{r^{'}},E)} = 
+  exp\left[-\int_0^{|\vec{r^{'}} - \vec{r}|} 
+    \Sigma_T \left(\vec{r} + \left[|\vec{r^{'}} - \vec{r}| - R^{'} \right] 
+    \hat{\Omega},E \right) dR^{'} 
+    \right] \frac{\delta \left(\Omega - \left[\frac{\vec{r^{'}} - \vec{r}}
+      {|\vec{r^{'}} - \vec{r}|}\right]\right)}
+       {|\vec{r^{'}} - \vec{r}|^2}
+\end{equation*}
+A new variable of integration can be defined to simplify the exponent. Note
+that when $R^{'} = 0$, $R^{''} = |\vec{r^{'}} - \vec{r}|$ and when 
+$R^{'} = |\vec{r^{'}} - \vec{r}|$, $R^{''} = 0$.
+\begin{eqnarray}
+  R^{''} & = & |\vec{r^{'}} - \vec{r}| - R^{'} \nonumber \\
+  dR^{''} & = & -dR^{'} \nonumber 
+\end{eqnarray}
+
+\begin{eqnarray}
+  \frac{T(\vec{r} \to \vec{r^{'}},E,\hat{\Omega})}{\Sigma_T(\vec{r^{'}},E)} & = &
+  exp\left[-\int_0^{|\vec{r^{'}} - \vec{r}|} 
+    \Sigma_T \left(\vec{r} + R^{''}\hat{\Omega},E \right) dR^{''} 
+    \right] \frac{\delta \left(\Omega - \left[\frac{\vec{r^{'}} - \vec{r}}
+      {|\vec{r^{'}} - \vec{r}|}\right]\right)}
+       {|\vec{r^{'}} - \vec{r}|^2} \nonumber \\
+       & = & exp\left[-\int_0^{|\vec{r} - \vec{r^{'}}|} 
+    \Sigma_T \left(\vec{r} + R^{''}\hat{\Omega},E \right) dR^{''} 
+    \right] \frac{\delta \left(\Omega + \left[\frac{\vec{r} - \vec{r^{'}}}
+      {|\vec{r} - \vec{r^{'}}|}\right]\right)}
+       {|\vec{r} - \vec{r^{'}}|^2} \nonumber \\
+       & = & \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) \\
+       & = & \frac{T(\vec{r^{'}} \to \vec{r},E,-\hat{\Omega})}
+       {\Sigma_T(\vec{r},E)}
+\end{eqnarray}
+The complete adjoint of the emission density state transition kernel can now be 
+defined.
+\begin{equation}
+  K^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'} \to E,
+  \hat{\Omega^{'}} \to \hat{\Omega}) = 
+  \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) 
+  \Sigma_S(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
+\end{equation}
+The source term $c(\vec{r},E,\hat{\Omega})$ can also be modified, since it
+contains the modified transport kernel.
+\begin{eqnarray}
+  c(\vec{r},E,\hat{\Omega}) & = & \int \frac{a(\vec{r^{'}},E,\hat{\Omega})}
+  {\Sigma_T(\vec{r^{'}},E)}T(\vec{r} \to \vec{r^{'}},E,\hat{\Omega}) dV^{'} 
+  \nonumber \\
+  & = & \int a(\vec{r^{'}},E,\hat{\Omega}) 
+  \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) dV^{'}
+\end{eqnarray}
+
+Finally, the adjoint of the emission density FIESK can be rewritten with the 
+modifications that were just outlined. By comparing equation
+\ref{eq:adjoint_of_emission_density_integral_eqn_2} to equation 
+\ref{eq:flux_integral_equation} for the flux, it is clear that
+the adjoint of the emission density behaves very similar to the flux. In the 
+literature, the adjoint of the emission density is often called ``flux-like'' 
+because of this similarity \citep{hoogenboom}. Though it will not be shown, 
+the adjoint of the collision density is also ``flux-like.'' Unfortunetly, it 
+was shown in the previous chapter that the random walk process to estimate the 
+flux was not ideal. While a random walk process could be constructed for the 
+adjoint of the emission density, because of its flux-like nature, its random 
+walk process will not be ideal either. 
+\begin{equation}
+  \begin{split}
+    \chi^{\dagger}(\vec{r},&E,\hat{\Omega}) =  \int a(\vec{r^{'}},E,\hat{\Omega}) 
+    \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) dV^{'} + \\
+    & \int\int\int  \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) 
+    \Sigma_S(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
+    dE^{'}d\hat{\Omega^{'}}dV^{'}
+  \end{split}
+  \label{eq:adjoint_of_emission_density_integral_eqn_2}
+\end{equation}
+
+One way to construct a function that will be collision like and still retain
+the favorable properties of the dual problem (i.e. the response function 
+becomes the source) is to multiply equation 
+\ref{eq:adjoint_of_emission_density_integral_eqn_2} by some function 
+$\Sigma^{\dagger}(\vec{r},E)$, whose only necessary properties are that is is
+strictly positive and that it goes to zero in a vacuum. This manipulation and 
+several others are shown in appendix \ref{ch:appendix_a}. However, it will be 
+more instructive to take a step back and start over again with the adjoint 
+transport equation. Then the process for deriving the random walk process for 
+the emission density and collision density outlined in the previous chapter 
+can be followed. 

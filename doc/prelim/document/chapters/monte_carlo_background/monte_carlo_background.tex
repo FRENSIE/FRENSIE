@@ -149,6 +149,30 @@ two procedures is the ordering of the steps.
   \label{fig:random_walk_process_2}
 \end{figure}
 
+All random walk processes can be placed into two catagories: Analogue and 
+non-analogue. In an analogue random walk process, the random walks simulate
+the physical behavior of the entity that would be expected while in a 
+non-analogue random walk process, the random walks do not simulate the physical
+behavior of the entity. As pointed out in \citep{ref}, when one says ``physical
+behavior,'' one is refering to the physical behavior characterized by the
+model equation of interest. If the model equation has limitations and/or
+approximations to the true physical process\footnote{The transport equation is
+a simplified version of the Boltzmann equation based on several approximations
+to the true physical process}, the analogue random walk process will also 
+contain those limitation and/or approximations. To determine if a random walk
+process is analogue, one must look at the source PDF $p^1(x)$ and the state 
+transition PDF $p(y \to x)$. If the source PDF is equal to the source function
+$S(x)$ divided by a normalization constant and the state transition PDF is 
+equal to the state transition kernel $K(y \to x)$ the random walk process is 
+analogue. 
+
+In terms of neutral particle transport, analogue random walk processes are 
+rarely used due to the difficutly in estimating low probability events. For
+example, if an estimate of some quantity on the back side of a thick shield is 
+desired, very few random walks will pass through the shield since they simulate
+the physical process of radiation passing through the shield, which should
+happen very little for a properly designed shield.
+
 \section{Monte Carlo Inner Product Estimators}
 \label{sec:mc_int_eqn_estimators}
 In most problems where Monte Carlo is used, the value of the inner product
@@ -172,19 +196,19 @@ are defined over the entire phase space instead of one particular point,
 which makes them quite useful. In addition, they allow the necessary properties
 of $S(x)$ and $K(y \to x)$ to be relaxed slightly, which will be shown shortly.
 
-
 The first estimator that will be discussed gathers information about every
 event of the random walk, but only contributes to the estimation of $I$ when
-the random walk terminates. To conduct the random walks using the procedure
+the random walk terminates. Because of this property, it is called the
+termination estimator. To conduct the random walks using the procedure
 described in the previous section, the PDFs $p^1(x)$ and $p(y \to x)$ must be 
 constructed by normalizing $S(x)$ and $K(y \to x)$ respectively. This random
 variable will then reincorporate the magnitude of these functions into
-the estimate of $I$. In equation \ref{eq:collision_estimator_1}, the variable 
+the estimate of $I$. In equation \ref{eq:termination_estimator}, the variable 
 $\alpha$ is a random walk beginning at $x_1$ and ending at $x_k$.
 \begin{equation}
   \varepsilon(\alpha) = \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_w)\cdots 
   w(x_{k-1} \to w_k)\frac{g(x_k)}{p(x_k)}
-  \label{eq:collision_estimator_1}
+  \label{eq:termination_estimator}
 \end{equation}
 The weight function $w(y \to x)$ is defined in the following equation.
 \begin{equation}
@@ -194,6 +218,15 @@ The weight function $w(y \to x)$ is defined in the following equation.
     0 & \text{o.w.}
   \end{cases}
 \end{equation}
+Note that for an analogue random walk process, the weight function after each
+event will be unity, since $p(y \to x)$ is equal to $K(y \to x)$. In addition,
+$\frac{S(x_1)}{p^1(x_1)}$ will be equal to the constant 
+$C = \int_{\Gamma} S(x)dx$. Therefore, for an analogue random walk process, the
+termination estimator reduces to
+\begin{equation*}
+  \varepsilon(\alpha) = C \frac{g(x_k)}{p(x_k)}
+\end{equation*}
+
 It will now be shown that the expected value of this estimator is equal to the 
 value of the inner product, which will prove that this estimator is unbiased 
 \citep{spanier_monte_1969}.
@@ -210,10 +243,10 @@ value of the inner product, which will prove that this estimator is unbiased
 \end{eqnarray}
 
 If the function g(x) is only non-zero in some finite portion of the phase space
-$\Gamma_p$, which will be the case for most problems, only the random walks 
-that terminate in the phase space $\Gamma_p$ will contribute to the 
+$\Gamma_d$, which will be the case for most problems, only the random walks 
+that terminate in the phase space $\Gamma_d$ will contribute to the 
 estimation of $I$. Another more efficient estimator exists, which estimates $I$
-every time a random walk has an event in the phase space $\Gamma_p$. This 
+every time a random walk has an event in the phase space $\Gamma_d$. This 
 estimator, defined in equation \ref{eq:collision_estimator_2}, is called the 
 event estimator since every event can potentially contribute to the estimation 
 of the value of interest \footnote{The collision estimator is the name given
@@ -226,33 +259,24 @@ entity after the $m^{th}$ event of the random walk.
   & = & \sum_m^k W_m(\alpha) g(x_m)
   \label{eq:collision_estimator_2}
 \end{eqnarray}
+Again, for an analogue random walk process, the weight function after each 
+event will be unity and the value $\frac{S(x_1)}{p^1(x_1)}$ will be equal to 
+the constant $C = \int_{\Gamma} S(x)dx$. Therefore, for an analogue random walk 
+process, the event estimator reduces to
+\begin{equation*}
+  \eta(\alpha) = C \sum_m^k g(x_k)
+\end{equation*}
+
 The proof that this estimator is an unbiased random variable is quite lengthy 
 and requires a more in-depth knowledge of probability theory. Therefore, 
 reference \cite{spanier_monte_1969} should be consulted for details on this 
-proof. As the size of the phase space $\Gamma_p$ decreases, the event estimator 
+proof. As the size of the phase space $\Gamma_d$ decreases, the event estimator 
 will perform slightly better than the first estimator because each random walk 
 will have more opportunities to contribute to the estimate of the inner product
 $I$. 
 
-One final estimator that will be discussed is the track length estimator.
-Unlike the previous two estimators, contributions to the inner product $I$
-are not made at event points but instead along a path between events points.
-Therefore, this estimator will have the best performance of the three
-estimators as the size of the phase space $\Gamma_p$ becomes small. In this 
-estimator, defined in equation \ref{eq:track_length_estimator}, the function 
-$W_m(\alpha)$ is the same that was defined in the event estimator. The function 
-$h(x_m)$ is related to the function $g(x_m)$, however the exact relationship is 
-problem dependent. The value $d_m$ is the length of the $m^{th}$ entity track 
-(distance between states $x_m$ and $x_{m+1}$) that lies within the phase space 
-$\Gamma_p$. For a proof that this estimator is also unbiased, please refer to
-reference \cite{spanier_monte_1969} once again.
-\begin{equation}
-  \tau(\alpha) = \sum_{m=1}^k W_m(\alpha)h(x_m)d_m
-  \label{eq:track_length_estimator}
-\end{equation}
-
-Note that as the size of the phase space $\Gamma_p$ decreases to a point, the 
-function $g(x)$ becomes a delta function. All three of the previous estimators 
+Note that as the size of the phase space $\Gamma_d$ decreases to a point, the 
+function $g(x)$ becomes a delta function. Both of the previous estimators 
 will be ineffective at estimating the value $I$ when that is the case. In the 
 next section, this problem will be addressed specifically.
 
@@ -283,7 +307,7 @@ the estimator is also an important consideration. The figure of merrit takes
  into account both of these factors and can therefore be used to evaluate the 
 efficacy of a particular estimator with regard to a particular problem. 
 Because the value $s^2/\bar{I}^2$ is proportional to $N^{-1}$ and the computer 
-time is proportional to $N$, the figure of merrit is a constant. For more one
+time is proportional to $N$, the figure of merrit is a constant. For more on
 the variance properties of estimators, please refer to reference 
 \cite{spanier_monte_1969}.
 \begin{equation}
@@ -306,81 +330,81 @@ criticality problems.
 \section{The Dual Problem for Calculating Inner Products Over Small Phase 
   Spaces}
 \label{sec:dual_problems}
-In the previous section, a problem arose when the value of an inner product
-in a small portion of the phase space was desired. In the limit that this 
-portion of the phase space becomes a point, the estimators become ineffective 
-at obtaining the value of the inner product. In this section, a dual problem 
-will be introduced in which the same Monte Carlo random walk process can be 
-used but a different inner product is estimated. Because of the way that this
-dual problem is formulated the value of this new inner product will have the 
-same value as the original inner product. 
+In section \ref{sec:mc_int_eqn_estimators}, a problem arose when the value of 
+an inner product in a small portion of the phase space was desired. In the 
+limit that this portion of the phase space becomes a point, the estimators 
+become ineffective at obtaining the value of the inner product. In this 
+section, a dual problem will be introduced in which the same Monte Carlo 
+random walk process can be used but a different inner product is estimated. 
+Because of the way that this dual problem is formulated the value of this new 
+inner product will have the same value as the original inner product. 
 
 First consider an operator $H$ with the following property when operating
-on the function P(x), where x again is a state in the continuous phase space
+on the function F(x), where x again is a state in the continuous phase space
 $\Gamma$. 
 \begin{equation}
-  H \cdot P(x) = P(x) - \int_{\Gamma} K(y \to x)P(y)dy
+  H \cdot F(x) = F(x) - \int_{\Gamma} K(y \to x)F(y)dy
   \label{eq:forward_operator}
 \end{equation}
-Based on equation \ref{eq:fredholm_int_eqn}, $H \cdot P(x)$ is equal to $S(x)$.
-If we assume that $P(x)$ is a real-valued function, the adjoint operator 
+Based on equation \ref{eq:fredholm_int_eqn}, $H \cdot F(x)$ is equal to $S(x)$.
+If we assume that $F(x)$ is a real-valued function, the adjoint operator 
 $H^{\dagger}$ is defined by the following identity 
-\citep{lewis_computational_1993}. The function $P^{\dagger}(x)$ is the solution 
+\citep{lewis_computational_1993}. The function $F^{\dagger}(x)$ is the solution 
 of a dual Fredholm integral equation of the second kind. 
 \begin{equation}
-  \langle P^{\dagger}H \cdot P \rangle = 
-  \langle PH^{\dagger} \cdot P^{\dagger} \rangle
+  \langle F^{\dagger}H \cdot F \rangle = 
+  \langle PH^{\dagger} \cdot F^{\dagger} \rangle
   \label{eq:forward_adjoint_ops}
 \end{equation}
 From this identity the adjoint operator $H^{\dagger}$ can be determined.
 \begin{eqnarray}
-  \langle P^{\dagger}H \cdot P \rangle & = & \int_{\Gamma} \left[P^{\dagger}(x)P(x) -
-  P^{\dagger}(x)\int_{\Gamma}K(y \to x)P(y)dy \right]dx \nonumber \\
-  & = & \int_{\Gamma} \left[P^{\dagger}(x)P(x) -
-  \int_{\Gamma}K(y \to x)P^{\dagger}(x)P(y)dy \right]dx \nonumber \\
-  & = & \int_{\Gamma} P(x)P^{\dagger}(x)dx - 
-  \int_{\Gamma}P(y)\int_{\Gamma}K(y \to x)P^{\dagger}(x)dxdy \nonumber \\
-  & = & \langle PH^{\dagger} \cdot P^{\dagger} \rangle \nonumber
+  \langle F^{\dagger}H \cdot P \rangle & = & \int_{\Gamma} \left[F^{\dagger}(x)F(x) -
+  F^{\dagger}(x)\int_{\Gamma}K(y \to x)F(y)dy \right]dx \nonumber \\
+  & = & \int_{\Gamma} \left[F^{\dagger}(x)F(x) -
+  \int_{\Gamma}K(y \to x)F^{\dagger}(x)F(y)dy \right]dx \nonumber \\
+  & = & \int_{\Gamma} F(y)F^{\dagger}(y)dy - 
+  \int_{\Gamma}F(y)\int_{\Gamma}K(y \to x)F^{\dagger}(x)dxdy \nonumber \\
+  & = & \langle FH^{\dagger} \cdot F^{\dagger} \rangle \nonumber
 \end{eqnarray}
 \begin{equation}
-  H^{\dagger} \cdot P^{\dagger}(x) = P^{\dagger}(x) - 
-  \int_{\Gamma}K(x \to y)P^{\dagger}(y)dy
+  H^{\dagger} \cdot F^{\dagger}(x) = F^{\dagger}(x) - 
+  \int_{\Gamma}K(x \to y)F^{\dagger}(y)dy
   \label{eq:adjoint_operator}
 \end{equation}
-If the function $H^{\dagger} \cdot P^{\dagger}(x)$ is set equal to the function
+If the function $H^{\dagger} \cdot F^{\dagger}(x)$ is set equal to the function
 $g(x)$ from equation \ref{eq:inner_product}, the dual Fredholm integral
 equation can be defined.
 \begin{equation}
-  P^{\dagger}(x) = g(x) + \int_{\Gamma}K(x \to y)P^{\dagger}(y)dy
+  F^{\dagger}(x) = g(x) + \int_{\Gamma}K(x \to y)F^{\dagger}(y)dy
   \label{eq:dual_fredholm_int_eqn}
 \end{equation}
 With the dual equation defined in this way, the new inner product can also
 be defined.
 \begin{eqnarray}
-  I & = & \langle PH^{\dagger} \cdot P^{\dagger} \rangle = 
-  \langle P^{\dagger}H \cdot P \rangle \nonumber \\
-  & = & \langle Pg \rangle \nonumber = \langle P^{\dagger}S \rangle \nonumber \\
-  I & = & \langle P^{\dagger}S \rangle
+  I & = & \langle FH^{\dagger} \cdot F^{\dagger} \rangle = 
+  \langle F^{\dagger}H \cdot F \rangle \nonumber \\
+  & = & \langle Fg \rangle \nonumber = \langle F^{\dagger}S \rangle \nonumber \\
+  I & = & \langle F^{\dagger}S \rangle
 \end{eqnarray}
 Now, in the limiting case where g(x) is a delta function, the Monte Carlo
 random walk process for the dual equation, combined with any of the estimators 
 described in the previous section, will be able to estimate the inner product. 
 This is because delta functions can be handled easily as source terms but
 are very challenging to handle with estimators. In general, if the portion of 
-the phase space in which the source is defined is larger than the the portion 
-of the phase space in which the function $g(x)$ is defined, the dual problem
-will be be able to take advantage of estimators with higher figures of merrit. 
-This is one of the primary motivations for studying the dual problem in this
-report. It should also be noted that for the dual problem, the same state 
-transition kernel is used, but the integration is over final states. This 
-property of the dual problem will cause many interesting issues, which will be 
-discussed in much more detail in the coming chapters.
+the phase space, $\Gamma_s$, in which the source is non-zero is larger than the
+portion of the phase space, $\Gamma_d$, in which the function $g(x)$ is 
+non-zero, the dual problem will be be able to take advantage of estimators with
+higher figures of merrit. This is one of the primary motivations for studying 
+the dual problem in this report. It should also be noted that for the dual 
+problem, the same state transition kernel is used, but the integration is over 
+final states. This property of the dual problem will cause many interesting 
+issues, which will be discussed in much more detail in the coming chapters.
 
 One final piece of terminology must be defined before moving on to the next 
-chapter. The detector will be defined as the portion of the phase space where
-the function $g(x)$ is non-zero. When discussing radiation transport problems,
-it is very common to refer to the region where particles are born as the source
-and the region where particles information is recorded as the detector. However,
-in the dual problem the opposite will be true; particles will be born in the
-detector region (where $g(x)$ is non-zero) and particle information will be 
-recorded in the source region (where $S(x)$ is non-zero).
+chapter. The detector will be defined as the portion of the phase space,
+$\Gamma_d$ where the function $g(x)$ is non-zero. When discussing radiation 
+transport problems, it is very common to refer to the region where particles 
+are born as the source and the region where particles information is recorded 
+as the detector. However, in the dual problem the opposite will be true; 
+particles will be born in the detector region ($\Gamma_d$) and 
+particle information will be recorded in the source region ($\Gamma_s$).

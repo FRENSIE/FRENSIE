@@ -1,0 +1,56 @@
+\chapter{Alternative Derivation of the Adjoint Emission and Collision Densities}
+\label{ch:appendix_a}
+
+In chapter \ref{ch:adjoint_neutral_particle_transport} a FIESK for the adjoint
+of the emission density was created. However, it was pointed out that the 
+adjoint of the emission density was ``flux-like'' and therefore not ideal to
+estimate via a Monte Carlo random walk process. It was also briefly mentioned
+that a better function could be constructed if the adjoint of the emission
+density was multiplied by some function $\Sigma^{\dagger}$, whose only necessary
+properties are that it is strictly positive and goes to zero in a vacuum. In 
+the following sections, two functions will be used to modify the adjoint of
+the emission density. In addition, the adjoint of the collision density, which
+is also ``flux-like,'' will be modified in a similar way.
+
+\section{The Adjoint Collision Density}
+To derive the adjoint collision density, equation 
+\ref{eq:adjoint_of_emission_density_integral_eqn_2} will be multiplied by
+the total cross section $\Sigma_T(\vec{r},E,)$. In the following equation,
+$\xi^{\dagger}(\vec{r},E,\hat{\Omega})$ is the adjoint collision density.
+\begin{equation}
+  \xi^{\dagger}(\vec{r},E,\hat{\Omega}) = \Sigma_T(\vec{r},E)
+  \chi^{\dagger}(\vec{r},E,\hat{\Omega})
+\end{equation}
+
+\begin{equation*}
+  \begin{split}
+  \xi^{\dagger}(\vec{r},&E,\hat{\Omega}) = \int a(\vec{r^{'}},E,\hat{\Omega}) 
+    \Sigma_T(\vec{r},E) \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) dV^{'} + \\
+    & \int\int\int  \frac{\Sigma_T(\vec{r},E)}{\Sigma_T(\vec{r^{'}},E^{'})}
+      \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) 
+    \Sigma_S(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
+    dE^{'}d\hat{\Omega^{'}}dV^{'}
+  \end{split}
+\end{equation*}
+\begin{equation*}
+  \begin{split}
+  &\text{} \qquad = \int a(\vec{r^{'}},E,\hat{\Omega}) 
+    T(\vec{r^{'}} \to \vec{r},E,-\hat{\Omega}) dV^{'} + \\
+    & \int\int\int
+      T(\vec{r^{'}} \to \vec{r},E,-\hat{\Omega})
+      \frac{\Sigma_S(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})}
+           {\Sigma_T(\vec{r^{'}},E^{'})}
+    dE^{'}d\hat{\Omega^{'}}dV^{'}
+  \end{split}
+\end{equation*}
+
+As mentioned in chapter \ref{ch:neutral_particle_transport}, the transport 
+kernel is normalized, assuming that random walks that exit the domain of 
+interest are terminated. Interestingly, the particles characterized by the 
+adjoint collision density FIESK travel in the direction opposite of the 
+variable $\hat{\Omega}$, which is indicated by the negative sign in front of
+this variable in the transport kernel. Unfortunately, the part of the state
+transition kernel that describes the collisions is still poorly behaved. 
+However, it can be normalized by introducing the factor 
+$P^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}})$.
+
