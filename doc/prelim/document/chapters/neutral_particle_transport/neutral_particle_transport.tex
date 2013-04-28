@@ -33,7 +33,7 @@ be found in several references \citep{lewis, hoogenboom, irving}.
     + \Sigma_T(\vec{r},E) \varphi(\vec{r},E,\hat{\Omega},t) = \\
     & \quad S(\vec{r},E,\hat{\Omega},t) +
     \int\int \Sigma_S(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
-    \varphi(\vec{r},E,\hat{\Omega^{'}},t) dE^{'}d\hat{\Omega^{'}} 
+    \varphi(\vec{r},E^{'},\hat{\Omega^{'}},t) dE^{'}d\hat{\Omega^{'}} 
   \end{split}
   \label{eq:integro_diff_boltzmann_eqn}
 \end{equation}
@@ -74,7 +74,7 @@ density $\chi(\vec{r},E,\hat{\Omega})$.
   \begin{split}
     \chi(\vec{r},E,\hat{\Omega}) = S(\vec{r},&E,\hat{\Omega}) + \\
     & \int\int \Sigma_S(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
-    \varphi(\vec{r},E,\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}
+    \varphi(\vec{r},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}
   \end{split}
   \label{eq:emission_density}
 \end{equation}
@@ -358,15 +358,15 @@ collision. Using equation \ref{eq:collision_emission_relation} and equation
 \ref{eq:emission_density}, an integral equation for the 
 collision density can be derived:
 \begin{equation*}
-  \psi(x) = \psi_1(x) + \int_{\Gamma} L(y \to x)\psi(y)dy.
+  \psi(x) = S_c(x) + \int_{\Gamma} L(y \to x)\psi(y)dy.
 \end{equation*}
-In this equation $\psi_1(x)$ is the first collided source and $L(y \to x)$ is
+In this equation $S_c(x)$ is the first collided source and $L(y \to x)$ is
 a new kernel that also characterizes the transition of a particle from a state 
 $y = (\vec{r^{'}},E^{'},\hat{\Omega^{'}})$ of the phase space $\Gamma$ to another 
 state $x = (\vec{r},E,\hat{\Omega})$. These functions are defined in the 
 following equations.
 \begin{equation}
-  \psi_1(x) = \int\int T(\vec{r^{'}} \to \vec{r},E,\hat{\Omega})
+  S_c(x) = \int\int T(\vec{r^{'}} \to \vec{r},E,\hat{\Omega})
   S(\vec{r^{'}},E,\hat{\Omega})dV^{'}
 \end{equation}
 \begin{equation}
