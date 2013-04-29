@@ -61,9 +61,9 @@ defined as follows.
 
 Unfortunately, the part of the state transition kernel that describes the 
 collisions is still poorly behaved. However, it can be normalized by 
-introducing the factor $P^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}})$.
+introducing the factor $P^{\dagger}(\vec{r^{'}},E^{'})$.
 \begin{equation}
-  P^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) = 
+  P^{\dagger}(\vec{r^{'}},E^{'}) = 
   \frac{\Sigma^{\dagger}(\vec{r^{'}},E^{'})}{\Sigma_T(\vec{r^{'}},E^{'})}
   \label{eq:adjoint_weight_factor}
 \end{equation}
@@ -92,7 +92,7 @@ can be defined.
     N^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
     = T^{\dagger}(\vec{r^{'}} \to \vec{r},E,\hat{\Omega})
     C^{\dagger}(\vec{r^{'}},&E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) \\
-    & \cdot P^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}})
+    & \cdot P^{\dagger}(\vec{r^{'}},E^{'})
   \end{split}
 \end{equation}
 
@@ -154,10 +154,10 @@ source from the previous section will be used.
 \end{equation*}
 \begin{equation*}
   \begin{split}
-  \text{} & \qquad \qquad = P^{\dagger}(\vec{r},E,\hat{\Omega}) \int
+  \text{} & \qquad \qquad = P^{\dagger}(\vec{r},E) \int
     a(\vec{r^{'}},E,\hat{\Omega}) 
     T(\vec{r^{'}} \to \vec{r},E,-\hat{\Omega}) dV^{'} + \\
-    & \int\int\int P^{\dagger}(\vec{r},E,\hat{\Omega}) 
+    & \int\int\int P^{\dagger}(\vec{r},E) 
     T(\vec{r^{'}} \to \vec{r},E,-\hat{\Omega})
       \frac{\Sigma_S(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})}
            {\Sigma^{\dagger}(\vec{r^{'}},E^{'})}
@@ -166,9 +166,9 @@ source from the previous section will be used.
 \end{equation*}
 \begin{equation*}
   \begin{split}
-    \text{} & \qquad \qquad = P^{\dagger}(\vec{r},E,\hat{\Omega}) 
+    \text{} & \qquad \qquad = P^{\dagger}(\vec{r},E) 
     S_c^{\dagger}(\vec{r},E,\hat{\Omega}) +\\
-    & \int\int\int P^{\dagger}(\vec{r},E,\hat{\Omega}) 
+    & \int\int\int P^{\dagger}(\vec{r},E) 
     T^{\dagger}(\vec{r^{'}} \to \vec{r},E,\hat{\Omega})
     C^{\dagger}(\vec{r^{'}},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
     \mu^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}dV^{'}
@@ -185,7 +185,7 @@ collision density state transition kernel.
 \begin{equation}
   \begin{split}
     O^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
-    = P^{\dagger}(\vec{r},E,&\hat{\Omega}) 
+    = P^{\dagger}(\vec{r},&E) 
     T^{\dagger}(\vec{r^{'}} \to \vec{r},E,\hat{\Omega}) \\
     & \cdot C^{\dagger}(\vec{r^{'}},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
   \end{split}
@@ -275,7 +275,7 @@ kernel and adjoint collision kernel from section
     & \qquad \qquad \qquad \quad = a(\vec{r},E,\hat{\Omega}) + \\
     & \int\int\int 
     C^{\dagger}(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
-    P^{\dagger}(\vec{r},E^{'},\hat{\Omega^{'}})
+    P^{\dagger}(\vec{r},E^{'})
     T^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'},\hat{\Omega^{'}})
     \psi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
   \end{split}
@@ -291,7 +291,7 @@ energy and direction).
   \begin{split}
     M^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
     = C^{\dagger}(\vec{r},E^{'} \to E,&\hat{\Omega^{'}} \to \hat{\Omega})
-    P^{\dagger}(\vec{r},E^{'},\hat{\Omega^{'}})  \\
+    P^{\dagger}(\vec{r},E^{'})  \\
     & \cdot T^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'},\hat{\Omega^{'}}) 
   \end{split}
 \end{equation}

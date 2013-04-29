@@ -398,17 +398,17 @@ information.
        {\Sigma_S(\vec{r},E^{'})} \nonumber \\
   & = & \frac{\Sigma_S(\vec{r},E^{'})}{\Sigma_T(\vec{r},E^{'})} \sum_j
         \frac{\Sigma_{S,j}(\vec{r},E^{'})}{\Sigma_S(\vec{r},E^{'})}
-        f_{j,A}(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) \nonumber\\
+        f_j(E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) \nonumber\\
   & = & \frac{\Sigma_S(\vec{r},E^{'})}{\Sigma_T(\vec{r},E^{'})}
         \sum_{A,j} \frac{\Sigma_{S,A}(\vec{r},E^{'})}{\Sigma_S(\vec{r},E^{'})}  
         \frac{\sigma_{j,A}(E^{'})}{\sigma_{S,A}(E^{'})}  \\
         && \qquad \cdot
-        f_{j,A}(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) \nonumber
+        f_{j,A}(E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) \nonumber
 \end{eqnarray}
-In the expansion of the scattering kernel, the subscript A denotes a particular
+In the expansion of the collision kernel, the subscript A denotes a particular
 nuclide and the subscript j denotes a particular type of scattering reaction. 
 The function 
-$f_{j,A}(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})$ is a PDF that 
+$f_{j,A}(E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})$ is a PDF that 
 characterizes the outgoing particle energy and direction ($E$,$\hat{\Omega}$) 
 given an initial energy and direction ($E$,$\hat{\Omega}$) for scattering 
 reaction j. This PDF has the following property:
@@ -456,7 +456,7 @@ processes are analogue.
 \begin{equation}
   \psi(x)\text{ Random Walk:}
   \begin{cases}
-    p^1(x) & = \frac{\psi_1(x)}{\int_{\Gamma}\psi_1(x)dx} \\
+    p^1(x) & = \frac{S_c(x)}{\int_{\Gamma} S_c(x)dx} \\
     p(y \to x) & = L(y \to x) \\
     p(x) & = 1 - P_{NA}(x)
   \end{cases}
@@ -495,7 +495,7 @@ walks to terminate.
   \chi(x)\text{ Random Walk:}
   \begin{cases}
     p^1(x) & = \frac{S(x)}{\int_{\Gamma} S(x)dx} \\
-    p(y \to x) &  = \frac{K(y \to x)}{P_{NA}(x)} \\
+    p(y \to x) &  = \frac{K(y \to x)}{P_{NA}(y)} \\
     p(x) & = 0
   \end{cases}
   \label{eq:mc_random_walk_emission_dens_nonan}
@@ -504,7 +504,7 @@ walks to terminate.
   \psi(x)\text{ Random Walk:}
   \begin{cases}
     p^1(x) & = \frac{\psi_1(x)}{\int_{\Gamma}\psi_1(x)dx} \\
-    p(y \to x) & = \frac{L(y \to x)}{P_{NA}(x)} \\
+    p(y \to x) & = \frac{L(y \to x)}{P_{NA}(y)} \\
     p(x) & = 0
   \end{cases}
   \label{eq:mc_random_walk_collision_dens_nonan}
@@ -521,9 +521,9 @@ or the emission density.
 \begin{eqnarray}
   I & = & \int a(\vec{r},E,\hat{\Omega}) \varphi(\vec{r},E,\hat{\Omega}) 
   dVdEd\hat{\Omega} \\
-  & = & \int_{\Gamma} b(\vec{r},E,\hat{\Omega}) \psi(\vec{r},E,\hat{\Omega})  
+  & = & \int b(\vec{r},E,\hat{\Omega}) \psi(\vec{r},E,\hat{\Omega})  
   dVdEd\hat{\Omega} \\
-  & = & \int_{\Gamma} c(\vec{r},E,\hat{\Omega}) \chi(\vec{r},E,\hat{\Omega}) 
+  & = & \int c(\vec{r},E,\hat{\Omega}) \chi(\vec{r},E,\hat{\Omega}) 
   dVdEd\hat{\Omega}
 \end{eqnarray}
 Based on the relationship between the collision density and the flux, $b(x)$
