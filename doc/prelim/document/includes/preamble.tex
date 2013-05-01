@@ -16,7 +16,7 @@
 
 %% You should use natbib
 \IfFileExists{natbib.sty}{%
-\usepackage{natbib}%
+\usepackage[square,comma,numbers,sort&compress]{natbib}%
 }{}
 
 %% You probably need appendix, if you want appendices
@@ -206,6 +206,9 @@
   \thispagestyle{empty}
   \mbox{}
 }
+
+%% change default footnote markings
+%\renewcommand{\thefootnote}{\fnsymbol{footnote}}
 
 \usepackage{titlesec}
 \titlespacing*{\chapter}{0pt}{-50pt}{20pt}
