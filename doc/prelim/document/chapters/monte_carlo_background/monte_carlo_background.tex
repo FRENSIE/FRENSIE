@@ -26,13 +26,13 @@ identical to the FIESK except that one of the limits of integration is variable.
 \end{equation}
 In these two equations, the functions $K(x,y)$ and $S(x)$ are known. The 
 function $S(x)$ is a forcing function and the function $K(x,y)$ is called the 
-kernel of the integral equation, which can be interpreted as characterizing the 
-transition from some initial state y to the state x. Due to this 
-interpretation, the kernel is sometimes written as $K(y \to x)$. This notation 
-will be adopted throughout the rest of this report.
+kernel of the integral equation, which can be interpreted a function 
+characterizing the transition from some initial state y to the state x. Due to 
+this interpretation, the kernel is sometimes written as $K(y \to x)$. This 
+notation will be adopted throughout the rest of this report.
 
 The Volterra integral equation is particularly important for radiation 
-transport because it comes about whenever there is a preferred direction for the 
+transport because it comes about whenever there is a preferred direction for the
 independent variable\footnote{Due to conservation of energy and momentum, 
 the energy of a particle after scattering off of a massive scattering center 
 cannot be greater than the energy prior to the scattering event, assuming that 
@@ -54,14 +54,14 @@ successive approximations will be shown because of its relevance to the
 Monte Carlo process that will be described in the next sections. To start,
 set the zeroth order approximation equal to the forcing function $S(x)$. The
 first through n-th order approximations will then be defined as follows.
-\begin{eqnarray}
-  f_0(x) & = & S(x) \nonumber \\
-  f_1(x) & = & S(x) + \lambda \int_a^b K(y \to x)f_0(y)dy \nonumber \\
-  f_2(x) & = & S(x) + \lambda \int_a^b K(y \to x)f_1(y)dy \nonumber \\
-  & \vdots & \nonumber \\
-  f_n(x) & = & S(x) + \lambda \int_a^b K(y \to x)f_{n-1}(y)dy 
+\begin{align}
+  f_0(x) & = S(x) \nonumber \\
+  f_1(x) & = S(x) + \lambda \int_a^b K(y \to x)f_0(y)dy \nonumber \\
+  f_2(x) & = S(x) + \lambda \int_a^b K(y \to x)f_1(y)dy \nonumber \\
+  & \vdots \nonumber \\
+  f_n(x) & = S(x) + \lambda \int_a^b K(y \to x)f_{n-1}(y)dy 
   \label{eq:nth_order_fiesk_approx} 
-\end{eqnarray}
+\end{align}
 As the order of the approximation goes to $\infty$, the exact solution of
 the FIESK is recovered.
 \begin{equation}
@@ -105,9 +105,9 @@ the Neumann series will converge if and only if the spectrum of $\hat{K}$ is
 contained on the open unit disk \citep{rahman_integral_2007,morse_methods_1953,spanier_monte_1969}. In other words, successive application of the operator
 $\hat{K}$ do not cause the function being operated on to grow in magnitude.
 
-\section{Monte Carlo Random Walk Process}
+\section{The Monte Carlo Random Walk Process}
 \label{sec:mc_random_walk_process}
-The Monte Carlo process that is used to determine the solution of a Fredholm
+The Monte Carlo process that is used to estimate the solution of a Fredholm
 integral equation of the second kind simulates the movement of entities from
 state to state in some phase space. The process of moving some entity from
 state to state is commonly referred to as a random walk processes. The 
@@ -124,15 +124,16 @@ represents one point, or state, in continuous phase space $\Gamma$. The
 PDF $p^1(x)$ characterizes the probability that the first event of a random 
 walk will occur in state $x$. The PDF $p(y \to x)$ characterizes the probability
 of a transition from state $y$ to state $x$. Finally, the probability $p(x)$
-characterizes the probability of termination in state $x$. The random walk
-is assumed to undergo $k$ events where $x_1$ is the first event and $x_k$ is
-the final event.
+characterizes the probability of termination in state $x$ and the probability
+$q(x)$ characterizes the probability of continuation in state $x$. The random 
+walk is assumed to undergo $k$ events where $x_1$ is the first event and $x_k$ 
+is the final event.
 \begin{equation}
   \text{Random Walk: }
   \begin{cases}
     p^1(x) & = P(x_1 = x) \\
-    p(y \to x) & = P(x_{n+1} = x \quad|\quad x_n = y, k > n)  \\
-    p(x) & = P(k = n \quad|\quad x_n = x) 
+    p(y \to x) & = P(x_{n+1} = x \text{ | } x_n = y, k > n)  \\
+    p(x) & = P(k = n \text{ | } x_n = x) 
   \end{cases}
   \label{eq:mc_random_walk_pdfs}
 \end{equation}
@@ -141,14 +142,21 @@ The PDFs that define the random walk process have the following properties:
   \item $p^1(x) \geq 0$ \\
   $\int_{\Gamma} p^1(x)dx = 1$
   \item $p(y \to x) \geq 0$ \\
-  $\int_{\Gamma} p(y \to x)dx = 1 - p(y) \leq 1$
+  $\int_{\Gamma} p(y \to x)dx = q(x) = 1 - p(x)$
 \end{enumerate}
-The PDF $p^1(x)$ can be generalized to a PDF that characterizes the
-probability of an entity having its $n^{th}$ event in state $x$. 
+It must be noted that these random walk PDFs will only be adequate, in general,
+when the state transition kernel does not allow for entity multiplication. The
+random walk PDFs that one can use for systems that allow for multiplicatioun 
+are discussed in \citep{spanier_monte_1969}. Fortunately, even in systems where 
+entity multiplication is allowed, these random walk PDFs will work as long as 
+the multiplication of entities is not treated implicitly. 
+
+The PDF $p^1(x)$ can be generalized to a PDF that characterizes the probability 
+of an entity having its $n^{th}$ event in state $x$. 
 \begin{equation}
   P^n(x) = 
   \begin{cases} 
-    P(x_n = x \quad|\quad k > n-1) & \text{if } n >= 2 \\
+    P(x_n = x \text{ | } k > n-1) & \text{if } n >= 2 \\
     P(x_1 = x) = p^1(x) & \text{if } n = 1 
   \end{cases}
   \label{eq:pn_pdf}
@@ -163,11 +171,11 @@ relation may be used.
 A discrete random variable $X(x)$ can now be defined on the space of random 
 walks, which represents the number density of events that happen in state $x$. 
 The expected value of this discrete random variable can be calculated easily.
-\begin{eqnarray}
-  E[X(x)] & = & 1 \cdot P^1(x) + 1 \cdot P^2(x) + \ldots \nonumber \\
-  & = & \sum_{n=1}^{\infty} P^n(x)
+\begin{align}
+  E[X(x)] & = 1 \cdot P^1(x) + 1 \cdot P^2(x) + \ldots \nonumber \\
+  & = \sum_{n=1}^{\infty} P^n(x)
   \label{eq:expec_coll_dens}
-\end{eqnarray}
+\end{align}
 
 Finally, a continuous random variable $P(x)$ can be defined, which is equal to
 $E[X(x)]$. This new random variable is called the continuous event density 
@@ -181,13 +189,13 @@ integral equation, which has the form shown in equation
 \ref{eq:fredholm_int_eqn}. This proof assumes that $S(x)$ and $K(y \to x)$ from 
 equation \ref{eq:fredholm_int_eqn} have the same properties as $p^1(x)$ and 
 $p(y \to x)$ respectively. 
-\begin{eqnarray}
-  P(x) & = & \sum_{n=1}^{\infty} P^n(x) \nonumber \\
-  & = & p^1(x) + \sum_{n=2}^{\infty} \int_{\Gamma} p(y \to x) P^{n-1}(y)dy \nonumber\\
-  & = & p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=2}^{\infty} P^{n-1}(y)dy \nonumber\\
-  & = & p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=1}^{\infty} P^{n}(y)dy \nonumber\\
-  & = & p^1(x) + \int_{\Gamma} p(y \to x) P(y)dy \nonumber \\
-\end{eqnarray}
+\begin{align}
+  P(x) & = \sum_{n=1}^{\infty} P^n(x) \nonumber \\
+  & = p^1(x) + \sum_{n=2}^{\infty} \int_{\Gamma} p(y \to x) P^{n-1}(y)dy \nonumber\\
+  & = p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=2}^{\infty} P^{n-1}(y)dy \nonumber\\
+  & = p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=1}^{\infty} P^{n}(y)dy \nonumber\\
+  & = p^1(x) + \int_{\Gamma} p(y \to x) P(y)dy \nonumber \\
+\end{align}
 
 The random variables $X(x)$ and $P(x)$ are purely mathematical contrivances
 used to motivate the use of the random walk process and will never be used 
@@ -202,7 +210,8 @@ phase space.
 To conduct the random walk process that has been outlined, one must first 
 sample a starting state $x_1$ from the PDF $p^1(x)$. With probability $p(x_1)$ 
 this random walk will end in state $x_1$. If the random walk continues, a new 
-state $x_2$ is sampled from $p(x_1 \to x)$. This process will then continue 
+state $x_2$ is sampled from 
+$p(x \text{ | } x_1) = \frac{p(x_1 \to x)}{\int p(x_1 \to x)dx}$. This process will then continue 
 until the random walk eventually ends in some state $x_k$. The variable 
 $\alpha = (x_1,\ldots,x_{k-1},x_k)$ will often be used to represent the random 
 walk. 
@@ -290,17 +299,17 @@ It will now be shown that the expected value of this estimator is equal to the
 value of the inner product, which will prove that this estimator is unbiased 
 \citep{spanier_monte_1969}. Equation \ref{eq:neumann_series_soln_expansion},
 which shows $F(x)$ as a Neumann series will be useful in verifying this proof.
-\begin{eqnarray}
-  E\left[\varepsilon(\alpha)\right] & = & \sum_{\alpha} 
+\begin{align}
+  E\left[\varepsilon(\alpha)\right] & = \sum_{\alpha} 
   P(\alpha)\varepsilon(\alpha) \nonumber \\
-  & = & \sum_{k=1}^{\infty} \int \cdots \int dx_1 \cdots dx_k p^1(x_1)
+  & = \sum_{k=1}^{\infty} \int \cdots \int dx_1 \cdots dx_k p^1(x_1)
   p(x_1 \to x_2) \cdots p(x_{k-1} \to x_k)p(x_k) \cdot \nonumber \\
-  & & \qquad \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_w)\cdots 
+  & \qquad \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_w)\cdots 
   w(x_{k-1} \to w_k)\frac{g(x_k)}{p(x_k)} \nonumber \\
-  & = & \sum_{k=1}^{\infty} \int \cdots \int dx_1 \cdots dx_k S(x_1)K(x_1 \to x_2)
+  & = \sum_{k=1}^{\infty} \int \cdots \int dx_1 \cdots dx_k S(x_1)K(x_1 \to x_2)
   \cdots K(x_{k-1} \to x_k)g(x_k) \nonumber \\
-  & = & \int_{\Gamma} g(x)F(x)dx \nonumber  
-\end{eqnarray}
+  & = \int_{\Gamma} g(x)F(x)dx \nonumber  
+\end{align}
 
 If the function g(x) is only non-zero in some finite portion of the phase space
 $\Gamma_d$, which will be the case for most problems, only the random walks 
@@ -313,18 +322,18 @@ of the value of interest \footnote{The collision estimator is the name given
 in most texts but for the sake of generality, event estimator has been 
 chosen.}. The value $W_m(\alpha)$ can be interpreted as the weight of the 
 entity after the $m^{th}$ event of the random walk.
-\begin{eqnarray}
-  \eta(\alpha) & = & \sum_m^k \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_2) \cdots 
+\begin{align}
+  \eta(\alpha) & = \sum_{m=1}^k \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_2) \cdots 
   w(x_{m-1} \to x_m) g(x_m) \nonumber \\
-  & = & \sum_m^k W_m(\alpha) g(x_m)
+  & = \sum_{m=1}^k W_m(\alpha) g(x_m)
   \label{eq:collision_estimator_2}
-\end{eqnarray}
+\end{align}
 Again, for an analogue random walk process, the weight function after each 
 event will be unity and the value $\frac{S(x_1)}{p^1(x_1)}$ will be equal to 
 the constant $C = \int_{\Gamma} S(x)dx$. Therefore, for an analogue random walk 
 process, the event estimator reduces to
 \begin{equation*}
-  \eta(\alpha) = C \sum_m^k g(x_k)
+  \eta(\alpha) = C \sum_{m=1}^k g(x_k)
 \end{equation*}
 The proof that this estimator is an unbiased random variable is quite lengthy 
 and requires a more in-depth discussion of probability theory. Details of this
@@ -399,16 +408,16 @@ of the dual FIESK.
   \label{eq:forward_adjoint_ops}
 \end{equation}
 From this identity the adjoint operator $H^{\dagger}$ can be determined.
-\begin{eqnarray}
-  \int_{\Gamma} F^{\dagger}(x)H \cdot F(x)dx & = & \int_{\Gamma} 
+\begin{align}
+  \int_{\Gamma} F^{\dagger}(x)H \cdot F(x)dx & = \int_{\Gamma} 
   \left[F^{\dagger}(x)F(x) -
   F^{\dagger}(x)\int_{\Gamma}K(y \to x)F(y)dy \right]dx \nonumber \\
-  & = & \int_{\Gamma} \left[F^{\dagger}(x)F(x) -
+  & = \int_{\Gamma} \left[F^{\dagger}(x)F(x) -
   \int_{\Gamma}K(y \to x)F^{\dagger}(x)F(y)dy \right]dx \nonumber \\
-  & = & \int_{\Gamma} F(y)F^{\dagger}(y)dy - 
+  & = \int_{\Gamma} F(y)F^{\dagger}(y)dy - 
   \int_{\Gamma}F(y)\int_{\Gamma}K(y \to x)F^{\dagger}(x)dxdy \nonumber \\
-  & = & \int_{\Gamma}F(x)H^{\dagger} \cdot F^{\dagger}(x)dx \nonumber
-\end{eqnarray}
+  & = \int_{\Gamma}F(x)H^{\dagger} \cdot F^{\dagger}(x)dx \nonumber
+\end{align}
 \begin{equation}
   H^{\dagger} \cdot F^{\dagger}(x) = F^{\dagger}(x) - 
   \int_{\Gamma}K(x \to y)F^{\dagger}(y)dy
@@ -426,12 +435,12 @@ cause the behavior of the kernel to be different.
 
 With the dual equation defined in this way, the new inner product can also
 be defined.
-\begin{eqnarray}
-  I & = & \int_{\Gamma} F(x)g(x)dx \nonumber \\
-  & = & \int_{\Gamma} F(x) H^{\dagger} \cdot F^{\dagger}(x)dx \nonumber \\
-  & = & \int_{\Gamma}  F^{\dagger}(x) H \cdot F(x) dx \nonumber \\
-  I & = & \int_{\Gamma} F^{\dagger}(x)S(x) dx
-\end{eqnarray}
+\begin{align}
+  I & = \int_{\Gamma} F(x)g(x)dx \nonumber \\
+  & = \int_{\Gamma} F(x) H^{\dagger} \cdot F^{\dagger}(x)dx \nonumber \\
+  & = \int_{\Gamma}  F^{\dagger}(x) H \cdot F(x) dx \nonumber \\
+  I & = \int_{\Gamma} F^{\dagger}(x)S(x) dx
+\end{align}
 Now, in the limiting case where g(x) is a delta function, the Monte Carlo
 random walk process for the dual equation, combined with any of the estimators 
 described in the previous section, will be able to estimate the inner product. 
