@@ -144,12 +144,6 @@ The PDFs that define the random walk process have the following properties:
   \item $p(y \to x) \geq 0$ \\
   $\int_{\Gamma} p(y \to x)dx = q(x) = 1 - p(x)$
 \end{enumerate}
-It must be noted that these random walk PDFs will only be adequate, in general,
-when the state transition kernel does not allow for entity multiplication. The
-random walk PDFs that one can use for systems that allow for multiplicatioun 
-are discussed in \citep{spanier_monte_1969}. Fortunately, even in systems where 
-entity multiplication is allowed, these random walk PDFs will work as long as 
-the multiplication of entities is not treated implicitly. 
 
 The PDF $p^1(x)$ can be generalized to a PDF that characterizes the probability 
 of an entity having its $n^{th}$ event in state $x$. 
@@ -194,7 +188,7 @@ $p(y \to x)$ respectively.
   & = p^1(x) + \sum_{n=2}^{\infty} \int_{\Gamma} p(y \to x) P^{n-1}(y)dy \nonumber\\
   & = p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=2}^{\infty} P^{n-1}(y)dy \nonumber\\
   & = p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=1}^{\infty} P^{n}(y)dy \nonumber\\
-  & = p^1(x) + \int_{\Gamma} p(y \to x) P(y)dy \nonumber \\
+  & = p^1(x) + \int_{\Gamma} p(y \to x) P(y)dy \nonumber 
 \end{align}
 
 The random variables $X(x)$ and $P(x)$ are purely mathematical contrivances

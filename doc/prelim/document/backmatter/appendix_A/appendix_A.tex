@@ -1,50 +1,45 @@
 \chapter{Alternative Derivation of the Adjoint Emission and Collision Densities}
 \label{ch:appendix_a}
 
-In chapter \ref{ch:adjoint_neutral_particle_transport} a FIESK for the adjoint
+In chapter \ref{ch:adjoint_neutral_particle_transport}, a FIESK for the adjoint
 of the emission density was created. However, it was pointed out that the 
 adjoint of the emission density was ``flux-like'' and therefore not ideal to
 estimate via a Monte Carlo random walk process. It was also briefly mentioned
 that a better function could be constructed if the adjoint of the emission
-density was multiplied by some function $\Sigma(\vec{r},E)$, whose only 
+density was multiplied by some function $\Sigma^{*}(\vec{r},E)$, whose only 
 necessary properties are that it is strictly positive and goes to zero in a 
 vacuum. In the following sections, two functions will be used to modify the 
-adjoint of the emission density. In addition, the adjoint of the collision 
-density, which is also ``flux-like,'' will be modified in a similar way.
+adjoint of the emission density. The adjoint of the collision 
+density, which is also ``flux-like,'' will also be modified in a similar way.
 
 \section{The Adjoint Collision Density}
 \label{sec:adjoint_collision_density}
 To derive the adjoint collision density, the adjoint of the emission density
-will be multiplied by $\Sigma(\vec{r},E) = \Sigma_T(\vec{r},E)$, which is the
-total cross section. In the following equation,
+will be multiplied by $\Sigma^{*}(\vec{r},E) = \Sigma_T(\vec{r},E)$, which is 
+the total cross section. In the following equation,
 $\xi^{\dagger}(\vec{r},E,\hat{\Omega})$ is the adjoint collision density.
 \begin{equation}
   \xi^{\dagger}(\vec{r},E,\hat{\Omega}) = \Sigma_T(\vec{r},E)
   \chi^{\dagger}(\vec{r},E,\hat{\Omega})
   \label{eq:adj_collision_dens_to_adjoint_of_emission_dens}
 \end{equation}
-
-\begin{equation*}
-  \begin{split}
-  \xi^{\dagger}(\vec{r},&E,\hat{\Omega}) = \int a(\vec{r^{'}},E,\hat{\Omega}) 
-    \Sigma_T(\vec{r},E) \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) dV^{'} + \\
-    & \int\int\int  \frac{\Sigma_T(\vec{r},E)}{\Sigma_T(\vec{r^{'}},E^{'})}
-      \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) 
-    \Sigma_S(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
-    \xi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}dV^{'}
-  \end{split}
-\end{equation*}
-\begin{equation*}
-  \begin{split}
-  &\text{} \qquad = \int a(\vec{r^{'}},E,\hat{\Omega}) 
-    T(\vec{r^{'}} \to \vec{r},E,-\hat{\Omega}) dV^{'} + \\
-    & \int\int\int
-      T(\vec{r^{'}} \to \vec{r},E,-\hat{\Omega})
-      \frac{\Sigma_S(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})}
+\begin{align}
+  \xi^{\dagger}(\vec{r},E,\hat{\Omega}) & = \int a(\vec{r^{'}},E,\hat{\Omega}) 
+  \Sigma_T(\vec{r},E) \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) dV^{'} + 
+  \nonumber \\
+  \int\int\int  &\frac{\Sigma_T(\vec{r},E)}{\Sigma_T(\vec{r^{'}},E^{'})}
+  \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) 
+  \Sigma_T(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
+  \xi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}dV^{'}
+  \nonumber \\
+  & = \int a(\vec{r^{'}},E,\hat{\Omega}) 
+    T(\vec{r^{'}} \to \vec{r},E,-\hat{\Omega}) dV^{'} + \nonumber \\
+    \int\int\int & T(\vec{r^{'}} \to \vec{r},E,-\hat{\Omega})
+      \frac{\Sigma_T(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})}
            {\Sigma_T(\vec{r^{'}},E^{'})}
     \xi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}dV^{'}
-  \end{split}
-\end{equation*}
+  \nonumber 
+\end{align}
 
 As mentioned in chapter \ref{ch:neutral_particle_transport}, the transport 
 kernel is normalized, assuming that random walks that exit the domain of 
@@ -59,28 +54,27 @@ defined as follows.
   \label{eq:adjoint_transport_kernel}
 \end{equation}
 
-Unfortunately, the part of the state transition kernel that describes the 
-collisions is still poorly behaved. However, it can be normalized by 
-introducing the factor $P^{\dagger}(\vec{r^{'}},E^{'})$.
+The part of the state transition kernel that describes the 
+collisions can be normalized to unity by introducing the following factor.
 \begin{equation}
   P^{\dagger}(\vec{r^{'}},E^{'}) = 
   \frac{\Sigma^{\dagger}(\vec{r^{'}},E^{'})}{\Sigma_T(\vec{r^{'}},E^{'})}
   \label{eq:adjoint_weight_factor}
 \end{equation}
 This factor will be called the adjoint weight factor and the function 
-$\Sigma^{\dagger}(\vec{r^{'}},E^{'})$ will be called the total adjoint cross 
-section.
+$\Sigma^{\dagger}(\vec{r^{'}},E^{'})$ will be called the total macroscopic adjoint 
+cross section.
 \begin{equation}
-  \Sigma^{\dagger}(\vec{r^{'}},E^{'}) = \int\int \sum_j \Sigma_{S,j}(\vec{r^{'}},E) 
-      f_j(E \to E^{'}, \hat{\Omega} \to \hat{\Omega^{'}}) dE d\Omega
+  \Sigma^{\dagger}(\vec{r^{'}},E^{'}) = \int\int  
+  \Sigma_T(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}}) dE d\Omega
   \label{eq:adjoint_total_cross_section}
 \end{equation}
-Now the adjoint collision kernel, which is properly normalized, can be 
+Now the adjoint collision kernel, which is normalized to unity, can be 
 defined.
 \begin{equation}
   C^{\dagger}(\vec{r^{'}},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) = 
-  \sum_j \frac{\Sigma_{S,j}(\vec{r^{'}},E)}{\Sigma^{\dagger}(\vec{r^{'}},E^{'})}
-  f_j(E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
+  \frac{\Sigma_T(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})}
+       {\Sigma^{\dagger}(\vec{r^{'}},E^{'})}
   \label{eq:adjoint_collision_kernel}
 \end{equation}
 
@@ -99,23 +93,19 @@ can be defined.
 The FIESK for the adjoint collision density can now be written in terms of 
 these kernels. In this equation $S_c^{\dagger}(\vec{r},E,\hat{\Omega})$ is the
 adjoint first collided source.
-\begin{equation*}
-  \begin{split}
-    \xi^{\dagger}(\vec{r},&E,\hat{\Omega}) = \int a(\vec{r^{'}},E,\hat{\Omega}) 
-    T^{\dagger}(\vec{r^{'}} \to \vec{r},E,\hat{\Omega}) dV^{'} + \\
-    & \int\int\int
-    N^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
+\begin{align}
+  \xi^{\dagger}(\vec{r},E,\hat{\Omega}) & = \int a(\vec{r^{'}},E,\hat{\Omega}) 
+  T^{\dagger}(\vec{r^{'}} \to \vec{r},E,\hat{\Omega}) dV^{'} + \nonumber \\
+  \int\int\int &
+  N^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
+  \xi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}dV^{'}
+  \nonumber \\
+  & = S_c^{\dagger}(\vec{r},E,\hat{\Omega}) + \nonumber \\
+  \int\int\int &
+  N^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
       \xi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}dV^{'}
-  \end{split}
-\end{equation*}
-\begin{equation*}
-  \begin{split}
-    \qquad & \qquad = S_c^{\dagger}(\vec{r},E,\hat{\Omega}) + \\
-    & \int\int\int
-    N^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
-      \xi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}dV^{'}
-  \end{split}
-\end{equation*}
+  \nonumber
+\end{align}
 
 Based on the relationship between the adjoint collision density and the adjoint
 of the emission density shown in equation 
@@ -129,59 +119,48 @@ now be defined as follows.
  
 \section{The Adjoint ``Collision-Like'' Density}
 Another adjoint event density, which is collision-like, can be found in the 
-literature. Instead of multiplying the adjoint of the emission density by the
-total cross section, it is multiplied by the total adjoint cross section.
+literature \citep{kalos_monte_1968, eriksson_monte_1969}. Instead of 
+multiplying the adjoint of the emission density by the total cross section, it 
+is multiplied by the total adjoint cross section.
 \begin{equation}
   \mu^{\dagger}(\vec{r},E,\hat{\Omega}) = \Sigma^{\dagger}(\vec{r},E)
   \chi^{\dagger}(\vec{r},E,\hat{\Omega})
   \label{eq:adj_collision_like_dens_to_adjoint_of_emission_dens}
 \end{equation}
-The resulting FIESK for this adjoint collision-like density is shown below.
+The resulting FIESK for this adjoint ``collision-like'' density is shown below.
 In this equation, the definition of the adjoint weight factor, adjoint
 transport kernel, adjoint collision kernel and adjoint first collided 
 source from the previous section will be used.
-\begin{equation*}
-  \begin{split}
-  \mu^{\dagger}(\vec{r},&E,\hat{\Omega}) = \int a(\vec{r^{'}},E,\hat{\Omega}) 
-    \Sigma^{\dagger}(\vec{r},E) \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) 
-    dV^{'} + \\
-    & \int\int\int  \frac{\Sigma^{\dagger}(\vec{r},E)}
-    {\Sigma^{\dagger}(\vec{r^{'}},E^{'})}
-      \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) 
-    \Sigma_S(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
-    \mu^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}dV^{'}
-  \end{split}
-\end{equation*}
-\begin{equation*}
-  \begin{split}
-  \text{} & \qquad \qquad = P^{\dagger}(\vec{r},E) \int
-    a(\vec{r^{'}},E,\hat{\Omega}) 
-    T(\vec{r^{'}} \to \vec{r},E,-\hat{\Omega}) dV^{'} + \\
-    & \int\int\int P^{\dagger}(\vec{r},E) 
-    T(\vec{r^{'}} \to \vec{r},E,-\hat{\Omega})
-      \frac{\Sigma_S(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})}
-           {\Sigma^{\dagger}(\vec{r^{'}},E^{'})}
-    \mu^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}dV^{'}
-  \end{split}
-\end{equation*}
-\begin{equation*}
-  \begin{split}
-    \text{} & \qquad \qquad = P^{\dagger}(\vec{r},E) 
-    S_c^{\dagger}(\vec{r},E,\hat{\Omega}) +\\
-    & \int\int\int P^{\dagger}(\vec{r},E) 
-    T^{\dagger}(\vec{r^{'}} \to \vec{r},E,\hat{\Omega})
-    C^{\dagger}(\vec{r^{'}},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
-    \mu^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}dV^{'}
-  \end{split}
-\end{equation*}
+\begin{align}
+  \mu^{\dagger}(\vec{r},E,\hat{\Omega}) & = \int a(\vec{r^{'}},E,\hat{\Omega}) 
+  \Sigma^{\dagger}(\vec{r},E) \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) 
+  dV^{'} + \nonumber \\
+  \int\int\int  & \frac{\Sigma^{\dagger}(\vec{r},E)}
+                       {\Sigma^{\dagger}(\vec{r^{'}},E^{'})}
+  \tau(\vec{r^{'}},\vec{r},E,-\hat{\Omega}) 
+  \Sigma_T(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
+  \mu^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}dV^{'}
+  \nonumber \\
+  & = P^{\dagger}(\vec{r},E) \int
+  a(\vec{r^{'}},E,\hat{\Omega}) 
+  T(\vec{r^{'}} \to \vec{r},E,-\hat{\Omega}) dV^{'} + \nonumber \\
+  \int\int\int &P^{\dagger}(\vec{r},E) 
+  T(\vec{r^{'}} \to \vec{r},E,-\hat{\Omega})
+  \frac{\Sigma_T(\vec{r^{'}},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})}
+       {\Sigma^{\dagger}(\vec{r^{'}},E^{'})}
+  \mu^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}dV^{'}
+  \nonumber \\
+  & = P^{\dagger}(\vec{r},E) 
+  S_c^{\dagger}(\vec{r},E,\hat{\Omega}) + \nonumber \\
+  \int\int\int &P^{\dagger}(\vec{r},E) 
+  T^{\dagger}(\vec{r^{'}} \to \vec{r},E,\hat{\Omega})
+  C^{\dagger}(\vec{r^{'}},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
+  \mu^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dE^{'}d\hat{\Omega^{'}}dV^{'}
+  \nonumber 
+\end{align}
 
-For this adjoint collision-like density, the state transition kernel is the 
-following. Interestingly, the only difference between this state transition
-kernel and the state transition kernel for the adjoint collision density is
-the placement of the adjoint weight factor. In this kernel, the adjoint
-weight factor is a function of the particle's state after the collision where
-it is a function of the particle's state before the collision in the adjoint
-collision density state transition kernel.
+For this adjoint ``collision-like'' density, the state transition kernel is the 
+following. 
 \begin{equation}
   \begin{split}
     O^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
@@ -190,8 +169,12 @@ collision density state transition kernel.
     & \cdot C^{\dagger}(\vec{r^{'}},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
   \end{split}
 \end{equation}
+Interestingly, the only difference between this state transition
+kernel and the state transition kernel for the adjoint collision density is
+the ordering of the adjoint transport kernel, adjoint collision kernel and the
+adjoint weight factor.
 
-Based on the relationship between the adjoint collision-like density and the
+Based on the relationship between the adjoint ``collision-like'' density and the
 adjoint of the emission density shown in equation 
 \ref{eq:adj_collision_like_dens_to_adjoint_of_emission_dens}, the inner product
 must now be defined as follows.
@@ -206,23 +189,20 @@ Using the procedure outlined in chapter \ref{ch:mc_methods}, the adjoint of the
 collision density FIESK can be derived. The steps will not be shown, but the 
 resulting equation can be seen in the next equation. The function 
 $\psi^{\dagger}(\vec{r},E,\hat{\Omega})$ is the adjoint of the collision density.
-\begin{equation*}
-  \begin{split}
-    \psi^{\dagger}(\vec{r},&E,\hat{\Omega}) = b(\vec{r},E,\hat{\Omega}) + \\
-    & \int\int\int C(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
-    T(\vec{r} \to \vec{r^{'}},E^{'},\hat{\Omega^{'}})
-    \psi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
-  \end{split}
-\end{equation*}
-\begin{equation}
-  \begin{split}
-    \qquad \quad \text{  } & \qquad = \frac{a(\vec{r},E,\hat{\Omega})}
-    {\Sigma_T(\vec{r},E)}+ \\
-    & \int\int\int C(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
-    T(\vec{r} \to \vec{r^{'}},E^{'},\hat{\Omega^{'}})
-    \psi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
-  \end{split}
-\end{equation}
+\begin{align}
+  \psi^{\dagger}(\vec{r},E,\hat{\Omega}) & = b(\vec{r},E,\hat{\Omega}) + 
+  \nonumber \\
+  \int\int\int &C(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
+  T(\vec{r} \to \vec{r^{'}},E^{'},\hat{\Omega^{'}})
+  \psi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
+  \nonumber \\
+   & = \frac{a(\vec{r},E,\hat{\Omega})}
+            {\Sigma_T(\vec{r},E)}+ \nonumber \\
+   \int\int\int & C(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}})
+   T(\vec{r} \to \vec{r^{'}},E^{'},\hat{\Omega^{'}})
+   \psi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
+   \nonumber
+\end{align}
 
 The adjoint of the collision density also exhibits flux-like behavior in that
 it will not got to zero in a vacuum. To derive the adjoint emission density,
@@ -239,54 +219,40 @@ The resulting FIESK for the adjoint emission density is shown below. In this
 equation, the definition of the adjoint weight factor, adjoint transport 
 kernel and adjoint collision kernel from section 
 \ref{sec:adjoint_collision_density} will be used.
-\begin{equation*}
-  \begin{split}
-    \theta^{\dagger}(\vec{r},E,\hat{\Omega}) = a(\vec{r},E,&\hat{\Omega}) + 
-    \int\int\int \frac{\Sigma_T(\vec{r},E)}{\Sigma_T(\vec{r^{'}},E^{'})}
-    C(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}}) \\
-    & \cdot \Sigma_T(\vec{r^{'}},E^{'})
-    \frac{T(\vec{r} \to \vec{r^{'}},E^{'},\hat{\Omega^{'}})}
-         {\Sigma_T(\vec{r^{'}},E^{'})}
-    \psi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
-  \end{split}
-\end{equation*}
-\begin{equation*}
-  \begin{split}
-    \quad \quad = a(\vec{r},E,&\hat{\Omega}) + 
-    \int\int\int \Sigma_T(\vec{r},E) 
-    C(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}}) \\
-    & \frac{T(\vec{r^{'}} \to \vec{r},E^{'},-\hat{\Omega^{'}})}
+\begin{align}
+  \theta^{\dagger}(\vec{r},E,\hat{\Omega}) & = a(\vec{r},E,\hat{\Omega}) + 
+  \int\int\int \frac{\Sigma_T(\vec{r},E)}{\Sigma_T(\vec{r^{'}},E^{'})}
+  C(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}}) \nonumber \\
+    & \qquad \cdot \Sigma_T(\vec{r^{'}},E^{'})
+  \frac{T(\vec{r} \to \vec{r^{'}},E^{'},\hat{\Omega^{'}})}
+       {\Sigma_T(\vec{r^{'}},E^{'})}
+  \theta^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
+  \nonumber \\
+  & = a(\vec{r},E,\hat{\Omega}) + 
+  \int\int\int \Sigma_T(\vec{r},E) 
+  C(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}}) \nonumber \\
+  & \qquad \cdot \frac{T(\vec{r^{'}} \to \vec{r},E^{'},-\hat{\Omega^{'}})}
+                      {\Sigma_T(\vec{r},E^{'})}
+  \theta^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
+  \nonumber \\
+  & = a(\vec{r},E,\hat{\Omega}) + 
+  \int\int\int \Sigma_T(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}}) 
+  \nonumber \\
+  & \qquad \cdot \frac{T(\vec{r^{'}} \to \vec{r},E^{'},-\hat{\Omega^{'}})}
            {\Sigma_T(\vec{r},E^{'})}
-    \psi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
-  \end{split}
-\end{equation*}
-\begin{equation*}
-  \begin{split}
-    \quad \quad = a(\vec{r},E,&\hat{\Omega}) + 
-    \int\int\int \sum_j \Sigma_{S,j}(\vec{r},E) 
-    f_j(E \to E^{'},\hat{\Omega} \to \hat{\Omega^{'}}) \\
-    & \frac{T(\vec{r^{'}} \to \vec{r},E^{'},-\hat{\Omega^{'}})}
-           {\Sigma_T(\vec{r},E^{'})}
-    \psi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
-  \end{split}
-\end{equation*}
-\begin{equation*}
-  \begin{split}
-    & \qquad \qquad \qquad \quad = a(\vec{r},E,\hat{\Omega}) + \\
-    & \int\int\int 
-    C^{\dagger}(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
-    P^{\dagger}(\vec{r},E^{'})
-    T^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'},\hat{\Omega^{'}})
-    \psi^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
-  \end{split}
-\end{equation*}
+    \theta^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
+  \nonumber \\
+  & = a(\vec{r},E,\hat{\Omega}) +
+  \int\int\int 
+  C^{\dagger}(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
+  P^{\dagger}(\vec{r},E^{'}) \nonumber \\
+  & \qquad \cdot 
+  T^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'},\hat{\Omega^{'}})
+  \theta^{\dagger}(\vec{r^{'}},E^{'},\hat{\Omega^{'}}) dV^{'}dE^{'}d\hat{\Omega^{'}}
+  \nonumber 
+\end{align}
 
 For the adjoint emission density, the state transition kernel is the following.
-Again, the only difference between this state transition kernel and the 
-previous two is the placement of the adjoint weight factor. In this kernel,
-the adjoint weight factor is a function of the particle's state before and
-after the collision (specifically, the particle's final position and initial
-energy and direction).
 \begin{equation}
   \begin{split}
     M^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
@@ -295,6 +261,9 @@ energy and direction).
     & \cdot T^{\dagger}(\vec{r^{'}} \to \vec{r},E^{'},\hat{\Omega^{'}}) 
   \end{split}
 \end{equation}
+Again, the only difference between this state transition kernel and the 
+previous two is the the odering of the adjoint transport kernel, adjoint
+collision kernel and the adjoint weight factor. 
 
 Based on the relationship between the adjoint emission density and the adjoint
 of the collision density shown in equation 

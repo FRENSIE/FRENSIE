@@ -131,13 +131,11 @@ functions.
   
 While this averaging of the transfer probabilities is necessary in the context 
 of the transport equation, it is not necessary in a Monte Carlo random walk 
-process. In fact, to use the random walk procedure that was outlined in the 
-previous chapter, the implicit treatment of multiplying reactions must be 
-avoided. Instead, one must use detailed transfer probabilities and conduct 
+process. Instead, one can use detailed transfer probabilities and conduct 
 a separate random walk for each additional particle emitted from a collision. 
-However, given a sufficient number of random walks, the behavior should be the 
+Then, given a sufficient number of random walks, the behavior should be the 
 same as if one were to use the averaged transfer probability present in the 
-transport equation and random walk PDFs appropriate for multiplying systems. 
+transport equation. 
 
 \section{The Transport equation in Integral Form}
 The transport equation is often given in an integro-differential form, as seen 
@@ -441,7 +439,6 @@ transport kernel is normalized.
   \nonumber \\
   & = 1 \nonumber
 \end{align}
-  
 However, if the domain of interest in a problem is finite, the transport kernel 
 will no longer be normalized. Fortunately, this is taken care of by terminating 
 random walks that exit the domain of interest, which is equivalent to 
@@ -482,11 +479,11 @@ the emission density state transition kernel can be determined. The first
 property, which is rather trivial, is that the emission density state 
 transition kernel is always positive. The second property is that the 
 normalization of the kernel is less than infinity. The kernel normalization, 
-which is shown below, is $c^{'}(\vec{r^{'}},E^{'})$. This function can be 
-interpreted as a spacial average of the function $c(\vec{r},E^{'})$, which is 
-the mean number of particles emerging per collision at $\vec{r}$ given a 
-particle of energy $E^{'}$. Because there may be some regions of the system 
-that are critical, the function $c^{'}(\vec{r},E^{'})$ need not be less than one 
+which is shown below, is $\bar{c}(\vec{r^{'}},E^{'})$. This function can be 
+interpreted as an average of the mean number of particles emerging per 
+collision along the line from $\vec{r^{'}}$ to $\vec{r}$ given a particle of 
+energy $E^{'}$. Because there may be some regions of the system that are 
+critical, the function $\bar{c}(\vec{r},E^{'})$ need not be less than one 
 everywhere as long as the system as a whole is subcritical.
 \begin{align}
   \int K(y \to x) dx & = \int\int\int 
@@ -495,7 +492,7 @@ everywhere as long as the system as a whole is subcritical.
   \nonumber \\
   & = \int c(\vec{r},E^{'}) T(\vec{r^{'}} \to \vec{r},E^{'},\hat{\Omega^{'}})
   dV \nonumber \\
-  & = c^{'}(\vec{r^{'}},E^{'})
+  & = \bar{c}(\vec{r^{'}},E^{'})
 \end{align}
 
 The properties of the collision density state transition kernel can also be
@@ -518,43 +515,43 @@ that are critical.
 In the special case where only non-multiplying reactions occur in a system,
 the function $c(\vec{r^{'}},E^{'})$ becomes the survival or non-absorption
 probability $P_{NA}(\vec{r^{'}},E^{'})$, as explained before. The function
-$c^{'}(\vec{r^{'}},E^{'})$ becomes a spatial average of the non-absorption
-probability, which will be referred to as $P_{NA}^{'}(\vec{r^{'}},E^{'})$. 
+$\bar{c}(\vec{r^{'}},E^{'})$ becomes a spatial average of the non-absorption
+probability, which will be referred to as $\overline{P}_{NA}(\vec{r^{'}},E^{'})$. 
 The properties of the two state transition kernels are summarized below.
 \begin{enumerate}
   \item $K(y \to x) > 0$ \\
     $L(y \to x) > 0$
-  \item $\int K(y \to x)dx = c^{'}(y) >= P_{NA}^{'}(y)$ \\
+  \item $\int K(y \to x)dx = \bar{c}(y) >= \overline{P}_{NA}(y)$ \\
     $\int L(y \to x)dx = c(y) >= P_{NA}(y)$
 \end{enumerate}
 
-Sampling from these kernels directly will result in random walks that exhibit 
-the average behavior of particles in the system. As mentioned before, the 
-simulation of this average behavior is not necessary and, in fact, not possible 
-with the random walk process that was outlined in the previous chapter. 
-However, if these kernels are sampled indirectly and all emitted particles are
-given their own random walks, their behavior will be identical to a 
-kernel from a non-multiplying system. The process of indirectly sampling from
-the state transition kernels will be discussed in the next section.
+Based on these properties for the two kernels, it would appear that an 
+analogue random walk process for neutral particles is impossible in a system
+where multiplying reactions are possible. This is indeed true if particle
+multiplication is handled implicitly. However, if particle multiplication is
+handled explicitly, with separate random walks conducted for each additional
+particle emitted, an analogue random walk process can be conducted. Handling
+particle multiplication explicitly will require indirect sampling of the 
+from the state transition kernels, which will be discussed in the next section.
 
 \section{Indirect Sampling of the Collision Kernel}
 As explained in the previous section, the state transition kernel for the 
 emission density and the collision density do not have the necessary properties
-to be used in the random walk process described in the previous chapter. 
-However, if these kernels are sampled indirectly, the random walk process can
-be used as long as the system being modeled is subcritical. In order to sample
-these state transition kernels indirectly, the collision kernel must be 
-expanded. 
+to be used directly in the random walk process described in the previous 
+chapter. However, if these kernels are sampled indirectly, an analogue random 
+walk process can be used as long as the system being modeled is subcritical. In 
+order to sample these state transition kernels indirectly, the collision kernel 
+must be expanded. 
 \begin{align}
   C(\vec{r},E^{'} \to E, \hat{\Omega^{'}} \to \hat{\Omega}) & =
   \frac{\Sigma_T(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})}
        {\Sigma_T(\vec{r},E^{'})} \nonumber \\
   & = f(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) \nonumber \\
-  & = \frac{\sum_j \Sigma_j(\vec{r},E^{'})c_i(\vec{r},E^{'})
+  & = \sum_j \frac{\Sigma_j(\vec{r},E^{'})c_i(\vec{r},E^{'})
             f_i(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})}
            {\Sigma_T(\vec{r},E^{'})} \nonumber \\
   & = \sum_A \frac{\Sigma_A(\vec{r},E^{'})}{\Sigma_T(\vec{r},E^{'})}
-      \sum_j \frac{\sigma_j(E^{'})}{\sigma_A(E^{'})} c_{A,j}(E^{'})
+      \sum_j \frac{\sigma_{A,j}(E^{'})}{\sigma_A(E^{'})} c_{A,j}(E^{'})
       f_{A,j}(E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) \nonumber \\
   & = \sum_A p_A(\vec{r},E^{'}) \sum_j p_{A,j}(E^{'}) 
       \sum_{k=1}^2 p_{A,j,k}(E^{'}) \nonumber \\
@@ -572,9 +569,9 @@ particle l given a collision of type j on nuclide A. This transfer probability
 will be normalized to unity. Since it is desired to conduct separate random
 walks for each emitted particle, only an integer number of particles 
 can be emitted from a collision\footnote{The average number of particles emitted
-from fission will normally be a non-integer value}. The function 
-$p_{A,j,k}(E^{'})$ restricts the number of particles emitted to integer values.
-It is defined as follows.
+from fission will normally be a non-integer value}. The probabilities 
+$p_{A,j,k}(E^{'})$ restrict the number of particles emitted to integer values.
+They are defined as follows along with the corresponding value of $x_k$.
 \begin{align}
   p_{A,j,1} & =
   \begin{cases}
@@ -584,6 +581,16 @@ It is defined as follows.
   \end{cases} \\
   p_{A,j,2} & = 1 - p_{A,j,1}
 \end{align}
+\begin{align}
+  x_1 & = 
+  \begin{cases}
+    \lfloor c_{A,j}(E^{'}) \rfloor & \text{ if } c_{A,j}(E^{'})
+    \text{ not an integer} \\
+    c_{A,j}(E^{'}) & o.w.
+  \end{cases} \\
+  x_2 & = \lceil c_{A,j}(E^{'}) \rceil
+\end{align}
+The expected value of the number of emitted particles, based on these probabilities and corresponding values of emitted particles, is $c_{A,j}(E^{'})$.
 
 The process of indirectly sampling the collision kernel is now completely
 defined by equation \ref{eq:fully_expanded_collision_kernel}. In this process,
@@ -596,50 +603,72 @@ transfer probability $f_{A,j,l}(E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})$.
 In the sampling of the reaction type, if an absorption reaction is chosen,
 the random walk for the current particle ends. Therefore, at every collision,
 a random walk will end with probability 
-$\frac{\Sigma_A(\vec{r},E)}{\Sigma_T(\vec{r},E)}$ regardless of the average 
-number of particles that are emitted from the collision. This behavior 
+$\frac{\Sigma_A(\vec{r},E)}{\Sigma_T(\vec{r},E)}$. This behavior 
 mimics the behavior that was described in the random walk process from the
-previous chapter, which indicated that it can be used despite the fact that 
-the state transition kernel will not, in general, have the necessary properties
-for use in the random walk process. 
+previous chapter. In addition, the particle weights will be unaffected by this
+sampling procedure. Therefore, the unmodified state transition kernels can
+be used directly in the random walk process as long as this sampling procedure
+is used. The resulting random walk process is then an analogue random walk
+process despite the fact that the state transition kernel will not, in general, 
+have the necessary properties for direct use in the random walk process. 
 
 \section{The Emission and Collision Density Random Walk PDFs}
 With the state transition kernels $K(y \to x)$ and $L(y \to x)$ fully 
 characterized, the Monte Carlo random walk process for neutral particles can 
-be completely specified. 
-\begin{equation}
-  \chi(x)\text{ Random Walk:}
+be completely specified. The first set of processes is for treating 
+multiplication implicitly\footnote{It must be noted that the random walk 
+procedures that treat multiplication implicitly will never be used. This is 
+because they rely on the total transfer probability, which is challenging to 
+obtain and even more challenging to sample from directly. However, they are 
+shown to provide continuity between this chapter and the previous chapter.}. 
+The second set is for treating multiplication explicitly using the procedure 
+outlined in the previous section. In the second set of processes, the 
+termination probabilities aren't sampled directly. Instead, a random walk can 
+potentially be terminated when sampling from $p(y \to x)$.
+\begin{align}
+  \chi(x)\text{ Random Walk (implicit mult.):}&
+  \begin{cases}
+    p^1(x) & = \frac{S(x)}{\int_{\Gamma} S(x)dx} \\
+    p(y \to x) &  = \frac{\overline{P}_{NA}(y)}{\bar{c}(y)}K(y \to x) \\
+    p(x) & = 1 - \overline{P}_{NA}(x)
+  \end{cases} \\
+  \psi(x)\text{ Random Walk (implicit mult.):}&
+  \begin{cases}
+    p^1(x) & = \frac{S_c(x)}{\int_{\Gamma} S_c(x)dx} \\
+    p(y \to x) & = \frac{P_{NA}(y)}{c(y)}L(y \to x) \\
+    p(x) & = 1 - P_{NA}(x)
+  \end{cases} \\
+  \nonumber \\
+  \chi(x)\text{ Random Walk (explicit mult.):} &
   \begin{cases}
     p^1(x) & = \frac{S(x)}{\int_{\Gamma} S(x)dx} \\
     p(y \to x) &  = K(y \to x) \\
-    p(x) & = 1 - P_{NA}^{'}(x)
+    p(x) & = 1 - \overline{P}_{NA}(x)
   \end{cases}
-  \label{eq:mc_random_walk_emission_dens}
-\end{equation}
-\begin{equation}
-  \psi(x)\text{ Random Walk:}
+  \label{eq:mc_random_walk_emission_dens} \\
+  \psi(x)\text{ Random Walk (explicit mult.):} &
   \begin{cases}
     p^1(x) & = \frac{S_c(x)}{\int_{\Gamma} S_c(x)dx} \\
     p(y \to x) & = L(y \to x) \\
     p(x) & = 1 - P_{NA}(x)
   \end{cases}
   \label{eq:mc_random_walk_collision_dens}
-\end{equation}
+\end{align}
 
-While it might appear from the above PDFs that the two random walk process are 
-completely different, because the kernels $K(y \to x)$ and $L(y \to x)$ only 
-differ in the ordering of the collision and transport kernels and because of 
-the relationship between the emission density and the collision density, both 
-of these quantities can be estimated during the same random walk process. 
-Figure \ref{fig:combined_random_walk_process} illustrates the new combined 
-random walk process. In this new process, particles always start in the true 
-source and not the first collided source, which is advantageous because the 
-first collided source would be challenging to calculate. The emission density 
-will always be estimated right after a collision (or birth) and the collision
-density will always be estimated right before a collision. This combined 
-process will also prove advantageous when using either of the estimators
-that were described in the previous chapter. The next section will elaborate
-on this point.
+While it might appear from the above PDFs that the random walk processes for
+the emission and collision density are completely different, because the kernels
+$K(y \to x)$ and $L(y \to x)$ only differ in the ordering of the collision and 
+transport kernels and because of the relationship between the emission density 
+and the collision density, both of these quantities can be estimated during the 
+same random walk process. Figure \ref{fig:combined_random_walk_process} 
+illustrates the new combined random walk process. In this new process, 
+particles always start in the true source and not the first collided source, 
+which is advantageous because the first collided source would be challenging to 
+calculate. The emission density will always be estimated right after a collision
+(or birth) and the collision density will always be estimated right before a 
+collision. This combined process will also prove advantageous when using either 
+of the estimators that were described in the previous chapter. The next section 
+will elaborate on this point.
 \begin{figure}[t!]
   \begin{center}
     \scalebox{0.75}{\includegraphics{chapters/neutral_particle_transport/random_walk_process.pdf}}
@@ -657,27 +686,38 @@ on this point.
 
 A common modification to the previous analogue random walk processes is to 
 ignore absorption. This modification results in the following non-analogue
-random walk processes.  
-\begin{equation}
-  \chi(x)\text{ Random Walk:}
+random walk processes. 
+\begin{align}
+  \chi(x)\text{ Random Walk (implicit mult.):}&
   \begin{cases}
     p^1(x) & = \frac{S(x)}{\int_{\Gamma} S(x)dx} \\
-    p(y \to x) &  = \frac{K(y \to x)}{P_{NA}^{'}(x)} \\
+    p(y \to x) &  = \frac{K(y \to x)}{\bar{c}(y)} \\
+    p(x) & = 0
+  \end{cases} \\
+  \psi(x)\text{ Random Walk (implicit mult.):}&
+  \begin{cases}
+    p^1(x) & = \frac{S_c(x)}{\int_{\Gamma} S_c(x)dx} \\
+    p(y \to x) & = \frac{L(y \to x) }{c(y)} \\
+    p(x) & = 0
+  \end{cases} \\
+  \nonumber \\
+  \chi(x)\text{ Random Walk (explicit mult.):}&
+  \begin{cases}
+    p^1(x) & = \frac{S(x)}{\int_{\Gamma} S(x)dx} \\
+    p(y \to x) &  = \frac{K(y \to x)}{\overline{P}_{NA}(x)} \\
     p(x) & = 0
   \end{cases}
-  \label{eq:mc_random_walk_emission_dens_nonan}
-\end{equation}
-\begin{equation}
-  \psi(x)\text{ Random Walk:}
+  \label{eq:mc_random_walk_emission_dens_nonan} \\
+  \psi(x)\text{ Random Walk (explicit mult.):} &
   \begin{cases}
     p^1(x) & = \frac{\psi_1(x)}{\int_{\Gamma}\psi_1(x)dx} \\
     p(y \to x) & = \frac{L(y \to x)}{P_{NA}(x)} \\
     p(x) & = 0
   \end{cases}
   \label{eq:mc_random_walk_collision_dens_nonan}
-\end{equation}
-Russian roulette will also have to be used with these random walk processes to 
-force random walks to terminate when the particle weight becomes to small. 
+\end{align}
+Russian roulette will have to be used with these random walk processes to 
+force random walks to terminate when the particle weight becomes too small. 
 
 \section{Estimating Responses}
 In typical neutral particle transport problems, the inner product of some 
@@ -709,14 +749,15 @@ Similarly, the function $c(x)$ must be defined as follows.
   \label{eq:emission_response_function}
 \end{equation}
 
-Clearly, the function $b(x)$ will be easier to evaluate, which presents an 
-interesting trade-off. Estimators will be easier to use if the random walk 
-process for the collision density is used. However, the random walk process
-for the collision density will be harder to conduct than the random walk 
-process for the emission density because of the difficulty in evaluating the 
-first collided source. Fortunately, the combined random walk process allows 
-one to take advantage of the function $b(x)$ without ever having to evaluate
-the first collided source. 
+Clearly, the function $b(\vec{r},E,\hat{\Omega})$ will be easier to evaluate, 
+which presents an interesting trade-off. Estimators will be easier to use if 
+the random walk process for the collision density is used. However, the random 
+walk process for the collision density will be harder to conduct than the 
+random walk process for the emission density because of the difficulty in 
+evaluating the first collided source. Fortunately, the combined random walk 
+process allows one to take advantage of the function 
+$b(\vec{r},E,\hat{\Omega})$ without ever having to evaluate the first collided 
+source. 
 
 It must be mentioned that the particle flux can also be estimated indirectly
 during the random walk process for the emission and collision density. This
@@ -725,13 +766,13 @@ A derivation of this estimator, which is a limiting case of the event
 estimator, can be found in ref. \citep{spanier_monte_1969}. If the function
 $a(\vec{r},E,\hat{\Omega})$ is assumed to have the following form, then the 
 track length estimator can be defined. 
-\begin{equation}
+\begin{equation*}
   a(\vec{r},E,\hat{\Omega}) = 
   \begin{cases}
     f(\vec{r},E,\hat{\Omega}) & \text{ if } \vec{r} \in V_d \\
     0 & \text{ o.w.}
   \end{cases}
-\end{equation}
+\end{equation*}
 
 \begin{equation}
   \eta^{*}(\alpha) = \sum_m W_m(\alpha)f_md_m
