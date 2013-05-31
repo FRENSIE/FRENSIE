@@ -1,5 +1,5 @@
-\chapter{Deriving the Monte Carlo Random Walk Process for Neutral Particle Transport Problems}
-\label{ch:neutral_particle_transport}
+\chapter{The Monte Carlo Random Walk Process for Radiation Transport}
+\label{ch:particle_transport}
 In the previous chapter, the Monte Carlo process was discussed in a very
 general mathematical sense. In this chapter, it will be shown how to apply
 the general Monte Carlo random walk process to neutral particle transport 
@@ -14,11 +14,11 @@ transport equation, the derivation will look almost identical.
 
 \section{The Integro-Differential Transport Equation}
 \label{sec:int_diff_transport_eqn}
-The equation that describes the average behavior of neutral radiation in a 
-medium is the radiation transport equation. Because of its similarity to the 
-Boltzmann equation, which describes the kinetic theory of gases, the 
-transport equation is often referred to simply as the Boltzmann equation in the 
-literature. 
+The equation that describes the average behavior of both charged and neutral
+radiation in a medium is the transport equation. Because of its similarity to 
+the Boltzmann equation (in a linearized form), which describes the kinetic 
+theory of gases, the transport equation is sometimes referred to simply as the 
+Boltzmann equation in the literature. 
 
 Several assumptions are made in the derivation of the transport 
 equation, which is shown in equation \ref{eq:integro_diff_boltzmann_eqn} 
@@ -34,7 +34,7 @@ the highest density of neutral particles that could potentially be observed
 will still be significantly smaller than the density of the material in which 
 the neutral particles travel. The first assumption will not be valid for very 
 low energy neutrons and for x-ray photons. However, if polarization and 
-interference effects are neglected, which will be the case in this report,
+interference effects can be neglected, which will be the case in this report,
 this assumption is still acceptable. 
 
 \begin{equation}
@@ -57,28 +57,27 @@ this assumption is still acceptable.
 \end{align}
 
 As mentioned previously, the transport equation only characterizes the average
-or expected behavior of the neutral radiation in a system. Therefore, the
+or expected behavior of the radiation in a system. Therefore, the
 continuous function, $\varphi(\vec{r},E,\hat{\Omega},t)$ in equation 
 \ref{eq:integro_diff_boltzmann_eqn} can be interpreted as the expected particle 
 flux at $\vec{r}$ and time $t$ for particles with energy $E$ and direction
-$\hat{\Omega}$ per unit volume per unit energy per unit solid angle. The 
-external particle source density is described by the function 
-$S(\vec{r},E,\hat{\Omega},t)$. It can be interpreted as the probability per
-unit time that a particle of energy $E$ will appear at $\vec{r}$ per unit 
-volume per unit energy per unit solid angle. The function $\Sigma_T(\vec{r},E)$ 
-describes the total macroscopic cross section at $\vec{r}$ for particles with 
-energy $E$. It can be interpreted as the probability of a particle interaction 
-per unit distance of particle travel. In the context of photon transport it is 
-often refereed to as the attenuation coefficient. The doubly differential 
-collision cross section is represented by the function 
-$\Sigma_T(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})$, which can be 
-interpreted as the total probability per unit distance per unit energy per unit 
-solid angle at $\vec{r}$ for the transfer of a particle with energy $E^{'}$ and 
-direction $\hat{\Omega^{'}}$ to the energy $E$ and direction $\hat{\Omega}$ as a
-result of a collision. This doubly differential collision cross section can be 
-expanded into a macroscopic cross section and a doubly differential transfer 
-probability. Also note that the total macroscopic cross section is just the sum 
-of all partial macroscopic cross sections.
+$\hat{\Omega}$ per unit energy per unit solid angle. The external particle 
+source density is described by the function $S(\vec{r},E,\hat{\Omega},t)$. It 
+can be interpreted as the probability per unit time that a particle of energy 
+$E$ will appear at $\vec{r}$ per unit volume per unit energy per unit solid 
+angle. The function $\Sigma_T(\vec{r},E)$ describes the total macroscopic cross 
+section at $\vec{r}$ for particles with energy $E$. It can be interpreted as the
+probability of a particle interaction per unit distance of particle travel. In 
+the context of photon transport it is often refered to as the attenuation 
+coefficient. The doubly differential collision cross section is represented by 
+the function $\Sigma_T(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})$, 
+which can be interpreted as the total probability per unit distance per unit 
+energy per unit solid angle at $\vec{r}$ for the transfer of a particle with 
+energy $E^{'}$ and direction $\hat{\Omega^{'}}$ to the energy $E$ and direction 
+$\hat{\Omega}$ as a result of a collision. This doubly differential collision 
+cross section can be expanded into a macroscopic cross section and a doubly 
+differential transfer function. Also note that the total macroscopic cross 
+section is just the sum of all partial macroscopic cross sections.
 \begin{align}
   \Sigma_T(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega}) & =
   \Sigma_T(\vec{r},E^{'})
@@ -98,14 +97,16 @@ emitted from the reaction \citep{bell_nuclear_1979}. However, to facilitate
 sampling from these distributions, they will instead be normalized to unity. 
 The number of particles emitted from reaction $i$ will then be accounted for by 
 the function $c_i(\vec{r},E^{'})$. For absorption reactions like the 
-(n,$\gamma$) and (n,$\alpha$) neutron reactions or the photoelectric effect for 
-photons, the function $c_i(\vec{r},E^{'})$ must be set equal to zero. For 
-elastic and inelastic scattering reactions, the function $c_i(\vec{r},E^{'})$ 
-will be set equal to unity. For the (n,2n) neutron reaction or the pair 
-production (neglecting charged particle creation) photon reaction, the function 
-$c_i(\vec{r},E^{'})$ will be set equal to two. For fission reactions, the 
-function $c_i(\vec{r},E^{'})$ will be set equal to the average number of 
-neutrons produced by a fission caused by a neutron of energy 
+(n,$\gamma$) and (n,$\alpha$) neutron reactions, the photoelectric effect for 
+photons or the annihilation reaction for positrons, the function 
+$c_i(\vec{r},E^{'})$ must be set equal to zero. For the elastic and inelastic 
+scattering reactions of neutrons and gamma rays or the elastic scattering
+reactions of electrons and positrons, the function $c_i(\vec{r},E^{'})$ will be 
+set equal to unity. For the (n,2n) neutron reaction, the pair production photon 
+reaction (neglecting charged particle creation) or the inelastic electron 
+reaction, the function $c_i(\vec{r},E^{'})$ will be set equal to two. For 
+fission reactions, the function $c_i(\vec{r},E^{'})$ will be set equal to the 
+average number of neutrons produced by a fission caused by a neutron of energy 
 $E^{'}$, $\nu(\vec{r},E^{'})$.
 
 Based on these definitions for the function $c_i(\vec{r},E^{'})$ the 
@@ -124,18 +125,24 @@ normalization for the total transfer probability can be determined.
              {\Sigma_T(\vec{r},E^{'})} \nonumber \\
   & = c(\vec{r},E^{'}) 
 \end{align}
-The function $c(\vec{r},E^{'})$ is the mean number of particles (of 
-interest) emerging per collision at $\vec{r}$ given a particle of energy 
-$E^{'}$, which is a cross section weighted average of the $c_i(\vec{r},E^{'})$
-functions.
+The function $c(\vec{r},E^{'})$ is the mean number of particles (of the same 
+type as the primary) emerging per collision at $\vec{r}$ given a particle of 
+energy $E^{'}$, which is a cross section weighted average of the 
+$c_i(\vec{r},E^{'})$ functions.
   
-While this averaging of the transfer probabilities is necessary in the context 
+While this consolidation of the transfer probabilities for each type of 
+reaction into a single, average transfer function is necessary in the context 
 of the transport equation, it is not necessary in a Monte Carlo random walk 
-process. Instead, one can use detailed transfer probabilities and conduct 
+process. Instead, one can model each reaction type separately, use the 
+detailed transfer probabilities for an associated reaction, and conduct 
 a separate random walk for each additional particle emitted from a collision. 
 Then, given a sufficient number of random walks, the behavior should be the 
-same as if one were to use the averaged transfer probability present in the 
-transport equation. 
+same as if one were to use the averaged transfer function present in the 
+transport equation\footnote{Generally, the creation of an average transfer
+function that adequately described the behavior of the particle is quite
+challenging. However, something close to this is often done in charged particle
+transport due to the properties of the charged particle interaction cross
+sections.}.
 
 \section{The Transport equation in Integral Form}
 The transport equation is often given in an integro-differential form, as seen 
@@ -143,8 +150,9 @@ in equation \ref{eq:integro_diff_boltzmann_eqn}. In order to use the Monte
 Carlo random walk process that was discussed in the previous chapter, the 
 integro-differential form of the transport equation must be converted to a 
 FIESK. Once it is in the appropriate form the PDFs that govern the random walk 
-process for neutral particles can be determined. Similar derivations to the one 
-that will be shown can also be found in several references \citep{lewis_computational_1993, hoogenboom_adjoint_1977, irving_adjoint_1971, bell_nuclear_1979}.
+process for the radiation type of interest can be determined. Similar 
+derivations to the one that will be shown can also be found in several 
+references \citep{lewis_computational_1993, hoogenboom_adjoint_1977, irving_adjoint_1971, bell_nuclear_1979}.
  
 In this report all problems discussed will be assumed to be steady state. 
 Therefore, the time dependence of equation \ref{eq:integro_diff_boltzmann_eqn} 
@@ -526,7 +534,7 @@ The properties of the two state transition kernels are summarized below.
 \end{enumerate}
 
 Based on these properties for the two kernels, it would appear that an 
-analogue random walk process for neutral particles is impossible in a system
+analogue random walk process for radiation is impossible in a system
 where multiplying reactions are possible. This is indeed true if particle
 multiplication is handled implicitly. However, if particle multiplication is
 handled explicitly, with separate random walks conducted for each additional
@@ -614,7 +622,7 @@ have the necessary properties for direct use in the random walk process.
 
 \section{The Emission and Collision Density Random Walk PDFs}
 With the state transition kernels $K(y \to x)$ and $L(y \to x)$ fully 
-characterized, the Monte Carlo random walk process for neutral particles can 
+characterized, the Monte Carlo random walk process for radiation can 
 be completely specified. The first set of processes is for treating 
 multiplication implicitly\footnote{It must be noted that the random walk 
 procedures that treat multiplication implicitly will never be used. This is 
@@ -671,9 +679,9 @@ of the estimators that were described in the previous chapter. The next section
 will elaborate on this point.
 \begin{figure}[t!]
   \begin{center}
-    \scalebox{0.75}{\includegraphics{chapters/neutral_particle_transport/random_walk_process.pdf}}
+    \scalebox{0.75}{\includegraphics{chapters/random_walk_process_derivation/random_walk_process.pdf}}
     \end{center}
-  \caption{\textbf{Monte Carlo random walk procedure for neutral particles.}
+  \caption{\textbf{Monte Carlo random walk procedure for radiation.}
     \textit{A particle state is first sampled from the source distribution. The
       next collision point is sampled from the transport kernel T. Finally,
       the new particle energy and direction is sampled from the collision
@@ -720,7 +728,7 @@ Russian roulette will have to be used with these random walk processes to
 force random walks to terminate when the particle weight becomes too small. 
 
 \section{Estimating Responses}
-In typical neutral particle transport problems, the inner product of some 
+In typical radiation transport problems, the inner product of some 
 function $a(x)$ and the flux $\varphi(x)$ is desired. If the function $a(x)$ is
 a cross section, the inner product that is calculated is often called a 
 material response or reaction rate. Because it is challenging to estimate the

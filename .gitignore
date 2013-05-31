@@ -21,6 +21,7 @@
 *.gif
 *.ico
 *.js
+*.svg
 *~
 EPDL
 EADL

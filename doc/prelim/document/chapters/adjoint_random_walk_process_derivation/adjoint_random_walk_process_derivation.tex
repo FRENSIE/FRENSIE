@@ -1,8 +1,8 @@
-\chapter{Deriving the Monte Carlo Random Walk Process for Adjoint Neutral Particle Transport Problems}
-\label{ch:adjoint_neutral_particle_transport}
+\chapter{The Monte Carlo Random Walk Process for Adjoint Radiation Transport}
+\label{ch:adjoint_particle_transport}
 In chapter \ref{ch:mc_methods}, the dual problem for calculating inner products
 over small sphase spaces was introduced. In this chapter, it will be shown how
-the dual problem can be solved in the context of neutral particle transport 
+the dual problem can be solved in the context of radiation transport 
 problems. This will require both the derivation of the dual problems of interest
 and their associated Monte Carlo random walk processes. Since, in the previous
 chapter, the FEISKs that described the event densities were shown to have 
@@ -395,7 +395,9 @@ macroscopic adjoint cross section. In some literature, this factor is called
 the adjoint non-absorption probability \citep{gabler_amos_2006}. However, as 
 will be shown in the coming chapters, this factor is not bounded in the 
 interval (0,1) but is instead bounded in the interval (0,$\infty$). It is 
-therefore inappropriate to call this factor a probability.
+therefore inappropriate to call this factor a probability\footnote{This fact is
+noted in the reference that calls the factor the adjoint non-absorption 
+probability \citep{gabler_amos_2006}.}.
 \begin{equation}
   P^{\dagger}(\vec{r},E) = \frac{\Sigma^{\dagger}(\vec{r},E)}
   {\Sigma_T(\vec{r},E)}
@@ -603,16 +605,16 @@ The properties of the two state transition kernels are summarized below.
 
 Based on these properties for the two kernels and the fact that the adjoint
 survival probability is always unity due to the lack of an absorption reaction,
-it is clear that an analogue random walk process for adjoint neutral particles 
-is impossible. Despite this fact, it will still be useful to conduct an 
-indirect sampling of the state transition kernels, which will be discussed in
+it is clear that an analogue random walk process for adjoint radiation 
+transport is impossible. Despite this fact, it will still be useful to conduct 
+an indirect sampling of the state transition kernels, which will be discussed in
 the next section. 
 
 \section{Indirect Sampling of the Adjoint Collision Kernel}
 As explained in the previous chapter, the total transfer probability, which
 appears in both the collision kernel and the adjoint collision kernel, is
 challenging to obtain and even more challenging to sample from. To conduct
-the random walks for adjoint neutral particles, the adjoint collision kernel 
+the random walks for adjoint radiation, the adjoint collision kernel 
 must be sampled indirectly. The adjoint collision will be expanded in order
 to determine this sampling procedure. 
 \begin{align}
@@ -675,7 +677,7 @@ These calculations will be discussed in the next chapter.
 \section{The Adjoint Emission Density and Adjoint Collision Density Random Walk PDFs}
 With the state transition kernels $M^{\dagger}(y \to x)$ and 
 $N^{\dagger}(y \to x)$ fully characterized, the Monte Carlo random walk process
-for adjoint neutral particles can be completely specified. 
+for adjoint radiation can be completely specified. 
 \begin{align}
   \theta^{\dagger}(x)\text{ Random Walk:}&
   \begin{cases}
@@ -710,9 +712,9 @@ advantageous when using either of the estimators that were described in chapter
 \ref{ch:mc_methods}. The next section will elaborate on this point.
 \begin{figure}[t!]
   \begin{center}
-    \scalebox{0.75}{\includegraphics{chapters/adjoint_neutral_particle_transport/random_walk_process.pdf}}
+    \scalebox{0.75}{\includegraphics{chapters/adjoint_random_walk_process_derivation/random_walk_process.pdf}}
     \end{center}
-  \caption{\textbf{Monte Carlo random walk procedure for adjoint neutral particles.}
+  \caption{\textbf{Monte Carlo random walk procedure for adjoint radiation.}
     \textit{A particle state is first sampled from the adjoint source 
       distribution. The next collision point is sampled from the adjoint 
       transport kernel $T^{\dagger}$. Next, the adjoint particle weight is

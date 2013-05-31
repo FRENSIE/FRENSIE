@@ -214,23 +214,25 @@ Depending on how the random walk process is derived from the model equation (in
 the form of a FIESK), it can fall into one of two categories: analogue or 
 non-analogue. In an analogue random walk process, the random walks simulate 
 the physical behavior of the entity that would be expected based on the model 
-equation. In a non-analogue random walk process, the random walks do not 
-simulate the physical behavior of the entity that would be expected. Often, 
-non-analogue random walk processes employ variance reducing techniques to aid 
-in the estimation of rare events. A few common forms of variance reduction are
-importance sampling, Russian roulette and splitting, all of which are described
-in detail by \citet{spanier_monte_1969}. To determine if a random walk
-process is analogue, one must look at the source PDF $p^1(x)$ and the state 
-transition PDF $p(y \to x)$. If the source PDF is equal to the source function
-$S(x)$ divided by a normalization constant and the state transition PDF is 
-equal to the state transition kernel $K(y \to x)$ the random walk process is 
+equation. A common misconception is that an analogue process is one where the
+weight of a particle is always unity. For multiplying systems where particle
+multiplication is treated implicitly, an analogue process will use particle
+weights. However, this is rarely done and the latter description will usually
+suffice. Non-analogue random walk processes employ one or more variance reducing
+techniques to aid in the estimation of rare events. A few common forms of 
+variance reduction are importance sampling, Russian roulette and splitting, all 
+of which are described in detail by \citet{spanier_monte_1969}. To determine if 
+a random walk process is analogue, one must look at the source PDF $p^1(x)$ and 
+the state transition PDF $p(y \to x)$. If the source PDF is equal to the source 
+function $S(x)$ divided by a normalization constant and the state transition PDF
+is equal to the state transition kernel $K(y \to x)$ the random walk process is 
 analogue. 
 
 In terms of neutral particle transport, analogue random walk processes are 
 rarely used due to the difficulty in estimating low probability events. For
 example, if an estimate of some quantity on the back side of a thick shield is 
 desired and an analogue random walk process is employed, the probability of any 
-random walk passing through the shield model will be very small. Getting good
+random walk passing through the shield model will be very small. Acquiring good
 estimates of the quantity of interest will therefore require a very large
 amount of random walks to compensate for the very small probability of any one
 random walk passing through the shield. 
@@ -281,10 +283,12 @@ The weight function $w(y \to x)$ is defined in the following equation.
   \end{cases}
 \end{equation}
 Note that for an analogue random walk process, the weight function after each
-event will be unity, since $p(y \to x)$ is equal to $K(y \to x)$. In addition,
-$\frac{S(x_1)}{p^1(x_1)}$ will be equal to the constant 
-$C = \int_{\Gamma} S(x)dx$. Therefore, for an analogue random walk process, the
-termination estimator reduces to
+event will be unity\footnote{As mentioned in the previous section, the weight
+function for an analogue random walk process where multiplication is treated 
+implicitly will not generally be unity.}, since $p(y \to x)$ is equal to 
+$K(y \to x)$. In addition, $\frac{S(x_1)}{p^1(x_1)}$ will be equal to the 
+constant $C = \int_{\Gamma} S(x)dx$. Therefore, for an analogue random walk 
+process, the termination estimator reduces to
 \begin{equation*}
   \varepsilon(\alpha) = C \frac{g(x_k)}{p(x_k)}
 \end{equation*}
