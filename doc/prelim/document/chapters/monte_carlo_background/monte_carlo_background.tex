@@ -1,19 +1,15 @@
 \chapter{Monte Carlo Methods for Fredholm Integral Equations}
 \label{ch:mc_methods}
-Monte Carlo processes are often used to solve quadrature problems. This is 
-because one can often interpret integrals probabilistically, which in turn 
-allows one to develop statistical estimators for integrals rather easily 
-\citep{spanier_monte_1969}. In this report, the focus will fall solely on the 
-specific Monte Carlo process that is used to estimate the solutions of Fredholm 
-integral equations of the second kind (FIESKs) because, as will be shown in the 
-coming chapters, the transport equation can be written this way. Before 
-discussing the Monte Carlo process, some background into integral equations 
-will be given. 
+Monte Carlo processes are often used to solve quadrature problems. In this 
+report, the focus will fall solely on the specific Monte Carlo process that is 
+used to estimate the solutions of Fredholm integral equations of the second 
+kind (FIESKs) because, as will be shown in the coming chapters, the transport 
+equation can be written this way. Before discussing this particular Monte Carlo 
+process, some background into integral equations will be given. 
 
 \section{Integral Equations}
 \label{sec:integral_equations}
-Two types of integral equation will be of interest. The first is the Fredholm 
-integral equation of the second kind.
+Two types of integral equation will be of interest. The first is the FIESK.
 \begin{equation}
   F(x) = S(x) + \lambda \int_a^b K(x,y) F(y)dy
   \label{eq:fredholm_int_eqn}
@@ -26,7 +22,7 @@ identical to the FIESK except that one of the limits of integration is variable.
 \end{equation}
 In these two equations, the functions $K(x,y)$ and $S(x)$ are known. The 
 function $S(x)$ is a forcing function and the function $K(x,y)$ is called the 
-kernel of the integral equation, which can be interpreted a function 
+kernel of the integral equation, which can be interpreted as a function 
 characterizing the transition from some initial state y to the state x. Due to 
 this interpretation, the kernel is sometimes written as $K(y \to x)$. This 
 notation will be adopted throughout the rest of this report.
@@ -38,7 +34,8 @@ the energy of a particle after scattering off of a massive scattering center
 cannot be greater than the energy prior to the scattering event, assuming that 
 the massive scattering center is stationary}. However, the Voltera integral 
 equation is just a special case of the FIESK and in fact, all Voltera integral
-equations can be written as a FIESK through the use of a modified kernel. 
+equations can be written as a FIESK through the use of a modified kernel 
+\citep{rahman_integral_2007}. 
 \begin{equation}
   M(y \to x) = 
   \begin{cases}
@@ -114,8 +111,7 @@ state to state is commonly referred to as a random walk processes. The
 derivation of this Monte Carlo process is outside the scope of this report. It 
 will only be proven that this process does indeed recover the solution to a 
 FIESK given an appropriate random variable. For a detailed derivation of the 
-process from a mathematical and probabilistic point of view, please refer to 
-reference \cite{spanier_monte_1969}. 
+process please refer to reference \cite{spanier_monte_1969}. 
 
 The random walk process for the solution of a Fredholm integral equation of
 the second kind is completely specified by the following probability
@@ -142,7 +138,7 @@ The PDFs that define the random walk process have the following properties:
   \item $p^1(x) \geq 0$ \\
   $\int_{\Gamma} p^1(x)dx = 1$
   \item $p(y \to x) \geq 0$ \\
-  $\int_{\Gamma} p(y \to x)dx = q(x) = 1 - p(x)$
+  $\int_{\Gamma} p(y \to x)dx = q(y) = 1 - p(y)$
 \end{enumerate}
 
 The PDF $p^1(x)$ can be generalized to a PDF that characterizes the probability 
@@ -207,28 +203,28 @@ this random walk will end in state $x_1$. If the random walk continues, a new
 state $x_2$ is sampled from 
 $p(x \text{ | } x_1) = \frac{p(x_1 \to x)}{\int p(x_1 \to x)dx}$. This process will then continue 
 until the random walk eventually ends in some state $x_k$. The variable 
-$\alpha = (x_1,\ldots,x_{k-1},x_k)$ will often be used to represent the random 
+$\alpha = (x_1,\ldots,x_{k-1},x_k)$ will be used to represent the random 
 walk. 
 
 Depending on how the random walk process is derived from the model equation (in
-the form of a FIESK), it can fall into one of two categories: analogue or 
-non-analogue. In an analogue random walk process, the random walks simulate 
-the physical behavior of the entity that would be expected based on the model 
-equation. A common misconception is that an analogue process is one where the
-weight of a particle is always unity. For multiplying systems where particle
-multiplication is treated implicitly, an analogue process will use particle
-weights. However, this is rarely done and the latter description will usually
-suffice. Non-analogue random walk processes employ one or more variance reducing
-techniques to aid in the estimation of rare events. A few common forms of 
-variance reduction are importance sampling, Russian roulette and splitting, all 
-of which are described in detail by \citet{spanier_monte_1969}. To determine if 
-a random walk process is analogue, one must look at the source PDF $p^1(x)$ and 
-the state transition PDF $p(y \to x)$. If the source PDF is equal to the source 
-function $S(x)$ divided by a normalization constant and the state transition PDF
-is equal to the state transition kernel $K(y \to x)$ the random walk process is 
-analogue. 
+the form of a FIESK), the random walk process can fall into one of two 
+categories: analogue or non-analogue. In an analogue random walk process, the 
+random walks simulate the physical behavior of the entity that would be 
+expected based on the model equation. A common misconception is that an 
+analogue process is one where the weight of a particle is always unity. For 
+multiplying systems where particle multiplication is treated implicitly, an 
+analogue process will use particle weights. However, this is rarely done and 
+the latter description will usually suffice. Non-analogue random walk processes 
+employ one or more variance reducing techniques to aid in the estimation of 
+rare events. A few common forms of variance reduction are importance sampling, 
+Russian roulette and splitting, all of which are described in detail by 
+\citet{spanier_monte_1969}. To determine if a random walk process is analogue, 
+one must look at the source PDF $p^1(x)$ and the state transition PDF
+$p(y \to x)$. If the source PDF is equal to the source function $S(x)$ divided 
+by a normalization constant and the state transition PDF is equal to the state 
+transition kernel $K(y \to x)$ the random walk process is analogue. 
 
-In terms of neutral particle transport, analogue random walk processes are 
+In terms of radiation transport, analogue random walk processes are 
 rarely used due to the difficulty in estimating low probability events. For
 example, if an estimate of some quantity on the back side of a thick shield is 
 desired and an analogue random walk process is employed, the probability of any 
@@ -256,9 +252,7 @@ to the FIESK of interest.
 In this section, two random variables, often referred to as estimators, will 
 be introduced that can be used to gather information from the random walks to 
 estimate the value $I$. These estimators are defined over the entire phase 
-space instead of one particular point, which makes them quite useful. In 
-addition, they allow the necessary properties of $S(x)$ and $K(y \to x)$ to be 
-relaxed slightly, which will be shown shortly.
+space instead of one particular point, which makes them quite useful. 
 
 The first estimator that will be discussed gathers information about every
 event of the random walk, but only contributes to the estimation of $I$ when
@@ -350,7 +344,7 @@ When the Monte Carlo random walk process is used to calculate the inner product
 $I$, only a finite number of random walks can be simulated and therefore, only 
 an estimate of the value $I$ can be obtained. The estimate will
 correspond to the following equation, where $N$ is the number of random walks
-conducted and $f(\alpha_i)$ is the value of the estimator used for random
+conducted and $f(\alpha_i)$ is the value of the estimator for random
 walk $\alpha_i$.
 \begin{equation}
   \bar{I} = \frac{1}{N} \sum_{i=1}^N f(\alpha_i)
@@ -398,14 +392,14 @@ $\Gamma$.
 Based on equation \ref{eq:fredholm_int_eqn}, $H \cdot F(x)$ is equal to $S(x)$.
 If we assume that $F(x)$ is a real-valued function, the adjoint operator 
 $H^{\dagger}$ is defined by the following identity 
-\citep{morse_methods_1953}. The function $F^{\dagger}(x)$ is the solution 
-of the dual FIESK. 
+\citep{morse_methods_1953}. 
 \begin{equation}
   \int_{\Gamma}F^{\dagger}(x)H \cdot F(x)dx  = 
   \int_{\Gamma}F(x)H^{\dagger} \cdot F^{\dagger}(x)dx
   \label{eq:forward_adjoint_ops}
 \end{equation}
-From this identity the adjoint operator $H^{\dagger}$ can be determined.
+The function $F^{\dagger}(x)$ is the solution of the dual FIESK. From this 
+identity the adjoint operator $H^{\dagger}$ can be determined.
 \begin{align}
   \int_{\Gamma} F^{\dagger}(x)H \cdot F(x)dx & = \int_{\Gamma} 
   \left[F^{\dagger}(x)F(x) -

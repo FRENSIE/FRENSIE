@@ -9,7 +9,7 @@ with matter will be discussed: incoherent scattering, coherent scattering,
 pair production and the photoelectric effect. Photonuclear absorption, which can
 become important in high energy coupled neutron-photon transport simulations, 
 will be discussed briefly. In addition, sampling procedures that can be used 
-with each differential interaction cross section will be discribed. All 
+with each differential interaction cross section will be described. All 
 secondary particles other than photons will be neglected from the cross sections
 and sampling procedures. 
 
@@ -50,7 +50,7 @@ energy divided by the rest mass of the electron.
     \cos{^2\theta} \right] S(y,Z)
 \end{equation}
 The later form of the differential incoherent cross section is made possible 
-by the one-to-one correspondance between the outgoing energy and outgoing 
+by the one-to-one correspondence between the outgoing energy and outgoing 
 direction, which can be found using conservation of energy and momentum and the 
 assumption that the electron is free and at rest (see Appendix 
 \ref{ch:appendix_B}). 
@@ -60,7 +60,7 @@ assumption that the electron is free and at rest (see Appendix
 \end{equation}
 When binding effects cannot be neglected, which typically occurs when the 
 incident photon energies are on the order of the electron binding energy, there 
-will no longer be a one-to-one correspondance between the outgoing energy and 
+will no longer be a one-to-one correspondence between the outgoing energy and 
 the outgoing direction. Instead, there will be a distribution of outgoing 
 energies that correspond to each outgoing direction. This phenomenon will be 
 discussed more in the next section.
@@ -100,7 +100,7 @@ Klein-Nishina cross section in terms of a new variable whose inverse is the
 energy loss ratio.
 \begin{align}
   \frac{1}{x} & = \frac{\alpha}{\alpha^{'}} \\
-  x = 1+\alpha^{'}(1-\cos{\theta})
+  x = 1+&\alpha^{'}(1-\cos{\theta})
 \end{align}
 The differential Klein-Nishina cross section can then be written as follows 
 \citep{lux_monte_1991}.
@@ -219,7 +219,7 @@ shown in figure \ref{fig:kahn_rejection_sampling}.
     \textit{This sampling procedure is used to sample a value of x from the
     differential Klein-Nishina cross section. One can use this sampling
     procedure at any incoming particle energy, however the efficiency of the
-    procedure degrades at higher enegies \citep{lux_monte_1991}.}}
+    procedure degrades at higher energies \citep{lux_monte_1991}.}}
   \label{fig:kahn_rejection_sampling}
 \end{figure}
 
@@ -274,7 +274,7 @@ As mentioned in the previous section, the differential Klein-Nishina cross
 section assumes that the electron upon which the photon scatters is free
 and at rest. Atomic electrons are bound and consequently cannot be at rest. 
 When the energy of the incoming photon is much greater than the binding 
-energies of the electrons in the atom, binding effects are negligable and the
+energies of the electrons in the atom, binding effects are negligible and the
 incoherent cross section becomes simply the atomic number times the 
 Klein-Nishina cross section. However, when the incoming photon energy is on the
 order of a few hundred keV or lower, binding effects must be taken into account
@@ -287,7 +287,7 @@ suppressed because it would result in energetically impossible scattering
 events\footnote{Because the atomic system is a quantum-mechanical system, enough
 energy must be given to the electron to free it. Otherwise a reaction will not
 occur}. Second, the angular distribution of the scattered photon is 
-modified, particurily in the forward direction. Finaly, the Compton-scattered
+modified, particularly in the forward direction. Finally, the Compton-scattered
 photon energy is broadened by the pre-collision motion of the electron 
 \citep{namito_implementation_1994}. In other words, the one-to-one 
 correspondence between the outgoing photon direction and energy is broken and 
@@ -384,10 +384,10 @@ can be recovered by integrating over all possible electron momentum projections
 and by summing up the resulting differential cross section for each shell.
 Because $\alpha$ and $p_z$ are related by equation \ref{eq:pz}, this integral
 will be quite complicated. Fortunately, Ribberfors has shown that using the
-approximation $\alpha_c \approx \alpha$ results in negligable errors in the 
+approximation $\alpha_c \approx \alpha$ results in negligible errors in the 
 total incoherent scattering cross section \citep{ribberfors_x-ray_1983}. The
 limit of integration $p_{i,max}$ is the maximum electron momentum projection
-allowed for a compton scattering reaction to occur. This maximum occurs when
+allowed for a Compton scattering reaction to occur. This maximum occurs when
 the outgoing photon energy is equal to $E - E_{i,b}$, where $E_{i,b}$ is the 
 binding energy for the particular subshell. Unfortunately, $p_{i,max}$ is a 
 function of $\theta$ so this integral will still be complicated. 
@@ -416,7 +416,7 @@ upon which the photon will scatter must be sampled. The most accurate
 way to sample the subshell would be to create a discrete PDF based on the total
 incoherent cross section for each subshell. This data isn't readily available in
 the popular tables \citep{cullen_epdl97_1997}. The approximation used by Namito 
-et al., which is only truely applicable when the incoming photon energy is much 
+et al., which is only truly applicable when the incoming photon energy is much 
 greater than the binding energy of the electron, is to sample the electron shell
 based on the number of electrons present in each shell (given as $n_i$).
 \begin{align}
@@ -475,7 +475,7 @@ must be randomly selected (with probability one half).
 \section{Coherent Scattering}
 \label{sec:coherent_scattering}
 Coherent or Rayleigh scattering occurs when a photon scatters off of an atom 
-with negligable energy loss. It occurs rarely except for when low energy (keV)
+with negligible energy loss. It occurs rarely except for when low energy (keV)
 photons pass through a high atomic number material 
 \citep{lux_monte_1991}. The differential coherent cross section (per atom) is 
 usually expressed as a product of the classical Thompson differential 
@@ -535,7 +535,7 @@ and a rejection function.
   \left[\frac{F^2(y,Z)}{\int_0^{y_{max}^2}F^2(y,Z)dy^2} \right] \nonumber \\
   & = C(\alpha^{'},Z)R(\cos{\theta})p(y^2,Z)
 \end{align}
-Now, to sample the outgoing photon direction, one first samples a squared
+To sample the outgoing photon direction, one first samples a squared
 argument from the PDF $p(y^2,Z)$. Then one uses the rejection function 
 $R(\cos{\theta})$ with the angle corresponding to the squared argument
 \begin{equation}
@@ -579,13 +579,13 @@ sampling method and the efficiency of the naive method that was discussed first.
 \label{sec:pair_production}
 Pair production occurs when the photon interacts with the electric field of an
 atom (screened nuclear field) producing an electron-positron pair. It can be
-subdivided into two separate phenomemon depending on the state of the atom
+subdivided into two separate phenomenon depending on the state of the atom
 after the interaction \citep{hubbell_pair_1980}. Coherent pair production occurs
 when the entire atom recoils from the interaction without any internal 
 excitation. Incoherent pair production occurs when the atom is left in an 
 excited or ionized state. Pair production resulting in the ionization of an 
 atom is often called triplet production because three outgoing particles (two 
-electron and one positron) result from the interaction. However, triplet 
+electrons and one positron) result from the interaction. However, triplet 
 production is often used to refer to incoherent pair production (excitation and
 ionization). 
 
@@ -599,26 +599,24 @@ neglected in data tables \citep{hubbell_pair_1980}.
 
 When one is conducting coupled photon-electron transport, the energy and 
 direction of the outgoing electron and positron must be sampled. This can
-be done using the Bethe-Hetler expression for the coherent pair production
-cross section \citep{mukhin_experimental_1987, salvat_physics_2001}. This
-cross section and the methods for sampling from it will be discussed in 
-section \ref{}. When one is only interested in the transport of photons in 
-the system, the pair production cross section can be formulated differently. 
-Several assumptions will be made in the formulation of this approximate
-cross section. The first is that the electron and positron deposit all of 
-their energy locally (they stop immediately after being created). Since the 
-mean free paths of electrons is generally much smaller than photons, this
-assumption is usually acceptable. The second is that the positron will only
-annihilate once its kinetic energy is essentially zero. In other words, the
-annihilation of positrons in flight will be neglected. This results in a very
-simple (isotropic) angular distribution of the annihilation photons. The final 
-approximation is that the directions of the resulting annihilation photons are 
-uncorrelated with the initial photon direction. Because of the tortorous path 
-taken by a typical electron or positron, this approximation is usually 
-acceptable as well. The simplified treatment allows the pair production and 
-triplet production cross sections to be combined into a single cross section. 
-The resulting double differential pair production is as follows 
-\citep{hoogenboom_adjoint_2000,gabler_amos_2006}.
+be done using the Bethe-Heitler expression for the coherent pair production
+cross section \citep{mukhin_experimental_1987, salvat_physics_2001}. When one 
+is only interested in the transport of photons in the system, the pair 
+production cross section can be formulated differently. Several assumptions 
+will be made in the formulation of this approximate cross section. The first is 
+that the electron and positron deposit all of their energy locally (they stop 
+immediately after being created). Since the mean free paths of electrons is 
+generally much smaller than photons, this assumption is usually acceptable. The 
+second is that the positron will only annihilate once its kinetic energy is 
+essentially zero. In other words, the annihilation of positrons in flight will 
+be neglected. This results in a very simple (isotropic) angular distribution of 
+the annihilation photons. The final approximation is that the directions of the 
+resulting annihilation photons are uncorrelated with the initial photon 
+direction. Because of the torturous path taken by a typical electron or 
+positron, this approximation is usually acceptable as well. The simplified 
+treatment allows the pair production and triplet production cross sections to 
+be combined into a single cross section. The resulting double differential pair 
+production is as follows \citep{hoogenboom_adjoint_2000,gabler_amos_2006}.
 \begin{equation}
   \frac{d^2\sigma_{p.p.}(E^{'},Z)}{d\Omega dE} = \frac{2 [\sigma_{p.p.}(E^{'},Z) 
     + \sigma_{t.p.}(E^{'},Z)] \delta(E - m_ec^2)}{4\pi}
@@ -634,7 +632,7 @@ section. The first photon will then have its outgoing direction sampled from
 an isotropic distribution. The direction of the second photon will then simply
 be the opposite direction of the first photon in accordance with conservation
 of momentum (and under the assumption that the positron-electron pair that
-annihilated had negligable momentum).
+annihilated had negligible momentum).
 
 \section{The Photoelectric Effect}
 The photoelectric effect occurs when a photon of energy E is absorbed by a
@@ -642,7 +640,7 @@ target atom, which makes a transition to an excited state or becomes ionized.
 When ionization occurs, the ejected electron will have energy equal to the 
 absorbed photon minus the binding energy of the electron. Atomic relaxation
 will occur after the vacancy has been created. This process results in the 
-emission of Auger electrons and x-rays. The x-rays may be of significance to
+emission of Auger electrons and x-rays. The x-rays may be of significance in
 low energy photon simulations, especially when high atomic number elements are
 present. It is therefore necessary to conduct a more detailed treatment of the
 photoelectric effect in photon transport codes. Salvat et al. recommended a 
@@ -747,9 +745,7 @@ shown below.
     \right] S(y,Z)
 \end{equation}
 From this equation, the adjoint differential incoherent scattering cross section
-is the following. To construct this equation, all of the primed and unprimed 
-variables in the previous equation are switched in accordance with equation
-\ref{eq:adjoint_forward_cross_sec_rel}. 
+is the following.  
 \begin{equation}
   \frac{d\sigma_{i.s.}^{\dagger}(\alpha^{'},\alpha,Z)}{dE} = 
   \frac{\pi r_e^2}{m_ec^2 \alpha^{2}}
@@ -757,8 +753,11 @@ variables in the previous equation are switched in accordance with equation
     \right] S(y,Z)
   \label{eq:diff_adjoint_incoh_scatt_cross_sec_energy}
 \end{equation}
-It must also be noted that the first argument of the scattering function is
-now $y = \sin{\frac{\theta}{2}}/\lambda$, which is dependent on the outgoing
+To construct this equation, all of the primed and unprimed 
+variables in the previous equation are switched in accordance with equation
+\ref{eq:adjoint_forward_cross_sec_rel}. It must also be noted that the first 
+argument of the scattering function is now 
+$y = \sin{\frac{\theta}{2}}/\lambda$, which is dependent on the outgoing
 photon wavelength.
 
 A PDF for the outgoing energy can now be created, which will have a similar
@@ -783,7 +782,7 @@ Klein-Nishina cross section, the differential adjoint Klein-Nishina cross
 section can be written in terms of an inverse energy gain ratio.
 \begin{align}
   \frac{1}{x} & = \frac{\alpha}{\alpha^{'}} \\
-  x & = 1 - \alpha^{'}(1-\cos{\theta})
+  x = 1 - &\alpha^{'}(1-\cos{\theta})
 \end{align}
 The differential adjoint Klein-Nishina cross section can then be written as 
 follows (see Appendix \ref{ch:appendix_B}).
@@ -800,7 +799,7 @@ follows (see Appendix \ref{ch:appendix_B}).
 
 Now, a PDF for x can be created if the differential adjoint Klein-Nishina cross
 section is divided by the total adjoint Klein-Nishina cross section. The total
-adjoint Klein-Nishan cross section can be found by integrating the differential
+adjoint Klein-Nishina cross section can be found by integrating the differential
 Klein-Nishina cross section from $x_{min} = 1-\alpha^{'}(1-\mu_{min})$ to 
 $x_{max} = 1$. Unfortunately, when the initial energy of the adjoint photon is
 greater than $\frac{1}{2}m_ec^2$, the total adjoint Klein-Nishina cross section
@@ -905,9 +904,12 @@ The overall sampling procedure efficiency is still very good though.
   \label{fig:diff_adj_incoh_sampling_proc_eff}
 \end{figure}
 
-To evaluate the adjoint weight factor, the adjoint incoherent cross 
-section must be known. While this cross section is not provided in any of the
-popular tables, it can be determined by integrating equation 
+Now that the procedure for sampling values from the differential adjoint 
+incoherent cross section has been described, another important part of the 
+adjoint random walk process must be addressed: the evaluation of the adjoint
+weight factor. To evaluate the adjoint weight factor, the adjoint incoherent 
+cross section must be known. While this cross section is not provided in any of 
+the popular tables, it can be determined by integrating equation 
 \ref{eq:diff_adjoint_incoh_scatt_cross_sec_energy} at an initial energy of
 interest (or many to create a table). As indicated previously, the adjoint
 incoherent cross section is a function of the maximum problem energy. Figure
@@ -934,14 +936,14 @@ the adjoint incoherent cross section goes to zero.
 \section{Doppler Broadening of Incoherently Scattered Adjoint Photons}
 In section \ref{sec:photon_dopp_broadening} doppler broadening of incoherently
 scattered photons was discussed. While it hasn't been addressed in the 
-literature yet, this process is also reversable. In this section, some 
+literature yet, this process is also reversible. In this section, some 
 arguments will be made to validate this claim. However, it must be noted that
 no simulations have been completed yet to confirm the validity of this claim. 
 
 In the derivation of the double differential incoherent scattering cross 
 section, Ribberfors used the Born and impulse approximations. The impulse 
 approximation is of particular importance because it allows the system to be
-treated identically imediately before and imediately after the collision.
+treated identically immediately before and immediately after the collision.
 Therefore, the scattering mechanics using this approximation will be identical
 for the adjoint process, except that they will happen in reverse. In addition,
 the double differential incoherent scattering cross section is actually
@@ -1033,10 +1035,10 @@ energy for the particular subshell.
 The fact that the differential adjoint incoherent cross section can be recovered
 using similar approximations to the ones used to recover the differential 
 incoherent cross section is a promising result, which adds credibility to the
-claim that the photon doppler broadening process is reversible. 
+claim that the photon Doppler broadening process is reversible. 
 
 A sampling method similar to the one proposed by Namito et al. for photon 
-doppler broadening can now be created for adjoint photon doppler broadening. 
+Doppler broadening can now be created for adjoint photon Doppler broadening. 
 The first step is to sample an outgoing scattering angle from the differential
 adjoint incoherent cross section using the rejection method from the 
 previous section. Next, the subshell containing the electron upon which the
@@ -1238,9 +1240,9 @@ presented in chapter \ref{ch:adjoint_particle_transport} except that there is
 now an additional term. This additional term, which was missed in the initial
 derivation, takes into account adjoint pair production. By manipulating this 
 term further, the necessary modification to the adjoint random walk process
-will become aparent. This term will temporarily be refered to as  $T_3$. 
+will become apparent. This term will temporarily be referred to as  $T_3$. 
 The FIESK for the adjoint emission density, shown in equation 
-\ref{eq:adj_collision_dens_fiesk} will now be substitued into $T_3$.
+\ref{eq:adj_collision_dens_fiesk} will now be substituted into $T_3$.
 \begin{align}
   T_3 & = \frac{1}{4\pi}P_{p.p.}^{\dagger}(\vec{r},m_ec^2)
   p_{p.p.}^{\dagger}(\vec{r},E) 
@@ -1394,7 +1396,7 @@ The only reaction for adjoint photons that can change the particles energy
 as required by the energy point detector, every time an adjoint incoherent
 scattering event is selected and the adjoint photon's energy is in the 
 necessary energy window, an additional random walk must be initiated. The
-weight assiciated with this new random walk will be the weight of the main
+weight associated with this new random walk will be the weight of the main
 random walk times the probability of incoherently scattering from the current 
 energy to the source energy.
 \begin{align}
