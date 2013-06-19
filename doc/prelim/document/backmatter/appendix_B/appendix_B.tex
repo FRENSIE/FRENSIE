@@ -1,14 +1,8 @@
 \chapter{Photon Interaction Physics and Sampling Derivations}
 \label{ch:appendix_B}
 In chapter \ref{ch:photon_interactions} the derivation of several important
-equations were omitted. In this appendix the details of several derivations will
-be shown in detail. In particular, the derivation of the outgoing energy of a
-photon after a Compton scatter off of a free electron, the electron momentum 
-projection on the photon scattering vector from a Compton scatter off of a
-bound electron, the Klein-Nishina cross section differential in the inverse
-energy loss ratio (x), the total Klein-Nishina cross section, Kahn's
-rejection sampling technique, and the pair and triplet production thresholds
-will be discussed.
+equations and sampling schemes were omitted. In this appendix the details of 
+many of these derivations will be shown. 
 
 \section{Compton Scattering from Free and Bound Electrons}
 The process of Compton scattering off of a free electron is represented by 
@@ -254,7 +248,7 @@ Now, the change of variables can be completed.
 \end{align}
 \begin{align}
   K & = \frac{\pi r_e^2}{\alpha^{'}} \nonumber \\
-  A & = \frac{1}{\alpha^{'}} \nonumber \\
+  A & = \frac{1}{\alpha^{'2}} \nonumber \\
   B & = 1 - \frac{2(\alpha^{'}+1)}{\alpha^{'2}} \nonumber \\
   C & = \frac{(1+2\alpha^{'})}{\alpha^{'2}} \nonumber \\
   D & = 1 \nonumber 
@@ -345,7 +339,7 @@ one factor can improve the sampling efficiency \citep{kahn_applications_1956}.
 The probability of selecting a value of x from a particular factor is $p_i$.
 The function $T_i(x)$ must be bounded in the interval (0,1). The efficiency
 of the sampling procedure is $\kappa$. Now, to sample a value of $x$, one 
-first samples an index $i$ from the disctrete PDF $p(i) = p_i$. Then, one 
+first samples an index $i$ from the discrete PDF $p(i) = p_i$. Then, one 
 samples a value of $x$ from the PDF $n_i(x)$. Finally, if the following 
 equality holds, the value is accepted. Otherwise the entire process is repeated.
 The quantity $\varepsilon$ is a uniform random number in the interval (0,1).
@@ -421,8 +415,8 @@ form.
   T_2(\alpha^{'},x)n_2(\alpha^{'},x) = \frac{C_2(\alpha^{'})}{x^2}
   \left(cos^2\theta + \frac{1}{x}\right)
 \end{equation*}
-The most efficienct way to sample from this distribution is to sample a value
-of x from the follwing distribution.
+The most efficient way to sample from this distribution is to sample a value
+of x from the following distribution.
 \begin{equation}
   n_2(\alpha^{'},x) = \frac{1+2\alpha^{'}}{2\alpha^{'} x^2}
 \end{equation}
@@ -447,14 +441,16 @@ Now, the probabilities associated with each factor need to be determined.
   \frac{2p_1}{\alpha^{'}} & = \frac{1+2\alpha^{'}}{4\alpha^{'}}p_2 \nonumber \\
   & = \frac{1+2\alpha^{'}}{4\alpha^{'}}(1-p_1) \nonumber \\
   p_1\left(\frac{2}{\alpha^{'}} + \frac{1}{4\alpha^{'}} + \frac{1}{2} \right)
-  & = \frac{1+2\alpha^{'}}{4\alpha^{'}} \nonumber \\
+  & = \frac{1+2\alpha^{'}}{4\alpha^{'}} \nonumber
+\end{align}
+\begin{align}
   p_1 = \frac{1+2\alpha^{'}}{9 + 2\alpha^{'}} \\
   p_2 = \frac{8}{9 + 2\alpha^{'}}
 \end{align}
 The efficiency associated with this rejection scheme is
 \begin{equation}
   \kappa(\alpha^{'}) = \frac{2 K(\alpha^{'})(1+2\alpha^{'})}
-  {\alpha^{'}(2\alpha^{'}+9)}.
+  {\alpha^{'}(9+2\alpha^{'})}.
 \end{equation}
 
 Kahn's rejection sampling procedure corresponds to the above expansion.
@@ -600,7 +596,7 @@ will be sampled from the following distribution.
   n_3(\alpha^{'},\alpha_{max},x) = \frac{3\left(x-1+\alpha^{'}\right)^2}
   {\alpha^{'3} - \left(x_{min}-1+\alpha^{'}\right)^3}
 \end{equation}
-The rejection function will again be simply unity due to the direct sampling.
+The rejection function will again be unity due to the direct sampling.
 
 Now the probabilities associated with each factor need to be determined.
 \begin{align}

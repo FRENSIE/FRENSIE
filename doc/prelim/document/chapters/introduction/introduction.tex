@@ -1,9 +1,9 @@
 \chapter{Introduction}
 \label{ch:introduction}
 The Monte Carlo method has a rich history going back as far back as Babylonian 
-times. However, its use in the field of radiation transport began in the 1940s and can 
-be attributed to the work of von Neumann, Ulam, Metropolis, Kahn, Fermi and 
-their collaborators \citep{halton_retrospective_1970}. The first successful 
+times. However, its use in the field of radiation transport began in the 1940s 
+and can be attributed to the work of von Neumann, Ulam, Metropolis, Kahn, Fermi 
+and their collaborators \citep{halton_retrospective_1970}. The first successful 
 application of the method in the field of radiation transport coincided with 
 the construction of the first digital computers \citep{lux_monte_1991}. Because 
 computational resources were relatively scarce and expensive, the computer codes
@@ -17,82 +17,59 @@ methods for solving radiation transport problems because all variables of
 interest (i.e. energy, direction and position) can be treated on a continuous
 scale and because the problem geometry can be modeled completely. As 
 computers continue to grow in size and speed, the Monte Carlo method will 
-continue to be used for more and more challenging problems. Already, the Monte
-Carlo method is appearing in full reactor core simulation codes with the hope
-of one day being used in place of deterministic codes (mc21 ref).
-
-While it is important to acknowledge that the Monte Carlo method is being 
-used to solve more and more challenging problems where it was once thought to 
-be an ineffective tool (full core reactor modeling), these applications of the 
-method are outside the scope of this report. The discussions of the Monte Carlo
-method in the following sections will focus exclusively on fixed source 
-problems of modest size. For a detailed look into how the Monte Carlo method 
-can be used in criticality calculations, please refer to refs (...). Before 
-outlining the proceeding sections of this report, some characteristics of the 
-Monte Carlo method and the radiation transport equation must be discussed.
+continue to be used for more and more challenging problems \footnote{Already, 
+the Monte Carlo method is appearing in full reactor core simulation codes 
+where it was once deemed too costly and inefficient to use 
+\citep{hoogenboom_monte_2011}.}.
 
 \section{The Monte Carlo Method}
 \label{sec:monte_carlo_method}
 The Monte Carlo method is a stochastic method in which samples are drawn from 
 a parent population through sampling procedures governed by a set of 
-probability laws. From the samples, statistical data are acquired and analyzed 
-to make inferences about the parent population. When the probability laws used 
-to sample from the parent population have a 
-physical analog, the process of sampling particle histories is refered to as 
-analog. In radiation transport problems, there is usually interest in rare
-events, such as the penetration of radiation through a thick shield. When rare
-events are of interest, analog Monte Carlo processes are undesirable
-because the rare events will only rarely be sampled and therefore little data
-will exist to study them. Fortunately, the probability laws can be biased to 
-increase the probability of sampling rare events as long as the bias is 
-accounted for and removed from the statistical analysis of the results. There
-are many techniques that can be used to improve the probability of sampling
-rare events, which all fall under the catagory of variance reduction techiques.
-While variance reduction techniques are extremely important for the successful
-application of the Monte Carlo method to many radiation transport problems, 
-only a few of the simple techniques will be discussed in this report. For a
-detailed look at the variance reduction techniques used in todays Monte Carlo
-codes please refer to refs (...). 
+probability laws. From the samples, statistical data is acquired and analyzed 
+to make inferences about the parent population. 
 
 In radiation transport problems, the system of interest is a collection of 
 bounded regions which can contain one or more of the following: a material, a 
-vacuum, a source, a detector. The parent population is the 
-set of all possible radiation histories and the samples are histories drawn 
-from this set. The particle history can be regarded as a random walk from a 
-source region to problem domain boundary or some other terminating location
-(i.e. absorption point). Each phase of the random walk is governed by different 
-probability laws that are all related to the material interaction cross sections
-of the particular form of radiation. The portion of a random walk that passes 
-through a finite detector region is recorded or scored. It must be noted that
-the terms source region and detector region do not necessarily refer to the 
-physical analog of a radiation source and radiation detector. Any region where
-a history is started is refered to as a source region and any region where
-some portion of a history is recorded is refered to as a detector region. The
-necessity of this generality is an important point of discussion. 
+vacuum, a source, a detector. The parent population is the set of all possible 
+radiation histories and the samples are histories drawn from this set. The 
+particle history can be regarded as a random walk from a source region to a 
+problem domain boundary or some other terminating location (i.e. absorption 
+point). Each phase of the random walk is governed by a set of probability laws 
+that are all related to the material interaction cross sections of the 
+particular form of radiation. The portion of a random walk that passes through 
+a finite detector region is recorded or scored. It must be noted that in the 
+context of the Monte Carlo method, the terms source region and detector region 
+do not necessarily refer to the physical analog of a radiation source and 
+radiation detector. Any region where a random walk is started is referred to 
+as a source region and any region where some portion of a random walk is 
+recorded is refereed to as a detector region. The necessity of this generality 
+is an important point of discussion. 
 
 While radiation transport problems are typically solved by sampling radiation
 histories that start in what can be regarded as a model of the physical source
 and recorded in what can be regarded as a model of the physical detector, the
 opposite can also be true. The process of sampling the starting point of a 
-radiation history in 
-the region analogous to a physical source is known as a forward process. The
-probability laws used in a forward process can be derived from the radiation
-transport equation. The forward process is most effective when the detector 
-region is large relative to the source region. As the detector region decreases
-in size, the probability of any given history passing through the detector 
-region decreases until, for a point detector, the probability goes to zero. 
-Fortunately, there is another process of sampling radiation histories where the 
-starting point of a history is sampled in the region analogous to a physical
-detector. This process is refered to in the literature as an adjoint or reverse
-process (refs.). In this process histories are instead recorded when they pass
-through the region analogous to a physical source. The same logic applies to 
-this process in the sense that as the Monte Carlo detector region is large 
-relative to the Monte Carlo source region, the process will be more effective. 
-The difference being that the Monte Carlo source now refers to the region
-analogous to the physical detector and the Monte Carlo detector now refers to
-the region analogous to the physical source. The probability laws that govern 
-this process can be derived from the adjoint transport equation. The derivation
-of these probability laws will be a major focus of this report.
+radiation history in the region analogous to a physical source is often called
+a forward process. The probability laws used in a forward process can be 
+derived from the radiation transport equation. The forward process is most 
+effective when the detector region is large relative to the source region. As 
+the detector region decreases in size, the probability of any given history 
+passing through the detector region decreases until, for a point detector, the 
+probability goes to zero \citep{spanier_monte_1969}. Fortunately, there is 
+another process of sampling radiation histories where the starting point of a 
+history is sampled in the region analogous to a physical detector. This process 
+is refer-ed to in the literature as an adjoint or reverse process 
+\citep{spanier_monte_1969, desorgher_implementation_2010}. In this process 
+histories are instead recorded when they pass through the region analogous to a 
+physical source. The same logic applies to this process in the sense that as 
+the Monte Carlo detector region is large relative to the Monte Carlo source
+region, the process will be more effective. The difference is that the 
+Monte Carlo source now refers to the region analogous to the physical detector 
+and the Monte Carlo detector now refers to the region analogous to the physical 
+source. The probability laws that govern this process can be derived from the 
+adjoint transport equation. The derivation of these probability laws will be a 
+major focus of this report.
 
 \section{Monte Carlo Codes Available Today}
 \label{sec:monte_carlo_codes}
@@ -104,7 +81,7 @@ accurate cross section data that is available. The reverse process has not been
 developed to the same level yet. Only a few Monte Carlo codes have implemented
 the reverse process in a way that is relatively free of approximation. The
 GEANT4 toolkit has implemented the reverse process on a continuous energy 
-scale for electromagnetic radiation and charged particles. In this implementation there are still some approximations that lead to discrepencies in results 
+scale for electromagnetic radiation and charged particles. In this implementation there are still some approximations that lead to discrepancies in results 
 compared to results from the forward process 
 \citep{desorgher_implementation_2010}. FOCUS, a research code written by 
 Hoogenboom, was the first code to implement the reverse process for neutrons
@@ -115,8 +92,8 @@ process for neutrons \citep{grimstone_extension_1998}. The implementation in
 MCBEND has some approximations that can be eliminated as well. Like FOCUS, 
 MCBEND can not model the coupled reverse process for neutrons and photons. 
 Table \ref{table:monte_carlo_codes_today} summarizes the continuous energy 
-modeling capabilities of Monte Carlo codes available today. Please note that
-two of the most powerful and popular codes, MCNP5 and MCBEND are not open 
+modeling capabilities of most Monte Carlo codes available today. Please note 
+that two of the most powerful and popular codes, MCNP5 and MCBEND are not open 
 source codes. GEANT4, though a software development kit and not a true code,
 is the only open source software that has some continuous energy reverse 
 capabilities. Several codes, such as MCNP5 and MORSE have implemented the 
@@ -124,24 +101,26 @@ reverse process on a discrete or multigroup energy scale.
 
 \begin{table}[ht]
 \label{table:monte_carlo_codes_today}
-  \caption{Continuous Energy Capabilities of Monte Carlo Codes Available Today}
+  \caption{\textbf{Continuous Energy Capabilities of Monte Carlo Codes Available
+      Today}.\textit{The final column shows the proposed capabilities of the 
+      Forward-Adjoint Continuous Energy Monte Carlo (FACEMC) code}.}
   \centering
-  \begin{tabular}{c c c c c c c c c}
+  \begin{tabular}{c c c c c c c c }
     \hline\hline
-    Code & $n$ & $\gamma$ & $e^-$ & $p$ & $n^{\dagger}$ & $\gamma^{\dagger}$ & $e^{-\dagger}$ & $p^{\dagger}$ \\ [0.5ex]
+    Code & $n$ & $\gamma$ & $e^-$ & $p$ & $n^{\dagger}$ & $\gamma^{\dagger}$ & $e^{-\dagger}$ \\ [0.5ex]
     \hline
-    EGS4 & - & $\surd$ & $\surd$ & - & - & - & - & - \\
-    EGSnrc & - & $\surd$ & $\surd$ & - & - & - & - & - \\
-    ITS6 & - & $\surd$ & $\surd$ & - & - & - & - & - \\
-    PENELOPE & - & $\surd$ & $\surd$ & - & - & - & - & - \\
-    MORSE & - & - & - & - & - & - & - & - \\
-    TART2005 & $\surd$ & $\surd$ & - & - & - & - & - & - \\
-    MCNP5/6 & $\surd$ & $\surd$ & $\surd$ & - & - & - & - & - \\
-    MCNPX & $\surd$ & $\surd$ & $\surd$ & $\surd$ & - & - & - & - \\
-    GEANT4 & $\surd$ & $\surd$ & $\surd$ & $\surd$ & - & $\surd$ & $\surd$ & $\surd$ \\
-    MCBEND & $\surd$ & $\surd$ & $\surd$ & - & $\surd$ & - & - & - \\ [1ex]
+    EGS4 & - & $\surd$ & $\surd$ & - & - & - & -  \\
+    EGSnrc & - & $\surd$ & $\surd$ & - & - & - & - \\
+    ITS6 & - & $\surd$ & $\surd$ & - & - & - & - \\
+    PENELOPE & - & $\surd$ & $\surd$ & - & - & - & - \\
+    MORSE & - & - & - & - & - & - & - \\
+    TART2005 & $\surd$ & $\surd$ & - & - & - & - & - \\
+    MCNP5/6 & $\surd$ & $\surd$ & $\surd$ & - & - & - & - \\
+    MCNPX & $\surd$ & $\surd$ & $\surd$ & $\surd$ & - & - & - \\
+    GEANT4 & $\surd$ & $\surd$ & $\surd$ & $\surd$ & - & $\surd$ & $\surd$ \\
+    MCBEND & $\surd$ & $\surd$ & $\surd$ & - & $\surd$ & - & - \\ [1ex]
     \hline
-    FACEMC & $\surd$ & $\surd$ & $\surd$ & $\surd$ & $\surd$ & $\surd$ & $\surd$ & $\surd$ \\ [1ex]
+    FACEMC & $\surd$ & $\surd$ & $\surd$ & $\surd$ & $\surd$ & $\surd$ & $\surd$ \\ [1ex]
     \hline
   \end{tabular}
   \label{table:mccodes}
@@ -159,19 +138,28 @@ sections. The calculation of these cross sections is costly, but only needs to
 be done once and can be done in the popular ENDF format
 \citep{hoogenboom_adjoint_1977}. 
 
-\section{Research Outline}
+\section{The FACEMC Code}
 \label{sec:research_outline}
-To address the limitations of current Monte Carlo codes and to bring the reverse
+To address the limitations of current Monte Carlo codes and to bring the adjoint
 process up to the level of the forward process, the Forward-Adjoint Continuous 
-Energy Monte Carlo (FACEMC) code will be developed. This code will be open 
-source to foster adoption by other researchers. As mentioned previously, the
-scope of this code will only encompass fixed source problems. Forward and
-reverse processes for neutrons, photons, electrons, and protons will be 
-developed. The energy range over which the forward and adjoint neutron 
-processes will be explored is $\sn{1}{-5} eV - 20.0 MeV$. For the forward and 
-adjoint photon, electron and proton processes, the energy range that will be 
-explored is $1.0 keV to 20.0 MeV$. These energy ranges will be sufficient to 
-model a large number of problems important to both the nuclear engineering 
-community and the medical physics community. Several such problems will be used
-to test the final version of the code. 
+Energy Monte Carlo (FACEMC) code will be developed along with any adjoint
+Monte Carlo cross sections and sampling techniques that are currently lacking. 
+This code will be open source to foster adoption by other researchers. As 
+mentioned previously, the scope of this code will only encompass fixed source 
+problems. The energy range over which the forward and adjoint neutron processes 
+will be explored is $10^{-5}$ eV to 20.0 MeV. For the forward and adjoint photon
+and electron processes, the energy range that will be explored is 1.0 keV to 
+20.0 MeV. These energy ranges will be sufficient to model a large number of 
+problems important to both the nuclear engineering community and the medical 
+physics community. Several such problems will be used to test the final version 
+of the code. 
+
+Most of this report will focus on the theory behind the Monte Carlo random 
+walk process used to simulate the transport of the above types of radiation 
+through a problem model. The first chapters will discuss the Monte Carlo random
+walk process very generally. The later chapters will discuss the specifics 
+associated with each type of radiation and its adjoint. Because some work has 
+already been completed, specifically with adjoint photon transport, the final
+chapter will discuss some preliminary results as well as the current state of
+the FACEMC code.  
 
