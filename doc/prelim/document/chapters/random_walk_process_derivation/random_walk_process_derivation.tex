@@ -727,11 +727,11 @@ challenging to estimate the flux directly using a Monte Carlo random walk
 procedure, equivalent inner products must be constructed that are either in 
 terms of the collision density or the emission density. 
 \begin{align}
-  I & = \int a(\vec{r},E,\hat{\Omega}) \varphi(\vec{r},E,\hat{\Omega}) 
+  I & = \int\int\int a(\vec{r},E,\hat{\Omega}) \varphi(\vec{r},E,\hat{\Omega}) 
   dVdEd\hat{\Omega} \\
-  & = \int b(\vec{r},E,\hat{\Omega}) \psi(\vec{r},E,\hat{\Omega})  
+  & = \int\int\int b(\vec{r},E,\hat{\Omega}) \psi(\vec{r},E,\hat{\Omega})  
   dVdEd\hat{\Omega} \\
-  & = \int c(\vec{r},E,\hat{\Omega}) \chi(\vec{r},E,\hat{\Omega}) 
+  & = \int\int\int c(\vec{r},E,\hat{\Omega}) \chi(\vec{r},E,\hat{\Omega}) 
   dVdEd\hat{\Omega}
 \end{align}
 Based on the relationship between the collision density and the flux, $b(x)$

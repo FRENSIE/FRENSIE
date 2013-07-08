@@ -737,11 +737,11 @@ adjoint flux directly using a Monte Carlo random walk procedure, equivalent
 inner products must be constructed that are either in terms of the adjoint
 collision density or the adjoint emission density.
 \begin{align}
-  I & = \int S(\vec{r},E,\hat{\Omega})\varphi^{\dagger}(\vec{r},E,\hat{\Omega})
+  I & = \int\int\int S(\vec{r},E,\hat{\Omega})\varphi^{\dagger}(\vec{r},E,\hat{\Omega})
   dV dE d\hat{\Omega} \\ 
-  & = \int U(\vec{r},E,\hat{\Omega})\xi^{\dagger}(\vec{r},E,\hat{\Omega})
+  & = \int\int\int U(\vec{r},E,\hat{\Omega})\xi^{\dagger}(\vec{r},E,\hat{\Omega})
   dV dE d\hat{\Omega} \\
-  & = \int V(\vec{r},E,\hat{\Omega})\theta^{\dagger}(\vec{r},E,\hat{\Omega})
+  & = \int\int\int V(\vec{r},E,\hat{\Omega})\theta^{\dagger}(\vec{r},E,\hat{\Omega})
   dV dE d\hat{\Omega}
   \label{eq:adj_emission_ip}
 \end{align}
