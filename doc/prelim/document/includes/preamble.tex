@@ -54,7 +54,7 @@
 \usepackage{color}
 \usepackage[chapter]{algorithm}
 \usepackage{algpseudocode}
-
+\usepackage[top=1.0in,bottom=1.0in,left=1.25in,right=1.25in]{geometry}
 
 \IfFileExists{mathpartir.sty}{%
 \usepackage{mathpartir}%
@@ -64,8 +64,6 @@
 \IfFileExists{listings.sty}{%
 \usepackage{listings}%
 }{}
-
-
 
 %% Get rid of ugly borders around PDF hyperlinks (e.g. for cross-references, bib entries, or URLs)
 \hypersetup{pdfborder = 0 0 0}
@@ -177,10 +175,10 @@
 %%% bib nonsense
 \makeatletter
 \newenvironment{wb-bib}[1]{%
-  \chapter*{references}
+  \chapter*{Bibliography}
 \ifnobibintoc\else 
 \phantomsection 
-\addcontentsline{toc}{chapter}{References} 
+\addcontentsline{toc}{chapter}{Bibliography} 
 \fi 
 \prebibhook
   \begin{bibitemlist}{#1}}{\end{bibitemlist}\postbibhook}
@@ -208,7 +206,9 @@
 }
 
 %% change default footnote markings
-%\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\usepackage{perpage}
+\MakePerPage{footnote}
 
 \usepackage{titlesec}
 \titlespacing*{\chapter}{0pt}{-50pt}{20pt}

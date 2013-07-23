@@ -9,25 +9,24 @@ The process of Compton scattering off of a free electron is represented by
 figure \ref{fig:compton_scatter_free_electron}. Conservation of energy and 
 momentum will be used to determine the final energy of the photon after the 
 collision with the electron. First, the momentum of the particle system will be 
-analyzed. In the transverse direction, momentum conservation is as follows.
+analyzed. In the transverse direction, momentum conservation is:
 \begin{equation*}
-  P\sin{\theta} = P_e\sin{\phi}
+  P\sin{\theta} = P_e\sin{\phi}.
 \end{equation*}
-In the longitudinal direction, momentum conservation is as follows.
+In the longitudinal direction, momentum conservation is.
 \begin{equation*}
-  P^{'} = P\cos{\theta} + P_e\cos{\phi} 
+  P^{'} = P\cos{\theta} + P_e\cos{\phi}.
 \end{equation*}
-Both of these equations will now be squared and added together.
+Both of these equations will now be squared and added together:
 \begin{align}
   P^{'2} - 2P^{'}P\cos{\theta} + P^2(cos^2\theta + sin^2\theta) & = 
   P_e^2(cos^2\phi + sin^2\phi) \nonumber \\
-  P_e^2 = P^{'2} - 2P^{'}P\cos{\theta} + P^2
+  P_e^2 = P^{'2} - 2P^{'}P\cos{\theta} + P^2.
 \end{align}
 This equation for the electron momentum will be useful in the equation for
 the conservation of energy of the particle system.
 
-Now, the energy of the particle system will be analyzed. The energy of the
-system is shown below.
+Now, the energy of the particle system will be analyzed:
 \begin{equation*}
   E^{'} + m_ec^2 = E + E_e
 \end{equation*}
@@ -53,7 +52,7 @@ system is shown below.
 \begin{align}
   E & = \frac{m_ec^2E^{'}}{E^{'}(1 - \cos{\theta}) + m_ec^2} \nonumber \\
   & = \frac{E^{'}}{1 + \frac{E^{'}}{m_ec^2}(1 - \cos{\theta})} \\
-  \alpha & = \frac{\alpha^{'}}{1 + \alpha^{'}(1 - \cos{\theta})} 
+  \alpha & = \frac{\alpha^{'}}{1 + \alpha^{'}(1 - \cos{\theta})}.
 \end{align}
 
 \begin{figure}[t!]
@@ -81,20 +80,21 @@ scattering vector. Therefore, the electron momentum projection will be
 represented by the variable $p_z$.
 
 Before analyzing the energy of the particle system, then energy of the 
-electron will be discussed. The kinetic energy of the electron will be
-represented by, $E_{e,k}$.
+electron will be examined: 
 \begin{align}
   E_e^2 & = m_e^2c^4 + P_e^2c^2 \nonumber \\
-  & = \left(m_ec^2 + E_{e,k}\right)^2 \nonumber
+  & = \left(m_ec^2 + E_{e,k}\right)^2. \nonumber
 \end{align}
 \begin{equation}
-  P_e^2c^2 = 2m_ec^2E_{e,k} + E_{e,k}^2
+  P_e^2c^2 = 2m_ec^2E_{e,k} + E_{e,k}^2.
 \end{equation}
-The energy of the particle system is given below. The binding energy of the 
-electron is $E_b$.
+The kinetic energy of the electron is represented by, $E_{e,k}$. The binding 
+energy of the electron is will be represented by $E_b$.
+The energy of the particle system is 
 \begin{equation*}
   E^{'} + E_{e,k}^{'} + m_ec^2 = E + E_{e,k} + m_ec^2 + E_b
 \end{equation*}
+and 
 \begin{align}
   E^{'}-E-E_b & = E_{e,k} - E_{e,k}^{'} \nonumber \\
   \left(E^{'}-E-E_b\right)^2 & = \left(E_{e,k} - E_{e,k}^{'}\right)^2 \nonumber \\
@@ -110,23 +110,23 @@ electron is $E_b$.
   & = \left(P_e^2 - P_e^{'2}\right)c^2 -
   2\left(E^{'}-E-E_b\right)\left(m_ec^2 + E_{e,k}^{'}\right) \nonumber \\
   \left(P_e^2 - P_e^{'2}\right)c^2 & = \left(E^{'}-E-E_b\right)^2 +
-  2\left(E^{'}-E-E_b\right)\left(m_ec^2 + E_{e,k}^{'}\right)
+  2\left(E^{'}-E-E_b\right)\left(m_ec^2 + E_{e,k}^{'}\right).
 \end{align}
 
-The momentum of the particle system will now be analyzed. 
+The momentum of the particle system will now be analyzed:
 \begin{align}
   \vec{P^{'}} + \vec{P_e^{'}} & = \vec{P} + \vec{P_e} \nonumber \\
-  m_ec\vec{\alpha^{'}} + \vec{P_e^{'}} & = m_ec\vec{\alpha} + \vec{P_e} \nonumber
+  m_ec\vec{\alpha^{'}} + \vec{P_e^{'}} & = m_ec\vec{\alpha} + \vec{P_e}. \nonumber
 \end{align}
 The new variable $\vec{\alpha}$ is simply the momentum of the photon in 
-units of $m_ec$. The magnitude of this vector has the following properties.
+units of $m_ec$. The magnitude of this vector has the following properties:
 \begin{align}
   \left|\vec{\alpha}\right| & = \alpha \nonumber \\
   & = \frac{P}{m_ec} \\ 
-  & = \frac{E}{m_ec^2} 
+  & = \frac{E}{m_ec^2}.
 \end{align}
 The equation for the momentum of the system must be rearranged further before
-moving on.
+moving on:
 \begin{align}
   \vec{P_e^{'}} - \vec{P_e} & = \vec{q} \nonumber \\
   & = m_ec\left(\vec{\alpha} - \vec{\alpha^{'}}\right) \nonumber
@@ -135,11 +135,11 @@ moving on.
   q^2 & = (m_ec)^2\left|\vec{\alpha} - \vec{\alpha^{'}}\right| \nonumber \\
   & = (m_ec)^2\left(\alpha^{'2} + \alpha^2 - 
   2\vec{\alpha^{'}}\cdot\vec{\alpha}\right) \nonumber \\
-  & = (m_ec)^2\left(\alpha^{'2} + \alpha^2 - 2\alpha^{'}\alpha\cos{\theta}\right)
+  & = (m_ec)^2\left(\alpha^{'2} + \alpha^2 - 2\alpha^{'}\alpha\cos{\theta}\right).
 \end{align}
 
 Now, using the equation for $\vec{q}$, the equation for the electron momentum 
-projection can be determined.
+projection can be determined:
 \begin{equation*}
   \vec{P_e} = \vec{P_e^{'}} - \vec{q}
 \end{equation*}
@@ -173,15 +173,14 @@ projection can be determined.
     \right) + \alpha^{'}\alpha(1-\cos{\theta}) -
     \frac{1}{2}\left(\frac{E_b}{m_ec^2}\right)^2 + 
     \left(\frac{E_b}{m_ec^2}\right)\left(1 + \frac{E_{e,k}^{'}}{m_ec^2}\right)
-    \right]} {\sqrt{\alpha^{'2} + \alpha^2 - 2\alpha^{'}\alpha\cos{\theta}}}
+    \right]} {\sqrt{\alpha^{'2} + \alpha^2 - 2\alpha^{'}\alpha\cos{\theta}}}.
 \end{align}
 If the binding energy and kinetic energy of the electron are assumed to be 
 small compared to the rest mass energy of the electron, they can be neglected. 
-The resulting equation, which is often reported in the literature is the 
-following.
+The resulting equation, which is often reported in the literature is
 \begin{equation}
   p_z = m_ec\frac{\left[\alpha - \alpha^{'} + \alpha^{'}\alpha(1-\cos{\theta})
-      \right]}{\sqrt{\alpha^{'2} + \alpha^2 - 2\alpha^{'}\alpha\cos{\theta}}}
+      \right]}{\sqrt{\alpha^{'2} + \alpha^2 - 2\alpha^{'}\alpha\cos{\theta}}}.
 \end{equation}
 
 Derivations that are similar to the ones just shown were completed by Sood
@@ -193,13 +192,13 @@ As mentioned in chapter \ref{ch:photon_interactions}, the differential
 Klein-Nishina cross section is most easily sampled when a change of variables
 from steradians to the inverse energy loss ratio is conducted. The energy loss
 ratio, which was originally shown in chapter \ref{ch:photon_interactions}, will
-be shown again below.
+be shown again:
 \begin{align}
   \frac{1}{x} & = \frac{\alpha}{\alpha^{'}} \nonumber \\
-  & = \frac{1}{1+\alpha^{'}(1-\cos{\theta})} \nonumber
+  & = \frac{1}{1+\alpha^{'}(1-\cos{\theta})}. \nonumber
 \end{align}
 
-The change of variables is conducted using the following relationship.
+The change of variables is conducted using the following relationship:
 \begin{equation*}
   \frac{d\sigma_{K.N.}(\alpha^{'},x)}{dx} dx = 
   \frac{d\sigma_{K.N.}(\alpha^{'},\theta)}{d\Omega} d\Omega
@@ -207,25 +206,26 @@ The change of variables is conducted using the following relationship.
 \begin{equation*}
   \frac{d\sigma_{K.N.}(\alpha^{'},x)}{dx} = 
   \frac{d\sigma_{K.N.}(\alpha^{'},\theta)}{d\Omega}
-  \left(\frac{d\Omega}{dx}\right)
+  \left(\frac{d\Omega}{dx}\right).
 \end{equation*}
 Based on the equation for the energy loss ratio, the second term in the above
-equation can be determined.
+equation can be determined:
 \begin{align}
   x = 1 + \alpha^{'}(1-\cos{\theta}) \nonumber \\
   dx = -\alpha^{'} d(\cos{\theta}) \nonumber
 \end{align}
+and
 \begin{align}
   \frac{d\Omega}{dx} & = -2\pi\frac{d(\cos{\theta})}{dx} \nonumber \\
-  & = \frac{2\pi}{\alpha^{'}}
+  & = \frac{2\pi}{\alpha^{'}}.
 \end{align}
 The following relationships will also be useful while conducting the change
-of variables.
+of variables:
 \begin{align}
   x - 1 & = \alpha^{'}(1-\cos{\theta}) \\
-  cos^2\theta & = 1 - \frac{2(x-1)}{\alpha^{'}} + \frac{(x-1)^2}{\alpha^{'2}}
+  cos^2\theta & = 1 - \frac{2(x-1)}{\alpha^{'}} + \frac{(x-1)^2}{\alpha^{'2}}.
 \end{align}
-Now, the change of variables can be completed.
+Now, the change of variables can be completed:
 \begin{align}
   \frac{d\sigma_{K.N.}(\alpha^{'},x)}{dx} & = \frac{r_e^2}{2}
   \frac{\left[1 + \cos{^{2}\theta} + \frac{\alpha^{'2}(1-\cos{\theta})^2}
@@ -244,8 +244,9 @@ Now, the change of variables can be completed.
     \frac{1}{x}\left(1 - \frac{2}{\alpha^{'}}-\frac{2}{\alpha^{'2}}\right) +
     \frac{1}{x^2}\left(\frac{2}{\alpha^{'}} + \frac{1}{\alpha^{'2}}\right) +
     \frac{1}{x^3} \right] \nonumber \\
-  & = K \left[A + \frac{B}{x} + \frac{C}{x^2} + \frac{D}{x^3}\right]
+  & = K \left[A + \frac{B}{x} + \frac{C}{x^2} + \frac{D}{x^3}\right].
 \end{align}
+where
 \begin{align}
   K & = \frac{\pi r_e^2}{\alpha^{'}} \nonumber \\
   A & = \frac{1}{\alpha^{'2}} \nonumber \\
@@ -258,10 +259,7 @@ Now, the change of variables can be completed.
 Using the sampling methods from chapter \ref{ch:photon_interactions} will 
 sometimes require the total Klein-Nishina cross section. Using the 
 Klein-Nishina cross section differential in the inverse energy loss ratio,
-the total Klein-Nishina cross section can be determined rather easily. The
-integration of the differential cross section will be split up into four parts
-and then recombined and reorganized to give the total cross section reported by 
-Lux (with the error corrected) \citep{lux_monte_1991}. 
+the total Klein-Nishina cross section can be determined rather easily:
 \begin{align}
   \sigma_{K.N.}(\alpha^{'}) & = \int_1^{1+2\alpha^{'}} \frac{d\sigma_{K.N.}(x)}{dx} dx
   \nonumber \\
@@ -300,7 +298,7 @@ Lux (with the error corrected) \citep{lux_monte_1991}.
     \left[\frac{2(1+\alpha^{'})}{1+2\alpha^{'}} - 
     \frac{\ln{(1+2\alpha^{'})}}{\alpha^{'}} \right] +
     \frac{\ln{(1 + 2\alpha^{'})}}{2\alpha^{'}} - 
-    \frac{(1+3\alpha^{'})}{(1+2\alpha^{'})^2} \right) 
+    \frac{(1+3\alpha^{'})}{(1+2\alpha^{'})^2} \right).
 \end{align}
 
 In the equation for the total Klein-Nishina cross section reported by Lux, the
@@ -329,9 +327,9 @@ sample the outgoing angle and energy of the photon after a Compton scattering
 event. In this section, the derivation of this rejection sampling procedure will
 be presented. First, rejection sampling must be explained. 
 
-Most PDFs can be expanded in the following way.
+Most PDFs can be expanded in the following way:
 \begin{equation}
-  p(x) = \frac{\sum_i^m p_i T_i(x)n_i(x)}{\kappa}
+  p(x) = \frac{\sum_i^m p_i T_i(x)n_i(x)}{\kappa}.
   \label{eq:general_pdf_expansion}
 \end{equation}
 The number of factors, $m$, is arbitrary although splitting a PDF into more than
@@ -341,15 +339,16 @@ The function $T_i(x)$ must be bounded in the interval (0,1). The efficiency
 of the sampling procedure is $\kappa$. Now, to sample a value of $x$, one 
 first samples an index $i$ from the discrete PDF $p(i) = p_i$. Then, one 
 samples a value of $x$ from the PDF $n_i(x)$. Finally, if the following 
-equality holds, the value is accepted. Otherwise the entire process is repeated.
-The quantity $\varepsilon$ is a uniform random number in the interval (0,1).
+equality holds, the value is accepted: 
 \begin{equation*}
-  \varepsilon \leq T_i(x)
+  \varepsilon \leq T_i(x).
 \end{equation*}
+Otherwise the entire process is repeated. The quantity $\varepsilon$ is a 
+uniform random number in the interval (0,1).
 
-The simplest possible expansion for rejection sampling would be the following.
+The simplest possible expansion for rejection sampling would be the following:
 \begin{equation*}
-  \kappa p(x) = \left(\frac{p(x)}{C}\right)\left(\frac{1}{b-a}\right)
+  \kappa p(x) = \left(\frac{p(x)}{C}\right)\left(\frac{1}{b-a}\right).
 \end{equation*}
 Using this expansion, one would sample a value of x from the uniform 
 distribution in the interval (a,b). Then the rejection function $\frac{p(x)}{C}$
@@ -364,10 +363,10 @@ optimum expansion will be shown.
 To begin, the PDF corresponding to the differential Klein-Nishina cross section 
 will be derived. A change of variables to the inverse energy loss ratio must
 be conducted first, which is shown in section 
-\ref{diff_kn_cross_sec_var_change}.
+\ref{diff_kn_cross_sec_var_change}:
 \begin{equation*}
   \frac{d\sigma_{K.N.}(\alpha^{'},x)}{dx} = \frac{\pi r_e^2}{\alpha^{'}x^2}
-  \left(\frac{1}{x} + x - 1 + cos^2\theta \right)
+  \left(\frac{1}{x} + x - 1 + cos^2\theta \right).
 \end{equation*}
 The PDF corresponding to this cross section is simply
 \begin{align}
@@ -375,28 +374,29 @@ The PDF corresponding to this cross section is simply
   \begin{cases}
     \frac{1}{K(\alpha^{'})x^2}\left(\frac{1}{x} + x - 1 + cos^2\theta \right)
     & \text{if } 1 \leq x \leq 1 + 2\alpha^{'} \\
-    0 & \text{o.w.}
+    0 & \text{ otherwise}
   \end{cases} \\
+  & \text{where} \nonumber \\
   K(\alpha^{'}) & = \int_1^{1+2\alpha^{'}} \frac{dx}{x^2}
   \left(\frac{1}{x}+x-1+cos^2\theta \right) \nonumber \\
-  & = \left(\frac{\alpha^{'}}{\pi r_e^2}\right) \sigma_{K.N}(\alpha^{'})
+  & = \left(\frac{\alpha^{'}}{\pi r_e^2}\right) \sigma_{K.N}(\alpha^{'}).
 \end{align}
 
-Now, the PDF will be factored into the following form.
+Now, the PDF will be factored into the following form:
 \begin{equation*}
   \kappa p(\alpha^{'},x) = p_1(\alpha^{'})T_1(\alpha^{'},x)n_1(\alpha^{'},x) + 
-  p_2(\alpha^{'})T_2(\alpha^{'},x)n_2(\alpha^{'},x)
+  p_2(\alpha^{'})T_2(\alpha^{'},x)n_2(\alpha^{'},x).
 \end{equation*}
 The first factor $T_1(\alpha^{'},x)n_1(\alpha^{'},x)$ will have the following 
-form.
+form:
 \begin{equation*}
   T_1(\alpha^{'},x)n_1(\alpha^{'},x) = C_1(\alpha^{'})\left(\frac{1}{x} - 
-  \frac{1}{x^2}\right)
+  \frac{1}{x^2}\right).
 \end{equation*}
 The most efficient way to sample from this distribution is to sample a value
-of x from the uniform distribution.
+of x from the uniform distribution:
 \begin{equation}
-  n_1(\alpha^{'},x) = \frac{1}{2\alpha^{'}}
+  n_1(\alpha^{'},x) = \frac{1}{2\alpha^{'}}.
 \end{equation}
 The rejection function is then
 \begin{equation*}
@@ -404,34 +404,34 @@ The rejection function is then
 \end{equation*}
 This function evaluates to zero when $x = 1$. The maximum value of this function
 occurs when $x = 2$. Therefore, $C_{T1}$ must equal four so that the function
-is always between zero and one.
+is always between zero and one:
 \begin{equation}
   T_1(\alpha^{'},x) = 4\left(\frac{1}{x} - \frac{1}{x^2}\right).
 \end{equation}
 
 The second factor $T_2(\alpha^{'},x)n_2(\alpha^{'},x)$ will have the following 
-form.
+form:
 \begin{equation*}
   T_2(\alpha^{'},x)n_2(\alpha^{'},x) = \frac{C_2(\alpha^{'})}{x^2}
-  \left(cos^2\theta + \frac{1}{x}\right)
+  \left(cos^2\theta + \frac{1}{x}\right).
 \end{equation*}
 The most efficient way to sample from this distribution is to sample a value
-of x from the following distribution.
+of x from the following distribution:
 \begin{equation}
-  n_2(\alpha^{'},x) = \frac{1+2\alpha^{'}}{2\alpha^{'} x^2}
+  n_2(\alpha^{'},x) = \frac{1+2\alpha^{'}}{2\alpha^{'} x^2}.
 \end{equation}
 The rejection function is then
 \begin{equation*}
-  T_2(\alpha^{'},x) = C_{T2}\left(cos^2\theta + \frac{1}{x} \right)
+  T_2(\alpha^{'},x) = C_{T2}\left(cos^2\theta + \frac{1}{x} \right).
 \end{equation*}
 The maximum value of this function occurs when x equals unity and 
 correspondingly, $\cos{\theta}$ equals unity. To ensure that this function is
-always between zero and one, $C_{T2} = \frac{1}{2}$.
+always between zero and one, $C_{T2} = \frac{1}{2}$ giving
 \begin{equation}
-  T_2(\alpha^{'},x) = \frac{1}{2}\left(cos^2\theta + \frac{1}{x} \right)
+  T_2(\alpha^{'},x) = \frac{1}{2}\left(cos^2\theta + \frac{1}{x} \right).
 \end{equation}
 
-Now, the probabilities associated with each factor need to be determined.
+Now, the probabilities associated with each factor need to be determined:
 \begin{equation*}
   \kappa p(\alpha^{'},x) = \frac{2 p_1(\alpha^{'})}{\alpha^{'}}
   \left(\frac{1}{x} - \frac{1}{x^2}\right) + 
@@ -445,7 +445,7 @@ Now, the probabilities associated with each factor need to be determined.
 \end{align}
 \begin{align}
   p_1 = \frac{1+2\alpha^{'}}{9 + 2\alpha^{'}} \\
-  p_2 = \frac{8}{9 + 2\alpha^{'}}
+  p_2 = \frac{8}{9 + 2\alpha^{'}}.
 \end{align}
 The efficiency associated with this rejection scheme is
 \begin{equation}
@@ -459,36 +459,37 @@ Kahn's rejection sampling procedure corresponds to the above expansion.
 In this section, the derivation of the adjoint Klein-Nishina cross section
 differential in inverse energy gain ratio will be shown. The energy gain
 ratio, which was originally shown in chapter \ref{ch:photon_interactions}, 
-will be shown again.
+will be shown again:
 \begin{align}
   \frac{1}{x} & = \frac{\alpha}{\alpha^{'}} \nonumber \\
-  & = \frac{1}{1 - \alpha^{'}(1-\cos{\theta})} \nonumber
+  & = \frac{1}{1 - \alpha^{'}(1-\cos{\theta})}. \nonumber
 \end{align}
 
-The change of variables is conducted using the following relationship.
+The change of variables is conducted using the following relationship:
 \begin{align}
   \frac{d\sigma_{K.N.}^{\dagger}(\alpha^{'},x)}{dx}dx & =
   \frac{d\sigma_{K.N.}^{\dagger}(\alpha^{'},\theta)}{dE}dE \nonumber \\
   \frac{d\sigma_{K.N.}^{\dagger}(\alpha^{'},x)}{dx} & = 
-  \frac{d\sigma_{K.N.}^{\dagger}(\alpha^{'},\theta)}{dE} \left|\frac{dE}{dx}\right|
+  \frac{d\sigma_{K.N.}^{\dagger}(\alpha^{'},\theta)}{dE} \left|\frac{dE}{dx}\right|.
   \nonumber
 \end{align}
 Based on the equation for the energy gain ratio, the second term in the above
-equation can be determined.
+equation can be determined:
 \begin{align}
   x = \frac{\alpha^{'}}{\alpha} \nonumber \\
   dx = -\frac{\alpha^{'}}{\alpha^2}d\alpha \nonumber
 \end{align}
+and
 \begin{align}
   \frac{dx}{dE} & = -\frac{\alpha^{'}}{\alpha^2}\frac{d\alpha}{dE} \nonumber \\
-  & = -\frac{\alpha^{'}}{m_ec^2\alpha^2}
+  & = -\frac{\alpha^{'}}{m_ec^2\alpha^2}.
 \end{align}
 The following relationship will also be useful while conducting the change
-of variables.
+of variables:
 \begin{equation}
-  cos^2\theta = 1 - \frac{2(1-x)}{\alpha^{'}} + \frac{(1-x)^2}{\alpha^{'2}}
+  cos^2\theta = 1 - \frac{2(1-x)}{\alpha^{'}} + \frac{(1-x)^2}{\alpha^{'2}}.
 \end{equation}
-Now the change of variables can be completed.
+Now the change of variables can be completed:
 \begin{align}
   \frac{d\sigma_{K.N.}^{\dagger}(\alpha^{'},x)}{dx} & = 
   \frac{\pi r_e^2}{m_ec^2 \alpha^2}\left[x + \frac{1}{x} 
@@ -508,12 +509,13 @@ Now the change of variables can be completed.
   & = K^{\dagger}\left[A^{\dagger}x^2 + B^{\dagger}x + C^{\dagger} + 
     \frac{D^{\dagger}}{x} \right]
 \end{align}
+where
 \begin{align}
   K^{\dagger} & = \frac{\pi r_e^2}{\alpha^{'}} \nonumber \\
   A^{\dagger} & = \frac{1}{\alpha^{'2}} \nonumber \\
   B^{\dagger} & = 1 + \frac{2(\alpha^{'}-1)}{\alpha^{'2}} \nonumber \\
   C^{\dagger} & = \frac{1-2\alpha^{'}}{\alpha^{'2}} \nonumber \\
-  D^{\dagger} & = 1 \nonumber
+  D^{\dagger} & = 1. \nonumber
 \end{align}
   
 \section{Efficient Adjoint Klein-Nishina Rejection Sampling Procedure}
@@ -521,7 +523,7 @@ As explained in section \ref{sec:Kahn_rejection_procedure_der} and shown in
 equation \ref{eq:general_pdf_expansion}, a PDF can be split into many factors 
 from which values of the PDF are sampled. In the case of the PDF corresponding 
 to the differential adjoint Klein-Nishina cross section, three factors will 
-used. 
+used:
 \begin{align}
   \kappa p_{K.N.}^{\dagger}(x|\alpha^{'},\alpha_{max}) & = 
   p_1(\alpha^{'},\alpha_{max})T_1(\alpha^{'},\alpha_{max},x)
@@ -529,76 +531,76 @@ used.
   & \quad + p_2(\alpha^{'},\alpha_{max})T_2(\alpha^{'},\alpha_{max},x)
   n_2(\alpha^{'},\alpha_{max},x) \nonumber \\
   & \quad + p_3(\alpha^{'},\alpha_{max})T_3(\alpha^{'},\alpha_{max},x)
-  n_3(\alpha^{'},\alpha_{max},x) \nonumber 
+  n_3(\alpha^{'},\alpha_{max},x). \nonumber 
 \end{align}
 The PDF corresponding to the differential adjoint Klein-Nishina cross section 
 was shown in equation \ref{eq:reorganized_adjoint_KN_pdf}. It will be shown 
-here again for convenience.
+here again for convenience:
 \begin{equation}
   p_{K.N.}^{\dagger}(x|\alpha^{'},\alpha_{max}) = 
   \begin{cases}
     H^{\dagger}\left[\left(\frac{1}{x} - 1 \right) + \left(x\right) + 
       \left(cos^2\theta\right) \right] 
     & \text{if } x_{min} \leq x \leq 1 \\
-    0 & \text{o.w.}
+    0 & \text{ otherwise}.
   \end{cases}
 \end{equation}
 The three terms from which the three factors will be derived are shown in
 parenthesis in the above equation. 
 
 The first factor $T_1(\alpha^{'},\alpha_{max},x)n_1(\alpha^{'},\alpha_{max},x)$
-will have the following form.
+will have the following form:
 \begin{equation*}
   T_1(\alpha^{'},\alpha_{max},x)n_1(\alpha^{'},\alpha_{max},x) = 
-  C_1(\alpha^{'},\alpha_{max})\left(\frac{1}{x}-1\right)
+  C_1(\alpha^{'},\alpha_{max})\left(\frac{1}{x}-1\right).
 \end{equation*}
 The most efficient way to sample from this distribution is to sample a value of
-x from the following distribution.
+x from the following distribution:
 \begin{equation}
-  n_1(\alpha^{'},\alpha_{max},x) = -\frac{1}{x\ln{x_{min}}}
+  n_1(\alpha^{'},\alpha_{max},x) = -\frac{1}{x\ln{x_{min}}}.
 \end{equation}
 The rejection function is then 
 \begin{equation*}
   T_1(\alpha^{'},\alpha_{max},x) = C_{T1}(\alpha^{'},\alpha_{max})(1-x).
 \end{equation*}
 This function evaluates to zero when $x=1$. The maximum value of this function
-occurs when $x=x_{min}$. Therefore, this function must be defined as follows.
+occurs when $x=x_{min}$. Therefore, this function must be defined as follows:
 \begin{equation}
-  T_1(\alpha^{'},\alpha_{max},x) = \frac{1-x}{1-x_{min}}
+  T_1(\alpha^{'},\alpha_{max},x) = \frac{1-x}{1-x_{min}}.
 \end{equation}
 
 The second factor $T_2(\alpha^{'},\alpha_{max},x)n_2(\alpha^{'},\alpha_{max},x)$
-will have the following form.
+will have the following form:
 \begin{equation*}
   T_2(\alpha^{'},\alpha_{max},x)n_2(\alpha^{'},\alpha_{max},x) = 
-  C_2(\alpha^{'},\alpha_{max})x
+  C_2(\alpha^{'},\alpha_{max})x.
 \end{equation*}
 This distribution can be sampled from directly. Therefore a value of x will
-be sampled from the following distribution.
+be sampled from the following distribution:
 \begin{equation}
-  n_2(\alpha^{'},\alpha_{max},x) = \frac{2x}{1-x_{min}^2}
+  n_2(\alpha^{'},\alpha_{max},x) = \frac{2x}{1-x_{min}^2}.
 \end{equation}
 The rejection function is then simply unity due to the direct sampling.
 
 The third factor $T_3(\alpha^{'},\alpha_{max},x)n_3(\alpha^{'},\alpha_{max},x)$
-will have the following form.
+will have the following form:
 \begin{align}
   T_3(\alpha^{'},\alpha_{max},x)n_3(\alpha^{'},\alpha_{max},x) & = 
   C_3(\alpha^{'},\alpha_{max})cos^2\theta \nonumber \\
   & = C_3(\alpha^{'},\alpha_{max})
   \left(1 - \frac{1}{\alpha^{'}} + \frac{x}{\alpha^{'}}\right)^2 \nonumber \\
-  & = \frac{C_3(\alpha^{'},\alpha_{max})}{\alpha^{'2}}\left(x-1+\alpha^{'}\right)^2
+  & = \frac{C_3(\alpha^{'},\alpha_{max})}{\alpha^{'2}}\left(x-1+\alpha^{'}\right)^2.
   \nonumber \\
 \end{align}
 This distribution can also be sampled from directly. Therefore a value of x
-will be sampled from the following distribution.
+will be sampled from the following distribution:
 \begin{equation}
   n_3(\alpha^{'},\alpha_{max},x) = \frac{3\left(x-1+\alpha^{'}\right)^2}
-  {\alpha^{'3} - \left(x_{min}-1+\alpha^{'}\right)^3}
+  {\alpha^{'3} - \left(x_{min}-1+\alpha^{'}\right)^3}.
 \end{equation}
 The rejection function will again be unity due to the direct sampling.
 
-Now the probabilities associated with each factor need to be determined.
+Now the probabilities associated with each factor need to be determined:
 \begin{align}
   \kappa p_{K.N.}^{\dagger}(x|\alpha^{'},\alpha_{max}) & = 
   -\frac{p_1(\alpha^{'},\alpha_{max})}{x\ln{x_{min}}}
@@ -616,10 +618,10 @@ Now the probabilities associated with each factor need to be determined.
   \frac{3\alpha^{'2}p_3(\alpha^{'},\alpha_{max})}
        {\alpha^{'3} - \left(x_{min}-1+\alpha^{'}\right)^3} \\
   1 = p_1(\alpha^{'},\alpha_{max}) & + p_2(\alpha^{'},\alpha_{max}) +
-  p_3(\alpha^{'},\alpha_{max})
+  p_3(\alpha^{'},\alpha_{max}).
 \end{align}
 By solving the above system of equations, the probabilities can be determined, 
-which are shown below.
+which are shown below:
 \begin{align}
   p_1(\alpha^{'},\alpha_{max}) & = 
   -\frac{3\ln{x_{min}}\left(1-x_{min}\right)\alpha^{'2}}
@@ -635,7 +637,7 @@ which are shown below.
   \frac{\alpha^{'3} - \left(x_{min}-1+\alpha^{'}\right)^3}
   {\frac{3}{2}\left(1-x_{min}^2\right)\alpha^{'2} - 
     3\ln{x_{min}}\left(1-x_{min}\right)\alpha^{'2} + \alpha^{'3} - 
-    \left(x_{min}-1+\alpha^{'}\right)^3}
+    \left(x_{min}-1+\alpha^{'}\right)^3}.
 \end{align}
 The efficiency associated with this rejection scheme is 
 \begin{align}
@@ -644,6 +646,6 @@ The efficiency associated with this rejection scheme is
   \nonumber \\
   &\cdot \left(\frac{3\alpha^{'2}}{\frac{3}{2}\left(1-x_{min}^2\right)\alpha^{'2} 
     -3\ln{x_{min}}\left(1-x_{min}\right)\alpha^{'2} + \alpha^{'3} - 
-    \left(x_{min}-1+\alpha^{'}\right)^3}\right)
+    \left(x_{min}-1+\alpha^{'}\right)^3}\right).
 \end{align}
   

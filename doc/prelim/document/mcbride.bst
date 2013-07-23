@@ -513,7 +513,8 @@ FUNCTION {format.names.ed}
   numnames 'namesleft :=
     { namesleft #0 > }
     { s nameptr
-      "{ff~}{vv~}{ll}{, jj}"
+%      "{ff~}{vv~}{ll}{, jj}"
+      "{f.~}{vv~}{ll}{, jj}"
       format.name$
       bibinfo bibinfo.check
       't :=
@@ -1551,30 +1552,53 @@ FUNCTION {editor.sort}
     { editor sort.format.names }
   if$
 }
+%FUNCTION {presort}
+%{ calc.label
+%  label sortify
+%  "    "
+%  *
+%  type$ "book" =
+%  type$ "inbook" =
+%  or
+%    'author.editor.sort
+%    { type$ "proceedings" =
+%        'editor.sort
+%        'author.sort
+%      if$
+%    }
+%  if$
+%  #1 entry.max$ substring$
+%  'sort.label :=
+%  sort.label
+%  *
+%  "    "
+%  *
+%  title field.or.null
+%  sort.format.title
+%  *
+%  #1 entry.max$ substring$
+%  'sort.key$ :=
+%}
+INTEGERS { seq.num }
+
+FUNCTION {init.seq}
+{ #0 'seq.num :=}
+
+EXECUTE {init.seq}
+FUNCTION {int.to.fix}
+{ "000000000" swap$ int.to.str$ *
+  #-1 #10 substring$
+}
+
 FUNCTION {presort}
 { calc.label
   label sortify
   "    "
   *
-  type$ "book" =
-  type$ "inbook" =
-  or
-    'author.editor.sort
-    { type$ "proceedings" =
-        'editor.sort
-        'author.sort
-      if$
-    }
-  if$
-  #1 entry.max$ substring$
+  seq.num #1 + 'seq.num :=
+  seq.num int.to.fix
   'sort.label :=
-  sort.label
-  *
-  "    "
-  *
-  title field.or.null
-  sort.format.title
-  *
+  sort.label *
   #1 entry.max$ substring$
   'sort.key$ :=
 }

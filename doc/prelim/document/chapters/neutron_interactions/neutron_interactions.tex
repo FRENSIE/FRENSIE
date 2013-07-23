@@ -74,8 +74,9 @@ using conservation of energy and momentum in both reference frames (see
 Appendix \ref{ch:appendix_C}).
 \begin{equation}
   \mu_{l} = \frac{A\sqrt{1-\left(\frac{A+1}{A}\right)\frac{Q}{E^{'}}}\mu_{cm} + 1}
-  {\sqrt{2A\sqrt{1-\left(\frac{A+1}{A}\right)\frac{Q}{E^{'}}}\mu_{cm} + 1 + A^2
-        \left[1-\left(\frac{A+1}{A}\right)\frac{Q}{E^{'}}\right]}}
+  {\sqrt{A^2\left[1-\left(\frac{A+1}{A}\right)\frac{Q}{E^{'}}\right] + 
+      2A\mu_{cm}\sqrt{1-\left(\frac{A+1}{A}\right)\frac{Q}{E^{'}}} + 1}}
+  \label{eq:lab_scatterin_angle_cosine}
 \end{equation}
 \begin{equation*}
   A = \frac{m_A}{m_n}
@@ -91,10 +92,20 @@ inelastic level scattering interaction (in the lab frame) as a function of the
 initial energy and the scattering angle in the center of mass system is the 
 following (see Appendix \ref{ch:appendix_C}).
 \begin{equation}
-  E = E^{'} \left(\frac{2A\sqrt{1 - \left(\frac{A+1}{A}\right)\frac{Q}{E^{'}}}
-    \mu_{cm} + 1 + A^2\left[1-\left(\frac{A+1}{A}\right)\frac{Q}{E^{'}}
-      \right]}{\left(A+1\right)^2}\right) 
+  E = E^{'} \left(\frac{A^2\left[1-\left(\frac{A+1}{A}\right)\frac{Q}{E^{'}}
+      \right]+ 2A\mu_{cm}\sqrt{1 - \left(\frac{A+1}{A}\right)\frac{Q}{E^{'}}}
+     + 1}{\left(A+1\right)^2}\right) 
+  \label{eq:neutron_outgoing_energy}
 \end{equation}
+The outgoing energy is limited to the following range.
+\begin{equation}
+  \left(\frac{A\sqrt{1-\left(\frac{A+1}{A}\right)\frac{Q}{E}}-1}{A+1}\right)^2
+  E^{'} \leq E \leq 
+  \left(\frac{A\sqrt{1-\left(\frac{A+1}{A}\right)\frac{Q}{E}}+1}{A+1}\right)^2
+    E^{'}
+\end{equation}
+The lower limit occurs when $\mu_{cm} = -1$ and the upper limit occurs when
+$\mu_{cm} = 1$.
 
 \section{Absorption Reactions}
 A neutron absorption reaction is any reaction in which an incident neutron is
@@ -108,16 +119,18 @@ further in the following chapter when coupled neutron-photon transport will
 be discussed. 
 
 \section{Other Non-fission Reactions}
-In the ENDF/B-VII.1 manual one can find a complete list of the neutron reactions
-that are possible. A few examples are the inelastic scattering to 
-a continuum of energy levels, the (n,2n) reaction and the (n,3n) reaction. In
-these reactions there is assumed to be no correlation between the outgoing
-energy and direction according to the ENDF/B-VII.1 manual 
-\citep{chadwick_endf/b-vii.1_2011}. This simplification of the reaction model 
-means that conservation of energy and momentum is unlikely for any given 
-reaction. However the average of many individual reactions will still give the 
-desired behavior. The neutron transfer probability for any of these reactions
-can be represented as follows.
+There are many other reactions which can also be important but are more
+complicated than the previous reactions that have been discussed. A few 
+examples are the inelastic scattering to a continuum of energy levels, the 
+(n,2n) reaction and the (n,3n) reaction. For a complete list of possible
+non-fission reactions, refer to the ENDF/B-VII.1 manual. In these reactions 
+there is assumed to be no correlation between the outgoing energy and direction 
+according to the ENDF/B-VII.1 manual \citep{chadwick_endf/b-vii.1_2011}. This 
+simplification of the reaction model means that conservation of energy and 
+momentum will likely be violated during a given reaction modeled during the
+Monte Carlo random walk process. However the average of many individual 
+reactions will still give the desired behavior. The neutron transfer 
+probability for any of these reactions can be represented as follows.
 \begin{align}
   f(E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}) & = p(E^{'} \to E)
   p(\hat{\Omega}^{'} \to \hat{\Omega} | E^{'}) \nonumber \\
@@ -221,25 +234,314 @@ the value of E must be rejected if it is greater than $E^{'}-U$ to account for
 the improper truncation.
 
 \section{Neutron Induced Fission}
-The energy energy-dependent Watt spectrum
-has the following form.
+Fission reaction must also be taken into account since for the random walk
+procedure that has been described, fission can occur as long as the system is
+subcritical. In fission reactions there is also assumed to be no correlation
+between outgoing energy and direction according to the ENDF/B-VII.1 manual
+\citep{chadwick_endf/b-vii.1_2011}. The neutron transfer probability for 
+fission reactions will therefore have the same form as for the non-fission
+reactions from the previous section. 
+
+The energy distributions are again expressed as normalized PDFs
+\citep{chadwick_endf/b-vii.1_2011}. The variable $\nu(E^{'})$ is the average 
+number of either prompt or delayed neutrons emitted by the fission reaction, 
+depending on which distribution is of interest. 
 \begin{equation}
-  p(E^{'} \to E) = \frac{1}{I}exp\left[\frac{-E}{a}\right]sinh\left(\sqrt{bE}
+  p(E^{'} \to E) = \frac{1}{\nu(E^{'})\sigma_f(E^{'})}
+  \frac{d\sigma_f(E^{'} \to E)}{dE}
+\end{equation}
+\begin{equation}
+  \int_0^{E_{max}}p(E^{'} \to E)dE = 1
+\end{equation}
+The energy distributions are given in either a tabular form or as an analytical
+formulation. The possible analytical formulations are the evaporation spectrum, 
+which was discussed in the previous section, the simple Maxwellian fission 
+spectrum and the energy-dependent Watt spectrum 
+\citep{chadwick_endf/b-vii.1_2011}. The simple Maxwellian fission spectrum has 
+the following form.
+\begin{equation}
+  p(E^{'} \to E) = \frac{\sqrt{E}}{I}exp\left[\frac{-E}{\theta(E^{'})}\right]
+\end{equation}
+\begin{equation}
+  I = \theta^{3/2}(E^{'})\left[\frac{\sqrt{\pi}}{2}
+    erf\left(\sqrt{\frac{(E^{'}-U)}{\theta(E^{'})}}\right) -
+    \sqrt{\frac{(E^{'}-U)}{\theta(E^{'})}}
+    exp\left[\frac{-(E^{'}-U)}{\theta(E^{'})}
+      \right]\right]
+\end{equation}
+The function $\theta(E^{'})$ is tabulated as a function of incident neutron
+energy and the variable U is introduced to define the proper upper limit for 
+the final particle energy. In the case of fission reactions, U is usually a
+large negative number since the outgoing neutrons can have an energy much 
+higher than the incoming neutron \citep{chadwick_endf/b-vii.1_2011}. Several
+methods are commonly used to sample from this distribution. All methods assume
+that the outgoing enegy can take on any value between zero and infinity, which
+results in a slightly different normalization of the distribution. The
+Maxwellian distribution falls off quickly enough that this difference is
+neglibible. 
+
+The first method for sampling from the Maxwellian is a direct sampling method, 
+which is shown in the following equation \citep{mohamed_efficient_2011}.
+\begin{equation}
+  E = -\theta(E^{'})\left[cos^2\left(\frac{2}{\pi}\varepsilon_1\right)
+    \ln{\varepsilon_2} + \ln{\varepsilon_3}\right]
+\end{equation}
+For a derivation of this method, refer to appendix \ref{ch:Appendix_C}. The
+second method is a rejection sampling procedure. It is referred to by
+some authors as Johnk's algorithm\footnote{This method is used in MCNP 
+\citep{x-5_monte_carlo_team_mcnp_2003}.} and is shown in figure 
+\ref{fig:Johnks_algorithm} \citep{mohamed_efficient_2011, c._j._everett_third_1983}. 
+\begin{figure}[t!]
+  \begin{center}
+    \def\svgwidth{170bp}
+    \input{chapters/neutron_interactions/Johnks_algorithm.pdf_tex}
+  \end{center}
+  \caption{\textbf{Johnk's Algorithm}.
+    \textit{This sampling procedure is used to sample a value from the 
+      Maxwellian distribution. The efficiency of this procedure is about
+      0.78 and is independent of the incoming neutron energy 
+      \citep{mohamed_efficient_2011}.}}
+  \label{fig:Johnks_algorithm}
+\end{figure}
+The derivation of this method can also be found in appendix \ref{ch:Appendix_C}.
+The final sampling method is also a rejection sampling procedure, which is shown
+in figure \ref{fig:Mohameds_rejection_sampling_procedure}. 
+\begin{figure}[t!]
+  \begin{center}
+    \def\svgwidth{120bp}
+    \input{chapters/neutron_interactions/Mohameds_rejection_sampling_proc.pdf_tex}
+  \end{center}
+  \caption{\textbf{Mohamed's Rejection Sampling Procedure}.
+    \textit{This sampling procedure is used to sample a value from the
+      Maxwellian distribution. The efficiency of this procedure is about
+      0.73 and is independent of the incoming neutron energy
+      \citep{mohamed_efficient_2011}.}}
+  \label{fig:Mohameds_rejection_sampling_procedure}
+\end{figure}
+Mohamed has shown that this method is the fastest of the three for generating 
+random samples from a Maxwellian distribution despite having an efficiency of 
+only 0.73 \citep{mohamed_efficient_2011}. The derivation of this method can 
+also be found in appendix \ref{ch:Appendix_C}.
+
+The energy energy-dependent Watt spectrum has the following form.
+\begin{equation}
+  p(E^{'} \to E) = I^{-1}exp\left[\frac{-E}{a(E^{'})}\right]
+  sinh\left(\sqrt{b(E^{'})E}
   \right)
 \end{equation}
-\begin{equation}
-  I = \frac{1}{2}\sqrt{\frac{\pi a^3b}{4}}exp\left(\frac{ab}{4}\right)\left[
+\begin{align}
+  I & = \frac{1}{2}\sqrt{\frac{\pi a^3b}{4}}exp\left(\frac{ab}{4}\right)\left[
     erf\left(\sqrt{\frac{E^{'}-U}{a}} - \sqrt{\frac{ab}{4}}\right) +
-    erf\left(\sqrt{\frac{E^{'}-U}{a}} + \sqrt{\frac{ab}{4}}\right)\right] -
-    a exp\left[-\left(\frac{E^{'}-U}{a}\right)\right]sinh\sqrt{b(E^{'}-U)}
+    erf\left(\sqrt{\frac{E^{'}-U}{a}} + \sqrt{\frac{ab}{4}}\right)\right] 
+  \nonumber \\
+  & \qquad - a \exp{\left[-\left(\frac{E^{'}-U}{a}\right)\right]}
+  sinh\sqrt{b(E^{'}-U)}
+\end{align}
+The functions $a(E^{'})$ and $b(E^{'})$ are tabulated as a function of incident 
+neutron energy and the variable U is introduced to again define the proper 
+upper limit for the final particle energy. Two methods are commonly used to
+sample from this distribution. Both methods assume that the outgoing energy
+can take on any value between zero and infinity, which results in a slightly
+different normalization of the distribution. However, the distribution falls
+off quickly enough thta this difference is negligible.
+
+The first method is rejection sampling procedure referred to as Kalos's 
+algorithm \citep{mohamed_efficient_2011}. This method is shown in figure
+\ref{fig:Kalos_algorithm}. 
+\begin{figure}[t!]
+  \begin{center}
+    \def\svgwidth{190bp}
+    \input{chapters/neutron_interactions/Kalos_algorithm.pdf_tex}
+  \end{center}
+  \caption{\textbf{Kalos's Algorithm}.
+    \textit{This sampling procedure is used to sample a value from the
+      Watt fission spectrum. The efficiency of this procedure is about
+      0.67 and is independent of the incoming neutron energy
+      \citep{mohamed_efficient_2011}.}}
+  \label{fig:Kalos_algorithm}
+\end{figure}
+The efficiency of this method is about 0.67. The 
+second method is a direct sampling method, which is shown in the following
+equation \citep{mohamed_efficient_2011}. The variable $y$ is a random number
+from a Maxwellian distribution with $\theta(E^{'})$ replaced with $a(E^{'})$.
+To generate this random number, any of the methods for sampling from a 
+Maxwellian distribution can be used. 
+\begin{equation}
+  E = y + \frac{a^2b}{4} + (2\varepsilon_1-1)\sqrt{a^2by}
 \end{equation}
-The variables a and b are tabulated as a function of incident neutron energy 
-and the variable U is introduced to again define the proper upper limit for the
-final particle energy. 
+When combined with Mohamed's rejection sampling procedure, the direct sampling
+method is the fastest at generating random samples from the Watt spectrum
+\citep{mohamed_efficient_2011}.
 
 \section{Thermal Scattering}
+In all previous sections it was assumed that the energy of the neutron was
+much greater than the thermal energy of the atoms upon which the neutron
+interacts. When the neutron energy drops below about one eV, this assumption
+is no longer valid. To account for the thermal motion of atoms upon which
+the neutron scatters, several models have been developed. 
+
+The most detailed model is the $S(\alpha,\beta)$ model, which can treat thermal 
+neutron scattering by both molecules and crystalline solids 
+\citep{bell_nuclear_1979, chadwick_endf/b-vii.1_2011}. The $S(\alpha,\beta)$
+data required for this model is only available for a few materials in the 
+ENDF ENDF/B-VII.1 library \citep{chadwick_endf/b-vii.1_2011}. 
+
+When $S(\alpha,\beta)$ data is not available for a particular material another 
+model that can lead to an accurate representation of thermal scattering is
+the free gas model. In this model, the atoms upon which the neutrons interact
+are assumed to be unbound with speeds characterized by a Maxwell-Boltzmann
+distribution \citep{bell_nuclear_1979}. This model is applicable to any
+mixture of materials as long as all scattering cross sections are independent
+of the relative speed of the neutron and scattering nucleus and all 
+effective absoption cross sections are known \citep{bell_nuclear_1979}. 
+
+The final model, which is the simplest and least accurate, is the one-velocity
+thermal energy group model. As its name implies, thermal neutrons are treated
+as if they all have the same energy with cross sections averaged over this
+thermal energy group used. Once a neutron scatters into the thermal group, its
+energy never changes due to scattering collisions and therefore, it never leaves
+the thermal group. Will many inaccuracies can arrise from this model, the
+largest is most likely from the generation of the average cross sections, which
+requires an assumption of the thermal neutron spectrum. Despite these
+limitations, this model will be employed initially because of the ease with
+which an equivalent adjoint model can be created. The development of 
+equivalent adjoint models for the other two models will be one of the primary
+focuses of the thesis.
+
+The energy transfer probability for elastic scattering for the one-velocity 
+thermal energy model is the following \citep{hoogenboom_adjoint_1977}.
+\begin{equation}
+  p(E^{'} \to E) = \delta(E - E^{'})
+\end{equation}
+As soon as the neutron scatters to an energy below $E_c$, which is the energy
+cutoff for the thermal energy group, its energy will never change. Furthermore,
+the cross sections used will be the thermal group averaged cross sections,
+which are independent of the actual energy of the thermal neutron. 
 
 \section{Adjoint Elastic and Inelastic Level Scattering}
+To model adjoint elastic and inelastic level scattering, the adjoint energy
+transfer probabilities and adjoint cross sections must be determined. For
+elastic and inelastic level scattering, the double differential transfer
+probability is represented by the following function 
+\citep{hoogenboom_adjoint_1977}.
+\begin{equation}
+  p(E^{'} \to E, \mu_{cm}) = p(\mu_{cm},E^{'})\delta\left(E - 
+  E^{'} \left(\frac{A^2\left[1-\left(\frac{A+1}{A}\right)\frac{Q}{E^{'}}
+      \right]+ 2A\mu_{cm}\sqrt{1 - \left(\frac{A+1}{A}\right)\frac{Q}{E^{'}}}
+     + 1}{\left(A+1\right)^2}\right)\right)
+\end{equation}
+The delta function in the above equation comes about from the one-to-one 
+correspondence between the outgoing energy and outgoing direction. The energy
+transfer probability can now be deterimed by the following integral.
+\begin{equation}
+  p(E^{'} \to E) = \int_{-1}^1 p(E^{'} \to E, \mu_{cm}) d\mu_{cm}
+\end{equation}
+Given that the delta function in the equation for the double differential
+transfer probability is in terms of the outgoing energy, the above integral
+will be more easily evaluated when the integration is over the outgoing energy.
+Based on equation \ref{eq:neutron_outgoing_energy},
+\begin{equation}
+  d\mu_{cm} = \frac{(A+1)^2}{2AE^{'}\sqrt{1-\left(\frac{A+1}{A}\right)
+      \frac{Q}{E^{'}}}} dE.
+\end{equation}
+Using the change of variables, the energy transfer probability is the following.
+\begin{align}
+  p(E^{'} \to E) & = \int_{-1}^1 p(E^{'} \to E, \mu_{cm}) 
+  \frac{(A+1)^2}{2AE^{'}\sqrt{1-\left(\frac{A+1}{A}\right)\frac{Q}{E^{'}}}} dE
+  \nonumber \\
+  & = p(E^{'}, \mu_{cm}(E^{'},E)) 
+  \frac{(A+1)^2}{2AE^{'}\sqrt{1-\left(\frac{A+1}{A}\right)\frac{Q}{E^{'}}}}
+\end{align}
+
+The adjoint elastic and inelastic level scattering cross sections can now be
+determined using equation \ref{eq:adjoint_cross_section}.
+\begin{equation}
+  \sigma_{e/i}^{\dagger}(E^{'}) = \int_{E_{min}}^{E_{max}} \sigma_{e/i}(E)p(E \to E^{'})
+    dE
+\end{equation}
+The last missing piece of information that is needed before the adjoint cross
+section can be evaluated is the limits of integrations. These limits can be
+determined by determining an equation for the incoming energy as a function of
+the outgoing energy (in the forward case). Unfortunately, one cannot simply
+solve equation \ref{eq:neutron_outgoing_energy} for $E^{'}$. As figure
+\ref{fig:in_out_energies_cm} shows, when the outgoing energy is less than
+$\frac{Q}{A(A+1)}$ and the CM scattering angle cosine is less than zero, there 
+is not a one-to-one correspondance between incoming energy and the CM 
+scattering angle cosine for fixed outgoing energy. If the outgoing energy is 
+given as a function of incoming energy and the lab scattering angle instead, as 
+shown in figure \ref{fig:in_out_energies_cm}, there is a one-to-one 
+correspondance between incoming energy and the lab scattering angle cosine for 
+fixed outgoing energy.
+\begin{figure}[t!]
+  \begin{center}
+    \input{chapters/neutron_interactions/incoming_outgoing_energies_cm_angle.tex}
+  \end{center}
+  \caption{\textbf{Outgoing energy from forward reaction as a function of 
+      incoming energy and center-of-mass scattering angle cosine}.
+    \textit{For fixed incoming energy, there is a one-to-one correspondence
+      between outgoing energy and center-of-mass scattering angle cosine. For
+      fixed outgoing energy, there is only a one-to-one correspondence
+      between incoming energy and center-of-mass scattering angle cosine if the
+      outgoing energy is above $\frac{Q}{A(A+1)}$ or if the scattering angle
+      cosine is above zero.}}
+  \label{fig:in_out_energies_cm}
+\end{figure}
+\begin{figure}[t!]
+  \begin{center}
+    \input{chapters/neutron_interactions/incoming_outgoing_energies_lab_angle.tex}
+  \end{center}
+  \caption{\textbf{Outgoing energy from forward reaction as a function of 
+      incoming energy and lab scattering angle cosine}.
+    \textit{For fixed incoming energy, there is only a one-to-one correspondence
+      between outgoing energy and lab scattering angle cosine if the
+      incoming energy is above $\frac{AQ}{A-1}$. For fixed outgoing energy,
+      there is a one-to-one correspondence between incoming energy and lab
+      scattering angle cosine.}}
+  \label{fig:in_out_energies_cm}
+\end{figure}
+The incoming energy as a function of incoming energy and lab scattering angle
+cosine is shown in the following equation. It must also be noted that the
+primed and unprimed variables have been switched. The derivation of this 
+equation is shown in appendix \ref{appendix_C}.
+\begin{equation}
+  E = E^{'}\left(\frac{A^2-1+2\mu_l^2 + A(A-1)\frac{Q}{E^{'}} - 
+    2\mu_l\sqrt{A^2 - 1 + \mu_l^2 + A(A-1)\frac{Q}{E^{'}}}}{(A-1)^2}
+  \right)
+\end{equation}
+By using $\mu_l = 1$ and $\mu_l = -1$ in the above equation, the lower and
+upper energy bound of the adjoint elastic and inelastic level scattering
+process can be determined, repsectively.
+\begin{equation}
+  \left(\frac{A\sqrt{1+\left(\frac{A-1}{A}\right)\frac{Q}{E^{'}}}-1}{A-1}
+  \right)^2 E^{'} \leq E \leq
+  \left(\frac{A\sqrt{1+\left(\frac{A-1}{A}\right)\frac{Q}{E^{'}}}+1}{A-1}
+  \right)^2 E^{'}
+\end{equation}
+
+With the adjoint cross section for elastic and inelastic level scattering
+completely defined, the adjoint energy transfer probability can now be 
+determined using equation \ref{eq:adjoint_double_diff_transfer_prob}
+\citep{hoogenboom_adjoint_1977}.
+\begin{align}
+  p^{\dagger}(E^{'} \to E) & = \frac{\sigma_{e/i}(E)p(E \to E^{'})}
+  {\sigma_{e/i}^{\dagger}(E^{'})} \nonumber \\
+    & = \frac{\sigma_{e/i}(E)}{\sigma_{e/i}^{\dagger}(E^{'})}
+  \frac{(A+1)^2}{2AE\sqrt{1-\left(\frac{A+1}{A}\right)\frac{Q}{E}}}
+  p(E, \mu_{cm}(E,E^{'})) 
+\end{align}
+Efficient methods for sampling from this function will be a major focus of this
+work. However, it is likely that a tabular method will be used based on the
+seemingly complex nature of this PDF.
+
+Because of the one-to-one correspondence between the outgoing energy and
+direction, once the outgoing energy has been selected the outgoing direction
+is known. The following equation must be used to determine the outgoind
+lab scattering angle cosine corresponding to the incoming and outgoing energy.
+\begin{equation}
+  \mu_l = - \left[\frac{\left(\frac{E}{E^{'}}\right)(A-1)^2 - 
+      A^2\left(1+\left(\frac{A-1}{A}\right)\frac{Q}{E^{'}}\right) + 1}
+    {2\sqrt{\frac{E}{E^{'}}}(A-1)}\right]
+\end{equation}
 
 \section{Other Non-fission Adjoint  Reactions}
 

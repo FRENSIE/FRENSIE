@@ -1,0 +1,60 @@
+%% Creator: Inkscape inkscape 0.48.4, www.inkscape.org
+%% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
+%% Accompanies image file 'Kalos_algorithm.pdf' (pdf, eps, ps)
+%%
+%% To include the image in your LaTeX document, write
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics{<filename>.pdf}
+%% To scale the image, write
+%%   \def\svgwidth{<desired width>}
+%%   \input{<filename>.pdf_tex}
+%%  instead of
+%%   \includegraphics[width=<desired width>]{<filename>.pdf}
+%%
+%% Images with a different path to the parent latex file can
+%% be accessed with the `import' package (which may need to be
+%% installed) using
+%%   \usepackage{import}
+%% in the preamble, and then including the image with
+%%   \import{<path to file>}{<filename>.pdf_tex}
+%% Alternatively, one can specify
+%%   \graphicspath{{<path to file>/}}
+%% 
+%% For more information, please see info/svg-inkscape on CTAN:
+%%   http://tug.ctan.org/tex-archive/info/svg-inkscape
+%%
+\begingroup%
+  \makeatletter%
+  \providecommand\color[2][]{%
+    \errmessage{(Inkscape) Color is used for the text in Inkscape, but the package 'color.sty' is not loaded}%
+    \renewcommand\color[2][]{}%
+  }%
+  \providecommand\transparent[1]{%
+    \errmessage{(Inkscape) Transparency is used (non-zero) for the text in Inkscape, but the package 'transparent.sty' is not loaded}%
+    \renewcommand\transparent[1]{}%
+  }%
+  \providecommand\rotatebox[2]{#2}%
+  \ifx\svgwidth\undefined%
+    \setlength{\unitlength}{248.175bp}%
+    \ifx\svgscale\undefined%
+      \relax%
+    \else%
+      \setlength{\unitlength}{\unitlength * \real{\svgscale}}%
+    \fi%
+  \else%
+    \setlength{\unitlength}{\svgwidth}%
+  \fi%
+  \global\let\svgwidth\undefined%
+  \global\let\svgscale\undefined%
+  \makeatother%
+  \begin{picture}(1,0.96635439)%
+    \put(0,0){\includegraphics[width=\unitlength]{chapters/neutron_interactions/Kalos_algorithm.pdf}}%
+    \put(0.36,0.94){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\begin{minipage}{1.24511387\unitlength}\raggedright Select $\varepsilon_1$, $\varepsilon_2$\end{minipage}}}%
+    \put(0.56,0.18){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\begin{minipage}{0.3618515\unitlength}\raggedright yes\end{minipage}}}%
+    \put(0.005,0.28){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\begin{minipage}{0.3618515\unitlength}\raggedright no\\ \end{minipage}}}%
+    \put(0.1,0.34){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\begin{minipage}{1.24511387\unitlength}\raggedright $\left[(1-g)(1-\ln{\varepsilon_1})-ln{\varepsilon_2}\right]^2 < bE$ \end{minipage}}}%
+    \put(0.001,0.735){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\begin{minipage}{1.1\unitlength}\center Compute \\ $g = \sqrt{\left(1+\frac{ab}{8}\right)^2 - 1} + \left(1+\frac{ab}{8}\right)$ \\ $E = -ag\ln{\varepsilon_1}$\end{minipage}}}%
+    \put(0.435,0.08){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\begin{minipage}{1.24511387\unitlength}\raggedright Keep E\end{minipage}}}%
+  \end{picture}%
+\endgroup%

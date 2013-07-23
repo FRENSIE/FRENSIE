@@ -374,16 +374,18 @@
 %   \@starttoc{#4}  \if@restonecol\twocolumn\fi
 %   \newpage
 % }}
-% 
-% \def\tableofcontents{\@tableof{TABLE OF CONTENTS}{}{tocpage}{toc}{}}
-% 
-% \def\listoffigures{
-%   \@tableof{LIST OF FIGURES}{Figure}{lofpage}{lof}
-%   {\protect\addcontentsline{toc}{chapter}{LIST OF FIGURES}}}
-% 
-% \def\listoftables{
-%   \@tableof{LIST OF TABLES}{Table}{lotpage}{lot}
-%   {\protect\addcontentsline{toc}{chapter}{LIST OF TABLES}}}
+ 
+ %\def\tableofcontents{\@tableof{TABLE OF CONTENTS}{}{tocpage}{toc}{}}
+ 
+ %\def\listoffigures{
+ %  \@tableof{LIST OF FIGURES}{Figure}{lofpage}{lof}
+ %  {\protect\addcontentsline{toc}{chapter}{LIST OF FIGURES}}}
+ 
+ %\def\listoftables{
+ %  \@tableof{LIST OF TABLES}{Table}{lotpage}{lot}
+ %  {\protect\addcontentsline{toc}{chapter}{LIST OF TABLES}}}
+
+ %\AtBeginDocument{\renewcommand\contentsname{Table of Contents}
 
 %=============================================================================
 % BIBLIOGRAPHY
@@ -409,23 +411,22 @@
 %   \altbibtitle has been added to change the chapter title.
 %   This command does nothing more than change REFERENCES to BIBLIOGRAPHY
 %============================================================================
-\def\@bibchaptitle{Bibliography}
-\def\altbibtitle{\def\@bibchaptitle{Bibliography}}
-\def\thebibliography#1{
-  %\separatorpage{\@bibchaptitle}
-  \global\@bibpresenttrue
-  \chapter*{\@bibchaptitle\markboth{\@bibchaptitle}{\@bibchaptitle}}
-  \addcontentsline{toc}{chapter}{\@bibchaptitle}
-  \vspace{0.375in}    % added to match 4 line requirement
-  \interlinepenalty=10000 % added to prevent breaking of bib entries
-  \singlespace\list
-  {[\arabic{enumi}]}{\settowidth\labelwidth{[#1]}\leftmargin\labelwidth
-    \advance\leftmargin\labelsep \usecounter{enumi}}
-  \def\newblock{\hskip .11em plus .33em minus -.07em}
-  \sloppy
-  \sfcode`\.=1000\relax}
-\let\endthebibliography=\endlist
-
-
+%\def\@bibchaptitle{Bibliography}
+%\def\altbibtitle{\def\@bibchaptitle{Bibliography}}
+%\def\thebibliography#1{
+%  \separatorpage{\@bibchaptitle}
+%  \global\@bibpresenttrue
+%  \chapter*{\@bibchaptitle\markboth{\@bibchaptitle}{\@bibchaptitle}}
+%  \addcontentsline{toc}{chapter}{\@bibchaptitle}
+%  \vspace{0.375in}    % added to match 4 line requirement
+%  \interlinepenalty=10000 % added to prevent breaking of bib entries
+%  \singlespace\list
+%  {[\arabic{enumi}]}{\settowidth\labelwidth{[#1]}\leftmargin\labelwidth
+%    \advance\leftmargin\labelsep \usecounter{enumi}}
+%  \def\newblock{\hskip .11em plus .33em minus -.07em}
+%  \sloppy
+%  \sfcode`\.=1000\relax}
+%\let\endthebibliography=\endlist
+%\renewcommand{\bibname}{Bibliography}
 
 \makeatother
