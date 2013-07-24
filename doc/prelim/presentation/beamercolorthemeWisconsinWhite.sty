@@ -1,0 +1,48 @@
+\ProvidesPackage{beamercolorthemeWisconsinWhite}
+% Adapted from the default crane style
+
+\mode<presentation>
+
+\definecolor{EmphColor}{RGB}{153,1,0}
+\definecolor{HighlightBackground}{RGB}{255,255,0}
+\definecolor{KeywordColor}{RGB}{0,0,95}
+
+% Color definitions
+\definecolor{UWRed}{RGB}{153,1,0}
+\definecolor{UWGold}{RGB}{205,153,0}
+
+\setbeamercolor*{section text}{fg=white!80!gray}
+
+\setbeamercolor{item projected}{bg=UWRed}
+\setbeamercolor{itemize item}{fg=UWRed}
+\setbeamercolor{itemize subitem}{fg=UWGold}
+\setbeamercolor{description item}{fg=UWRed}
+\setbeamercolor{enumerate item}{fg=UWRed}
+\setbeamercolor{enumerate subitem}{fg=UWGold}
+
+
+\setbeamercolor{palette secondary}{fg=white,bg=UWRed}
+% This green is just so that I can figure out when, if ever, this
+% is used.  If it is a useful palette, it should be changed to something
+% else.  Let me know if you figure out what uses these.
+\setbeamercolor{palette tertiary}{fg=green,bg=UWGold}
+\setbeamercolor{palette quaternary}{fg=white,bg=UWRed}
+
+\setbeamercolor{titlelike}{parent=palette secondary}
+
+\setbeamercolor{block title}{parent=palette secondary}
+\setbeamercolor{block title alerted}{use=alerted text,fg=green,bg=alerted text.fg}
+\setbeamercolor{block title example}{use=example text,fg=green,bg=example text.fg}
+
+% This ends up applying to most navigation-related things
+\setbeamercolor{sidebar}{bg=UWGold}
+
+\setbeamercolor{palette sidebar primary}{fg=white}
+\setbeamercolor{palette sidebar secondary}{fg=UWGold}
+
+\setbeamercolor*{separation line}{bg=UWGold}
+\setbeamercolor*{fine separation line}{bg=UWGold}
+
+
+\mode
+<all>

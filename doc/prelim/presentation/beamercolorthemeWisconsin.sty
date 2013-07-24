@@ -1,0 +1,59 @@
+\ProvidesPackage{beamercolorthemeWisconsin}
+% Adapted from the default crane style
+
+\mode<presentation>
+
+% Suggestion from Jeff Ballard to help Beamer correctly draw shaded text.
+\beamersetaveragebackground{black}
+
+\definecolor{EmphColor}{RGB}{170,50,50}
+\definecolor{HighlightBackground}{RGB}{150,80,10}
+\definecolor{KeywordColor}{RGB}{50,50,150}
+
+% Color definitions
+\definecolor{UWRed}{RGB}{153,1,0}
+\definecolor{UWGold}{RGB}{205,153,0}
+
+\setbeamercolor*{normal text}{fg=white}
+\setbeamercolor*{alerted text}{fg=white}
+\setbeamercolor*{section text}{fg=white!80!gray}
+\setbeamercolor{background canvas}{parent=normal text,bg=black}
+
+\setbeamercolor{item projected}{bg=UWRed}
+\setbeamercolor{itemize item}{fg=UWRed}
+\setbeamercolor{itemize subitem}{fg=UWGold}
+\setbeamercolor{description item}{fg=UWRed}
+\setbeamercolor{enumerate item}{fg=UWRed}
+\setbeamercolor{enumerate subitem}{fg=UWGold}
+
+\setbeamercolor{palette primary}{fg=white,bg=black}
+\setbeamercolor{palette secondary}{fg=white,bg=UWRed}
+
+% This green is just so that I can figure out when, if ever, this
+% is used.  If it is a useful palette, it should be changed to something
+% else.  Let me know if you figure out what uses these.
+\setbeamercolor{palette tertiary}{fg=green,bg=UWGold}
+\setbeamercolor{palette quaternary}{fg=white,bg=UWRed}
+
+\setbeamercolor{titlelike}{parent=palette secondary}
+
+\setbeamercolor{block title}{parent=palette secondary}
+\setbeamercolor{block title alerted}{use=alerted text,fg=green,bg=alerted text.fg}
+\setbeamercolor{block title example}{use=example text,fg=green,bg=example text.fg}
+
+\setbeamercolor{block body}{parent=normal text,use=block title,bg=black}
+\setbeamercolor{block body alerted}{parent=normal text,use=block title alerted,bg=black}
+\setbeamercolor{block body example}{parent=normal text,use=block title example,bg=black}
+
+% This ends up applying to most navigation-related things
+\setbeamercolor{sidebar}{bg=UWGold}
+
+\setbeamercolor{palette sidebar primary}{fg=white}
+\setbeamercolor{palette sidebar secondary}{fg=UWGold}
+
+\setbeamercolor*{separation line}{bg=UWGold}
+\setbeamercolor*{fine separation line}{bg=UWGold}
+
+
+\mode
+<all>

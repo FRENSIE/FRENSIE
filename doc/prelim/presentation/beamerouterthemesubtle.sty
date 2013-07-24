@@ -1,0 +1,33 @@
+% Copyright 2007 by Till Tantau
+%
+% This file may be distributed and/or modified
+%
+% 1. under the LaTeX Project Public License and/or
+% 2. under the GNU Public License.
+%
+% See the file doc/licenses/LICENSE for more details.
+
+\ProvidesPackageRCS $Header: /home/vedranm/bitbucket/beamer/base/themes/outer/beamerouterthemeinfolines.sty,v 445340293dde 2010/07/10 12:51:34 rivanvx $
+
+
+\mode<presentation>
+
+% \setbeamercolor*{author in head/foot}{parent=palette tertiary}
+\setbeamercolor*{title in head/foot}{parent=palette secondary}
+\setbeamercolor*{page in head/foot}{parent=palette primary}
+
+% \setbeamercolor*{section in head/foot}{parent=palette tertiary}
+% \setbeamercolor*{subsection in head/foot}{parent=palette primary}
+
+\defbeamertemplate*{footline}{subtle theme}
+{
+  \leavevmode%
+  \makebox[\paperwidth][r]{\insertframenumber{} / \inserttotalframenumber{}\hspace*{1ex}}%
+  \vspace*{1ex}%
+  \vskip0pt%
+}
+
+\setbeamersize{text margin left=1em,text margin right=1em}
+
+\mode
+<all>

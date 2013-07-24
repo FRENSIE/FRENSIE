@@ -1,0 +1,358 @@
+\documentclass{beamer}
+\usetheme[white]{Wisconsin}
+\usepackage{wrapfig}
+\usepackage{longtable}
+\usepackage{listings}
+\usepackage{color}
+%% The amssymb package provides various useful mathematical symbols
+\usepackage{amssymb}
+%% The amsthm package provides extended theorem environments
+\usepackage{amsthm} \usepackage{amsmath}
+\usepackage[mathcal]{euscript} \usepackage{color}
+\usepackage{textcomp}
+\usepackage{algorithm,algorithmic}
+\usepackage[absolute,overlay]{textpos}
+  \setlength{\TPHorizModule}{1mm}
+  \setlength{\TPVertModule}{1mm}
+\definecolor{listinggray}{gray}{0.9}
+\definecolor{lbcolor}{rgb}{0.9,0.9,0.9}
+\lstset{
+  backgroundcolor=\color{lbcolor},
+  tabsize=4,
+  rulecolor=,
+  language=c++,
+  basicstyle=\scriptsize,
+  upquote=true,
+  aboveskip={1.5\baselineskip},
+  columns=fixed,
+  showstringspaces=false,
+  extendedchars=true,
+  breaklines=true,
+  prebreak =
+  \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+  frame=single,
+  showtabs=false,
+  showspaces=false,
+  showstringspaces=false,
+  identifierstyle=\ttfamily,
+  keywordstyle=\color[rgb]{0,0,1},
+  commentstyle=\color[rgb]{0.133,0.545,0.133},
+  stringstyle=\color[rgb]{0.627,0.126,0.941},
+}
+
+%% colors
+\setbeamercolor{boxheadcolor}{fg=white,bg=UWRed}
+\setbeamercolor{boxbodycolor}{fg=black,bg=white}
+
+\setbeamerfont{block body}{size=\footnotesize}
+
+%%----------------------------------------------------------------------------%%
+\author{Alex P. Robinson
+    \\ Engineering Physics Department
+    \\ University of Wisconsin - Madison
+    \\ Preliminary Examination
+}
+
+\date{\today}
+\title{Development of a Monte Carlo Code System with Continuous Energy Adjoint Transport Capabilities for Neutrons and Photons} 
+\begin{document}
+\maketitle
+%%----------------------------------------------------------------------------%%
+\section{Overview}
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Overview}
+
+\begin{itemize}
+  \item The Monte Carlo method
+  \item Motivations for using the adjoint process
+  \item Monte Carlo codes available today
+  \item The Monte Carlo random walk process
+  \item The Monte Carlo random walk process for radiation transport
+  \item The Monte Carlo random walk process for adjoint radiation transport
+  \item Adjoint photon incoherent scattering
+  \item Adjoint photon coherent scattering
+  \item Adjoint photon pair production
+  \item The adjoint photon weight factor
+  \item FACEMC code overview
+  \item FACEMC validation plan
+  \item Future Work
+\end{itemize}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\section{The Monte Carlo Method}
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The Monte Carlo method}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The forward process vs. the adjoint process}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\section{Motivations for using the adjoint process}
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Motivations for using the adjoint process}
+
+\begin{itemize}
+  \item Two motivations for using the adjoint process will be given:
+    \begin{enumerate}
+      \item One based on the phase space of the problem
+      \item One based on the physical interpretation of the quantity that is 
+        estimated during the adjoint process
+    \end{enumerate}
+\end{itemize}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{1.) A phase space motivation for using the adjoint process}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{2.) A motivation based on the physical interpretation of the adjoint flux}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\section{Monte Carlo Codes Available Today}
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Continuous energy capabilities of popular codes}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\section{The Monte Carlo random walk process}
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Fredholm Integral Equations of the second kind (FIESKs)}
+
+  \begin{itemize}
+    \item Volterra integral equation also important for radiation transport.
+    \item It is a special case of the FIESK
+   \end{itemize}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Analytical solution method: the method of successive approximations}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Numerical solution method: the Monte Carlo random walk process}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Proof that the Monte Carlo method recovers the solution}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\section{The Monte Carlo Random Walk Process for Radiation Transport}
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The Boltzmann or transport equation}
+
+  \begin{itemize}
+    \item The transport equation described the expected behavior of particles
+      in a medium.
+    \item This equation must be converted to a FIESK before a Monte Carlo
+      random walk process can be employed.
+  \end{itemize}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Converting the transport equation to an integral form}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The emission density FIESK}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The collision density FIESK}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The transport kernel}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The collision kernel}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The Monte Carlo random walk process for radiation transport}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\section{The Monte Carlo random walk process for adjoint radiation transport}
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Derivation of the adjoint transport equation}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Converting the adjoint transport equation to an integral form}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The adjoint emission density}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The adjoint collision density}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The adjoint transport kernel}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The adjoint collision kernel}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Adjoint cross sections}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The adjoint weight factor}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The Monte Carlo random walk process for adjoint radiation transport}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\section{Adjoint Photon Incoherent Scattering}
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The incoherent scattering cross section for photons}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Developing the adjoint incoherent scattering cross section}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The adjoint incoherent scattering cross section for photons}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The adjoint incoherent scattering cross section for aluminum}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\section{Adjoint Photon Coherent Scattering}
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The coherent scattering cross section for photons}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Developing the adjoint coherent scattering cross section}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\section{Adjoint Photon Pair Production}
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The simplified pair production cross section for photons}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Developing the adjoint pair production cross section}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The adjoint pair production kernel}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{A modified Monte Carlo random walk process for adjoint photon transport}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\section{The Adjoint Photon Weight Factor }
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The adjoint photon weight factor}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\section{FACEMC Code Overview}
+%%----------------------------------------------------------------------------%%
+\begin{frame}{FACEMC code requirements}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Major Components of FACEMC}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\section{FACEMC Validation Plan}
+%%----------------------------------------------------------------------------%%
+\begin{frame}{FACEMC validation plan}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{FACEMC validation plan step 1}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{FACEMC validation plan step 2}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{FACEMC validation plan step 3}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Results from preliminary validation of FACEMC}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\section{Future Work}
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Future work on FACEMC}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+
+\end{document}
+
