@@ -5,7 +5,6 @@
 *.bbl
 *.blg
 *.spl
-*.pdftex_t
 *.idx
 *.lof
 *.lot
@@ -15,9 +14,7 @@
 *.snm
 *.nav
 *.vrb
-*.pdf
 *.h5
-*.png
 *.gif
 *.ico
 *.js
