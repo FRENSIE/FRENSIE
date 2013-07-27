@@ -76,7 +76,7 @@
 %%----------------------------------------------------------------------------%%
 \section{Introduction}
 %%----------------------------------------------------------------------------%%
-\subsection{The Monte Carlo method}
+\subsection{The Monte Carlo Method}
 %%----------------------------------------------------------------------------%%
 \begin{frame}{The Monte Carlo method}
 
@@ -84,6 +84,7 @@
     \item The Monte Carlo method is a stochastic method in which samples are
       drawn from a parent population through sampling procedures governed by
       a set of probability laws.
+      \medskip
     \item From the samples, statistical data is acquired and analyzed to make
       inferences about the parent population.
   \end{itemize}
@@ -91,44 +92,44 @@
   \medskip
   \medskip
   
-  \begin{beamerboxesrounded}{Radiation Transport Problems}
+  \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]{Radiation Transport Problems}
     \begin{itemize}
-      \item \textbf{System of interest:} collection of bounded regions 
+      \item \textbf{System of Interest:} collection of bounded regions 
         containing a material, vacuum, source or detector
-      \item \textbf{Parent population:} set of all possible radiation histories
+      \item \textbf{Parent Population:} set of all possible radiation histories
       \item \textbf{Sample:} radiation history drawn from set of all possible 
         histories
-      \item \textbf{Probability laws:} related to material interaction cross 
+      \item \textbf{Probability Laws:} related to material interaction cross 
         sections
-      \item \textbf{Sampling process variations}: forward and adjoint
+      \item \textbf{Sampling Process Variations}: forward and adjoint
     \end{itemize}
   \end{beamerboxesrounded}
     
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The forward process vs. the adjoint process}
+\begin{frame}{The Forward Process vs. the Adjoint Process}
 
   \medskip
 
-  \begin{beamerboxesrounded}{The Forward Process}
+  \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]{The Forward Process}
     \begin{itemize}
-      \item The starting point of a history is sampled from the source.
-      \item Information about the history is recorded in the detector.
-      \item The probability laws used for sampling states of the history
-        can be derived from the \textit{transport equation}.
+      \item Starting point of a history is sampled from the source
+      \item Information about the history is recorded in the detector
+      \item Probability laws used for sampling states of the history
+        can be derived from the \textit{transport equation}
     \end{itemize}
   \end{beamerboxesrounded}
 
-  \medskip
+  \bigskip
   \medskip
 
-  \begin{beamerboxesrounded}{The Adjoint Process}
+  \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]{The Adjoint Process}
     \begin{itemize}
-      \item The starting point of a history is sampled from the detector.
-      \item Information about the history is recorded in the source.
-      \item The probability laws used for sampling states of the history
-        can be derived from the \textit{adjoint transport equation}.
+      \item Starting point of a history is sampled from the detector
+      \item Information about the history is recorded in the source
+      \item Probability laws used for sampling states of the history
+        can be derived from the \textit{adjoint transport equation}
     \end{itemize}
   \end{beamerboxesrounded}
 
@@ -137,32 +138,27 @@
 %%----------------------------------------------------------------------------%%
 \subsection{Motivations for using the adjoint process}
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Motivations for using the adjoint process}
-
-  \begin{itemize} 
-    \item The motivation for using the adjoint process can separated into two
-    catagories:
-      \begin{enumerate}
-        \item One based on the phase space of the source and detector
-        \item One based on the physical interpretation of the quantity that is 
-          estimated during the adjoint process
-      \end{enumerate}
-  \end{itemize}
+\begin{frame}{Motivations for Using the Adjoint Process}
 
   \begin{enumerate}
     \item Motivation 1: The source and detector phase space
+      \smallskip
       \begin{itemize}
-        \item The adjoint process is generally more efficient than the forward 
-          process when the phase space of the source is larger than the phase 
-          space of the detector.
+        \item Adjoint process generally more efficient than forward 
+          process when phase space of the source is larger than phase 
+          space of detector
       \end{itemize}
-      \medskip
+      \bigskip
+      \bigskip
     \item Motivation 2: The adjoint flux interpretation
+      \smallskip
       \begin{itemize}
-        \item The adjoint process estimates a quantity called the adjoint flux.
-        \item A physical interpretation of the adjoint flux is a source 
-          importance or sensitivity to the detector response.
-        \item The adjoint flux can be invaluable when the exact source 
+        \item Adjoint process estimates a quantity called the adjoint flux
+          \medskip
+        \item Physical interpretation of the adjoint flux is a source 
+          importance or sensitivity to the detector response
+          \medskip
+        \item Adjoint flux can be invaluable when exact source 
           distribution is not known (optimization problems)
       \end{itemize}
   \end{enumerate}
@@ -170,71 +166,82 @@
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Shutdown dose calculations using the R2S method}
+\begin{frame}{Shutdown Dose Calculations Using the R2S Method}
 
   \begin{itemize}
-    \item The photon dose in a particular region of an experiment, fusion
+    \item Photon dose in a particular region of an experiment, fusion
       device or fission device resulting from neutron activation of material
-      is desired.
+      is desired
+      \medskip
     \item This information is useful for planning maintenance on the experiment
-      or device.
-    \item These problems are often solved using the rigorous 2-step method 
-      (R2S).
+      or device
+      \medskip
+    \item These problems are often solved using the rigorous 2-step method (R2S)
   \end{itemize}
 
   \medskip
   \medskip
 
-  \begin{beamerboxesrounded}{The R2S method}
-    \begin{itemize}
-      \item The neutron flux throughout the experiment or device is calculated.
-      \item An activation code calculates the material activation and photon
-        sources from the neutron flux data.
-      \item The photon dose is calculated in areas of interest using a forward
-        process.
-    \end{itemize}
+  \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]{The R2S method}
+    \begin{enumerate}
+      \item Neutron flux throughout the experiment or device is calculated
+        \smallskip
+      \item Activation code calculates the material activation and photon
+        sources from neutron flux data
+        \smallskip
+      \item Photon dose calculated in areas of interest using a forward
+        process
+    \end{enumerate}
   \end{beamerboxesrounded}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Shutdown dose calculations using the R2SA method}
+\begin{frame}{Shutdown Dose Calculations Using the R2SA Method}
   
   \begin{itemize}
-    \item In shutdown dose calculations, the amount of activated material is
-      often much larger than the region where the dose distribution is desired. 
+    \item Amount of activated material is often much larger than the region 
+      where the dose distribution is desired 
+      \medskip
     \item These problems could potentially benefit from the adjoint process
-      for photons.
+      for photons
+      \medskip
     \item When the adjoint process is used, the solution method is called the
-      rigorous 2-step adjoint method (R2SA).
+      rigorous 2-step adjoint method (R2SA)
   \end{itemize}
 
   \medskip
   \medskip
 
-  \begin{beamerboxesrounded}{The R2SA method}
-    \begin{itemize}
-      \item The neutron flux throughout the experiment or device is calculated.
-      \item An activation code calculates the material activation and photon
-        sources from the neutron flux data.
-      \item The photon dose is calculated in areas of interest using an adjoint
+  \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]{The R2SA method}
+    \begin{enumerate}
+      \item Neutron flux throughout the experiment or device is calculated
+        \smallskip
+      \item Activation code calculates the material activation and photon
+        sources from the neutron flux data
+        \smallskip
+      \item Photon dose is calculated in areas of interest using an adjoint
         process 
-    \end{itemize}
+    \end{enumerate}
   \end{beamerboxesrounded}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Permanent implant brachytherapy}
+\begin{frame}{Permanent Implant Brachytherapy}
 
   \begin{textblock}{120}(4,15)
     \begin{itemize}
       \item \textbf{Optimization goal:} determine a source configuration
         that provides an optimal dose distribution to the target while
-        minimizing the dose to sensitive structures.
+        minimizing the dose to sensitive structures
+        \medskip
       \item Adjoint flux data allows one to eliminate source positions that 
-        result in a high dose to sensitive structures relative to the target,
-        simplifying and speeding up optimization algorithms.
+        result in a high dose to sensitive structures relative to the target
+        \smallskip
+        \begin{itemize}
+          \item Shown to simplify and speed up optimization algorithms
+        \end{itemize}
     \end{itemize}
   \end{textblock}
 
@@ -249,15 +256,19 @@
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Detector design}
+\begin{frame}{Detector Design}
   
   \begin{textblock}{120}(4,15)
     \begin{itemize}
-      \item The adjoint flux can allow for the spectral performance of a 
-        detector to be predicted for an arbitrary source distribution.
-      \item This data allows the detector design to be optimized before it is
-        constructed, which is important for detectors with rare materials 
-        (e.g. $He^3$ neutron detectors).
+      \item Adjoint flux can allow for spectral performance of a detector to be 
+        predicted for an arbitrary source distribution
+        \medskip
+      \item Detector design can then be be optimized before it is constructed
+        \smallskip
+        \begin{itemize}
+          \item Important for detectors with rare materials (e.g. $He^3$ 
+            neutron detectors)
+        \end{itemize}
     \end{itemize}
   \end{textblock}
 
@@ -274,7 +285,7 @@
 %%----------------------------------------------------------------------------%%
 \subsection{Monte Carlo codes available today}
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Continuous energy capabilities of popular codes}
+\begin{frame}{Continuous Energy Capabilities of Popular Codes}
   
   \begin{table}[ht]
     \centering
@@ -299,225 +310,242 @@
   \end{table}
 
 \begin{itemize}
-  \item A lack of necessary adjoint cross section data is a major deterent to
-    implementing the adjoint process on a continouous energy scale.
+  \item A lack of necessary adjoint cross section data is a major deterrent to
+    implementing the adjoint process on a continuous energy scale.
 \end{itemize}
   
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\section{The Monte Carlo random walk process}
+\section{The Monte Carlo Random Walk Process}
 %%----------------------------------------------------------------------------%%
 \subsection{General Monte Carlo theory}
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Fredholm Integral Equations of the second kind (FIESKs)}
+\begin{frame}{Fredholm Integral Equations of the Second Kind (FIESKs)}
+  
+  \begin{equation*}
+    F(x) = S(x) + \lambda \int_a^b K(x,y) F(y)dy
+  \end{equation*}
 
-  \begin{beamerboxesrounded}{The FIESK}
-    \begin{equation*}
-      F(x) = S(x) + \lambda \int_a^b K(x,y) F(y)dy
-      \label{eq:fredholm_int_eqn}
-    \end{equation*}
-  \end{beamerboxesrounded}
+  \bigskip
   
   \begin{itemize}
-    \item The function $S(x)$ is a forcing function.
-    \item The function $K(x,y)$ is the kernel of the integral equation
-    \item $K(x,y)$ characterizes the transition from some initial state y to
-      the state x.
-    \item It is often written as $K(y \to x)$ to signify this interpretation.
-  \end{itemize}
-  
-\end{frame}
-
-%%----------------------------------------------------------------------------%%
-\begin{frame}{The Volterra integral equation of the second kind}
-  
-  \begin{itemize}
-    \item This equation is very similar to the FIESK except one limit of 
-      integration is variable.
-    \item This equation comes about whenever there is a preferred direction for 
-      the independent variable (i.e. particle scattering kinematics)
-    \item It can be written as a FIESK using a modified kernel
-  \end{itemize}
-
-  \begin{beamerboxesrounded}{The Volterra integral equation of the second kind}
-    \begin{align}
-      F(x) & = S(x) + \lambda \int_a^x K(y \to x) F(y) dy
-      \nonumber \\
-      & = S(x) + \lambda \int_a^b K^{'}(y \to x) F(y) dy \nonumber
-    \end{align}
-    \begin{equation*}
-      K^{'}(y \to x) = 
-      \begin{cases}
-        K(y \to x) & \text{if }y < x \\
-        0 & \text{if }y > x.
-      \end{cases}
-    \end{equation*}
-  \end{beamerboxesrounded}
-
-\end{frame}
-
-%%----------------------------------------------------------------------------%%
-\begin{frame}{Analytical solution method for a FIESK}
-
-  \begin{beamerboxesrounded}{The method of successive approximations}
-    \begin{align}
-      f_0(x) & = S(x) \nonumber \\
-      f_n(x) & = S(x) + \lambda \int_a^b K(y \to x)f_{n-1}(y)dy \nonumber \\
-      & \quad \nonumber \\
-      F(x) & = \lim_{n \to \infty} f_n(x) \nonumber \\
-      & = S(x) + \lambda \int_a^b K(y \to x)S(y)dy + \nonumber \\
-      & \quad \lambda^2 \int_a^b \int_a^b K(y \to x)K(y_1 \to y)S(y_1)dy_1dy +
-      \nonumber \\
-      & \quad \lambda^3 \int_a^b \int_a^b \int_a^b K(y \to x)K(y_1 \to y)
-      K(y_2 \to y_1)S(y_2)dy_2dy_1dy + \nonumber \\
-      & \quad \cdots \nonumber
-    \end{align}
-  \end{beamerboxesrounded}
-
-\end{frame}
-
-%%----------------------------------------------------------------------------%%
-\begin{frame}{Numerical solution method for a FIESK}
-
-  \begin{beamerboxesrounded}{The Monte Carlo random walk process}
-    \begin{equation*}
-      \text{Random Walk: }
-      \begin{cases}
-        p^1(x) & = p(x_1 = x) \\
-        p(y \to x) & = p(x_{n+1} = x | x_n = y, k > n)  \\
-        p(x) & = p(k = n | x_n = x).
-      \end{cases}
-      \label{eq:mc_random_walk_pdfs}
-    \end{equation*}
-  \end{beamerboxesrounded}
-
-  \begin{itemize}
-    \item $p^1(x)$ characterizes the probability that the first event of a
-      random walk occurs in state $x$.
-    \item $p(y \to x)$ characterizes the probability of a transition from an
-      initial state $y$ to a new state $x$.
-    \item $p(x)$ represents the probability of termination in a state $x$.
-    \item The above probability distribution functions (PDFs) must have
-      the following properties:
+    \item Important equation for radiation transport 
       \medskip
-      \begin{enumerate}
-        \item $p^1(x) \geq 0$ \newline
-          $\int_{\Gamma} p^1(x)dx = 1$
-        \medskip
-        \item $p(y \to x) \geq 0$ \newline
-          $\int_{\Gamma} p(y \to x)dx = q(y) = 1 - p(y)$.
-      \end{enumerate}
+    \item $S(x)$ is a forcing function
+      \medskip
+    \item $K(x,y)$ is the kernel of the integral equation
+      \begin{itemize}
+        \smallskip
+        \item Characterizes the transition from some initial state y to
+          the state x
+          \smallskip
+        \item Often written as $K(y \to x)$ to signify this interpretation
+      \end{itemize}
+  \end{itemize}
+  
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Volterra Integral Equations of the Second Kind}
+
+  \begin{equation*}
+    F(x) = S(x) + \lambda \int_a^x K(y \to x) F(y) dy
+  \end{equation*}
+
+  \bigskip
+  
+  \begin{itemize}
+    \item Very similar to the FIESK except one limit of integration is variable
+      \medskip
+    \item Comes about whenever there is a preferred direction for the 
+      independent variable (i.e. particle scattering kinematics)
+      \medskip
+    \item Can be converted to a FIESK using a modified kernel
+  \end{itemize}
+
+  \begin{equation*}
+    F(x) = S(x) + \lambda \int_a^b K^{'}(y \to x) F(y) dy \nonumber
+  \end{equation*}
+  
+  \begin{equation*}
+    K^{'}(y \to x) = 
+    \begin{cases}
+      K(y \to x) & \text{if }y < x \\
+      0 & \text{if }y > x.
+    \end{cases}
+  \end{equation*}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The Method of Successive Approximations}
+
+  \begin{align}
+    f_0(x) & = S(x) \nonumber \\
+    f_n(x) & = S(x) + \lambda \int_a^b K(y \to x)f_{n-1}(y)dy \nonumber \\
+    & \quad \nonumber \\
+    F(x) & = \lim_{n \to \infty} f_n(x) \nonumber
+  \end{align}
+
+  \begin{itemize}
+    \item The solution is more commonly expressed as a Neumann series:
+  \end{itemize}
+  \begin{align}
+    F(x) & = S(x) + \lambda \int_a^b K(y \to x)S(y)dy \text{ }+ \nonumber \\
+    & \quad \lambda^2 \int_a^b \int_a^b K(y \to x)K(y_1 \to y)S(y_1)dy_1dy 
+    \text{ } + \nonumber \\
+    & \quad \lambda^3 \int_a^b \int_a^b \int_a^b K(y \to x)K(y_1 \to y)
+    K(y_2 \to y_1)S(y_2)dy_2dy_1dy \text{ }+ \nonumber \\
+    & \quad \cdots \nonumber
+  \end{align}
+  
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The Monte Carlo Method}
+
+  \begin{equation*}
+    \text{Random Walk: }
+    \begin{cases}
+      p^1(x) & = \frac{S(x)}{\int S(x)dx} \\ 
+      p(y \to x) & = C(y)K(y \to x)  \\
+      p(y) & = 1 - \int_a^b p(y \to x) dx.
+    \end{cases}
+    \label{eq:mc_random_walk_pdfs}
+  \end{equation*}
+
+  \bigskip
+
+  \begin{itemize}
+    \item $p^1(x)$ represents the probability of a random walk starting in
+      state $x$
+      \medskip
+    \item $p(y \to x)$ characterizes the probability of a transition from
+      initial state $y$ to new state $x$
+      \medskip
+    \item $p(y)$ represents the probability of termination in state $y$
+      \medskip
+    \item From these probability distribution functions (PDFs) random walks
+      can be constructed
+      \medskip
+    \item Using special statistical rules, called estimators, the solution to
+      the FIESK can be estimated from the random walks
   \end{itemize}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Proof that the Monte Carlo method recovers the solution}
+%% \begin{frame}{Proof That the Monte Carlo Method Recovers the Solution}
 
-  \begin{itemize}
-    \item First define the event density as the expected value of the number
-      density of events that happen in state $x$:
-      \begin{align}
-        P(x) = 1 \cdot &P^1(x) + 1 \cdot P^2(x) + \ldots 
-        = \sum_{n=1}^{\infty} P^n(x) \nonumber \\
-        P^1(x) & = p^1(x) \nonumber \\
-        P^n(x) & = \int_{\Gamma} p(y \to x) P^{n-1}(y)dy. \nonumber
-      \end{align}
-    \item Using the event density and the Monte Carlo method, the solution
-      to a FIESK is recovered:
-      \begin{align}
-        P(x) & = \sum_{n=1}^{\infty} P^n(x) \nonumber
-        = p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=2}^{\infty} P^{n-1}(y)dy 
-        \nonumber\\
-        & = p^1(x) + \int_{\Gamma} p(y \to x) P(y)dy \nonumber.
-      \end{align}
-  \end{itemize}
+%%   \begin{itemize}
+%%     \item First define the event density as the expected value of the number
+%%       density of events that happen in state $x$:
+%%       \begin{align}
+%%         P(x) = 1 \cdot &P^1(x) + 1 \cdot P^2(x) + \ldots 
+%%         = \sum_{n=1}^{\infty} P^n(x) \nonumber \\
+%%         P^1(x) & = p^1(x) \nonumber \\
+%%         P^n(x) & = \int_{\Gamma} p(y \to x) P^{n-1}(y)dy. \nonumber
+%%       \end{align}
+%%     \item Using the event density and the Monte Carlo method, the solution
+%%       to a FIESK is recovered:
+%%       \begin{align}
+%%         P(x) & = \sum_{n=1}^{\infty} P^n(x) \nonumber
+%%         = p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=2}^{\infty} P^{n-1}(y)dy 
+%%         \nonumber\\
+%%         & = p^1(x) + \int_{\Gamma} p(y \to x) P(y)dy \nonumber.
+%%       \end{align}
+%%   \end{itemize}
 
-\end{frame}
+%% \end{frame}
 
 %%----------------------------------------------------------------------------%%
 \subsection{The Monte Carlo random walk process for radiation transport}
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The transport equation}
+\begin{frame}{The Transport Equation}
 
-\begin{equation*}
-  \begin{split}
-    \frac{1}{v}&\frac{\partial \varphi(\vec{r},E,\hat{\Omega},t)}{\partial t} +
-    \hat{\Omega} \cdot \vec{\bigtriangledown} \varphi(\vec{r},E,\hat{\Omega},t)
-    + \Sigma_T(\vec{r},E) \varphi(\vec{r},E,\hat{\Omega},t) = \\
-    & \quad S(\vec{r},E,\hat{\Omega},t) +
-    \int\int \Sigma_T(\vec{r},E^{'} \to E,\hat{\Omega^{'}} \to \hat{\Omega})
-    \varphi(\vec{r},E^{'},\hat{\Omega^{'}},t) dE^{'}d\hat{\Omega^{'}} \nonumber
-  \end{split}
-\end{equation*}
+\begin{align}
+  \hat{\Omega} \cdot \vec{\bigtriangledown} \varphi(\vec{r},E,\hat{\Omega},t)
+    &\text{ }+\text{ } \Sigma_T(\vec{r},E) \varphi(\vec{r},E,\hat{\Omega},t) = 
+    S(\vec{r},E,\hat{\Omega},t) \text{ }+\text{ } \nonumber \\
+    & \int\int \Sigma_T(\vec{r},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega})
+    \varphi(\vec{r},E^{'},\hat{\Omega}^{'},t) dE^{'}d\hat{\Omega}^{'} \nonumber
+\end{align}
 
   \begin{itemize}
     \item The transport equation describes the expected behavior of particles
-      in a medium.
-    \item This equation must be converted to a FIESK to derive a Monte Carlo
-      random walk process.
-    \item First define the emission density $\chi(\vec{r},E,\hat{\Omega})$, 
-      which is the expected density of particles exiting a collision or the 
-      source, as
-      \newline
-      \begin{align}
-        \chi(\vec{r},E,\hat{\Omega}) = S(\vec{r},E,\hat{\Omega}) +
-        \int\int &\Sigma_T(\vec{r},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega})
-        \nonumber \\
-        & \cdot \varphi(\vec{r},E^{'},\hat{\Omega}^{'}) dE^{'}d\hat{\Omega}^{'}.
-        \nonumber
-      \end{align}
+      in a medium
+      \medskip
+    \item The right side of this equation is called the emission density 
+      $\chi(\vec{r},E,\hat{\Omega})$
+  \end{itemize}
+  \medskip
+  \begin{equation*}
+    \chi(\vec{r},E,\hat{\Omega}) = S(\vec{r},E,\hat{\Omega}) +
+    \int\int \Sigma_T(\vec{r},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega})
+    \varphi(\vec{r},E^{'},\hat{\Omega}^{'}) dE^{'}d\hat{\Omega}^{'}
+  \end{equation*}
+  
+  \begin{itemize}
+    \item The transport equation must be converted to a FIESK to derive a 
+      Monte Carlo random walk process for radiation transport
   \end{itemize}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Converting the transport equation to an integral form}
+%% \begin{frame}{Converting the Transport Equation to an Integral Form}
 
-  \begin{itemize}
-    \item The method of characteristics will be used to convert the 
-      transport equation to an integral form: \newline
-      \begin{equation*}
-        \vec{r}^{'} = \vec{r} - R\hat{\Omega}.
-        \label{eq:characteristic}
-      \end{equation*}
-    \item A directional derivative along the characteristic can be determined:
-      \newline
-      \begin{align}
-        \frac{d}{dR} & = \frac{dx^{'}}{dR}\frac{\partial}{\partial x} +
-        \frac{dy^{'}}{dR}\frac{\partial}{\partial y} +
-        \frac{dz^{'}}{dR}\frac{\partial}{\partial z} \nonumber \\
-        & = -\Omega_x \frac{\partial}{\partial x} -
-        \Omega_y \frac{\partial}{\partial y} -
-        \Omega_z \frac{\partial}{\partial z} \nonumber \\
-        & = -\hat{\Omega} \cdot \vec{\bigtriangledown}. \nonumber
-      \end{align}
-    \item The transport equation becomes
-      \begin{equation*}
-        -\frac{d}{dR}\varphi(\vec{r}^{'},E,\hat{\Omega}) + \Sigma_T(\vec{r}^{'},E)
-        \varphi(\vec{r}^{'},E,\hat{\Omega}) =
-        \chi(\vec{r}^{'},E,\hat{\Omega}).
-        \label{eq:transport_ode}
-      \end{equation*}
-  \end{itemize}
+%%   \begin{itemize}
+%%     \item The method of characteristics will be used to convert the 
+%%       transport equation to an integral form: \newline
+%%       \begin{equation*}
+%%         \vec{r}^{'} = \vec{r} - R\hat{\Omega}.
+%%         \label{eq:characteristic}
+%%       \end{equation*}
+%%     \item A directional derivative along the characteristic can be determined:
+%%       \newline
+%%       \begin{align}
+%%         \frac{d}{dR} & = \frac{dx^{'}}{dR}\frac{\partial}{\partial x} +
+%%         \frac{dy^{'}}{dR}\frac{\partial}{\partial y} +
+%%         \frac{dz^{'}}{dR}\frac{\partial}{\partial z} \nonumber \\
+%%         & = -\Omega_x \frac{\partial}{\partial x} -
+%%         \Omega_y \frac{\partial}{\partial y} -
+%%         \Omega_z \frac{\partial}{\partial z} \nonumber \\
+%%         & = -\hat{\Omega} \cdot \vec{\bigtriangledown}. \nonumber
+%%       \end{align}
+%%     \item The transport equation becomes
+%%       \begin{equation*}
+%%         -\frac{d}{dR}\varphi(\vec{r}^{'},E,\hat{\Omega}) + \Sigma_T(\vec{r}^{'},E)
+%%         \varphi(\vec{r}^{'},E,\hat{\Omega}) =
+%%         \chi(\vec{r}^{'},E,\hat{\Omega}).
+%%         \label{eq:transport_ode}
+%%       \end{equation*}
+%%   \end{itemize}
 
-\end{frame}
+%% \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The transport equation in integral form}
+\begin{frame}{The Transport Equation in Integral Form}
+
+  %% \begin{itemize}
+  %%   \item Using the following integrating factor, the transport equation can
+  %%     be converted to an integral form: \newline
+  %%     \begin{equation*}
+  %%       \exp{\left[-\int_0^R \Sigma_T(\vec{r}-R^{'}\hat{\Omega},E)dR^{'} \right]}.
+  %%     \end{equation*}
+  %%   \item By integrating the equation from 0 to $\infty$ and assuming that the
+  %%     flux goes to zero as $R$ goes to $\infty$, the integral equation is
+  %%     obtained:
+  %% \end{itemize}
 
   \begin{itemize}
-    \item Using the following integrating factor, the transport equation can
-      be converted to an integral form: \newline
-      \begin{equation*}
-        \exp{\left[-\int_0^R \Sigma_T(\vec{r}-R^{'}\hat{\Omega},E)dR^{'} \right]}.
-      \end{equation*}
-    \item By integrating the equation from 0 to $\infty$ and assuming that the
-      flux goes to zero as $R$ goes to $\infty$, the integral equation is
-      obtained:
+    \item The method of characteristics is used to convert the transport 
+      equation to an ordinary differential equation (ODE)
+      \medskip
+    \item Subsequent solution of this ODE results in the integral transport 
+      equation
   \end{itemize}
-
   \begin{align}
     \varphi(\vec{r},E,\hat{\Omega}) & = 
     \int_0^{\infty} \chi(\vec{r} - R\hat{\Omega},E,\hat{\Omega})
@@ -526,9 +554,11 @@
     & = \int \chi(\vec{r}^{'},E,\hat{\Omega}) 
     \tau(\vec{r}^{'},\vec{r},E,\hat{\Omega}) dV^{'}. \nonumber
   \end{align}
-
-  \medskip
-
+  
+  \begin{itemize}
+    \item The function $\tau(\vec{r}^{'},\vec{r},E,\hat{\Omega})$ allows
+      the line integral to be expressed as a volume integral
+  \end{itemize}
   \begin{equation*}
     \tau(\vec{r}^{'},\vec{r},E,\hat{\Omega})= 
     \exp{\left[-\int_0^{|\vec{r} - \vec{r}^{'}|} 
@@ -541,11 +571,11 @@
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The emission density FIESK}
+\begin{frame}{The Emission Density FIESK}
 
   \begin{itemize}
     \item To construct the emission density FIESK, the integral transport 
-      equation will be substituted into the equation for the emission density:
+      equation is substituted into the equation for the emission density
   \end{itemize}
   \begin{align}
     \chi(\vec{r},E,\hat{\Omega}) & = S(\vec{r},E,\hat{\Omega}) +
@@ -559,7 +589,7 @@
     K(\vec{r}^{'} \to \vec{r}, E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega})
     \nonumber \\
     & \qquad \qquad \qquad \qquad \qquad \cdot
-    \chi(\vec{r}^{'},E',\hat{\Omega}^{'}) dV^{'}dE^{'}d\hat{\Omega}^{'}.
+    \chi(\vec{r}^{'},E',\hat{\Omega}^{'}) dV^{'}dE^{'}d\hat{\Omega}^{'}
     \nonumber
   \end{align}
 
@@ -569,44 +599,44 @@
         K(y \to x) & = K(\vec{r}^{'} \to \vec{r}, E^{'} \to E, 
         \hat{\Omega}^{'} \to \hat{\Omega}) \nonumber \\
         & = \Sigma_T(\vec{r},E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega})
-        \tau(\vec{r}^{'},\vec{r},E^{'},\hat{\Omega}^{'}). \nonumber
+        \tau(\vec{r}^{'},\vec{r},E^{'},\hat{\Omega}^{'}) \nonumber
       \end{align}
-    \item This kernel can be simplified by introducing two new kernels.
+    \item This kernel can be simplified by introducing two new kernels
   \end{itemize}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The transport kernel}
+\begin{frame}{The Transport Kernel}
 
   \begin{align}
-    T(\vec{r}^{'} \to \vec{r},E,\hat{\Omega}) & = \Sigma_T(\vec{r},E)
+    T(\vec{r}^{'} \to &\vec{r},E,\hat{\Omega}) = \Sigma_T(\vec{r},E)
     \tau(\vec{r}^{'},\vec{r},E,\hat{\Omega}) \nonumber \\
     & = \Sigma_T(\vec{r},E)
     \exp{\left[-\int_0^{|\vec{r} - \vec{r}^{'}|} 
-        \Sigma_T(\vec{r}-R^{'}\hat{\Omega},E)dR^{'} \right]} \nonumber \\
-    & \qquad \qquad \qquad \qquad \cdot
+        \Sigma_T(\vec{r}-R^{'}\hat{\Omega},E)dR^{'} \right]} %%\nonumber \\
+    %%& \qquad \qquad \qquad \qquad \cdot
     \frac{\delta \left(\hat{\Omega} - \left[\frac{\vec{r} - \vec{r}^{'}}
         {|\vec{r} - \vec{r}^{'}|}\right]\right)}
          {|\vec{r} - \vec{r}^{'}|^2} \nonumber
   \end{align}
 
   \begin{itemize}
-    \item This kernel describes the movement of particles through space.
-    \item It is normalized to unity and can thus be used as a PDF for sampling
-      new particle positions.
-    \item The quantity $T(\vec{r}^{'} \to \vec{r},E,\hat{\Omega})dV$ can be 
-      interpreted as the probability that a particle at $\vec{r}^{'}$ with 
-      energy $E$ and direction $\hat{\Omega}$ will have its next collision in 
-      volume element $dV$ at $\vec{r}$.
-    \item Due to the factor $\Sigma_T(\vec{r},E)$, a new position $\vec{r}$ will
-      never be sampled in a vacuum.
+    \item Describes the movement of particles through space
+      \medskip
+    \item Quantity $T(\vec{r}^{'} \to \vec{r},E,\hat{\Omega})dV$ is  
+      probability that a particle at $\vec{r}^{'}$ with energy $E$ and 
+      direction $\hat{\Omega}$ will have next collision in volume element 
+      $dV$ at $\vec{r}$
+      \medskip
+    \item The factor $\Sigma_T(\vec{r},E)$ prevents new positions $\vec{r}$ from
+      being sampled in a vacuum
   \end{itemize}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The collision kernel}
+\begin{frame}{The Collision Kernel}
 
   \begin{equation*}
     C(\vec{r},E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) =
@@ -615,12 +645,18 @@
   \end{equation*}
 
   \begin{itemize}
-    \item This kernel describes the movement of particles through energy
-      and direction.
-    \item Upon expansion, a procedure for sampling a new energy and direction
-      from this kernel becomes clear:
+    \item Describes the movement of particles through energy and direction
+      \medskip
+    \item In a non-multiplying medium, this kernel integrates to
   \end{itemize}
-
+  \begin{equation*}
+    P_{NA}(E^{'}) = \frac{\Sigma_s(\vec{r},E^{'})}{\Sigma_T(\vec{r},E^{'})} 
+  \end{equation*}
+  
+  \begin{itemize}
+    \item Upon expansion, a procedure for sampling a new energy and direction
+      from this kernel becomes clear
+  \end{itemize}
   \begin{align}
     C(\vec{r},&E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) =
     \sum_j \frac{\Sigma_j(\vec{r},E^{'})c_i(\vec{r},E^{'})
@@ -634,13 +670,12 @@
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The emission density FIESK revisited}
+\begin{frame}{The Emission Density FIESK Revisited}
 
   \begin{itemize}
     \item Using the transport kernel and the collision kernel, the state
       transition kernel for the emission density FIESK can be simplified:
   \end{itemize}
-
   \begin{align}
     K(y \to x) & = K(\vec{r}^{'} \to \vec{r}, E^{'} \to E, 
     \hat{\Omega}^{'} \to \hat{\Omega}) \nonumber \\
@@ -656,23 +691,25 @@
 
   \begin{itemize}
     \item Sampling a new state from the state transition kernel $K(y \to x)$
-      is now straightforward.
+      is now straightforward
   \end{itemize}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The collision density FIESK}    
+\begin{frame}{The Collision Density FIESK}    
 
   \begin{itemize}
-    \item The collision density $\psi(\vec{r},E,\hat{\Omega})$ is the expected 
-      density of particles entering a collision.
-    \item It is related to the emission density by
-      \begin{equation*}
-        \psi(\vec{r},E,\hat{\Omega}) = \int 
-        T(\vec{r}^{'} \to \vec{r},E,\hat{\Omega})
-        \chi(\vec{r}^{'},E,\hat{\Omega})dV^{'}.
-      \end{equation*}
+    \item The collision density and emission density are directly related
+  \end{itemize}
+  
+  \begin{equation*}
+    \psi(\vec{r},E,\hat{\Omega}) = \int 
+    T(\vec{r}^{'} \to \vec{r},E,\hat{\Omega})
+    \chi(\vec{r}^{'},E,\hat{\Omega})dV^{'}
+  \end{equation*}
+
+  \begin{itemize} 
     \item The collision density FIESK is therefore
   \end{itemize}
   \begin{align}
@@ -680,7 +717,7 @@
     T(\vec{r}^{'} \to \vec{r},E,\hat{\Omega}) dV^{'} + \nonumber \\ 
     & \quad \int\int\int
     L(\vec{r}^{'} \to \vec{r},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}) 
-    \psi(\vec{r}^{'},E^{'},\hat{\Omega}^{'}) dE^{'}d\hat{\Omega}^{'}dV^{'}.
+    \psi(\vec{r}^{'},E^{'},\hat{\Omega}^{'}) dE^{'}d\hat{\Omega}^{'}dV^{'}
     \nonumber
   \end{align}
   \begin{itemize}
@@ -690,62 +727,67 @@
         L(\vec{r}^{'} \to \vec{r},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}) 
         \nonumber \\
         & = T(\vec{r}^{'} \to \vec{r},E,\hat{\Omega})
-        C(\vec{r}^{'},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}). \nonumber
+        C(\vec{r}^{'},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}) \nonumber
       \end{align}
   \end{itemize}
   
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The Monte Carlo process for radiation transport}
+\begin{frame}{The Monte Carlo Process for Radiation Transport}
 
   \begin{itemize}
-    \item The following PDFs govern the Monte Carlo random walk process
-      for the emission density and collision density:
+    \item From the emission density FIESK and collision density FIESK, the
+      random walk process for each quantity can be determined
   \end{itemize}
 
-  \begin{align}
-    \chi(x)\text{ Random Walk:} &
+  \begin{equation*}
+    \chi(x)\text{ Random Walk:}
     \begin{cases}
-      p^1(x) & = \frac{S(x)}{\int_{\Gamma} S(x)dx} \\
+      p^1(x) & = \frac{S(x)}{\int S(x)dx} \\
       p(y \to x) &  = K(y \to x) \\
-      p(x) & = 1 - \overline{P}_{NA}(x),
-    \end{cases} \nonumber \\ \medskip
-    \psi(x)\text{ Random Walk:} &
-    \begin{cases}
-      p^1(x) & = \frac{S_c(x)}{\int_{\Gamma} S_c(x)dx} \\
-      p(y \to x) & = L(y \to x) \\
-      p(x) & = 1 - P_{NA}(x).
+      p(x) & = 1 - \overline{P}_{NA}(x)
     \end{cases}
-    \nonumber
-  \end{align}
+  \end{equation*}
+  \medskip
+  \begin{equation*}
+    \psi(x)\text{ Random Walk:}
+    \begin{cases}
+      p^1(x) & = \frac{S_c(x)}{\int S_c(x)dx} \\
+      p(y \to x) & = L(y \to x) \\
+      p(x) & = 1 - P_{NA}(x)
+    \end{cases}
+  \end{equation*}
 
   \begin{itemize}
-    \item $P_{NA}(x) = \frac{\Sigma_s(\vec{r},E^{'})}{\Sigma_T(\vec{r},E^{'})}$ is
-      the non-absorption or survival probability.
     \item $\overline{P}_{NA}(x)$ is an average survival probability along the 
-      line from $\vec{r}^{'}$ to $\vec{r}$.
-    \item $S_c(x)$ is the first collided source.
-    \item Both processes can be combined into a single process.
+      line from $\vec{r}^{'}$ to $\vec{r}$
+      \medskip
+    \item $S_c(x)$ is the first collided source
+      \medskip
+    \item Both processes can be combined into a single process
   \end{itemize}
     
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The combined Monte Carlo process}
+\begin{frame}{The Combined Monte Carlo Process}
 
-  \begin{textblock}{120}(4,15)
-    \begin{itemize}
-      \item The state transition kernels for the emission density and the
-        collision density only differ in the ordering of the transport and
-        collision kernels.
-      \item They can therefore be estimated during the same random walk process.
-    \end{itemize}
-  \end{textblock}
-
-  \begin{textblock}{20}(50,45)
-    \includegraphics[width=1.25in]{../document/chapters/random_walk_process_derivation/random_walk_process.pdf}
-  \end{textblock}
+  \begin{itemize}
+    \item The kernels $K(y \to x)$ and $L(y \to x)$ only differ in the order
+      of the collision and transport kernels
+      \medskip
+    \item The collision kernel and transport kernel will always be sampled
+      from in succession
+      \medskip
+    \item Both densities can therefore be estimated during the same process
+  \end{itemize}
+  
+  \begin{figure}[h!]
+    \begin{center}
+      \includegraphics[width=1.25in]{../document/chapters/random_walk_process_derivation/random_walk_process.pdf}
+    \end{center}
+  \end{figure}
 
   %% \begin{textblock}{20}(80,50)
   %%   \begin{align}
@@ -753,50 +795,64 @@
   %%     & = \langle r_{\psi} \text{ } \psi \rangle \nonumber \\
   %%     & = \langle r_{\chi} \text{ } \chi \rangle \nonumber
   %%   \end{align}
-  %% \end{textblock}
+  %% \end{textblock
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
 \subsection{The Monte Carlo random walk process for adjoint radiation transport}
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Derivation of the adjoint transport equation}
+\begin{frame}{The Adjoint Transport Equation Forcing Function}
 
   \begin{itemize}
-    \item An adjoint operator is defined by the following relationship:
-      \begin{equation*}
-        \langle \varphi^{\dagger}H_B \cdot \varphi \rangle = 
-        \langle \varphi H_B^{\dagger} \cdot \varphi^{\dagger} \rangle.
-      \end{equation*}
-    \item The transport equation can be written in an operator form:
-      \begin{equation*}
-        H_B \cdot \varphi(\vec{r},E,\hat{\Omega}) = S(\vec{r},E,\hat{\Omega}).
-      \end{equation*}
     \item A material response can be calculated using the flux and a material
-      response function $r(\vec{r},E,\hat{\Omega})$:
-      \begin{equation*}
-        R = \langle \varphi r \rangle.
-      \end{equation*}
-    \item If $H_B^{\dagger} \cdot \varphi^{\dagger}$ is set equal to the response 
-      function, the material response becomes
-      \begin{align}
-        R & = \langle \varphi r \rangle 
-        = \langle \varphi H_B^{\dagger} \cdot \varphi^{\dagger} \rangle \nonumber \\
-        & = \langle \varphi^{\dagger}H_B \cdot \varphi \rangle
-        = \langle \varphi^{\dagger} S \rangle \nonumber.
-      \end{align}
+      response function $r(\vec{r},E,\hat{\Omega})$
+  \end{itemize}
+  \begin{equation*}
+    R = \langle \varphi r \rangle
+  \end{equation*}
+  
+  \begin{itemize}
+    \item The flux is characterized by the transport equation 
+  \end{itemize}
+  \begin{equation*}
+    H_B \cdot \varphi(\vec{r},E,\hat{\Omega}) = S(\vec{r},E,\hat{\Omega})
+  \end{equation*}
+  
+  \begin{itemize}
+    \item The adjoint operator is defined by the following relationship:
+  \end{itemize}
+  \begin{equation*}
+    \langle \varphi^{\dagger}H_B \cdot \varphi \rangle = 
+    \langle \varphi H_B^{\dagger} \cdot \varphi^{\dagger} \rangle
+  \end{equation*}
+  
+  \begin{itemize}
+    \item Want to calculate the same material response
+  \end{itemize}
+  \medskip
+  \begin{equation*}
+    R = \langle \varphi r \rangle 
+    = \langle \varphi H_B^{\dagger} \cdot \varphi^{\dagger} \rangle 
+    = \langle \varphi^{\dagger}H_B \cdot \varphi \rangle
+    = \langle \varphi^{\dagger} S \rangle \nonumber
+  \end{equation*}
+
+  \begin{itemize}
+    \item The forcing function for the adjoint transport equation must be
+      the material response function
   \end{itemize}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The adjoint transport equation}
+\begin{frame}{The Adjoint Transport Equation}
 
   \begin{itemize}
-    \item Using the transport equation in operator form and the definition
-      of the adjoint operator, the adjoint transport equation can be derived.
-    \item The adjoint transport equation is 
+    \item Using the definition of the adjoint operator, the adjoint transport 
+      equation can be derived
   \end{itemize}
+  
   \begin{equation*}
     \begin{split}
       -\hat{\Omega} &\cdot \vec{\bigtriangledown} 
@@ -804,38 +860,37 @@
       + \Sigma_T(\vec{r},E) \varphi^{\dagger}(\vec{r},E,\hat{\Omega}) = \\
       & \quad r(\vec{r},E,\hat{\Omega}) +
       \int\int \Sigma_T(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})
-      \varphi^{\dagger}(\vec{r},E^{'},\hat{\Omega}^{'}) dE^{'}d\hat{\Omega}^{'}.
+      \varphi^{\dagger}(\vec{r},E^{'},\hat{\Omega}^{'}) dE^{'}d\hat{\Omega}^{'}
     \end{split}
   \end{equation*}
 
+  \medskip
+
   \begin{itemize}
-    \item The adjoint emission denisty will be defined as
+    \item The right side of this equation is called the adjoint emission density
   \end{itemize}
   \begin{equation*}
     \theta^{\dagger}(\vec{r},E,\hat{\Omega}) = r(\vec{r},E,\hat{\Omega}) +
     \int\int \Sigma_T(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})
-    \varphi^{\dagger}(\vec{r},E^{'},\hat{\Omega}^{'}) dE^{'}d\hat{\Omega}^{'}.
+    \varphi^{\dagger}(\vec{r},E^{'},\hat{\Omega}^{'}) dE^{'}d\hat{\Omega}^{'}
   \end{equation*}
 
   \begin{itemize}
-    \item The simplified adjoint transport equation is
+    \item This equation must be converted to a FIESK to derive
+      a Monte Carlo random walk process for adjoint radiation transport
   \end{itemize}
-  \begin{equation*}
-    -\hat{\Omega} \cdot \vec{\bigtriangledown} 
-      \varphi^{\dagger}(\vec{r},E,\hat{\Omega})
-      + \Sigma_T(\vec{r},E) \varphi^{\dagger}(\vec{r},E,\hat{\Omega}) =
-      \theta^{\dagger}(\vec{r},E,\hat{\Omega}).
-  \end{equation*} 
       
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The adjoint transport equation in integral form}
+\begin{frame}{The Adjoint Transport Equation in Integral Form}
 
   \begin{itemize}
-    \item Using a very similar process to the one used for the transport 
-      equation the adjoint transport equation can be converted to an
-      integral form:
+    \item The method of characteristics is used to convert the adjoint transport
+      equation to an ordinary differential equation (ODE)
+      \medskip
+    \item Subsequent solution of this ODE results in the integral adjoint 
+      transport equation
   \end{itemize}
   \begin{align}
     \varphi^{\dagger}(\vec{r},E,\hat{\Omega}) & = 
@@ -843,26 +898,30 @@
     exp\left[-\int_0^R \Sigma_T(\vec{r}+R^{'}\hat{\Omega},E)dR^{'} \right] dR
     \nonumber \\
     & = \int \theta^{\dagger}(\vec{r}^{'},E,\hat{\Omega}) 
-    \tau^{\dagger}(\vec{r}^{'},\vec{r},E,\hat{\Omega}) dV^{'}. \nonumber
+    \tau^{\dagger}(\vec{r}^{'},\vec{r},E,\hat{\Omega}) dV^{'} \nonumber
   \end{align}
 
+  \begin{itemize}
+    \item The function $\tau^{\dagger}(\vec{r}^{'},\vec{r},E,\hat{\Omega})$ allows
+      the line integral to be expressed as a volume integral
+  \end{itemize}
   \begin{equation*}
     \tau^{\dagger}(\vec{r}^{'},\vec{r},E,\hat{\Omega}) = 
     \exp{\left[-\int_0^{|\vec{r}^{'} - \vec{r}|} 
         \Sigma_T(\vec{r}+R^{'}\hat{\Omega},E)dR^{'} \right]}
-    \frac{\delta \left(\Omega - \left[\frac{\vec{r}^{'} - \vec{r}}
+    \frac{\delta \left(\hat{\Omega} - \left[\frac{\vec{r}^{'} - \vec{r}}
         {|\vec{r}^{'} - \vec{r}|}\right]\right)}
-         {|\vec{r}^{'} - \vec{r}|^2}.
+         {|\vec{r}^{'} - \vec{r}|^2}
   \end{equation*}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The adjoint emission density FIESK}
+\begin{frame}{The Adjoint Emission Density FIESK}
 
   \begin{itemize}
     \item To construct the adjoint emission density FIESK, the integral 
-      adjoint transport equation will be substituted into the equation for
+      adjoint transport equation is substituted into the equation for
       the adjoint emission density:
   \end{itemize}
   \begin{align}
@@ -878,7 +937,7 @@
         \hat{\Omega}^{'} \to \hat{\Omega}) \nonumber \\
          & \qquad \qquad \qquad \qquad \qquad \cdot
          \theta^{\dagger}(\vec{r}^{'},E^{'},\hat{\Omega}^{'}) 
-         dV^{'} dE^{'} d\hat{\Omega}^{'}. \nonumber
+         dV^{'} dE^{'} d\hat{\Omega}^{'} \nonumber
   \end{align}
 
   \begin{itemize}
@@ -895,34 +954,36 @@
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The adjoint transport kernel}
+\begin{frame}{The Adjoint Transport Kernel}
 
   \begin{align}
-    T^{\dagger}(\vec{r}^{'} \to \vec{r},E,\hat{\Omega}) & = 
+    T^{\dagger}(\vec{r}^{'} \to &\vec{r},E,\hat{\Omega}) = 
     \Sigma_T(\vec{r},E) \tau^{\dagger}(\vec{r}^{'},\vec{r},E,\hat{\Omega})
     \nonumber \\
     & = \Sigma_T(\vec{r},E) \exp{\left[-\int_0^{|\vec{r}^{'} - \vec{r}|} 
-        \Sigma_T(\vec{r}+R^{'}\hat{\Omega},E)dR^{'} \right]} \nonumber \\
-    & \qquad \qquad \qquad \qquad \cdot
-    \frac{\delta \left(\Omega - \left[\frac{\vec{r}^{'} - \vec{r}}
+        \Sigma_T(\vec{r}+R^{'}\hat{\Omega},E)dR^{'} \right]} %%\nonumber \\
+    %%& \qquad \qquad \qquad \qquad \cdot
+    \frac{\delta \left(\hat{\Omega} - \left[\frac{\vec{r}^{'} - \vec{r}}
         {|\vec{r}^{'} - \vec{r}|}\right]\right)}
          {|\vec{r}^{'} - \vec{r}|^2} \nonumber
   \end{align}
 
   \begin{itemize}
-    \item This kernel describes the movement of adjoint particles through space.
-    \item It is normalized to unity and can thus be used as a PDF for sampling
-      new particle positions.
-    \item The quantity $T^{\dagger}(\vec{r}^{'} \to \vec{r},E,\hat{\Omega})dV$ can
-      be interpreted as the probability that an adjoint particle at 
-      $\vec{r}^{'}$ with energy $E$ and direction $\hat{\Omega}$ will have its 
-      next collision in volume element $dV$ at $\vec{r}$.
+    \item Describes the movement of adjoint particles through space
+      \medskip
+    \item Quantity $T^{\dagger}(\vec{r}^{'} \to \vec{r},E,\hat{\Omega})dV$ is 
+      probability that an adjoint particle at $\vec{r}^{'}$ with energy $E$ and 
+      direction $\hat{\Omega}$ will have next collision in volume element $dV$ 
+      at $\vec{r}$
+      \medskip
+    \item The factor $\Sigma_T(\vec{r},E)$ prevents new positions $\vec{r}$ 
+      from begin sampled in a vacuum
   \end{itemize}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The adjoint collision kernel}
+\begin{frame}{The Adjoint Collision Kernel}
 
   \begin{align}
     C^{\dagger}(\vec{r},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}) & = 
@@ -934,18 +995,22 @@
   \end{align}
 
   \begin{itemize}
-    \item This kernel describes the movement of adjoint particles through 
-      energy and direction.
-    \item The normalization factor for this kernel will be referred to simply
-      as the total macroscopic adjoint cross section.
-    \item To derive a sampling procedure for this kernel, it must be expanded
-      into its constituent reactions.
+    \item Describes the movement of adjoint particles through energy and 
+      direction
+      \medskip
+    \item Not immediately clear what this kernel should integrate to - force it
+      to integrate to unity for simplicity
+      \medskip
+    \item Normalization factor is referred to simply as the total macroscopic 
+      adjoint cross section
+      \medskip
+    \item Expansion of this kernel is necessary to derive a sampling procedure
   \end{itemize}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The expanded adjoint collision kernel}
+\begin{frame}{The Expanded Adjoint Collision Kernel}
   
   \begin{align}
     C^{\dagger}(\vec{r},&E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}) =
@@ -963,35 +1028,35 @@
                    {\sigma_{A,j}^{\dagger}(E^{'})} \nonumber
   \end{align}
 
+  \medskip
+
   \begin{itemize}
-    \item Through expansion of this kernel, the definition of the adjoint
-      cross section also becomes clear:
-      \begin{equation*}
-        \sigma_{A,j}^{\dagger}(E^{'}) = \int\int
-        \sigma_{A,j}(E)c_{A,j}(E) 
-        p_{A,j}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'}) dE d\hat{\Omega}
-      \end{equation*}
-      \begin{equation*}
-        p_{A,j}^{\dagger}(E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}) = 
-        \frac{\sigma_{A,j}(E)c_{A,j}(E) 
-          p_{A,j}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})}
-             {\sigma_{A,j}^{\dagger}(E^{'})}
-      \end{equation*}
+    \item Through expansion the definition of the adjoint cross section also 
+      becomes clear
   \end{itemize}
-  
+  \begin{equation*}
+    \sigma_{A,j}^{\dagger}(E^{'}) = \int\int
+    \sigma_{A,j}(E)c_{A,j}(E) 
+    p_{A,j}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'}) dE d\hat{\Omega}
+  \end{equation*}
+  \begin{equation*}
+    p_{A,j}^{\dagger}(E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}) = 
+    \frac{\sigma_{A,j}(E)c_{A,j}(E) 
+      p_{A,j}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})}
+         {\sigma_{A,j}^{\dagger}(E^{'})}
+  \end{equation*}
+      
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The adjoint emission density FIESK revisited}
+\begin{frame}{The Adjoint Emission Density FIESK Revisited}
   
   \begin{itemize}
-    \item Using the adjoint transport kernel and the adjoint collision kernel,
-      the state transition kernel for the adjoint emission density FIESK 
-      can be simplified:
+    \item The state transition kernel for the adjoint emission density FIESK 
+      can be simplified using the previous two kernels
   \end{itemize}
-
   \begin{align}
-    M^{\dagger}(y \to x) & = M^{\dagger}(\vec{r}^{'} \to \vec{r},E^{'} \to E,
+    M^{\dagger}(&y \to x) = M^{\dagger}(\vec{r}^{'} \to \vec{r},E^{'} \to E,
     \hat{\Omega}^{'} \to \hat{\Omega}) \nonumber \\
     & = \Sigma_T(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})
     \tau^{\dagger}(\vec{r}^{'},\vec{r},E^{'},\hat{\Omega}^{'}) \nonumber \\
@@ -999,33 +1064,33 @@
       \frac{\Sigma_T(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})}
            {\Sigma^{\dagger}(\vec{r},E^{'})}\right]
     \left[\frac{\Sigma^{\dagger}(\vec{r},E^{'})}{\Sigma_T(\vec{r},E^{'})}\right]
+    \left[\Sigma_T(\vec{r},E^{'})
+    \tau^{\dagger}(\vec{r}^{'},\vec{r},E^{'},\hat{\Omega}^{'})\right] 
     \nonumber \\
-    & \qquad \cdot \left[\Sigma_T(\vec{r},E^{'})
-    \tau^{\dagger}(\vec{r}^{'},\vec{r},E^{'},\hat{\Omega}^{'})\right] \nonumber \\
     & = C^{\dagger}(\vec{r},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega})
     P^{\dagger}(\vec{r},E^{'})
-    T^{\dagger}(\vec{r}^{'} \to \vec{r},E^{'},\hat{\Omega}^{'}). \nonumber
+    T^{\dagger}(\vec{r}^{'} \to \vec{r},E^{'},\hat{\Omega}^{'}) \nonumber
   \end{align}
 
   \begin{itemize}
     \item This kernel also contains a factor $P^{\dagger}(\vec{r},E^{'})$ called 
-      the adjoint weight factor.
+      the adjoint weight factor
+      \medskip
     \item This factor is bounded in the interval (0,$\infty$).
   \end{itemize}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The adjoint collision density FIESK}
+\begin{frame}{The Adjoint Collision Density FIESK}
 
   \begin{itemize}
-    \item The adjoint collision density $\xi^{\dagger}(\vec{r},E,\hat{\Omega})$
-      is the expected density of adjoint particles entering a collision.
-    \item It is related to the adjoint emission density by
+    \item The adjoint collision density and emission density are directly
+      related
       \begin{equation*}
         \xi^{\dagger}(\vec{r},E,\hat{\Omega}) =
         \int T^{\dagger}(\vec{r}^{'} \to \vec{r},E,\hat{\Omega})
-        \theta^{\dagger}(\vec{r}^{'},E,\hat{\Omega}) dV^{'}.
+        \theta^{\dagger}(\vec{r}^{'},E,\hat{\Omega}) dV^{'}
       \end{equation*}
     \item The adjoint collision density FIESK is therefore
   \end{itemize}
@@ -1035,7 +1100,7 @@
     &\quad \int\int\int N^{\dagger}(\vec{r}^{'} \to \vec{r},E^{'} \to E,
     \hat{\Omega}^{'} \to \hat{\Omega}) 
     \xi^{\dagger}(\vec{r}^{'},E^{'},\hat{\Omega}^{'})
-    dE^{'}d\hat{\Omega}^{'}dV^{'}. \nonumber
+    dE^{'}d\hat{\Omega}^{'}dV^{'} \nonumber
   \end{align}
   
   \begin{itemize}
@@ -1047,56 +1112,65 @@
     \nonumber \\
     & = T^{\dagger}(\vec{r}^{'} \to \vec{r},E,\hat{\Omega})
     C^{\dagger}(\vec{r}^{'},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega})
-    P^{\dagger}(\vec{r}^{'},E^{'}). \nonumber
+    P^{\dagger}(\vec{r}^{'},E^{'}) \nonumber
   \end{align}
   
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The Monte Carlo random walk process for adjoint radiation transport}
+\begin{frame}{The Monte Carlo Random Walk Process}
   \begin{itemize}
-    \item The following PDFs govern the Monte Carlo random walk process for
-      the adjoint emission density and the adjoint collision density:
+    \item From the adjoint emission density FIESK and adjoint collision 
+      density FIESK, the random walk process can be determined
   \end{itemize}
-  \begin{align}
-    \theta^{\dagger}(x)\text{ Random Walk:}&
+  \begin{equation*}
+    \theta^{\dagger}(x)\text{ Random Walk:}
     \begin{cases}
-      p^1(x) & = \frac{a(x)}{\int_{\Gamma} a(x)dx} \\
+      p^1(x) & = \frac{a(x)}{\int a(x)dx} \\
       p(y \to x) & = \frac{M^{\dagger}(y \to x)}{\overline{P}^{\dagger}(y)} \\
       p(x) & = 0
-    \end{cases} \nonumber \\
-    \xi^{\dagger}(x)\text{ Random Walk:}&
+    \end{cases}
+  \end{equation*}
+  \medskip
+  \begin{equation*}
+    \xi^{\dagger}(x)\text{ Random Walk:}
     \begin{cases}
-      p^1(x) & = \frac{S_c^{\dagger}(x)}{\int_{\gamma} S_c^{\dagger}(x)dx} \\
+      p^1(x) & = \frac{S_c^{\dagger}(x)}{\int S_c^{\dagger}(x)dx} \\
       p(y \to x) & = \frac{N^{\dagger}(y \to x)}{P^{\dagger}(y)} \\
-      p(x) & = 0.
-    \end{cases} \nonumber
-  \end{align}
+      p(x) & = 0
+    \end{cases}
+  \end{equation*}
 
   \begin{itemize}
-    \item Due to the definition of the adjoint cross section, there is no
-      absorption reaction for adjoint radiation.
-    \item Russian roulette must be used to end random walks.
-    \item Both processes can be combined into a single process.
+    \item There is no absorption reaction for adjoint radiation
+      \smallskip
+      \begin{itemize}
+        \item Due to the adjoint cross section definition
+      \end{itemize}
+      \medskip
+    \item Russian roulette must be used to end random walks
+      \medskip
+    \item Both processes can be combined into a single process
   \end{itemize}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The combined Monte Carlo adjoint process}
+\begin{frame}{The Combined Monte Carlo Adjoint Process}
 
-  \begin{textblock}{120}(4,15)
-    \begin{itemize}
-      \item The state transition kernels for the emission density and the 
-        collision density only differ in the ordering of the adjoint transport
-        kernel, adjoint collision kernel, and adjoint weight factor.
-      \item They can therefore be estimated during the same random walk process.
-    \end{itemize}
-  \end{textblock}
-
-  \begin{textblock}{20}(50,45)
-    \includegraphics[width=1.0in]{figures/adjoint_random_walk_process.pdf}
-  \end{textblock}
+  \begin{itemize}
+    \item The kernels $M^{\dagger}(y \to x)$ and $N^{\dagger}(y \to x)$ only differ
+      in the order of the adjoint collision kernel, adjoint transport kernel
+      and adjoint weight factor
+      \medskip
+    \item Both densities can therefore be estimated during the same process
+  \end{itemize}
+  
+  \begin{figure}[h!]
+    \begin{center}
+      \includegraphics[width=1.0in]{figures/adjoint_random_walk_process.pdf}
+    \end{center}
+  \end{figure}
 
 \end{frame}
 
@@ -1105,11 +1179,11 @@
 %%----------------------------------------------------------------------------%%
 \subsection{Adjoint photon incoherent scattering}
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Developing the adjoint incoherent scattering cross section}
+\begin{frame}{The Adjoint Incoherent Scattering Cross Section}
   
   \begin{itemize}
-    \item To conduct adjoint incoherent scattering, the cross section for 
-      this interaction must be derived:
+    \item Use the definition of the adjoint double differential transfer 
+      probability to construct this cross section:
   \end{itemize}
   \begin{align}
     p_{i.s}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) & =
@@ -1119,7 +1193,7 @@
          \sigma_{i.s.}^{\dagger}(E^{'})
          p_{i.s}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) & = 
          \sigma_{i.s.}(E)p_{i.s.}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})
-         \nonumber \\
+         \nonumber \\ \medskip \nonumber \\
          \sigma_{i.s}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) & = 
          \sigma_{i.s.}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'}) \nonumber
   \end{align}
@@ -1128,18 +1202,17 @@
     \item Both the forward and adjoint cross sections are only dependent on the 
       angle between the initial and final directions:
   \end{itemize}
-  
   \begin{align}
     \sigma_{i.s}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \cdot \hat{\Omega}) & = 
     \sigma_{i.s.}(E \to E^{'},\hat{\Omega} \cdot \hat{\Omega}^{'}) \nonumber \\
     \sigma_{i.s}^{\dagger}(E^{'} \to E, \mu) & = 
-    \sigma_{i.s.}(E \to E^{'}, \mu). \nonumber
+    \sigma_{i.s.}(E \to E^{'}, \mu) \nonumber
   \end{align}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The adjoint incoherent scattering cross section}
+\begin{frame}{The Adjoint Incoherent Scattering Cross Section}
 
   \begin{itemize}
     \item The double differential incoherent scattering cross section is
@@ -1151,7 +1224,7 @@
     \left[\frac{\alpha}{\alpha^{'}} + \frac{\alpha^{'}}{\alpha} - 
       1 + \mu^2\right] S\left(y(\alpha^{'},\mu),Z\right) \nonumber \\
     & \qquad \qquad \qquad \cdot \delta\left(\mu - \left[1-\frac{1}{\alpha} + 
-      \frac{1}{\alpha^{'}}\right]\right). \nonumber
+      \frac{1}{\alpha^{'}}\right]\right) \nonumber
   \end{align}
 
   \begin{itemize}
@@ -1164,62 +1237,81 @@
     \left[\frac{\alpha^{'}}{\alpha} + \frac{\alpha}{\alpha^{'}} - 
       1 + \mu^2\right] S\Big(y(\alpha,\mu),Z\Big) \nonumber \\
     & \qquad \qquad \qquad \cdot \delta\left(\mu - \left[1-\frac{1}{\alpha^{'}} 
-      + \frac{1}{\alpha}\right]\right). \nonumber
+      + \frac{1}{\alpha}\right]\right) \nonumber
   \end{align}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The integrated adjoint incoherent scattering cross section}
+\begin{frame}{The Integrated Adjoint Incoherent Scattering Cross Section}
 
-  \begin{textblock}{120}(4,15)
-    \begin{itemize}
-      \item The scattering kinematics of the adjoint interaction have an
-        interesting property:
-        \begin{equation*}
-          E = \frac{E^{'}}{1-\alpha^{'}(1-\mu)}
-        \end{equation*}
-      \item There is a discontinuity when $\mu = 1 - \frac{1}{\alpha^{'}}$,
-        which results in an unbound integrated cross section.
-      \item A max problem energy must be set to bound the integrated 
-        cross section.
-    \end{itemize}
-  \end{textblock}
-
-  \begin{textblock}{20}(37,53)
-    \includegraphics[width=2.4in]{figures/adjoint_and_forward_incoherent_cross_section-13.pdf}
-  \end{textblock}
+  \begin{itemize}
+    \item Limits of integration must be determined to compute the 
+      integrated adjoint incoherent cross section
+      \medskip
+    \item Use the kinematic equation for the adjoint process
+  \end{itemize}
+  \begin{equation*}
+    E = \frac{E^{'}}{1-\alpha^{'}(1-\mu)}
+  \end{equation*}
+  \begin{align}
+    \mu = 1&\text{:} \quad E_{low} = E^{'} \nonumber \\
+    \mu = 1 - \frac{1}{\alpha^{'}}&\text{:} \quad E_{high} = \infty \nonumber
+  \end{align}
+        
+  \begin{itemize}
+    \item The integrated cross section will be unbound unless a max problem 
+      energy is set
+  \end{itemize}
   
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{The Integrated Adjoint Incoherent Scattering Cross Section}
+
+  \begin{figure}[h!]
+    \begin{center}
+      \includegraphics[width=4.0in]{figures/adjoint_and_forward_incoherent_cross_section-13.pdf}
+    \end{center}
+  \end{figure}
+
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
 \subsection{Adjoint photon coherent scattering}
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The adjoint coherent scattering cross section}
+\begin{frame}{The Adjoint Coherent Scattering Cross Section}
 
   \begin{itemize}
-    \item To conduct adjoint coherent scattering, the cross section for this
-      interaction must be derived.
-    \item The forward and adjoint cross sections are only dependent on the angle
-      between the initial and final directions.
-    \item In addition, the energy of the photon does not change in a forward
-      coherent scatter:
+    \item Use the definition of the adjoint double differential cross section
+  \end{itemize}
+  
+  \begin{equation*}
+    \sigma_{c.s.}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \cdot \hat{\Omega}) =
+    \sigma_{c.s.}(E \to E^{'},\hat{\Omega} \cdot \hat{\Omega}^{'})
+  \end{equation*}
+  
+  \bigskip
+
+  \begin{itemize}
+  \item In the forward interaction, the energy of the photon does not change: 
   \end{itemize}
   \begin{align}
-  \sigma_{c.s.}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) & =
-  \sigma_{c.s.}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'}) \nonumber \\
-  \sigma_{c.s.}^{\dagger}(E^{'}, \hat{\Omega}^{'} \cdot \hat{\Omega}) & = 
-  \sigma_{c.s.}(E^{'},\hat{\Omega} \cdot \hat{\Omega}^{'}) \nonumber \\
-  \sigma_{c.s.}^{\dagger}(E^{'}, \mu) & = \sigma_{c.s.}(E^{'}, \mu). \nonumber
-\end{align}
+    \sigma_{c.s.}^{\dagger}(E^{'}, \hat{\Omega}^{'} \cdot \hat{\Omega}) & = 
+    \sigma_{c.s.}(E^{'},\hat{\Omega} \cdot \hat{\Omega}^{'}) \nonumber \\
+    \frac{\sigma_{c.s.}^{\dagger}(E^{'}, \mu)}{d\mu} & = 
+    \frac{\sigma_{c.s.}(E^{'}, \mu)}{d\mu} \nonumber
+  \end{align}
+
+  \medskip
 
   \begin{itemize}
     \item Both the forward and adjoint differential coherent scattering cross
       section are therefore the same:
       \begin{align}
-        \frac{d\sigma_{c.s.}(\alpha^{'},\mu,Z)}{d\mu} & = 
-        \frac{d\sigma_{c.s.}^{\dagger}(\alpha^{'},\mu,Z)}{d\mu} \nonumber \\
-        & = \pi r_e^2 (1 + \mu^2)F^2(y,Z). \nonumber
+        \frac{d\sigma_{c.s.}^{\dagger}(E^{'},\mu,Z)}{d\mu} & = 
+        \frac{d\sigma_{c.s.}(E^{'},\mu,Z)}{d\mu} \nonumber \\
+        & = \pi r_e^2 (1 + \mu^2)F^2(y,Z) \nonumber
       \end{align}
   \end{itemize}
 
@@ -1228,22 +1320,18 @@
 %%----------------------------------------------------------------------------%%
 \subsection{Adjoint photon pair production}
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Developing the adjoint pair production cross section}
+\begin{frame}{The Adjoint Pair Production Cross Section}
 
   \begin{itemize}
-    \item To conduct adjoint pair production, the cross section for this
-      interaction must be derived.
-    \item As with all other photon cross sections, these cross sections are
-      only depenedent on the angle between the initial and final directions:
+    \item Use the definition of the adjoint double differential cross section
   \end{itemize}
-  \begin{align}
-    \sigma_{p.p.}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) & = 
-    \sigma_{p.p.}(E \to E^{'}, \hat{\Omega} \to \hat{\Omega}^{'}) \nonumber \\
-    \sigma_{p.p.}^{\dagger}(E^{'} \to E,\mu) & =  
-    \sigma_{p.p.}(E \to E^{'},\mu) \nonumber
-    %% \frac{d^2\sigma_{p.p.}^{\dagger}(E^{'},E,Z)}{dEd\mu} & = 
-    %% \frac{d^2\sigma_{p.p.}^{\dagger}(E,E^{'},Z)}{dE^{'}d\mu}
-  \end{align}
+  
+  \begin{equation*}
+    \sigma_{p.p.}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \cdot \hat{\Omega}) =
+    2\sigma_{p.p.}(E \to E^{'},\hat{\Omega} \cdot \hat{\Omega}^{'})
+  \end{equation*}
+
+  \bigskip
 
   \begin{itemize}
     \item The simplified double differential pair production cross section is
@@ -1251,49 +1339,74 @@
   \begin{align}
     \sigma_{p.p.}(E^{'} \to E,\mu) & = \frac{d^2\sigma_{p.p.}(E^{'},Z)}{dEd\mu} 
     \nonumber \\
-    & = \frac{2 [\sigma_{p.p.}(E^{'},Z) + \sigma_{t.p.}(E^{'},Z)] 
-      \delta(E - m_ec^2)}{2}. \nonumber
+    & = \frac{[\sigma_{p.p.}(E^{'},Z) + \sigma_{t.p.}(E^{'},Z)] 
+      \delta(E - m_ec^2)}{2} \nonumber
+  \end{align}
+
+  
+
+  \begin{itemize}
+    \item The adjoint pair production cross section is therefore
+  \end{itemize}
+  \begin{align}
+    \sigma_{p.p.}^{\dagger}(E^{'} \to E,\mu) & = 
+    \frac{d^2\sigma_{p.p.}^{\dagger}(E^{'},E,Z)}{dEd\mu} \nonumber \\
+    & = 2\left[\frac{\left[\sigma_{p.p.}(E,Z)+\sigma_{t.p.}(E,Z)\right]
+      \delta(E^{'}-m_ec^2)}{2}\right] \nonumber
   \end{align}
   
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The adjoint pair production cross section}
+\begin{frame}{The Adjoint Pair Production Cross Section}
+
+  \begin{equation*}
+    \frac{d^2\sigma_{p.p.}^{\dagger}(E^{'},E,Z)}{dEd\mu} = 
+    2\left[\frac{\left[\sigma_{p.p.}(E,Z)+\sigma_{t.p.}(E,Z)\right]
+      \delta(E^{'}-m_ec^2)}{2}\right] \nonumber
+  \end{equation*}
+
+  \bigskip
 
   \begin{itemize}
-    \item The adjoint pair production cross section is
-  \end{itemize}
-  \begin{align}
-    \sigma_{p.p.}^{\dagger}(E^{'} \to E,\mu) & = 
-    \frac{d^2\sigma_{p.p.}^{\dagger}(E^{'},E,Z)}{dEd\mu} \nonumber \\
-    & = \frac{2\left[\sigma_{p.p.}(E,Z)+\sigma_{t.p.}(E,Z)\right]
-      \delta(E^{'}-m_ec^2)}{2}. \nonumber
-  \end{align}
-
-  \begin{itemize}
-    \item The adjoint double differential pair production cross section will be
-      zero unless the initial energy of the adjoint photon is equal to $m_ec^2$.
-    \item A modification to the adjoint Monte Carlo random walk process must
-      be made for adjoint photons to model adjoint pair production.
-    \item The modification is rather complicated and will not be discussed
-      further in this presentation. 
+    \item The two annihilation photons are taken into account with the
+      factor of 2
+      \medskip
+    \item Unless the adjoint photon energy is $m_ec^2$ this cross section is 
+      zero 
+      \medskip
+    \item A modification to the adjoint random walk process is made which
+      forces adjoint photons to have energy $m_ec^2$
+      \medskip
+    \item The modification is rather complicated but is fairly computationally
+      inexpensive 
   \end{itemize}
 
 \end{frame}  
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The photoelectric effect}
+\begin{frame}{Current Limitation: The Photoelectric Effect}
 
   \begin{itemize}
-    \item The photoelectric effect occurs when a photon of energy E is absorbed
-      by a target atom.
-    \item An electron will be ejected leaving an electron shell vacancy.
-    \item Atomic relaxation will occur to fill the vacancy, which has the
-      potential to release x-rays.
-    \item These x-rays can be important for certain problems (e.g. brachytherapy
-      seed characterization).
-    \item The adjoint process cannot currently take these x-rays into account
-      since there is not an equivalent adjoint reaction.
+    \item \textbf{Problem:} 
+      \begin{itemize}
+        \item Photoelectric effect occurs when a photon is absorbed by an atom
+          \medskip
+        \item An electron is ejected leaving an electron shell vacancy
+          \medskip
+        \item Atomic relaxation occurs to fill the vacancy with x-rays 
+          potentially released
+          \medskip
+        \item Emitted x-rays can be important for certain problems (e.g. 
+          brachytherapy seed characterization)
+          \medskip
+        \item The adjoint process cannot currently take these x-rays into 
+          account
+          \medskip
+      \end{itemize}
+      \bigskip
+    \item \textbf{Possible Solution:} Compute x-ray production cross sections
+      for which equivalent adjoint cross sections can be computed
   \end{itemize}
 
 \end{frame}
@@ -1301,92 +1414,103 @@
 %%----------------------------------------------------------------------------%%
 \subsection{The adjoint photon weight factor}
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The adjoint photon weight factor}
+\begin{frame}{The Adjoint Photon Weight Factor}
 
-  \begin{textblock}{120}(4,15)
-    \begin{itemize}
-      \item The adjoint weight factor is an important feature of the adjoint 
-        process.
-      \item Because it is bound to the interval (0,$\infty$) instead of (0,1) it
-        can negatively effect the statistics of the random walks.
-      \item Many test problems will need to be run to characterize the effect
-        for adjoint photons.
-    \end{itemize}
-  \end{textblock}
+  \begin{itemize}
+    \item Important feature of the adjoint process.
+      \medskip
+    \item Bound to the interval (0,$\infty$) instead of (0,1)
+      \medskip
+    \item Can negatively effect the statistics of the random walks.
+      \medskip
+    \item Thorough characterization of its effects must be completed.
+      \medskip
+  \end{itemize}
+  
+  \begin{figure}[h!]
+    \begin{center}
+      \includegraphics[width=3.0in]{../document/chapters/photon_interactions/adjoint_weight_factor.pdf}
+    \end{center}
+  \end{figure}
 
-  \begin{textblock}{20}(36,42)
-    \includegraphics[width=3.0in]{../document/chapters/photon_interactions/adjoint_weight_factor.pdf}
-  \end{textblock}
   
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\section{Forward-Adjoint Continuous Energy Monte Carlo (FACEMC)}
+\section{Forward-Adjoint Continuous Energy Monte Carlo (FACEMC) Code}
 %%----------------------------------------------------------------------------%%
 \subsection{Code overview}
 %%----------------------------------------------------------------------------%%
-\begin{frame}{FACEMC code requirements}
+\begin{frame}{FACEMC Code Requirements}
+
 
   \begin{itemize}
-    \item The FACEMC code will be able to model photons and adjoint photons
-      in the energy range of 1 keV to 20 MeV.
-    \item The FACEMC code will also be able to model neutrons and adjoint
-      neutrons in the energy range of $10^{-5}$ eV to 20 MeV.
-    \item The direct accelerated geometry (DAG) package will primarily used
-      for spatial domain modeling.
-    \item The main variance reduction techniques that will be available are
-      Russian roulette, splitting, and weight windows.
-    \item The code will be able to run in parallel using domain replication
-      only.
+    \item \textbf{Energy Range:}
+      \begin{itemize}
+        \item 1 keV - 20 MeV for photons and adjoint photons
+        \item $10^{-5}$ eV - 20 MeV for neutrons and adjoint neutrons
+          \bigskip
+      \end{itemize}
+    \item \textbf{Spatial Domain Modeling:} CAD based (primarily)
+      \begin{itemize}
+        \item Accomplished with the direct accelerated geometry (DAG) package
+      \end{itemize}
+      \bigskip
+    \item \textbf{Variance Reduction:} implicit capture, Russian roulette,
+      splitting, forced collisions, weight windows
+      \begin{itemize}
+        \item Weight windows must be user generated
+      \end{itemize}
+      \bigskip
+    \item \textbf{Parallelism:} domain replication
   \end{itemize}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Major Components of FACEMC}
+%% \begin{frame}{Major Components of FACEMC}
   
-  \begin{textblock}{20}(20,15)
-    \includegraphics[width=3.5in]{../document/chapters/code_overview/Problem_Simulator.pdf}
-  \end{textblock}
+%%   \begin{textblock}{20}(20,15)
+%%     \includegraphics[width=3.5in]{../document/chapters/code_overview/Problem_Simulator.pdf}
+%%   \end{textblock}
 
-  \begin{textblock}{120}(4,85)
-    \begin{itemize}
-      \item FACEMC version 1.0 is currently complete.
-    \end{itemize}
-  \end{textblock}
+%%   \begin{textblock}{120}(4,85)
+%%     \begin{itemize}
+%%       \item FACEMC version 1.0 is currently complete.
+%%     \end{itemize}
+%%   \end{textblock}
 
-\end{frame}
+%% \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\subsection{Validation Plan}
+\subsection{Validation plan}
 %%----------------------------------------------------------------------------%%
-\begin{frame}{FACEMC validation plan}
+\begin{frame}{FACEMC Validation Plan}
 
-  \begin{itemize}
-    \item The following validation plan has been created to ensure that FACEMC
-      functions properly:
       \begin{enumerate}
-        \item Calculation of benchmark test problems for photons and neutrons
-        \item Code-to-code comparisons of integral quantities and photon or 
-          neutron spectra against other Monte Carlo codes that have been 
-          previously validated
-        \item Comparison of integral quantities and spectra from forward and 
-          reverse simulations
+        \item \textbf{Benchmarking:} simulation of benchmark test problems for 
+          photons and neutrons
+          \bigskip
+          \bigskip
+        \item \textbf{Code-to-Code Comparisons:} calculate integral quantities 
+          and spectra and compare against other validated Monte Carlo codes 
+          \bigskip
+          \bigskip
+        \item \textbf{Intra-Code Comparisons:} calculate integral quantities 
+          and spectra using FACEMC forward and adjoint simulations
       \end{enumerate}
-    \item Each step will be elaborated upon.
-  \end{itemize}
-
+    
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{FACEMC validation plan step 1}
+\begin{frame}{FACEMC Validation Plan: Step 1}
 
   \begin{textblock}{120}(4,15)
     \begin{itemize}
-      \item The same benchmark problem that was used to validate GEANT4 photon
-        simulations will be used with FACEMC.
-      \item In this problem, photon mass attenuation coefficients and partial
-        interaction coefficients will be calculated and compared to NIST values
+      \item \textbf{GEANT4 Photon Benchmark Problem:} calculate mass 
+        attenuation coefficients and partial interaction coefficients
+        \medskip
+      \item Results will be compared to NIST values
     \end{itemize}
   \end{textblock}
   
@@ -1404,77 +1528,90 @@
   \begin{textblock}{120}(4,80)
     \begin{itemize}
       \item For neutrons, several experiments from the Shielding Integral
-        Benchmark Archive Database (SINBAD) will be modeled.
+        Benchmark Archive Database (SINBAD) will be modeled
     \end{itemize}
   \end{textblock}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{FACEMC validation plan step 2}
+\begin{frame}{FACEMC Validation Plan: Step 2}
   
-  \begin{textblock}{120}(4,15)
-    \begin{itemize}
-      \item A code-to-code comparison problem has been created to test
-        FACEMC agains codes that have already been validated:
-    \end{itemize}
-  \end{textblock}
-
-  \begin{textblock}{20}(43,27)
-    \includegraphics[width=1.7in]{figures/code_comparison_problem.pdf}
-  \end{textblock}
-
-  \begin{textblock}{120}(4,62)
-    \begin{itemize}
-      \item For photons, an isotropic point source with two
-        discrete energies will be modeled.
-      \item For neutrons, an isotropic point source with a
-        fission spectrum will be modeled.
-      \item PENELOPE, MCNP5 and TART2005 will be the codes
-        that are tested against.
-    \end{itemize}
-  \end{textblock}
-
-\end{frame}
-
-%%----------------------------------------------------------------------------%%
-\begin{frame}{FACEMC validation plan step 3}
+  \begin{itemize}
+    \item \textbf{Problem Geometry:}
+  \end{itemize}
+      
+  \begin{figure}[h!]
+    \begin{center}
+      \includegraphics[width=1.7in]{figures/code_comparison_problem.pdf}
+    \end{center}
+  \end{figure}
 
   \begin{itemize}
-    \item The third step of the validation plan will focus
-      on comparisons between forward and adjoin calculations
-      using FACEMC only.
-    \item The problem from step 2 will be used.
-    \item Due to unique symmetry in that problem, the adjoint problem can be 
-      constructed identically to the forward problem.
-    \item A proof of this symmetry is lengthy and will not be shown in this
-      presentation.
+    \item \textbf{Source:}
+      \begin{itemize}
+        \item isotropic point source with several discrete energies (photons)
+        \item isotropic point source with a fission spectrum (neutrons)
+      \end{itemize}
+      \medskip
+    \item \textbf{Quantities:} Flux spectrum and total flux at each spherical 
+      surface
+      \medskip
+    \item \textbf{Comparison Codes:} PENELOPE, MCNP5 and TART2005 
+  \end{itemize}
+  
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{FACEMC Validation Plan: Step 3}
+
+  \begin{itemize}
+    \item \textbf{Problem Geometry:} same as FACEMC validation plan step 2
+      \begin{itemize}
+        \item Due to unique symmetry, the adjoint problem can be constructed 
+          identically to the forward problem (point source)
+      \end{itemize}
+      \bigskip
+      \bigskip
+    \item \textbf{Source:} isotropic point source with several discrete
+      energies (photons and adjoint photons)
+      \bigskip
+      \bigskip
+    \item \textbf{Quantities:} Flux spectrum and total flux at each spherical 
+      surface
+
   \end{itemize}    
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Preliminary validation of FACEMC: AMOS comparison}
+\begin{frame}{Preliminary Validation of FACEMC: AMOS Comparison}
 
-   \begin{textblock}{120}(4,15)
-    \begin{itemize}
-      \item A comparison to the AMOS code was made using a simple model
-        of an irradiation facility.
-      \item A Cs-137 gamma source is located behind the tungsten alloy 
-        collimator.
-      \item The flux spectrum 50 cm from the center of the source on the
-        axis of the source was calculated.
-    \end{itemize}
-  \end{textblock}
+  \begin{itemize}
+    \item \textbf{Problem Geometry:} simple irradiation facility
+      \begin{itemize}
+        \item The source is located behind the tungsten alloy collimator.
+      \end{itemize}
+  \end{itemize}
 
-  \begin{textblock}{20}(43,50)
-    \includegraphics[width=2.3in]{figures/Irradiator_Facility.png}
-  \end{textblock}
+  \begin{figure}[h!]
+    \begin{center}
+      \includegraphics[width=2.3in]{figures/Irradiator_Facility.png}
+    \end{center}
+  \end{figure}
+
+  \begin{itemize}
+    \item \textbf{Source:} isotropically emitting Cs-137 gamma source
+      \medskip
+    \item \textbf{Quantity:} flux spectrum 50 cm from center of source (on axis)
+      \medskip
+    \item \textbf{Comparison Code:} AMOS (TU Dresden research code)
+  \end{itemize}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{AMOS comparison results}
+\begin{frame}{AMOS Comparison Results}
 
   \begin{figure}[h!]
     \begin{center}
@@ -1485,17 +1622,16 @@
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Preliminary validation of FACEMC: forward vs. adjoint}
+\begin{frame}{Preliminary Validation of FACEMC: Forward vs. Adjoint}
 
-   %%\begin{textblock}{120}(4,15)
-    \begin{itemize}
-      \item The problem from validation step 3 was used.
-      \item \textbf{Source energies:} 661.66 keV, 321.0 keV
-      \item \textbf{Material:} water
-      \item \textbf{Number of histories:} $10^7$
-    \end{itemize}
-   %%\end{textblock}
-
+  \begin{itemize}
+    \item \textbf{Problem Geometry:} same as FACEMC validation step 3
+    \item \textbf{Source:} isotropic point source emitting at 661.66 keV 
+      (80\%) and 321.0 keV (20\%)
+    \item \textbf{Material:} water
+    \item \textbf{Number of histories:} $10^7$
+  \end{itemize}
+  
     \begin{table}[ht]
       \centering
       \begin{tabular}{c c c c c c}
@@ -1516,7 +1652,7 @@
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Forward vs. adjoint spectrum results}
+\begin{frame}{Forward vs. Adjoint Spectrum Results}
   
   \begin{figure}[h!]
      \begin{center}
@@ -1529,32 +1665,80 @@
 %%----------------------------------------------------------------------------%%
 \section{Future Work}
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Future work on FACEMC}
+\begin{frame}{Future work on FACEMC: Development}
 
-  \begin{itemize}
-    \item \textbf{Development work:} 
-      \begin{enumerate}
-        \item Solve the low energy x-ray emission problem for adjoint photons.
-        \item Complete background work on neutron and adjoint neutron transport 
-          cross sections and sampling techniques.
-        \item Complete coding of the second version of all major FACEMC 
-          components.
-        \item Complete the computation of adjoint neutron cross sections and 
-          storage in an HDF5 format library.
-        \item Complete the FACEMC validation plan.
-      \end{enumerate}
-  \item \textbf{Challenge Problems:}
+  \begin{enumerate}
+    \item Solve the low energy x-ray emission problem for adjoint photons
+      %% \smallskip
+      %% \begin{itemize}
+      %%   \item Solution proposed
+      %% \end{itemize}
+      \medskip
+    \item Complete background work on neutron and adjoint neutron transport 
+      cross sections and sampling techniques
+      %% \smallskip
+      %% \begin{itemize}
+      %%   \item Adjoint cross section generation generally no more challenging
+      %%     than for photons, more numerically intensive
+      %% \end{itemize}
+      \medskip
+    \item Complete coding of the second version of all major FACEMC 
+      components 
+      %% \smallskip
+      %% \begin{itemize}
+      %%   \item Based on experience from version 1.0, this will take anywhere
+      %%     from 3 to 6 months to complete
+      %% \end{itemize}
+      \medskip
+    \item Complete the computation of adjoint neutron cross sections and 
+      storage in an HDF5 format library
+      \medskip
+    \item Complete the FACEMC validation plan
+      \medskip
+    \item Characterize the effect of the adjoint weight factor on the 
+      variance of the adjoint process
+  \end{enumerate}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Future work on FACEMC: Challenge Problems}
+  
     \begin{enumerate}
       \item Calculate the adjoint data required for brachytherapy treatment 
-        planning optimization using data from a patient.
+        planning optimization using data from a patient
+        \medskip
       \item Calculate the adjoint data required for external beam treatment 
-        planning using a standard phantom.
+        planning using a standard phantom
+        \medskip
       \item Run a full scale shutdown dose calculation for a fusion device using
-        the R2SA method.
-      \item Run a shielding problem using the adjoint neutron transport 
-        capabilities of FACEMC.
+        the R2SA method
+        \medskip
+      \item Run a fusion shielding problem using the adjoint neutron transport 
+        capabilities of FACEMC
+        \medskip
     \end{enumerate}
+  
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Acknowledgments}
+
+  Thanks to...
+  
+  \begin{itemize}
+    \item Douglass Henderson
+    \item Bruce Thomadsen
+    \item TU Dresden
   \end{itemize}
+
+  \medskip \medskip \medskip \medskip \medskip \medskip \medskip
+
+  \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]{Support}
+    This work was performed under appointment to the Nuclear Regulatory
+    Commission Fellowship program at the University of Wisconsin - Madison
+    Department of Engineering Physics.
+  \end{beamerboxesrounded}
 
 \end{frame}
 

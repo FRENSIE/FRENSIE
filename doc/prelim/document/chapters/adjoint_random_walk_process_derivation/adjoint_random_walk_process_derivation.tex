@@ -103,7 +103,7 @@ examined:
   \frac{T(\vec{r} \to \vec{r}^{'},E,\hat{\Omega})}{\Sigma_T(\vec{r}^{'},E)} = 
   \exp{\left[-\int_0^{|\vec{r}^{'} - \vec{r}|} 
     \Sigma_T(\vec{r}^{'} - R^{'} \hat{\Omega},E)dR^{'} \right]}
-  \frac{\delta \left(\Omega - \left[\frac{\vec{r}^{'} - \vec{r}}
+  \frac{\delta \left(\hat{\Omega} - \left[\frac{\vec{r}^{'} - \vec{r}}
       {|\vec{r}^{'} - \vec{r}|}\right]\right)}
        {|\vec{r}^{'} - \vec{r}|^2}.
   \label{eq:unnormalized_adjoint_transport_kernel}
@@ -122,7 +122,7 @@ This equation for $\vec{r}^{'}$ can be substituted back into the equation
   \exp{\left[-\int_0^{|\vec{r}^{'} - \vec{r}|} 
     \Sigma_T \left(\vec{r} + \left[|\vec{r}^{'} - \vec{r}| - R^{'} \right]
     \hat{\Omega},E \right) dR^{'} 
-    \right]} \frac{\delta \left(\Omega - \left[\frac{\vec{r}^{'} - \vec{r}}
+    \right]} \frac{\delta \left(\hat{\Omega} - \left[\frac{\vec{r}^{'} - \vec{r}}
       {|\vec{r}^{'} - \vec{r}|}\right]\right)}
        {|\vec{r}^{'} - \vec{r}|^2}.
 \end{equation*}
@@ -138,12 +138,12 @@ $R^{''} = |\vec{r}^{'} - \vec{r}|$ when $R^{'} = 0$. Equation
   \frac{T(\vec{r} \to \vec{r}^{'},E,\hat{\Omega})}{\Sigma_T(\vec{r}^{'},E)} & =
   \exp{\left[-\int_0^{|\vec{r}^{'} - \vec{r}|} 
     \Sigma_T \left(\vec{r} + R^{''}\hat{\Omega},E \right) dR^{''} 
-    \right]} \frac{\delta \left(\Omega - \left[\frac{\vec{r}^{'} - \vec{r}}
+    \right]} \frac{\delta \left(\hat{\Omega} - \left[\frac{\vec{r}^{'} - \vec{r}}
       {|\vec{r}^{'} - \vec{r}|}\right]\right)}
        {|\vec{r}^{'} - \vec{r}|^2} \nonumber \\
        & = \exp{\left[-\int_0^{|\vec{r} - \vec{r}^{'}|} 
     \Sigma_T \left(\vec{r} + R^{''}\hat{\Omega},E \right) dR^{''} 
-    \right]} \frac{\delta \left(\Omega + \left[\frac{\vec{r} - \vec{r}^{'}}
+    \right]} \frac{\delta \left(\hat{\Omega} + \left[\frac{\vec{r} - \vec{r}^{'}}
       {|\vec{r} - \vec{r}^{'}|}\right]\right)}
        {|\vec{r} - \vec{r}^{'}|^2} \nonumber \\
        & = \tau(\vec{r}^{'},\vec{r},E,-\hat{\Omega}) \\
@@ -352,7 +352,7 @@ With these definitions, the integral adjoint transport equation becomes
     \int \theta^{\dagger}(\vec{r}^{'},E,\hat{\Omega})
     \exp{\left[-\int_0^{|\vec{r}^{'} - \vec{r}|} 
       \Sigma_T(\vec{r}+R^{'}\hat{\Omega},E)dR^{'} \right]}
-    \frac{\delta \left(\Omega - \left[\frac{\vec{r}^{'} - \vec{r}}
+    \frac{\delta \left(\hat{\Omega} - \left[\frac{\vec{r}^{'} - \vec{r}}
         {|\vec{r}^{'} - \vec{r}|}\right]\right)}
     {|\vec{r}^{'} - \vec{r}|^2} dV^{'}.
 \end{equation*}
@@ -363,7 +363,7 @@ will be introduced:
   \tau^{\dagger}(\vec{r}^{'},\vec{r},E,\hat{\Omega}) = 
   \exp{\left[-\int_0^{|\vec{r}^{'} - \vec{r}|} 
       \Sigma_T(\vec{r}+R^{'}\hat{\Omega},E)dR^{'} \right]}
-    \frac{\delta \left(\Omega - \left[\frac{\vec{r}^{'} - \vec{r}}
+    \frac{\delta \left(\hat{\Omega} - \left[\frac{\vec{r}^{'} - \vec{r}}
         {|\vec{r}^{'} - \vec{r}|}\right]\right)}
     {|\vec{r}^{'} - \vec{r}|^2}.
 \end{equation}
@@ -434,7 +434,7 @@ The second kernel will be called the adjoint transport kernel and is defined as
   \nonumber \\
   & = \Sigma_T(\vec{r},E) \exp{\left[-\int_0^{|\vec{r}^{'} - \vec{r}|} 
       \Sigma_T(\vec{r}+R^{'}\hat{\Omega},E)dR^{'} \right]}
-    \frac{\delta \left(\Omega - \left[\frac{\vec{r}^{'} - \vec{r}}
+    \frac{\delta \left(\hat{\Omega} - \left[\frac{\vec{r}^{'} - \vec{r}}
         {|\vec{r}^{'} - \vec{r}|}\right]\right)}
     {|\vec{r}^{'} - \vec{r}|^2}.
 \end{align}
