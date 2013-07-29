@@ -144,9 +144,8 @@
     \item Motivation 1: The source and detector phase space
       \smallskip
       \begin{itemize}
-        \item Adjoint process generally more efficient than forward 
-          process when phase space of the source is larger than phase 
-          space of detector
+        \item Adjoint process generally more efficient than forward process 
+          when phase space of source is larger than phase space of detector
       \end{itemize}
       \bigskip
       \bigskip
@@ -163,69 +162,77 @@
       \end{itemize}
   \end{enumerate}
 
+  \bigskip
+
+  \begin{itemize}
+    \item Three classes of problems will be discussed that can benefit from
+      the adjoint process
+  \end{itemize}
+
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Shutdown Dose Calculations Using the R2S Method}
+\begin{frame}{Shutdown Dose Calculations Using the R2S(A) Method}
 
   \begin{itemize}
-    \item Photon dose in a particular region of an experiment, fusion
-      device or fission device resulting from neutron activation of material
-      is desired
+    \item Photon dose in a region of a nuclear system resulting from neutron 
+      activation of material is desired
       \medskip
-    \item This information is useful for planning maintenance on the experiment
-      or device
+    \item This information is useful for planning maintenance on the system
       \medskip
     \item These problems are often solved using the rigorous 2-step method (R2S)
+      \medskip
+    \item The adjoint process can be useful for small regions of interest
   \end{itemize}
 
   \medskip
   \medskip
 
-  \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]{The R2S method}
+  \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]
+    {The R2S(A) method}
     \begin{enumerate}
-      \item Neutron flux throughout the experiment or device is calculated
+      \item Neutron flux throughout the system is calculated
         \smallskip
       \item Activation code calculates the material activation and photon
         sources from neutron flux data
         \smallskip
       \item Photon dose calculated in areas of interest using a forward
-        process
+        process or an adjoint process (A)
     \end{enumerate}
   \end{beamerboxesrounded}
 
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{Shutdown Dose Calculations Using the R2SA Method}
+%% \begin{frame}{Shutdown Dose Calculations Using the R2SA Method}
   
-  \begin{itemize}
-    \item Amount of activated material is often much larger than the region 
-      where the dose distribution is desired 
-      \medskip
-    \item These problems could potentially benefit from the adjoint process
-      for photons
-      \medskip
-    \item When the adjoint process is used, the solution method is called the
-      rigorous 2-step adjoint method (R2SA)
-  \end{itemize}
+%%   \begin{itemize}
+%%     \item Amount of activated material is often much larger than the region 
+%%       where the dose distribution is desired 
+%%       \medskip
+%%     \item These problems could potentially benefit from the adjoint process
+%%       for photons
+%%       \medskip
+%%     \item When the adjoint process is used, the solution method is called the
+%%       rigorous 2-step adjoint method (R2SA)
+%%   \end{itemize}
 
-  \medskip
-  \medskip
+%%   \medskip
+%%   \medskip
 
-  \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]{The R2SA method}
-    \begin{enumerate}
-      \item Neutron flux throughout the experiment or device is calculated
-        \smallskip
-      \item Activation code calculates the material activation and photon
-        sources from the neutron flux data
-        \smallskip
-      \item Photon dose is calculated in areas of interest using an adjoint
-        process 
-    \end{enumerate}
-  \end{beamerboxesrounded}
+%%   \begin{beamerboxesrounded}[upper=boxheadcolor,lower=boxbodycolor,shadow=true]{The R2SA method}
+%%     \begin{enumerate}
+%%       \item Neutron flux throughout the experiment or device is calculated
+%%         \smallskip
+%%       \item Activation code calculates the material activation and photon
+%%         sources from the neutron flux data
+%%         \smallskip
+%%       \item Photon dose is calculated in areas of interest using an adjoint
+%%         process 
+%%     \end{enumerate}
+%%   \end{beamerboxesrounded}
 
-\end{frame}
+%% \end{frame}
 
 %%----------------------------------------------------------------------------%%
 \begin{frame}{Permanent Implant Brachytherapy}
@@ -263,7 +270,7 @@
       \item Adjoint flux can allow for spectral performance of a detector to be 
         predicted for an arbitrary source distribution
         \medskip
-      \item Detector design can then be be optimized before it is constructed
+      \item Detector design can then be optimized before it is constructed
         \smallskip
         \begin{itemize}
           \item Important for detectors with rare materials (e.g. $He^3$ 
@@ -272,12 +279,16 @@
     \end{itemize}
   \end{textblock}
 
-  \begin{textblock}{20}(2,50)
+  \begin{textblock}{20}(2,45)
     \includegraphics[width=2.5in]{figures/He3_detector.png}
   \end{textblock}
 
   \begin{textblock}{20}(70,49)
     \includegraphics[width=1.8in]{figures/He3_detector_adjoint_data_modified.pdf}
+  \end{textblock}
+
+  \begin{textblock}{50}(4,90)
+    (Sjoden, 2002)
   \end{textblock}
 
 \end{frame}
@@ -465,11 +476,11 @@
 \begin{frame}{The Transport Equation}
 
 \begin{align}
-  \hat{\Omega} \cdot \vec{\bigtriangledown} \varphi(\vec{r},E,\hat{\Omega},t)
-    &\text{ }+\text{ } \Sigma_T(\vec{r},E) \varphi(\vec{r},E,\hat{\Omega},t) = 
-    S(\vec{r},E,\hat{\Omega},t) \text{ }+\text{ } \nonumber \\
+  \hat{\Omega} \cdot \vec{\bigtriangledown} \varphi(\vec{r},E,\hat{\Omega})
+    &\text{ }+\text{ } \Sigma_T(\vec{r},E) \varphi(\vec{r},E,\hat{\Omega}) = 
+    S(\vec{r},E,\hat{\Omega}) \text{ }+\text{ } \nonumber \\
     & \int\int \Sigma_T(\vec{r},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega})
-    \varphi(\vec{r},E^{'},\hat{\Omega}^{'},t) dE^{'}d\hat{\Omega}^{'} \nonumber
+    \varphi(\vec{r},E^{'},\hat{\Omega}^{'}) dE^{'}d\hat{\Omega}^{'} \nonumber
 \end{align}
 
   \begin{itemize}
@@ -626,7 +637,7 @@
       \medskip
     \item Quantity $T(\vec{r}^{'} \to \vec{r},E,\hat{\Omega})dV$ is  
       probability that a particle at $\vec{r}^{'}$ with energy $E$ and 
-      direction $\hat{\Omega}$ will have next collision in volume element 
+      direction $\hat{\Omega}$ will have its next collision in volume element 
       $dV$ at $\vec{r}$
       \medskip
     \item The factor $\Sigma_T(\vec{r},E)$ prevents new positions $\vec{r}$ from
@@ -1186,15 +1197,15 @@
       probability to construct this cross section:
   \end{itemize}
   \begin{align}
-    p_{i.s}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) & =
+    p_{i.s.}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) & =
     \frac{\sigma_{i.s.}(E)c_{i.s.}(E)
       p_{i.s.}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})}
          {\sigma_{i.s.}^{\dagger}(E^{'})} \nonumber \\
          \sigma_{i.s.}^{\dagger}(E^{'})
-         p_{i.s}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) & = 
+         p_{i.s.}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) & = 
          \sigma_{i.s.}(E)p_{i.s.}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})
          \nonumber \\ \medskip \nonumber \\
-         \sigma_{i.s}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) & = 
+         \sigma_{i.s.}^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) & = 
          \sigma_{i.s.}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'}) \nonumber
   \end{align}
 
@@ -1215,11 +1226,12 @@
 \begin{frame}{The Adjoint Incoherent Scattering Cross Section}
 
   \begin{itemize}
-    \item The double differential incoherent scattering cross section is
+    \item The double differential incoherent scattering cross section is the
+      following, where $S(y,Z)$ is the scattering function:
   \end{itemize}
   \begin{align}
     \sigma_{i.s.}(E^{'} \to E, \mu) & = 
-    \frac{d\sigma_{i.s.}(E^{'},E,\mu,Z)}{dEd\mu} \nonumber \\
+    \frac{d^2\sigma_{i.s.}(E^{'},E,\mu,Z)}{dEd\mu} \nonumber \\
     & =  \frac{\pi r_e^2}{m_ec^2 \alpha^{'2}}
     \left[\frac{\alpha}{\alpha^{'}} + \frac{\alpha^{'}}{\alpha} - 
       1 + \mu^2\right] S\left(y(\alpha^{'},\mu),Z\right) \nonumber \\
@@ -1260,7 +1272,7 @@
   \end{align}
         
   \begin{itemize}
-    \item The integrated cross section will be unbound unless a max problem 
+    \item The integrated cross section will be infinite unless a max problem 
       energy is set
   \end{itemize}
   
@@ -1299,8 +1311,8 @@
   \begin{align}
     \sigma_{c.s.}^{\dagger}(E^{'}, \hat{\Omega}^{'} \cdot \hat{\Omega}) & = 
     \sigma_{c.s.}(E^{'},\hat{\Omega} \cdot \hat{\Omega}^{'}) \nonumber \\
-    \frac{\sigma_{c.s.}^{\dagger}(E^{'}, \mu)}{d\mu} & = 
-    \frac{\sigma_{c.s.}(E^{'}, \mu)}{d\mu} \nonumber
+    \frac{d\sigma_{c.s.}^{\dagger}(E^{'}, \mu)}{d\mu} & = 
+    \frac{d\sigma_{c.s.}(E^{'}, \mu)}{d\mu} \nonumber
   \end{align}
 
   \medskip
@@ -1308,11 +1320,15 @@
   \begin{itemize}
     \item Both the forward and adjoint differential coherent scattering cross
       section are therefore the same:
-      \begin{align}
-        \frac{d\sigma_{c.s.}^{\dagger}(E^{'},\mu,Z)}{d\mu} & = 
-        \frac{d\sigma_{c.s.}(E^{'},\mu,Z)}{d\mu} \nonumber \\
-        & = \pi r_e^2 (1 + \mu^2)F^2(y,Z) \nonumber
-      \end{align}
+  \end{itemize}
+  \begin{align}
+    \frac{d\sigma_{c.s.}^{\dagger}(E^{'},\mu,Z)}{d\mu} & = 
+    \frac{d\sigma_{c.s.}(E^{'},\mu,Z)}{d\mu} \nonumber \\
+    & = \pi r_e^2 (1 + \mu^2)F^2(y,Z) \nonumber
+  \end{align}
+
+  \begin{itemize}
+    \item F(y,Z) is the atomic form factor
   \end{itemize}
 
 \end{frame}
@@ -1573,8 +1589,7 @@
       \end{itemize}
       \bigskip
       \bigskip
-    \item \textbf{Source:} isotropic point source with several discrete
-      energies (photons and adjoint photons)
+    \item \textbf{Source:} same as FACEMC validation plan step 2
       \bigskip
       \bigskip
     \item \textbf{Quantities:} Flux spectrum and total flux at each spherical 
@@ -1707,16 +1722,15 @@
     \begin{enumerate}
       \item Calculate the adjoint data required for brachytherapy treatment 
         planning optimization using data from a patient
-        \medskip
+        \bigskip
       \item Calculate the adjoint data required for external beam treatment 
         planning using a standard phantom
-        \medskip
+        \bigskip
       \item Run a full scale shutdown dose calculation for a fusion device using
         the R2SA method
-        \medskip
+        \bigskip
       \item Run a fusion shielding problem using the adjoint neutron transport 
         capabilities of FACEMC
-        \medskip
     \end{enumerate}
   
 \end{frame}
@@ -1730,6 +1744,7 @@
     \item Douglass Henderson
     \item Bruce Thomadsen
     \item TU Dresden
+    \item The NRC
   \end{itemize}
 
   \medskip \medskip \medskip \medskip \medskip \medskip \medskip
