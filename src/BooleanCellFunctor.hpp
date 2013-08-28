@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 // \file   BooleanCellFunctor.hpp
 // \author Alex Robinson
-// \brief  Functor that takes a boolean array and returns true/false
-//---------------------------------------------------------------------------//
+// \brief  BooleanCellFunctor class declaration
+//----------------------------------------------------------------------------//
 
 #ifndef BOOLEAN_CELL_FUNCTOR_HPP
 #define BOOLEAN_CELL_FUNCTOR_HPP
@@ -19,14 +19,29 @@
 #include "SetOperationFunctor.hpp"
 
 namespace FACEMC{
-  
+
+/*! \brief Functor that takes an array of bools and returns true of false.
+ *
+ * This object is designed to represent the logical representation of a 
+ * geometric cell defined by the logical combination of second order surface. 
+ * Its constructor takes a string which contains the logical combination of 
+ * second order surfaces. Only the logical operators that define the cell are
+ * are recorded during object construction. The surface numbers and senses
+ * are ignored. Upon creation, this object can be used as a function which 
+ * takes an array of bools and returns either true or false. The array of bools
+ * represent whether a point is on the side of each surface corresponding
+ * to the sense that defines the cell. This object allows the evaluation of
+ * very complicated cell definitions that contain unions (if only intersections
+ * were allowed, this object might not be necessary). A return value of true
+ * indicates that the point is indeed in or on the surface (whether its in
+ * or on depends on the Boolean array that is passed as an argument).
+ */
 class BooleanCellFunctor
 {
   
 public:
   
   //! Constructor
-  // \brief The string is not passed by reference so that a copy will be made
   BooleanCellFunctor( std::string cell_definition );
 
   //! Destructor
@@ -34,7 +49,6 @@ public:
   { /* ... */ }
   
   //! Function evaluation operator
-  // \brief Bool can be either a bool or a const bool
   template<typename Bool, template<typename> class Array>
   bool operator()( const Array<Bool> &arguments ) const;
 
@@ -54,8 +68,6 @@ protected:
   unsigned getNumVariables( const std::string &cell_definition );
 
   //! Determine the variable range in the string
-  // \brief The string is not passed by reference so that a copy will be made
-  //        which will be manipulated.
   Pair<unsigned,unsigned> getVariableRange( std::string sub_string ) const;
 
   //! Construct the child functors
@@ -81,14 +93,14 @@ private:
   // Child BooleanCellFunctors for evaluation of terms in parentheses
   Teuchos::Array<BooleanCellFunctor> d_child_functors;
   
-  // Indices of boolean variables found in parentheses
+  // Indices of Boolean variables found in parentheses
   Teuchos::Array<Pair<unsigned,unsigned> > d_child_functor_variables;
 
   // SetOperationFunctors for evaluating the cell function
   Teuchos::Array<Teuchos::RCP<SetOperationFunctor> > 
   d_function_definition;
   
-  // Number of boolean variables to expect in boolean array
+  // Number of Boolean variables to expect in Boolean array
   unsigned d_number_of_variables;
 
 };

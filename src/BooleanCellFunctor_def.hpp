@@ -17,7 +17,25 @@
 
 namespace FACEMC{
 
-//! Function evaluation operator
+// Function evaluation operator
+/*! \details This operator allows the object to behave like a function (the
+ * standard name for this type of object is functor). The array of bools
+ * represents whether a point is on the side of each surface corresponding to
+ * the sense that defines the cell. A return value of true indicates that the
+ * point is indeed in or on the surface (whether its in or on depends on the
+ * Boolean array that is passed as an argument). 
+ * \tparam Bool either a bool or a const bool
+ * \tparam Array an array class with a single template parameter
+ * \param[in] arguments An array of bools that represent whether a point is on 
+ * the side of each surface corresponding to the sense that defines the cell.
+ * \return A bool is returned which indicates whether the Boolean array
+ * satisfies the cell definition or not.
+ * \pre The size of the Boolean input array must be the same as the number of
+ * variables present in the cell definition string used to create the functor.
+ * \note Developers: It might be useful to change the DBC precondition to a 
+ * FACEMC_ASSERT_ALWAYS since the failure of this precondition could cause a
+ * program crash during program execution.
+ */
 template<typename Bool, template<typename> class Array>
 bool BooleanCellFunctor::operator()( const Array<Bool> &arguments ) const
 {
@@ -46,8 +64,7 @@ bool BooleanCellFunctor::operator()( const Array<Bool> &arguments ) const
   if( d_child_functors.size() > 0 )
   {
     if( child_variables->first == 0 )
-    {
-	
+    {	
       success = (*child)( arguments( child_variables->first,
 				     child_variables->second -
 				     child_variables->first + 1 ) );

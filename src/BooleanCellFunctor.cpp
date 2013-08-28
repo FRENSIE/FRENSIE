@@ -22,7 +22,22 @@
 
 namespace FACEMC{
 
-//! Constructor
+// Constructor
+/*! \details The cell definition string contains the logical combination
+ * of second order surfaces which define the cell. Only the logical operators
+ * that define the cell will be recorded during object construction. All
+ * surface numbers and senses will be ignored. During construction, all white
+ * space is first removed from the string. Next, all surface numbers in the
+ * string are renumbered according to the order in which they appear (even
+ * duplicates are given new numbers). For every parentheses present in the
+ * cell definition string, a new child BooleanCellFunctor will be created.
+ * The parentheses will then be reduced to a single new variable. Finally,
+ * the logical operators in the cell definition are recorded in an array
+ * of SetOperationFunctors.
+ * \param[in] cell_definition a cell definition string which contains the
+ * logical combination of second order surfaces which define the cell. The
+ * string is not passed by reference so that a copy is made.
+ */
 BooleanCellFunctor::BooleanCellFunctor( std::string cell_definition )
 {
   removeWhiteSpace( cell_definition );
@@ -33,7 +48,19 @@ BooleanCellFunctor::BooleanCellFunctor( std::string cell_definition )
   assignSetOperationFunctors( cell_definition );
 }
 
-//! Remove white space from the cell definition string
+// Remove white space from the cell definition string
+/*! \details This function removes white space from the cell definition string.
+ * It is only called by the constructor. It is a protected member and not a
+ * private member to allow for "white-box" unit testing.
+ * \param[in,out] cell_definition a cell definition string which contains the
+ * logical combination of second order surfaces which define the cell. The 
+ * string is passed by reference so that is can be modified.  
+ * \pre The cell definition string must not contain any characters except the
+ * ones in the following string: "0123456789-nu() ".
+ * \note Developers: It might be useful to change the DBC precondition to a
+ * FACEMC_ASSERT_ALWAYS since the failure of this precondition could cause a
+ * program crash during program execution.
+ */
 void BooleanCellFunctor::removeWhiteSpace( std::string &cell_definition ) const
 {
   // The cell definition must be valid
@@ -50,7 +77,19 @@ void BooleanCellFunctor::removeWhiteSpace( std::string &cell_definition ) const
   }
 }
 
-//! Rename the cell definition variables
+// Rename the cell definition variables
+/*! \details This function renames all of the surface IDs (variables) in the 
+ * cell definition string based on the order in which they appear. This allows
+ * variables to be referenced based on their index in an array. This function
+ * is only called by the constructor. It is a protected member and not a 
+ * private member to allow for "white-box" unit testing.
+ * \param[in,out] cell_definition a cell definition string which contains the
+ * logical combination of second order surfaces which define the cell. The 
+ * string is passed by reference so that it can be modified.
+ * \pre The cell definition string must not contain any white space characters
+ * (the BooleanCellFunctor::removeWhiteSpace member function must be called 
+ * before this function).
+ */
 void BooleanCellFunctor::renameVariables( std::string &cell_definition ) const
 {
   // The cell definition must be free of white space
@@ -91,7 +130,19 @@ void BooleanCellFunctor::renameVariables( std::string &cell_definition ) const
   }
 }
 
-//! Determine the number of variables present in the cell definition
+// Determine the number of variables present in the cell definition
+/*! \details This function determines the number of variables (surface IDs
+ * include duplicates) present in the cell definition string. It is only called
+ * by the constructor. It is a protected member and not a private member to
+ * allow for "white-box" unit testing.
+ * \param[in] cell_definition a cell definition string which contains the
+ * logical combination of second order surfaces which define the cell. The
+ * string is passed by reference to avoid copy overhead though it is not 
+ * modified.
+ * \pre The cell definition string must not contain any white space characters
+ * (the BooleanCellFunctor::removeWhiteSpace member function must be called 
+ * before this function).
+ */
 unsigned 
 BooleanCellFunctor::getNumVariables( const std::string &cell_definition )
 {
@@ -126,11 +177,26 @@ BooleanCellFunctor::getNumVariables( const std::string &cell_definition )
   return number_of_variables;
 }
 
-//! Determine the variable range in the string
+// Determine the variable range in the string
+/*! \details This function determines the range of variable indices that are 
+ * present in a sub-string. It is a protected member and not a private member
+ * to allow for "white-box" unit testing.
+ * \param[in] sub_string A sub-string from the original cell_definition (usually
+ * the part of the string inside of parentheses). The sub_string will be
+ * modified in a way that will only be useful inside of this function, which is
+ * why it is not passed by reference.
+ * \return A FACEMC::Pair<unsigned,unsigned> object is returned. The first
+ * member of this tuple will contain the lowest variable index of the
+ * sub_string. The second member of this tuple will contain the largest
+ * variable index of the sub_string.
+ * \pre The sub_string must not contain any white space characters (the
+ * BooleanCellFunctor::removeWhiteSpace member function must be called before
+ * this function).
+ */
 Pair<unsigned,unsigned> 
 BooleanCellFunctor::getVariableRange( std::string sub_string ) const
 {
-  // The substring must be free of white space
+  // The sub-string must be free of white space
   testPrecondition( sub_string.find( " " ) > sub_string.size() );
   
   std::string operation_characters( "nu()" );
@@ -160,10 +226,22 @@ BooleanCellFunctor::getVariableRange( std::string sub_string ) const
   return range;  
 }
   
-//! Construct the child functors
+// Construct the child functors
+/*! \details This function constructs child BooleanCellFunctors from the
+ * cell_definition. Every time a parentheses is encountered a new child will
+ * be created. It is a protected member and not a private member to allow for 
+ * "white-box" unit testing.
+ * \param[in] cell_definition A cell definition string which contains the 
+ * logical combination of second order surfaces which define the cell. The
+ * string is passed by reference to avoid copy overhead though it is not
+ * modified. 
+ * \pre The cell definition string must not contain any white space
+ * characters (the BooleanCellFunctor::removeWhiteSpace member function must
+ * be called before this function).
+ */
 void BooleanCellFunctor::constructChildFunctors( const std::string &cell_definition )
 {
-  // The substring must be free of white space
+  // The sub-string must be free of white space
   testPrecondition( cell_definition.find( " " ) > cell_definition.size() );
   
   unsigned sub_string_start, next_sub_string_start, sub_string_end;
@@ -184,7 +262,7 @@ void BooleanCellFunctor::constructChildFunctors( const std::string &cell_definit
       sub_string_end = cell_definition.find( ")", sub_string_end+1 );
     }
 
-    // Substring will not contain the outer parentheses
+    // Sub-string will not contain the outer parentheses
     unsigned sub_string_size = sub_string_end - sub_string_start - 1;
     std::string sub_string = cell_definition.substr( sub_string_start+1,
 						     sub_string_size );
@@ -194,7 +272,7 @@ void BooleanCellFunctor::constructChildFunctors( const std::string &cell_definit
       getVariableRange( sub_string );
     child_functor_variables.push_back( sub_string_variable_range );
 
-    // Create a new child functor from the substring
+    // Create a new child functor from the sub-string
     BooleanCellFunctor child_functor( sub_string );
     child_functors.push_back( child_functor );
 
@@ -208,10 +286,20 @@ void BooleanCellFunctor::constructChildFunctors( const std::string &cell_definit
   d_child_functor_variables = child_functor_variables;
 }
 
-//! Reduce the cell definition so that it contains no parentheses
+// Reduce the cell definition so that it contains no parentheses
+/*! \details This function reduces the cell definition string to one in which
+ * there are no parentheses. All of the variables in parentheses are combined
+ * into a single variable. This member function is protected and not private
+ * to allow for "white-box" unit testing.
+ * /param[in,out] cell_definition A cell definition string which contains the
+ * logical combination of second order surfaces which define the cell.
+ * /pre The cell definition string must not contain any white space characters
+ * (the BooleanCellFunctor::removeWhiteSpace member function must be called
+ * before this function).
+ */
 void BooleanCellFunctor::reduceDefinition( std::string &cell_definition ) const
 {
-  // The substring must be free of white space
+  // The sub-string must be free of white space
   testPrecondition( cell_definition.find( " " ) > cell_definition.size() );
   
   unsigned sub_string_start, next_sub_string_start, sub_string_end;
@@ -231,7 +319,7 @@ void BooleanCellFunctor::reduceDefinition( std::string &cell_definition ) const
       sub_string_end = cell_definition.find( ")", sub_string_end+1 );
     }
     
-    // Remove the substring and add a dummy variable
+    // Remove the sub-string and add a dummy variable
     unsigned sub_string_size = sub_string_end - sub_string_start + 1;
     
     cell_definition.erase( sub_string_start, sub_string_size );
@@ -241,7 +329,7 @@ void BooleanCellFunctor::reduceDefinition( std::string &cell_definition ) const
     
     cell_definition.insert( sub_string_start, dummy_variable.str() );
 
-    // Find the next substring if one exists
+    // Find the next sub-string if one exists
     sub_string_start = cell_definition.find( "(", sub_string_start );
     next_sub_string_start = cell_definition.find( "(", sub_string_start+1 );
     sub_string_end = cell_definition.find( ")", sub_string_start );
@@ -250,7 +338,29 @@ void BooleanCellFunctor::reduceDefinition( std::string &cell_definition ) const
   }
 }    
 
-//! Assign the set operation functors based on the cell definition
+// Assign the set operation functors based on the cell definition
+/*! \details This function creates an array of FACEMC::SetOperatorFunctors from
+ * the cell definition string. It is a protected member and not a private
+ * member to allow for "white-box" unit testing.
+ * \param[in] cell_definition A cell definition string which contains the 
+ * logical combination of second order surfaces which define the cell. The
+ * string is passed by reference to avoid copy overhead.
+ * \pre 
+ * <ul>
+ *  <li> The cell definition string must not contain any white space characters
+ *       (the BooleanCellFunctor::removeWhiteSpace member function must be 
+ *       called before this function).
+ *  <li> The cell definition string cannot start with an operation character.
+ *  <li> The cell definition string cannot end with an operation character.
+ *  <li> The cell definition string must contain at least one operation 
+ *       character.
+ *  <li> The cell definition string must be a reduced definition (there must
+ *       not be any parentheses present in the string).
+ * </ul>
+ * \note Developers: It might be useful to create a new function that test the
+ * cell definition before any of the other member functions are called in the
+ * constructor. This function will always do the tests unlike the DBC tests.
+ */
 void BooleanCellFunctor::assignSetOperationFunctors( const std::string &cell_definition )
 {
   // The cell definition must be free of white space
@@ -291,19 +401,19 @@ void BooleanCellFunctor::assignSetOperationFunctors( const std::string &cell_def
   d_function_definition = function_definition;
 }
       
-//! Get the number of child functors
+// Get the number of child functors
 unsigned BooleanCellFunctor::getNumChildFunctors() const
 {
   return d_child_functors.size();
 }
 
-//! Get the number of SetOperationFunctors
+// Get the number of SetOperationFunctors
 unsigned BooleanCellFunctor::getNumSetOperationFunctors() const
 {
   return d_function_definition.size();
 }
 
-//! Get the variable ranges for child functors
+// Get the variable ranges for child functors
 Teuchos::Array<Pair<unsigned,unsigned> > 
 BooleanCellFunctor::getChildFunctorVariableRanges() const
 {

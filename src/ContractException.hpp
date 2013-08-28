@@ -27,6 +27,8 @@ namespace FACEMC
 /*!
  * \brief Exception class to be thrown when function contract is not met
  * met.
+ *
+ * The ContractExpection class is a key part of \ref DBC. 
  */
 class ContractException : public std::logic_error
 {
@@ -45,7 +47,7 @@ public:
 // Design-by-Contract macros.
 //---------------------------------------------------------------------------//
 /*!
-  \page FACEMC Design-by-Contract
+  \page DBC Design-by-Contract
 
   Design-by-Contract (DBC) functionality is provided to verify function
   preconditions, postconditions, and invariants. These checks are separated
@@ -58,7 +60,7 @@ public:
   By default, DBC is deactivated. Although they will require additional
   computational overhead, these checks provide a mechanism for veryifing
   library input arguments. Note that the bounds-checking functionality used
-  within the Chimera is only provided by a debug build.
+  within FACEMC is only provided by a debug build.
  
   In addition, remember is provided to store values used only for DBC
   checks and no other place in executed code.
