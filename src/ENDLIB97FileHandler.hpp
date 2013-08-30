@@ -19,6 +19,16 @@
 
 namespace FACEMC{
 
+/*! \brief A class which defines the interface for reading from ENDLIB-97 files 
+ * (i.e. the EPDL, the EADL and the EEDL). 
+ *
+ * This class defines and implements the interface that is used to read from
+ * ENDLIB-97 files. The ENDLIB-97 files that can be read with this class are
+ * the Evaluated Photon Data Library (EPDL), the Evaluated Atomic Data Library
+ * (EADL) and the Evaluated Electron Data Library (EEDL). This class only
+ * reads the data tables from the files and loads them into arrays. For
+ * data processing functionality, refer to the FACEMC::DataProcessor. 
+ */
 class ENDLIB97FileHandler
 {
 
@@ -47,19 +57,12 @@ public:
   bool endOfFile() const;
 
   //! Read the first table header
-  // \brief Read the first ENDLIB table header and extract info
-  // \param atomic_number Atomic number associated with the table
-  // \param outgoing_particle_designator Outgoing particle from the reaction
-  // \param interpolation_flag Type of interpolation required for the table
   void readFirstTableHeader( unsigned int &atomic_number,
 			     unsigned int &outgoing_particle_designator,
 			     double &atomic_weight,
 			     unsigned int &interpolation_flag );
 
   //! Read the second table header
-  // \brief Read the second ENDLIB table header and extract info
-  // \param reaction_type Reaction type identifier (see EPDL doc files)
-  // \param electron_shell Electron shell identifier for table
   void readSecondTableHeader( unsigned int &reaction_type,
 			      unsigned int &electron_shell );
   
@@ -67,8 +70,6 @@ public:
   void skipTwoColumnTable();
 
   //! Read two column table in ENDLIB file 
-  // \brief T is assumed to be a FACEMC::Pair, FACEMC::Trip, or FACEMC::Quad
-  // struct
   template<typename T>
   void readTwoColumnTable( Teuchos::Array<T> &data );
 
@@ -76,7 +77,6 @@ public:
   void skipThreeColumnTable();
 
   //! Read three column table in ENDLIB file
-  // \brief T is assumed to be a FACEMC::Trip or FACEMC::Quad struct
   template<typename T>
   void readThreeColumnTable( Teuchos::Array<T> &data );
 
@@ -84,18 +84,12 @@ public:
   void skipFourColumnTable();
   
   //! Read four column table in ENDLIB file
-  // \brief T is assumed to be a FACEMC::Quad struct
   template<typename T>
   void readFourColumnTable( Teuchos::Array<T> &data );
 
 protected:
-
-  /*! 
-   * \brief Create the desired type from a printed fortran style fixed-width 
-   * float. Undefined behavior is likely for types other than double, int or
-   * unsigned int. Because this function will be called many times while 
-   * processing the entire ENDLIB file it has been inlined.
-   */
+  
+  //! Extract the desired type from a printed FORTRAN style fixed-width float.
   template<typename T>
   T extractValue( std::string mantissa,
 		  std::string exponent );

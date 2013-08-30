@@ -34,7 +34,7 @@ namespace FACEMC{
  * The parentheses will then be reduced to a single new variable. Finally,
  * the logical operators in the cell definition are recorded in an array
  * of SetOperationFunctors.
- * \param[in] cell_definition a cell definition string which contains the
+ * \param[in] cell_definition A cell definition string which contains the
  * logical combination of second order surfaces which define the cell. The
  * string is not passed by reference so that a copy is made.
  */

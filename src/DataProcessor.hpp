@@ -18,6 +18,13 @@
 
 namespace FACEMC{
 
+/*! \brief Abstract base class which defines the data processing interface
+ * 
+ * This abstract base class defines the interface that is used to process all
+ * data files. A variety of useful protected member functions are also defined.
+ * These protected member functions comprise the low level data processing
+ * functionality that is needed to process any data file.
+ */ 
 class DataProcessor
 {
   
@@ -40,52 +47,31 @@ public:
 
 protected:
 
-  /*!
-   * \brief Process the indepMember and the depMember using the desired 
-   * processing policy. This function will only compile if the desired
-   * tuple members are actually available in tuple Tuple.
-   */
+  //! Process the data points in a table of continuous data.
   template<typename DataProcessingPolicy,
 	   TupleMember indepMember,
 	   TupleMember depMember,
 	   typename Tuple>
   void processContinuousData( Teuchos::Array<Tuple> &data );
 
-  /*!
-   * \brief Remove elements with a tuple member that is less than the specified
-   * value. The element closest to the specified value will be kept to allow
-   * for interpolation.
-   */
+  //! Remove elements with a tuple member less than the specified value
   template<TupleMember member,
 	   typename Tuple>
   void removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
 				    const double value );
 
-  /*!
-   * \brief Remove elements with a tuple member that is greater than the 
-   * specified value. The element closest to the specified value will be kept
-   * to allow for interpolation
-   */
+  //! Remove elements with a tuple member greater than the specified value
   template<TupleMember member,
 	   typename Tuple>
   void removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
 				       const double value );
 
-  /*!
-   * \brief Search the data array for constant regions and reduce the number
-   * of bins in these regions to one. Only the Teuchos::Array can be used 
-   * because the erase member function is needed.
-   */
+  //! Eliminate adjacent data points with the same values.
   template<TupleMember member,
 	   typename Tuple>
   void coarsenConstantRegions( Teuchos::Array<Tuple> &data );
 
-  /*!
-   * \brief Calculate the slope between indepMember and depMember and store
-   * at the slopeMember. This function will only compile if the desired
-   * tuple members are actually available in tuple Tuple. This function will
-   * compile for Teuchos::Array and Teuchos::ArrayView.
-   */
+  //! Calculate the slope between each pair of data points.
   template<TupleMember indepMember, 
 	   TupleMember depMember,
 	   TupleMember slopeMember,
@@ -93,12 +79,7 @@ protected:
 	   template<typename> class Array>
   void calculateSlopes( Array<Tuple> &data );
 
-  /*!
-   * \brief Create a continuous CDF from an array of data and store at the 
-   * desired tuple member. This function will only compile if the desired 
-   * tuple member is actually available in tuple Tuple. This function will
-   * compile for Teuchos::Array and Teuchos::ArrayView.
-   */
+  //! Create a cdf from an array of data using a taylor series expansion to O(2)
   template<TupleMember indepMember,
 	   TupleMember pdfMember,
 	   TupleMember cdfMember,
@@ -106,23 +87,13 @@ protected:
 	   template<typename> class Array>
   void calculateContinuousCDF( Array<Tuple> &data );
 
-  /*!
-   * \brief Create a discrete CDF from an array of data and store at 
-   * the desired tuple member. To create the CDF in place the pdfMember and the
-   * cdfMember should be the same. This function will only compile if the 
-   * desired tuple member is actually available in tuple Tuple.
-   */
+  //! Create a discrete CDF from an array of data.
   template<TupleMember pdfMember,
 	   TupleMember cdfMember,
 	   typename Tuple>
   void calculateDiscreteCDF( Teuchos::Array<Tuple> &data );
 
-  /*!
-   * \brief Copy the data in the desired tuple member of the original tuple to 
-   * the desired tuple member of the copy tuple. The two arrays references must
-   * refer to the same array (no in place copying). This function will compile 
-   * for Teuchos::Array and Teuchos::ArrayView.
-   */
+  //! Copy the data in the desired tuple member of the original tuple to the desired tuple member of the copy tuple.
   template<TupleMember origMember, 
 	   TupleMember copyMember,
 	   typename origTuple,
@@ -131,25 +102,23 @@ protected:
   void copyTupleMemberData( const Array<origTuple> &orig_data,
 			    Array<copyTuple> &copy_data );
 
-  /*!
-   * \brief Swap the data in a desired tuple member with the data in another
-   * tuple member. This function will compile for Teuchos::Array and 
-   * Teuchos::ArrayView.
-   */
+  //! Swap the data in a desired tuple member with the data in another tuple member
   template<TupleMember member1,
 	   TupleMember member2,
 	   typename Tuple,
 	   template<typename> class Array>
   void swapTupleMemberData( Array<Tuple> &data );
 
-  /*!
-   * \brief Convert an unsigned int to an electron shell string
-   */
-  std::string uintToShellStr( unsigned int shell );
+  //! Convert an unsigned int to an electron shell string
+  std::string uintToShellStr( const unsigned int shell );
 
-  /*!
-   * \brief Policy struct for processing data tables that require log-log
+  /*! \brief Policy struct for processing data tables that require log-log 
    * interpolation between evaluated points.
+   * 
+   * This policy class implements the data processing policy interface that is
+   * expected by certain protected member functions of the DataProcessor base
+   * class. All data processed with this policy will be converted to log-log
+   * format. 
    */
   struct LogLogDataProcessingPolicy
   {
@@ -162,9 +131,13 @@ protected:
     static T processDependentVar( const T dep_var );
   };
 
-  /*!
-   * \brief Policy struct for processing data tables that require square-square
+  /*! \brief Policy struct for processing data tables that require square-square
    * interpolation between data points.
+   *
+   * This policy class implements the data processing policy interface that is
+   * expected by certain protected member functions of the DataProcessor base
+   * class. All data processed with this policy will be converted to 
+   * square-square format. 
    */
   struct SquareSquareDataProcessingPolicy
   {

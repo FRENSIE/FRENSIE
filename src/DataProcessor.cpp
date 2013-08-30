@@ -13,8 +13,12 @@
 
 namespace FACEMC{
 
-//! Convert an unsigned int to an electron shell string
-std::string DataProcessor::uintToShellStr( unsigned int shell )
+/*! \details This function simply converts the integer electron shell number to 
+ * a string.
+ * \param[in] shell An integer representing the electron shell number
+ * \return A string of the electron shell number. 
+ */
+std::string DataProcessor::uintToShellStr( const unsigned int shell )
 {
   std::stringstream shell_str;
   shell_str << shell;
