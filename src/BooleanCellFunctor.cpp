@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   BooleanCellFunctor.cpp
-// \author Alex Robinson
-// \brief  BooleanCellFunctor definition
+//!
+//! \file   BooleanCellFunctor.cpp
+//! \author Alex Robinson
+//! \brief  BooleanCellFunctor definition
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes

@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file ContractException.hpp
-// \author Alex Robinson
-// \brief Design-by-Contract exception handling and error policy declaration.
+//!
+//! \file ContractException.hpp
+//! \author Alex Robinson (aprobinson@wisc.edu)
+//! \brief Design-by-Contract exception handling and error policy declaration.
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef CONTRACT_EXCEPTION_HPP
@@ -46,40 +48,46 @@ public:
 //---------------------------------------------------------------------------//
 // Design-by-Contract macros.
 //---------------------------------------------------------------------------//
-/*!
-  \page DBC Design-by-Contract
-
-  Design-by-Contract (DBC) functionality is provided to verify function
-  preconditions, postconditions, and invariants. These checks are separated
-  from the debug build and can be activated for both release and debug
-  builds. They can be activated by setting the following in a CMake
-  configure:
- 
-  -D FACEMC_ENABLE_DBC:BOOL=ON
- 
-  By default, DBC is deactivated. Although they will require additional
-  computational overhead, these checks provide a mechanism for veryifing
-  library input arguments. Note that the bounds-checking functionality used
-  within FACEMC is only provided by a debug build.
- 
-  In addition, remember is provided to store values used only for DBC
-  checks and no other place in executed code.
+/*! \page DBC Design-by-Contract
+ *
+ * Design-by-Contract (DBC) functionality is provided to verify function
+ * preconditions, postconditions, and invariants. These checks are separated
+ * from the debug build and can be activated for both release and debug
+ * builds. They can be activated by setting the following in a CMake
+ * configure:
+ *
+ * -D FACEMC_ENABLE_DBC:BOOL=ON
+ *
+ * By default, DBC is deactivated. Although they will require additional
+ * computational overhead, these checks provide a mechanism for veryifing
+ * library input arguments. Note that the bounds-checking functionality used
+ * within FACEMC is only provided by a debug build.
+ *
+ * In addition, remember is provided to store values used only for DBC
+ * checks and no other place in executed code.
  */
 
 #if HAVE_FACEMC_DBC
 
+//! Test a function precondition
 #define testPrecondition(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),					\
 			      FACEMC::ContractException,		\
 			      "Precondition exception" << std::endl ) 
+
+//! Test a function postcondition
 #define testPostcondition(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),					\
 			      FACEMC::ContractException,		\
 			      "Postcondition exception" << std::endl ) 
+
+//! Test a function invariant
 #define testInvariant(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),					\
                               FACEMC::ContractException,		\
 			      "Invariant exception" << std::endl )
+
+//! Remember a variable that is needed for testing DBC conditions
 #define remember(c) c
 
 #else

@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   BooleanCellFunctor_def.hpp
-// \author Alex Robinson
-// \brief  BooleanCellFunctor template operator definition
+//!
+//! \file   BooleanCellFunctor_def.hpp
+//! \author Alex Robinson
+//! \brief  BooleanCellFunctor template operator definition
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef BOOLEAN_CELL_FUNCTOR_DEF_HPP

@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   FACEMC_Assertion.hpp
-// \author Alex Robinson
-// \brief  FACEMC assertion and assertion policy declaration
+//!
+//! \file   FACEMC_Assertion.hpp
+//! \author Alex Robinson
+//! \brief  FACEMC assertion and assertion policy declaration
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef FACEMC_ASSERTION_HPP
@@ -44,19 +46,18 @@ public:
 //---------------------------------------------------------------------------//
 // Assertion macros
 //---------------------------------------------------------------------------//
-/*!
-  \page FACEMC Assertion
-
-  Two types of assertions are often needed: assertions used to check for
-  coding errors (debugging assertions) and assertions that check for user
-  error. Debugging assertions will only be activated when the code has been
-  compiled in debug mode. When compiled in release mode, the macro NDEBUG
-  is set by the compiler, which will prevent the execution of degubbing
-  assertion code. 
-
-  Use assertions in parts of the code where Design-by-Contract is not used,
-  when writing new pieces of code that have not been unit tested and when
-  correct user input is extremely critical to the execution of the program.
+/*! \page assert FACEMC Assertion
+ *
+ * Two types of assertions are often needed: assertions used to check for
+ * coding errors (debugging assertions) and assertions that check for user
+ * error. Debugging assertions will only be activated when the code has been
+ * compiled in debug mode. When compiled in release mode, the macro NDEBUG
+ * is set by the compiler, which will prevent the execution of degubbing
+ * assertion code. 
+ *
+ * Use assertions in parts of the code where Design-by-Contract is not used,
+ * when writing new pieces of code that have not been unit tested and when
+ * correct user input is extremely critical to the execution of the program.
 */
 
 #define FACEMC_ASSERT_ALWAYS(c) \

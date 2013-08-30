@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   BooleanCellFunctor.hpp
-// \author Alex Robinson
-// \brief  BooleanCellFunctor class declaration
+//!
+//! \file   BooleanCellFunctor.hpp
+//! \author Alex Robinson (aprobinson@wisc.edu)
+//! \brief  BooleanCellFunctor class declaration
+//!
 //----------------------------------------------------------------------------//
 
 #ifndef BOOLEAN_CELL_FUNCTOR_HPP

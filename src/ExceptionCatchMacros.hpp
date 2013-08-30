@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   ExceptionCatchMacros.hpp
-// \author Alex Robinson
-// \brief  Macros for catching Exceptions
+//!
+//! \file   ExceptionCatchMacros.hpp
+//! \author Alex Robinson
+//! \brief  Macros for catching Exceptions
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef EXCEPTION_CATCH_MACROS_HPP
@@ -20,8 +22,8 @@
 // HDF5 Includes
 #include <H5Cpp.h>
 
+// This macro is based off of the Teuchos_StandardCatchMacro
 //! Catch statement macro for catching HDF5 Exceptions
-// \brief This macro is based off of the Teuchos_StandardCatchMacro
 #define HDF5_EXCEPTION_CATCH_AND_EXIT()	\
   catch( const H5::Exception &exception )	\
   {						\
@@ -38,7 +40,7 @@
   } \
 
 //! Catch statement macro for catching std::exception Exceptions
-// \brief This macro is based off of the Teuchos_StandardCatchMacro
+// This macro is based off of the Teuchos_StandardCatchMacro
 #define STD_EXCEPTION_CATCH_AND_EXIT() \
   catch( const std::exception &exception )	\
   {						\
