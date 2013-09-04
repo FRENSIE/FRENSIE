@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file HDF5FileHandler_def.hpp
-// \author Alex Robinson
-// \brief HDF5 file handler template member function definitions
+//!
+//! \file HDF5FileHandler_def.hpp
+//! \author Alex Robinson
+//! \brief HDF5 file handler template member function definitions
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef HDF5_FILE_HANDLER_DEF_HPP
@@ -28,7 +30,30 @@
 
 namespace FACEMC{
 
-//! Write data in array to HDF5 file dataset
+// Write data in array to HDF5 file dataset
+/*! \tparam T Data type contained in array
+ * \tparam Array An array class with a single template parameter. Any of the
+ * Teuchos array classes will work. Because std::vector has two template 
+ * parameters it cannot be used. The Teuchos array classes are all extensions
+ * of the std::vector though.
+ * \param[in] data The data array to write to the HDF5 file dataset.
+ * \param[in] location_in_file The location in the HDF5 file where the data will
+ * \pre A valid location string, which is any string that does not start with
+ * a "/", must be given to this function.
+ * \note Developers: 
+ * <ul>
+ *  <li> The template parameters should never be given explicitly.
+ *       The compiler will be able to deduce the template parameters based on 
+ *       the array that is passed to the function.
+ *  <li> The FACEMC::HDF5ArrayPolicy and FACEMC::HDF5TypeTraits structs are
+ *       critical to the generality of this function. Review these structs to
+ *       better understand how this function operates.
+ *  <li> The template parameter T and Array template template parameter could
+ *       be combined into a single template parameter Array. The type T could
+ *       then be accessed using "typename Array::value_type". This would allow
+ *       for std::vector to be used. The current method seems more verbose.
+ * </ul>
+ */
 template<typename T, template<typename> class Array>
 void HDF5FileHandler::writeArrayToDataSet( const Array<T> &data,
 					   const std::string &location_in_file
@@ -57,7 +82,32 @@ void HDF5FileHandler::writeArrayToDataSet( const Array<T> &data,
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
-//! Read in HDF5 file dataset and save the data to an array
+// Read in HDF5 file dataset and save the data to an array
+/*! \tparam T Data type contained in array
+ * \tparam Array An array class with a single template parameter. Any of the
+ * Teuchos array classes will work. Because std::vector has two template 
+ * parameters it cannot be used. The Teuchos array classes are all extensions
+ * of the std::vector though.
+ * \param[in,out] data The data array that will be used to store the HDF5 file 
+ * dataset.
+ * \param[in] location_in_file The location in the HDF5 file where the data will
+ * be read from.
+ * \pre A valid location string, which is any string that does not start with
+ * a "/", must be given to this function.
+ * \note Developers: 
+ * <ul>
+ *  <li> The template parameters should never be given explicitly.
+ *       The compiler will be able to deduce the template parameters based on 
+ *       the array that is passed to the function.
+ *  <li> The FACEMC::HDF5ArrayPolicy and FACEMC::HDF5TypeTraits structs are
+ *       critical to the generality of this function. Review these structs to
+ *       better understand how this function operates.
+ *  <li> The template parameter T and Array template template parameter could
+ *       be combined into a single template parameter Array. The type T could
+ *       then be accessed using "typename Array::value_type". This would allow
+ *       for std::vector to be used. The current method seems more verbose.
+ * </ul>
+ */
 template<typename T, template<typename> class Array>
 void HDF5FileHandler::readArrayFromDataSet( Array<T> &data,
 					    const std::string &location_in_file
@@ -96,7 +146,37 @@ void HDF5FileHandler::readArrayFromDataSet( Array<T> &data,
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
-//! Write attribute to HDF5 file dataset
+// Write attribute to HDF5 file dataset
+/*! \tparam T Data type contained in array
+ * \tparam Array An array class with a single template parameter. Any of the
+ * Teuchos array classes will work. Because std::vector has two template 
+ * parameters it cannot be used. The Teuchos array classes are all extensions
+ * of the std::vector though.
+ * \param[in] data The data array to write to the HDF5 file dataset attribute.
+ * \param[in] location_in_file The location in the HDF5 file where the dataset
+ * attribute will written.
+ * \param[in] attribute_name The name of the dataset attribute.
+ * \pre 
+ * <ul>
+ *  <li> A valid location string, which is any string that does not start with
+ *       a "/", must be given to this function.
+ *  <li> A valid attribute name string, which is any string that does not
+ *       contian a "/", must be given to this function.
+ * </ul>
+ * \note Developers: 
+ * <ul>
+ *  <li> The template parameters should never be given explicitly.
+ *       The compiler will be able to deduce the template parameters based on 
+ *       the array that is passed to the function.
+ *  <li> The FACEMC::HDF5ArrayPolicy and FACEMC::HDF5TypeTraits structs are
+ *       critical to the generality of this function. Review these structs to
+ *       better understand how this function operates.
+ *  <li> The template parameter T and Array template template parameter could
+ *       be combined into a single template parameter Array. The type T could
+ *       then be accessed using "typename Array::value_type". This would allow
+ *       for std::vector to be used. The current method seems more verbose.
+ * </ul>
+ */
 template<typename T, template<typename> class Array>
 void HDF5FileHandler::writeArrayToDataSetAttribute( const Array<T> &data,
 						    const std::string 
@@ -128,7 +208,38 @@ void HDF5FileHandler::writeArrayToDataSetAttribute( const Array<T> &data,
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
-//! Read in HDF5 file dataset attribute and save the data to an array
+// Read in HDF5 file dataset attribute and save the data to an array
+/*! \tparam T Data type contained in array
+ * \tparam Array An array class with a single template parameter. Any of the
+ * Teuchos array classes will work. Because std::vector has two template 
+ * parameters it cannot be used. The Teuchos array classes are all extensions
+ * of the std::vector though.
+ * \param[in,out] data The data array that will be used to store the HDF5 file 
+ * dataset attribute.
+ * \param[in] location_in_file The location in the HDF5 file where the data will
+ * be read from.
+ * \param[in] attribute_name The name of the dataset attribute.
+ * \pre 
+ * <ul>
+ *  <li> A valid location string, which is any string that does not start with
+ *       a "/", must be given to this function.
+ *  <li> A valid attribute name string, which is any string that does not
+ *       contian a "/", must be given to this function.
+ * </ul>
+ * \note Developers: 
+ * <ul>
+ *  <li> The template parameters should never be given explicitly.
+ *       The compiler will be able to deduce the template parameters based on 
+ *       the array that is passed to the function.
+ *  <li> The FACEMC::HDF5ArrayPolicy and FACEMC::HDF5TypeTraits structs are
+ *       critical to the generality of this function. Review these structs to
+ *       better understand how this function operates.
+ *  <li> The template parameter T and Array template template parameter could
+ *       be combined into a single template parameter Array. The type T could
+ *       then be accessed using "typename Array::value_type". This would allow
+ *       for std::vector to be used. The current method seems more verbose.
+ * </ul>
+ */
 template<typename T, template<typename> class Array>
 void HDF5FileHandler::readArrayFromDataSetAttribute( Array<T> &data,
 						     const std::string 
@@ -174,7 +285,29 @@ void HDF5FileHandler::readArrayFromDataSetAttribute( Array<T> &data,
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
-//! Write attribute to HDF5 file dataset
+// Write attribute to HDF5 file dataset
+/*! \tparam T Data type to be written.
+ * \param[in] value The data value to write to the HDF5 file dataset attribute.
+ * \param[in] dataset_location The location in the HDF5 file where the dataset
+ * attribute will written.
+ * \param[in] attribute_name The name of the dataset attribute.
+ * \pre 
+ * <ul>
+ *  <li> A valid location string, which is any string that does not start with
+ *       a "/", must be given to this function.
+ *  <li> A valid attribute name string, which is any string that does not
+ *       contian a "/", must be given to this function.
+ * </ul>
+ * \note Developers: 
+ * <ul>
+ *  <li> The template parameter should never be given explicitly.
+ *       The compiler will be able to deduce the template parameter based on 
+ *       the value that is passed to the function.
+ *  <li> The FACEMC::HDF5TypeTraits struct is critical to the generality of this
+ *       function. Review this structs to better understand how this function 
+ *       operates.
+ * </ul>
+ */
 template<typename T>
 void HDF5FileHandler::writeValueToDataSetAttribute( const T &value,
 						    const std::string 
@@ -206,7 +339,30 @@ void HDF5FileHandler::writeValueToDataSetAttribute( const T &value,
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
-//! Read in HDF5 file dataset attribute and save the single value
+// Read in HDF5 file dataset attribute and save the single value
+/*! \tparam T Data type to be read.
+ * \param[in,out] value The data value that will store the HDF5 file dataset 
+ * attribute.
+ * \param[in] dataset_location The location in the HDF5 file where the dataset
+ * attribute will written.
+ * \param[in] attribute_name The name of the dataset attribute.
+ * \pre 
+ * <ul>
+ *  <li> A valid location string, which is any string that does not start with
+ *       a "/", must be given to this function.
+ *  <li> A valid attribute name string, which is any string that does not
+ *       contian a "/", must be given to this function.
+ * </ul>
+ * \note Developers: 
+ * <ul>
+ *  <li> The template parameter should never be given explicitly.
+ *       The compiler will be able to deduce the template parameter based on 
+ *       the value that is passed to the function.
+ *  <li> The FACEMC::HDF5TypeTraits struct is critical to the generality of this
+ *       function. Review this structs to better understand how this function 
+ *       operates.
+ * </ul>
+ */
 template<typename T>
 void HDF5FileHandler::readValueFromDataSetAttribute( T &value,
 						     const std::string 
@@ -247,7 +403,37 @@ void HDF5FileHandler::readValueFromDataSetAttribute( T &value,
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
-//! Write attribute to HDF5 file group
+// Write attribute to HDF5 file group
+/*! \tparam T Data type contained in array
+ * \tparam Array An array class with a single template parameter. Any of the
+ * Teuchos array classes will work. Because std::vector has two template 
+ * parameters it cannot be used. The Teuchos array classes are all extensions
+ * of the std::vector though.
+ * \param[in] data The data array to write to the HDF5 file group attribute.
+ * \param[in] group_location The location in the HDF5 file where the group
+ * attribute will written.
+ * \param[in] attribute_name The name of the group attribute.
+ * \pre 
+ * <ul>
+ *  <li> A valid location string, which is any string that does not start with
+ *       a "/", must be given to this function.
+ *  <li> A valid attribute name string, which is any string that does not
+ *       contian a "/", must be given to this function.
+ * </ul>
+ * \note Developers: 
+ * <ul>
+ *  <li> The template parameters should never be given explicitly.
+ *       The compiler will be able to deduce the template parameters based on 
+ *       the array that is passed to the function.
+ *  <li> The FACEMC::HDF5ArrayPolicy and FACEMC::HDF5TypeTraits structs are
+ *       critical to the generality of this function. Review these structs to
+ *       better understand how this function operates.
+ *  <li> The template parameter T and Array template template parameter could
+ *       be combined into a single template parameter Array. The type T could
+ *       then be accessed using "typename Array::value_type". This would allow
+ *       for std::vector to be used. The current method seems more verbose.
+ * </ul>
+ */
 template<typename T, template<typename> class Array>
 void HDF5FileHandler::writeArrayToGroupAttribute( const Array<T> &data,
 						  const std::string 
@@ -282,7 +468,38 @@ void HDF5FileHandler::writeArrayToGroupAttribute( const Array<T> &data,
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
-//! Read in HDF5 file group attribute and save the data to an array
+// Read in HDF5 file group attribute and save the data to an array
+/*! \tparam T Data type contained in array
+ * \tparam Array An array class with a single template parameter. Any of the
+ * Teuchos array classes will work. Because std::vector has two template 
+ * parameters it cannot be used. The Teuchos array classes are all extensions
+ * of the std::vector though.
+ * \param[in,out] data The data array that will be used to store the HDF5 file 
+ * group attribute.
+ * \param[in] group_location The location in the HDF5 file where the group is
+ * located.
+ * \param[in] attribute_name The name of the group attribute.
+ * \pre 
+ * <ul>
+ *  <li> A valid location string, which is any string that does not start with
+ *       a "/", must be given to this function.
+ *  <li> A valid attribute name string, which is any string that does not
+ *       contian a "/", must be given to this function.
+ * </ul>
+ * \note Developers: 
+ * <ul>
+ *  <li> The template parameters should never be given explicitly.
+ *       The compiler will be able to deduce the template parameters based on 
+ *       the array that is passed to the function.
+ *  <li> The FACEMC::HDF5ArrayPolicy and FACEMC::HDF5TypeTraits structs are
+ *       critical to the generality of this function. Review these structs to
+ *       better understand how this function operates.
+ *  <li> The template parameter T and Array template template parameter could
+ *       be combined into a single template parameter Array. The type T could
+ *       then be accessed using "typename Array::value_type". This would allow
+ *       for std::vector to be used. The current method seems more verbose.
+ * </ul>
+ */
 template<typename T, template<typename> class Array>
 void HDF5FileHandler::readArrayFromGroupAttribute( Array<T> &data,
 						   const std::string 
@@ -328,7 +545,29 @@ void HDF5FileHandler::readArrayFromGroupAttribute( Array<T> &data,
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
-//! Write attribute to HDF5 file group
+// Write attribute to HDF5 file group
+/*! \tparam T Data type of value to write
+ * \param[in] value The data value to write to the HDF5 file group attribute.
+ * \param[in] group_location The location in the HDF5 file where the group
+ * is located.
+ * \param[in] attribute_name The name of the group attribute.
+ * \pre 
+ * <ul>
+ *  <li> A valid location string, which is any string that does not start with
+ *       a "/", must be given to this function.
+ *  <li> A valid attribute name string, which is any string that does not
+ *       contian a "/", must be given to this function.
+ * </ul>
+ * \note Developers: 
+ * <ul>
+ *  <li> The template parameter should never be given explicitly.
+ *       The compiler will be able to deduce the template parameter based on 
+ *       the value that is passed to the function.
+ *  <li> The FACEMC::HDF5TypeTraits struct is critical to the generality of this
+ *       function. Review this structs to better understand how this function 
+ *       operates.
+ * </ul>
+ */
 template<typename T>
 void HDF5FileHandler::writeValueToGroupAttribute( const T &value,
 						  const std::string 
@@ -363,7 +602,30 @@ void HDF5FileHandler::writeValueToGroupAttribute( const T &value,
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
-//! Read in HDF5 file group attribute and save the single value
+// Read in HDF5 file group attribute and save the single value
+/*! \tparam T Data type to be read.
+ * \param[in,out] value The data value that will store the HDF5 file group 
+ * attribute.
+ * \param[in] group_location The location in the HDF5 file where the group
+ * is located.
+ * \param[in] attribute_name The name of the group attribute.
+ * \pre 
+ * <ul>
+ *  <li> A valid location string, which is any string that does not start with
+ *       a "/", must be given to this function.
+ *  <li> A valid attribute name string, which is any string that does not
+ *       contian a "/", must be given to this function.
+ * </ul>
+ * \note Developers: 
+ * <ul>
+ *  <li> The template parameter should never be given explicitly.
+ *       The compiler will be able to deduce the template parameter based on 
+ *       the value that is passed to the function.
+ *  <li> The FACEMC::HDF5TypeTraits struct is critical to the generality of this
+ *       function. Review this structs to better understand how this function 
+ *       operates.
+ * </ul>
+ */
 template<typename T>
 void HDF5FileHandler::readValueFromGroupAttribute( T &value,
 						   const std::string 

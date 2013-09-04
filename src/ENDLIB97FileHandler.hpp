@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   ENDLIB97FileHandler.hpp
-// \author Alex Robinson
-// \brief  ENDLIB-97 data file handler class declaration.
+//!
+//! \file   ENDLIB97FileHandler.hpp
+//! \author Alex Robinson
+//! \brief  ENDLIB-97 data file handler class declaration.
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef ENDLIB97_FILE_HANDLER_HPP

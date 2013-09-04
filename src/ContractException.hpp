@@ -19,6 +19,16 @@
 // FACEMC Includes
 #include "FACEMC_config.hpp"
 
+/*! \defgroup contract_exceptions_macros Design-By-Contract Exceptions and Macros
+ *
+ * Design-By-Contract is a powerful way to ensure that certain function
+ * preconditions and postconditions are explicit. When Design-By-Contract
+ * functionality is enabled, the program will exit whenever one of these
+ * conditions is not met. This functionality is made possible through a series
+ * of macros and an exception class. For more information on enabling
+ * Design-By-Contract, please refer to the \ref DBC page.
+ */
+
 namespace FACEMC
 {
 
@@ -26,11 +36,10 @@ namespace FACEMC
 // Design-By-Contract Exceptions
 //---------------------------------------------------------------------------//
 
-/*!
- * \brief Exception class to be thrown when function contract is not met
- * met.
+/*! Exception class to be thrown when function contract is not met.
  *
- * The ContractExpection class is a key part of \ref DBC. 
+ * The ContractExpection class is a key part of \ref DBC.
+ * \ingroup contract_exceptions_macros
  */
 class ContractException : public std::logic_error
 {
@@ -65,29 +74,40 @@ public:
  *
  * In addition, remember is provided to store values used only for DBC
  * checks and no other place in executed code.
+ *
+ * Developers should refer to the \ref contract_exceptions_macros page for more
+ * on how this functionality is implemented.
  */
 
 #if HAVE_FACEMC_DBC
 
-//! Test a function precondition
+/*! Test a function precondition
+ * \ingroup contract_exceptions_macros 
+ */
 #define testPrecondition(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),					\
 			      FACEMC::ContractException,		\
 			      "Precondition exception" << std::endl ) 
 
-//! Test a function postcondition
+/*! Test a function postcondition
+ * \ingroup contract_exceptions_macros
+ */
 #define testPostcondition(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),					\
 			      FACEMC::ContractException,		\
 			      "Postcondition exception" << std::endl ) 
 
-//! Test a function invariant
+/*! Test a function invariant
+ * \ingroup contract_exceptions_macros
+ */
 #define testInvariant(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),					\
                               FACEMC::ContractException,		\
 			      "Invariant exception" << std::endl )
 
-//! Remember a variable that is needed for testing DBC conditions
+/*! Remember a variable that is needed for testing DBC conditions
+ * \ingroup contract_exceptions_macros
+ */
 #define remember(c) c
 
 #else

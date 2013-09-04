@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   HDF5ArrayPolicy.hpp
-// \author Alex Robinson
-// \brief  HDF5 Array Policy specializations
+//!
+//! \file   HDF5ArrayPolicy.hpp
+//! \author Alex Robinson
+//! \brief  HDF5 Array Policy specializations
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef HDF5_ARRAY_POLICY_HPP
@@ -24,6 +26,10 @@
 
 namespace FACEMC{
 
+/*! \brief The partial specialization of the FACEMC::HDF5ArrayPolicy for the
+ * Teuchos::Array class
+ * \ingroup hdf5_array_policy
+ */
 template<typename T>
 struct HDF5ArrayPolicy<T,Teuchos::Array>
 {
@@ -33,6 +39,10 @@ struct HDF5ArrayPolicy<T,Teuchos::Array>
   static inline typename Teuchos::Array<T>::size_type size(const Teuchos::Array<T> &array) { return array.size(); }
 };
 
+/*! \brief The partial specialization of the FACEMC::HDF5ArrayPolicy for the
+ * Teuchos::ArrayRCP class
+ * \ingroup hdf5_array_policy
+ */
 template<typename T>
 struct HDF5ArrayPolicy<T,Teuchos::ArrayRCP>
 {
@@ -42,6 +52,10 @@ struct HDF5ArrayPolicy<T,Teuchos::ArrayRCP>
   static inline typename Teuchos::ArrayRCP<T>::size_type size(const Teuchos::ArrayRCP<T> &array) { return array.size(); } 
 };
 
+/*! \brief The partial specialization of the FACEMC::HDF5ArrayPolicy for the
+ * Teuchos::ArrayView class
+ * \ingroup hdf5_array_policy
+ */
 template<typename T>
 struct HDF5ArrayPolicy<T,Teuchos::ArrayView>
 {
@@ -51,6 +65,10 @@ struct HDF5ArrayPolicy<T,Teuchos::ArrayView>
   static inline typename Teuchos::ArrayView<T>::size_type size(const Teuchos::ArrayView<T> &array) { return array.size(); } 
 };
 
+/*! \brief The partial specialization of the FACEMC::HDF5ArrayPolicy for the
+ * Teuchos::TwoDArray class
+ * \ingroup hdf5_array_policy
+ */
 template<typename T>
 struct HDF5ArrayPolicy<T,Teuchos::TwoDArray>
 {

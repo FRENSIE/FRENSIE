@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   DataProcessor_def.hpp
-// \author Alex Robinson
-// \brief  Data Processor base class template definitions
+//!
+//! \file   DataProcessor_def.hpp
+//! \author Alex Robinson
+//! \brief  Data Processor base class template definitions
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef DATA_PROCESSOR_DEF_HPP

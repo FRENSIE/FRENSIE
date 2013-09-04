@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   ENDLIB97FileHandler.cpp
-// \author Alex Robinson
-// \brief  ENDLIB97 data processor base class non-template member function defs.
+//!
+//! \file   ENDLIB97FileHandler.cpp
+//! \author Alex Robinson
+//! \brief  ENDLIB97 data proc. base class non-template member function defs.
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes

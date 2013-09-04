@@ -16,9 +16,22 @@
 // Trilinos Includes
 #include <Teuchos_TestForException.hpp>
 
+/*! \defgroup assertion_exceptions_macros FACEMC Assertion Exceptions and Macros
+ *
+ * Use these assertions to check for coding errors (debugging assertions) or
+ * to verify user input in parts of the code where Design-By-Contract is not
+ * appropriate. This assertion functionality is implemented with two exception
+ * classes and three macros.
+ */
+
 namespace FACEMC
 {
 
+/*! Exception class to be thrown when degub assertion condition is not met.
+ *
+ * This Assertion class is a key part of \ref assert.
+ * \ingroup assertion_exceptions_macros
+ */
 class Assertion : public std::logic_error
 {
 public:
@@ -30,6 +43,11 @@ public:
   { /* ... */ }
 };
 
+/*! Exception class to be thrown when a critical (user input) assertion condition is not met.
+ *
+ * This Assertion class is a key part of \ref assert.
+ * \ingroup assertion_exceptions_macros
+ */
 class CriticalAssertion : public std::runtime_error
 {
 public:
@@ -58,13 +76,24 @@ public:
  * Use assertions in parts of the code where Design-by-Contract is not used,
  * when writing new pieces of code that have not been unit tested and when
  * correct user input is extremely critical to the execution of the program.
-*/
+ *
+ * Developers whould refer to the \ref assertion_exceptions_macros page
+ * for more on how this functionality is implemented.
+ */
 
+/*! Assert that a critical (user input) condition is always met.
+ * \ingroup assertion_exceptions_macros
+ */
 #define FACEMC_ASSERT_ALWAYS(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),		\
                               FACEMC::CriticalAssertion,		\
                               "FACEMC critical assertion failed" << std::endl )
 
+/*! Assert that a critical (user input) condition is always met.
+ *
+ * This macro will print the desired message when the condition is not met.
+ * \ingroup assertion_exceptions_macros
+ */
 #define FACEMC_ASSERT_ALWAYS_MSG( c, msg ) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c), \
 			      FACEMC::CriticalAssertion, \
@@ -76,12 +105,19 @@ public:
 
 #else
 
+/*! Assert that a condition is always met.
+ *
+ * This macro should be used during code development to test that certain 
+ * conditions are met in pieces of code where Design-By-Contract is not
+ * appropriate. 
+ * \ingroup assertion_exceptions_macros
+ */
 #define FACEMC_ASSERT(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),		\
 			      FACEMC::Assertion,			\
 			      "FACEMC assertion failed" << std::endl )
 
-#endif
+#endif // end NDEBUG
 
 #endif // end FACEMC_ASSERTION_HPP
 

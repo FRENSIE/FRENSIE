@@ -1,18 +1,39 @@
 //---------------------------------------------------------------------------//
-// \file   HDF5ArrayPolicyDecl.hpp
-// \author Alex Robinson
-// \brief  HDF5 Array Policy declaration
+//!
+//! \file   HDF5ArrayPolicyDecl.hpp
+//! \author Alex Robinson
+//! \brief  HDF5 Array Policy declaration
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef HDF5_ARRAY_POLICY_DECL_HPP
 #define HDF5_ARRAY_POLICY_DECL_HPP
 
+/*! \defgroup hdf5_array_policy HDF5 Array Policy
+ *
+ * The FACEMC::HDF5FileHandler has many templated member functions with a
+ * template template parameter (Array). Because the Teuchos array classes have
+ * slightly different interfaces, a policy class is needed to homogenize the
+ * interfaces (bridge pattern). The FACEMC::HDF5ArrayPolicy is the struct that 
+ * defines the interface. Because of the slightly different interfaces for each 
+ * array type, the FACEMC::HDF5ArrayPolicy class must be specialized. 
+ * Attempting to use the class without a specialization will result in a 
+ * compile time error. The compile time error message is defined by the 
+ * FACEMC::UndefinedArrayPolicy struct.
+ */
+
 namespace FACEMC{
 
-/*!
- * \brief This is the default structure used by ArrayTraits<Array> to produce
- * a compile time error when the specialization does not exist for array type
- * Array
+/*! \brief Default structure used by FACEMC::ArrayTraits<Array> to 
+ * produce a compile time error when the specialization does not exist for 
+ * array type Array
+ *
+ * To use the FACEMC::HDF5ArrayPolicy struct a partial template specialization 
+ * for the particular array must be written. When the type of array does not
+ * have a partial specialization, the compiler will attempt to instantiate this
+ * struct, which has a function notDefined() that attemts to access a 
+ * non-existant Array member, causing a compile time error.
+ * \ingroup hdf5_array_policy
  */
 template<typename T, template<typename> class Array>
 struct UndefinedArrayPolicy
@@ -21,17 +42,23 @@ struct UndefinedArrayPolicy
   static inline T notDefined() { return Array<T>::this_type_is_missing_a_specialization(); }
 };
 
-/*!
- * \brief This structure defines some basic traits for Arrays to be used in 
- * FACEMC. This struct should allow use of any Teuchos::Array anywhere in 
- * FACEMC. Any other arrays will not be supported. The functions in the 
+/*!\brief This structure defines the Arrays policy to be used in conjunction
+ * with the FACEMC::HDF5FileHandler class member functions.
+ *
+ * This struct should allow use of any Teuchos::Array when dealing with the
+ * HDF5 interface. Any other arrays will not be supported. The function in the 
  * templated base unspecialized struct are designed not to compile (giving a 
  * nice compile-time error message) and therefore specializations must be 
- * written for each array type.
- * \note <ol>
- * <li> The default defined specializations are provided for \c Teuchos::Array,
- * \c Teuchos::ArrayRCP, \c Teuchos::ArrayView, \c Teuchos::TwoDArray
- * </ol>
+ * written for each array type. The design pattern that is implemented with this
+ * templated class is the bridge pattern. Every array type has a slightly
+ * different interface. This templated class homogenizes the interfaces so
+ * that they can all be used inside of the other templated functions used
+ * by FACEMC. 
+ * \tparam T A data type that is stored in the Array
+ * \tparam Array An array class with a single template parameter.
+ * \note The default defined specializations are provided for Teuchos::Array,
+ * Teuchos::ArrayRCP, Teuchos::ArrayView and Teuchos::TwoDArray.
+ * \ingroup hdf5_array_policy
  */
 template<typename T, template<typename> class Array>
 struct HDF5ArrayPolicy

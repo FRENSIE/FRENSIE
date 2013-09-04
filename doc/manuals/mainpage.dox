@@ -1,7 +1,7 @@
 // This file is used to reorganize the Doxygen output and to add material to the
 // index page.
 
-/*! \mainpage FACEMC Overview and Theory
+/*! \mainpage Overview and Theory
  * 
  * The Forward Adjoint Continuous Energy Monte Carlo (FACEMC) code is a 
  * shielding code that can be used to model experiments and devices with a

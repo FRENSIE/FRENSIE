@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   DataProcessor.cpp
-// \author Alex Robinson
-// \brief  DataProcessor function definitions
+//!
+//! \file   DataProcessor.cpp
+//! \author Alex Robinson
+//! \brief  DataProcessor function definitions
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes

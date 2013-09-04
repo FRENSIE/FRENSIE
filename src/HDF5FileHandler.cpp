@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file HDF5FileHandler.cpp
-// \author Alex Robinson
-// \brief HDF5 file handler non-template member function definitions
+//!
+//! \file HDF5FileHandler.cpp
+//! \author Alex Robinson
+//! \brief HDF5 file handler non-template member function definitions
+//!
 //---------------------------------------------------------------------------//
 
 // HDF5 Includes
@@ -13,7 +15,7 @@
 
 namespace FACEMC{
 
-//! Default Constructor
+//Default Constructor
 HDF5FileHandler::HDF5FileHandler()
 {
   // Turn off HDF5 error auto printing: All errors will be handled through
@@ -26,7 +28,10 @@ HDF5FileHandler::HDF5FileHandler()
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
-//! Open an HDF5 file and overwrite any existing data
+// Open an HDF5 file and overwrite any existing data
+/*! \param[in] file_name The name of the HDF5 file that will be opened and
+ * overwritten
+ */
 void HDF5FileHandler::openHDF5FileAndOverwrite( const std::string &file_name )
 {
   // The H5File contructor can throw a H5::FileIException exception
@@ -38,7 +43,10 @@ void HDF5FileHandler::openHDF5FileAndOverwrite( const std::string &file_name )
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
-//! Open an HDF5 file and append to any existing data
+//Open an HDF5 file and append to any existing data
+/*! \param[in] file_name The name of the HDF5 file that will be opened and
+ * appended to.
+ */
 void HDF5FileHandler::openHDF5FileAndAppend( const std::string &file_name )
 {
   // The H5File constructor can throw a H5::FileIException exception
@@ -50,7 +58,10 @@ void HDF5FileHandler::openHDF5FileAndAppend( const std::string &file_name )
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
-//! Open an HDF5 file and read data
+// Open an HDF5 file and read data
+/*! \param[in] file_name The name of the HDF5 file that will be opened and
+ * read.
+ */
 void HDF5FileHandler::openHDF5FileAndReadOnly( const std::string &file_name )
 {
   // The H5File constructor can throw a H5::FileIException exception
@@ -62,13 +73,17 @@ void HDF5FileHandler::openHDF5FileAndReadOnly( const std::string &file_name )
   HDF5_EXCEPTION_CATCH_AND_EXIT();
 }
 
-//! Close an HDF5 file
+// Close an HDF5 file
 void HDF5FileHandler::closeHDF5File()
 {
   d_hdf5_file.reset();
 }
 
-//! Create the parent groups, if necessary, for the specified path
+/*! \details This function can be used to create a group heirarchy or to
+ * create a directory at the desired location of the HDF5 file.
+ * \param[in] path_name The name of the path containing parent groups that
+ * need to be created.
+ */
 void HDF5FileHandler::createParentGroups( const std::string &path_name )
 {
   // Separate the group names from the dataset name
@@ -81,8 +96,7 @@ void HDF5FileHandler::createParentGroups( const std::string &path_name )
     loc = path_name.find( "/", loc+1 );
   }
   
-  // Check that each of the groups has been created and create the group if it 
-  // hasn't
+  // Check if each group has been created and create the group if it hasn't
   for( unsigned int i = 0; i < group_names.size(); ++i )
   {
     // The H5::File openGroup member function can throw a H5::FileIException 
