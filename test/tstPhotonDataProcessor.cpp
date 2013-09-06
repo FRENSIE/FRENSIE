@@ -90,6 +90,7 @@ public:
   using FACEMC::PhotonDataProcessor::processShellRadiativeTransitionData;
   using FACEMC::PhotonDataProcessor::processShellNonradiativeTransitionData;
   using FACEMC::PhotonDataProcessor::processComptonFiles;
+  using FACEMC::PhotonDataProcessor::initializeHDF5Files;
   using FACEMC::PhotonDataProcessor::d_hdf5_file_handler;
 };
 
@@ -540,6 +541,8 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, processEPDLFile )
 						    OUTPUT_DIRECTORY,
 						    ENERGY_MIN,
 						    ENERGY_MAX );
+
+  photon_data_processor.initializeHDF5Files();
 
   // This member function will throw an exception and exit if an error occurs
   // so no TEST macro is needed.

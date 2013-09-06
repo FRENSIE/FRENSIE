@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   SearchAlgorithms_def.hpp
-// \author Alex Robinson
-// \brief  Template definitions for search functions
+//!
+//! \file   SearchAlgorithms_def.hpp
+//! \author Alex Robinson
+//! \brief  Template definitions for search functions
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef SEARCH_ALGORITHMS_DEF_HPP
@@ -18,9 +20,36 @@
 
 namespace FACEMC{
 
+//! The namespace where searching algorithms are located.
 namespace Search{
 
-//! Binary search on an array of continuous data
+// Binary search on an array of continuous data
+/*! \details This function allows one to search a container of continuous data
+ * and find the lower bin boundary where the value of interest falls in. The
+ * container is accessed with iterators and an iterator to the element 
+ * representing the lower bin boundary is returned. 
+ * \tparam member The tuple (either FACEMC::Pair, FACEMC::Trip or FACEMC::Quad)
+ * member where the data that is being search on is stored. 
+ * \tparam Iterator An iterator type that gives access to the container of
+ * interest.
+ * \param[in] start An iterator pointing to the first element of the container
+ * of interest.
+ * \param[in] end An iterator pointing to the last element of the container of
+ * interest.
+ * \param[in] value The value whose location in the container must be found.
+ * \return An iterator to the element of the container representing the lower
+ * bin boundary of the bin where the value of interest falls.
+ * \pre 
+ * <ul>
+ *  <li> A valid set of iterators, which are any two iterators that are not
+ *       equal (and from the same container), must be given to this function.
+ *  <li> The value of interest must be greater than (or equal to) the start 
+ *       value.
+ *  <li> The value of interest must be less than (or equal to) the end value.
+ * </ul>
+ * \post The returned iterator must be valid (not equal to the initial end
+ * iterator).
+ */ 
 template<TupleMember member, typename Iterator>
 Iterator binarySearchContinuousData( Iterator start,
 				     Iterator end,
@@ -55,7 +84,35 @@ Iterator binarySearchContinuousData( Iterator start,
   return start;
 }
 
-//! Binary search on an array of discrete data
+// Binary search on an array of discrete data
+/*! \details This function allows one to search a container of discrete data
+ * and find the lower bin boundary where the value of interest falls in. The
+ * container is accessed with iterators and an iterator to the element 
+ * representing the lower bin boundary is returned. When dealing with discrete
+ * data an extra test must be done to ensure that the correct bin has been
+ * found.
+ * \tparam member The tuple (either FACEMC::Pair, FACEMC::Trip or FACEMC::Quad)
+ * member where the data that is being searched on is stored.
+ * \tparam Iterator An iterator type that gives access to the container of
+ * interest.
+ * \param[in] start An iterator pointing to the first element of the container
+g * of interest.
+ * \param[in] end An iterator pointing to the last element of the container of
+ * interest.
+ * \param[in] value The value whose location in the container must be found.
+ * \return An iterator to the element of the container representing the lower
+ * bin boundary of the bin where the value of interest falls.
+ * \pre 
+ * <ul> 
+ *  <li> A valid set of iterators, which are any two iterators that are not
+ *       equal (and from the same container), must be given to this function.
+ *  <li> The value of interest must be greater than or equal to zero.
+ *  <li> The value of interest must be less than the value in the last element
+ *       of the container.
+ * </ul>
+ * \post The returned iterator must be valid (not equal to the initial end
+ * iterator).
+ */
 template<TupleMember member, typename Iterator>
 Iterator binarySearchDiscreteData( Iterator start,
 				   Iterator end,

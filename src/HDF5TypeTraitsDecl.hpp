@@ -13,6 +13,7 @@
 #include <H5Cpp.h>
 
 /*! \defgroup hdf5_type_traits HDF5 Type Traits
+ * \ingroup traits
  *
  * The FACEMC::HDF5FileHandler has many templated member functions. To allow
  * these functions to read and write a variety of data types, a type traits
@@ -59,24 +60,21 @@ struct Empty{};
  * functions in the templated base unspecialized struct are designed not to 
  * compile (giving a nice compile-time error message) and therefore 
  * specializations must be written for each type to be written to HDF5
- * \note 
- * The defualt defined specializations are provided for int, uint and
+ * \note The defualt defined specializations are provided for int, uint and
  * double. The tuple structs will also provide their own specializations.
- * \tparam T The primary type
- * \tparam T2 A template parameter for T.
- * \tparam T3 A template parameter for T.
- * \tparam T4 A template parameter for T.
- * \tparam T5 A template parameter for T.
+ * \tparam T The first type
+ * \tparam T2 The second type.
+ * \tparam T3 The third type.
+ * \tparam T4 The fourth type.
  * \ingroup hdf5_type_traits
  */
 template<typename T, 
 	 typename T2 = Empty, 
 	 typename T3 = Empty,
-	 typename T4 = Empty,
-	 typename T5 = Empty>
+	 typename T4 = Empty>
 struct HDF5TypeTraits
 { 
-  //! returns the data type object of the type
+  //! returns the HDF5 data type object corresponding to the type
   static inline H5::DataType dataType() { (void)UndefinedTypeTraits<T>::notDefined(); return 0; }
   //! Returns the name of this scalar type
   static inline std::string name() { (void)UndefinedTypeTraits<T>::notDefined(); return 0; }

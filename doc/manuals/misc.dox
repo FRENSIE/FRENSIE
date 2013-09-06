@@ -1,0 +1,21 @@
+// This file is used for miscelaneous code documentation.
+
+/*! \namespace FACEMC
+ * \brief The primary namespace
+ * \details All classes, structs and enums used by FACEMC will be found inside
+ * of this namespace. 
+ *
+ * \defgroup policies Policies
+ * \brief This group contains all policies that are used by FACEMC.
+ * \details A policy represents configurable behavior for generic functions and 
+ * types. In FACEMC, policy classes are also used to implement a bridge pattern
+ * that homogenizes an interface so that it can be used inside of a templated
+ * function more easily.
+ *
+ * \defgroup traits Traits
+ * \brief This group contains all traits that are used by FACEMC.
+ * \details A trait represents natural additional properties of a template
+ * parameter. In FACEMC, traits classes are used to provide templated functions
+ * with additional information about a type (either value traits or type 
+ * triats).
+ */

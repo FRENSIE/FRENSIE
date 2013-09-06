@@ -10,16 +10,17 @@
 #define HDF5_ARRAY_POLICY_DECL_HPP
 
 /*! \defgroup hdf5_array_policy HDF5 Array Policy
+ * \ingroup policies
  *
- * The FACEMC::HDF5FileHandler has many templated member functions with a
- * template template parameter (Array). Because the Teuchos array classes have
- * slightly different interfaces, a policy class is needed to homogenize the
- * interfaces (bridge pattern). The FACEMC::HDF5ArrayPolicy is the struct that 
- * defines the interface. Because of the slightly different interfaces for each 
- * array type, the FACEMC::HDF5ArrayPolicy class must be specialized. 
- * Attempting to use the class without a specialization will result in a 
- * compile time error. The compile time error message is defined by the 
- * FACEMC::UndefinedArrayPolicy struct.
+ * The FACEMC::HDF5FileHandler has many templated member functions 
+ * with a template template parameter (Array). Because the Teuchos array 
+ * classes have slightly different interfaces, a policy class is needed to 
+ * homogenize the interfaces (bridge pattern). The FACEMC::HDF5ArrayPolicy is 
+ * the struct that defines the interface. Because of the slightly different 
+ * interfaces for each array type, the FACEMC::HDF5ArrayPolicy class must be 
+ * specialized. Attempting to use the class without a specialization will 
+ * result in a compile time error. The compile time error message is defined by 
+ * the FACEMC::UndefinedArrayPolicy struct.
  */
 
 namespace FACEMC{

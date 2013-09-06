@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   SetOperationFunctor.hpp
-// \author Alex Robinson
-// \brief  Functor that takes two boolean variables and returns a boolean
+//!
+//! \file   SetOperationFunctor.hpp
+//! \author Alex Robinson
+//! \brief  Functor that takes two boolean variables and returns a boolean
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef SET_OPERATION_FUNCTOR_HPP

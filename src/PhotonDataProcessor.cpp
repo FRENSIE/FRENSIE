@@ -23,7 +23,30 @@
 
 namespace FACEMC{
 
-//! Constructor
+// Constructor
+/*! \param[in] epdl_file_name The name of the EPDL file which contains the data 
+ * that will be processed and saved to a HDF5 file. The absolute path to this 
+ * file must be included in the name.
+ * \param[in] eadl_file_name The name of the EADL file which contains the data 
+ * that will be processed and saved to a HDF5 file. The absolute path to this 
+ * file must be included in the name. 
+ * \param[in] compton_file_prefix The name prefix of the Compton profile data 
+ * files that will be processed and saved to a HDF5 file. The absolute path to 
+ * these files must be included in the name prefix. 
+ * \param[in] output_directory The directory where the HDF5 files will be 
+ * stored.
+ * \param[in] energy_min The minimum energy that will be extracted from the data
+ * tables (in MeV). 
+ * \param[in] energy_max The maximum energy that will be extracted from the data
+ * tables (in MeV).
+ * \pre 
+ * <ul>
+ *  <li> A valid minimum energy, which is any energy above 0.0 MeV, must be 
+ *       given to this function if the default is not acceptable.
+ *  <li> A valid maximum energy, which is any energy above the minimum energy,
+ *       must be given to this function if the default is not acceptable.
+ * </ul> 
+ */
 PhotonDataProcessor::PhotonDataProcessor( const std::string epdl_file_name,
 					  const std::string eadl_file_name,
 					  const std::string compton_file_prefix,
@@ -45,21 +68,30 @@ PhotonDataProcessor::PhotonDataProcessor( const std::string epdl_file_name,
   testPrecondition( d_energy_min < d_energy_max );
 }
   
-/*! Process Photon Data Files
- * \brief Unfortunately, the data file processing must be done in this order.
- * This is because when an HDF5 file is opened, one must specify if the file
- * will be overwritten, appended and/or read. The processEPDLFile() member 
- * function will overwrite an existing HDF5 file while the two other member
- * functions will only append to an existing HDF5 file.
+// Process Photon Data Files
+/*! \details All of the HDF5 files are first initialized by calling the
+ * openHDF5FileAndOverwrite FACEMC::HDF5FileHandler member function. If the
+ * file already exists, this will overwrite it. This also allows each file
+ * to be processed in any order. Each file has its own processing function
+ * due to the different properties of these files. These functions will
+ * append to the HDF5 files that were initialized.
  */
 void PhotonDataProcessor::processDataFiles()
 {
+  // Initialize all HDF5 files
+  initializeHDF5Files();
+  
+  // Process photon Data - this functions can be called in any order.
   processEPDLFile();
   processEADLFile();
   processComptonFiles();
 }
 
-//! Process EPDL file
+// Process EPDL file
+/*! \details This function uses the FACEMC::ENDLIB97FileHandler to read the
+ * EPDL data file. The data that is read is then processed into an appropriate
+ * format and finally stored in the necessary HDF5 file. 
+ */
 void PhotonDataProcessor::processEPDLFile()
 {   
   // Atomic number of element currently being processed
@@ -117,7 +149,7 @@ void PhotonDataProcessor::processEPDLFile()
       file_number << atomic_number;
       std::string hdf5_file_name = d_output_directory + 
 	PHOTON_DATA_FILE_PREFIX + file_number.str() + DATA_FILE_SUFFIX;
-      d_hdf5_file_handler.openHDF5FileAndOverwrite( hdf5_file_name );
+      d_hdf5_file_handler.openHDF5FileAndAppend( hdf5_file_name );
       
       // Create a top level attribute to store the atomic weight
       d_hdf5_file_handler.writeValueToGroupAttribute( atomic_weight,
@@ -300,7 +332,7 @@ void PhotonDataProcessor::processEPDLFile()
   d_epdl_file_handler.closeENDLIB97File();
 }
 
-//! Process the integrated coherent cross section data
+// Process the integrated coherent cross section data
 void PhotonDataProcessor::processCoherentCrossSectionData()
 {
   Teuchos::Array<Trip<double,double,double> > data;
@@ -321,7 +353,7 @@ void PhotonDataProcessor::processCoherentCrossSectionData()
 					   COHERENT_CROSS_SECTION_LOC );
 }
 
-//! Process the integrated incoherent cross section data
+// Process the integrated incoherent cross section data
 void PhotonDataProcessor::processIncoherentCrossSectionData()
 {
   Teuchos::Array<Trip<double,double,double> > data;
@@ -342,7 +374,7 @@ void PhotonDataProcessor::processIncoherentCrossSectionData()
 					   INCOHERENT_CROSS_SECTION_LOC );
 }
 
-//! Process the total integrated photoelectric cross section data
+// Process the total integrated photoelectric cross section data
 void PhotonDataProcessor::processTotalPhotoelectricCrossSectionData()
 {	
   Teuchos::Array<Trip<double,double,double> > data;
@@ -363,7 +395,10 @@ void PhotonDataProcessor::processTotalPhotoelectricCrossSectionData()
 					   PHOTOELECTRIC_CROSS_SECTION_LOC );
 }
   
-//! Process shell integrated photoelectric cross section data
+// Process shell integrated photoelectric cross section data
+/*! \param[in] shell The electron shell being processed, which will be used to
+ * create a new HDF5 group.
+ */
 void PhotonDataProcessor::processShellPhotoelectricCrossSectionData( unsigned int shell )
 {	
   Teuchos::Array<Trip<double,double,double> > data;
@@ -384,7 +419,7 @@ void PhotonDataProcessor::processShellPhotoelectricCrossSectionData( unsigned in
 					   PHOTOELECTRIC_SUBSHELL_CROSS_SECTION_ROOT + uintToShellStr( shell ) );
 }
 
-//! Process the integrated pair production cross section data
+// Process the integrated pair production cross section data
 void PhotonDataProcessor::processPairProductionCrossSectionData()
 {
   Teuchos::Array<Trip<double,double,double> > data;
@@ -411,7 +446,7 @@ void PhotonDataProcessor::processPairProductionCrossSectionData()
 					   PAIR_PRODUCTION_CROSS_SECTION_LOC );
 }     
 
-//! Process the integrated triplet production cross section
+// Process the integrated triplet production cross section
 void PhotonDataProcessor::processTripletProductionCrossSectionData()
 {
   Teuchos::Array<Trip<double,double,double> > data;
@@ -438,7 +473,7 @@ void PhotonDataProcessor::processTripletProductionCrossSectionData()
 					   TRIPLET_PRODUCTION_CROSS_SECTION_LOC );
 }    
   
-//! Process the atomic form factor data
+// Process the atomic form factor data
 void PhotonDataProcessor::processFormFactorData()
 {
   Teuchos::Array<Quad<double,double,double,double> > data;
@@ -461,7 +496,7 @@ void PhotonDataProcessor::processFormFactorData()
 					   ATOMIC_FORM_FACTOR_LOC );
 }
       
-//! Process the scattering function data
+// Process the scattering function data
 void PhotonDataProcessor::processScatteringFunctionData()
 {
   Teuchos::Array<Trip<double,double,double> > data;
@@ -483,7 +518,11 @@ void PhotonDataProcessor::processScatteringFunctionData()
 					   SCATTERING_FUNCTION_LOC );
 }
 
-//! Process EADL file 
+// Process EADL file 
+/*! \details This function uses the FACEMC::ENDLIB97FileHandler to read the
+ * EPDL data file. The data that is read is then processed into an appropriate
+ * format and finally stored in the necessary HDF5 file.
+ */
 void PhotonDataProcessor::processEADLFile()
 {
   // Atomic number of element currently being processed
@@ -690,7 +729,16 @@ void PhotonDataProcessor::processEADLFile()
   d_eadl_file_handler.closeENDLIB97File();
 }
 
-//! Process the electron shell occupancy data
+// Process the electron shell occupancy data
+/*! \param[in] atomic_number The atomic number of the element being processed. 
+ * This is needed so that the appropriate shell map can be created.
+ * \param[in,out] occupancy_data This array holds the occupancy data for this
+ * shell. The first tuple member holds the number of electrons in the shell.
+ * The second tuple member holds the EADL shell index. The third tuple member
+ * holds the Compton profile index. The fourth tuple member holds the 
+ * shell binding energy. The binding energy is stored in a different EADL table
+ * and must be read in separately.
+ */
 void PhotonDataProcessor::processShellOccupancyData( 
 					       const unsigned int atomic_number,
 		                               Teuchos::Array<Quad<double,unsigned int,unsigned int,double> > &occupancy_data )
@@ -733,7 +781,7 @@ void PhotonDataProcessor::processShellOccupancyData(
   // data has been added.
 }      
 
-//! Process the electron shell binding energy data
+// Process the electron shell binding energy data
 void PhotonDataProcessor::processBindingEnergyData( Teuchos::Array<Quad<double,unsigned int,unsigned int,double> > &occupancy_data )
 {
   Teuchos::Array<Pair<unsigned int,double> > data;
@@ -752,7 +800,7 @@ void PhotonDataProcessor::processBindingEnergyData( Teuchos::Array<Quad<double,u
 					   ELECTRON_SHELL_CDF_LOC );
 }      
 
-//! Process the electron shell kinetic energy data
+// Process the electron shell kinetic energy data
 void PhotonDataProcessor::processKineticEnergyData()
 {
   Teuchos::Array<Pair<unsigned int,double> > data;
@@ -763,7 +811,10 @@ void PhotonDataProcessor::processKineticEnergyData()
 					   ELECTRON_SHELL_KINETIC_ENERGY_LOC );
 }      
 
-//! Process the shell radiative transition probability data
+// Process the shell radiative transition probability data
+/*! \param[in] shell The electron shell being processed, which will be used to
+ * create a new HDF5 group.
+ */
 void PhotonDataProcessor::processShellRadiativeTransitionData( const unsigned int shell )
 {
   Teuchos::Array<Trip<unsigned int,double,double> > data;
@@ -807,7 +858,10 @@ void PhotonDataProcessor::processShellRadiativeTransitionData( const unsigned in
 						    );
 }
       
-//! Process the shell nonradiative transition probability data
+// Process the shell nonradiative transition probability data
+/*! \param[in] shell The electron shell being processed, which will be used to
+ * create a new HDF5 group.
+ */
 void PhotonDataProcessor::processShellNonradiativeTransitionData( const unsigned int shell )
 {
   Teuchos::Array<Quad<unsigned int,unsigned int,double,double> > data;
@@ -839,7 +893,10 @@ void PhotonDataProcessor::processShellNonradiativeTransitionData( const unsigned
 					    uintToShellStr( shell )) );
 }      
 
-//! Process Compton files
+// Process Compton files
+/*! \details The data that is read is processed into an appropriate format and 
+ * stored in the necessary HDF5 file.
+ */
 void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
 					       unsigned int atomic_number_end )
 {
@@ -940,7 +997,21 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
   }
 }
 
-//! Create the Electron Shell Index Map
+// Create the Electron Shell Index Map
+/*! \details The Hartree-Fock Compton profiles were compiled in the 1970s. The
+ * shell filling that is done in the tables is out-of-date and not consistent
+ * with the shell filling that is done in the EADL data file. To use the 
+ * EADL data file with the Hartree-Fock Compton profiles a map must be
+ * made that relates the electron shell in the EADL data file to the correct
+ * Hartree-Fock Compton profile. Unfortunately, this will potentially be
+ * different for every element.
+ * \param[in] atomic_number The atomic number for which a mapping will be made.
+ * \param[in,out] map The mapping of the EADL electron shell to the correct
+ * Hartree-Fock Compton profile.
+ * \todo Recompute the Compton profile data with the correct occupancy data
+ * provided by the EADL library. This will eliminate the need for this
+ * mapping function.
+ */
 void PhotonDataProcessor::createShellIndexMap( 
 			       unsigned int atomic_number,
 			       Teuchos::Array<Pair<unsigned int,unsigned int> >
@@ -2046,6 +2117,22 @@ void PhotonDataProcessor::createShellIndexMap(
       data_point.second = 26;
       map.push_back( data_point );
     }
+  }
+}
+
+// Initialize all HDF5 files
+/*! \details This must be done before processing any of the data files
+ */
+void PhotonDataProcessor::initializeHDF5Files()
+{
+  for(unsigned int i = 1; i <= 99; ++i)
+  {
+    std::ostringstream file_number;
+    file_number << i;
+    std::string hdf5_file_name = d_output_directory + 
+      PHOTON_DATA_FILE_PREFIX + file_number.str() + DATA_FILE_SUFFIX;
+    d_hdf5_file_handler.openHDF5FileAndOverwrite( hdf5_file_name );
+    d_hdf5_file_handler.closeHDF5File();
   }
 }
 

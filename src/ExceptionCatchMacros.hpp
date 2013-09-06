@@ -22,8 +22,22 @@
 // HDF5 Includes
 #include <H5Cpp.h>
 
-// This macro is based off of the Teuchos_StandardCatchMacro
-//! Catch statement macro for catching HDF5 Exceptions
+/*! \defgroup exception_macros Exception Catch Macros
+ *
+ * These macros are design to catch certain types of exceptions, print
+ * out error messages with the file name and line where the exception
+ * occurred and then exit the program.
+ */
+
+/*! Catch statement macro for catching HDF5 H5::Exception exceptions
+ * 
+ * This macro is based off of the Teuchos_StandardCatchMacro. The only class
+ * that handles the HDF5 interface is the FACEMC::HDF5FileHandler. This
+ * macro will only appear in that class. The HDF5 library can throw a
+ * variety of H5:Exception classes. This macro will be used after any
+ * HDF5 library call that can throw one of these exceptions.
+ * \ingroup exception_macros
+ */
 #define HDF5_EXCEPTION_CATCH_AND_EXIT()	\
   catch( const H5::Exception &exception )	\
   {						\
@@ -39,8 +53,13 @@
     exit(EXIT_FAILURE); \
   } \
 
-//! Catch statement macro for catching std::exception Exceptions
-// This macro is based off of the Teuchos_StandardCatchMacro
+/*! Catch statement macro for catching std::exception Exceptions
+ *
+ * This macro is based off of the Teuchos_StandardCatchMacro. This macro
+ * should be used anywhere that a std::exception is thrown in order to
+ * properly document the exception and exit the program.
+ * \ingroup exception_macros
+ */
 #define STD_EXCEPTION_CATCH_AND_EXIT() \
   catch( const std::exception &exception )	\
   {						\

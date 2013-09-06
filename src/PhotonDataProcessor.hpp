@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   PhotonDataProcessor.hpp
-// \author Alex Robinson
-// \brief  Photon Data Processor declaration
+//!
+//! \file   PhotonDataProcessor.hpp
+//! \author Alex Robinson
+//! \brief  Photon Data Processor declaration
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef PHOTON_DATA_PROCESSOR_HPP
@@ -20,19 +22,21 @@
 
 namespace FACEMC{
 
+/*! \brief Class which implements the data processing interface for photons.
+ *
+ * This class is derived from the FACEMC::DataProcessor abstract base class. It 
+ * implements the data processing interface. In addition, it defines a series
+ * of useful member functions for processing of photon data. These member
+ * functions are all found in the protected interface. This interface is
+ * protected instead of private to allow for white-box unit testing.
+ * \ingroup data_proc
+ */
 class PhotonDataProcessor : public DataProcessor
 {
 
 public:
 
   //! Constructor
-  // \param epdl_file_name EPDL file name including absolute path to file
-  // \param eadl_file_name EADL file name including absolute path to file
-  // \param compton_file_prefix Compton Profile file name prefix including 
-  // absolute path to file
-  // \param output_directory Director where the HDF5 files will be stored
-  // \param energy_min Minimum energy to extract from tables
-  // \param energy_max Maximum energy to extract from tables
   PhotonDataProcessor( const std::string epdl_file_name,
 		       const std::string eadl_file_name,
 		       const std::string compton_file_prefix,
@@ -66,7 +70,6 @@ protected:
   void processTotalPhotoelectricCrossSectionData();
   
   //! Process shell integrated photoelectric cross section data
-  // \param shell shell being processed for HDF5 group creation
   void processShellPhotoelectricCrossSectionData( const unsigned int shell );
 
   //! Process the integrated pair production cross section data
@@ -89,7 +92,6 @@ protected:
   void processEADLFile();
 
   //! Process the electron shell occupancy data
-  //! \param atomic_number atomic number being processed for shell map func.
   void processShellOccupancyData( const unsigned int atomic_number,
 				  Teuchos::Array<Quad<double,unsigned int,unsigned int,double> > &occupancy_data );
 
@@ -100,11 +102,9 @@ protected:
   void processKineticEnergyData();
 
   //! Process the shell radiative transition probability data
-  //! \param shell shell being processed for HDF5 group creation
   void processShellRadiativeTransitionData( const unsigned int shell );
 
   //! Process the shell nonradiative transition probability data
-  //! \param shell shell being processed for HDF5 group creation
   void processShellNonradiativeTransitionData( const unsigned int shell );
 
   //--------------------------------------------------------------------------//
@@ -119,20 +119,21 @@ protected:
   // Extras
   //--------------------------------------------------------------------------//
 
+  //! Create the x-ray production cross sections
+  /* \brief These cross sections are created by multiplying the photoelectric
+     cross section for a specific shell by the radiative transition probability.
+     X-ray production cross sections are only created for the strongest
+     x-ray lines. All other transitions are grouped together in a single
+     photon absorption cross section.
+  */
+  void createXrayProductionCrossSections();
+
   //! Create the Electron Shell Index Map
-  /* \brief The Hartree-Fock Compton Profiles were compiled in the 1970s. The
-   * shell filling that is done in the tables is out-of-date and not consistent
-   * with the shell filling that is done in the ENDLIB-97 data file. To use the 
-   * ENDLIB-97 data file with the Hartree-Fock Compton Profiles a map must be
-   * made that relates the electron shell in the ENDLIB data file to the correct
-   * Hartree-Fock Compton Profile. Unfortunately, this will potentially be
-   * different for every element.
-   * \param atomic_number Atomic number of element the map will be made for
-   * \param map An empty Pair array where the index mapping will be
-   * stored
-   */
   void createShellIndexMap( unsigned int atomic_number,
 			    Teuchos::Array<Pair<unsigned int,unsigned int> > &map );
+
+  //! Initialize all HDF5 files
+  void initializeHDF5Files();
 
   // HDF5 file handler ( This is only protected for testing purposes :( )
   HDF5FileHandler d_hdf5_file_handler;

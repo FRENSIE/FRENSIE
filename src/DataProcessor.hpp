@@ -18,14 +18,23 @@
 // FACEMC Includes
 #include "Tuple.hpp"
 
+/*! \defgroup data_proc Data Processing
+ * 
+ * FACEMC requires that all data be processed in an HDF5 file. A data processing
+ * interface is defined which allows the necessary data to be processed in
+ * very simple way. Each type of particle has its own data processor defined,
+ * which implements the abstract data processing interface.
+ */
+
 namespace FACEMC{
 
 /*! \brief Abstract base class which defines the data processing interface
- * 
+ *
  * This abstract base class defines the interface that is used to process all
  * data files. A variety of useful protected member functions are also defined.
  * These protected member functions comprise the low level data processing
  * functionality that is needed to process any data file.
+ * \ingroup data_proc
  */ 
 class DataProcessor
 {
@@ -120,7 +129,8 @@ protected:
    * This policy class implements the data processing policy interface that is
    * expected by certain protected member functions of the DataProcessor base
    * class. All data processed with this policy will be converted to log-log
-   * format. 
+   * format.
+   * \ingroup policies
    */
   struct LogLogDataProcessingPolicy
   {
@@ -140,6 +150,7 @@ protected:
    * expected by certain protected member functions of the DataProcessor base
    * class. All data processed with this policy will be converted to 
    * square-square format. 
+   * \ingroup policies
    */
   struct SquareSquareDataProcessingPolicy
   {
