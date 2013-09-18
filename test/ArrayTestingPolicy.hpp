@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   ArrayTestingPolicy.hpp
-// \author Alex Robinson
-// \brief  Policy specializations for running tests on arrays
+//!
+//! \file   ArrayTestingPolicy.hpp
+//! \author Alex Robinson
+//! \brief  Policy specializations for running tests on arrays
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef ARRAY_TESTING_POLICY_HPP
@@ -18,6 +20,10 @@
 
 namespace FACEMC{
 
+/*! \brief The partial specialization of the FACEMC::ArrayTestingPolicy for the
+ * Teuchos::Array class
+ * \ingroup array_testing_policy
+ */
 template<typename T>
 struct ArrayTestingPolicy<T,Teuchos::Array>
 {
@@ -32,6 +38,10 @@ struct ArrayTestingPolicy<T,Teuchos::Array>
   static inline typename Teuchos::Array<T>::size_type size( const Teuchos::Array<T> &array ) { return array.size(); }
 };
 
+/*! \brief The partial specialization of the FACEMC::ArrayTestingPolicy for the 
+ * Teuchos::ArrayRCP class.
+ * \ingroup array_testing_policy
+ */
 template<typename T>
 struct ArrayTestingPolicy<T,Teuchos::ArrayRCP>
 {
@@ -42,6 +52,10 @@ struct ArrayTestingPolicy<T,Teuchos::ArrayRCP>
   static inline typename Teuchos::ArrayRCP<T>::size_type size( const Teuchos::ArrayRCP<T> &array ) { return array.size(); }
 };
 
+/*! \brief The partial specialization of the FACEMC::ArrayTestingPolicy for the
+ * Teuchos::ArrayView class.
+ * \ingroup array_testing_policy
+ */
 template<typename T>
 struct ArrayTestingPolicy<T,Teuchos::ArrayView>
 {
@@ -52,6 +66,10 @@ struct ArrayTestingPolicy<T,Teuchos::ArrayView>
   static inline typename Teuchos::ArrayRCP<T>::size_type size( const Teuchos::ArrayRCP<T> &array ) { return array.size(); }
 };
 
+/*! \brief The partial specialization of the FACEMC::ArrayTestingPolicy for the
+ * Teuchos::ArrayView class.
+ * \ingroup array_testing_policy
+ */
 template<typename T>
 struct ArrayTestingPolicy<T,Teuchos::TwoDArray>
 {
@@ -63,6 +81,10 @@ struct ArrayTestingPolicy<T,Teuchos::TwoDArray>
     dummy_array[0] = array_view;
     return dummy_array;
   }
+  /*! \details Becuase only one size parameter is allowed in the interface, the
+   * Teuchos::TwoDArray will simply be resized to a 1D array with <em> size
+   * </em> columns.
+   */
   static inline void resize( Teuchos::TwoDArray<T> &array, const typename Teuchos::TwoDArray<T>::size_type size )
   {
     array.resizeRows( 1 );

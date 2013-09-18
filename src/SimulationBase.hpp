@@ -1,13 +1,15 @@
 //---------------------------------------------------------------------------//
-// \file SimulationBase.hpp
-// \author Alex Robinson
-// \brief Simulation Base Class declaration.
+//!
+//! \file SimulationBase.hpp
+//! \author Alex Robinson
+//! \brief Simulation Base Class declaration.
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef SIMULATION_BASE_HPP
 #define SIMULATION_BASE_HPP
 
-namespace FAPMC{
+namespace FACEMC{
 
 class SimulationBase
 {

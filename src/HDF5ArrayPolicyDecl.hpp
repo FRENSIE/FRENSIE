@@ -25,9 +25,8 @@
 
 namespace FACEMC{
 
-/*! \brief Default structure used by FACEMC::ArrayTraits<Array> to 
- * produce a compile time error when the specialization does not exist for 
- * array type Array
+/*! \brief Default structure used by FACEMC::ArrayPolicy to produce a compile 
+ * time error when the specialization does not exist for array type Array.
  *
  * To use the FACEMC::HDF5ArrayPolicy struct a partial template specialization 
  * for the particular array must be written. When the type of array does not
@@ -43,7 +42,7 @@ struct UndefinedArrayPolicy
   static inline T notDefined() { return Array<T>::this_type_is_missing_a_specialization(); }
 };
 
-/*!\brief This structure defines the Arrays policy to be used in conjunction
+/*!\brief This structure defines the Array policy to be used in conjunction
  * with the FACEMC::HDF5FileHandler class member functions.
  *
  * This struct should allow use of any Teuchos::Array when dealing with the

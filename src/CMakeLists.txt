@@ -15,7 +15,7 @@ SET(HEADERS
   PhotonDataFluorescence.hpp
   PhotonDataDopplerBroadening.hpp
   PhotonData.hpp
-  LinearAlgebraAlgorithms.hpp
+  ThreeSpaceHelpers.hpp
   Surface.hpp
   SetOperationFunctor.hpp
   BooleanCellFunctor.hpp
@@ -33,7 +33,6 @@ SET(SOURCES
   PhotonDataFluorescence.cpp
   PhotonDataDopplerBroadening.cpp
   LinearAlgebraAlgorithms.cpp
-  Surface.cpp
   BooleanCellFunctor.cpp
   Cell.cpp
   ${SOURCES}
@@ -57,7 +56,7 @@ ADD_EXECUTABLE(process_data
   PhotonDataProcessor.cpp
   HDF5FileHandler.cpp)
 
-TARGET_LINK_LIBRARIES(process_data ${TEUCHOS} ${HDF5})
+TARGET_LINK_LIBRARIES(process_data ${TEUCHOS_CORE} ${HDF5})
 
 INSTALL(TARGETS ${TARGETS}
   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

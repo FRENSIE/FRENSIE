@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   TupleGetSetMemberPolicy.hpp
-// \author Alex Robinson
-// \brief  Tuple get and set member policy specializations
+//!
+//! \file   TupleGetSetMemberPolicy.hpp
+//! \author Alex Robinson
+//! \brief  Tuple get and set member policy specializations
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef TUPLE_GET_SET_MEMBER_POLICY_HPP
@@ -13,6 +15,10 @@
 
 namespace FACEMC{
 
+/*! \brief The partial specialization of the FACEMC::TupleGetSetMemberPolicy for
+ * the FIRST tuple member enumeration.
+ * \ingroup tuple_gsm_policy
+ */
 template<typename T>
 struct TupleGetSetMemberPolicy<T,FIRST>
 {
@@ -21,6 +27,10 @@ struct TupleGetSetMemberPolicy<T,FIRST>
   static inline void set(T &tuple, tupleMemberType value) { tuple.first = value; }
 };
 
+/*! \brief The partial specialization of the FACEMC::TupleGetSetMemberPolicy for
+ * the SECOND tuple member enumeration.
+ * \ingroup tuple_gsm_policy
+ */
 template<typename T>
 struct TupleGetSetMemberPolicy<T,SECOND>
 {
@@ -29,6 +39,10 @@ struct TupleGetSetMemberPolicy<T,SECOND>
   static inline void set(T &tuple, tupleMemberType value) { tuple.second = value; }
 };
 
+/*! \brief The partial specialization of the FACEMC::TupleGetSetMemberPolicy for
+ * the THIRD tuple member enumeration.
+ * \ingroup tuple_gsm_policy
+ */
 template<typename T>
 struct TupleGetSetMemberPolicy<T,THIRD>
 {
@@ -37,6 +51,10 @@ struct TupleGetSetMemberPolicy<T,THIRD>
   static inline void set(T &tuple, tupleMemberType value) { tuple.third = value; }
 };
 
+/*! \brief The partial specialization of the FACEMC::TupleGetSetMemberPolicy for
+ * the FOURTH tuple member enumeration.
+ * \ingroup tuple_gsm_policy
+ */
 template<typename T>
 struct TupleGetSetMemberPolicy<T,FOURTH>
 {

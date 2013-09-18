@@ -9,6 +9,9 @@
 #ifndef HDF5_TYPE_TRAITS_DECL_HPP
 #define HDF5_TYPE_TRAITS_DECL_HPP
 
+// FACEMC Includes
+#include "Empty.hpp"
+
 // HDF5 Includes
 #include <H5Cpp.h>
 
@@ -43,12 +46,6 @@ struct UndefinedTypeTraits
   //! This function should not compile if there is any attempt to instantiate!
   static inline T notDefined() { return T::this_type_is_missing_a_specialization(); }
 };
-
-/*! \brief An empty class used for default template parameters in the 
- * HDF5TypeTraits struct.
- * \ingroup hdf5_type_traits
- */
-struct Empty{};
 
 /*! \brief This structure defines the traits that are needed by the 
  * FACEMC::HDF5FileHandler class member functions.

@@ -18,4 +18,17 @@
  * parameter. In FACEMC, traits classes are used to provide templated functions
  * with additional information about a type (either value traits or type 
  * triats).
+ *
+ * \defgroup testing Unit Testing
+ * \brief This group contains all classes and structs that are used to unit
+ * test FACEMC. 
+ * \details Every line of FACEMC is tested through the use of one or more
+ * unit tests. To make the tests simpler and/or to conduct white-box testing
+ * many classes and structs have been created. The <em> Teuchos Unit Test 
+ * Harness </em> is used for creating unit tests.
+ *
+ * After building the code simply type <em> make test </em> in the build
+ * directory to run all of the unit tests. This should be done any time code
+ * changes have been made to ensure that the code is still in working order
+ * (regression testing).
  */
