@@ -1,0 +1,26 @@
+Patches:
+	1.) blas_makefile_patch
+	2.) Teuchos_TwoDArray_patch
+
+1.) FACEMC requires the Teuchos_Numerics library, which contains blas and
+    lapack wrappers, which allow the blas and lapack fortran routines to
+    be called by c++ functions. When compiling an executable using g++
+    the libgfortan library must be linked to the executable during the
+    linking stage so that the fortran routines can execute properly. Failure
+    to link against this library will result in linker errors. In addition,
+    the default ubuntu blas and lapack libraries have a compatability issue
+    that prevents successful linking. The best solution is to recompile the
+    blas and lapack libraries. The libgfortran library can then be manualy
+    inserted into the blas library that is created. This can be done by
+    applying the patch file to the blas makefile that is distributed:	
+    	     
+	     cp blas_makefile_patch path-to-blas-dir/.
+	     mv Makefile Makefile-old
+	     patch blas_makefile_patch Makefile-old Makefile
+
+2.) FACEM requires the Teuchos::TwoDArray. Unfortunately the const access
+    operator and the const ArrayView operator are not defined properly. These
+    operators should return an ArrayView of const objects and not a const
+    ArrayView (compiler errors are given with the current source code).
+    Applying this patch will fix the Teuchos::TwoDArray source code. This
+    patch is automatically applied by the build system.

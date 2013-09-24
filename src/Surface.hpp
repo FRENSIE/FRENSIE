@@ -16,6 +16,9 @@
 #include <Teuchos_OrdinalTraits.hpp>
 #include <Teuchos_Tuple.hpp>
 
+// FACEMC Includes
+#include "ThreeSpaceTraitsAndPolicy.hpp"
+
 namespace FACEMC{
 
 //! Surface sense enumeration
@@ -37,11 +40,26 @@ public:
   typedef OrdinalType ordinalType;
   //! Typedef for scalar type
   typedef ScalarType scalarType;
-  //! Typedef for matrix
-  typedef Teuchos::SerialDenseMatrix<char,ScalarType> Matrix;
-  //! Typedef for vector
-  typedef Teuchos::SerialDenseVector<char,ScalarType> Vector;
   //@}
+
+private:
+  
+  //! Typedef for scalar traits
+  typedef Teuchos::ScalarTraits<ScalarType> ST;
+  //! Typedef for ordinal traits
+  typedef Teuchos::OrdinalTraits<OrdinalType> OT;
+  //! Typedef for Teuchos::Tuple index
+  typedef typename Teuchos::Tuple<ScalarType,10>::Ordinal tupleIndex;
+  //! Typedef for Teuchos::Tuple ordinal traits
+  typedef Teuchos::OrdinalTraits<tupleIndex> Tuple_OT;
+  //! Typedef for three space traits and policy struct
+  typedef ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
+  //! Typedef for vector
+  typedef typename ThreeSpace::Vector Vector;
+  //! Typedef for matrix
+  typedef typename ThreeSpace::Matrix Matrix;
+  
+public:
 
   //! General Surface Constructor.
   // \details ax^2+by^2+cz^2+dxy+eyz+fxz+gx+hy+jz+k = 0
@@ -80,23 +98,18 @@ public:
   //! Construct surface by translating another surface
   Surface( OrdinalType id,
 	   const Surface<OrdinalType,ScalarType> &original_surface,
-	   const Teuchos::SerialDenseVector<char,ScalarType>
-	   &translation_vector );
+	   const Vector &translation_vector );
 
   //! Construct surface by rotating another surface
   Surface( OrdinalType id,
 	   const Surface<OrdinalType,ScalarType> &original_surface,
-	   const Teuchos::SerialDenseMatrix<char,ScalarType>
-	   &rotation_matrix );
+	   const Matrix &rotation_matrix );
 
   //! Construct surface by conducting a general transform on anothe surface
   Surface( OrdinalType id,
-	   const Surface<OrdinalType,ScalarType> 
-	   &original_surface,
-	   const Teuchos::SerialDenseMatrix<char,ScalarType>
-	   &rotation_matrix,
-	   const Teuchos::SerialDenseVector<char,ScalarType>
-	   &translation_vector );
+	   const Surface<OrdinalType,ScalarType> &original_surface,
+	   const Matrix &rotation_matrix,
+	   const Vector &translation_vector );
 
   //! Destructor.
   ~Surface()
@@ -181,15 +194,6 @@ protected:
 						const ScalarType z ) const;
 
 private:
-
-  //! Typedef for scalar traits
-  typedef Teuchos::ScalarTraits<ScalarType> ST;
-  //! Typedef for ordinal traits
-  typedef Teuchos::OrdinalTraits<OrdinalType> OT;
-  //! Typedef for Teuchos::Tuple index
-  typedef typename Teuchos::Tuple<ScalarType,10>::Ordinal tupleIndex;
-  //! Typedef for Teuchos::Tuple ordinal traits
-  typedef Teuchos::OrdinalTraits<tupleIndex> Tuple_OT;
 
   // Surface ID
   OrdinalType d_id;

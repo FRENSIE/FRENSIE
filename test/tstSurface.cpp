@@ -18,7 +18,7 @@
 // FACEMC Includes
 #include "FACEMC_UnitTestHarnessExtensions.hpp"
 #include "Surface.hpp"
-#include "ThreeSpaceHelpers.hpp"
+#include "ThreeSpaceTraitsAndPolicy.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Info.
@@ -37,10 +37,11 @@ TEUCHOS_UNIT_TEST( Surface, isOn )
 						 20, 20, 20,
 						 10*10+10*10+10*10 - 10*10 );
 
-  typedef FACEMC::Surface<short,double>::Vector Point;
+  typedef FACEMC::ThreeSpaceTraitsAndPolicy<double> ThreeSpace;
+  typedef ThreeSpace::Vector Point;
 
-  Point point_1 = FACEMC::createThreeSpaceVector( 0.0, -10.0, -10.0 );
-  Point point_2 = FACEMC::createThreeSpaceVector( -10.0, -10.0, -10.0 ); 
+  Point point_1 = ThreeSpace::createVector( 0.0, -10.0, -10.0 );
+  Point point_2 = ThreeSpace::createVector( -10.0, -10.0, -10.0 ); 
 
   TEST_ASSERT( sphere.isOn( point_1 ) );
   TEST_ASSERT( !sphere.isOn( point_2 ) );
@@ -84,12 +85,13 @@ TEUCHOS_UNIT_TEST( Surface, getSense )
 					1, 1, 1,
 					20, 20, 20,
 					10*10+10*10+10*10 - 10*10 );
+  
+  typedef FACEMC::ThreeSpaceTraitsAndPolicy<double> ThreeSpace;
+  typedef ThreeSpace::Vector Point;
 
-  typedef FACEMC::Surface<short,double>::Vector Point;
-
-  Point point_1 = FACEMC::createThreeSpaceVector( 0.0, -10.0, -10.0 );
-  Point point_2 = FACEMC::createThreeSpaceVector( -10.0, -10.0, -10.0 ); 
-  Point point_3 = FACEMC::createThreeSpaceVector( 10.0, 10.0, 10.0 ); 
+  Point point_1 = ThreeSpace::createVector( 0.0, -10.0, -10.0 );
+  Point point_2 = ThreeSpace::createVector( -10.0, -10.0, -10.0 ); 
+  Point point_3 = ThreeSpace::createVector( 10.0, 10.0, 10.0 ); 
 
   FACEMC::SurfaceSense sense_1 = sphere.getSenseOfPoint( point_1 );
   FACEMC::SurfaceSense sense_2 = sphere.getSenseOfPoint( point_2 );
@@ -110,15 +112,16 @@ TEUCHOS_UNIT_TEST( Surface, getUnitNormal )
 					20, 20, 20,
 					10*10+10*10+10*10 - 10*10 );
 
-  typedef FACEMC::Surface<short,double>::Vector Point;
-  typedef FACEMC::Surface<short,double>::Vector Vector;
+  typedef FACEMC::ThreeSpaceTraitsAndPolicy<double> ThreeSpace;
+  typedef ThreeSpace::Vector Point;
+  typedef ThreeSpace::Vector Vector;
 
-  Point point_1 = FACEMC::createThreeSpaceVector( 0.0, -10.0, -10.0 ); 
-  Point point_2 = FACEMC::createThreeSpaceVector( -10.0, 0.0, -10.0 );
-  Point point_3 = FACEMC::createThreeSpaceVector( -10.0, -10.0, 0.0 );
-  Point point_4 = FACEMC::createThreeSpaceVector( -20.0, -10.0, -10.0 );
-  Point point_5 = FACEMC::createThreeSpaceVector( -10.0, -20.0, -10.0 );
-  Point point_6 = FACEMC::createThreeSpaceVector( -10.0, -10.0, -20.0 );
+  Point point_1 = ThreeSpace::createVector( 0.0, -10.0, -10.0 ); 
+  Point point_2 = ThreeSpace::createVector( -10.0, 0.0, -10.0 );
+  Point point_3 = ThreeSpace::createVector( -10.0, -10.0, 0.0 );
+  Point point_4 = ThreeSpace::createVector( -20.0, -10.0, -10.0 );
+  Point point_5 = ThreeSpace::createVector( -10.0, -20.0, -10.0 );
+  Point point_6 = ThreeSpace::createVector( -10.0, -10.0, -20.0 );
 
   Point normal_1 = sphere.getUnitNormalAtPoint( point_1 );
   Point normal_2 = sphere.getUnitNormalAtPoint( point_2 );

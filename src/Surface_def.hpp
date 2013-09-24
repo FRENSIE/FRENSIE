@@ -11,7 +11,7 @@
 
 // FACEMC Includes
 #include "ContractException.hpp"
-#include "ThreeSpaceHelpers.hpp"
+#include "ThreeSpaceTraitsAndPolicy.hpp"
 
 namespace FACEMC{
 
@@ -99,7 +99,7 @@ template<typename OrdinalType, typename ScalarType>
 Surface<OrdinalType,ScalarType>::Surface( 
         OrdinalType id,
 	const Surface<OrdinalType,ScalarType> &original_surface,
-	const Teuchos::SerialDenseVector<char,ScalarType> &translation_vector )
+	const Vector &translation_vector )
   : d_id( id ),
     d_definition( original_surface.d_definition ),
     d_tolerance( original_surface.d_tolerance ),
@@ -112,7 +112,8 @@ Surface<OrdinalType,ScalarType>::Surface(
   testPrecondition( translation_vector.length() == 3 );
   testPrecondition( translation_vector.normFrobenius() > ST::zero() );
 
-  remember( int multiply_success = 0 ); // successful multiplication returns 0
+  // Successful multiplication returns 0
+  remember( int multiply_success = 0 ); 
 
   // Matrix form of surface eqn: x^tAx+b^tx+k => ^t indicates the transpose
   // Translate the surface using the given translation vector:
@@ -168,7 +169,7 @@ template<typename OrdinalType, typename ScalarType>
 Surface<OrdinalType,ScalarType>::Surface( 
 	   OrdinalType id,
 	   const Surface<OrdinalType,ScalarType> &original_surface,
-	   const Teuchos::SerialDenseMatrix<char,ScalarType> &rotation_matrix )
+	   const Matrix &rotation_matrix )
   : d_id( id ),
     d_definition( original_surface.d_definition ),
     d_tolerance( original_surface.d_tolerance ),
@@ -272,8 +273,8 @@ template<typename OrdinalType, typename ScalarType>
 Surface<OrdinalType,ScalarType>::Surface( 
 	OrdinalType id,
 	const Surface<OrdinalType,ScalarType> &original_surface,
-	const Teuchos::SerialDenseMatrix<char,ScalarType> &rotation_matrix,
-        const Teuchos::SerialDenseVector<char,ScalarType> &translation_vector )
+	const Matrix &rotation_matrix,
+        const Vector &translation_vector )
   : d_id( id ),
     d_definition( original_surface.d_definition ),
     d_tolerance( original_surface.d_tolerance ),
@@ -490,7 +491,7 @@ SurfaceSense Surface<OrdinalType,ScalarType>::getSenseOfPoint(
 // Return the unit normal from the surface at a point on the surface,
 // pointing in the direction of the desired sense
 template<typename OrdinalType, typename ScalarType>
-typename Surface<OrdinalType,ScalarType>::Vector 
+typename Surface<OrdinalType,ScalarType>::Vector
 Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint( 
 					       const ScalarType x, 
 					       const ScalarType y, 
@@ -565,28 +566,28 @@ Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
 
 // Return the quadratic form matrix of the surface
 template<typename OrdinalType, typename ScalarType>
-typename Surface<OrdinalType,ScalarType>::Matrix
+typename Surface<OrdinalType,ScalarType>::Matrix 
 Surface<OrdinalType,ScalarType>::getQuadraticFormMatrix() const
 {
-  return createThreeByThreeMatrix( d_definition[0], 
-				   d_definition[3]/2, 
-				   d_definition[5]/2,
-				   d_definition[3]/2,
-				   d_definition[1],
-				   d_definition[4]/2,
-				   d_definition[5]/2,
-				   d_definition[4]/2,
-				   d_definition[2] );
+  return ThreeSpace::createSquareMatrix( d_definition[0], 
+					 d_definition[3]/2, 
+					 d_definition[5]/2,
+					 d_definition[3]/2,
+					 d_definition[1],
+					 d_definition[4]/2,
+					 d_definition[5]/2,
+					 d_definition[4]/2,
+					 d_definition[2] );
 }
 
 // Return the linear term vector of the surface
 template<typename OrdinalType, typename ScalarType>
-typename Surface<OrdinalType,ScalarType>::Vector
+typename Surface<OrdinalType,ScalarType>::Vector 
 Surface<OrdinalType,ScalarType>::getLinearTermVector() const
 {
-  return createThreeSpaceVector( d_definition[6],
-				 d_definition[7],
-				 d_definition[8] );
+  return ThreeSpace::createVector( d_definition[6],
+				   d_definition[7],
+				   d_definition[8] );
 }
 
 //! Return the constant term of the surface

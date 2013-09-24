@@ -15,7 +15,8 @@ SET(HEADERS
   PhotonDataFluorescence.hpp
   PhotonDataDopplerBroadening.hpp
   PhotonData.hpp
-  ThreeSpaceHelpers.hpp
+  ThreeSpaceTraitsAndPolicy.hpp
+  LinearAlbebraPolicy.hpp
   Surface.hpp
   SetOperationFunctor.hpp
   BooleanCellFunctor.hpp
@@ -32,7 +33,6 @@ SET(SOURCES
   PhotonDataBasic.cpp
   PhotonDataFluorescence.cpp
   PhotonDataDopplerBroadening.cpp
-  LinearAlgebraAlgorithms.cpp
   BooleanCellFunctor.cpp
   Cell.cpp
   ${SOURCES}

@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   TestingHelperFunctions.hpp
-// \author Alex Robinson
-// \brief  Functions that aid in the testing of FACEMC class
+//!
+//! \file   TestingHelperFunctions.hpp
+//! \author Alex Robinson
+//! \brief  Functions that aid in the testing of FACEMC classes
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef TESTING_HELPER_FUNCTIONS_HPP
@@ -21,12 +23,16 @@
 #include "ArrayTestingPolicy.hpp"
 #include "TypeTestingPolicy.hpp"
 
-namespace Teuchos{
+/*! \defgroup print_format Object Printing Format
+ * \ingroup testing
+ *
+ * This group defines how some types used by FACEMC are output when printed to
+ * the terminal using the stream operator.
+ */ 
 
-} // end Teuchos namespace 
-
-
-// Stream operator for Pair
+/*! \brief Stream operator for Pair
+ * \ingroup print_format
+ */
 template<typename T1, typename T2>
 std::ostream& operator<<(std::ostream &out, const FACEMC::Pair<T1,T2> &p)
 {
@@ -34,7 +40,9 @@ std::ostream& operator<<(std::ostream &out, const FACEMC::Pair<T1,T2> &p)
   return out;
 }
 
-// Stream operator for Trip
+/*! Stream operator for Trip
+ * \ingroup print_format
+ */
 template<typename T1, typename T2, typename T3>
 std::ostream& operator<<(std::ostream &out, const FACEMC::Trip<T1,T2,T3> &p)
 {
@@ -42,7 +50,9 @@ std::ostream& operator<<(std::ostream &out, const FACEMC::Trip<T1,T2,T3> &p)
   return out;
 }
 
-// Stream operator for Quad
+/*! Stream operator for Quad
+ * \ingroup print_format
+ */
 template<typename T1, typename T2, typename T3, typename T4>
 std::ostream& operator<<(std::ostream &out, const FACEMC::Quad<T1,T2,T3,T4> &p)
 {
@@ -51,7 +61,9 @@ std::ostream& operator<<(std::ostream &out, const FACEMC::Quad<T1,T2,T3,T4> &p)
   return out;
 }
 
-// Stream operator for std::list
+/*! Stream operator for std::list
+ * \ingroup print_format
+ */
 template<typename T, template<typename,typename> class List>
 std::ostream& operator<<( std::ostream &out, 
 			  List<T,std::allocator<T> > &list)
@@ -78,14 +90,36 @@ std::ostream& operator<<( std::ostream &out,
 
 namespace FACEMC{
 
-// Function for comparing individual types
+/*! \brief A function for comparing individual types.
+ *
+ * This function is used by the Teuchos Unit Test Harness extension testing
+ * macros (see \ref unit_test_harness_extensions). It allows any type commonly 
+ * used by FACEMC to be tested. The generality is made possible through the
+ * FACEMC::ComparePolicy. Refer to the FACEMC::ComparePolicy to gain a 
+ * better understanding of how this function operates.
+ * \tparam T A data type that will be tested.
+ * \param[in] first_value The first value that will be tested.
+ * \param[in] first_name The name given to the first value, which will be 
+ * used to refer to the value if the test fails.
+ * \param[in] second_value The second value that will be tested.
+ * \param[in] second_name The name given to the second value, which will be 
+ * used to refer to the value if the test fails.
+ * \param[in,out] out The output stream that will be used to output the
+ * results of the test.
+ * \param[in] index The index in the array that corresponds to the values
+ * being tested. An index of -1 indicates that the values are not part
+ * of an array.
+ * \param[in] tol The testing tolerance used to compare floating point
+ * values. This will be ignored with integer comparisons.
+ * \ingroup unit_test_harness_extensions
+ */
 template<typename T>
 bool compare( const T &first_value,
 	      const std::string &first_name,
 	      const T &second_value,
 	      const std::string &second_name,
 	      Teuchos::FancyOStream &out,
-	      const int index = 0,
+	      const int index = -1,
 	      const double tol = 0.0 )
 {
   bool success = ComparePolicy<T>::compare( first_value,
@@ -101,7 +135,28 @@ bool compare( const T &first_value,
   return success;
 }
   
-// Function for comparing arrays of types
+/*! \brief A function for comparing arrays of types.
+ * 
+ * This function is used by the Teuchos Unit Test Harness extension testing
+ * macros (see \ref unit_test_harness_extensions). It allows any type commonly
+ * used by FACEMC in an array to be tested. The generality is made possible
+ * through the FACEMC::ComparePolicy. Refer to the FACEMC::ComparePolicy to 
+ * gain a better understanding of how this function operates.
+ * \tparam T A data type that will be tested.
+ * \tparam Array1 The first array type containing data that will be tested.
+ * \tparam Array2 The second array type containing data that will be tested.
+ * \param[in] a1 The first array containing data that needs to be tested.
+ * \param[in] a1_name The name given to the first array, which will be used
+ * to refer to the array if the test fails.
+ * \param[in] a2 The second array containing data that needs to be tested.
+ * \param[in] a2_name The name given to the second array, which will be used
+ * to refer to the array if the test fails.
+ * \param[in,out] out The output stream that will be used to output the 
+ * results of the test.
+ * \param[in] tol The testing tolerance used to compare floating point values
+ * in the arrays. This will be ignored with integer comparisons.
+ * \ingroup unit_test_harness_extensions
+ */
 template<typename T,
 	 template<typename> class Array1,
 	 template<typename> class Array2>
