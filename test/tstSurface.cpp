@@ -21,6 +21,17 @@
 #include "ThreeSpaceTraitsAndPolicy.hpp"
 
 //---------------------------------------------------------------------------//
+// Instantiation Macros.
+//---------------------------------------------------------------------------//
+#define UNIT_TEST_INSTANTIATION( type, name ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, short, float ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, short, double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, float ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, long, float ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, long, double ) 
+
+//---------------------------------------------------------------------------//
 // Testing Info.
 //---------------------------------------------------------------------------//
 #define TOL 1e-12
@@ -29,16 +40,19 @@
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that a surface can determine if a point is on it
-TEUCHOS_UNIT_TEST( Surface, isOn )
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface, 
+				   isOn,
+				   OrdinalType,
+				   ScalarType )
 {
   // Spherical surface centered at (-10,-10,-10) with radius 10
-  FACEMC::Surface<short,double> sphere( 0,
-						 1, 1, 1,
-						 20, 20, 20,
-						 10*10+10*10+10*10 - 10*10 );
+  FACEMC::Surface<OrdinalType,ScalarType> sphere( 0,
+						  1, 1, 1,
+						  20, 20, 20,
+						  10*10+10*10+10*10 - 10*10 );
 
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<double> ThreeSpace;
-  typedef ThreeSpace::Vector Point;
+  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
+  typedef typename ThreeSpace::Vector Point;
 
   Point point_1 = ThreeSpace::createVector( 0.0, -10.0, -10.0 );
   Point point_2 = ThreeSpace::createVector( -10.0, -10.0, -10.0 ); 
@@ -47,47 +61,57 @@ TEUCHOS_UNIT_TEST( Surface, isOn )
   TEST_ASSERT( !sphere.isOn( point_2 ) );
 }
 
+UNIT_TEST_INSTANTIATION( Surface, isOn );
+
 //---------------------------------------------------------------------------//
 // Check that a surface returns if it is planar or not
-TEUCHOS_UNIT_TEST( Surface, isPlanar )
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface, 
+				   isPlanar,
+				   OrdinalType,
+				   ScalarType )
 {
   // Generic surface
-  FACEMC::Surface<short,double> surface( 0, 
-					 1, 2, 3,
-					 4, 5, 6,
-					 7, 8, 9,
-					 10 );
+  FACEMC::Surface<OrdinalType,ScalarType> surface( 0, 
+						   1, 2, 3,
+						   4, 5, 6,
+						   7, 8, 9,
+						   10 );
   
   TEST_ASSERT( !surface.isPlanar() );
 
   // Spherical surface centered at (-10,-10,-10) with radius 10
-  FACEMC::Surface<short,double> sphere( 0,
-					1, 1, 1,
-					20, 20, 20,
-					10*10+10*10+10*10 - 10*10 );
+  FACEMC::Surface<OrdinalType,ScalarType> sphere( 0,
+						  1, 1, 1,
+						  20, 20, 20,
+						  10*10+10*10+10*10 - 10*10 );
 
   TEST_ASSERT( !sphere.isPlanar() );
 
   // Planar surface
-  FACEMC::Surface<short,double> plane( 0,
+  FACEMC::Surface<OrdinalType,ScalarType> plane( 0,
 				       1, 2, 3,
 				       4 );
 
   TEST_ASSERT( plane.isPlanar() );
 }
 
+UNIT_TEST_INSTANTIATION( Surface, isPlanar );
+
 //---------------------------------------------------------------------------//
 // Check that a surface can return the correct sense of a point
-TEUCHOS_UNIT_TEST( Surface, getSense )
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface, 
+				   getSense,
+				   OrdinalType,
+				   ScalarType )
 {
   // Spherical surface centered at (-10,-10,-10) with radius 10
-  FACEMC::Surface<short,double> sphere( 0,
-					1, 1, 1,
-					20, 20, 20,
-					10*10+10*10+10*10 - 10*10 );
+  FACEMC::Surface<OrdinalType,ScalarType> sphere( 0,
+						  1, 1, 1,
+						  20, 20, 20,
+						  10*10+10*10+10*10 - 10*10 );
   
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<double> ThreeSpace;
-  typedef ThreeSpace::Vector Point;
+  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
+  typedef typename ThreeSpace::Vector Point;
 
   Point point_1 = ThreeSpace::createVector( 0.0, -10.0, -10.0 );
   Point point_2 = ThreeSpace::createVector( -10.0, -10.0, -10.0 ); 
@@ -102,19 +126,25 @@ TEUCHOS_UNIT_TEST( Surface, getSense )
   TEST_EQUALITY_CONST( sense_3, FACEMC::POS_SURFACE_SENSE );
 }
 
+UNIT_TEST_INSTANTIATION( Surface, getSense );
+
 //---------------------------------------------------------------------------//
 // Check that a surface can return the correct unit normal at a point
-TEUCHOS_UNIT_TEST( Surface, getUnitNormal )
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface, 
+				   getUnitNormal,
+				   OrdinalType,
+				   ScalarType )
 {
   // Spherical surface centered at (-10,-10,-10) with radius 10
-  FACEMC::Surface<short,double> sphere( 0,
-					1, 1, 1,
-					20, 20, 20,
-					10*10+10*10+10*10 - 10*10 );
+  FACEMC::Surface<OrdinalType,ScalarType> sphere( 0,
+						  1, 1, 1,
+						  20, 20, 20,
+						  10*10+10*10+10*10 - 10*10 );
 
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<double> ThreeSpace;
-  typedef ThreeSpace::Vector Point;
-  typedef ThreeSpace::Vector Vector;
+  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
+  typedef Teuchos::ScalarTraits<ScalarType> ST;
+  typedef typename ThreeSpace::Vector Point;
+  typedef typename ThreeSpace::Vector Vector;
 
   Point point_1 = ThreeSpace::createVector( 0.0, -10.0, -10.0 ); 
   Point point_2 = ThreeSpace::createVector( -10.0, 0.0, -10.0 );
@@ -130,19 +160,25 @@ TEUCHOS_UNIT_TEST( Surface, getUnitNormal )
   Point normal_5 = sphere.getUnitNormalAtPoint( point_5 );
   Point normal_6 = sphere.getUnitNormalAtPoint( point_6 );
 
-  Teuchos::ArrayView<double> normal_1_view( normal_1.values(), 3 );
-  Teuchos::ArrayView<double> normal_2_view( normal_2.values(), 3 );
-  Teuchos::ArrayView<double> normal_3_view( normal_3.values(), 3 );
-  Teuchos::ArrayView<double> normal_4_view( normal_4.values(), 3 );
-  Teuchos::ArrayView<double> normal_5_view( normal_5.values(), 3 );
-  Teuchos::ArrayView<double> normal_6_view( normal_6.values(), 3 );
+  Teuchos::ArrayView<ScalarType> normal_1_view( normal_1.values(), 3 );
+  Teuchos::ArrayView<ScalarType> normal_2_view( normal_2.values(), 3 );
+  Teuchos::ArrayView<ScalarType> normal_3_view( normal_3.values(), 3 );
+  Teuchos::ArrayView<ScalarType> normal_4_view( normal_4.values(), 3 );
+  Teuchos::ArrayView<ScalarType> normal_5_view( normal_5.values(), 3 );
+  Teuchos::ArrayView<ScalarType> normal_6_view( normal_6.values(), 3 );
 
-  Teuchos::Tuple<double,3> ref_normal_1 = Teuchos::tuple( 1.0, 0.0, 0.0 );
-  Teuchos::Tuple<double,3> ref_normal_2 = Teuchos::tuple( 0.0, 1.0, 0.0 );
-  Teuchos::Tuple<double,3> ref_normal_3 = Teuchos::tuple( 0.0, 0.0, 1.0 );
-  Teuchos::Tuple<double,3> ref_normal_4 = Teuchos::tuple( -1.0, 0.0, 0.0 );
-  Teuchos::Tuple<double,3> ref_normal_5 = Teuchos::tuple( 0.0, -1.0, 0.0 );
-  Teuchos::Tuple<double,3> ref_normal_6 = Teuchos::tuple( 0.0, 0.0, -1.0 );
+  Teuchos::Tuple<ScalarType,3> ref_normal_1 = 
+    Teuchos::tuple( ST::one(), ST::zero(), ST::zero() );
+  Teuchos::Tuple<ScalarType,3> ref_normal_2 = 
+    Teuchos::tuple( ST::zero(), ST::one(), ST::zero() );
+  Teuchos::Tuple<ScalarType,3> ref_normal_3 = 
+    Teuchos::tuple( ST::zero(), ST::zero(), ST::one() );
+  Teuchos::Tuple<ScalarType,3> ref_normal_4 = 
+    Teuchos::tuple( -ST::one(), ST::zero(), ST::zero() );
+  Teuchos::Tuple<ScalarType,3> ref_normal_5 = 
+    Teuchos::tuple( ST::zero(), -ST::one(), ST::zero() );
+  Teuchos::Tuple<ScalarType,3> ref_normal_6 = 
+    Teuchos::tuple( ST::zero(), ST::zero(), -ST::one() );
 
   
   TEST_COMPARE_ARRAYS( normal_1_view, ref_normal_1 );
@@ -152,6 +188,8 @@ TEUCHOS_UNIT_TEST( Surface, getUnitNormal )
   TEST_COMPARE_ARRAYS( normal_5_view, ref_normal_5 );
   TEST_COMPARE_ARRAYS( normal_6_view, ref_normal_6 );
 }
+
+UNIT_TEST_INSTANTIATION( Surface, getUnitNormal );
 
 //---------------------------------------------------------------------------//
 // Check that a surface can be transformed with a rotation matrix and 

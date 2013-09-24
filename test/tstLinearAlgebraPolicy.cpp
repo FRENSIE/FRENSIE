@@ -21,63 +21,74 @@
 #include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
-// Testing Info.
+// Instantiation Macros.
 //---------------------------------------------------------------------------//
-#define TOL 1e-12
+#define UNIT_TEST_INSTANTIATION( type, name ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, float ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that a vector can be normalized
-TEUCHOS_UNIT_TEST( LinearAlgebraPolicy, normalizeVector )
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebraPolicy, 
+				   normalizeVector,
+				   ScalarType )
 {
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<double> ThreeSpace;
-  ThreeSpace::Vector vector = ThreeSpace::createVector( 1.0, 1.0, 1.0 );
-  FACEMC::LinearAlgebraPolicy<double>::normalizeVector( vector );
-  Teuchos::ArrayView<double> vector_view( vector.values(), 3 );
+  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
+  typedef Teuchos::ScalarTraits<ScalarType> ST;
+  
+  typename ThreeSpace::Vector vector = 
+    ThreeSpace::createVector( 1.0, 1.0, 1.0 );
+  
+  FACEMC::LinearAlgebraPolicy<ScalarType>::normalizeVector( vector );
+  
+  Teuchos::ArrayView<ScalarType> vector_view( vector.values(), 3 );
 
-  double divisor = Teuchos::ScalarTraits<double>::squareroot( 3.0 );
+  ScalarType divisor = ST::squareroot( 3.0 );
 
-  Teuchos::Tuple<double,3> ref_norm_vector = 
-    Teuchos::tuple( 1.0/divisor, 1.0/divisor, 1.0/divisor );
+  Teuchos::Tuple<ScalarType,3> ref_norm_vector = 
+    Teuchos::tuple( ST::one()/divisor, ST::one()/divisor, ST::one()/divisor );
 
   TEST_COMPARE_ARRAYS( vector_view, ref_norm_vector );
 }
 
+UNIT_TEST_INSTANTIATION( LinearAlgebraPolicy, normalizeVector );
+
 //---------------------------------------------------------------------------//
 // Check that the correct rotation matrix can be calculated from two unit
 // vectors
-TEUCHOS_UNIT_TEST( LinearAlgebraPolicy, createRotationMatrixFromUnitVectors )
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebraPolicy, 
+				   createRotationMatrixFromUnitVectors,
+				   ScalarType )
 {
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<double> ThreeSpace;
-  typedef FACEMC::LinearAlgebraPolicy<double> LAP;
+  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
+  typedef FACEMC::LinearAlgebraPolicy<ScalarType> LAP;
 
   // x-axis to z-axis rotation
-  ThreeSpace::Vector initial_direction = ThreeSpace::createVector( 1.0, 
-								   0.0, 
-								   0.0 );
-  ThreeSpace::Vector final_direction = ThreeSpace::createVector( 0.0, 
-								 0.0, 
-								 1.0 );
+  typename ThreeSpace::Vector initial_direction = 
+    ThreeSpace::createVector( 1.0, 0.0, 0.0 );
+  typename ThreeSpace::Vector final_direction = 
+    ThreeSpace::createVector( 0.0, 0.0, 1.0 );
 
-  ThreeSpace::Matrix ref_rotation_matrix = 
+  typename ThreeSpace::Matrix ref_rotation_matrix = 
     ThreeSpace::createSquareMatrix( 0.0, 0.0, -1.0,
 				    0.0, 1.0,  0.0,
 				    1.0, 0.0,  0.0 );
 
   // This view will allow the reference rotation_matrix to be tested. Every
   // time the reference object is changed the view will see the change.
-  Teuchos::ArrayView<double> ref_rotation_matrix_view( 
+  Teuchos::ArrayView<ScalarType> ref_rotation_matrix_view( 
 						  ref_rotation_matrix.values(),
 						  9 );
 
-  ThreeSpace::Matrix rotation_matrix = 
+  typename ThreeSpace::Matrix rotation_matrix = 
     LAP::createRotationMatrixFromUnitVectors( initial_direction,
 					      final_direction );
     
   // This view will allow the calculated rotation_matrix to be tested. Every
   // time the rotation_matrix object is changed the view will see the change.
-  Teuchos::ArrayView<double> rotation_matrix_view( rotation_matrix.values(),
+  Teuchos::ArrayView<ScalarType> rotation_matrix_view( rotation_matrix.values(),
 						   9 );
   TEST_COMPARE_ARRAYS( rotation_matrix_view, ref_rotation_matrix_view );
 
@@ -157,55 +168,69 @@ TEUCHOS_UNIT_TEST( LinearAlgebraPolicy, createRotationMatrixFromUnitVectors )
   TEST_COMPARE_ARRAYS( rotation_matrix_view, ref_rotation_matrix_view );
 }
 
+UNIT_TEST_INSTANTIATION( LinearAlgebraPolicy, createRotationMatrixFromUnitVectors);
+
 //---------------------------------------------------------------------------//
 // Check that the inverse of a matrix can be calculated
-TEUCHOS_UNIT_TEST( LinearAlgebraPolicy, computeMatrixInverse )
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebraPolicy, 
+				   computeMatrixInverse,
+				   ScalarType )
 {
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<double> ThreeSpace;
-  typedef FACEMC::LinearAlgebraPolicy<double> LAP;
+  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
+  typedef Teuchos::ScalarTraits<ScalarType> ST;
+  typedef FACEMC::LinearAlgebraPolicy<ScalarType> LAP;
   
-  ThreeSpace::Matrix matrix = ThreeSpace::createSquareMatrix( 1.0, 2.0, 3.0,
-							      2.0, 1.0, 4.0,
-							      3.0, 4.0, 1.0 );
+  typename ThreeSpace::Matrix matrix = 
+    ThreeSpace::createSquareMatrix( 1.0, 2.0, 3.0,
+				    2.0, 1.0, 4.0,
+				    3.0, 4.0, 1.0 );
 
-  ThreeSpace::Matrix inverse_matrix = LAP::computeMatrixInverse( matrix );
+  typename ThreeSpace::Matrix 
+    inverse_matrix = LAP::computeMatrixInverse( matrix );
   
-  ThreeSpace::Matrix inverse_inverse_matrix = 
+  typename ThreeSpace::Matrix inverse_inverse_matrix = 
     LAP::computeMatrixInverse( inverse_matrix );
   
-  Teuchos::ArrayView<double> matrix_view( matrix.values(), 9 );
-  Teuchos::ArrayView<double> inverse_inverse_matrix_view( inverse_inverse_matrix.values(), 9 );
+  Teuchos::ArrayView<ScalarType> matrix_view( matrix.values(), 9 );
+  Teuchos::ArrayView<ScalarType> inverse_inverse_matrix_view( 
+					      inverse_inverse_matrix.values(), 
+					      9 );
 
   TEST_COMPARE_FLOATING_ARRAYS( matrix_view, 
 				inverse_inverse_matrix_view, 
-				TOL );
+				ST::eps()*10 );
 }
+
+UNIT_TEST_INSTANTIATION( LinearAlgebraPolicy, computeMatrixInverse );
 
 //---------------------------------------------------------------------------//
 // Check that the eigenvalues of a symmetric matrix can be found.
-TEUCHOS_UNIT_TEST( LinearAlgebraPolicy, computeEigenvalues )
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebraPolicy, 
+				   computeEigenvalues,
+				   ScalarType )
 {
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<double> ThreeSpace;
-  typedef FACEMC::LinearAlgebraPolicy<double> LAP;
+  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
+  typedef Teuchos::ScalarTraits<ScalarType> ST;
+  typedef FACEMC::LinearAlgebraPolicy<ScalarType> LAP;
   
   // Positive-definite matrix
-  ThreeSpace::Matrix coefficient_matrix = 
+  typename ThreeSpace::Matrix coefficient_matrix = 
     ThreeSpace::createSymmetricMatrix( 3.0, 0.0, 0.0,
 				            2.0, 0.0,
 				                 1.0 );
 
-  ThreeSpace::Vector ref_eigenvalues = 
+  typename ThreeSpace::Vector ref_eigenvalues = 
     ThreeSpace::createVector( 1.0, 2.0, 3.0 );
   
-  ThreeSpace::Vector eigenvalues = 
+  typename ThreeSpace::Vector eigenvalues = 
     LAP::computeEigenvalues( coefficient_matrix );
 
-  Teuchos::ArrayView<double> ref_eigenvalues_view( ref_eigenvalues.values(), 3 );
-  Teuchos::ArrayView<double> eigenvalues_view( eigenvalues.values(), 3 );
+  Teuchos::ArrayView<ScalarType> ref_eigenvalues_view( ref_eigenvalues.values(), 3 );
+  Teuchos::ArrayView<ScalarType> eigenvalues_view( eigenvalues.values(), 3 );
 
   TEST_COMPARE_FLOATING_ARRAYS( eigenvalues_view, 
 				ref_eigenvalues_view, 
-				TOL );
+				ST::eps() );
 
   // Negative-definite matrix
   coefficient_matrix = ThreeSpace::createSymmetricMatrix( -3.0, 0.0, 0.0,
@@ -218,48 +243,53 @@ TEUCHOS_UNIT_TEST( LinearAlgebraPolicy, computeEigenvalues )
 
   TEST_COMPARE_FLOATING_ARRAYS( eigenvalues_view, 
 				ref_eigenvalues_view, 
-				TOL );  
+				ST::eps() );  
 }
+
+UNIT_TEST_INSTANTIATION( LinearAlgebraPolicy, computeEigenvalues );
 
 //---------------------------------------------------------------------------//
 // Check that the eigenvalues and eigenvectors of a symmetric matrix can be 
 // found.
-TEUCHOS_UNIT_TEST( LinearAlgebraPolicy, computeEigenvaluesAndEigenvectors )
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebraPolicy, 
+				   computeEigenvaluesAndEigenvectors,
+				   ScalarType )
 {
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<double> ThreeSpace;
-  typedef FACEMC::LinearAlgebraPolicy<double> LAP;
+  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
+  typedef Teuchos::ScalarTraits<ScalarType> ST;
+  typedef FACEMC::LinearAlgebraPolicy<ScalarType> LAP;
   
   // Positive-definite matrix
-  ThreeSpace::Matrix coefficient_matrix = 
+  typename ThreeSpace::Matrix coefficient_matrix = 
     ThreeSpace::createSymmetricMatrix( 3.0, 0.0, 0.0,
 				            2.0, 0.0,
 				                 1.0 );
 
-  ThreeSpace::Matrix eigenvectors;
+  typename ThreeSpace::Matrix eigenvectors;
   
-  ThreeSpace::Vector eigenvalues = 
+  typename ThreeSpace::Vector eigenvalues = 
     LAP::computeEigenvaluesAndEigenvectors( coefficient_matrix,
 					    eigenvectors );
 
-  ThreeSpace::Vector ref_eigenvalues = 
+  typename ThreeSpace::Vector ref_eigenvalues = 
     ThreeSpace::createVector( 1.0, 2.0, 3.0 );
 
-  ThreeSpace::Matrix ref_eigenvectors = 
+  typename ThreeSpace::Matrix ref_eigenvectors = 
     ThreeSpace::createSquareMatrix( 0.0, 0.0, 1.0,
 				    0.0, 1.0, 0.0,
 				    1.0, 0.0, 0.0 );
 
-  Teuchos::ArrayView<double> ref_eigenvalues_view( ref_eigenvalues.values(), 3 );
-  Teuchos::ArrayView<double> ref_eigenvectors_view( ref_eigenvectors.values(), 9 );
-  Teuchos::ArrayView<double> eigenvalues_view( eigenvalues.values(), 3 );
-  Teuchos::ArrayView<double> eigenvectors_view( eigenvectors.values(), 9 );
+  Teuchos::ArrayView<ScalarType> ref_eigenvalues_view( ref_eigenvalues.values(), 3 );
+  Teuchos::ArrayView<ScalarType> ref_eigenvectors_view( ref_eigenvectors.values(), 9 );
+  Teuchos::ArrayView<ScalarType> eigenvalues_view( eigenvalues.values(), 3 );
+  Teuchos::ArrayView<ScalarType> eigenvectors_view( eigenvectors.values(), 9 );
 
   TEST_COMPARE_FLOATING_ARRAYS( eigenvalues_view, 
 				ref_eigenvalues_view, 
-				TOL );
+				ST::eps() );
   TEST_COMPARE_FLOATING_ARRAYS( eigenvectors_view,
 				ref_eigenvectors_view,
-				TOL );
+				ST::eps() );
 
   // Negative-definite matrix
   coefficient_matrix = ThreeSpace::createSymmetricMatrix( -3.0, 0.0, 0.0,
@@ -277,10 +307,10 @@ TEUCHOS_UNIT_TEST( LinearAlgebraPolicy, computeEigenvaluesAndEigenvectors )
 
   TEST_COMPARE_FLOATING_ARRAYS( eigenvalues_view, 
 				ref_eigenvalues_view, 
-				TOL );  
+				ST::eps() );  
   TEST_COMPARE_FLOATING_ARRAYS( eigenvectors_view,
 				ref_eigenvectors_view,
-				TOL );
+				ST::eps() );
 }
 
 //---------------------------------------------------------------------------//
