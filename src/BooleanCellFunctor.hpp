@@ -42,6 +42,12 @@ class BooleanCellFunctor
 {
   
 public:
+
+  //@{
+  //! Typedefs
+  //! Typedef for Boolean array
+  typedef typename Teuchos::ArrayRCP<bool> BooleanArray;
+  //@}
   
   //! Constructor
   BooleanCellFunctor( std::string cell_definition );

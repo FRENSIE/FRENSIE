@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   Cell.hpp
-// \author Alex Robinson
-// \brief  Cell class declaration
+//!
+//! \file   Cell.hpp
+//! \author Alex Robinson
+//! \brief  Cell class declaration
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef CELL_HPP
@@ -13,6 +15,7 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ArrayView.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FACEMC Includes
@@ -23,6 +26,12 @@
 
 namespace FACEMC{
 
+template<typename CellOrdinalType, 
+	 typename SurfaceOrdinalType, 
+	 typename ScalarType,
+	 typename SurfaceMap = 
+	 std::map<SurfaceOrdinalType,
+		  Teuchos::RCP<Surface<SurfaceOrdinalType,ScalarType> > > >
 class Cell
 {
 
@@ -30,159 +39,126 @@ public:
 
   //@{
   //! Typedefs
-  typedef Teuchos::Tuple<double,3> Vector;
+  //! Typedef for cell ordinal type (only used for cell ids)
+  typedef CellOrdinalType ordinalType;
+  //! Typedef for surface ordinal type (only used for surface ids)
+  typedef SurfaceOrdinalType surfaceOrdinalType;
+  //! Typedef for scalar type
+  typedef ScalarType scalarType;
+  //! Typedef for surface type
+  typedef Surface<SurfaceOrdinalType,ScalarType> Surface;
+  //! Typedef for surface map type
+  typedef SurfaceMap SurfaceMap;
+  //! Typedef for surface-sense pairs array const iterator
+  typedef Teuchos::Array<Pair<Teuchos::RCP<Surface>,SurfaceSense> >::const_iterator SurfaceSensePairsIterator;
   //@}
+
+private:
+
+  //! Typedef for scalar traits
+  typedef Teuchos::ScalarTraits<ScalarType> ST;
+  //! Typedef for cell ordinal traits
+  typedef Teuchos::OrdinalTraits<CellOrdinalType> CellOT;
+  //! Typedef for surface ordinal traits
+  typedef Teuchos::OrdinalTraits<SurfaceOrdinalType> SurfaceOT;
+  //! Typedef for three space traits and policy struct
+  typedef ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
+  //! Typedef for vector
+  typedef typename ThreeSpace::Vector Vector;
+  //! Typedef for surface area map
+  typedef std::map<SurfaceOrdinalType,ScalarType> SurfaceAreaMap;
+  //! Typedef for Boolean array
+  typedef BooleanCellFunctor::BooleanArray BooleanArray;
+
+public:
   
   //! Constructor
-  // \brief The cell volume will be calculated if requested
-  Cell( unsigned id,
-	std::string &cell_definition,
-	std::map<unsigned,Teuchos::RCP<Surface> > &global_surface_map,
-	bool calculate_geometric_data );
+  Cell( const CellOrdinalType id,
+	const std::string &cell_definition,
+	const SurfaceMap &global_surface_map );
 
   //! Destructor
   ~Cell()
   { /* ... */ }
 
   //! Return if the point is in the cell
+  bool isIn( const ScalarType x,
+	     const ScalarType y,
+	     const ScalarType z ) const;
+
+  //! Return if the point is in the cell
   bool isIn( const Vector &point ) const;
+
+  //! Return if the point is on the cell
+  bool IsOn( const ScalarType x,
+	     const ScalarType y,
+	     const ScalarType z ) const;
 
   //! Return if the point is on the cell
   bool isOn( const Vector &point ) const;
 
+  //! Return if the cell is a polyhedron
+  bool isPolyhedron() const;
+
   //! Return the volume of the cell
-  double getVolume() const;
+  ScalarType getVolume() const;
+
+  //! Manually set the volume of the cell
+  void setVolume( const ScalarType volume );
 
   //! Return the area of a surface bounding the cell
-  double getSurfaceArea( unsigned surface_id ) const;
+  ScalarType getSurfaceArea( const SurfaceOrdinalType surface_id ) const;
+
+  //! Manually set the surface area of one of the cell surfaces
+  void setSurfaceArea( const SurfaceOrdinalType surface_id,
+		       const ScalarType surface_area );
+
+  //! Get a const iterator to the beginning of the surface sense pairs array
+  SurfaceSensePairsIterator beginSurfaceSensePairs() const;
+
+  //! Get a const iterator to the end of the surface sense pairs array
+  SurfaceSensePairsIterator endSurfaceSensePairs() const;
+
+  //! Evaluate the cell definition
+  bool isCellPresent( BooleanArray &surface_tests );
+
+  //! Strip the cell definition of set operation characters
+  static void simplifyCellDefinitionString( std::string &cell_definition );
 
 protected:
 
-  //! Default Constructor
-  Cell() : d_cell_definition_evaluator( "0n1" ), 
-	   d_geometric_data_calculated(true)
-  { /* ... */ }
-
-  //! Simple Constructor
-  Cell( std::string &cell_definition ) 
-    : d_cell_definition_evaluator( cell_definition ), 
-      d_geometric_data_calculated(true)
-  { /* ... */ }
-  
-  //! Return if the point is on the cell
-  bool isOn( const Vector &point,
-	     const Teuchos::Array<Pair<Surface,Surface::Sense> > 
-	     &surfaces ) const;
-
-  //! Strip the cell definition of set operation characters
-  void simplifyCellDefinitionString( std::string &cell_definition );
-
   //! Assign surfaces to the cell
   void assignSurfaces( std::string &cell_definition, 
-		       std::map<unsigned,Teuchos::RCP<Surface> > &global_surface_map );
-
-  //! Calculate the cell volume and surface area of the bounding surfaces
-  void calculateVolumeAndSurfaceAreas();
-
-  //! Calculate the polyhedron volume and surface areas
-  void calculatePolyhedralCellVolumeAndSurfaceAreas();
-
-  //! Calculate the intersection points of planes with the z-axis
-  void calculatePolygonIntersectionPoints( 
-			    const unsigned xy_plane_surface_id,
-			    const Teuchos::Array<Pair<Surface,Surface::Sense> > 
-			    &surfaces,
-			    std::list<Quad<double,double,unsigned,unsigned> > 
-			    &intersection_points ) const;
-  
-  //! Test if an intersection point is real
-  bool testIntersectionPoint( 
-			    const Teuchos::Array<Pair<Surface,Surface::Sense> > 
-			    &surfaces,
-			    const Quad<double,double,unsigned,unsigned>
-			    &intersection_point,
-			    const unsigned third_surface_id ) const;
-
-  //! Create a polygon from intersection points
-  void createPolygon( std::list<Quad<double,double,unsigned,unsigned> > 
-		      &intersection_points,
-		      const Teuchos::Array<Pair<Surface,Surface::Sense> > 
-                      &surfaces ) const;
-
-  //! Initialize the polygon
-  // \brief Returns an iterator to the start point of the new polygon
-  // \param current_surface_id holds the surface id that should be searched
-  //        for in the next intersection point
-  std::list<Quad<double,double,unsigned,unsigned> >::const_iterator
-  initializePolygon( 
-		    std::list<Quad<double,double,unsigned,unsigned> > 
-		    &polygon,
-		    std::list<Quad<double,double,unsigned,unsigned> > 
-		    &intersection_points,
-		    const Teuchos::Array<Pair<Surface,Surface::Sense> > 
-                    &surfaces,
-		    unsigned &current_surface_id ) const;  
-
-  //! Calculate the area of a surface bounding the polyhedral cell
-  // \brief Adds the area of the surface relative to this cell to the 
-  // d_surface_areas map
-  void calculatePolygonArea( 
-	       const unsigned surface_id,
-	       const std::list<Quad<double,double,unsigned,unsigned> > &polygon,
-	       std::list<double> &polygon_areas );
-
-  //! Assign the correct sign to the polygon areas
-  // \brief If the largest polygon area is negative, this feature lies
-  // inside of the cell. To calculate the correct volume contribution
-  // the largest polygon area must always be positive. If the largest
-  // polygon area is negative, multiply all polygon areas by -1.
-  void assignPolygonAreaSign( std::list<double> &polygon_areas );
-
-  //! Calculate the volume contribution from a surface bounding this cell
-  void calculatePolygonVolumeContribution( 
-	       const Surface &reference_surface,
-	       const std::list<Quad<double,double,unsigned,unsigned> > &polygon,
-	       const std::list<double> &polygon_areas,
-	       const Surface::Sense reference_surface_sense,
-	       const Surface::Sense current_surface_sense );
-  
-  //! Calculate the rotationally symmetric cell volume and surface areas
-  // \brief If the cell is indeed rotationally symmetric, true will be returned
-  bool calculateRotationallySymmetricCellVolumeAndSurfaceAreas();
-
-  //! Calculate the cell volume and surface areas using monte carlo integration
-  void calculateVolumeAndSurfaceAreasUsingMonteCarlo();
-
-  //! Calculate a bounding box for the cell
-  Cell calculateBoundingBox() const;
-  
-  //! Get the surface array
-  Teuchos::Array<Pair<Teuchos::RCP<Surface>,Surface::Sense> >
-  getSurfaceArray() const;
+		       SurfaceMap &global_surface_map );
 
 private:
 
   // Cell Id
-  unsigned d_id;
+  CellOrdinalType d_id;
 
   // Functor used to evaluate the cell definition
   BooleanCellFunctor d_cell_definition_evaluator;
 
   // Surfaces and Senses that define the cell
-  Teuchos::Array<Pair<Teuchos::RCP<Surface>,Surface::Sense> > d_surfaces;
+  Teuchos::Array<Pair<Teuchos::RCP<Surface>,SurfaceSense> > 
+  d_surface_sense_pairs;
   
   // Surface information particular to this cell
-  std::map<unsigned,double> d_surface_areas;
+  SurfaceAreaMap d_surface_id_area_map;
 
   // Cell volume
-  double d_volume;
-
-  // Bool that records if the cell volume and surface areas were calculated
-  bool d_geometric_data_calculated;
-
+  ScalarType d_volume;
 };
 
 } // end FACEMC namespace
+
+//---------------------------------------------------------------------------//
+// Template includes.
+//---------------------------------------------------------------------------//
+
+#include "Cell_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end CELL_HPP
 

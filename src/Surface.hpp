@@ -18,6 +18,7 @@
 
 // FACEMC Includes
 #include "ThreeSpaceTraitsAndPolicy.hpp"
+#include "LinearAlgebraPolicy.hpp"
 
 namespace FACEMC{
 
@@ -54,6 +55,8 @@ private:
   typedef Teuchos::OrdinalTraits<tupleIndex> Tuple_OT;
   //! Typedef for three space traits and policy struct
   typedef ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
+  //! Typedef for linear algebra policy
+  typedef LinearAlgebraPolicy<ScalarType> LAP;
   //! Typedef for vector
   typedef typename ThreeSpace::Vector Vector;
   //! Typedef for matrix
@@ -74,7 +77,7 @@ public:
 	   ScalarType h,
 	   ScalarType j,
 	   ScalarType k,
-	   ScalarType tolerance_ratio = ST::eps() );
+	   ScalarType tolerance_ratio = ST::prec() );
 
   //! Symmetric 2nd order surface constructor.
   Surface( OrdinalType id,
@@ -85,7 +88,7 @@ public:
 	   ScalarType h,
 	   ScalarType j,
 	   ScalarType k,
-	   ScalarType tolerance_ratio = ST::eps() );
+	   ScalarType tolerance_ratio = ST::prec() );
 
   //! Planar surface constructor.
   Surface( OrdinalType id,
@@ -93,7 +96,7 @@ public:
 	   ScalarType h,
 	   ScalarType j,
 	   ScalarType k,
-	   ScalarType tolerance_ratio = ST::eps() );
+	   ScalarType tolerance_ratio = ST::prec() );
 
   //! Construct surface by translating another surface
   Surface( OrdinalType id,
@@ -105,7 +108,7 @@ public:
 	   const Surface<OrdinalType,ScalarType> &original_surface,
 	   const Matrix &rotation_matrix );
 
-  //! Construct surface by conducting a general transform on anothe surface
+  //! Construct surface by conducting a general transform on another surface
   Surface( OrdinalType id,
 	   const Surface<OrdinalType,ScalarType> &original_surface,
 	   const Matrix &rotation_matrix,

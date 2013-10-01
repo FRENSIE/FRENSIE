@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+#ifndef SURFACE_DEF_HPP
+#define SURFACE_DEF_HPP
+
 // Trilinos Includes
 #include <Teuchos_SerialDenseHelpers.hpp>
 
@@ -90,6 +93,15 @@ Surface<OrdinalType,ScalarType>::Surface( OrdinalType id,
   // Make sure that the surface is valid
   testPrecondition( g != ST::zero() || h != ST::zero() || j != ST::zero() );
 
+  // Scale the surface so that the linear term vector is a unit vector (this
+  // will not change the nature of the surface - it will merely make
+  // transformations using this surface cleaner).
+  ScalarType scale_factor = getLinearTermVector().normFrobenius();
+  d_definition[6] /= scale_factor;
+  d_definition[7] /= scale_factor;
+  d_definition[8] /= scale_factor;
+  d_definition[9] /= scale_factor;
+
   // Determine floating point tolerance
   setTolerance( tolerance_ratio );
 }
@@ -162,6 +174,13 @@ Surface<OrdinalType,ScalarType>::Surface(
 
   // Check that all matrix multiplications were successful
   testPostcondition( multiply_success == 0 );
+  // The new surface must be distinct from the original
+  testPostcondition( (getQuadraticFormMatrix() != 
+		      original_surface.getQuadraticFormMatrix()) ||
+		     (getLinearTermVector() !=
+		      original_surface.getLinearTermVector()) ||
+		     (getConstantTerm() !=
+		      original_surface.getConstantTerm()) );
 }
 
 // Construct surface by rotating another surface
@@ -181,24 +200,7 @@ Surface<OrdinalType,ScalarType>::Surface(
   // Make sure that the rotation matrix is valid (3x3 and orthonormal)
   testPrecondition( rotation_matrix.numRows() == 3 );
   testPrecondition( rotation_matrix.numCols() == 3 );
-  remember( Vector column_1( Teuchos::getCol( Teuchos::View, 
-					      rotation_matrix, 
-					      0 ) ) );
-  remember( Vector column_2( Teuchos::getCol( Teuchos::View,
-					      rotation_matrix,
-					      1 ) ) );
-  remember( Vector column_3( Teuchos::getCol( Teuchos::View,
-					      rotation_matrix,
-					      2 ) ) );
-  remember( ScalarType column_1_magnitude = column_1.normFrobenius() );
-  remember( ScalarType column_2_magnitude = column_2.normFrobenius() );
-  remember( ScalarType column_3_magnitude = column_3.normFrobenius() );
-  testPrecondition( ST::magnitude( column_1_magnitude - 1.0 ) < d_tolerance );
-  testPrecondition( ST::magnitude( column_2_magnitude - 1.0 ) < d_tolerance );
-  testPrecondition( ST::magnitude( column_3_magnitude - 1.0 ) < d_tolerance );
-  testPrecondition( ST::magnitude( column_1.dot( column_2 ) ) < d_tolerance );
-  testPrecondition( ST::magnitude( column_1.dot( column_3 ) ) < d_tolerance );
-  testPrecondition( ST::magnitude( column_2.dot( column_3 ) ) < d_tolerance );
+  testPrecondition( LAP::isOrthonormal( rotation_matrix ) );
 
   remember( int multiply_success = 0 ); // successful multiplication returns 0
 
@@ -226,8 +228,7 @@ Surface<OrdinalType,ScalarType>::Surface(
 
   if( !d_planar ) // second order surface
   {
-    Matrix A = getQuadraticFormMatrix(), A_prime( 3, 3 );
-    Vector AR( 3 );
+    Matrix A = getQuadraticFormMatrix(), A_prime( 3, 3 ), AR( 3, 3 );
     
     remember( multiply_success += )
       AR.multiply( Teuchos::NO_TRANS, 
@@ -266,6 +267,13 @@ Surface<OrdinalType,ScalarType>::Surface(
 
   // Check that all matrix multiplications were successful
   testPostcondition( multiply_success == 0 );
+  // The new surface must be distinct from the original
+  testPostcondition( (getQuadraticFormMatrix() != 
+		      original_surface.getQuadraticFormMatrix()) ||
+		     (getLinearTermVector() !=
+		      original_surface.getLinearTermVector()) ||
+		     (getConstantTerm() !=
+		      original_surface.getConstantTerm()) );
 }
 
 // Construct surface by conducting a general transform on anothe surface
@@ -286,24 +294,7 @@ Surface<OrdinalType,ScalarType>::Surface(
   // Make sure that the rotation matrix is valid (3x3 and orthonormal)
   testPrecondition( rotation_matrix.numRows() == 3 );
   testPrecondition( rotation_matrix.numCols() == 3 );
-  remember( Vector column_1( Teuchos::getCol( Teuchos::View, 
-					      rotation_matrix, 
-					      0 ) ) );
-  remember( Vector column_2( Teuchos::getCol( Teuchos::View,
-					      rotation_matrix,
-					      1 ) ) );
-  remember( Vector column_3( Teuchos::getCol( Teuchos::View,
-					      rotation_matrix,
-					      2 ) ) );
-  remember( ScalarType column_1_magnitude = column_1.normFrobenius() );
-  remember( ScalarType column_2_magnitude = column_2.normFrobenius() );
-  remember( ScalarType column_3_magnitude = column_3.normFrobenius() );
-  testPrecondition( ST::magnitude( column_1_magnitude - 1.0 ) < d_tolerance );
-  testPrecondition( ST::magnitude( column_2_magnitude - 1.0 ) < d_tolerance );
-  testPrecondition( ST::magnitude( column_3_magnitude - 1.0 ) < d_tolerance );
-  testPrecondition( ST::magnitude( column_1.dot( column_2 ) ) < d_tolerance );
-  testPrecondition( ST::magnitude( column_1.dot( column_3 ) ) < d_tolerance );
-  testPrecondition( ST::magnitude( column_2.dot( column_3 ) ) < d_tolerance );
+  testPrecondition( LAP::isOrthonormal( rotation_matrix ) );
   // Make sure that the translation vector is valid
   testPrecondition( translation_vector.length() == 3 );
   testPrecondition( translation_vector.normFrobenius() > ST::zero() );
@@ -416,6 +407,13 @@ Surface<OrdinalType,ScalarType>::Surface(
 
   // Check that all matrix multiplications were successful
   testPostcondition( multiply_success == 0 );
+  // The new surface must be distinct from the original
+  testPostcondition( (getQuadraticFormMatrix() != 
+		      original_surface.getQuadraticFormMatrix()) ||
+		     (getLinearTermVector() !=
+		      original_surface.getLinearTermVector()) ||
+		     (getConstantTerm() !=
+		      original_surface.getConstantTerm()) );
 }
 
 // Return if the point is on the surface
@@ -513,6 +511,7 @@ Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
     unit_normal[1] = d_definition[7];
     // dS/dz: j
     unit_normal[2] = d_definition[8];
+    // Note: planes are normalized at construction
   }
   else
   {
@@ -527,11 +526,11 @@ Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
     // dS/dz: 2cz+ey+fx+j
     unit_normal[2] = 2*d_definition[2]*z + d_definition[4]*y + 
       d_definition[5]*x + d_definition[8];
+    
+    // Normalize the vector
+    unit_normal.scale( 1.0/unit_normal.normFrobenius() );
   }
   
-  // Normalize the vector
-  unit_normal.scale( 1.0/unit_normal.normFrobenius() );
-
   // Point the vector in the direction of the desired half-space
   SurfaceSense sense_of_norm_tip = getSenseOfPoint( x + unit_normal[0],
 						    y + unit_normal[1],
@@ -694,6 +693,8 @@ Surface<OrdinalType,ScalarType>::evaluateGeneralSecondOrderSurface(
 }
 
 } // end FACEMC namespace
+
+#endif // end SURFACE_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end Surface_def.hpp
