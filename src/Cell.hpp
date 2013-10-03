@@ -35,6 +35,12 @@ template<typename CellOrdinalType,
 class Cell
 {
 
+private:
+
+  //! Typedef for surface-sense pairs container
+  typedef Teuchos::Array<Pair<Teuchos::RCP<Surface>,SurfaceSense> >
+  SufaceSensePairContainer;
+
 public:
 
   //@{
@@ -50,7 +56,7 @@ public:
   //! Typedef for surface map type
   typedef SurfaceMap SurfaceMap;
   //! Typedef for surface-sense pairs array const iterator
-  typedef Teuchos::Array<Pair<Teuchos::RCP<Surface>,SurfaceSense> >::const_iterator SurfaceSensePairsIterator;
+  typedef SurfaceSensePairContainer::const_iterator SurfaceSensePairsIterator;
   //@}
 
 private:
@@ -144,8 +150,7 @@ private:
   BooleanCellFunctor d_cell_definition_evaluator;
 
   // Surfaces and Senses that define the cell
-  Teuchos::Array<Pair<Teuchos::RCP<Surface>,SurfaceSense> > 
-  d_surface_sense_pairs;
+  SurfaceSensePairContainer d_surface_sense_pairs;
   
   // Surface information particular to this cell
   SurfaceAreaMap d_surface_id_area_map;
