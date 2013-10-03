@@ -113,11 +113,15 @@ public:
   void setSurfaceArea( const SurfaceOrdinalType surface_id,
 		       const ScalarType surface_area );
 
-  //! Get a const iterator to the beginning of the surface sense pairs array
-  SurfaceSensePairsIterator beginSurfaceSensePairs() const;
+  //! Get a const iterator to beginning of the surface-sense pairs container
+  inline SurfaceSensePairsIterator beginSurfaceSensePairs() const;
 
-  //! Get a const iterator to the end of the surface sense pairs array
-  SurfaceSensePairsIterator endSurfaceSensePairs() const;
+  //! Get a const iterator to end of the surface-sense pairs container
+  inline SurfaceSensePairsIterator endSurfaceSensePairs() const;
+
+  //! Get a const iterator to a specific surface-sense pair in container
+  SurfaceSensePairsIterator getSurfaceSensePair( 
+				   const SurfaceOrdinalType surface_id ) const;
 
   //! Evaluate the cell definition
   bool isCellPresent( BooleanArray &surface_tests );

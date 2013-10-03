@@ -76,6 +76,10 @@ public:
   //! Normalize a vector.
   static inline void normalizeVector( Vector &vector );
 
+  //! Compute the cosine of the angle between two vectors
+  static ScalarType computeCosineAngleBetweenVectors( const Vector &a,
+						      const Vector &b );
+
   //! Test if a vector is parallel to another vector
   static bool isParallel( const Vector &a,
 			  const Vector &b );

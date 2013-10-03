@@ -155,7 +155,6 @@ public:
 			  const Vector &point,
 			  const SurfaceSense sense = POS_SURFACE_SENSE ) const;
 
-
   //! Return the quadratic form matrix of the surface
   Matrix getQuadraticFormMatrix() const;
 

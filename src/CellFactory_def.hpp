@@ -12,6 +12,8 @@
 // Std lib includes
 #include <string>
 #include <map>
+#include <algorithm>
+#include <iterator>
 
 // Trilinos Includes
 #include <Teuchos_ArrayView.hpp>
@@ -99,38 +101,57 @@ void CellFactory<Cell,SurfaceMap>::calculatePolyhedralCellVolumeAndArea( CellPtr
     
     // Determine the intersection points of all other surfaces with this surf.
     std::list<IntersectionPoint> intersection_points;
-    calculateIntersectionPoints( surface_sense_pair,
-				 cell,
-				 intersection_points );
+    calculateIntersectionPoints( intersection_points,
+				 surface_sense_pair,
+				 cell );
 
-    // Rotate the intersection points to the x-y plane
+    // Create a new polygon from the intersection points
+    std::list<PolygonCorner> polygon;
+    createPolygon( polygon, intersection_points, cell );
+
+    // Rotate the polygon to the x-y plane to simplify area and volume calcs.
     Matrix rotation_matrix;
     Vector translation_vector;
-    transformIntersectionPoints( surface_sense_pair,
-			      intersection_points,
-			      rotation_matrix,
-			      translation_vector );
+    transformPolygon( polygon,
+		      surface_sense_pair,
+		      rotation_matrix,
+		      translation_vector );
 
+    // Calculate the area of the polygon (current surface)
+    ScalarType polygon_area = calculatePolygonArea( polygon );
+    cell->setSurfaceArea( surface_sense_pair->first->getId(),
+			  polygon_area );
+
+    // Move this to a new function: //@{
+    // Transform the reference surface using the same transformation
     Surface reference_surface( reference_surface_sense_pair->first->getId(),
 			       *(reference_surface_sense_pair->first),
 			       rotation_matrix,
 			       translation_vector );
 
-    // Create a new polygon from the intersection points
-    std::list<Pair<ScalarType,ScalarType> > polgon;
-    createPolygon( intersection_points, cell, polygon );
+    // Get a point on the reference surface
+    Vector point_on_reference_surface = 
+      LAP::createZeroingVector( reference_surface.getLinearTermVector(),
+				reference_surface.getConstantTerm() );
 
-    // Calculate the area of the polygon (current surface)
-    ScalarType area = calculatePolygonArea( polygon );
-    cell->setSurfaceArea( surface_sense_pair->first->getId(),
-			  area );
+    // Get the normal to the reference surface pointing outside the cell
+    if( reference_surface_sense_pair->second == POS_SURFACE_SENSE )
+      // change this to normal (not unit normal)
+      reference_surface.getUnitNormalAtPoint( point_on_reference_surface,
+					      NEG_SURFACE_SENSE );
+    else
+      reference_surface.getUnitNormalAtPoint( point_on_reference_surface,
+					      POS_SURFACE_SENSE );
+    //@}
+					    
     
     // Calculate the volume contribution from this surface
     ScalarType volume += calculatePolygonVolumeContribution( 
 					polygon,
-					reference_surface,
-					surface_sense_pair->second,
-					reference_surface_sense_pair->second );
+					polygon_area,
+					plane_of_polygon_normal,
+					reference_plane_normal,
+					reference_plane_const_term )
     
     ++surface_sense_pair;
   }
@@ -144,10 +165,9 @@ void CellFactory<Cell,SurfaceMap>::calculatePolyhedralCellVolumeAndArea( CellPtr
 
 template<typename Cell, typename SurfaceMap>
 void CellFactory<Cell,SurfaceMap>::calculateIntersectionPoints(
-			     const SurfaceSensePairsIterator &plane_of_polygon,
-			     const CellPtr &cell,
-			     std::list<IntersectionPoints>
-			     &intersection_points ) const
+			    std::list<IntersectionPoints> &intersection_points,
+			    const SurfaceSensePairsIterator &plane_of_polygon,
+			    const CellPtr &cell ) const
 {
   // Make sure that the intersection points list is empty
   intersection_points.clear();
@@ -437,42 +457,313 @@ unsigned CellFactory<Cell,SurfaceMap>::getPointTestFunctionMultiplier(
   }
 }
 
+// Create a polygon from intersection points
+template<typename Cell, typename Surfacemap>
+void CellFactory<Cell,SurfaceMap>::createPolygon( 
+			     std::list<PolygonCorner> &polygon,
+		             std::list<IntersectionPoint> &intersection_points,
+			     const CellPtr &cell ) const
+{
+  // There must be at least three intersection points to create a polygon
+  testPrecondition( intersection_points.size() >= 3 );
+
+  typename std::list<IntersectionPoint>::iterator next_point, end_point;
+
+  typename std::list<PolygonCorner>::iterator global_start_corner, 
+    local_start_corner;
+  typename std::list<PolygonCorner>::reverse_iterator current_corner;
+
+  unsigned disjoint_polygon_number = 0;
+
+  // There may be multiple disjoint polygons
+  while( intersection_points.size() > 0 )
+  {
+    surfaceOrdinalType current_surface_id;
+
+    // Find the first three points on the boundary of the polygon
+    local_start_corner = initializePolygon( polygon,
+					    intersection_points,
+					    cell,
+					    current_surface_id );
+    
+    current_corner = polygon.rbegin(); 
+
+    // Save the initial start corner
+    if( disjoint_polygon_number == 0 )
+      global_start_corner = local_start_corner;
+
+    // Continue adding points to the polygon until no more points can be found
+    while( true )
+    {
+      // The current surface id will be reassigned by this function
+      next_point = getNextPolygonCorner( current_surface_id,
+					 current_corner,
+					 intersection_points,
+					 POINT_MAY_NOT_BE_FOUND );
+      end_point = intersection_points.end();
+
+      if( next_point != end_point )
+      {
+	polygon.push_back( next_point->first );
+	
+	current_surface_id = getNextSurfaceId( current_surface_id,
+					       next_point );
+	
+	intersection_points.erase( next_point );
+
+	current_corner = polygon.rbegin();
+      }
+      else // This section of the possibly disjoint polygon is finished
+      {
+	// Add a copy of the start corner to the end of the polygon
+	polygon.push_back( *local_start_corner );
+
+	break;
+      }
+    }
+    
+    // Add copy of global start
+    if( disjoint_polygon_number > 0 )
+      polygon.push_back( *global_start_corner );
+
+    ++disjoint_polygon_number;
+  }
+	
+  // Make sure that all intersection points have been processed
+  testPostcondition( intersection_points.size() == 0 );
+}
+
+// Find the first three points on the boundary of the polygon
+template<typename Cell, typename SurfaceMap>
+typename std::list<PolygonCorner>::const_iterator
+CellFactory<Cell,SurfaceMap>::initializePolygon( 
+		     std::list<PolygonCorner> &polygon,
+		     std::list<IntersectionPoint> &intersection_points,
+		     const CellPtr &cell,
+		     surfaceOrdinalType &current_surface_id ) const
+{
+  // There must be at least three intersection points left to create a polygon
+  testPrecondition( intersection_points.size() >= 3 );
+
+  typename std::list<IntersectionPoint>::iterator first_point, second_point,
+    third_point, end_point;
+  end_point = intersection_points.end();
+
+  // Find the lexicographically largest point
+  second_point = getLexicographicallyLargestPoint( intersection_points );
+
+  // Add this point to the polygon
+  polygon.push_back( polygon_corner->first );
+  
+  // Save the surfaces ids that this point is on
+  surfaceOrdinalType first_surface_id = second_point->second.second;
+  surfaceOrdinalType second_surface_id = second_point->second.third;
+  surfaceOrdinalType next_surface_id, final_surface_id;
+    
+  // Remove this point from the intersection point list
+  second_point = intersection_points.erase( second_point );
+
+  // Get the first surface
+  SurfaceSensePairsIterator first_surface = 
+    cell->getSurfaceSensePair( first_surface_id );
+
+  // Find the first and third points 
+  first_point = getNextPolygonCorner( first_surface_id,
+				      polygon.begin(),
+				      intersection_points );
+
+  third_point = getNextPolygonCorner( second_surface_id,
+				      polygon.begin(),
+				      intersection_points );
+
+  // Find the next surface id and final surface id
+  final_surface_id = getNextSurfaceId( first_surface_id,
+				       first_point );
+  next_surface_id = getNextSurfaceId( second_surface_id,
+				      third_point );
+
+  // Determine if the points need to be swapped to keep cell on left
+  SurfaceSense sense_of_third_point = 
+    first_surface->first->getSense( third_point->first.first,
+				    third_point->first.second,
+				    third_point->first.third );
+  if( sense_of_third_point != first_surface->second )
+  {
+    std::swap( first_point, third_point );
+    std::swap( next_surface_id, final_surface_id );
+  }
+
+  // Add the points to the polygon
+  polygon.push_front( first_point->first );
+  polygon.push_back( third_point->first );
+
+  // Remove the points from the intersection points list
+  first_point = intersection_points.erase( first_point );
+  third_point = intersection_points.erase( third_point );
+
+  // Set the next surface id to the current surface id
+  current_surface_id = next_surface_id;  
+}
+
+// Find the lexicographically largest point
+template<typename Cell, typename SurfaceMap>
+typename std::list<IntersectionPoint>::const_iterator
+CellFactory<Cell,SurfaceMap>::getLexicographicallyLargestPoint(
+	        const std::list<IntersectionPoint> &intersection_points ) const
+{
+  // The list must not be empty
+  testPrecondition( intersection_points.size() > 0 );
+
+  typename std::list<IntersectionPoint>::const_iterator point, largest_point,
+    end_point;
+
+  largest_point = intersection_points.begin();
+  point = largest_point;
+  ++point;
+  end_point = intersection_points.end();
+  
+  while( point != end_point )
+  {
+    if( point->first.first - largest_point->first.first > ST::prec() )
+      largest_point = point;
+    else if( ST::magnitude( point->first.first - largest_point->first.first )
+	     < ST::prec() && point->first.second > largest_point->first.second)
+      largest_point = point;
+    else if( ST::magnitude( point->first.first - largest_point->first.first )
+	     < ST::prec() && 
+	     ST::magnitude( point->first.second - largest_point->first.second )
+	     < ST::prec() && point->first.third > largest_point->first.third )
+      largest_point = point;
+
+    ++point;
+  }
+
+  return largest_point;
+}
+
+// Find the next point on the boundary of the polygon
+template<typename Cell, typename SurfaceMap>
+typename std::list<IntersectionPoint>::const_iterator
+CellFactory<Cell,SurfaceMap>::getNextPolygonCorner(
+       const surfaceOrdinalType desired_surface_id,
+       const typename std::list<PolygonCorner>::const_iterator &current_corner,
+       const std::list<IntersectionPoint> &intersection_points,
+       PointFindNecessity point_find_necessity ) const
+{
+  // The list must not be empty
+  testPrecondition( intersection_points.size() > 0 );
+
+  typename std::list<IntersectionPoint>::const_iterator point, desired_point,
+    end_point;
+  
+  point = intersection_points.begin();
+  end_point = intersection_points.end();
+  desired_point = end_point;
+
+  while( point != end_point )
+  {
+    // Test if the point is on the desired surface
+    if( point->second.second == desired_surface_id ||
+	point->second.third == desired_surface_id )
+    {
+      // No points on the desired surface have been found yet
+      if( desired_point == end_point )
+      {
+	desired_point = point;
+      }
+      // At least one point on the desired surface has already been found - 
+      // take the one that is closest to the current polygon corner.
+      else
+      {
+	scalarType current_x = desired_point->first.first - 
+	  current_corner->first;
+	scalarType current_y = desired_point->first.second - 
+	  current_corner->second;
+	scalarType current_z = desired_point->first.third -
+	  current_corner->third;
+	Vector current_vector = ThreeSpace::createVector( current_x,
+							  current_y,
+							  current_z );
+	
+	scalarType new_x = point->first.first - current_corner->first;
+	scalarType new_y = point->first.second - current_corner->second;
+	scalarType new_z = point->first.third - current_corner->third;
+	Vector new_vector = ThreeSpace::createVector( new_x,
+						      new_y,
+						      new_z );
+	
+	if( new_vector.normFrobenius() < current_vector.normFrobenius() )
+	  desired_point = point;
+      }
+    }
+
+    ++point;
+  }
+
+  // Make sure that a point was found if one must be
+  testPostCondition( (point_find_necessity == POINT_MUST_BE_FOUND) ? 
+		     (desired_point != end_point ) : true );
+
+  return desired_point;
+}
+
+// Get the next surface id (edge) of the polygon
+template<typename Cell, typename SurfaceMap>
+scalarType CellFactory<Cell,SurfaceMap>::getNextSurfaceId(
+		    const surfaceOrdinalType current_surface_id,   
+		    const typename std::list<IntersectionPoint>::const_iterator
+		    &intersection_point ) const
+{
+  // The point must be on the given surface
+  testPrecondition( intersection_point->second.second == current_surface_id ||
+		    intersection_point->second.third == current_surface_id );
+
+  if( intersection_point->second.second == current_surface_id )
+    return intersection_point->second.third;
+  else if( intersection_point->second.third == current_surface_id )
+    return intersection_point->second.second;
+}
+
 // Rotate the intersection points to the x-y plane
 template<typename Cell, typename SurfaceMap>
-void CellFactory<Cell,SurfaceMap>::transformIntersectionPoints(
+void CellFactory<Cell,SurfaceMap>::transformPolygon(
+			    std::list<PolygonCorner> &polygon,
 			    const SurfaceSensePairsIterator &plane_of_polygon,
-			    std::list<IntersectionPoints> &intersection_points,
 			    Matrix &rotation_matrix,
 			    Vector &translation_vector ) const	   
 {
-  // Create the necessary rotation matrix
   Vector plane_of_polygon_normal = 
     plane_of_polygon->first->getLinearTermVector();
-  rotation_matrix = LAP::createRotationMatrixFromUnitVectors( 
-			                             ThreeSpace::zaxisVector(),
-						     plane_of_polygon_normal );
 
   // Create the necessary translation vector
   translation_vector = LAP::createZeroingVector( 
 				  plane_of_polygon_normal,
 				  plane_of_polygon->first->getConstantTerm() );
 
-  // Transform each intersection point
-  typename std::list<IntersectionPoint>::iterator intersection_point =
-    intersection_points.begin();
-  typename std::list<IntersectionPoint>::iterator end_intersection_point = 
-    intersection_points.end();
+  // Normalize the normal to the polygon plane
+  LAP::normalizeVector( plane_of_polygon_unit_normal );
+
+  // Create the necessary rotation matrix
+  rotation_matrix = LAP::createRotationMatrixFromUnitVectors( 
+			                        ThreeSpace::zaxisVector(),
+						plane_of_polygon_normal );
+
+  // Transform each point of the polygon
+  typename std::list<PolygonCorner>::iterator polygon_corner = polygon.begin();
+  typename std::list<PolygonCorner>::iterator end_polygon_corner = 
+    polygon.end();
 
   remember( bool multiply_success = true );
   remember( bool all_points_on_xy_plane = true );
 
-  while( intersection_point != end_intersection_point )
+  while( polygon_corner != end_polygon_corner )
   {
     Vector point_coordinates = ThreeSpace::createVector( 
-					    intersection_point->first.first,
-					    intersection_point->first.second,
-					    intersection_point->first.third );
+					    polygon_corner->first,
+					    polygon_corner->first,
+					    polygon_corner->first );
     
+    // x' = Rx + x0
     Vector transformed_point_coordinates( translation_vector );
     remember( bool local_multiply_success = );
     transformed_point_coordinates.multiply( Teuchos::NO_TRANS,
@@ -485,17 +776,17 @@ void CellFactory<Cell,SurfaceMap>::transformIntersectionPoints(
     remember( multiply_success = (local_multiply_success) ? multiply_success :
 	      local_multiply_success );
 
-    // Reassign the intersection point coordinates
-    intersection_point->first.first = transformed_point_coordinates[0];
-    intersection_point->first.second = transformed_point_coordinates[1];
-    intersection_point->first.third = transformed_point_coordinates[2];
+    // Reassign the point coordinates
+    polygon_corner->first = transformed_point_coordinates[0];
+    polygon_corner->second = transformed_point_coordinates[1];
+    polygon_corner->third = transformed_point_coordinates[2];
 
     remember( bool this_point_on_xy_plane = 
-	      (ST::magnitude(intersection_point->first.third) < ST::prec()) );
+	      (ST::magnitude(polygon_corner->first.third) < ST::prec()) );
     remember( all_points_on_xy_plane = (this_point_on_xy_plane) ? 
-	      all_points_on_xy_plane : this_point_on_xy_plane );
+	      all_points_on_xy_plane : false );
     
-    ++intersection_point;
+    ++polygon_corner;
   }
 					    
   // Make sure that all multiplications were successful
@@ -504,33 +795,177 @@ void CellFactory<Cell,SurfaceMap>::transformIntersectionPoints(
   testPostcondition( all_points_on_xy_plane );
 }
 
-// Create a polygon from intersection points
-template<typename Cell, typename Surfacemap>
-void CellFactory<Cell,SurfaceMap>::createPolygon( 
-		      const std::list<IntersectionPoints> &intersection_points,
-		      const CellPtr &Cell,
-		      std::list<Pair<ScalarType,ScalarType> > &polygon ) const
-{
-
-}
-
 // Calculate the area of a polygon
 template<typename Cell, typename SurfaceMap>
-ScalarType CellFactory<Cell,SurfaceMap>::calculatePolygonArea(
-		 const std::list<Pair<ScalarType,ScalarType> > &polygon ) const
+scalarType CellFactory<Cell,SurfaceMap>::calculatePolygonArea(
+		                const std::list<PolygonCorner> &polygon ) const
 {
+  // The polygon must have at least 4 points (triangle with first point copied)
+  testPrecondition( polygon.size() >= 4 );
 
+  typename std::list<PolygonCorner>::const_iterator first_point, second_point, 
+    end_point;
+
+  first_point = polygon.begin();
+
+  second_point = first_point;
+  ++second_point;
+
+  end_point = polygon.end();
+
+  scalarType area = ST::zero();
+
+  // A = 0.5 * Sum_{i=0}^{n-1}(x_i + x_{i+1})*(y_{i+1} - y_i)
+  while( second_point != end_point )
+  {
+    area += (first_point->first + second_point->first)*
+      (second_point->second - first_point->second);
+    
+    ++first_point;
+    ++second_point;
+  }
+
+  area /= 2;
+
+  // Make sure that the calculated area is physical
+  testPostcondition( area > ST::zero() );
+  testPostcondition( !ST::isnaninf( area ) );
+
+  return area;
+}
+
+// Calculate the x-coord. of the polygon centroid
+template<typename Cell, typename SurfaceMap>
+scalarType 
+CellFactory<Cell,SurfaceMap>::calculatePolygonCentroidXCoordinate(
+				       const std::list<PolygonCorner> &polygon,
+				       const scalarType polygon_area ) const
+{
+  // The polygon must have at least 4 points (triangle with first point copied)
+  testPrecondition( polygon.size() >= 4 );
+
+  typename std::list<PolygonCorner>::const_iterator first_point, second_point, 
+    end_point;
+
+  first_point = polygon.begin();
+
+  second_point = first_point;
+  ++second_point;
+
+  end_point = polygon.end();
+
+  scalarType centroid_x_coord = ST::zero();
+
+  // x_c = (6*Area)^{-1} * Sum_{i=0}^{n-1}(x_{i+1}^2 + x_{i+1}*x_i + x_i^2)*
+  //                                      (y_{i+1} - y_i)
+  while( second_point != end_point )
+  {
+    centroid_x_coord += (second_point->first*second_point->first +
+			  second_point->first*first_point->first +
+			  first_point->first*first_point->first)*
+      (second_point->second - first_point->second);
+    
+    ++first_point;
+    ++second_point;
+  }
+
+  centroid_x_coord /= 6*polygon_area;
+
+  // Make sure that the calculated coordinate is physical
+  testPostcondition( !ST::isnaninf( centroid_x_coord ) );
+
+  return centroid_x_coord;
+}
+
+// Calculate the y-coord. of the polygon centroid
+template<typename Cell, typename SurfaceMap>
+scalarType 
+CellFactory<Cell,SurfaceMap>::calculatePolygonCentroidYCoordinate(
+				       const std::list<PolygonCorner> &polygon,
+				       const scalarType polygon_area ) const
+{
+  // The polygon must have at least 4 points (triangle with first point copied)
+  testPrecondition( polygon.size() >= 4 );
+
+  typename std::list<PolygonCorner>::const_iterator first_point, second_point, 
+    end_point;
+
+  first_point = polygon.begin();
+
+  second_point = first_point;
+  ++second_point;
+
+  end_point = polygon.end();
+
+  scalarType centroid_y_coord = ST::zero();
+
+  // y_c = (6*Area)^{-1} * Sum_{i=0}^{n-1}(y_{i+1}^2 + y_{i+1}*y_i + y_i^2)*
+  //                                      (x_{i+1} - x_i)
+  while( second_point != end_point )
+  {
+    centroid_y_coord += (second_point->second*second_point->second +
+			  second_point->second*first_point->second +
+			  first_point->second*first_point->second)*
+      (second_point->first - first_point->first);
+    
+    ++first_point;
+    ++second_point;
+  }
+
+  centroid_y_coord /= 6*polygon_area;
+
+  // Make sure that the calculated coordinate is physical
+  testPostcondition( !ST::isnaninf( centroid_y_coord ) );
+
+  return centroid_y_coord;
 }
 
 // Calculate the volume contribution from a surface bounding this cell
+/*! \details To calculate the volume correctly the reference surface unit
+ * normal must be directed out of the cell and the unit normal to the plane
+ * of the polygon must be directed into the cell.
+ */
 template<typename Cell, typename SurfaceMap>
-ScalarType CellFactory<Cell,SurfaceMap>::calculatePolygonVolumeContribution(
-			const std::list<Pair<ScalarType,ScalarType> > &polygon,
-			const Surface &reference_surface,
-			SurfaceSense polygon_sense,
-			SurfaceSense reference_sense )	
+scalarType CellFactory<Cell,SurfaceMap>::calculatePolygonVolumeContribution(
+			  const std::list<PolygonCorner> &polygon,
+			  const scalarType polygon_area,
+			  const Vector plane_of_polygon_normal,
+			  const Vector reference_plane_normal,
+			  const scalarType reference_plane_const_term ) const
 {
+  // The polygon must have at least 4 points (triangle with first point copied)
+  testPrecondition( polygon.size() >= 4 );
+  // The polygon area must be physical
+  testPrecondition( area > ST::zero() );
+  testPrecondition( !ST::isnaninf( area ) );
 
+  // Calculate the polygon centroid
+  scalarType centroid_x_coord = 
+    calculatePolygonCentroidXCoordinate( polygon, polygon_area );
+  scalarType centeroid_y_coord = 
+    calculatePolygonCentroidYCoordinate( polygon, polygon_area );
+
+  // Calculate the angle between the two normals
+  scalarType cos_angle = 
+    LAP::computeCosineAngleBetweenVectors( plane_of_polygon_unit_normal,
+					   reference_surface_unit_normal );
+
+  // Calculate the distance between the centroid and the reference plane
+  scalarType reference_plane_normal_magnitude = 
+    reference_plane_normal.normFrobenius();
+  scalarType distance = 
+    ST::magnitude( reference_plane_normal[0]*centroid_x_coord +
+		   reference_plane_normal[1]*centroid_y_coord +
+		   reference_plane_constant_term )/
+    reference_plane_normal_magnitude;
+
+  // Calculate the volume contribution (V = d*Area*cos_angle)
+  scalarType volume_contribution = distance*polygon_area*cos_angle;
+
+  // Make sure that the calculated volume is physical (neg. contribs. possible)
+  testPostcondition( !ST::isnaninf( volume_contribution ) );
+
+  return volume_contribution;  
 }		    
 
 // Calculate the volume and area of a rotationally symmetric cell

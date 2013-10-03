@@ -35,6 +35,23 @@ inline void LinearAlgebraPolicy<ScalarType>::normalizeVector( Vector &vector )
   vector.scale( 1.0/vector.normFrobenius() );
 }
 
+// Compute the cosine of the angle between two vectors
+template<typename ScalarType>
+ScalarType
+LinearAlgebraPolicy<ScalarType>::computeCosineAngleBetweenVectors(
+							      const Vector &a,
+							      const Vector &b )
+{
+  // The vectors must be three space vectors
+  testPrecondition( a.length() == 3 );
+  testPrecondition( b.length() == 3 );
+  // The vectors must be valid
+  testPrecondition( a.normFrobenius() > ST::zero() );
+  testPrecondition( b.normFrobenius() > ST::zero() );
+
+  return a.dot( b )/(a.normFrobenius()*b.normFrobenius());
+}
+
 // Test if a vector is parallel to another vector
 template<typename ScalarType>
 bool LinearAlgebraPolicy<ScalarType>::isParallel( const Vector &a,
@@ -44,7 +61,8 @@ bool LinearAlgebraPolicy<ScalarType>::isParallel( const Vector &a,
   testPrecondition( a.length() == 3 );
   testPrecondition( b.length() == 3 );
 
-  ScalarType cos_angle = a.dot( b )/(a.normFrobenius()*b.normFrobenius());
+  ScalarType cos_angle = 
+    LinearAlgebraPolicy<ScalarType>::computeCosineAngleBetweenVectors( a, b );
 
   if( ST::magnitude( cos_angle - ST::one() ) < ST::prec() )
     return true;
@@ -61,7 +79,8 @@ bool LinearAlgebraPolicy<ScalarType>::isAntiparallel( const Vector &a,
   testPrecondition( a.length() == 3 );
   testPrecondition( b.length() == 3 );
 
-  ScalarType cos_angle = a.dot( b )/(a.normFrobenius()*b.normFrobenius());
+  ScalarType cos_angle = 
+    LinearAlgebraPolicy<ScalarType>::computeCosineAngleBetweenVectors( a, b );
 
   if( ST::magnitude( cos_angle + ST::one() ) < ST::prec() )
     return true;

@@ -24,8 +24,9 @@
 
 namespace FACEMC{
 
-//! Eighth space enumeration
-/*! \details Assigning the booleans in this order assures that the octants
+/*! \brief Eighth space enumeration
+ * 
+ * Assigning the booleans in this order assures that the octants
  * are iterated through in counter-clockwise order w.r.t. the x-y plane.
  */
 enum Octant{
@@ -39,6 +40,16 @@ enum Octant{
   NEG_POS_NEG_OCTANT,
   NEG_POS_POS_OCTANT,
   END_OCTANT = NEG_POS_POS_OCTANT
+};
+
+/*! \brief Enumeration to specify whether function must find a point
+ *
+ * This enumeration is used by the findNextPolygonCorner member function when
+ * design-by-contract is enabled. 
+ */
+enum PointFindNecessity{
+  POINT_MUST_BE_FOUND,
+  POINT_MAY_NOT_BE_FOUND
 };
 
 template<typename Cell, typename SurfaceMap = typename Cell::SurfaceMap>
@@ -82,6 +93,8 @@ private:
   typedef Pair<Trip<scalarType,scalarType,scalarType>,
 	       Trip<surfaceOrdinalType,surfaceOrdinalType,surfaceOrdinalType> >
   IntersectionPoint;
+  //! Typedef for polygon corner
+  typedef Pair<scalarType,scalarType,scalarType> PolygonCorner;
 
 public:
 
@@ -108,10 +121,9 @@ protected:
 
   //! Calculate the intersection points of planes with a plane of interest
   void calculateIntersectionPoints(
+			    std::list<IntersectionPoint> &intersection_points,
 			    const SurfaceSensePairsIterator &plane_of_polygon,
-			    const CellPtr &cell,
-			    std::list<IntersectionPoints>
-			    &intersection_points ) const;
+			    const CellPtr &cell ) const;
 
   //! Calculate the intersection point created by three planes
   IntersectionPoint calculateIntersectionPoint(
@@ -132,29 +144,69 @@ protected:
 
   //! Get the point test function multiplier
   unsigned getPointTestFunctionMultiplier( const Octant octant ) const;
-
-  //! Rotate the intersection points to the x-y plane
-  void transformIntersectionPoints( 
-			    const SurfaceSensePairsIterator &plane_of_polygon,
-			    std::list<IntersectionPoints> &intersection_points,
-			    Matrix &rotation_matrix,
-			    Vector &translation_vector ) const;
   
   //! Create a polygon from intersection points
-  void createPolygon( const std::list<IntersectionPoints> &intersection_points,
-		      const CellPtr &Cell,
-		      std::list<Pair<scalarType,scalarType> > &polygon ) const;
+  void createPolygon( std::list<Pair<scalarType,scalarType> > &polygon,
+		      std::list<IntersectionPoint> &intersection_points,
+		      const CellPtr &cell ) const;
+
+  //! Find the first three points on the boundary of the polygon
+  typename std::list<Pair<scalarType,scalarType> >::const_iterator 
+  initializePolygon( std::list<Pair<scalarType,scalarType> > &polygon,
+		     std::list<IntersectionPoint> &intersection_points,
+		     const CellPtr &cell,
+		     surfaceOrdinalType &current_surface_id ) const;
+
+  //! Find the lexicographically largest point
+  typename std::list<IntersectionPoint>::const_iterator
+  getLexicographicallyLargestPoint(
+	       const std::list<IntersectionPoint> &intersection_points ) const;
+
+  //! Find the next point on the boundary of the polygon
+  /*! \details If the point may not be found by this function 
+   * (POINT_MAY_NOT_BE_FOUND), this function may return an iterator to the
+   * end of the list. It is therefore important to test the iterator returned.
+   */
+  typename std::list<IntersectionPoint>::const_iterator
+  getNextPolygonCorner( 
+       const surfaceOrdinalType desired_surface_id,
+       const typename std::list<PolygonCorner>::const_iterator &current_corner,
+       const std::list<IntersectionPoint> &intersection_points,
+       PointFindNecessity point_find_necessity = POINT_MUST_BE_FOUND ) const;
+
+  //! Get the next surface id (edge) of the polygon
+  scalarType getNextSurfaceId( 
+		    const surfaceOrdinalType current_surface_id,   
+		    const typename std::list<IntersectionPoint>::const_iterator
+		    &intersection_point ) const;
+
+  //! Rotate the polygon to the x-y plane
+  void transformPolygon( std::list<PolygonCorner> &polygon,
+			 const SurfaceSensePairsIterator &plane_of_polygon,
+			 Matrix &rotation_matrix,
+			 Vector &translation_vector ) const;
 
   //! Calculate the area of a polygon
   scalarType calculatePolygonArea( 
-		const std::list<Pair<scalarType,scalarType> > &polygon ) const;
+		               const std::list<PolygonCorner> &polygon ) const;
+
+  //! Calculate the x-coord. of the polygon centroid
+  scalarType calculatePolygonCentroidXCoordinate(
+				       const std::list<PolygonCorner> &polygon,
+				       const scalarType polygon_area ) const;
+
+  //! Calculate the y-coord. of the polygon centroid
+  scalarType calculatePolygonCentroidYCoordinate(
+				       const std::list<PolygonCorner> &polygon,
+				       const scalarType polygon_area ) const;
 
   //! Calculate the volume contribution from a surface bounding this cell
   scalarType calculatePolygonVolumeContribution( 
-			const std::list<Pair<scalarType,scalarType> > &polygon,
-			const Surface &reference_surface,
-			SurfaceSense polygon_sense,
-			SurfaceSense reference_sense ) const;
+			   const std::list<PolygonCorner> &polygon,
+			   const ScalarType polygon_area,
+			   const Vector plane_of_polygon_normal,
+			   const Vector reference_plane_normal,
+			   const scalarType reference_plane_const_term ) const;
 
   //! Calculate the volume and area of a rotationally symmetric cell
   void calculateRotationallySymmetricCellVolumeAndArea( CellPtr &cell );
@@ -173,13 +225,6 @@ protected:
                     &surfaces,
 		    unsigned &current_surface_id ) const;  
 
-  //! Assign the correct sign to the polygon areas
-  // \brief If the largest polygon area is negative, this feature lies
-  // inside of the cell. To calculate the correct volume contribution
-  // the largest polygon area must always be positive. If the largest
-  // polygon area is negative, multiply all polygon areas by -1.
-  void assignPolygonAreaSign( std::list<double> &polygon_areas );
-  
   //! Calculate the rotationally symmetric cell volume and surface areas
   // \brief If the cell is indeed rotationally symmetric, true will be returned
   bool calculateRotationallySymmetricCellVolumeAndSurfaceAreas();

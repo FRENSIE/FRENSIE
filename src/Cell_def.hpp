@@ -300,10 +300,10 @@ template<typename CellOrdinalType,
 	 typename SurfaceOrdinalType, 
 	 typename ScalarType,
 	 typename SurfaceMap>
-Cell<CellOrdinalType,
-     SurfaceOrdinalType,
-     ScalarType,
-     SurfaceMap>::SurfaceSensePairsIterator
+inline Cell<CellOrdinalType,
+	    SurfaceOrdinalType,
+	    ScalarType,
+	    SurfaceMap>::SurfaceSensePairsIterator
 Cell<CellOrdinalType,
      SurfaceOrdinalType,
      ScalarType,
@@ -317,6 +317,23 @@ template<typename CellOrdinalType,
 	 typename SurfaceOrdinalType, 
 	 typename ScalarType,
 	 typename SurfaceMap>
+inline Cell<CellOrdinalType,
+	    SurfaceOrdinalType,
+	    ScalarType,
+	    SurfaceMap>::SurfaceSensePairsIterator
+Cell<CellOrdinalType,
+     SurfaceOrdinalType,
+     ScalarType,
+     SurfaceMap>::endSurfaceSensePairs() const
+{  
+  return d_surface_sense_pairs.end();
+}
+
+// Get a const iterator to a specific surface-sense pair in container
+template<typename CellOrdinalType, 
+	 typename SurfaceOrdinalType, 
+	 typename ScalarType,
+	 typename SurfaceMap>
 Cell<CellOrdinalType,
      SurfaceOrdinalType,
      ScalarType,
@@ -324,9 +341,24 @@ Cell<CellOrdinalType,
 Cell<CellOrdinalType,
      SurfaceOrdinalType,
      ScalarType,
-     SurfaceMap>::endSurfaceSensePairs() const
-{  
-  return d_surface_sense_pairs.end();
+     SurfaceMap>::getSurfaceSensePair( 
+				    const SurfaceOrdinalType surface_id ) const
+{
+  SurfaceSensePairsIterator surface_sense_pair =
+    d_surface_sense_pairs.begin();
+  SurfaceSensePairsIterator end_surface_sense_pair = 
+    d_surface_sense_pairs.end();
+  
+  while( surface_sense_pair != end_surface_sense_pair )
+  {
+    if( surface_sense_pair->first->getId() == surface_id )
+      break;
+  }
+
+  // Make sure that the desired surface was found
+  testPostcondition( surface_sense_pair != end_surface_sense_pair );
+
+  return surface_sense_pair;
 }
 
 // Evaluate the cell definition
