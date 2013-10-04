@@ -37,7 +37,7 @@ inline void LinearAlgebraPolicy<ScalarType>::normalizeVector( Vector &vector )
 
 // Compute the cosine of the angle between two vectors
 template<typename ScalarType>
-ScalarType
+inline ScalarType
 LinearAlgebraPolicy<ScalarType>::computeCosineAngleBetweenVectors(
 							      const Vector &a,
 							      const Vector &b )
@@ -50,6 +50,25 @@ LinearAlgebraPolicy<ScalarType>::computeCosineAngleBetweenVectors(
   testPrecondition( b.normFrobenius() > ST::zero() );
 
   return a.dot( b )/(a.normFrobenius()*b.normFrobenius());
+}
+
+// Compute the cross product of two vectors
+typename ThreeSpaceTraitsAndPolicy<ScalarType>::Vector
+LinearAlgebraPolicy<ScalarType>::computeCrossProduct( const Vector &a,
+						      const Vector &b )
+{
+  // The vectors must be three space vectors
+  testPrecondition( a.length() == 3 );
+  testPrecondition( a.length() == 3 );
+  // The vectors must be valid
+  testPrecondition( a.normFrobenius() > ST::zero() );
+  testPrecondition( b.normFrobenius() > ST::zero() );
+
+  ScalarType x = a[1]*b[2]-a[2]*b[1];
+  ScalarType y = a[2]*b[0]-a[0]*b[2];
+  ScalarType z = a[0]*b[1]-a[1]*b[0];
+  
+  return ThreeSpace::createVector( x, y, z );
 }
 
 // Test if a vector is parallel to another vector

@@ -75,8 +75,7 @@ void CellFactory<Cell,SurfaceMap>::calculatePolyhedralCellVolumeAndArea( CellPtr
     cell->endSurfaceSensePairs();
   
   // Assign the reference surface used for calculating the cell vol.
-  typename Cell::SurfaceSensePairsIterator reference_surface_sense_pair = 
-    surface_sense_pair;
+  typename Cell::SurfaceSensePairsIterator reference_surface_sense_pair;
 
   // Processed surfaces (the same surf. may appear more than once in cell def)
   std::set<typename Cell::surfaceOrdinalType> processed_surfaces;
@@ -793,131 +792,6 @@ void CellFactory<Cell,SurfaceMap>::transformPolygon(
   testPostcondition( multiply_success );
   // Make sure that the transformation was successful
   testPostcondition( all_points_on_xy_plane );
-}
-
-// Calculate the area of a polygon
-template<typename Cell, typename SurfaceMap>
-scalarType CellFactory<Cell,SurfaceMap>::calculatePolygonArea(
-		                const std::list<PolygonCorner> &polygon ) const
-{
-  // The polygon must have at least 4 points (triangle with first point copied)
-  testPrecondition( polygon.size() >= 4 );
-
-  typename std::list<PolygonCorner>::const_iterator first_point, second_point, 
-    end_point;
-
-  first_point = polygon.begin();
-
-  second_point = first_point;
-  ++second_point;
-
-  end_point = polygon.end();
-
-  scalarType area = ST::zero();
-
-  // A = 0.5 * Sum_{i=0}^{n-1}(x_i + x_{i+1})*(y_{i+1} - y_i)
-  while( second_point != end_point )
-  {
-    area += (first_point->first + second_point->first)*
-      (second_point->second - first_point->second);
-    
-    ++first_point;
-    ++second_point;
-  }
-
-  area /= 2;
-
-  // Make sure that the calculated area is physical
-  testPostcondition( area > ST::zero() );
-  testPostcondition( !ST::isnaninf( area ) );
-
-  return area;
-}
-
-// Calculate the x-coord. of the polygon centroid
-template<typename Cell, typename SurfaceMap>
-scalarType 
-CellFactory<Cell,SurfaceMap>::calculatePolygonCentroidXCoordinate(
-				       const std::list<PolygonCorner> &polygon,
-				       const scalarType polygon_area ) const
-{
-  // The polygon must have at least 4 points (triangle with first point copied)
-  testPrecondition( polygon.size() >= 4 );
-
-  typename std::list<PolygonCorner>::const_iterator first_point, second_point, 
-    end_point;
-
-  first_point = polygon.begin();
-
-  second_point = first_point;
-  ++second_point;
-
-  end_point = polygon.end();
-
-  scalarType centroid_x_coord = ST::zero();
-
-  // x_c = (6*Area)^{-1} * Sum_{i=0}^{n-1}(x_{i+1}^2 + x_{i+1}*x_i + x_i^2)*
-  //                                      (y_{i+1} - y_i)
-  while( second_point != end_point )
-  {
-    centroid_x_coord += (second_point->first*second_point->first +
-			  second_point->first*first_point->first +
-			  first_point->first*first_point->first)*
-      (second_point->second - first_point->second);
-    
-    ++first_point;
-    ++second_point;
-  }
-
-  centroid_x_coord /= 6*polygon_area;
-
-  // Make sure that the calculated coordinate is physical
-  testPostcondition( !ST::isnaninf( centroid_x_coord ) );
-
-  return centroid_x_coord;
-}
-
-// Calculate the y-coord. of the polygon centroid
-template<typename Cell, typename SurfaceMap>
-scalarType 
-CellFactory<Cell,SurfaceMap>::calculatePolygonCentroidYCoordinate(
-				       const std::list<PolygonCorner> &polygon,
-				       const scalarType polygon_area ) const
-{
-  // The polygon must have at least 4 points (triangle with first point copied)
-  testPrecondition( polygon.size() >= 4 );
-
-  typename std::list<PolygonCorner>::const_iterator first_point, second_point, 
-    end_point;
-
-  first_point = polygon.begin();
-
-  second_point = first_point;
-  ++second_point;
-
-  end_point = polygon.end();
-
-  scalarType centroid_y_coord = ST::zero();
-
-  // y_c = (6*Area)^{-1} * Sum_{i=0}^{n-1}(y_{i+1}^2 + y_{i+1}*y_i + y_i^2)*
-  //                                      (x_{i+1} - x_i)
-  while( second_point != end_point )
-  {
-    centroid_y_coord += (second_point->second*second_point->second +
-			  second_point->second*first_point->second +
-			  first_point->second*first_point->second)*
-      (second_point->first - first_point->first);
-    
-    ++first_point;
-    ++second_point;
-  }
-
-  centroid_y_coord /= 6*polygon_area;
-
-  // Make sure that the calculated coordinate is physical
-  testPostcondition( !ST::isnaninf( centroid_y_coord ) );
-
-  return centroid_y_coord;
 }
 
 // Calculate the volume contribution from a surface bounding this cell

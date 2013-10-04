@@ -186,20 +186,6 @@ protected:
 			 Matrix &rotation_matrix,
 			 Vector &translation_vector ) const;
 
-  //! Calculate the area of a polygon
-  scalarType calculatePolygonArea( 
-		               const std::list<PolygonCorner> &polygon ) const;
-
-  //! Calculate the x-coord. of the polygon centroid
-  scalarType calculatePolygonCentroidXCoordinate(
-				       const std::list<PolygonCorner> &polygon,
-				       const scalarType polygon_area ) const;
-
-  //! Calculate the y-coord. of the polygon centroid
-  scalarType calculatePolygonCentroidYCoordinate(
-				       const std::list<PolygonCorner> &polygon,
-				       const scalarType polygon_area ) const;
-
   //! Calculate the volume contribution from a surface bounding this cell
   scalarType calculatePolygonVolumeContribution( 
 			   const std::list<PolygonCorner> &polygon,
