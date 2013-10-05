@@ -140,10 +140,12 @@ ThreeSpaceTraitsAndPolicy<ScalarType>::createSquareMatrixFromColumns(
   testPrecondition( column_2.length() == 3 );
   testPrecondition( column_3.length() == 3 );
 
+  ordinalType index = OT::zero();
+
   Matrix matrix( 3, 3 );
-  Teuchos::setCol( column_1, 0, matrix );
-  Teuchos::setCol( column_2, 1, matrix );
-  Teuchos::setCol( column_3, 2, matrix );
+  Teuchos::setCol( column_1, index, matrix );
+  Teuchos::setCol( column_2, ++index, matrix );
+  Teuchos::setCol( column_3, ++index, matrix );
 
   return matrix;
 }

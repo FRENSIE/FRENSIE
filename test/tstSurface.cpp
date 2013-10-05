@@ -89,8 +89,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
 
   // Planar surface
   FACEMC::Surface<OrdinalType,ScalarType> plane( 0,
-				       1, 2, 3,
-				       4 );
+						 1, 2, 3,
+						 4 );
 
   TEST_ASSERT( plane.isPlanar() );
 }
@@ -191,6 +191,264 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
 
 UNIT_TEST_INSTANTIATION( Surface, getUnitNormal );
 
+//---------------------------------------------------------------------------//
+// Check that a surface can be created by transforming another surface with
+// a translation vector.
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
+				   constructor_with_translation_vector,
+				   OrdinalType,
+				   ScalarType )
+{
+  FACEMC::Surface<OrdinalType,ScalarType> xy_plane( 0,
+						    0, 0, 1,
+						    0 );
+  FACEMC::Surface<OrdinalType,ScalarType> unit_sphere( 1,
+						       1, 1, 1,
+						       0, 0, 0,
+						       -1 );
+
+  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
+  typedef Teuchos::ScalarTraits<ScalarType> ST;
+  
+  typename ThreeSpace::Vector xaxis_translation_vector = 
+    ThreeSpace::createVector( 1.0, 0.0, 0.0 );
+
+  typename ThreeSpace::Vector yaxis_translation_vector = 
+    ThreeSpace::createVector( 0.0, 1.0, 0.0 );
+  
+  typename ThreeSpace::Vector zaxis_translation_vector = 
+    ThreeSpace::createVector( 0.0, 0.0, 1.0 );
+
+  typename ThreeSpace::Matrix zero_matrix = 
+    ThreeSpace::createSquareMatrix( 0.0, 0.0, 0.0,
+				    0.0, 0.0, 0.0,
+				    0.0, 0.0, 0.0 );
+
+  typename ThreeSpace::Matrix identity_matrix = 
+    ThreeSpace::createSquareMatrix( 1.0, 0.0, 0.0,
+				    0.0, 1.0, 0.0,
+				    0.0, 0.0, 1.0 );
+  
+  // Create a plane at z=1 from the xy_plane
+  FACEMC::Surface<OrdinalType,ScalarType> z_plane( 2,
+						   xy_plane,
+						   zaxis_translation_vector );
+
+  typename ThreeSpace::Matrix quad_form_matrix = 
+    z_plane.getQuadraticFormMatrix();
+  typename ThreeSpace::Vector linear_term_vector = 
+    z_plane.getLinearTermVector();
+  
+  Teuchos::ArrayView<ScalarType> quad_form_matrix_view( 
+						     quad_form_matrix.values(),
+						     9 );
+  Teuchos::ArrayView<ScalarType> linear_term_vector_view(
+						   linear_term_vector.values(),
+						   3 );
+
+  typename ThreeSpace::Vector ref_linear_term_vector =
+    ThreeSpace::createVector( 0.0, 0.0, 1.0 );
+  typename ThreeSpace::Matrix ref_quad_form_matrix = zero_matrix;
+  ScalarType ref_constant_term = 1.0;
+
+  Teuchos::ArrayView<ScalarType> ref_quad_form_matrix_view(
+						 ref_quad_form_matrix.values(),
+						 9 );
+  Teuchos::ArrayView<ScalarType> ref_linear_term_vector_view(
+					       ref_linear_term_vector.values(),
+					       3 );
+  
+  TEST_COMPARE_FLOATING_ARRAYS( quad_form_matrix_view,
+				ref_quad_form_matrix_view,
+				ST::prec() );
+  TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector_view,
+				ref_linear_term_vector_view,
+				ST::prec() );
+  TEST_FLOATING_EQUALITY( z_plane.getConstantTerm(), 
+			  ref_constant_term, 
+			  ST::prec() );
+
+  // Create a unit sphere centered at (-1, 0, 0) from the unit sphere at origin
+  FACEMC::Surface<OrdinalType,ScalarType> unit_sphere_xaxis(
+						    3,
+						    unit_sphere,
+						    xaxis_translation_vector );
+  
+  quad_form_matrix = unit_sphere_xaxis.getQuadraticFormMatrix();
+  linear_term_vector = unit_sphere_xaxis.getLinearTermVector();
+
+  ref_linear_term_vector = ThreeSpace::createVector( 2.0, 0.0, 0.0 );
+  ref_quad_form_matrix = identity_matrix;
+  ref_constant_term = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( quad_form_matrix_view,
+				ref_quad_form_matrix_view,
+				ST::prec() );
+  TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector_view,
+				ref_linear_term_vector_view,
+				ST::prec() );
+  TEST_FLOATING_EQUALITY( unit_sphere_xaxis.getConstantTerm(), 
+			  ref_constant_term, 
+			  ST::prec() );
+
+  // Create a unit sphere centered at (0, -1, 0) from the unit sphere at origin
+  FACEMC::Surface<OrdinalType,ScalarType> unit_sphere_yaxis(
+						    3,
+						    unit_sphere,
+						    yaxis_translation_vector );
+
+  quad_form_matrix = unit_sphere_yaxis.getQuadraticFormMatrix();
+  linear_term_vector = unit_sphere_yaxis.getLinearTermVector();
+
+  ref_linear_term_vector = ThreeSpace::createVector( 0.0, 2.0, 0.0 );
+  ref_quad_form_matrix = identity_matrix;
+  ref_constant_term = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( quad_form_matrix_view,
+				ref_quad_form_matrix_view,
+				ST::prec() );
+  TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector_view,
+				ref_linear_term_vector_view,
+				ST::prec() );
+  TEST_FLOATING_EQUALITY( unit_sphere_yaxis.getConstantTerm(), 
+			  ref_constant_term, 
+			  ST::prec() );
+
+  // Create a unit sphere centered at (0, 0, -1) from the unit sphere at origin
+  FACEMC::Surface<OrdinalType,ScalarType> unit_sphere_zaxis( 
+						    3,
+						    unit_sphere,
+						    zaxis_translation_vector );
+  
+  quad_form_matrix = unit_sphere_zaxis.getQuadraticFormMatrix();
+  linear_term_vector = unit_sphere_zaxis.getLinearTermVector();
+
+  ref_linear_term_vector = ThreeSpace::createVector( 0.0, 0.0, 2.0 );
+  ref_quad_form_matrix = identity_matrix;
+  ref_constant_term = 0.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( quad_form_matrix_view,
+				ref_quad_form_matrix_view,
+				ST::prec() );
+  TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector_view,
+				ref_linear_term_vector_view,
+				ST::prec() );
+  TEST_FLOATING_EQUALITY( unit_sphere_zaxis.getConstantTerm(), 
+			  ref_constant_term, 
+			  ST::prec() );
+}
+
+UNIT_TEST_INSTANTIATION( Surface, constructor_with_translation_vector );
+  
+//---------------------------------------------------------------------------//
+// Check that a surface can be created by transforming another surface with
+// a translation vector.
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
+				   constructor_with_rotation_matrix,
+				   OrdinalType,
+				   ScalarType )
+{
+  // General plane.
+  FACEMC::Surface<OrdinalType,ScalarType> plane( 0,
+						 5, 4, 3,
+						 0 );
+  // Unit skew cylinder with axis direction (1/2,1/2,sqrt(2)/2)
+  FACEMC::Surface<OrdinalType,ScalarType> skew_cylinder( 1,
+							 0.5, 1.0, 0.5,
+							 0.0, 0.0, 1.0,
+							 0.0, 0.0, 0.0,
+							 -1.0 );
+
+  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
+  typedef FACEMC::LinearAlgebraPolicy<ScalarType> LAP;
+  typedef Teuchos::ScalarTraits<ScalarType> ST;
+  
+  // create the xy-plane by rotating the general plane
+  typename ThreeSpace::Vector desired_direction = 
+    ThreeSpace::createVector( 0.0, 0.0, 1.0 );
+  typename ThreeSpace::Vector current_direction = 
+    plane.getUnitNormalAtPoint( 0.0, 0.0, 0.0 );
+  typename ThreeSpace::Matrix rotation_matrix =
+    LAP::createRotationMatrixFromUnitVectors( desired_direction,
+					      current_direction );
+
+  FACEMC::Surface<OrdinalType,ScalarType> xy_plane( 2,
+						    plane,
+						    rotation_matrix );
+  
+  typename ThreeSpace::Matrix quad_form_matrix = 
+    xy_plane.getQuadraticFormMatrix();
+  typename ThreeSpace::Vector linear_term_vector = 
+    xy_plane.getLinearTermVector();
+  
+  Teuchos::ArrayView<ScalarType> quad_form_matrix_view( 
+						     quad_form_matrix.values(),
+						     9 );
+  Teuchos::ArrayView<ScalarType> linear_term_vector_view( 
+						   linear_term_vector.values(),
+						   3 );
+
+  typename ThreeSpace::Matrix ref_quad_form_matrix = 
+    ThreeSpace::createSymmetricMatrix( 0.0, 0.0, 0.0,
+				            0.0, 0.0,
+				                 0.0 );
+  typename ThreeSpace::Vector ref_linear_term_vector = 
+    ThreeSpace::createVector( 0.0,
+			      0.0, 
+			      1.0 );
+  
+  ScalarType ref_constant_term = 0.0;
+
+  Teuchos::ArrayView<ScalarType> ref_quad_form_matrix_view(
+						 ref_quad_form_matrix.values(),
+						 9 );
+  Teuchos::ArrayView<ScalarType> ref_linear_term_vector_view(
+					       ref_linear_term_vector.values(),
+					       3 );
+  
+  TEST_COMPARE_FLOATING_ARRAYS( quad_form_matrix_view,
+				ref_quad_form_matrix_view,
+				ST::prec() );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector_view,
+				       ref_linear_term_vector_view,
+				       ST::prec() );
+  TEST_FLOATING_EQUALITY( xy_plane.getConstantTerm(), 
+			  ref_constant_term, 
+			  ST::prec() );
+
+  // create a cylinder parallel to z-axis centered at (1.0,1.0)
+  typename ThreeSpace::Vector eigenvalues;
+  eigenvalues = LAP::computeEigenvaluesAndEigenvectors( 
+  					skew_cylinder.getQuadraticFormMatrix(),
+  					rotation_matrix );
+  if( LAP::isRealignable( eigenvalues ) )
+    LAP::realignEigenvectors( eigenvalues, rotation_matrix );
+
+  FACEMC::Surface<OrdinalType,ScalarType> z_cylinder( 3,
+						      skew_cylinder,
+						      rotation_matrix );
+
+  quad_form_matrix = z_cylinder.getQuadraticFormMatrix();
+  linear_term_vector = z_cylinder.getLinearTermVector();
+
+  ref_quad_form_matrix = ThreeSpace::createSymmetricMatrix( 1.0, 0.0, 0.0,
+							         1.0, 0.0,
+							              0.0 );
+  ref_linear_term_vector = ThreeSpace::createVector( 0.0, 0.0, 0.0 );
+  ref_constant_term = -1.0;
+
+  TEST_COMPARE_FLOATING_ARRAYS( quad_form_matrix_view,
+				ref_quad_form_matrix_view,
+				ST::prec() );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector_view,
+				       ref_linear_term_vector_view,
+				       ST::prec() );
+  TEST_FLOATING_EQUALITY( z_cylinder.getConstantTerm(), 
+			  ref_constant_term, 
+			  ST::prec() );
+}
+
+UNIT_TEST_INSTANTIATION( Surface, constructor_with_rotation_matrix );
 //---------------------------------------------------------------------------//
 // Check that a surface can be transformed with a rotation matrix and 
 // a translation vector

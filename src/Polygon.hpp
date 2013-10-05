@@ -37,6 +37,11 @@ public:
   //! Typedef 
   //@}
 
+protected:
+
+  //! Typedef for projected point
+  typedef Pair<ScalarType,ScalarType> PointProjection;
+
 private:
 
   //! Typedef for scalar traits
@@ -51,19 +56,12 @@ private:
   typedef typename ThreeSpace::Matrix Matrix;
   //! Typdef for linear algebra policy
   typedef LinearAlgebraPolicy<ScalarType> LAP;
-  //! Typedef for projected point
-  typedef Pair<ScalarType,ScalarType> PointProjection;
 
 public:
 
   //! Constructor
   Polygon( const OrdinalType polygon_id,
 	   const std::list<Point> &ordered_polygon_corners );
-
-  //! Constructor
-  Polygon( const OrdinalType polygon_id,
-	   const std::list<Point> &ordered_polygon_corners,
-	   const Vector &polygon_plane_unit_normal );
 
   //! Destructor
   ~Polygon()
@@ -143,7 +141,8 @@ protected:
 
   //! Calculate the y-coordinate of a simplified polygon centroid
   static ScalarType calculateCentroidYCoordinate(
-			const std::list<PoinProjection> &simplified_polygon );
+			  const std::list<PointProjection> &simplified_polygon,
+			  const ScalarType polygon_area );
 
 private:
 

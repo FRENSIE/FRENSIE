@@ -73,6 +73,9 @@ template<typename T,
 	 typename T4 = Empty>
 struct ComparePolicy
 {
+  //! Typdef for scalar type
+  typedef double scalarType;
+  
   /*! Compare two values of a type.
    *
    * \details To provide detailed output, it must be known whether the

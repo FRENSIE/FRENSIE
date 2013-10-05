@@ -53,6 +53,7 @@ LinearAlgebraPolicy<ScalarType>::computeCosineAngleBetweenVectors(
 }
 
 // Compute the cross product of two vectors
+template<typename ScalarType>
 typename ThreeSpaceTraitsAndPolicy<ScalarType>::Vector
 LinearAlgebraPolicy<ScalarType>::computeCrossProduct( const Vector &a,
 						      const Vector &b )
@@ -257,7 +258,7 @@ LinearAlgebraPolicy<ScalarType>::createZeroingVector(
   {
     zeroing_term = -constant_term/vector[0];
     
-    zeroing_vecgtor = ThreeSpace::createVector( zeroing_term,
+    zeroing_vector = ThreeSpace::createVector( zeroing_term,
 						ST::zero(),
 						ST::zero() );
   }

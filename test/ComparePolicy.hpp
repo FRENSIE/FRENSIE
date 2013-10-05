@@ -31,11 +31,13 @@ namespace FACEMC{
 /*! \brief Relative error of two values
  * \ingroup compare_policy
  */
-double relError( const double first_value, const double second_value )
+template<typename ScalarType>
+ScalarType relError( const ScalarType first_value, 
+		     const ScalarType second_value )
 {
-  typedef Teuchos::ScalarTraits<double> ST;
-  ST::magnitudeType err;
-  if( first_value != 0.0 && second_value != 0.0 )
+  typedef Teuchos::ScalarTraits<ScalarType> ST;
+  typename ST::magnitudeType err;
+  if( first_value != ST::zero() && second_value != ST::zero() )
   {
     err = ST::magnitude( first_value - second_value )/
       std::max( ST::magnitude( first_value ),
@@ -80,12 +82,12 @@ bool compareFirstTupleMembers( const T &first_value,
   }
   
   success = ComparePolicy<T>::compare( first_value,
-					    first_tuple_member_name.str(),
-					    second_value,
-					    second_tuple_member_name.str(),
-					    out,
-					    -1,
-					    tol );
+				       first_tuple_member_name.str(),
+				       second_value,
+				       second_tuple_member_name.str(),
+				       out,
+				       -1,
+				       tol );
   return success;
 }
 
@@ -119,12 +121,12 @@ bool compareSecondTupleMembers( const T &first_value,
   }
   
   success = ComparePolicy<T>::compare( first_value,
-					    first_tuple_member_name.str(),
-					    second_value,
-					    second_tuple_member_name.str(),
-					    out,
-					    -1,
-					    tol );
+				       first_tuple_member_name.str(),
+				       second_value,
+				       second_tuple_member_name.str(),
+				       out,
+				       -1,
+				       tol );
   return success;
 }
 
@@ -133,12 +135,12 @@ bool compareSecondTupleMembers( const T &first_value,
  */
 template<typename T>
 bool compareThirdTupleMembers( const T &first_value,
-				const std::string &first_name,
-				const T &second_value,
-				const std::string &second_name,
-				Teuchos::FancyOStream &out,
-				const int index,
-				const double tol )
+			       const std::string &first_name,
+			       const T &second_value,
+			       const std::string &second_name,
+			       Teuchos::FancyOStream &out,
+			       const int index,
+			       const double tol )
 {
   bool success = true;
   
@@ -158,12 +160,12 @@ bool compareThirdTupleMembers( const T &first_value,
   }
   
   success = ComparePolicy<T>::compare( first_value,
-					    first_tuple_member_name.str(),
-					    second_value,
-					    second_tuple_member_name.str(),
-					    out,
-					    -1,
-					    tol );
+				       first_tuple_member_name.str(),
+				       second_value,
+				       second_tuple_member_name.str(),
+				       out,
+				       -1,
+				       tol );
   return success;
 }
 
@@ -197,12 +199,12 @@ bool compareFourthTupleMembers( const T &first_value,
   }
   
   success = ComparePolicy<T>::compare( first_value,
-					    first_tuple_member_name.str(),
-					    second_value,
-					    second_tuple_member_name.str(),
-					    out,
-					    -1,
-					    tol );
+				       first_tuple_member_name.str(),
+				       second_value,
+				       second_tuple_member_name.str(),
+				       out,
+				       -1,
+				       tol );
   return success;
 }
 
@@ -212,13 +214,15 @@ bool compareFourthTupleMembers( const T &first_value,
 template<>
 struct ComparePolicy<unsigned int>
 {
+  typedef unsigned int scalarType;
+  
   static inline bool compare( const unsigned int &first_value,
 			      const std::string &first_name,
 			      const unsigned int &second_value,
 			      const std::string &second_name,
 			      Teuchos::FancyOStream &out,
 			      const int index = -1,
-			      const double tol = 0.0 )
+			      const scalarType tol = 0 )
   {
     bool success = true;
       
@@ -252,13 +256,14 @@ struct ComparePolicy<unsigned int>
 template<>
 struct ComparePolicy<double>
 {
+  typedef double scalarType;
   static inline bool compare( const double &first_value,
 			      const std::string &first_name,
 			      const double &second_value,
 			      const std::string &second_name,
 			      Teuchos::FancyOStream &out,
 			      const int index = -1,
-			      const double tol = 0.0 )
+			      const scalarType tol = 0.0 )
   {
     bool success = true;
       
@@ -314,6 +319,75 @@ struct ComparePolicy<double>
   }
 };
 
+/*! \brief The specialization of the FACEMC::ComparePolicy for float.
+ * \ingroup compare_policy
+ */
+template<>
+struct ComparePolicy<float>
+{
+  typedef float scalarType;
+  static inline bool compare( const float &first_value,
+			      const std::string &first_name,
+			      const float &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0.0f )
+  {
+    bool success = true;
+      
+    if( tol == 0.0f )
+    {
+      if( first_value != second_value )
+      {
+	// Array Element Compare
+	if( index >= 0 )
+	{
+	  out << "\nError, " << first_name << "[" << index << "]" << " = "
+	      << first_value << " == " << second_name << "[" << index << "]" 
+	      << " = " << second_value << ": failed!\n";
+	}
+	// Single Compare
+	else
+	{
+	  out << first_name << " = " << first_value
+	      << " == " << second_name << " = " << second_value 
+	      << ": ";
+	}
+	
+	success = false;
+      }
+    }
+    else
+    {
+      float err = relError( first_value, second_value );
+      
+      if( err > tol )
+      {
+	// Array Element Compare
+	if( index >= 0 )
+	{
+	  out << "\nError, relErr(" << first_name << "[" << index << "],"
+	      << second_name << "[" << index << "])" << " = relErr(" 
+	      << first_value << "," << second_value << ") = " << err
+	      << " <= tol = " << tol << ": failed!\n";
+	}
+	// Single Compare
+	else
+	{
+	  out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
+	      << "\n= relErr(" << first_value << "," << second_value << ") = "
+	      << err << "\n<= tol = " << tol << ": ";
+	}
+
+	success = false;
+      }	  
+    }
+    
+    return success;
+  }
+};
+
 /*! \brief The partial specialization of the FACEMC::ComparePolicy for 
  * FACEMC::Pair. 
  * \ingroup compare_policy
@@ -321,13 +395,14 @@ struct ComparePolicy<double>
 template<typename T, typename T2>
 struct ComparePolicy<Pair<T,T2> >
 {
+  typedef double scalarType;
   static inline bool compare( const Pair<T,T2> &first_value,
 			      const std::string &first_name,
 			      const Pair<T,T2> &second_value,
 			      const std::string &second_name,
 			      Teuchos::FancyOStream &out,
 			      const int index = -1,
-			      const double tol = 0.0 )
+			      const scalarType tol = 0.0 )
   {
     bool success = true;
     
@@ -370,13 +445,15 @@ struct ComparePolicy<Pair<T,T2> >
 template<typename T, typename T2, typename T3>
 struct ComparePolicy<Trip<T,T2,T3> >
 {
+  typedef double scalarType;
+  
   static inline bool compare( const Trip<T,T2,T3> &first_value,
 			      const std::string &first_name,
 			      const Trip<T,T2,T3> &second_value,
 			      const std::string &second_name,
 			      Teuchos::FancyOStream &out,
 			      const int index = -1,
-			      const double tol = 0.0 )
+			      const scalarType tol = 0.0 )
   {
     bool success = true;
     
@@ -433,13 +510,15 @@ struct ComparePolicy<Trip<T,T2,T3> >
 template<typename T, typename T2, typename T3, typename T4>
 struct ComparePolicy<Quad<T,T2,T3,T4> >
 {
+  typedef double scalarType;
+  
   static inline bool compare( const Quad<T,T2,T3,T4> &first_value,
 			      const std::string &first_name,
 			      const Quad<T,T2,T3,T4> &second_value,
 			      const std::string &second_name,
 			      Teuchos::FancyOStream &out,
 			      const int index = -1,
-			      const double tol = 0.0 )
+			      const scalarType tol = 0.0 )
   {
     bool success = true;
     

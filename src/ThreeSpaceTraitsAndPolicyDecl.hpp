@@ -11,6 +11,7 @@
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
+#include <Teuchos_OrdinalTraits.hpp>
 #include <Teuchos_SerialDenseVector.hpp>
 #include <Teuchos_SerialDenseMatrix.hpp>
 
@@ -41,13 +42,19 @@ template<typename ScalarType>
 struct ThreeSpaceTraitsAndPolicy
 {
   
-private:
-  //! Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<ScalarType> ST;
-  
 public:
+  
   //! Typedef for ordinal type
   typedef char ordinalType;
+
+private:
+  
+  //! Typedef for ScalarTraits
+  typedef Teuchos::ScalarTraits<ScalarType> ST;
+  //! Typedef for OrdinalTraits
+  typedef Teuchos::OrdinalTraits<ordinalType> OT;
+  
+public:
   
   //! The vector type that is used to represent points in three space
   typedef Teuchos::SerialDenseVector<ordinalType,ScalarType> Vector;
