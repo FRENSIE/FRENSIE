@@ -31,6 +31,10 @@
 #define COMPRESSED_CELL_DEFINITION_3 "-2n-5n3n(4n5n(8u9)u(10u-11)n6)"
 #define RENAMED_CELL_DEFINITION_3 "0n1n2n(3n4n(5u6)u(7u8)n9)"
 #define REDUCED_CELL_DEFINITION_3 "0n1n2nd0"
+#define CELL_DEFINITION_4 "(-1n2n-3n4n-7n8)u(-1n2n-5n6n-7n8)"
+#define COMPRESSED_CELL_DEFINITION_4 "(-1n2n-3n4n-7n8)u(-1n2n-5n6n-7n8)"
+#define RENAMED_CELL_DEFINITION_4 "(0n1n2n3n4n5)u(6n7n8n9n10n11)"
+#define REDUCED_CELL_DEFINITION_4 "d0ud1"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -95,6 +99,16 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, removeWhiteSpace )
   TEST_ASSERT( cell_definition.compare( 0,
 					std::string::npos,
 					COMPRESSED_CELL_DEFINITION_3 ) == 0 );
+
+  cell_definition = CELL_DEFINITION_4;
+  
+  cell_functor.removeWhiteSpace( cell_definition );
+
+  std::cout << cell_definition << std::endl;
+
+  TEST_ASSERT( cell_definition.compare( 0,
+					std::string::npos,
+					COMPRESSED_CELL_DEFINITION_4 ) == 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -130,6 +144,15 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, renameVariables )
   TEST_ASSERT( cell_definition.compare( 0,
 					std::string::npos,
 					RENAMED_CELL_DEFINITION_3 ) == 0 );
+
+  cell_definition = CELL_DEFINITION_4;
+  
+  cell_functor.removeWhiteSpace( cell_definition );
+  cell_functor.renameVariables( cell_definition );
+
+  TEST_ASSERT( cell_definition.compare( 0,
+					std::string::npos,
+					RENAMED_CELL_DEFINITION_4 ) == 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -166,6 +189,15 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, getNumVariables )
   number_of_variables = cell_functor.getNumVariables( cell_definition );
 
   TEST_EQUALITY( number_of_variables, ref_number_of_variables );
+
+  cell_definition = CELL_DEFINITION_4;
+  ref_number_of_variables = 12;
+
+  cell_functor.removeWhiteSpace( cell_definition );
+  cell_functor.renameVariables( cell_definition );
+  number_of_variables = cell_functor.getNumVariables( cell_definition );
+
+  TEST_EQUALITY( number_of_variables, ref_number_of_variables );
 }
 
 //---------------------------------------------------------------------------//
@@ -195,6 +227,15 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, getVariableRange )
 
   cell_definition = CELL_DEFINITION_3;
   ref_range( 0u, 9u );
+
+  cell_functor.removeWhiteSpace( cell_definition );
+  cell_functor.renameVariables( cell_definition );
+  range = cell_functor.getVariableRange( cell_definition );
+
+  FACEMC_TEST_EQUALITY( range, ref_range );
+
+  cell_definition = CELL_DEFINITION_4;
+  ref_range( 0u, 11u );
 
   cell_functor.removeWhiteSpace( cell_definition );
   cell_functor.renameVariables( cell_definition );
@@ -248,6 +289,19 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, constructChildFunctors )
   TEST_EQUALITY_CONST( number_of_children, 1 );
   FACEMC_TEST_COMPARE_ARRAYS( variable_ranges, ref_variable_ranges );
 
+  cell_definition = CELL_DEFINITION_4;
+  ref_variable_ranges.resize( 2 );
+  ref_variable_ranges[0]( 0u, 5u );
+  ref_variable_ranges[1]( 6u, 11u );
+
+  cell_functor.removeWhiteSpace( cell_definition );
+  cell_functor.renameVariables( cell_definition );
+  cell_functor.constructChildFunctors( cell_definition );
+  number_of_children = cell_functor.getNumChildFunctors();
+  variable_ranges = cell_functor.getChildFunctorVariableRanges();
+
+  TEST_EQUALITY_CONST( number_of_children, 2 );
+  FACEMC_TEST_COMPARE_ARRAYS( variable_ranges, ref_variable_ranges );
 }
 
 //---------------------------------------------------------------------------//
@@ -289,6 +343,17 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, reduceDefinition )
   TEST_ASSERT( cell_definition.compare( 0, 
 					std::string::npos,
 					REDUCED_CELL_DEFINITION_3 ) == 0 ); 
+
+  cell_definition = CELL_DEFINITION_4;
+  
+  cell_functor.removeWhiteSpace( cell_definition );
+  cell_functor.renameVariables( cell_definition );
+  cell_functor.constructChildFunctors( cell_definition );
+  cell_functor.reduceDefinition( cell_definition );
+
+  TEST_ASSERT( cell_definition.compare( 0,
+					std::string::npos,
+					REDUCED_CELL_DEFINITION_4 ) == 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -331,6 +396,17 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, assignSetOperationFunctors )
   number_of_set_op_functors = cell_functor.getNumSetOperationFunctors();
 
   TEST_EQUALITY_CONST( number_of_set_op_functors, 3 );
+
+  cell_definition = CELL_DEFINITION_4;
+
+  cell_functor.removeWhiteSpace( cell_definition );
+  cell_functor.renameVariables( cell_definition );
+  cell_functor.constructChildFunctors( cell_definition );
+  cell_functor.reduceDefinition( cell_definition );
+  cell_functor.assignSetOperationFunctors( cell_definition );
+  number_of_set_op_functors = cell_functor.getNumSetOperationFunctors();
+
+  TEST_EQUALITY_CONST( number_of_set_op_functors, 1 );
 }
   
 //---------------------------------------------------------------------------//
@@ -342,7 +418,7 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, operator )
   Teuchos::RCP<FACEMC::BooleanCellFunctor> 
     cell_functor( new FACEMC::BooleanCellFunctor( cell_definition ) );
 
-  Teuchos::ArrayRCP<bool> arguments( 9 );
+  FACEMC::BooleanCellFunctor::BooleanArray arguments( 9 );
   arguments[0] = true;
   arguments[1] = true;
   arguments[2] = true;
@@ -460,6 +536,56 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, operator )
   arguments[9] = true;
 
   TEST_ASSERT( !(*cell_functor)( arguments ) );
+
+  cell_definition = CELL_DEFINITION_4;
+  
+  cell_functor.reset( new FACEMC::BooleanCellFunctor( cell_definition ) );
+
+  arguments.resize( 12 );
+  arguments[0] = true;
+  arguments[1] = true;
+  arguments[2] = true;
+  arguments[3] = true;
+  arguments[4] = true;
+  arguments[5] = true;
+  arguments[6] = true;
+  arguments[7] = true;
+  arguments[8] = true;
+  arguments[9] = true;
+  arguments[10] = true;
+  arguments[11] = true;
+
+  TEST_ASSERT( (*cell_functor)( arguments ) );
+
+  arguments[0] = false;
+  arguments[1] = true;
+  arguments[2] = true;
+  arguments[3] = true;
+  arguments[4] = true;
+  arguments[5] = true;
+  arguments[6] = true;
+  arguments[7] = true;
+  arguments[8] = true;
+  arguments[9] = true;
+  arguments[10] = true;
+  arguments[11] = true;
+
+  TEST_ASSERT( (*cell_functor)( arguments ) );
+
+  arguments[0] = false;
+  arguments[1] = true;
+  arguments[2] = true;
+  arguments[3] = true;
+  arguments[4] = true;
+  arguments[5] = true;
+  arguments[6] = false;
+  arguments[7] = true;
+  arguments[8] = true;
+  arguments[9] = true;
+  arguments[10] = true;
+  arguments[11] = true;
+
+  TEST_ASSERT( !(*cell_functor)( arguments ) );  
 }
   
 

@@ -48,7 +48,7 @@ public:
   // Allow public access to the protected member functions
   using FACEMC::Polygon<OrdinalType,ScalarType>::PointProjection;
   using FACEMC::Polygon<OrdinalType,ScalarType>::calculatePolygonPlaneUnitNormal;
-  using FACEMC::Polygon<OrdinalType,ScalarType>::getLargestCoordinates;
+  using FACEMC::Polygon<OrdinalType,ScalarType>::getExtremeCoordinates;
   using FACEMC::Polygon<OrdinalType,ScalarType>::getTransformMatrixAndVector;
   using FACEMC::Polygon<OrdinalType,ScalarType>::transformPolygon;
   using FACEMC::Polygon<OrdinalType,ScalarType>::applyTransform;
@@ -195,7 +195,7 @@ UNIT_TEST_INSTANTIATION( Polygon, calculatePolygonPlaneUnitNormal );
 //---------------------------------------------------------------------------//
 // Check that the polygon can find its largest coordinates
 TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
-				   getLargestCoordinates,
+				   getExtremeCoordinates,
 				   OrdinalType,
 				   ScalarType )
 {
@@ -206,21 +206,25 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   typedef typename Polygon::Point Point;
   
   std::list<Point> polygon_corners;
-  Point largest_coordinates;
+  Point min_coordinates;
+  Point max_coordinates;
 
   // Create a triangle
   createThreeSpaceTriangle( polygon_corners );
 
   // Get the largest coordinates
-  Polygon::getLargestCoordinates( polygon_corners,
-				  largest_coordinates );
+  Polygon::getExtremeCoordinates( polygon_corners,
+				  min_coordinates,
+				  max_coordinates );
 
-  Point ref_largest_coordinates( ST::one(), ST::one(), ST::one() );
+  Point ref_min_coordinates( ST::zero(), ST::zero(), ST::zero() );
+  Point ref_max_coordinates( ST::one(), ST::one(), ST::one() );
 
-  FACEMC_TEST_EQUALITY( largest_coordinates, ref_largest_coordinates );
+  FACEMC_TEST_EQUALITY( min_coordinates, ref_min_coordinates );
+  FACEMC_TEST_EQUALITY( max_coordinates, ref_max_coordinates );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, getLargestCoordinates );
+UNIT_TEST_INSTANTIATION( Polygon, getExtremeCoordinates );
 
 //---------------------------------------------------------------------------//
 // Check that the polygon can be transformed to a polygon in the x-y plane

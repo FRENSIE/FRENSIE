@@ -87,6 +87,8 @@ public:
   ~Cell()
   { /* ... */ }
 
+  //@{
+  //! Primary abstraction
   //! Return if the point is in the cell
   bool isIn( const ScalarType x,
 	     const ScalarType y,
@@ -103,6 +105,9 @@ public:
   //! Return if the point is on the cell
   bool isOn( const Vector &point ) const;
 
+  //! Evaluate the cell definition
+  bool isCellPresent( BooleanArray &surface_tests );
+
   //! Return if the cell is a polyhedron
   bool isPolyhedron() const;
 
@@ -118,28 +123,29 @@ public:
   //! Manually set the surface area of one of the cell surfaces
   void setSurfaceArea( const SurfaceOrdinalType surface_id,
 		       const ScalarType surface_area );
+  //@}
 
+  //@{
+  //! Container based abstraction 
   //! Get a const iterator to beginning of the surface-sense pairs container
   inline SurfaceSensePairsIterator beginSurfaceSensePairs() const;
 
   //! Get a const iterator to end of the surface-sense pairs container
   inline SurfaceSensePairsIterator endSurfaceSensePairs() const;
 
-  //! Get a const iterator to a specific surface-sense pair in container
+  //! Get a const iterator to first occurance of specific surface-sense pair
   SurfaceSensePairsIterator getSurfaceSensePair( 
 				   const SurfaceOrdinalType surface_id ) const;
+  //@}
 
-  //! Evaluate the cell definition
-  bool isCellPresent( BooleanArray &surface_tests );
+protected:
 
   //! Strip the cell definition of set operation characters
   static void simplifyCellDefinitionString( std::string &cell_definition );
 
-protected:
-
   //! Assign surfaces to the cell
   void assignSurfaces( std::string &cell_definition, 
-		       SurfaceMap &global_surface_map );
+		       const SurfaceMap &global_surface_map );
 
 private:
 

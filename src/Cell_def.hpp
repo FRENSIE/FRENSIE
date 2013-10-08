@@ -427,7 +427,7 @@ void Cell<CellOrdinalType,
 	  SurfaceOrdinalType,
 	  ScalarType,
 	  SurfaceMap>::assignSurfaces( std::string &cell_definition,
-				       SurfaceMap &global_surface_map )
+				       const SurfaceMap &global_surface_map )
 {
   // The cell_definition must be simplified
   testPrecondition( cell_definition.find_first_of( "nu()", 0 ) == 

@@ -20,6 +20,7 @@
 // FACEMC Includes
 #include "Cell.hpp"
 #include "Surface.hpp"
+#include "Polygon.hpp"
 #include "Tuple.hpp"
 
 namespace FACEMC{
@@ -52,6 +53,22 @@ enum PointFindNecessity{
   POINT_MAY_NOT_BE_FOUND
 };
 
+/*! \brief Enumeration to specify the cell attribute(s) to calc. numerically
+ */
+enum NumericalCellIntegrationType{
+  CELL_VOLUME,
+  CELL_SURFACE_AREAS,
+  CELL_VOLUME_AND_SURFACE_AREAS
+};  
+
+/*! \brief Enumeration to specify the orientation of a polygon
+ */
+enum PolygonOrientation{
+  LEFT_HANDED,
+  RIGHT_HANDED,
+  INVALID_ORIENTATION
+};
+
 template<typename Cell, typename SurfaceMap = typename Cell::SurfaceMap>
 class CellFactory 
 {
@@ -61,6 +78,12 @@ public:
   //! Typedefs
   //! Typedef for cell pointer
   typedef typename Teuchos::RCP<Cell> CellPtr;
+  //! Typedef for bounding box
+  typedef Quad<Pair<typename Cell::ordinalType, NumericalCellIntegrationType>,
+	       Pair<typename Cell::scalarType,typename Cell::scalarType>,
+	       Pair<typename Cell::scalarType,typename Cell::scalarType>,
+	       Pair<typename Cell::scalarType,typename Cell::scalarType> >
+	       BoudingBox;
   //@}
 
 private:
@@ -93,8 +116,10 @@ private:
   typedef Pair<Trip<scalarType,scalarType,scalarType>,
 	       Trip<surfaceOrdinalType,surfaceOrdinalType,surfaceOrdinalType> >
   IntersectionPoint;
+  //!Typedef for polygon
+  typedef Polygon<surfaceOrdinalType,scalarType> Polygon;
   //! Typedef for polygon corner
-  typedef Pair<scalarType,scalarType,scalarType> PolygonCorner;
+  typedef typename Polygon::Point PolygonCorner;
 
 public:
 
@@ -117,48 +142,65 @@ public:
 protected:
 
   //! Calculate the volume and area of a polyhedral cell
-  void calculatePolyhedralCellVolumeAndArea( CellPtr &cell ) const;
+  void calculatePolyhedralCellVolumeAndArea( CellPtr &cell );
+
+  //! Create the polygons bounding the cell
+  static void createBoundingPolygons( 
+				  const Teuchos::Array<Polygon> &cell_polygons,
+				  CellPtr &cell );
+
+  //! Determine if a cell can have its volume calculated
+  static void isAnalyticallyIntegrable( CellPtr &cell );
+
+  //! Calculate the volume of a polyhedral cell using bounding polygons
+  static scalarType calculatePolyhedralCellVolumeFromPolygons( 
+				const Teuchos::Array<Polygon> &cell_polygons );
+
+  //! Create a bounding box for a polyhedral cell from bounding polygons
+  static void createBoundingBoxFromPolygons( 
+				BoundingBox &cell_bounding_box,
+				const Teuchos::Array<Polygon> &cell_polygons );
 
   //! Calculate the intersection points of planes with a plane of interest
-  void calculateIntersectionPoints(
+  static void calculateIntersectionPoints(
 			    std::list<IntersectionPoint> &intersection_points,
 			    const SurfaceSensePairsIterator &plane_of_polygon,
 			    const CellPtr &cell ) const;
 
   //! Calculate the intersection point created by three planes
-  IntersectionPoint calculateIntersectionPoint(
+  static IntersectionPoint calculateIntersectionPoint(
 		     const SurfaceSensePairsIterator &primary_surface,
 		     const SurfaceSensePairsIterator &secondary_surface,
 		     const SurfaceSensePairsIterator &tertiary_surface ) const;
 
   //! Return if the intersection point is real
-  bool isRealIntersectionPoint( const IntersectionPoint &point,
-				const CellPtr &cell ) const;
+  static bool isRealIntersectionPoint( const IntersectionPoint &point,
+				       const CellPtr &cell ) const;
 
   //! Initialize boolean variables for the point test
-  void initializeBooleansForPointTest( 
+  static void initializeBooleansForPointTest( 
 			      const Octant octant,
 			      bool &primary_surface_boolean_parameter,
 			      bool &secondary_surface_boolean_parameter,
 			      bool &tertiary_surface_boolean_parameter ) const;
 
   //! Get the point test function multiplier
-  unsigned getPointTestFunctionMultiplier( const Octant octant ) const;
+  static unsigned getPointTestFunctionMultiplier( const Octant octant ) const;
   
   //! Create a polygon from intersection points
-  void createPolygon( std::list<Pair<scalarType,scalarType> > &polygon,
-		      std::list<IntersectionPoint> &intersection_points,
-		      const CellPtr &cell ) const;
+  static Polygon createPolygonFromIntersectionPoints(
+			     std::list<IntersectionPoint> &intersection_points,
+			     const CellPtr &cell ) const;
 
   //! Find the first three points on the boundary of the polygon
-  typename std::list<Pair<scalarType,scalarType> >::const_iterator 
-  initializePolygon( std::list<Pair<scalarType,scalarType> > &polygon,
-		     std::list<IntersectionPoint> &intersection_points,
-		     const CellPtr &cell,
-		     surfaceOrdinalType &current_surface_id ) const;
+  static typename std::list<Pair<scalarType,scalarType> >::const_iterator 
+  initializePolygonCorners( std::list<PolygonCorner> &oriented_polygon_corners,
+			    std::list<IntersectionPoint> &intersection_points,
+			    const CellPtr &cell,
+			    surfaceOrdinalType &current_surface_id ) const;
 
   //! Find the lexicographically largest point
-  typename std::list<IntersectionPoint>::const_iterator
+  static typename std::list<IntersectionPoint>::const_iterator
   getLexicographicallyLargestPoint(
 	       const std::list<IntersectionPoint> &intersection_points ) const;
 
@@ -167,7 +209,7 @@ protected:
    * (POINT_MAY_NOT_BE_FOUND), this function may return an iterator to the
    * end of the list. It is therefore important to test the iterator returned.
    */
-  typename std::list<IntersectionPoint>::const_iterator
+  static typename std::list<IntersectionPoint>::const_iterator
   getNextPolygonCorner( 
        const surfaceOrdinalType desired_surface_id,
        const typename std::list<PolygonCorner>::const_iterator &current_corner,
@@ -175,19 +217,19 @@ protected:
        PointFindNecessity point_find_necessity = POINT_MUST_BE_FOUND ) const;
 
   //! Get the next surface id (edge) of the polygon
-  scalarType getNextSurfaceId( 
+  static scalarType getNextSurfaceId( 
 		    const surfaceOrdinalType current_surface_id,   
 		    const typename std::list<IntersectionPoint>::const_iterator
 		    &intersection_point ) const;
 
   //! Rotate the polygon to the x-y plane
-  void transformPolygon( std::list<PolygonCorner> &polygon,
+  static void transformPolygon( std::list<PolygonCorner> &polygon,
 			 const SurfaceSensePairsIterator &plane_of_polygon,
 			 Matrix &rotation_matrix,
 			 Vector &translation_vector ) const;
 
   //! Calculate the volume contribution from a surface bounding this cell
-  scalarType calculatePolygonVolumeContribution( 
+  static scalarType calculatePolygonVolumeContribution( 
 			   const std::list<PolygonCorner> &polygon,
 			   const ScalarType polygon_area,
 			   const Vector plane_of_polygon_normal,
@@ -223,9 +265,8 @@ private:
   // Stored copy of the global surface map (weak pointer)
   Teuchos::RCP<const SurfaceMap> d_global_surface_map;
 
-  // Cells needing Monte Carlo integration to determine volume and area
-  Teuchos::ArrayView<typename Cell::ordinalType> 
-  d_cells_needing_mc_integration;
+  // Bounding boxes of cells needing MC integration to determine vol (and area)
+  Teuchos::Array<BoundingBox> d_bounding_boxes;
 };
 
 } // end FACEMC namespace

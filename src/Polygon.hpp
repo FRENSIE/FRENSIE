@@ -73,14 +73,32 @@ public:
   //! Return the area of the polygon
   inline ScalarType getArea() const;
 
-  //! Return the largest x-coordinate
-  inline ScalarType getLargestXCoordinate() const;
+  //! Return the minimum x-coordinate
+  inline ScalarType getMinXCoordinate() const;
 
-  //! Return the largest y-coordinate
-  inline ScalarType getLargestYCoordinate() const;
+  //! Return the maximum x-coordinate
+  inline ScalarType getMaxXCoordinate() const;
+
+  //! Return the minimum y-coordinate
+  inline ScalarType getMinYCoordinate() const;
+
+  //! Return the maximum y-coordinate
+  inline ScalarType getMaxYCoordinate() const;
+
+  //! Return the minimum z-coordinate
+  inline ScalarType getMinZCoordinate() const;
   
-  //! Return the largest z-coordinate
-  inline ScalarType getLargestZCoordinate() const;
+  //! Return the maximum z-coordinate
+  inline ScalarType getMaxZCoordinate() const;
+
+  //! Return the centroid x-coordinate
+  inline ScalarType getCentroidXCoordinate() const;
+
+  //! Return the centroid y-coordinate
+  inline ScalarType getCentroidYCoordinate() const;
+
+  //! Return the centroid z-coordinate
+  inline ScalarType getCentroidZCoordinate() const;
 	   
   //! Return the polygon centroid
   inline Point getCentroid() const;
@@ -97,9 +115,10 @@ protected:
   static Vector calculatePolygonPlaneUnitNormal( 
 				     const std::list<Point> &polygon_corners );
 
-  //! Find and set the largest coordinates of the polygon
-  static void getLargestCoordinates( const std::list<Point> &polygon_corners,
-				     Point &largest_coordinates );
+  //! Find and the maximum and minimum coordinates of the polygon
+  static void getExtremeCoordinates( const std::list<Point> &polygon_corners,
+				     Point &min_coordinates,
+				     Point &max_coordinates );
 
   //! Create and set the transformation matrix and vector
   static void getTransformMatrixAndVector( 
@@ -152,8 +171,11 @@ private:
   // Polygon corners
   std::list<PointProjection> d_corners;
 
-  // Largest coordinates of the polygon
-  Point d_largest_coordinates;
+  // Min coordinates of the polygon
+  Point d_min_coordinates;
+
+  // Max coordinates of the polygon
+  Point d_max_coordinates;
 
   // Polygon area
   ScalarType d_area;

@@ -57,11 +57,17 @@ ADD_EXECUTABLE(tstPhotonData
   ${SRC}/PhotonDataDopplerBroadening.cpp
   ${SRC}/HDF5FileHandler.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstThreeSpaceTraitsAndPolicy
+  tstThreeSpaceTraitsAndPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstLinearAlgebraPolicy
   tstLinearAlgebraPolicy.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstSurface
   tstSurface.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstPolygon
+  tstPolygon.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstSetOperationFunctor
   tstSetOperationFunctor.cpp
@@ -117,8 +123,10 @@ TARGET_LINK_LIBRARIES(tstPhotonDataBasic ${TEUCHOS_CORE} ${HDF5})
 TARGET_LINK_LIBRARIES(tstPhotonDataFluorescence ${TEUCHOS_CORE} ${HDF5})
 TARGET_LINK_LIBRARIES(tstPhotonDataDopplerBroadening ${TEUCHOS_CORE} ${HDF5})
 TARGET_LINK_LIBRARIES(tstPhotonData ${TEUCHOS_CORE} ${HDF5})
+TARGET_LINK_LIBRARIES(tstThreeSpaceTraitsAndPolicy ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstLinearAlgebraPolicy ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstSurface ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+TARGET_LINK_LIBRARIES(tstPolygon ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstSetOperationFunctor ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstBooleanCellFunctor ${TEUCHOS_CORE})
 # TARGET_LINK_LIBRARIES(tstCell ${TEUCHOS})
@@ -139,8 +147,10 @@ ADD_TEST(PhotonDataBasic_test tstPhotonDataBasic)
 ADD_TEST(PhotonDataFluorescence_test tstPhotonDataFluorescence)
 ADD_TEST(PhotonDataDopplerBroadening_test tstPhotonDataDopplerBroadening)
 ADD_TEST(PhotonData_test tstPhotonData)
+ADD_TEST(ThreeSpaceTraitsAndPolicy_test tstThreeSpaceTraitsAndPolicy)
 ADD_TEST(LinearAlgebraPolicy_test tstLinearAlgebraPolicy)
 ADD_TEST(Surface_test tstSurface)
+ADD_TEST(Polygon_test tstPolygon)
 ADD_TEST(SetOperationFunctor_test tstSetOperationFunctor)
 ADD_TEST(BooleanCellFunctor_test tstBooleanCellFunctor)
 # ADD_TEST(Cell_test tstCell)

@@ -29,7 +29,7 @@ Polygon<OrdinalType,ScalarType>::Polygon(
 			      const std::list<Point> &ordered_polygon_corners )
   : d_id( polygon_id ),
     d_corners( ordered_polygon_corners.size() ),
-    d_largest_coordinates(),
+    d_max_coordinates(),
     d_area( ST::zero() ),
     d_centroid(),
     d_unit_normal( 3 ),
@@ -46,10 +46,11 @@ Polygon<OrdinalType,ScalarType>::Polygon(
     Polygon<OrdinalType,ScalarType>::calculatePolygonPlaneUnitNormal( 
 						     ordered_polygon_corners );
   
-  // Find and set the largest coordinates of the polygon
-  Polygon<OrdinalType,ScalarType>::getLargestCoordinates( 
+  // Find and set the minimum and maximum coordinates of the polygon
+  Polygon<OrdinalType,ScalarType>::getExtremeCoordinates( 
 						       ordered_polygon_corners,
-						       d_largest_coordinates );
+						       d_min_coordinates,
+						       d_max_coordinates );
 
   // Create and set the transformation matrix and vector
   Polygon<OrdinalType,ScalarType>::getTransformMatrixAndVector( 
@@ -93,28 +94,76 @@ inline ScalarType Polygon<OrdinalType,ScalarType>::getArea() const
   return d_area;
 }
 
-// Return the largest x-coordinate
+// Return the minimum x-coordinate
 template<typename OrdinalType, typename ScalarType>
 inline ScalarType 
-Polygon<OrdinalType,ScalarType>::getLargestXCoordinate() const
+Polygon<OrdinalType,ScalarType>::getMinXCoordinate() const
 {
-  return d_largest_coordinates.first;
+  return d_min_coordinates.first;
 }
 
-// Return the largest y-coordinate
+// Return the maximum x-coordinate
 template<typename OrdinalType, typename ScalarType>
-inline ScalarType
-Polygon<OrdinalType,ScalarType>::getLargestYCoordinate() const
+inline ScalarType 
+Polygon<OrdinalType,ScalarType>::getMaxXCoordinate() const
 {
-  return d_largest_coordinates.second;
+  return d_max_coordinates.first;
 }
 
-// Return the largest z-coordinate
+// Return the minimum y-coordinate
 template<typename OrdinalType, typename ScalarType>
 inline ScalarType
-Polygon<OrdinalType,ScalarType>::getLargestZCoordinate() const
+Polygon<OrdinalType,ScalarType>::getMinYCoordinate() const
 {
-  return d_largest_coordinates.third;
+  return d_min_coordinates.second;
+}
+
+// Return the maximum y-coordinate
+template<typename OrdinalType, typename ScalarType>
+inline ScalarType
+Polygon<OrdinalType,ScalarType>::getMaxYCoordinate() const
+{
+  return d_max_coordinates.second;
+}
+
+// Return the minimum z-coordinate
+template<typename OrdinalType, typename ScalarType>
+inline ScalarType
+Polygon<OrdinalType,ScalarType>::getMinZCoordinate() const
+{
+  return d_min_coordinates.third;
+}
+
+// Return the maximum z-coordinate
+template<typename OrdinalType, typename ScalarType>
+inline ScalarType
+Polygon<OrdinalType,ScalarType>::getMaxZCoordinate() const
+{
+  return d_max_coordinates.third;
+}
+
+// Return the centroid x-coordinate
+template<typename OrdinalType, typename ScalarType>
+inline ScalarType
+Polygon<OrdinalType,ScalarType>::getCentroidXCoordinate() const
+{
+  return d_centroid.first;
+}
+
+// Return the centroid y-coordinate
+template<typename OrdinalType, typename ScalarType>
+inline ScalarType
+Polygon<OrdinalType,ScalarType>::getCentroidYCoordinate() const
+{
+  return d_centroid.second;
+}
+
+// Return the centroid z-coordinate
+template<typename OrdinalType, typename ScalarType>
+inline ScalarType
+Polygon<OrdinalType,ScalarType>::getCentroidZCoordinate() const
+{
+  return d_centroid.third;
 }
 
 // Return the polygon centroid
@@ -199,19 +248,25 @@ Polygon<OrdinalType,ScalarType>::calculatePolygonPlaneUnitNormal(
   return polygon_plane_normal;
 }
 
-// Find and set the largest coordinates of the polygon
+// Find and the maximum and minimum coordinates of the polygon
 template<typename OrdinalType, typename ScalarType>
-void Polygon<OrdinalType,ScalarType>::getLargestCoordinates(
+void Polygon<OrdinalType,ScalarType>::getExtremeCoordinates(
 				       const std::list<Point> &polygon_corners,
-				       Point &largest_coordinates )
+				       Point &min_coordinates,
+				       Point &max_coordinates )
 {
   // The polygon must have at least 4 corners (3 + copy of first point)
   testPrecondition( polygon_corners.size() >= 4 );
 
-  // Initialize the largest coordinates
-  largest_coordinates.first = -ST::rmax();
-  largest_coordinates.second = -ST::rmax();
-  largest_coordinates.third = -ST::rmax();
+  // Initialize the min coordinates
+  min_coordinates.first = ST::rmax();
+  min_coordinates.second = ST::rmax();
+  min_coordinates.third = ST::rmax();
+
+  // Initialize the max coordinates
+  max_coordinates.first = -ST::rmax();
+  max_coordinates.second = -ST::rmax();
+  max_coordinates.third = -ST::rmax();
 
   typename std::list<Point>::const_iterator corner, end_corner;
   corner = polygon_corners.begin();
@@ -219,14 +274,23 @@ void Polygon<OrdinalType,ScalarType>::getLargestCoordinates(
 
   while( corner != end_corner )
   {
-    if( corner->first > largest_coordinates.first )
-      largest_coordinates.first = corner->first;
+    if( corner->first < min_coordinates.first )
+      min_coordinates.first = corner->first;
     
-    if( corner->second > largest_coordinates.second )
-      largest_coordinates.second = corner->second;
+    if( corner->first > max_coordinates.first )
+      max_coordinates.first = corner->first;
     
-    if( corner->third > largest_coordinates.third )
-      largest_coordinates.third = corner->second;
+    if( corner->second < min_coordinates.second )
+      min_coordinates.second = corner->second;
+
+    if( corner->second > max_coordinates.second )
+      max_coordinates.second = corner->second;
+    
+    if( corner->third < min_coordinates.third )
+      min_coordinates.third = corner->third;
+
+    if( corner->third > max_coordinates.third )
+      max_coordinates.third = corner->third;
 
     ++corner;
   }
