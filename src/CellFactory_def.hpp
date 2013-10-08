@@ -81,7 +81,7 @@ void CellFactory<Cell,SurfaceMap>::calculatePolyhedralCellVolumeAndArea( CellPtr
   
   // Determine if this cell can have its volume calculated analytically
   bool calculate_volume_analytically = 
-    CellFactory<Cell,SurfaceMap>::isAnalyticallyIntegrable( cell );
+    CellFactory<Cell,SurfaceMap>::isPolyhedronAnalyticallyIntegrable( cell );
   
   // Calculate the cell volume analytically if it is possible
   if( calculate_volume_analytically )

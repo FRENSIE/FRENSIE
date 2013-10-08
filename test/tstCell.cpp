@@ -21,16 +21,52 @@
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-#include "TestCell.hpp"
+class TestCell : public FACEMC::Cell
+{
+public:
+  TestCell() : FACEMC::Cell()
+  { /* ... */ }
+  
+  ~TestCell()
+  { /* ... */ }
+
+  using FACEMC::Cell::simplifyCellDefinitionString;
+  using FACEMC::Cell::assignSurfaces;
+};
+
+//---------------------------------------------------------------------------//
+// Testing Functions.
+//---------------------------------------------------------------------------//
+// Create a cube centered on the origin
+template<typename OrdinalType, typename ScalarType, typename SurfaceMap>
+void createConvexPolyhedronSurfaces( SurfaceMap &cell_surfaces )
+{
+  
+}
+
+// Create a cube with a wedge removed centered on the origin
+template<typename OrdinalType, typename ScalarType, typename SurfaceMap>
+void createConcavePolyhedronSurfaces( SurfaceMap &cell_surfaces )
+{
+
+}
+
+// Create a hemisphere centered on origin, above xy-plane
+template<typename OrdinalType, typename ScalarType, typename SurfaceMap>
+void createHemisphereSurfaces( SurfaceMap &cell_surfaces )
+{
+
+}
 
 //---------------------------------------------------------------------------//
 // Testing Info.
 //---------------------------------------------------------------------------//
-#define CELL_DEFINITION_1 "-1 n 2 n -3 n 4 n -5 n 6 "
-#define SIMPLIFIED_CELL_DEFINITION_1 "-1   2   -3   4   -5   6"
-#define CELL_DEFINITION_2 "-1 n 2 n 3 n (4 u -5) n -6 n 7"
-#define SIMPLIFIED_CELL_DEFINITION_2 "-1   2   3    4   -5    -6   7"
-
+#define CONVEX_POLYHEDRON_DEF "-1 n 2 n -3 n 4 n -5 n 6 "
+#define SIMPLIFIED_CONVEX_POLYHEDRON_DEF "-1   2   -3   4   -5   6"
+#define CONCAVE_POLYHEDRON_DEF "-1 n 2 n 3 n (4 u -5) n -6 n 7"
+#define SIMPLIFIED_CONCAVE_POLYHEDRON_DEF "-1   2   3    4   -5    -6   7"
+#define HEMISPHERE_DEF "-1 n 2"
+#define SIMPLIFIED_HEMISPHERE_DEF "-1   2"
 
 //---------------------------------------------------------------------------//
 // Tests.

@@ -150,7 +150,7 @@ protected:
 				  CellPtr &cell );
 
   //! Determine if a cell can have its volume calculated
-  static void isAnalyticallyIntegrable( CellPtr &cell );
+  static void isPolyhedronAnalyticallyIntegrable( CellPtr &cell );
 
   //! Calculate the volume of a polyhedral cell using bounding polygons
   static scalarType calculatePolyhedralCellVolumeFromPolygons( 
@@ -217,48 +217,13 @@ protected:
        PointFindNecessity point_find_necessity = POINT_MUST_BE_FOUND ) const;
 
   //! Get the next surface id (edge) of the polygon
-  static scalarType getNextSurfaceId( 
+  static surfaceOrdinalType getNextSurfaceId( 
 		    const surfaceOrdinalType current_surface_id,   
 		    const typename std::list<IntersectionPoint>::const_iterator
 		    &intersection_point ) const;
 
-  //! Rotate the polygon to the x-y plane
-  static void transformPolygon( std::list<PolygonCorner> &polygon,
-			 const SurfaceSensePairsIterator &plane_of_polygon,
-			 Matrix &rotation_matrix,
-			 Vector &translation_vector ) const;
-
-  //! Calculate the volume contribution from a surface bounding this cell
-  static scalarType calculatePolygonVolumeContribution( 
-			   const std::list<PolygonCorner> &polygon,
-			   const ScalarType polygon_area,
-			   const Vector plane_of_polygon_normal,
-			   const Vector reference_plane_normal,
-			   const scalarType reference_plane_const_term ) const;
-
   //! Calculate the volume and area of a rotationally symmetric cell
-  void calculateRotationallySymmetricCellVolumeAndArea( CellPtr &cell );
-
-  //! Initialize the polygon
-  // \brief Returns an iterator to the start point of the new polygon
-  // \param current_surface_id holds the surface id that should be searched
-  //        for in the next intersection point
-  std::list<Quad<double,double,unsigned,unsigned> >::const_iterator
-  initializePolygon( 
-		    std::list<Quad<double,double,unsigned,unsigned> > 
-		    &polygon,
-		    std::list<Quad<double,double,unsigned,unsigned> > 
-		    &intersection_points,
-		    const Teuchos::Array<Pair<Surface,Surface::Sense> > 
-                    &surfaces,
-		    unsigned &current_surface_id ) const;  
-
-  //! Calculate the rotationally symmetric cell volume and surface areas
-  // \brief If the cell is indeed rotationally symmetric, true will be returned
-  bool calculateRotationallySymmetricCellVolumeAndSurfaceAreas();
-
-  //! Calculate a bounding box for the cell
-  Cell calculateBoundingBox() const;
+  void calculateRotationallySymmetricCellVolumeAndArea( CellPtr &cell ); 
 
 private:
 
