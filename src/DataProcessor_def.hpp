@@ -16,7 +16,7 @@
 
 // FACEMC Includes
 #include "Tuple.hpp"
-#include "TupleGetSetMemberPolicy.hpp"
+#include "TupleMemberTraits.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -48,7 +48,7 @@ namespace FACEMC{
  * raw table data.
  * \pre A valid array, which is any array of tuples with at least one element,
  * must be given to this function.
- * \note Developers: The FACEMC::TupleGetSetMemberPolicy is critical to the
+ * \note Developers: The FACEMC::Traits::TupleMemberTraits is critical to the
  * generality of this function. Review this struct to better understand how
  * this function operates. 
  */
@@ -64,19 +64,20 @@ void DataProcessor::processContinuousData( Teuchos::Array<Tuple> &data )
   typename Teuchos::Array<Tuple>::iterator data_point = data.begin();
   typename Teuchos::Array<Tuple>::iterator end = data.end();
 
-  typedef TupleGetSetMemberPolicy<Tuple,indepMember> indepTGSMP;
-  typedef TupleGetSetMemberPolicy<Tuple,depMember> depTGSMP;
-
-  typename indepTGSMP::tupleMemberType indep_value;
-  typename depTGSMP::tupleMemberType dep_value;
+  typename Traits::TupleMemberTraits<Tuple,indepMember>::tupleMemberType 
+    indep_value;
+  typename Traits::TupleMemberTraits<Tuple,depMember>::tupleMemberType
+    dep_value;
 
   while( data_point != end )
   {
-    indep_value = DataProcessingPolicy::processIndependentVar( indepTGSMP::get( *data_point ) );
-    dep_value = DataProcessingPolicy::processDependentVar( depTGSMP::get( *data_point ) );
+    indep_value = DataProcessingPolicy::processIndependentVar( 
+					     get<indepMember>( *data_point ) );
+    dep_value = DataProcessingPolicy::processDependentVar( 
+					       get<depMember>( *data_point ) );
 
-    indepTGSMP::set( *data_point, indep_value );
-    depTGSMP::set( *data_point, dep_value );
+    set<indepMember>( *data_point, indep_value );
+    set<depMember>( *data_point, dep_value );
 
     ++data_point;
   }
@@ -107,9 +108,9 @@ void DataProcessor::processContinuousData( Teuchos::Array<Tuple> &data )
  * must be returned from this function. If the testing value is set too high
  * it is possible for all elements to be eliminated from the array, which is
  * surely not an intended results.
- * \note Developers: The FACEMC::TupleGetSetMemberPolicy is critical to the
- * generality of this function. Review this struct to better understand how
- * this function operates. 
+ * \note Developers: The FACEMC::Traits::TupleMemberTraits struct is critical 
+ * to the generality of this function. Review this struct to better understand 
+ * how this function operates. 
  */
 template<TupleMember member,
 	 typename Tuple>
@@ -123,15 +124,13 @@ void DataProcessor::removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
   typename Teuchos::Array<Tuple>::iterator data_point_1 = data.begin();
   typename Teuchos::Array<Tuple>::iterator data_point_2 = data_point_1 + 1;
   typename Teuchos::Array<Tuple>::iterator end = data.end();
-
-  typedef TupleGetSetMemberPolicy<Tuple,member> dataTGSMP;
   
   // Loop through the array and find the element range to remove
   typename Teuchos::Array<Tuple>::size_type max_index = 0;
   while( data_point_2 != end )
   {
-    if( dataTGSMP::get( *data_point_1 ) < value &&
-	dataTGSMP::get( *data_point_2 ) <= value )
+    if( get<member>( *data_point_1 ) < value &&
+	get<member>( *data_point_2 ) <= value )
       ++max_index;
     else
       break;
@@ -174,9 +173,9 @@ void DataProcessor::removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
  * must be returned from this function. If the testing value is set too low it
  * is possible for all elements to be eliminated from the array, which is surely
  * not an intended result.
- * \note Developers: The FACEMC::TupleGetSetMemberPolicy is critical to the
- * generality of this function. Review this struct to better understand how
- * this function operates.
+ * \note Developers: The FACEMC::Traits::TupleMemberTraits struct is critical 
+ * to the generality of this function. Review this struct to better understand 
+ * how this function operates.
  */
 template<TupleMember member,
 	 typename Tuple>
@@ -191,15 +190,13 @@ void DataProcessor::removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
   typename Teuchos::Array<Tuple>::iterator data_point_1 = data.end() - 1;
   typename Teuchos::Array<Tuple>::iterator data_point_2 = data_point_1 - 1;
   typename Teuchos::Array<Tuple>::iterator end = data.begin() - 1;
-
-  typedef TupleGetSetMemberPolicy<Tuple,member> dataTGSMP;
   
   // Loop through the array and find the element range to remove
   typename Teuchos::Array<Tuple>::size_type max_index = 0;
   while( data_point_2 != end )
   {
-    if( dataTGSMP::get( *data_point_1 ) > value &&
-	dataTGSMP::get( *data_point_2 ) >= value )
+    if( get<member>( *data_point_1 ) > value &&
+        get<member>( *data_point_2 ) >= value )
       ++max_index;
     else
       break;
@@ -232,8 +229,8 @@ void DataProcessor::removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
  * </em> elements, must be given to this function.
  * \post A valid array, which is any array of tuples with at least <em> two
  * </em> elements, must be returned from this function.
- * \note Developers: The FACEMC::TupleGetSetMemberPolicy is critical to the
- * generality of this function. Review this struct to better understand how
+ * \note Developers: The FACEMC::TraitsTupleMemberTraits struct is critical to 
+ * the generality of this function. Review this struct to better understand how
  * this function operates. 
  */ 
 template<TupleMember member,
@@ -249,14 +246,12 @@ void DataProcessor::coarsenConstantRegions( Teuchos::Array<Tuple> &data )
   typename Teuchos::Array<Tuple>::iterator data_point_2, data_point_3;
   typename Teuchos::Array<Tuple>::iterator end = data.begin()-1;
 
-  typedef TupleGetSetMemberPolicy<Tuple,member> dataTGSMP;
-
   data_point_2 = data_point_1-1;
   data_point_3 = data_point_2-1;
   while( data_point_3 != end )
   {
-    if( dataTGSMP::get( *data_point_1 ) == dataTGSMP::get( *data_point_2 ) &&
-	dataTGSMP::get( *data_point_1 ) == dataTGSMP::get( *data_point_3 ) )
+    if( get<member>( *data_point_1 ) == get<member>( *data_point_2 ) &&
+	get<member>( *data_point_1 ) == get<member>( *data_point_3 ) )
     {
       data_point_1 = data.erase( data_point_1 );
     }
@@ -301,7 +296,7 @@ void DataProcessor::coarsenConstantRegions( Teuchos::Array<Tuple> &data )
  * must be given to this function.
  * \note Developers: 
  * <ul>
- *  <li> The FACEMC::TupleGetSetMemberPolicy is critical to the
+ *  <li> The FACEMC::Traits::TupleMemberTraits struct is critical to the
  *       generality of this function. Review this struct to better understand 
  *       how this function operates. 
  *  <li> The Tuple template parameter and Array template template parameter 
@@ -328,19 +323,15 @@ void DataProcessor::calculateSlopes( Array<Tuple> &data  )
   data_point_1 = data.begin();
   data_point_2 = data_point_1 + 1;
 
-  typedef TupleGetSetMemberPolicy<Tuple,indepMember> indepTGSMP;
-  typedef TupleGetSetMemberPolicy<Tuple,depMember> depTGSMP;
-  typedef TupleGetSetMemberPolicy<Tuple,slopeMember> slopeTGSMP;
-  
-  typename slopeTGSMP::tupleMemberType slope;
+  typename Traits::TupleMemberTraits<Tuple,slopeMember>::tupleMemberType slope;
   
   while( data_point_2 != end )
   {
-    slope = (depTGSMP::get( *data_point_2 ) - depTGSMP::get( *data_point_1 ))/
-      (indepTGSMP::get( *data_point_2 ) - indepTGSMP::get( *data_point_1 ));
+    slope = (get<depMember>( *data_point_2 )-get<depMember>( *data_point_1 ))/
+      (get<indepMember>( *data_point_2 ) - get<indepMember>( *data_point_1 ));
     
-    slopeTGSMP::set( *data_point_1, slope );
-    slopeTGSMP::set( *data_point_2, 0 );
+    set<slopeMember>( *data_point_1, slope );
+    set<slopeMember>( *data_point_2, 0 );
 
     ++data_point_1;
     ++data_point_2;
@@ -380,7 +371,7 @@ void DataProcessor::calculateSlopes( Array<Tuple> &data  )
  * elements, must be given to this function.
  * \note Developers:
  * <ul>
- *  <li> The FACEMC::TupleGetSetMemberPolicy is critical to the
+ *  <li> The FACEMC::Traits::TupleMemberTraits struct is critical to the
  *       generality of this function. Review this struct to better understand 
  *       how this function operates. 
  *  <li> The Tuple template parameter and Array template template parameter 
@@ -407,44 +398,45 @@ void DataProcessor::calculateContinuousCDF( Array<Tuple> &data )
   data_point_1 = data.begin();
   data_point_2 = data.begin() + 1;
 
-  typedef TupleGetSetMemberPolicy<Tuple,indepMember> indepTGSMP;
-  typedef TupleGetSetMemberPolicy<Tuple,pdfMember> pdfTGSMP;
-  typedef TupleGetSetMemberPolicy<Tuple,cdfMember> cdfTGSMP;
-
-  typename cdfTGSMP::tupleMemberType cdf_value;
+  typename Traits::TupleMemberTraits<Tuple,cdfMember>::tupleMemberType 
+    cdf_value;
 
   // Initialize the CDF
-  cdfTGSMP::set( *data_point_1, 0 );
+  set<cdfMember>( *data_point_1, 0 );
   
   // Calculate the CDF
   // CDF(x) = CDF(x1)+PDF(x1)*(x-x1)+0.5*(PDF(x)-PDF(x1))/(x2-x1)*(x-x1)^2
   while( data_point_2 != end )
   {
-    cdf_value = cdfTGSMP::get( *data_point_1 ) +
-      pdfTGSMP::get( *data_point_1 )*
-      (indepTGSMP::get( *data_point_2 ) - indepTGSMP::get( *data_point_1 )) +
-      0.5*(pdfTGSMP::get( *data_point_2 ) - pdfTGSMP::get( *data_point_1 ))*
-      (indepTGSMP::get( *data_point_2) - indepTGSMP::get( *data_point_1 ));
+    cdf_value = get<cdfMember>( *data_point_1 ) + 
+      get<pdfMember>( *data_point_1 )*
+      (get<indepMember>( *data_point_2 ) - get<indepMember>( *data_point_1 )) +
+      0.5*(get<pdfMember>( *data_point_2 ) - get<pdfMember>( *data_point_1 ))*
+      (get<indepMember>( *data_point_2) - get<indepMember>( *data_point_1 ));
     
-    cdfTGSMP::set( *data_point_2, cdf_value );
+    set<cdfMember>( *data_point_2, cdf_value );
     
     ++data_point_1;
     ++data_point_2;
   }
 
   // Normalize the CDF and PDF
-  typename cdfTGSMP::tupleMemberType cdf_max, cdf_norm_value;
-  cdf_max = cdfTGSMP::get( data.back() );
-  typename pdfTGSMP::tupleMemberType pdf_norm_value;
+  typename Traits::TupleMemberTraits<Tuple,cdfMember>::tupleMemberType cdf_max,
+    cdf_norm_value;
+  cdf_max = get<cdfMember>( data.back() );
+  
+  typename Traits::TupleMemberTraits<Tuple,pdfMember>::tupleMemberType 
+    pdf_norm_value;
+  
   data_point_1 = data.begin();
   
   while( data_point_1 != end )
   {
-    cdf_norm_value = cdfTGSMP::get( *data_point_1 )/cdf_max;
-    cdfTGSMP::set( *data_point_1, cdf_norm_value );
+    cdf_norm_value = get<cdfMember>( *data_point_1 )/cdf_max;
+    set<cdfMember>( *data_point_1, cdf_norm_value );
 
-    pdf_norm_value = pdfTGSMP::get( *data_point_1 )/cdf_max;
-    pdfTGSMP::set( *data_point_1, pdf_norm_value );
+    pdf_norm_value = get<pdfMember>( *data_point_1 )/cdf_max;
+    set<pdfMember>( *data_point_1, pdf_norm_value );
     
     ++data_point_1;
   }
@@ -453,7 +445,7 @@ void DataProcessor::calculateContinuousCDF( Array<Tuple> &data )
 /*! \details This function calculates a discrete CDF from an array of discrete
  * data points. Since this data will be stored in a Teuchos::Array of Tuples
  * (either FACEMC::Pair, FACEMC::Trip or FACEMC::Quad) this function must know 
- * which member of the tuple stores the processed PDF value and which member of 
+ * which member of the tuple stores the processed PDF value and which member of
  * the tuple will store the CDF value that is calculated. This function will 
  * only compile if the desired tuple members are actually available in Tuple.
  * \tparam pdfMember A member of the enumeration FACEMC::TupleMember, which is
@@ -465,9 +457,9 @@ void DataProcessor::calculateContinuousCDF( Array<Tuple> &data )
  * \param[in,out] data The array of tuple structs which contain the table data.
  * \pre A valid array, which is any array of tuples with at least two elements,
  * must be given to this function. 
- * \note Developers: The FACEMC::TupleGetSetMemberPolicy is critical to the 
- * generality of this function. Review this struct to better understand how this
- * function operates. 
+ * \note Developers: The FACEMC::Traits::TupleMemberTraits struct is critical 
+ * to the generality of this function. Review this struct to better understand 
+ * how this function operates. 
  */
 template<TupleMember pdfMember,
 	 TupleMember cdfMember,
@@ -482,16 +474,14 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
 
   data_point = data.begin();
 
-  typedef TupleGetSetMemberPolicy<Tuple,pdfMember> pdfTGSMP;
-  typedef TupleGetSetMemberPolicy<Tuple,cdfMember> cdfTGSMP;
-
-  typename cdfTGSMP::tupleMemberType cdf_value = 0;
+  typename Traits::TupleMemberTraits<Tuple,cdfMember>::tupleMemberType 
+    cdf_value = 0;
 
   // Create the discrete CDF
   while( data_point != end )
   {
-    cdf_value += pdfTGSMP::get( *data_point );
-    cdfTGSMP::set( *data_point, cdf_value );
+    cdf_value += get<pdfMember>( *data_point );
+    set<cdfMember>( *data_point, cdf_value );
     
     ++data_point;
   }
@@ -500,8 +490,8 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
   data_point = data.begin();
   while( data_point != end )
   {
-    cdf_value = cdfTGSMP::get( *data_point )/cdfTGSMP::get( data.back() );
-    cdfTGSMP::set( *data_point, cdf_value );
+    cdf_value = get<cdfMember>( *data_point )/get<cdfMember>( data.back() );
+    set<cdfMember>( *data_point, cdf_value );
     
     ++data_point;
   }
@@ -514,11 +504,11 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
  * used to refer to the member of the tuple whose value will be copied.
  * \tparam copyMember A member of the enumeration FACEMC::TupleMember, which is
  * used to refer to the member of the new tuple that will store the copy.
- * \tparam origTuple A FACEMC tuple struct (either FACEMC::Pair, FACEMC::Trip or
- * FACEMC::Quad) that will have a member value copied.
- * \tparam copyTuple A FACEMC tuple struct (either FACEMC::Pair, FACEMC::Trip or
- * FACEMC::Quad) that will store a copy in one of its members. This tuple does
- * not need to be the same as the <em> origTuple </em>.
+ * \tparam origTuple A FACEMC tuple struct (either FACEMC::Pair, FACEMC::Trip 
+ * or FACEMC::Quad) that will have a member value copied.
+ * \tparam copyTuple A FACEMC tuple struct (either FACEMC::Pair, FACEMC::Trip 
+ * or FACEMC::Quad) that will store a copy in one of its members. This tuple 
+ * does not need to be the same as the <em> origTuple </em>.
  * \tparam Array An array class with a single template parameter. Only the 
  * Teuchos::Array and the Teuchos::ArrayView classes should be used. Because
  * std::vector has two template parameters it cannot be used. The Teuchos array
@@ -529,16 +519,16 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
  * copied data.
  * \pre
  * <ul>
- *  <li> A valid array, which is any array of tuples with at least two elements,
- *       must be given to this function.
+ *  <li> A valid array, which is any array of tuples with at least two 
+ *       elements, must be given to this function.
  *  <li> The two arrays must have the same number of elements.
  *  <li> The two arrays must be distinct.
  * </ul>
  * \note Developers:
  * <ul>
- *  <li> The FACEMC::TupleGetSetMemberPolicy is critical to the generality of
- *       this function. Review this struct to better understand how this 
- *       function operates. 
+ *  <li> The FACEMC::Traits::TupleMemberTraits struct is critical to the
+ *       generality of this function. Review this struct to better understand 
+ *       how this function operates. 
  *  <li> The Tuple template parameter and Array template template parameter
  *       could be combined into a single template parameter Array. The tuple
  *       type could then be accessed using "typename Array::value_type". This
@@ -567,11 +557,9 @@ void DataProcessor::copyTupleMemberData( const Array<origTuple> &orig_data,
   copy_data_point = copy_data.begin();
   end = orig_data.end();
   
-  typedef TupleGetSetMemberPolicy<origTuple,origMember> origTGSMP;
-  typedef TupleGetSetMemberPolicy<copyTuple,copyMember> copyTGSMP;
   while( orig_data_point != end )
   {
-    copyTGSMP::set( *copy_data_point, origTGSMP::get( *orig_data_point ) );
+    set<copyMember>( *copy_data_point, get<origMember>( *orig_data_point ) );
     
     ++orig_data_point;
     ++copy_data_point;
@@ -599,9 +587,9 @@ void DataProcessor::copyTupleMemberData( const Array<origTuple> &orig_data,
  * </ul>
  * \note Developers:
  * <ul>
- *  <li> The FACEMC::TupleGetSetMemberPolicy is critical to the generality of
- *       this function. Review this struct to better understand how this 
- *       function operates. 
+ *  <li> The FACEMC::Traits::TupleMemberTraits struct is critical to the 
+ *       generality of this function. Review this struct to better understand 
+ *       how this function operates. 
  *  <li> The Tuple template parameter and Array template template parameter
  *       could be combined into a single template parameter Array. The tuple
  *       type could then be accessed using "typename Array::value_type". This
@@ -625,13 +613,13 @@ void DataProcessor::swapTupleMemberData( Array<Tuple> &data )
   data_point = data.begin();
   end = data.end();
 
-  typedef TupleGetSetMemberPolicy<Tuple,member1> TGSMP_1;
-  typedef TupleGetSetMemberPolicy<Tuple,member2> TGSMP_2;
+  typename Traits::TupleMemberTraits<Tuple,member1>::tupleMemberType copy;
+
   while( data_point != end )
   {
-    typename TGSMP_1::tupleMemberType copy = TGSMP_1::get( *data_point );
-    TGSMP_1::set( *data_point, TGSMP_2::get( *data_point ) );
-    TGSMP_2::set( *data_point, copy );
+    copy = get<member1>( *data_point );
+    set<member1>( *data_point, get<member2>( *data_point ) );
+    set<member2>( *data_point, copy );
 
     ++data_point;
   }

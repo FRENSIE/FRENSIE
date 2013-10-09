@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   tstBinarySearch.cpp
-// \author Alex Robinson
-// \brief  Binary Search function unit tests.
+//!
+//! \file   tstBinarySearch.cpp
+//! \author Alex Robinson
+//! \brief  Binary Search function unit tests.
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
@@ -17,7 +19,7 @@
 // FACEMC Includes
 #include "SearchAlgorithms.hpp"
 #include "Tuple.hpp"
-#include "TupleGetSetMemberPolicy.hpp"
+#include "TupleMemberTraits.hpp"
 #include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -75,10 +77,14 @@
 //---------------------------------------------------------------------------//
 // Helper functions.
 //---------------------------------------------------------------------------//
-template<FACEMC::TupleMember member, typename T, template<typename> class Array>
+template<FACEMC::TupleMember member, 
+	 typename T, 
+	 template<typename> class Array>
 void fillArrayTupleMembersContinuousData( Array<T> &array )
 {
-  typedef FACEMC::TupleGetSetMemberPolicy<T,member> localTGSMP;
+  typedef typename FACEMC::Traits::TupleMemberTraits<T,member>::tupleMemberType
+    tupleMemberType;
+  
   typename Array<T>::size_type size = 
     FACEMC::ArrayTestingPolicy<T,Array>::size( array );
   
@@ -86,16 +92,19 @@ void fillArrayTupleMembersContinuousData( Array<T> &array )
   {
     for( unsigned int i = 0; i < size; ++i )
     {
-      localTGSMP::set( array[i], 
-		       static_cast<typename localTGSMP::tupleMemberType>( i ) );
+      FACEMC::set<member>( array[i], static_cast<tupleMemberType>( i ) );
     }
   }
 }
 
-template<FACEMC::TupleMember member, typename T, template<typename> class Array>
+template<FACEMC::TupleMember member, 
+	 typename T, 
+	 template<typename> class Array>
 void fillArrayTupleMembersDiscreteData( Array<T> &array )
 {
-  typedef FACEMC::TupleGetSetMemberPolicy<T,member> localTGSMP;
+  typedef typename FACEMC::Traits::TupleMemberTraits<T,member>::tupleMemberType
+    tupleMemberType;
+  
   typename Array<T>::size_type size = 
     FACEMC::ArrayTestingPolicy<T,Array>::size( array );
   
@@ -103,8 +112,7 @@ void fillArrayTupleMembersDiscreteData( Array<T> &array )
   {
     for( unsigned int i = 0; i < size; ++i )
     {
-      localTGSMP::set( array[i], 
-		       static_cast<double>( i+1 )/size );
+      FACEMC::set<member>( array[i], static_cast<tupleMemberType>( i+1 )/size);
     }
   }
 }
@@ -131,7 +139,6 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   start = data.begin();
   end = data.end();
 
-  typedef FACEMC::TupleGetSetMemberPolicy<type,member> localTGSMP;
   double value, bin_value;
 
   // Value on first bin
@@ -139,7 +146,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.0 );
 
   // Value in first bin
@@ -147,7 +154,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.0 );
 
   // Value on second bin
@@ -155,7 +162,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 1.0 );
 
   // Value in second bin
@@ -163,7 +170,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 1.0 );
 
   // Value on third bin
@@ -171,7 +178,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 2.0 );
 
   // Value in third bin
@@ -179,7 +186,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 2.0 );
 
   // Value on fourth bin
@@ -187,7 +194,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 3.0 );
 
   // Value in fourth bin
@@ -195,7 +202,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 3.0 );
 
   // Value on fifth bin
@@ -203,7 +210,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 4.0 );
 
   // Value in fifth bin
@@ -211,7 +218,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 4.0 );
 
   // Value on sixth bin
@@ -219,7 +226,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 5.0 );
 
   // Value in sixth bin
@@ -227,7 +234,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 5.0 );
 
   // Value on seventh bin
@@ -235,7 +242,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 6.0 );
 
   // Value in seventh bin
@@ -243,7 +250,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 6.0 );
   
   // Value on eighth bin
@@ -251,7 +258,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 7.0 );
   
   // Value in eighth bin
@@ -259,7 +266,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 7.0 );
 
   // Value on ninth bin
@@ -267,7 +274,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 8.0 );
 
   // Value in ninth bin
@@ -275,7 +282,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 8.0 );
 
   // Value on boundary
@@ -283,7 +290,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   lower_bound = FACEMC::Search::binarySearchContinuousData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 9.0 );
 }
 
@@ -310,7 +317,6 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   start = data.begin();
   end = data.end();
 
-  typedef FACEMC::TupleGetSetMemberPolicy<type,member> localTGSMP;
   double value, bin_value;
 
   // Value on first bin
@@ -318,7 +324,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.1 );
 
   // Value in first bin
@@ -326,7 +332,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.1 );
 
   // Value on second bin
@@ -334,7 +340,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.1 );
 
   // Value in second bin
@@ -342,7 +348,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.2 );
 
   // Value on third bin
@@ -350,7 +356,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.2 );
 
   // Value in third bin
@@ -358,7 +364,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.3 );
 
   // Value on fourth bin
@@ -366,7 +372,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.3 );
 
   // Value in fourth bin
@@ -374,7 +380,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								    end,
 								    value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.4 );
 
   // Value on fifth bin
@@ -382,7 +388,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.4 );
 
   // Value in fifth bin
@@ -390,7 +396,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.5 );
 
   // Value on sixth bin
@@ -398,7 +404,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.5 );
 
   // Value in sixth bin
@@ -406,7 +412,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.6 );
 
   // Value on seventh bin
@@ -414,7 +420,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.6 );
 
   // Value in seventh bin
@@ -422,7 +428,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.7 );
   
   // Value on eighth bin
@@ -430,7 +436,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.7 );
   
   // Value in eighth bin
@@ -438,7 +444,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.8 );
 
   // Value on ninth bin
@@ -446,7 +452,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.8 );
 
   // Value in ninth bin
@@ -454,7 +460,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.9 );
 
   // Value on boundary
@@ -462,7 +468,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 0.9 );
 
   // Value on boundary
@@ -470,7 +476,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 1.0 );
 
   // Value on boundary
@@ -478,7 +484,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
-  bin_value = localTGSMP::get( *lower_bound );
+  bin_value = FACEMC::get<member>( *lower_bound );
   TEST_EQUALITY_CONST( bin_value, 1.0 );
 }
 

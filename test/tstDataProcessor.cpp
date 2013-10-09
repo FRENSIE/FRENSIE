@@ -14,7 +14,7 @@
 
 // FACEMC Includes
 #include "DataProcessor.hpp"
-#include "TupleGetSetMemberPolicy.hpp"
+#include "TupleMemberTraits.hpp"
 #include "Tuple.hpp"
 #include "FACEMC_UnitTestHarnessExtensions.hpp"
 
@@ -157,7 +157,9 @@ struct ProcessingPolicyTestingTraits<SquareSquareDataProcessingPolicy>
 template<FACEMC::TupleMember member, typename T, template<typename> class Array>
 void fillArrayOneTupleMemberData( Array<T> &array )
 {
-  typedef FACEMC::TupleGetSetMemberPolicy<T,member> localTGSMP;
+  typedef typename FACEMC::Traits::TupleMemberTraits<T,member>::tupleMemberType
+    tupleMemberType;
+  
   typename Array<T>::size_type size = 
     FACEMC::ArrayTestingPolicy<T,Array>::size( array );
 
@@ -165,8 +167,7 @@ void fillArrayOneTupleMemberData( Array<T> &array )
   {
     for( unsigned int i = 1; i <= size; ++i )
     {
-      localTGSMP::set( array[i-1],
-		       static_cast<typename localTGSMP::tupleMemberType>( i ) );
+      FACEMC::set<member>( array[i-1], static_cast<tupleMemberType>( i ) );
     }
   }
 }
@@ -177,8 +178,9 @@ template<FACEMC::TupleMember indepMember,
 	 template<typename> class Array>
 void fillArrayTwoTupleMemberData( Array<T> &array )
 {
-  typedef FACEMC::TupleGetSetMemberPolicy<T,indepMember> indepTGSMP;
-  typedef FACEMC::TupleGetSetMemberPolicy<T,depMember> depTGSMP;
+  typedef typename FACEMC::Traits::TupleMemberTraits<T,indepMember>::tupleMemberType indepTupleMemberType;
+  typedef typename FACEMC::Traits::TupleMemberTraits<T,depMember>::tupleMemberType depTupleMemberType;
+  
   typename Array<T>::size_type size = 
     FACEMC::ArrayTestingPolicy<T,Array>::size( array );
 
@@ -186,10 +188,10 @@ void fillArrayTwoTupleMemberData( Array<T> &array )
   {
     for( unsigned int i = 0; i < size; ++i )
     {
-      indepTGSMP::set( array[i],
-		       static_cast<typename indepTGSMP::tupleMemberType>( i*INDEP_VAR ) );
-      depTGSMP::set( array[i],
-		     static_cast<typename depTGSMP::tupleMemberType>( i*DEP_VAR ) );
+      FACEMC::set<indepMember>( array[i],
+		            static_cast<indepTupleMemberType>( i*INDEP_VAR ) );
+      FACEMC::set<depMember>( array[i],
+		                static_cast<depTupleMemberType>( i*DEP_VAR ) );
     }
   }
 }
@@ -263,11 +265,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
 
   // Load the clipped array
   clipped_data = ref_data;
-
-  typedef FACEMC::TupleGetSetMemberPolicy<Tuple,FACEMC::FIRST> localTGSMP;
   
   // Set the lower bound to the min value in the array and clip the array
-  double lower_bound = localTGSMP::get( ref_data.front() );
+  double lower_bound = FACEMC::get<FACEMC::FIRST>( ref_data.front() );
   data_processor.removeElementsLessThanValue<FACEMC::FIRST>( clipped_data,
 							     lower_bound );
   
@@ -285,8 +285,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   // Set the lower bound to a value greater than the min value but between
   // two bin boundaries and clip the array
   clipped_data = ref_data;
-  lower_bound = (localTGSMP::get( ref_data[2] ) + 
-		 localTGSMP::get( ref_data[1] ) )/2.0;
+  lower_bound = (FACEMC::get<FACEMC::FIRST>( ref_data[2] ) + 
+		 FACEMC::get<FACEMC::FIRST>( ref_data[1] ) )/2.0;
   data_processor.removeElementsLessThanValue<FACEMC::FIRST>( clipped_data,
 							     lower_bound );
 
@@ -295,7 +295,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   // Set the lower bound to a value greater than the min value but on
   // a bin boundary and clip the array
   clipped_data = ref_data;
-  lower_bound = localTGSMP::get( ref_data[2] );
+  lower_bound = FACEMC::get<FACEMC::FIRST>( ref_data[2] );
   data_processor.removeElementsLessThanValue<FACEMC::FIRST>( clipped_data,
 							     lower_bound );
   
@@ -320,11 +320,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
 
   // Load the clipped array
   clipped_data = ref_data;
-
-  typedef FACEMC::TupleGetSetMemberPolicy<Tuple,FACEMC::FIRST> localTGSMP;
   
   // Set the upper bound to the max value in the array and clip the array
-  double upper_bound = localTGSMP::get( ref_data.back() );
+  double upper_bound = FACEMC::get<FACEMC::FIRST>( ref_data.back() );
   data_processor.removeElementsGreaterThanValue<FACEMC::FIRST>( clipped_data,
 								upper_bound );
   
@@ -333,7 +331,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   // Set the upper bound to a value greater than the max value in the array and
   // clip the array
   clipped_data = ref_data;
-  upper_bound = localTGSMP::get( ref_data.back() ) + 1.0;
+  upper_bound = FACEMC::get<FACEMC::FIRST>( ref_data.back() ) + 1.0;
   data_processor.removeElementsGreaterThanValue<FACEMC::FIRST>( clipped_data,
 								upper_bound );
 
@@ -342,8 +340,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   // Set the upper bound to a value less than the max value but between
   // two bin boundaries and clip the array
   clipped_data = ref_data;
-  upper_bound = (localTGSMP::get( ref_data[ref_data.size()-2] ) + 
-		 localTGSMP::get( ref_data[ref_data.size()-3] ) )/2.0;
+  upper_bound = (FACEMC::get<FACEMC::FIRST>( ref_data[ref_data.size()-2] ) + 
+		 FACEMC::get<FACEMC::FIRST>( ref_data[ref_data.size()-3]))/2.0;
   data_processor.removeElementsGreaterThanValue<FACEMC::FIRST>( clipped_data,
 								upper_bound );
   FACEMC_TEST_COMPARE_ARRAYS( clipped_data, ref_data( 0, ref_data.size()-1 ) );
@@ -351,14 +349,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DataProcessor,
   // Set the upper bound to a value less than the max value but on
   // a bin boundary and clip the array
   clipped_data = ref_data;
-  upper_bound = localTGSMP::get( ref_data[ref_data.size()-3] );
+  upper_bound = FACEMC::get<FACEMC::FIRST>( ref_data[ref_data.size()-3] );
   data_processor.removeElementsGreaterThanValue<FACEMC::FIRST>( clipped_data,
 								upper_bound );
   FACEMC_TEST_COMPARE_ARRAYS( clipped_data, ref_data( 0, ref_data.size()-2 ) );
 }
 
 UNIT_TEST_INSTANTIATION_TUPLE( DataProcessor, removeElementsGreaterThanValue );
-
 
 //---------------------------------------------------------------------------//
 // Check that the DataProcessor can coarsen constant regions in an array
@@ -407,7 +404,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   // Load the reference array
   Teuchos::Array<Tuple> ref_data( 10 );
   fillArrayTwoTupleMemberData<FACEMC::FIRST,FACEMC::SECOND>( ref_data );
-  typedef FACEMC::TupleGetSetMemberPolicy<Tuple,member> localTGSMP;
+  
   double slope = 0.0;
   for( unsigned int i = 0; i < ref_data.size(); ++i )
   {
@@ -415,10 +412,10 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
     {
       slope = (ref_data[i+1].second - ref_data[i].second)/
 	(ref_data[i+1].first - ref_data[i].first);
-      localTGSMP::set( ref_data[i], slope );
+      FACEMC::set<member>( ref_data[i], slope );
     }
     else
-      localTGSMP::set( ref_data[i], 0.0 );
+      FACEMC::set<member>( ref_data[i], 0.0 );
   }
 
   // Processes the array
@@ -453,7 +450,7 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   Teuchos::Array<Tuple> ref_data( 10 );
   fillArrayTwoTupleMemberData<FACEMC::FIRST,FACEMC::SECOND>( ref_data );
   double cdf_value;
-  typedef FACEMC::TupleGetSetMemberPolicy<Tuple,member> localTGSMP;
+  
   for( unsigned int i = 0; i < ref_data.size(); ++i )
   {    
     if( i != 0 )
@@ -464,14 +461,15 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
     else
       cdf_value = 0.0;
       
-    localTGSMP::set( ref_data[i], cdf_value );
+    FACEMC::set<member>( ref_data[i], cdf_value );
   }
   
-  double norm_value = localTGSMP::get( ref_data.back() );
+  double norm_value = FACEMC::get<member>( ref_data.back() );
   for( unsigned int i = 0; i < ref_data.size(); ++i )
   {
     ref_data[i].second /= norm_value;
-    localTGSMP::set( ref_data[i], localTGSMP::get( ref_data[i] )/norm_value );
+    FACEMC::set<member>( ref_data[i], 
+			 FACEMC::get<member>( ref_data[i] )/norm_value );
   }
   
   // Processes the array
@@ -503,17 +501,16 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( DataProcessor,
   Teuchos::Array<Tuple> ref_data( 10 );
   fillArrayOneTupleMemberData<member>( ref_data );
   
-  typedef FACEMC::TupleGetSetMemberPolicy<Tuple,member> localTGSMP;
   for( unsigned int i = 1; i < ref_data.size(); ++i )
   {
-    localTGSMP::set( ref_data[i], localTGSMP::get( ref_data[i-1] ) +
-  		     localTGSMP::get( ref_data[i] ) );
+    FACEMC::set<member>( ref_data[i], FACEMC::get<member>( ref_data[i-1] ) +
+			 FACEMC::get<member>( ref_data[i] ) );
   }
   
   for( unsigned int i = 0; i < ref_data.size(); ++i )
   {
-    localTGSMP::set( ref_data[i], localTGSMP::get( ref_data[i] )/
-  		     localTGSMP::get( ref_data.back() ) );
+    FACEMC::set<member>( ref_data[i], FACEMC::get<member>( ref_data[i] )/
+			 FACEMC::get<member>( ref_data.back() ) );
   }
   
   // Processes the array

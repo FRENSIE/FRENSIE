@@ -308,7 +308,7 @@ struct ComparePolicy<double>
 	{
 	  out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
 	      << "\n= relErr(" << first_value << "," << second_value << ") = "
-	      << err << "\n<= tol = " << tol << ": ";
+	      << err << "\n<= tol = " << tol << ": failed!\n";
 	}
 
 	success = false;
@@ -352,7 +352,7 @@ struct ComparePolicy<float>
 	{
 	  out << first_name << " = " << first_value
 	      << " == " << second_name << " = " << second_value 
-	      << ": ";
+	      << ": failed!\n";
 	}
 	
 	success = false;
@@ -377,7 +377,7 @@ struct ComparePolicy<float>
 	{
 	  out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
 	      << "\n= relErr(" << first_value << "," << second_value << ") = "
-	      << err << "\n<= tol = " << tol << ": ";
+	      << err << "\n<= tol = " << tol << ": failed!\n";
 	}
 
 	success = false;

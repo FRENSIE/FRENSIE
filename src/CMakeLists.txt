@@ -10,13 +10,13 @@ SET(HEADERS
   HDF5ArrayPolicy.hpp
   SimulationBase.hpp
   SearchAlgorithms.hpp
-  TupleGetSetMemberPolicy.hpp
+  TupleMemberTraits.hpp
   PhotonDataBasic.hpp
   PhotonDataFluorescence.hpp
   PhotonDataDopplerBroadening.hpp
   PhotonData.hpp
   ThreeSpaceTraitsAndPolicy.hpp
-  LinearAlbebraPolicy.hpp
+  LinearAlgebraPolicy.hpp
   Surface.hpp
   SetOperationFunctor.hpp
   BooleanCellFunctor.hpp
