@@ -56,10 +56,13 @@ Iterator binarySearchContinuousData( Iterator start,
 				     Iterator end,
 				     const typename Traits::TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
 {
+  // The iterators must be random access iterators (support +/- ops)
+  remember( typedef std::iterator_traits<Iterator> iterator_traits );
+  testPrecondition( typeid(typename iterator_traits::iterator_category)==
+		    typeid(std::random_access_iterator_tag) );
   // The iterators must be from a valid container (size > 0)
   testPrecondition( (start != end) );
-
-  // The value used for the search must be within the limits of the data
+  // The value used for the search must be within the limits of the sorted data
   testPrecondition( (value >= get<member>( *start )) );
   testPrecondition( (value <= get<member>( *(end-1) )) );
 
@@ -119,9 +122,12 @@ Iterator binarySearchDiscreteData( Iterator start,
 				   Iterator end,
 				   const typename Traits::TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
 {
+  // The iterators must be random access iterators (support +/- ops)
+  remember( typedef std::iterator_traits<Iterator> iterator_traits );
+  testPrecondition( typeid(typename iterator_traits::iterator_category)==
+		    typeid(std::random_access_iterator_tag) );
   // The iterators must be from a valid container (size > 0)
   testPrecondition( (start != end) );
-  
   // The value used for the search must be within the limits of the data
   testPrecondition( (value >= 0) );
   testPrecondition( (value <= get<member>( *(end-1) )) );
