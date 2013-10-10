@@ -55,24 +55,24 @@ public:
   void closeHDF5File();
 
   //! Write data in array to HDF5 file data set
-  template<typename T, template<typename> class Array>
-  void writeArrayToDataSet( const Array<T> &data,
+  template<typename Array>
+  void writeArrayToDataSet( const Array &data,
 			    const std::string &location_in_file );
 
   //! Read in HDF5 file dataset and save the data to an array
-  template<typename T, template<typename> class Array>
-  void readArrayFromDataSet( Array<T> &data,
+  template<typename Array>
+  void readArrayFromDataSet( Array &data,
 			     const std::string &location_in_file );
 
   //! Write an attribute to an HDF5 file data set
-  template<typename T, template<typename> class Array>
-  void writeArrayToDataSetAttribute( const Array<T> &data,
+  template<typename Array>
+  void writeArrayToDataSetAttribute( const Array &data,
 				     const std::string &dataset_location,
 				     const std::string &attribute_name );
 
   //! Read in HDF5 file dataset attribute and save the data to an array
-  template<typename T, template<typename> class Array>
-  void readArrayFromDataSetAttribute( Array<T> &data,
+  template<typename Array>
+  void readArrayFromDataSetAttribute( Array &data,
 				      const std::string &dataset_location,
 				      const std::string &attribute_name );
 
@@ -89,14 +89,14 @@ public:
 				      const std::string &attribute_name );
 
   //! Write an attribute to an HDF5 file group
-  template<typename T, template<typename> class Array>
-  void writeArrayToGroupAttribute( const Array<T> &data,
+  template<typename Array>
+  void writeArrayToGroupAttribute( const Array &data,
 				   const std::string &group_location,
 				   const std::string &attribute_name );
 
   //! Read in HDF5 file group attribute and save the data to an array
-  template<typename T, template<typename> class Array>
-  void readArrayFromGroupAttribute( Array<T> &data,
+  template<typename Array>
+  void readArrayFromGroupAttribute( Array &data,
 				    const std::string &group_location,
 				    const std::string &attribute_name );
 

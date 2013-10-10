@@ -13,11 +13,11 @@
 #include <Teuchos_TwoDArray.hpp>
 
 // FACEMC Includes
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 #include "PhotonDataProcessor.hpp"
 #include "HDF5FileHandler.hpp"
 #include "Tuple.hpp"
 #include "HDF5DataFileNames.hpp"
-#include "FACEMC_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Test File Names.
@@ -77,7 +77,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_1 )
   data_point.second = 0;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -101,7 +101,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_2 )
   data_point.second = 0;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -129,7 +129,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_3 )
   data_point.second = 1;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -157,7 +157,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_4 )
   data_point.second = 1;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -193,7 +193,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_5 )
   data_point.second = 2;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -229,7 +229,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_6 )
   data_point.second = 2;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -265,7 +265,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_7 )
   data_point.second = 2;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -301,7 +301,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_8 )
   data_point.second = 2;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -337,7 +337,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_9 )
   data_point.second = 2;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -373,7 +373,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_10 )
   data_point.second = 2;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -413,7 +413,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_11 )
   data_point.second = 3;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -453,7 +453,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_12 )
   data_point.second = 3;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -501,7 +501,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_13 )
   data_point.second = 4;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -549,7 +549,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_14 )
   data_point.second = 4;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -597,7 +597,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_15 )
   data_point.second = 4;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -645,7 +645,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_16 )
   data_point.second = 4;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -693,7 +693,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_17 )
   data_point.second = 4;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -741,7 +741,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_18 )
   data_point.second = 4;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -793,7 +793,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_19 )
   data_point.second = 5;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -845,7 +845,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_20 )
   data_point.second = 5;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -905,7 +905,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_21 )
   data_point.second = 6;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -965,7 +965,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_22 )
   data_point.second = 6;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1025,7 +1025,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_23 )
   data_point.second = 6;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1085,7 +1085,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_24 )
   data_point.second = 6;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1145,7 +1145,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_25 )
   data_point.second = 6;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1205,7 +1205,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_26 )
   data_point.second = 6;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1265,7 +1265,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_27 )
   data_point.second = 6;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1325,7 +1325,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_28 )
   data_point.second = 6;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1385,7 +1385,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_29 )
   data_point.second = 6;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1445,7 +1445,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_30 )
   data_point.second = 6;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1513,7 +1513,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_31 )
   data_point.second = 7;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1581,7 +1581,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_32 )
   data_point.second = 7;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1649,7 +1649,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_34 )
   data_point.second = 7;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1717,7 +1717,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_35 )
   data_point.second = 7;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1785,7 +1785,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_36 )
   data_point.second = 11;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1857,7 +1857,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_37 )
   data_point.second = 12;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -1929,7 +1929,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_38 )
   data_point.second = 12;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -2009,7 +2009,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_39 )
   data_point.second = 13;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -2089,7 +2089,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_40 )
   data_point.second = 13;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -2169,7 +2169,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_41 )
   data_point.second = 13;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -2249,7 +2249,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_42 )
   data_point.second = 14;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -2329,7 +2329,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_43 )
   data_point.second = 14;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -2409,7 +2409,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_44 )
   data_point.second = 14;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -2489,7 +2489,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_45 )
   data_point.second = 14;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -2565,7 +2565,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_46 )
   data_point.second = 13;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -2645,7 +2645,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_47 )
   data_point.second = 14;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -2725,7 +2725,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_48 )
   data_point.second = 14;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -2813,7 +2813,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_49 )
   data_point.second = 15;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -2901,7 +2901,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_50 )
   data_point.second = 15;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -2989,7 +2989,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_51 )
   data_point.second = 16;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -3077,7 +3077,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_52 )
   data_point.second = 16;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -3165,7 +3165,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_53 )
   data_point.second = 16;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -3253,7 +3253,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_54 )
   data_point.second = 16;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -3345,7 +3345,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_55 )
   data_point.second = 17;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -3437,7 +3437,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_56 )
   data_point.second = 17;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -3537,7 +3537,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_57 )
   data_point.second = 18;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -3637,7 +3637,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_58 )
   data_point.second = 19;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -3737,7 +3737,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_59 )
   data_point.second = 18;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -3837,7 +3837,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_60 )
   data_point.second = 18;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -3937,7 +3937,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_61 )
   data_point.second = 18;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -4037,7 +4037,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_62 )
   data_point.second = 18;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -4137,7 +4137,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_63 )
   data_point.second = 19;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -4245,7 +4245,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_64 )
   data_point.second = 20;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -4345,7 +4345,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_65 )
   data_point.second = 19;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -4445,7 +4445,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_66 )
   data_point.second = 19;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -4545,7 +4545,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_67 )
   data_point.second = 19;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -4645,7 +4645,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_68 )
   data_point.second = 19;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -4745,7 +4745,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_69 )
   data_point.second = 19;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -4845,7 +4845,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_70 )
   data_point.second = 19;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -4953,7 +4953,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_71 )
   data_point.second = 20;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -5061,7 +5061,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_72 )
   data_point.second = 20;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -5169,7 +5169,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_73 )
   data_point.second = 20;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -5277,7 +5277,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_74 )
   data_point.second = 20;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -5385,7 +5385,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_75 )
   data_point.second = 21;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -5493,7 +5493,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_76 )
   data_point.second = 21;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -5597,7 +5597,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_77 )
   data_point.second = 20;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -5705,7 +5705,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_78 )
   data_point.second = 21;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -5813,7 +5813,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_79 )
   data_point.second = 21;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -5921,7 +5921,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_80 )
   data_point.second = 21;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -6037,7 +6037,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_81 )
   data_point.second = 22;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -6153,7 +6153,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_82 )
   data_point.second = 22;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -6269,7 +6269,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_83 )
   data_point.second = 23;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -6385,7 +6385,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_84 )
   data_point.second = 23;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -6501,7 +6501,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_85 )
   data_point.second = 23;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -6617,7 +6617,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_86 )
   data_point.second = 23;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -6737,7 +6737,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_87 )
   data_point.second = 24;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -6857,7 +6857,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_88 )
   data_point.second = 24;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -6985,7 +6985,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_89 )
   data_point.second = 25;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -7113,7 +7113,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_90 )
   data_point.second = 25;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -7249,7 +7249,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_91 )
   data_point.second = 26;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -7385,7 +7385,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_92 )
   data_point.second = 26;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -7521,7 +7521,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_93 )
   data_point.second = 26;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -7649,7 +7649,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_94 )
   data_point.second = 25;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -7777,7 +7777,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_95 )
   data_point.second = 26;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -7913,7 +7913,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_96 )
   data_point.second = 27;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -8049,7 +8049,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_97 )
   data_point.second = 26;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -8177,7 +8177,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_98 )
   data_point.second = 26;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -8305,7 +8305,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_99 )
   data_point.second = 26;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//
@@ -8433,7 +8433,7 @@ TEUCHOS_UNIT_TEST( PhotonDataProcessor, electron_shell_index_map_z_100 )
   data_point.second = 26;
   map_true.push_back( data_point );
 
-  TEST_COMPARE_ARRAYS( map, map_true );
+  FACEMC_TEST_COMPARE_ARRAYS( map, map_true );
 }
 
 //---------------------------------------------------------------------------//

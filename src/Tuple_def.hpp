@@ -32,11 +32,11 @@ inline H5::CompType Pair<T1,T2>::createHDF5DataType()
     
     memtype.insertMember( "first",
 			  HOFFSET( Tuple , first ),
-			  HDF5TypeTraits<T1>::dataType() );
+			  Traits::HDF5TypeTraits<T1>::dataType() );
     
     memtype.insertMember( "second",
 			  HOFFSET( Tuple, second ),
-			  HDF5TypeTraits<T2>::dataType() );
+			  Traits::HDF5TypeTraits<T2>::dataType() );
     
   }
   
@@ -49,8 +49,8 @@ inline H5::CompType Pair<T1,T2>::createHDF5DataType()
 template<typename T1, typename T2>
 inline std::string Pair<T1,T2>::name()
 { 
-  return "Pair<" + HDF5TypeTraits<T1>::name() + "," +
-    HDF5TypeTraits<T2>::name() + ">";
+  return "Pair<" + Traits::HDF5TypeTraits<T1>::name() + "," +
+    Traits::HDF5TypeTraits<T2>::name() + ">";
 }
 
 //! Create an HDF5 type that represents the FACEMC::Trip struct
@@ -67,15 +67,15 @@ inline H5::CompType Trip<T1,T2,T3>::createHDF5DataType()
     
     memtype.insertMember( "first",
 			  HOFFSET( Tuple, first ),
-			  HDF5TypeTraits<T1>::dataType() );
+			  Traits::HDF5TypeTraits<T1>::dataType() );
     
     memtype.insertMember( "second",
 			  HOFFSET( Tuple, second ),
-			  HDF5TypeTraits<T2>::dataType() );
+			  Traits::HDF5TypeTraits<T2>::dataType() );
     
     memtype.insertMember( "third",
 			  HOFFSET( Tuple, third ),
-			  HDF5TypeTraits<T3>::dataType() );
+			  Traits::HDF5TypeTraits<T3>::dataType() );
   }
   
   HDF5_EXCEPTION_CATCH_AND_EXIT();
@@ -87,9 +87,9 @@ inline H5::CompType Trip<T1,T2,T3>::createHDF5DataType()
 template<typename T1, typename T2, typename T3>
 inline std::string Trip<T1,T2,T3>::name()
 {
-  return "Trip<" + HDF5TypeTraits<T1>::name() + "," +
-    HDF5TypeTraits<T2>::name() + "," +
-    HDF5TypeTraits<T3>::name() + ">";
+  return "Trip<" + Traits::HDF5TypeTraits<T1>::name() + "," +
+    Traits::HDF5TypeTraits<T2>::name() + "," +
+    Traits::HDF5TypeTraits<T3>::name() + ">";
 }
 
 //! Create an HDF5 type that represents the FACEMC::Quad struct.
@@ -106,19 +106,19 @@ inline H5::CompType Quad<T1,T2,T3,T4>::createHDF5DataType()
     
     memtype.insertMember( "first",
 			  HOFFSET( Tuple, first ),
-			  HDF5TypeTraits<T1>::dataType() );
+			  Traits::HDF5TypeTraits<T1>::dataType() );
     
     memtype.insertMember( "second",
 			  HOFFSET( Tuple, second ),
-			  HDF5TypeTraits<T2>::dataType() );
+			  Traits::HDF5TypeTraits<T2>::dataType() );
     
     memtype.insertMember( "third",
 			  HOFFSET( Tuple, third ),
-			  HDF5TypeTraits<T3>::dataType() );
+			  Traits::HDF5TypeTraits<T3>::dataType() );
     
     memtype.insertMember( "fourth",
 			  HOFFSET( Tuple, fourth ),
-			  HDF5TypeTraits<T4>::dataType() );
+			  Traits::HDF5TypeTraits<T4>::dataType() );
   }
   
   HDF5_EXCEPTION_CATCH_AND_EXIT();
@@ -130,10 +130,10 @@ inline H5::CompType Quad<T1,T2,T3,T4>::createHDF5DataType()
 template<typename T1, typename T2, typename T3, typename T4>
 inline std::string Quad<T1,T2,T3,T4>::name()
 {
-  return "Quad<" + HDF5TypeTraits<T1>::name() + "," +
-    HDF5TypeTraits<T2>::name() + "," +
-    HDF5TypeTraits<T3>::name() + "," +
-    HDF5TypeTraits<T4>::name() + ">";
+  return "Quad<" + Traits::HDF5TypeTraits<T1>::name() + "," +
+    Traits::HDF5TypeTraits<T2>::name() + "," +
+    Traits::HDF5TypeTraits<T3>::name() + "," +
+    Traits::HDF5TypeTraits<T4>::name() + ">";
 }
 
 } // end FACEMC namespace

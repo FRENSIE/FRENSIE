@@ -5,9 +5,8 @@ SET(HEADERS
   DataProcessor.hpp
   FACEMC_Assertion.hpp
   ExceptionCatchMacros.hpp
-  HDF5FileHandler.hpp
+  ArrayTraits.hpp
   HDF5TypeTraits.hpp
-  HDF5ArrayPolicy.hpp
   SimulationBase.hpp
   SearchAlgorithms.hpp
   TupleMemberTraits.hpp

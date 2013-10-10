@@ -63,11 +63,11 @@ struct TupleMemberTraits
   
 } // end Traits namespace
 
-/*! This function allows access to the get FACEMC::TupleMemberTraits function
+/*! This function allows access to the get TupleMemberTraits function.
  *
  * This function is simply a more concise way to access the get static
- * member function associated with the FACEMC::TupleMemberTraits class. It 
- * simply forwards calls to get a member to the associated 
+ * member function associated with the TupleMemberTraits class. It simply 
+ * forwards calls to get a member to the associated 
  * FACEMC::Traits::TupleMemberTraits class. It is important to note that the
  * tuple type will be deduced by the function. The FACEMC::TupleMember must be
  * specified manually (i.e. get<FIRST>( my_tuple ) ).
@@ -78,11 +78,11 @@ inline typename Traits::TupleMemberTraits<Tuple,member>::tupleMemberType
 get( const Tuple &tuple )
 { return Traits::TupleMemberTraits<Tuple,member>::get( tuple ); }
   
-/*! This function allows access to the set FACEMC::TupleMemberTraits function
+/*! This function allows access to the set TupleMemberTraits function.
  *
  * This function is simply a more concise way to access the set static 
- * member function associated with the FACEMC::TupleMemberTraits class. It
- * simply forwards calls to set a member to the associated 
+ * member function associated with the TupleMemberTraits class. It simply 
+ * forwards calls to set a member to the associated 
  * FACEMC::Traits::TupleMemberTraits class. It is important to note that The
  * tuple type will be deduced by the function. The FACEMC::TupleMember must be
  * specified manually (i.e. set<SECOND>( my_tuple, desired_value ) ).

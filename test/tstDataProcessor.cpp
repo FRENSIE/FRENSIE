@@ -160,8 +160,7 @@ void fillArrayOneTupleMemberData( Array<T> &array )
   typedef typename FACEMC::Traits::TupleMemberTraits<T,member>::tupleMemberType
     tupleMemberType;
   
-  typename Array<T>::size_type size = 
-    FACEMC::ArrayTestingPolicy<T,Array>::size( array );
+  typename Array<T>::size_type size = FACEMC::getArraySize( array );
 
   if( size > 0 )
   {
@@ -181,8 +180,7 @@ void fillArrayTwoTupleMemberData( Array<T> &array )
   typedef typename FACEMC::Traits::TupleMemberTraits<T,indepMember>::tupleMemberType indepTupleMemberType;
   typedef typename FACEMC::Traits::TupleMemberTraits<T,depMember>::tupleMemberType depTupleMemberType;
   
-  typename Array<T>::size_type size = 
-    FACEMC::ArrayTestingPolicy<T,Array>::size( array );
+  typename Array<T>::size_type size = FACEMC::getArraySize( array );
 
   if( size > 0 )
   {
@@ -398,8 +396,8 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   // Load the array to be processed
   Teuchos::Array<Tuple> raw_data( 10 );
   fillArrayTwoTupleMemberData<FACEMC::FIRST,FACEMC::SECOND>( raw_data );
-  array<Tuple> processed_data = 
-  FACEMC::ArrayTestingPolicy<Tuple,array>::createArrayFromView( raw_data() );
+  array<Tuple> processed_data;
+  FACEMC::copyArrayView( processed_data, raw_data() );
 
   // Load the reference array
   Teuchos::Array<Tuple> ref_data( 10 );
@@ -443,8 +441,8 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   // Load the array to be processed
   Teuchos::Array<Tuple> raw_data( 10 );
   fillArrayTwoTupleMemberData<FACEMC::FIRST,FACEMC::SECOND>( raw_data );
-  array<Tuple> processed_data = 
-  FACEMC::ArrayTestingPolicy<Tuple,array>::createArrayFromView( raw_data() );
+  array<Tuple> processed_data;
+  FACEMC::copyArrayView( processed_data, raw_data() );
 
   // Load the reference array
   Teuchos::Array<Tuple> ref_data( 10 );
@@ -538,12 +536,12 @@ FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_DECL( DataProcessor,
   // Load the array to be processed
   Teuchos::Array<Tuple1> raw_original_data( 10 );
   fillArrayOneTupleMemberData<Member1>( raw_original_data );
-  array<Tuple1>  original_data = 
-    FACEMC::ArrayTestingPolicy<Tuple1,array>::createArrayFromView( raw_original_data() );
-
+  array<Tuple1>  original_data;
+  FACEMC::copyArrayView( original_data, raw_original_data() );
+ 
   Teuchos::Array<Tuple2> raw_processed_data( raw_original_data.size() );
-  array<Tuple2> processed_data = 
-    FACEMC::ArrayTestingPolicy<Tuple2,array>::createArrayFromView( raw_processed_data() );
+  array<Tuple2> processed_data;
+  FACEMC::copyArrayView( processed_data, raw_processed_data() );
   
   // Load the reference array
   Teuchos::Array<Tuple2> ref_data( 10 );
@@ -574,8 +572,8 @@ FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_DECL( DataProcessor,
   // Load the array to be processed
   Teuchos::Array<Tuple> raw_data( 10 );
   fillArrayOneTupleMemberData<Member1>( raw_data );
-  array<Tuple>  processed_data = 
-    FACEMC::ArrayTestingPolicy<Tuple,array>::createArrayFromView( raw_data() );
+  array<Tuple>  processed_data;
+  FACEMC::copyArrayView( processed_data, raw_data() );
 
   // Load the reference array
   Teuchos::Array<Tuple> ref_data( 10 );

@@ -85,8 +85,7 @@ void fillArrayTupleMembersContinuousData( Array<T> &array )
   typedef typename FACEMC::Traits::TupleMemberTraits<T,member>::tupleMemberType
     tupleMemberType;
   
-  typename Array<T>::size_type size = 
-    FACEMC::ArrayTestingPolicy<T,Array>::size( array );
+  typename Array<T>::size_type size = FACEMC::getArraySize( array );
   
   if( size > 0 )
   {
@@ -105,9 +104,8 @@ void fillArrayTupleMembersDiscreteData( Array<T> &array )
   typedef typename FACEMC::Traits::TupleMemberTraits<T,member>::tupleMemberType
     tupleMemberType;
   
-  typename Array<T>::size_type size = 
-    FACEMC::ArrayTestingPolicy<T,Array>::size( array );
-  
+  typename Array<T>::size_type size = FACEMC::getArraySize( array );
+      
   if( size > 0 )
   {
     for( unsigned int i = 0; i < size; ++i )
@@ -132,8 +130,8 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   Teuchos::Array<type> raw_data( 10 );
   fillArrayTupleMembersContinuousData<member>( raw_data );
  
-  array<type> data =
-  FACEMC::ArrayTestingPolicy<type,array>::createArrayFromView( raw_data() );
+  array<type> data;
+  FACEMC::copyArrayView( data, raw_data() );
 
   typename array<type>::iterator start, end, lower_bound;
   start = data.begin();
@@ -310,8 +308,8 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   Teuchos::Array<type> raw_data( 10 );
   fillArrayTupleMembersDiscreteData<member>( raw_data );
 
-  array<type> data =
-    FACEMC::ArrayTestingPolicy<type,array>::createArrayFromView( raw_data() );
+  array<type> data;
+  FACEMC::copyArrayView( data, raw_data() );
 
   typename array<type>::iterator start, end, lower_bound;
   start = data.begin();

@@ -11,6 +11,7 @@
 
 // FACEMC Includes
 #include "Empty.hpp"
+#include "UndefinedTraits.hpp"
 
 // HDF5 Includes
 #include <H5Cpp.h>
@@ -30,22 +31,7 @@
 
 namespace FACEMC{
 
-/*! \brief This is the default structure used by HDF5TypeTraits<T> to produce
- * a compile time error when the specialization does not exist for type T
- *
- * To use the FACEMC::HDF5TypeTraits struct a specialization for the 
- * particular type must be written. When the type does not have a
- * specialization, the compiler will attempt to instantiate this struct, which
- * has a function notDefined() that attempts to access a non-existant type
- * member, causing a compile time error. 
- * \ingroup hdf5_type_traits
- */
-template<typename T>
-struct UndefinedTypeTraits
-{
-  //! This function should not compile if there is any attempt to instantiate!
-  static inline T notDefined() { return T::this_type_is_missing_a_specialization(); }
-};
+namespace Traits{
 
 /*! \brief This structure defines the traits that are needed by the 
  * FACEMC::HDF5FileHandler class member functions.
@@ -71,11 +57,24 @@ template<typename T,
 	 typename T4 = Empty>
 struct HDF5TypeTraits
 { 
-  //! returns the HDF5 data type object corresponding to the type
-  static inline H5::DataType dataType() { (void)UndefinedTypeTraits<T>::notDefined(); return 0; }
-  //! Returns the name of this scalar type
-  static inline std::string name() { (void)UndefinedTypeTraits<T>::notDefined(); return 0; }
+  //! Returns the HDF5 data type object corresponding to the type
+  static inline H5::DataType dataType() 
+  { (void)Traits::UndefinedTraits<T>::notDefined(); return 0; }
+  
+  //! Returns the name of this type
+  static inline std::string name() 
+  { (void)Traits::UndefinedTraits<T>::notDefined(); return 0; }
+  
+  //! Returns the zero value for this type
+  static inline T zero()
+  { (void)Traits::UndefinedTraits<T>::notDefined(); return 0; }
+
+  //! Returns the unity value for this type
+  static inline T one()
+  { (void)Traits::UndefinedTraits<T>::notDefined(); return 0; }
 };
+
+} // end Traits namespace
 
 } // end FACEMC namespace
 

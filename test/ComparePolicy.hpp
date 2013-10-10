@@ -212,6 +212,48 @@ bool compareFourthTupleMembers( const T &first_value,
  * \ingroup compare_policy
  */
 template<>
+struct ComparePolicy<int>
+{
+  typedef unsigned int scalarType;
+  
+  static inline bool compare( const int &first_value,
+			      const std::string &first_name,
+			      const int &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0 )
+  {
+    bool success = true;
+      
+    if( first_value != second_value )
+    {
+      // Array Element Compare
+      if( index >= 0 )
+      {
+	out << "\nError, " << first_name << "[" << index << "]" << " = "
+	    << first_value << " == " << second_name << "[" << index << "]" 
+	    << " = " << second_value << ": failed!\n";
+      }
+      // Single Compare
+      else
+      {
+	out << first_name << " = " << first_value
+	    << " == " << second_name << " = " << second_value 
+	    << ": ";
+      }
+      
+      success = false;
+    }
+      
+    return success;
+  }
+};
+
+/*! \brief The specialization of the FACEMC::ComparePolicy for unsigned int.
+ * \ingroup compare_policy
+ */
+template<>
 struct ComparePolicy<unsigned int>
 {
   typedef unsigned int scalarType;
