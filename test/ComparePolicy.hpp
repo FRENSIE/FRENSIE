@@ -19,13 +19,13 @@
 // FACEMC Includes
 #include "ComparePolicyDecl.hpp"
 #include "Tuple.hpp"
-//#include "TupleComparePolicy.hpp"
-
 
 namespace FACEMC{
 
+namespace Policy{
+
 //---------------------------------------------------------------------------//
-// TupleComparePolicy Helper Functions.
+// ComparePolicy Helper Functions.
 //---------------------------------------------------------------------------//
 
 /*! \brief Relative error of two values
@@ -623,6 +623,8 @@ struct ComparePolicy<Quad<T,T2,T3,T4> >
     return success;
   }
 };
+
+} // end Policy namespace
 
 } // end FACEMC namespace
 

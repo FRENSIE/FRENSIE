@@ -38,21 +38,32 @@
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
 //---------------------------------------------------------------------------//
+#define TUPLE_TYPEDEFS()						\
+  typedef FACEMC::Pair<double,double> pair_d_d;				\
+  typedef FACEMC::Pair<unsigned,double> pair_u_d;			\
+  typedef FACEMC::Trip<double,double,double> trip_d_d_d;		\
+  typedef FACEMC::Trip<unsigned,double,double> trip_u_d_d;		\
+  typedef FACEMC::Quad<double,double,double,double> quad_d_d_d_d;	\
+  typedef FACEMC::Quad<unsigned,unsigned,double,double> quad_u_u_d_d;	\
+
 #define UNIT_TEST_INSTANTIATION( type, name )			\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, unsigned )	\
 
 #define UNIT_TEST_INSTANTIATION_PAIR( type, name )			\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_double_double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_uint_double )	\
+  TUPLE_TYPEDEFS()							\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_d_d )		\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_u_d )		\
 
 #define UNIT_TEST_INSTANTIATION_TRIP( type, name )			\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_double_double_double )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_uint_double_double ) \
+  TUPLE_TYPEDEFS()							\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_d_d_d )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_u_d_d )	\
 
 #define UNIT_TEST_INSTANTIATION_QUAD( type, name )			\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_double_double_double_double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_uint_uint_double_double ) \
+  TUPLE_TYPEDEFS()							\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_d_d_d )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_u_d_d )	\
 
 //---------------------------------------------------------------------------//
 // Testing Functions.

@@ -25,54 +25,245 @@
 //---------------------------------------------------------------------------//
 // Instantiation macros.
 //---------------------------------------------------------------------------//
-#define UNIT_TEST_INSTANTIATION_ARRAY( type, name, array )	\
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, pair_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, pair_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, pair_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, pair_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, trip_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, trip_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, trip_double_uint_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, trip_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, trip_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, trip_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, trip_uint_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, trip_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, trip_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, trip_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, trip_uint_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_double_uint_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_uint_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_uint_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, quad_double_uint_uint_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_double_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_double_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_double_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_uint_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_double_double_uint_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_uint_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_uint_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, quad_uint_double_uint_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_double_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_double_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_double_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_uint_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_double_uint_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_uint_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_uint_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_uint_uint_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_double_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_double_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_double_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_uint_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_double_uint_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_uint_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_uint_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_uint_uint_uint_double, array ) \
+#define TUPLE_TYPEDEFS()					\
+  typedef FACEMC::Pair<double,double> pair_d_d;			\
+  typedef FACEMC::Pair<unsigned,double> pair_u_d;			\
+  typedef FACEMC::Pair<double,unsigned> pair_d_u;			\
+  typedef FACEMC::Trip<double,double,double> trip_d_d_d;		\
+  typedef FACEMC::Trip<unsigned,double,double> trip_u_d_d;		\
+  typedef FACEMC::Trip<unsigned,double,unsigned> trip_u_d_u;		\
+  typedef FACEMC::Trip<double,double,unsigned> trip_d_d_u;		\
+  typedef FACEMC::Trip<unsigned,unsigned,double> trip_u_u_d;		\
+  typedef FACEMC::Trip<double,unsigned,double> trip_d_u_d;		\
+  typedef FACEMC::Trip<double,unsigned,unsigned> trip_d_u_u;		\
+  typedef FACEMC::Quad<double,double,double,double> quad_d_d_d_d;	\
+  typedef FACEMC::Quad<unsigned,unsigned,double,double> quad_u_u_d_d;	\
+  typedef FACEMC::Quad<unsigned,double,double,unsigned> quad_u_d_d_u;	\
+  typedef FACEMC::Quad<unsigned,double,double,double> quad_u_d_d_d;	\
+  typedef FACEMC::Quad<double,double,double,unsigned> quad_d_d_d_u;	\
+  typedef FACEMC::Quad<double,double,unsigned,unsigned> quad_d_d_u_u;	\
+  typedef FACEMC::Quad<double,unsigned,unsigned,double> quad_d_u_u_d;	\
+  typedef FACEMC::Quad<unsigned,double,unsigned,double> quad_u_d_u_d;	\
+  typedef FACEMC::Quad<unsigned,unsigned,unsigned,double> quad_u_u_u_d; \
+  typedef FACEMC::Quad<unsigned,unsigned,unsigned,unsigned> quad_u_u_u_u; \
+  typedef FACEMC::Quad<double,unsigned,double,unsigned> quad_d_u_d_u;	\
+  typedef FACEMC::Quad<double,double,unsigned,double> quad_d_d_u_d;	\
+  typedef FACEMC::Quad<unsigned,double,unsigned,unsigned> quad_u_d_u_u; \
+  typedef FACEMC::Quad<double,unsigned,double,double> quad_d_u_d_d; \
+  typedef FACEMC::Quad<unsigned,unsigned,double,unsigned> quad_u_u_d_u; \
+  
+#define UNIT_TEST_INSTANTIATION_ARRAY( type, name, array )		\
+  TUPLE_TYPEDEFS()							\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    pair_d_d,	\
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    pair_d_u,	\
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    pair_d_d,	\
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    pair_u_d,	\
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    trip_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    trip_d_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    trip_d_u_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    trip_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    trip_u_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    trip_d_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    trip_u_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    trip_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    trip_u_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    trip_d_u_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    trip_u_u_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    quad_d_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    quad_d_d_u_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    quad_d_u_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    quad_d_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    quad_d_d_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    quad_d_d_u_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    quad_u_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    quad_d_d_u_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    quad_u_d_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    quad_u_d_u_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    quad_u_d_u_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    quad_d_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    quad_d_d_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    quad_d_u_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    quad_u_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    quad_d_u_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    quad_u_d_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    quad_u_u_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    quad_u_u_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FOURTH,	\
+							    quad_d_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FOURTH,	\
+							    quad_d_d_u_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FOURTH,	\
+							    quad_d_u_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FOURTH,	\
+							    quad_u_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FOURTH,	\
+							    quad_d_u_u_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FOURTH,	\
+							    quad_u_d_u_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FOURTH,	\
+							    quad_u_u_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FOURTH,	\
+							    quad_u_u_u_d, \
+							    array )	\
 
 //---------------------------------------------------------------------------//
 // Helper functions.

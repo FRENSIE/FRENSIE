@@ -33,6 +33,8 @@
 
 namespace FACEMC{
 
+namespace Policy{
+
 /*! \brief Default structure used by FACEMC::ComparePolicy to produce a
  * compile time error when the specialization does not exist for type T.
  *
@@ -106,6 +108,8 @@ struct ComparePolicy
 			      const double tol = 0.0 )
   { (void)UndefinedComparePolicy<T>::notDefined(); }
 };
+
+} // end Policy namespace
 
 } // end FACEMC namespace
 

@@ -17,6 +17,7 @@
 // FACEMC Includes
 #include "Tuple.hpp"
 #include "TupleMemberTraits.hpp"
+#include "ArrayTraits.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -284,12 +285,8 @@ void DataProcessor::coarsenConstantRegions( Teuchos::Array<Tuple> &data )
  * values. 
  * \tparam slopeMember A member of the enumeration FACEMC::TupleMember, which
  * is used to refer to the member of Tuple that stores the slope values. 
- * \tparam Tuple A FACEMC tuple struct (either FACEMC::Trip or FACEMC::Quad)
- * that is used to store processed data. 
- * \tparam Array An array class with a single template parameter. Only the
- * Teuchos::Array or Teuchos::ArrayView classes should be used. Because
- * std::vector has two template parameters it cannot be used. The Teuchos array
- * classes are all extensions of the std::vector though. 
+ * \tparam Array An array class of tuple structs (either FACEMC::Trip or 
+ * FACEMC::Quad).
  * \param[in,out] data The array of tuple structs which contain the raw table
  * data.
  * \pre A valid array, which is any array of tuples with at least two elements,
@@ -299,26 +296,21 @@ void DataProcessor::coarsenConstantRegions( Teuchos::Array<Tuple> &data )
  *  <li> The FACEMC::Traits::TupleMemberTraits struct is critical to the
  *       generality of this function. Review this struct to better understand 
  *       how this function operates. 
- *  <li> The Tuple template parameter and Array template template parameter 
- *       could be combined into a single template parameter Array. The tuple
- *       type could then be accessed using "typename Array::value_type". This
- *       would allow for std::vector to be used. The current method seems
- *       more verbose. In either case, the Array and Tuple types never need
- *       to be given explicitly since they can be deduced by the compiler. 
  * </ul>
  */
 template<TupleMember indepMember, 
 	 TupleMember depMember,
 	 TupleMember slopeMember,
-	 typename Tuple,
-	 template<typename> class Array>
-void DataProcessor::calculateSlopes( Array<Tuple> &data  )
+	 typename Array>
+void DataProcessor::calculateSlopes( Array &data  )
 {
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
+
+  typedef typename Traits::ArrayTraits<Array>::value_type Tuple;
   
-  typename Array<Tuple>::iterator data_point_1, data_point_2;
-  typename Array<Tuple>::iterator end = data.end();
+  typename Array::iterator data_point_1, data_point_2;
+  typename Array::iterator end = data.end();
 
   data_point_1 = data.begin();
   data_point_2 = data_point_1 + 1;
@@ -362,10 +354,7 @@ void DataProcessor::calculateSlopes( Array<Tuple> &data  )
  * used to refer to the member of Tuple that will store the CDF data values.
  * \tparam Tuple A FACEMC tuple struct (only FACEMC::Quad) that is used to
  * store the processed data.
- * \tparam Array An array class with a single template parameter. Only the
- * Teuchos::Array and the Teuchos::ArrayView classes should be used. Because
- * std::vector has two template parameters it cannot be used. The Teuchos array
- * classes are all extensions of the std::vector though.
+ * \tparam Array An array class of tuple structs (only FACEMC::Quad).
  * \param[in,out] data The array of tuple structs which contain the table data.
  * \pre A valid array, which is any array of tuples with at least two
  * elements, must be given to this function.
@@ -374,26 +363,21 @@ void DataProcessor::calculateSlopes( Array<Tuple> &data  )
  *  <li> The FACEMC::Traits::TupleMemberTraits struct is critical to the
  *       generality of this function. Review this struct to better understand 
  *       how this function operates. 
- *  <li> The Tuple template parameter and Array template template parameter 
- *       could be combined into a single template parameter Array. The tuple
- *       type could then be accessed using "typename Array::value_type". This
- *       would allow for std::vector to be used. The current method seems
- *       more verbose. In either case, the Array and Tuple types never need
- *       to be given explicitly since they can be deduced by the compiler. 
  * </ul>
  */
 template<TupleMember indepMember,
 	 TupleMember pdfMember,
 	 TupleMember cdfMember,
-	 typename Tuple,
-	 template<typename> class Array>
-void DataProcessor::calculateContinuousCDF( Array<Tuple> &data )
+	 typename Array>
+void DataProcessor::calculateContinuousCDF( Array &data )
 {
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
   
-  typename Array<Tuple>::iterator data_point_1, data_point_2;
-  typename Array<Tuple>::iterator end = data.end();
+  typedef typename Traits::ArrayTraits<Array>::value_type Tuple;
+  
+  typename Array::iterator data_point_1, data_point_2;
+  typename Array::iterator end = data.end();
 
   data_point_1 = data.begin();
   data_point_2 = data.begin() + 1;
@@ -504,15 +488,12 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
  * used to refer to the member of the tuple whose value will be copied.
  * \tparam copyMember A member of the enumeration FACEMC::TupleMember, which is
  * used to refer to the member of the new tuple that will store the copy.
- * \tparam origTuple A FACEMC tuple struct (either FACEMC::Pair, FACEMC::Trip 
- * or FACEMC::Quad) that will have a member value copied.
- * \tparam copyTuple A FACEMC tuple struct (either FACEMC::Pair, FACEMC::Trip 
- * or FACEMC::Quad) that will store a copy in one of its members. This tuple 
- * does not need to be the same as the <em> origTuple </em>.
- * \tparam Array An array class with a single template parameter. Only the 
- * Teuchos::Array and the Teuchos::ArrayView classes should be used. Because
- * std::vector has two template parameters it cannot be used. The Teuchos array
- * classes are all extensions of the std::vector though.
+ * \tparam OrigArray An array class of tuple structs (either FACEMC::Pair, 
+ * FACEMC::Trip or FACEMC::Quad) that will have a member value copied.
+ * \tparam CopyArray An array class of tuple structs (either FACEMC::Pair, 
+ * FACEMC::Trip or FACEMC::Quad) that will store a copy in one of its members. 
+ * The tuple type contained in the array does not need to be the same as the 
+ * one contained in the <em> OrigArray </em>.
  * \param[in] orig_data The array of tuple structs which contain the data that
  * will be copied.
  * \param[in,out] copy_data The array of tuple structs that will store the
@@ -529,30 +510,25 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
  *  <li> The FACEMC::Traits::TupleMemberTraits struct is critical to the
  *       generality of this function. Review this struct to better understand 
  *       how this function operates. 
- *  <li> The Tuple template parameter and Array template template parameter
- *       could be combined into a single template parameter Array. The tuple
- *       type could then be accessed using "typename Array::value_type". This
- *       would allow for std::vector to be used. The current method seems more
- *       verbose. In either case, the Array and Tuple types never need to be
- *       given explicitly since they can be deduced by the compiler. 
  * </ul>
  */
 template<TupleMember origMember, 
 	 TupleMember copyMember,
-	 typename origTuple,
-	 typename copyTuple,
-	 template<typename> class Array>
-void DataProcessor::copyTupleMemberData( const Array<origTuple> &orig_data,
-					 Array<copyTuple> &copy_data )
+	 typename OrigArray,
+	 typename CopyArray>
+void DataProcessor::copyTupleMemberData( const OrigArray &orig_data,
+					 CopyArray &copy_data )
 {
   // Make sure that the arrays are valid
   testPrecondition( (orig_data.size() > 0) );
   testPrecondition( (orig_data.size() == copy_data.size()) );
+  remember(typedef typename Traits::ArrayTraits<OrigArray>::pointer 
+	   origTuplePointer);
   testPrecondition( &orig_data[0] != 
-		    reinterpret_cast<origTuple*>( &copy_data[0] ) );
-  
-  typename Array<origTuple>::const_iterator orig_data_point, end;
-  typename Array<copyTuple>::iterator copy_data_point;
+		    reinterpret_cast<origTuplePointer>( &copy_data[0] ) );
+
+  typename OrigArray::const_iterator orig_data_point, end;
+  typename CopyArray::iterator copy_data_point;
   orig_data_point = orig_data.begin();
   copy_data_point = copy_data.begin();
   end = orig_data.end();
@@ -572,12 +548,8 @@ void DataProcessor::copyTupleMemberData( const Array<origTuple> &orig_data,
  * used to refer to the member of the tuple whose value will be swapped.
  * \tparam member2 A member of the enumeration FACEMC::TupleMember, which is 
  * used to refer to the member of the tuple whose value will be swapped.
- * \tparam Tuple A FACEMC tuple struct (either FACEMC::Pair, FACEMC::Trip,
- * or FACEMC::Quad) that is used to store processed data. 
- * \tparam Array An array class with a single template parameter. Only the
- * Teuchos::Array and the Teuchos::ArrayView classes should be used. Because
- * std::vector has two template parameters it cannot be used. The Teuchos array
- * classes are all extensions of the std::vector though. 
+ * \tparam Array An array class of tuple structs (either FACEMC::Pair, 
+ * FACEMC::Trip or FACEMC::Quad).
  * \param[in,out] data The array of tuple structs which contain the table data.
  * \pre 
  * <ul>
@@ -590,26 +562,21 @@ void DataProcessor::copyTupleMemberData( const Array<origTuple> &orig_data,
  *  <li> The FACEMC::Traits::TupleMemberTraits struct is critical to the 
  *       generality of this function. Review this struct to better understand 
  *       how this function operates. 
- *  <li> The Tuple template parameter and Array template template parameter
- *       could be combined into a single template parameter Array. The tuple
- *       type could then be accessed using "typename Array::value_type". This
- *       would allow for std::vector to be used. The current method seems more
- *       verbose. In either case, the Array and Tuple types never need to be
- *       given explicitly since they can be deduced by the compiler. 
  * </ul>
  */
 template<TupleMember member1,
 	 TupleMember member2,
-	 typename Tuple,
-	 template<typename> class Array>
-void DataProcessor::swapTupleMemberData( Array<Tuple> &data )
+	 typename Array>
+void DataProcessor::swapTupleMemberData( Array &data )
 {
   // Make sure that the members are valid
   testPrecondition( member1 != member2 );
   // Make sure that the arrays are valid
   testPrecondition( (data.size() > 0) );
   
-  typename Array<Tuple>::iterator data_point, end;
+  typedef typename Traits::ArrayTraits<Array>::value_type Tuple;
+  
+  typename Array::iterator data_point, end;
   data_point = data.begin();
   end = data.end();
 

@@ -94,8 +94,8 @@ namespace FACEMC{
  * This function is used by the Teuchos Unit Test Harness extension testing
  * macros (see \ref unit_test_harness_extensions). It allows any type commonly 
  * used by FACEMC to be tested. The generality is made possible through the
- * FACEMC::ComparePolicy. Refer to the FACEMC::ComparePolicy to gain a 
- * better understanding of how this function operates.
+ * FACEMC::Policy::ComparePolicy. Refer to the FACEMC::Policy::ComparePolicy 
+ * to gain a better understanding of how this function operates.
  * \tparam T A data type that will be tested.
  * \param[in] first_value The first value that will be tested.
  * \param[in] first_name The name given to the first value, which will be 
@@ -121,13 +121,13 @@ bool compare( const T &first_value,
 	      const int index = -1,
 	      const double tol = 0.0 )
 {
-  bool success = ComparePolicy<T>::compare( first_value,
-					    first_name,
-					    second_value,
-					    second_name,
-					    out,
-					    index,
-					    tol );
+  bool success = Policy::ComparePolicy<T>::compare( first_value,
+						    first_name,
+						    second_value,
+						    second_name,
+						    out,
+						    index,
+						    tol );
   if( success )
     out << "passed\n";
 
@@ -139,8 +139,9 @@ bool compare( const T &first_value,
  * This function is used by the Teuchos Unit Test Harness extension testing
  * macros (see \ref unit_test_harness_extensions). It allows any type commonly
  * used by FACEMC in an array to be tested. The generality is made possible
- * through the FACEMC::ComparePolicy. Refer to the FACEMC::ComparePolicy to 
- * gain a better understanding of how this function operates.
+ * through the FACEMC::Policy::ComparePolicy. Refer to the 
+ * FACEMC::Policy::ComparePolicy to gain a better understanding of how this 
+ * function operates.
  * \tparam T A data type that will be tested.
  * \tparam Array1 The first array type containing data that will be tested.
  * \tparam Array2 The second array type containing data that will be tested.
@@ -179,8 +180,9 @@ bool compareSingleTemplateParameterArrays( const Array1<T> &a1,
  * This function is used by the Teuchos Unit Test Harness extension testing
  * macros (see \ref unit_test_harness_extensions). It allows any type commonly
  * used by FACEMC in an array to be tested. The generality is made possible
- * through the FACEMC::ComparePolicy. Refer to the FACEMC::ComparePolicy to 
- * gain a better understanding of how this function operates.
+ * through the FACEMC::Policy::ComparePolicy. Refer to the 
+ * FACEMC::Policy::ComparePolicy to gain a better understanding of how this 
+ * function operates.
  * \tparam Array1 The first array type containing data that will be tested.
  * \tparam Array2 The second array type containing data that will be tested.
  * \param[in] a1 The first array containing data that needs to be tested.
@@ -227,13 +229,13 @@ bool compareArrays( const Array1 &a1,
   // Compare Elements
   for( int i = 0; i < n; ++i )
   {
-    bool local_success = ComparePolicy<value_type>::compare( view1[i], 
-							     a1_name, 
-							     view2[i], 
-							     a2_name,
-							     out,
-							     i,
-							     tol );
+    bool local_success = Policy::ComparePolicy<value_type>::compare( view1[i], 
+								     a1_name, 
+								     view2[i], 
+								     a2_name,
+								     out,
+								     i,
+								     tol );
     if( !local_success )
       success = false;
   }

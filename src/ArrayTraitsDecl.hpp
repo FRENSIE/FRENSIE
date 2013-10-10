@@ -36,18 +36,21 @@ namespace Traits{
 /*! \brief Default array traits struct.
  * 
  * This struct should allow use of any Teuchos::Array when dealing with the
- * HDF5 interface. The std::vector is also supported. The functions in the
- * templated base unspecialized struct are designed not to compile (giving a 
- * nice compile-time error message) and therefore specializations must be
- * written for each array type. The design pattern that is implemented with 
- * the templated class is the bridge pattern. Every array type has a slightly
- * different interface and this struct homogenizes the interfaces so that
- * they can all be used inside of the other templated functions used by FACEMC.
- * It should be noted that even though the class name implies that this is
- * a traits class, some behavioral functions are also defined indicating that
- * it is not a true traits class (it is also a policies class). The traits
- * name was used to conform with the standard library convention (see
- * std::char_traits which is also a hybrid traits and policies class).
+ * HDF5 interface and DataProcessor interface. The std::vector is also 
+ * supported. The functions in the templated base unspecialized struct are 
+ * designed not to compile (giving a nice compile-time error message) and 
+ * therefore specializations must be written for each array type. The design 
+ * pattern that is implemented with the templated class is the bridge pattern. 
+ * Every array type has a slightly different interface and this struct 
+ * homogenizes the interfaces so that they can all be used inside of the other 
+ * templated functions used by FACEMC. It should be noted that even though the 
+ * class name implies that this is a traits class, some behavioral functions 
+ * are also defined indicating that it is not a true traits class (it is also 
+ * a policies class). The traits name was used to conform with the standard 
+ * library convention (see std::char_traits which is also a hybrid traits and 
+ * policies class). It must be noted that one need not interact with the 
+ * behavioral functions directly through the traits class. Several policy
+ * functions have been written that hide the traits class.
  * \tparam T An array of types.
  * \note The default defined specializations are provided for Teuchos::Array,
  * Teuchos::ArrayRCP, Teuchos::ArrayView and Teuchos::TwoDArray, and 
@@ -65,6 +68,10 @@ struct ArrayTraits
   typedef typename T::pointer pointer;
   //! The const pointer type of the array
   typedef typename T::const_pointer const_pointer;
+  //! The iterator type of the array
+  typedef typename T::iterator iterator;
+  //! The const iterator type of the array
+  typedef typename T::const_iterator const_iterator;
   
   //! The head pointer of the array
   static inline pointer headPtr( T &array )

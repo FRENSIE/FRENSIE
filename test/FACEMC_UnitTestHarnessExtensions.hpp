@@ -17,7 +17,6 @@
 
 // FACEMC Includes
 #include "FACEMC_TestingHelpers.hpp"
-#include "TupleTestingTypedefs.hpp"
 
 /*! \defgroup unit_test_harness_extensions Teuchos Unit Test Harness Extensions
  * \ingroup testing

@@ -86,17 +86,15 @@ protected:
   template<TupleMember indepMember, 
 	   TupleMember depMember,
 	   TupleMember slopeMember,
-	   typename Tuple,
-	   template<typename> class Array>
-  void calculateSlopes( Array<Tuple> &data );
+	   typename Array>
+  void calculateSlopes( Array &data );
 
   //! Create a cdf from an array of data using a taylor series expansion to O(2)
   template<TupleMember indepMember,
 	   TupleMember pdfMember,
 	   TupleMember cdfMember,
-	   typename Tuple,
-	   template<typename> class Array>
-  void calculateContinuousCDF( Array<Tuple> &data );
+	   typename Array>
+  void calculateContinuousCDF( Array &data );
 
   //! Create a discrete CDF from an array of data.
   template<TupleMember pdfMember,
@@ -107,18 +105,16 @@ protected:
   //! Copy the data in the desired tuple member of the original tuple to the desired tuple member of the copy tuple.
   template<TupleMember origMember, 
 	   TupleMember copyMember,
-	   typename origTuple,
-	   typename copyTuple,
-	   template<typename> class Array>
-  void copyTupleMemberData( const Array<origTuple> &orig_data,
-			    Array<copyTuple> &copy_data );
+	   typename OrigArray,
+	   typename CopyArray>
+  void copyTupleMemberData( const OrigArray &orig_data,
+			    CopyArray &copy_data );
 
   //! Swap the data in a desired tuple member with the data in another tuple member
   template<TupleMember member1,
 	   TupleMember member2,
-	   typename Tuple,
-	   template<typename> class Array>
-  void swapTupleMemberData( Array<Tuple> &data );
+	   typename Array>
+  void swapTupleMemberData( Array &data );
 
   //! Convert an unsigned int to an electron shell string
   std::string uintToShellStr( const unsigned int shell );

@@ -37,61 +37,266 @@
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
 //---------------------------------------------------------------------------//
+#define TUPLE_TYPEDEFS()					\
+  typedef FACEMC::Pair<double,double> pair_d_d;			\
+  typedef FACEMC::Pair<unsigned,double> pair_u_d;			\
+  typedef FACEMC::Pair<double,unsigned> pair_d_u;			\
+  typedef FACEMC::Trip<double,double,double> trip_d_d_d;		\
+  typedef FACEMC::Trip<unsigned,double,double> trip_u_d_d;		\
+  typedef FACEMC::Trip<unsigned,double,unsigned> trip_u_d_u;		\
+  typedef FACEMC::Trip<double,double,unsigned> trip_d_d_u;		\
+  typedef FACEMC::Trip<unsigned,unsigned,double> trip_u_u_d;		\
+  typedef FACEMC::Trip<double,unsigned,double> trip_d_u_d;		\
+  typedef FACEMC::Quad<double,double,double,double> quad_d_d_d_d;	\
+  typedef FACEMC::Quad<unsigned,unsigned,double,double> quad_u_u_d_d;	\
+  typedef FACEMC::Quad<unsigned,double,double,unsigned> quad_u_d_d_u;	\
+  typedef FACEMC::Quad<unsigned,double,double,double> quad_u_d_d_d;	\
+  typedef FACEMC::Quad<double,double,double,unsigned> quad_d_d_d_u;	\
+  typedef FACEMC::Quad<double,double,unsigned,unsigned> quad_d_d_u_u;	\
+  typedef FACEMC::Quad<double,unsigned,unsigned,double> quad_d_u_u_d;	\
+  typedef FACEMC::Quad<unsigned,double,unsigned,double> quad_u_d_u_d;	\
+  typedef FACEMC::Quad<unsigned,unsigned,unsigned,double> quad_u_u_u_d; \
+  typedef FACEMC::Quad<unsigned,unsigned,unsigned,unsigned> quad_u_u_u_u; \
+  
 #define UNIT_TEST_INSTANTIATION_POLICY( type, name )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, LogLogDataProcessingPolicy ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, SquareSquareDataProcessingPolicy ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type,				\
+					name,				\
+					LogLogDataProcessingPolicy )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type,				\
+					name,				\
+					SquareSquareDataProcessingPolicy ) \
 
-#define UNIT_TEST_INSTANTIATION_POLICY_TUPLE( type, name )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, LogLogDataProcessingPolicy, pair_double_double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, LogLogDataProcessingPolicy, trip_double_double_double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, LogLogDataProcessingPolicy, quad_double_double_double_double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, SquareSquareDataProcessingPolicy, pair_double_double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, SquareSquareDataProcessingPolicy, trip_double_double_double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, SquareSquareDataProcessingPolicy, quad_double_double_double_double ) \
+#define UNIT_TEST_INSTANTIATION_POLICY_TUPLE( type, name )		\
+  TUPLE_TYPEDEFS()							\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
+					name,				\
+					LogLogDataProcessingPolicy,	\
+					pair_d_d )			\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
+					name,				\
+					LogLogDataProcessingPolicy,	\
+					trip_d_d_d )			\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
+					name,				\
+					LogLogDataProcessingPolicy,	\
+					quad_d_d_d_d )			\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
+					name,				\
+					SquareSquareDataProcessingPolicy, \
+					pair_d_d )			\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
+					name,				\
+					SquareSquareDataProcessingPolicy, \
+					trip_d_d_d )			\
+  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
+					name,				\
+					SquareSquareDataProcessingPolicy, \
+					quad_d_d_d_d )			\
 
-#define UNIT_TEST_INSTANTIATION_TUPLE( type, name )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_double_double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_double_double_double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_double_double_double_double ) \
+#define UNIT_TEST_INSTANTIATION_TUPLE( type, name )			\
+  TUPLE_TYPEDEFS()							\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_d_d )		\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_d_d_d )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_d_d_d )	\
 
-#define UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( type, name, array )	\
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, trip_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, quad_double_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, quad_double_double_double_double, array ) \
+#define UNIT_TEST_INSTANTIATION_MEMBER_1_TUPLE_1_ARRAY( type, name, array ) \
+  TUPLE_TYPEDEFS()							\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, \
+							    name, \
+							    THIRD, \
+							    trip_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, \
+							    name, \
+							    THIRD, \
+							    quad_d_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, \
+							    name, \
+							    FOURTH, \
+							    quad_d_d_d_d, \
+							    array )	\
 
-#define UNIT_TEST_INSTANTIATION_MEMBER_TUPLE( type, name )	\
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, pair_double_double ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, pair_uint_double ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, trip_double_double_double ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, SECOND, trip_uint_double_double ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, THIRD, quad_double_double_double_double ) \
-  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type, name, THIRD, quad_uint_uint_double_double ) \
+#define UNIT_TEST_INSTANTIATION_MEMBER_TUPLE( type, name )		\
+  TUPLE_TYPEDEFS()							\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type,		\
+						      name,		\
+						      SECOND,		\
+						      pair_d_d )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type,		\
+						      name,		\
+						      SECOND,		\
+						      pair_u_d )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type,		\
+						      name,		\
+						      SECOND,		\
+						      trip_d_d_d )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type,		\
+						      name,		\
+						      SECOND,		\
+						      trip_u_d_d )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type,		\
+						      name,		\
+						      THIRD,		\
+						      quad_d_d_d_d )	\
+  FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_INSTANT( type,		\
+						      name,		\
+						      THIRD,		\
+						      quad_u_u_d_d )	\
 
 #define UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_2_ARRAY( type, name, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, FIRST, pair_double_uint, trip_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, SECOND, pair_double_uint, pair_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, THIRD, trip_double_double_uint, trip_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, FOURTH, quad_uint_double_double_double, quad_double_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, FIRST, pair_double_uint, pair_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, SECOND, trip_uint_uint_double, trip_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, THIRD, trip_double_uint_double, trip_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, FOURTH, quad_uint_uint_double_double, quad_uint_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, FIRST, trip_double_double_uint, trip_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, SECOND, trip_double_uint_double, trip_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, THIRD, trip_double_double_double, trip_uint_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, FOURTH, quad_double_double_double_double, quad_uint_uint_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, FIRST, quad_uint_double_double_double, quad_double_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH,SECOND, quad_uint_uint_double_double, quad_uint_double_double_uint, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, THIRD, quad_double_double_double_double, quad_uint_uint_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, name, FOURTH, FOURTH, quad_double_double_double_uint, quad_uint_uint_uint_uint, array ) \
+  TUPLE_TYPEDEFS()							\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    FIRST,	\
+							    pair_d_u,	\
+							    trip_d_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    SECOND,	\
+							    pair_d_u,	\
+							    pair_u_d,	\
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    THIRD,	\
+							    trip_d_d_u, \
+							    trip_u_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    FOURTH,	\
+							    quad_u_d_d_d, \
+							    quad_d_d_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    FIRST,	\
+							    pair_d_u,	\
+							    pair_u_d,	\
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    SECOND,	\
+							    trip_u_u_d, \
+							    trip_d_u_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    THIRD,	\
+							    trip_d_u_d, \
+							    trip_d_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    FOURTH,	\
+							    quad_u_u_d_d, \
+							    quad_u_d_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    FIRST,	\
+							    trip_d_d_u, \
+							    trip_u_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    SECOND,	\
+							    trip_d_u_d, \
+							    trip_d_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    THIRD,	\
+							    trip_d_d_d, \
+							    trip_u_u_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    FOURTH,	\
+							    quad_d_d_d_d, \
+							    quad_u_u_u_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FOURTH,	\
+							    FIRST,	\
+							    quad_u_d_d_d, \
+							    quad_d_d_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FOURTH,	\
+							    SECOND,	\
+							    quad_u_u_d_d, \
+							    quad_u_d_d_u, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FOURTH,	\
+							    THIRD,	\
+							    quad_d_d_d_d, \
+							    quad_u_u_u_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_2_ARRAY_TEMPLATE_INSTANT( type, \
+							    name, \
+							    FOURTH, \
+							    FOURTH, \
+							    quad_d_d_d_u, \
+							    quad_u_u_u_u, \
+							    array )	\
 
 #define UNIT_TEST_INSTANTIATION_MEMBER_2_TUPLE_1_ARRAY( type, name, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, SECOND, pair_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, THIRD, trip_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, FIRST, FOURTH, quad_double_double_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, THIRD, trip_uint_double_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, SECOND, FOURTH, quad_uint_double_uint_double, array ) \
-  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type, name, THIRD, FOURTH, quad_double_double_uint_uint, array ) \
+  TUPLE_TYPEDEFS()							\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    SECOND,	\
+							    pair_d_d,	\
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    THIRD,	\
+							    trip_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    FIRST,	\
+							    FOURTH,	\
+							    quad_d_d_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    THIRD,	\
+							    trip_u_d_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    SECOND,	\
+							    FOURTH,	\
+							    quad_u_d_u_d, \
+							    array )	\
+  FACEMC_UNIT_TEST_MEMBER_2_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
+							    name,	\
+							    THIRD,	\
+							    FOURTH,	\
+							    quad_d_d_u_u, \
+							    array )	\
   
 //---------------------------------------------------------------------------//
 // Testing Structs.

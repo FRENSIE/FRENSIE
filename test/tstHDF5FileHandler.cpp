@@ -40,6 +40,84 @@
 //---------------------------------------------------------------------------//
 // Instantiation macros.
 //---------------------------------------------------------------------------//
+#define TUPLE_TYPEDEFS()			\
+  typedef FACEMC::Pair<int,int> pair_i_i;				\
+  typedef FACEMC::Pair<unsigned,unsigned> pair_u_u;			\
+  typedef FACEMC::Pair<float,float> pair_f_f;				\
+  typedef FACEMC::Pair<double,double> pair_d_d;				\
+  typedef FACEMC::Pair<unsigned,double> pair_u_d;			\
+  typedef FACEMC::Pair<double,unsigned> pair_d_u;			\
+  typedef FACEMC::Trip<unsigned,unsigned,unsigned> trip_u_u_u;		\
+  typedef FACEMC::Trip<double,double,double> trip_d_d_d;		\
+  typedef FACEMC::Trip<unsigned,unsigned,double> trip_u_u_d;		\
+  typedef FACEMC::Trip<unsigned,double,unsigned> trip_u_d_u;		\
+  typedef FACEMC::Trip<unsigned,double,double> trip_u_d_d;		\
+  typedef FACEMC::Trip<double,double,unsigned> trip_d_d_u;		\
+  typedef FACEMC::Trip<double,unsigned,double> trip_d_u_d;		\
+  typedef FACEMC::Trip<double,unsigned,unsigned> trip_d_u_u;		\
+  typedef FACEMC::Quad<unsigned,unsigned,unsigned,unsigned> quad_u_u_u_u; \
+  typedef FACEMC::Quad<double,double,double,double> quad_d_d_d_d;	\
+  typedef FACEMC::Quad<unsigned,unsigned,unsigned,double> quad_u_u_u_d; \
+  typedef FACEMC::Quad<unsigned,unsigned,double,unsigned> quad_u_u_d_u; \
+  typedef FACEMC::Quad<unsigned,double,unsigned,unsigned> quad_u_d_u_u; \
+  typedef FACEMC::Quad<unsigned,unsigned,double,double> quad_u_u_d_d;	\
+  typedef FACEMC::Quad<unsigned,double,unsigned,double> quad_u_d_u_d;	\
+  typedef FACEMC::Quad<unsigned,double,double,unsigned> quad_u_d_d_u;	\
+  typedef FACEMC::Quad<unsigned,double,double,double> quad_u_d_d_d;	\
+  typedef FACEMC::Quad<double,double,double,unsigned> quad_d_d_d_u;	\
+  typedef FACEMC::Quad<double,unsigned,double,double> quad_d_u_d_d;	\
+  typedef FACEMC::Quad<double,double,unsigned,unsigned> quad_d_d_u_u;	\
+  typedef FACEMC::Quad<double,unsigned,double,unsigned> quad_d_u_d_u;	\
+  typedef FACEMC::Quad<double,unsigned,unsigned,double> quad_d_u_u_d;	\
+  typedef FACEMC::Quad<double,unsigned,unsigned,unsigned> quad_d_u_u_u;	\
+  
+#define ARRAY_TYPEDEFS( space, array )					\
+  typedef space::array<float> array##_f;				\
+  typedef space::array<double> array##_d;				\
+  typedef space::array<unsigned> array##_u;				\
+  typedef space::array<int> array##_i;					\
+  typedef space::array<FACEMC::Pair<float,float> > array##_pair_f_f;	\
+  typedef space::array<FACEMC::Pair<double,double> > array##_pair_d_d;	\
+  typedef space::array<FACEMC::Pair<unsigned,unsigned> >		\
+  array##_pair_u_u;							\
+  typedef space::array<FACEMC::Pair<int,int> > array##_pair_i_i;	\
+  typedef space::array<FACEMC::Pair<float,double> > array##_pair_f_d;	\
+  typedef space::array<FACEMC::Pair<float,unsigned> > array##_pair_f_u; \
+  typedef space::array<FACEMC::Pair<float,int> > array##_pair_f_i;	\
+  typedef space::array<FACEMC::Pair<double,float> > array##_pair_d_f;	\
+  typedef space::array<FACEMC::Pair<double,unsigned> > array##_pair_d_u; \
+  typedef space::array<FACEMC::Pair<double,int> > array##_pair_d_i;	\
+  typedef space::array<FACEMC::Pair<unsigned,float> > array##_pair_u_f; \
+  typedef space::array<FACEMC::Pair<unsigned,double> > array##_pair_u_d; \
+  typedef space::array<FACEMC::Pair<unsigned,int> > array##_pair_u_i;	\
+  typedef space::array<FACEMC::Pair<int,float> > array##_pair_i_f;	\
+  typedef space::array<FACEMC::Pair<int,double> > array##_pair_i_d;	\
+  typedef space::array<FACEMC::Pair<int,unsigned> > array##_pair_i_u;	\
+  typedef space::array<FACEMC::Trip<float,float,float> >		\
+  array##_trip_f_f_f;							\
+  typedef space::array<FACEMC::Trip<double,double,double> >		\
+  array##_trip_d_d_d;							\
+  typedef space::array<FACEMC::Trip<unsigned,unsigned,unsigned> >	\
+  array##_trip_u_u_u;							\
+  typedef space::array<FACEMC::Trip<int,int,int> >			\
+  array##_trip_i_i_i;							\
+  typedef space::array<FACEMC::Trip<double,float,int> >			\
+  array##_trip_d_f_i;							\
+  typedef space::array<FACEMC::Trip<unsigned,double,float> >		\
+  array##_trip_u_d_f;							\
+  typedef space::array<FACEMC::Quad<float,float,float,float> >		\
+  array##_quad_f_f_f_f;							\
+  typedef space::array<FACEMC::Quad<double,double,double,double> >	\
+  array##_quad_d_d_d_d;							\
+  typedef space::array<FACEMC::Quad<unsigned,unsigned,unsigned,unsigned> >\
+  array##_quad_u_u_u_u;							\
+  typedef space::array<FACEMC::Quad<int,int,int,int> >			\
+  array##_quad_i_i_i_i;							\
+  typedef space::array<FACEMC::Quad<float,double,unsigned,int> >	\
+  array##_quad_f_d_u_i;							\
+  typedef space::array<FACEMC::Quad<int,unsigned,double,float> >	\
+  array##_quad_i_u_d_f;							\
+
 #define UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( type, name, array )	\
   UNIT_TEST_INSTANTIATION_ARRAY( type, name, Teuchos, array )		\
 
@@ -47,146 +125,74 @@
   UNIT_TEST_INSTANTIATION_ARRAY( type, name, std, vector )	\
 
 #define UNIT_TEST_INSTANTIATION_ARRAY( type, name, space, array )	\
-  typedef space::array<float> array##_f;				\
+  ARRAY_TYPEDEFS( space, array )					\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_f )		\
-  typedef space::array<double> array##_d;				\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_d )		\
-  typedef space::array<unsigned> array##_u;				\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_u )		\
-  typedef space::array<int> array##_i;				\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_i )		\
-  typedef space::array<FACEMC::Pair<float,float> > array##_pair_f_f; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_f_f )	\
-  typedef space::array<FACEMC::Pair<double,double> > array##_pair_d_d; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_d_d )	\
-  typedef space::array<FACEMC::Pair<unsigned,unsigned> >		\
-  array##_pair_u_u;							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_u_u )	\
-  typedef space::array<FACEMC::Pair<int,int> > array##_pair_i_i;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_i_i )	\
-  typedef space::array<FACEMC::Pair<float,double> > array##_pair_f_d; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_f_d ) \
-  typedef space::array<FACEMC::Pair<float,unsigned> > array##_pair_f_u; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_f_u )	\
-  typedef space::array<FACEMC::Pair<float,int> > array##_pair_f_i;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_f_i )	\
-  typedef space::array<FACEMC::Pair<double,float> > array##_pair_d_f; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_d_f )	\
-  typedef space::array<FACEMC::Pair<double,unsigned> > array##_pair_d_u; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_d_u )	\
-  typedef space::array<FACEMC::Pair<double,int> > array##_pair_d_i;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_d_i )	\
-  typedef space::array<FACEMC::Pair<unsigned,float> > array##_pair_u_f; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_u_f )	\
-  typedef space::array<FACEMC::Pair<unsigned,double> > array##_pair_u_d; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_u_d )	\
-  typedef space::array<FACEMC::Pair<unsigned,int> > array##_pair_u_i; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_u_i )	\
-  typedef space::array<FACEMC::Pair<int,float> > array##_pair_i_f;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_i_f )	\
-  typedef space::array<FACEMC::Pair<int,double> > array##_pair_i_d;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_i_d )	\
-  typedef space::array<FACEMC::Pair<int,unsigned> > array##_pair_i_u; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_i_u )	\
-  typedef space::array<FACEMC::Trip<float,float,float> >		\
-  array##_trip_f_f_f;							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_trip_f_f_f ) \
-  typedef space::array<FACEMC::Trip<double,double,double> >		\
-  array##_trip_d_d_d;							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_trip_d_d_d ) \
-  typedef space::array<FACEMC::Trip<unsigned,unsigned,unsigned> >	\
-  array##_trip_u_u_u;							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_trip_u_u_u ) \
-  typedef space::array<FACEMC::Trip<int,int,int> >			\
-  array##_trip_i_i_i;							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_trip_i_i_i ) \
-  typedef space::array<FACEMC::Trip<double,float,int> >		\
-  array##_trip_d_f_i;							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_trip_d_f_i ) \
-  typedef space::array<FACEMC::Trip<unsigned,double,float> >	\
-  array##_trip_u_d_f;							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_trip_u_d_f ) \
-  typedef space::array<FACEMC::Quad<float,float,float,float> >	\
-  array##_quad_f_f_f_f;							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_f_f_f_f ) \
-  typedef space::array<FACEMC::Quad<double,double,double,double> >	\
-  array##_quad_d_d_d_d;							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_d_d_d_d ) \
-  typedef space::array<FACEMC::Quad<unsigned,unsigned,unsigned,unsigned> >\
-  array##_quad_u_u_u_u;							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_u_u_u_u ) \
-  typedef space::array<FACEMC::Quad<int,int,int,int> >		\
-  array##_quad_i_i_i_i;							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_i_i_i_i ) \
-  typedef space::array<FACEMC::Quad<float,double,unsigned,int> >	\
-  array##_quad_f_d_u_i;							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_f_d_u_i ) \
-  typedef space::array<FACEMC::Quad<int,unsigned,double,float> >	\
-  array##_quad_i_u_d_f;							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_i_u_d_f ) \
   
 #define UNIT_TEST_INSTANTIATION( type, name )				\
+  TUPLE_TYPEDEFS()							\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, float )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, unsigned )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, int )		\
-  typedef FACEMC::Pair<int,int> pair_i_i;				\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_i_i )		\
-  typedef FACEMC::Pair<unsigned,unsigned> pair_u_u;			\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_u_u )		\
-  typedef FACEMC::Pair<float,float> pair_f_f;				\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_f_f )		\
-  typedef FACEMC::Pair<double,double> pair_d_d;				\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_d_d )		\
-  typedef FACEMC::Pair<unsigned,double> pair_u_d;			\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_u_d )		\
-  typedef FACEMC::Pair<double,unsigned> pair_d_u;			\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_d_u )		\
-  typedef FACEMC::Trip<unsigned,unsigned,unsigned> trip_u_u_u;		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_u_u_u )	\
-  typedef FACEMC::Trip<double,double,double> trip_d_d_d;		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_d_d_d )	\
-  typedef FACEMC::Trip<unsigned,unsigned,double> trip_u_u_d;		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_u_u_d )	\
-  typedef FACEMC::Trip<unsigned,double,unsigned> trip_u_d_u;		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_u_d_u )	\
-  typedef FACEMC::Trip<unsigned,double,double> trip_u_d_d;		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_u_d_d )	\
-  typedef FACEMC::Trip<double,double,unsigned> trip_d_d_u;		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_d_d_u )	\
-  typedef FACEMC::Trip<double,unsigned,double> trip_d_u_d;		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_d_u_d )	\
-  typedef FACEMC::Trip<double,unsigned,unsigned> trip_d_u_u;		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_d_u_u )	\
-  typedef FACEMC::Quad<unsigned,unsigned,unsigned,unsigned> quad_u_u_u_u; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_u_u_u )	\
-  typedef FACEMC::Quad<double,double,double,double> quad_d_d_d_d;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_d_d_d )	\
-  typedef FACEMC::Quad<unsigned,unsigned,unsigned,double> quad_u_u_u_d; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_u_u_d )	\
-  typedef FACEMC::Quad<unsigned,unsigned,double,unsigned> quad_u_u_d_u; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_u_d_u )	\
-  typedef FACEMC::Quad<unsigned,double,unsigned,unsigned> quad_u_d_u_u; \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_d_u_u )	\
-  typedef FACEMC::Quad<unsigned,unsigned,double,double> quad_u_u_d_d;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_u_d_d )	\
-  typedef FACEMC::Quad<unsigned,double,unsigned,double> quad_u_d_u_d;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_d_u_d )	\
-  typedef FACEMC::Quad<unsigned,double,double,unsigned> quad_u_d_d_u;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_d_d_u )	\
-  typedef FACEMC::Quad<unsigned,double,double,double> quad_u_d_d_d;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_d_d_d )	\
-  typedef FACEMC::Quad<double,double,double,unsigned> quad_d_d_d_u;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_d_d_u )	\
-  typedef FACEMC::Quad<double,unsigned,double,double> quad_d_u_d_d;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_u_d_d )	\
-  typedef FACEMC::Quad<double,double,unsigned,unsigned> quad_d_d_u_u;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_d_u_u )	\
-  typedef FACEMC::Quad<double,unsigned,double,unsigned> quad_d_u_d_u;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_u_d_u )	\
-  typedef FACEMC::Quad<double,unsigned,unsigned,double> quad_d_u_u_d;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_u_u_d )	\
-  typedef FACEMC::Quad<double,unsigned,unsigned,unsigned> quad_d_u_u_u;	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_u_u_u )	\
 
 //---------------------------------------------------------------------------//
