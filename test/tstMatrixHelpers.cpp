@@ -46,13 +46,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
 						 1.0, 1.0, 1.0 );
 
   FACEMC::Matrix<ScalarType> symmetric_matrix = 
-    FACEMC::createMatrix<ScalarType>( 1.0, 2.0, 3.0,
-					   1.0, 2.0,
-					        1.0 );
+    FACEMC::createMatrix<ScalarType>( 1.0,
+				      2.0, 1.0,
+				      3.0, 2.0, 1.0 );
 
-  FACEMC::Matrix<ScalarType> ref_symmetric_matrix( 1.0, 2.0, 3.0,
-						        1.0, 2.0,
-						             1.0 );
+  FACEMC::Matrix<ScalarType> ref_symmetric_matrix( 1.0,
+						   2.0, 1.0,
+						   3.0, 2.0, 1.0 );
   
   TEST_EQUALITY( general_matrix, ref_general_matrix );
   TEST_EQUALITY( symmetric_matrix, ref_symmetric_matrix );

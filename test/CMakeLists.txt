@@ -72,15 +72,9 @@ ADD_EXECUTABLE(tstMatrixHelpers
 ADD_EXECUTABLE(tstLinearAlgebraAlgorithms
   tstLinearAlgebraAlgorithms.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# ADD_EXECUTABLE(tstThreeSpaceTraitsAndPolicy
-#   tstThreeSpaceTraitsAndPolicy.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# ADD_EXECUTABLE(tstLinearAlgebraPolicy
-#   tstLinearAlgebraPolicy.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# ADD_EXECUTABLE(tstSurface
-#   tstSurface.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstSurface
+  tstSurface.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 # ADD_EXECUTABLE(tstPolygon
 #   tstPolygon.cpp
 #   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -143,9 +137,7 @@ TARGET_LINK_LIBRARIES(tstVector ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LA
 TARGET_LINK_LIBRARIES(tstVectorHelpers ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstMatrixHelpers ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstLinearAlgebraAlgorithms ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
-# TARGET_LINK_LIBRARIES(tstThreeSpaceTraitsAndPolicy ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
-# TARGET_LINK_LIBRARIES(tstLinearAlgebraPolicy ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
-# TARGET_LINK_LIBRARIES(tstSurface ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+TARGET_LINK_LIBRARIES(tstSurface ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 # TARGET_LINK_LIBRARIES(tstPolygon ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstSetOperationFunctor ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstBooleanCellFunctor ${TEUCHOS_CORE})
@@ -172,9 +164,7 @@ ADD_TEST(Vector_test tstVector)
 ADD_TEST(VectorHelpers_test tstVectorHelpers)
 ADD_TEST(MatrixHelpers_test tstMatrixHelpers)
 ADD_TEST(LinearAlgebraAlgorithms_test tstLinearAlgebraAlgorithms)
-# ADD_TEST(ThreeSpaceTraitsAndPolicy_test tstThreeSpaceTraitsAndPolicy)
-# ADD_TEST(LinearAlgebraPolicy_test tstLinearAlgebraPolicy)
-# ADD_TEST(Surface_test tstSurface)
+ADD_TEST(Surface_test tstSurface)
 # ADD_TEST(Polygon_test tstPolygon)
 ADD_TEST(SetOperationFunctor_test tstSetOperationFunctor)
 ADD_TEST(BooleanCellFunctor_test tstBooleanCellFunctor)

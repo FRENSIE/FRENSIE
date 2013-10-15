@@ -25,9 +25,9 @@ Matrix<ScalarType> createMatrix(
 //! Create a 3x3 symmetric matrix
 template<typename ScalarType>
 Matrix<ScalarType> createMatrix(
-	    const ScalarType a00, const ScalarType a01, const ScalarType a02,
-	                          const ScalarType a11, const ScalarType a12, 
-	                                                const ScalarType a22 );
+	    const ScalarType a00, 
+	    const ScalarType a10, const ScalarType a11,
+	    const ScalarType a20, const ScalarType a21, const ScalarType a22 );
 
 //! Create a 3x3 matrix from rows
 template<typename ScalarType>

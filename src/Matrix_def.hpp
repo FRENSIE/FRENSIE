@@ -50,21 +50,21 @@ Matrix<ScalarType>::Matrix(
 // Symmetric constructor
 template<typename ScalarType>
 Matrix<ScalarType>::Matrix(
-	     const ScalarType a00, const ScalarType a01, const ScalarType a02,
-	                           const ScalarType a11, const ScalarType a12, 
-	                                                 const ScalarType a22 )
+	     const ScalarType a00, 
+	     const ScalarType a10, const ScalarType a11,
+	     const ScalarType a20, const ScalarType a21, const ScalarType a22 )
   : PrintableObject( "ThreeSpaceMatrix" ),
     ThreeSpaceObject( THREE_SPACE_MATRIX ),
     d_data( 3, 3 )
 {
   d_data( 0, 0 ) = a00;
-  d_data( 0, 1 ) = a01;
-  d_data( 0, 2 ) = a02;
-  d_data( 1, 0 ) = a01;
+  d_data( 0, 1 ) = a10;
+  d_data( 0, 2 ) = a20;
+  d_data( 1, 0 ) = a10;
   d_data( 1, 1 ) = a11;
-  d_data( 1, 2 ) = a12;
-  d_data( 2, 0 ) = a02;
-  d_data( 2, 1 ) = a12;
+  d_data( 1, 2 ) = a21;
+  d_data( 2, 0 ) = a20;
+  d_data( 2, 1 ) = a21;
   d_data( 2, 2 ) = a22;
 }
 

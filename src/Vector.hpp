@@ -111,13 +111,13 @@ public:
   Vector<ScalarType>& operator*=( const scalarType alpha );
 
   //! Multiply <em> this </em> vector by a matrix (x => Ax ).
-  Vector<ScalarType>& operator*=( Matrix<ScalarType> &source_matrix );
+  Vector<ScalarType>& operator*=( const Matrix<ScalarType> &source_matrix );
 
   //! Multiply alpha*A*x and add them to beta*<em>this</em>.
   void multiply( const ScalarType alpha,
-		 Matrix<ScalarType> &A,
+		 const Matrix<ScalarType> &A,
 		 const bool transpose_A,
-		 Vector<ScalarType> &x,
+		 const Vector<ScalarType> &x,
 		 const ScalarType beta );
 
   //! Normalize <em> this </em> vector

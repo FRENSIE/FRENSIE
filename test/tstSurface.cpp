@@ -18,7 +18,10 @@
 // FACEMC Includes
 #include "FACEMC_UnitTestHarnessExtensions.hpp"
 #include "Surface.hpp"
-#include "ThreeSpaceTraitsAndPolicy.hpp"
+#include "Vector.hpp"
+#include "VectorHelpers.hpp"
+#include "Matrix.hpp"
+#include "MatrixHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
@@ -51,11 +54,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
 						  20, 20, 20,
 						  10*10+10*10+10*10 - 10*10 );
 
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  typedef typename ThreeSpace::Vector Point;
-
-  Point point_1 = ThreeSpace::createVector( 0.0, -10.0, -10.0 );
-  Point point_2 = ThreeSpace::createVector( -10.0, -10.0, -10.0 ); 
+  FACEMC::Vector<ScalarType> point_1( 0.0, -10.0, -10.0 );
+  FACEMC::Vector<ScalarType> point_2( -10.0, -10.0, -10.0 ); 
 
   TEST_ASSERT( sphere.isOn( point_1 ) );
   TEST_ASSERT( !sphere.isOn( point_2 ) );
@@ -84,14 +84,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
 						  1, 1, 1,
 						  20, 20, 20,
 						  10*10+10*10+10*10 - 10*10 );
-
+  
   TEST_ASSERT( !sphere.isPlanar() );
 
   // Planar surface
   FACEMC::Surface<OrdinalType,ScalarType> plane( 0,
 						 1, 2, 3,
 						 4 );
-
+  
   TEST_ASSERT( plane.isPlanar() );
 }
 
@@ -110,12 +110,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
 						  20, 20, 20,
 						  10*10+10*10+10*10 - 10*10 );
   
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  typedef typename ThreeSpace::Vector Point;
-
-  Point point_1 = ThreeSpace::createVector( 0.0, -10.0, -10.0 );
-  Point point_2 = ThreeSpace::createVector( -10.0, -10.0, -10.0 ); 
-  Point point_3 = ThreeSpace::createVector( 10.0, 10.0, 10.0 ); 
+  FACEMC::Vector<ScalarType> point_1( 0.0, -10.0, -10.0 );
+  FACEMC::Vector<ScalarType> point_2( -10.0, -10.0, -10.0 ); 
+  FACEMC::Vector<ScalarType> point_3( 10.0, 10.0, 10.0 ); 
 
   FACEMC::SurfaceSense sense_1 = sphere.getSenseOfPoint( point_1 );
   FACEMC::SurfaceSense sense_2 = sphere.getSenseOfPoint( point_2 );
@@ -141,52 +138,33 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
 						  20, 20, 20,
 						  10*10+10*10+10*10 - 10*10 );
 
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  typedef Teuchos::ScalarTraits<ScalarType> ST;
-  typedef typename ThreeSpace::Vector Point;
-  typedef typename ThreeSpace::Vector Vector;
+  FACEMC::Vector<ScalarType> point_1( 0.0, -10.0, -10.0 ); 
+  FACEMC::Vector<ScalarType> point_2( -10.0, 0.0, -10.0 );
+  FACEMC::Vector<ScalarType> point_3( -10.0, -10.0, 0.0 );
+  FACEMC::Vector<ScalarType> point_4( -20.0, -10.0, -10.0 );
+  FACEMC::Vector<ScalarType> point_5( -10.0, -20.0, -10.0 );
+  FACEMC::Vector<ScalarType> point_6( -10.0, -10.0, -20.0 );
 
-  Point point_1 = ThreeSpace::createVector( 0.0, -10.0, -10.0 ); 
-  Point point_2 = ThreeSpace::createVector( -10.0, 0.0, -10.0 );
-  Point point_3 = ThreeSpace::createVector( -10.0, -10.0, 0.0 );
-  Point point_4 = ThreeSpace::createVector( -20.0, -10.0, -10.0 );
-  Point point_5 = ThreeSpace::createVector( -10.0, -20.0, -10.0 );
-  Point point_6 = ThreeSpace::createVector( -10.0, -10.0, -20.0 );
+  FACEMC::Vector<ScalarType> normal_1 = sphere.getUnitNormalAtPoint( point_1 );
+  FACEMC::Vector<ScalarType> normal_2 = sphere.getUnitNormalAtPoint( point_2 );
+  FACEMC::Vector<ScalarType> normal_3 = sphere.getUnitNormalAtPoint( point_3 );
+  FACEMC::Vector<ScalarType> normal_4 = sphere.getUnitNormalAtPoint( point_4 );
+  FACEMC::Vector<ScalarType> normal_5 = sphere.getUnitNormalAtPoint( point_5 );
+  FACEMC::Vector<ScalarType> normal_6 = sphere.getUnitNormalAtPoint( point_6 );
 
-  Point normal_1 = sphere.getUnitNormalAtPoint( point_1 );
-  Point normal_2 = sphere.getUnitNormalAtPoint( point_2 );
-  Point normal_3 = sphere.getUnitNormalAtPoint( point_3 );
-  Point normal_4 = sphere.getUnitNormalAtPoint( point_4 );
-  Point normal_5 = sphere.getUnitNormalAtPoint( point_5 );
-  Point normal_6 = sphere.getUnitNormalAtPoint( point_6 );
+  FACEMC::Vector<ScalarType> ref_normal_1( 1.0, 0.0, 0.0 );
+  FACEMC::Vector<ScalarType> ref_normal_2( 0.0, 1.0, 0.0 );
+  FACEMC::Vector<ScalarType> ref_normal_3( 0.0, 0.0, 1.0 );
+  FACEMC::Vector<ScalarType> ref_normal_4( -1.0, 0.0, 0.0 );
+  FACEMC::Vector<ScalarType> ref_normal_5( 0.0, -1.0, 0.0 );
+  FACEMC::Vector<ScalarType> ref_normal_6( 0.0, 0.0, -1.0 );
 
-  Teuchos::ArrayView<ScalarType> normal_1_view( normal_1.values(), 3 );
-  Teuchos::ArrayView<ScalarType> normal_2_view( normal_2.values(), 3 );
-  Teuchos::ArrayView<ScalarType> normal_3_view( normal_3.values(), 3 );
-  Teuchos::ArrayView<ScalarType> normal_4_view( normal_4.values(), 3 );
-  Teuchos::ArrayView<ScalarType> normal_5_view( normal_5.values(), 3 );
-  Teuchos::ArrayView<ScalarType> normal_6_view( normal_6.values(), 3 );
-
-  Teuchos::Tuple<ScalarType,3> ref_normal_1 = 
-    Teuchos::tuple( ST::one(), ST::zero(), ST::zero() );
-  Teuchos::Tuple<ScalarType,3> ref_normal_2 = 
-    Teuchos::tuple( ST::zero(), ST::one(), ST::zero() );
-  Teuchos::Tuple<ScalarType,3> ref_normal_3 = 
-    Teuchos::tuple( ST::zero(), ST::zero(), ST::one() );
-  Teuchos::Tuple<ScalarType,3> ref_normal_4 = 
-    Teuchos::tuple( -ST::one(), ST::zero(), ST::zero() );
-  Teuchos::Tuple<ScalarType,3> ref_normal_5 = 
-    Teuchos::tuple( ST::zero(), -ST::one(), ST::zero() );
-  Teuchos::Tuple<ScalarType,3> ref_normal_6 = 
-    Teuchos::tuple( ST::zero(), ST::zero(), -ST::one() );
-
-  
-  TEST_COMPARE_ARRAYS( normal_1_view, ref_normal_1 );
-  TEST_COMPARE_ARRAYS( normal_2_view, ref_normal_2 );
-  TEST_COMPARE_ARRAYS( normal_3_view, ref_normal_3 );
-  TEST_COMPARE_ARRAYS( normal_4_view, ref_normal_4 );
-  TEST_COMPARE_ARRAYS( normal_5_view, ref_normal_5 );
-  TEST_COMPARE_ARRAYS( normal_6_view, ref_normal_6 );
+  TEST_EQUALITY( normal_1, ref_normal_1 );
+  TEST_EQUALITY( normal_2, ref_normal_2 );
+  TEST_EQUALITY( normal_3, ref_normal_3 );
+  TEST_EQUALITY( normal_4, ref_normal_4 );
+  TEST_EQUALITY( normal_5, ref_normal_5 );
+  TEST_EQUALITY( normal_6, ref_normal_6 );
 }
 
 UNIT_TEST_INSTANTIATION( Surface, getUnitNormal );
@@ -207,66 +185,39 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
 						       0, 0, 0,
 						       -1 );
 
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  typedef Teuchos::ScalarTraits<ScalarType> ST;
+    
+  FACEMC::Vector<ScalarType> xaxis_translation_vector( 1.0, 0.0, 0.0 );
+
+  FACEMC::Vector<ScalarType> yaxis_translation_vector( 0.0, 1.0, 0.0 );
   
-  typename ThreeSpace::Vector xaxis_translation_vector = 
-    ThreeSpace::createVector( 1.0, 0.0, 0.0 );
+  FACEMC::Vector<ScalarType> zaxis_translation_vector( 0.0, 0.0, 1.0 );
 
-  typename ThreeSpace::Vector yaxis_translation_vector = 
-    ThreeSpace::createVector( 0.0, 1.0, 0.0 );
-  
-  typename ThreeSpace::Vector zaxis_translation_vector = 
-    ThreeSpace::createVector( 0.0, 0.0, 1.0 );
+  FACEMC::Matrix<ScalarType> zero_matrix;
 
-  typename ThreeSpace::Matrix zero_matrix = 
-    ThreeSpace::createSquareMatrix( 0.0, 0.0, 0.0,
-				    0.0, 0.0, 0.0,
-				    0.0, 0.0, 0.0 );
-
-  typename ThreeSpace::Matrix identity_matrix = 
-    ThreeSpace::createSquareMatrix( 1.0, 0.0, 0.0,
-				    0.0, 1.0, 0.0,
-				    0.0, 0.0, 1.0 );
+  FACEMC::Matrix<ScalarType> identity_matrix;
+  identity_matrix.identity();
   
   // Create a plane at z=1 from the xy_plane
   FACEMC::Surface<OrdinalType,ScalarType> z_plane( 2,
 						   xy_plane,
 						   zaxis_translation_vector );
 
-  typename ThreeSpace::Matrix quad_form_matrix = 
+  FACEMC::Matrix<ScalarType> quad_form_matrix = 
     z_plane.getQuadraticFormMatrix();
-  typename ThreeSpace::Vector linear_term_vector = 
+  FACEMC::Vector<ScalarType> linear_term_vector = 
     z_plane.getLinearTermVector();
-  
-  Teuchos::ArrayView<ScalarType> quad_form_matrix_view( 
-						     quad_form_matrix.values(),
-						     9 );
-  Teuchos::ArrayView<ScalarType> linear_term_vector_view(
-						   linear_term_vector.values(),
-						   3 );
 
-  typename ThreeSpace::Vector ref_linear_term_vector =
-    ThreeSpace::createVector( 0.0, 0.0, 1.0 );
-  typename ThreeSpace::Matrix ref_quad_form_matrix = zero_matrix;
+  FACEMC::Vector<ScalarType> ref_linear_term_vector( 0.0, 0.0, 1.0 );
+  FACEMC::Matrix<ScalarType> ref_quad_form_matrix;
   ScalarType ref_constant_term = 1.0;
 
-  Teuchos::ArrayView<ScalarType> ref_quad_form_matrix_view(
-						 ref_quad_form_matrix.values(),
-						 9 );
-  Teuchos::ArrayView<ScalarType> ref_linear_term_vector_view(
-					       ref_linear_term_vector.values(),
-					       3 );
-  
-  TEST_COMPARE_FLOATING_ARRAYS( quad_form_matrix_view,
-				ref_quad_form_matrix_view,
-				ST::prec() );
-  TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector_view,
-				ref_linear_term_vector_view,
-				ST::prec() );
+  TEST_EQUALITY( quad_form_matrix, ref_quad_form_matrix );
+  TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector(),
+				ref_linear_term_vector(),
+				Teuchos::ScalarTraits<ScalarType>::prec() );
   TEST_FLOATING_EQUALITY( z_plane.getConstantTerm(), 
 			  ref_constant_term, 
-			  ST::prec() );
+			  Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // Create a unit sphere centered at (-1, 0, 0) from the unit sphere at origin
   FACEMC::Surface<OrdinalType,ScalarType> unit_sphere_xaxis(
@@ -277,19 +228,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
   quad_form_matrix = unit_sphere_xaxis.getQuadraticFormMatrix();
   linear_term_vector = unit_sphere_xaxis.getLinearTermVector();
 
-  ref_linear_term_vector = ThreeSpace::createVector( 2.0, 0.0, 0.0 );
-  ref_quad_form_matrix = identity_matrix;
+  ref_linear_term_vector =  FACEMC::createVector<ScalarType>( 2.0, 0.0, 0.0 );
+  ref_quad_form_matrix.identity();
   ref_constant_term = 0.0;
 
-  TEST_COMPARE_FLOATING_ARRAYS( quad_form_matrix_view,
-				ref_quad_form_matrix_view,
-				ST::prec() );
-  TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector_view,
-				ref_linear_term_vector_view,
-				ST::prec() );
+  TEST_EQUALITY( quad_form_matrix, ref_quad_form_matrix );
+  TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector(),
+				ref_linear_term_vector(),
+				Teuchos::ScalarTraits<ScalarType>::prec() );
   TEST_FLOATING_EQUALITY( unit_sphere_xaxis.getConstantTerm(), 
 			  ref_constant_term, 
-			  ST::prec() );
+			  Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // Create a unit sphere centered at (0, -1, 0) from the unit sphere at origin
   FACEMC::Surface<OrdinalType,ScalarType> unit_sphere_yaxis(
@@ -300,19 +249,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
   quad_form_matrix = unit_sphere_yaxis.getQuadraticFormMatrix();
   linear_term_vector = unit_sphere_yaxis.getLinearTermVector();
 
-  ref_linear_term_vector = ThreeSpace::createVector( 0.0, 2.0, 0.0 );
-  ref_quad_form_matrix = identity_matrix;
+  ref_linear_term_vector = FACEMC::createVector<ScalarType>( 0.0, 2.0, 0.0 );
+  ref_quad_form_matrix.identity();
   ref_constant_term = 0.0;
 
-  TEST_COMPARE_FLOATING_ARRAYS( quad_form_matrix_view,
-				ref_quad_form_matrix_view,
-				ST::prec() );
-  TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector_view,
-				ref_linear_term_vector_view,
-				ST::prec() );
+  TEST_EQUALITY( quad_form_matrix, ref_quad_form_matrix );
+  TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector(),
+				ref_linear_term_vector(),
+				Teuchos::ScalarTraits<ScalarType>::prec() );
   TEST_FLOATING_EQUALITY( unit_sphere_yaxis.getConstantTerm(), 
 			  ref_constant_term, 
-			  ST::prec() );
+			  Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // Create a unit sphere centered at (0, 0, -1) from the unit sphere at origin
   FACEMC::Surface<OrdinalType,ScalarType> unit_sphere_zaxis( 
@@ -323,19 +270,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
   quad_form_matrix = unit_sphere_zaxis.getQuadraticFormMatrix();
   linear_term_vector = unit_sphere_zaxis.getLinearTermVector();
 
-  ref_linear_term_vector = ThreeSpace::createVector( 0.0, 0.0, 2.0 );
-  ref_quad_form_matrix = identity_matrix;
+  ref_linear_term_vector = FACEMC::createVector<ScalarType>( 0.0, 0.0, 2.0 );
+  ref_quad_form_matrix.identity();
   ref_constant_term = 0.0;
 
-  TEST_COMPARE_FLOATING_ARRAYS( quad_form_matrix_view,
-				ref_quad_form_matrix_view,
-				ST::prec() );
-  TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector_view,
-				ref_linear_term_vector_view,
-				ST::prec() );
+  TEST_EQUALITY( quad_form_matrix, ref_quad_form_matrix );
+  TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector(),
+				ref_linear_term_vector(),
+				Teuchos::ScalarTraits<ScalarType>::prec() );
   TEST_FLOATING_EQUALITY( unit_sphere_zaxis.getConstantTerm(), 
 			  ref_constant_term, 
-			  ST::prec() );
+			  Teuchos::ScalarTraits<ScalarType>::prec() );
 }
 
 UNIT_TEST_INSTANTIATION( Surface, constructor_with_translation_vector );
@@ -359,70 +304,42 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
 							 0.0, 0.0, 0.0,
 							 -1.0 );
 
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  typedef FACEMC::LinearAlgebraPolicy<ScalarType> LAP;
-  typedef Teuchos::ScalarTraits<ScalarType> ST;
-  
   // create the xy-plane by rotating the general plane
-  typename ThreeSpace::Vector desired_direction = 
-    ThreeSpace::createVector( 0.0, 0.0, 1.0 );
-  typename ThreeSpace::Vector current_direction = 
-    plane.getUnitNormalAtPoint( 0.0, 0.0, 0.0 );
-  typename ThreeSpace::Matrix rotation_matrix =
-    LAP::createRotationMatrixFromUnitVectors( desired_direction,
-					      current_direction );
+  FACEMC::Vector<ScalarType> desired_direction( 0.0, 0.0, 1.0 );
+  FACEMC::Vector<ScalarType> current_direction( 1.0/2, 1.0/2, 1.0/sqrt(2.0) );
+  FACEMC::Matrix<ScalarType> rotation_matrix =
+    FACEMC::createRotationMatrixFromUnitVectors( desired_direction,
+						 current_direction );
 
   FACEMC::Surface<OrdinalType,ScalarType> xy_plane( 2,
 						    plane,
 						    rotation_matrix );
   
-  typename ThreeSpace::Matrix quad_form_matrix = 
+  FACEMC::Matrix<ScalarType> quad_form_matrix = 
     xy_plane.getQuadraticFormMatrix();
-  typename ThreeSpace::Vector linear_term_vector = 
+  FACEMC::Vector<ScalarType> linear_term_vector = 
     xy_plane.getLinearTermVector();
   
-  Teuchos::ArrayView<ScalarType> quad_form_matrix_view( 
-						     quad_form_matrix.values(),
-						     9 );
-  Teuchos::ArrayView<ScalarType> linear_term_vector_view( 
-						   linear_term_vector.values(),
-						   3 );
-
-  typename ThreeSpace::Matrix ref_quad_form_matrix = 
-    ThreeSpace::createSymmetricMatrix( 0.0, 0.0, 0.0,
-				            0.0, 0.0,
-				                 0.0 );
-  typename ThreeSpace::Vector ref_linear_term_vector = 
-    ThreeSpace::createVector( 0.0,
-			      0.0, 
-			      1.0 );
-  
+  FACEMC::Matrix<ScalarType> ref_quad_form_matrix;
+  FACEMC::Vector<ScalarType> ref_linear_term_vector( 0.0, 0.0, 1.0 );
   ScalarType ref_constant_term = 0.0;
 
-  Teuchos::ArrayView<ScalarType> ref_quad_form_matrix_view(
-						 ref_quad_form_matrix.values(),
-						 9 );
-  Teuchos::ArrayView<ScalarType> ref_linear_term_vector_view(
-					       ref_linear_term_vector.values(),
-					       3 );
-  
-  TEST_COMPARE_FLOATING_ARRAYS( quad_form_matrix_view,
-				ref_quad_form_matrix_view,
-				ST::prec() );
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector_view,
-				       ref_linear_term_vector_view,
-				       ST::prec() );
+  TEST_EQUALITY( quad_form_matrix, ref_quad_form_matrix );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS(
+				    linear_term_vector(),
+				    ref_linear_term_vector(),
+				    Teuchos::ScalarTraits<ScalarType>::prec());
   TEST_FLOATING_EQUALITY( xy_plane.getConstantTerm(), 
 			  ref_constant_term, 
-			  ST::prec() );
+			  Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // create a cylinder parallel to z-axis centered at (1.0,1.0)
-  typename ThreeSpace::Vector eigenvalues;
-  eigenvalues = LAP::computeEigenvaluesAndEigenvectors( 
-  					skew_cylinder.getQuadraticFormMatrix(),
+  FACEMC::Vector<ScalarType> eigenvalues =
+  FACEMC::LinearAlgebra::computeEigenvaluesAndEigenvectors( 
+					skew_cylinder.getQuadraticFormMatrix(),
   					rotation_matrix );
-  if( LAP::isRealignable( eigenvalues ) )
-    LAP::realignEigenvectors( eigenvalues, rotation_matrix );
+  if( !eigenvalues.hasUniqueElements() )
+    FACEMC::LinearAlgebra::realignEigenvectors( eigenvalues, rotation_matrix );
 
   FACEMC::Surface<OrdinalType,ScalarType> z_cylinder( 3,
 						      skew_cylinder,
@@ -431,24 +348,28 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
   quad_form_matrix = z_cylinder.getQuadraticFormMatrix();
   linear_term_vector = z_cylinder.getLinearTermVector();
 
-  ref_quad_form_matrix = ThreeSpace::createSymmetricMatrix( 1.0, 0.0, 0.0,
-							         1.0, 0.0,
-							              0.0 );
-  ref_linear_term_vector = ThreeSpace::createVector( 0.0, 0.0, 0.0 );
+  ref_quad_form_matrix = FACEMC::createMatrix<ScalarType>( 1.0,
+							   0.0, 1.0,
+							   0.0, 0.0, 0.0 );
+  
+  ref_linear_term_vector = FACEMC::createVector<ScalarType>( 0.0, 0.0, 0.0 );
   ref_constant_term = -1.0;
 
-  TEST_COMPARE_FLOATING_ARRAYS( quad_form_matrix_view,
-				ref_quad_form_matrix_view,
-				ST::prec() );
-  FACEMC_TEST_COMPARE_FLOATING_ARRAYS( linear_term_vector_view,
-				       ref_linear_term_vector_view,
-				       ST::prec() );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS(
+				    quad_form_matrix(),
+				    ref_quad_form_matrix(),
+				    Teuchos::ScalarTraits<ScalarType>::prec());
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS(
+				    linear_term_vector(),
+				    ref_linear_term_vector(),
+				    Teuchos::ScalarTraits<ScalarType>::prec());
   TEST_FLOATING_EQUALITY( z_cylinder.getConstantTerm(), 
 			  ref_constant_term, 
-			  ST::prec() );
+			  Teuchos::ScalarTraits<ScalarType>::prec() );
 }
 
 UNIT_TEST_INSTANTIATION( Surface, constructor_with_rotation_matrix );
+
 //---------------------------------------------------------------------------//
 // Check that a surface can be transformed with a rotation matrix and 
 // a translation vector

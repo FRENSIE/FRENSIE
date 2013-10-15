@@ -9,12 +9,17 @@
 #ifndef SURFACE_DEF_HPP
 #define SURFACE_DEF_HPP
 
+// Std Lib Includes
+#include <sstream>
+
 // Trilinos Includes
 #include <Teuchos_SerialDenseHelpers.hpp>
 
 // FACEMC Includes
 #include "ContractException.hpp"
-#include "ThreeSpaceTraitsAndPolicy.hpp"
+#include "VectorHelpers.hpp"
+#include "MatrixHelpers.hpp"
+#include "LinearAlgebraAlgorithms.hpp"
 
 namespace FACEMC{
 
@@ -32,7 +37,9 @@ Surface<OrdinalType,ScalarType>::Surface( OrdinalType id,
 					  ScalarType j,
 					  ScalarType k,
 					  ScalarType tolerance_ratio )
-  : d_id( id ),
+  : PrintableObject( "ThreeSpaceSurface" ),
+    ThreeSpaceObject( THREE_SPACE_SURFACE ),
+    d_id( id ),
     d_definition( Teuchos::tuple( a, b, c, d, e, f, g, h, j, k ) ),
     d_tolerance( ST::zero() ),
     d_symmetric( false ),
@@ -59,7 +66,9 @@ Surface<OrdinalType,ScalarType>::Surface( OrdinalType id,
 					  ScalarType j,
 					  ScalarType k,
 					  ScalarType tolerance_ratio )
-  : d_id( id ),
+  : PrintableObject( "ThreeSpaceSurface" ),
+    ThreeSpaceObject( THREE_SPACE_SURFACE ),
+    d_id( id ),
     d_definition( Teuchos::tuple( a, b, c, ST::zero(), ST::zero(), ST::zero(), g, h, j, k ) ),
     d_tolerance( ST::zero() ),
     d_symmetric( true ),
@@ -82,7 +91,9 @@ Surface<OrdinalType,ScalarType>::Surface( OrdinalType id,
 					  ScalarType j,
 					  ScalarType k,
 					  ScalarType tolerance_ratio )
-  : d_id( id ),
+  : PrintableObject( "ThreeSpaceSurface" ),
+    ThreeSpaceObject( THREE_SPACE_SURFACE ),
+    d_id( id ),
     d_definition( Teuchos::tuple( ST::zero(), ST::zero(), ST::zero(), ST::zero(), ST::zero(), ST::zero(), g, h, j, k ) ),
     d_tolerance( ST::zero() ),
     d_symmetric( true ),
@@ -96,7 +107,7 @@ Surface<OrdinalType,ScalarType>::Surface( OrdinalType id,
   // Scale the surface so that the linear term vector is a unit vector (this
   // will not change the nature of the surface - it will merely make
   // transformations using this surface cleaner).
-  ScalarType scale_factor = getLinearTermVector().normFrobenius();
+  ScalarType scale_factor = getLinearTermVector().normTwo();
   d_definition[6] /= scale_factor;
   d_definition[7] /= scale_factor;
   d_definition[8] /= scale_factor;
@@ -111,8 +122,10 @@ template<typename OrdinalType, typename ScalarType>
 Surface<OrdinalType,ScalarType>::Surface( 
         OrdinalType id,
 	const Surface<OrdinalType,ScalarType> &original_surface,
-	const Vector &translation_vector )
-  : d_id( id ),
+	const Vector<ScalarType> &translation_vector )
+  : PrintableObject( "ThreeSpaceSurface" ),
+    ThreeSpaceObject( THREE_SPACE_SURFACE ),
+    d_id( id ),
     d_definition( original_surface.d_definition ),
     d_tolerance( original_surface.d_tolerance ),
     d_symmetric( original_surface.d_symmetric ),
@@ -121,18 +134,14 @@ Surface<OrdinalType,ScalarType>::Surface(
   // Make sure that the id is valid
   testPrecondition( id <= OT::max() && id >= OT::zero() );
   // Make sure that the translation vector is valid
-  testPrecondition( translation_vector.length() == 3 );
-  testPrecondition( translation_vector.normFrobenius() > ST::zero() );
-
-  // Successful multiplication returns 0
-  remember( int multiply_success = 0 ); 
+  testPrecondition( translation_vector.normTwo() > ST::zero() );
 
   // Matrix form of surface eqn: x^tAx+b^tx+k => ^t indicates the transpose
   // Translate the surface using the given translation vector:
   //  A' = A
   //  b' = (A + A^t)x0 => x0 is translation vector
   //  k' = x0^tAx0 + b^tx0 + k
-  Vector b = getLinearTermVector();
+  Vector<ScalarType> b = getLinearTermVector();
   
   if( d_planar )
   {
@@ -141,25 +150,12 @@ Surface<OrdinalType,ScalarType>::Surface(
   }
   else // 2nd order surface
   {
-    Matrix A = getQuadraticFormMatrix();
-    Vector Ax0( 3 ), Atx0( 3 );
+    Matrix<ScalarType> A = getQuadraticFormMatrix();
+    Vector<ScalarType> Ax0, Atx0;
 
-    remember( multiply_success += )
-      Ax0.multiply( Teuchos::NO_TRANS, 
-		    Teuchos::NO_TRANS, 
-		    1.0, 
-		    A, 
-		    translation_vector, 
-		    0.0 );
+    Ax0.multiply( 1.0, A, false, translation_vector, 0.0 );
     
-    
-    remember( multiply_success += )
-      Atx0.multiply( Teuchos::TRANS, 
-		     Teuchos::NO_TRANS, 
-		     1.0, 
-		     A, 
-		     translation_vector, 
-		     0.0 );
+    Atx0.multiply( 1.0, A, true, translation_vector, 0.0 );
     
     // g'
     d_definition[6] = Ax0[0] + Atx0[0];
@@ -172,8 +168,6 @@ Surface<OrdinalType,ScalarType>::Surface(
       translation_vector.dot( b );
   }
 
-  // Check that all matrix multiplications were successful
-  testPostcondition( multiply_success == 0 );
   // The new surface must be distinct from the original
   testPostcondition( (getQuadraticFormMatrix() != 
 		      original_surface.getQuadraticFormMatrix()) ||
@@ -188,8 +182,10 @@ template<typename OrdinalType, typename ScalarType>
 Surface<OrdinalType,ScalarType>::Surface( 
 	   OrdinalType id,
 	   const Surface<OrdinalType,ScalarType> &original_surface,
-	   const Matrix &rotation_matrix )
-  : d_id( id ),
+	   const Matrix<ScalarType> &rotation_matrix )
+  : PrintableObject( "ThreeSpaceSurface" ),
+    ThreeSpaceObject( THREE_SPACE_SURFACE ),
+    d_id( id ),
     d_definition( original_surface.d_definition ),
     d_tolerance( original_surface.d_tolerance ),
     d_symmetric( original_surface.d_symmetric ),
@@ -198,9 +194,7 @@ Surface<OrdinalType,ScalarType>::Surface(
   // Make sure that the id is valid
   testPrecondition( id <= OT::max() && id >= OT::zero() );
   // Make sure that the rotation matrix is valid (3x3 and orthonormal)
-  testPrecondition( rotation_matrix.numRows() == 3 );
-  testPrecondition( rotation_matrix.numCols() == 3 );
-  testPrecondition( LAP::isOrthonormal( rotation_matrix ) );
+  testPrecondition( rotation_matrix.isOrthonormal() );
 
   remember( int multiply_success = 0 ); // successful multiplication returns 0
 
@@ -209,15 +203,9 @@ Surface<OrdinalType,ScalarType>::Surface(
   //  A' = R^tAR => R is the rotation matrix
   //  b' = R^tb
   //  k' = k
-  Vector b = getLinearTermVector(), b_prime( 3 );
+  Vector<ScalarType> b = getLinearTermVector(), b_prime;
   
-  remember( multiply_success += )
-    b_prime.multiply( Teuchos::TRANS, 
-		      Teuchos::NO_TRANS, 
-		      1.0, 
-		      rotation_matrix, 
-		      b, 
-		      0.0 );
+  b_prime.multiply( 1.0, rotation_matrix, true, b, 0.0 );
 
   // g'
   d_definition[6] = b_prime[0];
@@ -228,22 +216,10 @@ Surface<OrdinalType,ScalarType>::Surface(
 
   if( !d_planar ) // second order surface
   {
-    Matrix A = getQuadraticFormMatrix(), A_prime( 3, 3 ), AR( 3, 3 );
+    Matrix<ScalarType> A = getQuadraticFormMatrix(), A_prime, AR;
     
-    remember( multiply_success += )
-      AR.multiply( Teuchos::NO_TRANS, 
-		   Teuchos::NO_TRANS, 
-		   1.0, 
-		   A, 
-		   rotation_matrix, 
-		   0.0 );
-    remember( multiply_success += )
-      A_prime.multiply( Teuchos::TRANS, 
-			Teuchos::NO_TRANS, 
-			1.0, 
-			rotation_matrix,
-			AR,
-			0.0 );
+    AR.multiply( 1.0, A, false, rotation_matrix, false, 0.0 );
+    A_prime.multiply( 1.0, rotation_matrix, true, AR, true, 0.0 );
   
     // a'
     d_definition[0] = A_prime( 0, 0 );
@@ -265,8 +241,6 @@ Surface<OrdinalType,ScalarType>::Surface(
     checkSymmetry();
   }
 
-  // Check that all matrix multiplications were successful
-  testPostcondition( multiply_success == 0 );
   // The new surface must be distinct from the original
   testPostcondition( (getQuadraticFormMatrix() != 
 		      original_surface.getQuadraticFormMatrix()) ||
@@ -281,9 +255,11 @@ template<typename OrdinalType, typename ScalarType>
 Surface<OrdinalType,ScalarType>::Surface( 
 	OrdinalType id,
 	const Surface<OrdinalType,ScalarType> &original_surface,
-	const Matrix &rotation_matrix,
-        const Vector &translation_vector )
-  : d_id( id ),
+	const Matrix<ScalarType> &rotation_matrix,
+        const Vector<ScalarType> &translation_vector )
+  : PrintableObject( "ThreeSpaceSurface" ),
+    ThreeSpaceObject( THREE_SPACE_SURFACE ),
+    d_id( id ),
     d_definition( original_surface.d_definition ),
     d_tolerance( original_surface.d_tolerance ),
     d_symmetric( original_surface.d_symmetric ),
@@ -292,29 +268,18 @@ Surface<OrdinalType,ScalarType>::Surface(
   // Make sure that the id is valid
   testPrecondition( id <= OT::max() && id >= OT::zero() );
   // Make sure that the rotation matrix is valid (3x3 and orthonormal)
-  testPrecondition( rotation_matrix.numRows() == 3 );
-  testPrecondition( rotation_matrix.numCols() == 3 );
-  testPrecondition( LAP::isOrthonormal( rotation_matrix ) );
+  testPrecondition( rotation_matrix.isOrthonormal() );
   // Make sure that the translation vector is valid
-  testPrecondition( translation_vector.length() == 3 );
-  testPrecondition( translation_vector.normFrobenius() > ST::zero() );
-
-  remember( int multiply_success = 0 ); // successful multiplication returns 0
+  testPrecondition( translation_vector.normTwo() > ST::zero() );
 
   // Matrix form of surface eqn: x^tAx+b^tx+k => ^t indicates the transpose
   // Translate the surface using the given rot. matrix & trans. vector:
   //  A' = R^tAR => R is the rotation matrix
   //  b' = R^t(A + A^t)x0 + R^tb => x0 is the translation vector
   //  k' = x0^tAx0 + b^tx0 + k
-  Vector b = getLinearTermVector(), b_prime( 3 );
+  Vector<ScalarType> b = getLinearTermVector(), b_prime;
 
-  remember( multiply_success += )
-    b_prime.multiply( Teuchos::TRANS, 
-		      Teuchos::NO_TRANS, 
-		      1.0, 
-		      rotation_matrix, 
-		      b, 
-		      0.0 );
+  b_prime.multiply( 1.0, rotation_matrix, true, b, 0.0 );
 
   if( d_planar )
   {
@@ -329,52 +294,20 @@ Surface<OrdinalType,ScalarType>::Surface(
   }
   else // second order surface
   {
-    Matrix A = getQuadraticFormMatrix(), A_prime( 3, 3 );
-    Vector AR( 3 ), Ax0( 3 ), Atx0( 3 );
+    Matrix<ScalarType> A = getQuadraticFormMatrix(), A_prime;
+    Vector<ScalarType> AR, Ax0, Atx0;
     
-    remember( multiply_success += )
-      Ax0.multiply( Teuchos::NO_TRANS, 
-		    Teuchos::NO_TRANS, 
-		    1.0, 
-		    A, 
-		    translation_vector, 
-		    0.0 );
-    remember( multiply_success += )
-      Atx0.multiply( Teuchos::TRANS, 
-		     Teuchos::NO_TRANS, 
-		     1.0, 
-		     A, 
-		     translation_vector, 
-		     0.0 );
-    //Add extra terms to b'
-    remember( multiply_success += )
-      b_prime.multiply( Teuchos::TRANS, 
-			Teuchos::NO_TRANS, 
-			1.0, 
-			rotation_matrix, 
-			Ax0, 
-			1.0 );
-    remember( multiply_success += )
-      b_prime.multiply( Teuchos::TRANS, 
-			Teuchos::NO_TRANS, 
-			1.0, 
-			rotation_matrix, 
-			Atx0, 
-			1.0 );
-    remember( multiply_success += )
-      AR.multiply( Teuchos::NO_TRANS, 
-		   Teuchos::NO_TRANS, 
-		   1.0, 
-		   A, 
-		   rotation_matrix, 
-		   0.0 );
-    remember( multiply_success += )
-      A_prime.multiply( Teuchos::TRANS, 
-			Teuchos::NO_TRANS, 
-			1.0, 
-			rotation_matrix,
-			AR,
-			0.0 );
+    Ax0.multiply( 1.0, A, false, translation_vector, 0.0 );
+    
+    Atx0.multiply( 1.0, A, true, translation_vector, 0.0 );
+    
+    // Add extra terms to b'
+    b_prime.multiply( 1.0, rotation_matrix, true, Ax0, 1.0 );
+    b_prime.multiply( 1.0, rotation_matrix, true, Atx0, 1.0 );
+    
+    // Compute new quadratic form matrix
+    AR.multiply( 1.0, A, false, rotation_matrix, false, 0.0 );
+    A_prime.multiply( 1.0, rotation_matrix, true, AR, false, 0.0 );
   
     // a'
     d_definition[0] = A_prime( 0, 0 );
@@ -404,9 +337,7 @@ Surface<OrdinalType,ScalarType>::Surface(
     // check if the surface symmetry has changed
     checkSymmetry();
   }
-
-  // Check that all matrix multiplications were successful
-  testPostcondition( multiply_success == 0 );
+  
   // The new surface must be distinct from the original
   testPostcondition( (getQuadraticFormMatrix() != 
 		      original_surface.getQuadraticFormMatrix()) ||
@@ -429,11 +360,9 @@ bool Surface<OrdinalType,ScalarType>::isOn( const ScalarType x,
 
 // Return if the point is on the surface
 template<typename OrdinalType, typename ScalarType>
-bool Surface<OrdinalType,ScalarType>::isOn( const Vector &point ) const
+bool Surface<OrdinalType,ScalarType>::isOn( 
+					const Vector<ScalarType> &point ) const
 {
-  // Make sure that the point is valid
-  testPrecondition( point.length() == 3 );
-
   return isOn( point[0], point[1], point[2] );
 }
 
@@ -478,19 +407,15 @@ SurfaceSense Surface<OrdinalType,ScalarType>::getSenseOfPoint(
 // Return the sense of a point with respect to the surface
 template<typename OrdinalType, typename ScalarType>
 SurfaceSense Surface<OrdinalType,ScalarType>::getSenseOfPoint( 
-						    const Vector &point ) const
+				        const Vector<ScalarType> &point ) const
 {
-  // Make sure the point is valid
-  testPrecondition( point.length() == 3 );
-
   return getSenseOfPoint( point[0], point[1], point[2] );
 }
     
 // Return the unit normal from the surface at a point on the surface,
 // pointing in the direction of the desired sense
 template<typename OrdinalType, typename ScalarType>
-typename Surface<OrdinalType,ScalarType>::Vector
-Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint( 
+Vector<ScalarType> Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint( 
 					       const ScalarType x, 
 					       const ScalarType y, 
 					       const ScalarType z,
@@ -501,7 +426,7 @@ Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
   // The surface sense must be either pos or neg (not on)
   testPrecondition( sense != ON_SURFACE );
 
-  Vector unit_normal( 3 );
+  Vector<ScalarType> unit_normal;
   
   if( d_planar )
   {
@@ -528,7 +453,7 @@ Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
       d_definition[5]*x + d_definition[8];
     
     // Normalize the vector
-    unit_normal.scale( 1.0/unit_normal.normFrobenius() );
+    unit_normal.normalize();
   }
   
   // Point the vector in the direction of the desired half-space
@@ -538,12 +463,12 @@ Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
 
   // Potentially reverse the direction of the unit normal
   if( sense_of_norm_tip != sense )
-    unit_normal.scale( -1.0 );
+    unit_normal *=-1.0;
 
   // The sense of the normal vector tip must not be ON_SURFACE
   testPostcondition( sense_of_norm_tip != ON_SURFACE );
   // The unit normal calculated must be valid
-  testPostcondition( ST::magnitude( unit_normal.normFrobenius() - 1.0 ) < 
+  testPostcondition( ST::magnitude( unit_normal.normTwo() - 1.0 ) < 
 		     ST::prec() );
 
   return unit_normal;
@@ -552,41 +477,31 @@ Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
 // Return the unit normal from the surface at a point on the surface,
 // pointing in the direction of the desired sense
 template<typename OrdinalType, typename ScalarType>
-typename Surface<OrdinalType,ScalarType>::Vector 
-Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint( 
-					       const Vector &point,
+Vector<ScalarType> Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint( 
+					       const Vector<ScalarType> &point,
 					       const SurfaceSense sense ) const
 {
-  // Make sure the point is valid
-  testPrecondition( point.length() == 3 );
-
   return getUnitNormalAtPoint( point[0], point[1], point[2] );
 }
 
 // Return the quadratic form matrix of the surface
 template<typename OrdinalType, typename ScalarType>
-typename Surface<OrdinalType,ScalarType>::Matrix 
+Matrix<ScalarType>
 Surface<OrdinalType,ScalarType>::getQuadraticFormMatrix() const
 {
-  return ThreeSpace::createSquareMatrix( d_definition[0], 
-					 d_definition[3]/2, 
-					 d_definition[5]/2,
-					 d_definition[3]/2,
-					 d_definition[1],
-					 d_definition[4]/2,
-					 d_definition[5]/2,
-					 d_definition[4]/2,
-					 d_definition[2] );
+  return Matrix<ScalarType>( 
+		       d_definition[0], 
+		       d_definition[3]/2, d_definition[1],
+		       d_definition[5]/2, d_definition[4]/2, d_definition[2] );
 }
 
 // Return the linear term vector of the surface
 template<typename OrdinalType, typename ScalarType>
-typename Surface<OrdinalType,ScalarType>::Vector 
-Surface<OrdinalType,ScalarType>::getLinearTermVector() const
+Vector<ScalarType> Surface<OrdinalType,ScalarType>::getLinearTermVector() const
 {
-  return ThreeSpace::createVector( d_definition[6],
-				   d_definition[7],
-				   d_definition[8] );
+  return Vector<ScalarType>( d_definition[6], 
+			     d_definition[7], 
+			     d_definition[8] );
 }
 
 //! Return the constant term of the surface
@@ -596,9 +511,56 @@ ScalarType Surface<OrdinalType,ScalarType>::getConstantTerm() const
   return d_definition[9];
 }
 
+// Print method that defines the behavior of the std::stream << operator
+template<typename OrdinalType, typename ScalarType>
+void Surface<OrdinalType,ScalarType>::print( std::ostream &os ) const
+{
+  std::stringstream ss;
+  if( ST::magnitude( d_definition[0] ) > ST::prec() )
+    ss << d_definition[0] << "x^2 ";
+  if( ST::magnitude( d_definition[1] ) > ST::prec() )
+    ss << d_definition[1] << "y^2 ";
+  if( ST::magnitude( d_definition[2] ) > ST::prec() )
+    ss << d_definition[2] << "z^2 ";
+  if( ST::magnitude( d_definition[3] ) > ST::prec() )
+    ss << d_definition[3] << "xy ";
+  if( ST::magnitude( d_definition[4] ) > ST::prec() )
+    ss << d_definition[4] << "yz ";
+  if( ST::magnitude( d_definition[5] ) > ST::prec() )
+    ss << d_definition[5] << "xz ";
+  if( ST::magnitude( d_definition[6] ) > ST::prec() )
+    ss << d_definition[6] << "x ";
+  if( ST::magnitude( d_definition[7] ) > ST::prec() )
+    ss << d_definition[7] << "y ";
+  if( ST::magnitude( d_definition[8] ) > ST::prec() )
+    ss << d_definition[8] << "z ";
+  if( ST::magnitude( d_definition[9] ) > ST::prec() )
+    ss << d_definition[9];
+  
+  std::string output = ss.str();
+  
+  // remove trailing spaces
+  if( output[output.size()-1] == ' ' )
+    output.erase( output.size()-1, 1 );
+  
+  // replace all remaining spaces with '+'
+  unsigned white_space_loc = output.find( " " );
+  
+  while( white_space_loc < output.size() )
+  {
+    output[white_space_loc] = '+';
+    
+    white_space_loc = output.find( " ", white_space_loc );
+  }
+
+  // print the string
+  os << "Id: " << d_id << std::endl;
+  os << "Definition: " << output << " = 0 " << std::endl;  
+}
+
 // Calculate tolerance based on tolerance ratio
 template<typename OrdinalType, typename ScalarType>
-void Surface<OrdinalType,ScalarType>::setTolerance( ScalarType tolerance_ratio )
+void Surface<OrdinalType,ScalarType>::setTolerance( ScalarType tolerance_ratio)
 {
   typename ST::magnitudeType max = ST::zero();
   
@@ -613,7 +575,7 @@ void Surface<OrdinalType,ScalarType>::setTolerance( ScalarType tolerance_ratio )
 
 // Filter out small values that can be calculated from a transform
 template<typename OrdinalType, typename ScalarType>
-void Surface<OrdinalType,ScalarType>::filterDefinition( ScalarType cutoff_value)
+void Surface<OrdinalType,ScalarType>::filterDefinition(ScalarType cutoff_value)
 {
   for( tupleIndex i = Tuple_OT::zero(); i < 10; ++i )
   {
@@ -642,10 +604,10 @@ void Surface<OrdinalType,ScalarType>::checkSymmetry()
 
 // Evaluate the surface definition at a point
 template<typename OrdinalType, typename ScalarType>
-ScalarType 
-Surface<OrdinalType,ScalarType>::evaluateSurface( const ScalarType x, 
-						  const ScalarType y, 
-						  const ScalarType z ) const
+ScalarType Surface<OrdinalType,ScalarType>::evaluateSurface( 
+						     const ScalarType x, 
+						     const ScalarType y, 
+						     const ScalarType z ) const
 {
   if( d_planar )
     return evaluatePlanarSurface( x, y, z );
@@ -657,8 +619,7 @@ Surface<OrdinalType,ScalarType>::evaluateSurface( const ScalarType x,
 
 // Evaluate planar surface
 template<typename OrdinalType, typename ScalarType>
-ScalarType 
-Surface<OrdinalType,ScalarType>::evaluatePlanarSurface( 
+ScalarType Surface<OrdinalType,ScalarType>::evaluatePlanarSurface( 
 						     const ScalarType x, 
 						     const ScalarType y, 
 						     const ScalarType z ) const

@@ -45,6 +45,23 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( VectorHelpers,
 UNIT_TEST_INSTANTIATION( VectorHelpers, createVector );
 
 //---------------------------------------------------------------------------//
+// Check that a vector can be created from a Trip struct
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( VectorHelpers,
+				   createVector_tuple,
+				   ScalarType )
+{
+  FACEMC::Trip<ScalarType,ScalarType,ScalarType> data( 1.0, 1.0, 1.0 );
+
+  FACEMC::Vector<ScalarType> data_vector = FACEMC::createVector( data );
+
+  FACEMC::Vector<ScalarType> ref_vector( 1.0, 1.0, 1.0 );
+
+  TEST_EQUALITY( data_vector, ref_vector );
+}
+
+UNIT_TEST_INSTANTIATION( VectorHelpers, createVector_tuple );
+
+//---------------------------------------------------------------------------//
 // Check that a x-axis vector can be created
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( VectorHelpers,
 				   createXAxisVector,

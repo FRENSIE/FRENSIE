@@ -18,7 +18,6 @@
 // FACEMC Includes
 #include "Tuple.hpp"
 #include "Vector.hpp"
-#include "VectorHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.

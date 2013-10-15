@@ -48,9 +48,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
 				   ScalarType )
 {
   FACEMC::Matrix<ScalarType> A;
-  FACEMC::Matrix<ScalarType> B( 1.0, 2.0, 3.0,
-				     4.0, 5.0,
-				          6.0 );
+  FACEMC::Matrix<ScalarType> B( 1.0,
+				2.0, 4.0,
+				3.0, 5.0, 6.0 );
 
   TEST_ASSERT( A != B );
 }
@@ -282,9 +282,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
 				   multiply,
 				   ScalarType )
 {
-  FACEMC::Matrix<ScalarType> A( 1.0, 1.0, 1.0,
-				     1.0, 1.0,
-				          1.0 );
+  FACEMC::Matrix<ScalarType> A( 1.0, 
+				1.0, 1.0,
+				1.0, 1.0, 1.0 );
 
   FACEMC::Matrix<ScalarType> B;
   B.identity();
@@ -399,9 +399,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Matrix,
   FACEMC::Matrix<ScalarType> general_matrix( 1.0, 2.0, 3.0,
 					     4.0, 5.0, 6.0,
 					     7.0, 8.0, 9.0 );
-  FACEMC::Matrix<ScalarType> symmetric_matrix( 1.0, 2.0, 3.0,
-					            1.0, 2.0,
-					                 1.0 );
+  FACEMC::Matrix<ScalarType> symmetric_matrix( 1.0,
+					       2.0, 1.0,
+					       3.0, 2.0, 1.0 );
   
   TEST_ASSERT( !general_matrix.isSymmetric() );
   TEST_ASSERT( symmetric_matrix.isSymmetric() );

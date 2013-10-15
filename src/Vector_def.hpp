@@ -157,10 +157,17 @@ Vector<ScalarType>& Vector<ScalarType>::operator*=( const scalarType alpha )
  */
 template<typename ScalarType>
 Vector<ScalarType>& Vector<ScalarType>::operator*=(
-					    Matrix<ScalarType> &source_matrix )
+				      const Matrix<ScalarType> &source_matrix )
 {
+  // Remove the const from source_matrix so that it is compatible with
+  // Teuchos::SerialDenseMatrix interface
+  Matrix<ScalarType>& nonconst_source_matrix = 
+    const_cast<Matrix<ScalarType>& >( source_matrix );
+  
+  remember( const Matrix<ScalarType> copy_source_matrix( source_matrix ) );
+  
   Teuchos::SerialDenseMatrix<ordinalType,ScalarType> 
-    matrix_data( Teuchos::View, source_matrix.getRawPtr(), 3, 3, 3 );
+    matrix_data( Teuchos::View, nonconst_source_matrix.getRawPtr(), 3, 3, 3 );
 
   Teuchos::SerialDenseVector<ordinalType,ScalarType>
     vector_data( Teuchos::Copy, d_data.values(), 3 );
@@ -175,6 +182,8 @@ Vector<ScalarType>& Vector<ScalarType>::operator*=(
     
   // Make sure that the multiplication was successful
   testPostcondition( multiply_success == 0 );
+  // Make sure that the source matrix was not modified
+  testPostcondition( source_matrix == copy_source_matrix );
 
   return *this; 
 }
@@ -187,16 +196,24 @@ Vector<ScalarType>& Vector<ScalarType>::operator*=(
  */
 template<typename ScalarType>
 void Vector<ScalarType>::multiply( const ScalarType alpha,
-				   Matrix<ScalarType> &A,
+				   const Matrix<ScalarType> &A,
 				   const bool transpose_A,
-				   Vector<ScalarType> &x,
+				   const Vector<ScalarType> &x,
 				   const ScalarType beta )
 {
+  // Remove the const from source_matrix so that it is compatible with
+  // Teuchos::SerialDenseMatrix interface
+  Matrix<ScalarType>& nonconst_A = const_cast<Matrix<ScalarType>& >( A );
+  Vector<ScalarType>& nonconst_x = const_cast<Vector<ScalarType>& >( x );
+    
+  remember( const Matrix<ScalarType> copy_A( A ) );
+  remember( const Vector<ScalarType> copy_x( x ) );
+
   Teuchos::SerialDenseMatrix<ordinalType,ScalarType> 
-    A_data( Teuchos::View, A.getRawPtr(), 3, 3, 3 );
+    A_data( Teuchos::View, nonconst_A.getRawPtr(), 3, 3, 3 );
 
   Teuchos::SerialDenseMatrix<ordinalType,ScalarType>
-    x_data( Teuchos::View, x.getRawPtr(), 3, 3, 1 );
+    x_data( Teuchos::View, nonconst_x.getRawPtr(), 3, 3, 1 );
 
   remember( int multiply_success = )
     d_data.multiply( transpose_A ? Teuchos::TRANS : Teuchos::NO_TRANS,
@@ -205,6 +222,10 @@ void Vector<ScalarType>::multiply( const ScalarType alpha,
 		     A_data,
 		     x_data,
 		     beta );
+
+  // Make sure that the input matrix and vector were not modified
+  testPostcondition( A == copy_A );
+  testPostcondition( x == copy_x );
 }
 
 // Normalize this vector 

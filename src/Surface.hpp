@@ -17,8 +17,10 @@
 #include <Teuchos_Tuple.hpp>
 
 // FACEMC Includes
-#include "ThreeSpaceTraitsAndPolicy.hpp"
-#include "LinearAlgebraPolicy.hpp"
+#include "PrintableObject.hpp"
+#include "ThreeSpaceObject.hpp"
+#include "Vector.hpp"
+#include "Matrix.hpp"
 
 namespace FACEMC{
 
@@ -30,7 +32,7 @@ enum SurfaceSense{
 };
 
 template<typename OrdinalType, typename ScalarType>
-class Surface 
+class Surface : public PrintableObject, public ThreeSpaceObject
 {
 
 public:
@@ -53,14 +55,6 @@ private:
   typedef typename Teuchos::Tuple<ScalarType,10>::Ordinal tupleIndex;
   //! Typedef for Teuchos::Tuple ordinal traits
   typedef Teuchos::OrdinalTraits<tupleIndex> Tuple_OT;
-  //! Typedef for three space traits and policy struct
-  typedef ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  //! Typedef for linear algebra policy
-  typedef LinearAlgebraPolicy<ScalarType> LAP;
-  //! Typedef for vector
-  typedef typename ThreeSpace::Vector Vector;
-  //! Typedef for matrix
-  typedef typename ThreeSpace::Matrix Matrix;
   
 public:
 
@@ -101,21 +95,21 @@ public:
   //! Construct surface by translating another surface
   Surface( OrdinalType id,
 	   const Surface<OrdinalType,ScalarType> &original_surface,
-	   const Vector &translation_vector );
+	   const Vector<ScalarType> &translation_vector );
 
   //! Construct surface by rotating another surface
   Surface( OrdinalType id,
 	   const Surface<OrdinalType,ScalarType> &original_surface,
-	   const Matrix &rotation_matrix );
+	   const Matrix<ScalarType> &rotation_matrix );
 
   //! Construct surface by conducting a general transform on another surface
   Surface( OrdinalType id,
 	   const Surface<OrdinalType,ScalarType> &original_surface,
-	   const Matrix &rotation_matrix,
-	   const Vector &translation_vector );
+	   const Matrix<ScalarType> &rotation_matrix,
+	   const Vector<ScalarType> &translation_vector );
 
   //! Destructor.
-  ~Surface()
+  virtual ~Surface()
   { /* ... */ }
 
   //! Return if the point is on the surface.
@@ -124,7 +118,7 @@ public:
 	     const ScalarType z ) const;
 
   //! Return if the point is on the surface.
-  bool isOn( const Vector &point ) const;
+  bool isOn( const Vector<ScalarType> &point ) const;
 
   //! Return if the surface is planar.
   bool isPlanar() const;
@@ -141,28 +135,31 @@ public:
 				const ScalarType z ) const;
 
   //! Return the sense of a point with respect to the surface.
-  SurfaceSense getSenseOfPoint( const Vector &point ) const;
+  SurfaceSense getSenseOfPoint( const Vector<ScalarType> &point ) const;
 
   //! Return the unit normal from the surface at a point on the surface, pointing in the direction of the desired sense.
-  Vector getUnitNormalAtPoint( 
+  Vector<ScalarType> getUnitNormalAtPoint( 
 			  const ScalarType x, 
 			  const ScalarType y, 
 			  const ScalarType z,
 			  const SurfaceSense sense = POS_SURFACE_SENSE ) const;
 
   //! Return the unit normal from the surface at a point on the surface, pointing in the direction of the desired sense.
-  Vector getUnitNormalAtPoint( 
-			  const Vector &point,
+  Vector<ScalarType> getUnitNormalAtPoint( 
+			  const Vector<ScalarType> &point,
 			  const SurfaceSense sense = POS_SURFACE_SENSE ) const;
 
   //! Return the quadratic form matrix of the surface
-  Matrix getQuadraticFormMatrix() const;
+  Matrix<ScalarType> getQuadraticFormMatrix() const;
 
   //! Return the linear term vector of the surface
-  Vector getLinearTermVector() const;
+  Vector<ScalarType> getLinearTermVector() const;
 
   //! Return the constant term of the surface
   ScalarType getConstantTerm() const;
+
+  //! Print method that defines the behavior of the std::stream << operator
+  void print( std::ostream &os ) const;
 
 protected:
 

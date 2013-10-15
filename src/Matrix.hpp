@@ -57,9 +57,9 @@ public:
 	  const ScalarType a20, const ScalarType a21, const ScalarType a22 );
 
   //! Symmetric constructor
-  Matrix( const ScalarType a00, const ScalarType a01, const ScalarType a02,
-	                        const ScalarType a11, const ScalarType a12, 
-	                                              const ScalarType a22 );
+  Matrix( const ScalarType a00,
+	  const ScalarType a10, const ScalarType a11,
+	  const ScalarType a20, const ScalarType a21, const ScalarType a22 );
 
   //! Copy constructor
   Matrix( const Matrix<ScalarType> &source_matrix );

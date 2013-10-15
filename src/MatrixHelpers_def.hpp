@@ -29,13 +29,13 @@ Matrix<ScalarType> createMatrix(
 // Create a 3x3 symmetric matrix
 template<typename ScalarType>
 Matrix<ScalarType> createMatrix(
-	    const ScalarType a00, const ScalarType a01, const ScalarType a02,
-	                          const ScalarType a11, const ScalarType a12, 
-	                                                const ScalarType a22 )
+	    const ScalarType a00, 
+	    const ScalarType a10, const ScalarType a11,
+	    const ScalarType a20, const ScalarType a21, const ScalarType a22 )
 {
-  return Matrix<ScalarType>( a00, a01, a02,
-			          a11, a12,
-			               a22 );
+  return Matrix<ScalarType>( a00, 
+			     a10, a11,
+			     a20, a21, a22 );
 }
 
 // Create a 3x3 matrix from row vectors
@@ -185,10 +185,7 @@ Matrix<ScalarType> createRotationMatrixFromUnitVectors(
   // The initial direction is parallel to the z-axis
   else if( w_i > ST::zero() )
   {
-    initial_dir_to_zaxis_matrix = createMatrix( 
-					   ST::one(), ST::zero(), ST::zero(),
-					   ST::zero(), ST::one(), ST::zero(),
-					   ST::zero(), ST::zero(), ST::one() );
+    initial_dir_to_zaxis_matrix.identity();
   }
   // The initial direction is anti-parallel to the z-axis
   else
@@ -209,12 +206,7 @@ Matrix<ScalarType> createRotationMatrixFromUnitVectors(
   }
   // The final direction is parallel to the z-axis
   else if( w_f > ST::zero() )
-  {
-    zaxis_to_final_dir_matrix = createMatrix(
-					   ST::one(), ST::zero(), ST::zero(),
-					   ST::zero(), ST::one(), ST::zero(),
-					   ST::zero(), ST::zero(), ST::one() );
-  }
+    zaxis_to_final_dir_matrix.identity();
   // The final direction is anti-parallel to the z-axis
   else
   {

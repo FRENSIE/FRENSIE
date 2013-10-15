@@ -137,9 +137,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				   ScalarType )
 {
   // Positive-definite matrix
-  FACEMC::Matrix<ScalarType> coefficient_matrix( 3.0, 0.0, 0.0,
-						      2.0, 0.0, 
-						           1.0 );
+  FACEMC::Matrix<ScalarType> coefficient_matrix( 3.0, 
+						 0.0, 2.0,
+						 0.0, 0.0, 1.0 );
 
   FACEMC::Vector<ScalarType> eigenvalues = 
     FACEMC::LinearAlgebra::computeEigenvalues( coefficient_matrix );
@@ -151,9 +151,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // Negative-definite matrix
-  coefficient_matrix = FACEMC::createMatrix<ScalarType>( -3.0, 0.0, 0.0,
-							      -2.0, 0.0,
-							           -1.0 );
+  coefficient_matrix = FACEMC::createMatrix<ScalarType>( -3.0, 
+							  0.0, -2.0, 
+							  0.0, 0.0, -1.0 );
   eigenvalues = FACEMC::LinearAlgebra::computeEigenvalues( coefficient_matrix);
   
   ref_eigenvalues = FACEMC::createVector<ScalarType>( -3.0, -2.0, -1.0 );
@@ -172,9 +172,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				   ScalarType )
 {
   // Positive-definite matrix
-  FACEMC::Matrix<ScalarType> coef_matrix( 3.0, 0.0, 0.0,
-						      2.0, 0.0,
-						           1.0 );
+  FACEMC::Matrix<ScalarType> coef_matrix( 3.0, 
+					  0.0, 2.0,
+					  0.0, 0.0, 1.0 );
   FACEMC::Matrix<ScalarType> eigenvectors;
 
   FACEMC::Vector<ScalarType> eigenvalues = 
@@ -194,9 +194,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 				Teuchos::ScalarTraits<ScalarType>::prec() );
 
   // Negative-definite matrix
-  coef_matrix = FACEMC::createMatrix<ScalarType>( -3.0, 0.0, 0.0,
-						       -2.0, 0.0,
-							    -1.0 );
+  coef_matrix = FACEMC::createMatrix<ScalarType>( -3.0, 
+						   0.0, -2.0,
+						   0.0, 0.0, -1.0 );
   eigenvalues = 
     FACEMC::LinearAlgebra::computeEigenvaluesAndEigenvectors( coef_matrix,
 							     eigenvectors );
