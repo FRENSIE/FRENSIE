@@ -35,11 +35,6 @@
   TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, long, double ) 
 
 //---------------------------------------------------------------------------//
-// Testing Info.
-//---------------------------------------------------------------------------//
-#define TOL 1e-12
-
-//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that a surface can determine if a point is on it
@@ -334,7 +329,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
 			  ref_constant_term, 
 			  Teuchos::ScalarTraits<ScalarType>::prec() );
 
-  // create a cylinder parallel to z-axis centered at (1.0,1.0)
+  // create a cylinder parallel to z-axis centered at (0.0,0.0)
   FACEMC::Vector<ScalarType> eigenvalues =
   FACEMC::LinearAlgebra::computeEigenvaluesAndEigenvectors( 
 					skew_cylinder.getQuadraticFormMatrix(),
@@ -374,253 +369,97 @@ UNIT_TEST_INSTANTIATION( Surface, constructor_with_rotation_matrix );
 //---------------------------------------------------------------------------//
 // Check that a surface can be transformed with a rotation matrix and 
 // a translation vector
-// TEUCHOS_UNIT_TEST( Surface, transformSurface )
-// {
-//   // Spherical surface centered at (-10,-10,-10) with radius 10
-//   Teuchos::RCP<FACEMC::Surface> surface_ptr( 
-// 			     new FACEMC::Surface( 0,
-// 						  1, 1, 1,
-// 						  20, 20, 20,
-// 						  10*10+10*10+10*10 - 10*10 ) 
-// 					  );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface, 
+				   constructor_general_transformation,
+				   OrdinalType,
+				   ScalarType )
+{
+  // General plane.
+  FACEMC::Surface<OrdinalType,ScalarType> plane( 0,
+						 5, 4, 3,
+						 -2 );
+
+  // create the xy-plane by transforming the general plane
+  FACEMC::Vector<ScalarType> desired_direction( 0.0, 0.0, 1.0 );
+  FACEMC::Vector<ScalarType> current_direction = 
+    plane.getUnitNormalAtPoint( 0.0, 0.5, 0.0 );
+  FACEMC::Matrix<ScalarType> rotation_matrix =
+    FACEMC::createRotationMatrixFromUnitVectors( desired_direction,
+						 current_direction );
+  FACEMC::Vector<ScalarType> translation_vector =
+    FACEMC::createZeroingVector( current_direction,
+				 plane.getConstantTerm() );
+
+  FACEMC::Surface<OrdinalType,ScalarType> xy_plane( 2,
+						    plane,
+						    rotation_matrix,
+						    translation_vector );
   
-//   // Direction vector of sphere local z-axis (in global coordinate system)
-//   FACEMC::Surface::Vector initial_direction =
-//     Teuchos::tuple( -sqrt(3.0)/3, -sqrt(3.0)/3, -sqrt(3.0)/3 );
-
-//   // Direction vector of sphere local z-axis after transform
-//   FACEMC::Surface::Vector final_direction = 
-//     Teuchos::tuple( 0.0, 0.0, 1.0 );
-
-//   // Rotation matrix
-//   FACEMC::Surface::Matrix rotation_matrix =
-//     FACEMC::LinearAlgebra::generateRotationMatrixFromUnitVectors(
-// 				              initial_direction,
-// 				              final_direction );
-
-//   // Translation vector (vector from origin to sphere center)
-//   FACEMC::Surface::Vector translation_vector = 
-//     Teuchos::tuple( -10.0, -10.0, -10.0 );
-
-//   surface_ptr->transformSurface( rotation_matrix,
-// 				 translation_vector );
-
-//   FACEMC::Surface::Matrix ref_quadratic_form_matrix = 
-//     Teuchos::tuple( 1.0, 0.0, 0.0,
-// 		    0.0, 1.0, 0.0,
-// 		    0.0, 0.0, 1.0 );
-//   FACEMC::Surface::Vector ref_linear_term_vector = 
-//     Teuchos::tuple( 0.0, 0.0, 0.0 );
-//   double ref_constant_term = -10*10;
-
-//   FACEMC_TEST_COMPARE_FLOATING_ARRAYS( surface_ptr->getQuadraticFormMatrix()(), 
-// 				       ref_quadratic_form_matrix(),
-// 				       TOL );
-//   FACEMC_TEST_COMPARE_FLOATING_ARRAYS( surface_ptr->getLinearTermVector()(), 
-// 				       ref_linear_term_vector(),
-// 				       TOL );
-//   TEST_FLOATING_EQUALITY( surface_ptr->getConstantTerm(), 
-// 			  ref_constant_term,
-// 			  TOL );
-
-//   // Spherical surface centered at (-10,-10,-10) with radius 10
-//   surface_ptr.reset( new FACEMC::Surface( 0,
-// 					  1, 1, 1,
-// 					  20, 20, 20,
-// 					  10*10+10*10+10*10 - 10*10 ) 
-// 		     );
+  FACEMC::Matrix<ScalarType> quad_form_matrix = 
+    xy_plane.getQuadraticFormMatrix();
+  FACEMC::Vector<ScalarType> linear_term_vector = 
+    xy_plane.getLinearTermVector();
   
-//   // Direction vector of sphere local z-axis (in global coordinate system)
-//   initial_direction =
-//     Teuchos::tuple( -sqrt(3.0)/3, -sqrt(3.0)/3, -sqrt(3.0)/3 );
+  FACEMC::Matrix<ScalarType> ref_quad_form_matrix;
+  FACEMC::Vector<ScalarType> ref_linear_term_vector( 0.0, 0.0, 1.0 );
+  ScalarType ref_constant_term = 0.0;
 
-//   // Direction vector of sphere local z-axis after transform
-//   final_direction = 
-//     Teuchos::tuple( 0.0, 1.0, 0.0 );
+  TEST_EQUALITY( quad_form_matrix, ref_quad_form_matrix );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS(
+				    linear_term_vector(),
+				    ref_linear_term_vector(),
+				    Teuchos::ScalarTraits<ScalarType>::prec());
+  TEST_FLOATING_EQUALITY( xy_plane.getConstantTerm(), 
+			  ref_constant_term, 
+			  Teuchos::ScalarTraits<ScalarType>::prec() );
 
-//   // Rotation matrix
-//   rotation_matrix =
-//     FACEMC::LinearAlgebra::generateRotationMatrixFromUnitVectors(
-// 				              initial_direction,
-// 					      final_direction );
-
-//   // Translation vector 
-//   translation_vector = 
-//     Teuchos::tuple( -10.0, -10.0, -10.0 );
-
-//   surface_ptr->transformSurface( rotation_matrix,
-// 				 translation_vector );
-
-//   translation_vector = 
-//     Teuchos::tuple( 10.0, -10.0, -10.0 );
-
-//   surface_ptr->transformSurface( ref_quadratic_form_matrix,
-// 				 translation_vector );
-
-//   ref_quadratic_form_matrix = 
-//     Teuchos::tuple( 1.0, 0.0, 0.0,
-// 		    0.0, 1.0, 0.0,
-// 		    0.0, 0.0, 1.0 );
-//   ref_linear_term_vector = 
-//     Teuchos::tuple( 20.0, -20.0, -20.0 );
+  // Unit skew cylinder with axis dir (1/2,1/2,sqrt(2)/2) off origin
+  FACEMC::Surface<OrdinalType,ScalarType> skew_cylinder( 
+					      1,
+					      0.5, 1.0, 0.5,
+					      0.0, 0.0, 1.0,
+					      -2+sqrt(2.0), -4.0, -2+sqrt(2.0),
+					      6-2*sqrt(2.0) );
   
-//   ref_constant_term = 10*10+10*10+10*10 - 10*10;
-
-//   FACEMC_TEST_COMPARE_FLOATING_ARRAYS( surface_ptr->getQuadraticFormMatrix()(), 
-// 				       ref_quadratic_form_matrix(),
-// 				       TOL );
-//   FACEMC_TEST_COMPARE_FLOATING_ARRAYS( surface_ptr->getLinearTermVector()(), 
-// 				       ref_linear_term_vector(),
-// 				       TOL );
-//   TEST_FLOATING_EQUALITY( surface_ptr->getConstantTerm(), 
-// 			  ref_constant_term,
-// 			  TOL );
-
-//   // cylindrical surface centered at (x0=-10, y0=-10) with radius 10
-//   surface_ptr.reset( 
-// 		    new FACEMC::Surface( 0,
-// 					 1, 1, 0,
-// 					 20, 20, 0,
-// 					 10*10+10*10 - 10*10 ) 
-// 		     );
+  // create a cylinder parallel to z-axis centered at (1.0,1.0)
+  FACEMC::Vector<ScalarType> eigenvalues =
+  FACEMC::LinearAlgebra::computeEigenvaluesAndEigenvectors( 
+  					skew_cylinder.getQuadraticFormMatrix(),
+  					rotation_matrix );
+  if( !eigenvalues.hasUniqueElements() )
+    FACEMC::LinearAlgebra::realignEigenvectors( eigenvalues, rotation_matrix );
   
-//   // Direction vector of cylinder local z-axis (in global coordinate system)
-//   initial_direction =
-//     Teuchos::tuple( 0.0, 0.0, 1.0 );
+  translation_vector = FACEMC::createVector<ScalarType>( 1, 1, 1 );
 
-//   // Direction vector of cylinder local z-axis after transformation
-//   final_direction =
-//     Teuchos::tuple( 1.0, 0.0, 0.0 );
+  FACEMC::Surface<OrdinalType,ScalarType> z_cylinder( 3,
+  						      skew_cylinder,
+  						      rotation_matrix,
+						      translation_vector );
 
-//   // Rotation matrix
-//   rotation_matrix =
-//     FACEMC::LinearAlgebra::generateRotationMatrixFromUnitVectors(
-// 				              initial_direction,
-// 				              final_direction );
-
-//   // Translation vector (vector from origin to cylinder center)
-//   translation_vector = 
-//     Teuchos::tuple( -10.0, -10.0, 0.0 );
-
-//   surface_ptr->transformSurface( rotation_matrix,
-// 				 translation_vector );
-
-//   ref_quadratic_form_matrix = 
-//     Teuchos::tuple( 0.0, 0.0, 0.0,
-// 		    0.0, 1.0, 0.0,
-// 		    0.0, 0.0, 1.0 );
-//   ref_linear_term_vector = 
-//     Teuchos::tuple( 0.0, 0.0, 0.0 );
-//   ref_constant_term = -10*10;
-
-//   FACEMC_TEST_COMPARE_FLOATING_ARRAYS( surface_ptr->getQuadraticFormMatrix()(), 
-// 				       ref_quadratic_form_matrix(),
-// 				       TOL );
-//   FACEMC_TEST_COMPARE_FLOATING_ARRAYS( surface_ptr->getLinearTermVector()(), 
-// 				       ref_linear_term_vector(),
-// 				       TOL );
-//   TEST_FLOATING_EQUALITY( surface_ptr->getConstantTerm(), 
-// 			  ref_constant_term,
-// 			  TOL );
-
-//   // cylindrical surface centered at (x0=0, y0=-10) with radius 10
-//   surface_ptr.reset( 
-// 		    new FACEMC::Surface( 0,
-// 					 1, 1, 0,
-// 					 0, 20, 0,
-// 					 10*10 - 10*10 ) 
-// 		     );
+  quad_form_matrix = z_cylinder.getQuadraticFormMatrix();
+  linear_term_vector = z_cylinder.getLinearTermVector();
   
-//   // Direction vector of cylinder local z-axis (in global coordinate system)
-//   initial_direction =
-//     Teuchos::tuple( 0.0, 0.0, 1.0 );
-
-//   // Direction vector of cylinder local z-axis after transformation
-//   final_direction =
-//     Teuchos::tuple( 1.0, 0.0, 0.0 );
-
-//   // Rotation matrix
-//   rotation_matrix =
-//     FACEMC::LinearAlgebra::generateRotationMatrixFromUnitVectors(
-// 				              initial_direction,
-// 				              final_direction );
-
-//   // Translation vector (vector from origin to cylinder center)
-//   translation_vector = 
-//     Teuchos::tuple( 0.0, -10.0, 0.0 );
-
-//   surface_ptr->transformSurface( rotation_matrix,
-// 				 translation_vector );
-
-//   ref_quadratic_form_matrix = 
-//     Teuchos::tuple( 0.0, 0.0, 0.0,
-// 		    0.0, 1.0, 0.0,
-// 		    0.0, 0.0, 1.0 );
-//   ref_linear_term_vector = 
-//     Teuchos::tuple( 0.0, 0.0, 0.0 );
-//   ref_constant_term = -10*10;
-
-//   FACEMC_TEST_COMPARE_FLOATING_ARRAYS( surface_ptr->getQuadraticFormMatrix()(), 
-// 				       ref_quadratic_form_matrix(),
-// 				       TOL );
-//   FACEMC_TEST_COMPARE_FLOATING_ARRAYS( surface_ptr->getLinearTermVector()(), 
-// 				       ref_linear_term_vector(),
-// 				       TOL );
-//   TEST_FLOATING_EQUALITY( surface_ptr->getConstantTerm(), 
-// 			  ref_constant_term,
-// 			  TOL );
-
-//   // planar surface 
-//   surface_ptr.reset( 
-// 		    new FACEMC::Surface( 0,
-// 					 6, 5, 4,
-// 					 3 ) 
-// 		     );
+  ref_quad_form_matrix = FACEMC::createMatrix<ScalarType>( 1.0,
+  							   0.0, 1.0,
+  							   0.0, 0.0, 0.0 );
   
-//   // Direction vector of plane local z-axis (in global coordinate system)
-//   initial_direction =
-//     Teuchos::tuple( 6.0/sqrt(6.0*6.0+5.0*5.0+4.0*4.0), 
-// 		    5.0/sqrt(6.0*6.0+5.0*5.0+4.0*4.0), 
-// 		    4.0/sqrt(6.0*6.0+5.0*5.0+4.0*4.0) );
+  ref_linear_term_vector = FACEMC::createVector<ScalarType>( 2.0, 2.0, 0.0 );
+  ref_constant_term = 1.0;
 
-//   // Direction vector of plane local z-axis after transformation
-//   final_direction =
-//     Teuchos::tuple( 0.0, 0.0, 1.0 );
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS(
+  				    quad_form_matrix(),
+  				    ref_quad_form_matrix(),
+  				    Teuchos::ScalarTraits<ScalarType>::prec());
+  FACEMC_TEST_COMPARE_FLOATING_ARRAYS(
+  				    linear_term_vector(),
+  				    ref_linear_term_vector(),
+  				    Teuchos::ScalarTraits<ScalarType>::prec());
+  TEST_FLOATING_EQUALITY( z_cylinder.getConstantTerm(), 
+  			  ref_constant_term, 
+  			  Teuchos::ScalarTraits<ScalarType>::prec() );
+}
 
-//   // Rotation matrix
-//   rotation_matrix =
-//     FACEMC::LinearAlgebra::generateRotationMatrixFromUnitVectors(
-// 					      initial_direction,
-// 				              final_direction );
-  
-//   rotation_matrix = FACEMC::LinearAlgebra::matrixTranspose( rotation_matrix );
-  
-//   // Translation vector (vector from origin to plane)
-//   translation_vector = 
-//     Teuchos::tuple( 0.0, 0.0, surface_ptr->getConstantTerm()/-4.0 );
-
-//   surface_ptr->transformSurface( rotation_matrix,
-// 				 translation_vector );
-
-//   ref_quadratic_form_matrix = 
-//     Teuchos::tuple( 0.0, 0.0, 0.0,
-// 		    0.0, 0.0, 0.0,
-// 		    0.0, 0.0, 0.0 );
-//   ref_linear_term_vector = 
-//     Teuchos::tuple( 0.0, 0.0, sqrt(6.0*6.0+5.0*5.0+4.0*4.0) );
-//   ref_constant_term = 0.0;
-
-//   FACEMC_TEST_COMPARE_FLOATING_ARRAYS( surface_ptr->getQuadraticFormMatrix()(), 
-// 				       ref_quadratic_form_matrix(),
-// 				       TOL );
-//   FACEMC_TEST_COMPARE_FLOATING_ARRAYS( surface_ptr->getLinearTermVector()(), 
-// 				       ref_linear_term_vector(),
-// 				       TOL );
-//   TEST_FLOATING_EQUALITY( surface_ptr->getConstantTerm(), 
-// 			  ref_constant_term,
-// 			  TOL );
-
-// }  
+UNIT_TEST_INSTANTIATION( Surface, constructor_general_transformation );
 	   
 //---------------------------------------------------------------------------//
 // end tstSurface.cpp

@@ -139,7 +139,7 @@ Surface<OrdinalType,ScalarType>::Surface(
   // Matrix form of surface eqn: x^tAx+b^tx+k => ^t indicates the transpose
   // Translate the surface using the given translation vector:
   //  A' = A
-  //  b' = (A + A^t)x0 => x0 is translation vector
+  //  b' = (A + A^t)x0 = 2Ax0 => x0 is translation vector
   //  k' = x0^tAx0 + b^tx0 + k
   Vector<ScalarType> b = getLinearTermVector();
   
@@ -151,18 +151,16 @@ Surface<OrdinalType,ScalarType>::Surface(
   else // 2nd order surface
   {
     Matrix<ScalarType> A = getQuadraticFormMatrix();
-    Vector<ScalarType> Ax0, Atx0;
+    Vector<ScalarType> Ax0;
 
     Ax0.multiply( 1.0, A, false, translation_vector, 0.0 );
     
-    Atx0.multiply( 1.0, A, true, translation_vector, 0.0 );
-    
     // g'
-    d_definition[6] = Ax0[0] + Atx0[0];
+    d_definition[6] = 2*Ax0[0];
     // h'
-    d_definition[7] = Ax0[1] + Atx0[1];
+    d_definition[7] = 2*Ax0[1];
     // j'
-    d_definition[8] = Ax0[2] + Atx0[2];
+    d_definition[8] = 2*Ax0[2];
     // k'
     d_definition[9] += translation_vector.dot( Ax0 ) + 
       translation_vector.dot( b );
@@ -275,7 +273,7 @@ Surface<OrdinalType,ScalarType>::Surface(
   // Matrix form of surface eqn: x^tAx+b^tx+k => ^t indicates the transpose
   // Translate the surface using the given rot. matrix & trans. vector:
   //  A' = R^tAR => R is the rotation matrix
-  //  b' = R^t(A + A^t)x0 + R^tb => x0 is the translation vector
+  //  b' = R^t(A + A^t)x0 + R^tb = 2R^tAx0 + R^tb => x0 is the translation vec
   //  k' = x0^tAx0 + b^tx0 + k
   Vector<ScalarType> b = getLinearTermVector(), b_prime;
 
@@ -294,16 +292,13 @@ Surface<OrdinalType,ScalarType>::Surface(
   }
   else // second order surface
   {
-    Matrix<ScalarType> A = getQuadraticFormMatrix(), A_prime;
-    Vector<ScalarType> AR, Ax0, Atx0;
+    Matrix<ScalarType> A = getQuadraticFormMatrix(), A_prime, AR;
+    Vector<ScalarType> Ax0;
     
     Ax0.multiply( 1.0, A, false, translation_vector, 0.0 );
     
-    Atx0.multiply( 1.0, A, true, translation_vector, 0.0 );
-    
     // Add extra terms to b'
-    b_prime.multiply( 1.0, rotation_matrix, true, Ax0, 1.0 );
-    b_prime.multiply( 1.0, rotation_matrix, true, Atx0, 1.0 );
+    b_prime.multiply( 2.0, rotation_matrix, true, Ax0, 1.0 );
     
     // Compute new quadratic form matrix
     AR.multiply( 1.0, A, false, rotation_matrix, false, 0.0 );

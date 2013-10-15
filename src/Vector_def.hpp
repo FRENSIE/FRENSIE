@@ -218,7 +218,7 @@ void Vector<ScalarType>::multiply( const ScalarType alpha,
   remember( int multiply_success = )
     d_data.multiply( transpose_A ? Teuchos::TRANS : Teuchos::NO_TRANS,
 		     Teuchos::NO_TRANS,
-		     ST::one(),
+		     alpha,
 		     A_data,
 		     x_data,
 		     beta );
