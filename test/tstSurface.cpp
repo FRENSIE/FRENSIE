@@ -306,7 +306,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
 
   // create the xy-plane by rotating the general plane
   FACEMC::Vector<ScalarType> desired_direction( 0.0, 0.0, 1.0 );
-  FACEMC::Vector<ScalarType> current_direction( 1.0/2, 1.0/2, 1.0/sqrt(2.0) );
+  FACEMC::Vector<ScalarType> current_direction = 
+    plane.getUnitNormalAtPoint( 0.0, 0.0, 0.0 );
   FACEMC::Matrix<ScalarType> rotation_matrix =
     FACEMC::createRotationMatrixFromUnitVectors( desired_direction,
 						 current_direction );

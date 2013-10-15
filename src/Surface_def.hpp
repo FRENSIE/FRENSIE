@@ -219,7 +219,7 @@ Surface<OrdinalType,ScalarType>::Surface(
     Matrix<ScalarType> A = getQuadraticFormMatrix(), A_prime, AR;
     
     AR.multiply( 1.0, A, false, rotation_matrix, false, 0.0 );
-    A_prime.multiply( 1.0, rotation_matrix, true, AR, true, 0.0 );
+    A_prime.multiply( 1.0, rotation_matrix, true, AR, false, 0.0 );
   
     // a'
     d_definition[0] = A_prime( 0, 0 );
