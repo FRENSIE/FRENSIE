@@ -9,11 +9,9 @@
 #ifndef POLYGON_DEF_HPP
 #define POLYGON_DEF_HPP
 
-// Std Lib Includes
-#include <list>
-
 // FACEMC Includes
-#include "Tuple.hpp"
+#include "LinearAlgebraAlgorithms.hpp"
+#include "VectorHelpers.hpp"
 
 namespace FACEMC{
 
@@ -25,16 +23,19 @@ namespace FACEMC{
  */ 
 template<typename OrdinalType, typename ScalarType>
 Polygon<OrdinalType,ScalarType>::Polygon( 
-			      const OrdinalType polygon_id,
-			      const std::list<Point> &ordered_polygon_corners )
-  : d_id( polygon_id ),
+		const OrdinalType polygon_id,
+		const std::list<Vector<ScalarType> > &ordered_polygon_corners )
+  : PrintableObject( "ThreeSpacePolygon" ),
+    ThreeSpaceObject( THREE_SPACE_POLYGON ),
+    d_id( polygon_id ),
     d_corners( ordered_polygon_corners.size() ),
+    d_min_coordinates(),
     d_max_coordinates(),
     d_area( ST::zero() ),
     d_centroid(),
-    d_unit_normal( 3 ),
-    d_rotation_matrix( 3, 3 ),
-    d_translation_vector( 3 )
+    d_unit_normal(),
+    d_rotation_matrix(),
+    d_translation_vector()
 {
   // The polygon must have at least 4 corners (3 + copy of first point)
   testPrecondition( d_corners.size() >= 4 );
@@ -99,7 +100,7 @@ template<typename OrdinalType, typename ScalarType>
 inline ScalarType 
 Polygon<OrdinalType,ScalarType>::getMinXCoordinate() const
 {
-  return d_min_coordinates.first;
+  return d_min_coordinates[0];
 }
 
 // Return the maximum x-coordinate
@@ -107,7 +108,7 @@ template<typename OrdinalType, typename ScalarType>
 inline ScalarType 
 Polygon<OrdinalType,ScalarType>::getMaxXCoordinate() const
 {
-  return d_max_coordinates.first;
+  return d_max_coordinates[0];
 }
 
 // Return the minimum y-coordinate
@@ -115,7 +116,7 @@ template<typename OrdinalType, typename ScalarType>
 inline ScalarType
 Polygon<OrdinalType,ScalarType>::getMinYCoordinate() const
 {
-  return d_min_coordinates.second;
+  return d_min_coordinates[1];
 }
 
 // Return the maximum y-coordinate
@@ -123,7 +124,7 @@ template<typename OrdinalType, typename ScalarType>
 inline ScalarType
 Polygon<OrdinalType,ScalarType>::getMaxYCoordinate() const
 {
-  return d_max_coordinates.second;
+  return d_max_coordinates[1];
 }
 
 // Return the minimum z-coordinate
@@ -131,7 +132,7 @@ template<typename OrdinalType, typename ScalarType>
 inline ScalarType
 Polygon<OrdinalType,ScalarType>::getMinZCoordinate() const
 {
-  return d_min_coordinates.third;
+  return d_min_coordinates[2];
 }
 
 // Return the maximum z-coordinate
@@ -139,7 +140,7 @@ template<typename OrdinalType, typename ScalarType>
 inline ScalarType
 Polygon<OrdinalType,ScalarType>::getMaxZCoordinate() const
 {
-  return d_max_coordinates.third;
+  return d_max_coordinates[2];
 }
 
 // Return the centroid x-coordinate
@@ -147,7 +148,7 @@ template<typename OrdinalType, typename ScalarType>
 inline ScalarType
 Polygon<OrdinalType,ScalarType>::getCentroidXCoordinate() const
 {
-  return d_centroid.first;
+  return d_centroid[0];
 }
 
 // Return the centroid y-coordinate
@@ -155,7 +156,7 @@ template<typename OrdinalType, typename ScalarType>
 inline ScalarType
 Polygon<OrdinalType,ScalarType>::getCentroidYCoordinate() const
 {
-  return d_centroid.second;
+  return d_centroid[1];
 }
 
 // Return the centroid z-coordinate
@@ -163,12 +164,12 @@ template<typename OrdinalType, typename ScalarType>
 inline ScalarType
 Polygon<OrdinalType,ScalarType>::getCentroidZCoordinate() const
 {
-  return d_centroid.third;
+  return d_centroid[2];
 }
 
 // Return the polygon centroid
 template<typename OrdinalType, typename ScalarType>
-typename Polygon<OrdinalType,ScalarType>::Point
+Vector<ScalarType>
 Polygon<OrdinalType,ScalarType>::getCentroid() const
 {
   return d_centroid;
@@ -176,49 +177,56 @@ Polygon<OrdinalType,ScalarType>::getCentroid() const
 
 // Return the unit normal to the plane of the polygon
 template<typename OrdinalType, typename ScalarType>
-typename ThreeSpaceTraitsAndPolicy<ScalarType>::Vector
+Vector<ScalarType> 
 Polygon<OrdinalType,ScalarType>::getPolygonPlaneUnitNormal() const
 {
   return d_unit_normal;
 }
 
-// Print the polygon
+// Print method that defines the behavior of the std::stream << operator
 template<typename OrdinalType, typename ScalarType>
-void Polygon<OrdinalType,ScalarType>::print( 
-					    std::ostream &output_stream ) const
+void Polygon<OrdinalType,ScalarType>::print( std::ostream &os ) const
 {
+  os << "Id: " << d_id << std::endl;
+  os << "Area: " << d_area << std::endl;
+  os << "Centroid: {" << d_centroid[0] << "," << d_centroid[1] << ","
+     << d_centroid[2] << "}" << std::endl;
+  os << "Unit Normal: {" << d_unit_normal[0] << "," << d_unit_normal[1] << ","
+     << d_unit_normal[2] << "}" << std::endl;
+  os << "Ordered Corners: ";
+  
   typename std::list<PointProjection>::const_iterator corner, end_corner;
   corner = d_corners.begin();
   end_corner = d_corners.end();
 
   while( corner != end_corner )
   {
-    Point original_point = 
+    Vector<ScalarType> original_point = 
       Polygon<OrdinalType,ScalarType>::applyReverseTransform( 
 							*corner,
 							d_rotation_matrix,
 							d_translation_vector );
-    output_stream << "{" << original_point.first << ","
-		  << original_point.second << ","
-		  << original_point.third << "} ";
+    os << "{" << original_point[0] << ","
+       << original_point[1] << ","
+       << original_point[2] << "} ";
       
     ++corner;
   }
 
-  output_stream << std::endl;
+  os << std::endl;
 }
 
 // Compute the unit normal to the plane of the polygon
 template<typename OrdinalType, typename ScalarType>
-typename ThreeSpaceTraitsAndPolicy<ScalarType>::Vector
+Vector<ScalarType>
 Polygon<OrdinalType,ScalarType>::calculatePolygonPlaneUnitNormal(
-			              const std::list<Point> &polygon_corners )
+			const std::list<Vector<ScalarType> > &polygon_corners )
 {
   // The polygon must have at least 4 corners (3 + copy of first point)
   testPrecondition( polygon_corners.size() >= 4 );
   
-  typename std::list<Point>::const_iterator first_point, second_point, 
-    third_point;
+  typename std::list<Vector<ScalarType> >::const_iterator first_point, 
+    second_point, third_point;
   
   first_point = polygon_corners.begin();
   
@@ -230,20 +238,18 @@ Polygon<OrdinalType,ScalarType>::calculatePolygonPlaneUnitNormal(
 
   // The orientation of these vector assures that the transformed polygon
   // will have a left-handed orientation on the xy-plane (needed for pos. area)
-  Vector polygon_vector_1 =
-    ThreeSpace::createVector( second_point->first - third_point->first,
-			      second_point->second - third_point->second,
-			      second_point->third - third_point->third );
+  Vector<ScalarType> polygon_vector_1((*second_point)[0] - (*third_point)[0],
+				      (*second_point)[1] - (*third_point)[1],
+				      (*second_point)[2] - (*third_point)[2] );
 
-  Vector polygon_vector_2 = 
-    ThreeSpace::createVector( second_point->first - first_point->first,
-			      second_point->second - first_point->second,
-			      second_point->third - first_point->third );
+  Vector<ScalarType> polygon_vector_2((*second_point)[0] - (*first_point)[0],
+				      (*second_point)[1] - (*first_point)[1],
+				      (*second_point)[2] - (*first_point)[2] );
 
-  Vector polygon_plane_normal =
-    LAP::computeCrossProduct( polygon_vector_1, polygon_vector_2 );
+  Vector<ScalarType> polygon_plane_normal =
+    LinearAlgebra::computeCrossProduct( polygon_vector_1, polygon_vector_2 );
+  polygon_plane_normal.normalize();
   
-  LAP::normalizeVector( polygon_plane_normal );
 
   return polygon_plane_normal;
 }
@@ -251,46 +257,46 @@ Polygon<OrdinalType,ScalarType>::calculatePolygonPlaneUnitNormal(
 // Find and the maximum and minimum coordinates of the polygon
 template<typename OrdinalType, typename ScalarType>
 void Polygon<OrdinalType,ScalarType>::getExtremeCoordinates(
-				       const std::list<Point> &polygon_corners,
-				       Point &min_coordinates,
-				       Point &max_coordinates )
+			 const std::list<Vector<ScalarType> > &polygon_corners,
+			 Vector<ScalarType> &min_coordinates,
+			 Vector<ScalarType> &max_coordinates )
 {
   // The polygon must have at least 4 corners (3 + copy of first point)
   testPrecondition( polygon_corners.size() >= 4 );
 
   // Initialize the min coordinates
-  min_coordinates.first = ST::rmax();
-  min_coordinates.second = ST::rmax();
-  min_coordinates.third = ST::rmax();
+  min_coordinates[0] = ST::rmax();
+  min_coordinates[1] = ST::rmax();
+  min_coordinates[2] = ST::rmax();
 
   // Initialize the max coordinates
-  max_coordinates.first = -ST::rmax();
-  max_coordinates.second = -ST::rmax();
-  max_coordinates.third = -ST::rmax();
+  max_coordinates[0] = -ST::rmax();
+  max_coordinates[1] = -ST::rmax();
+  max_coordinates[2] = -ST::rmax();
 
-  typename std::list<Point>::const_iterator corner, end_corner;
+  typename std::list<Vector<ScalarType> >::const_iterator corner, end_corner;
   corner = polygon_corners.begin();
   end_corner = polygon_corners.end();
 
   while( corner != end_corner )
   {
-    if( corner->first < min_coordinates.first )
-      min_coordinates.first = corner->first;
+    if( (*corner)[0] < min_coordinates[0] )
+      min_coordinates[0] = (*corner)[0];
     
-    if( corner->first > max_coordinates.first )
-      max_coordinates.first = corner->first;
+    if( (*corner)[0] > max_coordinates[0] )
+      max_coordinates[0] = (*corner)[0];
     
-    if( corner->second < min_coordinates.second )
-      min_coordinates.second = corner->second;
+    if( (*corner)[1] < min_coordinates[1] )
+      min_coordinates[1] = (*corner)[1];
 
-    if( corner->second > max_coordinates.second )
-      max_coordinates.second = corner->second;
+    if( (*corner)[1] > max_coordinates[1] )
+      max_coordinates[1] = (*corner)[1];
     
-    if( corner->third < min_coordinates.third )
-      min_coordinates.third = corner->third;
+    if( (*corner)[2] < min_coordinates[2] )
+      min_coordinates[2] = (*corner)[2];
 
-    if( corner->third > max_coordinates.third )
-      max_coordinates.third = corner->third;
+    if( (*corner)[2] > max_coordinates[2] )
+      max_coordinates[2] = (*corner)[2];
 
     ++corner;
   }
@@ -299,55 +305,49 @@ void Polygon<OrdinalType,ScalarType>::getExtremeCoordinates(
 // Create and set the transformation matrix and vector
 template<typename OrdinalType, typename ScalarType>
 void Polygon<OrdinalType,ScalarType>::getTransformMatrixAndVector( 
-				       const Vector &polygon_plane_unit_normal,
-				       const Point &polygon_corner,
-				       Matrix &rotation_matrix,
-				       Vector &translation_vector )
+			   const Vector<ScalarType> &polygon_plane_unit_normal,
+			   const Vector<ScalarType> &polygon_corner,
+			   Matrix<ScalarType> &rotation_matrix,
+			   Vector<ScalarType> &translation_vector )
 {
   // Make sure the unit normal is valid
-  testPrecondition( ST::magnitude( polygon_plane_unit_normal.normFrobenius() - 
+  testPrecondition( ST::magnitude( polygon_plane_unit_normal.normTwo() - 
 				   ST::one() ) < ST::prec() );
 
   // Create the rotation matrix
-  rotation_matrix = LAP::createRotationMatrixFromUnitVectors( 
-						   polygon_plane_unit_normal,
-						   ThreeSpace::zaxisVector() );
-
-  // Convert the polygon corner to a three space vector
-  Vector point = ThreeSpace::createVector( polygon_corner.first,
-					   polygon_corner.second,
-					   polygon_corner.third );
+  rotation_matrix = createRotationMatrixFromUnitVectors( 
+					     polygon_plane_unit_normal,
+					     createZAxisVector<ScalarType>() );
 
   // Determine the rotated polygon plane constant
-  Vector rotation_matrix_row_3 = ThreeSpace::createVector( 
-						     rotation_matrix( 2, 0 ), 
-						     rotation_matrix( 2, 1 ),
-						     rotation_matrix( 2, 2 ) );
-  ScalarType rotated_plane_constant = rotation_matrix_row_3.dot( point );
+  Vector<ScalarType> rotation_matrix_row_3( rotation_matrix( 2, 0 ), 
+					    rotation_matrix( 2, 1 ),
+					    rotation_matrix( 2, 2 ) );
+  
+  ScalarType rotated_plane_constant = 
+    rotation_matrix_row_3.dot( polygon_corner );
 
   // The translation will only need to occur in the z-direction
   ScalarType delta_z = -rotated_plane_constant;
 
   // Create the translation vector
-  translation_vector = ThreeSpace::createVector( ST::zero(),
-						 ST::zero(),
-						 delta_z );
+  translation_vector = createVector<ScalarType>( 0.0, 0.0, delta_z );
 }
 
 // Simplify the polygon by transforming plane-of-polygon to x-y plane
 template<typename OrdinalType, typename ScalarType>
 void Polygon<OrdinalType,ScalarType>::transformPolygon(
-		      const std::list<Point> &polygon_corners,
+		      const std::list<Vector<ScalarType> > &polygon_corners,
 		      std::list<PointProjection> &transformed_polygon_corners,
-		      const Matrix &rotation_matrix,
-		      const Vector &translation_vector )
+		      const Matrix<ScalarType> &rotation_matrix,
+		      const Vector<ScalarType> &translation_vector )
 {
   // The polygon must have at least 4 corners (3 + copy of first point)
   testPrecondition( polygon_corners.size() >= 4 );
   testPrecondition( polygon_corners.size() == 
 		    transformed_polygon_corners.size() );
 
-  typename std::list<Point>::const_iterator corner, end_corner;
+  typename std::list<Vector<ScalarType> >::const_iterator corner, end_corner;
   corner = polygon_corners.begin();
   end_corner = polygon_corners.end();
 
@@ -369,33 +369,18 @@ void Polygon<OrdinalType,ScalarType>::transformPolygon(
 template<typename OrdinalType, typename ScalarType>
 typename Polygon<OrdinalType,ScalarType>::PointProjection
 Polygon<OrdinalType,ScalarType>::applyTransform( 
-					     const Point &point_on_polygon,
-					     const Matrix &rotation_matrix,
-					     const Vector &translation_vector )
+				 const Vector<ScalarType> &point_on_polygon,
+				 const Matrix<ScalarType> &rotation_matrix,
+				 const Vector<ScalarType> &translation_vector )
 {
   // Make sure that the rotation matrix is valid (3x3 and orthonormal)
-  testPrecondition( rotation_matrix.numRows() == 3 );
-  testPrecondition( rotation_matrix.numCols() == 3 );
-  testPrecondition( LAP::isOrthonormal( rotation_matrix ) );
-
-  // Convert the point to a vector
-  Vector point = ThreeSpace::createVector( point_on_polygon.first,
-					   point_on_polygon.second,
-					   point_on_polygon.third );
+  testPrecondition( rotation_matrix.isOrthonormal() );
 
   // Apply the transformation (x' = R*x + x_0)
-  Vector transformed_point( translation_vector );
-  remember( int multiply_success = )
-    transformed_point.multiply( Teuchos::NO_TRANS,
-				Teuchos::NO_TRANS,
-				ST::one(),
-				rotation_matrix,
-				point,
-				ST::one() );
+  Vector<ScalarType> transformed_point( point_on_polygon );
+  transformed_point *= rotation_matrix;
+  transformed_point += translation_vector;
 
-  // Make sure that the multiplication was successful
-  testPostcondition( multiply_success == 0 );
-  
   // Make sure that the transform was successful
   testPostcondition( ST::magnitude( transformed_point[2] ) < ST::prec() );
 
@@ -406,41 +391,29 @@ Polygon<OrdinalType,ScalarType>::applyTransform(
 
 // Apply reverse transform to a point on the polygon
 template<typename OrdinalType, typename ScalarType>
-typename Polygon<OrdinalType,ScalarType>::Point
+Vector<ScalarType>
 Polygon<OrdinalType,ScalarType>::applyReverseTransform( 
-				       const PointProjection &xy_plane_point,
-				       const Matrix &rotation_matrix,
-				       const Vector &translation_vector )
+				 const PointProjection &xy_plane_point,
+				 const Matrix<ScalarType> &rotation_matrix,
+				 const Vector<ScalarType> &translation_vector )
 {
   // Make sure that the rotation matrix is valid (3x3 and orthonormal)
-  testPrecondition( rotation_matrix.numRows() == 3 );
-  testPrecondition( rotation_matrix.numCols() == 3 );
-  testPrecondition( LAP::isOrthonormal( rotation_matrix ) );
+  testPrecondition( rotation_matrix.isOrthonormal() );
 
   // Convert the point to a vector (x' - x_0)
-  Vector point = ThreeSpace::createVector( 
-				 xy_plane_point.first - translation_vector[0],
-				 xy_plane_point.second - translation_vector[1],
-				 -translation_vector[2] );
+  Vector<ScalarType> point( xy_plane_point.first - translation_vector[0],
+			    xy_plane_point.second - translation_vector[1],
+			    -translation_vector[2] );
 
   // Apply the reverse transformation ( x = R^T*(x' - x_0) )
-  Vector transformed_point( translation_vector );
-  remember( int multiply_success = )
-    transformed_point.multiply( Teuchos::TRANS,
-				Teuchos::NO_TRANS,
-				ST::one(),
-				rotation_matrix,
-				point,
-				ST::zero() );
+  Vector<ScalarType> transformed_point;
+  transformed_point.multiply( 1.0,
+			      rotation_matrix,
+			      true,
+			      point,
+			      0.0 );  
 
-  // Make sure that the multiplication was successful
-  testPostcondition( multiply_success == 0 );
-
-  // Return the point
-  Point new_point( transformed_point[0], 
-		   transformed_point[1],
-		   transformed_point[2] );
-  return new_point;
+  return transformed_point;
 }
 
 // Compute the area of a simplified polygon

@@ -18,8 +18,9 @@
 // FACEMC Includes
 #include "FACEMC_UnitTestHarnessExtensions.hpp"
 #include "Polygon.hpp"
-#include "ThreeSpaceTraitsAndPolicy.hpp"
-#include "LinearAlgebraPolicy.hpp"
+#include "Vector.hpp"
+#include "Matrix.hpp"
+#include "MatrixHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
@@ -68,19 +69,19 @@ void createThreeSpaceTriangle( CornerContainer &polygon_corners )
   polygon_corners.clear();
   
   // First point on origin
-  typename CornerContainer::value_type corner( 0.0, 0.0, 0.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_1( 0.0, 0.0, 0.0 );
+  polygon_corners.push_back( corner_1 );
   
   // Second point at (1, 1, 1)
-  corner( 1.0, 1.0, 1.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_2( 1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_2 );
 
   // Third point at (1, 0, 0)
-  corner( 1.0, 0.0, 0.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_3( 1.0, 0.0, 0.0 );
+  polygon_corners.push_back( corner_3 );
 
   // Add a copy of the first point
-  polygon_corners.push_back( polygon_corners.front() );
+  polygon_corners.push_back( corner_1 );
 }
 
 template<typename CornerContainer>
@@ -89,23 +90,23 @@ void createSimpleThreeSpaceSquare( CornerContainer &polygon_corners )
   polygon_corners.clear();
 
   // First point at (1, 1, 1)
-  typename CornerContainer::value_type corner( 1.0, 1.0, 1.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_1 );
 
   // Second point at (-1, 1, 1)
-  corner( -1.0, 1.0, 1.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_2( -1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_2 );
 
   // Third point at (-1, 1, -1)
-  corner( -1.0, 1.0, -1.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_3( -1.0, 1.0, -1.0 );
+  polygon_corners.push_back( corner_3 );
 
   // Fourth point at (1, 1, -1)
-  corner( 1.0, 1.0, -1.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_4( 1.0, 1.0, -1.0 );
+  polygon_corners.push_back( corner_4 );
 
   // Add a copy of the first point
-  polygon_corners.push_back( polygon_corners.front() );
+  polygon_corners.push_back( corner_1 );
 }
 
 template<typename CornerContainer>
@@ -114,48 +115,45 @@ void createComplexThreeSpaceSquare( CornerContainer &polygon_corners )
   polygon_corners.clear();
 
   // First point at (2, 2, 2)
-  typename CornerContainer::value_type corner( 2.0, 2.0, 2.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_1( 2.0, 2.0, 2.0 );
+  polygon_corners.push_back( corner_1 );
 
   // Second point at (2, -2, 2)
-  corner( 2.0, -2.0, 2.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_2( 2.0, -2.0, 2.0 );
+  polygon_corners.push_back( corner_2 );
 
   // Third point at (2, -2, -2)
-  corner( 2.0, -2.0, -2.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_3( 2.0, -2.0, -2.0 );
+  polygon_corners.push_back( corner_3 );
 
   // Fourth point at (2, 2, -2)
-  corner( 2.0, 2.0, -2.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_4( 2.0, 2.0, -2.0 );
+  polygon_corners.push_back( corner_4 );
 
   // Add a copy of the first point
-  polygon_corners.push_back( polygon_corners.front() );
+  polygon_corners.push_back( corner_1 );
 
   // Fifth point at (2, 1, 1)
-  corner( 2.0, 1.0, 1.0 );
-  polygon_corners.push_back( corner );
-
-  // Store the inner square start corner
-  typename CornerContainer::value_type inner_start_corner = corner;
+  typename CornerContainer::value_type corner_5( 2.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_5 );
 
   // Sixth point at (2, 1, -1)
-  corner( 2.0, 1.0, -1.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_6( 2.0, 1.0, -1.0 );
+  polygon_corners.push_back( corner_6 );
 
   // Seventh point at (2, -1, -1)
-  corner( 2.0, -1.0, -1.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_7( 2.0, -1.0, -1.0 );
+  polygon_corners.push_back( corner_7 );
 
   // Eigthth point at (2, -1, 1)
-  corner( 2.0, -1.0, 1.0 );
-  polygon_corners.push_back( corner );
+  typename CornerContainer::value_type corner_8( 2.0, -1.0, 1.0 );
+  polygon_corners.push_back( corner_8 );
 
   // Add a copy of the inner square start corner
-  polygon_corners.push_back( inner_start_corner );
+  polygon_corners.push_back( corner_5 );
 
   // Add a copy of the first point
-  polygon_corners.push_back( polygon_corners.front() );
+  polygon_corners.push_back( corner_1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -167,27 +165,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 				   OrdinalType,
 				   ScalarType )
 {
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  typedef FACEMC::LinearAlgebraPolicy<ScalarType> LAP;
-  typedef Teuchos::ScalarTraits<ScalarType> ST;
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
-  typedef typename Polygon::Point Point;
   
-  std::list<Point> polygon_corners;
+  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
 
   // Create a triangle
   createThreeSpaceTriangle( polygon_corners );
 
   // Get the unit normal to the polygon
-  typename ThreeSpace::Vector unit_normal = 
+  FACEMC::Vector<ScalarType> unit_normal = 
     Polygon::calculatePolygonPlaneUnitNormal( polygon_corners );
 
   // Assign the reference unit normal
-  typename ThreeSpace::Vector ref_unit_normal =
-    ThreeSpace::createVector( ST::zero(), -ST::one(), ST::one() );
+  FACEMC::Vector<ScalarType> ref_unit_normal( 0.0, -1.0, 1.0 );
   
-  TEST_ASSERT( LAP::isParallel( unit_normal, ref_unit_normal ) ||
-	       LAP::isAntiparallel( unit_normal, ref_unit_normal ) );
+  TEST_ASSERT( unit_normal.isParallel( ref_unit_normal ) ||
+	       unit_normal.isAntiparallel( ref_unit_normal ) );
 }
 
 UNIT_TEST_INSTANTIATION( Polygon, calculatePolygonPlaneUnitNormal );
@@ -199,15 +192,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 				   OrdinalType,
 				   ScalarType )
 {
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  typedef FACEMC::LinearAlgebraPolicy<ScalarType> LAP;
-  typedef Teuchos::ScalarTraits<ScalarType> ST;
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
-  typedef typename Polygon::Point Point;
-  
-  std::list<Point> polygon_corners;
-  Point min_coordinates;
-  Point max_coordinates;
+    
+  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
+  FACEMC::Vector<ScalarType> min_coordinates;
+  FACEMC::Vector<ScalarType> max_coordinates;
 
   // Create a triangle
   createThreeSpaceTriangle( polygon_corners );
@@ -217,11 +206,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 				  min_coordinates,
 				  max_coordinates );
 
-  Point ref_min_coordinates( ST::zero(), ST::zero(), ST::zero() );
-  Point ref_max_coordinates( ST::one(), ST::one(), ST::one() );
+  FACEMC::Vector<ScalarType> ref_min_coordinates( 0.0, 0.0, 0.0 );
+  FACEMC::Vector<ScalarType> ref_max_coordinates( 1.0, 1.0, 1.0 );
 
-  FACEMC_TEST_EQUALITY( min_coordinates, ref_min_coordinates );
-  FACEMC_TEST_EQUALITY( max_coordinates, ref_max_coordinates );
+  TEST_EQUALITY( min_coordinates, ref_min_coordinates );
+  TEST_EQUALITY( max_coordinates, ref_max_coordinates );
 }
 
 UNIT_TEST_INSTANTIATION( Polygon, getExtremeCoordinates );
@@ -233,25 +222,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 				   OrdinalType,
 				   ScalarType )
 {
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  typedef FACEMC::LinearAlgebraPolicy<ScalarType> LAP;
-  typedef Teuchos::ScalarTraits<ScalarType> ST;
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
-  typedef typename Polygon::Point Point;
   typedef typename Polygon::PointProjection PointProjection;
+  typedef Teuchos::ScalarTraits<ScalarType> ST;
 
-  std::list<Point> polygon_corners;
+  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
 
   // Create a triangle
   createThreeSpaceTriangle( polygon_corners );
 
   // Calculate the polygon plane unit normal
-  typename ThreeSpace::Vector unit_normal = 
+  FACEMC::Vector<ScalarType> unit_normal = 
     Polygon::calculatePolygonPlaneUnitNormal( polygon_corners );
 
   // Create the transformation matrix and vector
-  typename ThreeSpace::Matrix rotation_matrix( 3, 3 );
-  typename ThreeSpace::Vector translation_vector( 3 );
+  FACEMC::Matrix<ScalarType> rotation_matrix;
+  FACEMC::Vector<ScalarType> translation_vector;
   Polygon::getTransformMatrixAndVector( unit_normal,
 					polygon_corners.front(),
 					rotation_matrix,
@@ -290,25 +276,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 				   OrdinalType,
 				   ScalarType )
 {
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  typedef FACEMC::LinearAlgebraPolicy<ScalarType> LAP;
   typedef Teuchos::ScalarTraits<ScalarType> ST;
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
-  typedef typename Polygon::Point Point;
   typedef typename Polygon::PointProjection PointProjection;
 
-  std::list<Point> polygon_corners;
+  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
 
   // Create a triangle
   createThreeSpaceTriangle( polygon_corners );
 
   // Calculate the polygon plane unit normal
-  typename ThreeSpace::Vector unit_normal = 
+  FACEMC::Vector<ScalarType> unit_normal = 
     Polygon::calculatePolygonPlaneUnitNormal( polygon_corners );
 
   // Create the transformation matrix and vector
-  typename ThreeSpace::Matrix rotation_matrix( 3, 3 );
-  typename ThreeSpace::Vector translation_vector( 3 );
+  FACEMC::Matrix<ScalarType> rotation_matrix;
+  FACEMC::Vector<ScalarType> translation_vector;
   Polygon::getTransformMatrixAndVector( unit_normal,
 					polygon_corners.front(),
 					rotation_matrix,
@@ -323,29 +306,29 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 			     translation_vector );
 
   // Reverse transform the transformed corners
-  Point point_1 = Polygon::applyReverseTransform( 
+  FACEMC::Vector<ScalarType> point_1 = Polygon::applyReverseTransform( 
 					  transformed_polygon_corners.front(),
 					  rotation_matrix,
 					  translation_vector );
-  Point point_2 = Polygon::applyReverseTransform(
+  FACEMC::Vector<ScalarType> point_2 = Polygon::applyReverseTransform(
 				      *(++transformed_polygon_corners.begin()),
 				      rotation_matrix,
 				      translation_vector );
 
-  Point point_3 = Polygon::applyReverseTransform(
+  FACEMC::Vector<ScalarType> point_3 = Polygon::applyReverseTransform(
 				  *(++(++transformed_polygon_corners.begin())),
 				  rotation_matrix,
 				  translation_vector );
   
-  FACEMC_TEST_FLOATING_EQUALITY( point_1,
-				 polygon_corners.front(),
+  TEST_COMPARE_FLOATING_ARRAYS( point_1(),
+				polygon_corners.front().view(),
 				 ST::prec() );
-  FACEMC_TEST_FLOATING_EQUALITY( point_2,
-				 *(++polygon_corners.begin()),
-				 ST::prec() );
-  FACEMC_TEST_FLOATING_EQUALITY( point_3,
-				 *(++(++polygon_corners.begin())),
-				 ST::prec() );
+  TEST_COMPARE_FLOATING_ARRAYS( point_2(),
+				(*(++polygon_corners.begin())).view(),
+				ST::prec() );
+  TEST_COMPARE_FLOATING_ARRAYS( point_3(),
+				(*(++(++polygon_corners.begin()))).view(),
+				ST::prec() );
 }
 
 UNIT_TEST_INSTANTIATION( Polygon, applyReverseTransform );
@@ -357,25 +340,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 				   OrdinalType,
 				   ScalarType )
 {
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  typedef FACEMC::LinearAlgebraPolicy<ScalarType> LAP;
   typedef Teuchos::ScalarTraits<ScalarType> ST;
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
-  typedef typename Polygon::Point Point;
   typedef typename Polygon::PointProjection PointProjection;
 
-  std::list<Point> polygon_corners;
+  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
 
   // Create a triangle
   createThreeSpaceTriangle( polygon_corners );
 
   // Calculate the polygon plane unit normal
-  typename ThreeSpace::Vector unit_normal = 
+  FACEMC::Vector<ScalarType> unit_normal = 
     Polygon::calculatePolygonPlaneUnitNormal( polygon_corners );
 
   // Create the transformation matrix and vector
-  typename ThreeSpace::Matrix rotation_matrix( 3, 3 );
-  typename ThreeSpace::Vector translation_vector( 3 );
+  FACEMC::Matrix<ScalarType> rotation_matrix;
+  FACEMC::Vector<ScalarType> translation_vector;
   Polygon::getTransformMatrixAndVector( unit_normal,
 					polygon_corners.front(),
 					rotation_matrix,
@@ -407,25 +387,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 				   OrdinalType,
 				   ScalarType )
 {
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  typedef FACEMC::LinearAlgebraPolicy<ScalarType> LAP;
-  typedef Teuchos::ScalarTraits<ScalarType> ST;
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
-  typedef typename Polygon::Point Point;
   typedef typename Polygon::PointProjection PointProjection;
+  typedef Teuchos::ScalarTraits<ScalarType> ST;
 
-  std::list<Point> polygon_corners;
+  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
 
   // Create a triangle
   createSimpleThreeSpaceSquare( polygon_corners );
 
   // Calculate the polygon plane unit normal
-  typename ThreeSpace::Vector unit_normal = 
+  FACEMC::Vector<ScalarType> unit_normal = 
     Polygon::calculatePolygonPlaneUnitNormal( polygon_corners );
 
   // Create the transformation matrix and vector
-  typename ThreeSpace::Matrix rotation_matrix( 3, 3 );
-  typename ThreeSpace::Vector translation_vector( 3 );
+  FACEMC::Matrix<ScalarType> rotation_matrix;
+  FACEMC::Vector<ScalarType> translation_vector;
   
   Polygon::getTransformMatrixAndVector( unit_normal,
 					polygon_corners.front(),
@@ -458,25 +435,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 				   OrdinalType,
 				   ScalarType )
 {
-  typedef FACEMC::ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  typedef FACEMC::LinearAlgebraPolicy<ScalarType> LAP;
   typedef Teuchos::ScalarTraits<ScalarType> ST;
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
-  typedef typename Polygon::Point Point;
   typedef typename Polygon::PointProjection PointProjection;
 
-  std::list<Point> polygon_corners;
+  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
 
   // Create a triangle
   createComplexThreeSpaceSquare( polygon_corners );
 
   // Calculate the polygon plane unit normal
-  typename ThreeSpace::Vector unit_normal = 
+  FACEMC::Vector<ScalarType> unit_normal = 
     Polygon::calculatePolygonPlaneUnitNormal( polygon_corners );
 
   // Create the transformation matrix and vector
-  typename ThreeSpace::Matrix rotation_matrix( 3, 3 );
-  typename ThreeSpace::Vector translation_vector( 3 );
+  FACEMC::Matrix<ScalarType> rotation_matrix;
+  FACEMC::Vector<ScalarType> translation_vector;
   
   Polygon::getTransformMatrixAndVector( unit_normal,
 					polygon_corners.front(),
@@ -511,10 +485,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 {
   typedef Teuchos::ScalarTraits<ScalarType> ST;
   typedef FACEMC::Polygon<OrdinalType,ScalarType> Polygon;
-  typedef typename Polygon::Point Point;
   
   // Create the corners of the polygon
-  std::list<Point> polygon_corners;
+  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
   
   createThreeSpaceTriangle( polygon_corners );
 
@@ -522,12 +495,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   Polygon triangle( 0, polygon_corners );
   
   // Get the centroid of the polygon
-  Point centroid = triangle.getCentroid();
+  FACEMC::Vector<ScalarType> centroid = triangle.getCentroid();
 
   // Assign the reference centroid
-  Point ref_centroid( 2.0/3.0, 1.0/3.0, 1.0/3.0 );
+  FACEMC::Vector<ScalarType> ref_centroid( 2.0/3.0, 1.0/3.0, 1.0/3.0 );
 
-  FACEMC_TEST_FLOATING_EQUALITY( centroid, ref_centroid, ST::prec() );
+  TEST_COMPARE_FLOATING_ARRAYS( centroid(), ref_centroid(), ST::prec() );
 }
 
 UNIT_TEST_INSTANTIATION( Polygon, calculateCentroid_triangle );
@@ -541,10 +514,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 {
   typedef Teuchos::ScalarTraits<ScalarType> ST;
   typedef FACEMC::Polygon<OrdinalType,ScalarType> Polygon;
-  typedef typename Polygon::Point Point;
-  
+    
   // Create the corners of the polygon
-  std::list<Point> polygon_corners;
+  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
   
   createSimpleThreeSpaceSquare( polygon_corners );
 
@@ -552,12 +524,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   Polygon square( 0, polygon_corners );
   
   // Get the centroid of the polygon
-  Point centroid = square.getCentroid();
+  FACEMC::Vector<ScalarType> centroid = square.getCentroid();
 
   // Assign the reference centroid
-  Point ref_centroid( 0.0, 1.0, 0.0 );
+  FACEMC::Vector<ScalarType> ref_centroid( 0.0, 1.0, 0.0 );
 
-  FACEMC_TEST_FLOATING_EQUALITY( centroid, ref_centroid, ST::prec() );
+  TEST_COMPARE_FLOATING_ARRAYS( centroid(), ref_centroid(), ST::prec() );
 }
 
 UNIT_TEST_INSTANTIATION( Polygon, calculateCentroid_simple_square );
@@ -571,10 +543,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 {
   typedef Teuchos::ScalarTraits<ScalarType> ST;
   typedef FACEMC::Polygon<OrdinalType,ScalarType> Polygon;
-  typedef typename Polygon::Point Point;
-  
+    
   // Create the corners of the polygon
-  std::list<Point> polygon_corners;
+  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
   
   createComplexThreeSpaceSquare( polygon_corners );
 
@@ -582,12 +553,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   Polygon square( 0, polygon_corners );
   
   // Get the centroid of the polygon
-  Point centroid = square.getCentroid();
+  FACEMC::Vector<ScalarType> centroid = square.getCentroid();
 
   // Assign the reference centroid
-  Point ref_centroid( 2.0, 0.0, 0.0 );
+  FACEMC::Vector<ScalarType> ref_centroid( 2.0, 0.0, 0.0 );
 
-  FACEMC_TEST_FLOATING_EQUALITY( centroid, ref_centroid, ST::prec() );
+  TEST_COMPARE_FLOATING_ARRAYS( centroid(), ref_centroid(), ST::prec() );
 }
 
 UNIT_TEST_INSTANTIATION( Polygon, calculateCentroid_complex_square );
