@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstBinarySearch.cpp
+//! \file   tstSearchAlgorithms.cpp
 //! \author Alex Robinson
-//! \brief  Binary Search function unit tests.
+//! \brief  Search function unit tests.
 //!
 //---------------------------------------------------------------------------//
 
@@ -682,6 +682,6 @@ UNIT_TEST_INSTANTIATION_ARRAY( Search, binarySearchDiscreteData, ArrayRCP );
 UNIT_TEST_INSTANTIATION_ARRAY( Search, binarySearchDiscreteData, ArrayView );
 
 //---------------------------------------------------------------------------//
-//end tstBinarySearch.cpp
+//end tstSearchAlgorithms.cpp
 //---------------------------------------------------------------------------//
 

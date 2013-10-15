@@ -208,17 +208,86 @@ bool compareFourthTupleMembers( const T &first_value,
   return success;
 }
 
-/*! \brief The specialization of the FACEMC::ComparePolicy for unsigned int.
+/*! \brief The specialization of the FACEMC::ComparePolicy for const int.
+ * \ingroup compare_policy
+ */
+template<>
+struct ComparePolicy<const int>
+{
+  typedef const int scalarType;
+  
+  static inline bool compare( const int &first_value,
+			      const std::string &first_name,
+			      const int &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0 )
+  {
+    bool success = true;
+      
+    if( first_value != second_value )
+    {
+      // Array Element Compare
+      if( index >= 0 )
+      {
+	out << "\nError, " << first_name << "[" << index << "]" << " = "
+	    << first_value << " == " << second_name << "[" << index << "]" 
+	    << " = " << second_value << ": failed!\n";
+      }
+      // Single Compare
+      else
+      {
+	out << first_name << " = " << first_value
+	    << " == " << second_name << " = " << second_value 
+	    << ": ";
+      }
+      
+      success = false;
+    }
+      
+    return success;
+  }
+};
+
+/*! \brief The specialization of the FACEMC::ComparePolicy for int.
  * \ingroup compare_policy
  */
 template<>
 struct ComparePolicy<int>
 {
-  typedef unsigned int scalarType;
+  typedef int scalarType;
   
   static inline bool compare( const int &first_value,
 			      const std::string &first_name,
 			      const int &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0 )
+  {
+    return ComparePolicy<const int>::compare( first_value,
+					      first_name,
+					      second_value,
+					      second_name,
+					      out,
+					      index,
+					      tol );
+  }
+};
+
+/*! \brief The specialization of the FACEMC::ComparePolicy for const
+ * unsigned int.
+ * \ingroup compare_policy
+ */
+template<>
+struct ComparePolicy<const unsigned int>
+{
+  typedef unsigned int scalarType;
+  
+  static inline bool compare( const unsigned int &first_value,
+			      const std::string &first_name,
+			      const unsigned int &second_value,
 			      const std::string &second_name,
 			      Teuchos::FancyOStream &out,
 			      const int index = -1,
@@ -266,39 +335,23 @@ struct ComparePolicy<unsigned int>
 			      const int index = -1,
 			      const scalarType tol = 0 )
   {
-    bool success = true;
-      
-    if( first_value != second_value )
-    {
-      // Array Element Compare
-      if( index >= 0 )
-      {
-	out << "\nError, " << first_name << "[" << index << "]" << " = "
-	    << first_value << " == " << second_name << "[" << index << "]" 
-	    << " = " << second_value << ": failed!\n";
-      }
-      // Single Compare
-      else
-      {
-	out << first_name << " = " << first_value
-	    << " == " << second_name << " = " << second_value 
-	    << ": ";
-      }
-      
-      success = false;
-    }
-      
-    return success;
+    return ComparePolicy<const unsigned int>::compare( first_value,
+						       first_name,
+						       second_value,
+						       second_name,
+						       out,
+						       index,
+						       tol );
   }
 };
 
-/*! \brief The specialization of the FACEMC::ComparePolicy for double.
+/*! \brief The specialization of the FACEMC::ComparePolicy for const double.
  * \ingroup compare_policy
  */
 template<>
-struct ComparePolicy<double>
+struct ComparePolicy<const double>
 {
-  typedef double scalarType;
+  typedef const double scalarType;
   static inline bool compare( const double &first_value,
 			      const std::string &first_name,
 			      const double &second_value,
@@ -361,13 +414,38 @@ struct ComparePolicy<double>
   }
 };
 
-/*! \brief The specialization of the FACEMC::ComparePolicy for float.
+/*! \brief The specialization of the FACEMC::ComparePolicy for double.
  * \ingroup compare_policy
  */
 template<>
-struct ComparePolicy<float>
+struct ComparePolicy<double>
 {
-  typedef float scalarType;
+  typedef double scalarType;
+  static inline bool compare( const double &first_value,
+			      const std::string &first_name,
+			      const double &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0.0 )
+  {
+    return ComparePolicy<const double>::compare( first_value,
+						 first_name,
+						 second_value,
+						 second_name,
+						 out,
+						 index,
+						 tol );
+  }
+};
+
+/*! \brief The specialization of the FACEMC::ComparePolicy for const float.
+ * \ingroup compare_policy
+ */
+template<>
+struct ComparePolicy<const float>
+{
+  typedef const float scalarType;
   static inline bool compare( const float &first_value,
 			      const std::string &first_name,
 			      const float &second_value,
@@ -430,14 +508,39 @@ struct ComparePolicy<float>
   }
 };
 
+/*! \brief The specialization of the FACEMC::ComparePolicy for float.
+ * \ingroup compare_policy
+ */
+template<>
+struct ComparePolicy<float>
+{
+  typedef float scalarType;
+  static inline bool compare( const float &first_value,
+			      const std::string &first_name,
+			      const float &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0.0f )
+  {
+    return ComparePolicy<const float>::compare( first_value,
+						first_name, 
+						second_value,
+						second_name,
+						out,
+						index,
+						tol );
+  }
+};
+
 /*! \brief The partial specialization of the FACEMC::ComparePolicy for 
- * FACEMC::Pair. 
+ * const FACEMC::Pair. 
  * \ingroup compare_policy
  */
 template<typename T, typename T2>
-struct ComparePolicy<Pair<T,T2> >
+struct ComparePolicy<const Pair<T,T2> >
 {
-  typedef double scalarType;
+  typedef const double scalarType;
   static inline bool compare( const Pair<T,T2> &first_value,
 			      const std::string &first_name,
 			      const Pair<T,T2> &second_value,
@@ -481,13 +584,39 @@ struct ComparePolicy<Pair<T,T2> >
 };
 
 /*! \brief The partial specialization of the FACEMC::ComparePolicy for 
- * FACEMC::Trip. 
+ * FACEMC::Pair. 
+ * \ingroup compare_policy
+ */
+template<typename T, typename T2>
+struct ComparePolicy<Pair<T,T2> >
+{
+  typedef double scalarType;
+  static inline bool compare( const Pair<T,T2> &first_value,
+			      const std::string &first_name,
+			      const Pair<T,T2> &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0.0 )
+  {
+    return ComparePolicy<const Pair<T,T2> >::compare( first_value,
+						      first_name,
+						      second_value,
+						      second_name,
+						      out,
+						      index,
+						      tol );
+  }
+};
+
+/*! \brief The partial specialization of the FACEMC::ComparePolicy for 
+ * const FACEMC::Trip. 
  * \ingroup compare_policy
  */
 template<typename T, typename T2, typename T3>
-struct ComparePolicy<Trip<T,T2,T3> >
+struct ComparePolicy<const Trip<T,T2,T3> >
 {
-  typedef double scalarType;
+  typedef const double scalarType;
   
   static inline bool compare( const Trip<T,T2,T3> &first_value,
 			      const std::string &first_name,
@@ -546,13 +675,40 @@ struct ComparePolicy<Trip<T,T2,T3> >
 };
 
 /*! \brief The partial specialization of the FACEMC::ComparePolicy for 
- * FACEMC::Quad. 
+ * FACEMC::Trip. 
+ * \ingroup compare_policy
+ */
+template<typename T, typename T2, typename T3>
+struct ComparePolicy<Trip<T,T2,T3> >
+{
+  typedef double scalarType;
+  
+  static inline bool compare( const Trip<T,T2,T3> &first_value,
+			      const std::string &first_name,
+			      const Trip<T,T2,T3> &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0.0 )
+  {
+    return ComparePolicy<const Trip<T,T2,T3> >::compare( first_value,
+							 first_name,
+							 second_value,
+							 second_name,
+							 out,
+							 index,
+							 tol );
+  }
+};
+
+/*! \brief The partial specialization of the FACEMC::ComparePolicy for 
+ * const FACEMC::Quad. 
  * \ingroup compare_policy
  */
 template<typename T, typename T2, typename T3, typename T4>
-struct ComparePolicy<Quad<T,T2,T3,T4> >
+struct ComparePolicy<const Quad<T,T2,T3,T4> >
 {
-  typedef double scalarType;
+  typedef const double scalarType;
   
   static inline bool compare( const Quad<T,T2,T3,T4> &first_value,
 			      const std::string &first_name,
@@ -621,6 +777,33 @@ struct ComparePolicy<Quad<T,T2,T3,T4> >
     }
 
     return success;
+  }
+};
+
+/*! \brief The partial specialization of the FACEMC::ComparePolicy for 
+ * FACEMC::Quad. 
+ * \ingroup compare_policy
+ */
+template<typename T, typename T2, typename T3, typename T4>
+struct ComparePolicy<Quad<T,T2,T3,T4> >
+{
+  typedef double scalarType;
+  
+  static inline bool compare( const Quad<T,T2,T3,T4> &first_value,
+			      const std::string &first_name,
+			      const Quad<T,T2,T3,T4> &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0.0 )
+  {
+    return ComparePolicy<const Quad<T,T2,T3,T4> >::compare( first_value,
+							    first_name,
+							    second_value,
+							    second_name,
+							    out,
+							    index,
+							    tol );
   }
 };
 

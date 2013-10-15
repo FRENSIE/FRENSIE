@@ -32,8 +32,8 @@ ADD_EXECUTABLE(tstPhotonDataProcessor
   ${SRC}/HDF5FileHandler.cpp
   ${SRC}/PhotonDataProcessor.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-ADD_EXECUTABLE(tstBinarySearch
-  tstBinarySearch.cpp
+ADD_EXECUTABLE(tstSearchAlgorithms
+  tstSearchAlgorithms.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstPhotonDataBasic
   tstPhotonDataBasic.cpp
@@ -57,18 +57,33 @@ ADD_EXECUTABLE(tstPhotonData
   ${SRC}/PhotonDataDopplerBroadening.cpp
   ${SRC}/HDF5FileHandler.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-ADD_EXECUTABLE(tstThreeSpaceTraitsAndPolicy
-  tstThreeSpaceTraitsAndPolicy.cpp
+ADD_EXECUTABLE(tstMatrix
+  tstMatrix.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-ADD_EXECUTABLE(tstLinearAlgebraPolicy
-  tstLinearAlgebraPolicy.cpp
+ADD_EXECUTABLE(tstVector
+  tstVector.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-ADD_EXECUTABLE(tstSurface
-  tstSurface.cpp
+ADD_EXECUTABLE(tstVectorHelpers
+  tstVectorHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-ADD_EXECUTABLE(tstPolygon
-  tstPolygon.cpp
+ADD_EXECUTABLE(tstMatrixHelpers
+  tstMatrixHelpers.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstLinearAlgebraAlgorithms
+  tstLinearAlgebraAlgorithms.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# ADD_EXECUTABLE(tstThreeSpaceTraitsAndPolicy
+#   tstThreeSpaceTraitsAndPolicy.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# ADD_EXECUTABLE(tstLinearAlgebraPolicy
+#   tstLinearAlgebraPolicy.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# ADD_EXECUTABLE(tstSurface
+#   tstSurface.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# ADD_EXECUTABLE(tstPolygon
+#   tstPolygon.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstSetOperationFunctor
   tstSetOperationFunctor.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -118,15 +133,20 @@ TARGET_LINK_LIBRARIES(tstHDF5FileHandler ${TEUCHOS_CORE} ${HDF5})
 TARGET_LINK_LIBRARIES(tstDataProcessor ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstPhotonDataProcessorShellMap ${TEUCHOS_CORE} ${HDF5})
 TARGET_LINK_LIBRARIES(tstPhotonDataProcessor ${TEUCHOS_CORE} ${HDF5})
-TARGET_LINK_LIBRARIES(tstBinarySearch ${TEUCHOS_CORE})
+TARGET_LINK_LIBRARIES(tstSearchAlgorithms ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstPhotonDataBasic ${TEUCHOS_CORE} ${HDF5})
 TARGET_LINK_LIBRARIES(tstPhotonDataFluorescence ${TEUCHOS_CORE} ${HDF5})
 TARGET_LINK_LIBRARIES(tstPhotonDataDopplerBroadening ${TEUCHOS_CORE} ${HDF5})
 TARGET_LINK_LIBRARIES(tstPhotonData ${TEUCHOS_CORE} ${HDF5})
-TARGET_LINK_LIBRARIES(tstThreeSpaceTraitsAndPolicy ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
-TARGET_LINK_LIBRARIES(tstLinearAlgebraPolicy ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
-TARGET_LINK_LIBRARIES(tstSurface ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
-TARGET_LINK_LIBRARIES(tstPolygon ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+TARGET_LINK_LIBRARIES(tstMatrix ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+TARGET_LINK_LIBRARIES(tstVector ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+TARGET_LINK_LIBRARIES(tstVectorHelpers ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+TARGET_LINK_LIBRARIES(tstMatrixHelpers ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+TARGET_LINK_LIBRARIES(tstLinearAlgebraAlgorithms ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+# TARGET_LINK_LIBRARIES(tstThreeSpaceTraitsAndPolicy ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+# TARGET_LINK_LIBRARIES(tstLinearAlgebraPolicy ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+# TARGET_LINK_LIBRARIES(tstSurface ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+# TARGET_LINK_LIBRARIES(tstPolygon ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstSetOperationFunctor ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstBooleanCellFunctor ${TEUCHOS_CORE})
 # TARGET_LINK_LIBRARIES(tstCell ${TEUCHOS})
@@ -142,15 +162,20 @@ ADD_TEST(HDF5FileHandler_test tstHDF5FileHandler)
 ADD_TEST(DataProcessor_test tstDataProcessor)
 ADD_TEST(PhotonDataProcessorShellMap_test tstPhotonDataProcessorShellMap)
 ADD_TEST(PhotonDataProcessor_test tstPhotonDataProcessor)
-ADD_TEST(BinarySearch_test tstBinarySearch)
+ADD_TEST(SearchAlgorithms_test tstSearchAlgorithms)
 ADD_TEST(PhotonDataBasic_test tstPhotonDataBasic)
 ADD_TEST(PhotonDataFluorescence_test tstPhotonDataFluorescence)
 ADD_TEST(PhotonDataDopplerBroadening_test tstPhotonDataDopplerBroadening)
 ADD_TEST(PhotonData_test tstPhotonData)
-ADD_TEST(ThreeSpaceTraitsAndPolicy_test tstThreeSpaceTraitsAndPolicy)
-ADD_TEST(LinearAlgebraPolicy_test tstLinearAlgebraPolicy)
-ADD_TEST(Surface_test tstSurface)
-ADD_TEST(Polygon_test tstPolygon)
+ADD_TEST(Matrix_test tstMatrix)
+ADD_TEST(Vector_test tstVector)
+ADD_TEST(VectorHelpers_test tstVectorHelpers)
+ADD_TEST(MatrixHelpers_test tstMatrixHelpers)
+ADD_TEST(LinearAlgebraAlgorithms_test tstLinearAlgebraAlgorithms)
+# ADD_TEST(ThreeSpaceTraitsAndPolicy_test tstThreeSpaceTraitsAndPolicy)
+# ADD_TEST(LinearAlgebraPolicy_test tstLinearAlgebraPolicy)
+# ADD_TEST(Surface_test tstSurface)
+# ADD_TEST(Polygon_test tstPolygon)
 ADD_TEST(SetOperationFunctor_test tstSetOperationFunctor)
 ADD_TEST(BooleanCellFunctor_test tstBooleanCellFunctor)
 # ADD_TEST(Cell_test tstCell)

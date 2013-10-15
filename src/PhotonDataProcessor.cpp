@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   PhotonDataProcessor.cpp
-// \author Alex Robinson
-// \brief   Photon data processor definitions
+//!
+//! \file   PhotonDataProcessor.cpp
+//! \author Alex Robinson
+//! \brief  Photon data processor definitions
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
@@ -2125,7 +2127,7 @@ void PhotonDataProcessor::createShellIndexMap(
  */
 void PhotonDataProcessor::initializeHDF5Files()
 {
-  for(unsigned int i = 1; i <= 99; ++i)
+  for(unsigned int i = 1; i <= 100; ++i)
   {
     std::ostringstream file_number;
     file_number << i;

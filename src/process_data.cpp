@@ -65,7 +65,7 @@ int main( int argc, char* argv[] )
   eadl_file_name += "EADL";
 
   std::string compton_file_prefix = FACEMC_DATA_DIRECTORY;
-  compton_file_prefix += "compton_profile-";
+  compton_file_prefix += "profile-";
 
   processor.reset( new FACEMC::PhotonDataProcessor( epdl_file_name,
 						    eadl_file_name,
