@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   tstPhotonDataProcessorShellMap.cpp
-// \author Alex Robinson
-// \brief  PhotonDataProcessor class electron shell map unit tests.
+//!
+//! \file   tstPhotonDataProcessorShellMap.cpp
+//! \author Alex Robinson
+//! \brief  PhotonDataProcessor class electron shell map unit tests.
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes

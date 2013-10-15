@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   tstDataProcessor.cpp
-// \author Alex Robinson
-// \brief  DataProcessor class unit tests.
+//!
+//! \file   tstDataProcessor.cpp
+//! \author Alex Robinson
+//! \brief  DataProcessor class unit tests.
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes

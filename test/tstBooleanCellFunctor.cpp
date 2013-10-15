@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   tstBooleanCellFunctor.cpp
-// \author Alex Robinson
-// \brief  BooleanCellFunctor unit tests
+//!
+//! \file   tstBooleanCellFunctor.cpp
+//! \author Alex Robinson
+//! \brief  BooleanCellFunctor unit tests
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes

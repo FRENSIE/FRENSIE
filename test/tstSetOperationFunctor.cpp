@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   tstSetOperationFunctor.hpp
-// \author Alex Robinson
-// \brief  SetOperationFunctor unit tests
+//!
+//! \file   tstSetOperationFunctor.hpp
+//! \author Alex Robinson
+//! \brief  SetOperationFunctor unit tests
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes

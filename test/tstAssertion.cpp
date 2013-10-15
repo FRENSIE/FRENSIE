@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   tstAssertion.cpp
-// \author Alex Robinson
-// \brief  Assertion class unit tests.
+//!
+//! \file   tstAssertion.cpp
+//! \author Alex Robinson
+//! \brief  Assertion class unit tests.
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes

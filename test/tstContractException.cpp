@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   tstContractException.cpp
-// \author Alex Robinson
-// \brief  Contract Exception class unit tests.
+//!
+//! \file   tstContractException.cpp
+//! \author Alex Robinson
+//! \brief  Contract Exception class unit tests.
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes

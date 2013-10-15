@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   tstPhotonDataBasic.cpp
-// \author Alex Robinson
-// \brief  PhotonDataBasic class unit tests
+//!
+//! \file   tstPhotonDataBasic.cpp
+//! \author Alex Robinson
+//! \brief  PhotonDataBasic class unit tests
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes

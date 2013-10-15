@@ -27,13 +27,10 @@
 // Testing Info.
 //---------------------------------------------------------------------------//
 #define CELL_DEFINITION_1 "-1n2n-3n4n-5n6n(7u-8u9u-10u11u-12)"
-#define SIMPLIFIED_CELL_DEFINITION_1 "-1 2 -3 4 -5 6  7 -8 9 -10 11 -12"
+#define CELL_DEFINITION_2 "-1n2n-3n4n-5n6n(-7u9u-10u11u-12)"
 
 //---------------------------------------------------------------------------//
 // Tests.
-//---------------------------------------------------------------------------//
-// Check that the cell can test if an intersection point is real
-
 //---------------------------------------------------------------------------//
 // Check that the cell can be instantiated correctly
 TEUCHOS_UNIT_TEST( Cell, constructor )
@@ -132,6 +129,26 @@ TEUCHOS_UNIT_TEST( Cell, constructor )
   TEST_EQUALITY_CONST( cell->getSurfaceArea( 10 ), 4.0 );
   TEST_EQUALITY_CONST( cell->getSurfaceArea( 11 ), 4.0 );
   TEST_EQUALITY_CONST( cell->getSurfaceArea( 12 ), 4.0 );
+
+  cell_definition = CELL_DEFINITION_2;
+
+  cell.reset( new FACEMC::Cell( 2,
+				cell_definition,
+				global_surface_map,
+				true ) );
+
+  TEST_EQUALITY_CONST( cell->getVolume(), 60.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 1 ), 12.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 2 ), 16.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 3 ), 16.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 4 ), 16.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 5 ), 16.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 6 ), 16.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 7 ), 4.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 9 ), 2.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 10 ), 2.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 11 ), 2.0 );
+  TEST_EQUALITY_CONST( cell->getSurfaceArea( 12 ), 2.0 );
 }
 
 //---------------------------------------------------------------------------//

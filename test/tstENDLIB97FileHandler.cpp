@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   tstENDLIB97FileHandler.cpp
-// \author Alex Robinson
-// \brief  ENLIB97FileHandler class unit tests.
+//!
+//! \file   tstENDLIB97FileHandler.cpp
+//! \author Alex Robinson
+//! \brief  ENLIB97FileHandler class unit tests.
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes

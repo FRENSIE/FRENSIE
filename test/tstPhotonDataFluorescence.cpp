@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   tstPhotonDataFluorescence.cpp
-// \author Alex Robinson
-// \brief  PhotonDataFluorescence class unit tests
+//!
+//! \file   tstPhotonDataFluorescence.cpp
+//! \author Alex Robinson
+//! \brief  PhotonDataFluorescence class unit tests
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes

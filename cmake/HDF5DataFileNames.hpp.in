@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file DataFileNames.hpp
-// \author Alex Robinson
-// \brief Names of the processed HDF5 data files
+//! 
+//! \file DataFileNames.hpp
+//! \author Alex Robinson
+//! \brief Names of the processed HDF5 data files
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef DATA_FILE_NAMES_HPP

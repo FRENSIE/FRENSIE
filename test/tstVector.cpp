@@ -245,6 +245,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Vector,
   ref_vector *= 2;
 
   TEST_EQUALITY( vector, ref_vector );
+
+  vector.multiply( 2.0, A, true, x, 0.0 );
+
+  TEST_EQUALITY( vector, ref_vector );
 }
 
 UNIT_TEST_INSTANTIATION( Vector, multiply );
