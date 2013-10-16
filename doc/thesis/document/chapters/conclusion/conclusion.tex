@@ -1,0 +1,289 @@
+\chapter{Conclusion}
+The primary goals of this report were:
+\begin{enumerate}
+  \item to present a detailed background of the Monte Carlo method beyond what 
+    is typically found in the literature,
+  \item to use this background to develop the Monte Carlo random walk process
+    for adjoint particles,
+  \item to describe the adjoint cross sections and sampling procedures that 
+    will be used to conduct random walks with adjoint photons.
+  \item and to describe how all of this information will be incorporated into
+    the FACEMC code. 
+\end{enumerate}
+
+While working to achieve these goals in this report several important points 
+were made which must be summarized. In the following sections, the main points 
+from each chapter will be given. Before finishing, all proposed future work will
+also be enumerated. 
+
+\section{Monte Carlo Methods for Fredholm Integral Equations}
+The primary goal of chapter \ref{ch:mc_methods} was to give a very general
+description of the Monte Carlo random walk process and to show how one can use
+it to estimate solutions to a particular class of equations called FIESKs. 
+The FIESK is an important equation with applications in radiation transport
+problems. 
+
+The Monte Carlo random walk process was shown to be governed by a set of PDFs 
+that must be derived from the FIESK of interest. The process is very general 
+and can in fact be applied to any FIESK as long as the PDFs derived from the 
+FIESK have certain properties. 
+
+The concept of an estimator was also discussed in this chapter. To summarize 
+briefly, the estimator accumulates information from a random walk and uses
+it to estimate the inner product of the solution of a FIESK and some known
+function. The two estimators that were discussed were the termination estimator 
+and the event estimator. The termination estimator estimates the solution of a
+FIESK every time a random walk ends in the region of interest. The event
+estimator estimates the solution of a FIESK every time a random walk has an
+event in the region of interest. In general, these estimators become ineffective
+when the region of interest is reduced to a single point of the phases space.
+
+Finally, the estimation of the solution of a FIESK at a point was discussed. 
+When this kind of estimate is desired the Dual FIESK and its associated Monte 
+Carlo random walk process must be used. In the random walk process associated
+with the Dual FIESK random walks start in a detector region (or region of
+interest as its is sometimes referred to) and estimators accumulate information
+about the random walk in the source region. There are also special estimators 
+that exist which can be used to estimate the value of certain FIESKs at a point,
+however these estimators are not applicable in general and were therefore not 
+discussed. In general, if the size of the source region is larger than the size 
+of the detector region, the Dual FIESK and its associated Monte Carlo random 
+walk process should be used. This claim is based on the simple fact that a 
+random walk will have a higher probability of entering a large region than a 
+small region. 
+
+\section{The Monte Carlo Random Walk Process for Radiation Transport}
+The primary goal of chapter \ref{ch:particle_transport} was to show how to 
+create a FIESK from the integro-differental form of the transport equation and 
+to then construct a Monte Carlo random walk process using the general theory 
+from chapter \ref{ch:mc_methods}. The idea was to take a very thorough approach 
+to deriving the Monte Carlo random walk process for radiation transport even 
+though most people are likely familiar with the process. Then, the same thorough
+approach could be used to derive the Monte Carlo random walk process for 
+adjoint radiation, which is much less familiar. 
+
+Through a series of manipulations, it was shown in this chapter how to take
+the integro-differential tranport equation and create a FIESK that describes
+either the flux, the emission density or the collision density of a system. 
+The flux FIESK was examined first and an associated Monte Carlo random walk
+process was created. This process was shown to have several unfavorable
+properties. By far the most unseemly was the potential for event locations
+to be sampled in a vacuum. This property arose from the fact that the flux
+does not go to zero in a vacuum. Because of these unfavorable properties
+the flux FIESK and its associated random walk process are rarely used in
+practice. 
+
+The emission density FIESK and collision density FIESK were examined next. It
+was shown that the state transition kernels that appear in the emission density
+FIESK and collision density FIESK can be decomposed into two kernels: the
+collision kernel, which describes the movement of particles through energy
+and direction, and the transport kernel, which describes the movement of 
+particles through space. It was also shown that the collision kernel can be
+further decomposed into its constituent reactions. When one wants to handle
+particle multiplication explicitly, which is usually done, this expansion of
+the collision kernel must be done. A sampling procedure was also given for
+sampling a particular reaction from the collision kernel.
+
+Finally, the Monte Carlo random walk process for radiation transport was
+derived. Due to the similarities between the emission density FIESK and the
+collision density FIESK, solutions to both FIESKs can actually be estimated
+using the same random walk process. To quickly summarize this combined process,
+a random walk is always initiated in the problem source. The next collision 
+point is then sampled from the transport kernel. At this new collision point
+a new energy and direction is sampled from the collision kernel. If a
+multiplying reaction was sampled additional random walks will start from this
+collision point. A new collision point will then be sampled for the original
+random walk and the process will continue until either an absorption reaction
+is chosen or the random walk exits the problem domain. During this process
+the emission density will always be estimated after a birth or after a particle
+exits a collision. The collision density will always be estimated upon entering
+a collision. 
+
+One final note was also given regarding the calculation of material responses.
+The material response is usually given as the inner product of the flux and a
+material response function. The emission density or the collision density
+can be used instead of the flux if a modified material response function is
+used. 
+
+\section{The Monte Carlo Random Walk Process for Adjoint Radiation Transport}
+In chapter \ref{ch:adjoint_particle_transport} all of the theories and 
+procedures from chapters \ref{ch:mc_methods} and \ref{ch:particle_transport}
+were utilized to construct a Monte Carlo random walk process for adjoint
+radiation transport. The thorough approach to deriving the Monte Carlo
+random walk process for radiation transport in chapter 
+\ref{ch:particle_transport} was particularly useful. Before this approach
+was mimicked for adjoint radiation transport, the dual emission density
+FIESK was constructed and examined.
+
+Upon examination of the dual emission density FIESK it became clear that the 
+\textit{adjoint of the emission density}, which the dual emission density
+FIESK describes, was a ``flux-like'' quantity. Based on the observations
+made in chapter \ref{ch:particle_transport} about the Monte Carlo random
+walk process for the flux, it was determined that the dual emission density
+FIESK should be avoided. A modification to the dual emission density FIESK was
+also suggested to ameliorate its ``flux-like'' nature. It turns out that this
+modification results in the adjoint emission density FIESK, however this idea
+was not pursued further because it was desired to treat adjoint transport more
+generally. 
+
+As mentioned in chapter \ref{ch:particle_transport} a material response can
+be calculated from the inner product of the flux and the material response
+function. This material response function can also be calculated from the 
+inner product of the source function and another quantity called the adjoint
+flux, which is described by the adjoint transport equation. The exact 
+derivation of the adjoint transport equation was not given, though it is 
+actually very similar to the derivation of the dual FIESK from a FIESK given
+in chapter \ref{ch:mc_methods}. 
+
+Once the adjoint transport equation in integro-differential form was 
+obtained, a set of manipulations similar to the ones shown in chapter
+\ref{ch:particle_transport} were done to obtain a FIESK that described the
+adjoint emission density or the adjoint collision density. The adjoint flux
+FIESK was avoided due to the negative properties of FIESKs that describe 
+``flux-like'' quantities. The state transition kernels that appeared in the
+adjoint emission density FIESK and the adjoint collision density FIESK were
+then examined.
+
+Unlike the state transition kernels from the emission density FIESK and
+collision density FIESK, the state transition kernels from the adjoint
+emission density FIESK and adjoint collision density FIESK can actually be
+decomposed into three terms: the adjoint collision kernel, which describes
+the movement of adjoint particles through energy and direction, the adjoint
+transport kernel, which describes the movement of adjoint particles through
+space, and the adjoint weight factor.
+
+The adjoint weight factor, which is simply the ratio of the total macroscopic
+adjoint cross section to the total macroscopic cross section, is one of the 
+very interesting and surprising properties of these state transition kernels. It
+comes about from the construction of the adjoint collision kernel and the 
+adjoint transport kernel, both of which are normalized to unity. The adjoint 
+collision kernel is constructed with the total macroscopic adjoint cross
+section while the adjoint transport kernel is constructed with the total
+macroscopic cross section, which allows for their normalization to unity. The
+total macroscopic adjoint cross section and the total macroscopic cross section
+are in general not equal, which gives rise to the adjoint weight factor. 
+
+An expansion of the adjoint collision kernel into its constituent adjoint
+reactions and a sampling procedure for sampling a particular reaction from this
+expanded adjoint collision kernel were also shown. This expansion and the 
+associated sampling procedure is useful if one wants to model every
+adjoint reaction separately, which will usually be the case. Unfortunately, 
+the adjoint cross section for each individual reaction is often unknown and 
+must be constructed from the associated forward cross section. The equations
+for calculating the adjoint cross sections are an extremely important take-away 
+from this report and will therefore be shown again:
+\begin{equation*}
+  \sigma^{\dagger}(E^{'}) = \int\int \sigma(E)c(E)
+  p(E \to E^{'}, \hat{\Omega} \to \hat{\Omega}^{'})dEd\hat{\Omega}
+\end{equation*}
+\begin{equation*}
+  p^{\dagger}(E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) = 
+  \frac{\sigma(E)c(E)p(E \to E^{'}, \hat{\Omega} \to \hat{\Omega}^{'})}
+  {\sigma^{\dagger}(E^{'})}
+\end{equation*}
+
+An interesting property of adjoint radiation, which is apparent from both
+the normalization of the adjoint collision kernel and the definition of the
+adjoint cross section, is the lack of absorption reactions or multiplying
+reactions. For absorption reactions $c(E)$ is zero and the resulting adjoint
+cross section is zero. For multiplying reactions $c(E)$ gets integrated into
+the adjoint cross section. These properties highlight the necessity of the
+rigorous mathematical approach to deriving the Monte Carlo random walk process
+for adjoint radiation since they are very unintuitive. 
+
+Finally, the Monte Carlo random walk process for radiation transport was 
+derived. Due to the similarities between the adjoint emission density FIESK 
+and the adjoint collision density FIESK, solutions to both FIESKs can 
+actually be estimated using the same random walk process. To quickly 
+summarize this combined process, a random walk is always initiated in the
+adjoint source (or detector). The next collision point is then sampled from
+the adjoint transport kernel. At this new collision point a new energy and
+direction is sampled from the adjoint collision kernel. A new collision point
+will then be sampled and the process will continue. Due to the lack of an
+absorption cross section, Russian roulette must be used to terminate these
+random walks. During this process the adjoint emission density will always be
+estimated after a birth or after an adjoint particle exits a collision. The
+adoint collision density will always be estimated upon entering a collision. 
+
+One final note was also given in this chapter regarding the calculation of 
+material responses. The material response defined as the inner product of
+the adjoint flux and the source can also be defined in terms of the adjoint
+emission density or the adjoint collision density and a modified source
+function.
+
+\section{Photon Interaction Cross Sections and Sampling Techniques}
+Chapter \ref{ch:photon_interactions} was intended to described completely
+all photon and adjoint photon interactions and associated sampling procedures. 
+The primary interactions that were discussed for photons were incoherent 
+scattering (with and without Doppler broadening), coherent scattering, pair 
+production and the photoelectric effect. For adjoint photons the interactions
+that were discussed were adjoint incoherent scattering (with and without
+Doppler broadening), adjoint coherent scattering and adjoint pair production.
+
+The main take-away from this chapter is that nearly all photon phenomena 
+can be modeled with either photons or adjoint photons with the same degree of
+accuracy. The one phenomena that can't currently be accounted for by adjoint
+photons is the release of low energy x-rays due to atomic relaxation after
+a photoelectric effect event. In applications where low energy photons are
+important this limitation could be a problem. Solutions to this problem will
+be part of the future work. 
+
+It must also be noted that this chapter presented some genuinely novel work:
+the Doppler broadening of incoherently scattered adjoint photons. The
+theoretical work that was presented still needs to be tested. However, if it
+is indeed correct, the ability to model the Doppler broadening of incoherently 
+scattered adjoint photons will be a capability unique to FACEMC. 
+
+\section{Overview of FACEMC}
+The main take-away from chapter \ref{ch:code_overview} is that FACEMC is
+already in a state where problems can be modeled and data can be acquired. 
+The first version of the code is currently being updated to make it faster
+and easier to use. Adjoint neutron capabilities are also being added to the
+code. 
+
+An extensive validation plan was also presented in this chapter. Completion
+of this plan should ensure that FACEMC is working properly.
+
+\section{Future Work}
+Though much work has been completed towards the development of FACEMC both in
+terms of theory and coding, there is still much work to be done. In terms of
+theory, the following items have been identified as needing more work:
+\begin{itemize}
+  \item The low energy x-ray emission problem for adjoint photons.
+  \item The background work on neutron and adjoint neutron transport cross
+    sections and sampling techniques.
+\end{itemize}
+In terms of coding, the following items must still be completed:
+\begin{itemize}
+  \item The coding of the second version of all major FACEMC components 
+    outlined in chapter \ref{ch:code_overview}.
+  \item The computation of adjoint neutron cross sections and storage in
+    an HDF5 format library.
+\end{itemize}
+In terms of analysis work, the following items will be proposed:
+\begin{itemize}
+  \item Complete the FACEMC validation plan.
+  \item Calculate the adjoint data required for brachytherapy treatment planning
+    optimization using data from a patient.
+  \item Calculate the adjoint data required for external beam treatment planning
+    using a standard phantom.
+  \item Run a full scale shutdown dose calculation for a fusion device using
+    the R2SA method.
+  \item Run a shielding problem using the adjoint neutron transport capabilities
+    of FACEMC.
+\end{itemize}
+These final items should be challenging enough to test the capabilities of 
+FACEMC.
+
+To complete the items listed above in a timely fashion, the following timeline
+has been created:
+\begin{enumerate}
+  \item Complete all theoretical work by September 1st, 2013.
+  \item Complete all coding work by March 1st, 2014.
+  \item Complete the validation plan by April 1st, 2014.
+  \item Complete all of the the challenge problems by June 1st, 2014.
+  \item Ideal thesis completion date: August 1st, 2014 - September 1st, 2014
+\end{enumerate}
+Based on experience gained writing the first version of FACEMC, this timeline
+should be feasible. 
+

@@ -1,0 +1,513 @@
+\chapter{Monte Carlo Methods for Fredholm Integral Equations}
+\label{ch:mc_methods}
+While Monte Carlo processes can be used to estimate the solutions to a variety 
+of quadrature problems, the focus in this report will fall solely on the 
+specific Monte Carlo process that is used to estimate the solutions of Fredholm 
+integral equations of the second kind (FIESKs). This class of equations is of 
+interest because, through a series of manipulations that will be shown in the 
+following chapters, both the transport equation and the adjoint transport 
+equation become a FIESK. Before discussing the particular Monte Carlo process 
+that is used to solve a FIESK, some background into this class of integral 
+equations will be given. 
+
+\section{The Fredholm Integral Equations of the Second Kind}
+\label{sec:integral_equations}
+A FIESK has the following form:
+\begin{equation}
+  F(x) = S(x) + \lambda \int_a^b K(x,y) F(y)dy.
+  \label{eq:fredholm_int_eqn}
+\end{equation}
+In this equation, the functions $K(x,y)$ and $S(x)$ are known. The 
+function $S(x)$ is a forcing function and the function $K(x,y)$ is called the 
+kernel of the integral equation, which can be interpreted as a function 
+characterizing the transition from some initial state y to the state x. Due to 
+this interpretation, the kernel is sometimes written as $K(y \to x)$. This 
+notation will be adopted throughout the rest of this report.
+
+Another equation exists that is very similar to the FIESK. It is called the
+Volterra Integral equation of the second kind: 
+\begin{equation}
+  F(x) = S(x) + \lambda \int_a^x K(x,y) F(y) dy.
+  \label{eq:volterra_int_eqn}
+\end{equation} 
+The only difference between the two equations is that the Volterra Integral 
+equation of the second kind has a limits of integration that is variable. The 
+Volterra integral equation is particularly important for radiation transport 
+because it comes about whenever there is a preferred direction for the
+independent variable\footnote{Due to conservation of energy and momentum, 
+the energy of a particle after scattering off of a massive scattering center 
+cannot be greater than the energy prior to the scattering event, assuming that 
+the massive scattering center is stationary}. However, the Volterra integral 
+equation is just a special case of the FIESK and in fact, all Volterra integral
+equations can be written as a FIESK through the use of a modified kernel 
+\citep{rahman_integral_2007}:
+\begin{equation}
+  K^{'}(y \to x) = 
+  \begin{cases}
+    K(y \to x) & \text{if }y < x \\
+    0 & \text{if }y > x.
+  \end{cases}
+\end{equation}
+It is for this reason that only FIESKs will be of interest in the rest of this 
+report.
+
+There are many ways to analytically solve a FIESK 
+\citep{rahman_integral_2007, morse_methods_1953}. The method of 
+successive approximations will be shown because of its relevance to the
+Monte Carlo process that will be described in the next sections. To start,
+set the zeroth order approximation equal to the forcing function $S(x)$. The
+first through n-th order approximations will then be defined as follows:
+\begin{align}
+  f_0(x) & = S(x) \nonumber \\
+  f_1(x) & = S(x) + \lambda \int_a^b K(y \to x)f_0(y)dy \nonumber \\
+  f_2(x) & = S(x) + \lambda \int_a^b K(y \to x)f_1(y)dy \nonumber \\
+  & \vdots \nonumber \\
+  f_n(x) & = S(x) + \lambda \int_a^b K(y \to x)f_{n-1}(y)dy.
+  \label{eq:nth_order_fiesk_approx} 
+\end{align}
+As the order of the approximation goes to $\infty$, the exact solution of
+the FIESK is recovered:
+\begin{equation}
+  F(x) = \lim_{n \to \infty} f_n(x).
+\end{equation}
+
+The solution can also be represented as a Neumann series. First, define a new
+function $g_n(x)$:
+\begin{equation}
+  g_n(x) = 
+  \begin{cases}
+    \quad \int_a^b K(y \to x) S(y)dy & n = 1 \\
+    \quad \int_a^b K(y \to x) g_{n-1}(y)dy & n > 1.
+  \end{cases}
+\end{equation}
+Then equation \ref{eq:nth_order_fiesk_approx} can be written in terms of the 
+function $g_n(x)$:
+\begin{equation}
+  f_n(x) = S(x) + \sum_{j=1}^n \lambda^j g_j(x).
+\end{equation}
+Finally, the exact solution of the FIESK becomes
+\begin{equation}
+  F(x) = S(x) + \sum_{j=1}^{\infty} \lambda^j g_j(x).
+\end{equation}
+When the function $g_n(x)$ is expanded, the solution in terms of a Neumann 
+series has the following form:
+\begin{equation}
+  \begin{split}
+    F(x) = S(x) &+ \lambda \int_a^b K(y \to x)S(y)dy \\
+    & + \lambda^2 \int_a^b \int_a^b K(y \to x)K(y_1 \to y)S(y_1)dy_1dy \\
+    & + \lambda^3 \int_a^b \int_a^b \int_a^b K(y \to x)K(y_1 \to y)K(y_2 \to y_1)
+    S(y_2)dy_2dy_1dy \\
+    & + \cdots 
+  \end{split}
+  \label{eq:neumann_series_soln_expansion}
+\end{equation}
+
+If an integral operator $\hat{K} = \int_{\Gamma} K(y \to x)dy$\footnote{$\hat{K} \cdot f = \int_{\Gamma} K(y \to x)f(y)dy$} 
+is defined, then 
+the Neumann series will converge if and only if the spectrum of $\hat{K}$ is 
+contained on the open unit disk \citep{rahman_integral_2007,morse_methods_1953,spanier_monte_1969}. In other words, successive application of the operator
+$\hat{K}$ do not cause the function being operated on to grow in magnitude.
+
+\section{The Monte Carlo Random Walk Process}
+\label{sec:mc_random_walk_process}
+The Monte Carlo process that is used to estimate the solution of a FIESK
+simulates the movement of entities from state to state in some phase space. 
+The process of moving some entity from state to state is commonly referred to 
+as a random walk processes. The derivation of this Monte Carlo process is 
+outside the scope of this report. It will only be proven that this process does 
+indeed recover the solution to a FIESK given an appropriate random variable. 
+The work by Spanier and Gelbard should be consulted for a detailed discussion 
+of the process \cite{spanier_monte_1969}. 
+
+The random walk process for the solution of a Fredholm integral equation of
+the second kind is completely specified by the following probability
+distribution functions (PDFs) \citep{spanier_monte_1969}: 
+\begin{equation}
+  \text{Random Walk: }
+  \begin{cases}
+    p^1(x) & = P(x_1 = x) \\
+    p(y \to x) & = P(x_{n+1} = x \text{ | } x_n = y, k > n)  \\
+    p(x) & = P(k = n \text{ | } x_n = x).
+  \end{cases}
+  \label{eq:mc_random_walk_pdfs}
+\end{equation}
+The variable $x$ represents one point, or state, in continuous phase space 
+$\Gamma$. The PDF $p^1(x)$ characterizes the probability that the first event 
+of a random walk will occur in state $x$ ($x_1 = x$). The PDF $p(y \to x)$ characterizes the probability of a transition from an initial state $y$ to a new 
+state $x$ ($x_{n+1} = x$ given that $x_n = y$). Finally, the probability $p(x)$ 
+characterizes the probability of termination in state $x$. The probability
+of survival in state $x$ will be represented by $q(x)$. The random walk is 
+assumed to undergo $k$ events where $x_1$ is the first event and $x_k$ is the 
+final event. The PDFs that define the random walk process have the following 
+properties:
+\begin{enumerate}
+  \item $p^1(x) \geq 0$ \\
+  $\int_{\Gamma} p^1(x)dx = 1$ \\ \\
+    and
+  \item $p(y \to x) \geq 0$ \\
+  $\int_{\Gamma} p(y \to x)dx = q(y) = 1 - p(y)$.
+\end{enumerate}
+
+The PDF $p^1(x)$ can be generalized to a PDF that characterizes the probability 
+of an entity having its $n^{th}$ event in state $x$:
+\begin{equation}
+  P^n(x) = 
+  \begin{cases} 
+    P(x_n = x \text{ | } k > n-1) & \text{if } n >= 2 \\
+    P(x_1 = x) = p^1(x) & \text{if } n = 1.
+  \end{cases}
+  \label{eq:pn_pdf}
+\end{equation}
+To calculate the PDF in equation \ref{eq:pn_pdf}, the following recursion
+relation may be used:
+\begin{equation}
+  P^n(x) = \int_{\Gamma} p(y \to x) P^{n-1}(y)dy
+  \label{eq:pn_recursion_rel}
+\end{equation}
+
+A discrete random variable $X(x)$ can now be defined on the space of random 
+walks, which represents the number density of events that happen in state $x$. 
+The expected value of this discrete random variable is
+\begin{align}
+  E[X(x)] & = 1 \cdot P^1(x) + 1 \cdot P^2(x) + \ldots \nonumber \\
+  & = \sum_{n=1}^{\infty} P^n(x).
+  \label{eq:expec_coll_dens}
+\end{align}
+
+Finally, a continuous random variable $P(x)$ can be defined, which is equal to
+$E[X(x)]$. This new random variable is called the continuous event density 
+at $x$, or simply the event density\footnote{The collision density is the name 
+given in most texts but for the sake of generality, event density has been 
+chosen.}. Using this random variable for the event density, and equation 
+\ref{eq:pn_recursion_rel}, a proof will be shown that the Monte Carlo random 
+walk process outlined in equation \ref{eq:mc_random_walk_pdfs} will indeed 
+recover the solution of a Fredholm integral equation, which has the form shown 
+in equation \ref{eq:fredholm_int_eqn}. This proof assumes that $S(x)$ and 
+$K(y \to x)$ from equation \ref{eq:fredholm_int_eqn} have the same properties 
+as $p^1(x)$ and $p(y \to x)$ respectively:
+\begin{align}
+  P(x) & = \sum_{n=1}^{\infty} P^n(x) \nonumber \\
+  & = p^1(x) + \sum_{n=2}^{\infty} \int_{\Gamma} p(y \to x) P^{n-1}(y)dy \nonumber\\
+  & = p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=2}^{\infty} P^{n-1}(y)dy \nonumber\\
+  & = p^1(x) + \int_{\Gamma} p(y \to x) \sum_{n=1}^{\infty} P^{n}(y)dy \nonumber\\
+  & = p^1(x) + \int_{\Gamma} p(y \to x) P(y)dy \nonumber.
+\end{align}
+
+The random variables $X(x)$ and $P(x)$ are purely mathematical contrivances
+used to motivate the use of the random walk process and will never be used 
+to estimate values of interest in a problem. While one could count the
+number of events that occur at a particular point in phase space, given the 
+continuous nature of the phase space, the probability of any one event 
+occurring at exactly the point of interest is zero. In the next section, more 
+practical random variables will be discussed that allow one to estimate 
+the solution of a FIESK in some finite portion of the phase space.
+
+To conduct the random walk process that has been outlined, one must first 
+sample a starting state $x_1$ from the PDF $p^1(x)$. With probability $p(x_1)$ 
+this random walk will end in state $x_1$. If the random walk continues, a new 
+state $x_2$ is sampled from
+\begin{align}
+  p(x \text{ | } x_1) & = \frac{p(x_1 \to x)}{\int p(x_1 \to x)dx} \nonumber \\
+  & = \frac{p(x_1 \to x)}{q(x_1)}.
+\end{align}
+This process will then continue until the random walk eventually ends in some 
+state $x_k$. The variable $\alpha = (x_1,\ldots,x_{k-1},x_k)$ will be used to 
+represent the random walk. 
+
+Depending on how the random walk process is derived from the model equation (in
+the form of a FIESK), the random walk process can fall into one of two 
+categories: analogue or non-analogue. In an analogue random walk process, the 
+random walks simulate the physical behavior of the entity that would be 
+expected based on the model equation. A common misconception is that an 
+analogue process is one where the weight of a particle is always unity. For 
+multiplying systems where particle multiplication is treated implicitly, an 
+analogue process will use particle weights. However, this is rarely done and 
+the latter description will usually suffice. Non-analogue random walk processes 
+typically employ one or more variance reducing techniques to aid in the 
+estimation of rare events. A few common forms of variance reduction are 
+importance sampling, Russian roulette and splitting, all of which are 
+described in detail by Spanier and Gelbard \citet{spanier_monte_1969}. 
+
+To determine if a random walk process is analogue, one must look at the source 
+PDF $p^1(x)$ and the state transition PDF $p(y \to x)$. If the source PDF is 
+equal to the source function $S(x)$ divided by a normalization constant and the 
+state transition PDF is equal to the state transition kernel $K(y \to x)$ the 
+random walk process is analogue (usually).
+
+In terms of radiation transport, analogue random walk processes are 
+rarely used due to the difficulty in estimating low probability events. For
+example, if an estimate of some quantity on the back side of a thick shield is 
+desired and an analogue random walk process is employed, the probability of any 
+random walk passing through the shield model will be very small. Acquiring good
+estimates of the quantity of interest will therefore require a very large
+amount of random walks to compensate for the very small probability of any one
+random walk passing through the shield. 
+
+\section{Monte Carlo Inner Product Estimators}
+\label{sec:mc_int_eqn_estimators}
+As mentioned in the previous section, the continuous nature of the phase space
+where the Monte Carlo random walk process is conducted makes the estimation of
+quantities at a point very challenging. In most problems where Monte Carlo is 
+used, one is instead interested in the estimation of a quantity in some finite 
+portion of the phase space. This quantity of interest can be represented by
+an inner product of two functions. One function will be a known function and
+the other will be the solution to a FIESK, which is unknown. 
+
+As an example, consider a photon shielding problem where the dose in a 
+particular region behind the shield is desired. In this problem, the known 
+function is the flux-to-dose conversion function and the unknown function is 
+the photon flux distribution in the region of interest behind the shield. The 
+inner product of the flux-to-dose conversion function and the photon flux 
+distribution in the region of interest gives the dose in the region of 
+interest. In equation \ref{eq:inner_product}, $g(x)$ is the known function and 
+$F(x)$ is the solution to the FIESK of interest:
+\begin{equation}
+  I = \int_{\Gamma} g(x)F(x)dx.
+  \label{eq:inner_product}
+\end{equation}
+
+In this section, two random variables, often referred to as estimators, will 
+be introduced that can be used to gather information from the random walks to 
+estimate the value $I$. These estimators are defined over the entire phase 
+space instead of one particular point, which makes them quite useful. 
+
+The first estimator that will be discussed gathers information about every
+event of the random walk, but only contributes to the estimation of $I$ when
+the random walk terminates. Because of this property, it is called the
+termination estimator. To conduct the random walks using the procedure
+described in the previous section, the PDFs $p^1(x)$ and $p(y \to x)$ must be 
+constructed by normalizing $S(x)$ and $K(y \to x)$ respectively. This random
+variable will then reincorporate the magnitude of these functions into
+the estimate of $I$. In equation \ref{eq:termination_estimator}, the variable 
+$\alpha$ is a random walk beginning at $x_1$ and ending at $x_k$: 
+\begin{equation}
+  \varepsilon(\alpha) = \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_w)\cdots 
+  w(x_{k-1} \to w_k)\frac{g(x_k)}{p(x_k)}.
+  \label{eq:termination_estimator}
+\end{equation}
+The weight function $w(y \to x)$ is defined in the following equation:
+\begin{equation}
+  w(y \to x) = 
+  \begin{cases}
+    \frac{K(y \to x)}{p(y \to x)} & \text{if } p(y \to x) \neq 0 \\
+    0 & \text{ otherwise}.
+  \end{cases}
+\end{equation}
+Note that for an analogue random walk process, the weight function after each
+event will be unity\footnote{As mentioned in the previous section, the weight
+function for an analogue random walk process where multiplication is treated 
+implicitly will not generally be unity.}, since $p(y \to x)$ is equal to 
+$K(y \to x)$. In addition, $\frac{S(x_1)}{p^1(x_1)}$ will be equal to the 
+constant $C = \int_{\Gamma} S(x)dx$. Therefore, for an analogue random walk 
+process, the termination estimator reduces to
+\begin{equation*}
+  \varepsilon(\alpha) = C \frac{g(x_k)}{p(x_k)}.
+\end{equation*}
+
+It will now be shown that the expected value of this estimator is equal to the 
+value of the inner product, which will prove that this estimator is unbiased 
+\citep{spanier_monte_1969}. Equation \ref{eq:neumann_series_soln_expansion},
+which shows $F(x)$ as a Neumann series will be useful in verifying this proof:
+\begin{align}
+  E\left[\varepsilon(\alpha)\right] & = \sum_{\alpha} 
+  P(\alpha)\varepsilon(\alpha) \nonumber \\
+  & = \sum_{k=1}^{\infty} \int \cdots \int dx_1 \cdots dx_k p^1(x_1)
+  p(x_1 \to x_2) \cdots p(x_{k-1} \to x_k)p(x_k) \cdot \nonumber \\
+  & \qquad \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_w)\cdots 
+  w(x_{k-1} \to w_k)\frac{g(x_k)}{p(x_k)} \nonumber \\
+  & = \sum_{k=1}^{\infty} \int \cdots \int dx_1 \cdots dx_k S(x_1)K(x_1 \to x_2)
+  \cdots K(x_{k-1} \to x_k)g(x_k) \nonumber \\
+  & = \int_{\Gamma} g(x)F(x)dx \nonumber.
+\end{align}
+
+If the function g(x) is only non-zero in some finite portion of the phase space
+$\Gamma_d$, which will be the case for most problems, only the random walks 
+that terminate in the phase space $\Gamma_d$ will contribute to the 
+estimation of $I$. 
+
+Another more efficient estimator exists, which estimates $I$ every time a 
+random walk has an event in the phase space $\Gamma_d$. This estimator, defined 
+in equation \ref{eq:collision_estimator_2}, is called the event estimator since 
+every event can potentially contribute to the estimation of the value of 
+interest\footnote{The collision estimator is the name given in most texts but 
+for the sake of generality, event estimator has been chosen.}: 
+\begin{align}
+  \eta(\alpha) & = \sum_{m=1}^k \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_2) \cdots 
+  w(x_{m-1} \to x_m) g(x_m) \nonumber \\
+  & = \sum_{m=1}^k W_m(\alpha) g(x_m).
+  \label{eq:collision_estimator_2}
+\end{align} 
+The value $W_m(\alpha)$ can be interpreted as the weight of the entity after 
+the $m^{th}$ event of the random walk. 
+
+Again, for an analogue random walk process, the weight function after each 
+event will be unity and the value $\frac{S(x_1)}{p^1(x_1)}$ will be equal to 
+the constant $C = \int_{\Gamma} S(x)dx$. Therefore, for an analogue random walk 
+process, the event estimator reduces to
+\begin{equation*}
+  \eta(\alpha) = C \sum_{m=1}^k g(x_k).
+\end{equation*}
+
+The proof that this estimator is an unbiased random variable is quite lengthy 
+and requires a more in-depth discussion of probability theory. Details of this
+proof can be found in the work by Spanier and Gelbard \cite{spanier_monte_1969}.
+
+As the size of the phase space $\Gamma_d$ decreases, the event estimator 
+will perform slightly better than the termination estimator because each random
+walk will have more opportunities to contribute to the estimate of the inner 
+product $I$. Note that as the size of the phase space $\Gamma_d$ decreases to a 
+point, the function $g(x)$ becomes a delta function and both of the estimators 
+become ineffective at estimating the value $I$. In the next section, this 
+problem will be addressed specifically without resorting to special estimators\footnote{Kalos has shown how to estimate the flux at a point using a modified
+collision estimator \citep{kalos_estimation_1963}}.
+
+When the Monte Carlo random walk process is used to calculate the inner product
+$I$, only a finite number of random walks can be simulated and therefore, only 
+an estimate of the value $I$ can be obtained. The estimate will
+correspond to the following equation, where $N$ is the number of random walks
+conducted and $f(\alpha_i)$ is the value of the estimator for random
+walk $\alpha_i$:
+\begin{equation}
+  \bar{I} = \frac{1}{N} \sum_{i=1}^N f(\alpha_i).
+  \label{eq:inner_product_estimate}
+\end{equation}
+
+To quantify the uncertainty of the estimate of $I$, the sample standard 
+deviation must also be calculated. The unbiased sample standard deviation is 
+\begin{equation}
+  s = \sqrt{\frac{1}{N-1}\sum_{i=1}^N f(\alpha_i)^2 - \frac{N}{N-1}\bar{I}}.
+  \label{eq:inner_product_stddev}
+\end{equation}
+
+Before moving on, an assumption that was made, which has not been mentioned
+until now, must be discussed. In order for any of the above estimators to 
+converge to the value $I$, they must be bounded \citep{spanier_monte_1969}. This
+means that the random walks must terminate after $k < \infty$ events with 
+probability unity. Because the random walk process is in effect estimating the
+terms of a Neumann series, the convergence criteria for a Neumann series will
+also apply to the random walks. As mentioned in section 
+\ref{sec:integral_equations}, the Neumann series will converge if the spectrum
+of the operator $\hat{K} = \int_{\Gamma} K(y \to x)dy$ is contained on the open
+unit disk, and consequently random walks will terminate with probability unity.
+In the context of neutron transport problems, this means that only subcritical 
+problems can be handled. This is an acceptable limitation since this report 
+will not address criticality problems.
+
+\section{The Dual Fredholm Integral Equation of the Second Kind}
+\label{sec:dual_problems}
+It has been noted in the previous two sections that estimating a value of 
+interest at a point using a Monte Carlo random walk process is challenging.
+In this section, a new problem will be introduced that will allow the 
+for the estimation of a value of interest at a point using the same general
+Monte Carlo random walk process from section \ref{sec:mc_random_walk_process}. 
+
+First consider an operator $H$ with the following property when operating
+on the function F(x), where x again is a state in the continuous phase space
+$\Gamma$: 
+\begin{equation}
+  H \cdot F(x) = F(x) - \int_{\Gamma} K(y \to x)F(y)dy.
+  \label{eq:forward_operator}
+\end{equation}
+Based on the equation \ref{eq:fredholm_int_eqn}, which describes a FIESK, 
+$H \cdot F(x)$ is equal to $S(x)$, the forcing function. If $F(x)$ is assumed 
+to be a real-valued function, the adjoint operator $H^{\dagger}$ is defined by 
+the following identity \citep{morse_methods_1953}:
+\begin{equation}
+  \int_{\Gamma}F^{\dagger}(x)H \cdot F(x)dx  = 
+  \int_{\Gamma}F(x)H^{\dagger} \cdot F^{\dagger}(x)dx.
+  \label{eq:forward_adjoint_ops}
+\end{equation}
+The function $F^{\dagger}(x)$ is the solution of a different FIESK, which will
+be called the dual FIESK. From this identity the adjoint operator 
+$H^{\dagger}$ can be determined:
+\begin{align}
+  \int_{\Gamma} F^{\dagger}(x)H \cdot F(x)dx & = \int_{\Gamma} 
+  \left[F^{\dagger}(x)F(x) -
+  F^{\dagger}(x)\int_{\Gamma}K(y \to x)F(y)dy \right]dx \nonumber \\
+  & = \int_{\Gamma} \left[F^{\dagger}(x)F(x) -
+  \int_{\Gamma}K(y \to x)F^{\dagger}(x)F(y)dy \right]dx \nonumber \\
+  & = \int_{\Gamma} F(y)F^{\dagger}(y)dy - 
+  \int_{\Gamma}F(y)\int_{\Gamma}K(y \to x)F^{\dagger}(x)dxdy \nonumber \\
+  & = \int_{\Gamma}F(x)H^{\dagger} \cdot F^{\dagger}(x)dx \nonumber
+\end{align}
+\begin{equation}
+  H^{\dagger} \cdot F^{\dagger}(x) = F^{\dagger}(x) - 
+  \int_{\Gamma}K(x \to y)F^{\dagger}(y)dy.
+  \label{eq:adjoint_operator}
+\end{equation}
+
+If the function $H^{\dagger} \cdot F^{\dagger}(x)$ is set equal to the function
+$g(x)$ from the inner product that was defined in equation 
+\ref{eq:inner_product}, the dual FIESK can be defined as
+\begin{equation}
+  F^{\dagger}(x) = g(x) + \int_{\Gamma}K(x \to y)F^{\dagger}(y)dy.
+  \label{eq:dual_fredholm_int_eqn}
+\end{equation}
+The forcing function for the dual FIESK is the function $g(x)$, which means
+that random walks for the dual FIESK will start in the region $\Gamma_d$ where
+the function $g(x)$ is defined. The kernel of the dual FIESK is the same as 
+the kernel for the original FIESK. However, in the dual FIESK the integration 
+is over final states, which will cause the behavior of the kernel, and thus
+the random walks, to be different.
+
+With the dual FIESK defined in this way, the inner product from equation
+\ref{eq:inner_product} can now be defined as
+\begin{align}
+  I & = \int_{\Gamma} F(x)g(x)dx \nonumber \\
+  & = \int_{\Gamma} F(x) H^{\dagger} \cdot F^{\dagger}(x)dx \nonumber \\
+  & = \int_{\Gamma}  F^{\dagger}(x) H \cdot F(x) dx \nonumber \\
+  I & = \int_{\Gamma} F^{\dagger}(x)S(x) dx.
+  \label{eq:inner_product_dual}
+\end{align}
+As equation \ref{eq:inner_product} and \ref{eq:inner_product_dual} indicate, 
+either the solution to the original FIESK or to the dual FIESK can be used to 
+determine the value I, which is why the two equation are duals. The question
+of which one to use can be answered by analyzing the functions $g(x)$ and
+$S(x)$. 
+
+In the limiting case where $g(x)$ is a delta function, which will occur when
+the value of I is desired at a point, only a Monte Carlo random walk process for
+the dual FIESK, combined with any of the estimators described in the previous 
+section, will be able to estimate I. Conversely, in the limiting case where 
+$S(x)$ is a delta function, only a Monte Carlo random walk process for the 
+original FIESK, combined with any of the estimators described in the previous 
+section, will be able to estimate I. This is because delta functions can be 
+handled easily as source terms by the Monte Carlo random walk process but are 
+very challenging to handle with estimators. 
+
+In general, if the portion of the phase space $\Gamma_s$, in which the source 
+is non-zero is larger than the portion of the phase space $\Gamma_d$, in which 
+the function $g(x)$ is non-zero, the dual problem will be be able to take 
+advantage of estimators with smaller variance, assuming that the dual FIESK has 
+similar properties to the original FIESK\footnote{The properties of the dual
+FIESK are often much different, as will be shown in chapter 
+\ref{ch:adjoint_particle_transport}. In general though, this point is still 
+valid since the probability of random walks entering a larger region will be
+greater than the probability of random walks entering a smaller region.}. This 
+is one of the primary motivations for studying the dual problem in this report.
+
+\section{Chapter Summary}
+Several points from this chapter must be emphasized before moving on to the
+next chapter. They are summarized in the following list:
+\begin{itemize}
+  \item The FIESK is an important equation with applications in radiation
+    transport problems.
+  \item While the FIESK can be solved analytically using the method of 
+    successive approximations, it is more common to solve it numerically using
+    the Monte Carlo random walk process. This is especially true when the
+    system the FIESK describes is complex.
+  \item The Monte Carlo random walk process is governed by a set of PDFs that
+    are derived from the FIESK.
+  \item The solution to any FIESK can be estimated using the Monte Carlo
+    random walk process assuming that the PDFs derived from the FIESK have
+    certain necessary properties. 
+  \item To estimate the solution of a FIESK in some finite portion of phase
+    space, the termination estimator and the event estimator can be used.
+  \item If an estimation of the solution of a FIESK at a point of the phase 
+    space is desired, the Dual FIESK and its associated Monte Carlo random 
+    process must be used (unless special estimators are used which will not be 
+    discussed in this report).
+  \item More generally, if the size of the source region is larger than
+    the size of the detector region (the region of interest), the Dual FIESK
+    and its associated Monte Carlo random walk process should be used. 
+\end{itemize}

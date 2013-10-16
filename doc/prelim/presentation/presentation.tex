@@ -4,6 +4,9 @@
 \usepackage{longtable}
 \usepackage{listings}
 \usepackage{color}
+\usepackage{graphicx}
+%% Renumber appendix
+\usepackage{appendixnumberbeamer}
 %% The amssymb package provides various useful mathematical symbols
 \usepackage{amssymb}
 %% The amsthm package provides extended theorem environments
@@ -45,6 +48,15 @@
     \frametitle{Outline}
     \tableofcontents[currentsection]
   \end{frame}
+}
+
+\newcommand{\backupbegin}{
+   \newcounter{framenumberappendix}
+   \setcounter{framenumberappendix}{\value{framenumber}}
+}
+\newcommand{\backupend}{
+   \addtocounter{framenumberappendix}{-\value{framenumber}}
+   \addtocounter{framenumber}{\value{framenumberappendix}} 
 }
 
 %% colors
@@ -252,12 +264,24 @@
     \end{itemize}
   \end{textblock}
 
-   \begin{textblock}{20}(2,50)
-    \includegraphics[width=2.5in]{figures/Target_adjoint_flux-midplane.pdf}
+  %% \begin{textblock}{20}(2,50)
+  %%   \includegraphics[width=2.5in]{figures/Target_adjoint_flux-midplane.pdf}
+  %% \end{textblock}
+
+  %% \begin{textblock}{10}(35,40)
+  %%   \includegraphics[width=2.0in]{figures/organ_contour.pdf}
+  %% \end{textblock}
+
+  %% \begin{textblock}{20}(65,50)
+  %%   \includegraphics[width=2.5in]{figures/adjoint_ratio-slice5.pdf}
+  %% \end{textblock}
+
+  \begin{textblock}{20}(-5,43)
+    \includegraphics[width=3.0in]{figures/organ_contour.pdf}
   \end{textblock}
 
-   \begin{textblock}{20}(65,50)
-    \includegraphics[width=2.5in]{figures/adjoint_ratio-slice5.pdf}
+  \begin{textblock}{20}(65,50)
+    \includegraphics[width=2.5in]{figures/Target_adjoint_flux-midplane.pdf}
   \end{textblock}
 
 \end{frame}
@@ -390,28 +414,28 @@
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-\begin{frame}{The Method of Successive Approximations}
+%% \begin{frame}{The Method of Successive Approximations}
 
-  \begin{align}
-    f_0(x) & = S(x) \nonumber \\
-    f_n(x) & = S(x) + \lambda \int_a^b K(y \to x)f_{n-1}(y)dy \nonumber \\
-    & \quad \nonumber \\
-    F(x) & = \lim_{n \to \infty} f_n(x) \nonumber
-  \end{align}
+%%   \begin{align}
+%%     f_0(x) & = S(x) \nonumber \\
+%%     f_n(x) & = S(x) + \lambda \int_a^b K(y \to x)f_{n-1}(y)dy \nonumber \\
+%%     & \quad \nonumber \\
+%%     F(x) & = \lim_{n \to \infty} f_n(x) \nonumber
+%%   \end{align}
 
-  \begin{itemize}
-    \item The solution is more commonly expressed as a Neumann series:
-  \end{itemize}
-  \begin{align}
-    F(x) & = S(x) + \lambda \int_a^b K(y \to x)S(y)dy \text{ }+ \nonumber \\
-    & \quad \lambda^2 \int_a^b \int_a^b K(y \to x)K(y_1 \to y)S(y_1)dy_1dy 
-    \text{ } + \nonumber \\
-    & \quad \lambda^3 \int_a^b \int_a^b \int_a^b K(y \to x)K(y_1 \to y)
-    K(y_2 \to y_1)S(y_2)dy_2dy_1dy \text{ }+ \nonumber \\
-    & \quad \cdots \nonumber
-  \end{align}
+%%   \begin{itemize}
+%%     \item The solution is more commonly expressed as a Neumann series:
+%%   \end{itemize}
+%%   \begin{align}
+%%     F(x) & = S(x) + \lambda \int_a^b K(y \to x)S(y)dy \text{ }+ \nonumber \\
+%%     & \quad \lambda^2 \int_a^b \int_a^b K(y \to x)K(y_1 \to y)S(y_1)dy_1dy 
+%%     \text{ } + \nonumber \\
+%%     & \quad \lambda^3 \int_a^b \int_a^b \int_a^b K(y \to x)K(y_1 \to y)
+%%     K(y_2 \to y_1)S(y_2)dy_2dy_1dy \text{ }+ \nonumber \\
+%%     & \quad \cdots \nonumber
+%%   \end{align}
   
-\end{frame}
+%% \end{frame}
 
 %%----------------------------------------------------------------------------%%
 \begin{frame}{The Monte Carlo Method}
@@ -670,13 +694,29 @@
   \end{itemize}
   \begin{align}
     C(\vec{r},&E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega}) =
-    \sum_j \frac{\Sigma_j(\vec{r},E^{'})c_i(\vec{r},E^{'})
-      f_i(\vec{r},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega})}
+    \sum_j \frac{\Sigma_j(\vec{r},E^{'})c_j(\vec{r},E^{'})
+      f_j(\vec{r},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega})}
         {\Sigma_T(\vec{r},E^{'})} \nonumber \\
       & = \sum_A \frac{\Sigma_A(\vec{r},E^{'})}{\Sigma_T(\vec{r},E^{'})}
         \sum_j \frac{\sigma_{A,j}(E^{'})}{\sigma_A(E^{'})} c_{A,j}(E^{'})
         p_{A,j}(E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}) \nonumber
   \end{align}
+
+  \only<2>{
+    \begin{textblock}{10}(20,77)
+      \includegraphics[width=1.0in,height=0.5in]{figures/circle.pdf}
+    \end{textblock}
+  }
+  \only<3>{
+    \begin{textblock}{10}(43,77)
+      \includegraphics[width=0.85in,height=0.5in]{figures/circle.pdf}
+    \end{textblock}
+  }
+  \only<4>{
+    \begin{textblock}{10}(63,77)
+      \includegraphics[width=2.1in,height=0.5in]{figures/circle.pdf}
+    \end{textblock}
+  }  
 
 \end{frame}
 
@@ -827,15 +867,15 @@
     \item The flux is characterized by the transport equation 
   \end{itemize}
   \begin{equation*}
-    H_B \cdot \varphi(\vec{r},E,\hat{\Omega}) = S(\vec{r},E,\hat{\Omega})
+    L_T \cdot \varphi(\vec{r},E,\hat{\Omega}) = S(\vec{r},E,\hat{\Omega})
   \end{equation*}
   
   \begin{itemize}
     \item The adjoint operator is defined by the following relationship:
   \end{itemize}
   \begin{equation*}
-    \langle \varphi^{\dagger}H_B \cdot \varphi \rangle = 
-    \langle \varphi H_B^{\dagger} \cdot \varphi^{\dagger} \rangle
+    \langle \varphi^{\dagger}L_T \cdot \varphi \rangle = 
+    \langle \varphi L_T^{\dagger} \cdot \varphi^{\dagger} \rangle
   \end{equation*}
   
   \begin{itemize}
@@ -844,8 +884,8 @@
   \medskip
   \begin{equation*}
     R = \langle \varphi r \rangle 
-    = \langle \varphi H_B^{\dagger} \cdot \varphi^{\dagger} \rangle 
-    = \langle \varphi^{\dagger}H_B \cdot \varphi \rangle
+    = \langle \varphi L_T^{\dagger} \cdot \varphi^{\dagger} \rangle 
+    = \langle \varphi^{\dagger}L_T \cdot \varphi \rangle
     = \langle \varphi^{\dagger} S \rangle \nonumber
   \end{equation*}
 
@@ -1023,40 +1063,62 @@
 %%----------------------------------------------------------------------------%%
 \begin{frame}{The Expanded Adjoint Collision Kernel}
   
-  \begin{align}
-    C^{\dagger}(\vec{r},&E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}) =
-    \frac{\Sigma_T(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})}
-         {\Sigma^{\dagger}(\vec{r},E^{'})} \nonumber \\
-         & = \sum_j 
-         \frac{\Sigma_{j}(\vec{r},E)c_j(\vec{r},E)
-           f_j(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})}
-              {\Sigma^{\dagger}(\vec{r},E^{'})} \nonumber \\
-              & = \sum_A \frac{\Sigma_A^{\dagger}(\vec{r},E^{'})}
-              {\Sigma^{\dagger}(\vec{r},E^{'})}
-              \sum_j \frac{\sigma_{A,j}^{\dagger}(E^{'})}{\sigma_A^{\dagger}(E^{'})}
-              \frac{\sigma_{A,j}(E) c_{A,j}(E) 
-                p_{A,j}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})}
-                   {\sigma_{A,j}^{\dagger}(E^{'})} \nonumber
-  \end{align}
+  \begin{textblock}{120}(4,15)
+    \begin{align}
+      C^{\dagger}(\vec{r},&E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}) =
+      \frac{\Sigma_T(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})}
+           {\Sigma^{\dagger}(\vec{r},E^{'})} \nonumber \\
+           & = \sum_j 
+           \frac{\Sigma_{j}(\vec{r},E)c_j(\vec{r},E)
+             f_j(\vec{r},E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})}
+                {\Sigma^{\dagger}(\vec{r},E^{'})} \nonumber \\
+                & = \sum_A \frac{\Sigma_A^{\dagger}(\vec{r},E^{'})}
+                {\Sigma^{\dagger}(\vec{r},E^{'})}
+                \sum_j \frac{\sigma_{A,j}^{\dagger}(E^{'})}{\sigma_A^{\dagger}(E^{'})}
+                \frac{\sigma_{A,j}(E) c_{A,j}(E) 
+                  p_{A,j}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})}
+                     {\sigma_{A,j}^{\dagger}(E^{'})} \nonumber
+    \end{align}
+  \end{textblock}
+
+  \only<2>{
+    \begin{textblock}{10}(18,43)
+      \includegraphics[width=1.0in,height=0.5in]{figures/circle.pdf}
+    \end{textblock}
+  }
+  \only<3>{
+    \begin{textblock}{10}(41,43)
+      \includegraphics[width=0.85in,height=0.5in]{figures/circle.pdf}
+    \end{textblock}
+  }
+  \only<4,5>{
+    \begin{textblock}{10}(60,41)
+      \includegraphics[width=2.6in,height=0.6in]{figures/circle.pdf}
+    \end{textblock}
+  }  
 
   \medskip
 
-  \begin{itemize}
-    \item Through expansion the definition of the adjoint cross section also 
-      becomes clear
-  \end{itemize}
-  \begin{equation*}
-    \sigma_{A,j}^{\dagger}(E^{'}) = \int\int
-    \sigma_{A,j}(E)c_{A,j}(E) 
-    p_{A,j}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'}) dE d\hat{\Omega}
-  \end{equation*}
-  \begin{equation*}
-    p_{A,j}^{\dagger}(E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}) = 
-    \frac{\sigma_{A,j}(E)c_{A,j}(E) 
-      p_{A,j}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})}
-         {\sigma_{A,j}^{\dagger}(E^{'})}
-  \end{equation*}
-      
+  \only<5>{
+    \begin{textblock}{120}(4,58)
+      \begin{itemize}
+        \item Through expansion the definition of the adjoint cross section also
+          becomes clear
+      \end{itemize}
+      \begin{equation*}
+        p_{A,j}^{\dagger}(E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega}) = 
+        \frac{\sigma_{A,j}(E)c_{A,j}(E) 
+          p_{A,j}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'})}
+             {\sigma_{A,j}^{\dagger}(E^{'})}
+      \end{equation*}
+      \begin{equation*}
+        \sigma_{A,j}^{\dagger}(E^{'}) = \int\int
+        \sigma_{A,j}(E)c_{A,j}(E) 
+        p_{A,j}(E \to E^{'},\hat{\Omega} \to \hat{\Omega}^{'}) dE d\hat{\Omega}
+      \end{equation*}
+    \end{textblock}
+  }
+  
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
@@ -1484,21 +1546,6 @@
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
-%% \begin{frame}{Major Components of FACEMC}
-  
-%%   \begin{textblock}{20}(20,15)
-%%     \includegraphics[width=3.5in]{../document/chapters/code_overview/Problem_Simulator.pdf}
-%%   \end{textblock}
-
-%%   \begin{textblock}{120}(4,85)
-%%     \begin{itemize}
-%%       \item FACEMC version 1.0 is currently complete.
-%%     \end{itemize}
-%%   \end{textblock}
-
-%% \end{frame}
-
-%%----------------------------------------------------------------------------%%
 \subsection{Validation plan}
 %%----------------------------------------------------------------------------%%
 \begin{frame}{FACEMC Validation Plan}
@@ -1516,87 +1563,6 @@
           and spectra using FACEMC forward and adjoint simulations
       \end{enumerate}
     
-\end{frame}
-
-%%----------------------------------------------------------------------------%%
-\begin{frame}{FACEMC Validation Plan: Step 1}
-
-  \begin{textblock}{120}(4,15)
-    \begin{itemize}
-      \item \textbf{GEANT4 Photon Benchmark Problem:} calculate mass 
-        attenuation coefficients and partial interaction coefficients
-        \medskip
-      \item Results will be compared to NIST values
-    \end{itemize}
-  \end{textblock}
-  
-  \begin{textblock}{20}(30,43)
-    \includegraphics[width=1.0in]{../document/chapters/code_overview/photon_benchmark_problem.pdf}
-  \end{textblock}
-
-  \begin{textblock}{20}(65,52)
-    \begin{equation*}
-      \left(\frac{\mu}{\rho}\right) = -\frac{1}{\rho d}
-      \ln{\left(\frac{\text{I}}{\text{I}_0}\right)}
-    \end{equation*}
-  \end{textblock}
-
-  \begin{textblock}{120}(4,80)
-    \begin{itemize}
-      \item For neutrons, several experiments from the Shielding Integral
-        Benchmark Archive Database (SINBAD) will be modeled
-    \end{itemize}
-  \end{textblock}
-
-\end{frame}
-
-%%----------------------------------------------------------------------------%%
-\begin{frame}{FACEMC Validation Plan: Step 2}
-  
-  \begin{itemize}
-    \item \textbf{Problem Geometry:}
-  \end{itemize}
-      
-  \begin{figure}[h!]
-    \begin{center}
-      \includegraphics[width=1.7in]{figures/code_comparison_problem.pdf}
-    \end{center}
-  \end{figure}
-
-  \begin{itemize}
-    \item \textbf{Source:}
-      \begin{itemize}
-        \item isotropic point source with several discrete energies (photons)
-        \item isotropic point source with a fission spectrum (neutrons)
-      \end{itemize}
-      \medskip
-    \item \textbf{Quantities:} Flux spectrum and total flux at each spherical 
-      surface
-      \medskip
-    \item \textbf{Comparison Codes:} PENELOPE, MCNP5 and TART2005 
-  \end{itemize}
-  
-\end{frame}
-
-%%----------------------------------------------------------------------------%%
-\begin{frame}{FACEMC Validation Plan: Step 3}
-
-  \begin{itemize}
-    \item \textbf{Problem Geometry:} same as FACEMC validation plan step 2
-      \begin{itemize}
-        \item Due to unique symmetry, the adjoint problem can be constructed 
-          identically to the forward problem (point source)
-      \end{itemize}
-      \bigskip
-      \bigskip
-    \item \textbf{Source:} same as FACEMC validation plan step 2
-      \bigskip
-      \bigskip
-    \item \textbf{Quantities:} Flux spectrum and total flux at each spherical 
-      surface
-
-  \end{itemize}    
-
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
@@ -1639,14 +1605,18 @@
 %%----------------------------------------------------------------------------%%
 \begin{frame}{Preliminary Validation of FACEMC: Forward vs. Adjoint}
 
-  \begin{itemize}
-    \item \textbf{Problem Geometry:} same as FACEMC validation step 3
-    \item \textbf{Source:} isotropic point source emitting at 661.66 keV 
-      (80\%) and 321.0 keV (20\%)
-    \item \textbf{Material:} water
-    \item \textbf{Number of histories:} $10^7$
-  \end{itemize}
+  \begin{textblock}{80}(4,15)
+    \begin{itemize}
+      \item \textbf{Problem Geometry:} 
+        %%same as FACEMC validation step 3
+      \item \textbf{Source:} isotropic point source emitting at 661.66 keV 
+        (80\%) and 321.0 keV (20\%)
+      \item \textbf{Material:} water
+      \item \textbf{Number of histories:} $10^7$
+    \end{itemize}
+\end{textblock}
   
+  \begin{textblock}{120}(4,50)
     \begin{table}[ht]
       \centering
       \begin{tabular}{c c c c c c}
@@ -1661,8 +1631,12 @@
         50 & 1.9963e-5 & 0.0014 & 2.0030e-5 & 0.0033 & 0.34 \\ [1ex]
         \hline
       \end{tabular}
-      \label{table:val_plan_s3_c0_flux_water}
     \end{table}   
+  \end{textblock}
+
+  \begin{textblock}{20}(83,15)
+    \includegraphics[width=1.7in]{figures/code_comparison_problem.pdf}
+  \end{textblock}    
 
 \end{frame}
 
@@ -1758,6 +1732,130 @@
 \end{frame}
 
 %%----------------------------------------------------------------------------%%
+\appendix
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Adjoint K.N. Rejection Sampling Procedure}
+
+  \begin{figure}[h!]
+     \begin{center}
+       \includegraphics[width=4in]{figures/adjoint_KN_rejection_sampling_proc.pdf}
+     \end{center}
+   \end{figure}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Major Components of FACEMC}
+  
+  \begin{textblock}{20}(20,15)
+    \includegraphics[width=3.5in]{../document/chapters/code_overview/Problem_Simulator.pdf}
+  \end{textblock}
+
+  \begin{textblock}{120}(4,85)
+    \begin{itemize}
+      \item FACEMC version 1.0 is currently complete.
+    \end{itemize}
+  \end{textblock}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{FACEMC Validation Plan: Step 1}
+
+  \begin{textblock}{120}(4,15)
+    \begin{itemize}
+      \item \textbf{GEANT4 Photon Benchmark Problem:} calculate mass 
+        attenuation coefficients and partial interaction coefficients
+        \medskip
+      \item Results will be compared to NIST values
+    \end{itemize}
+  \end{textblock}
+  
+  \begin{textblock}{20}(30,43)
+    \includegraphics[width=1.0in]{../document/chapters/code_overview/photon_benchmark_problem.pdf}
+  \end{textblock}
+
+  \begin{textblock}{20}(65,52)
+    \begin{equation*}
+      \left(\frac{\mu}{\rho}\right) = -\frac{1}{\rho d}
+      \ln{\left(\frac{\text{I}}{\text{I}_0}\right)}
+    \end{equation*}
+  \end{textblock}
+
+  \begin{textblock}{120}(4,80)
+    \begin{itemize}
+      \item For neutrons, several experiments from the Shielding Integral
+        Benchmark Archive Database (SINBAD) will be modeled
+    \end{itemize}
+  \end{textblock}
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{FACEMC Validation Plan: Step 2}
+  
+  \begin{itemize}
+    \item \textbf{Problem Geometry:}
+  \end{itemize}
+      
+  \begin{figure}[h!]
+    \begin{center}
+      \includegraphics[width=1.7in]{figures/code_comparison_problem.pdf}
+    \end{center}
+  \end{figure}
+
+  \begin{itemize}
+    \item \textbf{Source:}
+      \begin{itemize}
+        \item isotropic point source with several discrete energies (photons)
+        \item isotropic point source with a fission spectrum (neutrons)
+      \end{itemize}
+      \medskip
+    \item \textbf{Quantities:} Flux spectrum and total flux at each spherical 
+      surface
+      \medskip
+    \item \textbf{Comparison Codes:} PENELOPE, MCNP5 and TART2005 
+  \end{itemize}
+  
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{FACEMC Validation Plan: Step 3}
+
+  \begin{itemize}
+    \item \textbf{Problem Geometry:} same as FACEMC validation plan step 2
+      \begin{itemize}
+        \item Due to unique symmetry, the adjoint problem can be constructed 
+          identically to the forward problem (point source)
+      \end{itemize}
+      \bigskip
+      \bigskip
+    \item \textbf{Source:} same as FACEMC validation plan step 2
+      \bigskip
+      \bigskip
+    \item \textbf{Quantities:} Flux spectrum and total flux at each spherical 
+      surface
+
+  \end{itemize}    
+
+\end{frame}
+
+%%----------------------------------------------------------------------------%%
+\begin{frame}{Timeline}
+
+  \begin{enumerate}
+    \item Complete all theoretical work by September 1st, 2013
+      \bigskip
+    \item Complete all coding work by March 1st, 2014
+      \bigskip
+    \item Complete the validation plan by April 1st, 2014
+      \bigskip
+    \item Complete all of the the challenge problems by June 1st, 2014
+      \bigskip
+    \item Ideal thesis completion date: August 1st, 2014 - September 1st, 2014
+\end{enumerate}
+
+\end{frame}
 
 \end{document}
 

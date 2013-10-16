@@ -1,0 +1,260 @@
+It must be noted that in the 
+context of the Monte Carlo method, the terms source region and detector region 
+do not necessarily refer to the physical analog of a radiation source and 
+radiation detector. Any region where a random walk is started is referred to 
+as a source region and any region where some portion of a random walk is 
+recorded is refereed to as a detector region. The necessity of this generality 
+is an important point of discussion. 
+
+However, the exact interpretation of this source term is 
+ambiguous. The source term can either characterize the birth states of entities
+or the states where the first non-birth events occur. Depending on the 
+interpretation of the source term, one must follow a set of steps to simulate a
+random walk. Figure \ref{fig:random_walk_process_1} shows the steps that one 
+would follow to simulate a random walk if the source term is interpreted as 
+characterizing the birth states of entites, while figure 
+\ref{fig:random_walk_process_2} shows the steps that one would follow to 
+simulate a random walk if the source term is interpreted as characterizing the 
+first non-birth states of entities. Note that the only difference between the 
+two procedures is the ordering of the steps.
+\begin{figure}[t!]
+  \begin{center}
+    \scalebox{0.5}{\includegraphics{chapters/monte_carlo_background/Monte_Carlo_Process_Emission.pdf} }
+  \end{center}
+  \caption{\textbf{Monte Carlo random walk simulation proceedure.} \textit{This
+      procedure must be followed if the source term characterizes the birth
+      states of entities.} }
+  \label{fig:random_walk_process_1}
+\end{figure}
+\begin{figure}[t!]
+  \begin{center}
+    \scalebox{0.5}{
+      \includegraphics{chapters/monte_carlo_background/Monte_Carlo_Process_Collision.pdf} }
+  \end{center}
+  \caption{\textbf{Monte Carlo random walk simulation procedure.} \textit{This
+      procedure must be followed if the source term characterizes the first
+      collision states of entities.} }
+  \label{fig:random_walk_process_2}
+\end{figure}
+
+One last quantity must be discussed, which characterizes the efficacy of
+an estimator at obtaining estimates of the value $I$. This quantity, defined
+in equation \ref{eq:fom}, is often refered to as the figure of merrit. While it
+can be tempting to base ones decision for using a particular estimator solely
+on the characteristics of its variance, the computer time needed to evaluate 
+the estimator is also an important consideration. The figure of merrit takes
+into account both of these factors and can therefore be used to evaluate the 
+efficacy of a particular estimator with regard to a particular problem. 
+Because the value $s^2/\bar{I}^2$ is proportional to $N^{-1}$ and the computer 
+time is proportional to $N$, the figure of merrit is a constant. For more on
+the variance properties of estimators, please refer to reference 
+\cite{spanier_monte_1969}.
+\begin{equation}
+  FOM = \frac{\bar{I}}{s^2t}
+  \label{eq:fom}
+\end{equation}
+
+One final piece of terminology must be defined before moving on to the next 
+chapter. The detector will be defined as the portion of the phase space,
+$\Gamma_d$ where the function $g(x)$ is non-zero. When discussing radiation 
+transport problems, it is very common to refer to the region where particles 
+are born as the source and the region where particles information is recorded 
+as the detector. However, in the dual problem the opposite will be true; 
+particles will be born in the detector region ($\Gamma_d$) and 
+particle information will be recorded in the source region ($\Gamma_s$).
+
+When the probability laws used 
+to sample from the parent population have a 
+physical analog, the process of sampling particle histories is refered to as 
+analog. In radiation transport problems, there is usually interest in rare
+events, such as the penetration of radiation through a thick shield. When rare
+events are of interest, analog Monte Carlo processes are undesirable
+because the rare events will only rarely be sampled and therefore little data
+will exist to study them. Fortunately, the probability laws can be biased to 
+increase the probability of sampling rare events as long as the bias is 
+accounted for and removed from the statistical analysis of the results. There
+are many techniques that can be used to improve the probability of sampling
+rare events, which all fall under the catagory of variance reduction techiques.
+While variance reduction techniques are extremely important for the successful
+application of the Monte Carlo method to many radiation transport problems, 
+only a few of the simple techniques will be discussed in this report. For a
+detailed look at the variance reduction techniques used in todays Monte Carlo
+codes please refer to refs (...). 
+
+While it is important to acknowledge that the Monte Carlo method is being 
+used to solve more and more challenging problems where it was once thought to 
+be an ineffective tool (full core reactor modeling), these applications of the 
+method are outside the scope of this report. The discussions of the Monte Carlo
+method in the following sections will focus exclusively on fixed source 
+problems of modest size. Before outlining the proceeding sections of this 
+report, some characteristics of the Monte Carlo method and the radiation 
+transport equation must be discussed.
+
+//---------------------------------------------------------------------------//
+To derive the expected value estimator for adjoint random walks given a 
+mono-energetic source, the adjoint emission density FIESK given in equation 
+\ref{eq:adjoint_emission_density} will be substituted back 
+into equation \ref{eq:adj_emission_ip}, which gave the value I in terms of
+the adjoint emission density\footnote{An analogous expected value 
+estimator can be derived for random walks from the previous chapter if a similar
+substitution is done \citep{spanier_monte_1969}. When the source is a point 
+source, the expected value estimator becomes the point estimator described by
+many references \citep{x-5_monte_carlo_team_mcnp_2003, kalos_estimation_1963}.}:
+\begin{align}
+  I & = \int\int\int V(\vec{r},E,\hat{\Omega})a(\vec{r},E,\hat{\Omega})
+  dVdEd\hat{\Omega} \nonumber \\  
+  & \quad + \int\int\int\int\int V(\vec{r},E,\hat{\Omega})
+  P^{\dagger}(\vec{r},E^{'}) 
+  C^{\dagger}(\vec{r},E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega})
+  \xi^{\dagger}(\vec{r},E^{'},\hat{\Omega}^{'})dE^{'}d\hat{\Omega}^{'}dVdE
+  d\hat{\Omega} \nonumber \\
+  & = I_u^{\dagger} + I_c^{\dagger}. \nonumber
+\end{align}
+Now, the value of the inner product has two contributions. The first, 
+$I_u^{\dagger}$, is the contribution from uncollided random walks. The second,
+$I_c^{\dagger}$, is the contribution from random walks which have undergone at
+least one collision. The collided contribution will be examined first. 
+
+A new function defined as
+\begin{align}
+  W(\vec{r},E^{'},\hat{\Omega}^{'}) & = \int\int V(\vec{r},E,\hat{\Omega})
+  P^{\dagger}(\vec{r},E^{'})
+  C^{\dagger}(\vec{r},E^{'} \to E,\hat{\Omega}^{'} \to \hat{\Omega})dEd\hat{\Omega}
+  \nonumber \\
+  & = \int\int\int U(\vec{r}^{'},E,\hat{\Omega})
+  T^{\dagger}(\vec{r} \to \vec{r}^{'},E,\hat{\Omega}) P^{\dagger}(\vec{r},E^{'})
+  C^{\dagger}(\vec{r},E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega})
+  dV^{'}dEd\hat{\Omega} \nonumber \\
+  & = \int\int\int \frac{S(\vec{r}^{'},E,\hat{\Omega})}
+  {\Sigma_T(\vec{r}^{'},E)}
+  T^{\dagger}(\vec{r} \to \vec{r}^{'},E,\hat{\Omega}) P^{\dagger}(\vec{r},E^{'})
+  C^{\dagger}(\vec{r},E^{'} \to E, \hat{\Omega}^{'} \to \hat{\Omega})
+  dV^{'}dEd\hat{\Omega},
+\end{align}
+must be introduced. The equation for the collided contribution therefore becomes
+\begin{equation*}
+  I_c^{\dagger} = \int\int\int W(\vec{r},E^{'},\hat{\Omega}^{'})
+  \xi^{\dagger}(\vec{r},E^{'},\hat{\Omega}^{'}) dVdE^{'}d\hat{\Omega}^{'}.
+\end{equation*}
+
+This function $W(\vec{r},E^{'},\hat{\Omega}^{'})$ will in general be hard to 
+evaluate. However, if the source has the following form, which corresponds to a 
+mono-energetic source, $W(\vec{r},E^{'},\hat{\Omega}^{'})$ can be simplified: 
+\begin{equation}
+  S(\vec{r},E,\hat{\Omega}) = 
+  \begin{cases}
+    S_0 \delta(E - E_s) p_{s,\hat{\Omega}}(\hat{\Omega})p_{s,\vec{r}}(\vec{r}) 
+    & \text{if } \vec{r} \in V_s \\
+    0 & \text{ otherwise}.
+  \end{cases}
+\end{equation}
+The simplified equation for $W(\vec{r},E^{'},\hat{\Omega}^{'})$ is now
+\begin{align}
+  W(\vec{r},E^{'},\hat{\Omega}^{'}) & = \frac{S_0 P^{\dagger}(\vec{r},E^{'})}
+  {\Sigma_T(\vec{r}_s,E_s)}\int\int_{V^{'} \in V_s} p_{s,\hat{\Omega}}(\hat{\Omega})
+  p_{s,\vec{r}}(\vec{r}^{'}) T^{\dagger}(\vec{r} \to \vec{r}^{'},E_s,\hat{\Omega})
+  \nonumber \\
+  & \qquad\cdot 
+  \sum_A p_A^{\dagger}(\vec{r},E^{'}) \sum_j p_{A,j}^{\dagger}(E^{'})
+  f_{A,j}^{\dagger}(E^{'} \to E_s,\hat{\Omega}^{'} \to \hat{\Omega}) 
+  dV^{'}d\hat{\Omega} \nonumber \\
+  & = \frac{S_0 P^{\dagger}(\vec{r},E^{'})}{\Sigma_T(\vec{r}_s,E_s)}
+  \sum_A p_A^{\dagger}(\vec{r},E^{'}) \sum_j p_{A,j}^{\dagger}(E^{'})
+  p_{A,j}^{\dagger}(E^{'} \to E_s|\hat{\Omega}^{'}) \nonumber \\
+  & \qquad\cdot \int\int_{V^{'} \in V_s} 
+  p_{s,\hat{\Omega}}(\hat{\Omega}) p_{s,\vec{r}}(\vec{r}^{'}) 
+  T^{\dagger}(\vec{r} \to \vec{r}^{'},E_s,\hat{\Omega})
+  p_{A,j}^{\dagger}(\hat{\Omega}^{'} \to \hat{\Omega}|E^{'} \to E_s) 
+  dV^{'}d\hat{\Omega} \nonumber
+\end{align}
+It is assumed that the cross sections in the source region are constant with 
+respect to position. The variable $\vec{r_s}$ represents any point contained in
+the source volume $V_s$.
+
+For photon reactions where the outgoing energy changes, the outgoing energy 
+will generally be coupled to the outgoing direction cosine 
+($\mu = \hat{\Omega}^{'}\cdot\hat{\Omega}$) and not the outgoing direction 
+(neglecting photon polarization). Therefore $W(\vec{r},E^{'},\hat{\Omega}^{'})$ 
+cannot be simplified further. It does however, provide a procedure that
+can be employed during the random walks which will allow particles with energy
+equal to the source energy to be realized. This procedure has several
+variations which depend on ones interpretation of 
+$W(\vec{r},E^{'},\hat{\Omega}^{'})$. These procedures only differ in the number 
+of additional random walks that are initiated at a collision point. The 
+simplest procedure, where only a single additional random walk is initiated, 
+will be discussed further. 
+
+Upon arriving at a collision site, the weight of the adjoint random
+walk must be multiplied by the adjoint weight factor. Next, the expanded
+form of the adjoint collision kernel is sampled by selecting the nuclide or 
+element hit (A) and the reaction type (j) for nuclide or element A. Now, if it 
+is energetically possible for the adjoint particle to undergo a reaction of 
+this type resulting in the source energy $E_s$, an additional random walk is 
+initiated. The weight associated with this new random walk will be the weight 
+of the main random walk times the probability of scattering from the current 
+energy to the source energy of interest:
+\begin{equation*}
+  W = W_mp_{A,j}^{\dagger}(E^{'} \to E_s|\hat{\Omega}^{'}). 
+\end{equation*}
+The initial direction of this random walk will be related to the energy before
+the collision and the source energy (though part of the direction will be 
+random). The distance to the next collision point will then be sampled from
+the adjoint transport kernel. If the next collision point is inside of the 
+source volume, a contribution will be made to the estimate of the inner product
+via the collision or track length estimator. This random walk can then continue 
+until a reaction is chosen that changes the energy of the adjoint particle, at 
+which point this random walk must be ended. 
+
+This procedure will only yield an unbiased estimate of the inner product if the 
+uncollided contribution to the inner product is also added to the estimate. 
+The uncollided contribution has the following form:
+\begin{align}
+  I_u^{\dagger} & = \int\int\int V(\vec{r},E,\hat{\Omega})
+  a(\vec{r},E,\hat{\Omega}) dVdEd\hat{\Omega} \nonumber \\
+  & = \int\int\int\int U(\vec{r}^{'},E,\hat{\Omega})
+  T^{\dagger}(\vec{r} \to \vec{r}^{'},E,\hat{\Omega}) a(\vec{r},E,\hat{\Omega})
+  dV^{'}dVdEd\hat{\Omega} \nonumber \\
+  & = \frac{S_0}{\Sigma_T(\vec{r}_s,E_s)} \int\int\int_{V^{'} \in V_s} 
+  p_{s,\hat{\Omega}}(\hat{\Omega}) p_{s,\vec{r}}(\vec{r}^{'})
+  T^{\dagger}(\vec{r} \to \vec{r}^{'},E_s,\hat{\Omega}) a(\vec{r},E_s,\hat{\Omega})
+  dV^{'}dVd\hat{\Omega}. \nonumber
+\end{align}
+
+If the detector response function $a(\vec{r},E,\hat{\Omega})$ has the following
+form, 
+\begin{equation*}
+  a(\vec{r},E,\hat{\Omega}) = f_{d,\vec{r}}(\vec{r})f_{d,E}(E)f_{d,\Omega}(\Omega),
+\end{equation*}
+the equation for the uncollided contribution can be simplified:
+\begin{equation*}
+  I_u^{\dagger}  = \frac{S_0f_{d,E}(E_s)}{\Sigma_T(\vec{r}_s,E_s)}
+  \int\int\int_{V^{'} \in V_s} p_{s,\hat{\Omega}}(\hat{\Omega}) p_{s,\vec{r}}(\vec{r}^{'})
+  p_s(\hat{\Omega})f_{d,\vec{r}}(\vec{r})f_{d,\Omega}(\Omega)
+  T^{\dagger}(\vec{r} \to \vec{r}^{'},E_s,\hat{\Omega})
+  dV^{'}dVd\hat{\Omega}.
+\end{equation*}
+This equation will be difficult to evaluate analytically in general as well. 
+However, it can be estimated by initiating random walks with energy $E_s$ and 
+weight $p_{d,E}(E_s)$, where
+\begin{equation*}
+  p_{d,E}(E_s) = \frac{f_{d,E}(E_s)}{\int f_{d,E}(E) dE},
+\end{equation*}
+and then using the collision or track length estimator. Once a collision occurs,
+the random walk must be terminated because it can no longer contribute to the 
+estimate of the uncollided contribution.
+
+//---------------------------------------------------------------------------//
+Several assumptions are made in the derivation of the transport equation 
+\citep{bell_nuclear_1979}. First, a neutral particle is assumed to be a point 
+particle, which means that it can be completely characterized by its position 
+and velocity. This assumption will not be valid for very low energy neutrons and
+for x-ray photons. However, if polarization and interference effects can be
+neglected, this assumption is still acceptable \citep{bell_nuclear_1979}. 
+Second, the medium is assumed to contain a large enough number of particles 
+that deviations from the expected distribution of the particles can be ignored. 
+In addition, the number of particles present in the medium is not so large that 
+they change the medium during the time scale of interest. Finally, particles 
+are assumed to not interact with each other. This assumption will be valid 
+nearly always since even the highest density of particles that could 
+potentially be observed will still be significantly smaller than the density of 
+the material in which the particles travel \citep{bell_nuclear_1979}. 

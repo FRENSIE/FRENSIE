@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="Monte_Carlo_Process_Collision.svg">
+  <defs
+     id="defs4">
+    <marker
+       inkscape:stockid="StopL"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="StopL"
+       style="overflow:visible">
+      <path
+         id="path4085"
+         d="M 0.0,5.65 L 0.0,-5.65"
+         style="fill:none;fill-opacity:0.75000000;fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.8)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lend"
+       style="overflow:visible;">
+      <path
+         id="path3919"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
+         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="TriangleInL"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="TriangleInL"
+       style="overflow:visible">
+      <path
+         id="path4049"
+         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(-0.8)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Mstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow2Mstart"
+       style="overflow:visible">
+      <path
+         id="path3940"
+         style="fill-rule:evenodd;stroke-width:0.62500000;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 L -2.2072895,0.016013256 L 8.7185884,-4.0017078 C 6.9730900,-1.6296469 6.9831476,1.6157441 8.7185878,4.0337352 z "
+         transform="scale(0.6) translate(0,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lstart"
+       orient="auto"
+       refY="0.0"
+       refX="0.0"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         id="path3916"
+         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
+         transform="scale(0.8) translate(12.5,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.7"
+     inkscape:cx="123.57143"
+     inkscape:cy="542.94643"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1545"
+     inkscape:window-height="876"
+     inkscape:window-x="55"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:2;stroke-miterlimit:4;stroke-opacity:0.99086758;stroke-dasharray:none"
+       id="rect2985"
+       width="274.28571"
+       height="104.28571"
+       x="180"
+       y="126.6479" />
+    <text
+       xml:space="preserve"
+       style="font-size:41.22954559px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="311.91086"
+       y="171.77045"
+       id="text2987"
+       sodipodi:linespacing="125%"
+       transform="scale(1.0307386,0.97017808)"><tspan
+         sodipodi:role="line"
+         id="tspan2989"
+         x="311.91086"
+         y="171.77045"
+         style="font-size:36.41955566px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Sans;-inkscape-font-specification:Sans">Sample x<tspan
+   style="font-size:65.00000013%;baseline-shift:sub"
+   id="tspan6764">1</tspan></tspan><tspan
+         sodipodi:role="line"
+         x="311.91086"
+         y="217.29489"
+         id="tspan2991"
+         style="font-size:36.41955566px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Sans;-inkscape-font-specification:Sans">from p<tspan
+   style="font-size:65.00000013%;baseline-shift:super"
+   id="tspan6768">1</tspan>(x)</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:2.59170556;stroke-miterlimit:4;stroke-opacity:0.99086758;stroke-dasharray:none"
+       id="rect2985-0"
+       width="460.58994"
+       height="104.28571"
+       x="84.835968"
+       y="323.07648" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="317.83795"
+       y="364.11163"
+       id="text2987-6"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         x="317.83795"
+         y="364.11163"
+         id="tspan3050"
+         style="font-size:37.20007324px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Sans;-inkscape-font-specification:Sans">With probability p(x<tspan
+   style="font-size:37.20007324px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;baseline-shift:sub;font-family:Sans;-inkscape-font-specification:Sans"
+   id="tspan3106">i</tspan>)</tspan><tspan
+         sodipodi:role="line"
+         x="317.83795"
+         y="410.61172"
+         id="tspan3054"
+         style="font-size:37.20007324px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Sans;-inkscape-font-specification:Sans">the random walk ends</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:2.25085449;stroke-miterlimit:4;stroke-opacity:0.99086758;stroke-dasharray:none"
+       id="rect2985-7"
+       width="347.40652"
+       height="104.28571"
+       x="141.95769"
+       y="551.64795" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="317.83792"
+       y="589.82593"
+       id="text2987-5"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2989-2"
+         x="317.83792"
+         y="589.82593"
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Sans;-inkscape-font-specification:Sans">Sample x<tspan
+   style="font-size:65.00091553%;baseline-shift:sub"
+   id="tspan3108">i</tspan></tspan><tspan
+         sodipodi:role="line"
+         x="317.83792"
+         y="639.82593"
+         id="tspan2991-7"
+         style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Sans;-inkscape-font-specification:Sans">from p(x<tspan
+   style="font-size:65.00091553%;baseline-shift:sub"
+   id="tspan3110">i-1</tspan> → x)</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="m 315.25185,427.36219 0.28819,124.28576"
+       id="path3114"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#rect2985-0"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-end="#rect2985-7"
+       inkscape:connection-end-point="d4" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3116"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><flowRegion
+         id="flowRegion3118"><rect
+           id="rect3120"
+           width="121.42857"
+           height="47.142857"
+           x="327.14285"
+           y="465.21933" /></flowRegion><flowPara
+         id="flowPara3122">i → i-1</flowPara></flowRoot>    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
+       d="m 316.60878,230.93362 -0.94377,92.14286"
+       id="path3126"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-end-point="d4"
+       inkscape:connection-end="#rect2985-0"
+       inkscape:connection-start-point="d4"
+       inkscape:connection-start="#rect2985" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.01825142px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;display:inline"
+       d="m 141.95769,603.79077 -114.600569,-2e-5"
+       id="path5666"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.97345245px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 27.142857,376.36445 1.428572,227.4263"
+       id="path5668"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.01220083px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Lstart);marker-end:none"
+       d="m 84.835968,375.21933 -59.109513,0"
+       id="path5670"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.21394718px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#StopL)"
+       d="m 545.4259,374.23266 152.00225,-0.44191"
+       id="path6048"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0" />
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot6426"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><flowRegion
+         id="flowRegion6428"><rect
+           id="rect6430"
+           width="82.85714"
+           height="44.285713"
+           x="661.42859"
+           y="362.36218" /></flowRegion><flowPara
+         id="flowPara6432">ende</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       id="flowRoot6442"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       transform="translate(241.42858,-395.71429)"><flowRegion
+         id="flowRegion6444"><rect
+           id="rect6446"
+           width="197.14285"
+           height="77.14286"
+           x="342.85715"
+           y="769.50507" /></flowRegion><flowPara
+         id="flowPara6448">i → k</flowPara></flowRoot>    <flowRoot
+       transform="translate(3.6961497,-213.24551)"
+       xml:space="preserve"
+       id="flowRoot3116-8"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"><flowRegion
+         id="flowRegion3118-8"><rect
+           id="rect3120-2"
+           width="121.42857"
+           height="47.142857"
+           x="327.14285"
+           y="465.21933" /></flowRegion><flowPara
+         id="flowPara3122-2">i → 1</flowPara></flowRoot>  </g>
+</svg>

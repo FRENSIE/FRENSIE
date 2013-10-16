@@ -1,0 +1,218 @@
+\chapter{Introduction}
+\label{ch:introduction}
+The Monte Carlo method has a rich history going back as far back as Babylonian 
+times. However, its use in the field of radiation transport began in the 1940s 
+and can be attributed to the work of von Neumann, Ulam, Metropolis, Kahn, Fermi 
+and their collaborators \citep{halton_retrospective_1970}. The first successful 
+application of the method in the field of radiation transport coincided with 
+the construction of the first digital computers \citep{lux_monte_1991}. Because 
+computational resources were relatively scarce and expensive, the computer codes
+implementing the Monte Carlo method to solve radiation transport problems were
+full of approximations to both the physical models and the cross section data.
+As the availability of computer resources increased, it became feasible to do 
+high fidelity Monte Carlo simulations with regard to both the physical models 
+and the cross section data \citep{chucas_preparing_1994}. Today, the Monte 
+Carlo method is regarded as the gold standard of computational methods for 
+solving radiation transport problems because all variables of interest 
+(i.e. energy, direction and position) can be treated on a continuous scale and 
+because the problem geometry can be modeled nearly completely. As computers 
+continue to grow in size and speed, the Monte Carlo method will continue to be 
+used for more and more challenging problems\footnote{Already, the Monte Carlo 
+method is appearing in full reactor core simulation codes where it was once 
+deemed too costly and inefficient to use \citep{hoogenboom_monte_2011}.}.
+
+\section{The Monte Carlo Method}
+\label{sec:monte_carlo_method}
+The Monte Carlo method is a stochastic method in which samples are drawn from 
+a parent population through sampling procedures governed by a set of 
+probability laws. From the samples, statistical data is acquired and analyzed 
+to make inferences about the parent population. 
+
+In radiation transport problems, the system of interest is a collection of 
+bounded regions which can contain one or more of the following: a material, a 
+vacuum, a source, a detector. The parent population is the set of all possible 
+radiation histories and the samples are histories drawn from this set. The 
+particle history can be regarded as a random walk from a source region to a 
+problem domain boundary or some other terminating location (i.e. absorption 
+point). Each phase of the random walk is governed by a set of probability laws 
+that are related to the material interaction cross sections of the particular 
+form of radiation. The portion of a random walk that passes through a finite 
+detector region is recorded or scored. 
+
+While radiation transport problems are typically solved by sampling radiation
+histories that start in what can be regarded as a model of the physical source
+and recorded in what can be regarded as a model of the physical detector, the
+opposite can also be true. The process of sampling the starting point of a 
+radiation history in the model of the physical source and recording information
+in the model of the physical detector is often called a forward process. The 
+probability laws used in a forward process can be derived from the Boltzmann 
+equation, which will be referred to as the transport equation. The forward 
+process is most effective when the detector region is large relative to the 
+source region. As the detector region decreases in size, the probability of any 
+given history passing through the detector region decreases until, for a point 
+detector, the probability goes to zero \citep{spanier_monte_1969}. The process 
+of sampling the starting point of a history in the model of a physical detector 
+and recording information in the model of the physical source is referred to in 
+the literature as an adjoint or reverse process 
+\citep{spanier_monte_1969, desorgher_implementation_2010}. The reverse process 
+is most effective when the source region is large compared to the detector 
+region. When the detector region is a point, only the reverse process can be 
+used without resorting to special procedures. The probability laws that govern 
+this process can be derived from the adjoint Boltzmann equation, which will be
+referred to as the adjoint transport equation. The derivation of these 
+probability laws will be a major focus of this report.
+
+\section{Motivations for using the Adjoint Process}
+As mentioned in the previous section, one of the primary motivations for using
+the adjoint process is that problems with detectors that are small relative to
+the source can be solved more efficiently. This motivation for the adjoint
+process is encountered often in the literature 
+\citep{spanier_monte_1969, bell_nuclear_1979, lewis_computational_1993}. 
+
+While a wide range of shielding problems could benefit from the adjoint process 
+based on the above motivation, there is a particular class of problems, which 
+are of particular interest in the fusion community, that could benefit. In 
+these problems the photon dose in a particular region of an experiment, fusion 
+device or fission device, which results from neutron activation of the 
+surrounding material, is desired. This information is particularly important 
+for planning maintenance on the experiment or device. These problems are often 
+solved using a method called the rigorous 2-step (R2S) method 
+\citep{pereslavtsev_novel_2013, chen_rigorous_2002, robinson_rigorous_2011}. In 
+this method the neutron flux throughout the experiment or device is calculated.
+This neutron flux data is then given to an activation code which calculates the 
+source of photons due to the decay of material that is activated by the 
+neutrons. Finally, the dose due to photons is calculated in the areas of 
+interest using a forward process. Usually, the amount of activated material is 
+much larger than the region where the dose distribution is desired, which 
+indicates that these problems could potentially benefit from the adjoint 
+process for photons. The use of the adjoint photon process in the 
+rigorous 2-step method has been coined the rigorous 2-step adjoint (R2SA) 
+method \citep{robinson_rigorous_2011}. 
+
+Another motivation for using the adjoint process exists. However, discussion
+of this motivation requires a physical interpretation of the adjoint flux that
+is estimated by using the adjoint process. As explained in the previous section,
+during an adjoint process an adjoint random walk starts in the detector and when
+it enters the source, information about the problem is gathered. It is therefore
+common to interpret the adjoint flux as the importance or sensitivity of a 
+particular point of the source (in phase space) to the detector response 
+\citep{lewis_computational_1993}. This source importance data can be 
+invaluable when the exact source distribution is not known, which
+can occur in source distribution optimization calculations. 
+
+In the medical physics community there has been a good deal of work done over 
+the last decade in which adjoint data is used for this very reason. In both 
+brachytherapy and external beam treatment planning optimization, the use 
+adjoint flux data interpreted as a source importance distribution has been 
+shown to allow for faster and simpler treatment planning optimization 
+algorithms 
+\citep{yoo_optimization_2003, chaswal_adjoint_2007, wang_adjoint_2005}. 
+
+The adjoint flux or importance can also be useful when designing
+detectors. Essentially, the adjoint flux can allow for the spectral performance 
+of a detector to be predicted for an arbitrary source distribution, which 
+allows the detector design to be optimized before it is constructed. This can 
+be especially important for detectors that utilize rare materials, such as 
+$He^3$ detectors \citep{sjoden_deterministic_2002}.
+
+\section{Monte Carlo Codes Available Today}
+\label{sec:monte_carlo_codes}
+Most Monte Carlo codes available today focus on the forward process described
+before. The forward process has been developed to a level where very few 
+approximations are used. For instance, it is very common to treat radiation
+histories on a continuous energy scale. This is also made possible by the very
+accurate cross section data that is available. The adjoint process has not been 
+developed to the same level yet. Only a few Monte Carlo codes have implemented
+the adjoint process in a way that is relatively free of approximation. The
+GEANT4 toolkit has implemented the adjoint process on a continuous energy 
+scale for electromagnetic radiation and charged particles. In this implementation there are still some approximations that lead to discrepancies in results 
+compared to results from the forward process 
+\citep{desorgher_implementation_2010}. FOCUS, a research code written by 
+Hoogenboom, was the first code to implement the adjoint process for neutrons
+on a continuous energy scale. This code was not able to model the coupled 
+adjoint process for neutrons and photons \citep{hoogenboom_adjoint_1977}. Today 
+only the commercial United Kingdom code MCBEND has implemented the adjoint
+process for neutrons \citep{grimstone_extension_1998}. The implementation in
+MCBEND has some approximations that can be eliminated as well. Like FOCUS, 
+MCBEND can not model the coupled adjoint process for neutrons and photons. 
+Table \ref{table:monte_carlo_codes_today} summarizes the continuous energy 
+modeling capabilities of most Monte Carlo codes available today. Please note 
+that two of the most powerful and popular codes, MCNP5 and MCBEND are not open 
+source codes. GEANT4, though a software development kit and not a true code,
+is the only open source software that has some continuous energy adjoint 
+capabilities. Several codes, such as MCNP5 and MORSE have implemented the 
+adjoint process with a discrete or multigroup energy format.
+
+\begin{table}[ht]
+\label{table:monte_carlo_codes_today}
+  \caption{\textbf{Continuous Energy Capabilities of Monte Carlo Codes Available
+      Today.}
+    \textit{The final column shows the proposed capabilities of the 
+      Forward-Adjoint Continuous Energy Monte Carlo (FACEMC) code}.}
+  \centering
+  \begin{tabular}{c c c c c }
+    \hline\hline
+    Code & $n$ & $\gamma$ &  $n^{\dagger}$ & $\gamma^{\dagger}$ \\ [0.5ex]
+    \hline
+    EGS4 & - & $\surd$ & - & - \\
+    EGSnrc & - & $\surd$ & - & - \\
+    ITS6 & - & $\surd$ & - & - \\
+    PENELOPE & - & $\surd$ & - & - \\
+    MORSE & - & - & - & - \\
+    TART2005 & $\surd$ & $\surd$ & - & - \\
+    MCNP5/6 & $\surd$ & $\surd$ & - & - \\
+    MCNPX & $\surd$ & $\surd$ & - & - \\
+    GEANT4 & $\surd$ & $\surd$ & - & $\surd$ \\
+    MCBEND & $\surd$ & $\surd$ & $\surd$ & - \\ [1ex]
+    \hline
+    FACEMC & $\surd$ & $\surd$ & $\surd$ & $\surd$ \\ [1ex]
+    \hline
+  \end{tabular}
+  \label{table:mccodes}
+\end{table}
+
+The main reason for the apparent lack of codes that have implemented the 
+adjoint process on a continuous energy scale is the lack of available adjoint 
+cross section data necessary for the adjoint process. The popular ENDF 
+libraries only supply cross section data for the forward process. In addition, 
+most of the literature only discusses sampling procedures for the forward 
+process based on differential cross sections. Fortunately, Hoogenboom has shown 
+that both the total and differential adjoint cross sections can be derived from 
+the forward cross sections. The calculation of these cross sections is costly, 
+but only needs to be done once and can be done in the popular ENDF format
+\citep{hoogenboom_adjoint_1977}. 
+
+\section{The FACEMC Code}
+\label{sec:research_outline}
+To address the limitations of current Monte Carlo codes and to bring the adjoint
+process up to the level of the forward process, the Forward-Adjoint Continuous 
+Energy Monte Carlo (FACEMC) code will be developed along with any adjoint
+cross sections and sampling techniques that are currently lacking. This code 
+will be open source to foster adoption and development by other researchers. As 
+mentioned previously, the scope of this code will only encompass fixed source 
+problems. The energy range over which the forward and adjoint neutron processes 
+will be explored is $10^{-5}$ eV to 20.0 MeV. For the forward and adjoint photon
+processes, the energy range that will be explored is 1.0 keV to 20.0 MeV. These 
+energy ranges will be sufficient to model a large number of problems important 
+to both the nuclear engineering community and the medical physics community. 
+
+\section{Report Outline}
+Most of this report will focus on the theory behind the Monte Carlo random 
+walk process used to simulate the transport of the types of radiation 
+that are of interest. Many texts tend to skip over the detailed derivations
+that are shown in the following chapters because the forward process is very
+easy to conceptualize. The probability laws that govern the forward process are
+also very easy to derive based solely on one's intuition of how radiation
+travels through a material. The adjoint process is much more difficult to
+conceptualize. To derive the probability laws that govern the adjoint process,
+one must rely solely on the adjoint transport equation since one is not likely
+to have any intuition for how adjoint radiation travels through a material.
+The goal of the following three chapters is therefore to derive the probability 
+laws that govern the adjoint process from the adjoint transport equation. 
+
+Once the probability laws that govern the adjoint process have been derived, a
+chapter will be devoted to sampling techniques specific to photons and 
+adjoint photons. A single chapter will also be devoted to describing the 
+FACEMC code. This description will include the proposed code requirements, the 
+high-level code design, and the code validation plan. 
+
