@@ -13,6 +13,10 @@
 #include <exception>
 #include <string>
 
+// Boost Includes
+#include <boost/static_assert.hpp>
+#include <boost/type_traits.hpp>
+
 // Trilinos Includes
 #include <Teuchos_TestForException.hpp>
 
@@ -77,6 +81,15 @@ public:
  *
  * Developers should refer to the \ref contract_exceptions_macros page for more
  * on how this functionality is implemented.
+ *
+ * Design-by-Contract functionality can also be expanded to compile-time
+ * preconditions which can be very useful in templated code where the
+ * the template parameter must have certain properties for the desired behavior
+ * to be guaranteed. This functionality will always be turned on.
+ *
+ * Developers should refer to the boost/static_assert.hpp manual for more
+ * information on conducting static asserts, which is what the
+ * testStaticPrecondition does.
  */
 
 #if HAVE_FACEMC_DBC
@@ -117,7 +130,13 @@ public:
 #define testInvariant(c)
 #define remember(c)
 
-#endif
+#endif // end HAVE_FACEMC_DBC
+
+/*! test a templated function static precondition
+ * \ingroup contract_exception_macros
+ */
+#define testStaticPrecondition(c) \
+  BOOST_STATIC_ASSERT( (c) )
 
 #endif // end CONTRACT_EXCEPTION_HPP
 
