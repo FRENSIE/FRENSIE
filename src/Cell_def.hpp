@@ -198,6 +198,8 @@ bool Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType>::isPolyhedron() const
       all_planar_surfaces = false;
       break;
     }
+    
+    ++surface_sense_pair;
   }
   
   return all_planar_surfaces;
@@ -214,6 +216,7 @@ ScalarType Cell<CellOrdinalType,
   // Make sure that the cell volume returned is valid
   testPostcondition( d_volume > ST::zero() );
   testPostcondition( !ST::isnaninf( d_volume ) );
+  
   return d_volume;
 }
 
@@ -225,8 +228,9 @@ void Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::setVolume(
 						      const ScalarType volume )
 {
   // Make sure that the cell volume assigned is valid
-  testPrecondition( d_volume > ST::zero() );
-  testPrecondition( !ST::isnaninf( d_volume ) );
+  testPrecondition( volume > ST::zero() );
+  testPrecondition( !ST::isnaninf( volume ) );
+  
   d_volume = volume;
 }
 
@@ -256,6 +260,8 @@ ScalarType Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType>::getSurfaceArea(
   // Make sure that the surface area returned is valid
   testPostcondition( area > ST::zero() );
   testPostcondition( !ST::isnaninf( area ) );
+
+  return area;
 }
   
 // Set the area of a surface bounding the cell
@@ -270,7 +276,7 @@ void Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::setSurfaceArea(
   testPrecondition( d_surface_id_area_map.count( surface_id ) > 0 );
   // Make sure that the surface area is valid
   testPrecondition( surface_area > ST::zero() );
-  testPrecondition( !ST::isnaninf() );
+  testPrecondition( !ST::isnaninf( surface_area ) );
 
   typename SurfaceAreaMap::iterator surface_id_area_pair;
   surface_id_area_pair = d_surface_id_area_map.find( surface_id );
@@ -306,7 +312,8 @@ Cell<CellOrdinalType,
   return d_surface_sense_pairs.end();
 }
 
-// Get a const iterator to a specific surface-sense pair in container
+
+// Get a const iterator to first occurance of specific surface-sense pair
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
 	 typename ScalarType>
@@ -327,6 +334,8 @@ Cell<CellOrdinalType,
   {
     if( surface_sense_pair->first->getId() == surface_id )
       break;
+    
+    ++surface_sense_pair;
   }
 
   // Make sure that the desired surface was found
@@ -375,9 +384,13 @@ void Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::print(
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
 	 typename ScalarType>
+template<typename BoolArray>
 bool Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::isCellPresent( 
-				       Teuchos::ArrayRCP<bool> &surface_tests )
+				               const BoolArray &surface_tests )
 {
+   // The array must contain boolean types
+  testStaticPrecondition((boost::is_same<typename Traits::ArrayTraits<BoolArray>::value_type,bool>::value || boost::is_same<typename Traits::ArrayTraits<BoolArray>::value_type,const bool>::value));
+  
   return d_cell_definition_evaluator( surface_tests );
 }
 

@@ -99,7 +99,8 @@ public:
   bool isOn( const Vector<ScalarType> &point ) const;
 
   //! Evaluate the cell definition
-  bool isCellPresent( BooleanArray &surface_tests );
+  template<typename BoolArray>
+  bool isCellPresent( const BoolArray &surface_tests );
 
   //! Return if the cell is a polyhedron
   bool isPolyhedron() const;

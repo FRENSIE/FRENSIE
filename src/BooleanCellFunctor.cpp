@@ -45,9 +45,15 @@ BooleanCellFunctor::BooleanCellFunctor( std::string cell_definition )
   removeWhiteSpace( cell_definition );
   renameVariables( cell_definition );
   d_number_of_variables = getNumVariables( cell_definition );
-  constructChildFunctors( cell_definition );
-  reduceDefinition( cell_definition );
-  assignSetOperationFunctors( cell_definition );
+  if( d_number_of_variables > 1 )
+  {
+    constructChildFunctors( cell_definition );
+    reduceDefinition( cell_definition );
+    assignSetOperationFunctors( cell_definition );
+  }
+
+  // At least one variable must be assigned to this BooleanCellFunctor
+  testPostcondition( d_number_of_variables > 0 );
 }
 
 // Remove white space from the cell definition string
@@ -148,6 +154,8 @@ void BooleanCellFunctor::renameVariables( std::string &cell_definition ) const
 unsigned 
 BooleanCellFunctor::getNumVariables( const std::string &cell_definition )
 {
+  // The cell definition must not be empty
+  testPrecondition( cell_definition.size() > 0 );
   // The cell definition must be free of white space
   testPrecondition( cell_definition.find( " " ) > cell_definition.size() );
   
@@ -158,24 +166,30 @@ BooleanCellFunctor::getNumVariables( const std::string &cell_definition )
   
   unsigned number_of_variables = 0;
 
-  // Check if the cell definition starts with a variable
-  if( operation_loc == 1 )
-    ++number_of_variables;
-  
-  while( operation_loc < cell_definition.size() )
+  if( operation_loc < cell_definition.size() )
   {
-    if( operation_loc - start_loc > 1 )
+    // Check if the cell definition starts with a variable
+    if( operation_loc == 1 )
       ++number_of_variables;
-
-    start_loc = operation_loc;
-    operation_loc = 
-      cell_definition.find_first_of( operation_characters, operation_loc+1 ); 
+    
+    while( operation_loc < cell_definition.size() )
+    {
+      if( operation_loc - start_loc > 1 )
+	++number_of_variables;
+      
+      start_loc = operation_loc;
+      operation_loc = 
+	cell_definition.find_first_of( operation_characters, operation_loc+1 );
+    }
+    
+    // Check if the cell definition ends with a variable
+    if( start_loc < cell_definition.size()-1 )
+      ++number_of_variables;
   }
-
-  // Check if the cell definition ends with a variable
-  if( start_loc < cell_definition.size()-1 )
-    ++number_of_variables;
-  
+  // Check for the special case of only one variable (e.g. sphere)
+  else
+    number_of_variables = 1;
+    
   return number_of_variables;
 }
 
@@ -371,8 +385,6 @@ void BooleanCellFunctor::assignSetOperationFunctors( const std::string &cell_def
   testPrecondition( cell_definition.find_first_of( "nu" ) != 0 );
   // The cell definition cannot end with an operation
   testPrecondition( cell_definition.find_last_of( "nu" ) != cell_definition.size()-1 );
-  // The cell definition must contain at least one operation
-  testPrecondition( cell_definition.find_first_of( "nu" ) < cell_definition.size() );
   // The cell definition must be reduced
   testPrecondition( cell_definition.find_first_of( "()" ) > cell_definition.size() );
 
