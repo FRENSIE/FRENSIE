@@ -22,24 +22,23 @@
 #include "BooleanCellFunctor.hpp"
 #include "Surface.hpp"
 #include "Tuple.hpp"
+#include "Vector.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
 
 template<typename CellOrdinalType, 
-	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap = 
-	 std::map<SurfaceOrdinalType,
-		  Teuchos::RCP<Surface<SurfaceOrdinalType,ScalarType> > > >
-class Cell
+	 typename SurfaceOrdinalType,
+	 typename ScalarType>
+class Cell : public PrintableObject, public ThreeSpaceObject
 {
 
 private:
 
+  //! Typedef for surface-sense pair
+  typedef Pair<Teuchos::RCP<Surface<SurfaceOrdinalType,ScalarType> >,SurfaceSense> SurfaceSensePair;
   //! Typedef for surface-sense pairs container
-  typedef Teuchos::Array<Pair<Teuchos::RCP<Surface>,SurfaceSense> >
-  SufaceSensePairContainer;
+  typedef Teuchos::Array<SurfaceSensePair> SurfaceSensePairContainer;
 
 public:
 
@@ -51,12 +50,9 @@ public:
   typedef SurfaceOrdinalType surfaceOrdinalType;
   //! Typedef for scalar type
   typedef ScalarType scalarType;
-  //! Typedef for surface type
-  typedef Surface<SurfaceOrdinalType,ScalarType> Surface;
-  //! Typedef for surface map type
-  typedef SurfaceMap SurfaceMap;
   //! Typedef for surface-sense pairs array const iterator
-  typedef SurfaceSensePairContainer::const_iterator SurfaceSensePairsIterator;
+  typedef typename SurfaceSensePairContainer::const_iterator 
+  SurfaceSensePairsIterator;
   //@}
 
 private:
@@ -67,10 +63,6 @@ private:
   typedef Teuchos::OrdinalTraits<CellOrdinalType> CellOT;
   //! Typedef for surface ordinal traits
   typedef Teuchos::OrdinalTraits<SurfaceOrdinalType> SurfaceOT;
-  //! Typedef for three space traits and policy struct
-  typedef ThreeSpaceTraitsAndPolicy<ScalarType> ThreeSpace;
-  //! Typedef for vector
-  typedef typename ThreeSpace::Vector Vector;
   //! Typedef for surface area map
   typedef std::map<SurfaceOrdinalType,ScalarType> SurfaceAreaMap;
   //! Typedef for Boolean array
@@ -79,12 +71,13 @@ private:
 public:
   
   //! Constructor
+  template<typename SurfaceMap>
   Cell( const CellOrdinalType id,
-	const std::string &cell_definition,
+	std::string &cell_definition,
 	const SurfaceMap &global_surface_map );
 
   //! Destructor
-  ~Cell()
+  virtual ~Cell()
   { /* ... */ }
 
   //@{
@@ -95,15 +88,15 @@ public:
 	     const ScalarType z ) const;
 
   //! Return if the point is in the cell
-  bool isIn( const Vector &point ) const;
+  bool isIn( const Vector<ScalarType> &point ) const;
 
   //! Return if the point is on the cell
-  bool IsOn( const ScalarType x,
+  bool isOn( const ScalarType x,
 	     const ScalarType y,
 	     const ScalarType z ) const;
 
   //! Return if the point is on the cell
-  bool isOn( const Vector &point ) const;
+  bool isOn( const Vector<ScalarType> &point ) const;
 
   //! Evaluate the cell definition
   bool isCellPresent( BooleanArray &surface_tests );
@@ -138,19 +131,26 @@ public:
 				   const SurfaceOrdinalType surface_id ) const;
   //@}
 
+  //! Print method that defines the behavior of the std::stream << operator
+  void print( std::ostream &os ) const;
+
 protected:
 
   //! Strip the cell definition of set operation characters
   static void simplifyCellDefinitionString( std::string &cell_definition );
 
+private:
+
   //! Assign surfaces to the cell
+  template<typename SurfaceMap>
   void assignSurfaces( std::string &cell_definition, 
 		       const SurfaceMap &global_surface_map );
 
-private:
-
   // Cell Id
   CellOrdinalType d_id;
+
+  // Cell definition (cache)
+  std::string d_cell_definition_string;
 
   // Functor used to evaluate the cell definition
   BooleanCellFunctor d_cell_definition_evaluator;

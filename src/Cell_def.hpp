@@ -14,6 +14,10 @@
 #include <sstream>
 #include <map>
 #include <iterator>
+#include <set>
+
+// Boost Includes
+#include <boost/unordered_map.hpp>
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -25,40 +29,43 @@
 #include "Surface.hpp"
 #include "Tuple.hpp"
 #include "ContractException.hpp"
-#include "FACEMC_Assertion.hpp"
 
 namespace FACEMC{
 
 //! Constructor
 template<typename CellOrdinalType,
 	 typename SurfaceOrdinalType,
-	 typename ScalarType,
-	 typename SurfaceMap>
-Cell<CellOrdinalType,
-     SurfaceOrdinalType,
-     ScalarType,
-     SurfaceMap>::Cell( const CellOrdinalType id,
-			std::string &cell_definition,
-			const SurfaceMap &global_surface_map )
-  : d_id( id ), 
+	 typename ScalarType>
+template<typename SurfaceMap>
+Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType>::Cell( 
+					 const CellOrdinalType id,
+					 std::string &cell_definition,
+					 const SurfaceMap &global_surface_map )
+  : PrintableObject( "ThreeSpaceCell" ),
+    ThreeSpaceObject( THREE_SPACE_CELL ),
+    d_id( id ), 
+    d_cell_definition_string( cell_definition ),
     d_cell_definition_evaluator( cell_definition ), 
     d_volume( 0.0 )
 {
+  // A valid SurfaceMap type must be used
+  testStaticPrecondition((boost::is_same<typename SurfaceMap::key_type,typename SurfaceMap::mapped_type::element_type::ordinalType>::value));
+  // The map properties must match the cell properties
+  testStaticPrecondition((boost::is_same<typename SurfaceMap::key_type,SurfaceOrdinalType>::value));
+  testStaticPrecondition((boost::is_same<typename SurfaceMap::mapped_type::element_type::scalarType,ScalarType>::value));
+  
   // Remove all characters from the cell definition string except for the ids
   Cell<CellOrdinalType,
        SurfaceOrdinalType,
-       ScalarType,
-       SurfaceMap>::simplifyCellDefinitionString( cell_definition );
+       ScalarType>::simplifyCellDefinitionString( cell_definition );
   
   // Query the surface map and assign the surfaces that define this cell
   assignSurfaces( cell_definition, global_surface_map );
 
   // Initialize the surface id-area map
-  Teuchos::Array<Pair<Teuchos::RCP<Surface>,SurfaceSense> >::const_iterator
-    surface_sense_pair, end_surface_sense_pair;
-
+  SurfaceSensePairsIterator surface_sense_pair, end_surface_sense_pair;
   surface_sense_pair = d_surface_sense_pairs.begin();
-  end_surface_sense_pair = d_surface_sense_pair.end();
+  end_surface_sense_pair = d_surface_sense_pairs.end();
 
   while( surface_sense_pair != end_surface_sense_pair )
   {
@@ -71,12 +78,9 @@ Cell<CellOrdinalType,
 // Return if the point is in the cell
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
-bool Cell<CellOrdinalType,
-	  SurfaceOrdinalType,
-	  ScalarType,
-	  SurfaceMap>::isIn( const Vector &point ) const
+	 typename ScalarType>
+bool Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::isIn( 
+				        const Vector<ScalarType> &point ) const
 {
   return isIn( point[0], point[1], point[2] );
 }
@@ -84,17 +88,13 @@ bool Cell<CellOrdinalType,
 // Return if the point is in the cell
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
-bool Cell<CellOrdinalType,
-	  SurfaceOrdinalType,
-	  ScalarType,
-	  SurfaceMap>::isIn( const ScalarType x,
-			     const ScalarType y,
-			     const ScalarType z ) const
+	 typename ScalarType>
+bool Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType>::isIn( 
+						     const ScalarType x,
+						     const ScalarType y,
+						     const ScalarType z ) const
 {
-  Teuchos::Array<Pair<Teuchos::RCP<Surface>,SurfaceSense> >::const_iterator
-    surface_sense_pair, end_surface_sense_pair;
+  SurfaceSensePairsIterator surface_sense_pair, end_surface_sense_pair;
   surface_sense_pair = d_surface_sense_pairs.begin();
   end_surface_sense_pair = d_surface_sense_pairs.end();
 
@@ -104,19 +104,19 @@ bool Cell<CellOrdinalType,
   // If the sense matches the cell surface sense, true is added to this array
   // else false is added (The surface ordering is the same as in the 
   // d_surfaces_sense_pair array)
-  Teuchos::ArrayRCP<bool> sense_tests( d_surfaces.size() );
-  Teuchos::ArrayRCP<bool>::iterator test = sense_tests.begin();
+  BooleanArray sense_tests( d_surface_sense_pairs.size() );
+  typename BooleanArray::iterator test = sense_tests.begin();
 
   while( surface_sense_pair != end_surface_sense_pair )
   {
-    sense = surface_sense_pair->first->getSense( x, y, z );
+    sense = surface_sense_pair->first->getSenseOfPoint( x, y, z );
     
     if( sense == surface_sense_pair->second )
       *test = true;
     else
       *test = false;
     
-    ++surface;
+    ++surface_sense_pair;
     ++test;
   }
 
@@ -126,12 +126,9 @@ bool Cell<CellOrdinalType,
 // Return if the point is on the cell
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
-bool Cell<CellOrdinalType,
-	  SurfaceOrdinalType,
-	  ScalarType,
-	  SurfaceMap>::isOn( const Vector &point ) const
+	 typename ScalarType>
+bool Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::isOn( 
+					const Vector<ScalarType> &point ) const
 {
   return isOn( point[0], point[1], point[2] );
 }
@@ -139,17 +136,13 @@ bool Cell<CellOrdinalType,
 //! Return if the point is on the cell
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType,
-	 typename ScalarType,
-	 typename SurfaceMap>
-bool Cell<CellOrdinalType,
-	  SurfaceOrdinalType,
-	  ScalarType,
-	  SurfaceMap>::isOn( const ScalarType x,
-			     const ScalarType y,
-			     const ScalarType z ) const
+	 typename ScalarType>
+bool Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::isOn( 
+						     const ScalarType x,
+						     const ScalarType y,
+						     const ScalarType z ) const
 {
-  Teuchos::Array<Pair<Teuchos::RCP<Surface>,Surface::Sense> >::const_iterator
-    surface_sense_pair, end_surface_sense_pair;
+  SurfaceSensePairsIterator surface_sense_pair, end_surface_sense_pair;
   surface_sense_pair = d_surface_sense_pairs.begin();
   end_surface_sense_pair = d_surface_sense_pairs.end();
 
@@ -159,37 +152,39 @@ bool Cell<CellOrdinalType,
   // If the sense matches the cell surface sense, true is added to this array
   // else false is added (The surface ordering is the same as in the d_surfaces
   // array)
-  Teuchos::ArrayRCP<bool> sense_tests( d_surfaces.size() );
-  Teuchos::ArrayRCP<bool>::iterator test = sense_tests.begin();
+  BooleanArray sense_tests( d_surface_sense_pairs.size() );
+  typename BooleanArray::iterator test = sense_tests.begin();
+
+  bool point_on_a_surface = false;
 
   while( surface_sense_pair != end_surface_sense_pair )
   {
-    sense = surface_sense_pair->first->getSense( x, y, z );
+    sense = surface_sense_pair->first->getSenseOfPoint( x, y, z );
     
-    if( sense == surface_sense_pair->second || sense == ON_SURFACE )
+    if( sense == surface_sense_pair->second )
       *test = true;
+    else if( sense == ON_SURFACE )
+    {
+      *test = true;
+      point_on_a_surface = true;
+    }
     else
       *test = false;
     
-    ++surface;
+    ++surface_sense_pair;
     ++test;
   }
 
-  return d_cell_definition_evaluator( sense_tests );
+  return d_cell_definition_evaluator( sense_tests ) && point_on_a_surface;
 }
 
 // Return if the cell is a polyhedron
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
-bool Cell<CellOrdinalType,
-	  SurfaceOrdinalType,
-	  ScalarType,
-	  SurfaceMap>::isPolyhedron() const
+	 typename ScalarType>
+bool Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType>::isPolyhedron() const
 {
-  Teuchos::Array<Pair<Teuchos::RCP<Surface>,Surface::Sense> >::const_iterator
-    surface_sense_pair, end_surface_sense_pair;
+  SurfaceSensePairsIterator surface_sense_pair, end_surface_sense_pair;
   surface_sense_pair = d_surface_sense_pairs.begin();
   end_surface_sense_pair = d_surface_sense_pairs.end();
 
@@ -211,28 +206,23 @@ bool Cell<CellOrdinalType,
 // Return the volume of the cell
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
+	 typename ScalarType>
 ScalarType Cell<CellOrdinalType,
 		SurfaceOrdinalType,
-		ScalarType,
-		SurfaceMap>::getVolume() const
+		ScalarType>::getVolume() const
 {  
   // Make sure that the cell volume returned is valid
   testPostcondition( d_volume > ST::zero() );
-  testPostcondition( !ST::isnaninf( d_volume );
+  testPostcondition( !ST::isnaninf( d_volume ) );
   return d_volume;
 }
 
 // Manually set the volume of the cell
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
-void Cell<CellOrdinalType,
-	  SurfaceOrdinalType,
-	  ScalarType,
-	  SurfaceMap>::setVolume( const ScalarType volume )
+	 typename ScalarType>
+void Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::setVolume( 
+						      const ScalarType volume )
 {
   // Make sure that the cell volume assigned is valid
   testPrecondition( d_volume > ST::zero() );
@@ -243,12 +233,8 @@ void Cell<CellOrdinalType,
 // Return the area of a surface bounding the cell
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
-ScalarType Cell<CellOrdinalType,
-		SurfaceOrdinalType,
-		ScalarType,
-		SurfaceMap>::getSurfaceArea( 
+	 typename ScalarType>
+ScalarType Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType>::getSurfaceArea(
 				    const SurfaceOrdinalType surface_id ) const
 {
   // The requested surface must be present in the cell (and have area data)
@@ -272,16 +258,13 @@ ScalarType Cell<CellOrdinalType,
   testPostcondition( !ST::isnaninf( area ) );
 }
   
-// Return the area of a surface bounding the cell
+// Set the area of a surface bounding the cell
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
-void Cell<CellOrdinalType,
-	  SurfaceOrdinalType,
-	  ScalarType,
-	  SurfaceMap>::setSurfaceArea( const SurfaceOrdinalType surface_id,
-				       const ScalarType surface_area ) 
+	 typename ScalarType>
+void Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::setSurfaceArea( 
+					   const SurfaceOrdinalType surface_id,
+					   const ScalarType surface_area ) 
 {
   // The requested surface must be present in the cell (and have area data)
   testPrecondition( d_surface_id_area_map.count( surface_id ) > 0 );
@@ -289,7 +272,7 @@ void Cell<CellOrdinalType,
   testPrecondition( surface_area > ST::zero() );
   testPrecondition( !ST::isnaninf() );
 
-  SurfaceAreaMap::iterator surface_id_area_pair;
+  typename SurfaceAreaMap::iterator surface_id_area_pair;
   surface_id_area_pair = d_surface_id_area_map.find( surface_id );
 
   surface_id_area_pair->second = surface_area;
@@ -298,16 +281,13 @@ void Cell<CellOrdinalType,
 // Get a const iterator to the beginning of the surface sense pairs array
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
-inline Cell<CellOrdinalType,
-	    SurfaceOrdinalType,
-	    ScalarType,
-	    SurfaceMap>::SurfaceSensePairsIterator
+	 typename ScalarType>
+inline typename Cell<CellOrdinalType,
+		     SurfaceOrdinalType,
+		     ScalarType>::SurfaceSensePairsIterator
 Cell<CellOrdinalType,
      SurfaceOrdinalType,
-     ScalarType,
-     SurfaceMap>::beginSurfaceSensePairs() const
+     ScalarType>::beginSurfaceSensePairs() const
 {  
   return d_surface_sense_pairs.begin();
 }
@@ -315,16 +295,13 @@ Cell<CellOrdinalType,
 // Get a const iterator to the end of the surface sense pairs array
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
-inline Cell<CellOrdinalType,
-	    SurfaceOrdinalType,
-	    ScalarType,
-	    SurfaceMap>::SurfaceSensePairsIterator
+	 typename ScalarType>
+inline typename Cell<CellOrdinalType,
+		     SurfaceOrdinalType,
+		     ScalarType>::SurfaceSensePairsIterator
 Cell<CellOrdinalType,
      SurfaceOrdinalType,
-     ScalarType,
-     SurfaceMap>::endSurfaceSensePairs() const
+     ScalarType>::endSurfaceSensePairs() const
 {  
   return d_surface_sense_pairs.end();
 }
@@ -332,16 +309,13 @@ Cell<CellOrdinalType,
 // Get a const iterator to a specific surface-sense pair in container
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
+	 typename ScalarType>
+typename Cell<CellOrdinalType,
+	      SurfaceOrdinalType,
+	      ScalarType>::SurfaceSensePairsIterator
 Cell<CellOrdinalType,
      SurfaceOrdinalType,
-     ScalarType,
-     SurfaceMap>::SurfaceSensePairsIterator
-Cell<CellOrdinalType,
-     SurfaceOrdinalType,
-     ScalarType,
-     SurfaceMap>::getSurfaceSensePair( 
+     ScalarType>::getSurfaceSensePair( 
 				    const SurfaceOrdinalType surface_id ) const
 {
   SurfaceSensePairsIterator surface_sense_pair =
@@ -361,15 +335,48 @@ Cell<CellOrdinalType,
   return surface_sense_pair;
 }
 
+// Print method that defines the behavior of the std::stream << operator
+template<typename CellOrdinalType, 
+	 typename SurfaceOrdinalType, 
+	 typename ScalarType>
+void Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::print( 
+						       std::ostream &os ) const
+{
+  os << "Id: " << d_id << std::endl;
+  os << "Definition: " << d_cell_definition_string << std::endl;
+  os << "Surface(s): " << std::endl;
+  
+  SurfaceSensePairsIterator pair, end_pair;
+  pair = beginSurfaceSensePairs();
+  end_pair = endSurfaceSensePairs();
+
+  std::set<surfaceOrdinalType> printed_surfaces;
+  
+  while( pair != end_pair )
+  {
+    if( printed_surfaces.find( pair->first->getId() ) == 
+	printed_surfaces.end() )
+    {
+      printed_surfaces.insert( pair->first->getId() );
+    }
+    else
+    {
+      ++pair;
+      continue;
+    }
+    
+    os << *(pair->first);
+    
+    ++pair;
+  }
+}
+
 // Evaluate the cell definition
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
-bool Cell<CellOrdinalType,
-	  SurfaceOrdinalType,
-	  ScalarType,
-	  SurfaceMap>::isCellPresent( Teuchos::ArrayRCP<bool> &surface_tests )
+	 typename ScalarType>
+bool Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::isCellPresent( 
+				       Teuchos::ArrayRCP<bool> &surface_tests )
 {
   return d_cell_definition_evaluator( surface_tests );
 }
@@ -377,12 +384,10 @@ bool Cell<CellOrdinalType,
 // Strip the cell definition string of set operation characters
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
+	 typename ScalarType>
 void Cell<CellOrdinalType,
 	  SurfaceOrdinalType,
-	  ScalarType,
-	  SurfaceMap>::simplifyCellDefinitionString( 
+	  ScalarType>::simplifyCellDefinitionString( 
 						 std::string &cell_definition )
 {
   // The cell definition must be valid
@@ -421,30 +426,35 @@ void Cell<CellOrdinalType,
 // Assign surfaces to the cell
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 
-	 typename ScalarType,
-	 typename SurfaceMap>
-void Cell<CellOrdinalType,
-	  SurfaceOrdinalType,
-	  ScalarType,
-	  SurfaceMap>::assignSurfaces( std::string &cell_definition,
-				       const SurfaceMap &global_surface_map )
+	 typename ScalarType>
+template<typename SurfaceMap>
+  void Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::assignSurfaces( 
+					 std::string &cell_definition,
+				         const SurfaceMap &global_surface_map )
 {
+  // A valid SurfaceMap type must be used
+  testStaticPrecondition((boost::is_same<typename SurfaceMap::key_type,typename SurfaceMap::mapped_type::element_type::ordinalType>::value));
+  // The map properties must match the cell properties
+  testStaticPrecondition((boost::is_same<typename SurfaceMap::key_type,SurfaceOrdinalType>::value));
+  testStaticPrecondition((boost::is_same<typename SurfaceMap::mapped_type::element_type::scalarType,ScalarType>::value));
   // The cell_definition must be simplified
   testPrecondition( cell_definition.find_first_of( "nu()", 0 ) == 
 		    std::string::npos );
   // A surface cannot have an id of 0
   testPrecondition( cell_definition.find( " 0 " ) == std::string::npos );
   testPrecondition( cell_definition.find( " -0 " ) == std::string::npos );
+  
+  // Test that all surfaces requested by cell def. exist
+  remember( bool all_surfaces_found = true );
 
   typename SurfaceMap::const_iterator global_surface_sense_pair,
     end_global_surface_sense_pair = global_surface_map.end();
   
-  Pair<Teuchos::RCP<Surface>,SurfaceSense> local_surface_sense_pair;
+  SurfaceSensePair local_surface_sense_pair;
 
   std::stringstream simplified_cell_definition( cell_definition );
   SurfaceOrdinalType surface_id_with_sense, surface_id;
   SurfaceSense surface_sense;
-  bool surface_exists = true;
 
   while( simplified_cell_definition )
   {
@@ -453,7 +463,7 @@ void Cell<CellOrdinalType,
     if( surface_id_with_sense < SurfaceOT::zero() )
     {
       surface_sense = NEG_SURFACE_SENSE;
-      surface_id = surface_id_with_sense*(-Surface::OT::one());
+      surface_id = surface_id_with_sense*(-SurfaceOT::one());
     }
     else
     {
@@ -464,21 +474,26 @@ void Cell<CellOrdinalType,
     // Pull the surface from the global map
     global_surface_sense_pair = global_surface_map.find( surface_id );
 
-    if( global_surface_sense_pair == end_global_surface_sense_pair )
-      surface_exists = false;
-    
-    // If the surface was not found exit the program
-    FACEMC_ASSERT_ALWAYS_MSG( surface_exists, "Fatal Error: Surface " << surface_id << " requested by Cell " << d_id << " does not exist." );
-
-    // Store this surface
-    local_surface.first = global_surface->second;
-    local_surface.second = surface_sense;
-    d_surfaces.push_back( local_surface );
+    if( global_surface_sense_pair != end_global_surface_sense_pair )
+    {
+      // Store this surface
+      local_surface_sense_pair.first = global_surface_sense_pair->second;
+      local_surface_sense_pair.second = surface_sense;
+      d_surface_sense_pairs.push_back( local_surface_sense_pair );
+    }
+    else
+    {
+      // If the surface was not found exit the program
+      //FACEMC_ASSERT_ALWAYS_MSG( surface_exists, "Fatal Error: Surface " << surface_id << " requested by Cell " << d_id << " does not exist." );
+      remember( all_surfaces_found = false );
+    }
     
     // Remove the next whitespace from the cell_definition
     simplified_cell_definition.ignore();
   }
   
+  // Make sure that all surfaces were found
+  testPostcondition( all_surfaces_found );
   // Make sure that at least one surface was assigned to the cell
   testPostcondition( d_surface_sense_pairs.size() > 0 );
 }

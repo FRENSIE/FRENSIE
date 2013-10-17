@@ -75,9 +75,9 @@ ADD_EXECUTABLE(tstLinearAlgebraAlgorithms
 ADD_EXECUTABLE(tstSurface
   tstSurface.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# ADD_EXECUTABLE(tstPolygon
-#   tstPolygon.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstPolygon
+  tstPolygon.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstSetOperationFunctor
   tstSetOperationFunctor.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -85,12 +85,10 @@ ADD_EXECUTABLE(tstBooleanCellFunctor
   tstBooleanCellFunctor.cpp
   ${SRC}/BooleanCellFunctor.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# ADD_EXECUTABLE(tstCell
-#   tstCell.cpp
-#   ${SRC}/Cell.cpp
-#   ${SRC}/BooleanCellFunctor.cpp
-#   ${SRC}/LinearAlgebraAlgorithms.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstCell
+  tstCell.cpp
+  ${SRC}/BooleanCellFunctor.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 # ADD_EXECUTABLE(tstConvexPolyhedralCell
 #   tstConvexPolyhedralCell.cpp
 #   ${SRC}/Cell.cpp
@@ -138,10 +136,10 @@ TARGET_LINK_LIBRARIES(tstVectorHelpers ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLA
 TARGET_LINK_LIBRARIES(tstMatrixHelpers ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstLinearAlgebraAlgorithms ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstSurface ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
-# TARGET_LINK_LIBRARIES(tstPolygon ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+TARGET_LINK_LIBRARIES(tstPolygon ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstSetOperationFunctor ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstBooleanCellFunctor ${TEUCHOS_CORE})
-# TARGET_LINK_LIBRARIES(tstCell ${TEUCHOS})
+TARGET_LINK_LIBRARIES(tstCell ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 # TARGET_LINK_LIBRARIES(tstConvexPolyhedralCell ${TEUCHOS})
 # TARGET_LINK_LIBRARIES(tstConcavePolyhedralCell ${TEUCHOS})
 # TARGET_LINK_LIBRARIES(tstCompoundConvexPolyhedralCell ${TEUCHOS})
@@ -165,10 +163,10 @@ ADD_TEST(VectorHelpers_test tstVectorHelpers)
 ADD_TEST(MatrixHelpers_test tstMatrixHelpers)
 ADD_TEST(LinearAlgebraAlgorithms_test tstLinearAlgebraAlgorithms)
 ADD_TEST(Surface_test tstSurface)
-# ADD_TEST(Polygon_test tstPolygon)
+ADD_TEST(Polygon_test tstPolygon)
 ADD_TEST(SetOperationFunctor_test tstSetOperationFunctor)
 ADD_TEST(BooleanCellFunctor_test tstBooleanCellFunctor)
-# ADD_TEST(Cell_test tstCell)
+ADD_TEST(Cell_test tstCell)
 # ADD_TEST(ConvexPolyhedralCell_test tstConvexPolyhedralCell)
 # ADD_TEST(ConcavePolyhedralCell_test tstConcavePolyhedralCell)
 # ADD_TEST(CompoundConvexPolyhedralCell tstCompoundConvexPolyhedralCell)
