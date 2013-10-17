@@ -11,9 +11,11 @@
 
 // Trilinos Includes
 #include <Teuchos_ArrayView.hpp>
+#include <Teuchos_OrdinalTraits.hpp>
 
 // FACEMC Includes
 #include "UndefinedTraits.hpp"
+#include "ContractException.hpp"
 
 /*! \defgroup array_traits Array Traits
  * \ingroup traits
@@ -82,11 +84,17 @@ struct ArrayTraits
   { (void)UndefinedTraits<T>::notDefined(); return 0; }
 
   //! A view of the array
-  static inline Teuchos::ArrayView<value_type> view( T &array )
+  static inline Teuchos::ArrayView<value_type> view( 
+	  T &array, 
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
   { (void)UndefinedTraits<T>::notDefined(); return 0; }
   
   //! A view of the const array
-  static inline Teuchos::ArrayView<const value_type> view( const T &array )
+  static inline Teuchos::ArrayView<const value_type> view(
+	  const T &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
   { (void)UndefinedTraits<T>::notDefined(); return 0; }
   
   //! The size of the array
@@ -132,29 +140,6 @@ inline typename Traits::ArrayTraits<Array>::const_pointer
 getHeadPtr( const Array &array )
 { return Traits::ArrayTraits<Array>::headPtr( array ); }
 
-/*! This function allows access to the view ArrayTriats function.
- *
- * This function is simply a more concise way to access the view static
- * member function associated with the ArrayTraits class. It simply forwards
- * calls to get a view of the array to the associated
- * FACEMC::Traits::ArrayTraits class. It is important to note that the array
- * type will be deduced by the function.
- * \ingroup array_traits
- */
-template<typename Array>
-inline Teuchos::ArrayView<typename Traits::ArrayTraits<Array>::value_type>
-getArrayView( Array &array )
-{ return Traits::ArrayTraits<Array>::view( array ); }
-
-/*! This function allows access to the view ArrayTraits function.
- * \ingroup array_traits
- */
-template<typename Array>
-inline 
-Teuchos::ArrayView<const typename Traits::ArrayTraits<Array>::value_type>
-getArrayView( const Array &array )
-{ return Traits::ArrayTraits<Array>::view( array ); }
-
 /*! This function allows access to the size ArrayTraits function.
  * 
  * This function is simply a more concise way to access the size static
@@ -182,6 +167,49 @@ template<typename Array>
 inline void
 resizeArray( Array &array, typename Traits::ArrayTraits<Array>::size_type n )
 { return Traits::ArrayTraits<Array>::resize( array, n ); }
+
+/*! This function allows access to the view ArrayTriats function.
+ *
+ * This function is simply a more concise way to access the view static
+ * member function associated with the ArrayTraits class. It simply forwards
+ * calls to get a view of the array to the associated
+ * FACEMC::Traits::ArrayTraits class. It is important to note that the array
+ * type will be deduced by the function.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline Teuchos::ArrayView<typename Traits::ArrayTraits<Array>::value_type>
+getArrayView( Array &array,
+	      const typename Traits::ArrayTraits<Array>::size_type offset = Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::zero(),
+	      typename Traits::ArrayTraits<Array>::size_type size = Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::invalid() )
+{ 
+  // make sure the offset and size supplied are acceptable
+  remember( typename Traits::ArrayTraits<Array>::size_type array_size =
+	    getArraySize( array ) );
+  testPrecondition( offset < array_size );
+  testPrecondition( size == Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::invalid() || ( size > Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::zero() && size <= array_size-offset ) );
+  
+  return Traits::ArrayTraits<Array>::view( array, offset, size ); 
+}
+
+/*! This function allows access to the view ArrayTraits function.
+ * \ingroup array_traits
+ */
+template<typename Array>
+inline 
+Teuchos::ArrayView<const typename Traits::ArrayTraits<Array>::value_type>
+getArrayView( const Array &array,
+	      const typename Traits::ArrayTraits<Array>::size_type offset = Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::zero(),
+	      const typename Traits::ArrayTraits<Array>::size_type size = Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::invalid() )
+{ 
+  // make sure the offset and size supplied are acceptable
+  remember( typename Traits::ArrayTraits<Array>::size_type array_size =
+	    getArraySize( array ) );
+  testPrecondition( offset < array_size );
+  testPrecondition( size == Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::invalid() || ( size > Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::zero() && size <= array_size-offset ) );
+  
+  return Traits::ArrayTraits<Array>::view( array, offset, size ); 
+}
 
 /*! This function allows access to the copyView ArrayTraits function
  *

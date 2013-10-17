@@ -51,12 +51,35 @@ struct ArrayTraits<std::vector<T> >
   { return &array[0]; }
 
   //! A view of the array
-  static inline Teuchos::ArrayView<T> view( std::vector<T> &array )
-  { return Teuchos::arrayViewFromVector( array ); }
+  static inline Teuchos::ArrayView<T> view( 
+	  std::vector<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return Teuchos::arrayViewFromVector( array ); 
+    else
+    {
+      Teuchos::ArrayView<T> full_view = Teuchos::arrayViewFromVector( array );
+      return full_view( offset, size );
+    }
+  }
 
   //! A view of the const array
-  static inline Teuchos::ArrayView<const T> view( const std::vector<T> &array )
-  { return Teuchos::arrayViewFromVector( array ); }
+  static inline Teuchos::ArrayView<const T> view( 
+	  const std::vector<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+          const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return Teuchos::arrayViewFromVector( array ); 
+    else
+    {
+      Teuchos::ArrayView<const T> full_view = 
+	Teuchos::arrayViewFromVector( array );
+      return full_view( offset, size );
+    }
+  }
   
   //! The size of the array
   static inline size_type size( const std::vector<T> &array )
@@ -97,8 +120,20 @@ struct ArrayTraits<const std::vector<T> >
   { return &array[0]; }
 
   //! A view of the const array
-  static inline Teuchos::ArrayView<const T> view( const std::vector<T> &array )
-  { return Teuchos::arrayViewFromVector( array ); }
+  static inline Teuchos::ArrayView<const T> view( 
+	  const std::vector<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return Teuchos::arrayViewFromVector( array ); 
+    else
+    {
+      Teuchos::ArrayView<const T> full_view = 
+	Teuchos::arrayViewFromVector( array );
+      return full_view( offset, size );
+    }
+  }
   
   //! The size of the array
   static inline size_type size( const std::vector<T> &array )
@@ -143,13 +178,28 @@ struct ArrayTraits<Teuchos::Array<T> >
   { return array.getRawPtr(); }
 
   //! A view of the array
-  static inline Teuchos::ArrayView<T> view( Teuchos::Array<T> &array )
-  { return array(); }
+  static inline Teuchos::ArrayView<T> view( 
+	  Teuchos::Array<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array();
+    else
+      return array( offset, size );
+  }
 
   //! A view of the const array
   static inline Teuchos::ArrayView<const T> view( 
-					       const Teuchos::Array<T> &array )
-  { return array(); }
+	  const Teuchos::Array<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array();
+    else
+      return array( offset, size );
+  }
 
   //! The size of the array
   static inline size_type size( const Teuchos::Array<T> &array )
@@ -192,8 +242,15 @@ struct ArrayTraits<const Teuchos::Array<T> >
 
   //! A view of the const array
   static inline Teuchos::ArrayView<const T> view( 
-					       const Teuchos::Array<T> &array )
-  { return array(); }
+	  const Teuchos::Array<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array();
+    else
+      return array( offset, size );
+  }
 
   //! The size of the array
   static inline size_type size( const Teuchos::Array<T> &array )
@@ -238,13 +295,28 @@ struct ArrayTraits<Teuchos::ArrayRCP<T> >
   { return array.getRawPtr(); }
 
   //! A view of the array
-  static inline Teuchos::ArrayView<T> view( Teuchos::ArrayRCP<T> &array )
-  { return array(); }
+  static inline Teuchos::ArrayView<T> view( 
+	  Teuchos::ArrayRCP<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array();
+    else
+      return array( offset, size );
+  }
 
   //! A view of the const array
   static inline Teuchos::ArrayView<const T> view( 
-				            const Teuchos::ArrayRCP<T> &array )
-  { return array(); }
+	  const Teuchos::ArrayRCP<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array();
+    else
+      return array( offset, size );
+  }
   
   //! The size of the array
   static inline size_type size( const Teuchos::ArrayRCP<T> &array )
@@ -287,8 +359,15 @@ struct ArrayTraits<const Teuchos::ArrayRCP<T> >
 
   //! A view of the array
   static inline Teuchos::ArrayView<const T> view( 
-				            const Teuchos::ArrayRCP<T> &array )
-  { return array(); }
+	  const Teuchos::ArrayRCP<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array();
+    else
+      return array( offset, size );
+  }
   
   //! The size of the array
   static inline size_type size( const Teuchos::ArrayRCP<T> &array )
@@ -339,8 +418,15 @@ struct ArrayTraits<Teuchos::ArrayView<T> >
 
   //! A view of the const array
   static inline Teuchos::ArrayView<const T> view( 
-					   const Teuchos::ArrayView<T> &array )
-  { return array(); }
+	  const Teuchos::ArrayView<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array();
+    else
+      return array( offset, size );
+  }
 
   //! The size of the array
   static inline size_type size( const Teuchos::ArrayView<T> &array )
@@ -383,8 +469,15 @@ struct ArrayTraits<const Teuchos::ArrayView<T> >
 
   //! A view of the const array
   static inline Teuchos::ArrayView<const T> view( 
-					   const Teuchos::ArrayView<T> &array )
-  { return array(); }
+	  const Teuchos::ArrayView<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array();
+    else
+      return array( offset, size );
+  }
 
   //! The size of the array
   static inline size_type size( const Teuchos::ArrayView<T> &array )
@@ -431,14 +524,28 @@ struct ArrayTraits<Teuchos::ArrayView<const T> >
 
   //! A view of the array
   static inline Teuchos::ArrayView<const T> view(
-					  Teuchos::ArrayView<const T> & array )
-  { return array(); }
+	  Teuchos::ArrayView<const T> & array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array();
+    else
+      return array( offset, size );
+  }
 
   //! A view of the const array
   static inline Teuchos::ArrayView<const T> view(
-				     const Teuchos::ArrayView<const T> &array )
-  { return array(); }
-
+	  const Teuchos::ArrayView<const T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array();
+    else
+      return array( offset, size );
+  }
+  
   //! The size of the array
   static inline size_type size( const Teuchos::ArrayView<const T> &array )
   { return array.size(); }
@@ -481,9 +588,16 @@ struct ArrayTraits<const Teuchos::ArrayView<const T> >
   
   //! A view of the const array
   static inline Teuchos::ArrayView<const T> view(
-				     const Teuchos::ArrayView<const T> &array )
-  { return array(); }
-
+	  const Teuchos::ArrayView<const T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array();
+    else
+      return array( offset, size );
+  }
+  
   //! The size of the array
   static inline size_type size( const Teuchos::ArrayView<const T> &array )
   { return array.size(); }
@@ -529,13 +643,28 @@ struct ArrayTraits<Teuchos::TwoDArray<T> >
   { return array[0].getRawPtr(); }
 
   //! A view of the array
-  static inline Teuchos::ArrayView<T> view( Teuchos::TwoDArray<T> &array )
-  { return array.getDataArray()(); }
+  static inline Teuchos::ArrayView<T> view( 
+	  Teuchos::TwoDArray<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array.getDataArray()();
+    else
+      return array.getDataArray()( offset, size );
+  }
 
   //! A view of the const array
   static inline Teuchos::ArrayView<const T> view( 
-					   const Teuchos::TwoDArray<T> &array )
-  { return array.getDataArray()(); }
+	  const Teuchos::TwoDArray<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array.getDataArray()();
+    else
+      return array.getDataArray()( offset, size );
+  }
 
   //! The size of the array
   static inline size_type size( const Teuchos::TwoDArray<T> &array )
@@ -597,8 +726,15 @@ struct ArrayTraits<const Teuchos::TwoDArray<T> >
 
   //! A view of the const array
   static inline Teuchos::ArrayView<const T> view( 
-					   const Teuchos::TwoDArray<T> &array )
-  { return array.getDataArray()(); }
+	  const Teuchos::TwoDArray<T> &array,
+	  const size_type offset = Teuchos::OrdinalTraits<size_type>::zero(),
+	  const size_type size = Teuchos::OrdinalTraits<size_type>::invalid() )
+  { 
+    if( size == Teuchos::OrdinalTraits<size_type>::invalid() )
+      return array.getDataArray()();
+    else
+      return array.getDataArray()( offset, size );
+  }
 
   //! The size of the array
   static inline size_type size( const Teuchos::TwoDArray<T> &array )

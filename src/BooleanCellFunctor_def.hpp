@@ -15,6 +15,7 @@
 
 // FACEMC Includes
 #include "SetOperationFunctor.hpp"
+#include "ArrayTraits.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -38,9 +39,11 @@ namespace FACEMC{
  * FACEMC_ASSERT_ALWAYS since the failure of this precondition could cause a
  * program crash during program execution.
  */
-template<typename Bool, template<typename> class Array>
-bool BooleanCellFunctor::operator()( const Array<Bool> &arguments ) const
+template<typename BoolArray>
+bool BooleanCellFunctor::operator()( const BoolArray &arguments ) const
 {
+  // The array must contain boolean types
+  testStaticPrecondition((boost::is_same<typename Traits::ArrayTraits<BoolArray>::value_type,bool>::value || boost::is_same<typename Traits::ArrayTraits<BoolArray>::value_type,const bool>::value));
   // The argument list must have the expected number of arguments
   testPrecondition( d_number_of_variables == arguments.size() );
 
@@ -67,9 +70,10 @@ bool BooleanCellFunctor::operator()( const Array<Bool> &arguments ) const
   {
     if( child_variables->first == 0 )
     {	
-      success = (*child)( arguments( child_variables->first,
-				     child_variables->second -
-				     child_variables->first + 1 ) );
+      success = (*child)( getArrayView( arguments,
+					child_variables->first,
+					child_variables->second -
+					child_variables->first + 1 ) );
       argument_index = child_variables->second + 1;
       ++child;
       ++child_variables;
@@ -93,9 +97,11 @@ bool BooleanCellFunctor::operator()( const Array<Bool> &arguments ) const
     {
       if( argument_index == child_variables->first )
       {
-	bool child_success = (*child)( arguments( child_variables->first,
-						  child_variables->second -
-						  child_variables->first + 1 ) );
+	bool child_success = (*child)( getArrayView( 
+						arguments, 
+						child_variables->first,
+						child_variables->second -
+						child_variables->first + 1 ) );
 	success = (**set_operation)( success, child_success );
     
 	argument_index = child_variables->second + 1;

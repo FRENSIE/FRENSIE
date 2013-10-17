@@ -9,10 +9,12 @@
 // Std Lib Includes
 #include <iostream>
 #include <string>
+#include <vector>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ArrayRCP.hpp>
 
 // FACEMC Includes
 #include "BooleanCellFunctor.hpp"
@@ -39,9 +41,18 @@
 #define REDUCED_CELL_DEFINITION_4 "d0ud1"
 
 //---------------------------------------------------------------------------//
+// Instantiation Macros.
+//---------------------------------------------------------------------------//
+#define UNIT_TEST_INSTANTIATION( type, name )			\
+  typedef Teuchos::ArrayRCP<bool> ArrayRCP;			\
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, ArrayRCP )	\
+  // typedef std::vector<bool> vector;				\
+  // TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, vector )	\
+
+
+//---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-
 class TestBooleanCellFunctor : public FACEMC::BooleanCellFunctor
 {
 public:
@@ -413,14 +424,16 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, assignSetOperationFunctors )
   
 //---------------------------------------------------------------------------//
 // Check that the BooleanCellFunctor evaluates the cell function correctly
-TEUCHOS_UNIT_TEST( BooleanCellFunctor, operator )
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( BooleanCellFunctor, 
+				   operator,
+				   BooleanArray )
 {
   std::string cell_definition( CELL_DEFINITION_1 );
   
   Teuchos::RCP<FACEMC::BooleanCellFunctor> 
     cell_functor( new FACEMC::BooleanCellFunctor( cell_definition ) );
 
-  FACEMC::BooleanCellFunctor::BooleanArray arguments( 9 );
+  BooleanArray arguments( 9 );
   arguments[0] = true;
   arguments[1] = true;
   arguments[2] = true;
@@ -589,6 +602,8 @@ TEUCHOS_UNIT_TEST( BooleanCellFunctor, operator )
 
   TEST_ASSERT( !(*cell_functor)( arguments ) );  
 }
+
+UNIT_TEST_INSTANTIATION( BooleanCellFunctor, operator );
   
 
 //---------------------------------------------------------------------------//

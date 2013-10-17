@@ -45,7 +45,7 @@ public:
 
   //@{
   //! Typedefs
-  //! Typedef for Boolean array
+  //! Typedef for Boolean array (guaranteed to work)
   typedef typename Teuchos::ArrayRCP<bool> BooleanArray;
   //@}
   
@@ -57,8 +57,8 @@ public:
   { /* ... */ }
   
   //! Function evaluation operator
-  template<typename Bool, template<typename> class Array>
-  bool operator()( const Array<Bool> &arguments ) const;
+  template<typename BoolArray>
+  bool operator()( const BoolArray &arguments ) const;
 
 protected:
 
