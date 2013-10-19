@@ -14,8 +14,6 @@ SET(HEADERS
   PhotonDataFluorescence.hpp
   PhotonDataDopplerBroadening.hpp
   PhotonData.hpp
-  ThreeSpaceTraitsAndPolicy.hpp
-  LinearAlgebraPolicy.hpp
   Surface.hpp
   SetOperationFunctor.hpp
   BooleanCellFunctor.hpp

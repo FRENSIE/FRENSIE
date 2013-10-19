@@ -105,6 +105,9 @@ public:
   //! Return if the cell is a polyhedron
   bool isPolyhedron() const;
 
+  //! Return if the cell is analytically integrable
+  bool isAnalyticallyIntegrable() const;
+
   //! Return the volume of the cell
   ScalarType getVolume() const;
 

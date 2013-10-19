@@ -57,8 +57,8 @@ public:
 	  const ScalarType y, 
 	  const ScalarType z );
 
-  //! Tuple constructor
-  Vector( const Trip<ScalarType,ScalarType,ScalarType> &tuple );
+  //! Tuple constructor 
+  explicit Vector( const Trip<ScalarType,ScalarType,ScalarType> &tuple );
 
   //! Copy constructor
   Vector( const Vector<ScalarType> &source_vector );

@@ -25,34 +25,6 @@
 
 namespace FACEMC{
 
-/*! \brief Eighth space enumeration
- * 
- * Assigning the booleans in this order assures that the octants
- * are iterated through in counter-clockwise order w.r.t. the x-y plane.
- */
-enum Octant{
-  START_OCTANT = 0,
-  POS_POS_POS_OCTANT = START_OCTANT,
-  POS_NEG_POS_OCTANT,
-  POS_NEG_NEG_OCTANT,
-  POS_POS_NEG_OCTANT,
-  NEG_NEG_POS_OCTANT,
-  NEG_NEG_NEG_OCTANT,
-  NEG_POS_NEG_OCTANT,
-  NEG_POS_POS_OCTANT,
-  END_OCTANT = NEG_POS_POS_OCTANT
-};
-
-/*! \brief Enumeration to specify whether function must find a point
- *
- * This enumeration is used by the findNextPolygonCorner member function when
- * design-by-contract is enabled. 
- */
-enum PointFindNecessity{
-  POINT_MUST_BE_FOUND,
-  POINT_MAY_NOT_BE_FOUND
-};
-
 /*! \brief Enumeration to specify the cell attribute(s) to calc. numerically
  */
 enum NumericalCellIntegrationType{
@@ -61,15 +33,10 @@ enum NumericalCellIntegrationType{
   CELL_VOLUME_AND_SURFACE_AREAS
 };  
 
-/*! \brief Enumeration to specify the orientation of a polygon
+/*! A factory class for creating smart pointers to cell objects and possibly
+ * calculating the volume and surface areas.
  */
-enum PolygonOrientation{
-  LEFT_HANDED,
-  RIGHT_HANDED,
-  INVALID_ORIENTATION
-};
-
-template<typename Cell, typename SurfaceMap = typename Cell::SurfaceMap>
+template<typename Cell, typename SurfaceMap>
 class CellFactory 
 {
 public:
@@ -104,22 +71,12 @@ private:
   typedef Teuchos::OrdinalTraits<cellOrdinalType> CellOT;
   //! Typedef for surface ordinal traits
   typedef Teuchos::OrdinalTraits<surfaceOrdinalType> SurfaceOT;
-  //! Typedef for three space traits and policy struct
-  typedef ThreeSpaceTraitsAndPolicy<scalarType> ThreeSpace;
-  //! Typedef for linear algebra policy
-  typedef LinearAlgebraPolicy<scalarType> LAP;
-  //! Typedef for vector
-  typedef typename ThreeSpace::Vector Vector;
-  //! Typedef for matrix
-  typedef typename ThreeSpace::Matrix Matrix;
   //! Typedef for intersection point
   typedef Pair<Trip<scalarType,scalarType,scalarType>,
 	       Trip<surfaceOrdinalType,surfaceOrdinalType,surfaceOrdinalType> >
   IntersectionPoint;
   //!Typedef for polygon
   typedef Polygon<surfaceOrdinalType,scalarType> Polygon;
-  //! Typedef for polygon corner
-  typedef typename Polygon::Point PolygonCorner;
 
 public:
 
@@ -149,9 +106,6 @@ protected:
 				  const Teuchos::Array<Polygon> &cell_polygons,
 				  CellPtr &cell );
 
-  //! Determine if a cell can have its volume calculated
-  static void isPolyhedronAnalyticallyIntegrable( CellPtr &cell );
-
   //! Calculate the volume of a polyhedral cell using bounding polygons
   static scalarType calculatePolyhedralCellVolumeFromPolygons( 
 				const Teuchos::Array<Polygon> &cell_polygons );
@@ -162,65 +116,10 @@ protected:
 				const Teuchos::Array<Polygon> &cell_polygons );
 
   //! Calculate the intersection points of planes with a plane of interest
-  static void calculateIntersectionPoints(
+  static void calculateIntersectionPointsOnPlane(
 			    std::list<IntersectionPoint> &intersection_points,
 			    const SurfaceSensePairsIterator &plane_of_polygon,
 			    const CellPtr &cell ) const;
-
-  //! Calculate the intersection point created by three planes
-  static IntersectionPoint calculateIntersectionPoint(
-		     const SurfaceSensePairsIterator &primary_surface,
-		     const SurfaceSensePairsIterator &secondary_surface,
-		     const SurfaceSensePairsIterator &tertiary_surface ) const;
-
-  //! Return if the intersection point is real
-  static bool isRealIntersectionPoint( const IntersectionPoint &point,
-				       const CellPtr &cell ) const;
-
-  //! Initialize boolean variables for the point test
-  static void initializeBooleansForPointTest( 
-			      const Octant octant,
-			      bool &primary_surface_boolean_parameter,
-			      bool &secondary_surface_boolean_parameter,
-			      bool &tertiary_surface_boolean_parameter ) const;
-
-  //! Get the point test function multiplier
-  static unsigned getPointTestFunctionMultiplier( const Octant octant ) const;
-  
-  //! Create a polygon from intersection points
-  static Polygon createPolygonFromIntersectionPoints(
-			     std::list<IntersectionPoint> &intersection_points,
-			     const CellPtr &cell ) const;
-
-  //! Find the first three points on the boundary of the polygon
-  static typename std::list<Pair<scalarType,scalarType> >::const_iterator 
-  initializePolygonCorners( std::list<PolygonCorner> &oriented_polygon_corners,
-			    std::list<IntersectionPoint> &intersection_points,
-			    const CellPtr &cell,
-			    surfaceOrdinalType &current_surface_id ) const;
-
-  //! Find the lexicographically largest point
-  static typename std::list<IntersectionPoint>::const_iterator
-  getLexicographicallyLargestPoint(
-	       const std::list<IntersectionPoint> &intersection_points ) const;
-
-  //! Find the next point on the boundary of the polygon
-  /*! \details If the point may not be found by this function 
-   * (POINT_MAY_NOT_BE_FOUND), this function may return an iterator to the
-   * end of the list. It is therefore important to test the iterator returned.
-   */
-  static typename std::list<IntersectionPoint>::const_iterator
-  getNextPolygonCorner( 
-       const surfaceOrdinalType desired_surface_id,
-       const typename std::list<PolygonCorner>::const_iterator &current_corner,
-       const std::list<IntersectionPoint> &intersection_points,
-       PointFindNecessity point_find_necessity = POINT_MUST_BE_FOUND ) const;
-
-  //! Get the next surface id (edge) of the polygon
-  static surfaceOrdinalType getNextSurfaceId( 
-		    const surfaceOrdinalType current_surface_id,   
-		    const typename std::list<IntersectionPoint>::const_iterator
-		    &intersection_point ) const;
 
   //! Calculate the volume and area of a rotationally symmetric cell
   void calculateRotationallySymmetricCellVolumeAndArea( CellPtr &cell ); 

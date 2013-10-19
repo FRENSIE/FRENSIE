@@ -1,7 +1,9 @@
 //---------------------------------------------------------------------------//
-// \file   process_data.cpp
-// \author Alex Robinson
-// \brief  Main function for processing data
+//!
+//! \file   process_data.cpp
+//! \author Alex Robinson
+//! \brief  Main function for processing data
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
@@ -65,7 +67,7 @@ int main( int argc, char* argv[] )
   eadl_file_name += "EADL";
 
   std::string compton_file_prefix = FACEMC_DATA_DIRECTORY;
-  compton_file_prefix += "profile-";
+  compton_file_prefix += "compton_profile-";
 
   processor.reset( new FACEMC::PhotonDataProcessor( epdl_file_name,
 						    eadl_file_name,

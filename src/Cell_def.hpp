@@ -205,6 +205,63 @@ bool Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType>::isPolyhedron() const
   return all_planar_surfaces;
 }
 
+template<typename CellOrdinalType, 
+	 typename SurfaceOrdinalType, 
+	 typename ScalarType>
+bool Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType>::isAnalyticallyIntegrable() const
+{
+  bool analytically_integrable_cell = true;
+
+  SurfaceSensePairsIterator first_surface = 
+    d_surface_sense_pairs.beginSurfaceSensePairs();
+  SurfaceSensePairsIterator second_surface = 
+    d_surface_sense_pairs.beginSurfaceSensePairs();
+  SurfaceSensePairsIterator end_surface = 
+    d_surface_sense_pairs.endSurfaceSensePairs();
+
+  // Processed surfaces
+  std::set<SurfaceOrdinalType> processed_surfaces;
+
+  while( first_surface != end_surface )
+  {
+    if( processed_surfaces.find( first_surface->first->getId() ) == 
+	processed_surfaces.end() )
+    {
+      processed_surfaces.insert( first_surface->first->getId() );
+    }
+    else // this surface has already been processed
+    {
+      ++first_surface;
+      continue;
+    }
+
+    second_surface = d_surface_sense_pairs.beginSurfaceSensePairs();
+
+    // See if the same surface appears again in the cell def. with diff. sense
+    while( second_surface != end_surface )
+    {
+      if( second_surface->first->getId() == first_surface->first->getId() )
+      {
+	if( second_surface->second != first_surface->second )
+	{
+	  analytically_integrable_cell = false;
+	  break;
+	}
+      }
+      
+      ++second_surface;
+    }
+
+    // If a repeated surface with diff. sense was found, exit the search.
+    if( analytically_integrable_cell == false )
+      break;
+    else
+      ++first_surface;	
+  }
+
+  return analytically_integrable_cell;
+}
+
 // Return the volume of the cell
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType, 

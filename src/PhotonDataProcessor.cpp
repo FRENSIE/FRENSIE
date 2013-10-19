@@ -952,6 +952,7 @@ void PhotonDataProcessor::processComptonFiles( unsigned int atomic_number_start,
     
     compton_file_name = d_compton_file_prefix + file_number.str() + ".txt";
     compton_file_stream.open( compton_file_name.c_str() );
+    
     FACEMC_ASSERT_ALWAYS_MSG( compton_file_stream,
 			      "Fatal Error: The requested Compton file cannot be opened. Please verify the file name and/or path.");
 

@@ -3,12 +3,16 @@
 //! \file   tstCellFactory.cpp
 //! \author Alex Robinson
 //! \brief  Cell factory class unit tests
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
 #include <iostream>
 #include <string>
 #include <map>
+
+// Boost Includes
+#include <boost/unordered_map.hpp>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
