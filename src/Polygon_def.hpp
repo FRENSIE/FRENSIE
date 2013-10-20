@@ -225,17 +225,103 @@ template<typename OrdinalType, typename ScalarType>
 template<typename Point>
 bool Polygon<OrdinalType,ScalarType>::isValidPointList(
 				      const std::list<Point> &polygon_corners )
-{
+{  
   // The polygon must have at least 4 corners (3 + copy of first point)
-  testPrecondition( polygon_corners.size() >= 4 );
+  bool valid_point_list = hasCorrectSize( polygon_corners );
   
-  bool valid_point_list = true;
-
   // The polygon must start and end with the same point
-  if( polygon_corners.front() != polygon_corners.back() )
-    valid_point_list = false;
+  if( valid_point_list )
+    valid_point_list = isClosed( polygon_corners );
+
+  // The polygon must not contain any consecutive repeated points
+  if( valid_point_list )
+    valid_point_list = hasNoConsecutiveRepeatedPoints( polygon_corners );
   
   // The first three points of the polygon must not lie on a straight line
+  if( valid_point_list )
+    valid_point_list = isInitializedProperly( polygon_corners );
+  
+  // All points must lie on the same plane
+  if( valid_point_list )
+    valid_point_list = hasAllPointsOnSamePlane( polygon_corners );
+    
+  // If all tests passed the polygon is valid
+  return valid_point_list;
+}
+
+// Check that the point list has the correct size
+template<typename OrdinalType, typename ScalarType>
+template<typename Point>
+bool Polygon<OrdinalType,ScalarType>::hasCorrectSize(
+				      const std::list<Point> &polygon_corners )
+{
+  if( polygon_corners.size() < 4 )
+    return false;
+  else 
+    return true;
+}
+
+// Check that the point list is closed
+template<typename OrdinalType, typename ScalarType>
+template<typename Point>
+bool Polygon<OrdinalType,ScalarType>::isClosed( 
+				      const std::list<Point> &polygon_corners )
+{
+  if( polygon_corners.front()[0] == polygon_corners.back()[0] &&
+      polygon_corners.front()[1] == polygon_corners.back()[1] &&
+      polygon_corners.front()[2] == polygon_corners.back()[2] )
+    return true;
+  else 
+    return false;
+}
+
+// Check that the point list doesn't contain any consecutive repeated points
+template<typename OrdinalType, typename ScalarType>
+template<typename Point>
+bool Polygon<OrdinalType,ScalarType>::hasNoConsecutiveRepeatedPoints(
+				      const std::list<Point> &polygon_corners )
+{
+  // The list must contain at least one point
+  testPrecondition( polygon_corners.size() >= 1 );
+    
+  typename std::list<Point>::const_iterator first_point, second_point,
+    end_point;
+  
+  first_point = polygon_corners.begin();
+  second_point = first_point;
+  ++second_point;
+  end_point = polygon_corners.end();
+
+  bool has_no_consecutive_repeated_points = true;
+
+  while( second_point != end_point )
+  {
+    if( (*first_point)[0] == (*second_point)[0] &&
+	(*first_point)[1] == (*second_point)[1] &&
+	(*first_point)[2] == (*second_point)[2] )
+    {
+      has_no_consecutive_repeated_points = false;
+      break;
+    }
+    
+    ++first_point;
+    ++second_point;
+  }
+
+  return has_no_consecutive_repeated_points;
+}
+
+// Check that the point list is initialized properly
+template<typename OrdinalType, typename ScalarType>
+template<typename Point>
+bool Polygon<OrdinalType,ScalarType>::isInitializedProperly(
+				      const std::list<Point> &polygon_corners )
+{
+  // The point list must have at least three points
+  testPrecondition( polygon_corners.size() >= 3 );
+  // The point list must not have any consecutive repeated points
+  testPrecondition( hasNoConsecutiveRepeatedPoints( polygon_corners ) );
+  
   typename std::list<Point>::const_iterator first_point, second_point,
     third_point, end_point;
   
@@ -244,58 +330,80 @@ bool Polygon<OrdinalType,ScalarType>::isValidPointList(
   ++second_point;
   third_point = second_point;
   ++third_point;
-
   end_point = polygon_corners.end();
 
-  Vector<ScalarType> unit_normal = calculateNormalOfPlaneFromThreePoints( 
+  Vector<ScalarType> normal = calculateNormalOfPlaneFromThreePoints( 
 								*first_point, 
 								*second_point,
 								*third_point );
-  if( unit_normal.isZeroVector() )
-    valid_point_list = false;
   
-  // All points must lie on the same plane
-  else 
+  // If all three points are in a line, the normal will be zero (invalid)
+  if( normal.isZeroVector() )
+    return false;
+  else
+    return true;
+}
+
+// Check that the point list has all points on the same plane
+template<typename OrdinalType, typename ScalarType>
+template<typename Point>
+bool Polygon<OrdinalType,ScalarType>::hasAllPointsOnSamePlane(
+                                      const std::list<Point> &polygon_corners )
+{
+  // The list must contain at least four points
+  testPrecondition( polygon_corners.size() >= 4 );
+  // The list must be closed
+  testPrecondition( isClosed( polygon_corners ) );
+  // The list must not contain any consecutive repeated points
+  testPrecondition( hasNoConsecutiveRepeatedPoints( polygon_corners ) );
+  // The list must be initialized properly
+  testPrecondition( isInitializedProperly( polygon_corners ) );
+  
+  typename std::list<Point>::const_iterator first_point, second_point, 
+    third_point, end_point;
+  
+  first_point = polygon_corners.begin();
+  second_point = first_point;
+  ++second_point;
+  third_point = second_point;
+  ++third_point;
+  end_point = polygon_corners.end();
+  
+  Vector<ScalarType> normal = calculateNormalOfPlaneFromThreePoints( 
+								*first_point,
+								*second_point,
+								*third_point );
+  ++first_point;
+  ++second_point;
+  ++third_point;
+  
+  Vector<ScalarType> test_normal;
+
+  bool all_points_on_same_plane = true;
+    
+  while( third_point != end_point )
   {
+    test_normal = calculateNormalOfPlaneFromThreePoints( *first_point,
+							 *second_point,
+							 *third_point );
+    
+    // The normal might be zero due to the closing of the polygon
+    if( !test_normal.isZeroVector() )
+    {  
+      if( !normal.isParallel( test_normal ) &&
+	  !normal.isAntiparallel( test_normal ) )
+      {
+	all_points_on_same_plane = false;
+	break;
+      }
+    }
+    
     ++first_point;
     ++second_point;
     ++third_point;
-    
-    Vector<ScalarType> test_unit_normal;
-    
-    while( third_point != end_point )
-    {
-      test_unit_normal = calculateNormalOfPlaneFromThreePoints( *first_point,
-								*second_point,
-								*third_point );
-      // Due to the possibility of repeated points, the unit normal may be
-      // a zero vector - this should only happen at the end of a disjoint
-      // polygon.
-      if( test_unit_normal.isZeroVector() )
-      {
-	if( *third_point != polygon_corners.front() &&
-	    *first_point != polygon_corners.front() )
-	{
-	  valid_point_list = false;
-	  break;
-	}
-	else 
-	  continue;
-      }
-      else if( !unit_normal.isParallel( test_unit_normal ) &&
-	       !unit_normal.isAntiparallel( test_unit_normal ) )
-      {
-	valid_point_list = false;
-	break;
-      }
-      
-      ++first_point;
-      ++second_point;
-      ++third_point;
-    }
   }
-    
-  return valid_point_list;
+
+  return all_points_on_same_plane;
 }
 
 // Compute the normal of the plane formed by three points
@@ -307,6 +415,10 @@ Polygon<OrdinalType,ScalarType>::calculateNormalOfPlaneFromThreePoints(
 						     const Point &second_point,
 						     const Point &third_point )
 {
+  // None of the points can be equal
+  testPrecondition( first_point != second_point );
+  testPrecondition( first_point != third_point );
+  testPrecondition( second_point != third_point );
   
   Vector<ScalarType> polygon_vector_1( second_point[0] - third_point[0],
 				       second_point[1] - third_point[1],

@@ -49,6 +49,11 @@ public:
   // Allow public access to the protected member functions
   using FACEMC::Polygon<OrdinalType,ScalarType>::PointProjection;
   using FACEMC::Polygon<OrdinalType,ScalarType>::isValidPointList;
+  using FACEMC::Polygon<OrdinalType,ScalarType>::hasCorrectSize;
+  using FACEMC::Polygon<OrdinalType,ScalarType>::isClosed;
+  using FACEMC::Polygon<OrdinalType,ScalarType>::hasNoConsecutiveRepeatedPoints;
+  using FACEMC::Polygon<OrdinalType,ScalarType>::isInitializedProperly;
+  using FACEMC::Polygon<OrdinalType,ScalarType>::hasAllPointsOnSamePlane;
   using FACEMC::Polygon<OrdinalType,ScalarType>::calculatePolygonPlaneUnitNormal;
   using FACEMC::Polygon<OrdinalType,ScalarType>::getExtremeCoordinates;
   using FACEMC::Polygon<OrdinalType,ScalarType>::getTransformMatrixAndVector;
@@ -208,9 +213,28 @@ void createDisjointThreeSpaceSquare( CornerContainer &polygon_corners )
   polygon_corners.push_back( corner_1 );
 }
 
-// Create an open polygon (first point not copied to the end
+// Create a polygon with an incorrect size
 template<typename CornerContainer>
 void createInvalidPolygonTypeA( CornerContainer &polygon_corners )
+{
+  polygon_corners.clear();
+  
+  // First point at (1, 1, 1)
+  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_1 );
+
+  // Second point at (-1, 1, 1)
+  typename CornerContainer::value_type corner_2( -1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_2 );
+
+  // Third point at (-1, 1, -1)
+  typename CornerContainer::value_type corner_3( -1.0, 1.0, -1.0 );
+  polygon_corners.push_back( corner_3 );
+}
+
+// Create an open polygon (first point not copied to the end
+template<typename CornerContainer>
+void createInvalidPolygonTypeB( CornerContainer &polygon_corners )
 {
   polygon_corners.clear();
 
@@ -231,9 +255,36 @@ void createInvalidPolygonTypeA( CornerContainer &polygon_corners )
   polygon_corners.push_back( corner_4 );
 }
 
+// Create an invalid polygon (has consecutive repeated points)
+template<typename CornerContainer>
+void createInvalidPolygonTypeC( CornerContainer &polygon_corners )
+{
+  polygon_corners.clear();
+
+  // First point at (1, 1, 1)
+  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_1 );
+
+  // Second point at (-1, 1, 1)
+  typename CornerContainer::value_type corner_2( -1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_2 );
+
+  // Third point at (-1, 1, -1)
+  typename CornerContainer::value_type corner_3( -1.0, 1.0, -1.0 );
+  polygon_corners.push_back( corner_3 );
+  polygon_corners.push_back( corner_3 );
+
+  // Fourth point at (1, 1, -1)
+  typename CornerContainer::value_type corner_4( 1.0, 1.0, -1.0 );
+  polygon_corners.push_back( corner_4 );
+
+  // Add a copy of the first point
+  polygon_corners.push_back( corner_1 );
+}
+
 // Create an invalid polygon (first three points in a line)
 template<typename CornerContainer>
-void createInvalidPolygonTypeB( CornerContainer &polygon_corners )
+void createInvalidPolygonTypeD( CornerContainer &polygon_corners )
 {
   polygon_corners.clear();
   
@@ -242,7 +293,7 @@ void createInvalidPolygonTypeB( CornerContainer &polygon_corners )
   polygon_corners.push_back( corner_1 );
   
   // Second point at (2, 2, 2)
-  typename CornerContainer::value_type corner_2( 1.0, 1.0, 1.0 );
+  typename CornerContainer::value_type corner_2( 2.0, 2.0, 2.0 );
   polygon_corners.push_back( corner_2 );
   
   // Third point at (3, 3, 3)
@@ -255,7 +306,7 @@ void createInvalidPolygonTypeB( CornerContainer &polygon_corners )
 
 // Create an invalid polygon (not all points on same plane)
 template<typename CornerContainer>
-void createInvalidPolygonTypeC( CornerContainer &polygon_corners )
+void createInvalidPolygonTypeE( CornerContainer &polygon_corners )
 {
   // First point at (1, 1, 1)
   typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
@@ -307,13 +358,148 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 UNIT_TEST_INSTANTIATION( Polygon, calculatePolygonPlaneUnitNormal );
 
 //---------------------------------------------------------------------------//
+// Check that a point list can be checked as having the correct size
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+				   hasCorrectSize,
+				   OrdinalType,
+				   ScalarType )
+{
+  typedef TestPolygon<OrdinalType,ScalarType> Polygon;
+  
+  std::list<FACEMC::Vector<ScalarType> > triangle_corners;
+  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_a;
+  
+  // Create a triangle
+  createThreeSpaceTriangle( triangle_corners );
+
+  // Create an invalid polygon
+  createInvalidPolygonTypeA( invalid_polygon_type_a );
+
+  TEST_ASSERT( Polygon::hasCorrectSize( triangle_corners ) );
+  TEST_ASSERT( !Polygon::hasCorrectSize( invalid_polygon_type_a ) );
+}
+
+UNIT_TEST_INSTANTIATION( Polygon, hasCorrectSize );
+
+//---------------------------------------------------------------------------//
+// Check that a point list can be checked as being closed
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+				   isClosed,
+				   OrdinalType,
+				   ScalarType )
+{
+  typedef TestPolygon<OrdinalType,ScalarType> Polygon;
+
+  std::list<FACEMC::Vector<ScalarType> > triangle_corners;
+  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_b;
+
+  // Create a triangle
+  createThreeSpaceTriangle( triangle_corners );
+
+  // Create an invalid polygon
+  createInvalidPolygonTypeB( invalid_polygon_type_b );
+
+  TEST_ASSERT( Polygon::isClosed( triangle_corners ) );
+  TEST_ASSERT( !Polygon::isClosed( invalid_polygon_type_b ) );
+}
+
+UNIT_TEST_INSTANTIATION( Polygon, isClosed );
+
+//---------------------------------------------------------------------------//
+// Check that the point list can be checked for consecutive repeated points
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+				   hasNoConsecutiveRepeatedPoints,
+				   OrdinalType,
+				   ScalarType )
+{
+  typedef TestPolygon<OrdinalType,ScalarType> Polygon;
+
+  std::list<FACEMC::Vector<ScalarType> > triangle_corners;
+  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_c;
+
+  // Create a triangle
+  createThreeSpaceTriangle( triangle_corners );
+
+  // Create an invalid polygon
+  createInvalidPolygonTypeC( invalid_polygon_type_c );
+
+  TEST_ASSERT( Polygon::hasNoConsecutiveRepeatedPoints( triangle_corners ) );
+  TEST_ASSERT( !Polygon::hasNoConsecutiveRepeatedPoints( invalid_polygon_type_c ) );
+}
+
+UNIT_TEST_INSTANTIATION( Polygon, hasNoConsecutiveRepeatedPoints );
+
+//---------------------------------------------------------------------------//
+// Check that the initialization of a point list can be correctly checked
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+				   isInitializedProperly,
+				   OrdinalType,
+				   ScalarType )
+{
+  typedef TestPolygon<OrdinalType,ScalarType> Polygon;
+
+  std::list<FACEMC::Vector<ScalarType> > triangle_corners;
+  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_d;
+
+  // Create a triangle
+  createThreeSpaceTriangle( triangle_corners );
+
+  // Create an invalid polygon
+  createInvalidPolygonTypeD( invalid_polygon_type_d );
+
+  TEST_ASSERT( Polygon::isInitializedProperly( triangle_corners ) );
+  TEST_ASSERT( !Polygon::isInitializedProperly( invalid_polygon_type_d ) );
+}
+
+UNIT_TEST_INSTANTIATION( Polygon, isInitializedProperly );
+
+//---------------------------------------------------------------------------//
+// Check that the point list can be tested as having all points on same plane
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+				   hasAllPointsOnSamePlane,
+				   OrdinalType,
+				   ScalarType )
+{
+  typedef TestPolygon<OrdinalType,ScalarType> Polygon;
+
+  std::list<FACEMC::Vector<ScalarType> > triangle_corners;
+  std::list<FACEMC::Vector<ScalarType> > simple_square_corners;
+  std::list<FACEMC::Vector<ScalarType> > complex_square_corners;
+  std::list<FACEMC::Vector<ScalarType> > disjoint_square_corners;
+  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_e;
+
+  // Create a triangle
+  createThreeSpaceTriangle( triangle_corners );
+
+  // Create a simple square
+  createSimpleThreeSpaceSquare( simple_square_corners );
+
+  // Create a complex square
+  createComplexThreeSpaceSquare( complex_square_corners );
+
+  // Create a disjoint square
+  createDisjointThreeSpaceSquare( disjoint_square_corners );
+
+  // Create an invalid polygon
+  createInvalidPolygonTypeE( invalid_polygon_type_e );
+
+  TEST_ASSERT( Polygon::hasAllPointsOnSamePlane( triangle_corners ) );
+  TEST_ASSERT( Polygon::hasAllPointsOnSamePlane( simple_square_corners ) );
+  TEST_ASSERT( Polygon::hasAllPointsOnSamePlane( complex_square_corners ) );
+  TEST_ASSERT( Polygon::hasAllPointsOnSamePlane( disjoint_square_corners ) );
+  TEST_ASSERT( !Polygon::hasAllPointsOnSamePlane( invalid_polygon_type_e ) );
+}
+
+UNIT_TEST_INSTANTIATION( Polygon, hasAllPointsOnSamePlane );
+
+//---------------------------------------------------------------------------//
 // Check that all points in the ordered list can be tested as on the same plane
 TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 				   isValidPointList,
 				   OrdinalType,
 				   ScalarType )
 {
-  typedef TestPolygon<OrdinalType,ScalarType> Polygon;
+  typedef FACEMC::Polygon<OrdinalType,ScalarType> Polygon;
   
   std::list<FACEMC::Vector<ScalarType> > triangle_corners;
   std::list<FACEMC::Vector<ScalarType> > simple_square_corners;
@@ -322,6 +508,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_a;
   std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_b;
   std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_c;
+  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_d;
+  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_e;
 
   // Create a triangle
   createThreeSpaceTriangle( triangle_corners );
@@ -339,6 +527,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   createInvalidPolygonTypeA( invalid_polygon_type_a );
   createInvalidPolygonTypeB( invalid_polygon_type_b );
   createInvalidPolygonTypeC( invalid_polygon_type_c );
+  createInvalidPolygonTypeD( invalid_polygon_type_d );
+  createInvalidPolygonTypeE( invalid_polygon_type_e );
   
 
   TEST_ASSERT( Polygon::isValidPointList( triangle_corners ) );  
@@ -348,6 +538,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_ASSERT( !Polygon::isValidPointList( invalid_polygon_type_a ) );
   TEST_ASSERT( !Polygon::isValidPointList( invalid_polygon_type_b ) );
   TEST_ASSERT( !Polygon::isValidPointList( invalid_polygon_type_c ) );
+  TEST_ASSERT( !Polygon::isValidPointList( invalid_polygon_type_d ) );
+  TEST_ASSERT( !Polygon::isValidPointList( invalid_polygon_type_e ) );
 }
 
 UNIT_TEST_INSTANTIATION( Polygon, isValidPointList );

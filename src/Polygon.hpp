@@ -102,11 +102,36 @@ public:
   //! Print method that defines the behavior of the std::stream << operator
   void print( std::ostream &os ) const;
 
-protected:
-
-  //! Check that all points in the ordered point list lie on the same plane
+  //! Check that a point list is a valid polygon representation
   template<typename Point>
   static bool isValidPointList( const std::list<Point> &polygon_corners );
+
+protected:
+
+  //@{
+  //! Valid point list tests
+  //! Check that the point list has the correct size
+  template<typename Point>
+  static bool hasCorrectSize( const std::list<Point> &polygon_corners );
+  
+  //! Check that the point list is closed
+  template<typename Point>
+  static bool isClosed( const std::list<Point> &polygon_corners );
+
+  //! Check that the point list doesn't contain any consecutive repeated points
+  template<typename Point>
+  static bool hasNoConsecutiveRepeatedPoints( 
+			             const std::list<Point> &polygon_corners );
+
+  //! Check that the point list is initialized properly
+  template<typename Point>
+  static bool isInitializedProperly( const std::list<Point> &polygon_corners );
+
+  // Check that the point list has all points on the same plane
+  template<typename Point>
+  static bool hasAllPointsOnSamePlane( 
+				     const std::list<Point> &polygon_corners );
+  //@}
 
   //! Calculate the normal of the plane formed by three points
   template<typename Point>
