@@ -100,7 +100,7 @@ public:
 
   //! Evaluate the cell definition
   template<typename BoolArray>
-  bool isCellPresent( const BoolArray &surface_tests );
+  bool isCellPresent( const BoolArray &surface_tests ) const;
 
   //! Return if the cell is a polyhedron
   bool isPolyhedron() const;

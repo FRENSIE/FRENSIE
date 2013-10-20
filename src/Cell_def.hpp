@@ -415,23 +415,12 @@ void Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::print(
   SurfaceSensePairsIterator pair, end_pair;
   pair = beginSurfaceSensePairs();
   end_pair = endSurfaceSensePairs();
-
-  std::set<surfaceOrdinalType> printed_surfaces;
   
   while( pair != end_pair )
-  {
-    if( printed_surfaces.find( pair->first->getId() ) == 
-	printed_surfaces.end() )
-    {
-      printed_surfaces.insert( pair->first->getId() );
-    }
-    else
-    {
-      ++pair;
-      continue;
-    }
-    
+  {    
     os << *(pair->first);
+    os << "Sense: " << (pair->second == POS_SURFACE_SENSE ? "+" : "-")
+       << std::endl;
     
     ++pair;
   }
@@ -443,7 +432,7 @@ template<typename CellOrdinalType,
 	 typename ScalarType>
 template<typename BoolArray>
 bool Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::isCellPresent( 
-				               const BoolArray &surface_tests )
+				         const BoolArray &surface_tests ) const
 {
    // The array must contain boolean types
   testStaticPrecondition((boost::is_same<typename Traits::ArrayTraits<BoolArray>::value_type,bool>::value || boost::is_same<typename Traits::ArrayTraits<BoolArray>::value_type,const bool>::value));

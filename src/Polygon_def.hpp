@@ -41,10 +41,8 @@ Polygon<OrdinalType,ScalarType>::Polygon(
 {
   // A valid point type must be used
   testStaticPrecondition((boost::is_same<typename Point::scalarType,ScalarType>::value));
-  // The polygon must have at least 4 corners (3 + copy of first point)
-  testPrecondition( d_corners.size() >= 4 );
-  // Make sure that the polygon starts and ends with the same point
-  testPrecondition( d_corners.front() == d_corners.back() );
+  // The point list must be valid
+  testPrecondition( isValidPointList( ordered_polygon_corners ) );
 
   // Compute the unit normal to the plane of the polygon
   d_unit_normal = 

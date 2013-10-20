@@ -39,7 +39,7 @@ enum Octant{
   NEG_NEG_NEG_OCTANT,
   NEG_POS_NEG_OCTANT,
   NEG_POS_POS_OCTANT,
-  END_OCTANT = NEG_POS_POS_OCTANT
+  END_OCTANT
 };
 
 //! An intersection point between three planar surfaces
@@ -90,7 +90,7 @@ public:
 		     &source_point );
 
   //! Destructor
-  virtual ~IntersectinPoint()
+  virtual ~IntersectionPoint()
   { /* ... */ }
 
   //! Copies values from one intersection point to another
@@ -99,6 +99,23 @@ public:
 
   //! Element access method (const).
   const ScalarType& operator[]( const ordinalType index ) const;
+
+  //! Equality of two intersection points
+  bool operator==( 
+	      const IntersectionPoint<OrdinalType,ScalarType> &operand ) const;
+
+  //! Inequality of two intersection points
+  bool operator!=( 
+	      const IntersectionPoint<OrdinalType,ScalarType> &operand ) const;
+
+  //! X coordinate access method
+  ScalarType getXCoordinate() const;
+
+  //! Y coordinate access method
+  ScalarType getYCoordinate() const;
+
+  //! Z coordinate access method
+  ScalarType getZCoordinate() const;
 
   //! First surface id access method
   OrdinalType getFirstSurfaceId() const;
@@ -115,13 +132,8 @@ public:
   //! Set this point as a star corner
   void setAsStarCorner();
 
-  //! Equality of two intersection points
-  bool operator==( 
-	      const IntersectionPoint<OrdinalType,ScalarType> &operand ) const;
-
-  //! Inequality of two intersection points
-  bool operator!=( 
-	      const IntersectionPoint<OrdinalType,ScalarType> &operand ) const;
+  //! Return if this point is a star corner
+  bool isStarCorner() const;
 
   //! Test if this point contains the requested surface id
   bool isOnSurface( const OrdinalType surface_id ) const;
@@ -149,7 +161,7 @@ public:
 protected:
   
   // Get the number of shared surfaces between two intersection points
-  static unsigned getNumberOfSharedSufaces( 
+  static unsigned getNumberOfSharedSurfaces( 
 	       const IntersectionPoint<OrdinalType,ScalarType> &first_point,
 	       const IntersectionPoint<OrdinalType,ScalarType> &second_point );
 
@@ -179,7 +191,54 @@ private:
   bool d_is_star_corner;
 };
 
+// Get an Octant from an integer type
+template<typename T>
+Octant getOctantFromInteger( const T value )
+{
+  Octant octant;
+  switch( value )
+  {
+  case POS_POS_POS_OCTANT:
+    octant = POS_POS_POS_OCTANT;
+    break;
+  case POS_NEG_POS_OCTANT:
+    octant = POS_NEG_POS_OCTANT;
+    break;
+  case POS_NEG_NEG_OCTANT:
+    octant = POS_NEG_NEG_OCTANT;
+    break;
+  case POS_POS_NEG_OCTANT:
+    octant = POS_POS_NEG_OCTANT;
+    break;
+  case NEG_NEG_POS_OCTANT:
+    octant = NEG_NEG_POS_OCTANT;
+    break;
+  case NEG_NEG_NEG_OCTANT:
+    octant = NEG_NEG_NEG_OCTANT;
+    break;
+  case NEG_POS_NEG_OCTANT:
+    octant = NEG_POS_NEG_OCTANT;
+    break;
+  case NEG_POS_POS_OCTANT:
+    octant = NEG_POS_POS_OCTANT;
+    break;
+  default:
+    octant = END_OCTANT;
+    break;
+  }
+
+  return octant;
+}
+
 } // end FACEMC namespace
+
+//---------------------------------------------------------------------------//
+// Template includes.
+//---------------------------------------------------------------------------//
+
+#include "IntersectionPoint_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end INTERSECTION_POINT_HPP
 

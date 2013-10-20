@@ -48,12 +48,23 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
 						  1, 1, 1,
 						  20, 20, 20,
 						  10*10+10*10+10*10 - 10*10 );
+  
+  // Planar Surfaces
+  FACEMC::Surface<OrdinalType,ScalarType> plane_a( 1,
+						   0.0, -1.0, 2.0,
+						   0.0 );
+  FACEMC::Surface<OrdinalType,ScalarType> plane_b( 2,
+						   0.0, 1.0, 2.0,
+						   0.0 );
 
   FACEMC::Vector<ScalarType> point_1( 0.0, -10.0, -10.0 );
   FACEMC::Vector<ScalarType> point_2( -10.0, -10.0, -10.0 ); 
+  FACEMC::Vector<ScalarType> point_3( 0.0, 0.0, 0.0 );
 
   TEST_ASSERT( sphere.isOn( point_1 ) );
   TEST_ASSERT( !sphere.isOn( point_2 ) );
+  TEST_ASSERT( plane_a.isOn( point_3 ) );
+  TEST_ASSERT( plane_b.isOn( point_3 ) );
 }
 
 UNIT_TEST_INSTANTIATION( Surface, isOn );
