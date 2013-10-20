@@ -45,15 +45,16 @@ IntersectionPoint<OrdinalType,ScalarType> createIntersectionPoint(
 		    !secondary_normal.isAntiparallel( tertiary_normal ) );
   
   // Create the system that will be solved (Ax = b)
-  Matrix A = createMatrixFromRows( primary_surface.getLinearTermVector(),
-				   secondary_surface.getLinearTermVector(),
-				   tertiary_surface.getLinearTermVector() );
+  Matrix<ScalarType> A = 
+    createMatrixFromRows( primary_surface.getLinearTermVector(),
+			  secondary_surface.getLinearTermVector(),
+			  tertiary_surface.getLinearTermVector() );
 
-  Vector b( -primary_surface.getConstantTerm(),
-	    -secondary_surface.getConstantTerm(),
-	    -tertiary_surface.getConstantTerm() );
+  Vector<ScalarType> b( -primary_surface.getConstantTerm(),
+			-secondary_surface.getConstantTerm(),
+			-tertiary_surface.getConstantTerm() );
 
-  Vector x = LinearAlgebra::solveSystem( A, b );
+  Vector<ScalarType> x = LinearAlgebra::solveSystem( A, b );
 
   return IntersectionPoint<OrdinalType,ScalarType>( x, 
 						    primary_surface.getId(),

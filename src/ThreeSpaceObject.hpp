@@ -13,6 +13,7 @@ namespace FACEMC{
 
 //! Types of objects that can be encountered in three space
 enum ThreeSpaceObjectType{
+  THREE_SPACE_POINT,
   THREE_SPACE_VECTOR,
   THREE_SPACE_MATRIX,
   THREE_SPACE_SURFACE,

@@ -25,7 +25,8 @@ IntersectionPoint<OrdinalType,ScalarType>::IntersectionPoint()
     d_z( ST::nan() ),
     d_first_surface_id( OT::invalid() ),
     d_second_surface_id( OT::invalid() ),
-    d_third_surface_id( OT::invalid() )
+    d_third_surface_id( OT::invalid() ),
+    d_is_star_corner( false )
 { /* ... */ }
 
 // General constructor
@@ -36,16 +37,64 @@ IntersectionPoint<OrdinalType,ScalarType>::IntersectionPoint(
 					   const ScalarType z,
 					   const OrdinalType first_surface_id,
 		                           const OrdinalType second_surface_id,
-				           const OrdinalType third_surface_id )
+				           const OrdinalType third_surface_id,
+					   const bool is_star_corner )
   : PrintableObject( "IntersectionPoint" ),
-    ThreeSpaceObject( THREE_SPACE_VECTOR ),
+    ThreeSpaceObject( THREE_SPACE_POINT ),
     d_x( x ),
     d_y( y ),
     d_z( z ),
     d_first_surface_id( first_surface_id ),
     d_second_surface_id( second_surface_id ),
-    d_third_surface_id( third_surface_id )
+    d_third_surface_id( third_surface_id ),
+    d_is_star_corner( is_star_corner )
 { 
+  // The coordinates of the intersection point must be valid
+  testPrecondition( !ST::isnaninf( x ) );
+  testPrecondition( !ST::isnaninf( y ) );
+  testPrecondition( !ST::isnaninf( z ) );
+  // The surface ids must be valid
+  testPrecondition( first_surface_id >= OT::zero() );
+  testPrecondition( first_surface_id != OT::invalid() );
+  testPrecondition( second_surface_id >= OT::zero() );
+  testPrecondition( second_surface_id != OT::invalid() );
+  testPrecondition( third_surface_id >= OT::zero() );
+  testPrecondition( third_surface_id != OT::invalid() );
+  // All of the surface ids must be unique
+  testPrecondition( first_surface_id != second_surface_id );
+  testPrecondition( first_surface_id != third_surface_id );
+  testPrecondition( second_surface_id != third_surface_id );
+}
+
+// Vector constructor
+template<typename OrdinalType, typename ScalarType>
+IntersectionPoint<OrdinalType,ScalarType>::IntersectionPoint(
+			       const Vector<ScalarType> raw_intersection_point,
+			       const OrdinalType first_surface_id,
+			       const OrdinalType second_surface_id,
+			       const OrdinalType third_surface_id,
+			       const bool is_star_corner )
+  : PrintableObject( "IntersectionPoint" ),
+    ThreeSpaceObject( THREE_SPACE_POINT ),
+    d_x( raw_intersection_point[0] ),
+    d_y( raw_intersection_point[1] ),
+    d_z( raw_intersection_point[2] ),
+    d_first_surface_id( first_surface_id ),
+    d_second_surface_id( second_surface_id ),
+    d_third_surface_id( third_surface_id ),
+    d_is_star_corner( is_star_corner )
+{ 
+  // The coordinates of the intersection point must be valid
+  testPrecondition( !ST::isnaninf( d_x ) );
+  testPrecondition( !ST::isnaninf( d_y ) );
+  testPrecondition( !ST::isnaninf( d_z ) );
+  // The surface ids must be valid
+  testPrecondition( first_surface_id >= OT::zero() );
+  testPrecondition( first_surface_id != OT::invalid() );
+  testPrecondition( second_surface_id >= OT::zero() );
+  testPrecondition( second_surface_id != OT::invalid() );
+  testPrecondition( third_surface_id >= OT::zero() );
+  testPrecondition( third_surface_id != OT::invalid() );
   // All of the surface ids must be unique
   testPrecondition( first_surface_id != second_surface_id );
   testPrecondition( first_surface_id != third_surface_id );
@@ -55,21 +104,32 @@ IntersectionPoint<OrdinalType,ScalarType>::IntersectionPoint(
 // Copy constructor
 template<typename OrdinalType, typename ScalarType>
 IntersectionPoint<OrdinalType,ScalarType>::IntersectionPoint(
-			        const IntersectionPoint<OrdinalType,ScalarType>
-				&source_point )
+	        const IntersectionPoint<OrdinalType,ScalarType> &source_point )
   : PrintableObject( "IntersectionPoint" ),
-    ThreeSpaceObject( THREE_SPACE_VECTOR ),
+    ThreeSpaceObject( THREE_SPACE_POINT ),
     d_x( source_point.d_x ),
     d_y( source_point.d_y ),
     d_z( source_point.d_z ),
     d_first_surface_id( source_point.d_first_surface_id ),
     d_second_surface_id( source_point.d_second_surface_id ),
-    d_third_surface_id( source_point.d_third_surface_id )
+    d_third_surface_id( source_point.d_third_surface_id ),
+    d_is_star_corner( source_point.d_is_star_corner )
 { 
+  // The coordinates of the intersection point must be valid
+  testPrecondition( !ST::isnaninf( x ) );
+  testPrecondition( !ST::isnaninf( y ) );
+  testPrecondition( !ST::isnaninf( z ) );
+  // The surface ids must be valid
+  testPrecondition( first_surface_id >= OT::zero() );
+  testPrecondition( first_surface_id != OT::invalid() );
+  testPrecondition( second_surface_id >= OT::zero() );
+  testPrecondition( second_surface_id != OT::invalid() );
+  testPrecondition( third_surface_id >= OT::zero() );
+  testPrecondition( third_surface_id != OT::invalid() );
   // All of the surface ids must be unique
-  testPostcondition( d_first_surface_id != d_second_surface_id );
-  testPostcondition( d_first_surface_id != d_third_surface_id );
-  testPostcondition( d_second_surface_id != d_third_surface_id );
+  testPrecondition( first_surface_id != second_surface_id );
+  testPrecondition( first_surface_id != third_surface_id );
+  testPrecondition( second_surface_id != third_surface_id );
 }
 
 // Copies values from one intersection point to another
@@ -87,12 +147,24 @@ IntersectionPoint<OrdinalType,ScalarType>::operator=(
     d_first_surface_id = source_point.d_first_surface_id;
     d_second_surface_id = source_point.d_second_surface_id;
     d_third_surface_id = source_point.d_third_surface_id;
+    d_is_star_corner = source_point.d_is_star_corner;
   }
 
+  // The coordinates of the intersection point must be valid
+  testPostcondition( !ST::isnaninf( x ) );
+  testPostcondition( !ST::isnaninf( y ) );
+  testPostcondition( !ST::isnaninf( z ) );
+  // The surface ids must be valid
+  testPostcondition( first_surface_id >= OT::zero() );
+  testPostcondition( first_surface_id != OT::invalid() );
+  testPostcondition( second_surface_id >= OT::zero() );
+  testPostcondition( second_surface_id != OT::invalid() );
+  testPostcondition( third_surface_id >= OT::zero() );
+  testPostcondition( third_surface_id != OT::invalid() );
   // All of the surface ids must be unique
-  testPostcondition( d_first_surface_id != d_second_surface_id );
-  testPostcondition( d_first_surface_id != d_third_surface_id );
-  testPostcondition( d_second_surface_id != d_third_surface_id );
+  testPostcondition( first_surface_id != second_surface_id );
+  testPostcondition( first_surface_id != third_surface_id );
+  testPostcondition( second_surface_id != third_surface_id );
 
   return *this;
 }
@@ -113,6 +185,8 @@ const ScalarType& IntersectionPoint<OrdinalType,ScalarType>::operator[](
     return d_y;
   case 2:
     return d_z;
+  default:
+    return ST::nan();
   }
 }	
 
@@ -148,6 +222,13 @@ IntersectionPoint<OrdinalType,ScalarType>::getRawPoint() const
   return Vector<ScalarType>( d_x, d_y, d_z );
 }
 
+// Set this point as a star corner
+template<typename OrdinalType, typename ScalarType>
+void IntersectionPoint<OrdinalType,ScalarType>::setAsStarCorner()
+{
+  d_is_star_corner = true;
+}
+
 // Equality of two intersection points
 template<typename OrdinalType, typename ScalarType>
 bool IntersectionPoint<OrdinalType,ScalarType>::operator==(
@@ -158,7 +239,8 @@ bool IntersectionPoint<OrdinalType,ScalarType>::operator==(
     d_z == operand.d_z &&
     d_first_surface_id == operand.d_first_surface_id &&
     d_second_surface_id == operand_d_second_surface_id &&
-    d_third_surface_id == operand.d_third_surface_id;
+    d_third_surface_id == operand.d_third_surface_id &&
+    d_is_star_corner == operand.d_is_star_corner;
 }
 
 // Inequality of two intersection points
@@ -171,7 +253,18 @@ bool IntersectionPoint<OrdinalType,ScalarType>::operator!=(
     d_z != operand.d_z ||
     d_first_surface_id != operand.d_first_surface_id ||
     d_second_surface_id != operand_d_second_surface_id ||
-    d_third_surface_id != operand.d_third_surface_id;
+    d_third_surface_id != operand.d_third_surface_id ||
+    d_is_star_corner != operand.d_is_star_corner;
+}
+
+// Test if this point contains the requested surface id
+template<typename OrdinalType, typename ScalarType>
+bool IntersectionPoint<OrdinalType,ScalarType>::isOnSurface(
+					   const OrdinalType surface_id ) const
+{
+  return surface_id == d_first_surface_id ||
+    surface_id == d_second_surface_id ||
+    surface_id == d_third_surface_id;
 }
 
 // Test if this point lies on the same plane as another intersection point
@@ -186,7 +279,6 @@ bool IntersectionPoint<OrdinalType,ScalarType>::isOnSamePlane(
     IntersectionPoint<OrdinalType,ScalarType>::getNumberOfSharedSurfaces(
 								  *this,
 								  test_point );
-
   if( number_of_shared_surfaces >= 1 )
     return true;
   else
@@ -205,7 +297,6 @@ bool IntersectionPoint<OrdinalType,ScalarType>::isOnSameCurve(
     IntersectionPoint<OrdinalType,ScalarType>::getNumberOfSharedSurfaces(
 								  *this,
 								  test_point );
-  
   if( number_of_shared_surfaces == 2 )
     return true;
   else
@@ -213,77 +304,82 @@ bool IntersectionPoint<OrdinalType,ScalarType>::isOnSameCurve(
 }
 
 // Test if the intersection point is a real intersection point on a cell
+template<typename OrdinalType,typename ScalarType>
 template<typename Cell>
 bool IntersectionPoint<OrdinalType,ScalarType>::isRealIntersectionPoint( 
 						       const Cell &cell ) const
 {
-  // The intersection point must actually lie on the cell
-  testPrecondition( cell.isOn( d_x, d_y, d_z ) );
+  bool is_real_intersection_point = false; 
   
-  // Delta value
-  bool cell_present = false;
-
-  unsigned test_function_value = 0;
-
-  // Need to evaluate the function Sum_i=1^8 2^(i-1)*delta_i mod3
-  for( Octant octant = START_OCTANT; octant <= END_OCTANT; ++octant )
+  // The intersection point can only be real if it lies on the cell
+  if( cell.isOn( d_x, d_y, d_z ) )
   {
-    bool primary_surface_boolean_parameter;
-    bool secondary_surface_boolean_parameter;
-    bool tertiary_surface_boolean_parameter;
-
-    initializeBooleansForPointTest( octant,
-				    primary_surface_boolean_parameter,
-				    secondary_surface_boolean_parameter,
-				    tertiary_surface_boolean_parameter );
-
-    SurfaceSensePairsIterator surface_sense_pair =
-      cell.beginSurfaceSensePairs();
-    SurfaceSensePairsIterator end_surface_sense_pair = 
-      cell.endSurfaceSensePairs();
-
-    // Array of bools for surface sense tests
-    Teuchos::ArrayRCP<bool> sense_tests(std::distance(surface_sense_pair,
-						      end_surface_sense_pair));
-    Teuchos::ArrayRCP<bool>::iterator test = sense_tests.begin();
-
-    while( surface_sense_pair != end_surface_sense_pair )
+    // Delta value
+    bool cell_present = false;
+    
+    unsigned test_function_value = 0;
+    
+    // Need to evaluate the function Sum_i=1^8 2^(i-1)*delta_i mod3
+    for( Octant octant = START_OCTANT; octant <= END_OCTANT; ++octant )
     {
-      if( surface_sense_pair->first->getId() == d_first_surface_id )
-	*test = primary_surface_boolean_parameter;
-      else if( surface_sense_pair->first->getId() == d_second_surface_id )
-	*test = secondary_surface_boolean_parameter;
-      else if( surface_sense_pair->first->getId() == d_third_surface_id )
-	*test = tertiary_surface_boolean_parameter;
-      else
+      bool primary_surface_boolean_parameter;
+      bool secondary_surface_boolean_parameter;
+      bool tertiary_surface_boolean_parameter;
+      
+      initializeBooleansForPointTest( octant,
+				      primary_surface_boolean_parameter,
+				      secondary_surface_boolean_parameter,
+				      tertiary_surface_boolean_parameter );
+      
+      SurfaceSensePairsIterator surface_sense_pair =
+	cell.beginSurfaceSensePairs();
+      SurfaceSensePairsIterator end_surface_sense_pair = 
+	cell.endSurfaceSensePairs();
+      
+      // Array of bools for surface sense tests
+      Teuchos::ArrayRCP<bool> 
+	sense_tests(std::distance(surface_sense_pair, end_surface_sense_pair));
+      
+      Teuchos::ArrayRCP<bool>::iterator test = sense_tests.begin();
+      
+      while( surface_sense_pair != end_surface_sense_pair )
       {
-	SurfaceSense sense = 
-	  surface_sense_pair->first->getSense( d_x, d_y, d_z );
-	
-	if( sense == surface_sense_pair->second() || sense == ON_SURFACE )
-	  *test = true;
+	if( surface_sense_pair->first->getId() == d_first_surface_id )
+	  *test = primary_surface_boolean_parameter;
+	else if( surface_sense_pair->first->getId() == d_second_surface_id )
+	  *test = secondary_surface_boolean_parameter;
+	else if( surface_sense_pair->first->getId() == d_third_surface_id )
+	  *test = tertiary_surface_boolean_parameter;
 	else
-	  *test = false;
+	{
+	  SurfaceSense sense = 
+	    surface_sense_pair->first->getSense( d_x, d_y, d_z );
+	  
+	  if( sense == surface_sense_pair->second() || sense == ON_SURFACE )
+	    *test = true;
+	  else
+	    *test = false;
+	}
+	
+	++surface_sense_pair;
+	++test;
       }
-
-      ++surface_sense_pair;
-      ++test;
+      
+      // Determine if the cell is present in the octant
+      cell_present = cell.isCellPresent( sense_tests );
+      
+      if( cell_present )
+	test_function_value += getPointTestFunctionMultiplier( octant );
     }
 
-    // Determine if the cell is present in the octant
-    cell_present = cell.isCellPresent( sense_tests );
-
-    if( cell_present )
-      test_function_value += getPointTestFunctionMultiplier( octant );
+    // The point is only real if the test function value is not 0 modulo 3
+    if( test_function_value%3 != 0 )
+      is_real_intersection_point = true;  
   }
 
-  // The point is only real if the test function value is not 0 modulo 3
-  if( test_function_value%3 != 0 )
-    return true;
-  else
-    return false;  
+  return is_real_intersection_point;
 }
-
+  
 // Get the unshared surface id between this point and another point
 template<typename OrdinalType,typename ScalarType>
 OrdinalType IntersectionPoint<OrdinalType,ScalarType>::getUnsharedSurfaceId( 

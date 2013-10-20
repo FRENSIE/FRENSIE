@@ -61,6 +61,7 @@ private:
 
   // Typedef for OrdinalTraits
   typedef Teuchos::OrdinalTraits<OrdinalType> OT;
+  // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<ScalarType> ST;
 
 public:
@@ -74,13 +75,15 @@ public:
 		     const ScalarType z,
 		     const OrdinalType first_surface_id,
 		     const OrdinalType second_surface_id,
-		     const OrdinalType third_surface_id );
+		     const OrdinalType third_surface_id,
+		     const bool is_star_corner = false );
 
   //! Vector constructor
-  IntersectionPoint( const Vector<ScalarType> intersection_point,
+  IntersectionPoint( const Vector<ScalarType> raw_intersection_point,
 		     const OrdinalType first_surface_id,
 		     const OrdinalType second_surface_id,
-		     const OrdinalType third_surface_id );
+		     const OrdinalType third_surface_id,
+		     const bool is_star_corner = false );
   
   //! Copy constructor
   IntersectionPoint( const IntersectionPoint<OrdinalType,ScalarType> 
@@ -109,6 +112,9 @@ public:
   //! Return the raw point (stripped of connectivity data)
   Vector<ScalarType> getRawPoint() const;
 
+  //! Set this point as a star corner
+  void setAsStarCorner();
+
   //! Equality of two intersection points
   bool operator==( 
 	      const IntersectionPoint<OrdinalType,ScalarType> &operand ) const;
@@ -116,6 +122,9 @@ public:
   //! Inequality of two intersection points
   bool operator!=( 
 	      const IntersectionPoint<OrdinalType,ScalarType> &operand ) const;
+
+  //! Test if this point contains the requested surface id
+  bool isOnSurface( const OrdinalType surface_id ) const;
 
   //! Test if this point is on the same plane as another intersection point
   bool isOnSamePlane( const IntersectionPoint<OrdinalType,ScalarType>
@@ -165,6 +174,9 @@ private:
   OrdinalType d_first_surface_id;
   OrdinalType d_second_surface_id;
   OrdinalType d_third_surface_id; 
+
+  // It must be recorded whether or not this point is a star corner
+  bool d_is_star_corner;
 };
 
 } // end FACEMC namespace
