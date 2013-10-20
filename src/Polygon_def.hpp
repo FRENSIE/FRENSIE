@@ -12,6 +12,7 @@
 // FACEMC Includes
 #include "LinearAlgebraAlgorithms.hpp"
 #include "VectorHelpers.hpp"
+#include "ContractException.hpp"
 
 namespace FACEMC{
 
@@ -22,9 +23,10 @@ namespace FACEMC{
  * of complex polygons in R3.
  */ 
 template<typename OrdinalType, typename ScalarType>
+template<typename Point>
 Polygon<OrdinalType,ScalarType>::Polygon( 
 		const OrdinalType polygon_id,
-		const std::list<Vector<ScalarType> > &ordered_polygon_corners )
+		const std::list<Point> &ordered_polygon_corners )
   : PrintableObject( "ThreeSpacePolygon" ),
     ThreeSpaceObject( THREE_SPACE_POLYGON ),
     d_id( polygon_id ),
@@ -37,6 +39,8 @@ Polygon<OrdinalType,ScalarType>::Polygon(
     d_rotation_matrix(),
     d_translation_vector()
 {
+  // A valid point type must be used
+  testStaticPrecondition((boost::is_same<typename Point::scalarType,ScalarType>::value));
   // The polygon must have at least 4 corners (3 + copy of first point)
   testPrecondition( d_corners.size() >= 4 );
   // Make sure that the polygon starts and ends with the same point
@@ -216,12 +220,117 @@ void Polygon<OrdinalType,ScalarType>::print( std::ostream &os ) const
   os << std::endl;
 }
 
+// Check that all points in the ordered point list lie on the same plane
+template<typename OrdinalType, typename ScalarType>
+template<typename Point>
+bool Polygon<OrdinalType,ScalarType>::isValidPointList(
+				      const std::list<Point> &polygon_corners )
+{
+  // The polygon must have at least 4 corners (3 + copy of first point)
+  testPrecondition( polygon_corners.size() >= 4 );
+  
+  bool valid_point_list = true;
+
+  // The polygon must start and end with the same point
+  if( polygon_corners.front() != polygon_corners.back() )
+    valid_point_list = false;
+  
+  // The first three points of the polygon must not lie on a straight line
+  typename std::list<Point>::const_iterator first_point, second_point,
+    third_point, end_point;
+  
+  first_point = polygon_corners.begin();
+  second_point = first_point;
+  ++second_point;
+  third_point = second_point;
+  ++third_point;
+
+  end_point = polygon_corners.end();
+
+  Vector<ScalarType> unit_normal = calculateNormalOfPlaneFromThreePoints( 
+								*first_point, 
+								*second_point,
+								*third_point );
+  if( unit_normal.isZeroVector() )
+    valid_point_list = false;
+  
+  // All points must lie on the same plane
+  else 
+  {
+    ++first_point;
+    ++second_point;
+    ++third_point;
+    
+    Vector<ScalarType> test_unit_normal;
+    
+    while( third_point != end_point )
+    {
+      test_unit_normal = calculateNormalOfPlaneFromThreePoints( *first_point,
+								*second_point,
+								*third_point );
+      // Due to the possibility of repeated points, the unit normal may be
+      // a zero vector - this should only happen at the end of a disjoint
+      // polygon.
+      if( test_unit_normal.isZeroVector() )
+      {
+	if( *third_point != polygon_corners.front() &&
+	    *first_point != polygon_corners.front() )
+	{
+	  valid_point_list = false;
+	  break;
+	}
+	else 
+	  continue;
+      }
+      else if( !unit_normal.isParallel( test_unit_normal ) &&
+	       !unit_normal.isAntiparallel( test_unit_normal ) )
+      {
+	valid_point_list = false;
+	break;
+      }
+      
+      ++first_point;
+      ++second_point;
+      ++third_point;
+    }
+  }
+    
+  return valid_point_list;
+}
+
+// Compute the normal of the plane formed by three points
+template<typename OrdinalType, typename ScalarType>
+template<typename Point>
+Vector<ScalarType> 
+Polygon<OrdinalType,ScalarType>::calculateNormalOfPlaneFromThreePoints(
+						     const Point &first_point,
+						     const Point &second_point,
+						     const Point &third_point )
+{
+  
+  Vector<ScalarType> polygon_vector_1( second_point[0] - third_point[0],
+				       second_point[1] - third_point[1],
+				       second_point[2] - third_point[2] );
+
+  Vector<ScalarType> polygon_vector_2( second_point[0] - first_point[0],
+				       second_point[1] - first_point[1],
+				       second_point[2] - first_point[2] );
+
+  Vector<ScalarType> polygon_plane_normal =
+    LinearAlgebra::computeCrossProduct( polygon_vector_1, polygon_vector_2 );
+  
+  return polygon_plane_normal;
+}
+
 // Compute the unit normal to the plane of the polygon
 template<typename OrdinalType, typename ScalarType>
+template<typename Point>
 Vector<ScalarType>
 Polygon<OrdinalType,ScalarType>::calculatePolygonPlaneUnitNormal(
-			const std::list<Vector<ScalarType> > &polygon_corners )
+			const std::list<Point> &polygon_corners )
 {
+  // A valid point type must be used
+  testStaticPrecondition((boost::is_same<typename Point::scalarType,ScalarType>::value));
   // The polygon must have at least 4 corners (3 + copy of first point)
   testPrecondition( polygon_corners.size() >= 4 );
   
@@ -236,31 +345,28 @@ Polygon<OrdinalType,ScalarType>::calculatePolygonPlaneUnitNormal(
   third_point = second_point;
   ++third_point;
 
-  // The orientation of these vector assures that the transformed polygon
-  // will have a left-handed orientation on the xy-plane (needed for pos. area)
-  Vector<ScalarType> polygon_vector_1((*second_point)[0] - (*third_point)[0],
-				      (*second_point)[1] - (*third_point)[1],
-				      (*second_point)[2] - (*third_point)[2] );
+  Vector<ScalarType> unit_normal = calculateNormalOfPlaneFromThreePoints( 
+								*first_point,
+								*second_point,
+					                        *third_point );
+  unit_normal.normalize();
 
-  Vector<ScalarType> polygon_vector_2((*second_point)[0] - (*first_point)[0],
-				      (*second_point)[1] - (*first_point)[1],
-				      (*second_point)[2] - (*first_point)[2] );
-
-  Vector<ScalarType> polygon_plane_normal =
-    LinearAlgebra::computeCrossProduct( polygon_vector_1, polygon_vector_2 );
-  polygon_plane_normal.normalize();
+  // The unit_normal cannot be a zero vector
+  testPostcondition( unit_normal.normTwo() > ST::zero() );
   
-
-  return polygon_plane_normal;
+  return unit_normal;
 }
 
 // Find and the maximum and minimum coordinates of the polygon
 template<typename OrdinalType, typename ScalarType>
+template<typename Point>
 void Polygon<OrdinalType,ScalarType>::getExtremeCoordinates(
-			 const std::list<Vector<ScalarType> > &polygon_corners,
+			 const std::list<Point> &polygon_corners,
 			 Vector<ScalarType> &min_coordinates,
 			 Vector<ScalarType> &max_coordinates )
 {
+  // A valid point type must be used
+  testStaticPrecondition((boost::is_same<typename Point::scalarType,ScalarType>::value));
   // The polygon must have at least 4 corners (3 + copy of first point)
   testPrecondition( polygon_corners.size() >= 4 );
 
@@ -336,12 +442,15 @@ void Polygon<OrdinalType,ScalarType>::getTransformMatrixAndVector(
 
 // Simplify the polygon by transforming plane-of-polygon to x-y plane
 template<typename OrdinalType, typename ScalarType>
+template<typename Point>
 void Polygon<OrdinalType,ScalarType>::transformPolygon(
-		      const std::list<Vector<ScalarType> > &polygon_corners,
+		      const std::list<Point> &polygon_corners,
 		      std::list<PointProjection> &transformed_polygon_corners,
 		      const Matrix<ScalarType> &rotation_matrix,
 		      const Vector<ScalarType> &translation_vector )
 {
+  // A valid point type must be used
+  testStaticPrecondition((boost::is_same<typename Point::scalarType,ScalarType>::value));
   // The polygon must have at least 4 corners (3 + copy of first point)
   testPrecondition( polygon_corners.size() >= 4 );
   testPrecondition( polygon_corners.size() == 

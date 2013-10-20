@@ -52,8 +52,9 @@ private:
 public:
 
   //! Constructor
+  template<typename Point>
   Polygon( const OrdinalType polygon_id,
-	   const std::list<Vector<ScalarType> > &ordered_polygon_corners );
+	   const std::list<Point> &ordered_polygon_corners );
 
   //! Destructor
   ~Polygon()
@@ -103,15 +104,27 @@ public:
 
 protected:
 
+  //! Check that all points in the ordered point list lie on the same plane
+  template<typename Point>
+  static bool isValidPointList( const std::list<Point> &polygon_corners );
+
+  //! Calculate the normal of the plane formed by three points
+  template<typename Point>
+  static Vector<ScalarType> calculateNormalOfPlaneFromThreePoints(
+						    const Point &first_point,
+						    const Point &second_point,
+						    const Point &third_point );
+
   //! Compute the unit normal to the plane of the polygon
+  template<typename Point>
   static Vector<ScalarType> calculatePolygonPlaneUnitNormal( 
-		       const std::list<Vector<ScalarType> > &polygon_corners );
+		       const std::list<Point> &polygon_corners );
 
   //! Find and the maximum and minimum coordinates of the polygon
-  static void getExtremeCoordinates( 
-			 const std::list<Vector<ScalarType> > &polygon_corners,
-			 Vector<ScalarType> &min_coordinates,
-			 Vector<ScalarType> &max_coordinates );
+  template<typename Point>
+  static void getExtremeCoordinates( const std::list<Point> &polygon_corners,
+				     Vector<ScalarType> &min_coordinates,
+				     Vector<ScalarType> &max_coordinates );
 
   //! Create and set the transformation matrix and vector
   static void getTransformMatrixAndVector( 
@@ -121,8 +134,9 @@ protected:
 			  Vector<ScalarType> &translation_vector );
   
   //! Simplify the polygon by transforming plane-of-polygon to x-y plane
+  template<typename Point>
   static void transformPolygon( 
-		     const std::list<Vector<ScalarType> > &polygon_corners,
+		     const std::list<Point> &polygon_corners,
 		     std::list<PointProjection> &transformed_polygon_corners,
 		     const Matrix<ScalarType> &rotation_matrix,
 		     const Vector<ScalarType> &translation_vector );

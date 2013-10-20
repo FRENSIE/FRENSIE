@@ -48,6 +48,7 @@ public:
 
   // Allow public access to the protected member functions
   using FACEMC::Polygon<OrdinalType,ScalarType>::PointProjection;
+  using FACEMC::Polygon<OrdinalType,ScalarType>::isValidPointList;
   using FACEMC::Polygon<OrdinalType,ScalarType>::calculatePolygonPlaneUnitNormal;
   using FACEMC::Polygon<OrdinalType,ScalarType>::getExtremeCoordinates;
   using FACEMC::Polygon<OrdinalType,ScalarType>::getTransformMatrixAndVector;
@@ -63,6 +64,7 @@ public:
 //---------------------------------------------------------------------------//
 // Testing Functions
 //---------------------------------------------------------------------------//
+// Create the corners of a triangle
 template<typename CornerContainer>
 void createThreeSpaceTriangle( CornerContainer &polygon_corners )
 {
@@ -84,6 +86,7 @@ void createThreeSpaceTriangle( CornerContainer &polygon_corners )
   polygon_corners.push_back( corner_1 );
 }
 
+// Create the corners of a square
 template<typename CornerContainer>
 void createSimpleThreeSpaceSquare( CornerContainer &polygon_corners )
 {
@@ -109,6 +112,7 @@ void createSimpleThreeSpaceSquare( CornerContainer &polygon_corners )
   polygon_corners.push_back( corner_1 );
 }
 
+// Create the corners of a complex square (internal square removed)
 template<typename CornerContainer>
 void createComplexThreeSpaceSquare( CornerContainer &polygon_corners )
 {
@@ -156,6 +160,123 @@ void createComplexThreeSpaceSquare( CornerContainer &polygon_corners )
   polygon_corners.push_back( corner_1 );
 }
 
+// Create the corners of a disjoint square polygon
+template<typename CornerContainer>
+void createDisjointThreeSpaceSquare( CornerContainer &polygon_corners )
+{
+  polygon_corners.clear();
+
+  // First point at (1, 1, 1)
+  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_1 );
+
+  // Second point at (-1, 1, 1)
+  typename CornerContainer::value_type corner_2( -1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_2 );
+
+  // Third point at (-1, 1, -1)
+  typename CornerContainer::value_type corner_3( -1.0, 1.0, -1.0 );
+  polygon_corners.push_back( corner_3 );
+
+  // Fourth point at (1, 1, -1)
+  typename CornerContainer::value_type corner_4( 1.0, 1.0, -1.0 );
+  polygon_corners.push_back( corner_4 );
+
+  // Add a copy of the first point
+  polygon_corners.push_back( corner_1 );
+
+  // Fifth point at (1, 1, 4)
+  typename CornerContainer::value_type corner_5( 1.0, 1.0, 4.0 );
+  polygon_corners.push_back( corner_5 );
+
+  // Sixth point at (-1, 1, 4)
+  typename CornerContainer::value_type corner_6( -1.0, 1.0, 4.0 );
+  polygon_corners.push_back( corner_6 );
+
+  // Seventh point at (-1, 1, 2)
+  typename CornerContainer::value_type corner_7( -1.0, 1.0, 2.0 );
+  polygon_corners.push_back( corner_7 );
+
+  // Eighth point at (1, 1, 2 )
+  typename CornerContainer::value_type corner_8( 1.0, 1.0, 2.0 );
+  polygon_corners.push_back( corner_8 );
+
+  // Add a copy of the local first point
+  polygon_corners.push_back( corner_5 );
+  
+  // Add a copy of the global first point
+  polygon_corners.push_back( corner_1 );
+}
+
+// Create an open polygon (first point not copied to the end
+template<typename CornerContainer>
+void createInvalidPolygonTypeA( CornerContainer &polygon_corners )
+{
+  polygon_corners.clear();
+
+  // First point at (1, 1, 1)
+  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_1 );
+
+  // Second point at (-1, 1, 1)
+  typename CornerContainer::value_type corner_2( -1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_2 );
+
+  // Third point at (-1, 1, -1)
+  typename CornerContainer::value_type corner_3( -1.0, 1.0, -1.0 );
+  polygon_corners.push_back( corner_3 );
+
+  // Fourth point at (1, 1, -1)
+  typename CornerContainer::value_type corner_4( 1.0, 1.0, -1.0 );
+  polygon_corners.push_back( corner_4 );
+}
+
+// Create an invalid polygon (first three points in a line)
+template<typename CornerContainer>
+void createInvalidPolygonTypeB( CornerContainer &polygon_corners )
+{
+  polygon_corners.clear();
+  
+  // First point at (1, 1, 1)
+  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_1 );
+  
+  // Second point at (2, 2, 2)
+  typename CornerContainer::value_type corner_2( 1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_2 );
+  
+  // Third point at (3, 3, 3)
+  typename CornerContainer::value_type corner_3( 3.0, 3.0, 3.0 );
+  polygon_corners.push_back( corner_3 );
+
+  // Add a copy of the first point
+  polygon_corners.push_back( corner_1 );
+}
+
+// Create an invalid polygon (not all points on same plane)
+template<typename CornerContainer>
+void createInvalidPolygonTypeC( CornerContainer &polygon_corners )
+{
+  // First point at (1, 1, 1)
+  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_1 );
+
+  // Second point at (-1, 1, 1)
+  typename CornerContainer::value_type corner_2( -1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_2 );
+
+  // Third point at (-1, 1, -1)
+  typename CornerContainer::value_type corner_3( -1.0, 1.0, -1.0 );
+  polygon_corners.push_back( corner_3 );
+
+  // Fourth point at (1, 1, -1)
+  typename CornerContainer::value_type corner_4( 1.0, 2.0, -1.0 );
+  polygon_corners.push_back( corner_4 );
+
+  // Add a copy of the first point
+  polygon_corners.push_back( corner_1 );
+}
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -184,6 +305,52 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 }
 
 UNIT_TEST_INSTANTIATION( Polygon, calculatePolygonPlaneUnitNormal );
+
+//---------------------------------------------------------------------------//
+// Check that all points in the ordered list can be tested as on the same plane
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+				   isValidPointList,
+				   OrdinalType,
+				   ScalarType )
+{
+  typedef TestPolygon<OrdinalType,ScalarType> Polygon;
+  
+  std::list<FACEMC::Vector<ScalarType> > triangle_corners;
+  std::list<FACEMC::Vector<ScalarType> > simple_square_corners;
+  std::list<FACEMC::Vector<ScalarType> > complex_square_corners;
+  std::list<FACEMC::Vector<ScalarType> > disjoint_square_corners;
+  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_a;
+  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_b;
+  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_c;
+
+  // Create a triangle
+  createThreeSpaceTriangle( triangle_corners );
+
+  // Create a simple square
+  createSimpleThreeSpaceSquare( simple_square_corners );
+
+  // Create a complex square
+  createComplexThreeSpaceSquare( complex_square_corners );
+
+  // Create a disjoint square
+  createDisjointThreeSpaceSquare( disjoint_square_corners );
+
+  // Create an invalid polygon
+  createInvalidPolygonTypeA( invalid_polygon_type_a );
+  createInvalidPolygonTypeB( invalid_polygon_type_b );
+  createInvalidPolygonTypeC( invalid_polygon_type_c );
+  
+
+  TEST_ASSERT( Polygon::isValidPointList( triangle_corners ) );  
+  TEST_ASSERT( Polygon::isValidPointList( simple_square_corners ) );
+  TEST_ASSERT( Polygon::isValidPointList( complex_square_corners ) );
+  TEST_ASSERT( Polygon::isValidPointList( disjoint_square_corners ) );
+  TEST_ASSERT( !Polygon::isValidPointList( invalid_polygon_type_a ) );
+  TEST_ASSERT( !Polygon::isValidPointList( invalid_polygon_type_b ) );
+  TEST_ASSERT( !Polygon::isValidPointList( invalid_polygon_type_c ) );
+}
+
+UNIT_TEST_INSTANTIATION( Polygon, isValidPointList );
 
 //---------------------------------------------------------------------------//
 // Check that the polygon can find its largest coordinates
