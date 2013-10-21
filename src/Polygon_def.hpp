@@ -444,7 +444,7 @@ Polygon<OrdinalType,ScalarType>::calculatePolygonPlaneUnitNormal(
   // The polygon must have at least 4 corners (3 + copy of first point)
   testPrecondition( polygon_corners.size() >= 4 );
   
-  typename std::list<Vector<ScalarType> >::const_iterator first_point, 
+  typename std::list<Point>::const_iterator first_point, 
     second_point, third_point;
   
   first_point = polygon_corners.begin();
@@ -490,7 +490,7 @@ void Polygon<OrdinalType,ScalarType>::getExtremeCoordinates(
   max_coordinates[1] = -ST::rmax();
   max_coordinates[2] = -ST::rmax();
 
-  typename std::list<Vector<ScalarType> >::const_iterator corner, end_corner;
+  typename std::list<Point>::const_iterator corner, end_corner;
   corner = polygon_corners.begin();
   end_corner = polygon_corners.end();
 
@@ -520,9 +520,10 @@ void Polygon<OrdinalType,ScalarType>::getExtremeCoordinates(
 
 // Create and set the transformation matrix and vector
 template<typename OrdinalType, typename ScalarType>
+template<typename Point>
 void Polygon<OrdinalType,ScalarType>::getTransformMatrixAndVector( 
 			   const Vector<ScalarType> &polygon_plane_unit_normal,
-			   const Vector<ScalarType> &polygon_corner,
+			   const Point &polygon_corner,
 			   Matrix<ScalarType> &rotation_matrix,
 			   Vector<ScalarType> &translation_vector )
 {
@@ -541,7 +542,9 @@ void Polygon<OrdinalType,ScalarType>::getTransformMatrixAndVector(
 					    rotation_matrix( 2, 2 ) );
   
   ScalarType rotated_plane_constant = 
-    rotation_matrix_row_3.dot( polygon_corner );
+    rotation_matrix( 2, 0 )*polygon_corner[0] +
+    rotation_matrix( 2, 1 )*polygon_corner[1] +
+    rotation_matrix( 2, 2 )*polygon_corner[2];
 
   // The translation will only need to occur in the z-direction
   ScalarType delta_z = -rotated_plane_constant;
@@ -566,7 +569,7 @@ void Polygon<OrdinalType,ScalarType>::transformPolygon(
   testPrecondition( polygon_corners.size() == 
 		    transformed_polygon_corners.size() );
 
-  typename std::list<Vector<ScalarType> >::const_iterator corner, end_corner;
+  typename std::list<Point>::const_iterator corner, end_corner;
   corner = polygon_corners.begin();
   end_corner = polygon_corners.end();
 
@@ -586,9 +589,10 @@ void Polygon<OrdinalType,ScalarType>::transformPolygon(
 
 // Apply transform to a point on the polygon
 template<typename OrdinalType, typename ScalarType>
+template<typename Point>
 typename Polygon<OrdinalType,ScalarType>::PointProjection
 Polygon<OrdinalType,ScalarType>::applyTransform( 
-				 const Vector<ScalarType> &point_on_polygon,
+				 const Point &point_on_polygon,
 				 const Matrix<ScalarType> &rotation_matrix,
 				 const Vector<ScalarType> &translation_vector )
 {
@@ -596,7 +600,9 @@ Polygon<OrdinalType,ScalarType>::applyTransform(
   testPrecondition( rotation_matrix.isOrthonormal() );
 
   // Apply the transformation (x' = R*x + x_0)
-  Vector<ScalarType> transformed_point( point_on_polygon );
+  Vector<ScalarType> transformed_point( point_on_polygon[0],
+					point_on_polygon[1],
+					point_on_polygon[2] );
   transformed_point *= rotation_matrix;
   transformed_point += translation_vector;
 

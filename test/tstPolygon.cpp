@@ -18,20 +18,44 @@
 // FACEMC Includes
 #include "FACEMC_UnitTestHarnessExtensions.hpp"
 #include "Polygon.hpp"
+#include "Empty.hpp"
 #include "Vector.hpp"
 #include "Matrix.hpp"
 #include "MatrixHelpers.hpp"
+#include "IntersectionPoint.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
 //---------------------------------------------------------------------------//
-#define UNIT_TEST_INSTANTIATION( type, name ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, short, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, short, double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, long, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, long, double ) 
+#define VEC_TYPEDEFS()					   \
+  typedef FACEMC::Vector<float>	vec_f;			   \
+  typedef FACEMC::Vector<double> vec_d;			   \
+
+#define INTERSECTION_POINT_TYPEDEFS()				    \
+  typedef FACEMC::IntersectionPoint<short,float> intersection_s_f;  \
+  typedef FACEMC::IntersectionPoint<short,double> intersection_s_d; \
+  typedef FACEMC::IntersectionPoint<int,float> intersection_i_f;    \
+  typedef FACEMC::IntersectionPoint<int,double> intersection_i_d;   \
+  typedef FACEMC::IntersectionPoint<long,float> intersection_l_f;   \
+  typedef FACEMC::IntersectionPoint<long,double> intersection_l_d;
+
+#define UNIT_TEST_INSTANTIATION_VEC( type, name )		   \
+  VEC_TYPEDEFS()						   \
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, vec_f, short, float ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, vec_d, short, double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, vec_f, int, float )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, vec_d, int, double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, vec_f, long, float ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, vec_d, long, double ) \
+
+#define UNIT_TEST_INSTANTIATION_INTERSECTION_PT( type, name )		\
+  INTERSECTION_POINT_TYPEDEFS()						\
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, intersection_s_f, short, float ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, intersection_s_d, short, double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, intersection_i_f, int, float )	\
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, intersection_i_d, int, double ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, intersection_l_f, long, float ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, intersection_l_d, long, double ) 
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -66,6 +90,39 @@ public:
   using FACEMC::Polygon<OrdinalType,ScalarType>::calculateCentroidYCoordinate;
 };
 
+template<typename T, typename T2 = FACEMC::Empty>
+struct PointCreationPolicy
+{
+  typedef T scalarType;
+  
+  static inline T createPoint( const scalarType x,
+			       const scalarType y,
+			       const scalarType z )
+  { return T::notDefined(); }
+};
+
+template<typename T>
+struct PointCreationPolicy<FACEMC::Vector<T> >
+{
+  typedef T scalarType;
+  
+  static inline FACEMC::Vector<T> createPoint( const T x,
+			       const T y,
+			       const T z )
+  { return FACEMC::Vector<T>( x, y, z ); }
+};
+
+template<typename T, typename T2>
+struct PointCreationPolicy<FACEMC::IntersectionPoint<T,T2> >
+{
+  typedef T2 scalarType;
+  
+  static inline FACEMC::IntersectionPoint<T,T2> createPoint(const scalarType x,
+							    const scalarType y,
+							    const scalarType z)
+  { return FACEMC::IntersectionPoint<T,T2>( x, y, z, 0, 1, 2 ); }
+};
+
 //---------------------------------------------------------------------------//
 // Testing Functions
 //---------------------------------------------------------------------------//
@@ -74,17 +131,23 @@ template<typename CornerContainer>
 void createThreeSpaceTriangle( CornerContainer &polygon_corners )
 {
   polygon_corners.clear();
+
+  // Point class
+  typedef typename CornerContainer::value_type Point;
+  
+  // Point creation policy class
+  typedef PointCreationPolicy<typename CornerContainer::value_type> PCP;
   
   // First point on origin
-  typename CornerContainer::value_type corner_1( 0.0, 0.0, 0.0 );
+  Point corner_1 = PCP::createPoint( 0.0, 0.0, 0.0 );
   polygon_corners.push_back( corner_1 );
   
   // Second point at (1, 1, 1)
-  typename CornerContainer::value_type corner_2( 1.0, 1.0, 1.0 );
+  Point corner_2 = PCP::createPoint( 1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_2 );
 
   // Third point at (1, 0, 0)
-  typename CornerContainer::value_type corner_3( 1.0, 0.0, 0.0 );
+  Point corner_3 = PCP::createPoint( 1.0, 0.0, 0.0 );
   polygon_corners.push_back( corner_3 );
 
   // Add a copy of the first point
@@ -97,20 +160,26 @@ void createSimpleThreeSpaceSquare( CornerContainer &polygon_corners )
 {
   polygon_corners.clear();
 
+  // Point class
+  typedef typename CornerContainer::value_type Point;
+  
+  // Point creation policy class
+  typedef PointCreationPolicy<typename CornerContainer::value_type> PCP;
+
   // First point at (1, 1, 1)
-  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  Point corner_1 = PCP::createPoint( 1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_1 );
 
   // Second point at (-1, 1, 1)
-  typename CornerContainer::value_type corner_2( -1.0, 1.0, 1.0 );
+  Point corner_2 = PCP::createPoint( -1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_2 );
 
   // Third point at (-1, 1, -1)
-  typename CornerContainer::value_type corner_3( -1.0, 1.0, -1.0 );
+  Point corner_3 = PCP::createPoint( -1.0, 1.0, -1.0 );
   polygon_corners.push_back( corner_3 );
 
   // Fourth point at (1, 1, -1)
-  typename CornerContainer::value_type corner_4( 1.0, 1.0, -1.0 );
+  Point corner_4 = PCP::createPoint( 1.0, 1.0, -1.0 );
   polygon_corners.push_back( corner_4 );
 
   // Add a copy of the first point
@@ -123,39 +192,45 @@ void createComplexThreeSpaceSquare( CornerContainer &polygon_corners )
 {
   polygon_corners.clear();
 
+  // Point class
+  typedef typename CornerContainer::value_type Point;
+  
+  // Point creation policy class
+  typedef PointCreationPolicy<typename CornerContainer::value_type> PCP;
+
   // First point at (2, 2, 2)
-  typename CornerContainer::value_type corner_1( 2.0, 2.0, 2.0 );
+  Point corner_1 = PCP::createPoint( 2.0, 2.0, 2.0 );
   polygon_corners.push_back( corner_1 );
 
   // Second point at (2, -2, 2)
-  typename CornerContainer::value_type corner_2( 2.0, -2.0, 2.0 );
+  Point corner_2 = PCP::createPoint( 2.0, -2.0, 2.0 );
   polygon_corners.push_back( corner_2 );
 
   // Third point at (2, -2, -2)
-  typename CornerContainer::value_type corner_3( 2.0, -2.0, -2.0 );
+  Point corner_3 = PCP::createPoint( 2.0, -2.0, -2.0 );
   polygon_corners.push_back( corner_3 );
 
   // Fourth point at (2, 2, -2)
-  typename CornerContainer::value_type corner_4( 2.0, 2.0, -2.0 );
+  Point corner_4 = PCP::createPoint( 2.0, 2.0, -2.0 );
   polygon_corners.push_back( corner_4 );
 
   // Add a copy of the first point
   polygon_corners.push_back( corner_1 );
 
   // Fifth point at (2, 1, 1)
-  typename CornerContainer::value_type corner_5( 2.0, 1.0, 1.0 );
+  Point corner_5 = PCP::createPoint( 2.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_5 );
 
   // Sixth point at (2, 1, -1)
-  typename CornerContainer::value_type corner_6( 2.0, 1.0, -1.0 );
+  Point corner_6 = PCP::createPoint( 2.0, 1.0, -1.0 );
   polygon_corners.push_back( corner_6 );
 
   // Seventh point at (2, -1, -1)
-  typename CornerContainer::value_type corner_7( 2.0, -1.0, -1.0 );
+  Point corner_7 = PCP::createPoint( 2.0, -1.0, -1.0 );
   polygon_corners.push_back( corner_7 );
 
   // Eigthth point at (2, -1, 1)
-  typename CornerContainer::value_type corner_8( 2.0, -1.0, 1.0 );
+  Point corner_8 = PCP::createPoint( 2.0, -1.0, 1.0 );
   polygon_corners.push_back( corner_8 );
 
   // Add a copy of the inner square start corner
@@ -171,39 +246,45 @@ void createDisjointThreeSpaceSquare( CornerContainer &polygon_corners )
 {
   polygon_corners.clear();
 
+  // Point class
+  typedef typename CornerContainer::value_type Point;
+  
+  // Point creation policy class
+  typedef PointCreationPolicy<typename CornerContainer::value_type> PCP;
+
   // First point at (1, 1, 1)
-  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  Point corner_1 = PCP::createPoint( 1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_1 );
 
   // Second point at (-1, 1, 1)
-  typename CornerContainer::value_type corner_2( -1.0, 1.0, 1.0 );
+  Point corner_2 = PCP::createPoint( -1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_2 );
 
   // Third point at (-1, 1, -1)
-  typename CornerContainer::value_type corner_3( -1.0, 1.0, -1.0 );
+  Point corner_3 = PCP::createPoint( -1.0, 1.0, -1.0 );
   polygon_corners.push_back( corner_3 );
 
   // Fourth point at (1, 1, -1)
-  typename CornerContainer::value_type corner_4( 1.0, 1.0, -1.0 );
+  Point corner_4 = PCP::createPoint( 1.0, 1.0, -1.0 );
   polygon_corners.push_back( corner_4 );
 
   // Add a copy of the first point
   polygon_corners.push_back( corner_1 );
 
   // Fifth point at (1, 1, 4)
-  typename CornerContainer::value_type corner_5( 1.0, 1.0, 4.0 );
+  Point corner_5 = PCP::createPoint( 1.0, 1.0, 4.0 );
   polygon_corners.push_back( corner_5 );
 
   // Sixth point at (-1, 1, 4)
-  typename CornerContainer::value_type corner_6( -1.0, 1.0, 4.0 );
+  Point corner_6 = PCP::createPoint( -1.0, 1.0, 4.0 );
   polygon_corners.push_back( corner_6 );
 
   // Seventh point at (-1, 1, 2)
-  typename CornerContainer::value_type corner_7( -1.0, 1.0, 2.0 );
+  Point corner_7 = PCP::createPoint( -1.0, 1.0, 2.0 );
   polygon_corners.push_back( corner_7 );
 
   // Eighth point at (1, 1, 2 )
-  typename CornerContainer::value_type corner_8( 1.0, 1.0, 2.0 );
+  Point corner_8 = PCP::createPoint( 1.0, 1.0, 2.0 );
   polygon_corners.push_back( corner_8 );
 
   // Add a copy of the local first point
@@ -218,17 +299,23 @@ template<typename CornerContainer>
 void createInvalidPolygonTypeA( CornerContainer &polygon_corners )
 {
   polygon_corners.clear();
+
+  // Point class
+  typedef typename CornerContainer::value_type Point;
+  
+  // Point creation policy class
+  typedef PointCreationPolicy<typename CornerContainer::value_type> PCP;
   
   // First point at (1, 1, 1)
-  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  Point corner_1 = PCP::createPoint( 1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_1 );
 
   // Second point at (-1, 1, 1)
-  typename CornerContainer::value_type corner_2( -1.0, 1.0, 1.0 );
+  Point corner_2 = PCP::createPoint( -1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_2 );
 
   // Third point at (-1, 1, -1)
-  typename CornerContainer::value_type corner_3( -1.0, 1.0, -1.0 );
+  Point corner_3 = PCP::createPoint( -1.0, 1.0, -1.0 );
   polygon_corners.push_back( corner_3 );
 }
 
@@ -238,20 +325,26 @@ void createInvalidPolygonTypeB( CornerContainer &polygon_corners )
 {
   polygon_corners.clear();
 
+  // Point class
+  typedef typename CornerContainer::value_type Point;
+  
+  // Point creation policy class
+  typedef PointCreationPolicy<typename CornerContainer::value_type> PCP;
+
   // First point at (1, 1, 1)
-  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  Point corner_1 = PCP::createPoint( 1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_1 );
 
   // Second point at (-1, 1, 1)
-  typename CornerContainer::value_type corner_2( -1.0, 1.0, 1.0 );
+  Point corner_2 = PCP::createPoint( -1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_2 );
 
   // Third point at (-1, 1, -1)
-  typename CornerContainer::value_type corner_3( -1.0, 1.0, -1.0 );
+  Point corner_3 = PCP::createPoint( -1.0, 1.0, -1.0 );
   polygon_corners.push_back( corner_3 );
 
   // Fourth point at (1, 1, -1)
-  typename CornerContainer::value_type corner_4( 1.0, 1.0, -1.0 );
+  Point corner_4 = PCP::createPoint( 1.0, 1.0, -1.0 );
   polygon_corners.push_back( corner_4 );
 }
 
@@ -261,21 +354,27 @@ void createInvalidPolygonTypeC( CornerContainer &polygon_corners )
 {
   polygon_corners.clear();
 
+  // Point class
+  typedef typename CornerContainer::value_type Point;
+  
+  // Point creation policy class
+  typedef PointCreationPolicy<typename CornerContainer::value_type> PCP;
+
   // First point at (1, 1, 1)
-  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  Point corner_1 = PCP::createPoint( 1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_1 );
 
   // Second point at (-1, 1, 1)
-  typename CornerContainer::value_type corner_2( -1.0, 1.0, 1.0 );
+  Point corner_2 = PCP::createPoint( -1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_2 );
 
   // Third point at (-1, 1, -1)
-  typename CornerContainer::value_type corner_3( -1.0, 1.0, -1.0 );
+  Point corner_3 = PCP::createPoint( -1.0, 1.0, -1.0 );
   polygon_corners.push_back( corner_3 );
   polygon_corners.push_back( corner_3 );
 
   // Fourth point at (1, 1, -1)
-  typename CornerContainer::value_type corner_4( 1.0, 1.0, -1.0 );
+  Point corner_4 = PCP::createPoint( 1.0, 1.0, -1.0 );
   polygon_corners.push_back( corner_4 );
 
   // Add a copy of the first point
@@ -288,16 +387,22 @@ void createInvalidPolygonTypeD( CornerContainer &polygon_corners )
 {
   polygon_corners.clear();
   
+  // Point class
+  typedef typename CornerContainer::value_type Point;
+  
+  // Point creation policy class
+  typedef PointCreationPolicy<typename CornerContainer::value_type> PCP;
+  
   // First point at (1, 1, 1)
-  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  Point corner_1 = PCP::createPoint( 1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_1 );
   
   // Second point at (2, 2, 2)
-  typename CornerContainer::value_type corner_2( 2.0, 2.0, 2.0 );
+  Point corner_2 = PCP::createPoint( 2.0, 2.0, 2.0 );
   polygon_corners.push_back( corner_2 );
   
   // Third point at (3, 3, 3)
-  typename CornerContainer::value_type corner_3( 3.0, 3.0, 3.0 );
+  Point corner_3 = PCP::createPoint( 3.0, 3.0, 3.0 );
   polygon_corners.push_back( corner_3 );
 
   // Add a copy of the first point
@@ -308,20 +413,28 @@ void createInvalidPolygonTypeD( CornerContainer &polygon_corners )
 template<typename CornerContainer>
 void createInvalidPolygonTypeE( CornerContainer &polygon_corners )
 {
+  polygon_corners.clear();
+
+  // Point class
+  typedef typename CornerContainer::value_type Point;
+  
+  // Point creation policy class
+  typedef PointCreationPolicy<typename CornerContainer::value_type> PCP;
+  
   // First point at (1, 1, 1)
-  typename CornerContainer::value_type corner_1( 1.0, 1.0, 1.0 );
+  Point corner_1 = PCP::createPoint( 1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_1 );
 
   // Second point at (-1, 1, 1)
-  typename CornerContainer::value_type corner_2( -1.0, 1.0, 1.0 );
+  Point corner_2 = PCP::createPoint( -1.0, 1.0, 1.0 );
   polygon_corners.push_back( corner_2 );
 
   // Third point at (-1, 1, -1)
-  typename CornerContainer::value_type corner_3( -1.0, 1.0, -1.0 );
+  Point corner_3 = PCP::createPoint( -1.0, 1.0, -1.0 );
   polygon_corners.push_back( corner_3 );
 
   // Fourth point at (1, 1, -1)
-  typename CornerContainer::value_type corner_4( 1.0, 2.0, -1.0 );
+  Point corner_4 = PCP::createPoint( 1.0, 2.0, -1.0 );
   polygon_corners.push_back( corner_4 );
 
   // Add a copy of the first point
@@ -332,14 +445,15 @@ void createInvalidPolygonTypeE( CornerContainer &polygon_corners )
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the polygon can calculate its unit normal
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   calculatePolygonPlaneUnitNormal,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
   
-  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
+  std::list<Point> polygon_corners;
 
   // Create a triangle
   createThreeSpaceTriangle( polygon_corners );
@@ -355,19 +469,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 	       unit_normal.isAntiparallel( ref_unit_normal ) );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, calculatePolygonPlaneUnitNormal );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, calculatePolygonPlaneUnitNormal );
+UNIT_TEST_INSTANTIATION_INTERSECTION_PT( Polygon, 
+					 calculatePolygonPlaneUnitNormal  );
 
 //---------------------------------------------------------------------------//
 // Check that a point list can be checked as having the correct size
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   hasCorrectSize,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
   
-  std::list<FACEMC::Vector<ScalarType> > triangle_corners;
-  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_a;
+  std::list<Point> triangle_corners;
+  std::list<Point> invalid_polygon_type_a;
   
   // Create a triangle
   createThreeSpaceTriangle( triangle_corners );
@@ -379,19 +496,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_ASSERT( !Polygon::hasCorrectSize( invalid_polygon_type_a ) );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, hasCorrectSize );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, hasCorrectSize );
+UNIT_TEST_INSTANTIATION_INTERSECTION_PT( Polygon, hasCorrectSize );
 
 //---------------------------------------------------------------------------//
 // Check that a point list can be checked as being closed
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   isClosed,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
 
-  std::list<FACEMC::Vector<ScalarType> > triangle_corners;
-  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_b;
+  std::list<Point> triangle_corners;
+  std::list<Point> invalid_polygon_type_b;
 
   // Create a triangle
   createThreeSpaceTriangle( triangle_corners );
@@ -403,19 +522,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_ASSERT( !Polygon::isClosed( invalid_polygon_type_b ) );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, isClosed );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, isClosed );
+UNIT_TEST_INSTANTIATION_INTERSECTION_PT( Polygon, isClosed );
 
 //---------------------------------------------------------------------------//
 // Check that the point list can be checked for consecutive repeated points
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   hasNoConsecutiveRepeatedPoints,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
 
-  std::list<FACEMC::Vector<ScalarType> > triangle_corners;
-  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_c;
+  std::list<Point> triangle_corners;
+  std::list<Point> invalid_polygon_type_c;
 
   // Create a triangle
   createThreeSpaceTriangle( triangle_corners );
@@ -427,19 +548,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_ASSERT( !Polygon::hasNoConsecutiveRepeatedPoints( invalid_polygon_type_c ) );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, hasNoConsecutiveRepeatedPoints );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, hasNoConsecutiveRepeatedPoints );
+UNIT_TEST_INSTANTIATION_INTERSECTION_PT( Polygon, 
+					 hasNoConsecutiveRepeatedPoints );
 
 //---------------------------------------------------------------------------//
 // Check that the initialization of a point list can be correctly checked
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   isInitializedProperly,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
 
-  std::list<FACEMC::Vector<ScalarType> > triangle_corners;
-  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_d;
+  std::list<Point> triangle_corners;
+  std::list<Point> invalid_polygon_type_d;
 
   // Create a triangle
   createThreeSpaceTriangle( triangle_corners );
@@ -451,22 +575,24 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_ASSERT( !Polygon::isInitializedProperly( invalid_polygon_type_d ) );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, isInitializedProperly );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, isInitializedProperly );
+UNIT_TEST_INSTANTIATION_INTERSECTION_PT( Polygon, isInitializedProperly );
 
 //---------------------------------------------------------------------------//
 // Check that the point list can be tested as having all points on same plane
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   hasAllPointsOnSamePlane,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
 
-  std::list<FACEMC::Vector<ScalarType> > triangle_corners;
-  std::list<FACEMC::Vector<ScalarType> > simple_square_corners;
-  std::list<FACEMC::Vector<ScalarType> > complex_square_corners;
-  std::list<FACEMC::Vector<ScalarType> > disjoint_square_corners;
-  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_e;
+  std::list<Point> triangle_corners;
+  std::list<Point> simple_square_corners;
+  std::list<Point> complex_square_corners;
+  std::list<Point> disjoint_square_corners;
+  std::list<Point> invalid_polygon_type_e;
 
   // Create a triangle
   createThreeSpaceTriangle( triangle_corners );
@@ -490,26 +616,28 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_ASSERT( !Polygon::hasAllPointsOnSamePlane( invalid_polygon_type_e ) );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, hasAllPointsOnSamePlane );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, hasAllPointsOnSamePlane );
+UNIT_TEST_INSTANTIATION_INTERSECTION_PT( Polygon, hasAllPointsOnSamePlane );
 
 //---------------------------------------------------------------------------//
 // Check that all points in the ordered list can be tested as on the same plane
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   isValidPointList,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
   typedef FACEMC::Polygon<OrdinalType,ScalarType> Polygon;
   
-  std::list<FACEMC::Vector<ScalarType> > triangle_corners;
-  std::list<FACEMC::Vector<ScalarType> > simple_square_corners;
-  std::list<FACEMC::Vector<ScalarType> > complex_square_corners;
-  std::list<FACEMC::Vector<ScalarType> > disjoint_square_corners;
-  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_a;
-  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_b;
-  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_c;
-  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_d;
-  std::list<FACEMC::Vector<ScalarType> > invalid_polygon_type_e;
+  std::list<Point> triangle_corners;
+  std::list<Point> simple_square_corners;
+  std::list<Point> complex_square_corners;
+  std::list<Point> disjoint_square_corners;
+  std::list<Point> invalid_polygon_type_a;
+  std::list<Point> invalid_polygon_type_b;
+  std::list<Point> invalid_polygon_type_c;
+  std::list<Point> invalid_polygon_type_d;
+  std::list<Point> invalid_polygon_type_e;
 
   // Create a triangle
   createThreeSpaceTriangle( triangle_corners );
@@ -542,18 +670,20 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_ASSERT( !Polygon::isValidPointList( invalid_polygon_type_e ) );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, isValidPointList );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, isValidPointList );
+UNIT_TEST_INSTANTIATION_INTERSECTION_PT( Polygon, isValidPointList );
 
 //---------------------------------------------------------------------------//
 // Check that the polygon can find its largest coordinates
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   getExtremeCoordinates,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
     
-  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
+  std::list<Point> polygon_corners;
   FACEMC::Vector<ScalarType> min_coordinates;
   FACEMC::Vector<ScalarType> max_coordinates;
 
@@ -572,12 +702,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_EQUALITY( max_coordinates, ref_max_coordinates );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, getExtremeCoordinates );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, getExtremeCoordinates );
 
 //---------------------------------------------------------------------------//
 // Check that the polygon can be transformed to a polygon in the x-y plane
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   transformPolygon,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
@@ -585,7 +716,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   typedef typename Polygon::PointProjection PointProjection;
   typedef Teuchos::ScalarTraits<ScalarType> ST;
 
-  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
+  std::list<Point> polygon_corners;
 
   // Create a triangle
   createThreeSpaceTriangle( polygon_corners );
@@ -626,12 +757,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 				 ST::prec() );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, transformPolygon );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, transformPolygon );
 
 //---------------------------------------------------------------------------//
 // Check that a transformed point can be reverse transformed
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   applyReverseTransform,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
@@ -639,7 +771,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
   typedef typename Polygon::PointProjection PointProjection;
 
-  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
+  std::list<Point> polygon_corners;
 
   // Create a triangle
   createThreeSpaceTriangle( polygon_corners );
@@ -690,12 +822,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
 				ST::prec() );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, applyReverseTransform );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, applyReverseTransform );
 
 //---------------------------------------------------------------------------//
 // Check that the area of a triangle can be calculated
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   calculateArea_triangle,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
@@ -703,7 +836,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
   typedef typename Polygon::PointProjection PointProjection;
 
-  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
+  std::list<Point> polygon_corners;
 
   // Create a triangle
   createThreeSpaceTriangle( polygon_corners );
@@ -737,12 +870,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_FLOATING_EQUALITY( area, ref_area, ST::prec() );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, calculateArea_triangle );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, calculateArea_triangle );
 
 //---------------------------------------------------------------------------//
 // Check that the area of a simple square can be calculated
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   calculateArea_simple_square,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
@@ -750,7 +884,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   typedef typename Polygon::PointProjection PointProjection;
   typedef Teuchos::ScalarTraits<ScalarType> ST;
 
-  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
+  std::list<Point> polygon_corners;
 
   // Create a triangle
   createSimpleThreeSpaceSquare( polygon_corners );
@@ -785,12 +919,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_FLOATING_EQUALITY( area, ref_area, ST::prec() );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, calculateArea_simple_square );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, calculateArea_simple_square );
 
 //---------------------------------------------------------------------------//
 // Check that the area of a complex square can be calculated
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   calculateArea_complex_square,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
@@ -798,7 +933,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   typedef TestPolygon<OrdinalType,ScalarType> Polygon;
   typedef typename Polygon::PointProjection PointProjection;
 
-  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
+  std::list<Point> polygon_corners;
 
   // Create a triangle
   createComplexThreeSpaceSquare( polygon_corners );
@@ -833,12 +968,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_FLOATING_EQUALITY( area, ref_area, ST::prec() );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, calculateArea_complex_square );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, calculateArea_complex_square );
 
 //---------------------------------------------------------------------------//
 // Check that the centroid of a triangle can be calculated
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   calculateCentroid_triangle,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
@@ -846,7 +982,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   typedef FACEMC::Polygon<OrdinalType,ScalarType> Polygon;
   
   // Create the corners of the polygon
-  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
+  std::list<Point> polygon_corners;
   
   createThreeSpaceTriangle( polygon_corners );
 
@@ -862,12 +998,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_COMPARE_FLOATING_ARRAYS( centroid(), ref_centroid(), ST::prec() );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, calculateCentroid_triangle );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, calculateCentroid_triangle );
+UNIT_TEST_INSTANTIATION_INTERSECTION_PT( Polygon, calculateCentroid_triangle );
 
 //---------------------------------------------------------------------------//
 // Check that the centroid of a simple square can be calculated
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   calculateCentroid_simple_square,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
@@ -875,7 +1013,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   typedef FACEMC::Polygon<OrdinalType,ScalarType> Polygon;
     
   // Create the corners of the polygon
-  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
+  std::list<Point> polygon_corners;
   
   createSimpleThreeSpaceSquare( polygon_corners );
 
@@ -891,12 +1029,15 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_COMPARE_FLOATING_ARRAYS( centroid(), ref_centroid(), ST::prec() );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, calculateCentroid_simple_square );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, calculateCentroid_simple_square );
+UNIT_TEST_INSTANTIATION_INTERSECTION_PT( Polygon, 
+					 calculateCentroid_simple_square );
 
 //---------------------------------------------------------------------------//
 // Check that the centroid of a complex square can be calculated
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
+TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 				   calculateCentroid_complex_square,
+				   Point,
 				   OrdinalType,
 				   ScalarType )
 {
@@ -904,7 +1045,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   typedef FACEMC::Polygon<OrdinalType,ScalarType> Polygon;
     
   // Create the corners of the polygon
-  std::list<FACEMC::Vector<ScalarType> > polygon_corners;
+  std::list<Point> polygon_corners;
   
   createComplexThreeSpaceSquare( polygon_corners );
 
@@ -920,7 +1061,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Polygon,
   TEST_COMPARE_FLOATING_ARRAYS( centroid(), ref_centroid(), ST::prec() );
 }
 
-UNIT_TEST_INSTANTIATION( Polygon, calculateCentroid_complex_square );
+UNIT_TEST_INSTANTIATION_VEC( Polygon, calculateCentroid_complex_square );
+UNIT_TEST_INSTANTIATION_INTERSECTION_PT( Polygon, 
+					 calculateCentroid_complex_square );
 
 //---------------------------------------------------------------------------//
 // end tstPolygon.cpp

@@ -152,9 +152,10 @@ protected:
 				     Vector<ScalarType> &max_coordinates );
 
   //! Create and set the transformation matrix and vector
+  template<typename Point>
   static void getTransformMatrixAndVector( 
 			  const Vector<ScalarType> &polygon_plane_unit_normal,
-			  const Vector<ScalarType> &polygon_corner,
+			  const Point &polygon_corner,
 			  Matrix<ScalarType> &rotation_matrix,
 			  Vector<ScalarType> &translation_vector );
   
@@ -167,8 +168,9 @@ protected:
 		     const Vector<ScalarType> &translation_vector );
 
   //! Apply transform to a point on the polygon (move to x-y plane)
+  template<typename Point>
   static PointProjection applyTransform( 
-				const Vector<ScalarType> &point_on_polygon,
+				const Point &point_on_polygon,
 				const Matrix<ScalarType> &rotation_matrix,
 				const Vector<ScalarType> &translation_vector );
 

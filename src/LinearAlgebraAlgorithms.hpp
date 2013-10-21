@@ -6,7 +6,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef LINEAR_ALBEGRA_ALGORITHMS_HPP
+#ifndef LINEAR_ALGEBRA_ALGORITHMS_HPP
 #define LINEAR_ALGEBRA_ALGORITHMS_HPP
 
 // FACEMC Includes
