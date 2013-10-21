@@ -1,0 +1,6 @@
+// Define if we want to use MPI
+// NOTE: If the CMake variable HAVE_${POJECT_NAME}_MPI is defined the macro
+//       HAVE_${PROJECT_NAME}_MPI will be set. If the CMake variable 
+//       does not exists, the macro will be commented out. 
+${CMAKEDEFINE} HAVE_${PROJECT_NAME}_MPI
+
