@@ -93,34 +93,10 @@ ADD_EXECUTABLE(tstIntersectionPoint
 ADD_EXECUTABLE(tstPolygon
   tstPolygon.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# ADD_EXECUTABLE(tstConvexPolyhedralCell
-#   tstConvexPolyhedralCell.cpp
-#   ${SRC}/Cell.cpp
-#   ${SRC}/BooleanCellFunctor.cpp
-#   ${SRC}/Surface.cpp
-#   ${SRC}/LinearAlgebraAlgorithms.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# ADD_EXECUTABLE(tstConcavePolyhedralCell
-#   tstConcavePolyhedralCell.cpp
-#   ${SRC}/Cell.cpp
-#   ${SRC}/BooleanCellFunctor.cpp
-#   ${SRC}/Surface.cpp
-#   ${SRC}/LinearAlgebraAlgorithms.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# ADD_EXECUTABLE(tstCompoundConvexPolyhedralCell
-#   tstCompoundConvexPolyhedralCell.cpp
-#   ${SRC}/Cell.cpp
-#   ${SRC}/BooleanCellFunctor.cpp
-#   ${SRC}/Surface.cpp
-#   ${SRC}/LinearAlgebraAlgorithms.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# ADD_EXECUTABLE(tstDisjointConvexPolyhedralCell
-#   tstDisjointConvexPolyhedralCell.cpp
-#   ${SRC}/Cell.cpp
-#   ${SRC}/BooleanCellFunctor.cpp
-#   ${SRC}/Surface.cpp
-#   ${SRC}/LinearAlgebraAlgorithms.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstCellPolygonFactory
+  tstCellPolygonFactory.cpp
+  ${SRC}/BooleanCellFunctor.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 
 TARGET_LINK_LIBRARIES(tstAssertion ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstContractException ${TEUCHOS_CORE})
@@ -145,10 +121,7 @@ TARGET_LINK_LIBRARIES(tstBooleanCellFunctor ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstCell ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstIntersectionPoint ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstPolygon ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
-# TARGET_LINK_LIBRARIES(tstConvexPolyhedralCell ${TEUCHOS})
-# TARGET_LINK_LIBRARIES(tstConcavePolyhedralCell ${TEUCHOS})
-# TARGET_LINK_LIBRARIES(tstCompoundConvexPolyhedralCell ${TEUCHOS})
-# TARGET_LINK_LIBRARIES(tstDisjointConvexPolyhedralCell ${TEUCHOS})
+TARGET_LINK_LIBRARIES(tstCellPolygonFactory ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 
 ADD_TEST(Assertion_test tstAssertion)
 ADD_TEST(ContractException_test tstContractException)
@@ -173,10 +146,7 @@ ADD_TEST(BooleanCellFunctor_test tstBooleanCellFunctor)
 ADD_TEST(Cell_test tstCell)
 ADD_TEST(IntersectionPoint_test tstIntersectionPoint)
 ADD_TEST(Polygon_test tstPolygon)
-# ADD_TEST(ConvexPolyhedralCell_test tstConvexPolyhedralCell)
-# ADD_TEST(ConcavePolyhedralCell_test tstConcavePolyhedralCell)
-# ADD_TEST(CompoundConvexPolyhedralCell tstCompoundConvexPolyhedralCell)
-# ADD_TEST(DisjointConvexPolyhedralCell tstDisjointConvexPolyhedralCell)
+ADD_TEST(CellPolygonFactory_test tstCellPolygonFactory)
 
 # Install test files for the EPDL97DataProcessor_test
 FILE(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test_files/*.txt)

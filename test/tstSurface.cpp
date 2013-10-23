@@ -165,12 +165,38 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
   FACEMC::Vector<ScalarType> ref_normal_5( 0.0, -1.0, 0.0 );
   FACEMC::Vector<ScalarType> ref_normal_6( 0.0, 0.0, -1.0 );
 
+  FACEMC::Vector<ScalarType> reverse_normal_1 = 
+    sphere.getUnitNormalAtPoint( point_1, FACEMC::NEG_SURFACE_SENSE );
+  FACEMC::Vector<ScalarType> reverse_normal_2 = 
+    sphere.getUnitNormalAtPoint( point_2, FACEMC::NEG_SURFACE_SENSE );
+  FACEMC::Vector<ScalarType> reverse_normal_3 = 
+    sphere.getUnitNormalAtPoint( point_3, FACEMC::NEG_SURFACE_SENSE );
+  FACEMC::Vector<ScalarType> reverse_normal_4 = 
+    sphere.getUnitNormalAtPoint( point_4, FACEMC::NEG_SURFACE_SENSE );
+  FACEMC::Vector<ScalarType> reverse_normal_5 = 
+    sphere.getUnitNormalAtPoint( point_5, FACEMC::NEG_SURFACE_SENSE );
+  FACEMC::Vector<ScalarType> reverse_normal_6 = 
+    sphere.getUnitNormalAtPoint( point_6, FACEMC::NEG_SURFACE_SENSE );
+
+  FACEMC::Vector<ScalarType> ref_reverse_normal_1( -1.0, 0.0, 0.0 );
+  FACEMC::Vector<ScalarType> ref_reverse_normal_2( 0.0, -1.0, 0.0 );
+  FACEMC::Vector<ScalarType> ref_reverse_normal_3( 0.0, 0.0, -1.0 );
+  FACEMC::Vector<ScalarType> ref_reverse_normal_4( 1.0, 0.0, 0.0 );
+  FACEMC::Vector<ScalarType> ref_reverse_normal_5( 0.0, 1.0, 0.0 );
+  FACEMC::Vector<ScalarType> ref_reverse_normal_6( 0.0, 0.0, 1.0 );
+
   TEST_EQUALITY( normal_1, ref_normal_1 );
   TEST_EQUALITY( normal_2, ref_normal_2 );
   TEST_EQUALITY( normal_3, ref_normal_3 );
   TEST_EQUALITY( normal_4, ref_normal_4 );
   TEST_EQUALITY( normal_5, ref_normal_5 );
   TEST_EQUALITY( normal_6, ref_normal_6 );
+  TEST_EQUALITY( reverse_normal_1, ref_reverse_normal_1 );
+  TEST_EQUALITY( reverse_normal_2, ref_reverse_normal_2 );
+  TEST_EQUALITY( reverse_normal_3, ref_reverse_normal_3 );
+  TEST_EQUALITY( reverse_normal_4, ref_reverse_normal_4 );
+  TEST_EQUALITY( reverse_normal_5, ref_reverse_normal_5 );
+  TEST_EQUALITY( reverse_normal_6, ref_reverse_normal_6 );
 }
 
 UNIT_TEST_INSTANTIATION( Surface, getUnitNormal );

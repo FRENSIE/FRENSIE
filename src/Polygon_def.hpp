@@ -81,6 +81,14 @@ Polygon<OrdinalType,ScalarType>::Polygon(
 							transformed_centroid,
 							d_rotation_matrix,
 							d_translation_vector );
+
+  // Special case: if the unit normal is pointing in the -z direction, a
+  // negative area will be calculated
+  if( d_unit_normal.isParallel( Vector<ScalarType>( 0.0, 0.0, -1.0 ) ) )
+    d_area *= -1;
+
+  // Make sure that the area calculated is positive and physical
+  testPostcondition( d_area > ST::zero() );
 }
 
 // Return the polygon id
@@ -674,7 +682,6 @@ ScalarType Polygon<OrdinalType,ScalarType>::calculateArea(
   area /= 2;
 
   // Make sure that the calculate area is physical
-  testPostcondition( area > ST::zero() );
   testPostcondition( !ST::isnaninf( area ) );
 
   return area;

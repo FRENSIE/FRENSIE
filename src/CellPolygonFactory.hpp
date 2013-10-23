@@ -32,8 +32,8 @@ enum PointFindNecessity{
 /*! \brief Enumeration to specify the orientation of a polygon
  */
 enum PolygonOrientation{
-  LEFT_HANDED,
-  RIGHT_HANDED,
+  CELL_ON_LEFT,
+  CELL_ON_RIGHT,
   INVALID_ORIENTATION
 };
 
@@ -48,25 +48,22 @@ public:
   //@{
   //! Typedefs
   //! Typedef for ordinal type
-  typedef typename Cell::surfaceOrdinalType ordinalType
+  typedef typename Cell::surfaceOrdinalType ordinalType;
   //! Typedef for scalar type
-  typedef typename Cell::scalarType scalarType
+  typedef typename Cell::scalarType scalarType;
   //! Typedef for polygon pointer
   typedef typename Teuchos::RCP<Polygon<ordinalType,scalarType> > PolygonPtr;
 
 private:
 
   // Typedef for IntersectionPoint
-  typedef IntersectionPoint<ordinalType,scalarType> IntersectionPoint;
-  // Typedef for Surface
-  typedef Surface<ordinalType,scalarType> Surface;
-  // Typedef for Polygon
-  typedef Polygon<ordinalType,scalarType> Polygon;
+  typedef IntersectionPoint<ordinalType,scalarType> Point;
   // Typedef for OrdinalTraits
   typedef Teuchos::OrdinalTraits<ordinalType> OT;
   // Typedef for ScalarTraits
   typedef Teuchos::ScalarTraits<scalarType> ST;
-  
+ 
+public:
 
   //! Constructor
   CellPolygonFactory( const Teuchos::RCP<Cell> &cell_ptr );
@@ -76,45 +73,45 @@ private:
   { /* ... */ }
   
   //! Create a polygon from intersection points on a surface
-  PolygonPtr create( 
-	       std::list<IntersectionPoint> &unordered_polygon_corners ) const;
+  PolygonPtr create( std::list<Point> &unordered_polygon_corners ) const;
 
 protected:
 
   //! Find the first three points on the boundary of the polygon
-  typename std::list<IntersectionPoint>::const_iterator 
+  typename std::list<Point>::const_iterator 
   initializePolygonCorners( 
-		       std::list<IntersectionPoint> &ordered_polygon_corners,
-		       std::list<IntersectionPoint> &unordered_polygon_corners,
+		       std::list<Point> &ordered_polygon_corners,
+		       std::list<Point> &unordered_polygon_corners,
 		       const ordinalType plane_of_polygon_id ) const;
 
   //! Determine if the ordering of a polygon initialization needs to reverse
-  bool reversePolygonCornerOrdering( 
+  bool cornerTripletNeedsReversing( 
 			 const ordinalType plane_of_polygon_id,
 			 const ordinalType first_to_second_point_surface_id,
 			 const ordinalType second_to_third_point_surface_id,
-			 const IntersectionPoint &first_point,
-			 const IntersectionPoint &second_point,
-			 const IntersectionPoint &third_point ) const;
+			 const Point &first_point,
+			 const Point &second_point,
+			 const Point &third_point ) const;
 
   //! Test if all of the points lie on the same plane
   static bool allPointsOnSamePlane( 
-	       const std::list<IntersectionPoint> &unordered_polygon_corners );
+	       const std::list<Point> &unordered_polygon_corners );
 
   //! Find the id of the polygon plane
   static ordinalType getPlaneOfPolygonId( 
-	       const std::list<IntersectionPoint> &unordered_polygon_corners );
+	       const std::list<Point> &unordered_polygon_corners );
 
-  //! Find the lexicographically largest point  static typename std::list<IntersectionPoint>::const_iterator
+  //! Find the lexicographically largest point  
+  static typename std::list<Point>::iterator
   getLexicographicallyLargestPoint(
-	 const std::list<IntersectionPoint> &unordered_polygon_corners );
+				 std::list<Point> &unordered_polygon_corners );
 
   //! Find the next point on the boundary of the polygon
-  static typename std::list<IntersectionPoint>::const_iterator
+  static typename std::list<Point>::iterator
   getNextPolygonCorner( 
                const ordinalType desired_surface_id,
-	       const Vector<scalarType> &current_corner,
-	       const std::list<IntersectionPoint> &unordered_polygon_corners,
+	       const Point &current_corner,
+	       std::list<Point> &unordered_polygon_corners,
                PointFindNecessity point_find_necessity = POINT_MUST_BE_FOUND );
 
 private:

@@ -476,7 +476,7 @@ Vector<ScalarType> Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
 					       const Vector<ScalarType> &point,
 					       const SurfaceSense sense ) const
 {
-  return getUnitNormalAtPoint( point[0], point[1], point[2] );
+  return getUnitNormalAtPoint( point[0], point[1], point[2], sense );
 }
 
 // Return the quadratic form matrix of the surface

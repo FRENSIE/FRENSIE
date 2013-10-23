@@ -154,9 +154,9 @@ void createThreeSpaceTriangle( CornerContainer &polygon_corners )
   polygon_corners.push_back( corner_1 );
 }
 
-// Create the corners of a square
+// Create the corners of a square perpendicular to y-axis
 template<typename CornerContainer>
-void createSimpleThreeSpaceSquare( CornerContainer &polygon_corners )
+void createSimpleThreeSpaceSquareYAxis( CornerContainer &polygon_corners )
 {
   polygon_corners.clear();
 
@@ -180,6 +180,38 @@ void createSimpleThreeSpaceSquare( CornerContainer &polygon_corners )
 
   // Fourth point at (1, 1, -1)
   Point corner_4 = PCP::createPoint( 1.0, 1.0, -1.0 );
+  polygon_corners.push_back( corner_4 );
+
+  // Add a copy of the first point
+  polygon_corners.push_back( corner_1 );
+}
+
+// Create the corners of a square perpendicular to z-axis
+template<typename CornerContainer>
+void createSimpleThreeSpaceSquareZAxis( CornerContainer &polygon_corners )
+{
+  polygon_corners.clear();
+
+  // Point class
+  typedef typename CornerContainer::value_type Point;
+  
+  // Point creation policy class
+  typedef PointCreationPolicy<typename CornerContainer::value_type> PCP;
+
+  // First point at (-1, 1, 1)
+  Point corner_1 = PCP::createPoint( -1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_1 );
+
+  // Second point at (1, 1, 1)
+  Point corner_2 = PCP::createPoint( 1.0, 1.0, 1.0 );
+  polygon_corners.push_back( corner_2 );
+
+  // Third point at (1, -1, 1)
+  Point corner_3 = PCP::createPoint( 1.0, -1.0, 1.0 );
+  polygon_corners.push_back( corner_3 );
+
+  // Fourth point at (-1, -1, 1)
+  Point corner_4 = PCP::createPoint( -1.0, -1.0, 1.0 );
   polygon_corners.push_back( corner_4 );
 
   // Add a copy of the first point
@@ -598,7 +630,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
   createThreeSpaceTriangle( triangle_corners );
 
   // Create a simple square
-  createSimpleThreeSpaceSquare( simple_square_corners );
+  createSimpleThreeSpaceSquareYAxis( simple_square_corners );
 
   // Create a complex square
   createComplexThreeSpaceSquare( complex_square_corners );
@@ -643,7 +675,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
   createThreeSpaceTriangle( triangle_corners );
 
   // Create a simple square
-  createSimpleThreeSpaceSquare( simple_square_corners );
+  createSimpleThreeSpaceSquareYAxis( simple_square_corners );
 
   // Create a complex square
   createComplexThreeSpaceSquare( complex_square_corners );
@@ -886,8 +918,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 
   std::list<Point> polygon_corners;
 
-  // Create a triangle
-  createSimpleThreeSpaceSquare( polygon_corners );
+  // Create a square perpendicular to the y-axis
+  createSimpleThreeSpaceSquareYAxis( polygon_corners );
 
   // Calculate the polygon plane unit normal
   FACEMC::Vector<ScalarType> unit_normal = 
@@ -909,7 +941,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
 			     transformed_polygon_corners,
 			     rotation_matrix,
 			     translation_vector );
-
+  
   // Calculate the polygon area
   ScalarType area = Polygon::calculateArea( transformed_polygon_corners );
 
@@ -1015,7 +1047,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
   // Create the corners of the polygon
   std::list<Point> polygon_corners;
   
-  createSimpleThreeSpaceSquare( polygon_corners );
+  createSimpleThreeSpaceSquareZAxis( polygon_corners );
 
   // Create the polygon
   Polygon square( 0, polygon_corners );
@@ -1024,8 +1056,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( Polygon,
   FACEMC::Vector<ScalarType> centroid = square.getCentroid();
 
   // Assign the reference centroid
-  FACEMC::Vector<ScalarType> ref_centroid( 0.0, 1.0, 0.0 );
-
+  FACEMC::Vector<ScalarType> ref_centroid( 0.0, 0.0, 1.0 );
+  
   TEST_COMPARE_FLOATING_ARRAYS( centroid(), ref_centroid(), ST::prec() );
 }
 
