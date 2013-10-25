@@ -294,7 +294,8 @@ int LCG::get_seed_rng()
 // Free the memory allocated to this generator
 int LCG::free_rng()
 {
-  free(this);
+  assert( this != NULL );
+  
   LCG::num_generators--;
   
   return LCG::num_generators;
@@ -313,9 +314,6 @@ int LCG::pack_rng( std::string &buffer )
   store_value( generatorTypeToInt( d_rng_type ), partial_buffer );
   buffer += partial_buffer;
 
-  // Store the description of the generator
-  buffer += d_gentype;
-  
   // Store the seed
   store_value( d_seed, partial_buffer );
   buffer += partial_buffer;
@@ -351,7 +349,7 @@ int LCG::pack_rng( std::string &buffer )
 int print_rng()
 {
   std::cout << d_gentype << std::endl << std::endl
-	    << "\tseed = " << d_init_seed <<
+	    << "\tseed = " << d_init_seed 
 	    << ", stream_number = " << d_prime_position 
 	    << "\tparameter = " << d_parameter 
 	    << std::endl << std::endl;
@@ -367,21 +365,12 @@ int unpack_rng( std::string &packed )
   
   // Load the generator type
   nbytes = sizeof( generator_type );
-  load_value( packed.substr( 0, nbytes ), generator_type );
+  load_value( packed.substr( offset, nbytes ), generator_type );
   d_rng_type = intToGeneratorType( generator_type );
   offset += nbytes;
   
-  
-  // Load the generator description
-  if(strcmp(packed.c_str()+offset,GENTYPE) != 0)
-  {
-    fprintf(stderr,"ERROR: Unpacked ' %.24s ' instead of ' %s '\n", p, GENTYPE); 
-    return 0;
-  }
-  
+  // Load the generator description (not packed because always the same)
   d_gentype = GENTYPE;
-  offset += d_gentype.size();
-
   
   // Load the seed
   nbytes = sizeof( d_seed );
@@ -410,23 +399,23 @@ int unpack_rng( std::string &packed )
   
   // Load the parameter
   nbytes = sizeof( d_parameter );
-  load_value( packed_substr( offset, nbytes ), d_parameter );
+  load_value( packed.substr( offset, nbytes ), d_parameter );
   offset += nbytes;
 
   // Load the multiplier
   nbytes = sizeof( d_multiplier );
-  load_value( packed_substr( offset, nbytes ), d_multiplier );
+  load_value( packed.substr( offset, nbytes ), d_multiplier );
   offset += nbytes;
 
   if(d_parameter < 0 || d_parameter >= 7)
   {
     fprintf(stderr,"ERROR: Unpacked parameters not acceptable.\n");
-    free(this);
     return 0;
   }
   
   d_multiplier = LCG::mults[parameter];
   
+  // Increment the number of streams
   LCG::num_generators++;
 
   return 1;
