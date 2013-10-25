@@ -12,7 +12,7 @@
 #ifndef SEED_HELPERS_HPP
 #define SEED_HELPERS_HPP
 
-namespace SPRNG{
+namespace sprng{
 
 //! Make a new seed from the time
 int make_new_seed();
@@ -20,7 +20,7 @@ int make_new_seed();
 //! Make a new seed from the time and broadcast to all procs
 int make_new_seed_mpi();
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 //---------------------------------------------------------------------------//
 // Definition includes.

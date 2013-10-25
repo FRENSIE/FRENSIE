@@ -15,7 +15,7 @@
 // SPRNG Includes
 #include "BigNum.hpp"
 
-namespace SPRNG{
+namespace sprng{
 
 //! Class for handling arighmetic on large rationals
 class BigRat
@@ -47,7 +47,7 @@ private:
   BigNum d_denominator;
 };
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 //---------------------------------------------------------------------------//
 // Definition includes.

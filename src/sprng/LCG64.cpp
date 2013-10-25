@@ -25,16 +25,11 @@
 #define GENTYPE "64 bit Linear Congruential Generator with Prime Addend"
 #define INIT_SEED1 0x2bc6ffffU
 #define INIT_SEED0 0x8cfe166dU
-#define TWO_M22  2.384185791015625e-07 /* 2^(-22) */
-#define TWO_P22  4194304  /* 2^(22) */
-#define TWO_M20  9.5367431640625e-07 /* 2^(-20) */
-#define TWO_P20  1048576 /* 2^(20) */
-#define TWO_M42  2.273736754432321e-13 /* 2^(-42) */
 #define TWO_M64 5.4210108624275222e-20 /* 2^(-64) */
 #define EXPO 0x3ff0000000000000ULL
 
 
-namespace SPRNG{
+namespace sprng{
 
 // Default constructor
 LCG64::LCG64()
@@ -169,13 +164,13 @@ int LCG64::get_rn_int()
 }
 
 // Return a random float in interval [0,1)
-float LCG64::get_rnd_flt()
+float LCG64::get_rn_flt()
 {
   return (float)get_rn_dbl();
 }
 
 // Return a random double in interval [0,1)
-double LCG64::get_rnd_dbl()
+double LCG64::get_rn_dbl()
 {
   static double dtemp[1] = {0.0};
 
@@ -375,7 +370,7 @@ void LCG64::advance_state()
   d_state = d_state*d_multiplier + d_prime;
 }
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 //---------------------------------------------------------------------------//
 // end LCG64.cpp

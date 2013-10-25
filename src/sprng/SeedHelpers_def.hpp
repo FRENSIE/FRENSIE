@@ -22,7 +22,7 @@
 
 using namespace std;
 
-namespace SPRNG{
+namespace sprng{
   
 // Make a new seed from the time
 int make_new_seed()
@@ -77,7 +77,7 @@ int make_new_seed_mpi()
 #endif
 }
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 
 #endif // end SEED_HELPERS_DEF_HPP

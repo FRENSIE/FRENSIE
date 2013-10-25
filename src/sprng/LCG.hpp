@@ -19,7 +19,7 @@
 #include "Sprng.hpp"
 #include "GeneratorType.hpp"
 
-namespace SPRNG{
+namespace sprng{
 
 //! A 48bit linear congruential pseudo-random number generator
 class LCG : public Sprng
@@ -48,10 +48,10 @@ public:
   int get_rn_int();
 
   //! Return a random float in interval [0,1)
-  float get_rnd_flt();
+  float get_rn_flt();
 
   //! Return a random double in interval [0,1)
-  double get_rnd_dbl();
+  double get_rn_dbl();
 
   //! Spawn new generators
   int spawn_rng( int nspawned, Sprng ***newgens );
@@ -81,13 +81,13 @@ private:
   void advance_seed();
 
   //! Max number of LCG streams possible 
-  static int max_streams = 1<<19;
+  static const int max_streams;
 
   //! Number of streams currently open
   static int num_generators = 0;
 
   //! Available multipliers
-  static unsigned long long mults[7];
+  static const unsigned long long mults[7];
 
   // Generator type
   GeneratorType d_rng_type;
@@ -117,8 +117,11 @@ private:
   unsigned long long d_multiplier; 
 };
 
+// Initialize the max streams static member
+const int LCG::max_streams = 1<<19;
+
 // Initialize the mults static member array
-unsigned long long LCG::mults[] = {
+const unsigned long long LCG::mults[] = {
 0x2875a2e7b175LL
 0x5deece66dLL
 0x3eac44605265LL
@@ -128,7 +131,7 @@ unsigned long long LCG::mults[] = {
 0x3228d7cc25f5LL
 };
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 #endif // LCG_HPP
 

@@ -15,7 +15,7 @@
 // Std Lib Includes
 #include <string>
 
-namespace SPRNG{
+namespace sprng{
 
 //! The main Sprng abstract base class
 class Sprng
@@ -34,10 +34,10 @@ public:
   virtual int get_rn_int() = 0;
 
   //! Return a random float in interval [0,1)
-  virtual float get_rnd_flt() = 0;
+  virtual float get_rn_flt() = 0;
 
   //! Return a random double in interval [0,1)
-  virtual double get_rnd_dbl() = 0;
+  virtual double get_rn_dbl() = 0;
 
   //! Spawn new generators
   virtual int spawn_rng( int nspawned, Sprng ***newgens ) = 0;
@@ -58,7 +58,7 @@ public:
   virtual int unpack_rng( std::string &packed ) = 0;
 };
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 #endif // end SPRNG_HPP
 

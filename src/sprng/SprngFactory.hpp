@@ -13,7 +13,7 @@
 #include "Sprng.hpp"
 #include "GeneratorType.hpp"
 
-namespace SPRNG{
+namespace sprng{
 
 //! Main Sprng factory class
 class SprngFactory
@@ -40,7 +40,7 @@ private:
   GeneratorType d_gen_type;
 };
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 //---------------------------------------------------------------------------//
 // Definition includes.

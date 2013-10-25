@@ -12,7 +12,7 @@
 #ifndef MPI_HELPERS_HPP
 #define MPI_HELPERS_HPP
 
-namespace SPRNG{
+namespace sprng{
 
 //! Get the processes mpi info
 void get_proc_info_mpi( int *myid, int *nprocs );
@@ -20,7 +20,7 @@ void get_proc_info_mpi( int *myid, int *nprocs );
 //! Get the processes mpi info
 void get_proc_info_mpi( int &myid, int &nprocs );
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 //---------------------------------------------------------------------------//
 // Definition includes.

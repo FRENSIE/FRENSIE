@@ -12,7 +12,7 @@
 // Std Lib Includes
 #include <assert.h>
 
-namespace SPRNG{
+namespace sprng{
 
 // Convert a GeneratorType to an int
 int generatorTypeToInt( const GeneratorType gtype )
@@ -45,7 +45,7 @@ GeneratorType intToGeneratorType( const int gtype )
 }
 
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 #endif // end GENERATOR_TYPE_DEF_HPP
 

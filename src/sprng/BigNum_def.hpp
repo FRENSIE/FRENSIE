@@ -25,7 +25,7 @@ using namespace std;
 
 #define NUMBITS 64
 
-namespace SPRNG{
+namespace sprng{
 
 // Default constructor
 BigNum::BigNum()
@@ -1371,7 +1371,7 @@ int C2I( char c )
     return toupper(c) - 55;  
 } 
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 #endif // end BIG_NUM_DEF_HPP
 

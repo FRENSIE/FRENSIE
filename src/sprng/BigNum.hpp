@@ -19,7 +19,7 @@
 // SPRNG Includes
 #include "BigNumHelpers.hpp"
 
-namespace SPRNG{
+namespace sprng{
 
 //! Class for handling big numbers
 class BigNum
@@ -321,7 +321,7 @@ int GetNumBits( unsigned long x );
 //! Convert a character to an integer
 int C2I( char c );  
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 //---------------------------------------------------------------------------//
 // Definition includes.

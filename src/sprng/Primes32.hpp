@@ -15,7 +15,7 @@
 // Std Lib Includes
 #include <vector>
 
-namespace SPRNG{
+namespace sprng{
 
 //! Struct for handling 32bit primes
 struct Primes32
@@ -59,7 +59,7 @@ private:
   static int prime_list_32[full_prime_list_size];
 };
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 //---------------------------------------------------------------------------//
 // Definition includes.

@@ -16,7 +16,7 @@
 // Std Lib Includes
 #include <assert.h>
 
-namespace SPRNG{
+namespace sprng{
 
 // Store an integer value in a character buffer
 template<typename OrdinalType>
@@ -72,7 +72,7 @@ void load_array( const std::string &c, int n, std::vector<OrdinalType> &l )
     load_valud( c.substr(i*nbytes, nbytes), l[i] );
 }
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 #endif // end STORE_DEF_HPP
 

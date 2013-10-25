@@ -45,10 +45,10 @@ public:
   int get_rn_int();
 
   //! Return a random float in interval [0,1)
-  float get_rnd_flt();
+  float get_rn_flt();
 
   //! Return a random double in interval [0,1)
-  double get_rnd_dbl();
+  double get_rn_dbl();
 
   //! Spawn new generators
   int spawn_rng( int nspawned, Sprng ***newgens );
@@ -75,13 +75,13 @@ private:
   inline void advance_state();
 
   //! Max number of LCG64 streams possible
-  static int max_streams = 146138719;
+  static const int max_streams = 146138719;
 
   //! Number of streams currently open
   static int num_generators = 0;
 
   //! Available mutlipliers
-  static unsigned int parameter_list[3][2];
+  static const unsigned int parameter_list[3][2];
 
   // Generator type
   GeneratorType d_rng_type;
@@ -112,12 +112,12 @@ private:
 };
 
 // Initialize the parameter list static member array
-unsigned int LCG64::parameter_list[][] =
-{{0x87b0b0fdU, 0x27bb2ee6U}, 
- {0xe78b6955U, 0x2c6fe96eU},
- {0x31a53f85U, 0x369dea0fU}};
+const unsigned int LCG64::parameter_list[][] =
+  {{0x87b0b0fdU, 0x27bb2ee6U}, 
+   {0xe78b6955U, 0x2c6fe96eU},
+   {0x31a53f85U, 0x369dea0fU}};
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 #endif // end LCG64_HPP
 

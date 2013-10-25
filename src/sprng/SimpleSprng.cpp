@@ -2,7 +2,7 @@
 //!
 //! \file    SimpleSprng.hpp
 //! \author  ?
-//! \brief   Definition of a Simple struct to aid the Sprng class 
+//! \brief   Definition of a simple struct to aid the Sprng class 
 //! \details This file originally appeared in the sprng4 library. It has been
 //!          modified by Alex Robinson (aprobinson@wisc.edu) to better support
 //!          the needs of FACEMC.
@@ -23,7 +23,7 @@
 
 using namespace std;
 
-namespace SPRNG{
+namespace sprng{
 
 // Generator initialization
 int SimpleSprng::init_rng_simple( int seed, int mult, int gtype )
@@ -161,7 +161,7 @@ int SimpleSprng::print_rng_simple()
   return SimpleSprng::default_generator->print_rng();
 }
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 //---------------------------------------------------------------------------//
 // end SimpleSprng.cpp

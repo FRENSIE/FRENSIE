@@ -15,7 +15,7 @@
 // Std Lib Includes
 #include <vector>
 
-namespace SPRNG{
+namespace sprng{
 
 //! Struct for handling 64bit primes
 struct Primes64
@@ -59,7 +59,7 @@ private:
   static unsigned int prime_list_64[full_prime_list_size];
 };
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 //---------------------------------------------------------------------------//
 // Definition includes.

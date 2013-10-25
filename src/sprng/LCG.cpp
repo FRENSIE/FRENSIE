@@ -29,7 +29,7 @@
 
 using namespace std;
 
-namespace SPRNG{
+namespace sprng{
 
 // Default constructor
 LCG::LCG()
@@ -174,13 +174,13 @@ int LCG::get_rn_int()
 }
 
 // Return a random float in interval [0,1)
-float LCG::get_rnd_flt()
+float LCG::get_rn_flt()
 {
   return (float) get_rn_dbl();
 }
 
 // Return a random double in interval [0,1)
-double LCG::get_rnd_dbl()
+double LCG::get_rn_dbl()
 {
   double temp[1];
   unsigned long long *ltemp;
@@ -490,7 +490,7 @@ void advance_seed()
   d_seed &= LSB48;
 }
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 //---------------------------------------------------------------------------//
 // end LCG.cpp

@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-namespace SPRNG{
+namespace sprng{
 
 // Store an integer value in a character buffer
 template<typename OrdinalType>
@@ -35,7 +35,7 @@ void load_value( const std::string &c, OrdinalType &l );
 template<typename OrdinalType>
 void load_array( const std::string &c, int n, std::vector<OrdinalType> &l );
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 //---------------------------------------------------------------------------//
 // Definition includes.

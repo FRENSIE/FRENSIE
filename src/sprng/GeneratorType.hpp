@@ -9,7 +9,7 @@
 #ifndef GENERATOR_TYPE_HPP
 #define GENERATOR_TYPE_HPP
 
-namespace SPRNG{
+namespace sprng{
 
 //! Generator Type enumeration
 enum GeneratorType{

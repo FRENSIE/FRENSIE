@@ -17,7 +17,7 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace SPRNG{
+namespace sprng{
 
 // Initialize the primes static array
 int Primes64::init_prime_64()
@@ -15767,7 +15767,7 @@ unsigned int Primes64::prime_list_64[] =
 143687U
 };
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 #endif // end PRIMES_64_DEF_HPP
 

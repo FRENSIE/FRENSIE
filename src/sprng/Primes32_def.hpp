@@ -17,7 +17,7 @@
 #include <cstdlib>
 #include <cstring>
 
-namespace SPRNG{
+namespace sprng{
 
 // Initialize the primes static array
 int Primes32::init_prime_32()
@@ -1932,7 +1932,7 @@ int Primes32::prime_list_32[] =
 4733
 };
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 #endif  // end PRIMES_32_DEF_HPP
 

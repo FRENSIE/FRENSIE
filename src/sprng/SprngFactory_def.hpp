@@ -17,7 +17,7 @@
 #include "MLFG.hpp"
 #include "PMLCG.hpp"
 
-namespace SPRNG{
+namespace sprng{
 
 // Constructor
 SprngFactory::SprngFactory( const GeneratorType gtype )
@@ -38,7 +38,7 @@ SprngFactory::SprngPtr SprngFactory::create() const
   }
 }
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 #endif // end SPRNG_FACTORY_DEF_HPP
 

@@ -12,7 +12,7 @@
 #ifndef BIG_RAT_DEF_HPP
 #define BIG_RAT_DEF_HPP
 
-namespace SPRNG{
+namespace sprng{
 
 // Default constructor
 BigRat::BigRat()
@@ -44,7 +44,7 @@ void BigRat::br_set_den( const BigNum &den )
   d_denominator = den;
 }
 
-} // end SPRNG namespace
+} // end namespace sprng
 
 #endif // end BIG_RAT_DEF_HPP
 
