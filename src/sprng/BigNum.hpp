@@ -14,9 +14,7 @@
 
 // Std Lib Includes
 #include <iostream>
-
-// Trilinos Includes
-#include <Teuchos_ArrayRCP.hpp>
+#include <vector>
 
 // SPRNG Includes
 #include "BigNumHelpers.hpp"
@@ -54,8 +52,8 @@ public:
   //! Get the size of the unsigned long array
   unsigned long Size() const;
 
-  //! Get the unsigned long array
-  Teuchos::ArrayRCP<unsigned long> V() const;
+  //! Get the head of the unsigned long array
+  unsigned long* V() const;
   
   //! Get the sign of the BigNum
   char Sign() const;
@@ -196,7 +194,7 @@ public:
 private:
   
   // Unsigned long array
-  Teuchos::ArrayRCP<unsigned long> d_v;
+  std::vector<unsigned long> d_v;
 
   // Size of the unsigned long array
   unsigned long int d_size;

@@ -13,43 +13,27 @@
 #ifndef STORE_HPP
 #define STORE_HPP
 
+// Std Lib Includes
+#include <string>
+#include <vector>
+
 namespace SPRNG{
 
-//! Store an unsigned long in a character buffer
-int store_long( unsigned long l, int nbytes, unsigned char *c );
+// Store an integer value in a character buffer
+template<typename OrdinalType>
+void store_value( const OrdinalType l, std::string &c );
 
-//! Store an array of unsigned longs in a character buffer
-int store_longarray( unsigned long *l, int n, int nbytes, unsigned char *c );
+// Store an array of integer values in a character buffer
+template<typename OrdinalType>
+void store_array( const std::vector<OrdinalType> &l, std::string &c );
 
-//! Load an unsigned long from a character buffer
-int load_long( unsigned char *c, int nbytes, unsigned long *l );
+// Load an integer value from a character buffer
+template<typename OrdinalType>
+void load_value( const std::string &c, OrdinalType &l );
 
-//! Load an array of unsigned longs from a character buffer
-int load_longarray( unsigned char *c, int n, int nbytes, unsigned long *l );
-
-//! Store an int in a character buffer
-int store_int( unsigned int l, int nbytes, unsigned char *c );
-
-//! Store an array of ints in a character buffer
-int store_intarray( unsigned int *l, int n, int nbytes, unsigned char *c );
-
-//! Load an int from a character buffer
-int load_int( unsigned char *c, int nbytes, unsigned int *l );
-
-//! Load an array of ints from a charater buffer
-int load_intarray( unsigned char *c, int n, int nbytes, unsigned int *l );
-
-//! Store a long long in a character buffer
-int store_longlong( unsigned long long l, int nbytes, unsigned char *c );
-  
-//! Store an array of long longs in a character buffer
-int store_longlongarray( unsigned long long *l, int n, int nbytes, unsigned char *c );
-
-//! Load a long long from a character buffer
-int load_longlong( unsigned char *c, int nbytes, unsigned long long *l );
-
-//! Load a long long from a character buffer
-int load_longlongarray( unsigned char *c, int n, int nbytes, unsigned long long *l );
+// Load an array of integer values from a character buffer
+template<typename OrdinalType>
+void load_array( const std::string &c, int n, std::vector<OrdinalType> &l );
 
 } // end SPRNG namespace
 

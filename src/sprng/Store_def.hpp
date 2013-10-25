@@ -14,147 +14,62 @@
 #define STORE_DEF_HPP
 
 // Std Lib Includes
-#include <iostream>
-#include <cstdio>
+#include <assert.h>
 
 namespace SPRNG{
 
-// Store an unsigned long in a character buffer
-int store_long( unsigned long l, int nbytes, unsigned char *c )
+// Store an integer value in a character buffer
+template<typename OrdinalType>
+void store_value( const OrdinalType l, std::string &c )
 {
-  int i;
+  typename std::size_t nbytes = sizeof( OrdinalType ), i;
   
-  for(i=0; i<nbytes; i++)
+  c.resize( nbytes );
+
+  for( i = 0; i < nbytes; i++ )
     c[i] = (l>>(8*(nbytes-i-1)))&0xff;
-  
-  return nbytes;		/* return number of chars filled */
 }
 
-// Store an array of unsigned longs in a character buffer
-int store_longarray( unsigned long *l, int n, int nbytes, unsigned char *c )
+// Store an array of integer values in a character buffer
+template<typename OrdinalType>
+void store_array( const std::vector<OrdinalType> &l, std::string &c )
 {
-  int i;
-  
-  for(i=0; i<n; i++)
-    c += store_long(l[i],nbytes,c);
+  c.clear();
+  std::string sub_string;
 
-  return nbytes*n;
+  for( int i = 0; i < l.size(); ++i )
+  {
+    store_value( l[i], sub_string );
+    c += sub_string; 
+  }
 }
 
-// Load an unsigned long from a character buffer
-int load_long( unsigned char *c, int nbytes, unsigned long *l )
+// Load an integer value from a character buffer
+template<typename OrdinalType>
+void load_value( const std::string &c, OrdinalType &l )
 {
-  int i;
+  l = 0;
   
-  *l = 0;
+  typename std::size_t nbytes = sizeof( OrdinalType ), i;
   
-  for(i=0; i<nbytes;i++)
-    *l = (*l<<8) + (c[i]&0xff);
- 
-  return nbytes;
+  assert( c.size() == nbytes );
+
+  for( i = 0; i < nbytes; ++i )
+    l = (l<<8) + (c[i]&0xff);
 }
 
-// Load an array of unsigned longs from a character buffer
-int load_longarray( unsigned char *c, int n, int nbytes, unsigned long *l )
+// Load an array of integer values from a character buffer
+template<typename OrdinalType>
+void load_array( const std::string &c, int n, std::vector<OrdinalType> &l )
 {
-  int i;
+  l.clear();
   
-  for(i=0; i<n; i++)
-    load_long(c+nbytes*i,nbytes,l+i);
+  typename std::size_t nbytes = sizeof( OrdinalType );
 
-  return nbytes*n;
-}
+  assert( c.size() >= n*nbytes );
 
-// Store an int in a character buffer
-int store_int( unsigned int l, int nbytes, unsigned char *c )
-{
-  int i;
-  
-  for(i=0; i<nbytes; i++)
-    c[i] = (l>>(8*(nbytes-i-1)))&0xff;
-
-  return nbytes;		/* return number of chars filled */
-}
-
-// Store an array of ints in a character buffer
-int store_intarray( unsigned int *l, int n, int nbytes, unsigned char *c )
-{
-  int i;
-  
-  for(i=0; i<n; i++)
-    c += store_int(l[i],nbytes,c);
-
-  return nbytes*n;
-}
-
-// Load an int from a character buffer
-int load_int( unsigned char *c, int nbytes, unsigned int *l )
-{
-  int i;
-  
-  *l = 0;
-  
-  for(i=0; i<nbytes;i++)
-    *l = (*l<<8) + (c[i]&0xff);
- 
-  return nbytes;
-}
-
-// Load an array of ints from a charater buffer
-int load_intarray( unsigned char *c, int n, int nbytes, unsigned int *l )
-{
-  int i;
-  
-  for(i=0; i<n; i++)
-    load_int(c+nbytes*i,nbytes,l+i);
-
-  return nbytes*n;
-}
-
-// Store a long long in a character buffer
-int store_longlong( unsigned long long l, int nbytes, unsigned char *c )
-{
-  int i;
-  
-  for(i=0; i<nbytes; i++)
-    c[i] = (l>>(8*(nbytes-i-1)))&0xff;
-  
-  return nbytes;		/* return number of chars filled */
-}
-  
-// Store an array of long longs in a character buffer
-int store_longlongarray( unsigned long long *l, int n, int nbytes, unsigned char *c )
-{
-  int i;
- 
-  for(i=0; i<n; i++)
-    c += store_longlong(l[i],nbytes,c);
-
-  return nbytes*n;
-}
-
-// Load a long long from a character buffer
-int load_longlong( unsigned char *c, int nbytes, unsigned long long *l )
-{
-  int i;
- 
-  *l = 0;
-  
-  for(i=0; i<nbytes;i++)
-    *l = (*l<<8) + (c[i]&0xff);
- 
-  return nbytes;
-}
-
-// Load a long long from a character buffer
-int load_longlongarray( unsigned char *c, int n, int nbytes, unsigned long long *l )
-{
-  int i;
-
-  for(i=0; i<n; i++)
-    load_longlong(c+nbytes*i,nbytes,l+i);
-
-  return nbytes*n;
+  for( int i = 0; i < n; ++i )
+    load_valud( c.substr(i*nbytes, nbytes), l[i] );
 }
 
 } // end SPRNG namespace

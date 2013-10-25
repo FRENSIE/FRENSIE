@@ -29,20 +29,19 @@ namespace SPRNG{
 
 // Default constructor
 BigNum::BigNum()
+  : d_size( 1 ),
+    d_v( d_size ),
+    d_sign( '+' )
 {
-  d_size = 1;
-  d_v( d_size );
   d_v[0] = 0;
-  d_sign = '+';
 }
 
 // Constructor by size
 BigNum::BigNum( unsigned long s )
+  : d_size( s ),
+    d_sign( '+' ),
+    d_v( s )
 {
-  d_size = s;
-  d_sign = '+';
-  d_v( s );
-
   for( unsigned long i = 0; i < s; i++ )
     d_v[i] = 0;
 }
@@ -63,7 +62,7 @@ BigNum::BigNum( char* c, char s )
   else
     d_size = hexdigits / n + 1;
 
-  d_v( d_size );
+  d_v.resize( d_size );
 
   if( mod > 0 )
   {
@@ -93,11 +92,10 @@ BigNum::BigNum( char* c, char s )
 
 // Copy constructor
 BigNum::BigNum( const BigNum &bn )
+  : d_size( bn.d_size ),
+    d_sign( bn.d_sign ),
+    d_v( d_size )
 {
-  d_size = bn.d_size;
-  d_sign = bn.d_sign;
-  d_v( d_size );
-
   // Do a deep copy of the stored array
   for( unsigned long i = 0; i < d_size; i++ )
     d_v[i] = bn.d_v[i];
@@ -134,10 +132,10 @@ unsigned long BigNum::Size() const
   return d_size;
 }
 
-// Get the unsigned long array
-Teuchos::ArrayRCP<unsigned long> BigNum::V() const
+// Get the head of the unsigned long array
+unsigned long* BigNum::V() const
 {
-  return d_v;
+  return &d_v[0];
 }
 
 // Get the sign of the BigNum
@@ -161,8 +159,8 @@ BigNum BigNum::EraseLeadingBits( unsigned long numbits )
   shiftamount = NUMBITS - (xbits - modulus) % NUMBITS;
   BigNum z(zsize);
 
-  zptr = z.d_v.getRawPtr();
-  xptr = d_v.getRawPtr();
+  zptr = z.V();
+  xptr = V();
 
   for (unsigned int i = 0; i < z.size; i++)
     *(zptr++) = *(xptr++);
@@ -264,9 +262,9 @@ BigNum operator+( const BigNum &x, const BigNum &y )
     zd_size = y.d_size + 1;
 
   BigNum z(zsize);
-  xptr = x.d_v.getRawPtr();
-  yptr = y.d_v.getRawPtr();
-  zptr = z.d_v.getRawPtr();
+  xptr = x.V();
+  yptr = y.V();
+  zptr = z.V();
 
   for (i = 0; i < smallersize; i++) {
     ztemp = *zptr;
@@ -400,9 +398,9 @@ BigNum operator-( const BigNum &x, const BigNum &y )
     return b_neg(b_abs(x) + y);
 
   BigNum z(biggersize + 1);
-  xptr = x.d_v.getRawPtr();
-  yptr = y.d_v.getRawPtr();
-  zptr = z.d_v.getRawPtr();
+  xptr = x.V();
+  yptr = y.V();
+  zptr = z.V();
 
   for (i = 0; i < smallersize; i++) {
     ztemp = *zptr;
@@ -547,12 +545,12 @@ BigNum operator*( const BigNum &x, const BigNum &y )
   if (x.d_size < y.d_size) {
     xcopy = y;
     ycopy = x;
-    yptr = ycopy.d_v.getRawPtr();
+    yptr = ycopy.V();
     ysize = ycopy.d_size;
   }
   else {
     xcopy = x;
-    yptr = y.d_v.getRawPtr();
+    yptr = y.V();
     ysize = y.d_size;
   }
 
@@ -601,9 +599,9 @@ BigNum Sub4Div( const BigNum &x, const BigNum &y )
   unsigned long int smallersize = SmallerSize(x, y);
   BigNum zero;
   BigNum z(biggersize + 1);
-  xptr = x.d_v.getRawPtr();
-  yptr = y.d_v.getRawPtr();
-  zptr = z.d_v.getRawPtr();
+  xptr = x.V();
+  yptr = y.V();
+  zptr = z.V();
 
   for (i = 0; i < smallersize; i++) {
     ztemp = *zptr;
@@ -886,9 +884,9 @@ BigNum operator^( const BigNum &x, const BigNum &y )
   smallersize = SmallerSize(x, y);
   zsize = biggersize;
   BigNum z(zsize);
-  xptr = x.d_v.getRawPtr();
-  yptr = y.d_v.getRawPtr();
-  zptr = z.d_v.getRawPtr();
+  xptr = x.V();
+  yptr = y.V();
+  zptr = z.V();
 
   for (i = 0; i < smallersize; i++)
     *(zptr++) = *(xptr++) ^ *(yptr++);
@@ -1002,8 +1000,8 @@ BigNum operator<<( const BigNum &x, const unsigned long y )
   shiftamount = NUMBITS - indexmod;
   BigNum z(zsize);
 
-  xptr = x.d_v.getRawPtr();
-  zptr = z.d_v.getRawPtr();
+  xptr = x.V();
+  zptr = z.V();
 
   for (i = 0; i < amount; i++)
     *(zptr++) = 0;
@@ -1145,7 +1143,7 @@ std::ostream& operator<<( std::ostream &os, const BigNum &bn )
   if (bn.d_v.size() == 0)
     return os;
 
-  ptr = bn.d_v.getRawPtr() + bn.Size() - 1;
+  ptr = bn.V() + bn.Size() - 1;
 
   os.setf(ios::uppercase);
   os << hex << *ptr--;
@@ -1171,8 +1169,8 @@ bool operator==( const BigNum &x, const BigNum &y )
   if (x.GetTotalBits() != y.GetTotalBits() || x.d_sign != y.d_sign)
     return false;
 
-  return memcmp(x.d_v.getRawPtr(), 
-		y.d_v.getRawPtr(), 
+  return memcmp(x.V(), 
+		y.V(), 
 		sizeof(unsigned long int) * x.d_size) == 0;
 }
 
@@ -1186,8 +1184,8 @@ bool operator==( const BigNum &x, const unsigned long y )
 int b_cmp( const BigNum &x, const BigNum &y )
 {
   unsigned long int * xptr, * yptr;  
-  xptr = x.d_v.getRawPtr() + x.d_size - 1;
-  yptr = y.d_v.getRawPtr() + y.d_size - 1;
+  xptr = x.V() + x.d_size - 1;
+  yptr = y.V() + y.d_size - 1;
 
   if (x == y)
     return 0;

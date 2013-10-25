@@ -16,11 +16,10 @@ namespace SPRNG{
 
 // Default constructor
 BigRat::BigRat()
-{
-  d_numerator = "0";
-  d_denominator = "1";
-}
-
+  : d_numerator( "0" ),
+    d_denominator( "1" )
+{ /* ... */ }
+  
 // Get the numerator
 BigNum BigRat::br_get_num() const
 {
