@@ -13,6 +13,9 @@
 namespace FACEMC{
 
 //! A linear congruential pseudo-random number generator (LCG)
+/*! \details A modulus of 2^64 is used so that modular arithmetic is done
+ * implicitly (using integer overflow).
+ */
 template<typename ScalarType>
 class LinearCongruentialGenerator
 {
@@ -42,30 +45,26 @@ protected:
   //! Advance the generator state
   void advanceState();
 
-  //! A recursive modular exponentiation algorithm
+  //! A recursive modular exponentiation algorithm (assuming mod 2^64)
   unsigned long long exponentiate( const unsigned long long x, 
-				   const unsigned long long y, 
-				   const unsigned long long N ) const;
+				   const unsigned long long y ) const;
 
 private:
+
+  // Initial seed of generator
+  static const unsigned long long d_initial_seed = 19073486328125ULL;
+
+  // Random number seed multiplier (g)
+  static const unsigned long long d_multiplier = 19073486328125ULL;
+
+  // Random number stride between starting seed of consecutive histories (L)
+  static const unsigned long long d_stride = 152917ULL;
 
   // Initial random number seed for current history (sh)
   unsigned long long d_initial_history_seed;
 
   // Random number state (sk)
   unsigned long long d_state;
- 
-  // Random number seed multiplier (g)
-  unsigned long long d_multiplier;
-
-  // LCG constant (c)
-  //unsigned long long d_constant;
-
-  // Modulus of generator (2^M)
-  unsigned long long d_modulus;
-
-  // Random number stride between starting seed of consecutive histories (L)
-  unsigned long long d_stride;
 
   // History counter
   unsigned long long d_history;

@@ -35,7 +35,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearCongruentialGenerator,
   FACEMC::LinearCongruentialGenerator<ScalarType> lcg;
   
   ScalarType random_number = lcg.rnd();
-
+  
   TEST_COMPARE( random_number, >=, Teuchos::ScalarTraits<ScalarType>::zero() );
   TEST_COMPARE( random_number, <, Teuchos::ScalarTraits<ScalarType>::one() );
 }
@@ -69,10 +69,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearCongruentialGenerator,
   
   TEST_FLOATING_EQUALITY( static_cast<ScalarType>( test_average ), 
 			  Teuchos::ScalarTraits<ScalarType>::one()/2, 
-			  static_cast<ScalarType>( 1e-4 ) );
+			  static_cast<ScalarType>( 2e-4 ) );
   TEST_FLOATING_EQUALITY( static_cast<ScalarType>( test_variance ),
 			  Teuchos::ScalarTraits<ScalarType>::one()/12,
-			  static_cast<ScalarType>( 1e-4 ) );
+			  static_cast<ScalarType>( 2e-4 ) );
 }
 
 UNIT_TEST_INSTANTIATION( LinearCongruentialGenerator, 

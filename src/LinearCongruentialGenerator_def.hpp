@@ -15,12 +15,9 @@ namespace FACEMC{
 // Constructor
 template<typename ScalarType>
 LinearCongruentialGenerator<ScalarType>::LinearCongruentialGenerator()
-: d_initial_history_seed( 19073486328125ULL ),
-  d_state( d_initial_history_seed ),
-  d_multiplier( d_initial_history_seed ),
-  d_modulus( 1ULL<<63 ),
-  d_stride( 152917ULL ),    
-  d_history( 0 )
+  : d_initial_history_seed( d_initial_seed ),
+    d_state( d_initial_history_seed ),
+    d_history( 0 )
 { /* ... */ }
 
 // Return a random number for the current history
@@ -30,8 +27,8 @@ ScalarType LinearCongruentialGenerator<ScalarType>::rnd()
   // Advance the generator state
   advanceState();
     
-  // Return the uniform random number
-  return (double)d_state/d_modulus;
+  // Return the uniform random number (state*2^-64)
+  return d_state*5.4210108624275222e-20;
 }
 
 // Initialize the generator for the desired history
@@ -45,8 +42,7 @@ void LinearCongruentialGenerator<ScalarType>::changeHistory(
 
   // Initialize the generator state
   d_initial_history_seed = exponentiate( d_initial_history_seed, 
-					 history_diff*d_stride, 
-					 d_modulus );
+					 history_diff*d_stride );
   d_state = d_initial_history_seed;
 }
 
@@ -54,32 +50,31 @@ void LinearCongruentialGenerator<ScalarType>::changeHistory(
 template<typename ScalarType>
 void LinearCongruentialGenerator<ScalarType>::advanceState()
 {
-  d_state = (d_state*d_multiplier)%d_modulus;
+  d_state = d_state*d_multiplier;
 }
     
 // A recursive modular exponentiation algorithm
-/*! \details Recursively evaluates the function (x^y)mod(N) to avoid integer
- * overflow. This algorithm was taken from "Algorithms" by Desgupta et al.
+/*! \details Recursively evaluates the function (x^y)mod(2^64). This algorithm 
+  was taken from "Algorithms" by Desgupta et al.
  */
 template<typename ScalarType>
 unsigned long long LinearCongruentialGenerator<ScalarType>::exponentiate( 
 					     const unsigned long long x,
-					     const unsigned long long y,
-					     const unsigned long long N ) const
+					     const unsigned long long y ) const
 {
   // The output integer
-  long long z;
+  unsigned long long z;
 
   if( y == 0 )
     z = 1;
   else
   {
-    z = exponentiate( x, y/2, N );
+    z = exponentiate( x, y/2 );
     
     if( y%2 == 0 )
-      z = (z*z)%N;
+      z = (z*z);
     else
-      z = (x*z*z)%N;
+      z = (x*z*z);
   }
 
   // Return the output integer
