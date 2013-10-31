@@ -13,12 +13,19 @@ MACRO(ENABLE_SPRNG_SUPPORT)
   # Set the link paths for Sprng
   LINK_DIRECTORIES(${SPRNG_LIBRARY_DIRS})
 
+  # Find the sprng library
+  FIND_LIBRARY(SPRNG sprng ${SPRNG_LIBRARY_DIRS})
+  IF(${SPRNG} MATCHES NOTFOUND)
+    MESSAGE(FATAL_ERROR "The sprng library could not be found")
+  ENDIF()
+
   # Echo the Sprng details if a verbose configure was requested
   IF(CMAKE_VERBOSE_CONFIGURE)
     MESSAGE("Found SPRNG! Here are the details: ")
     MESSAGE(" SPRNG_PREFIX = ${SPRNG_PREFIX}")
     MESSAGE(" SPRNG_INCLUDE_DIRS = ${SPRNG_INCLUDE_DIRS}")
     MESSAGE(" SPRNG_LIBRARY_DIRS = ${SPRNG_LIBRARY_DIRS}")
+    MESSAGE(" SPRNG_LIBRARY = ${SPRNG}")
     MESSAGE("End of SPRNG details\n")
   ENDIF()
 

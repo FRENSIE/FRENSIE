@@ -97,6 +97,12 @@ ADD_EXECUTABLE(tstCellPolygonFactory
   tstCellPolygonFactory.cpp
   ${SRC}/BooleanCellFunctor.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstLinearCongruentialGenerator
+  tstLinearCongruentialGenerator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstRandomNumberGenerator
+  tstRandomNumberGenerator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 
 TARGET_LINK_LIBRARIES(tstAssertion ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstContractException ${TEUCHOS_CORE})
@@ -122,6 +128,16 @@ TARGET_LINK_LIBRARIES(tstCell ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPA
 TARGET_LINK_LIBRARIES(tstIntersectionPoint ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstPolygon ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstCellPolygonFactory ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+TARGET_LINK_LIBRARIES(tstLinearCongruentialGenerator ${TEUCHOS_CORE})
+TARGET_LINK_LIBRARIES(tstRandomNumberGenerator ${TEUCHOS_CORE})
+IF(${FACEMC_ENABLE_MPI} AND (${CMAKE_BUILD_TYPE} MATCHES "RELEASE") )
+  TARGET_LINK_LIBRARIES(tstRandomNumberGenerator ${SPRNG} ${MPI_CXX_LIBRARIES})
+ELSEIF(${FACEMC_ENABLE_MPI} AND (${CMAKE_BUILD_TYPE} MATCHES "DEBUG") )
+  TARGET_LINK_LIBRARIES(tstRandomNumberGenerator ${MPI_CXX_LIBRARIES})
+ELSE()
+  TARGET_LINK_LIBRARIES(tstRandomNumberGenerator ${SPRNG})
+ENDIF()
+  
 
 ADD_TEST(Assertion_test tstAssertion)
 ADD_TEST(ContractException_test tstContractException)
@@ -147,6 +163,12 @@ ADD_TEST(Cell_test tstCell)
 ADD_TEST(IntersectionPoint_test tstIntersectionPoint)
 ADD_TEST(Polygon_test tstPolygon)
 ADD_TEST(CellPolygonFactory_test tstCellPolygonFactory)
+ADD_TEST(LinearCongruentialGenerator_test tstLinearCongruentialGenerator)
+ADD_TEST(RandomNumberGenerator_test tstRandomNumberGenerator)
+IF(${FACEMC_ENABLE_MPI})
+  ADD_TEST(ParallelRandomNumberGenerator_test 
+    mpiexec -n 2 tstRandomNumberGenerator)
+ENDIF()
 
 # Install test files for the EPDL97DataProcessor_test
 FILE(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test_files/*.txt)

@@ -61,10 +61,6 @@ private:
   typedef typename Cell::surfaceOrdinalType surfaceOrdinalType;
   //! Typedef for scalar type
   typedef typename Cell::scalarType scalarType;
-  //! Typedef for suface-sense pairs iterator
-  typedef typename Cell::SurfaceSensePairsIterator SurfaceSensePairsIterator;
-  //! Typedef for Boolean array
-  typedef typename Cell::BooleanArray BooleanArray;
   //! Typedef for scalar traits
   typedef Teuchos::ScalarTraits<scalarType> ST;
   //! Typedef for cell ordinal traits
@@ -72,11 +68,7 @@ private:
   //! Typedef for surface ordinal traits
   typedef Teuchos::OrdinalTraits<surfaceOrdinalType> SurfaceOT;
   //! Typedef for intersection point
-  typedef Pair<Trip<scalarType,scalarType,scalarType>,
-	       Trip<surfaceOrdinalType,surfaceOrdinalType,surfaceOrdinalType> >
-  IntersectionPoint;
-  //!Typedef for polygon
-  typedef Polygon<surfaceOrdinalType,scalarType> Polygon;
+  typedef IntersectionPoint<surfaceOrdinalType,scalarType> Point;
 
 public:
 
@@ -128,9 +120,6 @@ private:
 
   // Stored copy of the global surface map (weak pointer)
   Teuchos::RCP<const SurfaceMap> d_global_surface_map;
-
-  // Bounding boxes of cells needing MC integration to determine vol (and area)
-  Teuchos::Array<BoundingBox> d_bounding_boxes;
 };
 
 } // end FACEMC namespace
