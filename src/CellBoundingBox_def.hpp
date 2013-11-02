@@ -56,16 +56,15 @@ template<typename Cell>
 void CellBoundingBox<Cell>::calculateCellVolume( int max_samples )
 {
   scalarType cell_volume = ST::zero();
+  scalarType cell_volume_estimate = ST::zero();
 
   int number_of_samples = 0;
   int number_of_scores = 0;
-  scalarType sample_average;
-  scalarType sample_variance;
-
+  
   bool cell_volume_converged = false;
 
   // The number of samples taken before checking for convergence
-  int batch_size = (max_samples < 1000 ) ? max_samples : 1000;
+  int batch_size = (max_samples < 10000 ) ? max_samples : 10000;
 
   // The distance between max and min
   scalarType x_length = d_x_max - d_x_min;
@@ -98,23 +97,23 @@ void CellBoundingBox<Cell>::calculateCellVolume( int max_samples )
     }
 
     // Compute the average and variance of the samples
-    sample_average = 
-      static_cast<scalarType>(number_of_scores)/number_of_samples;
-    
-    sample_variance = sample_average - sample_average*sample_average;
+    cell_volume_estimate = number_of_scores*bounding_box_volume/
+      number_of_samples;
     
     // Test if the relative error has converged
-    cell_volume_converged = sample_variance/sample_average*sample_average <
-      d_convergence_ratio*d_convergence_ratio;
-      
-    // Compute the cell volume estimate
-    cell_volume = sample_average*bounding_box_volume;
-
+    cell_volume_converged = 
+      ST::magnitude( cell_volume_estimate/cell_volume - 1.0 ) < 
+      d_convergence_ratio;
+    
     std::cout.precision(9);
     std::cout.setf( std::ios::fixed, std::ios::floatfield );
-    std::cout << number_of_samples << " " << sample_average << " "
-	      << sample_variance/sample_average*sample_average << " "
-	      << cell_volume << std::endl;
+    std::cout << number_of_samples << " " << cell_volume_estimate << " " 
+	      << ST::magnitude( cell_volume_estimate/cell_volume - 1.0 )/
+      d_convergence_ratio
+	      << std::endl;
+      
+    // Compute the cell volume estimate
+    cell_volume = cell_volume_estimate;
   }
 
   // Make sure that a valid cell volume was calculated

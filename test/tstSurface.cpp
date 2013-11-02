@@ -202,6 +202,305 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
 UNIT_TEST_INSTANTIATION( Surface, getUnitNormal );
 
 //---------------------------------------------------------------------------//
+// Check that the distance to a surface from a point along a direction can be
+// calculated
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,
+				   getDistance,
+				   OrdinalType,
+				   ScalarType )
+{
+  FACEMC::Surface<OrdinalType,ScalarType> xy_plane( 0,
+						    0, 0, 1,
+						    0 );
+  FACEMC::Surface<OrdinalType,ScalarType> unit_sphere( 1,
+						       1, 1, 1,
+						       0, 0, 0,
+						       -1 );
+  FACEMC::Surface<OrdinalType,ScalarType> general_surface( 2,
+							   1, 1, 1,
+							   1, 1, 1,
+							   1, 1, 1,
+							   0 );
+
+  // Testing points
+  FACEMC::Vector<ScalarType> point1( 0, 0, 0 );
+  FACEMC::Vector<ScalarType> point2( 1, 0, 0 );
+  FACEMC::Vector<ScalarType> point3( 0, 1, 0 );
+  FACEMC::Vector<ScalarType> point4( 0, 0, 1 );
+  FACEMC::Vector<ScalarType> point5( -1, 0, 0 );
+  FACEMC::Vector<ScalarType> point6( 0, -1, 0 );
+  FACEMC::Vector<ScalarType> point7( 0, 0, -1 );
+  FACEMC::Vector<ScalarType> point8( -1, -1, -1 );
+  point8.normalize();
+  FACEMC::Vector<ScalarType> point9( -1, -1, -1 );
+  point9.normalize();
+  point9 *= 2;
+
+  // Testing directions
+  FACEMC::Vector<ScalarType> direction1( 1, 0, 0 );
+  FACEMC::Vector<ScalarType> direction2( 0, 1, 0 );
+  FACEMC::Vector<ScalarType> direction3( 0, 0, 1 );
+  FACEMC::Vector<ScalarType> direction4( -1, 0, 0 );
+  FACEMC::Vector<ScalarType> direction5( 0, -1, 0 );
+  FACEMC::Vector<ScalarType> direction6( 0, 0, -1 );
+  FACEMC::Vector<ScalarType> direction7( 1, 1, 1 );
+  direction7.normalize();
+			
+  // The distance to the surface
+  ScalarType distance;
+
+  // Test the xy plane
+  distance = xy_plane.getDistance( point2, direction1 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = xy_plane.getDistance( point2, direction2 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = xy_plane.getDistance( point2, direction3 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = xy_plane.getDistance( point3, direction1 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = xy_plane.getDistance( point3, direction2 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = xy_plane.getDistance( point3, direction3 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = xy_plane.getDistance( point4, direction1 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = xy_plane.getDistance( point4, direction2 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = xy_plane.getDistance( point4, direction3 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = xy_plane.getDistance( point4, direction6 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 1.0 ) );
+
+  distance = xy_plane.getDistance( point7, direction1 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = xy_plane.getDistance( point7, direction2 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = xy_plane.getDistance( point7, direction3 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 1.0 ) );
+
+  distance = xy_plane.getDistance( point7, direction6 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = xy_plane.getDistance( point8, direction7 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 1.0 ) );
+
+  // Test the unit sphere
+  distance = unit_sphere.getDistance( point1, direction1 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 1.0 ) );
+
+  distance = unit_sphere.getDistance( point1, direction4 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 1.0 ) );
+
+  distance = unit_sphere.getDistance( point1, direction2 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 1.0 ) );
+
+  distance = unit_sphere.getDistance( point1, direction5 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 1.0 ) );
+
+  distance = unit_sphere.getDistance( point1, direction3 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 1.0 ) );
+
+  distance = unit_sphere.getDistance( point1, direction6 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 1.0 ) );
+
+  distance = unit_sphere.getDistance( point2, direction1 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point2, direction2 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point2, direction3 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point2, direction4 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 2.0 ) );
+
+  distance = unit_sphere.getDistance( point2, direction5 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point2, direction6 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+  
+  distance = unit_sphere.getDistance( point3, direction1 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point3, direction2 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point3, direction3 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point3, direction4 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point3, direction5 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 2.0 ) );
+
+  distance = unit_sphere.getDistance( point3, direction6 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+  
+  distance = unit_sphere.getDistance( point4, direction1 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point4, direction2 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point4, direction3 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point4, direction4 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point4, direction5 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point4, direction6 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 2.0 ) );
+		       
+  distance = unit_sphere.getDistance( point5, direction1 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 2.0 ) );		       
+
+  distance = unit_sphere.getDistance( point5, direction2 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point5, direction3 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point5, direction4 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point5, direction5 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point5, direction6 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point6, direction1 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point6, direction2 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 2.0 ) );		       
+  
+  distance = unit_sphere.getDistance( point6, direction3 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point6, direction4 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point6, direction5 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point6, direction6 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+  
+  distance = unit_sphere.getDistance( point7, direction1 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point7, direction2 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+  
+  distance = unit_sphere.getDistance( point7, direction3 );
+  TEST_EQUALITY_CONST( distance,
+		       static_cast<ScalarType>( 2.0 ) );		       
+
+  distance = unit_sphere.getDistance( point7, direction4 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point7, direction5 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+
+  distance = unit_sphere.getDistance( point7, direction6 );
+  TEST_EQUALITY_CONST( distance,
+		       std::numeric_limits<ScalarType>::infinity() );
+  
+  distance = unit_sphere.getDistance( point8, direction7 );
+  TEST_FLOATING_EQUALITY( distance,
+			  static_cast<ScalarType>( 2.0 ),
+			  Teuchos::ScalarTraits<ScalarType>::eps() );
+
+  distance = unit_sphere.getDistance( point9, direction7 );
+  TEST_FLOATING_EQUALITY( distance,
+			  static_cast<ScalarType>( 1.0 ),
+			  Teuchos::ScalarTraits<ScalarType>::eps() );
+  
+  // Test the general surface
+  distance = general_surface.getDistance( point8, direction7 );
+  ScalarType ref_distance = 
+    1.0 - Teuchos::ScalarTraits<ScalarType>::squareroot(3.0)/2.0;
+  TEST_FLOATING_EQUALITY( distance,
+			  ref_distance,
+			  10*Teuchos::ScalarTraits<ScalarType>::eps() );
+}
+
+UNIT_TEST_INSTANTIATION( Surface, getDistance );
+
+//---------------------------------------------------------------------------//
 // Check that a surface can be created by transforming another surface with
 // a translation vector.
 TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( Surface,

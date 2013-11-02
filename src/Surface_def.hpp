@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <sstream>
+#include <limits>
 
 // Trilinos Includes
 #include <Teuchos_SerialDenseHelpers.hpp>
@@ -479,6 +480,59 @@ Vector<ScalarType> Surface<OrdinalType,ScalarType>::getUnitNormalAtPoint(
   return getUnitNormalAtPoint( point[0], point[1], point[2], sense );
 }
 
+// Return the distance to the surface from the given point along the given 
+// direction
+template<typename OrdinalType, typename ScalarType>
+ScalarType Surface<OrdinalType,ScalarType>::getDistance( 
+					   const ScalarType x,
+					   const ScalarType y,
+					   const ScalarType z,
+					   const ScalarType x_direction,
+					   const ScalarType y_direction,
+					   const ScalarType z_direction ) const
+{
+  remember( Vector<ScalarType> direction( x_direction, 
+					  y_direction, 
+					  z_direction ) );
+  testPrecondition( ST::magnitude( direction.normTwo() - 1.0 ) < ST::eps() );
+
+  ScalarType distance;
+
+  // Calculate the distance s from the point to the surface along the direction
+  // equation: alpha*s^2 + beta*s + gamma = 0
+  ScalarType gamma = calculateGammaParameter( x, y, z );
+  ScalarType beta = calculateBetaParameter( x, y, z, 
+					    x_direction, 
+					    y_direction, 
+					    z_direction );
+  
+  if( d_planar )
+    distance = calculateRoot( beta, gamma );
+  
+  else
+  {
+    ScalarType alpha = calculateAlphaParameter( x_direction,
+						y_direction,
+						z_direction );
+    distance = calculateMinimumRealPositiveRoot( alpha, beta, gamma );
+  }
+
+  return distance;
+}
+
+// Return the distance to the surface from the given point along the given 
+// direction
+template<typename OrdinalType, typename ScalarType>
+ScalarType Surface<OrdinalType,ScalarType>::getDistance( 
+				    const Vector<ScalarType> &point,
+			            const Vector<ScalarType> &direction ) const
+{
+  testPrecondition( ST::magnitude( direction.normTwo() - 1.0 ) < ST::eps() );
+  
+  return getDistance( point[0], point[1], point[2],
+		      direction[0], direction[1], direction[2] );
+}
+
 // Return the quadratic form matrix of the surface
 template<typename OrdinalType, typename ScalarType>
 Matrix<ScalarType>
@@ -623,6 +677,7 @@ ScalarType Surface<OrdinalType,ScalarType>::evaluatePlanarSurface(
     d_definition[9];
 }
 
+// Evaluate general 2nd order surface
 template<typename OrdinalType, typename ScalarType>
 ScalarType 
 Surface<OrdinalType,ScalarType>::evaluateSymmetricSecondOrderSurface( 
@@ -646,6 +701,166 @@ Surface<OrdinalType,ScalarType>::evaluateGeneralSecondOrderSurface(
     d_definition[3]*x*y + d_definition[4]*y*z + d_definition[5]*x*z +
     d_definition[6]*x + d_definition[7]*y + d_definition[8]*z + 
     d_definition[9];
+}
+
+// Calculate the alpha parameter of a given direction
+/*! \details alpha = au^2+bv^2+cw^2+duv+evw+fuw
+ */
+template<typename OrdinalType, typename ScalarType>
+ScalarType Surface<OrdinalType,ScalarType>::calculateAlphaParameter(
+					   const ScalarType x_direction,
+					   const ScalarType y_direction,
+					   const ScalarType z_direction ) const
+{
+  ScalarType alpha = d_definition[0]*x_direction*x_direction;
+  alpha += d_definition[1]*y_direction*y_direction;
+  alpha += d_definition[2]*z_direction*z_direction;
+
+  if( !d_symmetric )
+  {
+    alpha += d_definition[3]*x_direction*y_direction;
+    alpha += d_definition[4]*y_direction*z_direction;
+    alpha += d_definition[5]*x_direction*z_direction;
+  }
+
+  return alpha;
+}
+
+// Calculate the gamma parameter of a given point
+/*! \details beta = 2ax_0u+2by_0v+2cz_0w+d(x_0v+y_0u)+e(y_0w+z_0v)+f(x_0w+z_0u)
+ * +gu+hv+jw
+ */
+template<typename OrdinalType, typename ScalarType>
+ScalarType Surface<OrdinalType,ScalarType>::calculateBetaParameter(
+					   const ScalarType x,
+					   const ScalarType y,
+					   const ScalarType z,
+					   const ScalarType x_direction,
+					   const ScalarType y_direction,
+				           const ScalarType z_direction ) const
+{
+  ScalarType beta = d_definition[6]*x_direction;
+  beta += d_definition[7]*y_direction;
+  beta += d_definition[8]*z_direction;
+  
+  if( !d_planar )
+  {
+    beta += 2*d_definition[0]*x*x_direction;
+    beta += 2*d_definition[1]*y*y_direction;
+    beta += 2*d_definition[2]*z*z_direction;
+
+    if( !d_symmetric )
+    {
+      beta += d_definition[3]*(x*y_direction + y*x_direction);
+      beta += d_definition[4]*(y*z_direction + z*y_direction);
+      beta += d_definition[5]*(x*z_direction + z*x_direction);
+    }
+  }
+
+  return beta;
+}
+
+// Calculate the gamma parameter of a given point
+/*! \details ax_0^2+by_0^2+cz_0^2+dx_0y_0+ey_0z_0+fx_0z_0+gx_0+hy_0+jz_0+k
+ */
+template<typename OrdinalType, typename ScalarType>
+ScalarType Surface<OrdinalType,ScalarType>::calculateGammaParameter( 
+						     const ScalarType x,
+						     const ScalarType y,
+				                     const ScalarType z ) const
+{
+  ScalarType gamma = d_definition[6]*x;
+  gamma += d_definition[7]*y;
+  gamma += d_definition[8]*z;
+  gamma += d_definition[9];
+
+  if( !d_planar )
+  {
+    gamma += d_definition[0]*x*x;
+    gamma += d_definition[1]*y*y;
+    gamma += d_definition[2]*z*z;
+
+    if( !d_symmetric )
+    {
+      gamma += d_definition[3]*x*y;
+      gamma += d_definition[4]*y*z;
+      gamma += d_definition[5]*x*z;
+    }
+  }
+
+  return gamma;
+}
+
+// Compute the minimum real positive root of a second order polynomial
+/*! \details alpha*x^2+beta*x+gamma = 0. If no real positive root exists the
+ * infinity is returned.
+ */
+template<typename OrdinalType, typename ScalarType>
+ScalarType Surface<OrdinalType,ScalarType>::calculateMinimumRealPositiveRoot( 
+						 const ScalarType alpha,
+						 const ScalarType beta,
+				                 const ScalarType gamma ) const
+{
+  ScalarType min_pos_root;
+  
+  // Check if the discriminant is positive
+  ScalarType discriminant = beta*beta - 4*alpha*gamma;
+
+  // If the discriminant is negative an intersection is impossible: return inf
+  if( discriminant < ST::zero() )
+    min_pos_root = std::numeric_limits<ScalarType>::infinity();
+  else
+  {
+    ScalarType root1, root2;
+    ScalarType root_discriminant = ST::squareroot( discriminant );
+
+    root1 = (-beta + root_discriminant)/(2*alpha);
+    root2 = (-beta - root_discriminant)/(2*alpha);
+
+    if( root2 < root1 )
+    {
+      if( root2 > d_tolerance )
+	min_pos_root = root2;
+      else if( root1 > d_tolerance )
+	min_pos_root = root1;
+      else 
+	min_pos_root = std::numeric_limits<ScalarType>::infinity();
+    }
+    else
+    {
+      if( root1 > d_tolerance )
+	min_pos_root = root1;
+      else if( root2 > d_tolerance )
+	min_pos_root = root2;
+      else
+	min_pos_root = std::numeric_limits<ScalarType>::infinity();
+    }
+  }
+
+  return min_pos_root;
+}
+
+// Compute the root of a first order polynomial
+/*! \details beta*x + gamma = 0. If no positive root exists then infinity is
+ * returned.
+ */
+template<typename OrdinalType, typename ScalarType>
+ScalarType Surface<OrdinalType,ScalarType>::calculateRoot( 
+						 const ScalarType beta,
+						 const ScalarType gamma ) const
+{
+  ScalarType root;
+
+  // Check if there is a root
+  if( beta == ST::zero() )
+    root = std::numeric_limits<ScalarType>::infinity();
+  else
+    root = -gamma/beta;
+
+  if( root < d_tolerance )
+    root = std::numeric_limits<ScalarType>::infinity();
+  
+  return root;
 }
 
 } // end FACEMC namespace

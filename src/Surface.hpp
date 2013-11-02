@@ -149,6 +149,18 @@ public:
 			  const Vector<ScalarType> &point,
 			  const SurfaceSense sense = POS_SURFACE_SENSE ) const;
 
+  //! Return the distance to the surface from the given point along the given direction
+  ScalarType getDistance( const ScalarType x,
+			  const ScalarType y,
+			  const ScalarType z,
+			  const ScalarType x_direction,
+			  const ScalarType y_direction,
+			  const ScalarType z_direction ) const;
+
+  //! Return the distance to the surface from the given point along the given direction
+  ScalarType getDistance( const Vector<ScalarType> &point,
+			  const Vector<ScalarType> &direction ) const;
+  
   //! Return the quadratic form matrix of the surface
   Matrix<ScalarType> getQuadraticFormMatrix() const;
 
@@ -191,6 +203,33 @@ protected:
   ScalarType evaluateGeneralSecondOrderSurface( const ScalarType x, 
 						const ScalarType y, 
 						const ScalarType z ) const;
+
+  //! Calculate the alpha parameter of a given direction
+  ScalarType calculateAlphaParameter( const ScalarType x_direction,
+				      const ScalarType y_direction,
+				      const ScalarType z_direction ) const;
+
+  //! Calculate the beta parameter of a given direction and point
+  ScalarType calculateBetaParameter( const ScalarType x,
+				     const ScalarType y,
+				     const ScalarType z,
+				     const ScalarType x_direction,
+				     const ScalarType y_direction,
+				     const ScalarType z_direction ) const;
+
+  //! Calculate the gamma parameter of a given point
+  ScalarType calculateGammaParameter( const ScalarType x,
+				      const ScalarType y,
+				      const ScalarType z ) const;
+
+  //! Compute the minimum real positive root of a second order polynomial
+  ScalarType calculateMinimumRealPositiveRoot( const ScalarType alpha,
+					       const ScalarType beta,
+					       const ScalarType gamma ) const;
+
+  //! Compute the root of a first order polynomial
+  ScalarType calculateRoot( const ScalarType beta,
+			    const ScalarType gamma ) const;
 
 private:
 
