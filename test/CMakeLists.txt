@@ -103,6 +103,10 @@ ADD_EXECUTABLE(tstLinearCongruentialGenerator
 ADD_EXECUTABLE(tstRandomNumberGenerator
   tstRandomNumberGenerator.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstCellBoundingBox
+  tstCellBoundingBox.cpp
+  ${SRC}/BooleanCellFunctor.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 
 TARGET_LINK_LIBRARIES(tstAssertion ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstContractException ${TEUCHOS_CORE})
@@ -130,14 +134,17 @@ TARGET_LINK_LIBRARIES(tstPolygon ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${L
 TARGET_LINK_LIBRARIES(tstCellPolygonFactory ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstLinearCongruentialGenerator ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstRandomNumberGenerator ${TEUCHOS_CORE})
+TARGET_LINK_LIBRARIES(tstCellBoundingBox ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 IF(${FACEMC_ENABLE_MPI} AND (${CMAKE_BUILD_TYPE} MATCHES "RELEASE") )
   TARGET_LINK_LIBRARIES(tstRandomNumberGenerator ${SPRNG} ${MPI_CXX_LIBRARIES})
+  TARGET_LINK_LIBRARIES(tstCellBoundingBox ${SPRNG} ${MPI_CXX_LIBRARIES})
 ELSEIF(${FACEMC_ENABLE_MPI} AND (${CMAKE_BUILD_TYPE} MATCHES "DEBUG") )
   TARGET_LINK_LIBRARIES(tstRandomNumberGenerator ${MPI_CXX_LIBRARIES})
+  TARGET_LINK_LIBRARIES(tstCellBoundingBox ${MPI_CXX_LIBRARIES})
 ELSE()
   TARGET_LINK_LIBRARIES(tstRandomNumberGenerator ${SPRNG})
-ENDIF()
-  
+  TARGET_LINK_LIBRARIES(tstCellBoundingBox ${SPRNG})
+ENDIF()  
 
 ADD_TEST(Assertion_test tstAssertion)
 ADD_TEST(ContractException_test tstContractException)
@@ -169,6 +176,7 @@ IF(${FACEMC_ENABLE_MPI})
   ADD_TEST(ParallelRandomNumberGenerator_test 
     mpiexec -n 2 tstRandomNumberGenerator)
 ENDIF()
+ADD_TEST(CellBoundingBox_test tstCellBoundingBox)
 
 # Install test files for the EPDL97DataProcessor_test
 FILE(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test_files/*.txt)
