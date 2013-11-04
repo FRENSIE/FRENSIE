@@ -105,13 +105,6 @@ void CellBoundingBox<Cell>::calculateCellVolume( int max_samples )
       ST::magnitude( cell_volume_estimate/cell_volume - 1.0 ) < 
       d_convergence_ratio;
     
-    std::cout.precision(9);
-    std::cout.setf( std::ios::fixed, std::ios::floatfield );
-    std::cout << number_of_samples << " " << cell_volume_estimate << " " 
-	      << ST::magnitude( cell_volume_estimate/cell_volume - 1.0 )/
-      d_convergence_ratio
-	      << std::endl;
-      
     // Compute the cell volume estimate
     cell_volume = cell_volume_estimate;
   }

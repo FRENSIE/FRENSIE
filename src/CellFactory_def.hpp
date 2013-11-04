@@ -108,12 +108,6 @@ void CellFactory<Cell,SurfaceMap>::calculatePolyhedralCellVolumeAndArea( CellPtr
 							     cell_bounding_box,
 							     cell_polygons );
     
-    // Assign the cell id and the numerical calculation type
-    cell_bounding_box.first.first = cell->getId();
-    cell_bounding_box.first.second = CELL_VOLUME;
-
-    // add this bounding box to the array of bounding boxes
-    d_bounding_boxes.push_back( cell_bounding_box );
   }
 }
 

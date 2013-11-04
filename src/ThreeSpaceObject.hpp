@@ -45,7 +45,7 @@ private:
   ThreeSpaceObjectType d_object_type;
 };
 
-}
+} // end FACEMC namespace
 
 #endif // end THREE_SPACE_OBJECT_HPP
 
