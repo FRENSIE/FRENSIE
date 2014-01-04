@@ -18,6 +18,7 @@ SET(HEADERS
   SetOperationFunctor.hpp
   BooleanCellFunctor.hpp
   Cell.hpp
+  CellFactory.hpp
   ${HEADERS}
   )
 

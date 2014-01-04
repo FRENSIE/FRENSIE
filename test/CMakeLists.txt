@@ -97,6 +97,10 @@ ADD_EXECUTABLE(tstCellPolygonFactory
   tstCellPolygonFactory.cpp
   ${SRC}/BooleanCellFunctor.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstCellFactory
+  tstCellFactory.cpp
+  ${SRC}/BooleanCellFunctor.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstLinearCongruentialGenerator
   tstLinearCongruentialGenerator.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -132,6 +136,7 @@ TARGET_LINK_LIBRARIES(tstCell ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPA
 TARGET_LINK_LIBRARIES(tstIntersectionPoint ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstPolygon ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstCellPolygonFactory ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+TARGET_LINK_LIBRARIES(tstCellFactory ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstLinearCongruentialGenerator ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstRandomNumberGenerator ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstCellBoundingBox ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
@@ -170,6 +175,7 @@ ADD_TEST(Cell_test tstCell)
 ADD_TEST(IntersectionPoint_test tstIntersectionPoint)
 ADD_TEST(Polygon_test tstPolygon)
 ADD_TEST(CellPolygonFactory_test tstCellPolygonFactory)
+ADD_TEST(CellFactory_test tstCellFactory)
 ADD_TEST(LinearCongruentialGenerator_test tstLinearCongruentialGenerator)
 ADD_TEST(RandomNumberGenerator_test tstRandomNumberGenerator)
 IF(${FACEMC_ENABLE_MPI})

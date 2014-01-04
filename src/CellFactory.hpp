@@ -14,6 +14,7 @@
 #include <map>
 
 // Trilinos Includes
+#include <Teuchos_Array.hpp>
 #include <Teuchos_ArrayView.hpp>
 #include <Teuchos_RCP.hpp>
 
@@ -21,6 +22,7 @@
 #include "Cell.hpp"
 #include "Surface.hpp"
 #include "Polygon.hpp"
+#include "IntersectionPoint.hpp"
 #include "Tuple.hpp"
 
 namespace FACEMC{
@@ -69,6 +71,8 @@ private:
   typedef Teuchos::OrdinalTraits<surfaceOrdinalType> SurfaceOT;
   //! Typedef for intersection point
   typedef IntersectionPoint<surfaceOrdinalType,scalarType> Point;
+  //! Typedef for polygon
+  typedef Polygon<surfaceOrdinalType,scalarType> CellPolygon;
 
 public:
 
@@ -84,37 +88,36 @@ public:
 		  std::string &cell_definition,
 		  const bool calculate_volume_and_area = false ) const;
 
-  //! Get the cells needing Monte Carlo integration
-  Teuchos::Array<typename Cell::ordinalType> 
-  getCellsNeedingMonteCarloIntegration() const;
-
 protected:
 
   //! Calculate the volume and area of a polyhedral cell
-  void calculatePolyhedralCellVolumeAndArea( CellPtr &cell );
+  void calculatePolyhedralCellVolumeAndArea( CellPtr &cell ) const;
 
   //! Create the polygons bounding the cell
   static void createBoundingPolygons( 
-				  const Teuchos::Array<Polygon> &cell_polygons,
+				  const Teuchos::Array<CellPolygon> 
+				  &cell_polygons,
 				  CellPtr &cell );
 
   //! Calculate the volume of a polyhedral cell using bounding polygons
   static scalarType calculatePolyhedralCellVolumeFromPolygons( 
-				const Teuchos::Array<Polygon> &cell_polygons );
+				const Teuchos::Array<CellPolygon> 
+				&cell_polygons );
 
   //! Create a bounding box for a polyhedral cell from bounding polygons
-  static void createBoundingBoxFromPolygons( 
-				BoundingBox &cell_bounding_box,
-				const Teuchos::Array<Polygon> &cell_polygons );
+  // static void createBoundingBoxFromPolygons( 
+  // 				BoundingBox &cell_bounding_box,
+  // 				const Teuchos::Array<CellPolygon> &cell_polygons );
 
   //! Calculate the intersection points of planes with a plane of interest
   static void calculateIntersectionPointsOnPlane(
-			    std::list<IntersectionPoint> &intersection_points,
-			    const SurfaceSensePairsIterator &plane_of_polygon,
-			    const CellPtr &cell ) const;
+			    std::list<Point> &intersection_points,
+			    const typename Cell::SurfaceSensePairsIterator 
+			    &plane_of_polygon,
+			    const CellPtr &cell );
 
   //! Calculate the volume and area of a rotationally symmetric cell
-  void calculateRotationallySymmetricCellVolumeAndArea( CellPtr &cell ); 
+  // void calculateRotationallySymmetricCellVolumeAndArea( CellPtr &cell ); 
 
 private:
 
@@ -128,7 +131,7 @@ private:
 // Template includes.
 //---------------------------------------------------------------------------//
 
-#include CellFactory_def.hpp
+#include "CellFactory_def.hpp"
 
 //---------------------------------------------------------------------------//
 
