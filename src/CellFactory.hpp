@@ -95,9 +95,8 @@ protected:
 
   //! Create the polygons bounding the cell
   static void createBoundingPolygons( 
-				  const Teuchos::Array<CellPolygon> 
-				  &cell_polygons,
-				  CellPtr &cell );
+				    Teuchos::Array<CellPolygon> &cell_polygons,
+				    CellPtr &cell );
 
   //! Calculate the volume of a polyhedral cell using bounding polygons
   static scalarType calculatePolyhedralCellVolumeFromPolygons( 

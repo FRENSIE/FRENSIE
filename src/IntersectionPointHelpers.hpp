@@ -22,6 +22,8 @@ IntersectionPoint<OrdinalType,ScalarType> createIntersectionPoint(
 	       const Surface<OrdinalType,ScalarType> &secondary_surface,
 	       const Surface<OrdinalType,ScalarType> &tertiary_surface );
 
+} // end FACEMC namespace
+
 //---------------------------------------------------------------------------//
 // Template includes.
 //---------------------------------------------------------------------------//

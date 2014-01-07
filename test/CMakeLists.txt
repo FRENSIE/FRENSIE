@@ -90,6 +90,10 @@ ADD_EXECUTABLE(tstIntersectionPoint
   tstIntersectionPoint.cpp
   ${SRC}/BooleanCellFunctor.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstIntersectionPointHelpers
+  tstIntersectionPointHelpers.cpp
+  ${SRC}/BooleanCellFunctor.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 ADD_EXECUTABLE(tstPolygon
   tstPolygon.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -134,6 +138,7 @@ TARGET_LINK_LIBRARIES(tstSetOperationFunctor ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstBooleanCellFunctor ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstCell ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstIntersectionPoint ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
+TARGET_LINK_LIBRARIES(tstIntersectionPointHelpers ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstPolygon ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstCellPolygonFactory ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
 TARGET_LINK_LIBRARIES(tstCellFactory ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${BLAS} ${LAPACK})
@@ -173,6 +178,7 @@ ADD_TEST(SetOperationFunctor_test tstSetOperationFunctor)
 ADD_TEST(BooleanCellFunctor_test tstBooleanCellFunctor)
 ADD_TEST(Cell_test tstCell)
 ADD_TEST(IntersectionPoint_test tstIntersectionPoint)
+ADD_TEST(IntersectionPointHelpers_test tstIntersectionPointHelpers)
 ADD_TEST(Polygon_test tstPolygon)
 ADD_TEST(CellPolygonFactory_test tstCellPolygonFactory)
 ADD_TEST(CellFactory_test tstCellFactory)

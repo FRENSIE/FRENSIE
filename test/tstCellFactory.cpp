@@ -25,11 +25,64 @@
 #include "Surface.hpp"
 
 //---------------------------------------------------------------------------//
+// Instantiation Macros.
+//---------------------------------------------------------------------------//
+#define MAP_TYPEDEFS( space, map )					\
+  typedef space::map<short,Teuchos::RCP<FACEMC::Surface<short,float> > >	map##_s_f; \
+  typedef space::map<short,Teuchos::RCP<FACEMC::Surface<short,double> > > map##_s_d; \
+  typedef space::map<int,Teuchos::RCP<FACEMC::Surface<int,float> > > map##_i_f; \
+  typedef space::map<int,Teuchos::RCP<FACEMC::Surface<int,double> > > map##_i_d; \
+  typedef space::map<long,Teuchos::RCP<FACEMC::Surface<long,float> > > map##_l_f; \
+  typedef space::map<long,Teuchos::RCP<FACEMC::Surface<long,double> > > map##_l_d; \
+  
+#define UNIT_TEST_INSTANTIATION_STD_MAP( type, name )		\
+  MAP_TYPEDEFS( std, map )						\
+  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, short, float, map_s_f) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, short, double, map_s_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, int, float, map_i_f ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, int, double, map_i_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, long, float, map_l_f ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, long, double, map_l_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, short, float, map_s_f) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, short, double, map_s_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, int, float, map_i_f ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, int, double, map_i_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, long, float, map_l_f ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, long, double, map_l_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, short, float, map_s_f) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, short, double, map_s_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, int, float, map_i_f ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, int, double, map_i_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, long, float, map_l_f ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, long, double, map_l_d ) \
+
+#define UNIT_TEST_INSTANTIATION_BOOST_UMAP( type, name )		\
+  MAP_TYPEDEFS( boost, unordered_map )					\
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, short, float, unordered_map_s_f) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, short, double, unordered_map_s_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, int, float, unordered_map_i_f ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, int, double, unordered_map_i_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, long, float, unordered_map_l_f ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, long, double, unordered_map_l_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, short, float, unordered_map_s_f) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, short, double, unordered_map_s_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, int, float, unordered_map_i_f ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, int, double, unordered_map_i_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, long, float, unordered_map_l_f ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, long, double, unordered_map_l_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, short, float, unordered_map_s_f) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, short, double, unordered_map_s_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, int, float, unordered_map_i_f ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, int, double, unordered_map_i_d ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, long, float, unordered_map_l_f ) \
+  // TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, long, double, unordered_map_l_d ) \
+
+//---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
 // Create a cube centered on the origin and a sphere centered on the origin
 template<typename SurfaceMap>
-void createCubSurface( SurfaceMap &cell_surfaces )
+void createSurfaces( SurfaceMap &cell_surfaces )
 {
   typedef typename SurfaceMap::mapped_type::element_type::ordinalType 
     OrdinalType;
@@ -104,7 +157,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( CellFactory,
   std::string sphere_cell_definition = "-7";
 
   SurfaceMap surface_map;
-  createConvexPolyhedronSurfaces( surface_map );
+  createSurfaces( surface_map );
 
   // Create the cell factory
   CellFactory factory( surface_map );
@@ -121,6 +174,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( CellFactory,
   TEST_EQUALITY_CONST( cube->getVolume(), 64.0 );
   TEST_EQUALITY_CONST( sphere->getVolume(), 1.0 );
 }
+
+UNIT_TEST_INSTANTIATION_STD_MAP( CellFactory, create );
+UNIT_TEST_INSTANTIATION_BOOST_UMAP( CellFactory, create );
+
 //---------------------------------------------------------------------------//
 // end tstCellFactory.cpp
 //---------------------------------------------------------------------------//

@@ -25,6 +25,7 @@
 #include "Polygon.hpp"
 #include "CellPolygonFactory.hpp"
 #include "VectorHelpers.hpp"
+#include "IntersectionPointHelpers.hpp"
 #include "Tuple.hpp"
 #include "ContractException.hpp"
 
@@ -59,15 +60,12 @@ CellFactory<Cell,SurfaceMap>::create(
   {
     if( cell->isPolyhedron() )
     {
-      if( CellFactory<Cell,SurfaceMap>::isPolyhedronAnalyticallyIntegrable( 
-								       cell ) )
-      {
+      if( cell->isAnalyticallyIntegrable() )
 	calculatePolyhedralCellVolumeAndArea( cell );
-      }
       else
       {
 	std::cout << "Warning: the volume of polyhedral cell " 
-		  << cell->getId()
+		  << id
 		  << " cannot be calculated due to its complexity" 
 		  << std::endl;
       }
@@ -77,10 +75,20 @@ CellFactory<Cell,SurfaceMap>::create(
       //calculateRotationallySymmetricCellVolumeAndArea( cell );
 
       std::cout << "Warning: the volume of a non-polyhedral cell (" 
-		<< cell->getId() 
+		<< id
 		<< ") cannot currently be calculated." << std::endl;
       
       cell->setVolume( 1.0 );
+
+      typename Cell::SurfaceSensePairsIterator cell_surface = 
+	cell->beginSurfaceSensePairs();
+      
+      while( cell_surface != cell->endSurfaceSensePairs() )
+      {
+	cell->setSurfaceArea( cell_surface->first->getId(), 1.0 );
+	
+	++cell_surface;
+      }
     }
   }
 
@@ -92,7 +100,7 @@ template<typename Cell, typename SurfaceMap>
 void CellFactory<Cell,SurfaceMap>::calculatePolyhedralCellVolumeAndArea( CellPtr &cell ) const
 {
   // Make sure that the cell is analytically integrable
-  testPrecondition( isPolyhedronAnalyticallyIntegrable( cell ) );
+  testPrecondition( cell->isAnalyticallyIntegrable() );
   
   // All surface polygons will be stored in an array
   Teuchos::Array<CellPolygon> cell_polygons;
@@ -104,8 +112,8 @@ void CellFactory<Cell,SurfaceMap>::calculatePolyhedralCellVolumeAndArea( CellPtr
   typename Teuchos::Array<CellPolygon>::const_iterator polygon, end_polygon;
   polygon = cell_polygons.begin();
   end_polygon = cell_polygons.end();
-
-  while( polygon != end_polygon );
+  
+  while( polygon != end_polygon )
   {
     cell->setSurfaceArea( polygon->getId(), polygon->getArea() );
 
@@ -120,58 +128,58 @@ void CellFactory<Cell,SurfaceMap>::calculatePolyhedralCellVolumeAndArea( CellPtr
 }
 
 // Calculate the polygons bounding the cell
-// template<typename Cell, typename SurfaceMap>
-// void CellFactory<Cell,SurfaceMap>::createBoundingPolygons(
-// 							  const Teuchos::Array<Polygon> &cell_polygons,
-// 							  CellPtr &cell )
-// {
-//   // Initialize the polygon array
-//   cell_polygons.clear();
+template<typename Cell, typename SurfaceMap>
+void CellFactory<Cell,SurfaceMap>::createBoundingPolygons(
+			            Teuchos::Array<CellPolygon> &cell_polygons,
+			            CellPtr &cell )
+{
+  // Initialize the polygon array
+  cell_polygons.clear();
   
-//   // Get the surfaces that define the cell
-//   SurfaceSensePairsIterator surface_sense_pair = 
-//     cell->beginSurfaceSensePairs();
-//   SurfaceSensePairsIterator end_surface_sense_pair = 
-//     cell->endSurfaceSensePairs();
+  // Get the surfaces that define the cell
+  typename Cell::SurfaceSensePairsIterator surface_sense_pair = 
+    cell->beginSurfaceSensePairs();
+  typename Cell::SurfaceSensePairsIterator end_surface_sense_pair = 
+    cell->endSurfaceSensePairs();
 
-//   // Create a polygon factory for this cell
-//   CellPolygonFactory polygon_factory( cell );
+  // Create a polygon factory for this cell
+  CellPolygonFactory<Cell> polygon_factory( cell );
 
-//   // Processed surfaces (the same surf. may appear more than once in cell def)
-//   std::set<typename Cell::surfaceOrdinalType> processed_surfaces;
+  // Processed surfaces (the same surf. may appear more than once in cell def)
+  std::set<typename Cell::surfaceOrdinalType> processed_surfaces;
   
-//   // Process every surface of the cell and create a polygon
-//   while( surface_sense_pair != end_surface_sense_pair )
-//   {
-//     // Only use a surface if it hasn't been processed yet
-//     if( processed_surfaces.find( surface_sense_pair->first->getId() ) ==
-// 	processed_surfaces.end() )
-//     {
-//       processed_surfaces.insert( surface_sense_pair->first->getId() );
-//     }
-//     else // this surface has already been processed
-//     {
-//       ++surface_sense_pair;
-//       continue;
-//     }      
+  // Process every surface of the cell and create a polygon
+  while( surface_sense_pair != end_surface_sense_pair )
+  {
+    // Only use a surface if it hasn't been processed yet
+    if( processed_surfaces.find( surface_sense_pair->first->getId() ) ==
+	processed_surfaces.end() )
+    {
+      processed_surfaces.insert( surface_sense_pair->first->getId() );
+    }
+    else // this surface has already been processed
+    {
+      ++surface_sense_pair;
+      continue;
+    }      
     
-//     // Determine the intersection points of all other surfaces with this surf.
-//     std::list<IntersectionPoint> intersection_points;
-//     calculateIntersectionPointsOnPlane( intersection_points,
-// 				 surface_sense_pair,
-// 				 cell );
+    // Determine the intersection points of all other surfaces with this surf.
+    std::list<Point> intersection_points;
+    calculateIntersectionPointsOnPlane( intersection_points,
+				        surface_sense_pair,
+					cell );
 
-//     // Create a new ordered list of points (polygon) from the intersections
-//     CellPolygonFactory::PolygonPtr current_surface_polygon =
-//       polygon_factory.create( intersection_points );
+    // Create a new ordered list of points (polygon) from the intersections
+    typename CellPolygonFactory<Cell>::PolygonPtr current_surface_polygon =
+      polygon_factory.create( intersection_points );
 
-//     // Add this polygon to the array of cell polygons
-//     cell_polygons.push_back( *current_surface_polygon );
+    // Add this polygon to the array of cell polygons
+    cell_polygons.push_back( *current_surface_polygon );
 
-//     // Finished processing the current surface
-//     ++surface_sense_pair
-//   }
-// }
+    // Finished processing the current surface
+    ++surface_sense_pair;
+  }
+}
 
 // Calculate the volume of a polyhedral cell using bounding polygons
 template<typename Cell, typename SurfaceMap>
@@ -201,28 +209,32 @@ CellFactory<Cell,SurfaceMap>::calculatePolyhedralCellVolumeFromPolygons(
   // Calculate the volume contribution from each polygon (V_c = d*A*cos_ang)
   polygon = cell_polygons.begin();
   while( polygon != end_polygon )
-  {
+  {   
+    scalarType z_centroid = polygon->getCentroidZCoordinate();
+    
+    // d = abs( centroid_z - z_position )
+    scalarType distance = 
+      ST::magnitude( z_centroid - reference_z_position );
+
     Vector<scalarType> polygon_plane_unit_normal = 
       polygon->getPolygonPlaneUnitNormal();
-    
-    typename CellPolygon::Point z_centroid = polygon->getCentroidZCoordinate();
-    
-    // d = abs( reference_plane_z*centroid_z - z_position )
-    scalarType distance = 
-      ST::magnitude( polygon_plane_unit_normal[2]*z_centroid - 
-		     reference_z_position );
     
     scalarType cos_angle = 
       polygon_plane_unit_normal.angleCosine( reference_unit_normal );
           
     scalarType polygon_area = polygon->getArea();
+
+    std::cout << polygon->getId() << " " << z_centroid << " " 
+	      << distance << " " << cos_angle 
+	      << " " << polygon_area << std::endl;
     
     // Add the contribution to the cell volume
     cell_volume += distance*polygon_area*cos_angle;
     
     ++polygon;
   }
-
+  std::cout << "reference_z_position: " << reference_z_position << std::endl;
+  std::cout << "cell_volume: " << cell_volume << std::endl;
   // Make sure that the volume is physical
   testPostcondition( cell_volume > ST::zero() );
   testPostcondition( !ST::isnaninf( cell_volume ) );
@@ -327,7 +339,7 @@ void CellFactory<Cell,SurfaceMap>::calculateIntersectionPointsOnPlane(
       secondary_surface->first->getLinearTermVector();
     
     if( primary_surface_normal.isParallel( secondary_surface_normal ) ||
-	primary_surface_normal.isAntiParallel( secondary_surface_normal ) )
+	primary_surface_normal.isAntiparallel( secondary_surface_normal ) )
     {
       ++secondary_surface;
       continue;
@@ -363,9 +375,9 @@ void CellFactory<Cell,SurfaceMap>::calculateIntersectionPointsOnPlane(
 	tertiary_surface->first->getLinearTermVector();
          
       if( tertiary_surface_normal.isParallel( primary_surface_normal ) ||
-	  tertiary_surface_normal.isAntiParallel( primary_surface_normal )||
+	  tertiary_surface_normal.isAntiparallel( primary_surface_normal )||
 	  tertiary_surface_normal.isParallel( secondary_surface_normal )||
-	  tertiary_surface_normal.isAntiParallel( secondary_surface_normal ) )
+	  tertiary_surface_normal.isAntiparallel( secondary_surface_normal ) )
       {
 	  ++tertiary_surface;
 	  continue;
@@ -373,15 +385,15 @@ void CellFactory<Cell,SurfaceMap>::calculateIntersectionPointsOnPlane(
       
       // Calculate the intersection point
       Point intersection_point = 
-	calculateIntersectionPoint( plane_of_polygon,
-				    secondary_surface,
-				    tertiary_surface );
+	createIntersectionPoint( *(plane_of_polygon->first),
+				 *(secondary_surface->first),
+				 *(tertiary_surface->first) );
       
       // Test if the intersection point is on the cell
       bool possible_intersection_point = 
-	cell->isOn( intersection_point.first.first,
-		    intersection_point.first.second,
-		    intersection_point.first.third );
+	cell->isOn( intersection_point.getXCoordinate(),
+		    intersection_point.getYCoordinate(),
+		    intersection_point.getZCoordinate() );
 
       // Test if the intersection point is real
       bool real_intersection_point = false;
