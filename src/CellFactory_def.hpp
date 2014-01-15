@@ -224,17 +224,12 @@ CellFactory<Cell,SurfaceMap>::calculatePolyhedralCellVolumeFromPolygons(
           
     scalarType polygon_area = polygon->getArea();
 
-    std::cout << polygon->getId() << " " << z_centroid << " " 
-	      << distance << " " << cos_angle 
-	      << " " << polygon_area << std::endl;
-    
     // Add the contribution to the cell volume
     cell_volume += distance*polygon_area*cos_angle;
     
     ++polygon;
   }
-  std::cout << "reference_z_position: " << reference_z_position << std::endl;
-  std::cout << "cell_volume: " << cell_volume << std::endl;
+  
   // Make sure that the volume is physical
   testPostcondition( cell_volume > ST::zero() );
   testPostcondition( !ST::isnaninf( cell_volume ) );

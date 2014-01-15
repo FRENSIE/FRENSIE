@@ -24,7 +24,7 @@ MACRO(ENABLE_HDF5_SUPPORT)
 
   # Any execs built off of HFD5 will need both libraries so they will both
   # be stored in a single variable
-  SET(HDF5 ${HDF5CPP} ${HDF5CORE})
+  SET(HDF5 ${HDF5CPP} ${HDF5CORE} -ldl)
   
   # Set the include paths for HDF5
   INCLUDE_DIRECTORIES(${HDF5_INCLUDE_DIRS})

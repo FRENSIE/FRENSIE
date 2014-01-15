@@ -115,6 +115,9 @@ ADD_EXECUTABLE(tstCellBoundingBox
   tstCellBoundingBox.cpp
   ${SRC}/BooleanCellFunctor.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstParticleState
+  tstParticleState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 
 TARGET_LINK_LIBRARIES(tstAssertion ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstContractException ${TEUCHOS_CORE})
@@ -155,6 +158,7 @@ ELSE()
   TARGET_LINK_LIBRARIES(tstRandomNumberGenerator ${SPRNG})
   TARGET_LINK_LIBRARIES(tstCellBoundingBox ${SPRNG})
 ENDIF()  
+TARGET_LINK_LIBRARIES(tstParticleState ${TEUCHOS_CORE} ${MOAB})
 
 ADD_TEST(Assertion_test tstAssertion)
 ADD_TEST(ContractException_test tstContractException)
@@ -189,6 +193,7 @@ IF(${FACEMC_ENABLE_MPI})
     mpiexec -n 2 tstRandomNumberGenerator)
 ENDIF()
 ADD_TEST(CellBoundingBox_test tstCellBoundingBox)
+ADD_TEST(ParticleState_test tstParticleState)
 
 # Install test files for the EPDL97DataProcessor_test
 FILE(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test_files/*.txt)

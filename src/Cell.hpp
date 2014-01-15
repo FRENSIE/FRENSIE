@@ -27,6 +27,7 @@
 
 namespace FACEMC{
 
+//! The cell class
 template<typename CellOrdinalType, 
 	 typename SurfaceOrdinalType,
 	 typename ScalarType>
@@ -113,6 +114,9 @@ public:
 
   //! Manually set the volume of the cell
   void setVolume( const ScalarType volume );
+  
+  //! Return the cell id
+  CellOrdinalType getId() const;
 
   //! Return the area of a surface bounding the cell
   ScalarType getSurfaceArea( const SurfaceOrdinalType surface_id ) const;

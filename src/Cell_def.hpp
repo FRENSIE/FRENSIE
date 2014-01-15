@@ -213,11 +213,11 @@ bool Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType>::isAnalyticallyIntegrab
   bool analytically_integrable_cell = true;
 
   SurfaceSensePairsIterator first_surface = 
-    d_surface_sense_pairs.beginSurfaceSensePairs();
+    d_surface_sense_pairs.begin();
   SurfaceSensePairsIterator second_surface = 
-    d_surface_sense_pairs.beginSurfaceSensePairs();
+    d_surface_sense_pairs.begin();
   SurfaceSensePairsIterator end_surface = 
-    d_surface_sense_pairs.endSurfaceSensePairs();
+    d_surface_sense_pairs.end();
 
   // Processed surfaces
   std::set<SurfaceOrdinalType> processed_surfaces;
@@ -235,7 +235,7 @@ bool Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType>::isAnalyticallyIntegrab
       continue;
     }
 
-    second_surface = d_surface_sense_pairs.beginSurfaceSensePairs();
+    second_surface = d_surface_sense_pairs.begin();
 
     // See if the same surface appears again in the cell def. with diff. sense
     while( second_surface != end_surface )
@@ -289,6 +289,16 @@ void Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::setVolume(
   testPrecondition( !ST::isnaninf( volume ) );
   
   d_volume = volume;
+}
+
+// Return the cell id
+template<typename CellOrdinalType,
+	 typename SurfaceOrdinalType,
+	 typename ScalarType>
+CellOrdinalType 
+Cell<CellOrdinalType,SurfaceOrdinalType,ScalarType>::getId() const
+{
+  return d_id;
 }
 
 // Return the area of a surface bounding the cell

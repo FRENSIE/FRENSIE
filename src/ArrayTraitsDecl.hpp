@@ -23,12 +23,13 @@
  * The FACEMC::HDF5FileHandler has many templated member functions 
  * with a template template parameter (Array). Because the Teuchos array 
  * classes have slightly different interfaces, a traits class is needed to 
- * homogenize the interfaces (bridge pattern). The FACEMC::ArrayTraits struct 
- * is defines the interface. Because of the slightly different interfaces for 
- * each array type, the FACEMC::HDF5ArrayPolicy class must be specialized. 
- * Attempting to use the class without a specialization will result in a 
- * compile time error. The compile time error message is defined by 
- * the FACEMC::Traits::UndefinedTraits struct.
+ * homogenize the interfaces (bridge pattern). The 
+ * FACEMC::Traits::ArrayTraits struct defines the interface. Because of the 
+ * slightly different interfaces for each array type, the 
+ * FACEMC::Traits::HDF5ArrayTraits class must be specialized. Attempting to 
+ * use the class without a specialization will result in a compile time error. 
+ * The compile time error message is defined by the 
+ * FACEMC::Traits::UndefinedTraits struct.
  */
 
 namespace FACEMC{
