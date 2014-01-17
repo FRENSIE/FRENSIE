@@ -53,9 +53,9 @@ public:
   
 protected:
   
-  //--------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
   // EPDL file processing member functions
-  //--------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
 
   //! Process EPDL file
   void processEPDLFile();
@@ -84,9 +84,9 @@ protected:
   //! Process the scattering function data
   void processScatteringFunctionData();
 
-  //--------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
   // EADL file processing member functions
-  //--------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
 
   //! Process EADL file
   void processEADLFile();
@@ -107,24 +107,24 @@ protected:
   //! Process the shell nonradiative transition probability data
   void processShellNonradiativeTransitionData( const unsigned int shell );
 
-  //--------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
   // Compton Profile file processing member functions
-  //--------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
 
   //! Process Compton files
   void processComptonFiles( unsigned int atomic_number_start = 1,
 			    unsigned int atomic_number_end = 100 );
 
-  //--------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
   // Extras
-  //--------------------------------------------------------------------------//
+  //-------------------------------------------------------------------------//
 
   //! Create the x-ray production cross sections
   /* \brief These cross sections are created by multiplying the photoelectric
-     cross section for a specific shell by the radiative transition probability.
-     X-ray production cross sections are only created for the strongest
-     x-ray lines. All other transitions are grouped together in a single
-     photon absorption cross section.
+     cross section for a specific shell by the radiative transition 
+     probability. X-ray production cross sections are only created for the 
+     strongest x-ray lines. All other transitions are grouped together in a 
+     single photon absorption cross section.
   */
   void createXrayProductionCrossSections();
 

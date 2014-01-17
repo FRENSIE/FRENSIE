@@ -18,7 +18,7 @@
 #include "DagMCHelpers.hpp"
 
 //---------------------------------------------------------------------------//
-// Test sat file name
+// Test Sat File Name
 //---------------------------------------------------------------------------//
 std::string test_geometry_file_name;
 
@@ -77,8 +77,8 @@ int main( int argc, char* argv[] )
 		 &test_geometry_file_name,
 		 "Test sat file name" );
   
-  Teuchos::GlobalMPISession mpiSession(&argc, &argv);
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain(argc, argv);
+  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
+  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
 				  
 //---------------------------------------------------------------------------//

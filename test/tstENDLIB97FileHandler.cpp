@@ -22,15 +22,15 @@
 //---------------------------------------------------------------------------//
 // Test File Names.
 //---------------------------------------------------------------------------//
-#define FIRST_HEADER_TEST_FILE "test_first_header.txt"
-#define SECOND_HEADER_TEST_FILE "test_second_header.txt"
-#define FULL_HEADER_TEST_FILE "test_full_header.txt"
-#define TWO_COLUMN_TABLE_TEST_FILE "test_two_column_table.txt"
-#define THREE_COLUMN_TABLE_TEST_FILE "test_three_column_table.txt"
-#define FOUR_COLUMN_TABLE_TEST_FILE "test_four_column_table.txt"
-#define TWO_TWO_COLUMN_TABLES_TEST_FILE "test_two_two_column_tables.txt"
-#define TWO_THREE_COLUMN_TABLES_TEST_FILE "test_two_three_column_tables.txt"
-#define TWO_FOUR_COLUMN_TABLES_TEST_FILE "test_two_four_column_tables.txt"
+std::string first_header_test_file;
+std::string second_header_test_file;
+std::string full_header_test_file;
+std::string two_column_table_test_file;
+std::string three_column_table_test_file;
+std::string four_column_table_test_file;
+std::string two_two_column_tables_test_file;
+std::string two_three_column_tables_test_file;
+std::string two_four_column_tables_test_file;
 
 //---------------------------------------------------------------------------//
 // Testing Parameters
@@ -240,7 +240,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, constructor )
 {
   // If DBC is turned on, the constructor will throw an exception and exit
   // if this file does not exist. No Testing Macro is needed.
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( FIRST_HEADER_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( first_header_test_file );
 }
 
 //---------------------------------------------------------------------------//
@@ -251,7 +251,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, openENDLIB97File )
   
   // If DBC is turned on, the constructor will throw an exception and exit
   // if this file does not exist. No Testing Macro is needed.
-  endlib_file_handler.openENDLIB97File( FIRST_HEADER_TEST_FILE );
+  endlib_file_handler.openENDLIB97File( first_header_test_file );
 }
 
 //---------------------------------------------------------------------------//
@@ -260,7 +260,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, validFile )
 {
   FACEMC::ENDLIB97FileHandler endlib_file_handler;
 
-  endlib_file_handler.openENDLIB97File( FIRST_HEADER_TEST_FILE );
+  endlib_file_handler.openENDLIB97File( first_header_test_file );
   
   TEST_ASSERT( endlib_file_handler.validFile() );
 }
@@ -321,8 +321,8 @@ UNIT_TEST_INSTANTIATION( ENDLIB97FileHandler, extractValue );
 // Check that the ENDLIB97FileHandler can read the first header of a table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, readFirstTableHeader )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( FIRST_HEADER_TEST_FILE );
-
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( first_header_test_file );
+  
   // Values to read from the header
   unsigned int atomic_number, atomic_number_true = 99;
   unsigned int outgoing_particle_designator,
@@ -354,8 +354,9 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, readFirstTableHeader )
 // Check that the ENDLIB97FileHandler can read the second header of a table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, readSecondTableHeader )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( SECOND_HEADER_TEST_FILE );
-
+  std::cout << second_header_test_file << std::endl;
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( second_header_test_file );
+  
   // Values to read from the header
   unsigned int reaction_type, reaction_type_true = 73000;
   unsigned int electron_shell, electron_shell_true = 11;
@@ -378,7 +379,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, readSecondTableHeader )
 // second header of a table consecutively
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, read_full_header_test )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( FULL_HEADER_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( full_header_test_file );
   
   // Values to read from the header
   unsigned int atomic_number, atomic_number_true = 70;
@@ -421,7 +422,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, read_full_header_test )
 // Check that the ENDLIB97FileHandler can skip a two column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, skipTwoColumnTable )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_column_table_test_file );
   
   unsigned int atomic_number;
   unsigned int outgoing_particle_designator;
@@ -456,7 +457,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, skipTwoColumnTable )
 // Check that the ENDLIB97FileHandler can skip a three column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, skipThreeColumnTable )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( THREE_COLUMN_TABLE_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( three_column_table_test_file );
   
   unsigned int atomic_number;
   unsigned int outgoing_particle_designator;
@@ -492,7 +493,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, skipThreeColumnTable )
 // Check that the ENDLIB97FileHandler can skip a four column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, skipFourColumnTable )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( FOUR_COLUMN_TABLE_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( four_column_table_test_file );
   
   unsigned int atomic_number;
   unsigned int outgoing_particle_designator;
@@ -529,7 +530,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ENDLIB97FileHandler,
 				   readTwoColumnTable,
 				   Tuple )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_COLUMN_TABLE_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_column_table_test_file );
   
   unsigned int atomic_number;
   unsigned int outgoing_particle_designator;
@@ -576,7 +577,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ENDLIB97FileHandler,
 				   readThreeColumnTable,
 				   Tuple )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( THREE_COLUMN_TABLE_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( three_column_table_test_file );
   
   unsigned int atomic_number;
   unsigned int outgoing_particle_designator;
@@ -622,7 +623,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ENDLIB97FileHandler,
 				   readFourColumnTable,
 				   Tuple )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( FOUR_COLUMN_TABLE_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( four_column_table_test_file );
   
   unsigned int atomic_number;
   unsigned int outgoing_particle_designator;
@@ -666,7 +667,7 @@ UNIT_TEST_INSTANTIATION_QUAD( ENDLIB97FileHandler, readFourColumnTable );
 // skip a two column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_skip_skip_test )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_TWO_COLUMN_TABLES_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_two_column_tables_test_file );
   
   unsigned int atomic_number_1, atomic_number_2;
   unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
@@ -722,7 +723,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_skip_skip_test )
 // read a two column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_skip_read_test )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_TWO_COLUMN_TABLES_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_two_column_tables_test_file );
   
   unsigned int atomic_number_1, atomic_number_2;
   unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
@@ -781,7 +782,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_skip_read_test )
 // skip a two column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_read_skip_test )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_TWO_COLUMN_TABLES_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_two_column_tables_test_file );
   
   unsigned int atomic_number_1, atomic_number_2;
   unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
@@ -840,7 +841,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_read_skip_test )
 // read a two column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_read_read_test )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_TWO_COLUMN_TABLES_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_two_column_tables_test_file );
   
   unsigned int atomic_number_1, atomic_number_2;
   unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
@@ -899,7 +900,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, two_column_table_read_read_test )
 // skip a three column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_skip_skip_test )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_THREE_COLUMN_TABLES_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_three_column_tables_test_file );
   
   unsigned int atomic_number_1, atomic_number_2;
   unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
@@ -956,7 +957,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_skip_skip_test )
 // read a three column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_skip_read_test )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_THREE_COLUMN_TABLES_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_three_column_tables_test_file );
   
   unsigned int atomic_number_1, atomic_number_2;
   unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
@@ -1015,7 +1016,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_skip_read_test )
 // skip a three column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_read_skip_test )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_THREE_COLUMN_TABLES_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_three_column_tables_test_file );
   
   unsigned int atomic_number_1, atomic_number_2;
   unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
@@ -1074,7 +1075,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_read_skip_test )
 // read a three column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_read_read_test )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_THREE_COLUMN_TABLES_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_three_column_tables_test_file );
   
   unsigned int atomic_number_1, atomic_number_2;
   unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
@@ -1133,7 +1134,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, three_column_table_read_read_test )
 // skip a four column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_skip_skip_test )
 { 
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_FOUR_COLUMN_TABLES_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_four_column_tables_test_file );
   
   unsigned int atomic_number_1, atomic_number_2;
   unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
@@ -1190,7 +1191,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_skip_skip_test )
 // read a four column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_skip_read_test )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_FOUR_COLUMN_TABLES_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_four_column_tables_test_file );
   
   unsigned int atomic_number_1, atomic_number_2;
   unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
@@ -1249,7 +1250,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_skip_read_test )
 // skip a four column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_read_skip_test )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_FOUR_COLUMN_TABLES_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_four_column_tables_test_file );
   
   unsigned int atomic_number_1, atomic_number_2;
   unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
@@ -1308,7 +1309,7 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_read_skip_test )
 // read a four column table
 TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_read_read_test )
 {
-  FACEMC::ENDLIB97FileHandler endlib_file_handler( TWO_FOUR_COLUMN_TABLES_TEST_FILE );
+  FACEMC::ENDLIB97FileHandler endlib_file_handler( two_four_column_tables_test_file );
   
   unsigned int atomic_number_1, atomic_number_2;
   unsigned int outgoing_particle_designator_1, outgoing_particle_designator_2;
@@ -1361,6 +1362,45 @@ TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, four_column_table_read_read_test )
 
   // Close the test table file
   endlib_file_handler.closeENDLIB97File();
+}
+
+//---------------------------------------------------------------------------//
+// Custom main function
+//---------------------------------------------------------------------------//
+int main( int argc, char* argv[] )
+{
+  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  
+  clp.setOption( "first_header_test_file",
+		 &first_header_test_file,
+		 "First header test file name" );
+  clp.setOption( "second_header_test_file",
+		 &second_header_test_file,
+		 "Second header test file name" );
+  clp.setOption( "full_header_test_file",
+		 &full_header_test_file,
+		 "Full header test file name" );
+  clp.setOption( "two_column_table_test_file",
+		 &two_column_table_test_file,
+		 "Two column table test file name" );
+  clp.setOption( "three_column_table_test_file",
+		 &three_column_table_test_file,
+		 "Three column table test file name" );
+  clp.setOption( "four_column_table_test_file",
+		 &four_column_table_test_file,
+		 "Four column table test file name" );
+  clp.setOption( "two_two_column_tables_test_file",
+		 &two_two_column_tables_test_file,
+		 "Two two column tables test file name" );
+  clp.setOption( "two_three_column_tables_test_file",
+		 &two_three_column_tables_test_file,
+		 "Two three column tables test file name" );
+  clp.setOption( "two_four_column_tables_test_file",
+		 &two_four_column_tables_test_file,
+		 "Two four column tables test file name" );
+
+  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
+  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
   
 //---------------------------------------------------------------------------//

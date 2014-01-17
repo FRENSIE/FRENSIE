@@ -1,14 +1,19 @@
-# Define the project name
-INCLUDE(${CMAKE_SOURCE_DIR}/cmake/ProjectName.cmake)
-
-# Define the project version
-INCLUDE(${CMAKE_SOURCE_DIR}/cmake/Version.cmake)
-
 # Define the minimum required version of CMake
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8 FATAL_ERROR)
 
+# Add the custom modules to the module path
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+  "${CMAKE_DIR}/share/cmake-2.8/Modules"
+  ${PROJECT_SOURCE_DIR}/cmake)
+
+# Define the project name
+INCLUDE(ProjectName)
+
+# Define the project version
+INCLUDE(Version)
+
 # Include the macros that have been defined for this project
-INCLUDE(${CMAKE_SOURCE_DIR}/cmake/Macros.cmake)
+INCLUDE(Macros)
 
 # Enforce an out-of-source build
 ENFORCE_OUT_OF_SOURCE_BUILD()
@@ -78,6 +83,9 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/HDF5DataFileNames.hpp.in ${CMAKE_BINARY
 # Add the CMAKE_BINARY_DIR to the include path to access config files
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 
+# Add an uninstall target
+ADD_UNINSTALL_TARGET()
+
 # Enable testing through CTest
 ENABLE_TESTING()
 INCLUDE(Dart)
@@ -85,6 +93,8 @@ INCLUDE(Dart)
 # Set up the project directory hierarchy
 ADD_SUBDIRECTORY(src)
 INCLUDE_DIRECTORIES(src)
+
+ADD_SUBDIRECTORY(cli)
 
 ADD_SUBDIRECTORY(test)
 INCLUDE_DIRECTORIES(test)
