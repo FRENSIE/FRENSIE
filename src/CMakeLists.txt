@@ -7,7 +7,6 @@ SET(HEADERS
   ExceptionCatchMacros.hpp
   ArrayTraits.hpp
   HDF5TypeTraits.hpp
-  SimulationBase.hpp
   SearchAlgorithms.hpp
   TupleMemberTraits.hpp
   PhotonDataBasic.hpp

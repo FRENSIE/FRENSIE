@@ -84,6 +84,20 @@ ParticleState<CellHandle>::operator=(
   return *this;
 }
 
+// Return the particle type
+template<typename CellHandle>
+ParticleType ParticleState<CellHandle>::getParticleType() const
+{
+  return d_type;
+}
+
+// Return the history number
+template<typename CellHandle>
+unsigned long long ParticleState<CellHandle>::getHistoryNumber() const
+{
+  return d_history_number;
+}
+
 // Return the energy of the particle
 template<typename CellHandle>
 double ParticleState<CellHandle>::getEnergy() const
@@ -185,30 +199,11 @@ void ParticleState<CellHandle>::setDirection( const double x_direction,
   testPrecondition( !ST::isnaninf( y_direction ) );
   testPrecondition( !ST::isnaninf( z_direction ) );
   // Make sure the direction is a unit vector
-  remember( double x_direction_sqr = x_direction*x_direction );
-  remember( double y_direction_sqr = y_direction*y_direction );
-  remember( double z_direction_sqr = z_direction*z_direction );
-  remember( double argument = x_direction_sqr+y_direction_sqr+z_direction_sqr);
-  remember( double norm_two_value = ST::squareroot( argument ) );
-  testPrecondition( ST::magnitude( norm_two_value - 1.0 ) < ST::prec() );
+  testPrecondition( validDirection( x_direction, y_direction, z_direction ) );
   
   d_direction[0] = x_direction;
   d_direction[1] = y_direction;
   d_direction[2] = z_direction;
-}
-
-// Return the particle type
-template<typename CellHandle>
-ParticleType ParticleState<CellHandle>::getParticleType() const
-{
-  return d_type;
-}
-
-// Return the history number
-template<typename CellHandle>
-unsigned long long ParticleState<CellHandle>::getHistoryNumber() const
-{
-  return d_history_number;
 }
 
 // Return the cell handle for the cell containing the particle
@@ -274,7 +269,7 @@ void ParticleState<CellHandle>::advance( const double distance )
 
 // Spawn a child state (the history number will not change)
 template<typename CellHandle>
-Teuchos::RCP<ParticleState<CellHandle> >
+typename ParticleState<CellHandle>::ParticleStatePtr
 ParticleState<CellHandle>::spawnChildState( 
 			         const ParticleType child_particle_type ) const
 {
@@ -283,7 +278,9 @@ ParticleState<CellHandle>::spawnChildState(
 
   child_particle->setEnergy( d_energy );
   child_particle->setPosition( d_position[0], d_position[1], d_position[2] );
-  child_particle->setDirection( d_position[0], d_position[1], d_position[2] );
+  child_particle->setDirection( d_direction[0], 
+				d_direction[1], 
+				d_direction[2] );
   child_particle->setCell( d_cell );
   child_particle->setAsChildHistory();
 
@@ -292,7 +289,7 @@ ParticleState<CellHandle>::spawnChildState(
 
 // Spawn a child state that is the same type as the parent
 template<typename CellHandle>
-Teuchos::RCP<ParticleState<CellHandle> >
+inline typename ParticleState<CellHandle>::ParticleStatePtr
 ParticleState<CellHandle>::spawnChildState() const
 {
   return spawnChildState( d_type );
@@ -303,13 +300,31 @@ template<typename CellHandle>
 void ParticleState<CellHandle>::print( std::ostream& os ) const
 {
   os << "History Number: " << d_history_number << std::endl;
-  os << "Particle Type: " << d_type << std::endl;
+  
+  os << "Particle Type: ";
+  switch( d_type )
+  {
+  case PHOTON: 
+    os << "photon";
+    break;
+  case NEUTRON:
+    os << "neutron";
+    break;
+  case ADJOINT_PHOTON:
+    os << "adjoint photon";
+    break;
+  case ADJOINT_NEUTRON:
+    os << "adjoint neutron";
+    break;
+  }
+  os << std::endl;
+  
   os << "Energy: " << d_energy << std::endl;
   os << "Position: {" << d_position[0] << "," << d_position[1] << ","
      << d_position[2] << "}" << std::endl;
   os << "Direction: {" << d_direction[0] << "," << d_direction[1] << ","
      << d_direction[2] << "}" << std::endl;
-  os << "Cell: " << d_cell << std::endl;
+  os << "Cell Handle: " << d_cell << std::endl;
   os << "Root: " << (d_root_history ? "yes":"no") << std::endl;
   os << "Lost: " << (d_lost ? "yes":"no") << std::endl;
   os << "Gone: " << (d_gone ? "yes":"no") << std::endl;
@@ -320,6 +335,21 @@ template<typename CellHandle>
 void ParticleState<CellHandle>::setAsChildHistory()
 {
   d_root_history = false;
+}
+
+// Test if the direction is valid
+template<typename CellHandle>
+bool ParticleState<CellHandle>::validDirection( const double x_direction,
+						const double y_direction,
+						const double z_direction )
+{
+  double x_direction_sqr = x_direction*x_direction;
+  double y_direction_sqr = y_direction*y_direction;
+  double z_direction_sqr = z_direction*z_direction;
+  double argument = x_direction_sqr+y_direction_sqr+z_direction_sqr;
+  double norm_two_value = ST::squareroot( argument );
+  
+  return ST::magnitude( norm_two_value - 1.0 ) < ST::prec();
 }
 
 } // end FACEMC namespace

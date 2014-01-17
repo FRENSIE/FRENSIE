@@ -38,6 +38,8 @@ public:
   
   //! Typedef for the cell handle
   typedef CellHandle cellHandle;
+  //! Typedef for particle state pointer
+  typedef Teuchos::RCP<ParticleState<CellHandle> > ParticleStatePtr;
 
   //! Default constructor
   ParticleState();
@@ -56,6 +58,12 @@ public:
   //! Destructor
   ~ParticleState()
   { /* ... */ }
+
+  //! Return the particle type
+  ParticleType getParticleType() const;
+
+  //! Return the history number
+  unsigned long long getHistoryNumber() const;
 
   //! Return the energy of the particle
   double getEnergy() const;
@@ -97,12 +105,6 @@ public:
 		     const double y_direction,
 		     const double z_direction );
 
-  //! Return the particle type
-  ParticleType getParticleType() const;
-
-  //! Return the history number
-  unsigned long long getHistoryNumber() const;
-
   //! Return the cell handle for the cell containing the particle
   CellHandle getCell() const;
 
@@ -128,11 +130,11 @@ public:
   void advance( const double distance );
 
   //! Spawn a child state (the history number will not change)
-  Teuchos::RCP<ParticleState<CellHandle> > spawnChildState( 
+  ParticleStatePtr spawnChildState( 
 			        const ParticleType child_particle_type ) const;
 
   //! Spawn a child state that is the same type as the parent
-  Teuchos::RCP<ParticleState<CellHandle> > spawnChildState() const;
+  ParticleStatePtr spawnChildState() const;
 
   //! Print method that defines the behavior of the std::stream << operator
   void print( std::ostream& os ) const;
@@ -141,6 +143,11 @@ private:
 
   //! Set the history as a child
   void setAsChildHistory();
+
+  //! Test if the direction is valid
+  bool validDirection( const double x_direction,
+		       const double y_direction,
+		       const double z_direction );
 
   // Energy of the particle
   double d_energy;

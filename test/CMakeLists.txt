@@ -118,6 +118,9 @@ ADD_EXECUTABLE(tstCellBoundingBox
 ADD_EXECUTABLE(tstParticleState
   tstParticleState.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstDagMCHelpers
+  tstDagMCHelpers.cpp
+  ${SRC}/DagMCHelpers.cpp)
 
 TARGET_LINK_LIBRARIES(tstAssertion ${TEUCHOS_CORE})
 TARGET_LINK_LIBRARIES(tstContractException ${TEUCHOS_CORE})
@@ -159,6 +162,7 @@ ELSE()
   TARGET_LINK_LIBRARIES(tstCellBoundingBox ${SPRNG})
 ENDIF()  
 TARGET_LINK_LIBRARIES(tstParticleState ${TEUCHOS_CORE} ${MOAB})
+TARGET_LINK_LIBRARIES(tstDagMCHelpers ${TEUCHOS_CORE} ${MOAB} ${HDF5})
 
 ADD_TEST(Assertion_test tstAssertion)
 ADD_TEST(ContractException_test tstContractException)
@@ -194,6 +198,7 @@ IF(${FACEMC_ENABLE_MPI})
 ENDIF()
 ADD_TEST(CellBoundingBox_test tstCellBoundingBox)
 ADD_TEST(ParticleState_test tstParticleState)
+ADD_TEST(DagMCHelpers_test tstDagMCHelpers --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
 
 # Install test files for the EPDL97DataProcessor_test
 FILE(GLOB TEST_FILES ${CMAKE_CURRENT_SOURCE_DIR}/test_files/*.txt)

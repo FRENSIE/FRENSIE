@@ -3,8 +3,14 @@
 # 1.) MOAB - stores the Moab library name
 MACRO(ENABLE_MOAB_SUPPORT)
 
+  # Add the user supplied Moab prefix to help find Moab
+  SET(CMAKE_PREFIX_PATH ${MOAB_PREFIX}/lib ${CMAKE_PREFIX_PATH})
+
+  # Find the Moab package available on this system
+  FIND_PACKAGE(MOAB REQUIRED)
+
   # Use the user supplied prefix to find the Moab libraries and include dirs.
-  SET(MOAB_INCLUDE_DIRS ${MOAB_PREFIX}/include)
+  # SET(MOAB_INCLUDE_DIRS ${MOAB_PREFIX}/include)
   SET(MOAB_LIBRARY_DIRS ${MOAB_PREFIX}/lib)
   FIND_LIBRARY(MOAB MOAB ${MOAB_LIBRARY_DIRS})
   
@@ -18,7 +24,7 @@ MACRO(ENABLE_MOAB_SUPPORT)
     MESSAGE(FATAL_ERROR "The dagmc library could not be found.")
   ENDIF()
 
-  SET(MOAB ${DAGMC} ${MOAB})
+  SET(MOAB ${DAGMC} ${MOAB} ${MOAB_LIBRARIES})
 
   # Set the include paths for Moab
   INCLUDE_DIRECTORIES(${MOAB_INCLUDE_DIRS})
