@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   ArrayTraitsDecl.hpp
+//! \file   GeometryHandlerTraitsDecl.hpp
 //! \author Alex Robinson
 //! \brief  Geometry handler traits class declaration
 //!
@@ -10,7 +10,7 @@
 #define GEOMETRY_HANDLER_TRAITS_DECL_HPP
 
 // Trilinos Includes
-#include <Teuchos_ArrayView.hpp>
+#include <Teuchos_ArrayRCP.hpp>
 #include <Teuchos_OrdinalTraits.hpp>
 
 // FACEMC Includes
@@ -64,22 +64,22 @@ struct GeometryHandlerTraits
   typedef int SurfaceHandle;
   //! The cell handle class (used to reference a cell)
   typedef int CellHandle;
+  //! The surface id type
+  typedef int SurfaceId;
+  //! The cell id type
+  typedef int CellId;
 
   //! Get an instance of the GeometryHandler (singleton pattern)
-  static inline GeometryHandlerPtr getInstance()
+  static inline GeometryHandlerPtr getHandler()
   { (void)UndefinedTraits<GeometryHandler>::notDefined(); return NULL; }
-  
-  //! Fire a ray through the geometry
-  static inline void fireRay( GeometryHandler& geometry_handler,
-			      const CellHandle& cell,
-			      const double ray_start_position[3],
-			      const double ray_direction[3],
-			      SurfaceHandle& surface_hit,
-			      double& distance_to_surface_hit );
 
   //! Fire a ray through the geometry
-  static inline void fireRay( GeometryHandler& geometry_handler,
-			      const ParticleState<CellHandle>& particle,
+  /*! \details A std::runtime_error (or class derived from it) must be thrown 
+   * if a ray tracing error occurs. These exceptions will be caught in the
+   * main particle simulation algorithms and are used to indicate lost 
+   * particles.
+   */
+  static inline void fireRay( const ParticleState<CellHandle>& particle,
 			      SurfaceHandle& surface_hit,
 			      double& distance_to_surface_hit )
   { (void)UndefinedTraits<GeometryHandler>::notDefined(); }
@@ -88,188 +88,65 @@ struct GeometryHandlerTraits
   static inline void newRay()
   { (void)UndefinedTraits<GeometryHandler>::notDefined(); }
 
-  //! Get the cell that contains a given point
-  static inline CellHandle getCellContainingPoint( 
-				          GeometryHandler& geometry_handler,
-				          const double point[3],
-					  const double* direction = NULL )
-  { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
-
-  //! Get the point location w.r.t. a given cell
-  static inline PointLocation getPointLocation( 
-			            GeometryHandler& geometry_handler,
-				    const CellHandle& cell,
-				    const double point[3],
-				    const double* direction = NULL )
-  { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
-
-  //! Get the cell on the other side of a surface
-  static inline CellHandle getNextCell( GeometryHandler& geometry_handler,
-					const SurfaceHandle& surface,
-					const CellHandle& current_cell,
-					const double* point = NULL );
-  { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
-
   //! Update the cell that contains a given particle (start of history)
+  /*! \details A std::runtime_error (or class derived from it) must be thrown 
+   * if an error occurs. These exceptions will be caught in the main particle 
+   * simulation algorithms and are used to indicate lost particles.
+   */
   static inline void updateCellContainingParticle( 
-					  GeometryHandler& geometry_handler,
-				          ParticleState<CellHandle>& particle )
+					  ParticleState<CellHandle>& particle )
   { (void)UndefinedTraits<GeometryHandler>::notDefined(); }
 
   //! Update the cell that contains a given particle (surface crossing)
+  /*! \details A std::runtime_error (or class derived from it) must be thrown 
+   * if an error occurs. These exceptions will be caught in the main particle 
+   * simulation algorithms and are used to indicate lost particles.
+   */
   static inline void updateCellContainingParticle(
-				          GeometryHandler& geometry_handler,
-					  const SurfaceHandle& surface,
-				          ParticleState<CellHandle>& particle )
+					   ParticleState<CellHandle>& particle,
+					   const SurfaceHandle& surface )
   { (void)UndefinedTraits<GeometryHandler>::notDefined(); }
 
   //! Check if the cell is a termination cell
-  static inline bool isTerminationCell( GeometryHandler& geometry_handler,
-					const CellHandle& cell )
+  static inline bool isTerminationCell( const CellHandle& cell )
+  { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
+
+  //! Get the particle location w.r.t. a given cell
+  /*! \details A std::runtime_error (or class derived from it) must be thrown 
+   * if an error occurs. These exceptions will be caught in the main particle 
+   * simulation algorithms and are used to indicate lost particles.
+   */
+  static inline PointLocation getParticleLocation( 
+				    const CellHandle& cell,
+				    const ParticleState<CellHandle>& particle )
+  { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
+
+  //! Calculate the surface normal at a point on the surface
+  static inline void getSurfaceNormal( 
+				     const SurfaceHandle& surface,
+				     const ParticleState<CellHandle>& particle,
+				     double normal[3] )
   { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
 
   //! Get the volume of a cell
-  static inline double getCellVolume( GeometryHandler& geometry_handler,
-				      const CellHandle& cell )
+  static inline double getCellVolume( const CellHandle& cell )
   { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
 
   //! Get the surface area of a surface bounding a cell
-  static inline double getCellSurfaceArea( GeometryHandler& geometry_handler,
-					   const CellHandle& cell,
-					   const SurfaceHandle& surface )
+  static inline double getCellSurfaceArea( const SurfaceHandle& surface,
+					   const CellHandle& cell )
   { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
 
-  //! Get the surface normal at a point on the surface
-  static inline void getSurfaceNormal( GeometryHandler& geometry_handler,
-				       const SurfaceHandle& surface,
-				       const double point[3], 
-				       double angle[3] )
+  //! Get the cell id corresponding to the cell handle
+  static inline CellId getCellId( const CellHandle& cell )
   { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
-				       
+  
+  //! Get the surface id corresponding to the surface handle
+  static inline CellId getSurfaceId( const SurfaceHandle& surface )
+  { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
 };
 
 } // end Traits namespace
-
-/*! This function allows access to the fireRay GeometryHandlerTraits 
- * function.
- *
- * This function is simply a more concise way to access the fireRay static
- * member function associated with the GeometryHandlerTraits class. It simply
- * forwards calls to fire a ray to the associated 
- * FACEMC::Traits::GeometryHandlerTraits class. It is important to note that
- * GeometryHandler type will be deduced by the function.
- * \ingroup geometry_handler_traits
- */
-template<typename GeometryHandler>
-inline void fireRay( 
-  GeometryHandler& geometry_handler,
-  const typename Traits::GeometryHandlerTraits<GeometryHandler>::CellHandle& cell,
-  const ParticleState<typename Traits::GeometryHandlerTraits<GeometryHandler>::CellHandle>& particle,
-  typename Traits::GeometryHandlerTraits<GeometryHandler>::SurfaceHandle&
-  surface_hit,
-  double& distance_to_surface_hit )
-{ 
-  Traits::GeometryHandlerTraits<GeometryHandler>::fireRay( 
-						     geometry_handler,
-						     cell,
-						     particle,
-						     surface_hit,
-						     distance_to_surface_hit );
-}
-
-/*! This function allows access to the getPointLocation GeometryHandlerTraits 
- * function
- *
- * This function is simply a more concise way to access the getPointLocation
- * static member function associated with the GeometryHandlerTraits class. It 
- * simply forwards calls to get a point location to the associated 
- * FACEMC::Traits::GeometryHandlerTraits class. It is important to note that
- * GeometryHandler type will be deduced by the function.
- * \ingroup geometry_handler_traits
- */
-template<typename GeometryHandler>
-inline PointLocation getPointLocation( 
-     GeometryHandler& geometry_handler,
-     const typename Traits::GeometryHandlerTraits<GeometryHandler>::CellHandle&
-     cell,
-     const ParticleState<typename Traits::GeometryHandlerTraits<GeometryHandler>::CellHandle>& particle )
-{ 
-  return Traits::GeometryHandlerTraits<GeometryHandler>::getPointLocation( 
-							      geometry_handler,
-							      cell,
-							      particle );
-}
-
-/*! This function allows access to the getCellVolume GeometryHandlerTraits 
- * function
- * 
- * This function is simply a more concise way to access the getCellVolume
- * static member function associated with the GeometryHandlerTraits class. It 
- * simply forwards calls to get a cell volume to the associated 
- * FACEMC::Traits::GeometryHandlerTraits class. It is important to note that 
- * GeometryHandler type will be deduced by the function.
- * \ingroup geometry_handler_traits
- */
-template<typename GeometryHandler>
-inline double getCellVolume( 
-     GeometryHandler& geometry_handler,
-     const typename Traits::GeometryHandlerTraits<GeometryHandler>::CellHandle&
-     cell )
-{ 
-  return Traits::GeometryHandlerTraits<GeometryHandler>::getCellVolume(
-							      geometry_handler,
-							      cell );
-}
-
-/*! This function allows access to the getCellSurfaceArea GeometryHandlerTraits
- * function
- *
- * This function is simply a more concise way to access the getCellSurfaceArea
- * static member function associated with the GeometryHandlerTraits class. It 
- * simply forwards calls to get a cell surface area to the associated 
- * FACEMC::Traits::GeometryHandlerTraits class. It is important to note that
- * GeometryHandler type will be deduced by the function.
- * \ingroup geometry_handler_traits
- */
-template<typename GeometryHandler>
-inline double getCellSurfaceArea( 
-  const GeometryHandler& geometry_handler,
-  const typename Traits::GeometryHandlerTraits<GeometryHandler>::CellHandle&
-  cell,
-  const typename Traits::GeometryHandlerTraits<GeometryHandler>::SurfaceHandle&
-  surface )
-{
-  return Traits::GeometryHandlerTraits<GeometryHandler>::getCellVolume( 
-							      geometry_handler,
-							      cell,
-							      surface );
-}
-
-/*! This function allows access to the getNextCell GeometryHandlerTraits 
- * function.
- *
- * This function is simply a more concise way to access the getNextCell
- * static member function associated with the GeometryHandlerTraits class. It 
- * simply forwards calls to get the cell on the other side of a surface to the 
- * associated FACEMC::Traits::GeometryHandlerTraits class. It is important to 
- * note that GeometryHandler type will be deduced by the function.
- * \ingroup geometry_handler_traits
- */
-template<typename GeometryHandler>
-inline void getNextCell( 
-            const GeometryHandler& geometry_handler,
-            const Traits::GeometryHandlerTraits<GeometryHandler> SurfaceHandle&
-	    surface,
-	    const Traits::GeometryHandlerTraits<GeometryHandler> CellHandle& 
-	    current_cell,
-	    const ParticleState<typename Traits::GeometryHandlerTraits<GeometryHandler>::CellHandle>& particle )
-{
-  return Traits::GeometryHandlerTraits<GeometryHandler>::getNextCell( 
-							      geometry_handler,
-							      surface,
-							      current_cell,
-							      particle );
-}
 
 } // end FACEMC namespace
 

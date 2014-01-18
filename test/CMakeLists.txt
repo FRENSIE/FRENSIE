@@ -168,3 +168,8 @@ ADD_EXECUTABLE(tstDagMCHelpers
   tstDagMCHelpers.cpp)
 TARGET_LINK_LIBRARIES(tstDagMCHelpers ${PROJECT_NAME})
 ADD_TEST(DagMCHelpers_test tstDagMCHelpers --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
+
+ADD_EXECUTABLE(tstGeometryHandlerTraits
+  tstGeometryHandlerTraits.cpp)
+TARGET_LINK_LIBRARIES(tstGeometryHandlerTraits ${PROJECT_NAME})
+ADD_TEST(GeometryHandlerTraits_test tstGeometryHandlerTraits --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
