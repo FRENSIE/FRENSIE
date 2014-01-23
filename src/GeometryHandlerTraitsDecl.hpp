@@ -140,9 +140,17 @@ struct GeometryHandlerTraits
   //! Get the cell id corresponding to the cell handle
   static inline CellId getCellId( const CellHandle& cell )
   { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
+
+  //! Get the cell handle corresponding to the cell id
+  static inline CellHandle getCellHandle( const CellId& cell_id )
+  { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
   
   //! Get the surface id corresponding to the surface handle
-  static inline CellId getSurfaceId( const SurfaceHandle& surface )
+  static inline SurfaceId getSurfaceId( const SurfaceHandle& surface )
+  { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
+
+  //! Get the surface handle corresponding to the surface id
+  static inline SurfaceHandle getSurfaceHandle( const SurfaceHandle& surface )
   { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
 };
 

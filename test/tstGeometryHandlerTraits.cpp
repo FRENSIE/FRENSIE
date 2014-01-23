@@ -87,9 +87,6 @@ TEUCHOS_UNIT_TEST( GeometryHandlerTraits_DagMC, fireRay )
 
   // Find the cell that contains the particle
   GHT::updateCellContainingParticle( particle );
-  
-  // Initialize a new ray
-  GHT::newRay();
 
   // Fire a ray through the geometry
   typename GHT::SurfaceHandle surface_hit;
@@ -119,9 +116,6 @@ TEUCHOS_UNIT_TEST( GeometryHandlerTraits_DagMC,
 
   // Find the cell that contains the particle
   GHT::updateCellContainingParticle( particle );
-  
-  // Initialize a new ray
-  GHT::newRay();
 
   // Fire a ray through the geometry
   typename GHT::SurfaceHandle surface_hit;
@@ -147,6 +141,82 @@ TEUCHOS_UNIT_TEST( GeometryHandlerTraits_DagMC,
   cell_id = GHT::getCellId( particle.getCell() );
 
   TEST_EQUALITY_CONST( cell_id, 55 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the termination cell can be deterimed
+TEUCHOS_UNIT_TEST( GeometryHandlerTraits_DagMC, 
+		   isTerminationCell )
+{
+  typedef FACEMC::Traits::GeometryHandlerTraits<moab::DagMC> GHT;
+  typedef FACEMC::ParticleState<typename GHT::CellHandle> ParticleState;
+
+  // Get the cell handle associated with the termination cell
+  GHT::CellHandle cell = GHT::getCellHandle( 188 );
+  
+  TEST_ASSERT( GHT::isTerminationCell( cell ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the surface normal at a point on the surface can be calculated
+TEUCHOS_UNIT_TEST( GeometryHandlerTraits_DagMC,
+		   getSurfaceNormal )
+{
+  typedef FACEMC::Traits::GeometryHandlerTraits<moab::DagMC> GHT;
+  typedef FACEMC::ParticleState<typename GHT::CellHandle> ParticleState;
+
+  // Initialize the particle state (on cell 53)
+  ParticleState particle( 1ull, FACEMC::PHOTON );
+  particle.setPosition( -40.0, -40.0, 60.959999084 );
+  particle.setDirection( 0.0, 0.0, 1.0 );
+
+  // Get the surface handle associated with surface 242
+  GHT::SurfaceHandle surface = GHT::getSurfaceHandle( 242 );
+
+  // Get the surface normal
+  double normal[3];
+  GHT::getSurfaceNormal( surface, particle, normal );
+  
+  TEST_EQUALITY_CONST( normal[0], 0.0 );
+  TEST_EQUALITY_CONST( normal[1], 0.0 );
+  TEST_EQUALITY_CONST( normal[2], 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the volume of a cell can be calculated
+TEUCHOS_UNIT_TEST( GeometryHandlerTraits_DagMC,
+		   getCellVolume )
+{
+  typedef FACEMC::Traits::GeometryHandlerTraits<moab::DagMC> GHT;
+  typedef FACEMC::ParticleState<typename GHT::CellHandle> ParticleState;
+
+  // Get the cell handle associated with cell 53
+  GHT::CellHandle cell = GHT::getCellHandle( 53 );
+
+  // Get the volume of cell 53
+  double cell_volume = GHT::getCellVolume( cell );
+
+  TEST_FLOATING_EQUALITY( cell_volume, 98.322384, 1e-6 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the surface area of a surface bounding a cell can be calculated
+TEUCHOS_UNIT_TEST( GeometryHandlerTraits_DagMC,
+		   getCellSurfaceArea )
+{
+  typedef FACEMC::Traits::GeometryHandlerTraits<moab::DagMC> GHT;
+  typedef FACEMC::ParticleState<typename GHT::CellHandle> ParticleState;
+
+  // Get the cell handle associated with cell 53
+  GHT::CellHandle cell = GHT::getCellHandle( 53 );
+
+  // Get the cell handle associated with surface 242
+  GHT::SurfaceHandle surface = GHT::getSurfaceHandle( 242 );
+  
+  // Get the surface area of surface 242 on cell 53
+  double surface_area = GHT::getCellSurfaceArea( surface, cell );
+
+  TEST_FLOATING_EQUALITY( surface_area, 38.7096, 1e-6 );
 }
 
 //---------------------------------------------------------------------------//

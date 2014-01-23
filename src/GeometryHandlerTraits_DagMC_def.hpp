@@ -230,11 +230,13 @@ inline double GeometryHandlerTraits<moab::DagMC>::getCellVolume(
 
 // Get the surface area of a surface bounding a cell
 /*! \details This function will throw a FACEMC::MOABException if the 
- * desired surface does not exist.
+ * desired surface does not exist. Currently, the cell handle is not required
+ * to determine the surface area. The parameter is still needed to conform to
+ * the FACEMC::Traits::GeometryHandlerTraits class concept.
  */ 
 inline double GeometryHandlerTraits<moab::DagMC>::getCellSurfaceArea( 
 						  const SurfaceHandle& surface,
-						  const CellHandle& cell )
+						  const CellHandle& )
 {
   double area = 0.0;
   
@@ -261,12 +263,32 @@ GeometryHandlerTraits<moab::DagMC>::getCellId( const CellHandle& cell )
     GeometryHandlerTraits<moab::DagMC>::dagmc_instance->get_entity_id( cell );
 }
 
+// Get the cell handle corresponding to the cell id
+inline GeometryHandlerTraits<moab::DagMC>::CellHandle
+GeometryHandlerTraits<moab::DagMC>::getCellHandle( const CellId& cell_id )
+{
+  return 
+    GeometryHandlerTraits<moab::DagMC>::dagmc_instance->entity_by_id( 3, 
+								      cell_id);
+}
+
 // Get the surface id corresponding to the surface handle
 inline GeometryHandlerTraits<moab::DagMC>::SurfaceId 
 GeometryHandlerTraits<moab::DagMC>::getSurfaceId( const SurfaceHandle& surface)
 {
   return 
     GeometryHandlerTraits<moab::DagMC>::dagmc_instance->get_entity_id(surface);
+}
+
+// Get the surface handle corresponding to the surface id
+inline GeometryHandlerTraits<moab::DagMC>::SurfaceHandle
+GeometryHandlerTraits<moab::DagMC>::getSurfaceHandle( 
+						  const SurfaceId& surface_id )
+{
+  return 
+    GeometryHandlerTraits<moab::DagMC>::dagmc_instance->entity_by_id( 
+								   2, 
+								   surface_id);
 }
 
 // Get all the cells contained in the geometry

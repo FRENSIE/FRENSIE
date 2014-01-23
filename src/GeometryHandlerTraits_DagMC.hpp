@@ -90,13 +90,19 @@ public:
 
   //! Get the surface area of a surface bounding a cell
   static double getCellSurfaceArea( const SurfaceHandle& surface,
-				    const CellHandle& cell );
+				    const CellHandle& );
 
   //! Get the cell id corresponding to the cell handle
   static CellId getCellId( const CellHandle& cell );
 
+  //! Get the cell handle corresponding to the cell id
+  static CellHandle getCellHandle( const CellId& cell_id );
+
   //! Get the surface id corresponding to the surface handle
   static SurfaceId getSurfaceId( const SurfaceHandle& surface );
+
+  //! Get the surface handle corresponding to the surface id
+  static SurfaceHandle getSurfaceHandle( const SurfaceId& surface_id );
 
 private:
 

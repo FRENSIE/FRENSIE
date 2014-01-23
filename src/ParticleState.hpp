@@ -17,6 +17,7 @@
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
+#include <Teuchos_ScalarTraits.hpp>
 
 // FACEMC Includes
 #include "PrintableObject.hpp"
