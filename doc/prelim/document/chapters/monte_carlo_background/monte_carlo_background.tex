@@ -226,7 +226,7 @@ the latter description will usually suffice. Non-analogue random walk processes
 typically employ one or more variance reducing techniques to aid in the 
 estimation of rare events. A few common forms of variance reduction are 
 importance sampling, Russian roulette and splitting, all of which are 
-described in detail by Spanier and Gelbard \citet{spanier_monte_1969}. 
+described in detail by Spanier and Gelbard \cite{spanier_monte_1969}. 
 
 To determine if a random walk process is analogue, one must look at the source 
 PDF $p^1(x)$ and the state transition PDF $p(y \to x)$. If the source PDF is 
@@ -281,7 +281,7 @@ variable will then reincorporate the magnitude of these functions into
 the estimate of $I$. In equation \ref{eq:termination_estimator}, the variable 
 $\alpha$ is a random walk beginning at $x_1$ and ending at $x_k$: 
 \begin{equation}
-  \varepsilon(\alpha) = \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_w)\cdots 
+  \varepsilon(\alpha) = \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_2)\cdots 
   w(x_{k-1} \to w_k)\frac{g(x_k)}{p(x_k)}.
   \label{eq:termination_estimator}
 \end{equation}
@@ -313,7 +313,7 @@ which shows $F(x)$ as a Neumann series will be useful in verifying this proof:
   P(\alpha)\varepsilon(\alpha) \nonumber \\
   & = \sum_{k=1}^{\infty} \int \cdots \int dx_1 \cdots dx_k p^1(x_1)
   p(x_1 \to x_2) \cdots p(x_{k-1} \to x_k)p(x_k) \cdot \nonumber \\
-  & \qquad \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_w)\cdots 
+  & \qquad \frac{S(x_1)}{p^1(x_1)}w(x_1 \to x_2)\cdots 
   w(x_{k-1} \to w_k)\frac{g(x_k)}{p(x_k)} \nonumber \\
   & = \sum_{k=1}^{\infty} \int \cdots \int dx_1 \cdots dx_k S(x_1)K(x_1 \to x_2)
   \cdots K(x_{k-1} \to x_k)g(x_k) \nonumber \\
@@ -397,8 +397,8 @@ will not address criticality problems.
 \label{sec:dual_problems}
 It has been noted in the previous two sections that estimating a value of 
 interest at a point using a Monte Carlo random walk process is challenging.
-In this section, a new problem will be introduced that will allow the 
-for the estimation of a value of interest at a point using the same general
+In this section, a new problem will be introduced that will allow for the 
+estimation of a value of interest at a point using the same general
 Monte Carlo random walk process from section \ref{sec:mc_random_walk_process}. 
 
 First consider an operator $H$ with the following property when operating
