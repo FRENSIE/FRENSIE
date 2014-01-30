@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstNativeSurfaceInputValidators.cpp
+//! \file   tstSurfaceInputValidatorHelpers.cpp
 //! \author Alex Robinson
-//! \brief  Native surface input validator function unit tests
+//! \brief  Surface input validator helper function unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -11,36 +11,43 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_UnitTestRepository.hpp>
-#include <Teuchos_GlobalMPISession.hpp>
-#include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FACEMC Includes
-#include "NativeSurfaceInputValidators.hpp"
-
-//---------------------------------------------------------------------------//
-// Test XML File Name
-//---------------------------------------------------------------------------//
-std::string test_xml_file_name;
+#include "SurfaceInputValidatorHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the surface name can be validated
-TEUCHOS_UNIT_TEST( NativeSurfaceInputValidator, validateSurfaceName )
+TEUCHOS_UNIT_TEST( SurfaceInputValidatorHelpers, validateSurfaceName )
 {
   std::string good_surface_name = "surface_A";
-  std::string bad_surface_name = "surface A";
+  std::string bad_surface_name_1 = "surface A";
+  std::string bad_surface_name_2 = "surface(A";
+  std::string bad_surface_name_3 = "surface)A";
+  std::string bad_surface_name_4 = "surface-A";
+  std::string bad_surface_name_5 = "n";
+  std::string bad_surface_name_6 = "u";
 
   TEST_NOTHROW( FACEMC::validateSurfaceName( good_surface_name ) );
 
-  TEST_THROW( FACEMC::validateSurfaceName( bad_surface_name ),
+  TEST_THROW( FACEMC::validateSurfaceName( bad_surface_name_1 ),
+	      std::invalid_argument );
+  TEST_THROW( FACEMC::validateSurfaceName( bad_surface_name_2 ),
+	      std::invalid_argument );
+  TEST_THROW( FACEMC::validateSurfaceName( bad_surface_name_3 ),
+	      std::invalid_argument );
+  TEST_THROW( FACEMC::validateSurfaceName( bad_surface_name_4 ),
+	      std::invalid_argument );
+  TEST_THROW( FACEMC::validateSurfaceName( bad_surface_name_5 ),
+	      std::invalid_argument );
+  TEST_THROW( FACEMC::validateSurfaceName( bad_surface_name_6 ),
 	      std::invalid_argument );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the surface type can be validated
-TEUCHOS_UNIT_TEST( NativeSurfaceInputValidator, validateSurfaceType )
+TEUCHOS_UNIT_TEST( SurfaceInputValidatorHelpers, validateSurfaceType )
 {
   std::string valid_surface_type_1 = "x plane";
   std::string valid_surface_type_2 = "y plane";
@@ -81,9 +88,9 @@ TEUCHOS_UNIT_TEST( NativeSurfaceInputValidator, validateSurfaceType )
 
 //---------------------------------------------------------------------------//
 // Check that the surface definition can be validated
-TEUCHOS_UNIT_TEST( NativeSurfaceInputValidator, validateSurfaceDefinition )
+TEUCHOS_UNIT_TEST( SurfaceInputValidatorHelpers, validateSurfaceDefinition )
 {
-  std::string name = "test-surface";
+  std::string name = "test_surface";
   
   std::string x_plane = "x plane";
   Teuchos::Array<double> x_plane_valid_parameters( 1 );
@@ -200,7 +207,7 @@ TEUCHOS_UNIT_TEST( NativeSurfaceInputValidator, validateSurfaceDefinition )
 
 //---------------------------------------------------------------------------//
 // Check that the surface special attribute can be validated
-TEUCHOS_UNIT_TEST( NativeSurfaceInputValidator, 
+TEUCHOS_UNIT_TEST( SurfaceInputValidatorHelpers, 
 		   validateSurfaceSpecialAttribute )
 {
   std::string valid_surface_attribute = "reflecting";
@@ -216,73 +223,6 @@ TEUCHOS_UNIT_TEST( NativeSurfaceInputValidator,
 }
 
 //---------------------------------------------------------------------------//
-// Check that an individual surface can be validated
-TEUCHOS_UNIT_TEST( NativeSurfaceInputValidator, validateSurface )
-{
-  Teuchos::ParameterList valid_surface;
-
-  valid_surface.set( "type", "x cylinder" );
-  valid_surface.set<Teuchos::Array<double> >( "definition", 
-					      Teuchos::tuple( 1.0, 1.0, 1.0 ));
-  valid_surface.set( "special attribute", "reflecting" );
-  
-  TEST_NOTHROW( FACEMC::validateSurface( valid_surface, "test/surface" ) );
-
-  Teuchos::ParameterList invalid_surface_1;
-
-  TEST_THROW( FACEMC::validateSurface( invalid_surface_1, "test-surface" ),
-	      std::invalid_argument );
-  
-  Teuchos::ParameterList invalid_surface_2;
-  invalid_surface_2.set( "type", "y cylinder" );
-  
-  TEST_THROW( FACEMC::validateSurface( invalid_surface_2, "test-surface" ),
-	      std::invalid_argument );
-
-  Teuchos::ParameterList invalid_surface_3;
-  invalid_surface_3.set( "type", "z cylinder" );
-  invalid_surface_3.set<Teuchos::Array<double> >( "definition", 
-						  Teuchos::tuple( 1.0 ) );
-
-  TEST_THROW( FACEMC::validateSurface( invalid_surface_3, "test-surface" ),
-	      std::invalid_argument );
-
-  Teuchos::writeParameterListToXmlFile( valid_surface, "test.xml" );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a list of surfaces can be validated
-TEUCHOS_UNIT_TEST( NativeSurfaceInputValidator, validateAllSurfaces )
-{
-  // Read in the parameter list from the xml file
-  Teuchos::ParameterList surfaces;
-  
-  Teuchos::updateParametersFromXmlFile( test_xml_file_name, 
-					Teuchos::inoutArg( surfaces ) );
-  
-  // Validate the surfaces
-  TEST_NOTHROW( FACEMC::validateAllSurfaces( surfaces ) );
-  
-  // Print the parameter list
-  surfaces.print();
-}
-
-//---------------------------------------------------------------------------//
-// Custom main function
-//---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
-{
-  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-  clp.setOption( "test_xml_file",
-		 &test_xml_file_name,
-		 "Test xml file name with surfaces defined" );
-
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
-}
-
-//---------------------------------------------------------------------------//
-// end tstNativeSurfaceInputValidators.cpp
+// end tstSurfaceInputValidatorHelpers.cpp
 //---------------------------------------------------------------------------//
 

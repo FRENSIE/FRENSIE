@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   NativeSurfaceInputValidators.cpp
+//! \file   SurfaceInputValidatorHelpers.cpp
 //! \author Alex Robinson
-//! \brief  Native surface input validator function definitions.
+//! \brief  Surface input validator helper function definitions.
 //!
 //---------------------------------------------------------------------------//
 
@@ -13,31 +13,75 @@
 #include <Teuchos_ParameterListExceptions.hpp>
 
 // FACEMC Includes
-#include "NativeSurfaceInputValidators.hpp"
+#include "SurfaceInputValidatorHelpers.hpp"
 
 namespace FACEMC{
 
 // Validate the surface name
-/*! \details No empty spaces are allows in surface names. If one is found, a
- * std::invalid_argument exception is thrown.
+/*! \details No empty spaces, (, ) or - characters are allowed in surface 
+ * names. If one is found, a std::invalid_argument exception is thrown. In
+ * addition, the surface cannot be named "n" or "u". A 
+ * std::invalid_argument exception will be thrown if so.
  */ 
 void validateSurfaceName( const std::string& surface_name )
 {
-  std::string::size_type empty_space_pos = surface_name.find( " " );
+  std::string error_message;
   
   // No empty spaces are allowed in surface names
+  std::string::size_type empty_space_pos = surface_name.find( " " );
+  
   if( empty_space_pos < surface_name.size() )
   {
-    std::string error_message = "Error in surface \"";
-    error_message += surface_name.c_str();
-    error_message += "\": spaces are not allows in surface names.\n";
-    
+    error_message += "Error in surface \"";
+    error_message += surface_name;
+    error_message += "\": spaces are not allowed in surface names.\n";
+  }
+
+  // No ( or ) characters are allowed in surface names
+  std::string::size_type left_paren_pos = surface_name.find( "(" );
+  std::string::size_type right_paren_pos = surface_name.find( ")" );
+
+  if( left_paren_pos < surface_name.size() )
+  {
+    error_message += "Error in surface \"";
+    error_message += surface_name;
+    error_message += "\": ( characters are not allowed in surface names.\n";
+  }
+
+  if( right_paren_pos < surface_name.size() )
+  {
+    error_message += "Error in surface \"";
+    error_message += surface_name;
+    error_message += "\": ) characters are not allowed in surface names.\n";
+  }
+
+  // No - characters are allowed in surface names
+  std::string::size_type minus_pos = surface_name.find( "-" );
+  if( minus_pos < surface_name.size() )
+  {
+    error_message += "Error in surface \"";
+    error_message += surface_name;
+    error_message += "\": - characters are not allowed in surface names.\n";
+  }
+
+  // The name cannot be "n" or "u"
+  if( surface_name.compare( "n" ) == 0 ||
+      surface_name.compare( "u" ) == 0 )
+  {
+    error_message += "Error in surface \"";
+    error_message += surface_name;
+    error_message += "\": the name is reserved.\n";
+  }
+  
+  // If any errors have occured, throw
+  if( error_message.size() > 0 )
+  {
     throw std::invalid_argument( error_message );
   }
 }
 
 // Validate the surface type
-/*! \details Only the follow surface types are valid:
+/*! \details Only the following surface types are valid:
  * <ul>
  *  <li> x plane
  *  <li> y plane
@@ -182,148 +226,8 @@ void validateSurfaceSpecialAttribute( const std::string& surface_attribute,
   }
 }
 
-// Validate an individual surface
-/*! \details All parameters in the surface parameter list will be tested. If
- * any errors are detected, they will be recorded and a std::invalid_argument
- * exception will be thrown.
- */
-void validateSurface( const Teuchos::ParameterList& surface,
-		      const std::string& surface_name )
-{
-  std::string error_message;
-
-  // Validate the surface type
-  bool valid_surface_type = true;
-  
-  try{
-    validateSurfaceType( surface.get<std::string>( "type" ), surface_name );
-  }
-  // The type hasn't been specified
-  catch( Teuchos::Exceptions::InvalidParameter& parameterlist_exception )
-  {
-    // record the error message
-    error_message += parameterlist_exception.what();
-    
-    valid_surface_type = false;
-  }
-  // The type is invalid
-  catch( std::invalid_argument& surface_exception )
-  {
-    // record the error message
-    error_message += surface_exception.what();
-    
-    valid_surface_type = false;
-  }
-
-  // Validate the surface definition
-  if( valid_surface_type )
-  {
-    try{
-      validateSurfaceDefinition( 
-			  surface.get<Teuchos::Array<double> >( "definition" ),
-			  surface.get<std::string>( "type" ),
-			  surface_name );
-    }
-    // The definition hasn't been specified
-    catch( Teuchos::Exceptions::InvalidParameter& parameterlist_exception )
-    {
-      // record the error message
-      error_message += parameterlist_exception.what();
-    }
-    // The definition is invalid
-    catch( std::invalid_argument& surface_exception )
-    {
-      // record the error message
-      error_message += surface_exception.what();
-    }
-  }
-
-  // Validate the surface special attribute
-  try{
-    validateSurfaceSpecialAttribute( 
-			       surface.get<std::string>( "special attribute" ),
-			       surface_name );
-  }
-  // No special attribute has been specified (okay - optional argument)
-  catch( Teuchos::Exceptions::InvalidParameter& parameterlist_exception ){}
-  // The special attribute is invalid
-  catch( std::invalid_argument& surface_exception )
-  {
-    // record the error message
-    error_message += surface_exception.what();
-  }
-
-  // If any errors have occured throw
-  if( error_message.size() > 0 )
-  {
-    throw std::invalid_argument( error_message );
-  }
-}
-
-// Validate all surfaces
-void validateAllSurfaces( const Teuchos::ParameterList& all_surfaces )
-{
-  std::string error_message;
-
-  // Iterate over all surfaces defined in the surfaces parameter list
-  Teuchos::ParameterList::ConstIterator parameter =
-    all_surfaces.begin();
-  Teuchos::ParameterList::ConstIterator end_parameter = 
-    all_surfaces.end();
-  
-  while( parameter != end_parameter )
-  {
-    const Teuchos::ParameterEntry& parameter_entry = 
-      all_surfaces.entry( parameter );
-
-    const std::string& parameter_name = 
-      all_surfaces.name( parameter );
-
-    // Every parameter must be a sublist
-    if( !parameter_entry.isList() )
-    {
-      error_message += "Error: surface \"";
-      error_message += parameter_name.c_str();
-      error_message +=  "\" must be a parameter list.\n";
-    }
-    else
-    {
-      const Teuchos::ParameterList& surface = 
-	Teuchos::getValue<Teuchos::ParameterList>( parameter_entry );
-
-      // Validate the surface name
-      try{
-	validateSurfaceName( parameter_name );
-      }
-      catch( std::invalid_argument& surface_exception )
-      {
-	// record the error message
-	error_message += surface_exception.what();
-      }
-
-      // Validate the surface
-      try{
-	validateSurface( surface, parameter_name );
-      }
-      catch( std::invalid_argument& surface_exception )
-      {
-	// record the error message
-	error_message += surface_exception.what();
-      }
-      
-      // If any error occurred throw
-      if( error_message.size() > 0 )
-      {
-	throw std::invalid_argument( error_message );
-      }				  
-    }
-    
-    ++parameter;
-  }
-}
-
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//
-// end NativeSurfaceInputValidators.cpp
+// end SurfaceInputValidatorHelpers.cpp
 //---------------------------------------------------------------------------//

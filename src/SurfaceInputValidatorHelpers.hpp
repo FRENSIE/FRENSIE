@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   NativeSurfaceInputValidators.hpp
+//! \file   SurfaceInputValidatorHelpers.hpp
 //! \author Alex Robinson
-//! \brief  Native surface input validator function declarations.
+//! \brief  Surface input validator helper function declarations.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef NATIVE_SURFACE_INPUT_VALIDATORS_HPP
-#define NATIVE_SURFACE_INPUT_VALIDATORS_HPP
+#ifndef SURFACE_INPUT_VALIDATOR_HELPERS_HPP
+#define SURFACE_INPUT_VALIDATOR_HELPERS_HPP
 
 // Std Lib Includes
 #include <string>
@@ -36,17 +36,10 @@ void validateSurfaceDefinition(
 void validateSurfaceSpecialAttribute( const std::string& surface_attribute,
 				      const std::string& surface_name );
 
-//! Validate an individual surface
-void validateSurface( const Teuchos::ParameterList& surface,
-		      const std::string& surface_name );
-
-//! Validate all surfaces
-void validateAllSurfaces( const Teuchos::ParameterList& all_surfaces );
-
 } // end FACEMC namespace
 
-#endif // end NATIVE_SURFACE_INPUT_VALIDATORS_HPP
+#endif // end SURFACE_INPUT_VALIDATOR_HELPERS_HPP
 
 //---------------------------------------------------------------------------//
-// end NativeSurfaceInputValidators.hpp
+// end SurfaceInputValidatorHelpers.hpp
 //---------------------------------------------------------------------------//

@@ -1,4 +1,4 @@
-<ParameterList name="Surfaces">
+<ParameterList name="surfaces">
   <ParameterList name="plane_1">
     <Parameter name="type" type="string" value="x plane"/>
     <Parameter name="definition" type="Array(double)" value="{1.0}"/>

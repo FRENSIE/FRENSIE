@@ -158,11 +158,27 @@ ADD_EXECUTABLE(tstCellBoundingBox
 TARGET_LINK_LIBRARIES(tstCellBoundingBox ${PROJECT_NAME})
 ADD_TEST(CellBoundingBox_test tstCellBoundingBox)
 
-ADD_EXECUTABLE(tstNativeSurfaceInputValidators
-  tstNativeSurfaceInputValidators.cpp)
-TARGET_LINK_LIBRARIES(tstNativeSurfaceInputValidators ${PROJECT_NAME})
-ADD_TEST(NativeSurfaceInputValidators_test 
-  tstNativeSurfaceInputValidators --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_surfaces.xml")
+ADD_EXECUTABLE(tstSurfaceInputValidatorHelpers
+  tstSurfaceInputValidatorHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSurfaceInputValidatorHelpers ${PROJECT_NAME})
+ADD_TEST(SurfaceInputValidatorHelpers_test tstSurfaceInputValidatorHelpers) 
+
+ADD_EXECUTABLE(tstSurfaceInputValidator
+  tstSurfaceInputValidator.cpp)
+TARGET_LINK_LIBRARIES(tstSurfaceInputValidator ${PROJECT_NAME})
+ADD_TEST(SurfaceInputValidator_test tstSurfaceInputValidator --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_surfaces.xml")
+
+ADD_EXECUTABLE(tstCellInputValidatorHelpers
+  tstCellInputValidatorHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCellInputValidatorHelpers ${PROJECT_NAME})
+ADD_TEST(CellInputValidatorHelpers_test tstCellInputValidatorHelpers)
+
+ADD_EXECUTABLE(tstCellInputValidator
+  tstCellInputValidator.cpp)
+TARGET_LINK_LIBRARIES(tstCellInputValidator ${PROJECT_NAME})
+ADD_TEST(CellInputValidator_test tstCellInputValidator)
 
 ADD_EXECUTABLE(tstParticleState
   tstParticleState.cpp
