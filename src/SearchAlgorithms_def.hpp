@@ -108,7 +108,6 @@ g * of interest.
  * <ul> 
  *  <li> A valid set of iterators, which are any two iterators that are not
  *       equal (and from the same container), must be given to this function.
- *  <li> The value of interest must be greater than or equal to zero.
  *  <li> The value of interest must be less than the value in the last element
  *       of the container.
  * </ul>
@@ -125,8 +124,8 @@ Iterator binarySearchDiscreteData( Iterator start,
   // The iterators must be from a valid container (size > 0)
   testPrecondition( (start != end) );
   // The value used for the search must be within the limits of the data
-  testPrecondition( (value >= 0) );
-  testPrecondition( (value <= get<member>( *(end-1) )) );
+  //testPrecondition( (value >= 0.0) );
+  testPrecondition( (value <= get<member>( *(end-1) ) ) );
   
   // Remember the end iterator for the Postcondition check
   remember( Iterator invalid = end );

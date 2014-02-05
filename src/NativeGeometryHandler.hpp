@@ -27,7 +27,7 @@
 
 namespace FACEMC{
 
-//! The native geometry handler class
+//! Native geometry handler class
 template<typename Cell>
 class NativeGeometryHandler
 {

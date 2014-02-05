@@ -63,6 +63,9 @@ public:
   //! Return the particle type
   ParticleType getParticleType() const;
 
+  //! Set the particle type
+  ParticleType setParticleType( const ParticleType particle_type );
+
   //! Return the history number
   unsigned long long getHistoryNumber() const;
 
@@ -89,6 +92,9 @@ public:
 		    const double y_position,
 		    const double z_position );
 
+  //! Set the position of the particle
+  void setPosition( const double position[3] );
+
   //! Return the x direction of the particle
   double getXDirection() const;
 
@@ -105,6 +111,30 @@ public:
   void setDirection( const double x_direction,
 		     const double y_direction,
 		     const double z_direction );
+
+  //! Set the direction of the particle
+  void setDirection( const double direction[3] );
+
+  //! Return the time state of the particle
+  void getTime() const;
+
+  //! Set the time state of the particle
+  void setTime();
+
+  //! Return the weight of the particle
+  void getWeight() const;
+
+  //! Set the weight of the particle
+  void setWeight();
+
+  //! multiply the weight of the particle by a factor
+  void multiplyWeight( const double weight_factor );
+
+  //! Set the source strength multiplier
+  void setSourceStrengthMultiplier();
+    
+  //! Get the source strength multiplier
+  void getSourceStrengthMultiplier();
 
   //! Return the cell handle for the cell containing the particle
   CellHandle getCell() const;
@@ -158,6 +188,12 @@ private:
   
   // Direction of the particle
   boost::array<double,3> d_direction;
+
+  // Time of the particle
+  double d_time;
+
+  // Weight of the particle
+  double d_weight;
 
   // Type of particle
   ParticleType d_type;

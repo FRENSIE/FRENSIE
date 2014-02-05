@@ -118,7 +118,7 @@ struct GeometryHandlerTraits
    */
   static inline PointLocation getParticleLocation( 
 				    const CellHandle& cell,
-				    const ParticleState<CellHandle>& particle )
+				    const double position[3] )
   { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
 
   //! Calculate the surface normal at a point on the surface

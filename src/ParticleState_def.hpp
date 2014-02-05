@@ -21,6 +21,9 @@ ParticleState<CellHandle>::ParticleState()
     d_energy( 0.0 ),
     d_position(),
     d_direction(),
+    d_time( 0.0 ),
+    d_weight( 1.0 ),
+    d_source_strength_multiplier( 1.0 ),
     d_type( PHOTON ),
     d_history_number( 0ull ),
     d_cell( 0 ),
@@ -38,6 +41,9 @@ ParticleState<CellHandle>::ParticleState(
     d_energy( 0.0 ),
     d_position(),
     d_direction(),
+    d_time( 0.0 ),
+    d_weight( 1.0 ),
+    d_source_strength_multiplier( 1.0 ),
     d_type( particle_type ),
     d_history_number( history_number ),
     d_cell( 0 ),
@@ -53,6 +59,10 @@ ParticleState<CellHandle>::ParticleState(
 : d_energy( existing_particle_state.d_energy ),
   d_position( existing_particle_state.d_position ),
   d_direction( existing_particle_state.d_direction ),
+  d_time( existing_particle_state.d_time ),
+  d_weight( existing_particle_state.d_weight ),
+  d_source_strength_multiplier( 
+			existing_particle_state.d_source_strength_multiplier ),
   d_type( existing_particle_state.d_type ),
   d_history_number( existing_particle_state.d_history_number ),
   d_cell( existing_particle_state.d_cell ),
@@ -73,6 +83,10 @@ ParticleState<CellHandle>::operator=(
     d_energy = existing_particle_state.d_energy;
     d_position = existing_particle_state.d_position;
     d_direction = existing_particle_state.d_direction;
+    d_time( existing_particle_state.d_time );
+    d_weight( existing_particle_state.d_weight );
+    d_source_strength_multiplier( 
+			existing_particle_state.d_source_strength_multiplier );
     d_type = existing_particle_state.d_type;
     d_history_number = existing_particle_state.d_history_number;
     d_cell = existing_particle_state.d_cell;
@@ -89,6 +103,14 @@ template<typename CellHandle>
 ParticleType ParticleState<CellHandle>::getParticleType() const
 {
   return d_type;
+}
+
+// Set the particle type
+template<typeanme CellHandle>
+ParticleType ParticleState<CellHandle>::setParticleType( 
+					     const ParticleType particle_type )
+{
+  d_type = particle_type;
 }
 
 // Return the history number
@@ -205,6 +227,16 @@ void ParticleState<CellHandle>::setDirection( const double x_direction,
   d_direction[1] = y_direction;
   d_direction[2] = z_direction;
 }
+
+// Return the time state of the particle
+template<typename CellHandle>
+void ParticleState<CellHandle>::getTime()
+{
+  return d_time;
+}
+
+// Set the time state of the particle
+template<typename CellHandle>
 
 // Return the cell handle for the cell containing the particle
 template<typename CellHandle>
