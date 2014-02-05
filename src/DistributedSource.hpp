@@ -67,11 +67,10 @@ public:
       const typename GeometryHandlerTraits<GeometryHandler>::CellHandle cell );
 
   //! Sample a particle state from the source
-  template<typename ParticleState>
-  void sampleParticleState( ParticleState& particle );
+  void sampleParticleState( BasicParticleState& particle );
 
   //! Get the sampling efficiency from the source distribution
-  void getSamplingEfficiency() const;
+  double getSamplingEfficiency() const;
 
 private:
 

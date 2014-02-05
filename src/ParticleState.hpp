@@ -12,28 +12,20 @@
 // Std Lib Includes
 #include <iostream>
 
-// Boost Includes
-#include <boost/array.hpp>
-
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
 // FACEMC Includes
-#include "PrintableObject.hpp"
 #include "ParticleType.hpp"
+#include "BasicParticleState.hpp"
 
 namespace FACEMC{
 
 //! The particle state class
 template<typename CellHandle>
-class ParticleState : public PrintableObject
+class ParticleState : public BasicParticleState
 {
-
-private:
-  
-  // Typedef for ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
   
 public:
   
@@ -46,8 +38,7 @@ public:
   ParticleState();
 
   //! Constructor for a particular history
-  ParticleState( const unsigned long long history_number,
-		 const ParticleType particle_type );
+  ParticleState( const unsigned long long history_number );
 
   //! Copy constructor
   ParticleState( const ParticleState<CellHandle>& existing_particle_state );
@@ -60,81 +51,8 @@ public:
   ~ParticleState()
   { /* ... */ }
 
-  //! Return the particle type
-  ParticleType getParticleType() const;
-
-  //! Set the particle type
-  ParticleType setParticleType( const ParticleType particle_type );
-
   //! Return the history number
   unsigned long long getHistoryNumber() const;
-
-  //! Return the energy of the particle
-  double getEnergy() const;
-
-  //! Set the energy of the particle
-  void setEnergy( const double energy );
-
-  //! Return the x position of the particle
-  double getXPosition() const;
-
-  //! Return the y position of the particle
-  double getYPosition() const;
-
-  //! Return the z position of the particle
-  double getZPosition() const;
-
-  //! Return the position of the particle
-  const double* getPosition() const;
-
-  //! Set the position of the particle
-  void setPosition( const double x_position, 
-		    const double y_position,
-		    const double z_position );
-
-  //! Set the position of the particle
-  void setPosition( const double position[3] );
-
-  //! Return the x direction of the particle
-  double getXDirection() const;
-
-  //! Return the y direction of the particle
-  double getYDirection() const;
-
-  //! Return the z direction of the particle
-  double getZDirection() const;
-
-  //! Return the direction of the particle
-  const double* getDirection() const;
-
-  //! Set the direction of the particle
-  void setDirection( const double x_direction,
-		     const double y_direction,
-		     const double z_direction );
-
-  //! Set the direction of the particle
-  void setDirection( const double direction[3] );
-
-  //! Return the time state of the particle
-  void getTime() const;
-
-  //! Set the time state of the particle
-  void setTime();
-
-  //! Return the weight of the particle
-  void getWeight() const;
-
-  //! Set the weight of the particle
-  void setWeight();
-
-  //! multiply the weight of the particle by a factor
-  void multiplyWeight( const double weight_factor );
-
-  //! Set the source strength multiplier
-  void setSourceStrengthMultiplier();
-    
-  //! Get the source strength multiplier
-  void getSourceStrengthMultiplier();
 
   //! Return the cell handle for the cell containing the particle
   CellHandle getCell() const;
@@ -157,9 +75,6 @@ public:
   //! Set the particle as gone
   void setAsGone();
 
-  //! Advance the particle along its direction by the requested distance
-  void advance( const double distance );
-
   //! Spawn a child state (the history number will not change)
   ParticleStatePtr spawnChildState( 
 			        const ParticleType child_particle_type ) const;
@@ -174,29 +89,6 @@ private:
 
   //! Set the history as a child
   void setAsChildHistory();
-
-  //! Test if the direction is valid
-  bool validDirection( const double x_direction,
-		       const double y_direction,
-		       const double z_direction );
-
-  // Energy of the particle
-  double d_energy;
-
-  // Position of the particle
-  boost::array<double,3> d_position;
-  
-  // Direction of the particle
-  boost::array<double,3> d_direction;
-
-  // Time of the particle
-  double d_time;
-
-  // Weight of the particle
-  double d_weight;
-
-  // Type of particle
-  ParticleType d_type;
 
   // History number
   unsigned long long d_history_number;

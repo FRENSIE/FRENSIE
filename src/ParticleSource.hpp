@@ -10,7 +10,7 @@
 #define PARTICLE_SOURCE_HPP
 
 // FACEMC Includes
-#include "ParticleState.hpp"
+#include "BasicParticleState.hpp"
 
 namespace FACEMC{
 
@@ -25,15 +25,14 @@ public:
   { /* ... */ }
 
   //! Destructor
-  ~ParticleSource()
+  virtual ~ParticleSource()
   { /* ... */ }
 
   //! Sample a particle state from the source
-  template<typename ParticleState>
-  void sampleParticleState( ParticleState& particle ) = 0;
+  virtual void sampleParticleState( BasicParticleState& particle ) = 0;
 
-  //! Return the sampling efficiency from the source distribution
-  void getSamplingEfficiency() const = 0;
+  //! Return the sampling efficiency from the source
+  virtual double getSamplingEfficiency() const = 0;
 };
 
 } // end FACEMC namespace

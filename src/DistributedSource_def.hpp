@@ -115,9 +115,8 @@ DistributedSource<GeometryHandler>::setTimeImportanceDistribution(
 
 // Sample the particle state from the source
 template<typename GeometryHandler>
-template<typename ParticleState>
 DistributedSource<GeometryHandler>::sampleParticleState( 
-						      ParticleState& particle )
+						 BasicParticleState& particle )
 {
   // Make sure that the particle state is compatible with the geometry handler
   testStaticPrecondition((boost::is_same<typename ParticleState::CellHandle,
@@ -213,7 +212,7 @@ DistributedSource<GeometryHandler>::sampleParticleState(
 
 // Get the sampling efficiency from the source distribution
 template<typename GeometryHandler>
-void DistributedSource<GeometryHandler>::getSamplingEfficiency() const
+double DistributedSource<GeometryHandler>::getSamplingEfficiency() const
 {
   return static_cast<double>( d_number_of_samples )/d_number_of_trials;
 }

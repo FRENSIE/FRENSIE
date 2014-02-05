@@ -17,14 +17,7 @@ namespace FACEMC{
 // Constructor
 template<typename CellHandle>
 ParticleState<CellHandle>::ParticleState()
-  : PrintableObject( "ParticleState" ),
-    d_energy( 0.0 ),
-    d_position(),
-    d_direction(),
-    d_time( 0.0 ),
-    d_weight( 1.0 ),
-    d_source_strength_multiplier( 1.0 ),
-    d_type( PHOTON ),
+  : BasicParticleState(),
     d_history_number( 0ull ),
     d_cell( 0 ),
     d_root_history( true ),
@@ -35,16 +28,8 @@ ParticleState<CellHandle>::ParticleState()
 // Constructor for a particular history
 template<typename CellHandle>
 ParticleState<CellHandle>::ParticleState( 
-				       const unsigned long long history_number,
-				       const ParticleType particle_type )
-  : PrintableObject( "ParticleState" ),
-    d_energy( 0.0 ),
-    d_position(),
-    d_direction(),
-    d_time( 0.0 ),
-    d_weight( 1.0 ),
-    d_source_strength_multiplier( 1.0 ),
-    d_type( particle_type ),
+				      const unsigned long long history_number )
+  : BasicParticleState(),
     d_history_number( history_number ),
     d_cell( 0 ),
     d_root_history( true ),
@@ -56,19 +41,12 @@ ParticleState<CellHandle>::ParticleState(
 template<typename CellHandle>
 ParticleState<CellHandle>::ParticleState( 
 		     const ParticleState<CellHandle>& existing_particle_state )
-: d_energy( existing_particle_state.d_energy ),
-  d_position( existing_particle_state.d_position ),
-  d_direction( existing_particle_state.d_direction ),
-  d_time( existing_particle_state.d_time ),
-  d_weight( existing_particle_state.d_weight ),
-  d_source_strength_multiplier( 
-			existing_particle_state.d_source_strength_multiplier ),
-  d_type( existing_particle_state.d_type ),
-  d_history_number( existing_particle_state.d_history_number ),
-  d_cell( existing_particle_state.d_cell ),
-  d_root_history( existing_particle_state.d_root_history ),
-  d_lost( existing_particle_state.d_lost ),
-  d_gone( existing_particle_state.d_gone )
+  : BasicParticleState( existing_particle_state ),
+    d_history_number( existing_particle_state.d_history_number ),
+    d_cell( existing_particle_state.d_cell ),
+    d_root_history( existing_particle_state.d_root_history ),
+    d_lost( existing_particle_state.d_lost ),
+    d_gone( existing_particle_state.d_gone )
 { /* ... */ }
 
 // Assignment operator
@@ -80,14 +58,8 @@ ParticleState<CellHandle>::operator=(
   // Test if the existing particle state is the same as the target
   if( this != &existing_particle_state )
   {
-    d_energy = existing_particle_state.d_energy;
-    d_position = existing_particle_state.d_position;
-    d_direction = existing_particle_state.d_direction;
-    d_time( existing_particle_state.d_time );
-    d_weight( existing_particle_state.d_weight );
-    d_source_strength_multiplier( 
-			existing_particle_state.d_source_strength_multiplier );
-    d_type = existing_particle_state.d_type;
+    BasicParticleState::operator=( existing_particle_state );
+    
     d_history_number = existing_particle_state.d_history_number;
     d_cell = existing_particle_state.d_cell;
     d_root_history = existing_particle_state.d_root_history;
@@ -98,145 +70,12 @@ ParticleState<CellHandle>::operator=(
   return *this;
 }
 
-// Return the particle type
-template<typename CellHandle>
-ParticleType ParticleState<CellHandle>::getParticleType() const
-{
-  return d_type;
-}
-
-// Set the particle type
-template<typeanme CellHandle>
-ParticleType ParticleState<CellHandle>::setParticleType( 
-					     const ParticleType particle_type )
-{
-  d_type = particle_type;
-}
-
 // Return the history number
 template<typename CellHandle>
 unsigned long long ParticleState<CellHandle>::getHistoryNumber() const
 {
   return d_history_number;
 }
-
-// Return the energy of the particle
-template<typename CellHandle>
-double ParticleState<CellHandle>::getEnergy() const
-{
-  return d_energy;
-}
-
-// Set the energy of the particle
-template<typename CellHandle>
-void ParticleState<CellHandle>::setEnergy( const double energy )
-{
-  // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
-  
-  d_energy = energy;
-}
-
-// Return the x position of the particle
-template<typename CellHandle>
-double ParticleState<CellHandle>::getXPosition() const
-{
-  return d_position[0];
-}
-
-// Return the y position of the particle
-template<typename CellHandle>
-double ParticleState<CellHandle>::getYPosition() const
-{
-  return d_position[1];
-}
-
-// Return the z position of the particle
-template<typename CellHandle>
-double ParticleState<CellHandle>::getZPosition() const
-{
-  return d_position[2];
-}
-
-// Return the position of the particle
-template<typename CellHandle>
-const double* ParticleState<CellHandle>::getPosition() const
-{
-  return d_position.data();
-}
-
-// Set the position of the particle
-template<typename CellHandle>
-void ParticleState<CellHandle>::setPosition( const double x_position, 
-					     const double y_position,
-					     const double z_position )
-{
-  // Make sure the coordinates are valid
-  testPrecondition( !ST::isnaninf( x_position ) );
-  testPrecondition( !ST::isnaninf( y_position ) );
-  testPrecondition( !ST::isnaninf( z_position ) );
-  
-  d_position[0] = x_position;
-  d_position[1] = y_position;
-  d_position[2] = z_position;
-}
-
-// Return the x direction of the particle
-template<typename CellHandle>
-double ParticleState<CellHandle>::getXDirection() const
-{
-  return d_direction[0];
-}
-
-// Return the y direction of the particle
-template<typename CellHandle>
-double ParticleState<CellHandle>::getYDirection() const
-{
-  return d_direction[1];
-}
-
-// Return the z direction of the particle
-template<typename CellHandle>
-double ParticleState<CellHandle>::getZDirection() const
-{
-  return d_direction[2];
-}
-
-// Return the direction of the particle
-template<typename CellHandle>
-const double* ParticleState<CellHandle>::getDirection() const
-{
-  return d_direction.data();
-}
-
-// Set the direction of the particle
-template<typename CellHandle>
-void ParticleState<CellHandle>::setDirection( const double x_direction,
-					      const double y_direction,
-					      const double z_direction )
-{
-  // Make sure the direction coordinates are valid
-  testPrecondition( !ST::isnaninf( x_direction ) );
-  testPrecondition( !ST::isnaninf( y_direction ) );
-  testPrecondition( !ST::isnaninf( z_direction ) );
-  // Make sure the direction is a unit vector
-  testPrecondition( validDirection( x_direction, y_direction, z_direction ) );
-  
-  d_direction[0] = x_direction;
-  d_direction[1] = y_direction;
-  d_direction[2] = z_direction;
-}
-
-// Return the time state of the particle
-template<typename CellHandle>
-void ParticleState<CellHandle>::getTime()
-{
-  return d_time;
-}
-
-// Set the time state of the particle
-template<typename CellHandle>
 
 // Return the cell handle for the cell containing the particle
 template<typename CellHandle>
@@ -285,18 +124,6 @@ template<typename CellHandle>
 void ParticleState<CellHandle>::setAsGone()
 {
   d_gone = true;
-}
-
-// Advance the particle along its direction by the requested distance
-template<typename CellHandle>
-void ParticleState<CellHandle>::advance( const double distance )
-{
-  // Make sure the distance is valid
-  testPrecondition( !ST::isnaninf( distance ) );
-  
-  d_position[0] += d_direction[0]*distance;
-  d_position[1] += d_direction[1]*distance;
-  d_position[2] += d_direction[2]*distance;
 }
 
 // Spawn a child state (the history number will not change)
@@ -367,21 +194,6 @@ template<typename CellHandle>
 void ParticleState<CellHandle>::setAsChildHistory()
 {
   d_root_history = false;
-}
-
-// Test if the direction is valid
-template<typename CellHandle>
-bool ParticleState<CellHandle>::validDirection( const double x_direction,
-						const double y_direction,
-						const double z_direction )
-{
-  double x_direction_sqr = x_direction*x_direction;
-  double y_direction_sqr = y_direction*y_direction;
-  double z_direction_sqr = z_direction*z_direction;
-  double argument = x_direction_sqr+y_direction_sqr+z_direction_sqr;
-  double norm_two_value = ST::squareroot( argument );
-  
-  return ST::magnitude( norm_two_value - 1.0 ) < ST::prec();
 }
 
 } // end FACEMC namespace
