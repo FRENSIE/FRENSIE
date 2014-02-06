@@ -21,6 +21,20 @@ namespace FACEMC{
 
 namespace Traits{
 
+// The value of an invalid cell handle
+inline GeometryHandlerTraits<moab::DagMC>::CellHandle 
+GeometryHandlerTraits<moab::DagMC>::invalidCellHandle()
+{
+  return std::numeric_limits<CellHandle>::max();
+}
+
+// The value of an invalid surface handle
+inline GeometryHandlerTraits<moab::DagMC>::SurfaceHandle
+GeometryHandlerTraits<moab::DagMC>::invalidSurfaceHandle()
+{
+  return std::numeric_limits<SurfaceHandle>::max();
+}
+
 // Get an instance of DagMC (singleton pattern)
 inline GeometryHandlerTraits<moab::DagMC>::GeometryHandlerPtr 
 GeometryHandlerTraits<moab::DagMC>::getHandler()
@@ -87,7 +101,7 @@ inline void GeometryHandlerTraits<moab::DagMC>::updateCellContainingParticle(
     GeometryHandlerTraits<moab::DagMC>::getAllCells();
   
   CellHandle cell_containing_point = 
-    GeometryHandlerTraits<moab::DagMC>::invalidCellHandle;
+    GeometryHandlerTraits<moab::DagMC>::invalidCellHandle();
   
   // Try using the cells found to contain previously tested particles first.
   GeometryHandlerTraits<moab::DagMC>::testCellsContainingTestPoints( 
@@ -96,7 +110,7 @@ inline void GeometryHandlerTraits<moab::DagMC>::updateCellContainingParticle(
   
   // Try all remaining cells
   if( cell_containing_point == 
-      GeometryHandlerTraits<moab::DagMC>::invalidCellHandle )
+      GeometryHandlerTraits<moab::DagMC>::invalidCellHandle() )
   {
     GeometryHandlerTraits<moab::DagMC>::testAllRemainingCells(
 							 cell_containing_point,
@@ -105,7 +119,7 @@ inline void GeometryHandlerTraits<moab::DagMC>::updateCellContainingParticle(
   
   // Test if the particle is lost
   TEST_FOR_EXCEPTION( cell_containing_point == 
-		      GeometryHandlerTraits<moab::DagMC>::invalidCellHandle,
+		      GeometryHandlerTraits<moab::DagMC>::invalidCellHandle(),
 		      FACEMC::MOABException,
 		      moab::ErrorCodeStr[4] );
   

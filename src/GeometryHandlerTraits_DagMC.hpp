@@ -52,6 +52,12 @@ private:
 
 public:
 
+  //! The value of an invalid cell handle
+  static CellHandle invalidCellHandle();
+
+  //! The value of an invalid surface handle
+  static SurfaceHandle invalidSurfaceHandle();
+
   //! Get an instance of DagMC (singleton pattern)
   static GeometryHandlerPtr getHandler();
   
@@ -119,14 +125,6 @@ private:
 				   CellHandle& cell,
 				   const ParticleState<CellHandle>& particle );
 
-  // Invalid cell handle (for testing the successful assignment of cell 
-  // handles)
-  static const CellHandle invalidCellHandle;
-
-  // Invalid surface handle( for testing the successful assignment of surface
-  // handles)
-  static const SurfaceHandle invalidSurfaceHandle;
-
   // An instance of DagMC
   static moab::DagMC* const dagmc_instance;
 
@@ -148,18 +146,6 @@ private:
 //---------------------------------------------------------------------------//
 // GeometryHandlerTraits<moab::DagMC> static member initialization.
 //---------------------------------------------------------------------------//
-
-// Invalid cell handle (for testing the successful assignment of cell 
-// handles)
-const GeometryHandlerTraits<moab::DagMC>::CellHandle 
-GeometryHandlerTraits<moab::DagMC>::invalidCellHandle = 
-  std::numeric_limits<CellHandle>::max();
-
-// Invalid surface handle( for testing the successful assignment of surface
-// handles)
-const GeometryHandlerTraits<moab::DagMC>::SurfaceHandle 
-GeometryHandlerTraits<moab::DagMC>::invalidSurfaceHandle = 
-  std::numeric_limits<SurfaceHandle>::max();
 
 // An instance of DagMC
 moab::DagMC* const GeometryHandlerTraits<moab::DagMC>::dagmc_instance = 

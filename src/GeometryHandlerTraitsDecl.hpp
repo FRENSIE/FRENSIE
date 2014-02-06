@@ -69,6 +69,14 @@ struct GeometryHandlerTraits
   //! The cell id type
   typedef int CellId;
 
+  //! The value of an invalid cell handle
+  static inline CellHandle invalidCellHandle()
+  { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
+
+  //! The value of an invalid surface handle
+  static inline SurfaceHandle invalidSurfaceHandle()
+  { (void)UndefinedTraits<GeometryHandler>::notDefined(); return 0; }
+
   //! Get an instance of the GeometryHandler (singleton pattern)
   static inline GeometryHandlerPtr getHandler()
   { (void)UndefinedTraits<GeometryHandler>::notDefined(); return NULL; }
