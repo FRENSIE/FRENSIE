@@ -82,9 +82,9 @@ public:
   static bool isTerminationCell( const CellHandle& cell );
   
   //! Get the point location w.r.t. a given cell
-  static PointLocation getParticleLocation(
-				   const CellHandle& cell,
-				   const ParticleState<CellHandle>& particle );
+  static PointLocation getParticleLocation( const CellHandle& cell,
+					    const double position[3],
+					    const double direction[3] );
   
   //! Get the surface normal at a point on the surface
   static void getSurfaceNormal( const SurfaceHandle& surface,

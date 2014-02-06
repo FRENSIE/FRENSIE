@@ -168,17 +168,18 @@ inline bool GeometryHandlerTraits<moab::DagMC>::isTerminationCell(
  * should be caught and a lost particle should be indicated.
  */
 inline PointLocation GeometryHandlerTraits<moab::DagMC>::getParticleLocation(
-				    const CellHandle& cell,
-				    const ParticleState<CellHandle>& particle )
+				                    const CellHandle& cell,
+						    const double position[3],
+						    const double direction[3] )
 					     
 {
   int test_result;
   moab::ErrorCode return_value = 
     GeometryHandlerTraits<moab::DagMC>::dagmc_instance->point_in_volume( 
 			    cell,
-			    particle.getPosition(),
+			    position,
 			    test_result,
-			    particle.getDirection(),
+			    direction,
 			    &GeometryHandlerTraits<moab::DagMC>::ray_history );
     
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
@@ -345,8 +346,10 @@ inline void GeometryHandlerTraits<moab::DagMC>::testCellsContainingTestPoints(
   while( cell_handle != end_cell_handle )
   {
     PointLocation test_point_location = 
-      GeometryHandlerTraits<moab::DagMC>::getParticleLocation( *cell_handle,
-							       particle );
+      GeometryHandlerTraits<moab::DagMC>::getParticleLocation( 
+						     *cell_handle,
+						     particle.getPosition(),
+						     particle.getDirection() );
     
     if( test_point_location == POINT_INSIDE_CELL )
     {
@@ -373,8 +376,10 @@ void GeometryHandlerTraits<moab::DagMC>::testAllRemainingCells(
   while( cell_handle != end_cell_handle )
   {
     PointLocation test_point_location = 
-      GeometryHandlerTraits<moab::DagMC>::getParticleLocation( *cell_handle,
-							       particle );
+      GeometryHandlerTraits<moab::DagMC>::getParticleLocation( 
+						     *cell_handle,
+						     particle.getPosition(),
+						     particle.getDirection() );
     
     if( test_point_location == POINT_INSIDE_CELL )
     {

@@ -124,6 +124,19 @@ DistributedSource<GeometryHandler>::sampleParticleState(
   
   // Keep track of the starting particle weight
   double weight = 1.0;
+
+  // Sample the particle direction
+  double direction[3];
+
+  if( d_directional_importance_distribution.is_null() )
+    d_directional_distribution.sample( direction );
+  else
+  {
+    d_directional_importance_distribution.sample( direction );
+
+    weight *= d_directional_distribution.evaluatePDF( direction )/
+      d_directional_importance_distribution.evaluatePDF( direction );
+  }
   
   // Sample the particle position
   double position[3];
@@ -137,7 +150,7 @@ DistributedSource<GeometryHandler>::sampleParticleState(
     {
       d_spatial_importance_distribution.sample( position );
       
-      position_weight *= d_spatial_distribution.evaluatePDF( position )/
+      position_weight = d_spatial_distribution.evaluatePDF( position )/
 	d_spatial_importance_distribution.evaluatePDF( position );
     }
 
@@ -145,11 +158,16 @@ DistributedSource<GeometryHandler>::sampleParticleState(
     if( d_rejection_cell != GHT::invalidCellHandle() )
     {
       PointLocation location = GHT::getParticleLocation( d_rejection_cell,
-							 position );
+							 position,
+							 direction );
       if( location == POINT_INSIDE_CELL )
 	break;
       else
+      {
+	position_weight = 1.0;
+	
 	++d_number_of_trials;
+      }
     }
     // No rejection cell to test
     else
@@ -157,19 +175,6 @@ DistributedSource<GeometryHandler>::sampleParticleState(
   }
   
   weight *= position_weight;
-  
-  // Sample the particle direction
-  double direction[3];
-
-  if( d_directional_importance_distribution.is_null() )
-    d_directional_distribution.sample( direction );
-  else
-  {
-    d_directional_importance_distribution.sample( direction );
-
-    weight *= d_directional_distribution.evaluatePDF( direction )/
-      d_directional_importance_distribution.evaluatePDF( direction );
-  }
 
   // Sample the particle energy
   double energy = 14.1;
