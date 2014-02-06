@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FACEMC Includes
+#include "UniformDistribution.hpp"
 #include "RandomNumberGenerator.hpp"
 #include "ContractException.hpp"
 
@@ -14,7 +15,7 @@ namespace FACEMC{
 
 // Constructor
 UniformDistribution::UniformDistribution( const double min_independent_value, 
-					  const double max_independend_value,
+					  const double max_independent_value,
 					  const double dependent_value )
   : d_min_independent_value( min_independent_value ),
     d_max_independent_value( max_independent_value ),
@@ -29,8 +30,8 @@ UniformDistribution::UniformDistribution( const double min_independent_value,
 // Evaluate the distribution
 double UniformDistribution::evaluate( const double indep_var_value ) const
 {
-  if( indep_var_value >= min_independent_value && 
-      indep_var_value <= max_independent_value )
+  if( indep_var_value >= d_min_independent_value && 
+      indep_var_value <= d_max_independent_value )
     return d_dependent_value;
   else
     return 0.0;
@@ -39,9 +40,9 @@ double UniformDistribution::evaluate( const double indep_var_value ) const
 // Return a random sample from the distribution
 double UniformDistribution::sample()
 {
-  double random_number = RandomNumberGenerator<double>::getRandomNumber();
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  return random_number*(d_max_independend_value - d_min_independent_value) +
+  return random_number*(d_max_independent_value - d_min_independent_value) +
     d_min_independent_value;
 }
 
@@ -60,7 +61,7 @@ double UniformDistribution::getUpperBoundOfIndepVar() const
 // Return the lower bound of the distribution independent variable
 double UniformDistribution::getLowerBoundOfIndepVar() const
 {
-  return d_max_indepenent_value;
+  return d_max_independent_value;
 }
 
 } // end FACEMC namespace

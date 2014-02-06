@@ -133,14 +133,10 @@ ParticleState<CellHandle>::spawnChildState(
 			         const ParticleType child_particle_type ) const
 {
   ParticleState<CellHandle>* child_particle = 
-    new ParticleState<CellHandle>( d_history_number, child_particle_type );
-
-  child_particle->setEnergy( d_energy );
-  child_particle->setPosition( d_position[0], d_position[1], d_position[2] );
-  child_particle->setDirection( d_direction[0], 
-				d_direction[1], 
-				d_direction[2] );
-  child_particle->setCell( d_cell );
+    new ParticleState<CellHandle>( d_history_number );
+  
+  *child_particle = *this;
+  child_particle->setParticleType( child_particle_type );
   child_particle->setAsChildHistory();
 
   return Teuchos::RCP<ParticleState<CellHandle> >( child_particle );
@@ -151,7 +147,7 @@ template<typename CellHandle>
 inline typename ParticleState<CellHandle>::ParticleStatePtr
 ParticleState<CellHandle>::spawnChildState() const
 {
-  return spawnChildState( d_type );
+  return spawnChildState( getParticleType() );
 }
 
 // Print method that defines the behavior of the std::stream << operator
@@ -160,29 +156,8 @@ void ParticleState<CellHandle>::print( std::ostream& os ) const
 {
   os << "History Number: " << d_history_number << std::endl;
   
-  os << "Particle Type: ";
-  switch( d_type )
-  {
-  case PHOTON: 
-    os << "photon";
-    break;
-  case NEUTRON:
-    os << "neutron";
-    break;
-  case ADJOINT_PHOTON:
-    os << "adjoint photon";
-    break;
-  case ADJOINT_NEUTRON:
-    os << "adjoint neutron";
-    break;
-  }
-  os << std::endl;
+  BasicParticleState::print_implementation( os );
   
-  os << "Energy: " << d_energy << std::endl;
-  os << "Position: {" << d_position[0] << "," << d_position[1] << ","
-     << d_position[2] << "}" << std::endl;
-  os << "Direction: {" << d_direction[0] << "," << d_direction[1] << ","
-     << d_direction[2] << "}" << std::endl;
   os << "Cell Handle: " << d_cell << std::endl;
   os << "Root: " << (d_root_history ? "yes":"no") << std::endl;
   os << "Lost: " << (d_lost ? "yes":"no") << std::endl;

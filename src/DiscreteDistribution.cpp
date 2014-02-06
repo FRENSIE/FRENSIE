@@ -27,7 +27,7 @@ DiscreteDistribution::DiscreteDistribution(
   {
     d_distribution[i].first = discrete_values[i];
 
-    d_distribution[i].second = probalities[i];
+    d_distribution[i].second = probabilities[i];
     
     if( i > 0 )
       d_distribution[i].second += d_distribution[i-1].second;
@@ -35,7 +35,7 @@ DiscreteDistribution::DiscreteDistribution(
 
   // Normalize the CDF
   for( unsigned i = 0; i < d_distribution.size(); ++i )
-    d_distribution[i].second /= d_distrubiton.back().second;
+    d_distribution[i].second /= d_distribution.back().second;
 
   // Make sure that the CDF has been constructed correctly
   testPostcondition( ST::magnitude( d_distribution.back().second - 1.0 ) <
@@ -47,11 +47,11 @@ DiscreteDistribution::DiscreteDistribution(
  * functions. Therefore, the discrete distribution can only take on two
  * values: 0.0 and infinity.
  */
-double evaluate( const double indep_var_value ) const 
+double DiscreteDistribution::evaluate( const double indep_var_value ) const 
 {
   for( unsigned i = 0; i < d_distribution.size(); ++i )
   {
-    if( indep_var_value == d_distribution[i] )
+    if( indep_var_value == d_distribution[i].first )
       return std::numeric_limits<double>::infinity();
   }
 
@@ -61,7 +61,7 @@ double evaluate( const double indep_var_value ) const
 // Return a random sample from the distribution
 double DiscreteDistribution::sample()
 {
-  double random_number = RandomNumberGenerator<double>::getRandomNumber();
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
   Teuchos::Array<Pair<double,double> >::const_iterator sample = 
     Search::binarySearchDiscreteData<SECOND>( d_distribution.begin(),

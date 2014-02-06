@@ -32,9 +32,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearCongruentialGenerator,
 				   rnd, 
 				   ScalarType )
 {
-  FACEMC::LinearCongruentialGenerator<ScalarType> lcg;
+  FACEMC::LinearCongruentialGenerator lcg;
   
-  ScalarType random_number = lcg.rnd();
+  ScalarType random_number = lcg.rnd<ScalarType>();
   
   TEST_COMPARE( random_number, >=, Teuchos::ScalarTraits<ScalarType>::zero() );
   TEST_COMPARE( random_number, <, Teuchos::ScalarTraits<ScalarType>::one() );
@@ -49,7 +49,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearCongruentialGenerator,
 				   statistics_single_history,
 				   ScalarType )
 {
-  FACEMC::LinearCongruentialGenerator<ScalarType> lcg;
+  FACEMC::LinearCongruentialGenerator lcg;
   
   double test_average = 0;
   double test_variance = 0;
@@ -58,7 +58,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearCongruentialGenerator,
 
   for( int i = 0; i < samples; ++i )
   {
-    random_number = lcg.rnd();
+    random_number = lcg.rnd<ScalarType>();
     test_average += random_number;
     test_variance += random_number*random_number;    
   }
@@ -85,7 +85,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearCongruentialGenerator,
 				   statistics_multiple_histories,
 				   ScalarType )
 {
-  FACEMC::LinearCongruentialGenerator<ScalarType> lcg;
+  FACEMC::LinearCongruentialGenerator lcg;
   
   double test_average = 0;
   double test_variance = 0;
@@ -98,7 +98,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearCongruentialGenerator,
   {
     for( int j = 0; j < samples/histories; ++j )
     {
-      random_number = lcg.rnd();
+      random_number = lcg.rnd<ScalarType>();
       test_average += random_number;
       test_variance += random_number*random_number;
     }

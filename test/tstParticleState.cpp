@@ -35,7 +35,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
 				   getParticleType,
 				   CellHandle )
 {
-  FACEMC::ParticleState<CellHandle> particle( 1ull, FACEMC::PHOTON );
+  FACEMC::ParticleState<CellHandle> particle( 1ull );
+  particle.setParticleType( FACEMC::PHOTON );
   
   TEST_EQUALITY_CONST( particle.getParticleType(), FACEMC::PHOTON );
 }
@@ -48,7 +49,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
 				   getHistoryNumber,
 				   CellHandle )
 {
-  FACEMC::ParticleState<CellHandle> particle( 1ull, FACEMC::PHOTON );
+  FACEMC::ParticleState<CellHandle> particle( 1ull );
 
   TEST_EQUALITY_CONST( particle.getHistoryNumber(), 1ull );
 }
@@ -61,7 +62,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
 				   setgetEnergy,
 				   CellHandle )
 {
-  FACEMC::ParticleState<CellHandle> particle( 1ull, FACEMC::PHOTON );
+  FACEMC::ParticleState<CellHandle> particle( 1ull );
   
   particle.setEnergy( 1.0 );
   
@@ -76,7 +77,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
 				   setgetPosition,
 				   CellHandle )
 {
-  FACEMC::ParticleState<CellHandle> particle( 1ull, FACEMC::PHOTON );
+  FACEMC::ParticleState<CellHandle> particle( 1ull );
   
   particle.setPosition( 1.0, 1.0, 1.0 );
 
@@ -99,7 +100,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
 				   setgetDirection,
 				   CellHandle )
 {
-  FACEMC::ParticleState<CellHandle> particle( 1ull, FACEMC::PHOTON );
+  FACEMC::ParticleState<CellHandle> particle( 1ull );
   
   particle.setDirection( 0.5773502691896258, 
 			 0.5773502691896258,
@@ -124,7 +125,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
 				   advance,
 				   CellHandle )
 {
-  FACEMC::ParticleState<CellHandle> particle( 1ull, FACEMC::PHOTON );
+  FACEMC::ParticleState<CellHandle> particle( 1ull );
 
   particle.setPosition( 1.0, 1.0, 1.0 );
   particle.setDirection( 0.5773502691896258, 
@@ -146,7 +147,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
 				   setgetCell,
 				   CellHandle )
 {
-  FACEMC::ParticleState<CellHandle> particle( 1ull, FACEMC::PHOTON );
+  FACEMC::ParticleState<CellHandle> particle( 1ull );
 
   particle.setCell( 1 );
 
@@ -161,7 +162,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
 				   lost,
 				   CellHandle )
 {
-  FACEMC::ParticleState<CellHandle> particle( 1ull, FACEMC::PHOTON );
+  FACEMC::ParticleState<CellHandle> particle( 1ull );
 
   TEST_ASSERT( !particle.isLost() );
 
@@ -178,7 +179,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
 				   gone,
 				   CellHandle )
 {
-  FACEMC::ParticleState<CellHandle> particle( 1ull, FACEMC::PHOTON );
+  FACEMC::ParticleState<CellHandle> particle( 1ull );
 
   TEST_ASSERT( !particle.isGone() );
 
@@ -195,7 +196,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
 				   spawnChildState,
 				   CellHandle )
 {
-  FACEMC::ParticleState<CellHandle> particle( 1ull, FACEMC::PHOTON );
+  FACEMC::ParticleState<CellHandle> particle( 1ull );
 
   particle.setEnergy( 1.0 );
   particle.setPosition( 1.0, 1.0, 1.0 );
@@ -242,7 +243,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
 				   isRootHistory,
 				   CellHandle )
 {
-  FACEMC::ParticleState<CellHandle> particle( 1ull, FACEMC::PHOTON );
+  FACEMC::ParticleState<CellHandle> particle( 1ull );
 
   particle.setEnergy( 1.0 );
   particle.setPosition( 1.0, 1.0, 1.0 );

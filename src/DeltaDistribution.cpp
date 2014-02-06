@@ -11,7 +11,7 @@
 
 // FACEMC Includes
 #include "DeltaDistribution.hpp"
-#include "ContracException.hpp"
+#include "ContractException.hpp"
 
 namespace FACEMC{
 

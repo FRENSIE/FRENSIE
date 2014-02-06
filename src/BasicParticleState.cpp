@@ -43,7 +43,7 @@ BasicParticleState::BasicParticleState( const ParticleType type,
   // Make sure that the position coordinates are valid
   testPrecondition( !ST::isnaninf( position[0] ) );
   testPrecondition( !ST::isnaninf( position[1] ) );
-  testPrecontition( !ST::isnaninf( position[2] ) );
+  testPrecondition( !ST::isnaninf( position[2] ) );
   // Make sure that the direction coordinates are valid
   testPrecondition( !ST::isnaninf( direction[0] ) );
   testPrecondition( !ST::isnaninf( direction[1] ) );
@@ -70,7 +70,7 @@ BasicParticleState::BasicParticleState( const ParticleType type,
   // Set the velocity
   if( d_type == PHOTON || d_type == ADJOINT_PHOTON )
     d_velocity = 2.99792458e10;
-  else if( d_type = NEUTRON || d_type == ADJOINT_NEUTRON )
+  else if( d_type == NEUTRON || d_type == ADJOINT_NEUTRON )
     calculateNeutronVelocity();
 }
 
@@ -201,7 +201,7 @@ double BasicParticleState::getZDirection() const
 // Return the direction of the particle
 const double* BasicParticleState::getDirection() const
 {
-  return d_direction.data();
+  return d_direction;
 }
 
 // Set the direction of the particle
@@ -262,7 +262,7 @@ void BasicParticleState::setEnergy( const double energy )
 }
 
 // Return the time state of the particle
-void BasicParticleState::getTime()
+double BasicParticleState::getTime() const
 {
   return d_time;
 }
@@ -274,7 +274,7 @@ void BasicParticleState::setTime( const double time )
 }
 
 // Return the weight of the particle
-void BasicParticleState::getWeight() const
+double BasicParticleState::getWeight() const
 {
   return d_weight;
 }

@@ -76,7 +76,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellBoundingBox,
     unit_sphere_bounding_box( unit_sphere, -1.0, 1.0, -1.0, 1.0, -1.0, 1.0 );
 
   // Initialize the random number generator
-  FACEMC::RandomNumberGenerator<ScalarType>::initialize();
+  FACEMC::RandomNumberGenerator::initialize();
   
   // Calculate the cell volume
   unit_sphere_bounding_box.calculateCellVolume();

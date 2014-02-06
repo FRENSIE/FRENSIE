@@ -17,7 +17,7 @@ namespace FACEMC{
 DirectionalDistribution::DirectionalDistribution( 
 		      const Teuchos::RCP<OneDDistribution>& theta_distribution,
 		      const Teuchos::RCP<OneDDistribution>& mu_distribution,
-		      const Axis axis = Z_AXIS )
+		      const Axis axis )
   : d_theta_distribution( theta_distribution ),
     d_mu_distribution( mu_distribution ),
     d_axis( axis )
@@ -43,12 +43,12 @@ void DirectionalDistribution::sample( double sampled_direction[3] )
   // Sample from the distributions
   const double spherical_point[3] = {1.0,
 				     d_theta_distribution->sample(),
-				     d_mu_distribution->sample()}
+				     d_mu_distribution->sample()};
   
   // Convert the spherical coordinate to cartesian
-  convertSphericalCoordinateToCartesian( spherical_point,
-					 sampled_direction,
-					 d_axis );
+  convertSphericalCoordsToCartesian( spherical_point,
+				     sampled_direction,
+				     d_axis );
 }
 
 

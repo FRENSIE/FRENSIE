@@ -22,7 +22,7 @@ public:
   { /* ... */ }
 
   //! Destructor
-  virtual ~OneDPdf()
+  virtual ~OneDDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution

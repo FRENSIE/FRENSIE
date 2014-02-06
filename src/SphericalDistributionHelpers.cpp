@@ -13,9 +13,9 @@
 namespace FACEMC{
 
 // Convert spherical coordinate (r,theta,mu) to a cartesian coordinate (x,y,z)
-convertSphericalCoordsToCartesian( const double spherical_point[3],
-				   double cartesian_point[3],
-				   const Axis axis)
+void convertSphericalCoordsToCartesian( const double spherical_point[3],
+					double cartesian_point[3],
+					const Axis axis)
 {
   double cos_theta = cos( spherical_point[1] );
   double sin_theta = sin( spherical_point[1] );

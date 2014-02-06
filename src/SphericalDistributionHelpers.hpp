@@ -15,9 +15,9 @@
 namespace FACEMC{
 
 //! Convert spherical coordinate (r,theta,mu) to cartesian (x,y,z)
-convertSphericalCoordsToCartesian( const double spherical_point[3],
-				   double cartesian_point[3],
-				   const Axis axis = Z_AXIS );
+void convertSphericalCoordsToCartesian( const double spherical_point[3],
+					double cartesian_point[3],
+					const Axis axis = Z_AXIS );
 
 } // end FACEMC namespace 
 

@@ -15,6 +15,7 @@
 
 // FACEMC Includes
 #include "OneDDistribution.hpp"
+#include "Axis.hpp"
 
 namespace FACEMC{
 

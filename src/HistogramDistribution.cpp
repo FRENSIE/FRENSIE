@@ -24,7 +24,7 @@ HistogramDistribution::HistogramDistribution(
   : d_distribution( bin_values.size() )
 {
   // Make sure that for n bin boundaries there are n-1 bin values
-  testPrecondition( bin_boundaries.size()-1 = bin_values.size() );
+  testPrecondition( bin_boundaries.size()-1 == bin_values.size() );
 
   // Construct the distribution
   for( unsigned i = 0; i < bin_values.size(); ++i )
@@ -46,7 +46,7 @@ HistogramDistribution::HistogramDistribution(
 
   // Normalize the CDF
   for( unsigned i = 0; i < d_distribution.size(); ++i )
-    d_distribution[i].fourth /= d_distribution.back();
+    d_distribution[i].fourth /= d_distribution.back().fourth;
 
   // Make sure that the CDF has been constructed correctly
   testPostcondition( ST::magnitude( d_distribution.back().fourth - 1.0 ) <
@@ -62,9 +62,9 @@ double HistogramDistribution::evaluate( const double indep_var_value ) const
     return 0.0;
   else
   {
-    Teuchos::Array<Pair<double,double> >::const_iterator bin = 
+    Teuchos::Array<Quad<double,double,double,double> >::const_iterator bin = 
       Search::binarySearchDiscreteData<SECOND>( d_distribution.begin(),
-						d_distrubition.end(),
+						d_distribution.end(),
 						indep_var_value );
     return bin->third;
   }
@@ -74,15 +74,15 @@ double HistogramDistribution::evaluate( const double indep_var_value ) const
 double HistogramDistribution::sample()
 {
   // Sample the bin
-  double random_number_1 = RandomNumberGenerator<double>::getRandomNumber();
+  double random_number_1 = RandomNumberGenerator::getRandomNumber<double>();
 
-  Teuchos::Array<Pair<double,double> >::const_iterator bin = 
+  Teuchos::Array<Quad<double,double,double,double> >::const_iterator bin = 
     Search::binarySearchDiscreteData<FOURTH>( d_distribution.begin(),
-					      d_distrubition.end(),
+					      d_distribution.end(),
 					      random_number_1 );
 
   // Sample the value within the bin
-  double random_number_2 = RandomNumberGenerator<double>::getRandomNumber();
+  double random_number_2 = RandomNumberGenerator::getRandomNumber<double>();
 
   return random_number_2*bin->third + bin->first;
 }
@@ -102,7 +102,7 @@ double HistogramDistribution::getUpperBoundOfIndepVar() const
 // Return the lower bound of the distribution independent variable
 double HistogramDistribution::getLowerBoundOfIndepVar() const
 {
-  return d_distribution.end().second;
+  return d_distribution.back().second;
 }
 
 } // end FACEMC namespace

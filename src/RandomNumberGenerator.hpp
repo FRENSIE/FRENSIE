@@ -24,7 +24,6 @@
 namespace FACEMC{
 
 //! Struct that is used to obtain random numbers
-template<typename ScalarType>
 struct RandomNumberGenerator
 {
   //! Initialize the generator
@@ -34,13 +33,14 @@ struct RandomNumberGenerator
   static void reset();
 
   //! Return a random number in interval [0,1)
+  template<typename ScalarType>
   static ScalarType getRandomNumber();
 
 private:
 
 #if defined(HAVE_FACEMC_MPI) && !defined(NDEBUG)
   // Pointer to generator with reproducible parallel streams
-  static Teuchos::RCP<LinearCongruentialGenerator<ScalarType> > generator;
+  static Teuchos::RCP<LinearCongruentialGenerator> generator;
 
 #else
   // Pointer to generator

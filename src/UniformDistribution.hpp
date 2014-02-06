@@ -31,7 +31,7 @@ public:
  
   //! Constructor
   UniformDistribution( const double min_independent_value, 
-		       const double max_independend_value,
+		       const double max_independent_value,
 		       const double dependent_value );
   
   //! Destructor
@@ -62,7 +62,7 @@ private:
   double d_max_independent_value;
 
   // The uniform distribution (dependent) value
-  double d_depenedent_value;
+  double d_dependent_value;
 };
 
 } // end FACEMC namespace 

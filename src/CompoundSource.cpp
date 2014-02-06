@@ -21,7 +21,7 @@ CompoundSource::CompoundSource(
   : d_sources( sources.size() )
 {
   // Make sure that every source has a sampling weight
-  testPrecondition( sources.size() == source_sampling_weight.size() );
+  testPrecondition( sources.size() == source_sampling_weights.size() );
 
   // Create the array of sources
   double total_weight = 0.0;
@@ -40,17 +40,17 @@ CompoundSource::CompoundSource(
     d_sources[i].second /= total_weight;
 
   // Make sure that the CDF has been normalized correctly
-  testPostCondition( d_sources.back().second == 1.0 );
+  testPostcondition( d_sources.back().second == 1.0 );
 }
 
 // Sample a particle state from the source
 void CompoundSource::sampleParticleState( BasicParticleState& particle )
 {
-  double random_number = RandomNumberGenerator<double>::getRandomNumber();
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
   
   // Sample the source that will be sampled from
   Teuchos::Array<Trip<Teuchos::RCP<ParticleSource>,double,unsigned> >::iterator
-    selected_source = SearchAlgorithms::binarySearchDiscreteData( 
+    selected_source = Search::binarySearchDiscreteData<SECOND>( 
 							     d_sources.begin(),
 							     d_sources.end(),
 							     random_number );

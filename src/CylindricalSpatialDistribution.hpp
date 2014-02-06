@@ -16,6 +16,7 @@
 // FACEMC Includes
 #include "OneDDistribution.hpp"
 #include "SpatialDistribution.hpp"
+#include "Axis.hpp"
 
 namespace FACEMC{
 
@@ -40,7 +41,7 @@ public:
 		      const double start_x_position,
 		      const double start_y_position,
 		      const double start_z_position,
-		      const Axis axis = Z_AXIS )
+		      const Axis axis = Z_AXIS );
   
   //! Destructor
   ~CylindricalSpatialDistribution()

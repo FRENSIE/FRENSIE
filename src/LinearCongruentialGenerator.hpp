@@ -16,16 +16,10 @@ namespace FACEMC{
 /*! \details A modulus of 2^64 is used so that modular arithmetic is done
  * implicitly (using integer overflow).
  */
-template<typename ScalarType>
 class LinearCongruentialGenerator
 {
   
 public:
-
-  //@{
-  //! Typedef for scalar type
-  typedef ScalarType scalarType;
-  //@}
 
   //! Constructor
   LinearCongruentialGenerator();
@@ -35,6 +29,7 @@ public:
   { /* ... */}
 
   //! Return a random number for the current history
+  template<typename ScalarType>
   ScalarType rnd();
 
   //! Initialize the generator for the desired history

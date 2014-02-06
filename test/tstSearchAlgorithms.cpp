@@ -669,12 +669,12 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   TEST_EQUALITY_CONST( bin_value, 1.0 );
 
   // Value on boundary
-  value = 10.0;
+  value = 1.0;
   lower_bound = FACEMC::Search::binarySearchDiscreteData<member>( start,
 								  end,
 								  value );
   bin_value = FACEMC::get<member>( *lower_bound );
-  TEST_EQUALITY_CONST( bin_value, 9.0 );
+  TEST_EQUALITY_CONST( bin_value, 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION_ARRAY( Search, binarySearchDiscreteData, Array );

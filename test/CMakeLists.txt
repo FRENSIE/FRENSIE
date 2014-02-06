@@ -178,7 +178,7 @@ ADD_TEST(CellInputValidatorHelpers_test tstCellInputValidatorHelpers)
 ADD_EXECUTABLE(tstCellInputValidator
   tstCellInputValidator.cpp)
 TARGET_LINK_LIBRARIES(tstCellInputValidator ${PROJECT_NAME})
-ADD_TEST(CellInputValidator_test tstCellInputValidator)
+ADD_TEST(CellInputValidator_test tstCellInputValidator --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.xml")
 
 ADD_EXECUTABLE(tstParticleState
   tstParticleState.cpp

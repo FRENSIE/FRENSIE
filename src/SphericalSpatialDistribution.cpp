@@ -27,7 +27,7 @@ SphericalSpatialDistribution::SphericalSpatialDistribution(
     d_mu_distribution( mu_distribution ),
     d_center_x_position( center_x_position ),
     d_center_y_position( center_y_position ),
-    d_center_z_position( center_z_position )
+    d_center_z_position( center_z_position ),
     d_axis( axis )
 {
   // Make sure that the distributions have been set
@@ -58,12 +58,10 @@ void SphericalSpatialDistribution::sample( double sampled_point[3] )
   // Sample from the distributions
   const double spherical_point[3] = {d_r_distribution->sample(),
 				     d_theta_distribution->sample(),
-				     d_mu_distribution->sample()}
+				     d_mu_distribution->sample()};
 
   // Convert the spherical coordinate to cartesian
-  convertSphericalCoordinateToCartesian( spherical_point,
-					 sampled_point,
-					 d_axis );
+  convertSphericalCoordsToCartesian( spherical_point, sampled_point, d_axis );
 
   // Add the initial position to the sampled point
   sampled_point[0] += d_center_x_position;

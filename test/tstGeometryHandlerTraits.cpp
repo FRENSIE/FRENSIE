@@ -60,7 +60,7 @@ TEUCHOS_UNIT_TEST( GeometryHandlerTraits_DagMC,
   initializeDagMC();
 
   // Initialize the particle state
-  ParticleState particle( 1ull, FACEMC::PHOTON );
+  ParticleState particle( 1ull );
   particle.setPosition( -40.0, -40.0, 59.0 );
   particle.setDirection( 0.0, 0.0, 1.0 );
 
@@ -81,7 +81,7 @@ TEUCHOS_UNIT_TEST( GeometryHandlerTraits_DagMC, fireRay )
   typedef FACEMC::ParticleState<typename GHT::CellHandle> ParticleState;
 
   // Initialize the particle state
-  ParticleState particle( 1ull, FACEMC::PHOTON );
+  ParticleState particle( 1ull );
   particle.setPosition( -40.0, -40.0, 59.0 );
   particle.setDirection( 0.0, 0.0, 1.0 );
 
@@ -110,7 +110,7 @@ TEUCHOS_UNIT_TEST( GeometryHandlerTraits_DagMC,
   typedef FACEMC::ParticleState<typename GHT::CellHandle> ParticleState;
 
   // Initialize the particle state
-  ParticleState particle( 1ull, FACEMC::PHOTON );
+  ParticleState particle( 1ull );
   particle.setPosition( -40.0, -40.0, 59.0 );
   particle.setDirection( 0.0, 0.0, 1.0 );
 
@@ -166,7 +166,7 @@ TEUCHOS_UNIT_TEST( GeometryHandlerTraits_DagMC,
   typedef FACEMC::ParticleState<typename GHT::CellHandle> ParticleState;
 
   // Initialize the particle state (on cell 53)
-  ParticleState particle( 1ull, FACEMC::PHOTON );
+  ParticleState particle( 1ull );
   particle.setPosition( -40.0, -40.0, 60.959999084 );
   particle.setDirection( 0.0, 0.0, 1.0 );
 

@@ -9,6 +9,9 @@
 #ifndef BASIC_PARTICLE_STATE_HPP
 #define BASIC_PARTICLE_STATE_HPP
 
+// Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
+
 // FACEMC Includes
 #include "ParticleType.hpp"
 #include "PrintableObject.hpp"
@@ -104,13 +107,13 @@ public:
   void setEnergy( const double energy );
 
   //! Return the time state of the particle (s)
-  void getTime() const;
+  double getTime() const;
 
   //! Set the time state of the particle (s)
   void setTime( const double time );
 
   //! Return the weight of the particle
-  void getWeight() const;
+  double getWeight() const;
 
   //! Set the weight of the particle
   void setWeight( const double weight );
@@ -159,6 +162,8 @@ private:
 };
 
 } // end FACEMC namespace
+
+#endif // end BASIC_PARTICLE_STATE_HPP
 
 //---------------------------------------------------------------------------//
 // end BasicParticleState.hpp

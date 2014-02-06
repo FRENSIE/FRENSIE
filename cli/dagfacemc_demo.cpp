@@ -28,13 +28,13 @@ void initializeParticleState( ParticleState& particle )
 {
   particle.setPosition( -40.0, -40.0, 59.0 );
   
-  typedef FACEMC::RandomNumberGenerator<double> RNG;
+  typedef FACEMC::RandomNumberGenerator RNG;
 
   // Sample the particle direction uniformly
-  double rn1 = RNG::getRandomNumber();
+  double rn1 = RNG::getRandomNumber<double>();
   double z_dir = -1.0 + 2.0*rn1;
   
-  double rn2 = RNG::getRandomNumber();
+  double rn2 = RNG::getRandomNumber<double>();
   double sin_theta = sqrt( 1.0 - z_dir*z_dir );
   double pi = acos( -1.0 );
   double x_dir = sin_theta*cos( 2.0*pi*rn2 );
@@ -121,11 +121,11 @@ int main( int argc, char** argv )
   typedef FACEMC::Traits::GeometryHandlerTraits<moab::DagMC> GHT;
 
   // The particle state that will be used for ray firing
-  FACEMC::ParticleState<typename GHT::CellHandle> particle( 1ull, 
-							    FACEMC::PHOTON );
+  FACEMC::ParticleState<typename GHT::CellHandle> particle( 1ull );
+  particle.setParticleType( FACEMC::PHOTON );
   
   // Initialize the random number generator
-  FACEMC::RandomNumberGenerator<double>::initialize();
+  FACEMC::RandomNumberGenerator::initialize();
 
   // Trace the number of rays requested
   for( long int i = 0; i < num_rays_to_fire; ++i )

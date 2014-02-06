@@ -18,8 +18,8 @@ namespace FACEMC{
 // Constructor
 StateSource::StateSource( 
 		    const Teuchos::Array<BasicParticleState>& particle_states )
-  : d_particle_state( particle_state ),
-    d_next_state_index( 0 )
+  : d_particle_states( particle_states ),
+    d_next_state_index( 0u )
 { 
   // Make sure that there is at least one state in the array
   testPrecondition( particle_states.size() > 0 );
@@ -33,7 +33,7 @@ void StateSource::sampleParticleState( BasicParticleState& particle )
     std::string error_message = "Error: All particle states in the state ";
     error_message += "source have been used.\n";
     
-    throw std::runtime_exception( error_message );
+    throw std::runtime_error( error_message );
   }
   
   particle = d_particle_states[d_next_state_index];

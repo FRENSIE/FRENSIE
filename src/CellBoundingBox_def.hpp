@@ -84,11 +84,11 @@ void CellBoundingBox<Cell>::calculateCellVolume( int max_samples )
     for( int i = 0; i < batch_size; ++i )
     {
       x_sample = d_x_min + 
-	x_length*RandomNumberGenerator<scalarType>::getRandomNumber();
+	x_length*RandomNumberGenerator::getRandomNumber<scalarType>();
       y_sample = d_y_min + 
-	y_length*RandomNumberGenerator<scalarType>::getRandomNumber();
+	y_length*RandomNumberGenerator::getRandomNumber<scalarType>();
       z_sample = d_z_min + 
-	z_length*RandomNumberGenerator<scalarType>::getRandomNumber();
+	z_length*RandomNumberGenerator::getRandomNumber<scalarType>();
 
       if( d_cell->isIn( x_sample, y_sample, z_sample ) )
 	++number_of_scores;

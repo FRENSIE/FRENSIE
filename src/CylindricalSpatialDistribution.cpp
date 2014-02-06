@@ -72,7 +72,7 @@ void CylindricalSpatialDistribution::sample( double sampled_point[3] )
     sampled_point[2] += axis_position;
     break;
     
-  case Y_AXIS;
+  case Y_AXIS:
     sampled_point[0] += radius*sin_theta;
     sampled_point[1] += axis_position;
     sampled_point[2] += radius*cos_theta;

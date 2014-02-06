@@ -43,13 +43,15 @@ public:
 private:
 
   // The possible states
-  Teuchos::Array<BasicParticleState>& d_particle_states;
+  Teuchos::Array<BasicParticleState> d_particle_states;
 
   // The index of the next state to assign
   unsigned d_next_state_index;
 };
 
 } // end FACEMC namespace
+
+#endif // end STATE_SOURCE_HPP
 
 //---------------------------------------------------------------------------//
 // end StateSource.hpp
