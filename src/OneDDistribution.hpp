@@ -28,6 +28,9 @@ public:
   //! Evaluate the distribution
   virtual double evaluate( const double indep_var_value ) const = 0;
 
+  //! Evaluate the PDF
+  virtual double evaluatePDF( const double indep_var_value ) const = 0;
+
   //! Return a random sample from the corresponding CDF
   virtual double sample() = 0;
 

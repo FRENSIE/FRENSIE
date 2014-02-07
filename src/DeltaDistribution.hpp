@@ -39,6 +39,9 @@ public:
   //! Evaluate the distribution
   double evaluate( const double indep_var_value ) const;
 
+  //! Evaluate the PDF
+  double evaluatePDF( const double indep_var_value ) const;
+
   //! Return a random sample from the corresponding CDF
   double sample();
 

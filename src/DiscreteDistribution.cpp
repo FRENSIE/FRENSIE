@@ -18,6 +18,7 @@ namespace FACEMC{
 DiscreteDistribution::DiscreteDistribution( 
 			         const Teuchos::Array<double>& discrete_values,
 				 const Teuchos::Array<double>& probabilities )
+  : d_distribution( discrete_values.size() )
 {
   // Make sure that every value has a probability assigned
   testPrecondition( discrete_values.size() == probabilities.size() );
@@ -58,6 +59,23 @@ double DiscreteDistribution::evaluate( const double indep_var_value ) const
   return 0.0;
 }
 
+// Evaluate the PDF
+double DiscreteDistribution::evaluatePDF( const double indep_var_value ) const
+{
+  for( unsigned i = 0; i < d_distribution.size(); ++i )
+  {
+    if( indep_var_value == d_distribution[i].first )
+    {
+      if( i == 0 )
+	return d_distribution[i].second;
+      else
+	return d_distribution[i].second - d_distribution[i-1].second;
+    }
+  }
+  
+  return 0.0;
+}
+
 // Return a random sample from the distribution
 double DiscreteDistribution::sample()
 {
@@ -80,13 +98,31 @@ double DiscreteDistribution::getSamplingEfficiency() const
 // Return the upper bound of the distribution independent variable
 double DiscreteDistribution::getUpperBoundOfIndepVar() const
 {
-  return d_distribution.front().first;
+  double max_value = -std::numeric_limits<double>::infinity();
+  
+  // Find the max value
+  for( unsigned i = 0; i < d_distribution.size(); ++i )
+  {
+    if( d_distribution[i].first > max_value )
+      max_value = d_distribution[i].first;
+  }
+      
+  return max_value;
 }
 
 // Return the lower bound of the independent variable
 double DiscreteDistribution::getLowerBoundOfIndepVar() const
 {
-  return d_distribution.back().first;
+  double min_value = std::numeric_limits<double>::infinity();
+
+  // Find the min value
+  for( unsigned i = 0; i < d_distribution.size(); ++i )
+  {
+    if( d_distribution[i].first < min_value )
+      min_value = d_distribution[i].first;
+  }
+  
+  return min_value;
 }
 
 } // end FACEMC namespace

@@ -41,6 +41,9 @@ public:
   //! Evaluate the distribution
   double evaluate( const double indep_var_value ) const;
 
+  //! Evaluate the PDF
+  double evaluatePDF( const double indep_var_value ) const;
+
   //! Return a random sample from the distribution
   double sample();
 
@@ -55,9 +58,12 @@ public:
   
 private:
 
-  // The distribution (first = bin_min, second = bin_max, third = bin_value,
+  // The distribution (first = bin_min, second = bin_max, third = bin_PDF,
   // fourth = bin_CDF )
   Teuchos::Array<Quad<double,double,double,double> > d_distribution;
+  
+  // The normalization constant
+  double d_norm_constant;
 };
 
 } // end FACEMC namespace

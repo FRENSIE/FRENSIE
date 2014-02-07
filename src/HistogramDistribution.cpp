@@ -33,7 +33,7 @@ HistogramDistribution::HistogramDistribution(
     d_distribution[i].first = bin_boundaries[i];
     d_distribution[i].second = bin_boundaries[i+1];
 
-    // Assign the bin value
+    // Assign the bin PDF value
     d_distribution[i].third = bin_values[i];
     
     // Assign the discrete CDF value
@@ -41,20 +41,32 @@ HistogramDistribution::HistogramDistribution(
       (d_distribution[i].second - d_distribution[i].first);
 
     if( i > 0 )
-      d_distribution[i].fourth += d_distribution[i].fourth;
+      d_distribution[i].fourth += d_distribution[i-1].fourth;
   }
 
-  // Normalize the CDF
+  // Assign the normalization constant
+  d_norm_constant = d_distribution.back().fourth;
+
+  // Normalize the PDF and CDF
   for( unsigned i = 0; i < d_distribution.size(); ++i )
+  {
+    d_distribution[i].third /= d_distribution.back().fourth;
     d_distribution[i].fourth /= d_distribution.back().fourth;
+  }
 
   // Make sure that the CDF has been constructed correctly
   testPostcondition( ST::magnitude( d_distribution.back().fourth - 1.0 ) <
 		     ST::prec() );
 }
 
-// Return the value of the distribution at the desired point
+// Evaluate the distribution
 double HistogramDistribution::evaluate( const double indep_var_value ) const
+{
+  return evaluatePDF( indep_var_value )*d_norm_constant;
+}
+
+// Evaluate the PDF
+double HistogramDistribution::evaluatePDF( const double indep_var_value ) const
 {
   if( indep_var_value < d_distribution.front().first )
     return 0.0;
@@ -68,7 +80,7 @@ double HistogramDistribution::evaluate( const double indep_var_value ) const
 						indep_var_value );
     return bin->third;
   }
-}
+} 
 
 // Return a random sample from the distribution
 double HistogramDistribution::sample()
@@ -84,7 +96,7 @@ double HistogramDistribution::sample()
   // Sample the value within the bin
   double random_number_2 = RandomNumberGenerator::getRandomNumber<double>();
 
-  return random_number_2*bin->third + bin->first;
+  return random_number_2*(bin->second-bin->first) + bin->first;
 }
 
 // Return the sampling efficiency from the distribution
@@ -96,13 +108,13 @@ double HistogramDistribution::getSamplingEfficiency() const
 // Return the upper bound of the distribution independent variable
 double HistogramDistribution::getUpperBoundOfIndepVar() const
 {
-  return d_distribution.front().first;
+  return d_distribution.back().second;
 }
 
 // Return the lower bound of the distribution independent variable
 double HistogramDistribution::getLowerBoundOfIndepVar() const
 {
-  return d_distribution.back().second;
+  return d_distribution.front().first;
 }
 
 } // end FACEMC namespace

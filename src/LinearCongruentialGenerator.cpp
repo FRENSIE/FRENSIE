@@ -10,6 +10,7 @@
 
 // FACEMC Includes
 #include "LinearCongruentialGenerator.hpp"
+#include "ExponentiationAlgorithms.hpp"
 
 namespace FACEMC{
 
@@ -29,8 +30,8 @@ void LinearCongruentialGenerator::changeHistory(
   unsigned long long history_diff = history_number - d_history;
 
   // Initialize the generator state
-  d_initial_history_seed = exponentiate( d_initial_history_seed, 
-					 history_diff*d_stride );
+  d_initial_history_seed = Exponentiation::recursive( d_initial_history_seed, 
+						      history_diff*d_stride );
   d_state = d_initial_history_seed;
 }
 
@@ -38,33 +39,6 @@ void LinearCongruentialGenerator::changeHistory(
 void LinearCongruentialGenerator::advanceState()
 {
   d_state *= d_multiplier;
-}
-
-// A recursive modular exponentiation algorithm
-/*! \details Recursively evaluates the function (x^y)mod(2^64). This algorithm 
- * was taken from "Algorithms" by Desgupta et al.
- */
-unsigned long long LinearCongruentialGenerator::exponentiate( 
-					     const unsigned long long x,
-					     const unsigned long long y ) const
-{
-  // The output integer
-  unsigned long long z;
-
-  if( y == 0 )
-    z = 1;
-  else
-  {
-    z = exponentiate( x, y/2 );
-    
-    if( y%2 == 0 )
-      z = (z*z);
-    else
-      z = (x*z*z);
-  }
-
-  // Return the output integer
-  return z;
 }
 
 } // end FACEMC namespace

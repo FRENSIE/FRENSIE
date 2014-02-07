@@ -32,6 +32,15 @@ double DeltaDistribution::evaluate( const double indep_var_value ) const
     return 0.0;
 }
 
+// Evaluate the PDF
+double DeltaDistribution::evaluatePDF( const double indep_var_value ) const
+{
+  if( indep_var_value == d_location )
+    return 1.0;
+  else
+    return 0.0;
+}
+
 // Return a random sample from the distribution
 double DeltaDistribution::sample()
 {

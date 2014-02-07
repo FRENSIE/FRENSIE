@@ -11,6 +11,7 @@
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
+#include <Teucos_ScalarTraits.hpp>
 
 // FACEMC Includes
 #include "ParticleSource.hpp"
@@ -31,6 +32,9 @@ private:
   
   // Typedef for geometry handler traits
   typedef GeometryHandlerTraits<GeometryHandler> GHT;
+
+  // Typedef for scalar traits
+  typedef Teuchos::ScalarTraits<double> ST;
 
 public:
   

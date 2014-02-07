@@ -1,26 +1,27 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DiscreteDistribution.hpp
+//! \file   ExponentialDistribution.hpp
 //! \author Alex Robinson
-//! \brief  Discrete distribution class declaration.
+//! \brief  Exponential distribution class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DISCRETE_DISTRIBUTION_HPP
-#define DISCRETE_DISTRIBUTION_HPP
+#ifndef EXPONENTIAL_DISTRIBUTION_HPP
+#define EXPONENTIAL_DISTRIBUTION_HPP
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
 // FACEMC Includes
 #include "OneDDistribution.hpp"
-#include "Tuple.hpp"
 
 namespace FACEMC{
 
-//! Discrete distribution class
-class DiscreteDistribution : public OneDDistribution
+//! Exponential distribution class
+/*! \details only decaying exponential distributions are allowed (the 
+ * exponent is always assumed to be negative)
+ */
+class ExponentialDistribution : public OneDDistribution
 {
 
 private:
@@ -30,12 +31,12 @@ private:
 
 public:
 
-  //! Constructor
-  DiscreteDistribution( const Teuchos::Array<double>& independent_values,
-			const Teuchos::Array<double>& dependent_values );
+  //! Constructor ( a*exp(-b*x) )
+  ExponentialDistribution( const double constant_multiplier,
+			   const double exponent_multiplier );
 
   //! Destructor
-  ~DiscreteDistribution()
+  ~ExponentialDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -47,25 +48,28 @@ public:
   //! Return a random sample from the distribution
   double sample();
 
-  //! Return the sampling efficiency from the distribution
+  //! Return the sampling efficiency
   double getSamplingEfficiency() const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
 
-  //! Return the lower bound of the independent variable
+  //! Return the lower bound of the distribution independent variable
   double getLowerBoundOfIndepVar() const;
 
 private:
 
-  // The distribution (first = independent value, second = CDF)
-  Teuchos::Array<Pair<double,double> > d_distribution;
+  // The constant multiplier
+  double d_constant_multiplier;
+  
+  // The exponent multiplier
+  double d_exponent_multiplier;
 };
 
 } // end FACEMC namespace
 
-#endif // end DISCRETE_DISTRIBUTION_HPP
+#endif // end EXPONENTIAL_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end DiscreteDistribution.hpp
+// end ExponentialDistribution.hpp
 //---------------------------------------------------------------------------//

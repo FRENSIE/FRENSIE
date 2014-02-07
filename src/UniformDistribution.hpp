@@ -41,6 +41,9 @@ public:
   //! Evaluate the distribution
   double evaluate( const double indep_var_value ) const;  
 
+  //! Evaluate the PDF
+  double evaluatePDF( const double indep_var_value ) const;
+
   //! Return a random sample from the distribution
   double sample();
 
@@ -61,8 +64,11 @@ private:
   // The max independent value
   double d_max_independent_value;
 
-  // The uniform distribution (dependent) value
+  // The uniform distribution dependent value
   double d_dependent_value;
+
+  // The uniform distribution PDF value
+  double d_pdf_value;
 };
 
 } // end FACEMC namespace 

@@ -213,6 +213,9 @@ DistributedSource<GeometryHandler>::sampleParticleState(
   // Increment the number of trials and samples
   ++d_number_of_trials;
   ++d_number_of_samples;
+
+  // Make sure that the weight is valid
+  testPostcondition( !ST::isnaninf( weight ) );
 }
 
 // Get the sampling efficiency from the source distribution

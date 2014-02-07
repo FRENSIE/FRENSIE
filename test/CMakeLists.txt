@@ -195,3 +195,27 @@ ADD_EXECUTABLE(tstGeometryHandlerTraits
   tstGeometryHandlerTraits.cpp)
 TARGET_LINK_LIBRARIES(tstGeometryHandlerTraits ${PROJECT_NAME})
 ADD_TEST(GeometryHandlerTraits_test tstGeometryHandlerTraits --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
+
+ADD_EXECUTABLE(tstDeltaDistribution
+  tstDeltaDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDeltaDistribution ${PROJECT_NAME})
+ADD_TEST(DeltaDistribution_test tstDeltaDistribution)
+
+ADD_EXECUTABLE(tstDiscreteDistribution
+  tstDiscreteDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDiscreteDistribution ${PROJECT_NAME})
+ADD_TEST(DiscreteDistribution_test tstDiscreteDistribution )
+
+ADD_EXECUTABLE(tstUniformDistribution
+  tstUniformDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstUniformDistribution ${PROJECT_NAME})
+ADD_TEST(UniformDistribution_test tstUniformDistribution )
+
+ADD_EXECUTABLE(tstHistogramDistribution
+  tstHistogramDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstHistogramDistribution ${PROJECT_NAME})
+ADD_TEST(HistogramDistribution_test tstHistogramDistribution )

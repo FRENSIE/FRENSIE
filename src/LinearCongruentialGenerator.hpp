@@ -40,10 +40,6 @@ protected:
   //! Advance the generator state
   void advanceState();
 
-  //! A recursive modular exponentiation algorithm (assuming mod 2^64)
-  unsigned long long exponentiate( const unsigned long long x, 
-				   const unsigned long long y ) const;
-
 private:
 
   // Initial seed of generator
