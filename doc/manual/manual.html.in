@@ -1,0 +1,7 @@
+<head>
+  <meta http-equiv="refresh" content="1; URL=${CMAKE_CURRENT_BINARY_DIR}/html/index.html">
+</head>
+
+<body>
+  <p>You will be redirected automatically, otherwise please <a href="${CMAKE_CURRENT_BINARY_DIR}/html/index.html">click here</a>.</p>
+</body>
