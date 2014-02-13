@@ -24,23 +24,8 @@
 // Instantiation Macros.
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION( type, name ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, short, short, float ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, short, short, double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, short, int, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, short, int, double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, short, long, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, short, long, double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, int, short, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, int, short, double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, int, int, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, int, int, double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, int, long, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, int, long, double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, long, short, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, long, short, double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, long, int, float ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, long, int, double ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, long, long, float ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, int, int, double )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, long, long, double ) 
 
 //---------------------------------------------------------------------------//

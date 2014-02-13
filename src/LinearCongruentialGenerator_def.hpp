@@ -14,13 +14,19 @@ namespace FACEMC{
 
 // Return a random number for the current history
 template<typename ScalarType>
-inline ScalarType LinearCongruentialGenerator::rnd()
+ScalarType LinearCongruentialGenerator::rnd()
 {
   // Advance the generator state
   advanceState();
     
   // Return the uniform random number (state*2^-64)
   return static_cast<ScalarType>( d_state*5.4210108624275222e-20 );
+}
+
+// Advance the generator state
+inline void LinearCongruentialGenerator::advanceState()
+{
+  d_state *= LinearCongruentialGenerator::multiplier;
 }
 
 } // end FACEMC namespace

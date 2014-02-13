@@ -9,7 +9,6 @@
 // FACEMC Includes
 #include "UniformDistribution.hpp"
 #include "RandomNumberGenerator.hpp"
-#include "ContractException.hpp"
 
 namespace FACEMC{
 
@@ -55,8 +54,7 @@ double UniformDistribution::sample()
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  return random_number*(d_max_independent_value - d_min_independent_value) +
-    d_min_independent_value;
+  return sample( random_number );
 }
 
 // Return the sampling efficiency from the distribution

@@ -219,3 +219,9 @@ ADD_EXECUTABLE(tstHistogramDistribution
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstHistogramDistribution ${PROJECT_NAME})
 ADD_TEST(HistogramDistribution_test tstHistogramDistribution )
+
+ADD_EXECUTABLE(tstExponentialDistribution
+  tstExponentialDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstExponentialDistribution ${PROJECT_NAME})
+ADD_TEST(ExponentialDistribution_test tstExponentialDistribution)

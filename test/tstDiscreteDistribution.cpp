@@ -29,25 +29,21 @@ Teuchos::RCP<FACEMC::OneDDistribution> distribution;
 void initializeDistribution( 
 			 Teuchos::RCP<FACEMC::OneDDistribution>& distribution )
 {
-  if( distribution.is_null() )
-  {
-    Teuchos::Array<double> independent_values( 3 );
-    independent_values[0] = -1.0;
-    independent_values[1] = 0.0;
-    independent_values[2] = 1.0;
-    
-    Teuchos::Array<double> dependent_values( 3 );
-    dependent_values[0] = 1.0;
-    dependent_values[1] = 2.0;
-    dependent_values[2] = 1.0;
-    
-    distribution.reset( new FACEMC::DiscreteDistribution( independent_values,
-							  dependent_values ) );
-
-    FACEMC::RandomNumberGenerator::initialize();
-  }
+  Teuchos::Array<double> independent_values( 3 );
+  independent_values[0] = -1.0;
+  independent_values[1] = 0.0;
+  independent_values[2] = 1.0;
+  
+  Teuchos::Array<double> dependent_values( 3 );
+  dependent_values[0] = 1.0;
+  dependent_values[1] = 2.0;
+  dependent_values[2] = 1.0;
+  
+  distribution.reset( new FACEMC::DiscreteDistribution( independent_values,
+							dependent_values ) );
+  
+  FACEMC::RandomNumberGenerator::initialize();
 }
-
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -89,27 +85,17 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluatePDF )
 TEUCHOS_UNIT_TEST( DeltaDistribution, sample )
 {
   initializeDistribution( distribution );
-  
-  unsigned num_samples = 100000;
-  unsigned num_value_1_samples = 0;
-  unsigned num_value_2_samples = 0;
-  unsigned num_value_3_samples = 0;
-  
-  for( unsigned i = 0; i < num_samples; ++i )
-  {
-    double sample = distribution->sample();
-    
-    if( sample == -1.0 )
-      ++num_value_1_samples;
-    else if( sample == 0.0 )
-      ++num_value_2_samples;
-    else if( sample == 1.0 )
-      ++num_value_3_samples;
-  }
 
-  TEST_FLOATING_EQUALITY( num_value_1_samples/(double)num_samples,0.25,1e-2 );
-  TEST_FLOATING_EQUALITY( num_value_2_samples/(double)num_samples,0.50,1e-2 );
-  TEST_FLOATING_EQUALITY( num_value_3_samples/(double)num_samples,0.25,1e-2 );
+  Teuchos::RCP<FACEMC::DiscreteDistribution> discrete_distribution = 
+    Teuchos::rcp_dynamic_cast<FACEMC::DiscreteDistribution>( distribution );
+
+  TEST_EQUALITY_CONST( discrete_distribution->sample( 0.0 ), -1.0 );
+  TEST_EQUALITY_CONST( discrete_distribution->sample( 0.2 ), -1.0 );
+  TEST_EQUALITY_CONST( discrete_distribution->sample( 1.0/4.0 ), -1.0 );
+  TEST_EQUALITY_CONST( discrete_distribution->sample( 0.50), 0.0 );
+  TEST_EQUALITY_CONST( discrete_distribution->sample( 3.0/4.0 ), 0.0 );
+  TEST_EQUALITY_CONST( discrete_distribution->sample( 0.85 ), 1.0 );
+  TEST_EQUALITY_CONST( discrete_distribution->sample( 1.0 ), 1.0 );
 }
 
 //---------------------------------------------------------------------------//

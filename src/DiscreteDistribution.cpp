@@ -9,8 +9,6 @@
 // FACEMC Includes
 #include "DiscreteDistribution.hpp"
 #include "RandomNumberGenerator.hpp"
-#include "SearchAlgorithms.hpp"
-#include "ContractException.hpp"
 
 namespace FACEMC{
 
@@ -81,12 +79,7 @@ double DiscreteDistribution::sample()
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  Teuchos::Array<Pair<double,double> >::const_iterator sample = 
-    Search::binarySearchDiscreteData<SECOND>( d_distribution.begin(),
-					      d_distribution.end(),
-					      random_number );
-
-  return sample->first;
+  return sample( random_number );
 }
 
 // Return the sampling efficiency from the distribution

@@ -16,29 +16,25 @@ namespace FACEMC{
 
 // Constructor
 LinearCongruentialGenerator::LinearCongruentialGenerator()
-  : d_initial_history_seed( d_initial_seed ),
+  : d_initial_history_seed( LinearCongruentialGenerator::initial_seed ),
     d_state( d_initial_history_seed ),
-    d_history( 0 )
+    d_history( 0ULL )
 { /* ... */ }
 
 // Initialize the generator for the desired history
 void LinearCongruentialGenerator::changeHistory( 
 				      const unsigned long long history_number )
 {
-  d_history = history_number;
-
   unsigned long long history_diff = history_number - d_history;
 
-  // Initialize the generator state
-  d_initial_history_seed = Exponentiation::recursive( d_initial_history_seed, 
-						      history_diff*d_stride );
-  d_state = d_initial_history_seed;
-}
+  d_history = history_number;
 
-// Advance the generator state
-void LinearCongruentialGenerator::advanceState()
-{
-  d_state *= d_multiplier;
+  // Initialize the generator state
+  d_initial_history_seed = Exponentiation::recursive( 
+			    d_initial_history_seed, 
+		            history_diff*LinearCongruentialGenerator::stride );
+  
+  d_state = d_initial_history_seed;
 }
 
 } // end FACEMC namespace

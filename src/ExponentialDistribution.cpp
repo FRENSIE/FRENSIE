@@ -12,7 +12,6 @@
 // FACEMC Includes
 #include "ExponentialDistribution.hpp"
 #include "RandomNumberGenerator.hpp"
-#include "ContractException.hpp"
 
 namespace FACEMC{
 
@@ -36,16 +35,19 @@ double ExponentialDistribution::evaluate( const double indep_var_value ) const
   if( indep_var_value < 0.0 )
     return 0.0;
   else
-    return d_constant_multiplier*exp( -d_exponent_multiplier*indep_var_value );
+    return d_constant_multiplier*evaluateExponential( indep_var_value );
 }
 
 // Evaluate the PDF
-/*! \details PDF(x) = m*exp(-m*x)
+/*! \details PDF(x) = m*exp(-m*x) if x >= 0, = 0 if x < 0
  */ 
 double ExponentialDistribution::evaluatePDF( 
 					   const double indep_var_value ) const
 {
-  return d_exponent_multiplier*exp( -d_exponent_multiplier*indep_var_value );
+  if( indep_var_value < 0.0 )
+    return 0.0;
+  else
+    return d_exponent_multiplier*evaluateExponential( indep_var_value );
 }
 
 // Return a sample from the distribution
@@ -55,7 +57,7 @@ double ExponentialDistribution::sample()
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  return -log( random_number )/d_exponent_multiplier;
+  return sample( random_number );
 }
 
 // Return the sampling efficiency
@@ -74,6 +76,13 @@ double ExponentialDistribution::getUpperBoundOfIndepVar() const
 double ExponentialDistribution::getLowerBoundOfIndepVar() const
 {
   return 0.0;
+}
+
+// Evaluate the exponential
+double ExponentialDistribution::evaluateExponential( 
+					   const double indep_var_value ) const
+{
+  return exp( -d_exponent_multiplier*indep_var_value );
 }
 
 } // end FACEMC namespace

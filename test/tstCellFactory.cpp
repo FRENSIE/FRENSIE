@@ -37,44 +37,14 @@
   
 #define UNIT_TEST_INSTANTIATION_STD_MAP( type, name )		\
   MAP_TYPEDEFS( std, map )						\
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, short, float, map_s_f) \
   TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, short, double, map_s_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, int, float, map_i_f ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, int, double, map_i_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, long, float, map_l_f ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, long, double, map_l_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, short, float, map_s_f) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, short, double, map_s_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, int, float, map_i_f ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, int, double, map_i_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, long, float, map_l_f ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, long, double, map_l_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, short, float, map_s_f) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, short, double, map_s_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, int, float, map_i_f ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, int, double, map_i_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, long, float, map_l_f ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, long, double, map_l_d ) \
 
 #define UNIT_TEST_INSTANTIATION_BOOST_UMAP( type, name )		\
   MAP_TYPEDEFS( boost, unordered_map )					\
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, short, float, unordered_map_s_f) \
   TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, short, double, unordered_map_s_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, int, float, unordered_map_i_f ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, int, double, unordered_map_i_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, long, float, unordered_map_l_f ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, short, long, double, unordered_map_l_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, short, float, unordered_map_s_f) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, short, double, unordered_map_s_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, int, float, unordered_map_i_f ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, int, double, unordered_map_i_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, long, float, unordered_map_l_f ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, int, long, double, unordered_map_l_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, short, float, unordered_map_s_f) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, short, double, unordered_map_s_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, int, float, unordered_map_i_f ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, int, double, unordered_map_i_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, long, float, unordered_map_l_f ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( type, name, long, long, double, unordered_map_l_d ) \
 
 //---------------------------------------------------------------------------//

@@ -53,23 +53,12 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sample )
 {
   FACEMC::RandomNumberGenerator::initialize();
   
-  unsigned num_samples = 1000000;
-  double mean = 0.0;
-  double variance = 0.0;
-
-  for( unsigned i = 0; i < num_samples; ++i )
-  {
-    double sample = distribution->sample();
-
-    mean += sample;
-    variance += sample*sample;
-  }
-
-  mean /= num_samples;
-  variance = (variance - mean*mean*num_samples)/(num_samples-1);
-
-  FACEMC_TEST_FLOATING_EQUALITY( mean, 0.0, 1e-3 );
-  TEST_FLOATING_EQUALITY( variance, 1.0/3.0, 1e-3 );
+  Teuchos::RCP<FACEMC::UniformDistribution> uniform_distribution = 
+    Teuchos::rcp_dynamic_cast<FACEMC::UniformDistribution>( distribution );
+  
+  TEST_EQUALITY_CONST( uniform_distribution->sample( 0.0 ), -1.0 );
+  TEST_EQUALITY_CONST( uniform_distribution->sample( 0.5 ), 0.0 );  
+  TEST_EQUALITY_CONST( uniform_distribution->sample( 1.0 ), 1.0 );
 }
 
 //---------------------------------------------------------------------------//

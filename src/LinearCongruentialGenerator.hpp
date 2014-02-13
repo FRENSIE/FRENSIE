@@ -32,6 +32,9 @@ public:
   template<typename ScalarType>
   ScalarType rnd();
 
+  //! Return a random number for the current history
+  double randomNumber();
+
   //! Initialize the generator for the desired history
   void changeHistory( const unsigned long long history_number );
 
@@ -43,13 +46,13 @@ protected:
 private:
 
   // Initial seed of generator
-  static const unsigned long long d_initial_seed = 19073486328125ULL;
+  static const unsigned long long initial_seed = 19073486328125ULL;
 
   // Random number seed multiplier (g)
-  static const unsigned long long d_multiplier = 19073486328125ULL;
+  static const unsigned long long multiplier = 19073486328125ULL;
 
   // Random number stride between starting seed of consecutive histories (L)
-  static const unsigned long long d_stride = 152917ULL;
+  static const unsigned long long stride = 152917ULL;
 
   // Initial random number seed for current history (sh)
   unsigned long long d_initial_history_seed;

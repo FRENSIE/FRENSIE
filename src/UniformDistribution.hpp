@@ -15,6 +15,7 @@
 
 // FACEMC Includes
 #include "OneDDistribution.hpp"
+#include "ContractException.hpp"
 
 namespace FACEMC{
 
@@ -47,6 +48,9 @@ public:
   //! Return a random sample from the distribution
   double sample();
 
+  //! Return a sample from the distribution given a random number
+  double sample( const double random_number ) const;
+
   //! Return the sampling efficiency from the distribution
   double getSamplingEfficiency() const;
 
@@ -70,6 +74,17 @@ private:
   // The uniform distribution PDF value
   double d_pdf_value;
 };
+
+// Return a sample from the distribution given a random number
+inline double UniformDistribution::sample( const double random_number ) const
+{
+  // Make sure the random number is in [0,1]
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+
+  return random_number*(d_max_independent_value - d_min_independent_value) +
+    d_min_independent_value;
+}
 
 } // end FACEMC namespace 
 

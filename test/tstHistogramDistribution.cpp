@@ -28,24 +28,21 @@ Teuchos::RCP<FACEMC::OneDDistribution> distribution;
 void initializeDistribution(
 			 Teuchos::RCP<FACEMC::OneDDistribution>& distribution )
 {
-  if( distribution.is_null() )
-  {
-    Teuchos::Array<double> bin_boundaries( 4 );
-    bin_boundaries[0] = -2.0;
-    bin_boundaries[1] = -1.0;
-    bin_boundaries[2] = 1.0;
-    bin_boundaries[3] = 2.0;
-
-    Teuchos::Array<double> bin_values( 3 );
-    bin_values[0] = 2.0;
-    bin_values[1] = 1.0;
-    bin_values[2] = 2.0;
-
-    distribution.reset( new FACEMC::HistogramDistribution( bin_boundaries,
-							   bin_values ) );
-
-    FACEMC::RandomNumberGenerator::initialize();
-  }
+  Teuchos::Array<double> bin_boundaries( 4 );
+  bin_boundaries[0] = -2.0;
+  bin_boundaries[1] = -1.0;
+  bin_boundaries[2] = 1.0;
+  bin_boundaries[3] = 2.0;
+  
+  Teuchos::Array<double> bin_values( 3 );
+  bin_values[0] = 2.0;
+  bin_values[1] = 1.0;
+  bin_values[2] = 2.0;
+  
+  distribution.reset( new FACEMC::HistogramDistribution( bin_boundaries,
+							 bin_values ) );
+  
+  FACEMC::RandomNumberGenerator::initialize();
 }
 
 //---------------------------------------------------------------------------//
@@ -90,26 +87,30 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, sample )
 {
   initializeDistribution( distribution );
 
-  unsigned num_samples = 100000;
-  unsigned num_samples_bin_1 = 0;
-  unsigned num_samples_bin_2 = 0;
-  unsigned num_samples_bin_3 = 0;
-
-  for( unsigned i = 0; i < num_samples; ++i )
-  {
-    double sample = distribution->sample();
-
-    if( sample <= -1.0 )
-      ++num_samples_bin_1;
-    else if( sample <= 1.0 )
-      ++num_samples_bin_2;
-    else
-      ++num_samples_bin_3;
-  }
-
-  TEST_FLOATING_EQUALITY(num_samples_bin_1/(double)num_samples, 1.0/3.0, 1e-2);
-  TEST_FLOATING_EQUALITY(num_samples_bin_2/(double)num_samples, 1.0/3.0, 1e-2);
-  TEST_FLOATING_EQUALITY(num_samples_bin_3/(double)num_samples, 1.0/3.0, 1e-2);
+  Teuchos::RCP<FACEMC::HistogramDistribution> histogram_distribution = 
+    Teuchos::rcp_dynamic_cast<FACEMC::HistogramDistribution>( distribution );
+  
+  // First bin
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.0, 0.0 ), -2.0 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.0, 0.5 ), -1.5 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.0, 1.0 ), -1.0 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 1.0/3.0, 0.0 ), -2.0 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 1.0/3.0, 0.5 ), -1.5 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 1.0/3.0, 1.0 ), -1.0 );
+  // Second bin
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.4, 0.0 ), -1.0 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.4, 0.5 ), -0.0 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.4, 1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 2.0/3.0, 0.0 ), -1.0 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 2.0/3.0, 0.5 ), -0.0 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 2.0/3.0, 1.0 ), 1.0 );
+  // Third bin
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.7, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.7, 0.5 ), 1.5 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.7, 1.0 ), 2.0 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 1.0, 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 1.0, 0.5 ), 1.5 );
+  TEST_EQUALITY_CONST( histogram_distribution->sample( 1.0, 1.0 ), 2.0 );
 }
 
 //---------------------------------------------------------------------------//

@@ -126,74 +126,25 @@
 
 #define UNIT_TEST_INSTANTIATION_ARRAY( type, name, space, array )	\
   ARRAY_TYPEDEFS( space, array )					\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_f )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_d )		\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_u )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_i )		\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_f_f )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_d_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_u_u )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_i_i )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_f_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_f_u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_f_i )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_d_f )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_d_u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_d_i )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_u_f )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_u_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_u_i )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_i_f )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_i_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_pair_i_u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_trip_f_f_f ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_trip_d_d_d ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_trip_u_u_u ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_trip_i_i_i ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_trip_d_f_i ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_trip_u_d_f ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_f_f_f_f ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_d_d_d_d ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_u_u_u_u ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_i_i_i_i ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_f_d_u_i ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, array##_quad_i_u_d_f ) \
   
 #define UNIT_TEST_INSTANTIATION( type, name )				\
   TUPLE_TYPEDEFS()							\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, float )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, double )		\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, unsigned )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, int )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_i_i )		\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_u_u )		\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_f_f )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_d_d )		\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_u_d )		\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, pair_d_u )		\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_u_u_u )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_d_d_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_u_u_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_u_d_u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_u_d_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_d_d_u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_d_u_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, trip_d_u_u )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_u_u_u )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_d_d_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_u_u_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_u_d_u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_d_u_u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_u_d_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_d_u_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_d_d_u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_u_d_d_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_d_d_u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_u_d_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_d_u_u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_u_d_u )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_u_u_d )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, quad_d_u_u_u )	\
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
