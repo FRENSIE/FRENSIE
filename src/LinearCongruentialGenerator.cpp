@@ -11,6 +11,7 @@
 // FACEMC Includes
 #include "LinearCongruentialGenerator.hpp"
 #include "ExponentiationAlgorithms.hpp"
+#include "ContractException.hpp"
 
 namespace FACEMC{
 
@@ -22,17 +23,57 @@ LinearCongruentialGenerator::LinearCongruentialGenerator()
 { /* ... */ }
 
 // Initialize the generator for the desired history
+/*! \details The first history number is assumed to be 0.
+ */
 void LinearCongruentialGenerator::changeHistory( 
 				      const unsigned long long history_number )
 {
-  unsigned long long history_diff = history_number - d_history;
+  long long history_diff = (long long)history_number - d_history;
 
   d_history = history_number;
 
-  // Initialize the generator state
-  d_initial_history_seed = Exponentiation::recursive( 
+  // Set the state to the initial history seed
+  if( history_number == 0ULL )
+  {
+    d_initial_history_seed = LinearCongruentialGenerator::initial_seed;
+    
+    d_state = d_initial_history_seed;
+  }
+
+  // Calculate the next history seed from the current history seed
+  else if( history_diff == 1LL )
+    nextHistory();
+  
+  // Calculate the new history seed from the current history seed
+  else if( history_diff > 1LL )
+  {
+    d_initial_history_seed = Exponentiation::recursive( 
 			    d_initial_history_seed, 
 		            history_diff*LinearCongruentialGenerator::stride );
+
+    d_state = d_initial_history_seed;
+  }
+  // Calculate the history seed from the first history seed
+  else if( history_diff < 0LL )
+  {
+    d_initial_history_seed = Exponentiation::recursive(
+			  LinearCongruentialGenerator::initial_seed,
+			  history_number*LinearCongruentialGenerator::stride );
+    
+    d_state = d_initial_history_seed;
+  }
+
+  // Set the state to the history initial seed for the current history
+  else
+    d_state = d_initial_history_seed;
+}
+
+// Initialize the generator for the next history
+void LinearCongruentialGenerator::nextHistory()
+{
+  d_initial_history_seed = Exponentiation::recursive( 
+			                 d_initial_history_seed, 
+		                         LinearCongruentialGenerator::stride );
   
   d_state = d_initial_history_seed;
 }

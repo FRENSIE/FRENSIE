@@ -59,13 +59,6 @@ ELSE()
   MESSAGE(STATUS "The BOOST_PREFIX has not been set. The system default will be used.")
 ENDIF()
 
-# Enable SPRNG Support
-IF(SPRNG_PREFIX)
-  ENABLE_SPRNG_SUPPORT()
-ELSE()
-  MESSAGE(FATAL_ERROR "The SPRNG_PREFIX must be set!")
-ENDIF()
-
 # Add Design-by-Contract support if requested
 IF(${${PROJECT_NAME}_ENABLE_DBC})
   SET(HAVE_${PROJECT_NAME}_DBC "1")

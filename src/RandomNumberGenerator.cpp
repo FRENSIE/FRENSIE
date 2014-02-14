@@ -17,7 +17,7 @@ namespace FACEMC{
 boost::scoped_ptr<LinearCongruentialGenerator> 
 RandomNumberGenerator::generator;
 
-// Initialize the generator
+// Initialize the generator for the desired history
 void RandomNumberGenerator::initialize( 
 				      const unsigned long long history_number )
 {
@@ -30,14 +30,13 @@ void RandomNumberGenerator::initialize(
   testPostcondition( generator );
 }
 
-// Reset the generator to its initial state
-void RandomNumberGenerator::reset()
+// Initialize the generator for the next history
+void RandomNumberGenerator::initializeNextHistory()
 {
-  generator.reset( new LinearCongruentialGenerator() );
-  generator->changeHistory( 0ULL );
+  // Make sure the generator has been initialized
+  testPrecondition( generator );
 
-  // Make sure that the generator has been created
-  testPostcondition( generator );
+  generator->nextHistory();
 }
 
 // Set a fake stream for the generator

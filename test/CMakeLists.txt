@@ -164,11 +164,11 @@ IF(${FACEMC_ENABLE_MPI})
     mpiexec -n 2 tstRandomNumberGenerator)
 ENDIF()
 
-ADD_EXECUTABLE(tstCellBoundingBox
-  tstCellBoundingBox.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstCellBoundingBox ${PROJECT_NAME})
-ADD_TEST(CellBoundingBox_test tstCellBoundingBox)
+# ADD_EXECUTABLE(tstCellBoundingBox
+#   tstCellBoundingBox.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstCellBoundingBox ${PROJECT_NAME})
+# ADD_TEST(CellBoundingBox_test tstCellBoundingBox)
 
 ADD_EXECUTABLE(tstSurfaceInputValidatorHelpers
   tstSurfaceInputValidatorHelpers.cpp

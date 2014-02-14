@@ -34,6 +34,9 @@ public:
   //! Initialize the generator for the desired history
   void changeHistory( const unsigned long long history_number );
 
+  //! Initialize the generator for the next history
+  void nextHistory();
+
 protected:
 
   //! Advance the generator state

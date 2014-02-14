@@ -27,11 +27,10 @@
 void timeGenerator( const int trial_size, const int histories = 1 )
 {
   // Wrapped generator
-  FACEMC::RandomNumberGenerator::reset();
+  FACEMC::RandomNumberGenerator::initialize();
 
   // Raw generator
-  boost::scoped_ptr<FACEMC::LinearCongruentialGenerator> 
-    generator( new FACEMC::LinearCongruentialGenerator );
+  FACEMC::LinearCongruentialGenerator generator;
 
   double time1 = TIME();
 
@@ -41,8 +40,9 @@ void timeGenerator( const int trial_size, const int histories = 1 )
     for( int j = 0; j < trial_size/histories; ++j )
       FACEMC::RandomNumberGenerator::getRandomNumber<double>();
 
-    FACEMC::RandomNumberGenerator::initialize( i+1 );
+    FACEMC::RandomNumberGenerator::initializeNextHistory();
   }
+  std::cout << std::endl;
   
   double time2 = TIME();
 
@@ -50,9 +50,9 @@ void timeGenerator( const int trial_size, const int histories = 1 )
   for( int i = 0; i < histories; ++i )
   {
     for( int j = 0; j < trial_size/histories; ++j )
-      generator->getRandomNumber();
+      generator.getRandomNumber();
 
-    generator->changeHistory( i+1 );
+    generator.nextHistory();
   }
 
   double time3 = TIME();
@@ -71,7 +71,8 @@ void timeGenerator( const int trial_size, const int histories = 1 )
 
     // Print the last double generated
     std::cout << "Last random number generated: " 
-	      << FACEMC::RandomNumberGenerator::getRandomNumber<double>() 
+	      << generator.getRandomNumber() << " "
+	      << FACEMC::RandomNumberGenerator::getRandomNumber<double>()
 	      << std::endl
 	      << "Random numbers per history: " << trial_size/histories
 	      << std::endl
@@ -80,12 +81,10 @@ void timeGenerator( const int trial_size, const int histories = 1 )
 	      << "  Wrapped Double generator:\tTime = " << time2-time1  
 	      << " seconds " << "=> " << mdbls_per_sec_wrapped
 	      << std::endl
-	      << "  Raw Double generator:\tTime = " << time3-time2
+	      << "  Raw Double generator:\t\tTime = " << time3-time2
 	      << " seconds " << "=> " << mdbls_per_sec_raw
 	      << std::endl << std::endl;
   }
-
-  //delete generator;
 }
       
 

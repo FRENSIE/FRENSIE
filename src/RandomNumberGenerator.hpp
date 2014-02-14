@@ -23,12 +23,12 @@ namespace FACEMC{
 //! Struct that is used to obtain random numbers
 struct RandomNumberGenerator
 {
-  //! Initialize the generator
+  //! Initialize the generator for the desired history
   static void initialize( const unsigned long long history_number = 0ULL );
 
-  //! Reset the generator to its initial state
-  static void reset();
-
+  //! Initialize the generator for the next history
+  static void initializeNextHistory();
+  
   //! Set a fake stream for the generator
   static void setFakeStream( std::vector<double>& fake_stream );
 

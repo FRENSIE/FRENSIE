@@ -43,32 +43,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( RandomNumberGenerator,
 UNIT_TEST_INSTANTIATION( RandomNumberGenerator, initialize );
 
 //---------------------------------------------------------------------------//
-// Check that a random number generator can be reset
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( RandomNumberGenerator,
-				   reset,
-				   ScalarType )
-{
-  // Reset the generator
-  FACEMC::RandomNumberGenerator::reset();
-
-  // Store the first random number of the stream
-  double first_random_number = 
-    FACEMC::RandomNumberGenerator::getRandomNumber<ScalarType>();
-
-  // Reset the generator
-  FACEMC::RandomNumberGenerator::reset();
-
-  // Store the first random number of the stream again
-  double first_random_number_copy = 
-    FACEMC::RandomNumberGenerator::getRandomNumber<ScalarType>();
-
-  // These random numbers will only be the same if the generator was reset
-  TEST_EQUALITY( first_random_number, first_random_number_copy );
-}
-
-UNIT_TEST_INSTANTIATION( RandomNumberGenerator, reset );
-
-//---------------------------------------------------------------------------//
 // Check that a fake stream can be set
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( RandomNumberGenerator,
 				   setFakeStream,
@@ -103,9 +77,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( RandomNumberGenerator,
 				   initialize_history,
 				   ScalarType )
 {
-  // Reset the generator
-  FACEMC::RandomNumberGenerator::reset();
-
   // Initialize the generator to a particular history depending on the process
   FACEMC::RandomNumberGenerator::initialize( 
 					Teuchos::GlobalMPISession::getRank() );
