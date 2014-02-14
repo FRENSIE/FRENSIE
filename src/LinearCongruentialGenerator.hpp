@@ -29,11 +29,7 @@ public:
   { /* ... */}
 
   //! Return a random number for the current history
-  template<typename ScalarType>
-  ScalarType rnd();
-
-  //! Return a random number for the current history
-  double randomNumber();
+  virtual double getRandomNumber();
 
   //! Initialize the generator for the desired history
   void changeHistory( const unsigned long long history_number );
@@ -64,15 +60,13 @@ private:
   unsigned long long d_history;
 };
 
+// Advance the generator state
+inline void LinearCongruentialGenerator::advanceState()
+{
+  d_state *= LinearCongruentialGenerator::multiplier;
+}
+
 } // end FACEMC namespace
-
-//---------------------------------------------------------------------------//
-// Template includes.
-//---------------------------------------------------------------------------//
-
-#include "LinearCongruentialGenerator_def.hpp"
-
-//---------------------------------------------------------------------------//
 
 #endif // end LINEAR_CONGRUENTIAL_GENERATOR_HPP
 

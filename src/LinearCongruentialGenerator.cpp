@@ -37,6 +37,16 @@ void LinearCongruentialGenerator::changeHistory(
   d_state = d_initial_history_seed;
 }
 
+// Return a random number for the current history
+double LinearCongruentialGenerator::getRandomNumber()
+{
+  // Advance the generator state
+  advanceState();
+    
+  // Return the uniform random number (state*2^-64)
+  return d_state*5.4210108624275222e-20;
+}
+
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//

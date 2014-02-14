@@ -22,15 +22,9 @@ template<typename ScalarType>
 inline ScalarType RandomNumberGenerator::getRandomNumber()
 {
   // Make sure that the generator has been initialized
-  testPrecondition( !generator.is_null() );
+  testPrecondition( generator );
   
-#if defined(HAVE_FACEMC_MPI) && !defined(NDEBUG)
-  return generator->rnd<ScalarType>();
-
-#else
-  return SprngPolicy<ScalarType>::getSprngRandomNumber( generator );
-
-#endif
+  return static_cast<ScalarType>( generator->getRandomNumber() );
 }
 
 } // end FACEMC namespace

@@ -69,17 +69,46 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( RandomNumberGenerator,
 UNIT_TEST_INSTANTIATION( RandomNumberGenerator, reset );
 
 //---------------------------------------------------------------------------//
+// Check that a fake stream can be set
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( RandomNumberGenerator,
+				   setFakeStream,
+				   ScalarType )
+{
+  // Create the fake stream
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.2;
+  fake_stream[1] = 0.4;
+  fake_stream[2] = 0.6;
+
+  // Set the fake stream
+  FACEMC::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // Test the the fake stream returns the correct values
+  ScalarType random_number = 
+    FACEMC::RandomNumberGenerator::getRandomNumber<ScalarType>();
+  TEST_EQUALITY_CONST( random_number, (ScalarType)0.2 );
+  
+  random_number = FACEMC::RandomNumberGenerator::getRandomNumber<ScalarType>();
+  TEST_EQUALITY_CONST( random_number, (ScalarType)0.4 );
+
+  random_number = FACEMC::RandomNumberGenerator::getRandomNumber<ScalarType>();
+  TEST_EQUALITY_CONST( random_number, (ScalarType)0.6 );
+}
+
+UNIT_TEST_INSTANTIATION( RandomNumberGenerator, setFakeStream );
+
+//---------------------------------------------------------------------------//
 // Check that the random number generator can be initialized to a new history
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( RandomNumberGenerator,
 				   initialize_history,
 				   ScalarType )
 {
-#if defined(HAVE_FACEMC_MPI) && !defined(NDEBUG)
   // Reset the generator
   FACEMC::RandomNumberGenerator::reset();
 
   // Initialize the generator to a particular history depending on the process
-  FACEMC::RandomNumberGenerator::initialize( Teuchos::GlobalMPISession::getRank() );
+  FACEMC::RandomNumberGenerator::initialize( 
+					Teuchos::GlobalMPISession::getRank() );
 
   // Generate a random number
   double random_number = 
@@ -99,7 +128,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( RandomNumberGenerator,
     random_set.insert( all_random_numbers[i] );
 
   TEST_EQUALITY( all_random_numbers.size(), random_set.size() );
-#endif
 }
 
 UNIT_TEST_INSTANTIATION( RandomNumberGenerator, initialize_history );

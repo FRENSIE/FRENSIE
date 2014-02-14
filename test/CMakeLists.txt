@@ -16,6 +16,12 @@ ADD_EXECUTABLE(tstSearchAlgorithms
 TARGET_LINK_LIBRARIES(tstSearchAlgorithms ${PROJECT_NAME})
 ADD_TEST(SearchAlgorithms_test tstSearchAlgorithms)
 
+ADD_EXECUTABLE(tstExponentiationAlgorithms
+  tstExponentiationAlgorithms.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstExponentiationAlgorithms ${PROJECT_NAME})
+ADD_TEST(ExponentiationAlgorithms_test tstExponentiationAlgorithms)
+
 ADD_EXECUTABLE(tstENDLIB97FileHandler
   tstENDLIB97FileHandler.cpp)
 TARGET_LINK_LIBRARIES(tstENDLIB97FileHandler ${PROJECT_NAME})
@@ -141,6 +147,12 @@ ADD_EXECUTABLE(tstLinearCongruentialGenerator
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstLinearCongruentialGenerator ${PROJECT_NAME})
 ADD_TEST(LinearCongruentialGenerator_test tstLinearCongruentialGenerator)
+
+ADD_EXECUTABLE(tstFakeGenerator
+  tstFakeGenerator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstFakeGenerator ${PROJECT_NAME})
+ADD_TEST(FakeGenerator_test tstFakeGenerator)
 
 ADD_EXECUTABLE(tstRandomNumberGenerator
   tstRandomNumberGenerator.cpp

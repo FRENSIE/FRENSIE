@@ -18,7 +18,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FACEMC Includes
-#include <LinearCongruentialGenerator.hpp>
+#include "RandomNumberGenerator.hpp"
 
 // Time macro
 #define TIME() (clock()/((double)CLOCKS_PER_SEC))
@@ -26,35 +26,36 @@
 // Generator timing function
 void timeGenerator( const int trial_size, const int histories = 1 )
 {
-  // Timing info
-  double time1, time2, time3;
-  
-  boost::scoped_ptr<FACEMC::LinearCongruentialGenerator>
+  // Wrapped generator
+  FACEMC::RandomNumberGenerator::reset();
+
+  // Raw generator
+  boost::scoped_ptr<FACEMC::LinearCongruentialGenerator> 
     generator( new FACEMC::LinearCongruentialGenerator );
 
-  time1 = TIME();
+  double time1 = TIME();
 
-  // Float generator timing
+  // Wrapped double generator timing
   for( int i = 0; i < histories; ++i )
   {
     for( int j = 0; j < trial_size/histories; ++j )
-      generator->rnd<float>();
+      FACEMC::RandomNumberGenerator::getRandomNumber<double>();
 
-    generator->changeHistory( i+1 );
-  }
-
-  time2 = TIME();
-
-  //Double generator timing
-  for( int i = 0; i < histories; ++i )
-  {
-    for( int j = 0; j < trial_size/histories; ++j )
-      generator->rnd<double>();
-
-    generator->changeHistory( i+1 );
+    FACEMC::RandomNumberGenerator::initialize( i+1 );
   }
   
-  time3 = TIME();
+  double time2 = TIME();
+
+  // Raw double generator timing
+  for( int i = 0; i < histories; ++i )
+  {
+    for( int j = 0; j < trial_size/histories; ++j )
+      generator->getRandomNumber();
+
+    generator->changeHistory( i+1 );
+  }
+
+  double time3 = TIME();
 
   // Check for valid time intervals
   if( time2 - time1 < 1.0e-15 || time3 - time2 < 1.0e-15 )
@@ -65,20 +66,23 @@ void timeGenerator( const int trial_size, const int histories = 1 )
   else
   {
     // Calculate the generation speed (Millions/sec)
-    double mflts_per_sec = trial_size/(time2-time1)/1e6;
-    double mdbls_per_sec = trial_size/(time3-time2)/1e6;
+    double mdbls_per_sec_wrapped = trial_size/(time2-time1)/1e6;
+    double mdbls_per_sec_raw = trial_size/(time3-time2)/1e6;
 
     // Print the last double generated
-    std::cout << "Last random number generated: " << generator->rnd<double>()
+    std::cout << "Last random number generated: " 
+	      << FACEMC::RandomNumberGenerator::getRandomNumber<double>() 
 	      << std::endl
 	      << "Random numbers per history: " << trial_size/histories
 	      << std::endl
 	      << "User + System time information (NOTE: MRS = Million Random "
 	      << "Numbers Per Second)\n" << std::endl
-	      << "  Float generator:\tTime = " << time2-time1 << " seconds "
-	      << "=> " << mflts_per_sec << std::endl
-	      << "  Double generator:\tTime = " << time3-time2 << " seconds "
-	      << "=> " << mdbls_per_sec << std::endl << std::endl;
+	      << "  Wrapped Double generator:\tTime = " << time2-time1  
+	      << " seconds " << "=> " << mdbls_per_sec_wrapped
+	      << std::endl
+	      << "  Raw Double generator:\tTime = " << time3-time2
+	      << " seconds " << "=> " << mdbls_per_sec_raw
+	      << std::endl << std::endl;
   }
 
   //delete generator;
@@ -88,6 +92,8 @@ void timeGenerator( const int trial_size, const int histories = 1 )
 // Main itming function
 int main()
 {
+  FACEMC::RandomNumberGenerator::initialize();
+  
   int trial_size = 10000000;
 
   std::cout << "Timing generator for single history" << std::endl;
