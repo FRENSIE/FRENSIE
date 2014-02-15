@@ -54,7 +54,8 @@ double UniformDistribution::sample()
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  return sample( random_number );
+  return random_number*(d_max_independent_value - d_min_independent_value) +
+    d_min_independent_value;
 }
 
 // Return the sampling efficiency from the distribution

@@ -87,30 +87,102 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, sample )
 {
   initializeDistribution( distribution );
 
-  Teuchos::RCP<FACEMC::HistogramDistribution> histogram_distribution = 
-    Teuchos::rcp_dynamic_cast<FACEMC::HistogramDistribution>( distribution );
+  std::vector<double> fake_stream( 36 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.0;
+  fake_stream[2] = 0.0;
+  fake_stream[3] = 0.5;
+  fake_stream[4] = 0.0;
+  fake_stream[5] = 1.0 - 1e-15;
+  fake_stream[6] = 1.0/3.0;
+  fake_stream[7] = 0.0;
+  fake_stream[8] = 1.0/3.0;
+  fake_stream[9] = 0.5;
+  fake_stream[10] = 1.0/3.0;
+  fake_stream[11] = 1.0 - 1e-15;
+  fake_stream[12] = 0.4;
+  fake_stream[13] = 0.0;
+  fake_stream[14] = 0.4;
+  fake_stream[15] = 0.5;
+  fake_stream[16] = 0.4;
+  fake_stream[17] = 1.0 - 1e-15;
+  fake_stream[18] = 2.0/3.0;
+  fake_stream[19] = 0.0;
+  fake_stream[20] = 2.0/3.0;
+  fake_stream[21] = 0.5;
+  fake_stream[22] = 2.0/3.0;
+  fake_stream[23] = 1.0 - 1e-15;
+  fake_stream[24] = 0.7;
+  fake_stream[25] = 0.0;
+  fake_stream[26] = 0.7;
+  fake_stream[27] = 0.5;
+  fake_stream[28] = 0.7;
+  fake_stream[29] = 1.0 - 1e-15;
+  fake_stream[30] = 1.0 - 1e-15;
+  fake_stream[31] = 0.0;
+  fake_stream[32] = 1.0 - 1e-15;
+  fake_stream[33] = 0.5;
+  fake_stream[34] = 1.0 - 1e-15;
+  fake_stream[35] = 1.0 - 1e-15;
   
+  FACEMC::RandomNumberGenerator::setFakeStream( fake_stream );
+
   // First bin
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.0, 0.0 ), -2.0 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.0, 0.5 ), -1.5 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.0, 1.0 ), -1.0 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 1.0/3.0, 0.0 ), -2.0 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 1.0/3.0, 0.5 ), -1.5 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 1.0/3.0, 1.0 ), -1.0 );
+  double sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, -2.0 );
+
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, -1.5 );
+
+  sample = distribution->sample();
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-15 );
+  
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, -2.0 );
+
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, -1.5 );
+
+  sample = distribution->sample();
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-15 );
+  
   // Second bin
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.4, 0.0 ), -1.0 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.4, 0.5 ), -0.0 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.4, 1.0 ), 1.0 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 2.0/3.0, 0.0 ), -1.0 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 2.0/3.0, 0.5 ), -0.0 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 2.0/3.0, 1.0 ), 1.0 );
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, -1.0 );
+
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, -0.0 );
+
+  sample = distribution->sample();
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, -1.0 );
+
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, -0.0 );
+
+  sample = distribution->sample();
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+  
   // Third bin
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.7, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.7, 0.5 ), 1.5 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 0.7, 1.0 ), 2.0 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 1.0, 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 1.0, 0.5 ), 1.5 );
-  TEST_EQUALITY_CONST( histogram_distribution->sample( 1.0, 1.0 ), 2.0 );
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, 1.0 );
+  
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, 1.5 );
+
+  sample = distribution->sample();
+  TEST_FLOATING_EQUALITY( sample, 2.0, 1e-15 );
+
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, 1.0 );
+
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, 1.5 );
+
+  sample = distribution->sample();
+  TEST_FLOATING_EQUALITY( sample, 2.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//

@@ -32,6 +32,9 @@ struct RandomNumberGenerator
   //! Set a fake stream for the generator
   static void setFakeStream( std::vector<double>& fake_stream );
 
+  //! Unset the fake stream
+  static void unsetFakeStream();
+
   //! Return a random number in interval [0,1)
   template<typename ScalarType>
   static ScalarType getRandomNumber();

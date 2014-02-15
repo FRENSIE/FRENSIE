@@ -9,6 +9,9 @@
 #ifndef POWER_DISTRIBUTION_HPP
 #define POWER_DISTRIBUTION_HPP
 
+// Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
+
 // FACEMC Includes
 #include "OneDDistribution.hpp"
 
@@ -22,7 +25,7 @@ class PowerDistribution : public OneDDistribution
 private:
 
   // Scalar Traits
-  Teuchos::ScalarTraits<double> ST;
+  typedef Teuchos::ScalarTraits<double> ST;
 
 public:
 
@@ -79,7 +82,7 @@ class PowerDistribution<2u> : public OneDDistribution
 private:
 
   // Scalar Traits
-  Teuchos::ScalarTraits<double> ST;
+  typedef Teuchos::ScalarTraits<double> ST;
 
 public:
 
@@ -136,7 +139,7 @@ class PowerDistribution<1u> : public OneDDistribution
 private:
 
   // Scalar Traits
-  Teuchos::ScalarTraits<double> ST;
+  typedef Teuchos::ScalarTraits<double> ST;
 
 public:
 
@@ -191,7 +194,7 @@ private:
 // Template includes
 //---------------------------------------------------------------------------//
  
-#include "PowerDistribution.hpp"
+#include "PowerDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//
 

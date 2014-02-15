@@ -78,8 +78,13 @@ double DiscreteDistribution::evaluatePDF( const double indep_var_value ) const
 double DiscreteDistribution::sample()
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  
+  Teuchos::Array<Pair<double,double> >::const_iterator sample = 
+    Search::binarySearchDiscreteData<SECOND>( d_distribution.begin(),
+					      d_distribution.end(),
+					      random_number );
 
-  return sample( random_number );
+  return sample->first;
 }
 
 // Return the sampling efficiency from the distribution

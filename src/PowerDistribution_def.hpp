@@ -9,14 +9,15 @@
 // FACEMC Includes
 #include "ContractException.hpp"
 #include "ExponentiationAlgorithms.hpp"
+#include "RandomNumberGenerator.hpp"
 
 namespace FACEMC{
 
 // Constructor
 template<unsigned N>
-PowerDistribution<N>( const double constant_multiplier,
-		   const double min_indep_limit,
-		   const double max_indep_limit )
+PowerDistribution<N>::PowerDistribution( const double constant_multiplier,
+					 const double min_indep_limit,
+					 const double max_indep_limit )
   : d_constant_multiplier( constant_multiplier ),
     d_min_indep_limit( min_indep_limit ),
     d_min_indep_limit_to_power_Np1( min_indep_limit ),
@@ -43,10 +44,9 @@ PowerDistribution<N>( const double constant_multiplier,
 }
 
 // Constructor
-template<>
-PowerDistribution<2u>( const double constant_multiplier,
-		       const double min_indep_limit,
-		       const double max_indep_limit )
+PowerDistribution<2u>::PowerDistribution( const double constant_multiplier,
+					  const double min_indep_limit,
+					  const double max_indep_limit )
   : d_constant_multiplier( constant_multiplier ),
     d_min_indep_limit( min_indep_limit ),
     d_min_indep_limit_cubed( min_indep_limit*min_indep_limit*min_indep_limit ),
@@ -64,10 +64,9 @@ PowerDistribution<2u>( const double constant_multiplier,
 }
 
 // Constructor
-template<>
-PowerDistribution<1u>( const double constant_multiplier,
-		       const double min_indep_limit,
-		       const double max_indep_limit )
+PowerDistribution<1u>::PowerDistribution( const double constant_multiplier,
+					  const double min_indep_limit,
+					  const double max_indep_limit )
   : d_constant_multiplier( constant_multiplier ),
     d_min_indep_limit( min_indep_limit ),
     d_min_indep_limit_squared( min_indep_limit*min_indep_limit ),
@@ -97,7 +96,6 @@ double PowerDistribution<N>::evaluate( const double indep_var_value ) const
 }
 
 // Evaluate the distribution
-template<>
 double PowerDistribution<2u>::evaluate( const double indep_var_value ) const
 {
   if( indep_var_value < d_min_indep_limit )
@@ -109,7 +107,6 @@ double PowerDistribution<2u>::evaluate( const double indep_var_value ) const
 }
 
 // Evaluate the distribution
-template<>
 double PowerDistribution<1u>::evaluate( const double indep_var_value ) const
 {
   if( indep_var_value < d_min_indep_limit )
@@ -124,24 +121,43 @@ double PowerDistribution<1u>::evaluate( const double indep_var_value ) const
 template<unsigned N>
 double PowerDistribution<N>::evaluatePDF( const double indep_var_value ) const
 {
+  if( indep_var_value < d_min_indep_limit )
+    return 0.0;
+  else if( indep_var_value > d_max_indep_limit )
+    return 0.0;
+  else
+  {
     return (N+1u)*Exponentiation::recursive( indep_var_value, N )/
       (d_max_indep_limit_to_power_Np1 - d_min_indep_limit_to_power_Np1 );
+  }
 }
 
 // Evaluate the PDF
-template<>
 double PowerDistribution<2u>::evaluatePDF( const double indep_var_value ) const
 {
-  return 3*indep_var_value*indep_var_value/
-    (d_max_indep_limit_cubed - d_min_indep_limit_cubed );
+  if( indep_var_value < d_min_indep_limit )
+    return 0.0;
+  else if( indep_var_value > d_max_indep_limit )
+    return 0.0;
+  else
+  {
+    return 3*indep_var_value*indep_var_value/
+      (d_max_indep_limit_cubed - d_min_indep_limit_cubed );
+  }
 }
 
 // Evaluate the PDF
-template<>
 double PowerDistribution<1u>::evaluatePDF( const double indep_var_value ) const
 {
-  return 2*indep_var_value/
-    (d_max_indep_limit_squared - d_min_indep_limit_squared );
+  if( indep_var_value < d_min_indep_limit )
+    return 0.0;
+  else if( indep_var_value > d_max_indep_limit )
+    return 0.0;
+  else
+  {
+    return 2*indep_var_value/
+      (d_max_indep_limit_squared - d_min_indep_limit_squared );
+  }
 }
 
 // Return a random sample from the distribution
@@ -158,7 +174,6 @@ double PowerDistribution<N>::sample()
 }
 
 // Return a random sample from the distribution
-template<>
 double PowerDistribution<2u>::sample()
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
@@ -171,13 +186,12 @@ double PowerDistribution<2u>::sample()
 }
 
 // Return a random sample from the distribution
-template<>
 double PowerDistribution<1u>::sample()
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
   
   double argument = random_number*
-    (d_max_indep_limit_squard - d_min_indep_limit_squared) + 
+    (d_max_indep_limit_squared - d_min_indep_limit_squared) + 
     d_min_indep_limit_squared;
 
   return sqrt( argument );
@@ -191,14 +205,12 @@ double PowerDistribution<N>::getSamplingEfficiency() const
 }
 
 // Return the sampling efficiency from the distribution
-template<>
 double PowerDistribution<2u>::getSamplingEfficiency() const
 {
   return 1.0;
 }
 
 // Return the sampling efficiency from the distribution
-template<>
 double PowerDistribution<1u>::getSamplingEfficiency() const
 {
   return 1.0;
@@ -212,14 +224,12 @@ double PowerDistribution<N>::getUpperBoundOfIndepVar() const
 }
 
 // Return the upper bound of the distribution independent variable
-template<>
 double PowerDistribution<2u>::getUpperBoundOfIndepVar() const
 {
   return d_max_indep_limit;
 }
 
 // Return the upper bound of the distribution independent variable
-template<>
 double PowerDistribution<1u>::getUpperBoundOfIndepVar() const
 {
   return d_max_indep_limit;
@@ -233,14 +243,12 @@ double PowerDistribution<N>::getLowerBoundOfIndepVar() const
 }
 
 // Return the lower bound of the distribution independent variable
-template<>
 double PowerDistribution<2u>::getLowerBoundOfIndepVar() const 
 {
   return d_min_indep_limit;
 }
 
 // Return the lower bound of the distribution independent variable
-template<>
 double PowerDistribution<1u>::getLowerBoundOfIndepVar() const 
 {
   return d_min_indep_limit;

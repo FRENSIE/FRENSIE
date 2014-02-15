@@ -49,9 +49,6 @@ public:
   //! Return a random sample from the distribution
   double sample();
 
-  //! Return a sample from the distribution given a random number
-  double sample( const double random_number ) const;
-
   //! Return the sampling efficiency
   double getSamplingEfficiency() const;
 
@@ -72,17 +69,6 @@ private:
   // The exponent multiplier
   double d_exponent_multiplier;
 };
-
-// Return a sample from the distribution given a random number
-inline double ExponentialDistribution::sample( 
-					     const double random_number ) const
-{
-  // Make sure the random number is in [0,1]
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-
-  return -log( random_number )/d_exponent_multiplier;
-}
 
 } // end FACEMC namespace
 

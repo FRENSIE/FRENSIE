@@ -86,16 +86,40 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, sample )
 {
   initializeDistribution( distribution );
 
-  Teuchos::RCP<FACEMC::DiscreteDistribution> discrete_distribution = 
-    Teuchos::rcp_dynamic_cast<FACEMC::DiscreteDistribution>( distribution );
+  std::vector<double> fake_stream( 7 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.2;
+  fake_stream[2] = 1.0/4.0;
+  fake_stream[3] = 0.5;
+  fake_stream[4] = 3.0/4.0;
+  fake_stream[5] = 0.85;
+  fake_stream[6] = 1.0 - 1.0e-15;
 
-  TEST_EQUALITY_CONST( discrete_distribution->sample( 0.0 ), -1.0 );
-  TEST_EQUALITY_CONST( discrete_distribution->sample( 0.2 ), -1.0 );
-  TEST_EQUALITY_CONST( discrete_distribution->sample( 1.0/4.0 ), -1.0 );
-  TEST_EQUALITY_CONST( discrete_distribution->sample( 0.50), 0.0 );
-  TEST_EQUALITY_CONST( discrete_distribution->sample( 3.0/4.0 ), 0.0 );
-  TEST_EQUALITY_CONST( discrete_distribution->sample( 0.85 ), 1.0 );
-  TEST_EQUALITY_CONST( discrete_distribution->sample( 1.0 ), 1.0 );
+  FACEMC::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // Test the first bin
+  double sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, -1.0 );
+
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, -1.0 );
+
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, -1.0 );
+
+  // Test the second bin
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  // Test the third bin
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, 1.0 );
+
+  sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, 1.0 );
 }
 
 //---------------------------------------------------------------------------//

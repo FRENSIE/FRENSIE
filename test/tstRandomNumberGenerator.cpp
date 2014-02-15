@@ -67,6 +67,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( RandomNumberGenerator,
 
   random_number = FACEMC::RandomNumberGenerator::getRandomNumber<ScalarType>();
   TEST_EQUALITY_CONST( random_number, (ScalarType)0.6 );
+
+  // Unset the fake stream
+  FACEMC::RandomNumberGenerator::unsetFakeStream();
 }
 
 UNIT_TEST_INSTANTIATION( RandomNumberGenerator, setFakeStream );

@@ -83,10 +83,18 @@ double HistogramDistribution::evaluatePDF( const double indep_var_value ) const
 // Return a random sample from the distribution
 double HistogramDistribution::sample()
 {
+  // Sample the bin
   double random_number_1 = RandomNumberGenerator::getRandomNumber<double>();
-  double random_number_2 = RandomNumberGenerator::getRandomNumber<double>();
+  
+  Teuchos::Array<Quad<double,double,double,double> >::const_iterator bin = 
+    Search::binarySearchDiscreteData<FOURTH>( d_distribution.begin(),
+					      d_distribution.end(),
+					      random_number_1 );
 
-  return sample( random_number_1, random_number_2 );
+  // Sample the value within the bin
+  double random_number_2 = RandomNumberGenerator::getRandomNumber<double>();
+  
+  return random_number_2*(bin->second-bin->first) + bin->first;
 }
 
 // Return the sampling efficiency from the distribution

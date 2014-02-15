@@ -15,6 +15,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FACEMC Includes
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 #include "OneDDistribution.hpp"
 #include "ExponentialDistribution.hpp"
 #include "RandomNumberGenerator.hpp"
@@ -46,17 +47,23 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, evaluatePDF )
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( ExponentialDistribution, sample )
 {
-  FACEMC::RandomNumberGenerator::initialize();
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0 - 1e-15;
+  fake_stream[2] = 0.5;
 
-  Teuchos::RCP<FACEMC::ExponentialDistribution> exponential_distribution =
-    Teuchos::rcp_dynamic_cast<FACEMC::ExponentialDistribution>( distribution );
+  FACEMC::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  double sample = distribution->sample();
+  TEST_EQUALITY_CONST( sample, std::numeric_limits<double>::infinity() );
+  
+  sample = distribution->sample(); 
+  FACEMC_TEST_FLOATING_EQUALITY( sample, 0.0, 1e-15 );
 
-  TEST_EQUALITY_CONST( exponential_distribution->sample( 0.0 ), 
-		       std::numeric_limits<double>::infinity() );
-  TEST_EQUALITY_CONST( exponential_distribution->sample( 1.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( exponential_distribution->sample( 0.5 ), 
-			  -log(0.5)/3.0,
-			  1e-12 );
+  sample = distribution->sample(); 
+  TEST_FLOATING_EQUALITY( sample, -log(0.5)/3.0, 1e-12 );
+
+  FACEMC::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//

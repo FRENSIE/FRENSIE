@@ -57,7 +57,7 @@ double ExponentialDistribution::sample()
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  return sample( random_number );
+  return -log( random_number )/d_exponent_multiplier;
 }
 
 // Return the sampling efficiency

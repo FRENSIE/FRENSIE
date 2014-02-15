@@ -74,13 +74,16 @@ double NormalDistribution::sample()
   if( RandomNumberGenerator::getRandomNumber<double>() < 0.5 )
     x *= -1.0;
 
-  return x;
+  return d_standard_deviation*x+d_mean;
 }
 
 // Return the sampling efficiency from the distribution
 double NormalDistribution::getSamplingEfficiency() const
 {
-  return static_cast<double>(d_samples)/d_trials;
+  if( d_trials > 0 )
+    return static_cast<double>(d_samples)/d_trials;
+  else
+    return 0.0;
 }
 
 // Return the upper bound of the distribution independent variable

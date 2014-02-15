@@ -49,9 +49,6 @@ public:
   //! Return a random sample from the distribution
   double sample();
 
-  //! Return a sample from the distribution given a random number
-  double sample( const double random_number ) const;
-
   //! Return the sampling efficiency from the distribution
   double getSamplingEfficiency() const;
 
@@ -66,21 +63,6 @@ private:
   // The distribution (first = independent value, second = CDF)
   Teuchos::Array<Pair<double,double> > d_distribution;
 };
-
-// Return a sample from the distribution given a random number
-inline double DiscreteDistribution::sample( const double random_number ) const
-{
-  // Make sure the random number is in [0,1]
-  testPrecondition( random_number >= 0.0 );
-  testPrecondition( random_number <= 1.0 );
-  
-  Teuchos::Array<Pair<double,double> >::const_iterator sample = 
-    Search::binarySearchDiscreteData<SECOND>( d_distribution.begin(),
-					      d_distribution.end(),
-					      random_number );
-
-  return sample->first;
-}
 
 } // end FACEMC namespace
 
