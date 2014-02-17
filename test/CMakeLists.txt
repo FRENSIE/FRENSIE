@@ -244,15 +244,8 @@ ADD_EXECUTABLE(tstNormalDistribution
 TARGET_LINK_LIBRARIES(tstNormalDistribution ${PROJECT_NAME})
 ADD_TEST(NormalDistribution_test tstNormalDistribution)
 
-ADD_EXECUTABLE(tstPower1Distribution
-  tstPower1Distribution.cpp
+ADD_EXECUTABLE(tstPowerDistribution
+  tstPowerDistribution.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPower1Distribution ${PROJECT_NAME})
-ADD_TEST(Power1Distribution_test tstPower1Distribution)
-
-ADD_EXECUTABLE(tstPower2Distribution
-  tstPower2Distribution.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPower2Distribution ${PROJECT_NAME})
-ADD_TEST(Power2Distribution_test tstPower2Distribution)
-
+TARGET_LINK_LIBRARIES(tstPowerDistribution ${PROJECT_NAME})
+ADD_TEST(PowerDistribution_test tstPowerDistribution)

@@ -218,6 +218,28 @@
   TEST_GROUP##_##TEST_NAME##_UnitTest<FACEMC::MEMBER, TYPE1, Teuchos::ARRAY > \
   instance_##TEST_GROUP##_##MEMBER##_##TYPE1##_##ARRAY##_##TEST_NAME##_UnitTest(#MEMBER,#TYPE1,#ARRAY);
 
+/*! \brief A macro for the Teuchos Unit Test Harness for creating a
+ * templated unit test on an unsigned type.
+ * \ingroup unit_test_harness_extensions
+ */
+#define FACEMC_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL(TEST_GROUP, TEST_NAME, UNSIGNED_VALUE) \
+  template<unsigned UNSIGNED_VALUE> \
+  class TEST_GROUP##_##TEST_NAME##_UnitTest : public Teuchos::UnitTestBase \
+  {									\
+  public:								\
+    TEST_GROUP##_##TEST_NAME##_UnitTest( const std::string& unsignedValue ) \
+    : Teuchos::UnitTestBase(						\
+	#TEST_GROUP, unsignedValue+"_"+std::string(#TEST_NAME) ) \
+    {}								\
+    void runUnitTestImpl( Teuchos::FancyOStream &out, bool &success ) const; \
+    virtual std::string unitTestFile() const { return __FILE__; }	\
+    virtual long int unitTestFileLineNumber() const { return __LINE__; } \
+  };								       \
+								       \
+    template<unsigned UNSIGNED_VALUE>				       \
+    void TEST_GROUP##_##TEST_NAME##_UnitTest<UNSIGNED_VALUE>::runUnitTestImpl(\
+			    Teuchos::FancyOStream &out, bool &success ) const \
+
 /*! A macro for the Teuchos Unit Test Harness for comparing ordinal data types
  * and containers of ordinal data types.
  * 
