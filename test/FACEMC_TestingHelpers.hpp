@@ -128,9 +128,6 @@ bool compare( const T &first_value,
 						    out,
 						    index,
 						    tol );
-  if( success )
-    out << "passed\n";
-
   return success;
 }
   
@@ -239,10 +236,7 @@ bool compareArrays( const Array1 &a1,
     if( !local_success )
       success = false;
   }
-
-  if( success )
-    out << "passed\n";
-
+  
   return success;
 }
 

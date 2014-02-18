@@ -8,7 +8,7 @@
 
 // FACEMC Includes
 #include "SphericalSpatialDistribution.hpp"
-#include "SphericalDistributionHelpers.hpp"
+#include "SphericalCoordinateHelpers.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -50,6 +50,51 @@ SphericalSpatialDistribution::SphericalSpatialDistribution(
   testPrecondition( !ST::isnaninf( center_z_position ) );
 }
 
+// Evaluate the spatial distribution
+double SphericalSpatialDistribution::evaluate( 
+				        const double cartesian_point[3] ) const
+{
+  double spherical_point[3];
+
+  SphericalSpatialDistribution::convertCartesianCoordsToSpherical( 
+							     cartesian_point,
+							     spherical_point );
+				     
+  double distribution_value = d_r_distribution->evaluate( spherical_point[0] );
+  distribution_value *= d_theta_distribution->evaluate( spherical_point[1] );
+  distribution_value *= d_mu_distribution->evaluate( spherical_point[2] );
+  
+  // If one distribution evaluates to inf and another to zero (value = nan),
+  // return zero
+  if( distribution_value != distribution_value )
+    distribution_value = 0.0;
+
+  // Make sure that the distribution value is valid
+  testPostcondition( distribution_value == distribution_value );
+  
+  return distribution_value;
+}
+
+// Evaluate the spatial distribution PDF
+double SphericalSpatialDistribution::evaluatePDF( 
+					const double cartesian_point[3] ) const
+{
+  double spherical_point[3];
+
+  SphericalSpatialDistribution::convertCartesianCoordsToSpherical( 
+							     cartesian_point,
+							     spherical_point );
+
+  double pdf_value = d_r_distribution->evaluatePDF( spherical_point[0] );
+  pdf_value *= d_theta_distribution->evaluatePDF( spherical_point[1] );
+  pdf_value *= d_mu_distribution->evaluatePDF( spherical_point[2] );
+
+  // Make sure that the pdf value is valid
+  testPostcondition( pdf_value == pdf_value );
+
+  return pdf_value;    
+}
+
 // Return a random sample from the distribution
 /* \details The sampled position will be a point in cartesian space
  */
@@ -59,7 +104,7 @@ void SphericalSpatialDistribution::sample( double sampled_point[3] )
   const double spherical_point[3] = {d_r_distribution->sample(),
 				     d_theta_distribution->sample(),
 				     d_mu_distribution->sample()};
-
+  
   // Convert the spherical coordinate to cartesian
   convertSphericalCoordsToCartesian( spherical_point, sampled_point, d_axis );
 
@@ -67,6 +112,20 @@ void SphericalSpatialDistribution::sample( double sampled_point[3] )
   sampled_point[0] += d_center_x_position;
   sampled_point[1] += d_center_y_position;
   sampled_point[2] += d_center_z_position;
+}
+
+// Convert a cartesian coordinate to a spherical coordinate
+void SphericalSpatialDistribution::convertCartesianCoordsToSpherical( 
+					      const double cartesian_point[3],
+					      double spherical_point[3] ) const
+{
+  const double origin[3] = 
+    {d_center_x_position, d_center_y_position, d_center_z_position};
+  
+  FACEMC::convertCartesianCoordsToSpherical( cartesian_point,
+					     origin,
+					     spherical_point,
+					     d_axis );
 }
 
 } // end FACEMC namespace

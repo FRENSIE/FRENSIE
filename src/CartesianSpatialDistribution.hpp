@@ -10,6 +10,7 @@
 #define CARTESIAN_SPATIAL_DISTRIBUTION_HPP
 
 // Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FACEMC Includes
@@ -24,6 +25,11 @@ namespace FACEMC{
 class CartesianSpatialDistribution : public SpatialDistribution
 {
 
+private:
+  
+  // Typedef for Teuchos::ScalarTraits
+  typedef Teuchos::ScalarTraits<double> ST;
+
 public:
 
   //! Constructor
@@ -35,6 +41,12 @@ public:
   //! Destructor
   ~CartesianSpatialDistribution()
   { /* ... */ }
+
+  //! Evaluate the spatial distribution
+  double evaluate( const double cartesian_point[3] ) const;
+
+  //! Evaluate the spatial distribution PDF
+  double evaluatePDF( const double cartesian_point[3] ) const;
 
   //! Return a random (cartesian) sample from the distribution (x, y, z)
   void sample( double sampled_point[3] );

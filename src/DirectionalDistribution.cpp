@@ -8,7 +8,7 @@
 
 // FACEMC Includes
 #include "DirectionalDistribution.hpp"
-#include "SphericalDistributionHelpers.hpp"
+#include "SphericalCoordinateHelpers.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{

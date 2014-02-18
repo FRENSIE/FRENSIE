@@ -249,3 +249,21 @@ ADD_EXECUTABLE(tstPowerDistribution
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstPowerDistribution ${PROJECT_NAME})
 ADD_TEST(PowerDistribution_test tstPowerDistribution)
+
+ADD_EXECUTABLE(tstCartesianSpatialDistribution
+  tstCartesianSpatialDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCartesianSpatialDistribution ${PROJECT_NAME})
+ADD_TEST(CartesianSpatialDistribution_test tstCartesianSpatialDistribution)
+
+ADD_EXECUTABLE(tstSphericalCoordinateHelpers
+  tstSphericalCoordinateHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSphericalCoordinateHelpers ${PROJECT_NAME})
+ADD_TEST(SphericalCoordinateHelpers_test tstSphericalCoordinateHelpers)
+
+ADD_EXECUTABLE(tstSphericalSpatialDistribution
+  tstSphericalSpatialDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSphericalSpatialDistribution ${PROJECT_NAME})
+ADD_TEST(SphericalSpatialDistribution_test tstSphericalSpatialDistribution)

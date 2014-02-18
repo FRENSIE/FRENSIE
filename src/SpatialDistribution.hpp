@@ -25,6 +25,12 @@ public:
   virtual ~SpatialDistribution()
   { /* ... */ }
 
+  //! Evaluate the spatial distribution
+  virtual double evaluate( const double cartesian_point[3] ) const = 0;
+
+  //! Evaluate the spatial distribution PDF
+  virtual double evaluatePDF( const double cartesian_point[3] ) const = 0;
+
   //! Return a random (cartesian) sample from the distribution (x, y, z)
   virtual void sample( double sampled_point[3] ) = 0;
 };

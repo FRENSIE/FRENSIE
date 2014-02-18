@@ -47,8 +47,20 @@ public:
   ~SphericalSpatialDistribution()
   { /* ... */ }
 
+  //! Evaluate the spatial distribution
+  double evaluate( const double cartesian_point[3] ) const;
+
+  //! Evaluate the spatial distribution PDF
+  double evaluatePDF( const double cartesian_point[3] ) const;
+
   //! Return a random (cartesian) sample from the distribution (x, y, z)
   void sample( double sampled_point[3] );
+
+protected:
+
+  //! Convert a cartesian coordinate to a spherical coordinate
+  void convertCartesianCoordsToSpherical( const double cartesian_point[3],
+					  double spherical_point[3] ) const;
 
 private:
 
