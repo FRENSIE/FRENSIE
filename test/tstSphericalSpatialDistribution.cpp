@@ -21,6 +21,7 @@
 #include "UniformDistribution.hpp"
 #include "SpatialDistribution.hpp"
 #include "SphericalSpatialDistribution.hpp"
+#include "PhysicalConstants.hpp"
 #include "RandomNumberGenerator.hpp"
 
 Teuchos::RCP<FACEMC::SpatialDistribution> spatial_distribution;
@@ -38,9 +39,10 @@ void initializeDistribution(
 
   // Uniform distribution in theta dimension
   Teuchos::RCP<FACEMC::OneDDistribution>
-    theta_distribution( new FACEMC::UniformDistribution( 0.0, 
-							 2.0*acos(-1.0),
-							 1.0 ) );
+    theta_distribution( new FACEMC::UniformDistribution( 
+					       0.0, 
+					       2*FACEMC::PhysicalConstants::pi,
+					       1.0 ) );
 
   // Uniform distribution in mu dimension
   Teuchos::RCP<FACEMC::OneDDistribution>
@@ -97,7 +99,7 @@ TEUCHOS_UNIT_TEST( SphericalSpatialDistribution, evaluatePDF )
 {
   initializeDistribution( spatial_distribution );
 
-  double pdf_value = 3.0/(acos(-1.0)*4);
+  double pdf_value = 3.0/(FACEMC::PhysicalConstants::pi*4);
 
   double cartesian_point[3] = {1.0, 1.0, 1.0};
   TEST_EQUALITY_CONST( spatial_distribution->evaluatePDF( cartesian_point ), 

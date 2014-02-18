@@ -11,6 +11,7 @@
 
 // FACEMC Includes
 #include "SphericalCoordinateHelpers.hpp"
+#include "PhysicalConstants.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -25,7 +26,7 @@ void convertSphericalCoordsToCartesian( const double spherical_point[3],
   // Make sure that the spherical point is valid
   testPrecondition( spherical_point[0] >= 0.0 );
   testPrecondition( spherical_point[1] >= 0.0 );
-  testPrecondition( spherical_point[1] <= 2*acos(-1.0) );
+  testPrecondition( spherical_point[1] <= 2*PhysicalConstants::pi );
   testPrecondition( spherical_point[2] >= -1.0 );
   testPrecondition( spherical_point[2] <= 1.0 );
   
@@ -108,7 +109,7 @@ void convertCartesianCoordsToSpherical( const double cartesian_point[3],
 
   // Convert the theta value in [-pi,pi] to [0,2pi]
   if( spherical_point[1] < 0.0 )
-    spherical_point[1] += 2*acos(-1.0);
+    spherical_point[1] += 2*PhysicalConstants::pi;
 
   // Make sure that the point returned is valid
   remember( typedef Teuchos::ScalarTraits<double> ST );
@@ -117,7 +118,7 @@ void convertCartesianCoordsToSpherical( const double cartesian_point[3],
   testPostcondition( !ST::isnaninf( spherical_point[2] ) );
   testPostcondition( spherical_point[0] >= 0.0 );
   testPostcondition( spherical_point[1] >= 0.0 );
-  testPostcondition( spherical_point[1] <= 2*acos(-1.0) );
+  testPostcondition( spherical_point[1] <= 2*PhysicalConstants::pi );
   testPostcondition( spherical_point[2] >= -1.0 );
   testPostcondition( spherical_point[2] <= 1.0 );
 }

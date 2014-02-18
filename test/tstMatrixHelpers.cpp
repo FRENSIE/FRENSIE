@@ -18,6 +18,7 @@
 #include "VectorHelpers.hpp"
 #include "Matrix.hpp"
 #include "MatrixHelpers.hpp"
+#include "PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
@@ -114,7 +115,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
   FACEMC::Vector<ScalarType> y_axis( 0.0, 1.0, 0.0 );
   FACEMC::Vector<ScalarType> z_axis( 0.0, 0.0, 1.0 );
 
-  ScalarType rotation_angle = acos(-1.0)/4;
+  ScalarType rotation_angle = FACEMC::PhysicalConstants::pi/4;
 
   FACEMC::Matrix<ScalarType> rotation_matrix = 
     FACEMC::createXAxisRotationMatrix( rotation_angle );
@@ -150,7 +151,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
   FACEMC::Vector<ScalarType> y_axis( 0.0, 1.0, 0.0 );
   FACEMC::Vector<ScalarType> z_axis( 0.0, 0.0, 1.0 );
 
-  ScalarType rotation_angle = acos(-1.0)/4;
+  ScalarType rotation_angle = FACEMC::PhysicalConstants::pi/4;
 
   FACEMC::Matrix<ScalarType> rotation_matrix = 
     FACEMC::createYAxisRotationMatrix( rotation_angle );
@@ -186,7 +187,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( MatrixHelpers,
   FACEMC::Vector<ScalarType> y_axis( 0.0, 1.0, 0.0 );
   FACEMC::Vector<ScalarType> z_axis( 0.0, 0.0, 1.0 );
 
-  ScalarType rotation_angle = acos(-1.0)/4;
+  ScalarType rotation_angle = FACEMC::PhysicalConstants::pi/4;
 
   FACEMC::Matrix<ScalarType> rotation_matrix = 
     FACEMC::createZAxisRotationMatrix( rotation_angle );

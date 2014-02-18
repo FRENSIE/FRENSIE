@@ -9,6 +9,7 @@
 // FACEMC Includes
 #include "DirectionalDistribution.hpp"
 #include "SphericalCoordinateHelpers.hpp"
+#include "PhysicalConstants.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -27,7 +28,7 @@ DirectionalDistribution::DirectionalDistribution(
   testPrecondition( !mu_distribution.is_null() );
   // Make sure that the theta distribution is valid
   testPrecondition( theta_distribution->getUpperBoundOfIndepVar() 
-		    <= 2*acos(-1.0) );
+		    <= 2*PhysicalConstants::pi );
   testPrecondition( theta_distribution->getLowerBoundOfIndepVar()
 		    >= 0.0 );
   // Make sure that the mu distribution is valid

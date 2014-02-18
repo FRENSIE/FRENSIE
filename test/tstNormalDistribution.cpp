@@ -18,6 +18,7 @@
 #include "FACEMC_UnitTestHarnessExtensions.hpp"
 #include "OneDDistribution.hpp"
 #include "NormalDistribution.hpp"
+#include "PhysicalConstants.hpp"
 #include "RandomNumberGenerator.hpp"
 
 Teuchos::RCP<FACEMC::OneDDistribution> distribution(
@@ -29,7 +30,7 @@ Teuchos::RCP<FACEMC::OneDDistribution> distribution(
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( NormalDistribution, evaluate )
 {
-  double center_value = 1.0/sqrt( 2.0*acos(-1.0) );
+  double center_value = 1.0/sqrt( 2.0*FACEMC::PhysicalConstants::pi );
   double off_center_value = center_value*exp( -4.0/2.0 );
   
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), center_value);
@@ -41,7 +42,7 @@ TEUCHOS_UNIT_TEST( NormalDistribution, evaluate )
 // Check that the PDF can be evaluated
 TEUCHOS_UNIT_TEST( NormalDistribution, evaluatePDF )
 {
-  double center_value = 1.0/sqrt( 2.0*acos(-1.0) );
+  double center_value = 1.0/sqrt( 2.0*FACEMC::PhysicalConstants::pi );
   double off_center_value = center_value*exp( -4.0/2.0 );
   
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), center_value);

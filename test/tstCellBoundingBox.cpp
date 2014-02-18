@@ -20,6 +20,7 @@
 #include "Cell.hpp"
 #include "Surface.hpp"
 #include "CellBoundingBox.hpp"
+#include "PhysicalConstants.hpp"
 
 #define UNIT_TEST_INSTANTIATION( type, name ) \
   TEUCHOS_UNIT_TEST_TEMPLATE_3_INSTANT( type, name, int, int, float ) \
@@ -82,7 +83,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_3_DECL( CellBoundingBox,
   unit_sphere_bounding_box.calculateCellVolume();
 
   // Reference cell volume
-  ScalarType ref_unit_sphere_vol = 4.0/3.0*acos(-1.0);
+  ScalarType ref_unit_sphere_vol = 4.0/3.0*PhysicalConstants::pi;
 
   TEST_FLOATING_EQUALITY( unit_sphere->getVolume(), 
 			  ref_unit_sphere_vol,

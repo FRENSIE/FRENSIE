@@ -8,6 +8,7 @@
 
 // FACEMC Includes
 #include "BasicParticleState.hpp"
+#include "PhysicalConstants.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -22,7 +23,13 @@ BasicParticleState::BasicParticleState()
     d_velocity( 0.0 ),
     d_time( 0.0 ),
     d_weight( 1.0 )
-{ /* ... */ }
+{
+  // Set the velocity
+  if( d_type == PHOTON || d_type == ADJOINT_PHOTON )
+    d_velocity = PhysicalConstants::speed_of_light;
+  else if( d_type == NEUTRON || d_type == ADJOINT_NEUTRON )
+    d_velocity = 0.0;
+}
 
 // Constructor
 BasicParticleState::BasicParticleState( const ParticleType type,
@@ -51,11 +58,11 @@ BasicParticleState::BasicParticleState( const ParticleType type,
   // Make sure that the direction is a unit vector
   testPrecondition(validDirection( direction[0], direction[1], direction[2] ));
   // Make sure that the energy is valid
-  testPrecondition( energy > 0.0 );
   testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
   // Make sure that the time is valid
-  testPrecondition( time > 0.0 );
   testPrecondition( !ST::isnaninf( time ) );
+  testPrecondition( time >= 0.0 );
 
   // Deep copy of the position
   d_position[0] = position[0];
@@ -69,7 +76,7 @@ BasicParticleState::BasicParticleState( const ParticleType type,
 
   // Set the velocity
   if( d_type == PHOTON || d_type == ADJOINT_PHOTON )
-    d_velocity = 2.99792458e10;
+    d_velocity = PhysicalConstants::speed_of_light;
   else if( d_type == NEUTRON || d_type == ADJOINT_NEUTRON )
     calculateNeutronVelocity();
 }
@@ -232,6 +239,8 @@ void BasicParticleState::advance( const double distance )
 {
   // Make sure the distance is valid
   testPrecondition( !ST::isnaninf( distance ) );
+  // Make sure that the particle velocity is valid
+  testPrecondition( d_velocity > 0.0 );
   
   d_position[0] += d_direction[0]*distance;
   d_position[1] += d_direction[1]*distance;
@@ -288,7 +297,10 @@ void BasicParticleState::setWeight( const double weight )
 // Multiply the weight of the particle by a factor
 void BasicParticleState::multiplyWeight( const double weight_factor )
 {
-  d_weight += weight_factor;
+  // Make sure that the current weight is valid
+  testPrecondition( d_weight > 0.0 );
+  
+  d_weight *= weight_factor;
 }
 
 // Print method that defines the behavior of the std::stream << operator
@@ -329,8 +341,9 @@ void BasicParticleState::print_implementation( std::ostream& os ) const
 // Calculate the neutron velocity
 void BasicParticleState::calculateNeutronVelocity()
 {
-  d_velocity = d_energy*2.99792458e10/
-      sqrt( 939.56537821*939.56537821+d_energy*d_energy);
+  d_velocity = d_energy*PhysicalConstants::speed_of_light/
+    sqrt( PhysicalConstants::neutron_rest_mass_energy*
+	  PhysicalConstants::neutron_rest_mass_energy + d_energy*d_energy );
 }
 
 // Test if the direction is valid

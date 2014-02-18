@@ -15,6 +15,7 @@
 // FACEMC Includes
 #include "FACEMC_UnitTestHarnessExtensions.hpp"
 #include "SphericalCoordinateHelpers.hpp"
+#include "PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -60,7 +61,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   TEST_EQUALITY_CONST( cartesian_point[2], 0.0 );
 
   // (r=1.0,theta=pi/2,mu=0.0) -> (x=0.0,y=1.0,z=0.0)
-  spherical_point[1] = asin(1.0);
+  spherical_point[1] = FACEMC::PhysicalConstants::pi/2;
   
   FACEMC::convertSphericalCoordsToCartesian( spherical_point,
 					     cartesian_point,
@@ -71,7 +72,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   TEST_EQUALITY_CONST( cartesian_point[2], 0.0 );
 
   // (r=1.0,theta=pi,mu=0.0) -> (x=-1.0,y=1.0,z=0.0)
-  spherical_point[1] = acos(-1.0);
+  spherical_point[1] = FACEMC::PhysicalConstants::pi;
 
   FACEMC::convertSphericalCoordsToCartesian( spherical_point,
 					     cartesian_point,
@@ -82,7 +83,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   TEST_EQUALITY_CONST( cartesian_point[2], 0.0 );
 
   // (r=1.0,theta=3pi/2,mu=0.0) -> (x=0.0,y=-1.0,z=0.0)
-  spherical_point[1] = 3*acos(-1.0)/2;
+  spherical_point[1] = 3*FACEMC::PhysicalConstants::pi/2;
   
   FACEMC::convertSphericalCoordsToCartesian( spherical_point,
 					     cartesian_point,
@@ -94,7 +95,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
 
   // (r=sqrt(3),theta=pi/4,mu=1/sqrt(3)) -> (x=1.0,y=1.0,z=1.0)
   spherical_point[0] = sqrt(3.0);
-  spherical_point[1] = acos(-1.0)/4;
+  spherical_point[1] = FACEMC::PhysicalConstants::pi/4;
   spherical_point[2] = 1.0/sqrt(3.0);
 
   FACEMC::convertSphericalCoordsToCartesian( spherical_point,
@@ -148,7 +149,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   TEST_EQUALITY_CONST( cartesian_point[2], 1.0 );
 
   // (r=1.0,theta=pi/2,mu=0.0) -> (x=1.0,y=0.0,z=0.0)
-  spherical_point[1] = asin(1.0);
+  spherical_point[1] = FACEMC::PhysicalConstants::pi/2;
   
   FACEMC::convertSphericalCoordsToCartesian( spherical_point,
   					     cartesian_point,
@@ -159,7 +160,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   FACEMC_TEST_FLOATING_EQUALITY( cartesian_point[2], 0.0, 1e-15 );
 
   // (r=1.0,theta=pi,mu=0.0) -> (x=0.0,y=0.0,z=-1.0)
-  spherical_point[1] = acos(-1.0);
+  spherical_point[1] = FACEMC::PhysicalConstants::pi;
 
   FACEMC::convertSphericalCoordsToCartesian( spherical_point,
   					     cartesian_point,
@@ -170,7 +171,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   TEST_EQUALITY_CONST( cartesian_point[2], -1.0 );
 
   // (r=1.0,theta=3pi/2,mu=0.0) -> (x=-1.0,y=0.0,z=0.0)
-  spherical_point[1] = 3*acos(-1.0)/2;
+  spherical_point[1] = 3*FACEMC::PhysicalConstants::pi/2;
   
   FACEMC::convertSphericalCoordsToCartesian( spherical_point,
   					     cartesian_point,
@@ -182,7 +183,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
 
   // (r=sqrt(3),theta=pi/4,mu=1/sqrt(3)) -> (x=1.0,y=1.0,z=1.0)
   spherical_point[0] = sqrt(3.0);
-  spherical_point[1] = acos(-1.0)/4;
+  spherical_point[1] = FACEMC::PhysicalConstants::pi/4;
   spherical_point[2] = 1.0/sqrt(3.0);
 
   FACEMC::convertSphericalCoordsToCartesian( spherical_point,
@@ -236,7 +237,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   TEST_EQUALITY_CONST( cartesian_point[2], 0.0 );
 
   // (r=1.0,theta=pi/2,mu=0.0) -> (x=0.0,y=0.0,z=1.0)
-  spherical_point[1] = asin(1.0);
+  spherical_point[1] = FACEMC::PhysicalConstants::pi/2;
   
   FACEMC::convertSphericalCoordsToCartesian( spherical_point,
   					     cartesian_point,
@@ -247,7 +248,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   TEST_EQUALITY_CONST( cartesian_point[2], 1.0 );
 
   // (r=1.0,theta=pi,mu=0.0) -> (x=0.0,y=-1.0,z=0.0)
-  spherical_point[1] = acos(-1.0);
+  spherical_point[1] = FACEMC::PhysicalConstants::pi;
 
   FACEMC::convertSphericalCoordsToCartesian( spherical_point,
   					     cartesian_point,
@@ -258,7 +259,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   FACEMC_TEST_FLOATING_EQUALITY( cartesian_point[2], 0.0, 1e-15 );
 
   // (r=1.0,theta=3pi/2,mu=0.0) -> (x=0.0,y=0.0,z=-1.0)
-  spherical_point[1] = 3*acos(-1.0)/2;
+  spherical_point[1] = 3*FACEMC::PhysicalConstants::pi/2;
   
   FACEMC::convertSphericalCoordsToCartesian( spherical_point,
   					     cartesian_point,
@@ -270,7 +271,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
 
   // (r=sqrt(3),theta=pi/4,mu=1/sqrt(3)) -> (x=1.0,y=1.0,z=1.0)
   spherical_point[0] = sqrt(3.0);
-  spherical_point[1] = acos(-1.0)/4;
+  spherical_point[1] = FACEMC::PhysicalConstants::pi/4;
   spherical_point[2] = 1.0/sqrt(3.0);
 
   FACEMC::convertSphericalCoordsToCartesian( spherical_point,
@@ -339,7 +340,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
 					     FACEMC::Z_AXIS );
 
   TEST_EQUALITY_CONST( spherical_point[0], 1.0 );
-  TEST_EQUALITY_CONST( spherical_point[1], asin(1.0) );
+  TEST_EQUALITY_CONST( spherical_point[1], FACEMC::PhysicalConstants::pi/2 );
   TEST_EQUALITY_CONST( spherical_point[2], 0.0 );
   
   // (x'=-1.0,y'=0.0,z'=0.0) -> (r=1.0,theta=pi,mu=0.0)
@@ -352,7 +353,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
 					     FACEMC::Z_AXIS );
 
   TEST_EQUALITY_CONST( spherical_point[0], 1.0 );
-  TEST_EQUALITY_CONST( spherical_point[1], acos(-1.0) );
+  TEST_EQUALITY_CONST( spherical_point[1], FACEMC::PhysicalConstants::pi );
   TEST_EQUALITY_CONST( spherical_point[2], 0.0 );
 
   // (x'=0.0,y'=-1.0,z'=0.0) -> (r=1.0,theta=3pi/2,mu=0.0)
@@ -365,7 +366,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
 					     FACEMC::Z_AXIS );
 
   TEST_EQUALITY_CONST( spherical_point[0], 1.0 );
-  TEST_EQUALITY_CONST( spherical_point[1], 3*acos(-1.0)/2 );
+  TEST_EQUALITY_CONST( spherical_point[1], 3*FACEMC::PhysicalConstants::pi/2 );
   TEST_EQUALITY_CONST( spherical_point[2], 0.0 );
 
   // (x'=1.0,y'=1.0,z'=1.0) -> (r=sqrt(3),theta=pi/4,mu=1/sqrt(3))
@@ -379,7 +380,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
 					     FACEMC::Z_AXIS );
 
   TEST_EQUALITY_CONST( spherical_point[0], sqrt(3.0) );
-  TEST_EQUALITY_CONST( spherical_point[1], acos(-1.0)/4 );
+  TEST_EQUALITY_CONST( spherical_point[1], FACEMC::PhysicalConstants::pi/4 );
   TEST_EQUALITY_CONST( spherical_point[2], 1.0/sqrt(3.0) );
 
   // (x'=-1.0,y'=-1.0,z'=-1.0) -> (r=sqrt(3),theta=5pi/4,mu=-1/sqrt(3))
@@ -393,7 +394,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
 					     FACEMC::Z_AXIS );
   
   TEST_EQUALITY_CONST( spherical_point[0], sqrt(3.0) );
-  TEST_EQUALITY_CONST( spherical_point[1], 5*acos(-1.0)/4 );
+  TEST_EQUALITY_CONST( spherical_point[1], 5*FACEMC::PhysicalConstants::pi/4 );
   TEST_EQUALITY_CONST( spherical_point[2], -1.0/sqrt(3.0) );
 }
 
@@ -454,7 +455,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   					     FACEMC::Y_AXIS );
 
   TEST_EQUALITY_CONST( spherical_point[0], 1.0 );
-  TEST_EQUALITY_CONST( spherical_point[1], asin(1.0) );
+  TEST_EQUALITY_CONST( spherical_point[1], FACEMC::PhysicalConstants::pi/2 );
   TEST_EQUALITY_CONST( spherical_point[2], 0.0 );
   
   // (x'=0.0,y'=0.0,z'=-1.0) -> (r=1.0,theta=pi,mu=0.0)
@@ -467,7 +468,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   					     FACEMC::Y_AXIS );
 
   TEST_EQUALITY_CONST( spherical_point[0], 1.0 );
-  TEST_EQUALITY_CONST( spherical_point[1], acos(-1.0) );
+  TEST_EQUALITY_CONST( spherical_point[1], FACEMC::PhysicalConstants::pi );
   TEST_EQUALITY_CONST( spherical_point[2], 0.0 );
 
   // (x'=-1.0,y'=0.0,z'=0.0) -> (r=1.0,theta=3pi/2,mu=0.0)
@@ -480,7 +481,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   					     FACEMC::Y_AXIS );
 
   TEST_EQUALITY_CONST( spherical_point[0], 1.0 );
-  TEST_EQUALITY_CONST( spherical_point[1], 3*acos(-1.0)/2 );
+  TEST_EQUALITY_CONST( spherical_point[1], 3*FACEMC::PhysicalConstants::pi/2 );
   TEST_EQUALITY_CONST( spherical_point[2], 0.0 );
 
   // (x'=1.0,y'=1.0,z'=1.0) -> (r=sqrt(3),theta=pi/4,mu=1/sqrt(3))
@@ -494,7 +495,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   					     FACEMC::Y_AXIS );
 
   TEST_EQUALITY_CONST( spherical_point[0], sqrt(3.0) );
-  TEST_EQUALITY_CONST( spherical_point[1], acos(-1.0)/4 );
+  TEST_EQUALITY_CONST( spherical_point[1], FACEMC::PhysicalConstants::pi/4 );
   TEST_EQUALITY_CONST( spherical_point[2], 1.0/sqrt(3.0) );
 }
 
@@ -555,7 +556,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   					     FACEMC::X_AXIS );
 
   TEST_EQUALITY_CONST( spherical_point[0], 1.0 );
-  TEST_EQUALITY_CONST( spherical_point[1], asin(1.0) );
+  TEST_EQUALITY_CONST( spherical_point[1], FACEMC::PhysicalConstants::pi/2 );
   TEST_EQUALITY_CONST( spherical_point[2], 0.0 );
   
   // (x'=0.0,y'=-1.0,z'=0.0) -> (r=1.0,theta=pi,mu=0.0)
@@ -568,7 +569,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   					     FACEMC::X_AXIS );
 
   TEST_EQUALITY_CONST( spherical_point[0], 1.0 );
-  TEST_EQUALITY_CONST( spherical_point[1], acos(-1.0) );
+  TEST_EQUALITY_CONST( spherical_point[1], FACEMC::PhysicalConstants::pi );
   TEST_EQUALITY_CONST( spherical_point[2], 0.0 );
 
   // (x'=0.0,y'=0.0,z'=-1.0) -> (r=1.0,theta=3pi/2,mu=0.0)
@@ -581,7 +582,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   					     FACEMC::X_AXIS );
 
   TEST_EQUALITY_CONST( spherical_point[0], 1.0 );
-  TEST_EQUALITY_CONST( spherical_point[1], 3*acos(-1.0)/2 );
+  TEST_EQUALITY_CONST( spherical_point[1], 3*FACEMC::PhysicalConstants::pi/2 );
   TEST_EQUALITY_CONST( spherical_point[2], 0.0 );
 
   // (x'=1.0,y'=1.0,z'=1.0) -> (r=sqrt(3),theta=pi/4,mu=1/sqrt(3))
@@ -595,7 +596,7 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
   					     FACEMC::X_AXIS );
 
   TEST_EQUALITY_CONST( spherical_point[0], sqrt(3.0) );
-  TEST_EQUALITY_CONST( spherical_point[1], acos(-1.0)/4 );
+  TEST_EQUALITY_CONST( spherical_point[1], FACEMC::PhysicalConstants::pi/4 );
   TEST_EQUALITY_CONST( spherical_point[2], 1.0/sqrt(3.0) );
 }
 

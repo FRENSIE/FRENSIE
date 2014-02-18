@@ -30,22 +30,8 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Get the particle type
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
-				   getParticleType,
-				   CellHandle )
-{
-  FACEMC::ParticleState<CellHandle> particle( 1ull );
-  particle.setParticleType( FACEMC::PHOTON );
-  
-  TEST_EQUALITY_CONST( particle.getParticleType(), FACEMC::PHOTON );
-}
-
-UNIT_TEST_INSTANTIATION( ParticleState, getParticleType );
-
-//---------------------------------------------------------------------------//
 // Get the history number
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState, 
 				   getHistoryNumber,
 				   CellHandle )
 {
@@ -55,91 +41,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
 }
 
 UNIT_TEST_INSTANTIATION( ParticleState, getHistoryNumber );
-
-//---------------------------------------------------------------------------//
-// Set/get the energy of a particle
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
-				   setgetEnergy,
-				   CellHandle )
-{
-  FACEMC::ParticleState<CellHandle> particle( 1ull );
-  
-  particle.setEnergy( 1.0 );
-  
-  TEST_EQUALITY_CONST( particle.getEnergy(), 1.0 );
-}
-	
-UNIT_TEST_INSTANTIATION( ParticleState, setgetEnergy );
-
-//---------------------------------------------------------------------------//
-// Set/get the position of a particle
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
-				   setgetPosition,
-				   CellHandle )
-{
-  FACEMC::ParticleState<CellHandle> particle( 1ull );
-  
-  particle.setPosition( 1.0, 1.0, 1.0 );
-
-  TEST_EQUALITY_CONST( particle.getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getZPosition(), 1.0 );
-
-  const double* position = particle.getPosition();
-
-  TEST_EQUALITY_CONST( position[0], 1.0 );
-  TEST_EQUALITY_CONST( position[1], 1.0 );
-  TEST_EQUALITY_CONST( position[2], 1.0 );
-}
-
-UNIT_TEST_INSTANTIATION( ParticleState, setgetPosition );
-
-//---------------------------------------------------------------------------//
-// Set/get the direction of a particle
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
-				   setgetDirection,
-				   CellHandle )
-{
-  FACEMC::ParticleState<CellHandle> particle( 1ull );
-  
-  particle.setDirection( 0.5773502691896258, 
-			 0.5773502691896258,
-			 0.5773502691896258 );
-  
-  TEST_EQUALITY_CONST( particle.getXDirection(), 0.5773502691896258 );
-  TEST_EQUALITY_CONST( particle.getYDirection(), 0.5773502691896258 );
-  TEST_EQUALITY_CONST( particle.getZDirection(), 0.5773502691896258 );
-
-  const double* direction = particle.getDirection();
-
-  TEST_EQUALITY_CONST( direction[0], 0.5773502691896258 );
-  TEST_EQUALITY_CONST( direction[1], 0.5773502691896258 );
-  TEST_EQUALITY_CONST( direction[2], 0.5773502691896258 );
-}
-
-UNIT_TEST_INSTANTIATION( ParticleState, setgetDirection );
-
-//---------------------------------------------------------------------------//
-// Advance a particle along its direction by a specified distance
-TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ParticleState,
-				   advance,
-				   CellHandle )
-{
-  FACEMC::ParticleState<CellHandle> particle( 1ull );
-
-  particle.setPosition( 1.0, 1.0, 1.0 );
-  particle.setDirection( 0.5773502691896258, 
-			 0.5773502691896258,
-			 0.5773502691896258 );
-  
-  particle.advance( 1.7320508075688772 );
-
-  TEST_FLOATING_EQUALITY( particle.getXPosition(), 2.0, 1e-12 );
-  TEST_FLOATING_EQUALITY( particle.getYPosition(), 2.0, 1e-12 );
-  TEST_FLOATING_EQUALITY( particle.getZPosition(), 2.0, 1e-12 );
-}
-
-UNIT_TEST_INSTANTIATION( ParticleState, advance );
 
 //---------------------------------------------------------------------------//
 // Set/get the cell containing a particle
