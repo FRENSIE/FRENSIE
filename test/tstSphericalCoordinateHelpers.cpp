@@ -284,8 +284,8 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
 }
 
 //---------------------------------------------------------------------------//
-// Check that a spherical coordinate (with mu parallel to the z-axis) can be 
-// converted to a cartesian coordinate
+// Check that a cartesian coordinate can be converted to a cartesian 
+// coordinate (with mu parallel to the z-axis)
 TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers, 
 		   convertCartesianCoordsToSpherical_zaxis )
 {
@@ -399,8 +399,8 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
 }
 
 //---------------------------------------------------------------------------//
-// Check that a spherical coordinate (with mu parallel to the y-axis) can be 
-// converted to a cartesian coordinate
+// Check that a cartesian coordinate can be converted to a cartesian 
+// coordinate (with mu parallel to the y-axis)
 TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers, 
 		   convertCartesianCoordsToSpherical_yaxis )
 {
@@ -500,8 +500,8 @@ TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers,
 }
 
 //---------------------------------------------------------------------------//
-// Check that a spherical coordinate (with mu parallel to the x-axis) can be 
-// converted to a cartesian coordinate
+// Check that a cartesian coordinate can be converted to a cartesian 
+// coordinate (with mu parallel to the x-axis)
 TEUCHOS_UNIT_TEST( SphericalCoordinateHelpers, 
 		   convertCartesianCoordsToSpherical_xaxis )
 {

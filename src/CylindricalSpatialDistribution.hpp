@@ -38,17 +38,29 @@ public:
 	              const Teuchos::RCP<OneDDistribution>& r_distribution,
 	              const Teuchos::RCP<OneDDistribution>& theta_distribution,
 		      const Teuchos::RCP<OneDDistribution>& axis_distribution,
-		      const double start_x_position,
-		      const double start_y_position,
-		      const double start_z_position,
+		      const double center_x_position,
+		      const double center_y_position,
+		      const double center_z_position,
 		      const Axis axis = Z_AXIS );
   
   //! Destructor
   ~CylindricalSpatialDistribution()
   { /* ... */ }
+
+  //! Evaluate the spatial distribution
+  double evaluate( const double cartesian_point[3] ) const;
+
+  //! Evaluate the spatial distribution PDF
+  double evaluatePDF( const double cartesian_point[3] ) const;
   
   //! Return a random (cartesian) sample from the distribution (x, y, z)
   void sample( double sampled_point[3] );
+
+protected:
+
+  //! Convert a cartesian coordinate to a cylindrical coordinate
+  void convertCartesianCoordsToCylindrical(const double cartesian_point[3],
+					   double cylindrical_point[3]) const;
 
 private:
 
@@ -62,9 +74,9 @@ private:
   Teuchos::RCP<OneDDistribution> d_axis_distribution;
 
   // the start position of the cylindrical axis
-  double d_start_x_position;
-  double d_start_y_position;
-  double d_start_z_position;
+  double d_center_x_position;
+  double d_center_y_position;
+  double d_center_z_position;
 
   // the cylindrical axis
   Axis d_axis;

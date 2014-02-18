@@ -91,7 +91,7 @@ double SphericalSpatialDistribution::evaluatePDF(
   pdf_value *= d_mu_distribution->evaluatePDF( spherical_point[2] );
 
   // Make sure that the pdf value is valid
-  testPostcondition( pdf_value == pdf_value );
+  testPostcondition( !ST::isnaninf( pdf_value ) );
 
   return pdf_value;    
 }

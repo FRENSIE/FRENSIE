@@ -273,3 +273,9 @@ ADD_EXECUTABLE(tstSphericalSpatialDistribution
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSphericalSpatialDistribution ${PROJECT_NAME})
 ADD_TEST(SphericalSpatialDistribution_test tstSphericalSpatialDistribution)
+
+ADD_EXECUTABLE(tstCylindricalCoordinateHelpers
+  tstCylindricalCoordinateHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCylindricalCoordinateHelpers ${PROJECT_NAME})
+ADD_TEST(CylindricalCoordinateHelpers_test tstCylindricalCoordinateHelpers)

@@ -17,7 +17,8 @@
 namespace FACEMC{
 
 // Convert spherical coordinate (r,theta,mu) to a cartesian coordinate (x,y,z)
-/*! \details The origin is assumed to be at (x,y,z) = (0,0,0)
+/*! \details The origin is assumed to be at (x,y,z) = (0,0,0). If it is not,
+ * the returned cartesian coordinate must be shifted.
  */
 void convertSphericalCoordsToCartesian( const double spherical_point[3],
 					double cartesian_point[3],
@@ -69,6 +70,16 @@ void convertCartesianCoordsToSpherical( const double cartesian_point[3],
 					double spherical_point[3],
 					const Axis axis )
 {
+  // Make sure that the cartesian point is valid
+  remember( typedef Teuchos::ScalarTraits<double> ST );
+  testPrecondition( !ST::isnaninf( cartesian_point[0] ) );
+  testPrecondition( !ST::isnaninf( cartesian_point[1] ) );
+  testPrecondition( !ST::isnaninf( cartesian_point[2] ) );
+  // Make sure that the origin is valid
+  testPrecondition( !ST::isnaninf( origin[0] ) );
+  testPrecondition( !ST::isnaninf( origin[1] ) );
+  testPrecondition( !ST::isnaninf( origin[2] ) );
+  
   double x_distance = (cartesian_point[0] - origin[0]);
   double y_distance = (cartesian_point[1] - origin[1]);
   double z_distance = (cartesian_point[2] - origin[2]);
@@ -112,7 +123,6 @@ void convertCartesianCoordsToSpherical( const double cartesian_point[3],
     spherical_point[1] += 2*PhysicalConstants::pi;
 
   // Make sure that the point returned is valid
-  remember( typedef Teuchos::ScalarTraits<double> ST );
   testPostcondition( !ST::isnaninf( spherical_point[0] ) );
   testPostcondition( !ST::isnaninf( spherical_point[1] ) );
   testPostcondition( !ST::isnaninf( spherical_point[2] ) );
