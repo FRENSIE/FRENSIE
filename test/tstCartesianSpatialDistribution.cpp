@@ -44,7 +44,7 @@ void initializeDistribution(
   Teuchos::RCP<FACEMC::OneDDistribution>
     z_distribution( new FACEMC::UniformDistribution( 0.0, 2.0, 0.5 ) );
 
-  spatial_distribution.reset( new FACEMC::CartesianSpatialDistribution( 
+  distribution.reset( new FACEMC::CartesianSpatialDistribution( 
 							    x_distribution,
 							    y_distribution,
 							    z_distribution ) );

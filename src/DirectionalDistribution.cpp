@@ -9,6 +9,7 @@
 // FACEMC Includes
 #include "DirectionalDistribution.hpp"
 #include "SphericalCoordinateHelpers.hpp"
+#include "DirectionHelpers.hpp"
 #include "PhysicalConstants.hpp"
 #include "ContractException.hpp"
 
@@ -38,6 +39,53 @@ DirectionalDistribution::DirectionalDistribution(
 		    >= -1.0 );
 }
 
+// Evaluate the direction distribution
+double DirectionalDistribution::evaluate( 
+				        const double cartesian_point[3] ) const
+{
+  // Make sure that the point is a valid direction
+  testPrecondition( validDirection( cartesian_point ) );
+  
+  double spherical_point[3];
+
+  DirectionalDistribution::convertCartesianCoordsToSpherical(cartesian_point,
+							     spherical_point );
+
+  double distribution_value = 
+    d_theta_distribution->evaluate( spherical_point[1] );
+  distribution_value *= d_mu_distribution->evaluate( spherical_point[2] );
+
+  // If one distribution evaluates to inf and another to zero (value = nan),
+  // return zero
+  if( distribution_value != distribution_value )
+    distribution_value = 0.0;
+
+  // Make sure that the distribution value is valid
+  testPostcondition( distribution_value == distribution_value );
+  
+  return distribution_value;
+}
+
+// Evaluate the directional distribution PDF
+double DirectionalDistribution::evaluatePDF( 
+					const double cartesian_point[3] ) const
+{
+  // Make sure that the point is a valid direction
+  testPrecondition( validDirection( cartesian_point ) );
+  
+  double spherical_point[3];
+
+  DirectionalDistribution::convertCartesianCoordsToSpherical(cartesian_point,
+							     spherical_point );
+  double pdf_value = d_theta_distribution->evaluatePDF( spherical_point[1] );
+  pdf_value *= d_mu_distribution->evaluatePDF( spherical_point[2] );
+
+  // Make sure that the pdf value is valid
+  testPostcondition( !ST::isnaninf( pdf_value ) );
+
+  return pdf_value; 
+}
+
 // Return a random (cartesian) sample from the distribution (u, v, w)
 void DirectionalDistribution::sample( double sampled_direction[3] )
 {
@@ -50,6 +98,19 @@ void DirectionalDistribution::sample( double sampled_direction[3] )
   convertSphericalCoordsToCartesian( spherical_point,
 				     sampled_direction,
 				     d_axis );
+}
+
+// Convert a cartesian coordinate to a spherical coordinate
+void DirectionalDistribution::convertCartesianCoordsToSpherical( 
+					      const double cartesian_point[3],
+					      double spherical_point[3] ) const
+{
+  const double origin[3] = {0.0, 0.0, 0.0};
+
+  FACEMC::convertCartesianCoordsToSpherical( cartesian_point,
+					     origin,
+					     spherical_point,
+					     d_axis );
 }
 
 

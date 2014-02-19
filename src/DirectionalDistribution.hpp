@@ -23,6 +23,11 @@ namespace FACEMC{
 class DirectionalDistribution
 {
 
+private:
+
+  // Typedef for Teuchos::ScalarTraits
+  typedef Teuchos::ScalarTraits<double> ST;
+
 public:
 
   //! Constructor
@@ -35,8 +40,20 @@ public:
   ~DirectionalDistribution()
   { /* ... */ } 
 
+  //! Evaluate the directional distribution
+  double evaluate( const double cartesian_point[3] ) const;
+
+  //! Evaluate the directional distribution PDF
+  double evaluatePDF( const double cartesian_point[3] ) const;
+
   //! Return a random (cartesian) sample from the distribution (u, v, w)
   void sample( double sampled_direction[3] );
+
+protected:
+  
+  //! Convert a cartesian coordinate to a spherical coordinate
+  void convertCartesianCoordsToSpherical( const double cartesian_point[3],
+					  double spherical_point[3] ) const; 
 
 private:
 

@@ -134,11 +134,6 @@ private:
   // Calculate the velocity of a neutron
   void calculateNeutronVelocity();
 
-  // Test if the direction is valid
-  bool validDirection( const double x_direction,
-		       const double y_direction,
-		       const double z_direction );
-
   // Particle type
   ParticleType d_type;
 

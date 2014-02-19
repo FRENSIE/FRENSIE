@@ -192,6 +192,12 @@ ADD_EXECUTABLE(tstCellInputValidator
 TARGET_LINK_LIBRARIES(tstCellInputValidator ${PROJECT_NAME})
 ADD_TEST(CellInputValidator_test tstCellInputValidator --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.xml")
 
+ADD_EXECUTABLE(tstDirectionHelpers
+  tstDirectionHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDirectionHelpers ${PROJECT_NAME})
+ADD_TEST(DirectionHelpers_test tstDirectionHelpers)
+
 ADD_EXECUTABLE(tstBasicParticleState
   tstBasicParticleState.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -285,3 +291,9 @@ ADD_EXECUTABLE(tstCylindricalSpatialDistribution
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstCylindricalSpatialDistribution ${PROJECT_NAME})
 ADD_TEST(CylindricalSpatialDistribution_test tstCylindricalSpatialDistribution)
+
+ADD_EXECUTABLE(tstDirectionalDistribution
+  tstDirectionalDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDirectionalDistribution ${PROJECT_NAME})
+ADD_TEST(DirectionalDistribution_test tstDirectionalDistribution)

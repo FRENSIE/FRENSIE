@@ -47,7 +47,7 @@ void initializeDistribution(
   Teuchos::RCP<FACEMC::OneDDistribution>
     axis_distribution( new FACEMC::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
-  spatial_distribution.reset( new FACEMC::CylindricalSpatialDistribution( 
+  distribution.reset( new FACEMC::CylindricalSpatialDistribution( 
 							   r_distribution,
 							   theta_distribution,
 							   axis_distribution,

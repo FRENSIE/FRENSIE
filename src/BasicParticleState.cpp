@@ -9,6 +9,7 @@
 // FACEMC Includes
 #include "BasicParticleState.hpp"
 #include "PhysicalConstants.hpp"
+#include "DirectionHelpers.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -56,7 +57,7 @@ BasicParticleState::BasicParticleState( const ParticleType type,
   testPrecondition( !ST::isnaninf( direction[1] ) );
   testPrecondition( !ST::isnaninf( direction[2] ) );
   // Make sure that the direction is a unit vector
-  testPrecondition(validDirection( direction[0], direction[1], direction[2] ));
+  testPrecondition( validDirection( direction ) )
   // Make sure that the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
@@ -344,20 +345,6 @@ void BasicParticleState::calculateNeutronVelocity()
   d_velocity = d_energy*PhysicalConstants::speed_of_light/
     sqrt( PhysicalConstants::neutron_rest_mass_energy*
 	  PhysicalConstants::neutron_rest_mass_energy + d_energy*d_energy );
-}
-
-// Test if the direction is valid
-bool BasicParticleState::validDirection( const double x_direction,
-					 const double y_direction,
-					 const double z_direction )
-{
-  double x_direction_sqr = x_direction*x_direction;
-  double y_direction_sqr = y_direction*y_direction;
-  double z_direction_sqr = z_direction*z_direction;
-  double argument = x_direction_sqr+y_direction_sqr+z_direction_sqr;
-  double norm_two_value = ST::squareroot( argument );
-  
-  return ST::magnitude( norm_two_value - 1.0 ) < ST::prec();
 }
 
 } // end FACEMC
