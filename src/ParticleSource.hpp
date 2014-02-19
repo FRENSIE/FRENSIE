@@ -2,7 +2,7 @@
 //!
 //! \file   ParticleSource.hpp
 //! \author Alex Robinson
-//! \brief  Particle source declaration.hpp
+//! \brief  Particle source declaration
 //!
 //---------------------------------------------------------------------------//
 

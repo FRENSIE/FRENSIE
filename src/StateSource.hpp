@@ -38,7 +38,7 @@ public:
   void sampleParticleState( BasicParticleState& particle );
 
   //! Return the sampling efficiency from the source 
-  double getSamplingEfficiency() const = 0;
+  double getSamplingEfficiency() const;
 
 private:
 

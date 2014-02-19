@@ -297,3 +297,9 @@ ADD_EXECUTABLE(tstDirectionalDistribution
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstDirectionalDistribution ${PROJECT_NAME})
 ADD_TEST(DirectionalDistribution_test tstDirectionalDistribution)
+
+ADD_EXECUTABLE(tstStateSource
+  tstStateSource.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStateSource ${PROJECT_NAME})
+ADD_TEST(StateSource_test tstStateSource)
