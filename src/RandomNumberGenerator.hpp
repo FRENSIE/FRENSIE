@@ -40,6 +40,9 @@ struct RandomNumberGenerator
   static ScalarType getRandomNumber();
 
 private:
+  
+  // Constructor
+  RandomNumberGenerator();
 
   // Pointer to generator 
   static boost::scoped_ptr<LinearCongruentialGenerator> generator;

@@ -17,6 +17,10 @@ namespace FACEMC{
 boost::scoped_ptr<LinearCongruentialGenerator> 
 RandomNumberGenerator::generator( new LinearCongruentialGenerator );
 
+// Constructor
+RandomNumberGenerator::RandomNumberGenerator()
+{ /* ... */ }
+
 // Initialize the generator for the desired history
 void RandomNumberGenerator::initialize( 
 				      const unsigned long long history_number )
