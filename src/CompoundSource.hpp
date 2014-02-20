@@ -28,9 +28,11 @@ namespace FACEMC{
 class CompoundSource : public ParticleSource
 {
 
+public:
+  
   //! Constructor
-  CompoundSource( const Teuchos::Array<Teuchos::RCP<ParticleSource> > sources,
-		  const Teuchos::Array<double> source_sampling_weights );
+  CompoundSource( const Teuchos::Array<Teuchos::RCP<ParticleSource> >& sources,
+		  const Teuchos::Array<double>& source_sampling_weights );
 
   //! Destructor
   ~CompoundSource()
@@ -40,7 +42,7 @@ class CompoundSource : public ParticleSource
   void sampleParticleState( BasicParticleState& particle );
   
   //! Return the sampling efficiency from the source
-  double getSamplingEfficiency();
+  double getSamplingEfficiency() const;
 
 private:
 

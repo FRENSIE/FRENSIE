@@ -308,3 +308,8 @@ ADD_EXECUTABLE(tstDistributedSource
   tstDistributedSource.cpp)
 TARGET_LINK_LIBRARIES(tstDistributedSource ${PROJECT_NAME})
 ADD_TEST(DistributedSource_test tstDistributedSource --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat")
+
+ADD_EXECUTABLE(tstCompoundSource
+  tstCompoundSource.cpp)
+TARGET_LINK_LIBRARIES(tstCompoundSource ${PROJECT_NAME})
+ADD_TEST(CompoundSource_test tstCompoundSource --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat")

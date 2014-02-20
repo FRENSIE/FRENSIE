@@ -16,8 +16,8 @@ namespace FACEMC{
 
 // Constructor
 CompoundSource::CompoundSource( 
-		   const Teuchos::Array<Teuchos::RCP<ParticleSource> > sources,
-		   const Teuchos::Array<double> source_sampling_weights )
+		  const Teuchos::Array<Teuchos::RCP<ParticleSource> >& sources,
+		  const Teuchos::Array<double>& source_sampling_weights )
   : d_sources( sources.size() )
 {
   // Make sure that every source has a sampling weight
@@ -62,7 +62,7 @@ void CompoundSource::sampleParticleState( BasicParticleState& particle )
 }
 
 // Return the sampling efficiency from the source
-double CompoundSource::getSamplingEfficiency()
+double CompoundSource::getSamplingEfficiency() const
 {
   // Get the number of trials performed by each source
   unsigned trials = 0;
@@ -76,7 +76,7 @@ double CompoundSource::getSamplingEfficiency()
     samples += d_sources[i].third;
   }
 
-  return samples/trials;
+  return static_cast<double>( samples )/trials;
 }
 
 } // end FACEMC namespace

@@ -326,10 +326,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
   for( unsigned i = 0; i < 10; ++i )
     source->sampleParticleState( particle_1 );
 
-  TEST_COMPARE( source->getSamplingEfficiency(), >=, 0.0 );
+  // Theoretical efficiency: (4/sqrt(3))^3/(4*pi*2^3/3) ~= 0.367552
+  TEST_COMPARE( source->getSamplingEfficiency(), >, 0.0 );
   TEST_COMPARE( source->getSamplingEfficiency(), <=, 1.0 );
-
-  std::cout << source->getSamplingEfficiency() << std::endl;
 }
 
 UNIT_TEST_INSTANTIATION( DistributedSource, getSamplingEfficiency );
