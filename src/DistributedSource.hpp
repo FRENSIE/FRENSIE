@@ -11,11 +11,11 @@
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
-#include <Teucos_ScalarTraits.hpp>
+#include <Teuchos_ScalarTraits.hpp>
 
 // FACEMC Includes
 #include "ParticleSource.hpp"
-#include "OneDDistribution"
+#include "OneDDistribution.hpp"
 #include "SpatialDistribution.hpp"
 #include "DirectionalDistribution.hpp"
 #include "ParticleType.hpp"
@@ -31,7 +31,7 @@ class DistributedSource : public ParticleSource
 private:
   
   // Typedef for geometry handler traits
-  typedef GeometryHandlerTraits<GeometryHandler> GHT;
+  typedef Traits::GeometryHandlerTraits<GeometryHandler> GHT;
 
   // Typedef for scalar traits
   typedef Teuchos::ScalarTraits<double> ST;
@@ -40,11 +40,11 @@ public:
   
   //! Constructor
   DistributedSource( 
-	   const Teuchos::RCP<SpatialDistribution>& spatial_distribution,
-	   const Teuchos::RCP<DirectionalDistribution>& direction_distribution,
-	   const Teuchos::RCP<OneDDistribution>& energy_distribution,
-	   const Teuchos::RCP<OneDDistribution>& time_distribution,
-	   const ParticleType particle_type );
+	 const Teuchos::RCP<SpatialDistribution>& spatial_distribution,
+	 const Teuchos::RCP<DirectionalDistribution>& directional_distribution,
+	 const Teuchos::RCP<OneDDistribution>& energy_distribution,
+	 const Teuchos::RCP<OneDDistribution>& time_distribution,
+	 const ParticleType particle_type );
 
   //! Destructor
   ~DistributedSource()
@@ -66,9 +66,9 @@ public:
   void setTimeImportanceDistribution(
 		     const Teuchos::RCP<OneDDistribution>& time_distribution );
 
-  //! Set the rejection cell 
-  void setRejectionCell( 
-      const typename GeometryHandlerTraits<GeometryHandler>::CellHandle cell );
+  //! Set the rejection cell
+  template<typename CellHandle>
+  void setRejectionCell( const CellHandle& cell );
 
   //! Sample a particle state from the source
   void sampleParticleState( BasicParticleState& particle );
@@ -77,6 +77,18 @@ public:
   double getSamplingEfficiency() const;
 
 private:
+
+  // Sample the particle position
+  void sampleParticlePosition( BasicParticleState& particle );
+
+  // Sample the particle direction
+  void sampleParticleDirection( BasicParticleState& particle );
+
+  // Sample the particle energy
+  void sampleParticleEnergy( BasicParticleState& particle );
+  
+  // Sample the particle time
+  void sampleParticleTime( BasicParticleState& particle );
 
   // The spatial distribution of the source (possibly an importance dist.)
   Teuchos::RCP<SpatialDistribution> d_spatial_distribution;

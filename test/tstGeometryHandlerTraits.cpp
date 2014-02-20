@@ -20,7 +20,7 @@
 #include "GeometryHandlerTraits.hpp"
 
 //---------------------------------------------------------------------------//
-// Test Set File Name
+// Test Sat File Name
 //---------------------------------------------------------------------------//
 std::string test_geometry_file_name;
 

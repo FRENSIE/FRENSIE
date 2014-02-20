@@ -303,3 +303,8 @@ ADD_EXECUTABLE(tstStateSource
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstStateSource ${PROJECT_NAME})
 ADD_TEST(StateSource_test tstStateSource)
+
+ADD_EXECUTABLE(tstDistributedSource
+  tstDistributedSource.cpp)
+TARGET_LINK_LIBRARIES(tstDistributedSource ${PROJECT_NAME})
+ADD_TEST(DistributedSource_test tstDistributedSource --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat")

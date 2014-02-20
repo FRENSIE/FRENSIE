@@ -337,6 +337,7 @@ void BasicParticleState::print_implementation( std::ostream& os ) const
      << d_direction[2] << "}" << std::endl;
   os << "Energy: " << d_energy << std::endl;
   os << "Time: " << d_time << std::endl;
+  os << "Weight: " << d_weight << std::endl;
 }
 
 // Calculate the neutron velocity

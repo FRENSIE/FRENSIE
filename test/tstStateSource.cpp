@@ -19,7 +19,7 @@
 #include "ParticleState.hpp"
 #include "StateSource.hpp"
 
-Teuchos::RCP<FACEMC::StateSource> source;
+Teuchos::RCP<FACEMC::ParticleSource> source;
 
 //---------------------------------------------------------------------------//
 // Testing Functions
