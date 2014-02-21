@@ -52,6 +52,8 @@ inline void GeometryHandlerTraits<moab::DagMC>::fireRay(
 				     SurfaceHandle& surface_hit,
 				     double& distance_to_surface_hit )
 {
+  testPrecondition( dagmc_instance );
+  
   moab::ErrorCode return_value = 
     GeometryHandlerTraits<moab::DagMC>::dagmc_instance->ray_fire( 
 			    particle.getCell(),
@@ -139,6 +141,8 @@ inline void GeometryHandlerTraits<moab::DagMC>::updateCellContainingParticle(
 					  const SurfaceHandle& surface,
 				          ParticleState<CellHandle>& particle )
   {
+    testPrecondition( dagmc_instance );
+    
     CellHandle next_cell;
     
     moab::ErrorCode return_value = 
@@ -158,6 +162,8 @@ inline void GeometryHandlerTraits<moab::DagMC>::updateCellContainingParticle(
 inline bool GeometryHandlerTraits<moab::DagMC>::isTerminationCell( 
 						       const CellHandle& cell )
 {
+  testPrecondition( dagmc_instance );
+  
   return GeometryHandlerTraits<moab::DagMC>::dagmc_instance->has_prop( cell, GeometryHandlerTraits<moab::DagMC>::termination_cell_property_name );
 }
 
@@ -173,6 +179,8 @@ inline PointLocation GeometryHandlerTraits<moab::DagMC>::getParticleLocation(
 						    const double direction[3] )
 					     
 {
+  testPrecondition( dagmc_instance );
+  
   int test_result;
   moab::ErrorCode return_value = 
     GeometryHandlerTraits<moab::DagMC>::dagmc_instance->point_in_volume( 
@@ -206,6 +214,8 @@ inline void GeometryHandlerTraits<moab::DagMC>::getSurfaceNormal(
 				     const ParticleState<CellHandle>& particle,
 				     double normal[3] )
 {
+  testPrecondition( dagmc_instance );
+  
   moab::ErrorCode return_value =
       GeometryHandlerTraits<moab::DagMC>::dagmc_instance->get_angle( 
 			    surface, 
@@ -225,6 +235,8 @@ inline void GeometryHandlerTraits<moab::DagMC>::getSurfaceNormal(
 inline double GeometryHandlerTraits<moab::DagMC>::getCellVolume( 
 						       const CellHandle& cell )
 {
+  testPrecondition( dagmc_instance );
+  
   double volume = 0.0;
   
   moab::ErrorCode return_value = 
@@ -253,6 +265,8 @@ inline double GeometryHandlerTraits<moab::DagMC>::getCellSurfaceArea(
 						  const SurfaceHandle& surface,
 						  const CellHandle& )
 {
+  testPrecondition( dagmc_instance );
+  
   double area = 0.0;
   
   moab::ErrorCode return_value = 
@@ -274,6 +288,8 @@ inline double GeometryHandlerTraits<moab::DagMC>::getCellSurfaceArea(
 inline GeometryHandlerTraits<moab::DagMC>::CellId 
 GeometryHandlerTraits<moab::DagMC>::getCellId( const CellHandle& cell )
 {
+  testPrecondition( dagmc_instance );
+  
   return 
     GeometryHandlerTraits<moab::DagMC>::dagmc_instance->get_entity_id( cell );
 }
@@ -282,6 +298,8 @@ GeometryHandlerTraits<moab::DagMC>::getCellId( const CellHandle& cell )
 inline GeometryHandlerTraits<moab::DagMC>::CellHandle
 GeometryHandlerTraits<moab::DagMC>::getCellHandle( const CellId& cell_id )
 {
+  testPrecondition( dagmc_instance );
+  
   return 
     GeometryHandlerTraits<moab::DagMC>::dagmc_instance->entity_by_id( 3, 
 								      cell_id);
@@ -291,6 +309,8 @@ GeometryHandlerTraits<moab::DagMC>::getCellHandle( const CellId& cell_id )
 inline GeometryHandlerTraits<moab::DagMC>::SurfaceId 
 GeometryHandlerTraits<moab::DagMC>::getSurfaceId( const SurfaceHandle& surface)
 {
+  testPrecondition( dagmc_instance );
+  
   return 
     GeometryHandlerTraits<moab::DagMC>::dagmc_instance->get_entity_id(surface);
 }
@@ -300,6 +320,8 @@ inline GeometryHandlerTraits<moab::DagMC>::SurfaceHandle
 GeometryHandlerTraits<moab::DagMC>::getSurfaceHandle( 
 						  const SurfaceId& surface_id )
 {
+  testPrecondition( dagmc_instance );
+  
   return 
     GeometryHandlerTraits<moab::DagMC>::dagmc_instance->entity_by_id( 
 								   2, 
@@ -309,6 +331,8 @@ GeometryHandlerTraits<moab::DagMC>::getSurfaceHandle(
 // Get all the cells contained in the geometry
 void GeometryHandlerTraits<moab::DagMC>::getAllCells()
 {
+  testPrecondition( dagmc_instance );
+  
   moab::Interface* moab_instance = 
     GeometryHandlerTraits<moab::DagMC>::dagmc_instance->moab_instance();
   

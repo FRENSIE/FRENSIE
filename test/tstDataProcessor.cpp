@@ -63,36 +63,36 @@
 #define UNIT_TEST_INSTANTIATION_POLICY( type, name )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type,				\
 					name,				\
-					LogLogDataProcessingPolicy )	\
+					LogLogDataProcessing )	\
   TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type,				\
 					name,				\
-					SquareSquareDataProcessingPolicy ) \
+					SqrSqrDataProcessing ) \
 
 #define UNIT_TEST_INSTANTIATION_POLICY_TUPLE( type, name )		\
   TUPLE_TYPEDEFS()							\
   TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
 					name,				\
-					LogLogDataProcessingPolicy,	\
+					LogLogDataProcessing,	\
 					pair_d_d )			\
   TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
 					name,				\
-					LogLogDataProcessingPolicy,	\
+					LogLogDataProcessing,	\
 					trip_d_d_d )			\
   TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
 					name,				\
-					LogLogDataProcessingPolicy,	\
+					LogLogDataProcessing,	\
 					quad_d_d_d_d )			\
   TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
 					name,				\
-					SquareSquareDataProcessingPolicy, \
+					SqrSqrDataProcessing, \
 					pair_d_d )			\
   TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
 					name,				\
-					SquareSquareDataProcessingPolicy, \
+					SqrSqrDataProcessing, \
 					trip_d_d_d )			\
   TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type,				\
 					name,				\
-					SquareSquareDataProcessingPolicy, \
+					SqrSqrDataProcessing, \
 					quad_d_d_d_d )			\
 
 #define UNIT_TEST_INSTANTIATION_TUPLE( type, name )			\
@@ -327,15 +327,10 @@ public:
   using FACEMC::DataProcessor::copyTupleMemberData;
   using FACEMC::DataProcessor::swapTupleMemberData;
   using FACEMC::DataProcessor::uintToShellStr;
-  
-  // Allow public access to the DataProcessor nested processing policy structs
-  using FACEMC::DataProcessor::LogLogDataProcessingPolicy;
-  using FACEMC::DataProcessor::SquareSquareDataProcessingPolicy;
 };
 
-// Allow for easier access to the DataProcessor structs
-typedef TestDataProcessor::LogLogDataProcessingPolicy LogLogDataProcessingPolicy;
-typedef TestDataProcessor::SquareSquareDataProcessingPolicy SquareSquareDataProcessingPolicy;
+typedef FACEMC::LogLogDataProcessing LogLogDataProcessing;
+typedef FACEMC::SqrSqrDataProcessing SqrSqrDataProcessing;
 
 template<typename ProcessingPolicy>
 struct ProcessingPolicyTestingTraits
@@ -345,14 +340,14 @@ struct ProcessingPolicyTestingTraits
 };
 
 template<>
-struct ProcessingPolicyTestingTraits<LogLogDataProcessingPolicy>
+struct ProcessingPolicyTestingTraits<FACEMC::LogLogDataProcessing>
 {
   static const double referenceIndepValue = LOG_INDEP_VAR;
   static const double referenceDepValue = LOG_DEP_VAR;
 };
 
 template<>
-struct ProcessingPolicyTestingTraits<SquareSquareDataProcessingPolicy>
+struct ProcessingPolicyTestingTraits<FACEMC::SqrSqrDataProcessing>
 {
   static const double referenceIndepValue = SQR_INDEP_VAR;
   static const double referenceDepValue = SQR_DEP_VAR;

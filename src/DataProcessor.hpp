@@ -17,6 +17,7 @@
 
 // FACEMC Includes
 #include "Tuple.hpp"
+#include "DataProcessingPolicy.hpp"
 
 /*! \defgroup data_proc Data Processing
  * 
@@ -56,108 +57,66 @@ public:
   //! Process Data Files
   virtual void processDataFiles() = 0;
 
-protected:
-
   //! Process the data points in a table of continuous data.
   template<typename DataProcessingPolicy,
 	   TupleMember indepMember,
 	   TupleMember depMember,
 	   typename Tuple>
-  void processContinuousData( Teuchos::Array<Tuple> &data );
+  static void processContinuousData( Teuchos::Array<Tuple> &data );
 
   //! Remove elements with a tuple member less than the specified value
   template<TupleMember member,
 	   typename Tuple>
-  void removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
-				    const double value );
+  static void removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
+					   const double value );
 
   //! Remove elements with a tuple member greater than the specified value
   template<TupleMember member,
 	   typename Tuple>
-  void removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
-				       const double value );
+  static void removeElementsGreaterThanValue( Teuchos::Array<Tuple> &data,
+					      const double value );
 
   //! Eliminate adjacent data points with the same values.
   template<TupleMember member,
 	   typename Tuple>
-  void coarsenConstantRegions( Teuchos::Array<Tuple> &data );
+  static void coarsenConstantRegions( Teuchos::Array<Tuple> &data );
 
   //! Calculate the slope between each pair of data points.
   template<TupleMember indepMember, 
 	   TupleMember depMember,
 	   TupleMember slopeMember,
 	   typename Array>
-  void calculateSlopes( Array &data );
+  static void calculateSlopes( Array &data );
 
   //! Create a cdf from an array of data using a taylor series expansion to O(2)
   template<TupleMember indepMember,
 	   TupleMember pdfMember,
 	   TupleMember cdfMember,
 	   typename Array>
-  void calculateContinuousCDF( Array &data );
+  static double calculateContinuousCDF( Array &data );
 
   //! Create a discrete CDF from an array of data.
   template<TupleMember pdfMember,
 	   TupleMember cdfMember,
 	   typename Tuple>
-  void calculateDiscreteCDF( Teuchos::Array<Tuple> &data );
+  static void calculateDiscreteCDF( Teuchos::Array<Tuple> &data );
 
   //! Copy the data in the desired tuple member of the original tuple to the desired tuple member of the copy tuple.
   template<TupleMember origMember, 
 	   TupleMember copyMember,
 	   typename OrigArray,
 	   typename CopyArray>
-  void copyTupleMemberData( const OrigArray &orig_data,
+  static void copyTupleMemberData( const OrigArray &orig_data,
 			    CopyArray &copy_data );
 
   //! Swap the data in a desired tuple member with the data in another tuple member
   template<TupleMember member1,
 	   TupleMember member2,
 	   typename Array>
-  void swapTupleMemberData( Array &data );
+  static void swapTupleMemberData( Array &data );
 
   //! Convert an unsigned int to an electron shell string
-  std::string uintToShellStr( const unsigned int shell );
-
-  /*! \brief Policy struct for processing data tables that require log-log 
-   * interpolation between evaluated points.
-   * 
-   * This policy class implements the data processing policy interface that is
-   * expected by certain protected member functions of the DataProcessor base
-   * class. All data processed with this policy will be converted to log-log
-   * format.
-   * \ingroup policies
-   */
-  struct LogLogDataProcessingPolicy
-  {
-    //! Process Independent Variable
-    template<typename T>
-    static T processIndependentVar( const T indep_var );
-    
-    //! Process Dependent Variable
-    template<typename T>
-    static T processDependentVar( const T dep_var );
-  };
-
-  /*! \brief Policy struct for processing data tables that require square-square
-   * interpolation between data points.
-   *
-   * This policy class implements the data processing policy interface that is
-   * expected by certain protected member functions of the DataProcessor base
-   * class. All data processed with this policy will be converted to 
-   * square-square format. 
-   * \ingroup policies
-   */
-  struct SquareSquareDataProcessingPolicy
-  {
-    //! Process Independent Variable
-    template<typename T>
-    static T processIndependentVar( const T indep_var );
-    
-    //! Process Dependent Variable
-    template<typename T>
-    static T processDependentVar( const T dep_var );
-  };
+  static std::string uintToShellStr( const unsigned int shell );
 
 };
 

@@ -347,7 +347,7 @@ void PhotonDataProcessor::processCoherentCrossSectionData()
   removeElementsGreaterThanValue<FIRST>( data,
 					 d_energy_max );
   
-  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+  processContinuousData<LogLogDataProcessing,FIRST,SECOND>( data );
   
   calculateSlopes<FIRST,SECOND,THIRD>( data );
   
@@ -368,7 +368,7 @@ void PhotonDataProcessor::processIncoherentCrossSectionData()
   removeElementsGreaterThanValue<FIRST>( data,
 					 d_energy_max );
   
-  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );	       
+  processContinuousData<LogLogDataProcessing,FIRST,SECOND>( data );	       
   
   calculateSlopes<FIRST,SECOND,THIRD>( data );
   
@@ -389,7 +389,7 @@ void PhotonDataProcessor::processTotalPhotoelectricCrossSectionData()
   removeElementsGreaterThanValue<FIRST>( data,
 					 d_energy_max );
   
-  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );       
+  processContinuousData<LogLogDataProcessing,FIRST,SECOND>( data );       
   
   calculateSlopes<FIRST,SECOND,THIRD>( data );
   
@@ -413,7 +413,7 @@ void PhotonDataProcessor::processShellPhotoelectricCrossSectionData( unsigned in
   removeElementsGreaterThanValue<FIRST>( data,
 					 d_energy_max );
   
-  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+  processContinuousData<LogLogDataProcessing,FIRST,SECOND>( data );
   
   calculateSlopes<FIRST,SECOND,THIRD>( data );
   
@@ -434,7 +434,7 @@ void PhotonDataProcessor::processPairProductionCrossSectionData()
   removeElementsGreaterThanValue<FIRST>( data,
 					 d_energy_max );
   
-  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+  processContinuousData<LogLogDataProcessing,FIRST,SECOND>( data );
   
   
   // Approximate the cross section as constant in the first bin 
@@ -461,7 +461,7 @@ void PhotonDataProcessor::processTripletProductionCrossSectionData()
   removeElementsGreaterThanValue<FIRST>( data,
 					 d_energy_max );
   
-  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+  processContinuousData<LogLogDataProcessing,FIRST,SECOND>( data );
   
   
   // Approximate the cross section as constant in the first bin 
@@ -484,7 +484,7 @@ void PhotonDataProcessor::processFormFactorData()
   
   // For efficient sampling, the atomic form factor must be squared and
   // integrated over its squared argument
-  processContinuousData<SquareSquareDataProcessingPolicy,FIRST,SECOND>( data );
+  processContinuousData<SqrSqrDataProcessing,FIRST,SECOND>( data );
   
   calculateContinuousCDF<FIRST,SECOND,THIRD>( data );
   
@@ -507,7 +507,7 @@ void PhotonDataProcessor::processScatteringFunctionData()
 
   coarsenConstantRegions<SECOND>( data );
   
-  processContinuousData<LogLogDataProcessingPolicy,FIRST,SECOND>( data );
+  processContinuousData<LogLogDataProcessing,FIRST,SECOND>( data );
 
   calculateSlopes<FIRST,SECOND,THIRD>( data );
   

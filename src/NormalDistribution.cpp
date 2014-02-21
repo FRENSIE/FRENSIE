@@ -19,9 +19,13 @@ const double NormalDistribution::constant_multiplier =
 
 // Constructor
 NormalDistribution::NormalDistribution( const double mean,
-					const double standard_deviation )
+					const double standard_deviation,
+					const double min_independent_value,
+					const double max_independent_value )
   : d_mean( mean ),
     d_standard_deviation( standard_deviation ),
+    d_min_independent_value( min_independent_value ),
+    d_max_independent_value( max_independent_value ),
     d_trials( 0 ),
     d_samples( 0 )
 {
@@ -41,40 +45,59 @@ double NormalDistribution::evaluate( const double indep_var_value ) const
 // Evaluate the PDF
 double NormalDistribution::evaluatePDF( const double indep_var_value ) const
 {
-  double argument = -(indep_var_value-d_mean)*(indep_var_value-d_mean)/
-    (2*d_standard_deviation*d_standard_deviation);
+  if( indep_var_value < d_min_independent_value )
+    return 0.0;
+  else if( indep_var_value > d_max_independent_value )
+    return 0.0;
+  else
+  {
+    double argument = -(indep_var_value-d_mean)*(indep_var_value-d_mean)/
+      (2*d_standard_deviation*d_standard_deviation);
   
-  return NormalDistribution::constant_multiplier*exp( argument );
+    return NormalDistribution::constant_multiplier*exp( argument );
+  }
 }
 
 // Return a sample from the distribution
 double NormalDistribution::sample()
 {
   double random_number_1, random_number_2;
-  double x, y;
+  double x, y, sample;
   
   while( true )
   {
-    random_number_1 = RandomNumberGenerator::getRandomNumber<double>();
-    random_number_2 = RandomNumberGenerator::getRandomNumber<double>();
-    
-    x = -log( random_number_1 );
-    y = -log( random_number_2 );
-    
-    if( 0.5*(x - 1)*(x - 1) <= y )
+    // Use the rejection sampling technique outlined by Kahn in "Applications 
+    // of Mone Carlo" (1954)
+    while( true )
     {
-      ++d_samples;
-      ++d_trials;
-      break;
+      random_number_1 = RandomNumberGenerator::getRandomNumber<double>();
+      random_number_2 = RandomNumberGenerator::getRandomNumber<double>();
+      
+      x = -log( random_number_1 );
+      y = -log( random_number_2 );
+      
+      if( 0.5*(x - 1)*(x - 1) <= y )
+      {
+	++d_samples;
+	++d_trials;
+	break;
+      }
+      else
+	++d_trials;
     }
-    else
-      ++d_trials;
+
+    if( RandomNumberGenerator::getRandomNumber<double>() < 0.5 )
+      x *= -1.0;
+
+    // stretch and shift the sampled value
+    sample = d_standard_deviation*x+d_mean;
+
+    if( sample >= d_min_independent_value && 
+	sample <= d_max_independent_value )
+      break;
   }
-
-  if( RandomNumberGenerator::getRandomNumber<double>() < 0.5 )
-    x *= -1.0;
-
-  return d_standard_deviation*x+d_mean;
+  
+  return sample;
 }
 
 // Return the sampling efficiency from the distribution
@@ -89,13 +112,13 @@ double NormalDistribution::getSamplingEfficiency() const
 // Return the upper bound of the distribution independent variable
 double NormalDistribution::getUpperBoundOfIndepVar() const
 {
-  return std::numeric_limits<double>::infinity();
+  return d_max_independent_value;
 }
 
 // Return the lower bound of the distribution independent variable
 double NormalDistribution::getLowerBoundOfIndepVar() const
 {
-  return -std::numeric_limits<double>::infinity();
+  return d_min_independent_value;
 }
 
 } // end FACEMC namespace

@@ -21,8 +21,11 @@
 namespace FACEMC{
 
 //! Struct that is used to obtain random numbers
-struct RandomNumberGenerator
+class RandomNumberGenerator
 {
+  
+public:
+  
   //! Initialize the generator for the desired history
   static void initialize( const unsigned long long history_number = 0ULL );
 
@@ -38,6 +41,10 @@ struct RandomNumberGenerator
   //! Return a random number in interval [0,1)
   template<typename ScalarType>
   static ScalarType getRandomNumber();
+  
+  //! Destructor
+  ~RandomNumberGenerator()
+  { /* ... */ }
 
 private:
   

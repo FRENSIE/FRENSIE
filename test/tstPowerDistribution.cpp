@@ -79,7 +79,7 @@ FACEMC_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, evaluatePDF, N )
 UNIT_TEST_INSTANTIATION( PowerDistribution, evaluatePDF );
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be samled
+// Check that the distribution can be sampled
 FACEMC_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, sample, N )
 {
   initializeDistribution<N>( distribution );

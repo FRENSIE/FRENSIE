@@ -24,8 +24,8 @@ namespace FACEMC{
 
 /*! \details This function processes the independent and dependent data points
  * in a table of continuous data using the desired data processing policy (see
- * FACEMC::DataProcessor::LogLogDataProcessingPolicy or 
- * FACEMC::DataProcessor::SquareSquareDataProcessingPolicy). Since this data
+ * FACEMC::LogLogDataProcessingPolicy or 
+ * FACEMC::SquareSquareDataProcessingPolicy). Since this data
  * will be stored in a Teuchos::Array of Tuples (FACEMC::Pair, FACEMC::Trip,
  * or FACEMC::Quad) this function must also know which members of the tuple
  * store the raw independent data values and the raw dependent data values. 
@@ -369,7 +369,7 @@ template<TupleMember indepMember,
 	 TupleMember pdfMember,
 	 TupleMember cdfMember,
 	 typename Array>
-void DataProcessor::calculateContinuousCDF( Array &data )
+double DataProcessor::calculateContinuousCDF( Array &data )
 {
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
@@ -389,7 +389,7 @@ void DataProcessor::calculateContinuousCDF( Array &data )
   set<cdfMember>( *data_point_1, 0 );
   
   // Calculate the CDF
-  // CDF(x) = CDF(x1)+PDF(x1)*(x-x1)+0.5*(PDF(x)-PDF(x1))/(x2-x1)*(x-x1)^2
+  // CDF(x) = CDF(x1)+PDF(x1)*(x-x1)+0.5*(PDF(x2)-PDF(x1))/(x2-x1)*(x-x1)^2
   while( data_point_2 != end )
   {
     cdf_value = get<cdfMember>( *data_point_1 ) + 
@@ -424,6 +424,9 @@ void DataProcessor::calculateContinuousCDF( Array &data )
     
     ++data_point_1;
   }
+  
+  // Return the normalization constant
+  return cdf_max;
 }
 
 /*! \details This function calculates a discrete CDF from an array of discrete
@@ -590,60 +593,6 @@ void DataProcessor::swapTupleMemberData( Array &data )
 
     ++data_point;
   }
-}
-
-//---------------------------------------------------------------------------//
-// LogLogDataProcessingPolicy definitions
-//---------------------------------------------------------------------------//
-
-/*! \tparam T Any integer or floating point type.
- * \param[in] indep_var The independent variable that will be processed.
- * \return The processed independent variable. 
- */
-template<typename T>
-inline T DataProcessor::LogLogDataProcessingPolicy::processIndependentVar( const T indep_var )
-{
-  if( indep_var >= 0 )
-    return static_cast<T>( log( static_cast<double>(indep_var) ) );
-  else
-    return 0;
-}
-
-/*! \tparam T Any integer or floating point type.
- * \param[in] dep_var The dependent variable that will be processed.
- * \return The processed dependent variable. 
- */
-template<typename T>
-inline T DataProcessor::LogLogDataProcessingPolicy::processDependentVar( const T dep_var )
-{
-  if( dep_var >= 0 )
-    return static_cast<T>( log( static_cast<double>(dep_var) ) );
-  else
-    return 0;
-}
-
-//---------------------------------------------------------------------------//
-// SquareSquareDataProcessingPolicy definitions
-//---------------------------------------------------------------------------//
-
-/*! \tparam T Any integer or floating point type.
- * \param[in] indep_var The independent variable that will be processed.
- * \return The processed independent variable. 
- */
-template<typename T>
-inline T DataProcessor::SquareSquareDataProcessingPolicy::processIndependentVar( const T indep_var )
-{
-  return indep_var*indep_var;
-}
-
-/*! \tparam T Any integer or floating point type.
- * \param[in] dep_var The dependent variable that will be processed.
- * \return The processed dependent variable. 
- */
-template<typename T>
-inline T DataProcessor::SquareSquareDataProcessingPolicy::processDependentVar( const T dep_var )
-{
-  return dep_var*dep_var;
 }
 
 } // end FACEMC namespace

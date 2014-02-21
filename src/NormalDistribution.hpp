@@ -9,6 +9,9 @@
 #ifndef NORMAL_DISTRIBUTION_HPP
 #define NORMAL_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <limits>
+
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
 
@@ -30,7 +33,11 @@ public:
 
   //! Constructor
   NormalDistribution( const double mean = 0.0,
-		      const double standard_deviation = 1.0 );
+		      const double standard_deviation = 1.0,
+		      const double min_independent_value = 
+		      -std::numeric_limits<double>::infinity(),
+		      const double max_independent_value = 
+		      std::numeric_limits<double>::infinity() );
 
   //! Destructor
   ~NormalDistribution()
@@ -64,6 +71,12 @@ private:
 
   // The standard deviation of the distribution
   double d_standard_deviation;
+
+  // The min independent value
+  double d_min_independent_value;
+
+  // The max independent value
+  double d_max_independent_value;
 
   // The number of trials
   int d_trials;

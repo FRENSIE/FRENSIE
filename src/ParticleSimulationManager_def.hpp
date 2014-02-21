@@ -80,7 +80,7 @@ void ParticleSimulation<GeometryHandler,
     ParticleState particle( history );
 
     // Sample the starting state from the source handler
-    SHT::sampleStartingState( particle );
+    SHT::sampleStartingParticleState( particle );
 
     // Determine the starting cell from the  geometry handler
     try{

@@ -33,6 +33,12 @@ ADD_EXECUTABLE(tstHDF5FileHandler
 TARGET_LINK_LIBRARIES(tstHDF5FileHandler ${PROJECT_NAME})
 ADD_TEST(HDF5FileHandler_test tstHDF5FileHandler)
 
+ADD_EXECUTABLE(tstInterpolationPolicy
+  tstInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstInterpolationPolicy ${PROJECT_NAME})
+ADD_TEST(InterpolationPolicy_test tstInterpolationPolicy)
+
 ADD_EXECUTABLE(tstDataProcessor
   tstDataProcessor.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -261,6 +267,12 @@ ADD_EXECUTABLE(tstPowerDistribution
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstPowerDistribution ${PROJECT_NAME})
 ADD_TEST(PowerDistribution_test tstPowerDistribution)
+
+ADD_EXECUTABLE(tstTabularDistribution
+  tstTabularDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstTabularDistribution ${PROJECT_NAME})
+ADD_TEST(TabularDistribution_test tstTabularDistribution)
 
 ADD_EXECUTABLE(tstCartesianSpatialDistribution
   tstCartesianSpatialDistribution.cpp

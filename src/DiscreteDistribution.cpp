@@ -8,6 +8,7 @@
 
 // FACEMC Includes
 #include "DiscreteDistribution.hpp"
+#include "DataProcessor.hpp"
 #include "RandomNumberGenerator.hpp"
 
 namespace FACEMC{
@@ -21,24 +22,16 @@ DiscreteDistribution::DiscreteDistribution(
   // Make sure that every value has a probability assigned
   testPrecondition( discrete_values.size() == probabilities.size() );
 
-  // Construct the distribution( discrete values, CDF )
+  // Assign the raw distribution data
   for( unsigned i = 0; i < discrete_values.size(); ++i )
   {
     d_distribution[i].first = discrete_values[i];
 
     d_distribution[i].second = probabilities[i];
-    
-    if( i > 0 )
-      d_distribution[i].second += d_distribution[i-1].second;
   }
 
-  // Normalize the CDF
-  for( unsigned i = 0; i < d_distribution.size(); ++i )
-    d_distribution[i].second /= d_distribution.back().second;
-
-  // Make sure that the CDF has been constructed correctly
-  testPostcondition( ST::magnitude( d_distribution.back().second - 1.0 ) <
-		     ST::prec() );
+  // Create a CDF from the raw distribution data
+  DataProcessor::calculateDiscreteCDF<SECOND,SECOND>( d_distribution );
 }
 
 // Evaluate the distribution
