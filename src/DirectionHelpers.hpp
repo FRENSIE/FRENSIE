@@ -22,6 +22,10 @@ bool validDirection( const double direction[3] );
 //! Normalize a direction so that it lies on the unit sphere
 void normalizeDirection( double direction[3] );
 
+//! Calculate the cosine of the angle between two directions
+double calculateCosineOfAngleBetweenVectors( const double direction_a[3],
+					     const double direction_b[3] );
+
 } // end FACEMC namespace
 
 // Test if the direction is valid

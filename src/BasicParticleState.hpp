@@ -127,7 +127,7 @@ public:
 protected:
 
   //! Print method implementation 
-  void print_implementation( std::ostream& os ) const;
+  void printImplementation( std::ostream& os ) const;
 
 private:
 

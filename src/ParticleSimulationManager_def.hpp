@@ -131,6 +131,7 @@ void ParticleSimulation<GeometryHandler,
   double distance_to_surface_hit;
   double mfp_to_surface_hit;
   double remaining_subtrack_mfp;
+  double cell_total_macro_cross_section;
   
   while( !particle.isLost() && !particle.isGone() )
   {
@@ -139,7 +140,7 @@ void ParticleSimulation<GeometryHandler,
     
     // Trace the particle until the necessary number of mfps have be traveled
     while( true )
-      
+    {
       // Fire a ray at the cell currently containing the particle
       try{
 	fireRay( geometry_handler,
@@ -156,19 +157,26 @@ void ParticleSimulation<GeometryHandler,
 	break;
       }
 
+      // Get the total cross section for the cell
+      cell_total_macro_cross_section = 
+	CHT::getTotalMacroscopicCrossSection( particle.getCell() );
+
       // Convert the distance to the surface to mfp
       mfp_to_surface_hit = 
-	distance_to_surface_hit*totalMacroscopicCS( collision_handler, 
-						    particle );
+	distance_to_surface_hit*cell_total_macro_cross_section;
 
       if( mfp_to_surface_hit < remaining_subtrack_mfp )
       {
 	// Advance the particle to the cell boundary
 	particle.advance( distance_to_surface_hit );
 
-	// Update estimators before cross the cell boundary
-	updateEstimators( estimator_handler, particle_state );
-	
+	// Get the surface normal at the intersection point
+	double surface_normal[3];
+	GHT::getSurfaceNormal( surface_hit,
+			       particle,
+			       surface_normal );			       
+
+	CellHandle current_cell = particle_state.getCell();
 	// Find the cell on the other side of the surface hit
 	try{
 	  getNextCell( geometry_handler, surface_hit, particle );
@@ -181,6 +189,16 @@ void ParticleSimulation<GeometryHandler,
 	  
 	  break;
 	}
+
+	// Update track length estimators, current estimators before crossing 
+	// the cell boundary
+	// Note: Both the current cell and next cell need to be known for 
+	//       pulse height tallies
+	EHT::updateEstimatorsAtIntersection( particle_state,
+					     current_cell,
+					     surface_hit,
+					     distance_to_surface_hit,
+					     surface_normal );
 
 	// Check if a termination cell was encountered
 	if( isTerminationCell( geometry_handler, particle.cell() ) )
@@ -198,12 +216,16 @@ void ParticleSimulation<GeometryHandler,
       else
       {
 	// Advance the particle to the collision site
-	particle.advance( remaining_subtrack_mfp/getTotalMacroscopicCS( 
-							     collision_handler,
-							     particle ) );
-
-	// Update estimators before undergoing a collision
-	updateEstimators( estimator_handler, particle );
+	double distance = 
+	  remaining_subtrack_mfp/cell_total_macro_cross_section;
+	
+	particle.advance( distance );
+	
+	// Update collision and track length estimators before undergoing a 
+	// collision
+	EHT::updateEstimatorsAtCollision( particle,
+					  distance,
+					  1.0/cell_total_macro_cross_section );
 
 	// Undergo a collision with the material in the cell
 	undergoCollision( collision_handler, particle );
@@ -211,8 +233,7 @@ void ParticleSimulation<GeometryHandler,
 	// This subtrack is finished
 	break;
       }
-    }
-	     
+    }	     
   }
   
 }

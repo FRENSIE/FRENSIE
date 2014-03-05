@@ -69,6 +69,32 @@ struct TupleMemberTraits<Tuple,FOURTH>
   { tuple.fourth = value; }
 };
 
+/*! The specialization of the TupleMemberTraits for double and FIRST
+ * \ingroup tuple_member_traits
+ */
+template<>
+struct TupleMemberTraits<double,FIRST>
+{
+  typedef double tupleMemberType;
+  static inline double get( const double value )
+  { return value; }
+  static inline void set( double &value, const double &new_value )
+  { value = new_value; }
+};
+
+/*! The specialization of the TupleMemberTraits for unsigned and FIRST
+ * \ingroup tuple_member_traits
+ */
+template<>
+struct TupleMemberTraits<unsigned,FIRST>
+{
+  typedef unsigned tupleMemberType;
+  static inline unsigned get( const unsigned value )
+  { return value; }
+  static inline void set( unsigned &value, const unsigned &new_value )
+  { value = new_value; }
+};
+
 } // end Traits namespace
 
 } // end FACEMC namespace

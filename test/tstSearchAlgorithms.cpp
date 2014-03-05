@@ -52,7 +52,7 @@
   typedef FACEMC::Quad<double,unsigned,double,double> quad_d_u_d_d; \
   typedef FACEMC::Quad<unsigned,unsigned,double,unsigned> quad_u_u_d_u; \
   
-#define UNIT_TEST_INSTANTIATION_ARRAY( type, name, array )		\
+#define UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( type, name, array )	\
   TUPLE_TYPEDEFS()							\
   FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_INSTANT( type,	\
 							    name,	\
@@ -100,6 +100,16 @@
 							    quad_d_d_d_d, \
 							    array )	\
 
+#define UNIT_TEST_INSTANTIATION_ARRAY( type, name, array )		\
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type,			\
+						  name,			\
+						  double,		\
+						  array )		\
+  FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_INSTANT( type,			\
+						  name,			\
+						  unsigned,		\
+						  array ) 
+
 //---------------------------------------------------------------------------//
 // Helper functions.
 //---------------------------------------------------------------------------//
@@ -146,12 +156,189 @@ void fillArrayTupleMembersDiscreteData( Array<T> &array )
 //---------------------------------------------------------------------------//
 // Check that the binarySearchContinuousData function can search tuple elements
 // correctly.
+FACEMC_UNIT_TEST_TYPE_1_ARRAY_TEMPLATE_DECL( Search,
+					     binarySearchContinuousData,
+					     type,
+					     array )
+{
+  Teuchos::Array<type> raw_data( 10 );
+  fillArrayTupleMembersContinuousData<FACEMC::FIRST>( raw_data );
+ 
+  array<type> data;
+  FACEMC::copyArrayView( data, raw_data() );
+
+  typename array<type>::iterator start, end, lower_bound;
+  start = data.begin();
+  end = data.end();
+
+  double value, bin_value;
+
+  // Value on first bin
+  value = 0.0;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 0.0 );
+
+  // Value in first bin
+  value = 0.5;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 0.0 );
+
+  // Value on second bin
+  value = 1.0;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 1.0 );
+
+  // Value in second bin
+  value = 1.5;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 1.0 );
+
+  // Value on third bin
+  value = 2.0;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 2.0 );
+
+  // Value in third bin
+  value = 2.5;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 2.0 );
+
+  // Value on fourth bin
+  value = 3.0;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 3.0 );
+
+  // Value in fourth bin
+  value = 3.5;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 3.0 );
+
+  // Value on fifth bin
+  value = 4.0;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 4.0 );
+
+  // Value in fifth bin
+  value = 4.5;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 4.0 );
+
+  // Value on sixth bin
+  value = 5.0;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 5.0 );
+
+  // Value in sixth bin
+  value = 5.5;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 5.0 );
+
+  // Value on seventh bin
+  value = 6.0;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 6.0 );
+
+  // Value in seventh bin
+  value = 6.5;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 6.0 );
+  
+  // Value on eighth bin
+  value = 7.0;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 7.0 );
+  
+  // Value in eighth bin
+  value = 7.5;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 7.0 );
+
+  // Value on ninth bin
+  value = 8.0;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 8.0 );
+
+  // Value in ninth bin
+  value = 8.5;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 8.0 );
+
+  // Value on boundary
+  value = 9.0;
+  lower_bound = FACEMC::Search::binarySearchContinuousData( start,
+							    end,
+							    value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 9.0 );
+}
+
+UNIT_TEST_INSTANTIATION_ARRAY( Search, binarySearchContinuousData, Array );
+UNIT_TEST_INSTANTIATION_ARRAY( Search, binarySearchContinuousData, ArrayRCP );
+UNIT_TEST_INSTANTIATION_ARRAY( Search, binarySearchContinuousData, ArrayView );
+
+//---------------------------------------------------------------------------//
+// Check that the binarySearchContinuousData function can search tuple elements
+// correctly.
 FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( 
-						Search,
-						binarySearchContinuousData,
-						member,
-						type,
-						array )
+					      Search,
+					      binarySearchContinuousData_tuple,
+					      member,
+					      type,
+					      array )
 {
   Teuchos::Array<type> raw_data( 10 );
   fillArrayTupleMembersContinuousData<member>( raw_data );
@@ -318,18 +505,114 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL(
   TEST_EQUALITY_CONST( bin_value, 9.0 );
 }
 
-UNIT_TEST_INSTANTIATION_ARRAY( Search, binarySearchContinuousData, Array );
-UNIT_TEST_INSTANTIATION_ARRAY( Search, binarySearchContinuousData, ArrayRCP );
-UNIT_TEST_INSTANTIATION_ARRAY( Search, binarySearchContinuousData, ArrayView );
+UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search, 
+				     binarySearchContinuousData_tuple, 
+				     Array );
+UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search, 
+				     binarySearchContinuousData_tuple, 
+				     ArrayRCP );
+UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search, 
+				     binarySearchContinuousData_tuple, 
+				     ArrayView );
+
+//---------------------------------------------------------------------------//
+// Check that the binarySearchDiscreteData function can search an array of
+// doubles correctly
+TEUCHOS_UNIT_TEST( Search, binarySearchDiscreteData_unsigned )
+{
+  Teuchos::Array<unsigned> data( 10 );
+  
+  // Use continuous data so that values are all integers
+  fillArrayTupleMembersContinuousData<FACEMC::FIRST>( data );
+
+  typename Teuchos::Array<unsigned>::iterator start, end, lower_bound;
+  start = data.begin();
+  end = data.end();
+
+  unsigned value, bin_value;
+
+  // Value on first bin
+  value = 0u;
+  lower_bound = FACEMC::Search::binarySearchDiscreteData( start,
+							  end,
+							  value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 0u );
+
+  // Value on second bin
+  value = 1u;
+  lower_bound = FACEMC::Search::binarySearchDiscreteData( start,
+							  end,
+							  value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 1u );
+
+  // Value on third bin
+  value = 3u;
+  lower_bound = FACEMC::Search::binarySearchDiscreteData( start,
+							  end,
+							  value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 3u );
+
+  // Value on fourth bin
+  value = 4u;
+  lower_bound = FACEMC::Search::binarySearchDiscreteData( start,
+							  end,
+							  value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 4u );
+
+  // Value on fifth bin
+  value = 5u;
+  lower_bound = FACEMC::Search::binarySearchDiscreteData( start,
+							  end,
+							  value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 5u );
+
+  // Value on sixth bin
+  value = 6u;
+  lower_bound = FACEMC::Search::binarySearchDiscreteData( start,
+							  end,
+							  value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 6u );
+
+  // Value on seventh bin
+  value = 7u;
+  lower_bound = FACEMC::Search::binarySearchDiscreteData( start,
+							  end,
+							  value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 7u );
+
+  // Value in eighth bin
+  value = 8u;
+  lower_bound = FACEMC::Search::binarySearchDiscreteData( start,
+							  end,
+							  value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 8u );
+
+  // Value on nineth bin
+  value = 9u;
+  lower_bound = FACEMC::Search::binarySearchDiscreteData( start,
+							  end,
+							  value );
+  bin_value = *lower_bound;
+  TEST_EQUALITY_CONST( bin_value, 9u );
+}
 
 //---------------------------------------------------------------------------//
 // Check that the binarySearchDiscreteData function can search tuple elements
 // correctly.
-FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
-						       binarySearchDiscreteData,
-						       member,
-						       type,
-						       array )
+FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( 
+					        Search,	
+						binarySearchDiscreteData_tuple,
+						member,
+						type,
+						array )
 {
   Teuchos::Array<type> raw_data( 10 );
   fillArrayTupleMembersDiscreteData<member>( raw_data );
@@ -512,9 +795,15 @@ FACEMC_UNIT_TEST_MEMBER_1_TUPLE_1_ARRAY_TEMPLATE_DECL( Search,
   TEST_EQUALITY_CONST( bin_value, 1.0 );
 }
 
-UNIT_TEST_INSTANTIATION_ARRAY( Search, binarySearchDiscreteData, Array );
-UNIT_TEST_INSTANTIATION_ARRAY( Search, binarySearchDiscreteData, ArrayRCP );
-UNIT_TEST_INSTANTIATION_ARRAY( Search, binarySearchDiscreteData, ArrayView );
+UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search, 
+				     binarySearchDiscreteData_tuple, 
+				     Array );
+UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search, 
+				     binarySearchDiscreteData_tuple, 
+				     ArrayRCP );
+UNIT_TEST_INSTANTIATION_TUPLE_ARRAY( Search, 
+				     binarySearchDiscreteData_tuple, 
+				     ArrayView );
 
 //---------------------------------------------------------------------------//
 //end tstSearchAlgorithms.cpp

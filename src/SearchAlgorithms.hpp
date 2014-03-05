@@ -25,11 +25,24 @@ Iterator binarySearchContinuousData( Iterator start,
 				     Iterator end,
 				     const typename Traits::TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value );
 
+//! Binary search on a container of continuous data
+template<typename Iterator>
+Iterator binarySearchContinuousData( Iterator start,
+				     Iterator end,
+				     const typename std::iterator_traits<Iterator>::value_type value );
+
+
 //! Binary search on a container of discrete data
 template<TupleMember member, typename Iterator>
 Iterator binarySearchDiscreteData( Iterator start,
 				   Iterator end,
 				   const typename Traits::TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value);
+
+//! Binary search on a container of discrete data
+template<typename Iterator>
+Iterator binarySearchDiscreteData( Iterator start,
+				   Iterator end,
+				   const typename std::iterator_traits<Iterator>::value_type value );
 
 } // end Search namespace
 

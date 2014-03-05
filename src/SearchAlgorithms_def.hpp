@@ -86,6 +86,20 @@ Iterator binarySearchContinuousData( Iterator start,
   return start;
 }
 
+// Binary search on a container of continuous data
+/*! \details This function is meant for conducting a binary search on an 
+ * array of non tuple members. An array of tuple members can still be searched,
+ * however the tuple member on which the search will be conducted will always
+ * be FACEMC::FIRST.
+ */
+template<typename Iterator>
+inline Iterator binarySearchContinuousData( Iterator start,
+					    Iterator end,
+					    const typename std::iterator_traits<Iterator>::value_type value )
+{
+  return binarySearchContinuousData<FIRST>( start, end, value );
+}
+
 // Binary search on an array of discrete data
 /*! \details This function allows one to search a container of discrete data
  * and find the lower bin boundary where the value of interest falls in. The
@@ -155,6 +169,20 @@ Iterator binarySearchDiscreteData( Iterator start,
   testPostcondition( start != invalid );
   
   return start;
+}
+
+// Binary search on a container of discrete data
+/*! \details This function is meant for conducting a binary search on an 
+ * array of non tuple members. An array of tuple members can still be searched,
+ * however the tuple member on which the search will be conducted will always
+ * be FACEMC::FIRST.
+ */
+template<typename Iterator>
+inline Iterator binarySearchDiscreteData( Iterator start,
+					  Iterator end,
+					  const typename std::iterator_traits<Iterator>::value_type value )
+{
+  return binarySearchDiscreteData<FIRST>( start, end, value );
 }
 
 } // end Search namespace

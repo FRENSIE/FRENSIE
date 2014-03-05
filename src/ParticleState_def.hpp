@@ -156,7 +156,7 @@ void ParticleState<CellHandle>::print( std::ostream& os ) const
 {
   os << "History Number: " << d_history_number << std::endl;
   
-  BasicParticleState::print_implementation( os );
+  BasicParticleState::printImplementation( os );
   
   os << "Cell Handle: " << d_cell << std::endl;
   os << "Root: " << (d_root_history ? "yes":"no") << std::endl;

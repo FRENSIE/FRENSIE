@@ -52,6 +52,24 @@ void normalizeDirection( double direction[3] )
   direction[2] /= magnitude;
 }
 
+// Calculate the cosine of the angle between two direction
+double calculateCosineOfAngleBetweenVectors( const double direction_a[3],
+					     const double direction_b[3] )
+{
+  // Make sure that the directions are valid
+  testPrecondition( validDirection( direction_a ) );
+  testPrecondition( validDirection( direction_b ) );
+
+  double angle_cosine = direction_a[0]*direction_b[0] + 
+    direction_a[1]*direction_b[1] + direction_a[2]*direction_b[2];
+
+  // Make sure the angle cosine is valid
+  testPrecondition( angle_cosine >= -1.0 );
+  testPrecondition( angle_cosine <= 1.0 );
+
+  return angle_cosine;
+}
+
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//

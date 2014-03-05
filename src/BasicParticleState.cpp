@@ -307,11 +307,11 @@ void BasicParticleState::multiplyWeight( const double weight_factor )
 // Print method that defines the behavior of the std::stream << operator
 void BasicParticleState::print( std::ostream& os ) const
 {
-  print_implementation( os );
+  printImplementation( os );
 }
 
 // Print method implementation
-void BasicParticleState::print_implementation( std::ostream& os ) const
+void BasicParticleState::printImplementation( std::ostream& os ) const
 {
   os << "Particle Type: ";
   switch( d_type )
