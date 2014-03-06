@@ -15,21 +15,22 @@
 namespace FACEMC{
 
 // The pulse height estimator class
-template<typename CellHandle,
+template<typename CellId,
 	 typename ContributionMultiplierPolicy = WeightMultiplier>
 class PulseHeightEstimator : Estimator
 {
 
 public:
   
-  //! Default constructor
-  PulseHeightEstimator();
-
   //! Constructor
   PulseHeightEstimator( const unsigned long long id,
-			const CellHandle& entity,
+			const CellId& cell_id,
 			const double norm_constant,
 			const double multiplier = 1.0 );
+
+  //! Destructor
+  ~PulseHeightEstimator()
+  { /* ... */ }
 
   //! Set the cosine bin boundaries
   void setCosineBinBoundaries(
@@ -47,31 +48,43 @@ public:
   void setResponseFunctions( 
    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
 
-  //! Add a response function
-  void addResponseFunction(
-		     const Teuchos::RCP<ResponseFunction>& response_function );
-
-  //! Add estimator contribution from a portion of the current history
-  void addPartialHistoryContribution( const BasicParticleState& particle,
-				      const double raw_contribution,
-				      const double angle_cosine );
-
+  //! Calculate and add estimator contribution from a portion of the cur. hist.
+  void calculateAndAddPartialHistoryContribution( 
+			                    const BasicParticleState& particle,
+					    const bool entering_cell )
+  
   //! Return the cell handle that this esimator is assigned to
-  const CellHandle& getEntityHandle() const;
+  const CellId& getEntityId() const;
 
   //! Print the estimator data
   void print( std::ostream& os ) const;
+
+protected:
+
+  //! Calculate the estimator contribution from the entire history
+  double calculateHistoryContribution( WeightMultiplier );
+
+  //! Calculate the estimator contribution from the entire history
+  double calculateHistoryContribution( EnergyAndWeightMultiplier );
   
 private:
 
   // The cell that this estimator is assigned to
-  CellHandle d_cell;
+  CellId d_cell_id;
 
   // The estimator first moment for the current history
   double d_current_history_first_moment;
 };
 	 
 } // end FACEMC namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes.
+//---------------------------------------------------------------------------//
+
+#include "PulseHeightEstimator_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end PULSE_HEIGHT_ESTIMATOR_HPP
 

@@ -26,7 +26,7 @@ namespace FACEMC{
 class Estimator : public PrintableObject
 {
 
-private:
+protected:
 
   // Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
@@ -109,6 +109,9 @@ protected:
 					const double contribution );
   
 private:
+
+  // Test if the bin index is valid
+  bool isValidBinIndex( unsigned bin_index );
 
   // Calculate the mean for a bin
   double calculateMean( unsigned bin_index );

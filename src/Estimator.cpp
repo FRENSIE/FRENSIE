@@ -416,11 +416,7 @@ void Estimator::commitHistoryContributionToBin( const unsigned bin_index,
 						const double contribution )
 {
   // Make sure that the bin index is valid
-  testPrecondition( bin_index < d_response_functions.size()*
-		    d_collision_number_bins.size()*
-		    (d_time_bin_boundaries.size()-1)*
-		    (d_cosine_bin_boundaries.size()-1)*
-		    (d_energy_bin_boundaries.size()-1) );
+  testPrecondition( isValidBinIndex( bin_index ) );
   // Make sure the contribution is valid
   testPrecondition( !ST::isnaninf( contribution ) );
 
@@ -462,15 +458,21 @@ void Estimator::commitHistoryContributionToTotal(
     += moment_contribution;
 }
 
+// Test if the bin index is valid
+bool Estimator::isValidBinIndex( unsigned bin_index )
+{
+  return bin_index < d_response_functions.size()*
+    d_collision_number_bins.size()*
+    (d_time_bin_boundaries.size()-1)*
+    (d_cosine_bin_boundaries.size()-1)*
+    (d_energy_bin_boundaries.size()-1)
+}
+
 // Calculate the mean for a bin
 double Estimator::calculateMean( unsigned bin_index )
 {
   // Make sure that the bin index is valid
-  testPrecondition( bin_index < d_response_functions.size()*
-		    d_collision_number_bins.size()*
-		    (d_time_bin_boundaries.size()-1)*
-		    (d_cosine_bin_boundaries.size()-1)*
-		    (d_energy_bin_boundaries.size()-1) );
+  testPrecondition( isValidBinIndex( bin_index ) );
   // Make sure that the number of histories run is valid
   testPrecondition( Estimator::num_histories > 0 );
   
@@ -480,19 +482,53 @@ double Estimator::calculateMean( unsigned bin_index )
 // Calculate the estimator value for a bin
 double Estimator::calculateEstimatorValue( unsigned bin_index )
 {
+  // Make sure the bin index is valid
+  testPrecondition( isValidBinIndex( bin_index ) );
+  
   return calculateMean( bin_index )*d_multiplier/d_norm_constant;
 }
 
 // Calculate the relative error for a bin
 double Estimator::calculateRelativeError( unsigned bin_index )
 {
-  
+  // Make sure the bin index is valid
+  testPrecondition( isValidBinIndex( bin_index ) );
+
+  return sqrt( d_estimator_moments[bin_index].second/
+	       (d_estimator_moments[bin_index].first*
+		d_estimator_moments[bin_index].first) - 
+	       1.0/Estimator::num_histories );
 }
 
 // Calculate the variance of the variance (VOV) for a bin
 double Estimator::calculateVOV( unsigned bin_index )
 {
+  // Make sure the bin index is valid
+  testPrecondition( isValidBinIndex( bin_index ) );
+
+  double first_moment_squared = d_estimator_moments[bin_index].first*
+    d_estimator_moments[bin_index].first;
   
+  double num_histories_squared = Estimator::num_histories*
+    Estimator::num_histories;
+  double num_histories_cubed = num_histories_squared*Estimator::num_histories;
+    
+  // VOV = S^2(S^2_xbar)/S^4_xbar
+  double vov_numerator = d_estimator_moments[bin_index].fourth -
+    4*d_estimator_moments[bin_index].first*
+    d_estimator_moments[bin_index].third/Estimator::num_histories +
+    8*d_estimator_moments[bin_index].second*first_moment_squared/
+    num_histories_squared -
+    4*first_moment_squared*first_moment_squared/num_histories_cubed -
+    d_estimator_moments[bin_index].second*
+    d_estimator_moments[bin_index].second/Estimator::num_histories;
+    
+  double vov_denominator = (d_estimator_moments[bin_index].second - 
+			first_moment_squared/Estimator::num_histories)*
+    (d_estimator_moments[bin_index].second - 
+     first_moment_squared/Estimator::num_histories);
+
+  return vov_numerator/vov_denominator;
 }
 
 } // end FACEMC namespace

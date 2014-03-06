@@ -111,7 +111,7 @@ void StandardEstimator<EntityId>::addPartialHistoryContribution(
     {
       double response_function_value = evaluateResponseFunction( particle, i );
       
-      unsigned bin_offset = calculateBinIndex( particle, anle_cosine, i );
+      unsigned bin_offset = calculateBinIndex( particle, angle_cosine, i );
 
       d_current_history_first_moments[bin_offest] += 
 	contribution*response_function_value;

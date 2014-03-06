@@ -51,7 +51,7 @@ public:
 		       const Teuchos::Array<unsigned>& collision_number_bins );
 
   //! Set the response functions
-  void setResponseFunctions( 
+  virtual void setResponseFunctions( 
    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
 
   //! Add estimator contribution from a portion of the current history

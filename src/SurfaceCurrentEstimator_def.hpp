@@ -23,10 +23,7 @@ SurfaceCurrentEstimator<SurfaceId,
 						   const SurfaceId& surface_id,
 						   const double norm_constant,
 						   const double multiplier )
-			  : StandardEstimator<SurfaceId>( id, 
-							  surface_id,
-							  norm_constant,
-							  multiplier )
+  : StandardEstimator<SurfaceId>( id, surface_id, norm_constant, multiplier )
 { /* ... */ }
 
 // Calculate and add estimator contribution from a portion of the current hist.

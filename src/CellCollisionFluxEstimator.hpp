@@ -1,49 +1,41 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   SurfaceFluxEstimator.hpp
+//! \file   CellCollisionFluxEstimator.hpp
 //! \author Alex Robinson
-//! \brief  Surface flux estimator class declaration.
+//! \brief  Cell collision flux estimator class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef SURFACE_FLUX_ESTIMATOR_HPP
-#define SURFACE_FLUX_ESTIMATOR_HPP
+#ifndef CELL_COLLISION_FLUX_ESTIMATOR_HPP
+#define CELL_COLLISION_FLUX_ESTIMATOR_HPP
 
 // FACEMC Includes
-#include "SurfaceEstimator.hpp"
+#include "CellEstimator.hpp"
 #include "EstimatorContributionMultiplierPolicy.hpp"
 
 namespace FACEMC{
 
-template<typename SurfaceId,
+template<typename CellId,
 	 typename ContributionMultiplierPolicy = WeightMultiplier>
-class SurfaceFluxEstimator : public SurfaceEstimator<SurfaceId>
+class CellCollisionFluxEstimator : public CellEstimator<CellId>
 {
 
 public:
 
   //! Constructor
-  SurfaceFluxEstimator( const unsigned long long id,
-			const SurfaceId& surface_id,
-			const double norm_constant,
-			const double multiplier = 1.0 );
+  CellCollisionFluxEstimator( const unsigned long long id,
+			      const CellId& cell_id,
+			      const double norm_constant,
+			      const double multiplier = 1.0 );
 
   //! Destructor
-  ~SurfaceCurrentEstimator()
+  ~CellCollisionFluxEstimator()
   { /* ... */ }
 
   //! Calculate and add estimator contribution from a portion of the cur. hist.
-  void calculateAndAddPartialHistoryContribution(
-					 const BasicParticleState& particle,
-					 const double reference_direction[3] );
-
-  //! Set the angle cosine cutoff value
-  static void setAngleCosineCutoff( const double angle_cosine_cutoff );
-
-private:
-  
-  // Angle cosine cutoff value (default = 0.01)
-  static double angle_cosine_cutoff;
+  void calculateAndAddPartialHistoryContribution( 
+					   const BasicParticleState& particle,
+					   const double raw_contribution );
 };
 
 } // end FACEMC namespace
@@ -52,12 +44,12 @@ private:
 // Template Includes.
 //---------------------------------------------------------------------------//
 
-#include "SurfaceFluxEstimator_def.hpp"
+#include "CellCollisionFluxEstimator_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end SURFACE_FLUX_ESTIMATOR_HPP
+#endif // end CELL_COLLISION_FLUX_ESTIMATOR_HPP
 
 //---------------------------------------------------------------------------//
-// end SurfaceFluxEstimator.hpp
+// end CellCollisionFluxEstimator.hpp
 //---------------------------------------------------------------------------//

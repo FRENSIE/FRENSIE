@@ -25,7 +25,7 @@ SurfaceEstimator<SurfaceId>::SurfaceEstimator( const unsigned long long id,
 template<typename SurfaceId>
 void SurfaceEstimator<SurfaceId>::print( std::ostream& os ) const
 {
-  os << "Tally " << getId() << ": Surface " << getEntityId() << std::endl;
+  os << "Estimator " << getId() << ": Surface " << getEntityId() << std::endl;
 
   os << Estimator::printImplementation( os );
 }
