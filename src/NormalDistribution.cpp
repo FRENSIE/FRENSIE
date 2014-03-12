@@ -121,6 +121,12 @@ double NormalDistribution::getLowerBoundOfIndepVar() const
   return d_min_independent_value;
 }
 
+// Return the distribution type
+OneDDistribution NormalDistribution::getDistributionType() const
+{
+  return NormalDistribution::distribution_type;
+}
+
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//

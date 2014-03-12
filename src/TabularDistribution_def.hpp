@@ -140,6 +140,14 @@ TabularDistribution<InterpolationPolicy>::getLowerBoundOfIndepVar() const
 {
   return d_distribution.front().first;
 }
+
+// Return the distribution type
+template<typename InterpolationPolicy>
+OneDDistribution 
+TabularDistribution<InterpolationPolicy>::getDistributionType() const
+{
+  return TabularDistribution<InterpolationPolicy>::distribution_type;
+}
 				       			    
 } // end FACEMC namespace
 

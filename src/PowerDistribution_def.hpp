@@ -254,6 +254,13 @@ double PowerDistribution<1u>::getLowerBoundOfIndepVar() const
   return d_min_indep_limit;
 }
 
+// Return the distribution type
+template<unsigned N>
+double PowerDistribution<N>::getDistributionType() const
+{
+  return PowerDistribution<N>::distribution_type;
+}
+
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//

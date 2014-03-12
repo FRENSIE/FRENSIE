@@ -116,6 +116,12 @@ double DiscreteDistribution::getLowerBoundOfIndepVar() const
   return min_value;
 }
 
+// Return the distribution type
+OneDDistribution DiscreteDistribution::getDistributionType() const
+{
+  return DiscreteDistribution::distribution_type;
+}
+
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//

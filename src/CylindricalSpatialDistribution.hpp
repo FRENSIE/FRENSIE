@@ -56,6 +56,9 @@ public:
   //! Return a random (cartesian) sample from the distribution (x, y, z)
   void sample( double sampled_point[3] );
 
+  //! Check if the distribution is uniform
+  bool isUniform() const;
+
 protected:
 
   //! Convert a cartesian coordinate to a cylindrical coordinate
@@ -73,13 +76,16 @@ private:
   // axis dimension distribution
   Teuchos::RCP<OneDDistribution> d_axis_distribution;
 
-  // the start position of the cylindrical axis
+  // The start position of the cylindrical axis
   double d_center_x_position;
   double d_center_y_position;
   double d_center_z_position;
 
-  // the cylindrical axis
+  // The cylindrical axis
   Axis d_axis;
+
+  // Records whether the distribution is uniform
+  bool d_uniform;
 };
 
 } // end FACEMC namespace

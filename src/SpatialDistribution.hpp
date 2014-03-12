@@ -33,6 +33,9 @@ public:
 
   //! Return a random (cartesian) sample from the distribution (x, y, z)
   virtual void sample( double sampled_point[3] ) = 0;
+
+  //! Check if the distribution is uniform
+  virtual bool isUniform() const = 0;
 };
 
 } // end FACEMC namespace

@@ -19,12 +19,23 @@ CartesianSpatialDistribution::CartesianSpatialDistribution(
 			 const Teuchos::RCP<OneDDistribution>& z_distribution )
   : d_x_distribution( x_distribution ),
     d_y_distribution( y_distribution ),
-    d_z_distribution( z_distribution )
+    d_z_distribution( z_distribution ),
+    d_uniform( true )
 {
   // Make sure that the distributions have been set
   testPrecondition( !x_distribution.is_null() );
   testPrecondition( !y_distribution.is_null() );
   testPrecondition( !z_distribution.is_null() );
+
+  // Determine if the distribution is uniform
+  if( x_distribution->getDistributionType() != UNIFORM_DISTRIBUTION )
+    d_uniform = false;
+
+  if( y_distribution->getDistributionType() != UNIFORM_DISTRIBUTION )
+    d_uniform = false;
+
+  if( z_distribution->getDistributionType() != UNIFORM_DISTRIBUTION )
+    d_uniform = false;
 }
 
 // Evaluate the spatial distribution
@@ -71,6 +82,12 @@ void CartesianSpatialDistribution::sample( double sampled_point[3] )
 
   // Sample the z position
   sampled_point[2] = d_z_distribution->sample();
+}
+
+// Check if the distribution is uniform
+bool CartesianSpatialDistribution::isUniform() const
+{
+  return d_uniform;
 }
 
 } // end FACEMC namespace

@@ -41,6 +41,18 @@ void initializeParticleState( ParticleState& particle )
   double y_dir = sin_theta*sin( 2.0*pi*rn2 );
 
   particle.setDirection( x_dir, y_dir, z_dir );
+
+  // Sample the particle starting position 
+  double rn3 = RNG::getRandomNumber<double>();
+  double x_pos = -42.648 + (-36.552+42.648)*rn3;
+
+  double rn4 = RNG::getRandomNumber<double>();
+  double y_pos = -42.775 + (-36.425+42.775)*rn4;
+
+  double rn5 = RNG::getRandomNumber<double>();
+  double z_pos = -2.54 + (127+2.54)*rn5;
+
+  particle.setPosition( x_pos, y_pos, z_pos );
 }
 
 // Print out the ray history

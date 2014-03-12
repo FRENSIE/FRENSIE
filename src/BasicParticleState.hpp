@@ -19,7 +19,7 @@
 namespace FACEMC{
 
 //! The basic particle state struct
-  class BasicParticleState : public PrintableObject
+class BasicParticleState : public PrintableObject
 {
 
 private:
@@ -112,6 +112,12 @@ public:
   //! Set the time state of the particle (s)
   void setTime( const double time );
 
+  //! Return the collision number of the particle
+  unsigned getCollisionNumber() const;
+  
+  //! Increment the collision number of the particle
+  void incrementCollisionNumber() const;
+
   //! Return the weight of the particle
   double getWeight() const;
 
@@ -151,6 +157,9 @@ private:
 
   // Time of the particle (s)
   double d_time;
+
+  // Collision number of the particle
+  unsigned d_collision_number;
 
   // Weight o the particle
   double d_weight;

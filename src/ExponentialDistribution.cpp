@@ -85,6 +85,12 @@ double ExponentialDistribution::evaluateExponential(
   return exp( -d_exponent_multiplier*indep_var_value );
 }
 
+// Return the distribution type
+OneDDistributionType ExponentialDistribution::getDistributionType() const
+{
+  return ExponentialDistribution::distribution_type;
+}
+
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//

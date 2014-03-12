@@ -58,10 +58,17 @@ public:
   //! Return the lower bound of the distribution independent variable
   double getLowerBoundOfIndepVar() const;
 
+  //! Return the distribution type
+  OneDDistributionType getDistributionType() const;
+
 private:
 
   // Evaluate the exponential
   double evaluateExponential( const double indep_var_value ) const;
+
+  // The distribution type
+  static const OneDDistributionType distribution_type = 
+    EXPONENTIAL_DISTRIBUTION;
 
   // The constant multiplier
   double d_constant_multiplier;

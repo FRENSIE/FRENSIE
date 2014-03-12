@@ -56,7 +56,13 @@ public:
   //! Return the lower bound of the distribution independent variable
   double getLowerBoundOfIndepVar() const;
 
+  //! Return the distribution type
+  OneDDistribution getDistributionType() const;
+
 private:
+
+  // The distribution type
+  static const OneDDistributionType distribution_type = POWER_N_DISTRIBUTION;
 
   // The constant multiplier
   double d_constant_multiplier;
@@ -113,7 +119,13 @@ public:
   //! Return the lower bound of the distribution independent variable
   double getLowerBoundOfIndepVar() const;
 
+  //! Return the distribution type
+  OneDDistributionType getDistributionType() const;
+
 private:
+
+  // The distribution type
+  static const OneDDistributionType distribution_type = POWER_2_DISTRIBUTION;
 
   // The constant multiplier
   double d_constant_multiplier;
@@ -170,7 +182,13 @@ public:
   //! Return the lower bound of the distribution independent variable
   double getLowerBoundOfIndepVar() const;
 
+  //! Return the distribution type
+  OneDDistributionType getDistributionType() const;
+
 private:
+
+  // The distribution type
+  static const OneDDistribution distribution_type = POWER_1_DISTRIBUTION;
 
   // The constant multiplier
   double d_constant_multiplier;

@@ -2,7 +2,7 @@
 //!
 //! \file   SurfaceFluxEstimator_def.hpp
 //! \author Alex Robinson
-//! \brief  Surface flux estimator class definition.
+//! \brief  Surface flux estimator class definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -11,77 +11,85 @@
 
 // FACEMC Includes
 #include "ContractException.hpp"
-#include "DirectionHelpers.hpp"
 
 namespace FACEMC{
 
 // Initialize the static member data
-double SurfaceFluxEstimator::angle_cosine_cutoff = 0.01;
+double SurfaceFluxEstimator:angle_cosine_cutoff = 0.01;
 
+// Set the angle cosine cutoff value
+template<typename SurfaceId,typename ContributionMultiplierPolicy>
+void SurfaceFluxEstimator<SurfaceId,
+			  ContributionMultiplierPolicy>::setAngleCosineCutoff(
+					     const double angle_cosine_cutoff )
+{
+  // Make sure the angle cosine cutoff is valid
+  testPrecondition( angle_cosine_cutoff > 0.0 );
+  testPrecondition( angle_cosine_cutoff < 1.0 );
+  
+  SurfaceFluxEstimator::angle_cosine_cutoff = angle_cosine_cutoff;
+}
 
 // Constructor
 template<typename SurfaceId,typename ContributionMultiplierPolicy>
-SurfaceCurrentEstimator<SurfaceId,
-			ContributionMultiplierPolicy>::SurfaceCurrentEstimator(
-						   const unsigned long long id,
-						   const SurfaceId& surface_id,
-						   const double norm_constant,
-						   const double multiplier )
-  : StandardEstimator<SurfaceId>( id, surface_id, norm_constant, multiplier )
+SurfaceFluxEstimator<SurfaceId,
+		     ContributionMultiplierPolicy>::SurfaceFluxEstimator(
+				  const unsigned long long id,
+				  const double multiplier,
+				  const Teuchos::Array<SurfaceId>& surface_ids,
+				  const Teuchos::Array<double>& surface_areas )
+  : StandardSurfaceEstimator( id, multiplier, surface_ids, surface_areas )
 { /* ... */ }
 
-// Calculate and add estimator contribution from a portion of the current hist.
-/*! \details The contribution from this portion of the current history will
- * first be calculated. For a flux estimator, this value is simply the
- * weight of the particle divided by the absolute value of the cosine of the
- * angle between the particle direction and the reference direction (surface 
- * normal). For an energy flux estimator, this value is the weight of the 
- * particle multiplied by the particle energy and divided by the absolute 
- * value of the cosine of the angle between the particle direction and the 
- * reference direction (surface normal). This function will not multiply the 
- * contribution by the response function value. The reference direction will 
- * also be used to calculate the cosine bin for the contribution. Once these 
- * two values have been calculated, the contribution will be added to the 
- * other contributions from this history.
- */
+// Add estimator contribution from a portion of the current history
 template<typename SurfaceId,typename ContributionMultiplierPolicy>
 void SurfaceFluxEstimator<SurfaceId,
-      ContributionMultiplierPolicy>::calculateAndAddPartialHistoryContribution(
-					  const BasicParticleState& particle,
-					  const double reference_direction[3] )
+		  ContributionMultiplierPolicy>::addPartialHistoryContribution(
+					    const BasicParticleState& particle,
+					    const SurfaceId& surface_crossed,
+					    const double angle_cosine )
 {
-  // Make sure that the reference direction is valid
-  testPrecondition( validDirection( reference_direction ) );
+  // Make sure the surface is assigned to this estimator
+  testPrecondition( isEntityAssigned( surface_crossed ) );
+  // Make sure the angle cosine is valid
+  testPrecondition( angle_cosine <= 1.0 );
+  testPrecondition( angle_cosine >= -1.0 );
 
-  double angle_cosine = 
-    calculateCosineOfAngleBetweenVectors( particle.getDirection(),
-					  reference_direction );
+  if( isParticleTypeAssigned( particle.getType() ) )
+  {
+    if( isPointInEstimatorPhaseSpace( particle.getEnergy(),
+				      angle_cosine,
+				      particle.getTime(),
+				      particle.getCollisionNumber() ) )
+    {
+      double contribution; 
 
-  double contribution = ST::magnitude( angle_cosine );
-  
-  // If the angle cosine is very close to zero, set it to eps/2 to prevent
-  // large contributions to the estimator
-  if( contribution < SurfaceFlusEstimator::angle_cosine_cutoff )
-    contribution = SurfaceFlusEstimator::angle_cosine_cutoff/2;
-  
-  contribution *= ContributionMultiplierPolicy::multiplier( particle );
+      // If the angle cosine is very close to zero, set it to eps/2 to
+      // prevent large contributions to the estimator
+      if( ST::magnituce( angle_cosine ) >
+	  SurfaceFlusEstimator::angle_cosine_cutoff )
+	contribution = 1.0/ST::magnitude( angle_cosine );
+      else
+	contribution = SurfaceFlusEstimator::angle_cosine_cutoff/2;
 
-  // Add the contribution from this history
-  StandardEstimator<SurfaceId>::addPartialHistoryContribution( particle,
-							       contribution,
-							       angle_cosine );
+      contribution *= ContributionMultiplierPolicy::multiplier( particle );
+
+      addPartialHistoryContribution( surface_crossed, 
+				     particle, 
+				     angle_cosine,
+				     contribution );
+    }
+  }
 }
 
-// Set the angle cosine cutoff value
-/*! This value will be used to prevent very large estimator contributions when
- * the angle cosine is very close to zero. The default value is 0.01. 
- */ 
+// Print the estimator data
 template<typename SurfaceId,typename ContributionMultiplierPolicy>
 void SurfaceFluxEstimator<SurfaceId,
-			  ContributionMultiplierPolicy>::setAngleCosineCutoff( 
-					     const double angle_cosine_cutoff )
+		 ContributionMultiplierPolicy>::print( std::ostream& os ) const
 {
-  SurfaceFluxEstimator::angle_cosine_cutoff = angle_cosine_cutoff;
+  os << "Surface Flux Estimator: " << getId() << std::endl;
+
+  printImplementation( os, "Surface" );
 }
 
 } // end FACEMC namespace

@@ -9,9 +9,11 @@
 #ifndef SURFACE_CURRENT_ESTIMATOR_DEF_HPP
 #define SURFACE_CURRENT_ESTIMATOR_DEF_HPP
 
+// Std Lib Includes
+#include <iostream>
+
 // FACEMC Includes
 #include "ContractException.hpp"
-#include "DirectionHelpers.hpp"
 
 namespace FACEMC{
 
@@ -19,42 +21,68 @@ namespace FACEMC{
 template<typename SurfaceId,typename ContributionMultiplierPolicy>
 SurfaceCurrentEstimator<SurfaceId,
 			ContributionMultiplierPolicy>::SurfaceCurrentEstimator(
-						   const unsigned long long id,
-						   const SurfaceId& surface_id,
-						   const double norm_constant,
-						   const double multiplier )
-  : StandardEstimator<SurfaceId>( id, surface_id, norm_constant, multiplier )
+				  const unsigned long long id,
+				  const double multiplier,
+				  const Teuchos::Array<SurfaceId>& surface_ids,
+			          const Teuchos::Array<double>& surface_areas )
+  : StandardEntityEstimator<SurfaceId>( id,
+					multiplier,
+					surface_ids,
+					surface_areas )
 { /* ... */ }
 
-// Calculate and add estimator contribution from a portion of the current hist.
-/*! \details The contribution from this portion of the current history will
- * first be calculated. For a current estimator, this value is simply the
- * weight of the particle. For an energy current estimator, this value is
- * the weight of the particle multiplied by the particle energy. This function
- * will not multiply the contribution by the response function value. The 
- * reference direction will be used to calculate the cosine bin for the 
- * contribution. Once these two values have been calculated, the contribution
- * will be added to the other contributions from this history.
- */
+// Set the response functions
 template<typename SurfaceId,typename ContributionMultiplierPolicy>
 void SurfaceCurrentEstimator<SurfaceId,
-      ContributionMultiplierPolicy>::calculateAndAddPartialHistoryContribution(
-					  const BasicParticleState& particle,
-					  const double reference_direction[3] )
+			   ContributionMultiplierPolicy>::setResponseFunctions(
+    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
 {
-  // Make sure that the reference_direction is valid
-  testPrecondition( validDirection( reference_direction ) );
+  std::cerr << "Warning: Response functions cannot be set for surface current "
+	    << "estimators. The response functions requested for surface "
+	    << "current estimator " << getId() << " will be ignored."
+	    << std::endl;
+}
 
-  double angle_cosine = 
-    calculateCosineOfAngleBetweenVectors( particle.getDirection(),
-					  reference_direction );
+// Add estimator contribution from a portion of the current history
+template<typename SurfaceId,typename ContributionMultiplierPolicy>
+void SurfaceCurrentEstimator<SurfaceId,
+		  ContributionMultiplierPolicy>::addPartialHistoryContribution(
+					    const BasicParticleState& particle,
+					    const SurfaceId& surface_crossed,
+					    const double angle_cosine )
+{
+  // Make sure the surface is assigned to this estimator
+  testPrecondition( isEntityAssigned( surface_crossed ) );
+  // Make sure the angle cosine is valid
+  testPrecondition( angle_cosine <= 1.0 );
+  testPrecondition( angle_cosine >= -1.0 );
+  
+  if( isParticleTypeAssigned( particle.getType() ) )
+  {
+    if( isPointInEstimatorPhaseSpace( particle.getEnergy(),
+				      angle_cosine,
+				      particle.getTime(),
+				      particle.getCollisionNumber() ) )
+    {
+      double contribution = 
+	ContributionMultiplierPolicy::multiplier( particle );
 
-  double contribution = ContributionMultiplierPolicy::multiplier( particle );
+      addPartialHistoryContribution( surface_crossed, 
+				     particle, 
+				     angle_cosine,
+				     contribution );
+    }
+  }
+}
 
-  // Add the contribution from this history
-  StandardEstimator<SurfaceId>::addPartialHistoryContribution( particle, 
-							       contribution, 
-							       angle_cosine );
+// Print the estimator data
+template<typename SurfaceId,typename ContributionMultiplierPolicy>
+void SurfaceCurrentEstimator<SurfaceId,
+		 ContributionMultiplierPolicy>::print( std::ostream& os ) const
+{
+  os << "Surface Current Estimator: " << getId() << std::endl;
+
+  printImplementation( os, "Surface" );
 }
 
 } // end FACEMC namespace
@@ -62,5 +90,5 @@ void SurfaceCurrentEstimator<SurfaceId,
 #endif // end SURFACE_CURRENT_ESTIMATOR_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end SurfaceCurrentEstimator_def.hpp
+// SurfaceCurrentEstimator_def.hpp
 //---------------------------------------------------------------------------//

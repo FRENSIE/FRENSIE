@@ -29,37 +29,6 @@
  * the terminal using the stream operator.
  */ 
 
-/*! \brief Stream operator for Pair
- * \ingroup print_format
- */
-template<typename T1, typename T2>
-std::ostream& operator<<(std::ostream &out, const FACEMC::Pair<T1,T2> &p)
-{
-  out << "{ " << p.first << ", " << p.second << " }";
-  return out;
-}
-
-/*! Stream operator for Trip
- * \ingroup print_format
- */
-template<typename T1, typename T2, typename T3>
-std::ostream& operator<<(std::ostream &out, const FACEMC::Trip<T1,T2,T3> &p)
-{
-  out << "{ " << p.first << ", " << p.second << ", " << p.third << " }";
-  return out;
-}
-
-/*! Stream operator for Quad
- * \ingroup print_format
- */
-template<typename T1, typename T2, typename T3, typename T4>
-std::ostream& operator<<(std::ostream &out, const FACEMC::Quad<T1,T2,T3,T4> &p)
-{
-  out << "{ " << p.first << ", " << p.second << ", " << p.third 
-      << ", " << p.fourth << " }";
-  return out;
-}
-
 /*! Stream operator for std::list
  * \ingroup print_format
  */

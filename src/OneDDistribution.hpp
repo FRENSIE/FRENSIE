@@ -9,6 +9,9 @@
 #ifndef ONE_D_DISTRIBUTION_HPP
 #define ONE_D_DISTRIBUTION_HPP
 
+// FACEMC Includes
+#include "OneDDistributionType.hpp"
+
 namespace FACEMC{
 
 //! The one dimensional probability density function declaration
@@ -42,6 +45,9 @@ public:
 
   //! Return the lower bound of the distribution independent variable
   virtual double getLowerBoundOfIndepVar() const = 0;
+
+  //! Return the distribution type
+  virtual OneDDistributionType getDistributionType() const = 0;
 };
 
 } // end FACEMC namespace

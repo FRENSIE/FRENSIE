@@ -57,8 +57,14 @@ public:
 
   //! Return the lower bound of the distribution independent variable
   double getLowerBoundOfIndepVar() const;
+
+  //! Return the distribution type
+  OneDDistributionType getDistributionType() const;
   
 private:
+
+  // The distribution type
+  static const OneDDistributionType distribution_type = HISTOGRAM_DISTRIBUTION;
 
   // The distribution (first = bin_min, second = bin_max, third = bin_PDF,
   // fourth = bin_CDF )

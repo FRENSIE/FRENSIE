@@ -115,6 +115,12 @@ double HistogramDistribution::getLowerBoundOfIndepVar() const
   return d_distribution.front().first;
 }
 
+// Return the distribution type
+OneDDistribution HistogramDistribution::getDistributionType() const
+{
+  return HistogramDistribution::distribution_type;
+}
+
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//

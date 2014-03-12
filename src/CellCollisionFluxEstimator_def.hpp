@@ -2,12 +2,15 @@
 //!
 //! \file   CellCollisionFluxEstimator_def.hpp
 //! \author Alex Robinson
-//! \brief  Cell collision flux estimator class definition.
+//! \brief  Cell collision flux estimator class declaration
 //!
 //---------------------------------------------------------------------------//
 
 #ifndef CELL_COLLISION_FLUX_ESTIMATOR_DEF_HPP
 #define CELL_COLLISION_FLUX_ESTIMATOR_DEF_HPP
+
+// Std Lib Includes
+#include <iostream>
 
 // FACEMC Includes
 #include "ContractException.hpp"
@@ -15,38 +18,86 @@
 namespace FACEMC{
 
 // Constructor
-template<typename CellID,typename ContributionMultiplierPolicy>
+template<typename CellId,typename ContributionMultiplierPolicy>
 CellCollisionFluxEstimator<CellId,
 		     ContributionMultiplierPolicy>::CellCollisionFluxEstimator(
-						   const unsigned long long id,
-						   const CellId& cell_id,
-						   const double norm_constant,
-						   const double multiplier )
-  : CellEstimator( id, cell_id, norm_constant, multiplier )
+				   const unsigned long long id,
+				   const double multiplier,
+				   const Teuchos::Array<CellId>& cell_ids,
+			           const Teuchos::Array<double>& cell_volumes )
+  : StandardEntityEstimator<EntityId>( id,
+				       multiplier,
+				       cell_ids,
+				       cell_volumes )
 { /* ... */ }
 
-// Calculate and add estimator contribution from a portion of the cur. hist.
-/*! \details The raw contribution is 1 over the total macroscopic cross section
- * at the collision point inside of the cell associated with this estimator.
- */ 
-template<typename CellID,typename ContributionMultiplierPolicy>
+// Set the cosine bin boundaries
+template<typename CellId,typename ContributionMultiplierPolicy>
 void CellCollisionFluxEstimator<CellId,
-      ContributionMultiplierPolicy>::calculateAndAddPartialHistoryContribution(
-					    const BasicParticleState& particle,
-					    const double raw_contribution )
+			 ContributionMultiplierPolicy>::setCosineBinBoundaries(
+			  const Teuchos::Array<double>& cosine_bin_boundaries )
 {
-  // Make sure that the inverse macroscopic cross section value is valid
-  testPrecondition( !ST::isnaninf( raw_contribution ) );
-  testPrecondition( raw_contribution > 0.0 );
+  std::cerr << "Warning: Cosine bins cannot be set for cell collision flux "
+	    << "estimators. The cosine bins requested for cell collision "
+	    << "flux estimator " << getId() < " will be ignored."
+	    << std::endl;
+}
 
-  double contribution = raw_contribution*
-    ContributionMultiplierPolicy::multiplier( particle );
+// Set the particle types that can contribute to the estimator
+/*! \details Photons, electrons and neutrons (or their adjoint
+ * couterparts) can contribute to the estimator. Combinations are not 
+ * allowed.
+ */
+template<typename CellId,typename ContributionMultiplierPolicy>
+void CellCollisionFluxEstimator<CellId,
+			       ContributionMultiplierPolicy>::setParticleTypes(
+			   const Teuchos::Array<ParticleType>& particle_types )
+{
+  // Make sure only one particle type has been specified
+  testPrecondition( particle_types.size() == 1 );
 
-  // Assume a reference direction of (0,0,1) for calculating the angle cos bin
-  StandardEstimator<CellId>::addPartialHistoryContribution( 
-						    particle,
-						    contribution,
-						    particle.getZDirection() );
+  Estimator::setParticleTypes( particle_types );
+}
+
+// Add estimator contribution from a portion of the current history
+template<typename CellId,typename ContributionMultiplierPolicy>
+void CellTrackLengthFluxEstimator<CellId,
+		  ContributionMultiplierPolicy>::addPartialHistoryContribution(
+				     const BasicParticleState& particle,
+				     const CellId& cell_of_collision,
+				     const double inverse_total_cross_section )
+{
+  // Make sure the cell is assigned to this estimator
+  testPrecondition( isEntityAssigned( cell_of_collision ) );
+  // Make sure the inverse total macroscopic cross section is valid
+  testPrecondition( !ST::isnaninf( inverse_total_cross_section ) );
+  
+  if( isParticleTypeAssigned( particle.getType() ) )
+  {
+    if( isPointInEstimatorPhaseSpace( particle.getEnergy(),
+				      angle_cosine,
+				      particle.getTime(),
+				      particle.getCollisionNumber() ) )
+    {
+      double contribution = inverse_total_cross_section*
+	ContributionMultiplierPolicy::multiplier( particle );
+
+      addPartialHistoryContribution( cell_of_collision, 
+				     particle, 
+				     0, 
+				     contribution );
+    }
+  }
+}
+
+// Print the estimator data
+template<typename CellId,typename ContributionMultiplierPolicy>
+void CellTrackCollisionEstimator<CellId,
+		 ContributionMultiplierPolicy>::print( std::ostream& os ) const
+{
+  os << "Cell Collision Estimator: " << getId() << std::endl;
+
+  printImplementation( os, "Cell" );
 }
 
 } // end FACEMC namespace

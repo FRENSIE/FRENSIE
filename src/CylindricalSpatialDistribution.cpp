@@ -29,7 +29,8 @@ CylindricalSpatialDistribution::CylindricalSpatialDistribution(
     d_center_x_position( center_x_position ),
     d_center_y_position( center_y_position ),
     d_center_z_position( center_z_position ),
-    d_axis( axis )
+    d_axis( axis ),
+    d_uniform( true )
 {
   // Make sure that the distributions have been set
   testPrecondition( !r_distribution.is_null() );
@@ -44,6 +45,16 @@ CylindricalSpatialDistribution::CylindricalSpatialDistribution(
   testPrecondition( !ST::isnaninf( center_x_position ) );
   testPrecondition( !ST::isnaninf( center_y_position ) );
   testPrecondition( !ST::isnaninf( center_z_position ) );
+
+  // Determine if the distribution is uniform
+  if( r_distribution->getDistributionType() != POWER_1_DISTRIBUTION )
+    d_uniform = false;
+  
+  if( theta_distribution->getDistributionType() != UNIFORM_DISTRIBUTION )
+    d_uniform = false;
+
+  if( axis_distribution->getDistributionType() != UNIFORM_DISTRIBUTION )
+    d_uniform = false;
 }
 
 // Evaluate the spatial distribution
@@ -109,6 +120,12 @@ void CylindricalSpatialDistribution::sample( double sampled_point[3] )
   sampled_point[0] += d_center_x_position;
   sampled_point[1] += d_center_y_position;
   sampled_point[2] += d_center_z_position;
+}
+
+// Check if the distribution is uniform
+void CylindricalSpatialDistribution::isUniform() const
+{
+  return d_uniform;
 }
 
 // Convert a cartesian coordinate to a cylindrical coordinate

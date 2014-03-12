@@ -61,7 +61,13 @@ public:
   //! Return the lower bound of the distribution independent variable
   double getLowerBoundOfIndepVar() const;
 
+  //! Return the distribution type
+  OneDDistributionType getDistributionType() const;
+
 private:
+
+  // The distribution type
+  static const OneDDistributionType distribution_type = NORMAL_DISTRIBUTION;
 
   // Constant multiplier (1/sqrt(2*pi))
   static const double constant_multiplier;

@@ -56,6 +56,9 @@ public:
   //! Return a random (cartesian) sample from the distribution (x, y, z)
   void sample( double sampled_point[3] );
 
+  //! Check if the distribution is uniform
+  void isUniform() const;
+
 protected:
 
   //! Convert a cartesian coordinate to a spherical coordinate
@@ -80,6 +83,9 @@ private:
 
   // The spherical axis (direction of the mu distribution)
   Axis d_axis;
+
+  // Records whether the distribution is uniform
+  bool d_uniform;
 };
 
 } // end FACEMC namespace

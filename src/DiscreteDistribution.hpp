@@ -58,7 +58,13 @@ public:
   //! Return the lower bound of the independent variable
   double getLowerBoundOfIndepVar() const;
 
+  //! Return the distribution type
+  OneDDistribution getDistributionType() const;
+
 private:
+
+  // The distribution type
+  static const OneDDistributionType distribution_type = DISCRETE_DISTRIBUTION;
 
   // The distribution (first = independent value, second = CDF)
   Teuchos::Array<Pair<double,double> > d_distribution;

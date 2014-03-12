@@ -23,6 +23,7 @@ BasicParticleState::BasicParticleState()
     d_energy( 0.0 ),
     d_velocity( 0.0 ),
     d_time( 0.0 ),
+    d_collision_number( 0u ),
     d_weight( 1.0 )
 {
   // Set the velocity
@@ -46,6 +47,7 @@ BasicParticleState::BasicParticleState( const ParticleType type,
     d_energy( energy ),
     d_velocity(),
     d_time( time ),
+    d_collision_number( 0u ),
     d_weight( weight )
 {
   // Make sure that the position coordinates are valid
@@ -91,6 +93,7 @@ BasicParticleState::BasicParticleState(
     d_energy( existing_basic_state.d_energy ),
     d_velocity( existing_basic_state.d_velocity ),
     d_time( existing_basic_state.d_time ),
+    d_collision_number( existing_basic_state.d_collision_number ),
     d_weight( existing_basic_state.d_weight )
 {
   // Deep copy of the position
@@ -126,6 +129,7 @@ BasicParticleState& BasicParticleState::operator=(
     d_energy = existing_basic_state.d_energy;
     d_velocity = existing_basic_state.d_velocity;
     d_time = existing_basic_state.d_time;
+    d_collision_number = existing_basic_state.d_collision_number;
     d_weight = existing_basic_state.d_weight;
   }
 }
@@ -281,6 +285,18 @@ double BasicParticleState::getTime() const
 void BasicParticleState::setTime( const double time )
 {
   d_time = time;
+}
+
+// Return the collision number of the particle
+unsigned BasicParticleState::getCollisionNumber() const
+{
+  return d_collision_number;
+}
+
+// Increment the collision number
+void incrementCollisionNumber() const
+{
+  ++d_collision_number;
 }
 
 // Return the weight of the particle

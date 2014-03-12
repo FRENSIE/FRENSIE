@@ -57,7 +57,13 @@ public:
   //! Return the lower bound of the distribution independent variable
   double getLowerBoundOfIndepVar() const;
 
+  //! Return the distribution type
+  OneDDistribution getDistributionType() const;
+
 private:
+
+  // The distribution type
+  static const OneDDistributionType distribution_type = UNIFORM_DISTRIBUTION;
 
   // The min independent value
   double d_min_independent_value;

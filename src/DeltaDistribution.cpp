@@ -65,6 +65,12 @@ double DeltaDistribution::getLowerBoundOfIndepVar() const
   return d_location;
 }
 
+// Return the distribution type
+OneDDistributionType getDistributionType() const
+{
+  return DeltaDistribution::distribution_type;
+}
+
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//

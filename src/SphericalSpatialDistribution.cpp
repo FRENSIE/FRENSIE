@@ -29,7 +29,8 @@ SphericalSpatialDistribution::SphericalSpatialDistribution(
     d_center_x_position( center_x_position ),
     d_center_y_position( center_y_position ),
     d_center_z_position( center_z_position ),
-    d_axis( axis )
+    d_axis( axis ),
+    d_uniform( true )
 {
   // Make sure that the distributions have been set
   testPrecondition( !r_distribution.is_null() );
@@ -49,6 +50,16 @@ SphericalSpatialDistribution::SphericalSpatialDistribution(
   testPrecondition( !ST::isnaninf( center_x_position ) );
   testPrecondition( !ST::isnaninf( center_y_position ) );
   testPrecondition( !ST::isnaninf( center_z_position ) );
+
+  // Determine if the distribution is uniform
+  if( r_distribution->getDistributionType() != POWER_2_DISTRIBUTION )
+    d_uniform = false;
+
+  if( theta_distribution->getDistributionType() != UNIFORM_DISTRIBUTION )
+    d_uniform = false;
+
+  if( mu_distribution->getDistributionType() != UNIFORM_DISTRIBUTION )
+    d_uniform = false;
 }
 
 // Evaluate the spatial distribution
@@ -113,6 +124,12 @@ void SphericalSpatialDistribution::sample( double sampled_point[3] )
   sampled_point[0] += d_center_x_position;
   sampled_point[1] += d_center_y_position;
   sampled_point[2] += d_center_z_position;
+}
+
+// Check if the distribution is uniform
+void SphericalSpatialDistribution::isUniform() const
+{
+  return d_uniform;
 }
 
 // Convert a cartesian coordinate to a spherical coordinate

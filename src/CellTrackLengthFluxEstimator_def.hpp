@@ -19,43 +19,31 @@ namespace FACEMC{
 
 // Constructor
 template<typename CellId,typename ContributionMultiplierPolicy>
-class CellTrackLengthFluxEstimator<CellId,
-		   ContributionMultiplierPolicy>::CellTrackLengthFluxEstimator(
-						   const unsigned long long id,
-						   const CellId& cell_id,
-						   const double norm_constant,
-						   const double multiplier )
-: CellEstimator<CellId>( id, cell_id, norm_constant, multiplier )
+CellTrackLengthFluxEstimator<CellId,
+		       ContributionMultiplierPolicy>::CellTrackLengthEstimator(
+			           const unsigned long long id,
+				   const double multiplier,
+				   const Teuchos::Array<CellId>& cell_ids,
+			           const Teuchos::Array<double>& cell_volumes )
+  : StandardEntityEstimator<EntityId>( id,
+				       multiplier,
+				       cell_ids,
+				       cell_volumes )
 { /* ... */ }
 
-// Calculate and add estimator contribution from a portion of the cur. hist.
-/*! \details The raw contribution is the track length of the portion of the 
- * current history that lies within the cell associated with this estimator. 
- */
+// Set the cosine bin boundaries
 template<typename CellId,typename ContributionMultiplierPolicy>
 void CellTrackLengthFluxEstimator<CellId,
-      ContributionMultiplierPolicy>::calculateAndAddPartialHistoryContribution(
-					    const BasicParticleState& particle,
-					    const double raw_contribution )
+			 ContributionMultiplierPolicy>::setCosineBinBoundaries(
+			  const Teuchos::Array<double>& cosine_bin_boundaries )
 {
-  // Make sure the track length is valid
-  testPrecondition( !ST::isnaninf( raw_contribution ) );
-  testPrecondition( raw_contribution > 0.0 );
-  
-  double contribution = raw_contribution*
-    ContributionMultiplierPolicy::multiplier( particle );
-
-  // Assume a reference direction of (0,0,1) for calculating the angle cos bin
-  StandardEstimator<CellId>::addPartialHistoryContribution( 
-						    particle,
-						    contribution,
-						    particle.getZDirection() );
+  std::cerr << "Warning: Cosine bins cannot be set for cell track length flux "
+	    << "estimators. The cosine bins requested for cell track length "
+	    << "flux estimator " << getId() < " will be ignored."
+	    << std::endl;
 }
 
-// Set the response function
-/*! \details The response function must be uniform in space in order for the
- * track length estimator to be valid. 
- */
+// Set the response functions
 template<typename CellId,typename ContributionMultiplierPolicy>
 void CellTrackLengthFluxEstimator<CellId,
 			   ContributionMultiplierPolicy>::setResponseFunctions(
@@ -63,16 +51,68 @@ void CellTrackLengthFluxEstimator<CellId,
 {
   for( unsigned i = 0; i < response_functions.size(); ++i )
   {
-    if( !response_functions[i]->isUniformInSpace() )
+    if( !response_function[i]->isSpatiallyUniform() )
     {
-      std::cerr << "Warning: CellTrackLengthFluxEstimator " 
-		<< getId() << "has been assigned a response function that is "
-		<< "not uniform in space. The estimated response will not be "
-		<< "correct." << std::endl;
+      std::cerr << "Warning: cell track length estimators can only be used "
+		<< "with spatially uniform response functions. Results from "
+		<< "cell track length estimator " << getId()
+		<< "will not be correct." << std::endl;
     }
   }
+}  
 
-  StandardEstimator<CellId>::setResponseFunctions( response_functions );
+// Set the particle types that can contribute to the estimator
+/*! \details Photons, electrons and neutrons (or their adjoint
+ * couterparts) can contribute to the estimator. Combinations are not 
+ * allowed.
+ */
+template<typename CellId,typename ContributionMultiplierPolicy>
+void CellTrackLengthFluxEstimator<CellId,
+			       ContributionMultiplierPolicy>::setParticleTypes(
+			   const Teuchos::Array<ParticleType>& particle_types )
+{
+  // Make sure only one particle type has been specified
+  testPrecondition( particle_types.size() == 1 );
+
+  Estimator::setParticleTypes( particle_types );
+}
+
+// Add estimator contribution from a portion of the current history
+template<typename CellId,typename ContributionMultiplierPolicy>
+void CellTrackLengthFluxEstimator<CellId,
+		  ContributionMultiplierPolicy>::addPartialHistoryContribution(
+					    const BasicParticleState& particle,
+					    const CellId& cell_of_track,
+					    const double track_length )
+{
+  // Make sure the cell is assigned to this estimator
+  testPrecondition( isEntityAssigned( cell_of_track ) );
+  // Make sure the track length is valid
+  testPrecondition( !ST::isnaninf( track_length ) );
+  
+  if( isParticleTypeAssigned( particle.getType() ) )
+  {
+    if( isPointInEstimatorPhaseSpace( particle.getEnergy(),
+				      angle_cosine,
+				      particle.getTime(),
+				      particle.getCollisionNumber() ) )
+    {
+      double contribution = track_length*
+	ContributionMultiplierPolicy::multiplier( particle );
+
+      addPartialHistoryContribution( cell_of_track, particle, 0, contribution);
+    }
+  }
+}
+
+// Print the estimator data
+template<typename CellId,typename ContributionMultiplierPolicy>
+void CellTrackLengthFluxEstimator<CellId,
+		 ContributionMultiplierPolicy>::print( std::ostream& os ) const
+{
+  os << "Cell Track Length Flux Estimator: " << getId() << std::endl;
+
+  printImplementation( os, "Cell" );
 }
 
 } // end FACEMC namespace

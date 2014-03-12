@@ -76,6 +76,12 @@ double UniformDistribution::getLowerBoundOfIndepVar() const
   return d_min_independent_value;
 }
 
+// Return the distribution type
+OneDDistributionType UniformDistribution::getDistributionType() const
+{
+  return UniformDistribution::distribution_type;
+}
+
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//

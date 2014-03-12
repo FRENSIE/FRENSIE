@@ -51,6 +51,9 @@ public:
   //! Return a random (cartesian) sample from the distribution (x, y, z)
   void sample( double sampled_point[3] );
 
+  //! Check if the distribution is uniform
+  bool isUniform() const;
+
 private:
 
   // X dimension distribution
@@ -61,6 +64,9 @@ private:
 
   // Z dimension distribution
   Teuchos::RCP<OneDDistribution> d_z_distribution;
+
+  // Records whether the distribution is uniform
+  bool d_uniform;
 };
 
 } // end FACEMC namespace
