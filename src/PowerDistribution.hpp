@@ -57,7 +57,7 @@ public:
   double getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
-  OneDDistribution getDistributionType() const;
+  OneDDistributionType getDistributionType() const;
 
 private:
 
@@ -188,7 +188,7 @@ public:
 private:
 
   // The distribution type
-  static const OneDDistribution distribution_type = POWER_1_DISTRIBUTION;
+  static const OneDDistributionType distribution_type = POWER_1_DISTRIBUTION;
 
   // The constant multiplier
   double d_constant_multiplier;

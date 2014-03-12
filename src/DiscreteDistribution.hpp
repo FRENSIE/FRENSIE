@@ -59,7 +59,7 @@ public:
   double getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
-  OneDDistribution getDistributionType() const;
+  OneDDistributionType getDistributionType() const;
 
 private:
 

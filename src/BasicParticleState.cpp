@@ -294,7 +294,7 @@ unsigned BasicParticleState::getCollisionNumber() const
 }
 
 // Increment the collision number
-void incrementCollisionNumber() const
+void BasicParticleState::incrementCollisionNumber()
 {
   ++d_collision_number;
 }

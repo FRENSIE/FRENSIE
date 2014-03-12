@@ -133,6 +133,35 @@ TEUCHOS_UNIT_TEST( BasicParticleState, advance_neutron )
 }
 
 //---------------------------------------------------------------------------//
+// increment/get the collision number of a particle
+TEUCHOS_UNIT_TEST( BasicParticleState, incrementgetWeight )
+{
+  FACEMC::BasicParticleState particle_1;
+
+  TEST_EQUALITY_CONST( particle_1.getCollisionNumber(), 0u );
+
+  particle_1.incrementCollisionNumber();
+  
+  TEST_EQUALITY_CONST( particle_1.getCollisionNumber(), 1u );
+
+  const double position[3] = {1.0, 1.0, 1.0};
+  const double direction[3] = {0.5773502691896258, 
+			       0.5773502691896258,
+			       0.5773502691896258};
+  FACEMC::BasicParticleState particle_2( FACEMC::NEUTRON,
+					 position,
+					 direction,
+					 1.0,
+					 0.0,
+					 1.0 );
+  TEST_EQUALITY_CONST( particle_2.getCollisionNumber(), 0u );
+  
+  particle_2.incrementCollisionNumber();
+
+  TEST_EQUALITY_CONST( particle_2.getCollisionNumber(), 1u );
+}
+
+//---------------------------------------------------------------------------//
 // Set/get the weight of a particle
 TEUCHOS_UNIT_TEST( BasicParticleState, setgetWeight )
 {

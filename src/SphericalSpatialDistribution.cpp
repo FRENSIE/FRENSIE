@@ -127,7 +127,7 @@ void SphericalSpatialDistribution::sample( double sampled_point[3] )
 }
 
 // Check if the distribution is uniform
-void SphericalSpatialDistribution::isUniform() const
+bool SphericalSpatialDistribution::isUniform() const
 {
   return d_uniform;
 }

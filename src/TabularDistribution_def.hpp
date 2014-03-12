@@ -143,7 +143,7 @@ TabularDistribution<InterpolationPolicy>::getLowerBoundOfIndepVar() const
 
 // Return the distribution type
 template<typename InterpolationPolicy>
-OneDDistribution 
+OneDDistributionType 
 TabularDistribution<InterpolationPolicy>::getDistributionType() const
 {
   return TabularDistribution<InterpolationPolicy>::distribution_type;

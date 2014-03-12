@@ -147,5 +147,32 @@ FACEMC_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
 UNIT_TEST_INSTANTIATION( PowerDistribution, getLowerBoundOfIndepVar );
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type can be returned
+FACEMC_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
+					   getDistributionType,
+					   N )
+{
+  initializeDistribution<N>( distribution );
+
+  switch( N )
+  {
+  case 1u:
+    TEST_EQUALITY_CONST( distribution->getDistributionType(),
+			 FACEMC::POWER_1_DISTRIBUTION );
+    break;
+  case 2u:
+    TEST_EQUALITY_CONST( distribution->getDistributionType(),
+			 FACEMC::POWER_2_DISTRIBUTION );
+    break;
+  default:
+    TEST_EQUALITY_CONST( distribution->getDistributionType(),
+			 FACEMC::POWER_N_DISTRIBUTION );
+    break;
+  }
+}
+
+UNIT_TEST_INSTANTIATION( PowerDistribution, getDistributionType );
+
+//---------------------------------------------------------------------------//
 // end tstPowerDistribution.cpp
 //---------------------------------------------------------------------------//

@@ -116,7 +116,7 @@ public:
   unsigned getCollisionNumber() const;
   
   //! Increment the collision number of the particle
-  void incrementCollisionNumber() const;
+  void incrementCollisionNumber();
 
   //! Return the weight of the particle
   double getWeight() const;

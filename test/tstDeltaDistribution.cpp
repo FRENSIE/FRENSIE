@@ -73,5 +73,13 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, getLowerBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type can be returned
+TEUCHOS_UNIT_TEST( DeltaDistribution, getDistributionType )
+{
+  TEST_EQUALITY_CONST( distribution->getDistributionType(), 
+		       FACEMC::DELTA_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
 // end tstDeltaDistribution.cpp
 //---------------------------------------------------------------------------//

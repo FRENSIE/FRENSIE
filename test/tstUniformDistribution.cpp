@@ -94,6 +94,14 @@ TEUCHOS_UNIT_TEST( UniformDistribution, getLowerBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type can be returned
+TEUCHOS_UNIT_TEST( UniformDistribution, getDistributionType )
+{
+  TEST_EQUALITY_CONST( distribution->getDistributionType(),
+		       FACEMC::UNIFORM_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
 // end tstUniformDistribution.cpp
 //---------------------------------------------------------------------------//
 

@@ -57,7 +57,7 @@ public:
   void sample( double sampled_point[3] );
 
   //! Check if the distribution is uniform
-  void isUniform() const;
+  bool isUniform() const;
 
 protected:
 

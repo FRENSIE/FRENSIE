@@ -116,7 +116,7 @@ double HistogramDistribution::getLowerBoundOfIndepVar() const
 }
 
 // Return the distribution type
-OneDDistribution HistogramDistribution::getDistributionType() const
+OneDDistributionType HistogramDistribution::getDistributionType() const
 {
   return HistogramDistribution::distribution_type;
 }

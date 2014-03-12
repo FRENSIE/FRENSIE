@@ -256,9 +256,21 @@ double PowerDistribution<1u>::getLowerBoundOfIndepVar() const
 
 // Return the distribution type
 template<unsigned N>
-double PowerDistribution<N>::getDistributionType() const
+OneDDistributionType PowerDistribution<N>::getDistributionType() const
 {
   return PowerDistribution<N>::distribution_type;
+}
+
+// Return the distribution type
+OneDDistributionType PowerDistribution<2u>::getDistributionType() const
+{
+  return PowerDistribution<2u>::distribution_type;
+}
+
+// Return the distribution type
+OneDDistributionType PowerDistribution<1u>::getDistributionType() const
+{
+  return PowerDistribution<1u>::distribution_type;
 }
 
 } // end FACEMC namespace

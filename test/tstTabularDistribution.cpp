@@ -175,7 +175,19 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 
 UNIT_TEST_INSTANTIATION( TabularDistribution, getLowerBoundOfIndepVar );
 
+//---------------------------------------------------------------------------//
+// Check that the distribution type can be returned
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
+				   getDistributionType,
+				   InterpolationPolicy )
+{
+  initializeDistribution<InterpolationPolicy>();
 
+  TEST_EQUALITY_CONST( distribution->getDistributionType(), 
+		       FACEMC::TABULAR_DISTRIBUTION );
+}
+
+UNIT_TEST_INSTANTIATION( TabularDistribution, getDistributionType );
 
 //---------------------------------------------------------------------------//
 // end tstTabularDistribution.cpp

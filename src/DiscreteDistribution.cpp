@@ -117,7 +117,7 @@ double DiscreteDistribution::getLowerBoundOfIndepVar() const
 }
 
 // Return the distribution type
-OneDDistribution DiscreteDistribution::getDistributionType() const
+OneDDistributionType DiscreteDistribution::getDistributionType() const
 {
   return DiscreteDistribution::distribution_type;
 }

@@ -66,7 +66,7 @@ double DeltaDistribution::getLowerBoundOfIndepVar() const
 }
 
 // Return the distribution type
-OneDDistributionType getDistributionType() const
+OneDDistributionType DeltaDistribution::getDistributionType() const
 {
   return DeltaDistribution::distribution_type;
 }

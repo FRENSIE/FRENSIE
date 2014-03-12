@@ -123,7 +123,7 @@ void CylindricalSpatialDistribution::sample( double sampled_point[3] )
 }
 
 // Check if the distribution is uniform
-void CylindricalSpatialDistribution::isUniform() const
+bool CylindricalSpatialDistribution::isUniform() const
 {
   return d_uniform;
 }

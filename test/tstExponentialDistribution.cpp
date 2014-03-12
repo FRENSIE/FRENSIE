@@ -91,5 +91,13 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, getLowerBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type can be returned
+TEUCHOS_UNIT_TEST( ExponentialDistribution, getDistributionType )
+{
+  TEST_EQUALITY_CONST( distribution->getDistributionType(),
+		       FACEMC::EXPONENTIAL_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
 // end tstExponentialDistribution.cpp
 //---------------------------------------------------------------------------//

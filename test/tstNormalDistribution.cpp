@@ -108,6 +108,15 @@ TEUCHOS_UNIT_TEST( NormalDistribution, getLowerBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type can be returned
+TEUCHOS_UNIT_TEST( NormalDistribution, getDistributionType )
+{
+  TEST_EQUALITY_CONST( distribution->getDistributionType(),
+		       FACEMC::NORMAL_DISTRIBUTION );
+}
+
+
+//---------------------------------------------------------------------------//
 // end tstNormalDistribution.cpp
 //---------------------------------------------------------------------------//
 

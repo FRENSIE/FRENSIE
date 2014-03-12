@@ -215,5 +215,13 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, getLowerBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type can be returned
+TEUCHOS_UNIT_TEST( HistogramDistribution, getDistributionType )
+{
+  TEST_EQUALITY_CONST( distribution->getDistributionType(),
+		       FACEMC::HISTOGRAM_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
 // end tstHistogramDistribution.cpp
 //---------------------------------------------------------------------------//

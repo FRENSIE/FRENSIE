@@ -152,5 +152,15 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, getLowerBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type can be returned
+TEUCHOS_UNIT_TEST( DiscreteDistribution, getDistributionType )
+{
+  initializeDistribution( distribution );
+
+  TEST_EQUALITY_CONST( distribution->getDistributionType(),
+		       FACEMC::DISCRETE_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
 // end tstDiscreteDistribution.cpp
 //---------------------------------------------------------------------------//

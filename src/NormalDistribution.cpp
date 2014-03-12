@@ -122,7 +122,7 @@ double NormalDistribution::getLowerBoundOfIndepVar() const
 }
 
 // Return the distribution type
-OneDDistribution NormalDistribution::getDistributionType() const
+OneDDistributionType NormalDistribution::getDistributionType() const
 {
   return NormalDistribution::distribution_type;
 }
