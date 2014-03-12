@@ -184,6 +184,15 @@ TEUCHOS_UNIT_TEST( CylindricalSpatialDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
+// Check that distribution can be tested for uniformity
+TEUCHOS_UNIT_TEST( CylindricalSpatialDistribution, isUniform )
+{
+  initializeDistribution( spatial_distribution );
+
+  TEST_ASSERT( spatial_distribution->isUniform() );
+}
+
+//---------------------------------------------------------------------------//
 // end tstCylindricalSpatialDistribution.cpp
 //---------------------------------------------------------------------------//
 

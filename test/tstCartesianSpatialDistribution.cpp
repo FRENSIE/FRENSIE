@@ -130,5 +130,14 @@ TEUCHOS_UNIT_TEST( CartesianSpatialDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
+// Check that distribution can be tested for uniformity
+TEUCHOS_UNIT_TEST( CartesianSpatialDistribution, isUniform )
+{
+  initializeDistribution( spatial_distribution );
+
+  TEST_ASSERT( !spatial_distribution->isUniform() );
+}
+
+//---------------------------------------------------------------------------//
 // end tstCartesianSpatialDistribution.cpp
 //---------------------------------------------------------------------------//

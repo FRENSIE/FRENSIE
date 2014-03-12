@@ -177,6 +177,15 @@ TEUCHOS_UNIT_TEST( SphericalSpatialDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
+// Check that distribution can be tested for uniformity
+TEUCHOS_UNIT_TEST( SphericalSpatialDistribution, isUniform )
+{
+  initializeDistribution( spatial_distribution );
+
+  TEST_ASSERT( spatial_distribution->isUniform() );
+}
+
+//---------------------------------------------------------------------------//
 // end tstSphericalSpatialDistribution.cpp
 //---------------------------------------------------------------------------//
 
