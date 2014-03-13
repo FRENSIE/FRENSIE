@@ -52,7 +52,6 @@ Estimator::Estimator( const unsigned long long id,
 		      const double multiplier )
   : d_id( 0ull ),
     d_multiplier( multiplier ),
-    d_particle_types( particle_types ),
     d_energy_bin_boundaries( 2 ),
     d_cosine_bin_boundaries( 2 ),
     d_time_bin_boundaries( 2 ),
@@ -78,13 +77,10 @@ Estimator::Estimator( const unsigned long long id,
   d_collision_number_bins[0] = std::numeric_limits<unsigned>::max();
 
   // Set the response function
-  d_response_function[0] = ResponseFunction::default_response_function;
+  d_response_functions[0] = ResponseFunction::default_response_function;
 
   // Create the default particle types set (all particle types)
   d_particle_types.insert( PHOTON );
-  d_particle_types.insert( NEUTRON );
-  d_particle_types.insert( ADJOINT_PHOTON );
-  d_particle_types.insert( ADJOINT_NEUTRON );
 }
 
 // Return the estimator id
@@ -99,8 +95,8 @@ double Estimator::getMultiplier() const
   return d_multiplier;
 }
 
-// Return the estimator constant multiplier
-const std::set<ParticleType>& getParticleTypes() const
+// Return the particle types that can contribute to the estimator
+const std::set<ParticleType>& Estimator::getParticleTypes() const
 {
   return d_particle_types;
 }
@@ -136,7 +132,7 @@ Pair<double,double> Estimator::getBoundariesOfEnergyBin(
 
 // Set the cosine bin boundaries
 void Estimator::setCosineBinBoundaries(
-			  const Teuchos::Array<double>& cosine_bin_boundaires )
+			  const Teuchos::Array<double>& cosine_bin_boundaries )
 {
   // Make sure there is at least one cosine bin
   testPrecondition( cosine_bin_boundaries.size() >= 2 );
@@ -166,7 +162,7 @@ Pair<double,double> Estimator::getBoundariesOfCosineBin(
 
 // Set the time bin boundaries
 void Estimator::setTimeBinBoundaries(
-			     const Teuchos::Array<double>& tim_bin_boundaries )
+			    const Teuchos::Array<double>& time_bin_boundaries )
 {
   // Make sure there is at least one time bin
   testPrecondition( time_bin_boundaries.size() >= 2 );
@@ -206,11 +202,11 @@ void Estimator::setCollisionNumberBins(
 // Return the number of collision bins
 unsigned Estimator::getNumberOfCollisionNumberBins() const
 {
-  return d_collision_number_bins;
+  return d_collision_number_bins.size();
 }
 
 // Return the collision number boundaries of a bin
-Pair<double,double> Estimator::getBoundariesOfCollisionNumberBin(
+Pair<unsigned,unsigned> Estimator::getBoundariesOfCollisionNumberBin(
 				    const unsigned collision_number_bin ) const
 {
   // Make sure the collision number bin is valid
@@ -232,7 +228,7 @@ Pair<double,double> Estimator::getBoundariesOfCollisionNumberBin(
 unsigned Estimator::getNumberOfBins() const
 {
   return getNumberOfEnergyBins()*getNumberOfCosineBins()*getNumberOfTimeBins()*
-    getNumberOfCollisionNumberBins()
+    getNumberOfCollisionNumberBins();
 }
 
 // Set the response functions
@@ -240,7 +236,7 @@ void Estimator::setResponseFunctions(
     const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
 {
   // Make sure there is at least one response function
-  testPrecondition( response_function.size() >= 1 );
+  testPrecondition( response_functions.size() >= 1 );
 
   d_response_functions = response_functions;
 }
@@ -367,11 +363,8 @@ void Estimator::printEstimatorBinData(
 
 	    bin_index += i;
 
-	    const EstimatorMomentsArray& entity_estimator_moments_array = 
-	      d_entity_estimator_moments_map[entity_id];
-
 	    double estimator_bin_value = 
-	      calculateMean( entity_estimator_moments_data[bin_index].first )*
+	      calculateMean( estimator_moments_data[bin_index].first )*
 	      d_multiplier/norm_constant;
 
 	    double estimator_bin_rel_err = 
@@ -430,10 +423,10 @@ void Estimator::printEstimatorTotalData(
 			      total_estimator_moments_data[i].second );
   
     double estimator_vov = 
-      calculateVOV( total_estimator_moments_data[index].first,
-		    total_estimator_moments_data[index].second,
-		    total_estimator_moments_data[index].third,
-		    total_estimator_moments_data[index].fourth );
+      calculateVOV( total_estimator_moments_data[i].first,
+		    total_estimator_moments_data[i].second,
+		    total_estimator_moments_data[i].third,
+		    total_estimator_moments_data[i].fourth );
     
     double estimator_fom = calculateFOM( estimator_rel_err );
     
@@ -446,13 +439,13 @@ void Estimator::printEstimatorTotalData(
 
 // Evaluate the desired response function
 double Estimator::evaluateResponseFunction( 
-				       const BasicParticleState& particle,
-				       const unsigned response_function_index )
+				 const BasicParticleState& particle,
+				 const unsigned response_function_index ) const
 {
   // Make sure the response function index is valid
   testPrecondition( response_function_index < getNumberOfResponseFunctions() );
   
-  return d_response_functions[i]->evaluate( particle );
+  return d_response_functions[response_function_index]->evaluate( particle );
 }
 
 // Check if the energy lies within the estimator phase space
@@ -506,12 +499,12 @@ bool Estimator::isPointInEstimatorPhaseSpace(
 {
   return isEnergyInEstimatorEnergySpace( energy ) &&
     isAngleCosineInEstimatorCosineSpace( angle_cosine ) &&
-    isTimeInEstiamtorTimeSpace( time ) &&
+    isTimeInEstimatorTimeSpace( time ) &&
     isCollisionNumberInEstimatorCollisionNumberSpace( collision_number );
 }
 
 // Check if the particle type is assigned to the estimator
-bool Estimator::isParticleTypeAssigned( const ParticleType particle_type )
+bool Estimator::isParticleTypeAssigned( const ParticleType particle_type) const
 {
   return d_particle_types.count( particle_type );
 }
@@ -553,14 +546,14 @@ unsigned Estimator::calculateCosineBinIndex( const double angle_cosine ) const
 unsigned Estimator::calculateTimeBinIndex( const double time ) const
 {
   // Make sure the time is in the estimator time space
-  testPrecondition( isTimeInEstimatorTimeSpace( const double time ) );
+  testPrecondition( isTimeInEstimatorTimeSpace( time ) );
 
   Teuchos::Array<double>::const_iterator start, end, upper_bin_boundary;
   
   start = d_time_bin_boundaries.begin();
   end = d_time_bin_boundaries.end();
   upper_bin_boundary =
-    Search::binarySearchDiscreteData( start, end, angle_cosine );
+    Search::binarySearchDiscreteData( start, end, time );
 
   return
     std::distance( d_time_bin_boundaries.begin(), upper_bin_boundary ) - 1u;
@@ -571,7 +564,7 @@ unsigned Estimator::calculateCollisionNumberBinIndex(
 					  const double collision_number ) const
 {
   // Make sure the collision number is in the estimator col. num. space
-  testPrecondition( isCollisionNumberInEstimatorCollsionNumberSpace(
+  testPrecondition( isCollisionNumberInEstimatorCollisionNumberSpace(
 						          collision_number ) );
   
   Teuchos::Array<unsigned>::const_iterator collision_bin_start,
@@ -607,7 +600,7 @@ unsigned Estimator::calculateBinIndex(
   unsigned num_energy_bins = getNumberOfEnergyBins();
   unsigned num_cosine_bins = getNumberOfCosineBins();
   unsigned num_time_bins = getNumberOfTimeBins();
-  unsinged num_col_num_bins = getNumberOfCollisionNumberBins();
+  unsigned num_col_num_bins = getNumberOfCollisionNumberBins();
   
   unsigned bin_index = calculateEnergyBinIndex( energy );
   bin_index += calculateCosineBinIndex( angle_cosine )*num_energy_bins;
@@ -651,7 +644,7 @@ double Estimator::calculateRelativeError(
   if( first_moment_contributions > 0.0 )
   {
     double argument = second_moment_contributions/
-      (first_moment_contributions*first_moment_contribuitons) - 
+      (first_moment_contributions*first_moment_contributions) - 
       1.0/Estimator::num_histories;
     
     return ST::squareroot( argument );
@@ -696,7 +689,7 @@ double Estimator::calculateVOV( const double first_moment_contributions,
     Estimator::num_histories +
     8*second_moment_contributions*first_moment_contributions_squared/
     num_histories_squared +
-    4*first_moment_contributions_squared*first_moment_constributions_squared/
+    4*first_moment_contributions_squared*first_moment_contributions_squared/
     num_histories_cubed - 
     second_moment_contributions*second_moment_contributions/
     Estimator::num_histories;
@@ -713,7 +706,7 @@ double Estimator::calculateVOV( const double first_moment_contributions,
 }
 
 // Calculate the figure of merit (FOM) of a set of contributions
-double Estimator::calculateFOM( const double relative_error );
+double Estimator::calculateFOM( const double relative_error ) const
 {
   // Make sure the problem time is valid
   testPrecondition( Estimator::end_time - Estimator::start_time > 0.0 );

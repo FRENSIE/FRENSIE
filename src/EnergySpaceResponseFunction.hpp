@@ -40,7 +40,7 @@ private:
 
   // The energy distribution
   Teuchos::RCP<OneDDistribution> d_energy_distribution;
-}
+};
 
 } // end FACEMC namespace
 

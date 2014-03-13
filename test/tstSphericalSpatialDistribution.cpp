@@ -65,7 +65,7 @@ TEUCHOS_UNIT_TEST( SphericalSpatialDistribution, evaluate )
   initializeDistribution( spatial_distribution );
 
   double cartesian_point[3] = {1.0, 1.0, 1.0};
-  TEST_EQUALITY_CONST( spatial_distribution->evaluate( cartesian_point ), 0.0);
+  TEST_EQUALITY_CONST( spatial_distribution->evaluate( cartesian_point ), 3.0);
   
   cartesian_point[2] = 2.0;
   TEST_EQUALITY_CONST( spatial_distribution->evaluate( cartesian_point ), 3.0);

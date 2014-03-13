@@ -14,7 +14,6 @@
 #include "OneDDistribution.hpp"
 #include "SpatialDistribution.hpp"
 #include "DirectionalDistribution.hpp"
-#include "GeometryHandlerTraits.hpp"
 
 namespace FACEMC{
 
@@ -58,7 +57,7 @@ private:
 
   // Records if the response function is spatially uniform
   bool d_spatially_uniform;
-}
+};
 
 } // end FACEMC namespace
 

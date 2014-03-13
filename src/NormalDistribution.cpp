@@ -9,13 +9,14 @@
 // FACEMC Includes
 #include "NormalDistribution.hpp"
 #include "RandomNumberGenerator.hpp"
+#include "PhysicalConstants.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
 
 // Initialize the constant multiplier
 const double NormalDistribution::constant_multiplier = 
-  1.0/sqrt( 2*acos( -1.0 ) );
+  1.0/sqrt( 2*PhysicalConstants::pi );
 
 // Constructor
 NormalDistribution::NormalDistribution( const double mean,

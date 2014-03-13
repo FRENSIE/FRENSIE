@@ -325,3 +325,21 @@ ADD_EXECUTABLE(tstCompoundSource
   tstCompoundSource.cpp)
 TARGET_LINK_LIBRARIES(tstCompoundSource ${PROJECT_NAME})
 ADD_TEST(CompoundSource_test tstCompoundSource --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat")
+
+ADD_EXECUTABLE(tstResponseFunction
+  tstResponseFunction.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstResponseFunction ${PROJECT_NAME})
+ADD_TEST(ResponseFunction_test tstResponseFunction)
+
+ADD_EXECUTABLE(tstEnergySpaceResponseFunction
+  tstEnergySpaceResponseFunction.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEnergySpaceResponseFunction ${PROJECT_NAME})
+ADD_TEST(EnergySpaceResponseFunction_test tstEnergySpaceResponseFunction)
+
+ADD_EXECUTABLE(tstPhaseSpaceResponseFunction
+  tstPhaseSpaceResponseFunction.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPhaseSpaceResponseFunction ${PROJECT_NAME})
+ADD_TEST(PhaseSpaceResponseFunction_test tstPhaseSpaceResponseFunction)

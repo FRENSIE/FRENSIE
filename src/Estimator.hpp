@@ -11,10 +11,13 @@
 
 // Trilinos Includes
 #include "Teuchos_Array.hpp"
+#include "Teuchos_ScalarTraits.hpp"
 
 // FACEMC Includes
-#include "ParticleType.hpp"
 #include "PrintableObject.hpp"
+#include "ParticleType.hpp"
+#include "Tuple.hpp"
+#include "ResponseFunction.hpp"
 
 namespace FACEMC{
 
@@ -57,9 +60,6 @@ public:
 
   //! Return the estimator constant multiplier
   double getMultiplier() const;
-
-  //! Return the particle types that can contribute to the estimator
-  const std::set<ParticleType>& getParticleTypes() const;
 
   //! Set the energy bin boundaries
   virtual void setEnergyBinBoundaries( 
@@ -121,6 +121,9 @@ public:
   //! Set the particle types that can contribute to the estimator
   virtual void setParticleTypes( 
 			  const Teuchos::Array<ParticleType>& particle_types );
+
+  //! Return the particle types that can contribute to the estimator
+  const std::set<ParticleType>& getParticleTypes() const;
 
   //! Commit the contribution from the current history to the estimator
   virtual void commitHistoryContribution() = 0;

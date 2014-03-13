@@ -82,6 +82,19 @@ struct TupleMemberTraits<double,FIRST>
   { value = new_value; }
 };
 
+/*! The specialization of the TupleMemberTraits for const double and FIRST
+ * \ingroup tuple_member_traits
+ */
+template<>
+struct TupleMemberTraits<const double,FIRST>
+{
+  typedef const double tupleMemberType;
+  static inline const double get( const double value )
+  { return value; }
+  static inline void set( const double &value, const double &new_value )
+  { /* ... */ }
+};
+
 /*! The specialization of the TupleMemberTraits for unsigned and FIRST
  * \ingroup tuple_member_traits
  */
@@ -93,6 +106,19 @@ struct TupleMemberTraits<unsigned,FIRST>
   { return value; }
   static inline void set( unsigned &value, const unsigned &new_value )
   { value = new_value; }
+};
+
+/*! The specialization of the TupleMemberTraits for const unsigned and FIRST
+ * \ingroup tuple_member_traits
+ */
+template<>
+struct TupleMemberTraits<const unsigned,FIRST>
+{
+  typedef unsigned tupleMemberType;
+  static inline unsigned get( const unsigned value )
+  { return value; }
+  static inline void set( const unsigned &value, const unsigned &new_value )
+  { /* ... */ }
 };
 
 } // end Traits namespace

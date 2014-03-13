@@ -16,7 +16,7 @@ namespace FACEMC{
 EnergySpaceResponseFunction::EnergySpaceResponseFunction(
 		     const std::string& name,
 		     const Teuchos::RCP<OneDDistribution> energy_distribution )
-  : ReponseFunction( name ),
+  : ResponseFunction( name ),
     d_energy_distribution( energy_distribution )
 {
   // Make sure the energy distribution is valid
@@ -27,7 +27,7 @@ EnergySpaceResponseFunction::EnergySpaceResponseFunction(
 double EnergySpaceResponseFunction::evaluate( 
 				     const BasicParticleState& particle ) const
 {
-  return energy_distribution->evaluate( particle.getEnergy() );
+  return d_energy_distribution->evaluate( particle.getEnergy() );
 }
 
 // Check if the response function is spacially uniform

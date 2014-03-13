@@ -58,6 +58,15 @@ CylindricalSpatialDistribution::CylindricalSpatialDistribution(
 }
 
 // Evaluate the spatial distribution
+/*! \details The cylindrical volume element is r*dr*dtheta*dz. Therefore, when
+ * evaluating the radial distribution, the value returned must be divided by
+ * the radius to account for the volume element. When specifying a radial
+ * distribution, the r term of the volume element is assumed to be incorporated
+ * into the distribution (this means that a power_1 distribution is actually
+ * a uniform distribution, a uniform distribution is actually a 1/r 
+ * distribution, etc.). This implicit handling of the volume element does not
+ * effect sampling, only evaluation.
+ */ 
 double CylindricalSpatialDistribution::evaluate( 
 				        const double cartesian_point[3] ) const
 {
@@ -67,7 +76,12 @@ double CylindricalSpatialDistribution::evaluate(
 							   cartesian_point,
 							   cylindrical_point );
   
-  double distribution_value = d_r_distribution->evaluate(cylindrical_point[0]);
+  // If r = 0, re-evaluate at r~0 
+  if( cylindrical_point[0] == 0.0 )
+    cylindrical_point[0] = std::numeric_limits<double>::min();
+  
+  double distribution_value = d_r_distribution->evaluate(cylindrical_point[0])/
+    cylindrical_point[0];
   distribution_value *= d_theta_distribution->evaluate( cylindrical_point[1] );
   distribution_value *= d_axis_distribution->evaluate( cylindrical_point[2] );
 

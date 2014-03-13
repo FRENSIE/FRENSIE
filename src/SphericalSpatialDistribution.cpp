@@ -63,6 +63,15 @@ SphericalSpatialDistribution::SphericalSpatialDistribution(
 }
 
 // Evaluate the spatial distribution
+/*! \details The spherical volume element is r^2*dr*dtheta*dmu. Therefore, when
+ * evaluating the radial distribution, the value returned must be divided by
+ * the radius squared to account for the volume element. When specifying a 
+ * radial distribution, the r^2 term of the volume element is assumed to be
+ * incorporated into the distribution (this means that a power_2 distribution
+ * is actually a uniform distribution, a uniform distribution is actually a 
+ * 1/r^2 disribution, etc.). This implicit handling of the volume element does
+ * not effect sampling, only evaluation.
+ */
 double SphericalSpatialDistribution::evaluate( 
 				        const double cartesian_point[3] ) const
 {
@@ -71,8 +80,12 @@ double SphericalSpatialDistribution::evaluate(
   SphericalSpatialDistribution::convertCartesianCoordsToSpherical( 
 							     cartesian_point,
 							     spherical_point );
-				     
-  double distribution_value = d_r_distribution->evaluate( spherical_point[0] );
+  
+  if( spherical_point[0] == 0.0 )
+    spherical_point[0] = sqrt(std::numeric_limits<double>::min());
+  
+  double distribution_value = d_r_distribution->evaluate( spherical_point[0] )/
+    (spherical_point[0]*spherical_point[0]);
   distribution_value *= d_theta_distribution->evaluate( spherical_point[1] );
   distribution_value *= d_mu_distribution->evaluate( spherical_point[2] );
   

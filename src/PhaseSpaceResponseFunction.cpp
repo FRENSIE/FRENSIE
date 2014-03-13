@@ -42,16 +42,16 @@ double PhaseSpaceResponseFunction::evaluate(
 				     const BasicParticleState& particle ) const
 {
   double spatial_response = 
-    d_spatial_distribution->evaluate( particle->getPosition() );
+    d_spatial_distribution->evaluate( particle.getPosition() );
   
   double directional_response = 
-    d_directional_distribution->evaluate( particle->getDirection() );
+    d_directional_distribution->evaluate( particle.getDirection() );
 
   double energy_response = 
-    d_energy_distribution->evaluate( particle->getEnergy() );
+    d_energy_distribution->evaluate( particle.getEnergy() );
 
   double time_response = 
-    d_time_distribution->evaluate( particle->getTime() );
+    d_time_distribution->evaluate( particle.getTime() );
 
   return spatial_response*directional_response*energy_response*time_response;
 }
