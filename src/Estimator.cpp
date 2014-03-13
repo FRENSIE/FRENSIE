@@ -95,12 +95,6 @@ double Estimator::getMultiplier() const
   return d_multiplier;
 }
 
-// Return the particle types that can contribute to the estimator
-const std::set<ParticleType>& Estimator::getParticleTypes() const
-{
-  return d_particle_types;
-}
-
 // Set the energy bin boundaries
 void Estimator::setEnergyBinBoundaries(
 			  const Teuchos::Array<double>& energy_bin_boundaries )
@@ -248,7 +242,7 @@ unsigned Estimator::getNumberOfResponseFunctions() const
 }
 
 // Return the response function name
-std::string Estimator::getResponseFunctionName( 
+const std::string& Estimator::getResponseFunctionName( 
 				 const unsigned response_function_index ) const
 {
   // Make sure the response function index is valid
@@ -519,10 +513,15 @@ unsigned Estimator::calculateEnergyBinIndex( const double energy ) const
   
   start = d_energy_bin_boundaries.begin();
   end = d_energy_bin_boundaries.end();
-  upper_bin_boundary = Search::binarySearchDiscreteData( start, end, energy );
+  upper_bin_boundary = Search::binarySearchDiscreteData( start, end, energy);
 						 
-  return 
-    std::distance( d_energy_bin_boundaries.begin(), upper_bin_boundary ) - 1u;
+  unsigned distance = 
+    std::distance( d_energy_bin_boundaries.begin(), upper_bin_boundary );
+
+  if( distance != 0u )
+    return distance-1u;
+  else
+    return distance;
 }
 
 // Calculate the cosine bin index for the desired angle cosine
@@ -538,8 +537,13 @@ unsigned Estimator::calculateCosineBinIndex( const double angle_cosine ) const
   upper_bin_boundary = 
     Search::binarySearchDiscreteData( start, end, angle_cosine );
 
-  return
-    std::distance( d_cosine_bin_boundaries.begin(), upper_bin_boundary ) - 1u;
+  unsigned distance = 
+    std::distance( d_cosine_bin_boundaries.begin(), upper_bin_boundary );
+  
+  if( distance != 0u )
+    return distance-1u;
+  else
+    return distance;
 }
 
 // Calculate the time bin index for the desired time
@@ -555,8 +559,13 @@ unsigned Estimator::calculateTimeBinIndex( const double time ) const
   upper_bin_boundary =
     Search::binarySearchDiscreteData( start, end, time );
 
-  return
-    std::distance( d_time_bin_boundaries.begin(), upper_bin_boundary ) - 1u;
+  unsigned distance = 
+    std::distance( d_time_bin_boundaries.begin(), upper_bin_boundary );
+  
+  if( distance != 0u )
+    return distance-1u;
+  else
+    return distance;
 }
 
 // Calculate the collision number bin for the desired collision number

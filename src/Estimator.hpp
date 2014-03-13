@@ -68,20 +68,12 @@ public:
   //! Return the number of energy bins
   unsigned getNumberOfEnergyBins() const;
 
-  //! Return the energy boundaries of a bin
-  Pair<double,double> getBoundariesOfEnergyBin( 
-					     const unsigned energy_bin ) const;
-
   //! Set the cosine bin boundaries
   virtual void setCosineBinBoundaries( 
 			 const Teuchos::Array<double>& cosine_bin_boundaries );
 
   //! Return the number of cosine bins
   unsigned getNumberOfCosineBins() const;
-  
-  //! Return the cosine boundaries of a bin
-  Pair<double,double> getBoundariesOfCosineBin( 
-					     const unsigned cosine_bin ) const;
 
   //! Set the time bin boundaries
   virtual void setTimeBinBoundaries( 
@@ -90,19 +82,12 @@ public:
   //! Return the number of time bins
   unsigned getNumberOfTimeBins() const;
 
-  //! Return the time boundaries of a bin
-  Pair<double,double> getBoundariesOfTimeBin( const unsigned time_bin ) const;
-
   //! Set the collision number bins
   virtual void setCollisionNumberBins( 
 		       const Teuchos::Array<unsigned>& collision_number_bins );
 
   //! Return the number of collision bins
   unsigned getNumberOfCollisionNumberBins() const;
-
-  //! Return the collision number boundaries of a bin
-  Pair<unsigned,unsigned> getBoundariesOfCollisionNumberBin( 
-				   const unsigned collision_number_bin ) const;
 
   //! Return the total number of bins
   unsigned getNumberOfBins() const;
@@ -114,21 +99,36 @@ public:
   //! Return the number of response functions
   unsigned getNumberOfResponseFunctions() const;
 
-  //! Return the response function name
-  std::string getResponseFunctionName( 
-				const unsigned response_function_index ) const;
-
   //! Set the particle types that can contribute to the estimator
   virtual void setParticleTypes( 
 			  const Teuchos::Array<ParticleType>& particle_types );
 
-  //! Return the particle types that can contribute to the estimator
-  const std::set<ParticleType>& getParticleTypes() const;
+  //! Check if the particle type is assigned to the estimator
+  bool isParticleTypeAssigned( const ParticleType particle_type ) const;
 
   //! Commit the contribution from the current history to the estimator
   virtual void commitHistoryContribution() = 0;
 
 protected:
+
+  //! Return the energy boundaries of a bin
+  Pair<double,double> getBoundariesOfEnergyBin( 
+					     const unsigned energy_bin ) const;
+
+  //! Return the cosine boundaries of a bin
+  Pair<double,double> getBoundariesOfCosineBin( 
+					     const unsigned cosine_bin ) const;
+
+  //! Return the time boundaries of a bin
+  Pair<double,double> getBoundariesOfTimeBin( const unsigned time_bin ) const;
+
+  //! Return the collision number boundaries of a bin
+  Pair<unsigned,unsigned> getBoundariesOfCollisionNumberBin( 
+				   const unsigned collision_number_bin ) const;
+
+  //! Return the response function name
+  const std::string& getResponseFunctionName( 
+				const unsigned response_function_index ) const;
 
   //! Print the estimator response function names
   void printEstimatorResponseFunctionNames( std::ostream& os ) const;
@@ -171,9 +171,6 @@ protected:
 				     const double angle_cosine,
 				     const double time,
 				     const unsigned collision_number ) const;
-
-  //! Check if the particle type is assigned to the estimator
-  bool isParticleTypeAssigned( const ParticleType particle_type ) const;
 
   //! Calculate the energy bin index for the desired energy
   unsigned calculateEnergyBinIndex( const double energy ) const;

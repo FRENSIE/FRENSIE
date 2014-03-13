@@ -343,3 +343,9 @@ ADD_EXECUTABLE(tstPhaseSpaceResponseFunction
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstPhaseSpaceResponseFunction ${PROJECT_NAME})
 ADD_TEST(PhaseSpaceResponseFunction_test tstPhaseSpaceResponseFunction)
+
+ADD_EXECUTABLE(tstEstimator
+  tstEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEstimator ${PROJECT_NAME})
+ADD_TEST(Estimator_test tstEstimator)
