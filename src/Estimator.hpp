@@ -9,6 +9,10 @@
 #ifndef ESTIMATOR_HPP
 #define ESTIMATOR_HPP
 
+// Std Lib Includes
+#include <string>
+#include <set>
+
 // Trilinos Includes
 #include "Teuchos_Array.hpp"
 #include "Teuchos_ScalarTraits.hpp"
@@ -18,6 +22,7 @@
 #include "ParticleType.hpp"
 #include "Tuple.hpp"
 #include "ResponseFunction.hpp"
+#include "ContractException.hpp"
 
 namespace FACEMC{
 
@@ -244,6 +249,191 @@ private:
   // The particle types that this estimator will take contributions from
   std::set<ParticleType> d_particle_types;
 };
+
+// Return the estimator id
+inline unsigned long long Estimator::getId() const
+{
+  return d_id;
+}
+
+// Return the estimator constant multiplier
+inline double Estimator::getMultiplier() const
+{
+  return d_multiplier;
+}
+
+// Return the number of energy bins
+inline unsigned Estimator::getNumberOfEnergyBins() const
+{
+  return d_energy_bin_boundaries.size() - 1;
+}
+
+// Return the energy boundaries of a bin
+inline Pair<double,double> Estimator::getBoundariesOfEnergyBin( 
+					      const unsigned energy_bin ) const
+{
+  // Make sure the energy bin requested is valid
+  testPrecondition( energy_bin < getNumberOfEnergyBins() );
+
+  return Pair<double,double>( d_energy_bin_boundaries[energy_bin],
+			      d_energy_bin_boundaries[energy_bin+1] );
+}
+
+// Return the number of cosine bins
+inline unsigned Estimator::getNumberOfCosineBins() const
+{
+  return d_cosine_bin_boundaries.size() - 1;
+}
+
+// Return the cosine boundaries of a bin
+inline Pair<double,double> Estimator::getBoundariesOfCosineBin( 
+					      const unsigned cosine_bin ) const
+{
+  // Make sure the cosine bin requested is valid
+  testPrecondition( cosine_bin < getNumberOfCosineBins() );
+
+  return Pair<double,double>( d_cosine_bin_boundaries[cosine_bin],
+			      d_cosine_bin_boundaries[cosine_bin+1] );
+}
+
+// Return the number of time bins
+inline unsigned Estimator::getNumberOfTimeBins() const
+{
+  return d_time_bin_boundaries.size() - 1;
+}
+
+// Return the time boundaries of a bin
+inline Pair<double,double> Estimator::getBoundariesOfTimeBin( 
+						const unsigned time_bin ) const
+{
+  // Make sure the time bin is valid
+  testPrecondition( time_bin < getNumberOfTimeBins() );
+
+  return Pair<double,double>( d_time_bin_boundaries[time_bin],
+			      d_time_bin_boundaries[time_bin+1] );
+}
+
+// Return the number of collision bins
+inline unsigned Estimator::getNumberOfCollisionNumberBins() const
+{
+  return d_collision_number_bins.size();
+}
+
+// Return the collision number boundaries of a bin
+inline Pair<unsigned,unsigned> Estimator::getBoundariesOfCollisionNumberBin(
+				    const unsigned collision_number_bin ) const
+{
+  // Make sure the collision number bin is valid
+  testPrecondition( collision_number_bin < getNumberOfCollisionNumberBins() );
+
+  if( collision_number_bin == 0u )
+    return Pair<unsigned,unsigned>( 0u, d_collision_number_bins[0u] );
+  else
+  {
+    return Pair<unsigned,unsigned>( 
+			    d_collision_number_bins[collision_number_bin-1]+1u,
+			    d_collision_number_bins[collision_number_bin] );
+  }
+}
+
+// Return the total number of bins
+/*! \details This does not include the number of response functions.
+ */
+inline unsigned Estimator::getNumberOfBins() const
+{
+  return getNumberOfEnergyBins()*getNumberOfCosineBins()*getNumberOfTimeBins()*
+    getNumberOfCollisionNumberBins();
+}
+
+// Return the number of response functions
+inline unsigned Estimator::getNumberOfResponseFunctions() const
+{
+  return d_response_functions.size();
+}
+
+// Return the response function name
+inline const std::string& Estimator::getResponseFunctionName( 
+				 const unsigned response_function_index ) const
+{
+  // Make sure the response function index is valid
+  testPrecondition( response_function_index < getNumberOfResponseFunctions() );
+
+  return d_response_functions[response_function_index]->getName();
+}
+
+// Evaluate the desired response function
+inline double Estimator::evaluateResponseFunction( 
+				 const BasicParticleState& particle,
+				 const unsigned response_function_index ) const
+{
+  // Make sure the response function index is valid
+  testPrecondition( response_function_index < getNumberOfResponseFunctions() );
+  
+  return d_response_functions[response_function_index]->evaluate( particle );
+}
+
+// Check if the energy lies within the estimator phase space
+inline bool Estimator::isEnergyInEstimatorEnergySpace( 
+						    const double energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy >= 0.0 );
+  
+  return energy >= d_energy_bin_boundaries.front() &&
+    energy <= d_energy_bin_boundaries.back();
+}
+
+// Check if the angle cosine lies within the estimator angle cosine space
+inline bool Estimator::isAngleCosineInEstimatorCosineSpace( 
+					      const double angle_cosine ) const
+{
+  // Make sure the angle cosine is valid
+  testPrecondition( !ST::isnaninf( angle_cosine ) );
+  testPrecondition( angle_cosine >= -1.0 );
+  testPrecondition( angle_cosine <= 1.0 );
+  
+  return angle_cosine >= d_cosine_bin_boundaries.front() &&
+    angle_cosine <= d_cosine_bin_boundaries.back();
+}
+
+// Check if the time lies within the estimator time space
+inline bool Estimator::isTimeInEstimatorTimeSpace( const double time ) const
+{
+  // Make sure the time is valid
+  testPrecondition( !ST::isnaninf( time ) );
+  testPrecondition( time >= 0.0 );
+  
+  return time >= d_time_bin_boundaries.front() &&
+    time <= d_time_bin_boundaries.back();
+}
+
+// Check if the collision number lies within the estimator col. num. space
+inline bool Estimator::isCollisionNumberInEstimatorCollisionNumberSpace(
+					const unsigned collision_number ) const
+{
+  return collision_number <= d_collision_number_bins.back();
+}
+
+// Check if a phase space point lies within the estimator phase
+inline bool Estimator::isPointInEstimatorPhaseSpace( 
+					const double energy,
+					const double angle_cosine,
+					const double time,
+					const unsigned collision_number ) const
+{
+  return isEnergyInEstimatorEnergySpace( energy ) &&
+    isAngleCosineInEstimatorCosineSpace( angle_cosine ) &&
+    isTimeInEstimatorTimeSpace( time ) &&
+    isCollisionNumberInEstimatorCollisionNumberSpace( collision_number );
+}
+
+// Check if the particle type is assigned to the estimator
+inline bool Estimator::isParticleTypeAssigned( 
+					const ParticleType particle_type) const
+{
+  return d_particle_types.count( particle_type );
+}
 
 } // end FACEMC namespace
 

@@ -506,5 +506,56 @@ TEUCHOS_UNIT_TEST( estimator, calculateCollisionNumberBinIndex )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the bin index for the desired response function can be 
+// calculated
+TEUCHOS_UNIT_TEST( estimator, calculateBinIndex )
+{
+  unsigned bin_index = estimator.calculateBinIndex( 10.0, 0.0, 1e6, 2u, 0u );
+
+  TEST_EQUALITY_CONST( bin_index, 154 );
+}
+
+//---------------------------------------------------------------------------//
+// Calculate the mean of a set of contributions
+TEUCHOS_UNIT_TEST( estimator, calculateMean )
+{
+  FACEMC::Estimator::setNumberOfHistories( 100ull );
+
+  double mean = estimator.calculateMean( 100.00 );
+
+  TEST_EQUALITY_CONST( mean, 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Calculate the relative error of a set of contributions
+TEUCHOS_UNIT_TEST( estimator, calculateRelativeError )
+{
+  double rel_err = estimator.calculateRelativeError( 100.0, 150.0 );
+
+  TEST_FLOATING_EQUALITY( rel_err, 0.070710678118655, 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
+// Calculate the variance of the variance of a set of contributions
+TEUCHOS_UNIT_TEST( estimator, calculateVOV )
+{
+  double vov = estimator.calculateVOV( 100.0, 150.0, 300.0, 800.0 );
+
+  TEST_EQUALITY_CONST( vov, 0.07 );
+}
+
+//---------------------------------------------------------------------------//
+// Calculate the figure of merit of a of an estimator bin
+TEUCHOS_UNIT_TEST( estimator, calculateFOM )
+{
+  FACEMC::Estimator::setStartTime( 0.0 );
+  FACEMC::Estimator::setEndTime( 1.0 );
+
+  double fom = estimator.calculateFOM( 0.01 );
+
+  TEST_EQUALITY_CONST( fom, 10000.0 );
+}
+
+//---------------------------------------------------------------------------//
 // end tstEstimator.cpp
 //---------------------------------------------------------------------------//

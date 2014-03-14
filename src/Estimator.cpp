@@ -8,12 +8,10 @@
 
 // Std Lib Includes
 #include <limits>
-#include <set>
 
 // FACEMC Includes
 #include "Estimator.hpp"
 #include "SearchAlgorithms.hpp"
-#include "ContractException.hpp"
 
 namespace FACEMC{
 
@@ -83,18 +81,6 @@ Estimator::Estimator( const unsigned long long id,
   d_particle_types.insert( PHOTON );
 }
 
-// Return the estimator id
-unsigned long long Estimator::getId() const
-{
-  return d_id;
-}
-
-// Return the estimator constant multiplier
-double Estimator::getMultiplier() const
-{
-  return d_multiplier;
-}
-
 // Set the energy bin boundaries
 void Estimator::setEnergyBinBoundaries(
 			  const Teuchos::Array<double>& energy_bin_boundaries )
@@ -106,23 +92,6 @@ void Estimator::setEnergyBinBoundaries(
   
   d_energy_bin_boundaries = energy_bin_boundaries;
 }  
-
-// Return the number of energy bins
-unsigned Estimator::getNumberOfEnergyBins() const
-{
-  return d_energy_bin_boundaries.size() - 1;
-}
-
-// Return the energy boundaries of a bin
-Pair<double,double> Estimator::getBoundariesOfEnergyBin( 
-					      const unsigned energy_bin ) const
-{
-  // Make sure the energy bin requested is valid
-  testPrecondition( energy_bin < getNumberOfEnergyBins() );
-
-  return Pair<double,double>( d_energy_bin_boundaries[energy_bin],
-			      d_energy_bin_boundaries[energy_bin+1] );
-}
 
 // Set the cosine bin boundaries
 void Estimator::setCosineBinBoundaries(
@@ -137,23 +106,6 @@ void Estimator::setCosineBinBoundaries(
   d_cosine_bin_boundaries = cosine_bin_boundaries;
 }
 
-// Return the number of cosine bins
-unsigned Estimator::getNumberOfCosineBins() const
-{
-  return d_cosine_bin_boundaries.size() - 1;
-}
-
-// Return the cosine boundaries of a bin
-Pair<double,double> Estimator::getBoundariesOfCosineBin( 
-					      const unsigned cosine_bin ) const
-{
-  // Make sure the cosine bin requested is valid
-  testPrecondition( cosine_bin < getNumberOfCosineBins() );
-
-  return Pair<double,double>( d_cosine_bin_boundaries[cosine_bin],
-			      d_cosine_bin_boundaries[cosine_bin+1] );
-}
-
 // Set the time bin boundaries
 void Estimator::setTimeBinBoundaries(
 			    const Teuchos::Array<double>& time_bin_boundaries )
@@ -166,23 +118,6 @@ void Estimator::setTimeBinBoundaries(
   d_time_bin_boundaries = time_bin_boundaries;
 }
 
-// Return the number of time bins
-unsigned Estimator::getNumberOfTimeBins() const
-{
-  return d_time_bin_boundaries.size() - 1;
-}
-
-// Return the time boundaries of a bin
-Pair<double,double> Estimator::getBoundariesOfTimeBin( 
-						const unsigned time_bin ) const
-{
-  // Make sure the time bin is valid
-  testPrecondition( time_bin < getNumberOfTimeBins() );
-
-  return Pair<double,double>( d_time_bin_boundaries[time_bin],
-			      d_time_bin_boundaries[time_bin+1] );
-}
-
 // Set the collision number bins
 void Estimator::setCollisionNumberBins( 
 			const Teuchos::Array<unsigned>& collision_number_bins )
@@ -193,38 +128,6 @@ void Estimator::setCollisionNumberBins(
   d_collision_number_bins = collision_number_bins;
 }
 
-// Return the number of collision bins
-unsigned Estimator::getNumberOfCollisionNumberBins() const
-{
-  return d_collision_number_bins.size();
-}
-
-// Return the collision number boundaries of a bin
-Pair<unsigned,unsigned> Estimator::getBoundariesOfCollisionNumberBin(
-				    const unsigned collision_number_bin ) const
-{
-  // Make sure the collision number bin is valid
-  testPrecondition( collision_number_bin < getNumberOfCollisionNumberBins() );
-
-  if( collision_number_bin == 0u )
-    return Pair<unsigned,unsigned>( 0u, d_collision_number_bins[0u] );
-  else
-  {
-    return Pair<unsigned,unsigned>( 
-			    d_collision_number_bins[collision_number_bin-1]+1u,
-			    d_collision_number_bins[collision_number_bin] );
-  }
-}
-
-// Return the total number of bins
-/*! \details This does not include the number of response functions.
- */
-unsigned Estimator::getNumberOfBins() const
-{
-  return getNumberOfEnergyBins()*getNumberOfCosineBins()*getNumberOfTimeBins()*
-    getNumberOfCollisionNumberBins();
-}
-
 // Set the response functions
 void Estimator::setResponseFunctions( 
     const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
@@ -233,22 +136,6 @@ void Estimator::setResponseFunctions(
   testPrecondition( response_functions.size() >= 1 );
 
   d_response_functions = response_functions;
-}
-
-// Return the number of response functions
-unsigned Estimator::getNumberOfResponseFunctions() const
-{
-  return d_response_functions.size();
-}
-
-// Return the response function name
-const std::string& Estimator::getResponseFunctionName( 
-				 const unsigned response_function_index ) const
-{
-  // Make sure the response function index is valid
-  testPrecondition( response_function_index < getNumberOfResponseFunctions() );
-
-  return d_response_functions[response_function_index]->getName();
 }
 
 // Set the particle types
@@ -431,78 +318,6 @@ void Estimator::printEstimatorTotalData(
   }
 }
 
-// Evaluate the desired response function
-double Estimator::evaluateResponseFunction( 
-				 const BasicParticleState& particle,
-				 const unsigned response_function_index ) const
-{
-  // Make sure the response function index is valid
-  testPrecondition( response_function_index < getNumberOfResponseFunctions() );
-  
-  return d_response_functions[response_function_index]->evaluate( particle );
-}
-
-// Check if the energy lies within the estimator phase space
-bool Estimator::isEnergyInEstimatorEnergySpace( const double energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
-  testPrecondition( energy >= 0.0 );
-  
-  return energy >= d_energy_bin_boundaries.front() &&
-    energy <= d_energy_bin_boundaries.back();
-}
-
-// Check if the angle cosine lies within the estimator angle cosine space
-bool Estimator::isAngleCosineInEstimatorCosineSpace( 
-					      const double angle_cosine ) const
-{
-  // Make sure the angle cosine is valid
-  testPrecondition( !ST::isnaninf( angle_cosine ) );
-  testPrecondition( angle_cosine >= -1.0 );
-  testPrecondition( angle_cosine <= 1.0 );
-  
-  return angle_cosine >= d_cosine_bin_boundaries.front() &&
-    angle_cosine <= d_cosine_bin_boundaries.back();
-}
-
-// Check if the time lies within the estimator time space
-bool Estimator::isTimeInEstimatorTimeSpace( const double time ) const
-{
-  // Make sure the time is valid
-  testPrecondition( !ST::isnaninf( time ) );
-  testPrecondition( time >= 0.0 );
-  
-  return time >= d_time_bin_boundaries.front() &&
-    time <= d_time_bin_boundaries.back();
-}
-
-// Check if the collision number lies within the estimator col. num. space
-bool Estimator::isCollisionNumberInEstimatorCollisionNumberSpace(
-					const unsigned collision_number ) const
-{
-  return collision_number <= d_collision_number_bins.back();
-}
-
-// Check if a phase space point lies within the estimator phase
-bool Estimator::isPointInEstimatorPhaseSpace( 
-					const double energy,
-					const double angle_cosine,
-					const double time,
-					const unsigned collision_number ) const
-{
-  return isEnergyInEstimatorEnergySpace( energy ) &&
-    isAngleCosineInEstimatorCosineSpace( angle_cosine ) &&
-    isTimeInEstimatorTimeSpace( time ) &&
-    isCollisionNumberInEstimatorCollisionNumberSpace( collision_number );
-}
-
-// Check if the particle type is assigned to the estimator
-bool Estimator::isParticleTypeAssigned( const ParticleType particle_type) const
-{
-  return d_particle_types.count( particle_type );
-}
-
 // Calculate the energy bin index for the desired energy
 unsigned Estimator::calculateEnergyBinIndex( const double energy ) const
 {
@@ -607,21 +422,26 @@ unsigned Estimator::calculateBinIndex(
   testPrecondition( response_function_index < getNumberOfResponseFunctions() );
   
   unsigned num_energy_bins = getNumberOfEnergyBins();
-  unsigned num_cosine_bins = getNumberOfCosineBins();
-  unsigned num_time_bins = getNumberOfTimeBins();
-  unsigned num_col_num_bins = getNumberOfCollisionNumberBins();
+  unsigned num_energy_and_cosine_bins = 
+    num_energy_bins*getNumberOfCosineBins();
+  unsigned num_energy_cosine_and_time_bins = 
+    num_energy_and_cosine_bins*getNumberOfTimeBins();
+  unsigned num_bins = 
+    num_energy_cosine_and_time_bins*getNumberOfCollisionNumberBins();
   
-  unsigned bin_index = calculateEnergyBinIndex( energy );
+  unsigned long bin_index = calculateEnergyBinIndex( energy );
   bin_index += calculateCosineBinIndex( angle_cosine )*num_energy_bins;
-  bin_index += calculateTimeBinIndex( time )*num_energy_bins*num_cosine_bins;
+  bin_index += calculateTimeBinIndex( time )*num_energy_and_cosine_bins;
   bin_index += calculateCollisionNumberBinIndex( collision_number )*
-    num_energy_bins*num_cosine_bins*num_time_bins;
-  bin_index += response_function_index*num_energy_bins*num_cosine_bins*
-    num_time_bins*num_col_num_bins;
+    num_energy_cosine_and_time_bins;
+  bin_index += response_function_index*num_bins;
 				
   // Make sure the bin index calculated is valid
   testPostcondition( bin_index < 
 		     getNumberOfBins()*getNumberOfResponseFunctions() );
+  testPostcondition( bin_index < std::numeric_limits<unsigned>::max() );
+
+  return bin_index;
 }
 
 // Calculate the mean of a set of contributions
@@ -633,7 +453,13 @@ double Estimator::calculateMean( const double first_moment_contributions) const
   testPrecondition( !ST::isnaninf( first_moment_contributions ) );
   testPrecondition( first_moment_contributions >= 0.0 );
 
-  return first_moment_contributions/Estimator::num_histories;
+  double mean = first_moment_contributions/Estimator::num_histories;
+
+  // Make sure the mean is valid
+  testPostcondition( !ST::isnaninf( mean ) );
+  testPostcondition( mean >= 0.0 );
+
+  return mean;
 }
 
 // Calculate the relative error of a set of contributions
@@ -650,16 +476,24 @@ double Estimator::calculateRelativeError(
   testPrecondition( !ST::isnaninf( second_moment_contributions ) );
   testPrecondition( second_moment_contributions >= 0.0 );
 
+  double relative_error;
+  
   if( first_moment_contributions > 0.0 )
   {
     double argument = second_moment_contributions/
       (first_moment_contributions*first_moment_contributions) - 
       1.0/Estimator::num_histories;
     
-    return ST::squareroot( argument );
+    relative_error = ST::squareroot( argument );
   }
   else
-    return 0.0;
+    return relative_error = 0.0;
+
+  // Make sure the relative error is valid
+  testPostcondition( !ST::isnaninf( relative_error ) );
+  testPostcondition( relative_error >= 0.0 );
+
+  return relative_error;
 }
 
 // Calculate the variance of the variance (VOV) of a set of contributions
@@ -697,7 +531,7 @@ double Estimator::calculateVOV( const double first_moment_contributions,
     4*first_moment_contributions*third_moment_contributions/
     Estimator::num_histories +
     8*second_moment_contributions*first_moment_contributions_squared/
-    num_histories_squared +
+    num_histories_squared -
     4*first_moment_contributions_squared*first_moment_contributions_squared/
     num_histories_cubed - 
     second_moment_contributions*second_moment_contributions/
@@ -708,10 +542,18 @@ double Estimator::calculateVOV( const double first_moment_contributions,
      Estimator::num_histories);
   vov_denominator *= vov_denominator;
   
-  if( vov_denominator > 0.0 )
-    return vov_numerator/vov_denominator;   
+  double vov;
+  
+  if( vov_denominator != 0.0 )
+    vov = vov_numerator/vov_denominator;   
   else
-    return 0.0;
+    vov = 0.0;
+
+  // Make sure the variance of the variance is valid
+  testPostcondition( !ST::isnaninf( vov ) );
+  testPostcondition( vov >= 0.0 );
+
+  return vov;
 }
 
 // Calculate the figure of merit (FOM) of a set of contributions
@@ -722,10 +564,18 @@ double Estimator::calculateFOM( const double relative_error ) const
 
   double problem_time = Estimator::end_time - Estimator::start_time;
 
+  double fom;
+  
   if( relative_error > 0.0 )
-    return 1.0/(relative_error*relative_error*problem_time);
+    fom = 1.0/(relative_error*relative_error*problem_time);
   else
-    return 0.0;
+    fom = 0.0;
+
+  // Make sure the figure of merit is valid
+  testPostcondition( !ST::isnaninf( fom ) );
+  testPostcondition( fom >= 0.0 );
+  
+  return fom;
 }
 
 
