@@ -48,7 +48,8 @@ void Estimator::setEndTime( const double end_time )
  */
 Estimator::Estimator( const unsigned long long id,
 		      const double multiplier )
-  : d_id( 0ull ),
+  : PrintableObject( "//---------------------------------------------------------------------------//" ),
+    d_id( 0ull ),
     d_multiplier( multiplier ),
     d_energy_bin_boundaries( 2 ),
     d_cosine_bin_boundaries( 2 ),
@@ -157,9 +158,7 @@ void Estimator::printEstimatorResponseFunctionNames( std::ostream& os ) const
   os << "Response Functions: " << std::endl;
   
   for( unsigned i = 0; i < d_response_functions.size(); ++i )
-    os << i+1 << ".) " << getResponseFunctionName( i ) << std::endl;
-  
-  os << std::endl;
+    os << "  " << i+1 << ".) " << getResponseFunctionName( i ) << std::endl;
 }
 
 // Print the estimator bins
@@ -198,16 +197,17 @@ void Estimator::printEstimatorBins( std::ostream& os ) const
 void Estimator::printEstimatorBinData( 
 		     std::ostream& os,
 		     const EstimatorMomentsArray& estimator_moments_data,
-		     const double norm_constant )
+		     const double norm_constant ) const
 {
   // Make sure that the estimator moment array is valid
   testPrecondition( estimator_moments_data.size() == 
 		    getNumberOfBins()*getNumberOfResponseFunctions() );
   
   unsigned num_response_functions = getNumberOfResponseFunctions();
+  unsigned num_bins = getNumberOfBins();
   unsigned num_collision_number_bins = getNumberOfCollisionNumberBins();
   unsigned num_time_bins = getNumberOfTimeBins();
-  unsigned num_cosine_bins = getNumberOfTimeBins();
+  unsigned num_cosine_bins = getNumberOfCosineBins();
   unsigned num_energy_bins = getNumberOfEnergyBins();
   
   unsigned bin_index;
@@ -216,33 +216,28 @@ void Estimator::printEstimatorBinData(
   {
     os << "Response Function: " << getResponseFunctionName( m ) << std::endl;
     
-    bin_index = m*getNumberOfBins();
-
     for( unsigned l = 0; l < num_collision_number_bins; ++l )
     {
-      os << "Collision Number Bin: " << getBoundariesOfCollisionNumberBin( l )
+      os << " Collision Number Bin: " << getBoundariesOfCollisionNumberBin( l )
 	 << std::endl;
       
-      bin_index += l*getNumberOfEnergyBins()*getNumberOfCosineBins()*
-	getNumberOfTimeBins();
-
       for( unsigned k = 0; k < num_time_bins; ++k )
       {
-	os << "Time Bin: " << getBoundariesOfTimeBin( k ) << std::endl;
-
-	bin_index += k*getNumberOfEnergyBins()*getNumberOfCosineBins();
+	os << "  Time Bin: " << getBoundariesOfTimeBin( k ) << std::endl;
 
 	for( unsigned j = 0; j < num_cosine_bins; ++j )
 	{
-	  os << "Cosine Bin: " << getBoundariesOfCosineBin( j ) << std::endl;
-
-	  bin_index += j*getNumberOfEnergyBins();
+	  os << "   Cosine Bin: " << getBoundariesOfCosineBin( j ) 
+	     << std::endl;
 
 	  for( unsigned i = 0; i < num_energy_bins; ++i )
 	  {
-	    os << "Energy Bin: " << getBoundariesOfEnergyBin( i ) << " ";
+	    os << "    Energy Bin: " << getBoundariesOfEnergyBin( i ) << " ";
 
-	    bin_index += i;
+	    bin_index = m*num_bins + 
+	      l*num_time_bins*num_cosine_bins*num_energy_bins +
+	      k*num_cosine_bins*num_energy_bins +
+	      j*num_energy_bins;
 
 	    double estimator_bin_value = 
 	      calculateMean( estimator_moments_data[bin_index].first )*
@@ -266,14 +261,8 @@ void Estimator::printEstimatorBinData(
 	       << estimator_bin_vov << " "
 	       << estimator_bin_fom << std::endl;
 	  }
-	  bin_index -= num_energy_bins - 1u;
-
 	}
-	bin_index -= num_cosine_bins - 1u;
-
       }
-      bin_index -= num_time_bins - 1u;
-
     }
   }
 }

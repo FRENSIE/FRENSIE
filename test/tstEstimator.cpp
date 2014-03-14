@@ -44,6 +44,7 @@ public:
   { /* ... */ }
 
   // Allow public access to the estimator protected member functions
+  using FACEMC::Estimator::getMultiplier;
   using FACEMC::Estimator::getBoundariesOfEnergyBin;
   using FACEMC::Estimator::getBoundariesOfCosineBin;
   using FACEMC::Estimator::getBoundariesOfTimeBin;
@@ -252,14 +253,14 @@ TEUCHOS_UNIT_TEST( Estimator, getBoundariesOfCollisionNumberBin )
 
 //---------------------------------------------------------------------------//
 // Check that the total number of bins can be returned
-TEUCHOS_UNIT_TEST( estimator, getNumberOfBins )
+TEUCHOS_UNIT_TEST( Estimator, getNumberOfBins )
 {
   TEST_EQUALITY_CONST( estimator.getNumberOfBins(), 216u );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the response functions can be set
-TEUCHOS_UNIT_TEST( estimator, setResponseFunctions )
+TEUCHOS_UNIT_TEST( Estimator, setResponseFunctions )
 {
   Teuchos::Array<Teuchos::RCP<FACEMC::ResponseFunction> > 
     response_functions( 2 );
@@ -279,7 +280,7 @@ TEUCHOS_UNIT_TEST( estimator, setResponseFunctions )
 
 //---------------------------------------------------------------------------//
 // Check that the response function names can be returned
-TEUCHOS_UNIT_TEST( estimator, getResponseFunctionNames )
+TEUCHOS_UNIT_TEST( Estimator, getResponseFunctionNames )
 {
   TEST_EQUALITY_CONST( estimator.getResponseFunctionName( 0u ),
 		       "uniform_energy" );
@@ -290,7 +291,7 @@ TEUCHOS_UNIT_TEST( estimator, getResponseFunctionNames )
 //---------------------------------------------------------------------------//
 // Check that the particle types that can contribute to the estimator can
 // be set
-TEUCHOS_UNIT_TEST( estimator, setParticleTypes )
+TEUCHOS_UNIT_TEST( Estimator, setParticleTypes )
 {
   Teuchos::Array<FACEMC::ParticleType> particle_types( 2 );
   particle_types[0] = FACEMC::PHOTON;
@@ -306,7 +307,7 @@ TEUCHOS_UNIT_TEST( estimator, setParticleTypes )
 
 //---------------------------------------------------------------------------//
 // Check that the response functions can be evaluated
-TEUCHOS_UNIT_TEST( estimator, evaluateResponseFunction )
+TEUCHOS_UNIT_TEST( Estimator, evaluateResponseFunction )
 {
   FACEMC::BasicParticleState particle;
   particle.setEnergy( 1.0 );
@@ -324,7 +325,7 @@ TEUCHOS_UNIT_TEST( estimator, evaluateResponseFunction )
 
 //---------------------------------------------------------------------------//
 // Check if the energy lies within the estimator energy space
-TEUCHOS_UNIT_TEST( estimator, isEnergyInEstimatorEnergySpace )
+TEUCHOS_UNIT_TEST( Estimator, isEnergyInEstimatorEnergySpace )
 {
   TEST_ASSERT( estimator.isEnergyInEstimatorEnergySpace( 0.0 ) );
   TEST_ASSERT( estimator.isEnergyInEstimatorEnergySpace( 20.0 ) );
@@ -333,7 +334,7 @@ TEUCHOS_UNIT_TEST( estimator, isEnergyInEstimatorEnergySpace )
 
 //---------------------------------------------------------------------------//
 // Check if the angle cosine lies within the estimator angle cosine space
-TEUCHOS_UNIT_TEST( estimator, isAngleCosineInEstimatorCosineSpace )
+TEUCHOS_UNIT_TEST( Estimator, isAngleCosineInEstimatorCosineSpace )
 {
   TEST_ASSERT( estimator.isAngleCosineInEstimatorCosineSpace( -1.0 ) );
   TEST_ASSERT( estimator.isAngleCosineInEstimatorCosineSpace( 0.0 ) );
@@ -342,7 +343,7 @@ TEUCHOS_UNIT_TEST( estimator, isAngleCosineInEstimatorCosineSpace )
 
 //---------------------------------------------------------------------------//
 // Check if the time lies within the estimator time space
-TEUCHOS_UNIT_TEST( estimator, isTimeInEstimatorTimeSpace )
+TEUCHOS_UNIT_TEST( Estimator, isTimeInEstimatorTimeSpace )
 {
   TEST_ASSERT( estimator.isTimeInEstimatorTimeSpace( 0.0 ) );
   TEST_ASSERT( estimator.isTimeInEstimatorTimeSpace( 1e7 ) );
@@ -352,7 +353,7 @@ TEUCHOS_UNIT_TEST( estimator, isTimeInEstimatorTimeSpace )
 //---------------------------------------------------------------------------//
 // Check if the collision number lies within the estimator collision number
 // space
-TEUCHOS_UNIT_TEST( estimator, isCollisionNumberInEstimatorCollisionNumberSpace)
+TEUCHOS_UNIT_TEST( Estimator, isCollisionNumberInEstimatorCollisionNumberSpace)
 {
   TEST_ASSERT( estimator.isCollisionNumberInEstimatorCollisionNumberSpace(0u));
   TEST_ASSERT( estimator.isCollisionNumberInEstimatorCollisionNumberSpace(
@@ -361,7 +362,7 @@ TEUCHOS_UNIT_TEST( estimator, isCollisionNumberInEstimatorCollisionNumberSpace)
 
 //---------------------------------------------------------------------------//
 // Check if a phase space point lies within the estimator phase space
-TEUCHOS_UNIT_TEST( estimator, isPointInEstimatorPhaseSpace )
+TEUCHOS_UNIT_TEST( Estimator, isPointInEstimatorPhaseSpace )
 {
   TEST_ASSERT( estimator.isPointInEstimatorPhaseSpace( 0.0, -1.0, 0.0, 0u ) );
   TEST_ASSERT( estimator.isPointInEstimatorPhaseSpace( 
@@ -374,7 +375,7 @@ TEUCHOS_UNIT_TEST( estimator, isPointInEstimatorPhaseSpace )
 
 //---------------------------------------------------------------------------//
 // Check that the energy bin index can be calculated
-TEUCHOS_UNIT_TEST( estimator, calculateEnergyBinIndex )
+TEUCHOS_UNIT_TEST( Estimator, calculateEnergyBinIndex )
 {
   unsigned bin_index = estimator.calculateEnergyBinIndex( 0.0 );
 
@@ -423,7 +424,7 @@ TEUCHOS_UNIT_TEST( estimator, calculateEnergyBinIndex )
 
 //---------------------------------------------------------------------------//
 // Check that the cosine bin index can be calculated
-TEUCHOS_UNIT_TEST( estimator, calculateCosineBinIndex )
+TEUCHOS_UNIT_TEST( Estimator, calculateCosineBinIndex )
 {
   unsigned bin_index = estimator.calculateCosineBinIndex( -1.0 );
 
@@ -452,7 +453,7 @@ TEUCHOS_UNIT_TEST( estimator, calculateCosineBinIndex )
 
 //---------------------------------------------------------------------------//
 // Check that the time bin index can be calculated
-TEUCHOS_UNIT_TEST( estimator, calculateTimeBinIndex )
+TEUCHOS_UNIT_TEST( Estimator, calculateTimeBinIndex )
 {
   unsigned bin_index = estimator.calculateTimeBinIndex( 0.0 );
 
@@ -481,7 +482,7 @@ TEUCHOS_UNIT_TEST( estimator, calculateTimeBinIndex )
 
 //---------------------------------------------------------------------------//
 // Check that the collision number bin index can be calculated
-TEUCHOS_UNIT_TEST( estimator, calculateCollisionNumberBinIndex )
+TEUCHOS_UNIT_TEST( Estimator, calculateCollisionNumberBinIndex )
 {
   unsigned bin_index = estimator.calculateCollisionNumberBinIndex( 0u );
 
@@ -508,7 +509,7 @@ TEUCHOS_UNIT_TEST( estimator, calculateCollisionNumberBinIndex )
 //---------------------------------------------------------------------------//
 // Check that the bin index for the desired response function can be 
 // calculated
-TEUCHOS_UNIT_TEST( estimator, calculateBinIndex )
+TEUCHOS_UNIT_TEST( Estimator, calculateBinIndex )
 {
   unsigned bin_index = estimator.calculateBinIndex( 10.0, 0.0, 1e6, 2u, 0u );
 
@@ -517,7 +518,7 @@ TEUCHOS_UNIT_TEST( estimator, calculateBinIndex )
 
 //---------------------------------------------------------------------------//
 // Calculate the mean of a set of contributions
-TEUCHOS_UNIT_TEST( estimator, calculateMean )
+TEUCHOS_UNIT_TEST( Estimator, calculateMean )
 {
   FACEMC::Estimator::setNumberOfHistories( 100ull );
 
@@ -528,7 +529,7 @@ TEUCHOS_UNIT_TEST( estimator, calculateMean )
 
 //---------------------------------------------------------------------------//
 // Calculate the relative error of a set of contributions
-TEUCHOS_UNIT_TEST( estimator, calculateRelativeError )
+TEUCHOS_UNIT_TEST( Estimator, calculateRelativeError )
 {
   double rel_err = estimator.calculateRelativeError( 100.0, 150.0 );
 
@@ -537,7 +538,7 @@ TEUCHOS_UNIT_TEST( estimator, calculateRelativeError )
 
 //---------------------------------------------------------------------------//
 // Calculate the variance of the variance of a set of contributions
-TEUCHOS_UNIT_TEST( estimator, calculateVOV )
+TEUCHOS_UNIT_TEST( Estimator, calculateVOV )
 {
   double vov = estimator.calculateVOV( 100.0, 150.0, 300.0, 800.0 );
 
@@ -546,7 +547,7 @@ TEUCHOS_UNIT_TEST( estimator, calculateVOV )
 
 //---------------------------------------------------------------------------//
 // Calculate the figure of merit of a of an estimator bin
-TEUCHOS_UNIT_TEST( estimator, calculateFOM )
+TEUCHOS_UNIT_TEST( Estimator, calculateFOM )
 {
   FACEMC::Estimator::setStartTime( 0.0 );
   FACEMC::Estimator::setEndTime( 1.0 );

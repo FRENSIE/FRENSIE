@@ -33,6 +33,12 @@ EntityEstimator<EntityId>::EntityEstimator(
 
   // Calculate the total normalization constant
   calculateTotalNormalizationConstant();
+
+  // Make sure that the maps have the same size
+  testPostcondition( d_entity_ids.size() == 
+		     d_entity_norm_constants_map.size() );
+  testPostcondition( d_entity_ids.size() == 
+		     d_entity_estimator_moments_map.size() );
 }
 
 // Constructor (for non-flux estimators)
@@ -50,6 +56,12 @@ EntityEstimator<EntityId>::EntityEstimator(
   initializeEntityIds( entity_ids );
   initializeEntityEstimatorMomentsMap( entity_ids );
   initializeEntityNormConstantsMap( entity_ids );
+
+  // Make sure that the maps have the same size
+  testPostcondition( d_entity_ids.size() == 
+		     d_entity_norm_constants_map.size() );
+  testPostcondition( d_entity_ids.size() == 
+		     d_entity_estimator_moments_map.size() );
 }
 
 // Set the energy bin boundaries
@@ -109,7 +121,7 @@ void EntityEstimator<EntityId>::setResponseFunctions(
 
 // Return the entity ids associated with this estimator
 template<typename EntityId>
-inline const EntityEstimator<EntityId>::EntityIdSet&
+inline const typename EntityEstimator<EntityId>::EntityIdSet&
 EntityEstimator<EntityId>::getEntityIds() const
 {
   return d_entity_ids;
@@ -118,17 +130,17 @@ EntityEstimator<EntityId>::getEntityIds() const
 // Return the normalization constant for an entity
 template<typename EntityId>
 inline double EntityEstimator<EntityId>::getEntityNormConstant( 
-						    const EntityId& entity_id )
+					      const EntityId& entity_id ) const
 {
   // Make sure the entity is assigned to the estimator
   testPrecondition( isEntityAssigned( entity_id ) );
 
-  return d_entity_norm_constants_map[entity_id];
+  return d_entity_norm_constants_map.find( entity_id )->second;
 }
 
 // Return the total normalization constant
 template<typename EntityId>
-inline double EntityEstimator<EntityId>::getTotalNormConstant()
+inline double EntityEstimator<EntityId>::getTotalNormConstant() const
 {
   return d_total_norm_constant;
 }
@@ -136,7 +148,7 @@ inline double EntityEstimator<EntityId>::getTotalNormConstant()
 // Check if the entity is assigned to this estimator
 template<typename EntityId>
 inline bool EntityEstimator<EntityId>::isEntityAssigned( 
-						    const EntityId& entity_id )
+					      const EntityId& entity_id ) const
 {
   return d_entity_ids.count( entity_id );
 }
@@ -178,19 +190,20 @@ void EntityEstimator<EntityId>::commitHistoryContributionToBinOfEntity(
 
 // Print the entity ids assigned to the estimator
 template<typename EntityId>
-void EntityEstimator<EntityId>::printEntityIds( std::ostream& os,
-						const std::string& entity_type)
+void EntityEstimator<EntityId>::printEntityIds( 
+					  std::ostream& os,
+					  const std::string& entity_type) const
 {
   os << entity_type << " Ids: ";
 
-  EntityIdSet::const_iterator entity_id, end_entity_id;
+  typename EntityIdSet::const_iterator entity_id, end_entity_id;
     
   entity_id = d_entity_ids.begin();
   end_entity_id = d_entity_ids.end();
 
   while( entity_id != end_entity_id )
   {
-    os << entity_id << " ";
+    os << *entity_id << " ";
     
     ++entity_id;
   }
@@ -205,7 +218,7 @@ void EntityEstimator<EntityId>::printImplementation(
 					 const std::string& entity_type ) const
 {
   // Print the entity ids that are assigned to this estimator
-  printEntityIds( os );
+  printEntityIds( os, entity_type );
 
   // Print the response function names
   printEstimatorResponseFunctionNames( os );
@@ -214,22 +227,23 @@ void EntityEstimator<EntityId>::printImplementation(
   printEstimatorBins( os );
   
   // Print the estimator data for each entity
-  EntityIdSet::const_iterator entity_id, end_entity_id;
+  typename EntityEstimatorMomentsArrayMap::const_iterator entity_data, 
+    end_entity_data;
 
-  entity_id = d_entity_ids.begin();
-  end_entity_id = d_entity_ids.end();
+  entity_data = d_entity_estimator_moments_map.begin();
+  end_entity_data = d_entity_estimator_moments_map.end();
 
-  while( entity_id != end_entity_id )
+  while( entity_data != end_entity_data )
   {
-    os << entity_type << " " << *entity_id << std::endl;
+    os << entity_type << " " << entity_data->first << std::endl;
     os << "--------" << std::endl;
     os << "Bin Data: " << std::endl;
 
     printEstimatorBinData( os, 
-			   d_entity_estimator_moments_map[entity_id],
-			   getEntityNormConstant( entity_id ) );
+			   entity_data->second,
+			   getEntityNormConstant( entity_data->first ) );
 
-    ++entity_id;
+    ++entity_data;
   }
 }
 
@@ -271,9 +285,9 @@ void EntityEstimator<EntityId>::initializeEntityEstimatorMomentsMap(
     // Ignore duplicate entity ids
     if( d_entity_estimator_moments_map.count( entity_ids[i] ) == 0 )
     {
-      d_entity_estimator_moments_map[ entity_ids[i] ].resize( 
-			    getNumberOfBins()*getNumberOfResponseFunctions() )
       
+      d_entity_estimator_moments_map[ entity_ids[i] ].resize( 
+			    getNumberOfBins()*getNumberOfResponseFunctions() );
     }
   }
 }
@@ -289,7 +303,7 @@ void EntityEstimator<EntityId>::initializeEntityNormConstantsMap(
   for( unsigned i = 0; i < entity_ids.size(); ++i )
   {
     // Ignore duplicate entity ids
-    if( d_entity_norm_constants_map.count( entity_ids[i] ) )
+    if( d_entity_norm_constants_map.count( entity_ids[i] ) == 0 )
       d_entity_norm_constants_map[ entity_ids[i] ] = 1.0;
   }
 }
@@ -308,7 +322,7 @@ void EntityEstimator<EntityId>::initializeEntityNormConstantsMap(
   for( unsigned i = 0; i < entity_ids.size(); ++i )
   {
     // Ignore duplicate entity ids
-    if( d_entity_norm_constants_map.count( entity_ids[i] ) )
+    if( d_entity_norm_constants_map.count( entity_ids[i] ) == 0 )
       d_entity_norm_constants_map[ entity_ids[i] ] = entity_norm_constants[i];
   }
 }
@@ -317,7 +331,7 @@ void EntityEstimator<EntityId>::initializeEntityNormConstantsMap(
 template<typename EntityId>
 void EntityEstimator<EntityId>::resizeEntityEstimatorMapArrays()
 {
-  EntityEstimatorMomentsArrayMap::iterator start, end;
+  typename EntityEstimatorMomentsArrayMap::iterator start, end;
 
   start = d_entity_estimator_moments_map.begin();
   end = d_entity_estimator_moments_map.end();
@@ -334,17 +348,17 @@ void EntityEstimator<EntityId>::resizeEntityEstimatorMapArrays()
 template<typename EntityId>
 void EntityEstimator<EntityId>::calculateTotalNormalizationConstant()
 {
-  boost::unordered_map<EntityId,double>::const_iterator norm_constant,
+  typename boost::unordered_map<EntityId,double>::const_iterator norm_constant,
     end_norm_constant;
   
-  start_norm_constant = d_entity_norm_constants_map.begin();
+  norm_constant = d_entity_norm_constants_map.begin();
   end_norm_constant = d_entity_norm_constants_map.end();
 
   d_total_norm_constant = 0.0;
   
   while( norm_constant != end_norm_constant )
   {
-    d_total_norm_constant += start_norm_constant->second;
+    d_total_norm_constant += norm_constant->second;
 
     ++norm_constant;
   }

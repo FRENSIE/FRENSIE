@@ -63,9 +63,6 @@ public:
   //! Return the estimator id
   unsigned long long getId() const;
 
-  //! Return the estimator constant multiplier
-  double getMultiplier() const;
-
   //! Set the energy bin boundaries
   virtual void setEnergyBinBoundaries( 
 			 const Teuchos::Array<double>& energy_bin_boundaries );
@@ -116,6 +113,9 @@ public:
 
 protected:
 
+  //! Return the estimator constant multiplier
+  double getMultiplier() const;
+
   //! Return the energy boundaries of a bin
   Pair<double,double> getBoundariesOfEnergyBin( 
 					     const unsigned energy_bin ) const;
@@ -145,7 +145,7 @@ protected:
   void printEstimatorBinData( 
 			    std::ostream& os,
 			    const EstimatorMomentsArray& estimator_moment_data,
-			    const double norm_constant );
+			    const double norm_constant ) const;
 
   //! Print the total estimator data stored in an array
   void printEstimatorTotalData( 

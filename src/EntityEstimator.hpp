@@ -21,7 +21,7 @@ namespace FACEMC{
 
 //! The entity estimator class
 template<typename EntityId>
-class EntityEstimator : Estimator
+class EntityEstimator : public Estimator
 {
 
 protected:
@@ -39,12 +39,12 @@ public:
   EntityEstimator( const unsigned long long id,
 		   const double multiplier,
 		   const Teuchos::Array<EntityId>& entity_ids,
-		   const Teuchos::Array<double>& entity_norm_constants )
+		   const Teuchos::Array<double>& entity_norm_constants );
 
   //! Constructor (used by non-flux estimators)
   EntityEstimator( const unsigned long long id,
 		   const double multiplier,
-		   const Tuechos::Array<EntityId>& entity_ids );
+		   const Teuchos::Array<EntityId>& entity_ids );
 
   //! Destructor
   virtual ~EntityEstimator()
@@ -73,18 +73,18 @@ public:
   //! Return the entity ids associated with this estimator
   const EntityIdSet& getEntityIds() const;
 
-  //! Return the normalization constant for an entity
-  double getEntityNormConstant( const EntityId& entity_id );
-
-  //! Return the total normalization constant
-  double getTotalNormConstant();
-
   //! Check if the entity is assigned to this estimator
-  bool isEntityAssigned( const EntityId& entity_id );
+  bool isEntityAssigned( const EntityId& entity_id ) const;
 
 protected:
 
-  // Commit history contribution to a bin of an entity 
+  //! Return the normalization constant for an entity
+  double getEntityNormConstant( const EntityId& entity_id ) const;
+
+  //! Return the total normalization constant
+  double getTotalNormConstant() const;
+
+  //! Commit history contribution to a bin of an entity 
   void commitHistoryContributionToBinOfEntity( const EntityId& entity_id,
 					       const unsigned bin_index,
 					       const double contribution );
