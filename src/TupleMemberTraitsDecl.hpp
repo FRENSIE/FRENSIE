@@ -3,6 +3,7 @@
 //! \file   TupleMemberTraitsDecl.hpp
 //! \author Alex Robinson
 //! \brief  Tuple member traits class declaration
+//!
 //---------------------------------------------------------------------------//
 
 #ifndef TUPLE_MEMBER_TRAITS_DECL_HPP

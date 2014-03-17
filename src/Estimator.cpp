@@ -43,90 +43,21 @@ void Estimator::setEndTime( const double end_time )
 }
 
 // Constructor
-/*! \details All bins will be initialized so that any particle state will fall
- * within the estimator phase space.
- */
 Estimator::Estimator( const unsigned long long id,
 		      const double multiplier )
   : PrintableObject( "//---------------------------------------------------------------------------//" ),
     d_id( 0ull ),
     d_multiplier( multiplier ),
-    d_energy_bin_boundaries( 2 ),
-    d_cosine_bin_boundaries( 2 ),
-    d_time_bin_boundaries( 2 ),
-    d_collision_number_bins( 1 ),
     d_response_functions( 1 )
 {
   // Make sure the multiplier is valid
   testPrecondition( multiplier > 0.0 );
   
-  // Set the energy bin
-  d_energy_bin_boundaries[0] = 0.0;
-  d_energy_bin_boundaries[1] = std::numeric_limits<double>::infinity();
-
-  // Set the cosine bin
-  d_cosine_bin_boundaries[0] = -1.0;
-  d_cosine_bin_boundaries[1] = 1.0;
-
-  // Set the time bin
-  d_time_bin_boundaries[0] = 0.0;
-  d_time_bin_boundaries[1] = std::numeric_limits<double>::infinity();
-
-  // Set the collision number bin boundaries
-  d_collision_number_bins[0] = std::numeric_limits<unsigned>::max();
-
   // Set the response function
   d_response_functions[0] = ResponseFunction::default_response_function;
 
   // Create the default particle types set (all particle types)
   d_particle_types.insert( PHOTON );
-}
-
-// Set the energy bin boundaries
-void Estimator::setEnergyBinBoundaries(
-			  const Teuchos::Array<double>& energy_bin_boundaries )
-{
-  // Make sure there is at least one energy bin
-  testPrecondition( energy_bin_boundaries.size() >= 2 );
-  // Make sure the energy bins are valid
-  testPrecondition( energy_bin_boundaries[0] >= 0.0 );
-  
-  d_energy_bin_boundaries = energy_bin_boundaries;
-}  
-
-// Set the cosine bin boundaries
-void Estimator::setCosineBinBoundaries(
-			  const Teuchos::Array<double>& cosine_bin_boundaries )
-{
-  // Make sure there is at least one cosine bin
-  testPrecondition( cosine_bin_boundaries.size() >= 2 );
-  // Make sure the time bins are valid
-  testPrecondition( cosine_bin_boundaries[0] >= -1.0 );
-  testPrecondition( cosine_bin_boundaries[1] <= 1.0 );
-  
-  d_cosine_bin_boundaries = cosine_bin_boundaries;
-}
-
-// Set the time bin boundaries
-void Estimator::setTimeBinBoundaries(
-			    const Teuchos::Array<double>& time_bin_boundaries )
-{
-  // Make sure there is at least one time bin
-  testPrecondition( time_bin_boundaries.size() >= 2 );
-  // Make sure the time bins are valid
-  testPrecondition( time_bin_boundaries[0] >= 0.0 );
-  
-  d_time_bin_boundaries = time_bin_boundaries;
-}
-
-// Set the collision number bins
-void Estimator::setCollisionNumberBins( 
-			const Teuchos::Array<unsigned>& collision_number_bins )
-{
-  // Make sure there is at least one collision number bin
-  testPrecondition( collision_number_bins.size() >= 1 );
-  
-  d_collision_number_bins = collision_number_bins;
 }
 
 // Set the response functions
@@ -152,117 +83,125 @@ void Estimator::setParticleTypes(
     d_particle_types.insert( particle_types[i] );
 }
 
+// Assign bin boundaries to an estimator dimension
+void Estimator::assignBinBoundaries( 
+	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+{
+  if(d_dimension_bin_boundaries_map.count(bin_boundaries->getDimension()) == 0)
+  {
+    d_dimension_bin_boundaries_map[bin_boundaries->getDimension()] = 
+      bin_boundaries;
+
+    // Add the new dimension to the dimension ordering array
+    d_dimension_ordering.push_back( bin_boundaries->getDimension() );
+
+    // Calculate the index step size for the new dimension
+    unsigned dimension_index_step_size = 1u;
+
+    for( unsigned i = 0u; i < d_dimension_index_step_sizes.size(); ++i )
+    {
+      dimension_index_step_size *= 
+	d_dimension_bin_boundaries_map[d_dimension_ordering[i]]->getNumberOfBins();
+    }
+
+    d_dimension_index_step_sizes.push_back( dimension_index_step_size );
+  }
+  else
+  {
+    std::cerr << "Warning: The dimension requested already has bin boundaries "
+	      << "set. The new boundaries will be ignored."
+	      << std::endl;
+  }
+}
+
 // Print the estimator response function names
 void Estimator::printEstimatorResponseFunctionNames( std::ostream& os ) const
 {
   os << "Response Functions: " << std::endl;
   
-  for( unsigned i = 0; i < d_response_functions.size(); ++i )
+  for( unsigned i = 0u; i < d_response_functions.size(); ++i )
     os << "  " << i+1 << ".) " << getResponseFunctionName( i ) << std::endl;
 }
 
 // Print the estimator bins
 void Estimator::printEstimatorBins( std::ostream& os ) const
 {
-  os << "Collision Number Bins: ";
-  
-  for( unsigned i = 0; i < d_collision_number_bins.size(); ++i )
-    os << d_collision_number_bins[i] << " ";
-
-  os << std::endl;
-  os << "Time Bin Boundaries: ";
-  
-  for( unsigned i = 0; i < d_time_bin_boundaries.size(); ++i )
-    os << d_time_bin_boundaries[i] << " ";
-
-  os << std::endl;
-  os << "Cosine Bin Boundaries: ";
-  
-  for( unsigned i = 0; i < d_cosine_bin_boundaries.size(); ++i )
-    os << d_cosine_bin_boundaries[i] << " ";
-
-  os << std::endl;
-  os << "Energy Bin Boundaries: ";
-
-  for( unsigned i = 0; i < d_energy_bin_boundaries.size(); ++i )
-    os << d_energy_bin_boundaries[i] << " ";
-
-  os << std::endl;
+  for( unsigned i = 0u; i < d_dimension_ordering.size(); ++i )
+    d_dimension_bin_boundaries_map.find(d_dimension_ordering[i])->second->print( os );
 }
 
 // Print the estimator data stored in an array
 /*! \details The number of elements in the array should be equal to the
  * the number of estimator bins times the number of response functions.
  */
-void Estimator::printEstimatorBinData( 
-		     std::ostream& os,
-		     const EstimatorMomentsArray& estimator_moments_data,
-		     const double norm_constant ) const
+void Estimator::printEstimatorBinData(
+			   std::ostream& os,
+		           const EstimatorMomentsArray& estimator_moments_data,
+			   const double norm_constant ) const
 {
   // Make sure that the estimator moment array is valid
   testPrecondition( estimator_moments_data.size() == 
 		    getNumberOfBins()*getNumberOfResponseFunctions() );
+
+  // Use this array to determine when bin indices should be printed
+  Teuchos::Array<unsigned> previous_bin_indices( 
+					d_dimension_ordering.size(),
+					std::numeric_limits<unsigned>::max() );
   
-  unsigned num_response_functions = getNumberOfResponseFunctions();
-  unsigned num_bins = getNumberOfBins();
-  unsigned num_collision_number_bins = getNumberOfCollisionNumberBins();
-  unsigned num_time_bins = getNumberOfTimeBins();
-  unsigned num_cosine_bins = getNumberOfCosineBins();
-  unsigned num_energy_bins = getNumberOfEnergyBins();
-  
-  unsigned bin_index;
-  
-  for( unsigned m = 0; m < num_response_functions; ++m )
+  for( unsigned r = 0u; r < getNumberOfResponseFunctions(); ++r )
   {
-    os << "Response Function: " << getResponseFunctionName( m ) << std::endl;
-    
-    for( unsigned l = 0; l < num_collision_number_bins; ++l )
+    os << "Response Function: " << getResponseFunctionName( r ) << std::endl;
+
+    for( unsigned i = 0u; i < getNumberOfBins(); ++i )
     {
-      os << " Collision Number Bin: " << getBoundariesOfCollisionNumberBin( l )
-	 << std::endl;
-      
-      for( unsigned k = 0; k < num_time_bins; ++k )
+      for( unsigned d = d_dimension_ordering.size()-1; d >= 0u; --d )
       {
-	os << "  Time Bin: " << getBoundariesOfTimeBin( k ) << std::endl;
-
-	for( unsigned j = 0; j < num_cosine_bins; ++j )
+	// Add proper spacing before printing
+	for( unsigned s = 0u; s < d_dimension_ordering.size()-d; ++d )
+	  os << " ";
+	
+	// Calculate the bin index for the dimension
+	unsigned bin_index = (i/d_dimension_index_step_sizes[d])%
+	  (getNumberOfBins( d_dimension_ordering[d] ));
+	
+	// Print the bin boundaries if the dimension index has changed
+	if( bin_index != previous_bin_indices[d] )
 	{
-	  os << "   Cosine Bin: " << getBoundariesOfCosineBin( j ) 
-	     << std::endl;
+	  previous_bin_indices[d] = bin_index;
+	  
+	  d_dimension_bin_boundaries_map.find(d_dimension_ordering[d])->second->printBoundariesOfBin( os, bin_index );
+	}
+	
+	// Print a new line character for all but the first dimension
+	if( d != 0u )
+	  os << std::endl;
+      }
 
-	  for( unsigned i = 0; i < num_energy_bins; ++i )
-	  {
-	    os << "    Energy Bin: " << getBoundariesOfEnergyBin( i ) << " ";
+      unsigned bin_index = i + r*getNumberOfBins();
+      
+      // Calculate the estimator bin data
+      double estimator_bin_value = 
+	calculateMean( estimator_moments_data[bin_index].first )*
+	d_multiplier/norm_constant;
+      
+      double estimator_bin_rel_err = 
+	calculateRelativeError( 
+			       estimator_moments_data[bin_index].first,
+			       estimator_moments_data[bin_index].second );
+      
+      double estimator_bin_vov = 
+	calculateVOV( estimator_moments_data[bin_index].first,
+		      estimator_moments_data[bin_index].second,
+		      estimator_moments_data[bin_index].third,
+		      estimator_moments_data[bin_index].fourth );
+      
+      double estimator_bin_fom = calculateFOM( estimator_bin_rel_err );
 
-	    bin_index = m*num_bins + 
-	      l*num_time_bins*num_cosine_bins*num_energy_bins +
-	      k*num_cosine_bins*num_energy_bins +
-	      j*num_energy_bins;
-
-	    double estimator_bin_value = 
-	      calculateMean( estimator_moments_data[bin_index].first )*
-	      d_multiplier/norm_constant;
-
-	    double estimator_bin_rel_err = 
-	      calculateRelativeError( 
-			    estimator_moments_data[bin_index].first,
-			    estimator_moments_data[bin_index].second );
-
-	    double estimator_bin_vov = 
-	      calculateVOV( estimator_moments_data[bin_index].first,
-			    estimator_moments_data[bin_index].second,
-			    estimator_moments_data[bin_index].third,
-			    estimator_moments_data[bin_index].fourth );
-	       
-	    double estimator_bin_fom = calculateFOM( estimator_bin_rel_err );
-
-	    os << estimator_bin_value << " " 
+      // Print the estimator bin data
+      os << estimator_bin_value << " " 
 	       << estimator_bin_rel_err << " "
 	       << estimator_bin_vov << " "
 	       << estimator_bin_fom << std::endl;
-	  }
-	}
-      }
     }
   }
 }
@@ -280,7 +219,7 @@ void Estimator::printEstimatorTotalData(
   testPrecondition( total_estimator_moments_data.size() ==
 		    getNumberOfResponseFunctions() );
 
-  for( unsigned i = 0; i < d_response_functions.size(); ++i )
+   for( unsigned i = 0; i < d_response_functions.size(); ++i )
   {
     os << "Response Function: " << getResponseFunctionName( i ) << std::endl;
     
@@ -307,124 +246,33 @@ void Estimator::printEstimatorTotalData(
   }
 }
 
-// Calculate the energy bin index for the desired energy
-unsigned Estimator::calculateEnergyBinIndex( const double energy ) const
-{
-  // Make sure the energy is in the estimator energy space
-  testPrecondition( isEnergyInEstimatorEnergySpace( energy ) );
-
-  Teuchos::Array<double>::const_iterator start, end, upper_bin_boundary;
-  
-  start = d_energy_bin_boundaries.begin();
-  end = d_energy_bin_boundaries.end();
-  upper_bin_boundary = Search::binarySearchDiscreteData( start, end, energy);
-						 
-  unsigned distance = 
-    std::distance( d_energy_bin_boundaries.begin(), upper_bin_boundary );
-
-  if( distance != 0u )
-    return distance-1u;
-  else
-    return distance;
-}
-
-// Calculate the cosine bin index for the desired angle cosine
-unsigned Estimator::calculateCosineBinIndex( const double angle_cosine ) const
-{
-  // Make sure the angle cosine is in the estimator cosine space
-  testPrecondition( isAngleCosineInEstimatorCosineSpace( angle_cosine ) );
-
-  Teuchos::Array<double>::const_iterator start, end, upper_bin_boundary;
-  
-  start = d_cosine_bin_boundaries.begin();
-  end = d_cosine_bin_boundaries.end();
-  upper_bin_boundary = 
-    Search::binarySearchDiscreteData( start, end, angle_cosine );
-
-  unsigned distance = 
-    std::distance( d_cosine_bin_boundaries.begin(), upper_bin_boundary );
-  
-  if( distance != 0u )
-    return distance-1u;
-  else
-    return distance;
-}
-
-// Calculate the time bin index for the desired time
-unsigned Estimator::calculateTimeBinIndex( const double time ) const
-{
-  // Make sure the time is in the estimator time space
-  testPrecondition( isTimeInEstimatorTimeSpace( time ) );
-
-  Teuchos::Array<double>::const_iterator start, end, upper_bin_boundary;
-  
-  start = d_time_bin_boundaries.begin();
-  end = d_time_bin_boundaries.end();
-  upper_bin_boundary =
-    Search::binarySearchDiscreteData( start, end, time );
-
-  unsigned distance = 
-    std::distance( d_time_bin_boundaries.begin(), upper_bin_boundary );
-  
-  if( distance != 0u )
-    return distance-1u;
-  else
-    return distance;
-}
-
-// Calculate the collision number bin for the desired collision number
-unsigned Estimator::calculateCollisionNumberBinIndex( 
-					  const double collision_number ) const
-{
-  // Make sure the collision number is in the estimator col. num. space
-  testPrecondition( isCollisionNumberInEstimatorCollisionNumberSpace(
-						          collision_number ) );
-  
-  Teuchos::Array<unsigned>::const_iterator collision_bin_start,
-    collision_bin_end, collision_upper_bin_boundary;
-  
-  collision_bin_start = d_collision_number_bins.begin();
-  collision_bin_end = d_collision_number_bins.end();
-  collision_upper_bin_boundary = 
-    Search::binarySearchDiscreteData( collision_bin_start, 
-				      collision_bin_end,
-				      collision_number );
-  
-  return
-    std::distance( d_collision_number_bins.begin(), 
-		   collision_upper_bin_boundary );
-}
-
 // Calculate the bin index for the desired response function
-/*! \details The dimensions of the estimator phase space are ordered from
- * energy, angle cosine, time, collision number and finally response function 
- * (the energy variable runs the fastest in terms of the bin index). 
- */ 
 unsigned Estimator::calculateBinIndex( 
-				 const double energy,
-				 const double angle_cosine,
-				 const double time,
-				 const unsigned collision_number,
+			         const DimensionValueMap& dimension_values,
 				 const unsigned response_function_index ) const
 {
-  // Make sure the response function index is valid
+  // Make sure there are at least as many dimension values as dimensions
+  testPrecondition( dimension_values.size() >= 
+		    d_dimension_bin_boundaries_map.size() );
+  // Make sure the response function is valid
   testPrecondition( response_function_index < getNumberOfResponseFunctions() );
   
-  unsigned num_energy_bins = getNumberOfEnergyBins();
-  unsigned num_energy_and_cosine_bins = 
-    num_energy_bins*getNumberOfCosineBins();
-  unsigned num_energy_cosine_and_time_bins = 
-    num_energy_and_cosine_bins*getNumberOfTimeBins();
-  unsigned num_bins = 
-    num_energy_cosine_and_time_bins*getNumberOfCollisionNumberBins();
+  unsigned long bin_index = 0u;
   
-  unsigned long bin_index = calculateEnergyBinIndex( energy );
-  bin_index += calculateCosineBinIndex( angle_cosine )*num_energy_bins;
-  bin_index += calculateTimeBinIndex( time )*num_energy_and_cosine_bins;
-  bin_index += calculateCollisionNumberBinIndex( collision_number )*
-    num_energy_cosine_and_time_bins;
-  bin_index += response_function_index*num_bins;
-				
+  for( unsigned i = 0u; i < d_dimension_ordering.size(); ++i )
+  {
+    const Teuchos::any& dimension_value = 
+      dimension_values.find(d_dimension_ordering[i])->second;
+
+    const Teuchos::RCP<EstimatorDimensionDiscretization>& 
+      dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
+					     d_dimension_ordering[i] )->second;
+    bin_index += dimension_bin_boundaries->calculateBinIndex(dimension_value)*
+      d_dimension_index_step_sizes[i];
+  }
+  
+  bin_index += response_function_index*getNumberOfBins();
+
   // Make sure the bin index calculated is valid
   testPostcondition( bin_index < 
 		     getNumberOfBins()*getNumberOfResponseFunctions() );
@@ -566,7 +414,6 @@ double Estimator::calculateFOM( const double relative_error ) const
   
   return fom;
 }
-
 
 } // end FACEMC namespace
 

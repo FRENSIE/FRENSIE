@@ -240,6 +240,28 @@
     void TEST_GROUP##_##TEST_NAME##_UnitTest<UNSIGNED_VALUE>::runUnitTestImpl(\
 			    Teuchos::FancyOStream &out, bool &success ) const \
 
+/*! \brief A macro for the Teuchos Unit Test Harness for creating a 
+ * templated unit test on an EstimatorPhaseSpaceDimension enum.
+ * \ingroup unit_test_harness_extensions
+ */
+#define FACEMC_UNIT_TEST_EPSD_TEMPLATE_1_DECL(TEST_GROUP, TEST_NAME, EPSD_VALUE) \
+  template<FACEMC::EstimatorPhaseSpaceDimension EPSD_VALUE>		\
+  class TEST_GROUP##_##TEST_NAME##_UnitTest : public Teuchos::UnitTestBase \
+  {									\
+  public:								\
+    TEST_GROUP##_##TEST_NAME##_UnitTest( const std::string& value )	\
+    : Teuchos::UnitTestBase(						\
+		       #TEST_GROUP, value+"_"+std::string(#TEST_NAME) ) \
+    {}									\
+    void runUnitTestImpl( Teuchos::FancyOStream &out, bool &success ) const; \
+    virtual std::string unitTestFile() const { return __FILE__; }	\
+    virtual long int unitTestFileLineNumber() const { return __LINE__; } \
+  };									\
+									\
+  template<FACEMC::EstimatorPhaseSpaceDimension EPSD_VALUE>		\
+  void TEST_GROUP##_##TEST_NAME##_UnitTest<EPSD_VALUE>::runUnitTestImpl(\
+		          Teuchos::FancyOStream &out, bool &success ) const \
+    
 /*! A macro for the Teuchos Unit Test Harness for comparing ordinal data types
  * and containers of ordinal data types.
  * 

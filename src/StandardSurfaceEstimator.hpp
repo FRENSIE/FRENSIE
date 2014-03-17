@@ -48,7 +48,7 @@ public:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "StandardSurfaceEstimator.hpp"
+#include "StandardSurfaceEstimator_def.hpp"
 
 //---------------------------------------------------------------------------//
 
