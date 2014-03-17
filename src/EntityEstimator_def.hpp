@@ -64,50 +64,6 @@ EntityEstimator<EntityId>::EntityEstimator(
 		     d_entity_estimator_moments_map.size() );
 }
 
-// Set the energy bin boundaries
-template<typename EntityId>
-void EntityEstimator<EntityId>::setEnergyBinBoundaries( 
-			  const Teuchos::Array<double>& energy_bin_boundaries )
-{
-  Estimator::setEnergyBinBoundaries( energy_bin_boundaries );
-
-  // Resize the entity estimator moment map arrays
-  resizeEntityEstimatorMapArrays();
-}
-
-// Set the cosine bin boundaries
-template<typename EntityId>
-void EntityEstimator<EntityId>::setCosineBinBoundaries(
-			  const Teuchos::Array<double>& cosine_bin_boundaries )
-{
-  Estimator::setCosineBinBoundaries( cosine_bin_boundaries );
-
-  // Resize the entity estimator moment map arrays
-  resizeEntityEstimatorMapArrays();
-}
-
-// Set time bin boundaries
-template<typename EntityId>
-void EntityEstimator<EntityId>::setTimeBinBoundaries(
-			    const Teuchos::Array<double>& time_bin_boundaries )
-{
-  Estimator::setTimeBinBoundaries( time_bin_boundaries );
-
-  // Resize the entity estimator moment map arrays
-  resizeEntityEstimatorMapArrays();
-}
-
-// Set the collision number bin boundaries
-template<typename EntityId>
-void EntityEstimator<EntityId>::setCollisionNumberBins(
-			const Teuchos::Array<unsigned>& collision_number_bins )
-{
-  Estimator::setCollisionNumberBins( collision_number_bins );
-
-  // Resize the entity estimator moment map arrays
-  resizeEntityEstimatorMapArrays();
-}
-
 // Set the response functions
 template<typename EntityId>
 void EntityEstimator<EntityId>::setResponseFunctions( 
@@ -125,6 +81,17 @@ inline const typename EntityEstimator<EntityId>::EntityIdSet&
 EntityEstimator<EntityId>::getEntityIds() const
 {
   return d_entity_ids;
+}
+
+// Assign bin boundaries to an estimator dimension
+template<typename EntityId>
+void EntityEstimator<EntityId>::assignBinBoundaries(
+         const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+{
+  Estimator::assignBinBoundaries( bin_boundaries );
+
+  // Resize the entity estimator moments map arrays
+  resizeEntityEstimatorMapArrays();
 }
 
 // Return the normalization constant for an entity
@@ -225,6 +192,8 @@ void EntityEstimator<EntityId>::printImplementation(
   
   // Print the binning data
   printEstimatorBins( os );
+
+  os << std::endl;
   
   // Print the estimator data for each entity
   typename EntityEstimatorMomentsArrayMap::const_iterator entity_data, 
@@ -242,6 +211,7 @@ void EntityEstimator<EntityId>::printImplementation(
     printEstimatorBinData( os, 
 			   entity_data->second,
 			   getEntityNormConstant( entity_data->first ) );
+    os << std::endl;
 
     ++entity_data;
   }

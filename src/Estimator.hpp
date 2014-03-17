@@ -12,6 +12,7 @@
 // Std Lib Includes
 #include <string>
 #include <set>
+#include <map>
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
@@ -143,8 +144,21 @@ protected:
 				const BasicParticleState& particle,
 				const unsigned response_function_index ) const;
 
+  //! Check if the point is in the estimator phase space
+  bool isPointInEstimatorPhaseSpace( 
+			     const DimensionValueMap& dimension_values ) const;
+			        
+
+  //! Check if the point is in the estimator phase space
+  bool isPointInEstimatorPhaseSpace(
+			   const DimensionValueArray& dimension_values ) const;
+
   //! Calculate the bin index for the desired response function
   unsigned calculateBinIndex( const DimensionValueMap& dimension_values,
+			      const unsigned response_function_index ) const;
+
+  //! Calculate the bin index for the desired response function
+  unsigned calculateBinIndex( const DimensionValueArray& dimension_values,
 			      const unsigned response_function_index ) const;
 
   //! Calculate the mean of a set of contributions
@@ -186,14 +200,15 @@ private:
   
   // The estimator phase space dimension bin boundaries map
   boost::unordered_map<EstimatorPhaseSpaceDimension,
-		       Teuchos::RCP<EstimatorDimensionDiscretization> >
+  		       Teuchos::RCP<EstimatorDimensionDiscretization> >
   d_dimension_bin_boundaries_map;
+
+  // The estimator phase space dimension index step size map
+  boost::unordered_map<EstimatorPhaseSpaceDimension,unsigned>
+  d_dimension_index_step_size_map;
 
   // The estimator phase space dimension ordering
   Teuchos::Array<EstimatorPhaseSpaceDimension> d_dimension_ordering;
-
-  // The estimator phase space dimension index step size
-  Teuchos::Array<unsigned> d_dimension_index_step_sizes;
 
   // The particle types that this estimator will take contributions from
   std::set<ParticleType> d_particle_types;

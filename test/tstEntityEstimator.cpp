@@ -71,16 +71,18 @@ template<typename EntityId>
 void setEntityEstimatorBins( 
 		    Teuchos::RCP<TestEntityEstimator<int> >& entity_estimator )
 {
-  Teuchos::RCP<FACEMC::Estimator> base_estimator = 
+  // Use a base class pointer to test the virtual functions
+  Teuchos::RCP<FACEMC::Estimator> base_estimator =
     Teuchos::rcp_dynamic_cast<FACEMC::Estimator>( entity_estimator );
-
+  
   // Set the energy bins
   Teuchos::Array<double> energy_bin_boundaries( 3 );
   energy_bin_boundaries[0] = 0.0;
   energy_bin_boundaries[1] = 1e-1;
   energy_bin_boundaries[2] = 1.0;
 
-  base_estimator->setEnergyBinBoundaries( energy_bin_boundaries );
+  base_estimator->setBinBoundaries<FACEMC::ENERGY_DIMENSION>( 
+						       energy_bin_boundaries );
 
   // Set the cosine bins
   Teuchos::Array<double> cosine_bin_boundaries( 3 );
@@ -88,7 +90,8 @@ void setEntityEstimatorBins(
   cosine_bin_boundaries[1] = 0.0;
   cosine_bin_boundaries[2] = 1.0;
 
-  base_estimator->setCosineBinBoundaries( cosine_bin_boundaries );
+  base_estimator->setBinBoundaries<FACEMC::COSINE_DIMENSION>( 
+						       cosine_bin_boundaries );
 
   // Set the time bins
   Teuchos::Array<double> time_bin_boundaries( 3 );
@@ -96,7 +99,8 @@ void setEntityEstimatorBins(
   time_bin_boundaries[1] = 1e3;
   time_bin_boundaries[2] = 1e5;
 
-  base_estimator->setTimeBinBoundaries( time_bin_boundaries );
+  base_estimator->setBinBoundaries<FACEMC::TIME_DIMENSION>( 
+							 time_bin_boundaries );
 
   // Set the collision number bins
   Teuchos::Array<unsigned> collision_number_bins( 3 );
@@ -104,7 +108,8 @@ void setEntityEstimatorBins(
   collision_number_bins[1] = 1u;
   collision_number_bins[2] = std::numeric_limits<unsigned>::max();
 
-  base_estimator->setCollisionNumberBins( collision_number_bins );
+  base_estimator->setBinBoundaries<FACEMC::COLLISION_NUMBER_DIMENSION>( 
+						       collision_number_bins );
 
   // Set the response functions
   Teuchos::Array<Teuchos::RCP<FACEMC::ResponseFunction> > 

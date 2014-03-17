@@ -50,22 +50,6 @@ public:
   virtual ~EntityEstimator()
   { /* ... */ }
 
-  //! Set the energy bin boundaries
-  virtual void setEnergyBinBoundaries( 
-			 const Teuchos::Array<double>& energy_bin_boundaries );
-
-  //! Set the cosine bin boundaries
-  virtual void setCosineBinBoundaries(
-			 const Teuchos::Array<double>& cosine_bin_boundaries );
-
-  //! Set the time bin boundaries
-  virtual void setTimeBinBoundaries(
-			   const Teuchos::Array<double>& time_bin_boundaries );
-
-  //! Set the collision number bins
-  virtual void setCollisionNumberBins( 
-		       const Teuchos::Array<unsigned>& collision_number_bins );
-
   //! Set the response functions
   virtual void setResponseFunctions( 
    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
@@ -77,6 +61,10 @@ public:
   bool isEntityAssigned( const EntityId& entity_id ) const;
 
 protected:
+
+  //! Assign bin boundaries to an estimator dimension
+  virtual void assignBinBoundaries(
+	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
 
   //! Return the normalization constant for an entity
   double getEntityNormConstant( const EntityId& entity_id ) const;
@@ -90,8 +78,8 @@ protected:
 					       const double contribution );
 
   //! Print the estimator data
-  void printImplementation( std::ostream& os,
-			    const std::string& entity_type ) const;
+  virtual void printImplementation( std::ostream& os,
+				    const std::string& entity_type ) const;
   
 private:
 

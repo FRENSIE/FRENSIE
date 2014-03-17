@@ -21,6 +21,7 @@
 
 /*! \defgroup estimator_phase_space_dim_traits Estimator Phase Space Dimension
  * Traits
+ * \ingroup traits
  */
 
 namespace FACEMC{
@@ -50,6 +51,20 @@ struct EstimatorPhaseSpaceDimensionTraits
   { 
     (void)UndefinedEstimatorPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
     return std::string();
+  }
+
+  //! The lower bound of the dimension
+  static inline dimensionType lowerBound()
+  {
+    (void)UndefinedEstimatorPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
+    return 0;
+  }
+
+  //! The upper bound of the dimension
+  static inline dimensionType upperBound()
+  {
+    (void)UndefinedEstimatorPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
+    return 0;
   }
 
   //! Extract a value from a Teuchos::any object associated with the dimension

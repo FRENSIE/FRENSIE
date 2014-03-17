@@ -98,13 +98,14 @@ void Estimator::assignBinBoundaries(
     // Calculate the index step size for the new dimension
     unsigned dimension_index_step_size = 1u;
 
-    for( unsigned i = 0u; i < d_dimension_index_step_sizes.size(); ++i )
+    for( unsigned i = 0u; i < d_dimension_ordering.size()-1u; ++i )
     {
       dimension_index_step_size *= 
 	d_dimension_bin_boundaries_map[d_dimension_ordering[i]]->getNumberOfBins();
     }
 
-    d_dimension_index_step_sizes.push_back( dimension_index_step_size );
+    d_dimension_index_step_size_map[bin_boundaries->getDimension()] = 
+      dimension_index_step_size;
   }
   else
   {
@@ -127,7 +128,10 @@ void Estimator::printEstimatorResponseFunctionNames( std::ostream& os ) const
 void Estimator::printEstimatorBins( std::ostream& os ) const
 {
   for( unsigned i = 0u; i < d_dimension_ordering.size(); ++i )
+  {
     d_dimension_bin_boundaries_map.find(d_dimension_ordering[i])->second->print( os );
+    os << std::endl;
+  }
 }
 
 // Print the estimator data stored in an array
@@ -154,14 +158,13 @@ void Estimator::printEstimatorBinData(
 
     for( unsigned i = 0u; i < getNumberOfBins(); ++i )
     {
-      for( unsigned d = d_dimension_ordering.size()-1; d >= 0u; --d )
-      {
-	// Add proper spacing before printing
-	for( unsigned s = 0u; s < d_dimension_ordering.size()-d; ++d )
-	  os << " ";
+      for( int d = d_dimension_ordering.size()-1; d >= 0; --d )
+      {	
+	const unsigned& dimension_index_step_size = 
+	 d_dimension_index_step_size_map.find(d_dimension_ordering[d])->second;
 	
 	// Calculate the bin index for the dimension
-	unsigned bin_index = (i/d_dimension_index_step_sizes[d])%
+	unsigned bin_index = (i/dimension_index_step_size)%
 	  (getNumberOfBins( d_dimension_ordering[d] ));
 	
 	// Print the bin boundaries if the dimension index has changed
@@ -169,16 +172,21 @@ void Estimator::printEstimatorBinData(
 	{
 	  previous_bin_indices[d] = bin_index;
 	  
+	  // Add proper spacing before printing
+	  for( unsigned s = 0u; s < d_dimension_ordering.size()-d; ++s )
+	    os << " ";
+	  
 	  d_dimension_bin_boundaries_map.find(d_dimension_ordering[d])->second->printBoundariesOfBin( os, bin_index );
+	  
+	  // Print a new line character for all but the first dimension
+	  if( d != 0 )
+	    os << std::endl;
 	}
-	
-	// Print a new line character for all but the first dimension
-	if( d != 0u )
-	  os << std::endl;
       }
 
+      // Calculate the bin index for the response function
       unsigned bin_index = i + r*getNumberOfBins();
-      
+
       // Calculate the estimator bin data
       double estimator_bin_value = 
 	calculateMean( estimator_moments_data[bin_index].first )*
@@ -198,10 +206,10 @@ void Estimator::printEstimatorBinData(
       double estimator_bin_fom = calculateFOM( estimator_bin_rel_err );
 
       // Print the estimator bin data
-      os << estimator_bin_value << " " 
-	       << estimator_bin_rel_err << " "
-	       << estimator_bin_vov << " "
-	       << estimator_bin_fom << std::endl;
+      os << " " << estimator_bin_value << " " 
+	 << estimator_bin_rel_err << " "
+	 << estimator_bin_vov << " "
+	 << estimator_bin_fom << std::endl;
     }
   }
 }
@@ -246,6 +254,68 @@ void Estimator::printEstimatorTotalData(
   }
 }
 
+// Check if the point is in the estimator phase space
+bool Estimator::isPointInEstimatorPhaseSpace(
+			      const DimensionValueMap& dimension_values ) const
+{
+  // Make sure there are at least as many dimension values as dimensions
+  testPrecondition( dimension_values.size() >= 
+		    d_dimension_bin_boundaries_map.size() );
+
+  bool point_in_phase_space = true;
+
+  for( unsigned i = 0u; i < d_dimension_ordering.size(); ++i )
+  {
+    const Teuchos::any& dimension_value = 
+      dimension_values.find(d_dimension_ordering[i])->second;
+
+    const Teuchos::RCP<EstimatorDimensionDiscretization>& 
+      dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
+					     d_dimension_ordering[i] )->second;
+
+    if( !dimension_bin_boundaries->isValueInDiscretization( dimension_value ) )
+    {
+      point_in_phase_space = false;
+
+      break;
+    }
+  }
+
+  return point_in_phase_space;
+}
+
+// Check if the point is in the estimator phase space
+bool Estimator::isPointInEstimatorPhaseSpace(
+			    const DimensionValueArray& dimension_values ) const
+{
+  // Make sure there are at least as many dimension values as dimensions
+  testPrecondition( dimension_values.size() >= 
+		    d_dimension_bin_boundaries_map.size() );
+
+  bool point_in_phase_space = true;
+
+  for( unsigned i = 0u; i < dimension_values.size(); ++i )
+  {
+    if( d_dimension_bin_boundaries_map.count( dimension_values[i].first) == 1)
+    {
+      const Teuchos::any& dimension_value = dimension_values[i].second;
+
+      const Teuchos::RCP<EstimatorDimensionDiscretization>& 
+	dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
+					   dimension_values[i].first )->second;
+
+      if( !dimension_bin_boundaries->isValueInDiscretization(dimension_value) )
+      {
+	point_in_phase_space = false;
+	
+	break;
+      }
+    }
+  }
+
+  return point_in_phase_space;
+}
+
 // Calculate the bin index for the desired response function
 unsigned Estimator::calculateBinIndex( 
 			         const DimensionValueMap& dimension_values,
@@ -267,12 +337,58 @@ unsigned Estimator::calculateBinIndex(
     const Teuchos::RCP<EstimatorDimensionDiscretization>& 
       dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
 					     d_dimension_ordering[i] )->second;
+
+    const unsigned& dimension_index_step_size = 
+      d_dimension_index_step_size_map.find( d_dimension_ordering[i] )->second;
+    
     bin_index += dimension_bin_boundaries->calculateBinIndex(dimension_value)*
-      d_dimension_index_step_sizes[i];
+      dimension_index_step_size;
   }
   
   bin_index += response_function_index*getNumberOfBins();
 
+  // Make sure the bin index calculated is valid
+  testPostcondition( bin_index < 
+		     getNumberOfBins()*getNumberOfResponseFunctions() );
+  testPostcondition( bin_index < std::numeric_limits<unsigned>::max() );
+
+  return bin_index;
+}
+
+// Calculate the bin index for the desired response function
+unsigned Estimator::calculateBinIndex( 
+			         const DimensionValueArray& dimension_values,
+				 const unsigned response_function_index ) const
+{
+  // Make sure there are at least as many dimension values as dimensions
+  testPrecondition( dimension_values.size() >= 
+		    d_dimension_bin_boundaries_map.size() );
+  // Make sure the response function is valid
+  testPrecondition( response_function_index < getNumberOfResponseFunctions() );
+  
+  unsigned long bin_index = 0u;
+  
+  for( unsigned i = 0u; i < dimension_values.size(); ++i )
+  {
+    if( d_dimension_bin_boundaries_map.count( dimension_values[i].first ) == 1)
+    {
+      const Teuchos::any& dimension_value = dimension_values[i].second;
+      
+      const Teuchos::RCP<EstimatorDimensionDiscretization>& 
+	dimension_bin_boundaries = d_dimension_bin_boundaries_map.find(
+					   dimension_values[i].first )->second;
+
+      const unsigned& dimension_index_step_size = 
+       d_dimension_index_step_size_map.find(dimension_values[i].first)->second;
+    
+      bin_index += 
+	dimension_bin_boundaries->calculateBinIndex(dimension_value)*
+	dimension_index_step_size;
+    }
+  }
+  
+  bin_index += response_function_index*getNumberOfBins();
+  
   // Make sure the bin index calculated is valid
   testPostcondition( bin_index < 
 		     getNumberOfBins()*getNumberOfResponseFunctions() );

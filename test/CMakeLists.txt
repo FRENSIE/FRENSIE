@@ -350,14 +350,14 @@ ADD_EXECUTABLE(tstGeneralEstimatorDimensionDiscretization
 TARGET_LINK_LIBRARIES(tstGeneralEstimatorDimensionDiscretization ${PROJECT_NAME})
 ADD_TEST(GeneralEstimatorDimensionDiscretization_test tstGeneralEstimatorDimensionDiscretization)
 
-# ADD_EXECUTABLE(tstEstimator
-#   tstEstimator.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstEstimator ${PROJECT_NAME})
-# ADD_TEST(Estimator_test tstEstimator)
+ADD_EXECUTABLE(tstEstimator
+  tstEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEstimator ${PROJECT_NAME})
+ADD_TEST(Estimator_test tstEstimator)
 
-# ADD_EXECUTABLE(tstEntityEstimator
-#   tstEntityEstimator.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstEntityEstimator ${PROJECT_NAME})
-# ADD_TEST(EntityEstimator_test tstEntityEstimator)
+Add_executable(tstEntityEstimator
+  tstEntityEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEntityEstimator ${PROJECT_NAME})
+ADD_TEST(EntityEstimator_test tstEntityEstimator)

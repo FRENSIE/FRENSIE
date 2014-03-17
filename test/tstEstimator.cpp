@@ -44,22 +44,13 @@ public:
   { /* ... */ }
 
   // Allow public access to the estimator protected member functions
+  using FACEMC::Estimator::DimensionValueArray;
+  using FACEMC::Estimator::DimensionValueMap;
+  using FACEMC::Estimator::assignBinBoundaries;
   using FACEMC::Estimator::getMultiplier;
-  using FACEMC::Estimator::getBoundariesOfEnergyBin;
-  using FACEMC::Estimator::getBoundariesOfCosineBin;
-  using FACEMC::Estimator::getBoundariesOfTimeBin;
-  using FACEMC::Estimator::getBoundariesOfCollisionNumberBin;
   using FACEMC::Estimator::getResponseFunctionName;
   using FACEMC::Estimator::evaluateResponseFunction;
-  using FACEMC::Estimator::isEnergyInEstimatorEnergySpace;
-  using FACEMC::Estimator::isAngleCosineInEstimatorCosineSpace;
-  using FACEMC::Estimator::isTimeInEstimatorTimeSpace;
-  using FACEMC::Estimator::isCollisionNumberInEstimatorCollisionNumberSpace;
   using FACEMC::Estimator::isPointInEstimatorPhaseSpace;
-  using FACEMC::Estimator::calculateEnergyBinIndex;
-  using FACEMC::Estimator::calculateCosineBinIndex;
-  using FACEMC::Estimator::calculateTimeBinIndex;
-  using FACEMC::Estimator::calculateCollisionNumberBinIndex;
   using FACEMC::Estimator::calculateBinIndex;
   using FACEMC::Estimator::calculateMean;
   using FACEMC::Estimator::calculateRelativeError;
@@ -101,44 +92,10 @@ TEUCHOS_UNIT_TEST( Estimator, setEnergyBinBoundaries )
   energy_bin_boundaries[5] = 10.0;
   energy_bin_boundaries[6] = 20.0;
 
-  estimator.setEnergyBinBoundaries( energy_bin_boundaries );
+  estimator.setBinBoundaries<FACEMC::ENERGY_DIMENSION>( energy_bin_boundaries);
 
-  TEST_EQUALITY_CONST( estimator.getNumberOfEnergyBins(), 6u );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the energy boundaries of a bin can be returned
-TEUCHOS_UNIT_TEST( Estimator, getBoundariesOfEnergyBin )
-{
-  FACEMC::Pair<double,double> bin_boundaries( 0.0, 1e-1 );
-  
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfEnergyBin( 0u ),
-			bin_boundaries );
-
-  bin_boundaries( 1e-1, 1e-1 );
-
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfEnergyBin( 1u ),
-			bin_boundaries );
-
-  bin_boundaries( 1e-1, 1.0 );
-  
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfEnergyBin( 2u ),
-			bin_boundaries );
-
-  bin_boundaries( 1.0, 10.0 );
-  
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfEnergyBin( 3u ),
-			bin_boundaries );
-
-  bin_boundaries( 10.0, 10.0 );
-
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfEnergyBin( 4u ),
-			bin_boundaries );
-
-  bin_boundaries( 10.0, 20.0 );
-    
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfEnergyBin( 5u ),
-			bin_boundaries );
+  TEST_EQUALITY_CONST( estimator.getNumberOfBins( FACEMC::ENERGY_DIMENSION ), 
+		       6u );
 }
 
 //---------------------------------------------------------------------------//
@@ -151,29 +108,10 @@ TEUCHOS_UNIT_TEST( Estimator, setCosineBinBoundaries )
   cosine_bin_boundaries[2] = 1.0/3.0;
   cosine_bin_boundaries[3] = 1.0;
   
-  estimator.setCosineBinBoundaries( cosine_bin_boundaries );
+  estimator.setBinBoundaries<FACEMC::COSINE_DIMENSION>( cosine_bin_boundaries);
   
-  TEST_EQUALITY_CONST( estimator.getNumberOfCosineBins(), 3u );
-}
-
-//---------------------------------------------------------------------------//
-// Check that cosine boundaries of a bin can be returned
-TEUCHOS_UNIT_TEST( Estimator, getBoundariesOfCosineBin )
-{
-  FACEMC::Pair<double,double> bin_boundaries( -1.0, -1.0/3.0 );
-
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfCosineBin( 0u ),
-			bin_boundaries );
-
-  bin_boundaries( -1.0/3.0, 1.0/3.0 );
-
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfCosineBin( 1u ),
-			bin_boundaries );
-
-  bin_boundaries( 1.0/3.0, 1.0 );
-
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfCosineBin( 2u ),
-			bin_boundaries );
+  TEST_EQUALITY_CONST( estimator.getNumberOfBins( FACEMC::COSINE_DIMENSION ), 
+		       3u );
 }
 
 //---------------------------------------------------------------------------//
@@ -186,30 +124,11 @@ TEUCHOS_UNIT_TEST( Estimator, setTimeBinBoundaries )
   time_bin_boundaries[2] = 1e5;
   time_bin_boundaries[3] = 1e7;
 
-  estimator.setTimeBinBoundaries( time_bin_boundaries );
+  estimator.setBinBoundaries<FACEMC::TIME_DIMENSION>( time_bin_boundaries );
   
-  TEST_EQUALITY_CONST( estimator.getNumberOfTimeBins(), 3u );
+  TEST_EQUALITY_CONST( estimator.getNumberOfBins( FACEMC::TIME_DIMENSION ), 
+		       3u );
 }
-
-//---------------------------------------------------------------------------//
-// Check that time boundaries of a bin can be returned
-TEUCHOS_UNIT_TEST( Estimator, getBoundariesOfTimeBin )
-{
-  FACEMC::Pair<double,double> bin_boundaries( 0.0, 1e3 );
-
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfTimeBin( 0u ),
-			bin_boundaries );
-
-  bin_boundaries( 1e3, 1e5 );
-
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfTimeBin( 1u ),
-			bin_boundaries );
-
-  bin_boundaries( 1e5, 1e7 );
-
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfTimeBin( 2u ),
-			bin_boundaries );
-} 
 
 //---------------------------------------------------------------------------//
 // Check that the collision number bins can be set
@@ -221,34 +140,10 @@ TEUCHOS_UNIT_TEST( Estimator, setCollisionNumberBins )
   collision_number_bins[2] = 2u;
   collision_number_bins[3] = std::numeric_limits<unsigned>::max();
 
-  estimator.setCollisionNumberBins( collision_number_bins );
+  estimator.setBinBoundaries<FACEMC::COLLISION_NUMBER_DIMENSION>( 
+						       collision_number_bins );
 
-  TEST_EQUALITY_CONST( estimator.getNumberOfCollisionNumberBins(), 4u );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the collision number boundaries of a bin can be returned
-TEUCHOS_UNIT_TEST( Estimator, getBoundariesOfCollisionNumberBin )
-{
-  FACEMC::Pair<unsigned,unsigned>  bin_boundaries( 0u, 0u );
-
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfCollisionNumberBin( 0u ),
-			bin_boundaries );
-
-  bin_boundaries( 1u, 1u );
-
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfCollisionNumberBin( 1u ),
-			bin_boundaries );
-
-  bin_boundaries( 2u, 2u );
-
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfCollisionNumberBin( 2u ),
-			bin_boundaries );
-
-  bin_boundaries( 3u, std::numeric_limits<unsigned>::max() );
-
-  FACEMC_TEST_EQUALITY( estimator.getBoundariesOfCollisionNumberBin( 3u ),
-			bin_boundaries );
+  TEST_EQUALITY_CONST( estimator.getNumberOfBins( FACEMC::COLLISION_NUMBER_DIMENSION ), 4u );
 }
 
 //---------------------------------------------------------------------------//
@@ -324,196 +219,156 @@ TEUCHOS_UNIT_TEST( Estimator, evaluateResponseFunction )
 }
 
 //---------------------------------------------------------------------------//
-// Check if the energy lies within the estimator energy space
-TEUCHOS_UNIT_TEST( Estimator, isEnergyInEstimatorEnergySpace )
+// Check if a point is in the estimator phase space
+TEUCHOS_UNIT_TEST( Estimator, isPointInEstimatorPhaseSpace_array )
 {
-  TEST_ASSERT( estimator.isEnergyInEstimatorEnergySpace( 0.0 ) );
-  TEST_ASSERT( estimator.isEnergyInEstimatorEnergySpace( 20.0 ) );
-  TEST_ASSERT( !estimator.isEnergyInEstimatorEnergySpace( 21.0 ) );
-}
+  TestEstimator::DimensionValueArray dimension_values( 4 );
+  dimension_values[0]( FACEMC::ENERGY_DIMENSION, Teuchos::any( 0.0 ) );
+  dimension_values[1]( FACEMC::COSINE_DIMENSION, Teuchos::any( -1.0 ) );
+  dimension_values[2]( FACEMC::TIME_DIMENSION, Teuchos::any( 0.0 ) );
+  dimension_values[3]( FACEMC::COLLISION_NUMBER_DIMENSION, Teuchos::any( 0u ));
 
-//---------------------------------------------------------------------------//
-// Check if the angle cosine lies within the estimator angle cosine space
-TEUCHOS_UNIT_TEST( Estimator, isAngleCosineInEstimatorCosineSpace )
-{
-  TEST_ASSERT( estimator.isAngleCosineInEstimatorCosineSpace( -1.0 ) );
-  TEST_ASSERT( estimator.isAngleCosineInEstimatorCosineSpace( 0.0 ) );
-  TEST_ASSERT( estimator.isAngleCosineInEstimatorCosineSpace( 1.0 ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check if the time lies within the estimator time space
-TEUCHOS_UNIT_TEST( Estimator, isTimeInEstimatorTimeSpace )
-{
-  TEST_ASSERT( estimator.isTimeInEstimatorTimeSpace( 0.0 ) );
-  TEST_ASSERT( estimator.isTimeInEstimatorTimeSpace( 1e7 ) );
-  TEST_ASSERT( !estimator.isTimeInEstimatorTimeSpace( 2e7 ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check if the collision number lies within the estimator collision number
-// space
-TEUCHOS_UNIT_TEST( Estimator, isCollisionNumberInEstimatorCollisionNumberSpace)
-{
-  TEST_ASSERT( estimator.isCollisionNumberInEstimatorCollisionNumberSpace(0u));
-  TEST_ASSERT( estimator.isCollisionNumberInEstimatorCollisionNumberSpace(
-				      std::numeric_limits<unsigned>::max() ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check if a phase space point lies within the estimator phase space
-TEUCHOS_UNIT_TEST( Estimator, isPointInEstimatorPhaseSpace )
-{
-  TEST_ASSERT( estimator.isPointInEstimatorPhaseSpace( 0.0, -1.0, 0.0, 0u ) );
-  TEST_ASSERT( estimator.isPointInEstimatorPhaseSpace( 
-				      20.0, 
-				      1.0, 
-				      1e7, 
-				      std::numeric_limits<unsigned>::max() ) );
-  TEST_ASSERT( !estimator.isPointInEstimatorPhaseSpace( 21.0, 0.0, 2e7, 0u ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the energy bin index can be calculated
-TEUCHOS_UNIT_TEST( Estimator, calculateEnergyBinIndex )
-{
-  unsigned bin_index = estimator.calculateEnergyBinIndex( 0.0 );
-
-  TEST_EQUALITY_CONST( bin_index, 0u );
-
-  bin_index = estimator.calculateEnergyBinIndex( 0.05 );
-
-  TEST_EQUALITY_CONST( bin_index, 0u );
-
-  bin_index = estimator.calculateEnergyBinIndex( 0.0999999999999 );
-
-  TEST_EQUALITY_CONST( bin_index, 0u );
+  TEST_ASSERT( estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
   
-  bin_index = estimator.calculateEnergyBinIndex( 1e-1 );
-
-  TEST_EQUALITY_CONST( bin_index, 1u );
-
-  bin_index = estimator.calculateEnergyBinIndex( 0.1000000000001 );
-
-  TEST_EQUALITY_CONST( bin_index, 2u );
-
-  bin_index = estimator.calculateEnergyBinIndex( 1.0 );
-
-  TEST_EQUALITY_CONST( bin_index, 2u );
-
-  bin_index = estimator.calculateEnergyBinIndex( 1.0000000000001 );
-
-  TEST_EQUALITY_CONST( bin_index, 3u );
-
-  bin_index = estimator.calculateEnergyBinIndex( 9.9999999999999 );
-    
-  TEST_EQUALITY_CONST( bin_index, 3u );
-
-  bin_index = estimator.calculateEnergyBinIndex( 10.0 );
+  dimension_values[0].second = Teuchos::any( 20.0 );
+  dimension_values[1].second = Teuchos::any( 1.0 );
+  dimension_values[2].second = Teuchos::any( 1e7 );
+  dimension_values[3].second = Teuchos::any( std::numeric_limits<unsigned>::max() );
   
-  TEST_EQUALITY_CONST( bin_index, 4u );
+  TEST_ASSERT( estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
 
-  bin_index = estimator.calculateEnergyBinIndex( 10.000000000001 );
+  dimension_values[0].second = Teuchos::any( 21.0 );
+  
+  TEST_ASSERT( !estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
 
-  TEST_EQUALITY_CONST( bin_index, 5u );
-
-  bin_index = estimator.calculateEnergyBinIndex( 20.0 );
-
-  TEST_EQUALITY_CONST( bin_index, 5u );
-}
+  dimension_values[0].second = Teuchos::any( 20.0 );
+  dimension_values[2].second = Teuchos::any( 2e7 );
+  
+  TEST_ASSERT( !estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
+} 
 
 //---------------------------------------------------------------------------//
-// Check that the cosine bin index can be calculated
-TEUCHOS_UNIT_TEST( Estimator, calculateCosineBinIndex )
+// Check if a point is in the estimator phase space
+TEUCHOS_UNIT_TEST( Estimator, isPointInEstimatorPhaseSpace_map )
 {
-  unsigned bin_index = estimator.calculateCosineBinIndex( -1.0 );
+  TestEstimator::DimensionValueMap dimension_values;
+  dimension_values[FACEMC::ENERGY_DIMENSION] = Teuchos::any( 0.0 );
+  dimension_values[FACEMC::COSINE_DIMENSION] = Teuchos::any( -1.0 );
+  dimension_values[FACEMC::TIME_DIMENSION] = Teuchos::any( 0.0 );
+  dimension_values[FACEMC::COLLISION_NUMBER_DIMENSION] = Teuchos::any( 0u );
 
-  TEST_EQUALITY_CONST( bin_index, 0u );
+  TEST_ASSERT( estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
 
-  bin_index = estimator.calculateCosineBinIndex( -1.0/3.0 );
+  dimension_values[FACEMC::ENERGY_DIMENSION] = Teuchos::any( 20.0 );
+  dimension_values[FACEMC::COSINE_DIMENSION] = Teuchos::any( 1.0 );
+  dimension_values[FACEMC::TIME_DIMENSION] = Teuchos::any( 1e7 );
+  dimension_values[FACEMC::COLLISION_NUMBER_DIMENSION] = 
+    Teuchos::any( std::numeric_limits<unsigned>::max() );
 
-  TEST_EQUALITY_CONST( bin_index, 0u );
+  TEST_ASSERT( estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
 
-  bin_index = estimator.calculateCosineBinIndex( -1.0/3.0 + 1e-9 );
+  dimension_values[FACEMC::ENERGY_DIMENSION] = Teuchos::any( 21.0 );
 
-  TEST_EQUALITY_CONST( bin_index, 1u );
+  TEST_ASSERT( !estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
 
-  bin_index = estimator.calculateCosineBinIndex( 1.0/3.0 );
+  dimension_values[FACEMC::ENERGY_DIMENSION] = Teuchos::any( 20.0 );
+  dimension_values[FACEMC::TIME_DIMENSION] = Teuchos::any( 2e7 );
 
-  TEST_EQUALITY_CONST( bin_index, 1u );
-
-  bin_index = estimator.calculateCosineBinIndex( 1.0/3.0 + 1e-9 );
-  
-  TEST_EQUALITY_CONST( bin_index, 2u );
-
-  bin_index = estimator.calculateCosineBinIndex( 1.0 );
-
-  TEST_EQUALITY_CONST( bin_index, 2u );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the time bin index can be calculated
-TEUCHOS_UNIT_TEST( Estimator, calculateTimeBinIndex )
-{
-  unsigned bin_index = estimator.calculateTimeBinIndex( 0.0 );
-
-  TEST_EQUALITY_CONST( bin_index, 0u );
-
-  bin_index = estimator.calculateTimeBinIndex( 1e3 );
-
-  TEST_EQUALITY_CONST( bin_index, 0u );
-
-  bin_index = estimator.calculateTimeBinIndex( 1e3 + 1e-9 );
-
-  TEST_EQUALITY_CONST( bin_index, 1u );
-
-  bin_index = estimator.calculateTimeBinIndex( 1e5 );
-
-  TEST_EQUALITY_CONST( bin_index, 1u );
-
-  bin_index = estimator.calculateTimeBinIndex( 1e5 + 1e-9 );
-
-  TEST_EQUALITY_CONST( bin_index, 2u );
-
-  bin_index = estimator.calculateTimeBinIndex( 1e7 );
-
-  TEST_EQUALITY_CONST( bin_index, 2u );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the collision number bin index can be calculated
-TEUCHOS_UNIT_TEST( Estimator, calculateCollisionNumberBinIndex )
-{
-  unsigned bin_index = estimator.calculateCollisionNumberBinIndex( 0u );
-
-  TEST_EQUALITY_CONST( bin_index, 0u );
-
-  bin_index = estimator.calculateCollisionNumberBinIndex( 1u );
-  
-  TEST_EQUALITY_CONST( bin_index, 1u );
-
-  bin_index = estimator.calculateCollisionNumberBinIndex( 2u );
-
-  TEST_EQUALITY_CONST( bin_index, 2u );
-
-  bin_index = estimator.calculateCollisionNumberBinIndex( 3u );
-
-  TEST_EQUALITY_CONST( bin_index, 3u );
-
-  bin_index = estimator.calculateCollisionNumberBinIndex( 
-					std::numeric_limits<unsigned>::max() );
-
-  TEST_EQUALITY_CONST( bin_index, 3u );
+  TEST_ASSERT( !estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the bin index for the desired response function can be 
 // calculated
-TEUCHOS_UNIT_TEST( Estimator, calculateBinIndex )
+TEUCHOS_UNIT_TEST( Estimator, calculateBinIndex_array )
 {
-  unsigned bin_index = estimator.calculateBinIndex( 10.0, 0.0, 1e6, 2u, 0u );
+  TestEstimator::DimensionValueArray dimension_values( 4 );
+  dimension_values[0]( FACEMC::ENERGY_DIMENSION, Teuchos::any( 0.0 ) );
+  dimension_values[1]( FACEMC::COSINE_DIMENSION, Teuchos::any( -1.0 ) );
+  dimension_values[2]( FACEMC::TIME_DIMENSION, Teuchos::any( 0.0 ) );
+  dimension_values[3]( FACEMC::COLLISION_NUMBER_DIMENSION, Teuchos::any( 0u ));
+  
+  unsigned bin_index = estimator.calculateBinIndex( dimension_values, 0u );
 
-  TEST_EQUALITY_CONST( bin_index, 154 );
+  TEST_EQUALITY_CONST( bin_index, 0u );
+
+  bin_index = estimator.calculateBinIndex( dimension_values, 1u );
+
+  TEST_EQUALITY_CONST( bin_index, 216u );
+						    
+  dimension_values[0].second = Teuchos::any( 10.0 );
+  dimension_values[1].second = Teuchos::any( 0.0 );
+  dimension_values[2].second = Teuchos::any( 1e6 );
+  dimension_values[3].second = Teuchos::any( 2u );
+  
+  bin_index = estimator.calculateBinIndex( dimension_values, 0u );
+
+  TEST_EQUALITY_CONST( bin_index, 154u );
+
+  bin_index = estimator.calculateBinIndex( dimension_values, 1u );
+
+  TEST_EQUALITY_CONST( bin_index, 370u );
+
+  dimension_values[0].second = Teuchos::any( 20.0 );
+  dimension_values[1].second = Teuchos::any( 1.0 );
+  dimension_values[2].second = Teuchos::any( 1e7 );
+  dimension_values[3].second = 
+    Teuchos::any( std::numeric_limits<unsigned>::max() );
+
+  bin_index = estimator.calculateBinIndex( dimension_values, 0u );
+
+  TEST_EQUALITY_CONST( bin_index, 215u );
+
+  bin_index = estimator.calculateBinIndex( dimension_values, 1u );
+
+  TEST_EQUALITY_CONST( bin_index, 431u );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bin index for the desired response function can be 
+// calculated
+TEUCHOS_UNIT_TEST( Estimator, calculateBinIndex_map )
+{
+  TestEstimator::DimensionValueMap dimension_values;
+  dimension_values[FACEMC::ENERGY_DIMENSION] = Teuchos::any( 0.0 );
+  dimension_values[FACEMC::COSINE_DIMENSION] = Teuchos::any( -1.0 );
+  dimension_values[FACEMC::TIME_DIMENSION] = Teuchos::any( 0.0 );
+  dimension_values[FACEMC::COLLISION_NUMBER_DIMENSION] = Teuchos::any( 0u );
+  
+  unsigned bin_index = estimator.calculateBinIndex( dimension_values, 0u );
+
+  TEST_EQUALITY_CONST( bin_index, 0u );
+
+  bin_index = estimator.calculateBinIndex( dimension_values, 1u );
+
+  TEST_EQUALITY_CONST( bin_index, 216u );
+						    
+  dimension_values[FACEMC::ENERGY_DIMENSION] = Teuchos::any( 10.0 );
+  dimension_values[FACEMC::COSINE_DIMENSION] = Teuchos::any( 0.0 );
+  dimension_values[FACEMC::TIME_DIMENSION] = Teuchos::any( 1e6 );
+  dimension_values[FACEMC::COLLISION_NUMBER_DIMENSION] = Teuchos::any( 2u );
+  
+  bin_index = estimator.calculateBinIndex( dimension_values, 0u );
+
+  TEST_EQUALITY_CONST( bin_index, 154u );
+
+  bin_index = estimator.calculateBinIndex( dimension_values, 1u );
+
+  TEST_EQUALITY_CONST( bin_index, 370u );
+
+  dimension_values[FACEMC::ENERGY_DIMENSION] = Teuchos::any( 20.0 );
+  dimension_values[FACEMC::COSINE_DIMENSION] = Teuchos::any( 1.0 );
+  dimension_values[FACEMC::TIME_DIMENSION] = Teuchos::any( 1e7 );
+  dimension_values[FACEMC::COLLISION_NUMBER_DIMENSION] = 
+    Teuchos::any( std::numeric_limits<unsigned>::max() );
+
+  bin_index = estimator.calculateBinIndex( dimension_values, 0u );
+
+  TEST_EQUALITY_CONST( bin_index, 215u );
+
+  bin_index = estimator.calculateBinIndex( dimension_values, 1u );
+
+  TEST_EQUALITY_CONST( bin_index, 431u );
 }
 
 //---------------------------------------------------------------------------//

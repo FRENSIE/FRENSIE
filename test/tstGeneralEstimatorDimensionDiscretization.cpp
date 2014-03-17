@@ -46,17 +46,17 @@ void initialize( Teuchos::RCP<FACEMC::EstimatorDimensionDiscretization>&
     discretization.resize( 9 );
   
   discretization[0] = 0.0;
-  discretization[1] = 1.0;
-  discretization[2] = 2.0;
-  discretization[3] = 3.0;
+  discretization[1] = 1e-5;
+  discretization[2] = 1e-4;
+  discretization[3] = 1e-3;
   
   if( add_discrete_lines )
   {
-    discretization[4] = 3.0;
-    discretization[5] = 4.0;
-    discretization[6] = 5.0;
-    discretization[7] = 5.0;
-    discretization[8] = 6.0;
+    discretization[4] = 1e-3;
+    discretization[5] = 1e-2;
+    discretization[6] = 1e-1;
+    discretization[7] = 1e-1;
+    discretization[8] = 1.0;
   }
 
   dimension_discretization.reset( 
@@ -130,13 +130,13 @@ FACEMC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
   typedef FACEMC::Traits::EstimatorPhaseSpaceDimensionTraits<dimension> EPSDT;
 
   typename EPSDT::dimensionType value_1, value_2, value_3, value_4;
-  value_1 = -1;
-  value_2 = 0;
-  value_3 = 3;
-  value_4 = 4;
 
   if( dimension != FACEMC::COLLISION_NUMBER_DIMENSION )
   {
+    value_1 = -1;
+    value_2 = 0;
+    value_3 = 1e-3;
+    value_4 = 1e-2;
     TEST_ASSERT( !discretized_dimension->isValueInDiscretization( 
 						   Teuchos::any( value_1 ) ) );
     TEST_ASSERT( discretized_dimension->isValueInDiscretization( 
@@ -148,6 +148,10 @@ FACEMC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
   }
   else
   {
+    value_1 = 0;
+    value_2 = 1;
+    value_3 = 2;
+    value_3 = -1; // max value
     TEST_ASSERT( discretized_dimension->isValueInDiscretization( 
 						   Teuchos::any( value_1 ) ) );
     TEST_ASSERT( discretized_dimension->isValueInDiscretization( 
@@ -177,27 +181,27 @@ FACEMC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
   typename EPSDT::dimensionType value_1, value_2, value_3, value_4,
     value_5, value_6, value_7, value_8, value_9, value_10, value_11,
     value_12, value_13, value_14, value_15, value_16, value_17;
-  
-  value_1 = 0;
-  value_2 = 0.5;
-  value_3 = 1;
-  value_4 = 1.5;
-  value_5 = 2;
-  value_6 = 2.5;
-  value_7 = 2.9999999999999;
-  value_8 = 3;
-  value_9 = 3.0000000000001;
-  value_10 = 3.5;
-  value_11 = 4;
-  value_12 = 4.5;
-  value_13 = 4.999999999999;
-  value_14 = 5;
-  value_15 = 5.000000000001;
-  value_16 = 5.5;
-  value_17 = 6;
 
   if( dimension != FACEMC::COLLISION_NUMBER_DIMENSION )
   {
+    value_1 = 0.0;
+    value_2 = 5e-6;
+    value_3 = 1e-5;
+    value_4 = 5e-5;
+    value_5 = 1e-4;
+    value_6 = 5e-4;
+    value_7 = 9.9999999999999e-4;
+    value_8 = 1e-3;
+    value_9 = 1.0000000000001e-3;
+    value_10 = 5e-3;
+    value_11 = 1e-2;
+    value_12 = 5e-2;
+    value_13 = 9.999999999999e-2;
+    value_14 = 1e-1;
+    value_15 = 1.000000000001e-1;
+    value_16 = 5e-1;
+    value_17 = 1.0;
+    
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
 					       Teuchos::any( value_1 ) ), 0u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
@@ -235,20 +239,19 @@ FACEMC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
   }
   else
   {
+    value_1 = 0;
+    value_2 = 1;
+    value_3 = 2;
+    value_4 = -1; // max value
+    
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
 					       Teuchos::any( value_1 ) ), 0u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
-					       Teuchos::any( value_3 ) ), 1u );
+					       Teuchos::any( value_2 ) ), 1u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
-					       Teuchos::any( value_5 ) ), 2u );
+					       Teuchos::any( value_3 ) ), 2u );
     TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
-					       Teuchos::any( value_8 ) ), 2u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
-					      Teuchos::any( value_11 ) ), 2u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
-					      Teuchos::any( value_14 ) ), 2u );
-    TEST_EQUALITY_CONST( discretized_dimension->calculateBinIndex( 
-					      Teuchos::any( value_17 ) ), 2u );
+					       Teuchos::any( value_4 ) ), 2u );
   }
 
   discretized_dimension->print( std::cout );
