@@ -36,6 +36,9 @@ public:
   //! Return the dimension that has been discretized
   EstimatorPhaseSpaceDimension getDimension() const;
 
+  //! Return the dimension name that has been discretized
+  virtual std::string getDimensionName() const = 0;
+
   //! Return the number of bins in the discretization
   virtual unsigned getNumberOfBins() const = 0;
   

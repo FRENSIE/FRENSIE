@@ -39,54 +39,6 @@ CellPulseHeightEstimator<CellId,
   }
 }
 
-// Set the energy bin boundaries
-template<typename CellId,typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<CellId,
-			 ContributionMultiplierPolicy>::setEnergyBinBoundaries(
-			  const Tuechos::Array<double>& energy_bin_boundaries )
-{
-  EntityEstimator<CellId>::setEnergyBinBoundaries( energy_bin_boundaries );
-
-  // Resize the total energy deposition moments array
-  d_total_energy_deposition_moments.resize( getNumberOfBins() );
-}
-
-// Set the cosine bin boundaries
-template<typename CellId,typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<CellId,
-			 ContributionMultiplierPolicy>::setCosineBinBoundaries(
-			  const Teuchos::Array<double>& cosine_bin_boundaries )
-{
-  std::cerr << "Warning: Cosine bins cannot be set for pulse height "
-	    << "estimators. The cosine bins requested for pulse height "
-	    << "estimator " << getId() << " will be ignored."
-	    << std::endl;
-}
-
-// Set the time bin boundaries
-template<typename CellId,typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<CellId,
-			   ContributionMultiplierPolicy>::setTimeBinBoundaries(
-			    const Teuchos::Array<double>& time_bin_boundaries )
-{
-  std::cerr << "Warning: Time bins cannot be set for pulse height "
-	    << "estimators. The time bins requested for pulse height "
-	    << "estimator " << getId() << " will be ignored."
-	    << std::endl;
-}
-
-// Set the collision number bins
-template<typename CellId,typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<CellId,
-			 ContributionMultiplierPolicy>::setCollisionNumberBins(
-			const Teuchos::Array<unsigned>& collision_number_bins )
-{
-  std::cerr << "Warning: Collision number bins cannot be set for pulse height "
-	    << "estimators. The collision number bins requested for pulse "
-	    << "height estimator " << getId() << " will be ignored."
-	    << std::endl;
-}
-
 // Set the response functions
 template<typename CellId,typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<CellId,
@@ -95,7 +47,7 @@ void CellPulseHeightEstimator<CellId,
 {
   std::cerr << "Warning: Response functions cannot be set for pulse height "
 	    << "estimators. The response functions requested for pulse height "
-	    << "estimator " << getId() << " will be ignored."
+	    << "estimator " << this->getId() << " will be ignored."
 	    << std::endl;
 }
 
@@ -107,11 +59,34 @@ void CellPulseHeightEstimator<CellId,
 			      ContributionMultiplierPolicy>::setParticleTypes( 
 			   const Teuchos::Array<ParticleType>& particle_types )
 {
-  Estimator::setParticleTypes( particle_types );
+  Teuchos::Array<ParticleType> valid_particle_types;
+  
+  bool warning_issued = false;
+  
+  for( unsigned i = 0; i < particle_types.size(); ++i )
+  {
+    if( particle_types[i] != PHOTON )
+    {
+      if( !warning_issued )
+      {
+	std::cerr << "Warning: Only photons and charged particles can "
+		  << "contribute to pulse height estimators. The other "
+		  << "particle types requested for pulse height estimator "
+		  << this->getId() << " will be ignored."
+		  << std::endl;
+      
+	warning_issued = true;
+      }
+    }
+    else
+      valid_particle_types.push_back( particle_types[i] );
+  }
+  
+  Estimator::setParticleTypes( valid_particle_types );
 
-  testPostcondition( !isParticleTypeAssigned( NEUTRON ) );
-  testPostcondition( !isParticleTypeAssigned( ADJOINT_NEUTRON ) );
-  testPostcondition( !isParticleTypeAssigned( ADJOINT_PHOTON ) );
+  testPostcondition( !this->isParticleTypeAssigned( NEUTRON ) );
+  testPostcondition( !this->isParticleTypeAssigned( ADJOINT_NEUTRON ) );
+  testPostcondition( !this->isParticleTypeAssigned( ADJOINT_PHOTON ) );
 }
 
 // Add estimator contribution from a portion of the current history
@@ -119,15 +94,15 @@ template<typename CellId,typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<CellId,
 		  ContributionMultiplierPolicy>::addPartialHistoryContribution(
 					    const BasicParticleState& particle,
-					    const EntityId& cell_leaving,
-					    const EntityId& cell_entering )
+					    const CellId& cell_leaving,
+					    const CellId& cell_entering )
 {
-  if( isParticleTypeAssigned( particle.getType() )
+  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
     double contribution = particle.getWeight()*particle.getEnergy();
     
     // Subtract the contribution from the cell being exited
-    if( d_cell_energy-deposition_map.count( cell_leaving ) != 0 )
+    if( d_cell_energy_deposition_map.count( cell_leaving ) != 0 )
       d_cell_energy_deposition_map[cell_leaving] -= contribution;
     
     // Add the contribution to the cell being entered
@@ -141,7 +116,7 @@ template<typename CellId,typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<CellId,
 		     ContributionMultiplierPolicy>::commitHistoryContribution()
 {
-  boost::unordered_map<CellId,double>::iterator entity, end_entity;
+  typename boost::unordered_map<CellId,double>::iterator entity, end_entity;
 
   entity = d_cell_energy_deposition_map.begin();
   end_entity = d_cell_energy_deposition_map.end();
@@ -151,19 +126,24 @@ void CellPulseHeightEstimator<CellId,
   unsigned bin_index;
   double bin_contribution;
 
+  // Store the energy deposition in a generic way using the dimension val. map
+  Estimator::DimensionValueMap dimension_values;
+
   while( entity != end_entity )
   {
-    if( isEnergyInEstimatorEnergySpace( entity->second ) )
+    dimension_values[ENERGY_DIMENSION] = Teuchos::any( entity->second );
+    
+    if( this->isPointInEstimatorPhaseSpace( dimension_values ) )
     {
-      bin_index = calculateEnergyBinIndex( entity->second );
+      bin_index = this->calculateBinIndex( dimension_values, 0u );
       
       bin_contribution = calculateHistoryContribution( 
-						entity->second,
-						ContributionMultiplierPolicy );
+					      entity->second,
+					      ContributionMultiplierPolicy() );
       
-      commitHistoryContributionToBinOfEntity( entity->first,
-					      bin_index,
-					      bin_contribution );
+      this->commitHistoryContributionToBinOfEntity( entity->first,
+						    bin_index,
+						    bin_contribution );
       
       // Add the energy deposition in this cell to the total energy deposition
       energy_deposition_in_all_cells += entity->second;
@@ -171,28 +151,34 @@ void CellPulseHeightEstimator<CellId,
       // Reset the energy deposition in this cell
       entity->second = 0.0;
     }
+
+    ++entity;
   }
 
+  // Store the total energy deposition in the dimension values map
+  dimension_values[ENERGY_DIMENSION] = 
+    Teuchos::any( energy_deposition_in_all_cells );
+  
   // Determine the pulse bin for the combination of all cells
-  if( isEnergyInEstimatorEnergySpace( energy_deposition_in_all_cells ) )
+  if( this->isPointInEstimatorPhaseSpace( dimension_values ) )
   {
-    bin_index = calculateEnergyBinIndex( energy_deposition_in_all_cells );
+    bin_index = this->calculateBinIndex( dimension_values, 0u );
 
     bin_contribution = calculateHistoryContribution( 
-					        energy_deposition_in_all_cells,
-					        ContributionMultiplierPolicy );
+					      energy_deposition_in_all_cells,
+					      ContributionMultiplierPolicy() );
 
     // Compute the moment contributions
-    d_total_energy_deposition[bin_index].first += bin_contribution;
+    d_total_energy_deposition_moments[bin_index].first += bin_contribution;
     
     bin_contribution *= bin_contribution;
-    d_total_energy_deposition[bin_index].second += bin_contribution;
+    d_total_energy_deposition_moments[bin_index].second += bin_contribution;
 
     bin_contribution *= bin_contribution;
-    d_total_energy_deposition[bin_index].third += bin_contribution;
+    d_total_energy_deposition_moments[bin_index].third += bin_contribution;
 
     bin_contribution *= bin_contribution;
-    d_total_energy_deposition[bin_index].fourth += bin_contribution;
+    d_total_energy_deposition_moments[bin_index].fourth += bin_contribution;
   }
 }
 
@@ -201,16 +187,39 @@ template<typename CellId,typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<CellId,ContributionMultiplierPolicy>::print( 
 						       std::ostream& os ) const
 {
-  os << "Cell Pulse Height Estimator: " << getId() << std::endl;
+  os << "Cell Pulse Height Estimator: " << this->getId() << std::endl;
 
-  printImplementation( os, "Cell" );
+  this->printImplementation( os, "Cell" );
 
-  os << "Total Bin Data (all cells): " << std::endl;
+  os << "All Cells" << std::endl;
+  os << "--------" << std::endl;
 
-  printEstimatorBinData( os,
-			 d_total_energy_deposition_moments,
-			 getTotalNormConstant() );
+  this->printEstimatorBinData( os,
+			       d_total_energy_deposition_moments,
+			       this->getTotalNormConstant() );
 }
+
+// Assign bin boundaries to an estimator dimension
+template<typename CellId,typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<CellId,
+			    ContributionMultiplierPolicy>::assignBinBoundaries(
+	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+{
+  if( bin_boundaries->getDimension() == FACEMC::ENERGY_DIMENSION )
+  {
+    EntityEstimator<CellId>::assignBinBoundaries( bin_boundaries );
+
+    d_total_energy_deposition_moments.resize( this->getNumberOfBins() );
+  }
+  else
+  {
+    std::cerr << "Warning: " << bin_boundaries->getDimensionName()
+	      << " bins cannot be set for pulse height estimators. The bins "
+	      << "requested for pulse height estimator " << this->getId()
+	      << " will be ignored." 
+	      << std::endl;
+  }
+}	       
 
 // Calculate the estimator contribution from the entire history
 /*! \details The multiplier policy cannot be used directly since it only
@@ -223,7 +232,7 @@ inline double CellPulseHeightEstimator<CellId,
 					        const double energy_deposition,
 						WeightMultiplier )
 {
-  return 1.0
+  return 1.0;
 }
 
 // Calculate the estimator contribution from the entire history
@@ -236,7 +245,7 @@ template<typename CellId,typename ContributionMultiplierPolicy>
 inline double CellPulseHeightEstimator<CellId,
 		   ContributionMultiplierPolicy>::calculateHistoryContribution(
 					        const double energy_deposition,
-						EnergyAndWeightMultiplier )
+						WeightAndEnergyMultiplier )
 {
   return energy_deposition;
 }

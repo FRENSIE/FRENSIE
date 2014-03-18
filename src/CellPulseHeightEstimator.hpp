@@ -18,37 +18,19 @@ namespace FACEMC{
 //! The pulse height entity estimator class
 template<typename CellId,
 	 typename ContributionMultiplierPolicy = WeightMultiplier>
-class CellPulseHeightEstimator : EntityEstimator<CellId>
+class CellPulseHeightEstimator : public EntityEstimator<CellId>
 {
 
 public:
 
   //! Constructor
-  CellPulseHeightEstimator( 
-			   const unsigned long long id,
-			   const Teuchos::Array<CellId>& entity_ids,
-		           const Teuchos::Array<double>& entity_norm_constants,
-			   const double multiplier );
-
+  CellPulseHeightEstimator( const unsigned long long id,
+			    const double multiplier,
+			    const Teuchos::Array<CellId>& entity_ids );
+  
   //! Destructor
   ~CellPulseHeightEstimator()
   { /* ... */ }
-
-  //! Set the energy bin boundaries
-  void setEnergyBinBoundaries(
-			 const Teuchos::Array<double>& energy_bin_boundaries );
-
-  //! Set the cosine bin boundaries
-  void setCosineBinBoundaries(
-			 const Teuchos::Array<double>& cosine_bin_boundaries );
-
-  //! Set the time bin boundaries
-  void setTimeBinBoundaries(
-			   const Teuchos::Array<double>& time_bin_boundaries );
-
-  //! Set the collision number bins
-  void setCollisionNumberBins( 
-		       const Teuchos::Array<unsigned>& collision_number_bins );
 
   //! Set the response functions
   void setResponseFunctions( 
@@ -59,8 +41,8 @@ public:
   
   //! Add estimator contribution from a portion of the current history
   void addPartialHistoryContribution( const BasicParticleState& particle,
-				      const EntityId& cell_leaving,
-				      const EntityId& cell_entering );
+				      const CellId& cell_leaving,
+				      const CellId& cell_entering );
 
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution();
@@ -70,16 +52,20 @@ public:
 
 private:
 
+  //! Assign bin boundaries to an estimator dimension
+  void assignBinBoundaries(
+	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
+
   //! Calculate the estimator contribution from the entire history
   double calculateHistoryContribution( const double energy_deposition,
 				       WeightMultiplier );
 
   //! Calculate the estimator contribution from the entire history
   double calculateHistoryContribution( const double energy_deposition,
-				       EnergyAndWeightMultiplier );
+				       WeightAndEnergyMultiplier );
 
   // The total estimator moments for all entities
-  EstimatorMomentsArray d_total_energy_deposition_moments;
+  Estimator::EstimatorMomentsArray d_total_energy_deposition_moments;
 
   // The energy deposited in each cell of interest by the current history
   boost::unordered_map<CellId,double> d_cell_energy_deposition_map;

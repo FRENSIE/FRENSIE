@@ -30,16 +30,18 @@ GeneralEstimatorDimensionDiscretization<dimension>::GeneralEstimatorDimensionDis
   //testPrecondition( false );
 }
 
+// Return the dimension name that has been discretized
+template<EstimatorPhaseSpaceDimension dimension>
+inline std::string GeneralEstimatorDimensionDiscretization<dimension>::getDimensionName() const
+{
+  return DT::name();
+}
+
 // Return the number of bins in the discretization
 template<EstimatorPhaseSpaceDimension dimension>
 inline unsigned GeneralEstimatorDimensionDiscretization<dimension>::getNumberOfBins() const
 {
   return d_dimension_bin_boundaries.size() - 1u;
-}
-
-inline unsigned GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSION>::getNumberOfBins() const
-{
-  return d_dimension_bin_boundaries.size();
 }
 
 // Check if the value is contained in the dimension discretization

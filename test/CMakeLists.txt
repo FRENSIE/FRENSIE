@@ -356,8 +356,14 @@ ADD_EXECUTABLE(tstEstimator
 TARGET_LINK_LIBRARIES(tstEstimator ${PROJECT_NAME})
 ADD_TEST(Estimator_test tstEstimator)
 
-Add_executable(tstEntityEstimator
+Add_EXECUTABLE(tstEntityEstimator
   tstEntityEstimator.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstEntityEstimator ${PROJECT_NAME})
 ADD_TEST(EntityEstimator_test tstEntityEstimator)
+
+Add_EXECUTABLE(tstCellPulseHeightEstimator
+  tstCellPulseHeightEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCellPulseHeightEstimator ${PROJECT_NAME})
+ADD_TEST(CellPulseHeightEstimator_test tstCellPulseHeightEstimator)

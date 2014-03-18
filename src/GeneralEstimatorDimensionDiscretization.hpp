@@ -39,6 +39,9 @@ public:
   ~GeneralEstimatorDimensionDiscretization()
   { /* ... */ }
 
+  //! Return the dimension name that has been discretized
+  std::string getDimensionName() const;
+
   //! Return the number of bins in the discretization
   unsigned getNumberOfBins() const;
 
@@ -82,6 +85,9 @@ public:
   //! Destructor
   ~GeneralEstimatorDimensionDiscretization()
   { /* ... */ }
+
+  //! Return the dimension name that has been discretized
+  std::string getDimensionName() const;
 
   //! Return the number of bins in the discretization
   unsigned getNumberOfBins() const;

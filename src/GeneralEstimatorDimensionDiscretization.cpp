@@ -26,6 +26,17 @@ GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSION>::GeneralEsti
   //testPrecondition( false );
 }
 
+// Return the dimension name that has been discretized
+inline std::string GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSION>::getDimensionName() const
+{
+  return DT::name();
+}
+
+inline unsigned GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSION>::getNumberOfBins() const
+{
+  return d_dimension_bin_boundaries.size();
+}
+
 inline bool GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSION>::isValueInDiscretization( const Teuchos::any& any_container ) const
 {
   typename DT::dimensionType value = DT::getValue( any_container );
