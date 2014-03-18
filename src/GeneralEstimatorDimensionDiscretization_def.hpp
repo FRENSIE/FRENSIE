@@ -16,7 +16,7 @@
 namespace FACEMC{
 
 // Constructor
-template<EstimatorPhaseSpaceDimension dimension>
+template<PhaseSpaceDimension dimension>
 GeneralEstimatorDimensionDiscretization<dimension>::GeneralEstimatorDimensionDiscretization( const Teuchos::Array<typename DT::dimensionType>& dimension_bin_boundaries )
   : EstimatorDimensionDiscretization( dimension ),
     d_dimension_bin_boundaries( dimension_bin_boundaries )
@@ -31,21 +31,21 @@ GeneralEstimatorDimensionDiscretization<dimension>::GeneralEstimatorDimensionDis
 }
 
 // Return the dimension name that has been discretized
-template<EstimatorPhaseSpaceDimension dimension>
+template<PhaseSpaceDimension dimension>
 inline std::string GeneralEstimatorDimensionDiscretization<dimension>::getDimensionName() const
 {
   return DT::name();
 }
 
 // Return the number of bins in the discretization
-template<EstimatorPhaseSpaceDimension dimension>
+template<PhaseSpaceDimension dimension>
 inline unsigned GeneralEstimatorDimensionDiscretization<dimension>::getNumberOfBins() const
 {
   return d_dimension_bin_boundaries.size() - 1u;
 }
 
 // Check if the value is contained in the dimension discretization
-template<EstimatorPhaseSpaceDimension dimension>
+template<PhaseSpaceDimension dimension>
 inline bool GeneralEstimatorDimensionDiscretization<dimension>::isValueInDiscretization( const Teuchos::any& any_container ) const
 {
   typename DT::dimensionType value = DT::getValue( any_container );
@@ -55,7 +55,7 @@ inline bool GeneralEstimatorDimensionDiscretization<dimension>::isValueInDiscret
 }
 
 // Calculate the index of the bin that the value falls in
-template<EstimatorPhaseSpaceDimension dimension>
+template<PhaseSpaceDimension dimension>
 unsigned GeneralEstimatorDimensionDiscretization<dimension>::calculateBinIndex( const Teuchos::any& any_container ) const
 {
   // Make sure the value is in the dimension discretization
@@ -83,7 +83,7 @@ unsigned GeneralEstimatorDimensionDiscretization<dimension>::calculateBinIndex( 
 /*! \details Note: A new line character is not added after print the bin
  * boundaries.
  */
-template<EstimatorPhaseSpaceDimension dimension>
+template<PhaseSpaceDimension dimension>
 void GeneralEstimatorDimensionDiscretization<dimension>::printBoundariesOfBin(
 					       std::ostream& os,
 					       const unsigned bin_index ) const
@@ -103,7 +103,7 @@ void GeneralEstimatorDimensionDiscretization<dimension>::printBoundariesOfBin(
 }
 
 // Print the dimension discretization
-template<EstimatorPhaseSpaceDimension dimension>
+template<PhaseSpaceDimension dimension>
 void GeneralEstimatorDimensionDiscretization<dimension>::print(
 						       std::ostream& os ) const
 {

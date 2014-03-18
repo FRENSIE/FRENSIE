@@ -35,58 +35,12 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
     if( d_entity_current_history_first_moments_map.count( entity_ids[i] ) == 0)
     {
       d_entity_total_estimator_moments_map[ entity_ids[i] ].resize( 
-					      getNumberOfResponseFunctions() );
+					this->getNumberOfResponseFunctions() );
       
       d_entity_current_history_first_moments_map[ entity_ids[i] ].resize(
-			    getNumberOfBins()*getNumberOfResponseFunctions() );
+		this->getNumberOfBins()*this->getNumberOfResponseFunctions() );
     }
   }
-
-  
-}
-
-// Set the energy bin boundaries
-template<typename EntityId>
-void StandardEntityEstimator<EntityId>::setEnergyBinBoundaries(
-			  const Teuchos::Array<double>& energy_bin_boundaries )
-{
-  EntityEstimator<EntityId>::setEnergyBinBoundaries( energy_bin_boundaries );
-
-  // Resize the entity estimator first moment map arrays
-  resizeEntityEstimatorFirstMomentMapArrays();
-}
-
-// Set the cosine bin boundaries
-template<typename EntityId>
-void StandardEnityEstimator<EntityId>::setCosineBinBoundaries(
-			  const Teuchos::Array<double>& cosine_bin_boundaries )
-{
-  EntityEstimator<EntityId>::setCosineBinBoundaries( cosine_bin_boundaries );
-
-  // Resize the entity estimator first moment map arrays
-  resizeEntityEstimatorFirstMomentMapArrays();
-}
-
-// Set the time bin boundaries
-template<typename EntityId>
-void StandardEntityEstimator<EntityId>::setTimeBinBoundaries(
-			    const Teuchos::Array<double>& time_bin_boundaries )
-{
-  EntityEstimator<EntityId>::setTimeBinBoundaries( time_bin_boundaries );
-
-  // Resize the entity estimator first moment map arrays
-  resizeEntityEstimatorFirstMomentMapArrays();
-}
-
-// Set the collision number bins
-template<typename EntityId>
-void StandardEntityEstimator<EntityId>::setCollisionNumberBins(
-		        const Teuchos::Array<unsigned>& collision_number_bins )
-{
-  EntityEstimator<EntityId>::setCollisionNumberBins( collision_number_bins );
-
-  // Resize the entity estimator first moment map arrays
-  resizeEntityEstimatorFirstMomentMapArrays();
 }
 
 // Set the response functions
@@ -97,13 +51,13 @@ void StandardEntityEstimator<EntityId>::setResponseFunctions(
   EntityEstimator<EntityId>::setResponseFunctions( response_functions );
 
   // Resize the entity estimator first moment map arrays
-  resizeEntityEstimatorFirstMomentMapArrays();
+  resizeEntityEstimatorFirstMomentsMapArrays();
 
   // Resize the entity total estimator momens map arrays
   resizeEntityTotalEstimatorMomentsMapArrays();
   
   // Resize the total estimator moments array
-  d_total_estimator_moments.resize( getNumberOfResponseFunctions() );
+  d_total_estimator_moments.resize( this->getNumberOfResponseFunctions() );
 }
 
 // Commit the contribution from the current history to the estimator
@@ -111,11 +65,11 @@ template<typename EntityId>
 void StandardEntityEstimator<EntityId>::commitHistoryContribution()
 {
   // Number of bins per response function
-  unsigned num_bins = getNumberOfBins();
+  unsigned num_bins = this->getNumberOfBins();
   
-  EntityEstimatorFirstMomentsArrayMap::iterator entity, end_entity;
+  typename EntityEstimatorFirstMomentsArrayMap::iterator entity, end_entity;
   
-  for( unsigned i = 0; i < getNumberOfResponseFunctions(); ++i )
+  for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
   {
     double total_over_all_entities = 0.0;
     
@@ -126,7 +80,7 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
     {
       double total_over_entity = 0.0;
       
-      for( unsigned j = 0; j < num_bins; ++i )
+      for( unsigned j = 0; j < num_bins; ++j )
       {
 	unsigned bin_index = j + num_bins*i;
 	
@@ -136,9 +90,9 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
 	
 	total_over_all_entities += bin_contribution;
 						 
-	commitHistoryContributionToBinOfEntity( entity->first,
-						bin_index,
-						bin_contribution );
+	this->commitHistoryContributionToBinOfEntity( entity->first,
+						      bin_index,
+						      bin_contribution );
 
 	// Reset the bin
 	entity->second[bin_index] = 0.0;
@@ -148,13 +102,30 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
 						i,
 						total_over_entity );
 
-      ++entitiy;
+      ++entity;
     }
 
     commitHistoryContributionToTotalOfEstimator( i, total_over_all_entities );
+  }
+}
+
+// Assign bin boundaries to an estimator dimension
+template<typename EntityId>
+void StandardEntityEstimator<EntityId>::assignBinBoundaries(
+	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+{
+  EntityEstimator<EntityId>::assignBinBoundaries( bin_boundaries );
+
+  // Resize the first moment map arrays
+  resizeEntityEstimatorFirstMomentsMapArrays();
 }
 
 // Add estimator contribution from a portion of the current history
+/*! \details The contribution should incorporate the particle weight (and
+ * possibly other multiplier(s) ) but not the response function values. Do
+ * not check if a particle can contribute to the estimator outside of this
+ * function - this function will take care of all checks.
+ */
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::addPartialHistoryContribution( 
 					    const EntityId& entity_id,
@@ -163,98 +134,113 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
 					    const double contribution )
 {
   // Make sure the entity is assigned to the estimator
-  testPrecondition( isEntityAssigned( entity_id ) );
-  // Make sure the state point is in the estimator phase space
-  testPrecondition( isPointInEstimatorPhaseSpace(
-					     particle.getEnergy(),
-					     angle_cosine,
-					     particle.getTime(),
-					     particle.getCollisionNumber() ) );
-  // Make sure the particle type can contribute
-  testPrecondition( isParticleTypeAssigned( particle.getType() ) );
+  testPrecondition( this->isEntityAssigned( entity_id ) );
   // Make sure the contribution is valid
   testPrecondition( !ST::isnaninf( contribution ) );
-  
-  Teuchos::Array<double>& entity_first_moments_array = 
-    d_entity_current_history_first_moments_map[entity_id];
-  
-  for( unsigned i = 0; i < getNumberOfResponseFunctions(); ++i )
+
+  // Only add the contribution if the particle type can contribute
+  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
-    unsigned bin_index = calculateBinIndex( particle.getEnergy(),
-					    angle_cosine,
-					    particle.getTime(),
-					    particle.getCollisionNumber(),
-					    i );
+    // Export the particle state to a generic map
+    PhaseSpace::DimensionValueMap dimension_values;
+
+    particle.exportState( dimension_values );
     
-    entity_first_moments_array[bin_index] += 
-      contribution*evaluateResponseFunction( particle, i );
+    // Add the cosine dimension
+    dimension_values[COSINE_DIMENSION] = Teuchos::any( angle_cosine );
+    
+    // Only add the contribution if it the particle state is in the phase space
+    if( this->isPointInEstimatorPhaseSpace( dimension_values ) )
+    {
+
+      Teuchos::Array<double>& entity_first_moments_array = 
+	d_entity_current_history_first_moments_map[entity_id];
+  
+
+      unsigned bin_index;
+      
+      for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
+      {
+	bin_index = this->calculateBinIndex( dimension_values, i );
+    
+	entity_first_moments_array[bin_index] += 
+	  contribution*this->evaluateResponseFunction( particle, i );
+      }
+    }
   }
 }
 
 // Print the estimator data
 template<typename EntityId>
-  void StandardEntityEstimator<EntityId>::printImplementation( 
-					       std::ostream& os,
-					       const std::string& entity_type )
+void StandardEntityEstimator<EntityId>::printImplementation( 
+					 std::ostream& os,
+					 const std::string& entity_type ) const
 {
   EntityEstimator<EntityId>::printImplementation( os, entity_type );
 
   // Print the entity total estimator data
-  EntityIdSet::const_iterator entity_id, end_entity_id;
+  typename EntityEstimator<EntityId>::EntityIdSet::const_iterator 
+    entity_id, end_entity_id;
 
-  entity_id = getEntityIds().begin();
-  end_entity_id = getEntityIds().end();
+  entity_id = this->getEntityIds().begin();
+  end_entity_id = this->getEntityIds().end();
   
   while( entity_id != end_entity_id )
   {
-    os << entity_type << " " << *endity_id << std::endl;
+    os << entity_type << " " << *entity_id << " Total Data: " << std::endl;
     os << "--------" << std::endl;
-    os << "Total Data: " << std::endl;
       
-    printEstimatorTotalData( os,
-			     d_entity_total_estimator_moments_map[entity_id],
-			     getEntityNormConstant( entity_id ) );
+    this->printEstimatorTotalData( 
+		 os,
+		 d_entity_total_estimator_moments_map.find(*entity_id)->second,
+		 this->getEntityNormConstant( *entity_id ) );
+    
+    os << std::endl;
 
     ++entity_id;
   }
 
   // Print the total estimator data
-  os << "Total Data (all " << entity_type << "s): " << std::endl;
+  os << "All " << entity_type << "s Total Data: " << std::endl;
+  os << "--------" << std::endl;
 
-  printEstimatorTotalData( os,
-			   d_total_estimator_moments,
-			   getTotalNormConstant() );
+  this->printEstimatorTotalData( os,
+				 d_total_estimator_moments,
+				 this->getTotalNormConstant() );
 }
 
 // Resize the entity estimator first moment map arrays
 template<typename EntityId>
 void 
-StandardEntityEstimator<EntityId>::resizeEntityEstimatorFirstMomentMapArrays()
+StandardEntityEstimator<EntityId>::resizeEntityEstimatorFirstMomentsMapArrays()
 {
-  EntityEstimatorFirstMomentsArrayMap::iterator start, end;
+  typename EntityEstimatorFirstMomentsArrayMap::iterator start, end;
   
   start = d_entity_current_history_first_moments_map.begin();
   end = d_entity_current_history_first_moments_map.end();
 
   while( start != end )
   {
-    start->second.resize( getNumberOfBins()*getNumberOfResponseFunctions() );
+    start->second.resize( this->getNumberOfBins()*
+			  this->getNumberOfResponseFunctions() );
     ++start;
   }
 }
 
 // Resize the entity total estimator moments map arrays
 template<typename EntityId>
-void EntityEstimator<EntityId>::resizeEntityTotalEstimatorMapArrays()
+void 
+StandardEntityEstimator<EntityId>::resizeEntityTotalEstimatorMomentsMapArrays()
 {
-  EntityEstimatorMomentsArrayMap::iterator start, end;
+  typename EntityEstimator<EntityId>::EntityEstimatorMomentsArrayMap::iterator 
+    start, end;
 
   start = d_entity_total_estimator_moments_map.begin();
   end = d_entity_total_estimator_moments_map.end();
 
   while( start != end )
   {
-    start->second.resize( getNumberOfResponseFunctions() );
+    start->second.resize( this->getNumberOfResponseFunctions() );
     
     ++start;
   }
@@ -262,19 +248,21 @@ void EntityEstimator<EntityId>::resizeEntityTotalEstimatorMapArrays()
 
 // Commit hist. contr. to the total for a response function of an entity
 template<typename EntityId>
-void EntityEstimator<EntityId>::commitHistoryContributionToTotalOfEntity(
+void 
+StandardEntityEstimator<EntityId>::commitHistoryContributionToTotalOfEntity(
 					const EntityId& entity_id,
 					const unsigned response_function_index,
 					const double contribution )
 {
   // Make sure the entity is assigned to this estimator
-  testPrecondition( isEntityAssigned( entity_id ) );
+  testPrecondition( this->isEntityAssigned( entity_id ) );
   // Make sure the response function index is valid
-  testPrecondition( response_function_index < getNumberOfResponseFunctions() );
+  testPrecondition( response_function_index < 
+		    this->getNumberOfResponseFunctions() );
   // Make sure the contribution is valid
   testPrecondition( !ST::isnaninf( contribution ) );
 
-  EstimatorMomentsArray& entity_total_estimator_moments_array = 
+  Estimator::EstimatorMomentsArray& entity_total_estimator_moments_array = 
     d_entity_total_estimator_moments_map[entity_id];
 
   // Add the first moment contribution
@@ -298,14 +286,16 @@ void EntityEstimator<EntityId>::commitHistoryContributionToTotalOfEntity(
     moment_contribution;
 }
 
-// Commit history contr. to the total for a response function of an entity
+// Commit history contr. to the total for a response function of an estimator
 template<typename EntityId>
-void EntityEstimator<EntityId>::commitHistoryContributionToTotalOfEntity(
+void 
+StandardEntityEstimator<EntityId>::commitHistoryContributionToTotalOfEstimator(
 					const unsigned response_function_index,
 					const double contribution )
 {
   // Make sure the response function index is valid
-  testPrecondition( response_function_index < getNumberOfResponseFunctions() );
+  testPrecondition( response_function_index < 
+		    this->getNumberOfResponseFunctions() );
   // Make sure the contribution is valid
   testPrecondition( !ST::isnaninf( contribution ) );
 

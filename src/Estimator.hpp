@@ -28,7 +28,7 @@
 #include "Tuple.hpp"
 #include "ResponseFunction.hpp"
 #include "ContractException.hpp"
-#include "EstimatorPhaseSpaceDimension.hpp"
+#include "PhaseSpaceDimension.hpp"
 #include "EstimatorDimensionDiscretization.hpp"
 
 namespace FACEMC{
@@ -47,16 +47,6 @@ protected:
 
   // Typedef for the array of estimator moments 
   typedef Teuchos::Array<EstimatorMoments> EstimatorMomentsArray;
-
-  // Typedef for a dimension value
-  typedef Pair<EstimatorPhaseSpaceDimension,Teuchos::any> DimensionValue;
-
-  // Typedef for array of dimension values
-  typedef Teuchos::Array<DimensionValue> DimensionValueArray;
-
-  // Typedef for map of dimension values
-  typedef boost::unordered_map<EstimatorPhaseSpaceDimension,Teuchos::any> 
-  DimensionValueMap;
 
 public:
 
@@ -81,12 +71,11 @@ public:
   unsigned long long getId() const;
 
   //! Set the bin boundaries for a dimension of the phase space (floating pt)
-  template<EstimatorPhaseSpaceDimension dimension, typename DimensionType>
+  template<PhaseSpaceDimension dimension, typename DimensionType>
   void setBinBoundaries( const Teuchos::Array<DimensionType>& bin_boundaries );
   
   //! Return the number of bins for a dimension of the phase space
-  unsigned getNumberOfBins( 
-			  const EstimatorPhaseSpaceDimension dimension ) const;
+  unsigned getNumberOfBins( const PhaseSpaceDimension dimension ) const;
 
   //! Return the total number of bins
   unsigned getNumberOfBins() const;
@@ -137,7 +126,7 @@ protected:
   void printEstimatorTotalData( 
 		     std::ostream& os,
 		     const EstimatorMomentsArray& total_estimator_moments_data,
-		     const double norm_constant );
+		     const double norm_constant ) const;
 
   //! Evaluate the desired response function
   double evaluateResponseFunction( 
@@ -146,20 +135,22 @@ protected:
 
   //! Check if the point is in the estimator phase space
   bool isPointInEstimatorPhaseSpace( 
-			     const DimensionValueMap& dimension_values ) const;
+		 const PhaseSpace::DimensionValueMap& dimension_values ) const;
 			        
 
   //! Check if the point is in the estimator phase space
   bool isPointInEstimatorPhaseSpace(
-			   const DimensionValueArray& dimension_values ) const;
+	       const PhaseSpace::DimensionValueArray& dimension_values ) const;
 
   //! Calculate the bin index for the desired response function
-  unsigned calculateBinIndex( const DimensionValueMap& dimension_values,
-			      const unsigned response_function_index ) const;
+  unsigned calculateBinIndex( 
+			 const PhaseSpace::DimensionValueMap& dimension_values,
+			 const unsigned response_function_index ) const;
 
   //! Calculate the bin index for the desired response function
-  unsigned calculateBinIndex( const DimensionValueArray& dimension_values,
-			      const unsigned response_function_index ) const;
+  unsigned calculateBinIndex( 
+		       const PhaseSpace::DimensionValueArray& dimension_values,
+		       const unsigned response_function_index ) const;
 
   //! Calculate the mean of a set of contributions
   double calculateMean( const double first_moment_contributions ) const;
@@ -199,16 +190,16 @@ private:
   Teuchos::Array<Teuchos::RCP<ResponseFunction> > d_response_functions;
   
   // The estimator phase space dimension bin boundaries map
-  boost::unordered_map<EstimatorPhaseSpaceDimension,
+  boost::unordered_map<PhaseSpaceDimension,
   		       Teuchos::RCP<EstimatorDimensionDiscretization> >
   d_dimension_bin_boundaries_map;
 
   // The estimator phase space dimension index step size map
-  boost::unordered_map<EstimatorPhaseSpaceDimension,unsigned>
+  boost::unordered_map<PhaseSpaceDimension,unsigned>
   d_dimension_index_step_size_map;
 
   // The estimator phase space dimension ordering
-  Teuchos::Array<EstimatorPhaseSpaceDimension> d_dimension_ordering;
+  Teuchos::Array<PhaseSpaceDimension> d_dimension_ordering;
 
   // The particle types that this estimator will take contributions from
   std::set<ParticleType> d_particle_types;
@@ -228,7 +219,7 @@ inline double Estimator::getMultiplier() const
 
 // Return the number of bins for a dimension of the phase space
 inline unsigned Estimator::getNumberOfBins( 
-			   const EstimatorPhaseSpaceDimension dimension ) const
+				    const PhaseSpaceDimension dimension ) const
 {
   if( d_dimension_bin_boundaries_map.count( dimension ) != 0 )
     return d_dimension_bin_boundaries_map.find(dimension)->second->getNumberOfBins();

@@ -204,9 +204,9 @@ void EntityEstimator<EntityId>::printImplementation(
 
   while( entity_data != end_entity_data )
   {
-    os << entity_type << " " << entity_data->first << std::endl;
+    os << entity_type << " " << entity_data->first 
+       << " Bin Data: " << std::endl;
     os << "--------" << std::endl;
-    os << "Bin Data: " << std::endl;
 
     printEstimatorBinData( os, 
 			   entity_data->second,

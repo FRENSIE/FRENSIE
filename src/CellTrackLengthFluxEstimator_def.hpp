@@ -90,19 +90,10 @@ void CellTrackLengthFluxEstimator<CellId,
   // Make sure the track length is valid
   testPrecondition( !ST::isnaninf( track_length ) );
   
-  if( isParticleTypeAssigned( particle.getType() ) )
-  {
-    if( isPointInEstimatorPhaseSpace( particle.getEnergy(),
-				      angle_cosine,
-				      particle.getTime(),
-				      particle.getCollisionNumber() ) )
-    {
-      double contribution = track_length*
-	ContributionMultiplierPolicy::multiplier( particle );
-
-      addPartialHistoryContribution( cell_of_track, particle, 0, contribution);
-    }
-  }
+  double contribution = track_length*
+    ContributionMultiplierPolicy::multiplier( particle );
+  
+  addPartialHistoryContribution( cell_of_track, particle, 0, contribution);
 }
 
 // Print the estimator data

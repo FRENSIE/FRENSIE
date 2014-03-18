@@ -127,7 +127,7 @@ void CellPulseHeightEstimator<CellId,
   double bin_contribution;
 
   // Store the energy deposition in a generic way using the dimension val. map
-  Estimator::DimensionValueMap dimension_values;
+  PhaseSpace::DimensionValueMap dimension_values;
 
   while( entity != end_entity )
   {

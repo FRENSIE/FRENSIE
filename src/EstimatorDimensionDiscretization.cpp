@@ -13,13 +13,12 @@ namespace FACEMC{
 
 // Constructor
 EstimatorDimensionDiscretization::EstimatorDimensionDiscretization( 
-				 const EstimatorPhaseSpaceDimension dimension )
+				          const PhaseSpaceDimension dimension )
   : d_dimension( dimension )
 { /* ... */ }
 
 // Return the dimension that has been discretized
-EstimatorPhaseSpaceDimension 
-EstimatorDimensionDiscretization::getDimension() const
+PhaseSpaceDimension EstimatorDimensionDiscretization::getDimension() const
 {
   return d_dimension;
 }

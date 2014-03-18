@@ -19,6 +19,7 @@
 #include "Estimator.hpp"
 #include "UniformDistribution.hpp"
 #include "EnergySpaceResponseFunction.hpp"
+#include "PhaseSpaceDimension.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -44,8 +45,6 @@ public:
   { /* ... */ }
 
   // Allow public access to the estimator protected member functions
-  using FACEMC::Estimator::DimensionValueArray;
-  using FACEMC::Estimator::DimensionValueMap;
   using FACEMC::Estimator::assignBinBoundaries;
   using FACEMC::Estimator::getMultiplier;
   using FACEMC::Estimator::getResponseFunctionName;
@@ -222,7 +221,7 @@ TEUCHOS_UNIT_TEST( Estimator, evaluateResponseFunction )
 // Check if a point is in the estimator phase space
 TEUCHOS_UNIT_TEST( Estimator, isPointInEstimatorPhaseSpace_array )
 {
-  TestEstimator::DimensionValueArray dimension_values( 4 );
+  FACEMC::PhaseSpace::DimensionValueArray dimension_values( 4 );
   dimension_values[0]( FACEMC::ENERGY_DIMENSION, Teuchos::any( 0.0 ) );
   dimension_values[1]( FACEMC::COSINE_DIMENSION, Teuchos::any( -1.0 ) );
   dimension_values[2]( FACEMC::TIME_DIMENSION, Teuchos::any( 0.0 ) );
@@ -251,7 +250,7 @@ TEUCHOS_UNIT_TEST( Estimator, isPointInEstimatorPhaseSpace_array )
 // Check if a point is in the estimator phase space
 TEUCHOS_UNIT_TEST( Estimator, isPointInEstimatorPhaseSpace_map )
 {
-  TestEstimator::DimensionValueMap dimension_values;
+  FACEMC::PhaseSpace::DimensionValueMap dimension_values;
   dimension_values[FACEMC::ENERGY_DIMENSION] = Teuchos::any( 0.0 );
   dimension_values[FACEMC::COSINE_DIMENSION] = Teuchos::any( -1.0 );
   dimension_values[FACEMC::TIME_DIMENSION] = Teuchos::any( 0.0 );
@@ -282,7 +281,7 @@ TEUCHOS_UNIT_TEST( Estimator, isPointInEstimatorPhaseSpace_map )
 // calculated
 TEUCHOS_UNIT_TEST( Estimator, calculateBinIndex_array )
 {
-  TestEstimator::DimensionValueArray dimension_values( 4 );
+  FACEMC::PhaseSpace::DimensionValueArray dimension_values( 4 );
   dimension_values[0]( FACEMC::ENERGY_DIMENSION, Teuchos::any( 0.0 ) );
   dimension_values[1]( FACEMC::COSINE_DIMENSION, Teuchos::any( -1.0 ) );
   dimension_values[2]( FACEMC::TIME_DIMENSION, Teuchos::any( 0.0 ) );
@@ -329,7 +328,7 @@ TEUCHOS_UNIT_TEST( Estimator, calculateBinIndex_array )
 // calculated
 TEUCHOS_UNIT_TEST( Estimator, calculateBinIndex_map )
 {
-  TestEstimator::DimensionValueMap dimension_values;
+  FACEMC::PhaseSpace::DimensionValueMap dimension_values;
   dimension_values[FACEMC::ENERGY_DIMENSION] = Teuchos::any( 0.0 );
   dimension_values[FACEMC::COSINE_DIMENSION] = Teuchos::any( -1.0 );
   dimension_values[FACEMC::TIME_DIMENSION] = Teuchos::any( 0.0 );

@@ -221,7 +221,7 @@ void Estimator::printEstimatorBinData(
 void Estimator::printEstimatorTotalData( 
 		     std::ostream& os,
 		     const EstimatorMomentsArray& total_estimator_moments_data,
-		     const double norm_constant )
+		     const double norm_constant ) const
 {
   // Make sure that the total estimator moments data is valid
   testPrecondition( total_estimator_moments_data.size() ==
@@ -256,7 +256,7 @@ void Estimator::printEstimatorTotalData(
 
 // Check if the point is in the estimator phase space
 bool Estimator::isPointInEstimatorPhaseSpace(
-			      const DimensionValueMap& dimension_values ) const
+		  const PhaseSpace::DimensionValueMap& dimension_values ) const
 {
   // Make sure there are at least as many dimension values as dimensions
   testPrecondition( dimension_values.size() >= 
@@ -286,7 +286,7 @@ bool Estimator::isPointInEstimatorPhaseSpace(
 
 // Check if the point is in the estimator phase space
 bool Estimator::isPointInEstimatorPhaseSpace(
-			    const DimensionValueArray& dimension_values ) const
+	        const PhaseSpace::DimensionValueArray& dimension_values ) const
 {
   // Make sure there are at least as many dimension values as dimensions
   testPrecondition( dimension_values.size() >= 
@@ -318,8 +318,8 @@ bool Estimator::isPointInEstimatorPhaseSpace(
 
 // Calculate the bin index for the desired response function
 unsigned Estimator::calculateBinIndex( 
-			         const DimensionValueMap& dimension_values,
-				 const unsigned response_function_index ) const
+			 const PhaseSpace::DimensionValueMap& dimension_values,
+			 const unsigned response_function_index ) const
 {
   // Make sure there are at least as many dimension values as dimensions
   testPrecondition( dimension_values.size() >= 
@@ -357,8 +357,8 @@ unsigned Estimator::calculateBinIndex(
 
 // Calculate the bin index for the desired response function
 unsigned Estimator::calculateBinIndex( 
-			         const DimensionValueArray& dimension_values,
-				 const unsigned response_function_index ) const
+		       const PhaseSpace::DimensionValueArray& dimension_values,
+		       const unsigned response_function_index ) const
 {
   // Make sure there are at least as many dimension values as dimensions
   testPrecondition( dimension_values.size() >= 

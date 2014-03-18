@@ -16,7 +16,7 @@
 #include <Teuchos_any.hpp>
 
 // FACEMC Includes
-#include "EstimatorPhaseSpaceDimension.hpp"
+#include "PhaseSpaceDimension.hpp"
 
 namespace FACEMC{
 
@@ -26,15 +26,14 @@ class EstimatorDimensionDiscretization
 public:
 
   //! Constructor
-  EstimatorDimensionDiscretization( 
-				const EstimatorPhaseSpaceDimension dimension );
+  EstimatorDimensionDiscretization( const PhaseSpaceDimension dimension );
 
   //! Destructor
   virtual ~EstimatorDimensionDiscretization()
   { /* ... */ }
 
   //! Return the dimension that has been discretized
-  EstimatorPhaseSpaceDimension getDimension() const;
+  PhaseSpaceDimension getDimension() const;
 
   //! Return the dimension name that has been discretized
   virtual std::string getDimensionName() const = 0;
@@ -59,7 +58,7 @@ public:
 
 private:
 
-  EstimatorPhaseSpaceDimension d_dimension;
+  PhaseSpaceDimension d_dimension;
 };
 
 } // end FACEMC namespace

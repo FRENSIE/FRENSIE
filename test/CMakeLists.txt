@@ -362,8 +362,21 @@ Add_EXECUTABLE(tstEntityEstimator
 TARGET_LINK_LIBRARIES(tstEntityEstimator ${PROJECT_NAME})
 ADD_TEST(EntityEstimator_test tstEntityEstimator)
 
+Add_EXECUTABLE(tstStandardEntityEstimator
+  tstStandardEntityEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStandardEntityEstimator ${PROJECT_NAME})
+ADD_TEST(StandardEntityEstimator_test tstStandardEntityEstimator)
+
+Add_EXECUTABLE(tstStandardSurfaceEstimator
+  tstStandardSurfaceEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStandardSurfaceEstimator ${PROJECT_NAME})
+ADD_TEST(StandardSurfaceEstimator_test tstStandardSurfaceEstimator)
+
 Add_EXECUTABLE(tstCellPulseHeightEstimator
   tstCellPulseHeightEstimator.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstCellPulseHeightEstimator ${PROJECT_NAME})
 ADD_TEST(CellPulseHeightEstimator_test tstCellPulseHeightEstimator)
+

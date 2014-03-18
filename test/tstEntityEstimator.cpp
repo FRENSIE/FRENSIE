@@ -16,8 +16,6 @@
 
 // FACEMC Includes
 #include "EntityEstimator.hpp"
-#include "UniformDistribution.hpp"
-#include "EnergySpaceResponseFunction.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.

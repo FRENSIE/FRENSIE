@@ -57,22 +57,13 @@ void SurfaceCurrentEstimator<SurfaceId,
   testPrecondition( angle_cosine <= 1.0 );
   testPrecondition( angle_cosine >= -1.0 );
   
-  if( isParticleTypeAssigned( particle.getType() ) )
-  {
-    if( isPointInEstimatorPhaseSpace( particle.getEnergy(),
-				      angle_cosine,
-				      particle.getTime(),
-				      particle.getCollisionNumber() ) )
-    {
-      double contribution = 
-	ContributionMultiplierPolicy::multiplier( particle );
-
-      addPartialHistoryContribution( surface_crossed, 
-				     particle, 
-				     angle_cosine,
-				     contribution );
-    }
-  }
+  double contribution = 
+    ContributionMultiplierPolicy::multiplier( particle );
+  
+  addPartialHistoryContribution( surface_crossed, 
+				 particle, 
+				 angle_cosine,
+				 contribution );
 }
 
 // Print the estimator data

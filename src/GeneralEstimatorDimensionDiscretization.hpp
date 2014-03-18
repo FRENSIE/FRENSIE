@@ -14,19 +14,19 @@
 
 // FACEMC Includes
 #include "EstimatorDimensionDiscretization.hpp"
-#include "EstimatorPhaseSpaceDimensionTraits.hpp"
+#include "PhaseSpaceDimensionTraits.hpp"
 
 namespace FACEMC{
 
 //! The general estimator dimension discretization class
-template<EstimatorPhaseSpaceDimension dimension>
+template<PhaseSpaceDimension dimension>
 class GeneralEstimatorDimensionDiscretization : public EstimatorDimensionDiscretization
 {
 
 private:
 
   // Estimator phase space dimension traits typedef
-  typedef Traits::EstimatorPhaseSpaceDimensionTraits<dimension> DT;
+  typedef Traits::PhaseSpaceDimensionTraits<dimension> DT;
 
 public:
 
@@ -73,7 +73,7 @@ class GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSION> : publ
 private:
 
   // Estimator phase space dimension traits typedef
-  typedef Traits::EstimatorPhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION> DT;
+  typedef Traits::PhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION> DT;
 
 public:
 

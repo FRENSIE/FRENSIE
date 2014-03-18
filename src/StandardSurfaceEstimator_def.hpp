@@ -18,7 +18,10 @@ StandardSurfaceEstimator<SurfaceId>::StandardSurfaceEstimator(
 				  const double multiplier,
 			          const Teuchos::Array<SurfaceId>& surface_ids,
 				  const Teuchos::Array<double>& surface_areas )
-  : StandardEntityEstimator( id, mulitiplier, surface_ids, surface_areas )
+  : StandardEntityEstimator<SurfaceId>( id, 
+					multiplier, 
+					surface_ids, 
+					surface_areas )
 { /* ... */ }
 
 // Set the particle types that can contribute to the estimator
@@ -30,10 +33,21 @@ template<typename SurfaceId>
 void StandardSurfaceEstimator<SurfaceId>::setParticleTypes( 
 			   const Teuchos::Array<ParticleType>& particle_types )
 {
-  // Make sure only one particle type has been specified
-  testPrecondition( particle_types.size() == 1 );
-
-  Estimator::setParticleTypes( particle_types );
+  if( particle_types.size() > 1 )
+  {
+    std::cerr << "Warning: Standard surface estimators can only have one "
+	      << "particle type contribute. All but the first particle type "
+	      << "requested in estimator " << this->getId() 
+	      << " will be ignored."
+	      << std::endl;
+    
+    Teuchos::Array<ParticleType> valid_particle_types( 1 );
+    valid_particle_types[0] = particle_types.front();
+    
+    Estimator::setParticleTypes( valid_particle_types );
+  }
+  else
+    Estimator::setParticleTypes( particle_types );
 }
 
 } // end FACEMC namespace

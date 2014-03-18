@@ -15,6 +15,7 @@
 // FACEMC Includes
 #include "ParticleType.hpp"
 #include "PrintableObject.hpp"
+#include "PhaseSpaceDimension.hpp"
 
 namespace FACEMC{
 
@@ -126,6 +127,14 @@ public:
 
   //! Multiply the weight of the particle by a factor
   void multiplyWeight( const double weight_factor );
+
+  //! Export state to a generic array
+  virtual void exportState( 
+		  PhaseSpace::DimensionValueArray& generic_state_array ) const;
+  
+  //! Export the state to a generic map
+  virtual void exportState( 
+		       PhaseSpace::DimensionValueMap& generic_state_map) const;
 
   //! Print method that defines the behavior of the std::stream << operator
   virtual void print( std::ostream& os ) const;

@@ -1,31 +1,30 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   EstimatorPhaseSpaceDimensionTraits.hpp
+//! \file   PhaseSpaceDimensionTraits.hpp
 //! \author Alex Robinson
-//! \brief  Estimator phase space dimension traits class specializations
+//! \brief  Phase space dimension traits class specializations
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef ESTIMATOR_PHASE_SPACE_DIMENSION_TRAITS_HPP
-#define ESTIMATOR_PHASE_SPACE_DIMENSION_TRAITS_HPP
+#ifndef PHASE_SPACE_DIMENSION_TRAITS_HPP
+#define PHASE_SPACE_DIMENSION_TRAITS_HPP
 
 // Std Lib Includes
 #include <limits>
 
 // FACEMC Includes
-#include "EstimatorPhaseSpaceDimensionTraitsDecl.hpp"
-#include "EstimatorPhaseSpaceDimension.hpp"
+#include "PhaseSpaceDimensionTraitsDecl.hpp"
+#include "PhaseSpaceDimension.hpp"
 
 namespace FACEMC{
 
 namespace Traits{
 
-/*! The specialization of the EstimatorPhaseSpaceDimensionTraits for 
- * ENERGY_DIMENSION
- * \ingroup estimator_phase_space_dim_traits
+/*! The specialization of the PhaseSpaceDimensionTraits for ENERGY_DIMENSION
+ * \ingroup phase_space_dim_traits
  */
 template<>
-struct EstimatorPhaseSpaceDimensionTraits<ENERGY_DIMENSION>
+struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
 {
   typedef double dimensionType;
   
@@ -45,12 +44,11 @@ struct EstimatorPhaseSpaceDimensionTraits<ENERGY_DIMENSION>
   { return Teuchos::any_cast<dimensionType>( any_container );  }
 };
 
-/*! The specialization of the EstimatorPhaseSpaceDimensionTraits for
- * COSINE_DIMENSION
- * \ingroup estimator_phase_space_dim_traits
+/*! The specialization of the PhaseSpaceDimensionTraits for COSINE_DIMENSION
+ * \ingroup phase_space_dim_traits
  */
 template<>
-struct EstimatorPhaseSpaceDimensionTraits<COSINE_DIMENSION>
+struct PhaseSpaceDimensionTraits<COSINE_DIMENSION>
 {
   typedef double dimensionType;
     
@@ -70,12 +68,11 @@ struct EstimatorPhaseSpaceDimensionTraits<COSINE_DIMENSION>
   { return Teuchos::any_cast<dimensionType>( any_container );  }
 };
 
-/*! The specialization of the EstimatorPhaseSpaceDimensionTraits for
- * TIME_DIMENSION
- * \ingroup estimator_phase_space_dim_traits
+/*! The specialization of the PhaseSpaceDimensionTraits for TIME_DIMENSION
+ * \ingroup phase_space_dim_traits
  */
 template<>
-struct EstimatorPhaseSpaceDimensionTraits<TIME_DIMENSION>
+struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
 {
   typedef double dimensionType;
     
@@ -95,12 +92,12 @@ struct EstimatorPhaseSpaceDimensionTraits<TIME_DIMENSION>
   { return Teuchos::any_cast<dimensionType>( any_container );  }
 };
 
-/*! The specialization of the EstimatorPhaseSpaceDimensionTraits for
+/*! The specialization of the PhaseSpaceDimensionTraits for
  * COLLISION_NUMBER_DIMENSION
- * \ingroup estimator_phase_space_dim_traits
+ * \ingroup phase_space_dim_traits
  */
 template<>
-struct EstimatorPhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION>
+struct PhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION>
 {
   typedef unsigned dimensionType;
     
@@ -124,8 +121,8 @@ struct EstimatorPhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION>
 
 } // end FACEMC namespace
 
-#endif // end ESTIMATOR_PHASE_SPACE_DIMENSION_TRAITS_HPP
+#endif // end PHASE_SPACE_DIMENSION_TRAITS_HPP
 
 //---------------------------------------------------------------------------//
-// end EstimatorPhaseSpaceDimensionTraits.hpp
+// end PhaseSpaceDimensionTraits.hpp
 //---------------------------------------------------------------------------//

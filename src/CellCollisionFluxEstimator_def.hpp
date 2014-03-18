@@ -72,22 +72,13 @@ void CellTrackLengthFluxEstimator<CellId,
   // Make sure the inverse total macroscopic cross section is valid
   testPrecondition( !ST::isnaninf( inverse_total_cross_section ) );
   
-  if( isParticleTypeAssigned( particle.getType() ) )
-  {
-    if( isPointInEstimatorPhaseSpace( particle.getEnergy(),
-				      angle_cosine,
-				      particle.getTime(),
-				      particle.getCollisionNumber() ) )
-    {
-      double contribution = inverse_total_cross_section*
-	ContributionMultiplierPolicy::multiplier( particle );
+  double contribution = inverse_total_cross_section*
+    ContributionMultiplierPolicy::multiplier( particle );
 
-      addPartialHistoryContribution( cell_of_collision, 
-				     particle, 
-				     0, 
-				     contribution );
-    }
-  }
+  addPartialHistoryContribution( cell_of_collision, 
+				 particle, 
+				 0, 
+				 contribution );
 }
 
 // Print the estimator data

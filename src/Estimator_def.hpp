@@ -15,12 +15,12 @@
 namespace FACEMC{
 
 // Set the bin boundaries for a dimension of the sphase space
-template<EstimatorPhaseSpaceDimension dimension, typename DimensionType>
+template<PhaseSpaceDimension dimension, typename DimensionType>
 void Estimator::setBinBoundaries( 
 			  const Teuchos::Array<DimensionType>& bin_boundaries )
 {
   // Make sure the DimensionType matches the type associated with the dimension
-  testStaticPrecondition((boost::is_same<typename Traits::EstimatorPhaseSpaceDimensionTraits<dimension>::dimensionType,DimensionType>::value));
+  testStaticPrecondition((boost::is_same<typename Traits::PhaseSpaceDimensionTraits<dimension>::dimensionType,DimensionType>::value));
   
   Teuchos::RCP<EstimatorDimensionDiscretization> dimension_bin_boundaries(
     new GeneralEstimatorDimensionDiscretization<dimension>( bin_boundaries ) );

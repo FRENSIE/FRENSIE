@@ -241,11 +241,11 @@
 			    Teuchos::FancyOStream &out, bool &success ) const \
 
 /*! \brief A macro for the Teuchos Unit Test Harness for creating a 
- * templated unit test on an EstimatorPhaseSpaceDimension enum.
+ * templated unit test on an PhaseSpaceDimension enum.
  * \ingroup unit_test_harness_extensions
  */
 #define FACEMC_UNIT_TEST_EPSD_TEMPLATE_1_DECL(TEST_GROUP, TEST_NAME, EPSD_VALUE) \
-  template<FACEMC::EstimatorPhaseSpaceDimension EPSD_VALUE>		\
+  template<FACEMC::PhaseSpaceDimension EPSD_VALUE>		\
   class TEST_GROUP##_##TEST_NAME##_UnitTest : public Teuchos::UnitTestBase \
   {									\
   public:								\
@@ -258,7 +258,7 @@
     virtual long int unitTestFileLineNumber() const { return __LINE__; } \
   };									\
 									\
-  template<FACEMC::EstimatorPhaseSpaceDimension EPSD_VALUE>		\
+  template<FACEMC::PhaseSpaceDimension EPSD_VALUE>		\
   void TEST_GROUP##_##TEST_NAME##_UnitTest<EPSD_VALUE>::runUnitTestImpl(\
 		          Teuchos::FancyOStream &out, bool &success ) const \
     

@@ -14,6 +14,7 @@
 
 // FACEMC Includes
 #include "BasicParticleState.hpp"
+#include "PhaseSpaceDimensionTraits.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -182,6 +183,70 @@ TEUCHOS_UNIT_TEST( BasicParticleState, multipyWeight )
   particle.multiplyWeight( 0.5 );
 
   TEST_EQUALITY_CONST( particle.getWeight(), 0.5 );
+}
+
+//---------------------------------------------------------------------------//
+// Export the state to a generic array
+TEUCHOS_UNIT_TEST( BasicParticleState, exportState_array )
+{
+  FACEMC::BasicParticleState particle;
+
+  particle.setEnergy( 10.0 );
+  particle.setTime( 1e-3 );
+  particle.incrementCollisionNumber();
+  particle.incrementCollisionNumber();
+
+  FACEMC::PhaseSpace::DimensionValueArray generic_particle_state;
+
+  particle.exportState( generic_particle_state );
+
+  double energy_value = FACEMC::getValue<FACEMC::ENERGY_DIMENSION>( 
+					    generic_particle_state[0].second );
+
+  TEST_EQUALITY_CONST( energy_value, 10.0 );
+
+  double time_value = FACEMC::getValue<FACEMC::TIME_DIMENSION>(
+					    generic_particle_state[1].second );
+
+  TEST_EQUALITY_CONST( time_value, 1e-3 );
+
+  unsigned collision_number_value = 
+    FACEMC::getValue<FACEMC::COLLISION_NUMBER_DIMENSION>(
+					    generic_particle_state[2].second );
+
+  TEST_EQUALITY_CONST( collision_number_value, 2u );
+}
+
+//---------------------------------------------------------------------------//
+// Export the state to a generic map
+TEUCHOS_UNIT_TEST( BasicParticleState, exportState_map )
+{
+  FACEMC::BasicParticleState particle;
+
+  particle.setEnergy( 10.0 );
+  particle.setTime( 1e-3 );
+  particle.incrementCollisionNumber();
+  particle.incrementCollisionNumber();
+
+  FACEMC::PhaseSpace::DimensionValueMap generic_particle_state;
+
+  particle.exportState( generic_particle_state );
+
+  double energy_value = FACEMC::getValue<FACEMC::ENERGY_DIMENSION>( 
+			    generic_particle_state[FACEMC::ENERGY_DIMENSION] );
+
+  TEST_EQUALITY_CONST( energy_value, 10.0 );
+
+  double time_value = FACEMC::getValue<FACEMC::TIME_DIMENSION>(
+		              generic_particle_state[FACEMC::TIME_DIMENSION] );
+
+  TEST_EQUALITY_CONST( time_value, 1e-3 );
+
+  unsigned collision_number_value = 
+    FACEMC::getValue<FACEMC::COLLISION_NUMBER_DIMENSION>(
+		  generic_particle_state[FACEMC::COLLISION_NUMBER_DIMENSION] );
+  
+  TEST_EQUALITY_CONST( collision_number_value, 2u );
 }
 
 //---------------------------------------------------------------------------//

@@ -9,6 +9,9 @@
 #ifndef STANDARD_ENTITY_ESTIMATOR_HPP
 #define STANDARD_ENTITY_ESTIMATOR_HPP
 
+// Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
+
 // FACEMC Includes
 #include "EntityEstimator.hpp"
 
@@ -21,8 +24,11 @@ class StandardEntityEstimator : public EntityEstimator<EntityId>
 
 protected:
 
+  // Typedef for Teuchos Scalar Traits
+  typedef Teuchos::ScalarTraits<double> ST;
+
   // Typedef for the map of entity ids and estimator first moments
-  typedef boost::unordered_map<EntityId,Teuchos::Array<double> > 
+  typedef typename boost::unordered_map<EntityId,Teuchos::Array<double> > 
   EntityEstimatorFirstMomentsArrayMap;
 
 public:
@@ -38,22 +44,6 @@ public:
   virtual ~StandardEntityEstimator()
   { /* ... */ }
 
-  //! Set the energy bin boundaries
-  virtual void setEnergyBinBoundaries( 
-			 const Teuchos::Array<double>& energy_bin_boundaries );
-
-  //! Set the cosine bin boundaries
-  virtual void setCosineBinBoundaries(
-			 const Teuchos::Array<double>& cosine_bin_boundaries );
-
-  //! Set the time bin boundaries
-  virtual void setTimeBinBoundaries(
-			   const Teuchos::Array<double>& time_bin_boundaries );
-
-  //! Set the collision number bins
-  virtual void setCollisionNumberBins( 
-		       const Teuchos::Array<unsigned>& collision_number_bins );
-
   //! Set the response functions
   virtual void setResponseFunctions( 
    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
@@ -62,6 +52,10 @@ public:
   void commitHistoryContribution();
 
 protected:
+
+  //! Assign bin boundaries to an estimator dimension
+  virtual void assignBinBoundaries(
+	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
 
   //! Add estimator contribution from a portion of the current history
   void addPartialHistoryContribution( const EntityId& entity_id,
@@ -76,10 +70,10 @@ protected:
 private:
 
   // Resize the entity estimator first moment map arrays
-  void resizeEntityEstimatorFirstMomentMapArrays();
+  void resizeEntityEstimatorFirstMomentsMapArrays();
 
   // Resize the entity total estimator moments map arrays
-  void resizeEntityTotalEstimatorMapArrays();
+  void resizeEntityTotalEstimatorMomentsMapArrays();
 
   // Commit history contr. to the total for a response function of an entity
   void commitHistoryContributionToTotalOfEntity( 
@@ -93,13 +87,14 @@ private:
 					const double contribution );
 
   // The total estimator moments across all entities and response functions
-  EstimatorMomentsArray d_total_estimator_moments;
+  Estimator::EstimatorMomentsArray d_total_estimator_moments;
 
   // The total estimator moments for each entity and response functions
-  EntityEstimatorMomentsArrayMap d_entity_total_estimator_moments_map;
+  typename EntityEstimator<EntityId>::EntityEstimatorMomentsArrayMap 
+  d_entity_total_estimator_moments_map;
 
   // The estimator first moment for each bin of the current history
-  EntityEstimatorFirstMomentArrayMap 
+  EntityEstimatorFirstMomentsArrayMap 
   d_entity_current_history_first_moments_map;
 }; 
 

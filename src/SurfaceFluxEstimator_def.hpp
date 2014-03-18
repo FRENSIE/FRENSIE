@@ -55,31 +55,22 @@ void SurfaceFluxEstimator<SurfaceId,
   testPrecondition( angle_cosine <= 1.0 );
   testPrecondition( angle_cosine >= -1.0 );
 
-  if( isParticleTypeAssigned( particle.getType() ) )
-  {
-    if( isPointInEstimatorPhaseSpace( particle.getEnergy(),
-				      angle_cosine,
-				      particle.getTime(),
-				      particle.getCollisionNumber() ) )
-    {
-      double contribution; 
-
-      // If the angle cosine is very close to zero, set it to eps/2 to
-      // prevent large contributions to the estimator
-      if( ST::magnituce( angle_cosine ) >
-	  SurfaceFlusEstimator::angle_cosine_cutoff )
-	contribution = 1.0/ST::magnitude( angle_cosine );
-      else
-	contribution = SurfaceFlusEstimator::angle_cosine_cutoff/2;
-
-      contribution *= ContributionMultiplierPolicy::multiplier( particle );
-
-      addPartialHistoryContribution( surface_crossed, 
-				     particle, 
-				     angle_cosine,
-				     contribution );
-    }
-  }
+  double contribution; 
+  
+  // If the angle cosine is very close to zero, set it to eps/2 to
+  // prevent large contributions to the estimator
+  if( ST::magnituce( angle_cosine ) >
+      SurfaceFlusEstimator::angle_cosine_cutoff )
+    contribution = 1.0/ST::magnitude( angle_cosine );
+  else
+    contribution = SurfaceFlusEstimator::angle_cosine_cutoff/2;
+  
+  contribution *= ContributionMultiplierPolicy::multiplier( particle );
+  
+  addPartialHistoryContribution( surface_crossed, 
+				 particle, 
+				 angle_cosine,
+				 contribution );
 }
 
 // Print the estimator data

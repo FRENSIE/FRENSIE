@@ -320,6 +320,30 @@ void BasicParticleState::multiplyWeight( const double weight_factor )
   d_weight *= weight_factor;
 }
 
+// Export state to a generic array
+/*! \details The array will be cleared before assigning the state info
+ */
+void BasicParticleState::exportState( 
+		   PhaseSpace::DimensionValueArray& generic_state_array ) const
+{
+  generic_state_array.resize( 3 );
+  
+  generic_state_array[0]( ENERGY_DIMENSION, Teuchos::any( d_energy ) );
+  generic_state_array[1]( TIME_DIMENSION, Teuchos::any( d_time ) );
+  generic_state_array[2]( COLLISION_NUMBER_DIMENSION, 
+			  Teuchos::any( d_collision_number ) );
+} 
+
+// Export the state to a generic map
+void BasicParticleState::exportState(
+			PhaseSpace::DimensionValueMap& generic_state_map) const
+{
+  generic_state_map[ENERGY_DIMENSION] = Teuchos::any( d_energy );
+  generic_state_map[TIME_DIMENSION] = Teuchos::any( d_time );
+  generic_state_map[COLLISION_NUMBER_DIMENSION] = 
+    Teuchos::any( d_collision_number );
+}
+
 // Print method that defines the behavior of the std::stream << operator
 void BasicParticleState::print( std::ostream& os ) const
 {

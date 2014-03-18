@@ -17,7 +17,7 @@
 // FACEMC Includes
 #include "FACEMC_UnitTestHarnessExtensions.hpp"
 #include "GeneralEstimatorDimensionDiscretization.hpp"
-#include "EstimatorPhaseSpaceDimensionTraits.hpp"
+#include "PhaseSpaceDimensionTraits.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
@@ -33,12 +33,12 @@
 // Testing Functions.
 //---------------------------------------------------------------------------//
 // Initialize an estimator dimension discretization pointer
-template<FACEMC::EstimatorPhaseSpaceDimension dimension>
+template<FACEMC::PhaseSpaceDimension dimension>
 void initialize( Teuchos::RCP<FACEMC::EstimatorDimensionDiscretization>&
 		 dimension_discretization,
 		 const bool add_discrete_lines )
 {
-  typedef FACEMC::Traits::EstimatorPhaseSpaceDimensionTraits<dimension> EPSDT;
+  typedef FACEMC::Traits::PhaseSpaceDimensionTraits<dimension> EPSDT;
 
   Teuchos::Array<typename EPSDT::dimensionType> discretization( 4 );
 
@@ -71,7 +71,7 @@ void initialize<FACEMC::COLLISION_NUMBER_DIMENSION>(
 			dimension_discretization,
 			const bool )
 {
-  typedef FACEMC::Traits::EstimatorPhaseSpaceDimensionTraits<FACEMC::COLLISION_NUMBER_DIMENSION> EPSDT;
+  typedef FACEMC::Traits::PhaseSpaceDimensionTraits<FACEMC::COLLISION_NUMBER_DIMENSION> EPSDT;
 
   Teuchos::Array<typename EPSDT::dimensionType> discretization( 3 );
 
@@ -127,7 +127,7 @@ FACEMC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
 
   initialize<dimension>( discretized_dimension, false );
 
-  typedef FACEMC::Traits::EstimatorPhaseSpaceDimensionTraits<dimension> EPSDT;
+  typedef FACEMC::Traits::PhaseSpaceDimensionTraits<dimension> EPSDT;
 
   typename EPSDT::dimensionType value_1, value_2, value_3, value_4;
 
@@ -176,7 +176,7 @@ FACEMC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
 
   initialize<dimension>( discretized_dimension, true );
 
-  typedef FACEMC::Traits::EstimatorPhaseSpaceDimensionTraits<dimension> EPSDT;
+  typedef FACEMC::Traits::PhaseSpaceDimensionTraits<dimension> EPSDT;
 
   typename EPSDT::dimensionType value_1, value_2, value_3, value_4,
     value_5, value_6, value_7, value_8, value_9, value_10, value_11,
