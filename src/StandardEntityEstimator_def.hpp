@@ -141,16 +141,21 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
   // Only add the contribution if the particle type can contribute
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
-    // Export the particle state to a generic map
-    PhaseSpace::DimensionValueMap dimension_values;
+    // Export the energy dimension
+    d_dimension_values[ENERGY_DIMENSION] = Teuchos::any( particle.getEnergy());
 
-    particle.exportState( dimension_values );
+    // Export the time dimension
+    d_dimension_values[TIME_DIMENSION] = Teuchos::any( particle.getTime() );
     
-    // Add the cosine dimension
-    dimension_values[COSINE_DIMENSION] = Teuchos::any( angle_cosine );
+    // Export the collision number dimension
+    d_dimension_values[COLLISION_NUMBER_DIMENSION] = 
+      Teuchos::any( particle.getCollisionNumber() );
+    
+    // Export the cosine dimension
+    d_dimension_values[COSINE_DIMENSION] = Teuchos::any( angle_cosine );
     
     // Only add the contribution if it the particle state is in the phase space
-    if( this->isPointInEstimatorPhaseSpace( dimension_values ) )
+    if( this->isPointInEstimatorPhaseSpace( d_dimension_values ) )
     {
 
       Teuchos::Array<double>& entity_first_moments_array = 
@@ -161,7 +166,7 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
       
       for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
       {
-	bin_index = this->calculateBinIndex( dimension_values, i );
+	bin_index = this->calculateBinIndex( d_dimension_values, i );
     
 	entity_first_moments_array[bin_index] += 
 	  contribution*this->evaluateResponseFunction( particle, i );

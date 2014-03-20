@@ -96,6 +96,9 @@ private:
   // The estimator first moment for each bin of the current history
   EntityEstimatorFirstMomentsArrayMap 
   d_entity_current_history_first_moments_map;
+
+  // The generic particle state map (avoids having to make a new map for cont.)
+  Estimator::DimensionValueMap d_dimension_values;
 }; 
 
 } // end FACEMC namespace

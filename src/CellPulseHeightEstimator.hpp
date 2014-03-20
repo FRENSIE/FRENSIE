@@ -69,6 +69,9 @@ private:
 
   // The energy deposited in each cell of interest by the current history
   boost::unordered_map<CellId,double> d_cell_energy_deposition_map;
+
+  // The generic particle state map (avoids having to make a new map for cont.)
+  Estimator::DimensionValueMap d_dimension_values;
 };
 
 } // end FACEMC namespace 

@@ -94,6 +94,8 @@ void ParticleSimulation<GeometryHandler,
       continue;
     }
 
+    EHT::updateEstimatorsAtSourcePoint( particle );
+
     // Initialize the particle bank for this history
     particle_bank.push_back( particle );
 

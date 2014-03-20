@@ -45,6 +45,7 @@ public:
   { /* ... */ }
 
   // Allow public access to the estimator protected member functions
+  using FACEMC::Estimator::DimensionValueMap;
   using FACEMC::Estimator::assignBinBoundaries;
   using FACEMC::Estimator::getMultiplier;
   using FACEMC::Estimator::getResponseFunctionName;
@@ -219,38 +220,9 @@ TEUCHOS_UNIT_TEST( Estimator, evaluateResponseFunction )
 
 //---------------------------------------------------------------------------//
 // Check if a point is in the estimator phase space
-TEUCHOS_UNIT_TEST( Estimator, isPointInEstimatorPhaseSpace_array )
+TEUCHOS_UNIT_TEST( Estimator, isPointInEstimatorPhaseSpace )
 {
-  FACEMC::PhaseSpace::DimensionValueArray dimension_values( 4 );
-  dimension_values[0]( FACEMC::ENERGY_DIMENSION, Teuchos::any( 0.0 ) );
-  dimension_values[1]( FACEMC::COSINE_DIMENSION, Teuchos::any( -1.0 ) );
-  dimension_values[2]( FACEMC::TIME_DIMENSION, Teuchos::any( 0.0 ) );
-  dimension_values[3]( FACEMC::COLLISION_NUMBER_DIMENSION, Teuchos::any( 0u ));
-
-  TEST_ASSERT( estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
-  
-  dimension_values[0].second = Teuchos::any( 20.0 );
-  dimension_values[1].second = Teuchos::any( 1.0 );
-  dimension_values[2].second = Teuchos::any( 1e7 );
-  dimension_values[3].second = Teuchos::any( std::numeric_limits<unsigned>::max() );
-  
-  TEST_ASSERT( estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
-
-  dimension_values[0].second = Teuchos::any( 21.0 );
-  
-  TEST_ASSERT( !estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
-
-  dimension_values[0].second = Teuchos::any( 20.0 );
-  dimension_values[2].second = Teuchos::any( 2e7 );
-  
-  TEST_ASSERT( !estimator.isPointInEstimatorPhaseSpace( dimension_values ) );
-} 
-
-//---------------------------------------------------------------------------//
-// Check if a point is in the estimator phase space
-TEUCHOS_UNIT_TEST( Estimator, isPointInEstimatorPhaseSpace_map )
-{
-  FACEMC::PhaseSpace::DimensionValueMap dimension_values;
+  TestEstimator::DimensionValueMap dimension_values;
   dimension_values[FACEMC::ENERGY_DIMENSION] = Teuchos::any( 0.0 );
   dimension_values[FACEMC::COSINE_DIMENSION] = Teuchos::any( -1.0 );
   dimension_values[FACEMC::TIME_DIMENSION] = Teuchos::any( 0.0 );
@@ -279,56 +251,9 @@ TEUCHOS_UNIT_TEST( Estimator, isPointInEstimatorPhaseSpace_map )
 //---------------------------------------------------------------------------//
 // Check that the bin index for the desired response function can be 
 // calculated
-TEUCHOS_UNIT_TEST( Estimator, calculateBinIndex_array )
+TEUCHOS_UNIT_TEST( Estimator, calculateBinIndex )
 {
-  FACEMC::PhaseSpace::DimensionValueArray dimension_values( 4 );
-  dimension_values[0]( FACEMC::ENERGY_DIMENSION, Teuchos::any( 0.0 ) );
-  dimension_values[1]( FACEMC::COSINE_DIMENSION, Teuchos::any( -1.0 ) );
-  dimension_values[2]( FACEMC::TIME_DIMENSION, Teuchos::any( 0.0 ) );
-  dimension_values[3]( FACEMC::COLLISION_NUMBER_DIMENSION, Teuchos::any( 0u ));
-  
-  unsigned bin_index = estimator.calculateBinIndex( dimension_values, 0u );
-
-  TEST_EQUALITY_CONST( bin_index, 0u );
-
-  bin_index = estimator.calculateBinIndex( dimension_values, 1u );
-
-  TEST_EQUALITY_CONST( bin_index, 216u );
-						    
-  dimension_values[0].second = Teuchos::any( 10.0 );
-  dimension_values[1].second = Teuchos::any( 0.0 );
-  dimension_values[2].second = Teuchos::any( 1e6 );
-  dimension_values[3].second = Teuchos::any( 2u );
-  
-  bin_index = estimator.calculateBinIndex( dimension_values, 0u );
-
-  TEST_EQUALITY_CONST( bin_index, 154u );
-
-  bin_index = estimator.calculateBinIndex( dimension_values, 1u );
-
-  TEST_EQUALITY_CONST( bin_index, 370u );
-
-  dimension_values[0].second = Teuchos::any( 20.0 );
-  dimension_values[1].second = Teuchos::any( 1.0 );
-  dimension_values[2].second = Teuchos::any( 1e7 );
-  dimension_values[3].second = 
-    Teuchos::any( std::numeric_limits<unsigned>::max() );
-
-  bin_index = estimator.calculateBinIndex( dimension_values, 0u );
-
-  TEST_EQUALITY_CONST( bin_index, 215u );
-
-  bin_index = estimator.calculateBinIndex( dimension_values, 1u );
-
-  TEST_EQUALITY_CONST( bin_index, 431u );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the bin index for the desired response function can be 
-// calculated
-TEUCHOS_UNIT_TEST( Estimator, calculateBinIndex_map )
-{
-  FACEMC::PhaseSpace::DimensionValueMap dimension_values;
+  TestEstimator::DimensionValueMap dimension_values;
   dimension_values[FACEMC::ENERGY_DIMENSION] = Teuchos::any( 0.0 );
   dimension_values[FACEMC::COSINE_DIMENSION] = Teuchos::any( -1.0 );
   dimension_values[FACEMC::TIME_DIMENSION] = Teuchos::any( 0.0 );

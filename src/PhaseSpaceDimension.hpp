@@ -35,20 +35,6 @@ enum PhaseSpaceDimension{
   DIMENSION_end
 };
 
-namespace PhaseSpace{
-
-//! Typedef for a dimension value
-typedef Pair<PhaseSpaceDimension,Teuchos::any> DimensionValue;
-
-//! Typedef for array of dimension values
-typedef Teuchos::Array<DimensionValue> DimensionValueArray;
-
-// Typedef for map of dimension values
-typedef boost::unordered_map<PhaseSpaceDimension,Teuchos::any> 
-DimensionValueMap;
-
-}; // end PhaseSpace namespace
-
 } // end FACEMC namespace
 
 #endif // end PHASE_SPACE_DIMENSION_HPP

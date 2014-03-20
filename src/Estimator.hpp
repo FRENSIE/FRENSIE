@@ -39,14 +39,18 @@ class Estimator : public PrintableObject
 
 protected:
 
-  // Typedef for Teuchos::ScalarTraits
+  //! Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
-  // Typedef for tuple of estimator moments (1st,2nd,3rd,4th)
+  //! Typedef for tuple of estimator moments (1st,2nd,3rd,4th)
   typedef Quad<double,double,double,double> EstimatorMoments;
 
-  // Typedef for the array of estimator moments 
+  //! Typedef for the array of estimator moments 
   typedef Teuchos::Array<EstimatorMoments> EstimatorMomentsArray;
+  
+  // Typedef for map of dimension values
+  typedef boost::unordered_map<PhaseSpaceDimension,Teuchos::any> 
+  DimensionValueMap;
 
 public:
 
@@ -135,22 +139,11 @@ protected:
 
   //! Check if the point is in the estimator phase space
   bool isPointInEstimatorPhaseSpace( 
-		 const PhaseSpace::DimensionValueMap& dimension_values ) const;
+		             const DimensionValueMap& dimension_values ) const;
 			        
-
-  //! Check if the point is in the estimator phase space
-  bool isPointInEstimatorPhaseSpace(
-	       const PhaseSpace::DimensionValueArray& dimension_values ) const;
-
   //! Calculate the bin index for the desired response function
-  unsigned calculateBinIndex( 
-			 const PhaseSpace::DimensionValueMap& dimension_values,
-			 const unsigned response_function_index ) const;
-
-  //! Calculate the bin index for the desired response function
-  unsigned calculateBinIndex( 
-		       const PhaseSpace::DimensionValueArray& dimension_values,
-		       const unsigned response_function_index ) const;
+  unsigned calculateBinIndex( const DimensionValueMap& dimension_values,
+			      const unsigned response_function_index ) const; 
 
   //! Calculate the mean of a set of contributions
   double calculateMean( const double first_moment_contributions ) const;

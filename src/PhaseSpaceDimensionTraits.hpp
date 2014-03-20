@@ -15,6 +15,7 @@
 // FACEMC Includes
 #include "PhaseSpaceDimensionTraitsDecl.hpp"
 #include "PhaseSpaceDimension.hpp"
+#include "BasicParticleState.hpp"
 
 namespace FACEMC{
 
@@ -26,7 +27,7 @@ namespace Traits{
 template<>
 struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
 {
-  typedef double dimensionType;
+  typedef BasicParticleState::energyType dimensionType;
   
   static inline std::string name()
   { return "Energy"; }
@@ -74,7 +75,7 @@ struct PhaseSpaceDimensionTraits<COSINE_DIMENSION>
 template<>
 struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
 {
-  typedef double dimensionType;
+  typedef BasicParticleState::timeType dimensionType;
     
   static inline std::string name()
   { return "Time"; }
@@ -99,7 +100,7 @@ struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
 template<>
 struct PhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION>
 {
-  typedef unsigned dimensionType;
+  typedef BasicParticleState::collisionNumberType dimensionType;
     
   static inline std::string name()
   { return "Collision Number"; }

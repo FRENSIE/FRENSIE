@@ -126,16 +126,13 @@ void CellPulseHeightEstimator<CellId,
   unsigned bin_index;
   double bin_contribution;
 
-  // Store the energy deposition in a generic way using the dimension val. map
-  PhaseSpace::DimensionValueMap dimension_values;
-
   while( entity != end_entity )
   {
-    dimension_values[ENERGY_DIMENSION] = Teuchos::any( entity->second );
+    d_dimension_values[ENERGY_DIMENSION] = Teuchos::any( entity->second );
     
-    if( this->isPointInEstimatorPhaseSpace( dimension_values ) )
+    if( this->isPointInEstimatorPhaseSpace( d_dimension_values ) )
     {
-      bin_index = this->calculateBinIndex( dimension_values, 0u );
+      bin_index = this->calculateBinIndex( d_dimension_values, 0u );
       
       bin_contribution = calculateHistoryContribution( 
 					      entity->second,
@@ -156,13 +153,13 @@ void CellPulseHeightEstimator<CellId,
   }
 
   // Store the total energy deposition in the dimension values map
-  dimension_values[ENERGY_DIMENSION] = 
+  d_dimension_values[ENERGY_DIMENSION] = 
     Teuchos::any( energy_deposition_in_all_cells );
   
   // Determine the pulse bin for the combination of all cells
-  if( this->isPointInEstimatorPhaseSpace( dimension_values ) )
+  if( this->isPointInEstimatorPhaseSpace( d_dimension_values ) )
   {
-    bin_index = this->calculateBinIndex( dimension_values, 0u );
+    bin_index = this->calculateBinIndex( d_dimension_values, 0u );
 
     bin_contribution = calculateHistoryContribution( 
 					      energy_deposition_in_all_cells,
