@@ -113,19 +113,19 @@ public:
   void advance( const double distance );
 
   //! Return the energy of the particle (MeV)
-  double getEnergy() const;
+  energyType getEnergy() const;
 
   //! Set the energy of the particle (MeV)
   void setEnergy( const double energy );
 
   //! Return the time state of the particle (s)
-  double getTime() const;
+  timeType getTime() const;
 
   //! Set the time state of the particle (s)
   void setTime( const double time );
 
   //! Return the collision number of the particle
-  unsigned getCollisionNumber() const;
+  collisionNumberType getCollisionNumber() const;
   
   //! Increment the collision number of the particle
   void incrementCollisionNumber();
@@ -162,16 +162,16 @@ private:
   double d_direction[3];
   
   // Energy of the particle (MeV)
-  double d_energy;
+  energyType d_energy;
 
   // Velocity of the particle (cm/s)
   double d_velocity;
 
   // Time of the particle (s)
-  double d_time;
+  timeType d_time;
 
   // Collision number of the particle
-  unsigned d_collision_number;
+  collisionNumberType d_collision_number;
 
   // Weight o the particle
   double d_weight;
