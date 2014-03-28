@@ -12,12 +12,16 @@
 // Std Lib Includes
 #include <string>
 
+// Boost Includes
+#include <boost/unordered_map.hpp>
+
 // Trilinos Includes
 #include <Teuchos_any.hpp>
 
 // FACEMC Includes
 #include "PhaseSpaceDimension.hpp"
 #include "Tuple.hpp"
+#include "BasicParticleState.hpp"
 
 /*! \defgroup phase_space_dim_traits Phase Space Dimension Traits
  * \ingroup traits
@@ -64,15 +68,22 @@ struct PhaseSpaceDimensionTraits
     return 0;
   }
 
-  //! Extract a value from a Teuchos::any object associated with the dimension
-  static inline dimensionType& getValue( Teuchos::any& any_container )
-  {
+  //! Convert a value from a basic particle state to a Teuchos::any object
+  static inline Teuchos::any obfuscateValue( const BasicParticleState& particle )
+  { 
     (void)UndefinedPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
     return 0;
-  }
+  } 
+
+  //! Convert a value to a Teuchos::any object
+  static inline Teuchos::any obfuscateValue( const dimensionType& value )
+  { 
+    (void)UndefinedPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
+    return 0;
+  }    
 
   //! Extract a value from a Teuchos::any object associated with the dimension
-  static inline const dimensionType& getValue( const Teuchos::any& any_container )
+  static inline const dimensionType& clarifyValue( const Teuchos::any& any_container )
   {
     (void)UndefinedPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
     return 0;
@@ -81,36 +92,26 @@ struct PhaseSpaceDimensionTraits
 
 } // end Traits namespace
 
-/*! This function allows access to the getValue PhaseSpaceDimensionTraits 
- * function.
- *
- * This function is simply a more concise way to access the get static member
- * function associated with the PhaseSpaceDimensionTraits class.
+/*! This function allows access to the obfuscateValue PhaseSpaceDimension
+ * traits function.
  * \ingroup phase_space_dim_traits
  */
 template<PhaseSpaceDimension dimension>
-inline 
-typename Traits::PhaseSpaceDimensionTraits<dimension>::dimensionType&
-getValue( Teuchos::any& dimension_value )
-{ 
-  return Traits::PhaseSpaceDimensionTraits<dimension>::getValue( 
-							     dimension_value );
+inline Teuchos::any obfuscateValue( const BasicParticleState& particle )
+{
+  return Traits::PhaseSpaceDimensionTraits<dimension>::obfuscateValue( 
+								    particle );
 }
 
-/*! This function allows access to the getValue PhaseSpaceDimensionTraits 
- * function.
- *
- * This function is simply a more concise way to access the get static member
- * function associated with the PhaseSpaceDimensionTraits class.
+/*! This function allows access to the obfuscateValue PhaseSpaceDimension
+ * traits function.
  * \ingroup phase_space_dim_traits
  */
 template<PhaseSpaceDimension dimension>
-inline const 
-typename Traits::PhaseSpaceDimensionTraits<dimension>::dimensionType&
-getValue( const Teuchos::any& dimension_value )
-{ 
-  return Traits::PhaseSpaceDimensionTraits<dimension>::getValue( 
-							     dimension_value );
+inline Teuchos::any obfuscateValue( const typename Traits::PhaseSpaceDimensionTraits<dimension>::dimensionType& value )
+{
+  return Traits::PhaseSpaceDimensionTraits<dimension>::obfuscateValue( value );
+								    
 }
 
 } // end FACEMC namespace

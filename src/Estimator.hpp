@@ -29,6 +29,7 @@
 #include "ResponseFunction.hpp"
 #include "ContractException.hpp"
 #include "PhaseSpaceDimension.hpp"
+#include "PhaseSpaceDimensionTraits.hpp"
 #include "EstimatorDimensionDiscretization.hpp"
 
 namespace FACEMC{
@@ -137,6 +138,12 @@ protected:
 				const BasicParticleState& particle,
 				const unsigned response_function_index ) const;
 
+  //! Convert particle state to a generic map
+  void convertParticleStateToGenericMap( 
+				   const BasicParticleState& particle,
+				   const double angle_cosine,
+				   DimensionValueMap& dimension_values ) const;
+
   //! Check if the point is in the estimator phase space
   bool isPointInEstimatorPhaseSpace( 
 		             const DimensionValueMap& dimension_values ) const;
@@ -163,6 +170,14 @@ protected:
   double calculateFOM( const double relative_error ) const;
 
 private:
+
+  // Convert a portion of the particle state to a generic map
+  template<PhaseSpaceDimension dimension>
+  void convertPartialParticleStateToGenericMap( 
+				   const BasicParticleState& particle,
+			           DimensionValueMap& dimension_values ) const;
+			     
+					       
 
   // The number of particle histories that will be run
   static unsigned long long num_histories;
@@ -263,6 +278,22 @@ inline double Estimator::evaluateResponseFunction(
   testPrecondition( response_function_index < getNumberOfResponseFunctions() );
   
   return d_response_functions[response_function_index]->evaluate( particle );
+}
+
+// Convert particle state to a generic map
+inline void Estimator::convertParticleStateToGenericMap( 
+			      const BasicParticleState& particle,
+			      const double angle_cosine,
+			      DimensionValueMap& dimension_values ) const
+{
+  // It may be useful to neglect the COSINE_DIMENSION in the future...
+  convertPartialParticleStateToGenericMap<DIMENSION_start>( particle,
+							    dimension_values );
+
+  // Assign the cosine dimension value separately
+  dimension_values[COSINE_DIMENSION] = 
+    Traits::PhaseSpaceDimensionTraits<COSINE_DIMENSION>::obfuscateValue( 
+								angle_cosine );
 }
 
 } // end FACEMC namespace

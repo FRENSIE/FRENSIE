@@ -39,7 +39,7 @@ inline unsigned GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSI
 
 inline bool GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSION>::isValueInDiscretization( const Teuchos::any& any_container ) const
 {
-  typename DT::dimensionType value = DT::getValue( any_container );
+  typename DT::dimensionType value = DT::clarifyValue( any_container );
 
   return value <= d_dimension_bin_boundaries.back();
 }
@@ -50,7 +50,7 @@ unsigned GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSION>::ca
   // Make sure the value is in the dimension discretization
   testPrecondition( isValueInDiscretization( any_container ) );
   
-  typename DT::dimensionType value = DT::getValue( any_container );
+  typename DT::dimensionType value = DT::clarifyValue( any_container );
   
   typename Teuchos::Array<typename DT::dimensionType>::const_iterator 
     start, end, upper_bin_boundary;

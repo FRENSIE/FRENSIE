@@ -91,10 +91,7 @@ double HistogramDistribution::sample()
 					      d_distribution.end(),
 					      random_number_1 );
 
-  // Sample the value within the bin
-  double random_number_2 = RandomNumberGenerator::getRandomNumber<double>();
-  
-  return random_number_2*(bin->second-bin->first) + bin->first;
+  return bin->first + (random_number_1 - bin->fourth)/bin->third;
 }
 
 // Return the sampling efficiency from the distribution

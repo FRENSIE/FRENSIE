@@ -141,19 +141,10 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
   // Only add the contribution if the particle type can contribute
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
-    // Export the energy dimension
-    d_dimension_values[ENERGY_DIMENSION] = Teuchos::any( particle.getEnergy());
-
-    // Export the time dimension
-    d_dimension_values[TIME_DIMENSION] = Teuchos::any( particle.getTime() );
-    
-    // Export the collision number dimension
-    d_dimension_values[COLLISION_NUMBER_DIMENSION] = 
-      Teuchos::any( particle.getCollisionNumber() );
-    
-    // Export the cosine dimension
-    d_dimension_values[COSINE_DIMENSION] = Teuchos::any( angle_cosine );
-    
+    this->convertParticleStateToGenericMap( particle, 
+					    angle_cosine, 
+					    d_dimension_values );
+        
     // Only add the contribution if it the particle state is in the phase space
     if( this->isPointInEstimatorPhaseSpace( d_dimension_values ) )
     {

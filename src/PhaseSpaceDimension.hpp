@@ -27,13 +27,15 @@ namespace FACEMC{
  * iterating through the list of dimensions.
  */
 enum PhaseSpaceDimension{
-  DIMENSON_start = 0,
-  ENERGY_DIMENSION = DIMENSON_start,
-  COSINE_DIMENSION,
+  DIMENSION_start = 0,
+  COSINE_DIMENSION = DIMENSION_start,
+  ENERGY_DIMENSION,
   TIME_DIMENSION,
   COLLISION_NUMBER_DIMENSION,
   DIMENSION_end
 };
+
+
 
 } // end FACEMC namespace
 

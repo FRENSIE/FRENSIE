@@ -28,6 +28,26 @@ void Estimator::setBinBoundaries(
   assignBinBoundaries( dimension_bin_boundaries );
 }
 
+// Convert a portion of the particle state to a generic map
+template<PhaseSpaceDimension dimension>
+inline void Estimator::convertPartialParticleStateToGenericMap( 
+			            const BasicParticleState& particle,
+			            DimensionValueMap& dimension_values ) const
+{
+  dimension_values[dimension] = 
+    Traits::PhaseSpaceDimensionTraits<dimension>::obfuscateValue( particle );
+
+  // Recursive template instantiation
+  convertPartialParticleStateToGenericMap<static_cast<PhaseSpaceDimension>(dimension+1)>( particle, dimension_values );
+}
+
+// This specialization allows recursion to end.
+template<>
+inline void Estimator::convertPartialParticleStateToGenericMap<DIMENSION_end>( 
+	                            const BasicParticleState& particle,
+	                            DimensionValueMap& dimension_values ) const
+{ /* ... */ }
+
 } // end FACEMC namespace
 
 #endif // end ESTIMATOR_DEF_HPP
