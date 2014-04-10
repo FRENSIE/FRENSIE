@@ -49,6 +49,9 @@ public:
   //! Return a random sample from the distribution
   double sample();
 
+  //! Return a random sample from the distribution
+  double sample() const;
+
   //! Return the sampling efficiency
   double getSamplingEfficiency() const;
 

@@ -70,6 +70,12 @@ double DiscreteDistribution::evaluatePDF( const double indep_var_value ) const
 // Return a random sample from the distribution
 double DiscreteDistribution::sample()
 {
+  return (const_cast<const DiscreteDistribution*>(this))->sample();
+}
+
+// Return a random sample from the distribution
+double DiscreteDistribution::sample() const
+{
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
   
   Teuchos::Array<Pair<double,double> >::const_iterator sample = 

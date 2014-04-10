@@ -32,7 +32,7 @@ public:
   virtual double evaluatePDF( const double cartesian_point[3] ) const = 0;
 
   //! Return a random (cartesian) sample from the distribution (x, y, z)
-  virtual void sample( double sampled_point[3] ) = 0;
+  virtual void sample( double sampled_point[3] ) const = 0;
 
   //! Check if the distribution is uniform
   virtual bool isUniform() const = 0;

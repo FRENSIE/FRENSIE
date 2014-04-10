@@ -119,7 +119,7 @@ double CylindricalSpatialDistribution::evaluatePDF(
 // Return a random sample from the distribution
 /* \details The sampled position will be a point in cartesian space
  */
-void CylindricalSpatialDistribution::sample( double sampled_point[3] )
+void CylindricalSpatialDistribution::sample( double sampled_point[3] ) const
 {
   // Sample from the distributions
   const double cylindrical_point[3] = {d_r_distribution->sample(),

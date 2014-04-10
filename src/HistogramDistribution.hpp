@@ -49,6 +49,9 @@ public:
   //! Return a random sample from the distribution
   double sample();
 
+  //! Return a random sample from the distribution
+  double sample() const;
+
   //! Return the sampling efficiency from the distribution
   double getSamplingEfficiency() const;
 
@@ -66,9 +69,9 @@ private:
   // The distribution type
   static const OneDDistributionType distribution_type = HISTOGRAM_DISTRIBUTION;
 
-  // The distribution (first = bin_min, second = bin_max, third = bin_PDF,
-  // fourth = bin_CDF )
-  Teuchos::Array<Quad<double,double,double,double> > d_distribution;
+  // The distribution (first = bin_min, second = bin_PDF, third = bin_CDF)
+  // Note: The bin_CDF value is the value of the CDF at the lower bin boundary
+  Teuchos::Array<Trip<double,double,double> > d_distribution;
   
   // The normalization constant
   double d_norm_constant;

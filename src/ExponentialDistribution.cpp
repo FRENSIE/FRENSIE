@@ -55,6 +55,14 @@ double ExponentialDistribution::evaluatePDF(
  */
 double ExponentialDistribution::sample()
 {
+  return (const_cast<const ExponentialDistribution*>(this))->sample();
+}
+
+// Return a sample from the distribution
+/*! \details x = -ln(rnd)/m
+ */
+double ExponentialDistribution::sample() const
+{
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
   return -log( random_number )/d_exponent_multiplier;

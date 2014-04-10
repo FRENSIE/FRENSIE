@@ -47,7 +47,7 @@ public:
   double evaluatePDF( const double cartesian_point[3] ) const;
 
   //! Return a random (cartesian) sample from the distribution (u, v, w)
-  void sample( double sampled_direction[3] );
+  void sample( double sampled_direction[3] ) const;
 
 protected:
   

@@ -380,3 +380,7 @@ Add_EXECUTABLE(tstCellPulseHeightEstimator
 TARGET_LINK_LIBRARIES(tstCellPulseHeightEstimator ${PROJECT_NAME})
 ADD_TEST(CellPulseHeightEstimator_test tstCellPulseHeightEstimator)
 
+ADD_EXECUTABLE(tstACEFileHandler
+  tstACEFileHandler.cpp)
+TARGET_LINK_LIBRARIES(tstACEFileHandler ${PROJECT_NAME})
+ADD_TEST(ACEFileHandler_test tstACEFileHandler --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ace_file.txt")

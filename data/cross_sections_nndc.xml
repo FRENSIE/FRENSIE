@@ -1,0 +1,122 @@
+<ParameterList name="cross sections">
+  <Parameter name="file type" type="string" value="ascii"/>
+  <ParameterList name="H-1_293.6K">
+    <Parameter name="file" type="string" value="1001.71c"/>
+    <Parameter name="awr" type="double" value="0.999167"/>
+    <Parameter name="start_line" type="unsigned" value="1"/>
+    <Parameter name="path" type="string" value="293.6K/H_001_293.6K.ace"/>
+    <Parameter name="temperature" type="double" value="2.53e-08"/>
+    <Parameter name="Z" type="unsigned" value="1"/>
+    <Parameter name="A" type="unsigned" value="1"/>
+    <Parameter name="M" type="unsigned" value="0"/>
+  </ParameterList>
+  <ParameterList name="H-2_293.6K">
+    <Parameter name="file" type="string" value="1002.71c"/>
+    <Parameter name="awr" type="double" value="1.9968"/>
+    <Parameter name="start_line" type="unsigned" value="1"/>
+    <Parameter name="path" type="string" value="293.6K/H_002_293.6K.ace"/>
+    <Parameter name="temperature" type="double" value="2.53e-08"/>
+    <Parameter name="Z" type="unsigned" value="1"/>
+    <Parameter name="A" type="unsigned" value="2"/>
+    <Parameter name="M" type="unsigned" value="0"/>
+  </ParameterList>
+  <ParameterList name="H-3_293.6K">
+    <Parameter name="file" type="string" value="1003.71c"/>
+    <Parameter name="awr" type="double" value="2.989596"/>
+    <Parameter name="start_line" type="unsigned" value="1"/>
+    <Parameter name="path" type="string" value="293.6K/H_003_293.6K.ace"/>
+    <Parameter name="temperature" type="double" value="2.53e-08"/>
+    <Parameter name="Z" type="unsigned" value="1"/>
+    <Parameter name="A" type="unsigned" value="3"/>
+    <Parameter name="M" type="unsigned" value="0"/>
+  </ParameterList>
+  <ParameterList name="H-1_300K">
+    <Parameter name="file" type="string" value="1001.72c"/>
+    <Parameter name="awr" type="double" value="0.999167"/>
+    <Parameter name="start_line" type="unsigned" value="1"/>
+    <Parameter name="path" type="string" value="300K/H_001_300K.ace"/>
+    <Parameter name="temperature" type="double" value="2.585e-08"/>
+    <Parameter name="Z" type="unsigned" value="1"/>
+    <Parameter name="A" type="unsigned" value="1"/>
+    <Parameter name="M" type="unsigned" value="0"/>
+  </ParameterList>
+  <ParameterList name="H-2_300K">
+    <Parameter name="file" type="string" value="1002.72c"/>
+    <Parameter name="awr" type="double" value="1.9968"/>
+    <Parameter name="start_line" type="unsigned" value="1"/>
+    <Parameter name="path" type="string" value="300K/H_002_300K.ace"/>
+    <Parameter name="temperature" type="double" value="2.585e-08"/>
+    <Parameter name="Z" type="unsigned" value="1"/>
+    <Parameter name="A" type="unsigned" value="2"/>
+    <Parameter name="M" type="unsigned" value="0"/>
+  </ParameterList>
+  <ParameterList name="H-3_300K">
+    <Parameter name="file" type="string" value="1003.72c"/>
+    <Parameter name="awr" type="double" value="2.989596"/>
+    <Parameter name="start_line" type="unsigned" value="1"/>
+    <Parameter name="path" type="string" value="300K/H_003_300K.ace"/>
+    <Parameter name="temperature" type="double" value="2.585e-08"/>
+    <Parameter name="Z" type="unsigned" value="1"/>
+    <Parameter name="A" type="unsigned" value="3"/>
+    <Parameter name="M" type="unsigned" value="0"/>
+  </ParameterList>
+  <ParameterList name="H-1_900K">
+    <Parameter name="file" type="string" value="1001.73c"/>
+    <Parameter name="awr" type="double" value="0.999167"/>
+    <Parameter name="start_line" type="unsigned" value="1"/>
+    <Parameter name="path" type="string" value="900K/H_001_900K.ace"/>
+    <Parameter name="temperature" type="double" value="7.756e-08"/>
+    <Parameter name="Z" type="unsigned" value="1"/>
+    <Parameter name="A" type="unsigned" value="1"/>
+    <Parameter name="M" type="unsigned" value="0"/>
+  </ParameterList>
+  <ParameterList name="H-2_900K">
+    <Parameter name="file" type="string" value="1002.73c"/>
+    <Parameter name="awr" type="double" value="1.9968"/>
+    <Parameter name="start_line" type="unsigned" value="1"/>
+    <Parameter name="path" type="string" value="900K/H_002_900K.ace"/>
+    <Parameter name="temperature" type="double" value="7.756e-08"/>
+    <Parameter name="Z" type="unsigned" value="1"/>
+    <Parameter name="A" type="unsigned" value="2"/>
+    <Parameter name="M" type="unsigned" value="0"/>
+  </ParameterList>
+  <ParameterList name="H-3_900K">
+    <Parameter name="file" type="string" value="1003.73c"/>
+    <Parameter name="awr" type="double" value="2.989596"/>
+    <Parameter name="start_line" type="unsigned" value="1"/>
+    <Parameter name="path" type="string" value="900K/H_003_900K.ace"/>
+    <Parameter name="temperature" type="double" value="7.756e-08"/>
+    <Parameter name="Z" type="unsigned" value="1"/>
+    <Parameter name="A" type="unsigned" value="3"/>
+    <Parameter name="M" type="unsigned" value="0"/>
+  </ParameterList>
+  <ParameterList name="H-1_1500K">
+    <Parameter name="file" type="string" value="1001.74c"/>
+    <Parameter name="awr" type="double" value="0.999167"/>
+    <Parameter name="start_line" type="unsigned" value="1"/>
+    <Parameter name="path" type="string" value="1500K/H_001_1500K.ace"/>
+    <Parameter name="temperature" type="double" value="1.293e-07"/>
+    <Parameter name="Z" type="unsigned" value="1"/>
+    <Parameter name="A" type="unsigned" value="1"/>
+    <Parameter name="M" type="unsigned" value="0"/>
+  </ParameterList>
+  <ParameterList name="H-2_1500K">
+    <Parameter name="file" type="string" value="1002.74c"/>
+    <Parameter name="awr" type="double" value="1.9968"/>
+    <Parameter name="start_line" type="unsigned" value="1"/>
+    <Parameter name="path" type="string" value="1500K/H_002_1500K.ace"/>
+    <Parameter name="temperature" type="double" value="1.293e-07"/>
+    <Parameter name="Z" type="unsigned" value="1"/>
+    <Parameter name="A" type="unsigned" value="2"/>
+    <Parameter name="M" type="unsigned" value="0"/>
+  </ParameterList>
+  <ParameterList name="H-3_1500K">
+    <Parameter name="file" type="string" value="1003.74c"/>
+    <Parameter name="awr" type="double" value="2.989596"/>
+    <Parameter name="start_line" type="unsigned" value="1"/>
+    <Parameter name="path" type="string" value="1500K/H_003_1500K.ace"/>
+    <Parameter name="temperature" type="double" value="1.293e-07"/>
+    <Parameter name="Z" type="unsigned" value="1"/>
+    <Parameter name="A" type="unsigned" value="3"/>
+    <Parameter name="M" type="unsigned" value="0"/>
+  </ParameterList>

@@ -52,6 +52,9 @@ public:
   //! Return a random sample from the distribution
   double sample();
 
+  //! Return a random sample from the distribution
+  double sample() const;
+
   //! Return the sampling efficiency from the distribution
   double getSamplingEfficiency() const;
 
@@ -65,6 +68,9 @@ public:
   OneDDistributionType getDistributionType() const;
 
 private:
+
+  // Sample a value from the distribution, count the number of trials
+  double sample( unsigned& number_of_trials ) const;
 
   // The distribution type
   static const OneDDistributionType distribution_type = NORMAL_DISTRIBUTION;
@@ -85,10 +91,10 @@ private:
   double d_max_independent_value;
 
   // The number of trials
-  int d_trials;
+  unsigned d_trials;
 
   // The number of random samples returned
-  int d_samples;
+  unsigned d_samples;
 };
 
 } // end FACEMC namespace

@@ -123,7 +123,7 @@ double SphericalSpatialDistribution::evaluatePDF(
 // Return a random sample from the distribution
 /* \details The sampled position will be a point in cartesian space
  */
-void SphericalSpatialDistribution::sample( double sampled_point[3] )
+void SphericalSpatialDistribution::sample( double sampled_point[3] ) const
 {
   // Sample from the distributions
   const double spherical_point[3] = {d_r_distribution->sample(),

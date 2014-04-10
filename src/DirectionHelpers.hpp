@@ -9,7 +9,21 @@
 #ifndef DIRECTION_HELPERS_HPP
 #define DIRECTION_HELPERS_HPP
 
+// Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
+
+// FACEMC Includes
+#include "ContractException.hpp"
+
 namespace FACEMC{
+
+//! Calculate the magnitude of a vector
+double vectorMagnitude( const double x_component,
+			const double y_component,
+			const double z_component );
+
+//! Calculate the magnitude of a vector
+double vectorMagnitude( const double vector[3] );
 
 //! Test if the direction is valid (on unit sphere)
 bool validDirection( const double x_direction, 
@@ -26,13 +40,41 @@ void normalizeDirection( double direction[3] );
 double calculateCosineOfAngleBetweenVectors( const double direction_a[3],
 					     const double direction_b[3] );
 
-} // end FACEMC namespace
+//! Rotate a direction (unit vector) through a polar and azimuthal angle
+void rotateDirectionThroughPolarAndAzimuthalAngle(
+					       const double polar_angle_cosine,
+					       const double azimuthal_angle,
+					       const double direction[3],
+					       double rotated_direction[3] );
+
+// Calculate the magnitude of a vector
+inline double vectorMagnitude( const double x_component,
+			const double y_component,
+			const double z_component )
+{
+  // Make sure that the coordinates are valid
+  remember( typedef Teuchos::ScalarTraits<double> ST );
+  testPrecondition( !ST::isnaninf( x_component ) );
+  testPrecondition( !ST::isnaninf( y_component ) );
+  testPrecondition( !ST::isnaninf( z_component ) );
+  
+  return sqrt( x_component*x_component + y_component*y_component +
+	       z_component*z_component );
+}
+
+// Calculate the magnitude of a vector
+inline double vectorMagnitude( const double vector[3] )
+{
+  return vectorMagnitude( vector[0], vector[1], vector[2] );
+}
 
 // Test if the direction is valid
-inline bool FACEMC::validDirection( const double direction[3] )
+inline bool validDirection( const double direction[3] )
 {
   return validDirection( direction[0], direction[1], direction[2] );
 }
+
+} // end FACEMC namespace
 
 #endif // end DIRECTION_HELPERS_HPP
 

@@ -19,41 +19,47 @@ namespace FACEMC{
 HistogramDistribution::HistogramDistribution( 
 				  const Teuchos::Array<double>& bin_boundaries,
 				  const Teuchos::Array<double>& bin_values )
-  : d_distribution( bin_values.size() )
+  : d_distribution( bin_boundaries.size() )
 {
   // Make sure that for n bin boundaries there are n-1 bin values
   testPrecondition( bin_boundaries.size()-1 == bin_values.size() );
 
   // Construct the distribution
-  for( unsigned i = 0; i < bin_values.size(); ++i )
+  for( unsigned i = 0; i < bin_boundaries.size(); ++i )
   {
     // Assign the min and max bin boundaries (respectively)
     d_distribution[i].first = bin_boundaries[i];
-    d_distribution[i].second = bin_boundaries[i+1];
 
     // Assign the bin PDF value
-    d_distribution[i].third = bin_values[i];
+    if( i < bin_boundaries.size() - 1 )
+      d_distribution[i].second = bin_values[i];
+    else 
+      d_distribution[i].second = bin_values[i-1];
     
     // Assign the discrete CDF value
-    d_distribution[i].fourth = bin_values[i]*
-      (d_distribution[i].second - d_distribution[i].first);
-
     if( i > 0 )
-      d_distribution[i].fourth += d_distribution[i-1].fourth;
+    {
+      d_distribution[i].third = d_distribution[i-1].third;
+      
+      d_distribution[i].third += bin_values[i-1]*
+      (d_distribution[i].first - d_distribution[i-1].first);
+    }
+    else
+      d_distribution[i].third = 0.0;
   }
 
   // Assign the normalization constant
-  d_norm_constant = d_distribution.back().fourth;
+  d_norm_constant = d_distribution.back().third;
 
   // Normalize the PDF and CDF
   for( unsigned i = 0; i < d_distribution.size(); ++i )
   {
-    d_distribution[i].third /= d_distribution.back().fourth;
-    d_distribution[i].fourth /= d_distribution.back().fourth;
+    d_distribution[i].second /= d_norm_constant;
+    d_distribution[i].third /= d_norm_constant;
   }
 
   // Make sure that the CDF has been constructed correctly
-  testPostcondition( ST::magnitude( d_distribution.back().fourth - 1.0 ) <
+  testPostcondition( ST::magnitude( d_distribution.back().third - 1.0 ) <
 		     ST::prec() );
 }
 
@@ -72,29 +78,32 @@ double HistogramDistribution::evaluatePDF( const double indep_var_value ) const
     return 0.0;
   else
   {
-    Teuchos::Array<Quad<double,double,double,double> >::const_iterator bin = 
-      Search::binarySearchDiscreteData<SECOND>( d_distribution.begin(),
-						d_distribution.end(),
-						indep_var_value );
-    return bin->third;
+    Teuchos::Array<Trip<double,double,double> >::const_iterator bin = 
+      Search::binarySearchContinuousData<FIRST>( d_distribution.begin(),
+						 d_distribution.end(),
+						 indep_var_value );
+    return bin->second;
   }
 } 
 
 // Return a random sample from the distribution
-double HistogramDistribution::sample()
+double HistogramDistribution::sample() 
+{
+  return (const_cast<const HistogramDistribution*>(this))->sample();
+}
+
+// Return a random sample from the distribution
+double HistogramDistribution::sample() const
 {
   // Sample the bin
-  double random_number_1 = RandomNumberGenerator::getRandomNumber<double>();
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
   
-  Teuchos::Array<Quad<double,double,double,double> >::const_iterator bin = 
-    Search::binarySearchDiscreteData<FOURTH>( d_distribution.begin(),
-					      d_distribution.end(),
-					      random_number_1 );
+  Teuchos::Array<Trip<double,double,double> >::const_iterator bin = 
+    Search::binarySearchContinuousData<THIRD>( d_distribution.begin(),
+						d_distribution.end(),
+						random_number );
 
-  // Sample the value within the bin
-  double random_number_2 = RandomNumberGenerator::getRandomNumber<double>();
-  
-  return random_number_2*(bin->second-bin->first) + bin->first;
+  return bin->first + (random_number - bin->third)/bin->second;
 }
 
 // Return the sampling efficiency from the distribution
@@ -106,7 +115,7 @@ double HistogramDistribution::getSamplingEfficiency() const
 // Return the upper bound of the distribution independent variable
 double HistogramDistribution::getUpperBoundOfIndepVar() const
 {
-  return d_distribution.back().second;
+  return d_distribution.back().first;
 }
 
 // Return the lower bound of the distribution independent variable

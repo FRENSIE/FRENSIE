@@ -22,16 +22,16 @@ BasicParticleState::BasicParticleState()
     d_position(),
     d_direction(),
     d_energy( 0.0 ),
-    d_velocity( 0.0 ),
+    d_speed( 0.0 ),
     d_time( 0.0 ),
     d_collision_number( 0u ),
     d_weight( 1.0 )
 {
-  // Set the velocity
+  // Set the speed
   if( d_type == PHOTON || d_type == ADJOINT_PHOTON )
-    d_velocity = PhysicalConstants::speed_of_light;
+    d_speed = PhysicalConstants::speed_of_light;
   else if( d_type == NEUTRON || d_type == ADJOINT_NEUTRON )
-    d_velocity = 0.0;
+    d_speed = 0.0;
 }
 
 // Constructor
@@ -46,7 +46,7 @@ BasicParticleState::BasicParticleState( const ParticleType type,
     d_position(),
     d_direction(),
     d_energy( energy ),
-    d_velocity(),
+    d_speed(),
     d_time( time ),
     d_collision_number( 0u ),
     d_weight( weight )
@@ -78,11 +78,11 @@ BasicParticleState::BasicParticleState( const ParticleType type,
   d_direction[1] = direction[1];
   d_direction[2] = direction[2];
 
-  // Set the velocity
+  // Set the speed
   if( d_type == PHOTON || d_type == ADJOINT_PHOTON )
-    d_velocity = PhysicalConstants::speed_of_light;
+    d_speed = PhysicalConstants::speed_of_light;
   else if( d_type == NEUTRON || d_type == ADJOINT_NEUTRON )
-    calculateNeutronVelocity();
+    calculateNeutronSpeed();
 }
 
 // Copy constructor
@@ -92,7 +92,7 @@ BasicParticleState::BasicParticleState(
     d_position(),
     d_direction(),
     d_energy( existing_basic_state.d_energy ),
-    d_velocity( existing_basic_state.d_velocity ),
+    d_speed( existing_basic_state.d_speed ),
     d_time( existing_basic_state.d_time ),
     d_collision_number( existing_basic_state.d_collision_number ),
     d_weight( existing_basic_state.d_weight )
@@ -128,7 +128,7 @@ BasicParticleState& BasicParticleState::operator=(
     d_direction[2] = existing_basic_state.d_direction[2];
 
     d_energy = existing_basic_state.d_energy;
-    d_velocity = existing_basic_state.d_velocity;
+    d_speed = existing_basic_state.d_speed;
     d_time = existing_basic_state.d_time;
     d_collision_number = existing_basic_state.d_collision_number;
     d_weight = existing_basic_state.d_weight;
@@ -245,15 +245,15 @@ void BasicParticleState::advance( const double distance )
 {
   // Make sure the distance is valid
   testPrecondition( !ST::isnaninf( distance ) );
-  // Make sure that the particle velocity is valid
-  testPrecondition( d_velocity > 0.0 );
+  // Make sure that the particle speed is valid
+  testPrecondition( d_speed > 0.0 );
   
   d_position[0] += d_direction[0]*distance;
   d_position[1] += d_direction[1]*distance;
   d_position[2] += d_direction[2]*distance;
 
   // Compute the time to traverse the distance
-  d_time += distance/d_velocity;
+  d_time += distance/d_speed;
 }
 
 // Return the energy of the particle
@@ -271,9 +271,15 @@ void BasicParticleState::setEnergy( const double energy )
   
   d_energy = energy;
   
-  // set the velocity
+  // set the speed
   if( d_type == NEUTRON || d_type == ADJOINT_NEUTRON )
-    calculateNeutronVelocity();
+    calculateNeutronSpeed();
+}
+
+// Return the speed of the particle (cm/s)
+double BasicParticleState::getSpeed() const
+{
+  return d_speed;
 }
 
 // Return the time state of the particle
@@ -357,10 +363,10 @@ void BasicParticleState::printImplementation( std::ostream& os ) const
   os << "Weight: " << d_weight << std::endl;
 }
 
-// Calculate the neutron velocity
-void BasicParticleState::calculateNeutronVelocity()
+// Calculate the neutron speed
+void BasicParticleState::calculateNeutronSpeed()
 {
-  d_velocity = d_energy*PhysicalConstants::speed_of_light/
+  d_speed = d_energy*PhysicalConstants::speed_of_light/
     sqrt( PhysicalConstants::neutron_rest_mass_energy*
 	  PhysicalConstants::neutron_rest_mass_energy + d_energy*d_energy );
 }

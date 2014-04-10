@@ -72,7 +72,7 @@ double CartesianSpatialDistribution::evaluatePDF(
 }
 
 // Return a random sample from the distribution
-void CartesianSpatialDistribution::sample( double sampled_point[3] )
+void CartesianSpatialDistribution::sample( double sampled_point[3] ) const
 {
   // Sample the x position
   sampled_point[0] = d_x_distribution->sample();
