@@ -18,10 +18,26 @@ namespace FACEMC{
 class Nuclide
 {
 
-private:
+public:
 
-  // The nuclide table name
-  std::string d_table_name;
+  // Constructor
+  Nuclide( const unsigned atomic_number,
+	   const unsigned atomic_mass_number,
+	   const unsigned isomer_number,
+	   const double atomic_weight_ratio,
+	   const double temperature,
+	   const Teuchos::ArrayView<const int>& energy_grid,
+	   const Teuchos::ArrayView<const int>& absorption_cross_section,
+	   const Teuchos::RCP<NuclearReaction>& elastic_scattering_reaction,
+	   const Teuchos::Array<Teuchos::RCP<NuclearReaction> >&
+	   non_elastic_reactions );
+  
+
+  // Destructor
+  virtual ~Nuclide()
+  { /* ... */ }
+
+private:
 
   // The atomic number of the nuclide
   unsigned d_atomic_number;
@@ -40,9 +56,6 @@ private:
 
   // The incoming energy grid for all nuclide cross sections
   Teuchos::Array<double> d_energy_grid;
-
-  // The heating distribution
-  Teuchos::Array<double> d_heating_distribution;
 
   // The microscopic total cross sections
   Teuchos::Array<double> d_total_cross_section;

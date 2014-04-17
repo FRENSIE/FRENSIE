@@ -26,8 +26,8 @@ public:
 	 const double Q_value,
 	 const unsigned multiplicity,
 	 const unsigned threshold_energy_index,
-	 const Teuchos::ArrayView<double>& incoming_energy_grid,
-	 const Teuchos::ArrayView<double>& cross_section,
+	 const Teuchos::ArrayView<const double>& incoming_energy_grid,
+	 const Teuchos::ArrayView<const double>& cross_section,
 	 const Teuchos::RCP<ScatteringDistribution>& scattering_distribution );
 		   
 

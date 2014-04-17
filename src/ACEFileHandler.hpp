@@ -14,9 +14,27 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ArrayRCP.hpp>
 #include <Teuchos_Tuple.hpp>
 
 namespace FACEMC{
+
+/*! \defgroup ace_table A Compact ENDF (ACE) Table
+ * 
+ * The first line of every ACE table contains the table name, the atomic 
+ * weight ratio, the temperature (in MEV) that the table was evaluated at,
+ * and the date the table was evaluated on. The second line contains a 70
+ * character comment and a 10 character material identifier. The third through
+ * sixth lines contain the zaids and atomic weight ratios of the isotopes 
+ * corresponding to the particular element or molecule represented in the 
+ * table. If the table corresponds to an isotope, no data is given in these
+ * lines. The seventh and eighth lines contain the NXS array. The nineth 
+ * through twelfth lines contain the JXS array. All remaining lines in the 
+ * table contain the XSS array. The contents of each of these arrays depends
+ * on the type of table (i.e. continuous energy neutron, continuous energy
+ * photon, etc.). The task of reading in this data is handled by the 
+ * FACEMC::ACEFileHandler.
+ */
 
 //! The ACE (A Compact ENDF) file handler class
 class ACEFileHandler
