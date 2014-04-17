@@ -118,6 +118,9 @@ public:
   //! Set the energy of the particle (MeV)
   void setEnergy( const double energy );
 
+  //! Return the speed of the particle (cm/s)
+  double getSpeed() const;
+
   //! Return the time state of the particle (s)
   timeType getTime() const;
 
@@ -150,7 +153,7 @@ protected:
 private:
 
   // Calculate the velocity of a neutron
-  void calculateNeutronVelocity();
+  void calculateNeutronSpeed();
 
   // Particle type
   ParticleType d_type;
@@ -164,8 +167,8 @@ private:
   // Energy of the particle (MeV)
   energyType d_energy;
 
-  // Velocity of the particle (cm/s)
-  double d_velocity;
+  // Speed of the particle (cm/s)
+  double d_speed;
 
   // Time of the particle (s)
   timeType d_time;

@@ -45,6 +45,9 @@ public:
   //! Return a random sample from the corresponding CDF
   double sample();
 
+  //! Return a random sample from the corresponding CDF
+  double sample() const;
+
   //! Return the sampling efficiency from the distribution
   double getSamplingEfficiency() const;
 

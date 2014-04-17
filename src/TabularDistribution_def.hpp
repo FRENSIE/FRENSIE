@@ -94,9 +94,16 @@ double TabularDistribution<InterpolationPolicy>::evaluatePDF(
   }
 }
 
-// Return a sample from the distribution
+// Return a random sample from the distribution
 template<typename InterpolationPolicy>
 double TabularDistribution<InterpolationPolicy>::sample()
+{
+  return (const_cast<const TabularDistribution<InterpolationPolicy>*>(this))->sample();
+}
+
+// Return a random sample from the distribution
+template<typename InterpolationPolicy>
+double TabularDistribution<InterpolationPolicy>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
@@ -114,8 +121,14 @@ double TabularDistribution<InterpolationPolicy>::sample()
   double slope = lower_bin_boundary->fourth;
 
   // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m 
-  return indep_value + 
-    (sqrt( pdf_value*pdf_value + 2*slope*cdf_diff ) - pdf_value)/slope;
+  if( slope != 0.0 )
+  {
+    return indep_value + 
+      (sqrt( pdf_value*pdf_value + 2*slope*cdf_diff ) - pdf_value)/slope;
+  }
+  // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
+  else
+    return indep_value + cdf_diff/pdf_value;
 }
 
 // Return the sampling efficiency

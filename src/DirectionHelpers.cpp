@@ -6,12 +6,15 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <algorithm>
+
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
 
 // FACEMC Includes
 #include "DirectionHelpers.hpp"
-#include "ContractException.hpp"
+
 
 namespace FACEMC{
 
@@ -26,11 +29,7 @@ bool validDirection( const double x_direction,
   testPrecondition( !ST::isnaninf( y_direction ) );
   testPrecondition( !ST::isnaninf( z_direction ) );
   
-  double argument = x_direction*x_direction + y_direction*y_direction +
-    z_direction*z_direction;
-  double norm_two_value = Teuchos::ScalarTraits<double>::squareroot(argument);
-  
-  return Teuchos::ScalarTraits<double>::magnitude( norm_two_value - 1.0 ) < 
+  return vectorMagnitude( x_direction, y_direction, z_direction ) <
     Teuchos::ScalarTraits<double>::prec();
 }
 
@@ -43,9 +42,7 @@ void normalizeDirection( double direction[3] )
   testPrecondition( !ST::isnaninf( direction[0] ) );
   testPrecondition( !ST::isnaninf( direction[0] ) );
   
-  double argument = direction[0]*direction[0] + direction[1]*direction[1] +
-    direction[2]*direction[2];
-  double magnitude = Teuchos::ScalarTraits<double>::squareroot( argument );
+  double magnitude = vectorMagnitude( direction );
 
   direction[0] /= magnitude;
   direction[1] /= magnitude;
@@ -68,6 +65,70 @@ double calculateCosineOfAngleBetweenVectors( const double direction_a[3],
   testPrecondition( angle_cosine <= 1.0 );
 
   return angle_cosine;
+}
+
+// Rotate a direction (unit vector) through a polar and azimuthal angle
+/*! \details The cosine of the polar angle should be passed as the first 
+ * argument instead of the polar angle. This is because the cosine of the
+ * polar angle is commonly sampled and used much more often than the 
+ * polar angle. The azimuthal angle should be passed as the second argument
+ * instead of the cosine of the azimuthal angle. This is because the 
+ * azimuthal angle is often directly sampled.
+ */
+void rotateDirectionThroughPolarAndAzimuthalAngle(
+					       const double polar_angle_cosine,
+					       const double azimuthal_angle,
+					       const double direction[3],
+					       double rotated_direction[3] )
+{
+  // Make sure the direction is valid
+  testPrecondition( validDirection( direction ) );
+  
+  double polar_angle_sine = 
+    sqrt( std::max(0.0, 1.0 - polar_angle_cosine*polar_angle_cosine) );
+  double azimuthal_angle_cosine = cos(azimuthal_angle);
+  double azimuthal_angle_sine = sin(azimuthal_angle);
+  double direction_polar_angle_sine = 
+    sqrt( std::max(0.0, 1.0 - direction[2]*direction[2]) );
+
+  if( direction_polar_angle_sine > 1e-10 )
+  {
+    rotated_direction[0] = polar_angle_cosine*direction[0] +
+      polar_angle_sine*(direction[0]*direction[2]*azimuthal_angle_cosine - 
+			direction[1]*azimuthal_angle_sine)/
+      direction_polar_angle_sine;
+
+    rotated_direction[1] = polar_angle_cosine*direction[1] +
+      polar_angle_sine*(direction[1]*direction[2]*azimuthal_angle_cosine +
+			direction[0]*azimuthal_angle_sine)/
+      direction_polar_angle_sine;
+
+    rotated_direction[2] = polar_angle_cosine*direction[2] -
+      polar_angle_sine*direction_polar_angle_sine*azimuthal_angle_cosine;      
+  }
+  // For the special case where z_dir ~ 1 => sqrt(1 - z^2) ~ 0, assume
+  // spherical coordinates are w.r.t. y-axis instead of z-axis
+  else
+  {
+    // Recompute the sine of the polar angle of the direction
+    direction_polar_angle_sine = sqrt(1.0 - direction[1]*direction[1]);
+
+    rotated_direction[0] = polar_angle_cosine*direction[0] +
+      polar_angle_sine*(direction[0]*direction[1]*azimuthal_angle_cosine +
+			direction[2]*azimuthal_angle_sine)/
+      direction_polar_angle_sine;
+
+    rotated_direction[1] = polar_angle_cosine*direction[1] -
+      polar_angle_sine*direction_polar_angle_sine*azimuthal_angle_cosine;
+
+    rotated_direction[2] = polar_angle_cosine*direction[2] +
+      polar_angle_sine*(direction[1]*direction[2]*azimuthal_angle_cosine -
+			direction[0]*azimuthal_angle_sine)/
+      direction_polar_angle_sine;
+  }
+  
+  // Make sure that the rotated direction is valid
+  testPostcondition( validDirection( rotated_direction ) );
 }
 
 } // end FACEMC namespace

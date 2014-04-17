@@ -54,7 +54,7 @@ public:
   double evaluatePDF( const double cartesian_point[3] ) const;
   
   //! Return a random (cartesian) sample from the distribution (x, y, z)
-  void sample( double sampled_point[3] );
+  void sample( double sampled_point[3] ) const;
 
   //! Check if the distribution is uniform
   bool isUniform() const;

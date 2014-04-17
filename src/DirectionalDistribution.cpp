@@ -87,7 +87,7 @@ double DirectionalDistribution::evaluatePDF(
 }
 
 // Return a random (cartesian) sample from the distribution (u, v, w)
-void DirectionalDistribution::sample( double sampled_direction[3] )
+void DirectionalDistribution::sample( double sampled_direction[3] ) const
 {
   // Sample from the distributions
   const double spherical_point[3] = {1.0,

@@ -27,8 +27,8 @@ NormalDistribution::NormalDistribution( const double mean,
     d_standard_deviation( standard_deviation ),
     d_min_independent_value( min_independent_value ),
     d_max_independent_value( max_independent_value ),
-    d_trials( 0 ),
-    d_samples( 0 )
+    d_trials( 0u ),
+    d_samples( 0u )
 {
   // Make sure that the values are valid
   testPrecondition( !ST::isnaninf( mean ) );
@@ -62,13 +62,38 @@ double NormalDistribution::evaluatePDF( const double indep_var_value ) const
 // Return a sample from the distribution
 double NormalDistribution::sample()
 {
+  unsigned number_of_trials;
+
+  double normal_sample = sample( number_of_trials );
+
+  // Update the efficiency counters
+  d_trials += number_of_trials;
+  ++d_samples;
+
+  return normal_sample;
+}
+
+// Return a random sample from the distribution
+double NormalDistribution::sample() const
+{
+  unsigned number_of_trials;
+
+  return sample( number_of_trials );
+}
+
+// Sample a value from the distribution, count the number of trials
+double NormalDistribution::sample( unsigned& number_of_trials ) const
+{
   double random_number_1, random_number_2;
   double x, y, sample;
+  
+  // Set the number of trials to zero
+  number_of_trials = 0u;
   
   while( true )
   {
     // Use the rejection sampling technique outlined by Kahn in "Applications 
-    // of Mone Carlo" (1954)
+    // of Monte Carlo" (1954)
     while( true )
     {
       random_number_1 = RandomNumberGenerator::getRandomNumber<double>();
@@ -79,12 +104,11 @@ double NormalDistribution::sample()
       
       if( 0.5*(x - 1)*(x - 1) <= y )
       {
-	++d_samples;
-	++d_trials;
+	++number_of_trials;
 	break;
       }
       else
-	++d_trials;
+	++number_of_trials;
     }
 
     if( RandomNumberGenerator::getRandomNumber<double>() < 0.5 )
@@ -102,9 +126,12 @@ double NormalDistribution::sample()
 }
 
 // Return the sampling efficiency from the distribution
+/*! \details The sampling efficiency will only be correct if the non-const 
+ * sample member function is called exclusively.
+ */ 
 double NormalDistribution::getSamplingEfficiency() const
 {
-  if( d_trials > 0 )
+  if( d_trials > 0u )
     return static_cast<double>(d_samples)/d_trials;
   else
     return 0.0;

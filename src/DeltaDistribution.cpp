@@ -44,6 +44,12 @@ double DeltaDistribution::evaluatePDF( const double indep_var_value ) const
 // Return a random sample from the distribution
 double DeltaDistribution::sample()
 {
+  return (const_cast<const DeltaDistribution*>(this))->sample();
+}
+
+// Return a random sample from the distribution
+double DeltaDistribution::sample() const
+{
   return d_location;
 }
 

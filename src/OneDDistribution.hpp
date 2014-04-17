@@ -34,8 +34,11 @@ public:
   //! Evaluate the PDF
   virtual double evaluatePDF( const double indep_var_value ) const = 0;
 
-  //! Return a random sample from the corresponding CDF
+  //! Return a random sample from the corresponding CDF (log sampling eff.)
   virtual double sample() = 0;
+
+  //! Return a random sample from the corresponding CDF (ignore sample eff.)
+  virtual double sample() const = 0;
 
   //! Return the sampling efficiency from the distribution
   virtual double getSamplingEfficiency() const = 0;

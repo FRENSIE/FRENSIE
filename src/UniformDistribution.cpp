@@ -52,6 +52,12 @@ double UniformDistribution::evaluatePDF( const double indep_var_value ) const
 // Return a random sample from the distribution
 double UniformDistribution::sample()
 {
+  return (const_cast<const UniformDistribution*>(this))->sample();
+}
+
+// Return a random sample from the distribution
+double UniformDistribution::sample() const
+{
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
   return random_number*(d_max_independent_value - d_min_independent_value) +
