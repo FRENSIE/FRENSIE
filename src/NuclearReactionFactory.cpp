@@ -45,19 +45,19 @@ namespace FACEMC{
  * ENDF reaction.
  */
 NuclearReactionFactory::NuclearReactionFactory( 
-		       const std::string& table_name,
-		       const double atomic_weight_ratio,
-		       const Teuchos::ArrayView<double>& energy_grid,
-		       const Teuchos::ArrayView<double>& elastic_cross_section,
-		       const Teuchos::ArrayView<double>& mtr_block, 
-		       const Teuchos::ArrayView<double>& lqr_block,
-		       const Teuchos::ArrayView<double>& tyr_block,
-		       const Teuchos::ArrayView<double>& lsig_block,
-		       const Teuchos::ArrayView<double>& sig_block,
-		       const Teuchos::ArrayView<double>& land_block,
-		       const Teuchos::ArrayView<double>& and_block,
-		       const Teuchos::ArrayView<double>& ldlw_block,
-		       const Teuchos::ArrayView<double>& dlw_block )
+		 const std::string& table_name,
+		 const double atomic_weight_ratio,
+		 const Teuchos::ArrayRCP<const double>& energy_grid,
+		 const Teuchos::ArrayView<const double>& elastic_cross_section,
+		 const Teuchos::ArrayView<const double>& mtr_block, 
+		 const Teuchos::ArrayView<const double>& lqr_block,
+		 const Teuchos::ArrayView<const double>& tyr_block,
+		 const Teuchos::ArrayView<const double>& lsig_block,
+		 const Teuchos::ArrayView<const double>& sig_block,
+		 const Teuchos::ArrayView<const double>& land_block,
+		 const Teuchos::ArrayView<const double>& and_block,
+		 const Teuchos::ArrayView<const double>& ldlw_block,
+		 const Teuchos::ArrayView<const double>& dlw_block )
   : d_table_name( table_name ),
     d_atomic_weight_ratio( atomic_weight_ratio ),
     d_energy_grid( energy_grid ),
@@ -74,15 +74,15 @@ NuclearReactionFactory::NuclearReactionFactory(
   // Make sure there is an energy distribution index for every reaction type
   testPrecondition( ldlw_block.size() == mtr_block.size() );
   
-  initializeReactionTypeOrderingMap( mtr_block );
-  initializeReactionTypeQValueMap( lqr_block );
-  initializeReactionTypeMultiplicityAndRefFrameMap( tyr_block );
-  initializeReactionTypeThresholdAndCrossSectionMap( lsig_block, 
+  initializeReactionOrderingMap( mtr_block );
+  initializeReactionQValueMap( lqr_block );
+  initializeReactionMultiplicityAndRefFrameMap( tyr_block );
+  initializeReactionThresholdAndCrossSectionMap( lsig_block, 
 						     sig_block,
 						     elastic_cross_section );
-  initializeReactionTypeANDBlockOrdering( land_block );
-  initializeReactionTypeAngularDistMap( land_block, and_block );
-  initializeReactionTypeEnergyDistMap( ldlw_block, dlw_block );
+  initializeReactionANDBlockOrdering( mtr_block, tyr_block, land_block );
+  initializeReactionAngularDistMap( land_block, and_block );
+  initializeReactionEnergyDistMap( ldlw_block, dlw_block );
 }
 
 // Create the elastic reaction
@@ -91,28 +91,28 @@ NuclearReactionFactory::createElasticReaction() const
 {
   Teuchos::RCP<ScatteringDistribution> elastic_scattering_dist = 
     d_scattering_dist_factory.createElasticScatteringDistribution(
-			      d_reaction_angular_dist[N__N_ELASTIC_REACTION] );
+		 d_reaction_angular_dist.find(N__N_ELASTIC_REACTION)->second );
 
   return Teuchos::RCP<NuclearReaction>( new NuclearReaction( 
-			     N__N_ELASTIC_REACTION,
-			     d_reaction_q_value[N__N_ELASTIC_REACTION],
-			     d_reaction_multiplicity[N__N_ELASTIC_REACTION],
-			     d_reaction_threshold_index[N__N_ELASTIC_REACTION],
-			     d_energy_grid,
-			     d_reaction_cross_section[N__N_ELASTIC_REACTION],
-			     elastic_scattering_dist ) );
+		N__N_ELASTIC_REACTION,
+		d_reaction_q_value.find(N__N_ELASTIC_REACTION)->second,
+		d_reaction_multiplicity.find(N__N_ELASTIC_REACTION)->second,
+		d_reaction_threshold_index.find(N__N_ELASTIC_REACTION)->second,
+		d_energy_grid,
+		d_reaction_cross_section.find(N__N_ELASTIC_REACTION)->second,
+		elastic_scattering_dist ) );
 }
 
 // Create the non-elastic reactions (any reaction with multiplicity > 0 )
 Teuchos::Array<Teuchos::RCP<NuclearReaction> >
 NuclearReactionFactory::createNonElasticReactions() const
 {
-  return Teuchos::Array<Teuchos::RCP<NuclearReaction> >;
+  return Teuchos::Array<Teuchos::RCP<NuclearReaction> >();
 }
 
 // Initialize the reaction type ordering map
-void NuclearReactionFactory::initializeReactionTypeOrderingMap( 
-				  const Teuchos::ArrayView<double>& mtr_block )
+void NuclearReactionFactory::initializeReactionOrderingMap( 
+			    const Teuchos::ArrayView<const double>& mtr_block )
 {  
   NuclearReactionType reaction;
   
@@ -121,46 +121,46 @@ void NuclearReactionFactory::initializeReactionTypeOrderingMap(
     reaction = convertUnsignedToNuclearReactionType( 
 				       static_cast<unsigned>( mtr_block[i] ) );
     
-    d_reaction_type_ordering[reaction] = i;
+    d_reaction_ordering[reaction] = i;
   }
 
   // Elastic scattering must be handled separately: it never appears in block
-  d_reaction_type_ordering[N__ELASTIC_REACTION] = 
+  d_reaction_ordering[N__N_ELASTIC_REACTION] = 
     std::numeric_limits<unsigned>::max();
 }
 
 // Initialize the reaction type Q-value map
-void NuclearReactionFactory::initializeReactionTypeQValueMap(
-				  const Teuchos::ArrayView<double>& lqr_block )
+void NuclearReactionFactory::initializeReactionQValueMap(
+			    const Teuchos::ArrayView<const double>& lqr_block )
 {
   boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
     reaction, end_reaction;
-  reaction = d_reaction_type_ordering.begin();
-  end_reaction = d_reaction_type_ordering.end();
+  reaction = d_reaction_ordering.begin();
+  end_reaction = d_reaction_ordering.end();
 
   while( reaction != end_reaction )
   {
     if( reaction->first != N__N_ELASTIC_REACTION )
     {
-      d_reaction_type_q_value[reaction->first] = 
+      d_reaction_q_value[reaction->first] = 
 	lqr_block[reaction->second];
     }
     // Elastic scattering must be handled separately: it never appears in block
     else 
-      d_reaction_type_q_value[reaction->first] = 0.0;
+      d_reaction_q_value[reaction->first] = 0.0;
     
     ++reaction;
   }
 }
 
 // Initialize the reaction type multiplicity and scattering ref. frame map
-void NuclearReactionFactory::initializeReactionTypeMultiplicityAndRefFrameMap(
-				  const Teuchos::ArrayView<double>& tyr_block )
+void NuclearReactionFactory::initializeReactionMultiplicityAndRefFrameMap(
+			    const Teuchos::ArrayView<const double>& tyr_block )
 {
   boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
     reaction, end_reaction;
-  reaction = d_reaction_type_ordering.begin();
-  end_reaction = d_reaction_type_ordering.end();
+  reaction = d_reaction_ordering.begin();
+  end_reaction = d_reaction_ordering.end();
 
   double multiplicity;
   
@@ -170,20 +170,20 @@ void NuclearReactionFactory::initializeReactionTypeMultiplicityAndRefFrameMap(
     {
       multiplicity = tyr_block[reaction->second];
       
-      d_reaction_type_multiplicity[reaction->first] = 
+      d_reaction_multiplicity[reaction->first] = 
 	static_cast<unsigned>( 
 		    Teuchos::ScalarTraits<double>::magnitude( multiplicity ) );
 
       if( multiplicity < 0.0 )
-	d_reaction_type_cm_sattering[reaction->first] = true;
+	d_reaction_cm_scattering[reaction->first] = true;
       else
-	d_reaction_type_cm_scattering[reaction->first] = false;
+	d_reaction_cm_scattering[reaction->first] = false;
     }
     // Elastic scattering must be handled separately: it never appears in block
     else
     {
-      d_reaction_type_multiplicity[reaction->first] = 1u;
-      d_reaction_type_cm_scattering[reaction->first] = true;
+      d_reaction_multiplicity[reaction->first] = 1u;
+      d_reaction_cm_scattering[reaction->first] = true;
     }
 
     ++reaction;
@@ -193,15 +193,15 @@ void NuclearReactionFactory::initializeReactionTypeMultiplicityAndRefFrameMap(
 // Initialize the reaction type threshold and cross section map
 // NOTE: All LSIG block indices correspond to FORTRAN arrays. Subtract 1 from
 // the value to get the index in a C/C++ array.
-void NuclearReactionFactory::initializeReactionTypeThresholdAndCrossSectionMap(
-		      const Teuchos::ArrayView<double>& lsig_block,
-		      const Teuchos::ArrayView<double>& sig_block,
-		      const Teuchos::ArrayView<double>& elastic_cross_section )
+void NuclearReactionFactory::initializeReactionThresholdAndCrossSectionMap(
+		const Teuchos::ArrayView<const double>& lsig_block,
+		const Teuchos::ArrayView<const double>& sig_block,
+		const Teuchos::ArrayView<const double>& elastic_cross_section )
 {
   boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
     reaction, end_reaction;
-  reaction = d_reaction_type_ordering.begin();
-  end_reaction = d_reaction_type_ordering.end();
+  reaction = d_reaction_ordering.begin();
+  end_reaction = d_reaction_ordering.end();
 
   unsigned cs_index;
   unsigned cs_array_size;
@@ -212,19 +212,19 @@ void NuclearReactionFactory::initializeReactionTypeThresholdAndCrossSectionMap(
     {
       cs_index = static_cast<unsigned>( lsig_block[reaction->second] ) - 1u;
       
-      d_reaction_type_threshold_index[reaction->first] = 
+      d_reaction_threshold_index[reaction->first] = 
 	static_cast<unsigned>( sig_block[cs_index] ) - 1u;
 
       cs_array_size = static_cast<unsigned>( sig_block[cs_index+1u] );
 
-      d_reaction_type_cross_section[reaction->first] = 
+      d_reaction_cross_section[reaction->first] = 
 	sig_block( cs_index+2u, cs_array_size );	
     }
     // Elastic scattering must be handled separately: it never appears in block
     else
     {
-      d_reaction_type_threshold_index[reaction->first] = 0;
-      d_reaction_type_cross_section[reaction->first] = elastic_cross_section;
+      d_reaction_threshold_index[reaction->first] = 0;
+      d_reaction_cross_section[reaction->first] = elastic_cross_section;
     }
 
     ++reaction;
@@ -234,10 +234,10 @@ void NuclearReactionFactory::initializeReactionTypeThresholdAndCrossSectionMap(
 // Initialize the reaction type and block ordering map
 // NOTE: All LAND block indices correspond to FORTRAN arrays. Subtract 1 from
 // the value to get the index in a C/C++ array.
-void NuclearReactionFactory::initializeReactionTypeANDBlockOrdering(
-				 const Teuchos::ArrayView<double>& mtr_block,
-				 const Teuchos::ArrayView<double>& tyr_block,
-				 const Teuchos::ArrayView<double>& land_block )
+void NuclearReactionFactory::initializeReactionANDBlockOrdering(
+			   const Teuchos::ArrayView<const double>& mtr_block,
+			   const Teuchos::ArrayView<const double>& tyr_block,
+			   const Teuchos::ArrayView<const double>& land_block )
 {
   // Inelastic scattering is always appears first in the land block
   d_reaction_and_block_ordering[N__N_ELASTIC_REACTION] = 
@@ -265,9 +265,9 @@ void NuclearReactionFactory::initializeReactionTypeANDBlockOrdering(
 // Initialize the reaction type angular distribution map
 // NOTE: All LAND block indices correspond to FORTRAN arrays. Subtract 1 from
 // the value to get the index in a C/C++ array.
-void NuclearReactionFactory::initializeReactionTypeAngularDistMap(
-				  const Teuchos::ArrayView<double>& land_block,
-				  const Teuchos::ArrayView<double>& and_block )
+void NuclearReactionFactory::initializeReactionAngularDistMap(
+			    const Teuchos::ArrayView<const double>& land_block,
+			    const Teuchos::ArrayView<const double>& and_block )
 {
   // Calculate the size of each angular distribution array
   Teuchos::Array<unsigned> angular_dist_array_sizes;
@@ -277,8 +277,8 @@ void NuclearReactionFactory::initializeReactionTypeAngularDistMap(
   
   boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
     reaction, end_reaction;
-  reaction = d_reaction_type_and_block_ordering.begin();
-  end_reaction = d_reaction_type_and_block_ordering.end();
+  reaction = d_reaction_and_block_ordering.begin();
+  end_reaction = d_reaction_and_block_ordering.end();
 
   int dist_index; // index may be negative to signify special cases
   int dist_array_size;
@@ -298,16 +298,16 @@ void NuclearReactionFactory::initializeReactionTypeAngularDistMap(
     
     // The angular distribution is coupled to the energy distribution
     else if( dist_index == -1 )
-      d_reactions_with_coupled_energy_angle_dist.insert( reaction );
+      d_reactions_with_coupled_energy_angle_dist.insert( reaction->first );
   
     // The angular distribution is isotropic
     else if( dist_index == 0 )
-      d_reactions_with_isotropic_scattering_only.insert( reaction );
+      d_reactions_with_isotropic_scattering_only.insert( reaction->first );
     
     // An unknown index has been found
     else
     {
-      std::stringsteam ss;
+      std::stringstream ss;
       ss << "Unknown angular distribution index found in table "
 	 << d_table_name << " for MT = " << reaction->first;
       
@@ -319,21 +319,21 @@ void NuclearReactionFactory::initializeReactionTypeAngularDistMap(
 }
 
 // Initialize the reaction type energy distribution map
-void NuclearReactionFactory::initializeReactionTypeEnergyDistMap(
-				  const Teuchos::ArrayView<double>& ldlw_block,
-				  const Teuchos::ArrayView<double>& dlw_block )
+void NuclearReactionFactory::initializeReactionEnergyDistMap(
+			    const Teuchos::ArrayView<const double>& ldlw_block,
+			    const Teuchos::ArrayView<const double>& dlw_block )
 {
   
 }
 
 // Calculate the AND block angular distribution array sizes
-void NuclearReactionFactor::calculateAngularDistArraySizes( 
-                     const Teuchos::ArrayView<double>& land_block,
-		     const Teuchos::ArrayView<double>& and_block,
+void NuclearReactionFactory::calculateAngularDistArraySizes( 
+                     const Teuchos::ArrayView<const double>& land_block,
+		     const Teuchos::ArrayView<const double>& and_block,
                      Teuchos::Array<unsigned>& angular_dist_array_sizes ) const
 {
   // Make sure the multiplicity map has been initialized
-  testPrecondition( d_reaction_type_multiplicity.size() > 0 );
+  testPrecondition( d_reaction_multiplicity.size() > 0 );
   
   int dist_index;
   
@@ -341,7 +341,7 @@ void NuclearReactionFactor::calculateAngularDistArraySizes(
   Teuchos::Array<int> simplified_land_block;
   for( unsigned i = 0u; i < land_block.size(); ++i )
   {
-    dist_index = static_cast<int>( land_bock[i] );
+    dist_index = static_cast<int>( land_block[i] );
     
     if( dist_index > 0 )
       simplified_land_block.push_back( dist_index );
@@ -351,7 +351,7 @@ void NuclearReactionFactor::calculateAngularDistArraySizes(
   
   unsigned array_size;
   
-  angular_distribution_array_sizes.resize( simplified_land_block.size() );
+  angular_dist_array_sizes.resize( simplified_land_block.size() );
   
   // Calculate the angular distribution array sizes
   for( unsigned i = 0u; i < simplified_land_block.size(); ++i )
@@ -361,11 +361,11 @@ void NuclearReactionFactor::calculateAngularDistArraySizes(
     else
       array_size = land_block.size() + 1 - simplified_land_block[i];
     
-    angular_distribution_array_sizes[i] = array_size;
+    angular_dist_array_sizes[i] = array_size;
   }
 
   // Make sure every index in the land block has a corresponding array size
-  testPostcondition( angular_distribution_array_sizes.size() ==
+  testPostcondition( angular_dist_array_sizes.size() ==
 		     land_block.size() );
 }
 

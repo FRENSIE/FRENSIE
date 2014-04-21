@@ -92,7 +92,7 @@ public:
   //! Constructor
   XSSNeutronDataExtractor( const Teuchos::ArrayView<const int>& nxs,
 			   const Teuchos::ArrayView<const int>& jxs,
-			   const Teuchos::ArrayView<const double>& xss );
+			   const Teuchos::ArrayRCP<const double>& xss );
 
   //! Destructor
   ~XSSNeutronDataExtractor()
@@ -193,14 +193,14 @@ public:
 
 private:
 
-  // The nxs array
-  Teuchos::ArrayView<const int> d_nxs;
+  // The nxs array (a copy will be stored)
+  Teuchos::Array<int> d_nxs;
   
   // The jxs array (a copy will be stored so that modifications can be made)
   Teuchos::Array<int> d_jxs;
 
-  // The xss array
-  Teuchos::ArrayView<const double> d_xss;
+  // The xss array (data in this array should never be directly modified)
+  Teuchos::ArrayRCP<const double> d_xss;
 
   // The ESZ block (cached for quick access to cross sections in this block)
   Teuchos::ArrayView<const double> d_esz_block;

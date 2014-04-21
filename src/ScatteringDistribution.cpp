@@ -19,6 +19,9 @@
 
 namespace FACEMC{
 
+// Initialize the static member data
+unsigned ScatteringDistribution::free_gas_threshold = 400u;
+
 // Constructor
 ScatteringDistribution::ScatteringDistribution( 
 					     const double atomic_weight_ratio )
@@ -28,6 +31,17 @@ ScatteringDistribution::ScatteringDistribution(
   testPrecondition( atomic_weight_ratio > 0.0 );
   testPrecondition( atomic_weight_ratio < 
 		    std::numeric_limits<double>::infinity() );
+}
+
+// Set the free gas thermal treatment temperature threshold
+/*! \details The value given is the number of times above the material 
+ * temperature that the energy of a neutron can be before the free gas
+ * thermal treatment is not used anymore.
+ */
+void ScatteringDistribution::setFreeGasThermalTreatmentTemperatureThreshold(
+					   const double temperature_threshold )
+{
+  ScatteringDistribution::free_gas_threshold = temperature_threshold;
 }
 
 // Sample the velociy of the target nucleus

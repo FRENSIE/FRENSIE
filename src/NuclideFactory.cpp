@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // Trilinos Includes
+#include "NuclideFactory.hpp"
 #include "Teuchos_XMLParameterListCoreHelpers.hpp"
 
 namespace FACEMC{

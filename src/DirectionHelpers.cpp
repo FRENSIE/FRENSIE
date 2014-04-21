@@ -28,9 +28,12 @@ bool validDirection( const double x_direction,
   testPrecondition( !ST::isnaninf( x_direction ) );
   testPrecondition( !ST::isnaninf( y_direction ) );
   testPrecondition( !ST::isnaninf( z_direction ) );
+
+  double argument = 
+    vectorMagnitude( x_direction, y_direction, z_direction ) - 1.0;
+  argument = Teuchos::ScalarTraits<double>::magnitude( argument );
   
-  return vectorMagnitude( x_direction, y_direction, z_direction ) <
-    Teuchos::ScalarTraits<double>::prec();
+  return argument < Teuchos::ScalarTraits<double>::prec();
 }
 
 // Normalize the direction so that it lies on the unit sphere

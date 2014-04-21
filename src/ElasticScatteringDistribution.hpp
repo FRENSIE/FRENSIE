@@ -33,18 +33,17 @@ public:
 		 angular_scattering_distribution );
 
   //! Destructor
-  ~ElasticScatterinDistribution()
+  ~ElasticScatteringDistribution()
   { /* ... */ }
   
   //! Randomly scatter the particle
   void scatterParticle( BasicParticleState& particle,
-			const double atomic_weight_ratio,
 			const double temperature ) const;
 
 private:
 
   // Sample center-of-mass scattering angle cosine
-  double sampleCMScatteringAngleCosine( const double energy );
+  double sampleCMScatteringAngleCosine( const double energy ) const;
 
   // The incoming energy dependent angular scattering distribution
   Teuchos::Array<Pair<double,Teuchos::RCP<OneDDistribution> > > 

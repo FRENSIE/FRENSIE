@@ -9,9 +9,14 @@
 #ifndef NUCLEAR_REACTION_FACTORY_HPP
 #define NUCLEAR_REACTION_FACTORY_HPP
 
+// Boost Includes
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+
 // Std Lib Includes
 #include "NuclearReaction.hpp"
 #include "NuclearReactionType.hpp"
+#include "ScatteringDistributionFactory.hpp"
 
 namespace FACEMC{
 
@@ -27,19 +32,19 @@ public:
 
   //! Constructor
   NuclearReactionFactory( 
-		       const std::string& table_name,
-		       const double atomic_weight_ratio,
-		       const Teuchos::ArrayView<const double>& energy_grid,
-		       const Teuchos::ArrayView<const double>& elastic_cross_section,
-		       const Teuchos::ArrayView<const double>& mtr_block, 
-		       const Teuchos::ArrayView<const double>& lqr_block,
-		       const Teuchos::ArrayView<const double>& tyr_block,
-		       const Teuchos::ArrayView<const double>& lsig_block,
-		       const Teuchos::ArrayView<const double>& sig_block,
-		       const Teuchos::ArrayView<const double>& land_block,
-		       const Teuchos::ArrayView<const double>& and_block,
-		       const Teuchos::ArrayView<const double>& ldlw_block,
-		       const Teuchos::ArrayView<const double>& dlw_block );
+		 const std::string& table_name,
+		 const double atomic_weight_ratio,
+		 const Teuchos::ArrayRCP<const double>& energy_grid,
+		 const Teuchos::ArrayView<const double>& elastic_cross_section,
+		 const Teuchos::ArrayView<const double>& mtr_block, 
+		 const Teuchos::ArrayView<const double>& lqr_block,
+		 const Teuchos::ArrayView<const double>& tyr_block,
+		 const Teuchos::ArrayView<const double>& lsig_block,
+		 const Teuchos::ArrayView<const double>& sig_block,
+		 const Teuchos::ArrayView<const double>& land_block,
+		 const Teuchos::ArrayView<const double>& and_block,
+		 const Teuchos::ArrayView<const double>& ldlw_block,
+		 const Teuchos::ArrayView<const double>& dlw_block );
 
   //! Destructor
   ~NuclearReactionFactory()
@@ -55,43 +60,43 @@ public:
 private:
 
   // Initialize the reaction type ordering map
-  void initializeReactionTypeOrderingMap( 
-				 const Teuchos::ArrayView<double>& mtr_block );
+  void initializeReactionOrderingMap( 
+			   const Teuchos::ArrayView<const double>& mtr_block );
 
   // Initialize the reaction type Q-value map
-  void initializeReactionTypeQValueMap( 
-				 const Teuchos::ArrayView<double>& lqr_block );
+  void initializeReactionQValueMap( 
+			   const Teuchos::ArrayView<const double>& lqr_block );
 
   // Initialize the reaction type multiplicity and scattering ref. frame map
-  void initializeReactionTypeMultiplicityAndRefFrameMap(
-				 const Teuchos::ArrayView<double>& tyr_block );
+  void initializeReactionMultiplicityAndRefFrameMap(
+			   const Teuchos::ArrayView<const double>& tyr_block );
   
   // Initialize the reaction type threshold and cross section map
-  void initializeReactionTypeThresholdAndCrossSectionMap(
-		     const Teuchos::ArrayView<double>& lsig_block,
-		     const Teuchos::ArrayView<double>& sig_block,
-		     const Teuchos::ArrayView<double>& elastic_cross_section );
+  void initializeReactionThresholdAndCrossSectionMap(
+	       const Teuchos::ArrayView<const double>& lsig_block,
+	       const Teuchos::ArrayView<const double>& sig_block,
+	       const Teuchos::ArrayView<const double>& elastic_cross_section );
 
   // Initialize the reaction type and block ordering map
-  void initializeReactionTypeANDBlockOrdering(
-			        const Teuchos::ArrayView<double>& mtr_block,
-				const Teuchos::ArrayView<double>& tyr_block,
-				const Teuchos::ArrayView<double>& land_block );
+  void initializeReactionANDBlockOrdering(
+			  const Teuchos::ArrayView<const double>& mtr_block,
+			  const Teuchos::ArrayView<const double>& tyr_block,
+			  const Teuchos::ArrayView<const double>& land_block );
 
   // Initialize the reaction type angular distribution map
-  void initializeReactionTypeAngularDistMap(
-				 const Teuchos::ArrayView<double>& land_block,
-				 const Teuchos::ArrayView<double>& and_block );
+  void initializeReactionAngularDistMap(
+			   const Teuchos::ArrayView<const double>& land_block,
+			   const Teuchos::ArrayView<const double>& and_block );
 
   // Initialize the reaction type energy distribution map
-  void initializeReactionTypeEnergyDistMap(
-				 const Teuchos::ArrayView<double>& ldlw_block,
-				 const Teuchos::ArrayView<double>& dlw_block );
+  void initializeReactionEnergyDistMap(
+			   const Teuchos::ArrayView<const double>& ldlw_block,
+			   const Teuchos::ArrayView<const double>& dlw_block );
 
   // Calculate the AND block angular distribution array sizes
   void calculateAngularDistArraySizes( 
-                    const Teuchos::ArrayView<double>& land_block,
-		    const Teuchos::ArrayView<double>& and_block,
+                    const Teuchos::ArrayView<const double>& land_block,
+		    const Teuchos::ArrayView<const double>& and_block,
                     Teuchos::Array<unsigned>& angular_dist_array_sizes ) const;
 
   // The table name
@@ -101,7 +106,7 @@ private:
   double d_atomic_weight_ratio;
   
   // The energy grid
-  Teuchos::ArrayView<double> d_energy_grid;
+  Teuchos::ArrayRCP<const double> d_energy_grid;
 
   // The scattering distribution factory
   ScatteringDistributionFactory d_scattering_dist_factory;
@@ -125,7 +130,7 @@ private:
   d_reaction_threshold_index;
   
   // A map of the reaction types (MT #s) and the corresponding cross section
-  boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<double> >
+  boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >
   d_reaction_cross_section;
 
   // A map of the reaction types (MT #s) and their AND block ordering
@@ -141,11 +146,11 @@ private:
   d_reactions_with_coupled_energy_angle_dist;
 
   // A map of the reaction types (MT #s) and the corresponding angular dist
-  boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<double> >
+  boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >
   d_reaction_angular_dist;
   
   // A map of the reaction types (MT #s) and the corresponding energy dist
-  boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<double> >
+  boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >
   d_reaction_energy_dist;
 };
 

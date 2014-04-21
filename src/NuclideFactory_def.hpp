@@ -18,14 +18,17 @@
 namespace FACEMC{
 
 // Create the map of nuclides
-/*! \details Either a std::map template or a boost::unordered_map can currently
- * be passed to this member function. In theory, any map concept model that
- * has four template parameters can be passed.
+/*! \details Any map concept model that can be passed as an argument to this
+ * function. The key value must be a standard string and the mapped value must
+ * be a Teuchos::RCP<Nuclide>.
  */
-template<template<typename,typename,typename,typename> Map>
-NuclideFactory::create( 
-                   Map<std::string,Teuchos::RCP<Nuclide> >& nuclide_map ) const
+template<typename NuclideNameMap>
+void NuclideFactory::create( NuclideNameMap& nuclide_map ) const
 { 
+  // Make sure the key and map values are correct
+  testStaticPrecondition((boost::is_same<typename NuclideNameMap::key_type,std::string>::value));
+  testStaticPrecondition((boost::is_same<typename NuclideNameMap::mapped_type,Teuchos::RCP<Nuclide> >::value));
+  
   // Reset the nuclide map
   nuclide_map.clear();
 
@@ -38,17 +41,14 @@ NuclideFactory::create(
   // The XSS neutron data extractor
   Teuchos::RCP<XSSNeutronDataExtractor> xss_data_extractor;
 
-  // The Nuclear Reaction Factory
-  Teuchos::RCP<NuclearReactionFactory> nuclear_reaction_factory;
-
   // The nuclide that will be created
   Teuchos::RCP<Nuclide> nuclide;
 
   // Create each nuclide in the set
   boost::unordered_set<std::string>::const_iterator nuclide_name,
     end_nuclide_name;
-  nuclide_name = nuclides.begin();
-  end_nuclide_name = nuclides.end();
+  nuclide_name = d_nuclides.begin();
+  end_nuclide_name = d_nuclides.end();
 
   while( nuclide_name != end_nuclide_name )
   {
@@ -67,7 +67,7 @@ NuclideFactory::create(
     ace_file_handler.reset( new ACEFileHandler( 
 			ace_file_path,
 			table_info.get<std::string>( "table_name" ),
-			table_info.get<unsigned>( "start_line" )
+			table_info.get<unsigned>( "start_line" ),
 			d_cross_section_table_info.get<bool>( "is_ascii" ) ) );
 
     // Create the XSS data extractor
@@ -75,37 +75,19 @@ NuclideFactory::create(
 	 new XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
-
-    // Create the nuclear reaction factory
-    nuclear_reaction_factory.reset(  new NuclearReactionFactory( 
-			      table_info.get<std::string>( "table_name" ),
-			      table_info.get<double>( "atomic_weight_ratio" ),
-			      xss_data_extractor->extractEnergyGrid(),
-			      xss_data_extractor->extractElasticCrossSection(),
-			      xss_data_extractor->extractMTRBlock(),
-			      xss_data_extractor->extractLQRBlock(),
-			      xss_data_extractor->extractTYRBlock(),
-			      xss_data_extractor->extractLSIGBlock(),
-			      xss_data_extractor->extractSIGBlock(),
-			      xss_data_extractor->extractLANDBlock(),
-			      xss_data_extractor->extractANDBlock(),
-			      xss_data_extractor->extractLDLWBlock(),
-			      xss_data_extractor->extractDLWBlock() ) );
     
     // Create a standard nuclide
     if( !xss_data_extractor->hasFissionData() &&
 	!xss_data_extractor->hasUnresolvedResonanceData() )
     {
       nuclide.reset( new Nuclide( 
-		     table_info.get<unsigned>( "atomic_number" ),
-		     table_info.get<unsigned>( "atomic_mass_number" ),
-		     table_info.get<unsigned>( "isomer_number" ),
-		     table_info.get<double>( "atomic_weight_ratio" ),
-		     table_info.get<double>( "temperature" ),
-		     xss_data_extractor->extractEnergyGrid(),
-		     xss_data_extractor->extractTotalAbsorptionCrossSection(),
-		     nuclear_reaction_factory->createElasticReaction(),
-		     nuclear_reaction_factory->createNonElasticReactions() ) );
+		              *nuclide_name,
+			      table_info.get<unsigned>( "atomic_number" ),
+		              table_info.get<unsigned>( "atomic_mass_number" ),
+			      table_info.get<unsigned>( "isomer_number" ),
+			      table_info.get<double>( "atomic_weight_ratio" ),
+			      table_info.get<double>( "temperature" ),
+			      *xss_data_extractor ) );
     }
     // Create a fissionable nuclide
     else if( xss_data_extractor->hasFissionData() &&

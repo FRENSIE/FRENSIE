@@ -11,6 +11,7 @@
 
 // FACEMC Includes
 #include "ElasticScatteringDistribution.hpp"
+#include "DirectionHelpers.hpp"
 #include "ContractException.hpp"
 #include "SearchAlgorithms.hpp"
 
@@ -105,7 +106,7 @@ void ElasticScatteringDistribution::scatterParticle(
 
 // Sample a center-of-mass scattering angle cosine
 double ElasticScatteringDistribution::sampleCMScatteringAngleCosine(
-							  const double energy )
+						    const double energy ) const
 {
   double cm_scattering_angle_cosine;
 
@@ -121,13 +122,15 @@ double ElasticScatteringDistribution::sampleCMScatteringAngleCosine(
   }
   else
   {
-    Teuchos::Array<Pair<double,Teuchos::RCP<OneDDistribution> > >::iterator
+    Teuchos::Array<Pair<double,
+			Teuchos::RCP<OneDDistribution> > >::const_iterator
       lower_bin_boundary, upper_bin_boundary;
     
     lower_bin_boundary = d_angular_scattering_distribution.begin();
     upper_bin_boundary = d_angular_scattering_distribution.end();
     
-    lower_bin_boundary = binarySearchContinuousData<FIRST>( lower_bin_boundary,
+    lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( 
+							    lower_bin_boundary,
 							    upper_bin_boundary,
 							    energy );
 

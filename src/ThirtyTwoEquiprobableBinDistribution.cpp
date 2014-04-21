@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   32EquiprobableBinDistribution.cpp
+//! \file   ThirtyTwoEquiprobableBinDistribution.cpp
 //! \author Alex Robinson
-//! \brief  32 equiprobable bin distribution class definition.
+//! \brief  Thirty-Two equiprobable bin distribution class definition.
 //!
 //---------------------------------------------------------------------------//
 
 // FACEMC Includes
-#include "32EquiprobableBinDistribution.hpp"
+#include "ThirtyTwoEquiprobableBinDistribution.hpp"
 #include "SearchAlgorithms.hpp"
 #include "RandomNumberGenerator.hpp"
 #include "ContractException.hpp"
@@ -15,7 +15,7 @@
 namespace FACEMC{
 
 // Constructor
-32EquiprobableBinDistribution::32EquiprobableBinDistribution( 
+ThirtyTwoEquiprobableBinDistribution::ThirtyTwoEquiprobableBinDistribution( 
 				 const Teuchos::Array<double>& bin_boundaries )
 : d_bin_boundaries( bin_boundaries )
 {
@@ -24,14 +24,14 @@ namespace FACEMC{
 }
 
 // Evaulate the distribution
-double 32EquiprobableBinDistribution::evaluate( 
+double ThirtyTwoEquiprobableBinDistribution::evaluate( 
 					   const double indep_var_value ) const
 {
-  return evaluatePDF();
+  return evaluatePDF( indep_var_value );
 }
 
 // Evaluate the PDF
-double 32EquiprobableBinDistribution::evaluatePDF(
+double ThirtyTwoEquiprobableBinDistribution::evaluatePDF(
 					   const double indep_var_value ) const
 {
   if( indep_var_value < d_bin_boundaries.front() )
@@ -54,13 +54,13 @@ double 32EquiprobableBinDistribution::evaluatePDF(
 }
 
 // Return a random sample from the distribution
-double 32EquiprobableBinDistribution::sample()
+double ThirtyTwoEquiprobableBinDistribution::sample()
 {
-  return (const_cast<32EquiprobableBinDistribution*>(this))->sample();
+  return (const_cast<ThirtyTwoEquiprobableBinDistribution*>(this))->sample();
 }
 
 // Return a random sample from the distribution
-double 32EquiprobableBinDistribution::sample() const
+double ThirtyTwoEquiprobableBinDistribution::sample() const
 {
   double bin_location = 
     RandomNumberGenerator::getRandomNumber<double>()*32;
@@ -72,31 +72,32 @@ double 32EquiprobableBinDistribution::sample() const
 }
 
 // Return the sampling efficiency from the distribution
-double 32EquiprobableBinDistribution::getSamplingEfficiency() const
+double ThirtyTwoEquiprobableBinDistribution::getSamplingEfficiency() const
 {
   return 1.0;
 }
 
 // Return the upper bound of the distribution independent variable
-double 32EquiprobableBinDistribution::getUpperBoundOfIndepVar() const
+double ThirtyTwoEquiprobableBinDistribution::getUpperBoundOfIndepVar() const
 {
-  return d_distribution.back();
+  return d_bin_boundaries.back();
 }
 
 // Return the lower bound of the distribution independent variable
-double 32EquiprobableBinDistribution::getLowerBoundOfIndepVar() const
+double ThirtyTwoEquiprobableBinDistribution::getLowerBoundOfIndepVar() const
 {
-  return d_distribution.front();
+  return d_bin_boundaries.front();
 }
 
 // Return the distribution type
-OneDDistributionType 32EquiprobableBinDistribution::getDistributionType() const
+OneDDistributionType 
+ThirtyTwoEquiprobableBinDistribution::getDistributionType() const
 {
-  return 32EquiprobableBinDistribution::distribution_type;
+  return ThirtyTwoEquiprobableBinDistribution::distribution_type;
 }
 
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//
-// end 32EquiprobableBinDistribution.cpp
+// end ThirtyTwoEquiprobableBinDistribution.cpp
 //---------------------------------------------------------------------------//

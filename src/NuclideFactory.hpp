@@ -13,7 +13,7 @@
 #include <string>
 
 // Boost Includes
-#include <boost/unordered_set>
+#include <boost/unordered_set.hpp>
 
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
@@ -38,8 +38,8 @@ public:
   { /* ... */ }
 
   //! Create the map of nuclides
-  template<template<typename,typename,typename,typename> Map>
-  create( Map<std::string,Teuchos::RCP<Nuclide> >& nuclide_map) const;
+  template<typename NuclideNameMap>
+  void create( NuclideNameMap& nuclide_map) const;
 
 private:
 

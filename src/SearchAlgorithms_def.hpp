@@ -58,11 +58,13 @@ Iterator binarySearchContinuousData( Iterator start,
 {
   // The iterators must be random access iterators (support +/- ops)
   testStaticPrecondition((boost::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value));
+  remember( Iterator true_end = end );
+  remember( --true_end );
   // The iterators must be from a valid container (size > 0)
   testPrecondition( (start != end) );
   // The value used for the search must be within the limits of the sorted data
   testPrecondition( (value >= get<member>( *start )) );
-  testPrecondition( (value <= get<member>( *(end-1) )) );
+  testPrecondition( (value <= get<member>( *(true_end) )) );
 
   // Remember the end iterator for the Postcondition check
   remember( Iterator invalid = end );
@@ -135,11 +137,13 @@ Iterator binarySearchDiscreteData( Iterator start,
 {
   // The iterators must be random access iterators (support +/- ops)
   testStaticPrecondition((boost::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value));
+  remember( Iterator true_end = end );
+  remember( --true_end );
   // The iterators must be from a valid container (size > 0)
   testPrecondition( (start != end) );
   // The value used for the search must be within the limits of the data
   //testPrecondition( (value >= 0.0) );
-  testPrecondition( (value <= get<member>( *(end-1) ) ) );
+  testPrecondition( (value <= get<member>( *(true_end) ) ) );
   
   // Remember the end iterator for the Postcondition check
   remember( Iterator invalid = end );

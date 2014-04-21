@@ -29,6 +29,8 @@ TEUCHOS_UNIT_TEST( DirectionHelpers, validDirection )
   direction[1] = 1.0/sqrt(3.0);
   direction[2] = 1.0/sqrt(3.0);
 
+  std::cout << FACEMC::vectorMagnitude( direction ) << std::endl;
+
   TEST_ASSERT( FACEMC::validDirection( direction ) );
 }
 

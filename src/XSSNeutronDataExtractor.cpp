@@ -21,7 +21,7 @@ namespace FACEMC{
 XSSNeutronDataExtractor::XSSNeutronDataExtractor( 
 				  const Teuchos::ArrayView<const int>& nxs,
 				  const Teuchos::ArrayView<const int>& jxs,
-		                  const Teuchos::ArrayView<const double>& xss )
+		                  const Teuchos::ArrayRCP<const double>& xss )
   : d_nxs( nxs ),
     d_jxs( jxs ),
     d_xss( xss )

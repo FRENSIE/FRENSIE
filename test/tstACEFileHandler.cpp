@@ -80,10 +80,10 @@ TEUCHOS_UNIT_TEST( ACEFileHandler, constructor_get )
   ref_jxs[28] = 0;    ref_jxs[29] = 6931; ref_jxs[30] =6932; ref_jxs[31] =6933;
   TEST_COMPARE_ARRAYS( jxs, ref_jxs );
 
-  Teuchos::ArrayView<const double> xss = ace_file_handler->getTableXSSArray();
+  Teuchos::ArrayRCP<const double> xss = ace_file_handler->getTableXSSArray();
   TEST_EQUALITY( xss.size(), nxs[0] );
-  TEST_EQUALITY_CONST( xss.front(), 1e-11 );
-  TEST_EQUALITY_CONST( xss.back(), 102 );
+  TEST_EQUALITY_CONST( xss[0], 1e-11 );
+  TEST_EQUALITY_CONST( xss[xss.size()-1], 102 );
 }
 
 //---------------------------------------------------------------------------//

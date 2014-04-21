@@ -85,7 +85,7 @@ public:
   Teuchos::ArrayView<const int> getTableJXSArray() const;
 
   //! Get the table XSS array
-  Teuchos::ArrayView<const double> getTableXSSArray() const;
+  Teuchos::ArrayRCP<const double> getTableXSSArray() const;
 
 private:
 
@@ -137,7 +137,7 @@ private:
   Teuchos::Tuple<int,32> d_jxs;
 
   // The ace table XSS array
-  Teuchos::Array<double> d_xss;
+  Teuchos::ArrayRCP<double> d_xss;
 };
 
 } // end FACEMC namespace

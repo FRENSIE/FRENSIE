@@ -9,8 +9,13 @@
 #ifndef NUCLEAR_REACTION_HPP
 #define NUCLEAR_REACTION_HPP
 
+// Trilinos Includes
+#include <Teuchos_ArrayView.hpp>
+#include <Teuchos_ArrayRCP.hpp>
+
 // FACEMC Includes
 #include "NuclearReactionType.hpp"
+#include "ScatteringDistribution.hpp"
 
 namespace FACEMC{
 
@@ -26,7 +31,7 @@ public:
 	 const double Q_value,
 	 const unsigned multiplicity,
 	 const unsigned threshold_energy_index,
-	 const Teuchos::ArrayView<const double>& incoming_energy_grid,
+	 const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	 const Teuchos::ArrayView<const double>& cross_section,
 	 const Teuchos::RCP<ScatteringDistribution>& scattering_distribution );
 		   
@@ -46,7 +51,7 @@ private:
   unsigned d_threshold_energy_index;
 
   // The incoming energy grid
-  Teuchos::ArrayView<double> d_incoming_energy_grid;
+  Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
 
   // The cross section values evaluated on the incoming energy grid
   Teuchos::Array<double> d_cross_section;

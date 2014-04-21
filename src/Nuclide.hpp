@@ -9,6 +9,10 @@
 #ifndef NUCLIDE_HPP
 #define NUCLIDE_HPP
 
+// FACEMC Includes
+#include "XSSNeutronDataExtractor.hpp"
+#include "NuclearReaction.hpp"
+
 namespace FACEMC{
 
 /*! The nuclide class
@@ -21,16 +25,13 @@ class Nuclide
 public:
 
   // Constructor
-  Nuclide( const unsigned atomic_number,
+  Nuclide( const std::string& name,
+	   const unsigned atomic_number,
 	   const unsigned atomic_mass_number,
 	   const unsigned isomer_number,
 	   const double atomic_weight_ratio,
 	   const double temperature,
-	   const Teuchos::ArrayView<const int>& energy_grid,
-	   const Teuchos::ArrayView<const int>& absorption_cross_section,
-	   const Teuchos::RCP<NuclearReaction>& elastic_scattering_reaction,
-	   const Teuchos::Array<Teuchos::RCP<NuclearReaction> >&
-	   non_elastic_reactions );
+	   const XSSNeutronDataExtractor& raw_nuclide_data );
   
 
   // Destructor
@@ -38,6 +39,9 @@ public:
   { /* ... */ }
 
 private:
+
+  // The nuclide name
+  std::string d_name;
 
   // The atomic number of the nuclide
   unsigned d_atomic_number;
@@ -55,7 +59,7 @@ private:
   double d_temperature;
 
   // The incoming energy grid for all nuclide cross sections
-  Teuchos::Array<double> d_energy_grid;
+  Teuchos::ArrayRCP<double> d_energy_grid;
 
   // The microscopic total cross sections
   Teuchos::Array<double> d_total_cross_section;

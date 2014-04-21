@@ -16,7 +16,9 @@
 // FACEMC Includes
 #include "ScatteringDistributionFactory.hpp"
 #include "UniformDistribution.hpp"
-#include "32EquiprobableBinDistribution.hpp"
+#include "HistogramDistribution.hpp"
+#include "TabularDistribution.hpp"
+#include "ThirtyTwoEquiprobableBinDistribution.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -37,16 +39,16 @@ ScatteringDistributionFactory::ScatteringDistributionFactory(
 // Create a scattering distribution
 Teuchos::RCP<ScatteringDistribution> 
 ScatteringDistributionFactory::createElasticScatteringDistribution(
-		       const Teuchos::Array<double>& raw_angular_distribution )
+       const Teuchos::ArrayView<const double>& raw_angular_distribution ) const
 {
   unsigned number_of_tabulated_energies = raw_angular_distribution[0];
 
   // Get the energy grid
-  Teuchos::ArrayView<double> energy_grid = 
+  Teuchos::ArrayView<const double> energy_grid = 
     raw_angular_distribution( 1, number_of_tabulated_energies );
 
   // Get the location of the angular distribution for each energy
-  Teuchos::ArrayView<double> distribution_indices = 
+  Teuchos::ArrayView<const double> distribution_indices = 
     raw_angular_distribution( number_of_tabulated_energies + 1,
 				number_of_tabulated_energies );
 
@@ -61,14 +63,14 @@ ScatteringDistributionFactory::createElasticScatteringDistribution(
     unsigned distribution_index = 
       static_cast<unsigned>( distribution_indices[i] );
 
-    // 32 equiprobable bin distribution
+    // thirty two equiprobable bin distribution
     if( distribution_indices[i] > 0 )
     {
-      Teuchos::ArrayView<double> bin_boundaries = 
+      Teuchos::ArrayView<const double> bin_boundaries = 
 	raw_angular_distribution( distribution_index, 33 );
 
       angular_distribution[i].second.reset( 
-			 new 32EquiprobableBinDistribution( bin_boundaries ) );
+		  new ThirtyTwoEquiprobableBinDistribution( bin_boundaries ) );
     }
 
     // Tabular distribution
@@ -80,18 +82,18 @@ ScatteringDistributionFactory::createElasticScatteringDistribution(
       unsigned number_of_points_in_dist = 
 	raw_angular_distribution[distribution_index + 1];
 
-      Teuchos::ArrayView<double> scattering_angle_cosine_grid = 
+      Teuchos::ArrayView<const double> scattering_angle_cosine_grid = 
 	raw_angular_distribution( distribution_index + 2,
 				    number_of_points_in_dist );
+
+      // Ignore the last evaluated point in the PDF
+      Teuchos::ArrayView<const double> pdf = raw_angular_distribution( 
+			     distribution_index + 2 + number_of_points_in_dist,
+			     number_of_points_in_dist-1 );
 
       switch( interpolation_flag )
       {
       case 1u: // histogram interpolation
-	
-	// Ignore the last evaluated point in the PDF
-	Teuchos::ArrayView<double> pdf = raw_angular_distribution( 
-			     distribution_index + 2 + number_of_points_in_dist,
-			     number_of_points_in_dist-1 );
 	
 	angular_distribution[i].second.reset(
 	      new HistogramDistribution( scattering_angle_cosine_grid, pdf ) );
@@ -130,10 +132,11 @@ ScatteringDistributionFactory::createElasticScatteringDistribution(
 // Create a scattering distribution
 Teuchos::RCP<ScatteringDistribution> 
 ScatteringDistributionFactory::createDistribution(
-		      const Teuchos::Array<double>& raw_angular_distribution,
-		      const Teuchos::Array<double>& raw_energy_distribution )
+	      const Teuchos::ArrayView<const double>& raw_angular_distribution,
+	      const Teuchos::ArrayView<const double>& raw_energy_distribution,
+	      const NuclearReactionType reaction_type ) const
 {
-  
+  return Teuchos::RCP<ScatteringDistribution>();
 }
 								   
 

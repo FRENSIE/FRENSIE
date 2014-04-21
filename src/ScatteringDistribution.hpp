@@ -29,6 +29,10 @@ public:
   virtual ~ScatteringDistribution()
   { /* ... */ }
 
+  //! Set the free gas thermal treatment temperature threshold
+  static void setFreeGasThermalTreatmentTemperatureThreshold( 
+					  const double temperature_threshold );
+
   //! Randomly scatter the particle
   virtual void scatterParticle( BasicParticleState& particle,
 				const double temperature ) const = 0;
@@ -42,9 +46,9 @@ protected:
   double sampleAzimuthalAngle() const;
 
   //! Calculate the center-of-mass velocity
-  void calculateCenterOfMassVelocity( const double neutron_velocity[3],
-				      const double target_velocity[3],
-				      double center_of_mass_velocity ) const;
+  void calculateCenterOfMassVelocity(const double neutron_velocity[3],
+				     const double target_velocity[3],
+				     double center_of_mass_velocity[3] ) const;
 
   //! Transform a velocity in lab frame to the center-of-mass frame
   void transformVelocityToCenterOfMassFrame( 
@@ -67,14 +71,14 @@ private:
 			    const double temperature ) const;
 
   // The free gas thermal treatment temperature threshold
-  static unsigned free_gas_threshold = 400;
+  static unsigned free_gas_threshold;
 
   // The atomic weight of the nuclide in units of neutron mass
   double d_atomic_weight_ratio;
 };
 
 // Return the atomic weight ratio
-inline double getAtomicWeightRatio() const
+inline double ScatteringDistribution::getAtomicWeightRatio() const
 {
   return d_atomic_weight_ratio;
 }
@@ -88,9 +92,9 @@ inline double ScatteringDistribution::sampleAzimuthalAngle() const
 
 // Calculate the center-of-mass velocity
 inline void ScatteringDistribution::calculateCenterOfMassVelocity( 
-					 const double neutron_velocity[3],
-					 const double target_velocity[3],
-					 double center_of_mass_velocity ) const
+				      const double neutron_velocity[3],
+				      const double target_velocity[3],
+				      double center_of_mass_velocity[3] ) const
 {
   center_of_mass_velocity[0] = 
     (neutron_velocity[0] + d_atomic_weight_ratio*target_velocity[0])/

@@ -40,14 +40,14 @@ public:
   //! Create a scattering distribution
   Teuchos::RCP<ScatteringDistribution> 
   createElasticScatteringDistribution( 
-	    const Teuchos::ArrayView<double>& raw_angular_distribution ) const;
+      const Teuchos::ArrayView<const double>& raw_angular_distribution ) const;
 
   //! Create a scattering distribution 
   Teuchos::RCP<ScatteringDistribution> 
   createDistribution( 
-		    const Teuchos::ArrayView<double>& raw_angular_distribution,
-		    const Teuchos::ArrayView<double>& raw_energy_distribution,
-		    const NuclearReactionType reaction_type ) const;
+	      const Teuchos::ArrayView<const double>& raw_angular_distribution,
+	      const Teuchos::ArrayView<const double>& raw_energy_distribution,
+	      const NuclearReactionType reaction_type ) const;
 
 private:
 

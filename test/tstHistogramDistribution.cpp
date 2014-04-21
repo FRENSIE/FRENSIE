@@ -15,6 +15,7 @@
 #include <Teuchos_Array.hpp>
 
 // FACEMC Includes
+#include "FACEMC_UnitTestHarnessExtensions.hpp"
 #include "OneDDistribution.hpp"
 #include "HistogramDistribution.hpp"
 #include "RandomNumberGenerator.hpp"
@@ -56,9 +57,9 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, evalute )
   TEST_EQUALITY_CONST( distribution->evaluate( -3.0 ), 0.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( -2.0 ), 2.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( -1.5 ), 2.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0 ), 2.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0 ), 1.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), 1.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), 2.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( 1.5 ), 2.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( 2.0 ), 2.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( 3.0 ), 0.0 );
@@ -73,9 +74,9 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, evaluatePDF )
   TEST_EQUALITY_CONST( distribution->evaluatePDF( -3.0 ), 0.0 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( -2.0 ), 1.0/3.0 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( -1.5 ), 1.0/3.0 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( -1.0 ), 1.0/3.0 );
+  TEST_EQUALITY_CONST( distribution->evaluatePDF( -1.0 ), 1.0/6.0 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), 1.0/6.0 );
-  TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), 1.0/6.0 );
+  TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), 1.0/3.0 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.5 ), 1.0/3.0 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 2.0 ), 1.0/3.0 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 3.0 ), 0.0 );
@@ -89,41 +90,14 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, sample )
 
   std::vector<double> fake_stream( 36 );
   fake_stream[0] = 0.0;
-  fake_stream[1] = 0.0;
-  fake_stream[2] = 0.0;
-  fake_stream[3] = 0.5;
-  fake_stream[4] = 0.0;
-  fake_stream[5] = 1.0 - 1e-15;
-  fake_stream[6] = 1.0/3.0;
-  fake_stream[7] = 0.0;
-  fake_stream[8] = 1.0/3.0;
-  fake_stream[9] = 0.5;
-  fake_stream[10] = 1.0/3.0;
-  fake_stream[11] = 1.0 - 1e-15;
-  fake_stream[12] = 0.4;
-  fake_stream[13] = 0.0;
-  fake_stream[14] = 0.4;
-  fake_stream[15] = 0.5;
-  fake_stream[16] = 0.4;
-  fake_stream[17] = 1.0 - 1e-15;
-  fake_stream[18] = 2.0/3.0;
-  fake_stream[19] = 0.0;
-  fake_stream[20] = 2.0/3.0;
-  fake_stream[21] = 0.5;
-  fake_stream[22] = 2.0/3.0;
-  fake_stream[23] = 1.0 - 1e-15;
-  fake_stream[24] = 0.7;
-  fake_stream[25] = 0.0;
-  fake_stream[26] = 0.7;
-  fake_stream[27] = 0.5;
-  fake_stream[28] = 0.7;
-  fake_stream[29] = 1.0 - 1e-15;
-  fake_stream[30] = 1.0 - 1e-15;
-  fake_stream[31] = 0.0;
-  fake_stream[32] = 1.0 - 1e-15;
-  fake_stream[33] = 0.5;
-  fake_stream[34] = 1.0 - 1e-15;
-  fake_stream[35] = 1.0 - 1e-15;
+  fake_stream[1] = 1.0/6.0;
+  fake_stream[2] = 1.0/3.0 - 1e-15;
+  fake_stream[3] = 1.0/3.0;
+  fake_stream[4] = 0.5;
+  fake_stream[5] = 2.0/3.0 - 1e-15;
+  fake_stream[6] = 2.0/3.0;
+  fake_stream[7] = 5.0/6.0;
+  fake_stream[8] = 1.0 - 1e-15;
   
   FACEMC::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -135,32 +109,14 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, sample )
   TEST_EQUALITY_CONST( sample, -1.5 );
 
   sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-15 );
-  
-  sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, -2.0 );
-
-  sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, -1.5 );
-
-  sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
   
   // Second bin
   sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, -1.0 );
 
   sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, -0.0 );
-
-  sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
-
-  sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, -1.0 );
-
-  sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, -0.0 );
+  FACEMC_TEST_FLOATING_EQUALITY( sample, 0.0, 1e-14 );
 
   sample = distribution->sample();
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
@@ -170,19 +126,10 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, sample )
   TEST_EQUALITY_CONST( sample, 1.0 );
   
   sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, 1.5 );
+  TEST_FLOATING_EQUALITY( sample, 1.5, 1e-14 );
 
   sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, 2.0, 1e-15 );
-
-  sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, 1.0 );
-
-  sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, 1.5 );
-
-  sample = distribution->sample();
-  TEST_FLOATING_EQUALITY( sample, 2.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( sample, 2.0, 1e-14 );
 }
 
 //---------------------------------------------------------------------------//

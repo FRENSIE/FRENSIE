@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   32EquiprobableBinDistribution.hpp
+//! \file   ThirtyTwoEquiprobableBinDistribution.hpp
 //! \author Alex Robinson
-//! \brief  32 equiprobable bin distribution class declaration.
+//! \brief  Thirty-two equiprobable bin distribution class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef 32_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
-#define 32_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
+#ifndef THIRTY_TWO_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
+#define THIRTY_TWO_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -19,7 +19,7 @@
 namespace FACEMC{
 
 //! The 32 equiprobable bin distribution class
-class 32EquiprobableBinDistribution : public OneDDistribution
+class ThirtyTwoEquiprobableBinDistribution : public OneDDistribution
 {
 
 private:
@@ -30,10 +30,10 @@ private:
 public:
 
   //! Constructor
-  32EquiprobableBinDistribution( const Teuchos::Array<double>& bin_boundaries);
+  ThirtyTwoEquiprobableBinDistribution( const Teuchos::Array<double>& bin_boundaries);
 
   //! Destructor
-  ~32EquiprobableBinDistribution()
+  ~ThirtyTwoEquiprobableBinDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -64,7 +64,7 @@ private:
 
   // The disribution type
   static const OneDDistributionType distribution_type = 
-    32_EQUIPROBABLE_BIN_DISTRIBUTION;
+    THIRTY_TWO_EQUIPROBABLE_BIN_DISTRIBUTION;
 
   // The distribution
   Teuchos::Array<double> d_bin_boundaries;
@@ -72,7 +72,7 @@ private:
   
 } // end FACEMC namespace
 
-#endif // end 32_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
+#endif // end THIRTY_TWO_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end 32EquiprobableBinDistribution.hpp

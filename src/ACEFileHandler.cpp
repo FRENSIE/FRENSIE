@@ -59,7 +59,7 @@ ACEFileHandler::ACEFileHandler( const std::string& file_name,
     d_atomic_weight_ratios(),
     d_nxs(),
     d_jxs(),
-    d_xss( 0 )
+    d_xss()
 { 
   openACEFile( file_name, is_ascii );
   readACETable( table_name, table_start_line );
@@ -253,9 +253,9 @@ Teuchos::ArrayView<const int> ACEFileHandler::getTableJXSArray() const
 }
 
 // Get the table XSS array
-Teuchos::ArrayView<const double> ACEFileHandler::getTableXSSArray() const
+Teuchos::ArrayRCP<const double> ACEFileHandler::getTableXSSArray() const
 {
-  return d_xss();
+  return d_xss.getConst();
 }
 
 } // end FACEMC namespace
