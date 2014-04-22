@@ -16,6 +16,12 @@ ADD_EXECUTABLE(tstSearchAlgorithms
 TARGET_LINK_LIBRARIES(tstSearchAlgorithms ${PROJECT_NAME})
 ADD_TEST(SearchAlgorithms_test tstSearchAlgorithms)
 
+ADD_EXECUTABLE(tstSortAlgorithms
+  tstSortAlgorithms.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSortAlgorithms ${PROJECT_NAME})
+ADD_TEST(SortAlgorithms_test tstSortAlgorithms)
+
 ADD_EXECUTABLE(tstExponentiationAlgorithms
   tstExponentiationAlgorithms.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
