@@ -9,6 +9,7 @@
 
 // FACEMC Includes
 #include "GeneralEstimatorDimensionDiscretization.hpp"
+#include "SortAlgorithms.hpp"
 
 namespace FACEMC{
 
@@ -23,7 +24,8 @@ GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSION>::GeneralEsti
   testPrecondition( dimension_bin_boundaries.front() >= DT::lowerBound() );
   testPrecondition( dimension_bin_boundaries.back() <= DT::upperBound() );
   // Make sure the bins are sorted
-  //testPrecondition( false );
+  testPrecondition( Sort::isSortedAscending( dimension_bin_boundaries.begin(),
+					     dimension_bin_boundaries.end() ));
 }
 
 // Return the dimension name that has been discretized
