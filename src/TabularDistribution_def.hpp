@@ -13,6 +13,7 @@
 #include "DataProcessor.hpp"
 #include "SearchAlgorithms.hpp"
 #include "RandomNumberGenerator.hpp"
+#include "SortAlgorithms.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -30,6 +31,9 @@ TabularDistribution<InterpolationPolicy>::TabularDistribution(
 {
   // Make sure that at least two points of the distribution are specified
   testPrecondition( independent_values.size() > 1 );
+  // Make sure that the independent values are sorted
+  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
+					     independent_values.end() ) );
   // Make sure that every independent value has a dependent value
   testPrecondition( independent_values.size() == dependent_values.size() );
 

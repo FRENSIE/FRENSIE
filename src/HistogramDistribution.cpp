@@ -12,6 +12,7 @@
 // FACEMC Includes
 #include "HistogramDistribution.hpp"
 #include "RandomNumberGenerator.hpp"
+#include "SortAlgorithms.hpp"
 
 namespace FACEMC{
 
@@ -21,6 +22,9 @@ HistogramDistribution::HistogramDistribution(
 				  const Teuchos::Array<double>& bin_values )
   : d_distribution( bin_boundaries.size() )
 {
+  // Make sure that the bin boundaries are sorted
+  testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(), 
+					     bin_boundaries.end() ) );
   // Make sure that for n bin boundaries there are n-1 bin values
   testPrecondition( bin_boundaries.size()-1 == bin_values.size() );
 

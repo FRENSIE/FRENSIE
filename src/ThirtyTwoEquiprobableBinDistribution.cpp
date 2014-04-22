@@ -9,6 +9,7 @@
 // FACEMC Includes
 #include "ThirtyTwoEquiprobableBinDistribution.hpp"
 #include "SearchAlgorithms.hpp"
+#include "SortAlgorithms.hpp"
 #include "RandomNumberGenerator.hpp"
 #include "ContractException.hpp"
 
@@ -21,6 +22,9 @@ ThirtyTwoEquiprobableBinDistribution::ThirtyTwoEquiprobableBinDistribution(
 {
   // Make sure there are exactly 33 bin boundaries
   testPrecondition( bin_boundaries.size() == 33 );
+  // Make sure that the bins are sorted
+  testPrecondition( Sort::isSortedAscending( bin_boundaries.begin(),
+					     bin_boundaries.end() ) );
 }
 
 // Evaulate the distribution
