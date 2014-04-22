@@ -274,6 +274,12 @@ ADD_EXECUTABLE(tstTabularDistribution
 TARGET_LINK_LIBRARIES(tstTabularDistribution ${PROJECT_NAME})
 ADD_TEST(TabularDistribution_test tstTabularDistribution)
 
+ADD_EXECUTABLE(tstThirtyTwoEquiprobableBinDistribution
+  tstThirtyTwoEquiprobableBinDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstThirtyTwoEquiprobableBinDistribution ${PROJECT_NAME})
+ADD_TEST(32EquiprobableBinDistribution_test tstThirtyTwoEquiprobableBinDistribution)
+
 ADD_EXECUTABLE(tstCartesianSpatialDistribution
   tstCartesianSpatialDistribution.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

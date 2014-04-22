@@ -88,7 +88,7 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, sample )
 {
   initializeDistribution( distribution );
 
-  std::vector<double> fake_stream( 36 );
+  std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 1.0/6.0;
   fake_stream[2] = 1.0/3.0 - 1e-15;

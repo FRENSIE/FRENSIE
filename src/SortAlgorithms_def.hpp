@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   SortingAlgorithms_def.hpp
+//! \file   SortAlgorithms_def.hpp
 //! \author Alex Robinson
-//! \brief  Sorting algorithms definitions.
+//! \brief  Sort algorithms definitions.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef SORTING_ALGORITHMS_DEF_HPP
-#define SORTING_ALGORITHMS_DEF_HPP
+#ifndef SORT_ALGORITHMS_DEF_HPP
+#define SORT_ALGORITHMS_DEF_HPP
 
 // FACEMC Includes
 #include "TupleMemberTraits.hpp"
@@ -42,6 +42,9 @@ bool isSortedAscending( Iterator start, Iterator end )
       is_sorted = false;
       break;
     }
+
+    ++element_a;
+    ++element_b;
   }
   
   return is_sorted;
@@ -58,8 +61,8 @@ inline bool isSortedAscending( Iterator start, Iterator end )
 
 } // end FACEMC namespace
 
-#endif // end SORTING_ALGORITHMS_DEF_HPP
+#endif // end SORT_ALGORITHMS_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// SortingAlgorithms_def.hpp
+// SortAlgorithms_def.hpp
 //---------------------------------------------------------------------------//

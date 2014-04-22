@@ -40,23 +40,38 @@ double ThirtyTwoEquiprobableBinDistribution::evaluatePDF(
     return 0.0;
   else
   {
-    Teuchos::Array<double>::const_iterator lower_bin_boundary =
-      Search::binarySearchContinuousData( d_bin_boundaries.begin(),
-					  d_bin_boundaries.end(),
-					  indep_var_value );
-
-    Teuchos::Array<double>::const_iterator upper_bin_boundary = 
-      lower_bin_boundary;
-    ++upper_bin_boundary;
+    Teuchos::Array<double>::const_iterator lower_bin_boundary,
+      upper_bin_boundary;
     
-    return (1.0/32)*(*upper_bin_boundary - *lower_bin_boundary);
+    if( indep_var_value >= d_bin_boundaries.front() &&
+	indep_var_value < d_bin_boundaries.back() )
+    {
+      lower_bin_boundary = 
+	Search::binarySearchContinuousData( d_bin_boundaries.begin(),
+					    d_bin_boundaries.end(),
+					    indep_var_value );
+
+     upper_bin_boundary = lower_bin_boundary;
+     ++upper_bin_boundary;
+    }
+    else
+    {
+      upper_bin_boundary = d_bin_boundaries.end();
+      --upper_bin_boundary;
+      
+      lower_bin_boundary = upper_bin_boundary;
+      --lower_bin_boundary;
+    }
+    
+    return (1.0/32)/(*upper_bin_boundary - *lower_bin_boundary);
   }
 }
 
 // Return a random sample from the distribution
 double ThirtyTwoEquiprobableBinDistribution::sample()
 {
-  return (const_cast<ThirtyTwoEquiprobableBinDistribution*>(this))->sample();
+  return 
+    (const_cast<const ThirtyTwoEquiprobableBinDistribution*>(this))->sample();
 }
 
 // Return a random sample from the distribution

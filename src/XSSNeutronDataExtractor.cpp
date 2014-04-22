@@ -8,7 +8,7 @@
 
 // FACEMC Includes
 #include "XSSNeutronDataExtractor.hpp"
-#include "SortingAlgorithms.hpp"
+#include "SortAlgorithms.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -68,7 +68,13 @@ XSSNeutronDataExtractor::extractESZBlock() const
 Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractEnergyGrid() const
 {
-  return d_esz_block( 0, d_nxs[2] );
+  Teuchos::ArrayView<const double> energy_grid = d_esz_block( 0, d_nxs[2] );
+  
+  // Make sure the extracted energy grid is sorted
+  testPostcondition( Sort::isSortedAscending( energy_grid.begin(), 
+					      energy_grid.end() ) );
+		    
+  return energy_grid;
 }
 
 // Extract the total cross section from the XSS array

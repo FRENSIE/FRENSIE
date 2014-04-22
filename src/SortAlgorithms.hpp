@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   SortingAlgorithms
+//! \file   SortAlgorithms
 //! \author Alex Robinson
 //! \brief  Sorting algorithm declarations.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef SORTING_ALGORITHMS_HPP
-#define SORTING_ALGORITHMS_HPP
+#ifndef SORT_ALGORITHMS_HPP
+#define SORT_ALGORITHMS_HPP
 
 // Std Lib Includes
 #include <iterator>
@@ -37,12 +37,12 @@ bool isSortedAscending( Iterator start, Iterator end );
 // Template includes.
 //---------------------------------------------------------------------------//
 
-#include "SortingAlgorithms_def.hpp"
+#include "SortAlgorithms_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end SORTING_ALGORITHMS_HPP
+#endif // end SORT_ALGORITHMS_HPP
 
 //---------------------------------------------------------------------------//
-// end SortingAlgorithms.hpp
+// end SortAlgorithms.hpp
 //---------------------------------------------------------------------------//
