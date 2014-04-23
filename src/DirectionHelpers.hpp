@@ -49,8 +49,8 @@ void rotateDirectionThroughPolarAndAzimuthalAngle(
 
 // Calculate the magnitude of a vector
 inline double vectorMagnitude( const double x_component,
-			const double y_component,
-			const double z_component )
+			       const double y_component,
+			       const double z_component )
 {
   // Make sure that the coordinates are valid
   remember( typedef Teuchos::ScalarTraits<double> ST );

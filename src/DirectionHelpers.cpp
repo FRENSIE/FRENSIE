@@ -62,16 +62,21 @@ double calculateCosineOfAngleBetweenVectors( const double direction_a[3],
 
   double angle_cosine = direction_a[0]*direction_b[0] + 
     direction_a[1]*direction_b[1] + direction_a[2]*direction_b[2];
-
+  
+  // Check for round-off error.
+  if( Teuchos::ScalarTraits<double>::magnitude( angle_cosine ) > 1.0 )
+    angle_cosine = copysign( 1.0, angle_cosine );
+  
   // Make sure the angle cosine is valid
   testPrecondition( angle_cosine >= -1.0 );
   testPrecondition( angle_cosine <= 1.0 );
-
+  
   return angle_cosine;
 }
 
 // Rotate a direction (unit vector) through a polar and azimuthal angle
-/*! \details The cosine of the polar angle should be passed as the first 
+/*! \details The polar and azimuthal angles are with respect to the direction.
+ * The cosine of the polar angle should be passed as the first 
  * argument instead of the polar angle. This is because the cosine of the
  * polar angle is commonly sampled and used much more often than the 
  * polar angle. The azimuthal angle should be passed as the second argument
