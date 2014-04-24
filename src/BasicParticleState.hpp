@@ -67,7 +67,7 @@ public:
   ParticleType getParticleType() const;
 
   //! Set the particle type
-  ParticleType setParticleType( const ParticleType particle_type );
+  void setParticleType( const ParticleType particle_type );
 
   //! Return the x position of the particle
   double getXPosition() const;
@@ -121,6 +121,9 @@ public:
   //! Return the speed of the particle (cm/s)
   double getSpeed() const;
 
+  //! Set the speed of the particle (cm/s)
+  void setSpeed( const double speed );
+
   //! Return the time state of the particle (s)
   timeType getTime() const;
 
@@ -152,8 +155,11 @@ protected:
 
 private:
 
-  // Calculate the velocity of a neutron
+  // Calculate the speed of a neutron
   void calculateNeutronSpeed();
+
+  // Calculate the energy of a neutron
+  void calculateNeutronEnergy();
 
   // Particle type
   ParticleType d_type;

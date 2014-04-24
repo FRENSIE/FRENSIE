@@ -142,8 +142,7 @@ ParticleType BasicParticleState::getParticleType() const
 }
 
 // Set the particle type
-ParticleType BasicParticleState::setParticleType( 
-					     const ParticleType particle_type )
+void BasicParticleState::setParticleType( const ParticleType particle_type )
 {
   d_type = particle_type;
 }
@@ -263,6 +262,8 @@ double BasicParticleState::getEnergy() const
 }
 
 // Set the energy of the particle
+/*! \details The particle speed corresponding to this energy will also be set
+ */
 void BasicParticleState::setEnergy( const double energy )
 {
   // Make sure the energy is valid
@@ -280,6 +281,24 @@ void BasicParticleState::setEnergy( const double energy )
 double BasicParticleState::getSpeed() const
 {
   return d_speed;
+}
+
+// Set the speed of the particle (cm/s)
+/*! \details The particle energy corresponding to this speed will also be set
+ */
+void BasicParticleState::setSpeed( const double speed )
+{
+  // Make sure the speed is valid
+  testPrecondition( !ST::isnaninf( speed ) );
+  testPrecondition( speed > 0.0 );
+  testPrecondition( speed < PhysicalConstants::speed_of_light );
+
+  if( d_type == NEUTRON || d_type == ADJOINT_NEUTRON )
+  {
+    d_speed = speed;
+
+    calculateNeutronEnergy();
+  }
 }
 
 // Return the time state of the particle
@@ -369,6 +388,16 @@ void BasicParticleState::calculateNeutronSpeed()
   d_speed = d_energy*PhysicalConstants::speed_of_light/
     sqrt( PhysicalConstants::neutron_rest_mass_energy*
 	  PhysicalConstants::neutron_rest_mass_energy + d_energy*d_energy );
+}
+
+// Calculate the neutron energy
+void BasicParticleState::calculateNeutronEnergy()
+{
+  double speed_of_light_ratio = d_speed/PhysicalConstants::speed_of_light;
+
+  d_energy = 
+    PhysicalConstants::neutron_rest_mass_energy*speed_of_light_ratio/
+    sqrt( 1.0 - speed_of_light_ratio*speed_of_light_ratio );
 }
 
 } // end FACEMC
