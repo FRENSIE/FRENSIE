@@ -10,10 +10,11 @@
 #define STATE_SOURCE_HPP
 
 // Trilinos Includes
-#include <Teuchos_Array.hpp>
+#include <Teuchos_ArrayRCP.hpp>
 
 // FACEMC Includes
 #include "ParticleSource.hpp"
+#include "ParticleStateCore.hpp"
 
 namespace FACEMC{
 
@@ -28,25 +29,30 @@ class StateSource : public ParticleSource
 public:
 
   //! Constructor
-  StateSource( const Teuchos::Array<BasicParticleState>& particle_states );
+  StateSource( 
+	     const Teuchos::ArrayRCP<ParticleStateCore>& raw_particle_states );
 
   //! Destructor
   ~StateSource()
   { /* ... */ }
 
   //! Sample a particle state from the source
-  void sampleParticleState( BasicParticleState& particle );
+  void sampleParticleState( ParticleBank& bank );
 
   //! Return the sampling efficiency from the source 
   double getSamplingEfficiency() const;
 
 private:
 
-  // The possible states
-  Teuchos::Array<BasicParticleState> d_particle_states;
+  // Compare two particle state cores
+  static bool compareCores( const ParticleStateCore& core_a,
+			    const ParticleStateCore& core_b );
 
-  // The index of the next state to assign
-  unsigned d_next_state_index;
+  // The possible states
+  Teuchos::ArrayRCP<ParticleStateCore> d_raw_particle_states;
+
+  // The next index
+  unsigned d_next_index;
 };
 
 } // end FACEMC namespace

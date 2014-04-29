@@ -179,12 +179,12 @@ std::ostream& operator<<(std::ostream &out, const FACEMC::Quad<T1,T2,T3,T4> &p)
 //---------------------------------------------------------------------------//
 // Specialize the HDF5TypeTraits class for the Tuple Structs
 //---------------------------------------------------------------------------//
+namespace Traits{
+
 /*! \brief The partial specialization of the FACEMC::HDF5TypeTraits for the
  * FACEMC::Pair struct
  * \ingroup hdf5_type_traits
  */
-namespace Traits{
-
 template<typename T, typename T2>
 struct HDF5TypeTraits<Pair<T,T2> >
 {
