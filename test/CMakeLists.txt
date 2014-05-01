@@ -60,7 +60,6 @@ ADD_TEST(PhotonDataProcessorShellMap_test tstPhotonDataProcessorShellMap --epdl_
 #   tstPhotonDataProcessor.cpp)
 # TARGET_LINK_LIBRARIES(tstPhotonDataProcessor ${PROJECT_NAME})
 # ADD_TEST(PhotonDataProcessor_test tstPhotonDataProcessor)
-
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)
 # ADD_EXECUTABLE(tstPhotonDataFluorescence
@@ -210,11 +209,11 @@ ADD_EXECUTABLE(tstDirectionHelpers
 TARGET_LINK_LIBRARIES(tstDirectionHelpers ${PROJECT_NAME})
 ADD_TEST(DirectionHelpers_test tstDirectionHelpers)
 
-ADD_EXECUTABLE(tstBasicParticleState
-  tstBasicParticleState.cpp
+ADD_EXECUTABLE(tstParticleStateCore
+  tstParticleStateCore.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstBasicParticleState ${PROJECT_NAME})
-ADD_TEST(BasicParticleState_test tstBasicParticleState)
+TARGET_LINK_LIBRARIES(tstParticleStateCore ${PROJECT_NAME})
+ADD_TEST(ParticleStateCore_test tstParticleStateCore)
 
 ADD_EXECUTABLE(tstParticleState
   tstParticleState.cpp
@@ -222,15 +221,33 @@ ADD_EXECUTABLE(tstParticleState
 TARGET_LINK_LIBRARIES(tstParticleState ${PROJECT_NAME})
 ADD_TEST(ParticleState_test tstParticleState)
 
+ADD_EXECUTABLE(tstPhotonState
+  tstPhotonState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPhotonState ${PROJECT_NAME})
+ADD_TEST(PhotonState_test tstPhotonState)
+
+ADD_EXECUTABLE(tstNeutronState
+  tstNeutronState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstNeutronState ${PROJECT_NAME})
+ADD_TEST(NeutronState_test tstNeutronState)
+
+ADD_EXECUTABLE(tstParticleBank
+  tstParticleBank.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstParticleBank ${PROJECT_NAME})
+ADD_TEST(ParticleBank_test tstParticleBank)
+
 ADD_EXECUTABLE(tstDagMCHelpers
   tstDagMCHelpers.cpp)
 TARGET_LINK_LIBRARIES(tstDagMCHelpers ${PROJECT_NAME})
 ADD_TEST(DagMCHelpers_test tstDagMCHelpers --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
 
-ADD_EXECUTABLE(tstGeometryHandlerTraits
-  tstGeometryHandlerTraits.cpp)
-TARGET_LINK_LIBRARIES(tstGeometryHandlerTraits ${PROJECT_NAME})
-ADD_TEST(GeometryHandlerTraits_test tstGeometryHandlerTraits --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
+ADD_EXECUTABLE(tstGeometryModuleInterface
+  tstGeometryModuleInterface.cpp)
+TARGET_LINK_LIBRARIES(tstGeometryModuleInterface ${PROJECT_NAME})
+ADD_TEST(GeometryModuleInterface_test tstGeometryModuleInterface --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_geom.sat")
 
 ADD_EXECUTABLE(tstDeltaDistribution
   tstDeltaDistribution.cpp
@@ -338,59 +355,59 @@ ADD_EXECUTABLE(tstCompoundSource
 TARGET_LINK_LIBRARIES(tstCompoundSource ${PROJECT_NAME})
 ADD_TEST(CompoundSource_test tstCompoundSource --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat")
 
-ADD_EXECUTABLE(tstResponseFunction
-  tstResponseFunction.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstResponseFunction ${PROJECT_NAME})
-ADD_TEST(ResponseFunction_test tstResponseFunction)
+# ADD_EXECUTABLE(tstResponseFunction
+#   tstResponseFunction.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstResponseFunction ${PROJECT_NAME})
+# ADD_TEST(ResponseFunction_test tstResponseFunction)
 
-ADD_EXECUTABLE(tstEnergySpaceResponseFunction
-  tstEnergySpaceResponseFunction.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstEnergySpaceResponseFunction ${PROJECT_NAME})
-ADD_TEST(EnergySpaceResponseFunction_test tstEnergySpaceResponseFunction)
+# ADD_EXECUTABLE(tstEnergySpaceResponseFunction
+#   tstEnergySpaceResponseFunction.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstEnergySpaceResponseFunction ${PROJECT_NAME})
+# ADD_TEST(EnergySpaceResponseFunction_test tstEnergySpaceResponseFunction)
 
-ADD_EXECUTABLE(tstPhaseSpaceResponseFunction
-  tstPhaseSpaceResponseFunction.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstPhaseSpaceResponseFunction ${PROJECT_NAME})
-ADD_TEST(PhaseSpaceResponseFunction_test tstPhaseSpaceResponseFunction)
+# ADD_EXECUTABLE(tstPhaseSpaceResponseFunction
+#   tstPhaseSpaceResponseFunction.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstPhaseSpaceResponseFunction ${PROJECT_NAME})
+# ADD_TEST(PhaseSpaceResponseFunction_test tstPhaseSpaceResponseFunction)
 
-ADD_EXECUTABLE(tstGeneralEstimatorDimensionDiscretization
-  tstGeneralEstimatorDimensionDiscretization.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstGeneralEstimatorDimensionDiscretization ${PROJECT_NAME})
-ADD_TEST(GeneralEstimatorDimensionDiscretization_test tstGeneralEstimatorDimensionDiscretization)
+# ADD_EXECUTABLE(tstGeneralEstimatorDimensionDiscretization
+#   tstGeneralEstimatorDimensionDiscretization.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstGeneralEstimatorDimensionDiscretization ${PROJECT_NAME})
+# ADD_TEST(GeneralEstimatorDimensionDiscretization_test tstGeneralEstimatorDimensionDiscretization)
 
-ADD_EXECUTABLE(tstEstimator
-  tstEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstEstimator ${PROJECT_NAME})
-ADD_TEST(Estimator_test tstEstimator)
+# ADD_EXECUTABLE(tstEstimator
+#   tstEstimator.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstEstimator ${PROJECT_NAME})
+# ADD_TEST(Estimator_test tstEstimator)
 
-Add_EXECUTABLE(tstEntityEstimator
-  tstEntityEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstEntityEstimator ${PROJECT_NAME})
-ADD_TEST(EntityEstimator_test tstEntityEstimator)
+# Add_EXECUTABLE(tstEntityEstimator
+#   tstEntityEstimator.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstEntityEstimator ${PROJECT_NAME})
+# ADD_TEST(EntityEstimator_test tstEntityEstimator)
 
-Add_EXECUTABLE(tstStandardEntityEstimator
-  tstStandardEntityEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstStandardEntityEstimator ${PROJECT_NAME})
-ADD_TEST(StandardEntityEstimator_test tstStandardEntityEstimator)
+# Add_EXECUTABLE(tstStandardEntityEstimator
+#   tstStandardEntityEstimator.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstStandardEntityEstimator ${PROJECT_NAME})
+# ADD_TEST(StandardEntityEstimator_test tstStandardEntityEstimator)
 
-Add_EXECUTABLE(tstStandardSurfaceEstimator
-  tstStandardSurfaceEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstStandardSurfaceEstimator ${PROJECT_NAME})
-ADD_TEST(StandardSurfaceEstimator_test tstStandardSurfaceEstimator)
+# Add_EXECUTABLE(tstStandardSurfaceEstimator
+#   tstStandardSurfaceEstimator.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstStandardSurfaceEstimator ${PROJECT_NAME})
+# ADD_TEST(StandardSurfaceEstimator_test tstStandardSurfaceEstimator)
 
-Add_EXECUTABLE(tstCellPulseHeightEstimator
-  tstCellPulseHeightEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstCellPulseHeightEstimator ${PROJECT_NAME})
-ADD_TEST(CellPulseHeightEstimator_test tstCellPulseHeightEstimator)
+# Add_EXECUTABLE(tstCellPulseHeightEstimator
+#   tstCellPulseHeightEstimator.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstCellPulseHeightEstimator ${PROJECT_NAME})
+# ADD_TEST(CellPulseHeightEstimator_test tstCellPulseHeightEstimator)
 
 ADD_EXECUTABLE(tstACEFileHandler
   tstACEFileHandler.cpp)
@@ -402,8 +419,8 @@ ADD_EXECUTABLE(tstXSSNeutronDataExtractor
 TARGET_LINK_LIBRARIES(tstXSSNeutronDataExtractor ${PROJECT_NAME})
 ADD_TEST(XSSNeutronDataExtractor_test tstXSSNeutronDataExtractor --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ace_file.txt" --test_basic_ace_table="1001.70c")
 
-ADD_EXECUTABLE(tstScatteringDistribution
-  tstScatteringDistribution.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstScatteringDistribution ${PROJECT_NAME})
-ADD_TEST(ScatteringDistribution_test tstScatteringDistribution)
+# ADD_EXECUTABLE(tstScatteringDistribution
+#   tstScatteringDistribution.cpp
+#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
+# TARGET_LINK_LIBRARIES(tstScatteringDistribution ${PROJECT_NAME})
+# ADD_TEST(ScatteringDistribution_test tstScatteringDistribution)

@@ -39,7 +39,7 @@ public:
   { /* ... */ }
 
   //! Sample a particle state from the source
-  void sampleParticleState( BasicParticleState& particle );
+  void sampleParticleState( ParticleBank& bank );
   
   //! Return the sampling efficiency from the source
   double getSamplingEfficiency() const;

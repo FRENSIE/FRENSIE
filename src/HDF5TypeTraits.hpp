@@ -111,6 +111,30 @@ struct HDF5TypeTraits<unsigned int>
   { return Teuchos::ScalarTraits<unsigned>::one(); }
 };
 
+/*! \brief The specialization of the FACEMC::HDF5TypeTraits for unsigned long
+ * long
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<unsigned long long>
+{
+  //! Returns the HDF5 data type object corresponding to unsigned int
+  static inline H5::PredType dataType() 
+  { return H5::PredType::NATIVE_ULLONG; }
+  
+  //! Returns the name of the type
+  static inline std::string name() 
+  { return "unsigned long long int"; }
+  
+  //! Returns the zero value for this type
+  static inline unsigned zero()
+  { return 0ull; }
+
+  //! Returns the unity value for this type
+  static inline unsigned one()
+  { return 1ull; }
+};
+
 } // end Traits namespace
 
 } // end FACEMC namespace

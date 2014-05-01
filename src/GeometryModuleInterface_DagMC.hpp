@@ -117,15 +117,20 @@ public:
 
 private:
 
+  //! Get the particle location w.r.t. a given cell
+  static PointLocation getParticleLocation( const ExternalCellHandle cell,
+					    const double position[3],
+					    const double direction[3] );
+
   //! Get all the cells contained in the geometry
   static void getAllCells();
 
   //! Test the cells found to contain test points for point containment
-  static void testCellsContainingTestPoints( ExternalCellHandle& cell,
-					    const ParticleState& particle );
+  static void testCellsContainingTestPoints( InternalCellHandle& cell,
+					     const ParticleState& particle );
 
   //! Test all remaining cells for point containment
-  static void testAllRemainingCells( ExternalCellHandle& cell,
+  static void testAllRemainingCells( InternalCellHandle& cell,
 				     const ParticleState& particle );
 
   // An instance of DagMC

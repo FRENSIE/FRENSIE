@@ -11,12 +11,10 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_Array.hpp>
+#include <Teuchos_ArrayRCP.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FACEMC Includes
-#include "BasicParticleState.hpp"
-#include "ParticleState.hpp"
 #include "StateSource.hpp"
 
 Teuchos::RCP<FACEMC::ParticleSource> source;
@@ -27,39 +25,45 @@ Teuchos::RCP<FACEMC::ParticleSource> source;
 // Initialize the source
 void initializeSource()
 {
-  Teuchos::Array<FACEMC::BasicParticleState> particle_states( 3 );
+  Teuchos::ArrayRCP<FACEMC::ParticleStateCore> raw_particle_states( 3 );
 
-  double position[3] = {1.0, 1.0, 1.0};
-  double direction[3] = {1.0/sqrt(3.0),1.0/sqrt(3.0),1.0/sqrt(3.0)};
-  
-  FACEMC::BasicParticleState particle_1( FACEMC::PHOTON,
-					 position,
-					 direction,
-					 1.0,
-					 0.0,
-					 1.0 );
+  FACEMC::ParticleStateCore particle_core_1( 1ull,
+					     FACEMC::PHOTON,
+					     1.0, 1.0, 1.0,
+					     1.0, 0.0, 0.0,
+					     1.0,
+					     0.5,
+					     1u,
+					     1u,
+					     0.25 );
 
-  particle_states[0] = particle_1;
+  raw_particle_states[0] = particle_core_1;
 
-  FACEMC::BasicParticleState particle_2( FACEMC::PHOTON,
-					 position,
-					 direction,
-					 2.0,
-					 0.0,
-					 1.0 );
+  FACEMC::ParticleStateCore particle_core_2( 10ull,
+					     FACEMC::NEUTRON,
+					     2.0, 2.0, 2.0,
+					     0.0, 1.0, 0.0,
+					     2.0,
+					     0.75,
+					     2u,
+					     2u,
+					     0.3 );
 
-  particle_states[1] = particle_2;
+  raw_particle_states[1] = particle_core_2;
 
-  FACEMC::BasicParticleState particle_3( FACEMC::NEUTRON,
-					 position,
-					 direction,
-					 3.0,
-					 0.0,
-					 1.0 );
+  FACEMC::ParticleStateCore particle_core_3( 1ull,
+					     FACEMC::PHOTON,
+					     3.0, 3.0, 3.0,
+					     0.0, 0.0, 1.0,
+					     3.0,
+					     0.9,
+					     2u,
+					     3u,
+					     0.5 );
 
-  particle_states[2] = particle_3;
+  raw_particle_states[2] = particle_core_3;
 
-  source.reset( new FACEMC::StateSource( particle_states ) );
+  source.reset( new FACEMC::StateSource( raw_particle_states ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -69,62 +73,76 @@ void initializeSource()
 TEUCHOS_UNIT_TEST( StateSource, sampleParticleState )
 {
   initializeSource();
-
-  FACEMC::ParticleState<unsigned long long> particle_1( 1ull );
-
-  source->sampleParticleState( particle_1 );
-
-  TEST_EQUALITY_CONST( particle_1.getParticleType(), FACEMC::PHOTON );
-  TEST_EQUALITY_CONST( particle_1.getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle_1.getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle_1.getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle_1.getXDirection(), 1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( particle_1.getYDirection(), 1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( particle_1.getZDirection(), 1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( particle_1.getEnergy(), 1.0 );
-  TEST_EQUALITY_CONST( particle_1.getTime(), 0.0 );
-  TEST_EQUALITY_CONST( particle_1.getWeight(), 1.0 );
-
-  FACEMC::ParticleState<unsigned long long> particle_2( 2ull );
   
-  source->sampleParticleState( particle_2 );
+  FACEMC::ParticleBank bank;
+  source->sampleParticleState( bank );
 
-  TEST_EQUALITY_CONST( particle_2.getParticleType(), FACEMC::PHOTON );
-  TEST_EQUALITY_CONST( particle_2.getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle_2.getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle_2.getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle_2.getXDirection(), 1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( particle_2.getYDirection(), 1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( particle_2.getZDirection(), 1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( particle_2.getEnergy(), 2.0 );
-  TEST_EQUALITY_CONST( particle_2.getTime(), 0.0 );
-  TEST_EQUALITY_CONST( particle_2.getWeight(), 1.0 );
+  TEST_EQUALITY_CONST( bank.size(), 2 );
 
-  FACEMC::ParticleState<unsigned long long> particle_3( 3ull );
-  
-  source->sampleParticleState( particle_3 );
+  Teuchos::RCP<FACEMC::ParticleState> particle = bank.top();
+  bank.pop();
 
-  TEST_EQUALITY_CONST( particle_3.getParticleType(), FACEMC::NEUTRON );
-  TEST_EQUALITY_CONST( particle_3.getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle_3.getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle_3.getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle_3.getXDirection(), 1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( particle_3.getYDirection(), 1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( particle_3.getZDirection(), 1.0/sqrt(3.0) );
-  TEST_EQUALITY_CONST( particle_3.getEnergy(), 3.0 );
-  TEST_EQUALITY_CONST( particle_3.getTime(), 0.0 );
-  TEST_EQUALITY_CONST( particle_3.getWeight(), 1.0 );
+  TEST_EQUALITY_CONST( particle->getHistoryNumber(), 0ull );
+  TEST_EQUALITY_CONST( particle->getParticleType(), FACEMC::PHOTON );
+  TEST_EQUALITY_CONST( particle->getXPosition(), 3.0 );
+  TEST_EQUALITY_CONST( particle->getYPosition(), 3.0 );
+  TEST_EQUALITY_CONST( particle->getZPosition(), 3.0 );
+  TEST_EQUALITY_CONST( particle->getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle->getEnergy(), 3.0 );
+  TEST_EQUALITY_CONST( particle->getTime(), 0.9 );
+  TEST_EQUALITY_CONST( particle->getCollisionNumber(), 2u );
+  TEST_EQUALITY_CONST( particle->getGenerationNumber(), 3u );
+  TEST_EQUALITY_CONST( particle->getWeight(), 0.5 );
+
+  particle = bank.top();
+  bank.pop();
+
+  TEST_EQUALITY_CONST( particle->getHistoryNumber(), 0ull );
+  TEST_EQUALITY_CONST( particle->getParticleType(), FACEMC::PHOTON );
+  TEST_EQUALITY_CONST( particle->getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle->getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle->getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle->getXDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle->getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getZDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getEnergy(), 1.0 );
+  TEST_EQUALITY_CONST( particle->getTime(), 0.5 );
+  TEST_EQUALITY_CONST( particle->getCollisionNumber(), 1u );
+  TEST_EQUALITY_CONST( particle->getGenerationNumber(), 1u );
+  TEST_EQUALITY_CONST( particle->getWeight(), 0.25 );
+
+  // Sample from the source again
+  source->sampleParticleState( bank );
+
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+
+  particle = bank.top();
+  bank.top();
+
+  TEST_EQUALITY_CONST( particle->getHistoryNumber(), 1ull );
+  TEST_EQUALITY_CONST( particle->getParticleType(), FACEMC::NEUTRON );
+  TEST_EQUALITY_CONST( particle->getXPosition(), 2.0 );
+  TEST_EQUALITY_CONST( particle->getYPosition(), 2.0 );
+  TEST_EQUALITY_CONST( particle->getZPosition(), 2.0 );
+  TEST_EQUALITY_CONST( particle->getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getYDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle->getZDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getEnergy(), 2.0 );
+  TEST_EQUALITY_CONST( particle->getTime(), 0.75 );
+  TEST_EQUALITY_CONST( particle->getCollisionNumber(), 2u );
+  TEST_EQUALITY_CONST( particle->getGenerationNumber(), 2u );
+  TEST_EQUALITY_CONST( particle->getWeight(), 0.3 );
 
   // Attempting to get another particle state should cause an exception
-  TEST_THROW( source->sampleParticleState( particle_3 ), std::runtime_error );
+  TEST_THROW( source->sampleParticleState( bank ), std::runtime_error );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the sampling efficiency can be returned
 TEUCHOS_UNIT_TEST( StateSource, getSamplingEfficiency )
 {
-  initializeSource();
-
   TEST_EQUALITY_CONST( source->getSamplingEfficiency(), 1.0 );
 }
 

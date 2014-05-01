@@ -169,7 +169,38 @@ TEUCHOS_UNIT_TEST( NeutronState, copy_constructor )
 
 //---------------------------------------------------------------------------//
 // Create new particles
-TEUCHOS_UNIT_TEST( NeutronState, assignment_operatore )
+TEUCHOS_UNIT_TEST( NeutronState, core_constructor )
+{
+  FACEMC::ParticleStateCore core( 1ull, 
+				  FACEMC::NEUTRON, 
+				  1.0, 1.0, 1.0,
+				  0.0, 1.0, 0.0,
+				  2.0,
+				  0.5,
+				  1u,
+				  2u,
+				  0.25 );
+
+  FACEMC::NeutronState particle( core );
+
+  TEST_EQUALITY_CONST( particle.getHistoryNumber(), 1ull );
+  TEST_EQUALITY_CONST( particle.getParticleType(), FACEMC::NEUTRON );
+  TEST_EQUALITY_CONST( particle.getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle.getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle.getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle.getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getYDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle.getZDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle.getEnergy(), 2.0 );
+  TEST_EQUALITY_CONST( particle.getTime(), 0.5 );
+  TEST_EQUALITY_CONST( particle.getCollisionNumber(), 1u );
+  TEST_EQUALITY_CONST( particle.getGenerationNumber(), 2u );
+  TEST_EQUALITY_CONST( particle.getWeight(), 0.25 );
+}
+
+//---------------------------------------------------------------------------//
+// Create new particles
+TEUCHOS_UNIT_TEST( NeutronState, assignment_operator )
 {
   FACEMC::NeutronState particle_gen_a( 1ull );
   particle_gen_a.setPosition( 1.0, 1.0, 1.0 );

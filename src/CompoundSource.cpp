@@ -44,7 +44,7 @@ CompoundSource::CompoundSource(
 }
 
 // Sample a particle state from the source
-void CompoundSource::sampleParticleState( BasicParticleState& particle )
+void CompoundSource::sampleParticleState( ParticleBank& bank )
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
   
@@ -55,7 +55,7 @@ void CompoundSource::sampleParticleState( BasicParticleState& particle )
 							     d_sources.end(),
 							     random_number );
   // Sample from the source
-  selected_source->first->sampleParticleState( particle );
+  selected_source->first->sampleParticleState( bank );
   
   // Increment the number of samples from the source
   ++(selected_source->third);  

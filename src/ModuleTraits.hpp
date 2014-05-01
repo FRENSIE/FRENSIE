@@ -40,7 +40,7 @@ struct ModuleTraits
   typedef unsigned long long InternalEstimatorHandle;
   //! The internal material handle type
   typedef unsigned long long InternalMaterialHandle;
-
+  
   //! The invalid cell handle value
   static const InternalCellHandle invalid_internal_cell_handle; 
   

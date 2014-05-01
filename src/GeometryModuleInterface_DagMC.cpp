@@ -51,8 +51,8 @@ void GeometryModuleInterface<moab::DagMC>::updateCellContainingParticle(
   if( GeometryModuleInterface<moab::DagMC>::all_cells.empty() )
     GeometryModuleInterface<moab::DagMC>::getAllCells();
 
-  ExternalCellHandle cell_containing_point = 
-    GeometryModuleInterface<moab::DagMC>::invalid_external_cell_handle;
+  InternalCellHandle cell_containing_point = 
+    Traits::ModuleTraits::invalid_internal_cell_handle;
 
   // Try using the cells found to contain previously tested particles first
   GeometryModuleInterface<moab::DagMC>::testCellsContainingTestPoints(
@@ -61,7 +61,7 @@ void GeometryModuleInterface<moab::DagMC>::updateCellContainingParticle(
 
   // Try all remaining cells if necessary
   if( cell_containing_point ==
-      GeometryModuleInterface<moab::DagMC>::invalid_external_cell_handle )
+      Traits::ModuleTraits::invalid_internal_cell_handle )
   {
     GeometryModuleInterface<moab::DagMC>::testAllRemainingCells(
 							 cell_containing_point,
@@ -71,16 +71,11 @@ void GeometryModuleInterface<moab::DagMC>::updateCellContainingParticle(
   // Test if the particle is lost
   TEST_FOR_EXCEPTION( 
 	    cell_containing_point ==
-	    GeometryModuleInterface<moab::DagMC>::invalid_external_cell_handle,
+	    Traits::ModuleTraits::invalid_internal_cell_handle,
 	    FACEMC::MOABException,
 	    moab::ErrorCodeStr[4] );
 
-  // Update the particle state
-  InternalCellHandle cell_containing_point_internal = 
-    GeometryModuleInterface<moab::DagMC>::getInternalCellHandle( 
-						       cell_containing_point );
-  
-  particle.setCell( cell_containing_point_internal );
+  particle.setCell( cell_containing_point );
 }
 
 // Update the cell that contains a given particle (surface crossing)
@@ -170,6 +165,18 @@ PointLocation GeometryModuleInterface<moab::DagMC>::getParticleLocation(
   ExternalCellHandle cell_external = 
     GeometryModuleInterface<moab::DagMC>::getExternalCellHandle( cell );
     
+  return GeometryModuleInterface<moab::DagMC>::getParticleLocation(
+								 cell_external,
+								 position,
+								 direction );
+}
+
+// Get the particle location w.r.t. a given cell (using an external handle)
+PointLocation GeometryModuleInterface<moab::DagMC>::getParticleLocation(
+						 const ExternalCellHandle cell,
+						 const double position[3],
+						 const double direction[3] )
+{
   int test_result;
   
   moab::ErrorCode return_value = 
@@ -223,7 +230,7 @@ void GeometryModuleInterface<moab::DagMC>::getAllCells()
 
 // Test the cells found to contain test points for point containment
 void GeometryModuleInterface<moab::DagMC>::testCellsContainingTestPoints( 
-						ExternalCellHandle& cell,
+						InternalCellHandle& cell,
 						const ParticleState& particle )
 {
   boost::unordered_set<ExternalCellHandle>::const_iterator cell_handle = 
@@ -242,7 +249,8 @@ void GeometryModuleInterface<moab::DagMC>::testCellsContainingTestPoints(
     
     if( test_point_location == POINT_INSIDE_CELL )
     {
-      cell = *cell_handle;
+      cell = GeometryModuleInterface<moab::DagMC>::getInternalCellHandle( 
+								*cell_handle );
       
       break;
     }
@@ -253,7 +261,7 @@ void GeometryModuleInterface<moab::DagMC>::testCellsContainingTestPoints(
 
 // Test all remaining cells for point containment
 void GeometryModuleInterface<moab::DagMC>::testAllRemainingCells( 
-					        ExternalCellHandle& cell,
+					        InternalCellHandle& cell,
 						const ParticleState& particle )
 {
   moab::Range::const_iterator cell_handle = 
@@ -272,14 +280,15 @@ void GeometryModuleInterface<moab::DagMC>::testAllRemainingCells(
     
     if( test_point_location == POINT_INSIDE_CELL )
     {
-      cell = *cell_handle;
+      cell = GeometryModuleInterface<moab::DagMC>::getInternalCellHandle( 
+								*cell_handle );
       
       // Add the cell to the set of cells found to contain test points
       GeometryModuleInterface<moab::DagMC>::cells_containing_test_points.insert( *cell_handle );
       
       // Remove the entity handle from the remaining cells container so 
       // that it is not checked twice in the future.
-      GeometryModuleInterface<moab::DagMC>::all_cells.erase( cell );
+      GeometryModuleInterface<moab::DagMC>::all_cells.erase( *cell_handle );
 	
       break;
     }

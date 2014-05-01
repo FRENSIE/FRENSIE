@@ -14,8 +14,9 @@
 namespace FACEMC{
 
 // Constructor
-NeutronState::NeutronState( const unsigned long long history_number )
-  : ParticleState( history_number ),
+NeutronState::NeutronState( 
+		        const ParticleState::historyNumberType history_number )
+  : ParticleState( history_number, NEUTRON ),
     d_speed( 0.0 )
 { /* ... */ }
 
@@ -24,6 +25,7 @@ NeutronState::NeutronState( const NeutronState& existing_neutron_state,
 			    const bool increment_generation_number,
 			    const bool reset_collision_number )
   : ParticleState( existing_neutron_state, 
+		   NEUTRON,
 		   increment_generation_number,
 		   reset_collision_number ),
     d_speed( existing_neutron_state.d_speed )
@@ -34,10 +36,23 @@ NeutronState::NeutronState( const ParticleState& existing_base_state,
 			    const bool increment_generation_number,
 			    const bool reset_collision_number )
   : ParticleState( existing_base_state, 
+		   NEUTRON,
 		   increment_generation_number,
 		   reset_collision_number ),
     d_speed()
 {
+  d_speed = calculateSpeed( PhysicalConstants::neutron_rest_mass_energy,
+			    this->getEnergy() );
+}
+
+// Core constructor
+NeutronState::NeutronState( const ParticleStateCore& core )
+  : ParticleState( core ),
+    d_speed()
+{
+  // Make sure the core is a neutron core
+  testPrecondition( core.particle_type == NEUTRON );
+  
   d_speed = calculateSpeed( PhysicalConstants::neutron_rest_mass_energy,
 			    this->getEnergy() );
 }
@@ -49,12 +64,6 @@ NeutronState& NeutronState::operator=(
   ParticleState::operator=( existing_neutron_state );
 
   d_speed = existing_neutron_state.d_speed;
-}
-
-// Return the particle type
-ParticleType NeutronState::getParticleType() const
-{
-  return NEUTRON;
 }
 
 // Set the energy of the neutron (MeV)

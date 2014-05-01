@@ -27,7 +27,7 @@ TEUCHOS_UNIT_TEST( ParticleBank, push )
 
   TEST_ASSERT( bank.empty() );
 
-  FACEMC::ParticleBank::ParticleStatePtr particle( 
+  FACEMC::ParticleState::pointerType particle( 
 					     new FACEMC::PhotonState( 0ull ) );
   
   bank.push( particle );
@@ -49,7 +49,7 @@ TEUCHOS_UNIT_TEST( ParticleBank, top )
 {
   FACEMC::ParticleBank bank;
   
-  FACEMC::ParticleBank::ParticleStatePtr particle( 
+  FACEMC::ParticleState::pointerType particle( 
 					     new FACEMC::PhotonState( 0ull ) );
   
   bank.push( particle );
@@ -67,7 +67,7 @@ TEUCHOS_UNIT_TEST( ParticleBank, pop )
 {
   FACEMC::ParticleBank bank;
   
-  FACEMC::ParticleBank::ParticleStatePtr particle( 
+  FACEMC::ParticleState::pointerType particle( 
 					     new FACEMC::PhotonState( 0ull ) );
   
   bank.push( particle );

@@ -26,12 +26,15 @@ private:
 public:
 
   //! Constructor
-  PhotonState( const unsigned long long history_number );
+  PhotonState( const ParticleState::historyNumberType history_number );
 
   //! Copy constructor (with possible creation of new generation)
   PhotonState( const ParticleState& existing_base_state,
 	       const bool increment_generation_number = false,
 	       const bool reset_collision_number = false );
+
+  //! Core constructor
+  PhotonState( const ParticleStateCore& core );
 
   //! Assignment operator
   PhotonState& operator=( const PhotonState& existing_photon_state );
@@ -39,9 +42,6 @@ public:
   //! Destructor
   ~PhotonState()
   { /* ... */ }
-
-  //! Return the particle type
-  ParticleType getParticleType() const;
 
   //! Return the speed of the particle (cm/s)
   double getSpeed() const;

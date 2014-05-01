@@ -19,24 +19,26 @@
 #include "SpatialDistribution.hpp"
 #include "DirectionalDistribution.hpp"
 #include "ParticleType.hpp"
-#include "GeometryHandlerTraits.hpp"
+#include "ParticleBank.hpp"
+#include "ModuleTraits.hpp"
+#include "PointLocation.hpp"
 
 namespace FACEMC{
 
 //! The distributed source class
-template<typename GeometryHandler>
 class DistributedSource : public ParticleSource
 {
 
 private:
   
-  // Typedef for geometry handler traits
-  typedef Traits::GeometryHandlerTraits<GeometryHandler> GHT;
-
   // Typedef for scalar traits
   typedef Teuchos::ScalarTraits<double> ST;
 
+
 public:
+
+  //! Typedef for get particle location geometry module interface function
+  typedef PointLocation (*getLocationFunction)(const Traits::ModuleTraits::InternalCellHandle,const double*,const double*);
   
   //! Constructor
   DistributedSource( 
@@ -44,7 +46,8 @@ public:
 	 const Teuchos::RCP<DirectionalDistribution>& directional_distribution,
 	 const Teuchos::RCP<OneDDistribution>& energy_distribution,
 	 const Teuchos::RCP<OneDDistribution>& time_distribution,
-	 const ParticleType particle_type );
+	 const ParticleType particle_type,
+	 getLocationFunction get_particle_location_func );
 
   //! Destructor
   ~DistributedSource()
@@ -67,11 +70,10 @@ public:
 		     const Teuchos::RCP<OneDDistribution>& time_distribution );
 
   //! Set the rejection cell
-  template<typename CellHandle>
-  void setRejectionCell( const CellHandle& cell );
+  void setRejectionCell( const Traits::ModuleTraits::InternalCellHandle& cell);
 
   //! Sample a particle state from the source
-  void sampleParticleState( BasicParticleState& particle );
+  void sampleParticleState( ParticleBank& bank );
 
   //! Get the sampling efficiency from the source distribution
   double getSamplingEfficiency() const;
@@ -79,18 +81,18 @@ public:
 private:
 
   // Sample the particle position
-  void sampleParticlePosition( BasicParticleState& particle );
+  void sampleParticlePosition( ParticleState& particle );
 
   // Sample the particle direction
-  void sampleParticleDirection( BasicParticleState& particle );
+  void sampleParticleDirection( ParticleState& particle );
 
   // Sample the particle energy
-  void sampleParticleEnergy( BasicParticleState& particle );
+  void sampleParticleEnergy( ParticleState& particle );
   
   // Sample the particle time
-  void sampleParticleTime( BasicParticleState& particle );
+  void sampleParticleTime( ParticleState& particle );
 
-  // The spatial distribution of the source (possibly an importance dist.)
+  // The spatial distribution of the source 
   Teuchos::RCP<SpatialDistribution> d_spatial_distribution;
   
   // The true spatial distribution of the source
@@ -118,24 +120,22 @@ private:
   ParticleType d_particle_type;
 
   // The cell handle of the cell used for rejection sampling of the position
-  typename GHT::CellHandle d_rejection_cell;
+  Traits::ModuleTraits::InternalCellHandle d_rejection_cell;
+
+  // The current history number
+  unsigned long long d_history_number;
 
   // The number of trials
   unsigned d_number_of_trials;
 
   // The number of valid samples
   unsigned d_number_of_samples;
+
+  // A pointer to the desired getParticleLocation geometry module function
+  getLocationFunction d_get_particle_location_func;
 };
 
 } // end FACEMC namespace
-
-//---------------------------------------------------------------------------//
-// Template includes.
-//---------------------------------------------------------------------------//
-
-#include "DistributedSource_def.hpp"
-
-//---------------------------------------------------------------------------//
 
 #endif // end DISTRIBUTED_SOURCE_HPP
 

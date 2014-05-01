@@ -19,6 +19,7 @@
 #include "ParticleState.hpp"
 #include "NeutronState.hpp"
 #include "NuclearReactionType.hpp"
+#include "ModuleTraits.hpp"
 
 namespace FACEMC{
 
@@ -28,11 +29,8 @@ class ParticleBank
 
 public:
 
-  //! Type of particle state pointer
-  typedef Teuchos::RCP<ParticleState> ParticleStatePtr;
-
   //! Type of the bank elements
-  typedef ParticleStatePtr value_type;
+  typedef ParticleState::pointerType value_type;
   
   //! Type of the underlying container
   typedef std::list<value_type> container_type;

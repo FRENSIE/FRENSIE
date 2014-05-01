@@ -12,8 +12,7 @@
 
 // FACEMC Includes
 #include "StateSource.hpp"
-#include "PhotonState.hpp"
-#include "NeutronState.hpp"
+#include "ParticleStateFactory.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -70,24 +69,7 @@ void StateSource::sampleParticleState( ParticleBank& bank )
   {
     const ParticleStateCore& core = d_raw_particle_states[d_next_index];
 
-    Teuchos::RCP<ParticleState> particle;
-    
-    switch( core.particle_type )
-    {
-    case PHOTON:
-      particle.reset( new PhotonState( core ) );
-      break;
-    case NEUTRON:
-      particle.reset( new NeutronState( core ) );
-      break;
-    default:
-      std::string error_message = "Error: The particle type found in the ";
-      error_message += "particle state core has not been implemented.\n";
-      
-      throw std::logic_error( error_message );
-    }
-
-    bank.push( particle );
+    bank.push( ParticleStateFactory::createState( core ) );
     
     ++d_next_index;
 

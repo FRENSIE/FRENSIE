@@ -26,7 +26,7 @@ private:
 public:
 
   //! Constructor
-  NeutronState( const unsigned long long history_number );
+  NeutronState( const ParticleState::historyNumberType history_number );
 
   //! Copy constructor (with possible creation of new generation)
   NeutronState( const NeutronState& existing_neutron_state,
@@ -38,15 +38,15 @@ public:
 		const bool increment_generation_number = false,
 		const bool reset_collision_number = false );
 
+  //! Core constructor
+  NeutronState( const ParticleStateCore& core );
+
   //! Assignment operator
   NeutronState& operator=( const NeutronState& existing_neutron_state );
 
   //! Destructor
   ~NeutronState()
   { /* ... */ }
-
-  //! Return the particle type
-  ParticleType getParticleType() const;
 
   //! Set the energy of the neutron (MeV)
   void setEnergy( const ParticleState::energyType energy );

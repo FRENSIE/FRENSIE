@@ -9,8 +9,11 @@
 #ifndef PARTICLE_SOURCE_HPP
 #define PARTICLE_SOURCE_HPP
 
+// Trilinos Includes
+#include <Teuchos_RCP.hpp>
+
 // FACEMC Includes
-#include "BasicParticleState.hpp"
+#include "ParticleBank.hpp"
 
 namespace FACEMC{
 
@@ -29,7 +32,7 @@ public:
   { /* ... */ }
 
   //! Sample a particle state from the source
-  virtual void sampleParticleState( BasicParticleState& particle ) = 0;
+  virtual void sampleParticleState( ParticleBank& bank ) = 0;
 
   //! Return the sampling efficiency from the source
   virtual double getSamplingEfficiency() const = 0;

@@ -294,7 +294,11 @@ ParticleStateCore ParticleState::exportCore() const
 // Print method implementation
 void ParticleState::printImplementation( std::ostream& os ) const
 {
-  os << "Cell: " << d_cell << std::endl;
+  os << "Cell: ";
+  if( d_cell == Traits::ModuleTraits::invalid_internal_cell_handle )
+    os << "Invalid/Unknown" << std::endl;
+  else
+    os << d_cell << std::endl;
   os << "Position: {" << d_core.x_position << "," << d_core.y_position << ","
      << d_core.z_position << "}" << std::endl;
   os << "Direction: {" << d_core.x_direction << "," 

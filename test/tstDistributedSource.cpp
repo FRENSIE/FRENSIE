@@ -32,6 +32,7 @@
 #include "PhysicalConstants.hpp"
 #include "RandomNumberGenerator.hpp"
 #include "DagMCHelpers.hpp"
+#include "GeometryModuleInterface.hpp"
 
 Teuchos::RCP<FACEMC::ParticleSource> source;
 
@@ -94,12 +95,13 @@ void initializeSource( const bool set_importance_functions = false,
     time_distribution( new FACEMC::DeltaDistribution( 0.0 ) );
 
   // Create the distributed source
-  source.reset( new FACEMC::DistributedSource<GeometryHandler>( 
-						      spatial_distribution,
-						      directional_distribution,
-						      energy_distribution,
-						      time_distribution,
-						      FACEMC::PHOTON ) );
+  source.reset( new FACEMC::DistributedSource( 
+     spatial_distribution,
+     directional_distribution,
+     energy_distribution,
+     time_distribution,
+     FACEMC::PHOTON,
+     &FACEMC::GeometryModuleInterface<GeometryHandler>::getParticleLocation) );
 
   // Set the importance functions if requested
   if( set_importance_functions )
@@ -150,8 +152,8 @@ void initializeSource( const bool set_importance_functions = false,
 								bin_boundaries,
 								bin_values ) );
     
-    Teuchos::RCP<FACEMC::DistributedSource<GeometryHandler> >
-      distributed_source = Teuchos::rcp_dynamic_cast<FACEMC::DistributedSource<GeometryHandler> >( source );
+    Teuchos::RCP<FACEMC::DistributedSource> distributed_source = 
+      Teuchos::rcp_dynamic_cast<FACEMC::DistributedSource>( source );
 									     
     distributed_source->setSpatialImportanceDistribution( 
 					     spatial_importance_distribution );
@@ -164,13 +166,11 @@ void initializeSource( const bool set_importance_functions = false,
   // Set the rejection cell if requested
   if( set_rejection_cell )
   {
-    Teuchos::RCP<FACEMC::DistributedSource<GeometryHandler> >
-      distributed_source = Teuchos::rcp_dynamic_cast<FACEMC::DistributedSource<GeometryHandler> >( source );
+    Teuchos::RCP<FACEMC::DistributedSource> distributed_source = 
+      Teuchos::rcp_dynamic_cast<FACEMC::DistributedSource>( source );
 
     // Cell (id=2) of the test geometry will be used as the rejection cell
-    typename FACEMC::Traits::GeometryHandlerTraits<GeometryHandler>::CellHandle
-      cell = FACEMC::Traits::GeometryHandlerTraits<GeometryHandler>::getCellHandle( 2 );
-    distributed_source->setRejectionCell( cell );
+    distributed_source->setRejectionCell( 2 );
   }
 }
 
@@ -199,29 +199,29 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
 {
   initializeSource<GeometryHandler>();
   
-  typedef FACEMC::Traits::GeometryHandlerTraits<GeometryHandler> GHT;
-
-  FACEMC::ParticleState<typename GHT::CellHandle> particle_1( 1ull );
-
-  source->sampleParticleState( particle_1 );
+  FACEMC::ParticleBank bank;
   
-  TEST_EQUALITY_CONST( particle_1.getParticleType(), FACEMC::PHOTON );
-  TEST_COMPARE( particle_1.getXPosition(), >=, -2.0 );
-  TEST_COMPARE( particle_1.getXPosition(), <=, 2.0 );
-  TEST_COMPARE( particle_1.getYPosition(), >=, -2.0 );
-  TEST_COMPARE( particle_1.getYPosition(), <=, 2.0 );
-  TEST_COMPARE( particle_1.getZPosition(), >=, -2.0 );
-  TEST_COMPARE( particle_1.getZPosition(), <=, 2.0 );
-  TEST_COMPARE( particle_1.getXDirection(), >=, -1.0 );
-  TEST_COMPARE( particle_1.getXDirection(), <=, 1.0 );
-  TEST_COMPARE( particle_1.getYDirection(), >=, -1.0 );
-  TEST_COMPARE( particle_1.getYDirection(), <=, 1.0 );
-  TEST_COMPARE( particle_1.getZDirection(), >=, -1.0 );
-  TEST_COMPARE( particle_1.getZDirection(), <=, 1.0 );
-  TEST_COMPARE( particle_1.getEnergy(), >=, 1e-3 );
-  TEST_COMPARE( particle_1.getEnergy(), <=, 1.0 );
-  TEST_EQUALITY_CONST( particle_1.getTime(), 0.0 );
-  TEST_EQUALITY_CONST( particle_1.getWeight(), 1.0 );
+  source->sampleParticleState( bank );
+  
+  FACEMC::ParticleState::pointerType particle = bank.top();
+  
+  TEST_EQUALITY_CONST( particle->getParticleType(), FACEMC::PHOTON );
+  TEST_COMPARE( particle->getXPosition(), >=, -2.0 );
+  TEST_COMPARE( particle->getXPosition(), <=, 2.0 );
+  TEST_COMPARE( particle->getYPosition(), >=, -2.0 );
+  TEST_COMPARE( particle->getYPosition(), <=, 2.0 );
+  TEST_COMPARE( particle->getZPosition(), >=, -2.0 );
+  TEST_COMPARE( particle->getZPosition(), <=, 2.0 );
+  TEST_COMPARE( particle->getXDirection(), >=, -1.0 );
+  TEST_COMPARE( particle->getXDirection(), <=, 1.0 );
+  TEST_COMPARE( particle->getYDirection(), >=, -1.0 );
+  TEST_COMPARE( particle->getYDirection(), <=, 1.0 );
+  TEST_COMPARE( particle->getZDirection(), >=, -1.0 );
+  TEST_COMPARE( particle->getZDirection(), <=, 1.0 );
+  TEST_COMPARE( particle->getEnergy(), >=, 1e-3 );
+  TEST_COMPARE( particle->getEnergy(), <=, 1.0 );
+  TEST_EQUALITY_CONST( particle->getTime(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getWeight(), 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( DistributedSource, 
@@ -236,8 +236,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
 {
   initializeSource<GeometryHandler>( true );
   
-  typedef FACEMC::Traits::GeometryHandlerTraits<GeometryHandler> GHT;
-
   std::vector<double> fake_stream( 10 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
@@ -252,20 +250,22 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
 
   FACEMC::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  FACEMC::ParticleState<typename GHT::CellHandle> particle_1( 1ull );
-
-  source->sampleParticleState( particle_1 );
+  FACEMC::ParticleBank bank;
   
-  TEST_EQUALITY_CONST( particle_1.getParticleType(), FACEMC::PHOTON );
-  TEST_EQUALITY_CONST( particle_1.getXDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle_1.getYDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle_1.getZDirection(), -1.0 );
-  TEST_EQUALITY_CONST( particle_1.getXPosition(), 0.0 );
-  TEST_EQUALITY_CONST( particle_1.getYPosition(), 0.0 );
-  TEST_EQUALITY_CONST( particle_1.getZPosition(), 0.0 );
-  TEST_EQUALITY_CONST( particle_1.getEnergy(), 1e-3 );
-  TEST_EQUALITY_CONST( particle_1.getTime(), 0.0 );
-  TEST_FLOATING_EQUALITY( particle_1.getWeight(), 0.3378378378375, 1e-9 );
+  source->sampleParticleState( bank );
+
+  FACEMC::ParticleState::pointerType particle = bank.top();
+  
+  TEST_EQUALITY_CONST( particle->getParticleType(), FACEMC::PHOTON );
+  TEST_EQUALITY_CONST( particle->getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getZDirection(), -1.0 );
+  TEST_EQUALITY_CONST( particle->getXPosition(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getYPosition(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getZPosition(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getEnergy(), 1e-3 );
+  TEST_EQUALITY_CONST( particle->getTime(), 0.0 );
+  TEST_FLOATING_EQUALITY( particle->getWeight(), 0.3378378378375, 1e-9 );
 
   FACEMC::RandomNumberGenerator::unsetFakeStream();
 }
@@ -282,29 +282,29 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
 {
   initializeSource<GeometryHandler>( false, true );
   
-  typedef FACEMC::Traits::GeometryHandlerTraits<GeometryHandler> GHT;
-
-  FACEMC::ParticleState<typename GHT::CellHandle> particle_1( 1ull );
-
-  source->sampleParticleState( particle_1 );
+  FACEMC::ParticleBank bank;
   
-  TEST_EQUALITY_CONST( particle_1.getParticleType(), FACEMC::PHOTON );
-  TEST_COMPARE( particle_1.getXPosition(), >=, -1.1547005383792 );
-  TEST_COMPARE( particle_1.getXPosition(), <=, 1.1547005383792 );
-  TEST_COMPARE( particle_1.getYPosition(), >=, -1.1547005383792 );
-  TEST_COMPARE( particle_1.getYPosition(), <=, 1.1547005383792 );
-  TEST_COMPARE( particle_1.getZPosition(), >=, -1.1547005383792 );
-  TEST_COMPARE( particle_1.getZPosition(), <=, 1.1547005383792 );
-  TEST_COMPARE( particle_1.getXDirection(), >=, -1.0 );
-  TEST_COMPARE( particle_1.getXDirection(), <=, 1.0 );
-  TEST_COMPARE( particle_1.getYDirection(), >=, -1.0 );
-  TEST_COMPARE( particle_1.getYDirection(), <=, 1.0 );
-  TEST_COMPARE( particle_1.getZDirection(), >=, -1.0 );
-  TEST_COMPARE( particle_1.getZDirection(), <=, 1.0 );
-  TEST_COMPARE( particle_1.getEnergy(), >=, 1e-3 );
-  TEST_COMPARE( particle_1.getEnergy(), <=, 1.0 );
-  TEST_EQUALITY_CONST( particle_1.getTime(), 0.0 );
-  TEST_EQUALITY_CONST( particle_1.getWeight(), 1.0 );
+  source->sampleParticleState( bank );
+
+  FACEMC::ParticleState::pointerType particle = bank.top();
+  
+  TEST_EQUALITY_CONST( particle->getParticleType(), FACEMC::PHOTON );
+  TEST_COMPARE( particle->getXPosition(), >=, -1.1547005383792 );
+  TEST_COMPARE( particle->getXPosition(), <=, 1.1547005383792 );
+  TEST_COMPARE( particle->getYPosition(), >=, -1.1547005383792 );
+  TEST_COMPARE( particle->getYPosition(), <=, 1.1547005383792 );
+  TEST_COMPARE( particle->getZPosition(), >=, -1.1547005383792 );
+  TEST_COMPARE( particle->getZPosition(), <=, 1.1547005383792 );
+  TEST_COMPARE( particle->getXDirection(), >=, -1.0 );
+  TEST_COMPARE( particle->getXDirection(), <=, 1.0 );
+  TEST_COMPARE( particle->getYDirection(), >=, -1.0 );
+  TEST_COMPARE( particle->getYDirection(), <=, 1.0 );
+  TEST_COMPARE( particle->getZDirection(), >=, -1.0 );
+  TEST_COMPARE( particle->getZDirection(), <=, 1.0 );
+  TEST_COMPARE( particle->getEnergy(), >=, 1e-3 );
+  TEST_COMPARE( particle->getEnergy(), <=, 1.0 );
+  TEST_EQUALITY_CONST( particle->getTime(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getWeight(), 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( DistributedSource, 
@@ -318,13 +318,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
 {
   initializeSource<GeometryHandler>( false, true );
   
-  typedef FACEMC::Traits::GeometryHandlerTraits<GeometryHandler> GHT;
-
-  FACEMC::ParticleState<typename GHT::CellHandle> particle_1( 1ull );
+  FACEMC::ParticleBank bank;
   
   // Conduct 10 samples
   for( unsigned i = 0; i < 10; ++i )
-    source->sampleParticleState( particle_1 );
+    source->sampleParticleState( bank );
 
   // Theoretical efficiency: (4/sqrt(3))^3/(4*pi*2^3/3) ~= 0.367552
   TEST_COMPARE( source->getSamplingEfficiency(), >, 0.0 );

@@ -45,7 +45,7 @@ ParticleBank::const_reference ParticleBank::top() const
 void ParticleBank::push( const ParticleBank::value_type& particle )
 {
   // Make sure the particle is valid
-  testPrecondition( !particle.is_null() );
+  testPrecondition( particle.get() );
   
   d_particle_states.push_front( particle );
 }
