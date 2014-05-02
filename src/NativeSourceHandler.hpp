@@ -14,7 +14,7 @@
 
 // FACEMC Includes
 #include "ParticleSource.hpp"
-#include "BasicParticleState.hpp"
+#include "ParticleBank.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -29,7 +29,7 @@ public:
   static void initializeSource( const Teuchos::RCP<ParticleSource>& source );
   
   //! Sample the starting particle state
-  static void sampleStartingParticleState( BasicParticleState& particle );
+  static void sampleStartingParticleState( ParticleBank& bank );
 
   //! Get the sampling efficiency
   static double getSamplingEfficiency();
@@ -49,11 +49,11 @@ private:
 
 // Sample the starting particle state
 inline void NativeSourceHandler::sampleStartingParticleState( 
-						 BasicParticleState& particle )
+							   ParticleBank& bank )
 {
   testPrecondition( !source.is_null() );
   
-  source->sampleParticleState( particle );
+  NativeSourceHandler::source->sampleParticleState( bank );
 }
 
 // Get the sampling efficiency
