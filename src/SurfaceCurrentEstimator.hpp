@@ -16,18 +16,18 @@
 namespace FACEMC{
 
 //! The surface current estimator class
-template<typename SurfaceId,
-	 typename ContributionMultiplierPolicy = WeightMultiplier>
-class SurfaceCurrentEstimator : public StandardSurfaceEstimator<SurfaceId>
+template<typename ContributionMultiplierPolicy = WeightMultiplier>
+class SurfaceCurrentEstimator : public StandardSurfaceEstimator
 {
 
 public:
 
   //! Constructor
-  SurfaceCurrentEstimator( const unsigned long long id,
-			   const double multiplier,
-			   const Teuchos::Array<SurfaceId>& surface_ids,
-			   const Teuchos::Array<double>& surface_areas );   
+  SurfaceCurrentEstimator( 
+    const Estimator::idType id,
+    const double multiplier,
+    const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,
+    const Teuchos::Array<double>& surface_areas );   
 
   //! Destructor
   ~SurfaceCurrentEstimator()
@@ -38,9 +38,10 @@ public:
    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
 
   //! Add estimator contribution from a portion of the current history
-  void addPartialHistoryContribution( const BasicParticleState& particle,
-				      const SurfaceId& surface_crossed,
-				      const double angle_cosine );
+  void addPartialHistoryContribution( 
+		 const ParticleState& particle,
+		 const StandardSurfaceEstimator::surfaceIdType surface_crossed,
+		 const double angle_cosine );
   
   //! Print the estimator data
   void print( std::ostream& os ) const;

@@ -16,7 +16,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FACEMC Includes
-#include "BasicParticleState.hpp"
+#include "ParticleState.hpp"
 
 namespace FACEMC{
 
@@ -37,7 +37,7 @@ public:
   const std::string& getName() const;
 
   //! Evaluate the response function at the desired phase space point
-  virtual double evaluate( const BasicParticleState& particle ) const;
+  virtual double evaluate( const ParticleState& particle ) const;
 
   //! Check if the response function is spatially uniform
   virtual bool isSpatiallyUniform() const;

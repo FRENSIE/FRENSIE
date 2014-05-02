@@ -31,7 +31,7 @@ const std::string& ResponseFunction::getName() const
 }
 
 // Evaluate the response function at the desired phase space point
-double ResponseFunction::evaluate( const BasicParticleState& particle ) const
+double ResponseFunction::evaluate( const ParticleState& particle ) const
 {
   return 1.0;
 }

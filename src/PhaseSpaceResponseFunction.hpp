@@ -36,7 +36,7 @@ public:
   { /* ... */ }
 
   //! Evaluate the response function at the desired phase space point
-  double evaluate( const BasicParticleState& particle ) const;
+  double evaluate( const ParticleState& particle ) const;
 
   //! Check if the response function is spatially uniform
   bool isSpatiallyUniform() const;

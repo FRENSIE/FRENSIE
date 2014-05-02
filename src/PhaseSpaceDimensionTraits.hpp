@@ -15,7 +15,7 @@
 // FACEMC Includes
 #include "PhaseSpaceDimensionTraitsDecl.hpp"
 #include "PhaseSpaceDimension.hpp"
-#include "BasicParticleState.hpp"
+#include "ParticleState.hpp"
 
 namespace FACEMC{
 
@@ -27,7 +27,7 @@ namespace Traits{
 template<>
 struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
 {
-  typedef BasicParticleState::energyType dimensionType;
+  typedef ParticleState::energyType dimensionType;
   
   static inline std::string name()
   { return "Energy"; }
@@ -38,7 +38,7 @@ struct PhaseSpaceDimensionTraits<ENERGY_DIMENSION>
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::infinity(); }
 
-  static inline Teuchos::any obfuscateValue( const BasicParticleState& particle )
+  static inline Teuchos::any obfuscateValue( const ParticleState& particle )
   { return Teuchos::any( particle.getEnergy() ); }
 
   static inline Teuchos::any obfuscateValue( const dimensionType& value )
@@ -65,7 +65,7 @@ struct PhaseSpaceDimensionTraits<COSINE_DIMENSION>
   static inline dimensionType upperBound()
   { return 1.0; }
 
-  static inline Teuchos::any obfuscateValue( const BasicParticleState& particle )
+  static inline Teuchos::any obfuscateValue( const ParticleState& particle )
   { return Teuchos::any(); }
 
   static inline Teuchos::any obfuscateValue( const dimensionType& value )
@@ -81,7 +81,7 @@ struct PhaseSpaceDimensionTraits<COSINE_DIMENSION>
 template<>
 struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
 {
-  typedef BasicParticleState::timeType dimensionType;
+  typedef ParticleState::timeType dimensionType;
     
   static inline std::string name()
   { return "Time"; }
@@ -92,7 +92,7 @@ struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::infinity(); }
 
-  static inline Teuchos::any obfuscateValue( const BasicParticleState& particle )
+  static inline Teuchos::any obfuscateValue( const ParticleState& particle )
   { return Teuchos::any( particle.getTime() ); }
 
   static inline Teuchos::any obfuscateValue( const dimensionType& value )
@@ -109,7 +109,7 @@ struct PhaseSpaceDimensionTraits<TIME_DIMENSION>
 template<>
 struct PhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION>
 {
-  typedef BasicParticleState::collisionNumberType dimensionType;
+  typedef ParticleState::collisionNumberType dimensionType;
     
   static inline std::string name()
   { return "Collision Number"; }
@@ -120,7 +120,7 @@ struct PhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION>
   static inline dimensionType upperBound()
   { return std::numeric_limits<dimensionType>::max(); }
 
-  static inline Teuchos::any obfuscateValue( const BasicParticleState& particle )
+  static inline Teuchos::any obfuscateValue( const ParticleState& particle )
   { return Teuchos::any( particle.getCollisionNumber() ); }
 
   static inline Teuchos::any obfuscateValue( const dimensionType& value )

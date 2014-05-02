@@ -43,8 +43,8 @@ void Estimator::setEndTime( const double end_time )
 }
 
 // Constructor
-Estimator::Estimator( const unsigned long long id,
-		      const double multiplier )
+  Estimator::Estimator( const Estimator::idType id,
+			const double multiplier )
   : PrintableObject( "//---------------------------------------------------------------------------//" ),
     d_id( 0ull ),
     d_multiplier( multiplier ),

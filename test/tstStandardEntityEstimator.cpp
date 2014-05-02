@@ -16,6 +16,7 @@
 
 // FACEMC Includes
 #include "StandardEntityEstimator.hpp"
+#include "PhotonState.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
@@ -173,7 +174,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   Teuchos::RCP<TestStandardEntityEstimator<EntityId> > estimator;
   initializeStandardEntityEstimator( estimator );
   
-  FACEMC::BasicParticleState particle;
+  FACEMC::PhotonState particle( 0ull );
   particle.setEnergy( 1.0 );
   particle.setTime( 1e2 );
   particle.incrementCollisionNumber();

@@ -355,59 +355,89 @@ ADD_EXECUTABLE(tstCompoundSource
 TARGET_LINK_LIBRARIES(tstCompoundSource ${PROJECT_NAME})
 ADD_TEST(CompoundSource_test tstCompoundSource --test_sat_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_source_geom.sat")
 
-# ADD_EXECUTABLE(tstResponseFunction
-#   tstResponseFunction.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstResponseFunction ${PROJECT_NAME})
-# ADD_TEST(ResponseFunction_test tstResponseFunction)
+ADD_EXECUTABLE(tstResponseFunction
+  tstResponseFunction.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstResponseFunction ${PROJECT_NAME})
+ADD_TEST(ResponseFunction_test tstResponseFunction)
 
-# ADD_EXECUTABLE(tstEnergySpaceResponseFunction
-#   tstEnergySpaceResponseFunction.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstEnergySpaceResponseFunction ${PROJECT_NAME})
-# ADD_TEST(EnergySpaceResponseFunction_test tstEnergySpaceResponseFunction)
+ADD_EXECUTABLE(tstEnergySpaceResponseFunction
+  tstEnergySpaceResponseFunction.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEnergySpaceResponseFunction ${PROJECT_NAME})
+ADD_TEST(EnergySpaceResponseFunction_test tstEnergySpaceResponseFunction)
 
-# ADD_EXECUTABLE(tstPhaseSpaceResponseFunction
-#   tstPhaseSpaceResponseFunction.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstPhaseSpaceResponseFunction ${PROJECT_NAME})
-# ADD_TEST(PhaseSpaceResponseFunction_test tstPhaseSpaceResponseFunction)
+ADD_EXECUTABLE(tstPhaseSpaceResponseFunction
+  tstPhaseSpaceResponseFunction.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPhaseSpaceResponseFunction ${PROJECT_NAME})
+ADD_TEST(PhaseSpaceResponseFunction_test tstPhaseSpaceResponseFunction)
 
-# ADD_EXECUTABLE(tstGeneralEstimatorDimensionDiscretization
-#   tstGeneralEstimatorDimensionDiscretization.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstGeneralEstimatorDimensionDiscretization ${PROJECT_NAME})
-# ADD_TEST(GeneralEstimatorDimensionDiscretization_test tstGeneralEstimatorDimensionDiscretization)
+ADD_EXECUTABLE(tstGeneralEstimatorDimensionDiscretization
+  tstGeneralEstimatorDimensionDiscretization.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstGeneralEstimatorDimensionDiscretization ${PROJECT_NAME})
+ADD_TEST(GeneralEstimatorDimensionDiscretization_test tstGeneralEstimatorDimensionDiscretization)
 
-# ADD_EXECUTABLE(tstEstimator
-#   tstEstimator.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstEstimator ${PROJECT_NAME})
-# ADD_TEST(Estimator_test tstEstimator)
+ADD_EXECUTABLE(tstEstimator
+  tstEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEstimator ${PROJECT_NAME})
+ADD_TEST(Estimator_test tstEstimator)
 
-# Add_EXECUTABLE(tstEntityEstimator
-#   tstEntityEstimator.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstEntityEstimator ${PROJECT_NAME})
-# ADD_TEST(EntityEstimator_test tstEntityEstimator)
+Add_EXECUTABLE(tstEntityEstimator
+  tstEntityEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEntityEstimator ${PROJECT_NAME})
+ADD_TEST(EntityEstimator_test tstEntityEstimator)
 
-# Add_EXECUTABLE(tstStandardEntityEstimator
-#   tstStandardEntityEstimator.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstStandardEntityEstimator ${PROJECT_NAME})
-# ADD_TEST(StandardEntityEstimator_test tstStandardEntityEstimator)
+Add_EXECUTABLE(tstStandardEntityEstimator
+  tstStandardEntityEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStandardEntityEstimator ${PROJECT_NAME})
+ADD_TEST(StandardEntityEstimator_test tstStandardEntityEstimator)
 
-# Add_EXECUTABLE(tstStandardSurfaceEstimator
-#   tstStandardSurfaceEstimator.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstStandardSurfaceEstimator ${PROJECT_NAME})
-# ADD_TEST(StandardSurfaceEstimator_test tstStandardSurfaceEstimator)
+Add_EXECUTABLE(tstStandardSurfaceEstimator
+  tstStandardSurfaceEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStandardSurfaceEstimator ${PROJECT_NAME})
+ADD_TEST(StandardSurfaceEstimator_test tstStandardSurfaceEstimator)
 
-# Add_EXECUTABLE(tstCellPulseHeightEstimator
-#   tstCellPulseHeightEstimator.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstCellPulseHeightEstimator ${PROJECT_NAME})
-# ADD_TEST(CellPulseHeightEstimator_test tstCellPulseHeightEstimator)
+Add_EXECUTABLE(tstSurfaceFluxEstimator
+  tstSurfaceFluxEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSurfaceFluxEstimator ${PROJECT_NAME})
+ADD_TEST(SurfaceFluxEstimator_test tstSurfaceFluxEstimator)
+
+Add_EXECUTABLE(tstSurfaceCurrentEstimator
+  tstSurfaceCurrentEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSurfaceCurrentEstimator ${PROJECT_NAME})
+ADD_TEST(SurfaceCurrentEstimator_test tstSurfaceCurrentEstimator)
+
+Add_EXECUTABLE(tstCellPulseHeightEstimator
+  tstCellPulseHeightEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCellPulseHeightEstimator ${PROJECT_NAME})
+ADD_TEST(CellPulseHeightEstimator_test tstCellPulseHeightEstimator)
+
+Add_EXECUTABLE(tstStandardCellEstimator
+  tstStandardCellEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStandardCellEstimator ${PROJECT_NAME})
+ADD_TEST(StandardCellEstimator_test tstStandardCellEstimator)
+
+Add_EXECUTABLE(tstCellCollisionFluxEstimator
+  tstCellCollisionFluxEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCellCollisionFluxEstimator ${PROJECT_NAME})
+ADD_TEST(CellCollisionFluxEstimator_test tstCellCollisionFluxEstimator)
+
+Add_EXECUTABLE(tstCellTrackLengthFluxEstimator
+  tstCellTrackLengthFluxEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCellTrackLengthFluxEstimator ${PROJECT_NAME})
+ADD_TEST(CellTrackLengthFluxEstimator_test tstCellTrackLengthFluxEstimator)
 
 ADD_EXECUTABLE(tstACEFileHandler
   tstACEFileHandler.cpp)

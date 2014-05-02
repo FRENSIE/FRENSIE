@@ -36,13 +36,13 @@ public:
   typedef boost::unordered_set<EntityId> EntityIdSet;
 
   //! Constructor (for flux estimators)
-  EntityEstimator( const unsigned long long id,
+  EntityEstimator( const Estimator::idType id,
 		   const double multiplier,
 		   const Teuchos::Array<EntityId>& entity_ids,
 		   const Teuchos::Array<double>& entity_norm_constants );
 
   //! Constructor (used by non-flux estimators)
-  EntityEstimator( const unsigned long long id,
+  EntityEstimator( const Estimator::idType id,
 		   const double multiplier,
 		   const Teuchos::Array<EntityId>& entity_ids );
 

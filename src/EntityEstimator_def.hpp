@@ -20,7 +20,7 @@ namespace FACEMC{
  */
 template<typename EntityId>
 EntityEstimator<EntityId>::EntityEstimator( 
-			  const unsigned long long id,
+			  const Estimator::idType id,
 			  const double multiplier,
 			  const Teuchos::Array<EntityId>& entity_ids,
 			  const Teuchos::Array<double>& entity_norm_constants )
@@ -47,9 +47,9 @@ EntityEstimator<EntityId>::EntityEstimator(
  */
 template<typename EntityId>
 EntityEstimator<EntityId>::EntityEstimator( 
-			  const unsigned long long id,
-			  const double multiplier,
-			  const Teuchos::Array<EntityId>& entity_ids )
+				   const Estimator::idType id,
+				   const double multiplier,
+				   const Teuchos::Array<EntityId>& entity_ids )
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 )
 {

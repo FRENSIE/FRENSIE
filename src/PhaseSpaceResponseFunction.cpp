@@ -39,7 +39,7 @@ PhaseSpaceResponseFunction::PhaseSpaceResponseFunction(
 
 // Evaluate the response function at the desired phase space point
 double PhaseSpaceResponseFunction::evaluate( 
-				     const BasicParticleState& particle ) const
+				          const ParticleState& particle ) const
 {
   double spatial_response = 
     d_spatial_distribution->evaluate( particle.getPosition() );

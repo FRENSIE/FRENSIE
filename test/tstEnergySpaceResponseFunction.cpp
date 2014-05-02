@@ -17,6 +17,7 @@
 // FACEMC Includes
 #include "UniformDistribution.hpp"
 #include "EnergySpaceResponseFunction.hpp"
+#include "PhotonState.hpp"
 
 Teuchos::RCP<FACEMC::OneDDistribution> energy_distribution(
 			    new FACEMC::UniformDistribution( 0.0, 1e6, 1.0 ) );
@@ -38,7 +39,7 @@ TEUCHOS_UNIT_TEST( ResponseFunction, getName )
 // Check that the response function can be evaluated
 TEUCHOS_UNIT_TEST( ResponseFunction, evaluate )
 {
-  FACEMC::BasicParticleState particle;
+  FACEMC::PhotonState particle( 0ull );
   particle.setEnergy( 1e-11 );
 
   TEST_EQUALITY_CONST( response_function->evaluate( particle ), 1.0 );

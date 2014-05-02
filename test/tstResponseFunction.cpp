@@ -16,6 +16,7 @@
 
 // FACEMC Includes
 #include "ResponseFunction.hpp"
+#include "PhotonState.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -36,7 +37,7 @@ TEUCHOS_UNIT_TEST( ResponseFunction, evaluate )
   Teuchos::RCP<FACEMC::ResponseFunction> response_function= 
     FACEMC::ResponseFunction::default_response_function;
 
-  FACEMC::BasicParticleState particle;
+  FACEMC::PhotonState particle( 0ull );
   
   TEST_EQUALITY_CONST( response_function->evaluate( particle ), 1.0 );
 }

@@ -16,12 +16,15 @@
 
 // FACEMC Includes
 #include "EntityEstimator.hpp"
+#include "ModuleTraits.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
 //---------------------------------------------------------------------------//
+typedef FACEMC::Traits::ModuleTraits::InternalCellHandle CellId;
+
 #define UNIT_TEST_INSTANTIATION( type, name )	\
-  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, int ) 
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, CellId ) \
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -67,7 +70,7 @@ public:
 // Set the entity estimator bins (and response functions)
 template<typename EntityId>
 void setEntityEstimatorBins( 
-		    Teuchos::RCP<TestEntityEstimator<int> >& entity_estimator )
+	       Teuchos::RCP<TestEntityEstimator<EntityId> >& entity_estimator )
 {
   // Use a base class pointer to test the virtual functions
   Teuchos::RCP<FACEMC::Estimator> base_estimator =
@@ -126,12 +129,14 @@ void initializeEntityEstimator(
 
 // Initialize the entity estimator (int)
 template<>
-void initializeEntityEstimator<int>( 
-		     Teuchos::RCP<TestEntityEstimator<int> >& entity_estimator,
+void 
+initializeEntityEstimator<FACEMC::Traits::ModuleTraits::InternalCellHandle>( 
+                     Teuchos::RCP<TestEntityEstimator<FACEMC::Traits::ModuleTraits::InternalCellHandle> >& entity_estimator,
 		     const bool assign_entity_norm_consts )
 {  
   // Set the entity ids
-  Teuchos::Array<int> entity_ids( 5 );
+  Teuchos::Array<FACEMC::Traits::ModuleTraits::InternalCellHandle> 
+    entity_ids( 5 );
   entity_ids[0] = 0;
   entity_ids[1] = 1;
   entity_ids[2] = 2;
@@ -152,20 +157,24 @@ void initializeEntityEstimator<int>(
   if( assign_entity_norm_consts )
   {
     entity_estimator.reset( 
-			new TestEntityEstimator<int>(0ull,
+     new TestEntityEstimator<FACEMC::Traits::ModuleTraits::InternalCellHandle>(
+						     0ull,
 						     estimator_multiplier,
 						     entity_ids,
 						     entity_norm_constants ) );
   }
   else
   {
-    entity_estimator.reset( new TestEntityEstimator<int>( 0ull,
+    entity_estimator.reset( 
+     new TestEntityEstimator<FACEMC::Traits::ModuleTraits::InternalCellHandle>(
+							  0ull,
 							  estimator_multiplier,
 							  entity_ids ) );
   }
 
   // Set the entity estimator bins (and response functions)
-  setEntityEstimatorBins<int>( entity_estimator );
+  setEntityEstimatorBins<FACEMC::Traits::ModuleTraits::InternalCellHandle>( 
+							    entity_estimator );
 }
 
 //---------------------------------------------------------------------------//

@@ -21,7 +21,7 @@
 // FACEMC Includes
 #include "PhaseSpaceDimension.hpp"
 #include "Tuple.hpp"
-#include "BasicParticleState.hpp"
+#include "ParticleState.hpp"
 
 /*! \defgroup phase_space_dim_traits Phase Space Dimension Traits
  * \ingroup traits
@@ -69,7 +69,7 @@ struct PhaseSpaceDimensionTraits
   }
 
   //! Convert a value from a basic particle state to a Teuchos::any object
-  static inline Teuchos::any obfuscateValue( const BasicParticleState& particle )
+  static inline Teuchos::any obfuscateValue( const ParticleState& particle )
   { 
     (void)UndefinedPhaseSpaceDimensionTraits<dimensionType,dimension>::notDefined();
     return 0;
@@ -97,7 +97,7 @@ struct PhaseSpaceDimensionTraits
  * \ingroup phase_space_dim_traits
  */
 template<PhaseSpaceDimension dimension>
-inline Teuchos::any obfuscateValue( const BasicParticleState& particle )
+inline Teuchos::any obfuscateValue( const ParticleState& particle )
 {
   return Traits::PhaseSpaceDimensionTraits<dimension>::obfuscateValue( 
 								    particle );

@@ -16,14 +16,16 @@
 
 // FACEMC Includes
 #include "CellPulseHeightEstimator.hpp"
+#include "ModuleTraits.hpp"
+#include "PhotonState.hpp"
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
 //---------------------------------------------------------------------------//
 #define UNIT_TEST_INSTANTIATION( type, name ) \
   using namespace FACEMC;						\
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, WeightMultiplier ) \
-  TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( type, name, int, WeightAndEnergyMultiplier ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, WeightMultiplier ) \
+  TEUCHOS_UNIT_TEST_TEMPLATE_1_INSTANT( type, name, WeightAndEnergyMultiplier)\
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -46,7 +48,8 @@ void initializePulseHeightEstimator(
 				Teuchos::RCP<PulseHeightEstimator>& estimator )
 {  
   // Set the entity ids
-  Teuchos::Array<int> entity_ids( 2 );
+  Teuchos::Array<FACEMC::Traits::ModuleTraits::InternalCellHandle> 
+    entity_ids( 2 );
   entity_ids[0] = 0;
   entity_ids[1] = 1;
 
@@ -68,12 +71,12 @@ void initializePulseHeightEstimator(
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the number of bins can be returned
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( CellPulseHeightEstimator,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
 				   getNumberOfBins,
-				   EntityId,
 				   ContributionMultiplierPolicy )
 {
-  typedef FACEMC::CellPulseHeightEstimator<EntityId,ContributionMultiplierPolicy> CellPulseHeightEstimator;
+  typedef FACEMC::CellPulseHeightEstimator<ContributionMultiplierPolicy> 
+    CellPulseHeightEstimator;
 
   Teuchos::RCP<CellPulseHeightEstimator> estimator;
   initializePulseHeightEstimator<CellPulseHeightEstimator>( estimator );
@@ -105,12 +108,12 @@ UNIT_TEST_INSTANTIATION( CellPulseHeightEstimator, getNumberOfBins );
 
 //---------------------------------------------------------------------------//
 // Check that the particle types can be set
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( CellPulseHeightEstimator,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
 				   setParticleTypes,
-				   EntityId,
 				   ContributionMultiplierPolicy )
 {
-  typedef FACEMC::CellPulseHeightEstimator<EntityId,ContributionMultiplierPolicy> CellPulseHeightEstimator;
+  typedef FACEMC::CellPulseHeightEstimator<ContributionMultiplierPolicy> 
+    CellPulseHeightEstimator;
 
   Teuchos::RCP<CellPulseHeightEstimator> estimator;
   initializePulseHeightEstimator<CellPulseHeightEstimator>( estimator );
@@ -133,17 +136,17 @@ UNIT_TEST_INSTANTIATION( CellPulseHeightEstimator, setParticleTypes );
 
 //---------------------------------------------------------------------------//
 // Check that a partial history contribution can be added to the estimator
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( CellPulseHeightEstimator,
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
 				   addPartialHistoryContribution,
-				   EntityId,
 				   ContributionMultiplierPolicy )
 {
-  typedef FACEMC::CellPulseHeightEstimator<EntityId,ContributionMultiplierPolicy> CellPulseHeightEstimator;
+  typedef FACEMC::CellPulseHeightEstimator<ContributionMultiplierPolicy> 
+    CellPulseHeightEstimator;
 
   Teuchos::RCP<CellPulseHeightEstimator> estimator;
   initializePulseHeightEstimator<CellPulseHeightEstimator>( estimator );
 
-  FACEMC::BasicParticleState particle;
+  FACEMC::PhotonState particle( 0ull );
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
 

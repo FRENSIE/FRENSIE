@@ -35,7 +35,7 @@ public:
 
   //! Constructor
   StandardEntityEstimator( 
-			 const unsigned long long id,
+			 const Estimator::idType id,
 			 const double multiplier,
 			 const Teuchos::Array<EntityId>& entity_ids,
 			 const Teuchos::Array<double>& entity_norm_constants );
@@ -58,8 +58,8 @@ protected:
 	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
 
   //! Add estimator contribution from a portion of the current history
-  void addPartialHistoryContribution( const EntityId& entity_id,
-				      const BasicParticleState& particle,
+  void addPartialHistoryContribution( const EntityId entity_id,
+				      const ParticleState& particle,
 				      const double angle_cosine,
 				      const double contribution );
 

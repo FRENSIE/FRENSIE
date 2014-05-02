@@ -31,7 +31,7 @@ void Estimator::setBinBoundaries(
 // Convert a portion of the particle state to a generic map
 template<PhaseSpaceDimension dimension>
 inline void Estimator::convertPartialParticleStateToGenericMap( 
-			            const BasicParticleState& particle,
+			            const ParticleState& particle,
 			            DimensionValueMap& dimension_values ) const
 {
   dimension_values[dimension] = 
@@ -44,7 +44,7 @@ inline void Estimator::convertPartialParticleStateToGenericMap(
 // This specialization allows recursion to end.
 template<>
 inline void Estimator::convertPartialParticleStateToGenericMap<DIMENSION_end>( 
-	                            const BasicParticleState& particle,
+	                            const ParticleState& particle,
 	                            DimensionValueMap& dimension_values ) const
 { /* ... */ }
 

@@ -31,6 +31,7 @@
 #include "PhaseSpaceDimension.hpp"
 #include "PhaseSpaceDimensionTraits.hpp"
 #include "EstimatorDimensionDiscretization.hpp"
+#include "ModuleTraits.hpp"
 
 namespace FACEMC{
 
@@ -55,6 +56,9 @@ protected:
 
 public:
 
+  //! Typedef for estimator id
+  typedef Traits::ModuleTraits::InternalEstimatorHandle idType;
+
   //! Set the number of particle histories that will be simulated
   static void setNumberOfHistories( const unsigned long long num_histories );
   
@@ -65,7 +69,7 @@ public:
   static void setEndTime( const double end_time );
 
   //! Constructor
-  Estimator( const unsigned long long id,
+  Estimator( const idType id,
 	     const double multiplier );
 
   //! Destructor
@@ -73,7 +77,7 @@ public:
   { /* ... */ }
 
   //! Return the estimator id
-  unsigned long long getId() const;
+  idType getId() const;
 
   //! Set the bin boundaries for a dimension of the phase space (floating pt)
   template<PhaseSpaceDimension dimension, typename DimensionType>
@@ -135,12 +139,12 @@ protected:
 
   //! Evaluate the desired response function
   double evaluateResponseFunction( 
-				const BasicParticleState& particle,
+				const ParticleState& particle,
 				const unsigned response_function_index ) const;
 
   //! Convert particle state to a generic map
   void convertParticleStateToGenericMap( 
-				   const BasicParticleState& particle,
+				   const ParticleState& particle,
 				   const double angle_cosine,
 				   DimensionValueMap& dimension_values ) const;
 
@@ -174,7 +178,7 @@ private:
   // Convert a portion of the particle state to a generic map
   template<PhaseSpaceDimension dimension>
   void convertPartialParticleStateToGenericMap( 
-				   const BasicParticleState& particle,
+				   const ParticleState& particle,
 			           DimensionValueMap& dimension_values ) const;
 			     
 					       
@@ -189,7 +193,7 @@ private:
   static double end_time;
 
   // The estimator id
-  unsigned long long d_id;
+  idType d_id;
 
   // The constant multiplier for the estimator
   double d_multiplier;
@@ -214,7 +218,7 @@ private:
 };
 
 // Return the estimator id
-inline unsigned long long Estimator::getId() const
+inline Estimator::idType Estimator::getId() const
 {
   return d_id;
 }
@@ -271,7 +275,7 @@ inline const std::string& Estimator::getResponseFunctionName(
 
 // Evaluate the desired response function
 inline double Estimator::evaluateResponseFunction( 
-				 const BasicParticleState& particle,
+				 const ParticleState& particle,
 				 const unsigned response_function_index ) const
 {
   // Make sure the response function index is valid
@@ -282,7 +286,7 @@ inline double Estimator::evaluateResponseFunction(
 
 // Convert particle state to a generic map
 inline void Estimator::convertParticleStateToGenericMap( 
-			      const BasicParticleState& particle,
+			      const ParticleState& particle,
 			      const double angle_cosine,
 			      DimensionValueMap& dimension_values ) const
 {

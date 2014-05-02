@@ -27,6 +27,7 @@
 #include "HistogramDistribution.hpp"
 #include "NormalDistribution.hpp"
 #include "PhysicalConstants.hpp"
+#include "PhotonState.hpp"
 
 Teuchos::RCP<FACEMC::ResponseFunction> response_function;
 
@@ -246,13 +247,13 @@ TEUCHOS_UNIT_TEST( PhaseSpaceResponseFunction, evaluate )
   double position[3] = {0.0, 0.0, 0.0};
   double direction[3] = {1.0, 0.0, 0.0};
   
-  FACEMC::BasicParticleState particle( FACEMC::PHOTON,
-				       position,
-				       direction,
-				       1.0,
-				       0.0,
-				       1.0 );
-
+  FACEMC::PhotonState particle( 0ull );
+  particle.setPosition( position );
+  particle.setDirection( direction );
+  particle.setEnergy( 1.0 );
+  particle.setTime( 0.0 );
+  particle.setWeight( 1.0 );
+  
   initializeCartesianResponseFunction( true );
 
   TEST_EQUALITY_CONST( response_function->evaluate( particle ), 1.0 );

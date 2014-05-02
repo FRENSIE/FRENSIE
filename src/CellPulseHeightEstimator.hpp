@@ -16,17 +16,19 @@
 namespace FACEMC{
 
 //! The pulse height entity estimator class
-template<typename CellId,
-	 typename ContributionMultiplierPolicy = WeightMultiplier>
-class CellPulseHeightEstimator : public EntityEstimator<CellId>
+template<typename ContributionMultiplierPolicy = WeightMultiplier>
+class CellPulseHeightEstimator : public EntityEstimator<Traits::ModuleTraits::InternalCellHandle>
 {
 
 public:
 
+  //! Typedef for the cell id type
+  typedef Traits::ModuleTraits::InternalCellHandle cellIdType;
+
   //! Constructor
-  CellPulseHeightEstimator( const unsigned long long id,
+  CellPulseHeightEstimator( const Estimator::idType id,
 			    const double multiplier,
-			    const Teuchos::Array<CellId>& entity_ids );
+			    const Teuchos::Array<cellIdType>& entity_ids );
   
   //! Destructor
   ~CellPulseHeightEstimator()
@@ -40,9 +42,9 @@ public:
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
   
   //! Add estimator contribution from a portion of the current history
-  void addPartialHistoryContribution( const BasicParticleState& particle,
-				      const CellId& cell_leaving,
-				      const CellId& cell_entering );
+  void addPartialHistoryContribution( const ParticleState& particle,
+				      const cellIdType& cell_leaving,
+				      const cellIdType& cell_entering );
 
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution();
@@ -68,7 +70,7 @@ private:
   Estimator::EstimatorMomentsArray d_total_energy_deposition_moments;
 
   // The energy deposited in each cell of interest by the current history
-  boost::unordered_map<CellId,double> d_cell_energy_deposition_map;
+  boost::unordered_map<cellIdType,double> d_cell_energy_deposition_map;
 
   // The generic particle state map (avoids having to make a new map for cont.)
   Estimator::DimensionValueMap d_dimension_values;

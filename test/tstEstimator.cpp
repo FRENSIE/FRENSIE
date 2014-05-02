@@ -20,6 +20,7 @@
 #include "UniformDistribution.hpp"
 #include "EnergySpaceResponseFunction.hpp"
 #include "PhaseSpaceDimension.hpp"
+#include "PhotonState.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
@@ -204,7 +205,7 @@ TEUCHOS_UNIT_TEST( Estimator, setParticleTypes )
 // Check that the response functions can be evaluated
 TEUCHOS_UNIT_TEST( Estimator, evaluateResponseFunction )
 {
-  FACEMC::BasicParticleState particle;
+  FACEMC::PhotonState particle( 0ull );
   particle.setEnergy( 1.0 );
 
   double response_function_value = 

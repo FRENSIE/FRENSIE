@@ -10,42 +10,36 @@
 #define CELL_COLLISION_FLUX_ESTIMATOR_HPP
 
 // FACEMC Includes
-#include "StandardEntityEstimator.hpp"
+#include "StandardCellEstimator.hpp"
 #include "EstimatorContributionMultiplierPolicy.hpp"
 
 namespace FACEMC{
 
 //! The cell collision flux estimator class
-template<typename CellId,
-	 typename ContributionMultiplierPolicy = WeightMultiplier>
-class CellCollisionFluxEstimator : public StandardEntityEstimator<CellId>
+template<typename ContributionMultiplierPolicy = WeightMultiplier>
+class CellCollisionFluxEstimator : public StandardCellEstimator
 {
 
 public:
 
   //! Constructor
-  CellCollisionFluxEstimator( const unsigned long long id,
-			      const double multiplier,
-			      const Teuchos::Array<CellId>& cell_ids,
-			      const Teuchos::Array<double>& cell_volumes );
+  CellCollisionFluxEstimator( 
+	     const Estimator::idType id,
+	     const double multiplier,
+	     const Teuchos::Array<StandardCellEstimator::cellIdType>& cell_ids,
+	     const Teuchos::Array<double>& cell_volumes );
 
   //! Destructor
   ~CellCollisionFluxEstimator()
   { /* ... */ }
 
-  //! Set the cosine bin boundaries
-  void setCosineBinBoundaries( 
-			 const Teuchos::Array<double>& cosine_bin_boundaries );
-
-  //! Set the particle types that can contribute to the estimator
-  void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
-
   //! Add estimator contribution from a portion of the current history
   void addPartialHistoryContribution( 
-				    const BasicParticleState& particle,
-				    const CellId& cell_of_collision,
-				    const double inverse_total_cross_section );
-
+		     const ParticleState& particle,
+		     const StandardCellEstimator::cellIdType cell_of_collision,
+		     const double inverse_total_cross_section,
+		     const double angle_cosine = 0.0);
+  
   //! Print the estimator data
   void print( std::ostream& os ) const;
 };

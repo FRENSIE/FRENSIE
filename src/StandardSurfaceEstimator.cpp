@@ -1,27 +1,40 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   StandardSurfaceEstimator_def.hpp
+//! \file   StandardSurfaceEstimator.cpp
 //! \author Alex Robinson
 //! \brief  Standard surface estimator class definition.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef STANDARD_SURFACE_ESTIMATOR_DEF_HPP
-#define STANDARD_SURFACE_ESTIMATOR_DEF_HPP
+// FACEMC Includes
+#include "StandardSurfaceEstimator.hpp"
 
 namespace FACEMC{
 
+// Initialize the static member data
+double StandardSurfaceEstimator::angle_cosine_cutoff = 0.01;
+
+// Set the angle cosine cutoff value
+void StandardSurfaceEstimator::setAngleCosineCutoff(
+					     const double angle_cosine_cutoff )
+{
+  // Make sure the angle cosine cutoff is valid
+  testPrecondition( angle_cosine_cutoff > 0.0 );
+  testPrecondition( angle_cosine_cutoff < 1.0 );
+  
+  StandardSurfaceEstimator::angle_cosine_cutoff = angle_cosine_cutoff;
+}
+
 // Constructor
-template<typename SurfaceId>
-StandardSurfaceEstimator<SurfaceId>::StandardSurfaceEstimator(
-				  const unsigned long long id,
-				  const double multiplier,
-			          const Teuchos::Array<SurfaceId>& surface_ids,
-				  const Teuchos::Array<double>& surface_areas )
-  : StandardEntityEstimator<SurfaceId>( id, 
-					multiplier, 
-					surface_ids, 
-					surface_areas )
+StandardSurfaceEstimator::StandardSurfaceEstimator(
+    const Estimator::idType id,
+    const double multiplier,
+    const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,
+    const Teuchos::Array<double>& surface_areas )
+  : StandardEntityEstimator<surfaceIdType>( id, 
+					    multiplier, 
+					    surface_ids, 
+					    surface_areas )
 { /* ... */ }
 
 // Set the particle types that can contribute to the estimator
@@ -29,8 +42,7 @@ StandardSurfaceEstimator<SurfaceId>::StandardSurfaceEstimator(
  * couterparts) can contribute to the estimator. Combinations are not 
  * allowed.
  */
-template<typename SurfaceId>
-void StandardSurfaceEstimator<SurfaceId>::setParticleTypes( 
+void StandardSurfaceEstimator::setParticleTypes( 
 			   const Teuchos::Array<ParticleType>& particle_types )
 {
   if( particle_types.size() > 1 )
@@ -52,8 +64,6 @@ void StandardSurfaceEstimator<SurfaceId>::setParticleTypes(
 
 } // end FACEMC namespace
 
-#endif // end STANDARD_SURFACE_ESTIMATOR_DEF_HPP
-
 //---------------------------------------------------------------------------//
-// end StandardSurfaceEstimator_def.hpp
+// end StandardSurfaceEstimator.cpp
 //---------------------------------------------------------------------------//

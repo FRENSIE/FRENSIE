@@ -12,6 +12,7 @@
 // FACEMC Includes
 #include "ContractException.hpp"
 #include "SearchAlgorithms.hpp"
+#include "SortAlgorithms.hpp"
 
 namespace FACEMC{
 
@@ -27,7 +28,8 @@ GeneralEstimatorDimensionDiscretization<dimension>::GeneralEstimatorDimensionDis
   testPrecondition( dimension_bin_boundaries.front() >= DT::lowerBound() );
   testPrecondition( dimension_bin_boundaries.back() <= DT::upperBound() );
   // Make sure the bins are sorted
-  //testPrecondition( false );
+  testPrecondition( Sort::isSortedAscending( dimension_bin_boundaries.begin(),
+					     dimension_bin_boundaries.end() ));
 }
 
 // Return the dimension name that has been discretized

@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstStandardSurfaceEstimator.cpp
+//! \file   tstStandardCellEstimator.cpp
 //! \author Alex Robinson
-//! \brief  Standard surface estimator unit tests
+//! \brief  Standard cell estimator unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,59 +15,60 @@
 #include <Teuchos_RCP.hpp>
 
 // FACEMC Includes
-#include "StandardSurfaceEstimator.hpp"
+#include "StandardCellEstimator.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-class TestStandardSurfaceEstimator : public FACEMC::StandardSurfaceEstimator
+class TestStandardCellEstimator : public FACEMC::StandardCellEstimator
 {
 public:
-  TestStandardSurfaceEstimator( 
-	 const unsigned long long id,
-	 const double multiplier,
-         const Teuchos::Array<FACEMC::StandardSurfaceEstimator::surfaceIdType>&
-	 entity_ids,
-	 const Teuchos::Array<double>& entity_norm_constants )
-    : FACEMC::StandardSurfaceEstimator( id, 
-					multiplier,
-					entity_ids,
-					entity_norm_constants )
+  TestStandardCellEstimator( 
+	       const unsigned long long id,
+	       const double multiplier,
+               const Teuchos::Array<FACEMC::StandardCellEstimator::cellIdType>&
+	       entity_ids,
+	       const Teuchos::Array<double>& entity_norm_constants )
+    : FACEMC::StandardCellEstimator( id, 
+				     multiplier,
+				     entity_ids,
+				     entity_norm_constants )
   { /* ... */ }
 
-  ~TestStandardSurfaceEstimator()
+  ~TestStandardCellEstimator()
   { /* ... */ }
 
   void addPartialHistoryContribution( 
 	const FACEMC::ParticleState& particle,
-        const FACEMC::StandardSurfaceEstimator::surfaceIdType surface_crossed,
+        const FACEMC::StandardCellEstimator::cellIdType surface_crossed,
+	const double raw_constribution,
 	const double angle_cosine )
   { /* ... */ }
 
   void print( std::ostream& os ) const
-  { printImplementation( os, "Surface" ); }
+  { printImplementation( os, "Cell" ); }
 };
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that particle types can be assigned
-TEUCHOS_UNIT_TEST( StandardSurfaceEstimator, setParticleType )
+TEUCHOS_UNIT_TEST( StandardCellEstimator, setParticleType )
 {
-  Teuchos::Array<FACEMC::StandardSurfaceEstimator::surfaceIdType> 
-    surface_ids( 2 );
-  surface_ids[0] = 0;
-  surface_ids[1] = 1;
+  Teuchos::Array<FACEMC::StandardCellEstimator::cellIdType> 
+    cell_ids( 2 );
+  cell_ids[0] = 0;
+  cell_ids[1] = 1;
 
-  Teuchos::Array<double> surface_norm_consts( 2 );
-  surface_norm_consts[0] = 1.0;
-  surface_norm_consts[1] = 2.0;
+  Teuchos::Array<double> cell_norm_consts( 2 );
+  cell_norm_consts[0] = 1.0;
+  cell_norm_consts[1] = 2.0;
   
-  Teuchos::RCP<TestStandardSurfaceEstimator> estimator(
-	  new TestStandardSurfaceEstimator( 0ull,
-					    2.0,
-					    surface_ids,
-					    surface_norm_consts ) );
+  Teuchos::RCP<TestStandardCellEstimator> estimator(
+	  new TestStandardCellEstimator( 0ull,
+					 2.0,
+					 cell_ids,
+					 cell_norm_consts ) );
 
   Teuchos::Array<FACEMC::ParticleType> particle_types( 4 );
   particle_types[0] = FACEMC::PHOTON;
@@ -95,5 +96,6 @@ TEUCHOS_UNIT_TEST( StandardSurfaceEstimator, setParticleType )
 }
 
 //---------------------------------------------------------------------------//
-// end tstStandardSurfaceEstimator.cpp
+// end tstStandardCellEstimator.cpp
 //---------------------------------------------------------------------------//
+

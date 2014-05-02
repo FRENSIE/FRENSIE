@@ -17,7 +17,7 @@ namespace FACEMC{
 // Constructor
 template<typename EntityId>
 StandardEntityEstimator<EntityId>::StandardEntityEstimator( 
-			  const unsigned long long id,
+			  const Estimator::idType id,
 			  const double multiplier,
 			  const Teuchos::Array<EntityId>& entity_ids,
 			  const Teuchos::Array<double>& entity_norm_constants )
@@ -128,8 +128,8 @@ void StandardEntityEstimator<EntityId>::assignBinBoundaries(
  */
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::addPartialHistoryContribution( 
-					    const EntityId& entity_id,
-					    const BasicParticleState& particle,
+					    const EntityId entity_id,
+					    const ParticleState& particle,
 					    const double angle_cosine,
 					    const double contribution )
 {
@@ -145,7 +145,7 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
 					    angle_cosine, 
 					    d_dimension_values );
         
-    // Only add the contribution if it the particle state is in the phase space
+    // Only add the contribution if the particle state is in the phase space
     if( this->isPointInEstimatorPhaseSpace( d_dimension_values ) )
     {
 

@@ -18,16 +18,14 @@
 namespace FACEMC{
 
 // Constructor
-template<typename CellId,typename ContributionMultiplierPolicy>
-CellPulseHeightEstimator<CellId,
-		       ContributionMultiplierPolicy>::CellPulseHeightEstimator(
-			  const unsigned long long id,
-			  const double multiplier,
-			  const Teuchos::Array<CellId>& entity_ids )
+template<typename ContributionMultiplierPolicy>
+CellPulseHeightEstimator<
+                       ContributionMultiplierPolicy>::CellPulseHeightEstimator(
+       const unsigned long long id,
+       const double multiplier,
+       const Teuchos::Array<CellPulseHeightEstimator::cellIdType>& entity_ids )
 			   
-  : EntityEstimator<CellId>( id,
-			     multiplier,
-			     entity_ids ),
+  : EntityEstimator<cellIdType>( id, multiplier, entity_ids ),
     d_total_energy_deposition_moments( 1 )
 {
   // Set up the entity map
@@ -40,9 +38,9 @@ CellPulseHeightEstimator<CellId,
 }
 
 // Set the response functions
-template<typename CellId,typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<CellId,
-			   ContributionMultiplierPolicy>::setResponseFunctions(
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<
+                           ContributionMultiplierPolicy>::setResponseFunctions(
     const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
 {
   std::cerr << "Warning: Response functions cannot be set for pulse height "
@@ -54,9 +52,8 @@ void CellPulseHeightEstimator<CellId,
 // Set the particle types that can contribute to the estimator
 /*! \details Only photons and electrons can contribute to this estimator
  */
-template<typename CellId,typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<CellId,
-			      ContributionMultiplierPolicy>::setParticleTypes( 
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setParticleTypes( 
 			   const Teuchos::Array<ParticleType>& particle_types )
 {
   Teuchos::Array<ParticleType> valid_particle_types;
@@ -90,12 +87,12 @@ void CellPulseHeightEstimator<CellId,
 }
 
 // Add estimator contribution from a portion of the current history
-template<typename CellId,typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<CellId,
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<
 		  ContributionMultiplierPolicy>::addPartialHistoryContribution(
-					    const BasicParticleState& particle,
-					    const CellId& cell_leaving,
-					    const CellId& cell_entering )
+		    const ParticleState& particle,
+		    const CellPulseHeightEstimator::cellIdType& cell_leaving,
+		    const CellPulseHeightEstimator::cellIdType& cell_entering )
 {
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
@@ -112,11 +109,12 @@ void CellPulseHeightEstimator<CellId,
 }
 
 // Add estimator contribution from a portion of the current history
-template<typename CellId,typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<CellId,
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<
 		     ContributionMultiplierPolicy>::commitHistoryContribution()
 {
-  typename boost::unordered_map<CellId,double>::iterator entity, end_entity;
+  typename boost::unordered_map<cellIdType,double>::iterator 
+    entity, end_entity;
 
   entity = d_cell_energy_deposition_map.begin();
   end_entity = d_cell_energy_deposition_map.end();
@@ -180,8 +178,8 @@ void CellPulseHeightEstimator<CellId,
 }
 
 // Print the estimator data
-template<typename CellId,typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<CellId,ContributionMultiplierPolicy>::print( 
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::print( 
 						       std::ostream& os ) const
 {
   os << "Cell Pulse Height Estimator: " << this->getId() << std::endl;
@@ -197,14 +195,14 @@ void CellPulseHeightEstimator<CellId,ContributionMultiplierPolicy>::print(
 }
 
 // Assign bin boundaries to an estimator dimension
-template<typename CellId,typename ContributionMultiplierPolicy>
-void CellPulseHeightEstimator<CellId,
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<
 			    ContributionMultiplierPolicy>::assignBinBoundaries(
 	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
 {
   if( bin_boundaries->getDimension() == FACEMC::ENERGY_DIMENSION )
   {
-    EntityEstimator<CellId>::assignBinBoundaries( bin_boundaries );
+    EntityEstimator<cellIdType>::assignBinBoundaries( bin_boundaries );
 
     d_total_energy_deposition_moments.resize( this->getNumberOfBins() );
   }
@@ -223,8 +221,8 @@ void CellPulseHeightEstimator<CellId,
  * operates on a particle state. The policy classes will instead be used as
  * tags for tag dispatching. This function simply returns 1.0.
  */
-template<typename CellId,typename ContributionMultiplierPolicy>
-inline double CellPulseHeightEstimator<CellId,
+template<typename ContributionMultiplierPolicy>
+inline double CellPulseHeightEstimator<
 		   ContributionMultiplierPolicy>::calculateHistoryContribution(
 					        const double energy_deposition,
 						WeightMultiplier )
@@ -238,8 +236,8 @@ inline double CellPulseHeightEstimator<CellId,
  * tags for tag dispatching. This function returns the energy that has been
  * deposited in the cell(s) of interest for the entire history.
  */
-template<typename CellId,typename ContributionMultiplierPolicy>
-inline double CellPulseHeightEstimator<CellId,
+template<typename ContributionMultiplierPolicy>
+inline double CellPulseHeightEstimator<
 		   ContributionMultiplierPolicy>::calculateHistoryContribution(
 					        const double energy_deposition,
 						WeightAndEnergyMultiplier )
