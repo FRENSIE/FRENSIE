@@ -14,7 +14,6 @@
 
 // FACEMC Includes
 #include "NuclearReactionFactory.hpp"
-#include "ScatteringDistributionFactory.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
@@ -89,8 +88,8 @@ NuclearReactionFactory::NuclearReactionFactory(
 Teuchos::RCP<NuclearReaction> 
 NuclearReactionFactory::createElasticReaction() const
 {
-  Teuchos::RCP<ScatteringDistribution> elastic_scattering_dist = 
-    d_scattering_dist_factory.createElasticScatteringDistribution(
+  Teuchos::RCP<NeutronScatteringDistribution> elastic_scattering_dist = 
+    d_scattering_dist_factory.createElasticNeutronScatteringDistribution(
 		 d_reaction_angular_dist.find(N__N_ELASTIC_REACTION)->second );
 
   return Teuchos::RCP<NuclearReaction>( new NuclearReaction( 

@@ -16,7 +16,7 @@
 // Std Lib Includes
 #include "NuclearReaction.hpp"
 #include "NuclearReactionType.hpp"
-#include "ScatteringDistributionFactory.hpp"
+#include "NeutronScatteringDistributionFactory.hpp"
 
 namespace FACEMC{
 
@@ -109,7 +109,7 @@ private:
   Teuchos::ArrayRCP<const double> d_energy_grid;
 
   // The scattering distribution factory
-  ScatteringDistributionFactory d_scattering_dist_factory;
+  NeutronScatteringDistributionFactory d_scattering_dist_factory;
   
   // A map of the reaction types (MT #s) in the table and their ordering
   boost::unordered_map<NuclearReactionType,unsigned> d_reaction_ordering;

@@ -12,10 +12,11 @@
 // Trilinos Includes
 #include <Teuchos_ArrayView.hpp>
 #include <Teuchos_ArrayRCP.hpp>
+#include <Teuchos_Array.hpp>
 
 // FACEMC Includes
 #include "NuclearReactionType.hpp"
-#include "ScatteringDistribution.hpp"
+#include "NeutronScatteringDistribution.hpp"
 
 namespace FACEMC{
 
@@ -26,14 +27,14 @@ class NuclearReaction
 public:
 
   //! Constructor
-  NuclearReaction( 
-	 const NuclearReactionType reaction_type,
-	 const double Q_value,
-	 const unsigned multiplicity,
-	 const unsigned threshold_energy_index,
-	 const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	 const Teuchos::ArrayView<const double>& cross_section,
-	 const Teuchos::RCP<ScatteringDistribution>& scattering_distribution );
+  NuclearReaction( const NuclearReactionType reaction_type,
+		   const double Q_value,
+		   const unsigned multiplicity,
+		   const unsigned threshold_energy_index,
+	           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+		   const Teuchos::ArrayView<const double>& cross_section,
+		   const Teuchos::RCP<NeutronScatteringDistribution>& 
+		   scattering_distribution );
 		   
 
 private:
@@ -57,7 +58,7 @@ private:
   Teuchos::Array<double> d_cross_section;
 
   // The scattering distribution
-  Teuchos::RCP<ScatteringDistribution> d_scattering_distribution;
+  Teuchos::RCP<NeutronScatteringDistribution> d_scattering_distribution;
 };
 
 } // end FACEMC namespace

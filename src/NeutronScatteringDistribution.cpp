@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   ScatteringDistribution.cpp
+//! \file   NeutronScatteringDistribution.cpp
 //! \author Alex Robinson
-//! \brief  The scattering distribution base class definition
+//! \brief  The neutron scattering distribution base class definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -13,17 +13,17 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FACEMC Includes
-#include "ScatteringDistribution.hpp"
+#include "NeutronScatteringDistribution.hpp"
 #include "DirectionHelpers.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
 
 // Initialize the static member data
-unsigned ScatteringDistribution::free_gas_threshold = 400u;
+unsigned NeutronScatteringDistribution::free_gas_threshold = 400u;
 
 // Constructor
-ScatteringDistribution::ScatteringDistribution( 
+NeutronScatteringDistribution::NeutronScatteringDistribution( 
 					     const double atomic_weight_ratio )
   : d_atomic_weight_ratio( atomic_weight_ratio )
 {
@@ -38,23 +38,24 @@ ScatteringDistribution::ScatteringDistribution(
  * temperature that the energy of a neutron can be before the free gas
  * thermal treatment is not used anymore.
  */
-void ScatteringDistribution::setFreeGasThermalTreatmentTemperatureThreshold(
+void 
+NeutronScatteringDistribution::setFreeGasThermalTreatmentTemperatureThreshold(
 					   const double temperature_threshold )
 {
-  ScatteringDistribution::free_gas_threshold = temperature_threshold;
+  NeutronScatteringDistribution::free_gas_threshold = temperature_threshold;
 }
 
 // Sample the velociy of the target nucleus
 /*! \details the temperature should be in units of MeV (kT)
  */ 
-void ScatteringDistribution::sampleTargetVelocity(
-					      BasicParticleState& particle,
+void NeutronScatteringDistribution::sampleTargetVelocity(
+					      ParticleState& neutron,
 					      const double temperature,
 				              double target_velocity[3] ) const
 {
   // Check if the energy is above the free gas thermal treatment threshold
-  if( particle.getEnergy() > 
-      ScatteringDistribution::free_gas_threshold*temperature &&
+  if( neutron.getEnergy() > 
+      NeutronScatteringDistribution::free_gas_threshold*temperature &&
       d_atomic_weight_ratio > 1.0 )
   {
     target_velocity[0] = 0.0;
@@ -65,12 +66,12 @@ void ScatteringDistribution::sampleTargetVelocity(
   {
     double target_speed, mu_target;
     
-    double neutron_speed = particle.getSpeed();
+    double neutron_speed = neutron.getSpeed();
     
     while( true )
     {
       // Sample the target speed
-      target_speed = sampleTargetSpeed( particle, temperature );
+      target_speed = sampleTargetSpeed( neutron, temperature );
       
       // Sample the cosine of the angle between the neutron and target velocity
       mu_target = 2*RandomNumberGenerator::getRandomNumber<double>() - 1.0;
@@ -91,7 +92,7 @@ void ScatteringDistribution::sampleTargetVelocity(
     {
       rotateDirectionThroughPolarAndAzimuthalAngle( mu_target,
 						    sampleAzimuthalAngle(),
-						    particle.getDirection(),
+						    neutron.getDirection(),
 						    target_velocity );
     }
     
@@ -104,8 +105,8 @@ void ScatteringDistribution::sampleTargetVelocity(
 // Sample the speed of the target nucleus
 /*! \details the temperature should be in units of MeV (kT)
  */
-double ScatteringDistribution::sampleTargetSpeed( 
-					      BasicParticleState& particle,
+double NeutronScatteringDistribution::sampleTargetSpeed( 
+					      ParticleState& neutron,
 					      const double temperature ) const
 {
   double target_speed;
@@ -113,12 +114,12 @@ double ScatteringDistribution::sampleTargetSpeed(
   // Calculate beta [=] s/cm
   double beta = sqrt(d_atomic_weight_ratio*
 		     PhysicalConstants::neutron_rest_mass_energy*
-		     particle.getEnergy()/temperature)/
+		     neutron.getEnergy()/temperature)/
     PhysicalConstants::speed_of_light;
   
   // The sampling scheme branching probability (alpha)
   double alpha = 1.0/(1.0 + sqrt(PhysicalConstants::pi)*beta*
-		      particle.getSpeed()/2);
+		      neutron.getSpeed()/2);
   
   // Sample two random numbers
   double random_number_1 = RandomNumberGenerator::getRandomNumber<double>();
@@ -155,5 +156,5 @@ double ScatteringDistribution::sampleTargetSpeed(
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//
-// end ScatteringDistribution.cpp
+// end NeutronScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

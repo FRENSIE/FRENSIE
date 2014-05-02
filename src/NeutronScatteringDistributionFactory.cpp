@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   ScatteringDistributionFactor.cpp
+//! \file   NeutronScatteringDistributionFactor.cpp
 //! \author Alex Robinson
-//! \brief  Scattering distribution factory class definition
+//! \brief  Neutron scattering distribution factory class definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -14,7 +14,7 @@
 #include "Teuchos_ArrayView.hpp"
 
 // FACEMC Includes
-#include "ScatteringDistributionFactory.hpp"
+#include "NeutronScatteringDistributionFactory.hpp"
 #include "UniformDistribution.hpp"
 #include "HistogramDistribution.hpp"
 #include "TabularDistribution.hpp"
@@ -25,11 +25,11 @@ namespace FACEMC{
 
 // Initialize the static member data
 Teuchos::RCP<OneDDistribution> 
-ScatteringDistributionFactory::isotropic_angle_cosine_dist(
+NeutronScatteringDistributionFactory::isotropic_angle_cosine_dist(
 			   new FACEMC::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
 // Constructor
-ScatteringDistributionFactory::ScatteringDistributionFactory( 
+NeutronScatteringDistributionFactory::NeutronScatteringDistributionFactory( 
 					     const std::string& table_name,
 					     const double atomic_weight_ratio )
   : d_table_name( table_name ),
@@ -37,8 +37,8 @@ ScatteringDistributionFactory::ScatteringDistributionFactory(
 { /* ... */ }
 
 // Create a scattering distribution
-Teuchos::RCP<ScatteringDistribution> 
-ScatteringDistributionFactory::createElasticScatteringDistribution(
+Teuchos::RCP<NeutronScatteringDistribution> 
+NeutronScatteringDistributionFactory::createElasticNeutronScatteringDistribution(
        const Teuchos::ArrayView<const double>& raw_angular_distribution ) const
 {
   unsigned number_of_tabulated_energies = raw_angular_distribution[0];
@@ -50,7 +50,7 @@ ScatteringDistributionFactory::createElasticScatteringDistribution(
   // Get the location of the angular distribution for each energy
   Teuchos::ArrayView<const double> distribution_indices = 
     raw_angular_distribution( number_of_tabulated_energies + 1,
-				number_of_tabulated_energies );
+			      number_of_tabulated_energies );
 
   // Initialize the angular distribution array
   Teuchos::Array<Pair<double,Teuchos::RCP<OneDDistribution> > >
@@ -119,29 +119,29 @@ ScatteringDistributionFactory::createElasticScatteringDistribution(
     else
     {
       angular_distribution[i].second = 
-	ScatteringDistributionFactory::isotropic_angle_cosine_dist;
+	NeutronScatteringDistributionFactory::isotropic_angle_cosine_dist;
     }
   }
 
   // Create the elastic scattering distribution
-  return Teuchos::RCP<ScatteringDistribution>( 
-		   new ElasticScatteringDistribution( d_atomic_weight_ratio,
-					              angular_distribution ) );
+  return Teuchos::RCP<NeutronScatteringDistribution>( 
+	    new ElasticNeutronScatteringDistribution( d_atomic_weight_ratio,
+						      angular_distribution ) );
 }
 
 // Create a scattering distribution
-Teuchos::RCP<ScatteringDistribution> 
-ScatteringDistributionFactory::createDistribution(
+Teuchos::RCP<NeutronScatteringDistribution> 
+NeutronScatteringDistributionFactory::createDistribution(
 	      const Teuchos::ArrayView<const double>& raw_angular_distribution,
 	      const Teuchos::ArrayView<const double>& raw_energy_distribution,
 	      const NuclearReactionType reaction_type ) const
 {
-  return Teuchos::RCP<ScatteringDistribution>();
+  return Teuchos::RCP<NeutronScatteringDistribution>();
 }
 								   
 
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//
-// end ScatteringDistributionFactory.cpp
+// end NeutronScatteringDistributionFactory.cpp
 //---------------------------------------------------------------------------//

@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   ScatteringDistributionFactor.hpp
+//! \file   NeutronScatteringDistributionFactor.hpp
 //! \author Alex Robinson
-//! \brief  Scattering distribution factory class declaration
+//! \brief  Neutron scattering distribution factory class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef SCATTERING_DISTRIBUTION_FACTORY_HPP
-#define SCATTERING_DISTRIBUTION_FACTORY_HPP
+#ifndef NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HPP
+#define NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HPP
 
 // Std Lib Includes
 #include <string>
@@ -17,33 +17,33 @@
 #include <Teuchos_Array.hpp>
 
 // FACEMC Includes
-#include "ScatteringDistribution.hpp"
-#include "ElasticScatteringDistribution.hpp"
+#include "NeutronScatteringDistribution.hpp"
+#include "ElasticNeutronScatteringDistribution.hpp"
 #include "NuclearReactionType.hpp"
 
 namespace FACEMC{
 
 //! The scattering distribution factory class
-class ScatteringDistributionFactory
+class NeutronScatteringDistributionFactory
 {
   
 public:
 
   //! Constructor 
-  ScatteringDistributionFactory( const std::string& table_name,
-				 const double atomic_weight_ratio );
+  NeutronScatteringDistributionFactory( const std::string& table_name,
+					const double atomic_weight_ratio );
 
   //! Destructor
-  ~ScatteringDistributionFactory()
+  ~NeutronScatteringDistributionFactory()
   { /* ... */ }
 
   //! Create a scattering distribution
-  Teuchos::RCP<ScatteringDistribution> 
-  createElasticScatteringDistribution( 
+  Teuchos::RCP<NeutronScatteringDistribution> 
+  createElasticNeutronScatteringDistribution( 
       const Teuchos::ArrayView<const double>& raw_angular_distribution ) const;
 
   //! Create a scattering distribution 
-  Teuchos::RCP<ScatteringDistribution> 
+  Teuchos::RCP<NeutronScatteringDistribution> 
   createDistribution( 
 	      const Teuchos::ArrayView<const double>& raw_angular_distribution,
 	      const Teuchos::ArrayView<const double>& raw_energy_distribution,
@@ -63,8 +63,8 @@ private:
 
 } // end FACEMC namespace
 
-#endif // end SCATTERING_DISTRIBUTION_FACTORY_HPP
+#endif // end NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
-// end ScatteringDistributionFactory.hpp
+// end NeutronScatteringDistributionFactory.hpp
 //---------------------------------------------------------------------------//

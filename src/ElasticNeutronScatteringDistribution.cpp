@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   ElasticScatteringDistribution.cpp
+//! \file   ElasticNeutronScatteringDistribution.cpp
 //! \author Alex Robinson
 //! \brief  The elastic scattering distribution class definition
 //!
@@ -10,7 +10,7 @@
 #include <math.h>
 
 // FACEMC Includes
-#include "ElasticScatteringDistribution.hpp"
+#include "ElasticNeutronScatteringDistribution.hpp"
 #include "DirectionHelpers.hpp"
 #include "ContractException.hpp"
 #include "SearchAlgorithms.hpp"
@@ -18,36 +18,36 @@
 namespace FACEMC{
 
 // Constructor
-ElasticScatteringDistribution::ElasticScatteringDistribution(
+ElasticNeutronScatteringDistribution::ElasticNeutronScatteringDistribution(
 		 const double atomic_weight_ratio,
 		 Teuchos::Array<Pair<double,Teuchos::RCP<OneDDistribution> > >&
 		 angular_scattering_distribution )
-  : ScatteringDistribution( atomic_weight_ratio ),
+  : NeutronScatteringDistribution( atomic_weight_ratio ),
     d_angular_scattering_distribution( angular_scattering_distribution )
 { 
   // Make sure the array has at least one value
   testPrecondition( angular_scattering_distribution.size() > 0 );
 }
 
-// Randomly scatter the particle
+// Randomly scatter the neutron
 /*! \details The energy of the neutron in the lab frame is used to sample
  * a center-of-mass scattering angle cosine (this is also done in openmc). It
  * may be more appropriate to instead use the energy of the neutron in the
  * target-at-rest frame as recommended in the MCNP manual.
  */ 
-void ElasticScatteringDistribution::scatterParticle( 
-					      BasicParticleState& particle,
+void ElasticNeutronScatteringDistribution::scatterNeutron( 
+					      NeutronState& neutron,
 					      const double temperature ) const
 {
   // Calculate the neutron velocity
-  double neutron_velocity[3] = {particle.getXDirection()*particle.getSpeed(),
-				particle.getYDirection()*particle.getSpeed(),
-				particle.getZDirection()*particle.getSpeed()};
+  double neutron_velocity[3] = {neutron.getXDirection()*neutron.getSpeed(),
+				neutron.getYDirection()*neutron.getSpeed(),
+				neutron.getZDirection()*neutron.getSpeed()};
     
   // Sample the target velocity
   double target_velocity[3];
 
-  sampleTargetVelocity( particle, temperature, target_velocity );
+  sampleTargetVelocity( neutron, temperature, target_velocity );
 
   // Calculate the center-of-mass velocity
   double center_of_mass_velocity[3];
@@ -70,7 +70,7 @@ void ElasticScatteringDistribution::scatterParticle(
 
   // Sample the scattering angle 
   double cm_scattering_angle_cosine = 
-    sampleCMScatteringAngleCosine( particle.getEnergy() );
+    sampleCMScatteringAngleCosine( neutron.getEnergy() );
 
   // Rotate the neutron velocity vector to the new angle
   // Note: The speed of the neutron does not change in the center-of-mass
@@ -92,20 +92,16 @@ void ElasticScatteringDistribution::scatterParticle(
   double outgoing_neutron_speed = vectorMagnitude( neutron_velocity );
 
   // Set the new neutron direction
-  particle.setDirection( neutron_velocity[0]/outgoing_neutron_speed,
-			 neutron_velocity[1]/outgoing_neutron_speed,
-			 neutron_velocity[2]/outgoing_neutron_speed );
+  neutron.setDirection( neutron_velocity[0]/outgoing_neutron_speed,
+			neutron_velocity[1]/outgoing_neutron_speed,
+			neutron_velocity[2]/outgoing_neutron_speed );
 
   // Calculate and set the outgoing neutron energy  
-  double speed_ratio = 
-    outgoing_neutron_speed/PhysicalConstants::speed_of_light;
-  
-  particle.setEnergy( PhysicalConstants::neutron_rest_mass_energy*speed_ratio/
-		      sqrt(1.0 - speed_ratio*speed_ratio) );
+  neutron.setSpeed( outgoing_neutron_speed );
 }
 
 // Sample a center-of-mass scattering angle cosine
-double ElasticScatteringDistribution::sampleCMScatteringAngleCosine(
+double ElasticNeutronScatteringDistribution::sampleCMScatteringAngleCosine(
 						    const double energy ) const
 {
   double cm_scattering_angle_cosine;
@@ -163,5 +159,5 @@ double ElasticScatteringDistribution::sampleCMScatteringAngleCosine(
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//
-// end ElasticScatteringDistribution.cpp
+// end ElasticNeutronScatteringDistribution.cpp
 //---------------------------------------------------------------------------//
