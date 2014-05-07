@@ -240,8 +240,10 @@ inline double ParticleState::calculateSpeed(const double rest_mass_energy,
   testPrecondition( !ST::isnaninf( kinetic_energy ) );
   testPrecondition( kinetic_energy > 0.0 );
   
-  return kinetic_energy*PhysicalConstants::speed_of_light/
-    sqrt( rest_mass_energy*rest_mass_energy + kinetic_energy*kinetic_energy );
+  double energy = kinetic_energy + rest_mass_energy;
+  
+  return PhysicalConstants::speed_of_light*
+    sqrt( 1.0 - rest_mass_energy*rest_mass_energy/(energy*energy) );
 }
 
 // Calculate the kinetic enery of a massive particle (MeV)
@@ -257,9 +259,10 @@ inline double ParticleState::calculateKineticEnergy(
   testPrecondition( speed < PhysicalConstants::speed_of_light );
   testPrecondition( speed > 0.0 );
 
-  return rest_mass_energy*speed/
-    sqrt( PhysicalConstants::speed_of_light*PhysicalConstants::speed_of_light -
-	  speed*speed );
+  return rest_mass_energy*(PhysicalConstants::speed_of_light/
+			   sqrt( PhysicalConstants::speed_of_light*
+				 PhysicalConstants::speed_of_light -
+				 speed*speed ) - 1.0);
 }
 
 } // end FACEMC namespace

@@ -449,8 +449,24 @@ ADD_EXECUTABLE(tstXSSNeutronDataExtractor
 TARGET_LINK_LIBRARIES(tstXSSNeutronDataExtractor ${PROJECT_NAME})
 ADD_TEST(XSSNeutronDataExtractor_test tstXSSNeutronDataExtractor --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ace_file.txt" --test_basic_ace_table="1001.70c")
 
-# ADD_EXECUTABLE(tstScatteringDistribution
-#   tstScatteringDistribution.cpp
-#   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-# TARGET_LINK_LIBRARIES(tstScatteringDistribution ${PROJECT_NAME})
-# ADD_TEST(ScatteringDistribution_test tstScatteringDistribution)
+ADD_EXECUTABLE(tstNeutronNeutronScatteringDistribution
+  tstNeutronNeutronScatteringDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstNeutronNeutronScatteringDistribution ${PROJECT_NAME})
+ADD_TEST(NeutronNeutronScatteringDistribution_test tstNeutronNeutronScatteringDistribution)
+
+ADD_EXECUTABLE(tstElasticNeutronScatteringDistribution
+  tstElasticNeutronScatteringDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstElasticNeutronScatteringDistribution ${PROJECT_NAME})
+ADD_TEST(ElasticNeutronScatteringDistribution_test tstElasticNeutronScatteringDistribution)
+
+ADD_EXECUTABLE(tstNeutronNeutronScatteringDistributionFactory
+  tstNeutronNeutronScatteringDistributionFactory.cpp)
+TARGET_LINK_LIBRARIES(tstNeutronNeutronScatteringDistributionFactory ${PROJECT_NAME})
+ADD_TEST(NeutronNeutronScatteringDistributionFactory_test tstNeutronNeutronScatteringDistributionFactory --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ace_file.txt" --test_basic_ace_table="1001.70c")
+
+ADD_EXECUTABLE(tstNuclearReaction
+  tstNuclearReaction.cpp)
+TARGET_LINK_LIBRARIES(tstNuclearReaction ${PROJECT_NAME})
+ADD_TEST(NuclearReaction_test tstNuclearReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ace_file.txt" --test_basic_ace_table="1001.70c")

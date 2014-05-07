@@ -14,19 +14,24 @@
 #include "DirectionHelpers.hpp"
 #include "ContractException.hpp"
 #include "SearchAlgorithms.hpp"
+#include "SortAlgorithms.hpp"
 
 namespace FACEMC{
 
 // Constructor
 ElasticNeutronScatteringDistribution::ElasticNeutronScatteringDistribution(
-		 const double atomic_weight_ratio,
-		 Teuchos::Array<Pair<double,Teuchos::RCP<OneDDistribution> > >&
-		 angular_scattering_distribution )
-  : NeutronScatteringDistribution( atomic_weight_ratio ),
+	   const double atomic_weight_ratio,
+	   const Teuchos::Array<Pair<double,Teuchos::RCP<OneDDistribution> > >&
+	   angular_scattering_distribution )
+  : NeutronNeutronScatteringDistribution( atomic_weight_ratio ),
     d_angular_scattering_distribution( angular_scattering_distribution )
 { 
   // Make sure the array has at least one value
   testPrecondition( angular_scattering_distribution.size() > 0 );
+  // Make sure that the array is sorted
+  testPrecondition( Sort::isSortedAscending<FIRST>( 
+				     angular_scattering_distribution.begin(),
+				     angular_scattering_distribution.end() ) );
 }
 
 // Randomly scatter the neutron

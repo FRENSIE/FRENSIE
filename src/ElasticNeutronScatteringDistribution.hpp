@@ -14,23 +14,23 @@
 #include <Teuchos_RCP.hpp>
 
 // FACEMC Includes
-#include "NeutronScatteringDistribution.hpp"
+#include "NeutronNeutronScatteringDistribution.hpp"
 #include "OneDDistribution.hpp"
 #include "Tuple.hpp"
 
 namespace FACEMC{
 
 //! The elastic scattering distribution class
-class ElasticNeutronScatteringDistribution : public NeutronScatteringDistribution
+class ElasticNeutronScatteringDistribution : public NeutronNeutronScatteringDistribution
 {
 
 public:
   
   //! Constructor
   ElasticNeutronScatteringDistribution( 
-		 const double atomic_weight_ratio,
-		 Teuchos::Array<Pair<double,Teuchos::RCP<OneDDistribution> > >&
-		 angular_scattering_distribution );
+	   const double atomic_weight_ratio,
+	   const Teuchos::Array<Pair<double,Teuchos::RCP<OneDDistribution> > >&
+	   angular_scattering_distribution );
 
   //! Destructor
   ~ElasticNeutronScatteringDistribution()

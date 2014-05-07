@@ -35,7 +35,7 @@ TEUCHOS_UNIT_TEST( NeutronState, getSpeed )
 
   particle.setEnergy( 1.0 );
   
-  TEST_FLOATING_EQUALITY( particle.getSpeed(), 31907549.506739, 1e-13 );
+  TEST_FLOATING_EQUALITY( particle.getSpeed(), 1382056320.3445, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -44,9 +44,9 @@ TEUCHOS_UNIT_TEST( NeutronState, setSpeed )
 {
   FACEMC::NeutronState particle( 1ull );
 
-  particle.setSpeed( 31907549.506739 );
+  particle.setSpeed( 1382056320.3445 );
 
-  TEST_FLOATING_EQUALITY( particle.getEnergy(), 1.0, 1e-13 );
+  TEST_FLOATING_EQUALITY( particle.getEnergy(), 1.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -69,7 +69,7 @@ TEUCHOS_UNIT_TEST( NeutronState, advance )
   TEST_FLOATING_EQUALITY( particle.getXPosition(), 2.0, 1e-12 );
   TEST_FLOATING_EQUALITY( particle.getYPosition(), 2.0, 1e-12 );
   TEST_FLOATING_EQUALITY( particle.getZPosition(), 2.0, 1e-12 );
-  TEST_FLOATING_EQUALITY( particle.getTime(), 5.4283416756994e-8, 1e-12 );
+  TEST_FLOATING_EQUALITY( particle.getTime(), 1.2532418412131e-9, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

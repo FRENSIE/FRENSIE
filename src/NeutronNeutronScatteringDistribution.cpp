@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   NeutronScatteringDistribution.cpp
+//! \file   NeutronNeutronScatteringDistribution.cpp
 //! \author Alex Robinson
 //! \brief  The neutron scattering distribution base class definition
 //!
@@ -13,17 +13,17 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FACEMC Includes
-#include "NeutronScatteringDistribution.hpp"
+#include "NeutronNeutronScatteringDistribution.hpp"
 #include "DirectionHelpers.hpp"
 #include "ContractException.hpp"
 
 namespace FACEMC{
 
 // Initialize the static member data
-unsigned NeutronScatteringDistribution::free_gas_threshold = 400u;
+unsigned NeutronNeutronScatteringDistribution::free_gas_threshold = 400u;
 
 // Constructor
-NeutronScatteringDistribution::NeutronScatteringDistribution( 
+NeutronNeutronScatteringDistribution::NeutronNeutronScatteringDistribution( 
 					     const double atomic_weight_ratio )
   : d_atomic_weight_ratio( atomic_weight_ratio )
 {
@@ -38,24 +38,24 @@ NeutronScatteringDistribution::NeutronScatteringDistribution(
  * temperature that the energy of a neutron can be before the free gas
  * thermal treatment is not used anymore.
  */
-void 
-NeutronScatteringDistribution::setFreeGasThermalTreatmentTemperatureThreshold(
+void NeutronNeutronScatteringDistribution::setFreeGasThermalTreatmentTemperatureThreshold(
 					   const double temperature_threshold )
 {
-  NeutronScatteringDistribution::free_gas_threshold = temperature_threshold;
+  NeutronNeutronScatteringDistribution::free_gas_threshold = 
+    temperature_threshold;
 }
 
 // Sample the velociy of the target nucleus
 /*! \details the temperature should be in units of MeV (kT)
  */ 
-void NeutronScatteringDistribution::sampleTargetVelocity(
+void NeutronNeutronScatteringDistribution::sampleTargetVelocity(
 					      ParticleState& neutron,
 					      const double temperature,
 				              double target_velocity[3] ) const
 {
   // Check if the energy is above the free gas thermal treatment threshold
   if( neutron.getEnergy() > 
-      NeutronScatteringDistribution::free_gas_threshold*temperature &&
+      NeutronNeutronScatteringDistribution::free_gas_threshold*temperature &&
       d_atomic_weight_ratio > 1.0 )
   {
     target_velocity[0] = 0.0;
@@ -105,17 +105,16 @@ void NeutronScatteringDistribution::sampleTargetVelocity(
 // Sample the speed of the target nucleus
 /*! \details the temperature should be in units of MeV (kT)
  */
-double NeutronScatteringDistribution::sampleTargetSpeed( 
+double NeutronNeutronScatteringDistribution::sampleTargetSpeed( 
 					      ParticleState& neutron,
 					      const double temperature ) const
 {
   double target_speed;
   
   // Calculate beta [=] s/cm
-  double beta = sqrt(d_atomic_weight_ratio*
-		     PhysicalConstants::neutron_rest_mass_energy*
-		     neutron.getEnergy()/temperature)/
-    PhysicalConstants::speed_of_light;
+  double beta = 
+    sqrt(d_atomic_weight_ratio*PhysicalConstants::neutron_rest_mass_energy/
+	 (2*temperature))/PhysicalConstants::speed_of_light;
   
   // The sampling scheme branching probability (alpha)
   double alpha = 1.0/(1.0 + sqrt(PhysicalConstants::pi)*beta*
@@ -156,5 +155,5 @@ double NeutronScatteringDistribution::sampleTargetSpeed(
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//
-// end NeutronScatteringDistribution.cpp
+// end NeutronNeutronScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

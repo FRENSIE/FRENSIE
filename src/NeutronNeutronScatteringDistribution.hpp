@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   NeutronScatteringDistribution.hpp
+//! \file   NeutronNeutronScatteringDistribution.hpp
 //! \author Alex Robinson
 //! \brief  The neutron scattering distribution base class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef NEUTRON_SCATTERING_DISTRIBUTION_HPP
-#define NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#ifndef NEUTRON_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#define NEUTRON_NEUTRON_SCATTERING_DISTRIBUTION_HPP
 
 // FACEMC Includes
 #include "NeutronState.hpp"
@@ -17,16 +17,16 @@
 namespace FACEMC{
 
 //! The scattering distribution base class
-class NeutronScatteringDistribution
+class NeutronNeutronScatteringDistribution
 {
 
 public:
 
   //! Constructor 
-  NeutronScatteringDistribution( const double atomic_weight_ratio );
+  NeutronNeutronScatteringDistribution( const double atomic_weight_ratio );
 
   //! Destructor
-  virtual ~NeutronScatteringDistribution()
+  virtual ~NeutronNeutronScatteringDistribution()
   { /* ... */ }
 
   //! Set the free gas thermal treatment temperature threshold
@@ -78,20 +78,23 @@ private:
 };
 
 // Return the atomic weight ratio
-inline double NeutronScatteringDistribution::getAtomicWeightRatio() const
+inline double 
+NeutronNeutronScatteringDistribution::getAtomicWeightRatio() const
 {
   return d_atomic_weight_ratio;
 }
 
 // Sample an azimuthal angle from a uniform distribution
-inline double NeutronScatteringDistribution::sampleAzimuthalAngle() const
+inline double 
+NeutronNeutronScatteringDistribution::sampleAzimuthalAngle() const
 {
   return 2*PhysicalConstants::pi*
     RandomNumberGenerator::getRandomNumber<double>();
 }
 
 // Calculate the center-of-mass velocity
-inline void NeutronScatteringDistribution::calculateCenterOfMassVelocity( 
+inline void 
+NeutronNeutronScatteringDistribution::calculateCenterOfMassVelocity( 
 				      const double neutron_velocity[3],
 				      const double target_velocity[3],
 				      double center_of_mass_velocity[3] ) const
@@ -111,7 +114,7 @@ inline void NeutronScatteringDistribution::calculateCenterOfMassVelocity(
 
 // Transform a velocity in lab frame to the center-of-mass frame
 inline void 
-NeutronScatteringDistribution::transformVelocityToCenterOfMassFrame( 
+NeutronNeutronScatteringDistribution::transformVelocityToCenterOfMassFrame( 
 				       const double center_of_mass_velocity[3],
 				       double velocity[3] ) const
 {
@@ -121,7 +124,7 @@ NeutronScatteringDistribution::transformVelocityToCenterOfMassFrame(
 }
 
 // Transform a velocity in the center-of-mass frame to the lab frame
-inline void NeutronScatteringDistribution::transformVelocityToLabFrame( 
+inline void NeutronNeutronScatteringDistribution::transformVelocityToLabFrame( 
 				       const double center_of_mass_velocity[3],
 				       double velocity[3] ) const
 {
@@ -132,8 +135,8 @@ inline void NeutronScatteringDistribution::transformVelocityToLabFrame(
 
 } // end FACEMC namespace
 
-#endif // end NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#endif // end NEUTRON_NEUTRON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end NeutronScatteringDistribution.hpp
+// end NeutronNeutronScatteringDistribution.hpp
 //---------------------------------------------------------------------------//

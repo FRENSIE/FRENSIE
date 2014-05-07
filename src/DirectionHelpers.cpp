@@ -135,6 +135,9 @@ void rotateDirectionThroughPolarAndAzimuthalAngle(
       direction_polar_angle_sine;
   }
   
+  // Clean roundoff errors
+  normalizeDirection( rotated_direction );
+  
   // Make sure that the rotated direction is valid
   testPostcondition( validDirection( rotated_direction ) );
 }

@@ -30,7 +30,6 @@ std::string test_basic_ace_table_name;
 Teuchos::RCP<FACEMC::ACEFileHandler> ace_file_handler;
 
 Teuchos::RCP<FACEMC::XSSNeutronDataExtractor> xss_data_extractor;
-   
 
 //---------------------------------------------------------------------------//
 // Tests.

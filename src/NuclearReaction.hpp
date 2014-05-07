@@ -13,10 +13,12 @@
 #include <Teuchos_ArrayView.hpp>
 #include <Teuchos_ArrayRCP.hpp>
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ScalarTraits.hpp>
 
 // FACEMC Includes
 #include "NuclearReactionType.hpp"
-#include "NeutronScatteringDistribution.hpp"
+#include "NeutronNeutronScatteringDistribution.hpp"
+#include "ParticleBank.hpp"
 
 namespace FACEMC{
 
@@ -24,17 +26,47 @@ namespace FACEMC{
 class NuclearReaction
 {
 
+private:
+  
+  // Teuchos ScalarTraits typedef
+  typedef Teuchos::ScalarTraits<double> ST;
+
 public:
 
   //! Constructor
   NuclearReaction( const NuclearReactionType reaction_type,
-		   const double Q_value,
+		   const double temperature,
+		   const double q_value,
 		   const unsigned multiplicity,
 		   const unsigned threshold_energy_index,
 	           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayView<const double>& cross_section,
-		   const Teuchos::RCP<NeutronScatteringDistribution>& 
-		   scattering_distribution );
+		   const Teuchos::RCP<NeutronNeutronScatteringDistribution>& 
+		   scattering_distribution,
+		   const bool increment_collision_number = true,
+		   const bool increment_generation_number = false );
+
+  //! Destructor
+  virtual ~NuclearReaction()
+  { /* ... */ }
+
+  //! Return the reaction type
+  NuclearReactionType getReactionType() const;
+
+  //! Return the reaction Q value
+  double getQValue() const;
+  
+  //! Return the number of neutrons emitted from the rxn at the given energy
+  virtual unsigned getNumberOfEmittedNeutrons( const double energy ) const;
+  
+  //! Return the threshold energy
+  double getThresholdEnergy() const;
+
+  //! Return the cross section value at a given energy
+  double getCrossSectionValue( const double energy ) const;
+
+  //! Simulate the reaction
+  virtual void react( NeutronState& neutron, ParticleBank& bank ) const;
 		   
 
 private:
@@ -42,13 +74,16 @@ private:
   // The nuclear reaction type
   NuclearReactionType d_reaction_type;
 
+  // The temperature at which the reaction occurs
+  double d_temperature;
+
   // The Q value for the reaction
-  double d_Q_value;
+  double d_q_value;
 
   // The number of secondary particles (of the same type as primary) released
   unsigned d_multiplicity;
 
-  // The energy grid index of the reaction threshold
+  // The reaction threshold energy grid index
   unsigned d_threshold_energy_index;
 
   // The incoming energy grid
@@ -58,8 +93,20 @@ private:
   Teuchos::Array<double> d_cross_section;
 
   // The scattering distribution
-  Teuchos::RCP<NeutronScatteringDistribution> d_scattering_distribution;
+  Teuchos::RCP<NeutronNeutronScatteringDistribution> d_scattering_distribution;
+
+  // Increment the collision number after this reaction occurs
+  bool d_increment_collision_number;
+  
+  // Increment the generation number after this reaction occurs
+  bool d_increment_generation_number;
 };
+
+// Return the threshold energy
+inline double NuclearReaction::getThresholdEnergy() const
+{
+  return d_incoming_energy_grid[d_threshold_energy_index];
+}
 
 } // end FACEMC namespace
 

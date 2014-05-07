@@ -34,12 +34,13 @@ Nuclide::Nuclide( const std::string& name,
     d_nuclear_reactions( 0 )
 {
   // Create a deep copy of the energy grid
-  d_energy_grid.deepCopy( raw_nuclide_data.extractElasticCrossSection() );
+  d_energy_grid.deepCopy( raw_nuclide_data.extractEnergyGrid() );
 
   // Create the nuclear reaction factory
   NuclearReactionFactory reaction_factory( 
-				 name,
-				 atomic_weight_ratio,
+				 d_name,
+				 d_atomic_weight_ratio,
+				 d_temperature,
 				 d_energy_grid.getConst(),
 				 raw_nuclide_data.extractElasticCrossSection(),
 				 raw_nuclide_data.extractMTRBlock(),
@@ -53,10 +54,10 @@ Nuclide::Nuclide( const std::string& name,
 				 raw_nuclide_data.extractDLWBlock() );
 
   // Create the elastic reaction
-  d_elastic_scattering_reaction = reaction_factory.createElasticReaction();
+  reaction_factory.createElasticReaction( d_elastic_scattering_reaction );
 
   // Create all of the non-elastic reactions
-  d_nuclear_reactions = reaction_factory.createNonElasticReactions();
+  reaction_factory.createNonElasticReactions( d_nuclear_reactions );
 
   // Calculate the total absorption cross section
   

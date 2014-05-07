@@ -274,7 +274,7 @@ TEUCHOS_UNIT_TEST( ParticleState, calculateSpeed )
   double speed = particle.calculateSpeed( 1.0, 1.0 );
 
   TEST_EQUALITY_CONST( speed, 
-		       FACEMC::PhysicalConstants::speed_of_light/sqrt(2) );
+		       FACEMC::PhysicalConstants::speed_of_light*sqrt(3)/2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -285,8 +285,8 @@ TEUCHOS_UNIT_TEST( ParticleState, calculateKineticEnergy )
 
   double kinetic_energy = 
     particle.calculateKineticEnergy( 
-			   1.0, 
-			   FACEMC::PhysicalConstants::speed_of_light/sqrt(2) );
+			 1.0, 
+			 FACEMC::PhysicalConstants::speed_of_light*sqrt(3)/2 );
   
   TEST_FLOATING_EQUALITY( kinetic_energy, 1.0, 1e-15 );
 }
