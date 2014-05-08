@@ -111,38 +111,38 @@ TEUCHOS_UNIT_TEST( NuclearReaction_elastic, getThresholdEnergy )
 
 //---------------------------------------------------------------------------//
 // Check that the cross section can be returned
-TEUCHOS_UNIT_TEST( NuclearReaction_elastic, getCrossSectionValue )
+TEUCHOS_UNIT_TEST( NuclearReaction_elastic, getCrossSection )
 {
   double cross_section = 
-    nuclear_reaction->getCrossSectionValue( 1.00000000000e-11 );
+    nuclear_reaction->getCrossSection( 1.00000000000e-11 );
   
   TEST_EQUALITY_CONST( cross_section, 1.16054600000e+03 );
 
-  cross_section = nuclear_reaction->getCrossSectionValue( 1.015625e-11 );
+  cross_section = nuclear_reaction->getCrossSection( 1.015625e-11 );
   
   TEST_EQUALITY_CONST( cross_section, 1.151689e3 );
 
-  cross_section = nuclear_reaction->getCrossSectionValue( 1.03125e-11 );
+  cross_section = nuclear_reaction->getCrossSection( 1.03125e-11 );
   
   TEST_EQUALITY_CONST( cross_section, 1.142832e3 );
 
-  cross_section = nuclear_reaction->getCrossSectionValue( 1.0625e-11 );
+  cross_section = nuclear_reaction->getCrossSection( 1.0625e-11 );
   
   TEST_EQUALITY_CONST( cross_section, 1.125904e3 );
 
-  cross_section = nuclear_reaction->getCrossSectionValue( 1.09375e-11 );
+  cross_section = nuclear_reaction->getCrossSection( 1.09375e-11 );
 
   TEST_EQUALITY_CONST( cross_section, 1.109708e3 );
     
-  cross_section = nuclear_reaction->getCrossSectionValue( 1.90e1 );
+  cross_section = nuclear_reaction->getCrossSection( 1.90e1 );
   
   TEST_EQUALITY_CONST( cross_section, 5.087783e-1 );
   
-  cross_section = nuclear_reaction->getCrossSectionValue( 1.95e1 );
+  cross_section = nuclear_reaction->getCrossSection( 1.95e1 );
   
   TEST_EQUALITY_CONST( cross_section, 4.95463e-1 );
 
-  cross_section = nuclear_reaction->getCrossSectionValue( 2.0e1 );
+  cross_section = nuclear_reaction->getCrossSection( 2.0e1 );
   
   TEST_EQUALITY_CONST( cross_section, 4.827462e-1 );
 }

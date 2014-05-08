@@ -77,7 +77,7 @@ unsigned NuclearReaction::getNumberOfEmittedNeutrons(const double energy) const
 }
 
 // Return the cross section value at a given energy
-double NuclearReaction::getCrossSectionValue( const double energy ) const
+double NuclearReaction::getCrossSection( const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() &&
       energy < d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
@@ -109,9 +109,7 @@ double NuclearReaction::getCrossSectionValue( const double energy ) const
   else if( energy < this->getThresholdEnergy() )
     return 0.0;
   else if( energy == d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
-  {
     return d_cross_section.back();
-  }
   else // energy > this->getThresholdEnergy()
     return 0.0;    
 }

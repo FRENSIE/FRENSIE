@@ -9,6 +9,9 @@
 #ifndef NUCLIDE_HPP
 #define NUCLIDE_HPP
 
+// Boost Includes
+#include <boost/unordered_map.hpp>
+
 // FACEMC Includes
 #include "XSSNeutronDataExtractor.hpp"
 #include "NuclearReaction.hpp"
@@ -22,9 +25,14 @@ namespace FACEMC{
 class Nuclide
 {
 
+private:
+
+  // Typedef for Teuchos ScalarTraits
+  typedef Teuchos::ScalarTraits<double> ST;
+
 public:
 
-  // Constructor
+  //! Constructor
   Nuclide( const std::string& name,
 	   const unsigned atomic_number,
 	   const unsigned atomic_mass_number,
@@ -34,9 +42,46 @@ public:
 	   const XSSNeutronDataExtractor& raw_nuclide_data );
   
 
-  // Destructor
+  //! Destructor
   virtual ~Nuclide()
   { /* ... */ }
+
+  //! Return the nuclide name
+  const std::string& getName() const;
+
+  //! Return the atomic number of the nuclide
+  unsigned getAtomicNumber() const;
+
+  //! Return the atomic mass number of the nuclide
+  unsigned getAtomicMassNumber() const;
+
+  //! Return the nuclear isomer number of the nuclide
+  unsigned getIsomerNumber() const;
+  
+  //! Return the atomic weight ratio
+  double getAtomicWeightRatio() const;
+
+  //! Return the temperature of the nuclide (in MeV)
+  double getTemperature() const;
+  
+  //! Return the total cross section at the desired energy
+  double getTotalCrossSection( const double energy ) const;
+
+  //! Return the total absorption cross section at the desired energy
+  double getAbsorptionCrossSection( const double energy ) const;
+  
+  //! Return the survival probability at the desired energy
+  double getSurvivalProbability( const double energy ) const;
+
+  //! Return the cross section for a specific nuclear reaction
+  double getReactionCrossSection( const double energy,
+				  const NuclearReactionType reaction ) const;
+
+  //! Collide with a neutron
+  void collideAnalogue( NeutronState& neutron, ParticleBank& bank ) const;
+
+  //! Collide with a neutron and survival bias
+  void collideSurvivalBias( NeutronState& neutron, ParticleBank& bank ) const;
 
 private:
 
@@ -68,11 +113,9 @@ private:
   // Note: absorption is (n,0n) + Sum_x(n,xnf)
   Teuchos::Array<double> d_absorption_cross_section;
 
-  // The elastic scattering interaction data (including micro cross section)
-  Teuchos::RCP<NuclearReaction> d_elastic_scattering_reaction;
-  
-  // All nuclear interactions (other than elastic scattering)
-  Teuchos::Array<Teuchos::RCP<NuclearReaction> > d_nuclear_reactions;
+  // The nuclear reactions
+  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
+  d_nuclear_reactions;
 };
 
 } // end FACEMC namespace

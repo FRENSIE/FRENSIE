@@ -62,8 +62,8 @@ public:
   //! Return the threshold energy
   double getThresholdEnergy() const;
 
-  //! Return the cross section value at a given energy
-  double getCrossSectionValue( const double energy ) const;
+  //! Return the cross section at a given energy
+  double getCrossSection( const double energy ) const;
 
   //! Simulate the reaction
   virtual void react( NeutronState& neutron, ParticleBank& bank ) const;

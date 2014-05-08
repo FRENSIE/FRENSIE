@@ -85,9 +85,9 @@ TEUCHOS_UNIT_TEST( NuclearReactionFactory_hydrogen, createElasticReaction )
   TEST_EQUALITY_CONST( elastic_reaction->getQValue(), 0.0 );
   TEST_EQUALITY_CONST( elastic_reaction->getNumberOfEmittedNeutrons( 0.0 ), 1);
   TEST_EQUALITY_CONST( elastic_reaction->getThresholdEnergy(), 1.0e-11 );
-  TEST_EQUALITY_CONST( elastic_reaction->getCrossSectionValue( 1.0e-11 ),
+  TEST_EQUALITY_CONST( elastic_reaction->getCrossSection( 1.0e-11 ),
 		       1.1605460e3 );
-  TEST_EQUALITY_CONST( elastic_reaction->getCrossSectionValue( 2.0e1 ),
+  TEST_EQUALITY_CONST( elastic_reaction->getCrossSection( 2.0e1 ),
 		       4.827462e-1 );
 }
 
