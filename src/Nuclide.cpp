@@ -124,28 +124,16 @@ double Nuclide::getTotalCrossSection( const double energy ) const
 
   if( energy < d_energy_grid[d_energy_grid.size()-1] )
   {
-    Teuchos::ArrayRCP<const double>::const_iterator lower_energy_grid_pt,
-      upper_energy_grid_pt;
+    unsigned lower_bin_index =
+      Search::binaryLowerBoundIndex( d_energy_grid.begin(), 
+				     d_energy_grid.end(),
+				     energy );
 
-    lower_energy_grid_pt = d_energy_grid.begin();
-    upper_energy_grid_pt = d_energy_grid.end();
-
-    lower_energy_grid_pt = 
-      Search::binarySearchContinuousData( lower_energy_grid_pt, 
-					  upper_energy_grid_pt,
-					  energy );
-    
-    upper_energy_grid_pt = lower_energy_grid_pt;
-    ++upper_energy_grid_pt;
-
-    unsigned cs_index = 
-      std::distance( d_energy_grid.getConst().begin(), lower_energy_grid_pt );
-
-    return LinLin::interpolate( *lower_energy_grid_pt,
-				*upper_energy_grid_pt,
+    return LinLin::interpolate( d_energy_grid[lower_bin_index],
+				d_energy_grid[lower_bin_index+1],
 				energy,
-				d_total_cross_section[cs_index],
-				d_total_cross_section[cs_index+1] );
+				d_total_cross_section[lower_bin_index],
+				d_total_cross_section[lower_bin_index+1] );
   }
   else if( energy == d_energy_grid[d_energy_grid.size()-1] )
     return d_total_cross_section.back();
@@ -162,28 +150,16 @@ double Nuclide::getAbsorptionCrossSection( const double energy ) const
 
   if( energy < d_energy_grid[d_energy_grid.size()-1] )
   {
-    Teuchos::ArrayRCP<const double>::const_iterator lower_energy_grid_pt,
-      upper_energy_grid_pt;
+    unsigned lower_bin_index =
+      Search::binaryLowerBoundIndex( d_energy_grid.begin(), 
+				     d_energy_grid.end(),
+				     energy );
 
-    lower_energy_grid_pt = d_energy_grid.begin();
-    upper_energy_grid_pt = d_energy_grid.end();
-
-    lower_energy_grid_pt = 
-      Search::binarySearchContinuousData( lower_energy_grid_pt, 
-					  upper_energy_grid_pt,
-					  energy );
-    
-    upper_energy_grid_pt = lower_energy_grid_pt;
-    ++upper_energy_grid_pt;
-
-    unsigned cs_index = 
-      std::distance( d_energy_grid.getConst().begin(), lower_energy_grid_pt );
-
-    return LinLin::interpolate( *lower_energy_grid_pt,
-				*upper_energy_grid_pt,
+    return LinLin::interpolate( d_energy_grid[lower_bin_index],
+				d_energy_grid[lower_bin_index+1],
 				energy,
-				d_absorption_cross_section[cs_index],
-				d_absorption_cross_section[cs_index+1] );
+				d_absorption_cross_section[lower_bin_index],
+				d_absorption_cross_section[lower_bin_index+1]);
   }
   else if( energy == d_energy_grid[d_energy_grid.size()-1] )
     return d_absorption_cross_section.back();

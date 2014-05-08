@@ -78,9 +78,9 @@ double TabularDistribution<InterpolationPolicy>::evaluatePDF(
     start = d_distribution.begin();
     end = d_distribution.end();
 
-    lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
-								    end,
-								    indep_var_value );
+    lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							  end,
+							  indep_var_value );
 
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
@@ -115,9 +115,9 @@ double TabularDistribution<InterpolationPolicy>::sample() const
   start = d_distribution.begin();
   end = d_distribution.end();
 
-  lower_bin_boundary = Search::binarySearchContinuousData<SECOND>( start,
-								   end,
-								   random_number );
+  lower_bin_boundary = Search::binaryLowerBound<SECOND>( start,
+							 end,
+							 random_number );
 
   double indep_value = lower_bin_boundary->first;
   double cdf_diff = random_number - lower_bin_boundary->second;

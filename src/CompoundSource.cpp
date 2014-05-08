@@ -50,10 +50,9 @@ void CompoundSource::sampleParticleState( ParticleBank& bank )
   
   // Sample the source that will be sampled from
   Teuchos::Array<Trip<Teuchos::RCP<ParticleSource>,double,unsigned> >::iterator
-    selected_source = Search::binarySearchDiscreteData<SECOND>( 
-							     d_sources.begin(),
-							     d_sources.end(),
-							     random_number );
+    selected_source = Search::binaryUpperBound<SECOND>( d_sources.begin(),
+							d_sources.end(),
+							random_number );
   // Sample from the source
   selected_source->first->sampleParticleState( bank );
   

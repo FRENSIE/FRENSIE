@@ -82,26 +82,15 @@ double NuclearReaction::getCrossSection( const double energy ) const
   if( energy >= this->getThresholdEnergy() &&
       energy < d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
   {
-    Teuchos::ArrayRCP<const double>::const_iterator lower_energy_grid_pt,
-      upper_energy_grid_pt;
-
-    lower_energy_grid_pt = d_incoming_energy_grid.begin();
-    upper_energy_grid_pt = d_incoming_energy_grid.end();
-
-    lower_energy_grid_pt = 
-      Search::binarySearchContinuousData( lower_energy_grid_pt, 
-					  upper_energy_grid_pt,
-					  energy );
+    unsigned energy_index = 
+      Search::binaryLowerBoundIndex( d_incoming_energy_grid.begin(),
+				     d_incoming_energy_grid.end(),
+				     energy );
     
-    upper_energy_grid_pt = lower_energy_grid_pt;
-    ++upper_energy_grid_pt;
-
-    unsigned cs_index = 
-      std::distance( d_incoming_energy_grid, lower_energy_grid_pt );
-    cs_index -= d_threshold_energy_index;
+    unsigned cs_index = energy_index - d_threshold_energy_index;
     
-    return LinLin::interpolate( *lower_energy_grid_pt,
-				*upper_energy_grid_pt,
+    return LinLin::interpolate( d_incoming_energy_grid[energy_index],
+				d_incoming_energy_grid[energy_index+1],
 				energy,
 				d_cross_section[cs_index],
 				d_cross_section[cs_index+1] );

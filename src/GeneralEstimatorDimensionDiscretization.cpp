@@ -53,15 +53,10 @@ unsigned GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSION>::ca
   testPrecondition( isValueInDiscretization( any_container ) );
   
   typename DT::dimensionType value = DT::clarifyValue( any_container );
-  
-  typename Teuchos::Array<typename DT::dimensionType>::const_iterator 
-    start, end, upper_bin_boundary;
-  
-  start = d_dimension_bin_boundaries.begin();
-  end = d_dimension_bin_boundaries.end();
-  upper_bin_boundary = Search::binarySearchDiscreteData( start, end, value );
-  
-  return std::distance(d_dimension_bin_boundaries.begin(), upper_bin_boundary);
+
+  return Search::binaryUpperBoundIndex( d_dimension_bin_boundaries.begin(),
+					d_dimension_bin_boundaries.end(),
+					value );
 }
 
 // Print the boundaries of a bin

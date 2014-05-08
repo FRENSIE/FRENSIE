@@ -130,10 +130,9 @@ double ElasticNeutronScatteringDistribution::sampleCMScatteringAngleCosine(
     lower_bin_boundary = d_angular_scattering_distribution.begin();
     upper_bin_boundary = d_angular_scattering_distribution.end();
     
-    lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( 
-							    lower_bin_boundary,
-							    upper_bin_boundary,
-							    energy );
+    lower_bin_boundary = Search::binaryLowerBound<FIRST>( lower_bin_boundary,
+							  upper_bin_boundary,
+							  energy );
 
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;

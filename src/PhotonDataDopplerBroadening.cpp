@@ -86,9 +86,9 @@ PhotonDataDopplerBroadening::getIncoherentScatteringVacancyShellData(
   start = d_shell_occupancy.begin();
   end = d_shell_occupancy.end();
 
-  bin = Search::binarySearchDiscreteData<FIRST>( start,
-						 end,
-						 cdf_value );
+  bin = Search::binaryUpperBound<FIRST>( start,
+					 end,
+					 cdf_value );
 
   Trip<unsigned int, unsigned int, double> shell_data;
   shell_data.first = bin->second;
@@ -112,9 +112,9 @@ double PhotonDataDopplerBroadening::getComptonProfileCDF(
   start = d_compton_profiles[compton_profile_index].begin();
   end = d_compton_profiles[compton_profile_index].end();
 
-  lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
-								  end,
-								  momentum );
+  lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							end,
+							momentum );
 
   double momentum_diff = momentum - (*lower_bin_boundary).first;
   double cdf = (*lower_bin_boundary).second;
@@ -137,9 +137,9 @@ double PhotonDataDopplerBroadening::getComptonProfileMomentum(
   start = d_compton_profiles[compton_profile_index].begin();
   end = d_compton_profiles[compton_profile_index].end();
 
-  lower_bin_boundary = Search::binarySearchContinuousData<SECOND>( start,
-								   end,
-								   cdf_value );
+  lower_bin_boundary = Search::binaryLowerBound<SECOND>( start,
+							 end,
+							 cdf_value );
 
   double momentum = (*lower_bin_boundary).first;
   double cdf_diff = cdf_value - (*lower_bin_boundary).second;

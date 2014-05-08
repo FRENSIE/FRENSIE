@@ -65,20 +65,14 @@ unsigned GeneralEstimatorDimensionDiscretization<dimension>::calculateBinIndex( 
   
   typename DT::dimensionType value = DT::clarifyValue( any_container );
   
-  typename Teuchos::Array<typename DT::dimensionType>::const_iterator 
-    start, end, upper_bin_boundary;
-  
-  start = d_dimension_bin_boundaries.begin();
-  end = d_dimension_bin_boundaries.end();
-  upper_bin_boundary = Search::binarySearchDiscreteData( start, end, value );
-  
-  unsigned distance = 
-    std::distance( d_dimension_bin_boundaries.begin(), upper_bin_boundary );
-  
-  if( distance != 0u )
-    return distance - 1u;
+  unsigned bin = 
+    Search::binaryUpperBoundIndex( d_dimension_bin_boundaries.begin(),
+				   d_dimension_bin_boundaries.end(),
+				   value );
+  if( bin != 0u )
+    return bin - 1u;
   else
-    return distance;
+    return bin;
 }
 
 // Print the boundaries of a bin

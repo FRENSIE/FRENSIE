@@ -162,9 +162,9 @@ unsigned int PhotonDataFluorescence::getPhotoelectricVacancyShell(
   start = d_total_integrated_photoelectric_cross_section.begin();
   end = d_total_integrated_photoelectric_cross_section.end();
 
-  lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
-								  end,
-								  log_energy );
+  lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							end,
+							log_energy );
   double indep_var = (*lower_bin_boundary).first;
   double dep_var = (*lower_bin_boundary).second;
   double slope = (*lower_bin_boundary).third;
@@ -184,9 +184,9 @@ unsigned int PhotonDataFluorescence::getPhotoelectricVacancyShell(
       start = map_start->second.begin();
       end = map_start->second.end();
       
-      lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
-								      end,
-								      log_energy );
+      lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							    end,
+							    log_energy );
       indep_var = (*lower_bin_boundary).first;
       dep_var = (*lower_bin_boundary).second;
       slope = (*lower_bin_boundary).third;
@@ -252,9 +252,9 @@ Pair<unsigned int, double> PhotonDataFluorescence::getShellRadiativeTransitionDa
     start = map_start->second.begin();
     end = map_start->second.end();
     
-    bin = Search::binarySearchDiscreteData<FIRST>( start,
-						   end,
-						   cdf_value );
+    bin = Search::binaryUpperBound<FIRST>( start,
+					   end,
+					   cdf_value );
     
     transition_data.first = bin->second;
     transition_data.second = bin->third;
@@ -291,9 +291,9 @@ Trip<unsigned int, unsigned int, double> PhotonDataFluorescence::getShellNonradi
   start = map_start->second.begin();
   end = map_start->second.end();
   
-  bin = Search::binarySearchDiscreteData<FIRST>( start,
-						 end,
-						 cdf_value );
+  bin = Search::binaryUpperBound<FIRST>( start,
+					 end,
+					 cdf_value );
 
   transition_data.first = bin->second;
   transition_data.second = bin->third;

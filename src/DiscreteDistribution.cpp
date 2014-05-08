@@ -79,9 +79,9 @@ double DiscreteDistribution::sample() const
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
   
   Teuchos::Array<Pair<double,double> >::const_iterator sample = 
-    Search::binarySearchDiscreteData<SECOND>( d_distribution.begin(),
-					      d_distribution.end(),
-					      random_number );
+    Search::binaryUpperBound<SECOND>( d_distribution.begin(),
+				      d_distribution.end(),
+				      random_number );
 
   return sample->first;
 }

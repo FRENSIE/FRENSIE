@@ -51,9 +51,9 @@ double ThirtyTwoEquiprobableBinDistribution::evaluatePDF(
 	indep_var_value < d_bin_boundaries.back() )
     {
       lower_bin_boundary = 
-	Search::binarySearchContinuousData( d_bin_boundaries.begin(),
-					    d_bin_boundaries.end(),
-					    indep_var_value );
+	Search::binaryLowerBound( d_bin_boundaries.begin(),
+				  d_bin_boundaries.end(),
+				  indep_var_value );
 
      upper_bin_boundary = lower_bin_boundary;
      ++upper_bin_boundary;

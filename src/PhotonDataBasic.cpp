@@ -112,9 +112,9 @@ double PhotonDataBasic::getCoherentCrossSection( const double energy ) const
   start = d_integrated_coherent_cross_section.begin();
   end = d_integrated_coherent_cross_section.end();
 
-  lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
-								  end,
-								  log_energy );
+  lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							end,
+							log_energy );
   double indep_var = (*lower_bin_boundary).first;
   double dep_var = (*lower_bin_boundary).second;
   double slope = (*lower_bin_boundary).third;
@@ -133,9 +133,9 @@ double PhotonDataBasic::getFormFactorCDF( const double argument ) const
   start = d_form_factor.begin();
   end = d_form_factor.end();
 
-  lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
-								  end,
-								  squared_argument );
+  lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							end,
+							squared_argument );
   
   double argument_diff = squared_argument - (*lower_bin_boundary).first;
   double cdf = (*lower_bin_boundary).second;
@@ -154,9 +154,9 @@ double PhotonDataBasic::getFormFactorArgument( const double cdf_value ) const
   start = d_form_factor.begin();
   end = d_form_factor.end();
 
-  lower_bin_boundary = Search::binarySearchContinuousData<SECOND>( start,
-								   end,
-								   cdf_value );
+  lower_bin_boundary = Search::binaryLowerBound<SECOND>( start,
+							 end,
+							 cdf_value );
 
   double argument = (*lower_bin_boundary).first;
   double cdf_diff = cdf_value - (*lower_bin_boundary).second;
@@ -179,9 +179,9 @@ double PhotonDataBasic::getIncoherentCrossSection( const double energy) const
   start = d_integrated_incoherent_cross_section.begin();
   end = d_integrated_incoherent_cross_section.end();
 
-  lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
-								  end,
-								  log_energy );
+  lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							end,
+							log_energy );
 
   double indep_var = (*lower_bin_boundary).first;
   double dep_var = (*lower_bin_boundary).second;
@@ -201,9 +201,9 @@ double PhotonDataBasic::getScatteringFunction( const double argument ) const
   start = d_scattering_function.begin();
   end = d_scattering_function.end();
 
-  lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
-								  end,
-								  log_argument );
+  lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							end,
+							log_argument );
   
   double indep_diff = log_argument - (*lower_bin_boundary).first;
   // The first bin starts at (-INF,-INF). A value of 0.0 must be returned
@@ -229,9 +229,9 @@ double PhotonDataBasic::getPhotoelectricCrossSection( const double energy ) cons
   start = d_integrated_photoelectric_cross_section.begin();
   end = d_integrated_photoelectric_cross_section.end();
 
-  lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
-								  end,
-								  log_energy );
+  lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							end,
+							log_energy );
   
   double indep_var = (*lower_bin_boundary).first;
   double dep_var = (*lower_bin_boundary).second;
@@ -251,9 +251,9 @@ double PhotonDataBasic::getPairProductionCrossSection( const double energy ) con
   start = d_integrated_pair_production_cross_section.begin();
   end = d_integrated_pair_production_cross_section.end();
   
-  lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
-								  end,
-								  log_energy );
+  lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							end,
+							log_energy );
   
   double indep_var = (*lower_bin_boundary).first;
   double dep_var = (*lower_bin_boundary).second;
@@ -274,9 +274,9 @@ double PhotonDataBasic::getTripletProductionCrossSection( const double energy ) 
   start = d_integrated_triplet_production_cross_section.begin();
   end = d_integrated_triplet_production_cross_section.end();
   
-  lower_bin_boundary = Search::binarySearchContinuousData<FIRST>( start,
-								  end,
-								  log_energy );
+  lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							end,
+							log_energy );
   
   double indep_var = (*lower_bin_boundary).first;
   double dep_var = (*lower_bin_boundary).second;

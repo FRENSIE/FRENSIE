@@ -83,10 +83,9 @@ double HistogramDistribution::evaluatePDF( const double indep_var_value ) const
   else
   {
     Teuchos::Array<Trip<double,double,double> >::const_iterator bin = 
-      Search::binarySearchContinuousData<FIRST>( d_distribution.begin(),
-						 d_distribution.end(),
-						 indep_var_value );
-
+      Search::binaryLowerBound<FIRST>( d_distribution.begin(),
+				       d_distribution.end(),
+				       indep_var_value );
     
     return bin->second;
   }
@@ -105,9 +104,9 @@ double HistogramDistribution::sample() const
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
   
   Teuchos::Array<Trip<double,double,double> >::const_iterator bin = 
-    Search::binarySearchContinuousData<THIRD>( d_distribution.begin(),
-					       d_distribution.end(),
-					       random_number );
+    Search::binaryLowerBound<THIRD>( d_distribution.begin(),
+				     d_distribution.end(),
+				     random_number );
 
   return bin->first + (random_number - bin->third)/bin->second;
 }
