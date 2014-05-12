@@ -16,7 +16,7 @@
 // Std Lib Includes
 #include "NuclearReaction.hpp"
 #include "NuclearReactionType.hpp"
-#include "NeutronNeutronScatteringDistributionFactory.hpp"
+#include "NeutronScatteringDistributionFactory.hpp"
 
 namespace FACEMC{
 
@@ -51,65 +51,109 @@ public:
   ~NuclearReactionFactory()
   { /* ... */ }
 
-  //! Create the elastic reaction
-  void createElasticReaction( Teuchos::RCP<NuclearReaction>& reaction ) const;
+  //! Create the scattering reactions 
+  void createScatteringReactions( 
+      boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >&
+      scattering_reactions ) const;
 
-  //! Create the non-elastic reactions (any reaction with multiplicity > 0)
-  void createNonElasticReactions( 
-	     Teuchos::Array<Teuchos::RCP<NuclearReaction> >& reactions ) const;
+  //! Create the absorption reactions 
+  void createAbsorptionReactions(
+      boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >&
+      absorption_reactions ) const;	     
+
+  //! Create the fission reactions
+  void createFissionReactions(
+      boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >&
+      fission_reactions ) const;
+
+protected:
+
+  //! Create the reaction type ordering map
+  static void createReactionOrderingMap( 
+       const Teuchos::ArrayView<const double>& mtr_block,
+       boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering );
+
+  //! Create the reaction type Q-value map
+  static void createReactionQValueMap( 
+   const Teuchos::ArrayView<const double>& lqr_block,
+   const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
+   boost::unordered_map<NuclearReactionType,double>& reaction_q_value );
+
+  //! Create the reaction multiplicity map
+  static void createReactionMultiplicityMap(
+   const Teuchos::ArrayView<const double>& tyr_block,
+   const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
+   boost::unordered_map<NuclearReactionType,unsigned>& reaction_multiplicity );
+
+  //! Create the reaction threshold index map
+  static void createReactionThresholdMap(
+   const Teuchos::ArrayView<const double>& lsig_block,
+   const Teuchos::ArrayView<const double>& sig_block,
+   const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
+   boost::unordered_map<NuclearReactionType,unsigned>& 
+   reaction_threshold_index );
+
+  //! Create the reaction cross section map
+  static void createReactionCrossSectionMap(
+   const Teuchos::ArrayView<const double>& lsig_block,
+   const Teuchos::ArrayView<const double>& sig_block,
+   const Teuchos::ArrayView<const double>& elastic_cross_section,
+   const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
+   boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >& 
+   reaction_cross_section );
 
 private:
 
-  // Initialize the reaction type ordering map
-  void initializeReactionOrderingMap( 
-			   const Teuchos::ArrayView<const double>& mtr_block );
+  // Initialize the scattering reactions
+  void initializeScatteringReactions( 
+    const double temperature,
+    const Teuchos::ArrayRCP<const double> energy_grid,
+    const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
+    const boost::unordered_map<NuclearReactionType,unsigned>&
+    reaction_multiplicity,
+    const boost::unordered_map<NuclearReactionType,unsigned>&
+    reaction_threshold_index,
+    const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
+    reaction_cross_section,
+    const NeutronScatteringDistributionFactory& scattering_dist_factory );
 
-  // Initialize the reaction type Q-value map
-  void initializeReactionQValueMap( 
-			   const Teuchos::ArrayView<const double>& lqr_block );
+  // Initialize the absorption reactions
+  void initializeAbsorptionReactions(
+    const double temperature,
+    const Teuchos::ArrayRCP<const double> energy_grid,
+    const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
+    const boost::unordered_map<NuclearReactionType,unsigned>&
+    reaction_multiplicity,
+    const boost::unordered_map<NuclearReactionType,unsigned>&
+    reaction_threshold_index,
+    const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
+    reaction_cross_section );
 
-  // Initialize the reaction type multiplicity and scattering ref. frame map
-  void initializeReactionMultiplicityMap(
-			   const Teuchos::ArrayView<const double>& tyr_block );
+  // Initialize the fission reactions
+  void initializeFissionReactions(
+    const double temperature,
+    const Teuchos::ArrayRCP<const double> energy_grid,
+    const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
+    const boost::unordered_map<NuclearReactionType,unsigned>&
+    reaction_multiplicity,
+    const boost::unordered_map<NuclearReactionType,unsigned>&
+    reaction_threshold_index,
+    const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
+    reaction_cross_section,
+    const NeutronScatteringDistributionFactory& scattering_dist_factory );
+				    
+
+  // A map of the scattering reactions
+  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
+  d_scattering_reactions;
   
-  // Initialize the reaction type threshold and cross section map
-  void initializeReactionThresholdAndCrossSectionMap(
-	       const Teuchos::ArrayView<const double>& lsig_block,
-	       const Teuchos::ArrayView<const double>& sig_block,
-	       const Teuchos::ArrayView<const double>& elastic_cross_section );
+  // A map of the absorption reactions
+  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
+  d_absorption_reactions;
 
-  // The table name
-  std::string d_table_name;
-
-  // The atomic weight ratio
-  double d_atomic_weight_ratio;
-  
-  // The temperature at which the nuclear reactions will occur (MeV)
-  double d_temperature;
-  
-  // The energy grid
-  Teuchos::ArrayRCP<const double> d_energy_grid;
-
-  // The scattering distribution factory
-  NeutronNeutronScatteringDistributionFactory d_scattering_dist_factory;
-  
-  // A map of the reaction types (MT #s) in the table and their ordering
-  boost::unordered_map<NuclearReactionType,unsigned> d_reaction_ordering;
-
-  // A map of the reaction types (MT #s) and the corresponding Q-value
-  boost::unordered_map<NuclearReactionType,double> d_reaction_q_value;
-  
-  // A map of the reaction types (MT #s) and the corresponding multiplicity
-  boost::unordered_map<NuclearReactionType,unsigned> 
-  d_reaction_multiplicity;
-
-  // A map of the reaction types (MT #s) and the corresponding threshold index
-  boost::unordered_map<NuclearReactionType,unsigned> 
-  d_reaction_threshold_index;
-  
-  // A map of the reaction types (MT #s) and the corresponding cross section
-  boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >
-  d_reaction_cross_section;
+  // A map of the fission reactions
+  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
+  d_fission_reactions;
 };
 
 } // end FACEMC namespace

@@ -24,7 +24,7 @@
 //---------------------------------------------------------------------------//
 void initializeScatteringDistribution( 
   const double atomic_weight_ratio,
-  Teuchos::RCP<FACEMC::NeutronNeutronScatteringDistribution>& scattering_dist )
+  Teuchos::RCP<FACEMC::NeutronScatteringDistribution>& scattering_dist )
 {
   Teuchos::RCP<FACEMC::OneDDistribution> uniform_dist( 
 			   new FACEMC::UniformDistribution( -1.0, 1.0, 0.5 ) );
@@ -55,7 +55,7 @@ void initializeScatteringDistribution(
 TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution, 
 		   scatterNeutron_hydrogen )
 {
-  Teuchos::RCP<FACEMC::NeutronNeutronScatteringDistribution> scattering_dist;
+  Teuchos::RCP<FACEMC::NeutronScatteringDistribution> scattering_dist;
   
   initializeScatteringDistribution( 0.999167, scattering_dist );
   

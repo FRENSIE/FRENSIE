@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   NeutronNeutronScatteringDistributionFactor.hpp
+//! \file   NeutronScatteringDistributionFactor.hpp
 //! \author Alex Robinson
-//! \brief  NeutronNeutron scattering distribution factory class declaration
+//! \brief  Neutron scattering distribution factory class declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -21,20 +21,20 @@
 #include <Teuchos_Array.hpp>
 
 // FACEMC Includes
-#include "NeutronNeutronScatteringDistribution.hpp"
+#include "NeutronScatteringDistribution.hpp"
 #include "ElasticNeutronScatteringDistribution.hpp"
 #include "NuclearReactionType.hpp"
 
 namespace FACEMC{
 
 //! The scattering distribution factory class
-class NeutronNeutronScatteringDistributionFactory
+class NeutronScatteringDistributionFactory
 {
   
 public:
 
   //! Constructor 
-  NeutronNeutronScatteringDistributionFactory( 
+  NeutronScatteringDistributionFactory( 
 			   const std::string& table_name,
 			   const double atomic_weight_ratio,
 			   const Teuchos::ArrayView<const double>& mtr_block,
@@ -45,18 +45,18 @@ public:
 			   const Teuchos::ArrayView<const double>& dlw_block );
 
   //! Destructor
-  ~NeutronNeutronScatteringDistributionFactory()
+  ~NeutronScatteringDistributionFactory()
   { /* ... */ }
 
   //! Create the elastic scattering distribution
-  void createElasticScatteringDist( 
-                            Teuchos::RCP<NeutronNeutronScatteringDistribution>&
+  void createElasticScatteringDistribution( 
+                            Teuchos::RCP<NeutronScatteringDistribution>&
 			    elastic_distribution ) const;
 
   //! Create a scattering distribution 
-  void createScatteringDist( 
-	      Teuchos::RCP<NeutronNeutronScatteringDistribution>& distribution,
-	      const NuclearReactionType reaction_type ) const;
+  void createScatteringDistribution( 
+	      const NuclearReactionType reaction_type,
+	      Teuchos::RCP<NeutronScatteringDistribution>& distribution) const;
 
 private:
 

@@ -23,7 +23,7 @@ ElasticNeutronScatteringDistribution::ElasticNeutronScatteringDistribution(
 	   const double atomic_weight_ratio,
 	   const Teuchos::Array<Pair<double,Teuchos::RCP<OneDDistribution> > >&
 	   angular_scattering_distribution )
-  : NeutronNeutronScatteringDistribution( atomic_weight_ratio ),
+  : NeutronScatteringDistribution( atomic_weight_ratio ),
     d_angular_scattering_distribution( angular_scattering_distribution )
 { 
   // Make sure the array has at least one value

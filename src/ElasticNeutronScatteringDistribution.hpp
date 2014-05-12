@@ -14,14 +14,14 @@
 #include <Teuchos_RCP.hpp>
 
 // FACEMC Includes
-#include "NeutronNeutronScatteringDistribution.hpp"
+#include "NeutronScatteringDistribution.hpp"
 #include "OneDDistribution.hpp"
 #include "Tuple.hpp"
 
 namespace FACEMC{
 
 //! The elastic scattering distribution class
-class ElasticNeutronScatteringDistribution : public NeutronNeutronScatteringDistribution
+class ElasticNeutronScatteringDistribution : public NeutronScatteringDistribution
 {
 
 public:

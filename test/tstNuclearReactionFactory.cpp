@@ -71,15 +71,21 @@ void initializeReactionFactory(
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the elastic reaction can be created
-TEUCHOS_UNIT_TEST( NuclearReactionFactory_hydrogen, createElasticReaction )
+// Check that the scattering reaction can be created
+TEUCHOS_UNIT_TEST( NuclearReactionFactory_hydrogen, createScatteringReactions )
 {
   initializeReactionFactory( reaction_factory );
 
-  Teuchos::RCP<FACEMC::NuclearReaction> elastic_reaction;
+  boost::unordered_map<FACEMC::NuclearReactionType,
+		       Teuchos::RCP<FACEMC::NuclearReaction> > reactions;
   
-  reaction_factory->createElasticReaction( elastic_reaction );
+  reaction_factory->createScatteringReactions( reactions );
 
+  TEST_EQUALITY_CONST( reactions.size(), 1 );
+
+  Teuchos::RCP<FACEMC::NuclearReaction>& elastic_reaction =
+    reactions.find( FACEMC::N__N_ELASTIC_REACTION )->second;
+  
   TEST_EQUALITY_CONST( elastic_reaction->getReactionType(),
 		       FACEMC::N__N_ELASTIC_REACTION );
   TEST_EQUALITY_CONST( elastic_reaction->getQValue(), 0.0 );
@@ -89,6 +95,57 @@ TEUCHOS_UNIT_TEST( NuclearReactionFactory_hydrogen, createElasticReaction )
 		       1.1605460e3 );
   TEST_EQUALITY_CONST( elastic_reaction->getCrossSection( 2.0e1 ),
 		       4.827462e-1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the absorption reactions can be created
+TEUCHOS_UNIT_TEST( NuclearReactionFactory_hydrogen, createAbsorptionReactions )
+{
+  boost::unordered_map<FACEMC::NuclearReactionType,
+		       Teuchos::RCP<FACEMC::NuclearReaction> > reactions;
+  
+  reaction_factory->createAbsorptionReactions( reactions );
+
+  TEST_EQUALITY_CONST( reactions.size(), 3 );
+
+  Teuchos::RCP<FACEMC::NuclearReaction>& n_gamma_reaction = 
+    reactions.find( FACEMC::N__GAMMA_REACTION )->second;
+
+  TEST_EQUALITY_CONST( n_gamma_reaction->getReactionType(),
+		       FACEMC::N__GAMMA_REACTION );
+  TEST_EQUALITY_CONST( n_gamma_reaction->getQValue(), 2.224631 );
+  TEST_EQUALITY_CONST( n_gamma_reaction->getNumberOfEmittedNeutrons( 0.0 ), 0);
+  TEST_EQUALITY_CONST( n_gamma_reaction->getThresholdEnergy(), 1.0e-11 );
+  TEST_EQUALITY_CONST( n_gamma_reaction->getCrossSection( 1.0e-11 ),
+		       1.670111e1 );
+  TEST_EQUALITY_CONST( n_gamma_reaction->getCrossSection( 2.0e1 ),
+		       2.722354e-5 );
+
+  Teuchos::RCP<FACEMC::NuclearReaction>& d_production_reaction = 
+    reactions.find( FACEMC::N__TOTAL_D_PRODUCTION )->second;
+
+  TEST_EQUALITY_CONST( d_production_reaction->getReactionType(),
+		       FACEMC::N__TOTAL_D_PRODUCTION );
+  TEST_EQUALITY_CONST( d_production_reaction->getQValue(), 0.0 );
+  TEST_EQUALITY_CONST( d_production_reaction->getNumberOfEmittedNeutrons(0.0),
+		       0 );
+  TEST_EQUALITY_CONST( d_production_reaction->getThresholdEnergy(), 1.0e-11 );
+  TEST_EQUALITY_CONST( d_production_reaction->getCrossSection( 1.0e-11 ),
+		       1.670111e1 );
+  TEST_EQUALITY_CONST( d_production_reaction->getCrossSection( 2.0e1 ),
+		       2.722354e-5 );
+
+  Teuchos::RCP<FACEMC::NuclearReaction>& dpa_reaction = 
+    reactions.find( FACEMC::N__DPA )->second;
+
+  TEST_EQUALITY_CONST( dpa_reaction->getReactionType(),
+		       FACEMC::N__DPA );
+  TEST_EQUALITY_CONST( dpa_reaction->getQValue(), 0.0 );
+  TEST_EQUALITY_CONST( dpa_reaction->getNumberOfEmittedNeutrons( 0.0 ), 0 );
+  TEST_EQUALITY_CONST( dpa_reaction->getThresholdEnergy(), 2.375e-05);
+  TEST_EQUALITY_CONST( dpa_reaction->getCrossSection( 2.375e-05 ), 0.0 );
+  TEST_EQUALITY_CONST( dpa_reaction->getCrossSection( 2.0e1 ), 3.067696e-04 );
+
 }
 
 //---------------------------------------------------------------------------//

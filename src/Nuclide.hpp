@@ -11,6 +11,7 @@
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 
 // FACEMC Includes
 #include "XSSNeutronDataExtractor.hpp"
@@ -32,6 +33,14 @@ private:
 
 public:
 
+  //! Set the nuclear reaction types that will be considered as absorption
+  static void setAbsorptionReactionTypes( 
+	const Teuchos::Array<NuclearReactionType>& absorption_reaction_types );
+
+  //! Add nuclear reaction types that will be considered as absorption
+  static void addAbsorptionReactionTypes( 
+	const Teuchos::Array<NuclearReactionType>& absorption_reaction_types );
+
   //! Constructor
   Nuclide( const std::string& name,
 	   const unsigned atomic_number,
@@ -43,7 +52,7 @@ public:
   
 
   //! Destructor
-  virtual ~Nuclide()
+  ~Nuclide()
   { /* ... */ }
 
   //! Return the nuclide name
@@ -85,6 +94,34 @@ public:
 
 private:
 
+  // Set the default absorption reaction types
+  static boost::unordered_set<NuclearReactionType> 
+  setDefaultAbsorptionReactionTypes();
+
+  // Calculate the total absorption cross section
+  void calculateTotalAbsorptionCrossSection();
+
+  // Calculate the total cross section
+  void calculateTotalCrossSection();
+
+  // Check that the total cross section is valid
+  bool isCalculatedTotalCrossSectionValid( 
+	          Teuchos::Array<double>& calculated_total_cross_section,
+	          Teuchos::ArrayView<const double> table_total_cross_section );
+
+  // Sample an absorption reaction
+  void sampleAbsorptionReaction( const double scaled_random_number,
+				 NeutronState& neutron, 
+				 ParticleBank& bank ) const;
+
+  // Sample a scattering reaction
+  void sampleScatteringReaction( const double scaled_random_number,
+				 NeutronState& neutron,
+				 ParticleBank& bank ) const;
+
+  // Reactions that should be treated as absorption
+  static boost::unordered_set<NuclearReactionType> absorption_reaction_types;
+
   // The nuclide name
   std::string d_name;
 
@@ -110,12 +147,19 @@ private:
   Teuchos::Array<double> d_total_cross_section;
 
   // The microscopic absorption cross section
-  // Note: absorption is (n,0n) + Sum_x(n,xnf)
   Teuchos::Array<double> d_absorption_cross_section;
 
-  // The nuclear reactions
+  // The scattering reactions
   boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
-  d_nuclear_reactions;
+  d_scattering_reactions;
+
+  // The absorption reactions
+  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
+  d_absorption_reactions;
+
+  // Miscellaneous reactions
+  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
+  d_miscellaneous_reactions;
 };
 
 } // end FACEMC namespace

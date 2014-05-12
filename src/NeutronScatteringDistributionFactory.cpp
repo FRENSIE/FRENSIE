@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   NeutronNeutronScatteringDistributionFactor.cpp
+//! \file   NeutronScatteringDistributionFactor.cpp
 //! \author Alex Robinson
-//! \brief  NeutronNeutron scattering distribution factory class definition
+//! \brief  Neutron scattering distribution factory class definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -14,7 +14,7 @@
 #include "Teuchos_ArrayView.hpp"
 
 // FACEMC Includes
-#include "NeutronNeutronScatteringDistributionFactory.hpp"
+#include "NeutronScatteringDistributionFactory.hpp"
 #include "UniformDistribution.hpp"
 #include "HistogramDistribution.hpp"
 #include "TabularDistribution.hpp"
@@ -25,11 +25,11 @@ namespace FACEMC{
 
 // Initialize the static member data
 Teuchos::RCP<OneDDistribution> 
-NeutronNeutronScatteringDistributionFactory::isotropic_angle_cosine_dist(
+NeutronScatteringDistributionFactory::isotropic_angle_cosine_dist(
 			   new FACEMC::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
 // Constructor
-NeutronNeutronScatteringDistributionFactory::NeutronNeutronScatteringDistributionFactory( 
+NeutronScatteringDistributionFactory::NeutronScatteringDistributionFactory( 
 			   const std::string& table_name,
 			   const double atomic_weight_ratio,
 			   const Teuchos::ArrayView<const double>& mtr_block,
@@ -60,8 +60,8 @@ NeutronNeutronScatteringDistributionFactory::NeutronNeutronScatteringDistributio
 }
 
 // Create a scattering distribution
-void NeutronNeutronScatteringDistributionFactory::createElasticScatteringDist(
-                            Teuchos::RCP<NeutronNeutronScatteringDistribution>&
+void NeutronScatteringDistributionFactory::createElasticScatteringDistribution(
+                            Teuchos::RCP<NeutronScatteringDistribution>&
 			    elastic_distribution ) const
 {
   const Teuchos::ArrayView<const double>& raw_angular_dist = 
@@ -156,7 +156,7 @@ void NeutronNeutronScatteringDistributionFactory::createElasticScatteringDist(
     else
     {
       angular_distribution[i].second = 
-	NeutronNeutronScatteringDistributionFactory::isotropic_angle_cosine_dist;
+	NeutronScatteringDistributionFactory::isotropic_angle_cosine_dist;
     }
   }
 
@@ -167,17 +167,24 @@ void NeutronNeutronScatteringDistributionFactory::createElasticScatteringDist(
 }
 
 // Create a scattering distribution
-void NeutronNeutronScatteringDistributionFactory::createScatteringDist(
-			    Teuchos::RCP<NeutronNeutronScatteringDistribution>&
-			    distribution,
-			    const NuclearReactionType reaction_type ) const
+void NeutronScatteringDistributionFactory::createScatteringDistribution(
+	      const NuclearReactionType reaction_type,
+	      Teuchos::RCP<NeutronScatteringDistribution>& distribution ) const
 {
-  distribution.reset();
+  switch( reaction_type )
+  {
+  case N__N_ELASTIC_REACTION:
+    this->createElasticScatteringDistribution( distribution );
+    break;
+  default:
+    distribution.reset();
+    break;
+  }
 }
 
 // Initialize the reaction type ordering map
 void 
-NeutronNeutronScatteringDistributionFactory::initializeReactionOrderingMap( 
+NeutronScatteringDistributionFactory::initializeReactionOrderingMap( 
 			    const Teuchos::ArrayView<const double>& mtr_block,
 			    const Teuchos::ArrayView<const double>& tyr_block )
 {
@@ -195,7 +202,7 @@ NeutronNeutronScatteringDistributionFactory::initializeReactionOrderingMap(
 
 // Initialize the reaction type scattering ref. frame map
 void 
-NeutronNeutronScatteringDistributionFactory::initializeReactionRefFrameMap( 
+NeutronScatteringDistributionFactory::initializeReactionRefFrameMap( 
 			    const Teuchos::ArrayView<const double>& mtr_block,
 			    const Teuchos::ArrayView<const double>& tyr_block )
 {
@@ -215,7 +222,7 @@ NeutronNeutronScatteringDistributionFactory::initializeReactionRefFrameMap(
 
 // Initialize the reaction type angular distribution start index map
 void 
-NeutronNeutronScatteringDistributionFactory::initializeReactionAngularDistStartIndexMap(
+NeutronScatteringDistributionFactory::initializeReactionAngularDistStartIndexMap(
 											const Teuchos::ArrayView<const double>& land_block )
 {
   // Add elastic scattering separately (always first in LAND block)
@@ -239,7 +246,7 @@ NeutronNeutronScatteringDistributionFactory::initializeReactionAngularDistStartI
 // NOTE: All LAND block indices correspond to FORTRAN arrays. Subtract 1 from
 // the value to get the index in a C/C++ array.
 void
-NeutronNeutronScatteringDistributionFactory::initializeReactionAngularDistMap(
+NeutronScatteringDistributionFactory::initializeReactionAngularDistMap(
 			    const Teuchos::ArrayView<const double>& land_block,
 			    const Teuchos::ArrayView<const double>& and_block )
 {
@@ -309,7 +316,7 @@ NeutronNeutronScatteringDistributionFactory::initializeReactionAngularDistMap(
 
 // Initialize the reaction type energy distribution map
 void 
-NeutronNeutronScatteringDistributionFactory::initializeReactionEnergyDistMap(
+NeutronScatteringDistributionFactory::initializeReactionEnergyDistMap(
 			    const Teuchos::ArrayView<const double>& ldlw_block,
 			    const Teuchos::ArrayView<const double>& dlw_block )
 {
@@ -318,7 +325,7 @@ NeutronNeutronScatteringDistributionFactory::initializeReactionEnergyDistMap(
 
 // Calculate the AND block angular distribution array sizes
 void 
-NeutronNeutronScatteringDistributionFactory::calculateAngularDistArraySizes( 
+NeutronScatteringDistributionFactory::calculateAngularDistArraySizes( 
                      const Teuchos::ArrayView<const double>& land_block,
 		     const Teuchos::ArrayView<const double>& and_block,
                      Teuchos::Array<unsigned>& angular_dist_array_sizes ) const
@@ -361,5 +368,5 @@ NeutronNeutronScatteringDistributionFactory::calculateAngularDistArraySizes(
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//
-// end NeutronNeutronScatteringDistributionFactory.cpp
+// end NeutronScatteringDistributionFactory.cpp
 //---------------------------------------------------------------------------//

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstNeutronNeutronScatteringDistribution.cpp
+//! \file   tstNeutronScatteringDistribution.cpp
 //! \author Alex Robinson
 //! \brief  Neutron-neutron scattering distribution unit tests
 //!
@@ -16,17 +16,17 @@
 
 // FACEMC Includes
 #include "FACEMC_UnitTestHarnessExtensions.hpp"
-#include "NeutronNeutronScatteringDistribution.hpp"
+#include "NeutronScatteringDistribution.hpp"
 #include "RandomNumberGenerator.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs
 //---------------------------------------------------------------------------//
-class TestScatteringDistribution : public FACEMC::NeutronNeutronScatteringDistribution
+class TestScatteringDistribution : public FACEMC::NeutronScatteringDistribution
 {
 public:
   TestScatteringDistribution( const double atomic_weight_ratio )
-  : FACEMC::NeutronNeutronScatteringDistribution( atomic_weight_ratio )
+  : FACEMC::NeutronScatteringDistribution( atomic_weight_ratio )
   { /* ... */ }
 
   ~TestScatteringDistribution()
@@ -37,19 +37,19 @@ public:
   { /* ... */ }
 
   // Allow public access to the protected member functions
-  using FACEMC::NeutronNeutronScatteringDistribution::getAtomicWeightRatio;
-  using FACEMC::NeutronNeutronScatteringDistribution::sampleAzimuthalAngle;
-  using FACEMC::NeutronNeutronScatteringDistribution::calculateCenterOfMassVelocity;
-  using FACEMC::NeutronNeutronScatteringDistribution::transformVelocityToCenterOfMassFrame;
-  using FACEMC::NeutronNeutronScatteringDistribution::transformVelocityToLabFrame;
-  using FACEMC::NeutronNeutronScatteringDistribution::sampleTargetVelocity;
+  using FACEMC::NeutronScatteringDistribution::getAtomicWeightRatio;
+  using FACEMC::NeutronScatteringDistribution::sampleAzimuthalAngle;
+  using FACEMC::NeutronScatteringDistribution::calculateCenterOfMassVelocity;
+  using FACEMC::NeutronScatteringDistribution::transformVelocityToCenterOfMassFrame;
+  using FACEMC::NeutronScatteringDistribution::transformVelocityToLabFrame;
+  using FACEMC::NeutronScatteringDistribution::sampleTargetVelocity;
 };
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the atomic weight ratio can be returned
-TEUCHOS_UNIT_TEST( NeutronNeutronScatteringDistribution, getAtomicWeightRatio )
+TEUCHOS_UNIT_TEST( NeutronScatteringDistribution, getAtomicWeightRatio )
 {
   TestScatteringDistribution scattering_distribution( 2.0 );
   
@@ -58,7 +58,7 @@ TEUCHOS_UNIT_TEST( NeutronNeutronScatteringDistribution, getAtomicWeightRatio )
 
 //---------------------------------------------------------------------------//
 // Check that the azimuthal angle can be sampled
-TEUCHOS_UNIT_TEST( NeutronNeutronScatteringDistribution, sampleAzimuthalAngle )
+TEUCHOS_UNIT_TEST( NeutronScatteringDistribution, sampleAzimuthalAngle )
 {
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
@@ -86,7 +86,7 @@ TEUCHOS_UNIT_TEST( NeutronNeutronScatteringDistribution, sampleAzimuthalAngle )
 
 //---------------------------------------------------------------------------//
 // Check that the center of mass velocity can be calculated
-TEUCHOS_UNIT_TEST( NeutronNeutronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( NeutronScatteringDistribution, 
 		   calculateCenterOfMassVelocity )
 {
   TestScatteringDistribution scattering_distribution( 2.0 );
@@ -120,7 +120,7 @@ TEUCHOS_UNIT_TEST( NeutronNeutronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a lab velocity can be converted to a center-of-mass velocity
-TEUCHOS_UNIT_TEST( NeutronNeutronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( NeutronScatteringDistribution, 
 		   transformVelocityToCenterOfMassFrame )
 {
   TestScatteringDistribution scattering_distribution( 2.0 );
@@ -151,7 +151,7 @@ TEUCHOS_UNIT_TEST( NeutronNeutronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a center-of-mass velocity can be converted to a lab velocity
-TEUCHOS_UNIT_TEST( NeutronNeutronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( NeutronScatteringDistribution, 
 		   transformVelocityToLabFrame )
 {
   TestScatteringDistribution scattering_distribution( 2.0 );
@@ -181,5 +181,5 @@ TEUCHOS_UNIT_TEST( NeutronNeutronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// tstNeutronNeutronScatteringDistribution.cpp
+// tstNeutronScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

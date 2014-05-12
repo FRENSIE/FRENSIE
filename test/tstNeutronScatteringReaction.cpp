@@ -1,13 +1,12 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstNeutronNeutronScatteringDistributionFactory.cpp
+//! \file   tstNeutronScatteringReaction.cpp
 //! \author Alex Robinson
-//! \brief  Neutron-neutron scattering distribution factory unit tests
+//! \brief  Nuclear reaction unit tests.
 //!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
-#include <string>
 #include <iostream>
 
 // Trilinos Includes
@@ -17,7 +16,8 @@
 // FACEMC Includes
 #include "ACEFileHandler.hpp"
 #include "XSSNeutronDataExtractor.hpp"
-#include "NeutronNeutronScatteringDistributionFactory.hpp"
+#include "NeutronScatteringDistributionFactory.hpp"
+#include "NeutronScatteringReaction.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -32,12 +32,12 @@ Teuchos::RCP<FACEMC::ACEFileHandler> ace_file_handler;
 
 Teuchos::RCP<FACEMC::XSSNeutronDataExtractor> xss_data_extractor;
 
+Teuchos::RCP<FACEMC::NuclearReaction> nuclear_reaction;
+
 //---------------------------------------------------------------------------//
-// Tests.
+// Testing Functions.
 //---------------------------------------------------------------------------//
-// Check that an elastic scattering distribution can be constructed
-TEUCHOS_UNIT_TEST( NeutronNeutronScatteringDistributionFactory, 
-		   createElasticScatteringDist )
+void initializeElasticReaction(Teuchos::RCP<FACEMC::NuclearReaction>& reaction)
 {
   ace_file_handler.reset(new FACEMC::ACEFileHandler( test_basic_ace_file_name,
 						     test_basic_ace_table_name,
@@ -47,7 +47,7 @@ TEUCHOS_UNIT_TEST( NeutronNeutronScatteringDistributionFactory,
 				        ace_file_handler->getTableJXSArray(),
 				        ace_file_handler->getTableXSSArray()));
    
-  FACEMC::NeutronNeutronScatteringDistributionFactory 
+  FACEMC::NeutronScatteringDistributionFactory 
     factory( test_basic_ace_table_name,
 	     ace_file_handler->getTableAtomicWeightRatio(),
 	     xss_data_extractor->extractMTRBlock(),
@@ -57,35 +57,58 @@ TEUCHOS_UNIT_TEST( NeutronNeutronScatteringDistributionFactory,
 	     xss_data_extractor->extractLDLWBlock(),
 	     xss_data_extractor->extractDLWBlock() );
 
-  Teuchos::RCP<FACEMC::NeutronNeutronScatteringDistribution> scattering_dist;
+  Teuchos::RCP<FACEMC::NeutronScatteringDistribution> scattering_dist;
   
-  factory.createElasticScatteringDist( scattering_dist );
+  factory.createElasticScatteringDistribution( scattering_dist );
 
-  FACEMC::NeutronState neutron( 0ull );
-  neutron.setDirection( 0.0, 0.0, 1.0 );
-  neutron.setEnergy( 1.0 );
+  Teuchos::ArrayRCP<double> energy_grid;
+  energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
-  std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
-				   ace_file_handler->getTableTemperature() );
+  Teuchos::ArrayRCP<double> cross_section;
+  cross_section.deepCopy( xss_data_extractor->extractElasticCrossSection() );
+
+  nuclear_reaction.reset( new FACEMC::NeutronScatteringReaction( 
+				       FACEMC::N__N_ELASTIC_REACTION,
+			               ace_file_handler->getTableTemperature(),
+				       0.0,
+				       1u,
+				       0u,
+				       energy_grid,
+				       cross_section,
+				       scattering_dist ) );
+}
+
+//---------------------------------------------------------------------------//
+// Tests.
+//---------------------------------------------------------------------------//
+// Check that the number of emitted neutrons can be returned
+TEUCHOS_UNIT_TEST( NeutronScatteringReaction_elastic, 
+		   getNumberOfEmittedNeutrons )
+{
+  initializeElasticReaction( nuclear_reaction );
   
-  std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
-  				   ace_file_handler->getTableTemperature() );
+  TEST_EQUALITY_CONST( nuclear_reaction->getNumberOfEmittedNeutrons( 0.0 ), 1);
+}
 
-  std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
-  				   ace_file_handler->getTableTemperature() );
+//---------------------------------------------------------------------------//
+// Check that the reaction can be simulated
+TEUCHOS_UNIT_TEST( NeutronScatteringReaction_elastic, 
+		   react )
+{
+  Teuchos::RCP<FACEMC::NeutronState> neutron( new FACEMC::NeutronState(0ull) );
+  
+  neutron->setDirection( 0.0, 0.0, 1.0 );
+  neutron->setEnergy( 1.0 );
 
-  std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
-  				   ace_file_handler->getTableTemperature() );
+  FACEMC::ParticleBank bank;
 
-  std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
-  				   ace_file_handler->getTableTemperature() );
+  bank.push( neutron );
+  
+  nuclear_reaction->react( *neutron, bank );
 
-  std::cout << neutron << std::endl;
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+
+  std::cout << std::endl << std::endl << *neutron << std::endl;
 }
 
 //---------------------------------------------------------------------------//
@@ -107,5 +130,6 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstNeutronNeutronScatteringDistributionFactory.cpp
+// end tstNeutronScatteringReaction.cpp
 //---------------------------------------------------------------------------//
+

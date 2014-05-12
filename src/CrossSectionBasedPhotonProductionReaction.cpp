@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   NuclearReaction.cpp
+//! \file   CrossSectionBasedPhotonProductionReaction.hpp
 //! \author Alex Robinson
-//! \brief  The nuclear reaction base class definition
+//! \brief  The photon production reaction with cross section data class def.
 //!
 //---------------------------------------------------------------------------//
 
 // FACEMC Includes
-#include "NuclearReaction.hpp"
+#include "CrossSectionBasedPhotonProductionReaction.hpp"
 #include "SortAlgorithms.hpp"
 #include "SearchAlgorithms.hpp"
 #include "InterpolationPolicy.hpp"
@@ -16,48 +16,34 @@
 namespace FACEMC{
 
 // Constructor
-NuclearReaction::NuclearReaction( 
-		   const NuclearReactionType reaction_type,
+CrossSectionBasedPhotonProductionReaction::CrossSectionBasedPhotonProductionReaction(
+		   const NuclearReactionType base_reaction_type,
+		   const unsigned photon_production_id,
 		   const double temperature,
-		   const double q_value,
 		   const unsigned threshold_energy_index,
-	           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section)
-  : d_reaction_type( reaction_type ),
-    d_temperature( temperature ),
-    d_q_value( q_value ),
+		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+		   const Teuchos::ArrayRCP<const double>& cross_section,
+		   const Teuchos::RCP<PhotonProductionDistribution>& 
+		   photon_production_distribution )
+  : PhotonProductionReaction( base_reaction_type,
+			      photon_production_id,
+			      temperature,
+			      photon_production_distribution ),
     d_threshold_energy_index( threshold_energy_index ),
     d_incoming_energy_grid( incoming_energy_grid ),
     d_cross_section( cross_section )
 {
-  // Make sure the Q value is valid
-  testPrecondition( !ST::isnaninf( q_value ) );
-  // Make sure the temperature is valid
-  testPrecondition( !ST::isnaninf( temperature ) );
-  // Make sure the threshold energy index is valid
-  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the incoming energy grid is valid
+  testPrecondition( incoming_energy_grid.size() > 1 );
   testPrecondition( Sort::isSortedAscending( incoming_energy_grid.begin(),
 					     incoming_energy_grid.end() ) );
-  testPrecondition( incoming_energy_grid.size() > 0 );
   // Make sure the cross section is valid
-  testPrecondition( cross_section.size() > 0 );
+  testPrecondition( cross_section.size() > 1 );
 }
 
-// Return the reaction type
-NuclearReactionType NuclearReaction::getReactionType() const
-{
-  return d_reaction_type;
-}
-
-// Return the reaction Q value
-double NuclearReaction::getQValue() const
-{
-  return d_q_value;
-}
-
-// Return the cross section value at a given energy
-double NuclearReaction::getCrossSection( const double energy ) const
+// Return the cross section at a given energy
+double CrossSectionBasedPhotonProductionReaction::getCrossSection( 
+						    const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() &&
       energy < d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
@@ -66,7 +52,6 @@ double NuclearReaction::getCrossSection( const double energy ) const
       Search::binaryLowerBoundIndex( d_incoming_energy_grid.begin(),
 				     d_incoming_energy_grid.end(),
 				     energy );
-    
     unsigned cs_index = energy_index - d_threshold_energy_index;
     
     return LinLin::interpolate( d_incoming_energy_grid[energy_index],
@@ -78,13 +63,15 @@ double NuclearReaction::getCrossSection( const double energy ) const
   else if( energy < this->getThresholdEnergy() )
     return 0.0;
   else if( energy == d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
+  {
     return d_cross_section[d_cross_section.size()-1];
+  }
   else // energy > this->getThresholdEnergy()
-    return 0.0;    
+    return 0.0;
 }
 
 } // end FACEMC namespace
 
 //---------------------------------------------------------------------------//
-// end NuclearReaction.cpp
+// end CrossSectionBasedPhotonProductionReaction.cpp
 //---------------------------------------------------------------------------//

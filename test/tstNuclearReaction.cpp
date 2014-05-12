@@ -16,7 +16,6 @@
 // FACEMC Includes
 #include "ACEFileHandler.hpp"
 #include "XSSNeutronDataExtractor.hpp"
-#include "NeutronNeutronScatteringDistributionFactory.hpp"
 #include "NuclearReaction.hpp"
 
 //---------------------------------------------------------------------------//
@@ -35,6 +34,37 @@ Teuchos::RCP<FACEMC::XSSNeutronDataExtractor> xss_data_extractor;
 Teuchos::RCP<FACEMC::NuclearReaction> nuclear_reaction;
 
 //---------------------------------------------------------------------------//
+// Testing Structs.
+//---------------------------------------------------------------------------//
+class TestNuclearReaction : public FACEMC::NuclearReaction
+{
+public:
+  TestNuclearReaction( 
+		   const FACEMC::NuclearReactionType reaction_type,
+		   const double temperature,
+		   const double q_value,
+		   const unsigned threshold_energy_index,
+	           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+		   const Teuchos::ArrayRCP<const double>& cross_section )
+    : FACEMC::NuclearReaction( reaction_type,
+			       temperature,
+			       q_value,
+			       threshold_energy_index,
+			       incoming_energy_grid,
+			       cross_section )
+  { /* ... */ }
+
+  ~TestNuclearReaction()
+  { /* ... */ }
+  
+  unsigned getNumberOfEmittedNeutrons( const double energy ) const
+  { return 0u; }
+
+  void react( FACEMC::NeutronState& neutron, FACEMC::ParticleBank& bank ) const
+  { /* ... */ }
+};
+
+//---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
 void initializeElasticReaction(Teuchos::RCP<FACEMC::NuclearReaction>& reaction)
@@ -47,32 +77,19 @@ void initializeElasticReaction(Teuchos::RCP<FACEMC::NuclearReaction>& reaction)
 				        ace_file_handler->getTableJXSArray(),
 				        ace_file_handler->getTableXSSArray()));
    
-  FACEMC::NeutronNeutronScatteringDistributionFactory 
-    factory( test_basic_ace_table_name,
-	     ace_file_handler->getTableAtomicWeightRatio(),
-	     xss_data_extractor->extractMTRBlock(),
-	     xss_data_extractor->extractTYRBlock(),
-	     xss_data_extractor->extractLANDBlock(),
-	     xss_data_extractor->extractANDBlock(),
-	     xss_data_extractor->extractLDLWBlock(),
-	     xss_data_extractor->extractDLWBlock() );
-
-  Teuchos::RCP<FACEMC::NeutronNeutronScatteringDistribution> scattering_dist;
-  
-  factory.createElasticScatteringDist( scattering_dist );
-
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
-  nuclear_reaction.reset( new FACEMC::NuclearReaction( 
-			      FACEMC::N__N_ELASTIC_REACTION,
-			      ace_file_handler->getTableTemperature(),
-			      0.0,
-			      1u,
-			      0u,
-			      energy_grid,
-			      xss_data_extractor->extractElasticCrossSection(),
-			      scattering_dist ) );
+  Teuchos::ArrayRCP<double> cross_section;
+  cross_section.deepCopy( xss_data_extractor->extractElasticCrossSection() );
+
+  nuclear_reaction.reset( new TestNuclearReaction( 
+			               FACEMC::N__N_ELASTIC_REACTION,
+			               ace_file_handler->getTableTemperature(),
+				       0.0,
+				       0u,
+				       energy_grid,
+				       cross_section ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -92,13 +109,6 @@ TEUCHOS_UNIT_TEST( NuclearReaction_elastic, getReactionType )
 TEUCHOS_UNIT_TEST( NuclearReaction_elastic, getQValue )
 {
   TEST_EQUALITY_CONST( nuclear_reaction->getQValue(), 0.0 );		       
-}
-
-//---------------------------------------------------------------------------//
-// Check that the number of emitted neutrons can be returned
-TEUCHOS_UNIT_TEST( NuclearReaction_elastic, getNumberOfEmittedNeutrons )
-{
-  TEST_EQUALITY_CONST( nuclear_reaction->getNumberOfEmittedNeutrons( 0.0 ), 1);
 }
 
 //---------------------------------------------------------------------------//
@@ -145,26 +155,6 @@ TEUCHOS_UNIT_TEST( NuclearReaction_elastic, getCrossSection )
   cross_section = nuclear_reaction->getCrossSection( 2.0e1 );
   
   TEST_EQUALITY_CONST( cross_section, 4.827462e-1 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the reaction can be simulated
-TEUCHOS_UNIT_TEST( NuclearReaction_elastic, react )
-{
-  Teuchos::RCP<FACEMC::NeutronState> neutron( new FACEMC::NeutronState(0ull) );
-  
-  neutron->setDirection( 0.0, 0.0, 1.0 );
-  neutron->setEnergy( 1.0 );
-
-  FACEMC::ParticleBank bank;
-
-  bank.push( neutron );
-  
-  nuclear_reaction->react( *neutron, bank );
-
-  TEST_EQUALITY_CONST( bank.size(), 1 );
-
-  std::cout << std::endl << std::endl << *neutron << std::endl;
 }
 
 //---------------------------------------------------------------------------//

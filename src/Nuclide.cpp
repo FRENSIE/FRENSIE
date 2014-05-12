@@ -19,6 +19,53 @@
 
 namespace FACEMC{
 
+// Initialize the static member data
+boost::unordered_set<NuclearReactionType> Nuclide::absorption_reaction_types =
+  Nuclide::setDefaultAbsorptionReactionTypes();
+
+// Set the default absorption reaction types
+boost::unordered_set<NuclearReactionType> 
+Nuclide::setDefaultAbsorptionReactionTypes()
+{
+  boost::unordered_set<NuclearReactionType> absorption_reaction_type;
+  absorption_reaction_type.insert( N__CAPTURE_REACTION );
+  absorption_reaction_type.insert( N__GAMMA_REACTION ); // start capture
+  absorption_reaction_type.insert( N__P_REACTION );
+  absorption_reaction_type.insert( N__D_REACTION );
+  absorption_reaction_type.insert( N__T_REACTION );
+  absorption_reaction_type.insert( N__HE3_REACTION );
+  absorption_reaction_type.insert( N__ALPHA_REACTION );
+  absorption_reaction_type.insert( N__2ALPHA_REACTION );
+  absorption_reaction_type.insert( N__3ALPHA_REACTION );
+  absorption_reaction_type.insert( N__2P_REACTION );
+  absorption_reaction_type.insert( N__P_ALPHA_REACTION );
+  absorption_reaction_type.insert( N__T_2ALPHA_REACTION );
+  absorption_reaction_type.insert( N__D_2ALPHA_REACTION );
+  absorption_reaction_type.insert( N__P_D_REACTION );
+  absorption_reaction_type.insert( N__P_T_REACTION );
+  absorption_reaction_type.insert( N__D_ALPHA_REACTION ); // end capture
+
+  return absorption_reaction_type;
+}
+
+// Set the nuclear reaction types that will be considered as absorption
+void Nuclide::setAbsorptionReactionTypes( 
+	 const Teuchos::Array<NuclearReactionType>& absorption_reaction_types )
+{
+  Nuclide::absorption_reaction_types.clear();
+  
+  Nuclide::absorption_reaction_types.insert( absorption_reaction_types.begin(),
+					     absorption_reaction_types.end() );
+}
+
+// Add nuclear reaction types that will be considered as absorption
+void Nuclide::addAbsorptionReactionTypes( 
+	 const Teuchos::Array<NuclearReactionType>& absorption_reaction_types )
+{
+  for( unsigned i = 0; i < absorption_reaction_types.size(); ++i )
+    Nuclide::absorption_reaction_types.insert( absorption_reaction_types[i] );
+}
+
 // Constructor
 Nuclide::Nuclide( const std::string& name,
 		  const unsigned atomic_number,
@@ -34,9 +81,8 @@ Nuclide::Nuclide( const std::string& name,
     d_atomic_weight_ratio( atomic_weight_ratio ),
     d_temperature( temperature ),
     d_energy_grid(),
-    d_total_cross_section( raw_nuclide_data.extractTotalCrossSection() ),
-    d_absorption_cross_section( 
-		       raw_nuclide_data.extractTotalAbsorptionCrossSection() )
+    d_total_cross_section( raw_nuclide_data.extractEnergyGrid().size() ),
+    d_absorption_cross_section( raw_nuclide_data.extractEnergyGrid().size() )
 {
   // Create a deep copy of the energy grid
   d_energy_grid.deepCopy( raw_nuclide_data.extractEnergyGrid() );
@@ -58,25 +104,58 @@ Nuclide::Nuclide( const std::string& name,
 				 raw_nuclide_data.extractLDLWBlock(),
 				 raw_nuclide_data.extractDLWBlock() );
 
-  // Create the elastic reaction
-  Teuchos::RCP<NuclearReaction> elastic_reaction;
-  reaction_factory.createElasticReaction( elastic_reaction );
+  // Create the standard scattering reactions
+  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
+    standard_scattering_reactions;
+  reaction_factory.createScatteringReactions( standard_scattering_reactions );
+  reaction_factory.createFissionReactions( standard_scattering_reactions );
 
-  d_nuclear_reactions[N__N_ELASTIC_REACTION] = elastic_reaction;
+  // Create the standard absorption reactions
+  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
+    standard_absorption_reactions;
+  reaction_factory.createAbsorptionReactions( standard_absorption_reactions );
+  
+  // Place the reactions in the appropriate group
+  boost::unordered_map<NuclearReactionType,
+		       Teuchos::RCP<NuclearReaction> >::const_iterator
+    reaction_type_pointer, end_reaction_type_pointer;
 
-  // Create all of the non-elastic reactions
-  Teuchos::Array<Teuchos::RCP<NuclearReaction> > other_reactions;
-  reaction_factory.createNonElasticReactions( other_reactions );
+  reaction_type_pointer = standard_scattering_reactions.begin();
+  end_reaction_type_pointer = standard_scattering_reactions.end();
 
-  for( unsigned i = 0; i < other_reactions.size(); ++i )
+  while( reaction_type_pointer != end_reaction_type_pointer )
   {
-    d_nuclear_reactions[other_reactions[i]->getReactionType()] = 
-      other_reactions[i];
+    if(Nuclide::absorption_reaction_types.count(reaction_type_pointer->first))
+      d_absorption_reactions.insert( *reaction_type_pointer );
+    else
+      d_scattering_reactions.insert( *reaction_type_pointer );
+
+    ++reaction_type_pointer;
+  }
+
+  reaction_type_pointer = standard_absorption_reactions.begin();
+  end_reaction_type_pointer = standard_absorption_reactions.end();
+
+  while( reaction_type_pointer != end_reaction_type_pointer )
+  {
+    if(Nuclide::absorption_reaction_types.count(reaction_type_pointer->first))
+      d_absorption_reactions.insert( *reaction_type_pointer );
+    else
+      d_miscellaneous_reactions.insert( *reaction_type_pointer );
+
+    ++reaction_type_pointer;
   }
 
   // Calculate the total absorption cross section
+  calculateTotalAbsorptionCrossSection();
   
   // Calculate the total cross section
+  calculateTotalCrossSection();
+
+  // Make sure the calculated total cross section is valid
+  testPostcondition( isCalculatedTotalCrossSectionValid( 
+			       d_total_cross_section,
+			       raw_nuclide_data.extractTotalCrossSection() ) );
 }
 
 // Return the nuclide name
@@ -198,9 +277,19 @@ double Nuclide::getReactionCrossSection(
 			 Teuchos::RCP<NuclearReaction> >::const_iterator
       nuclear_reaction;
     
-    nuclear_reaction = d_nuclear_reactions.find( reaction );
+    nuclear_reaction = d_scattering_reactions.find( reaction );
     
-    if( nuclear_reaction != d_nuclear_reactions.end() )
+    if( nuclear_reaction != d_scattering_reactions.end() )
+      return nuclear_reaction->second->getCrossSection( energy );
+    
+    nuclear_reaction = d_absorption_reactions.find( reaction );
+
+    if( nuclear_reaction != d_absorption_reactions.end() )
+      return nuclear_reaction->second->getCrossSection( energy );
+    
+    nuclear_reaction = d_miscellaneous_reactions.find( reaction );
+
+    if( nuclear_reaction != d_miscellaneous_reactions.end() )
       return nuclear_reaction->second->getCrossSection( energy );
     else // If the reaction does not exist for the nuclide, return 0
       return 0.0;
@@ -219,38 +308,21 @@ void Nuclide::collideAnalogue( NeutronState& neutron,
   double absorption_cross_section = 
     this->getAbsorptionCrossSection( neutron.getEnergy() );
 
-  double reaction_cdf = absorption_cross_section/total_cross_section;
-  
   // Check if absorption occurs
-  if( random_number < reaction_cdf )
-    neutron.setAsGone();
+  if( random_number*total_cross_section < absorption_cross_section )
+  {
+    sampleAbsorptionReaction( random_number*absorption_cross_section, 
+			      neutron, 
+			      bank );
+    // Set the neutron as gone regardless of the reaction that occured.
+    neutron.setAsGone(); 
+  }
   else
   {
-    boost::unordered_map<NuclearReactionType,
-			 Teuchos::RCP<NuclearReaction> >::const_iterator
-      nuclear_reaction, nuclear_reaction_end;
-    
-    nuclear_reaction = d_nuclear_reactions.begin();
-    nuclear_reaction_end = d_nuclear_reactions.end();
-    
-    // Make sure that fission reactions are neglected
-    while( nuclear_reaction != nuclear_reaction_end )
-    {
-      reaction_cdf += 
-	nuclear_reaction->second->getCrossSection( neutron.getEnergy() )/
-	total_cross_section;
-
-      if( random_number < reaction_cdf )
-	break;
-      
-      ++nuclear_reaction;
-    }
-
-    TEST_FOR_EXCEPTION( nuclear_reaction == nuclear_reaction_end,
-			std::runtime_error,
-			"The nuclear reaction type could not be sampled." );
-
-    nuclear_reaction->second->react( neutron, bank );
+    sampleScatteringReaction( random_number*(total_cross_section - 
+					     absorption_cross_section), 
+			      neutron, 
+			      bank );
   }
 }
 
@@ -263,42 +335,174 @@ void Nuclide::collideSurvivalBias( NeutronState& neutron,
   double total_cross_section = 
     this->getTotalCrossSection( neutron.getEnergy() );
 
-  double absorption_cross_section = 
+  double scattering_cross_section = total_cross_section - 
     this->getAbsorptionCrossSection( neutron.getEnergy() );
 
-  double scattering_cross_section = 
-    total_cross_section - absorption_cross_section;
+  double survival_prob = scattering_cross_section/total_cross_section;
   
   // Multiply the neutrons weight by the survival probability
-  neutron.multiplyWeight( scattering_cross_section/total_cross_section );
-  
-  double reaction_cdf = 0.0;
+  if( survival_prob > 0.0 )
+  {
+    neutron.multiplyWeight( scattering_cross_section/total_cross_section );
+
+    sampleScatteringReaction( random_number*scattering_cross_section,
+			    neutron,
+			    bank );
+  }
+  else
+    neutron.setAsGone();
+}
+
+// Calculate the total absorption cross section
+void Nuclide::calculateTotalAbsorptionCrossSection()
+{
+  // Make sure the absorption cross section is sized correctly
+  testPrecondition( d_absorption_cross_section.size() == d_energy_grid.size());
   
   boost::unordered_map<NuclearReactionType,
 		       Teuchos::RCP<NuclearReaction> >::const_iterator
-    nuclear_reaction, nuclear_reaction_end;
+    reaction_type_pointer, end_reaction_type_pointer;
+
+  end_reaction_type_pointer = d_absorption_reactions.end();
   
-  nuclear_reaction = d_nuclear_reactions.begin();
-  nuclear_reaction_end = d_nuclear_reactions.end();
-  
-  // Make sure that fission reactions are neglected
-  while( nuclear_reaction != nuclear_reaction_end )
+  for( unsigned i = 0; i < d_absorption_cross_section.size(); ++i )
   {
-    reaction_cdf += 
-      nuclear_reaction->second->getCrossSection( neutron.getEnergy() )/
-      scattering_cross_section;
-    
-    if( random_number < reaction_cdf )
-      break;
-    
-    ++nuclear_reaction;
+    d_absorption_cross_section[i] = 0.0; 
+      
+    reaction_type_pointer = d_absorption_reactions.begin();
+
+    while( reaction_type_pointer != end_reaction_type_pointer )
+    {
+      d_absorption_cross_section[i] += 
+	reaction_type_pointer->second->getCrossSection( d_energy_grid[i] );
+
+      ++reaction_type_pointer;
+    }
   }
+}
+
+// Calculate the total cross section
+void Nuclide::calculateTotalCrossSection()
+{
+  // Make sure the total cross section is sized correctly
+  testPrecondition( d_total_cross_section.size() == d_energy_grid.size() );
+
+  boost::unordered_map<NuclearReactionType,
+		       Teuchos::RCP<NuclearReaction> >::const_iterator
+    reaction_type_pointer, end_reaction_type_pointer;
+
+  end_reaction_type_pointer = d_scattering_reactions.end();
   
-  TEST_FOR_EXCEPTION( nuclear_reaction == nuclear_reaction_end,
-		      std::runtime_error,
-		      "The nuclear reaction type could not be sampled." );
+  for( unsigned i = 0; i < d_total_cross_section.size(); ++i )
+  {
+    d_total_cross_section[i] = d_absorption_cross_section[i]; 
+      
+    reaction_type_pointer = d_scattering_reactions.begin();
+
+    while( reaction_type_pointer != end_reaction_type_pointer )
+    {
+      d_total_cross_section[i] += 
+	reaction_type_pointer->second->getCrossSection( d_energy_grid[i] );
+
+      ++reaction_type_pointer;
+    }
+  }
+}
+
+// Check that the total cross section is valid
+bool Nuclide::isCalculatedTotalCrossSectionValid(
+                   Teuchos::Array<double>& calculated_total_cross_section,
+	           Teuchos::ArrayView<const double> table_total_cross_section )
+{
+  if( calculated_total_cross_section.size() !=
+      table_total_cross_section.size() )
+    return false;
   
-  nuclear_reaction->second->react( neutron, bank );
+  bool valid = true;
+  double rel_error;
+  for( unsigned i = 0u; i < calculated_total_cross_section.size(); ++i )
+  {
+    rel_error = ST::magnitude( calculated_total_cross_section[i] - 
+			       table_total_cross_section[i] )/
+      std::max( ST::magnitude( calculated_total_cross_section[i] ),
+		ST::magnitude( table_total_cross_section[i] ) );
+    
+    if( rel_error > 5e-9 )
+    {
+      valid = false;
+      std::cout << i << ": " << rel_error << std::endl;
+    }
+  }
+
+  return valid;
+}
+
+// Sample a scattering reaction
+// NOTE: The scaled random number must be a random number multiplied by the
+//       total scattering cross section
+void Nuclide::sampleScatteringReaction( const double scaled_random_number,
+					NeutronState& neutron,
+					ParticleBank& bank ) const
+{
+  double partial_cross_section = 0.0;
+    
+    boost::unordered_map<NuclearReactionType,
+			 Teuchos::RCP<NuclearReaction> >::const_iterator
+      nuclear_reaction, nuclear_reaction_end;
+    
+    nuclear_reaction = d_scattering_reactions.begin();
+    nuclear_reaction_end = d_scattering_reactions.end();
+    
+    while( nuclear_reaction != nuclear_reaction_end )
+    {
+      partial_cross_section += 
+	nuclear_reaction->second->getCrossSection( neutron.getEnergy() );
+
+      if( scaled_random_number < partial_cross_section )
+	break;
+      
+      ++nuclear_reaction;
+    }
+
+    TEST_FOR_EXCEPTION( nuclear_reaction == nuclear_reaction_end,
+			std::runtime_error,
+			"The nuclear reaction type could not be sampled." );
+
+    nuclear_reaction->second->react( neutron, bank );
+}
+
+// Sample an absorption reaction
+// NOTE: The scaled random number must be a random number multiplied by the
+//       total absorption cross section
+void Nuclide::sampleAbsorptionReaction( const double scaled_random_number,
+					NeutronState& neutron,
+					ParticleBank& bank ) const
+{
+  double partial_cross_section = 0.0;
+    
+    boost::unordered_map<NuclearReactionType,
+			 Teuchos::RCP<NuclearReaction> >::const_iterator
+      nuclear_reaction, nuclear_reaction_end;
+    
+    nuclear_reaction = d_absorption_reactions.begin();
+    nuclear_reaction_end = d_absorption_reactions.end();
+    
+    while( nuclear_reaction != nuclear_reaction_end )
+    {
+      partial_cross_section += 
+	nuclear_reaction->second->getCrossSection( neutron.getEnergy() );
+
+      if( scaled_random_number < partial_cross_section )
+	break;
+      
+      ++nuclear_reaction;
+    }
+
+    TEST_FOR_EXCEPTION( nuclear_reaction == nuclear_reaction_end,
+			std::runtime_error,
+			"The nuclear reaction type could not be sampled." );
+
+    nuclear_reaction->second->react( neutron, bank );
 }
 
 } // end FACEMC namespace

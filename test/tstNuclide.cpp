@@ -116,11 +116,11 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getTotalCrossSection )
 
   cross_section = nuclide->getTotalCrossSection( 1.03125e-11 );
 
-  TEST_EQUALITY_CONST( cross_section, 1.15927812e3 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.15927812e3, 1e-15 );
 
   cross_section = nuclide->getTotalCrossSection( 1.046875e-11 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 1.15069229e3, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 1.15069229e3, 1e-9 );
 
   cross_section = nuclide->getTotalCrossSection( 1.0625e-11 );
   
@@ -128,23 +128,23 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getTotalCrossSection )
 
   cross_section = nuclide->getTotalCrossSection( 1.90e1 );
 
-  TEST_EQUALITY_CONST( cross_section, 5.08805961e-1 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.08805961e-1, 1e-9 );
 
   cross_section = nuclide->getTotalCrossSection( 1.925e1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 5.02148202e-1, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 5.02148202e-1, 1e-9 );
 
   cross_section = nuclide->getTotalCrossSection( 1.95e1 );
 
-  TEST_EQUALITY_CONST( cross_section, 4.95490443e-1 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.95490443e-1, 1e-9 );
 
   cross_section = nuclide->getTotalCrossSection( 1.975e1 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.891319335e-1, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.891319335e-1, 1e-9 );
 
   cross_section = nuclide->getTotalCrossSection( 2.0e1 );
 
-  TEST_EQUALITY_CONST( cross_section, 4.82773424e-1 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.82773424e-1, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
@@ -198,27 +198,27 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getSurvivalProbability )
 {
   double survival_prob = nuclide->getSurvivalProbability( 1.0e-11 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.98581342025975, 1e-14 );
+  TEST_FLOATING_EQUALITY( survival_prob, 0.98581342025975, 1e-13 );
 
   survival_prob = nuclide->getSurvivalProbability( 1.03125e-11 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.98581348192787, 1e-14 );
+  TEST_FLOATING_EQUALITY( survival_prob, 0.98581348192787, 1e-13 );
 
   survival_prob = nuclide->getSurvivalProbability( 1.0625e-11 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.98581352915209, 1e-14 );
+  TEST_FLOATING_EQUALITY( survival_prob, 0.98581352915209, 1e-13 );
 
   survival_prob = nuclide->getSurvivalProbability( 1.90e1 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.99994563556224, 1e-14 );
+  TEST_FLOATING_EQUALITY( survival_prob, 0.99994563556224, 1e-13 );
 
   survival_prob = nuclide->getSurvivalProbability( 1.95e1 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.99994461529907, 1e-14  );
+  TEST_FLOATING_EQUALITY( survival_prob, 0.99994461529907, 1e-13  );
 
   survival_prob = nuclide->getSurvivalProbability( 2.0e1 );
 
-  TEST_FLOATING_EQUALITY( survival_prob, 0.99994361011057, 1e-14 );
+  TEST_FLOATING_EQUALITY( survival_prob, 0.99994361011057, 1e-13 );
 }
 
 //---------------------------------------------------------------------------//
@@ -233,7 +233,7 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getReactionCrossSection )
   cross_section = 
     nuclide->getReactionCrossSection( 2.0e1, FACEMC::N__TOTAL_REACTION );
 
-  TEST_EQUALITY_CONST( cross_section, 4.82773424e-1 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.82773424e-1, 1e-9 );
   
   cross_section = 
     nuclide->getReactionCrossSection( 1.0e-11, FACEMC::N__N_ELASTIC_REACTION );
@@ -244,6 +244,36 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getReactionCrossSection )
     nuclide->getReactionCrossSection( 2.0e1, FACEMC::N__N_ELASTIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 4.827462e-1 );
+
+  cross_section =
+    nuclide->getReactionCrossSection( 1.0e-11, FACEMC::N__GAMMA_REACTION );
+  
+  TEST_EQUALITY_CONST( cross_section, 1.670111e1 );
+
+  cross_section =
+    nuclide->getReactionCrossSection( 2.0e1, FACEMC::N__GAMMA_REACTION );
+  
+  TEST_EQUALITY_CONST( cross_section, 2.722354e-5 );
+
+  cross_section =
+    nuclide->getReactionCrossSection( 1.0e-11, FACEMC::N__TOTAL_D_PRODUCTION );
+  
+  TEST_EQUALITY_CONST( cross_section, 1.670111e1 );
+
+  cross_section =
+    nuclide->getReactionCrossSection( 2.0e1, FACEMC::N__TOTAL_D_PRODUCTION );
+  
+  TEST_EQUALITY_CONST( cross_section, 2.722354e-5 );
+
+  cross_section =
+    nuclide->getReactionCrossSection( 1.0e-11, FACEMC::N__DPA );
+  
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section =
+    nuclide->getReactionCrossSection( 2.0e1, FACEMC::N__DPA );
+  
+  TEST_EQUALITY_CONST( cross_section, 3.067696e-4 );
 
   cross_section = 
     nuclide->getReactionCrossSection( 1.0e-11, FACEMC::N__FISSION_REACTION );
