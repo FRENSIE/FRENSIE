@@ -34,16 +34,15 @@ moab::Range GeometryModuleInterface<moab::DagMC>::all_cells;
 
 moab::DagMC::RayHistory GeometryModuleInterface<moab::DagMC>::ray_history;
 
-// Update the cell that contains a given particle (start of history)
-/*! \details This function should be called after a particle is generated. It
- * is used to find the starting cell of a particle, which must be done before
- * ray tracing may begin. The cell containing the particle will be updated
- * in the particle class. If no cell can be found, a FACEMC::MOABException will
- * be thrown. This exception should be caught and a lost particle should be
- * indicated.
+// Find the cell that contains a given point (start of history)
+/*! \details This function should be called after a ray is generated. It
+ * is used to find the starting cell of a ray, which must be done before
+ * ray tracing may begin. If no cell can be found, a FACEMC::MOABException will
+ * be thrown. This exception should be caught to end the tracing of this ray.
  */
-void GeometryModuleInterface<moab::DagMC>::updateCellContainingParticle( 
-						      ParticleState& particle )
+GeometryModuleInterface<moab::DagMC>::InternalCellHandle 
+GeometryModuleInterface<moab::DagMC>::findCellContainingPoint( 
+						      const Ray& ray )
 {
   // Reset the RayHistory
   GeometryModuleInterface<moab::DagMC>::newRay();
@@ -57,7 +56,7 @@ void GeometryModuleInterface<moab::DagMC>::updateCellContainingParticle(
   // Try using the cells found to contain previously tested particles first
   GeometryModuleInterface<moab::DagMC>::testCellsContainingTestPoints(
 						         cell_containing_point,
-							 particle );
+							 ray );
 
   // Try all remaining cells if necessary
   if( cell_containing_point ==
@@ -65,79 +64,74 @@ void GeometryModuleInterface<moab::DagMC>::updateCellContainingParticle(
   {
     GeometryModuleInterface<moab::DagMC>::testAllRemainingCells(
 							 cell_containing_point,
-							 particle );
+							 ray );
   }
 
-  // Test if the particle is lost
+  // Test if the ray is lost
   TEST_FOR_EXCEPTION( 
 	    cell_containing_point ==
 	    Traits::ModuleTraits::invalid_internal_cell_handle,
 	    FACEMC::MOABException,
 	    moab::ErrorCodeStr[4] );
 
-  particle.setCell( cell_containing_point );
+  return cell_containing_point;
 }
 
-// Update the cell that contains a given particle (surface crossing)
-/*! \details This function should be called after a particle has intersected a
+// Find the cell that contains a given point (surface crossing)
+/*! \details This function should be called after a ray has intersected a
  * surface. It is used to find the cell on the other side of the surface (at
- * the point of intersection. The cell containing the particle will be updated
- * in the particle class. If no cell can be found, a FACEMC::MOABException will
- * be thrown. This exception should be caught and a lost particle should be
- * indicated.
+ * the point of intersection). If no cell can be found, a FACEMC::MOABException
+ * will be thrown. This exception should be caught and a lost particle should 
+ *be indicated.
  */
-void GeometryModuleInterface<moab::DagMC>::updateCellContainingParticle( 
-					  ParticleState& particle,
-					  const InternalSurfaceHandle surface )
+GeometryModuleInterface<moab::DagMC>::InternalCellHandle 
+GeometryModuleInterface<moab::DagMC>::findCellContainingPoint( 
+					 const Ray& ray,
+					 const InternalCellHandle current_cell,
+					 const InternalSurfaceHandle surface )
 {
   ExternalSurfaceHandle surface_external = 
     GeometryModuleInterface<moab::DagMC>::getExternalSurfaceHandle( surface );
 
-  ExternalCellHandle current_cell = 
-    GeometryModuleInterface<moab::DagMC>::getExternalCellHandle( 
-							  particle.getCell() );
+  ExternalCellHandle current_cell_external = 
+    GeometryModuleInterface<moab::DagMC>::getExternalCellHandle( current_cell);
 
-  
-  ExternalCellHandle next_cell;
+  ExternalCellHandle next_cell_external;
 
   moab::ErrorCode return_value = 
     GeometryModuleInterface<moab::DagMC>::dagmc_instance->next_vol(
-							      surface_external,
-							      current_cell,
-							      next_cell );
+							 surface_external,
+							 current_cell_external,
+							 next_cell_external );
 
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
 		      FACEMC::MOABException,
 		      moab::ErrorCodeStr[return_value] );
 
-  InternalCellHandle next_cell_internal = 
-    GeometryModuleInterface<moab::DagMC>::getInternalCellHandle( next_cell );
-  
-  particle.setCell( next_cell_internal );
-								   
+  return GeometryModuleInterface<moab::DagMC>::getInternalCellHandle( 
+							  next_cell_external );
 }
 
 // Fire a ray through the geometry
 /*! \details If for any reason the ray fire fails, a FACEMC::MOABException 
- * will be thrown. This exception should be caught and a lost particle should
- * be indicated.
+ * will be thrown. This exception should be caught to end the ray tracing.
  */
 void GeometryModuleInterface<moab::DagMC>::fireRay( 
-					    const ParticleState& particle,
-			                    InternalSurfaceHandle& surface_hit,
-			                    double& distance_to_surface_hit )
+					const Ray& ray,
+					const InternalCellHandle& current_cell,
+					InternalSurfaceHandle& surface_hit,
+					double& distance_to_surface_hit )
 {
-  ExternalCellHandle current_cell = 
-    GeometryModuleInterface<moab::DagMC>::getExternalCellHandle( 
-							  particle.getCell() );
+  ExternalCellHandle current_cell_external = 
+    GeometryModuleInterface<moab::DagMC>::getExternalCellHandle( current_cell);
 
   ExternalSurfaceHandle surface_hit_external;
   
   moab::ErrorCode return_value = 
     GeometryModuleInterface<moab::DagMC>::dagmc_instance->ray_fire(
-			  current_cell,
-			  particle.getPosition(),
-			  particle.getDirection(),
+			  current_cell_external,
+			  ray.getPosition(),
+			  ray.getDirection(),
 			  surface_hit_external,
 			  distance_to_surface_hit,
 			  &GeometryModuleInterface<moab::DagMC>::ray_history );
@@ -151,37 +145,36 @@ void GeometryModuleInterface<moab::DagMC>::fireRay(
 							surface_hit_external );
 }
 
-// Get the particle location w.r.t. a given cell
-/*! \details This function is used to determine if a particle is in, on, or
- * outside a given cell. If a particles position relative to a cell cannot
+// Get the point location w.r.t. a given cell
+/*! \details This function is used to determine if a point is in, on, or
+ * outside a given cell. If a position relative to a cell cannot
  * be determined, a FACEMC::MOABException will be thrown. This exception 
- * should be caught and a lost particle should be indicated.
+ * should be caught so that ray tracing can be terminated.
  */
-PointLocation GeometryModuleInterface<moab::DagMC>::getParticleLocation(
-						 const InternalCellHandle cell,
-						 const double position[3],
-						 const double direction[3] )
+PointLocation GeometryModuleInterface<moab::DagMC>::getPointLocation(
+						const Ray& ray,
+						const InternalCellHandle cell )
 {
   ExternalCellHandle cell_external = 
     GeometryModuleInterface<moab::DagMC>::getExternalCellHandle( cell );
     
-  return GeometryModuleInterface<moab::DagMC>::getParticleLocation(
-								 cell_external,
-								 position,
-								 direction );
+  return GeometryModuleInterface<moab::DagMC>::getPointLocation(
+							  cell_external,
+							  ray.getPosition(),
+							  ray.getDirection() );
 }
 
-// Get the particle location w.r.t. a given cell (using an external handle)
-PointLocation GeometryModuleInterface<moab::DagMC>::getParticleLocation(
-						 const ExternalCellHandle cell,
-						 const double position[3],
-						 const double direction[3] )
+// Get the point location w.r.t. a given cell (using an external handle)
+PointLocation GeometryModuleInterface<moab::DagMC>::getPointLocation(
+					const ExternalCellHandle cell_external,
+					const double position[3],
+					const double direction[3] )
 {
   int test_result;
   
   moab::ErrorCode return_value = 
     GeometryModuleInterface<moab::DagMC>::dagmc_instance->point_in_volume(
-			  cell,
+			  cell_external,
 			  position,
 			  test_result,
 			  direction,
@@ -230,8 +223,8 @@ void GeometryModuleInterface<moab::DagMC>::getAllCells()
 
 // Test the cells found to contain test points for point containment
 void GeometryModuleInterface<moab::DagMC>::testCellsContainingTestPoints( 
-						InternalCellHandle& cell,
-						const ParticleState& particle )
+						      InternalCellHandle& cell,
+						      const Ray& ray )
 {
   boost::unordered_set<ExternalCellHandle>::const_iterator cell_handle = 
     GeometryModuleInterface<moab::DagMC>::cells_containing_test_points.begin();
@@ -242,10 +235,10 @@ void GeometryModuleInterface<moab::DagMC>::testCellsContainingTestPoints(
   while( cell_handle != end_cell_handle )
   {
     PointLocation test_point_location = 
-      GeometryModuleInterface<moab::DagMC>::getParticleLocation( 
-						     *cell_handle,
-						     particle.getPosition(),
-						     particle.getDirection() );
+      GeometryModuleInterface<moab::DagMC>::getPointLocation( 
+						          *cell_handle,
+						          ray.getPosition(),
+						          ray.getDirection() );
     
     if( test_point_location == POINT_INSIDE_CELL )
     {
@@ -261,8 +254,8 @@ void GeometryModuleInterface<moab::DagMC>::testCellsContainingTestPoints(
 
 // Test all remaining cells for point containment
 void GeometryModuleInterface<moab::DagMC>::testAllRemainingCells( 
-					        InternalCellHandle& cell,
-						const ParticleState& particle )
+					              InternalCellHandle& cell,
+						      const Ray& ray )
 {
   moab::Range::const_iterator cell_handle = 
     GeometryModuleInterface<moab::DagMC>::all_cells.begin();
@@ -273,10 +266,10 @@ void GeometryModuleInterface<moab::DagMC>::testAllRemainingCells(
   while( cell_handle != end_cell_handle )
   {
     PointLocation test_point_location = 
-      GeometryModuleInterface<moab::DagMC>::getParticleLocation( 
-						     *cell_handle,
-						     particle.getPosition(),
-						     particle.getDirection() );
+      GeometryModuleInterface<moab::DagMC>::getPointLocation( 
+						          *cell_handle,
+							  ray.getPosition(),
+						          ray.getDirection() );
     
     if( test_point_location == POINT_INSIDE_CELL )
     {

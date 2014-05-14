@@ -101,7 +101,7 @@ void initializeSource( const bool set_importance_functions = false,
      energy_distribution,
      time_distribution,
      FACEMC::PHOTON,
-     &FACEMC::GeometryModuleInterface<GeometryHandler>::getParticleLocation) );
+     &FACEMC::GeometryModuleInterface<GeometryHandler>::getPointLocation) );
 
   // Set the importance functions if requested
   if( set_importance_functions )

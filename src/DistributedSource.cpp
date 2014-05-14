@@ -192,10 +192,12 @@ void DistributedSource::sampleParticlePosition( ParticleState& particle )
 
     if( d_rejection_cell != Traits::ModuleTraits::invalid_internal_cell_handle)
     {
+      Ray ray( position, particle.getDirection() );
+            
       PointLocation location = (*d_get_particle_location_func)( 
-						     d_rejection_cell,
-						     position,
-						     particle.getDirection() );
+							    ray,
+							    d_rejection_cell );
+      
       if( location == POINT_INSIDE_CELL )
 	break;
       else

@@ -209,6 +209,12 @@ ADD_EXECUTABLE(tstDirectionHelpers
 TARGET_LINK_LIBRARIES(tstDirectionHelpers ${PROJECT_NAME})
 ADD_TEST(DirectionHelpers_test tstDirectionHelpers)
 
+ADD_EXECUTABLE(tstRay
+  tstRay.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstRay ${PROJECT_NAME})
+ADD_TEST(Ray_test tstRay)
+
 ADD_EXECUTABLE(tstParticleStateCore
   tstParticleStateCore.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

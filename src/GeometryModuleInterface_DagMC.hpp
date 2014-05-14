@@ -62,16 +62,18 @@ public:
   //! Set the geometry handler instance
   static void setHandlerInstance( moab::DagMC* handler_instance );
 
-  //! Update the cell that contains a given particle (start of history)
-  static void updateCellContainingParticle( ParticleState& particle );
+  //! Find the cell that contains a given point (start of history)
+  static InternalCellHandle findCellContainingPoint( const Ray& ray );
 
-  //! Update the cell that contains a given particle (surface crossing)
-  static void updateCellContainingParticle( 
-					 ParticleState& particle,
+  //! Find the cell that contains a given point (surface crossing)
+  static InternalCellHandle findCellContainingPoint( 
+					 const Ray& ray,
+					 const InternalCellHandle current_cell,
 					 const InternalSurfaceHandle surface );
 
   //! Fire a ray through the geometry
-  static void fireRay( const ParticleState& particle,
+  static void fireRay( const Ray& ray,
+		       const InternalCellHandle& current_cell,
 		       InternalSurfaceHandle& surface_hit,
 		       double& distance_to_surface_hit );
 
@@ -81,14 +83,13 @@ public:
   //! Check if the cell is a termination cell
   static bool isTerminationCell( const InternalCellHandle cell );
 
-  //! Get the particle location w.r.t. a given cell
-  static PointLocation getParticleLocation( const InternalCellHandle cell,
-					    const double position[3],
-					    const double direction[3] );
+  //! Get the point location w.r.t. a given cell
+  static PointLocation getPointLocation( const Ray& ray,
+					 const InternalCellHandle cell );
   
   //! Calculate the surface normal at a point on the surface
   static void getSurfaceNormal( const InternalSurfaceHandle surface,
-				const ParticleState& particle,
+				const double position[3],
 				double normal[3] );
 
   //! Get the volume of a cell
@@ -100,11 +101,11 @@ public:
 
   //! Get the internal surf. handle corresponding to the external surf. handle
   static InternalSurfaceHandle getInternalSurfaceHandle(
-					 const ExternalSurfaceHandle surface );
+				const ExternalSurfaceHandle surface_external );
 
   //! Get the internal cell handle corresponding to the external cell handle
   static InternalCellHandle getInternalCellHandle( 
-					       const ExternalCellHandle cell );
+				      const ExternalCellHandle cell_external );
 
   //! Get the external surf. handle corresponding to the internal surf. handle
   static ExternalSurfaceHandle getExternalSurfaceHandle(
@@ -113,25 +114,25 @@ public:
 
   //! Get the external cell handle corresponding to the internal cell handle
   static ExternalCellHandle getExternalCellHandle(
-					       const ExternalCellHandle cell );
+					       const InternalCellHandle cell );
 
 private:
 
-  //! Get the particle location w.r.t. a given cell
-  static PointLocation getParticleLocation( const ExternalCellHandle cell,
-					    const double position[3],
-					    const double direction[3] );
+  //! Get the point location w.r.t. a given cell
+  static PointLocation getPointLocation(const ExternalCellHandle cell_external,
+					const double position[3],
+					const double direction[3] );
 
   //! Get all the cells contained in the geometry
   static void getAllCells();
 
   //! Test the cells found to contain test points for point containment
   static void testCellsContainingTestPoints( InternalCellHandle& cell,
-					     const ParticleState& particle );
+					     const Ray& ray );
 
   //! Test all remaining cells for point containment
   static void testAllRemainingCells( InternalCellHandle& cell,
-				     const ParticleState& particle );
+				     const Ray& ray );
 
   // An instance of DagMC
   static moab::DagMC* const dagmc_instance;
@@ -162,7 +163,7 @@ inline void GeometryModuleInterface<moab::DagMC>::setHandlerInstance(
  * ray tracing. This class simply stores the entity handles of surface facets
  * that have been crossed so that those facets will not be intersected again by
  * the current ray. This class is very specific to DagMC and thus should be 
- * hidden from the rest of FACEMC so that genericity in the particle tracking 
+ * hidden from the rest of FACEMC so that generality in the particle tracking 
  * algorithms is maintained. This specialized class has a RayHistory instance 
  * stored as a private static member. Everytime a particle changes direction 
  * and ray tracing recommences, this function must be called to reset the 
@@ -188,11 +189,11 @@ inline bool GeometryModuleInterface<moab::DagMC>::isTerminationCell(
 
 // Calculate the surface normal at a point on the surface
 /* \details This function will throw a FACEMC::MOABException if the desired
- * surface does not exist or if the particle is not actually on the surface.
+ * surface does not exist or if the point is not actually on the surface.
  */
 inline void GeometryModuleInterface<moab::DagMC>::getSurfaceNormal( 
 					   const InternalSurfaceHandle surface,
-					   const ParticleState& particle,
+					   const double position[3],
 					   double normal[3] )
 {
   ExternalSurfaceHandle surface_external = 
@@ -201,7 +202,7 @@ inline void GeometryModuleInterface<moab::DagMC>::getSurfaceNormal(
   moab::ErrorCode return_value = 
     GeometryModuleInterface<moab::DagMC>::dagmc_instance->get_angle(
 			  surface_external,
-			  particle.getPosition(),
+			  position,
 			  normal,
 			  &GeometryModuleInterface<moab::DagMC>::ray_history );
 
@@ -272,21 +273,21 @@ inline double GeometryModuleInterface<moab::DagMC>::getCellSurfaceArea(
 // Get the internal surf. handle corresponding to the external surf. handle
 inline GeometryModuleInterface<moab::DagMC>::InternalSurfaceHandle 
 GeometryModuleInterface<moab::DagMC>::getInternalSurfaceHandle(
-					  const ExternalSurfaceHandle surface )
+				 const ExternalSurfaceHandle surface_external )
 {
   return static_cast<InternalSurfaceHandle>( 
 	   GeometryModuleInterface<moab::DagMC>::dagmc_instance->get_entity_id(
-								   surface ) );
+							  surface_external ) );
 }
 
 // Get the internal cell handle corresponding to the external cell handle
 inline GeometryModuleInterface<moab::DagMC>::InternalCellHandle 
 GeometryModuleInterface<moab::DagMC>::getInternalCellHandle( 
-					        const ExternalCellHandle cell )
+				       const ExternalCellHandle cell_external )
 {
   return static_cast<InternalCellHandle>(
 	   GeometryModuleInterface<moab::DagMC>::dagmc_instance->get_entity_id(
-								      cell ) );
+							     cell_external ) );
 }
 
 // Get the external surf. handle corresponding to the internal surf. handle
@@ -303,7 +304,7 @@ GeometryModuleInterface<moab::DagMC>::getExternalSurfaceHandle(
 // Get the external cell handle corresponding to the internal cell handle
 inline GeometryModuleInterface<moab::DagMC>::ExternalCellHandle 
 GeometryModuleInterface<moab::DagMC>::getExternalCellHandle(
-					        const ExternalCellHandle cell )
+					        const InternalCellHandle cell )
 {
   return GeometryModuleInterface<moab::DagMC>::dagmc_instance->entity_by_id(
 						    3,

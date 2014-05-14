@@ -20,6 +20,7 @@
 #include "ParticleType.hpp"
 #include "ParticleStateCore.hpp"
 #include "PrintableObject.hpp"
+#include "Ray.hpp"
 #include "ModuleTraits.hpp"
 #include "ContractException.hpp"
 #include "PhysicalConstants.hpp"
@@ -176,6 +177,9 @@ public:
 
   //! Set the particle as gone
   void setAsGone();
+
+  //! Spawn a ray that can be used for ray tracing
+  void spawnRay( Teuchos::RCP<Ray>& ray ) const;
 
   //! Export the core (creating a copy of it)
   ParticleStateCore exportCore() const;

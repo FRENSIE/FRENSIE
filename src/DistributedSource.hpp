@@ -38,7 +38,7 @@ private:
 public:
 
   //! Typedef for get particle location geometry module interface function
-  typedef PointLocation (*getLocationFunction)(const Traits::ModuleTraits::InternalCellHandle,const double*,const double*);
+  typedef PointLocation (*getLocationFunction)(const Ray&, Traits::ModuleTraits::InternalCellHandle );
   
   //! Constructor
   DistributedSource( 

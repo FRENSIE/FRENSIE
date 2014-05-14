@@ -285,6 +285,12 @@ void ParticleState::setAsGone()
   d_gone = true;
 }
 
+// Spawn a ray that can be used for ray tracing
+void ParticleState::spawnRay( Teuchos::RCP<Ray>& ray ) const
+{
+  ray.reset( new Ray( this->getPosition(), this->getDirection() ) );
+}
+
 // Export the core (creating a copy of it)
 ParticleStateCore ParticleState::exportCore() const
 {

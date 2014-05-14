@@ -17,8 +17,7 @@
 #include <Teuchos_Tuple.hpp>
 
 // FACEMC Includes
-#include "NeutronState.hpp"
-#include "PhotonState.hpp"
+#include "Ray.hpp"
 #include "DagMCHelpers.hpp"
 #include "GeometryModuleInterface.hpp"
 
@@ -61,16 +60,14 @@ TEUCHOS_UNIT_TEST( GeometryModuleInterface_DagMC,
   // Initialize DagMC
   initializeDagMC();
 
-  // Initialize the particle state
-  FACEMC::NeutronState particle( 1ull );
-  particle.setPosition( -40.0, -40.0, 59.0 );
-  particle.setDirection( 0.0, 0.0, 1.0 );
-
-  // Find the cell that contains the particle
-  GMI::updateCellContainingParticle( particle );
+  // Initialize the ray
+  FACEMC::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
+  
+  // Find the cell that contains the point
+  GMI::InternalCellHandle cell = GMI::findCellContainingPoint( ray );
   
   // Get the cell id associated with the cell handle
-  TEST_EQUALITY_CONST( particle.getCell(), 53 );
+  TEST_EQUALITY_CONST( cell, 53 );
 }
 
 //---------------------------------------------------------------------------//
@@ -79,19 +76,17 @@ TEUCHOS_UNIT_TEST( GeometryModuleInterface_DagMC, fireRay )
 {
   typedef FACEMC::GeometryModuleInterface<moab::DagMC> GMI;
   
-  // Initialize the particle state
-  FACEMC::NeutronState particle( 1ull );
-  particle.setPosition( -40.0, -40.0, 59.0 );
-  particle.setDirection( 0.0, 0.0, 1.0 );
+  // Initialize the ray
+  FACEMC::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
 
-  // Find the cell that contains the particle
-  GMI::updateCellContainingParticle( particle );
-
+  // Find the cell that contains the point
+  GMI::InternalCellHandle cell = GMI::findCellContainingPoint( ray );
+ 
   // Fire a ray through the geometry
-  typename GMI::InternalSurfaceHandle surface_hit;
+  GMI::InternalSurfaceHandle surface_hit;
   double distance_to_surface_hit;
 
-  GMI::fireRay( particle, surface_hit, distance_to_surface_hit );
+  GMI::fireRay( ray, cell, surface_hit, distance_to_surface_hit );
   
   // Get the surface id associated with the surface handle
   TEST_FLOATING_EQUALITY( distance_to_surface_hit, 1.959999084, 1e-9 );
@@ -105,35 +100,32 @@ TEUCHOS_UNIT_TEST( GeometryModuleInterface_DagMC,
 {
   typedef FACEMC::GeometryModuleInterface<moab::DagMC> GMI;
   
-  // Initialize the particle state
-  FACEMC::NeutronState particle( 1ull );
-  particle.setPosition( -40.0, -40.0, 59.0 );
-  particle.setDirection( 0.0, 0.0, 1.0 );
-  particle.setEnergy( 1.0 );
+  // Initialize the ray
+  FACEMC::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
 
-  // Find the cell that contains the particle
-  GMI::updateCellContainingParticle( particle );
-
+  // Find the cell that contains the point
+  GMI::InternalCellHandle cell = GMI::findCellContainingPoint( ray );
+ 
   // Fire a ray through the geometry
-  typename GMI::InternalSurfaceHandle surface_hit;
+  GMI::InternalSurfaceHandle surface_hit;
   double distance_to_surface_hit;
 
-  GMI::fireRay( particle, surface_hit, distance_to_surface_hit );
+  GMI::fireRay( ray, cell, surface_hit, distance_to_surface_hit );
   
-  // Advance the particle to the surface intersection point
-  particle.advance( distance_to_surface_hit );
+  // Advance the ray head to the surface intersection point
+  ray.advanceHead( distance_to_surface_hit );
   
   // Find the cell that the particle enters
-  GMI::updateCellContainingParticle( particle, surface_hit );
+  cell = GMI::findCellContainingPoint( ray, cell, surface_hit );
 
-  TEST_EQUALITY_CONST( particle.getCell(), 54 );
+  TEST_EQUALITY_CONST( cell, 54 );
 
   // Complete another sequence
-  GMI::fireRay( particle, surface_hit, distance_to_surface_hit );
-  particle.advance( distance_to_surface_hit );
-  GMI::updateCellContainingParticle( particle, surface_hit );
+  GMI::fireRay( ray, cell, surface_hit, distance_to_surface_hit );
+  ray.advanceHead( distance_to_surface_hit );
+  cell = GMI::findCellContainingPoint( ray, cell, surface_hit );
   
-  TEST_EQUALITY_CONST( particle.getCell(), 55 );
+  TEST_EQUALITY_CONST( cell, 55 );
 }
 
 //---------------------------------------------------------------------------//
@@ -154,14 +146,12 @@ TEUCHOS_UNIT_TEST( GeometryModuleInterface_DagMC,
 {
   typedef FACEMC::GeometryModuleInterface<moab::DagMC> GMI;
 
-  // Initialize the particle state (on cell 53)
-  FACEMC::NeutronState particle( 1ull );
-  particle.setPosition( -40.0, -40.0, 60.959999084 );
-  particle.setDirection( 0.0, 0.0, 1.0 );
+  // Initialize the ray (on cell 53)
+  FACEMC::Ray ray( -40.0, -40.0, 60.959999084, 0.0, 0.0, 1.0 );
 
   // Get the surface normal
   Teuchos::Tuple<double,3> normal;
-  GMI::getSurfaceNormal( 242, particle, normal.getRawPtr() );
+  GMI::getSurfaceNormal( 242, ray.getPosition(), normal.getRawPtr() );
 
   Teuchos::Tuple<double,3> ref_normal = Teuchos::tuple( 0.0, 0.0, 1.0 );
   

@@ -127,7 +127,7 @@ void initializeSource()
      source_1_energy_distribution,
      time_distribution,
      FACEMC::PHOTON,
-     &FACEMC::GeometryModuleInterface<GeometryHandler>::getParticleLocation) );
+     &FACEMC::GeometryModuleInterface<GeometryHandler>::getPointLocation) );
   
   spherical_source->setRejectionCell( 2 );
 
@@ -139,7 +139,7 @@ void initializeSource()
      source_2_energy_distribution,
      time_distribution,
      FACEMC::NEUTRON,
-     &FACEMC::GeometryModuleInterface<GeometryHandler>::getParticleLocation) );
+     &FACEMC::GeometryModuleInterface<GeometryHandler>::getPointLocation) );
 
   Teuchos::Array<Teuchos::RCP<FACEMC::ParticleSource> > sources( 2 );
   sources[0] = Teuchos::rcp_dynamic_cast<FACEMC::ParticleSource>( 

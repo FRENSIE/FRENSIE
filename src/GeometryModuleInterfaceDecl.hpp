@@ -14,7 +14,7 @@
 
 // FACEMC Includes
 #include "PointLocation.hpp"
-#include "ParticleState.hpp"
+#include "Ray.hpp"
 #include "ModuleTraits.hpp"
 #include "ContractException.hpp"
 
@@ -73,24 +73,25 @@ public:
   static inline void setHandlerInstance( GeometryHandler* handler_instance )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
-  /*! Update the cell that contains a given particle (start of history)
+  /*! Find the cell that contains a given point (start of history)
    *
    * A std::runtime_error (or class derived from it) must be thrown 
    * if an error occurs. These exceptions will be caught in the main particle 
    * simulation algorithms and are used to indicate lost particles.
    */
-  static inline void updateCellContainingParticle( ParticleState& particle )
+  static inline InternalCellHandle findCellContainingPoint( const Ray& ray )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
-  /*! Update the cell that contains a given particle (surface crossing)
+  /*! Find the cell that contains a given point (surface crossing)
    *
    * A std::runtime_error (or class derived from it) must be thrown 
    * if an error occurs. These exceptions will be caught in the main particle 
    * simulation algorithms and are used to indicate lost particles.
    */
-  static inline void updateCellContainingParticle( 
-					  ParticleState& particle,
-					  const InternalSurfaceHandle surface )
+  static inline InternalCellHandle findCellContainingPoint( 
+					 const Ray& ray,
+					 const InternalCellHandle current_cell,
+					 const InternalSurfaceHandle surface )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
   /*! Fire a ray through the geometry
@@ -100,7 +101,8 @@ public:
    * main particle simulation algorithms and are used to indicate lost 
    * particles.
    */
-  static inline void fireRay( const ParticleState& particle,
+  static inline void fireRay( const Ray& ray,
+			      const InternalCellHandle& current_cell,
 			      InternalSurfaceHandle& surface_hit,
 			      double& distance_to_surface_hit )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
@@ -119,15 +121,13 @@ public:
    * if an error occurs. These exceptions will be caught in the main particle 
    * simulation algorithms and are used to indicate lost particles.
    */
-  static inline PointLocation getParticleLocation(
-						 const InternalCellHandle cell,
-						 const double position[3],
-						 const double direction[3] )
+  static inline PointLocation getPointLocation( const Ray& ray,
+						const InternalCellHandle cell )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
   
   //! Calculate the surface normal at a point on the surface
   static inline void getSurfaceNormal( const InternalSurfaceHandle surface,
-				       const ParticleState& particle,
+				       const double position[3],
 				       double normal[3] )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
@@ -142,12 +142,12 @@ public:
 
   //! Get the internal surf. handle corresponding to the external surf. handle
   static inline InternalSurfaceHandle getInternalSurfaceHandle(
-					  const ExternalSurfaceHandle surface )
+				 const ExternalSurfaceHandle surface_external )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
 
   //! Get the internal cell handle corresponding to the external cell handle
   static inline InternalCellHandle getInternalCellHandle( 
-					        const ExternalCellHandle cell )
+				       const ExternalCellHandle cell_external )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
 
   //! Get the external surf. handle corresponding to the internal surf. handle
@@ -157,7 +157,7 @@ public:
 
   //! Get the external cell handle corresponding to the internal cell handle
   static inline ExternalCellHandle getExternalCellHandle(
-					        const ExternalCellHandle cell )
+					        const InternalCellHandle cell )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; } 
 };
 

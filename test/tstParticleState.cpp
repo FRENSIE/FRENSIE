@@ -246,6 +246,26 @@ TEUCHOS_UNIT_TEST( ParticleState, gone )
 }
 
 //---------------------------------------------------------------------------//
+// Spawn a ray 
+TEUCHOS_UNIT_TEST( ParticleState, spawnRay )
+{
+  TestParticleState particle( 1ull );
+  particle.setPosition( 1.0, 1.0, -1.0 );
+  particle.setDirection( 0.0, 0.0, 1.0 );
+
+  Teuchos::RCP<FACEMC::Ray> ray;
+
+  particle.spawnRay( ray );
+
+  TEST_EQUALITY_CONST( ray->getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( ray->getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( ray->getZPosition(), -1.0 );
+  TEST_EQUALITY_CONST( ray->getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( ray->getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( ray->getZDirection(), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Export a particle state core
 TEUCHOS_UNIT_TEST( ParticleState, exportCore )
 {
