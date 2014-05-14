@@ -29,11 +29,17 @@ public:
   //! Planck's constant by pi (MeV-s)
   static const double h_bar;
 
+  //! Avogadro constant (mol)
+  static const double avogadro_constant;
+
   //! Rest mass energy of electron (MeV)
   static const double electron_rest_mass_energy;
 
   //! Rest mass energy of neutron (MeV)
   static const double neutron_rest_mass_energy;
+
+  //! Rest mass of neutron (amu)
+  static const double neutron_rest_mass_amu;
 };
 
 } // end FACEMC namespace

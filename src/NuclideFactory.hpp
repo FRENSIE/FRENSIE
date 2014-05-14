@@ -14,10 +14,12 @@
 
 // Boost Includes
 #include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
 
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
 #include <Teuchos_ArrayRCP.hpp>
+#include <Teuchos_RCP.hpp>
 
 // FACEMC Includes
 #include "Nuclide.hpp"
@@ -30,38 +32,25 @@ class NuclideFactory
 public:
 
   //! Constructor
-  NuclideFactory( const std::string& ace_table_directory,
-		  const boost::unordered_set<std::string>& nuclides );
+  NuclideFactory( const std::string& cross_sections_xml_directory,
+		  const Teuchos::ParameterList& cross_section_table_info,
+		  const boost::unordered_set<std::string>& nuclide_aliases );
 
   //! Destructor
   ~NuclideFactory()
   { /* ... */ }
 
   //! Create the map of nuclides
-  template<typename NuclideNameMap>
-  void create( NuclideNameMap& nuclide_map) const;
+  void createNuclideMap( 
+    boost::unordered_map<unsigned,Teuchos::RCP<Nuclide> >& nuclide_map ) const;
 
 private:
 
-  // The path to the ace table directory
-  std::string d_ace_table_directory;
-
-  // The nuclides that need to be loaded
-  const boost::unordered_set<std::string>& d_nuclides;
-  
-   // The cross section table information
-  Teuchos::ParameterList d_cross_section_table_info;
+  // The nuclide id map
+  boost::unordered_map<unsigned,Teuchos::RCP<Nuclide> > d_nuclide_id_map;
 };
 
 } // end FACEMC namespace
-
-//---------------------------------------------------------------------------//
-// Template Includes.
-//---------------------------------------------------------------------------//
-
-#include "NuclideFactory_def.hpp"
-
-//---------------------------------------------------------------------------//
 
 #endif // end NUCLIDE_FACTORY_HPP
 

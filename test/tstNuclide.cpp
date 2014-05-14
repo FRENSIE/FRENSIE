@@ -68,6 +68,13 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getName )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the nuclide id can be returned
+TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getId )
+{
+  TEST_EQUALITY_CONST( nuclide->getId(), 100170u );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the nuclide atomic number can be returned
 TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getAtomicNumber )
 {

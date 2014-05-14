@@ -442,12 +442,12 @@ ADD_TEST(CellTrackLengthFluxEstimator_test tstCellTrackLengthFluxEstimator)
 ADD_EXECUTABLE(tstACEFileHandler
   tstACEFileHandler.cpp)
 TARGET_LINK_LIBRARIES(tstACEFileHandler ${PROJECT_NAME})
-ADD_TEST(ACEFileHandler_test tstACEFileHandler --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ace_file.txt")
+ADD_TEST(ACEFileHandler_test tstACEFileHandler --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt")
 
 ADD_EXECUTABLE(tstXSSNeutronDataExtractor
   tstXSSNeutronDataExtractor.cpp)
 TARGET_LINK_LIBRARIES(tstXSSNeutronDataExtractor ${PROJECT_NAME})
-ADD_TEST(XSSNeutronDataExtractor_test tstXSSNeutronDataExtractor --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ace_file.txt" --test_basic_ace_table="1001.70c")
+ADD_TEST(XSSNeutronDataExtractor_test tstXSSNeutronDataExtractor --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
 
 ADD_EXECUTABLE(tstNeutronScatteringDistribution
   tstNeutronScatteringDistribution.cpp
@@ -464,29 +464,45 @@ ADD_TEST(ElasticNeutronScatteringDistribution_test tstElasticNeutronScatteringDi
 ADD_EXECUTABLE(tstNeutronScatteringDistributionFactory
   tstNeutronScatteringDistributionFactory.cpp)
 TARGET_LINK_LIBRARIES(tstNeutronScatteringDistributionFactory ${PROJECT_NAME})
-ADD_TEST(NeutronScatteringDistributionFactory_test tstNeutronScatteringDistributionFactory --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ace_file.txt" --test_basic_ace_table="1001.70c")
+ADD_TEST(NeutronScatteringDistributionFactory_test tstNeutronScatteringDistributionFactory --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
 
 ADD_EXECUTABLE(tstNuclearReaction
   tstNuclearReaction.cpp)
 TARGET_LINK_LIBRARIES(tstNuclearReaction ${PROJECT_NAME})
-ADD_TEST(NuclearReaction_test tstNuclearReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ace_file.txt" --test_basic_ace_table="1001.70c")
+ADD_TEST(NuclearReaction_test tstNuclearReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
 
 ADD_EXECUTABLE(tstNeutronScatteringReaction
   tstNeutronScatteringReaction.cpp)
 TARGET_LINK_LIBRARIES(tstNeutronScatteringReaction ${PROJECT_NAME})
-ADD_TEST(NeutronScatteringReaction_test tstNeutronScatteringReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ace_file.txt" --test_basic_ace_table="1001.70c")
+ADD_TEST(NeutronScatteringReaction_test tstNeutronScatteringReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
 
 ADD_EXECUTABLE(tstNeutronAbsorptionReaction
   tstNeutronAbsorptionReaction.cpp)
 TARGET_LINK_LIBRARIES(tstNeutronAbsorptionReaction ${PROJECT_NAME})
-ADD_TEST(NeutronAbsorptionReaction_test tstNeutronAbsorptionReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ace_file.txt" --test_basic_ace_table="1001.70c")
+ADD_TEST(NeutronAbsorptionReaction_test tstNeutronAbsorptionReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
 
 ADD_EXECUTABLE(tstNuclearReactionFactory
   tstNuclearReactionFactory.cpp)
 TARGET_LINK_LIBRARIES(tstNuclearReactionFactory ${PROJECT_NAME})
-ADD_TEST(NuclearReactionFactory_test tstNuclearReactionFactory --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ace_file.txt" --test_basic_ace_table="1001.70c")
+ADD_TEST(NuclearReactionFactory_test tstNuclearReactionFactory --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
 
 ADD_EXECUTABLE(tstNuclide
   tstNuclide.cpp)
 TARGET_LINK_LIBRARIES(tstNuclide ${PROJECT_NAME})
-ADD_TEST(Nuclide_test tstNuclide --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_ace_file.txt" --test_basic_ace_table="1001.70c")
+ADD_TEST(Nuclide_test tstNuclide --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+
+ADD_EXECUTABLE(tstNuclideFactory
+  tstNuclideFactory.cpp)
+TARGET_LINK_LIBRARIES(tstNuclideFactory ${PROJECT_NAME})
+ADD_TEST(NuclideFactory_test tstNuclideFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
+
+ADD_EXECUTABLE(tstMaterialHelpers
+  tstMaterialHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstMaterialHelpers ${PROJECT_NAME})
+ADD_TEST(MaterialHelpers_test tstMaterialHelpers)
+
+ADD_EXECUTABLE(tstNeutronMaterial
+  tstNeutronMaterial.cpp)
+TARGET_LINK_LIBRARIES(tstNeutronMaterial ${PROJECT_NAME})
+ADD_TEST(NeutronMaterial_test tstNeutronMaterial --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")

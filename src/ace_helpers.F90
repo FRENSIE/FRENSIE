@@ -180,7 +180,7 @@ module ace_table_helpers
 
     !> Move to the desired table in the ACE library
     !> \detials The indexing for the start line should follow FORTRAN
-    !> converntions (start at 1). It is assumed that the desired ACE library
+    !> conventions (start at 1). It is assumed that the desired ACE library
     !> has already been opened
     subroutine locate_ace_table( file_id, table_start_line ) &
          bind(c, name='locateAceTable')

@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <stdexcept>
+#include <sstream>
 
 // FACEMC Includes
 #include "Nuclide.hpp"
@@ -66,6 +67,63 @@ void Nuclide::addAbsorptionReactionTypes(
     Nuclide::absorption_reaction_types.insert( absorption_reaction_types[i] );
 }
 
+// Create a unique id for the nuclide based on its name
+/*! The names are assumed to be in the form ZZZAAA.xxc. As long as this format
+ * is used, this function will return a unique id corresponding to the name by
+ * stripping away the "." and the "c".
+ */
+unsigned Nuclide::getUniqueIdFromName( const std::string& name )
+{
+  std::string name_copy( name );
+  
+  // Remove all but the numbers in the name
+  unsigned char_loc = name_copy.find_first_not_of("0123456789");
+  
+  while( char_loc < name_copy.size() )
+  {
+    name_copy.erase( char_loc, 1 );
+
+    char_loc = name_copy.find_first_not_of("0123456789");
+  }
+
+  std::stringstream ss;
+  ss << name_copy;
+
+  unsigned id;
+
+  ss >> id;
+  
+  return id;
+}
+
+// Check that the total cross section is valid
+bool Nuclide::isCalculatedTotalCrossSectionValid(
+                   Teuchos::Array<double>& calculated_total_cross_section,
+	           Teuchos::ArrayView<const double> table_total_cross_section )
+{
+  if( calculated_total_cross_section.size() !=
+      table_total_cross_section.size() )
+    return false;
+  
+  bool valid = true;
+  double rel_error;
+  for( unsigned i = 0u; i < calculated_total_cross_section.size(); ++i )
+  {
+    rel_error = ST::magnitude( calculated_total_cross_section[i] - 
+			       table_total_cross_section[i] )/
+      std::max( ST::magnitude( calculated_total_cross_section[i] ),
+		ST::magnitude( table_total_cross_section[i] ) );
+    
+    if( rel_error > 5e-9 )
+    {
+      valid = false;
+      std::cout << i << ": " << rel_error << std::endl;
+    }
+  }
+
+  return valid;
+}
+
 // Constructor
 Nuclide::Nuclide( const std::string& name,
 		  const unsigned atomic_number,
@@ -75,6 +133,7 @@ Nuclide::Nuclide( const std::string& name,
 		  const double temperature,
 		  const XSSNeutronDataExtractor& raw_nuclide_data )
   : d_name( name ),
+    d_id( Nuclide::getUniqueIdFromName( name ) ),
     d_atomic_number( atomic_number ),
     d_atomic_mass_number( atomic_mass_number ),
     d_isomer_number( isomer_number ),
@@ -153,7 +212,7 @@ Nuclide::Nuclide( const std::string& name,
   calculateTotalCrossSection();
 
   // Make sure the calculated total cross section is valid
-  testPostcondition( isCalculatedTotalCrossSectionValid( 
+  testPostcondition( Nuclide::isCalculatedTotalCrossSectionValid( 
 			       d_total_cross_section,
 			       raw_nuclide_data.extractTotalCrossSection() ) );
 }
@@ -162,6 +221,12 @@ Nuclide::Nuclide( const std::string& name,
 const std::string& Nuclide::getName() const
 {
   return d_name;
+}
+
+// Return the nuclide id
+unsigned Nuclide::getId() const
+{
+  return d_id;
 }
 
 // Return the atomic number of the nuclide
@@ -407,34 +472,6 @@ void Nuclide::calculateTotalCrossSection()
       ++reaction_type_pointer;
     }
   }
-}
-
-// Check that the total cross section is valid
-bool Nuclide::isCalculatedTotalCrossSectionValid(
-                   Teuchos::Array<double>& calculated_total_cross_section,
-	           Teuchos::ArrayView<const double> table_total_cross_section )
-{
-  if( calculated_total_cross_section.size() !=
-      table_total_cross_section.size() )
-    return false;
-  
-  bool valid = true;
-  double rel_error;
-  for( unsigned i = 0u; i < calculated_total_cross_section.size(); ++i )
-  {
-    rel_error = ST::magnitude( calculated_total_cross_section[i] - 
-			       table_total_cross_section[i] )/
-      std::max( ST::magnitude( calculated_total_cross_section[i] ),
-		ST::magnitude( table_total_cross_section[i] ) );
-    
-    if( rel_error > 5e-9 )
-    {
-      valid = false;
-      std::cout << i << ": " << rel_error << std::endl;
-    }
-  }
-
-  return valid;
 }
 
 // Sample a scattering reaction

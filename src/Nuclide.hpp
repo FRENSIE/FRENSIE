@@ -20,8 +20,8 @@
 namespace FACEMC{
 
 /*! The nuclide class
- * \details This is the base class for all nuclides. No fission data is
- * maintained in the base class.
+ * \details This is the base class for all nuclides. No unresolved 
+ * resonance data is stored in this base class.
  */
 class Nuclide
 {
@@ -41,6 +41,9 @@ public:
   static void addAbsorptionReactionTypes( 
 	const Teuchos::Array<NuclearReactionType>& absorption_reaction_types );
 
+  //! Create a unique id for the nuclide based on its name
+  static unsigned getUniqueIdFromName( const std::string& name );
+
   //! Constructor
   Nuclide( const std::string& name,
 	   const unsigned atomic_number,
@@ -57,6 +60,9 @@ public:
 
   //! Return the nuclide name
   const std::string& getName() const;
+
+  //! Return the unique id used to refer to this nuclide
+  unsigned getId() const;
 
   //! Return the atomic number of the nuclide
   unsigned getAtomicNumber() const;
@@ -98,16 +104,16 @@ private:
   static boost::unordered_set<NuclearReactionType> 
   setDefaultAbsorptionReactionTypes();
 
+  // Check that the total cross section is valid
+  static bool isCalculatedTotalCrossSectionValid( 
+	          Teuchos::Array<double>& calculated_total_cross_section,
+	          Teuchos::ArrayView<const double> table_total_cross_section );
+
   // Calculate the total absorption cross section
   void calculateTotalAbsorptionCrossSection();
 
   // Calculate the total cross section
   void calculateTotalCrossSection();
-
-  // Check that the total cross section is valid
-  bool isCalculatedTotalCrossSectionValid( 
-	          Teuchos::Array<double>& calculated_total_cross_section,
-	          Teuchos::ArrayView<const double> table_total_cross_section );
 
   // Sample an absorption reaction
   void sampleAbsorptionReaction( const double scaled_random_number,
@@ -124,6 +130,9 @@ private:
 
   // The nuclide name
   std::string d_name;
+
+  // The unique id used to refer to this nuclide
+  unsigned d_id;
 
   // The atomic number of the nuclide
   unsigned d_atomic_number;

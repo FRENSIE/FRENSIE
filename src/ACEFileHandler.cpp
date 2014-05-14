@@ -68,11 +68,7 @@ ACEFileHandler::ACEFileHandler( const std::string& file_name,
 // Destructor
 ACEFileHandler::~ACEFileHandler()
 {
-  // If an ACE library is open, close it
-  if( aceLibraryOpen( d_ace_file_id ) )
-  {
     closeAceLibrary( d_ace_file_id );
-  }
 }
 
 // Open an ACE library file
