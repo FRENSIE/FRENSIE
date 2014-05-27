@@ -1,0 +1,77 @@
+ADD_EXECUTABLE(tstDeltaDistribution 
+  tstDeltaDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDeltaDistribution utilitycore utilityprng utilitydist)
+ADD_TEST(DeltaDistribution_test tstDeltaDistribution)
+
+ADD_EXECUTABLE(tstDiscreteDistribution 
+  tstDiscreteDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDiscreteDistribution utilitycore utilityprng utilitydist)
+ADD_TEST(DiscreteDistribution_test tstDiscreteDistribution)
+
+ADD_EXECUTABLE(tstUniformDistribution 
+  tstUniformDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstUniformDistribution utilitycore utilityprng utilitydist)
+ADD_TEST(UniformDistribution_test tstUniformDistribution)
+
+ADD_EXECUTABLE(tstHistogramDistribution 
+  tstHistogramDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstHistogramDistribution utilitycore utilityprng utilitydist)
+ADD_TEST(HistogramDistribution_test tstHistogramDistribution)
+
+ADD_EXECUTABLE(tstThirtyTwoEquiprobableBinDistribution 
+  tstThirtyTwoEquiprobableBinDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstThirtyTwoEquiprobableBinDistribution utilitycore utilityprng utilitydist)
+ADD_TEST(ThirtyTwoEquiprobableBinDistribution_test tstThirtyTwoEquiprobableBinDistribution)
+
+ADD_EXECUTABLE(tstTabularDistribution 
+  tstTabularDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstTabularDistribution utilitycore utilityprng utilitydist)
+ADD_TEST(TabularDistribution_test tstTabularDistribution)
+
+ADD_EXECUTABLE(tstExponentialDistribution 
+  tstExponentialDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstExponentialDistribution utilitycore utilityprng utilitydist)
+ADD_TEST(ExponentialDistribution_test tstExponentialDistribution)
+
+ADD_EXECUTABLE(tstNormalDistribution 
+  tstNormalDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstNormalDistribution utilitycore utilityprng utilitydist)
+ADD_TEST(NormalDistribution_test tstNormalDistribution)
+
+ADD_EXECUTABLE(tstPowerDistribution 
+  tstPowerDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPowerDistribution utilitycore utilityprng utilitydist)
+ADD_TEST(PowerDistribution_test tstPowerDistribution)
+
+ADD_EXECUTABLE(tstCartesianSpatialDistribution 
+  tstCartesianSpatialDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCartesianSpatialDistribution utilitycore utilityprng utilitydist)
+ADD_TEST(CartesianSpatialDistribution_test tstCartesianSpatialDistribution)
+
+ADD_EXECUTABLE(tstCylindricalSpatialDistribution 
+  tstCylindricalSpatialDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCylindricalSpatialDistribution utilitycore utilityprng utilitydist)
+ADD_TEST(CylindricalSpatialDistribution_test tstCylindricalSpatialDistribution)
+
+ADD_EXECUTABLE(tstSphericalSpatialDistribution 
+  tstSphericalSpatialDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSphericalSpatialDistribution utilitycore utilityprng utilitydist)
+ADD_TEST(SphericalSpatialDistribution_test tstSphericalSpatialDistribution)
+
+ADD_EXECUTABLE(tstDirectionalDistribution 
+  tstDirectionalDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstDirectionalDistribution utilitycore utilityprng utilitydist)
+ADD_TEST(DirectionalDistribution_test tstDirectionalDistribution)

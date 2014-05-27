@@ -1,0 +1,5 @@
+ADD_EXECUTABLE(tstRandomNumberGenerator 
+  tstRandomNumberGenerator.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstRandomNumberGenerator utilitycore utilityprng)
+ADD_TEST(RandomNumberGenerator_test tstRandomNumberGenerator)
