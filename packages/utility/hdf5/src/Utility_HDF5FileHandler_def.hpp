@@ -21,7 +21,7 @@
 // HDF5 includes
 #include <H5Cpp.h>
 
-// FRNECS includes
+// FRENSIE includes
 #include "Utility_HDF5TypeTraits.hpp"
 #include "Utility_ArrayTraits.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"

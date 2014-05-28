@@ -6,7 +6,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_DataProcessor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"

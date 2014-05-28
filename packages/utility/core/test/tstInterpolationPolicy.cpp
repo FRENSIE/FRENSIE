@@ -12,7 +12,7 @@
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_DataProcessingPolicy.hpp"
 

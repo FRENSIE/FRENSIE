@@ -9,7 +9,7 @@
 #ifndef UTILITY_TABULAR_DISTRIBUTION_DEF_HPP
 #define UTILITY_TABULAR_DISTRIBUTION_DEF_HPP
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_DataProcessor.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"

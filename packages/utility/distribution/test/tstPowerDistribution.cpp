@@ -14,7 +14,7 @@
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"

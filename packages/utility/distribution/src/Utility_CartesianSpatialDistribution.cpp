@@ -6,7 +6,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_CartesianSpatialDistribution.hpp"
 #include "Utility_ContractException.hpp"
 

@@ -6,7 +6,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_PhysicalConstants.hpp"
 
 namespace Utility{

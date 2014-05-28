@@ -17,7 +17,7 @@
 #include <Teuchos_ArrayView.hpp>
 #include <Teuchos_TwoDArray.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_HDF5FileHandler.hpp"
 #include "Utility_HDF5TypeTraits.hpp"
 #include "Utility_Tuple.hpp"

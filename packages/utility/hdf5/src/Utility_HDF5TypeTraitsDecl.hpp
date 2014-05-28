@@ -12,7 +12,7 @@
 // HDF5 Includes
 #include <H5Cpp.h>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_Empty.hpp"
 #include "Utility_UndefinedTraits.hpp"
 

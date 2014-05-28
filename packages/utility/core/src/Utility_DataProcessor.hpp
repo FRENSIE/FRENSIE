@@ -15,7 +15,7 @@
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_Tuple.hpp"
 #include "Utility_DataProcessingPolicy.hpp"
 

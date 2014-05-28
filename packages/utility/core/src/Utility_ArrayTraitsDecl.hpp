@@ -13,7 +13,7 @@
 #include <Teuchos_ArrayView.hpp>
 #include <Teuchos_OrdinalTraits.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_UndefinedTraits.hpp"
 #include "Utility_ContractException.hpp"
 

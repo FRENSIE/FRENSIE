@@ -13,7 +13,7 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_Array.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_DirectionHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"

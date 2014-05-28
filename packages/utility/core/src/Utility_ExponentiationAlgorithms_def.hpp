@@ -9,7 +9,7 @@
 #ifndef UTILITY_EXPONENTIATION_ALGORITHMS_DEF_HPP
 #define UTILITY_EXPONENTIATION_ALGORITHMS_DEF_HPP
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_ContractException.hpp"
 
 namespace Utility{

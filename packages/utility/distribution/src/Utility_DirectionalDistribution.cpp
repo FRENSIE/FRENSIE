@@ -6,7 +6,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_DirectionalDistribution.hpp"
 #include "Utility_SphericalCoordinateHelpers.hpp"
 #include "Utility_DirectionHelpers.hpp"

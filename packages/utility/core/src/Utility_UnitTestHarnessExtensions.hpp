@@ -15,7 +15,7 @@
 // Trilinos Includes
 #include <Teuchos_FancyOStream.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_TestingHelpers.hpp"
 
 /*! \defgroup unit_test_harness_extensions Teuchos Unit Test Harness Extensions

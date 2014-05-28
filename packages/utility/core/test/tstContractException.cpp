@@ -13,8 +13,8 @@
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 
-// FRNECS Includes
-#include "FRNECS_config.hpp"
+// FRENSIE Includes
+#include "FRENSIE_config.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -96,7 +96,7 @@ TEUCHOS_UNIT_TEST( ContractException, precondition_test )
   }
   catch( const Utility::ContractException& exception )
   {
-#if HAVE_FRNECS_DBC
+#if HAVE_FRENSIE_DBC
     std::string message( exception.what() );
     std::string partial_message( "Precondition exception" );
     std::string::size_type idx = message.find( partial_message );
@@ -110,7 +110,7 @@ TEUCHOS_UNIT_TEST( ContractException, precondition_test )
   }
   catch( ... )
   {
-#if HAVE_FRNECS_DBC
+#if HAVE_FRENSIE_DBC
     TEST_ASSERT( 0 );
 #endif
   }
@@ -128,7 +128,7 @@ TEUCHOS_UNIT_TEST( ContractException, postcondition_test )
   }
   catch( const Utility::ContractException& exception )
   {
-#if HAVE_FRNECS_DBC
+#if HAVE_FRENSIE_DBC
     std::string message( exception.what() );
     std::string partial_message( "Postcondition exception" );
     std::string::size_type idx = message.find( partial_message );
@@ -142,7 +142,7 @@ TEUCHOS_UNIT_TEST( ContractException, postcondition_test )
   }
   catch( ... )
   {
-#if HAVE_FRNECS_DBC
+#if HAVE_FRENSIE_DBC
     TEST_ASSERT( 0 );
 #endif
   }
@@ -160,7 +160,7 @@ TEUCHOS_UNIT_TEST( ContractException, invariant_test )
   }
   catch( const Utility::ContractException& exception )
   {
-#if HAVE_FRNECS_DBC
+#if HAVE_FRENSIE_DBC
     std::string message( exception.what() );
     std::string partial_message( "Invariant exception" );
     std::string::size_type idx = message.find( partial_message );
@@ -174,7 +174,7 @@ TEUCHOS_UNIT_TEST( ContractException, invariant_test )
   }
   catch( ... )
   {
-#if HAVE_FRNECS_DBC
+#if HAVE_FRENSIE_DBC
     TEST_ASSERT( 0 );
 #endif
   }
@@ -193,7 +193,7 @@ TEUCHOS_UNIT_TEST( ContractException, remember_test )
   }
   catch( const Utility::ContractException& exception )
   {
-#if HAVE_FRNECS_DBC
+#if HAVE_FRENSIE_DBC
     TEST_ASSERT( 1 );
 #else
     TEST_ASSERT( 0 );
@@ -201,7 +201,7 @@ TEUCHOS_UNIT_TEST( ContractException, remember_test )
   }
   catch( ... )
   {
-#if HAVE_FRNECS_DBC
+#if HAVE_FRENSIE_DBC
     TEST_ASSERT( 0 );
 #endif
   }

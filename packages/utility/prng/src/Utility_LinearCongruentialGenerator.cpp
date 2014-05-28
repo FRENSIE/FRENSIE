@@ -8,7 +8,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_LinearCongruentialGenerator.hpp"
 #include "Utility_ExponentiationAlgorithms.hpp"
 #include "Utility_ContractException.hpp"

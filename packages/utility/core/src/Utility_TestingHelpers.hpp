@@ -17,7 +17,7 @@
 #include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_FancyOStream.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_Tuple.hpp"
 #include "Utility_ComparePolicy.hpp"
 #include "Utility_ArrayTraits.hpp"

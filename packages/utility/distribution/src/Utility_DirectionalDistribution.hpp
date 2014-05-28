@@ -13,7 +13,7 @@
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_Axis.hpp"
 

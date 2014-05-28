@@ -14,7 +14,7 @@
 #include <limits>
 #include <iterator>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_Tuple.hpp"
 #include "Utility_TupleMemberTraits.hpp"
 #include "Utility_ArrayTraits.hpp"

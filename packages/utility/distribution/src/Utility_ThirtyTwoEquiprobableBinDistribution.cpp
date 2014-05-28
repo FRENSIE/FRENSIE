@@ -6,7 +6,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_ThirtyTwoEquiprobableBinDistribution.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_SortAlgorithms.hpp"

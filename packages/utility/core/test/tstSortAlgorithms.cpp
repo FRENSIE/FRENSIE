@@ -15,7 +15,7 @@
 #include <Teuchos_ArrayRCP.hpp>
 #include <Teuchos_ArrayView.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_TupleMemberTraits.hpp"

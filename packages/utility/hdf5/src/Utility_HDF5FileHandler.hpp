@@ -22,7 +22,7 @@
 namespace Utility{
 
 /*! \brief A class which wraps the HDF5 interface and adds some additional
- * functionality useful for FRNECS.
+ * functionality useful for FRENSIE.
  *
  * This class wraps the HDF5 file interface. It is used to either write data to 
  * an HDF5 file or to read data from an HDF5 file. Depending on how the file
@@ -122,7 +122,7 @@ private:
 
 };
 
-} // end FRNECS namespace
+} // end FRENSIE namespace
 
 //---------------------------------------------------------------------------//
 // Template includes.

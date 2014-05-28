@@ -13,7 +13,7 @@
 // Std Lib Includes
 #include <vector>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_LinearCongruentialGenerator.hpp"
 
 namespace Utility{

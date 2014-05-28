@@ -13,7 +13,7 @@
 #include <iostream>
 #include <iterator>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_ContractException.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_TupleMemberTraits.hpp"

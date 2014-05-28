@@ -9,7 +9,7 @@
 #ifndef UTILITY_ONE_D_DISTRIBUTION_HPP
 #define UTILITY_ONE_D_DISTRIBUTION_HPP
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
 
 namespace Utility{

@@ -6,7 +6,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_SphericalSpatialDistribution.hpp"
 #include "Utility_SphericalCoordinateHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"

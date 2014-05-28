@@ -9,7 +9,7 @@
 // Std Lib Includes
 #include <limits>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_ContractException.hpp"
 

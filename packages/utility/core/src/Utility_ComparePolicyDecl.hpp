@@ -15,7 +15,7 @@
 // Trilinos Includes
 #include <Teuchos_FancyOStream.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_Empty.hpp"
 
 /*! \defgroup compare_policy Compare Policy

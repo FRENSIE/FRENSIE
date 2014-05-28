@@ -9,7 +9,7 @@
 #ifndef UTILITY_TUPLE_MEMBER_TRAITS_HPP
 #define UTILITY_TUPLE_MEMBER_TRAITS_HPP
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_TupleMemberTraitsDecl.hpp"
 #include "Utility_Tuple.hpp"
 

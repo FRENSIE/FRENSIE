@@ -13,7 +13,7 @@
 #include <Teuchos_Array.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_SearchAlgorithms.hpp"

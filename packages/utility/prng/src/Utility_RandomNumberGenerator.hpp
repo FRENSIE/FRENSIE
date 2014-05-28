@@ -15,7 +15,7 @@
 // Boost Includes
 #include <boost/scoped_ptr.hpp>
 
-// FRNECS includes
+// FRENSIE includes
 #include "Utility_LinearCongruentialGenerator.hpp"
 #include "Utility_ContractException.hpp"
 

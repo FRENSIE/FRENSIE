@@ -12,7 +12,7 @@
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"

@@ -20,8 +20,8 @@
 // Trilinos Includes
 #include <Teuchos_TestForException.hpp>
 
-// FRNECS Includes
-#include "FRNECS_config.hpp"
+// FRENSIE Includes
+#include "FRENSIE_config.hpp"
 
 /*! \defgroup contract_exceptions_macros Design-By-Contract Exceptions and Macros
  *
@@ -69,12 +69,12 @@ public:
  * builds. They can be activated by setting the following in a CMake
  * configure:
  *
- * -D FRNECS_ENABLE_DBC:BOOL=ON
+ * -D FRENSIE_ENABLE_DBC:BOOL=ON
  *
  * By default, DBC is deactivated. Although they will require additional
  * computational overhead, these checks provide a mechanism for veryifing
  * library input arguments. Note that the bounds-checking functionality used
- * within FRNECS is only provided by a debug build.
+ * within FRENSIE is only provided by a debug build.
  *
  * In addition, remember is provided to store values used only for DBC
  * checks and no other place in executed code.
@@ -92,7 +92,7 @@ public:
  * testStaticPrecondition does.
  */
 
-#if HAVE_FRNECS_DBC
+#if HAVE_FRENSIE_DBC
 
 /*! Test a function precondition
  * \ingroup contract_exceptions_macros 
@@ -130,7 +130,7 @@ public:
 #define testInvariant(c)
 #define remember(c)
 
-#endif // end HAVE_FRNECS_DBC
+#endif // end HAVE_FRENSIE_DBC
 
 /*! test a templated function static precondition
  * \ingroup contract_exception_macros

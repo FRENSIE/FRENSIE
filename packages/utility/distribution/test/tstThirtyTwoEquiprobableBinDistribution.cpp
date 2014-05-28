@@ -14,7 +14,7 @@
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_ThirtyTwoEquiprobableBinDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"

@@ -1,0 +1,81 @@
+<ParameterList name="geometry">
+  <ParameterList name="surfaces">
+    <ParameterList name="plane_x_m10">
+      <Parameter name="type" type="string" value="x plane"/>
+      <Parameter name="definition" type="Array(double)" value="{-10.0}"/>
+    </ParameterList>
+    <ParameterList name="plane_x_m6">
+      <Parameter name="type" type="string" value="x plane"/>
+      <Parameter name="definition" type="Array(double)" value="{-6.0}"/>
+    </ParameterList>
+    <ParameterList name="plane_x_6">
+      <Parameter name="type" type="string" value="x plane"/>
+      <Parameter name="definition" type="Array(double)" value="{6.0}"/>
+    </ParameterList>
+    <ParameterList name="plane_x_10">
+      <Parameter name="type" type="string" value="x plane"/>
+      <Parameter name="definition" type="Array(double)" value="{10.0}"/>
+    </ParameterList>
+    <ParameterList name="plane_y_m2">
+      <Parameter name="type" type="string" value="y plane"/>
+      <Parameter name="definition" type="Array(double)" value="{-2.0}"/>
+    </ParameterList>
+    <ParameterList name="plane_y_2">
+      <Parameter name="type" type="string" value="y plane"/>
+      <Parameter name="definition" type="Array(double)" value="{2.0}"/>
+    </ParameterList>
+    <ParameterList name="plane_z_m2">
+      <Parameter name="type" type="string" value="z plane"/>
+      <Parameter name="definition" type="Array(double)" value="{-2.0}"/>
+    </ParameterList>
+    <ParameterList name="plane_z_2">
+      <Parameter name="type" type="string" value="z plane"/>
+      <Parameter name="definition" type="Array(double)" value="{2.0}"/>
+    </ParameterList>
+    <ParameterList name="plane_x_m12">
+      <Parameter name="type" type="string" value="x plane"/>
+      <Parameter name="definition" type="Array(double)" value="{-12.0}"/>
+    </ParameterList>
+    <ParameterList name="plane_x_12">
+      <Parameter name="type" type="string" value="x plane"/>
+      <Parameter name="definition" type="Array(double)" value="{12.0}"/>
+    </ParameterList>
+    <ParameterList name="plane_y_m4">
+      <Parameter name="type" type="string" value="y plane"/>
+      <Parameter name="definition" type="Array(double)" value="{-4.0}"/>
+    </ParameterList>
+    <ParameterList name="plane_y_4">
+      <Parameter name="type" type="string" value="y plane"/>
+      <Parameter name="definition" type="Array(double)" value="{4.0}"/>
+    </ParameterList>
+    <ParameterList name="plane_z_m4">
+      <Parameter name="type" type="string" value="z plane"/>
+      <Parameter name="definition" type="Array(double)" value="{-4.0}"/>
+    </ParameterList>
+    <ParameterList name="plane_z_4">
+      <Parameter name="type" type="string" value="z plane"/>
+      <Parameter name="definition" type="Array(double)" value="{4.0}"/>
+    </ParameterList>
+  </ParameterList>
+  <ParameterList name="cells">
+    <ParameterList name="left_cube">
+      <Parameter name="definition" type="string" value="plane_x_m10 n -plane_x_m6 n plane_y_m2 n -plane_y_2 n plane_z_m2 n -plane_z_2"/>
+      <Parameter name="material" type="string" value="water"/>
+      <Parameter name="density" type="double" value="1.0"/>
+    </ParameterList>
+    <ParameterList name="right_cube">
+      <Parameter name="definition" type="string" value="plane_x_6 n -plane_x_10 n plane_y_m2 n -plane_y_2 n plane_z_m2 n -plane_z_2"/>
+      <Parameter name="material" type="string" value="water"/>
+      <Parameter name="density" type="double" value="1.0"/>
+    </ParameterList>
+    <ParameterList name="surrounding_cuboid">
+      <Parameter name="definition" type="string" value="(plane_x_m12 n -plane_x_12 n plane_y_m4 n -plane_y_4 n plane_z_m4 n -plane_z_4) n (-plane_x_m10 u plane_x_m6 u -plane_y_m2 u plane_y_2 u -plane_z_m2 u plane_z_2) n (-plane_x_6 u plane_x_6 u -plane_y_m2 u plane_y_2 u -plane_z_m2 u plane_z_2)"/>
+      <Parameter name="material" type="string" value="water"/>
+      <Parameter name="density" type="double" value="1.0"/>
+    </ParameterList>
+    <ParameterList name="graveyard">
+      <Parameter name="definition" type="string" value="-plane_x_m12 u plane_x_12 u -plane_y_m4 u plane_y_4 u -plane_z_m4 u plane_z_4"/>
+      <Parameter name="special attribute" type="string" value="graveyard"/>
+    </ParameterList>
+  </ParameterList>
+</ParameterList>

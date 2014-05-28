@@ -9,7 +9,7 @@
 // HDF5 Includes
 #include <H5Cpp.h>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_HDF5FileHandler.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 

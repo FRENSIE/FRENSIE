@@ -6,7 +6,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_CylindricalSpatialDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_CylindricalCoordinateHelpers.hpp"

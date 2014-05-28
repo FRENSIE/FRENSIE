@@ -19,7 +19,7 @@
 #include <Teuchos_ArrayView.hpp>
 #include <Teuchos_TwoDArray.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_ArrayTraitsDecl.hpp"
 #include "Utility_ContractException.hpp"
 

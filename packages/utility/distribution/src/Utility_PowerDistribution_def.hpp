@@ -6,7 +6,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_ContractException.hpp"
 #include "Utility_ExponentiationAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"

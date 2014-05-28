@@ -12,7 +12,7 @@
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_HDF5TypeTraitsDecl.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"

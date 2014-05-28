@@ -10,7 +10,7 @@
 #include <sstream>
 #include <string>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_DataProcessor.hpp"
 
 namespace Utility{

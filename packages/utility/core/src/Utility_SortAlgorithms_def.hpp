@@ -9,7 +9,7 @@
 #ifndef UTILITY_SORT_ALGORITHMS_DEF_HPP
 #define UTILITY_SORT_ALGORITHMS_DEF_HPP
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_ContractException.hpp"
 
 namespace Utility{

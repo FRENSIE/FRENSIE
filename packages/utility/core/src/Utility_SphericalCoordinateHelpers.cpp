@@ -9,7 +9,7 @@
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_SphericalCoordinateHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"

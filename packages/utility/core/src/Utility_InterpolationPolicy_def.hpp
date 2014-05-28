@@ -15,7 +15,7 @@
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_ContractException.hpp"
 
 namespace Utility{

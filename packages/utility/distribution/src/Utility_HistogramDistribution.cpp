@@ -9,7 +9,7 @@
 // Std Lib Includes
 #include <limits>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SortAlgorithms.hpp"

@@ -12,7 +12,7 @@
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
 #include "Utility_CylindricalCoordinateHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"

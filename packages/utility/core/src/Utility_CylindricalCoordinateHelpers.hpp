@@ -9,7 +9,7 @@
 #ifndef UTILITY_CYLINDRICAL_COORDINATE_HELPERS_HPP
 #define UTILITY_CYLINDRICAL_COORDINATE_HELPERS_HPP
 
-// FRNECS Includes
+// FRENSIE Includes
 #include "Utility_Axis.hpp"
 
 namespace Utility{

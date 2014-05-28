@@ -16,7 +16,7 @@
 // Trilinos Includes
 #include <Teuchos_TestForException.hpp>
 
-/*! \defgroup assertion_exceptions_macros FRNECS Assertion Exceptions and Macros
+/*! \defgroup assertion_exceptions_macros FRENSIE Assertion Exceptions and Macros
  *
  * Use these assertions to check for coding errors (debugging assertions) or
  * to verify user input in parts of the code where Design-By-Contract is not
@@ -64,7 +64,7 @@ public:
 //---------------------------------------------------------------------------//
 // Assertion macros
 //---------------------------------------------------------------------------//
-/*! \page assert FRNECS Assertion
+/*! \page assert FRENSIE Assertion
  *
  * Two types of assertions are often needed: assertions used to check for
  * coding errors (debugging assertions) and assertions that check for user
@@ -87,7 +87,7 @@ public:
 #define ASSERT_ALWAYS(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),		\
                               Utility::CriticalAssertion,		\
-                              "FRNECS critical assertion failed" << std::endl )
+                              "FRENSIE critical assertion failed" << std::endl )
 
 /*! Assert that a critical (user input) condition is always met.
  *
@@ -115,7 +115,7 @@ public:
 #define ASSERT(c) \
   TEUCHOS_TEST_FOR_EXCEPTION( !(c),		\
 			      Utility::Assertion,			\
-			      "FRNECS assertion failed" << std::endl )
+			      "FRENSIE assertion failed" << std::endl )
 
 #endif // end NDEBUG
 
