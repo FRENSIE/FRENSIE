@@ -2,6 +2,9 @@
 FIND_PACKAGE(Doxygen)
 
 IF(DOXYGEN_FOUND)
+
+  # Find doxygen depends
+  FILE(GLOB_RECURSE DOXYGEN_DEPENDS ../../packages/*.cpp ../../packages/*.hpp ../../packages/*.F90 ../../packages/*.dox *.dox *.in)
   
   # Configure the Doxygen file
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
@@ -10,8 +13,6 @@ IF(DOXYGEN_FOUND)
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/manual.html.in ${CMAKE_CURRENT_BINARY_DIR}/manual.html)
 
   # Add a custom doxygen build command
-  FILE(GLOB DOXYGEN_DEPENDS ${CMAKE_SOURCE_DIR}/src/*.cpp ${CMAKE_SOURCE_DIR}/src/*.hpp *.dox)
-
   IF(CMAKE_VERBOSE_CONFIGURE)
     MESSAGE("DOXYGEN_DEPENDS: ${DOXYGEN_DEPENDS}\n")
   ENDIF()
