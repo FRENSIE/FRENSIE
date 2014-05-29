@@ -1,4 +1,4 @@
-FACEMC
+FRENSIE
 =====
 
-Forward-Adjoint Continuous Energy Monte Carlo
+Framework for REsearch in Nuclear ScIence and Engineering
