@@ -1,21 +1,12 @@
-# Find all headers and sources (no updates to this file necessary!)
-FILE(GLOB HEADERS *.hpp)
-FILE(GLOB SOURCES *.cpp *.F90)
+# Set up the packages directory hierarchy
+ADD_SUBDIRECTORY(utility)
+INCLUDE_DIRECTORIES(utility/core/src utility/prng/src utility/hdf5/src utility/distribution/src)
 
-IF(CMAKE_VERBOSE_CONFIGURE)
-  MESSAGE("HEADERS = ${HEADERS}")
-  MESSAGE("SOURCES = ${SOURCES}")
-ENDIF()
+ADD_SUBDIRECTORY(geometry)
+INCLUDE_DIRECTORIES(geometry/core/src geometry/dagmc/src geometry/interface)
 
-# Create the FACEMC library
-ADD_LIBRARY(${PROJECT_NAME} ${SOURCES})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${TEUCHOS_CORE} ${TEUCHOS_NUMERICS} ${TEUCHOS_PARAMETER_LIST} ${HDF5} ${MOAB} ${SPRNG})
-IF(${FACEMC_ENABLE_MPI})
-  TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${MPI_CXX_LIBRARIES})
-ENDIF()
+ADD_SUBDIRECTORY(data)
+INCLUDE_DIRECTORIES(data/ace/src data/epdl/src)
 
-INSTALL(TARGETS ${PROJECT_NAME}
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-INSTALL(FILES ${HEADERS}
-  DESTINATION ${CMAKE_INSTALL_PREFIX}/include
-  PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
+ADD_SUBDIRECTORY(facemc)
+INCLUDE_DIRECTORIES(facemc)

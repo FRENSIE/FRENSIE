@@ -31,8 +31,6 @@
 
 namespace Utility{
 
-namespace Traits{
-
 /*! \brief This structure defines the traits that are needed by the 
  * Utility::HDF5FileHandler class member functions.
  *
@@ -59,22 +57,20 @@ struct HDF5TypeTraits
 { 
   //! Returns the HDF5 data type object corresponding to the type
   static inline H5::DataType dataType() 
-  { (void)Traits::UndefinedTraits<T>::notDefined(); return 0; }
+  { (void)UndefinedTraits<T>::notDefined(); return 0; }
   
   //! Returns the name of this type
   static inline std::string name() 
-  { (void)Traits::UndefinedTraits<T>::notDefined(); return 0; }
+  { (void)UndefinedTraits<T>::notDefined(); return 0; }
   
   //! Returns the zero value for this type
   static inline T zero()
-  { (void)Traits::UndefinedTraits<T>::notDefined(); return 0; }
+  { (void)UndefinedTraits<T>::notDefined(); return 0; }
 
   //! Returns the unity value for this type
   static inline T one()
-  { (void)Traits::UndefinedTraits<T>::notDefined(); return 0; }
+  { (void)UndefinedTraits<T>::notDefined(); return 0; }
 };
-
-} // end Traits namespace
 
 } // end Utility namespace
 

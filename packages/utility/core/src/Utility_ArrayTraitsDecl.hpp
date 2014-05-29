@@ -24,17 +24,15 @@
  * with a template template parameter (Array). Because the Teuchos array 
  * classes have slightly different interfaces, a traits class is needed to 
  * homogenize the interfaces (bridge pattern). The 
- * Utility::Traits::ArrayTraits struct defines the interface. Because of the 
+ * Utility::ArrayTraits struct defines the interface. Because of the 
  * slightly different interfaces for each array type, the 
- * Utility::Traits::HDF5ArrayTraits class must be specialized. Attempting to 
+ * Utility::HDF5ArrayTraits class must be specialized. Attempting to 
  * use the class without a specialization will result in a compile time error. 
  * The compile time error message is defined by the 
- * Utility::Traits::UndefinedTraits struct.
+ * Utility::UndefinedTraits struct.
  */
 
 namespace Utility{
-
-namespace Traits{
 
 /*! \brief Default array traits struct.
  * 
@@ -117,80 +115,78 @@ struct ArrayTraits
   { (void)UndefinedTraits<T>::notDefined(); }
 };
 
-} // end Traits namespace
-
 /*! This function allows access to the headPtr ArrayTraits function.
  *
  * This function is simply a more concise way to access the getRawPtr static
  * member function associated with the ArrayTraits class. It simply forwards
- * calls to get a raw pointer to the associated Utility::Traits::ArrayTraits 
+ * calls to get a raw pointer to the associated Utility::ArrayTraits 
  * class. It is important to note that the array type will be deduced by
  * the function.
  * \ingroup array_traits
  */
 template<typename Array>
-inline typename Traits::ArrayTraits<Array>::pointer
+inline typename ArrayTraits<Array>::pointer
 getHeadPtr( Array &array )
-{ return Traits::ArrayTraits<Array>::headPtr( array ); }
+{ return ArrayTraits<Array>::headPtr( array ); }
 
 /*! This function allows access to the headPtr ArrayTraits function.
  * \ingroup array_traits
  */
 template<typename Array>
-inline typename Traits::ArrayTraits<Array>::const_pointer
+inline typename ArrayTraits<Array>::const_pointer
 getHeadPtr( const Array &array )
-{ return Traits::ArrayTraits<Array>::headPtr( array ); }
+{ return ArrayTraits<Array>::headPtr( array ); }
 
 /*! This function allows access to the size ArrayTraits function.
  * 
  * This function is simply a more concise way to access the size static
  * member function associated with the ArrayTraits class. It simply forwards
  * calls to get the size of an array to the associated 
- * Utility::Traits::ArrayTraits class. It is important to note that the array
+ * Utility::ArrayTraits class. It is important to note that the array
  * type will be deduced by the function.
  * \ingroup array_traits
  */
 template<typename Array>
-inline typename Traits::ArrayTraits<Array>::size_type
+inline typename ArrayTraits<Array>::size_type
 getArraySize( const Array &array )
-{ return Traits::ArrayTraits<Array>::size( array ); }
+{ return ArrayTraits<Array>::size( array ); }
 
 /*! This function allows access to the resize ArrayTraits function.
  *
  * This function is simply a more concise way to access the resize static
  * member function associated with the ArrayTraits class. It simply forwards
- * calls to resize an array to the assocaited Utility::Traits::ArrayTraits 
+ * calls to resize an array to the assocaited Utility::ArrayTraits 
  * class. It is important to note that the array type will be deduced by the
  * function.
  * \ingroup array_traits
  */
 template<typename Array>
 inline void
-resizeArray( Array &array, typename Traits::ArrayTraits<Array>::size_type n )
-{ return Traits::ArrayTraits<Array>::resize( array, n ); }
+resizeArray( Array &array, typename ArrayTraits<Array>::size_type n )
+{ return ArrayTraits<Array>::resize( array, n ); }
 
 /*! This function allows access to the view ArrayTriats function.
  *
  * This function is simply a more concise way to access the view static
  * member function associated with the ArrayTraits class. It simply forwards
  * calls to get a view of the array to the associated
- * Utility::Traits::ArrayTraits class. It is important to note that the array
+ * Utility::ArrayTraits class. It is important to note that the array
  * type will be deduced by the function.
  * \ingroup array_traits
  */
 template<typename Array>
-inline Teuchos::ArrayView<typename Traits::ArrayTraits<Array>::value_type>
+inline Teuchos::ArrayView<typename ArrayTraits<Array>::value_type>
 getArrayView( Array &array,
-	      const typename Traits::ArrayTraits<Array>::size_type offset = Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::zero(),
-	      typename Traits::ArrayTraits<Array>::size_type size = Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::invalid() )
+	      const typename ArrayTraits<Array>::size_type offset = Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::zero(),
+	      typename ArrayTraits<Array>::size_type size = Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::invalid() )
 { 
   // make sure the offset and size supplied are acceptable
-  remember( typename Traits::ArrayTraits<Array>::size_type array_size =
+  remember( typename ArrayTraits<Array>::size_type array_size =
 	    getArraySize( array ) );
   testPrecondition( offset < array_size );
-  testPrecondition( size == Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::invalid() || ( size > Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::zero() && size <= array_size-offset ) );
+  testPrecondition( size == Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::invalid() || ( size > Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::zero() && size <= array_size-offset ) );
   
-  return Traits::ArrayTraits<Array>::view( array, offset, size ); 
+  return ArrayTraits<Array>::view( array, offset, size ); 
 }
 
 /*! This function allows access to the view ArrayTraits function.
@@ -198,18 +194,18 @@ getArrayView( Array &array,
  */
 template<typename Array>
 inline 
-Teuchos::ArrayView<const typename Traits::ArrayTraits<Array>::value_type>
+Teuchos::ArrayView<const typename ArrayTraits<Array>::value_type>
 getArrayView( const Array &array,
-	      const typename Traits::ArrayTraits<Array>::size_type offset = Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::zero(),
-	      const typename Traits::ArrayTraits<Array>::size_type size = Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::invalid() )
+	      const typename ArrayTraits<Array>::size_type offset = Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::zero(),
+	      const typename ArrayTraits<Array>::size_type size = Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::invalid() )
 { 
   // make sure the offset and size supplied are acceptable
-  remember( typename Traits::ArrayTraits<Array>::size_type array_size =
+  remember( typename ArrayTraits<Array>::size_type array_size =
 	    getArraySize( array ) );
   testPrecondition( offset < array_size );
-  testPrecondition( size == Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::invalid() || ( size > Teuchos::OrdinalTraits<typename Traits::ArrayTraits<Array>::size_type>::zero() && size <= array_size-offset ) );
+  testPrecondition( size == Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::invalid() || ( size > Teuchos::OrdinalTraits<typename ArrayTraits<Array>::size_type>::zero() && size <= array_size-offset ) );
   
-  return Traits::ArrayTraits<Array>::view( array, offset, size ); 
+  return ArrayTraits<Array>::view( array, offset, size ); 
 }
 
 /*! This function allows access to the copyView ArrayTraits function
@@ -217,22 +213,22 @@ getArrayView( const Array &array,
  * This function is simply a more concise way to access the copyView
  * static member function associated with the ArrayTraits class. It simply
  * forwards calls to copy the ArrayView object to the associated 
- * Utility::Traits::ArrayTraits class. It is important to note that the array
+ * Utility::ArrayTraits class. It is important to note that the array
  * type will be deduced by the function.
  * \ingroup array_traits
  */
 template<typename Array>
 inline void copyArrayView( Array &array,
-			   const Teuchos::ArrayView<typename Traits::ArrayTraits<Array>::value_type> &array_view )
-{ Traits::ArrayTraits<Array>::copyView( array, array_view ); } 
+			   const Teuchos::ArrayView<typename ArrayTraits<Array>::value_type> &array_view )
+{ ArrayTraits<Array>::copyView( array, array_view ); } 
 
 /*! This function allows access to the copyView ArrayTraits function
  * \ingroup array_traits
  */
 template<typename Array>
 inline void copyArrayView( Array &array,
-			   const Teuchos::ArrayView<const typename Traits::ArrayTraits<Array>::value_type> &array_view )
-{ Traits::ArrayTraits<Array>::copyView( array, array_view ); }
+			   const Teuchos::ArrayView<const typename ArrayTraits<Array>::value_type> &array_view )
+{ ArrayTraits<Array>::copyView( array, array_view ); }
 
 } // end Utility namespace
 

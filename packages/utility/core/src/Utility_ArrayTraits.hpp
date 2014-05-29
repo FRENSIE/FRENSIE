@@ -25,8 +25,6 @@
 
 namespace Utility{
 
-namespace Traits{
-
 /*! The partial specialization of the ArrayTraits struct for std::vector.
  * \ingroup array_traits
  */
@@ -754,8 +752,6 @@ struct ArrayTraits<const Teuchos::TwoDArray<T> >
 			       const Teuchos::ArrayView<const T> &view )
   { testPrecondition( false ); } // Cannot change a const array
 };
-
-} // end Traits namespace
 
 } // end Utility namespace
 

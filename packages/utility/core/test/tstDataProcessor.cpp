@@ -359,7 +359,7 @@ struct ProcessingPolicyTestingTraits<Utility::SqrSqrDataProcessing>
 template<Utility::TupleMember member, typename T, template<typename> class Array>
 void fillArrayOneTupleMemberData( Array<T> &array )
 {
-  typedef typename Utility::Traits::TupleMemberTraits<T,member>::tupleMemberType
+  typedef typename Utility::TupleMemberTraits<T,member>::tupleMemberType
     tupleMemberType;
   
   typename Array<T>::size_type size = Utility::getArraySize( array );
@@ -379,8 +379,8 @@ template<Utility::TupleMember indepMember,
 	 template<typename> class Array>
 void fillArrayTwoTupleMemberData( Array<T> &array )
 {
-  typedef typename Utility::Traits::TupleMemberTraits<T,indepMember>::tupleMemberType indepTupleMemberType;
-  typedef typename Utility::Traits::TupleMemberTraits<T,depMember>::tupleMemberType depTupleMemberType;
+  typedef typename Utility::TupleMemberTraits<T,indepMember>::tupleMemberType indepTupleMemberType;
+  typedef typename Utility::TupleMemberTraits<T,depMember>::tupleMemberType depTupleMemberType;
   
   typename Array<T>::size_type size = Utility::getArraySize( array );
 

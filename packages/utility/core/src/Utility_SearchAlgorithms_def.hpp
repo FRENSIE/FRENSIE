@@ -55,7 +55,7 @@ template<TupleMember member,
 	 typename Iterator>
 Iterator binaryLowerBound( Iterator start,
 			   Iterator end,
-			   const typename Traits::TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+			   const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
 {
   // The iterators must be random access iterators (support +/- ops)
   testStaticPrecondition((boost::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value));
@@ -192,7 +192,7 @@ binaryLowerBoundIndex( Iterator start,
 template<TupleMember member, typename Iterator>
 Iterator binaryUpperBound( Iterator start,
 			   Iterator end,
-			   const typename Traits::TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
+			   const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
 {
   // The iterators must be random access iterators (support +/- ops)
   testStaticPrecondition((boost::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value));

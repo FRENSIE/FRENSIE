@@ -445,7 +445,7 @@ bool Cell<CellOrdinalType, SurfaceOrdinalType, ScalarType>::isCellPresent(
 				         const BoolArray &surface_tests ) const
 {
    // The array must contain boolean types
-  testStaticPrecondition((boost::is_same<typename Utility::Traits::ArrayTraits<BoolArray>::value_type,bool>::value || boost::is_same<typename Utility::Traits::ArrayTraits<BoolArray>::value_type,const bool>::value));
+  testStaticPrecondition((boost::is_same<typename Utility::ArrayTraits<BoolArray>::value_type,bool>::value || boost::is_same<typename Utility::ArrayTraits<BoolArray>::value_type,const bool>::value));
   
   return d_cell_definition_evaluator( surface_tests );
 }

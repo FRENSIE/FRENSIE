@@ -237,9 +237,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
-  typedef typename Utility::Traits::ArrayTraits<array>::value_type value_type;
+  typedef typename Utility::ArrayTraits<array>::value_type value_type;
   
-  value_type test_value = Utility::Traits::HDF5TypeTraits<value_type>::zero();
+  value_type test_value = Utility::HDF5TypeTraits<value_type>::zero();
 
   Teuchos::Array<value_type> raw_data( 100, test_value );
   
@@ -279,9 +279,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
-  typedef typename Utility::Traits::ArrayTraits<array>::value_type value_type;
+  typedef typename Utility::ArrayTraits<array>::value_type value_type;
   
-  value_type test_value = Utility::Traits::HDF5TypeTraits<value_type>::one();
+  value_type test_value = Utility::HDF5TypeTraits<value_type>::one();
 
   Teuchos::Array<value_type> raw_data( 100, test_value );
   
@@ -322,9 +322,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
-  typedef typename Utility::Traits::ArrayTraits<array>::value_type value_type;
+  typedef typename Utility::ArrayTraits<array>::value_type value_type;
 
-  value_type test_value = Utility::Traits::HDF5TypeTraits<value_type>::one();
+  value_type test_value = Utility::HDF5TypeTraits<value_type>::one();
 
   Teuchos::Array<value_type> raw_data( 100, test_value );
   array set_data; 
@@ -372,9 +372,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
-  typedef typename Utility::Traits::ArrayTraits<array>::value_type  value_type;
+  typedef typename Utility::ArrayTraits<array>::value_type  value_type;
 
-  value_type test_value = Utility::Traits::HDF5TypeTraits<value_type>::one();
+  value_type test_value = Utility::HDF5TypeTraits<value_type>::one();
 
   Teuchos::Array<value_type> raw_data( 100, test_value );
   array set_data;
@@ -423,7 +423,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
-  Type test_value = Utility::Traits::HDF5TypeTraits<Type>::one();
+  Type test_value = Utility::HDF5TypeTraits<Type>::one();
 
   Teuchos::Array<Type> data( 100, test_value ); 
   
@@ -453,7 +453,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
-  Type test_value_original = Utility::Traits::HDF5TypeTraits<Type>::one();
+  Type test_value_original = Utility::HDF5TypeTraits<Type>::one();
   
   Teuchos::Array<Type> data( 100, test_value_original ); 
 
@@ -487,9 +487,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
-  typedef typename Utility::Traits::ArrayTraits<array>::value_type value_type;
+  typedef typename Utility::ArrayTraits<array>::value_type value_type;
 
-  value_type test_value = Utility::Traits::HDF5TypeTraits<value_type>::one();
+  value_type test_value = Utility::HDF5TypeTraits<value_type>::one();
 
   Teuchos::Array<value_type> raw_data( 100, test_value );
   array data;
@@ -531,9 +531,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
-  typedef typename Utility::Traits::ArrayTraits<array>::value_type value_type;
+  typedef typename Utility::ArrayTraits<array>::value_type value_type;
 
-  value_type test_value = Utility::Traits::HDF5TypeTraits<value_type>::one();
+  value_type test_value = Utility::HDF5TypeTraits<value_type>::one();
  
   Teuchos::Array<value_type> raw_data( 100, test_value );
   array data_original;
@@ -576,7 +576,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
-  Type test_value = Utility::Traits::HDF5TypeTraits<Type>::one();
+  Type test_value = Utility::HDF5TypeTraits<Type>::one();
  
   // If the group attribute is not written successfuly, an exception will be 
   // thrown and caught inside of the member function, causing a program exit.
@@ -605,7 +605,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
   Type test_value_original, test_value;
-  test_value_original = Utility::Traits::HDF5TypeTraits<Type>::zero();
+  test_value_original = Utility::HDF5TypeTraits<Type>::zero();
 
   hdf5_file_handler.writeValueToGroupAttribute( test_value_original,
 						ROOT_GROUP,

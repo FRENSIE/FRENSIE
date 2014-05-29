@@ -15,8 +15,6 @@
 
 namespace Utility{
 
-namespace Traits{
-
 /*! The partial specialization of the TupleMemberTraits for FIRST
  * \ingroup tuple_member_traits
  */
@@ -120,8 +118,6 @@ struct TupleMemberTraits<const unsigned,FIRST>
   static inline void set( const unsigned &value, const unsigned &new_value )
   { /* ... */ }
 };
-
-} // end Traits namespace
 
 } // end Utility namespace
 

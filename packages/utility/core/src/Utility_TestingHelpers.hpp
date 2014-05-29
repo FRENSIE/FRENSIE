@@ -171,7 +171,7 @@ bool compareArrays( const Array1 &a1,
 		    Teuchos::FancyOStream &out,
 		    const double tol = 0.0 )
 {
-  typedef typename Utility::Traits::ArrayTraits<Array1>::value_type value_type;
+  typedef typename Utility::ArrayTraits<Array1>::value_type value_type;
   
   bool success = true;
 

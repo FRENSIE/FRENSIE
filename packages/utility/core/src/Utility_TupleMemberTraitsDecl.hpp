@@ -27,8 +27,6 @@
 
 namespace Utility{
 
-namespace Traits{
-
 template<typename Tuple, TupleMember member>
 struct UndefinedTupleMemberTraits
 {
@@ -63,29 +61,27 @@ struct TupleMemberTraits
   { (void)UndefinedTupleMemberTraits<Tuple,member>::notDefined(); return 0; }
 };
   
-} // end Traits namespace
-
 /*! This function allows access to the get TupleMemberTraits function.
  *
  * This function is simply a more concise way to access the get static
  * member function associated with the TupleMemberTraits class. It simply 
  * forwards calls to get a member to the associated 
- * Utility::Traits::TupleMemberTraits class. It is important to note that the
+ * Utility::TupleMemberTraits class. It is important to note that the
  * tuple type will be deduced by the function. The Utility::TupleMember must be
  * specified manually (i.e. get<FIRST>( my_tuple ) ).
  * \ingroup tuple_member_traits
  */
 template<TupleMember member, typename Tuple>
-inline typename Traits::TupleMemberTraits<Tuple,member>::tupleMemberType
+inline typename TupleMemberTraits<Tuple,member>::tupleMemberType
 get( const Tuple &tuple )
-{ return Traits::TupleMemberTraits<Tuple,member>::get( tuple ); }
+{ return TupleMemberTraits<Tuple,member>::get( tuple ); }
   
 /*! This function allows access to the set TupleMemberTraits function.
  *
  * This function is simply a more concise way to access the set static 
  * member function associated with the TupleMemberTraits class. It simply 
  * forwards calls to set a member to the associated 
- * Utility::Traits::TupleMemberTraits class. It is important to note that The
+ * Utility::TupleMemberTraits class. It is important to note that The
  * tuple type will be deduced by the function. The Utility::TupleMember must be
  * specified manually (i.e. set<SECOND>( my_tuple, desired_value ) ).
  * \ingroup tuple_member_traits
@@ -93,9 +89,9 @@ get( const Tuple &tuple )
 template<TupleMember member, typename Tuple>
 inline void
 set( Tuple &tuple, 
-     const typename Traits::TupleMemberTraits<Tuple,member>::tupleMemberType 
+     const typename TupleMemberTraits<Tuple,member>::tupleMemberType 
      &value )
-{ Traits::TupleMemberTraits<Tuple,member>::set( tuple, value ); }
+{ TupleMemberTraits<Tuple,member>::set( tuple, value ); }
 
 } // end Utility namespace
 

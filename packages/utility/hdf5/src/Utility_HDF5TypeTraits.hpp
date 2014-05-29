@@ -19,8 +19,6 @@
 
 namespace Utility{
 
-namespace Traits{
- 
 /*! \brief The specialization of the Utility::HDF5TypeTraits for double
  * \ingroup hdf5_type_traits
  */
@@ -157,11 +155,11 @@ struct HDF5TypeTraits<Pair<T1,T2> >
     
       memtype.insertMember( "first",
 			    HOFFSET( Tuple, first ),
-			    Traits::HDF5TypeTraits<T1>::dataType() );
+			    HDF5TypeTraits<T1>::dataType() );
       
       memtype.insertMember( "second",
 			    HOFFSET( Tuple, second ),
-			    Traits::HDF5TypeTraits<T2>::dataType() );
+			    HDF5TypeTraits<T2>::dataType() );
       
     }
     
@@ -173,8 +171,8 @@ struct HDF5TypeTraits<Pair<T1,T2> >
   //! Returns the name of this type
   static inline std::string name() 
   {
-    return "Pair<" + Traits::HDF5TypeTraits<T1>::name() + "," +
-    Traits::HDF5TypeTraits<T2>::name() + ">";
+    return "Pair<" + HDF5TypeTraits<T1>::name() + "," +
+    HDF5TypeTraits<T2>::name() + ">";
   }
 
   //! Returns the zero value for this type
@@ -209,15 +207,15 @@ struct HDF5TypeTraits<Trip<T1,T2,T3> >
     {
       memtype.insertMember( "first",
 			    HOFFSET( Tuple, first ),
-			    Traits::HDF5TypeTraits<T1>::dataType() );
+			    HDF5TypeTraits<T1>::dataType() );
       
       memtype.insertMember( "second",
 			    HOFFSET( Tuple, second ),
-			    Traits::HDF5TypeTraits<T2>::dataType() );
+			    HDF5TypeTraits<T2>::dataType() );
       
       memtype.insertMember( "third",
 			    HOFFSET( Tuple, third ),
-			    Traits::HDF5TypeTraits<T3>::dataType() );
+			    HDF5TypeTraits<T3>::dataType() );
     }
     
     HDF5_EXCEPTION_CATCH_AND_EXIT();
@@ -228,9 +226,9 @@ struct HDF5TypeTraits<Trip<T1,T2,T3> >
   //! Returns the name of this type
   static inline std::string name() 
   { 
-    return "Trip<" + Traits::HDF5TypeTraits<T1>::name() + "," +
-    Traits::HDF5TypeTraits<T2>::name() + "," +
-    Traits::HDF5TypeTraits<T3>::name() + ">";
+    return "Trip<" + HDF5TypeTraits<T1>::name() + "," +
+    HDF5TypeTraits<T2>::name() + "," +
+    HDF5TypeTraits<T3>::name() + ">";
   }
 
   //! Returns the zero value for this type
@@ -269,19 +267,19 @@ struct HDF5TypeTraits<Quad<T1,T2,T3,T4> >
     {
       memtype.insertMember( "first",
 			    HOFFSET( Tuple, first ),
-			    Traits::HDF5TypeTraits<T1>::dataType() );
+			    HDF5TypeTraits<T1>::dataType() );
       
       memtype.insertMember( "second",
 			    HOFFSET( Tuple, second ),
-			    Traits::HDF5TypeTraits<T2>::dataType() );
+			    HDF5TypeTraits<T2>::dataType() );
       
       memtype.insertMember( "third",
 			    HOFFSET( Tuple, third ),
-			    Traits::HDF5TypeTraits<T3>::dataType() );
+			    HDF5TypeTraits<T3>::dataType() );
       
       memtype.insertMember( "fourth",
 			    HOFFSET( Tuple, fourth ),
-			    Traits::HDF5TypeTraits<T4>::dataType() );
+			    HDF5TypeTraits<T4>::dataType() );
     }
     
     HDF5_EXCEPTION_CATCH_AND_EXIT();
@@ -292,10 +290,10 @@ struct HDF5TypeTraits<Quad<T1,T2,T3,T4> >
   //! Returns the name of this type
   static inline std::string name() 
   { 
-    return "Quad<" + Traits::HDF5TypeTraits<T1>::name() + "," +
-      Traits::HDF5TypeTraits<T2>::name() + "," +
-      Traits::HDF5TypeTraits<T3>::name() + "," +
-      Traits::HDF5TypeTraits<T4>::name() + ">";
+    return "Quad<" + HDF5TypeTraits<T1>::name() + "," +
+      HDF5TypeTraits<T2>::name() + "," +
+      HDF5TypeTraits<T3>::name() + "," +
+      HDF5TypeTraits<T4>::name() + ">";
   }
   
   //! Returns the zero value for this type
@@ -316,8 +314,6 @@ struct HDF5TypeTraits<Quad<T1,T2,T3,T4> >
 			      HDF5TypeTraits<T4>::one() );
   }
 };
-
-} // end Traits namespace
 
 } // end Utility namespace
 

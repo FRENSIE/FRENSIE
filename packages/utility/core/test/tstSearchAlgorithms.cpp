@@ -118,7 +118,7 @@ template<Utility::TupleMember member,
 	 template<typename> class Array>
 void fillArrayTupleMembersContinuousData( Array<T> &array )
 {
-  typedef typename Utility::Traits::TupleMemberTraits<T,member>::tupleMemberType
+  typedef typename Utility::TupleMemberTraits<T,member>::tupleMemberType
     tupleMemberType;
   
   typename Array<T>::size_type size = Utility::getArraySize( array );
@@ -137,7 +137,7 @@ template<Utility::TupleMember member,
 	 template<typename> class Array>
 void fillArrayTupleMembersDiscreteData( Array<T> &array )
 {
-  typedef typename Utility::Traits::TupleMemberTraits<T,member>::tupleMemberType
+  typedef typename Utility::TupleMemberTraits<T,member>::tupleMemberType
     tupleMemberType;
   
   typename Array<T>::size_type size = Utility::getArraySize( array );

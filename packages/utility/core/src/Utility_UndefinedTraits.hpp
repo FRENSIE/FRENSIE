@@ -12,8 +12,6 @@
 
 namespace Utility{
 
-namespace Traits{
-
 /*! \brief A struct designed to give a compile time error
  * \ingroup hdf5_type_traits
  * \ingroup compare_policy
@@ -25,8 +23,6 @@ struct UndefinedTraits
   //! This function should not compile if there is any attempt to instantiate!
   static inline T notDefined() { return T::this_type_is_missing_a_specialization(); }
 };
-
-} // end Traits namespace
 
 } // end Utility namespace
 

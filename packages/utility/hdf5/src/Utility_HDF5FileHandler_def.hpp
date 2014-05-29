@@ -32,7 +32,7 @@ namespace Utility{
 
 // Write data in array to HDF5 file dataset
 /*! \tparam Array An array class. Any array class that has a 
- *          Utility::Traits::ArrayTraits specialization can be used. 
+ *          Utility::ArrayTraits specialization can be used. 
  * \param[in] data The data array to write to the HDF5 file dataset.
  * \param[in] location_in_file The location in the HDF5 file where the data will
  * \pre A valid location string, which is any string that does not start with
@@ -42,7 +42,7 @@ namespace Utility{
  *  <li> The template parameters should never be given explicitly.
  *       The compiler will be able to deduce the template parameters based on 
  *       the array that is passed to the function.
- *  <li> The Utility::Traits::ArrayTraits and Utility::Traits::HDF5TypeTraits 
+ *  <li> The Utility::ArrayTraits and Utility::HDF5TypeTraits 
  *       structs are critical to the generality of this function. Review these 
  *       structs to better understand how this function operates.
  * </ul>
@@ -56,7 +56,7 @@ void HDF5FileHandler::writeArrayToDataSet( const Array &data,
   testPrecondition( location_in_file.compare( 0, 1, "/" ) == 0 );
 
   // Type contained in the array
-  typedef typename Traits::ArrayTraits<Array>::value_type value_type;
+  typedef typename ArrayTraits<Array>::value_type value_type;
   
   // Create any parent groups that do not exist yet in the location path
   createParentGroups( location_in_file );
@@ -69,10 +69,10 @@ void HDF5FileHandler::writeArrayToDataSet( const Array &data,
     H5::DataSpace space( 1, &dim );
     H5::DataSet dataset(d_hdf5_file->createDataSet( 
 				location_in_file,
-				Traits::HDF5TypeTraits<value_type>::dataType(),
+				HDF5TypeTraits<value_type>::dataType(),
 				space ) );
     dataset.write( getHeadPtr( data ),
-		   Traits::HDF5TypeTraits<value_type>::dataType() );
+		   HDF5TypeTraits<value_type>::dataType() );
   }
   
   HDF5_EXCEPTION_CATCH_AND_EXIT();
@@ -80,7 +80,7 @@ void HDF5FileHandler::writeArrayToDataSet( const Array &data,
 
 // Read in HDF5 file dataset and save the data to an array
 /*! \tparam Array An array class. Any array class that has a 
- *          Utility::Traits::ArrayTraits specialization can be used. 
+ *          Utility::ArrayTraits specialization can be used. 
  * \param[in,out] data The data array that will be used to store the HDF5 file 
  *                dataset.
  * \param[in] location_in_file The location in the HDF5 file where the data 
@@ -92,7 +92,7 @@ void HDF5FileHandler::writeArrayToDataSet( const Array &data,
  *  <li> The template parameters should never be given explicitly.
  *       The compiler will be able to deduce the template parameters based on 
  *       the array that is passed to the function.
- *  <li> The Utility::Traits::ArrayTraits and Utility::Traits::HDF5TypeTraits 
+ *  <li> The Utility::ArrayTraits and Utility::HDF5TypeTraits 
  *       structs are critical to the generality of this function. Review these 
  *       structs to better understand how this function operates.
  * </ul>
@@ -106,9 +106,9 @@ void HDF5FileHandler::readArrayFromDataSet( Array &data,
   testPrecondition( location_in_file.compare( 0, 1, "/" ) == 0 ); 
 
   // Type contained in the array
-  typedef typename Traits::ArrayTraits<Array>::value_type value_type;
+  typedef typename ArrayTraits<Array>::value_type value_type;
   // The size type associated with the array
-  typedef typename Traits::ArrayTraits<Array>::size_type size_type;
+  typedef typename ArrayTraits<Array>::size_type size_type;
   
   
   // HDF5 exceptions can be thrown when opening and reading from datasets
@@ -135,7 +135,7 @@ void HDF5FileHandler::readArrayFromDataSet( Array &data,
     
     // Read the data in the dataset and save it to the output array
     dataset.read( getHeadPtr( data ),
-		  Traits::HDF5TypeTraits<value_type>::dataType() );
+		  HDF5TypeTraits<value_type>::dataType() );
   }
   
   HDF5_EXCEPTION_CATCH_AND_EXIT();
@@ -143,7 +143,7 @@ void HDF5FileHandler::readArrayFromDataSet( Array &data,
 
 // Write attribute to HDF5 file dataset
 /*! \tparam Array An array class. Any array class that has a 
- *          Utility::Traits::ArrayTraits specialization can be used. 
+ *          Utility::ArrayTraits specialization can be used. 
  * \param[in] data The data array to write to the HDF5 file dataset attribute.
  * \param[in] location_in_file The location in the HDF5 file where the dataset
  *            attribute will written.
@@ -160,7 +160,7 @@ void HDF5FileHandler::readArrayFromDataSet( Array &data,
  *  <li> The template parameters should never be given explicitly.
  *       The compiler will be able to deduce the template parameters based on 
  *       the array that is passed to the function.
- *  <li> The Utility::Traits::ArrayTraits and Utility::Traits::HDF5TypeTraits 
+ *  <li> The Utility::ArrayTraits and Utility::HDF5TypeTraits 
  *       structs are critical to the generality of this function. Review these 
  *       structs to better understand how this function operates.
  * </ul>
@@ -177,7 +177,7 @@ void HDF5FileHandler::writeArrayToDataSetAttribute( const Array &data,
   // The attribute name can contain any character except /
   testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
 
-  typedef typename Traits::ArrayTraits<Array>::value_type value_type;
+  typedef typename ArrayTraits<Array>::value_type value_type;
     
   // HDF5 exceptions can be thrown when opening a group, creating an attribute,
   // or writing an attribute to a group
@@ -188,10 +188,10 @@ void HDF5FileHandler::writeArrayToDataSetAttribute( const Array &data,
     H5::DataSet dataset(d_hdf5_file->openDataSet( dataset_location ) ); 
     H5::Attribute attribute(dataset.createAttribute( 
 				attribute_name, 
-				Traits::HDF5TypeTraits<value_type>::dataType(),
+				HDF5TypeTraits<value_type>::dataType(),
 				space ) );
     
-    attribute.write( Traits::HDF5TypeTraits<value_type>::dataType(),
+    attribute.write( HDF5TypeTraits<value_type>::dataType(),
 		     getHeadPtr( data ) );  
   }
 
@@ -200,7 +200,7 @@ void HDF5FileHandler::writeArrayToDataSetAttribute( const Array &data,
 
 // Read in HDF5 file dataset attribute and save the data to an array
 /*! \tparam Array An array class. Any array class that has a 
- *          Utility::Traits::ArrayTraits specialization can be used.
+ *          Utility::ArrayTraits specialization can be used.
  * \param[in,out] data The data array that will be used to store the HDF5 file 
  *                dataset attribute.
  * \param[in] location_in_file The location in the HDF5 file where the data 
@@ -218,7 +218,7 @@ void HDF5FileHandler::writeArrayToDataSetAttribute( const Array &data,
  *  <li> The template parameters should never be given explicitly.
  *       The compiler will be able to deduce the template parameters based on 
  *       the array that is passed to the function.
- *  <li> The Utility::Traits::ArrayTraits and Utility::Traits::HDF5TypeTraits 
+ *  <li> The Utility::ArrayTraits and Utility::HDF5TypeTraits 
  *       structs are critical to the generality of this function. Review these 
  *       structs to better understand how this function operates.
  * </ul>
@@ -235,8 +235,8 @@ void HDF5FileHandler::readArrayFromDataSetAttribute( Array &data,
   // The attribute name can contain any character except /
   testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
 
-  typedef typename Traits::ArrayTraits<Array>::value_type value_type;
-  typedef typename Traits::ArrayTraits<Array>::size_type size_type;
+  typedef typename ArrayTraits<Array>::value_type value_type;
+  typedef typename ArrayTraits<Array>::size_type size_type;
   
   // HDF5 exceptions can be thrown when opening and reading from datasets
   try
@@ -264,7 +264,7 @@ void HDF5FileHandler::readArrayFromDataSetAttribute( Array &data,
     resizeArray( data, size );
     
     // Read the data in the dataset and save it to the output array
-    attribute.read( Traits::HDF5TypeTraits<value_type>::dataType(),
+    attribute.read( HDF5TypeTraits<value_type>::dataType(),
 		    getHeadPtr( data ) );
   }
   
@@ -289,7 +289,7 @@ void HDF5FileHandler::readArrayFromDataSetAttribute( Array &data,
  *  <li> The template parameter should never be given explicitly.
  *       The compiler will be able to deduce the template parameter based on 
  *       the value that is passed to the function.
- *  <li> The Utility::Traits::HDF5TypeTraits struct is critical to the 
+ *  <li> The Utility::HDF5TypeTraits struct is critical to the 
  *       generality of this function. Review this structs to better understand 
  *       how this function operates.
  * </ul>
@@ -315,10 +315,10 @@ void HDF5FileHandler::writeValueToDataSetAttribute( const T &value,
     H5::DataSet dataset(d_hdf5_file->openDataSet( dataset_location ) ); 
     H5::Attribute attribute(dataset.createAttribute( 
 					 attribute_name, 
-				         Traits::HDF5TypeTraits<T>::dataType(),
+				         HDF5TypeTraits<T>::dataType(),
 					 space ) );
     
-    attribute.write( Traits::HDF5TypeTraits<T>::dataType(),
+    attribute.write( HDF5TypeTraits<T>::dataType(),
 		     &value );  
   }
 
@@ -344,7 +344,7 @@ void HDF5FileHandler::writeValueToDataSetAttribute( const T &value,
  *  <li> The template parameter should never be given explicitly.
  *       The compiler will be able to deduce the template parameter based on 
  *       the value that is passed to the function.
- *  <li> The Utility::Traits::HDF5TypeTraits struct is critical to the 
+ *  <li> The Utility::HDF5TypeTraits struct is critical to the 
  *       generality of this function. Review this structs to better understand 
  *       how this function operates.
  * </ul>
@@ -382,7 +382,7 @@ void HDF5FileHandler::readValueFromDataSetAttribute( T &value,
     ASSERT_ALWAYS( (rank == 1 && dims[0] == 1) );
     
     // Read the data in the dataset and save it to the output array
-    attribute.read( Traits::HDF5TypeTraits<T>::dataType(),
+    attribute.read( HDF5TypeTraits<T>::dataType(),
 		    &value );
   }
   
@@ -391,7 +391,7 @@ void HDF5FileHandler::readValueFromDataSetAttribute( T &value,
 
 // Write attribute to HDF5 file group
 /*! \tparam Array An array class. Any array class that has a 
- *          Utility::Traits::ArrayTraits specialization can be used.
+ *          Utility::ArrayTraits specialization can be used.
  * \param[in] data The data array to write to the HDF5 file group attribute.
  * \param[in] group_location The location in the HDF5 file where the group
  *            attribute will written.
@@ -408,7 +408,7 @@ void HDF5FileHandler::readValueFromDataSetAttribute( T &value,
  *  <li> The template parameters should never be given explicitly.
  *       The compiler will be able to deduce the template parameters based on 
  *       the array that is passed to the function.
- *  <li> The Utility::Traits::ArrayTraits and Utility::Traits::HDF5TypeTraits 
+ *  <li> The Utility::ArrayTraits and Utility::HDF5TypeTraits 
  *       structs are critical to the generality of this function. Review these 
  *       structs to better understand how this function operates.
  * </ul>
@@ -425,7 +425,7 @@ void HDF5FileHandler::writeArrayToGroupAttribute( const Array &data,
   // The attribute name can contain any character except /
   testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
 
-  typedef typename Traits::ArrayTraits<Array>::value_type value_type;
+  typedef typename ArrayTraits<Array>::value_type value_type;
 
   // Create any parent groups that do not exist yet in the location path
   createParentGroups( group_location );
@@ -439,10 +439,10 @@ void HDF5FileHandler::writeArrayToGroupAttribute( const Array &data,
     H5::Group group(d_hdf5_file->openGroup( group_location ) ); 
     H5::Attribute attribute(group.createAttribute( 
 				attribute_name, 
-			        Traits::HDF5TypeTraits<value_type>::dataType(),
+			        HDF5TypeTraits<value_type>::dataType(),
 				space ) );
     
-    attribute.write( Traits::HDF5TypeTraits<value_type>::dataType(),
+    attribute.write( HDF5TypeTraits<value_type>::dataType(),
 		     getHeadPtr( data ) );  
   }
 
@@ -451,7 +451,7 @@ void HDF5FileHandler::writeArrayToGroupAttribute( const Array &data,
 
 // Read in HDF5 file group attribute and save the data to an array
 /*! \tparam Array An array class. Any array class that has a 
- *          Utility::Traits::ArrayTraits specialization can be used.
+ *          Utility::ArrayTraits specialization can be used.
  * \param[in,out] data The data array that will be used to store the HDF5 file 
  *                group attribute.
  * \param[in] group_location The location in the HDF5 file where the group is
@@ -469,7 +469,7 @@ void HDF5FileHandler::writeArrayToGroupAttribute( const Array &data,
  *  <li> The template parameters should never be given explicitly.
  *       The compiler will be able to deduce the template parameters based on 
  *       the array that is passed to the function.
- *  <li> The Utility::Traits::ArrayTraits and Utility::Traits::HDF5TypeTraits 
+ *  <li> The Utility::ArrayTraits and Utility::HDF5TypeTraits 
  *       structs are critical to the generality of this function. Review these 
  *       structs to better understand how this function operates.
  * </ul>
@@ -486,8 +486,8 @@ void HDF5FileHandler::readArrayFromGroupAttribute( Array &data,
   // The attribute name can contain any character except /
   testPrecondition( (attribute_name.find( "/" ) == std::string::npos ) );
 
-  typedef typename Traits::ArrayTraits<Array>::value_type value_type;
-  typedef typename Traits::ArrayTraits<Array>::size_type size_type;
+  typedef typename ArrayTraits<Array>::value_type value_type;
+  typedef typename ArrayTraits<Array>::size_type size_type;
   
   // HDF5 exceptions can be thrown when opening and reading from datasets
   try
@@ -515,7 +515,7 @@ void HDF5FileHandler::readArrayFromGroupAttribute( Array &data,
     resizeArray( data, size );
     
     // Read the data in the dataset and save it to the output array
-    attribute.read( Traits::HDF5TypeTraits<value_type>::dataType(),
+    attribute.read( HDF5TypeTraits<value_type>::dataType(),
 		    getHeadPtr( data ) );
   }
   
@@ -540,7 +540,7 @@ void HDF5FileHandler::readArrayFromGroupAttribute( Array &data,
  *  <li> The template parameter should never be given explicitly.
  *       The compiler will be able to deduce the template parameter based on 
  *       the value that is passed to the function.
- *  <li> The Utility::Traits::HDF5TypeTraits struct is critical to the 
+ *  <li> The Utility::HDF5TypeTraits struct is critical to the 
  *       generality of this function. Review this structs to better understand 
  *       how this function operates.
  * </ul>
@@ -569,10 +569,10 @@ void HDF5FileHandler::writeValueToGroupAttribute( const T &value,
     H5::Group group(d_hdf5_file->openGroup( group_location ) ); 
     H5::Attribute attribute(group.createAttribute( 
 					 attribute_name, 
-					 Traits::HDF5TypeTraits<T>::dataType(),
+					 HDF5TypeTraits<T>::dataType(),
 					 space ) );
     
-    attribute.write( Traits::HDF5TypeTraits<T>::dataType(),
+    attribute.write( HDF5TypeTraits<T>::dataType(),
 		     &value );  
   }
 
@@ -598,7 +598,7 @@ void HDF5FileHandler::writeValueToGroupAttribute( const T &value,
  *  <li> The template parameter should never be given explicitly.
  *       The compiler will be able to deduce the template parameter based on 
  *       the value that is passed to the function.
- *  <li> The Utility::Traits::HDF5TypeTraits struct is critical to the 
+ *  <li> The Utility::HDF5TypeTraits struct is critical to the 
  *       generality of this function. Review this structs to better understand 
  *       how this function operates.
  * </ul>
@@ -637,7 +637,7 @@ void HDF5FileHandler::readValueFromGroupAttribute( T &value,
 			      "Fatal Error: Cannot read a single value from an attribute array.");
 
     // Read the data in the dataset and save it to the output array
-    attribute.read( Traits::HDF5TypeTraits<T>::dataType(),
+    attribute.read( HDF5TypeTraits<T>::dataType(),
 		    &value );
   }
   

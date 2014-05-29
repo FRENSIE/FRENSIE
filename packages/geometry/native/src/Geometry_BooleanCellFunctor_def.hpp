@@ -42,7 +42,7 @@ template<typename BoolArray>
 bool BooleanCellFunctor::operator()( const BoolArray &arguments ) const
 {
   // The array must contain boolean types
-  testStaticPrecondition((boost::is_same<typename Utility::Traits::ArrayTraits<BoolArray>::value_type,bool>::value || boost::is_same<typename Utility::Traits::ArrayTraits<BoolArray>::value_type,const bool>::value));
+  testStaticPrecondition((boost::is_same<typename Utility::ArrayTraits<BoolArray>::value_type,bool>::value || boost::is_same<typename Utility::ArrayTraits<BoolArray>::value_type,const bool>::value));
   // The argument list must have the expected number of arguments
   testPrecondition( d_number_of_variables == arguments.size() );
 

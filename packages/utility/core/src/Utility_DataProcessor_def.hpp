@@ -49,7 +49,7 @@ namespace Utility{
  * raw table data.
  * \pre A valid array, which is any array of tuples with at least one element,
  * must be given to this function.
- * \note Developers: The Utility::Traits::TupleMemberTraits is critical to the
+ * \note Developers: The Utility::TupleMemberTraits is critical to the
  * generality of this function. Review this struct to better understand how
  * this function operates. 
  */
@@ -65,9 +65,9 @@ void DataProcessor::processContinuousData( Teuchos::Array<Tuple> &data )
   typename Teuchos::Array<Tuple>::iterator data_point = data.begin();
   typename Teuchos::Array<Tuple>::iterator end = data.end();
 
-  typename Traits::TupleMemberTraits<Tuple,indepMember>::tupleMemberType 
+  typename TupleMemberTraits<Tuple,indepMember>::tupleMemberType 
     indep_value;
-  typename Traits::TupleMemberTraits<Tuple,depMember>::tupleMemberType
+  typename TupleMemberTraits<Tuple,depMember>::tupleMemberType
     dep_value;
 
   while( data_point != end )
@@ -109,7 +109,7 @@ void DataProcessor::processContinuousData( Teuchos::Array<Tuple> &data )
  * must be returned from this function. If the testing value is set too high
  * it is possible for all elements to be eliminated from the array, which is
  * surely not an intended results.
- * \note Developers: The Utility::Traits::TupleMemberTraits struct is critical 
+ * \note Developers: The Utility::TupleMemberTraits struct is critical 
  * to the generality of this function. Review this struct to better understand 
  * how this function operates. 
  */
@@ -174,7 +174,7 @@ void DataProcessor::removeElementsLessThanValue( Teuchos::Array<Tuple> &data,
  * must be returned from this function. If the testing value is set too low it
  * is possible for all elements to be eliminated from the array, which is surely
  * not an intended result.
- * \note Developers: The Utility::Traits::TupleMemberTraits struct is critical 
+ * \note Developers: The Utility::TupleMemberTraits struct is critical 
  * to the generality of this function. Review this struct to better understand 
  * how this function operates.
  */
@@ -293,7 +293,7 @@ void DataProcessor::coarsenConstantRegions( Teuchos::Array<Tuple> &data )
  * must be given to this function.
  * \note Developers: 
  * <ul>
- *  <li> The Utility::Traits::TupleMemberTraits struct is critical to the
+ *  <li> The Utility::TupleMemberTraits struct is critical to the
  *       generality of this function. Review this struct to better understand 
  *       how this function operates. 
  * </ul>
@@ -307,7 +307,7 @@ void DataProcessor::calculateSlopes( Array &data  )
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
 
-  typedef typename Traits::ArrayTraits<Array>::value_type Tuple;
+  typedef typename ArrayTraits<Array>::value_type Tuple;
   
   typename Array::iterator data_point_1, data_point_2;
   typename Array::iterator end = data.end();
@@ -315,7 +315,7 @@ void DataProcessor::calculateSlopes( Array &data  )
   data_point_1 = data.begin();
   data_point_2 = data_point_1 + 1;
 
-  typename Traits::TupleMemberTraits<Tuple,slopeMember>::tupleMemberType slope;
+  typename TupleMemberTraits<Tuple,slopeMember>::tupleMemberType slope;
   
   while( data_point_2 != end )
   {
@@ -360,7 +360,7 @@ void DataProcessor::calculateSlopes( Array &data  )
  * elements, must be given to this function.
  * \note Developers:
  * <ul>
- *  <li> The Utility::Traits::TupleMemberTraits struct is critical to the
+ *  <li> The Utility::TupleMemberTraits struct is critical to the
  *       generality of this function. Review this struct to better understand 
  *       how this function operates. 
  * </ul>
@@ -374,7 +374,7 @@ double DataProcessor::calculateContinuousCDF( Array &data )
   // Make sure that the array has more than one element
   testPrecondition( (data.size() > 1) );
   
-  typedef typename Traits::ArrayTraits<Array>::value_type Tuple;
+  typedef typename ArrayTraits<Array>::value_type Tuple;
   
   typename Array::iterator data_point_1, data_point_2;
   typename Array::iterator end = data.end();
@@ -382,7 +382,7 @@ double DataProcessor::calculateContinuousCDF( Array &data )
   data_point_1 = data.begin();
   data_point_2 = data.begin() + 1;
 
-  typename Traits::TupleMemberTraits<Tuple,cdfMember>::tupleMemberType 
+  typename TupleMemberTraits<Tuple,cdfMember>::tupleMemberType 
     cdf_value;
 
   // Initialize the CDF
@@ -405,11 +405,11 @@ double DataProcessor::calculateContinuousCDF( Array &data )
   }
 
   // Normalize the CDF and PDF
-  typename Traits::TupleMemberTraits<Tuple,cdfMember>::tupleMemberType cdf_max,
+  typename TupleMemberTraits<Tuple,cdfMember>::tupleMemberType cdf_max,
     cdf_norm_value;
   cdf_max = get<cdfMember>( data.back() );
   
-  typename Traits::TupleMemberTraits<Tuple,pdfMember>::tupleMemberType 
+  typename TupleMemberTraits<Tuple,pdfMember>::tupleMemberType 
     pdf_norm_value;
   
   data_point_1 = data.begin();
@@ -444,7 +444,7 @@ double DataProcessor::calculateContinuousCDF( Array &data )
  * \param[in,out] data The array of tuple structs which contain the table data.
  * \pre A valid array, which is any array of tuples with at least two elements,
  * must be given to this function. 
- * \note Developers: The Utility::Traits::TupleMemberTraits struct is critical 
+ * \note Developers: The Utility::TupleMemberTraits struct is critical 
  * to the generality of this function. Review this struct to better understand 
  * how this function operates. 
  */
@@ -461,7 +461,7 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
 
   data_point = data.begin();
 
-  typename Traits::TupleMemberTraits<Tuple,cdfMember>::tupleMemberType 
+  typename TupleMemberTraits<Tuple,cdfMember>::tupleMemberType 
     cdf_value = 0;
 
   // Create the discrete CDF
@@ -510,7 +510,7 @@ void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
  * </ul>
  * \note Developers:
  * <ul>
- *  <li> The Utility::Traits::TupleMemberTraits struct is critical to the
+ *  <li> The Utility::TupleMemberTraits struct is critical to the
  *       generality of this function. Review this struct to better understand 
  *       how this function operates. 
  * </ul>
@@ -525,7 +525,7 @@ void DataProcessor::copyTupleMemberData( const OrigArray &orig_data,
   // Make sure that the arrays are valid
   testPrecondition( (orig_data.size() > 0) );
   testPrecondition( (orig_data.size() == copy_data.size()) );
-  remember(typedef typename Traits::ArrayTraits<OrigArray>::pointer 
+  remember(typedef typename ArrayTraits<OrigArray>::pointer 
 	   origTuplePointer);
   testPrecondition( &orig_data[0] != 
 		    reinterpret_cast<origTuplePointer>( &copy_data[0] ) );
@@ -562,7 +562,7 @@ void DataProcessor::copyTupleMemberData( const OrigArray &orig_data,
  * </ul>
  * \note Developers:
  * <ul>
- *  <li> The Utility::Traits::TupleMemberTraits struct is critical to the 
+ *  <li> The Utility::TupleMemberTraits struct is critical to the 
  *       generality of this function. Review this struct to better understand 
  *       how this function operates. 
  * </ul>
@@ -577,13 +577,13 @@ void DataProcessor::swapTupleMemberData( Array &data )
   // Make sure that the arrays are valid
   testPrecondition( (data.size() > 0) );
   
-  typedef typename Traits::ArrayTraits<Array>::value_type Tuple;
+  typedef typename ArrayTraits<Array>::value_type Tuple;
   
   typename Array::iterator data_point, end;
   data_point = data.begin();
   end = data.end();
 
-  typename Traits::TupleMemberTraits<Tuple,member1>::tupleMemberType copy;
+  typename TupleMemberTraits<Tuple,member1>::tupleMemberType copy;
 
   while( data_point != end )
   {

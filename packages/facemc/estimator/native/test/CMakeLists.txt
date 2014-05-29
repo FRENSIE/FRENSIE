@@ -1,0 +1,83 @@
+ADD_EXECUTABLE(tstResponseFunction
+  tstResponseFunction.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstResponseFunction facemc_estimator_native)
+ADD_TEST(ResponseFunction_test tstResponseFunction)
+
+ADD_EXECUTABLE(tstEnergySpaceResponseFunction
+  tstEnergySpaceResponseFunction.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEnergySpaceResponseFunction facemc_estimator_native)
+ADD_TEST(EnergySpaceResponseFunction_test tstEnergySpaceResponseFunction)
+
+ADD_EXECUTABLE(tstPhaseSpaceResponseFunction
+  tstPhaseSpaceResponseFunction.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPhaseSpaceResponseFunction facemc_estimator_native)
+ADD_TEST(PhaseSpaceResponseFunction_test tstPhaseSpaceResponseFunction)
+
+ADD_EXECUTABLE(tstGeneralEstimatorDimensionDiscretization
+  tstGeneralEstimatorDimensionDiscretization.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstGeneralEstimatorDimensionDiscretization facemc_estimator_native)
+ADD_TEST(GeneralEstimatorDimensionDiscretization_test tstGeneralEstimatorDimensionDiscretization)
+
+ADD_EXECUTABLE(tstEstimator
+  tstEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEstimator facemc_estimator_native)
+ADD_TEST(Estimator_test tstEstimator)
+
+Add_EXECUTABLE(tstEntityEstimator
+  tstEntityEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEntityEstimator facemc_estimator_native)
+ADD_TEST(EntityEstimator_test tstEntityEstimator)
+
+Add_EXECUTABLE(tstStandardEntityEstimator
+  tstStandardEntityEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStandardEntityEstimator facemc_estimator_native)
+ADD_TEST(StandardEntityEstimator_test tstStandardEntityEstimator)
+
+Add_EXECUTABLE(tstStandardSurfaceEstimator
+  tstStandardSurfaceEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStandardSurfaceEstimator facemc_estimator_native)
+ADD_TEST(StandardSurfaceEstimator_test tstStandardSurfaceEstimator)
+
+Add_EXECUTABLE(tstSurfaceFluxEstimator
+  tstSurfaceFluxEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSurfaceFluxEstimator facemc_estimator_native)
+ADD_TEST(SurfaceFluxEstimator_test tstSurfaceFluxEstimator)
+
+Add_EXECUTABLE(tstSurfaceCurrentEstimator
+  tstSurfaceCurrentEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSurfaceCurrentEstimator facemc_estimator_native)
+ADD_TEST(SurfaceCurrentEstimator_test tstSurfaceCurrentEstimator)
+
+Add_EXECUTABLE(tstCellPulseHeightEstimator
+  tstCellPulseHeightEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCellPulseHeightEstimator facemc_estimator_native)
+ADD_TEST(CellPulseHeightEstimator_test tstCellPulseHeightEstimator)
+
+Add_EXECUTABLE(tstStandardCellEstimator
+  tstStandardCellEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStandardCellEstimator facemc_estimator_native)
+ADD_TEST(StandardCellEstimator_test tstStandardCellEstimator)
+
+Add_EXECUTABLE(tstCellCollisionFluxEstimator
+  tstCellCollisionFluxEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCellCollisionFluxEstimator facemc_estimator_native)
+ADD_TEST(CellCollisionFluxEstimator_test tstCellCollisionFluxEstimator)
+
+Add_EXECUTABLE(tstCellTrackLengthFluxEstimator
+  tstCellTrackLengthFluxEstimator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstCellTrackLengthFluxEstimator facemc_estimator_native)
+ADD_TEST(CellTrackLengthFluxEstimator_test tstCellTrackLengthFluxEstimator)

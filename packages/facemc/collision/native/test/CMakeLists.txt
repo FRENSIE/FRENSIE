@@ -1,0 +1,69 @@
+ADD_EXECUTABLE(tstNeutronScatteringDistribution
+  tstNeutronScatteringDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstNeutronScatteringDistribution facemc_collision_native)
+ADD_TEST(NeutronScatteringDistribution_test tstNeutronScatteringDistribution)
+
+ADD_EXECUTABLE(tstElasticNeutronScatteringDistribution
+  tstElasticNeutronScatteringDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstElasticNeutronScatteringDistribution facemc_collision_native)
+ADD_TEST(ElasticNeutronScatteringDistribution_test tstElasticNeutronScatteringDistribution)
+
+ADD_EXECUTABLE(tstNeutronScatteringDistributionFactory
+  tstNeutronScatteringDistributionFactory.cpp)
+TARGET_LINK_LIBRARIES(tstNeutronScatteringDistributionFactory facemc_collision_native)
+ADD_TEST(NeutronScatteringDistributionFactory_test tstNeutronScatteringDistributionFactory --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+
+ADD_EXECUTABLE(tstNuclearReaction
+  tstNuclearReaction.cpp)
+TARGET_LINK_LIBRARIES(tstNuclearReaction facemc_collision_native)
+ADD_TEST(NuclearReaction_test tstNuclearReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+
+ADD_EXECUTABLE(tstNeutronScatteringReaction
+  tstNeutronScatteringReaction.cpp)
+TARGET_LINK_LIBRARIES(tstNeutronScatteringReaction facemc_collision_native)
+ADD_TEST(NeutronScatteringReaction_test tstNeutronScatteringReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+
+ADD_EXECUTABLE(tstNeutronAbsorptionReaction
+  tstNeutronAbsorptionReaction.cpp)
+TARGET_LINK_LIBRARIES(tstNeutronAbsorptionReaction facemc_collision_native)
+ADD_TEST(NeutronAbsorptionReaction_test tstNeutronAbsorptionReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+
+ADD_EXECUTABLE(tstNuclearReactionFactory
+  tstNuclearReactionFactory.cpp)
+TARGET_LINK_LIBRARIES(tstNuclearReactionFactory facemc_collision_native)
+ADD_TEST(NuclearReactionFactory_test tstNuclearReactionFactory --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+
+ADD_EXECUTABLE(tstNuclide
+  tstNuclide.cpp)
+TARGET_LINK_LIBRARIES(tstNuclide facemc_collision_native)
+ADD_TEST(Nuclide_test tstNuclide --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+
+ADD_EXECUTABLE(tstNuclideFactory
+  tstNuclideFactory.cpp)
+TARGET_LINK_LIBRARIES(tstNuclideFactory facemc_collision_native)
+ADD_TEST(NuclideFactory_test tstNuclideFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
+
+ADD_EXECUTABLE(tstMaterialHelpers
+  tstMaterialHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstMaterialHelpers facemc_collision_native)
+ADD_TEST(MaterialHelpers_test tstMaterialHelpers)
+
+ADD_EXECUTABLE(tstNeutronMaterial
+  tstNeutronMaterial.cpp)
+TARGET_LINK_LIBRARIES(tstNeutronMaterial facemc_collision_native)
+ADD_TEST(NeutronMaterial_test tstNeutronMaterial --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
+
+# ADD_EXECUTABLE(tstPhotonDataBasic
+#   tstPhotonDataBasic.cpp)
+
+# ADD_EXECUTABLE(tstPhotonDataFluorescence
+#   tstPhotonDataFluorescence.cpp)
+
+# ADD_EXECUTABLE(tstPhotonDataDopplerBroadening
+#   tstPhotonDataDopplerBroadening.cpp)
+
+# ADD_EXECUTABLE(tstPhotonData
+#   tstPhotonData.cpp)

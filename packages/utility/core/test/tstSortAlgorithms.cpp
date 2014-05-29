@@ -112,7 +112,7 @@ template<Utility::TupleMember member,
 	 template<typename> class Array>
 void fillSortedArray( Array<T> &array )
 {
-  typedef typename Utility::Traits::TupleMemberTraits<T,member>::tupleMemberType
+  typedef typename Utility::TupleMemberTraits<T,member>::tupleMemberType
     tupleMemberType;
   
   typename Array<T>::size_type size = Utility::getArraySize( array );
