@@ -30,10 +30,15 @@ namespace Facemc{
  */
 struct ModuleTraits
 {
+  //! The internal source handle type
+  typedef unsigned long long InternalSourceHandle;
   //! The internal estimator handle type
   typedef unsigned long long InternalEstimatorHandle;
   //! The internal material handle type
   typedef unsigned long long InternalMaterialHandle;
+
+  //! The invalid source handle value
+  static const InternalSourceHandle invalid_internal_source_handle;
   
   //! The invalid estimator handle value
   static const InternalEstimatorHandle invalid_internal_estimator_handle;

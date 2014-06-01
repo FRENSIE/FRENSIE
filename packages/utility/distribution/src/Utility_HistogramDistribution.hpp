@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_XMLCompatibleObject.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
@@ -22,7 +23,8 @@
 namespace Utility{
 
 //! Histogram distribution class
-class HistogramDistribution : public OneDDistribution
+class HistogramDistribution : public OneDDistribution,
+			      public XMLCompatibleObject<HistogramDistribution>
 {
 
 private:
@@ -32,9 +34,19 @@ private:
 
 public:
 
+  //! Default constructor
+  HistogramDistribution();
+
   //! Constructor
   HistogramDistribution( const Teuchos::Array<double>& bin_boundaries,
 			 const Teuchos::Array<double>& bin_values );
+
+  //! Copy constructor
+  HistogramDistribution( const HistogramDistribution& dist_instance );
+
+  //! Assignment operator
+  HistogramDistribution& operator=( 
+				  const HistogramDistribution& dist_instance );
 
   //! Destructor
   ~HistogramDistribution()
@@ -63,8 +75,21 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Method for placing the object in an output stream
+  void toStream( std::ostream& os ) const;
+
+  //! Method for initializing the object from an input stream
+  void fromStream( std::istream& is );
+
+  //! Method for testing if two objects are equivalent
+  bool isEqual( const HistogramDistribution& other ) const;
   
 private:
+
+  // Initialize the distribution
+  void initializeDistribution( const Teuchos::Array<double>& bin_boundaries,
+			       const Teuchos::Array<double>& bin_values );
 
   // The distribution type
   static const OneDDistributionType distribution_type = HISTOGRAM_DISTRIBUTION;
@@ -78,6 +103,30 @@ private:
 };
 
 } // end Utility namespace
+
+namespace Teuchos{
+
+/*! Type name traits specialization for the Utility::HistogramDistribution
+ *
+ * \details The name function will set the type name that must be used in
+ * xml files.
+ */
+template<>
+class TypeNameTraits<Utility::HistogramDistribution>
+{
+public:
+  static std::string name()
+  {
+    return "Histogram Distribution";
+  }
+  static std::string concreteName( 
+			       const Utility::HistogramDistribution& instance )
+  {
+    return name();
+  }
+};
+
+} // end Teuchos namespace
 
 #endif // end UTILITY_HISTOGRAM_DISTRIBUTION_HPP
 

@@ -10,8 +10,17 @@
 #include "Utility_ContractException.hpp"
 #include "Utility_ExponentiationAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Utility{
+
+// Default constructor
+template<unsigned N>
+PowerDistribution<N>::PowerDistribution()
+{ 
+  // Make sure the exponent is valid
+  testStaticPrecondition( N > 0 );
+}
 
 // Constructor
 template<unsigned N>
@@ -35,12 +44,60 @@ PowerDistribution<N>::PowerDistribution( const double constant_multiplier,
   // Make sure that the max value is greater than the min value
   testPrecondition( max_indep_limit > min_indep_limit );
 
-  // Take the limits to the power N
-  d_min_indep_limit_to_power_Np1 = 
-    Exponentiation::recursive( d_min_indep_limit, N+1u );
+  initializeDistribution();
+}
+
+// Copy constructor
+template<unsigned N>
+PowerDistribution<N>::PowerDistribution( 
+				    const PowerDistribution<N>& dist_instance )
+  : d_constant_multiplier( dist_instance.d_constant_multiplier ),
+    d_min_indep_limit( dist_instance.d_min_indep_limit ),
+    d_min_indep_limit_to_power_Np1( 
+				dist_instance.d_min_indep_limit_to_power_Np1 ),
+    d_max_indep_limit( dist_instance.d_max_indep_limit ),
+    d_max_indep_limit_to_power_Np1( 
+				 dist_instance.d_max_indep_limit_to_power_Np1 )
+{
+  // Make sure the exponent is valid
+  testStaticPrecondition( N > 0 );
+  // Make sure that the values are valid
+  testPrecondition( !ST::isnaninf( dist_instance.d_constant_multiplier ) );
+  testPrecondition( !ST::isnaninf( dist_instance.d_min_indep_limit ) );
+  testPrecondition( !ST::isnaninf( dist_instance.d_max_indep_limit ) );
+  testPrecondition( !ST::isnaninf( 
+			      dist_instance.d_min_indep_limit_to_power_Np1 ) );
+  testPrecondition( !ST::isnaninf( 
+			      dist_instance.d_max_indep_limit_to_power_Np1 ) );
+  // Make sure that the min value is greater than or equal to zero
+  testPrecondition( dist_instance.d_min_indep_limit >= 0.0 );
+  // Make sure that the max value is greater than the min value
+  testPrecondition( dist_instance.d_max_indep_limit > 
+		    dist_instance.d_min_indep_limit );
+}
+
+// Assignment operator
+template<unsigned N>
+PowerDistribution<N>& PowerDistribution<N>::operator=( 
+				    const PowerDistribution<N>& dist_instance )
+{
+  // Make sure the distribution is valid
+  testPrecondition( dist_instance.d_min_indep_limit >= 0.0 );
+  testPrecondition( dist_instance.d_max_indep_limit > 
+		    dist_instance.d_min_indep_limit );
   
-  d_max_indep_limit_to_power_Np1 = 
-    Exponentiation::recursive( d_max_indep_limit, N+1u );
+  if( this != &dist_instance )
+  {
+    d_constant_multiplier = dist_instance.d_constant_multiplier;
+    d_min_indep_limit = dist_instance.d_min_indep_limit;
+    d_min_indep_limit_to_power_Np1 = 
+      dist_instance.d_min_indep_limit_to_power_Np1;
+    d_max_indep_limit = dist_instance.d_max_indep_limit;
+    d_max_indep_limit_to_power_Np1 = 
+      dist_instance.d_max_indep_limit_to_power_Np1;
+  }
+  
+  return *this;
 }
 
 // Evaluate the distribution
@@ -116,6 +173,110 @@ template<unsigned N>
 OneDDistributionType PowerDistribution<N>::getDistributionType() const
 {
   return PowerDistribution<N>::distribution_type;
+}
+
+// Method for placing the object in an output stream
+template<unsigned N>
+void PowerDistribution<N>::toStream( std::ostream& os ) const
+{
+  os << "{" << d_constant_multiplier 
+     << "," << d_min_indep_limit
+     << "," << d_max_indep_limit
+     << "}";
+}
+
+// Method for initializing the object from an input stream
+template<unsigned N>
+void PowerDistribution<N>::fromStream( std::istream& is )
+{
+  // Read in the distribution representation
+  std::string dist_rep;
+  std::getline( is, dist_rep, '}' );
+  dist_rep += '}';
+
+  Teuchos::Array<double> distribution;
+  try{
+    distribution = Teuchos::fromStringToArray<double>( dist_rep );
+  }
+  catch( Teuchos::InvalidArrayStringRepresentation& error )
+  {
+    std::ostringstream message;
+    message << "Error: the power " << N << " distribution cannot be "
+	    << "constructed because the representation is not valid "
+	    << "(see details below)!\n" << error.what();
+    
+    throw InvalidDistributionStringRepresentation( message.str() );
+  }
+
+  TEST_FOR_EXCEPTION( distribution.size() != 3,
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power " << N << " distribution cannot be "
+		      "constructed because the representation is not valid "
+		      "(only 3 values may be specified)!" );
+
+  // Set the constant multiplier
+  d_constant_multiplier = distribution[0];
+  
+  TEST_FOR_EXCEPTION( ST::isnaninf( d_constant_multiplier ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power " << N << " distribution cannot be "
+		      "constructed because the constant multiplier is not "
+		      "valid!" );
+  
+  // Read the min independent limit
+  d_min_indep_limit = distribution[1];
+
+  TEST_FOR_EXCEPTION( ST::isnaninf( d_min_indep_limit ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power " << N << " distribution cannot be "
+		      "constructed because the min independent limit is not "
+		      "valid!" );
+
+  TEST_FOR_EXCEPTION( d_min_indep_limit < 0,
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power " << N << " distribution cannot be "
+		      "constructed because the min independent limit is not "
+		      "valid!" );
+
+  // Read the max independent limit
+  d_max_indep_limit = distribution[2];
+
+  TEST_FOR_EXCEPTION( ST::isnaninf( d_max_indep_limit ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power " << N << " distribution cannot be "
+		      "constructed because the max independent limit is not "
+		      "valid!" );
+
+  TEST_FOR_EXCEPTION( d_max_indep_limit <= d_min_indep_limit,
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power " << N << " distribution cannot be "
+		      "constructed because the max independent limit is not "
+		      "valid!" );
+
+  initializeDistribution();	      
+}
+
+// Method for testing if two objects are equivalent
+template<unsigned N>
+bool PowerDistribution<N>::isEqual( const PowerDistribution<N>& other ) const
+{
+  return d_constant_multiplier == other.d_constant_multiplier &&
+    d_min_indep_limit == other.d_min_indep_limit &&
+    d_min_indep_limit_to_power_Np1 == other.d_min_indep_limit_to_power_Np1 &&
+    d_max_indep_limit == other.d_max_indep_limit &&
+    d_max_indep_limit_to_power_Np1 == other.d_max_indep_limit_to_power_Np1;
+}
+
+// Initialize the distribution
+template<unsigned N>
+void PowerDistribution<N>::initializeDistribution()
+{
+  // Take the limits to the power N
+  d_min_indep_limit_to_power_Np1 = 
+    Exponentiation::recursive( d_min_indep_limit, N+1u );
+  
+  d_max_indep_limit_to_power_Np1 = 
+    Exponentiation::recursive( d_max_indep_limit, N+1u );
 }
 
 } // end Utility namespace

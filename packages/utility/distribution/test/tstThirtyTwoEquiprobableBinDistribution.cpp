@@ -13,6 +13,8 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ParameterList.hpp>
+#include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -488,6 +490,39 @@ TEUCHOS_UNIT_TEST( ThirtyTwoEquiprobableBinDistribution,
 {
   TEST_EQUALITY_CONST( distribution->getDistributionType(),
 		       Utility::THIRTY_TWO_EQUIPROBABLE_BIN_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to and read from an xml file
+TEUCHOS_UNIT_TEST( ThirtyTwoEquiprobableBinDistribution, toFromParameterList )
+{
+  Teuchos::RCP<Utility::ThirtyTwoEquiprobableBinDistribution> 
+    true_distribution = Teuchos::rcp_dynamic_cast<Utility::ThirtyTwoEquiprobableBinDistribution>( distribution );
+  
+  Teuchos::ParameterList parameter_list;
+  
+  parameter_list.set<Utility::ThirtyTwoEquiprobableBinDistribution>( 
+							  "test distribution",
+							  *true_distribution );
+
+  Teuchos::writeParameterListToXmlFile( 
+				    parameter_list,
+				    "32_equiprobable_bin_dist_test_list.xml" );
+  
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+    Teuchos::getParametersFromXmlFile( 
+				    "32_equiprobable_bin_dist_test_list.xml" );
+  
+  TEST_EQUALITY( parameter_list, *read_parameter_list );
+
+  Teuchos::RCP<Utility::ThirtyTwoEquiprobableBinDistribution> 
+    copy_distribution( new Utility::ThirtyTwoEquiprobableBinDistribution );
+
+  *copy_distribution = 
+    read_parameter_list->get<Utility::ThirtyTwoEquiprobableBinDistribution>(
+							  "test distribution");
+
+  TEST_EQUALITY( *copy_distribution, *true_distribution );
 }
 
 //---------------------------------------------------------------------------//

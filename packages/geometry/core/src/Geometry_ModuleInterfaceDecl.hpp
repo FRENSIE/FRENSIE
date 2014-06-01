@@ -19,7 +19,7 @@
 #include "Utility_ContractException.hpp"
 
 /*! \defgroup geometry_module Geometry Module
- * \ingroup particle_simulation_modules
+ * \ingroup physics_simulation_modules
  *
  * The handling of a geometry used in particle tracking simulations has
  * been abstracted. This allows any of the geometry handling packages 

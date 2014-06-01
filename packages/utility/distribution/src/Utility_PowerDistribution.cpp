@@ -13,6 +13,14 @@
 
 namespace Utility{
 
+// Default constructor
+PowerDistribution<2u>::PowerDistribution()
+{ /* ... */ }
+
+// Default constructor
+PowerDistribution<1u>::PowerDistribution()
+{ /* ... */ }
+
 // Constructor
 PowerDistribution<2u>::PowerDistribution( const double constant_multiplier,
 					  const double min_indep_limit,
@@ -51,6 +59,88 @@ PowerDistribution<1u>::PowerDistribution( const double constant_multiplier,
   testPrecondition( min_indep_limit >= 0.0 );
   // Make sure that the max value is greater than the min value
   testPrecondition( max_indep_limit > min_indep_limit ); 
+}
+
+// Copy constructor
+PowerDistribution<2u>::PowerDistribution( 
+				   const PowerDistribution<2u>& dist_instance )
+  : d_constant_multiplier( dist_instance.d_constant_multiplier ),
+    d_min_indep_limit( dist_instance.d_min_indep_limit ),
+    d_min_indep_limit_cubed( dist_instance.d_min_indep_limit_cubed ),
+    d_max_indep_limit( dist_instance.d_max_indep_limit ),
+    d_max_indep_limit_cubed( dist_instance.d_max_indep_limit_cubed )
+{
+  // Make sure that the values are valid
+  testPrecondition( !ST::isnaninf( dist_instance.d_constant_multiplier ) );
+  testPrecondition( !ST::isnaninf( dist_instance.d_min_indep_limit ) );
+  testPrecondition( !ST::isnaninf( dist_instance.d_max_indep_limit ) );
+  // Make sure that the min value is greater than or equal to zero
+  testPrecondition( dist_instance.d_min_indep_limit >= 0.0 );
+  // Make sure that the max value is greater than the min value
+  testPrecondition( dist_instance.d_max_indep_limit > 
+		    dist_instance.d_min_indep_limit ); 
+}
+
+// Copy constructor
+PowerDistribution<1u>::PowerDistribution(
+				   const PowerDistribution<1u>& dist_instance )
+  : d_constant_multiplier( dist_instance.d_constant_multiplier ),
+    d_min_indep_limit( dist_instance.d_min_indep_limit ),
+    d_min_indep_limit_squared( dist_instance.d_min_indep_limit_squared ),
+    d_max_indep_limit( dist_instance.d_max_indep_limit ),
+    d_max_indep_limit_squared( dist_instance.d_max_indep_limit_squared )
+{
+  // Make sure that the values are valid
+  testPrecondition( !ST::isnaninf( dist_instance.d_constant_multiplier ) );
+  testPrecondition( !ST::isnaninf( dist_instance.d_min_indep_limit ) );
+  testPrecondition( !ST::isnaninf( dist_instance.d_max_indep_limit ) );
+  // Make sure that the min value is greater than or equal to zero
+  testPrecondition( dist_instance.d_min_indep_limit >= 0.0 );
+  // Make sure that the max value is greater than the min value
+  testPrecondition( dist_instance.d_max_indep_limit > 
+		    dist_instance.d_min_indep_limit ); 
+}
+
+// Assignment operator
+PowerDistribution<2u>& PowerDistribution<2u>::operator=(
+				   const PowerDistribution<2u>& dist_instance )
+{
+  // Make sure the distribution is valid
+  testPrecondition( dist_instance.d_min_indep_limit >= 0.0 );
+  testPrecondition( dist_instance.d_max_indep_limit > 
+		    dist_instance.d_min_indep_limit );
+
+  if( this != &dist_instance )
+  {
+    d_constant_multiplier = dist_instance.d_constant_multiplier;
+    d_min_indep_limit = dist_instance.d_min_indep_limit;
+    d_min_indep_limit_cubed = dist_instance.d_min_indep_limit_cubed;
+    d_max_indep_limit = dist_instance.d_max_indep_limit;
+    d_max_indep_limit_cubed = dist_instance.d_max_indep_limit_cubed;
+  }
+
+  return *this;
+}
+
+// Assignment operator
+PowerDistribution<1u>& PowerDistribution<1u>::operator=(
+				   const PowerDistribution<1u>& dist_instance )
+{
+  // Make sure the distribution is valid
+  testPrecondition( dist_instance.d_min_indep_limit >= 0.0 );
+  testPrecondition( dist_instance.d_max_indep_limit > 
+		    dist_instance.d_min_indep_limit );
+
+  if( this != &dist_instance )
+  {
+    d_constant_multiplier = dist_instance.d_constant_multiplier;
+    d_min_indep_limit = dist_instance.d_min_indep_limit;
+    d_min_indep_limit_squared = dist_instance.d_min_indep_limit_squared;
+    d_max_indep_limit = dist_instance.d_max_indep_limit;
+    d_max_indep_limit_squared = dist_instance.d_max_indep_limit_squared;
+  }
+
+  return *this;
 }
 
 // Evaluate the distribution
@@ -185,6 +275,190 @@ OneDDistributionType PowerDistribution<2u>::getDistributionType() const
 OneDDistributionType PowerDistribution<1u>::getDistributionType() const
 {
   return PowerDistribution<1u>::distribution_type;
+}
+
+// Method for placing the object in an output stream
+void PowerDistribution<2u>::toStream( std::ostream& os ) const
+{
+  os << "{" << d_constant_multiplier 
+     << "," << d_min_indep_limit
+     << "," << d_max_indep_limit
+     << "}";
+}
+
+// Method for placing the object in an output stream
+void PowerDistribution<1u>::toStream( std::ostream& os ) const
+{
+  os << "{" << d_constant_multiplier 
+     << "," << d_min_indep_limit
+     << "," << d_max_indep_limit
+     << "}";
+}
+
+// Method for initializing the object from an input stream
+void PowerDistribution<2u>::fromStream( std::istream& is )
+{
+  // Read in the distribution representation
+  std::string dist_rep;
+  std::getline( is, dist_rep, '}' );
+  dist_rep += '}';
+
+  Teuchos::Array<double> distribution;
+  try{
+    distribution = Teuchos::fromStringToArray<double>( dist_rep );
+  }
+  catch( Teuchos::InvalidArrayStringRepresentation& error )
+  {
+    std::string message( "Error: the power 2 distribution cannot be "
+			 "constructed because the representation is not valid "
+			 "(see details below)!\n" );
+    message += error.what();
+
+    throw InvalidDistributionStringRepresentation( message );
+  }
+
+  TEST_FOR_EXCEPTION( distribution.size() != 3,
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power 2 distribution cannot be constructed "
+		      "because the representation is not valid "
+		      "(only 3 values may be specified)!" );
+
+  // Set the constant multiplier
+  d_constant_multiplier = distribution[0];
+  
+  TEST_FOR_EXCEPTION( ST::isnaninf( d_constant_multiplier ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power 2 distribution cannot be "
+		      "constructed because the constant multiplier is not "
+		      "valid!" );
+  
+  // Set the min independent limit
+  d_min_indep_limit = distribution[1];
+  
+  TEST_FOR_EXCEPTION( ST::isnaninf( d_min_indep_limit ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power 2 distribution cannot be "
+		      "constructed because the min independent limit is not "
+		      "valid!" );
+
+  TEST_FOR_EXCEPTION( d_min_indep_limit < 0,
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power 2 distribution cannot be "
+		      "constructed because the min independent limit is not "
+		      "valid!" );
+
+  d_min_indep_limit_cubed = 
+    d_min_indep_limit*d_min_indep_limit*d_min_indep_limit;
+
+  // Set the max independent limit
+  d_max_indep_limit = distribution[2];
+
+  TEST_FOR_EXCEPTION( ST::isnaninf( d_max_indep_limit ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power 2 distribution cannot be "
+		      "constructed because the max independent limit is not "
+		      "valid!" );
+
+  TEST_FOR_EXCEPTION( d_max_indep_limit <= d_min_indep_limit,
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power 2 distribution cannot be "
+		      "constructed because the max independent limit is not "
+		      "valid!" );
+
+  d_max_indep_limit_cubed = 
+    d_max_indep_limit*d_max_indep_limit*d_max_indep_limit;
+}
+
+// Method for initializing the object from an input stream
+void PowerDistribution<1u>::fromStream( std::istream& is )
+{
+  // Read in the distribution representation
+  std::string dist_rep;
+  std::getline( is, dist_rep, '}' );
+  dist_rep += '}';
+
+  Teuchos::Array<double> distribution;
+  try{
+    distribution = Teuchos::fromStringToArray<double>( dist_rep );
+  }
+  catch( Teuchos::InvalidArrayStringRepresentation& error )
+  {
+    std::string message( "Error: the power 2 distribution cannot be "
+			 "constructed because the representation is not valid "
+			 "(see details below)!\n" );
+    message += error.what();
+
+    throw InvalidDistributionStringRepresentation( message );
+  }
+
+  TEST_FOR_EXCEPTION( distribution.size() != 3,
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power 1 distribution cannot be constructed "
+		      "because the representation is not valid "
+		      "(only 3 values may be specified)!" );
+
+  // Set the constant multiplier
+  d_constant_multiplier = distribution[0];
+  
+  TEST_FOR_EXCEPTION( ST::isnaninf( d_constant_multiplier ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power 1 distribution cannot be "
+		      "constructed because the constant multiplier is not "
+		      "valid!" );
+  
+  // Read the min independent limit
+  d_min_indep_limit = distribution[1];
+
+  TEST_FOR_EXCEPTION( ST::isnaninf( d_min_indep_limit ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power 1 distribution cannot be "
+		      "constructed because the min independent limit is not "
+		      "valid!" );
+
+  TEST_FOR_EXCEPTION( d_min_indep_limit < 0,
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power 1 distribution cannot be "
+		      "constructed because the min independent limit is not "
+		      "valid!" );
+
+  d_min_indep_limit_squared = d_min_indep_limit*d_min_indep_limit;
+
+  // Read the max independent limit
+  d_max_indep_limit = distribution[2];
+  
+  TEST_FOR_EXCEPTION( ST::isnaninf( d_max_indep_limit ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power 1 distribution cannot be "
+		      "constructed because the max independent limit is not "
+		      "valid!" );
+
+  TEST_FOR_EXCEPTION( d_max_indep_limit <= d_min_indep_limit,
+		      InvalidDistributionStringRepresentation,
+		      "Error: the power 1 distribution cannot be "
+		      "constructed because the max independent limit is not "
+		      "valid!" );
+
+  d_max_indep_limit_squared = d_max_indep_limit*d_max_indep_limit;
+}
+
+// Method for testing if two objects are equivalent
+bool PowerDistribution<2u>::isEqual( const PowerDistribution<2u>& other ) const
+{
+  return d_constant_multiplier == other.d_constant_multiplier &&
+    d_min_indep_limit == other.d_min_indep_limit &&
+    d_min_indep_limit_cubed == other.d_min_indep_limit_cubed &&
+    d_max_indep_limit == other.d_max_indep_limit &&
+    d_max_indep_limit_cubed == other.d_max_indep_limit_cubed;
+}
+
+// Method for testing if two objects are equivalent
+bool PowerDistribution<1u>::isEqual( const PowerDistribution<1u>& other ) const
+{
+  return d_constant_multiplier == other.d_constant_multiplier &&
+    d_min_indep_limit == other.d_min_indep_limit &&
+    d_min_indep_limit_squared == other.d_min_indep_limit_squared &&
+    d_max_indep_limit == other.d_max_indep_limit &&
+    d_max_indep_limit_squared == other.d_max_indep_limit_squared;
 }
 
 } // end Utility namespace

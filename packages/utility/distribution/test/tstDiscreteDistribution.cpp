@@ -14,6 +14,8 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ParameterList.hpp>
+#include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
@@ -40,7 +42,7 @@ void initializeDistribution(
   dependent_values[2] = 1.0;
   
   distribution.reset( new Utility::DiscreteDistribution( independent_values,
-							dependent_values ) );
+							 dependent_values ) );
   
   Utility::RandomNumberGenerator::initialize();
 }
@@ -69,8 +71,6 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluate )
 // Check that the PDF can be evaluated
 TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluatePDF )
 {
-  initializeDistribution( distribution );
-  
   TEST_EQUALITY_CONST( distribution->evaluatePDF( -2.0 ), 0.0 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( -1.0 ), 0.25 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( -0.5 ), 0.0 );
@@ -82,10 +82,8 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluatePDF )
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
-TEUCHOS_UNIT_TEST( DeltaDistribution, sample )
+TEUCHOS_UNIT_TEST( DiscreteDistribution, sample )
 {
-  initializeDistribution( distribution );
-
   std::vector<double> fake_stream( 7 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.2;
@@ -126,8 +124,6 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, sample )
 // Check that the sampling efficiency can be returned
 TEUCHOS_UNIT_TEST( DiscreteDistribution, getSamplingEfficiency )
 {
-  initializeDistribution( distribution );
-  
   TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
 }
 
@@ -136,8 +132,6 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, getSamplingEfficiency )
 // returned
 TEUCHOS_UNIT_TEST( DiscreteDistribution, getUpperBoundOfIndepVar )
 {
-  initializeDistribution( distribution );
-  
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 1.0 );
 }
 
@@ -146,8 +140,6 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, getUpperBoundOfIndepVar )
 // returned
 TEUCHOS_UNIT_TEST( DiscreteDistribution, getLowerBoundOfIndepVar )
 {
-  initializeDistribution( distribution );
-
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), -1.0 );
 }
 
@@ -155,10 +147,37 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, getLowerBoundOfIndepVar )
 // Check that the distribution type can be returned
 TEUCHOS_UNIT_TEST( DiscreteDistribution, getDistributionType )
 {
-  initializeDistribution( distribution );
-
   TEST_EQUALITY_CONST( distribution->getDistributionType(),
 		       Utility::DISCRETE_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to and read from an xml file
+TEUCHOS_UNIT_TEST( DiscreteDistribution, toFromParameterList )
+{
+  Teuchos::RCP<Utility::DiscreteDistribution> true_distribution =
+    Teuchos::rcp_dynamic_cast<Utility::DiscreteDistribution>( distribution );
+  
+  Teuchos::ParameterList parameter_list;
+  
+  parameter_list.set<Utility::DiscreteDistribution>( "test distribution", 
+						     *true_distribution );
+
+  Teuchos::writeParameterListToXmlFile( parameter_list,
+					"discrete_dist_test_list.xml" );
+  
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+    Teuchos::getParametersFromXmlFile( "discrete_dist_test_list.xml" );
+  
+  TEST_EQUALITY( parameter_list, *read_parameter_list );
+
+  Teuchos::RCP<Utility::DiscreteDistribution> 
+    copy_distribution( new Utility::DiscreteDistribution );
+
+  *copy_distribution = read_parameter_list->get<Utility::DiscreteDistribution>(
+							  "test distribution");
+
+  TEST_EQUALITY( *copy_distribution, *true_distribution );
 }
 
 //---------------------------------------------------------------------------//

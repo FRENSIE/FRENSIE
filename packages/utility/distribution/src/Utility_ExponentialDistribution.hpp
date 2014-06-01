@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_XMLCompatibleObject.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -22,7 +23,8 @@ namespace Utility{
 /*! \details only decaying exponential distributions are allowed (the 
  * exponent is always assumed to be negative)
  */
-class ExponentialDistribution : public OneDDistribution
+class ExponentialDistribution : public OneDDistribution,
+			    public XMLCompatibleObject<ExponentialDistribution>
 {
 
 private:
@@ -32,9 +34,19 @@ private:
 
 public:
 
+  //! Default constructor
+  ExponentialDistribution();
+
   //! Constructor ( a*exp(-b*x) )
   ExponentialDistribution( const double constant_multiplier,
 			   const double exponent_multiplier );
+
+  //! Copy constructor
+  ExponentialDistribution( const ExponentialDistribution& dist_instance );
+
+  //! Assignment operator
+  ExponentialDistribution& operator=( 
+				const ExponentialDistribution& dist_instance );
 
   //! Destructor
   ~ExponentialDistribution()
@@ -64,6 +76,15 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
 
+  //! Method for placing the object in an output stream
+  void toStream( std::ostream& os ) const;
+
+  //! Method for initializing the object from an input stream
+  void fromStream( std::istream& is );
+
+  //! Method for testing if two objects are equivalent
+  bool isEqual( const ExponentialDistribution& other ) const;
+
 private:
 
   // Evaluate the exponential
@@ -81,6 +102,30 @@ private:
 };
 
 } // end Utility namespace
+
+namespace Teuchos{
+
+/*! Type name traits specialization for the Utility::ExponentialDistribution
+ *
+ * \details The name function will set the type name that must be used in
+ * xml files.
+ */
+template<>
+class TypeNameTraits<Utility::ExponentialDistribution>
+{
+public:
+  static std::string name()
+  {
+    return "Exponential Distribution";
+  }
+  static std::string concreteName( 
+			     const Utility::ExponentialDistribution& instance )
+  {
+    return name();
+  }
+};
+
+} // end Teuchos namespace
 
 #endif // end UTILITY_EXPONENTIAL_DISTRIBUTION_HPP
 

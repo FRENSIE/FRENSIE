@@ -13,6 +13,8 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ParameterList.hpp>
+#include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -115,6 +117,34 @@ TEUCHOS_UNIT_TEST( NormalDistribution, getDistributionType )
 		       Utility::NORMAL_DISTRIBUTION );
 }
 
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to and read from an xml file
+TEUCHOS_UNIT_TEST( NormalDistribution, toFromParameterList )
+{
+  Teuchos::RCP<Utility::NormalDistribution> true_distribution =
+    Teuchos::rcp_dynamic_cast<Utility::NormalDistribution>( distribution );
+  
+  Teuchos::ParameterList parameter_list;
+  
+  parameter_list.set<Utility::NormalDistribution>( "test distribution", 
+						     *true_distribution );
+
+  Teuchos::writeParameterListToXmlFile( parameter_list,
+					"normal_dist_test_list.xml" );
+  
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+    Teuchos::getParametersFromXmlFile( "normal_dist_test_list.xml" );
+  
+  TEST_EQUALITY( parameter_list, *read_parameter_list );
+
+  Teuchos::RCP<Utility::NormalDistribution> 
+    copy_distribution( new Utility::NormalDistribution );
+
+  *copy_distribution = read_parameter_list->get<Utility::NormalDistribution>(
+							  "test distribution");
+
+  TEST_EQUALITY( *copy_distribution, *true_distribution );
+}
 
 //---------------------------------------------------------------------------//
 // end tstNormalDistribution.cpp

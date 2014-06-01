@@ -15,11 +15,13 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_XMLCompatibleObject.hpp"
 
 namespace Utility{
 
 //! Delta distribution class
-class DeltaDistribution : public OneDDistribution
+class DeltaDistribution : public OneDDistribution,
+			  public XMLCompatibleObject<DeltaDistribution>
 {
 
 private:
@@ -28,9 +30,18 @@ private:
   typedef Teuchos::ScalarTraits<double> ST;
 
 public:
+
+  //! Default Constructor
+  DeltaDistribution();
   
   //! Constructor
   DeltaDistribution( const double location );
+
+  //! Copy constructor
+  DeltaDistribution( const DeltaDistribution& dist_instance );
+
+  //! Assignment operator
+  DeltaDistribution& operator=( const DeltaDistribution& dist_instance );
 
   //! Destructor
   ~DeltaDistribution()
@@ -60,6 +71,15 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
 
+  //! Method for placing the object in an output stream
+  void toStream( std::ostream& os ) const;
+
+  //! Method for initializing the object from an input stream
+  void fromStream( std::istream& is );
+
+  //! Method for testing if two objects are equivalent
+  bool isEqual( const DeltaDistribution& other ) const;
+
 private:
 
   // The distribution type
@@ -70,6 +90,29 @@ private:
 };
 
 } // end Utility namespace
+
+namespace Teuchos{
+
+/*! Type name traits specialization for the Utility::DeltaDistribution
+ *
+ * \details The name function will set the type name that must be used in
+ * xml files.
+ */
+template<>
+class TypeNameTraits<Utility::DeltaDistribution>
+{
+public:
+  static std::string name()
+  {
+    return "Delta Distribution";
+  }
+  static std::string concreteName( const Utility::DeltaDistribution& instance )
+  {
+    return name();
+  }
+};
+
+} // end Teuchos namespace
 
 #endif // end UTILITY_DELTA_DISTRIBUTION_HPP
 

@@ -13,6 +13,8 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ParameterList.hpp>
+#include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -167,6 +169,36 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, getDistributionType )
 {
   TEST_EQUALITY_CONST( distribution->getDistributionType(),
 		       Utility::HISTOGRAM_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to and read from an xml file
+TEUCHOS_UNIT_TEST( HistogramDistribution, toFromParameterList )
+{
+  Teuchos::RCP<Utility::HistogramDistribution> true_distribution =
+    Teuchos::rcp_dynamic_cast<Utility::HistogramDistribution>( distribution );
+  
+  Teuchos::ParameterList parameter_list;
+  
+  parameter_list.set<Utility::HistogramDistribution>( "test distribution", 
+						     *true_distribution );
+
+  Teuchos::writeParameterListToXmlFile( parameter_list,
+					"histogram_dist_test_list.xml" );
+  
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+    Teuchos::getParametersFromXmlFile( "histogram_dist_test_list.xml" );
+  
+  TEST_EQUALITY( parameter_list, *read_parameter_list );
+
+  Teuchos::RCP<Utility::HistogramDistribution> 
+    copy_distribution( new Utility::HistogramDistribution );
+
+  *copy_distribution = 
+    read_parameter_list->get<Utility::HistogramDistribution>(
+							  "test distribution");
+
+  TEST_EQUALITY( *copy_distribution, *true_distribution );
 }
 
 //---------------------------------------------------------------------------//

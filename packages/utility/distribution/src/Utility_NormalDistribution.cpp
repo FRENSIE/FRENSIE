@@ -10,6 +10,7 @@
 #include "Utility_NormalDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -35,6 +36,40 @@ NormalDistribution::NormalDistribution( const double mean,
   testPrecondition( !ST::isnaninf( standard_deviation ) );
   // Make sure that the standard deviation is positive
   testPrecondition( standard_deviation > 0.0 );
+}
+
+// Copy constructor
+NormalDistribution::NormalDistribution( 
+				      const NormalDistribution& dist_instance )
+  : d_mean( dist_instance.d_mean ),
+    d_standard_deviation( dist_instance.d_standard_deviation ),
+    d_min_independent_value( dist_instance.d_min_independent_value ),
+    d_max_independent_value( dist_instance.d_max_independent_value ),
+    d_trials( dist_instance.d_trials ),
+    d_samples( dist_instance.d_samples )
+{
+  // Make sure that the values are valid
+  testPrecondition( !ST::isnaninf( dist_instance.d_mean ) );
+  testPrecondition( !ST::isnaninf( dist_instance.d_standard_deviation ) );
+  // Make sure that the standard deviation is positive
+  testPrecondition( dist_instance.d_standard_deviation > 0.0 );
+}
+
+// Assignment operator
+NormalDistribution& NormalDistribution::operator=(
+				      const NormalDistribution& dist_instance )
+{
+  if( this != &dist_instance )
+  {
+    d_mean = dist_instance.d_mean;
+    d_standard_deviation = dist_instance.d_standard_deviation;
+    d_min_independent_value = dist_instance.d_min_independent_value;
+    d_max_independent_value = dist_instance.d_max_independent_value;
+    d_trials = dist_instance.d_trials;
+    d_samples = dist_instance.d_samples;
+  }
+
+  return *this;
 }
 
 // Evaluate the distribution
@@ -153,6 +188,140 @@ double NormalDistribution::getLowerBoundOfIndepVar() const
 OneDDistributionType NormalDistribution::getDistributionType() const
 {
   return NormalDistribution::distribution_type;
+}
+
+// Method for placing the object in an output stream
+void NormalDistribution::toStream( std::ostream& os ) const
+{
+  os << "{" << d_mean << "," << d_standard_deviation << ","
+     << d_min_independent_value << "," << d_max_independent_value << "}";
+}
+
+// Method for initializing the object from an input stream
+void NormalDistribution::fromStream( std::istream& is )
+{
+  // Read in the distribution representation
+  std::string dist_rep;
+  std::getline( is, dist_rep, '}' );
+  dist_rep += '}';
+
+  Teuchos::Array<std::string> distribution;
+  try{
+    distribution = Teuchos::fromStringToArray<std::string>( dist_rep );
+  }
+  catch( Teuchos::InvalidArrayStringRepresentation& error )
+  {
+    std::string message( "Error: the normal distribution cannot be "
+			 "constructed because the representation is not valid "
+			 "(see details below)!\n" );
+    message += error.what();
+
+    throw InvalidDistributionStringRepresentation( message );
+  }
+
+  TEST_FOR_EXCEPTION( distribution.size() < 2 || distribution.size() > 4,
+		      InvalidDistributionStringRepresentation,
+		      "Error: the normal distribution cannot be constructed "
+		      "because the representation is not valid "
+		      "(only 2, 3, or 4 values may be specified)!" );
+
+  // Set the mean
+  TEST_FOR_EXCEPTION( distribution[0].find_first_not_of( "-0123456789" ) <
+		      distribution[0].size(),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the normal distribution cannot be "
+		      "constructed because of an invalid mean "
+		      << distribution[0] );
+  {
+    std::istringstream iss( distribution[0] );
+    Teuchos::extractDataFromISS( iss, d_mean );
+  }
+  
+  TEST_FOR_EXCEPTION( ST::isnaninf( d_mean ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the normal distribution cannot be constructed "
+		      "because of an invalid mean " << d_mean );
+  
+  // Set the standard deviation
+  TEST_FOR_EXCEPTION( distribution[1].find_first_not_of( "0123456789" ) <
+		      distribution[1].size(),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the normal distribution cannot be "
+		      "constructed because of an invalid standard deviation "
+		      << distribution[1] );
+  {
+    std::istringstream iss( distribution[1] );
+    Teuchos::extractDataFromISS( iss, d_standard_deviation );
+  }
+
+  TEST_FOR_EXCEPTION( ST::isnaninf( d_standard_deviation ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the normal distribution cannot be constructed "
+		      "because of an invalid standard deviation "
+		      << d_standard_deviation );
+
+  TEST_FOR_EXCEPTION( d_standard_deviation < 0.0,
+		      InvalidDistributionStringRepresentation,
+		      "Error: the normal distribution cannot be constructed "
+		      "because of an invalid standard deviation "
+		      << d_standard_deviation );
+
+  // Set the min independent value
+  if( distribution.size() > 2 )
+  {
+    if( distribution[2].compare( "-inf" ) == 0 )
+      d_min_independent_value = -std::numeric_limits<double>::infinity();
+    else
+    {
+      TEST_FOR_EXCEPTION( distribution[2].find_first_not_of( "-0123456789" ) <
+			  distribution[2].size(),
+			  InvalidDistributionStringRepresentation,
+			  "Error: the normal distribution cannot be "
+			  "constructed because of an invalid min independent "
+			  " value " << distribution[2] );
+      std::istringstream entry_iss( distribution[2] );
+      
+      Teuchos::extractDataFromISS( entry_iss, d_min_independent_value );
+    }
+  }
+  else
+    d_min_independent_value = -std::numeric_limits<double>::infinity();
+
+  // Set the max independent value
+  if( distribution.size() > 3 )
+  {
+    if( distribution[3].compare( "inf" ) == 0 )
+      d_max_independent_value = std::numeric_limits<double>::infinity();
+    else
+    {
+      TEST_FOR_EXCEPTION( distribution[3].find_first_not_of( "-0123456789" ) <
+			  distribution[3].size(),
+			  InvalidDistributionStringRepresentation,
+			  "Error: the normal distribution cannot be "
+			  "constructed because of an invalid max independent "
+			  " value " << distribution[3] );
+      std::istringstream entry_iss( distribution[3] );
+      
+      Teuchos::extractDataFromISS( entry_iss, d_max_independent_value );
+    }
+  }
+  else
+    d_max_independent_value = std::numeric_limits<double>::infinity();
+
+  TEST_FOR_EXCEPTION( d_max_independent_value <= d_min_independent_value,
+		      InvalidDistributionStringRepresentation,
+		      "Error: the normal distribution cannot be "
+		      "constructed because the max independent value is not "
+		      "greater than the min independent value!" );
+}
+
+// Method for testing if two objects are equivalent
+bool NormalDistribution::isEqual( const NormalDistribution& other ) const
+{
+  return d_mean == other.d_mean && 
+    d_standard_deviation == other.d_standard_deviation &&
+    d_min_independent_value == other.d_min_independent_value &&
+    d_max_independent_value == other.d_max_independent_value;
 }
 
 } // end Utility namespace

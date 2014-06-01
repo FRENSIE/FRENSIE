@@ -53,6 +53,17 @@ public:
   virtual OneDDistributionType getDistributionType() const = 0;
 };
 
+//! The invalid distribution string representation error
+class InvalidDistributionStringRepresentation : public std::logic_error
+{
+
+public:
+  
+  InvalidDistributionStringRepresentation( const std::string& what_arg )
+    : std::logic_error( what_arg ) 
+  { /* ... */ }
+};
+
 } // end Utility namespace
 
 #endif // end UTILITY_ONE_D_DISTRIBUTION_HPP

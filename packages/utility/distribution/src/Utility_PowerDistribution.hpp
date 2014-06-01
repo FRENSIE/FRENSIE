@@ -14,12 +14,14 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_XMLCompatibleObject.hpp"
 
 namespace Utility{
 
 //! Power distribution class (N > 2)
 template<unsigned N>
-class PowerDistribution : public OneDDistribution
+class PowerDistribution : public OneDDistribution,
+			  public XMLCompatibleObject<PowerDistribution<N> >
 {
 
 private:
@@ -29,10 +31,19 @@ private:
 
 public:
 
+  //! Default constructor
+  PowerDistribution();
+
   //! Constructor ( A*x^N : x in (a,b) )
   PowerDistribution( const double constant_multiplier,
 		     const double min_indep_limit,
 		     const double max_indep_limit );
+
+  //! Copy constructor
+  PowerDistribution( const PowerDistribution<N>& dist_instance );
+
+  //! Assignment operator
+  PowerDistribution<N>& operator=( const PowerDistribution<N>& dist_instance );
 
   //! Destructor
   ~PowerDistribution()
@@ -62,7 +73,19 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
 
+  //! Method for placing the object in an output stream
+  void toStream( std::ostream& os ) const;
+
+  //! Method for initializing the object from an input stream
+  void fromStream( std::istream& is );
+
+  //! Method for testing if two objects are equivalent
+  bool isEqual( const PowerDistribution<N>& other ) const;
+
 private:
+
+  // Initialize the distribution
+  void initializeDistribution();
 
   // The distribution type
   static const OneDDistributionType distribution_type = POWER_N_DISTRIBUTION;
@@ -85,7 +108,8 @@ private:
 
 //! Power distribution class (N = 2)
 template<>
-class PowerDistribution<2u> : public OneDDistribution
+class PowerDistribution<2u> : public OneDDistribution,
+			     public XMLCompatibleObject<PowerDistribution<2u> >
 {
 
 private:
@@ -95,10 +119,20 @@ private:
 
 public:
 
+  //! Default constructor
+  PowerDistribution();
+
   //! Constructor ( A*x^2 : x in (a,b) )
   PowerDistribution( const double constant_multiplier,
 		     const double min_indep_limit,
 		     const double max_indep_limit );
+
+  //! Copy constructor
+  PowerDistribution( const PowerDistribution<2u>& dist_instance );
+
+  //! Assignment operator
+  PowerDistribution<2u>& operator=( 
+				  const PowerDistribution<2u>& dist_instance );
 
   //! Destructor
   ~PowerDistribution()
@@ -127,6 +161,15 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Method for placing the object in an output stream
+  void toStream( std::ostream& os ) const;
+
+  //! Method for initializing the object from an input stream
+  void fromStream( std::istream& is );
+
+  //! Method for testing if two objects are equivalent
+  bool isEqual( const PowerDistribution<2u>& other ) const;
 
 private:
 
@@ -151,7 +194,8 @@ private:
 
 //! Power distribution class (N = 1)
 template<>
-class PowerDistribution<1u> : public OneDDistribution
+class PowerDistribution<1u> : public OneDDistribution,
+			     public XMLCompatibleObject<PowerDistribution<1u> >
 {
 
 private:
@@ -161,10 +205,20 @@ private:
 
 public:
 
+  //! Default constructor
+  PowerDistribution();
+
   //! Constructor ( A*x : x in (a,b) )
   PowerDistribution( const double constant_multiplier,
 		     const double min_indep_limit,
 		     const double max_indep_limit );
+  
+  //! Copy constructor
+  PowerDistribution( const PowerDistribution<1u>& dist_instance );
+
+  //! Assignment operator
+  PowerDistribution<1u>& operator=( 
+				  const PowerDistribution<1u>& dist_instance );
 
   //! Destructor
   ~PowerDistribution()
@@ -194,6 +248,15 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
 
+  //! Method for placing the object in an output stream
+  void toStream( std::ostream& os ) const;
+
+  //! Method for initializing the object from an input stream
+  void fromStream( std::istream& is );
+
+  //! Method for testing if two objects are equivalent
+  bool isEqual( const PowerDistribution<1u>& other ) const;
+
 private:
 
   // The distribution type
@@ -216,6 +279,33 @@ private:
 };
 
 } // end Utility namespace
+
+namespace Teuchos{
+
+/*! Type name traits specialization for the Utility::PowerDistribution
+ *
+ * \details The name function will set the type name that must be used in
+ * xml files.
+ */
+template<unsigned N>
+class TypeNameTraits<Utility::PowerDistribution<N> >
+{
+public:
+  static std::string name()
+  {
+    std::ostringstream iss;
+    iss << "Power " << N << " Distribution";
+    
+    return iss.str();
+  }
+  static std::string concreteName( 
+				const Utility::PowerDistribution<N>& instance )
+  {
+    return name();
+  }
+};
+
+} // end Teuchos namespace
 
 //---------------------------------------------------------------------------//
 // Template includes

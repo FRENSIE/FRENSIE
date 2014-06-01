@@ -71,6 +71,12 @@ inline T LogLog::interpolate( const T processed_indep_var_0,
 	      processed_slope*(processed_indep_var - processed_indep_var_0) );
 }
 
+// The name of the policy
+inline const std::string LogLog::name()
+{
+  return "LogLog";
+}
+
 // Interpolate between two points
 template<typename T>
 inline T LogLin::interpolate( const T indep_var_0,
@@ -117,6 +123,12 @@ inline T LogLin::interpolate( const T processed_indep_var_0,
   
   return exp( processed_dep_var_0 + 
 	      processed_slope*(processed_indep_var - processed_indep_var_0) );
+}
+
+// The name of the policy
+inline const std::string LogLin::name()
+{
+  return "LogLin";
 }
 
 // Interpolate between two points
@@ -167,6 +179,12 @@ inline T LinLog::interpolate( const T processed_indep_var_0,
     processed_slope*(processed_indep_var - processed_indep_var_0 );
 }
 
+// The name of the policy
+inline const std::string LinLog::name()
+{
+  return "LinLog";
+}
+
 // Interpolate between two points
 template<typename T>
 inline T LinLin::interpolate( const T indep_var_0,
@@ -215,6 +233,12 @@ inline T LinLin::interpolate( const T processed_indep_var_0,
   
   return processed_dep_var_0 + 
     processed_slope*(processed_indep_var - processed_indep_var_0 );
+}
+
+// The name of the policy
+inline const std::string LinLin::name()
+{
+  return "LinLin";
 }
 
 } // end Utility namespace

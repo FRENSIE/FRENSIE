@@ -13,6 +13,8 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ParameterList.hpp>
+#include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
@@ -188,6 +190,48 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 }
 
 UNIT_TEST_INSTANTIATION( TabularDistribution, getDistributionType );
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to and read from an xml file
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
+				   toFromParameterList,
+				   InterpolationPolicy )
+{
+  initializeDistribution<InterpolationPolicy>();
+
+  typedef Utility::TabularDistribution<InterpolationPolicy> Distribution;
+
+  Teuchos::RCP<Distribution> true_distribution =
+    Teuchos::rcp_dynamic_cast<Distribution>( distribution );
+  
+  Teuchos::ParameterList parameter_list;
+  
+  parameter_list.set<Distribution>( "test distribution", 
+				      *true_distribution );
+
+  std::ostringstream xml_file_name;
+  xml_file_name << "tabular_" << InterpolationPolicy::name() 
+		<< "_dist_test_list.xml";
+  
+  Teuchos::writeParameterListToXmlFile( parameter_list,
+					xml_file_name.str() );
+  
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+    Teuchos::getParametersFromXmlFile( xml_file_name.str() );
+  
+  TEST_EQUALITY( parameter_list, *read_parameter_list );
+
+  Teuchos::RCP<Distribution> 
+    copy_distribution( new Distribution );
+
+  *copy_distribution = read_parameter_list->get<Distribution>(
+							  "test distribution");
+
+  TEST_EQUALITY( *copy_distribution, *true_distribution );
+}
+
+UNIT_TEST_INSTANTIATION( TabularDistribution, toFromParameterList );
+
 
 //---------------------------------------------------------------------------//
 // end tstTabularDistribution.cpp

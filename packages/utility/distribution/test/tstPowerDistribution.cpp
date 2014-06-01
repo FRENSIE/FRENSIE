@@ -13,6 +13,8 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ParameterList.hpp>
+#include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -149,8 +151,8 @@ UNIT_TEST_INSTANTIATION( PowerDistribution, getLowerBoundOfIndepVar );
 //---------------------------------------------------------------------------//
 // Check that the distribution type can be returned
 UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
-					   getDistributionType,
-					   N )
+					    getDistributionType,
+					    N )
 {
   initializeDistribution<N>( distribution );
 
@@ -172,6 +174,45 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
 }
 
 UNIT_TEST_INSTANTIATION( PowerDistribution, getDistributionType );
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to and read from an xml file
+UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
+					    toFromParameterList,
+					    N )
+{
+  initializeDistribution<N>( distribution );
+
+  Teuchos::RCP<Utility::PowerDistribution<N> > true_distribution =
+    Teuchos::rcp_dynamic_cast<Utility::PowerDistribution<N> >( distribution );
+  
+  Teuchos::ParameterList parameter_list;
+  
+  parameter_list.set<Utility::PowerDistribution<N> >( "test distribution", 
+						      *true_distribution );
+
+  std::ostringstream xml_file_name;
+  xml_file_name << "power_" << N << "_dist_test_list.xml";
+  
+  Teuchos::writeParameterListToXmlFile( parameter_list,
+					xml_file_name.str() );
+  
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+    Teuchos::getParametersFromXmlFile( xml_file_name.str() );
+  
+  TEST_EQUALITY( parameter_list, *read_parameter_list );
+
+  Teuchos::RCP<Utility::PowerDistribution<N> > 
+    copy_distribution( new Utility::PowerDistribution<N> );
+
+  *copy_distribution = 
+    read_parameter_list->get<Utility::PowerDistribution<N> >(
+							  "test distribution");
+
+  TEST_EQUALITY( *copy_distribution, *true_distribution );
+}
+
+UNIT_TEST_INSTANTIATION( PowerDistribution, toFromParameterList );
 
 //---------------------------------------------------------------------------//
 // end tstPowerDistribution.cpp

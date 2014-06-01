@@ -22,7 +22,8 @@ class PrintableObject
 public:
   
   //! Constructor
-  PrintableObject( const std::string &label = "PrintableObject" );
+  PrintableObject( const std::string &label = "PrintableObject",
+		   const bool print_label_on_output = false );
 
   //! Destructor
   virtual ~PrintableObject()
@@ -31,23 +32,28 @@ public:
   //! Print method for placing the printable object in an output stream.
   virtual void print( std::ostream &os ) const;
 
-  //! Set the printable object label
-  void setLabel( const std::string &label );
-
   //! Get the printable object label
   std::string getLabel() const;
+
+  //! Check if the label will be printed
+  bool isLabelPrinted() const;
 
 private:
   
   // Printable object label
   std::string d_label;
+
+  // Output specification boolean
+  bool d_print_label_on_output;
 };
 
 //! Stream operator for printing all printable objects
 inline std::ostream& operator<<( std::ostream &os, 
 				 const Utility::PrintableObject &obj )
 { 
-  os << obj.getLabel() << std::endl;
+  if( !obj.isLabelPrinted() )
+    os << obj.getLabel() << std::endl;
+  
   obj.print( os );
 
   return os;

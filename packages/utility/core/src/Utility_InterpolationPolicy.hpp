@@ -31,6 +31,9 @@ struct LogLog
 			const T processed_indep_var,
 			const T processed_dep_var,
 			const T processed_slope );
+
+  //! The name of the policy
+  static const std::string name();
 };
 
 /*! \brief Policy struct for interpolating data tables that require log-lin 
@@ -53,6 +56,9 @@ struct LogLin
 			const T processed_indep_var,
 			const T processed_dep_var,
 			const T processed_slope );
+
+  //! The name of the policy
+  static const std::string name();
 };
 
 /*! \brief Policy struct for interpolating data tables that require lin-log
@@ -75,6 +81,9 @@ struct LinLog
 			const T processed_indep_var,
 			const T processed_dep_var,
 			const T processed_slope );
+
+  //! The name of the policy
+  static const std::string name();
 };
 
 /*! \brief Policy struct for interpolating data tables that require lin-lin
@@ -97,6 +106,9 @@ struct LinLin
 			const T processed_indep_var,
 			const T processed_dep_var,
 			const T processed_slope );
+
+  //! The name of the policy
+  static const std::string name();
 };
 
 } // end Utility namespace

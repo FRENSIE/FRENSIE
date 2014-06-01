@@ -9,11 +9,19 @@
 // Std Lib Includes
 #include <limits>
 
+// Trilinos Includes
+#include <Teuchos_Utils.hpp>
+
 // FRENSIE Includes
 #include "Utility_ExponentialDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Utility{
+
+// Default constructor
+ExponentialDistribution::ExponentialDistribution()
+{ /* ... */ }
 
 // Constructor
 ExponentialDistribution::ExponentialDistribution( 
@@ -27,6 +35,37 @@ ExponentialDistribution::ExponentialDistribution(
   testPrecondition( !ST::isnaninf( exponent_multiplier ) );
   // Make sure that the exponent multiplier is positive
   testPrecondition( exponent_multiplier > 0.0 );
+}
+
+// Copy constructor
+ExponentialDistribution::ExponentialDistribution( 
+				 const ExponentialDistribution& dist_instance )
+  : d_constant_multiplier( dist_instance.d_constant_multiplier ),
+    d_exponent_multiplier( dist_instance.d_exponent_multiplier )
+{
+  // Make sure the multipliers are valid
+  testPrecondition( !ST::isnaninf( dist_instance.d_constant_multiplier ) );
+  testPrecondition( !ST::isnaninf( dist_instance.d_exponent_multiplier ) );
+  // Make sure that the exponent multiplier is positive
+  testPrecondition( dist_instance.d_exponent_multiplier > 0.0 );
+}
+
+// Assignment operator
+ExponentialDistribution& ExponentialDistribution::operator=( 
+				 const ExponentialDistribution& dist_instance )
+{
+  // Make sure the distribution is valid
+  testPrecondition( !ST::isnaninf( dist_instance.d_constant_multiplier ) );
+  testPrecondition( !ST::isnaninf( dist_instance.d_exponent_multiplier ) );
+  testPrecondition( dist_instance.d_exponent_multiplier > 0.0 );
+
+  if( this != &dist_instance )
+  {
+    d_constant_multiplier = dist_instance.d_constant_multiplier;
+    d_exponent_multiplier = dist_instance.d_exponent_multiplier;
+  }
+  
+  return *this;
 }
 
 // Evaluate the distribution
@@ -97,6 +136,65 @@ double ExponentialDistribution::evaluateExponential(
 OneDDistributionType ExponentialDistribution::getDistributionType() const
 {
   return ExponentialDistribution::distribution_type;
+}
+
+// Method for placing the object in an output stream
+void ExponentialDistribution::toStream( std::ostream& os ) const
+{
+  os << "{" << d_constant_multiplier << "," << d_exponent_multiplier << "}";
+}
+
+// Method for initializing the object from an input stream
+void ExponentialDistribution::fromStream( std::istream& is )
+{
+  // Read in the distribution representation
+  std::string dist_rep;
+  std::getline( is, dist_rep, '}' );
+  dist_rep += '}';
+
+  Teuchos::Array<double> distribution;
+  try{
+    distribution = Teuchos::fromStringToArray<double>( dist_rep );
+  }
+  catch( Teuchos::InvalidArrayStringRepresentation& error )
+  {
+    std::string message( "Error: the exponential distribution cannot be "
+			 "constructed because the representation is not valid "
+			 "(see details below)!\n" );
+    message += error.what();
+
+    throw InvalidDistributionStringRepresentation( message );
+  }
+
+  TEST_FOR_EXCEPTION( distribution.size() != 2,
+		      InvalidDistributionStringRepresentation,
+		      "Error: the exponential distribution cannot be "
+		      "constructed because the representation is not valid "
+		      "(only two values may be specified)!" );
+
+  d_constant_multiplier = distribution[0];
+
+  TEST_FOR_EXCEPTION( ST::isnaninf( d_constant_multiplier ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the exponential distribution cannot be "
+		      "constructed because of an invalid constant "
+		      "multiplier " << d_constant_multiplier );
+
+  d_exponent_multiplier = distribution[1];
+
+  TEST_FOR_EXCEPTION( ST::isnaninf( d_exponent_multiplier ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the exponential distribution cannot be "
+		      "constructed because of an invalid exponent "
+		      "multiplier " << d_exponent_multiplier );
+}
+
+// Method for testing if two objects are equivalent
+bool ExponentialDistribution::isEqual( 
+				   const ExponentialDistribution& other ) const
+{
+  return d_constant_multiplier == other.d_constant_multiplier &&
+    d_exponent_multiplier == other.d_exponent_multiplier;
 }
 
 } // end Utility namespace

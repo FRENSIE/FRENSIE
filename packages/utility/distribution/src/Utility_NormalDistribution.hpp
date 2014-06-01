@@ -17,11 +17,13 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_XMLCompatibleObject.hpp"
 
 namespace Utility{
 
 //! Normal distribution class
-class NormalDistribution : public OneDDistribution
+class NormalDistribution : public OneDDistribution,
+			   public XMLCompatibleObject<NormalDistribution>
 {
 
 private:
@@ -38,6 +40,12 @@ public:
 		      -std::numeric_limits<double>::infinity(),
 		      const double max_independent_value = 
 		      std::numeric_limits<double>::infinity() );
+
+  //! Copy constructor
+  NormalDistribution( const NormalDistribution& dist_instance );
+
+  //! Assignment operator
+  NormalDistribution& operator=( const NormalDistribution& dist_instance );
 
   //! Destructor
   ~NormalDistribution()
@@ -66,6 +74,15 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Method for placing the object in an output stream
+  void toStream( std::ostream& os ) const;
+
+  //! Method for initializing the object from an input stream
+  void fromStream( std::istream& is );
+
+  //! Method for testing if two objects are equivalent
+  bool isEqual( const NormalDistribution& other ) const;
 
 private:
 
@@ -98,6 +115,30 @@ private:
 };
 
 } // end Utility namespace
+
+namespace Teuchos{
+
+/*! Type name traits specialization for the Utility::NormalDistribution
+ *
+ * \details The name function will set the type name that must be used in
+ * xml files.
+ */
+template<>
+class TypeNameTraits<Utility::NormalDistribution>
+{
+public:
+  static std::string name()
+  {
+    return "Normal Distribution";
+  }
+  static std::string concreteName( 
+				const Utility::NormalDistribution& instance )
+  {
+    return name();
+  }
+};
+
+} // end Teuchos namespace
 
 #endif // end UTILITY_NORMAL_DISTRIBUTION_HPP
 

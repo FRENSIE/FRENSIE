@@ -15,12 +15,14 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_XMLCompatibleObject.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
 
 //! Uniform distribution class
-class UniformDistribution : public OneDDistribution
+class UniformDistribution : public OneDDistribution,
+			    public XMLCompatibleObject<UniformDistribution>
 {
 
 private:
@@ -29,11 +31,20 @@ private:
   typedef Teuchos::ScalarTraits<double> ST;
 
 public:
+
+  //! Default constructor
+  UniformDistribution();
  
   //! Constructor
   UniformDistribution( const double min_independent_value, 
 		       const double max_independent_value,
 		       const double dependent_value );
+
+  //! Copy constructor
+  UniformDistribution( const UniformDistribution& dist_instance );
+
+  //! Assignment operator
+  UniformDistribution& operator=( const UniformDistribution& dist_instance );
   
   //! Destructor
   ~UniformDistribution()
@@ -63,6 +74,15 @@ public:
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
 
+  //! Method for placing the object in an output stream
+  void toStream( std::ostream& os ) const;
+
+  //! Method for initializing the object from an input stream
+  void fromStream( std::istream& is );
+
+  //! Method for testing if two objects are equivalent
+  bool isEqual( const UniformDistribution& other ) const;
+
 private:
 
   // The distribution type
@@ -81,7 +101,31 @@ private:
   double d_pdf_value;
 };
 
-} // end Utility namespace 
+} // end Utility namespace
+
+namespace Teuchos{
+
+/*! Type name traits specialization for the Utility::UniformDistribution
+ *
+ * \details The name function will set the type name that must be used in
+ * xml files.
+ */
+template<>
+class TypeNameTraits<Utility::UniformDistribution>
+{
+public:
+  static std::string name()
+  {
+    return "Uniform Distribution";
+  }
+  static std::string concreteName( 
+			     const Utility::UniformDistribution& instance )
+  {
+    return name();
+  }
+};
+
+} // end Teuchos namespace 
 
 #endif // end UTILITY_UNIFORM_DISTRIBUTION_HPP
 

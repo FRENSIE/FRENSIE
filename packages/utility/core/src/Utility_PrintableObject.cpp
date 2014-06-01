@@ -12,8 +12,10 @@
 namespace Utility{
 
 // Constructor
-PrintableObject::PrintableObject( const std::string &label )
-  : d_label( label )
+PrintableObject::PrintableObject( const std::string &label,
+				  const bool print_label_on_output  )
+  : d_label( label ),
+    d_print_label_on_output( print_label_on_output )
 { /* ... */ }
 
 // Print method for placing the printable object in an output stream.
@@ -22,16 +24,16 @@ void PrintableObject::print( std::ostream &os ) const
   os << d_label << std::endl;
 }
 
-// Set the printable object label
-void PrintableObject::setLabel( const std::string& label )
-{ 
-  d_label = label; 
-}
-
 // Get the printable object label
 std::string PrintableObject::getLabel() const
 {
   return d_label;
+}
+
+// Check if the label will be printed
+bool PrintableObject::isLabelPrinted() const
+{
+  return d_print_label_on_output;
 }
 
 } // end Utility namespace

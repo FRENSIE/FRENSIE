@@ -6,32 +6,54 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <stdexcept>
+
 // FRENSIE Includes
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_DataProcessor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Utility{
 
+// Default Constructor
+DiscreteDistribution::DiscreteDistribution()
+{ /* ... */ }
+
 // Constructor
 DiscreteDistribution::DiscreteDistribution( 
-			         const Teuchos::Array<double>& discrete_values,
-				 const Teuchos::Array<double>& probabilities )
-  : d_distribution( discrete_values.size() )
+			      const Teuchos::Array<double>& independent_values,
+			      const Teuchos::Array<double>& dependent_values )
+  : d_distribution( independent_values.size() )
 {
-  // Make sure that every value has a probability assigned
-  testPrecondition( discrete_values.size() == probabilities.size() );
+  initializeDistribution( independent_values, dependent_values );
+}
 
-  // Assign the raw distribution data
-  for( unsigned i = 0; i < discrete_values.size(); ++i )
+// Copy constructor
+DiscreteDistribution::DiscreteDistribution( 
+			    const DiscreteDistribution& dist_instance )
+  : d_distribution( dist_instance.d_distribution ),
+    d_norm_constant( dist_instance.d_norm_constant )
+{
+  // Make sure that the distribution is valid
+  testPrecondition( d_distribution.size() > 0 );
+}
+
+// Assignment operator
+DiscreteDistribution& DiscreteDistribution::operator=( 
+				    const DiscreteDistribution& dist_instance )
+{
+  // Make sure that the distribution is valid
+  testPrecondition( dist_instance.d_distribution.size() > 0 );
+  
+  if( this != &dist_instance )
   {
-    d_distribution[i].first = discrete_values[i];
-
-    d_distribution[i].second = probabilities[i];
+    d_distribution = dist_instance.d_distribution;
+    d_norm_constant = dist_instance.d_norm_constant;
   }
 
-  // Create a CDF from the raw distribution data
-  DataProcessor::calculateDiscreteCDF<SECOND,SECOND>( d_distribution );
+  return *this;
 }
 
 // Evaluate the distribution
@@ -126,6 +148,127 @@ double DiscreteDistribution::getLowerBoundOfIndepVar() const
 OneDDistributionType DiscreteDistribution::getDistributionType() const
 {
   return DiscreteDistribution::distribution_type;
+}
+
+// Method for placing the object in an output stream
+void DiscreteDistribution::toStream( std::ostream& os ) const
+{
+  Teuchos::Array<double> independent_values( d_distribution.size() );
+  Teuchos::Array<double> dependent_values( d_distribution.size() );
+
+  independent_values[0] = d_distribution[0].first;
+  dependent_values[0] = d_distribution[0].second*d_norm_constant;
+
+  for( unsigned i = 1u; i < d_distribution.size(); ++i )
+  {
+    independent_values[i] = d_distribution[i].first;
+    dependent_values[i] = 
+      (d_distribution[i].second-d_distribution[i-1].second)*d_norm_constant;
+  }
+
+  os << "{" << independent_values << "," << dependent_values << "}";
+}
+
+// Method for initializing the object from an input stream
+void DiscreteDistribution::fromStream( std::istream& is )
+{
+  // Read the initial '{'
+  std::string start_bracket;
+  std::getline( is, start_bracket, '{' );
+  start_bracket = Teuchos::Utils::trimWhiteSpace( start_bracket );
+  
+  TEST_FOR_EXCEPTION( start_bracket.size() != 0, 
+		      InvalidDistributionStringRepresentation, 
+		      "Error: the input stream is not a valid discrete "
+		      "distribution representation!" );
+
+  std::string independent_values_rep;
+  std::getline( is, independent_values_rep, '}' );
+  independent_values_rep += "}";
+  
+  Teuchos::Array<double> independent_values;
+  try{
+    independent_values = 
+      Teuchos::fromStringToArray<double>( independent_values_rep );
+  }
+  catch( Teuchos::InvalidArrayStringRepresentation& error )
+  {
+    std::string message( "Error: the discrete distribution cannot be "
+			 "constructed because the independent values are "
+			 "not valid (see details below)!\n" );
+    message += error.what();
+    
+    throw InvalidDistributionStringRepresentation( message );
+  }
+  
+  // Read the ","
+  std::string separator;
+  std::getline( is, separator, ',' );
+  
+  std::string dependent_values_rep;
+  std::getline( is, dependent_values_rep, '}' );
+  dependent_values_rep += "}";
+  
+  Teuchos::Array<double> dependent_values;
+  try{
+    dependent_values = 
+      Teuchos::fromStringToArray<double>( dependent_values_rep );
+  }
+  catch( Teuchos::InvalidArrayStringRepresentation& error )
+  {
+    std::string message( "Error: the discrete distribution cannot be "
+			 "constructed because the dependent values are "
+			 "not valid (see details below)!\n" );
+    message += error.what();
+    
+    throw InvalidDistributionStringRepresentation( message );
+  }
+
+  TEST_FOR_EXCEPTION( independent_values.size() != dependent_values.size(),
+		      InvalidDistributionStringRepresentation, 
+		      "Error: the discrete distribution "
+		      "{" << independent_values_rep << "},{"
+		      << dependent_values_rep << "} "
+		      "cannot be constructed because the number of "
+		      "independent values does not match the number of "
+		      " dependent values!" );
+  
+  initializeDistribution( independent_values, dependent_values );
+}
+
+// Method for testing if two objects are equivalent
+bool DiscreteDistribution::isEqual( const DiscreteDistribution& other ) const
+{
+  return d_distribution == other.d_distribution && 
+    d_norm_constant == other.d_norm_constant;
+}
+
+// Initialize the distribution
+void DiscreteDistribution::initializeDistribution( 
+			      const Teuchos::Array<double>& independent_values,
+			      const Teuchos::Array<double>& dependent_values )
+{
+  // Make sure that every value has a probability assigned
+  testPrecondition( independent_values.size() == dependent_values.size() );
+  
+  // resize the distribution array
+  d_distribution.resize( independent_values.size() );
+  
+  // reset the normalization constant
+  d_norm_constant = 0.0;
+  
+  // Assign the raw distribution data
+  for( unsigned i = 0; i < independent_values.size(); ++i )
+  {
+    d_distribution[i].first = independent_values[i];
+
+    d_distribution[i].second = dependent_values[i];
+
+    d_norm_constant += dependent_values[i];
+  }
+
+  // Create a CDF from the raw distribution data
+  DataProcessor::calculateDiscreteCDF<SECOND,SECOND>( d_distribution );
 }
 
 } // end Utility namespace
