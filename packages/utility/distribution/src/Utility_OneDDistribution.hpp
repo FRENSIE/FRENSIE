@@ -53,6 +53,17 @@ public:
   virtual OneDDistributionType getDistributionType() const = 0;
 };
 
+//! The invalid distribution string name error
+class InvalidDistributionStringName : public std::logic_error
+{
+
+public:
+
+  InvalidDistributionStringName( const std::string& what_arg )
+    : std::logic_error( what_arg )
+  { /* ... */ }
+};
+
 //! The invalid distribution string representation error
 class InvalidDistributionStringRepresentation : public std::logic_error
 {
