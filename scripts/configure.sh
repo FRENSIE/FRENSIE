@@ -9,7 +9,7 @@ MOAB_PREFIX_PATH=$HOME/Software/MOAB
 HDF5_PREFIX_PATH=$HOME/Software/HDF5
 BOOST_PREFIX_PATH=$HOME/Software/boost
 SPRNG_PREFIX_PATH=$HOME/Software/sprng
-FACEMC_PATH=$HOME/research/transport/FACEMC/
+FACEMC_PATH=$HOME/research/transport/FRENSIE/
 
 ##---------------------------------------------------------------------------##
 ## The Teuchos_TwoDArray class has a bug that needs to be fixed. This patch
@@ -28,7 +28,7 @@ cmake \
     -D CMAKE_BUILD_TYPE:STRING=DEBUG \
     -D CMAKE_VERBOSE_CONFIGURE:BOOL=ON \
     -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON \
-    -D FACEMC_ENABLE_DBC:BOOL=ON \
+    -D FRENSIE_ENABLE_DBC:BOOL=ON \
     -D TRILINOS_PREFIX:PATH=$TRILINOS_PREFIX_PATH \
     -D MOAB_PREFIX:PATH=$MOAB_PREFIX_PATH \
     -D HDF5_PREFIX:PATH=$HDF5_PREFIX_PATH \
