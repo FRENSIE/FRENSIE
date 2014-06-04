@@ -57,6 +57,8 @@ public:
   { /* ... */ }
 };
 
+} // end Utility namespace
+
 #endif // end UTILITY_DIRECTIONAL_DISTRIBUTION_FACTORY_HPP
 
 //---------------------------------------------------------------------------//

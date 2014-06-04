@@ -6,9 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Std Includes
-#include <map>
-
 // FRENSIE Includes
 #include "Utility_SpatialDistributionFactory.hpp"
 #include "Utility_CartesianSpatialDistribution.hpp"

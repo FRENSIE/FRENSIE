@@ -81,3 +81,8 @@ ADD_EXECUTABLE(tstDirectionalDistribution
 TARGET_LINK_LIBRARIES(tstDirectionalDistribution utility_core utility_prng utility_dist)
 ADD_TEST(DirectionalDistribution_test tstDirectionalDistribution)
 
+ADD_EXECUTABLE(tstDirectionalDistributionFactory 
+  tstDirectionalDistributionFactory.cpp)
+TARGET_LINK_LIBRARIES(tstDirectionalDistributionFactory utility_core utility_prng utility_dist)
+ADD_TEST(DirectionalDistributionFactory_test tstDirectionalDistributionFactory --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_directional_distributions.xml")
+

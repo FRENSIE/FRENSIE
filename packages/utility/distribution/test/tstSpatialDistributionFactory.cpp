@@ -2,7 +2,7 @@
 //!
 //! \file   tstSpatialDistributionFactory.cpp
 //! \author Alex Robinson
-//! \brief  1D distribution factory unit tests
+//! \brief  Spatial distribution factory unit tests
 //!
 //---------------------------------------------------------------------------//
 
