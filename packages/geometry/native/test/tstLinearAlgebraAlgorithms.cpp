@@ -125,7 +125,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( LinearAlgebra,
 
   TEST_COMPARE_FLOATING_ARRAYS( x(), 
 				ref_x(), 
-				Teuchos::ScalarTraits<ScalarType>::prec() );
+				2*Teuchos::ScalarTraits<ScalarType>::prec() );
 }
 
 UNIT_TEST_INSTANTIATION( LinearAlgebra, solveSystem );
