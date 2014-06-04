@@ -73,7 +73,7 @@ ADD_TEST(SphericalSpatialDistribution_test tstSphericalSpatialDistribution)
 ADD_EXECUTABLE(tstSpatialDistributionFactory
   tstSpatialDistributionFactory.cpp)
 TARGET_LINK_LIBRARIES(tstSpatialDistributionFactory utility_core utility_prng utility_dist)
-ADD_TEST(SpatialDistributionFactory_test tstSpatialDistributionFactory)
+ADD_TEST(SpatialDistributionFactory_test tstSpatialDistributionFactory --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_spatial_distributions.xml")
 
 ADD_EXECUTABLE(tstDirectionalDistribution 
   tstDirectionalDistribution.cpp 

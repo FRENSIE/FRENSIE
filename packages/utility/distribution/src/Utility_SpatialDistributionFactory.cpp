@@ -160,29 +160,11 @@ void SpatialDistributionFactory::validateDistributionRep(
 void SpatialDistributionFactory::validateAxisName( 
 						 const std::string& axis_name )
 {
-  TEST_FOR_EXCEPTION( axis_name.compare( "X" ) != 0 &&
-		      axis_name.compare( "Y" ) != 0 &&
-		      axis_name.compare( "Z" ) != 0,
+  TEST_FOR_EXCEPTION( !isValidAxisName( axis_name ),
 		      InvalidSpatialDistributionRepresentation,
 		      "Error: An invalid axis was specified (" 
-		      << axis_name << ")!" );
-}
-
-// Convert the axis name to an Axis enum
-Axis SpatialDistributionFactory::convertAxisNameToAxisEnum(
-						 const std::string& axis_name )
-{
-  switch( axis_name.c_str()[0] )
-  {
-  case 'X':
-    return X_AXIS;
-  case 'Y':
-    return Y_AXIS;
-  case 'Z':
-    return Z_AXIS;
-  default:
-    return UNDEFINED_AXIS;
-  }
+		      << axis_name << "). Only 'X', 'Y', and 'Z' are valid "
+		      " names!" );
 }
 
 // Create a cartesian distribution

@@ -9,6 +9,9 @@
 #ifndef UTILITY_SPATIAL_DISTRIBUTION_FACTORY_HPP
 #define UTILITY_SPATIAL_DISTRIBUTION_FACTORY_HPP
 
+// Std Lib Includes
+#include <stdexcept>
+
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_ParameterList.hpp>
@@ -38,9 +41,6 @@ private:
 
   // Validate the axis name
   static void validateAxisName( const std::string& axis_name );
-
-  // Convert the axis name to an Axis enum
-  static Axis convertAxisNameToAxisEnum( const std::string& axis_name );
 
   // Create a cartesian distribution
   static Teuchos::RCP<Utility::SpatialDistribution> 

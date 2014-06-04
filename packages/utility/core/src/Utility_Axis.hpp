@@ -2,12 +2,15 @@
 //!
 //! \file   Utility_Axis.hpp
 //! \author Alex Robinson
-//! \brief  Axis and Axis direction enumeration.
+//! \brief  Axis enumerations and helper declarations.
 //!
 //---------------------------------------------------------------------------//
 
 #ifndef UTILITY_AXIS_HPP
 #define UTILITY_AXIS_HPP
+
+// Std Lib Includes
+#include <string>
 
 namespace Utility{
 
@@ -24,6 +27,12 @@ enum AxisVectorDirection{
   POSITIVE_DIRECTION,
   NEGATIVE_DIRECTION
 };
+
+//! Test if the axis name is valid
+bool isValidAxisName( const std::string& axis_name );
+
+//! Convert the axis name to an Axis enum
+Axis convertAxisNameToAxisEnum( const std::string& axis_name );
 
 } // end Utility namespace
 
