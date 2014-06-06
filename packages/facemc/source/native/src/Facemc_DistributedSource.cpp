@@ -25,6 +25,7 @@ namespace Facemc{
  * estimators unbiased.
  */
 DistributedSource::DistributedSource( 
+	const unsigned id,
 	const Teuchos::RCP<Utility::SpatialDistribution>& spatial_distribution,
         const Teuchos::RCP<Utility::DirectionalDistribution>& 
 	directional_distribution,
@@ -34,7 +35,8 @@ DistributedSource::DistributedSource(
 	time_distribution,
 	const ParticleType particle_type,
 	getLocationFunction get_particle_location_func )
-  : d_spatial_distribution( spatial_distribution ),
+  : d_id( id ),
+    d_spatial_distribution( spatial_distribution ),
     d_spatial_importance_distribution( NULL ),
     d_directional_distribution( directional_distribution ),
     d_directional_importance_distribution( NULL ),
@@ -156,6 +158,12 @@ void DistributedSource::sampleParticleState( ParticleBank& bank )
 double DistributedSource::getSamplingEfficiency() const
 {
   return static_cast<double>( d_number_of_samples )/d_number_of_trials;
+}
+
+// Get the source id
+unsigned DistributedSource::getId() const
+{
+  return d_id;
 }
 
 // Sample the particle position

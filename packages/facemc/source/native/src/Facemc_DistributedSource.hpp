@@ -42,6 +42,7 @@ public:
   
   //! Constructor
   DistributedSource( 
+	const unsigned id,
 	const Teuchos::RCP<Utility::SpatialDistribution>& spatial_distribution,
         const Teuchos::RCP<Utility::DirectionalDistribution>& 
 	directional_distribution,
@@ -83,6 +84,9 @@ public:
   //! Get the sampling efficiency from the source distribution
   double getSamplingEfficiency() const;
 
+  //! Get the source id
+  unsigned getId() const;
+
 private:
 
   // Sample the particle position
@@ -121,6 +125,9 @@ private:
 
   // The true time distribution of the source
   Teuchos::RCP<Utility::OneDDistribution> d_time_importance_distribution;
+
+  // The source id
+  unsigned d_id;
 
   // The type of particle emitted
   ParticleType d_particle_type;

@@ -184,6 +184,8 @@ SpatialDistributionFactory::createCartesianDistribution(
   
   Teuchos::RCP<OneDDistribution> z_distribution = 
     OneDDistributionEntryConverterDB::convertEntry( entry );
+
+  distribution_rep.unused( std::cout );
   
   return Teuchos::RCP<SpatialDistribution>( 
 			  new CartesianSpatialDistribution( x_distribution,
@@ -228,6 +230,8 @@ SpatialDistributionFactory::createCylindricalDistribution(
   
   Axis axis = convertAxisNameToAxisEnum( axis_name );
   
+  distribution_rep.unused( std::cout );
+
   return Teuchos::RCP<SpatialDistribution>( 
 			new CylindricalSpatialDistribution( r_distribution,
 						            theta_distribution,
@@ -275,6 +279,8 @@ SpatialDistributionFactory::createSphericalDistribution(
   
   Axis axis = convertAxisNameToAxisEnum( axis_name );
   
+  distribution_rep.unused( std::cout );
+
   return Teuchos::RCP<SpatialDistribution>( 
 			  new SphericalSpatialDistribution( r_distribution,
 							    theta_distribution,
