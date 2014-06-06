@@ -23,6 +23,7 @@
     
     <Parameter name="Time Distribution" type="Delta Distribution"
 	       value="{0}"/>
+    <Parameter name="Weight" type="double" value="0.2"/>
   </ParameterList>
 
   <ParameterList name="Photon Source">
@@ -48,6 +49,7 @@
     
     <Parameter name="Time Distribution" type="Delta Distribution"
 	       value="{0}"/>
+    <Parameter name="Weight" type="double" value="0.8"/>
   </ParameterList>
   
 </ParameterList>

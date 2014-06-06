@@ -17,7 +17,7 @@
 #include <Teuchos_ParameterList.hpp>
 
 // FRENSIE Includes
-#include "Utility_ParticleSource.hpp"
+#include "Facemc_ParticleSource.hpp"
 #include "Facemc_DistributedSource.hpp"
 
 namespace Facemc{
@@ -39,19 +39,28 @@ public:
 private:
 
   // Validate a source respresentation
-  static void validateSourceRep( const Teuchos::ParameterList& source_rep );
+  static void validateSourceRep( const Teuchos::ParameterList& source_rep,
+				 const unsigned num_sources = 1u );
+
+  // Validate the particle type name
+  static void validateParticleTypeName( const std::string& particle_type_name);
 
   // Create a distributed source
-  static Teuchos::RCP<ParticleSource>
-  createDistributedSource( const Teuchos::ParameterList& source_rep );
+  static double 
+  createDistributedSource( const Teuchos::ParameterList& source_rep,
+			   Teuchos::RCP<ParticleSource>& source,
+			   const unsigned num_sources = 1u );
 
   // Create a state source
-  static Teuchos::RCP<ParticleSource>
-  createStateSource( const Teuchos::ParameterList& source_rep );
+  static double
+  createStateSource( const Teuchos::ParameterList& source_rep,
+		     Teuchos::RCP<ParticleSource>& source,
+		     const unsigned num_sources = 1u );
 
   // Create a compound source
-  static Teuchos::RCP<ParticleSource>
-  createCompoundSource( const Teuchos::ParameterList& compound_source );
+  static void
+  createCompoundSource( const Teuchos::ParameterList& compound_source,
+			Teuchos::RCP<ParticleSource>& source );
 
   // The getLocationFunction pointer
   static DistributedSource::getLocationFunction get_location_function_ptr;

@@ -2,7 +2,7 @@
 //!
 //! \file   Facemc_ParticleType.hpp
 //! \author Alex Robinson
-//! \brief  Particle type enumeration
+//! \brief  Particle type enumeration and helper function declarations
 //!
 //---------------------------------------------------------------------------//
 
@@ -21,8 +21,16 @@ enum ParticleType{
   PHOTON = 0,
   NEUTRON,
   ADJOINT_PHOTON,
-  ADJOINT_NEUTRON
+  ADJOINT_NEUTRON,
+  UNKNOWN_PARTICLE
 };
+
+//! Test if the particle type name is valid
+bool isValidParticleTypeName( const std::string& particle_type_name );
+
+//! Convert the particle type name to a ParticleType enum
+ParticleType convertParticleTypeNameToParticleTypeEnum( 
+				       const std::string& particle_type_name );
 
 } // end Facemc namespace
 
