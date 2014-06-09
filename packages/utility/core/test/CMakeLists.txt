@@ -63,3 +63,16 @@ ADD_EXECUTABLE(tstDataProcessor
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstDataProcessor utility_core)
 ADD_TEST(DataProcessor_test tstDataProcessor)
+
+ADD_EXECUTABLE(tstFortranStringHelpers 
+  tstFortranStringHelpers.cpp 
+  string_conversion.F90 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstFortranStringHelpers utility_core)
+ADD_TEST(FortranStringHelpers_test tstFortranStringHelpers)
+
+ADD_EXECUTABLE(tstFortranFileHelpers 
+  tstFortranFileHelpers.cpp )
+TARGET_LINK_LIBRARIES(tstFortranFileHelpers utility_core)
+ADD_TEST(FortranFileHelpers_test tstFortranFileHelpers
+--test_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/check_file.txt")

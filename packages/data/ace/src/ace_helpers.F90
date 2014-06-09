@@ -9,6 +9,7 @@
 module ace_table_helpers
 
   use iso_c_binding
+!  use Utility_FortranStringHelpers
 
   implicit none
 
@@ -72,6 +73,7 @@ module ace_table_helpers
     integer(c_int) function ace_library_exists( file_name, file_name_size ) &
          bind(c, name='aceLibraryExists')
       use iso_c_binding
+!      use Utility_FortranStringHelpers
 
       integer(c_int), intent(in), value :: file_name_size
       character(kind=c_char,len=1), dimension(file_name_size), intent(in) :: &
@@ -100,6 +102,7 @@ module ace_table_helpers
     integer(c_int) function ace_library_is_readable( file_name, &
          file_name_size ) bind(c, name='aceLibraryIsReadable')
       use iso_c_binding
+!      use Utility_FortranStringHelpers
 
       integer(c_int), intent(in), value :: file_name_size
       character(kind=c_char,len=1), dimension(file_name_size), intent(in) :: &
@@ -150,6 +153,7 @@ module ace_table_helpers
     subroutine open_ace_library( file_name, file_name_size, file_id ) &
          bind(c, name='openAceLibrary')
       use iso_c_binding
+!      use Utility_FortranStringHelpers
 
       integer(c_int), intent(in), value :: file_name_size
       character(kind=c_char,len=1), dimension(file_name_size), intent(in) :: &
@@ -211,6 +215,7 @@ module ace_table_helpers
          atomic_weight_ratio, temperature, table_date ) &
          bind(c, name='readAceTableHeaderLine1')
       use iso_c_binding
+!      use Utility_FortranStringHelpers
 
       integer(c_int), intent(in), value :: file_id
       character(kind=c_char,len=1), dimension(10), intent(inout) :: table_name
@@ -235,6 +240,7 @@ module ace_table_helpers
     subroutine read_ace_table_header_line_2( file_id, comment, material_id ) &
          bind(c, name='readAceTableHeaderLine2')
       use iso_c_binding
+!      use Utility_FortranStringHelpers
 
       integer(c_int), intent(in), value :: file_id
       character(kind=c_char,len=1), dimension(70), intent(inout) :: comment
