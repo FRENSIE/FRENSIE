@@ -136,10 +136,61 @@ void CylindricalSpatialDistribution::sample( double sampled_point[3] ) const
   sampled_point[2] += d_center_z_position;
 }
 
+// Return the distribution type
+SpatialDistributionType 
+CylindricalSpatialDistribution::getDistributionType() const
+{
+  return CYLINDRICAL_SPATIAL_DISTRIBUTION;
+}
+
 // Check if the distribution is uniform
 bool CylindricalSpatialDistribution::isUniform() const
 {
   return d_uniform;
+}
+
+// Check if the distribution has the same bounds
+bool CylindricalSpatialDistribution::hasSameBounds( 
+				const SpatialDistribution& distribution ) const
+{
+  if( this->getDistributionType() == distribution.getDistributionType() )
+  {
+    const CylindricalSpatialDistribution& true_dist =
+      dynamic_cast<const CylindricalSpatialDistribution&>( distribution );
+
+    if( d_axis == true_dist.d_axis )
+    {
+      return 
+	Policy::relError( d_center_x_position,
+			  true_dist.d_center_x_position ) < 1e-9 &&
+	Policy::relError( d_center_y_position,
+			  true_dist.d_center_y_position ) < 1e-9 &&
+	Policy::relError( d_center_z_position,
+			  true_dist.d_center_z_position ) < 1e-9 &&
+	Policy::relError(d_r_distribution->getLowerBoundOfIndepVar(),
+			 true_dist.d_r_distribution->getLowerBoundOfIndepVar())
+	< 1e-9 &&
+	Policy::relError(d_r_distribution->getUpperBoundOfIndepVar(), 
+			 true_dist.d_r_distribution->getUpperBoundOfIndepVar())
+	< 1e-9 &&
+	Policy::relError(d_theta_distribution->getLowerBoundOfIndepVar(),
+		     true_dist.d_theta_distribution->getLowerBoundOfIndepVar())
+	< 1e-9 &&
+	Policy::relError(d_theta_distribution->getUpperBoundOfIndepVar(),
+		     true_dist.d_theta_distribution->getUpperBoundOfIndepVar())
+	< 1e-9 &&
+	Policy::relError(d_axis_distribution->getLowerBoundOfIndepVar(),
+		      true_dist.d_axis_distribution->getLowerBoundOfIndepVar())
+	< 1e-9 &&
+	Policy::relError(d_axis_distribution->getUpperBoundOfIndepVar(),
+		      true_dist.d_axis_distribution->getUpperBoundOfIndepVar())
+	< 1e-9;
+    }
+    else
+      return false;
+  }
+  else
+    return false;
 }
 
 // Convert a cartesian coordinate to a cylindrical coordinate

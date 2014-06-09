@@ -38,7 +38,7 @@ CompoundSource::CompoundSource(
   // Normalize the CDF
   for( unsigned i = 0; i < sources.size(); ++i )
     d_sources[i].second /= total_weight;
-
+  
   // Make sure that the CDF has been normalized correctly
   testPostcondition( d_sources.back().second == 1.0 );
 }

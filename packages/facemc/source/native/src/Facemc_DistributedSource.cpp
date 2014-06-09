@@ -297,18 +297,18 @@ void DistributedSource::sampleParticleEnergy( ParticleState& particle )
   else
   {
     energy = d_energy_importance_distribution->sample();
-
+    
     double energy_weight_numerator = 
       d_energy_distribution->evaluatePDF( energy );
-
+    
     double energy_weight_denominator = 
       d_energy_importance_distribution->evaluatePDF( energy );
-
+    
     // If both evaluate to 0, a weight of 1 is desired but nan will result
     if( energy_weight_numerator > 0.0 || energy_weight_denominator > 0.0 )
       energy_weight = energy_weight_numerator/energy_weight_denominator;
   }
-
+  
   // Make sure the weight is valid
   testPostcondition( !ST::isnaninf( energy_weight ) );
   testPostcondition( energy_weight > 0.0 );

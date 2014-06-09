@@ -84,10 +84,50 @@ void CartesianSpatialDistribution::sample( double sampled_point[3] ) const
   sampled_point[2] = d_z_distribution->sample();
 }
 
+// Return the distribution type
+SpatialDistributionType 
+CartesianSpatialDistribution::getDistributionType() const
+{
+  return CARTESIAN_SPATIAL_DISTRIBUTION;
+}
+
 // Check if the distribution is uniform
 bool CartesianSpatialDistribution::isUniform() const
 {
   return d_uniform;
+}
+
+// Check if the distribution has the same bounds
+bool CartesianSpatialDistribution::hasSameBounds( 
+			        const SpatialDistribution& distribution ) const
+{
+  if( this->getDistributionType() == distribution.getDistributionType() )
+  {
+    const CartesianSpatialDistribution& true_dist = 
+      dynamic_cast<const CartesianSpatialDistribution&>( distribution );
+    
+    return 
+      Policy::relError(d_x_distribution->getLowerBoundOfIndepVar(),
+		       true_dist.d_x_distribution->getLowerBoundOfIndepVar()) <
+      1e-9 &&
+      Policy::relError(d_x_distribution->getUpperBoundOfIndepVar(),
+		       true_dist.d_x_distribution->getUpperBoundOfIndepVar()) <
+      1e-9 &&
+      Policy::relError(d_y_distribution->getLowerBoundOfIndepVar(),
+		       true_dist.d_y_distribution->getLowerBoundOfIndepVar()) <
+      1e-9 &&
+      Policy::relError(d_y_distribution->getUpperBoundOfIndepVar(),
+		       true_dist.d_y_distribution->getUpperBoundOfIndepVar()) <
+      1e-9 &&
+      Policy::relError(d_z_distribution->getLowerBoundOfIndepVar(),
+		       true_dist.d_z_distribution->getLowerBoundOfIndepVar()) <
+      1e-9 &&
+      Policy::relError(d_z_distribution->getUpperBoundOfIndepVar(),
+		       true_dist.d_z_distribution->getUpperBoundOfIndepVar()) <
+      1e-9;
+  }
+  else
+    return false;
 }
 
 } // end Utility namespace

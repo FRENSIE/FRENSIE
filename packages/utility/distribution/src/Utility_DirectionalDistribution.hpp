@@ -16,6 +16,7 @@
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_Axis.hpp"
+#include "Utility_ComparePolicy.hpp"
 
 namespace Utility{
 
@@ -49,6 +50,9 @@ public:
   //! Return a random (cartesian) sample from the distribution (u, v, w)
   void sample( double sampled_direction[3] ) const;
 
+  //! Check if the distribution has the same bounds
+  bool hasSameBounds( const DirectionalDistribution& distribution ) const;
+
 protected:
   
   //! Convert a cartesian coordinate to a spherical coordinate
@@ -66,6 +70,30 @@ private:
   // The spherical axis (direction of the mu distribution)
   Axis d_axis;
 };
+
+// Check if the distribution has the same bounds
+inline bool DirectionalDistribution::hasSameBounds( 
+			    const DirectionalDistribution& distribution ) const
+{
+  if( d_axis == distribution.d_axis )
+  {
+    return 
+      Policy::relError(d_theta_distribution->getLowerBoundOfIndepVar(),
+		  distribution.d_theta_distribution->getLowerBoundOfIndepVar())
+      < 1e-9 &&
+      Policy::relError(d_theta_distribution->getUpperBoundOfIndepVar(),
+		  distribution.d_theta_distribution->getUpperBoundOfIndepVar())
+      < 1e-9 &&
+      Policy::relError(d_mu_distribution->getLowerBoundOfIndepVar(),
+		     distribution.d_mu_distribution->getLowerBoundOfIndepVar())
+      < 1e-9 &&
+      Policy::relError(d_mu_distribution->getUpperBoundOfIndepVar(),
+		     distribution.d_mu_distribution->getUpperBoundOfIndepVar())
+      < 1e-9;
+  }
+  else
+    return false;
+}
 
 } // end Utility namespace
 

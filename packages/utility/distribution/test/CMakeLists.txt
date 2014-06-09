@@ -52,6 +52,12 @@ ADD_EXECUTABLE(tstPowerDistribution
 TARGET_LINK_LIBRARIES(tstPowerDistribution utility_core utility_prng utility_dist)
 ADD_TEST(PowerDistribution_test tstPowerDistribution)
 
+ADD_EXECUTABLE(tstOneDDistribution
+  tstOneDDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstOneDDistribution utility_core utility_prng utility_dist)
+ADD_TEST(OneDDistribution_test tstOneDDistribution )
+
 ADD_EXECUTABLE(tstCartesianSpatialDistribution 
   tstCartesianSpatialDistribution.cpp 
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -69,6 +75,12 @@ ADD_EXECUTABLE(tstSphericalSpatialDistribution
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstSphericalSpatialDistribution utility_core utility_prng utility_dist)
 ADD_TEST(SphericalSpatialDistribution_test tstSphericalSpatialDistribution)
+
+ADD_EXECUTABLE(tstSpatialDistribution 
+  tstSpatialDistribution.cpp 
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSpatialDistribution utility_core utility_prng utility_dist)
+ADD_TEST(SpatialDistribution_test tstSpatialDistribution)
 
 ADD_EXECUTABLE(tstSpatialDistributionFactory
   tstSpatialDistributionFactory.cpp)

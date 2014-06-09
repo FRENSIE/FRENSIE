@@ -96,6 +96,7 @@ void initializeSource( const bool set_importance_functions = false,
 
   // Create the distributed source
   source.reset( new Facemc::DistributedSource( 
+     0u,
      spatial_distribution,
      directional_distribution,
      energy_distribution,

@@ -97,8 +97,6 @@ TEUCHOS_UNIT_TEST( SphericalSpatialDistribution, evaluate )
 // Check that the PDF can be evaluated
 TEUCHOS_UNIT_TEST( SphericalSpatialDistribution, evaluatePDF )
 {
-  initializeDistribution( spatial_distribution );
-
   double pdf_value = 3.0/(Utility::PhysicalConstants::pi*4);
 
   double cartesian_point[3] = {1.0, 1.0, 1.0};
@@ -141,8 +139,6 @@ TEUCHOS_UNIT_TEST( SphericalSpatialDistribution, evaluatePDF )
 // Check that the distribution can be sampled from
 TEUCHOS_UNIT_TEST( SphericalSpatialDistribution, sample )
 {
-  initializeDistribution( spatial_distribution );
-
   std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
@@ -177,11 +173,17 @@ TEUCHOS_UNIT_TEST( SphericalSpatialDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the correct distribution type is returned
+TEUCHOS_UNIT_TEST( SphericalSpatialDistribution, getDistributionType )
+{
+  TEST_EQUALITY_CONST( spatial_distribution->getDistributionType(),
+		       Utility::SPHERICAL_SPATIAL_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
 // Check that distribution can be tested for uniformity
 TEUCHOS_UNIT_TEST( SphericalSpatialDistribution, isUniform )
 {
-  initializeDistribution( spatial_distribution );
-
   TEST_ASSERT( spatial_distribution->isUniform() );
 }
 

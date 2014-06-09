@@ -35,6 +35,11 @@ class ModuleInterface<moab::DagMC>
 {
 
 public:
+
+  //! The external surface id class (used within the geometry handler)
+  typedef int ExternalSurfaceId;
+  //! The external cell id class (used within the geometry handler )
+  typedef int ExternalCellId;
   
   //! The external surface handle class (used within the geometry handler)
   typedef moab::EntityHandle ExternalSurfaceHandle;
@@ -99,13 +104,27 @@ public:
   static double getCellSurfaceArea( const InternalSurfaceHandle surface,
 				    const InternalCellHandle cell );
 
+  //! Check that an external surface handle exists
+  static bool doesSurfaceExist( const ExternalSurfaceId surface );
+
+  //! Check that an external cell handle exists
+  static bool doesCellExist( const ExternalCellId cell );
+
   //! Get the internal surf. handle corresponding to the external surf. handle
   static InternalSurfaceHandle getInternalSurfaceHandle(
 				const ExternalSurfaceHandle surface_external );
 
+  //! Get the internal surf. handle corresponding to the external surf. id
+  static InternalSurfaceHandle getInternalSurfaceHandle(
+					  const ExternalSurfaceId surface_id );
+
   //! Get the internal cell handle corresponding to the external cell handle
   static InternalCellHandle getInternalCellHandle( 
 				      const ExternalCellHandle cell_external );
+
+  //! Get the internal cell handle corresponding to the external cell id
+  static InternalCellHandle getInternalCellHandle(
+						const ExternalCellId cell_id );
 
   //! Get the external surf. handle corresponding to the internal surf. handle
   static ExternalSurfaceHandle getExternalSurfaceHandle(
@@ -270,6 +289,28 @@ inline double ModuleInterface<moab::DagMC>::getCellSurfaceArea(
   return area;
 }
 
+// Check that an external surface handle exists
+inline bool ModuleInterface<moab::DagMC>::doesSurfaceExist(
+					      const ExternalSurfaceId surface )
+{
+  if( ModuleInterface<moab::DagMC>::dagmc_instance->entity_by_id( 2, surface )
+      != 0 )
+    return true;
+  else
+    return false;
+}
+
+// Check that an external cell handle exists
+inline bool ModuleInterface<moab::DagMC>::doesCellExist(
+						    const ExternalCellId cell )
+{
+  if( ModuleInterface<moab::DagMC>::dagmc_instance->entity_by_id( 3, cell )
+      != 0 )
+    return true;
+  else
+    return false;
+}
+
 // Get the internal surf. handle corresponding to the external surf. handle
 inline ModuleInterface<moab::DagMC>::InternalSurfaceHandle 
 ModuleInterface<moab::DagMC>::getInternalSurfaceHandle(
@@ -278,6 +319,16 @@ ModuleInterface<moab::DagMC>::getInternalSurfaceHandle(
   return static_cast<InternalSurfaceHandle>( 
 	   ModuleInterface<moab::DagMC>::dagmc_instance->get_entity_id(
 							  surface_external ) );
+}
+
+// Get the internal surf. handle corresponding to the external surf. handle
+inline ModuleInterface<moab::DagMC>::InternalSurfaceHandle 
+ModuleInterface<moab::DagMC>::getInternalSurfaceHandle(
+				           const ExternalSurfaceId surface_id )
+{
+  testPrecondition( doesSurfaceExist( surface_id ) );
+  
+  return static_cast<InternalSurfaceHandle>( surface_id );
 }
 
 // Get the internal cell handle corresponding to the external cell handle
@@ -290,25 +341,37 @@ ModuleInterface<moab::DagMC>::getInternalCellHandle(
 							     cell_external ) );
 }
 
+// Get the internal cell handle corresponding to the external cell handle
+inline ModuleInterface<moab::DagMC>::InternalCellHandle 
+ModuleInterface<moab::DagMC>::getInternalCellHandle( 
+				                 const ExternalCellId cell_id )
+{
+  testPrecondition( doesCellExist( cell_id ) );
+  
+  return static_cast<InternalCellHandle>( cell_id );
+}
+
 // Get the external surf. handle corresponding to the internal surf. handle
 inline ModuleInterface<moab::DagMC>::ExternalSurfaceHandle 
 ModuleInterface<moab::DagMC>::getExternalSurfaceHandle(
 					  const InternalSurfaceHandle surface )
 {
+  testPrecondition( doesSurfaceExist( 
+		                 static_cast<ExternalSurfaceId>( surface ) ) );
+  
   return ModuleInterface<moab::DagMC>::dagmc_instance->entity_by_id(
-						 2,
-					         static_cast<int>( surface ) );
+				2, static_cast<ExternalSurfaceId>( surface ) );
 }
   
-
 // Get the external cell handle corresponding to the internal cell handle
 inline ModuleInterface<moab::DagMC>::ExternalCellHandle 
 ModuleInterface<moab::DagMC>::getExternalCellHandle(
 					        const InternalCellHandle cell )
 {
+  testPrecondition( doesCellExist( static_cast<ExternalCellId>( cell ) ) );
+  
   return ModuleInterface<moab::DagMC>::dagmc_instance->entity_by_id(
-						    3,
-						    static_cast<int>( cell ) );
+				      3, static_cast<ExternalCellId>( cell ) );
 }
 
 } // end Geometry namespace

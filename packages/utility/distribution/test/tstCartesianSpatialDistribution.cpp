@@ -77,8 +77,6 @@ TEUCHOS_UNIT_TEST( CartesianSpatialDistribution, evaluate )
 // Check that the PDF can be evaluated
 TEUCHOS_UNIT_TEST( CartesianSpatialDistribution, evaluatePDF )
 {
-  initializeDistribution( spatial_distribution );
-
   double point[3] = {0.0, 0.0, 0.0};
   TEST_EQUALITY_CONST( spatial_distribution->evaluatePDF( point ), 0.0 );
 
@@ -97,8 +95,6 @@ TEUCHOS_UNIT_TEST( CartesianSpatialDistribution, evaluatePDF )
 // Check that the distribuiton can be sampled from
 TEUCHOS_UNIT_TEST( CartesianSpatialDistribution, sample )
 {
-  initializeDistribution( spatial_distribution );
-
   std::vector<double> fake_stream( 6 );
   fake_stream[0] = 0.0;
   fake_stream[1] = 0.0;
@@ -130,11 +126,17 @@ TEUCHOS_UNIT_TEST( CartesianSpatialDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the correct distribution type is returned
+TEUCHOS_UNIT_TEST( CartesianSpatialDistribution, getDistributionType )
+{
+  TEST_EQUALITY_CONST( spatial_distribution->getDistributionType(),
+		       Utility::CARTESIAN_SPATIAL_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
 // Check that distribution can be tested for uniformity
 TEUCHOS_UNIT_TEST( CartesianSpatialDistribution, isUniform )
 {
-  initializeDistribution( spatial_distribution );
-
   TEST_ASSERT( !spatial_distribution->isUniform() );
 }
 

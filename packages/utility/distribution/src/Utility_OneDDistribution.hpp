@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
+#include "Utility_ComparePolicy.hpp"
 
 namespace Utility{
 
@@ -51,7 +52,21 @@ public:
 
   //! Return the distribution type
   virtual OneDDistributionType getDistributionType() const = 0;
+
+  //! Test if the distribution has the same bounds
+  bool hasSameBounds( const OneDDistribution& distribution ) const;
 };
+
+// Test if the distribution has the same bounds
+inline bool OneDDistribution::hasSameBounds( 
+				   const OneDDistribution& distribution ) const
+{
+  return
+    Policy::relError( this->getUpperBoundOfIndepVar(),
+		      distribution.getUpperBoundOfIndepVar() ) < 1e-9 &&
+    Policy::relError( this->getLowerBoundOfIndepVar(),
+		      distribution.getLowerBoundOfIndepVar() ) < 1e-9;
+}
 
 //! The invalid distribution string name error
 class InvalidDistributionStringName : public std::logic_error

@@ -13,12 +13,10 @@ namespace Geometry{
 
 // Initialize the DagMC geometry module interface static member data
 const ModuleInterface<moab::DagMC>::ExternalSurfaceHandle
-ModuleInterface<moab::DagMC>::invalid_external_surface_handle = 
-  std::numeric_limits<ExternalSurfaceHandle>::max();
+ModuleInterface<moab::DagMC>::invalid_external_surface_handle = 0;
 
 const ModuleInterface<moab::DagMC>::ExternalCellHandle
-ModuleInterface<moab::DagMC>::invalid_external_cell_handle =
-  std::numeric_limits<ExternalCellHandle>::max();
+ModuleInterface<moab::DagMC>::invalid_external_cell_handle = 0;
 
 moab::DagMC* const ModuleInterface<moab::DagMC>::dagmc_instance = 
   moab::DagMC::instance();
@@ -124,8 +122,8 @@ void ModuleInterface<moab::DagMC>::fireRay(
 					double& distance_to_surface_hit )
 {
   ExternalCellHandle current_cell_external = 
-    ModuleInterface<moab::DagMC>::getExternalCellHandle( current_cell);
-
+    ModuleInterface<moab::DagMC>::getExternalCellHandle( current_cell );
+  
   ExternalSurfaceHandle surface_hit_external;
   
   moab::ErrorCode return_value = 

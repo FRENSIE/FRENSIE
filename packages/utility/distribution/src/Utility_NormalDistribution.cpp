@@ -36,6 +36,8 @@ NormalDistribution::NormalDistribution( const double mean,
   testPrecondition( !ST::isnaninf( standard_deviation ) );
   // Make sure that the standard deviation is positive
   testPrecondition( standard_deviation > 0.0 );
+  // Make sure that the min indep value is < the max indep value
+  testPrecondition( min_independent_value < max_independent_value );
 }
 
 // Copy constructor
@@ -226,7 +228,7 @@ void NormalDistribution::fromStream( std::istream& is )
 		      "(only 2, 3, or 4 values may be specified)!" );
 
   // Set the mean
-  TEST_FOR_EXCEPTION( distribution[0].find_first_not_of( " -0123456789." ) <
+  TEST_FOR_EXCEPTION( distribution[0].find_first_not_of( " -0123456789.e" ) <
 		      distribution[0].size(),
 		      InvalidDistributionStringRepresentation,
 		      "Error: the normal distribution cannot be "
@@ -243,7 +245,7 @@ void NormalDistribution::fromStream( std::istream& is )
 		      "because of an invalid mean " << d_mean );
   
   // Set the standard deviation
-  TEST_FOR_EXCEPTION( distribution[1].find_first_not_of( " 0123456789." ) <
+  TEST_FOR_EXCEPTION( distribution[1].find_first_not_of( " 0123456789.e" ) <
 		      distribution[1].size(),
 		      InvalidDistributionStringRepresentation,
 		      "Error: the normal distribution cannot be "
@@ -273,7 +275,7 @@ void NormalDistribution::fromStream( std::istream& is )
       d_min_independent_value = -std::numeric_limits<double>::infinity();
     else
     {
-      TEST_FOR_EXCEPTION( distribution[2].find_first_not_of( " -0123456789.") <
+      TEST_FOR_EXCEPTION( distribution[2].find_first_not_of( " -0123456789.e")<
 			  distribution[2].size(),
 			  InvalidDistributionStringRepresentation,
 			  "Error: the normal distribution cannot be "
@@ -294,7 +296,7 @@ void NormalDistribution::fromStream( std::istream& is )
       d_max_independent_value = std::numeric_limits<double>::infinity();
     else
     {
-      TEST_FOR_EXCEPTION( distribution[3].find_first_not_of( " -0123456789.") <
+      TEST_FOR_EXCEPTION( distribution[3].find_first_not_of( " -0123456789.e")<
 			  distribution[3].size(),
 			  InvalidDistributionStringRepresentation,
 			  "Error: the normal distribution cannot be "

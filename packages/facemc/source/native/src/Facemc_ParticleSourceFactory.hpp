@@ -2,7 +2,7 @@
 //!
 //! \file   Facemc_ParticleSourceFactory.hpp
 //! \author Alex Robinson
-//! \brief  Particle source factory class declaration
+//! \brief  Particle source factory base class declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -22,19 +22,30 @@
 
 namespace Facemc{
 
-//! The particle source factory class
+//! The particle source factory base class
 class ParticleSourceFactory
 {
 
 public:
 
-  //! Set the getLocationFunction pointer
-  static void setGetLocationFunctionPointer( 
-	    DistributedSource::getLocationFunction get_location_function_ptr );
+  //! Constructor
+  ParticleSourceFactory()
+  { /* ... */ }
+
+  //! Destructor
+  virtual ~ParticleSourceFactory()
+  { /* ... */ }
 
   //! Create the particle source represented by the parameter list
+  virtual Teuchos::RCP<ParticleSource>
+  createSource( const Teuchos::ParameterList& source_rep ) = 0;
+
+protected:
+
+  // Create the particle source represented by the parameter list
+  template<typename GeometryHandler>
   static Teuchos::RCP<ParticleSource>
-  createSource( const Teuchos::ParameterList& distribution_rep );
+  createSourceImpl( const Teuchos::ParameterList& source_rep );
 
 private:
 
@@ -46,10 +57,11 @@ private:
   static void validateParticleTypeName( const std::string& particle_type_name);
 
   // Create a distributed source
+  template<typename GeometryHandler>
   static double 
-  createDistributedSource( const Teuchos::ParameterList& source_rep,
-			   Teuchos::RCP<ParticleSource>& source,
-			   const unsigned num_sources = 1u );
+  createDistributedSource(const Teuchos::ParameterList& source_rep,
+			  Teuchos::RCP<ParticleSource>& source,
+			  const unsigned num_sources = 1u );
 
   // Create a state source
   static double
@@ -58,15 +70,10 @@ private:
 		     const unsigned num_sources = 1u );
 
   // Create a compound source
+  template<typename GeometryHandler>
   static void
   createCompoundSource( const Teuchos::ParameterList& compound_source,
 			Teuchos::RCP<ParticleSource>& source );
-
-  // The getLocationFunction pointer
-  static DistributedSource::getLocationFunction get_location_function_ptr;
-
-  // Constructor
-  ParticleSourceFactory();
 };
 
 //! The invalid particle source representation error
@@ -81,6 +88,14 @@ public:
 };
 
 } // end Facemc namespace
+
+//---------------------------------------------------------------------------//
+// Template inludes.
+//---------------------------------------------------------------------------//
+
+#include "Facemc_ParticleSourceFactory_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end FACEMC_PARTICLE_SOURCE_FACTORY_HPP
 

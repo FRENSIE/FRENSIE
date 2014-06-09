@@ -53,10 +53,15 @@ class ModuleInterface
 
 public:
 
+  //! The external surface id class (used within the geometry handler)
+  typedef int ExternalSurfaceId;
+  //! The external cell id class (used within the geometry handler)
+  typedef int ExternalCellId;
+
   //! The external surface handle class (used within the geometry handler)
-  typedef int ExternalSurfaceHandle;
+  typedef ExternalSurfaceId ExternalSurfaceHandle;
   //! The external cell handle class (used within the geometry handler)
-  typedef int ExternalCellHandle;
+  typedef ExternalCellId ExternalCellHandle;
   
   //! The internal surface handle class (used within FRENSIE)
   typedef ModuleTraits::InternalSurfaceHandle InternalSurfaceHandle;
@@ -138,6 +143,14 @@ public:
   //! Get the surface area of a surface bounding a cell
   static inline double getCellSurfaceArea( const InternalSurfaceHandle surface,
 					   const InternalCellHandle cell )
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
+
+  //! Check that an external surface handle exists
+  static inline bool doesSurfaceExist(const ExternalSurfaceId surface )
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
+
+  //! Check that an external cell handle exists
+  static inline bool doesCellExist( const ExternalCellId cell )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; }
 
   //! Get the internal surf. handle corresponding to the external surf. handle

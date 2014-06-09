@@ -29,7 +29,7 @@
   <ParameterList name="Photon Source">
     <Parameter name="Id" type="int" value="2"/>
 
-    <Parameter name="Particle Type" type="string" value="Neutron"/>
+    <Parameter name="Particle Type" type="string" value="Photon"/>
     
     <ParameterList name="Spatial Distribution">
       <Parameter name="X Distribution" type="Delta Distribution" value="{0}"/>

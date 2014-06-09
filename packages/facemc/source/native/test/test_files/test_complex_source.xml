@@ -13,12 +13,12 @@
     </ParameterList>
 
     <ParameterList name="Spatial Importance Function">
-      <Parameter name="X Importance Function" type="Exponential Distribution"
-		 value="{1,2}"/>
-      <Parameter name="Y Importance Function" type="Exponential Distribution"
-		 value="{1,2}"/>
-      <Parameter name="Z Importance Function" type="Exponential Distribution"
-		 value="{1,2}"/>
+      <Parameter name="X Distribution" type="Histogram Distribution"
+		 value="{{0,0.5,1},{2,1}}"/>
+      <Parameter name="Y Distribution" type="Histogram Distribution"
+		 value="{{0,0.5,1},{2,1}}"/>
+      <Parameter name="Z Distribution" type="Histogram Distribution"
+		 value="{{0,0.5,1},{2,1}}"/>
     </ParameterList>
     
     <ParameterList name="Directional Distribution">
@@ -31,13 +31,15 @@
     <Parameter name="Energy Distribution" type="Uniform Distribution" 
 	       value="{1e-5,1,1}"/>
     
-    <ParameterList name="Energy Importance Function" 
-		   type="Exponential Distribution" value="{1,2}"/>
+    <Parameter name="Energy Importance Function" 
+	       type="Normal Distribution" value="{1,1,1e-5,1}"/>
     
     <Parameter name="Time Distribution" type="Delta Distribution"
 	       value="{0}"/>
 
-    <Parameter name="Rejection Cell" type="int" value="0"/>
+    <Parameter name="Rejection Cell" type="int" value="2"/>
+
+    <Parameter name="Particle Type" type="string" value="Neutron"/>
   </ParameterList>
 
 </ParameterList>

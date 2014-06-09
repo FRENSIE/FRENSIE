@@ -15,6 +15,7 @@
 #include <Teuchos_GlobalMPISession.hpp>
 #include <Teuchos_Array.hpp>
 #include <Teuchos_Tuple.hpp>
+#include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
 #include "Geometry_Ray.hpp"
@@ -44,12 +45,98 @@ void initializeDagMC()
 
   // Initialize DagMC
   Geometry::initializeDagMC( test_geometry_file_name,
-			   property_names,
-			   1e-3 );
+			     property_names,
+			     1e-3 );
 }
 
 //---------------------------------------------------------------------------//
 // Tests.
+//---------------------------------------------------------------------------//
+// Check that surface ids can be checked for existence
+TEUCHOS_UNIT_TEST( ModuleInterface_DagMC, doesSufaceExist )
+{
+  typedef Geometry::ModuleInterface<moab::DagMC> GMI;
+  
+  TEST_ASSERT( !GMI::doesSurfaceExist( 0 ) );
+  TEST_ASSERT( GMI::doesSurfaceExist( 1 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 2 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 3 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 4 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 5 ) );
+  TEST_ASSERT( !GMI::doesSurfaceExist( 6 ) );
+  TEST_ASSERT( GMI::doesSurfaceExist( 7 ) );
+  TEST_ASSERT( GMI::doesSurfaceExist( 8 ) );
+  TEST_ASSERT( GMI::doesSurfaceExist( 9 ) );
+}
+
+//---------------------------------------------------------------------------//
+// Check that cell ids can be checked for existence
+TEUCHOS_UNIT_TEST( ModuleInterface_DagMC, doesCellExist )
+{
+  typedef Geometry::ModuleInterface<moab::DagMC> GMI;
+  
+  TEST_ASSERT( !GMI::doesCellExist( 0 ) );
+  TEST_ASSERT( GMI::doesCellExist( 1 ) );
+  TEST_ASSERT( !GMI::doesCellExist( 2 ) );
+  TEST_ASSERT( GMI::doesCellExist( 3 ) );
+  TEST_ASSERT( !GMI::doesCellExist( 4 ) );
+  TEST_ASSERT( GMI::doesCellExist( 5 ) );
+  TEST_ASSERT( !GMI::doesCellExist( 6 ) );
+  TEST_ASSERT( GMI::doesCellExist( 7 ) );
+  TEST_ASSERT( !GMI::doesCellExist( 8 ) );
+  TEST_ASSERT( GMI::doesCellExist( 9 ) );
+  TEST_ASSERT( GMI::doesCellExist( 13 ) );
+  TEST_ASSERT( GMI::doesCellExist( 19 ) );
+  TEST_ASSERT( GMI::doesCellExist( 26 ) );
+  TEST_ASSERT( GMI::doesCellExist( 27 ) );
+  TEST_ASSERT( GMI::doesCellExist( 28 ) );
+  TEST_ASSERT( GMI::doesCellExist( 29 ) );
+  TEST_ASSERT( GMI::doesCellExist( 30 ) );
+  TEST_ASSERT( GMI::doesCellExist( 31 ) );
+  TEST_ASSERT( GMI::doesCellExist( 32 ) );
+  TEST_ASSERT( GMI::doesCellExist( 33 ) );
+  TEST_ASSERT( GMI::doesCellExist( 34 ) );
+  TEST_ASSERT( GMI::doesCellExist( 35 ) );
+  TEST_ASSERT( GMI::doesCellExist( 36 ) );
+  TEST_ASSERT( GMI::doesCellExist( 37 ) );
+  TEST_ASSERT( GMI::doesCellExist( 41 ) );
+  TEST_ASSERT( GMI::doesCellExist( 48 ) );
+  TEST_ASSERT( GMI::doesCellExist( 49 ) );
+  TEST_ASSERT( GMI::doesCellExist( 50 ) );
+  TEST_ASSERT( GMI::doesCellExist( 51 ) );
+  TEST_ASSERT( GMI::doesCellExist( 52 ) );
+  TEST_ASSERT( GMI::doesCellExist( 53 ) );
+  TEST_ASSERT( GMI::doesCellExist( 54 ) );
+  TEST_ASSERT( GMI::doesCellExist( 55 ) );
+  TEST_ASSERT( GMI::doesCellExist( 56 ) );
+  TEST_ASSERT( GMI::doesCellExist( 57 ) );
+  TEST_ASSERT( GMI::doesCellExist( 58 ) );
+  TEST_ASSERT( GMI::doesCellExist( 59 ) );
+  TEST_ASSERT( GMI::doesCellExist( 63 ) );
+  TEST_ASSERT( GMI::doesCellExist( 70 ) );
+  TEST_ASSERT( GMI::doesCellExist( 71 ) );
+  TEST_ASSERT( GMI::doesCellExist( 72 ) );
+  TEST_ASSERT( GMI::doesCellExist( 73 ) );
+  TEST_ASSERT( GMI::doesCellExist( 74 ) );
+  TEST_ASSERT( GMI::doesCellExist( 75 ) );
+  TEST_ASSERT( GMI::doesCellExist( 76 ) );
+  TEST_ASSERT( GMI::doesCellExist( 77 ) );
+  TEST_ASSERT( GMI::doesCellExist( 78 ) );
+  TEST_ASSERT( GMI::doesCellExist( 79 ) );
+  TEST_ASSERT( GMI::doesCellExist( 80 ) );
+  TEST_ASSERT( GMI::doesCellExist( 81 ) );
+  TEST_ASSERT( GMI::doesCellExist( 82 ) );
+  TEST_ASSERT( GMI::doesCellExist( 83 ) );
+  TEST_ASSERT( GMI::doesCellExist( 88 ) );
+  TEST_ASSERT( GMI::doesCellExist( 136 ) );
+  TEST_ASSERT( GMI::doesCellExist( 152 ) );
+  TEST_ASSERT( GMI::doesCellExist( 154 ) );
+  TEST_ASSERT( GMI::doesCellExist( 166 ) );
+  TEST_ASSERT( GMI::doesCellExist( 168 ) );
+  TEST_ASSERT( GMI::doesCellExist( 184 ) );
+  TEST_ASSERT( GMI::doesCellExist( 188 ) );
+}
+
 //---------------------------------------------------------------------------//
 // Check that the cell containing a point can be deterimined
 TEUCHOS_UNIT_TEST( ModuleInterface_DagMC, 
@@ -57,9 +144,6 @@ TEUCHOS_UNIT_TEST( ModuleInterface_DagMC,
 {
   typedef Geometry::ModuleInterface<moab::DagMC> GMI;
   
-  // Initialize DagMC
-  initializeDagMC();
-
   // Initialize the ray
   Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
   
@@ -195,8 +279,32 @@ int main( int argc, char** argv )
 		 &test_geometry_file_name,
 		 "Test sat file name" );
 
+  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+    Teuchos::VerboseObjectBase::getDefaultOStream();
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+    clp.parse(argc,argv);
+
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
+    *out << "\nEnd Result: TEST FAILED" << std::endl;
+    return parse_return;
+  }
+  
+  // Initialize DagMC
+  initializeDagMC();
+  
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+
+  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
+
+  if (success)
+    *out << "\nEnd Result: TEST PASSED" << std::endl;
+  else
+    *out << "\nEnd Result: TEST FAILED" << std::endl;
+
+  clp.printFinalTimerSummary(out.ptr());
+
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

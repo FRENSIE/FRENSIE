@@ -120,25 +120,27 @@ void initializeSource()
   
   // Create the uniform spherical source
   Teuchos::RCP<Facemc::DistributedSource> spherical_source( 
-   new Facemc::DistributedSource(
-     source_1_spatial_distribution,
-     directional_distribution,
-     source_1_energy_distribution,
-     time_distribution,
-     Facemc::PHOTON,
-     &Geometry::ModuleInterface<GeometryHandler>::getPointLocation) );
+     new Facemc::DistributedSource(
+	      0u,
+	      source_1_spatial_distribution,
+	      directional_distribution,
+	      source_1_energy_distribution,
+	      time_distribution,
+              Facemc::PHOTON,
+              &Geometry::ModuleInterface<GeometryHandler>::getPointLocation) );
   
   spherical_source->setRejectionCell( 2 );
 
   // Create the point source
-  Teuchos::RCP<Facemc::ParticleSource> 
-    point_source( new Facemc::DistributedSource(
-     source_2_spatial_distribution,
-     directional_distribution,
-     source_2_energy_distribution,
-     time_distribution,
-     Facemc::NEUTRON,
-     &Geometry::ModuleInterface<GeometryHandler>::getPointLocation) );
+  Teuchos::RCP<Facemc::ParticleSource> point_source( 
+     new Facemc::DistributedSource(
+	      1u,
+              source_2_spatial_distribution,
+	      directional_distribution,
+	      source_2_energy_distribution,
+	      time_distribution,
+              Facemc::NEUTRON,
+              &Geometry::ModuleInterface<GeometryHandler>::getPointLocation) );
 
   Teuchos::Array<Teuchos::RCP<Facemc::ParticleSource> > sources( 2 );
   sources[0] = Teuchos::rcp_dynamic_cast<Facemc::ParticleSource>( 

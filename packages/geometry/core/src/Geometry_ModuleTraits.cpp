@@ -16,12 +16,10 @@ namespace Geometry{
 
 // Initialize static member data
 const ModuleTraits::InternalCellHandle 
-ModuleTraits::invalid_internal_cell_handle =
-  std::numeric_limits<ModuleTraits::InternalCellHandle>::max();
+ModuleTraits::invalid_internal_cell_handle = 0;
 
 const ModuleTraits::InternalSurfaceHandle
-ModuleTraits::invalid_internal_surface_handle =
-  std::numeric_limits<ModuleTraits::InternalSurfaceHandle>::max();
+ModuleTraits::invalid_internal_surface_handle = 0;
 
 } // end Geometry namespace
 

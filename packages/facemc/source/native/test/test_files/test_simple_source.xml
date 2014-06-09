@@ -6,9 +6,9 @@
     <Parameter name="Particle Type" type="string" value="Neutron"/>
     
     <ParameterList name="Spatial Distribution">
-      <Parameter name="X Distribution" type="Delta Distribution" value="{0}"/>
-      <Parameter name="Y Distribution" type="Delta Distribution" value="{0}"/>
-      <Parameter name="Z Distribution" type="Delta Distribution" value="{0}"/>
+      <Parameter name="X Distribution" type="Delta Distribution" value="{1}"/>
+      <Parameter name="Y Distribution" type="Delta Distribution" value="{1}"/>
+      <Parameter name="Z Distribution" type="Delta Distribution" value="{1}"/>
     </ParameterList>
     
     <ParameterList name="Directional Distribution">
@@ -18,8 +18,8 @@
 		 value="{0,6.283185307179586,1}"/>
     </ParameterList>
     
-    <Parameter name="Energy Distribution" type="Delta Distribution" 
-	       value="{1}"/>
+    <Parameter name="Energy Distribution" type="Exponential Distribution" 
+	       value="{2,0.5}"/>
     
     <Parameter name="Time Distribution" type="Delta Distribution"
 	       value="{0}"/>
