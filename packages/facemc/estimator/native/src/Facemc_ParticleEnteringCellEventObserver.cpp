@@ -1,23 +1,23 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Facemc_ParticleGenerationEventObserver.hpp
+//! \file   Facemc_ParticleEnteringCellEventObserver.cpp
 //! \author Alex Robinson
-//! \brief  Source event observer base class
+//! \brief  Particle entering cell event observer base class definition.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Facemc_ParticleGenerationEventObserver.hpp"
-#include "Facemc_ParticleGenerationEventDispatcherDB.hpp"
+#include "Facemc_ParticleEnteringCellEventObserver.hpp"
+#include "Facemc_ParticleEnteringCellEventDispatcherDB.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Facemc{
 
 // Constructor
-ParticleGenerationEventObserver::ParticleGenerationEventObserver( 
-   const ModuleTraits::InternalEstimatorHandle id,
-   const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
-   const bool auto_register_with_dispatchers )
+ParticleEnteringCellEventObserver::ParticleEnteringCellEventObserver(
+    const ModuleTraits::InternalEstimatorHandle id,
+    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
+    const bool auto_register_with_dispatchers )
   : d_id( id ),
     d_is_registered( false )
 {
@@ -27,36 +27,35 @@ ParticleGenerationEventObserver::ParticleGenerationEventObserver(
   // Attach this observer to the source event dispatcher corresponding to
   // each cell id if requested
   if( auto_register_with_dispatchers )
-    this->registerWithParticleGenerationEventDispatcher( cell_ids );
+    this->registerWithParticleEnteringCellEventDispatcher( cell_ids );
 }
 
 // Destructor
-ParticleGenerationEventObserver::~ParticleGenerationEventObserver()
+ParticleEnteringCellEventObserver::~ParticleEnteringCellEventObserver()
 {
   if( d_is_registered )
-    ParticleGenerationEventDispatcherDB::detachObserver( d_id );
+    ParticleEnteringCellEventDispatcherDB::detachObserver( d_id );
 }
 
-//! Register the observer
-void 
-ParticleGenerationEventObserver::registerWithParticleGenerationEventDispatcher(
+// Register the observer
+void ParticleEnteringCellEventObserver::registerWithParticleEnteringCellEventDispatcher( 
    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids )
 {
   if( !d_is_registered )
   {
     for( unsigned i = 0u; i < cell_ids.size(); ++i )
     {
-      ParticleGenerationEventDispatcherDB::attachObserver( cell_ids[i], 
-							   d_id, 
-							   this );
+      ParticleEnteringCellEventDispatcherDB::attachObserver( cell_ids[i],
+							     d_id,
+							     this );
     }
-    
+
     d_is_registered = true;
   }
 }
-
+									      
 } // end Facemc namespace
 
 //---------------------------------------------------------------------------//
-// end Facemc_ParticleGenerationEventObserver.hpp
+// end Facemc_ParticleEnteringCellEventObserver.cpp
 //---------------------------------------------------------------------------//

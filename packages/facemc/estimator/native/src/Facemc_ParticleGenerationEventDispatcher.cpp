@@ -2,7 +2,7 @@
 //!
 //! \file   Facemc_ParticleGenerationEventDispatcher.cpp
 //! \author Alex Robinson
-//! \brief  Source event dispatcher singleton class definition.
+//! \brief  Particle generation event dispatcher class definition.
 //!
 //---------------------------------------------------------------------------//
 

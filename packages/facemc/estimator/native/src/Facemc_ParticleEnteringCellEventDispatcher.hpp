@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Facemc_ParticleGenerationEventDispatcher.hpp
+//! \file   Facemc_ParticleEnteringCellEventDispatcher.hpp
 //! \author Alex Robinson
-//! \brief  Particle generation event dispatcher class declaration.
+//! \brief  Particle entering cell event dispatcher class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_GENERATION_EVENT_DISPATCHER_HPP
-#define FACEMC_PARTICLE_GENERATION_EVENT_DISPATCHER_HPP
+#ifndef FACEMC_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_HPP
+#define FACEMC_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_HPP
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
@@ -16,57 +16,59 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "Facemc_ParticleGenerationEventObserver.hpp"
+#include "Facemc_ParticleEnteringCellEventObserver.hpp"
 #include "Facemc_ParticleState.hpp"
 #include "Facemc_ModuleTraits.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
 namespace Facemc{
 
-//! The particle generation event dispatcher class
-class ParticleGenerationEventDispatcher{
+//! The particle entering cell event dispatcher class
+class ParticleEnteringCellEventDispatcher{
   
 public:
 
   //! Constructor
-  ParticleGenerationEventDispatcher( 
+  ParticleEnteringCellEventDispatcher(
 		    const Geometry::ModuleTraits::InternalCellHandle cell_id );
 
   //! Destructor
-  ~ParticleGenerationEventDispatcher()
+  ~ParticleEnteringCellEventDispatcher()
   { /* ... */ }
 
   //! Attach an observer to the dispatcher
   void attachObserver( 
-		     const ModuleTraits::InternalEstimatorHandle id,
-		     Teuchos::RCP<ParticleGenerationEventObserver>& observer );
+		   const ModuleTraits::InternalEstimatorHandle id,
+		   Teuchos::RCP<ParticleEnteringCellEventObserver>& observer );
 
   //! Detach an observer from the dispatcher
   void detachObserver( const ModuleTraits::InternalEstimatorHandle id );
 
   //! Dispatch the new event to the observers
-  void dispatchParticleGenerationEvent( const ParticleState& particle );
+  void dispatchParticleEnteringCellEvent( 
+	      const ParticleState& particle,
+	      const Geometry::ModuleTraits::InternalCellHandle cell_entering );
 
-  //! Get the cell id corresponding to this particle gen. event dispatcher
+  //! Get the cell id corresponding to this particle entering cell event disp.
   Geometry::ModuleTraits::InternalCellHandle getCellId() const;
-  
+
 private:
 
-  // The cell handle for which particle generation events will be dispatched
+  // The cell handle for which particle entering cell events will be dispatched
   Geometry::ModuleTraits::InternalCellHandle d_cell_id;
 
   // The observer map
   typedef boost::unordered_map<ModuleTraits::InternalEstimatorHandle,
-			       Teuchos::RCP<ParticleGenerationEventObserver> > 
+			      Teuchos::RCP<ParticleEnteringCellEventObserver> >
   ObserverIdMap;
-  
+
   ObserverIdMap d_observer_map;
 };
 
 } // end Facemc namespace
 
-#endif // end FACEMC_PARTICLE_GENERATION_EVENT_DISPATCHER_HPP
+#endif // end FACEMC_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_HPP
 
 //---------------------------------------------------------------------------//
-// end Facemc_ParticleGenerationEventDispatcher.hpp
+// end Facemc_ParticleEnteringCellEventDispatcher.hpp
 //---------------------------------------------------------------------------//

@@ -13,13 +13,16 @@
 #include "Facemc_EntityEstimator.hpp"
 #include "Facemc_EstimatorContributionMultiplierPolicy.hpp"
 #include "Facemc_ParticleGenerationEventObserver.hpp"
+#include "Facemc_ParticleEnteringCellEventObserver.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
 namespace Facemc{
 
 //! The pulse height entity estimator class
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
-class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>, public ParticleGenerationEventObserver
+class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>, 
+				 public ParticleGenerationEventObserver,
+				 public ParticleEnteringCellEventObserver
 {
 
 public:
@@ -43,6 +46,13 @@ public:
 
   //! Set the particle types that can contribute to the estimator
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
+
+  //! Add current history estimator contribution
+  void updateFromParticleGenerationEvent( const ParticleState& particle );
+
+  //! Add current history estimator contribution
+  void updateFromParticleEnteringCellEvent( const ParticleState& particle,
+					    const cellIdType cell_entering );
   
   //! Add estimator contribution from a portion of the current history
   void addPartialHistoryContribution( const ParticleState& particle,
@@ -51,9 +61,6 @@ public:
 
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution();
-  
-  //! Add estimator contribution from a portion of the current history
-  void updateFromParticleGenerationEvent( const ParticleState& particle );
 
   //! Print the estimator data
   void print( std::ostream& os ) const;

@@ -30,10 +30,12 @@ ParticleGenerationEventDispatcherDB::getDispatcher(
     return it->second;
   else
   {
-    ParticleGenerationEventDispatcherDB::master_map[cell_id] = 
-      Teuchos::rcp( new ParticleGenerationEventDispatcher( cell_id ) );
+    Teuchos::RCP<ParticleGenerationEventDispatcher>& new_dispatcher =
+      ParticleGenerationEventDispatcherDB::master_map[cell_id];
 
-    return ParticleGenerationEventDispatcherDB::master_map[cell_id];
+    new_dispatcher.reset( new ParticleGenerationEventDispatcher( cell_id ) );
+
+    return new_dispatcher;
   }
 }
 

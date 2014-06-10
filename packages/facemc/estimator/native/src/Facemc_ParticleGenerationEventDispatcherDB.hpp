@@ -2,7 +2,7 @@
 //!
 //! \file   Facemc_ParticleGenerationEventDispatcherDB.hpp
 //! \author Alex Robinson
-//! \brief  Source event dispatcher database declaration.
+//! \brief  Particle generation event dispatcher database declaration.
 //!
 //---------------------------------------------------------------------------//
 
@@ -20,7 +20,7 @@
 
 namespace Facemc{
 
-//! The source event dispatcher class 
+//! The particle generation event dispatcher database class 
 class ParticleGenerationEventDispatcherDB
 {
 
@@ -51,7 +51,7 @@ public:
   static void detachObserver( 
 		    const ModuleTraits::InternalEstimatorHandle estimator_id );
 
-  //! Dispatch the source event to the observers
+  //! Dispatch the particle generation event to the observers
   static void dispatchParticleGenerationEvent( const ParticleState& particle );
 
 private:
@@ -70,7 +70,8 @@ private:
 // Attach an observer
 /*! \details A non-owning Teuchos::RCP will be constructed from the raw 
  * pointer. This function should be used from inside of observer constructors.
- * The observer destructor should call the detachObserver method
+ * The observer destructor should call the detachObserver method to avoid
+ * null pointer dereferencing in the dispatchers.
  */
 inline void ParticleGenerationEventDispatcherDB::attachObserver(
                       const Geometry::ModuleTraits::InternalCellHandle cell_id,
@@ -81,11 +82,11 @@ inline void ParticleGenerationEventDispatcherDB::attachObserver(
 							       false );
     
   ParticleGenerationEventDispatcherDB::attachObserver( cell_id,
-					   estimator_id,
-					   safe_observer );
+						       estimator_id,
+						       safe_observer );
 }
 
-// Dispatch the source event to the observers
+// Dispatch the particle generation event to the observers
 inline void 
 ParticleGenerationEventDispatcherDB::dispatchParticleGenerationEvent( 
 					        const ParticleState& particle )
