@@ -1,40 +1,42 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Facemc_SourceEventDispatcher.cpp
+//! \file   Facemc_ParticleGenerationEventDispatcher.cpp
 //! \author Alex Robinson
 //! \brief  Source event dispatcher singleton class definition.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Facemc_SourceEventDispatcher.hpp"
+#include "Facemc_ParticleGenerationEventDispatcher.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Facemc{
 
 // Constructor
-SourceEventDispatcher::SourceEventDispatcher(
-		       const GeometryModuleTraits::InternalCellHandle cell_id )
+ParticleGenerationEventDispatcher::ParticleGenerationEventDispatcher(
+		     const Geometry::ModuleTraits::InternalCellHandle cell_id )
   : d_cell_id( cell_id )
 { /* ... */ }
 
 // Attach an observer to the dispatcher
-void SourceEventDispatcher::attachObserver(
-			    const Estimator::idType id,
-			    const Teuchos::RCP<SourceEventObserver>& observer )
+void ParticleGenerationEventDispatcher::attachObserver(
+		      const ModuleTraits::InternalEstimatorHandle id,
+		      Teuchos::RCP<ParticleGenerationEventObserver>& observer )
 {
   if( d_observer_map.find( id ) == d_observer_map.end() )
     d_observer_map[id] = observer;
 }
 
 // Detach an observer from the dispatcher
-void SourceEventDispatcher::detachObserver( const Estimator::idType id )
+void ParticleGenerationEventDispatcher::detachObserver( 
+			       const ModuleTraits::InternalEstimatorHandle id )
 {
   d_observer_map.erase( id );
 }
 
 // Set a new event and dispatch to the observers
-void SourceEventDispatcher::dispatchSourceEvent( const ParticleState& particle)
+void ParticleGenerationEventDispatcher::dispatchParticleGenerationEvent(
+					        const ParticleState& particle )
 {
   // Make sure the particle state is valid
   testPrecondition( particle.getCell() == d_cell_id );
@@ -43,7 +45,7 @@ void SourceEventDispatcher::dispatchSourceEvent( const ParticleState& particle)
   
   while( it != d_observer_map.end() )
   {
-    it->second->update( particle );
+    it->second->updateFromParticleGenerationEvent( particle );
 
     ++it;
   }
@@ -51,7 +53,7 @@ void SourceEventDispatcher::dispatchSourceEvent( const ParticleState& particle)
 
 // Get the cell id corresponding to this source event dispatcher
 Geometry::ModuleTraits::InternalCellHandle 
-SourceEventDispatcher::getCellId() const
+ParticleGenerationEventDispatcher::getCellId() const
 {
   return d_cell_id;
 }
@@ -59,5 +61,5 @@ SourceEventDispatcher::getCellId() const
 } // end Facemc namespace
 
 //---------------------------------------------------------------------------//
-// end Facemc_SourceEventDispatcher.cpp
+// end Facemc_ParticleGenerationEventDispatcher.cpp
 //---------------------------------------------------------------------------//

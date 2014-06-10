@@ -12,14 +12,14 @@
 // FRENSIE Includes
 #include "Facemc_EntityEstimator.hpp"
 #include "Facemc_EstimatorContributionMultiplierPolicy.hpp"
-#include "Facemc_SourceEventObserver.hpp"
+#include "Facemc_ParticleGenerationEventObserver.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
 namespace Facemc{
 
 //! The pulse height entity estimator class
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
-class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>, public SourceEventObserver
+class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>, public ParticleGenerationEventObserver
 {
 
 public:
@@ -30,7 +30,8 @@ public:
   //! Constructor
   CellPulseHeightEstimator( const Estimator::idType id,
 			    const double multiplier,
-			    const Teuchos::Array<cellIdType>& entity_ids );
+			    const Teuchos::Array<cellIdType>& entity_ids,
+			    const bool auto_register_with_dispatchers = true );
   
   //! Destructor
   ~CellPulseHeightEstimator()
@@ -52,7 +53,7 @@ public:
   void commitHistoryContribution();
   
   //! Add estimator contribution from a portion of the current history
-  void update( const ParticleState& particle );
+  void updateFromParticleGenerationEvent( const ParticleState& particle );
 
   //! Print the estimator data
   void print( std::ostream& os ) const;

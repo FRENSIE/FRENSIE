@@ -23,10 +23,12 @@ CellPulseHeightEstimator<
                        ContributionMultiplierPolicy>::CellPulseHeightEstimator(
        const Estimator::idType id,
        const double multiplier,
-       const Teuchos::Array<CellPulseHeightEstimator::cellIdType>& entity_ids )
-			   
+       const Teuchos::Array<CellPulseHeightEstimator::cellIdType>& entity_ids,
+       const bool auto_register_with_dispatchers )			   
   : EntityEstimator<cellIdType>( id, multiplier, entity_ids ),
-    SourceEventObserver( id, entity_ids ),
+    ParticleGenerationEventObserver( id, 
+				     entity_ids, 
+				     auto_register_with_dispatchers ),
     d_total_energy_deposition_moments( 1 )
 {
   // Set up the entity map
@@ -202,7 +204,8 @@ void CellPulseHeightEstimator<
 
 // Update the observer
 template<typename ContributionMultiplierPolicy>
-inline void CellPulseHeightEstimator<ContributionMultiplierPolicy>::update(
+inline void CellPulseHeightEstimator<
+              ContributionMultiplierPolicy>::updateFromParticleGenerationEvent(
 						const ParticleState& particle )
 {
   this->addPartialHistoryContribution( particle );
