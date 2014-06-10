@@ -11,6 +11,7 @@
 
 // Trilinos Inludes
 #include <Teuchos_OrdinalTraits.hpp>
+#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Geometry_PointLocation.hpp"
@@ -75,7 +76,8 @@ public:
   static const ExternalCellHandle invalid_external_cell_handle = 0;
 
   //! Set the geometry handler instance
-  static inline void setHandlerInstance( GeometryHandler* handler_instance )
+  static inline void setHandlerInstance( 
+		        const Teuchos::RCP<GeometryHandler>& handler_instance )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
   /*! Find the cell that contains a given point (start of history)
@@ -173,6 +175,15 @@ public:
 					        const InternalCellHandle cell )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); return 0; } 
 };
+
+//! Set the geometry handler instance
+template<typename GeometryHandler>
+void setGeometryHandlerInstance(
+			const Teuchos::RCP<GeometryHandler>& handler_instance )
+{
+  Geometry::ModuleInterface<GeometryHandler>::setHandlerInstance( 
+							    handler_instance );
+}
 
 } // end Geometry namespace
 

@@ -65,7 +65,8 @@ public:
   static const ExternalCellHandle invalid_external_cell_handle; 
   
   //! Set the geometry handler instance
-  static void setHandlerInstance( moab::DagMC* handler_instance );
+  static void setHandlerInstance( 
+			   const Teuchos::RCP<moab::DagMC>& handler_instance );
 
   //! Find the cell that contains a given point (start of history)
   static InternalCellHandle findCellContainingPoint( const Ray& ray );
@@ -174,7 +175,7 @@ private:
  * ever be active so this function call can be ignored.
  */
 inline void ModuleInterface<moab::DagMC>::setHandlerInstance( 
-						moab::DagMC* handler_instance )
+			    const Teuchos::RCP<moab::DagMC>& handler_instance )
 { /* ... */ }
 
 // Initialize a new ray (after a collision)

@@ -73,6 +73,14 @@ public:
   { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); return 0; }
 };
 
+//! Set the source handler instance
+template<typename SourceHandler>
+void setSourceHandlerInstance( 
+			   const Teuchos::RCP<SourceHandler>& source_instance )
+{
+  SourceModuleInterface<SourceHandler>::setHandlerInstance( source_instance );
+}
+
 } // end Facemc namespace
 
 #endif // end FACEMC_SOURCE_MODULE_INTERFACE_DECL_HPP

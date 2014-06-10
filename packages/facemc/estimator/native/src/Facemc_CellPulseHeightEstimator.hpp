@@ -12,13 +12,14 @@
 // FRENSIE Includes
 #include "Facemc_EntityEstimator.hpp"
 #include "Facemc_EstimatorContributionMultiplierPolicy.hpp"
+#include "Facemc_SourceEventObserver.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
 namespace Facemc{
 
 //! The pulse height entity estimator class
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
-class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>
+class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>, public SourceEventObserver
 {
 
 public:
@@ -49,11 +50,17 @@ public:
 
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution();
+  
+  //! Add estimator contribution from a portion of the current history
+  void update( const ParticleState& particle );
 
   //! Print the estimator data
   void print( std::ostream& os ) const;
 
 private:
+
+  //! Add estimator contribution from a portion of the current history
+  void addPartialHistoryContribution( const ParticleState& particle );
 
   //! Assign bin boundaries to an estimator dimension
   void assignBinBoundaries(

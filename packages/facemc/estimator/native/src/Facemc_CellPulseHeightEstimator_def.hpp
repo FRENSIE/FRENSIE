@@ -21,11 +21,12 @@ namespace Facemc{
 template<typename ContributionMultiplierPolicy>
 CellPulseHeightEstimator<
                        ContributionMultiplierPolicy>::CellPulseHeightEstimator(
-       const unsigned long long id,
+       const Estimator::idType id,
        const double multiplier,
        const Teuchos::Array<CellPulseHeightEstimator::cellIdType>& entity_ids )
 			   
   : EntityEstimator<cellIdType>( id, multiplier, entity_ids ),
+    SourceEventObserver( id, entity_ids ),
     d_total_energy_deposition_moments( 1 )
 {
   // Set up the entity map
@@ -87,6 +88,8 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setParticleTypes(
 }
 
 // Add estimator contribution from a portion of the current history
+/*! \detials This function is to be called at a surface crossing
+ */
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<
 		  ContributionMultiplierPolicy>::addPartialHistoryContribution(
@@ -94,6 +97,7 @@ void CellPulseHeightEstimator<
 		    const CellPulseHeightEstimator::cellIdType& cell_leaving,
 		    const CellPulseHeightEstimator::cellIdType& cell_entering )
 {
+  
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {
     double contribution = particle.getWeight()*particle.getEnergy();
@@ -105,6 +109,25 @@ void CellPulseHeightEstimator<
     // Add the contribution to the cell being entered
     if( d_cell_energy_deposition_map.count( cell_entering ) != 0 )
       d_cell_energy_deposition_map[cell_entering] += contribution;
+  }
+}
+
+// Add estimator contribution from a portion of the current history
+/*! \details This function is to be called at a source point
+ */
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<
+		  ContributionMultiplierPolicy>::addPartialHistoryContribution(
+						const ParticleState& particle )
+{
+  // Make sure the cell is in the energy deposition map
+  testPrecondition( d_cell_energy_deposition_map.count( particle.getCell() )
+		    != 0 );
+  
+  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
+  {
+    d_cell_energy_deposition_map[particle.getCell()] += 
+      particle.getWeight()*particle.getEnergy();
   }
 }
 
@@ -175,6 +198,14 @@ void CellPulseHeightEstimator<
     bin_contribution *= bin_contribution;
     d_total_energy_deposition_moments[bin_index].fourth += bin_contribution;
   }
+}
+
+// Update the observer
+template<typename ContributionMultiplierPolicy>
+inline void CellPulseHeightEstimator<ContributionMultiplierPolicy>::update(
+						const ParticleState& particle )
+{
+  this->addPartialHistoryContribution( particle );
 }
 
 // Print the estimator data

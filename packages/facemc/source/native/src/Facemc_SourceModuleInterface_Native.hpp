@@ -31,7 +31,7 @@ class SourceModuleInterface<ParticleSource>
 public:
 
   //! The external source handle class (used within the source handler)
-  typedef unsigned long long ExternalSourceHandle;
+  typedef int ExternalSourceHandle;
   
   //! The internal source handle class (used within FRENSIE)
   typedef ModuleTraits::InternalSourceHandle InternalSourceHandle;
@@ -61,7 +61,7 @@ private:
 inline void SourceModuleInterface<ParticleSource>::sampleParticleState( 
 							   ParticleBank& bank )
 {
-  testPrecondition( !source.is_null() );
+  testPrecondition( !SourceModuleInterface::source.is_null() );
   
   SourceModuleInterface::source->sampleParticleState( bank );
 }
@@ -69,9 +69,9 @@ inline void SourceModuleInterface<ParticleSource>::sampleParticleState(
 // Get the sampling efficiency
 inline double SourceModuleInterface<ParticleSource>::getSamplingEfficiency()
 {
-  testPrecondition( !source.is_null() );
+  testPrecondition( !SourceModuleInterface::source.is_null() );
   
-  return source->getSamplingEfficiency();
+  return SourceModuleInterface::source->getSamplingEfficiency();
 }
 
 } // end Facemc namespace
