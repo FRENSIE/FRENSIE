@@ -45,6 +45,12 @@ void SurfaceCurrentEstimator<
 }
 
 // Add current history estimator contribution
+/*! \details It is unsafe to call this function directly! This function will
+ * be called by the appropriate dispatcher whan an event of interest occurs.
+ * If calling this function directly, make sure that the cell of surface of
+ * interest is actually assigned to this estimator (otherwise seg. faults are
+ * likely!).
+ */
 template<typename ContributionMultiplierPolicy>
 void SurfaceCurrentEstimator<
          ContributionMultiplierPolicy>::updateFromParticleCrossingSurfaceEvent(
