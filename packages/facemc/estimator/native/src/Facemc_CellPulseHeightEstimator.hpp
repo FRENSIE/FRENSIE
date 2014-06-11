@@ -14,6 +14,7 @@
 #include "Facemc_EstimatorContributionMultiplierPolicy.hpp"
 #include "Facemc_ParticleGenerationEventObserver.hpp"
 #include "Facemc_ParticleEnteringCellEventObserver.hpp"
+#include "Facemc_ParticleLeavingCellEventObserver.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
 namespace Facemc{
@@ -22,7 +23,8 @@ namespace Facemc{
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
 class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>, 
 				 public ParticleGenerationEventObserver,
-				 public ParticleEnteringCellEventObserver
+				 public ParticleEnteringCellEventObserver,
+				 public ParticleLeavingCellEventObserver
 {
 
 public:
@@ -53,6 +55,10 @@ public:
   //! Add current history estimator contribution
   void updateFromParticleEnteringCellEvent( const ParticleState& particle,
 					    const cellIdType cell_entering );
+
+  //! Add current history estimator contribution
+  void updateFromParticleLeavingCellEvent( const ParticleState& particle,
+					   const cellIdType cell_leaving );
   
   //! Add estimator contribution from a portion of the current history
   void addPartialHistoryContribution( const ParticleState& particle,

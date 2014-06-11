@@ -32,6 +32,9 @@ CellPulseHeightEstimator<
     ParticleEnteringCellEventObserver( id,
 				       entity_ids,
 				       auto_register_with_dispatchers ),
+    ParticleLeavingCellEventObserver( id,
+				      entity_ids,
+				      auto_register_with_dispatchers ),
     d_total_energy_deposition_moments( 1 )
 {
   // Set up the entity map
@@ -90,6 +93,78 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::setParticleTypes(
   testPostcondition( !this->isParticleTypeAssigned( NEUTRON ) );
   testPostcondition( !this->isParticleTypeAssigned( ADJOINT_NEUTRON ) );
   testPostcondition( !this->isParticleTypeAssigned( ADJOINT_PHOTON ) );
+}
+
+// Add current history estimator contribution
+/*! \details It is unsafe to call this function directly! This function will
+ * be called by the appropriate dispatcher when an event of interest occurs.
+ * If calling this function directly, make sure that the cell of interest is
+ * actually assigned to this estimator (otherwise segfaults are likely!).
+ */ 
+template<typename ContributionMultiplierPolicy>
+inline void CellPulseHeightEstimator<
+              ContributionMultiplierPolicy>::updateFromParticleGenerationEvent(
+						const ParticleState& particle )
+{
+  // Make sure the cell is in the energy deposition map
+  testPrecondition( d_cell_energy_deposition_map.count( particle.getCell() )
+		    != 0 );
+  
+  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
+  {
+    boost::unordered_map<cellIdType,double>::iterator it = 
+      d_cell_energy_deposition_map.find( particle.getCell() );
+    
+    it->second += particle.getWeight()*particle.getEnergy();
+  }
+}
+
+// Add current history estimator contribution
+/*! \details It is unsafe to call this function directly! This function will
+ * be called by the appropriate dispatcher when an event of interest occurs.
+ * If calling this function directly, make sure that the cell of interest is
+ * actually assigned to this estimator (otherwise segfaults are likely!).
+ */
+template<typename ContributionMultiplierPolicy>
+inline void CellPulseHeightEstimator<
+            ContributionMultiplierPolicy>::updateFromParticleEnteringCellEvent(
+					       const ParticleState& particle,
+					       const cellIdType cell_entering )
+{
+  // Make sure the cell is in the energy deposition map
+  testPrecondition( d_cell_energy_deposition_map.count( cell_entering ) != 0 );
+  
+  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
+  {    
+    boost::unordered_map<cellIdType,double>::iterator it = 
+      d_cell_energy_deposition_map.find( cell_entering );
+    
+    it->second += particle.getWeight()*particle.getEnergy();
+  }
+}
+
+// Add current history estimator contribution
+/*! \details It is unsafe to call this functio directly! This function will
+ * be called by the appropriate dispatcher when an event of interest occurs.
+ * If calling this function directly, make sure that the cell of interest is
+ * actually assigned to this estimator (otherwise segfaults are likely! ).
+ */
+template<typename ContributionMultiplierPolicy>
+inline void CellPulseHeightEstimator<
+            ContributionMultiplierPolicy>::updateFromParticleLeavingCellEvent(
+					        const ParticleState& particle,
+					        const cellIdType cell_leaving )
+{
+  // Make sure the cell is in the energy deposition map
+  testPrecondition( d_cell_energy_deposition_map.count( cell_leaving ) != 0 );
+  
+  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
+  {    
+    boost::unordered_map<cellIdType,double>::iterator it = 
+      d_cell_energy_deposition_map.find( cell_leaving );
+    
+    it->second -= particle.getWeight()*particle.getEnergy();
+  }
 }
 
 // Add estimator contribution from a portion of the current history
@@ -183,55 +258,6 @@ void CellPulseHeightEstimator<
 
     bin_contribution *= bin_contribution;
     d_total_energy_deposition_moments[bin_index].fourth += bin_contribution;
-  }
-}
-
-// Add current history estimator contribution
-/*! \details It is unsafe to call this function directly! This function will
- * be called by the appropriate dispatcher when an event of interest occurs.
- * If calling this function directly, make sure that the cell of interest is
- * actually assigned to this estimator (otherwise segfaults are likely!).
- */ 
-template<typename ContributionMultiplierPolicy>
-inline void CellPulseHeightEstimator<
-              ContributionMultiplierPolicy>::updateFromParticleGenerationEvent(
-						const ParticleState& particle )
-{
-  // Make sure the cell is in the energy deposition map
-  testPrecondition( d_cell_energy_deposition_map.count( particle.getCell() )
-		    != 0 );
-  
-  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
-  {
-    boost::unordered_map<cellIdType,double>::iterator it = 
-      d_cell_energy_deposition_map.find( particle.getCell() );
-    
-    it->second += particle.getWeight()*particle.getEnergy();
-  }
-}
-
-
-// Add current history estimator contribution
-/*! \details It is unsafe to call this function directly! This function will
- * be called by the appropriate dispatcher when an event of interest occurs.
- * If calling this function directly, make sure that the cell of interest is
- * actually assigned to this estimator (otherwise segfaults are likely!).
- */
-template<typename ContributionMultiplierPolicy>
-inline void CellPulseHeightEstimator<
-            ContributionMultiplierPolicy>::updateFromParticleEnteringCellEvent(
-					       const ParticleState& particle,
-					       const cellIdType cell_entering )
-{
-  // Make sure the cell is in the energy deposition map
-  testPrecondition( d_cell_energy_deposition_map.count( cell_entering ) != 0 );
-  
-  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
-  {    
-    boost::unordered_map<cellIdType,double>::iterator it = 
-      d_cell_energy_deposition_map.find( cell_entering );
-    
-    it->second += particle.getWeight()*particle.getEnergy();
   }
 }
 

@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Facemc_ParticleEnteringCellEventObserver.hpp
+//! \file   Facemc_ParticleLeavingCellEventObserver.hpp
 //! \author Alex Robinson
-//! \brief  Particle entering cell event observer base class declaration.
+//! \brief  Particle leaving cell event observer base class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_ENTERING_CELL_EVENT_OBSERVER_HPP
-#define FACEMC_PARTICLE_ENTERING_CELL_EVENT_OBSERVER_HPP
+#ifndef FACEMC_PARTICLE_LEAVING_CELL_EVENT_OBSERVER_HPP
+#define FACEMC_PARTICLE_LEAVING_CELL_EVENT_OBSERVER_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -19,28 +19,28 @@
 
 namespace Facemc{
 
-//! The particle entering cell event observer base class
-class ParticleEnteringCellEventObserver{
+//! The particle leaving cell event observer base class
+class ParticleLeavingCellEventObserver{
   
 public:
 
   //! Constructor
-  ParticleEnteringCellEventObserver(
+  ParticleLeavingCellEventObserver(
     const ModuleTraits::InternalEstimatorHandle id,
     const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
     const bool auto_register_with_dispatchers );
 
   //! Destructor
-  virtual ~ParticleEnteringCellEventObserver();
+  virtual ~ParticleLeavingCellEventObserver();
 
   //! Register the observer
-  void registerWithParticleEnteringCellEventDispatcher(
+  void registerWithParticleLeavingCellEventDispatcher(
    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids);
 
   //! Update the observer
-  virtual void updateFromParticleEnteringCellEvent( 
-	  const ParticleState& particle,
-	  const Geometry::ModuleTraits::InternalCellHandle cell_entering ) = 0;
+  virtual void updateFromParticleLeavingCellEvent(
+	   const ParticleState& particle,
+	   const Geometry::ModuleTraits::InternalCellHandle cell_leaving ) = 0;
 
 private:
 
@@ -53,9 +53,8 @@ private:
 
 } // end Facemc namespace
 
-#endif // end FACEMC_PARTICLE_ENTERING_CELL_EVENT_OBSERVER_HPP
+#endif // end FACEMC_PARTICLE_LEAVING_CELL_EVENT_OBSERVER_HPP
 
 //---------------------------------------------------------------------------//
-// end Facemc_ParticleEnteringCellEventObserver.hpp
+// end Facemc_ParticleLeavingCellEventObserver.hpp
 //---------------------------------------------------------------------------//
-

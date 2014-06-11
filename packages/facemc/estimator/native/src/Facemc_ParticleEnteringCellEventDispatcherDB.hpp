@@ -53,8 +53,8 @@ public:
 
   //! Dispatch the particle entering cell event to the observers
   static void dispatchParticleEnteringCellEvent( 
-	     const ParticleState& particle,
-	     const Geometry::ModuleTraits::InternalCellHandle& cell_entering );
+	      const ParticleState& particle,
+	      const Geometry::ModuleTraits::InternalCellHandle cell_entering );
 
 private:
 
@@ -88,11 +88,11 @@ inline void ParticleEnteringCellEventDispatcherDB::attachObserver(
 							 safe_observer );
 }
 
-// Dispatch the particle generation event to the observers
+// Dispatch the particle entering cell event to the observers
 inline void
 ParticleEnteringCellEventDispatcherDB::dispatchParticleEnteringCellEvent( 
-	     const ParticleState& particle,
-	     const Geometry::ModuleTraits::InternalCellHandle& cell_entering )
+	       const ParticleState& particle,
+	       const Geometry::ModuleTraits::InternalCellHandle cell_entering )
 {
   DispatcherMap::iterator it = 
     ParticleEnteringCellEventDispatcherDB::master_map.find( cell_entering );
