@@ -28,17 +28,19 @@ public:
 	 const double multiplier,
          const Teuchos::Array<Facemc::StandardSurfaceEstimator::surfaceIdType>&
 	 entity_ids,
-	 const Teuchos::Array<double>& entity_norm_constants )
+	 const Teuchos::Array<double>& entity_norm_constants,
+	 const bool auto_register_with_dispatchers )
     : Facemc::StandardSurfaceEstimator( id, 
 					multiplier,
 					entity_ids,
-					entity_norm_constants )
+					entity_norm_constants,
+					auto_register_with_dispatchers )
   { /* ... */ }
 
   ~TestStandardSurfaceEstimator()
   { /* ... */ }
 
-  void addPartialHistoryContribution( 
+  void updateFromParticleCrossingSurfaceEvent(
 	const Facemc::ParticleState& particle,
         const Facemc::StandardSurfaceEstimator::surfaceIdType surface_crossed,
 	const double angle_cosine )
@@ -67,7 +69,8 @@ TEUCHOS_UNIT_TEST( StandardSurfaceEstimator, setParticleType )
 	  new TestStandardSurfaceEstimator( 0ull,
 					    2.0,
 					    surface_ids,
-					    surface_norm_consts ) );
+					    surface_norm_consts,
+					    false ) );
 
   Teuchos::Array<Facemc::ParticleType> particle_types( 4 );
   particle_types[0] = Facemc::PHOTON;

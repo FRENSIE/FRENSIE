@@ -63,7 +63,8 @@ void initializeSurfaceFluxEstimator(
   estimator.reset( new SurfaceFluxEstimator( 0ull, 
 					     estimator_multiplier,
 					     surface_ids,
-					     surface_areas ) );
+					     surface_areas,
+					     false ) );
 
   Teuchos::Array<Facemc::ParticleType> particle_types( 1 );
   particle_types[0] = Facemc::PHOTON;
@@ -126,7 +127,7 @@ UNIT_TEST_INSTANTIATION( SurfaceFluxEstimator, getNumberOfBins );
 //---------------------------------------------------------------------------//
 // Check that a partial history contribution can be added to the estimator
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SurfaceFluxEstimator,
-				   addPartialHistoryContribution,
+				   updateFromParticleCrossingSurfaceEvent,
 				   ContributionMultiplierPolicy )
 {
   typedef Facemc::SurfaceFluxEstimator<ContributionMultiplierPolicy>
@@ -139,11 +140,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SurfaceFluxEstimator,
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( particle, 0, 0 );
+  estimator->updateFromParticleCrossingSurfaceEvent( particle, 0, 0 );
 
   particle.setEnergy( 0.5 );
 
-  estimator->addPartialHistoryContribution( particle, 1, 1 );
+  estimator->updateFromParticleCrossingSurfaceEvent( particle, 1, 1 );
 
   estimator->commitHistoryContribution();
 
@@ -154,7 +155,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SurfaceFluxEstimator,
 }
 
 UNIT_TEST_INSTANTIATION( SurfaceFluxEstimator, 
-			 addPartialHistoryContribution );
+			 updateFromParticleCrossingSurfaceEvent );
 
 //---------------------------------------------------------------------------//
 // end tstSurfaceFluxEstimator.cpp

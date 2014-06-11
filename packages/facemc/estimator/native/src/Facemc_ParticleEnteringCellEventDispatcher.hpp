@@ -24,7 +24,8 @@
 namespace Facemc{
 
 //! The particle entering cell event dispatcher class
-class ParticleEnteringCellEventDispatcher{
+class ParticleEnteringCellEventDispatcher
+{
   
 public:
 

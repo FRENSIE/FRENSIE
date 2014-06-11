@@ -11,12 +11,14 @@
 
 // FRENSIE Includes
 #include "Facemc_StandardEntityEstimator.hpp"
+#include "Facemc_ParticleCrossingSurfaceEventObserver.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
 namespace Facemc{
 
 //! The standard surface estimator base class
-class StandardSurfaceEstimator : public StandardEntityEstimator<Geometry::ModuleTraits::InternalSurfaceHandle>
+class StandardSurfaceEstimator : public StandardEntityEstimator<Geometry::ModuleTraits::InternalSurfaceHandle>,
+				 public ParticleCrossingSurfaceEventObserver
 {
 
 public:
@@ -31,7 +33,8 @@ public:
   StandardSurfaceEstimator( const Estimator::idType id,
 			    const double multiplier,
 			    const Teuchos::Array<surfaceIdType>& surface_ids,
-			    const Teuchos::Array<double>& surface_areas );
+			    const Teuchos::Array<double>& surface_areas,
+			    const bool auto_register_with_dispatchers );
 
   //! Destructor
   virtual ~StandardSurfaceEstimator()
@@ -39,12 +42,6 @@ public:
 
   //! Set the particle types that can contribute to the estimator
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
-
-  //! Add estimator contribution from a portion of the current history
-  virtual void addPartialHistoryContribution( 
-					   const ParticleState& particle,
-					   const surfaceIdType surface_crossed,
-					   const double angle_cosine ) = 0;
 
 protected:
 

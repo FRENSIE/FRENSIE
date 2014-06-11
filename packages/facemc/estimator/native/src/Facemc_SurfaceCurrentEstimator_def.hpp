@@ -23,8 +23,13 @@ SurfaceCurrentEstimator<ContributionMultiplierPolicy>::SurfaceCurrentEstimator(
     const Estimator::idType id,
     const double multiplier,
     const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,
-    const Teuchos::Array<double>& surface_areas )
-  : StandardSurfaceEstimator( id, multiplier, surface_ids, surface_areas )
+    const Teuchos::Array<double>& surface_areas,
+    const bool auto_register_with_dispatchers )
+  : StandardSurfaceEstimator( id, 
+			      multiplier, 
+			      surface_ids, 
+			      surface_areas,
+			      auto_register_with_dispatchers )
 { /* ... */ }
 
 // Set the response functions
@@ -39,32 +44,32 @@ void SurfaceCurrentEstimator<
 	    << std::endl;
 }
 
-// Add estimator contribution from a portion of the current history
+// Add current history estimator contribution
 template<typename ContributionMultiplierPolicy>
 void SurfaceCurrentEstimator<
-		  ContributionMultiplierPolicy>::addPartialHistoryContribution(
-		 const ParticleState& particle,
-		 const StandardSurfaceEstimator::surfaceIdType surface_crossed,
-		 const double angle_cosine )
+         ContributionMultiplierPolicy>::updateFromParticleCrossingSurfaceEvent(
+		const ParticleState& particle,
+		const StandardSurfaceEstimator::surfaceIdType surface_crossing,
+		const double angle_cosine )
 {
   // Make sure the surface is assigned to this estimator
-  testPrecondition( isEntityAssigned( surface_crossed ) );
-  // Make sure the particle type is assigned to this estimator
-  testPrecondition( isParticleTypeAssigned( particle.getParticleType() ) );
+  testPrecondition( isEntityAssigned( surface_crossing ) );
   // Make sure the angle cosine is valid
   testPrecondition( angle_cosine <= 1.0 );
   testPrecondition( angle_cosine >= -1.0 );
   
-  double contribution = 
-    ContributionMultiplierPolicy::multiplier( particle );
-  std::cout << contribution << std::endl;
-  
-  StandardEntityEstimator<
+  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
+  {
+    double contribution = 
+      ContributionMultiplierPolicy::multiplier( particle );
+    
+    StandardEntityEstimator<
        StandardSurfaceEstimator::surfaceIdType>::addPartialHistoryContribution(
-							       surface_crossed,
-							       particle, 
-							       angle_cosine,
-							       contribution );
+							      surface_crossing,
+							      particle, 
+							      angle_cosine,
+							      contribution );
+  }
 }
 
 // Print the estimator data

@@ -27,17 +27,18 @@ public:
     const Estimator::idType id,
     const double multiplier,
     const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,
-    const Teuchos::Array<double>& surface_areas );
+    const Teuchos::Array<double>& surface_areas,
+    const bool auto_register_with_dispatchers = true );
 
   //! Destructor
   ~SurfaceFluxEstimator()
   { /* ... */ }
 
   //! Add estimator contribution from a portion of the current history
-  void addPartialHistoryContribution( 
-		 const ParticleState& particle,
-		 const StandardSurfaceEstimator::surfaceIdType surface_crossed,
-		 const double angle_cosine );
+  void updateFromParticleCrossingSurfaceEvent(
+		const ParticleState& particle,
+		const StandardSurfaceEstimator::surfaceIdType surface_crossing,
+		const double angle_cosine );
 
   //! Print the estimator data
   void print( std::ostream& os ) const;
