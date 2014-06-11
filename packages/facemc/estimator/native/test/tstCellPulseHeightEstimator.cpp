@@ -138,7 +138,7 @@ UNIT_TEST_INSTANTIATION( CellPulseHeightEstimator, setParticleTypes );
 //---------------------------------------------------------------------------//
 // Check that a partial history contribution can be added to the estimator
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
-				   addPartialHistoryContribution,
+				   updateFromParticleEvent,
 				   ContributionMultiplierPolicy )
 {
   typedef Facemc::CellPulseHeightEstimator<ContributionMultiplierPolicy> 
@@ -151,16 +151,17 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( particle, 2, 0 );
+  estimator->updateFromParticleEnteringCellEvent( particle, 0 );
 
   particle.setEnergy( 0.5 );
 
-  estimator->addPartialHistoryContribution( particle, 0, 1 );
-
+  estimator->updateFromParticleLeavingCellEvent( particle, 0 );
+  estimator->updateFromParticleEnteringCellEvent( particle, 1 );
+  
   particle.setEnergy( 0.1 );
   
-  estimator->addPartialHistoryContribution( particle, 1, 2 );
-
+  estimator->updateFromParticleLeavingCellEvent( particle, 1 );
+  
   estimator->commitHistoryContribution();
 
   Facemc::Estimator::setNumberOfHistories( 1.0 );
@@ -170,7 +171,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
 }
 
 UNIT_TEST_INSTANTIATION( CellPulseHeightEstimator, 
-			 addPartialHistoryContribution );
+			 updateFromParticleEvent );
 
 //---------------------------------------------------------------------------//
 // end tstCellPulseHeightEstimator.cpp

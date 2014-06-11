@@ -12,7 +12,6 @@
 // FRENSIE Includes
 #include "Facemc_EntityEstimator.hpp"
 #include "Facemc_EstimatorContributionMultiplierPolicy.hpp"
-#include "Facemc_ParticleGenerationEventObserver.hpp"
 #include "Facemc_ParticleEnteringCellEventObserver.hpp"
 #include "Facemc_ParticleLeavingCellEventObserver.hpp"
 #include "Geometry_ModuleTraits.hpp"
@@ -22,7 +21,6 @@ namespace Facemc{
 //! The pulse height entity estimator class
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
 class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>, 
-				 public ParticleGenerationEventObserver,
 				 public ParticleEnteringCellEventObserver,
 				 public ParticleLeavingCellEventObserver
 {
@@ -50,9 +48,6 @@ public:
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
 
   //! Add current history estimator contribution
-  void updateFromParticleGenerationEvent( const ParticleState& particle );
-
-  //! Add current history estimator contribution
   void updateFromParticleEnteringCellEvent( const ParticleState& particle,
 					    const cellIdType cell_entering );
 
@@ -60,11 +55,6 @@ public:
   void updateFromParticleLeavingCellEvent( const ParticleState& particle,
 					   const cellIdType cell_leaving );
   
-  //! Add estimator contribution from a portion of the current history
-  void addPartialHistoryContribution( const ParticleState& particle,
-				      const cellIdType& cell_leaving,
-				      const cellIdType& cell_entering );
-
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution();
 
@@ -72,9 +62,6 @@ public:
   void print( std::ostream& os ) const;
 
 private:
-
-  //! Add estimator contribution from a portion of the current history
-  void addPartialHistoryContribution( const ParticleState& particle );
 
   //! Assign bin boundaries to an estimator dimension
   void assignBinBoundaries(
