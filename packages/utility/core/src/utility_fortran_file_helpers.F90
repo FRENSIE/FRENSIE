@@ -115,15 +115,23 @@ module utility_fortran_file_helpers
       character(kind=c_char,len=1), dimension(file_name_size), intent(in) :: &
            file_name
       integer(c_int), intent(in), value :: file_id
-
+      integer :: success
       character(file_name_size) :: file_name_fortran
+   
 
       ! Convert the file name character array to a fortran character array
       call convert_c_string_to_fortran( file_name, file_name_fortran, &
            file_name_size )
 
       ! Open the file
-      open(file_id, file=file_name_fortran, status='old', action='read')
+      open(file_id, file=file_name_fortran, status='old', action='read', &
+                    position='rewind',form='formatted',iostat=success)
+
+      if( success /= 0 ) then
+         write(*,*) 'Error when opening file ' , file_name_fortran
+         stop
+      endif 
+
 
     end subroutine open_file_using_fortran
 
@@ -134,8 +142,14 @@ module utility_fortran_file_helpers
       use iso_c_binding
 
       integer(c_int), intent(in), value :: file_id
+      integer :: success
 
-      close(file_id)
+      close(file_id,iostat=success)
+
+      if( success /= 0 ) then
+         write(*,*) 'Error when closing file attached to file id ' , file_id
+         stop
+      endif 
 
     end subroutine close_file_using_fortran
 
@@ -147,9 +161,15 @@ module utility_fortran_file_helpers
       use iso_c_binding
 
       integer(c_int), intent(in), value :: file_id
+      integer :: success
 
       ! Move to the beginning of the file
-      rewind(file_id)
+      rewind(file_id,iostat=success) 
+
+      if( success /= 0 ) then
+         write(*,*) 'Error when rewinding file attached to file id ' , file_id
+         stop
+      endif 
 
     end subroutine rewind_file_using_fortran 
 
