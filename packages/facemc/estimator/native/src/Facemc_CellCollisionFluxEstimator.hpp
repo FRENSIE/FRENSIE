@@ -11,13 +11,15 @@
 
 // FRENSIE Includes
 #include "Facemc_StandardCellEstimator.hpp"
+#include "Facemc_ParticleCollidingInCellEventObserver.hpp"
 #include "Facemc_EstimatorContributionMultiplierPolicy.hpp"
 
 namespace Facemc{
 
 //! The cell collision flux estimator class
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
-class CellCollisionFluxEstimator : public StandardCellEstimator
+class CellCollisionFluxEstimator : public StandardCellEstimator,
+				   public ParticleCollidingInCellEventObserver
 {
 
 public:
@@ -27,18 +29,18 @@ public:
 	     const Estimator::idType id,
 	     const double multiplier,
 	     const Teuchos::Array<StandardCellEstimator::cellIdType>& cell_ids,
-	     const Teuchos::Array<double>& cell_volumes );
+	     const Teuchos::Array<double>& cell_volumes,
+	     const bool auto_register_with_dispatchers = true );
 
   //! Destructor
   ~CellCollisionFluxEstimator()
   { /* ... */ }
 
-  //! Add estimator contribution from a portion of the current history
-  void addPartialHistoryContribution( 
+  //! Add current history estimator contribution
+  void updateFromParticleCollidingInCellEvent(
 		     const ParticleState& particle,
 		     const StandardCellEstimator::cellIdType cell_of_collision,
-		     const double inverse_total_cross_section,
-		     const double angle_cosine = 0.0);
+		     const double inverse_total_cross_section );
   
   //! Print the estimator data
   void print( std::ostream& os ) const;

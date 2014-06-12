@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Facemc_ParticleEnteringCellEventObserver.hpp
+//! \file   Facemc_ParticleCollidingInCellEventObserver.hpp
 //! \author Alex Robinson
-//! \brief  Particle entering cell event observer base class declaration.
+//! \brief  Particle colliding in cell event observer base class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_ENTERING_CELL_EVENT_OBSERVER_HPP
-#define FACEMC_PARTICLE_ENTERING_CELL_EVENT_OBSERVER_HPP
+#ifndef FACEMC_PARTICLE_COLLIDING_IN_CELL_EVENT_OBSERVER_HPP
+#define FACEMC_PARTICLE_COLLIDING_IN_CELL_EVENT_OBSERVER_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -19,29 +19,30 @@
 
 namespace Facemc{
 
-//! The particle entering cell event observer base class
-class ParticleEnteringCellEventObserver
+//! The particle colliding in cell event observer base class
+class ParticleCollidingInCellEventObserver
 {
   
 public:
 
   //! Constructor
-  ParticleEnteringCellEventObserver(
+  ParticleCollidingInCellEventObserver(
     const ModuleTraits::InternalEstimatorHandle id,
     const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
     const bool auto_register_with_dispatchers );
 
   //! Destructor
-  virtual ~ParticleEnteringCellEventObserver();
+  virtual ~ParticleCollidingInCellEventObserver();
 
   //! Register the observer
-  void registerWithParticleEnteringCellEventDispatcher(
+  void registerWithParticleCollidingInCellEventDispatcher(
    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids);
 
   //! Update the observer
-  virtual void updateFromParticleEnteringCellEvent( 
-	  const ParticleState& particle,
-	  const Geometry::ModuleTraits::InternalCellHandle cell_entering ) = 0;
+  virtual void updateFromParticleCollidingInCellEvent(
+	    const ParticleState& particle,
+	    const Geometry::ModuleTraits::InternalCellHandle cell_of_collision,
+	    const double inverse_total_cross_section ) = 0;
 
 private:
 
@@ -54,9 +55,8 @@ private:
 
 } // end Facemc namespace
 
-#endif // end FACEMC_PARTICLE_ENTERING_CELL_EVENT_OBSERVER_HPP
+#endif // end FACEMC_PARTICLE_COLLIDING_IN_CELL_EVENT_OBSERVER_HPP
 
 //---------------------------------------------------------------------------//
-// end Facemc_ParticleEnteringCellEventObserver.hpp
+// end Facemc_ParticleCollidingInCellEventObserver.hpp
 //---------------------------------------------------------------------------//
-

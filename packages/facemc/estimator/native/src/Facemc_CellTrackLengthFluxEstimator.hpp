@@ -11,13 +11,15 @@
 
 // FRENSIE Includes
 #include "Facemc_StandardCellEstimator.hpp"
+#include "Facemc_ParticleSubtrackEndingInCellEventObserver.hpp"
 #include "Facemc_EstimatorContributionMultiplierPolicy.hpp"
 
 namespace Facemc{
 
 //! The cell track length flux estimator class
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
-class CellTrackLengthFluxEstimator : public StandardCellEstimator
+class CellTrackLengthFluxEstimator : public StandardCellEstimator,
+				     public ParticleSubtrackEndingInCellEventObserver
 {
 
 public:
@@ -27,7 +29,8 @@ public:
 	     const Estimator::idType id,
 	     const double multiplier,
 	     const Teuchos::Array<StandardCellEstimator::cellIdType>& cell_ids,
-	     const Teuchos::Array<double>& cell_volumes );
+	     const Teuchos::Array<double>& cell_volumes,
+	     const bool auto_register_with_dispatchers = true );
 
   //! Destructor
   ~CellTrackLengthFluxEstimator()
@@ -37,12 +40,11 @@ public:
   void setResponseFunctions(
    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
 
-  //! Add estimator contribution from a portion of the current history
-  void addPartialHistoryContribution( 
-			 const ParticleState& particle,
-			 const StandardCellEstimator::cellIdType cell_of_track,
-			 const double track_length,
-			 const double angle_cosine = 0.0 );
+  //! Add current history estimator contribution
+  void updateFromParticleSubtrackEndingInCellEvent(
+		      const ParticleState& particle,
+		      const StandardCellEstimator::cellIdType cell_of_subtrack,
+		      const double track_length );
 
   //! Print the estimator data
   void print( std::ostream& os ) const;

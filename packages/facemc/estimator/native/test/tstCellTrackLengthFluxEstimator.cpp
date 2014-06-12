@@ -63,7 +63,8 @@ void initializeCellTrackLengthFluxEstimator(
   estimator.reset( new CellTrackLengthFluxEstimator( 0ull, 
 						     estimator_multiplier,
 						     cell_ids,
-						     cell_volumes ) );
+						     cell_volumes,
+						     false ) );
 
   Teuchos::Array<Facemc::ParticleType> particle_types( 1 );
   particle_types[0] = Facemc::PHOTON;
@@ -127,7 +128,7 @@ UNIT_TEST_INSTANTIATION( CellTrackLengthFluxEstimator, getNumberOfBins );
 //---------------------------------------------------------------------------//
 // Check that a partial history contribution can be added to the estimator
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellTrackLengthFluxEstimator,
-				   addPartialHistoryContribution,
+				   updateFromParticleSubtrackEndingInCellEvent,
 				   ContributionMultiplierPolicy )
 {
   typedef Facemc::CellTrackLengthFluxEstimator<ContributionMultiplierPolicy>
@@ -141,11 +142,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellTrackLengthFluxEstimator,
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( particle, 0, 1.0 );
+  estimator->updateFromParticleSubtrackEndingInCellEvent( particle, 0, 1.0 );
 
   particle.setEnergy( 0.5 );
 
-  estimator->addPartialHistoryContribution( particle, 1, 1.0, 1 );
+  estimator->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
 
   estimator->commitHistoryContribution();
 
@@ -156,7 +157,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellTrackLengthFluxEstimator,
 }
 
 UNIT_TEST_INSTANTIATION( CellTrackLengthFluxEstimator, 
-			 addPartialHistoryContribution );
+			 updateFromParticleSubtrackEndingInCellEvent );
 
 //---------------------------------------------------------------------------//
 // end tstCellTrackLengthFluxEstimator.cpp

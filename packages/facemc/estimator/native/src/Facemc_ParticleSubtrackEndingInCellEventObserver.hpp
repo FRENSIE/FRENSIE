@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Facemc_ParticleEnteringCellEventObserver.hpp
+//! \file   Facemc_ParticleSubtrackEndingInCellEventObserver.hpp
 //! \author Alex Robinson
-//! \brief  Particle entering cell event observer base class declaration.
+//! \brief  Particle subtrack ending in cell event observer base class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_ENTERING_CELL_EVENT_OBSERVER_HPP
-#define FACEMC_PARTICLE_ENTERING_CELL_EVENT_OBSERVER_HPP
+#ifndef FACEMC_PARTICLE_SUBTRACK_ENDING_IN_CELL_EVENT_OBSERVER_HPP
+#define FACEMC_PARTICLE_SUBTRACK_ENDING_IN_CELL_EVENT_OBSERVER_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -19,29 +19,30 @@
 
 namespace Facemc{
 
-//! The particle entering cell event observer base class
-class ParticleEnteringCellEventObserver
+//! The particle subtrack ending in cell event observer
+class ParticleSubtrackEndingInCellEventObserver
 {
   
 public:
 
   //! Constructor
-  ParticleEnteringCellEventObserver(
+  ParticleSubtrackEndingInCellEventObserver(
     const ModuleTraits::InternalEstimatorHandle id,
     const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
     const bool auto_register_with_dispatchers );
 
   //! Destructor
-  virtual ~ParticleEnteringCellEventObserver();
+  virtual ~ParticleSubtrackEndingInCellEventObserver();
 
   //! Register the observer
-  void registerWithParticleEnteringCellEventDispatcher(
+  void registerWithParticleSubtrackEndingInCellEventDispatcher(
    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids);
 
   //! Update the observer
-  virtual void updateFromParticleEnteringCellEvent( 
-	  const ParticleState& particle,
-	  const Geometry::ModuleTraits::InternalCellHandle cell_entering ) = 0;
+  virtual void updateFromParticleSubtrackEndingInCellEvent(
+	     const ParticleState& particle,
+	     const Geometry::ModuleTraits::InternalCellHandle cell_of_subtrack,
+	     const double track_length ) = 0;
 
 private:
 
@@ -54,9 +55,8 @@ private:
 
 } // end Facemc namespace
 
-#endif // end FACEMC_PARTICLE_ENTERING_CELL_EVENT_OBSERVER_HPP
+#endif // end FACEMC_PARTICLE_SUBTRACK_ENDING_IN_CELL_EVENT_OBSERVER_HPP
 
 //---------------------------------------------------------------------------//
-// end Facemc_ParticleEnteringCellEventObserver.hpp
+// end Facemc_ParticleSubtrackEndingInCellEventObserver.hpp
 //---------------------------------------------------------------------------//
-

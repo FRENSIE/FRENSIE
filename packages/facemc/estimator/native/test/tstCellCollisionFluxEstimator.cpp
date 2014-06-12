@@ -126,7 +126,7 @@ UNIT_TEST_INSTANTIATION( CellCollisionFluxEstimator, getNumberOfBins );
 //---------------------------------------------------------------------------//
 // Check that a partial history contribution can be added to the estimator
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellCollisionFluxEstimator,
-				   addPartialHistoryContribution,
+				   updateFromParticleCollidingInCellEvent,
 				   ContributionMultiplierPolicy )
 {
   typedef Facemc::CellCollisionFluxEstimator<ContributionMultiplierPolicy>
@@ -139,11 +139,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellCollisionFluxEstimator,
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
 
-  estimator->addPartialHistoryContribution( particle, 0, 1.0 );
+  estimator->updateFromParticleCollidingInCellEvent( particle, 0, 1.0 );
 
   particle.setEnergy( 0.5 );
 
-  estimator->addPartialHistoryContribution( particle, 1, 1.0, 1 );
+  estimator->updateFromParticleCollidingInCellEvent( particle, 1, 1.0 );
 
   estimator->commitHistoryContribution();
 
@@ -154,7 +154,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellCollisionFluxEstimator,
 }
 
 UNIT_TEST_INSTANTIATION( CellCollisionFluxEstimator, 
-			 addPartialHistoryContribution );
+			 updateFromParticleCollidingInCellEvent );
 
 
 //---------------------------------------------------------------------------//

@@ -24,18 +24,22 @@ CellCollisionFluxEstimator<
 	     const Estimator::idType id,
 	     const double multiplier,
 	     const Teuchos::Array<StandardCellEstimator::cellIdType>& cell_ids,
-	     const Teuchos::Array<double>& cell_volumes )
-  : StandardCellEstimator( id, multiplier, cell_ids, cell_volumes )
+	     const Teuchos::Array<double>& cell_volumes,
+	     const bool auto_register_with_dispatchers )
+  : StandardCellEstimator( id, multiplier, cell_ids, cell_volumes ),
+    ParticleCollidingInCellEventObserver( id,
+					  cell_ids,
+					  auto_register_with_dispatchers )
+			 
 { /* ... */ }
 
 // Add estimator contribution from a portion of the current history
 template<typename ContributionMultiplierPolicy>
 void CellCollisionFluxEstimator<
-		  ContributionMultiplierPolicy>::addPartialHistoryContribution(
+         ContributionMultiplierPolicy>::updateFromParticleCollidingInCellEvent(
 		     const ParticleState& particle,
 		     const StandardCellEstimator::cellIdType cell_of_collision,
-		     const double inverse_total_cross_section,
-		     const double angle_cosine )
+		     const double inverse_total_cross_section )
 {
   // Make sure the cell is assigned to this estimator
   testPrecondition( isEntityAssigned( cell_of_collision ) );
@@ -43,9 +47,6 @@ void CellCollisionFluxEstimator<
   testPrecondition( isParticleTypeAssigned( particle.getParticleType() ) );
   // Make sure the inverse total macroscopic cross section is valid
   testPrecondition( !ST::isnaninf( inverse_total_cross_section ) );
-  // Make sure the angle cosine is valid
-  testPrecondition( angle_cosine <= 1.0 );
-  testPrecondition( angle_cosine >= -1.0 );
   
   double contribution = inverse_total_cross_section*
     ContributionMultiplierPolicy::multiplier( particle );
@@ -54,7 +55,7 @@ void CellCollisionFluxEstimator<
              StandardCellEstimator::cellIdType>::addPartialHistoryContribution(
 							     cell_of_collision,
 							     particle, 
-							     angle_cosine, 
+							     0.0, 
 							     contribution );
 }
 

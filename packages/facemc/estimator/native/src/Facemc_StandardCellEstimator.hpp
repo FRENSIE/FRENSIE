@@ -36,13 +36,6 @@ public:
 
   //! Set the particle types that can contribute to the estimator
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
-
-  //! Add estimator contribution from a portion of the current history
-  virtual void addPartialHistoryContribution(
-					   const ParticleState& particle,
-					   const cellIdType cell_of_interest,
-					   const double raw_contribution,
-					   const double angle_cosine ) = 0;
 };
 
 } // end Facemc namespace
