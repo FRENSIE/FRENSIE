@@ -22,13 +22,15 @@ class SurfaceCurrentEstimator : public StandardSurfaceEstimator
 
 public:
 
+  //! Typedef for event tags
+  typedef StandardSurfaceEstimator::EventTags EventTags;
+
   //! Constructor
   SurfaceCurrentEstimator( 
     const Estimator::idType id,
     const double multiplier,
     const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,
-    const Teuchos::Array<double>& surface_areas,
-    const bool auto_register_with_dispatchers = true );
+    const Teuchos::Array<double>& surface_areas );
 
   //! Destructor
   ~SurfaceCurrentEstimator()

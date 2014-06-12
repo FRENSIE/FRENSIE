@@ -11,6 +11,8 @@
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
+#include <boost/mpl/find.hpp>
+#include <boost/mpl/deref.hpp>
 
 // Teuchos Includes
 #include <Teuchos_RCP.hpp>
@@ -36,12 +38,6 @@ public:
 		    const ModuleTraits::InternalEstimatorHandle estimator_id,
 		    Teuchos::RCP<ParticleLeavingCellEventObserver>& observer );
 
-  //! Attach an observer to the apropriate dispatcher
-  static void attachObserver(
-		      const Geometry::ModuleTraits::InternalCellHandle cell_id,
-		      const ModuleTraits::InternalEstimatorHandle estimator_id,
-		      ParticleLeavingCellEventObserver* observer );
-
   //! Detach the observer from the appropriate dispatcher
   static void detachObserver(
 		    const Geometry::ModuleTraits::InternalCellHandle cell_id,
@@ -50,6 +46,9 @@ public:
   //! Detach the observer from all dispatchers
   static void detachObserver(
 		    const ModuleTraits::InternalEstimatorHandle estimator_id );
+
+  //! Detach all observers
+  static void detachAllObservers();
 
   //! Dispatch the particle leaving cell event to the observers
   static void dispatchParticleLeavingCellEvent(
@@ -69,25 +68,6 @@ private:
   static DispatcherMap master_map;
 };
 
-// Attach an observer
-/*! \details A non-owning Teuchos::RCP will be constructed from the raw 
- * pointer. This function should be used from inside of observer constructors.
- * The observer destructor should call the detachObserver method to avoid
- * null pointer dereferencing in the dispatchers.
- */
-inline void ParticleLeavingCellEventDispatcherDB::attachObserver(
-		      const Geometry::ModuleTraits::InternalCellHandle cell_id,
-		      const ModuleTraits::InternalEstimatorHandle estimator_id,
-		      ParticleLeavingCellEventObserver* observer )
-{
-  Teuchos::RCP<ParticleLeavingCellEventObserver> safe_observer( observer,
-								false );
-  
-  ParticleLeavingCellEventDispatcherDB::attachObserver( cell_id,
-							estimator_id,
-							safe_observer );
-}
-
 // Dispatch the particle leaving cell event to the observers
 inline void
 ParticleLeavingCellEventDispatcherDB::dispatchParticleLeavingCellEvent( 
@@ -100,6 +80,27 @@ ParticleLeavingCellEventDispatcherDB::dispatchParticleLeavingCellEvent(
   if( it != ParticleLeavingCellEventDispatcherDB::master_map.end() )
     it->second->dispatchParticleLeavingCellEvent( particle, cell_leaving );
 }
+
+//! Register an observer with the appropriate dispatchers
+template<typename Observer, typename EntityHandle>
+inline void registerObserver( Teuchos::RCP<Observer>& observer,
+			      const Teuchos::Array<EntityHandle>& entity_ids,
+			      ParticleLeavingCellEventObserver::EventTag )
+{
+  // Make sure the observer has the expected event tag
+  testStaticPrecondition((boost::is_same<typename boost::mpl::deref<typename boost::mpl::find<typename Observer::EventTags,ParticleLeavingCellEventObserver::EventTag>::type>::type,ParticleLeavingCellEventObserver::EventTag>::type));
+  
+  Teuchos::RCP<ParticleLeavingCellEventObserver> observer_base = 
+    Teuchos::rcp_dynamic_cast<ParticleLeavingCellEventObserver>( observer );
+  
+  for( unsigned i = 0u; i < entity_ids.size(); ++i )
+  {
+    ParticleLeavingCellEventDispatcherDB::attachObserver( entity_ids[i],
+							  observer->getId(),
+							  observer_base );
+  }
+}
+
 
 } // end Facemc namespace
 

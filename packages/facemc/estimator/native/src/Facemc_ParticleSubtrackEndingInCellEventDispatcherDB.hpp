@@ -11,6 +11,8 @@
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
+#include <boost/mpl/find.hpp>
+#include <boost/mpl/deref.hpp>
 
 // Teuchos Includes
 #include <Teuchos_RCP.hpp>
@@ -35,12 +37,6 @@ public:
 	   const Geometry::ModuleTraits::InternalCellHandle cell_id,
 	   const ModuleTraits::InternalEstimatorHandle estimator_id,
 	   Teuchos::RCP<ParticleSubtrackEndingInCellEventObserver>& observer );
-
-  //! Attach an observer to the appropriate dispatcher
-  static void attachObserver(
-		      const Geometry::ModuleTraits::InternalCellHandle cell_id,
-		      const ModuleTraits::InternalEstimatorHandle estimator_id,
-		      ParticleSubtrackEndingInCellEventObserver* observer );
   
   //! Detach an observer from the appropriate dispatcher
   static void detachObserver(
@@ -50,6 +46,9 @@ public:
   //! Detach the observer from all dispatchers
   static void detachObserver(
 		    const ModuleTraits::InternalEstimatorHandle estimator_id );
+
+  //! Detach all observers
+  static void detachAllObservers();
 
   //! Dispatch the particle subtrack ending in cell event to the observers
   static void dispatchParticleSubtrackEndingInCellEvent(
@@ -70,27 +69,6 @@ private:
   static DispatcherMap master_map;
 };
 
-// Attach an observer to the appropriate dispatcher
-/*! \details A non-owning Teuchos::RCP will be constructed from the raw 
- * pointer. This function should be used from inside of observer constructors.
- * The observer destructor should call the detachObserver method to avoid
- * null pointer dereferencing in the dispatchers.
- */
-inline void ParticleSubtrackEndingInCellEventDispatcherDB::attachObserver(
-		      const Geometry::ModuleTraits::InternalCellHandle cell_id,
-		      const ModuleTraits::InternalEstimatorHandle estimator_id,
-		      ParticleSubtrackEndingInCellEventObserver* observer )
-{
-  Teuchos::RCP<ParticleSubtrackEndingInCellEventObserver> safe_observer( 
-								      observer,
-								      false );
-  
-  ParticleSubtrackEndingInCellEventDispatcherDB::attachObserver( 
-							       cell_id,
-							       estimator_id,
-							       safe_observer );
-} 
-
 // Dispatch the particle subtrack ending in cell event to the observers
 inline void 
 ParticleSubtrackEndingInCellEventDispatcherDB::dispatchParticleSubtrackEndingInCellEvent(
@@ -107,6 +85,29 @@ ParticleSubtrackEndingInCellEventDispatcherDB::dispatchParticleSubtrackEndingInC
     it->second->dispatchParticleSubtrackEndingInCellEvent( particle, 
 							   cell_of_subtrack,
 							   track_length );
+  }
+}
+
+//! Register an observer with the appropriate dispatchers
+template<typename Observer, typename EntityHandle>
+inline void registerObserver( 
+			  Teuchos::RCP<Observer>& observer,
+			  const Teuchos::Array<EntityHandle>& entity_ids,
+			  ParticleSubtrackEndingInCellEventObserver::EventTag )
+{
+  // Make sure the Observer class has the corrent event tag
+  testStaticPrecondition((boost::is_same<typename boost::mpl::deref<typename boost::mpl::find<typename Observer::EventTags,ParticleSubtrackEndingInCellEventObserver::EventTag>::type>::type,ParticleSubtrackEndingInCellEventObserver::EventTag>::type));
+  
+  Teuchos::RCP<ParticleSubtrackEndingInCellEventObserver> observer_base = 
+    Teuchos::rcp_dynamic_cast<ParticleSubtrackEndingInCellEventObserver>( 
+								    observer );
+  
+  for( unsigned i = 0u; i < entity_ids.size(); ++i )
+  {
+    ParticleSubtrackEndingInCellEventDispatcherDB::attachObserver(
+							     entity_ids[i],
+							     observer->getId(),
+							     observer_base );
   }
 }
 

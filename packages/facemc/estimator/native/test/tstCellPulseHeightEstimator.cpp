@@ -58,9 +58,8 @@ void initializePulseHeightEstimator(
 
   estimator.reset( new PulseHeightEstimator( 0ull, 
 					     estimator_multiplier,
-					     entity_ids,
-					     false ) );
-
+					     entity_ids ) );
+					     
   Teuchos::RCP<Facemc::Estimator> estimator_base = 
     Teuchos::rcp_dynamic_cast<Facemc::Estimator>( estimator );
   

@@ -30,15 +30,12 @@ StandardSurfaceEstimator::StandardSurfaceEstimator(
     const Estimator::idType id,
     const double multiplier,
     const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,
-    const Teuchos::Array<double>& surface_areas,
-    const bool auto_register_with_dispatchers )
+    const Teuchos::Array<double>& surface_areas )
   : StandardEntityEstimator<surfaceIdType>( id, 
 					    multiplier, 
 					    surface_ids, 
 					    surface_areas ),
-    ParticleCrossingSurfaceEventObserver( id,
-					  surface_ids,
-					  auto_register_with_dispatchers)
+    ParticleCrossingSurfaceEventObserver()
 { /* ... */ }
 
 // Set the particle types that can contribute to the estimator

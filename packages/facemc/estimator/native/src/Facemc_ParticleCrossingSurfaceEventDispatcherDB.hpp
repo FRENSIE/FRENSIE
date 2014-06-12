@@ -11,6 +11,8 @@
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
+#include <boost/mpl/find.hpp>
+#include <boost/mpl/deref.hpp>
 
 // Teuchos Includes
 #include <Teuchos_RCP.hpp>
@@ -36,11 +38,6 @@ public:
 		const ModuleTraits::InternalEstimatorHandle estimator_id,
 	        Teuchos::RCP<ParticleCrossingSurfaceEventObserver>& observer );
 
-  static void attachObserver(
-	        const Geometry::ModuleTraits::InternalSurfaceHandle surface_id,
-		const ModuleTraits::InternalEstimatorHandle estimator_id,
-	        ParticleCrossingSurfaceEventObserver* observer );
-
   //! Detach the observer from the appropriate dispatcher
   static void detachObserver(
 		const Geometry::ModuleTraits::InternalSurfaceHandle surface_id,
@@ -49,6 +46,9 @@ public:
   //! Detach the observer from all dispatchers
   static void detachObserver(
 		    const ModuleTraits::InternalEstimatorHandle estimator_id );
+
+  //! Detach all observers
+  static void detachAllObservers();
 
   //! Dispatch the particle crossing surface event to the observers
   static void dispatchParticleCrossingSurfaceEvent(
@@ -69,25 +69,6 @@ private:
   static DispatcherMap master_map;
 };
 
-// Attach an observer
-/*! \details A non-owning Teuchos::RCP willl be constructed from the raw
- * pointer. This function should be used from inside of observer constructors.
- * The observer destructor should call the detachObserver method to avoid
- * null pointer dereferencing in the dispatchers.
- */
-inline void ParticleCrossingSurfaceEventDispatcherDB::attachObserver(
-	        const Geometry::ModuleTraits::InternalSurfaceHandle surface_id,
-		const ModuleTraits::InternalEstimatorHandle estimator_id,
-	        ParticleCrossingSurfaceEventObserver* observer )
-{
-  Teuchos::RCP<ParticleCrossingSurfaceEventObserver> safe_observer( observer,
-								    false );
-
-  ParticleCrossingSurfaceEventDispatcherDB::attachObserver( surface_id,
-							    estimator_id,
-							    safe_observer );
-}
-
 // Dispatch the particle crossing surface event to the observers
 inline void
 ParticleCrossingSurfaceEventDispatcherDB::dispatchParticleCrossingSurfaceEvent(
@@ -104,6 +85,26 @@ ParticleCrossingSurfaceEventDispatcherDB::dispatchParticleCrossingSurfaceEvent(
     it->second->dispatchParticleCrossingSurfaceEvent( particle,
 						      surface_crossing,
 						      angle_cosine );
+  }
+}
+
+//! Register an observer with the appropriate dispatchers
+template<typename Observer, typename EntityHandle>
+inline void registerObserver( Teuchos::RCP<Observer>& observer,
+			      const Teuchos::Array<EntityHandle>& entity_ids,
+			      ParticleCrossingSurfaceEventObserver::EventTag )
+{
+  // Make sure the Observer class has the corrent event tag
+  testStaticPrecondition((boost::is_same<typename boost::mpl::deref<typename boost::mpl::find<typename Observer::EventTags,ParticleCrossingSurfaceEventObserver::EventTag>::type>::type,ParticleCrossingSurfaceEventObserver::EventTag>::type));
+  
+  Teuchos::RCP<ParticleCrossingSurfaceEventObserver> observer_base = 
+    Teuchos::rcp_dynamic_cast<ParticleCrossingSurfaceEventObserver>( observer );
+  
+  for( unsigned i = 0u; i < entity_ids.size(); ++i )
+  {
+    ParticleCrossingSurfaceEventDispatcherDB::attachObserver(entity_ids[i],
+							     observer->getId(),
+							     observer_base );
   }
 }
 

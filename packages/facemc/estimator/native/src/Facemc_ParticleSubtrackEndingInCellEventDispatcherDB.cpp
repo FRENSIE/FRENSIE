@@ -73,6 +73,12 @@ void ParticleSubtrackEndingInCellEventDispatcherDB::detachObserver(
   }
 }
 
+// Detach all observers
+void ParticleSubtrackEndingInCellEventDispatcherDB::detachAllObservers()
+{
+  ParticleSubtrackEndingInCellEventDispatcherDB::master_map.clear();
+}
+
 } // end Facemc namespace
 
 //---------------------------------------------------------------------------//

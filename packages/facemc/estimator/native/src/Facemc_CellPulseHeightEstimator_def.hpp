@@ -23,15 +23,10 @@ CellPulseHeightEstimator<
                        ContributionMultiplierPolicy>::CellPulseHeightEstimator(
        const Estimator::idType id,
        const double multiplier,
-       const Teuchos::Array<CellPulseHeightEstimator::cellIdType>& entity_ids,
-       const bool auto_register_with_dispatchers )			   
+       const Teuchos::Array<CellPulseHeightEstimator::cellIdType>& entity_ids )
   : EntityEstimator<cellIdType>( id, multiplier, entity_ids ),
-    ParticleEnteringCellEventObserver( id,
-				       entity_ids,
-				       auto_register_with_dispatchers ),
-    ParticleLeavingCellEventObserver( id,
-				      entity_ids,
-				      auto_register_with_dispatchers ),
+    ParticleEnteringCellEventObserver(),
+    ParticleLeavingCellEventObserver(),
     d_total_energy_deposition_moments( 1 )
 {
   // Set up the entity map

@@ -24,13 +24,9 @@ CellCollisionFluxEstimator<
 	     const Estimator::idType id,
 	     const double multiplier,
 	     const Teuchos::Array<StandardCellEstimator::cellIdType>& cell_ids,
-	     const Teuchos::Array<double>& cell_volumes,
-	     const bool auto_register_with_dispatchers )
+	     const Teuchos::Array<double>& cell_volumes )
   : StandardCellEstimator( id, multiplier, cell_ids, cell_volumes ),
-    ParticleCollidingInCellEventObserver( id,
-					  cell_ids,
-					  auto_register_with_dispatchers )
-			 
+    ParticleCollidingInCellEventObserver()			 
 { /* ... */ }
 
 // Add estimator contribution from a portion of the current history

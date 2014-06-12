@@ -24,31 +24,24 @@ class ParticleLeavingCellEventObserver{
   
 public:
 
+  //! The event tag type
+  struct ParticleLeavingCellEvent{};
+  
+  //! Typedef for the observer event
+  typedef ParticleLeavingCellEvent EventTag;
+
   //! Constructor
-  ParticleLeavingCellEventObserver(
-    const ModuleTraits::InternalEstimatorHandle id,
-    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
-    const bool auto_register_with_dispatchers );
+  ParticleLeavingCellEventObserver()
+  { /* ... */ }
 
   //! Destructor
-  virtual ~ParticleLeavingCellEventObserver();
-
-  //! Register the observer
-  void registerWithParticleLeavingCellEventDispatcher(
-   const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids);
+  virtual ~ParticleLeavingCellEventObserver()
+  { /* ... */ }
 
   //! Update the observer
   virtual void updateFromParticleLeavingCellEvent(
 	   const ParticleState& particle,
 	   const Geometry::ModuleTraits::InternalCellHandle cell_leaving ) = 0;
-
-private:
-
-  // The estimator id corresponding to this observer
-  ModuleTraits::InternalEstimatorHandle d_id;
-
-  // Indicates if the observer has registered
-  bool d_is_registered;
 };
 
 } // end Facemc namespace

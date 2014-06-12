@@ -25,32 +25,25 @@ class ParticleSubtrackEndingInCellEventObserver
   
 public:
 
+  //! The event tag type
+  struct ParticleSubtrackEndingInCellEvent{};
+
+  //! Typedef for the observer event tat
+  typedef ParticleSubtrackEndingInCellEvent EventTag;
+
   //! Constructor
-  ParticleSubtrackEndingInCellEventObserver(
-    const ModuleTraits::InternalEstimatorHandle id,
-    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
-    const bool auto_register_with_dispatchers );
+  ParticleSubtrackEndingInCellEventObserver()
+  { /* ... */ }
 
   //! Destructor
-  virtual ~ParticleSubtrackEndingInCellEventObserver();
-
-  //! Register the observer
-  void registerWithParticleSubtrackEndingInCellEventDispatcher(
-   const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids);
+  virtual ~ParticleSubtrackEndingInCellEventObserver()
+  { /* ... */ }
 
   //! Update the observer
   virtual void updateFromParticleSubtrackEndingInCellEvent(
 	     const ParticleState& particle,
 	     const Geometry::ModuleTraits::InternalCellHandle cell_of_subtrack,
 	     const double track_length ) = 0;
-
-private:
-
-  // The estimator id corresponding to this observer
-  ModuleTraits::InternalEstimatorHandle d_id;
-
-  // Indicates if the observer has registered
-  bool d_is_registered;
 };
 
 } // end Facemc namespace

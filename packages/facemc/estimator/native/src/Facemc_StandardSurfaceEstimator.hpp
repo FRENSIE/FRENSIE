@@ -9,6 +9,9 @@
 #ifndef FACEMC_STANDARD_SURFACE_ESTIMATOR_HPP
 #define FACEMC_STANDARD_SURFACE_ESTIMATOR_HPP
 
+// Boost Includes
+#include <boost/mpl/vector.hpp>
+
 // FRENSIE Includes
 #include "Facemc_StandardEntityEstimator.hpp"
 #include "Facemc_ParticleCrossingSurfaceEventObserver.hpp"
@@ -26,6 +29,10 @@ public:
   //! Typedef for the surface id type
   typedef Geometry::ModuleTraits::InternalSurfaceHandle surfaceIdType;
 
+  //! Typedef for event tags used for quick dispatcher registering
+  typedef boost::mpl::vector<ParticleCrossingSurfaceEventObserver::EventTag>
+  EventTags;
+
   //! Set the angle cosine cutoff value
   static void setAngleCosineCutoff( const double angle_cosine_cutoff );
 
@@ -33,8 +40,7 @@ public:
   StandardSurfaceEstimator( const Estimator::idType id,
 			    const double multiplier,
 			    const Teuchos::Array<surfaceIdType>& surface_ids,
-			    const Teuchos::Array<double>& surface_areas,
-			    const bool auto_register_with_dispatchers );
+			    const Teuchos::Array<double>& surface_areas );
 
   //! Destructor
   virtual ~StandardSurfaceEstimator()

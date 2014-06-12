@@ -25,32 +25,25 @@ class ParticleCollidingInCellEventObserver
   
 public:
 
+  //! The event tag type
+  struct ParticleCollidingInCellEvent{};
+
+  //! Typedef for the observer event tag
+  typedef ParticleCollidingInCellEvent EventTag;
+
   //! Constructor
-  ParticleCollidingInCellEventObserver(
-    const ModuleTraits::InternalEstimatorHandle id,
-    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids,
-    const bool auto_register_with_dispatchers );
+  ParticleCollidingInCellEventObserver()
+  { /* ... */ }
 
   //! Destructor
-  virtual ~ParticleCollidingInCellEventObserver();
-
-  //! Register the observer
-  void registerWithParticleCollidingInCellEventDispatcher(
-   const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>& cell_ids);
-
+  virtual ~ParticleCollidingInCellEventObserver()
+  { /* ... */ }
+  
   //! Update the observer
   virtual void updateFromParticleCollidingInCellEvent(
 	    const ParticleState& particle,
 	    const Geometry::ModuleTraits::InternalCellHandle cell_of_collision,
 	    const double inverse_total_cross_section ) = 0;
-
-private:
-
-  // The estimator id corresponding to this observer
-  ModuleTraits::InternalEstimatorHandle d_id;
-
-  // Indicates if the observer has registered
-  bool d_is_registered;
 };
 
 } // end Facemc namespace

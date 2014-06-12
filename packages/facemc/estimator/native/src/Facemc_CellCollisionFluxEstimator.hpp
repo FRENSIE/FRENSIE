@@ -9,6 +9,9 @@
 #ifndef FACEMC_CELL_COLLISION_FLUX_ESTIMATOR_HPP
 #define FACEMC_CELL_COLLISION_FLUX_ESTIMATOR_HPP
 
+// Boost Includes
+#include <boost/mpl/vector.hpp>
+
 // FRENSIE Includes
 #include "Facemc_StandardCellEstimator.hpp"
 #include "Facemc_ParticleCollidingInCellEventObserver.hpp"
@@ -24,13 +27,16 @@ class CellCollisionFluxEstimator : public StandardCellEstimator,
 
 public:
 
+  //! Typedef for event tags used for quick dispatcher registering
+  typedef boost::mpl::vector<ParticleCollidingInCellEventObserver::EventTag>
+  EventTags;
+
   //! Constructor
   CellCollisionFluxEstimator( 
 	     const Estimator::idType id,
 	     const double multiplier,
 	     const Teuchos::Array<StandardCellEstimator::cellIdType>& cell_ids,
-	     const Teuchos::Array<double>& cell_volumes,
-	     const bool auto_register_with_dispatchers = true );
+	     const Teuchos::Array<double>& cell_volumes );
 
   //! Destructor
   ~CellCollisionFluxEstimator()

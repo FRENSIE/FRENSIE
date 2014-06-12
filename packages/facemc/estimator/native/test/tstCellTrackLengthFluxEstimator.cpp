@@ -63,9 +63,8 @@ void initializeCellTrackLengthFluxEstimator(
   estimator.reset( new CellTrackLengthFluxEstimator( 0ull, 
 						     estimator_multiplier,
 						     cell_ids,
-						     cell_volumes,
-						     false ) );
-
+						     cell_volumes ) );
+						     
   Teuchos::Array<Facemc::ParticleType> particle_types( 1 );
   particle_types[0] = Facemc::PHOTON;
   

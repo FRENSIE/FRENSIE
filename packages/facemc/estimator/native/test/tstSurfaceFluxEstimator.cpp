@@ -63,8 +63,7 @@ void initializeSurfaceFluxEstimator(
   estimator.reset( new SurfaceFluxEstimator( 0ull, 
 					     estimator_multiplier,
 					     surface_ids,
-					     surface_areas,
-					     false ) );
+					     surface_areas ) );
 
   Teuchos::Array<Facemc::ParticleType> particle_types( 1 );
   particle_types[0] = Facemc::PHOTON;

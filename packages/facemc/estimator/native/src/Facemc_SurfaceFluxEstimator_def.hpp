@@ -20,13 +20,8 @@ SurfaceFluxEstimator<ContributionMultiplierPolicy>::SurfaceFluxEstimator(
     const Estimator::idType id,
     const double multiplier,
     const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,
-    const Teuchos::Array<double>& surface_areas,
-    const bool auto_register_with_dispatchers )
-  : StandardSurfaceEstimator( id, 
-			      multiplier, 
-			      surface_ids, 
-			      surface_areas,
-			      auto_register_with_dispatchers )
+    const Teuchos::Array<double>& surface_areas )
+  : StandardSurfaceEstimator( id, multiplier, surface_ids, surface_areas )
 { /* ... */ }
 
 // Add estimator contribution from a portion of the current history

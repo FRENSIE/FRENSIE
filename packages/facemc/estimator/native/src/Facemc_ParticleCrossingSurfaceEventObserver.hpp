@@ -25,34 +25,25 @@ class ParticleCrossingSurfaceEventObserver
 
 public:
 
+  //! The event tag type
+  struct ParticleCrossingSurfaceEvent{};
+
+  //! Typedef for the observer event tag
+  typedef ParticleCrossingSurfaceEvent EventTag;
+
   //! Constructor
-  ParticleCrossingSurfaceEventObserver(
-           const ModuleTraits::InternalEstimatorHandle id,
-           const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
-	   surface_ids,
-           const bool auto_register_with_dispatchers );
+  ParticleCrossingSurfaceEventObserver()
+  { /* ... */ }
 
   //! Destructor
-  virtual ~ParticleCrossingSurfaceEventObserver();
-
-  //! Register the observer
-  void registerWithParticleCrossingSurfaceEventDispatcher(
-	   const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
-	   surface_ids );
+  virtual ~ParticleCrossingSurfaceEventObserver()
+  { /* ... */ }
 
   //! Update the observer
   virtual void updateFromParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
 	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
 	  const double angle_cosine ) = 0;
-
-private:
-
-  // The estimator id corresponding to this observer
-  ModuleTraits::InternalEstimatorHandle d_id;
-
-  // Indicates if the observer has registered
-  bool d_is_registered;
 };
   
 } // end Facemc namespace

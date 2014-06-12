@@ -11,6 +11,8 @@
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
+#include <boost/mpl/find.hpp>
+#include <boost/mpl/deref.hpp>
 
 // Teuchos Includes
 #include <Teuchos_RCP.hpp>
@@ -35,12 +37,6 @@ public:
 		const Geometry::ModuleTraits::InternalCellHandle cell_id,
 		const ModuleTraits::InternalEstimatorHandle estimator_id,
 		Teuchos::RCP<ParticleCollidingInCellEventObserver>& observer );
-
-  //! Attach an observer to the appropriate dispatcher
-  static void attachObserver(
-		      const Geometry::ModuleTraits::InternalCellHandle cell_id,
-		      const ModuleTraits::InternalEstimatorHandle estimator_id,
-		      ParticleCollidingInCellEventObserver* observer );
   
   //! Detach an observer from the appropriate dispatcher
   static void detachObserver(
@@ -50,6 +46,9 @@ public:
   //! Detach the observer from all dispatchers
   static void detachObserver(
 		    const ModuleTraits::InternalEstimatorHandle estimator_id );
+
+  //! Detach all observers
+  static void detachAllObservers();
 
   //! Dispatch the particle colliding in cell event to the observers
   static void dispatchParticleCollidingInCellEvent( 
@@ -69,25 +68,6 @@ private:
 
   static DispatcherMap master_map;
 };
-
-// Attach an observer
-/*! \details A non-owning Teuchos::RCP will be constructed from the raw 
- * pointer. This function should be used from inside of observer constructors.
- * The observer destructor should call the detachObserver method to avoid
- * null pointer dereferencing in the dispatchers.
- */
-inline void ParticleCollidingInCellEventDispatcherDB::attachObserver(
-		      const Geometry::ModuleTraits::InternalCellHandle cell_id,
-		      const ModuleTraits::InternalEstimatorHandle estimator_id,
-		      ParticleCollidingInCellEventObserver* observer )
-{
-  Teuchos::RCP<ParticleCollidingInCellEventObserver> safe_observer( observer,
-								    false );
-  
-  ParticleCollidingInCellEventDispatcherDB::attachObserver( cell_id,
-							    estimator_id,
-							    safe_observer );
-}
 
 // Dispatch the particle entering cell event to the observers
 inline void
@@ -109,7 +89,27 @@ ParticleCollidingInCellEventDispatcherDB::dispatchParticleCollidingInCellEvent(
   }
 }
 
-} // end Facemc
+//! Register an observer with the appropriate dispatchers
+template<typename Observer, typename EntityHandle>
+inline void registerObserver( Teuchos::RCP<Observer>& observer,
+			      const Teuchos::Array<EntityHandle>& entity_ids,
+			      ParticleCollidingInCellEventObserver::EventTag )
+{
+  // Make sure the Observer class has the corrent event tag
+  testStaticPrecondition((boost::is_same<typename boost::mpl::deref<typename boost::mpl::find<typename Observer::EventTags,ParticleCollidingInCellEventObserver::EventTag>::type>::type,ParticleCollidingInCellEventObserver::EventTag>::type));
+  
+  Teuchos::RCP<ParticleCollidingInCellEventObserver> observer_base = 
+    Teuchos::rcp_dynamic_cast<ParticleCollidingInCellEventObserver>( observer );
+  
+  for( unsigned i = 0u; i < entity_ids.size(); ++i )
+  {
+    ParticleCollidingInCellEventDispatcherDB::attachObserver(entity_ids[i],
+							     observer->getId(),
+							     observer_base );
+  }
+}
+
+} // end Facemc namespace
 
 #endif // end FACEMC_PARTICLE_COLLIDING_IN_CELL_EVENT_DISPATCHER_DB_HPP
 

@@ -9,6 +9,9 @@
 #ifndef FACEMC_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
 #define FACEMC_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
 
+// Boost Includes
+#include <boost/mpl/vector.hpp>
+
 // FRENSIE Includes
 #include "Facemc_EntityEstimator.hpp"
 #include "Facemc_EstimatorContributionMultiplierPolicy.hpp"
@@ -30,11 +33,15 @@ public:
   //! Typedef for the cell id type
   typedef Geometry::ModuleTraits::InternalCellHandle cellIdType;
 
+  //! Typedef for event tags used for quick dispatcher registering
+  typedef boost::mpl::vector<ParticleEnteringCellEventObserver::EventTag,
+			     ParticleLeavingCellEventObserver::EventTag>
+  EventTags;
+
   //! Constructor
   CellPulseHeightEstimator( const Estimator::idType id,
 			    const double multiplier,
-			    const Teuchos::Array<cellIdType>& entity_ids,
-			    const bool auto_register_with_dispatchers = true );
+			    const Teuchos::Array<cellIdType>& entity_ids );
   
   //! Destructor
   ~CellPulseHeightEstimator()

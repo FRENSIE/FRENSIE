@@ -73,6 +73,12 @@ void ParticleCrossingSurfaceEventDispatcherDB::detachObserver(
   }
 }
 
+// Detach all observers
+void ParticleCrossingSurfaceEventDispatcherDB::detachAllObservers()
+{
+  ParticleCrossingSurfaceEventDispatcherDB::master_map.clear();
+}
+
 } // end Facemc namespace
 
 //---------------------------------------------------------------------------//

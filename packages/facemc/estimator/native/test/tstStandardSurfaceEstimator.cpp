@@ -28,13 +28,11 @@ public:
 	 const double multiplier,
          const Teuchos::Array<Facemc::StandardSurfaceEstimator::surfaceIdType>&
 	 entity_ids,
-	 const Teuchos::Array<double>& entity_norm_constants,
-	 const bool auto_register_with_dispatchers )
+	 const Teuchos::Array<double>& entity_norm_constants )
     : Facemc::StandardSurfaceEstimator( id, 
 					multiplier,
 					entity_ids,
-					entity_norm_constants,
-					auto_register_with_dispatchers )
+					entity_norm_constants )
   { /* ... */ }
 
   ~TestStandardSurfaceEstimator()
@@ -69,9 +67,8 @@ TEUCHOS_UNIT_TEST( StandardSurfaceEstimator, setParticleType )
 	  new TestStandardSurfaceEstimator( 0ull,
 					    2.0,
 					    surface_ids,
-					    surface_norm_consts,
-					    false ) );
-
+					    surface_norm_consts ) );
+					    
   Teuchos::Array<Facemc::ParticleType> particle_types( 4 );
   particle_types[0] = Facemc::PHOTON;
   particle_types[1] = Facemc::NEUTRON;

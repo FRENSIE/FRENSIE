@@ -72,6 +72,12 @@ void ParticleEnteringCellEventDispatcherDB::detachObserver(
   }
 }
 
+// Detach all observers
+void ParticleEnteringCellEventDispatcherDB::detachAllObservers()
+{
+  ParticleEnteringCellEventDispatcherDB::master_map.clear();
+}
+
 } // end Facemc namespace
 
 //---------------------------------------------------------------------------//
