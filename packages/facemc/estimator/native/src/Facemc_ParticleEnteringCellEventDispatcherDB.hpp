@@ -81,26 +81,6 @@ ParticleEnteringCellEventDispatcherDB::dispatchParticleEnteringCellEvent(
     it->second->dispatchParticleEnteringCellEvent( particle, cell_entering );
 }
 
-//! Register an observer with the appropriate dispatchers
-template<typename Observer, typename EntityHandle>
-inline void registerObserver( Teuchos::RCP<Observer>& observer,
-			      const Teuchos::Array<EntityHandle>& entity_ids,
-			      ParticleEnteringCellEventObserver::EventTag )
-{
-  // Make sure the Observer class has the corrent event tag
-  testStaticPrecondition((boost::is_same<typename boost::mpl::deref<typename boost::mpl::find<typename Observer::EventTags,ParticleEnteringCellEventObserver::EventTag>::type>::type,ParticleEnteringCellEventObserver::EventTag>::type));
-  
-  Teuchos::RCP<ParticleEnteringCellEventObserver> observer_base = 
-    Teuchos::rcp_dynamic_cast<ParticleEnteringCellEventObserver>( observer );
-  
-  for( unsigned i = 0u; i < entity_ids.size(); ++i )
-  {
-    ParticleEnteringCellEventDispatcherDB::attachObserver( entity_ids[i],
-							   observer->getId(),
-							   observer_base );
-  }
-}
-
 } // end Facemc namespace
 
 #endif // end FACEMC_PARTICLE_ENTERING_CELL_EVENT_DISPATCHER_DP_HPP

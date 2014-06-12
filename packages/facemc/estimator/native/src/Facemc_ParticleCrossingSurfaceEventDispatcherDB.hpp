@@ -88,26 +88,6 @@ ParticleCrossingSurfaceEventDispatcherDB::dispatchParticleCrossingSurfaceEvent(
   }
 }
 
-//! Register an observer with the appropriate dispatchers
-template<typename Observer, typename EntityHandle>
-inline void registerObserver( Teuchos::RCP<Observer>& observer,
-			      const Teuchos::Array<EntityHandle>& entity_ids,
-			      ParticleCrossingSurfaceEventObserver::EventTag )
-{
-  // Make sure the Observer class has the corrent event tag
-  testStaticPrecondition((boost::is_same<typename boost::mpl::deref<typename boost::mpl::find<typename Observer::EventTags,ParticleCrossingSurfaceEventObserver::EventTag>::type>::type,ParticleCrossingSurfaceEventObserver::EventTag>::type));
-  
-  Teuchos::RCP<ParticleCrossingSurfaceEventObserver> observer_base = 
-    Teuchos::rcp_dynamic_cast<ParticleCrossingSurfaceEventObserver>( observer );
-  
-  for( unsigned i = 0u; i < entity_ids.size(); ++i )
-  {
-    ParticleCrossingSurfaceEventDispatcherDB::attachObserver(entity_ids[i],
-							     observer->getId(),
-							     observer_base );
-  }
-}
-
 } // end Facemc namespace
 
 #endif // end FACEMC_PARTICLE_CROSSING_SURFACE_EVENT_DISPATCHER_DB_HPP

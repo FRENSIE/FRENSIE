@@ -81,27 +81,6 @@ ParticleLeavingCellEventDispatcherDB::dispatchParticleLeavingCellEvent(
     it->second->dispatchParticleLeavingCellEvent( particle, cell_leaving );
 }
 
-//! Register an observer with the appropriate dispatchers
-template<typename Observer, typename EntityHandle>
-inline void registerObserver( Teuchos::RCP<Observer>& observer,
-			      const Teuchos::Array<EntityHandle>& entity_ids,
-			      ParticleLeavingCellEventObserver::EventTag )
-{
-  // Make sure the observer has the expected event tag
-  testStaticPrecondition((boost::is_same<typename boost::mpl::deref<typename boost::mpl::find<typename Observer::EventTags,ParticleLeavingCellEventObserver::EventTag>::type>::type,ParticleLeavingCellEventObserver::EventTag>::type));
-  
-  Teuchos::RCP<ParticleLeavingCellEventObserver> observer_base = 
-    Teuchos::rcp_dynamic_cast<ParticleLeavingCellEventObserver>( observer );
-  
-  for( unsigned i = 0u; i < entity_ids.size(); ++i )
-  {
-    ParticleLeavingCellEventDispatcherDB::attachObserver( entity_ids[i],
-							  observer->getId(),
-							  observer_base );
-  }
-}
-
-
 } // end Facemc namespace
 
 #endif // end FACEMC_PARTICLE_LEAVING_CELL_EVENT_DISPATCHER_DP_HPP
