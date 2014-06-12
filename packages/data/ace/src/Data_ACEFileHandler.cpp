@@ -9,7 +9,7 @@
 // Std Lib Includes
 #include <stdexcept>
 
-// FRENIE Includes
+// FRENSIE Includes
 #include "Data_ACEFileHandler.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -42,9 +42,7 @@ ACEFileHandler::ACEFileHandler( const std::string& file_name,
 
 // Destructor
 ACEFileHandler::~ACEFileHandler()
-{
-    closeFileUsingFortran( d_ace_file_id );
-}
+{}
 
 // Open an ACE library file
 void ACEFileHandler::openACEFile( const std::string& file_name, 
@@ -141,6 +139,9 @@ void ACEFileHandler::readACETable( const std::string& table_name,
 
   // Read the xss array
   readAceTableXSSArray( d_ace_file_id, d_xss.getRawPtr(), d_xss.size() );
+
+  // Close the ACE File
+  closeFileUsingFortran( d_ace_file_id );
 }
 
 // Remove white space from table name
