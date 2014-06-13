@@ -9,6 +9,9 @@
 #ifndef FACEMC_PARTICLE_EVENT_DISPATCHER_DEF_HPP
 #define FACEMC_PARTICLE_EVENT_DISPATCHER_DEF_HPP
 
+// FRENSIE Includes
+#include "Utility_ContractException.hpp"
+
 namespace Facemc{
 
 // Constructor
@@ -24,6 +27,9 @@ void ParticleEventDispatcher<EntityHandle,Observer>::attachObserver(
 				const ModuleTraits::InternalEstimatorHandle id,
 				Teuchos::RCP<Observer>& observer )
 {
+  // Make sure the observer has not been attached yet
+  testPrecondition( d_observer_map.find( id ) == d_observer_map.end() );
+  
   if( d_observer_map.find( id ) == d_observer_map.end() )
     d_observer_map[id] = observer;
 }

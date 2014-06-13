@@ -11,44 +11,22 @@
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
-#include <boost/mpl/find.hpp>
-#include <boost/mpl/deref.hpp>
 
 // Teuchos Includes
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Facemc_ParticleSubtrackEndingInCellEventDispatcher.hpp"
+#include "Facemc_ParticleEventDispatcherDB.hpp"
 
 namespace Facemc{
 
 //! The particle subtrack ending in cell event dispatcher database class
-class ParticleSubtrackEndingInCellEventDispatcherDB
+class ParticleSubtrackEndingInCellEventDispatcherDB :
+    public ParticleEventDispatcherDB<ParticleSubtrackEndingInCellEventDispatcher>
 {
 
 public:
-
-  //! Get the appropriate dispatcher for the given cell id
-  static Teuchos::RCP<ParticleSubtrackEndingInCellEventDispatcher>& 
-  getDispatcher( const Geometry::ModuleTraits::InternalCellHandle cell_id );
-
-  //! Attach an observer to the appropriate dispatcher
-  static void attachObserver(
-	   const Geometry::ModuleTraits::InternalCellHandle cell_id,
-	   const ModuleTraits::InternalEstimatorHandle estimator_id,
-	   Teuchos::RCP<ParticleSubtrackEndingInCellEventObserver>& observer );
-  
-  //! Detach an observer from the appropriate dispatcher
-  static void detachObserver(
-		    const Geometry::ModuleTraits::InternalCellHandle cell_id,
-		    const ModuleTraits::InternalEstimatorHandle estimator_id );
-
-  //! Detach the observer from all dispatchers
-  static void detachObserver(
-		    const ModuleTraits::InternalEstimatorHandle estimator_id );
-
-  //! Detach all observers
-  static void detachAllObservers();
 
   //! Dispatch the particle subtrack ending in cell event to the observers
   static void dispatchParticleSubtrackEndingInCellEvent(
@@ -60,13 +38,6 @@ private:
 
   // Constructor
   ParticleSubtrackEndingInCellEventDispatcherDB();
-
-  // Typedef for the dispatcher map
-  typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-		    Teuchos::RCP<ParticleSubtrackEndingInCellEventDispatcher> >
-  DispatcherMap;
-
-  static DispatcherMap master_map;
 };
 
 // Dispatch the particle subtrack ending in cell event to the observers
@@ -77,10 +48,10 @@ ParticleSubtrackEndingInCellEventDispatcherDB::dispatchParticleSubtrackEndingInC
 	    const double track_length )
 {
   DispatcherMap::iterator it = 
-    ParticleSubtrackEndingInCellEventDispatcherDB::master_map.find( 
+    ParticleSubtrackEndingInCellEventDispatcherDB::master_disp_map().find( 
 							    cell_of_subtrack );
 
-  if( it != ParticleSubtrackEndingInCellEventDispatcherDB::master_map.end() )
+  if( it != ParticleSubtrackEndingInCellEventDispatcherDB::master_disp_map().end() )
   {
     it->second->dispatchParticleSubtrackEndingInCellEvent( particle, 
 							   cell_of_subtrack,

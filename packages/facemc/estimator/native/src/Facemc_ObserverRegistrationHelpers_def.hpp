@@ -15,46 +15,43 @@ namespace Facemc{
 template<typename BeginEventTagIterator, typename EndEventTagIterator>
 template<typename Observer, typename EntityHandle>
 inline void 
-ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>::operator()( 
+ObserverRegistrationHelper<BeginEventTagIterator,
+			   EndEventTagIterator>::registerObserverWithTag(
 			       Teuchos::RCP<Observer>& observer,
 			       const Teuchos::Array<EntityHandle>& entity_ids )
 {
   registerObserver( observer, 
 		    entity_ids,
-		    boost::mpl::deref<BeginEventTagIterator>::type );
+		    typename boost::mpl::deref<BeginEventTagIterator>::type());
   
-  ObserverRegistrationHelper<typename boost::mpl::next<BeginEventTagIterator>::type,EndEventTagIterator>( 
+  ObserverRegistrationHelper<typename boost::mpl::next<BeginEventTagIterator>::type,
+                             EndEventTagIterator>::registerObserverWithTag(
 				                                  observer,
 								  entity_ids );
 }
 
+// End registration iteration
 template<typename EndEventTagIterator>
 template<typename Observer, typename EntityHandle>
 inline void 
-ObserverRegistrationHelper<EndEventTagIterator,EndEventTagIterator>::operator()( 
+ObserverRegistrationHelper<EndEventTagIterator,
+			   EndEventTagIterator>::registerObserverWithTag(
 			       Teuchos::RCP<Observer>& observer,
 			       const Teuchos::Array<EntityHandle>& entity_ids )
 { /* ... */ }
 
-struct register_with_each_dispatcher
-{
-  template<typename Observer, typename EntityHandle>
-  inline void operator()( Teuchos::RCP<Observer>& observer,
-			  const Teuchos::Array<EntityHandle>& entity_ids )
-  { /* ... */  }
-}
-
 //! Register an observer with the appropriate dispatcher
 template<typename Observer, typename EntityHandle>
 inline void registerObserver( Teuchos::RCP<Observer>& observer,
-			      const Teuchos::Array<EntityHandle>& entity_ids );
+			      const Teuchos::Array<EntityHandle>& entity_ids )
 {
   typedef typename boost::mpl::begin<typename Observer::EventTags>::type
     BeginEventTagIterator;
-  typedef typename typename boost::mpl::end<typename Observer::EventTags>::type
+  typedef typename boost::mpl::end<typename Observer::EventTags>::type
     EndEventTagIterator;
   
-  ObserverRegistrationHelper<BeginEventTagIterator,EndEventTagIterator>( 
+  ObserverRegistrationHelper<BeginEventTagIterator,
+                             EndEventTagIterator>::registerObserverWithTag(
 								  observer,
 								  entity_ids );
 }
@@ -68,7 +65,7 @@ inline void registerObserver( Teuchos::RCP<Observer>& observer,
 			      ParticleCollidingInCellEventObserver::EventTag )
 {
   // Make sure the Observer class has the corrent event tag
-  testStaticPrecondition((boost::is_same<typename boost::mpl::deref<typename boost::mpl::find<typename Observer::EventTags,ParticleCollidingInCellEventObserver::EventTag>::type>::type,ParticleCollidingInCellEventObserver::EventTag>::type));
+  testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleCollidingInCellEventObserver::EventTag>::value));
   
   Teuchos::RCP<ParticleCollidingInCellEventObserver> observer_base = 
     Teuchos::rcp_dynamic_cast<ParticleCollidingInCellEventObserver>( observer );
@@ -90,7 +87,7 @@ inline void registerObserver( Teuchos::RCP<Observer>& observer,
 			      ParticleCrossingSurfaceEventObserver::EventTag )
 {
   // Make sure the Observer class has the corrent event tag
-  testStaticPrecondition((boost::is_same<typename boost::mpl::deref<typename boost::mpl::find<typename Observer::EventTags,ParticleCrossingSurfaceEventObserver::EventTag>::type>::type,ParticleCrossingSurfaceEventObserver::EventTag>::type));
+  testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleCrossingSurfaceEventObserver::EventTag>::value));
   
   Teuchos::RCP<ParticleCrossingSurfaceEventObserver> observer_base = 
     Teuchos::rcp_dynamic_cast<ParticleCrossingSurfaceEventObserver>( observer );
@@ -112,7 +109,7 @@ inline void registerObserver( Teuchos::RCP<Observer>& observer,
 			      ParticleEnteringCellEventObserver::EventTag )
 {
   // Make sure the Observer class has the corrent event tag
-  testStaticPrecondition((boost::is_same<typename boost::mpl::deref<typename boost::mpl::find<typename Observer::EventTags,ParticleEnteringCellEventObserver::EventTag>::type>::type,ParticleEnteringCellEventObserver::EventTag>::type));
+  testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleEnteringCellEventObserver::EventTag>::value));
   
   Teuchos::RCP<ParticleEnteringCellEventObserver> observer_base = 
     Teuchos::rcp_dynamic_cast<ParticleEnteringCellEventObserver>( observer );
@@ -134,7 +131,7 @@ inline void registerObserver( Teuchos::RCP<Observer>& observer,
 			      ParticleLeavingCellEventObserver::EventTag )
 {
   // Make sure the observer has the expected event tag
-  testStaticPrecondition((boost::is_same<typename boost::mpl::deref<typename boost::mpl::find<typename Observer::EventTags,ParticleLeavingCellEventObserver::EventTag>::type>::type,ParticleLeavingCellEventObserver::EventTag>::type));
+  testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleLeavingCellEventObserver::EventTag>::value));
   
   Teuchos::RCP<ParticleLeavingCellEventObserver> observer_base = 
     Teuchos::rcp_dynamic_cast<ParticleLeavingCellEventObserver>( observer );
@@ -157,7 +154,7 @@ inline void registerObserver(
 			  ParticleSubtrackEndingInCellEventObserver::EventTag )
 {
   // Make sure the Observer class has the corrent event tag
-  testStaticPrecondition((boost::is_same<typename boost::mpl::deref<typename boost::mpl::find<typename Observer::EventTags,ParticleSubtrackEndingInCellEventObserver::EventTag>::type>::type,ParticleSubtrackEndingInCellEventObserver::EventTag>::type));
+  testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleSubtrackEndingInCellEventObserver::EventTag>::value));
   
   Teuchos::RCP<ParticleSubtrackEndingInCellEventObserver> observer_base = 
     Teuchos::rcp_dynamic_cast<ParticleSubtrackEndingInCellEventObserver>( 
@@ -173,10 +170,6 @@ inline void registerObserver(
 }
 
 } // end Facemc namespace
-
-//! Macro for simple registering of observers
-#define REGISTER_OBSERVER_WITH_DISPATCHERS( observer, entity_ids ) \
-  Facemc::registerObserver( observer, entity_ids ) 
 
 #endif // end FACEMC_OBSERVER_REGISTRATION_HELPERS_DEF_HPP
 

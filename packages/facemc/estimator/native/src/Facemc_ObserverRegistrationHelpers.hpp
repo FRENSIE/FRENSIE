@@ -14,6 +14,7 @@
 #include <boost/mpl/deref.hpp>
 #include <boost/mpl/next_prior.hpp>
 #include <boost/mpl/begin_end.hpp>
+#include <boost/mpl/contains.hpp>
 
 // FRENSIE Includes
 #include "Facemc_ParticleCollidingInCellEventDispatcherDB.hpp"
@@ -30,18 +31,20 @@ struct ObserverRegistrationHelper
 {
   //! Register the observer with dispatchers associated with BeginEventTag tag
   template<typename Observer, typename EntityHandle>
-  void operator()( Teuchos::RCP<Observer>& observer,
-		   const Teuchos::Array<EntityHandle>& entity_ids );
+  static void registerObserverWithTag(
+			      Teuchos::RCP<Observer>& observer,
+			      const Teuchos::Array<EntityHandle>& entity_ids );
 };
 
 //! Struct for ending iteration through all event tags
 template<typename EndEventTagIterator>
 struct ObserverRegistrationHelper<EndEventTagIterator,EndEventTagIterator>
 {
-  //! Do nothing
+  //! End registration iteration
   template<typename Observer, typename EntityHandle>
-  void operator()( Teuchos::RCP<Observer>& observer,
-		   const Teuchos::Array<EntityHandle>& entity_ids );
+  static void registerObserverWithTag(
+			      Teuchos::RCP<Observer>& observer,
+			      const Teuchos::Array<EntityHandle>& entity_ids );
 };
 
 //! Register an observer with the appropriate dispatcher
@@ -91,6 +94,10 @@ inline void registerObserver(
 			 ParticleSubtrackEndingInCellEventObserver::EventTag );
 
 } // end Facemc namespace
+
+//! Macro for simple registering of observers
+#define REGISTER_OBSERVER_WITH_DISPATCHERS( observer, entity_ids ) \
+  Facemc::registerObserver( observer, entity_ids ) 
 
 //---------------------------------------------------------------------------//
 // Template includes.

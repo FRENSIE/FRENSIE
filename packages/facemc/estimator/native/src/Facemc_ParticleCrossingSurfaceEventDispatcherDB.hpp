@@ -11,44 +11,22 @@
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
-#include <boost/mpl/find.hpp>
-#include <boost/mpl/deref.hpp>
 
 // Teuchos Includes
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Facemc_ParticleCrossingSurfaceEventDispatcher.hpp"
+#include "Facemc_ParticleEventDispatcherDB.hpp"
 
 namespace Facemc{
 
 //! The particle crossing surface event dispatcher database class
-class ParticleCrossingSurfaceEventDispatcherDB
+class ParticleCrossingSurfaceEventDispatcherDB :
+    public ParticleEventDispatcherDB<ParticleCrossingSurfaceEventDispatcher>
 {
 
 public:
-
-  //! Get the appropriate dispatcher for the given surface id
-  static Teuchos::RCP<ParticleCrossingSurfaceEventDispatcher>& getDispatcher(
-	      const Geometry::ModuleTraits::InternalSurfaceHandle surface_id );
-
-  //! Attach an observer to the appropriate dispatcher
-  static void attachObserver(
-		const Geometry::ModuleTraits::InternalSurfaceHandle surface_id,
-		const ModuleTraits::InternalEstimatorHandle estimator_id,
-	        Teuchos::RCP<ParticleCrossingSurfaceEventObserver>& observer );
-
-  //! Detach the observer from the appropriate dispatcher
-  static void detachObserver(
-		const Geometry::ModuleTraits::InternalSurfaceHandle surface_id,
-		const ModuleTraits::InternalEstimatorHandle estimator_id );
-
-  //! Detach the observer from all dispatchers
-  static void detachObserver(
-		    const ModuleTraits::InternalEstimatorHandle estimator_id );
-
-  //! Detach all observers
-  static void detachAllObservers();
 
   //! Dispatch the particle crossing surface event to the observers
   static void dispatchParticleCrossingSurfaceEvent(
@@ -60,13 +38,6 @@ private:
 
   // Constructor
   ParticleCrossingSurfaceEventDispatcherDB();
-
-  // Typedef for the dispatcher map
-  typedef boost::unordered_map<Geometry::ModuleTraits::InternalSurfaceHandle,
-			 Teuchos::RCP<ParticleCrossingSurfaceEventDispatcher> >
-  DispatcherMap;
-
-  static DispatcherMap master_map;
 };
 
 // Dispatch the particle crossing surface event to the observers
@@ -77,10 +48,10 @@ ParticleCrossingSurfaceEventDispatcherDB::dispatchParticleCrossingSurfaceEvent(
 	  const double angle_cosine )
 {
   DispatcherMap::iterator it = 
-    ParticleCrossingSurfaceEventDispatcherDB::master_map.find( 
+    ParticleCrossingSurfaceEventDispatcherDB::master_disp_map().find( 
 							    surface_crossing );
 
-  if( it != ParticleCrossingSurfaceEventDispatcherDB::master_map.end() )
+  if( it != ParticleCrossingSurfaceEventDispatcherDB::master_disp_map().end() )
   {
     it->second->dispatchParticleCrossingSurfaceEvent( particle,
 						      surface_crossing,

@@ -27,6 +27,12 @@ class ParticleEventDispatcher
 
 public:
 
+  //! Typedef for EntityHandle type
+  typedef EntityHandle EntityHandleType;
+  
+  //! Typedef for Observer type
+  typedef Observer ObserverType;
+
   //! Constructor
   ParticleEventDispatcher( const EntityHandle entity_id );
 
