@@ -45,6 +45,25 @@ void StandardCellEstimator::setParticleTypes(
     Estimator::setParticleTypes( particle_types );
 }
 
+// Assign bin boundaries to an estimator dimension
+/*! \details The Facemc::COSINE_DIMENSION cannot be discretized in standard
+ * cell estimators.
+ */
+void StandardCellEstimator::assignBinBoundaries(
+	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+{
+  if( bin_boundaries->getDimension() == COSINE_DIMENSION )
+  {
+    std::cerr << "Warning: " << bin_boundaries->getDimensionName()
+	      << " bins cannot be set for standard cell estimators. The bins "
+	      << "requested for standard cell estimator " << this->getId()
+	      << " will be ignored."
+	      << std::endl;
+  }
+  else
+    StandardEntityEstimator<cellIdType>::assignBinBoundaries( bin_boundaries );
+}
+
 } // end Facemc namespace
 
 //---------------------------------------------------------------------------//

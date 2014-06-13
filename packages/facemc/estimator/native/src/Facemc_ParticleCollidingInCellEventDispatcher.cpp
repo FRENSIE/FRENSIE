@@ -15,24 +15,9 @@ namespace Facemc{
 // Constructor
 ParticleCollidingInCellEventDispatcher::ParticleCollidingInCellEventDispatcher(
 	             const Geometry::ModuleTraits::InternalCellHandle cell_id )
-  : d_cell_id( cell_id )
+  : ParticleEventDispatcher<Geometry::ModuleTraits::InternalCellHandle,
+			    ParticleCollidingInCellEventObserver>( cell_id )
 { /* ... */ }
-
-// Attach an observer to the dispatcher
-void ParticleCollidingInCellEventDispatcher::attachObserver(
-		 const ModuleTraits::InternalEstimatorHandle id,
-		 Teuchos::RCP<ParticleCollidingInCellEventObserver>& observer )
-{
-  if( d_observer_map.find( id ) == d_observer_map.end() )
-    d_observer_map[id] = observer;
-}
-
-// Detach an observer from the dispatcher
-void ParticleCollidingInCellEventDispatcher::detachObserver( 
-			       const ModuleTraits::InternalEstimatorHandle id )
-{
-  d_observer_map.erase( id );
-}
 
 // Dispatch the new event to the observers
 void 
@@ -42,11 +27,11 @@ ParticleCollidingInCellEventDispatcher::dispatchParticleCollidingInCellEvent(
 	    const double inverse_total_cross_section )
 {
   // Make sure the cell being collided in is valid
-  testPrecondition( cell_of_collision == d_cell_id );
+  testPrecondition( cell_of_collision == this->getId() );
 
-  ObserverIdMap::iterator it = d_observer_map.begin();
+  ObserverIdMap::iterator it = observer_id_map().begin();
 
-  while( it != d_observer_map.end() )
+  while( it != observer_id_map().end() )
   {
     it->second->updateFromParticleCollidingInCellEvent( 
 						 particle, 
@@ -55,13 +40,6 @@ ParticleCollidingInCellEventDispatcher::dispatchParticleCollidingInCellEvent(
 
     ++it;
   }
-}
-
-// Get the cell id corresponding to this particle entering cell event disp.
-Geometry::ModuleTraits::InternalCellHandle
-ParticleCollidingInCellEventDispatcher::getCellId() const
-{
-  return d_cell_id;
 }
 
 } // end Facemc namespace

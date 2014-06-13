@@ -109,6 +109,9 @@ inline void CellPulseHeightEstimator<
     
     it->second += particle.getWeight()*particle.getEnergy();
   }
+
+  // Indicate that there is an uncommitted history contribution
+  this->setHasUncommittedHistoryContribution();
 }
 
 // Add current history estimator contribution
@@ -133,6 +136,9 @@ inline void CellPulseHeightEstimator<
     
     it->second -= particle.getWeight()*particle.getEnergy();
   }
+
+  // Indicate that there is an uncommitted history contribution
+  this->setHasUncommittedHistoryContribution();
 }
 
 // Add estimator contribution from a portion of the current history
@@ -202,6 +208,9 @@ void CellPulseHeightEstimator<
     bin_contribution *= bin_contribution;
     d_total_energy_deposition_moments[bin_index].fourth += bin_contribution;
   }
+
+  // Reset the has uncommitted history contribution boolean
+  this->unsetHasUncommittedHistoryContribution();
 }
 
 // Print the estimator data

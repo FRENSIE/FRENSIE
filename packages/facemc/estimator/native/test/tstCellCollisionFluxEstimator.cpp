@@ -93,15 +93,6 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellCollisionFluxEstimator,
 
   TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 2u );
 
-  Teuchos::Array<double> cosine_bins( 3 );
-  cosine_bins[0] = -1.0;
-  cosine_bins[1] = 0.0;
-  cosine_bins[2] = 1.0;
-
-  estimator->template setBinBoundaries<Facemc::COSINE_DIMENSION>( cosine_bins);
-  
-  TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 4u );
-
   Teuchos::Array<double> time_bins( 3 );
   time_bins[0] = 0.0;
   time_bins[1] = 0.5;
@@ -109,7 +100,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellCollisionFluxEstimator,
 
   estimator->template setBinBoundaries<Facemc::TIME_DIMENSION>( time_bins );
 
-  TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 8u );
+  TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 4u );
 
   Teuchos::Array<unsigned> coll_bins( 2 );
   coll_bins[0] = 0u;
@@ -118,7 +109,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellCollisionFluxEstimator,
   estimator->template setBinBoundaries<Facemc::COLLISION_NUMBER_DIMENSION>( 
 							       coll_bins );
 
-  TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 16u );
+  TEST_EQUALITY_CONST( estimator->getNumberOfBins(), 8u );
 }
 
 UNIT_TEST_INSTANTIATION( CellCollisionFluxEstimator, getNumberOfBins );
@@ -139,13 +130,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellCollisionFluxEstimator,
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
 
+  TEST_ASSERT( !estimator->hasUncommittedHistoryContribution() );
+  
   estimator->updateFromParticleCollidingInCellEvent( particle, 0, 1.0 );
+
+  TEST_ASSERT( estimator->hasUncommittedHistoryContribution() );
 
   particle.setEnergy( 0.5 );
 
   estimator->updateFromParticleCollidingInCellEvent( particle, 1, 1.0 );
 
+  TEST_ASSERT( estimator->hasUncommittedHistoryContribution() );
+
   estimator->commitHistoryContribution();
+
+  TEST_ASSERT( !estimator->hasUncommittedHistoryContribution() );
 
   Facemc::Estimator::setNumberOfHistories( 1.0 );
   Facemc::Estimator::setEndTime( 1.0 );

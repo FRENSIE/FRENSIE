@@ -103,10 +103,19 @@ public:
   //! Check if the particle type is assigned to the estimator
   bool isParticleTypeAssigned( const ParticleType particle_type ) const;
 
+  //! Check if the estimator has uncommitted history contributions
+  bool hasUncommittedHistoryContribution() const;
+
   //! Commit the contribution from the current history to the estimator
   virtual void commitHistoryContribution() = 0;
 
 protected:
+
+  //! Set the has uncommited history contribution flag
+  void setHasUncommittedHistoryContribution();
+
+  //! Unset the has uncommited history contribution flag
+  void unsetHasUncommittedHistoryContribution();
 
   //! Assign bin boundaries to an estimator dimension
   virtual void assignBinBoundaries( 
@@ -197,6 +206,9 @@ private:
 
   // The constant multiplier for the estimator
   double d_multiplier;
+
+  // Records if there is an uncommitted history contribution
+  bool d_has_uncommitted_history_contribution;
 
   // The response functions
   Teuchos::Array<Teuchos::RCP<ResponseFunction> > d_response_functions;
@@ -298,6 +310,30 @@ inline void Estimator::convertParticleStateToGenericMap(
   dimension_values[COSINE_DIMENSION] = 
     PhaseSpaceDimensionTraits<COSINE_DIMENSION>::obfuscateValue( 
 								angle_cosine );
+}
+
+// Check if the estimator has uncommitted history contributions
+inline bool Estimator::hasUncommittedHistoryContribution() const
+{
+  return d_has_uncommitted_history_contribution;
+}
+
+// Set the has uncommited history contribution flag
+/*! \details This should be called whenever the current history contributes
+ * to the estimator.
+ */
+inline void Estimator::setHasUncommittedHistoryContribution()
+{
+  d_has_uncommitted_history_contribution = true;
+}
+
+// Unset the has uncommited history contribution flag
+/*! \details This should be called when the current history contribution is
+ * committed to the estimator
+ */
+inline void Estimator::unsetHasUncommittedHistoryContribution()
+{
+  d_has_uncommitted_history_contribution = false;
 }
 
 } // end Facemc namespace

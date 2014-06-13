@@ -179,7 +179,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   particle.setTime( 1e2 );
   particle.incrementCollisionNumber();
 
+  TEST_ASSERT( !estimator->hasUncommittedHistoryContribution() );
+
   estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
+
+  TEST_ASSERT( estimator->hasUncommittedHistoryContribution() );
 
   particle.setEnergy( 1e-1 );
   particle.setTime( 1e4 );
@@ -187,7 +191,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
 
   estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
 
+  TEST_ASSERT( estimator->hasUncommittedHistoryContribution() );
+
   estimator->commitHistoryContribution();
+
+  TEST_ASSERT( !estimator->hasUncommittedHistoryContribution() );
 
   Facemc::Estimator::setNumberOfHistories( 1.0 );
   Facemc::Estimator::setEndTime( 1.0 );

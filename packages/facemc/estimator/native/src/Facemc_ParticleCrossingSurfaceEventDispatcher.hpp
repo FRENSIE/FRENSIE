@@ -16,6 +16,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include "Facemc_ParticleEventDispatcher.hpp"
 #include "Facemc_ParticleCrossingSurfaceEventObserver.hpp"
 #include "Facemc_ParticleState.hpp"
 #include "Facemc_ModuleTraits.hpp"
@@ -24,7 +25,9 @@
 namespace Facemc{
 
 //! The particle crossing surface event dispatcher class
-class ParticleCrossingSurfaceEventDispatcher
+class ParticleCrossingSurfaceEventDispatcher : 
+    public ParticleEventDispatcher<Geometry::ModuleTraits::InternalSurfaceHandle,
+				   ParticleCrossingSurfaceEventObserver>
 {
 
 public:
@@ -37,34 +40,11 @@ public:
   ~ParticleCrossingSurfaceEventDispatcher()
   { /* ... */ }
 
-  //! Attach an observer to the dispatcher
-  void attachObserver(
-		const ModuleTraits::InternalEstimatorHandle id,
-	        Teuchos::RCP<ParticleCrossingSurfaceEventObserver>& observer );
-
-  //! Detach an observer from the dispatcher
-  void detachObserver( const ModuleTraits::InternalEstimatorHandle id );
-
-  //! Dispatch the new event ot the observers
+  //! Dispatch the new event to the observers
   void dispatchParticleCrossingSurfaceEvent(
 	  const ParticleState& particle,
 	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
 	  const double angle_cosine );
-
-  //! Get the surface id corresponding to this particle crossing surface disp.
-  Geometry::ModuleTraits::InternalSurfaceHandle getSurfaceId() const;
-
-private:
-
-  // The surface handle for which particle crossing surface events will be disp
-  Geometry::ModuleTraits::InternalSurfaceHandle d_surface_id;
-
-  // The observer map
-  typedef boost::unordered_map<ModuleTraits::InternalEstimatorHandle,
-			   Teuchos::RCP<ParticleCrossingSurfaceEventObserver> >
-  ObserverIdMap;
-
-  ObserverIdMap d_observer_map;
 };
 
 } // end Facemc namespace

@@ -106,6 +106,9 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
     }
 
     commitHistoryContributionToTotalOfEstimator( i, total_over_all_entities );
+
+    // Unset the uncommitted history contribution boolean
+    this->unsetHasUncommittedHistoryContribution();
   }
 }
 
@@ -122,9 +125,7 @@ void StandardEntityEstimator<EntityId>::assignBinBoundaries(
 
 // Add estimator contribution from a portion of the current history
 /*! \details The contribution should incorporate the particle weight (and
- * possibly other multiplier(s) ) but not the response function values. Do
- * not check if a particle can contribute to the estimator outside of this
- * function - this function will take care of all checks.
+ * possibly other multiplier(s) ) but not the response function values.
  */
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::addPartialHistoryContribution( 
@@ -135,35 +136,34 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
 {
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
+  // Make sure the particle type can contribute
+  testPrecondition( this->isParticleTypeAssigned( particle.getParticleType()));
   // Make sure the contribution is valid
   testPrecondition( !ST::isnaninf( contribution ) );
-
-  // Only add the contribution if the particle type can contribute
-  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
-  {
-    this->convertParticleStateToGenericMap( particle, 
-					    angle_cosine, 
-					    d_dimension_values );
-        
-    // Only add the contribution if the particle state is in the phase space
-    if( this->isPointInEstimatorPhaseSpace( d_dimension_values ) )
-    {
-
-      Teuchos::Array<double>& entity_first_moments_array = 
-	d_entity_current_history_first_moments_map[entity_id];
   
-
-      unsigned bin_index;
+  this->convertParticleStateToGenericMap( particle, 
+					  angle_cosine, 
+					  d_dimension_values );
+        
+  // Only add the contribution if the particle state is in the phase space
+  if( this->isPointInEstimatorPhaseSpace( d_dimension_values ) )
+  {
+    Teuchos::Array<double>& entity_first_moments_array = 
+      d_entity_current_history_first_moments_map[entity_id];
+  
+    unsigned bin_index;
       
-      for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
-      {
-	bin_index = this->calculateBinIndex( d_dimension_values, i );
-    
-	entity_first_moments_array[bin_index] += 
-	  contribution*this->evaluateResponseFunction( particle, i );
-      }
+    for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
+    {
+      bin_index = this->calculateBinIndex( d_dimension_values, i );
+      
+      entity_first_moments_array[bin_index] += 
+	contribution*this->evaluateResponseFunction( particle, i );
     }
   }
+
+  // Indicate that there is an uncommitted history contribution
+  this->setHasUncommittedHistoryContribution();
 }
 
 // Print the estimator data

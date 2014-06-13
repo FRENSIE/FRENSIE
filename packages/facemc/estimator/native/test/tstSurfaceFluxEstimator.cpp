@@ -139,13 +139,21 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SurfaceFluxEstimator,
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
 
+  TEST_ASSERT( !estimator->hasUncommittedHistoryContribution() );
+
   estimator->updateFromParticleCrossingSurfaceEvent( particle, 0, 0 );
 
+  TEST_ASSERT( estimator->hasUncommittedHistoryContribution() );
+  
   particle.setEnergy( 0.5 );
 
   estimator->updateFromParticleCrossingSurfaceEvent( particle, 1, 1 );
 
+  TEST_ASSERT( estimator->hasUncommittedHistoryContribution() );
+
   estimator->commitHistoryContribution();
+
+  TEST_ASSERT( !estimator->hasUncommittedHistoryContribution() );
 
   Facemc::Estimator::setNumberOfHistories( 1.0 );
   Facemc::Estimator::setEndTime( 1.0 );

@@ -47,6 +47,8 @@ public:
 
   // Allow public access to the estimator protected member functions
   using Facemc::Estimator::DimensionValueMap;
+  using Facemc::Estimator::setHasUncommittedHistoryContribution;
+  using Facemc::Estimator::unsetHasUncommittedHistoryContribution;
   using Facemc::Estimator::assignBinBoundaries;
   using Facemc::Estimator::getMultiplier;
   using Facemc::Estimator::getResponseFunctionName;
@@ -294,6 +296,21 @@ TEUCHOS_UNIT_TEST( Estimator, calculateBinIndex )
   bin_index = estimator.calculateBinIndex( dimension_values, 1u );
 
   TEST_EQUALITY_CONST( bin_index, 431u );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the estimator has an uncommitted history contribution
+TEUCHOS_UNIT_TEST( Estimator, hasUncommittedHisotryContribution )
+{
+  TEST_ASSERT( !estimator.hasUncommittedHistoryContribution() );
+  
+  estimator.setHasUncommittedHistoryContribution();
+
+  TEST_ASSERT( estimator.hasUncommittedHistoryContribution() );
+
+  estimator.unsetHasUncommittedHistoryContribution();
+
+  TEST_ASSERT( !estimator.hasUncommittedHistoryContribution() );
 }
 
 //---------------------------------------------------------------------------//

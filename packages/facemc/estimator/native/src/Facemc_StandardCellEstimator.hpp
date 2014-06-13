@@ -36,6 +36,12 @@ public:
 
   //! Set the particle types that can contribute to the estimator
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
+
+private:
+
+  // Assign bin boundaries to an estimator dimension
+  void assignBinBoundaries(
+	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
 };
 
 } // end Facemc namespace

@@ -150,18 +150,28 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CellPulseHeightEstimator,
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
 
+  TEST_ASSERT( !estimator->hasUncommittedHistoryContribution() );
+
   estimator->updateFromParticleEnteringCellEvent( particle, 0 );
+
+  TEST_ASSERT( estimator->hasUncommittedHistoryContribution() );
 
   particle.setEnergy( 0.5 );
 
   estimator->updateFromParticleLeavingCellEvent( particle, 0 );
   estimator->updateFromParticleEnteringCellEvent( particle, 1 );
   
+  TEST_ASSERT( estimator->hasUncommittedHistoryContribution() );
+  
   particle.setEnergy( 0.1 );
   
   estimator->updateFromParticleLeavingCellEvent( particle, 1 );
+
+  TEST_ASSERT( estimator->hasUncommittedHistoryContribution() );
   
   estimator->commitHistoryContribution();
+
+  TEST_ASSERT( !estimator->hasUncommittedHistoryContribution() );
 
   Facemc::Estimator::setNumberOfHistories( 1.0 );
   Facemc::Estimator::setEndTime( 1.0 );

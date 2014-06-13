@@ -64,15 +64,18 @@ void CellTrackLengthFluxEstimator<
   // Make sure the subtrack length is valid
   testPrecondition( !ST::isnaninf( track_length ) );
     
-  double contribution = track_length*
-    ContributionMultiplierPolicy::multiplier( particle );
+  if( isParticleTypeAssigned( particle.getParticleType() ) )
+  {
+    double contribution = track_length*
+      ContributionMultiplierPolicy::multiplier( particle );
   
-  StandardEntityEstimator<
+    StandardEntityEstimator<
              StandardCellEstimator::cellIdType>::addPartialHistoryContribution(
 							      cell_of_subtrack,
 							      particle, 
 							      0.0,
 							      contribution);
+  }
 }
 
 // Print the estimator data

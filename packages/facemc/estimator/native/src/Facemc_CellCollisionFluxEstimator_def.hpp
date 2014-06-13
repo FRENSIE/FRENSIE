@@ -39,20 +39,21 @@ void CellCollisionFluxEstimator<
 {
   // Make sure the cell is assigned to this estimator
   testPrecondition( isEntityAssigned( cell_of_collision ) );
-  // Make sure the particle type is assigned
-  testPrecondition( isParticleTypeAssigned( particle.getParticleType() ) );
   // Make sure the inverse total macroscopic cross section is valid
   testPrecondition( !ST::isnaninf( inverse_total_cross_section ) );
   
-  double contribution = inverse_total_cross_section*
-    ContributionMultiplierPolicy::multiplier( particle );
+  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
+  {
+    double contribution = inverse_total_cross_section*
+      ContributionMultiplierPolicy::multiplier( particle );
 
-  StandardEntityEstimator<
+    StandardEntityEstimator<
              StandardCellEstimator::cellIdType>::addPartialHistoryContribution(
 							     cell_of_collision,
 							     particle, 
 							     0.0, 
 							     contribution );
+  }
 }
 
 // Print the estimator data
