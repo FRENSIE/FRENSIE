@@ -75,7 +75,7 @@ public:
 
 //! Set the source handler instance
 template<typename SourceHandler>
-void setSourceHandlerInstance( 
+inline void setSourceHandlerInstance( 
 			   const Teuchos::RCP<SourceHandler>& source_instance )
 {
   SourceModuleInterface<SourceHandler>::setHandlerInstance( source_instance );
