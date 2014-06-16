@@ -15,39 +15,20 @@
 #include <Teuchos_GlobalMPISession.hpp>
 #include <Teuchos_Array.hpp>
 #include <Teuchos_Tuple.hpp>
+#include <Teuchos_ParameterList.hpp>
+#include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
 #include "Geometry_Ray.hpp"
 #include "Geometry_DagMCHelpers.hpp"
+#include "Geometry_DagMCInstanceFactory.hpp"
 #include "Geometry_ModuleInterface_DagMC.hpp"
 
 //---------------------------------------------------------------------------//
 // Test Sat File Name
 //---------------------------------------------------------------------------//
-std::string test_geometry_file_name;
-
-//---------------------------------------------------------------------------//
-// DagMC Initialization Function
-//---------------------------------------------------------------------------//
-void initializeDagMC()
-{
-  // Set up the valid property names
-  std::vector<std::string> property_names( 6 );
-  property_names[0] = "graveyard";
-  property_names[1] = "mat";
-  property_names[2] = "rho";
-  property_names[3] = "tally";
-  property_names[4] = "cell.flux";
-  property_names[5] = "surf.flux";
-  
-  std::cout << std::endl;
-
-  // Initialize DagMC
-  Geometry::initializeDagMC( test_geometry_file_name,
-			     property_names,
-			     1e-3 );
-}
+std::string test_geom_xml_file_name;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -275,10 +256,10 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  clp.setOption( "test_sat_file",
-		 &test_geometry_file_name,
-		 "Test sat file name" );
-
+  clp.setOption( "test_xml_file",
+		 &test_geom_xml_file_name,
+		 "Test xml geometry file name" );
+  
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -291,8 +272,12 @@ int main( int argc, char** argv )
   }
   
   // Initialize DagMC
-  initializeDagMC();
+  Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
+    Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
+
+  Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
   
+  // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
 
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);

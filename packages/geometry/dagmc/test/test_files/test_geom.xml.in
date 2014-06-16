@@ -1,7 +1,8 @@
 <ParameterList name="Geometry">
 
   <Parameter name="Handler" type="string" value="DagMC"/>
-  <Parameter name="CAD File" type="string" value="test_geom.sat"/>
+  <Parameter name="CAD File" type="string" 
+	     value="${CMAKE_CURRENT_SOURCE_DIR}/test_geom.sat"/>
   <Parameter name="Facet Tolerance" type="double" value="1e-3"/>
   <Parameter name="Termination Cell Synonym" type="string" value="graveyard"/>
   <Parameter name="Material Synonym" type="string" value="mat"/>
@@ -9,11 +10,7 @@
   <Parameter name="Estimator Synonym" type="string" value="tally"/>
   <Parameter name="Cell Track Length Flux Estimator Synonym" type="string"
 	     value="cell.flux"/>
-  <Parameter name="Cell Collision Flux Estimator Synonym" type="string"
-	     value="cell.cflux"/>
   <Parameter name="Surface Flux Estimator Synonym" type="string"
 	     value="surf.flux"/>
-  <Parameter name="Surface Current Estimator Synonym" type="string"
-	     value="surf.current"/>
 
 </ParameterList>
