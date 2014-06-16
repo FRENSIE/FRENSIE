@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "Geometry_DagMCHelpers.hpp"
+#include "Geometry_DagMCProperties.hpp"
 
 //---------------------------------------------------------------------------//
 // Test Sat File Name
@@ -62,9 +63,192 @@ TEUCHOS_UNIT_TEST( DagMCHelpers, initializeDagMC )
   
   // Initialize DagMC
   Geometry::initializeDagMC( test_geometry_file_name,
-			   property_names,
-			   1e-3 );
+  			     property_names,
+  			     1e-3 );
 }
+
+//---------------------------------------------------------------------------//
+// Check that the property values assigned to cells can be returned
+TEUCHOS_UNIT_TEST( DagMCHelpers, getCellPropertyValues )
+{
+  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+		       std::vector<std::string> >
+    cell_id_prop_value_map;
+  
+  Geometry::getCellPropertyValues( "mat", cell_id_prop_value_map );
+  
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[26].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[26][0], "9" );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[27].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[27][0], "9" );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[80].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[80][0], "9" );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[81].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[81][0], "9" );
+
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[9].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[9][0], "1" );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[88].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[88][0], "1" );
+
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[136].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[136][0], "2" );
+
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[19].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[19][0], "3" );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[184].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[184][0], "3" );
+
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[3].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[3][0], "4" );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[7].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[7][0], "4" );
+
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[5].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[5][0], "10" );
+
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[1].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[1][0], "8" );
+
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[13].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[13][0], "7" );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[168].size(), 1 );
+  TEST_EQUALITY_CONST( cell_id_prop_value_map[168][0], "7" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the property values assigned to surfaces can be returned
+TEUCHOS_UNIT_TEST( DagMCHelpers, getSurfacePropertyValues )
+{
+  boost::unordered_map<Geometry::ModuleTraits::InternalSurfaceHandle,
+		       std::vector<std::string> >
+    surface_id_prop_value_map;
+
+  Geometry::getSurfacePropertyValues( "tally", surface_id_prop_value_map );
+  
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[7].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[7][0], "0" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[7][1], "1" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[16].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[16][0], "0" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[16][1], "1" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[25].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[25][0], "0" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[25][1], "1" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[34].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[34][0], "0" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[34][1], "1" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[94].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[94][0], "0" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[94][1], "1" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[202].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[202][0], "0" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[202][1], "1" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[310].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[310][0], "0" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[310][1], "1" );
+  
+  Geometry::getSurfacePropertyValues( "surf.flux", surface_id_prop_value_map );
+
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[7].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[7][0], "n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[7][1], "p" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[16].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[16][0], "n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[16][1], "p" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[25].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[25][0], "n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[25][1], "p" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[34].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[34][0], "n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[34][1], "p" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[94].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[94][0], "n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[94][1], "p" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[202].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[202][0], "n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[202][1], "p" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[310].size(), 2 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[310][0], "n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[310][1], "p" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cell ids with a property value can be returned
+TEUCHOS_UNIT_TEST( DagMCHelpers, getCellIdsWithPropertyValue )
+{
+  boost::unordered_map<std::string,
+		      std::vector<Geometry::ModuleTraits::InternalCellHandle> >
+    prop_value_cell_id_map;
+
+  Geometry::getCellIdsWithPropertyValue( "mat", prop_value_cell_id_map );
+
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["9"].size(), 36 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["9"].front(), 26 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["9"].back(), 81 );
+
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["1"].size(), 2 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["1"].front(), 9 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["1"].back(), 88 );
+
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["2"].size(), 1 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["2"].front(), 136 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["2"].back(), 136 );
+  
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["3"].size(), 7 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["3"].front(), 19 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["3"].back(), 184 );
+
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["4"].size(), 2 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["4"].front(), 3 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["4"].back(), 7 );
+
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["10"].size(), 1 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["10"].front(), 5 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["10"].back(), 5 );
+
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["8"].size(), 1 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["8"].front(), 1 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["8"].back(), 1 );
+
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["4"].size(), 2 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["4"].front(), 3 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["4"].back(), 7 );
+  
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["7"].size(), 4 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["7"].front(), 13 );
+  TEST_EQUALITY_CONST( prop_value_cell_id_map["7"].back(), 168 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the surface ids with a property value can be returned
+TEUCHOS_UNIT_TEST( DagMCHelpers, getSurfaceIdsWithPropertyValue )
+{
+  boost::unordered_map<std::string,
+		   std::vector<Geometry::ModuleTraits::InternalSurfaceHandle> >
+    prop_value_surface_id_map;
+
+  Geometry::getSurfaceIdsWithPropertyValue("tally", prop_value_surface_id_map);
+
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["0"].size(), 7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["0"].front(), 7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["0"].back(), 310 );
+
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["1"].size(), 7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["1"].front(), 7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["1"].back(), 310 );
+
+  Geometry::getSurfaceIdsWithPropertyValue( "surf.flux", 
+					    prop_value_surface_id_map );
+
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["n"].size(), 7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["n"].front(), 7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["n"].back(), 310 );
+
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["p"].size(), 7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["p"].front(), 7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["p"].back(), 310 );
+}  
 
 //---------------------------------------------------------------------------//
 // Custom main function
