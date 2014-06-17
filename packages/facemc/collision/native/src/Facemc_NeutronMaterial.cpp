@@ -189,7 +189,8 @@ unsigned NeutronMaterial::sampleCollisionNuclide( const double energy ) const
   
   for( unsigned i = 0u; i < d_nuclides.size(); ++i )
   {
-    partial_total_cs += d_nuclides[i].second->getTotalCrossSection( energy );
+    partial_total_cs += 
+      d_nuclides[i].first*d_nuclides[i].second->getTotalCrossSection( energy );
     
     if( scaled_random_number < partial_total_cs )
     {

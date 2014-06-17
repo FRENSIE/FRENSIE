@@ -1,3 +1,5 @@
+ADD_SUBDIRECTORY(test_files)
+
 ADD_EXECUTABLE(tstNeutronScatteringDistribution
   tstNeutronScatteringDistribution.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -55,6 +57,21 @@ ADD_EXECUTABLE(tstNeutronMaterial
   tstNeutronMaterial.cpp)
 TARGET_LINK_LIBRARIES(tstNeutronMaterial facemc_collision_native)
 ADD_TEST(NeutronMaterial_test tstNeutronMaterial --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
+
+ADD_EXECUTABLE(tstCollisionHandler
+  tstCollisionHandler.cpp)
+TARGET_LINK_LIBRARIES(tstCollisionHandler facemc_collision_native)
+ADD_TEST(CollisionHandler_test tstCollisionHandler --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
+
+ADD_EXECUTABLE(tstCollisionHandlerFactory
+  tstCollisionHandlerFactory.cpp)
+TARGET_LINK_LIBRARIES(tstCollisionHandlerFactory facemc_collision_native)
+ADD_TEST(CollisionHandlerFactory_test tstCollisionHandlerFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+
+ADD_EXECUTABLE(tstCollisionModuleInterface_Native
+  tstModuleInterface.cpp)
+TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_Native facemc_collision_native)
+ADD_TEST(CollisionModuleInterface_Native_test tstCollisionModuleInterface_Native --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)

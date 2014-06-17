@@ -100,6 +100,8 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
     
     CollisionHandler::addMaterial( material_name_pointer_it->second,
 				   cells_containing_material );
+
+    ++material_name_pointer_it;
   }
 }
 

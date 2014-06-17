@@ -13,12 +13,17 @@
 #include "Facemc_CollisionModuleInterfaceDecl.hpp"
 #include "Facemc_CollisionHandler.hpp"
 
+namespace Facemc{
+
 /*! Native handler specialization of the collision module interface class
  * \ingroup collision_module
  */
 template<>
-class CollisionModuleInterface<Facemc::CollisionHandler>
+class CollisionModuleInterface<CollisionHandler>
 {
+  
+public:
+  
   //! The external material handle class (used within the collision handler)
   typedef ModuleTraits::InternalMaterialHandle ExternalMaterialHandle;
 
@@ -26,12 +31,11 @@ class CollisionModuleInterface<Facemc::CollisionHandler>
   typedef ModuleTraits::InternalMaterialHandle InternalMaterialHandle;
 
   //! The value of an invalie external material handle
-  static const ExternalMaterialHandle invalid_external_material_handle = 
-    ModuleTraits::invalid_internal_material_handle;
+  static const ExternalMaterialHandle invalid_external_material_handle;
 
   //! Set the collision handler instance
   static void setHandlerInstance(
-	     const Teuchos::RCP<Facemc::CollisionHandler>& collision_handler );
+	             const Teuchos::RCP<CollisionHandler>& collision_handler );
 
   //! Check if a cell is void
   static bool isCellVoid(
@@ -41,46 +45,69 @@ class CollisionModuleInterface<Facemc::CollisionHandler>
   static double getMacroscopicTotalCrossSection(
 					       const ParticleState& particle );
 
+  //! Get the macroscopic cross section for a specific reaction
+  static double getMacroscopicReactionCrossSection(
+					  const ParticleState& particle,
+					  const NuclearReactionType reaction );
+
   //! Collide with the material in a cell
   static void collideWithCellMaterial( ParticleState& particle,
 				       ParticleBank& bank,
 				       const bool analogue );
 };
 
+
+// Initialize static member data
+const CollisionModuleInterface<CollisionHandler>::ExternalMaterialHandle 
+CollisionModuleInterface<CollisionHandler>::invalid_external_material_handle = 
+  ModuleTraits::invalid_internal_material_handle;
+
 // Set the collision handler instance
 /* \detials The Facemc::CollisionHandler is a singleton class
  */ 
 inline void 
-CollisionModuleInterface<Facemc::CollisionHandler>::setHandlerInstance(
-	      const Teuchos::RCP<Facemc::CollisionHandler>& collision_handler )
+CollisionModuleInterface<CollisionHandler>::setHandlerInstance(
+	      const Teuchos::RCP<CollisionHandler>& collision_handler )
 { /* ... */ }
 
 // Check if a cell is void
-inline bool CollisionModuleInterface<Facemc::CollisionHandler>::isCellVoid(
+inline bool CollisionModuleInterface<CollisionHandler>::isCellVoid(
 		        const Geometry::ModuleTraits::InternalCellHandle cell )
 {
-  return Facemc::CollisionHandler::isCellVoid( cell );
+  return CollisionHandler::isCellVoid( cell );
 }
 
 // Get the total macroscopic cross section of a material
 inline double 
-CollisionModuleInterface<Facemc::CollisionHandler>::getMacroscopicTotalCrossSection(
+CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
 					        const ParticleState& particle )
 {
-  return Facemc::CollisionHandler::getMacroscopicTotalCrossSection( particle );
+  return CollisionHandler::getMacroscopicTotalCrossSection( particle );
+}
+
+//! Get the macroscopic cross section for a specific reaction
+inline double 
+CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
+					   const ParticleState& particle,
+					   const NuclearReactionType reaction )
+{
+  return CollisionHandler::getMacroscopicReactionCrossSection( particle,
+							       reaction );
 }
 
 // Collide with the material in a cell
 inline void 
-CollisionModuleInterface<Facemc::CollisionHandler>::collideWithCellMaterial( 
+CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial( 
 						       ParticleState& particle,
 						       ParticleBank& bank,
 						       const bool analogue )
 {
-  return Facemc::CollisionHandler::collideWithCellMaterial( particle,
-							    bank,
-							    analogue );
+  return CollisionHandler::collideWithCellMaterial( particle,
+						    bank,
+						    analogue );
 }
+
+} // end Facemc namespace
 
 #endif // end FACEMC_COLLISION_MODULE_INTERFACE_NATIVE_HPP
 

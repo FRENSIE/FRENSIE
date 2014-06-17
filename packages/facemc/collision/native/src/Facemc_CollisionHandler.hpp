@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+#ifndef FACEMC_COLLISION_HANDLER_HPP
+#define FACEMC_COLLISION_HANDLER_HPP
+
 // Boost Includes
 #include <boost/unordered_map.hpp>
 
@@ -39,6 +42,11 @@ public:
   static double getMacroscopicTotalCrossSection(
 					       const ParticleState& particle );
 
+  //! Get the macroscopic cross section for a specific reaction
+  static double getMacroscopicReactionCrossSection(
+					  const ParticleState& particle,
+					  const NuclearReactionType reaction );
+
   //! Collide with the material in a cell
   static void collideWithCellMaterial( ParticleState& particle,
 				       ParticleBank& bank,
@@ -55,6 +63,8 @@ private:
 };
 
 } // end Facemc namespace
+
+#endif // end FACEMC_COLLISION_HANDLER_HPP
 
 //---------------------------------------------------------------------------//
 // end Facemc_CollisionHandler.hpp

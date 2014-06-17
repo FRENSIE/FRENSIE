@@ -60,6 +60,12 @@ public:
   static inline double getMacroscopicTotalCrossSection(
 					        const ParticleState& particle )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); return 0;}
+  
+  //! Get the macroscopic cross section for a specific reaction
+  static inline double getMacroscopicReactionCrossSection(
+					   const ParticleState& particle,
+					   const NuclearReactionType reaction )
+  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 
   //! Collide with the material in a cell
   static inline void collideWithCellMaterial( ParticleState& particle,

@@ -16,6 +16,9 @@
 
 namespace Facemc{
 
+// Initialize the static member data
+CollisionHandler::CellIdMaterialMap CollisionHandler::master_neutron_map;
+
 // Add a material to the collision handler
 void CollisionHandler::addMaterial(
 	      const Teuchos::RCP<NeutronMaterial>& material,
@@ -71,6 +74,26 @@ double CollisionHandler::getMacroscopicTotalCrossSection(
     CollisionHandler::master_neutron_map.find( particle.getCell() )->second;
 
   return material->getMacroscopicTotalCrossSection( particle.getEnergy() );
+}
+
+// Get the macroscopic cross section for a specific reaction
+double CollisionHandler::getMacroscopicReactionCrossSection(
+					   const ParticleState& particle,
+					   const NuclearReactionType reaction )
+{
+  // Make sure the particle is a neutron
+  testPrecondition( particle.getParticleType() == NEUTRON );
+
+  CellIdMaterialMap::const_iterator it =
+    CollisionHandler::master_neutron_map.find( particle.getCell() );
+  
+  if( it != CollisionHandler::master_neutron_map.end() )
+  {
+    return it->second->getMacroscopicReactionCrossSection(particle.getEnergy(),
+							  reaction );
+  }
+  else
+    return 0.0;
 }
 
 // Collide with the material in a cell
