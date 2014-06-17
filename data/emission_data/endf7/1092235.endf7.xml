@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="6">
+<emission_file class_id="0" tracking_level="0" version="0">
+	<z>92</z>
+	<a>235</a>
+	<s>1</s>
+	<discretes class_id="1" tracking_level="0" version="0">
+		<count>2</count>
+		<item_version>0</item_version>
+		<item class_id="2" tracking_level="0" version="0">
+			<first>0</first>
+			<second class_id="3" tracking_level="0" version="0">
+				<count>1</count>
+				<item_version>0</item_version>
+				<item class_id="4" tracking_level="0" version="0">
+					<energy>7.6500000000000003e-05</energy>
+					<energy_err>3.9999990000000004e-07</energy_err>
+					<intensity>1.4285699999999999e-14</intensity>
+					<intensity_err>1.4285700000000001e-15</intensity_err>
+					<decay_type>3</decay_type>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>8</first>
+			<second>
+				<count>1</count>
+				<item_version>0</item_version>
+				<item>
+					<energy>5.6799999999999998e-05</energy>
+					<energy_err>3.9999990000000004e-07</energy_err>
+					<intensity>1</intensity>
+					<intensity_err>0.20000000000000001</intensity_err>
+					<decay_type>3</decay_type>
+				</item>
+			</second>
+		</item>
+	</discretes>
+	<continuum class_id="5" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</continuum>
+	<watt class_id="6" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</watt>
+	<watt_scale class_id="7" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</watt_scale>
+</emission_file>
+</boost_serialization>
+

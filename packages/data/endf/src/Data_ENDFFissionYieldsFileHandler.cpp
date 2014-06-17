@@ -293,4 +293,3 @@ void ENDFFissionYieldsFileHandler::filterZeroYields( Teuchos::Array<int>& zaid,
 //---------------------------------------------------------------------------//
 // end Data_ENDFFissionYieldsFileHandler.cpp
 //---------------------------------------------------------------------------//
-//

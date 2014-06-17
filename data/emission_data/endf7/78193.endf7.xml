@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="6">
+<emission_file class_id="0" tracking_level="0" version="0">
+	<z>78</z>
+	<a>193</a>
+	<s>0</s>
+	<discretes class_id="1" tracking_level="0" version="0">
+		<count>3</count>
+		<item_version>0</item_version>
+		<item class_id="2" tracking_level="0" version="0">
+			<first>2</first>
+			<second class_id="3" tracking_level="0" version="0">
+				<count>1</count>
+				<item_version>0</item_version>
+				<item class_id="4" tracking_level="0" version="0">
+					<energy>0.056599999999999998</energy>
+					<energy_err>0.00029999999999999997</energy_err>
+					<intensity>1</intensity>
+					<intensity_err>0</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>8</first>
+			<second>
+				<count>6</count>
+				<item_version>0</item_version>
+				<item>
+					<energy>0.00037068880000000004</energy>
+					<energy_err>1.6269939999999998e-05</energy_err>
+					<intensity>0.75272559999999999</intensity>
+					<intensity_err>0.02807693</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.00051084790000000002</energy>
+					<energy_err>2.446078e-05</energy_err>
+					<intensity>0.50984439999999998</intensity>
+					<intensity_err>0.038869239999999999</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.0016689319999999999</energy>
+					<energy_err>5.776888e-05</energy_err>
+					<intensity>1.5383849999999999</intensity>
+					<intensity_err>0.052122439999999999</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.007098661</energy>
+					<energy_err>0.00036868169999999996</energy_err>
+					<intensity>0.31345859999999998</intensity>
+					<intensity_err>0.016607090000000001</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.0090823850000000001</energy>
+					<energy_err>0.00030584699999999999</energy_err>
+					<intensity>0.13184799999999999</intensity>
+					<intensity_err>0.0046024259999999997</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.011111579999999999</energy>
+					<energy_err>0.00039613389999999999</energy_err>
+					<intensity>0.013639989999999999</intensity>
+					<intensity_err>0.00050698059999999996</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>9</first>
+			<second>
+				<count>4</count>
+				<item_version>0</item_version>
+				<item>
+					<energy>0.0079949730000000007</energy>
+					<energy_err>0.00072129029999999997</energy_err>
+					<intensity>0.0089737020000000001</intensity>
+					<intensity_err>0.00079205469999999996</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.0091613070000000005</energy>
+					<energy_err>0.0011230650000000001</energy_err>
+					<intensity>0.1106814</intensity>
+					<intensity_err>0.013520900000000001</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.01077118</energy>
+					<energy_err>0.0005838105000000001</energy_err>
+					<intensity>0.082756949999999996</intensity>
+					<intensity_err>0.0044611870000000001</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.012815700000000001</energy>
+					<energy_err>0.00068844890000000001</energy_err>
+					<intensity>0.015880410000000001</intensity>
+					<intensity_err>0.00085260339999999998</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+			</second>
+		</item>
+	</discretes>
+	<continuum class_id="5" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</continuum>
+	<watt class_id="6" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</watt>
+	<watt_scale class_id="7" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</watt_scale>
+</emission_file>
+</boost_serialization>
+

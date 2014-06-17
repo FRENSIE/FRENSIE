@@ -54,7 +54,7 @@ ENDIF()
 
 # Enable BOOST Support
 IF(BOOST_PREFIX)
-  ENABLE_BOOST_SUPPORT()
+  ENABLE_BOOST_SUPPORT(serialization)
 ELSE()
   MESSAGE(STATUS "The BOOST_PREFIX has not been set. The system default will be used.")
 ENDIF()

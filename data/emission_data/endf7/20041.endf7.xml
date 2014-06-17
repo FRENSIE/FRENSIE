@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="6">
+<emission_file class_id="0" tracking_level="0" version="0">
+	<z>20</z>
+	<a>41</a>
+	<s>0</s>
+	<discretes class_id="1" tracking_level="0" version="0">
+		<count>3</count>
+		<item_version>0</item_version>
+		<item class_id="2" tracking_level="0" version="0">
+			<first>2</first>
+			<second class_id="3" tracking_level="0" version="0">
+				<count>1</count>
+				<item_version>0</item_version>
+				<item class_id="4" tracking_level="0" version="0">
+					<energy>0.42138999999999999</energy>
+					<energy_err>0.00027999999999999998</energy_err>
+					<intensity>1</intensity>
+					<intensity_err>0.10000000000000001</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>8</first>
+			<second>
+				<count>6</count>
+				<item_version>0</item_version>
+				<item>
+					<energy>4.0603260000000002e-05</energy>
+					<energy_err>3.5939739999999999e-06</energy_err>
+					<intensity>0.27866740000000001</intensity>
+					<intensity_err>0.025211339999999999</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.00024925840000000001</energy>
+					<energy_err>2.4051210000000002e-05</energy_err>
+					<intensity>1.48994</intensity>
+					<intensity_err>0.14320659999999999</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.00027406130000000003</energy>
+					<energy_err>3.812222e-05</energy_err>
+					<intensity>0.02195648</intensity>
+					<intensity_err>0.0030820079999999998</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.0029532500000000001</energy>
+					<energy_err>0.00022927789999999999</energy_err>
+					<intensity>0.63698520000000003</intensity>
+					<intensity_err>0.04906688</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.003239025</energy>
+					<energy_err>0.00018959559999999999</energy_err>
+					<intensity>0.128166</intensity>
+					<intensity_err>0.007463768</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.0035278049999999997</energy>
+					<energy_err>0.00025225719999999999</energy_err>
+					<intensity>0.0065135590000000004</intensity>
+					<intensity_err>0.00046431549999999998</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+			</second>
+		</item>
+		<item>
+			<first>9</first>
+			<second>
+				<count>7</count>
+				<item_version>0</item_version>
+				<item>
+					<energy>0.00024262170000000002</energy>
+					<energy_err>2.7081359999999998e-05</energy_err>
+					<intensity>0.0014834799999999999</intensity>
+					<intensity_err>0.0001556842</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.00029743</energy>
+					<energy_err>4.150573e-05</energy_err>
+					<intensity>1.1442230000000001e-05</intensity>
+					<intensity_err>1.5926349999999999e-06</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.00033896380000000002</energy>
+					<energy_err>3.1474699999999999e-05</energy_err>
+					<intensity>0.0001672551</intensity>
+					<intensity_err>1.526747e-05</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.0032816500000000001</energy>
+					<energy_err>3.28165e-05</energy_err>
+					<intensity>0.037415539999999997</intensity>
+					<intensity_err>0.0037425079999999999</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.00328466</energy>
+					<energy_err>3.2846600000000005e-05</energy_err>
+					<intensity>0.07387647</intensity>
+					<intensity_err>0.0073895310000000004</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.0035595500000000003</energy>
+					<energy_err>3.5595500000000002e-05</energy_err>
+					<intensity>0.0035729780000000001</intensity>
+					<intensity_err>0.00035738890000000002</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+				<item>
+					<energy>0.0035598299999999999</energy>
+					<energy_err>3.5598300000000001e-05</energy_err>
+					<intensity>0.0070702489999999998</intensity>
+					<intensity_err>0.00070720519999999999</intensity_err>
+					<decay_type>2</decay_type>
+				</item>
+			</second>
+		</item>
+	</discretes>
+	<continuum class_id="5" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</continuum>
+	<watt class_id="6" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</watt>
+	<watt_scale class_id="7" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</watt_scale>
+</emission_file>
+</boost_serialization>
+
