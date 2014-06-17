@@ -42,12 +42,13 @@ public:
 
   //! Create the map of nuclides
   void createNuclideMap( 
-    boost::unordered_map<unsigned,Teuchos::RCP<Nuclide> >& nuclide_map ) const;
+                      boost::unordered_map<std::string,Teuchos::RCP<Nuclide> >&
+		      nuclide_map ) const;
 
 private:
 
   // The nuclide id map
-  boost::unordered_map<unsigned,Teuchos::RCP<Nuclide> > d_nuclide_id_map;
+  boost::unordered_map<std::string,Teuchos::RCP<Nuclide> > d_nuclide_name_map;
 };
 
 } // end Facemc namespace

@@ -41,6 +41,10 @@ void validateSynonymNames(const std::vector<std::string>& valid_property_names,
 			  const std::map<std::string,std::string>& synonyms,
 			  std::string& invalid_property_names );
 
+//! Return all of the property values associated with a property name
+void getPropertyValues( const std::string& property,
+			std::vector<std::string>& values );
+
 /*! Return all of the property values associated with a property name and cell
  * id.
  */

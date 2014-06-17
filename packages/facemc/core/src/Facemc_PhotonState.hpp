@@ -24,6 +24,12 @@ private:
   typedef Teuchos::ScalarTraits<double> ST;
 
 public:
+  
+  // The photon tag
+  struct PhotonTag{};
+
+  // Typedef for the photon tag
+  struct PhotonTag ParticleTag;
 
   //! Constructor
   PhotonState( const ParticleState::historyNumberType history_number );

@@ -13,6 +13,7 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
+#include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
 #include "Facemc_NuclideFactory.hpp"
@@ -56,19 +57,17 @@ void initializeNuclideFactory()
 // Check that a nuclide map can be created
 TEUCHOS_UNIT_TEST( NuclideFactory, createNuclideMap )
 {
-  initializeNuclideFactory();
-
-  boost::unordered_map<unsigned,Teuchos::RCP<Facemc::Nuclide> > nuclide_map;
+  boost::unordered_map<std::string,Teuchos::RCP<Facemc::Nuclide> > nuclide_map;
 
   nuclide_factory->createNuclideMap( nuclide_map );
 
   TEST_EQUALITY_CONST( nuclide_map.size(), 3 );
-  TEST_ASSERT( nuclide_map.count( 100170 ) );
-  TEST_EQUALITY_CONST( nuclide_map[100170]->getId(), 100170 );
-  TEST_ASSERT( nuclide_map.count( 100171 ) );
-  TEST_EQUALITY_CONST( nuclide_map[100171]->getId(), 100171 );
-  TEST_ASSERT( nuclide_map.count( 100172 ) );
-  TEST_EQUALITY_CONST( nuclide_map[100172]->getId(), 100172 );
+  TEST_ASSERT( nuclide_map.count( "H-1_293.6K" ) );
+  TEST_ASSERT( !nuclide_map["H-1_293.6K"].is_null() );
+  TEST_ASSERT( nuclide_map.count( "H-1_300K" ) );
+  TEST_ASSERT( !nuclide_map["H-1_300K"].is_null() );
+  TEST_ASSERT( nuclide_map.count( "H-1_900K" ) );
+  TEST_ASSERT( !nuclide_map["H-1_900K"].is_null() );
 }
 
 //---------------------------------------------------------------------------//
@@ -81,9 +80,34 @@ int main( int argc, char** argv )
   clp.setOption( "test_cross_sections_xml_directory",
 		 &test_cross_sections_xml_directory,
 		 "Test cross_sections.xml file name" );
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+    Teuchos::VerboseObjectBase::getDefaultOStream();
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+    clp.parse(argc,argv);
+
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
+    *out << "\nEnd Result: TEST FAILED" << std::endl;
+    return parse_return;
+  }
+
+  // Initialize the nuclide factory
+  initializeNuclideFactory();
   
+  // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+
+  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
+
+  if (success)
+    *out << "\nEnd Result: TEST PASSED" << std::endl;
+  else
+    *out << "\nEnd Result: TEST FAILED" << std::endl;
+
+  clp.printFinalTimerSummary(out.ptr());
+
+  return (success ? 0 : 1);
 }
 
 //---------------------------------------------------------------------------//

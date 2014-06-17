@@ -90,7 +90,7 @@ NuclideFactory::NuclideFactory(
     }		     
 
     // Add the nuclide to the map
-    d_nuclide_id_map[nuclide->getId()] = nuclide;
+    d_nuclide_name_map[*nuclide_name] = nuclide;
 
     std::cout << "done." << std::endl;
 
@@ -98,7 +98,7 @@ NuclideFactory::NuclideFactory(
   }
 
   // Make sure that every nuclide has been created
-  testPostcondition( d_nuclide_id_map.size() == nuclide_aliases.size() );
+  testPostcondition( d_nuclide_name_map.size() == nuclide_aliases.size() );
 }
 
 // Create the map of nuclides
@@ -106,13 +106,13 @@ NuclideFactory::NuclideFactory(
  * will be used as its key in the map that is populated.
  */
 void NuclideFactory::createNuclideMap( 
-     boost::unordered_map<unsigned,Teuchos::RCP<Nuclide> >& nuclide_map ) const
+  boost::unordered_map<std::string,Teuchos::RCP<Nuclide> >& nuclide_map ) const
 {   
   // Reset the nuclide map
   nuclide_map.clear();
 
   // Copy the stored map
-  nuclide_map.insert( d_nuclide_id_map.begin(), d_nuclide_id_map.end() );
+  nuclide_map.insert( d_nuclide_name_map.begin(), d_nuclide_name_map.end() );
 
 }
 

@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <algorithm>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -65,6 +66,25 @@ TEUCHOS_UNIT_TEST( DagMCHelpers, initializeDagMC )
   Geometry::initializeDagMC( test_geometry_file_name,
   			     property_names,
   			     1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that all property values associated with a property can be returned
+TEUCHOS_UNIT_TEST( DagMCHelpers, getPropertyValues )
+{
+  std::vector<std::string> values;
+
+  Geometry::getPropertyValues( "mat", values );
+
+  TEST_EQUALITY_CONST( values.size(), 8 );
+  TEST_ASSERT(std::find( values.begin(), values.end(), "1" ) != values.end());
+  TEST_ASSERT(std::find( values.begin(), values.end(), "2" ) != values.end());
+  TEST_ASSERT(std::find( values.begin(), values.end(), "3" ) != values.end());
+  TEST_ASSERT(std::find( values.begin(), values.end(), "4" ) != values.end());
+  TEST_ASSERT(std::find( values.begin(), values.end(), "7" ) != values.end());
+  TEST_ASSERT(std::find( values.begin(), values.end(), "8" ) != values.end());
+  TEST_ASSERT(std::find( values.begin(), values.end(), "9" ) != values.end());
+  TEST_ASSERT(std::find( values.begin(), values.end(), "10" ) != values.end());
 }
 
 //---------------------------------------------------------------------------//

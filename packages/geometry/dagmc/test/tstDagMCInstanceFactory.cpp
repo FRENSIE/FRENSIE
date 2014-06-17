@@ -22,6 +22,7 @@
 
 // FRENSIE Includes
 #include "Geometry_DagMCInstanceFactory.hpp"
+#include "Geometry_DagMCProperties.hpp"
 #include "Geometry_DagMCHelpers.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
@@ -41,11 +42,32 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
 
   Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
 
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getTerminationCellPropertyName(),
+		       "graveyard" );
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getMaterialPropertyName(),
+		       "mat" );
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getDensityPropertyName(),
+		       "rho" );
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getEstimatorPropertyName(),
+		       "tally" );
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getCellTrackLengthFluxPropertyName(),
+		       "cell.flux" );
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getCellCollisionFluxPropertyName(),
+		       "cell.c.flux" );
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getCellPulseHeightPropertyName(),
+		       "cell.pulse.height" );
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getSurfaceFluxPropertyName(),
+		       "surf.flux" );
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getSurfaceCurrentPropertyName(),
+		       "surface.current" );
+
   boost::unordered_map<std::string,
 		      std::vector<Geometry::ModuleTraits::InternalCellHandle> >
     prop_value_cell_id_map;
 
-  Geometry::getCellIdsWithPropertyValue( "mat", prop_value_cell_id_map );
+  Geometry::getCellIdsWithPropertyValue(
+			  Geometry::DagMCProperties::getMaterialPropertyName(),
+			  prop_value_cell_id_map );
 
   TEST_EQUALITY_CONST( prop_value_cell_id_map["9"].size(), 36 );
   TEST_EQUALITY_CONST( prop_value_cell_id_map["1"].size(), 2 );
@@ -61,13 +83,16 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
 		   std::vector<Geometry::ModuleTraits::InternalSurfaceHandle> >
     prop_value_surface_id_map;
 
-  Geometry::getSurfaceIdsWithPropertyValue("tally", prop_value_surface_id_map);
+  Geometry::getSurfaceIdsWithPropertyValue(
+			 Geometry::DagMCProperties::getEstimatorPropertyName(),
+			 prop_value_surface_id_map);
   
   TEST_EQUALITY_CONST( prop_value_surface_id_map["0"].size(), 7 );
   TEST_EQUALITY_CONST( prop_value_surface_id_map["1"].size(), 7 );
   
-  Geometry::getSurfaceIdsWithPropertyValue( "surf.flux", 
-					    prop_value_surface_id_map );
+  Geometry::getSurfaceIdsWithPropertyValue( 
+		       Geometry::DagMCProperties::getSurfaceFluxPropertyName(),
+		       prop_value_surface_id_map );
 
   TEST_EQUALITY_CONST( prop_value_surface_id_map["n"].size(), 7 );
   TEST_EQUALITY_CONST( prop_value_surface_id_map["p"].size(), 7 );

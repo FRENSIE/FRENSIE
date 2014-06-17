@@ -47,19 +47,21 @@ void initializeSolidHydrogen()
 					  cross_section_table_info,
 					  nuclide_aliases );
 
-  boost::unordered_map<unsigned,Teuchos::RCP<Facemc::Nuclide> > nuclide_map;
+  boost::unordered_map<std::string,Teuchos::RCP<Facemc::Nuclide> > nuclide_map;
 
   nuclide_factory.createNuclideMap( nuclide_map );
 
-  Teuchos::Array<Utility::Pair<unsigned,double> > 
-    mat_nuclide_id_fraction_data( 1 );
-  mat_nuclide_id_fraction_data[0].first = 100170;
-  mat_nuclide_id_fraction_data[0].second = -1.0; // weight fraction
+  Teuchos::Array<double> nuclide_fractions( 1 );
+  Teuchos::Array<std::string> nuclide_names( 1 );
+
+  nuclide_fractions[0] = -1.0; // weight fraction
+  nuclide_names[0] = "H-1_293.6K";
   
   material.reset( new Facemc::NeutronMaterial( 0,
 					       -1.0, // mass density (g/cm^3)
 					       nuclide_map,
-					       mat_nuclide_id_fraction_data ));
+					       nuclide_fractions,
+					       nuclide_names ) );
 }
 
 //---------------------------------------------------------------------------//

@@ -21,26 +21,25 @@ namespace Facemc{
 NeutronMaterial::NeutronMaterial(
 		const ModuleTraits::InternalMaterialHandle id,
 		const double density,
-	        const boost::unordered_map<unsigned,Teuchos::RCP<Nuclide> >&
-	        nuclide_id_map,
-		const Teuchos::Array<Utility::Pair<unsigned,double> >&
-		material_nuclide_id_fraction_data )
+	        const boost::unordered_map<std::string,Teuchos::RCP<Nuclide> >&
+	        nuclide_name_map,
+		const Teuchos::Array<double>& nuclide_fractions,
+		const Teuchos::Array<std::string>& nuclide_names )
   : d_id( id ),
     d_number_density( density ),
-    d_nuclides( material_nuclide_id_fraction_data.size() )
+    d_nuclides( nuclide_fractions.size() )
 {
   // Make sure the fraction values are valid (all positive or all negative)
-  testPrecondition( areFractionValuesValid<Utility::SECOND>( 
-				   material_nuclide_id_fraction_data.begin(),
-				   material_nuclide_id_fraction_data.end() ) );
+  testPrecondition( areFractionValuesValid( nuclide_fractions.begin(),
+					    nuclide_fractions.end() ) );
+  testPrecondition( nuclide_fractions.size() == nuclide_names.size() );
 		    
   // Copy the nuclides that make up this material
-  for( unsigned i = 0u; i < material_nuclide_id_fraction_data.size(); ++i )
+  for( unsigned i = 0u; i < nuclide_fractions.size(); ++i )
   {
-    d_nuclides[i].first = material_nuclide_id_fraction_data[i].second;
+    d_nuclides[i].first = nuclide_fractions[i];
     
-    d_nuclides[i].second = nuclide_id_map.find( 
-			  material_nuclide_id_fraction_data[i].first )->second;
+    d_nuclides[i].second = nuclide_name_map.find( nuclide_names[i] )->second;
   }
 
   // Convert weight fractions to atom fractions
@@ -77,8 +76,8 @@ NeutronMaterial::NeutronMaterial(
 
   // Convert the atom fractions to isotopic number densities
   scaleAtomFractionsByNumberDensity<Utility::FIRST>( d_number_density,
-					    d_nuclides.begin(),
-					    d_nuclides.end() );
+						     d_nuclides.begin(),
+						     d_nuclides.end() );
 }
 
 // Return the material id

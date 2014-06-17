@@ -25,6 +25,12 @@ private:
 
 public:
 
+  // The neutron tag
+  struct NeutronTag{};
+
+  // Typedef for the neutron tag
+  typedef NeutronTag ParticleTag;
+
   //! Constructor
   NeutronState( const ParticleState::historyNumberType history_number );
 

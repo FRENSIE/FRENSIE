@@ -12,29 +12,125 @@
 namespace Geometry{
 
 // Initialize the static member data
-const std::string DagMCProperties::termination_cell_property = 
-  "termination.cell";
+std::string DagMCProperties::termination_cell_property = "termination.cell";
+std::string DagMCProperties::material_property = "material";
+std::string DagMCProperties::density_property = "density";
+std::string DagMCProperties::estimator_property = "estimator";
+std::string DagMCProperties::cell_track_length_flux_property = "cell.tl.flux";
+std::string DagMCProperties::cell_collision_flux_property = "cell.c.flux";
+std::string DagMCProperties::cell_pulse_height_property = "cell.pulse.height";
+std::string DagMCProperties::surface_flux_property = "surface.flux";
+std::string DagMCProperties::surface_current_property = "surface.current";
 
-const std::string DagMCProperties::material_property = "material";
+// Set the termination cell property name
+void DagMCProperties::setTerminationCellPropertyName( const std::string& name )
+{
+  DagMCProperties::termination_cell_property = name;
+}
 
-const std::string DagMCProperties::density_property = "density";
+// Get the termination cell property name
+const std::string& DagMCProperties::getTerminationCellPropertyName()
+{
+  return DagMCProperties::termination_cell_property;
+}
 
-const std::string DagMCProperties::estimator_property = "estimator";
+// Set the material property name
+void DagMCProperties::setMaterialPropertyName( const std::string& name )
+{
+  DagMCProperties::material_property = name;
+}
 
-const std::string DagMCProperties::cell_track_length_flux_property = 
-  "cell.tl.flux";
+// Get the material property name
+const std::string& DagMCProperties::getMaterialPropertyName()
+{
+  return DagMCProperties::material_property;
+}
 
-const std::string DagMCProperties::cell_collision_flux_property = 
-  "cell.c.flux";
+// Set the density property name
+void DagMCProperties::setDensityPropertyName( const std::string& name )
+{
+  DagMCProperties::density_property = name;
+}
 
-const std::string DagMCProperties::cell_pulse_height_property = 
-  "cell.pulse.height";
+// Get the density property name
+const std::string& DagMCProperties::getDensityPropertyName()
+{
+  return DagMCProperties::density_property;
+}
 
-const std::string DagMCProperties::surface_flux_property = 
-  "surface.flux";
+// Set the estimator property name
+void DagMCProperties::setEstimatorPropertyName( const std::string& name )
+{
+  DagMCProperties::estimator_property = name;
+}
 
-const std::string DagMCProperties::surface_current_property = 
-  "surface.current";
+// Get the estimator property name
+const std::string& DagMCProperties::getEstimatorPropertyName()
+{
+  return DagMCProperties::estimator_property;
+}
+
+// Set the cell track length flux property name
+void DagMCProperties::setCellTrackLengthFluxPropertyName( 
+						      const std::string& name )
+{
+  DagMCProperties::cell_track_length_flux_property = name;
+}
+  
+// Get the cell track length flux property name
+const std::string& DagMCProperties::getCellTrackLengthFluxPropertyName()
+{
+  return DagMCProperties::cell_track_length_flux_property;
+}
+
+// Set the cell collision flux property name
+void DagMCProperties::setCellCollisionFluxPropertyName(
+						      const std::string& name )
+{
+  DagMCProperties::cell_collision_flux_property = name;
+}
+  
+// Get the cell collision flux property name
+const std::string& DagMCProperties::getCellCollisionFluxPropertyName()
+{
+  return DagMCProperties::cell_collision_flux_property;
+}
+
+// Set the cell pulse height property name
+void DagMCProperties::setCellPulseHeightPropertyName( const std::string& name )
+{
+  DagMCProperties::cell_pulse_height_property = name;
+}
+
+// Get the cell pulse height property name
+const std::string& DagMCProperties::getCellPulseHeightPropertyName()
+{
+  return DagMCProperties::cell_pulse_height_property;
+}
+
+// Set the surface flux property name
+void DagMCProperties::setSurfaceFluxPropertyName( const std::string& name )
+{
+  DagMCProperties::surface_flux_property = name;
+}
+
+// Get the surface flux property name
+const std::string& DagMCProperties::getSurfaceFluxPropertyName()
+{
+  return DagMCProperties::surface_flux_property;
+}
+
+// Set the surface current property name
+void DagMCProperties::setSurfaceCurrentPropertyName( const std::string& name )
+{
+  DagMCProperties::surface_current_property = name;
+}
+
+// Get the surface current property name
+const std::string& DagMCProperties::getSurfaceCurrentPropertyName()
+{
+  return DagMCProperties::surface_current_property;
+}
 
 // Get all of the properties
 void DagMCProperties::getProperties( std::vector<std::string>& properties )

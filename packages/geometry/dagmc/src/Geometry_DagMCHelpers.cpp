@@ -140,6 +140,25 @@ void validateSynonymNames(const std::vector<std::string>& valid_property_names,
     ++it;
   }
 }
+
+// Return all of the property values associated with a property name
+void getPropertyValues( const std::string& property,
+			std::vector<std::string>& values )
+{
+  // Clear the values vector
+  values.clear();
+
+  // Get an instance of DagMC
+  moab::DagMC* dagmc_instance = moab::DagMC::instance();
+
+  // Get all of the property values
+  moab::ErrorCode return_value = 
+    dagmc_instance->get_all_prop_values( property, values );
+
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS, 
+		      Utility::MOABException,
+		      moab::ErrorCodeStr[return_value] );
+}
 		       
 // Return all of the property values associated with a prop. name and cell id
 void getCellPropertyValues( 

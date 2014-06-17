@@ -31,12 +31,13 @@ class NeutronMaterial
 public:
 
   //! Constructor
-  NeutronMaterial( const ModuleTraits::InternalMaterialHandle id,
-		   const double density,
-		   const boost::unordered_map<unsigned,Teuchos::RCP<Nuclide> >&
-		   nuclide_id_map,
-		   const Teuchos::Array<Utility::Pair<unsigned,double> >&
-		   material_nuclide_id_fraction_data );
+  NeutronMaterial( 
+		const ModuleTraits::InternalMaterialHandle id,
+		const double density,
+		const boost::unordered_map<std::string,Teuchos::RCP<Nuclide> >&
+		nuclide_name_map,
+		const Teuchos::Array<double>& nuclide_fractions,
+		const Teuchos::Array<std::string>& nuclide_names );
 
   //! Destructor
   ~NeutronMaterial()
