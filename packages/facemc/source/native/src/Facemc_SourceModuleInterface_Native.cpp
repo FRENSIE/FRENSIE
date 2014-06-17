@@ -22,7 +22,7 @@ SourceModuleInterface<ParticleSource>::SourceModuleInterface()
 void SourceModuleInterface<ParticleSource>::setHandlerInstance( 
 				   const Teuchos::RCP<ParticleSource>& source )
 {
-  testPrecondition( !SourceModuleInterface::source.is_null() );
+  testPrecondition( !source.is_null() );
 
   SourceModuleInterface::source = source;
 }
