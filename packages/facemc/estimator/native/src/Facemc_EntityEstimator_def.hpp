@@ -25,7 +25,8 @@ EntityEstimator<EntityId>::EntityEstimator(
 			  const Teuchos::Array<EntityId>& entity_ids,
 			  const Teuchos::Array<double>& entity_norm_constants )
   : Estimator( id, multiplier ),
-    d_total_norm_constant( 1.0 )
+    d_total_norm_constant( 1.0 ),
+    d_supplied_norm_constants( true )
 {
   initializeEntityIds( entity_ids );
   initializeEntityEstimatorMomentsMap( entity_ids );
@@ -51,7 +52,8 @@ EntityEstimator<EntityId>::EntityEstimator(
 				   const double multiplier,
 				   const Teuchos::Array<EntityId>& entity_ids )
   : Estimator( id, multiplier ),
-    d_total_norm_constant( 1.0 )
+    d_total_norm_constant( 1.0 ),
+    d_supplied_norm_constants( false )
 {
   initializeEntityIds( entity_ids );
   initializeEntityEstimatorMomentsMap( entity_ids );
@@ -178,6 +180,35 @@ void EntityEstimator<EntityId>::printEntityIds(
   os << std::endl;
 }
 
+// Print the entity norm constants assigned to the estimator
+template<typename EntityId>
+void EntityEstimator<EntityId>::printEntityNormConstants( 
+					 std::ostream& os,
+					 const std::string& entity_type ) const
+{
+  os << entity_type;
+
+  if( entity_type == "Cell" )
+    os << " Volumes: ";
+  else if( entity_type == "Surface" )
+    os << " Areas: ";
+
+  typename EntityIdSet::const_iterator entity_id, end_entity_id;
+
+  entity_id = d_entity_ids.begin();
+  end_entity_id = d_entity_ids.end();
+
+  while( entity_id != end_entity_id )
+  {
+    os << d_entity_norm_constants_map.find( *entity_id )->second << " ";
+
+    ++entity_id;
+  }
+
+  os << std::endl;
+}
+							 
+
 // Print the estimator data
 template<typename EntityId>
 void EntityEstimator<EntityId>::printImplementation( 
@@ -186,6 +217,10 @@ void EntityEstimator<EntityId>::printImplementation(
 {
   // Print the entity ids that are assigned to this estimator
   printEntityIds( os, entity_type );
+
+  // Print the entity norm constants
+  if( d_supplied_norm_constants )
+    printEntityNormConstants( os, entity_type );
 
   // Print the response function names
   printEstimatorResponseFunctionNames( os );

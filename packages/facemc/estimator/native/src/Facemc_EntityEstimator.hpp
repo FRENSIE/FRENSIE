@@ -108,8 +108,15 @@ private:
   void printEntityIds( std::ostream& os,
 		       const std::string& entity_type ) const;
 
+  // Print the entity norm constants
+  void printEntityNormConstants( std::ostream& os,
+				 const std::string& entity_type ) const;
+
   // The total normalization constant (sum of all norm constants)
   double d_total_norm_constant;
+
+  // Bool that records if entity norm constants were supplied
+  bool d_supplied_norm_constants;
 
   // The estimator moments (1st,2nd,3rd,4th) for each bin and each entity
   EntityEstimatorMomentsArrayMap d_entity_estimator_moments_map;

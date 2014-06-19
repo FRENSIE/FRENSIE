@@ -260,17 +260,19 @@ void getCellIdsWithPropertyValue(
 							 entities,
 							 3,
 							 &property_values[i] );
-
-    std::vector<ModuleTraits::InternalCellHandle>& cell_ids = 
-      prop_val_cell_id_map[property_values[i]];
-    
-    cell_ids.resize( entities.size() );
-
-    // Convert the entity handles to cell ids
-    for( unsigned j = 0u; j < entities.size(); ++j )
-      cell_ids[j] = dagmc_instance->get_entity_id( entities[j] );
-
-    entities.clear();
+    if( entities.size() > 0 )
+    {
+      std::vector<ModuleTraits::InternalCellHandle>& cell_ids = 
+	prop_val_cell_id_map[property_values[i]];
+      
+      cell_ids.resize( entities.size() );
+      
+      // Convert the entity handles to cell ids
+      for( unsigned j = 0u; j < entities.size(); ++j )
+	cell_ids[j] = dagmc_instance->get_entity_id( entities[j] );
+      
+      entities.clear();
+    }
   }
 }
 
@@ -304,16 +306,19 @@ void getSurfaceIdsWithPropertyValue(
 							 2,
 							 &property_values[i] );
 
-    std::vector<ModuleTraits::InternalSurfaceHandle>& surface_ids = 
-      prop_val_surface_id_map[property_values[i]];
-    
-    surface_ids.resize( entities.size() );
-
-    // Convert the entity handles to cell ids
-    for( unsigned j = 0u; j < entities.size(); ++j )
-      surface_ids[j] = dagmc_instance->get_entity_id( entities[j] );
-
-    entities.clear();
+    if( entities.size() > 0 )
+    {
+      std::vector<ModuleTraits::InternalSurfaceHandle>& surface_ids = 
+	prop_val_surface_id_map[property_values[i]];
+      
+      surface_ids.resize( entities.size() );
+      
+      // Convert the entity handles to cell ids
+      for( unsigned j = 0u; j < entities.size(); ++j )
+	surface_ids[j] = dagmc_instance->get_entity_id( entities[j] );
+      
+      entities.clear();
+    }
   }
 }
 

@@ -27,6 +27,8 @@ namespace Facemc{
 template<>
 class EstimatorModuleInterface<Facemc::EstimatorHandler>
 {
+
+public:
   //! The external estimator handle class
   typedef ModuleTraits::InternalEstimatorHandle ExternalEstimatorHandle;
   
@@ -46,13 +48,13 @@ class EstimatorModuleInterface<Facemc::EstimatorHandler>
 
   //! Update the estimators from a surface intersection event
   static void updateEstimatorsFromParticleCrossingSurfaceEvent(
-		        const ParticleState& particle,
-			const Geometry::InternalCellHandle cell_entering,
-			const Geometry::InternalCellHandle cell_leaving,
-			const Geometry::InternalSurfaceHandle surface_crossing,
-			const double particle_subtrack_length,
-			const double subtrack_start_time,
-			const double surface_normal[3] );
+	  const ParticleState& particle,
+	  const Geometry::ModuleTraits::InternalCellHandle cell_entering,
+	  const Geometry::ModuleTraits::InternalCellHandle cell_leaving,
+	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
+	  const double particle_subtrack_length,
+	  const double subtrack_start_time,
+	  const double surface_normal[3] );
 
   //! Update the estimators from a collision event
   static void updateEstimatorsFromParticleCollidingInCellEvent(
@@ -94,13 +96,13 @@ EstimatorModuleInterface<Facemc::EstimatorHandler>::updateEstimatorsFromParticle
 // Update the estimators from a surface intersection event
 inline void 
 EstimatorModuleInterface<Facemc::EstimatorHandler>::updateEstimatorsFromParticleCrossingSurfaceEvent(
-		        const ParticleState& particle,
-			const Geometry::InternalCellHandle cell_entering,
-			const Geometry::InternalCellHandle cell_leaving,
-			const Geometry::InternalSurfaceHandle surface_crossing,
-			const double particle_subtrack_length,
-			const double subtrack_start_time,
-			const double surface_normal[3] )
+	  const ParticleState& particle,
+	  const Geometry::ModuleTraits::InternalCellHandle cell_entering,
+	  const Geometry::ModuleTraits::InternalCellHandle cell_leaving,
+	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
+	  const double particle_subtrack_length,
+	  const double subtrack_start_time,
+	  const double surface_normal[3] )
 {
   // Make sure the surface normal is valid
   testPrecondition( Utility::validDirection( surface_normal ) );
@@ -117,15 +119,15 @@ EstimatorModuleInterface<Facemc::EstimatorHandler>::updateEstimatorsFromParticle
 						       particle.getDirection(),
 						       surface_normal );
 
-  ParticleCrossingSurfaceEventDispatcherDB::dispatcherParticleCrossingSurfaceEvent(
+  ParticleCrossingSurfaceEventDispatcherDB::dispatchParticleCrossingSurfaceEvent(
 							      particle,
 							      surface_crossing,
 							      angle_cosine );
 
   ParticleSubtrackEndingInCellEventDispatcherDB::dispatchParticleSubtrackEndingInCellEvent(
-								particle,
-								cell_leaving,
-								track_length );
+						    particle,
+						    cell_leaving,
+						    particle_subtrack_length );
 }
 
 // Update the estimators from a collision event
@@ -137,9 +139,9 @@ EstimatorModuleInterface<Facemc::EstimatorHandler>::updateEstimatorsFromParticle
 				     const double inverse_total_cross_section )
 {
   ParticleSubtrackEndingInCellEventDispatcherDB::dispatchParticleSubtrackEndingInCellEvent(
-							    particle,
-							    particle.getCell(),
-							    track_length );
+						    particle,
+						    particle.getCell(),
+						    particle_subtrack_length );
 
   ParticleCollidingInCellEventDispatcherDB::dispatchParticleCollidingInCellEvent(
 						 particle,
@@ -155,7 +157,7 @@ EstimatorModuleInterface<Facemc::EstimatorHandler>::commitEstimatorHistoryContri
 }
 
 // Get the internal estimator handle corresponding to the external handle
-inline InternalEstimatorHandle 
+inline EstimatorModuleInterface<Facemc::EstimatorHandler>::InternalEstimatorHandle 
 EstimatorModuleInterface<Facemc::EstimatorHandler>::getInternalEstimatorHandle(
 			     const ExternalEstimatorHandle estimator_external )
 {
@@ -163,7 +165,7 @@ EstimatorModuleInterface<Facemc::EstimatorHandler>::getInternalEstimatorHandle(
 }
 
 // Get the external estimator handle corresponding to the internal handle
-inline ExternalEstimatorHandle 
+inline EstimatorModuleInterface<Facemc::EstimatorHandler>::ExternalEstimatorHandle 
 EstimatorModuleInterface<Facemc::EstimatorHandler>::getExternalEstimatorHandle(
 			     const InternalEstimatorHandle estimator_internal )
 {

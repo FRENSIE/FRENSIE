@@ -42,6 +42,8 @@ TEUCHOS_UNIT_TEST( EstimatorHandlerFactory, initializeHandlerUsingDagMC )
   Facemc::EstimatorHandlerFactory::initializeHandlerUsingDagMC( 
 							     *response_reps,
 							     *estimator_reps );
+
+  TEST_EQUALITY_CONST( Facemc::EstimatorHandler::getNumberOfEstimators(), 11 );
 }
 
 //---------------------------------------------------------------------------//
@@ -82,6 +84,7 @@ int main( int argc, char** argv )
 
   Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
 
+  // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);

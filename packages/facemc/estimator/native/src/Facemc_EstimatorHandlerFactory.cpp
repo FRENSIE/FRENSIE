@@ -837,7 +837,6 @@ void EstimatorHandlerFactory::createPulseHeightEstimator(
   // Assign estimator bins
   if( bins )
     EstimatorHandlerFactory::assignBinsToEstimator( *bins, estimator );
-
   // Add this estimator to the handler
   if( energy_multiplication )
   {
@@ -1103,8 +1102,6 @@ void EstimatorHandlerFactory::assignBinsToEstimator(
 
   while( it != bins.end() )
   {
-    std::cout << bins.name( it ) << std::endl;
-    
     if( bins.name( it ) == "Energy Bins" )
     {
       const Teuchos::Array<double>& energy_bins = 

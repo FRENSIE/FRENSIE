@@ -1,5 +1,5 @@
 1900 0 55 0           
-10 Cubit 12.2 17 ACIS 19.0.2 Linux 24 Wed Jun 18 09:14:09 2014 
+10 Cubit 12.2 17 ACIS 19.0.2 Linux 24 Thu Jun 19 08:41:38 2014 
 1 9.9999999999999995e-07 1e-10 
 body $55 -1 -1 $-1 $56 $-1 $57 T -46.350000000000001 -46.350000000000001 -2.54 -32.850000000000001 -32.850000000000001 126.99999999999999 #
 body $58 -1 -1 $-1 $59 $-1 $60 T -45.950000000000003 -45.950000000000003 -2.54 -33.25 -33.25 126.99999999999999 #
@@ -1871,7 +1871,7 @@ coedge $-1 -1 -1 $-1 $3046 $1195 $3047 $3048 forward $776 $-1 #
 coedge $-1 -1 -1 $-1 $1195 $3046 $3049 $3050 forward $776 $-1 #
 coedge $-1 -1 -1 $-1 $3051 $3052 $1195 $1869 reversed $3053 $-1 #
 edge $3054 -1 -1 $-1 $3055 -74.769999999999996 $3056 74.769999999999996 $1868 $3057 forward @7 unknown T 35.169999999999995 -114.37 137 35.169999999999995 35.169999999999995 137 #
-simple-snl-attrib $-1 -1 $3058 $1197 $386 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 0 0 0 0 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $3058 $1197 $386 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 0 0 0 0 0 0 0 0 0 0 #
 simple-snl-attrib $-1 -1 $-1 $1198 $501 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 3 @13 MESH_INTERVAL @4 LIMP @4 LIMP 2 1 0 5 1 0 0 1 1 #
 simple-snl-attrib $-1 -1 $3059 $1199 $781 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 8 -2147483648 -1 #
 integer_attrib-name_attrib-gen-attrib $-1 -1 $3060 $-1 $1200 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 9 #
@@ -1886,7 +1886,7 @@ edge $3067 -1 -1 $-1 $3068 0 $3068 6.2831853071795862 $1880 $3069 forward @7 unk
 integer_attrib-name_attrib-gen-attrib $-1 -1 $3070 $-1 $1207 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 5 #
 vertex $3071 -1 -1 $-1 $1207 $3072 #
 ellipse-curve $-1 -1 -1 $-1 -39.600000000000001 -39.600000000000001 -2.54 0 0 1 6.3499999999999996 0 0 1 I I #
-simple-snl-attrib $-1 -1 $3073 $1209 $388 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 1 1 1 1 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $3073 $1209 $388 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 1 1 1 1 0 0 0 0 0 0 #
 simple-snl-attrib $-1 -1 $3074 $1210 $506 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 7 1098808408 1 #
 simple-snl-attrib $-1 -1 $3075 $1211 $789 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 17 -2147483648 -1 #
 integer_attrib-name_attrib-gen-attrib $-1 -1 $3076 $-1 $1212 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 18 #
@@ -1901,7 +1901,7 @@ edge $3083 -1 -1 $-1 $3084 0 $3084 6.2831853071795862 $1895 $3085 forward @7 unk
 integer_attrib-name_attrib-gen-attrib $-1 -1 $3086 $-1 $1219 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 11 #
 vertex $3087 -1 -1 $-1 $1219 $3088 #
 ellipse-curve $-1 -1 -1 $-1 -39.600000000000001 -39.600000000000001 -2.54 0 0 1 6.2458600000000004 0 0 1 I I #
-simple-snl-attrib $-1 -1 $3089 $1221 $390 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 2 2 2 2 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $3089 $1221 $390 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 2 2 2 2 0 0 0 0 0 0 #
 simple-snl-attrib $-1 -1 $3090 $1222 $511 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 16 1650852877 1 #
 simple-snl-attrib $-1 -1 $3091 $1223 $797 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 26 -2147483648 -1 #
 integer_attrib-name_attrib-gen-attrib $-1 -1 $3092 $-1 $1224 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 27 #
@@ -1916,7 +1916,7 @@ edge $3099 -1 -1 $-1 $3100 0 $3100 6.2831853071795862 $1910 $3101 forward @7 unk
 integer_attrib-name_attrib-gen-attrib $-1 -1 $3102 $-1 $1231 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 17 #
 vertex $3103 -1 -1 $-1 $1231 $3104 #
 ellipse-curve $-1 -1 -1 $-1 -39.600000000000001 -39.600000000000001 -2.54 0 0 1 6.02996 0 0 1 I I #
-simple-snl-attrib $-1 -1 $3105 $1233 $392 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 3 3 3 3 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $3105 $1233 $392 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 3 3 3 3 0 0 0 0 0 0 #
 simple-snl-attrib $-1 -1 $3106 $1234 $516 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 25 85166923 1 #
 simple-snl-attrib $-1 -1 $3107 $1235 $805 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 35 -2147483648 -1 #
 integer_attrib-name_attrib-gen-attrib $-1 -1 $3108 $-1 $1236 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 36 #
@@ -3075,7 +3075,7 @@ simple-snl-attrib $-1 -1 $4884 $1882 $1207 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @
 integer_attrib-name_attrib-gen-attrib $-1 -1 $4885 $-1 $1883 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 5 #
 point $-1 -1 -1 $-1 -33.25 -39.600000000000001 -2.54 #
 simple-snl-attrib $-1 -1 $4886 $1885 $388 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @13 MERGE_PARTNER 0 4 648136998 1 10 1 #
-simple-snl-attrib $-1 -1 $4887 $1886 $506 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 0 0 0 0 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $4887 $1886 $506 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 0 0 0 0 0 0 0 0 0 0 #
 simple-snl-attrib $-1 -1 $-1 $1887 $789 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 3 @13 MESH_INTERVAL @4 LIMP @4 LIMP 2 1 0 5 1 0 0 1 1 #
 simple-snl-attrib $-1 -1 $4888 $1888 $1212 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 18 -2147483648 -1 #
 loop $-1 -1 -1 $-1 $-1 $3078 $1212 T -45.950000000000003 -45.950000000000003 126.99999999999999 -33.25 -33.25 126.99999999999999 unknown #
@@ -3091,7 +3091,7 @@ simple-snl-attrib $-1 -1 $4898 $1897 $1219 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @
 integer_attrib-name_attrib-gen-attrib $-1 -1 $4899 $-1 $1898 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 11 #
 point $-1 -1 -1 $-1 -33.354140000000001 -39.600000000000001 -2.54 #
 simple-snl-attrib $-1 -1 $4900 $1900 $390 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @13 MERGE_PARTNER 0 4 1437517319 1 19 1 #
-simple-snl-attrib $-1 -1 $4901 $1901 $511 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 1 1 1 1 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $4901 $1901 $511 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 1 1 1 1 0 0 0 0 0 0 #
 simple-snl-attrib $-1 -1 $-1 $1902 $797 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 3 @13 MESH_INTERVAL @4 LIMP @4 LIMP 2 1 0 5 1 0 0 1 1 #
 simple-snl-attrib $-1 -1 $4902 $1903 $1224 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 27 -2147483648 -1 #
 loop $-1 -1 -1 $-1 $-1 $3094 $1224 T -45.845860000000002 -45.845860000000002 126.99999999999999 -33.354140000000001 -33.354140000000001 126.99999999999999 unknown #
@@ -3107,7 +3107,7 @@ simple-snl-attrib $-1 -1 $4912 $1912 $1231 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @
 integer_attrib-name_attrib-gen-attrib $-1 -1 $4913 $-1 $1913 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 17 #
 point $-1 -1 -1 $-1 -33.570039999999999 -39.600000000000001 -2.54 #
 simple-snl-attrib $-1 -1 $4914 $1915 $392 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @13 MERGE_PARTNER 0 4 656043252 1 28 1 #
-simple-snl-attrib $-1 -1 $4915 $1916 $516 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 2 2 2 2 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $4915 $1916 $516 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 2 2 2 2 0 0 0 0 0 0 #
 simple-snl-attrib $-1 -1 $-1 $1917 $805 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 3 @13 MESH_INTERVAL @4 LIMP @4 LIMP 2 1 0 5 1 0 0 1 1 #
 simple-snl-attrib $-1 -1 $4916 $1918 $1236 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 36 -2147483648 -1 #
 loop $-1 -1 -1 $-1 $-1 $3110 $1236 T -45.629960000000004 -45.629960000000004 126.99999999999999 -33.570039999999999 -33.570039999999999 126.99999999999999 unknown #
@@ -4656,7 +4656,7 @@ simple-snl-attrib $-1 -1 $6491 $2904 $1768 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @
 integer_attrib-name_attrib-gen-attrib $-1 -1 $6492 $-1 $2905 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 436 #
 point $-1 -1 -1 $-1 -34.520000000000003 -39.600000000000001 110.744 #
 simple-snl-attrib $-1 -1 $-1 $2907 $483 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 3 @13 MESH_INTERVAL @4 LIMP @4 LIMP 2 1 0 5 1 0 0 1 1 #
-simple-snl-attrib $-1 -1 $6493 $2908 $739 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 6 6 6 6 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $6493 $2908 $739 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 6 6 6 6 0 0 0 0 0 0 #
 simple-snl-attrib $-1 -1 $6494 $2909 $1133 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 293 145627481 0 #
 simple-snl-attrib $-1 -1 $6495 $2910 $1773 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 UNIQUE_ID 1 0 1 1302584317 #
 integer_attrib-name_attrib-gen-attrib $-1 -1 $6496 $-1 $2911 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 185 #
@@ -8126,7 +8126,7 @@ simple-snl-attrib $-1 -1 $-1 $6491 $1768 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17
 simple-snl-attrib $-1 -1 $9565 $6492 $2905 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 436 -2147483648 -1 #
 simple-snl-attrib $-1 -1 $-1 $6493 $739 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 3 @13 MESH_INTERVAL @4 LIMP @4 LIMP 2 1 0 5 1 0 0 1 1 #
 simple-snl-attrib $-1 -1 $-1 $6494 $1133 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 3 @13 MESH_INTERVAL @4 LIMP @4 LIMP 2 1 0 5 1 0 0 1 1 #
-simple-snl-attrib $-1 -1 $9566 $6495 $1773 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 5 5 5 5 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $9566 $6495 $1773 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 5 5 5 5 0 0 0 0 0 0 #
 simple-snl-attrib $-1 -1 $9567 $6496 $2911 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 185 809316591 0 #
 simple-snl-attrib $-1 -1 $9568 $6497 $4659 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 UNIQUE_ID 1 0 1 1081781885 #
 integer_attrib-name_attrib-gen-attrib $-1 -1 $9569 $-1 $6498 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 77 #
@@ -10768,7 +10768,7 @@ simple-snl-attrib $-1 -1 $-1 $9562 $4646 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17
 simple-snl-attrib $-1 -1 $-1 $9564 $4649 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @13 MERGE_PARTNER 0 4 1683408398 1 704 0 #
 simple-snl-attrib $-1 -1 $-1 $9566 $1773 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 3 @13 MESH_INTERVAL @4 LIMP @4 LIMP 2 1 0 5 1 0 0 1 1 #
 simple-snl-attrib $-1 -1 $-1 $9567 $2911 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 3 @13 MESH_INTERVAL @4 LIMP @4 LIMP 2 1 0 5 1 0 0 1 1 #
-simple-snl-attrib $-1 -1 $11548 $9568 $4659 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 4 4 4 4 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $11548 $9568 $4659 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 4 4 4 4 0 0 0 0 0 0 #
 simple-snl-attrib $-1 -1 $11549 $9569 $6498 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 77 596623306 0 #
 simple-snl-attrib $-1 -1 $11550 $9570 $8129 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 UNIQUE_ID 1 0 1 69837072 #
 loop $-1 -1 -1 $-1 $-1 $10772 $8129 T -44.25582 -44.25582 14.985999999999997 -34.944180000000003 -34.944180000000003 14.986000000000001 unknown #
@@ -11462,7 +11462,7 @@ coedge $-1 -1 -1 $-1 $10544 $12097 $12100 $12079 reversed $9267 $-1 #
 coedge $-1 -1 -1 $-1 $12066 $12068 $10544 $11459 reversed $12069 $-1 #
 edge $12101 -1 -1 $-1 $11439 -3.0480000000000018 $12102 3.0480000000000018 $10544 $12103 forward @7 unknown T -42.648000000000003 -42.774999999999999 96.596199999999996 -36.552 -42.774999999999999 96.596199999999996 #
 simple-snl-attrib $-1 -1 $-1 $10548 $4194 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 3 @13 MESH_INTERVAL @4 LIMP @4 LIMP 2 1 0 5 1 0 0 1 1 #
-simple-snl-attrib $-1 -1 $12104 $10549 $6038 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 6 6 6 6 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $12104 $10549 $6038 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 6 6 6 6 0 0 0 0 0 0 #
 edge $12105 -1 -1 $-1 $12106 0 $12106 6.2831853071795862 $10565 $12107 forward @7 unknown T -44.25582 -44.25582 107.94999999999999 -34.944180000000003 -34.944180000000003 107.94999999999999 #
 integer_attrib-name_attrib-gen-attrib $-1 -1 $12108 $-1 $10552 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 414 #
 vertex $12109 -1 -1 $-1 $10552 $12110 #
@@ -11755,7 +11755,7 @@ simple-snl-attrib $-1 -1 $12320 $10980 $9783 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1
 integer_attrib-name_attrib-gen-attrib $-1 -1 $12321 $-1 $10981 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 703 #
 point $-1 -1 -1 $-1 -34.02216 -39.600000000000001 77.622399999999999 #
 simple-snl-attrib $-1 -1 $-1 $10993 $4933 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 3 @13 MESH_INTERVAL @4 LIMP @4 LIMP 2 1 0 5 1 0 0 1 1 #
-simple-snl-attrib $-1 -1 $12322 $10994 $6793 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 3 3 3 3 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $12322 $10994 $6793 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 3 3 3 3 0 0 0 0 0 0 #
 simple-snl-attrib $-1 -1 $-1 $10995 $8410 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 3 @13 MESH_INTERVAL @4 LIMP @4 LIMP 2 1 0 5 1 0 0 1 1 #
 simple-snl-attrib $-1 -1 $12323 $10996 $9830 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 45 -2147483648 -1 #
 edge $12324 -1 -1 $-1 $12325 0 $12325 6.2831853071795862 $11012 $12326 forward @7 unknown T -45.579160000000002 -45.579160000000002 126.99999999999999 -33.620840000000001 -33.620840000000001 126.99999999999999 #
@@ -12443,7 +12443,7 @@ simple-snl-attrib $-1 -1 $-1 $11889 $8563 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @1
 simple-snl-attrib $-1 -1 $12926 $11890 $9981 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 55 -2147483648 -1 #
 simple-snl-attrib $-1 -1 $12927 $11892 $9984 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 84 2052144745 0 #
 simple-snl-attrib $-1 -1 $-1 $11894 $8566 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @13 MERGE_PARTNER 0 4 28151614 1 83 0 #
-simple-snl-attrib $-1 -1 $12928 $11896 $8573 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 4 4 4 4 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $12928 $11896 $8573 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 4 4 4 4 0 0 0 0 0 0 #
 integer_attrib-name_attrib-gen-attrib $-1 -1 $12929 $-1 $11898 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 52 #
 vertex $12930 -1 -1 $-1 $11898 $12931 #
 ellipse-curve $-1 -1 -1 $-1 -39.600000000000001 -39.600000000000001 16.509999999999998 0 0 -1 4.6558200000000003 0 0 1 I I #
@@ -12539,7 +12539,7 @@ simple-snl-attrib $-1 -1 $-1 $12002 $8922 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @1
 simple-snl-attrib $-1 -1 $13021 $12003 $10270 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 184 -2147483648 -1 #
 simple-snl-attrib $-1 -1 $13022 $12005 $10273 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @9 ENTITY_ID 0 3 192 1464675973 0 #
 simple-snl-attrib $-1 -1 $-1 $12007 $8925 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 1 @13 MERGE_PARTNER 0 4 645266231 1 212 0 #
-simple-snl-attrib $-1 -1 $13023 $12009 $8932 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n @25 tally_8.surface.current.p 0 19 4 61 62 63 64 684407422 1069394967 1505150743 1804924583 5 5 5 5 0 0 0 0 0 0 #
+simple-snl-attrib $-1 -1 $13023 $12009 $8932 1 1 1 1 1 1 1 1 1 1 1 1 0 1 0 1 1 1 @17 NEW_SIMPLE_ATTRIB 5 @5 GROUP @25 tally_8.surface.current.p @22 tally_5.surface.flux.n @22 tally_6.surface.flux.p @25 tally_7.surface.current.n 0 19 4 65 61 62 63 1404207215 684407422 1069394967 1505150743 5 5 5 5 0 0 0 0 0 0 #
 integer_attrib-name_attrib-gen-attrib $-1 -1 $13024 $-1 $12011 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1 1 1 @8 CUBIT_ID 233 #
 vertex $13025 -1 -1 $-1 $12011 $13026 #
 ellipse-curve $-1 -1 -1 $-1 -39.600000000000001 -39.600000000000001 47.066199999999995 0 0 -1 4.6558200000000003 0 0 1 I I #

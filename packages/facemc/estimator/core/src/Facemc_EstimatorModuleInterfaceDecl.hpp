@@ -71,13 +71,13 @@ public:
 
   //! Update the estimators from a surface intersection event
   static inline void updateEstimatorsFromParticleCrossingSurfaceEvent(
-		        const ParticleState& particle,
-			const Geometry::InternalCellHandle cell_entering,
-			const Geometry::InternalCellHandle cell_leaving,
-			const Geometry::InternalSurfaceHandle surface_crossing,
-			const double particle_subtrack_length,
-			const double subtrack_start_time,
-			const double surface_normal[3] )
+	  const ParticleState& particle,
+	  const Geometry::ModuleTraits::InternalCellHandle cell_entering,
+	  const Geometry::ModuleTraits::InternalCellHandle cell_leaving,
+	  const Geometry::ModuleTraits::InternalSurfaceHandle surface_crossing,
+	  const double particle_subtrack_length,
+	  const double subtrack_start_time,
+	  const double surface_normal[3] )
   { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
 
   //! Update the estimators from a collision event
@@ -109,7 +109,7 @@ inline void setEstimatorHandlerInstance(
 		       const Teuchos::RCP<EstimatorHandler>& handler_instance )
 {
   EstimatorModuleInterface<EstimatorHandler>::setHandlerInstance( 
-							  estimator_instance );
+							    handler_instance );
 }
 
 } // end Facemc namespace

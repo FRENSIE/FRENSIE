@@ -155,6 +155,11 @@ ADD_EXECUTABLE(tstEstimatorHandler
 TARGET_LINK_LIBRARIES(tstEstimatorHandler facemc_estimator_native)
 ADD_TEST(EstimatorHandler_test tstEstimatorHandler)
 
+ADD_EXECUTABLE(tstEstimatorModuleInterface_Native
+  tstModuleInterface.cpp)
+TARGET_LINK_LIBRARIES(tstEstimatorModuleInterface_Native facemc_estimator_native)
+ADD_TEST(EstimatorModuleInterface_Native_test tstEstimatorModuleInterface_Native)
+
 ADD_EXECUTABLE(tstResponseFunctionFactory
   tstResponseFunctionFactory.cpp)
 TARGET_LINK_LIBRARIES(tstResponseFunctionFactory facemc_estimator_native)
