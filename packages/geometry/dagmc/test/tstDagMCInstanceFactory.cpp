@@ -50,16 +50,6 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
 		       "rho" );
   TEST_EQUALITY_CONST( Geometry::DagMCProperties::getEstimatorPropertyName(),
 		       "tally" );
-  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getCellTrackLengthFluxPropertyName(),
-		       "cell.flux" );
-  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getCellCollisionFluxPropertyName(),
-		       "cell.c.flux" );
-  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getCellPulseHeightPropertyName(),
-		       "cell.pulse.height" );
-  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getSurfaceFluxPropertyName(),
-		       "surf.flux" );
-  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getSurfaceCurrentPropertyName(),
-		       "surface.current" );
 
   boost::unordered_map<std::string,
 		      std::vector<Geometry::ModuleTraits::InternalCellHandle> >
@@ -87,15 +77,12 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
 			 Geometry::DagMCProperties::getEstimatorPropertyName(),
 			 prop_value_surface_id_map);
   
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["0"].size(), 7 );
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["1"].size(), 7 );
-  
-  Geometry::getSurfaceIdsWithPropertyValue( 
-		       Geometry::DagMCProperties::getSurfaceFluxPropertyName(),
-		       prop_value_surface_id_map );
-
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["n"].size(), 7 );
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["p"].size(), 7 );
+  TEST_EQUALITY_CONST(prop_value_surface_id_map["5.surface.flux.n"].size(), 7);
+  TEST_EQUALITY_CONST(prop_value_surface_id_map["6.surface.flux.p"].size(), 7);
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["7.surface.current.n"].size(),
+		       7);
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["8.surface.current.p"].size(),
+		       7);
 }
 
 //---------------------------------------------------------------------------//

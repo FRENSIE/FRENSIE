@@ -45,35 +45,20 @@ public:
   //! Get the estimator property name
   static const std::string& getEstimatorPropertyName();
 
-  //! Set the cell track length flux property name
-  static void setCellTrackLengthFluxPropertyName( const std::string& name );
-  
-  //! Get the cell track length flux property name
-  static const std::string& getCellTrackLengthFluxPropertyName();
+  //! Extract estimator property values
+  static void extractEstimatorPropertyValues( const std::string& prop_value,
+					      unsigned& estimator_id,
+					      std::string& estimator_type,
+					      std::string& particle_type );
 
-  //! Set the cell collision flux property name
-  static void setCellCollisionFluxPropertyName( const std::string& name );
-  
-  //! Get the cell collision flux property name
-  static const std::string& getCellCollisionFluxPropertyName();
+  //! Check if the cell estimator type is valid
+  static bool isCellEstimatorTypeValid( const std::string& estimator_type );
 
-  //! Set the cell pulse height property name
-  static void setCellPulseHeightPropertyName( const std::string& name );
+  //! Check if the surface estimator type is valid
+  static bool isSurfaceEstimatorTypeValid( const std::string& estimator_type );
 
-  //! Get the cell pulse height property name
-  static const std::string& getCellPulseHeightPropertyName();
-
-  //! Set the surface flux property name
-  static void setSurfaceFluxPropertyName( const std::string& name );
-
-  //! Get the surface flux property name
-  static const std::string& getSurfaceFluxPropertyName();
-
-  //! Set the surface current property name
-  static void setSurfaceCurrentPropertyName( const std::string& name );
-
-  //! Get the surface current property name
-  static const std::string& getSurfaceCurrentPropertyName();
+  //! Check if the particle type is valid
+  static bool isParticleTypeValid( const std::string& particle_type );
 
   //! Get all of the properties
   static void getProperties( std::vector<std::string>& properties );
@@ -91,21 +76,6 @@ private:
 
   //! The estimator property name
   static std::string estimator_property;
-
-  //! The cell track length flux property name
-  static std::string cell_track_length_flux_property;
-
-  //! The cell collision flux property name
-  static std::string cell_collision_flux_property;
-  
-  //! The cell pulse height property name
-  static std::string cell_pulse_height_property;
-
-  //! The surface flux property name
-  static std::string surface_flux_property;
-
-  //! The surface current property name
-  static std::string surface_current_property;
 };
 
 } // end Geometry namespace

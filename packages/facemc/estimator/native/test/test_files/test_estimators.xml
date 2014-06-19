@@ -1,43 +1,67 @@
 <ParameterList name="Estimators">
 
   <ParameterList name="Pulse Height Estimator">
-    <Parameter name="Id" type="unsigned int" value="0"/>
+    <Parameter name="Id" type="unsigned int" value="51"/>
+    <Parameter name="Type" type="string" value="cell.pulse.height"/>
     <Parameter name="Particle Type" type="string" value="Photon"/>
     <Parameter name="Multiplier" type="double" value="1.0"/>
-    <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
     <Parameter name="Cells" type="Array(unsigned int)" value="{1,2,3}"/>
+    <Parameter name="Energy Multiplication" type="bool" value="true"/>
+    <ParameterList name="Bins">
+      <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
+    </ParameterList>
   </ParameterList>
 
   <ParameterList name="Cell Track Length Flux Estimator">
-    <Parameter name="Id" type="unsigned int" value="1"/>
+    <Parameter name="Id" type="unsigned int" value="52"/>
+    <Parameter name="Type" type="string" value="cell.tl.flux"/>
     <Parameter name="Particle Type" type="string" value="Photon"/>
     <Parameter name="Multiplier" type="double" value="1.0"/>
-    <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
-    <Parameter name="Time Bins" type="Array(double)" value="{0.0, 1e-9, 1e-8, 1e-7, 1.0}"/>
+    <Parameter name="Cells" type="Array(unsigned int)" value="{1,2,3}"/>
+    <Parameter name="Response Functions" type="Array(unsigned int)"
+	       value="{0}"/>
+    <ParameterList name="Bins">
+      <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
+      <Parameter name="Time Bins" type="Array(double)" value="{0.0, 1e-9, 1e-8, 1e-7, 1.0}"/>
+    </ParameterList>
   </ParameterList>
 
   <ParameterList name="Cell Collision Flux Estimator">
-    <Parameter name="Id" type="unsigned int" value="2"/>
+    <Parameter name="Id" type="unsigned int" value="53"/>
+    <Parameter name="Type" type="string" value="cell.c.flux"/>
     <Parameter name="Particle Type" type="string" value="Photon"/>
     <Parameter name="Multiplier" type="double" value="1.0"/>
-    <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
-    <Parameter name="Collision Number Bins" type="Array(unsigned int)" value="{0, 1, 2, 10}"/>
+    <Parameter name="Cells" type="Array(unsigned int)" value="{1,2,3}"/>
+    <Parameter name="Response Functions" type="Array(unsigned int)"
+	       value="{0,1}"/>
+    <ParameterList name="Bins">
+      <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
+      <Parameter name="Collision Number Bins" type="Array(unsigned int)" value="{0, 1, 2, 10}"/>
+    </ParameterList>
   </ParameterList>
 
   <ParameterList name="Surface Flux Estimator">
-    <Parameter name="Id" type="unsigned int" value="3"/>
+    <Parameter name="Id" type="unsigned int" value="54"/>
+    <Parameter name="Type" type="string" value="surface.flux"/>
     <Parameter name="Particle Type" type="string" value="Neutron"/>
     <Parameter name="Multiplier" type="double" value="2.0"/>
-    <Parameter name="Cosine Bins" type="Array(double)" value="{-1.0, -0.5, 0.0, 0.5, 1.0}"/>
-    <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
+    <Parameter name="Surfaces" type="Array(unsigned int)" value="{1,2,3}"/>
+    <ParameterList name="Bins">
+      <Parameter name="Cosine Bins" type="Array(double)" value="{-1.0, -0.5, 0.0, 0.5, 1.0}"/>
+      <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
+    </ParameterList>
   </ParameterList>
   
   <ParameterList name="Surface Current Estimator">
-    <Parameter name="Id" type="unsigned int" value="4"/>
+    <Parameter name="Id" type="unsigned int" value="55"/>
+    <Parameter name="Type" type="string" value="surface.current"/>
     <Parameter name="Particle Type" type="string" value="Neutron"/>
     <Parameter name="Multiplier" type="double" value="2.0"/>
-    <Parameter name="Cosine Bins" type="Array(double)" value="{-1.0, -0.5, 0.0, 0.5, 1.0}"/>
-    <Parameter name="Collision Number Bins" type="Array(unsigned int)" value="{0, 1, 2, 10}"/>
+    <Parameter name="Surfaces" type="Array(unsigned int)" value="{1,2,3}"/>
+    <ParameterList name="Bins">
+      <Parameter name="Cosine Bins" type="Array(double)" value="{-1.0, -0.5, 0.0, 0.5, 1.0}"/>
+      <Parameter name="Collision Number Bins" type="Array(unsigned int)" value="{0, 1, 2, 10}"/>
+    </ParameterList>
   </ParameterList>
 
 </ParameterList>

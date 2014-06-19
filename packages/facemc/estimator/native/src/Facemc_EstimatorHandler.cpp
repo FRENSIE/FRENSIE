@@ -12,6 +12,15 @@
 
 namespace Facemc{
 
+// Initialize the static member data
+EstimatorHandler::EstimatorArray EstimatorHandler::master_array;
+
+// Return the number of estimators that have been added
+unsigned EstimatorHandler::getNumberOfEstimators()
+{
+  return EstimatorHandler::master_array.size();
+}
+
 // Commit the estimator history contributions
 void EstimatorHandler::commitEstimatorHistoryContributions()
 {

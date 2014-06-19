@@ -54,13 +54,11 @@ TEUCHOS_UNIT_TEST( DagMCHelpers, validatePropertyNames )
 TEUCHOS_UNIT_TEST( DagMCHelpers, initializeDagMC )
 {
   // Set up the valid property names
-  std::vector<std::string> property_names( 6 );
+  std::vector<std::string> property_names( 4 );
   property_names[0] = "graveyard";
   property_names[1] = "mat";
   property_names[2] = "rho";
   property_names[3] = "tally";
-  property_names[4] = "cell.flux";
-  property_names[5] = "surf.flux";
   
   // Initialize DagMC
   Geometry::initializeDagMC( test_geometry_file_name,
@@ -146,51 +144,41 @@ TEUCHOS_UNIT_TEST( DagMCHelpers, getSurfacePropertyValues )
 
   Geometry::getSurfacePropertyValues( "tally", surface_id_prop_value_map );
   
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[7].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[7][0], "0" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[7][1], "1" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[16].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[16][0], "0" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[16][1], "1" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[25].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[25][0], "0" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[25][1], "1" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[34].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[34][0], "0" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[34][1], "1" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[94].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[94][0], "0" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[94][1], "1" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[202].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[202][0], "0" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[202][1], "1" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[310].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[310][0], "0" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[310][1], "1" );
-  
-  Geometry::getSurfacePropertyValues( "surf.flux", surface_id_prop_value_map );
-
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[7].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[7][0], "n" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[7][1], "p" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[16].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[16][0], "n" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[16][1], "p" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[25].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[25][0], "n" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[25][1], "p" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[34].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[34][0], "n" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[34][1], "p" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[94].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[94][0], "n" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[94][1], "p" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[202].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[202][0], "n" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[202][1], "p" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[310].size(), 2 );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[310][0], "n" );
-  TEST_EQUALITY_CONST( surface_id_prop_value_map[310][1], "p" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[7].size(), 4 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[7][0], "5.surface.flux.n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[7][1], "6.surface.flux.p" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[7][2], "7.surface.current.n");
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[7][3], "8.surface.current.p");
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[16].size(), 4 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[16][0], "5.surface.flux.n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[16][1], "6.surface.flux.p" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[16][2],"7.surface.current.n");
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[16][3],"8.surface.current.p");
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[25].size(), 4 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[25][0], "5.surface.flux.n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[25][1], "6.surface.flux.p" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[25][2],"7.surface.current.n");
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[25][3],"8.surface.current.p");
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[34].size(), 4 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[34][0], "5.surface.flux.n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[34][1], "6.surface.flux.p" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[34][2],"7.surface.current.n");
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[34][3],"8.surface.current.p");
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[94].size(), 4 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[94][0], "5.surface.flux.n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[94][1], "6.surface.flux.p" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[94][2],"7.surface.current.n");
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[94][3],"8.surface.current.p");
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[202].size(), 4 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[202][0], "5.surface.flux.n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[202][1], "6.surface.flux.p" );
+  TEST_EQUALITY_CONST(surface_id_prop_value_map[202][2],"7.surface.current.n");
+  TEST_EQUALITY_CONST(surface_id_prop_value_map[202][3],"8.surface.current.p");
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[310].size(), 4 );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[310][0], "5.surface.flux.n" );
+  TEST_EQUALITY_CONST( surface_id_prop_value_map[310][1], "6.surface.flux.p" );
+  TEST_EQUALITY_CONST(surface_id_prop_value_map[310][2],"7.surface.current.n");
+  TEST_EQUALITY_CONST(surface_id_prop_value_map[310][3],"8.surface.current.p");
 }
 
 //---------------------------------------------------------------------------//
@@ -250,24 +238,33 @@ TEUCHOS_UNIT_TEST( DagMCHelpers, getSurfaceIdsWithPropertyValue )
 
   Geometry::getSurfaceIdsWithPropertyValue("tally", prop_value_surface_id_map);
 
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["0"].size(), 7 );
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["0"].front(), 7 );
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["0"].back(), 310 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["5.surface.flux.n"].size(), 
+		       7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["5.surface.flux.n"].front(), 
+		       7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["5.surface.flux.n"].back(), 
+		       310 );
 
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["1"].size(), 7 );
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["1"].front(), 7 );
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["1"].back(), 310 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["6.surface.flux.p"].size(), 
+		       7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["6.surface.flux.p"].front(), 
+		       7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["6.surface.flux.p"].back(), 
+		       310 );
 
-  Geometry::getSurfaceIdsWithPropertyValue( "surf.flux", 
-					    prop_value_surface_id_map );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["7.surface.current.n"].size(),
+		       7 );
+  TEST_EQUALITY_CONST(prop_value_surface_id_map["7.surface.current.n"].front(),
+		       7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["7.surface.current.n"].back(),
+		       310 );
 
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["n"].size(), 7 );
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["n"].front(), 7 );
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["n"].back(), 310 );
-
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["p"].size(), 7 );
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["p"].front(), 7 );
-  TEST_EQUALITY_CONST( prop_value_surface_id_map["p"].back(), 310 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["8.surface.current.p"].size(),
+		       7 );
+  TEST_EQUALITY_CONST(prop_value_surface_id_map["8.surface.current.p"].front(),
+		       7 );
+  TEST_EQUALITY_CONST( prop_value_surface_id_map["8.surface.current.p"].back(),
+		       310 );
 }  
 
 //---------------------------------------------------------------------------//

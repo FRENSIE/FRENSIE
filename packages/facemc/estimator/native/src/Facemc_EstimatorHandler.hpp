@@ -31,6 +31,9 @@ public:
   static void addEstimator( Teuchos::RCP<EstimatorType>& estimator,
 			    const Teuchos::Array<EntityHandle>& entity_ids );
 
+  //! Return the number of estimators that have been added
+  static unsigned getNumberOfEstimators();
+
   //! Commit the estimator history contributions
   static void commitEstimatorHistoryContributions();
 

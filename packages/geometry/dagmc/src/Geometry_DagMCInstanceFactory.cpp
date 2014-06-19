@@ -35,7 +35,7 @@ void DagMCInstanceFactory::initializeDagMC(
     facet_tol = geom_rep.get<double>( "Facet Tolerance" );
 
   // Get the property synonyms
-  std::vector<std::string> properties( 9 );
+  std::vector<std::string> properties( 4 );
 
   if( geom_rep.isParameter( "Termination Cell Synonym" ) )
   {
@@ -72,51 +72,6 @@ void DagMCInstanceFactory::initializeDagMC(
   }
   else
     properties[3] = DagMCProperties::getEstimatorPropertyName();
-
-  if( geom_rep.isParameter( "Cell Track Length Flux Estimator Synonym" ) )
-  {
-    properties[4] = geom_rep.get<std::string>( "Cell Track Length Flux Estimator Synonym" );
-    
-    DagMCProperties::setCellTrackLengthFluxPropertyName( properties[4] );
-  }
-  else
-    properties[4] = DagMCProperties::getCellTrackLengthFluxPropertyName();
-  
-  if( geom_rep.isParameter( "Cell Collision Flux Estimator Synonym" ) )
-  {
-    properties[5] = geom_rep.get<std::string>( "Cell Collision Flux Estimator Synonym" );
-    
-    DagMCProperties::setCellCollisionFluxPropertyName( properties[5] );
-  }
-  else
-    properties[5] = DagMCProperties::getCellCollisionFluxPropertyName();
-
-  if( geom_rep.isParameter( "Cell Pulse Height Estimator Synonym" ) )
-  {
-    properties[6] = geom_rep.get<std::string>( "Cell Pulse Height Estimator Synonym" );
-    
-    DagMCProperties::setCellPulseHeightPropertyName( properties[6] );
-  }
-  else
-    properties[6] = DagMCProperties::getCellPulseHeightPropertyName();
-
-  if( geom_rep.isParameter( "Surface Flux Estimator Synonym" ) )
-  {
-    properties[7] = geom_rep.get<std::string>( "Surface Flux Estimator Synonym" );
-
-    DagMCProperties::setSurfaceFluxPropertyName( properties[7] );
-  }
-  else
-    properties[7] = DagMCProperties::getSurfaceFluxPropertyName();
-
-  if( geom_rep.isParameter( "Surface Current Estimator Synonym" ) )
-  {
-    properties[8] = geom_rep.get<std::string>( "Surface Current Estimator Synonym" );
-
-    DagMCProperties::setSurfaceCurrentPropertyName( properties[8] );
-  }
-  else
-    properties[8] = DagMCProperties::getSurfaceCurrentPropertyName();
 
   // Initialize DagMC
   Geometry::initializeDagMC( cad_file_name, properties, facet_tol );

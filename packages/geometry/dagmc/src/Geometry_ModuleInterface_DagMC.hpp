@@ -294,7 +294,7 @@ inline double ModuleInterface<moab::DagMC>::getCellSurfaceArea(
 inline bool ModuleInterface<moab::DagMC>::doesSurfaceExist(
 					      const ExternalSurfaceId surface )
 {
-  if( ModuleInterface<moab::DagMC>::dagmc_instance->entity_by_id( 2, surface )
+  if( ModuleInterface<moab::DagMC>::dagmc_instance->entity_by_id( 2, surface ) 
       != 0 )
     return true;
   else
@@ -305,7 +305,7 @@ inline bool ModuleInterface<moab::DagMC>::doesSurfaceExist(
 inline bool ModuleInterface<moab::DagMC>::doesCellExist(
 						    const ExternalCellId cell )
 {
-  if( ModuleInterface<moab::DagMC>::dagmc_instance->entity_by_id( 3, cell )
+  if( ModuleInterface<moab::DagMC>::dagmc_instance->entity_by_id( 3, cell ) 
       != 0 )
     return true;
   else

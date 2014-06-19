@@ -20,6 +20,9 @@
 
 namespace Geometry{
 
+// The dagmc instance
+static moab::DagMC* dagmc_instance = moab::DagMC::instance();
+
 // Initialize DagMC
 void initializeDagMC(
 	   const std::string& geometry_file_name, 
@@ -34,9 +37,6 @@ void initializeDagMC(
   testPrecondition( property_names.size() > 0 );
   // Make sure that the facet tolerance is valid
   testPrecondition( facet_tol >= 0 );
-
-  // Get an instance of DagMC
-  moab::DagMC* dagmc_instance = moab::DagMC::instance();
 
   // Load the geometry
   moab::ErrorCode return_value =
@@ -148,9 +148,6 @@ void getPropertyValues( const std::string& property,
   // Clear the values vector
   values.clear();
 
-  // Get an instance of DagMC
-  moab::DagMC* dagmc_instance = moab::DagMC::instance();
-
   // Get all of the property values
   moab::ErrorCode return_value = 
     dagmc_instance->get_all_prop_values( property, values );
@@ -170,9 +167,6 @@ void getCellPropertyValues(
   // Clear the map
   cell_id_prop_val_map.clear();
   
-  // Get an instance of DagMC
-  moab::DagMC* dagmc_instance = moab::DagMC::instance();
-
   std::vector<moab::EntityHandle> entities_with_property;
 
   // Get all of the cells with the desired property
@@ -210,9 +204,6 @@ void getSurfacePropertyValues(
   // Clear the map
   surface_id_prop_val_map.clear();
   
-  // Get an instance of DagMC
-  moab::DagMC* dagmc_instance = moab::DagMC::instance();
-
   std::vector<moab::EntityHandle> entities_with_property;
 
   // Get all of the surfaces with the desired property
@@ -249,9 +240,6 @@ void getCellIdsWithPropertyValue(
 {
   // Clear the map
   prop_val_cell_id_map.clear();
-
-  // Get an instance of DagMC
-  moab::DagMC* dagmc_instance = moab::DagMC::instance();
 
   // Get all of the values for the desired property
   std::vector<std::string> property_values;
@@ -295,9 +283,6 @@ void getSurfaceIdsWithPropertyValue(
 {
   // Clear the map
   prop_val_surface_id_map.clear();
-
-  // Get an instance of DagMC
-  moab::DagMC* dagmc_instance = moab::DagMC::instance();
 
   // Get all of the values for the desired property
   std::vector<std::string> property_values;

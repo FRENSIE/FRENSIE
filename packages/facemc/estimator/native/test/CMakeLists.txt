@@ -1,3 +1,5 @@
+ADD_SUBDIRECTORY(test_files)
+
 ADD_EXECUTABLE(tstResponseFunction
   tstResponseFunction.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -147,3 +149,18 @@ ADD_EXECUTABLE(tstObserverRegistrationHelpers
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstObserverRegistrationHelpers facemc_estimator_native)
 ADD_TEST(ObserverRegistrationHelpers_test tstObserverRegistrationHelpers)
+
+ADD_EXECUTABLE(tstEstimatorHandler
+  tstEstimatorHandler.cpp)
+TARGET_LINK_LIBRARIES(tstEstimatorHandler facemc_estimator_native)
+ADD_TEST(EstimatorHandler_test tstEstimatorHandler)
+
+ADD_EXECUTABLE(tstResponseFunctionFactory
+  tstResponseFunctionFactory.cpp)
+TARGET_LINK_LIBRARIES(tstResponseFunctionFactory facemc_estimator_native)
+ADD_TEST(ResponseFunctionFactory_test tstResponseFunctionFactory --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml")
+
+ADD_EXECUTABLE(tstEstimatorHandlerFactory
+  tstEstimatorHandlerFactory.cpp)
+TARGET_LINK_LIBRARIES(tstEstimatorHandlerFactory facemc_estimator_native)
+ADD_TEST(EstimatorHandlerFactory_test tstEstimatorHandlerFactory --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml" --test_estimator_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_estimators.xml")

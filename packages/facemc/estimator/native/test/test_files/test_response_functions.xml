@@ -17,7 +17,7 @@
 		 value="{-1e50,1e50,1.0}"/>
     </ParameterList>
     <ParameterList name="Directional Distribution">
-      <Parameter name="Mu Distribuiton" type="Uniform Distribution"
+      <Parameter name="Mu Distribution" type="Uniform Distribution"
 		 value="{-1.0,1.0,1.0}"/>
       <Parameter name="Theta Distribution" type="Uniform Distribution"
 		 value="{0.0, 6.283185307179586, 1.0}"/>

@@ -6,8 +6,12 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <sstream>
+
 // FRENSIE Includes
 #include "Geometry_DagMCProperties.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Geometry{
 
@@ -16,11 +20,6 @@ std::string DagMCProperties::termination_cell_property = "termination.cell";
 std::string DagMCProperties::material_property = "material";
 std::string DagMCProperties::density_property = "density";
 std::string DagMCProperties::estimator_property = "estimator";
-std::string DagMCProperties::cell_track_length_flux_property = "cell.tl.flux";
-std::string DagMCProperties::cell_collision_flux_property = "cell.c.flux";
-std::string DagMCProperties::cell_pulse_height_property = "cell.pulse.height";
-std::string DagMCProperties::surface_flux_property = "surface.flux";
-std::string DagMCProperties::surface_current_property = "surface.current";
 
 // Set the termination cell property name
 void DagMCProperties::setTerminationCellPropertyName( const std::string& name )
@@ -70,83 +69,64 @@ const std::string& DagMCProperties::getEstimatorPropertyName()
   return DagMCProperties::estimator_property;
 }
 
-// Set the cell track length flux property name
-void DagMCProperties::setCellTrackLengthFluxPropertyName( 
-						      const std::string& name )
+// Extract estimator property values
+/*! \details An estimator property is assumed to have the form 
+ *  id.type.ptype
+ */
+void DagMCProperties::extractEstimatorPropertyValues( 
+						 const std::string& prop_value,
+						 unsigned& estimator_id,
+						 std::string& estimator_type,
+						 std::string& particle_type )
 {
-  DagMCProperties::cell_track_length_flux_property = name;
+  unsigned first_pos = prop_value.find_first_of( "." );
+  unsigned last_pos = prop_value.find_last_of( "." );
+
+  std::string id_string = prop_value.substr( 0, first_pos );
+
+  std::istringstream iss( id_string );
+
+  iss >> estimator_id;
+
+  estimator_type = prop_value.substr( first_pos+1, last_pos-first_pos-1 );
+
+  particle_type = prop_value.substr( last_pos+1, prop_value.size()-last_pos-1);
 }
-  
-// Get the cell track length flux property name
-const std::string& DagMCProperties::getCellTrackLengthFluxPropertyName()
+	
+// Check if the cell estimator type is valid
+bool DagMCProperties::isCellEstimatorTypeValid( 
+					    const std::string& estimator_type )
 {
-  return DagMCProperties::cell_track_length_flux_property;
+  return estimator_type.compare( "cell.pulse.height" ) == 0 ||
+    estimator_type.compare( "cell.tl.flux" ) == 0 ||
+    estimator_type.compare( "cell.c.flux" ) == 0;
 }
 
-// Set the cell collision flux property name
-void DagMCProperties::setCellCollisionFluxPropertyName(
-						      const std::string& name )
+// Check if the surface estimator type is valid
+bool DagMCProperties::isSurfaceEstimatorTypeValid( 
+					    const std::string& estimator_type )
 {
-  DagMCProperties::cell_collision_flux_property = name;
-}
-  
-// Get the cell collision flux property name
-const std::string& DagMCProperties::getCellCollisionFluxPropertyName()
-{
-  return DagMCProperties::cell_collision_flux_property;
+  return estimator_type.compare( "surface.flux" ) == 0 ||
+    estimator_type.compare( "surface.current" ) == 0;
 }
 
-// Set the cell pulse height property name
-void DagMCProperties::setCellPulseHeightPropertyName( const std::string& name )
+// Check if the particle type is valid
+bool DagMCProperties::isParticleTypeValid( const std::string& particle_type )
 {
-  DagMCProperties::cell_pulse_height_property = name;
-}
-
-// Get the cell pulse height property name
-const std::string& DagMCProperties::getCellPulseHeightPropertyName()
-{
-  return DagMCProperties::cell_pulse_height_property;
-}
-
-// Set the surface flux property name
-void DagMCProperties::setSurfaceFluxPropertyName( const std::string& name )
-{
-  DagMCProperties::surface_flux_property = name;
-}
-
-// Get the surface flux property name
-const std::string& DagMCProperties::getSurfaceFluxPropertyName()
-{
-  return DagMCProperties::surface_flux_property;
-}
-
-// Set the surface current property name
-void DagMCProperties::setSurfaceCurrentPropertyName( const std::string& name )
-{
-  DagMCProperties::surface_current_property = name;
-}
-
-// Get the surface current property name
-const std::string& DagMCProperties::getSurfaceCurrentPropertyName()
-{
-  return DagMCProperties::surface_current_property;
+  return particle_type.compare( "n" ) == 0 ||
+    particle_type.compare( "p" ) == 0;
 }
 
 // Get all of the properties
 void DagMCProperties::getProperties( std::vector<std::string>& properties )
 {
   properties.clear();
-  properties.resize( 9 );
+  properties.resize( 4 );
 
   properties[0] = DagMCProperties::termination_cell_property;
   properties[1] = DagMCProperties::material_property;
   properties[2] = DagMCProperties::density_property;
   properties[3] = DagMCProperties::estimator_property;
-  properties[4] = DagMCProperties::cell_track_length_flux_property;
-  properties[5] = DagMCProperties::cell_collision_flux_property;
-  properties[6] = DagMCProperties::cell_pulse_height_property;
-  properties[7] = DagMCProperties::surface_flux_property;
-  properties[8] = DagMCProperties::surface_current_property;
 }
 
 } // end Geometry namespace
