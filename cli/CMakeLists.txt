@@ -1,14 +1,14 @@
 # Create the data processor
-ADD_EXECUTABLE(process_data process_data.cpp)
-TARGET_LINK_LIBRARIES(process_data ${PROJECT_NAME})
-
-# Create the dagfacemc demo
-# ADD_EXECUTABLE(dagfacemc_demo dagfacemc_demo.cpp)
-# TARGET_LINK_LIBRARIES(dagfacemc_demo ${PROJECT_NAME})
+# ADD_EXECUTABLE(process_data process_data.cpp)
+# TARGET_LINK_LIBRARIES(process_data )
 
 # Create the random number generator timer
 ADD_EXECUTABLE(rng_timer rng_timer.cpp)
-TARGET_LINK_LIBRARIES(rng_timer ${PROJECT_NAME})
+TARGET_LINK_LIBRARIES(rng_timer utility_core utility_prng)
 
-# INSTALL(TARGETS process_data dagfacemc_demo rng_timer
-#   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+# Create the facemc exec
+ADD_EXECUTABLE(facemc facemc.cpp)
+TARGET_LINK_LIBRARIES(facemc facemc_manager)
+
+INSTALL(TARGETS rng_timer facemc
+  RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

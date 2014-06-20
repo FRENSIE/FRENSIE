@@ -21,10 +21,6 @@ ModuleInterface<moab::DagMC>::invalid_external_cell_handle = 0;
 moab::DagMC* const ModuleInterface<moab::DagMC>::dagmc_instance = 
   moab::DagMC::instance();
 
-const std::string 
-ModuleInterface<moab::DagMC>::termination_cell_property_name = 
-  "graveyard";
-
 boost::unordered_set<ModuleInterface<moab::DagMC>::ExternalCellHandle>
 ModuleInterface<moab::DagMC>::cells_containing_test_points;
 
@@ -135,10 +131,15 @@ void ModuleInterface<moab::DagMC>::fireRay(
 			  distance_to_surface_hit,
 			  &ModuleInterface<moab::DagMC>::ray_history );
 
+  // Check for lost particle
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS, 
 		      Utility::MOABException,
 		      moab::ErrorCodeStr[return_value] );
 
+  TEST_FOR_EXCEPTION( surface_hit_external == invalid_external_surface_handle,
+		      Utility::MOABException,
+		      "Warning: lost particle detected!" );
+		      
   surface_hit = 
     ModuleInterface<moab::DagMC>::getInternalSurfaceHandle( 
 							surface_hit_external );

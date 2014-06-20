@@ -72,7 +72,7 @@ void ParticleSimulationManager<GeometryHandler,
       // A lost particle will result in an exception
       catch( std::runtime_error& exception )
       {
-	std::cerr << exception.what() << std::endl;
+	std::cout << exception.what() << std::endl;
 	bank.pop();
 	
 	continue;
@@ -86,6 +86,7 @@ void ParticleSimulationManager<GeometryHandler,
     // This history only ends when the particle bank is empty
     while( bank.size() > 0 )
     {
+      std::cout << "History " << history << std::endl;
       simulateParticle( *bank.top(), bank );
 
       bank.pop();
@@ -133,6 +134,8 @@ void ParticleSimulationManager<GeometryHandler,
     {
       // Fire a ray at the cell currently containing the particle
       try{
+	distance_to_surface_hit = 0.0;
+	
 	GMI::fireRay( particle.ray(),
 		      particle.getCell(),
 		      surface_hit,
@@ -141,15 +144,28 @@ void ParticleSimulationManager<GeometryHandler,
       // A lost particle will result in an exception
       catch( std::runtime_error& exception )
       {
-	std::cerr << exception.what() << std::endl;
-	particle.isLost();
+	std::cout << exception.what() << std::endl;
+	std::cout << "Lost particle info: " << std::endl;
+	std::cout << " Cell: " << particle.getCell() << std::endl;
+	std::cout << " Position: " << particle.getXPosition() << " ";
+	std::cout << particle.getYPosition() << " ";
+	std::cout << particle.getZPosition() << std::endl;
+	std::cout << " Direction: " << particle.getXDirection() << " ";
+	std::cout << particle.getYDirection() << " ";
+	std::cout << particle.getZDirection() << std::endl;
+	particle.setAsLost();
 	
 	break;
       }
 
       // Get the total cross section for the cell
-      cell_total_macro_cross_section = 
-	CMI::getMacroscopicTotalCrossSection( particle );
+      if( !CMI::isCellVoid( particle.getCell() ) )
+      {
+	cell_total_macro_cross_section = 
+	  CMI::getMacroscopicTotalCrossSection( particle );
+      }
+      else
+	cell_total_macro_cross_section = 0.0;
 
       // Convert the distance to the surface to optical path
       op_to_surface_hit = 
@@ -179,7 +195,7 @@ void ParticleSimulationManager<GeometryHandler,
 	// A lost particle will result in an exception
 	catch( std::runtime_error& exception )
 	{
-	  std::cerr << exception.what() << std::endl;
+	  std::cout << exception.what() << std::endl;
 	  particle.setAsLost();
 	  
 	  break;
@@ -227,6 +243,13 @@ void ParticleSimulationManager<GeometryHandler,
 	// Undergo a collision with the material in the cell
 	CMI::collideWithCellMaterial( particle, bank, true );
 
+	// Indicate that a collision has occurred
+	GMI::newRay();
+
+	// Make sure the energy is above the cutoff
+	if( particle.getEnergy() < 1e-11 )
+	  particle.setAsGone();
+
 	// This subtrack is finished
 	break;
       }
@@ -246,8 +269,9 @@ void ParticleSimulationManager<GeometryHandler,
 						       std::ostream &os ) const
 {
   os << "!!!Particle Simulation Finished!!!" << std::endl;
-  os << "Number of histories completed: " << d_history_number_wall;
-  os << std::endl << std::endl;
+  os << "Number of histories completed: " << d_history_number_wall <<std::endl;
+  os << "Simulation Time (s): " << d_end_time - d_start_time << std::endl;
+  os << std::endl;
   os << "/*---------------------------------------------------------------*/";
   os << "Estimator Data" << std::endl;
   os << "/*---------------------------------------------------------------*/";

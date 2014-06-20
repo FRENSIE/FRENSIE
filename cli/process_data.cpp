@@ -14,8 +14,8 @@
 #include <Teuchos_CommandLineProcessor.hpp>
 
 // FACEMC Includes
-#include "PhotonDataProcessor.hpp"
-#include "ExceptionCatchMacros.hpp"
+#include "Data_PhotonDataProcessor.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "DefaultParameterValues.hpp"
 #include "HDF5DataFileNames.hpp"
 

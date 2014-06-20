@@ -20,6 +20,7 @@
 
 // FRENSIE Includes
 #include "Geometry_ModuleInterfaceDecl.hpp"
+#include "Geometry_DagMCProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_ContractException.hpp"
@@ -157,9 +158,6 @@ private:
   // An instance of DagMC
   static moab::DagMC* const dagmc_instance;
 
-  // The termination cell property name
-  static const std::string termination_cell_property_name;
-
   // The set of cells that have previously been found to contain points.
   static boost::unordered_set<ExternalCellHandle> cells_containing_test_points;
 
@@ -204,7 +202,7 @@ inline bool ModuleInterface<moab::DagMC>::isTerminationCell(
                                                                                
   return ModuleInterface<moab::DagMC>::dagmc_instance->has_prop( 
 	cell_external,
-	ModuleInterface<moab::DagMC>::termination_cell_property_name );
+	DagMCProperties::getTerminationCellPropertyName() );
 }
 
 // Calculate the surface normal at a point on the surface

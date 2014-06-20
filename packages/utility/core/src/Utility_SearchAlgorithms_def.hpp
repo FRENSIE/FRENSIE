@@ -66,7 +66,7 @@ Iterator binaryLowerBound( Iterator start,
   // The value used for the search must be within the limits of the sorted data
   testPrecondition( (value >= get<member>( *start )) );
   testPrecondition( (value <= get<member>( *(true_end) )) );
-
+  
   // Remember the end iterator for the Postcondition check
   remember( Iterator invalid = end );
   

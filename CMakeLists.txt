@@ -85,7 +85,8 @@ INCLUDE(Dart)
 
 # Set up the project directory hierarchy
 ADD_SUBDIRECTORY(packages)
+INCLUDE_DIRECTORIES(packages/utility/core/src packages/utility/prng/src packages/utility/hdf5/src packages/utility/distribution/src packages/geometry/core/src packages/geometry/dagmc/src packages/geometry/interface packages/data/ace/src packages/data/epdl/src packages/facemc/core/src packages/facemc/source/core/src packages/facemc/source/interface packages/facemc/source/native/src packages/facemc/estimator/core/src packages/facemc/estimator/interface packages/facemc/estimator/native/src packages/facemc/collision/core/src packages/facemc/collision/interface packages/facemc/collision/native/src packages/facemc/manager/src)
 
-#ADD_SUBDIRECTORY(cli)
+ADD_SUBDIRECTORY(cli)
 
 ADD_SUBDIRECTORY(doc)

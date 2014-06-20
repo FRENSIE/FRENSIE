@@ -17,8 +17,8 @@
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
-// FACEMC Includes
-#include "RandomNumberGenerator.hpp"
+// FRENSIE Includes
+#include "Utility_RandomNumberGenerator.hpp"
 
 // Time macro
 #define TIME() (clock()/((double)CLOCKS_PER_SEC))
@@ -27,10 +27,10 @@
 void timeGenerator( const int trial_size, const int histories = 1 )
 {
   // Wrapped generator
-  FACEMC::RandomNumberGenerator::initialize();
+  Utility::RandomNumberGenerator::initialize();
 
   // Raw generator
-  FACEMC::LinearCongruentialGenerator generator;
+  Utility::LinearCongruentialGenerator generator;
 
   double time1 = TIME();
 
@@ -38,9 +38,9 @@ void timeGenerator( const int trial_size, const int histories = 1 )
   for( int i = 0; i < histories; ++i )
   {
     for( int j = 0; j < trial_size/histories; ++j )
-      FACEMC::RandomNumberGenerator::getRandomNumber<double>();
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-    FACEMC::RandomNumberGenerator::initializeNextHistory();
+    Utility::RandomNumberGenerator::initializeNextHistory();
   }
   std::cout << std::endl;
   
@@ -72,7 +72,7 @@ void timeGenerator( const int trial_size, const int histories = 1 )
     // Print the last double generated
     std::cout << "Last random number generated: " 
 	      << generator.getRandomNumber() << " "
-	      << FACEMC::RandomNumberGenerator::getRandomNumber<double>()
+	      << Utility::RandomNumberGenerator::getRandomNumber<double>()
 	      << std::endl
 	      << "Random numbers per history: " << trial_size/histories
 	      << std::endl
@@ -91,7 +91,7 @@ void timeGenerator( const int trial_size, const int histories = 1 )
 // Main itming function
 int main()
 {
-  FACEMC::RandomNumberGenerator::initialize();
+  Utility::RandomNumberGenerator::initialize();
   
   int trial_size = 10000000;
 

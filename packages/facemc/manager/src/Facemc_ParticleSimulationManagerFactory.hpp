@@ -28,7 +28,7 @@ class ParticleSimulationManagerFactory
 public:
 
   //! Create the requested manager
-  Teuchos::RCP<SimulationManager> createManager( 
+  static Teuchos::RCP<SimulationManager> createManager( 
 		       const Teuchos::ParameterList& simulation_info,
 		       const Teuchos::ParameterList& geom_def,
 		       const Teuchos::ParameterList& source_def,

@@ -163,10 +163,12 @@ EstimatorModuleInterface<Facemc::EstimatorHandler>::commitEstimatorHistoryContri
 }
 
 //! Print the estimator data
-inline void printEstimators( std::ostream& os,
-			     const double num_histories,
-			     const double start_time,
-			     const double end_time )
+inline void 
+EstimatorModuleInterface<Facemc::EstimatorHandler>::printEstimators( 
+						    std::ostream& os,
+						    const double num_histories,
+						    const double start_time,
+						    const double end_time )
 {
   Facemc::EstimatorHandler::printEstimators( os,
 					     num_histories,
