@@ -62,7 +62,7 @@ TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getZaidFissionProductsIndepende
      TEST_COMPARE(file_handler->getZaidFissionProductsIndependentYields()[1].front(),==,23066);
      TEST_COMPARE(file_handler->getZaidFissionProductsIndependentYields()[1].back(),==,69172);
      TEST_COMPARE(file_handler->getZaidFissionProductsIndependentYields()[2].front(),==,23066);
-     TEST_COMPARE(file_handler->getZaidFissionProductsIndependentYields()[2].back(),==,71172);
+     TEST_COMPARE(file_handler->getZaidFissionProductsIndependentYields()[2].back(),==,1071172);
 }
 
 TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getMetaStateFissionProductsIndependentYields )
@@ -72,13 +72,13 @@ TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getMetaStateFissionProductsInde
      TEST_COMPARE(file_handler->getMetaStateFissionProductsIndependentYields()[1].size(),==,1016);
      TEST_COMPARE(file_handler->getMetaStateFissionProductsIndependentYields()[2].size(),==,1170);
 
-     // Test First and Last Meta States
+     // Test First and Last Zaids
      TEST_COMPARE(file_handler->getMetaStateFissionProductsIndependentYields()[0].front(),==,0);
-     TEST_COMPARE(file_handler->getMetaStateFissionProductsIndependentYields()[0].back(),==,0);
+     TEST_COMPARE(file_handler->getMetaStateFissionProductsIndependentYields()[0].back(),==, 0);
      TEST_COMPARE(file_handler->getMetaStateFissionProductsIndependentYields()[1].front(),==,0);
-     TEST_COMPARE(file_handler->getMetaStateFissionProductsIndependentYields()[1].back(),==,0);
+     TEST_COMPARE(file_handler->getMetaStateFissionProductsIndependentYields()[1].back(),==, 0);
      TEST_COMPARE(file_handler->getMetaStateFissionProductsIndependentYields()[2].front(),==,0);
-     TEST_COMPARE(file_handler->getMetaStateFissionProductsIndependentYields()[2].back(),==,1);
+     TEST_COMPARE(file_handler->getMetaStateFissionProductsIndependentYields()[2].back(),==, 1);
 }
 
 TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getYieldFissionProductsIndependentYields )
@@ -133,7 +133,7 @@ TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getZaidFissionProductsCumulativ
      TEST_COMPARE(file_handler->getZaidFissionProductsCumulativeYields()[1].front(),==,23066);
      TEST_COMPARE(file_handler->getZaidFissionProductsCumulativeYields()[1].back(),==, 70172);
      TEST_COMPARE(file_handler->getZaidFissionProductsCumulativeYields()[2].front(),==,23066);
-     TEST_COMPARE(file_handler->getZaidFissionProductsCumulativeYields()[2].back(),==, 71172);
+     TEST_COMPARE(file_handler->getZaidFissionProductsCumulativeYields()[2].back(),==, 1071172);
 }
 
 TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getMetaStateFissionProductsCumulativeYields )
@@ -143,13 +143,13 @@ TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getMetaStateFissionProductsCumu
      TEST_COMPARE(file_handler->getMetaStateFissionProductsCumulativeYields()[1].size(),==,1050);
      TEST_COMPARE(file_handler->getMetaStateFissionProductsCumulativeYields()[2].size(),==,1166);
 
-     // Test First and Last Meta States
+     // Test First and Last Zaids
      TEST_COMPARE(file_handler->getMetaStateFissionProductsCumulativeYields()[0].front(),==,0);
-     TEST_COMPARE(file_handler->getMetaStateFissionProductsCumulativeYields()[0].back(),==,0);
+     TEST_COMPARE(file_handler->getMetaStateFissionProductsCumulativeYields()[0].back(),==, 0);
      TEST_COMPARE(file_handler->getMetaStateFissionProductsCumulativeYields()[1].front(),==,0);
-     TEST_COMPARE(file_handler->getMetaStateFissionProductsCumulativeYields()[1].back(),==,0);
+     TEST_COMPARE(file_handler->getMetaStateFissionProductsCumulativeYields()[1].back(),==, 0);
      TEST_COMPARE(file_handler->getMetaStateFissionProductsCumulativeYields()[2].front(),==,0);
-     TEST_COMPARE(file_handler->getMetaStateFissionProductsCumulativeYields()[2].back(),==,1);
+     TEST_COMPARE(file_handler->getMetaStateFissionProductsCumulativeYields()[2].back(),==, 1);
 }
 
 TEUCHOS_UNIT_TEST( EndfFissionYieldsFileHandler, getYieldFissionProductsCumulativeYields )
