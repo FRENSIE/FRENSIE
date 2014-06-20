@@ -47,7 +47,7 @@ void ParticleBank::push( const ParticleBank::value_type& particle )
   // Make sure the particle is valid
   testPrecondition( particle.get() );
   
-  d_particle_states.push_front( particle );
+  d_particle_states.push_back( particle );
 }
 
 // Push a neutron to the bank

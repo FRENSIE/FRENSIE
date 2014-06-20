@@ -36,12 +36,6 @@ PhotonState::PhotonState( const ParticleStateCore& core )
   testPrecondition( core.particle_type == PHOTON );
 }
 
-// Assignment operator
-PhotonState& PhotonState::operator=( const PhotonState& existing_photon_state)
-{
-  ParticleState::operator=( existing_photon_state );
-}
-
 // Return the speed of the particle (cm/s)
 double PhotonState::getSpeed() const
 {

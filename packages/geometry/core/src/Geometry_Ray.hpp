@@ -10,12 +10,10 @@
 #define GEOMETRY_RAY_HPP
 
 // Trilinos Includes
-#include <Teuchos_RCP.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
 #include "Utility_PrintableObject.hpp"
-
 
 namespace Geometry{
 
@@ -42,6 +40,14 @@ public:
   Ray( const double position[3],
        const double direction[3] );
 
+  //! Constructor
+  Ray( double position[3],
+       double direction[3],
+       const bool deep_copy = true );
+
+  //! Destructor
+  ~Ray();
+  
   //! Return the x position of the ray
   double getXPosition() const;
 
@@ -81,10 +87,13 @@ private:
   Ray( const Ray& );
 
   // The position
-  double d_position[3];
+  double* d_position;
 
   // The direction
-  double d_direction[3];
+  double* d_direction;
+
+  // Records if ray was constructed with a deep copy
+  bool d_deep_copy_initialization;
 };
 
 } // end Geometry namespace

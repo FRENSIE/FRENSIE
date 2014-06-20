@@ -67,6 +67,10 @@ public:
 					   const NuclearReactionType reaction )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 
+  //! Sample the optical path length traveled by a particle before a collision
+  static inline double sampleOpticalPathLength()
+  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
+
   //! Collide with the material in a cell
   static inline void collideWithCellMaterial( ParticleState& particle,
 					      ParticleBank& bank,

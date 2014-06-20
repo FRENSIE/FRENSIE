@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Facemc_CollisionModuleInterfaceDecl.hpp"
 #include "Facemc_CollisionHandler.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 
 namespace Facemc{
 
@@ -49,6 +50,9 @@ public:
   static double getMacroscopicReactionCrossSection(
 					  const ParticleState& particle,
 					  const NuclearReactionType reaction );
+
+  //! Sample the optical path length traveled by a particle before a collision
+  static double sampleOpticalPathLength();
 
   //! Collide with the material in a cell
   static void collideWithCellMaterial( ParticleState& particle,
@@ -93,6 +97,13 @@ CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
 {
   return CollisionHandler::getMacroscopicReactionCrossSection( particle,
 							       reaction );
+}
+
+// Sample the optical path length traveled by a particle before a collision
+inline double 
+CollisionModuleInterface<CollisionHandler>::sampleOpticalPathLength()
+{
+  return -log( Utility::RandomNumberGenerator::getRandomNumber<double>() );
 }
 
 // Collide with the material in a cell

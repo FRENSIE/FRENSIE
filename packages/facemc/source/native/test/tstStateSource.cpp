@@ -84,23 +84,6 @@ TEUCHOS_UNIT_TEST( StateSource, sampleParticleState )
 
   TEST_EQUALITY_CONST( particle->getHistoryNumber(), 0ull );
   TEST_EQUALITY_CONST( particle->getParticleType(), Facemc::PHOTON );
-  TEST_EQUALITY_CONST( particle->getXPosition(), 3.0 );
-  TEST_EQUALITY_CONST( particle->getYPosition(), 3.0 );
-  TEST_EQUALITY_CONST( particle->getZPosition(), 3.0 );
-  TEST_EQUALITY_CONST( particle->getXDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle->getYDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle->getZDirection(), 1.0 );
-  TEST_EQUALITY_CONST( particle->getEnergy(), 3.0 );
-  TEST_EQUALITY_CONST( particle->getTime(), 0.9 );
-  TEST_EQUALITY_CONST( particle->getCollisionNumber(), 2u );
-  TEST_EQUALITY_CONST( particle->getGenerationNumber(), 3u );
-  TEST_EQUALITY_CONST( particle->getWeight(), 0.5 );
-
-  particle = bank.top();
-  bank.pop();
-
-  TEST_EQUALITY_CONST( particle->getHistoryNumber(), 0ull );
-  TEST_EQUALITY_CONST( particle->getParticleType(), Facemc::PHOTON );
   TEST_EQUALITY_CONST( particle->getXPosition(), 1.0 );
   TEST_EQUALITY_CONST( particle->getYPosition(), 1.0 );
   TEST_EQUALITY_CONST( particle->getZPosition(), 1.0 );
@@ -112,6 +95,23 @@ TEUCHOS_UNIT_TEST( StateSource, sampleParticleState )
   TEST_EQUALITY_CONST( particle->getCollisionNumber(), 1u );
   TEST_EQUALITY_CONST( particle->getGenerationNumber(), 1u );
   TEST_EQUALITY_CONST( particle->getWeight(), 0.25 );
+
+  particle = bank.top();
+  bank.pop();
+
+  TEST_EQUALITY_CONST( particle->getHistoryNumber(), 0ull );
+  TEST_EQUALITY_CONST( particle->getParticleType(), Facemc::PHOTON );
+  TEST_EQUALITY_CONST( particle->getXPosition(), 3.0 );
+  TEST_EQUALITY_CONST( particle->getYPosition(), 3.0 );
+  TEST_EQUALITY_CONST( particle->getZPosition(), 3.0 );
+  TEST_EQUALITY_CONST( particle->getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle->getEnergy(), 3.0 );
+  TEST_EQUALITY_CONST( particle->getTime(), 0.9 );
+  TEST_EQUALITY_CONST( particle->getCollisionNumber(), 2u );
+  TEST_EQUALITY_CONST( particle->getGenerationNumber(), 3u );
+  TEST_EQUALITY_CONST( particle->getWeight(), 0.5 );
 
   // Sample from the source again
   source->sampleParticleState( bank );

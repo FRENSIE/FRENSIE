@@ -23,7 +23,7 @@
 
 namespace Facemc{
 
-//! The particle bank base class
+//! The particle bank base class (FIFO)
 class ParticleBank
 {
 

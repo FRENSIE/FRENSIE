@@ -40,10 +40,6 @@ public:
     : Facemc::ParticleState( core )
   { /* ... */ }
 
-  TestParticleState& operator=(
-			     const Facemc::ParticleState& existing_base_state )
-  { Facemc::ParticleState::operator=( existing_base_state ); }
-
   ~TestParticleState()
   { /* ... */ }
 
@@ -60,6 +56,9 @@ public:
   // Allow public access to protected member functions
   using Facemc::ParticleState::calculateSpeed;
   using Facemc::ParticleState::calculateKineticEnergy;
+
+private:
+  TestParticleState( const TestParticleState& state );
 };
 
 //---------------------------------------------------------------------------//
@@ -246,23 +245,19 @@ TEUCHOS_UNIT_TEST( ParticleState, gone )
 }
 
 //---------------------------------------------------------------------------//
-// Spawn a ray 
-TEUCHOS_UNIT_TEST( ParticleState, spawnRay )
+// Get a ray object from the particle
+TEUCHOS_UNIT_TEST( ParticleState, ray )
 {
   TestParticleState particle( 1ull );
   particle.setPosition( 1.0, 1.0, -1.0 );
   particle.setDirection( 0.0, 0.0, 1.0 );
 
-  Teuchos::RCP<Geometry::Ray> ray;
-
-  particle.spawnRay( ray );
-
-  TEST_EQUALITY_CONST( ray->getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( ray->getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( ray->getZPosition(), -1.0 );
-  TEST_EQUALITY_CONST( ray->getXDirection(), 0.0 );
-  TEST_EQUALITY_CONST( ray->getYDirection(), 0.0 );
-  TEST_EQUALITY_CONST( ray->getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle.ray().getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle.ray().getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle.ray().getZPosition(), -1.0 );
+  TEST_EQUALITY_CONST( particle.ray().getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle.ray().getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle.ray().getZDirection(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -322,31 +317,6 @@ TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
   particle_gen_a.setTime( 1.0 );
   particle_gen_a.incrementCollisionNumber();
   particle_gen_a.setWeight( 0.5 );
-
-  TestParticleState particle_gen_a_copy( particle_gen_a );
-
-  TEST_EQUALITY( particle_gen_a_copy.getXPosition(), 
-		 particle_gen_a.getXPosition() );
-  TEST_EQUALITY( particle_gen_a_copy.getYPosition(), 
-		 particle_gen_a.getYPosition() );
-  TEST_EQUALITY( particle_gen_a_copy.getZPosition(), 
-		 particle_gen_a.getZPosition() );
-  TEST_EQUALITY( particle_gen_a_copy.getXDirection(), 
-		 particle_gen_a.getXDirection() );
-  TEST_EQUALITY( particle_gen_a_copy.getYDirection(), 
-		 particle_gen_a.getYDirection() );
-  TEST_EQUALITY( particle_gen_a_copy.getZDirection(), 
-		 particle_gen_a.getZDirection() );
-  TEST_EQUALITY( particle_gen_a_copy.getEnergy(),
-		 particle_gen_a.getEnergy() );
-  TEST_EQUALITY( particle_gen_a_copy.getTime(),
-		 particle_gen_a.getTime() );
-  TEST_EQUALITY( particle_gen_a_copy.getCollisionNumber(),
-		 particle_gen_a.getCollisionNumber() );
-  TEST_EQUALITY( particle_gen_a_copy.getGenerationNumber(),
-		 particle_gen_a.getGenerationNumber() );
-  TEST_EQUALITY( particle_gen_a_copy.getWeight(),
-		 particle_gen_a.getWeight() );  
 
   // Create a second generation particle with the same collision number
   TestParticleState particle_gen_b( particle_gen_a, true );
@@ -429,44 +399,6 @@ TEUCHOS_UNIT_TEST( ParticleState, core_constructor )
   TEST_EQUALITY_CONST( particle.getCollisionNumber(), 1u );
   TEST_EQUALITY_CONST( particle.getGenerationNumber(), 2u );
   TEST_EQUALITY_CONST( particle.getWeight(), 0.25 );
-}
-
-//---------------------------------------------------------------------------//
-// Create new particles
-TEUCHOS_UNIT_TEST( ParticleState, assignment_operator )
-{
-  TestParticleState particle_gen_a( 1ull );
-  particle_gen_a.setPosition( 1.0, 1.0, 1.0 );
-  particle_gen_a.setPosition( 0.0, 0.0, 1.0 );
-  particle_gen_a.setEnergy( 1.0 );
-  particle_gen_a.setTime( 1.0 );
-  particle_gen_a.incrementCollisionNumber();
-  particle_gen_a.setWeight( 0.5 );
-
-  TestParticleState particle_gen_a_copy = particle_gen_a;
-
-  TEST_EQUALITY( particle_gen_a_copy.getXPosition(), 
-		 particle_gen_a.getXPosition() );
-  TEST_EQUALITY( particle_gen_a_copy.getYPosition(), 
-		 particle_gen_a.getYPosition() );
-  TEST_EQUALITY( particle_gen_a_copy.getZPosition(), 
-		 particle_gen_a.getZPosition() );
-  TEST_EQUALITY( particle_gen_a_copy.getXDirection(), 
-		 particle_gen_a.getXDirection() );
-  TEST_EQUALITY( particle_gen_a_copy.getYDirection(), 
-		 particle_gen_a.getYDirection() );
-  TEST_EQUALITY( particle_gen_a_copy.getZDirection(), 
-		 particle_gen_a.getZDirection() );
-  TEST_EQUALITY( particle_gen_a_copy.getEnergy(),
-		 particle_gen_a.getEnergy() );
-  TEST_EQUALITY( particle_gen_a_copy.getTime(),
-		 particle_gen_a.getTime() );
-  TEST_EQUALITY( particle_gen_a_copy.getCollisionNumber(),
-		 particle_gen_a.getCollisionNumber() );
-  TEST_EQUALITY( particle_gen_a_copy.getGenerationNumber(),
-		 particle_gen_a.getGenerationNumber() );
-  TEST_EQUALITY( particle_gen_a_copy.getWeight(),
-		 particle_gen_a.getWeight() );  
 }
 
 //---------------------------------------------------------------------------//

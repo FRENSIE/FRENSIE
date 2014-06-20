@@ -28,7 +28,8 @@ namespace Facemc{
 	      1.0 ),
       d_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
       d_lost( false ),
-      d_gone( false )
+      d_gone( false ),
+      d_ray( &d_core.x_position, &d_core.x_direction, false )
 { /* ... */ }
 
 // Copy constructor
@@ -39,7 +40,8 @@ ParticleState::ParticleState( const ParticleState& existing_base_state,
   : d_core( existing_base_state.d_core  ),
     d_cell( existing_base_state.d_cell ),
     d_lost( existing_base_state.d_lost ),
-    d_gone( existing_base_state.d_gone )
+    d_gone( existing_base_state.d_gone ),
+    d_ray( &d_core.x_position, &d_core.x_direction, false )
 {
   // Reassign the particle type
   d_core.particle_type = new_type;
@@ -58,22 +60,9 @@ ParticleState::ParticleState( const ParticleStateCore& core )
   : d_core( core ),
     d_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
     d_lost( false ),
-    d_gone( false )
+    d_gone( false ),
+    d_ray( &d_core.x_position, &d_core.x_direction, false )
 { /* ... */ }
-
-// Assignment operator
-ParticleState& ParticleState::operator=(
-				     const ParticleState& existing_base_state )
-{
-  // Test if the existing base state is the same as the target
-  if( this != &existing_base_state )
-  {
-    d_core = existing_base_state.d_core;
-    d_cell = existing_base_state.d_cell;
-    d_lost = existing_base_state.d_lost;
-    d_gone = existing_base_state.d_gone;
-  }
-}
 
 // Return the history number
 ParticleState::historyNumberType ParticleState::getHistoryNumber() const
@@ -286,12 +275,6 @@ bool ParticleState::isGone() const
 void ParticleState::setAsGone()
 {
   d_gone = true;
-}
-
-// Spawn a ray that can be used for ray tracing
-void ParticleState::spawnRay( Teuchos::RCP<Geometry::Ray>& ray ) const
-{
-  ray.reset( new Geometry::Ray( this->getPosition(), this->getDirection() ) );
 }
 
 // Export the core (creating a copy of it)

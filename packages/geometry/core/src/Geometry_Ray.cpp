@@ -21,8 +21,9 @@ Ray::Ray( const double x_position,
 	  const double y_direction,
 	  const double z_direction )
   : Utility::PrintableObject( "Ray" ),
-    d_position( {x_position, y_position, z_position} ),
-    d_direction( {x_direction, y_direction, z_direction} )
+    d_position( new double[3] ),
+    d_direction( new double[3] ),
+    d_deep_copy_initialization( true )
 {
   // Make sure the position is valid
   testPrecondition( !ST::isnaninf( d_position[0] ) );
@@ -32,14 +33,23 @@ Ray::Ray( const double x_position,
   testPrecondition( Utility::validDirection( x_direction, 
 					     y_direction, 
 					     z_direction ) );
+
+  d_position[0] = x_position;
+  d_position[1] = y_position;
+  d_position[2] = z_position;
+
+  d_direction[0] = x_direction;
+  d_direction[1] = y_direction;
+  d_direction[2] = z_direction;
 }
 
 // Constructor
 Ray::Ray( const double position[3],
 	  const double direction[3] )
   : Utility::PrintableObject( "Ray" ),
-    d_position( {position[0], position[1], position[2]} ), // deep copy
-    d_direction( {direction[0], direction[1], direction[2]} ) // deep copy
+    d_position( new double[3] ), 
+    d_direction( new double[3] ),
+    d_deep_copy_initialization( true )
 {
   // Make sure the position and direction are valid
   testPrecondition( !ST::isnaninf( d_position[0] ) );
@@ -49,6 +59,58 @@ Ray::Ray( const double position[3],
   testPrecondition( Utility::validDirection( direction[0], 
 					     direction[1], 
 					     direction[2] ) );
+
+  d_position[0] = position[0];
+  d_position[1] = position[1];
+  d_position[2] = position[2];
+
+  d_direction[0] = direction[0];
+  d_direction[1] = direction[1];
+  d_direction[2] = direction[2];
+}
+
+// Constructor
+/*! \details Warning: creating a shallow copy of the input pointers can be
+ * dangerous. Only do this if you know what you're doing!
+ */
+Ray::Ray( double position[3],
+	  double direction[3],
+	  const bool deep_copy )
+  : Utility::PrintableObject( "Ray" ),
+    d_position( position ), 
+    d_direction( direction ),
+    d_deep_copy_initialization( deep_copy )
+{
+  if( deep_copy )
+  {
+    // Make sure the position and direction are valid
+    testPrecondition( !ST::isnaninf( d_position[0] ) );
+    testPrecondition( !ST::isnaninf( d_position[1] ) );
+    testPrecondition( !ST::isnaninf( d_position[2] ) );
+    // Make sure the direction is a unit vector
+    testPrecondition( Utility::validDirection( direction[0], 
+					       direction[1], 
+					       direction[2] ) );
+    d_position = new double[3];
+    d_position[0] = position[0];
+    d_position[1] = position[1];
+    d_position[2] = position[2];
+
+    d_direction = new double[3];
+    d_direction[0] = direction[0];
+    d_direction[1] = direction[1];
+    d_direction[2] = direction[2];
+  }
+}
+
+// Destructor
+Ray::~Ray()
+{
+  if( d_deep_copy_initialization )
+  {
+    delete[] d_position;
+    delete[] d_direction;
+  }
 }
 
 // Return the x position of the ray

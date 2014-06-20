@@ -71,9 +71,6 @@ public:
   //! Core constructor
   ParticleState( const ParticleStateCore& core );
 
-  //! Assignment operator
-  ParticleState& operator=( const ParticleState& existing_base_state);
-
   //! Destructor
   virtual ~ParticleState()
   { /* ... */ }
@@ -179,7 +176,7 @@ public:
   void setAsGone();
 
   //! Spawn a ray that can be used for ray tracing
-  void spawnRay( Teuchos::RCP<Geometry::Ray>& ray ) const;
+  const Geometry::Ray& ray() const;
 
   //! Export the core (creating a copy of it)
   ParticleStateCore exportCore() const;
@@ -202,6 +199,9 @@ protected:
 
 private:
 
+  // Copy constructor
+  ParticleState( const ParticleState& state );
+
   // The particle state core
   ParticleStateCore d_core;
 
@@ -213,6 +213,9 @@ private:
 
   // Finished history boolean
   bool d_gone;
+  
+  // Ray for ray tracing
+  Geometry::Ray d_ray;
 };
 
 // Set the position of the particle
@@ -231,6 +234,12 @@ inline void ParticleState::setDirection( const double direction[3] )
 inline ParticleState::energyType ParticleState::getEnergy() const
 {
   return d_core.energy;
+}
+
+// Spawn a ray that can be used for ray tracing
+inline const Geometry::Ray& ParticleState::ray() const
+{
+  return d_ray;
 }
 
 // Calculate the speed of a massive particle 

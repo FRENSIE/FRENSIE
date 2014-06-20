@@ -38,7 +38,10 @@ public:
   static void commitEstimatorHistoryContributions();
 
   //! Print the estimators
-  static void printEstimators( std::ostream& os );
+  static void printEstimators( std::ostream& os,
+			       const double num_histories,
+			       const double start_time,
+			       const double end_time );
 
 private:
 

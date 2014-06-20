@@ -66,6 +66,12 @@ public:
   //! Commit the estimator history constributions
   static void commitEstimatorHistoryContributions();
 
+  //! Print the estimator data
+  static void printEstimators( std::ostream& os,
+			       const double num_histories,
+			       const double start_time,
+			       const double end_time );
+
   //! Get the internal estimator handle corresponding to the external handle
   static InternalEstimatorHandle getInternalEstimatorHandle(
 			    const ExternalEstimatorHandle estimator_external );
@@ -154,6 +160,18 @@ inline void
 EstimatorModuleInterface<Facemc::EstimatorHandler>::commitEstimatorHistoryContributions()
 {
   Facemc::EstimatorHandler::commitEstimatorHistoryContributions();
+}
+
+//! Print the estimator data
+inline void printEstimators( std::ostream& os,
+			     const double num_histories,
+			     const double start_time,
+			     const double end_time )
+{
+  Facemc::EstimatorHandler::printEstimators( os,
+					     num_histories,
+					     start_time,
+					     end_time );
 }
 
 // Get the internal estimator handle corresponding to the external handle

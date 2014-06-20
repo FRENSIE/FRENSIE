@@ -42,9 +42,6 @@ public:
   //! Core constructor
   PhotonState( const ParticleStateCore& core );
 
-  //! Assignment operator
-  PhotonState& operator=( const PhotonState& existing_photon_state );
-
   //! Destructor
   ~PhotonState()
   { /* ... */ }

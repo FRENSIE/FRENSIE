@@ -92,6 +92,10 @@ public:
   static inline void commitEstimatorHistoryContributions()
   { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
 
+  //! Print the estimator data
+  static inline void printEstimators( std::ostream& os )
+  { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
+
   //! Get the internal estimator handle corresponding to the external handle
   static inline InternalEstimatorHandle getInternalEstimatorHandle(
 			     const ExternalEstimatorHandle estimator_external )

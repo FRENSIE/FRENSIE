@@ -73,6 +73,50 @@ TEUCHOS_UNIT_TEST( Ray, advanceHead )
 }
 
 //---------------------------------------------------------------------------//
+// Create a non-owning ray
+TEUCHOS_UNIT_TEST( Ray, non_owning )
+{
+  double position[3] = {1.0, 1.0, 1.0};
+  double direction[3] = {0.5773502691896258, 
+			 0.5773502691896258,
+			 0.5773502691896258};
+
+  Geometry::Ray ray( position, direction, false );
+
+  TEST_EQUALITY_CONST( ray.getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( ray.getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( ray.getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( ray.getXDirection(), 0.5773502691896258 );
+  TEST_EQUALITY_CONST( ray.getYDirection(), 0.5773502691896258 );
+  TEST_EQUALITY_CONST( ray.getZDirection(), 0.5773502691896258 );
+
+  position[0] = 2.0;
+  position[1] = 3.0;
+  position[2] = 4.0;
+
+  TEST_EQUALITY_CONST( ray.getXPosition(), 2.0 );
+  TEST_EQUALITY_CONST( ray.getYPosition(), 3.0 );
+  TEST_EQUALITY_CONST( ray.getZPosition(), 4.0 );
+
+  direction[0] = 1.0;
+  direction[1] = 0.0;
+  direction[2] = 0.0;
+
+  TEST_EQUALITY_CONST( ray.getXDirection(), 1.0 );
+  TEST_EQUALITY_CONST( ray.getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( ray.getZDirection(), 0.0 );
+
+  ray.advanceHead( 1.0 );
+
+  TEST_EQUALITY_CONST( ray.getXPosition(), 3.0 );
+  TEST_EQUALITY_CONST( ray.getYPosition(), 3.0 );
+  TEST_EQUALITY_CONST( ray.getZPosition(), 4.0 );
+  TEST_EQUALITY_CONST( position[0], 3.0 );
+  TEST_EQUALITY_CONST( position[1], 3.0 );
+  TEST_EQUALITY_CONST( position[2], 4.0 ); 
+}
+
+//---------------------------------------------------------------------------//
 // end tstRay.cpp
 //---------------------------------------------------------------------------//
 

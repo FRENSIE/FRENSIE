@@ -36,8 +36,15 @@ void EstimatorHandler::commitEstimatorHistoryContributions()
 }
 
 // Print the estimators
-void EstimatorHandler::printEstimators( std::ostream& os )
+void EstimatorHandler::printEstimators( std::ostream& os,
+					const double num_histories,
+					const double start_time,
+					const double end_time )
 {
+  Estimator::setNumberOfHistories( num_histories );
+  Estimator::setStartTime( start_time );
+  Estimator::setEndTime( end_time );
+  
   os << "Estimators: " << std::endl;
   
   EstimatorArray::iterator it = EstimatorHandler::master_array.begin();
