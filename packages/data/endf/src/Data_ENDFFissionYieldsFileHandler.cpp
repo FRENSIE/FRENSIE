@@ -91,14 +91,20 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
 
        if( ! expected_zaid )
        {
-           std::stringstream ss;
 
-           ss << "Fatal Error: Expected ZAID: " << zaid_name
-              << " Found ZAID: " << d_zaid << "The wrong ENDF"
-              << " file was given."
-              << std::endl;
+           expected_zaid = ( (zaid_name - 1000000) == d_zaid );
 
-           TEST_FOR_EXCEPTION( !expected_zaid, std::runtime_error, ss.str() );
+           if( ! expected_zaid)
+           {
+                std::stringstream ss;
+
+                ss << "Fatal Error: Expected ZAID: " << zaid_name
+                   << " Found ZAID: " << d_zaid << "The wrong ENDF"
+                   << " file was given."
+                   << std::endl;
+
+                TEST_FOR_EXCEPTION( !expected_zaid, std::runtime_error, ss.str() );
+           }
        }
     }
 
@@ -121,6 +127,12 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
                                   d_yield_meta_state_independent[i].getRawPtr(),
                                   d_yield_independent[i].getRawPtr(),
                                   d_yield_std_independent[i].getRawPtr() );
+
+        // Converts ZAID into SZAIDS
+        for(int j = 0; j < d_yield_zaid_independent[i].size(); j++)
+        {
+             d_yield_zaid_independent[i][j] = d_yield_zaid_independent[i][j] + 1000000 * d_yield_meta_state_independent[i][j];
+        }
 
         // Remove zero yield entries
         filterZeroYields(d_yield_zaid_independent[i],
@@ -160,6 +172,12 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
                                   d_yield_cumulative[i].getRawPtr(),
                                   d_yield_std_cumulative[i].getRawPtr() );
 
+        // Converts ZAID into SZAIDS
+        for(int j = 0; j < d_yield_zaid_cumulative[i].size(); j++)
+        {
+             d_yield_zaid_cumulative[i][j] = d_yield_zaid_cumulative[i][j] + 1000000 * d_yield_meta_state_cumulative[i][j];
+        }
+
         // Remove zero yield entries
         filterZeroYields(d_yield_zaid_cumulative[i],
                          d_yield_meta_state_cumulative[i],
@@ -193,7 +211,7 @@ ENDFFissionYieldsFileHandler::getZaidFissionProductsIndependentYields() const
    return d_yield_zaid_independent();
 }
 
-// Get the meta stable state of the fission products for the independent yields
+// Get the Meta State of the fission products for the independent yields
 Teuchos::ArrayView<const Teuchos::Array<int> > 
 ENDFFissionYieldsFileHandler::getMetaStateFissionProductsIndependentYields() const
 {
@@ -227,11 +245,11 @@ ENDFFissionYieldsFileHandler::getZaidFissionProductsCumulativeYields() const
     return d_yield_zaid_cumulative();
 }
 
-// Get the meta stable state of the fission products for the cumulative yields
-Teuchos::ArrayView<const Teuchos::Array<int> > 
+// Get the Meta State of the fission products for the cumulative yields
+Teuchos::ArrayView<const Teuchos::Array<int> >
 ENDFFissionYieldsFileHandler::getMetaStateFissionProductsCumulativeYields() const
 {
-     return d_yield_meta_state_cumulative();
+    return d_yield_meta_state_cumulative();
 }
 
 // Get the yields of the fission products for the cumulative yields

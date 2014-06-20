@@ -9,7 +9,7 @@ ENDIF()
 
 SET(SUBPACKAGE_LIB_NAME data_decay)
 
-# Create the utilitycore library
+# Create the data_decay library
 ADD_LIBRARY(${SUBPACKAGE_LIB_NAME} ${DATA_DECAY_SOURCES})
 TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} utility_core ${Boost_LIBRARIES})
 IF(${FRENSIE_ENABLE_MPI})

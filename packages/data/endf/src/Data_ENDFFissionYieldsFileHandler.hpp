@@ -61,7 +61,7 @@ public:
   //! Get the ZAID of the fission products for the independent yields
   Teuchos::ArrayView<const Teuchos::Array<int> > getZaidFissionProductsIndependentYields() const;
 
-  //! Get the meta stable state of the fission products for the independent yields
+  //! Get the meta state of the fission products for the independent yields
   Teuchos::ArrayView<const Teuchos::Array<int> > getMetaStateFissionProductsIndependentYields() const;
 
   //! Get the yields of the fission products for the independent yields
@@ -76,7 +76,7 @@ public:
   //! Get the ZAID of the fission products for the cumulative yields
   Teuchos::ArrayView<const Teuchos::Array<int> > getZaidFissionProductsCumulativeYields() const;
 
-  //! Get the meta stable state of the fission products for the cumulative yields
+  //! Get the meta state of the fission products for the cumulative yields
   Teuchos::ArrayView<const Teuchos::Array<int> > getMetaStateFissionProductsCumulativeYields() const;
 
   //! Get the yields of the fission products for the cumulative yields
