@@ -66,17 +66,11 @@ void ParticleSimulationManager<GeometryHandler,
     for( unsigned i = 0; i < bank.size(); ++i )
     {
       typename GMI::InternalCellHandle start_cell;
+      
       try{
 	start_cell = GMI::findCellContainingPoint( bank.top()->ray() );
       }
-      // A lost particle will result in an exception
-      catch( std::runtime_error& exception )
-      {
-	std::cout << exception.what() << std::endl;
-	bank.pop();
-	
-	continue;
-      }
+      CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank );
 
       bank.top()->setCell( start_cell );
     
@@ -141,22 +135,7 @@ void ParticleSimulationManager<GeometryHandler,
 		      surface_hit,
 		      distance_to_surface_hit );
       }
-      // A lost particle will result in an exception
-      catch( std::runtime_error& exception )
-      {
-	std::cout << exception.what() << std::endl;
-	std::cout << "Lost particle info: " << std::endl;
-	std::cout << " Cell: " << particle.getCell() << std::endl;
-	std::cout << " Position: " << particle.getXPosition() << " ";
-	std::cout << particle.getYPosition() << " ";
-	std::cout << particle.getZPosition() << std::endl;
-	std::cout << " Direction: " << particle.getXDirection() << " ";
-	std::cout << particle.getYDirection() << " ";
-	std::cout << particle.getZDirection() << std::endl;
-	particle.setAsLost();
-	
-	break;
-      }
+      CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
       // Get the total cross section for the cell
       if( !CMI::isCellVoid( particle.getCell() ) )
@@ -192,14 +171,7 @@ void ParticleSimulationManager<GeometryHandler,
 							cell_leaving,
 							surface_hit );
 	}
-	// A lost particle will result in an exception
-	catch( std::runtime_error& exception )
-	{
-	  std::cout << exception.what() << std::endl;
-	  particle.setAsLost();
-	  
-	  break;
-	}
+	CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
 	particle.setCell( cell_entering );
 

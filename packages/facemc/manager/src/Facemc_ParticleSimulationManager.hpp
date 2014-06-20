@@ -76,6 +76,42 @@ private:
   double d_end_time;
 };
 
+//! Macro for catching a lost particle and breaking a loop
+#define CATCH_LOST_PARTICLE_AND_BREAK( particle )			\
+  catch( std::runtime_error& exception )				\
+  {									\
+    std::cout << exception.what() << std::endl;				\
+    std::cout << "Lost particle info: " << std::endl;			\
+    std::cout << " History: " << particle.getHistoryNumber() << std::endl; \
+    std::cout << " Cell: " << particle.getCell() << std::endl;		\
+    std::cout << " Position: " << particle.getXPosition() << " ";	\
+    std::cout << particle.getYPosition() << " ";			\
+    std::cout << particle.getZPosition() << std::endl;			\
+    std::cout << " Direction: " << particle.getXDirection() << " ";	\
+    std::cout << particle.getYDirection() << " ";			\
+    std::cout << particle.getZDirection() << std::endl;			\
+    particle.setAsLost();						\
+    break;								\
+  }
+
+//! Macro for catching a lost source particle
+#define CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank )			\
+  catch( std::runtime_error& exception )				\
+  {									\
+    std::cout << exception.what() << std::endl;				\
+    std::cout << "Lost particle info: " << std::endl;			\
+    std::cout << " History: " << bank.top()->getHistoryNumber() << std::endl; \
+    std::cout << " Cell: " << bank.top()->getCell() << std::endl;	\
+    std::cout << " Position: " << bank.top()->getXPosition() << " ";	\
+    std::cout << bank.top()->getYPosition() << " ";			\
+    std::cout << bank.top()->getZPosition() << std::endl;		\
+    std::cout << " Direction: " << bank.top()->getXDirection() << " ";	\
+    std::cout << bank.top()->getYDirection() << " ";			\
+    std::cout << bank.top()->getZDirection() << std::endl;		\
+    bank.pop();								\
+    continue;								\
+  }
+
 } // end Facemc namespace
 
 //---------------------------------------------------------------------------//
