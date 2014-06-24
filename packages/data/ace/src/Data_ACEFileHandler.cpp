@@ -9,36 +9,11 @@
 // Std Lib Includes
 #include <stdexcept>
 
-// FRENIE Includes
+// FRENSIE Includes
 #include "Data_ACEFileHandler.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-
-//! The fortran ace file helper functions
-extern "C" {
-  int aceLibraryExists( const char* file_name, const int file_name_size );
-  int aceLibraryIsReadable( const char* file_name, const int file_name_size );
-  int aceLibraryOpen( const int file_id );
-  void openAceLibrary( const char* file_name, 
-		       const int file_name_size,
-		       const int file_id );
-  void closeAceLibrary( const int file_id );
-  void locateAceTable( const int file_id, const int table_start_line );
-  void readAceTableHeaderLine1( const int file_id,
-				char* table_name, 
-				double* atomic_weight_ratio,
-				double* temperature,
-				char* table_date );
-  void readAceTableHeaderLine2( const int file_id, 
-				char* comment, 
-				char* material_id );
-  void readAceTableZaidsAndAwrs( const int file_id, int* zaids, double* awrs );
-  void readAceTableNXSArray( const int file_id, int* nxs );
-  void readAceTableJXSArray( const int file_id, int* jxs );
-  void readAceTableXSSArray( const int file_id, 
-			     double* xss, 
-			     const int xss_size );
-}
+#include "Data_ACEFileHandlerWrapper.hpp"
 
 namespace Data{
 
@@ -67,16 +42,14 @@ ACEFileHandler::ACEFileHandler( const std::string& file_name,
 
 // Destructor
 ACEFileHandler::~ACEFileHandler()
-{
-    closeAceLibrary( d_ace_file_id );
-}
+{}
 
 // Open an ACE library file
 void ACEFileHandler::openACEFile( const std::string& file_name, 
 				  const bool is_ascii )
 {
   // Make sure no other ace library is open and assigned the desired id
-  testPrecondition( !aceLibraryOpen( d_ace_file_id ) );
+  testPrecondition( !fileIsOpenUsingFortran( d_ace_file_id ) );
   
   // Binary files cannot currently be handled
   TEST_FOR_EXCEPTION( !is_ascii, 
@@ -84,26 +57,26 @@ void ACEFileHandler::openACEFile( const std::string& file_name,
 		      "Fatal Error: Binary ACE files cannot currently be read ("+ file_name + ")." );
   
   // Check that the file exists
-  bool ace_file_exists = (bool)aceLibraryExists( file_name.c_str(), 
-						 file_name.size() );
+  bool ace_file_exists = (bool)fileExistsUsingFortran( file_name.c_str(), 
+						       file_name.size() );
   TEST_FOR_EXCEPTION( !ace_file_exists, 
 		      std::runtime_error, 
 		      "Fatal Error: ACE file " + file_name + 
 		      " does not exists." );
   
   // Check that the file can be opened
-  bool ace_file_is_readable = (bool)aceLibraryIsReadable( file_name.c_str(),
-							  file_name.size() );
+  bool ace_file_is_readable = (bool)fileIsReadableUsingFortran( file_name.c_str(),
+							        file_name.size() );
   TEST_FOR_EXCEPTION( !ace_file_is_readable,
 		      std::runtime_error,
 		      "Fatal Error: ACE file " + file_name +
 		      " exists but is not readable." );
   
   // Open the file
-  openAceLibrary( file_name.c_str(), file_name.size(), d_ace_file_id );
+  openFileUsingFortran( file_name.c_str(), file_name.size(), d_ace_file_id );
 
   // Make sure the ace library is open and assigned the desired id
-  testPostcondition( aceLibraryOpen( d_ace_file_id ) );
+  testPostcondition( fileIsOpenUsingFortran( d_ace_file_id ) );
 }
 
 // Read a table in the ACE file
@@ -111,7 +84,7 @@ void ACEFileHandler::readACETable( const std::string& table_name,
 				   const unsigned table_start_line )
 {
   // Move to the start of the ACE table in the ACE file
-  locateAceTable( d_ace_file_id, static_cast<int>( table_start_line ) );
+  moveToLineUsingFortran( d_ace_file_id, static_cast<int>( table_start_line ) );
 
   // Read the first line of the ACE table header
   readAceTableHeaderLine1( d_ace_file_id,
@@ -166,6 +139,9 @@ void ACEFileHandler::readACETable( const std::string& table_name,
 
   // Read the xss array
   readAceTableXSSArray( d_ace_file_id, d_xss.getRawPtr(), d_xss.size() );
+
+  // Close the ACE File
+  closeFileUsingFortran( d_ace_file_id );
 }
 
 // Remove white space from table name
