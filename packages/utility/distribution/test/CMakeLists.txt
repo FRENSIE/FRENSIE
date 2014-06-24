@@ -51,20 +51,17 @@ TARGET_LINK_LIBRARIES(tstOneDDistribution utility_core utility_prng utility_dist
 ADD_TEST(OneDDistribution_test tstOneDDistribution )
 
 ADD_EXECUTABLE(tstCartesianSpatialDistribution 
-  tstCartesianSpatialDistribution.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstCartesianSpatialDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstCartesianSpatialDistribution utility_core utility_prng utility_dist)
 ADD_TEST(CartesianSpatialDistribution_test tstCartesianSpatialDistribution)
 
 ADD_EXECUTABLE(tstCylindricalSpatialDistribution 
-  tstCylindricalSpatialDistribution.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstCylindricalSpatialDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstCylindricalSpatialDistribution utility_core utility_prng utility_dist)
 ADD_TEST(CylindricalSpatialDistribution_test tstCylindricalSpatialDistribution)
 
 ADD_EXECUTABLE(tstSphericalSpatialDistribution 
-  tstSphericalSpatialDistribution.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstSphericalSpatialDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstSphericalSpatialDistribution utility_core utility_prng utility_dist)
 ADD_TEST(SphericalSpatialDistribution_test tstSphericalSpatialDistribution)
 
@@ -80,13 +77,13 @@ TARGET_LINK_LIBRARIES(tstSpatialDistributionFactory utility_core utility_prng ut
 ADD_TEST(SpatialDistributionFactory_test tstSpatialDistributionFactory --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_spatial_distributions.xml")
 
 ADD_EXECUTABLE(tstDirectionalDistribution 
-  tstDirectionalDistribution.cpp 
+  tstDirectionalDistribution.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstDirectionalDistribution utility_core utility_prng utility_dist)
 ADD_TEST(DirectionalDistribution_test tstDirectionalDistribution)
 
 ADD_EXECUTABLE(tstDirectionalDistributionFactory 
-  tstDirectionalDistributionFactory.cpp)
+  tstDirectionalDistributionFactory.cpp )
 TARGET_LINK_LIBRARIES(tstDirectionalDistributionFactory utility_core utility_prng utility_dist)
 ADD_TEST(DirectionalDistributionFactory_test tstDirectionalDistributionFactory --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_directional_distributions.xml")
 

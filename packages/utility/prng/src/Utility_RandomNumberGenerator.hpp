@@ -14,6 +14,7 @@
 
 // Boost Includes
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/scoped_ptr.hpp>
 
 // OpenMP Includes
 #ifdef _OPENMP
@@ -61,7 +62,11 @@ private:
   RandomNumberGenerator();
 
   // Pointer to generator 
+#ifdef _OPENMP
   static boost::ptr_vector<LinearCongruentialGenerator> generator;
+#else
+  static boost::scoped_ptr<LinearCongruentialGenerator> generator;
+#endif
 
 };
 
@@ -78,9 +83,9 @@ inline ScalarType RandomNumberGenerator::getRandomNumber()
   
 #else
   // Make sure that the generator has been initialized
-  testPrecondition( !generator.is_null( 0 ) );
+  testPrecondition( generator.get() );
   
-  return static_cast<ScalarType>( generator[0].getRandomNumber() );
+  return static_cast<ScalarType>( generator->getRandomNumber() );
 #endif
 }
 

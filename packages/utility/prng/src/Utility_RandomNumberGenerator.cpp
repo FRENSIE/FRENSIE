@@ -14,8 +14,13 @@
 namespace Utility{
 
 // Initialize the stored generator pointer
+#ifdef _OPENMP
 boost::ptr_vector<LinearCongruentialGenerator>
 RandomNumberGenerator::generator;
+#else
+boost::scoped_ptr<LinearCongruentialGenerator>
+RandomNumberGenerator::generator( new LinearCongruentialGenerator() );
+#endif
 
 // Constructor
 RandomNumberGenerator::RandomNumberGenerator()
@@ -29,7 +34,7 @@ void RandomNumberGenerator::createStreams()
   {
     #pragma omp master
     {
-      //generator.resize( omp_get_num_threads() );
+      generator.resize( omp_get_num_threads() );
     }
     
     #pragma omp barrier
@@ -40,13 +45,6 @@ void RandomNumberGenerator::createStreams()
   
   // Make sure the streams have been created
   testPostcondition( !generator.is_null( omp_get_thread_num() ) );
-#else
-  generator.resize( 1 );
-
-  generator.replace( 0, new LinearCongruentialGenerator() );
-
-  // Make sure the stream has been created
-  testPostcondition( !generator.is_null( 0 ) );
 #endif
 }
 
@@ -60,9 +58,9 @@ void RandomNumberGenerator::initialize(
   
   generator[omp_get_thread_num()].changeHistory( history_number );
 #else
-  testPrecondition( !generator.is_null( 0 ) );
+  testPrecondition( generator.get() );
   
-  generator[0].changeHistory( history_number ); 
+  generator->changeHistory( history_number ); 
 #endif 
 }
 
@@ -73,9 +71,9 @@ void RandomNumberGenerator::initializeNextHistory()
   testPrecondition( false );
 #else
   // Make sure the generator has been initialized
-  testPrecondition( !generator.is_null( 0 ) );
+  testPrecondition( generator.get() );
 
-  generator[0].nextHistory();
+  generator->nextHistory();
 #endif
 }
 
@@ -85,10 +83,10 @@ void RandomNumberGenerator::setFakeStream( std::vector<double>& fake_stream )
 #ifdef _OPENMP
   testPrecondition( false );
 #else
-  generator.replace( 0, new FakeGenerator( fake_stream ) );
+  generator.reset( new FakeGenerator( fake_stream ) );
 
   // Make sure that the generator has been created
-  testPostcondition( !generator.is_null( 0 ) );
+  testPostcondition( generator.get() );
 #endif
 }
 
@@ -98,10 +96,10 @@ void RandomNumberGenerator::unsetFakeStream()
 #ifdef _OPENMP
   testPrecondition( false );
 #else
-  generator.replace( 0, new LinearCongruentialGenerator() );
+  generator.reset( new LinearCongruentialGenerator() );
 
   // Make sure that the generator has been created
-  testPostcondition( !generator.is_null( 0 ) );
+  testPostcondition( generator.get() );
 #endif
 }
 
