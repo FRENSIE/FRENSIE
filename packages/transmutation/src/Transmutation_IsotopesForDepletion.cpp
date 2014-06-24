@@ -87,5 +87,5 @@ bool IsotopesForDepletion::sZaidComparison(int i, int j)
 } // End namespace transmutation
 
 //---------------------------------------------------------------------------//
-// end Transmutation_IsotopesForDepletion.hpp
+// end Transmutation_IsotopesForDepletion.cpp
 //---------------------------------------------------------------------------//
