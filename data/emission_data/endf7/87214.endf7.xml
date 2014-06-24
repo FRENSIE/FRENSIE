@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<!DOCTYPE boost_serialization>
+<boost_serialization signature="serialization::archive" version="6">
+<emission_file class_id="0" tracking_level="0" version="0">
+	<z>87</z>
+	<a>214</a>
+	<s>0</s>
+	<discretes class_id="1" tracking_level="0" version="0">
+		<count>1</count>
+		<item_version>0</item_version>
+		<item class_id="2" tracking_level="0" version="0">
+			<first>4</first>
+			<second class_id="3" tracking_level="0" version="0">
+				<count>6</count>
+				<item_version>0</item_version>
+				<item class_id="4" tracking_level="0" version="0">
+					<energy>7.4059999999999997</energy>
+					<energy_err>0.0080000000000000002</energy_err>
+					<intensity>0.0030000000000000001</intensity>
+					<intensity_err>0</intensity_err>
+					<decay_type>4</decay_type>
+				</item>
+				<item>
+					<energy>7.6050000000000004</energy>
+					<energy_err>0.0080000000000000002</energy_err>
+					<intensity>0.01</intensity>
+					<intensity_err>0</intensity_err>
+					<decay_type>4</decay_type>
+				</item>
+				<item>
+					<energy>7.8399999999999999</energy>
+					<energy_err>0.01</energy_err>
+					<intensity>0.00050000000000000001</intensity>
+					<intensity_err>0.00050000000000000001</intensity_err>
+					<decay_type>4</decay_type>
+				</item>
+				<item>
+					<energy>7.9370000000000003</energy>
+					<energy_err>0.0080000000000000002</energy_err>
+					<intensity>0.01</intensity>
+					<intensity_err>0</intensity_err>
+					<decay_type>4</decay_type>
+				</item>
+				<item>
+					<energy>8.3580000000000005</energy>
+					<energy_err>0.0040000000000000001</energy_err>
+					<intensity>0.048000000000000001</intensity>
+					<intensity_err>0.002</intensity_err>
+					<decay_type>4</decay_type>
+				</item>
+				<item>
+					<energy>8.4269999999999996</energy>
+					<energy_err>0.0040000000000000001</energy_err>
+					<intensity>0.93000000000000005</intensity>
+					<intensity_err>0.0050000000000000001</intensity_err>
+					<decay_type>4</decay_type>
+				</item>
+			</second>
+		</item>
+	</discretes>
+	<continuum class_id="5" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</continuum>
+	<watt class_id="6" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</watt>
+	<watt_scale class_id="7" tracking_level="0" version="0">
+		<count>0</count>
+		<item_version>0</item_version>
+	</watt_scale>
+</emission_file>
+</boost_serialization>
+

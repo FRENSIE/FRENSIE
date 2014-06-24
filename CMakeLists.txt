@@ -54,7 +54,7 @@ ENDIF()
 
 # Enable BOOST Support
 IF(BOOST_PREFIX)
-  ENABLE_BOOST_SUPPORT()
+  ENABLE_BOOST_SUPPORT(serialization)
 ELSE()
   MESSAGE(STATUS "The BOOST_PREFIX has not been set. The system default will be used.")
 ENDIF()
@@ -72,6 +72,9 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dbc_config.hpp.in ${CMAKE_BINARY_DIR}/$
 # Parse the HDF5 data file names configure file
 SET(${PROJECT_NAME}_DATA_DIRECTORY ${CMAKE_SOURCE_DIR}/data/)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/HDF5DataFileNames.hpp.in ${CMAKE_BINARY_DIR}/HDF5DataFileNames.hpp)
+
+# Parse the ENDF Fission Product Data Path configure file
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/ENDFFissionProductDataPath.hpp.in ${CMAKE_BINARY_DIR}/ENDFFissionProductDataPath.hpp)
 
 # Add the CMAKE_BINARY_DIR to the include path to access config files
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})

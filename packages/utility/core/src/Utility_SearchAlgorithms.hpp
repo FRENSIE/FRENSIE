@@ -6,7 +6,7 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef Utility_SEARCH_ALGORITHMS_HPP
+#ifndef UTILITY_SEARCH_ALGORITHMS_HPP
 #define UTILITY_SEARCH_ALGORITHMS_HPP
 
 // Std Lib Includes
