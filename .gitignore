@@ -21,6 +21,7 @@
 *.eps
 *.cub*
 *.jou*
+*.bin
 *~
 EPDL
 EADL
