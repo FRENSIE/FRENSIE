@@ -22,7 +22,7 @@ private:
   static bool sZaidComparison(int i, int j);
 };
 
-} // TRANSMUTATION_ISOTOPES_FOR_DEPLETION_HPP
+} 
 
 #endif // TRANSMUTATION_ISOTOPES_FOR_DEPLETION_HPP
 
