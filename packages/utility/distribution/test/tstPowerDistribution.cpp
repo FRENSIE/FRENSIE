@@ -15,6 +15,7 @@
 #include <Teuchos_Array.hpp>
 #include <Teuchos_ParameterList.hpp>
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
+#include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -213,6 +214,42 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
 }
 
 UNIT_TEST_INSTANTIATION( PowerDistribution, toFromParameterList );
+
+//---------------------------------------------------------------------------//
+// Custom main function
+//---------------------------------------------------------------------------//
+int main( int argc, char** argv )
+{
+  Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  
+  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+    Teuchos::VerboseObjectBase::getDefaultOStream();
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+    clp.parse(argc,argv);
+
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
+    *out << "\nEnd Result: TEST FAILED" << std::endl;
+    return parse_return;
+  }
+  
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+  
+  // Run the unit tests
+  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
+
+  const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
+
+  if (success)
+    *out << "\nEnd Result: TEST PASSED" << std::endl;
+  else
+    *out << "\nEnd Result: TEST FAILED" << std::endl;
+
+  clp.printFinalTimerSummary(out.ptr());
+
+  return (success ? 0 : 1);
+}
 
 //---------------------------------------------------------------------------//
 // end tstPowerDistribution.cpp

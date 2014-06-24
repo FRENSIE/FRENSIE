@@ -5,50 +5,42 @@ TARGET_LINK_LIBRARIES(tstDeltaDistribution utility_core utility_prng utility_dis
 ADD_TEST(DeltaDistribution_test tstDeltaDistribution)
 
 ADD_EXECUTABLE(tstDiscreteDistribution 
-  tstDiscreteDistribution.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstDiscreteDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstDiscreteDistribution utility_core utility_prng utility_dist)
 ADD_TEST(DiscreteDistribution_test tstDiscreteDistribution)
 
 ADD_EXECUTABLE(tstUniformDistribution 
-  tstUniformDistribution.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstUniformDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstUniformDistribution utility_core utility_prng utility_dist)
 ADD_TEST(UniformDistribution_test tstUniformDistribution)
 
 ADD_EXECUTABLE(tstHistogramDistribution 
-  tstHistogramDistribution.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstHistogramDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstHistogramDistribution utility_core utility_prng utility_dist)
 ADD_TEST(HistogramDistribution_test tstHistogramDistribution)
 
 ADD_EXECUTABLE(tstThirtyTwoEquiprobableBinDistribution 
-  tstThirtyTwoEquiprobableBinDistribution.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstThirtyTwoEquiprobableBinDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstThirtyTwoEquiprobableBinDistribution utility_core utility_prng utility_dist)
 ADD_TEST(ThirtyTwoEquiprobableBinDistribution_test tstThirtyTwoEquiprobableBinDistribution)
 
 ADD_EXECUTABLE(tstTabularDistribution 
-  tstTabularDistribution.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstTabularDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstTabularDistribution utility_core utility_prng utility_dist)
 ADD_TEST(TabularDistribution_test tstTabularDistribution)
 
 ADD_EXECUTABLE(tstExponentialDistribution 
-  tstExponentialDistribution.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstExponentialDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstExponentialDistribution utility_core utility_prng utility_dist)
 ADD_TEST(ExponentialDistribution_test tstExponentialDistribution)
 
 ADD_EXECUTABLE(tstNormalDistribution 
-  tstNormalDistribution.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstNormalDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstNormalDistribution utility_core utility_prng utility_dist)
 ADD_TEST(NormalDistribution_test tstNormalDistribution)
 
 ADD_EXECUTABLE(tstPowerDistribution 
-  tstPowerDistribution.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstPowerDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstPowerDistribution utility_core utility_prng utility_dist)
 ADD_TEST(PowerDistribution_test tstPowerDistribution)
 

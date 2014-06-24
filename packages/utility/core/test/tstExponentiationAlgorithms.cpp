@@ -60,6 +60,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( Exponentiation,
     Utility::Exponentiation::recursiveMod<OrdinalType>(2,30,3);
   
   TEST_EQUALITY_CONST( value, 1 );
+
+  OrdinalType value2 = 
+    Utility::Exponentiation::recursiveMod<OrdinalType>(2,15,3);
 }
 
 UNIT_TEST_INSTANTIATION( Exponentiation, recursiveMod );

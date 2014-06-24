@@ -13,7 +13,12 @@
 #include <vector>
 
 // Boost Includes
-#include <boost/scoped_ptr.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
+
+// OpenMP Includes
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 // FRENSIE includes
 #include "Utility_LinearCongruentialGenerator.hpp"
@@ -26,6 +31,9 @@ class RandomNumberGenerator
 {
   
 public:
+
+  //! Create the number of random number streams required
+  static void createStreams();
   
   //! Initialize the generator for the desired history
   static void initialize( const unsigned long long history_number = 0ULL );
@@ -53,7 +61,7 @@ private:
   RandomNumberGenerator();
 
   // Pointer to generator 
-  static boost::scoped_ptr<LinearCongruentialGenerator> generator;
+  static boost::ptr_vector<LinearCongruentialGenerator> generator;
 
 };
 
@@ -61,10 +69,19 @@ private:
 template<typename ScalarType>
 inline ScalarType RandomNumberGenerator::getRandomNumber()
 {
+#ifdef _OPENMP
   // Make sure that the generator has been initialized
-  testPrecondition( generator );
+  testPrecondition( !generator.is_null( omp_get_thread_num() ) );
   
-  return static_cast<ScalarType>( generator->getRandomNumber() );
+  return static_cast<ScalarType>( 
+			   generator[omp_get_thread_num()].getRandomNumber() );
+  
+#else
+  // Make sure that the generator has been initialized
+  testPrecondition( !generator.is_null( 0 ) );
+  
+  return static_cast<ScalarType>( generator[0].getRandomNumber() );
+#endif
 }
 
 } // end Utility namespace

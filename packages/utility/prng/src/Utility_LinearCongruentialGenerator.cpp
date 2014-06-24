@@ -39,41 +39,48 @@ void LinearCongruentialGenerator::changeHistory(
     
     d_state = d_initial_history_seed;
   }
-
-  // Calculate the next history seed from the current history seed
-  else if( history_diff == 1LL )
-    nextHistory();
-  
-  // Calculate the new history seed from the current history seed
-  else if( history_diff > 1LL )
+  else
   {
-    d_initial_history_seed = Exponentiation::recursive( 
-			    d_initial_history_seed, 
+    // Calculate the next history seed from the current history seed
+    if( history_diff == 1LL )
+      nextHistory();
+  
+    // Calculate the new history seed from the current history seed
+    else if( history_diff > 1LL )
+    {
+      d_initial_history_seed = 
+	d_initial_history_seed*
+	Exponentiation::recursive( 
+			    LinearCongruentialGenerator::multiplier, 
 		            history_diff*LinearCongruentialGenerator::stride );
 
-    d_state = d_initial_history_seed;
-  }
-  // Calculate the history seed from the first history seed
-  else if( history_diff < 0LL )
-  {
-    d_initial_history_seed = Exponentiation::recursive(
-			  LinearCongruentialGenerator::initial_seed,
+      d_state = d_initial_history_seed;
+    }
+    // Calculate the history seed from the first history seed
+    else if( history_diff < 0LL )
+    {
+      d_initial_history_seed = 
+	LinearCongruentialGenerator::initial_seed*
+	Exponentiation::recursive(
+			  LinearCongruentialGenerator::multiplier,
 			  history_number*LinearCongruentialGenerator::stride );
     
-    d_state = d_initial_history_seed;
-  }
+      d_state = d_initial_history_seed;
+    }
 
-  // Set the state to the history initial seed for the current history
-  else
-    d_state = d_initial_history_seed;
+    // Set the state to the history initial seed for the current history
+    else
+      d_state = d_initial_history_seed;
+  }
 }
 
 // Initialize the generator for the next history
 void LinearCongruentialGenerator::nextHistory()
 {
-  d_initial_history_seed = Exponentiation::recursive( 
-			                 d_initial_history_seed, 
-		                         LinearCongruentialGenerator::stride );
+  d_initial_history_seed = 
+    d_initial_history_seed*
+    Exponentiation::recursive( LinearCongruentialGenerator::multiplier,
+			       LinearCongruentialGenerator::stride );
   
   d_state = d_initial_history_seed;
 }
