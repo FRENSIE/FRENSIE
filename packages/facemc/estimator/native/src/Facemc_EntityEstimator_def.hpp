@@ -28,7 +28,6 @@ EntityEstimator<EntityId>::EntityEstimator(
     d_total_norm_constant( 1.0 ),
     d_supplied_norm_constants( true )
 {
-  initializeEntityIds( entity_ids );
   initializeEntityEstimatorMomentsMap( entity_ids );
   initializeEntityNormConstantsMap( entity_ids, entity_norm_constants );
 
@@ -55,7 +54,6 @@ EntityEstimator<EntityId>::EntityEstimator(
     d_total_norm_constant( 1.0 ),
     d_supplied_norm_constants( false )
 {
-  initializeEntityIds( entity_ids );
   initializeEntityEstimatorMomentsMap( entity_ids );
   initializeEntityNormConstantsMap( entity_ids );
 
@@ -79,10 +77,17 @@ void EntityEstimator<EntityId>::setResponseFunctions(
 
 // Return the entity ids associated with this estimator
 template<typename EntityId>
-inline const typename EntityEstimator<EntityId>::EntityIdSet&
-EntityEstimator<EntityId>::getEntityIds() const
+void getEntityIds( boost::unordered_set<EntityId>& entity_ids ) const
 {
-  return d_entity_ids;
+  boost::unordered_map<EntityId,double>::const_iterator it = 
+    d_entity_norm_constants_map.begin();
+
+  while( it != d_entity_norm_constants_map.end() )
+  {
+    entity_id.insert( it->first );
+
+    ++it;
+  }
 }
 
 // Assign bin boundaries to an estimator dimension
@@ -252,31 +257,6 @@ void EntityEstimator<EntityId>::printImplementation(
   }
 }
 
-// Initialize entity ids and entity moment map
-template<typename EntityId>
-void EntityEstimator<EntityId>::initializeEntityIds( 
-				   const Teuchos::Array<EntityId>& entity_ids )
-{
-  // Make sure there is at least one entity id
-  testPrecondition( entity_ids.size() > 0 );
-  
-  for( unsigned i = 0; i < entity_ids.size(); ++i )
-  {
-    // Ignore duplicate entity ids
-    if( d_entity_ids.count( entity_ids[i] ) == 0 )
-    {
-      d_entity_ids.insert( entity_ids[i] );
-    }
-    else
-    {
-      std::cerr << "Warning: entity id " << entity_ids[i] << "has been "
-		<< "specified more than once in estimator " 
-		<< getId() << ". All but the first occurrence will be ignored."
-		<< std::endl;
-    }
-  }
-}
-
 // Initialize entity estimator moments map
 template<typename EntityId>
 void EntityEstimator<EntityId>::initializeEntityEstimatorMomentsMap(
@@ -293,6 +273,13 @@ void EntityEstimator<EntityId>::initializeEntityEstimatorMomentsMap(
       
       d_entity_estimator_moments_map[ entity_ids[i] ].resize( 
 			    getNumberOfBins()*getNumberOfResponseFunctions() );
+    }
+    else
+    {
+      std::cerr << "Warning: entity id " << entity_ids[i] << "has been "
+		<< "specified more than once in estimator " 
+		<< getId() << ". All but the first occurrence will be ignored."
+		<< std::endl;
     }
   }
 }
