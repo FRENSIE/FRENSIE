@@ -26,21 +26,21 @@
 #include <boost/archive/binary_iarchive.hpp>
 
 #include "Data_DecayData.hpp"
-#include "Data_ISCDataFile.hpp"
+#include "Data_DataFile.hpp"
 
 namespace data {
 
-class DecayFile : public ISCDataFile {
+class DecayFile : public DataFile {
 public:
   DecayFile();
-  DecayFile(const std::string& filename, const unsigned int type=ISCDataFile::XML);
+  DecayFile(const std::string& filename, const unsigned int type=DataFile::XML);
 
   void SetDecayData(const unsigned int& zaid, const DecayData& dd);
 
   std::string PackString() const;
 
-  void Save(const std::string& filename, const unsigned int type=ISCDataFile::XML) const;
-  void Load(const std::string& filename, const unsigned int type=ISCDataFile::XML);
+  void Save(const std::string& filename, const unsigned int type=DataFile::XML) const;
+  void Load(const std::string& filename, const unsigned int type=DataFile::XML);
 
 private:
   std::map<unsigned int, DecayData> m_decay_data;
