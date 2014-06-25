@@ -29,7 +29,8 @@ module utility_fortran_file_helpers
 
     !> Test if the file name exists
     !> \details The size variable should neglect the null character.
-    integer(c_int) function file_exists_using_fortran( file_name, file_name_size ) &
+    function file_exists_using_fortran( file_name, file_name_size ) &
+         result( file_existence_verified ) &
          bind(c, name='fileExistsUsingFortran')
       use iso_c_binding
 
@@ -57,8 +58,9 @@ module utility_fortran_file_helpers
     end function file_exists_using_fortran
 
     !> Test if the file is readable
-    integer(c_int) function file_is_readable_using_fortran( file_name, &
-         file_name_size ) bind(c, name='fileIsReadableUsingFortran')
+    function file_is_readable_using_fortran( file_name, file_name_size ) &
+         result( file_is_readable_test) &
+         bind(c, name='fileIsReadableUsingFortran')
       use iso_c_binding
 
       integer(c_int), intent(in), value :: file_name_size
@@ -74,17 +76,18 @@ module utility_fortran_file_helpers
            file_name_size )
 
       inquire(file=file_name_fortran, read=read_message)
-
-      if(read_message(1:3) == 'NO') then
-         file_is_readable_test = 0
-      else
+      
+      if(read_message(1:3) == 'YES') then
          file_is_readable_test = 1
+      else
+         file_is_readable_test = 0
       end if
 
     end function file_is_readable_using_fortran
 
     !> Check if a file is open
-    integer(c_int) function file_is_open_using_fortran( file_id ) &
+    function file_is_open_using_fortran( file_id ) &
+         result( file_open_verified ) &
          bind(c, name='fileIsOpenUsingFortran')
       use iso_c_binding
 

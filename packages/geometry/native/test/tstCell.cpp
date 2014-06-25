@@ -559,37 +559,37 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( Cell,
   // Get the first surface-sense pair
   desired_pair = polyhedron.getSurfaceSensePair( 1 );
 
-  TEST_INEQUALITY( desired_pair, end_pair );
+  TEST_ASSERT( desired_pair != end_pair );
   TEST_EQUALITY_CONST( desired_pair->first->getId(), 1 );
   
   // Get the second surface-sense pair
   desired_pair = polyhedron.getSurfaceSensePair( 2 );
 
-  TEST_INEQUALITY( desired_pair, end_pair );
+  TEST_ASSERT( desired_pair != end_pair );
   TEST_EQUALITY_CONST( desired_pair->first->getId(), 2 );
   
   // Get the third surface-sense pair
   desired_pair = polyhedron.getSurfaceSensePair( 3 );
 
-  TEST_INEQUALITY( desired_pair, end_pair );
+  TEST_ASSERT( desired_pair != end_pair );
   TEST_EQUALITY_CONST( desired_pair->first->getId(), 3 );
 
   // Get the fourth surface-sense pair
   desired_pair = polyhedron.getSurfaceSensePair( 4 );
 
-  TEST_INEQUALITY( desired_pair, end_pair );
+  TEST_ASSERT( desired_pair != end_pair );
   TEST_EQUALITY_CONST( desired_pair->first->getId(), 4 );
   
   // Get the fifth surface-sense pair
   desired_pair = polyhedron.getSurfaceSensePair( 5 );
 
-  TEST_INEQUALITY( desired_pair, end_pair );
+  TEST_ASSERT( desired_pair != end_pair );
   TEST_EQUALITY_CONST( desired_pair->first->getId(), 5 );
 
   // Get the sixth surface-sense pair
   desired_pair = polyhedron.getSurfaceSensePair( 6 );
 
-  TEST_INEQUALITY( desired_pair, end_pair );
+  TEST_ASSERT( desired_pair != end_pair );
   TEST_EQUALITY_CONST( desired_pair->first->getId(), 6 );
 }
 
