@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstIsotopesForDepletion.cpp
+//! \file   tstIsotopesArray.cpp
 //! \author Alex Bennett
-//! \brief  Isotopes for depletion unit test
+//! \brief  Decay Matrix unit test
 //!
 //---------------------------------------------------------------------------//
 
@@ -12,26 +12,19 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "Transmutation_IsotopesForDepletion.hpp"
+#include "Transmutation_IsotopesArray.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables 
 //---------------------------------------------------------------------------//
- 
 
 //---------------------------------------------------------------------------//
 // Tests 
 //---------------------------------------------------------------------------//
 // Check read ENDF Fission Yields Header
-TEUCHOS_UNIT_TEST( IsotopesForDepletion, getIsotopes )
+TEUCHOS_UNIT_TEST( IsotopesArray, setIsotopesArray )
 {
-   Teuchos::Array<int> zaids;
-
-   Transmutation::IsotopesForDepletion::getIsotopes( zaids ); 
- 
-   TEST_COMPARE( zaids.front() , == , 1001 );
-   TEST_COMPARE( zaids.back() , == , 100259 );
-   TEST_COMPARE( zaids.length() , == , 2328 );
+   Transmutation::IsotopesArray::setIsotopesArray(); 
 }
 //---------------------------------------------------------------------------//
 // Custom Main Function 
@@ -46,5 +39,5 @@ int main( int argc, char** argv )
 
  
 //---------------------------------------------------------------------------//
-// end tstEndfFissionYieldsHelpers.cpp 
+// end tstIsotopesArray.cpp 
 //---------------------------------------------------------------------------//
