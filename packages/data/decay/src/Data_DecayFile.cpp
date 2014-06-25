@@ -31,21 +31,21 @@ std::string DecayFile::PackString() const {
 }
 
 void DecayFile::Save(const std::string& filename, const unsigned int type) const {
-  // if( type != ISCDataFile::TXT && format != ISCDataFile::XML && format != ISCDataFile::BIN ) {
+  // if( type != DataFile::TXT && format != DataFile::XML && format != DataFile::BIN ) {
   //   need exception here
   // }
 
   std::ofstream ofs( filename.c_str() );
 
-  if( type == ISCDataFile::TXT ) {
+  if( type == DataFile::TXT ) {
     boost::archive::text_oarchive ar(ofs);
     ar << *this;
   }
-  else if( type == ISCDataFile::XML ) {
+  else if( type == DataFile::XML ) {
     boost::archive::xml_oarchive ar(ofs);
     ar << boost::serialization::make_nvp("decay_file",*this);
   }
-  else if( type == ISCDataFile::BIN ) {
+  else if( type == DataFile::BIN ) {
     boost::archive::binary_oarchive ar(ofs);
     ar << *this;
   }
@@ -58,15 +58,15 @@ void DecayFile::Load(const std::string& filename, const unsigned int type) {
 
   std::ifstream ifs( filename.c_str() );
 
-  if( type == ISCDataFile::TXT ) {
+  if( type == DataFile::TXT ) {
     boost::archive::text_iarchive ar(ifs);
     ar >> *this;
   }
-  else if( type == ISCDataFile::XML ) {
+  else if( type == DataFile::XML ) {
     boost::archive::xml_iarchive ar(ifs);
     ar >> boost::serialization::make_nvp("decay_file",*this);
   }
-  else if( type == ISCDataFile::BIN ) {
+  else if( type == DataFile::BIN ) {
     boost::archive::binary_iarchive ar(ifs);
     ar >> *this;
   }

@@ -76,3 +76,13 @@ ADD_EXECUTABLE(tstFortranFileHelpers
 TARGET_LINK_LIBRARIES(tstFortranFileHelpers utility_core)
 ADD_TEST(FortranFileHelpers_test tstFortranFileHelpers
 --test_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/check_file.txt")
+
+ADD_EXECUTABLE(tstODEPACKHelper 
+  tstODEPACKHelper.cpp )
+TARGET_LINK_LIBRARIES(tstODEPACKHelper utility_core)
+ADD_TEST(ODEPACKHelper_test tstODEPACKHelper)
+
+ADD_EXECUTABLE(tstODESolver 
+  tstODESolver.cpp )
+TARGET_LINK_LIBRARIES(tstODESolver utility_core)
+ADD_TEST(ODESolver_test tstODESolver)

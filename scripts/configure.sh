@@ -4,12 +4,12 @@
 ##---------------------------------------------------------------------------##
 
 EXTRA_ARGS=$@
-TRILINOS_PREFIX_PATH=$HOME/Software/trilinos
-MOAB_PREFIX_PATH=$HOME/Software/MOAB
-HDF5_PREFIX_PATH=$HOME/Software/HDF5
-BOOST_PREFIX_PATH=$HOME/Software/boost
-SPRNG_PREFIX_PATH=$HOME/Software/sprng
-FACEMC_PATH=$HOME/research/transport/FRENSIE/
+TRILINOS_PREFIX_PATH=$HOME/software/trilinos
+MOAB_PREFIX_PATH=$HOME/software/moab
+HDF5_PREFIX_PATH=$HOME/software/hdf5
+ODEPACK_PREFIX_PATH=$HOME/software/odepack
+BOOST_PREFIX_PATH=$HOME/software/boost
+FACEMC_PATH=$HOME/summer_2014/transmutation/FRENSIE/
 
 ##---------------------------------------------------------------------------##
 ## The Teuchos_TwoDArray class has a bug that needs to be fixed. This patch
@@ -23,7 +23,7 @@ rm -rf CMakeCache.txt
 
 ##---------------------------------------------------------------------------##
 
-cmake \
+/home/asb/software/cmake/bin/cmake \
     -D CMAKE_INSTALL_PREFIX:PATH=$PWD/../ \
     -D CMAKE_BUILD_TYPE:STRING=DEBUG \
     -D CMAKE_VERBOSE_CONFIGURE:BOOL=ON \
@@ -32,7 +32,12 @@ cmake \
     -D TRILINOS_PREFIX:PATH=$TRILINOS_PREFIX_PATH \
     -D MOAB_PREFIX:PATH=$MOAB_PREFIX_PATH \
     -D HDF5_PREFIX:PATH=$HDF5_PREFIX_PATH \
+    -D ODEPACK_PREFIX:PATH=$ODEPACK_PREFIX_PATH \
     -D BOOST_PREFIX:PATH=$BOOST_PREFIX_PATH \
-    -D SPRNG_PREFIX:PATH=$SPRNG_PREFIX_PATH \
+    -D CMAKE_CXX_COMPILER:FILEPATH=/home/asb/software/gcc/bin/c++ \
+    -D CMAKE_C_COMPILER:FILEPATH=/home/asb/software/gcc/bin/gcc \
+    -D CMAKE_Fortran_COMPILER:FILEPATH=/home/asb/software/gcc/bin/gfortran \
     $EXTRA_ARGS \
     $FACEMC_PATH
+
+ 

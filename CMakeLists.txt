@@ -52,6 +52,13 @@ ELSE()
   MESSAGE(FATAL_ERROR "The HDF5_PREFIX must be set!")
 ENDIF()
 
+# Enable ODEPACK Support
+IF(ODEPACK_PREFIX)
+  ENABLE_ODEPACK_SUPPORT()
+ELSE()
+  MESSAGE(FATAL_ERROR "The ODEPACK_PREFIX must be set!")
+ENDIF()
+
 # Enable BOOST Support
 IF(BOOST_PREFIX)
   ENABLE_BOOST_SUPPORT(serialization)
@@ -75,6 +82,9 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/HDF5DataFileNames.hpp.in ${CMAKE_BINARY
 
 # Parse the ENDF Fission Product Data Path configure file
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/ENDFFissionProductDataPath.hpp.in ${CMAKE_BINARY_DIR}/ENDFFissionProductDataPath.hpp)
+
+# Parse the Decay Data Path configure file
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/DecayDataPath.hpp.in ${CMAKE_BINARY_DIR}/DecayDataPath.hpp)
 
 # Add the CMAKE_BINARY_DIR to the include path to access config files
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
