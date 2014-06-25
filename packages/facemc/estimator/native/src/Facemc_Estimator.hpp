@@ -44,11 +44,17 @@ protected:
   //! Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
+  //! Typedef for tuple of estimator moments (1st,2nd)
+  typedef Utility::Quad<double,double> TwoEstimatorMoments;
+
   //! Typedef for tuple of estimator moments (1st,2nd,3rd,4th)
-  typedef Utility::Quad<double,double,double,double> EstimatorMoments;
+  typedef Utility::Quad<double,double,double,double> FourEstimatorMoments;
 
   //! Typedef for the array of estimator moments 
-  typedef Teuchos::Array<EstimatorMoments> EstimatorMomentsArray;
+  typedef Teuchos::Array<TwoEstimatorMoments> TwoEstimatorMomentsArray;
+
+  //! Typedef for the array of estimator moments
+  typedef Teuchos::Array<FourEstimatorMoments> FourEstimatorMomentsArray;
   
   // Typedef for map of dimension values
   typedef boost::unordered_map<PhaseSpaceDimension,Teuchos::any> 
@@ -136,15 +142,15 @@ protected:
 
   //! Print the estimator data stored in an array
   void printEstimatorBinData( 
-			    std::ostream& os,
-			    const EstimatorMomentsArray& estimator_moment_data,
-			    const double norm_constant ) const;
+			 std::ostream& os,
+			 const TwoEstimatorMomentsArray& estimator_moment_data,
+			 const double norm_constant ) const;
 
   //! Print the total estimator data stored in an array
   void printEstimatorTotalData( 
-		     std::ostream& os,
-		     const EstimatorMomentsArray& total_estimator_moments_data,
-		     const double norm_constant ) const;
+		 std::ostream& os,
+		 const FourEstimatorMomentsArray& total_estimator_moments_data,
+		 const double norm_constant ) const;
 
   //! Evaluate the desired response function
   double evaluateResponseFunction( 

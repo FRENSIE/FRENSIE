@@ -139,9 +139,9 @@ void Estimator::printEstimatorBins( std::ostream& os ) const
  * the number of estimator bins times the number of response functions.
  */
 void Estimator::printEstimatorBinData(
-			   std::ostream& os,
-		           const EstimatorMomentsArray& estimator_moments_data,
-			   const double norm_constant ) const
+			std::ostream& os,
+		        const TwoEstimatorMomentsArray& estimator_moments_data,
+			const double norm_constant ) const
 {
   // Make sure that the estimator moment array is valid
   testPrecondition( estimator_moments_data.size() == 
@@ -196,20 +196,10 @@ void Estimator::printEstimatorBinData(
 	calculateRelativeError( 
 			       estimator_moments_data[bin_index].first,
 			       estimator_moments_data[bin_index].second );
-      
-      double estimator_bin_vov = 
-	calculateVOV( estimator_moments_data[bin_index].first,
-		      estimator_moments_data[bin_index].second,
-		      estimator_moments_data[bin_index].third,
-		      estimator_moments_data[bin_index].fourth );
-      
-      double estimator_bin_fom = calculateFOM( estimator_bin_rel_err );
 
       // Print the estimator bin data
       os << " " << estimator_bin_value << " " 
-	 << estimator_bin_rel_err << " "
-	 << estimator_bin_vov << " "
-	 << estimator_bin_fom << std::endl;
+	 << estimator_bin_rel_err << std::endl;
     }
   }
 }
@@ -219,9 +209,9 @@ void Estimator::printEstimatorBinData(
  * assigned to the estimator.
  */ 
 void Estimator::printEstimatorTotalData( 
-		     std::ostream& os,
-		     const EstimatorMomentsArray& total_estimator_moments_data,
-		     const double norm_constant ) const
+		 std::ostream& os,
+		 const FourEstimatorMomentsArray& total_estimator_moments_data,
+		 const double norm_constant ) const
 {
   // Make sure that the total estimator moments data is valid
   testPrecondition( total_estimator_moments_data.size() ==
