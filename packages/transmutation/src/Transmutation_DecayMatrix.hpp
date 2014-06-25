@@ -12,13 +12,14 @@
 
 //Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_SerialDenseMatrix.hpp>
 
 namespace Transmutation {
 
 class DecayMatrix {
 public:
    static void getDecayMatrix(Teuchos::Array<int>& zaids,
-                              Teuchos::Array<Teuchos::Array<double> >& decay_matrix,
+                              Teuchos::SerialDenseMatrix<int,double>& decay_matrix,
                               std::string& data_file);
 };
 

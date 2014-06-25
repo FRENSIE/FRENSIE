@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstDecayMatrix.cpp
+//! \file   tstODESolver.cpp
 //! \author Alex Bennett
-//! \brief  Decay Matrix unit test
+//! \brief  ODE Solver unit test
 //!
 //---------------------------------------------------------------------------//
 
@@ -13,36 +13,40 @@
 #include <Teuchos_SerialDenseMatrix.hpp>
 
 // FRENSIE Includes
-#include "Transmutation_DecayMatrix.hpp"
-#include "Transmutation_IsotopesForDepletion.hpp"
+#include "Utility_ODESolver.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables 
 //---------------------------------------------------------------------------//
  
-
 //---------------------------------------------------------------------------//
 // Tests 
 //---------------------------------------------------------------------------//
-// Check read ENDF Fission Yields Header
-TEUCHOS_UNIT_TEST( DecayMatrix, getDecayMatrix )
+TEUCHOS_UNIT_TEST( ODESolver, solve )
 {
-   Teuchos::Array<int> zaids;
+  Teuchos::SerialDenseMatrix<int,double> matrix;
+  matrix.shape(2,2);
 
-   Transmutation::IsotopesForDepletion::getIsotopes( zaids ); 
+  matrix(0,0) = -1.0;
+  matrix(1,0) = -1.0;
+  matrix(0,1) =  95.0;
+  matrix(1,1) = -97.0;
 
-   Teuchos::SerialDenseMatrix<int,double> decay_matrix;
-   std::string data_file = "endf7.dk.xml";
+  Teuchos::Array<double> number_densities;
+  number_densities.resize(2);
 
-   Transmutation::DecayMatrix::getDecayMatrix(zaids,decay_matrix,data_file);
+  number_densities[0] = 1;
+  number_densities[1] = 1;
 
-   TEST_COMPARE(decay_matrix.numRows() ,==, 2328);
-   TEST_COMPARE(decay_matrix.numCols() ,==, 2328);
-   TEST_FLOATING_EQUALITY(decay_matrix(2,2) , -1.7828336471961835e-09 , 1e-15);
-   TEST_FLOATING_EQUALITY(decay_matrix(3,2) ,  1.7828336471961835e-09 , 1e-15);
-   TEST_FLOATING_EQUALITY(decay_matrix(7,7) , -1.507428938751673e-07 , 1e-15);
-   TEST_FLOATING_EQUALITY(decay_matrix(6,7) ,  1.507428938751673e-07 , 1e-15);
+  double time = 1.0;
+
+  Utility::ODESolver solver_instance;
+  solver_instance.solve(matrix,number_densities,time);
+
+  TEST_FLOATING_EQUALITY(number_densities[0],0.273550,1e-3);
+  TEST_FLOATING_EQUALITY(number_densities[1],-2.8790e-3,1e-3);
 }
+
 //---------------------------------------------------------------------------//
 // Custom Main Function 
 //---------------------------------------------------------------------------//
@@ -54,7 +58,9 @@ int main( int argc, char** argv )
    return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
 
+
+
+//---------------------------------------------------------------------------//
+// end tstODESolver.cpp
+//---------------------------------------------------------------------------//
  
-//---------------------------------------------------------------------------//
-// end tstDecayMatrix.cpp 
-//---------------------------------------------------------------------------//
