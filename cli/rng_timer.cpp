@@ -26,9 +26,6 @@
 // Generator timing function
 void timeGenerator( const int trial_size, const int histories = 1 )
 {
-  // Wrapped generator
-  Utility::RandomNumberGenerator::initialize();
-
   // Raw generator
   Utility::LinearCongruentialGenerator generator;
 
@@ -37,10 +34,10 @@ void timeGenerator( const int trial_size, const int histories = 1 )
   // Wrapped double generator timing
   for( int i = 0; i < histories; ++i )
   {
+    Utility::RandomNumberGenerator::initialize( i );
+    
     for( int j = 0; j < trial_size/histories; ++j )
       Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-    Utility::RandomNumberGenerator::initializeNextHistory();
   }
   std::cout << std::endl;
   
