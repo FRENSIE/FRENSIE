@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstIsotopesForDepletion.cpp
+//! \file   tstODESolver.cpp
 //! \author Alex Bennett
-//! \brief  Isotopes for depletion unit test
+//! \brief  ODE Solver unit test
 //!
 //---------------------------------------------------------------------------//
 
@@ -10,29 +10,43 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_Utils.hpp>
 #include <Teuchos_Array.hpp>
+#include <Teuchos_SerialDenseMatrix.hpp>
 
 // FRENSIE Includes
-#include "Transmutation_IsotopesForDepletion.hpp"
+#include "Utility_ODESolver.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables 
 //---------------------------------------------------------------------------//
  
-
 //---------------------------------------------------------------------------//
 // Tests 
 //---------------------------------------------------------------------------//
-// Check read ENDF Fission Yields Header
-TEUCHOS_UNIT_TEST( IsotopesForDepletion, getIsotopes )
+TEUCHOS_UNIT_TEST( ODESolver, solve )
 {
-   Teuchos::Array<int> zaids;
+  Teuchos::SerialDenseMatrix<int,double> matrix;
+  matrix.shape(2,2);
 
-   Transmutation::IsotopesForDepletion::getIsotopes( zaids ); 
- 
-   TEST_COMPARE( zaids.front() , == , 1001 );
-   TEST_COMPARE( zaids.back() , == , 100259 );
-   TEST_COMPARE( zaids.length() , == , 2328 );
+  matrix(0,0) = -1.0;
+  matrix(1,0) = -1.0;
+  matrix(0,1) =  95.0;
+  matrix(1,1) = -97.0;
+
+  Teuchos::Array<double> number_densities;
+  number_densities.resize(2);
+
+  number_densities[0] = 1;
+  number_densities[1] = 1;
+
+  double time = 1.0;
+
+  Utility::ODESolver solver_instance;
+  solver_instance.solve(matrix,number_densities,time);
+
+  TEST_FLOATING_EQUALITY(number_densities[0],0.273550,1e-3);
+  TEST_FLOATING_EQUALITY(number_densities[1],-2.8790e-3,1e-3);
 }
+
 //---------------------------------------------------------------------------//
 // Custom Main Function 
 //---------------------------------------------------------------------------//
@@ -44,7 +58,9 @@ int main( int argc, char** argv )
    return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
 
+
+
+//---------------------------------------------------------------------------//
+// end tstODESolver.cpp
+//---------------------------------------------------------------------------//
  
-//---------------------------------------------------------------------------//
-// end tstEndfFissionYieldsHelpers.cpp 
-//---------------------------------------------------------------------------//

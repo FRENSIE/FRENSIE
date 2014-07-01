@@ -17,12 +17,12 @@ namespace Transmutation {
 
 class IsotopesForDepletion {
 public:
-  static void getIsotopes();
+  static void getIsotopes( Teuchos::Array<int>& zaids);
 private:
   static bool sZaidComparison(int i, int j);
 };
 
-} // TRANSMUTATION_ISOTOPES_FOR_DEPLETION_HPP
+} 
 
 #endif // TRANSMUTATION_ISOTOPES_FOR_DEPLETION_HPP
 

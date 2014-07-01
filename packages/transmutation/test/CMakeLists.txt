@@ -8,10 +8,18 @@ ADD_EXECUTABLE(tstAllIsotopes
 TARGET_LINK_LIBRARIES(tstAllIsotopes transmutation)
 ADD_TEST(AllIsotopes_test tstAllIsotopes --z_number="49")
 
-#ADD_EXECUTABLE(tstIsotopesForDepletion 
-#  tstIsotopesForDepletion.cpp )
-#TARGET_LINK_LIBRARIES(tstIsotopesForDepletion transmutation)
-#ADD_TEST(IsotopesForDepletion_test tstIsotopesForDepletion
-#--xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/endf7.dk.xml"
-#--endf_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/U_235.txt"
-#--zaid_name="92235")
+ADD_EXECUTABLE(tstIsotopesForDepletion 
+  tstIsotopesForDepletion.cpp )
+TARGET_LINK_LIBRARIES(tstIsotopesForDepletion transmutation)
+ADD_TEST(IsotopesForDepletion_test tstIsotopesForDepletion)
+
+ADD_EXECUTABLE(tstDecayMatrix 
+  tstDecayMatrix.cpp )
+TARGET_LINK_LIBRARIES(tstDecayMatrix transmutation)
+ADD_TEST(DecayMatrix_test tstDecayMatrix)
+
+ADD_EXECUTABLE(tstIsotopesArray 
+  tstIsotopesArray.cpp )
+TARGET_LINK_LIBRARIES(tstIsotopesArray transmutation)
+ADD_TEST(IsotopesArray_test tstIsotopesArray)
+
