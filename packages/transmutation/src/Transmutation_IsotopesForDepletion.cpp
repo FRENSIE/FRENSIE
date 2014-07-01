@@ -15,18 +15,20 @@
 
 namespace Transmutation {
 
-void IsotopesForDepletion::getIsotopes()
+void IsotopesForDepletion::getIsotopes( Teuchos::Array<int>& zaids )
 {
+    zaids.clear();
+
     // Create Arrays for the zaids and meta stable zaids
-    Teuchos::Array<int> zaids , meta_state_zaids;
+    Teuchos::Array<int> meta_state_zaids;
 
     // Get all the zaids
-    Transmutation::AllIsotopes::getAllZaids(zaids);
+    Transmutation::AllIsotopes::getAllZaids( zaids );
 
     // Get all the meta stable zaids
-    Transmutation::AllIsotopes::getAllMetaStateZaids(meta_state_zaids);
+    Transmutation::AllIsotopes::getAllMetaStateZaids( meta_state_zaids );
 
-    // Add the meta stable zaids with the zaids
+    // Adds the meta stable zaids and the zaids into one list
     zaids.insert( zaids.end() , meta_state_zaids.begin() , meta_state_zaids.end() );
 
     // Sorts the array
@@ -57,6 +59,25 @@ bool IsotopesForDepletion::sZaidComparison(int i, int j)
               return i - 1000000 < j;
          }
     }
+    else if( i > 1000000 && j > 1000000)
+    {
+         if( i > 2000000 && j > 2000000)
+         {
+               return i < j;
+         }
+         else if( i > 2000000 )
+         {
+               return i - 1000000 < j;
+         }
+         else if( j > 2000000 )
+         {
+               return i > j - 2000000;
+         }
+         else
+         {
+               return i < j;
+         }
+    }
     else
     {
          return i < j;
@@ -66,5 +87,5 @@ bool IsotopesForDepletion::sZaidComparison(int i, int j)
 } // End namespace transmutation
 
 //---------------------------------------------------------------------------//
-// end Transmutation_IsotopesForDepletion.hpp
+// end Transmutation_IsotopesForDepletion.cpp
 //---------------------------------------------------------------------------//

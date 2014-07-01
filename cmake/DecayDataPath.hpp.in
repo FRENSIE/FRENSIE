@@ -1,0 +1,20 @@
+//---------------------------------------------------------------------------//
+//!
+//! \file   DecayDataPath.hpp
+//! \author Alex Bennett
+//! \brief  Macro to set up decay data paths
+//!
+//---------------------------------------------------------------------------//
+
+#ifndef DECAY_DATA_PATH_HPP
+#define DECAY_DATA_PATH_HPP
+
+// Platform specific decay data path
+#define DECAY_DATA_DIRECTORY "${CMAKE_SOURCE_DIR}/data/emission_data/"
+
+#endif // end DECAY_DATA_PATH_HPP
+
+//---------------------------------------------------------------------------//
+// end DecayDataPath.hpp 
+//---------------------------------------------------------------------------//
+
