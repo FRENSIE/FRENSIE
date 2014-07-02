@@ -25,7 +25,7 @@ void StandardSurfaceEstimator::setAngleCosineCutoff(
   StandardSurfaceEstimator::angle_cosine_cutoff = angle_cosine_cutoff;
 }
 
-// Constructor
+// Constructor (for flux estimators)
 StandardSurfaceEstimator::StandardSurfaceEstimator(
     const Estimator::idType id,
     const double multiplier,
@@ -35,6 +35,15 @@ StandardSurfaceEstimator::StandardSurfaceEstimator(
 					    multiplier, 
 					    surface_ids, 
 					    surface_areas ),
+    ParticleCrossingSurfaceEventObserver()
+{ /* ... */ }
+
+// Constructor (for non-flux estimators)
+StandardSurfaceEstimator::StandardSurfaceEstimator(
+   const Estimator::idType id,
+   const double multiplier,
+   const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids )
+  : StandardEntityEstimator<surfaceIdType>( id, multiplier, surface_ids ),
     ParticleCrossingSurfaceEventObserver()
 { /* ... */ }
 

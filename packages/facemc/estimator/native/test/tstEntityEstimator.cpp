@@ -223,10 +223,13 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
 				   EntityId )
 {
   Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
+  typename Facemc::EntityEstimator<EntityId>::EntityIdSet entity_ids;
 
   initializeEntityEstimator( entity_estimator, true );
 
-  TEST_EQUALITY_CONST( entity_estimator->getEntityIds().size(), 5 );
+  entity_estimator->getEntityIds( entity_ids );
+
+  TEST_EQUALITY_CONST( entity_ids.size(), 5 );
 }
 
 UNIT_TEST_INSTANTIATION( EntityEstimator, getEntityIds );
@@ -310,10 +313,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
   unsigned num_estimator_bins = entity_estimator->getNumberOfBins()*
     entity_estimator->getNumberOfResponseFunctions();
 
+  typename Facemc::EntityEstimator<EntityId>::EntityIdSet entity_ids;
+  
+  entity_estimator->getEntityIds( entity_ids );
+
   typename Facemc::EntityEstimator<EntityId>::EntityIdSet::const_iterator
     entity_id, end_entity_id;
-  entity_id = entity_estimator->getEntityIds().begin();
-  end_entity_id = entity_estimator->getEntityIds().end();
+  entity_id = entity_ids.begin();
+  end_entity_id = entity_ids.end();
   
   // Commit one contribution to every bin of the estimator - if there is an
   // error with the estimator bins, an exception (or segfault) will occur

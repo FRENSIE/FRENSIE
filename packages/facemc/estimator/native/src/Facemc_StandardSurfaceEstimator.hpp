@@ -36,11 +36,16 @@ public:
   //! Set the angle cosine cutoff value
   static void setAngleCosineCutoff( const double angle_cosine_cutoff );
 
-  //! Constructor
+  //! Constructor (for flux estimators)
   StandardSurfaceEstimator( const Estimator::idType id,
 			    const double multiplier,
 			    const Teuchos::Array<surfaceIdType>& surface_ids,
 			    const Teuchos::Array<double>& surface_areas );
+
+  //! Constructor (for non-flux estimators)
+  StandardSurfaceEstimator( const Estimator::idType id,
+			    const double multiplier,
+			    const Teuchos::Array<surfaceIdType>& surface_ids );
 
   //! Destructor
   virtual ~StandardSurfaceEstimator()

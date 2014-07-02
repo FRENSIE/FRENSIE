@@ -148,7 +148,6 @@ private:
 	 const Teuchos::Array<ParticleType> particle_types,
 	 const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
 	 surfaces,
-	 const Teuchos::Array<double>& surface_areas,
 	 const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
 	 const bool energy_multiplication = false,
 	 const Teuchos::ParameterList* bins = NULL );

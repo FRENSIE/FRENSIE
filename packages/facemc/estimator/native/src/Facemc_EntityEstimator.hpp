@@ -29,7 +29,13 @@ protected:
   typedef boost::unordered_map<EntityId,TwoEstimatorMomentsArray> 
   EntityEstimatorMomentsArrayMap;
 
+  // Typedef for the entity norm constants map
+  typedef boost::unordered_map<EntityId,double> EntityNormConstMap;
+
 public:
+
+  // Typedef for the set of entity ids
+  typedef boost::unordered_set<EntityId> EntityIdSet;
 
   //! Constructor (for flux estimators)
   EntityEstimator( const Estimator::idType id,
@@ -37,7 +43,7 @@ public:
 		   const Teuchos::Array<EntityId>& entity_ids,
 		   const Teuchos::Array<double>& entity_norm_constants );
 
-  //! Constructor (used by non-flux estimators)
+  //! Constructor (for non-flux estimators)
   EntityEstimator( const Estimator::idType id,
 		   const double multiplier,
 		   const Teuchos::Array<EntityId>& entity_ids );
@@ -51,7 +57,7 @@ public:
    const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
 
   //! Return the entity ids associated with this estimator
-  void getEntityIds( boost::unordered_set<EntityId>& entity_ids ) const;
+  void getEntityIds( EntityIdSet& entity_ids ) const;
 
   //! Check if the entity is assigned to this estimator
   bool isEntityAssigned( const EntityId& entity_id ) const;
@@ -67,7 +73,7 @@ protected:
 
   //! Return the total normalization constant
   double getTotalNormConstant() const;
-
+  
   //! Commit history contribution to a bin of an entity 
   void commitHistoryContributionToBinOfEntity( const EntityId& entity_id,
 					       const unsigned bin_index,
@@ -116,7 +122,7 @@ private:
   EntityEstimatorMomentsArrayMap d_entity_estimator_moments_map;
   
   // The entity normalization constants (surface areas or cell volumes)
-  boost::unordered_map<EntityId,double> d_entity_norm_constants_map;
+  EntityNormConstMap d_entity_norm_constants_map;
 };
 
 } // end Facemc namespace

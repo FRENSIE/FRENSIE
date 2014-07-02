@@ -14,7 +14,7 @@
 
 namespace Facemc{
 
-// Constructor
+// Constructor (for flux estimators)
 template<typename EntityId>
 StandardEntityEstimator<EntityId>::StandardEntityEstimator( 
 			  const Estimator::idType id,
@@ -28,19 +28,19 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
     d_total_estimator_moments( 1 )
     
 {
-  // Set up the entity maps
-  for( unsigned i = 0; i < entity_ids.size(); ++i )
-  {
-    // Ignore duplicate entity ids
-    if( d_entity_current_history_first_moments_map.count( entity_ids[i] ) == 0)
-    {
-      d_entity_total_estimator_moments_map[ entity_ids[i] ].resize( 
-					this->getNumberOfResponseFunctions() );
-      
-      d_entity_current_history_first_moments_map[ entity_ids[i] ].resize(
-		this->getNumberOfBins()*this->getNumberOfResponseFunctions() );
-    }
-  }
+  initializeMomentsMaps( entity_ids );
+}
+
+// Constructor (for non-flux estimators)
+template<typename EntityId>
+StandardEntityEstimator<EntityId>::StandardEntityEstimator( 
+				   const Estimator::idType id,
+				   const double multiplier,
+			           const Teuchos::Array<EntityId>& entity_ids )
+  : EntityEstimator<EntityId>( id, multiplier, entity_ids ),
+    d_total_estimator_moments( 1 )
+{
+  initializeMomentsMaps( entity_ids );
 }
 
 // Set the response functions
@@ -89,24 +89,24 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
 	total_over_entity += bin_contribution;
 	
 	total_over_all_entities += bin_contribution;
-						 
+	
 	this->commitHistoryContributionToBinOfEntity( entity->first,
 						      bin_index,
 						      bin_contribution );
-
+	
 	// Reset the bin
 	entity->second[bin_index] = 0.0;
       }
-
+      
       commitHistoryContributionToTotalOfEntity( entity->first,
 						i,
 						total_over_entity );
-
+      
       ++entity;
     }
-
+    
     commitHistoryContributionToTotalOfEstimator( i, total_over_all_entities );
-
+    
     // Unset the uncommitted history contribution boolean
     this->unsetHasUncommittedHistoryContribution();
   }
@@ -175,21 +175,21 @@ void StandardEntityEstimator<EntityId>::printImplementation(
   EntityEstimator<EntityId>::printImplementation( os, entity_type );
 
   // Print the entity total estimator data
-  typename EntityEstimator<EntityId>::EntityIdSet::const_iterator 
+  typename EntityEstimatorMomentsArrayMap::const_iterator 
     entity_id, end_entity_id;
 
-  entity_id = this->getEntityIds().begin();
-  end_entity_id = this->getEntityIds().end();
+  entity_id = d_entity_total_estimator_moments_map.begin();
+  end_entity_id = d_entity_total_estimator_moments_map.end();
   
   while( entity_id != end_entity_id )
   {
-    os << entity_type << " " << *entity_id << " Total Data: " << std::endl;
+    os << entity_type << " " << entity_id->first << " Total Data: "<<std::endl;
     os << "--------" << std::endl;
       
     this->printEstimatorTotalData( 
-		 os,
-		 d_entity_total_estimator_moments_map.find(*entity_id)->second,
-		 this->getEntityNormConstant( *entity_id ) );
+		             os,
+			     entity_id->second,
+		             this->getEntityNormConstant( entity_id->first ) );
     
     os << std::endl;
 
@@ -228,7 +228,7 @@ template<typename EntityId>
 void 
 StandardEntityEstimator<EntityId>::resizeEntityTotalEstimatorMomentsMapArrays()
 {
-  typename EntityEstimator<EntityId>::EntityEstimatorMomentsArrayMap::iterator 
+  typename EntityEstimatorMomentsArrayMap::iterator 
     start, end;
 
   start = d_entity_total_estimator_moments_map.begin();
@@ -258,7 +258,7 @@ StandardEntityEstimator<EntityId>::commitHistoryContributionToTotalOfEntity(
   // Make sure the contribution is valid
   testPrecondition( !ST::isnaninf( contribution ) );
 
-  Estimator::EstimatorMomentsArray& entity_total_estimator_moments_array = 
+  Estimator::FourEstimatorMomentsArray& entity_total_estimator_moments_array = 
     d_entity_total_estimator_moments_map[entity_id];
 
   // Add the first moment contribution
@@ -314,6 +314,26 @@ StandardEntityEstimator<EntityId>::commitHistoryContributionToTotalOfEstimator(
   moment_contribution *= contribution;
   d_total_estimator_moments[response_function_index].fourth +=
     moment_contribution;
+}
+
+// Initialize the moments maps
+template<typename EntityId>
+void StandardEntityEstimator<EntityId>::initializeMomentsMaps(
+				   const Teuchos::Array<EntityId>& entity_ids )
+{
+  // Set up the entity maps
+  for( unsigned i = 0; i < entity_ids.size(); ++i )
+  {
+    // Ignore duplicate entity ids
+    if( d_entity_current_history_first_moments_map.count( entity_ids[i] ) == 0)
+    {
+      d_entity_total_estimator_moments_map[ entity_ids[i] ].resize( 
+					this->getNumberOfResponseFunctions() );
+      
+      d_entity_current_history_first_moments_map[ entity_ids[i] ].resize(
+		this->getNumberOfBins()*this->getNumberOfResponseFunctions() );
+    }
+  }
 }
 
 } // end Facemc namespace

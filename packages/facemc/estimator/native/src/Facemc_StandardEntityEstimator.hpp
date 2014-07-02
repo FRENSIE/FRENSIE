@@ -31,14 +31,24 @@ protected:
   typedef typename boost::unordered_map<EntityId,Teuchos::Array<double> > 
   EntityEstimatorFirstMomentsArrayMap;
 
+  // Typedef for the map of entity ids and estimator moments array
+  typedef typename boost::unordered_map<EntityId,
+					Estimator::FourEstimatorMomentsArray>
+  EntityEstimatorMomentsArrayMap;
+
 public:
 
-  //! Constructor
+  //! Constructor (for flux estimators)
   StandardEntityEstimator( 
 			 const Estimator::idType id,
 			 const double multiplier,
 			 const Teuchos::Array<EntityId>& entity_ids,
 			 const Teuchos::Array<double>& entity_norm_constants );
+
+  //! Constructor (for non-flux estimators)
+  StandardEntityEstimator( const Estimator::idType id,
+			   const double multiplier,
+			   const Teuchos::Array<EntityId>& entity_ids );
 
   //! Destructor
   virtual ~StandardEntityEstimator()
@@ -86,12 +96,14 @@ private:
 					const unsigned response_function_index,
 					const double contribution );
 
+  // Initialize the moments maps
+  void initializeMomentsMaps( const Teuchos::Array<EntityId>& entity_ids );
+
   // The total estimator moments across all entities and response functions
-  Estimator::EstimatorMomentsArray d_total_estimator_moments;
+  Estimator::FourEstimatorMomentsArray d_total_estimator_moments;
 
   // The total estimator moments for each entity and response functions
-  typename EntityEstimator<EntityId>::EntityEstimatorMomentsArrayMap 
-  d_entity_total_estimator_moments_map;
+  EntityEstimatorMomentsArrayMap d_entity_total_estimator_moments_map;
 
   // The estimator first moment for each bin of the current history
   EntityEstimatorFirstMomentsArrayMap 

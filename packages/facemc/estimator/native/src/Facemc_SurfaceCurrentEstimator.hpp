@@ -27,10 +27,9 @@ public:
 
   //! Constructor
   SurfaceCurrentEstimator( 
-    const Estimator::idType id,
-    const double multiplier,
-    const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids,
-    const Teuchos::Array<double>& surface_areas );
+   const Estimator::idType id,
+   const double multiplier,
+   const Teuchos::Array<StandardSurfaceEstimator::surfaceIdType>& surface_ids);
 
   //! Destructor
   ~SurfaceCurrentEstimator()

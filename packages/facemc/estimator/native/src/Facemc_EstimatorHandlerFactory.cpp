@@ -230,17 +230,12 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
 							estimator_bins );
       }
       else
-      {
-	EstimatorHandlerFactory::fillSurfaceAreasArray( surfaces,
-							surface_area_map,
-							surface_areas );
-	
+      {	
 	EstimatorHandlerFactory::createSurfaceCurrentEstimator(
 							id,
 							multiplier,
 							particle_types,
 							surfaces,
-							surface_areas,
 							response_functions,
 							energy_mult,
 							estimator_bins );
@@ -341,16 +336,11 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
       }
       else
       {
-	EstimatorHandlerFactory::fillSurfaceAreasArray( surfaces,
-							surface_area_map,
-							surface_areas );
-	
 	EstimatorHandlerFactory::createSurfaceCurrentEstimator(
 							id,
 							1.0,
 							particle_types,
 							surfaces,
-							surface_areas,
 							response_functions );
       }
     }
@@ -1040,7 +1030,6 @@ void EstimatorHandlerFactory::createSurfaceCurrentEstimator(
       const Teuchos::Array<ParticleType> particle_types,
       const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
       surfaces,
-      const Teuchos::Array<double>& surface_areas,
       const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
       const bool energy_multiplication,
       const Teuchos::ParameterList* bins )
@@ -1051,18 +1040,16 @@ void EstimatorHandlerFactory::createSurfaceCurrentEstimator(
   if( energy_multiplication )
   {
     estimator.reset( new SurfaceCurrentEstimator<WeightAndEnergyMultiplier>(
-							      id,
-							      multiplier,
-							      surfaces,
-							      surface_areas ) );
+							          id,
+							          multiplier,
+							          surfaces ) );
   }
   else
   {
     estimator.reset( new SurfaceCurrentEstimator<WeightMultiplier>(
-							      id,
-							      multiplier,
-							      surfaces,
-							      surface_areas ) );
+							          id,
+							          multiplier,
+							          surfaces ) );
   }
 
   // Set the particle type
