@@ -53,17 +53,12 @@ void initializeSurfaceCurrentEstimator(
   surface_ids[0] = 0;
   surface_ids[1] = 1;
 
-  Teuchos::Array<double> surface_areas( 2 );
-  surface_areas[0] = 1.0;
-  surface_areas[1] = 2.0;
-
   // Set the estimator multiplier
   double estimator_multiplier = 10.0;
 
   estimator.reset( new SurfaceCurrentEstimator( 0ull, 
 						estimator_multiplier,
-						surface_ids,
-						surface_areas ) );
+						surface_ids ) );
 						
 
   Teuchos::Array<Facemc::ParticleType> particle_types( 1 );
@@ -153,7 +148,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SurfaceCurrentEstimator,
   TEST_ASSERT( estimator->hasUncommittedHistoryContribution() );
   
   estimator->commitHistoryContribution();
-
+  
   TEST_ASSERT( !estimator->hasUncommittedHistoryContribution() );
 
   Facemc::Estimator::setNumberOfHistories( 1.0 );

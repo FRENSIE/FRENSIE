@@ -105,7 +105,7 @@ void initializeCellPulseHeightEstimator(
 
 // Initialize a surface estimator
 template<typename SurfaceEstimator>
-void initializeSurfaceEstimator( 
+void initializeSurfaceFluxEstimator( 
 	   const unsigned estimator_id,
            const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
 	   surface_ids,
@@ -120,6 +120,29 @@ void initializeSurfaceEstimator(
 					 estimator_multiplier,
 					 surface_ids,
 					 surface_areas ) );
+
+  Teuchos::Array<Facemc::ParticleType> particle_types( 1 );
+  particle_types[0] = Facemc::PHOTON;
+
+  estimator->setParticleTypes( particle_types );
+}
+
+// Initialize a surface estimator
+template<typename SurfaceEstimator>
+void initializeSurfaceCurrentEstimator( 
+	   const unsigned estimator_id,
+           const Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
+	   surface_ids,
+	   Teuchos::RCP<SurfaceEstimator>& estimator )
+{
+  Teuchos::Array<double> surface_areas( surface_ids.size(), 1.0 );
+
+  // Set the estimator multiplier
+  double estimator_multiplier = 10.0;
+
+  estimator.reset( new SurfaceEstimator( estimator_id,
+					 estimator_multiplier,
+					 surface_ids ) );
 
   Teuchos::Array<Facemc::ParticleType> particle_types( 1 );
   particle_types[0] = Facemc::PHOTON;
@@ -148,10 +171,10 @@ TEUCHOS_UNIT_TEST( ObserverRegistrationHelpers, register_macro )
   surface_ids[0] = 0;
   surface_ids[1] = 1;
   
-  initializeSurfaceEstimator( 6u, surface_ids, estimator_7 );
-  initializeSurfaceEstimator( 7u, surface_ids, estimator_8 );
-  initializeSurfaceEstimator( 8u, surface_ids, estimator_9 );
-  initializeSurfaceEstimator( 9u, surface_ids, estimator_10 );
+  initializeSurfaceFluxEstimator( 6u, surface_ids, estimator_7 );
+  initializeSurfaceFluxEstimator( 7u, surface_ids, estimator_8 );
+  initializeSurfaceCurrentEstimator( 8u, surface_ids, estimator_9 );
+  initializeSurfaceCurrentEstimator( 9u, surface_ids, estimator_10 );
 
   REGISTER_OBSERVER_WITH_DISPATCHERS( estimator_1, cell_ids );
   REGISTER_OBSERVER_WITH_DISPATCHERS( estimator_2, cell_ids );

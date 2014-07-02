@@ -83,7 +83,7 @@ private:
 				       WeightAndEnergyMultiplier );
 
   // The total estimator moments for all entities
-  Estimator::FourEstimatorMomentsArray d_total_energy_deposition_moments;
+  Estimator::TwoEstimatorMomentsArray d_total_energy_deposition_moments;
 
   // The energy deposited in each cell of interest by the current history
   boost::unordered_map<cellIdType,double> d_cell_energy_deposition_map;

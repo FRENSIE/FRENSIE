@@ -45,7 +45,7 @@ protected:
   typedef Teuchos::ScalarTraits<double> ST;
 
   //! Typedef for tuple of estimator moments (1st,2nd)
-  typedef Utility::Quad<double,double> TwoEstimatorMoments;
+  typedef Utility::Pair<double,double> TwoEstimatorMoments;
 
   //! Typedef for tuple of estimator moments (1st,2nd,3rd,4th)
   typedef Utility::Quad<double,double,double,double> FourEstimatorMoments;

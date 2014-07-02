@@ -35,7 +35,7 @@ estimator_2;
 //---------------------------------------------------------------------------//
 // Initialize the estimator
 template<typename SurfaceEstimator>
-void initializeSurfaceEstimator( const unsigned estimator_id,
+void initializeSurfaceFluxEstimator( const unsigned estimator_id,
 				 Teuchos::RCP<SurfaceEstimator>& estimator )
 {
   // Set the entity ids
@@ -55,6 +55,34 @@ void initializeSurfaceEstimator( const unsigned estimator_id,
 					 estimator_multiplier,
 					 surface_ids,
 					 surface_areas ) );
+
+  Teuchos::Array<Facemc::ParticleType> particle_types( 1 );
+  particle_types[0] = Facemc::PHOTON;
+
+  estimator->setParticleTypes( particle_types );
+}
+
+// Initialize the estimator
+template<typename SurfaceEstimator>
+void initializeSurfaceCurrentEstimator( const unsigned estimator_id,
+				 Teuchos::RCP<SurfaceEstimator>& estimator )
+{
+  // Set the entity ids
+  Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> 
+    surface_ids( 2 );
+  surface_ids[0] = 0;
+  surface_ids[1] = 1;
+
+  Teuchos::Array<double> surface_areas( 2 );
+  surface_areas[0] = 1.0;
+  surface_areas[1] = 2.0;
+
+  // Set the estimator multiplier
+  double estimator_multiplier = 10.0;
+
+  estimator.reset( new SurfaceEstimator( estimator_id,
+					 estimator_multiplier,
+					 surface_ids ) );
 
   Teuchos::Array<Facemc::ParticleType> particle_types( 1 );
   particle_types[0] = Facemc::PHOTON;
@@ -83,8 +111,8 @@ TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcherDB, getDispatcher )
 // Check that observers can be attached to dispatchers
 TEUCHOS_UNIT_TEST( ParticleCrossingSurfaceEventDispatcherDB, attachObserver )
 {
-  initializeSurfaceEstimator( 0u, estimator_1 );
-  initializeSurfaceEstimator( 1u, estimator_2 );
+  initializeSurfaceCurrentEstimator( 0u, estimator_1 );
+  initializeSurfaceFluxEstimator( 1u, estimator_2 );
 
   Teuchos::RCP<Facemc::ParticleCrossingSurfaceEventObserver> observer_1 =
     Teuchos::rcp_dynamic_cast<Facemc::ParticleCrossingSurfaceEventObserver>( 

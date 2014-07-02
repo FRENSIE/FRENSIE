@@ -201,12 +201,6 @@ void CellPulseHeightEstimator<
     
     bin_contribution *= bin_contribution;
     d_total_energy_deposition_moments[bin_index].second += bin_contribution;
-
-    bin_contribution *= bin_contribution;
-    d_total_energy_deposition_moments[bin_index].third += bin_contribution;
-
-    bin_contribution *= bin_contribution;
-    d_total_energy_deposition_moments[bin_index].fourth += bin_contribution;
   }
 
   // Reset the has uncommitted history contribution boolean
