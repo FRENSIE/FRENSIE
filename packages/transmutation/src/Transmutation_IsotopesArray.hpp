@@ -17,7 +17,11 @@ namespace Transmutation {
 
 class IsotopesArray {
 public:
-   static void setIsotopesArray();
+   static void getOrderedIsotopesArray(boost::unordered_map<int,double>& number_densities,
+                                       Teuchos::Array<double>& number_densities_array);
+   static bool isIsotopeInList(int isotope);
+   static void getIsotopesNumberDensityMap(boost::unordered_map<int,double>& number_densities,
+                                          Teuchos::Array<double>& number_densities_array);
 };
 
 }

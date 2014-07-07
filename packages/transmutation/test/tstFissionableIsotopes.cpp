@@ -26,7 +26,6 @@
 //---------------------------------------------------------------------------//
 // Tests 
 //---------------------------------------------------------------------------//
-// Check read ENDF Fission Yields Header
 TEUCHOS_UNIT_TEST( FissionableIsotopes, isFissionable )
 {
     int zaid;
@@ -48,6 +47,24 @@ TEUCHOS_UNIT_TEST( FissionableIsotopes, isFissionable )
 
     zaid = 94237;
     TEST_ASSERT( !Transmutation::FissionableIsotopes::isFissionable( zaid ) );
+}
+
+
+TEUCHOS_UNIT_TEST( FissionableIsotopes, isSpontaneousFissionable )
+{
+    int zaid;
+
+    zaid = 98252;
+    TEST_ASSERT( Transmutation::FissionableIsotopes::isSpontaneousFissionable( zaid ) );
+
+    zaid = 92238;
+    TEST_ASSERT( Transmutation::FissionableIsotopes::isSpontaneousFissionable( zaid ) );
+
+    zaid = 1001;
+    TEST_ASSERT( !Transmutation::FissionableIsotopes::isSpontaneousFissionable( zaid ) );
+
+    zaid = 8016;
+    TEST_ASSERT( !Transmutation::FissionableIsotopes::isSpontaneousFissionable( zaid ) );
 }
 //---------------------------------------------------------------------------//
 // Custom Main Function 

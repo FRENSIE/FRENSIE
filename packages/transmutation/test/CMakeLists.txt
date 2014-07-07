@@ -18,6 +18,16 @@ ADD_EXECUTABLE(tstDecayMatrix
 TARGET_LINK_LIBRARIES(tstDecayMatrix transmutation)
 ADD_TEST(DecayMatrix_test tstDecayMatrix)
 
+ADD_EXECUTABLE(tstReactionRateMatrix 
+  tstReactionRateMatrix.cpp )
+TARGET_LINK_LIBRARIES(tstReactionRateMatrix transmutation)
+ADD_TEST(ReactionRateMatrix_test tstReactionRateMatrix)
+
+ADD_EXECUTABLE(tstCellTransmutationData 
+  tstCellTransmutationData.cpp )
+TARGET_LINK_LIBRARIES(tstCellTransmutationData transmutation)
+ADD_TEST(CellTransmutationData_test tstCellTransmutationData)
+
 ADD_EXECUTABLE(tstIsotopesArray 
   tstIsotopesArray.cpp )
 TARGET_LINK_LIBRARIES(tstIsotopesArray transmutation)

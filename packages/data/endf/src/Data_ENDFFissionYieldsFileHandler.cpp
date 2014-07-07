@@ -98,12 +98,12 @@ void ENDFFissionYieldsFileHandler::readENDFFile( const int zaid_name)
            {
                 std::stringstream ss;
 
-                ss << "Fatal Error: Expected ZAID: " << zaid_name
+                ss << "Warning: Expected ZAID: " << zaid_name
                    << " Found ZAID: " << d_zaid << "The wrong ENDF"
                    << " file was given."
                    << std::endl;
 
-                TEST_FOR_EXCEPTION( !expected_zaid, std::runtime_error, ss.str() );
+            //    TEST_FOR_EXCEPTION( !expected_zaid, std::runtime_error, ss.str() );
            }
        }
     }

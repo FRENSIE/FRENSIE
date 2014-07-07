@@ -80,8 +80,8 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dbc_config.hpp.in ${CMAKE_BINARY_DIR}/$
 SET(${PROJECT_NAME}_DATA_DIRECTORY ${CMAKE_SOURCE_DIR}/data/)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/HDF5DataFileNames.hpp.in ${CMAKE_BINARY_DIR}/HDF5DataFileNames.hpp)
 
-# Parse the ENDF Fission Product Data Path configure file
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/ENDFFissionProductDataPath.hpp.in ${CMAKE_BINARY_DIR}/ENDFFissionProductDataPath.hpp)
+# Parse the Fission Product Data Path configure file
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/FissionProductDataPath.hpp.in ${CMAKE_BINARY_DIR}/FissionProductDataPath.hpp)
 
 # Parse the Decay Data Path configure file
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/DecayDataPath.hpp.in ${CMAKE_BINARY_DIR}/DecayDataPath.hpp)
@@ -98,7 +98,17 @@ INCLUDE(Dart)
 
 # Set up the project directory hierarchy
 ADD_SUBDIRECTORY(packages)
-INCLUDE_DIRECTORIES(packages/utility/core/src packages/utility/prng/src packages/utility/hdf5/src packages/utility/distribution/src packages/geometry/core/src packages/geometry/dagmc/src packages/geometry/interface packages/data/ace/src packages/data/epdl/src packages/facemc/core/src packages/facemc/source/core/src packages/facemc/source/interface packages/facemc/source/native/src packages/facemc/estimator/core/src packages/facemc/estimator/interface packages/facemc/estimator/native/src packages/facemc/collision/core/src packages/facemc/collision/interface packages/facemc/collision/native/src packages/facemc/manager/src)
+INCLUDE_DIRECTORIES(packages/utility/core/src packages/utility/prng/src
+packages/utility/hdf5/src packages/utility/distribution/src
+packages/geometry/core/src packages/geometry/dagmc/src
+packages/geometry/interface packages/data/ace/src packages/data/epdl/src
+packages/facemc/core/src packages/facemc/source/core/src
+packages/facemc/source/interface packages/facemc/source/native/src
+packages/facemc/estimator/core/src packages/facemc/estimator/interface
+packages/facemc/estimator/native/src packages/facemc/collision/core/src
+packages/facemc/collision/interface packages/facemc/collision/native/src
+packages/facemc/manager/src packages/transmutation/src packages/data/decay/src
+packages/data/endf/src)
 
 ADD_SUBDIRECTORY(cli)
 
