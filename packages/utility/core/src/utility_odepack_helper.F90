@@ -99,7 +99,7 @@ module utility_odepack_helper
      subroutine fex(neq, t, y, ydot)
      ! Subroutine for the right hand side vector
      
-        double precision :: t, y(2), ydot(2)
+        double precision :: t, y(neq), ydot(neq)
         integer, intent(inout) :: neq    
 
         ydot(:) = matmul(odepack_matrix(:,:),y(:))
@@ -109,7 +109,7 @@ module utility_odepack_helper
      subroutine jex(neq, t, y, j, ia, ja, pdj)
      ! Sets up the matrix
      
-         double precision :: t, y(2), pdj(2)
+         double precision :: t, y(neq), pdj(neq)
          integer :: ia(*), ja(*)
          integer, intent(inout) :: neq, j 
 
