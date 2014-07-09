@@ -66,6 +66,43 @@ TEUCHOS_UNIT_TEST( IsotopesArray, getIsotopeNumberDensityMap )
    TEST_FLOATING_EQUALITY( number_densities[1001], 5.0, 1e-15)
    TEST_FLOATING_EQUALITY( number_densities[2004],10.0, 1e-15)
 }
+
+TEUCHOS_UNIT_TEST( IsotopesArray, getNumberDensityMapFromUnorderedArray )
+{
+   Teuchos::Array<std::pair<int,double> > unordered_number_densities(2);
+
+   unordered_number_densities[0] = std::pair<int,double> (1001,5.0);
+   unordered_number_densities[1] = std::pair<int,double> (2004,10.0);
+
+   boost::unordered_map<int,double> number_densities; 
+
+   Transmutation::IsotopesArray::getNumberDensityMapFromUnorderedArray( number_densities , unordered_number_densities );
+
+   TEST_FLOATING_EQUALITY( number_densities[1001], 5.0, 1e-15)
+   TEST_FLOATING_EQUALITY( number_densities[2004],10.0, 1e-15)
+}
+
+TEUCHOS_UNIT_TEST( IsotopesArray, getUnorderedArray )
+{
+   boost::unordered_map<int,double> number_densities; 
+
+   number_densities.insert( std::pair<int,double>(1001,5.0) );
+   number_densities.insert( std::pair<int,double>(2004,10.0) );
+
+   Teuchos::Array<double> number_densities_array;
+
+   Transmutation::IsotopesArray::getOrderedIsotopesArray( number_densities , number_densities_array );
+
+   Teuchos::Array<std::pair<int,double> > unordered_number_densities;
+
+   Transmutation::IsotopesArray::getUnorderedArray(unordered_number_densities, number_densities_array);
+
+   TEST_COMPARE( unordered_number_densities.length() ,==, 2 );
+   TEST_COMPARE( unordered_number_densities[0].first ,==, 1001 );
+   TEST_FLOATING_EQUALITY( unordered_number_densities[0].second, 5.0, 1e-15);
+   TEST_COMPARE( unordered_number_densities[1].first ,==, 2004 );
+   TEST_FLOATING_EQUALITY( unordered_number_densities[1].second, 10.0, 1e-15);
+}
 //---------------------------------------------------------------------------//
 // Custom Main Function 
 //---------------------------------------------------------------------------//

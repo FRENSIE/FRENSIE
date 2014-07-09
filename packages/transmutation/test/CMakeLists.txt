@@ -28,6 +28,11 @@ ADD_EXECUTABLE(tstCellTransmutationData
 TARGET_LINK_LIBRARIES(tstCellTransmutationData transmutation)
 ADD_TEST(CellTransmutationData_test tstCellTransmutationData)
 
+ADD_EXECUTABLE(tstModuleInterface_ODESolver 
+  tstModuleInterface_ODESolver.cpp )
+TARGET_LINK_LIBRARIES(tstModuleInterface_ODESolver transmutation)
+ADD_TEST(ModuleInterfacei_ODESolver_test tstModuleInterface_ODESolver)
+
 ADD_EXECUTABLE(tstIsotopesArray 
   tstIsotopesArray.cpp )
 TARGET_LINK_LIBRARIES(tstIsotopesArray transmutation)

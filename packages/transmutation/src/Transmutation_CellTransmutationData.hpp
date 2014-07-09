@@ -27,13 +27,17 @@ class CellTransmutationData {
 public:
   
   //! Constructor
-  CellTransmutationData( const Geometry::ModuleTraits::InternalCellHandle cell_id );
+  CellTransmutationData( const Geometry::ModuleTraits::InternalCellHandle cell_id,
+                         const Teuchos::Array<std::pair<int,double> >& initial_number_densities );
 
   //! Destructor
   ~CellTransmutationData();
 
   //! Get Cell ID
-  int getCellID();
+  Geometry::ModuleTraits::InternalCellHandle getCellID();
+
+  //! Get Number Densities
+  void getNumberDensities(Teuchos::Array<double>& number_densities);
 
   //! Set Reaction Rates
   void setReactionRates(const Facemc::NuclearReactionType reaction, 
@@ -49,8 +53,17 @@ public:
 
 private:
 
+  // Check reaction rates zaids are in isotope map
+  bool areReactionRateZaidsInIsotopeMap(const Teuchos::Array<std::pair<int,double> >& reaction_rates);
+
+  // Check fission reaction rate zaid is in isotope map
+  bool isFissionReactionRateZaidInIsotopeMap(const int fission_zaid);
+
   // cell id
- int d_cell_id;
+  Geometry::ModuleTraits::InternalCellHandle d_cell_id;
+
+  // number densities
+  boost::unordered_map<int,double> d_number_densities;
 
   // Map of reaction rates
   boost::unordered_map<Facemc::NuclearReactionType, Teuchos::Array<std::pair<int,double> > > d_reaction_rates;

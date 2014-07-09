@@ -16,7 +16,8 @@
 #include <boost/unordered_map.hpp>
 
 // FRENSIE Includes
-#include "Geometery_ModuleTraits.hpp"
+#include "Geometry_ModuleTraits.hpp"
+#include "Facemc_NuclearReactionType.hpp"
 
 /*! \defgroup transmutation_module Transmutation Module
  *
@@ -45,14 +46,14 @@ struct UndefinedTransmutationHandler
  * Transmutation::UndefinedTransmutationHandler struct.
  */
 
-template<typename TransmutataionHandler>
+template<typename TransmutationHandler>
 class ModuleInterface
 {
 
 public:
   //! Set the reaction rates
   static inline void setReactionRates(const int reaction, 
-                                      Tuechos::Array<std::pair<int,double> >& reaction_rates, 
+                                      Teuchos::Array<std::pair<int,double> >& reaction_rates, 
                                       const Geometry::ModuleTraits::InternalCellHandle cell_id)
   { (void)UndefinedTransmutationHandler<TransmutationHandler>::notDefined(); return 0; }
 
@@ -61,18 +62,17 @@ public:
                                              const double& reaction_rate, 
                                              Teuchos::Array<std::pair<int,double> >& fission_fragment_reaction_rates,
                                              const Geometry::ModuleTraits::InternalCellHandle cell_id)
-
   { (void)UndefinedTransmutationHandler<TransmutationHandler>::notDefined(); return 0; }
 
   //! Set the number densities
-  static inline void setNumberDensities(boost::unordered_map<int,double>& initial_number_densities
-                                        const Geometry::ModuleTraits::InternalCellHandle cell_id)
+  static inline void setNumberDensities(const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,Teuchos::Array<std::pair<int,double> > >& number_densities)
   { (void)UndefinedTransmutationHandler<TransmutationHandler>::notDefined(); return 0; }
 
   //! Solve the transmutation matrix
   static inline void burn(const double& time, 
                           boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,Teuchos::Array<std::pair<int,double> > >& final_number_density)
   { (void)UndefinedTransmutationHandler<TransmutationHandler>::notDefined(); return 0; }
+};
 
 //! Set the transmutation handler instance
 template<typename TransmutationHandler>
@@ -80,6 +80,8 @@ void setTransmutationHandlerInstance ( const Teuchos::RCP<TransmutationHandler>&
 {
   Transmutation::ModuleInterface<TransmutationHandler>::setHandler(handler);
 }
+
+}; // end transmutation namespace
 
 #endif // end TRANSMUTATION_MODULE_INTERFACE_DECL_HPP
 

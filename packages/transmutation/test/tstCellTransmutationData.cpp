@@ -26,16 +26,44 @@
 //---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( CellTransmutationData, getCellID )
 {
+   Teuchos::Array<std::pair<int,double> > number_densities;
+
    // Initialize the cell transmutation data instance
-   Transmutation::CellTransmutationData cell_data(5);
+   Transmutation::CellTransmutationData cell_data(5,number_densities);
   
    TEST_COMPARE( cell_data.getCellID() ,==, 5);
 }
 
+TEUCHOS_UNIT_TEST( CellTransmutationData, getNumberDensities )
+{
+   Teuchos::Array<std::pair<int,double> > initial_number_densities(2);
+
+   initial_number_densities[0] = std::pair<int,double>(1001,5.0);
+   initial_number_densities[1] = std::pair<int,double>(2005,15.0);
+
+   // Initialize the cell transmutation data instance
+   Transmutation::CellTransmutationData cell_data(5,initial_number_densities);
+
+   Teuchos::Array<double> number_densities;
+  
+   cell_data.getNumberDensities(number_densities);
+
+   TEST_FLOATING_EQUALITY(number_densities[0], 5.0, 1e-15);
+   TEST_FLOATING_EQUALITY(number_densities[9],15.0, 1e-15); 
+}
+
 TEUCHOS_UNIT_TEST( CellTransmutationData, populateMatrix )
 {
+   Teuchos::Array<std::pair<int,double> > number_densities(5);
+
+   number_densities[0] = std::pair<int,double>(2004,5.0);
+   number_densities[1] = std::pair<int,double>(6012,15.0);
+   number_densities[2] = std::pair<int,double>(92235,15.0);
+   number_densities[3] = std::pair<int,double>(92238,15.0);
+   number_densities[4] = std::pair<int,double>(94239,15.0);
+
    // Initialize the cell transmutation data instance
-   Transmutation::CellTransmutationData cell_data(1);
+   Transmutation::CellTransmutationData cell_data(1,number_densities);
 
    // Set the reaction rates
    Teuchos::Array<std::pair<int,double> > reaction_rates(2);
@@ -72,10 +100,14 @@ TEUCHOS_UNIT_TEST( CellTransmutationData, populateMatrix )
    // Populate the matrix
    Teuchos::SerialDenseMatrix<int,double> matrix;
 
-   cell_data.populateMatrix(matrix);
-
+   // Set up the zaids array
    Teuchos::Array<int> zaids;
-   Transmutation::IsotopesForDepletion::getIsotopes( zaids );
+   Transmutation::IsotopesForDepletion::getIsotopes( zaids ); 
+
+   // Allocate the matrix
+   matrix.shape(zaids.length(),zaids.length());
+
+   cell_data.populateMatrix(matrix);
 
    int parent_zaid;
    int parent_zaid_2;
