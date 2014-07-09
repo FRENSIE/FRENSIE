@@ -20,9 +20,9 @@ namespace Utility{
 
 // Default Constructor
 ODESolver::ODESolver()
- : d_relative_tol(1e-4),
-   d_absolute_tol(1e-6),
-   d_length_working_array(10000)
+ : d_relative_tol(1e-10),
+   d_absolute_tol(1e-10),
+   d_length_working_array(300000)
 { /* ... */ }
 
 // Constructor

@@ -18,8 +18,9 @@ namespace Transmutation {
 class IsotopesForDepletion {
 public:
   static void getIsotopes( Teuchos::Array<int>& zaids);
+  static int getLocation( const int input_zaid, const Teuchos::Array<int>& zaids );
 private:
-  static bool sZaidComparison(int i, int j);
+  static bool sZaidComparison(const int i, const int j);
 };
 
 } 

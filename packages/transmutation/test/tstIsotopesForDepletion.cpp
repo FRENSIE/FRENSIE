@@ -22,7 +22,6 @@
 //---------------------------------------------------------------------------//
 // Tests 
 //---------------------------------------------------------------------------//
-// Check read ENDF Fission Yields Header
 TEUCHOS_UNIT_TEST( IsotopesForDepletion, getIsotopes )
 {
    Teuchos::Array<int> zaids;
@@ -30,8 +29,19 @@ TEUCHOS_UNIT_TEST( IsotopesForDepletion, getIsotopes )
    Transmutation::IsotopesForDepletion::getIsotopes( zaids ); 
  
    TEST_COMPARE( zaids.front() , == , 1001 );
-   TEST_COMPARE( zaids.back() , == , 100259 );
-   TEST_COMPARE( zaids.length() , == , 2328 );
+   TEST_COMPARE( zaids.back() , == , 100260 );
+   TEST_COMPARE( zaids.length() , == , 3255 );
+}
+
+TEUCHOS_UNIT_TEST( IsotopesForDepletion, getLocation )
+{
+   Teuchos::Array<int> zaids;
+ 
+   Transmutation::IsotopesForDepletion::getIsotopes( zaids );
+
+   TEST_COMPARE( Transmutation::IsotopesForDepletion::getLocation(1001,zaids) ,==, 0);
+   TEST_COMPARE( Transmutation::IsotopesForDepletion::getLocation(1007,zaids) ,==, 6);
+   TEST_COMPARE( Transmutation::IsotopesForDepletion::getLocation(2006,zaids) ,==,10);
 }
 //---------------------------------------------------------------------------//
 // Custom Main Function 

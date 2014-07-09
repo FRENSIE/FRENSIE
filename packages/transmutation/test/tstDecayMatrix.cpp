@@ -27,21 +27,16 @@
 // Check read ENDF Fission Yields Header
 TEUCHOS_UNIT_TEST( DecayMatrix, getDecayMatrix )
 {
-   Teuchos::Array<int> zaids;
-
-   Transmutation::IsotopesForDepletion::getIsotopes( zaids ); 
-
    Teuchos::SerialDenseMatrix<int,double> decay_matrix;
-   std::string data_file = "endf7.dk.xml";
 
-   Transmutation::DecayMatrix::getDecayMatrix(zaids,decay_matrix,data_file);
+   Transmutation::DecayMatrix::getDecayMatrix(decay_matrix);
 
-   TEST_COMPARE(decay_matrix.numRows() ,==, 2328);
-   TEST_COMPARE(decay_matrix.numCols() ,==, 2328);
+   TEST_COMPARE(decay_matrix.numRows() ,==, 3255);
+   TEST_COMPARE(decay_matrix.numCols() ,==, 3255);
    TEST_FLOATING_EQUALITY(decay_matrix(2,2) , -1.7828336471961835e-09 , 1e-15);
-   TEST_FLOATING_EQUALITY(decay_matrix(3,2) ,  1.7828336471961835e-09 , 1e-15);
-   TEST_FLOATING_EQUALITY(decay_matrix(7,7) , -1.507428938751673e-07 , 1e-15);
-   TEST_FLOATING_EQUALITY(decay_matrix(6,7) ,  1.507428938751673e-07 , 1e-15);
+   TEST_FLOATING_EQUALITY(decay_matrix(7,2) ,  1.7828336471961835e-09 , 1e-15);
+   TEST_FLOATING_EQUALITY(decay_matrix(25,25) , -1.507428938751673e-07 , 1e-15);
+   TEST_FLOATING_EQUALITY(decay_matrix(18,25) ,  1.507428938751673e-07 , 1e-15);
 }
 //---------------------------------------------------------------------------//
 // Custom Main Function 
