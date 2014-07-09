@@ -19,7 +19,7 @@
 
 namespace Transmutation {
 
-void IsotopesArray::getOrderedIsotopesArray(boost::unordered_map<int,double>& number_densities,
+void IsotopesArray::getOrderedIsotopesArray(const boost::unordered_map<int,double>& number_densities,
                                             Teuchos::Array<double>& number_densities_array) 
 {
      // Set up the zaids array
@@ -33,7 +33,9 @@ void IsotopesArray::getOrderedIsotopesArray(boost::unordered_map<int,double>& nu
      int j = 0;
 
      // Loop through given unordered map of zaids and number densities
-     for(boost::unordered_map<int,double>::iterator i = number_densities.begin(); i != number_densities.end(); ++i)
+     for(boost::unordered_map<int,double>::const_iterator i = number_densities.begin(); 
+         i != number_densities.end(); 
+         ++i)
      {
           // Loop through the zaids to find the location of the zaid
           for(j = 0; j != zaids.length(); j++)
@@ -81,7 +83,7 @@ bool IsotopesArray::isIsotopeInList(int isotope)
 }
 
 void IsotopesArray::getIsotopesNumberDensityMap(boost::unordered_map<int,double>& number_densities,
-                                                Teuchos::Array<double>& number_densities_array)
+                                                const Teuchos::Array<double>& number_densities_array)
 {
      // Clear the number densities map before filling it
      number_densities.clear();
@@ -93,14 +95,52 @@ void IsotopesArray::getIsotopesNumberDensityMap(boost::unordered_map<int,double>
      // Loop through the number densities array
      for(int i = 0; i != number_densities_array.length(); i++)
      {
-           // Check if element is present
+           // Check if isotope is present
            if( number_densities_array[i] > 0.0 )
            {
-                  // Add the number densityof the element to the unordered map
-                  number_densities.insert( std::pair<int,double>(zaids[i],number_densities_array[i]) );
+                  // Add the number density of the element to the unordered map
+                  number_densities[ zaids[i] ] = number_densities_array[i];
            }
      } 
 }
+
+void IsotopesArray::getNumberDensityMapFromUnorderedArray(boost::unordered_map<int,double>& number_densities,
+                                                          const Teuchos::Array<std::pair<int,double> >& number_densities_array)
+{
+   // Clear the map
+   number_densities.clear();
+
+   // Loop through the array and fill the map
+   for(Teuchos::Array<std::pair<int,double> >::const_iterator i = number_densities_array.begin(); 
+       i != number_densities_array.end(); 
+       ++i)
+   {
+      number_densities[ i->first ] = i->second;
+   }
+}
+
+void IsotopesArray::getUnorderedArray(Teuchos::Array<std::pair<int,double> >& unordered_number_densities,
+                                        const Teuchos::Array<double>& ordered_number_densities)
+{
+   // Clear the array
+   unordered_number_densities.clear();
+
+   // Set up zaids array
+   Teuchos::Array<int> zaids;
+   IsotopesForDepletion::getIsotopes( zaids );
+
+   // Loop through the ordered array
+   for(int i = 0; i != ordered_number_densities.length(); i++)
+   {
+      // Check if isotope is present
+      if( ordered_number_densities[i] > 0.0 )
+      {
+         // Add the isotope to the unordered array
+         unordered_number_densities.push_back( std::pair<int,double>(zaids[i],ordered_number_densities[i]) );
+      }
+   }
+}
+
 } // End namespace transmutation
 
 //---------------------------------------------------------------------------//
