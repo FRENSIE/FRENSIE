@@ -28,7 +28,7 @@ public:
   
   //! Constructor
   ElasticNeutronScatteringDistribution( const double atomic_weight_ratio,
-					const Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >& angular_scattering_distribution );
+					const AngularDistribution& angular_scattering_distribution );
 
   //! Destructor
   ~ElasticNeutronScatteringDistribution()
@@ -41,12 +41,10 @@ public:
 private:
 
   // Sample center-of-mass scattering angle cosine
-  double sampleCMScatteringAngleCosine( const double energy ) const;
+  //double sampleCMScatteringAngleCosine( const double energy ) const;
 
   // The incoming energy dependent angular scattering distribution
-  Teuchos::Array<Utility::Pair<double,
-			       Teuchos::RCP<Utility::OneDDistribution> > > 
-  d_angular_scattering_distribution;
+  AngularDistribution d_angular_scattering_distribution;
 };
 
 } // end Facemc namespace

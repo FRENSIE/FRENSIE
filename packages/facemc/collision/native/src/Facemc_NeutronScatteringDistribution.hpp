@@ -9,10 +9,14 @@
 #ifndef FACEMC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
 #define FACEMC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
 
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
+
 // FRENSIE Includes
 #include "Facemc_NeutronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_OneDDistribution.hpp"
 
 namespace Facemc{
 
@@ -21,6 +25,11 @@ class NeutronScatteringDistribution
 {
 
 public:
+
+  //! Typedef for energy dependent angular distribution
+  typedef Teuchos::Array<Utility::Pair<double,
+			       Teuchos::RCP<Utility::OneDDistribution> > > 
+  AngularDistribution;
 
   //! Constructor 
   NeutronScatteringDistribution( const double atomic_weight_ratio );
@@ -44,6 +53,11 @@ protected:
 
   //! Sample an azimuthal angle from a uniform distribution
   double sampleAzimuthalAngle() const;
+
+  //! Sample a scattering angle cosine
+  double sampleScatteringAngleCosine( 
+		       const double energy,
+		       const AngularDistribution& angular_distribution ) const;
 
   //! Calculate the center-of-mass velocity
   void calculateCenterOfMassVelocity(const double neutron_velocity[3],
