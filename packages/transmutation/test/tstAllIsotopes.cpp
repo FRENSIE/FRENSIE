@@ -38,8 +38,8 @@ TEUCHOS_UNIT_TEST( AllIsotopes, getZaidLimits )
 
     std::pair<int,int> limits = Transmutation::AllIsotopes::getZaidLimits(z);
 
-    TEST_COMPARE(limits.first, == , 99);
-    TEST_COMPARE(limits.second , == , 127); 
+    TEST_COMPARE(limits.first, == , 98);
+    TEST_COMPARE(limits.second , == , 135); 
 }
 
 TEUCHOS_UNIT_TEST( AllIsotopes, getZaids )
@@ -53,9 +53,9 @@ TEUCHOS_UNIT_TEST( AllIsotopes, getZaids )
   
     Transmutation::AllIsotopes::getZaids(z, zaids);
 
-    TEST_COMPARE(zaids.front(), == , 49099);
-    TEST_COMPARE(zaids.back(), == , 49127);
-    TEST_COMPARE(zaids.size(), == , 29);
+    TEST_COMPARE(zaids.front(), == , 49098);
+    TEST_COMPARE(zaids.back(), == , 49135);
+    TEST_COMPARE(zaids.size(), == , 38);
 }
 
 TEUCHOS_UNIT_TEST( AllIsotopes, getAllZaids)
@@ -64,9 +64,9 @@ TEUCHOS_UNIT_TEST( AllIsotopes, getAllZaids)
   
     Transmutation::AllIsotopes::getAllZaids(zaids);
 
-    TEST_COMPARE(zaids.front(), == , 100245);
-    TEST_COMPARE(zaids.back(), == , 1003);
-    TEST_COMPARE(zaids.size(), == , 2137);
+    TEST_COMPARE(zaids.front(), == , 100241);
+    TEST_COMPARE(zaids.back(), == , 1007);
+    TEST_COMPARE(zaids.size(), == , 3013);
 }
 
 TEUCHOS_UNIT_TEST( AllIsotopes, getMetaStateZaids )
@@ -80,9 +80,9 @@ TEUCHOS_UNIT_TEST( AllIsotopes, getMetaStateZaids )
   
     Transmutation::AllIsotopes::getMetaStateZaids(z, meta_state_zaids);
 
-    TEST_COMPARE(meta_state_zaids.front(), == , 1049115);
+    TEST_COMPARE(meta_state_zaids.front(), == , 1049110);
     TEST_COMPARE(meta_state_zaids.back(), == , 1049131);
-    TEST_COMPARE(meta_state_zaids.size(), == , 25);
+    TEST_COMPARE(meta_state_zaids.size(), == , 29);
 }
 
 TEUCHOS_UNIT_TEST( AllIsotopes, getAllMetaStateZaids)
@@ -91,9 +91,9 @@ TEUCHOS_UNIT_TEST( AllIsotopes, getAllMetaStateZaids)
   
     Transmutation::AllIsotopes::getAllMetaStateZaids(meta_state_zaids);
 
-    TEST_COMPARE(meta_state_zaids.front(), == , 1030071);
-    TEST_COMPARE(meta_state_zaids.back(), == , 1048115);
-    TEST_COMPARE(meta_state_zaids.size(), == , 191);
+    TEST_COMPARE(meta_state_zaids.front(), == , 1045101);
+    TEST_COMPARE(meta_state_zaids.back(), == , 1048113);
+    TEST_COMPARE(meta_state_zaids.size(), == , 242);
 }
 
 //---------------------------------------------------------------------------//

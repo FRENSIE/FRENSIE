@@ -27,7 +27,7 @@ public:
   static void getAllMetaStateZaids(Teuchos::Array<int>& meta_state_zaids);
 private:
   static boost::unordered_map<int, std::pair<int,int> > master_isotope_map;
-  static boost::unordered_map<int, std::vector<int> > master_meta_state_isotope_map; 
+  static boost::unordered_map<int, std::vector<int> > master_meta_state_isotope_map;
 };
 
 } 

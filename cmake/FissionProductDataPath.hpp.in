@@ -1,0 +1,22 @@
+//---------------------------------------------------------------------------//
+//!
+//! \file   ENDFFissionProductDataPath.hpp
+//! \author Alex Bennett
+//! \brief  Macro to set up ENDF Fission Products data paths
+//!
+//---------------------------------------------------------------------------//
+
+#ifndef ENDF_FISSION_PRODUCT_DATA_PATH_HPP
+#define ENDF_FISSION_PRODUCT_DATA_PATH_HPP
+
+// Platform specific ENDF Fission Product data path
+#define ENDF_NEUTRON_INDUCED_FISSION_PRODUCT_DIRECTORY "${CMAKE_SOURCE_DIR}/data/endf_fission_yields_VII.1/neutron_induced_fission/"
+#define ENDF_SPONTANEOUS_FISSION_PRODUCT_DIRECTORY "${CMAKE_SOURCE_DIR}/data/fission_yields/endf_fission_yields_VII.1/spontaneous_fission/"
+#define UKFY_SPONTANEOUS_FISSION_PRODUCT_DIRECTORY "${CMAKE_SOURCE_DIR}/data/fission_yields/UKFY4.1_fission_yields/spontaneous_fission/"
+
+#endif // end ENDF_FISSION_PRODUCT_DATA_PATH_HPP
+
+//---------------------------------------------------------------------------//
+// end ENDFFissionProductDataPath.hpp 
+//---------------------------------------------------------------------------//
+

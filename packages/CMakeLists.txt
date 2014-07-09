@@ -10,7 +10,7 @@ ADD_SUBDIRECTORY(data)
 INCLUDE_DIRECTORIES(data/ace/src data/epdl/src data/endf/src data/decay/src)
 
 ADD_SUBDIRECTORY(facemc)
-INCLUDE_DIRECTORIES(facemc)
+INCLUDE_DIRECTORIES(facemc/core/src)
 
 ADD_SUBDIRECTORY(transmutation)
 INCLUDE_DIRECTORIES(transmutation/src)

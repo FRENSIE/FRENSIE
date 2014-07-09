@@ -55,13 +55,18 @@ module utility_odepack_helper
         ! Length of rwork array
         ! rwork is the working array
         allocate(rwork(1:length_working_array))
-     
+        rwork(:) = 0.0 
+
         ! Length of iwork array
         ! iwork is the integer working array
         ! set to 30
         liw = 30
         allocate(iwork(liw))
-     
+        iwork(:) = 0  
+
+        ! Increase maximum number of steps
+        iwork(6) = 10000;  
+ 
         ! Number of differential equations
         neq = matrix_dimension
        
@@ -81,7 +86,8 @@ module utility_odepack_helper
         istate = 1
      
         ! Set to 0 for normal inputs
-        iopt = 0
+        ! Set to 1 for option inputs
+        iopt = 1
      
         ! Method flag
         ! 10 for nonstiff method
@@ -92,6 +98,11 @@ module utility_odepack_helper
                      itask, istate, iopt, rwork, length_working_array, iwork, &
                      liw, jex, mf)
 
+        if( istate < 0 ) then
+            write(*,*) 'Error: Matrix was not solved correctly using DLSODES.'
+            write(*,*) 'Error Code: istate = ' , istate
+        endif
+
         deallocate(odepack_matrix)
 
      end subroutine lsodes_solver
@@ -99,7 +110,7 @@ module utility_odepack_helper
      subroutine fex(neq, t, y, ydot)
      ! Subroutine for the right hand side vector
      
-        double precision :: t, y(2), ydot(2)
+        double precision :: t, y(neq), ydot(neq)
         integer, intent(inout) :: neq    
 
         ydot(:) = matmul(odepack_matrix(:,:),y(:))
@@ -109,7 +120,7 @@ module utility_odepack_helper
      subroutine jex(neq, t, y, j, ia, ja, pdj)
      ! Sets up the matrix
      
-         double precision :: t, y(2), pdj(2)
+         double precision :: t, y(neq), pdj(neq)
          integer :: ia(*), ja(*)
          integer, intent(inout) :: neq, j 
 

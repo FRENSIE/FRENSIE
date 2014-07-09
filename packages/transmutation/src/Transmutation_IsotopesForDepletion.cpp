@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Transmutation_IsotopesForDepletion.hpp"
 #include "Transmutation_AllIsotopes.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace Transmutation {
 
@@ -35,9 +36,28 @@ void IsotopesForDepletion::getIsotopes( Teuchos::Array<int>& zaids )
     std::sort( zaids.begin() , zaids.end() , IsotopesForDepletion::sZaidComparison );
 };
 
-bool IsotopesForDepletion::sZaidComparison(int i, int j)
+int IsotopesForDepletion::getLocation(const int input_zaid, const Teuchos::Array<int>& zaids)
 {
-    if( i < 1000000 && j > 1000000)
+   // Make sure the input zaid is positive
+   testPrecondition( input_zaid >= 0 );
+
+   // Search for input zaid location
+   for(int i = 0; i != zaids.length(); i++)
+   {
+      if( input_zaid == zaids[i] )
+      {
+         return i;
+      }
+   }
+   return -1;
+}
+
+bool IsotopesForDepletion::sZaidComparison(const int i, const int j)
+{
+    // Make sure i and j are numbers greater then 0
+    testPrecondition( i > 0 and j > 0 );
+
+    if( i < 1000000 and j > 1000000)
     {
          if( j > 2000000 )
          {
@@ -48,7 +68,7 @@ bool IsotopesForDepletion::sZaidComparison(int i, int j)
               return i <= j - 1000000;
          }
     }
-    else if( i > 1000000 && j < 1000000)
+    else if( i > 1000000 and j < 1000000)
     {
          if( i > 2000000)
          {
@@ -59,9 +79,9 @@ bool IsotopesForDepletion::sZaidComparison(int i, int j)
               return i - 1000000 < j;
          }
     }
-    else if( i > 1000000 && j > 1000000)
+    else if( i > 1000000 and j > 1000000)
     {
-         if( i > 2000000 && j > 2000000)
+         if( i > 2000000 and j > 2000000)
          {
                return i < j;
          }
