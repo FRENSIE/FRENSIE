@@ -85,10 +85,10 @@ private:
 			   const Teuchos::ArrayView<const double>& dlw_block );
 
   // Calculate the AND block angular distribution array sizes
-  void calculateAngularDistArraySizes( 
-                    const Teuchos::ArrayView<const double>& land_block,
-		    const Teuchos::ArrayView<const double>& and_block,
-                    Teuchos::Array<unsigned>& angular_dist_array_sizes ) const;
+  void calculateDistArraySizes( 
+                    const Teuchos::ArrayView<const double>& location_block,
+		    const Teuchos::ArrayView<const double>& data_block,
+                    Teuchos::Array<unsigned>& dist_array_sizes ) const;
 
   // The default (isotropic) angle cosine distribution
   static Teuchos::RCP<Utility::OneDDistribution> isotropic_angle_cosine_dist;

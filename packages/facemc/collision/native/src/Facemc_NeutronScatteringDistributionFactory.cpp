@@ -66,10 +66,12 @@ void NeutronScatteringDistributionFactory::createElasticScatteringDistribution(
 {
   const Teuchos::ArrayView<const double>& raw_angular_dist = 
     d_reaction_angular_dist.find( N__N_ELASTIC_REACTION )->second;
-  
+ 
+//  std::cout << raw_angular_dist << std::endl;
+ 
   // Get the number of energies at which the angular distribution is tabulated
   unsigned num_tabulated_energies = static_cast<unsigned>(raw_angular_dist[0]);
-  
+
   // Get the energy grid
   Teuchos::ArrayView<const double> energy_grid = 
     raw_angular_dist( 1, num_tabulated_energies);
@@ -221,6 +223,8 @@ NeutronScatteringDistributionFactory::initializeReactionRefFrameMap(
       d_reaction_cm_scattering[reaction->first] = true;
     else
       d_reaction_cm_scattering[reaction->first] = false;
+    
+    ++reaction;
   }
 }
 
@@ -243,6 +247,8 @@ NeutronScatteringDistributionFactory::initializeReactionAngularDistStartIndexMap
     // Subtract by one to get C-array index
     d_reaction_angular_dist_start_index[reaction_order->first] = 
       static_cast<int>( land_block[reaction_order->second] ) - 1;
+
+    ++reaction_order;
   }
 }
 
@@ -256,7 +262,7 @@ NeutronScatteringDistributionFactory::initializeReactionAngularDistMap(
 {
   // Calculate the size of each angular distribution array
   Teuchos::Array<unsigned> angular_dist_array_sizes;
-  calculateAngularDistArraySizes( land_block, 
+  calculateDistArraySizes( land_block, 
 				  and_block, 
 				  angular_dist_array_sizes );
 
@@ -264,6 +270,9 @@ NeutronScatteringDistributionFactory::initializeReactionAngularDistMap(
   // handled separately
   d_reaction_angular_dist[N__N_ELASTIC_REACTION] = 
     and_block( 0u, angular_dist_array_sizes[0] );
+
+//    std::cout << angular_dist_array_sizes[0] << std::endl;
+//    std::cout << and_block( 0u, angular_dist_array_sizes[0] ) << std::endl;
 
   // Handle all other distributions
   boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
@@ -324,49 +333,103 @@ NeutronScatteringDistributionFactory::initializeReactionEnergyDistMap(
 			    const Teuchos::ArrayView<const double>& ldlw_block,
 			    const Teuchos::ArrayView<const double>& dlw_block )
 {
+  // Calculate the size of each energy distribution array
+  Teuchos::Array<unsigned> energy_dist_array_sizes;
+  calculateDistArraySizes( ldlw_block, 
+				 dlw_block, 
+				 energy_dist_array_sizes );
+
+  // Handle all other distributions
+  boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
+    reaction_order, end_reaction_order;
+  reaction_order = d_reaction_ordering.begin();
+  end_reaction_order = d_reaction_ordering.end();
+
+  int dist_index;
+  int dist_array_size;
+  
+  // Elastic scattering will always be the first entry in the land block -
+  // increment all indices by 1 to account for this
+  while( reaction_order != end_reaction_order )
+  {
+    std::cout << "----------------------------" << std::endl;
+    std::cout << "reaction_order " << reaction_order->second << std::endl;
+
+    dist_index = static_cast<int>( ldlw_block[reaction_order->second] );
+
+    dist_array_size = energy_dist_array_sizes[reaction_order->second];
+    
+    d_reaction_energy_dist[reaction_order->first] =
+	    dlw_block( dist_index - 1u, dist_array_size );
+    
+    ++reaction_order;
+  }
+
+  // Check that every reaction has been found
+  testPostcondition( d_reaction_energy_dist.size() == d_reaction_ordering.size() );
 
 }
 
-// Calculate the AND block angular distribution array sizes
+// Calculate the data block angular distribution array sizes
 void 
-NeutronScatteringDistributionFactory::calculateAngularDistArraySizes( 
-                     const Teuchos::ArrayView<const double>& land_block,
-		     const Teuchos::ArrayView<const double>& and_block,
-                     Teuchos::Array<unsigned>& angular_dist_array_sizes ) const
+NeutronScatteringDistributionFactory::calculateDistArraySizes( 
+                     const Teuchos::ArrayView<const double>& location_block,
+		     const Teuchos::ArrayView<const double>& data_block,
+                     Teuchos::Array<unsigned>& dist_array_sizes ) const
 {
-  int dist_index;
-  
-  // Strip the LAND block of index values <= 0
-  Teuchos::Array<int> simplified_land_block;
-  for( unsigned i = 0u; i < land_block.size(); ++i )
+  unsigned first_index = 0, second_index = 1;
+
+  dist_array_sizes.resize( location_block.size() );
+
+  // find first/next nonzero positive location block values
+  while( first_index != location_block.size() )
   {
-    dist_index = static_cast<int>( land_block[i] );
-    
-    if( dist_index > 0 )
-      simplified_land_block.push_back( dist_index );
+    if( location_block[ first_index ]  > 0 )
+    {
+      if( first_index < location_block.size() - 1)
+      {
+        // find the second nonzero positive location block value
+        while( second_index != location_block.size() )
+        {
+          if( location_block[ second_index ] > 0 )
+          {
+            dist_array_sizes[ first_index ] = location_block[ second_index ] - location_block[ first_index ];
+            break;
+          }
+          else
+          {
+            dist_array_sizes[ second_index ] = 0;
+          }
+          ++second_index;
+        }
+        // Check if the second index is beyond the bounds of the array
+        if( second_index == location_block.size() and first_index != location_block.size() - 1 )
+        {
+          dist_array_sizes[ first_index ] = data_block.size() + 1 - location_block[first_index];
+        }  
+        first_index = second_index;
+        ++second_index;
+      }
+      else
+      {
+        dist_array_sizes[ first_index ] = data_block.size() + 1 - location_block[first_index];
+        ++first_index;
+        ++second_index;
+      }
+    }
     else
-      simplified_land_block.push_back( simplified_land_block.back() );
+    {
+      dist_array_sizes[ first_index ] = 0;
+      ++first_index;
+      ++second_index;
+    }
   }
-  
-  unsigned array_size;
-  
-  // resize the array sizes array
-  angular_dist_array_sizes.resize( simplified_land_block.size() );
-  
-  // Calculate the angular distribution array sizes
-  for( unsigned i = 0u; i < simplified_land_block.size(); ++i )
-  {
-    if( i < simplified_land_block.size() - 1u )
-      array_size = simplified_land_block[i+1u] - simplified_land_block[i];
-    else
-      array_size = and_block.size() + 1 - simplified_land_block[i];
-    
-    angular_dist_array_sizes[i] = array_size;
-  }
-  
-  // Make sure every index in the land block has a corresponding array size
-  testPostcondition( angular_dist_array_sizes.size() ==
-		     land_block.size() );
+ 
+  std::cout << dist_array_sizes << std::endl;
+ 
+  // Make sure every index in the location block has a corresponding array size
+  testPostcondition( dist_array_sizes.size() ==
+		     location_block.size() );
 }								   
 
 } // end Facemc namespace
