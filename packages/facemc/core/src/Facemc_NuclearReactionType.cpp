@@ -12,6 +12,7 @@
 
 // FRENSIE Includes
 #include "Facemc_NuclearReactionType.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Facemc{
 
@@ -25,6 +26,7 @@ NuclearReactionType convertUnsignedToNuclearReactionType(
   case 2u: return N__N_ELASTIC_REACTION;
   case 3u: return N__N_NON_ELASTIC_REACTION;
   case 4u: return N__N_INELASTIC_REACTION;
+  case 5u: return N__ANYTHING_REACTION
   case 11u: return N__2N_D_REACTION;
   case 16u: return N__2N_REACTION;
   case 17u: return N__3N_REACTION;
@@ -167,9 +169,10 @@ NuclearReactionType convertUnsignedToNuclearReactionType(
   case 301u: return N__AVERAGE_HEATING;
   case 444u: return N__DPA;
   default:
-    std::stringstream ss;
-    ss << "Error: ENDF reaction (MT #) " << reaction << " is unknown.";
-    throw std::runtime_error( ss.str() );
+    TEST_FOR_EXCEPTION( true,
+			std::runtime_error,
+			"Error: ENDF reaction (MT #) " << reaction <<
+			" is unknown." );
   }
 }
 
