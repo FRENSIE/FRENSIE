@@ -26,11 +26,6 @@ class NeutronScatteringDistribution
 
 public:
 
-  //! Typedef for energy dependent angular distribution
-  typedef Teuchos::Array<Utility::Pair<double,
-			       Teuchos::RCP<Utility::OneDDistribution> > > 
-  AngularDistribution;
-
   //! Constructor 
   NeutronScatteringDistribution( const double atomic_weight_ratio );
 
@@ -53,11 +48,6 @@ protected:
 
   //! Sample an azimuthal angle from a uniform distribution
   double sampleAzimuthalAngle() const;
-
-  //! Sample a scattering angle cosine
-  double sampleScatteringAngleCosine( 
-		       const double energy,
-		       const AngularDistribution& angular_distribution ) const;
 
   //! Calculate the center-of-mass velocity
   void calculateCenterOfMassVelocity(const double neutron_velocity[3],
