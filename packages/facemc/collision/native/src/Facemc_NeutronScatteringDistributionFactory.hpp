@@ -125,6 +125,32 @@ private:
   // A map of the reaction types (MT #s) and the corresponding energy dist
   boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >
   d_reaction_energy_dist;
+
+protected:
+
+  // Returns a map of the reaction types (MT #s) and their AND block ordering
+  const boost::unordered_map<NuclearReactionType,unsigned>& getReactionOrdering() const;
+
+  // Returns a map of the reaction types (MT #s) and the scattering reference frame
+  // Note: True = center-of-mass, False = lab
+  const boost::unordered_map<NuclearReactionType,bool>& getReactionCMScattering() const;
+  
+  // Returns a set of the reaction types (MT #s) with isotropic scattering only
+  const boost::unordered_set<NuclearReactionType>& getReactionsWithIsotropicScatteringOnly() const;
+
+  // Returns a set of the reaction types (MT #s) with coupled energy-angle dist
+  const boost::unordered_set<NuclearReactionType>& getReactionsWithCoupledEnergyAngleDist() const;
+
+  // Returns a map of the reaction types (MT #s) and the corresponding angular dist
+  const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+  getReactionAngularDist() const;
+
+  // Returns a map of the reaction types (MT #s) and the angular dist start index
+  const boost::unordered_map<NuclearReactionType,int>& getReactionAngularDistStartIndex() const;
+  
+  // Returns a map of the reaction types (MT #s) and the corresponding energy dist
+  const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+  getReactionEnergyDist() const;
 };
 
 } // end Facemc namespace
