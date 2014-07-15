@@ -53,7 +53,7 @@ NuclearReactionType convertUnsignedToNuclearReactionType(
   case 42u: return N__3N_P_REACTION;
   case 44u: return N__N_2P_REACTION;
   case 45u: return N__N_P_ALPHA_REACTION;
-  case 51u: return N__N_EXICTED_STATE_1_REACTION;
+  case 51u: return N__N_EXCITED_STATE_1_REACTION;
   case 52u: return N__N_EXCITED_STATE_2_REACTION;
   case 53u: return N__N_EXCITED_STATE_3_REACTION;
   case 54u: return N__N_EXCITED_STATE_4_REACTION;

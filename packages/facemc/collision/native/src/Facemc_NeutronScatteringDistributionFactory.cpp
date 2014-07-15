@@ -352,9 +352,6 @@ NeutronScatteringDistributionFactory::initializeReactionEnergyDistMap(
   // increment all indices by 1 to account for this
   while( reaction_order != end_reaction_order )
   {
-    std::cout << "----------------------------" << std::endl;
-    std::cout << "reaction_order " << reaction_order->second << std::endl;
-
     dist_index = static_cast<int>( ldlw_block[reaction_order->second] );
 
     dist_array_size = energy_dist_array_sizes[reaction_order->second];
@@ -425,12 +422,61 @@ NeutronScatteringDistributionFactory::calculateDistArraySizes(
     }
   }
  
-  std::cout << dist_array_sizes << std::endl;
- 
   // Make sure every index in the location block has a corresponding array size
   testPostcondition( dist_array_sizes.size() ==
 		     location_block.size() );
 }								   
+
+// Returns a map of the reaction types (MT #s) and their AND block ordering
+const boost::unordered_map<NuclearReactionType,unsigned>& 
+NeutronScatteringDistributionFactory::getReactionOrdering() const
+{
+  return NeutronScatteringDistributionFactory::d_reaction_ordering;
+}
+
+// Returns a map of the reaction types (MT #s) and the scattering reference frame
+// Note: True = center-of-mass, False = lab
+const boost::unordered_map<NuclearReactionType,bool>& 
+NeutronScatteringDistributionFactory::getReactionCMScattering() const
+{
+  return NeutronScatteringDistributionFactory::d_reaction_cm_scattering;
+}
+
+// Returns a set of the reaction types (MT #s) with isotropic scattering only
+const boost::unordered_set<NuclearReactionType>& 
+NeutronScatteringDistributionFactory::getReactionsWithIsotropicScatteringOnly() const
+{
+  return NeutronScatteringDistributionFactory::d_reactions_with_isotropic_scattering_only;
+}
+
+// Returns a set of the reaction types (MT #s) with coupled energy-angle dist
+const boost::unordered_set<NuclearReactionType>& 
+NeutronScatteringDistributionFactory::getReactionsWithCoupledEnergyAngleDist() const
+{
+  return NeutronScatteringDistributionFactory::d_reactions_with_coupled_energy_angle_dist;
+}
+
+// Returns a map of the reaction types (MT #s) and the corresponding angular dist
+const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+NeutronScatteringDistributionFactory::getReactionAngularDist() const
+{
+  return NeutronScatteringDistributionFactory::d_reaction_angular_dist;
+}
+
+// Returns a map of the reaction types (MT #s) and the angular dist start index
+const boost::unordered_map<NuclearReactionType,int>& 
+NeutronScatteringDistributionFactory::getReactionAngularDistStartIndex() const
+{
+  return NeutronScatteringDistributionFactory::d_reaction_angular_dist_start_index;
+}
+
+// Returns a map of the reaction types (MT #s) and the corresponding energy dist
+const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+NeutronScatteringDistributionFactory::getReactionEnergyDist() const
+{
+  return NeutronScatteringDistributionFactory::d_reaction_energy_dist;
+}
+
 
 } // end Facemc namespace
 
