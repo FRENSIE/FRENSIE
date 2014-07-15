@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   Facemc_NeutronScatteringDistributionFactor.hpp
+//! \file   Facemc_NeutronScatteringDistributionFactory.hpp
 //! \author Alex Robinson
 //! \brief  Neutron scattering distribution factory class declaration
 //!
@@ -48,15 +48,36 @@ public:
   ~NeutronScatteringDistributionFactory()
   { /* ... */ }
 
-  //! Create the elastic scattering distribution
-  void createElasticScatteringDistribution( 
-                            Teuchos::RCP<NeutronScatteringDistribution>&
-			    elastic_distribution ) const;
-
   //! Create a scattering distribution 
   void createScatteringDistribution( 
 	      const NuclearReactionType reaction_type,
 	      Teuchos::RCP<NeutronScatteringDistribution>& distribution) const;
+
+protected:
+
+  // Returns a map of the reaction types (MT #s) and their AND block ordering
+  const boost::unordered_map<NuclearReactionType,unsigned>& getReactionOrdering() const;
+
+  // Returns a map of the reaction types (MT #s) and the scattering reference frame
+  // Note: True = center-of-mass, False = lab
+  const boost::unordered_map<NuclearReactionType,bool>& getReactionCMScattering() const;
+  
+  // Returns a set of the reaction types (MT #s) with isotropic scattering only
+  const boost::unordered_set<NuclearReactionType>& getReactionsWithIsotropicScatteringOnly() const;
+
+  // Returns a set of the reaction types (MT #s) with coupled energy-angle dist
+  const boost::unordered_set<NuclearReactionType>& getReactionsWithCoupledEnergyAngleDist() const;
+
+  // Returns a map of the reaction types (MT #s) and the corresponding angular dist
+  const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+  getReactionAngularDist() const;
+
+  // Returns a map of the reaction types (MT #s) and the angular dist start index
+  const boost::unordered_map<NuclearReactionType,int>& getReactionAngularDistStartIndex() const;
+  
+  // Returns a map of the reaction types (MT #s) and the corresponding energy dist
+  const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+  getReactionEnergyDist() const;
 
 private:
 
@@ -90,9 +111,6 @@ private:
 		    const Teuchos::ArrayView<const double>& data_block,
                     Teuchos::Array<unsigned>& dist_array_sizes ) const;
 
-  // The default (isotropic) angle cosine distribution
-  static Teuchos::RCP<Utility::OneDDistribution> isotropic_angle_cosine_dist;
-
   // The table name
   std::string d_table_name;
 
@@ -125,32 +143,6 @@ private:
   // A map of the reaction types (MT #s) and the corresponding energy dist
   boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >
   d_reaction_energy_dist;
-
-protected:
-
-  // Returns a map of the reaction types (MT #s) and their AND block ordering
-  const boost::unordered_map<NuclearReactionType,unsigned>& getReactionOrdering() const;
-
-  // Returns a map of the reaction types (MT #s) and the scattering reference frame
-  // Note: True = center-of-mass, False = lab
-  const boost::unordered_map<NuclearReactionType,bool>& getReactionCMScattering() const;
-  
-  // Returns a set of the reaction types (MT #s) with isotropic scattering only
-  const boost::unordered_set<NuclearReactionType>& getReactionsWithIsotropicScatteringOnly() const;
-
-  // Returns a set of the reaction types (MT #s) with coupled energy-angle dist
-  const boost::unordered_set<NuclearReactionType>& getReactionsWithCoupledEnergyAngleDist() const;
-
-  // Returns a map of the reaction types (MT #s) and the corresponding angular dist
-  const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
-  getReactionAngularDist() const;
-
-  // Returns a map of the reaction types (MT #s) and the angular dist start index
-  const boost::unordered_map<NuclearReactionType,int>& getReactionAngularDistStartIndex() const;
-  
-  // Returns a map of the reaction types (MT #s) and the corresponding energy dist
-  const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
-  getReactionEnergyDist() const;
 };
 
 } // end Facemc namespace

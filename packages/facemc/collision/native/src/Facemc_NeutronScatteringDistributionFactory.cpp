@@ -15,18 +15,10 @@
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringDistributionFactory.hpp"
-#include "Utility_UniformDistribution.hpp"
-#include "Utility_HistogramDistribution.hpp"
-#include "Utility_TabularDistribution.hpp"
-#include "Utility_ThirtyTwoEquiprobableBinDistribution.hpp"
+#include "Facemc_NeutronScatteringAngularDistributionFactory.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Facemc{
-
-// Initialize the static member data
-Teuchos::RCP<Utility::OneDDistribution> 
-NeutronScatteringDistributionFactory::isotropic_angle_cosine_dist(
-			  new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
 // Constructor
 NeutronScatteringDistributionFactory::NeutronScatteringDistributionFactory( 
@@ -60,131 +52,65 @@ NeutronScatteringDistributionFactory::NeutronScatteringDistributionFactory(
 }
 
 // Create a scattering distribution
-void NeutronScatteringDistributionFactory::createElasticScatteringDistribution(
-                            Teuchos::RCP<NeutronScatteringDistribution>&
-			    elastic_distribution ) const
-{
-  const Teuchos::ArrayView<const double>& raw_angular_dist = 
-    d_reaction_angular_dist.find( N__N_ELASTIC_REACTION )->second;
- 
-//  std::cout << raw_angular_dist << std::endl;
- 
-  // Get the number of energies at which the angular distribution is tabulated
-  unsigned num_tabulated_energies = static_cast<unsigned>(raw_angular_dist[0]);
-
-  // Get the energy grid
-  Teuchos::ArrayView<const double> energy_grid = 
-    raw_angular_dist( 1, num_tabulated_energies);
-  
-  // Get the location of the angular distribution for each energy
-  Teuchos::ArrayView<const double> distribution_indices = 
-    raw_angular_dist( num_tabulated_energies + 1,
-		      num_tabulated_energies );
-  
-  // Initialize the angular distribution array
-  Teuchos::Array<Utility::Pair<double,
-			       Teuchos::RCP<Utility::OneDDistribution> > >
-    angular_distribution( num_tabulated_energies );
-
-  for( unsigned i = 0u; i < energy_grid.size(); ++i )
-  {
-    angular_distribution[i].first = energy_grid[i];
-
-    int distribution_index = 
-      static_cast<int>( distribution_indices[i] );
-
-    // Thirty two equiprobable bin distribution
-    if( distribution_index > 0 )
-    {
-      Teuchos::ArrayView<const double> bin_boundaries = 
-	raw_angular_dist( distribution_index, 33 );
-
-      angular_distribution[i].second.reset( 
-	 new Utility::ThirtyTwoEquiprobableBinDistribution( bin_boundaries ) );
-    }
-
-    // Tabular distribution
-    else if( distribution_index < 0 )
-    {
-      // Distribution index is relative to beginning of AND block - subtract
-      // off start index of portion of and block for given MT #.
-      distribution_index = abs(distribution_index) - 1 -
-	d_reaction_angular_dist_start_index.find(
-						N__N_ELASTIC_REACTION)->second;
-      
-      unsigned interpolation_flag = 
-	raw_angular_dist[distribution_index];
-      
-      unsigned number_of_points_in_dist = 
-	raw_angular_dist[distribution_index + 1];
-      
-      Teuchos::ArrayView<const double> scattering_angle_cosine_grid = 
-	raw_angular_dist( distribution_index + 2,
-			  number_of_points_in_dist );
-
-      // Ignore the last evaluated point in the PDF
-      Teuchos::ArrayView<const double> pdf;
-
-      switch( interpolation_flag )
-      {
-      case 1u: // histogram interpolation
-	pdf = raw_angular_dist( 
-			     distribution_index + 2 + number_of_points_in_dist,
-			     number_of_points_in_dist - 1u );
-	
-	angular_distribution[i].second.reset( 
-	      new Utility::HistogramDistribution( scattering_angle_cosine_grid,
-						  pdf ) );
-	break;
-	
-      case 2u: // Linear-Linear interpolation
-	pdf = raw_angular_dist( 
-			     distribution_index + 2 + number_of_points_in_dist,
-			     number_of_points_in_dist );
-	
-	angular_distribution[i].second.reset( 
-	                 new Utility::TabularDistribution<Utility::LinLin>(
-						  scattering_angle_cosine_grid,
-						  pdf ) );
-						 
-	break;
-	
-      default:
-	std::stringstream ss;
-	ss << "Unknown interpolation flag found in table " << d_table_name
-	   << " for angular distribution of MT = 2: " << interpolation_flag;
-	
-	throw std::runtime_error( ss.str() );
-      }
-    }
-    
-    // Isotropic distribution
-    else
-    {
-      angular_distribution[i].second = 
-	NeutronScatteringDistributionFactory::isotropic_angle_cosine_dist;
-    }
-  }
-
-  // Create the elastic scattering distribution
-  elastic_distribution.reset(
-	    new ElasticNeutronScatteringDistribution( d_atomic_weight_ratio,
-						      angular_distribution ) );
-}
-
-// Create a scattering distribution
 void NeutronScatteringDistributionFactory::createScatteringDistribution(
 	      const NuclearReactionType reaction_type,
 	      Teuchos::RCP<NeutronScatteringDistribution>& distribution ) const
 {
-  switch( reaction_type )
+  // Make sure the reaction type has a scattering distribution (mult > 0)
+  remember( bool valid_reaction_type = N__N_ELASTIC_REACTION ||
+	    (d_reaction_ordering.find( reaction_type ) !=
+	     d_reaction_ordering.end()) );
+  testPrecondition( valid_reaction_type );
+  
+  // Create an angular distribution if scattering law 44 is not used
+  if( !d_reactions_with_coupled_energy_angle_dist.count( reaction_type ) )
   {
-  case N__N_ELASTIC_REACTION:
-    this->createElasticScatteringDistribution( distribution );
-    break;
-  default:
-    distribution.reset();
-    break;
+    Teuchos::RCP<NeutronScatteringAngularDistribution> angular_distribution;
+
+    if( !d_reactions_with_isotropic_scattering_only.count( reaction_type ) )
+    {
+      NeutronScatteringAngularDistributionFactory::createDistribution(
+       d_reaction_angular_dist.find( reaction_type )->second,
+       d_reaction_angular_dist_start_index.find( reaction_type )->second,
+       d_reaction_cm_scattering.find( reaction_type )->second,
+       d_table_name,
+       reaction_type,
+       angular_distribution ); 
+    }
+    // Create a purely isotropic scattering angle distribution
+    else
+    {
+      NeutronScatteringAngularDistributionFactory::createIsotropicDistribution(
+			d_reaction_cm_scattering.find( reaction_type )->second,
+			angular_distribution );
+    }
+
+    // Special Case: elastic scattering will have no energy distribution
+    if( reaction_type == N__N_ELASTIC_REACTION )
+    {
+      distribution.reset( 
+	    new ElasticNeutronScatteringDistribution( d_atomic_weight_ratio,
+						      angular_distribution ) );
+    }
+    // Create all other scattering distributions using the energy dist factory
+    else
+    {
+      // NeutronScatteringEnergyDistributionFactory::createDistribution(
+      // 	      d_reaction_energy_dist.find( reaction_type )->second,
+      // 	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
+      // 	      angular_distribution,
+      // 	      reaction_type,
+      // 	      distribution );
+    }
+  }
+  // Create a coupled angular-energy distribution (law 44)
+  else
+  {
+    // NeutronScatteringEnergyDistributionFactory::createCoupledDistribution(
+    // 	      d_reaction_energy_dist.find( reaction_type )->second,
+    // 	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
+    // 	      reaction_type,
+    // 	      distribution );
   }
 }
 
@@ -226,6 +152,9 @@ NeutronScatteringDistributionFactory::initializeReactionRefFrameMap(
     
     ++reaction;
   }
+
+  // Add the elastic scattering case (always CM)
+  d_reaction_cm_scattering[N__N_ELASTIC_REACTION] = true;
 }
 
 // Initialize the reaction type angular distribution start index map

@@ -107,6 +107,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionOrdering().size() ,==, 0);
 }
 
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionOrdering_o16 )
 {
@@ -138,26 +139,32 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionOrdering().find(Facemc::N__N_CONTINUUM_REACTION)->second ,==, 16 );
 }
 
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionCMScattering_h1 )
 {
-  TEST_COMPARE( neutron_distribution_factory_h1->getReactionCMScattering().size() ,==, 0);
+  TEST_COMPARE( neutron_distribution_factory_h1->getReactionCMScattering().size() ,==, 1);
+  TEST_ASSERT( neutron_distribution_factory_h1->getReactionCMScattering().find(Facemc::N__N_ELASTIC_REACTION)->second );
 }
 
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionCMScattering_o16 )
 {
-  TEST_COMPARE( neutron_distribution_factory_o16->getReactionCMScattering().size() ,==, 17);
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionCMScattering().size() ,==, 18);
+  TEST_ASSERT( neutron_distribution_factory_o16->getReactionCMScattering().find(Facemc::N__N_ELASTIC_REACTION)->second );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionCMScattering().find(Facemc::N__ANYTHING_REACTION)->second );
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionCMScattering().find(Facemc::N__N_CONTINUUM_REACTION)->second );
 }
 
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionsWithIsotropicScatteringOnly_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionsWithIsotropicScatteringOnly().size() ,==, 0 );
 }
 
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionsWithIsotropicScatteringOnly_o16 )
 {
@@ -168,12 +175,14 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
                neutron_distribution_factory_o16->getReactionsWithIsotropicScatteringOnly().end() )
 }
 
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionWithCoupledEnergyAngleDist_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionsWithCoupledEnergyAngleDist().size() ,==, 0 );
 }
 
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionWithCoupledEnergyAngleDist_o16 )
 {
@@ -184,6 +193,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
                neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() );
 }
 
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionAngularDist_h1 )
 {
@@ -195,6 +205,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionAngularDist().find(Facemc::N__N_ELASTIC_REACTION)->second.back() ,==, 1 );
 }
 
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionAngularDist_o16 )
 {
@@ -238,6 +249,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
 
 }
 
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionAngularDistStartIndex_h1 )
 {
@@ -245,6 +257,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionAngularDistStartIndex().find(Facemc::N__N_ELASTIC_REACTION)->second ,==, 0 );
 }
 
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionAngularDistStartIndex_o16 )
 {
@@ -253,12 +266,14 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDistStartIndex().find(Facemc::N__N_CONTINUUM_REACTION)->second ,==, -1 );
 }
 
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionEnergyDist_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionEnergyDist().size() ,==, 0 );
 }
 
+//---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionEnergyDist_o16 )
 {
@@ -364,13 +379,17 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
   TEST_FLOATING_EQUALITY( neutron_distribution_factory_o16->getReactionEnergyDist().find(Facemc::N__N_CONTINUUM_REACTION)->second.back(), 1.007868, 1e-15 );
 }
 
+//---------------------------------------------------------------------------//
 // Check that an elastic scattering distribution can be constructed
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   createElasticScatteringDist )
 {
   Teuchos::RCP<Facemc::NeutronScatteringDistribution> scattering_dist;
-  
-  neutron_distribution_factory_h1->createElasticScatteringDistribution( scattering_dist );
+
+  // Sample the hydrogen elastic scattering distribution
+  neutron_distribution_factory_h1->createScatteringDistribution(
+						 Facemc::N__N_ELASTIC_REACTION,
+						 scattering_dist );
 
   Facemc::NeutronState neutron( 0ull );
   neutron.setDirection( 0.0, 0.0, 1.0 );
@@ -395,6 +414,36 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
   std::cout << neutron << std::endl;
   scattering_dist->scatterNeutron( neutron, 
   				   ace_file_handler_h1->getTableTemperature() );
+
+  std::cout << neutron << std::endl;
+
+  // Create a the elastic scattering distribution for oxygen
+  neutron_distribution_factory_o16->createScatteringDistribution(
+						 Facemc::N__N_ELASTIC_REACTION,
+						 scattering_dist );
+
+  neutron.setDirection( 0.0, 0.0, 1.0 );
+  neutron.setEnergy( 1.0 );
+
+  std::cout << neutron << std::endl;
+  scattering_dist->scatterNeutron( neutron, 
+				   ace_file_handler_o16->getTableTemperature() );
+  
+  std::cout << neutron << std::endl;
+  scattering_dist->scatterNeutron( neutron, 
+  				   ace_file_handler_o16->getTableTemperature() );
+
+  std::cout << neutron << std::endl;
+  scattering_dist->scatterNeutron( neutron, 
+  				   ace_file_handler_o16->getTableTemperature() );
+
+  std::cout << neutron << std::endl;
+  scattering_dist->scatterNeutron( neutron, 
+  				   ace_file_handler_o16->getTableTemperature() );
+
+  std::cout << neutron << std::endl;
+  scattering_dist->scatterNeutron( neutron, 
+  				   ace_file_handler_o16->getTableTemperature() );
 
   std::cout << neutron << std::endl;
 }

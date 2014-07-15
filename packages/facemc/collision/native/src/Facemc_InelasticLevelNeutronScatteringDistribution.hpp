@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringDistribution.hpp"
+#include "Facemc_NeutronScatteringAngularDistribution.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -26,33 +27,33 @@ class InelasticLevelNeutronScatteringDistribution : public NeutronScatteringDist
 
 public:
 
-   //! Constructor
-   InelasticLevelNeutronScatteringDistribution( const double atomic_weight_ratio,
-                                                const double param_a,
-                                                const double param_b,
-					        const Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >& angular_scattering_distribution );
+  //! Constructor
+  InelasticLevelNeutronScatteringDistribution( 
+		      const double atomic_weight_ratio,
+		      const double param_a,
+		      const double param_b,
+		      const Teuchos::RCP<NeutronScatteringAngularDistribution>&
+		      angular_scattering_distribution );
                                               
-   //! Destructor
-   ~InelasticLevelNeutronScatteringDistribution()
-   { /* ... */ }
-
-   //! Randomly scatter the neutron
-   void scatterNeutron( NeutronState& neutron,
+  //! Destructor
+  ~InelasticLevelNeutronScatteringDistribution()
+  { /* ... */ }
+  
+  //! Randomly scatter the neutron
+  void scatterNeutron( NeutronState& neutron,
 		       const double temperature ) const;
     
 private:
 
-   // (A+1)/A * |Q|
-   double d_param_a;
-
-   // (A/(A+1))^2
-   double d_param_b;
-
-   // The incoming energy dependent angular scattering distribution
-   Teuchos::Array<Utility::Pair<double,
-			       Teuchos::RCP<Utility::OneDDistribution> > > 
-   d_angular_scattering_distribution;
-
+  // (A+1)/A * |Q|
+  double d_param_a;
+  
+  // (A/(A+1))^2
+  double d_param_b;
+  
+  // The incoming energy dependent angular scattering distribution
+  Teuchos::RCP<NeutronScatteringAngularDistribution> 
+  d_angular_scattering_distribution;
 };
 
 } // End facemc namespace

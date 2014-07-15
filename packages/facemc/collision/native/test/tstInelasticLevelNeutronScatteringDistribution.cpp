@@ -39,14 +39,17 @@ void initializeScatteringDistribution(
   raw_scattering_distribution[1].first = 2e1;
   raw_scattering_distribution[1].second = delta_dist;
 
+  Teuchos::RCP<Facemc::NeutronScatteringAngularDistribution> angular_dist(
+                             new Facemc::NeutronScatteringAngularDistribution(
+					       raw_scattering_distribution ) );
   // Q value is 1 and A is 1
   // param_a = (A + 1)/A * |Q| = 2.0
   // param_b = (A/(A + 1)^2 = 0.25
   scattering_dist.reset( new Facemc::InelasticLevelNeutronScatteringDistribution( 
-					       atomic_weight_ratio,
-                                               2.0,
-                                               0.25,
-					       raw_scattering_distribution ) );
+					                   atomic_weight_ratio,
+							   2.0,
+							   0.25,
+							   angular_dist ) );
 }
 
 //---------------------------------------------------------------------------//
