@@ -73,12 +73,15 @@ protected:
   getReactionAngularDist() const;
 
   // Returns a map of the reaction types (MT #s) and the angular dist start index
-  const boost::unordered_map<NuclearReactionType,int>& getReactionAngularDistStartIndex() const;
+  const boost::unordered_map<NuclearReactionType,unsigned>& getReactionAngularDistStartIndex() const;
   
   // Returns a map of the reaction types (MT #s) and the corresponding energy dist
   const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
   getReactionEnergyDist() const;
 
+  // Returns a map of the reaction types (MT #s) and the energy dist start index
+  const boost::unordered_map<NuclearReactionType,unsigned>& getReactionEnergyDistStartIndex() const;
+  
 private:
 
   // Initialize the reaction type ordering map
@@ -99,6 +102,10 @@ private:
   void initializeReactionAngularDistMap(
 			   const Teuchos::ArrayView<const double>& land_block,
 			   const Teuchos::ArrayView<const double>& and_block );
+
+  // Initialize the reaction type energy distribution start index map
+  void initializeReactionEnergyDistStartIndexMap(
+			  const Teuchos::ArrayView<const double>& ldlw_block );
 
   // Initialize the reaction type energy distribution map
   void initializeReactionEnergyDistMap(
@@ -137,8 +144,12 @@ private:
   d_reaction_angular_dist;
 
   // A map of the reaction types (MT #s) and the angular dist start index
-  boost::unordered_map<NuclearReactionType,int> 
+  boost::unordered_map<NuclearReactionType,unsigned> 
   d_reaction_angular_dist_start_index;
+  
+  // A map of the reaction types (MT #s) and the energy dist start index
+  boost::unordered_map<NuclearReactionType,unsigned> 
+  d_reaction_energy_dist_start_index;
   
   // A map of the reaction types (MT #s) and the corresponding energy dist
   boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >

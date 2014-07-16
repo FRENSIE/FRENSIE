@@ -77,7 +77,7 @@ void NeutronScatteringAngularDistributionFactory::createDistribution(
       // off start index of portion of and block for given MT #.
       distribution_index = abs(distribution_index) - 1 -
 	and_block_array_start_index;
-      
+ 
       unsigned interpolation_flag = 
 	and_block_array[distribution_index];
       
