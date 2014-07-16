@@ -101,18 +101,13 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
        	      d_reaction_energy_dist.find( reaction_type )->second,
        	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
        	      d_table_name,
-       	      reaction_type);
-       //	      distribution );
+       	      reaction_type,
+	      energy_distribution );
     }
   }
   // Create a coupled angular-energy distribution (law 44)
   else
   {
-       NeutronScatteringEnergyDistributionFactory::createDistribution(
-       	      d_reaction_energy_dist.find( reaction_type )->second,
-       	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
-       	      d_table_name,
-              reaction_type);
     // NeutronScatteringEnergyDistributionFactory::createCoupledDistribution(
     // 	      d_reaction_energy_dist.find( reaction_type )->second,
     // 	      d_reaction_energy_dist_start_index.find( reaction_type )->second,

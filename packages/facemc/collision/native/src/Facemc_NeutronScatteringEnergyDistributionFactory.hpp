@@ -15,9 +15,8 @@
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringEnergyDistribution.hpp"
+#include "Facemc_NeutronScatteringDistribution.hpp"
 #include "Facemc_NuclearReactionType.hpp"
-
-#include "Facemc_NeutronScatteringDistributionFactory.hpp"
 
 namespace Facemc{
 
@@ -32,9 +31,8 @@ public:
 	    const Teuchos::ArrayView<const double>& dlw_block_array,
 	    const unsigned dlw_block_array_start_index,
 	    const std::string& table_name,
-	    const NuclearReactionType reaction);
-//	    Teuchos::RCP<ElasticNeutronScatteringDistribution>& distribution );
-	  //  Teuchos::RCP<NeutronScatteringEnergyDistribution>& distribution );
+	    const NuclearReactionType reaction,
+            Teuchos::RCP<NeutronScatteringDistribution>& distribution );
 
 private:
 
