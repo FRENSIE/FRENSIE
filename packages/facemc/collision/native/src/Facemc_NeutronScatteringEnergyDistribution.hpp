@@ -9,15 +9,6 @@
 #ifndef FACEMC_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
 #define FACEMC_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
-// FRENSIE Includes
-#include "Facemc_NeutronState.hpp"
-#include "Utility_PhysicalConstants.hpp"
-#include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_OneDDistribution.hpp"
-
 namespace Facemc{
 
 //! The energy scattering distribution base class
@@ -27,17 +18,29 @@ class NeutronScatteringEnergyDistribution
 public:
 
   //! Constructor
-  NeutronScatteringEnergyDistribution()
-  { /* ... */ }
+  NeutronScatteringEnergyDistribution( const bool is_cm_dist = false );
 
   //! Destructor
   virtual ~NeutronScatteringEnergyDistribution()
   { /* ... */ }
 
+  //! Return if the distribution is for the CM energy
+  bool isCMDistribution() const;
+
   //! Sample a scattering energy
   virtual double sampleEnergy( const double energy ) const = 0;
 
+private:
+
+  // Records if the energy distribution is for the cm energy
+  bool d_is_cm_dist;
 };
+
+// Return if the distribution is for the CM energy
+inline bool NeutronScatteringEnergyDistribution::isCMDistribution() const
+{
+  return d_is_cm_dist;
+}
 
 } // end Facemc namespace
 
