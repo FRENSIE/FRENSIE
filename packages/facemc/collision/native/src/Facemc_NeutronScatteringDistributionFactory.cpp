@@ -17,6 +17,9 @@
 #include "Facemc_NeutronScatteringDistributionFactory.hpp"
 #include "Facemc_NeutronScatteringAngularDistributionFactory.hpp"
 #include "Facemc_NeutronScatteringEnergyDistributionFactory.hpp"
+#include "Facemc_ElasticNeutronScatteringDistribution.hpp"
+#include "Facemc_InelasticLevelNeutronScatteringDistribution.hpp"
+#include "Facemc_IndependentEnergyAngleNeutronScatteringDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Facemc{
@@ -91,28 +94,50 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
     if( reaction_type == N__N_ELASTIC_REACTION )
     {
       distribution.reset( 
-	    new ElasticNeutronScatteringDistribution( d_atomic_weight_ratio,
-						      angular_distribution ) );
+	  new ElasticNeutronScatteringDistribution( d_atomic_weight_ratio,
+						    angular_distribution ) );
     }
     // Create all other scattering distributions using the energy dist factory
     else
     {
-       NeutronScatteringEnergyDistributionFactory::createDistribution(
+      Teuchos::RCP<NeutronScatteringEnergyDistribution> energy_distribution;
+      
+      NeutronScatteringEnergyDistributionFactory::createDistribution(
        	      d_reaction_energy_dist.find( reaction_type )->second,
        	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
        	      d_table_name,
        	      reaction_type,
 	      energy_distribution );
+      
+      // Create an inelastic level scattering distribution
+      if( energy_distribution->isCMDistribution() )
+      {
+	distribution.reset(
+			   new InelasticLevelNeutronScatteringDistribution(
+						      d_atomic_weight_ratio,
+						      energy_distribution,
+						      angular_distribution ) );
+      }
+      // Create an independent energy angle distribution
+      else
+      {
+	distribution.reset(
+	            new IndependentEnergyAngleNeutronScatteringDistribution( 
+						      d_atomic_weight_ratio,
+						      energy_distribution,
+						      angular_distribution ) );
+      }
     }
   }
   // Create a coupled angular-energy distribution (law 44)
   else
   {
-    // NeutronScatteringEnergyDistributionFactory::createCoupledDistribution(
-    // 	      d_reaction_energy_dist.find( reaction_type )->second,
-    // 	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
-    // 	      reaction_type,
-    // 	      distribution );
+    NeutronScatteringEnergyDistributionFactory::createCoupledDistribution(
+     	      d_reaction_energy_dist.find( reaction_type )->second,
+     	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
+	      d_table_name,
+     	      reaction_type,
+     	      distribution );
   }
 }
 

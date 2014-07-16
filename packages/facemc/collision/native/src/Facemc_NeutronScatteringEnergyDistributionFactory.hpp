@@ -32,7 +32,15 @@ public:
 	    const unsigned dlw_block_array_start_index,
 	    const std::string& table_name,
 	    const NuclearReactionType reaction,
-            Teuchos::RCP<NeutronScatteringDistribution>& distribution );
+            Teuchos::RCP<NeutronScatteringEnergyDistribution>& distribution );
+
+  //! Create the ENDF law 44 coupled energy-angle distribution
+  static void createCoupledDistribution(
+	           const Teuchos::ArrayView<const double>& dlw_block_array,
+		   const unsigned dlw_block_array_start_index,
+		   const std::string& table_name,
+		   const NuclearReactionType reaction,
+                   Teuchos::RCP<NeutronScatteringDistribution>& distribution );
 
 private:
 
