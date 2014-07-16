@@ -56,6 +56,7 @@ public:
   using Facemc::NeutronScatteringDistributionFactory::getReactionAngularDist;
   using Facemc::NeutronScatteringDistributionFactory::getReactionAngularDistStartIndex;
   using Facemc::NeutronScatteringDistributionFactory::getReactionEnergyDist;
+  using Facemc::NeutronScatteringDistributionFactory::getReactionEnergyDistStartIndex;
 
 
 };
@@ -187,10 +188,28 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
 		   getReactionWithCoupledEnergyAngleDist_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().size() ,==, 10 );
+
+  TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(Facemc::N__ANYTHING_REACTION) !=
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(Facemc::N__2N_REACTION) !=
-               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() );
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+  TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(Facemc::N__N_ALPHA_REACTION) !=
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+  TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(Facemc::N__N_3ALPHA_REACTION) !=
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+  TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(Facemc::N__N_P_REACTION) !=
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+  TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(Facemc::N__N_D_REACTION) !=
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+  TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(Facemc::N__2N_P_REACTION) !=
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+  TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(Facemc::N__N_2P_REACTION) !=
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
+  TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(Facemc::N__N_P_ALPHA_REACTION) !=
+               neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() ); 
   TEST_ASSERT( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().find(Facemc::N__N_CONTINUUM_REACTION) !=
                neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().end() );
+
 }
 
 //---------------------------------------------------------------------------//
@@ -261,9 +280,13 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
 		   getReactionAngularDistStartIndex_o16 )
 {
-  TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDistStartIndex().size() ,==, 18 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDistStartIndex().size() ,==, 6 );
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDistStartIndex().find(Facemc::N__N_ELASTIC_REACTION)->second ,==, 0 );
-  TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDistStartIndex().find(Facemc::N__N_CONTINUUM_REACTION)->second ,==, -1 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDistStartIndex().find(Facemc::N__N_EXCITED_STATE_1_REACTION)->second ,==, 101748 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDistStartIndex().find(Facemc::N__N_EXCITED_STATE_2_REACTION)->second ,==, 103223 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDistStartIndex().find(Facemc::N__N_EXCITED_STATE_3_REACTION)->second ,==, 104698 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDistStartIndex().find(Facemc::N__N_EXCITED_STATE_4_REACTION)->second ,==, 105795 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDistStartIndex().find(Facemc::N__N_EXCITED_STATE_5_REACTION)->second ,==, 106879 );
 }
 
 //---------------------------------------------------------------------------//
@@ -377,6 +400,36 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDist().find(Facemc::N__N_CONTINUUM_REACTION)->second.size() ,==, 8892 );
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDist().find(Facemc::N__N_CONTINUUM_REACTION)->second.front() ,==, 0 );
   TEST_FLOATING_EQUALITY( neutron_distribution_factory_o16->getReactionEnergyDist().find(Facemc::N__N_CONTINUUM_REACTION)->second.back(), 1.007868, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
+		   getReactionEnergyDistStartIndex_h1 )
+{
+  TEST_COMPARE( neutron_distribution_factory_h1->getReactionEnergyDistStartIndex().size() ,==, 0 );
+}
+
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
+		   getReactionEnergyDistStartIndex_o16 )
+{
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__ANYTHING_REACTION)->second ,==, 34 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__2N_REACTION)->second ,==, 5472 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_ALPHA_REACTION)->second ,==, 9333 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_3ALPHA_REACTION)->second ,==, 19930 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_P_REACTION)->second ,==, 23622 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_D_REACTION)->second ,==, 29905 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__2N_P_REACTION)->second ,==, 31623 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_2P_REACTION)->second ,==, 32589 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_P_ALPHA_REACTION)->second ,==, 33560 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_EXCITED_STATE_1_REACTION)->second ,==, 34476 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_EXCITED_STATE_2_REACTION)->second ,==, 34487 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_EXCITED_STATE_3_REACTION)->second ,==, 34498 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_EXCITED_STATE_4_REACTION)->second ,==, 34509 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_EXCITED_STATE_5_REACTION)->second ,==, 34520 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_EXCITED_STATE_6_REACTION)->second ,==, 34531 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_EXCITED_STATE_7_REACTION)->second ,==, 34542 );
+  TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(Facemc::N__N_CONTINUUM_REACTION)->second ,==, 34553 );
 }
 
 //---------------------------------------------------------------------------//

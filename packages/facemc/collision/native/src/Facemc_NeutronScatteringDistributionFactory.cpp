@@ -16,6 +16,7 @@
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringDistributionFactory.hpp"
 #include "Facemc_NeutronScatteringAngularDistributionFactory.hpp"
+#include "Facemc_NeutronScatteringEnergyDistributionFactory.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Facemc{
@@ -48,6 +49,7 @@ NeutronScatteringDistributionFactory::NeutronScatteringDistributionFactory(
   initializeReactionRefFrameMap( mtr_block, tyr_block );
   initializeReactionAngularDistStartIndexMap( land_block );
   initializeReactionAngularDistMap( land_block, and_block );
+  initializeReactionEnergyDistStartIndexMap( ldlw_block );
   initializeReactionEnergyDistMap( ldlw_block, dlw_block );
 }
 
@@ -95,17 +97,22 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
     // Create all other scattering distributions using the energy dist factory
     else
     {
-      // NeutronScatteringEnergyDistributionFactory::createDistribution(
-      // 	      d_reaction_energy_dist.find( reaction_type )->second,
-      // 	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
-      // 	      angular_distribution,
-      // 	      reaction_type,
-      // 	      distribution );
+       NeutronScatteringEnergyDistributionFactory::createDistribution(
+       	      d_reaction_energy_dist.find( reaction_type )->second,
+       	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
+       	      d_table_name,
+       	      reaction_type);
+       //	      distribution );
     }
   }
   // Create a coupled angular-energy distribution (law 44)
   else
   {
+       NeutronScatteringEnergyDistributionFactory::createDistribution(
+       	      d_reaction_energy_dist.find( reaction_type )->second,
+       	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
+       	      d_table_name,
+              reaction_type);
     // NeutronScatteringEnergyDistributionFactory::createCoupledDistribution(
     // 	      d_reaction_energy_dist.find( reaction_type )->second,
     // 	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
@@ -173,10 +180,12 @@ NeutronScatteringDistributionFactory::initializeReactionAngularDistStartIndexMap
   
   while( reaction_order != end_reaction_order )
   {
-    // Subtract by one to get C-array index
-    d_reaction_angular_dist_start_index[reaction_order->first] = 
-      static_cast<int>( land_block[reaction_order->second] ) - 1;
-
+    if( land_block[reaction_order->second + 1] > 0 )
+    {
+      // Subtract by one to get C-array index
+      d_reaction_angular_dist_start_index[reaction_order->first] = 
+        static_cast<unsigned>( land_block[reaction_order->second + 1] ) - 1;
+    }
     ++reaction_order;
   }
 }
@@ -255,6 +264,28 @@ NeutronScatteringDistributionFactory::initializeReactionAngularDistMap(
 		     d_reactions_with_coupled_energy_angle_dist.size() ==
 		     d_reaction_ordering.size() + 1 );
 }
+
+// Initialize the reaction type energy distribution start index map
+void 
+NeutronScatteringDistributionFactory::initializeReactionEnergyDistStartIndexMap(
+											const Teuchos::ArrayView<const double>& ldlw_block )
+{
+  // Add all other reactions
+  boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
+    reaction_order, end_reaction_order;
+  reaction_order = d_reaction_ordering.begin();
+  end_reaction_order = d_reaction_ordering.end();
+  
+  while( reaction_order != end_reaction_order )
+  {
+    // Subtract by one to get C-array index
+    d_reaction_energy_dist_start_index[reaction_order->first] = 
+      static_cast<unsigned>( ldlw_block[reaction_order->second] ) - 1;
+
+    ++reaction_order;
+  }
+}
+
 
 // Initialize the reaction type energy distribution map
 void 
@@ -393,7 +424,7 @@ NeutronScatteringDistributionFactory::getReactionAngularDist() const
 }
 
 // Returns a map of the reaction types (MT #s) and the angular dist start index
-const boost::unordered_map<NuclearReactionType,int>& 
+const boost::unordered_map<NuclearReactionType,unsigned>& 
 NeutronScatteringDistributionFactory::getReactionAngularDistStartIndex() const
 {
   return NeutronScatteringDistributionFactory::d_reaction_angular_dist_start_index;
@@ -404,6 +435,13 @@ const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> 
 NeutronScatteringDistributionFactory::getReactionEnergyDist() const
 {
   return NeutronScatteringDistributionFactory::d_reaction_energy_dist;
+}
+
+// Returns a map of the reaction types (MT #s) and the energy dist start index
+const boost::unordered_map<NuclearReactionType,unsigned>& 
+NeutronScatteringDistributionFactory::getReactionEnergyDistStartIndex() const
+{
+  return NeutronScatteringDistributionFactory::d_reaction_energy_dist_start_index;
 }
 
 
