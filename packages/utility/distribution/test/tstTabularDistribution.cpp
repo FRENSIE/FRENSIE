@@ -121,11 +121,15 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  double sample = distribution->sample();
-  TEST_EQUALITY_CONST( sample, 1e-3 );
+  unsigned bin_index;
 
-  sample = distribution->sample();
+  double sample = distribution->sample( bin_index );
+  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( bin_index, 0u );
+
+  sample = distribution->sample( bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( bin_index, 2u );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
