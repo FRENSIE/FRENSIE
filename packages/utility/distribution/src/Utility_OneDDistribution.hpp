@@ -9,6 +9,9 @@
 #ifndef UTILITY_ONE_D_DISTRIBUTION_HPP
 #define UTILITY_ONE_D_DISTRIBUTION_HPP
 
+// Std Lib Includes
+#include <limits>
+
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
 #include "Utility_ComparePolicy.hpp"
@@ -41,6 +44,9 @@ public:
   //! Return a random sample from the corresponding CDF (ignore sample eff.)
   virtual double sample() const = 0;
 
+  //! Return a random sample and sampled index from the corresponding CDF (ignore sample eff.)
+  virtual double sample( unsigned& sampled_bin_index ) const;
+
   //! Return the sampling efficiency from the distribution
   virtual double getSamplingEfficiency() const = 0;
 
@@ -56,6 +62,14 @@ public:
   //! Test if the distribution has the same bounds
   bool hasSameBounds( const OneDDistribution& distribution ) const;
 };
+
+//! Return a random sample and sampled index from the corresponding CDF (ignore sample eff.)
+inline double OneDDistribution::sample( unsigned& sampled_bin_index ) const
+{
+  sampled_bin_index = std::numeric_limits<unsigned>::max();
+
+  return this->sample();
+}
 
 // Test if the distribution has the same bounds
 inline bool OneDDistribution::hasSameBounds( 
