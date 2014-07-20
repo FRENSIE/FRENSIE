@@ -34,6 +34,20 @@
  }									\
 } 
 
+/*! Throw an exception always
+ *
+ * This macros should be used in conditional execution blocks that should never
+ * be reached (e.g. default case statement).
+ * \ingroup exception_macros
+ */
+#define THROW_EXCEPTION( Exception, msg ) \
+{					  \
+ std::ostringstream detailed_msg;	  \
+ detailed_msg << __FILE__ << ":" << __LINE__ << ":\n\n" \
+ << msg;						\
+ throw Exception(detailed_msg.str());			\
+}
+
 #endif // end UTILITY_EXCEPTION_TEST_MACROS_HPP
 
 //---------------------------------------------------------------------------//

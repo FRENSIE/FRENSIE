@@ -19,6 +19,7 @@
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ThirtyTwoEquiprobableBinDistribution.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Facemc{
@@ -196,8 +197,13 @@ NeutronScatteringDistributionFactory::initializeReactionOrderingMap(
 
   for( unsigned i = 0; i < mtr_block.size(); ++i )
   {
-    reaction = convertUnsignedToNuclearReactionType( 
+    try{
+      reaction = convertUnsignedToNuclearReactionType( 
 				       static_cast<unsigned>( mtr_block[i] ) );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			     "Error: unsuppported MT # found while parsing "
+			     "MTR block in table " << d_table_name << "\n." );
 
     if( tyr_block[i] != 0 )
       d_reaction_ordering[reaction] = i;
