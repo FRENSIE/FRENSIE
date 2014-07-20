@@ -59,7 +59,8 @@ void initializeElasticReaction(Teuchos::RCP<Facemc::NuclearReaction>& reaction)
 
   Teuchos::RCP<Facemc::NeutronScatteringDistribution> scattering_dist;
   
-  factory.createElasticScatteringDistribution( scattering_dist );
+  factory.createScatteringDistribution( Facemc::N__N_ELASTIC_REACTION,
+					scattering_dist );
 
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );

@@ -105,34 +105,44 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, sample )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // First bin
-  double sample = distribution->sample();
+  unsigned bin_index;
+  double sample = distribution->sample( bin_index );
   TEST_EQUALITY_CONST( sample, -2.0 );
+  TEST_EQUALITY_CONST( bin_index, 0u );
 
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   TEST_EQUALITY_CONST( sample, -1.5 );
+  TEST_EQUALITY_CONST( bin_index, 0u );  
 
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+  TEST_EQUALITY_CONST( bin_index, 0u );
   
   // Second bin
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   TEST_EQUALITY_CONST( sample, -1.0 );
+  TEST_EQUALITY_CONST( bin_index, 1u );
 
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0, 1e-14 );
+  TEST_EQUALITY_CONST( bin_index, 1u );
 
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+  TEST_EQUALITY_CONST( bin_index, 1u );
   
   // Third bin
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   TEST_EQUALITY_CONST( sample, 1.0 );
+  TEST_EQUALITY_CONST( bin_index, 2u );
   
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   TEST_FLOATING_EQUALITY( sample, 1.5, 1e-14 );
+  TEST_EQUALITY_CONST( bin_index, 2u );
 
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   TEST_FLOATING_EQUALITY( sample, 2.0, 1e-14 );
+  TEST_EQUALITY_CONST( bin_index, 2u );
 }
 
 //---------------------------------------------------------------------------//

@@ -12,10 +12,21 @@ ADD_EXECUTABLE(tstElasticNeutronScatteringDistribution
 TARGET_LINK_LIBRARIES(tstElasticNeutronScatteringDistribution facemc_collision_native)
 ADD_TEST(ElasticNeutronScatteringDistribution_test tstElasticNeutronScatteringDistribution)
 
+ADD_EXECUTABLE(tstInelasticLevelNeutronScatteringDistribution
+  tstInelasticLevelNeutronScatteringDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstInelasticLevelNeutronScatteringDistribution facemc_collision_native)
+ADD_TEST(InelasticLevelNeutronScatteringDistribution_test tstInelasticLevelNeutronScatteringDistribution)
+
 ADD_EXECUTABLE(tstNeutronScatteringDistributionFactory
   tstNeutronScatteringDistributionFactory.cpp)
 TARGET_LINK_LIBRARIES(tstNeutronScatteringDistributionFactory facemc_collision_native)
-ADD_TEST(NeutronScatteringDistributionFactory_test tstNeutronScatteringDistributionFactory --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
+ADD_TEST(NeutronScatteringDistributionFactory_test
+tstNeutronScatteringDistributionFactory
+--test_basic_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt"
+--test_basic_h1_ace_table="1001.70c"
+--test_basic_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt"
+--test_basic_o16_ace_table="8016.70c")
 
 ADD_EXECUTABLE(tstNuclearReaction
   tstNuclearReaction.cpp)

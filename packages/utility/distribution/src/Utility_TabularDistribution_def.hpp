@@ -9,6 +9,9 @@
 #ifndef UTILITY_TABULAR_DISTRIBUTION_DEF_HPP
 #define UTILITY_TABULAR_DISTRIBUTION_DEF_HPP
 
+// Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
+
 // FRENSIE Includes
 #include "Utility_DataProcessor.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -115,14 +118,24 @@ double TabularDistribution<InterpolationPolicy>::evaluatePDF(
 
 // Return a random sample from the distribution
 template<typename InterpolationPolicy>
-double TabularDistribution<InterpolationPolicy>::sample()
+inline double TabularDistribution<InterpolationPolicy>::sample()
 {
   return (const_cast<const TabularDistribution<InterpolationPolicy>*>(this))->sample();
 }
 
 // Return a random sample from the distribution
 template<typename InterpolationPolicy>
-double TabularDistribution<InterpolationPolicy>::sample() const
+inline double TabularDistribution<InterpolationPolicy>::sample() const
+{
+  unsigned bin_index;
+  
+  return this->sample( bin_index );
+}
+
+// Return a random sample and bin index from the distribution
+template<typename InterpolationPolicy>
+double TabularDistribution<InterpolationPolicy>::sample( 
+					    unsigned& sampled_bin_index ) const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
@@ -134,6 +147,12 @@ double TabularDistribution<InterpolationPolicy>::sample() const
 							 end,
 							 random_number );
 
+  // Calculate the sampled bin index
+  sampled_bin_index = std::distance(d_distribution.begin(),lower_bin_boundary);
+
+  // Calculate the sampled independent value
+  double sample;
+  
   double indep_value = lower_bin_boundary->first;
   double cdf_diff = random_number - lower_bin_boundary->second;
   double pdf_value = lower_bin_boundary->third;
@@ -142,12 +161,17 @@ double TabularDistribution<InterpolationPolicy>::sample() const
   // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m 
   if( slope != 0.0 )
   {
-    return indep_value + 
+    sample = indep_value + 
       (sqrt( pdf_value*pdf_value + 2*slope*cdf_diff ) - pdf_value)/slope;
   }
   // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
   else
-    return indep_value + cdf_diff/pdf_value;
+    sample =  indep_value + cdf_diff/pdf_value;
+
+  // Make sure the sample is valid
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( sample ) );
+
+  return sample;
 }
 
 // Return the sampling efficiency

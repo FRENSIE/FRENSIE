@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringDistribution.hpp"
+#include "Facemc_NeutronScatteringAngularDistribution.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -27,8 +28,10 @@ class ElasticNeutronScatteringDistribution : public NeutronScatteringDistributio
 public:
   
   //! Constructor
-  ElasticNeutronScatteringDistribution( const double atomic_weight_ratio,
-					const AngularDistribution& angular_scattering_distribution );
+  ElasticNeutronScatteringDistribution( 
+		      const double atomic_weight_ratio,
+                      const Teuchos::RCP<NeutronScatteringAngularDistribution>&
+		      angular_scattering_distribution );
 
   //! Destructor
   ~ElasticNeutronScatteringDistribution()
@@ -40,11 +43,9 @@ public:
 
 private:
 
-  // Sample center-of-mass scattering angle cosine
-  //double sampleCMScatteringAngleCosine( const double energy ) const;
-
   // The incoming energy dependent angular scattering distribution
-  AngularDistribution d_angular_scattering_distribution;
+  Teuchos::RCP<NeutronScatteringAngularDistribution> 
+  d_angular_scattering_distribution;
 };
 
 } // end Facemc namespace
