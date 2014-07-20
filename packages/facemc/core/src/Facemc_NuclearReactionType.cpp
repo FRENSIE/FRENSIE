@@ -12,6 +12,7 @@
 
 // FRENSIE Includes
 #include "Facemc_NuclearReactionType.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Facemc{
 
@@ -167,9 +168,9 @@ NuclearReactionType convertUnsignedToNuclearReactionType(
   case 301u: return N__AVERAGE_HEATING;
   case 444u: return N__DPA;
   default:
-    std::stringstream ss;
-    ss << "Error: ENDF reaction (MT #) " << reaction << " is unknown.";
-    throw std::runtime_error( ss.str() );
+    THROW_EXCEPTION( std::runtime_error,
+		     "Error: ENDF reaction (MT #) " << reaction <<
+		     " is not supported.\n" );
   }
 }
 
