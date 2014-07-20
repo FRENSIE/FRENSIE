@@ -64,6 +64,9 @@ public:
   //! Return a random sample from the distribution
   double sample() const;
 
+  //! Return a random sample and bin index from the distribution
+  double sample( unsigned& sampled_bin_index ) const;
+
   //! Return the sampling efficiency from the distribution
   double getSamplingEfficiency() const;
 
@@ -101,6 +104,20 @@ private:
   // The normalization constant
   double d_norm_constant;
 };
+
+// Return a random sample from the distribution
+inline double HistogramDistribution::sample() 
+{
+  return (const_cast<const HistogramDistribution*>(this))->sample();
+}
+
+// Return a random sample from the distribution
+inline double HistogramDistribution::sample() const
+{
+  unsigned bin_index;
+  
+  return this->sample( bin_index );
+}
 
 } // end Utility namespace
 

@@ -77,14 +77,8 @@ double HistogramDistribution::evaluatePDF( const double indep_var_value ) const
   }
 } 
 
-// Return a random sample from the distribution
-double HistogramDistribution::sample() 
-{
-  return (const_cast<const HistogramDistribution*>(this))->sample();
-}
-
-// Return a random sample from the distribution
-double HistogramDistribution::sample() const
+// Return a random sample and bin index from the distribution
+double HistogramDistribution::sample( unsigned& sampled_bin_index ) const
 {
   // Sample the bin
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
@@ -93,6 +87,8 @@ double HistogramDistribution::sample() const
     Search::binaryLowerBound<THIRD>( d_distribution.begin(),
 				     d_distribution.end(),
 				     random_number );
+
+  sampled_bin_index = std::distance( d_distribution.begin(), bin );
 
   return bin->first + (random_number - bin->third)/bin->second;
 }

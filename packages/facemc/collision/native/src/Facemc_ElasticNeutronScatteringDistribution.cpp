@@ -19,17 +19,18 @@ namespace Facemc{
 
 // Constructor
 ElasticNeutronScatteringDistribution::ElasticNeutronScatteringDistribution(
-                                              const double atomic_weight_ratio,
-					      const Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >& angular_scattering_distribution )
+		      const double atomic_weight_ratio,
+		      const Teuchos::RCP<NeutronScatteringAngularDistribution>&
+		      angular_scattering_distribution )
   : NeutronScatteringDistribution( atomic_weight_ratio ),
     d_angular_scattering_distribution( angular_scattering_distribution )
 { 
-  // Make sure the array has at least one value
-  testPrecondition( angular_scattering_distribution.size() > 0 );
-  // Make sure that the array is sorted
-  testPrecondition( Utility::Sort::isSortedAscending<Utility::FIRST>( 
-				     angular_scattering_distribution.begin(),
-				     angular_scattering_distribution.end() ) );
+  // Make sure the atomic weight ratio is valid
+  testPrecondition( atomic_weight_ratio > 0.0 );
+  // Make sure the angular distribution pointer is valid
+  testPrecondition( !angular_scattering_distribution.is_null() );
+  // Make sure the angular distribution is in the CM
+  testPrecondition( angular_scattering_distribution->isCMDistribution() );
 }
 
 // Randomly scatter the neutron
@@ -73,8 +74,7 @@ void ElasticNeutronScatteringDistribution::scatterNeutron(
 
   // Sample the scattering angle 
   double cm_scattering_angle_cosine = 
-    sampleScatteringAngleCosine( neutron.getEnergy(),
-				 d_angular_scattering_distribution );
+    d_angular_scattering_distribution->sampleAngleCosine( neutron.getEnergy());
 
   // Rotate the neutron velocity vector to the new angle
   // Note: The speed of the neutron does not change in the center-of-mass
