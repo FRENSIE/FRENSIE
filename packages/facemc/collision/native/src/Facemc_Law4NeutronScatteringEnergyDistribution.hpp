@@ -11,6 +11,7 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringEnergyDistribution.hpp"
