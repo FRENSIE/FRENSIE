@@ -81,9 +81,14 @@ protected:
 
   //! Create the reaction multiplicity map
   static void createReactionMultiplicityMap(
+   const std::string& table_name,
    const Teuchos::ArrayView<const double>& tyr_block,
+   const Teuchos::ArrayView<const double>& dlw_block,
    const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<NuclearReactionType,unsigned>& reaction_multiplicity );
+   boost::unordered_map<NuclearReactionType,unsigned>& 
+   reaction_multiplicity,
+   boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+   reaction_energy_dependent_multiplicity );
 
   //! Create the reaction threshold index map
   static void createReactionThresholdMap(
@@ -111,6 +116,8 @@ private:
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
+    const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+    reaction_energy_dependent_multiplicity,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
@@ -124,6 +131,8 @@ private:
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
+    const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+    reaction_energy_dependent_multiplicity,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
@@ -136,6 +145,8 @@ private:
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
+    const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+    reaction_energy_dependent_multiplicity,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
