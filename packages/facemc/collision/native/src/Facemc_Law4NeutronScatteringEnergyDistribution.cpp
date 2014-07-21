@@ -36,14 +36,17 @@ double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double energ
 {
   unsigned sampled_index, incoming_index;
 
-  return this->sampleEnergy( energy, sampled_index, incoming_index );
+  double energy_prime;
+
+  return this->sampleEnergy( energy, sampled_index, incoming_index, energy_prime );
 }
 
 
 // Sample a scattering energy
-double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double energy, 
+double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double& energy, 
                                                               unsigned& sampled_index, 
-                                                              unsigned& incoming_index) const
+                                                              unsigned& incoming_index,
+                                                              double& energy_prime) const
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0 );
@@ -85,9 +88,9 @@ double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double energ
     double random_num = Utility::RandomNumberGenerator::getRandomNumber<double>();
 
     if( random_num < interpolation_fraction )
-      outgoing_energy = upper_bin_boundary->second->sample( sampled_index );
+      energy_prime = upper_bin_boundary->second->sample( sampled_index );
     else
-      outgoing_energy = lower_bin_boundary->second->sample( sampled_index );
+      energy_prime = lower_bin_boundary->second->sample( sampled_index );
 
     // Calculate the energy bounds
     double energy_lower = lower_bin_boundary->second->getLowerBoundOfIndepVar() + interpolation_fraction *
@@ -99,12 +102,12 @@ double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double energ
 
     // Calculate the outgoing energy
     if( random_num < interpolation_fraction )
-      outgoing_energy = energy_lower + (outgoing_energy - upper_bin_boundary->second->getLowerBoundOfIndepVar()) *
+      outgoing_energy = energy_lower + (energy_prime - upper_bin_boundary->second->getLowerBoundOfIndepVar()) *
                       (energy_upper - energy_lower) / 
                       (upper_bin_boundary->second->getUpperBoundOfIndepVar() - 
                        upper_bin_boundary->second->getLowerBoundOfIndepVar());
     else
-      outgoing_energy = energy_lower + (outgoing_energy - lower_bin_boundary->second->getLowerBoundOfIndepVar()) *
+      outgoing_energy = energy_lower + (energy_prime - lower_bin_boundary->second->getLowerBoundOfIndepVar()) *
                       (energy_upper - energy_lower) / 
                       (lower_bin_boundary->second->getUpperBoundOfIndepVar() - 
                        lower_bin_boundary->second->getLowerBoundOfIndepVar());

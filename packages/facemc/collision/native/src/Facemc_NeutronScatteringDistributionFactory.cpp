@@ -134,6 +134,7 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
   else
   {
     NeutronScatteringEnergyDistributionFactory::createCoupledDistribution(
+              d_atomic_weight_ratio,
      	      d_reaction_energy_dist.find( reaction_type )->second,
      	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
 	      d_table_name,
