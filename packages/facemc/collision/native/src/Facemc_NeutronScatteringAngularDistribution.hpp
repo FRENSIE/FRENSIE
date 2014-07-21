@@ -9,9 +9,6 @@
 #ifndef FACEMC_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
 #define FACEMC_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
 
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "Facemc_NeutronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -32,8 +29,8 @@ public:
   AngularDistribution;
   
   //! Constructor
-  NeutronScatteringAngularDistribution( const AngularDistribution& dist,
-					const bool is_cm_dist = true );
+  NeutronScatteringAngularDistribution( const AngularDistribution& dist, 
+					const bool is_cm_dist );
 
   //! Destructor
   virtual ~NeutronScatteringAngularDistribution()
@@ -47,11 +44,11 @@ public:
 
 private:
   
-  // The angular distribution
-  AngularDistribution d_angular_distribution;
-
   // Records if the distribution is in the CM or Lab system
   bool d_is_cm_dist;
+
+  // The angular distribution
+  AngularDistribution d_angular_distribution;
 };
 
 // Return if the distribution is in the CM or Lab system

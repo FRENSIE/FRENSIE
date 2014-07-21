@@ -40,9 +40,9 @@ public:
   virtual double sampleEnergy( const double energy ) const = 0;
 
   //! Sample a scattering energy (and return the sampled bin index)
-  virtual double sampleEnergy( const double& energy, 
-			       unsigned& sampled_bin_index,
-                               unsigned& incoming_bin_index,
+  virtual double sampleEnergy( const double energy, 
+			       unsigned& incoming_bin_index,
+			       unsigned& outgoing_bin_index,
                                double& energy_prime ) const;
 
 private:
@@ -59,9 +59,9 @@ inline bool NeutronScatteringEnergyDistribution::isCMDistribution() const
 
 // Sample a scattering energy (and return the sampled bin index)
 inline double NeutronScatteringEnergyDistribution::sampleEnergy( 
-					    const double& energy, 
-					    unsigned& sampled_bin_index,
-                                            unsigned& incoming_bin_index,
+					    const double energy, 
+					    unsigned& incoming_bin_index,
+					    unsigned& outgoing_bin_index,
                                             double& energy_prime ) const
 {
   sampled_bin_index = std::numeric_limits<unsigned>::max();

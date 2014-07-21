@@ -11,7 +11,7 @@
 
 namespace Facemc {
 
-struct Law44HistogramInterpolation
+struct Law44HistogramInterpolationPolicy
 {
   //! Return interpolated A or R
   inline static double interpolate( const double& indep_var_prime,
@@ -24,7 +24,7 @@ struct Law44HistogramInterpolation
   }
 };
 
-struct Law44LinearLinearInterpolation
+struct Law44LinLinInterpolationPolicy
 {
   //! Return interpolated A or R
   inline static double interpolate( const double& indep_var_prime,

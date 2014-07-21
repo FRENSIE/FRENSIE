@@ -20,6 +20,7 @@
 #include "Facemc_EquiprobableBinNeutronScatteringEnergyDistribution.hpp"
 #include "Facemc_Law4NeutronScatteringEnergyDistribution.hpp"
 #include "Facemc_Law44NeutronScatteringDistribution.hpp"
+#include "Facemc_Law44ARDistribution.hpp"
 #include "Facemc_Law44InterpolationPolicy.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -178,17 +179,17 @@ void NeutronScatteringEnergyDistributionFactory::createCoupledDistribution(
                                                                incoming_energies); 
 
   // Initialize the energy distribution array
-  Law4NeutronScatteringEnergyDistribution::EnergyDistribution energy_distribution( incoming_energies );
+  Law4NeutronScatteringEnergyDistribution::EnergyDistribution 
+    energy_distribution( incoming_energies );
 
-  // Initialize the scattering distribution
-  Law44NeutronScatteringDistribution<Law44HistogramInterpolation>::ScatteringDistribution scattering_distribution( incoming_energies );
+  // Initialize the AR distribution array
+  Teuchos::Array<Teuchos::RCP<Law44ARDistribution> > 
+    ar_distribution( incoming_energies );
 
   // Loop through the incoming energies
   for(int i = 0; i != incoming_energies; i++)
   {
     energy_distribution[i].first = incoming_energies_array[i];
-
-    scattering_distribution[i].first = incoming_energies_array[i];
 
     int distribution_index = static_cast<int>( distribution_locations[i] ) - dlw_block_array_start_index - 1;
 
@@ -203,35 +204,50 @@ void NeutronScatteringEnergyDistributionFactory::createCoupledDistribution(
 
     int number_points_distribution = dlw_block_array[distribution_index + 1];
 
-    Teuchos::ArrayView<const double> outgoing_energy_grid = dlw_block_array( distribution_index + 2,
-                                                                             number_points_distribution );
+    Teuchos::ArrayView<const double> outgoing_energy_grid = 
+      dlw_block_array( distribution_index + 2, number_points_distribution );
 
-    scattering_distribution[i].second = dlw_block_array( distribution_index + 2, number_points_distribution );
-    scattering_distribution[i].third = dlw_block_array( distribution_index + 2 + 2 * number_points_distribution, 
-                                                        number_points_distribution );
-    scattering_distribution[i].fourth = dlw_block_array( distribution_index + 2 + 3 * number_points_distribution, 
-                                                        number_points_distribution );
+    Teuchos::ArrayView<const double> pdf, A_array;
 
-    std::cout << "energy " << scattering_distribution[i].second << std::endl;
-    std::cout << "r " << scattering_distribution[i].third << std::endl;
-    std::cout << "a " << scattering_distribution[i].fourth << std::endl;
+    Teuchos::ArrayView<const double> R_array = 
+      dlw_block_array( distribution_index + 2 + number_points_distribution*3,
+		       number_points_distribution );
 
-    Teuchos::ArrayView<const double> pdf;
+    Teuchos::ArrayView<const double> A_array = 
+      dlw_block_array( distribution_index + 2 + number_points_distribution*4,
+		       number_points_distribution );
 
     switch( interpolation_flag )
     {
     case 1: // histogram interpolation
-      pdf = dlw_block_array( distribution_index + 2 + number_points_distribution, number_points_distribution - 1 );
+      pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
+			     number_points_distribution - 1 );
 
-      energy_distribution[i].second.reset( new Utility::HistogramDistribution( outgoing_energy_grid, pdf ) );
+      energy_distribution[i].second.reset( 
+		      new Utility::HistogramDistribution( outgoing_energy_grid,
+							  pdf ) );
+
+      ar_distribution[i].reset( 
+	    new StandardLaw44ARDistribution<Law44HistogramInterpolationPolicy>(
+							  outgoing_energy_grid,
+							  A_array,
+							  R_array ) );
 
       break;
  
     case 2: // Linear-Linear interpolation
-      pdf = dlw_block_array( distribution_index + 2 + number_points_distribution, number_points_distribution );
+      pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
+			     number_points_distribution );
 
-      energy_distribution[i].second.reset( new Utility::TabularDistribution<Utility::LinLin>(
-                                           outgoing_energy_grid, pdf ) );
+      energy_distribution[i].second.reset( 
+			     new Utility::TabularDistribution<Utility::LinLin>(
+						 outgoing_energy_grid, pdf ) );
+
+      ar_distribution[i].reset(
+	       new StandardLaw44ARDistribution<Law44LinLinInterpolationPolicy>(
+							  outgoing_energy_grid,
+							  A_array,
+							  R_array ) );
 
       break;
  
@@ -248,35 +264,13 @@ void NeutronScatteringEnergyDistributionFactory::createCoupledDistribution(
 
   Teuchos::RCP<NeutronScatteringEnergyDistribution> energy_out_distribution; 
 
-  energy_out_distribution.reset( new Law4NeutronScatteringEnergyDistribution( energy_distribution ) );
+  energy_out_distribution.reset( 
+	  new Law4NeutronScatteringEnergyDistribution( energy_distribution ) );
 
-  switch( interpolation_flag )
-  {
-  case 1: // histogram interpolation
-
-    distribution.reset( new Law44NeutronScatteringDistribution<Law44HistogramInterpolation>( atomic_weight_ratio,
-                                                                                             energy_out_distribution,
-                                                                                             scattering_distribution) );
-
-    break;
- 
-  case 2: // Linear-Linear interpolation
-
-
-    distribution.reset( new Law44NeutronScatteringDistribution<Law44LinearLinearInterpolation>( atomic_weight_ratio,
-                                                                                                energy_out_distribution,
-                                                                                                scattering_distribution) );
-    break;
- 
-  default:
-    TEST_FOR_EXCEPTION( true,
-                        std::runtime_error,
-                        "Unknown interpolation flag in table "
-                        << table_name << 
-                        " for energy distribution of MT = "
-                        << reaction << ": "
-                        << interpolation_flag << "\n" );
-  } 
+  distribution.reset( 
+	       new Law44NeutronScatteringDistribution( atomic_weight_ratio,
+						       energy_out_distribution,
+						       ar_distribution ) );
 }
 
 } // end Facemc namespace

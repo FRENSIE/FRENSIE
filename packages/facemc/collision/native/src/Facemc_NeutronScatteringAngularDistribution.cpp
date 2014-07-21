@@ -11,8 +11,6 @@
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringAngularDistribution.hpp"
-#include "Utility_SearchAlgorithms.hpp"
-#include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Facemc{
@@ -31,7 +29,6 @@ NeutronScatteringAngularDistribution::NeutronScatteringAngularDistribution(
 				                                dist.begin(),
 								dist.end() ) );
 }
- 
 
 // Sample a scattering angle cosine
 double NeutronScatteringAngularDistribution::sampleAngleCosine( 
@@ -87,6 +84,7 @@ double NeutronScatteringAngularDistribution::sampleAngleCosine(
 
   return angle_cosine;
 }
+
 
 
 } // end Facemc namespace

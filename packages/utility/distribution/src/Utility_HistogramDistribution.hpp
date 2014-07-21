@@ -11,6 +11,7 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ArrayRCP.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
@@ -37,7 +38,7 @@ public:
   //! Default constructor
   HistogramDistribution();
 
-  //! Constructor
+  //! Constructor (data owning)
   HistogramDistribution( const Teuchos::Array<double>& bin_boundaries,
 			 const Teuchos::Array<double>& bin_values );
 

@@ -11,34 +11,33 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringDistribution.hpp"
 #include "Facemc_NeutronScatteringEnergyDistribution.hpp"
-#include "Facemc_NeutronScatteringAngularDistribution.hpp"
+#include "Facemc_Law44ARDistribution.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace Facemc{
 
-//! The law 44 scattering eneryg distribution class (ENDF Law 44)
-template<typename Law44InterpolationPolicy>
+//! The law 44 scattering energy distribution class (ENDF Law 44)
 class Law44NeutronScatteringDistribution : public NeutronScatteringDistribution
 {
 
 public:
 
   //! Typedef for the distribution
-  typedef Teuchos::Array<Utility::Quad<double,
-                                       Teuchos::Array<double>,
-                                       Teuchos::Array<double>,
-                                       Teuchos::Array<double> > > ScatteringDistribution;
+  Teuchos::Array<Teuchos::RCP<Law44ARDistribution> >;
  
   //! Constructor
   Law44NeutronScatteringDistribution( 
 		      const double atomic_weight_ratio,
-		      const Teuchos::RCP<NeutronScatteringEnergyDistribution>& energy_scattering_distribution,
-                      ScatteringDistribution& scattering_distribution ); 
+		      const Teuchos::RCP<NeutronScatteringEnergyDistribution>&
+		      energy_scattering_distribution,
+                      const Teuchos::Array<Teuchos::RCP<Law44ARDistribution> >&
+		      ar_distributions );
                                               
   //! Destructor
   ~Law44NeutronScatteringDistribution()
@@ -50,22 +49,15 @@ public:
 
 private:
 
-  // Law 4 distribution should always be stored
+  // The energy distribution (only a law 4 distribution should be stored)
   Teuchos::RCP<NeutronScatteringEnergyDistribution> d_energy_scattering_distribution;
 
-  ScatteringDistribution d_scattering_distribution;
+  // The AR distributions
+  Teuchos::Array<Teuchos::RCP<Law44ARDistribution> > d_ar_distributions;
 };
 
 } // end Facemc namespace
 
-
-//---------------------------------------------------------------------------//
-// Template Includes
-//---------------------------------------------------------------------------//
-
-#include "Facemc_Law44NeutronScatteringDistribution_def.hpp"
-
-//---------------------------------------------------------------------------//
 
 #endif // end FACEMC_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION
 
