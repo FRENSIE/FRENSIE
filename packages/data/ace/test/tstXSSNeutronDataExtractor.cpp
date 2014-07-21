@@ -12,6 +12,7 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
+#include <Teuchos_VerboseObject.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
@@ -37,14 +38,6 @@ Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
 // Check that the XSSNeutronDataExtractor can check if fission data is present
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, hasFissionData_basic )
 {
-  ace_file_handler.reset(new Data::ACEFileHandler( test_basic_ace_file_name,
-						   test_basic_ace_table_name,
-						   1u ) );
-  xss_data_extractor.reset(
-   new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray()));
-  
   TEST_ASSERT( !xss_data_extractor->hasFissionData() );
 }
 
@@ -411,8 +404,40 @@ int main( int argc, char** argv )
 		 &test_basic_ace_table_name,
 		 "Test basic ACE table name in basic ACE file" );
 
+  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+    Teuchos::VerboseObjectBase::getDefaultOStream();
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+    clp.parse(argc,argv);
+
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
+    *out << "\nEnd Result: TEST FAILED" << std::endl;
+    return parse_return;
+  }
+  
+  // Initialize ace file handler and data extractor
+  ace_file_handler.reset( new Data::ACEFileHandler( test_basic_ace_file_name,
+						    test_basic_ace_table_name,
+						    1u ) );
+
+  xss_data_extractor.reset( 
+   new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
+				      ace_file_handler->getTableJXSArray(),
+				      ace_file_handler->getTableXSSArray() ) );
+
+  // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+
+  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
+
+  if (success)
+    *out << "\nEnd Result: TEST PASSED" << std::endl;
+  else
+    *out << "\nEnd Result: TEST FAILED" << std::endl;
+
+  clp.printFinalTimerSummary(out.ptr());
+
+  return (success ? 0 : 1);  
 }
 
 //---------------------------------------------------------------------------//

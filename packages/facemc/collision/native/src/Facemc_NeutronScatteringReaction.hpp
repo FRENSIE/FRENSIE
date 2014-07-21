@@ -26,7 +26,7 @@ private:
 
 public:
 
-  //! Constructor
+  //! Constructor 
   NeutronScatteringReaction( 
 		   const NuclearReactionType reaction_type,
 		   const double temperature,
@@ -47,11 +47,10 @@ public:
 
   //! Simulate the reaction
   void react( NeutronState& neutron, ParticleBank& bank ) const;
-		   
 
 private:
 
-  // The number of secondary particles (of the same type as primary) released
+  // The neutron multiplicity
   unsigned d_multiplicity;
 
   // The scattering distribution

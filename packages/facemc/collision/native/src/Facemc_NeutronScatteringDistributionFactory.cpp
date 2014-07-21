@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringDistributionFactory.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "Facemc_NeutronScatteringAngularDistributionFactory.hpp"
 #include "Facemc_NeutronScatteringEnergyDistributionFactory.hpp"
 #include "Facemc_ElasticNeutronScatteringDistribution.hpp"
@@ -151,8 +152,13 @@ NeutronScatteringDistributionFactory::initializeReactionOrderingMap(
 
   for( unsigned i = 0; i < mtr_block.size(); ++i )
   {
-    reaction = convertUnsignedToNuclearReactionType( 
+    try{
+      reaction = convertUnsignedToNuclearReactionType( 
 				       static_cast<unsigned>( mtr_block[i] ) );
+    }
+    EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			     "Error: unsuppported MT # found while parsing "
+			     "MTR block in table " << d_table_name << "\n." );
 
     if( tyr_block[i] != 0 )
       d_reaction_ordering[reaction] = i;

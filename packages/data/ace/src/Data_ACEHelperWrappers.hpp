@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_ACEFileHandlerWrapper.hpp
+//! \file   Data_ACEHelperWrappers.hpp
 //! \author Alex Bennett
-//! \brief  ACE File Handler C Wrappers
+//! \brief  ACE file helper C wrappers
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_ACE_FILE_HANDLER_WRAPPERS_HPP
-#define DATA_ACE_FILE_HANDLER_WRAPPERS_HPP
+#ifndef DATA_ACE_HELPER_WRAPPERS_HPP
+#define DATA_ACE_HELPER_WRAPPERS_HPP
 
 extern "C" {
   int fileExistsUsingFortran( const char* file_name, const int file_name_size );
@@ -34,9 +34,9 @@ extern "C" {
 			     const int xss_size );
 }
 
-#endif // end DATA_ACE_FILE_HANDLER_WRAPPERS_HPP
+#endif // end DATA_ACE_HELPER_WRAPPERS_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_ACEFileHandlerWrapper.hpp
+// end Utility_ACEHelperWrappers.hpp
 //---------------------------------------------------------------------------//
 

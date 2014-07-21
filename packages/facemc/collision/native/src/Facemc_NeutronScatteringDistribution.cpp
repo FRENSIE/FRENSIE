@@ -14,14 +14,12 @@
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringDistribution.hpp"
+#include "Facemc_SimulationProperties.hpp"
 #include "Utility_DirectionHelpers.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Facemc{
-
-// Initialize the static member data
-unsigned NeutronScatteringDistribution::free_gas_threshold = 400u;
 
 // Constructor
 NeutronScatteringDistribution::NeutronScatteringDistribution( 
@@ -34,18 +32,6 @@ NeutronScatteringDistribution::NeutronScatteringDistribution(
 		    std::numeric_limits<double>::infinity() );
 }
 
-// Set the free gas thermal treatment temperature threshold
-/*! \details The value given is the number of times above the material 
- * temperature that the energy of a neutron can be before the free gas
- * thermal treatment is not used anymore.
- */
-void NeutronScatteringDistribution::setFreeGasThermalTreatmentTemperatureThreshold(
-					   const double temperature_threshold )
-{
-  NeutronScatteringDistribution::free_gas_threshold = 
-    temperature_threshold;
-}
-
 // Sample the velociy of the target nucleus
 /*! \details the temperature should be in units of MeV (kT)
  */ 
@@ -56,7 +42,7 @@ void NeutronScatteringDistribution::sampleTargetVelocity(
 {
   // Check if the energy is above the free gas thermal treatment threshold
   if( neutron.getEnergy() > 
-      NeutronScatteringDistribution::free_gas_threshold*temperature &&
+      SimulationProperties::getFreeGasThreshold()*temperature &&
       d_atomic_weight_ratio > 1.0 )
   {
     target_velocity[0] = 0.0;
