@@ -12,6 +12,12 @@
 // Std Lib Includes
 #include <limits>
 
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
+
+// FRENSIE Includes
+#include "Utility_OneDDistribution.hpp"
+
 namespace Facemc{
 
 //! The energy scattering distribution base class
@@ -35,7 +41,8 @@ public:
 
   //! Sample a scattering energy (and return the sampled bin index)
   virtual double sampleEnergy( const double energy, 
-			       unsigned& sampled_bin_index ) const;
+			       unsigned& sampled_bin_index,
+                               unsigned& incoming_bin_index ) const;
 
 private:
 
@@ -52,10 +59,13 @@ inline bool NeutronScatteringEnergyDistribution::isCMDistribution() const
 // Sample a scattering energy (and return the sampled bin index)
 inline double NeutronScatteringEnergyDistribution::sampleEnergy( 
 					    const double energy, 
-					    unsigned& sampled_bin_index ) const
+					    unsigned& sampled_bin_index,
+                                            unsigned& incoming_bin_index ) const
 {
   sampled_bin_index = std::numeric_limits<unsigned>::max();
   
+  incoming_bin_index = std::numeric_limits<unsigned>::max();
+
   return this->sampleEnergy( energy );
 }
 
