@@ -8,11 +8,13 @@
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringReaction.hpp"
+#include "Facemc_SimulationProperties.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Facemc{
 
-// Constructor
+// Constructor 
 NeutronScatteringReaction::NeutronScatteringReaction( 
 		   const NuclearReactionType reaction_type,
 		   const double temperature,
@@ -39,9 +41,6 @@ NeutronScatteringReaction::NeutronScatteringReaction(
 }
 
 // Return the number of neutrons emitted from the rxn at the given energy
-/*! In reality, only an integer number of neutrons can be released per
- * reaction. The integer return type of this function reflects this reality.
- */
 unsigned NeutronScatteringReaction::getNumberOfEmittedNeutrons(
 						    const double energy ) const
 {
@@ -52,8 +51,9 @@ unsigned NeutronScatteringReaction::getNumberOfEmittedNeutrons(
 void NeutronScatteringReaction::react( NeutronState& neutron, 
 				       ParticleBank& bank ) const
 {
+  // There should always be at least one outgoing neutron (>= 0 additional)
   unsigned num_additional_neutrons = 
-    getNumberOfEmittedNeutrons( neutron.getEnergy() ) - 1u;
+    this->getNumberOfEmittedNeutrons( neutron.getEnergy() ) - 1u;
   
   // Create the additional neutrons (multiplicity - 1)
   for( unsigned i = 0; i < num_additional_neutrons; ++i )
