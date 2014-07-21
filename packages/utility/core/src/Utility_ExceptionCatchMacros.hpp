@@ -74,6 +74,24 @@
     exit(EXIT_FAILURE); \
   } \
 
+/*! Catch macro for catching exceptions, adding error info, rethrowing
+ * 
+ * This macro should be used anywhere an exception is thrown in order to 
+ * properly document the exception and add additional information to it before
+ * throwing it again.
+ * \ingroup exception_macros
+ */
+#define EXCEPTION_CATCH_RETHROW( Exception, msg ) \
+catch( const Exception &exception )				\
+{								\
+  std::ostringstream detailed_msg;				\
+  detailed_msg << __FILE__ << ":" << __LINE__ << ":\n\n"	\
+	       << msg << "\n"					\
+	       << exception.what() << "\n";			\
+  throw Exception(detailed_msg.str());				\
+}
+ 
+
 #endif // end UTILITY_EXCEPTION_CATCH_MACROS_HPP
 
 //---------------------------------------------------------------------------//

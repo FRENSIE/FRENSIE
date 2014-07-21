@@ -50,6 +50,11 @@ ADD_EXECUTABLE(tstNeutronScatteringReaction
 TARGET_LINK_LIBRARIES(tstNeutronScatteringReaction facemc_collision_native)
 ADD_TEST(NeutronScatteringReaction_test tstNeutronScatteringReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
 
+# ADD_EXECUTABLE(tstEnergyDependentNeutronMultiplicityReaction
+#   tstEnergyDependentNeutronMultiplicityReaction.cpp)
+# TARGET_LINK_LIBRARIES(tstEnergyDependentNeutronMultiplicityReaction facemc_collision_native)
+# ADD_TEST(EnergyDependentNeutronMultiplicityReaction_test tstEnergyDependentNeutronMultiplicityReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt" --test_ace_table="8016.70c")
+
 ADD_EXECUTABLE(tstNeutronAbsorptionReaction
   tstNeutronAbsorptionReaction.cpp)
 TARGET_LINK_LIBRARIES(tstNeutronAbsorptionReaction facemc_collision_native)

@@ -16,6 +16,8 @@
 #include "Facemc_NuclearReactionFactory.hpp"
 #include "Facemc_NeutronScatteringReaction.hpp"
 #include "Facemc_NeutronAbsorptionReaction.hpp"
+#include "Facemc_EnergyDependentNeutronMultiplicityReaction.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Facemc{
@@ -99,10 +101,17 @@ NuclearReactionFactory::NuclearReactionFactory(
 						   reaction_q_value );
   
   // Create a map of the reaction types and the corresponding multiplicity
-  boost::unordered_map<NuclearReactionType,unsigned> reaction_multiplicity;
-  NuclearReactionFactory::createReactionMultiplicityMap(tyr_block,
-							reaction_ordering,
-							reaction_multiplicity);
+  boost::unordered_map<NuclearReactionType,unsigned> 
+    reaction_multiplicity;
+  boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >
+    reaction_energy_dependent_multiplicity;
+  NuclearReactionFactory::createReactionMultiplicityMap(
+				      table_name,
+				      tyr_block,
+				      dlw_block,
+				      reaction_ordering,
+				      reaction_multiplicity,
+				      reaction_energy_dependent_multiplicity );
   
   // Create a map of the reaction types and the corresponding threshold index
   boost::unordered_map<NuclearReactionType,unsigned> reaction_threshold_index;
@@ -126,6 +135,7 @@ NuclearReactionFactory::NuclearReactionFactory(
 				 energy_grid,
 				 reaction_q_value,
 				 reaction_multiplicity,
+				 reaction_energy_dependent_multiplicity,
 				 reaction_threshold_index,
 				 reaction_cross_section,
 				 scattering_dist_factory );
@@ -133,6 +143,7 @@ NuclearReactionFactory::NuclearReactionFactory(
 				 energy_grid,
 				 reaction_q_value,
 				 reaction_multiplicity,
+				 reaction_energy_dependent_multiplicity,
 				 reaction_threshold_index,
 				 reaction_cross_section );
   //initializeFissionReactions();
@@ -213,10 +224,18 @@ void NuclearReactionFactory::createReactionQValueMap(
 }
 
 // Create the reaction type multiplicity and scattering ref. frame map
+/*! \details The reaction_multiplicity map stores the absolute values of the 
+ * values in the TYR block. The reaction_energy_dependent_multiplicity stores
+ * the raw ACE table array that provides the energy dependent multiplicity
+ */
 void NuclearReactionFactory::createReactionMultiplicityMap(
+   const std::string& table_name,
    const Teuchos::ArrayView<const double>& tyr_block,
+   const Teuchos::ArrayView<const double>& dlw_block,
    const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
-   boost::unordered_map<NuclearReactionType,unsigned>& reaction_multiplicity )
+   boost::unordered_map<NuclearReactionType,unsigned>& reaction_multiplicity,
+   boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+   reaction_energy_dependent_multiplicity )
 {
   boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
     reaction, end_reaction;
@@ -229,11 +248,40 @@ void NuclearReactionFactory::createReactionMultiplicityMap(
   {
     if( reaction->first != N__N_ELASTIC_REACTION )
     {
-      multiplicity = tyr_block[reaction->second];
+      multiplicity = 
+	Teuchos::ScalarTraits<double>::magnitude(tyr_block[reaction->second]);
       
+      // Assign multiplicity to reaction type
       reaction_multiplicity[reaction->first] = 
-	static_cast<unsigned>( 
-		    Teuchos::ScalarTraits<double>::magnitude( multiplicity ) );
+	static_cast<unsigned>( multiplicity );
+            
+      // Assign energy dependent multiplicity to reaction type
+      if( multiplicity > 100 )
+      {
+	unsigned start_index = static_cast<unsigned>( multiplicity ) - 101;
+	
+	TEST_FOR_EXCEPTION( dlw_block[start_index] != 0,
+			    std::runtime_error,
+			    "Error: multiple interpolation regions found for "
+			    "energy dependent multiplicities of reaction " 
+			    << reaction->first << " in table "
+			    << table_name << ". This is not currently "
+			    "supported!\n" );
+	
+	// Add interpolation regions to size
+	unsigned size = 2*(unsigned)dlw_block[start_index] + 1;
+
+	// Add energy grid and multiplicities to size
+	size += 2*(unsigned)dlw_block[start_index + size] + 1;
+	
+	reaction_energy_dependent_multiplicity[reaction->first] = 
+	  dlw_block( start_index, size );		     
+      }
+      
+      TEST_FOR_EXCEPTION( multiplicity == 19,
+			  std::runtime_error,
+			  "Error: Fission reactions are not currently "
+			  "supported!\n" );
     }
     // Elastic scattering must be handled separately: it never appears in block
     else
@@ -329,6 +377,8 @@ void NuclearReactionFactory::initializeScatteringReactions(
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
+    const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+    reaction_energy_dependent_multiplicity,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
@@ -348,18 +398,20 @@ void NuclearReactionFactory::initializeScatteringReactions(
   end_reaction_type_multiplicity = reaction_multiplicity.end();
 
   NuclearReactionType reaction_type;
+
+  Teuchos::RCP<NeutronScatteringDistribution> scattering_distribution;
   
   while( reaction_type_multiplicity != end_reaction_type_multiplicity )
   {
+    // Create a neutron scattering reaction
     if( reaction_type_multiplicity->second > 0u &&
-	reaction_type_multiplicity->second != 19u )
+	reaction_type_multiplicity->second != 19u &&
+	reaction_type_multiplicity->second <= 100u )
     {
       reaction_type = reaction_type_multiplicity->first;
       
       Teuchos::RCP<NuclearReaction>& reaction = 
 	d_scattering_reactions[reaction_type];
-
-      Teuchos::RCP<NeutronScatteringDistribution> scattering_distribution;
       
       scattering_dist_factory.createScatteringDistribution(
 						     reaction_type,
@@ -375,6 +427,35 @@ void NuclearReactionFactory::initializeScatteringReactions(
 			  reaction_cross_section.find(reaction_type)->second,
 			  scattering_distribution ) );	    
     }
+    // Create an energy dependent neutron multiplicity reaction
+    else if( reaction_type_multiplicity->second >= 100u )
+    {
+      reaction_type = reaction_type_multiplicity->first;
+
+      Teuchos::RCP<NuclearReaction>& reaction = 
+	d_scattering_reactions[reaction_type];
+
+      scattering_dist_factory.createScatteringDistribution(
+						   reaction_type,
+						   scattering_distribution );
+      
+      const Teuchos::ArrayView<const double>& raw_multiplicity_array = 
+	reaction_energy_dependent_multiplicity.find( reaction_type )->second;
+      
+      // Assume there is only one interpolation region
+      unsigned number_of_energies = (unsigned)raw_multiplicity_array[1];
+      
+      reaction.reset( new EnergyDependentNeutronMultiplicityReaction(
+	    reaction_type,
+	    temperature,
+	    reaction_q_value.find(reaction_type)->second,
+	    raw_multiplicity_array( 1, number_of_energies ),
+	    raw_multiplicity_array( 1+number_of_energies, number_of_energies ),
+	    reaction_threshold_index.find(reaction_type)->second,
+	    energy_grid,
+	    reaction_cross_section.find(reaction_type)->second,
+	    scattering_distribution ) );
+    }
 
     ++reaction_type_multiplicity;
   }
@@ -387,6 +468,8 @@ void NuclearReactionFactory::initializeAbsorptionReactions(
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
+    const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+    reaction_energy_dependent_multiplicity,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
@@ -434,6 +517,8 @@ void NuclearReactionFactory::initializeFissionReactions(
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
+    const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+    reaction_energy_dependent_multiplicity,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&

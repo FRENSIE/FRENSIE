@@ -33,10 +33,6 @@ public:
   virtual ~NeutronScatteringDistribution()
   { /* ... */ }
 
-  //! Set the free gas thermal treatment temperature threshold
-  static void setFreeGasThermalTreatmentTemperatureThreshold( 
-					  const double temperature_threshold );
-
   //! Randomly scatter the neutron
   virtual void scatterNeutron( NeutronState& neutron,
 			       const double temperature ) const = 0;
@@ -73,9 +69,6 @@ private:
   //! Sample the speed of the target nucleus
   double sampleTargetSpeed( ParticleState& neutron,
 			    const double temperature ) const;
-
-  // The free gas thermal treatment temperature threshold
-  static unsigned free_gas_threshold;
 
   // The atomic weight of the nuclide in units of neutron mass
   double d_atomic_weight_ratio;

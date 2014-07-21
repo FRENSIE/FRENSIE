@@ -19,8 +19,8 @@ namespace Data{
  * \ingroup ace_table
  *
  * After a continuous energy neutron table has been read by the 
- * FACEMC::ACEFileHandler the individual data blocks must be extracted from 
- * the XSS array using the FACEMC::XSSNeutronDataExtractor. Both the NXS array 
+ * Data::ACEFileHandler the individual data blocks must be extracted from 
+ * the XSS array using the Data::XSSNeutronDataExtractor. Both the NXS array 
  * and the JXS array are required to successfully extract the blocks. The NXS 
  * array elements have the following meanings:
  * <ul>

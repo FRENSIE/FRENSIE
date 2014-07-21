@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstNeutronScatteringReaction.cpp
+//! \file   tstEnergyDependentNeutronMultiplicityReaction.cpp
 //! \author Alex Robinson
-//! \brief  Nuclear reaction unit tests.
+//! \brief  Energy dependent neutron multiplicity reaction
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,15 +16,16 @@
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringDistributionFactory.hpp"
-#include "Facemc_NeutronScatteringReaction.hpp"
+#include "Facemc_EnergyDependentNeutronMultiplicityReaction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 
 //---------------------------------------------------------------------------//
-// Testing Variables.
+// Testing Variables
 //---------------------------------------------------------------------------//
-std::string test_basic_ace_file_name;
-std::string test_basic_ace_table_name;
+std::string test_ace_file_name;
+std::string test_ace_table_name;
 
 Teuchos::RCP<Data::ACEFileHandler> ace_file_handler;
 
@@ -36,9 +37,9 @@ Teuchos::RCP<Facemc::NuclearReaction> nuclear_reaction;
 // Testing Functions.
 //---------------------------------------------------------------------------//
 void initializeReaction()
-{   
+{
   Facemc::NeutronScatteringDistributionFactory 
-    factory( test_basic_ace_table_name,
+    factory( test_ace_table_name,
 	     ace_file_handler->getTableAtomicWeightRatio(),
 	     xss_data_extractor->extractMTRBlock(),
 	     xss_data_extractor->extractTYRBlock(),
@@ -49,21 +50,38 @@ void initializeReaction()
 
   Teuchos::RCP<Facemc::NeutronScatteringDistribution> scattering_dist;
   
-  factory.createScatteringDistribution( Facemc::N__N_ELASTIC_REACTION,
+  factory.createScatteringDistribution( Facemc::N__ANYTHING_REACTION,
 					scattering_dist );
 
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
-  Teuchos::ArrayRCP<double> cross_section;
-  cross_section.deepCopy( xss_data_extractor->extractElasticCrossSection() );
+  Teuchos::ArrayView<const double> sig_block =
+    xss_data_extractor->extractSIGBlock();
 
-  nuclear_reaction.reset( new Facemc::NeutronScatteringReaction( 
-				       Facemc::N__N_ELASTIC_REACTION,
+  unsigned threshold_index = (unsigned)sig_block[0];
+  unsigned num_energies = (unsigned)sig_block[1];
+  
+  Teuchos::ArrayRCP<double> cross_section;
+  cross_section.deepCopy( sig_block( 2, num_energies ) );
+
+  Teuchos::ArrayView<const double> dlw_block = 
+    xss_data_extractor->extractDLWBlock();
+
+  Teuchos::ArrayView<const double> multiplicity_energy_grid = 
+    dlw_block( 2, (unsigned)dlw_block[1] );
+
+  Teuchos::ArrayView<const double> multiplicity = 
+    dlw_block( 2 + (unsigned)dlw_block[1], (unsigned)dlw_block[1] );
+
+  nuclear_reaction.reset( 
+		        new Facemc::EnergyDependentNeutronMultiplicityReaction(
+				       Facemc::N__ANYTHING_REACTION,
 			               ace_file_handler->getTableTemperature(),
 				       0.0,
-				       1u,
-				       0u,
+				       multiplicity_energy_grid,
+				       multiplicity,
+				       threshold_index,
 				       energy_grid,
 				       cross_section,
 				       scattering_dist ) );
@@ -73,45 +91,47 @@ void initializeReaction()
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the number of emitted neutrons can be returned
-TEUCHOS_UNIT_TEST( NeutronScatteringReaction_elastic, 
+TEUCHOS_UNIT_TEST( EnergyDependentNeutronMultiplicityReaction,
 		   getNumberOfEmittedNeutrons )
 {
-  TEST_EQUALITY_CONST( nuclear_reaction->getNumberOfEmittedNeutrons( 0.0 ), 1);
-}
+  unsigned number_of_emitted_neutrons = 
+    nuclear_reaction->getNumberOfEmittedNeutrons( 1e-11 );
 
-//---------------------------------------------------------------------------//
-// Check that the reaction can be simulated
-TEUCHOS_UNIT_TEST( NeutronScatteringReaction_elastic, 
-		   react )
-{
-  Teuchos::RCP<Facemc::NeutronState> neutron( new Facemc::NeutronState(0ull) );
+  TEST_EQUALITY_CONST( number_of_emitted_neutrons, 0.0 );
+
+  number_of_emitted_neutrons = 
+    nuclear_reaction->getNumberOfEmittedNeutrons( 30.0 );
   
-  neutron->setDirection( 0.0, 0.0, 1.0 );
-  neutron->setEnergy( 1.0 );
+  TEST_EQUALITY_CONST( number_of_emitted_neutrons, 0.0 );
 
-  Facemc::ParticleBank bank;
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.15;
+  fake_stream[1] = 0.20;
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  bank.push( neutron );
+  number_of_emitted_neutrons =
+    nuclear_reaction->getNumberOfEmittedNeutrons( 150.0 );
+
+  TEST_EQUALITY_CONST( number_of_emitted_neutrons, 1.0 );
   
-  nuclear_reaction->react( *neutron, bank );
+  number_of_emitted_neutrons =
+    nuclear_reaction->getNumberOfEmittedNeutrons( 150.0 );
 
-  TEST_EQUALITY_CONST( bank.size(), 1 );
-
-  std::cout << std::endl << std::endl << *neutron << std::endl;
+  TEST_EQUALITY_CONST( number_of_emitted_neutrons, 2.0 );  
 }
 
 //---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+int main( int argc, char** argv)
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  clp.setOption( "test_basic_ace_file",
-		 &test_basic_ace_file_name,
+  clp.setOption( "test_ace_file",
+		 &test_ace_file_name,
 		 "Test basic ACE file name" );
-  clp.setOption( "test_basic_ace_table",
-		 &test_basic_ace_table_name,
+  clp.setOption( "test_ace_table",
+		 &test_ace_table_name,
 		 "Test basic ACE table name in basic ACE file" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
@@ -126,8 +146,8 @@ int main( int argc, char** argv )
   }
 
   // Initialize the ace file handler and data extractor
-  ace_file_handler.reset(new Data::ACEFileHandler( test_basic_ace_file_name,
-						   test_basic_ace_table_name,
+  ace_file_handler.reset(new Data::ACEFileHandler( test_ace_file_name,
+						   test_ace_table_name,
 						   1u ) );
   xss_data_extractor.reset(
    new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
@@ -153,6 +173,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstNeutronScatteringReaction.cpp
+// end tstEnergyDependentNeutronMultiplicityReaction.cpp
 //---------------------------------------------------------------------------//
-

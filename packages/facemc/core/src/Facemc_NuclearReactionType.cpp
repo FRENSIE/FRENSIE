@@ -436,10 +436,9 @@ NuclearReactionType convertUnsignedToNuclearReactionType(
   case 890u: return N__2N_EXCITED_STATE_15_REACTION;
   case 891u: return N__2N_CONTINUUM_REACTION;
   default:
-    TEST_FOR_EXCEPTION( true,
-			std::runtime_error,
-			"Error: ENDF reaction (MT #) " << reaction <<
-			" is unknown." );
+    THROW_EXCEPTION( std::runtime_error,
+		     "Error: ENDF reaction (MT #) " << reaction <<
+		     " is not supported.\n" );
   }
 }
 
