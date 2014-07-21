@@ -502,18 +502,18 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
 }
 
 //---------------------------------------------------------------------------//
-//TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
-//		   testLaw3_o16 )
-//{
-//  Teuchos::RCP<Facemc::NeutronScatteringDistribution> distribution;
-//
-//  for(boost::unordered_map<Facemc::NuclearReactionType,Teuchos::ArrayView<const double> >::const_iterator i = neutron_distribution_factory_o16->getReactionEnergyDist().begin(); i != neutron_distribution_factory_o16->getReactionEnergyDist().end(); ++i)
-//  {
-//     std::cout << "mt number " << i->first << std::endl;
-//
-//     neutron_distribution_factory_o16->createScatteringDistribution(i->first,distribution);
-//  }
-//}
+TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
+		   testLaw3_o16 )
+{
+  Teuchos::RCP<Facemc::NeutronScatteringDistribution> distribution;
+
+  for(boost::unordered_map<Facemc::NuclearReactionType,Teuchos::ArrayView<const double> >::const_iterator i = neutron_distribution_factory_o16->getReactionEnergyDist().begin(); i != neutron_distribution_factory_o16->getReactionEnergyDist().end(); ++i)
+  {
+     std::cout << "mt number " << i->first << std::endl;
+
+     neutron_distribution_factory_o16->createScatteringDistribution(i->first,distribution);
+  }
+}
 
 //---------------------------------------------------------------------------//
 // Custom main function

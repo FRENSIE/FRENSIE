@@ -39,7 +39,10 @@ public:
   double sampleEnergy( const double energy ) const;
 
   //! Sample a scattering energy
-  double sampleEnergy( const double energy, unsigned& sampled_index, unsigned& incoming_index ) const;
+  double sampleEnergy( const double& energy, 
+                       unsigned& sampled_index, 
+                       unsigned& incoming_index,
+                       double& energy_prime ) const;
 
 private:
 
