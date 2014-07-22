@@ -44,13 +44,13 @@ public:
 protected:
 
   //! Return the outgoing energy grid
-  double getOutgoingEnergyGridPoint( const unsigned outgoing_index );
+  double getOutgoingEnergyGridPoint( const unsigned outgoing_index ) const;
 
   //! Return the A value
-  double getAValue( const unsigned outgoing_index );
+  double getAValue( const unsigned outgoing_index ) const;
 
   //! Return the R value
-  double getRValue( const unsigned outgoing_index );
+  double getRValue( const unsigned outgoing_index ) const;
 
 private:
 
@@ -66,7 +66,7 @@ private:
 
 // Return the outgoing energy grid
 inline double Law44ARDistribution::getOutgoingEnergyGridPoint( 
-						const unsigned outgoing_index )
+				         const unsigned outgoing_index ) const
 {
   // Make sure the outgoing index is valid
   testPrecondition( outgoing_index < d_outgoing_energy_grid.size() );
@@ -75,7 +75,7 @@ inline double Law44ARDistribution::getOutgoingEnergyGridPoint(
 }
 
 // Return the A value
-inline double Law44ARDistribution::getAValue( const unsigned outgoing_index )
+inline double Law44ARDistribution::getAValue( const unsigned outgoing_index ) const
 {
   // Make sure the outgoing index is valid
   testPrecondition( outgoing_index < d_A.size() );
@@ -84,7 +84,7 @@ inline double Law44ARDistribution::getAValue( const unsigned outgoing_index )
 }
 
 // Return the R value
-inline double Law44ARDistribution::getRValue( const unsigned outgoing_index )
+inline double Law44ARDistribution::getRValue( const unsigned outgoing_index ) const
 {
   // Make sure the outgoing index is valid
   testPrecondition( outgoing_index < d_R.size() );

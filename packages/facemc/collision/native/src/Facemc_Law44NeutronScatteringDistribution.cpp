@@ -33,10 +33,6 @@ Law44NeutronScatteringDistribution::Law44NeutronScatteringDistribution(
   testPrecondition( !energy_scattering_distribution.is_null() );
   // Make sure the energy distribution is not in the CM
   testPrecondition( !energy_scattering_distribution->isCMDistribution() );
-  // Make sure the energy scattering distribution and the ar distribution have
-  // the same size
-  testPrecondition( energy_scattering_distribution.size() ==
-		    ar_distributions.size() );
 }
 
 // Randomly scatter the neutron
@@ -54,10 +50,10 @@ void Law44NeutronScatteringDistribution::scatterNeutron(
 						    incoming_bin_index,
 						    outgoing_bin_index,
 						    energy_prime );
-  
+ 
   double a, r;
-  
-  d_ar_distribution[incoming_energy_bin]->sampleAR( outgoing_index,
+ 
+  d_ar_distributions[incoming_bin_index]->sampleAR( outgoing_bin_index,
 						    energy_prime,
 						    a, 
 						    r );
@@ -95,8 +91,6 @@ void Law44NeutronScatteringDistribution::scatterNeutron(
 }
 
 } // End Facemc namespace
-
-#endif // end FACEMC_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_DEF
 
 //---------------------------------------------------------------------------//
 // end Facemc_Law44NeutronScatteringDistribution_def.hpp
