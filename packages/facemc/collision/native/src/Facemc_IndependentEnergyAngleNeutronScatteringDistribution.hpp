@@ -20,6 +20,10 @@
 namespace Facemc{
 
 //! The independent energy angle neutron scattering distribution class
+/*! \detials The system conversion policy will convert the sampled energy and
+ * scattering angle cosine from the current system to the lab system.
+ */
+template<typename SystemConversionPolicy>
 class IndependentEnergyAngleNeutronScatteringDistribution : public NeutronScatteringDistribution
 {
 
@@ -53,6 +57,14 @@ private:
 };
 
 } // end Facemc namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Facemc_IndependentEnergyAngleNeutronScatteringDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif//end FACEMC_INDEPENDENT_ENERGY_ANGLE_NEUTRON_SCATTERING_DISTRIBUTION_HPP
 

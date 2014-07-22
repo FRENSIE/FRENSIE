@@ -32,34 +32,20 @@ public:
   AngularDistribution;
   
   //! Constructor
-  NeutronScatteringAngularDistribution( const AngularDistribution& dist, 
-					const bool is_cm_dist = true );
+  NeutronScatteringAngularDistribution( const AngularDistribution& dist );
 
   //! Destructor
   virtual ~NeutronScatteringAngularDistribution()
   { /* ... */ }
 
-  //! Return if the distribution is in the CM or Lab system
-  bool isCMDistribution() const;
-  
   //! Sample a scattering angle cosine
   virtual double sampleAngleCosine( const double energy ) const;
 
 private:
-  
-  // Records if the distribution is in the CM or Lab system
-  bool d_is_cm_dist;
 
   // The angular distribution
   AngularDistribution d_angular_distribution;
 };
-
-// Return if the distribution is in the CM or Lab system
-inline bool
-NeutronScatteringAngularDistribution::isCMDistribution() const
-{
-  return d_is_cm_dist;
-}  
 
 } // end Facemc namespace
 

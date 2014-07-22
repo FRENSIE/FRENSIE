@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   Facemc_EquiprobableBinNeutronScatteringEnergyDistribution.cpp
+//! \file   Facemc_AceLaw1NeutronScatteringEnergyDistribution.cpp
 //! \author Alex Bennett
 //! \brief  The neutron equiprobable bin scattering energy distribution class
 //!
@@ -11,7 +11,7 @@
 #include <math.h>
 
 // FRENSIE Includes
-#include "Facemc_EquiprobableBinNeutronScatteringEnergyDistribution.hpp"
+#include "Facemc_AceLaw1NeutronScatteringEnergyDistribution.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -20,9 +20,9 @@
 namespace Facemc{
 
 // Constructor
-EquiprobableBinNeutronScatteringEnergyDistribution::EquiprobableBinNeutronScatteringEnergyDistribution(
-                  EnergyDistArray& energy_grid )
-  : NeutronScatteringEnergyDistribution( false ),
+AceLaw1NeutronScatteringEnergyDistribution::AceLaw1NeutronScatteringEnergyDistribution( 
+						 EnergyDistArray& energy_grid )
+  : NeutronScatteringEnergyDistribution( 1u ),
     d_energy_grid( energy_grid )
 {
   // Check to make sure the energy grid is filled
@@ -30,8 +30,8 @@ EquiprobableBinNeutronScatteringEnergyDistribution::EquiprobableBinNeutronScatte
 }
 
 // Sample a scattering energy
-double EquiprobableBinNeutronScatteringEnergyDistribution::sampleEnergy(
-                                                                const double energy ) const
+double AceLaw1NeutronScatteringEnergyDistribution::sampleEnergy( 
+						    const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0 );
@@ -111,5 +111,5 @@ double EquiprobableBinNeutronScatteringEnergyDistribution::sampleEnergy(
 } // end Facemc namespace
 
 //---------------------------------------------------------------------------//
-// end Facemc_EquiprobableBinNeutronScatteringEnergyDistribution.cpp
+// end Facemc_AceLaw1NeutronScatteringEnergyDistribution.cpp
 //---------------------------------------------------------------------------//

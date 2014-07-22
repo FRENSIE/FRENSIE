@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Facemc_Law44ARDistribution.hpp
+//! \file   Facemc_AceLaw44ARDistribution.hpp
 //! \author Alex Robinson
 //! \brief  The law 44 AR distribution base class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_LAW_44_AR_DISTRIBUTION_HPP
-#define FACEMC_LAW_44_AR_DISTRIBUTION_HPP
+#ifndef FACEMC_ACE_LAW_44_AR_DISTRIBUTION_HPP
+#define FACEMC_ACE_LAW_44_AR_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_ArrayRCP.hpp>
@@ -20,19 +20,19 @@
 namespace Facemc{
 
 //! The law 44 AR distribution base class
-class Law44ARDistribution
+class AceLaw44ARDistribution
 {
 
 public:
 
   //! Constructor
-  Law44ARDistribution( 
+  AceLaw44ARDistribution( 
 		  const Teuchos::ArrayView<const double>& outgoing_energy_grid,
 		  const Teuchos::ArrayView<const double>& A_array,
 		  const Teuchos::ArrayView<const double>& R_array );
 
   //! Destructor
-  virtual ~Law44ARDistribution()
+  virtual ~AceLaw44ARDistribution()
   { /* ... */ }
 
   //! Sample A and R from the distribution
@@ -65,7 +65,7 @@ private:
 };
 
 // Return the outgoing energy grid
-inline double Law44ARDistribution::getOutgoingEnergyGridPoint( 
+inline double AceLaw44ARDistribution::getOutgoingEnergyGridPoint( 
 				         const unsigned outgoing_index ) const
 {
   // Make sure the outgoing index is valid
@@ -75,7 +75,8 @@ inline double Law44ARDistribution::getOutgoingEnergyGridPoint(
 }
 
 // Return the A value
-inline double Law44ARDistribution::getAValue( const unsigned outgoing_index ) const
+inline double AceLaw44ARDistribution::getAValue( 
+					  const unsigned outgoing_index ) const
 {
   // Make sure the outgoing index is valid
   testPrecondition( outgoing_index < d_A.size() );
@@ -84,7 +85,8 @@ inline double Law44ARDistribution::getAValue( const unsigned outgoing_index ) co
 }
 
 // Return the R value
-inline double Law44ARDistribution::getRValue( const unsigned outgoing_index ) const
+inline double AceLaw44ARDistribution::getRValue( 
+					  const unsigned outgoing_index ) const
 {
   // Make sure the outgoing index is valid
   testPrecondition( outgoing_index < d_R.size() );
@@ -94,8 +96,8 @@ inline double Law44ARDistribution::getRValue( const unsigned outgoing_index ) co
 
 } // end Facemc namespace
 
-#endif // end FACEMC_LAW_44_AR_DISTRIBUTION_HPP
+#endif // end FACEMC_ACE_LAW_44_AR_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Facemc_Law44ARDistribution.hpp
+// end Facemc_AceLaw44ARDistribution.hpp
 //---------------------------------------------------------------------------//

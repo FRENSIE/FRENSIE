@@ -1,18 +1,18 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Facemc_Law44ARDistribution.cpp
+//! \file   Facemc_AceLaw44ARDistribution.cpp
 //! \author Alex Robinson, Alex Bennett
 //! \brief  The law 44 AR distribution base class def.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Facemc_Law44ARDistribution.hpp"
+#include "Facemc_AceLaw44ARDistribution.hpp"
 
 namespace Facemc{
 
 // Constructor
-Law44ARDistribution::Law44ARDistribution( 
+AceLaw44ARDistribution::AceLaw44ARDistribution( 
 		  const Teuchos::ArrayView<const double>& outgoing_energy_grid,
 		  const Teuchos::ArrayView<const double>& A_array,
 		  const Teuchos::ArrayView<const double>& R_array )
@@ -29,5 +29,5 @@ Law44ARDistribution::Law44ARDistribution(
 } // end Facemc namespace
 
 //---------------------------------------------------------------------------//
-// end Facemc_Law44ARDistribution.cpp
+// end Facemc_AceLaw44ARDistribution.cpp
 //---------------------------------------------------------------------------//

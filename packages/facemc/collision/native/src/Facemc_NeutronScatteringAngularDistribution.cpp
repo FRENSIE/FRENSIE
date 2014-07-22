@@ -19,10 +19,8 @@ namespace Facemc{
 
 // Constructor
 NeutronScatteringAngularDistribution::NeutronScatteringAngularDistribution( 
-	 const NeutronScatteringAngularDistribution::AngularDistribution& dist,
-	 const bool is_cm_dist )
-  : d_angular_distribution( dist ),
-    d_is_cm_dist( is_cm_dist )
+	const NeutronScatteringAngularDistribution::AngularDistribution& dist )
+  : d_angular_distribution( dist )
 {
   // Make sure the array has at least one value
   testPrecondition( dist.size() > 0 );

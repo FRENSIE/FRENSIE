@@ -1,34 +1,34 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Facemc_StandardLaw44ARDistribution.hpp
+//! \file   Facemc_StandardAceLaw44ARDistribution.hpp
 //! \author Alex Robinson
 //! \brief  The standard law 44 AR distribution class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_LAW_44_AR_DISTRIBUTION_HPP
-#define FACEMC_STANDARD_LAW_44_AR_DISTRIBUTION_HPP
+#ifndef FACEMC_STANDARD_ACE_LAW_44_AR_DISTRIBUTION_HPP
+#define FACEMC_STANDARD_ACE_LAW_44_AR_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "Facemc_Law44ARDistribution.hpp"
+#include "Facemc_AceLaw44ARDistribution.hpp"
 
 namespace Facemc{
 
 //! The standard law 44 AR distribution base class
-template<typename Law44InterpolationPolicy>
-class StandardLaw44ARDistribution : public Law44ARDistribution
+template<typename AceLaw44InterpolationPolicy>
+class StandardAceLaw44ARDistribution : public AceLaw44ARDistribution
 {
 
 public:
 
   //! Constructor
-  StandardLaw44ARDistribution( 
+  StandardAceLaw44ARDistribution( 
 		   const Teuchos::ArrayView<const double>& outgoing_energy_grid,
 		   const Teuchos::ArrayView<const double>& A_array,
 		   const Teuchos::ArrayView<const double>& R_array );
 
   //! Destructor
-  ~StandardLaw44ARDistribution()
+  ~StandardAceLaw44ARDistribution()
   { /* ... */ }
 
   //! Sample A and R from the distribution
@@ -44,12 +44,12 @@ public:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "Facemc_StandardLaw44ARDistribution_def.hpp"
+#include "Facemc_StandardAceLaw44ARDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_STANDARD_LAW_44_AR_DISTRIBUTION_HPP
+#endif // end FACEMC_STANDARD_ACE_LAW_44_AR_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Facemc_StandardLaw44ARDistribution.hpp
+// end Facemc_StandardAceLaw44ARDistribution.hpp
 //---------------------------------------------------------------------------//

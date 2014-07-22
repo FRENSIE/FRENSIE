@@ -15,13 +15,14 @@
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringDistributionFactory.hpp"
-#include "Utility_ExceptionCatchMacros.hpp"
 #include "Facemc_NeutronScatteringAngularDistributionFactory.hpp"
 #include "Facemc_NeutronScatteringEnergyDistributionFactory.hpp"
 #include "Facemc_ElasticNeutronScatteringDistribution.hpp"
-#include "Facemc_InelasticLevelNeutronScatteringDistribution.hpp"
 #include "Facemc_IndependentEnergyAngleNeutronScatteringDistribution.hpp"
+#include "Facemc_LabSystemConversionPolicy.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Facemc{
 
@@ -78,7 +79,6 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
       NeutronScatteringAngularDistributionFactory::createDistribution(
        d_reaction_angular_dist.find( reaction_type )->second,
        d_reaction_angular_dist_start_index.find( reaction_type )->second,
-       d_reaction_cm_scattering.find( reaction_type )->second,
        d_table_name,
        reaction_type,
        angular_distribution ); 
@@ -87,13 +87,20 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
     else
     {
       NeutronScatteringAngularDistributionFactory::createIsotropicDistribution(
-			d_reaction_cm_scattering.find( reaction_type )->second,
-			angular_distribution );
+							angular_distribution );
     }
 
     // Special Case: elastic scattering will have no energy distribution
     if( reaction_type == N__N_ELASTIC_REACTION )
     {
+      TEST_FOR_EXCEPTION( !(d_reaction_cm_scattering.find( 
+						      reaction_type )->second),
+			  std::runtime_error,
+			  "Error: elastic scattering in ACE table "
+			  << d_table_name << " is specified in the Lab "
+			  "system. Elastic scattering must always be in the "
+			  "CM system, which indicates that there is a problem "
+			  "in the ACE table!" );
       distribution.reset( 
 	  new ElasticNeutronScatteringDistribution( d_atomic_weight_ratio,
 						    angular_distribution ) );
@@ -110,20 +117,31 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
        	      reaction_type,
 	      energy_distribution );
       
-      // Create an inelastic level scattering distribution
-      if( energy_distribution->isCMDistribution() )
+      // Test that law 3 distributions are always in the CM system
+      if( energy_distribution->getLaw() == 3 )
+      {
+	TEST_FOR_EXCEPTION( !(d_reaction_cm_scattering.find( 
+						      reaction_type )->second),
+			    std::runtime_error,
+			    "Error: MT# " << reaction_type << " in ACE table "
+			    << d_table_name << " uses ACE Law 3, which must "
+			    "be in the CM system. The ref. frame specified is "
+			    "the lab indicating that there is an error in the "
+			    "ACE table!" );
+      }
+      
+      if( d_reaction_cm_scattering.find( reaction_type )->second )
       {
 	distribution.reset(
-			   new InelasticLevelNeutronScatteringDistribution(
+	     new IndependentEnergyAngleNeutronScatteringDistribution<CMSystemConversionPolicy>( 
 						      d_atomic_weight_ratio,
 						      energy_distribution,
 						      angular_distribution ) );
       }
-      // Create an independent energy angle distribution
       else
       {
 	distribution.reset(
-	            new IndependentEnergyAngleNeutronScatteringDistribution( 
+	     new IndependentEnergyAngleNeutronScatteringDistribution<LabSystemConversionPolicy>( 
 						      d_atomic_weight_ratio,
 						      energy_distribution,
 						      angular_distribution ) );
@@ -133,12 +151,13 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
   // Create a coupled angular-energy distribution (law 44)
   else
   {
-    NeutronScatteringEnergyDistributionFactory::createCoupledDistribution(
+    NeutronScatteringEnergyDistributionFactory::createAceLaw44Distribution(
               d_atomic_weight_ratio,
      	      d_reaction_energy_dist.find( reaction_type )->second,
      	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
 	      d_table_name,
      	      reaction_type,
+	      d_reaction_cm_scattering.find( reaction_type )->second,
      	      distribution );
   }
 }

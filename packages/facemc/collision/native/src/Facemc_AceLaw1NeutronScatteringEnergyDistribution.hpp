@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   Facemc_EquiprobableBinNeutronScatteringEnergyDistribution.hpp
+//! \file   Facemc_AceLaw1NeutronScatteringEnergyDistribution.hpp
 //! \author Alex Bennett
 //! \brief  The neutron equiprobable bin scattering energy distribution class
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_EQUIPROBABLE_BIN_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
-#define FACEMC_EQUIPROBABLE_BIN_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
+#ifndef FACEMC_ACE_LAW_1_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_HPP
+#define FACEMC_ACE_LAW_1_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -20,18 +20,19 @@
 namespace Facemc{
 
 //! The inelastic equiprobable energy bins scattering eneryg distribution class (ENDF Law 1)
-class EquiprobableBinNeutronScatteringEnergyDistribution : public NeutronScatteringEnergyDistribution
+class AceLaw1NeutronScatteringEnergyDistribution : public NeutronScatteringEnergyDistribution
 {
 
 public:
 
-  typedef Teuchos::Array<Utility::Pair<double,Teuchos::Array<double> > > EnergyDistArray;
+  typedef Teuchos::Array<Utility::Pair<double,Teuchos::Array<double> > >
+  EnergyDistArray;
 
   //! Constructor
-  EquiprobableBinNeutronScatteringEnergyDistribution(EnergyDistArray& energy_grid);
+  AceLaw1NeutronScatteringEnergyDistribution(EnergyDistArray& energy_grid);
 
   //! Destructor
-  ~EquiprobableBinNeutronScatteringEnergyDistribution()
+  ~AceLaw1NeutronScatteringEnergyDistribution()
   { /* ... */ }
 
   //! Sample a scattering energy
@@ -45,9 +46,9 @@ private:
 
 } // end Facemc namespace
 
-#endif // end FACEMC_EQUIPROBABLE_BIN_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
+#endif // end FACEMC_ACE_LAW_1_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Facemc_EquiprobableBinNeutronScatteringEnergyDistribution.hpp
+// end Facemc_AceLaw1NeutronScatteringEnergyDistribution.hpp
 //---------------------------------------------------------------------------//
 

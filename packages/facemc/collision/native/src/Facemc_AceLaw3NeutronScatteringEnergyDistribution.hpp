@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   Facemc_InelasticLevelNeutronScatteringEnergyDistribution.hpp
+//! \file   Facemc_AceLaw3NeutronScatteringEnergyDistribution.hpp
 //! \author Alex Robinson, Alex Bennett
 //! \brief  The neutron inelastic level scattering energy distribution class
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_INELASTIC_LEVEL_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
-#define FACEMC_INELASTIC_LEVEL_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
+#ifndef FACEMC_ACE_LAW_3_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_HPP
+#define FACEMC_ACE_LAW_3_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_HPP
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringEnergyDistribution.hpp"
@@ -16,17 +16,17 @@
 namespace Facemc{
 
 //! The inelastic level scattering energy distribution class (ENDF Law 3)
-class InelasticLevelNeutronScatteringEnergyDistribution : public NeutronScatteringEnergyDistribution
+class AceLaw3NeutronScatteringEnergyDistribution : public NeutronScatteringEnergyDistribution
 {
 
 public:
   
   //! Constructor
-  InelasticLevelNeutronScatteringEnergyDistribution( const double param_a,
+  AceLaw3NeutronScatteringEnergyDistribution( const double param_a,
 						     const double param_b );
   
   //! Destructor
-  ~InelasticLevelNeutronScatteringEnergyDistribution()
+  ~AceLaw3NeutronScatteringEnergyDistribution()
   { /* ... */ }
   
   //! Sample a scattering energy
@@ -43,8 +43,8 @@ private:
 
 } // end Facemc namespace
 
-#endif // end FACEMC_INELASTIC_LEVEL_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
+#endif // end FACEMC_ACE_LAW_3_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Facemc_InelasticLevelNeutronScatteringEnergyDistribution.hpp
+// end Facemc_AceLaw3NeutronScatteringEnergyDistribution.hpp
 //---------------------------------------------------------------------------//
