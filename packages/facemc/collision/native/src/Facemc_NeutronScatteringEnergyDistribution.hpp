@@ -64,9 +64,9 @@ inline double NeutronScatteringEnergyDistribution::sampleEnergy(
 					    unsigned& outgoing_bin_index,
                                             double& energy_prime ) const
 {
-  sampled_bin_index = std::numeric_limits<unsigned>::max();
-  
   incoming_bin_index = std::numeric_limits<unsigned>::max();
+  
+  outgoing_bin_index = std::numeric_limits<unsigned>::max();
 
   return this->sampleEnergy( energy );
 }

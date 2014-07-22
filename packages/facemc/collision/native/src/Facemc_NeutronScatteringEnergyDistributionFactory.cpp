@@ -22,6 +22,7 @@
 #include "Facemc_Law44NeutronScatteringDistribution.hpp"
 #include "Facemc_Law44ARDistribution.hpp"
 #include "Facemc_Law44InterpolationPolicy.hpp"
+#include "Facemc_StandardLaw44ARDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -122,6 +123,98 @@ void NeutronScatteringEnergyDistributionFactory::createDistribution(
 
      break;
   }
+  case 4u:
+  {
+     // Verify that it is law 4
+     TEST_FOR_EXCEPTION( dlw_block_array[1] != 4,
+           	      std::runtime_error,
+           	      "Error: MT# " << reaction << "in ACE table "
+           	      << table_name << " should be law 4!\n" );
+
+     // Start index for ldat data
+     int ldat_start_index = (int)dlw_block_array[2] - dlw_block_array_start_index - 1;
+
+     // Verify that only one law is present
+     TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
+           	      std::runtime_error,
+           	      "Error: MT# " << reaction << "in ACE table "
+           	      << table_name << " has multiple interpolation schemes "
+           	      " with it, which is not currently supported!\n" );
+
+     // Number of incident energies
+     double incoming_energies = dlw_block_array[ldat_start_index + 1];
+
+     // Array of incoming energies
+     Teuchos::Array<double> incoming_energies_array = dlw_block_array( ldat_start_index + 2,
+                                                                       incoming_energies);
+
+     // Array of distribution locations
+     Teuchos::Array<double> distribution_locations = dlw_block_array(ldat_start_index + 2 + incoming_energies,
+                                                                  incoming_energies); 
+
+     // Initialize the energy distribution array
+     Law4NeutronScatteringEnergyDistribution::EnergyDistribution 
+       energy_distribution( incoming_energies );
+
+     // Loop through the incoming energies
+     for(int i = 0; i != incoming_energies; i++)
+     {
+       energy_distribution[i].first = incoming_energies_array[i];
+
+       int distribution_index = static_cast<int>( distribution_locations[i] ) - dlw_block_array_start_index - 1;
+
+       int interpolation_flag = dlw_block_array[distribution_index];
+
+       // Check if discrete lines are present 
+       TEST_FOR_EXCEPTION( interpolation_flag > 10,
+           	        std::runtime_error,
+           	        "Error: MT# " << reaction << "in ACE table "
+           	        << table_name << " has discrete lines in continuous"
+           	        " tabular data, which is not currently supported!\n" );
+
+       int number_points_distribution = dlw_block_array[distribution_index + 1];
+
+       Teuchos::ArrayView<const double> outgoing_energy_grid = 
+         dlw_block_array( distribution_index + 2, number_points_distribution );
+
+       Teuchos::ArrayView<const double> pdf;
+
+       switch( interpolation_flag )
+       {
+       case 1: // histogram interpolation
+         pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
+           		     number_points_distribution - 1 );
+
+         energy_distribution[i].second.reset( 
+           	      new Utility::HistogramDistribution( outgoing_energy_grid,
+           						  pdf ) );
+
+         break;
+ 
+       case 2: // Linear-Linear interpolation
+         pdf = dlw_block_array( distribution_index +2+ number_points_distribution,
+           		     number_points_distribution );
+
+         energy_distribution[i].second.reset( 
+           		     new Utility::TabularDistribution<Utility::LinLin>(
+           					 outgoing_energy_grid, pdf ) );
+
+         break;
+ 
+       default:
+         TEST_FOR_EXCEPTION( true,
+                             std::runtime_error,
+                             "Unknown interpolation flag in table "
+                             << table_name << 
+                             " for energy distribution of MT = "
+                             << reaction << ": "
+                             << interpolation_flag << "\n" );
+       } 
+     }
+
+     distribution.reset( 
+             new Law4NeutronScatteringEnergyDistribution( energy_distribution ) );
+  }
   default:
     // This law is not currently supported
     TEST_FOR_EXCEPTION( true,
@@ -183,8 +276,7 @@ void NeutronScatteringEnergyDistributionFactory::createCoupledDistribution(
     energy_distribution( incoming_energies );
 
   // Initialize the AR distribution array
-  Teuchos::Array<Teuchos::RCP<Law44ARDistribution> > 
-    ar_distribution( incoming_energies );
+  Law44NeutronScatteringDistribution::ARDistributions ar_distribution( incoming_energies );
 
   // Loop through the incoming energies
   for(int i = 0; i != incoming_energies; i++)
@@ -207,7 +299,7 @@ void NeutronScatteringEnergyDistributionFactory::createCoupledDistribution(
     Teuchos::ArrayView<const double> outgoing_energy_grid = 
       dlw_block_array( distribution_index + 2, number_points_distribution );
 
-    Teuchos::ArrayView<const double> pdf, A_array;
+    Teuchos::ArrayView<const double> pdf;
 
     Teuchos::ArrayView<const double> R_array = 
       dlw_block_array( distribution_index + 2 + number_points_distribution*3,

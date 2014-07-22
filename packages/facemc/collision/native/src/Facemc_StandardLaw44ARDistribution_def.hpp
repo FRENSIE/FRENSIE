@@ -9,12 +9,15 @@
 #ifndef FACEMC_STANDARD_LAW_44_AR_DISTRIBUTION_DEF_HPP
 #define FACEMC_STANDARD_LAW_44_AR_DISTRIBUTION_DEF_HPP
 
+// FRENSIE Includes
+#include "Facemc_StandardLaw44ARDistribution.hpp"
+
 namespace Facemc{
 
 // Constructor
 template<typename Law44InterpolationPolicy>
 StandardLaw44ARDistribution<Law44InterpolationPolicy>::StandardLaw44ARDistribution( 
-		   const Teuchos::ArrayRCP<const double>& outgoing_energy_grid,
+		   const Teuchos::ArrayView<const double>& outgoing_energy_grid,
 		   const Teuchos::ArrayView<const double>& A_array,
 		   const Teuchos::ArrayView<const double>& R_array )
   : Law44ARDistribution( outgoing_energy_grid, A_array, R_array )
@@ -22,7 +25,7 @@ StandardLaw44ARDistribution<Law44InterpolationPolicy>::StandardLaw44ARDistributi
 
 // Sample A and R from the distribution
 template<typename Law44InterpolationPolicy>
-void StandardLaw44ARDistribution<Law44InterpolationPolicy>:sampleAR( 
+void StandardLaw44ARDistribution<Law44InterpolationPolicy>::sampleAR( 
 						const unsigned outgoing_index,
 						const double energy_prime,
 						double& sampled_A,

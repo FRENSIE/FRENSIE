@@ -16,14 +16,14 @@ namespace Facemc{
 
 //! The standard law 44 AR distribution base class
 template<typename Law44InterpolationPolicy>
-class StandardLaw44ARDistribution : Law44ARDistribution
+class StandardLaw44ARDistribution : public Law44ARDistribution
 {
 
 public:
 
   //! Constructor
   StandardLaw44ARDistribution( 
-		   const Teuchos::ArrayRCP<const double>& outgoing_energy_grid,
+		   const Teuchos::ArrayView<const double>& outgoing_energy_grid,
 		   const Teuchos::ArrayView<const double>& A_array,
 		   const Teuchos::ArrayView<const double>& R_array );
 

@@ -12,6 +12,8 @@
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringAngularDistribution.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_SearchAlgorithms.hpp"
+#include "Utility_SortAlgorithms.hpp"
 
 namespace Facemc{
 

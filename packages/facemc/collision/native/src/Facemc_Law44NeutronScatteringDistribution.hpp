@@ -29,7 +29,7 @@ class Law44NeutronScatteringDistribution : public NeutronScatteringDistribution
 public:
 
   //! Typedef for the distribution
-  Teuchos::Array<Teuchos::RCP<Law44ARDistribution> >;
+  typedef Teuchos::Array<Teuchos::RCP<Law44ARDistribution> > ARDistributions;
  
   //! Constructor
   Law44NeutronScatteringDistribution( 
@@ -53,7 +53,7 @@ private:
   Teuchos::RCP<NeutronScatteringEnergyDistribution> d_energy_scattering_distribution;
 
   // The AR distributions
-  Teuchos::Array<Teuchos::RCP<Law44ARDistribution> > d_ar_distributions;
+  ARDistributions d_ar_distributions;
 };
 
 } // end Facemc namespace

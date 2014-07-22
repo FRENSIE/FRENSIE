@@ -34,18 +34,18 @@ Law4NeutronScatteringEnergyDistribution::Law4NeutronScatteringEnergyDistribution
 // Sample a scattering energy
 double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double energy ) const
 {
-  unsigned sampled_index, incoming_index;
+  unsigned incoming_index, outgoing_index;
 
   double energy_prime;
 
-  return this->sampleEnergy( energy, sampled_index, incoming_index, energy_prime );
+  return this->sampleEnergy( energy, incoming_index, outgoing_index, energy_prime );
 }
 
 
 // Sample a scattering energy
-double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double& energy, 
-                                                              unsigned& sampled_index, 
-                                                              unsigned& incoming_index,
+double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double energy, 
+                                                              unsigned& incoming_index, 
+                                                              unsigned& outgoing_index,
                                                               double& energy_prime) const
 {
   // Make sure the energy is valid
@@ -55,17 +55,8 @@ double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double& ener
   double outgoing_energy;
 
   // Check if energy is outside the grid
-  if( energy < d_energy_distribution.front().first ) 
+  if( energy >= d_energy_distribution.front().first and energy <= d_energy_distribution.back().first )
   {
-    outgoing_energy = d_energy_distribution.front().second->sample();
-  }
-  else if( energy > d_energy_distribution.back().first )
-  {  
-    outgoing_energy = d_energy_distribution.back().second->sample(); 
-  }
-  else
-  {
-
     EnergyDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
 
     lower_bin_boundary = d_energy_distribution.begin();
@@ -78,8 +69,6 @@ double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double& ener
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
 
-    // Calculate incoming bin index
-    incoming_index = std::distance(d_energy_distribution.begin(), lower_bin_boundary);
  
     // Calculate the interpolation fraction
     double interpolation_fraction = ( energy - lower_bin_boundary->first )/
@@ -88,9 +77,17 @@ double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double& ener
     double random_num = Utility::RandomNumberGenerator::getRandomNumber<double>();
 
     if( random_num < interpolation_fraction )
-      energy_prime = upper_bin_boundary->second->sample( sampled_index );
+    {
+      energy_prime = upper_bin_boundary->second->sample( outgoing_index );
+
+      incoming_index = std::distance(d_energy_distribution.begin(), upper_bin_boundary);
+    }
     else
-      energy_prime = lower_bin_boundary->second->sample( sampled_index );
+    {
+      energy_prime = lower_bin_boundary->second->sample( outgoing_index );
+   
+      incoming_index = std::distance(d_energy_distribution.begin(), lower_bin_boundary);
+    }
 
     // Calculate the energy bounds
     double energy_lower = lower_bin_boundary->second->getLowerBoundOfIndepVar() + interpolation_fraction *
@@ -111,6 +108,19 @@ double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double& ener
                       (energy_upper - energy_lower) / 
                       (lower_bin_boundary->second->getUpperBoundOfIndepVar() - 
                        lower_bin_boundary->second->getLowerBoundOfIndepVar());
+
+  }
+  else if( energy < d_energy_distribution.front().first ) 
+  {
+    outgoing_energy = d_energy_distribution.front().second->sample( outgoing_index);
+    energy_prime = outgoing_energy;
+    incoming_index = 0;
+  }
+  else
+  {  
+    outgoing_energy = d_energy_distribution.back().second->sample( outgoing_index );
+    energy_prime = outgoing_energy;
+    incoming_index = d_energy_distribution.size() - 1; 
   }
 
   return outgoing_energy;
