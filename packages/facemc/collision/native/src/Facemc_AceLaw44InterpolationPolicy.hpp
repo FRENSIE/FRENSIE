@@ -1,17 +1,17 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   Facemc_Law44InterpolationPolicy.hpp
+//! \file   Facemc_AceLaw44InterpolationPolicy.hpp
 //! \author Alex Bennett, Alex Robinson
 //! \brief  The law 44 interpolation policy class
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_LAW_44_INTERPOLATION_POLICY 
-#define FACEMC_LAW_44_INTERPOLATION_POLICY 
+#ifndef FACEMC_ACE_LAW_44_INTERPOLATION_POLICY 
+#define FACEMC_ACE_LAW_44_INTERPOLATION_POLICY 
 
 namespace Facemc {
 
-struct Law44HistogramInterpolationPolicy
+struct AceLaw44HistogramInterpolationPolicy
 {
   //! Return interpolated A or R
   inline static double interpolate( const double& indep_var_prime,
@@ -24,7 +24,7 @@ struct Law44HistogramInterpolationPolicy
   }
 };
 
-struct Law44LinLinInterpolationPolicy
+struct AceLaw44LinLinInterpolationPolicy
 {
   //! Return interpolated A or R
   inline static double interpolate( const double& indep_var_prime,
@@ -39,8 +39,8 @@ struct Law44LinLinInterpolationPolicy
 
 } // end facemc namespace
 
-#endif //FACEMC_LAW_44_INTERPOLATION_POLICY
+#endif //FACEMC_ACE_LAW_44_INTERPOLATION_POLICY
 
 //---------------------------------------------------------------------------//
-// end Facemc_Law44InterpolationPolicy.hpp
+// end Facemc_AceLaw44InterpolationPolicy.hpp
 //---------------------------------------------------------------------------//

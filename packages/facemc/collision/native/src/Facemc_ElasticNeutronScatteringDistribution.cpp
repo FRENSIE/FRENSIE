@@ -29,8 +29,6 @@ ElasticNeutronScatteringDistribution::ElasticNeutronScatteringDistribution(
   testPrecondition( atomic_weight_ratio > 0.0 );
   // Make sure the angular distribution pointer is valid
   testPrecondition( !angular_scattering_distribution.is_null() );
-  // Make sure the angular distribution is in the CM
-  testPrecondition( angular_scattering_distribution->isCMDistribution() );
 }
 
 // Randomly scatter the neutron

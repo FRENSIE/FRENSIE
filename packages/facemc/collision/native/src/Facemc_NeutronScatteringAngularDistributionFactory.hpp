@@ -29,14 +29,12 @@ public:
   static void createDistribution( 
 	    const Teuchos::ArrayView<const double>& and_block_array,
 	    const unsigned and_block_array_start_index,
-	    const bool is_cm_dist,
 	    const std::string& table_name,
 	    const NuclearReactionType reaction,
 	    Teuchos::RCP<NeutronScatteringAngularDistribution>& distribution );
 
   //! Create an isotropic angular distribution
   static void createIsotropicDistribution(
-	    const bool is_cm_dist,
 	    Teuchos::RCP<NeutronScatteringAngularDistribution>& distribution );
 
 private:

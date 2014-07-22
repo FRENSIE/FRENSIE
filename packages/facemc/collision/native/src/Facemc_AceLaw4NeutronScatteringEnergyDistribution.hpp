@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   Facemc_Law4NeutronScatteringEnergyDistribution.hpp
+//! \file   Facemc_AceLaw4NeutronScatteringEnergyDistribution.hpp
 //! \author Alex Bennett
 //! \brief  The law 4 scattering energy distribution class
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_LAW_4_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
-#define FACEMC_LAW_4_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
+#ifndef FACEMC_ACE_LAW_4_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_HPP
+#define FACEMC_ACE_LAW_4_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -20,8 +20,8 @@
 
 namespace Facemc{
 
-//! The law 4 scattering eneryg distribution class (ENDF Law 4)
-class Law4NeutronScatteringEnergyDistribution : public NeutronScatteringEnergyDistribution
+//! The law 4 scattering eneryg distribution class (Ace Law 4)
+class AceLaw4NeutronScatteringEnergyDistribution : public NeutronScatteringEnergyDistribution
 {
 
 public:
@@ -30,10 +30,11 @@ public:
   typedef Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
                                                         EnergyDistribution;
   //! Constructor
-  Law4NeutronScatteringEnergyDistribution(EnergyDistribution& energy_distribution);
+  AceLaw4NeutronScatteringEnergyDistribution( 
+				     EnergyDistribution& energy_distribution );
 
   //! Destructor
-  ~Law4NeutronScatteringEnergyDistribution()
+  ~AceLaw4NeutronScatteringEnergyDistribution()
   { /* ... */ }
 
   //! Sample a scattering energy
@@ -53,9 +54,9 @@ private:
 
 } // end Facemc namespace
 
-#endif // end FACEMC_LAW_4_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
+#endif // end FACEMC_ACE_LAW_4_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Facemc_Law4NeutronScatteringEnergyDistribution.hpp
+// end Facemc_AceLaw4NeutronScatteringEnergyDistribution.hpp
 //---------------------------------------------------------------------------//
 

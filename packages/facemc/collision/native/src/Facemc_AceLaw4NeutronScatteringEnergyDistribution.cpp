@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   Facemc_Law4NeutronScatteringEnergyDistribution.cpp
+//! \file   Facemc_AceLaw4NeutronScatteringEnergyDistribution.cpp
 //! \author Alex Bennett
 //! \brief  The neutron law 4 scattering energy distribution class
 //!
@@ -13,7 +13,7 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "Facemc_Law4NeutronScatteringEnergyDistribution.hpp"
+#include "Facemc_AceLaw4NeutronScatteringEnergyDistribution.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -22,8 +22,8 @@
 namespace Facemc{
 
 // Constructor
-Law4NeutronScatteringEnergyDistribution::Law4NeutronScatteringEnergyDistribution( EnergyDistribution& energy_distribution )
-  : NeutronScatteringEnergyDistribution( false ),
+AceLaw4NeutronScatteringEnergyDistribution::AceLaw4NeutronScatteringEnergyDistribution( EnergyDistribution& energy_distribution )
+  : NeutronScatteringEnergyDistribution( 4u ),
     d_energy_distribution( energy_distribution )
 {
   // Check to make sure the energy grid is filled
@@ -32,7 +32,7 @@ Law4NeutronScatteringEnergyDistribution::Law4NeutronScatteringEnergyDistribution
 
 
 // Sample a scattering energy
-double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double energy ) const
+double AceLaw4NeutronScatteringEnergyDistribution::sampleEnergy( const double energy ) const
 {
   unsigned incoming_index, outgoing_index;
 
@@ -43,7 +43,7 @@ double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double energ
 
 
 // Sample a scattering energy
-double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double energy, 
+double AceLaw4NeutronScatteringEnergyDistribution::sampleEnergy( const double energy, 
                                                               unsigned& incoming_index, 
                                                               unsigned& outgoing_index,
                                                               double& energy_prime) const
@@ -130,5 +130,5 @@ double Law4NeutronScatteringEnergyDistribution::sampleEnergy( const double energ
 } // end Facemc namespace
 
 //---------------------------------------------------------------------------//
-// end Facemc_Law4NeutronScatteringEnergyDistribution.cpp
+// end Facemc_AceLaw4NeutronScatteringEnergyDistribution.cpp
 //---------------------------------------------------------------------------//

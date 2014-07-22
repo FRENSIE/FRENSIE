@@ -29,7 +29,6 @@ NeutronScatteringAngularDistributionFactory::isotropic_angle_cosine_dist(
 void NeutronScatteringAngularDistributionFactory::createDistribution(
 	     const Teuchos::ArrayView<const double>& and_block_array,
 	     const unsigned and_block_array_start_index,
-	     const bool is_cm_dist,
 	     const std::string& table_name,
 	     const NuclearReactionType reaction,
 	     Teuchos::RCP<NeutronScatteringAngularDistribution>& distribution )
@@ -133,15 +132,13 @@ void NeutronScatteringAngularDistributionFactory::createDistribution(
     }
   }
 
-  // Create the energy distribution
+  // Create the angular distribution
   distribution.reset( 
-		new NeutronScatteringAngularDistribution( angular_distribution,
-							  is_cm_dist ) );
+	    new NeutronScatteringAngularDistribution( angular_distribution ) );
 }
 
 // Create an isotropic angular distribution
 void NeutronScatteringAngularDistributionFactory::createIsotropicDistribution(
-	     const bool is_cm_dist,
 	     Teuchos::RCP<NeutronScatteringAngularDistribution>& distribution )
 {
   NeutronScatteringAngularDistribution::AngularDistribution
@@ -154,8 +151,7 @@ void NeutronScatteringAngularDistributionFactory::createIsotropicDistribution(
   angular_distribution[1].second = isotropic_angle_cosine_dist;
 
   distribution.reset( 
-		new NeutronScatteringAngularDistribution( angular_distribution,
-							  is_cm_dist ) );
+	    new NeutronScatteringAngularDistribution( angular_distribution ) );
 }
 
 } // end Facemc namespace

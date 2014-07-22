@@ -13,9 +13,15 @@ namespace Facemc{
 
 // Constructor
 NeutronScatteringEnergyDistribution::NeutronScatteringEnergyDistribution( 
-					                const bool is_cm_dist )
-  : d_is_cm_dist( is_cm_dist )
+						      const unsigned law )
+  : d_law( law )
 { /* ... */ }
+
+// Return the scattering law
+unsigned NeutronScatteringEnergyDistribution::getLaw() const
+{
+  return d_law;
+}
 
 } // end Facemc namespace
 

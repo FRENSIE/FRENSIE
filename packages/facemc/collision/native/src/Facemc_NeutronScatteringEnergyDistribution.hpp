@@ -27,16 +27,13 @@ class NeutronScatteringEnergyDistribution
 public:
 
   //! Constructor
-  NeutronScatteringEnergyDistribution( const bool is_cm_dist = false );
+  NeutronScatteringEnergyDistribution( const unsigned law );
 
   //! Destructor
   virtual ~NeutronScatteringEnergyDistribution()
   { /* ... */ }
 
-  //! Return if the distribution is for the CM energy
-  bool isCMDistribution() const;
-
-  //! Sample a scattering energy
+   //! Sample a scattering energy
   virtual double sampleEnergy( const double energy ) const = 0;
 
   //! Sample a scattering energy (and return the sampled bin index)
@@ -45,17 +42,14 @@ public:
 			       unsigned& outgoing_bin_index,
                                double& energy_prime ) const;
 
+  //! Return the scattering law
+  unsigned getLaw() const;
+
 private:
 
-  // Records if the energy distribution is for the cm energy
-  bool d_is_cm_dist;
+  // The endf law that this distribution represents
+  unsigned d_law;
 };
-
-// Return if the distribution is for the CM energy
-inline bool NeutronScatteringEnergyDistribution::isCMDistribution() const
-{
-  return d_is_cm_dist;
-}
 
 // Sample a scattering energy (and return the sampled bin index)
 inline double NeutronScatteringEnergyDistribution::sampleEnergy( 

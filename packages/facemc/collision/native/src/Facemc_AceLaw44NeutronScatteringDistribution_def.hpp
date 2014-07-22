@@ -1,16 +1,19 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Facemc_Law44NeutronScatteringDistribution.cpp
+//! \file   Facemc_AceLaw44NeutronScatteringDistribution_def.hpp
 //! \author Alex Bennett
 //! \brief  The law 44 scattering distribution class definition
 //!
 //---------------------------------------------------------------------------//
 
+#ifndef FACEMC_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
+#define FACEMC_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
+
 // Std Lib Includes
 #include <math.h>
 
 // FRENSIE Includes
-#include "Facemc_Law44NeutronScatteringDistribution.hpp"
+#include "Facemc_AceLaw44NeutronScatteringDistribution.hpp"
 #include "Facemc_NeutronScatteringEnergyDistribution.hpp"
 #include "Utility_DirectionHelpers.hpp"
 #include "Utility_ContractException.hpp"
@@ -19,11 +22,12 @@
 namespace Facemc{
 
 // Constructor
-Law44NeutronScatteringDistribution::Law44NeutronScatteringDistribution( 
+template<typename SystemConversionPolicy>
+AceLaw44NeutronScatteringDistribution<SystemConversionPolicy>::AceLaw44NeutronScatteringDistribution( 
                       const double atomic_weight_ratio,
 		      const Teuchos::RCP<NeutronScatteringEnergyDistribution>& 
 		      energy_scattering_distribution,
-		      const Teuchos::Array<Teuchos::RCP<Law44ARDistribution> >&
+		      const Teuchos::Array<Teuchos::RCP<AceLaw44ARDistribution> >&
 		      ar_distributions )
    : NeutronScatteringDistribution( atomic_weight_ratio ),
      d_energy_scattering_distribution( energy_scattering_distribution ),
@@ -31,12 +35,11 @@ Law44NeutronScatteringDistribution::Law44NeutronScatteringDistribution(
 {
   // Make sure the energy distribution pointer is valid
   testPrecondition( !energy_scattering_distribution.is_null() );
-  // Make sure the energy distribution is not in the CM
-  testPrecondition( !energy_scattering_distribution->isCMDistribution() );
 }
 
 // Randomly scatter the neutron
-void Law44NeutronScatteringDistribution::scatterNeutron(
+template<typename SystemConversionPolicy>
+void AceLaw44NeutronScatteringDistribution<SystemConversionPolicy>::scatterNeutron(
 					       NeutronState& neutron,
                                                const double ) const
 {
@@ -45,7 +48,7 @@ void Law44NeutronScatteringDistribution::scatterNeutron(
   double energy_prime;
 
   // Sample the energy of the neutron
-  double energy = 
+  double outgoing_sys_energy = 
     d_energy_scattering_distribution->sampleEnergy( neutron.getEnergy(),
 						    incoming_bin_index,
 						    outgoing_bin_index,
@@ -61,30 +64,47 @@ void Law44NeutronScatteringDistribution::scatterNeutron(
   double random_num = 
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  double scattering_angle;
+  double sys_scattering_angle_cosine;
 
   if( Utility::RandomNumberGenerator::getRandomNumber<double>() > r )
   {
     double t = (2 * random_num - 1) * sinh(a);
 
-    scattering_angle = log(t + sqrt(t * t + 1) ) / a;
+    sys_scattering_angle_cosine = log(t + sqrt(t * t + 1) ) / a;
   }
   else
   {
-    scattering_angle = log(random_num * exp(a) + (1 - random_num) * exp(-a))/a;
+    sys_scattering_angle_cosine = 
+      log(random_num * exp(a) + (1 - random_num) * exp(-a))/a;
   }
+
+  // convert the outgoing energy from this system to the lab system
+  double outgoing_energy = 
+    SystemConversionPolicy::convertToLabEnergy( neutron.getEnergy(),
+						outgoing_sys_energy,
+						sys_scattering_angle_cosine,
+						this->getAtomicWeightRatio() );
+
+  // convert the scattering angle cosine from this system to the lab system
+  double scattering_angle_cosine = 
+    SystemConversionPolicy::convertToLabAngleCosine( 
+						neutron.getEnergy(),
+						outgoing_sys_energy,
+						outgoing_energy,
+						sys_scattering_angle_cosine,
+						this->getAtomicWeightRatio() );
 
   // Rotate the neutron to the new angle
   double outgoing_neutron_direction[3];
   
   Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
-						  scattering_angle,
+						  scattering_angle_cosine,
 						  sampleAzimuthalAngle(),
 						  neutron.getDirection(),
 						  outgoing_neutron_direction );
 
   // Set the new energy
-  neutron.setEnergy( energy );
+  neutron.setEnergy( outgoing_energy );
   
   // Set the new direction
   neutron.setDirection( outgoing_neutron_direction );
@@ -92,6 +112,8 @@ void Law44NeutronScatteringDistribution::scatterNeutron(
 
 } // End Facemc namespace
 
+#endif // end FACEMC_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
+
 //---------------------------------------------------------------------------//
-// end Facemc_Law44NeutronScatteringDistribution_def.hpp
+// end Facemc_AceLaw44NeutronScatteringDistribution_def.hpp
 //---------------------------------------------------------------------------//
