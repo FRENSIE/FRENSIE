@@ -12,6 +12,8 @@
 // Std Lib Includes
 #include <math.h>
 
+namespace Facemc {
+
 //! Policy for converting from the CM system to the Lab system 
 struct CMSystemConversionPolicy
 {
@@ -26,8 +28,8 @@ struct CMSystemConversionPolicy
     
     return outgoing_sys_energy + (incident_energy + 
 				 2.0*sys_scattering_angle_cosine*a_plus_1*
-				 sqrt(incident_energy*outgoing_sys_energy)/
-				 (a_plus_1*a_plus_1));
+				 sqrt(incident_energy*outgoing_sys_energy))/
+				 (a_plus_1*a_plus_1);
   }
 
   //! Convert the CM scattering angle cosine to the outgoing lab angle cosine
@@ -68,6 +70,8 @@ struct LabSystemConversionPolicy
     return sys_scattering_angle_cosine;
   }
 };
+
+} // end facemc namespace
 
 #endif // end FACEMC_LAB_SYSTEM_CONVERSION_POLICY
 

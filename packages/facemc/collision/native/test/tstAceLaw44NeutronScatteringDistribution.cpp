@@ -137,7 +137,7 @@ TEUCHOS_UNIT_TEST( AceLaw44NeutronScatteringDistribution,
 	            new Facemc::AceLaw4NeutronScatteringEnergyDistribution(
 							 energy_distribution));
 
-   Facemc::AceLaw44NeutronScatteringDistribution<LabSystemConversionPolicy> 
+   Facemc::AceLaw44NeutronScatteringDistribution<Facemc::LabSystemConversionPolicy> 
      distribution( 1.0, energy_scattering_distribution, ar_distribution );
 
    Facemc::NeutronState neutron( 0ull );
