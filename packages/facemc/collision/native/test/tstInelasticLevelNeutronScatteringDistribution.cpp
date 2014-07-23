@@ -15,8 +15,9 @@
 
 // FRENSIE Includes
 #include "Facemc_UnitTestHarnessExtensions.hpp"
-#include "Facemc_InelasticLevelNeutronScatteringDistribution.hpp"
-#include "Facemc_InelasticLevelNeutronScatteringEnergyDistribution.hpp"
+#include "Facemc_IndependentEnergyAngleNeutronScatteringDistribution.hpp"
+#include "Facemc_AceLaw3NeutronScatteringEnergyDistribution.hpp"
+#include "Facemc_LabSystemConversionPolicy.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -48,10 +49,10 @@ void initializeScatteringDistribution(
   // param_a = (A + 1)/A * |Q| = 2.0
   // param_b = (A/(A + 1)^2 = 0.25
   Teuchos::RCP<Facemc::NeutronScatteringEnergyDistribution> energy_dist( 
-       new Facemc::InelasticLevelNeutronScatteringEnergyDistribution( 2.0,
-								      0.25 ) );
+       new Facemc::AceLaw3NeutronScatteringEnergyDistribution( 2.0, 0.25 ) );
   
-  scattering_dist.reset( new Facemc::InelasticLevelNeutronScatteringDistribution( 
+  scattering_dist.reset( 
+   new Facemc::IndependentEnergyAngleNeutronScatteringDistribution<LabSystemConversionPolicy>( 
 					                   atomic_weight_ratio,
 							   energy_dist, 
 							   angular_dist ) );

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstLaw4NeutronScatteringDistribution.cpp
+//! \file   tstAceLaw4NeutronScatteringDistribution.cpp
 //! \author Alex Bennett
 //! \brief  Law 4 neutron scattering distribution unit tests
 //---------------------------------------------------------------------------//
@@ -15,7 +15,7 @@
 
 // FRENSIE Includes
 #include "Facemc_UnitTestHarnessExtensions.hpp"
-#include "Facemc_Law4NeutronScatteringEnergyDistribution.hpp"
+#include "Facemc_AceLaw4NeutronScatteringEnergyDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -24,10 +24,11 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( Law4NeutronScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw4NeutronScatteringEnergyDistribution, 
 		   sampleEnergy_lower_bound_histogram )
 {
-   Facemc::Law4NeutronScatteringEnergyDistribution::EnergyDistribution energy_distribution(2);
+   Facemc::AceLaw4NeutronScatteringEnergyDistribution::EnergyDistribution 
+     energy_distribution(2);
 
    energy_distribution[0].first = 1.0;
    energy_distribution[1].first = 2.0;
@@ -47,7 +48,9 @@ TEUCHOS_UNIT_TEST( Law4NeutronScatteringEnergyDistribution,
    pdf[2] = 0.2;
    pdf[3] = 0.2;
 
-   energy_distribution[0].second.reset( new Utility::HistogramDistribution( outgoing_energy_grid, pdf ) );
+   energy_distribution[0].second.reset( new Utility::HistogramDistribution( 
+							  outgoing_energy_grid,
+							  pdf ) );
 
    outgoing_energy_grid[0] = 2.0;
    outgoing_energy_grid[1] = 3.0;
@@ -60,7 +63,9 @@ TEUCHOS_UNIT_TEST( Law4NeutronScatteringEnergyDistribution,
    pdf[2] = 0.1;
    pdf[3] = 0.1;
 
-   energy_distribution[1].second.reset( new Utility::HistogramDistribution( outgoing_energy_grid, pdf ) );
+   energy_distribution[1].second.reset( new Utility::HistogramDistribution( 
+							  outgoing_energy_grid,
+							  pdf ) );
 
    // Create the fake stream
    std::vector<double> fake_stream( 1 );
@@ -68,16 +73,18 @@ TEUCHOS_UNIT_TEST( Law4NeutronScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   Facemc::Law4NeutronScatteringEnergyDistribution distribution( energy_distribution );
+   Facemc::AceLaw4NeutronScatteringEnergyDistribution 
+     distribution( energy_distribution );
 
    TEST_FLOATING_EQUALITY(distribution.sampleEnergy(0.5), 3.0, 1e-15);
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( Law4NeutronScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw4NeutronScatteringEnergyDistribution, 
 		   sampleEnergy_upper_bound_histogram )
 {
-   Facemc::Law4NeutronScatteringEnergyDistribution::EnergyDistribution energy_distribution(2);
+   Facemc::AceLaw4NeutronScatteringEnergyDistribution::EnergyDistribution 
+     energy_distribution(2);
 
    energy_distribution[0].first = 1.0;
    energy_distribution[1].first = 2.0;
@@ -97,7 +104,9 @@ TEUCHOS_UNIT_TEST( Law4NeutronScatteringEnergyDistribution,
    pdf[2] = 0.2;
    pdf[3] = 0.2;
 
-   energy_distribution[0].second.reset( new Utility::HistogramDistribution( outgoing_energy_grid, pdf ) );
+   energy_distribution[0].second.reset( new Utility::HistogramDistribution( 
+							  outgoing_energy_grid,
+							  pdf ) );
 
    outgoing_energy_grid[0] = 2.0;
    outgoing_energy_grid[1] = 3.0;
@@ -110,7 +119,9 @@ TEUCHOS_UNIT_TEST( Law4NeutronScatteringEnergyDistribution,
    pdf[2] = 0.1;
    pdf[3] = 0.1;
 
-   energy_distribution[1].second.reset( new Utility::HistogramDistribution( outgoing_energy_grid, pdf ) );
+   energy_distribution[1].second.reset( new Utility::HistogramDistribution( 
+							  outgoing_energy_grid,
+							  pdf ) );
 
    // Create the fake stream
    std::vector<double> fake_stream( 1 );
@@ -118,16 +129,18 @@ TEUCHOS_UNIT_TEST( Law4NeutronScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   Facemc::Law4NeutronScatteringEnergyDistribution distribution( energy_distribution );
+   Facemc::AceLaw4NeutronScatteringEnergyDistribution 
+     distribution( energy_distribution );
 
    TEST_FLOATING_EQUALITY(distribution.sampleEnergy(2.5), 4.0, 1e-15);
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( Law4NeutronScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw4NeutronScatteringEnergyDistribution, 
 		   sampleEnergy_histogram )
 {
-   Facemc::Law4NeutronScatteringEnergyDistribution::EnergyDistribution energy_distribution(2);
+   Facemc::AceLaw4NeutronScatteringEnergyDistribution::EnergyDistribution 
+     energy_distribution(2);
 
    energy_distribution[0].first = 1.0;
    energy_distribution[1].first = 2.0;
@@ -147,7 +160,9 @@ TEUCHOS_UNIT_TEST( Law4NeutronScatteringEnergyDistribution,
    pdf[2] = 0.2;
    pdf[3] = 0.2;
 
-   energy_distribution[0].second.reset( new Utility::HistogramDistribution( outgoing_energy_grid, pdf ) );
+   energy_distribution[0].second.reset( new Utility::HistogramDistribution( 
+							  outgoing_energy_grid,
+							  pdf ) );
 
    outgoing_energy_grid[0] = 2.0;
    outgoing_energy_grid[1] = 3.0;
@@ -160,7 +175,9 @@ TEUCHOS_UNIT_TEST( Law4NeutronScatteringEnergyDistribution,
    pdf[2] = 0.1;
    pdf[3] = 0.1;
 
-   energy_distribution[1].second.reset( new Utility::HistogramDistribution( outgoing_energy_grid, pdf ) );
+   energy_distribution[1].second.reset( new Utility::HistogramDistribution( 
+							  outgoing_energy_grid,
+							  pdf ) );
 
    // Create the fake stream
    std::vector<double> fake_stream( 2 );
@@ -169,7 +186,8 @@ TEUCHOS_UNIT_TEST( Law4NeutronScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   Facemc::Law4NeutronScatteringEnergyDistribution distribution( energy_distribution );
+   Facemc::AceLaw4NeutronScatteringEnergyDistribution 
+     distribution( energy_distribution );
 
    TEST_FLOATING_EQUALITY(distribution.sampleEnergy(1.5), 3.5, 1e-15);
 }
@@ -187,5 +205,5 @@ int main( int argc, char** argv )
 
 
 //---------------------------------------------------------------------------//
-// tstLaw4NeutronScatteringDistribution.cpp
+// tstAceLaw4NeutronScatteringDistribution.cpp
 //---------------------------------------------------------------------------//
