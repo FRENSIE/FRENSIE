@@ -146,7 +146,7 @@ Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractLNEPSBlock() const
 {
   if( hasElectronShellOccupancyData() )
-    return d_xss( 0, d_nxs[4] );
+    return d_xss( d_jxs[5], d_nxs[4] );
   else
     return Teuchos::ArrayView<const double>();
 }
@@ -156,7 +156,7 @@ Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractLBEPSBlock() const
 {
   if( hasElectronShellOccupancyData() )
-    return d_xss( d_nxs[4], d_nxs[4] );
+    return d_xss( d_jxs[6], d_nxs[4] );
   else
     return Teuchos::ArrayView<const double>();
 }
@@ -166,7 +166,7 @@ Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractLPIPSBlock() const
 {
   if( hasElectronShellOccupancyData() )
-    return d_xss( 2*d_nxs[4], d_nxs[4] );
+    return d_xss( d_jxs[7], d_nxs[4] );
   else
     return Teuchos::ArrayView<const double>();
 }
@@ -186,7 +186,9 @@ Teuchos::ArrayView<const double>
 XSSPhotoatomicDataExtractor::extractSWDBlock() const
 {
   if( hasComptonProfileData() )
-    return d_xss( d_jxs[9], d_nxs[0] - d_jxs[9] + 1 );
+    return d_xss( d_jxs[9], d_nxs[0] - d_jxs[9] );
+  else
+    return Teuchos::ArrayView<const double>();
 }
 
 } // end Data namespace
