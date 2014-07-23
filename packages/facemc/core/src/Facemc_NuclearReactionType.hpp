@@ -428,7 +428,7 @@ enum NuclearReactionType{
   N__2N_EXCITED_STATE_13_REACTION = 888,
   N__2N_EXCITED_STATE_14_REACTION = 889,
   N__2N_EXCITED_STATE_15_REACTION = 890,
-  N__2N_CONTINUUM_REACTION = 891,
+  N__2N_CONTINUUM_REACTION = 891
 };
 
 //! Convert an unsigned int to a NuclearReactionType

@@ -11,6 +11,7 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
+#include <Teuchos_VerboseObject.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
@@ -22,37 +23,39 @@
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
-std::string test_basic_ace_file_name;
-std::string test_basic_ace_table_name;
+std::string test_h1_ace_file_name;
+std::string test_h1_ace_table_name;
+std::string test_o16_ace_file_name;
+std::string test_o16_ace_table_name;
 // std::string test_fission_ace_file_name;
 // std::string test_ptable_ace_file_name;
 // std::string test_fission_ptable_ace_file_name;
 
-Teuchos::RCP<Data::ACEFileHandler> ace_file_handler;
-
-Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
-
-Teuchos::RCP<Facemc::NuclearReactionFactory> reaction_factory;
+Teuchos::RCP<Facemc::NuclearReactionFactory> h1_reaction_factory;
+Teuchos::RCP<Facemc::NuclearReactionFactory> o16_reaction_factory;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
 void initializeReactionFactory( 
-			Teuchos::RCP<Facemc::NuclearReactionFactory>& factory )
+			 Teuchos::RCP<Facemc::NuclearReactionFactory>& factory,
+			 const std::string& ace_file_name,
+			 const std::string& ace_table_name )
 {
-  ace_file_handler.reset(new Data::ACEFileHandler( test_basic_ace_file_name,
-						     test_basic_ace_table_name,
-						     1u ) );
-  xss_data_extractor.reset(
+  Teuchos::RCP<Data::ACEFileHandler>
+    ace_file_handler( new Data::ACEFileHandler( ace_file_name,
+						ace_table_name,
+						1u ) );
+  Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor(
    new Data::XSSNeutronDataExtractor( ace_file_handler->getTableNXSArray(),
-				        ace_file_handler->getTableJXSArray(),
-				        ace_file_handler->getTableXSSArray()));
+				      ace_file_handler->getTableJXSArray(),
+				      ace_file_handler->getTableXSSArray()));
 
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
   factory.reset( new Facemc::NuclearReactionFactory( 
-			      test_basic_ace_table_name,
+			      ace_table_name,
 			      ace_file_handler->getTableAtomicWeightRatio(),
 			      ace_file_handler->getTableTemperature(),
 			      energy_grid,
@@ -74,12 +77,10 @@ void initializeReactionFactory(
 // Check that the scattering reaction can be created
 TEUCHOS_UNIT_TEST( NuclearReactionFactory_hydrogen, createScatteringReactions )
 {
-  initializeReactionFactory( reaction_factory );
-
   boost::unordered_map<Facemc::NuclearReactionType,
 		       Teuchos::RCP<Facemc::NuclearReaction> > reactions;
   
-  reaction_factory->createScatteringReactions( reactions );
+  h1_reaction_factory->createScatteringReactions( reactions );
 
   TEST_EQUALITY_CONST( reactions.size(), 1 );
 
@@ -104,7 +105,7 @@ TEUCHOS_UNIT_TEST( NuclearReactionFactory_hydrogen, createAbsorptionReactions )
   boost::unordered_map<Facemc::NuclearReactionType,
 		       Teuchos::RCP<Facemc::NuclearReaction> > reactions;
   
-  reaction_factory->createAbsorptionReactions( reactions );
+  h1_reaction_factory->createAbsorptionReactions( reactions );
 
   TEST_EQUALITY_CONST( reactions.size(), 3 );
 
@@ -145,7 +146,105 @@ TEUCHOS_UNIT_TEST( NuclearReactionFactory_hydrogen, createAbsorptionReactions )
   TEST_EQUALITY_CONST( dpa_reaction->getThresholdEnergy(), 2.375e-05);
   TEST_EQUALITY_CONST( dpa_reaction->getCrossSection( 2.375e-05 ), 0.0 );
   TEST_EQUALITY_CONST( dpa_reaction->getCrossSection( 2.0e1 ), 3.067696e-04 );
+}
 
+//---------------------------------------------------------------------------//
+// Check that the scattering reaction can be created
+TEUCHOS_UNIT_TEST( NuclearReactionFactory_oxygen, createScatteringReactions )
+{
+  boost::unordered_map<Facemc::NuclearReactionType,
+		       Teuchos::RCP<Facemc::NuclearReaction> > reactions;
+  
+  o16_reaction_factory->createScatteringReactions( reactions );
+
+  typedef boost::unordered_map<Facemc::NuclearReactionType,
+    Teuchos::RCP<Facemc::NuclearReaction> >::const_iterator Reaction;
+
+  for( Reaction reaction = reactions.begin(); reaction != reactions.end(); ++reaction )
+  {
+    std::cout << reaction->first << " " << reaction->second->getThresholdEnergy() << std::endl;
+  }
+
+  TEST_EQUALITY_CONST( reactions.size(), 18 );
+
+  Teuchos::RCP<Facemc::NuclearReaction>& elastic_reaction =
+    reactions.find( Facemc::N__N_ELASTIC_REACTION )->second;
+  
+  TEST_EQUALITY_CONST( elastic_reaction->getReactionType(),
+		       Facemc::N__N_ELASTIC_REACTION );
+  TEST_EQUALITY_CONST( elastic_reaction->getQValue(), 0.0 );
+  TEST_EQUALITY_CONST( elastic_reaction->getNumberOfEmittedNeutrons( 0.0 ), 1);
+  TEST_EQUALITY_CONST( elastic_reaction->getThresholdEnergy(), 1.0e-11 );
+  TEST_EQUALITY_CONST( elastic_reaction->getCrossSection( 1.0e-11 ),
+		       5.50078400000e+01 );
+  TEST_EQUALITY_CONST( elastic_reaction->getCrossSection( 150.0 ),
+		       1.48000000000e-01 );
+
+  Teuchos::RCP<Facemc::NuclearReaction>& inelastic_continuum_reaction = 
+    reactions.find( Facemc::N__N_CONTINUUM_REACTION )->second;
+  TEST_EQUALITY_CONST( inelastic_continuum_reaction->getQValue(), 
+		       -9.58500000000e+00 );
+  TEST_EQUALITY_CONST( 
+	       inelastic_continuum_reaction->getNumberOfEmittedNeutrons( 0.0 ),
+	       1);
+  TEST_EQUALITY_CONST( inelastic_continuum_reaction->getThresholdEnergy(), 
+		       1.01894600000e+01 );
+  TEST_EQUALITY_CONST(
+	    inelastic_continuum_reaction->getCrossSection( 1.01894600000e+01 ),
+	    0.0 );
+  TEST_EQUALITY_CONST( inelastic_continuum_reaction->getCrossSection( 150.0 ),
+		       0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the absorption reactions can be created
+TEUCHOS_UNIT_TEST( NuclearReactionFactory_oxygen, 
+		   createAbsorptionReactions )
+{
+  boost::unordered_map<Facemc::NuclearReactionType,
+		       Teuchos::RCP<Facemc::NuclearReaction> > reactions;
+
+  o16_reaction_factory->createAbsorptionReactions( reactions );
+
+  typedef boost::unordered_map<Facemc::NuclearReactionType,
+    Teuchos::RCP<Facemc::NuclearReaction> >::const_iterator Reaction;
+
+  for( Reaction reaction = reactions.begin(); reaction != reactions.end(); ++reaction )
+  {
+    if( reaction->first < 117 )
+    {
+      std::cout << reaction->first << " " << reaction->second->getThresholdEnergy() << std::endl;
+    }
+  }
+
+  TEST_EQUALITY_CONST( reactions.size(), 51 );
+
+  Teuchos::RCP<Facemc::NuclearReaction>& n_gamma_reaction = 
+    reactions.find( Facemc::N__GAMMA_REACTION )->second;
+
+  TEST_EQUALITY_CONST( n_gamma_reaction->getReactionType(),
+		       Facemc::N__GAMMA_REACTION );
+  TEST_EQUALITY_CONST( n_gamma_reaction->getQValue(), 4.14342300000e+00 );
+  TEST_EQUALITY_CONST( n_gamma_reaction->getNumberOfEmittedNeutrons( 0.0 ), 0);
+  TEST_EQUALITY_CONST( n_gamma_reaction->getThresholdEnergy(), 1.0e-11 );
+  TEST_EQUALITY_CONST( n_gamma_reaction->getCrossSection( 1.0e-11 ),
+		       9.55754000000e-03 );
+  TEST_EQUALITY_CONST( n_gamma_reaction->getCrossSection( 150.0 ), 0.0 );
+
+ Teuchos::RCP<Facemc::NuclearReaction>& n_alpha_ex_3_reaction = 
+    reactions.find( Facemc::N__ALPHA_EXCITED_STATE_3_REACTION )->second;
+
+  TEST_EQUALITY_CONST( n_alpha_ex_3_reaction->getReactionType(),
+		       Facemc::N__ALPHA_EXCITED_STATE_3_REACTION );
+  TEST_EQUALITY_CONST( n_alpha_ex_3_reaction->getQValue(), -6.06940000000e+00);
+  TEST_EQUALITY_CONST(n_alpha_ex_3_reaction->getNumberOfEmittedNeutrons( 0.0 ),
+		      0);
+  TEST_EQUALITY_CONST( n_alpha_ex_3_reaction->getThresholdEnergy(), 
+		       6.45214700000e+00 );
+  TEST_EQUALITY_CONST( n_alpha_ex_3_reaction->getCrossSection( 1.0e-11 ),
+		       0.0 );
+  TEST_EQUALITY_CONST( n_alpha_ex_3_reaction->getCrossSection( 150.0 ),
+		       0.0 ); 
 }
 
 //---------------------------------------------------------------------------//
@@ -155,15 +254,53 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  clp.setOption( "test_basic_ace_file",
-		 &test_basic_ace_file_name,
-		 "Test basic ACE file name" );
-  clp.setOption( "test_basic_ace_table",
-		 &test_basic_ace_table_name,
-		 "Test basic ACE table name in basic ACE file" );
+  clp.setOption( "test_h1_ace_file",
+		 &test_h1_ace_file_name,
+		 "Test h1 ACE file name" );
+  clp.setOption( "test_h1_ace_table",
+		 &test_h1_ace_table_name,
+		 "Test ACE table name in h1 ACE file" );
 
+  clp.setOption( "test_o16_ace_file",
+		 &test_o16_ace_file_name,
+		 "Test o16 ACE file name" );
+  clp.setOption( "test_o16_ace_table",
+		 &test_o16_ace_table_name,
+		 "Test ACE table name in o16 ACE file" );
+
+  const Teuchos::RCP<Teuchos::FancyOStream> out = 
+    Teuchos::VerboseObjectBase::getDefaultOStream();
+
+  Teuchos::CommandLineProcessor::EParseCommandLineReturn parse_return = 
+    clp.parse(argc,argv);
+
+  if ( parse_return != Teuchos::CommandLineProcessor::PARSE_SUCCESSFUL ) {
+    *out << "\nEnd Result: TEST FAILED" << std::endl;
+    return parse_return;
+  }
+  
+  // Initialize nuclear reaction factories
+  initializeReactionFactory( h1_reaction_factory,
+			     test_h1_ace_file_name,
+			     test_h1_ace_table_name );
+
+  initializeReactionFactory( o16_reaction_factory,
+			     test_o16_ace_file_name,
+			     test_o16_ace_table_name );
+
+  // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+
+  const bool success = Teuchos::UnitTestRepository::runUnitTests( *out );
+
+  if (success)
+    *out << "\nEnd Result: TEST PASSED" << std::endl;
+  else
+    *out << "\nEnd Result: TEST FAILED" << std::endl;
+
+  clp.printFinalTimerSummary(out.ptr());
+
+  return (success ? 0 : 1);  
 }
 
 //---------------------------------------------------------------------------//

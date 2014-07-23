@@ -64,9 +64,10 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
 	      Teuchos::RCP<NeutronScatteringDistribution>& distribution ) const
 {
   // Make sure the reaction type has a scattering distribution (mult > 0)
-  remember( bool valid_reaction_type = N__N_ELASTIC_REACTION ||
-	    (d_reaction_ordering.find( reaction_type ) !=
-	     d_reaction_ordering.end()) );
+  remember( bool valid_reaction_type = 
+	    (reaction_type == N__N_ELASTIC_REACTION) ||
+	    (d_reaction_energy_dist.find( reaction_type ) !=
+	     d_reaction_energy_dist.end()) );
   testPrecondition( valid_reaction_type );
   
   // Create an angular distribution if scattering law 44 is not used
