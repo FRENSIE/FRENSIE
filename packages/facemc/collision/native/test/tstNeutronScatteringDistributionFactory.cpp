@@ -435,7 +435,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
 //---------------------------------------------------------------------------//
 // Check that an elastic scattering distribution can be constructed
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
-		   createElasticScatteringDist )
+		   createScatteringDistribution_elastic )
 {
   Teuchos::RCP<Facemc::NeutronScatteringDistribution> scattering_dist;
 
@@ -499,6 +499,110 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
   				   ace_file_handler_o16->getTableTemperature() );
 
   std::cout << neutron << std::endl;
+}
+
+//---------------------------------------------------------------------------//
+// Check that all other scattering distributions can be constructed
+TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory, 
+		   createScatteringDistribution_all )
+{
+  Teuchos::RCP<Facemc::NeutronScatteringDistribution> scattering_dist;
+  
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					       Facemc::N__ANYTHING_REACTION,
+					       scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					      Facemc::N__2N_REACTION,
+					      scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					       Facemc::N__N_ALPHA_REACTION,
+					       scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					       Facemc::N__N_3ALPHA_REACTION,
+					       scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					       Facemc::N__N_D_REACTION,
+					       scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					       Facemc::N__2N_P_REACTION,
+					       scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					       Facemc::N__N_2P_REACTION,
+					       scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					       Facemc::N__N_P_ALPHA_REACTION,
+					       scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					 Facemc::N__N_EXCITED_STATE_1_REACTION,
+					 scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					 Facemc::N__N_EXCITED_STATE_2_REACTION,
+					 scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					 Facemc::N__N_EXCITED_STATE_3_REACTION,
+					 scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					 Facemc::N__N_EXCITED_STATE_4_REACTION,
+					 scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					 Facemc::N__N_EXCITED_STATE_5_REACTION,
+					 scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					 Facemc::N__N_EXCITED_STATE_6_REACTION,
+					 scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					 Facemc::N__N_EXCITED_STATE_7_REACTION,
+					 scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
+
+  neutron_distribution_factory_o16->createScatteringDistribution( 
+					      Facemc::N__N_CONTINUUM_REACTION,
+					      scattering_dist );
+						
+  TEST_ASSERT( !scattering_dist.is_null() );
 }
 
 //---------------------------------------------------------------------------//
