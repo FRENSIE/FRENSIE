@@ -46,6 +46,12 @@ TARGET_LINK_LIBRARIES(tstAceLaw44NeutronScatteringDistribution facemc_collision_
 ADD_TEST(AceLaw44NeutronScatteringDistribution_test
 tstAceLaw44NeutronScatteringDistribution)
 
+ADD_EXECUTABLE(tstLabSystemConversionPolicy
+  tstLabSystemConversionPolicy.cpp)
+TARGET_LINK_LIBRARIES(tstLabSystemConversionPolicy facemc_collision_native)
+ADD_TEST(LabSystemConversionPolicy_test
+tstLabSystemConversionPolicy)
+
 ADD_EXECUTABLE(tstNuclearReaction
   tstNuclearReaction.cpp)
 TARGET_LINK_LIBRARIES(tstNuclearReaction facemc_collision_native)

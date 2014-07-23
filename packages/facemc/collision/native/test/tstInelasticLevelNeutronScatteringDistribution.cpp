@@ -52,7 +52,7 @@ void initializeScatteringDistribution(
        new Facemc::AceLaw3NeutronScatteringEnergyDistribution( 2.0, 0.25 ) );
   
   scattering_dist.reset( 
-   new Facemc::IndependentEnergyAngleNeutronScatteringDistribution<LabSystemConversionPolicy>( 
+   new Facemc::IndependentEnergyAngleNeutronScatteringDistribution<Facemc::CMSystemConversionPolicy>( 
 					                   atomic_weight_ratio,
 							   energy_dist, 
 							   angular_dist ) );
