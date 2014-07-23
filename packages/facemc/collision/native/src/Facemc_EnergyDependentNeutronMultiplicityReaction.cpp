@@ -96,6 +96,8 @@ void EnergyDependentNeutronMultiplicityReaction::react(
 						     NeutronState& neutron,
 						     ParticleBank& bank ) const
 {
+  neutron.incrementCollisionNumber();
+  
   // There may be zero outgoing neutrons
   unsigned num_outgoing_neutrons = 
     this->getNumberOfEmittedNeutrons( neutron.getEnergy() );
