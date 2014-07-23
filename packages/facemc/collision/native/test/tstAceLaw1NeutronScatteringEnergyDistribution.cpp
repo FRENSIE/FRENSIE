@@ -1,8 +1,9 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstEquiprobableBinNeutronScatteringDistribution.cpp
+//! \file   tstAceLaw1NeutronScatteringEnergyDistribution.cpp
 //! \author Alex Bennett
-//! \brief  Equiprobable bin neutron scattering distribution unit tests
+//! \brief  Ace law 1 neutron scattering energy distribution unit tests
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
@@ -15,17 +16,18 @@
 
 // FRENSIE Includes
 #include "Facemc_UnitTestHarnessExtensions.hpp"
-#include "Facemc_EquiprobableBinNeutronScatteringEnergyDistribution.hpp"
+#include "Facemc_AceLaw1NeutronScatteringEnergyDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( EquiprobableBinNeutronScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw1NeutronScatteringEnergyDistribution, 
 		   sampleEnergy_lower_bound )
 {
-   Facemc::EquiprobableBinNeutronScatteringEnergyDistribution::EnergyDistArray energy_grid;
+   Facemc::AceLaw1NeutronScatteringEnergyDistribution::EnergyDistArray 
+     energy_grid;
 
    energy_grid.resize(2);
 
@@ -51,16 +53,16 @@ TEUCHOS_UNIT_TEST( EquiprobableBinNeutronScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   Facemc::EquiprobableBinNeutronScatteringEnergyDistribution distribution( energy_grid );
+   Facemc::AceLaw1NeutronScatteringEnergyDistribution distribution( energy_grid );
 
    TEST_COMPARE(distribution.sampleEnergy(0.5) ,==, 3)
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( EquiprobableBinNeutronScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw1NeutronScatteringEnergyDistribution, 
 		   sampleEnergy_upper_bound )
 {
-   Facemc::EquiprobableBinNeutronScatteringEnergyDistribution::EnergyDistArray energy_grid;
+   Facemc::AceLaw1NeutronScatteringEnergyDistribution::EnergyDistArray energy_grid;
 
    energy_grid.resize(2);
 
@@ -86,16 +88,16 @@ TEUCHOS_UNIT_TEST( EquiprobableBinNeutronScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   Facemc::EquiprobableBinNeutronScatteringEnergyDistribution distribution( energy_grid );
+   Facemc::AceLaw1NeutronScatteringEnergyDistribution distribution( energy_grid );
 
    TEST_COMPARE(distribution.sampleEnergy(3.0) ,==, 4)
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( EquiprobableBinNeutronScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw1NeutronScatteringEnergyDistribution, 
 		   sampleEnergy )
 {
-   Facemc::EquiprobableBinNeutronScatteringEnergyDistribution::EnergyDistArray energy_grid;
+   Facemc::AceLaw1NeutronScatteringEnergyDistribution::EnergyDistArray energy_grid;
 
    energy_grid.resize(2);
 
@@ -123,7 +125,7 @@ TEUCHOS_UNIT_TEST( EquiprobableBinNeutronScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   Facemc::EquiprobableBinNeutronScatteringEnergyDistribution distribution( energy_grid );
+   Facemc::AceLaw1NeutronScatteringEnergyDistribution distribution( energy_grid );
 
    TEST_COMPARE(distribution.sampleEnergy(1.5) ,==, 4)
 }
@@ -141,5 +143,5 @@ int main( int argc, char** argv )
 
 
 //---------------------------------------------------------------------------//
-// tstEquiprobableBinNeutronScatteringDistribution.cpp
+// tstAceLaw1NeutronScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

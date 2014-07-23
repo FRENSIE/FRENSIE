@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstLaw44NeutronScatteringDistribution.cpp
+//! \file   tstAceLaw44NeutronScatteringDistribution.cpp
 //! \author Alex Bennett
 //! \brief  Law 44 neutron scattering distribution unit tests
 //---------------------------------------------------------------------------//
@@ -14,13 +14,14 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "Facemc_Law44NeutronScatteringDistribution.hpp"
-#include "Facemc_Law4NeutronScatteringEnergyDistribution.hpp"
-#include "Facemc_Law44ARDistribution.hpp"
-#include "Facemc_StandardLaw44ARDistribution.hpp"
-#include "Facemc_Law44InterpolationPolicy.hpp"
+#include "Facemc_AceLaw44NeutronScatteringDistribution.hpp"
+#include "Facemc_AceLaw4NeutronScatteringEnergyDistribution.hpp"
+#include "Facemc_AceLaw44ARDistribution.hpp"
+#include "Facemc_StandardAceLaw44ARDistribution.hpp"
+#include "Facemc_AceLaw44InterpolationPolicy.hpp"
 #include "Facemc_NeutronScatteringDistribution.hpp"
 #include "Facemc_NeutronScatteringEnergyDistribution.hpp"
+#include "Facemc_LabSystemConversionPolicy.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -30,12 +31,14 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( Law44NeutronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw44NeutronScatteringDistribution, 
 		   sampleAngle )
 {
-   Facemc::Law4NeutronScatteringEnergyDistribution::EnergyDistribution energy_distribution(2);
+   Facemc::AceLaw4NeutronScatteringEnergyDistribution::EnergyDistribution 
+     energy_distribution(2);
 
-   Teuchos::Array<Teuchos::RCP<Facemc::Law44ARDistribution> > ar_distribution(2);
+   Teuchos::Array<Teuchos::RCP<Facemc::AceLaw44ARDistribution> > 
+     ar_distribution(2);
 
    energy_distribution[0].first = 1.0;
    energy_distribution[1].first = 2.0;
@@ -73,10 +76,16 @@ TEUCHOS_UNIT_TEST( Law44NeutronScatteringDistribution,
    a_array[3] = 4.0;
    a_array[4] = 5.0;
 
-   energy_distribution[0].second.reset( new Utility::TabularDistribution<Utility::LinLin>( outgoing_energy_grid, pdf_linear ) );
+   energy_distribution[0].second.reset( 
+		       new Utility::TabularDistribution<Utility::LinLin>( 
+							  outgoing_energy_grid,
+							  pdf_linear ) );
 
-   ar_distribution[0].reset( new Facemc::StandardLaw44ARDistribution<Facemc::Law44LinLinInterpolationPolicy>(
-                                                      outgoing_energy_grid, a_array(), r_array()) );
+   ar_distribution[0].reset( 
+     new Facemc::StandardAceLaw44ARDistribution<Facemc::AceLaw44LinLinInterpolationPolicy>(
+                                                          outgoing_energy_grid,
+                                                          a_array(), 
+                                                          r_array() ) );
 
 
    outgoing_energy_grid[0] = 2.0;
@@ -102,10 +111,15 @@ TEUCHOS_UNIT_TEST( Law44NeutronScatteringDistribution,
    a_array[3] = 5.0;
    a_array[4] = 6.0;
 
-   energy_distribution[1].second.reset( new Utility::HistogramDistribution( outgoing_energy_grid, pdf ) );
+   energy_distribution[1].second.reset( 
+		      new Utility::HistogramDistribution( outgoing_energy_grid,
+							  pdf ) );
 
-   ar_distribution[1].reset( new Facemc::StandardLaw44ARDistribution<Facemc::Law44HistogramInterpolationPolicy>(
-                                                      outgoing_energy_grid, a_array(), r_array()) );
+   ar_distribution[1].reset( 
+     new Facemc::StandardAceLaw44ARDistribution<Facemc::AceLaw44HistogramInterpolationPolicy>(
+                                                          outgoing_energy_grid,
+							  a_array(), 
+							  r_array()) );
 
    // Create the fake stream
    std::vector<double> fake_stream( 4 );
@@ -116,11 +130,15 @@ TEUCHOS_UNIT_TEST( Law44NeutronScatteringDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   Teuchos::RCP<Facemc::NeutronScatteringEnergyDistribution> energy_scattering_distribution;
+   Teuchos::RCP<Facemc::NeutronScatteringEnergyDistribution> 
+   energy_scattering_distribution;
 
-   energy_scattering_distribution.reset( new Facemc::Law4NeutronScatteringEnergyDistribution( energy_distribution ) );
+   energy_scattering_distribution.reset( 
+	            new Facemc::AceLaw4NeutronScatteringEnergyDistribution(
+							 energy_distribution));
 
-   Facemc::Law44NeutronScatteringDistribution distribution( 1.0, energy_scattering_distribution, ar_distribution );
+   Facemc::AceLaw44NeutronScatteringDistribution<LabSystemConversionPolicy> 
+     distribution( 1.0, energy_scattering_distribution, ar_distribution );
 
    Facemc::NeutronState neutron( 0ull );
    
@@ -134,7 +152,9 @@ TEUCHOS_UNIT_TEST( Law44NeutronScatteringDistribution,
 
    distribution.scatterNeutron( neutron, 1.0 );
 
-   double angle = Utility::calculateCosineOfAngleBetweenVectors( initial_angle, neutron.getDirection() );
+   double angle = 
+     Utility::calculateCosineOfAngleBetweenVectors( initial_angle, 
+						    neutron.getDirection() );
 
    TEST_FLOATING_EQUALITY( angle, 0.6958068, 1e-7);
 
@@ -156,7 +176,9 @@ TEUCHOS_UNIT_TEST( Law44NeutronScatteringDistribution,
 
    distribution.scatterNeutron( neutron, 1.0 );
 
-   angle = Utility::calculateCosineOfAngleBetweenVectors( initial_angle, neutron.getDirection() );
+   angle = Utility::calculateCosineOfAngleBetweenVectors( 
+						      initial_angle, 
+						      neutron.getDirection() );
 
    TEST_FLOATING_EQUALITY( angle, 0.48174437, 1e-7);
 
@@ -178,7 +200,9 @@ TEUCHOS_UNIT_TEST( Law44NeutronScatteringDistribution,
 
    distribution.scatterNeutron( neutron, 1.0 );
 
-   angle = Utility::calculateCosineOfAngleBetweenVectors( initial_angle, neutron.getDirection() );
+   angle = Utility::calculateCosineOfAngleBetweenVectors( 
+						      initial_angle, 
+						      neutron.getDirection() );
 
    TEST_FLOATING_EQUALITY( angle, 0.607568, 1e-6);
 
@@ -200,7 +224,9 @@ TEUCHOS_UNIT_TEST( Law44NeutronScatteringDistribution,
 
    distribution.scatterNeutron( neutron, 1.0 );
 
-   angle = Utility::calculateCosineOfAngleBetweenVectors( initial_angle, neutron.getDirection() );
+   angle = Utility::calculateCosineOfAngleBetweenVectors( 
+						      initial_angle, 
+						      neutron.getDirection() );
 
    TEST_FLOATING_EQUALITY( angle, 0.607568, 1e-6);
 
@@ -221,7 +247,9 @@ TEUCHOS_UNIT_TEST( Law44NeutronScatteringDistribution,
 
    distribution.scatterNeutron( neutron, 1.0 );
 
-   angle = Utility::calculateCosineOfAngleBetweenVectors( initial_angle, neutron.getDirection() );
+   angle = Utility::calculateCosineOfAngleBetweenVectors( 
+						      initial_angle, 
+						      neutron.getDirection() );
 
    TEST_FLOATING_EQUALITY( angle, 0.6958068, 1e-7);
 }
@@ -239,5 +267,5 @@ int main( int argc, char** argv )
 
 
 //---------------------------------------------------------------------------//
-// tstLaw44NeutronScatteringDistribution.cpp
+// tstAceLaw44NeutronScatteringDistribution.cpp
 //---------------------------------------------------------------------------//
