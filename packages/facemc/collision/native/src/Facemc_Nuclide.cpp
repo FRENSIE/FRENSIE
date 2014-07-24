@@ -264,7 +264,7 @@ double Nuclide::getTotalCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
+  testPrecondition( energy >= d_energy_grid[0] );
 
   if( energy < d_energy_grid[d_energy_grid.size()-1] )
   {
@@ -291,7 +291,7 @@ double Nuclide::getAbsorptionCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
+  testPrecondition( energy > d_energy_grid[0] );
 
   if( energy < d_energy_grid[d_energy_grid.size()-1] )
   {
