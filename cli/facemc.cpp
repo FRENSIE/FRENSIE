@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <signal.h>
 
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
@@ -20,9 +21,23 @@
 #include "Facemc_ParticleSimulationManagerFactory.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 
+// The simulation manager
+Teuchos::RCP<Facemc::SimulationManager> simulation_manager;
+
+// The signal handler
+void signalHandlerWrapper(int signal)
+{
+  if( !simulation_manager.is_null() )
+    simulation_manager->signalHandler(signal);
+}
+
 // Main facemc function
 int main( int argc, char** argv )
 {
+  // Assign the signal handler
+  void (*handler)(int);
+  handler = signal(SIGINT,signalHandlerWrapper);
+  
   Utility::OneDDistributionEntryConverterDB::standardInitialization();
   
   Teuchos::RCP<Teuchos::FancyOStream> out = 
@@ -118,7 +133,7 @@ int main( int argc, char** argv )
     Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
 
   // Create the simulation manager
-  Teuchos::RCP<Facemc::SimulationManager> simulation_manager = 
+  simulation_manager = 
     Facemc::ParticleSimulationManagerFactory::createManager( 
 						*simulation_info,
 						*geometry_definition,

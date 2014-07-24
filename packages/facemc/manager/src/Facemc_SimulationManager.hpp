@@ -19,7 +19,7 @@ class SimulationManager
 {
   
 public:
-  
+
   //! Default constructor.
   SimulationManager()
   { /* ... */ }
@@ -33,6 +33,9 @@ public:
 
   //! Print the data in all estimators to the desired stream
   virtual void printSimulationSummary( std::ostream &os ) const = 0;
+
+  //! Return a signal handler function
+  virtual void signalHandler(int signal) = 0;
 }; 
 
 } // end Facemc namespace
