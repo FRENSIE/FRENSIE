@@ -288,7 +288,7 @@ void NeutronScatteringEnergyDistributionFactory::createAceLaw1EnergyDistribution
       for(int j = 0; i != outgoing_energies; j++)
       {
         energy_grid[i].second[j] = dlw_block_array[ldat_start_index + 4 + incoming_energies +
-                                        i * outoing_energies + j];
+                                        i * outgoing_energies + j];
       }
     }
 
