@@ -41,54 +41,43 @@ void NeutronScatteringDistribution::sampleTargetVelocity(
 				              double target_velocity[3] ) const
 {
   // Check if the energy is above the free gas thermal treatment threshold
-  if( neutron.getEnergy() > 
-      SimulationProperties::getFreeGasThreshold()*temperature &&
-      d_atomic_weight_ratio > 1.0 )
+  double target_speed, mu_target;
+  
+  double neutron_speed = neutron.getSpeed();
+  
+  while( true )
   {
-    target_velocity[0] = 0.0;
-    target_velocity[1] = 0.0;
-    target_velocity[2] = 0.0;
+    // Sample the target speed
+    target_speed = sampleTargetSpeed( neutron, temperature );
+    
+    // Sample the cosine of the angle between the neutron and target velocity
+    mu_target = 
+      2*Utility::RandomNumberGenerator::getRandomNumber<double>() - 1.0;
+    
+    // Calculate the acceptance probability
+    double acceptance_probability = 
+      sqrt( neutron_speed*neutron_speed + target_speed*target_speed - 
+	    2*neutron_speed*target_speed*mu_target)/
+      (neutron_speed+target_speed);
+    
+    if( Utility::RandomNumberGenerator::getRandomNumber<double>() < 
+	acceptance_probability )
+      break;
   }
-  else
+  
+  // Calculate the velocity of the target nucleus
+  if( target_speed > 0.0 )
   {
-    double target_speed, mu_target;
-    
-    double neutron_speed = neutron.getSpeed();
-    
-    while( true )
-    {
-      // Sample the target speed
-      target_speed = sampleTargetSpeed( neutron, temperature );
-      
-      // Sample the cosine of the angle between the neutron and target velocity
-      mu_target = 
-	2*Utility::RandomNumberGenerator::getRandomNumber<double>() - 1.0;
-      
-      // Calculate the acceptance probability
-      double acceptance_probability = 
-	sqrt( neutron_speed*neutron_speed + target_speed*target_speed - 
-	      2*neutron_speed*target_speed*mu_target)/
-	(neutron_speed+target_speed);
-      
-      if( Utility::RandomNumberGenerator::getRandomNumber<double>() < 
-	  acceptance_probability )
-	break;
-    }
-    
-    // Calculate the velocity of the target nucleus
-    if( target_speed > 0.0 )
-    {
-      Utility::rotateDirectionThroughPolarAndAzimuthalAngle( 
+    Utility::rotateDirectionThroughPolarAndAzimuthalAngle( 
 							mu_target,
 						        sampleAzimuthalAngle(),
 							neutron.getDirection(),
 							target_velocity );
-    }
-    
-    target_velocity[0] *= target_speed;
-    target_velocity[1] *= target_speed;
-    target_velocity[2] *= target_speed;
   }
+  
+  target_velocity[0] *= target_speed;
+  target_velocity[1] *= target_speed;
+  target_velocity[2] *= target_speed;
 }
 
 // Sample the speed of the target nucleus

@@ -162,7 +162,7 @@ TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getTotalCrossSection )
 // Check that the absorption cross section can be returned
 TEUCHOS_UNIT_TEST( Nuclide_hydrogen, getAbsorptionCrossSection )
 {
-  double cross_section = h1_nuclide->getAbsorptionCrossSection( 1.0e-11 );
+  double cross_section = h1_nuclide->getAbsorptionCrossSection(1.0e-11 );
 
   TEST_EQUALITY_CONST( cross_section, 1.670111e1 );
 
@@ -337,14 +337,14 @@ TEUCHOS_UNIT_TEST( Nuclide_oxygen, collideSurvivalBias)
   double energy;
   for( unsigned i = 0; i < 1e6; ++i )
   {
-    energy = exp(log(1.01e-11) + ((log(7.0)-log(1.01e-11))/1e6)*i);
-    std::cout << energy << " " << o16_nuclide->getTotalCrossSection( energy )
-	      << " " << o16_nuclide->getAbsorptionCrossSection( energy )
-	      << " " << o16_nuclide->getReactionCrossSection( energy, Facemc::N__ALPHA_REACTION )
-	      << " " << o16_nuclide->getReactionCrossSection( energy, Facemc::N__N_ELASTIC_REACTION )
-	      << " " << o16_nuclide->getReactionCrossSection( energy, Facemc::N__N_EXCITED_STATE_1_REACTION )
-	      << " " << o16_nuclide->getReactionCrossSection( energy, Facemc::N__N_EXCITED_STATE_2_REACTION )
-	      << std::endl;
+    // energy = exp(log(1.01e-11) + ((log(1.0)-log(1.01e-11))/1e6)*i);
+    // std::cout << energy << " " << o16_nuclide->getTotalCrossSection( energy )
+    // 	      << " " << o16_nuclide->getAbsorptionCrossSection( energy )
+    // 	      << " " << o16_nuclide->getReactionCrossSection( energy, Facemc::N__ALPHA_REACTION )
+    // 	      << " " << o16_nuclide->getReactionCrossSection( energy, Facemc::N__N_ELASTIC_REACTION )
+    // 	      << " " << o16_nuclide->getReactionCrossSection( energy, Facemc::N__N_EXCITED_STATE_1_REACTION )
+    // 	      << " " << o16_nuclide->getReactionCrossSection( energy, Facemc::N__N_EXCITED_STATE_2_REACTION )
+    // 	      << std::endl;
   }
   
 }

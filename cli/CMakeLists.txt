@@ -10,6 +10,10 @@ TARGET_LINK_LIBRARIES(rng_timer utility_core utility_prng)
 ADD_EXECUTABLE(facemc facemc.cpp)
 TARGET_LINK_LIBRARIES(facemc facemc_manager)
 
+# Create the angle dist sampler exec
+ADD_EXECUTABLE(sample_scattering_distribution sample_scattering_distribution.cpp)
+TARGET_LINK_LIBRARIES(sample_scattering_distribution facemc_manager)
+
 # Create the decay regresssion suite
 ADD_EXECUTABLE(decay_regression_suite decay_regression_suite.cpp)
 TARGET_LINK_LIBRARIES(decay_regression_suite utility_core transmutation)
@@ -30,5 +34,5 @@ TARGET_LINK_LIBRARIES(decay_verification_advanced_problem utility_core transmuta
 ADD_EXECUTABLE(decay_verification_analytical_problem decay_verification_analytical_problem.cpp)
 TARGET_LINK_LIBRARIES(decay_verification_analytical_problem utility_core transmutation)
 
-INSTALL(TARGETS rng_timer facemc
+INSTALL(TARGETS rng_timer facemc sample_scattering_distribution
   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
