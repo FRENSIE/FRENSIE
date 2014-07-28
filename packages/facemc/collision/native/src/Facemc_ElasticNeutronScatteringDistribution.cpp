@@ -53,7 +53,6 @@ void ElasticNeutronScatteringDistribution::scatterNeutron(
     double cm_scattering_angle_cosine = 
       d_angular_scattering_distribution->sampleAngleCosine( 
 							 neutron.getEnergy() );
-  
     double outgoing_neutron_energy = neutron.getEnergy()*
       (2*A*cm_scattering_angle_cosine + 1 + A*A)/((A+1)*(A+1));
     double lab_scattering_angle_cosine = (A*cm_scattering_angle_cosine + 1)/

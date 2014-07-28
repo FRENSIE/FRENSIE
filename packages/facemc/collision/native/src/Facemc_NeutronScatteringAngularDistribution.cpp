@@ -66,8 +66,6 @@ double NeutronScatteringAngularDistribution::sampleAngleCosine(
     double interpolation_fraction = ( energy - lower_bin_boundary->first )/
       (upper_bin_boundary->first - lower_bin_boundary->first);
     
-    //double angle_cosine_prime;
-    double angle_cosine;
     double random_number = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
     
@@ -75,38 +73,6 @@ double NeutronScatteringAngularDistribution::sampleAngleCosine(
       angle_cosine = upper_bin_boundary->second->sample();
     else
       angle_cosine = lower_bin_boundary->second->sample();
-  
-    // double angle_cosine_lower = 
-    //   lower_bin_boundary->second->getLowerBoundOfIndepVar() + 
-    //   interpolation_fraction*
-    //   (upper_bin_boundary->second->getLowerBoundOfIndepVar() - 
-    //    lower_bin_boundary->second->getLowerBoundOfIndepVar());
-
-    // double angle_cosine_upper = 
-    //   lower_bin_boundary->second->getUpperBoundOfIndepVar() +
-    //   interpolation_fraction*
-    //   (upper_bin_boundary->second->getUpperBoundOfIndepVar() - 
-    //    lower_bin_boundary->second->getUpperBoundOfIndepVar());
-  
-    // // Calculate the outgoing angle
-    // if( random_number < interpolation_fraction )
-    // {
-    //   angle_cosine = angle_cosine_lower + 
-    // 	(angle_cosine_prime - 
-    // 	 upper_bin_boundary->second->getLowerBoundOfIndepVar())*
-    // 	(angle_cosine_upper - angle_cosine_lower)/
-    // 	(upper_bin_boundary->second->getUpperBoundOfIndepVar() - 
-    // 	 upper_bin_boundary->second->getLowerBoundOfIndepVar());
-    // }
-    // else
-    // {
-    //   angle_cosine = angle_cosine_lower +
-    // 	(angle_cosine_prime - 
-    // 	 lower_bin_boundary->second->getLowerBoundOfIndepVar())*
-    // 	(angle_cosine_upper - angle_cosine_lower)/
-    // 	(lower_bin_boundary->second->getUpperBoundOfIndepVar() - 
-    //    lower_bin_boundary->second->getLowerBoundOfIndepVar());
-    // }
   }
 
   // Due to floating-point roundoff, it is possible for the scattering angle
