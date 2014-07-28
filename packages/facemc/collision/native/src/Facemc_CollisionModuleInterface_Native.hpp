@@ -113,9 +113,9 @@ CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial(
 						       ParticleBank& bank,
 						       const bool analogue )
 {
-  return CollisionHandler::collideWithCellMaterial( particle,
-						    bank,
-						    analogue );
+  CollisionHandler::collideWithCellMaterial( particle,
+					     bank,
+					     analogue );
 }
 
 } // end Facemc namespace
