@@ -264,7 +264,6 @@ double Nuclide::getTotalCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
-  testPrecondition( energy >= d_energy_grid[0] );
 
   if( energy < d_energy_grid[d_energy_grid.size()-1] )
   {
@@ -283,7 +282,7 @@ double Nuclide::getTotalCrossSection( const double energy ) const
   else if( energy == d_energy_grid[d_energy_grid.size()-1] )
     return d_total_cross_section.back();
   else // energy > d_energy_grid[d_energy_grid.size()-1]
-    return 0.0;
+    return d_total_cross_section.front();
 }
 
 // Return the total absorption cross section at the desired energy
@@ -291,7 +290,6 @@ double Nuclide::getAbsorptionCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
-  testPrecondition( energy > d_energy_grid[0] );
 
   if( energy < d_energy_grid[d_energy_grid.size()-1] )
   {
@@ -310,7 +308,7 @@ double Nuclide::getAbsorptionCrossSection( const double energy ) const
   else if( energy == d_energy_grid[d_energy_grid.size()-1] )
     return d_absorption_cross_section.back();
   else // energy > d_energy_grid[d_energy_grid.size()-1]
-    return 0.0;
+    return d_absorption_cross_section.front();
 }
  
 // Return the survival probability at the desired energy
