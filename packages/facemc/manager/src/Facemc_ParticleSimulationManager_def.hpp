@@ -254,7 +254,7 @@ void ParticleSimulationManager<GeometryHandler,
   os << "Estimator Data" << std::endl;
   os << "/*---------------------------------------------------------------*/";
   EMI::printEstimators( os,
-			d_history_number_wall,
+			d_histories_completed,
 			d_start_time,
 			d_end_time );
 }
