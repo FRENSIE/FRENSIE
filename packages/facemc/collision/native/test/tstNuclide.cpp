@@ -346,7 +346,39 @@ TEUCHOS_UNIT_TEST( Nuclide_oxygen, collideSurvivalBias)
   //   	      << " " << o16_nuclide->getReactionCrossSection( energy, Facemc::N__N_EXCITED_STATE_2_REACTION )
   //   	      << std::endl;
   // }
+
+  // double sampling_prob = 
+  //   o16_nuclide->getReactionCrossSection( 7.0, Facemc::N__N_EXCITED_STATE_2_REACTION )/
+  //   o16_nuclide->getTotalCrossSection( 7.0 );
+
+  // std::cout << sampling_prob << std::endl;
   
+  // Teuchos::RCP<Facemc::NeutronState> neutron( new Facemc::NeutronState( 0ull ) );
+  // neutron->setEnergy( 7.0 );
+  // neutron->setDirection( 0.0, 0.0, 1.0 );
+
+  // Facemc::ParticleBank bank;
+
+  // unsigned number_of_samples = 0u;
+  // double ave_energy = 0.0;
+  // for( unsigned i = 0; i < 1e6; ++i )
+  // {
+  //   o16_nuclide->collideAnalogue( *neutron, bank );
+
+  //   if( neutron->getEnergy() > 0.24 && neutron->getEnergy() < 0.658 )
+  //   {
+  //     ++number_of_samples;
+  //     ave_energy += neutron->getEnergy();
+  //   }
+
+  //   neutron->setEnergy( 7.0 );
+  // }
+
+  // std::cout << number_of_samples/1e6 << std::endl;  
+  // std::cout << ave_energy/number_of_samples << std::endl;
+  // std::cout << o16_nuclide->getTotalCrossSection( 0.24 ) << std::endl;
+  // std::cout << o16_nuclide->getTotalCrossSection( 0.450 ) << std::endl;
+  // std::cout << o16_nuclide->getTotalCrossSection( 0.658 ) << std::endl;
 }
 
 //---------------------------------------------------------------------------//
