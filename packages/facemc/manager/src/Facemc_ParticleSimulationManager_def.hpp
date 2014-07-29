@@ -273,7 +273,7 @@ void ParticleSimulationManager<GeometryHandler,
   double time = 0.0;
   
   // Ask the user what to do
-  std::cout << " Status (s), End (e), Kill (k)" << std::endl;
+  std::cerr << " Status (s), End (e), Kill (k)" << std::endl;
   std::string option;
   std::cin >> option;
   
