@@ -365,28 +365,27 @@ double Nuclide::getReactionCrossSection(
 void Nuclide::collideAnalogue( NeutronState& neutron, 
 			       ParticleBank& bank ) const
 {
-  double random_number = 
-    Utility::RandomNumberGenerator::getRandomNumber<double>();
-  
   double total_cross_section = 
     this->getTotalCrossSection( neutron.getEnergy() );
+
+  double scaled_random_number = 
+    Utility::RandomNumberGenerator::getRandomNumber<double>()*
+    total_cross_section;
 
   double absorption_cross_section = 
     this->getAbsorptionCrossSection( neutron.getEnergy() );
 
   // Check if absorption occurs
-  if( random_number*total_cross_section < absorption_cross_section )
+  if( scaled_random_number < absorption_cross_section )
   {
-    sampleAbsorptionReaction( random_number*absorption_cross_section, 
-			      neutron, 
-			      bank );
+    sampleAbsorptionReaction( scaled_random_number, neutron, bank );
+
     // Set the neutron as gone regardless of the reaction that occured.
     neutron.setAsGone(); 
   }
   else
   {
-    sampleScatteringReaction( random_number*(total_cross_section - 
-					     absorption_cross_section), 
+    sampleScatteringReaction( scaled_random_number - absorption_cross_section, 
 			      neutron, 
 			      bank );
   }
@@ -413,8 +412,8 @@ void Nuclide::collideSurvivalBias( NeutronState& neutron,
     neutron.multiplyWeight( scattering_cross_section/total_cross_section );
 
     sampleScatteringReaction( random_number*scattering_cross_section,
-			    neutron,
-			    bank );
+			      neutron,
+			      bank );
   }
   else
     neutron.setAsGone();
@@ -478,36 +477,36 @@ void Nuclide::calculateTotalCrossSection()
 
 // Sample a scattering reaction
 // NOTE: The scaled random number must be a random number multiplied by the
-//       total scattering cross section
+//       total scattering cross section then subtracted by the absorption xs.
 void Nuclide::sampleScatteringReaction( const double scaled_random_number,
 					NeutronState& neutron,
 					ParticleBank& bank ) const
 {
   double partial_cross_section = 0.0;
     
-    boost::unordered_map<NuclearReactionType,
-			 Teuchos::RCP<NuclearReaction> >::const_iterator
-      nuclear_reaction, nuclear_reaction_end;
+  boost::unordered_map<NuclearReactionType,
+		       Teuchos::RCP<NuclearReaction> >::const_iterator
+    nuclear_reaction, nuclear_reaction_end;
     
-    nuclear_reaction = d_scattering_reactions.begin();
-    nuclear_reaction_end = d_scattering_reactions.end();
+  nuclear_reaction = d_scattering_reactions.begin();
+  nuclear_reaction_end = d_scattering_reactions.end();
     
-    while( nuclear_reaction != nuclear_reaction_end )
-    {
-      partial_cross_section += 
-	nuclear_reaction->second->getCrossSection( neutron.getEnergy() );
+  while( nuclear_reaction != nuclear_reaction_end )
+  {
+    partial_cross_section += 
+      nuclear_reaction->second->getCrossSection( neutron.getEnergy() );
 
-      if( scaled_random_number < partial_cross_section )
-	break;
+    if( scaled_random_number < partial_cross_section )
+      break;
       
-      ++nuclear_reaction;
-    }
-
-    TEST_FOR_EXCEPTION( nuclear_reaction == nuclear_reaction_end,
-			std::runtime_error,
-			"The nuclear reaction type could not be sampled." );
-
-    nuclear_reaction->second->react( neutron, bank );
+    ++nuclear_reaction;
+  }
+  
+  // Make sure a reaction was found
+  testPostcondition( nuclear_reaction != nuclear_reaction_end );
+  
+  // Undergo reaction selected
+  nuclear_reaction->second->react( neutron, bank );
 }
 
 // Sample an absorption reaction
@@ -519,29 +518,29 @@ void Nuclide::sampleAbsorptionReaction( const double scaled_random_number,
 {
   double partial_cross_section = 0.0;
     
-    boost::unordered_map<NuclearReactionType,
-			 Teuchos::RCP<NuclearReaction> >::const_iterator
-      nuclear_reaction, nuclear_reaction_end;
+  boost::unordered_map<NuclearReactionType,
+		       Teuchos::RCP<NuclearReaction> >::const_iterator
+    nuclear_reaction, nuclear_reaction_end;
+  
+  nuclear_reaction = d_absorption_reactions.begin();
+  nuclear_reaction_end = d_absorption_reactions.end();
+  
+  while( nuclear_reaction != nuclear_reaction_end )
+  {
+    partial_cross_section += 
+      nuclear_reaction->second->getCrossSection( neutron.getEnergy() );
     
-    nuclear_reaction = d_absorption_reactions.begin();
-    nuclear_reaction_end = d_absorption_reactions.end();
+    if( scaled_random_number < partial_cross_section )
+      break;
     
-    while( nuclear_reaction != nuclear_reaction_end )
-    {
-      partial_cross_section += 
-	nuclear_reaction->second->getCrossSection( neutron.getEnergy() );
+    ++nuclear_reaction;
+  }
 
-      if( scaled_random_number < partial_cross_section )
-	break;
-      
-      ++nuclear_reaction;
-    }
+  // Make sure a reaction was selected
+  testPostcondition( nuclear_reaction != nuclear_reaction_end );
 
-    TEST_FOR_EXCEPTION( nuclear_reaction == nuclear_reaction_end,
-			std::runtime_error,
-			"The nuclear reaction type could not be sampled." );
-
-    nuclear_reaction->second->react( neutron, bank );
+  // Undergo the reaction selected
+  nuclear_reaction->second->react( neutron, bank );
 }
 
 } // end Facemc namespace
