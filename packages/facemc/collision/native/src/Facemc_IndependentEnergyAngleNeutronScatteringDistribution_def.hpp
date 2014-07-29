@@ -70,6 +70,10 @@ IndependentEnergyAngleNeutronScatteringDistribution<SystemConversionPolicy>::sca
 						  neutron.getDirection(),
 						  outgoing_neutron_direction );
 
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( scattering_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine <= 1.0 );
+
   // Set the new energy
   neutron.setEnergy( outgoing_energy );
 
