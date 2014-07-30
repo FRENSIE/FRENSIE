@@ -101,6 +101,9 @@ public:
   //! Check if the nuclide is fissionable
   bool hasFissionData() const;
 
+  //! Check if the nuclide has delayed neutron data
+  bool hasDelayedNeutronData() const;
+
   //! Check if the nuclide has unresolved resonances
   bool hasUnresolvedResonanceData() const;
 
@@ -124,6 +127,9 @@ public:
 
   //! Extract the NU block form the XSS array
   Teuchos::ArrayView<const double> extractNUBlock() const;
+
+  //! Extract the Delayed NU block form the XSS array
+  Teuchos::ArrayView<const double> extractDelayedNUBlock() const;
 
   //! Extract the MTR block from the XSS array
   Teuchos::ArrayView<const double> extractMTRBlock() const;
