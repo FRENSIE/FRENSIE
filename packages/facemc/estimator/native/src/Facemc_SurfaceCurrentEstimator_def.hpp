@@ -62,7 +62,7 @@ void SurfaceCurrentEstimator<
   {
     double contribution = 
       ContributionMultiplierPolicy::multiplier( particle );
-    
+
     StandardEntityEstimator<
        StandardSurfaceEstimator::surfaceIdType>::addPartialHistoryContribution(
 							      surface_crossing,

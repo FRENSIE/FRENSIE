@@ -180,6 +180,23 @@ TEUCHOS_UNIT_TEST( NuclearReactionFactory_oxygen, createScatteringReactions )
   TEST_EQUALITY_CONST( elastic_reaction->getCrossSection( 150.0 ),
 		       1.48000000000e-01 );
 
+  Teuchos::RCP<Facemc::NuclearReaction>& inelastic_level_1_reaction = 
+    reactions.find( Facemc::N__N_EXCITED_STATE_1_REACTION )->second;
+  TEST_EQUALITY_CONST( inelastic_level_1_reaction->getQValue(), 
+		       -6.04940000000e+00 );
+  TEST_EQUALITY_CONST( 
+		 inelastic_level_1_reaction->getNumberOfEmittedNeutrons( 0.0 ),
+		 1 );
+  TEST_EQUALITY_CONST( inelastic_level_1_reaction->getThresholdEnergy(), 
+		       6.43088600000e+00 );
+  TEST_EQUALITY_CONST(
+		      inelastic_level_1_reaction->getCrossSection( 1.0e-11 ),
+		      0.0 );
+  TEST_EQUALITY_CONST( inelastic_level_1_reaction->getCrossSection( 7.0 ),
+		       1.022538000000e-03 );
+  TEST_EQUALITY_CONST( inelastic_level_1_reaction->getCrossSection( 150.0 ),
+		       0.0 );
+
   Teuchos::RCP<Facemc::NuclearReaction>& inelastic_continuum_reaction = 
     reactions.find( Facemc::N__N_CONTINUUM_REACTION )->second;
   TEST_EQUALITY_CONST( inelastic_continuum_reaction->getQValue(), 

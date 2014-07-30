@@ -61,16 +61,18 @@ double NeutronScatteringAngularDistribution::sampleAngleCosine(
 
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
-    
-    double lower_bin_boundary_probability = 
-      (upper_bin_boundary->first - energy)/
+
+    // Calculate the interpolation fraction
+    double interpolation_fraction = ( energy - lower_bin_boundary->first )/
       (upper_bin_boundary->first - lower_bin_boundary->first);
     
-    if( Utility::RandomNumberGenerator::getRandomNumber<double>() < 
-	lower_bin_boundary_probability )
-      angle_cosine = lower_bin_boundary->second->sample();
-    else
+    double random_number = 
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+    
+    if( random_number < interpolation_fraction )
       angle_cosine = upper_bin_boundary->second->sample();
+    else
+      angle_cosine = lower_bin_boundary->second->sample();
   }
 
   // Due to floating-point roundoff, it is possible for the scattering angle

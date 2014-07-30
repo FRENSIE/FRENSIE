@@ -35,7 +35,7 @@ double AceLaw3NeutronScatteringEnergyDistribution::sampleEnergy(
 						    const double energy ) const
 {
   // Make sure the energy is valid
-  testPrecondition( energy > 0 );
+  testPrecondition( energy >= d_param_a );
   testPrecondition( energy < std::numeric_limits<double>::infinity() );
   
   return d_param_b * ( energy - d_param_a);

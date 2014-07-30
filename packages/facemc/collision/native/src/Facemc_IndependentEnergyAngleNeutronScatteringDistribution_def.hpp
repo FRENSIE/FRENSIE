@@ -41,7 +41,7 @@ IndependentEnergyAngleNeutronScatteringDistribution<SystemConversionPolicy>::sca
 							 const double ) const
 {
   double outgoing_sys_energy = 
-    d_energy_scattering_distribution->sampleEnergy( neutron.getEnergy() );
+    d_energy_scattering_distribution->sampleEnergy( neutron.getEnergy() ); 
 
   double sys_scattering_angle_cosine = 
     d_angular_scattering_distribution->sampleAngleCosine( neutron.getEnergy());
@@ -49,19 +49,38 @@ IndependentEnergyAngleNeutronScatteringDistribution<SystemConversionPolicy>::sca
   // convert the outgoing energy from this system to the lab system
   double outgoing_energy = 
     SystemConversionPolicy::convertToLabEnergy( neutron.getEnergy(),
-						outgoing_sys_energy,
-						sys_scattering_angle_cosine,
-						this->getAtomicWeightRatio() );
+  						outgoing_sys_energy,
+  						sys_scattering_angle_cosine,
+  						this->getAtomicWeightRatio() );
 
   // convert the scattering angle cosine from this system to the lab system
   double scattering_angle_cosine = 
     SystemConversionPolicy::convertToLabAngleCosine( 
-						neutron.getEnergy(),
-						outgoing_sys_energy,
-						outgoing_energy,
-						sys_scattering_angle_cosine,
-						this->getAtomicWeightRatio() );
+  						neutron.getEnergy(),
+  						outgoing_sys_energy,
+  						outgoing_energy,
+  						sys_scattering_angle_cosine,
+  						this->getAtomicWeightRatio() );
 
+  // double cm_scattering_angle_cosine = 
+  //   d_angular_scattering_distribution->sampleAngleCosine( neutron.getEnergy());
+
+  // double A = this->getAtomicWeightRatio();
+
+  // double threshold_energy =
+  //   neutron.getEnergy() -
+  //   d_energy_scattering_distribution->sampleEnergy( neutron.getEnergy() )*
+  //   (A+1)*(A+1)/(A*A);
+
+  // double arg = 1 - threshold_energy/neutron.getEnergy();
+  // double outgoing_energy_factor = 
+  //   (2*A*sqrt(arg)*cm_scattering_angle_cosine + 1 + A*A*arg)/((A+1)*(A+1));
+  // double outgoing_energy = neutron.getEnergy()*outgoing_energy_factor;
+
+  // double scattering_angle_cosine = 
+  //   (A*sqrt(arg)*cm_scattering_angle_cosine + 1)/
+  //   sqrt(2*A*sqrt(arg)*cm_scattering_angle_cosine + 1 + A*A*arg);
+  
   double outgoing_neutron_direction[3];
 
   Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
@@ -69,6 +88,10 @@ IndependentEnergyAngleNeutronScatteringDistribution<SystemConversionPolicy>::sca
 						  sampleAzimuthalAngle(),
 						  neutron.getDirection(),
 						  outgoing_neutron_direction );
+
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( scattering_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine <= 1.0 );
 
   // Set the new energy
   neutron.setEnergy( outgoing_energy );
