@@ -18,6 +18,11 @@ TARGET_LINK_LIBRARIES(decay_regression_suite utility_core transmutation)
 ADD_EXECUTABLE(decay_verification_simple_problem decay_verification_simple_problem.cpp)
 TARGET_LINK_LIBRARIES(decay_verification_simple_problem utility_core transmutation)
 
+# Create a simple decay verification problem for boost
+ADD_EXECUTABLE(decay_verification_simple_problem_boost
+decay_verification_simple_problem_boost.cpp)
+TARGET_LINK_LIBRARIES(decay_verification_simple_problem_boost utility_core transmutation)
+
 # Create an intermediate decay verification problem
 ADD_EXECUTABLE(decay_verification_intermediate_problem decay_verification_intermediate_problem.cpp)
 TARGET_LINK_LIBRARIES(decay_verification_intermediate_problem utility_core transmutation)
@@ -26,9 +31,10 @@ TARGET_LINK_LIBRARIES(decay_verification_intermediate_problem utility_core trans
 ADD_EXECUTABLE(decay_verification_advanced_problem decay_verification_advanced_problem.cpp)
 TARGET_LINK_LIBRARIES(decay_verification_advanced_problem utility_core transmutation)
 
-# Create an analytical decay verification problem
-ADD_EXECUTABLE(decay_verification_analytical_problem decay_verification_analytical_problem.cpp)
-TARGET_LINK_LIBRARIES(decay_verification_analytical_problem utility_core transmutation)
+# Create a simple decay verification problem
+ADD_EXECUTABLE(fission_reaction_rate_verification_problem
+fission_reaction_rate_verification_problem.cpp)
+TARGET_LINK_LIBRARIES(fission_reaction_rate_verification_problem utility_core transmutation)
 
 INSTALL(TARGETS rng_timer facemc
   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

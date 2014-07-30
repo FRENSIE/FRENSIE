@@ -19,7 +19,7 @@
 
 namespace Transmutation {
 
-void ReactionRateMatrix::addFissionFragments(Teuchos::SerialDenseMatrix<int,double>& reaction_rate_matrix,
+void ReactionRateMatrix::addFissionFragments(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& reaction_rate_matrix,
                                              const int fission_zaid, 
                                              const double& fission_reaction_rate,
                                              const Teuchos::Array<std::pair<int,double> >& fission_fragments)
@@ -37,7 +37,7 @@ void ReactionRateMatrix::addFissionFragments(Teuchos::SerialDenseMatrix<int,doub
    testPrecondition( fission_location >= 0 );
 
    // Add the fission reaction rate to the matrix
-   reaction_rate_matrix(fission_location,fission_location) -= fission_reaction_rate;
+   (*reaction_rate_matrix)(fission_location,fission_location) -= fission_reaction_rate;
 
    // Loop through all the fission fragments
    for(int i = 0; i != fission_fragments.length(); i++)
@@ -49,11 +49,11 @@ void ReactionRateMatrix::addFissionFragments(Teuchos::SerialDenseMatrix<int,doub
       testPrecondition( fission_fragment_location >= 0 );
 
       // Add the fission fragment rection rate to the matrix
-      reaction_rate_matrix(fission_fragment_location,fission_location) += fission_fragments[i].second;
+      (*reaction_rate_matrix)(fission_fragment_location,fission_location) += fission_fragments[i].second;
    }
 }
    
-void ReactionRateMatrix::addReactionRates(Teuchos::SerialDenseMatrix<int,double>& reaction_rate_matrix,
+void ReactionRateMatrix::addReactionRates(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& reaction_rate_matrix,
                                           Teuchos::Array<std::pair<int,double> >& reaction_rates,
                                           const Facemc::NuclearReactionType& reaction)
 {
@@ -70,7 +70,7 @@ void ReactionRateMatrix::addReactionRates(Teuchos::SerialDenseMatrix<int,double>
       int reaction_loc = ReactionRateMatrix::getLocation(reaction_rates[i].first, zaids);
 
       // Add the reaction rate into the matrix
-      reaction_rate_matrix(reaction_loc,reaction_loc) -= reaction_rates[i].second;
+      (*reaction_rate_matrix)(reaction_loc,reaction_loc) -= reaction_rates[i].second;
 
       // Get the daughter nuclide
       int daughter_zaid = ReactionRateMatrix::reactionProduct(reaction_rates[i].first, reaction);
@@ -79,7 +79,7 @@ void ReactionRateMatrix::addReactionRates(Teuchos::SerialDenseMatrix<int,double>
       int daughter_loc = ReactionRateMatrix::getLocation(daughter_zaid, zaids);
 
       // Add the daughter nuclide reaction rate to the matrix
-      reaction_rate_matrix(daughter_loc,reaction_loc) += reaction_rates[i].second;
+      (*reaction_rate_matrix)(daughter_loc,reaction_loc) += reaction_rates[i].second;
    }
 }
 

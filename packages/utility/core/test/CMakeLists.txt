@@ -86,3 +86,8 @@ ADD_EXECUTABLE(tstODESolver
   tstODESolver.cpp )
 TARGET_LINK_LIBRARIES(tstODESolver utility_core)
 ADD_TEST(ODESolver_test tstODESolver)
+
+ADD_EXECUTABLE(tstBoostSolver 
+  tstBoostSolver.cpp )
+TARGET_LINK_LIBRARIES(tstBoostSolver utility_core)
+ADD_TEST(BoostSolver_test tstBoostSolver)

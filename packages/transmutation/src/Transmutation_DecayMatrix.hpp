@@ -21,14 +21,14 @@ namespace Transmutation {
 
 class DecayMatrix {
 public:
-   static void getDecayMatrix(Teuchos::SerialDenseMatrix<int,double>& decay_matrix,
+   static void getDecayMatrix(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& decay_matrix,
                               const std::string& data_file = DecayMatrix::default_data_file);
 private: 
-   static void addDecayIsotopes(Teuchos::SerialDenseMatrix<int,double>& decay_matrix, 
+   static void addDecayIsotopes(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& decay_matrix, 
                                              Teuchos::Array<int>& zaids, 
                                              data::DecayData& decay_data,
                                              const int i); 
-   static void addSpontaneousFissionYields(Teuchos::SerialDenseMatrix<int,double>& decay_matrix, 
+   static void addSpontaneousFissionYields(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& decay_matrix, 
                                                         Teuchos::Array<int>& zaids_array,
                                                         data::DecayData& decay_data,
                                                         const int i);

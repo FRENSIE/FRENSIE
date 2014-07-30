@@ -85,7 +85,7 @@ void CellTransmutationData::setFissionReactionRates(const int fission_zaid,
 }
 
 // Populate the matrix
-void CellTransmutationData::populateMatrix(Teuchos::SerialDenseMatrix<int,double>& matrix)
+void CellTransmutationData::populateMatrix(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& matrix)
 {
    // Loop through and add all the reaction rates
    for(boost::unordered_map<Facemc::NuclearReactionType, Teuchos::Array<std::pair<int,double> > >::iterator i = d_reaction_rates.begin();

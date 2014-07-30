@@ -33,6 +33,11 @@ ADD_EXECUTABLE(tstModuleInterface_ODESolver
 TARGET_LINK_LIBRARIES(tstModuleInterface_ODESolver transmutation)
 ADD_TEST(ModuleInterfacei_ODESolver_test tstModuleInterface_ODESolver)
 
+#ADD_EXECUTABLE(tstModuleInterface_BoostSolver 
+#  tstModuleInterface_BoostSolver.cpp )
+#TARGET_LINK_LIBRARIES(tstModuleInterface_BoostSolver transmutation)
+#ADD_TEST(ModuleInterfacei_BoostSolver_test tstModuleInterface_BoostSolver)
+
 ADD_EXECUTABLE(tstIsotopesArray 
   tstIsotopesArray.cpp )
 TARGET_LINK_LIBRARIES(tstIsotopesArray transmutation)

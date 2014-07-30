@@ -24,13 +24,13 @@
 //---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( ODESolver, solve )
 {
-  Teuchos::SerialDenseMatrix<int,double> matrix;
-  matrix.shape(2,2);
+  Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> > matrix( new Teuchos::SerialDenseMatrix<int,double>);
+  matrix->shape(2,2);
 
-  matrix(0,0) = -1.0;
-  matrix(1,0) = -1.0;
-  matrix(0,1) =  95.0;
-  matrix(1,1) = -97.0;
+  (*matrix)(0,0) = -1.0;
+  (*matrix)(1,0) = -1.0;
+  (*matrix)(0,1) =  95.0;
+  (*matrix)(1,1) = -97.0;
 
   Teuchos::Array<double> number_densities;
   number_densities.resize(2);
