@@ -51,10 +51,12 @@ unsigned NeutronScatteringReaction::getNumberOfEmittedNeutrons(
 void NeutronScatteringReaction::react( NeutronState& neutron, 
 				       ParticleBank& bank ) const
 {
+  neutron.incrementCollisionNumber();
+  
   // There should always be at least one outgoing neutron (>= 0 additional)
   unsigned num_additional_neutrons = 
     this->getNumberOfEmittedNeutrons( neutron.getEnergy() ) - 1u;
-  
+
   // Create the additional neutrons (multiplicity - 1)
   for( unsigned i = 0; i < num_additional_neutrons; ++i )
   {

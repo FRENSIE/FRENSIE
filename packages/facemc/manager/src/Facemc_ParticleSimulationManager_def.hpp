@@ -33,7 +33,9 @@ ParticleSimulationManager<GeometryHandler,
 			  EstimatorHandler,
 			  CollisionHandler>::ParticleSimulationManager( 
 					   const unsigned number_of_histories )
-: d_history_number_wall( number_of_histories )
+  : d_history_number_wall( number_of_histories ),
+    d_histories_completed( 0u ),
+    d_end_simulation( false )			      
 {
   // At least one history must be simulated
   testPrecondition( number_of_histories > 0 );
@@ -51,8 +53,6 @@ void ParticleSimulationManager<GeometryHandler,
 {
   // Set the start time
   d_start_time = clock()/((double)CLOCKS_PER_SEC);
-  
-  ParticleBank bank;
 
   for( unsigned history = 0; history < d_history_number_wall; ++history )
   {
@@ -60,34 +60,40 @@ void ParticleSimulationManager<GeometryHandler,
     Utility::RandomNumberGenerator::initialize( history );
     
     // Sample a particle state from the source
-    SMI::sampleParticleState( bank );
+    SMI::sampleParticleState( d_bank );
 
     // Determine the starting cell of the particle
-    for( unsigned i = 0; i < bank.size(); ++i )
+    for( unsigned i = 0; i < d_bank.size(); ++i )
     {
       typename GMI::InternalCellHandle start_cell;
       
       try{
-	start_cell = GMI::findCellContainingPoint( bank.top()->ray() );
+	start_cell = GMI::findCellContainingPoint( d_bank.top()->ray() );
       }
-      CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank );
+      CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( d_bank );
 
-      bank.top()->setCell( start_cell );
+      d_bank.top()->setCell( start_cell );
     
-      EMI::updateEstimatorsFromParticleGenerationEvent( *bank.top() );
+      EMI::updateEstimatorsFromParticleGenerationEvent( *d_bank.top() );
     }
     
     // This history only ends when the particle bank is empty
-    while( bank.size() > 0 )
+    while( d_bank.size() > 0 )
     {
-      std::cout << "History " << history << std::endl;
-      simulateParticle( *bank.top(), bank );
+      simulateParticle( *d_bank.top(), d_bank );
 
-      bank.pop();
+      d_bank.pop();
     }
 
     // Commit all estimator history contributions
     EMI::commitEstimatorHistoryContributions();
+
+    // Increment the number of histories completed
+    ++d_histories_completed;
+
+    // Check for user requested end of simulation
+    if( d_end_simulation )
+      break;
   }
 
   // Set the end time
@@ -241,16 +247,76 @@ void ParticleSimulationManager<GeometryHandler,
 						       std::ostream &os ) const
 {
   os << "!!!Particle Simulation Finished!!!" << std::endl;
-  os << "Number of histories completed: " << d_history_number_wall <<std::endl;
+  os << "Number of histories completed: " << d_histories_completed <<std::endl;
   os << "Simulation Time (s): " << d_end_time - d_start_time << std::endl;
   os << std::endl;
   os << "/*---------------------------------------------------------------*/";
   os << "Estimator Data" << std::endl;
   os << "/*---------------------------------------------------------------*/";
   EMI::printEstimators( os,
-			d_history_number_wall,
+			d_histories_completed,
 			d_start_time,
 			d_end_time );
+}
+
+// Signal handler
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+void ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::signalHandler(int signal)
+{
+  // Record the current time
+  double time = 0.0;
+  
+  // Ask the user what to do
+  std::cerr << " Status (s), End (e), Kill (k)" << std::endl;
+  std::string option;
+  std::cin >> option;
+  
+  if( option.compare( "s" ) == 0 )
+  {
+    printSimulationStateInfo();
+  }
+  else if( option.compare( "e" ) == 0 )
+  {
+    d_end_simulation = true;
+  }
+  else if( option.compare( "k" ) == 0 )
+  {
+    exit(0);
+  }
+}
+
+// Print simulation state info in collision handler
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+void ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::printSimulationStateInfo()
+{
+  double time = clock()/((double)(CLOCKS_PER_SEC));
+  
+  if( d_bank.size() > 0 )
+  {
+      std::cerr << " History: " << d_bank.top()->getHistoryNumber()
+		<< " Collision: " << d_bank.top()->getCollisionNumber()
+		<< " Run Time: " << time - d_start_time
+		<< std::endl;
+  }
+  else
+  {
+    std::cerr << " History: " << d_histories_completed
+		<< " Collision: " << 0
+		<< " Run Time: " << time - d_start_time
+		<< std::endl;
+  }
 }
 
 } // end Facemc namespace

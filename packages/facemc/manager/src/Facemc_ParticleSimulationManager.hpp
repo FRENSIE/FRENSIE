@@ -60,20 +60,35 @@ public:
   //! Print the data in all estimators to the desired stream
   void printSimulationSummary( std::ostream &os ) const;
 
+  // Signal handler
+  void signalHandler(int signal);
+
 private:
 
   // Simulate an individual particle
   void simulateParticle( ParticleState& particle,
 			 ParticleBank& particle_bank );
+
+  // Print simulation state info in collision handler
+  void printSimulationStateInfo();
   
   // Number of particle histories to simulate
   unsigned d_history_number_wall;
+
+  // Number of histories completed
+  unsigned d_histories_completed;
+
+  // Flag for ending simulation early
+  bool d_end_simulation;
 
   // The simulation start time
   double d_start_time;
 
   // The simulation end time
   double d_end_time;
+
+  // Particle bank
+  ParticleBank d_bank;
 };
 
 //! Macro for catching a lost particle and breaking a loop

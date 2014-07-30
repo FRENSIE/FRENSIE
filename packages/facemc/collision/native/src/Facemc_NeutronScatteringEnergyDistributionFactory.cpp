@@ -306,18 +306,20 @@ void NeutronScatteringEnergyDistributionFactory::createAceLaw3EnergyDistribution
 	      Teuchos::RCP<NeutronScatteringEnergyDistribution>& distribution )
 {
   // Verify that there isn't multiple interpolation regions
-    TEST_FOR_EXCEPTION( dlw_block_array[3] != 0,
-                        std::runtime_error,
-                        "Error: MT# " << reaction << "in ACE table "
-                        << table_name << " has multiple interpolation regions "
-                        " with it, which is not possible in LAW 3!\n" );
+  TEST_FOR_EXCEPTION( dlw_block_array[3] != 0,
+		      std::runtime_error,
+		      "Error: MT# " << reaction << "in ACE table "
+		      << table_name << " has multiple interpolation regions "
+		      " with it, which is not possible in LAW 3!\n" );
 
-    // Parse data
-    double ldat1 = dlw_block_array[dlw_block_array[2] - dlw_block_array_start_index - 1];
-    double ldat2 = dlw_block_array[dlw_block_array[2] - dlw_block_array_start_index];
+  // Parse data
+  double ldat1 = 
+    dlw_block_array[dlw_block_array[2] - dlw_block_array_start_index - 1];
+  double ldat2 = 
+    dlw_block_array[dlw_block_array[2] - dlw_block_array_start_index];
 
-    // Create the inelastic level scattering energy distribution (law 3)
-    distribution.reset( 
+  // Create the inelastic level scattering energy distribution (law 3)
+  distribution.reset( 
 	      new AceLaw3NeutronScatteringEnergyDistribution( ldat1, ldat2 ) );
 }
 
