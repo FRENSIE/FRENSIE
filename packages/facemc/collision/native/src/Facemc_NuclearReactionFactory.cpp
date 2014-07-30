@@ -278,10 +278,13 @@ void NuclearReactionFactory::createReactionMultiplicityMap(
 	  dlw_block( start_index, size );		     
       }
       
-      TEST_FOR_EXCEPTION( multiplicity == 19,
-			  std::runtime_error,
-			  "Error: Fission reactions are not currently "
-			  "supported!\n" );
+      // TEST_FOR_EXCEPTION( multiplicity == 19,
+      // 			  std::runtime_error,
+      // 			  "Error: Fission reactions are not currently "
+      // 			  "supported!\n" );
+      std::cerr << "Warning: multiplicity of 19 found. Fission reactions not "
+		<< "currently supported!"
+		<< std::endl;
     }
     // Elastic scattering must be handled separately: it never appears in block
     else
