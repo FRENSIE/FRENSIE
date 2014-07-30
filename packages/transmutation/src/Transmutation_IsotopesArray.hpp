@@ -25,7 +25,8 @@ public:
    static void getNumberDensityMapFromUnorderedArray(boost::unordered_map<int,double>& number_densities,
                                                      const Teuchos::Array<std::pair<int,double> >& number_densities_array);
    static void getUnorderedArray(Teuchos::Array<std::pair<int,double> >& unordered_number_densities,
-                                 const Teuchos::Array<double>& ordered_number_densities);
+                                 const Teuchos::Array<double>& ordered_number_densities,
+                                 const double lower_bound = 1e-3);
 };
 
 }

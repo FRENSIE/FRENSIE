@@ -21,11 +21,11 @@ namespace Transmutation {
 
 class ReactionRateMatrix {
 public:
-   static void addFissionFragments(Teuchos::SerialDenseMatrix<int,double>& reaction_rate_matrix,
+   static void addFissionFragments(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& reaction_rate_matrix,
                                    const int fission_zaid, 
                                    const double& fission_reaction_rate,
                                    const Teuchos::Array<std::pair<int,double> >& fission_fragments);
-   static void addReactionRates(Teuchos::SerialDenseMatrix<int,double>& reaction_rate_matrix,
+   static void addReactionRates(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& reaction_rate_matrix,
                                 Teuchos::Array<std::pair<int,double> >& reaction_rates,
                                 const Facemc::NuclearReactionType& reaction);
 private:

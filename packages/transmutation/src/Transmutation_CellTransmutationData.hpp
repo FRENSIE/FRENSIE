@@ -16,6 +16,7 @@
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_SerialDenseMatrix.hpp>
+#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Geometry_ModuleTraits.hpp"
@@ -49,7 +50,7 @@ public:
                                const Teuchos::Array<std::pair<int,double> >& fission_fragments);
 
   //! Populate matrix
-  void populateMatrix(Teuchos::SerialDenseMatrix<int,double>& matrix);
+  void populateMatrix(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& matrix);
 
 private:
 

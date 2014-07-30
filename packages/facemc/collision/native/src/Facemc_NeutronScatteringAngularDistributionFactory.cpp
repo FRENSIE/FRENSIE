@@ -42,12 +42,12 @@ void NeutronScatteringAngularDistributionFactory::createDistribution(
   // Get the energy grid
   Teuchos::ArrayView<const double> energy_grid = 
     and_block_array( 1, num_tabulated_energies);
-  
+ 
   // Get the location of the angular distribution for each energy
   Teuchos::ArrayView<const double> distribution_indices = 
     and_block_array( num_tabulated_energies + 1,
 		     num_tabulated_energies );
-  
+ 
   // Initialize the angular distribution array
   NeutronScatteringAngularDistribution::AngularDistribution
     angular_distribution( num_tabulated_energies );
@@ -79,7 +79,7 @@ void NeutronScatteringAngularDistributionFactory::createDistribution(
  
       unsigned interpolation_flag = 
 	and_block_array[distribution_index];
-      
+  
       unsigned number_of_points_in_dist = 
 	and_block_array[distribution_index + 1];
       

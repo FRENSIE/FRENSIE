@@ -98,14 +98,14 @@ TEUCHOS_UNIT_TEST( CellTransmutationData, populateMatrix )
    cell_data.setFissionReactionRates(94239,13,fission_fragments);
 
    // Populate the matrix
-   Teuchos::SerialDenseMatrix<int,double> matrix;
+   Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> > matrix( new Teuchos::SerialDenseMatrix<int,double>);
 
    // Set up the zaids array
    Teuchos::Array<int> zaids;
    Transmutation::IsotopesForDepletion::getIsotopes( zaids ); 
 
    // Allocate the matrix
-   matrix.shape(zaids.length(),zaids.length());
+   matrix->shape(zaids.length(),zaids.length());
 
    cell_data.populateMatrix(matrix);
 
@@ -130,15 +130,15 @@ TEUCHOS_UNIT_TEST( CellTransmutationData, populateMatrix )
    daughter_zaid_5 = Transmutation::IsotopesForDepletion::getLocation( 6011 , zaids ); 
    daughter_zaid_6 = Transmutation::IsotopesForDepletion::getLocation( 5013 , zaids );
 
-   TEST_FLOATING_EQUALITY(matrix(parent_zaid,parent_zaid), -12.0, 1e-15); 
-   TEST_FLOATING_EQUALITY(matrix(daughter_zaid_1,parent_zaid), 5.0, 1e-15); 
-   TEST_FLOATING_EQUALITY(matrix(daughter_zaid_2,parent_zaid), 4.0, 1e-15); 
-   TEST_FLOATING_EQUALITY(matrix(daughter_zaid_3,parent_zaid), 3.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(parent_zaid,parent_zaid), -12.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(daughter_zaid_1,parent_zaid), 5.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(daughter_zaid_2,parent_zaid), 4.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(daughter_zaid_3,parent_zaid), 3.0, 1e-15); 
 
-   TEST_FLOATING_EQUALITY(matrix(parent_zaid_2,parent_zaid_2), -30.0, 1e-15); 
-   TEST_FLOATING_EQUALITY(matrix(daughter_zaid_4,parent_zaid_2), 10.0, 1e-15); 
-   TEST_FLOATING_EQUALITY(matrix(daughter_zaid_5,parent_zaid_2), 10.0, 1e-15); 
-   TEST_FLOATING_EQUALITY(matrix(daughter_zaid_6,parent_zaid_2), 10.0, 1e-15);
+   TEST_FLOATING_EQUALITY((*matrix)(parent_zaid_2,parent_zaid_2), -30.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(daughter_zaid_4,parent_zaid_2), 10.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(daughter_zaid_5,parent_zaid_2), 10.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(daughter_zaid_6,parent_zaid_2), 10.0, 1e-15);
 
    // Test the fission fragment reaction rates
    parent_zaid = Transmutation::IsotopesForDepletion::getLocation( 92235 , zaids ); 
@@ -148,18 +148,18 @@ TEUCHOS_UNIT_TEST( CellTransmutationData, populateMatrix )
    daughter_zaid_1 = Transmutation::IsotopesForDepletion::getLocation( 26056 , zaids );
    daughter_zaid_2 = Transmutation::IsotopesForDepletion::getLocation( 26058 , zaids );
 
-   TEST_FLOATING_EQUALITY(matrix(parent_zaid,parent_zaid), -7.0, 1e-15); 
-   TEST_FLOATING_EQUALITY(matrix(parent_zaid_2,parent_zaid_2), -11.0, 1e-15); 
-   TEST_FLOATING_EQUALITY(matrix(parent_zaid_3,parent_zaid_3), -13.0, 1e-13);
+   TEST_FLOATING_EQUALITY((*matrix)(parent_zaid,parent_zaid), -7.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(parent_zaid_2,parent_zaid_2), -11.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(parent_zaid_3,parent_zaid_3), -13.0, 1e-13);
 
-   TEST_FLOATING_EQUALITY(matrix(daughter_zaid_1,parent_zaid), 10.0, 1e-15); 
-   TEST_FLOATING_EQUALITY(matrix(daughter_zaid_2,parent_zaid), 15.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(daughter_zaid_1,parent_zaid), 10.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(daughter_zaid_2,parent_zaid), 15.0, 1e-15); 
 
-   TEST_FLOATING_EQUALITY(matrix(daughter_zaid_1,parent_zaid_2), 10.0, 1e-15); 
-   TEST_FLOATING_EQUALITY(matrix(daughter_zaid_2,parent_zaid_2), 15.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(daughter_zaid_1,parent_zaid_2), 10.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(daughter_zaid_2,parent_zaid_2), 15.0, 1e-15); 
 
-   TEST_FLOATING_EQUALITY(matrix(daughter_zaid_1,parent_zaid_3), 10.0, 1e-15); 
-   TEST_FLOATING_EQUALITY(matrix(daughter_zaid_2,parent_zaid_3), 15.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(daughter_zaid_1,parent_zaid_3), 10.0, 1e-15); 
+   TEST_FLOATING_EQUALITY((*matrix)(daughter_zaid_2,parent_zaid_3), 15.0, 1e-15); 
 }
 //---------------------------------------------------------------------------//
 // Custom Main Function 

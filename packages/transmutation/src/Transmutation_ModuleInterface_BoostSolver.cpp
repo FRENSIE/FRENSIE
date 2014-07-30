@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   Transmutation_ModuleInterface_ODESolver.cpp
+//! \file   Transmutation_ModuleInterface_BoostSolver.cpp
 //! \author Alex Bennett
-//! \brief  Transmutation module interface class
+//! \brief  Transmutation module interface class for the boost solver
 //!
 //---------------------------------------------------------------------------//
 
@@ -13,22 +13,22 @@
 #include <boost/unordered_map.hpp>
 
 // FRENSIE Includes
-#include "Transmutation_ModuleInterface_ODESolver.hpp"
+#include "Transmutation_ModuleInterface_BoostSolver.hpp"
 #include "Transmutation_DecayMatrix.hpp"
 #include "Transmutation_IsotopesArray.hpp"
 #include "Transmutation_CellTransmutationData.hpp"
-#include "Utility_ODESolver.hpp"
+#include "Utility_BoostSolver.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Transmutation{
 
 // Initialize the static member data
-Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> > ModuleInterface<Utility::ODESolver>::decay_matrix;
-Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> > ModuleInterface<Utility::ODESolver>::total_matrix( new Teuchos::SerialDenseMatrix<int,double> );
-boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,CellTransmutationData> ModuleInterface<Utility::ODESolver>::cell_data;
+Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> > ModuleInterface<Utility::BoostSolver>::decay_matrix;
+Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> > ModuleInterface<Utility::BoostSolver>::total_matrix( new Teuchos::SerialDenseMatrix<int,double> );
+boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,CellTransmutationData> ModuleInterface<Utility::BoostSolver>::cell_data;
 
 //! Set the reaction rates
-void ModuleInterface<Utility::ODESolver>::setReactionRates(const Facemc::NuclearReactionType reaction, 
+void ModuleInterface<Utility::BoostSolver>::setReactionRates(const Facemc::NuclearReactionType reaction, 
                                                              Teuchos::Array<std::pair<int,double> >& reaction_rates, 
                                                              const Geometry::ModuleTraits::InternalCellHandle cell_id)
 {
@@ -40,7 +40,7 @@ void ModuleInterface<Utility::ODESolver>::setReactionRates(const Facemc::Nuclear
 } 
 
 //! Set the fission reaction rates
-void ModuleInterface<Utility::ODESolver>::setFissionReactionRates(const int zaid, 
+void ModuleInterface<Utility::BoostSolver>::setFissionReactionRates(const int zaid, 
                                                         const double& reaction_rate, 
                                                         Teuchos::Array<std::pair<int,double> >& fission_fragment_reaction_rates,
                                                         const Geometry::ModuleTraits::InternalCellHandle cell_id)
@@ -53,7 +53,7 @@ void ModuleInterface<Utility::ODESolver>::setFissionReactionRates(const int zaid
 }
 
 //! Set the number densities
-void ModuleInterface<Utility::ODESolver>::setNumberDensities(const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,Teuchos::Array<std::pair<int,double> > >& number_densities)
+void ModuleInterface<Utility::BoostSolver>::setNumberDensities(const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,Teuchos::Array<std::pair<int,double> > >& number_densities)
 {
    // Make sure cell data map has not been created yet
    testPrecondition( cell_data.size() == 0 );
@@ -73,7 +73,7 @@ void ModuleInterface<Utility::ODESolver>::setNumberDensities(const boost::unorde
 
 
 //! Solve the transmutation matrix
-void ModuleInterface<Utility::ODESolver>::burn(const double& time, 
+void ModuleInterface<Utility::BoostSolver>::burn(const double& time, 
                                      boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,Teuchos::Array<std::pair<int,double> > >& final_number_densities)
 {
    final_number_densities.clear();
@@ -90,9 +90,6 @@ void ModuleInterface<Utility::ODESolver>::burn(const double& time,
    // Initialize the number densities arrays
    Teuchos::Array<double> number_densities;
    Teuchos::Array<std::pair<int,double> > unordered_number_densities;
-
-   // Create the matrix solver instance
-   Utility::ODESolver solver_instance;
 
    // Loop through the cells
    for(boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle, CellTransmutationData>::iterator i = cell_data.begin();
@@ -112,8 +109,14 @@ void ModuleInterface<Utility::ODESolver>::burn(const double& time,
       // Get the initial number densities
       i->second.getNumberDensities(number_densities);
 
+      // Create the matrix solver instance
+      Utility::BoostSolver solver_instance(total_matrix, number_densities);
+
       // Solve for the new number densities
-      solver_instance.solve(total_matrix, number_densities, time);
+      solver_instance.Solve(time);
+
+      // Get the new number densities
+      solver_instance.getNumberDensities( number_densities );
 
       // Convert number density array
       Transmutation::IsotopesArray::getUnorderedArray( unordered_number_densities, number_densities );
@@ -128,5 +131,5 @@ void ModuleInterface<Utility::ODESolver>::burn(const double& time,
 } // end transmutation namespace
 
 //---------------------------------------------------------------------------//
-// end Transmutation_ModuleInterface_Solver.cpp
+// end Transmutation_ModuleInterface_BoostSolver.cpp
 //---------------------------------------------------------------------------//
