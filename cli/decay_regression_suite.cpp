@@ -12,6 +12,7 @@
 // Trilinos includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_SerialDenseMatrix.hpp>
+#include <Teuchos_RCP.hpp>
 
 // FRENSIE includes
 #include "Transmutation_IsotopesArray.hpp"
@@ -36,7 +37,7 @@ int main(int argc, char** argv)
    Transmutation::IsotopesArray::getOrderedIsotopesArray( initial_number_densities, number_densities_array );
    
    // Initialize the decay matrix
-   Teuchos::SerialDenseMatrix<int,double> decay_matrix;
+   Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> > decay_matrix;
    
    // Fill the decay matrix
    Transmutation::DecayMatrix::getDecayMatrix(decay_matrix);

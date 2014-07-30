@@ -110,14 +110,14 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
     else
     {
       Teuchos::RCP<NeutronScatteringEnergyDistribution> energy_distribution;
-      
+     
       NeutronScatteringEnergyDistributionFactory::createDistribution(
        	      d_reaction_energy_dist.find( reaction_type )->second,
        	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
        	      d_table_name,
        	      reaction_type,
 	      energy_distribution );
-      
+  
       // Test that law 3 distributions are always in the CM system
       if( energy_distribution->getLaw() == 3 )
       {

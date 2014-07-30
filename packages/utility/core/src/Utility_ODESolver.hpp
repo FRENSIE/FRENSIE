@@ -43,7 +43,7 @@ public:
    int getLengthWorkingArray() const;
 
    // solves the ODE
-   void solve(const Teuchos::SerialDenseMatrix<int,double>& matrix,
+   void solve(const Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& matrix,
               Teuchos::Array<double>& y,
               const double time) const;
 

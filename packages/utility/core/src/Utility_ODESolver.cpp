@@ -89,17 +89,17 @@ int ODESolver::getLengthWorkingArray() const
 }
 
 // Solve the matrix
-void ODESolver::solve(const Teuchos::SerialDenseMatrix<int,double>& matrix,
+void ODESolver::solve(const Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& matrix,
                       Teuchos::Array<double>& y,
                       const double time) const
 {
      // Check if values are valid
-     testPrecondition( matrix.numRows() > 1 );
-     testPrecondition( matrix.numRows() == matrix.numCols() );
-     testPrecondition( matrix.numRows() == y.length() );
+     testPrecondition( matrix->numRows() > 1 );
+     testPrecondition( matrix->numRows() == matrix->numCols() );
+     testPrecondition( matrix->numRows() == y.length() );
      testPrecondition( time > 0.0 );
 
-     lsodesSolver(matrix.values(), y.getRawPtr(), matrix.numRows(), &time, 
+     lsodesSolver(matrix->values(), y.getRawPtr(), matrix->numRows(), &time, 
                   &d_relative_tol, &d_absolute_tol, &d_length_working_array);
 
 }

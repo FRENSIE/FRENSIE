@@ -25,7 +25,7 @@ struct CMSystemConversionPolicy
 				      const double atomic_weight_ratio )
   {
     double a_plus_1 = atomic_weight_ratio + 1.0;
-    
+  
     return outgoing_sys_energy + (incident_energy + 
 				 2.0*sys_scattering_angle_cosine*a_plus_1*
 				 sqrt(incident_energy*outgoing_sys_energy))/
@@ -43,6 +43,7 @@ struct CMSystemConversionPolicy
     return sys_scattering_angle_cosine * 
       sqrt(outgoing_sys_energy/outgoing_lab_energy) +
       sqrt(incident_energy/outgoing_lab_energy)/(atomic_weight_ratio + 1.0);
+
   }
 };
 

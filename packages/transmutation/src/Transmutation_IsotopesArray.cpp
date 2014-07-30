@@ -120,7 +120,8 @@ void IsotopesArray::getNumberDensityMapFromUnorderedArray(boost::unordered_map<i
 }
 
 void IsotopesArray::getUnorderedArray(Teuchos::Array<std::pair<int,double> >& unordered_number_densities,
-                                        const Teuchos::Array<double>& ordered_number_densities)
+                                        const Teuchos::Array<double>& ordered_number_densities,
+                                        const double lower_bound)
 {
    // Clear the array
    unordered_number_densities.clear();
@@ -133,7 +134,7 @@ void IsotopesArray::getUnorderedArray(Teuchos::Array<std::pair<int,double> >& un
    for(int i = 0; i != ordered_number_densities.length(); i++)
    {
       // Check if isotope is present
-      if( ordered_number_densities[i] > 0.0 )
+      if( ordered_number_densities[i] > lower_bound )
       {
          // Add the isotope to the unordered array
          unordered_number_densities.push_back( std::pair<int,double>(zaids[i],ordered_number_densities[i]) );
