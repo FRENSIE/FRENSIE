@@ -15,6 +15,7 @@
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Facemc{
 
@@ -86,7 +87,21 @@ NuclideFactory::NuclideFactory(
     // Create a nuclide with unresolved resonances
     else
     {
-      throw std::runtime_error( "Nuclei with unresolved resonance data are not currently supported." );
+      std::cerr << "Warning: Nuclei with unresolved resonance data has been "
+		<< "requested. Unresolved resonance data will be ignored!"
+		<< std::endl;
+
+      nuclide.reset( new Nuclide( 
+			      table_info.get<std::string>( "table_name" ),
+			      table_info.get<int>( "atomic_number" ),
+		              table_info.get<int>( "atomic_mass_number" ),
+			      table_info.get<int>( "isomer_number" ),
+			      table_info.get<double>( "atomic_weight_ratio" ),
+			      table_info.get<double>( "temperature" ),
+			      *xss_data_extractor ) );
+      // THROW_EXCEPTION( std::runtime_error,
+      // 		       "Nuclei with unresolved resonance data are not "
+      // 		       "currently supported!" );
     }		     
 
     // Add the nuclide to the map

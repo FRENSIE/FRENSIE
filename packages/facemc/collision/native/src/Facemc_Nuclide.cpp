@@ -117,7 +117,8 @@ bool Nuclide::isCalculatedTotalCrossSectionValid(
     if( rel_error > 5e-9 )
     {
       valid = false;
-      std::cout << i << ": " << rel_error << std::endl;
+      //std::cout << i << ": " << rel_error << std::endl;
+      break;
     }
   }
 
