@@ -49,7 +49,7 @@ void initializeScatteringDistribution(
   // param_a = (A + 1)/A * |Q| = 2.0
   // param_b = (A/(A + 1)^2 = 0.25
   Teuchos::RCP<Facemc::NeutronScatteringEnergyDistribution> energy_dist( 
-       new Facemc::AceLaw3NeutronScatteringEnergyDistribution( 2.0, 0.25 ) );
+       new Facemc::AceLaw3NeutronScatteringEnergyDistribution( 6.516454, 0.8848775 ) );
   
   scattering_dist.reset( 
    new Facemc::IndependentEnergyAngleNeutronScatteringDistribution<Facemc::CMSystemConversionPolicy>( 
@@ -67,23 +67,32 @@ TEUCHOS_UNIT_TEST( InelasticLevelNeutronScatteringDistribution,
 {
   Teuchos::RCP<Facemc::NeutronScatteringDistribution> scattering_dist;
   
-  initializeScatteringDistribution( 1.0, scattering_dist );
+  initializeScatteringDistribution( 15.857510, scattering_dist );
   
   Facemc::NeutronState neutron( 0ull );
-  neutron.setDirection( 0.0, 0.0, 1.0 );
-  double start_energy = 3.0;
+  double initial_angle[3];
+  initial_angle[0] = 0.0;
+  initial_angle[1] = 0.0;
+  initial_angle[2] = 1.0;
+  neutron.setDirection( initial_angle );
+  double start_energy = 7.0;
   neutron.setEnergy( start_energy );
 
   scattering_dist->scatterNeutron( neutron, 2.53010e-8 );
 
-  TEST_FLOATING_EQUALITY( neutron.getEnergy(), 1.0, 1e-15);
+  TEST_FLOATING_EQUALITY( neutron.getEnergy(), 0.452512, 1e-6);
 
-  start_energy = 5.0;
-  neutron.setEnergy( start_energy );
+  double angle = Utility::calculateCosineOfAngleBetweenVectors( 
+					      initial_angle, 
+					      neutron.getDirection() );
+  TEST_FLOATING_EQUALITY( angle, 0.233314, 1e-6);
 
-  scattering_dist->scatterNeutron( neutron, 2.53010e-8 );
-
-  TEST_FLOATING_EQUALITY( neutron.getEnergy(), 2.0, 1e-15 );
+//  start_energy = 5.0;
+//  neutron.setEnergy( start_energy );
+//
+//  scattering_dist->scatterNeutron( neutron, 2.53010e-8 );
+//
+//  TEST_FLOATING_EQUALITY( neutron.getEnergy(), 2.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//

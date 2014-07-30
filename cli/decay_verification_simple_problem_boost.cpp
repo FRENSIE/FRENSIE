@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   decay_verification_advanced_problem.cpp
+//! \file   decay_verification_simple_problem.cpp
 //! \author Alex Bennett
-//! \brief  decay verication advanced problem
+//! \brief  decay verication simple problem
 //!
 //---------------------------------------------------------------------------//
 
@@ -13,23 +13,22 @@
 #include <Teuchos_Array.hpp>
 #include <Teuchos_SerialDenseMatrix.hpp>
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_RCP.hpp>
 
 // FRENSIE includes
 #include "Transmutation_IsotopesArray.hpp"
 #include "Transmutation_DecayMatrix.hpp"
-#include "Utility_ODESolver.hpp"
+#include "Utility_BoostSolver.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( decay_verification, advanced_problem )
+TEUCHOS_UNIT_TEST( decay_verification, simple_problem )
 {
    // Initialize map of initial number densities
    boost::unordered_map<int,double> initial_number_densities;
    
    // Add tritium to the map of number densities
-   initial_number_densities.insert( std::pair<int,double>(96246,100) );
+   initial_number_densities.insert( std::pair<int,double>(1003,100) );
    
    // Initialize array of number densities to be used
    Teuchos::Array<double> number_densities_array;
@@ -44,14 +43,18 @@ TEUCHOS_UNIT_TEST( decay_verification, advanced_problem )
    Transmutation::DecayMatrix::getDecayMatrix(decay_matrix);
    
    // Set the time isotope will decay for about ten years
-   double time = 1000000000.0*3600.0*24.0*365.25;
- 
+   double time = 10.0*3600.0*24.0*365.25;
+   time  = 1.0;
+
    // Initialize the solver instance
-   Utility::ODESolver solver_instance;
+   Utility::BoostSolver solver_instance(decay_matrix, number_densities_array);
    
    // Solve for the new number densities
-   solver_instance.solve(decay_matrix, number_densities_array, time);
-   
+   solver_instance.Solve(time);
+ 
+   // Get the new number densities
+   solver_instance.getNumberDensities( number_densities_array );
+
    // Initialize map of new number densities
    boost::unordered_map<int,double> new_number_densities;
    
@@ -70,9 +73,10 @@ TEUCHOS_UNIT_TEST( decay_verification, advanced_problem )
    }
 
    // Test Results
-   TEST_FLOATING_EQUALITY(total_number_density , 100.02614 , 1e-5);
-   TEST_FLOATING_EQUALITY(new_number_densities.find(92238)->second , 85.6143 , 1e-4);
-   TEST_ASSERT( new_number_densities.find(96246) == new_number_densities.end() );
+   TEST_COMPARE(new_number_densities.size() ,==, 2)
+   TEST_FLOATING_EQUALITY(total_number_density , 100.0 , 1e-15);
+   TEST_FLOATING_EQUALITY(new_number_densities.find(2003)->second , 43.0276 , 1e-3);
+   TEST_FLOATING_EQUALITY(new_number_densities.find(1003)->second , 56.9724 , 1e-4);
 }
 
 //---------------------------------------------------------------------------//
@@ -86,5 +90,5 @@ int main( int argc, char** argv )
    return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
 //---------------------------------------------------------------------------//
-// end decay_verification_advanced_problem.cpp
+// end decay_verification_simple_problem.cpp
 //---------------------------------------------------------------------------//

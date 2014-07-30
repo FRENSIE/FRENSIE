@@ -603,6 +603,22 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactory,
 					      scattering_dist );
 						
   TEST_ASSERT( !scattering_dist.is_null() );
+
+
+
+//  boost::unordered_map<Facemc::NuclearReactionType,unsigned>::const_iterator i;
+//
+//  for(i = neutron_distribution_factory_o16->getReactionOrdering().begin(); i != neutron_distribution_factory_o16->getReactionOrdering().end(); ++i)
+//  {
+//    std::cout << "MT number " << i->first << std::endl;
+//
+//    Teuchos::RCP<Facemc::NeutronScatteringDistribution> dist;
+//
+//    neutron_distribution_factory_o16->createScatteringDistribution( i->first, dist );
+//
+//  }
+
+
 }
 
 //---------------------------------------------------------------------------//

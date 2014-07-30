@@ -9,6 +9,7 @@
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_SerialDenseMatrix.hpp>
+#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Transmutation_DecayMatrix.hpp"
@@ -26,7 +27,7 @@ namespace Transmutation {
 //Initializing Static Member Data
 const std::string DecayMatrix::default_data_file = "endf7.dk.xml";
 
-void DecayMatrix::getDecayMatrix(Teuchos::SerialDenseMatrix<int,double>& decay_matrix,
+void DecayMatrix::getDecayMatrix(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& decay_matrix,
                                  const std::string& data_file)
 {
      // Set up the zaids array
@@ -42,7 +43,7 @@ void DecayMatrix::getDecayMatrix(Teuchos::SerialDenseMatrix<int,double>& decay_m
      data::DecayLib decay_library(decay_file);
 
      // Allocate the matrix
-     decay_matrix.shape(zaids.length(),zaids.length());
+     decay_matrix->shape(zaids.length(),zaids.length());
 
      // Fill Decay Matrix
      // Loop through all the isotopes in the matrix
@@ -63,13 +64,13 @@ void DecayMatrix::getDecayMatrix(Teuchos::SerialDenseMatrix<int,double>& decay_m
      }
 }
 
-void DecayMatrix::addDecayIsotopes(Teuchos::SerialDenseMatrix<int,double>& decay_matrix, 
+void DecayMatrix::addDecayIsotopes(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& decay_matrix, 
                                    Teuchos::Array<int>& zaids, 
                                    data::DecayData& decay_data,
                                    const int i)
 { 
      // Add the decay constants for the isotope
-     decay_matrix(i,i) -= decay_data.GetDecayConst();
+     (*decay_matrix)(i,i) -= decay_data.GetDecayConst();
 
      // Loop through the number of decay daughters for the isotopes
      for(int j = 0; j < decay_data.GetNumber(); j++)
@@ -80,12 +81,12 @@ void DecayMatrix::addDecayIsotopes(Teuchos::SerialDenseMatrix<int,double>& decay
          // Chech if isotope was found
          if( decay_location >= 0 )
          {
-              decay_matrix(decay_location,i) += decay_data.GetDecayConst() * decay_data.GetBranchingRatio(j);
+              (*decay_matrix)(decay_location,i) += decay_data.GetDecayConst() * decay_data.GetBranchingRatio(j);
          }
      }
 }
 
-void DecayMatrix::addSpontaneousFissionYields(Teuchos::SerialDenseMatrix<int,double>& decay_matrix,
+void DecayMatrix::addSpontaneousFissionYields(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& decay_matrix,
                                               Teuchos::Array<int>& zaids,
                                               data::DecayData& decay_data,
                                               const int i)
@@ -107,7 +108,7 @@ void DecayMatrix::addSpontaneousFissionYields(Teuchos::SerialDenseMatrix<int,dou
           if( fission_fragment_location >= 0 )
           {
              // Add the fission fragment to the matrix
-             decay_matrix(fission_fragment_location,i) += 
+             (*decay_matrix)(fission_fragment_location,i) += 
                                      DecayMatrix::getSpontaneousFissionBranchingRatio(decay_data) *
                                      fission_yields.getYieldFissionProductsIndependentYields()[0][j] *
                                      decay_data.GetDecayConst();
