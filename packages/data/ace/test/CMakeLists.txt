@@ -6,7 +6,11 @@ ADD_TEST(ACEFileHandler_test tstACEFileHandler --test_neutron_ace_file="${CMAKE_
 ADD_EXECUTABLE(tstXSSNeutronDataExtractor
   tstXSSNeutronDataExtractor.cpp)
 TARGET_LINK_LIBRARIES(tstXSSNeutronDataExtractor data_ace)
-ADD_TEST(XSSNeutronDataExtractor_test tstXSSNeutronDataExtractor --test_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c")
+ADD_TEST(XSSNeutronDataExtractor_test tstXSSNeutronDataExtractor
+--test_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt"
+--test_h1_ace_table="1001.70c"
+--test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt"
+--test_u238_ace_table="92238.70c")
 
 ADD_EXECUTABLE(tstXSSSabDataExtractor
   tstXSSSabDataExtractor.cpp)
