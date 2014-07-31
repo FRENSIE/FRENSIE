@@ -286,10 +286,10 @@ TEUCHOS_UNIT_TEST( ParticleState, calculateSpeed )
 {
   TestParticleState particle( 1ull );
   
-  double speed = particle.calculateSpeed( 1.0, 1.0 );
+  double speed = particle.calculateSpeed( 8.0, 1.0 );
 
   TEST_EQUALITY_CONST( speed, 
-		       Utility::PhysicalConstants::speed_of_light*sqrt(3)/2 );
+		       Utility::PhysicalConstants::speed_of_light*0.5 );
 }
 
 //---------------------------------------------------------------------------//
@@ -300,10 +300,10 @@ TEUCHOS_UNIT_TEST( ParticleState, calculateKineticEnergy )
 
   double kinetic_energy = 
     particle.calculateKineticEnergy( 
-			1.0, 
-			Utility::PhysicalConstants::speed_of_light*sqrt(3)/2 );
+			8.0, 
+			Utility::PhysicalConstants::speed_of_light*0.5 );
   
-  TEST_FLOATING_EQUALITY( kinetic_energy, 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( kinetic_energy, 1.0, 4.0 );
 }
 
 //---------------------------------------------------------------------------//

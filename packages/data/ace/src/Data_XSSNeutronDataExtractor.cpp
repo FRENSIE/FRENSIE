@@ -48,6 +48,15 @@ bool XSSNeutronDataExtractor::hasFissionData() const
     return false;
 }
 
+// check if the nuclide has delayed neutron data
+bool XSSNeutronDataExtractor::hasDelayedNeutronData() const
+{
+  if( d_jxs[23] >= 0 )
+    return true;
+  else
+    return false;
+}
+
 // Check if the nuclide has unresolved resonances
 bool XSSNeutronDataExtractor::hasUnresolvedResonanceData() const
 {
@@ -111,6 +120,16 @@ XSSNeutronDataExtractor::extractNUBlock() const
 {
   if( d_jxs[1] >= 0 )
     return d_xss( d_jxs[1], d_jxs[2]-d_jxs[1] );
+  else
+    return Teuchos::ArrayView<const double>();
+}
+
+// Extract the Delayed NU block form the XSS array
+Teuchos::ArrayView<const double> 
+XSSNeutronDataExtractor::extractDelayedNUBlock() const
+{
+  if( d_jxs[23] > 0 )
+    return d_xss( d_jxs[24], d_jxs[25]-d_jxs[24] );
   else
     return Teuchos::ArrayView<const double>();
 }
@@ -272,7 +291,7 @@ Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractDelayedNeutronDLWBlock() const
 {
   if( d_nxs[7] != 0 )
-    return d_xss( d_jxs[26], d_jxs[27]-d_jxs[26] );
+    return d_xss( d_jxs[26], d_jxs[11] - d_jxs[26] );
   else
     return Teuchos::ArrayView<const double>();
 }
@@ -362,7 +381,7 @@ Teuchos::ArrayView<const double>
 XSSNeutronDataExtractor::extractUNRBlock() const
 {
   if( d_jxs[22] >= 0 )
-    return d_xss( d_jxs[22], d_jxs[21]-d_jxs[22]+1 );
+    return d_xss( d_jxs[22], d_jxs[23]-d_jxs[22] );
   else
     return Teuchos::ArrayView<const double>();
 }

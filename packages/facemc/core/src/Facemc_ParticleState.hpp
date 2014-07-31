@@ -190,12 +190,20 @@ protected:
   virtual timeType calculateTraversalTime( const double distance ) const = 0;
 
   //! Calculate the speed of a massive particle (cm/s)
-  double calculateSpeed( const double rest_mass_energy,
-			 const double kinetic_energy ) const;
+  double calculateRelativisticSpeed( const double rest_mass_energy,
+			             const double kinetic_energy ) const;
 
   //! Calculate the kinetic energy of a massive particle (MeV)
+  double calculateRelativisticKineticEnergy( const double rest_mass_energy,
+			                     const double speed ) const;
+
+  //! Calculate the classical speed (cm/s)
+  double calculateSpeed( const double rest_mass_energy,
+                         const double kinetic_energy ) const;
+ 
+  //! Calculate the classical kinetic energy of a massive particle (MeV)
   double calculateKineticEnergy( const double rest_mass_energy,
-				 const double speed ) const;
+                                 const double speed ) const;
 
   //! Print method implementation 
   void printImplementation( std::ostream& os ) const;
@@ -246,8 +254,8 @@ inline const Geometry::Ray& ParticleState::ray() const
 }
 
 // Calculate the speed of a massive particle 
-inline double ParticleState::calculateSpeed(const double rest_mass_energy,
-					    const double kinetic_energy ) const
+inline double ParticleState::calculateRelativisticSpeed(const double rest_mass_energy,
+		     			                const double kinetic_energy ) const
 {
   // Make sure the rest mass energy is valid
   testPrecondition( !ST::isnaninf( rest_mass_energy ) );
@@ -263,7 +271,7 @@ inline double ParticleState::calculateSpeed(const double rest_mass_energy,
 }
 
 // Calculate the kinetic enery of a massive particle (MeV)
-inline double ParticleState::calculateKineticEnergy( 
+inline double ParticleState::calculateRelativisticKineticEnergy( 
 						 const double rest_mass_energy,
 						 const double speed ) const
 {
@@ -279,6 +287,39 @@ inline double ParticleState::calculateKineticEnergy(
 			   sqrt( Utility::PhysicalConstants::speed_of_light*
 				 Utility::PhysicalConstants::speed_of_light -
 				 speed*speed ) - 1.0);
+}
+
+// Calculate the speed of a massive particle 
+inline double ParticleState::calculateSpeed(const double rest_mass_energy,
+		     		            const double kinetic_energy ) const
+{
+  // Make sure the rest mass energy is valid
+  testPrecondition( !ST::isnaninf( rest_mass_energy ) );
+  testPrecondition( rest_mass_energy > 0.0 );
+  // Make sure the kinetic energy is valid
+  testPrecondition( !ST::isnaninf( kinetic_energy ) );
+  testPrecondition( kinetic_energy > 0.0 );
+
+  return Utility::PhysicalConstants::speed_of_light * sqrt( 2 * kinetic_energy /
+                  rest_mass_energy);  
+}
+
+// Calculate the kinetic enery of a massive particle (MeV)
+inline double ParticleState::calculateKineticEnergy( 
+					 const double rest_mass_energy,
+					 const double speed ) const
+{
+  // Make sure the rest mass energy is valid
+  testPrecondition( !ST::isnaninf( rest_mass_energy ) );
+  testPrecondition( rest_mass_energy > 0.0 );
+  // Make sure the speed is valid
+  testPrecondition( !ST::isnaninf( speed ) );
+  testPrecondition( speed < Utility::PhysicalConstants::speed_of_light );
+  testPrecondition( speed > 0.0 );
+
+  return 0.5 * rest_mass_energy * speed * speed / 
+        ( Utility::PhysicalConstants::speed_of_light * 
+          Utility::PhysicalConstants::speed_of_light );
 }
 
 } // end Facemc namespace
