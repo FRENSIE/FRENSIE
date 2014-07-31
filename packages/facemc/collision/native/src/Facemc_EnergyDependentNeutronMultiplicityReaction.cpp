@@ -47,18 +47,23 @@ EnergyDependentNeutronMultiplicityReaction::EnergyDependentNeutronMultiplicityRe
 }
 
 // Return the number of neutrons emitted from the rxn at the given energy
-/*! In reality, only an integer number of neutrons can be released per
- * reaction. The integer return type of this function reflects this reality. 
- * The integer value is sampled so that the expected value is the non-integer
- * multiplicity.
- */
 unsigned 
 EnergyDependentNeutronMultiplicityReaction::getNumberOfEmittedNeutrons(
 						    const double energy ) const
 {
+  double average_multiplicity = getAverageNumberOfEmittedNeutrons( energy );
+  
+  return sampleNumberOfEmittedNeutrons( average_multiplicity );
+}
+
+// Return the average number of neutrons emitted from the rxn 
+double 
+EnergyDependentNeutronMultiplicityReaction::getAverageNumberOfEmittedNeutrons(
+						    const double energy ) const
+{
   double multiplicity;
   
-  if( energy >= d_multiplicity_energy_grid.size() &&
+  if( energy >= d_multiplicity_energy_grid.front() &&
       energy < d_multiplicity_energy_grid.back() )
   {
     unsigned energy_index = 
@@ -76,19 +81,13 @@ EnergyDependentNeutronMultiplicityReaction::getNumberOfEmittedNeutrons(
   }
   else if( energy == d_multiplicity_energy_grid.back() )
     multiplicity = d_multiplicity.back();
-  else
+  else // energy < d_multiplicity_energy_grid.front()
     multiplicity = 0.0;
-  
-  double floor_multiplicity;
-  double round_down_prob = modf( multiplicity, &floor_multiplicity );
-  
-  round_down_prob = 1.0 - round_down_prob;
 
-  if( Utility::RandomNumberGenerator::getRandomNumber<double>() <
-      round_down_prob )
-    return (unsigned)floor_multiplicity;
-  else
-    return (unsigned)floor_multiplicity + 1u;
+  // Make sure the multiplicity is valid
+  testPostcondition( multiplicity >= 0.0 );
+
+  return multiplicity;
 }
 
 // Simulate the reaction

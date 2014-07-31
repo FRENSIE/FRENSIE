@@ -153,6 +153,9 @@ public:
 
   //! Return the generation number of the particle
   generationNumberType getGenerationNumber() const;
+
+  //! Increment the generation number of the particle
+  void incrementGenerationNumber();
   
   //! Return the weight of the particle
   double getWeight() const;

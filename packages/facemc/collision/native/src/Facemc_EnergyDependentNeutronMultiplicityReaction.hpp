@@ -50,6 +50,9 @@ public:
   //! Return the number of neutrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedNeutrons( const double energy ) const;
 
+  //! Return the average number of neutrons emitted from the rxn
+  double getAverageNumberOfEmittedNeutrons( const double energy ) const;
+
   //! Simulate the reaction
   void react( NeutronState& neutron, ParticleBank& bank ) const;
 
