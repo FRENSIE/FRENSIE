@@ -19,6 +19,7 @@
 #include "Facemc_NeutronScatteringAngularDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_DirectionHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -59,39 +60,69 @@ void initializeScatteringDistribution(
 //---------------------------------------------------------------------------//
 // Check that an incoming neutron can be scattered
 TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution, 
-		   scatterNeutron_hydrogen )
+		   scatterNeutron )
 {
   Teuchos::RCP<Facemc::NeutronScatteringDistribution> scattering_dist;
   
-  initializeScatteringDistribution( 0.999167, scattering_dist );
+  initializeScatteringDistribution( 2.0, scattering_dist );
   
   Facemc::NeutronState neutron( 0ull );
-  neutron.setDirection( 0.0, 0.0, 1.0 );
-  double start_energy = 1e-9;
+  double initial_angle[3];
+  initial_angle[0] = 0.0;
+  initial_angle[1] = 1.0;
+  initial_angle[2] = 0.0;
+  neutron.setDirection( initial_angle );
+  double start_energy = 1.0;
   neutron.setEnergy( start_energy );
   
-  std::vector<double> fake_stream( 9 );
-  fake_stream[0] = 0.90; // go to second branch (alpha)
-  fake_stream[1] = 0.1; // \
-  fake_stream[2] = 0.5; // = sample y_2
-  fake_stream[3] = 0.5; // /
-  fake_stream[4] = 0.0; // sample mu_t
-  fake_stream[5] = 0.7; // accept target speed and mu_t 
-  fake_stream[6] = 0.0; // sample the azimuthal angle
-  fake_stream[7] = 0.5; // sample from the lower cm angle distribution
-  fake_stream[8] = 0.0; // sample a cm scattering angle of -1
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.0; // go to second branch (alpha)
+  fake_stream[1] = 0.0; // \
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  std::cout << neutron << std::endl;
+  scattering_dist->scatterNeutron( neutron, 2.53010e-8 );
+
+  double angle = Utility::calculateCosineOfAngleBetweenVectors( 
+					      initial_angle, 
+					      neutron.getDirection() );
+
+  TEST_FLOATING_EQUALITY( neutron.getEnergy(),0.1111111, 1e-6);
+  TEST_FLOATING_EQUALITY( angle, -1.0, 1e-6);
+
+  fake_stream[0] = 0.5;
+  fake_stream[1] = 0.5;
+ 
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  neutron.setDirection( initial_angle );
+  neutron.setEnergy( start_energy );
 
   scattering_dist->scatterNeutron( neutron, 2.53010e-8 );
 
-  std::cout << neutron << std::endl;
+  angle = Utility::calculateCosineOfAngleBetweenVectors( 
+					      initial_angle, 
+					      neutron.getDirection() );
 
-  Utility::RandomNumberGenerator::unsetFakeStream();
+  TEST_FLOATING_EQUALITY( neutron.getEnergy(),0.555556, 1e-6);
+  TEST_FLOATING_EQUALITY( angle, 0.447214, 1e-6);
 
-  TEST_COMPARE( neutron.getEnergy(), >, start_energy );
+  fake_stream[0] = 0.99999999999;
+  fake_stream[1] = 0.99999999999;
+ 
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  neutron.setDirection( initial_angle );
+  neutron.setEnergy( start_energy );
+
+  scattering_dist->scatterNeutron( neutron, 2.53010e-8 );
+
+  angle = Utility::calculateCosineOfAngleBetweenVectors( 
+					      initial_angle, 
+					      neutron.getDirection() );
+
+  TEST_FLOATING_EQUALITY( neutron.getEnergy(),1.0, 1e-11);
+  TEST_FLOATING_EQUALITY( angle, 1.0, 1e-11);
 }
 
 //---------------------------------------------------------------------------//

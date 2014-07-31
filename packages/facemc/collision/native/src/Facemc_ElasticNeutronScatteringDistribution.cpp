@@ -42,51 +42,61 @@ void ElasticNeutronScatteringDistribution::scatterNeutron(
 					      NeutronState& neutron,
 					      const double temperature ) const
 {
-  // Use the free gas thermal model
-  if( neutron.getEnergy() > 
-      SimulationProperties::getFreeGasThreshold()*temperature &&
-      this->getAtomicWeightRatio() > 1.0 )
-  {
-    double A = this->getAtomicWeightRatio();
-
-    // Sample the CM scattering angle cosine
-    double cm_scattering_angle_cosine = 
-      d_angular_scattering_distribution->sampleAngleCosine( 
-							 neutron.getEnergy() );
-    double outgoing_neutron_energy = neutron.getEnergy()*
-      (2*A*cm_scattering_angle_cosine + 1 + A*A)/((A+1)*(A+1));
-    double lab_scattering_angle_cosine = (A*cm_scattering_angle_cosine + 1)/
-      sqrt(2*A*cm_scattering_angle_cosine + 1 + A*A);
-
-    double outgoing_neutron_direction[3];
-    
-    Utility::rotateDirectionThroughPolarAndAzimuthalAngle( 
-						lab_scattering_angle_cosine,
-						sampleAzimuthalAngle(),
-						neutron.getDirection(),
-						outgoing_neutron_direction);
-
-    // Make sure the lab scattering angle cosine is in [-1,1]
-    testPostcondition( lab_scattering_angle_cosine >= -1.0 );
-    testPostcondition( lab_scattering_angle_cosine <= 1.0 );
-
-    neutron.setEnergy( outgoing_neutron_energy );
-    
-    neutron.setDirection( outgoing_neutron_direction );
-  }
   // Use the target-at-rest kinematics
-  else
-  {
+//  if( neutron.getEnergy() > 
+//      SimulationProperties::getFreeGasThreshold()*temperature &&
+//      this->getAtomicWeightRatio() > 1.0 )
+//  {
+//    double A = this->getAtomicWeightRatio();
+//
+//    // Sample the CM scattering angle cosine
+//    double cm_scattering_angle_cosine = 
+//      d_angular_scattering_distribution->sampleAngleCosine( 
+//							 neutron.getEnergy() );
+//    double outgoing_neutron_energy = neutron.getEnergy()*
+//      (2*A*cm_scattering_angle_cosine + 1 + A*A)/((A+1)*(A+1));
+//    double lab_scattering_angle_cosine = (A*cm_scattering_angle_cosine + 1)/
+//      sqrt(2*A*cm_scattering_angle_cosine + 1 + A*A);
+//
+//    double outgoing_neutron_direction[3];
+//    
+//    Utility::rotateDirectionThroughPolarAndAzimuthalAngle( 
+//						lab_scattering_angle_cosine,
+//						sampleAzimuthalAngle(),
+//						neutron.getDirection(),
+//						outgoing_neutron_direction);
+//
+//    // Make sure the lab scattering angle cosine is in [-1,1]
+//    testPostcondition( lab_scattering_angle_cosine >= -1.0 );
+//    testPostcondition( lab_scattering_angle_cosine <= 1.0 );
+//
+//    neutron.setEnergy( outgoing_neutron_energy );
+//    
+//    neutron.setDirection( outgoing_neutron_direction );
+//  }
+  // Use the free gas thermal model
+//  else
+//  {
     // Calculate the neutron velocity
     double neutron_velocity[3] = {neutron.getXDirection()*neutron.getSpeed(),
 				  neutron.getYDirection()*neutron.getSpeed(),
 				  neutron.getZDirection()*neutron.getSpeed()};
-    
+
     // Sample the target velocity
     double target_velocity[3];
-    
-    sampleTargetVelocity( neutron, temperature, target_velocity );
-    
+ 
+    if( neutron.getEnergy() > 
+        SimulationProperties::getFreeGasThreshold()*temperature &&
+        this->getAtomicWeightRatio() > 1.0 )
+    {
+      target_velocity[0] = 0;  
+      target_velocity[1] = 0;  
+      target_velocity[2] = 0;  
+    }
+    else
+    {
+      sampleTargetVelocity( neutron, temperature, target_velocity );
+    }
     // Calculate the center-of-mass velocity
     double center_of_mass_velocity[3];
     
@@ -97,7 +107,7 @@ void ElasticNeutronScatteringDistribution::scatterNeutron(
     // Transform the neutron velocity to the center-of-mass frame
     transformVelocityToCenterOfMassFrame( center_of_mass_velocity, 
 					  neutron_velocity );
-    
+   
     // Calculate the neutron speed in the center-of-mass
     double cm_neutron_speed = Utility::vectorMagnitude( neutron_velocity );
     
@@ -110,7 +120,7 @@ void ElasticNeutronScatteringDistribution::scatterNeutron(
     double cm_scattering_angle_cosine = 
       d_angular_scattering_distribution->sampleAngleCosine( 
 							 neutron.getEnergy() );
-    
+   
     // Rotate the neutron velocity vector to the new angle
     // Note: The speed of the neutron does not change in the center-of-mass
     double cm_outgoing_neutron_direction[3];
@@ -139,7 +149,7 @@ void ElasticNeutronScatteringDistribution::scatterNeutron(
 
     // Calculate and set the outgoing neutron energy  
     neutron.setSpeed( outgoing_neutron_speed );
-  }
+//  }
 }
 
 } // end Facemc namespace
