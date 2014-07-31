@@ -13,6 +13,8 @@
 #include "Facemc_NuclearReactionType.hpp"
 #include "Facemc_NeutronScatteringDistribution.hpp"
 #include "Facemc_ParticleBank.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace Facemc{
 
@@ -57,10 +59,18 @@ public:
   //! Return the number of neutrons emitted from the rxn at the given energy
   virtual unsigned getNumberOfEmittedNeutrons( const double energy ) const = 0;
 
+  //! Return the average number of neutron emitted from the rxn
+  virtual double getAverageNumberOfEmittedNeutrons( const double energy) const;
+
   //! Simulate the reaction
   virtual void react( NeutronState& neutron, ParticleBank& bank ) const = 0;
-		   
 
+protected:
+
+  //! Return an integer number of emitted neutrons given a non-integer value
+  unsigned sampleNumberOfEmittedNeutrons( 
+				     const double average_multiplicity ) const;
+  
 private:
 
   // The nuclear reaction type
@@ -92,6 +102,40 @@ inline double NuclearReaction::getTemperature() const
 inline double NuclearReaction::getThresholdEnergy() const
 {
   return d_incoming_energy_grid[d_threshold_energy_index];
+}
+
+// Return the average number of neutron emitted from the rxn
+/*! \details If the neutron multiplicity for the reaction is not an integer
+ * at the desired energy, this function should be overridden in the derived
+ * class. It will be used in implicit multiplication weighting games.
+ */
+inline double NuclearReaction::getAverageNumberOfEmittedNeutrons( 
+						    const double energy ) const
+{
+  return this->getNumberOfEmittedNeutrons( energy );
+}
+
+// Return an integer number of emitted neutrons given a non-integer value
+/*! In reality, only an integer number of neutrons can be released per
+ * reaction. The integer return type of this function reflects this reality. 
+ * The integer value is sampled so that the expected value is the average
+ * multiplicity.
+ */
+inline unsigned NuclearReaction::sampleNumberOfEmittedNeutrons( 
+				      const double average_multiplicity ) const
+{
+  // Make sure the average multiplicity is valid
+  testPrecondition( average_multiplicity >= 0.0 );
+
+  double floor_multiplicity;
+  double round_down_prob = 1.0 - modf( average_multiplicity, 
+				       &floor_multiplicity );
+  
+  if( Utility::RandomNumberGenerator::getRandomNumber<double>() <
+      round_down_prob )
+    return (unsigned)floor_multiplicity;
+  else
+    return (unsigned)floor_multiplicity + 1u;
 }
 
 } // end Facemc namespace

@@ -232,6 +232,12 @@ ParticleState::generationNumberType ParticleState::getGenerationNumber() const
   return d_core.generation_number;
 }
 
+// Increment the generation number
+void ParticleState::incrementGenerationNumber()
+{
+  ++d_core.generation_number;
+}
+
 // Return the weight of the particle
 double ParticleState::getWeight() const
 {

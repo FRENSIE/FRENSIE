@@ -28,6 +28,7 @@
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ThirtyTwoEquiprobableBinDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
+#include "Utility_PolynomialDistribution.hpp"
 
 namespace Utility{
 
@@ -86,7 +87,8 @@ private:
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(TabularDistribution<LinLog>);\
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(TabularDistribution<LogLog>);\
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(ThirtyTwoEquiprobableBinDistribution); \
-  UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(UniformDistribution)
+  UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(UniformDistribution);	\
+  UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(PolynomialDistribution)
 
 #endif // end UTILITY_ONE_D_DISTRIBUTION_ENTRY_CONVERTER_DB_HPP
 

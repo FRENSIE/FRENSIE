@@ -44,6 +44,11 @@ ADD_EXECUTABLE(tstPowerDistribution
 TARGET_LINK_LIBRARIES(tstPowerDistribution utility_core utility_prng utility_dist)
 ADD_TEST(PowerDistribution_test tstPowerDistribution)
 
+ADD_EXECUTABLE(tstPolynomialDistribution 
+  tstPolynomialDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstPolynomialDistribution utility_core utility_prng utility_dist)
+ADD_TEST(PolynomialDistribution_test tstPolynomialDistribution)
+
 ADD_EXECUTABLE(tstOneDDistribution
   tstOneDDistribution.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
