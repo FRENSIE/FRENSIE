@@ -16,7 +16,11 @@
 #include "Facemc_NuclearReactionFactory.hpp"
 #include "Facemc_NeutronScatteringReaction.hpp"
 #include "Facemc_NeutronAbsorptionReaction.hpp"
+#include "Facemc_NeutronFissionReaction.hpp"
+#include "Facemc_DetailedNeutronFissionReaction.hpp"
 #include "Facemc_EnergyDependentNeutronMultiplicityReaction.hpp"
+#include "Facemc_FissionNeutronMultiplicityDistributionFactory.hpp"
+#include "Facemc_DelayedNeutronEmissionDistributionFactory.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -46,6 +50,16 @@ namespace Facemc{
  * distribution for each ENDF reaction.
  * \param[in] dlw_block The DLW block stores the energy distribution for each 
  * ENDF reaction.
+ * \param[in] nu_block The NU block stores the nu-bar data for fission. This
+ * block is only present (not empty) if there are fission reactions
+ * \param[in] delayed_ldlw_block The delayed fission neutron LDLW block stores
+ * the location of the energy distribution for each delayed neutron precursor
+ * group. This block is only present (not empty) if delayed neutron data is
+ * provided in the ACE file
+ * \param[in] delayed_dlw_block The delayed fission neutron DLW block stores
+ * the energy distribution for each delayed neutron precursor group. This block
+ * is only present (not empty) if delayed neutron data is provided in the
+ * ACE file
  */
 NuclearReactionFactory::NuclearReactionFactory( 
 		 const std::string& table_name,
@@ -61,7 +75,12 @@ NuclearReactionFactory::NuclearReactionFactory(
 		 const Teuchos::ArrayView<const double>& land_block,
 		 const Teuchos::ArrayView<const double>& and_block,
 		 const Teuchos::ArrayView<const double>& ldlw_block,
-		 const Teuchos::ArrayView<const double>& dlw_block )
+		 const Teuchos::ArrayView<const double>& dlw_block,
+		 const Teuchos::ArrayView<const double>& nu_block,
+		 const Teuchos::ArrayView<const double>& dnu_block,
+		 const Teuchos::ArrayView<const double>& bdd_block,
+		 const Teuchos::ArrayView<const double>& dnedl_block,
+		 const Teuchos::ArrayView<const double>& dnedl_block )
 { 
   // Make sure there is at least one MT # present
   testPrecondition( mtr_block.size() > 0 );
@@ -129,6 +148,37 @@ NuclearReactionFactory::NuclearReactionFactory(
 						      elastic_cross_section,
 						      reaction_ordering,
 						      reaction_cross_section );
+
+  // Create the fission neutron multiplicity distribution
+  Teuchos::RCP<FissionNeutronMultiplicityDistribution>
+    fission_neutron_multiplicity_distribution;
+
+  if( nu_block.size() > 0 )
+  {
+    FissionNeutronMultiplicityDistributionFactory
+      fission_multiplicity_factory( table_name,
+				    nu_block,
+				    dnu_block );
+
+    fission_neutron_multiplicity_factory.createDistribution(
+				   fission_neutron_multiplicity_distribution );
+  }
+
+  // Create the delayed neutron emission distributions
+  Teuchos::RCP<NeutronScatteringDistribution> delayed_neutron_emission_dist;
+  
+  if( dnedl_block.size() > 0 )
+  {
+    DelayedNeutronEmissionDistributionFactory 
+      delayed_neutron_emission_factory( table_name,
+					atomic_weight_ratio,
+					bdd_block,
+					dnedl_block,
+					dned_block );
+    
+    DelayedNeutronEmissionDistributionFactory::createEmissionDistribution(
+					       delayed_neutron_emission_dist );
+  }
   
   // Create the nuclear reactions
   initializeScatteringReactions( temperature,
@@ -146,7 +196,15 @@ NuclearReactionFactory::NuclearReactionFactory(
 				 reaction_energy_dependent_multiplicity,
 				 reaction_threshold_index,
 				 reaction_cross_section );
-  //initializeFissionReactions();
+  initializeFissionReactions( temperature,
+			      energy_grid,
+			      reaction_q_value,
+			      reaction_multiplicity,
+			      reaction_threshold_index,
+			      reaction_cross_section,
+			      scattering_dist_factory,
+			      fission_neutron_multiplicity_distribution,
+			      delayed_neutron_emission_distribution );
 }
 
 // Create the scattering reactions 
@@ -277,14 +335,6 @@ void NuclearReactionFactory::createReactionMultiplicityMap(
 	reaction_energy_dependent_multiplicity[reaction->first] = 
 	  dlw_block( start_index, size );		     
       }
-      
-      // TEST_FOR_EXCEPTION( multiplicity == 19,
-      // 			  std::runtime_error,
-      // 			  "Error: Fission reactions are not currently "
-      // 			  "supported!\n" );
-      std::cerr << "Warning: multiplicity of 19 found. Fission reactions not "
-		<< "currently supported!"
-		<< std::endl;
     }
     // Elastic scattering must be handled separately: it never appears in block
     else
@@ -520,15 +570,79 @@ void NuclearReactionFactory::initializeFissionReactions(
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
-    const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
-    reaction_energy_dependent_multiplicity,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
     reaction_cross_section,
-    const NeutronScatteringDistributionFactory& scattering_dist_factory )
+    const NeutronScatteringDistributionFactory& scattering_dist_factory,
+    const Teuchos::RCP<FissionNeutronMultiplicityDistribution>&
+    fission_neutron_multiplicity_distribution,
+    const Teuchos::RCP<NeutronScatteringDistribution>& 
+    delayed_neutron_emission_distribution )
 {
+  // Make sure the maps have the correct number of elements
+  testPrecondition( reaction_q_value.size() == reaction_multiplicity.size() );
+  testPrecondition(reaction_q_value.size() == reaction_threshold_index.size());
+  testPrecondition( reaction_q_value.size() == reaction_cross_section.size() );
+  
+  boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
+    reaction_type_multiplicity, end_reaction_type_multiplicity;
 
+  reaction_type_multiplicity = reaction_multiplicity.begin();
+  end_reaction_type_multiplicity = reaction_multiplicity.end();
+
+  NuclearReactionType reaction_type;
+
+  Teuchos::RCP<NeutronScatteringDistribution> neutron_emission_distribution;
+  
+  while( reaction_type_multiplicity != end_reaction_type_multiplicity )
+  {
+    if( reaction_type_multiplicity->second == 19 )
+    {
+      // Make sure the fission neutron multiplicity distribution has been
+      // created
+      testPrecondition( !fission_neutron_multiplicity_distribution.is_null() );
+     
+      reaction_type = reaction_type_multiplicity->first;
+
+      scattering_dist_factory.createScatteringDistribution( 
+					       reaction_type,
+					       neutron_emission_distribution );
+      
+      Teuchos::RCP<NuclearReaction>& reaction = 
+	d_fission_reactions[reaction_type];
+
+      // Create a basic neutron fission reaction (no delayed info)
+      if( delayed_neutron_emission_distribution.is_null() )
+      {
+	reaction.reset( new NeutronFissionReaction(
+			reaction_type,
+			temperature,
+			reaction_q_value.find(reaction_type)->second,
+			reaction_threshold_index.find(reaction_type)->second,
+			energy_grid,
+			reaction_cross_section.find(reaction_type)->second ),
+			fission_neutron_multiplicity_distribution,
+			prompt_neutron_emission_distribution );
+      }
+      // Create a detaild neutron fission reaction (with delayed info)
+      else
+      {
+	reaction.reset( new DetailedNeutronFissionReaction(
+			reaction_type,
+			temperature,
+			reaction_q_value.find(reaction_type)->second,
+			reaction_threshold_index.find(reaction_type)->second,
+			energy_grid,
+			reaction_cross_section.find(reaction_type)->second ),
+			fission_neutron_multiplicity_distribution,
+			prompt_neutron_emission_distribution,
+			delayed_neutron_emission_distribution );
+      }
+    }
+
+    ++reaction_type_multiplicity;
+  }
 }
 
 } // end Facemc namespace

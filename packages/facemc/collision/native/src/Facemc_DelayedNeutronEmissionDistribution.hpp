@@ -34,10 +34,8 @@ public:
       const Teuchos::Array<double>& precursor_group_decay_consts,
       const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >& 
       precursor_group_prob_distributions,
-      const Teuchos::Array<Teuchos::RCP<NeutronScatteringEnergyDistribution> >&
-      precursor_group_energy_distributions,
-      const Teuchos::RCP<NeutronScatteringAngularDistribution>&
-      angular_distribution );
+      const Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >&
+      precursor_group_emission_distributions );
 
   //! Destructor
   ~DelayedNeutronEmissionDistribution()
@@ -62,11 +60,8 @@ private:
   d_precursor_group_prob_distributions;
 
   // The delayed neutron precursor group energy distributions
-  Teuchos::Array<Teuchos::RCP<NeutronScatteringEnergyDistribution> >
-  d_precursor_group_energy_distributions;
-
-  // The angular distribution
-  Teuchos::RCP<NeutronScatteringAngularDistribution> d_angular_distribution;
+  Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >
+  d_precursor_group_emission_distributions;
 };
 
 } // end Facemc namespace

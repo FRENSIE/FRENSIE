@@ -74,7 +74,7 @@ namespace Data{
  *  <li> JXS[24] = location of basic delayed data such as decay constants and
  *                 probabilities (BDD)
  *  <li> JXS[25] = location of table of energy distribution locators (DNEDL)
- *  <li> JXS[26] = location of energy distributions
+ *  <li> JXS[26] = location of energy distributions (DNED)
  *  <li> JXS[27] = N/A
  *  <li> JXS[28] = N/A
  *  <li> JXS[29] = N/A
@@ -128,9 +128,6 @@ public:
   //! Extract the NU block form the XSS array
   Teuchos::ArrayView<const double> extractNUBlock() const;
 
-  //! Extract the Delayed NU block form the XSS array
-  Teuchos::ArrayView<const double> extractDelayedNUBlock() const;
-
   //! Extract the MTR block from the XSS array
   Teuchos::ArrayView<const double> extractMTRBlock() const;
 
@@ -164,17 +161,11 @@ public:
   //! Extract the LDLWP block from the XSS array
   Teuchos::ArrayView<const double> extractLDLWPBlock() const;
 
-  //! Extract the delayed neutron LDLW block from the XSS array
-  Teuchos::ArrayView<const double> extractDelayedNeutronLDLWBlock() const;
-
   //! Extract the DLW block from the XSS array
   Teuchos::ArrayView<const double> extractDLWBlock() const;
 
   //! Extract the DLWP block from the XSS array
   Teuchos::ArrayView<const double> extractDLWPBlock() const;
-
-  //! Extract the delayed neutron DLW block from the XSS array
-  Teuchos::ArrayView<const double> extractDelayedNeutronDLWBlock() const;
 
   //! Extract the GPD block from the XSS array
   Teuchos::ArrayView<const double> extractGPDBlock() const;
@@ -196,6 +187,18 @@ public:
 
   //! Extract the UNR block from the XSS array
   Teuchos::ArrayView<const double> extractUNRBlock() const;
+
+  //! Extract the DNU (delayed NU) block form the XSS array
+  Teuchos::ArrayView<const double> extractDNUBlock() const;
+
+  //! Extract the BDD (basic delayed data) block from the XSS array
+  Teuchos::ArrayView<const double> extractBDDBlock() const;
+
+  //! Extract the DNEDL (delayed neutron LDLW) block from the XSS array
+  Teuchos::ArrayView<const double> extractDNEDLBlock() const;
+
+  //! Extract the DNED (delayed neutron DLW) block from the XSS array
+  Teuchos::ArrayView<const double> extractDNEDBlock() const;
 
 private:
 

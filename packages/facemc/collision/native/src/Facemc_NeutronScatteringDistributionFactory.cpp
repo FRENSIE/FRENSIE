@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringDistributionFactory.hpp"
+#include "Facemc_NeutronScatteringDistributionFactoryHelpers.hpp"
 #include "Facemc_NeutronScatteringAngularDistributionFactory.hpp"
 #include "Facemc_NeutronScatteringEnergyDistributionFactory.hpp"
 #include "Facemc_ElasticNeutronScatteringDistribution.hpp"
@@ -248,16 +249,13 @@ NeutronScatteringDistributionFactory::initializeReactionAngularDistMap(
   // Calculate the size of each angular distribution array
   Teuchos::Array<unsigned> angular_dist_array_sizes;
   calculateDistArraySizes( land_block, 
-				  and_block, 
-				  angular_dist_array_sizes );
+			   and_block, 
+			   angular_dist_array_sizes );
 
   // An elastic scattering distribution will always exist but must be 
   // handled separately
   d_reaction_angular_dist[N__N_ELASTIC_REACTION] = 
     and_block( 0u, angular_dist_array_sizes[0] );
-
-//    std::cout << angular_dist_array_sizes[0] << std::endl;
-//    std::cout << and_block( 0u, angular_dist_array_sizes[0] ) << std::endl;
 
   // Handle all other distributions
   boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
@@ -343,8 +341,8 @@ NeutronScatteringDistributionFactory::initializeReactionEnergyDistMap(
   // Calculate the size of each energy distribution array
   Teuchos::Array<unsigned> energy_dist_array_sizes;
   calculateDistArraySizes( ldlw_block, 
-				 dlw_block, 
-				 energy_dist_array_sizes );
+			   dlw_block, 
+			   energy_dist_array_sizes );
 
   // Handle all other distributions
   boost::unordered_map<NuclearReactionType,unsigned>::const_iterator
@@ -373,66 +371,6 @@ NeutronScatteringDistributionFactory::initializeReactionEnergyDistMap(
   testPostcondition( d_reaction_energy_dist.size() == d_reaction_ordering.size() );
 
 }
-
-// Calculate the data block angular distribution array sizes
-void 
-NeutronScatteringDistributionFactory::calculateDistArraySizes( 
-                     const Teuchos::ArrayView<const double>& location_block,
-		     const Teuchos::ArrayView<const double>& data_block,
-                     Teuchos::Array<unsigned>& dist_array_sizes ) const
-{
-  unsigned first_index = 0, second_index = 1;
-
-  dist_array_sizes.resize( location_block.size() );
-
-  // find first/next nonzero positive location block values
-  while( first_index != location_block.size() )
-  {
-    if( location_block[ first_index ]  > 0 )
-    {
-      if( first_index < location_block.size() - 1)
-      {
-        // find the second nonzero positive location block value
-        while( second_index != location_block.size() )
-        {
-          if( location_block[ second_index ] > 0 )
-          {
-            dist_array_sizes[ first_index ] = location_block[ second_index ] - location_block[ first_index ];
-            break;
-          }
-          else
-          {
-            dist_array_sizes[ second_index ] = 0;
-          }
-          ++second_index;
-        }
-        // Check if the second index is beyond the bounds of the array
-        if( second_index == location_block.size() and first_index != location_block.size() - 1 )
-        {
-          dist_array_sizes[ first_index ] = data_block.size() + 1 - location_block[first_index];
-        }  
-        first_index = second_index;
-        ++second_index;
-      }
-      else
-      {
-        dist_array_sizes[ first_index ] = data_block.size() + 1 - location_block[first_index];
-        ++first_index;
-        ++second_index;
-      }
-    }
-    else
-    {
-      dist_array_sizes[ first_index ] = 0;
-      ++first_index;
-      ++second_index;
-    }
-  }
- 
-  // Make sure every index in the location block has a corresponding array size
-  testPostcondition( dist_array_sizes.size() ==
-		     location_block.size() );
-}								   
 
 // Returns a map of the reaction types (MT #s) and their AND block ordering
 const boost::unordered_map<NuclearReactionType,unsigned>& 

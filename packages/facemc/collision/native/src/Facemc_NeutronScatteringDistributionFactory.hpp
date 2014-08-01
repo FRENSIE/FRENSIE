@@ -56,31 +56,39 @@ public:
 protected:
 
   // Returns a map of the reaction types (MT #s) and their AND block ordering
-  const boost::unordered_map<NuclearReactionType,unsigned>& getReactionOrdering() const;
+  const boost::unordered_map<NuclearReactionType,unsigned>& 
+  getReactionOrdering() const;
 
-  // Returns a map of the reaction types (MT #s) and the scattering reference frame
+  // Returns a map of the reaction types (MT #s) and the scattering ref. frame
   // Note: True = center-of-mass, False = lab
-  const boost::unordered_map<NuclearReactionType,bool>& getReactionCMScattering() const;
+  const boost::unordered_map<NuclearReactionType,bool>& 
+  getReactionCMScattering() const;
   
   // Returns a set of the reaction types (MT #s) with isotropic scattering only
-  const boost::unordered_set<NuclearReactionType>& getReactionsWithIsotropicScatteringOnly() const;
+  const boost::unordered_set<NuclearReactionType>& 
+  getReactionsWithIsotropicScatteringOnly() const;
 
   // Returns a set of the reaction types (MT #s) with coupled energy-angle dist
-  const boost::unordered_set<NuclearReactionType>& getReactionsWithCoupledEnergyAngleDist() const;
+  const boost::unordered_set<NuclearReactionType>& 
+  getReactionsWithCoupledEnergyAngleDist() const;
 
-  // Returns a map of the reaction types (MT #s) and the corresponding angular dist
-  const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+  // Returns a map of the reaction types (MT #s) and the corresp. angular dist
+  const boost::unordered_map<NuclearReactionType,
+			     Teuchos::ArrayView<const double> >&
   getReactionAngularDist() const;
 
-  // Returns a map of the reaction types (MT #s) and the angular dist start index
-  const boost::unordered_map<NuclearReactionType,unsigned>& getReactionAngularDistStartIndex() const;
+  // Returns a map of the reaction types (MT #s) and angular dist start index
+  const boost::unordered_map<NuclearReactionType,unsigned>& 
+  getReactionAngularDistStartIndex() const;
   
-  // Returns a map of the reaction types (MT #s) and the corresponding energy dist
-  const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
+  // Returns a map of the reaction types (MT #s) and the corresp. energy dist
+  const boost::unordered_map<NuclearReactionType,
+			     Teuchos::ArrayView<const double> >&
   getReactionEnergyDist() const;
 
-  // Returns a map of the reaction types (MT #s) and the energy dist start index
-  const boost::unordered_map<NuclearReactionType,unsigned>& getReactionEnergyDistStartIndex() const;
+  // Returns a map of the reaction types (MT #s) and energy dist start index
+  const boost::unordered_map<NuclearReactionType,unsigned>& 
+  getReactionEnergyDistStartIndex() const;
   
 private:
 
@@ -111,12 +119,6 @@ private:
   void initializeReactionEnergyDistMap(
 			   const Teuchos::ArrayView<const double>& ldlw_block,
 			   const Teuchos::ArrayView<const double>& dlw_block );
-
-  // Calculate the AND block angular distribution array sizes
-  void calculateDistArraySizes( 
-                    const Teuchos::ArrayView<const double>& location_block,
-		    const Teuchos::ArrayView<const double>& data_block,
-                    Teuchos::Array<unsigned>& dist_array_sizes ) const;
 
   // The table name
   std::string d_table_name;

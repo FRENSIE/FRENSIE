@@ -22,8 +22,9 @@ namespace Facemc{
 
 /*! The nuclear reaction factory class
  * \details This factory class stores all of the data blocks found in the 
- * ACE tables. The array parameters used in the class constructor have the
- * same name as the corresponding ACE data block.
+ * ACE tables that describe specific reactions (except for fission reactions). 
+ * The array parameters used in the class constructor have the same name as 
+ * the corresponding ACE data block.
  */
 class NuclearReactionFactory
 {
@@ -45,7 +46,12 @@ public:
 		 const Teuchos::ArrayView<const double>& land_block,
 		 const Teuchos::ArrayView<const double>& and_block,
 		 const Teuchos::ArrayView<const double>& ldlw_block,
-		 const Teuchos::ArrayView<const double>& dlw_block );
+		 const Teuchos::ArrayView<const double>& dlw_block,
+		 const Teuchos::ArrayView<const double>& nu_block,
+		 const Teuchos::ArrayView<const double>& dnu_block,
+		 const Teuchos::ArrayView<const double>& bdd_block,
+		 const Teuchos::ArrayView<const double>& dnedl_block,
+		 const Teuchos::ArrayView<const double>& dned_block );
 
   //! Destructor
   ~NuclearReactionFactory()
@@ -62,7 +68,7 @@ public:
       absorption_reactions ) const;	     
 
   //! Create the fission reactions
-  void createFissionReactions(
+  virtual void createFissionReactions(
       boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >&
       fission_reactions ) const;
 
@@ -145,13 +151,15 @@ private:
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_multiplicity,
-    const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
-    reaction_energy_dependent_multiplicity,
     const boost::unordered_map<NuclearReactionType,unsigned>&
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
     reaction_cross_section,
-    const NeutronScatteringDistributionFactory& scattering_dist_factory );
+    const NeutronScatteringDistributionFactory& scattering_dist_factory,
+    const Teuchos::RCP<FissionNeutronMultiplicityDistribution>&
+    fission_neutron_multiplicity_distribution,
+    const Teuchos::RCP<NeutronScatteringDistribution>& 
+    delayed_neutron_emission_distribution );
 				    
 
   // A map of the scattering reactions
