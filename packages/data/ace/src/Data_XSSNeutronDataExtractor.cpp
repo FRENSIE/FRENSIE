@@ -124,16 +124,6 @@ XSSNeutronDataExtractor::extractNUBlock() const
     return Teuchos::ArrayView<const double>();
 }
 
-// Extract the Delayed NU block form the XSS array
-Teuchos::ArrayView<const double> 
-XSSNeutronDataExtractor::extractDelayedNUBlock() const
-{
-  if( d_jxs[23] > 0 )
-    return d_xss( d_jxs[24], d_jxs[25]-d_jxs[24] );
-  else
-    return Teuchos::ArrayView<const double>();
-}
-
 // Extract the MTR block from the XSS array
 Teuchos::ArrayView<const double> 
 XSSNeutronDataExtractor::extractMTRBlock() const
@@ -253,19 +243,6 @@ XSSNeutronDataExtractor::extractLDLWPBlock() const
     return Teuchos::ArrayView<const double>();
 }
 
-// Extract the delayed neutron LDLW block from the XSS array
-/*! \details All indices in this array are for Fortran arrays.
- * Subtract by one to get the corresponding C array indices.
- */
-Teuchos::ArrayView<const double>
-XSSNeutronDataExtractor::extractDelayedNeutronLDLWBlock() const
-{
-  if( d_nxs[7] != 0 )
-    return d_xss( d_jxs[25], d_nxs[7] );
-  else 
-    return Teuchos::ArrayView<const double>();
-}
-
 // Extract the DLW block from the XSS array
 Teuchos::ArrayView<const double> 
 XSSNeutronDataExtractor::extractDLWBlock() const
@@ -282,16 +259,6 @@ XSSNeutronDataExtractor::extractDLWPBlock() const
 {
   if( d_nxs[5] != 0 )
     return d_xss( d_jxs[18], d_jxs[19]-d_jxs[18] );
-  else
-    return Teuchos::ArrayView<const double>();
-}
-
-// Extract the delayed neutron DLW block from the XSS array
-Teuchos::ArrayView<const double>
-XSSNeutronDataExtractor::extractDelayedNeutronDLWBlock() const
-{
-  if( d_nxs[7] != 0 )
-    return d_xss( d_jxs[26], d_jxs[11] - d_jxs[26] );
   else
     return Teuchos::ArrayView<const double>();
 }
@@ -382,6 +349,49 @@ XSSNeutronDataExtractor::extractUNRBlock() const
 {
   if( d_jxs[22] >= 0 )
     return d_xss( d_jxs[22], d_jxs[23]-d_jxs[22] );
+  else
+    return Teuchos::ArrayView<const double>();
+}
+
+// Extract the DNU (delayed NU) block from the XSS array
+Teuchos::ArrayView<const double> 
+XSSNeutronDataExtractor::extractDNUBlock() const
+{
+  if( hasDelayedNeutronData() )
+    return d_xss( d_jxs[23], d_jxs[24]-d_jxs[23] );
+  else
+    return Teuchos::ArrayView<const double>();
+}
+
+// Extract the BDD (basic delayed data) block from the XSS array
+Teuchos::ArrayView<const double>
+XSSNeutronDataExtractor::extractBDDBlock() const
+{
+  if( hasDelayedNeutronData() )
+    return d_xss( d_jxs[24], d_jxs[25] - d_jxs[24] );
+  else
+    return Teuchos::ArrayView<const double>();
+}
+
+// Extract the DNEDL (delayed neutron LDLW) block from the XSS array
+/*! \details All indices in this array are for Fortran arrays.
+ * Subtract by one to get the corresponding C array indices.
+ */
+Teuchos::ArrayView<const double>
+XSSNeutronDataExtractor::extractDNEDLBlock() const
+{
+  if( d_nxs[7] != 0 )
+    return d_xss( d_jxs[25], d_nxs[7] );
+  else 
+    return Teuchos::ArrayView<const double>();
+}
+
+// Extract the delayed neutron DLW block from the XSS array
+Teuchos::ArrayView<const double>
+XSSNeutronDataExtractor::extractDNEDBlock() const
+{
+  if( d_nxs[7] != 0 )
+    return d_xss( d_jxs[26], d_jxs[11] - d_jxs[26] );
   else
     return Teuchos::ArrayView<const double>();
 }

@@ -25,16 +25,13 @@ DelayedNeutronEmissionDistribution::DelayedNeutronEmissionDistribution(
       const Teuchos::Array<double>& precursor_group_decay_consts,
       const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >& 
       precursor_group_prob_distributions,
-      const Teuchos::Array<Teuchos::RCP<NeutronScatteringEnergyDistribution> >&
-      precursor_group_energy_distributions,
-      const Teuchos::RCP<NeutronScatteringAngularDistribution>&
-      angular_distribution )
+      const Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >&
+      precursor_group_emission_distributions )
   : NeutronScatteringDistribution( atomic_weight_ratio ),
     d_precursor_group_decay_consts( precursor_group_decay_consts ),
     d_precursor_group_prob_distributions( precursor_group_prob_distributions ),
     d_precursor_group_energy_distributions( 
-					precursor_group_energy_distributions ),
-    d_angular_distribution( angular_distribution )
+					 precursor_group_energy_distributions )
 {
   // Make sure the group data is valid
   testPrecondition( precursor_group_decay_consts.size() > 0 );
@@ -42,7 +39,6 @@ DelayedNeutronEmissionDistribution::DelayedNeutronEmissionDistribution(
 		    precursor_group_prob_distributions.size() );
   testPrecondition( precursor_group_decay_consts.size() == 
 		    precursor_group_energy_distributions.size() );
-  testPrecondition( !angular_distribution.is_null() );
 }
 
 // Randomly "scatter" the neutron
@@ -75,32 +71,10 @@ void DelayedNeutronEmissionDistribution::scatterNeutron(
   double emission_time = 
     sampleEmissionTime( d_precursor_group_decay_consts[precursor_group] );
 
-  // Sample the outgoing neutron energy
-  double outgoing_energy =
-    d_precursor_group_energy_distributions[precursor_group]->sampleEnergy( 
-							 neutron.getEnergy() );
-
-  // Sample the lab scattering angle cosine
-  double scattering_angle_cosine = 
-    d_angular_distribution->sampleAngleCosine( neutron.getEnergy() );
-
-  double outgoing_neutron_direction[3];
-
-  Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
-						  scattering_angle_cosine,
-						  sampleAzimuthalAngle(),
-						  neutron.getDirection(),
-						  outgoing_neutron_direction );
-
-  // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= -1.0 );
-  testPostcondition( scattering_angle_cosine <= 1.0 );
-
-  // Set the new energy
-  neutron.setEnergy( outgoing_energy );
-
-  // Set the new direction
-  neutron.setDirection( outgoing_neutron_direction );
+  // Sample the state after emission
+  d_precursor_group_emission_distributions[precursor_group]->scatterNeutron(
+								 neutron,
+								 temperature );
  
   // Set the new neutron time
   neutron.setTime( neutron.getTime() + emission_time );

@@ -162,7 +162,12 @@ Nuclide::Nuclide( const std::string& name,
 				 raw_nuclide_data.extractLANDBlock(),
 				 raw_nuclide_data.extractANDBlock(),
 				 raw_nuclide_data.extractLDLWBlock(),
-				 raw_nuclide_data.extractDLWBlock() );
+				 raw_nuclide_data.extractDLWBlock(),
+				 raw_nuclide_data.extractNUBlock(),
+				 raw_nuclide_data.extractDNUBlock(),
+				 raw_nuclide_data.extractBDDBlock(),
+				 raw_nuclide_data.extractDNEDLBlock(),
+				 raw_nuclide_data.extractDNEDBlock() );
 
   // Create the standard scattering reactions
   boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
