@@ -10,6 +10,7 @@
 #include "Facemc_NeutronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_SpeedHelpers.hpp"
 
 namespace Facemc{
 
@@ -41,7 +42,7 @@ NeutronState::NeutronState( const ParticleState& existing_base_state,
 		   reset_collision_number ),
     d_speed()
 {
-  d_speed = calculateSpeed( 
+  d_speed = Utility::calculateSpeed( 
 			  Utility::PhysicalConstants::neutron_rest_mass_energy,
 			  this->getEnergy() );
 }
@@ -54,7 +55,7 @@ NeutronState::NeutronState( const ParticleStateCore& core )
   // Make sure the core is a neutron core
   testPrecondition( core.particle_type == NEUTRON );
   
-  d_speed = calculateSpeed( 
+  d_speed = Utility::calculateSpeed( 
 			  Utility::PhysicalConstants::neutron_rest_mass_energy,
 			  this->getEnergy() );
 }
@@ -75,7 +76,7 @@ void NeutronState::setEnergy( const ParticleState::energyType energy )
 {
   ParticleState::setEnergy( energy );
 
-  d_speed = calculateSpeed( 
+  d_speed = Utility::calculateSpeed( 
 			  Utility::PhysicalConstants::neutron_rest_mass_energy,
 			  energy );
 }
@@ -96,7 +97,7 @@ void NeutronState::setSpeed( const double speed )
 
   d_speed = speed;
 
-  setEnergy( calculateKineticEnergy(
+  setEnergy( Utility::calculateKineticEnergy(
 			  Utility::PhysicalConstants::neutron_rest_mass_energy,
 			  speed) );
 }
