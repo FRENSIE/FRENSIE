@@ -53,10 +53,6 @@ public:
   void print( std::ostream& os ) const
   { printImplementation( os ); }
 
-  // Allow public access to protected member functions
-  using Facemc::ParticleState::calculateSpeed;
-  using Facemc::ParticleState::calculateKineticEnergy;
-
 private:
   TestParticleState( const TestParticleState& state );
 };
@@ -280,31 +276,6 @@ TEUCHOS_UNIT_TEST( ParticleState, exportCore )
   TEST_EQUALITY_CONST( particle.getXPosition(), 1.0 );
 }
 
-//---------------------------------------------------------------------------//
-// Calculate the speed of a massive particle (cm/s)
-TEUCHOS_UNIT_TEST( ParticleState, calculateSpeed )
-{
-  TestParticleState particle( 1ull );
-  
-  double speed = particle.calculateSpeed( 8.0, 1.0 );
-
-  TEST_EQUALITY_CONST( speed, 
-		       Utility::PhysicalConstants::speed_of_light*0.5 );
-}
-
-//---------------------------------------------------------------------------//
-// Calculate the kinetic energy of a massive particle (MeV)
-TEUCHOS_UNIT_TEST( ParticleState, calculateKineticEnergy )
-{
-  TestParticleState particle( 1ull );
-
-  double kinetic_energy = 
-    particle.calculateKineticEnergy( 
-			8.0, 
-			Utility::PhysicalConstants::speed_of_light*0.5 );
-  
-  TEST_FLOATING_EQUALITY( kinetic_energy, 1.0, 4.0 );
-}
 
 //---------------------------------------------------------------------------//
 // Create new particles
