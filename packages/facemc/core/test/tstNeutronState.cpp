@@ -34,10 +34,13 @@ TEUCHOS_UNIT_TEST( NeutronState, getSpeed )
   Facemc::NeutronState particle( 1ull );
 
   particle.setEnergy( 1.0 );
-  
+ 
+  double speed_of_light = Utility::PhysicalConstants::speed_of_light;
+  double rest_mass = Utility::PhysicalConstants::neutron_rest_mass_energy;
+ 
   TEST_FLOATING_EQUALITY( particle.getSpeed(),
-                          Utility::PhysicalConstants::speed_of_light * sqrt( 
-                          2.0 / Utility::PhysicalConstants::neutron_rest_mass_energy),
+                          speed_of_light * sqrt( 1.0 - rest_mass * rest_mass /
+                          ((1.0 + rest_mass) * (1.0 + rest_mass))),
                           1e-12 );
 }
 
@@ -47,8 +50,11 @@ TEUCHOS_UNIT_TEST( NeutronState, setSpeed )
 {
   Facemc::NeutronState particle( 1ull );
 
-  particle.setSpeed( Utility::PhysicalConstants::speed_of_light * sqrt(
-                     2.0 / Utility::PhysicalConstants::neutron_rest_mass_energy) );
+  double speed_of_light = Utility::PhysicalConstants::speed_of_light;
+  double rest_mass = Utility::PhysicalConstants::neutron_rest_mass_energy;
+ 
+  particle.setSpeed( speed_of_light * sqrt( 1 - rest_mass * rest_mass /
+                     ((1 + rest_mass) * (1 + rest_mass))) );
 
   TEST_FLOATING_EQUALITY( particle.getEnergy(), 1.0, 1e-12 );
 }
@@ -70,12 +76,15 @@ TEUCHOS_UNIT_TEST( NeutronState, advance )
 
   particle.advance( 1.7320508075688772 );
 
+  double speed_of_light = Utility::PhysicalConstants::speed_of_light;
+  double rest_mass = Utility::PhysicalConstants::neutron_rest_mass_energy;
+ 
   TEST_FLOATING_EQUALITY( particle.getXPosition(), 2.0, 1e-12 );
   TEST_FLOATING_EQUALITY( particle.getYPosition(), 2.0, 1e-12 );
   TEST_FLOATING_EQUALITY( particle.getZPosition(), 2.0, 1e-12 );
   TEST_FLOATING_EQUALITY( particle.getTime(), 
-                          1.7320508075688772 / ( Utility::PhysicalConstants::speed_of_light *
-                          sqrt( 2.0 / Utility::PhysicalConstants::neutron_rest_mass_energy) ), 
+                          1.7320508075688772 / ( speed_of_light * sqrt( 1 - rest_mass * rest_mass /
+                          ((1 + rest_mass) * (1 + rest_mass)))), 
                           1e-12 );
 }
 
