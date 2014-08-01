@@ -42,7 +42,7 @@ void BoostSolver::getNumberDensities(Teuchos::Array<double>& y)
 void BoostSolver::Solve(const double& time)
 {
   size_t nstep = boost::numeric::odeint::integrate_adaptive( 
-           boost::numeric::odeint::rosenbrock4_controller<boost::numeric::odeint::rosenbrock4<double> >(),
+           boost::numeric::odeint::rosenbrock4_controller<boost::numeric::odeint::rosenbrock4<double> >(1e-6,1e-6),
            std::make_pair( m_system, m_jacobian ),
            m_y,
            0.0,
@@ -67,7 +67,7 @@ void BoostSolver::BatemanSystem::operator()(const boost::numeric::ublas::vector<
 
 void BoostSolver::BatemanJacobian::operator()(const boost::numeric::ublas::vector<double>& m_y,
                                                     boost::numeric::ublas::matrix<double>& jacobian,
-                                              const double time,
+                                              const double& time,
                                                     boost::numeric::ublas::vector<double>& dfdt )
 {
   for(int i = 0; i != jacobian.size1(); i++)

@@ -53,7 +53,7 @@ private:
     BatemanJacobian(const Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& matrix): m_matrix(matrix) {};
     void operator()(const boost::numeric::ublas::vector<double>& y,
                           boost::numeric::ublas::matrix<double>& jacobian,
-                    const double time,
+                    const double& time,
                           boost::numeric::ublas::vector<double>& dfdt);
 
   private:
