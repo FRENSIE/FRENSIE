@@ -80,7 +80,7 @@ NuclearReactionFactory::NuclearReactionFactory(
 		 const Teuchos::ArrayView<const double>& dnu_block,
 		 const Teuchos::ArrayView<const double>& bdd_block,
 		 const Teuchos::ArrayView<const double>& dnedl_block,
-		 const Teuchos::ArrayView<const double>& dnedl_block )
+		 const Teuchos::ArrayView<const double>& dned_block )
 { 
   // Make sure there is at least one MT # present
   testPrecondition( mtr_block.size() > 0 );
@@ -151,7 +151,7 @@ NuclearReactionFactory::NuclearReactionFactory(
 
   // Create the fission neutron multiplicity distribution
   Teuchos::RCP<FissionNeutronMultiplicityDistribution>
-    fission_neutron_multiplicity_distribution;
+    fission_neutron_multiplicity_dist;
 
   if( nu_block.size() > 0 )
   {
@@ -160,8 +160,8 @@ NuclearReactionFactory::NuclearReactionFactory(
 				    nu_block,
 				    dnu_block );
 
-    fission_neutron_multiplicity_factory.createDistribution(
-				   fission_neutron_multiplicity_distribution );
+    fission_multiplicity_factory.createDistribution(
+				           fission_neutron_multiplicity_dist );
   }
 
   // Create the delayed neutron emission distributions
@@ -176,7 +176,7 @@ NuclearReactionFactory::NuclearReactionFactory(
 					dnedl_block,
 					dned_block );
     
-    DelayedNeutronEmissionDistributionFactory::createEmissionDistribution(
+    delayed_neutron_emission_factory.createEmissionDistribution(
 					       delayed_neutron_emission_dist );
   }
   
@@ -203,8 +203,8 @@ NuclearReactionFactory::NuclearReactionFactory(
 			      reaction_threshold_index,
 			      reaction_cross_section,
 			      scattering_dist_factory,
-			      fission_neutron_multiplicity_distribution,
-			      delayed_neutron_emission_distribution );
+			      fission_neutron_multiplicity_dist,
+			      delayed_neutron_emission_dist );
 }
 
 // Create the scattering reactions 
@@ -593,7 +593,8 @@ void NuclearReactionFactory::initializeFissionReactions(
 
   NuclearReactionType reaction_type;
 
-  Teuchos::RCP<NeutronScatteringDistribution> neutron_emission_distribution;
+  Teuchos::RCP<NeutronScatteringDistribution> 
+    prompt_neutron_emission_distribution;
   
   while( reaction_type_multiplicity != end_reaction_type_multiplicity )
   {
@@ -606,8 +607,8 @@ void NuclearReactionFactory::initializeFissionReactions(
       reaction_type = reaction_type_multiplicity->first;
 
       scattering_dist_factory.createScatteringDistribution( 
-					       reaction_type,
-					       neutron_emission_distribution );
+					reaction_type,
+					prompt_neutron_emission_distribution );
       
       Teuchos::RCP<NuclearReaction>& reaction = 
 	d_fission_reactions[reaction_type];
@@ -616,14 +617,14 @@ void NuclearReactionFactory::initializeFissionReactions(
       if( delayed_neutron_emission_distribution.is_null() )
       {
 	reaction.reset( new NeutronFissionReaction(
-			reaction_type,
-			temperature,
-			reaction_q_value.find(reaction_type)->second,
-			reaction_threshold_index.find(reaction_type)->second,
-			energy_grid,
-			reaction_cross_section.find(reaction_type)->second ),
-			fission_neutron_multiplicity_distribution,
-			prompt_neutron_emission_distribution );
+			  reaction_type,
+			  temperature,
+			  reaction_q_value.find(reaction_type)->second,
+			  reaction_threshold_index.find(reaction_type)->second,
+			  energy_grid,
+			  reaction_cross_section.find(reaction_type)->second,
+			  fission_neutron_multiplicity_distribution,
+			  prompt_neutron_emission_distribution ) );
       }
       // Create a detaild neutron fission reaction (with delayed info)
       else
@@ -634,10 +635,10 @@ void NuclearReactionFactory::initializeFissionReactions(
 			reaction_q_value.find(reaction_type)->second,
 			reaction_threshold_index.find(reaction_type)->second,
 			energy_grid,
-			reaction_cross_section.find(reaction_type)->second ),
+			reaction_cross_section.find(reaction_type)->second,
 			fission_neutron_multiplicity_distribution,
 			prompt_neutron_emission_distribution,
-			delayed_neutron_emission_distribution );
+			delayed_neutron_emission_distribution ) );
       }
     }
 

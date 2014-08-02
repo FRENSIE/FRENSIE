@@ -13,7 +13,7 @@
 #include "Utility_PolynomialDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Utility_ConstractException.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace Facemc{
 
@@ -44,7 +44,8 @@ FissionNeutronMultiplicityDistributionFactory::FissionNeutronMultiplicityDistrib
 
   d_prompt_dist_exists = true;
 
-  createPartialDistribution( raw_prompt_distribution, 
+  createPartialDistribution( table_name,
+			     raw_prompt_distribution, 
 			     d_prompt_multiplicity_distribution );
 
   // Parse the total nu-bar distribution
@@ -54,7 +55,8 @@ FissionNeutronMultiplicityDistributionFactory::FissionNeutronMultiplicityDistrib
 
   d_total_dist_exists = true;
 
-  createPartialDistribution( raw_total_distribution,
+  createPartialDistribution( table_name,
+			     raw_total_distribution,
 			     d_total_multiplicity_distribution );
 
   // Parse the delayed nu-bar distribution
@@ -62,7 +64,8 @@ FissionNeutronMultiplicityDistributionFactory::FissionNeutronMultiplicityDistrib
   {
     d_delayed_dist_exists = true;
 
-    createPartialDistribution( dnu_block,
+    createPartialDistribution( table_name,
+			       dnu_block,
 			       d_delayed_multiplicity_distribution );
   }
 }
@@ -99,22 +102,23 @@ void FissionNeutronMultiplicityDistributionFactory::createDistribution(
 }
 
 // Create the partial distribution from a raw distribution array
-void FissionNeutronMultiplicityDistribtionFactory::createPartialDistribution(
+void FissionNeutronMultiplicityDistributionFactory::createPartialDistribution(
+	  const std::string& table_name,
 	  const Teuchos::ArrayView<const double>& distribution_array,
 	  Teuchos::RCP<Utility::OneDDistribution>& partial_distribution ) const
 {
-  unsigned form_flag = static_cast<unsigned>( raw_prompt_distribution[0] );
+  unsigned form_flag = static_cast<unsigned>( distribution_array[0] );
   
   switch( form_flag )
   {
   case 1: // Parse a polynomial function
     {
       unsigned number_of_coeffs = 
-	static_cast<unsigned>( raw_prompt_distribution[1] );
+	static_cast<unsigned>( distribution_array[1] );
 
       partial_distribution.reset( 
 			    new Utility::PolynomialDistribution( 
-				raw_prompt_distribution( 2, number_of_coeffs ),
+				distribution_array( 2, number_of_coeffs ),
 				1e-11, 
 				20.0 ) );
 
@@ -123,7 +127,7 @@ void FissionNeutronMultiplicityDistribtionFactory::createPartialDistribution(
   case 2: // Parse a tabular distribution
     {
       unsigned number_of_interp_regions = 
-	static_cast<unsigned>( raw_prompt_distribution[1] );
+	static_cast<unsigned>( distribution_array[1] );
 
       TEST_FOR_EXCEPTION( number_of_interp_regions != 0,
 			  std::runtime_error,
@@ -132,13 +136,13 @@ void FissionNeutronMultiplicityDistribtionFactory::createPartialDistribution(
 			  ", which is not currently supported!" );
 
       unsigned number_of_energies = 
-	static_cast<unsigned>( raw_prompt_distribution[2] );
+	static_cast<unsigned>( distribution_array[2] );
 
       Teuchos::ArrayView<const double> energy_grid =
-	raw_prompt_distribution( 2, number_of_energies );
+	distribution_array( 2, number_of_energies );
 
       Teuchos::ArrayView<const double> nu_values = 
-	raw_prompt_distribution( 2+number_of_energies, number_of_energies );
+	distribution_array( 2+number_of_energies, number_of_energies );
 
       partial_distribution.reset(
 			     new Utility::TabularDistribution<Utility::LinLin>(

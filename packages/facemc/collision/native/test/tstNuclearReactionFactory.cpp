@@ -68,7 +68,12 @@ void initializeReactionFactory(
 			      xss_data_extractor->extractLANDBlock(),
 			      xss_data_extractor->extractANDBlock(),
 			      xss_data_extractor->extractLDLWBlock(),
-			      xss_data_extractor->extractDLWBlock() ) );
+			      xss_data_extractor->extractDLWBlock(),
+			      xss_data_extractor->extractNUBlock(),
+			      xss_data_extractor->extractDNUBlock(),
+			      xss_data_extractor->extractBDDBlock(),
+			      xss_data_extractor->extractDNEDLBlock(),
+			      xss_data_extractor->extractDNEDBlock() ) );
 }
 
 //---------------------------------------------------------------------------//

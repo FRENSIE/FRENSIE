@@ -30,15 +30,15 @@ DelayedNeutronEmissionDistribution::DelayedNeutronEmissionDistribution(
   : NeutronScatteringDistribution( atomic_weight_ratio ),
     d_precursor_group_decay_consts( precursor_group_decay_consts ),
     d_precursor_group_prob_distributions( precursor_group_prob_distributions ),
-    d_precursor_group_energy_distributions( 
-					 precursor_group_energy_distributions )
+    d_precursor_group_emission_distributions( 
+				       precursor_group_emission_distributions )
 {
   // Make sure the group data is valid
   testPrecondition( precursor_group_decay_consts.size() > 0 );
   testPrecondition( precursor_group_decay_consts.size() ==
 		    precursor_group_prob_distributions.size() );
   testPrecondition( precursor_group_decay_consts.size() == 
-		    precursor_group_energy_distributions.size() );
+		    precursor_group_emission_distributions.size() );
 }
 
 // Randomly "scatter" the neutron

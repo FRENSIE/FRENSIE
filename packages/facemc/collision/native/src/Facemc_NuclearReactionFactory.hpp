@@ -17,6 +17,7 @@
 #include "Facemc_NuclearReaction.hpp"
 #include "Facemc_NuclearReactionType.hpp"
 #include "Facemc_NeutronScatteringDistributionFactory.hpp"
+#include "Facemc_FissionNeutronMultiplicityDistribution.hpp"
 
 namespace Facemc{
 

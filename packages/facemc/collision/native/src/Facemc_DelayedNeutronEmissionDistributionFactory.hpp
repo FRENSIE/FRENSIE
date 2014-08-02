@@ -74,10 +74,12 @@ private:
 
   // The precursor group emission distributions
   Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >
-  d_precursor_group_emission_distributions
+  d_precursor_group_emission_distributions;
 };
 
 } // end Facemc namespace
+
+#endif // end FACEMC_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end Facemc_DelayedNeutronEmissionDistributionFactory.hpp

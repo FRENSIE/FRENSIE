@@ -26,9 +26,6 @@ std::string test_h1_ace_file_name;
 std::string test_h1_ace_table_name;
 std::string test_u238_ace_file_name;
 std::string test_u238_ace_table_name;
-// std::string test_fission_ace_file_name;
-// std::string test_ptable_ace_file_name;
-// std::string test_fission_ptable_ace_file_name;
 
 Teuchos::RCP<Data::ACEFileHandler> ace_file_handler_h1;
 Teuchos::RCP<Data::ACEFileHandler> ace_file_handler_u238;
@@ -231,26 +228,6 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractNUBlock_u238 )
   TEST_EQUALITY_CONST( nu_block.size(), 47 );
   TEST_EQUALITY_CONST( nu_block.front(), -23 );
   TEST_EQUALITY_CONST( nu_block.back(), 6.414109 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the XSSNeutronDataExtractor can extract the Delayed NU block
-TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNUBlock_h1 )
-{
-  Teuchos::ArrayView<const double> delayed_nu_block = 
-    xss_data_extractor_h1->extractDNUBlock();
-
-  TEST_EQUALITY_CONST( delayed_nu_block.size(), 0 );
-}
-
-TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNUBlock_u238 )
-{
-  Teuchos::ArrayView<const double> delayed_nu_block = 
-    xss_data_extractor_u238->extractDNUBlock();
-
-  TEST_EQUALITY_CONST( delayed_nu_block.size(), 42 );
-  TEST_EQUALITY_CONST( delayed_nu_block.front(), 1.249423e-10 );
-  TEST_EQUALITY_CONST( delayed_nu_block.back(), 6.168868e-2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -496,29 +473,6 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractLDLWPBlock_u238 )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the XSSNeutronDataExtractor can extract the delayed neutron
-// LDLW block
-TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, 
-		   extractDNEDLBlock_h1 )
-{
-  Teuchos::ArrayView<const double> delayed_neutron_ldlw_block = 
-    xss_data_extractor_h1->extractDNEDLBlock();
-
-  TEST_EQUALITY_CONST( delayed_neutron_ldlw_block.size(), 0 );
-}
-
-TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, 
-		   extractDNEDLBlock_u238 )
-{
-  Teuchos::ArrayView<const double> delayed_neutron_ldlw_block = 
-    xss_data_extractor_u238->extractDNEDLBlock();
-
-  TEST_EQUALITY_CONST( delayed_neutron_ldlw_block.size(), 6 );
-  TEST_EQUALITY_CONST( delayed_neutron_ldlw_block.front(), 1 );
-  TEST_EQUALITY_CONST( delayed_neutron_ldlw_block.back(), 7944 );
-}
-
-//---------------------------------------------------------------------------//
 // Check that the XSSNeutronDataExtractor can extract the DLW block
 TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDLWBlock_h1 )
 {
@@ -558,29 +512,6 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDLWPBlock_u238 )
   TEST_EQUALITY_CONST( dlwp_block.size(), 3170 );
   TEST_EQUALITY_CONST( dlwp_block.front(), 0 );
   TEST_EQUALITY_CONST( dlwp_block.back(), 1.0 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the XSSNeutronDataExtractor can extract the delayed neutron
-// DLW block
-TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, 
-		   extractDNEDBlock_h1 )
-{
-  Teuchos::ArrayView<const double> delayed_neutron_dlw_block = 
-    xss_data_extractor_h1->extractDNEDBlock();
-
-  TEST_EQUALITY_CONST( delayed_neutron_dlw_block.size(), 0 );
-}
-
-TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, 
-		   extractDNEDBlock_u238 )
-{
-  Teuchos::ArrayView<const double> delayed_neutron_dlw_block = 
-    xss_data_extractor_u238->extractDNEDBlock();
-
-  TEST_EQUALITY_CONST( delayed_neutron_dlw_block.size(), 9768 );
-  TEST_EQUALITY_CONST( delayed_neutron_dlw_block.front(), 0 );
-  TEST_EQUALITY_CONST( delayed_neutron_dlw_block.back(), 9.99999999e-1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -726,6 +657,86 @@ TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractUNRBlock_u238 )
   TEST_EQUALITY_CONST( unr_block.size(), 2184 );
   TEST_EQUALITY_CONST( unr_block.front(), 18 );
   TEST_EQUALITY_CONST( unr_block.back(), 1.02014888699 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor can extract the DNU block
+TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNUBlock_h1 )
+{
+  Teuchos::ArrayView<const double> dnu_block = 
+    xss_data_extractor_h1->extractDNUBlock();
+
+  TEST_EQUALITY_CONST( dnu_block.size(), 0 );
+}
+
+TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNUBlock_u238 )
+{
+  Teuchos::ArrayView<const double> dnu_block = 
+    xss_data_extractor_u238->extractDNUBlock();
+
+  TEST_EQUALITY_CONST( dnu_block.size(), 11 );
+  TEST_EQUALITY_CONST( dnu_block.front(), 2 );
+  TEST_EQUALITY_CONST( dnu_block.back(), 2.60000000000e-02 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor can extract the BDD block
+TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractBDDBlock_h1 )
+{
+  Teuchos::ArrayView<const double> bdd_block =
+    xss_data_extractor_h1->extractBDDBlock();
+  
+  TEST_EQUALITY_CONST( bdd_block.size(), 0 );
+}
+
+TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractBDDBlock_u238 )
+{
+  Teuchos::ArrayView<const double> bdd_block = 
+    xss_data_extractor_u238->extractBDDBlock();
+
+  TEST_EQUALITY_CONST( bdd_block.size(), 42 );
+  TEST_EQUALITY_CONST( bdd_block.front(), 1.24942300000e-10 );
+  TEST_EQUALITY_CONST( bdd_block.back(), 6.16886800000e-02 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor can extract the DNEDL block
+TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDLBlock_h1 )
+{
+  Teuchos::ArrayView<const double> dnedl_block = 
+    xss_data_extractor_h1->extractDNEDLBlock();
+
+  TEST_EQUALITY_CONST( dnedl_block.size(), 0 );
+}
+
+TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDLBlock_u238 )
+{
+  Teuchos::ArrayView<const double> dnedl_block = 
+    xss_data_extractor_u238->extractDNEDLBlock();
+
+  TEST_EQUALITY_CONST( dnedl_block.size(), 6 );
+  TEST_EQUALITY_CONST( dnedl_block.front(), 1 );
+  TEST_EQUALITY_CONST( dnedl_block.back(), 7944 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the XSSNeutronDataExtractor can extract the DNED block
+TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDBlock_h1 )
+{
+  Teuchos::ArrayView<const double> dned_block = 
+    xss_data_extractor_h1->extractDNEDBlock();
+
+  TEST_EQUALITY_CONST( dned_block.size(), 0 );
+}
+
+TEUCHOS_UNIT_TEST( XSSNeutronDataExtractor, extractDNEDBlock_u238 )
+{
+  Teuchos::ArrayView<const double> dned_block =
+    xss_data_extractor_u238->extractDNEDBlock();
+
+  TEST_EQUALITY_CONST( dned_block.size(), 9768 );
+  TEST_EQUALITY_CONST( dned_block.front(), 0 );
+  TEST_EQUALITY_CONST( dned_block.back(), 9.99999999000e-01 );
 }
 
 //---------------------------------------------------------------------------//
