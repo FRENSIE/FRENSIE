@@ -92,7 +92,7 @@ ADD_EXECUTABLE(tstBoostSolver
 TARGET_LINK_LIBRARIES(tstBoostSolver utility_core)
 ADD_TEST(BoostSolver_test tstBoostSolver)
 
-ADD_EXECUTABLE(tstSpeedHelpers 
-  tstSpeedHelpers.cpp )
-TARGET_LINK_LIBRARIES(tstSpeedHelpers utility_core)
-ADD_TEST(SpeedHelpers_test tstSpeedHelpers)
+ADD_EXECUTABLE(tstKinematicHelpers 
+  tstKinematicHelpers.cpp )
+TARGET_LINK_LIBRARIES(tstKinematicHelpers utility_core)
+ADD_TEST(KinematicHelpers_test tstKinematicHelpers)
