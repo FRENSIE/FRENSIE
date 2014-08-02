@@ -26,13 +26,16 @@ public:
   { /* ... */ }
 
   //! Return the average number of neutrons emitted 
-  virtual double getAverageNumberOfEmittedNeutrons( const double energy) const;
+  virtual double getAverageNumberOfEmittedNeutrons( 
+					       const double energy ) const = 0;
 
   //! Return the average number of prompt neutrons emitted
-  virtual double getAverageNumberOfPromptNeutrons( const double energy ) const;
+  virtual double getAverageNumberOfPromptNeutrons( 
+					       const double energy ) const = 0;
 
   //! Return the average number of delayed neutrons emitted
-  virtual double getAverageNumberOfDelayedNeutrons( const double energy) const;
+  virtual double getAverageNumberOfDelayedNeutrons( 
+					       const double energy ) const = 0;
 };
 
 } // end Facemc namespace

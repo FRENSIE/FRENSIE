@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "Facemc_DelayedNeutronEmissionDistributionFactory.hpp"
+#include "Facemc_DelayedNeutronEmissionDistribution.hpp"
 #include "Facemc_NeutronScatteringEnergyDistributionFactory.hpp"
 #include "Facemc_NeutronScatteringAngularDistributionFactory.hpp"
 #include "Facemc_NeutronScatteringDistributionFactoryHelpers.hpp"
@@ -99,11 +100,11 @@ void DelayedNeutronEmissionDistributionFactory::initializeBasicDelayedNeutronDat
 
     // Create the group probability distribution
     Teuchos::RCP<Utility::OneDDistribution> group_prob_dist(
-	               new Utility::TabularDistribuiton<Utility::LinLin>( 
+	               new Utility::TabularDistribution<Utility::LinLin>( 
 						    precursor_prob_energy_grid,
 						    precursor_prob_values ) );
     
-    d_precursor_group_prob_distributions( group_prob_dist );
+    d_precursor_group_prob_distributions.push_back( group_prob_dist );
   }
 }
 
@@ -118,7 +119,7 @@ void DelayedNeutronEmissionDistributionFactory::initializeEmissionDistributions(
   Teuchos::RCP<NeutronScatteringAngularDistribution> 
     default_angular_distribution;
 
-  NeutronScatteringAngularDistributionFactory::createIsotropicDistribuiton(
+  NeutronScatteringAngularDistributionFactory::createIsotropicDistribution(
 						default_angular_distribution );
 
   // Create the energy distributions
@@ -168,7 +169,7 @@ void DelayedNeutronEmissionDistributionFactory::initializeEmissionDistributions(
 						     emission_distribution );
     }
 
-    d_precursor_group_emssion_distributions.push_back( emission_distribution );
+    d_precursor_group_emission_distributions.push_back( emission_distribution);
   }
 }
 

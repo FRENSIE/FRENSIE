@@ -10,7 +10,7 @@
 #define FACEMC_PARTIAL_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_ConstractException.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace Facemc{
 
@@ -20,7 +20,7 @@ namespace Facemc{
  * distribution: (prompt, total), (delayed,total), (delayed,prompt).
  */
 template<typename FissionNeutronMultiplicityDistributionPolicy>
-PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityDistributionPolicy>::FissionNeutronMultiplicityDistributionPolicy(
+PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityDistributionPolicy>::PartialFissionNeutronMultiplicityDistribution(
 				 const Teuchos::RCP<Utility::OneDDistribution>&
 				 first_multiplicity_distribution,
 				 const Teuchos::RCP<Utility::OneDDistribution>&

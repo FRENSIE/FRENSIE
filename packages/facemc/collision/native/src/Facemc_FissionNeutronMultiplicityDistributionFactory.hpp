@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "Facemc_FissionNeutronMultiplicityDistribution.hpp"
+#include "Utility_OneDDistribution.hpp"
 
 namespace Facemc{
 
@@ -42,6 +43,7 @@ protected:
   
   //! Create the partial distribution from a raw distribution array
   void createPartialDistribution( 
+	 const std::string& table_name,
 	 const Teuchos::ArrayView<const double>& distribution_array,
 	 Teuchos::RCP<Utility::OneDDistribution>& partial_distribution ) const;
 
