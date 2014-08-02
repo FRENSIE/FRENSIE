@@ -60,6 +60,16 @@ TARGET_LINK_LIBRARIES(tstLabSystemConversionPolicy facemc_collision_native)
 ADD_TEST(LabSystemConversionPolicy_test
 tstLabSystemConversionPolicy)
 
+ADD_EXECUTABLE(tstFissionNeutronMultiplicityDistributionFactory
+  tstFissionNeutronMultiplicityDistributionFactory.cpp)
+TARGET_LINK_LIBRARIES(tstFissionNeutronMultiplicityDistributionFactory facemc_collision_native)
+ADD_TEST(FissionNeutronMultiplicityDistributionFactory_test tstFissionNeutronMultiplicityDistributionFactory --test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
+
+ADD_EXECUTABLE(tstFissionNeutronMultiplicityDistribution
+  tstFissionNeutronMultiplicityDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstFissionNeutronMultiplicityDistribution facemc_collision_native)
+ADD_TEST(FissionNeutronMultiplicityDistribution_test tstFissionNeutronMultiplicityDistribution --test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
+
 ADD_EXECUTABLE(tstNuclearReaction
   tstNuclearReaction.cpp)
 TARGET_LINK_LIBRARIES(tstNuclearReaction facemc_collision_native)

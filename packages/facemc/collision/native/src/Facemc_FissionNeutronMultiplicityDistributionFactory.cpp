@@ -40,7 +40,7 @@ FissionNeutronMultiplicityDistributionFactory::FissionNeutronMultiplicityDistrib
 
   // Parse the prompt nu-bar distribution
   Teuchos::ArrayView<const double> raw_prompt_distribution = 
-    nu_block( 1, location_of_total_data );
+    nu_block( 1, abs(location_of_total_data) );
 
   d_prompt_dist_exists = true;
 
@@ -50,8 +50,8 @@ FissionNeutronMultiplicityDistributionFactory::FissionNeutronMultiplicityDistrib
 
   // Parse the total nu-bar distribution
   Teuchos::ArrayView<const double> raw_total_distribution = 
-    nu_block( 1 + location_of_total_data, 
-	      nu_block.size() - 1 - location_of_total_data );
+    nu_block( 1 + abs(location_of_total_data), 
+	      nu_block.size() - 1 - abs(location_of_total_data) );
 
   d_total_dist_exists = true;
 
@@ -139,21 +139,62 @@ void FissionNeutronMultiplicityDistributionFactory::createPartialDistribution(
 	static_cast<unsigned>( distribution_array[2] );
 
       Teuchos::ArrayView<const double> energy_grid =
-	distribution_array( 2, number_of_energies );
+	distribution_array( 3, number_of_energies );
 
       Teuchos::ArrayView<const double> nu_values = 
-	distribution_array( 2+number_of_energies, number_of_energies );
-
+	distribution_array( 3+number_of_energies, number_of_energies );
+      
       partial_distribution.reset(
 			     new Utility::TabularDistribution<Utility::LinLin>(
 							         energy_grid,
 							         nu_values ) );
+      break;
     }
   default:
     THROW_EXCEPTION( std::runtime_error,
-		     "Error: Unsupported form flag found in nu block of "
-		     "ace table " << table_name << "!" );
+		     "Error: Unsupported form flag " << form_flag <<
+		     " found in nu block of ace table " << table_name << "!" );
   }
+}
+
+// Return if a prompt distribution exists
+bool FissionNeutronMultiplicityDistributionFactory::doesPromptDistExist() const
+{
+  return d_prompt_dist_exists;
+}
+
+// Return if a delayed distribution exists
+bool 
+FissionNeutronMultiplicityDistributionFactory::doesDelayedDistExist() const
+{
+  return d_delayed_dist_exists;
+}
+
+// Return if a total distribution exists
+bool FissionNeutronMultiplicityDistributionFactory::doesTotalDistExist() const
+{
+  return d_total_dist_exists;
+}
+
+// Return the prompt multiplicity distribution
+const Teuchos::RCP<Utility::OneDDistribution>& 
+FissionNeutronMultiplicityDistributionFactory::getPromptMultDist() const
+{
+  return d_prompt_multiplicity_distribution;
+}
+
+// Return the delayed multiplicity distribution
+const Teuchos::RCP<Utility::OneDDistribution>& 
+FissionNeutronMultiplicityDistributionFactory::getDelayedMultDist() const
+{
+  return d_delayed_multiplicity_distribution;
+}
+
+// Return the total multiplicity distribution
+const Teuchos::RCP<Utility::OneDDistribution>& 
+FissionNeutronMultiplicityDistributionFactory::getTotalMultDist() const
+{
+  return d_total_multiplicity_distribution;
 }
 
 } // end Facemc namespace
