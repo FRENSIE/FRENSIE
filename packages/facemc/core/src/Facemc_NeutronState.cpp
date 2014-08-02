@@ -10,7 +10,7 @@
 #include "Facemc_NeutronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
-#include "Utility_SpeedHelpers.hpp"
+#include "Utility_KinematicHelpers.hpp"
 
 namespace Facemc{
 
