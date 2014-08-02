@@ -48,7 +48,6 @@ public:
   ~TestNeutronScatteringDistributionFactory()
   { /* ... */ }
 
-
   using Facemc::NeutronScatteringDistributionFactory::getReactionOrdering;
   using Facemc::NeutronScatteringDistributionFactory::getReactionCMScattering;
   using Facemc::NeutronScatteringDistributionFactory::getReactionsWithIsotropicScatteringOnly;
@@ -57,8 +56,6 @@ public:
   using Facemc::NeutronScatteringDistributionFactory::getReactionAngularDistStartIndex;
   using Facemc::NeutronScatteringDistributionFactory::getReactionEnergyDist;
   using Facemc::NeutronScatteringDistributionFactory::getReactionEnergyDistStartIndex;
-
-
 };
 //---------------------------------------------------------------------------//
 // Testing Variables.

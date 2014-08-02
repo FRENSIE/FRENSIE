@@ -47,6 +47,24 @@ protected:
 	 const Teuchos::ArrayView<const double>& distribution_array,
 	 Teuchos::RCP<Utility::OneDDistribution>& partial_distribution ) const;
 
+  //! Return if a prompt distribution exists
+  bool doesPromptDistExist() const;
+
+  //! Return if a delayed distribution exists
+  bool doesDelayedDistExist() const;
+
+  //! Return if a total distribution exists
+  bool doesTotalDistExist() const;
+
+  //! Return the prompt multiplicity distribution
+  const Teuchos::RCP<Utility::OneDDistribution>& getPromptMultDist() const;
+
+  //! Return the delayed multiplicity distribution
+  const Teuchos::RCP<Utility::OneDDistribution>& getDelayedMultDist() const;
+
+  //! Return the total multiplicity distribution
+  const Teuchos::RCP<Utility::OneDDistribution>& getTotalMultDist() const;
+
 private:
 
   // The prompt multiplicity distribution exists
