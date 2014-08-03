@@ -114,7 +114,7 @@ bool Nuclide::isCalculatedTotalCrossSectionValid(
       std::max( ST::magnitude( calculated_total_cross_section[i] ),
 		ST::magnitude( table_total_cross_section[i] ) );
     
-    if( rel_error > 5e-9 )
+    if( rel_error > 1e-8 )
     {
       valid = false;
       //std::cout << i << ": " << rel_error << std::endl;
