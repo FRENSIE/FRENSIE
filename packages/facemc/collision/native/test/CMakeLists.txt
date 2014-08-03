@@ -75,6 +75,11 @@ ADD_EXECUTABLE(tstDelayedNeutronEmissionDistributionFactory
 TARGET_LINK_LIBRARIES(tstDelayedNeutronEmissionDistributionFactory facemc_collision_native)
 ADD_TEST(DelayedNeutronEmissionDistributionFactory_test tstDelayedNeutronEmissionDistributionFactory --test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
 
+ADD_EXECUTABLE(tstDelayedNeutronEmissionDistribution
+  tstDelayedNeutronEmissionDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstDelayedNeutronEmissionDistribution facemc_collision_native)
+ADD_TEST(DelayedNeutronEmissionDistribution_test tstDelayedNeutronEmissionDistribution --test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
+
 ADD_EXECUTABLE(tstNuclearReaction
   tstNuclearReaction.cpp)
 TARGET_LINK_LIBRARIES(tstNuclearReaction facemc_collision_native)
