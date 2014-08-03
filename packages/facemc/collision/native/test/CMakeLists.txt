@@ -70,6 +70,11 @@ ADD_EXECUTABLE(tstFissionNeutronMultiplicityDistribution
 TARGET_LINK_LIBRARIES(tstFissionNeutronMultiplicityDistribution facemc_collision_native)
 ADD_TEST(FissionNeutronMultiplicityDistribution_test tstFissionNeutronMultiplicityDistribution --test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
 
+ADD_EXECUTABLE(tstDelayedNeutronEmissionDistributionFactory
+  tstDelayedNeutronEmissionDistributionFactory.cpp)
+TARGET_LINK_LIBRARIES(tstDelayedNeutronEmissionDistributionFactory facemc_collision_native)
+ADD_TEST(DelayedNeutronEmissionDistributionFactory_test tstDelayedNeutronEmissionDistributionFactory --test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
+
 ADD_EXECUTABLE(tstNuclearReaction
   tstNuclearReaction.cpp)
 TARGET_LINK_LIBRARIES(tstNuclearReaction facemc_collision_native)
