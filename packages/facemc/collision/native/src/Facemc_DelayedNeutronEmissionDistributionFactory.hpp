@@ -48,6 +48,19 @@ public:
   void createEmissionDistribution(
 	     Teuchos::RCP<NeutronScatteringDistribution>& distribution ) const;
 
+protected:
+
+  //! Return the precursor group decay constants
+  const Teuchos::Array<double>& getPrecursorGroupDecayConsts() const;
+
+  //! Return the precursor group probability distributions
+  const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >&
+  getPrecursorGroupProbDists() const;
+
+  //! Return the precursor group emission distributions
+  const Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >&
+  getPrecursorGroupEmissionDists() const;
+
 private:
 
   // Initialize basic delayed neutron data

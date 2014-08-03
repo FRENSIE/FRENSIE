@@ -105,14 +105,14 @@ void NeutronScatteringEnergyDistributionFactory::createAceLaw44Distribution(
   // Verify that only one law is present
   TEST_FOR_EXCEPTION( dlw_block_array[0] != 0,
 		      std::runtime_error,
-		      "Error: MT# " << reaction << "in ACE table "
+		      "Error: MT# " << reaction << " in ACE table "
 		      << table_name << " has multiple interpolation schemes "
 		      " with it, which is not currently supported!\n" );
 
   // Verify that it is law 44
   TEST_FOR_EXCEPTION( dlw_block_array[1] != 44,
 		      std::runtime_error,
-		      "Error: MT# " << reaction << "in ACE table "
+		      "Error: MT# " << reaction << " in ACE table "
 		      << table_name << " should be law 44!\n" );
 
   // Start index for ldat data
@@ -121,7 +121,7 @@ void NeutronScatteringEnergyDistributionFactory::createAceLaw44Distribution(
   // Verify that only one law is present
   TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
 		      std::runtime_error,
-		      "Error: MT# " << reaction << "in ACE table "
+		      "Error: MT# " << reaction << " in ACE table "
 		      << table_name << " has multiple interpolation schemes "
 		      " with it, which is not currently supported!\n" );
 
@@ -129,12 +129,14 @@ void NeutronScatteringEnergyDistributionFactory::createAceLaw44Distribution(
   double incoming_energies = dlw_block_array[ldat_start_index + 1];
 
   // Array of incoming energies
-  Teuchos::Array<double> incoming_energies_array = dlw_block_array( ldat_start_index + 2,
-                                                                    incoming_energies);
+  Teuchos::Array<double> incoming_energies_array = 
+    dlw_block_array( ldat_start_index + 2,
+		     incoming_energies);
 
   // Array of distribution locations
-  Teuchos::Array<double> distribution_locations = dlw_block_array(ldat_start_index + 2 + incoming_energies,
-                                                               incoming_energies); 
+  Teuchos::Array<double> distribution_locations = 
+    dlw_block_array( ldat_start_index + 2 + incoming_energies,
+		     incoming_energies); 
 
   // Initialize the energy distribution array
   AceLaw4NeutronScatteringEnergyDistribution::EnergyDistribution 
@@ -149,14 +151,15 @@ void NeutronScatteringEnergyDistributionFactory::createAceLaw44Distribution(
   {
     energy_distribution[i].first = incoming_energies_array[i];
 
-    int distribution_index = static_cast<int>( distribution_locations[i] ) - dlw_block_array_start_index - 1;
+    int distribution_index = static_cast<int>( distribution_locations[i] ) - 
+      dlw_block_array_start_index - 1;
 
     int interpolation_flag = dlw_block_array[distribution_index];
 
     // Check if discrete lines are present 
     TEST_FOR_EXCEPTION( interpolation_flag > 10,
 		        std::runtime_error,
-		        "Error: MT# " << reaction << "in ACE table "
+		        "Error: MT# " << reaction << " in ACE table "
 		        << table_name << " has discrete lines in continuous"
 		        " tabular data, which is not currently supported!\n" );
 
@@ -258,7 +261,7 @@ void NeutronScatteringEnergyDistributionFactory::createAceLaw1EnergyDistribution
     // Verify that there isn't multiple interpolation regions
     TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index + 1] != 0,
                         std::runtime_error,
-                        "Error: MT# " << reaction << "in ACE table "
+                        "Error: MT# " << reaction << " in ACE table "
                         << table_name << " has multiple interpolation regions "
                         " with it, which is not currently supported in AceLaw 1!\n" );
   
@@ -334,7 +337,7 @@ void NeutronScatteringEnergyDistributionFactory::createAceLaw4EnergyDistribution
   // Verify that it is law 4
      TEST_FOR_EXCEPTION( dlw_block_array[1] != 4,
            	      std::runtime_error,
-           	      "Error: MT# " << reaction << "in ACE table "
+           	      "Error: MT# " << reaction << " in ACE table "
            	      << table_name << " should be law 4!\n" );
 
      // Start index for ldat data
@@ -343,7 +346,7 @@ void NeutronScatteringEnergyDistributionFactory::createAceLaw4EnergyDistribution
      // Verify that only one law is present
      TEST_FOR_EXCEPTION( dlw_block_array[ldat_start_index] != 0,
            	      std::runtime_error,
-           	      "Error: MT# " << reaction << "in ACE table "
+           	      "Error: MT# " << reaction << " in ACE table "
            	      << table_name << " has multiple interpolation schemes "
            	      " with it, which is not currently supported!\n" );
 

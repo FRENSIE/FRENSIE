@@ -47,6 +47,27 @@ void DelayedNeutronEmissionDistributionFactory::createEmissionDistribution(
 				  d_precursor_group_emission_distributions ) );
 }
 
+// Return the precursor group decay constants
+const Teuchos::Array<double>& 
+DelayedNeutronEmissionDistributionFactory::getPrecursorGroupDecayConsts() const
+{
+  return d_precursor_group_decay_consts;
+}
+
+// Return the precursor group probability distributions
+const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >&
+DelayedNeutronEmissionDistributionFactory::getPrecursorGroupProbDists() const
+{
+  return d_precursor_group_prob_distributions;
+}
+
+// Return the precursor group emission distributions
+const Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >&
+DelayedNeutronEmissionDistributionFactory::getPrecursorGroupEmissionDists() const
+{
+  return d_precursor_group_emission_distributions;
+}
+
 // Initialize basic delayed neutron data
 void DelayedNeutronEmissionDistributionFactory::initializeBasicDelayedNeutronData( 
 			    const std::string& table_name,
@@ -97,7 +118,7 @@ void DelayedNeutronEmissionDistributionFactory::initializeBasicDelayedNeutronDat
     precursor_prob_values = bdd_block( bdd_loc, number_of_energies );
 
     bdd_loc += number_of_energies;
-
+    
     // Create the group probability distribution
     Teuchos::RCP<Utility::OneDDistribution> group_prob_dist(
 	               new Utility::TabularDistribution<Utility::LinLin>( 
@@ -109,7 +130,8 @@ void DelayedNeutronEmissionDistributionFactory::initializeBasicDelayedNeutronDat
 }
 
 // Initialize the emission distributions
-void DelayedNeutronEmissionDistributionFactory::initializeEmissionDistributions(
+void 
+DelayedNeutronEmissionDistributionFactory::initializeEmissionDistributions(
 			   const std::string& table_name,
 			   const double atomic_weight_ratio,
 			   const Teuchos::ArrayView<const double>& dnedl_block,
@@ -135,18 +157,18 @@ void DelayedNeutronEmissionDistributionFactory::initializeEmissionDistributions(
   
   for( unsigned i = 0u; i < dnedl_block.size(); ++i )
   {
-    dist_index = static_cast<unsigned>( dnedl_block[i] );
+    dist_index = static_cast<unsigned>( dnedl_block[i] ) - 1u;
     
-    energy_dist_array = dned_block( dist_index - 1u, 
+    energy_dist_array = dned_block( dist_index, 
 				    energy_dist_array_sizes[i] );
-
+    
     ace_law = static_cast<unsigned>( energy_dist_array[1] );
 
     if( ace_law != 44 )
     {
       NeutronScatteringEnergyDistributionFactory::createDistribution( 
 						     energy_dist_array,
-						     dnedl_block[i],
+						     dist_index,
 						     table_name,
 						     N__TOTAL_FISSION_REACTION,
 						     energy_distribution );
@@ -162,7 +184,7 @@ void DelayedNeutronEmissionDistributionFactory::initializeEmissionDistributions(
       NeutronScatteringEnergyDistributionFactory::createAceLaw44Distribution(
 						     atomic_weight_ratio,
 						     energy_dist_array,
-						     dnedl_block[i],
+						     dist_index,
 						     table_name,
 						     N__TOTAL_FISSION_REACTION,
 						     false,
