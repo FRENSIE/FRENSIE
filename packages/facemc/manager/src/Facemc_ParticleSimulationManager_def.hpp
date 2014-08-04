@@ -232,7 +232,10 @@ void ParticleSimulationManager<GeometryHandler,
 	break;
       }
     }	     
-  } 
+  }
+
+  // Indicate that this particle history is complete
+  GMI::newRay();
 }
 
 // Print the data in all estimators to the desired stream

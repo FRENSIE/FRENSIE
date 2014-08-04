@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Facemc_ElasticNeutronScatteringDistribution.hpp"
 #include "Facemc_SimulationProperties.hpp"
+#include "Utility_KinematicHelpers.hpp"
 #include "Utility_DirectionHelpers.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_SortAlgorithms.hpp"
@@ -84,10 +85,9 @@ void ElasticNeutronScatteringDistribution::scatterNeutron(
    // model.
    
    // Calculate the neutron velocity (classical)
-   double incoming_neutron_speed = 
-      Utility::PhysicalConstants::speed_of_light*
-      sqrt(2*neutron.getEnergy()/
-    	   Utility::PhysicalConstants::neutron_rest_mass_energy);
+   double incoming_neutron_speed = Utility::calculateSpeed( 
+			  Utility::PhysicalConstants::neutron_rest_mass_energy,
+			  neutron.getEnergy() );
   
    double neutron_velocity[3] = 
      {neutron.getXDirection()*incoming_neutron_speed,
@@ -144,12 +144,11 @@ void ElasticNeutronScatteringDistribution::scatterNeutron(
    double outgoing_neutron_speed = 
      Utility::vectorMagnitude( neutron_velocity );
    
-   // Calculate and set the outgoing neutron energy
+   // Calculate and set the outgoing neutron energy (classical)
    double outgoing_neutron_energy = 
-     0.5*Utility::PhysicalConstants::neutron_rest_mass_energy*
-     outgoing_neutron_speed*outgoing_neutron_speed/
-     (Utility::PhysicalConstants::speed_of_light*
-      Utility::PhysicalConstants::speed_of_light);
+     Utility::calculateKineticEnergy( 
+			  Utility::PhysicalConstants::neutron_rest_mass_energy,
+			  outgoing_neutron_speed );
 
    // Set the new neutron direction
    neutron.setDirection( neutron_velocity[0]/outgoing_neutron_speed,
