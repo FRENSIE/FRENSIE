@@ -87,7 +87,56 @@ double NeutronScatteringAngularDistribution::sampleAngleCosine(
   return angle_cosine;
 }
 
+// Evaluate the PDF
+double NeutronScatteringAngularDistribution::evaluatePDF( 
+				const double energy,
+				const double cm_scattering_angle_cosine ) const
+{
+  double pdf_value;
+  
+  if( energy < d_angular_distribution.front().first )
+  {
+    pdf_value = d_angular_distribution.front().second->evaluatePDF( 
+						  cm_scattering_angle_cosine );
+  }
+  else if( energy >= d_angular_distribution.back().first )
+  {
+    pdf_value = d_angular_distribution.back().second->evaluatePDF(
+						  cm_scattering_angle_cosine );
+  }
+  else
+  {
+    Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >::const_iterator
+      lower_bin_boundary, upper_bin_boundary;
+    
+    lower_bin_boundary = d_angular_distribution.begin();
+    upper_bin_boundary = d_angular_distribution.end();
+    
+    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
+							  lower_bin_boundary,
+							  upper_bin_boundary,
+							  energy );
 
+    upper_bin_boundary = lower_bin_boundary;
+    ++upper_bin_boundary;
+
+    // Get the PDF value on the two grid points
+    double pdf_low = lower_bin_boundary->second->evaluatePDF( 
+						  cm_scattering_angle_cosine );
+    double pdf_high = upper_bin_boundary->second->evaluatePDF(
+						  cm_scattering_angle_cosine );
+
+    // Use linear interpolation to evaluate the PDF at the desired energy
+    pdf_value = pdf_low + 
+      (pdf_high-pdf_low)/(upper_bin_boundary->first-lower_bin_boundary->first)*
+      (energy - lower_bin_boundary->first);
+  }
+
+  // Make sure the PDF value is valid
+  testPostcondition( pdf_value >= 0.0 );
+
+  return pdf_value;
+}
 
 } // end Facemc namespace
 
