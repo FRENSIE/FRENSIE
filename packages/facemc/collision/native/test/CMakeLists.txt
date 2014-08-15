@@ -141,6 +141,11 @@ ADD_EXECUTABLE(tstCollisionModuleInterface_Native
 TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_Native facemc_collision_native)
 ADD_TEST(CollisionModuleInterface_Native_test tstCollisionModuleInterface_Native --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 
+ADD_EXECUTABLE(tstFreeGasElasticScatteringKernelFactor
+  tstFreeGasElasticScatteringKernelFactor.cpp)
+TARGET_LINK_LIBRARIES(tstFreeGasElasticScatteringKernelFactor facemc_collision_native)
+ADD_TEST(FreeGasElasticScatteringKernelFactor_test tstFreeGasElasticScatteringKernelFactor)
+
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)
 

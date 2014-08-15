@@ -41,6 +41,10 @@ public:
   //! Sample a scattering angle cosine
   virtual double sampleAngleCosine( const double energy ) const;
 
+  //! Evaluate the PDF
+  double evaluatePDF( const double energy,
+		      const double cm_scattering_angle_cosine ) const;
+
 private:
 
   // The angular distribution
