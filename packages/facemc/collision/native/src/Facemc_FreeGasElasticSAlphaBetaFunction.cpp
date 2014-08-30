@@ -40,19 +40,19 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
 {
   // Make sure the values are valid
   testPrecondition( E > 0.0 );
-  remember( double alpha_min_arg = sqrt(E)-sqrt(E+beta*kT) );
-  remember( double alpha_min = alpha_min_arg*alpha_min_arg/(A*kT) );
+  remember( double alpha_min_arg = sqrt(E)-sqrt(E+beta*d_kT) );
+  remember( double alpha_min = alpha_min_arg*alpha_min_arg/(d_A*d_kT) );
   testPrecondition( alpha >= alpha_min );
-  remember( double alpha_max_arg = sqrt(E)+sqrt(E+beta*kT) );
-  remember( double alpha_max = alpha_max_arg*alpha_max_arg/(A*kT) );
+  remember( double alpha_max_arg = sqrt(E)+sqrt(E+beta*d_kT) );
+  remember( double alpha_max = alpha_max_arg*alpha_max_arg/(d_A*d_kT) );
   testPrecondition( alpha <= alpha_max );
-  testPrecondition( beta >= -E/kT );
+  testPrecondition( beta >= -E/d_kT );
   
   d_kernel_factor.setIndependentVariables( alpha, beta, E );
   
   double error;
 
-  return sqrt(alpha)*exp(-d_A/2.0*(beta - (d_A+1)*d_alpha))*
+  return sqrt(alpha)*exp(-d_A/2.0*(beta - (d_A+1)*alpha))*
     d_kernel_factor.getIntegratedValue( error );
 }
 
