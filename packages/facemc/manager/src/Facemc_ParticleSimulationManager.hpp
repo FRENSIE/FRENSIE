@@ -47,7 +47,7 @@ private:
 
 public:
 
-  // Constructor
+  //! Constructor for multiple threads
   ParticleSimulationManager( const unsigned number_of_histories );
 
   //! Destructor

@@ -26,7 +26,24 @@ ModuleInterface<moab::DagMC>::cells_containing_test_points;
 
 moab::Range ModuleInterface<moab::DagMC>::all_cells;
 
-moab::DagMC::RayHistory ModuleInterface<moab::DagMC>::ray_history;
+std::vector<moab::DagMC::RayHistory> 
+ModuleInterface<moab::DagMC>::ray_history( 1 );
+
+// Do just in time initialization required for interface to work properly
+void ModuleInterface<moab::DagMC>::initialize()  
+{
+  #pragma omp master
+  {
+    // Get all of the cells from the problem (for quick lookup)
+    ModuleInterface<moab::DagMC>::getAllCells();
+  
+    // Create a moab::DagMC::RayHistory for each thread
+    ModuleInterface<moab::DagMC>::ray_history.resize( 
+		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+  }
+
+  #pragma omp barrier
+}
 
 // Find the cell that contains a given point (start of history)
 /*! \details This function should be called after a ray is generated. It
@@ -39,11 +56,11 @@ ModuleInterface<moab::DagMC>::InternalCellHandle
 ModuleInterface<moab::DagMC>::findCellContainingPoint( 
 						      const Ray& ray )
 {
+  // Make sure the problem cells have been loaded
+  testPrecondition( !ModuleInterface<moab::DagMC>::all_cells.empty() );
+  
   // Reset the RayHistory
   ModuleInterface<moab::DagMC>::newRay();
-
-  if( ModuleInterface<moab::DagMC>::all_cells.empty() )
-    ModuleInterface<moab::DagMC>::getAllCells();
 
   InternalCellHandle cell_containing_point = 
     ModuleTraits::invalid_internal_cell_handle;
@@ -57,9 +74,14 @@ ModuleInterface<moab::DagMC>::findCellContainingPoint(
   if( cell_containing_point ==
       ModuleTraits::invalid_internal_cell_handle )
   {
-    ModuleInterface<moab::DagMC>::testAllRemainingCells(
+    // Prevent potential problematic race conditions by allowing only one
+    // thread to execute this function at a time!
+    #pragma omp critical(dagmc_find_cell)
+    {
+      ModuleInterface<moab::DagMC>::testAllRemainingCells( 
 							 cell_containing_point,
 							 ray );
+    }
   }
 
   // Test if the ray is lost
@@ -117,6 +139,10 @@ void ModuleInterface<moab::DagMC>::fireRay(
 					InternalSurfaceHandle& surface_hit,
 					double& distance_to_surface_hit )
 {
+  // Make sure the interface has been set up correctly
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
+		    ModuleInterface<moab::DagMC>::ray_history.size() );
+  
   ExternalCellHandle current_cell_external = 
     ModuleInterface<moab::DagMC>::getExternalCellHandle( current_cell );
   
@@ -129,7 +155,7 @@ void ModuleInterface<moab::DagMC>::fireRay(
 			  ray.getDirection(),
 			  surface_hit_external,
 			  distance_to_surface_hit,
-			  &ModuleInterface<moab::DagMC>::ray_history );
+			  &ModuleInterface<moab::DagMC>::ray_history[Utility::GlobalOpenMPSession::getThreadId()] );
 
   // Check for lost particle
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS, 
@@ -170,6 +196,10 @@ PointLocation ModuleInterface<moab::DagMC>::getPointLocation(
 					const double position[3],
 					const double direction[3] )
 {
+  // Make sure the interface has been set up correctly
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
+		    ModuleInterface<moab::DagMC>::ray_history.size() );
+  
   int test_result;
   
   moab::ErrorCode return_value = 
@@ -178,7 +208,7 @@ PointLocation ModuleInterface<moab::DagMC>::getPointLocation(
 			  position,
 			  test_result,
 			  direction,
-			  &ModuleInterface<moab::DagMC>::ray_history );
+			  &ModuleInterface<moab::DagMC>::ray_history[Utility::GlobalOpenMPSession::getThreadId()] );
 
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
 		      Utility::MOABException,
@@ -235,10 +265,9 @@ void ModuleInterface<moab::DagMC>::testCellsContainingTestPoints(
   while( cell_handle != end_cell_handle )
   {
     PointLocation test_point_location = 
-      ModuleInterface<moab::DagMC>::getPointLocation( 
-						          *cell_handle,
-						          ray.getPosition(),
-						          ray.getDirection() );
+      ModuleInterface<moab::DagMC>::getPointLocation( *cell_handle,
+						      ray.getPosition(),
+						      ray.getDirection() );
     
     if( test_point_location == POINT_INSIDE_CELL )
     {
@@ -266,10 +295,9 @@ void ModuleInterface<moab::DagMC>::testAllRemainingCells(
   while( cell_handle != end_cell_handle )
   {
     PointLocation test_point_location = 
-      ModuleInterface<moab::DagMC>::getPointLocation( 
-						          *cell_handle,
-							  ray.getPosition(),
-						          ray.getDirection() );
+      ModuleInterface<moab::DagMC>::getPointLocation( *cell_handle,
+						      ray.getPosition(),
+						      ray.getDirection() );
     
     if( test_point_location == POINT_INSIDE_CELL )
     {
@@ -277,8 +305,8 @@ void ModuleInterface<moab::DagMC>::testAllRemainingCells(
 								*cell_handle );
       
       // Add the cell to the set of cells found to contain test points
-      ModuleInterface<moab::DagMC>::cells_containing_test_points.insert( *cell_handle );
-      
+	ModuleInterface<moab::DagMC>::cells_containing_test_points.insert( *cell_handle );
+
       // Remove the entity handle from the remaining cells container so 
       // that it is not checked twice in the future.
       ModuleInterface<moab::DagMC>::all_cells.erase( *cell_handle );

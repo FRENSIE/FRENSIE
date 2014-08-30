@@ -20,10 +20,14 @@
 #include "Geometry_ModuleInterface.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
 
 namespace Facemc{
 
-// Constructor
+// Constructor for multiple threads
+/*! \details If OpenMP is not being used, the number of threads requested will
+ * be ignored.
+ */
 template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
@@ -35,7 +39,10 @@ ParticleSimulationManager<GeometryHandler,
 					   const unsigned number_of_histories )
   : d_history_number_wall( number_of_histories ),
     d_histories_completed( 0u ),
-    d_end_simulation( false )			      
+    d_end_simulation( false ),
+    d_start_time( 0.0 ),
+    d_end_time( 0.0 ),
+    d_bank()
 {
   // At least one history must be simulated
   testPrecondition( number_of_histories > 0 );
@@ -51,9 +58,16 @@ void ParticleSimulationManager<GeometryHandler,
 			       EstimatorHandler,
 			       CollisionHandler>::runSimulation()
 {
+  // Set up the random number generator for the number of threads requested
+  Utility::RandomNumberGenerator::createStreams();
+
+  // Set up the geometry module interface for the number of threads requested
+  GMI::initialize();
+  
   // Set the start time
   d_start_time = clock()/((double)CLOCKS_PER_SEC);
 
+#pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   for( unsigned history = 0; history < d_history_number_wall; ++history )
   {
     // Initialize the random number generator for this history
@@ -89,6 +103,7 @@ void ParticleSimulationManager<GeometryHandler,
     EMI::commitEstimatorHistoryContributions();
 
     // Increment the number of histories completed
+    #pragma omp atomic
     ++d_histories_completed;
 
     // Check for user requested end of simulation
@@ -272,9 +287,6 @@ void ParticleSimulationManager<GeometryHandler,
 			       EstimatorHandler,
 			       CollisionHandler>::signalHandler(int signal)
 {
-  // Record the current time
-  double time = 0.0;
-  
   // Ask the user what to do
   std::cerr << " Status (s), End (e), Kill (k)" << std::endl;
   std::string option;

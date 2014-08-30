@@ -24,6 +24,7 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
 
 namespace Geometry{
 
@@ -68,6 +69,9 @@ public:
   //! Set the geometry handler instance
   static void setHandlerInstance( 
 			   const Teuchos::RCP<moab::DagMC>& handler_instance );
+
+  //! Do just in time initialization required for interface to work properly
+  static void initialize();  
 
   //! Find the cell that contains a given point (start of history)
   static InternalCellHandle findCellContainingPoint( const Ray& ray );
@@ -164,8 +168,8 @@ private:
   // The collection of all cells in the geometry
   static moab::Range all_cells;
 
-  // The DagMC::RayHistory for ray tracing
-  static moab::DagMC::RayHistory ray_history;
+  // The DagMC::RayHistory for ray tracing (one for each thread)
+  static std::vector<moab::DagMC::RayHistory> ray_history;
 };
 
 // Set the geometry handler instance
@@ -190,7 +194,11 @@ inline void ModuleInterface<moab::DagMC>::setHandlerInstance(
  */
 inline void ModuleInterface<moab::DagMC>::newRay()
 {
-  ModuleInterface<moab::DagMC>::ray_history.reset();
+  // Make sure the interface has been set up correctly
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
+		    ModuleInterface<moab::DagMC>::ray_history.size() );
+  
+  ModuleInterface<moab::DagMC>::ray_history[Utility::GlobalOpenMPSession::getThreadId()].reset();
 }
 
 // Check if the cell is a termination cell
@@ -214,6 +222,10 @@ inline void ModuleInterface<moab::DagMC>::getSurfaceNormal(
 					   const double position[3],
 					   double normal[3] )
 {
+  // Make sure the interface has been set up correctly
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
+		    ModuleInterface<moab::DagMC>::ray_history.size() );
+  
   ExternalSurfaceHandle surface_external = 
     ModuleInterface<moab::DagMC>::getExternalSurfaceHandle( surface );
     
@@ -222,7 +234,7 @@ inline void ModuleInterface<moab::DagMC>::getSurfaceNormal(
 			  surface_external,
 			  position,
 			  normal,
-			  &ModuleInterface<moab::DagMC>::ray_history );
+			  &ModuleInterface<moab::DagMC>::ray_history[Utility::GlobalOpenMPSession::getThreadId()] );
 
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
 		      Utility::MOABException,

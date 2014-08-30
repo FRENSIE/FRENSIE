@@ -95,6 +95,12 @@ double LinearCongruentialGenerator::getRandomNumber()
   return d_state*5.4210108624275222e-20;
 }
 
+// Return the state of the random number
+unsigned long long LinearCongruentialGenerator::getGeneratorState() const
+{
+  return d_state;
+}
+
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//

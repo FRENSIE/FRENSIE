@@ -17,36 +17,40 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
   # Find the Trilinos package available on this system
   FIND_PACKAGE(Trilinos 11.4.1 REQUIRED)
 
-  # Use the same compilers and flags as Trilinos
-  SET(CMAKE_CXX_COMPILER ${Trilinos_CXX_COMPILER} )
-  SET(CMAKE_C_COMPILER ${Trilinos_C_COMPILER} )
-  SET(CMAKE_Fortran_COMPILER ${Trilinos_Fortran_COMPILER} )
-  SET(CMAKE_CXX_FLAGS  "${Trilinos_CXX_COMPILER_FLAGS}")
-  SET(CMAKE_C_FLAGS  "${Trilinos_C_COMPILER_FLAGS}")
-  SET(CMAKE_Fortran_FLAGS  "${Trilinos_Fortran_COMPILER_FLAGS}")
+  # Verify that the same compiler used to compile trilinos has been requested
+  MESSAGE("-- Comparing C compiler with Trilinos C compiler")
+  COMPARE_COMPILERS(C ${CMAKE_C_COMPILER} ${Trilinos_C_COMPILER})
+  IF(SAME_VENDOR AND SAME_VERSION)
+    MESSAGE("-- Comparing C compiler with Trilinos C compiler - done")
+  ELSEIF(NOT SAME_VENDOR)
+    MESSAGE(FATAL_ERROR "Trilinos was compiled with ${Trilinos_C_COMPILER}, which is incompatible with ${CMAKE_C_COMPILER}")
+  ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
+    MESSAGE(WARNING "Trilinos was compiled with a different version of ${CMAKE_C_COMPILER}. There may be conflicts!")
+  ENDIF()
   
-  # Find the BLAS and LAPACK libraries that were used
-  # FOREACH(I ${Trilinos_TPL_LIBRARIES})
-  #   STRING(REGEX MATCH [libapck.][libapck.][libapck.][libapck.][libapck.][libapck.][libapck.][libapck.][libapck.][libapck.][libapck.] FOUND_LAPACK_STRING ${I})
-  #   STRING(REGEX MATCH [libas.][libas.][libas.][libas.][libas.][libas.][libas.][libas.][libas.] FOUND_BLAS_STRING ${I})
-  #   IF(FOUND_LAPACK_STRING)
-  #     SET(BLAS ${I})
-  #   ELSEIF(FOUND_BLAS_STRING)
-  #     SET(LAPACK ${I})
-  #   ENDIF()
-  #   UNSET(FOUND_LAPACK_STRING)
-  #   UNSET(FOUND_BLAS_STRING)
-  # ENDFOREACH(I)
-  
-  # IF(NOT BLAS)
-  #   MESSAGE(FATAL_ERROR "Could not find the BLAS library used by Trilinos.")
-  # ENDIF()
+  MESSAGE("-- Comparing CXX compiler with Trilinos CXX compiler")
+  COMPARE_COMPILERS(CXX ${CMAKE_CXX_COMPILER} ${Trilinos_CXX_COMPILER})
+  IF(SAME_VENDOR AND SAME_VERSION)
+    MESSAGE("-- Comparing CXX compiler with Trilinos CXX compiler - done")
+  ELSEIF(NOT SAME_VENDOR)
+    MESSAGE(FATAL_ERROR "Trilinos was compiled with ${Trilinos_CXX_COMPILER}, which is incompatible with ${CMAKE_CXX_COMPILER}")
+  ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
+    MESSAGE(WARNING "Trilinos was compiled with a different version of ${CMAKE_CXX_COMPILER}. There may be conflicts!")
+  ENDIF()
 
+  MESSAGE("-- Comparing Fortran compiler with Trilinos Fortran compiler")
+  COMPARE_COMPILERS(Fortran ${CMAKE_Fortran_COMPILER} ${Trilinos_Fortran_COMPILER})
+  IF(SAME_VENDOR AND SAME_VERSION)
+  MESSAGE("-- Comparing Fortran compiler with Trilinos Fortran compiler - done")
+  ELSEIF(NOT SAME_VENDOR)
+    MESSAGE(FATAL_ERROR "Trilinos was compiled with ${Trilinos_Fortran_COMPILER}, which is incompatible with ${CMAKE_Fortran_COMPILER}")
+  ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
+    MESSAGE(WARNING "Trilinos was compiled with a different version of ${CMAKE_Fortran_COMPILER}. There may be conflicts!")
+  ENDIF()
   
-  # IF(NOT LAPACK)
-  #   MESSAGE(FATAL_ERROR "Could not find the LAPACK library used by Trilinos.")
-  # ENDIF()
-
+  UNSET(SAME_VENDOR)
+  UNSET(SAME_VERSION)
+    
   # Find the teuchos core library
   FIND_LIBRARY(TEUCHOS_CORE teuchoscore ${TRILINOS_LIBRARY_DIRS})
   IF(${TEUCHOS_CORE} MATCHES NOTFOUND)
@@ -118,24 +122,6 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
     MESSAGE(" TEUCHOS_PARAMETER_LIST_LIBRARY = ${TEUCHOS_PARAMETER_LIST}")
     MESSAGE("End of Teuchos details\n")
   ENDIF()
-
-  # Echo Blas info if a verbose configure is requested
-  # IF(BLAS)
-  #   IF(CMAKE_VERBOSE_CONFIGURE)
-  #     MESSAGE("Found BLAS library used by Trilinos! Here are the details: ")
-  #     MESSAGE(" BLAS_LIBRARY = ${BLAS}")
-  #     MESSAGE("End of BLAS details\n")
-  #   ENDIF()
-  # ENDIF()
-
-  # Echo Lapack info if a verbose configure is requested
-  # IF(LAPACK)
-  #   IF(CMAKE_VERBOSE_CONFIGURE)
-  #     MESSAGE("Found LAPACK library used by Trilinos! Here are the details: ")
-  #     MESSAGE(" LAPACK_LIBRARY = ${LAPACK}")
-  #     MESSAGE("End of LAPACK details\n")
-  #   ENDIF()
-  # ENDIF()
 
 ENDMACRO(ENABLE_TRILINOS_SUPPORT)
 
