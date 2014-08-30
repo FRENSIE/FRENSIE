@@ -75,8 +75,8 @@ public:
 
 private:
 
-  // A list of particle states
-  container_type d_particle_states;
+  // A list of particle states (one for each thread)
+  std::vector<container_type> d_particle_states;
 };  
 
 } // end Facemc namespace

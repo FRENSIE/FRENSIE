@@ -14,93 +14,94 @@
 namespace Utility{
 
 // Initialize the stored generator pointer
-#ifdef _OPENMP
-boost::ptr_vector<LinearCongruentialGenerator>
-RandomNumberGenerator::generator;
-#else
-boost::scoped_ptr<LinearCongruentialGenerator>
-RandomNumberGenerator::generator( new LinearCongruentialGenerator() );
-#endif
+boost::ptr_vector<LinearCongruentialGenerator> 
+RandomNumberGenerator::generator( 1 );
 
 // Constructor
 RandomNumberGenerator::RandomNumberGenerator()
 { /* ... */ }
 
 // Create the number of random number streams required
+/*! \details The number of streams that are created will be determined by
+ * the number of threads requested at run time
+ */ 
 void RandomNumberGenerator::createStreams()
 {
-#ifdef _OPENMP
-  #pragma omp parallel
+#pragma omp parallel num_threads(GlobalOpenMPSession::getRequestedNumberOfThreads())
   {
     #pragma omp master
     {
-      generator.resize( omp_get_num_threads() );
+      generator.resize( GlobalOpenMPSession::getRequestedNumberOfThreads() );
     }
     
     #pragma omp barrier
   
-    generator.replace( omp_get_thread_num(),
+    generator.replace( GlobalOpenMPSession::getThreadId(),
 		       new LinearCongruentialGenerator() );
   }
   
   // Make sure the streams have been created
-  testPostcondition( !generator.is_null( omp_get_thread_num() ) );
-#endif
+  testPostcondition( !generator.is_null( GlobalOpenMPSession::getThreadId() ));
 }
 
 // Initialize the generator for the desired history
 void RandomNumberGenerator::initialize( 
 				      const unsigned long long history_number )
 {
-#ifdef _OPENMP
+  // Make sure the generator has been set up correctly
+  testPrecondition( GlobalOpenMPSession::getThreadId() < generator.size() );
   // Make sure the streams have been created
-  testPrecondition( !generator.is_null( omp_get_thread_num() ) );
+  testPrecondition( !generator.is_null( GlobalOpenMPSession::getThreadId() ) );
   
-  generator[omp_get_thread_num()].changeHistory( history_number );
-#else
-  testPrecondition( generator.get() );
-  
-  generator->changeHistory( history_number ); 
-#endif 
+  generator[GlobalOpenMPSession::getThreadId()].changeHistory(history_number);
 }
 
 // Initialize the generator for the next history
 void RandomNumberGenerator::initializeNextHistory()
 {
-#ifdef _OPENMP
-  testPrecondition( false );
-#else
-  // Make sure the generator has been initialized
-  testPrecondition( generator.get() );
+  // Make sure the generator has been set up correctly
+  testPrecondition( GlobalOpenMPSession::getThreadId() < generator.size() );
+  // Make sure the streams have been created
+  testPrecondition( !generator.is_null( GlobalOpenMPSession::getThreadId() ) );
 
-  generator->nextHistory();
-#endif
+  generator[GlobalOpenMPSession::getThreadId()].nextHistory();
 }
 
 // Set a fake stream for the generator
-void RandomNumberGenerator::setFakeStream( std::vector<double>& fake_stream )
+/*! \details The default thread is the master (id = 0)
+ */
+void RandomNumberGenerator::setFakeStream( std::vector<double>& fake_stream,
+					   const unsigned thread_id )
 {
-#ifdef _OPENMP
-  testPrecondition( false );
-#else
-  generator.reset( new FakeGenerator( fake_stream ) );
+  // Make sure the thread id requested is valid
+  testPrecondition( thread_id < GlobalOpenMPSession::getNumberOfThreads() );
 
-  // Make sure that the generator has been created
-  testPostcondition( generator.get() );
-#endif
+  if( thread_id == GlobalOpenMPSession::getThreadId() )
+  {
+    generator.replace( GlobalOpenMPSession::getThreadId(),
+		       new FakeGenerator( fake_stream ) );
+  }
+  
+  // Make sure the generator has been created
+  testPostcondition( !generator.is_null( GlobalOpenMPSession::getThreadId() ));
 }
 
 // Unset the fake stream
-void RandomNumberGenerator::unsetFakeStream()
+/*! \details The default thread is the master (id = 0)
+ */
+void RandomNumberGenerator::unsetFakeStream( const unsigned thread_id )
 {
-#ifdef _OPENMP
-  testPrecondition( false );
-#else
-  generator.reset( new LinearCongruentialGenerator() );
+  // Make sure the thread id requested is valid
+  testPrecondition( thread_id < GlobalOpenMPSession::getNumberOfThreads() );
 
+  if( thread_id == GlobalOpenMPSession::getThreadId() )
+  {
+    generator.replace( GlobalOpenMPSession::getThreadId(),
+		       new LinearCongruentialGenerator() );
+  }
+  
   // Make sure that the generator has been created
-  testPostcondition( generator.get() );
-#endif
+  testPostcondition(!generator.is_null( GlobalOpenMPSession::getThreadId() ) );
 }
 
 } // end Utility namespace

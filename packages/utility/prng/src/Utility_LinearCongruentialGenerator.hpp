@@ -31,6 +31,9 @@ public:
   //! Return a random number for the current history
   virtual double getRandomNumber();
 
+  //! Return the state of the random number
+  virtual unsigned long long getGeneratorState() const;
+
   //! Initialize the generator for the desired history
   void changeHistory( const unsigned long long history_number );
 

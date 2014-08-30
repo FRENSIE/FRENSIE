@@ -17,18 +17,24 @@ INCLUDE(Macros)
 
 # Enforce an out-of-source build
 ENFORCE_OUT_OF_SOURCE_BUILD()
-    
-# Enable Trilinos Support
-IF(TRILINOS_PREFIX)
-  ENABLE_TRILINOS_SUPPORT()
-ELSE()
-  MESSAGE(FATAL_ERROR "The TRILINOS_PREFIX must be set!")
+
+# Enable OpenMP support
+IF(${${PROJECT_NAME}_ENABLE_OPENMP})
+  SET(HAVE_${PROJECT_NAME}_OPENMP "1")
+  ENABLE_OPENMP_SUPPORT()
 ENDIF()
+
+# Parse the OpenMP configure file so that it can be used in our source files
+SET(CMAKEDEFINE \#cmakedefine)
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/openmp_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_openmp_config.hpp.in)
+CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_openmp_config.hpp.in
+  ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_openmp_config.hpp)
 
 # Enable MPI support 
 IF(${${PROJECT_NAME}_ENABLE_MPI})
   SET(HAVE_${PROJECT_NAME}_MPI "1")
-  ENABLE_MPI_SUPPORT(${PROJECT_NAME}_LIBS)
+  ENABLE_MPI_SUPPORT()
 ENDIF()
 
 # Parse the MPI configure file so that it can be used in our source files
@@ -37,6 +43,13 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/mpi_config.hpp.in
   ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_mpi_config.hpp.in)
 CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_mpi_config.hpp.in
   ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_mpi_config.hpp)
+    
+# Enable Trilinos Support
+IF(TRILINOS_PREFIX)
+  ENABLE_TRILINOS_SUPPORT()
+ELSE()
+  MESSAGE(FATAL_ERROR "The TRILINOS_PREFIX must be set!")
+ENDIF()
 
 # Enable MOAB Support
 IF(MOAB_PREFIX)

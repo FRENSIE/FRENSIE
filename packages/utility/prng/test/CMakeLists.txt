@@ -12,9 +12,9 @@ ADD_TEST(FakeGenerator_test tstFakeGenerator)
 
 ADD_EXECUTABLE(tstRandomNumberGenerator
   tstRandomNumberGenerator.cpp)
-TARGET_LINK_LIBRARIES(tstRandomNumberGenerator utility_core utility_prng)
+TARGET_LINK_LIBRARIES(tstRandomNumberGenerator utility_core utility_prng ${MPI_CXX_LIBRARIES})
 ADD_TEST(RandomNumberGenerator_test tstRandomNumberGenerator)
 IF(${FACEMC_ENABLE_MPI})
   ADD_TEST(ParallelRandomNumberGenerator_test 
-    mpiexec -n 2 tstRandomNumberGenerator)
+    ${MPIEXEC} -n 2 tstRandomNumberGenerator)
 ENDIF()

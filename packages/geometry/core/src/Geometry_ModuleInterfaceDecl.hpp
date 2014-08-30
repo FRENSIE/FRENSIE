@@ -80,6 +80,10 @@ public:
 		        const Teuchos::RCP<GeometryHandler>& handler_instance )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
+  //! Do just in time initialization of the interface that my be required
+  static inline void initialize()
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
+
   /*! Find the cell that contains a given point (start of history)
    *
    * A std::runtime_error (or class derived from it) must be thrown 
