@@ -10,6 +10,7 @@
 #define FACEMC_FREE_GAS_ELASTIC_SCATTERING_KERNEL_FACTOR_HPP
 
 // Boost Includes
+#include <boost/numeric/quadrature/kronrodgauss.hpp>
 #include <boost/math/policies/policy.hpp>
 #include <boost/math/policies/error_handling.hpp>
 #include <boost/multiprecision/float128.hpp>
