@@ -173,6 +173,9 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
   
   // Initialize DagMC with the test geometry
   initializeDagMC();

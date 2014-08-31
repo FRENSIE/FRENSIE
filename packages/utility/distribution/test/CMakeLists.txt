@@ -82,8 +82,7 @@ TARGET_LINK_LIBRARIES(tstSpatialDistributionFactory utility_core utility_prng ut
 ADD_TEST(SpatialDistributionFactory_test tstSpatialDistributionFactory --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_spatial_distributions.xml")
 
 ADD_EXECUTABLE(tstDirectionalDistribution 
-  tstDirectionalDistribution.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstDirectionalDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstDirectionalDistribution utility_core utility_prng utility_dist)
 ADD_TEST(DirectionalDistribution_test tstDirectionalDistribution)
 

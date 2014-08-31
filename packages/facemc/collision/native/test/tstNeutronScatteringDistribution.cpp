@@ -181,5 +181,18 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Custom main function
+//---------------------------------------------------------------------------//
+int main( int argc, char** argv )
+{
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+
+  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
+
+  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+}
+
+//---------------------------------------------------------------------------//
 // tstNeutronScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

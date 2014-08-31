@@ -412,6 +412,9 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
   
   // Initialize nuclear reaction factories
   initializeNuclide( h1_nuclide,

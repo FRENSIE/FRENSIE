@@ -257,6 +257,9 @@ int main( int argc, char** argv )
 
   Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
 
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+
   // Initialize the collison handler
   initializeCollisionHandler();
 

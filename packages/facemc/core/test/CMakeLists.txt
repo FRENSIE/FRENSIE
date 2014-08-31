@@ -23,7 +23,6 @@ TARGET_LINK_LIBRARIES(tstNeutronState facemc_core)
 ADD_TEST(NeutronState_test tstNeutronState)
 
 ADD_EXECUTABLE(tstParticleBank
-  tstParticleBank.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstParticleBank.cpp)
 TARGET_LINK_LIBRARIES(tstParticleBank facemc_core)
 ADD_TEST(ParticleBank_test tstParticleBank)

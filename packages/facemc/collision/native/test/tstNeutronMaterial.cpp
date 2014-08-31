@@ -243,6 +243,9 @@ int main( int argc, char** argv )
   clp.setOption( "test_cross_sections_xml_directory",
 		 &test_cross_sections_xml_directory,
 		 "Test cross_sections.xml file name" );
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
   
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
