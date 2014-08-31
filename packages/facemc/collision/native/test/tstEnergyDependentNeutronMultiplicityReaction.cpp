@@ -145,6 +145,9 @@ int main( int argc, char** argv)
     return parse_return;
   }
 
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+
   // Initialize the ace file handler and data extractor
   ace_file_handler.reset(new Data::ACEFileHandler( test_ace_file_name,
 						   test_ace_table_name,

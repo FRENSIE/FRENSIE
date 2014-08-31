@@ -639,6 +639,8 @@ int main( int argc, char** argv )
 		 &test_basic_o16_ace_table_name,
 		 "Test basic O16 ACE table name in basic ACE file" );
 
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
 
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );

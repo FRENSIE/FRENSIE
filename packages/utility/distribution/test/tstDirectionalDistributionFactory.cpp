@@ -91,6 +91,9 @@ int main( int argc, char** argv )
   
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+
   clp.setOption( "test_xml_file",
 		 &test_xml_file_name,
 		 "Test spatial distribution xml file name" );

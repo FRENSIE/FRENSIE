@@ -120,6 +120,9 @@ TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createSphericalDistribution )
 int main( int argc, char** argv )
 {
   Utility::OneDDistributionEntryConverterDB::standardInitialization();
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
   
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 

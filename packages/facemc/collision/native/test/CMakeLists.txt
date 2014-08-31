@@ -1,20 +1,17 @@
 ADD_SUBDIRECTORY(test_files)
 
 ADD_EXECUTABLE(tstNeutronScatteringDistribution
-  tstNeutronScatteringDistribution.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstNeutronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstNeutronScatteringDistribution facemc_collision_native)
 ADD_TEST(NeutronScatteringDistribution_test tstNeutronScatteringDistribution)
 
 ADD_EXECUTABLE(tstElasticNeutronScatteringDistribution
-  tstElasticNeutronScatteringDistribution.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstElasticNeutronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstElasticNeutronScatteringDistribution facemc_collision_native)
 ADD_TEST(ElasticNeutronScatteringDistribution_test tstElasticNeutronScatteringDistribution)
 
 ADD_EXECUTABLE(tstInelasticLevelNeutronScatteringDistribution
-  tstInelasticLevelNeutronScatteringDistribution.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstInelasticLevelNeutronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstInelasticLevelNeutronScatteringDistribution facemc_collision_native)
 ADD_TEST(InelasticLevelNeutronScatteringDistribution_test tstInelasticLevelNeutronScatteringDistribution)
 

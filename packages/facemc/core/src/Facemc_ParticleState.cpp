@@ -293,6 +293,7 @@ ParticleStateCore ParticleState::exportCore() const
 void ParticleState::printImplementation( std::ostream& os ) const
 {
   os.precision( 16 );
+  os << "History: " << d_core.history_number << std::endl;
   os << "Cell: ";
   if( d_cell == Geometry::ModuleTraits::invalid_internal_cell_handle )
     os << "Invalid/Unknown" << std::endl;

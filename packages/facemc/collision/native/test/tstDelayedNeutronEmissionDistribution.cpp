@@ -79,6 +79,9 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+
   // Initialize ace file handler, data extractor and multiplicity factory
   Teuchos::RCP<Data::ACEFileHandler>
   ace_file_handler( new Data::ACEFileHandler( test_u238_ace_file_name,

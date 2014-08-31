@@ -27,35 +27,10 @@
 Teuchos::RCP<Utility::DirectionalDistribution> directional_distribution;
 
 //---------------------------------------------------------------------------//
-// Testing Functions
-//---------------------------------------------------------------------------//
-// Initialize the distribution
-void initializeDistribution( 
-		  Teuchos::RCP<Utility::DirectionalDistribution>& distribution )
-{
-  // Uniform distribution in theta dimension
-  Teuchos::RCP<Utility::OneDDistribution>
-    theta_distribution( new Utility::UniformDistribution( 
-					      0.0,
-					      2*Utility::PhysicalConstants::pi,
-					      1.0 ) );
-
-  // Uniform distribution in mu dimension
-  Teuchos::RCP<Utility::OneDDistribution>
-    mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
-
-  directional_distribution.reset( new Utility::DirectionalDistribution(
-							   theta_distribution,
-							   mu_distribution ) );
-} 
-
-//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( DirectionalDistribution, evaluate )
 {
-  initializeDistribution( directional_distribution );
-
   double cartesian_point[3] = {0.0, 0.0, 1.0};
   TEST_EQUALITY_CONST( directional_distribution->evaluate( cartesian_point ),
 		       1.0 );
@@ -195,6 +170,33 @@ TEUCHOS_UNIT_TEST( DirectionalDistribution, hasSameBounds )
   TEST_ASSERT(!directional_distribution->hasSameBounds( *directional_dist_b ));
   TEST_ASSERT(directional_distribution->hasSameBounds( *directional_dist_c ));
   TEST_ASSERT(!directional_distribution->hasSameBounds( *directional_dist_d ));
+}
+
+//---------------------------------------------------------------------------//
+// Custom main function
+//---------------------------------------------------------------------------//
+int main( int argc, char** argv )
+{
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+  
+  // Uniform distribution in theta dimension
+  Teuchos::RCP<Utility::OneDDistribution>
+    theta_distribution( new Utility::UniformDistribution( 
+					      0.0,
+					      2*Utility::PhysicalConstants::pi,
+					      1.0 ) );
+
+  // Uniform distribution in mu dimension
+  Teuchos::RCP<Utility::OneDDistribution>
+    mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
+
+  directional_distribution.reset( new Utility::DirectionalDistribution(
+							   theta_distribution,
+							   mu_distribution ) );
+
+  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
+  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
 
 //---------------------------------------------------------------------------//

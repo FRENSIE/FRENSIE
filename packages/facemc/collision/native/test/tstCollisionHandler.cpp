@@ -358,6 +358,9 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+
   // Initialize the materials
   initializeMaterials();
 

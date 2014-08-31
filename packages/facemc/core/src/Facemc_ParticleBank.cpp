@@ -70,8 +70,7 @@ void ParticleBank::push( const ParticleBank::value_type& particle )
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() < 
 		    d_particle_states.size() );
   
-  return 
-    d_particle_states[Utility::GlobalOpenMPSession::getThreadId()].push_back( 
+  d_particle_states[Utility::GlobalOpenMPSession::getThreadId()].push_back( 
 								    particle );
 }
 

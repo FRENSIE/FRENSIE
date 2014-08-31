@@ -220,6 +220,9 @@ UNIT_TEST_INSTANTIATION( CompoundSource, getSamplingEfficiency );
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_sat_file",

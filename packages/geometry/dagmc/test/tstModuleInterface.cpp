@@ -163,34 +163,49 @@ TEUCHOS_UNIT_TEST( ModuleInterface_DagMC, fireRay )
 TEUCHOS_UNIT_TEST( ModuleInterface_DagMC, 
 		   updateCellContainingParticle_crossing )
 {
-  typedef Geometry::ModuleInterface<moab::DagMC> GMI;
+  std::cout << std::endl;
   
-  // Initialize the ray
-  Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
+  #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
+  {
+    typedef Geometry::ModuleInterface<moab::DagMC> GMI;
+    
+    // Initialize the ray
+    Geometry::Ray ray( -40.0, -40.0, 59.0, 0.0, 0.0, 1.0 );
+    
+    // Find the cell that contains the point
+    #pragma omp critical(dagmc_independent_ray_check)
+    {
+      std::cout << "proc " << Teuchos::GlobalMPISession::getRank() << ": "
+		<< "firing ray with thread "
+		<< Utility::GlobalOpenMPSession::getThreadId()
+		<< " ... ";
+      
+      GMI::InternalCellHandle cell = GMI::findCellContainingPoint( ray );
+      
+      // Fire a ray through the geometry
+      GMI::InternalSurfaceHandle surface_hit;
+      double distance_to_surface_hit;
+      
+      GMI::fireRay( ray, cell, surface_hit, distance_to_surface_hit );
+      
+      // Advance the ray head to the surface intersection point
+      ray.advanceHead( distance_to_surface_hit );
+      
+      // Find the cell that the particle enters
+      cell = GMI::findCellContainingPoint( ray, cell, surface_hit );
+      
+      TEST_EQUALITY_CONST( cell, 54 );
+      
+      // Complete another sequence
+      GMI::fireRay( ray, cell, surface_hit, distance_to_surface_hit );
+      ray.advanceHead( distance_to_surface_hit );
+      cell = GMI::findCellContainingPoint( ray, cell, surface_hit );
+      
+      TEST_EQUALITY_CONST( cell, 55 );
 
-  // Find the cell that contains the point
-  GMI::InternalCellHandle cell = GMI::findCellContainingPoint( ray );
- 
-  // Fire a ray through the geometry
-  GMI::InternalSurfaceHandle surface_hit;
-  double distance_to_surface_hit;
-
-  GMI::fireRay( ray, cell, surface_hit, distance_to_surface_hit );
-  
-  // Advance the ray head to the surface intersection point
-  ray.advanceHead( distance_to_surface_hit );
-  
-  // Find the cell that the particle enters
-  cell = GMI::findCellContainingPoint( ray, cell, surface_hit );
-
-  TEST_EQUALITY_CONST( cell, 54 );
-
-  // Complete another sequence
-  GMI::fireRay( ray, cell, surface_hit, distance_to_surface_hit );
-  ray.advanceHead( distance_to_surface_hit );
-  cell = GMI::findCellContainingPoint( ray, cell, surface_hit );
-  
-  TEST_EQUALITY_CONST( cell, 55 );
+      std::cout << "done" << std::endl;
+    }
+  }
 }
 
 //---------------------------------------------------------------------------//
@@ -256,9 +271,15 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
+  int threads = 1;
+
   clp.setOption( "test_xml_file",
 		 &test_geom_xml_file_name,
 		 "Test xml geometry file name" );
+
+  clp.setOption( "threads",
+		 &threads,
+		 "Number of threads to use" );
   
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -270,16 +291,29 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  // Set up the global OpenMP session
+  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
+    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+
+  // Initialize the global MPI session
+  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
+
+  out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
+  out->setOutputToRootOnly( 0 );
   
   // Initialize DagMC
   Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
 
   Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
+
+  // Initialize the Module Interface
+  Geometry::ModuleInterface<moab::DagMC>::initialize();
+
+  mpiSession.barrier();
   
   // Run the unit tests
-  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
   if (success)

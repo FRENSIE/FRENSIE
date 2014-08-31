@@ -70,45 +70,46 @@ void ParticleSimulationManager<GeometryHandler,
 #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   for( unsigned history = 0; history < d_history_number_wall; ++history )
   {
-    // Initialize the random number generator for this history
-    Utility::RandomNumberGenerator::initialize( history );
-    
-    // Sample a particle state from the source
-    SMI::sampleParticleState( d_bank );
-
-    // Determine the starting cell of the particle
-    for( unsigned i = 0; i < d_bank.size(); ++i )
+    // Do useful work unless the user requests an end to the simulation
+    #pragma omp flux( d_end_simulation )
+    if( !d_end_simulation )
     {
-      typename GMI::InternalCellHandle start_cell;
+      // Initialize the random number generator for this history
+      Utility::RandomNumberGenerator::initialize( history );
       
-      try{
-	start_cell = GMI::findCellContainingPoint( d_bank.top()->ray() );
+      // Sample a particle state from the source
+      SMI::sampleParticleState( d_bank );
+      
+      // Determine the starting cell of the particle
+      for( unsigned i = 0; i < d_bank.size(); ++i )
+      {
+	typename GMI::InternalCellHandle start_cell;
+	
+	try{
+	  start_cell = GMI::findCellContainingPoint( d_bank.top()->ray() );
+	}
+	CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( d_bank );
+	
+	d_bank.top()->setCell( start_cell );
+	
+	EMI::updateEstimatorsFromParticleGenerationEvent( *d_bank.top() );
       }
-      CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( d_bank );
+      
+      // This history only ends when the particle bank is empty
+      while( d_bank.size() > 0 )
+      {
+	simulateParticle( *d_bank.top(), d_bank );
+	
+	d_bank.pop();
+      }
 
-      d_bank.top()->setCell( start_cell );
-    
-      EMI::updateEstimatorsFromParticleGenerationEvent( *d_bank.top() );
+      // Commit all estimator history contributions
+      EMI::commitEstimatorHistoryContributions();
+
+      // Increment the number of histories completed
+      #pragma omp atomic
+      ++d_histories_completed;
     }
-    
-    // This history only ends when the particle bank is empty
-    while( d_bank.size() > 0 )
-    {
-      simulateParticle( *d_bank.top(), d_bank );
-
-      d_bank.pop();
-    }
-
-    // Commit all estimator history contributions
-    EMI::commitEstimatorHistoryContributions();
-
-    // Increment the number of histories completed
-    #pragma omp atomic
-    ++d_histories_completed;
-
-    // Check for user requested end of simulation
-    if( d_end_simulation )
-      break;
   }
 
   // Set the end time
