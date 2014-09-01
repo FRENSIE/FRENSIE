@@ -30,8 +30,8 @@ IF(${FRENSIE_ENABLE_MPI})
 ENDIF()
 
 IF(${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
-  ADD_TEST(CompleteParallelRandomNumberGenerator_2_2_test
+  ADD_TEST(HybridParallelRandomNumberGenerator_2_2_test
     ${MPIEXEC} -n 2 tstRandomNumberGenerator --threads=2)
-  ADD_TEST(CompleteParallelRandomNumberGenerator_4_4_test
+  ADD_TEST(HybridParallelRandomNumberGenerator_4_4_test
     ${MPIEXEC} -n 4 tstRandomNumberGenerator --threads=4)
 ENDIF()

@@ -10,7 +10,7 @@
 #define FACEMC_PARTICLE_BANK_HPP
 
 // Std Lib Includes
-#include <list>
+#include <deque>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -33,7 +33,7 @@ public:
   typedef ParticleState::pointerType value_type;
   
   //! Type of the underlying container
-  typedef std::list<value_type> container_type;
+  typedef std::deque<value_type> container_type;
 
   //! Bank element reference type
   typedef value_type& reference;
@@ -64,7 +64,7 @@ public:
   const_reference top() const; 
 
   //! Insert a particle to the bank
-  void push( const value_type& particle );
+  virtual void push( const value_type& particle );
 
   //! Insert a neutron into the bank after an interaction
   virtual void push( const value_type& neutron,
@@ -75,8 +75,8 @@ public:
 
 private:
 
-  // A list of particle states (one for each thread)
-  std::vector<container_type> d_particle_states;
+  // A list of particle states 
+  container_type d_particle_states;
 };  
 
 } // end Facemc namespace
