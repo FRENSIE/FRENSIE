@@ -96,3 +96,9 @@ ADD_EXECUTABLE(tstKinematicHelpers
   tstKinematicHelpers.cpp )
 TARGET_LINK_LIBRARIES(tstKinematicHelpers utility_core)
 ADD_TEST(KinematicHelpers_test tstKinematicHelpers)
+
+ADD_EXECUTABLE(tstGaussKronrodQuadratureKernel 
+  tstGaussKronrodQuadratureKernel.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstGaussKronrodQuadratureKernel utility_core)
+ADD_TEST(GaussKronrodQuadratureKernel_test tstGaussKronrodQuadratureKernel)

@@ -79,6 +79,13 @@ ELSE()
   MESSAGE(STATUS "The BOOST_PREFIX has not been set. The system default will be used.")
 ENDIF()
 
+# Enable GSL Support
+IF(GSL_PREFIX)
+  ENABLE_GSL_SUPPORT()
+ELSE()
+  MESSAGE(FATAL_ERROR "The GSL_PREFIX must be set!")
+ENDIF()
+
 # Add Design-by-Contract support if requested
 IF(${${PROJECT_NAME}_ENABLE_DBC})
   SET(HAVE_${PROJECT_NAME}_DBC "1")
