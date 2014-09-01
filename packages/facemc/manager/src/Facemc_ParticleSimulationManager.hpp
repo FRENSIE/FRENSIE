@@ -86,9 +86,6 @@ private:
 
   // The simulation end time
   double d_end_time;
-
-  // Particle bank
-  ParticleBank d_bank;
 };
 
 //! Macro for catching a lost particle and breaking a loop

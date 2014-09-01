@@ -41,8 +41,7 @@ ParticleSimulationManager<GeometryHandler,
     d_histories_completed( 0u ),
     d_end_simulation( false ),
     d_start_time( 0.0 ),
-    d_end_time( 0.0 ),
-    d_bank()
+    d_end_time( 0.0 )
 {
   // At least one history must be simulated
   testPrecondition( number_of_histories > 0 );
@@ -67,51 +66,57 @@ void ParticleSimulationManager<GeometryHandler,
   // Set the start time
   d_start_time = clock()/((double)CLOCKS_PER_SEC);
 
-#pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
-  for( unsigned history = 0; history < d_history_number_wall; ++history )
-  {
-    // Do useful work unless the user requests an end to the simulation
-    #pragma omp flux( d_end_simulation )
-    if( !d_end_simulation )
+  #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
+  { 
+    // Create a bank for each thread
+    ParticleBank bank;
+
+    #pragma omp for
+    for( unsigned history = 0; history < d_history_number_wall; ++history )
     {
-      // Initialize the random number generator for this history
-      Utility::RandomNumberGenerator::initialize( history );
-      
-      // Sample a particle state from the source
-      SMI::sampleParticleState( d_bank );
-      
-      // Determine the starting cell of the particle
-      for( unsigned i = 0; i < d_bank.size(); ++i )
+      // Do useful work unless the user requests an end to the simulation
+      #pragma omp flush( d_end_simulation )
+      if( !d_end_simulation )
       {
-	typename GMI::InternalCellHandle start_cell;
+	// Initialize the random number generator for this history
+	Utility::RandomNumberGenerator::initialize( history );
 	
-	try{
-	  start_cell = GMI::findCellContainingPoint( d_bank.top()->ray() );
+	// Sample a particle state from the source
+	SMI::sampleParticleState( bank );
+	
+	// Determine the starting cell of the particle
+	for( unsigned i = 0; i < bank.size(); ++i )
+	{
+	  typename GMI::InternalCellHandle start_cell;
+	  
+	  try{
+	    start_cell = GMI::findCellContainingPoint( bank.top()->ray() );
+	  }
+	  CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank );
+	  
+	  bank.top()->setCell( start_cell );
+	  
+	  EMI::updateEstimatorsFromParticleGenerationEvent( *bank.top() );
 	}
-	CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( d_bank );
 	
-	d_bank.top()->setCell( start_cell );
+	// This history only ends when the particle bank is empty
+	while( bank.size() > 0 )
+	{
+	  simulateParticle( *bank.top(), bank );
+	  
+	  bank.pop();
+	}
 	
-	EMI::updateEstimatorsFromParticleGenerationEvent( *d_bank.top() );
+	// Commit all estimator history contributions
+	EMI::commitEstimatorHistoryContributions();
+	
+	// Increment the number of histories completed
+        #pragma omp atomic
+	++d_histories_completed;
       }
-      
-      // This history only ends when the particle bank is empty
-      while( d_bank.size() > 0 )
-      {
-	simulateParticle( *d_bank.top(), d_bank );
-	
-	d_bank.pop();
-      }
-
-      // Commit all estimator history contributions
-      EMI::commitEstimatorHistoryContributions();
-
-      // Increment the number of histories completed
-      #pragma omp atomic
-      ++d_histories_completed;
     }
   }
-
+    
   // Set the end time
   d_end_time = clock()/((double)CLOCKS_PER_SEC);
 }
@@ -319,19 +324,12 @@ void ParticleSimulationManager<GeometryHandler,
 {
   double time = clock()/((double)(CLOCKS_PER_SEC));
   
-  if( d_bank.size() > 0 )
+  #pragma omp critical( ostream_update )
   {
-      std::cerr << " History: " << d_bank.top()->getHistoryNumber()
-		<< " Collision: " << d_bank.top()->getCollisionNumber()
-		<< " Run Time: " << time - d_start_time
-		<< std::endl;
-  }
-  else
-  {
+    #pragma omp flush( d_histories_completed )
     std::cerr << " History: " << d_histories_completed
-		<< " Collision: " << 0
-		<< " Run Time: " << time - d_start_time
-		<< std::endl;
+	      << " Run Time: " << time - d_start_time
+	      << std::endl;
   }
 }
 
