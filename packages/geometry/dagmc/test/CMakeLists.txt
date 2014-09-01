@@ -36,8 +36,8 @@ IF(${FRENSIE_ENABLE_MPI})
 ENDIF()
 
 IF(${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
-  ADD_TEST(CompleteParallelGeometryModuleInterface_DagMC_2_2_test
+  ADD_TEST(HybridParallelGeometryModuleInterface_DagMC_2_2_test
     ${MPIEXEC} -n 2 tstGeometryModuleInterface_DagMC --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml" --threads=2)
-  ADD_TEST(CompleteParallelGeometryModuleInterface_DagMC_4_4_test
+  ADD_TEST(HybridParallelGeometryModuleInterface_DagMC_4_4_test
     ${MPIEXEC} -n 4 tstGeometryModuleInterface_DagMC --test_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml" --threads=4)
 ENDIF()

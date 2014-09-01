@@ -25,31 +25,43 @@
 // Check that particles can be pushed to the particle bank
 TEUCHOS_UNIT_TEST( ParticleBank, push )
 {
-  Facemc::ParticleBank bank;
-  
-  #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
+#pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   {
-    //#pragma omp critical
+    Facemc::ParticleBank bank;
+    
+    TEST_ASSERT( bank.empty() );
+    
+    unsigned history_number = Teuchos::GlobalMPISession::getRank()*
+      Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() +
+      Utility::GlobalOpenMPSession::getThreadId();
+    
+    Facemc::ParticleState::pointerType particle;
+    
+    particle.reset( new Facemc::PhotonState( history_number ) );
+    
+    bank.push( particle );
+    
+    #pragma omp critical( test_update )
     {
-      TEST_ASSERT( bank.empty() );
-      
-      unsigned history_number = Utility::GlobalOpenMPSession::getThreadId();
-      
-      // Facemc::ParticleState::pointerType particle( 
-      // 				   new Facemc::PhotonState( history_number ) );
-    
-      // bank.push( particle );
-      
-      // TEST_ASSERT( !bank.empty() );
-      // TEST_EQUALITY_CONST( bank.size(), 1 );
-    
-      // particle.reset( new Facemc::NeutronState( history_number + 1u ) );
-      // std::cout << *particle << std::endl;
-      // bank.push( particle, Facemc::N__N_ELASTIC_REACTION );
-      
-      // TEST_ASSERT( !bank.empty() );
-      // TEST_EQUALITY_CONST( bank.size(), 2 );
+      std::cout << bank.top()->getHistoryNumber() << std::endl;
+        
+      TEST_ASSERT( !bank.empty() );
+      TEST_EQUALITY_CONST( bank.size(), 1 );
     }
+    
+    particle.reset( new Facemc::NeutronState( history_number ) );
+      
+    bank.push( particle, Facemc::N__N_ELASTIC_REACTION );
+    
+    #pragma omp critical( test_update )
+    {
+      std::cout << particle->getHistoryNumber() << std::endl;
+    
+      TEST_ASSERT( !bank.empty() );
+      TEST_EQUALITY_CONST( bank.size(), 2 );
+    }
+  
+    #pragma omp barrier
   }
 }
 

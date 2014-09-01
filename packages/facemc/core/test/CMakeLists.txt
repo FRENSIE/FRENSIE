@@ -26,3 +26,24 @@ ADD_EXECUTABLE(tstParticleBank
   tstParticleBank.cpp)
 TARGET_LINK_LIBRARIES(tstParticleBank facemc_core)
 ADD_TEST(ParticleBank_test tstParticleBank)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelParticleBank_2_test
+    tstParticleBank --threads=2)
+  ADD_TEST(SharedParallelParticleBank_4_test
+    tstParticleBank --threads=4)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_MPI})
+  ADD_TEST(DistributedParallelParticleBank_2_test
+    ${MPIEXEC} -n 2 tstParticleBank)
+  ADD_TEST(DistributedParallelParticleBank_4_test
+    ${MPIEXEC} -n 4 tstParticleBank)
+ENDIF()
+
+IF( ${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
+  ADD_TEST(HybridParallelParticleBank_2_2_test
+    ${MPIEXEC} -n 2 tstParticleBank --threads=2)
+  ADD_TEST(HybridParallelParticleBank_4_4_test
+    ${MPIEXEC} -n 4 tstParticleBank --threads=4)
+ENDIF()
