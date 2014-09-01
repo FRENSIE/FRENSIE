@@ -10,7 +10,6 @@
 #define FACEMC_FREE_GAS_ELASTIC_SCATTERING_KERNEL_FACTOR_HPP
 
 // Boost Includes
-#include <boost/numeric/quadrature/kronrodgauss.hpp>
 #include <boost/math/policies/policy.hpp>
 #include <boost/math/policies/error_handling.hpp>
 #include <boost/multiprecision/float128.hpp>
@@ -21,6 +20,7 @@
 
 // FRENSIE Includes
 #include "Facemc_NeutronScatteringAngularDistribution.hpp"
+#include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace Facemc{
@@ -30,9 +30,6 @@ class FreeGasElasticScatteringKernelFactor
 {
   
 private:
-
-  // Typedef for the quadrature kernel type
-  typedef boost::numeric::quadrature::kronrod_gauss<15> KernelType;
 
   // Typedef for bessel function error policy
   typedef boost::math::policies::domain_error<
@@ -94,7 +91,7 @@ private:
   static double neutron_kinetic_energy_multiplier;
 
   // The integration kernel
-  KernelType d_kernel;
+  Utility::GaussKronrodQuadratureKernel d_kernel;
 
   // The zero temperature cross section
   Teuchos::RCP<Utility::OneDDistribution> d_zero_temp_elastic_cross_section;

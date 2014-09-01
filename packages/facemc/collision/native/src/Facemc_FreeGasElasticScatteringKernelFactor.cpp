@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <iostream>
+
 // Boost Includes
 #include <boost/math/special_functions/bessel.hpp>
 #include <boost/numeric/quadrature/adaptive.hpp>
@@ -33,7 +36,7 @@ FreeGasElasticScatteringKernelFactor::FreeGasElasticScatteringKernelFactor(
       const double alpha,
       const double beta,
       const double E )
-  : d_kernel(),
+  : d_kernel( 1e-6 ),
     d_zero_temp_elastic_cross_section( zero_temp_elastic_cross_section ),
     d_cm_scattering_distribution( cm_scattering_distribution ),
     d_A( A ),
@@ -177,8 +180,11 @@ double FreeGasElasticScatteringKernelFactor::getIntegratedValue(
   
   this->findLimits( lower_limit, upper_limit );
 
-  boost::numeric::quadrature::adaptive().kernel(d_kernel)
-    (*this, lower_limit, upper_limit, integrated_value, error_estimate);
+  d_kernel.integrateAdaptively<15>( *this, 
+				    lower_limit,
+				    upper_limit,
+				    integrated_value,
+				    error_estimate );
 
   return integrated_value;
 }

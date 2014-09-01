@@ -88,7 +88,7 @@ int main( int argc, char** argv )
 						    2.53010e-8,
 						    39.5,
 						    1.0,
-						    1.0e+01 ) );
+						    1.0e-06 ) );
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
