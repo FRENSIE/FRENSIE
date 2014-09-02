@@ -88,11 +88,14 @@ TEUCHOS_UNIT_TEST( AllIsotopes, getMetaStateZaids )
 TEUCHOS_UNIT_TEST( AllIsotopes, getAllMetaStateZaids)
 {
     Teuchos::Array<int> meta_state_zaids;
-  
+    
     Transmutation::AllIsotopes::getAllMetaStateZaids(meta_state_zaids);
 
-    TEST_COMPARE(meta_state_zaids.front(), == , 1045101);
-    TEST_COMPARE(meta_state_zaids.back(), == , 1048113);
+    std::set<int> zaid_set( meta_state_zaids.begin(),
+			    meta_state_zaids.end() );
+    
+    TEST_ASSERT( zaid_set.count( 1045101 ) );
+    TEST_ASSERT( zaid_set.count( 1048113 ) );
     TEST_COMPARE(meta_state_zaids.size(), == , 242);
 }
 

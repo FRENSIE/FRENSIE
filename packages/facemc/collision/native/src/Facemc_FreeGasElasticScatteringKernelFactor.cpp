@@ -11,7 +11,6 @@
 
 // Boost Includes
 #include <boost/math/special_functions/bessel.hpp>
-#include <boost/numeric/quadrature/adaptive.hpp>
 
 // FRENSIE Includes
 #include "Facemc_FreeGasElasticScatteringKernelFactor.hpp"
