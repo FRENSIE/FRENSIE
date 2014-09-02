@@ -76,7 +76,7 @@ are described.
 5. run `ln -s openmpi-1.8.2 src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/mpi/build)
-8. run `../src/configure --prefix=absolute-path-to_software/mpi
+8. run `../src/configure --prefix=absolute-path-to_software/mpi`
 9. run `make -j n`
 10. run `make check`
 11. run `make install`
