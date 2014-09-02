@@ -190,4 +190,4 @@ At this point all of the dependent software libraries should have been built. If
 Note: There are several configure options that can be changed in the frensie.sh script. `-D FRENSIE_ENABLE_DBC:BOOL=ON` turns on very thorough Design-by-Contract checks that can be a very useful debugging tool. `-D FRENSIE_ENABLE_OPENMP:BOOL=ON` enables OpenMP thread support. `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support. 
 
 ## Feedback
-If any issues are encountered during the build process please direct your questions to Alex Robinson (aprobinson@wisc.edu).
+If any issues are encountered during the build process please direct your questions to [Alex Robinson](https://github.com/aprobinson)
