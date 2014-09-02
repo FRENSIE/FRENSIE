@@ -1,9 +1,9 @@
 # Define the minimum required version of CMake
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.11 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.0.1 FATAL_ERROR)
 
 # Add the custom modules to the module path
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
-  "${CMAKE_DIR}/share/cmake-2.8/Modules"
+  "${CMAKE_DIR}/share/cmake-3.0/Modules"
   ${PROJECT_SOURCE_DIR}/cmake)
 
 # Define the project name
