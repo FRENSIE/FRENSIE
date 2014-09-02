@@ -2,7 +2,7 @@
 #
 for FILE in `ls -1 *.f`;
 do
-  gfortran -c -g $FILE >& compiler.txt
+  gfortran -c -O3 $FILE >& compiler.txt
   if [ $? -ne 0 ]; then
     echo "Errors compiling " $FILE
     exit

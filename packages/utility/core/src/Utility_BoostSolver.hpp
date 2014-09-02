@@ -16,7 +16,6 @@
 
 // Boost Includes
 #include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/odeint.hpp>
 
 namespace Utility {
 

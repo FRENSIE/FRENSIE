@@ -4,30 +4,29 @@
 ##---------------------------------------------------------------------------##
 
 EXTRA_ARGS=$@
-TRILINOS_PREFIX_PATH=$HOME/software/trilinos
-MOAB_PREFIX_PATH=$HOME/software/moab
-HDF5_PREFIX_PATH=$HOME/software/hdf5
-ODEPACK_PREFIX_PATH=$HOME/software/odepack
-BOOST_PREFIX_PATH=$HOME/software/boost
-GSL_PREFIX_PATH=$HOME/software/gsl
-FACEMC_PATH=$HOME/research/transport/FRENSIE/
+TRILINOS_PREFIX_PATH=$HOME/trilinos-path
+HDF5_PREFIX_PATH=$HOME/hdf5-path
+MOAB_PREFIX_PATH=$HOME/moab-path
+ODEPACK_PREFIX_PATH=$HOME/odepack-path
+BOOST_PREFIX_PATH=$HOME/boost-path
+GSL_PREFIX_PATH=$HOME/gsl-path
+MPI_PREFIX_PATH=$HOME/mpi-path
+FRENSIE_PREFIX_PATH=$HOME/frensie-path
 
 ##---------------------------------------------------------------------------##
 ## The Teuchos_TwoDArray class has a bug that needs to be fixed. This patch
 ## will work as a temporary solution.
 patch -s -f $TRILINOS_PREFIX_PATH/include/Teuchos_TwoDArray.hpp \
-    $FACEMC_PATH/patches/Teuchos_TwoDArray_patch
+   $FRENSIE_PREFIX_PATH/src/patches/Teuchos_TwoDArray_patch
 
-##---------------------------------------------------------------------------##
+source ~/.bashrc
 
-rm -rf CMakeCache.txt
-
-##---------------------------------------------------------------------------##
+cmake --version
 
 cmake \
-    -D CMAKE_INSTALL_PREFIX:PATH=$PWD/../ \
-    -D CMAKE_BUILD_TYPE:STRING=DEBUG \
-    -D CMAKE_VERBOSE_CONFIGURE:BOOL=ON \
+    -D CMAKE_INSTALL_PREFIX:PATH=$FRENSIE_PREFIX_PATH \
+    -D CMAKE_BUILD_TYPE:STRING=RELEASE \
+    -D CMAKE_VERBOSE_CONFIGURE:BOOL=OFF \
     -D CMAKE_VERBOSE_MAKEFILE:BOOL=ON \
     -D FRENSIE_ENABLE_DBC:BOOL=ON \
     -D FRENSIE_ENABLE_OPENMP:BOOL=ON \
@@ -38,7 +37,8 @@ cmake \
     -D ODEPACK_PREFIX:PATH=$ODEPACK_PREFIX_PATH \
     -D BOOST_PREFIX:PATH=$BOOST_PREFIX_PATH \
     -D GSL_PREFIX:PATH=$GSL_PREFIX_PATH \
+    -D MPI_PREFIX:PATH=$MPI_PREFIX_PATH \
     $EXTRA_ARGS \
-    $FACEMC_PATH
+    $FRENSIE_PREFIX_PATH/src
 
  
