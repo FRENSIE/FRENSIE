@@ -12,7 +12,7 @@ depends on is listed below.
 
 1. [HDF5 1.8.13](http://www.hdfgroup.org/HDF5)
 2. [OpenMPI 1.8.2](http://www.open-mpi.org/)
-3. [Cubit 14.0](https://cubit.sandia.gov/public/)
+3. [Cubit 14.0](https://cubit.sandia.gov/index.html)
 4. [CGM 14.1pre](http://trac.mcs.anl.gov/projects/ITAPS/wiki/CGM)
 5. [MOAB 4.6.3](http://trac.mcs.anl.gov/projects/ITAPS/wiki/MOAB)
 6. [Trilinos 11.10.2](http://trilinos.org/)
