@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "Facemc_FreeGasElasticScatteringKernelFactor.cpp"
 #include "Utility_UniformDistribution.hpp"
+#include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -26,18 +27,223 @@
 Teuchos::RCP<Facemc::FreeGasElasticScatteringKernelFactor> kernel_factor;
 
 //---------------------------------------------------------------------------//
+// Testing Functions
+//---------------------------------------------------------------------------//
+double analyticCrossSectionValue( const double A,
+				  const double kT,
+				  const double alpha,
+				  const double beta,
+				  const double E )
+{
+  double pi3 = Utility::PhysicalConstants::pi*
+    Utility::PhysicalConstants::pi*
+    Utility::PhysicalConstants::pi;
+
+  return (kT*(A+1)*(A+1)/(16*sqrt(pi3)*A*E*sqrt(alpha)))*
+	  exp( -(alpha + beta)*(alpha + beta)/(4*alpha) );
+}
+
+double integratedCrossSectionValue( const double A,
+				    const double kT,
+				    const double alpha,
+				    const double beta,
+				    const double E,
+				    const double integral_value )
+{
+  double pi3 = Utility::PhysicalConstants::pi*
+    Utility::PhysicalConstants::pi*
+    Utility::PhysicalConstants::pi;
+
+  return ((A+1)*(A+1)*(A+1)*(A+1)*sqrt(alpha)*kT/(16*sqrt(pi3)*A*E))*
+    exp( -(A+1)/2*(beta - A*alpha) )*integral_value;
+}
+
+//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 		   getIntegratedValue )
 {
+  kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-6 );
+
   double value, error;
   value = kernel_factor->getIntegratedValue( error );
  
-  // Test against analytic integral
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       39.5,
+				       1.0,
+				       1.0e-06,
+				       value );
 
-  std::cout.precision( 10 );
-  std::cout << value << " " << error << std::endl;
+  double analytic_value = analyticCrossSectionValue( 0.999167,
+						     2.53010e-8,
+						     39.5,
+						     1.0,
+						     1.0e-06 );
+
+  // Test against analytic integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-9 );
+
+  kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-5 );
+
+  value = kernel_factor->getIntegratedValue( error );
+
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       39.5,
+				       1.0,
+				       1.0e-05,
+				       value );
+
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      39.5,
+					      1.0,
+					      1.0e-05 );
+
+  // Test against the analyticl integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-3 );
+
+  kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-4 );
+
+  value = kernel_factor->getIntegratedValue( error );
+
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       39.5,
+				       1.0,
+				       1.0e-04,
+				       value );
+
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      39.5,
+					      1.0,
+					      1.0e-04 );
+
+  // Test against the analyticl integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-4 );
+
+  kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-3 );
+
+  value = kernel_factor->getIntegratedValue( error );
+
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       39.5,
+				       1.0,
+				       1.0e-03,
+				       value );
+
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      39.5,
+					      1.0,
+					      1.0e-03 );
+
+  // Test against the analyticl integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-5 );
+
+  kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-2 );
+
+  value = kernel_factor->getIntegratedValue( error );
+
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       39.5,
+				       1.0,
+				       1.0e-02,
+				       value );
+
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      39.5,
+					      1.0,
+					      1.0e-02 );
+
+  // Test against the analyticl integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-6 );
+
+  kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-1 );
+
+  value = kernel_factor->getIntegratedValue( error );
+
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       39.5,
+				       1.0,
+				       1.0e-01,
+				       value );
+
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      39.5,
+					      1.0,
+					      1.0e-01 );
+
+  // Test against the analyticl integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-7 );
+
+  kernel_factor->setIndependentVariables( 39.5, 1.0, 1.0 );
+
+  value = kernel_factor->getIntegratedValue( error );
+
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       39.5,
+				       1.0,
+				       1.0,
+				       value );
+
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      39.5,
+					      1.0,
+					      1.0 );
+
+  // Test against the analyticl integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-7 );
+
+  kernel_factor->setIndependentVariables( 39.5, 1.0, 10.0 );
+
+  value = kernel_factor->getIntegratedValue( error );
+
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       39.5,
+				       1.0,
+				       10.0,
+				       value );
+
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      39.5,
+					      1.0,
+					      10.0 );
+
+  // Test against the analyticl integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-6 );
+
+  kernel_factor->setIndependentVariables( 39.5, 1.0, 19.99 );
+
+  value = kernel_factor->getIntegratedValue( error );
+
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       39.5,
+				       1.0,
+				       19.99,
+				       value );
+
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      39.5,
+					      1.0,
+					      19.99 );
+
+  // Test against the analyticl integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-5 );
 }
 
 //---------------------------------------------------------------------------//
