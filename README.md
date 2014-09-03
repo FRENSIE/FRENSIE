@@ -35,6 +35,7 @@ are described.
 1. create a working directory where FRENSIE will be built (e.g. software/frensie)
 2. move to the frensie directory
 3. run `git clone git@github.com:aprobinson/FRENSIE.git`
+4. run `ln -s FRENSIE src`
 
 ### Building CMake
 1. download the [CMake 3.0.1 source](http://www.cmake.org/cmake/resources/software.html)
@@ -60,7 +61,7 @@ are described.
 5. run `ln -s hdf5-1.8.13 src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/hdf5/build)
-8. copy FRENSIE/scripts/hdf5.sh into the build directory
+8. copy `FRENSIE/scripts/hdf5.sh` into the build directory
 9. change the variables in the script to reflect the desired system paths
 10. run `./hdf5.sh` to configure hdf5
 11. run `make -j n`
@@ -130,7 +131,7 @@ are described.
 5. run `ln -s lapack-3.5.0 src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/lapack/build)
-8. copy FRENSIE/scripts/lapack.sh into the build directory
+8. copy `FRENSIE/scripts/lapack.sh` into the build directory
 9. change the variables in the script to reflect the desired system paths
 10. run `./lapack.sh` to configure lapack
 11. run `make -j n`
@@ -147,7 +148,7 @@ are described.
 5. run `ln -s trilinos-11.10.2.Source src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/trilinos/build)
-8. copy FRENSIE/scripts/trilinos.sh into the build directory 
+8. copy `FRENSIE/scripts/trilinos.sh` into the build directory 
 9. change the variables in the script to reflect the desired system paths
 10. run `./trilinos.sh` to configure trilinos
 11. run `make -j n`
@@ -163,8 +164,9 @@ are described.
  * opkda1.f
  * opkda2.f
  * opkddemos.txt
-2. copy FRENSIE/scripts/odepack.sh into the odepack directory
-3. run `./odepack.sh` to build libodepack.a
+2. move the above files to the odepack directory (e.g. software/odepack)
+3. copy `FRENSIE/scripts/odepack.sh` into the odepack directory
+4. run `./odepack.sh` to build libodepack.a
 
 ### Building Boost
 1. download the [Boost 1.56.0 source](http://sourceforge.net/projects/boost/files/boost/1.56.0/)
@@ -199,7 +201,7 @@ At this point all of the dependent software libraries should have been built. If
 1. move to the frensie working directory - not the repo itself (e.g. software/frensie)
 2. run `mkdir build`
 3. move to the build directory (e.g. software/frensie/build)
-4. copy the FRENSIE/scripts/frensie.sh into the build directory
+4. copy the `FRENSIE/scripts/frensie.sh` into the build directory
 5. change the variables in the script to reflect the desired system paths
 6. run `./frensie.sh` to configure FRENSIE
 7. run `make`
