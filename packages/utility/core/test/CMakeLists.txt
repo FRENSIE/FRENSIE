@@ -102,3 +102,9 @@ ADD_EXECUTABLE(tstGaussKronrodQuadratureKernel
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstGaussKronrodQuadratureKernel utility_core)
 ADD_TEST(GaussKronrodQuadratureKernel_test tstGaussKronrodQuadratureKernel)
+
+ADD_EXECUTABLE(tstLinearizedGridGenerator 
+  tstLinearizedGridGenerator.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLinearizedGridGenerator utility_core)
+ADD_TEST(LinearizedGridGenerator_test tstLinearizedGridGenerator)
