@@ -64,6 +64,7 @@ double integratedCrossSectionValue( const double A,
 TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 		   getIntegratedValue )
 {
+  // Calculate the integral value at energy 1e-6 MeV
   kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-6 );
 
   double value, error;
@@ -85,6 +86,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Test against analytic integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-9 );
 
+  // Calculate the integral value at energy 1e-5 MeV
   kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-5 );
 
   value = kernel_factor->getIntegratedValue( error );
@@ -105,6 +107,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Test against the analyticl integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-3 );
 
+  // Calculate the integral value at energy 1e-4 MeV
   kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-4 );
 
   value = kernel_factor->getIntegratedValue( error );
@@ -125,6 +128,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Test against the analyticl integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-4 );
 
+  // Calculate the integral value at energy 1e-3 MeV
   kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-3 );
 
   value = kernel_factor->getIntegratedValue( error );
@@ -145,6 +149,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Test against the analyticl integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-5 );
 
+  // Calculate the integral value at energy 1e-2 MeV
   kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-2 );
 
   value = kernel_factor->getIntegratedValue( error );
@@ -165,6 +170,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Test against the analyticl integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-6 );
 
+  // Calculate the integral value at energy 0.1 MeV
   kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-1 );
 
   value = kernel_factor->getIntegratedValue( error );
@@ -185,6 +191,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Test against the analyticl integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-7 );
 
+  // Calculate the integral value at energy 1.0 MeV
   kernel_factor->setIndependentVariables( 39.5, 1.0, 1.0 );
 
   value = kernel_factor->getIntegratedValue( error );
@@ -205,6 +212,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Test against the analyticl integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-7 );
 
+  // Calculate the integral value at energy 10.0 MeV
   kernel_factor->setIndependentVariables( 39.5, 1.0, 10.0 );
 
   value = kernel_factor->getIntegratedValue( error );
@@ -225,6 +233,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   // Test against the analyticl integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-6 );
 
+  // Calculate the integral value at energy 19.99 MeV
   kernel_factor->setIndependentVariables( 39.5, 1.0, 19.99 );
 
   value = kernel_factor->getIntegratedValue( error );
