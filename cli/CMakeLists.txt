@@ -6,13 +6,19 @@
 ADD_EXECUTABLE(rng_timer rng_timer.cpp)
 TARGET_LINK_LIBRARIES(rng_timer utility_core utility_prng)
 
+SET(CLI_TARGETS rng_timer ${CLI_TARGETS})
+
 # Create the facemc exec
-ADD_EXECUTABLE(facemc facemc.cpp)
-TARGET_LINK_LIBRARIES(facemc facemc_manager)
+IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(facemc facemc.cpp)
+  TARGET_LINK_LIBRARIES(facemc facemc_manager)
+  SET(CLI_TARGETS facemc ${CLI_TARGETS})
+ENDIF()
 
 # Create the angle dist sampler exec
 ADD_EXECUTABLE(sample_scattering_distribution sample_scattering_distribution.cpp)
 TARGET_LINK_LIBRARIES(sample_scattering_distribution facemc_manager)
+SET(CLI_TARGETS sample_scattering_distribution ${CLI_TARGETS})
 
 # Create the decay regresssion suite
 ADD_EXECUTABLE(decay_regression_suite decay_regression_suite.cpp)
@@ -40,5 +46,5 @@ ADD_EXECUTABLE(fission_reaction_rate_verification_problem
 fission_reaction_rate_verification_problem.cpp)
 TARGET_LINK_LIBRARIES(fission_reaction_rate_verification_problem utility_core transmutation)
 
-INSTALL(TARGETS rng_timer facemc sample_scattering_distribution
+INSTALL(TARGETS ${CLI_TARGETS}
   RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)

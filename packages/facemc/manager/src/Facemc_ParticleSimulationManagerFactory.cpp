@@ -7,18 +7,25 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_dagmc_config.hpp"
 #include "Facemc_ParticleSimulationManagerFactory.hpp"
 #include "Facemc_ParticleSimulationManager.hpp"
 #include "Facemc_StandardParticleSourceFactory.hpp"
 #include "Facemc_SourceModuleInterface.hpp"
 #include "Facemc_EstimatorHandlerFactory.hpp"
 #include "Facemc_CollisionHandlerFactory.hpp"
+
+#ifdef HAVE_FRENSIE_DAGMC
 #include "Geometry_DagMCInstanceFactory.hpp"
+#endif
+
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace Facemc{
 
 // Create the requested manager
+/*! \details If DagMC has not been enabled, this function will be empty
+ */
 Teuchos::RCP<SimulationManager> 
 ParticleSimulationManagerFactory::createManager(
 		       const Teuchos::ParameterList& simulation_info,
@@ -30,6 +37,7 @@ ParticleSimulationManagerFactory::createManager(
 		       const Teuchos::ParameterList& cross_sections_table_info,
 		       const std::string& cross_sections_xml_directory )
 {
+  #ifdef HAVE_FRENSIE_DAGMC
   TEST_FOR_EXCEPTION( !simulation_info.isParameter( "Histories" ),
 		      InvalidSimulationInfo,
 		      "Error: the number of histories to run must be "
@@ -63,6 +71,9 @@ ParticleSimulationManagerFactory::createManager(
 	                               EstimatorHandler,
 		                       CollisionHandler>(
 			  simulation_info.get<unsigned int>( "Histories" ) ) );
+  #else
+  return Teuchos::RCP<SimulationManager>();
+  #endif // end HAVE_FRENSIE_DAGMC
 }
 
 } // end Facemc namespace
