@@ -43,11 +43,10 @@ private:
 	      const Teuchos::ParameterList& material_rep,
 	      boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>&
 	      material_ids );
-
+  
   // Validate the material ids using DagMC
   static void validateMaterialIdsUsingDagMC( 
 				 const Teuchos::ParameterList& material_reps );
-
 
   // Create the set of all nuclides needed to construct materials
   static void createNuclideSet( const Teuchos::ParameterList& material_reps,

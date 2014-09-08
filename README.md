@@ -12,14 +12,16 @@ depends on is listed below.
 
 1. [HDF5 1.8.13](http://www.hdfgroup.org/HDF5)
 2. [OpenMPI 1.8.2](http://www.open-mpi.org/)
-3. [Cubit 14.0](https://cubit.sandia.gov/index.html)
-4. [CGM 14.1pre](http://trac.mcs.anl.gov/projects/ITAPS/wiki/CGM)
+3. [Cubit 14.0](https://cubit.sandia.gov/index.html) - optional
+4. [CGM 14.1pre](http://trac.mcs.anl.gov/projects/ITAPS/wiki/CGM) - optional
 5. [MOAB 4.6.3](http://trac.mcs.anl.gov/projects/ITAPS/wiki/MOAB)
 6. [LAPACK 3.5.0](http://www.netlib.org/lapack/)
 7. [Trilinos 11.10.2](http://trilinos.org/)
 8. [ODEPACK](http://computation.llnl.gov/casc/odepack/)
 9. [Boost 1.56.0](http://www.boost.org/)
 10. [GSL 1.16](http://www.gnu.org/software/gsl/)
+
+
 
 FRENSIE also requires a GNU compiler (4.7.3 or greater) and CMake version 3.0.1 to build correctly. All of the above software libraries will be built from source. This process will be described in the next section.
 
@@ -86,7 +88,7 @@ are described.
 13. add the following line to the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:$LD_LIBRARY_PATH`
 14. run `exec bash`
 
-### Building Cubit
+### Building Cubit - Optional
 1. Cubit is not open source software so a [license](https://cubit.sandia.gov/public/licensing.html) must be acquired.
 2. The binary files will be be available for download once a license has been acquired
 3. move the Cubit-14.0-Lin64.tar.gz file to the cubit14.0 directory (e.g. software/cubit14.0)
@@ -95,7 +97,7 @@ are described.
 6. update the `export LD_LIBRARY_PATH` line in the .bashrc file: `export LD_LIBRARY_PATH=absolute-path-to_software/mpi/lib:absolute-path-to_software/cubit14.0/bin:$LD_LIBRARY_PATH`
 7. run `exec bash`
 
-### Building CGM
+### Building CGM - Optional
 1. download the [CGM 14.1pre source](http://ftp.mcs.anl.gov/pub/fathom/cgm-nightly-trunk.tar.gz)
 2. move the cgm-nightly-trunk.tar.gz file to the cgm directory (e.g. software/cgm)
 3. move to the cgm directory
@@ -104,6 +106,7 @@ are described.
 6. run `mkdir build`
 7. move to the build directory (e.g. software/cgm/build)
 8. run `../src/configure --enable-optimize --disable-debug --with-cubit=absolute-path-to_software/cubit14.0 --prefix=absolute-path-to_software/cgm`
+   b. else run `
 9. run `make -j n`
 10. run 'make check'
 11. run `make install`
@@ -116,7 +119,9 @@ are described.
 5. run `ln -s moab-4.6.3 src`
 6. run `mkdir build`
 7. move to the build directory (e.g. software/moab/build)
-8. run `../src/configure --enable-optimize --disable-debug --with-cgm=absolute-path-to_software/cgm/ --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+8. if DagMC is desired (Cubit 14.0 and CGM must be built): 
+   a. run `../src/configure --enable-optimize --disable-debug --with-cgm=absolute-path-to_software/cgm/ --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
+   b. else run `../src/configure --enable-optimize --disable-debug --with-hdf5=absolute-path-to_software/hdf5 --prefix=absolute-path-to_software/moab/`
 9. run `make -j n`
 10. run `make check`
 11. run `make install`
@@ -208,7 +213,9 @@ At this point all of the dependent software libraries should have been built. If
 8. run `make test`
 9. run `make install`
 
-Note: There are several configure options that can be changed in the frensie.sh script. `-D FRENSIE_ENABLE_DBC:BOOL=ON` turns on very thorough Design-by-Contract checks that can be a very useful debugging tool. `-D FRENSIE_ENABLE_OPENMP:BOOL=ON` enables OpenMP thread support. `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support. 
+Because this will eventually be an open source project, the goal is to be able to build FRENSIE without having to acquire commercial software licenses. Currently, the geometry capabilities within FRENSIE are only activated when the DagMC configure option is set to ON (e.g. `-D FRENSIE_ENABLE_DAGMC:BOOL=ON`), which requires a CUBIT license. In the future, more software libraries will be incorporated into FRENSIE which will allow for geometry capabilities to be built without building DagMC.
+
+Note: There are several other configure options that can be changed in the frensie.sh script. `-D FRENSIE_ENABLE_DBC:BOOL=ON` turns on very thorough Design-by-Contract checks that can be a very useful debugging tool. `-D FRENSIE_ENABLE_OPENMP:BOOL=ON` enables OpenMP thread support. `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support. 
 
 ## Feedback
 If any issues are encountered during the build process please direct your questions to [Alex Robinson](https://github.com/aprobinson)

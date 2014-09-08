@@ -10,10 +10,15 @@
 #include <boost/unordered_set.hpp>
 
 // FRENSIE Includes
+#include "FRENSIE_dagmc_config.hpp"
 #include "Facemc_CollisionHandlerFactory.hpp"
 #include "Facemc_NuclideFactory.hpp"
+
+#ifdef HAVE_FRENSIE_DAGMC
 #include "Geometry_DagMCHelpers.hpp"
 #include "Geometry_DagMCProperties.hpp"
+#endif
+
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -139,9 +144,11 @@ void CollisionHandlerFactory::validateMaterialRep(
 }
 
 // Validate the material ids using DagMC
+// If DagMC has not been enabled this function will be empty. 
 void CollisionHandlerFactory::validateMaterialIdsUsingDagMC(
 				  const Teuchos::ParameterList& material_reps )
 {
+  #ifdef HAVE_FRENSIE_DAGMC
   // Construct the set of material ids
   boost::unordered_set<ModuleTraits::InternalMaterialHandle> material_ids;
 
@@ -179,7 +186,8 @@ void CollisionHandlerFactory::validateMaterialIdsUsingDagMC(
 			"Error: DagMC has requested material number "
 			<< requested_material_ids[i] << " which is lacking "
 			"a definition!" );
-  }
+  } 
+  #endif // end HAVE_FRENSIE_DAGMC
 }
 
 // Create the set of all nuclides needed to construct materials
@@ -242,6 +250,7 @@ void CollisionHandlerFactory::createMaterialIdDataMaps(
 }
 
 // Create the material name data maps
+// If DagMC has not been enabled this function will be empty
 void CollisionHandlerFactory::createMaterialNameDataMapsUsingDagMC(
      const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
                             Teuchos::Array<double> >& material_id_fraction_map,
@@ -255,6 +264,7 @@ void CollisionHandlerFactory::createMaterialNameDataMapsUsingDagMC(
                   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >&
      material_name_cell_ids_map )
 {
+  #ifdef HAVE_FRENSIE_DAGMC
   // Get the cell material property values
   boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
                        std::vector<std::string> > cell_id_mat_id_map;
@@ -338,6 +348,7 @@ void CollisionHandlerFactory::createMaterialNameDataMapsUsingDagMC(
 
     ++cell_id_mat_id_it;
   }
+  #endif // end HAVE_FRENSIE_DAGMC
 }
 
 } // end Facemc namespace

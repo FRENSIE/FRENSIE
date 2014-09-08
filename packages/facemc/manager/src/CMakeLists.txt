@@ -11,8 +11,11 @@ SET(SUBPACKAGE_LIB_NAME facemc_manager)
 
 # Create the utilitycore library
 ADD_LIBRARY(${SUBPACKAGE_LIB_NAME} ${FACEMC_MANAGER_SOURCES})
-TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} ${TEUCHOS_CORE} ${TEUCHOS_PARAMETER_LIST} utility_dist data_ace geometry_dagmc facemc_source_native facemc_estimator_native facemc_collision_native)
-IF(${FACEMC_ENABLE_MPI})
+TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} ${TEUCHOS_CORE} ${TEUCHOS_PARAMETER_LIST} utility_dist data_ace facemc_source_native facemc_estimator_native facemc_collision_native)
+IF(FRENSIE_ENABLE_DAGMC)
+  TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} geometry_dagmc)
+ENDIF()
+IF(FRENSIE_ENABLE_MPI)
   TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} ${MPI_CXX_LIBRARIES})
 ENDIF()
 

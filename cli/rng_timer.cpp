@@ -88,6 +88,8 @@ void timeGenerator( const int trial_size, const int histories = 1 )
 // Main itming function
 int main()
 {
+  Utility::RandomNumberGenerator::createStreams();
+  
   Utility::RandomNumberGenerator::initialize();
   
   int trial_size = 10000000;

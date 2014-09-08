@@ -10,6 +10,7 @@
 #include <set>
 
 // FRENSIE Includes
+#include "FRENSIE_dagmc_config.hpp"
 #include "Facemc_EstimatorHandlerFactory.hpp"
 #include "Facemc_ResponseFunctionFactory.hpp"
 #include "Facemc_CellPulseHeightEstimator.hpp"
@@ -17,9 +18,13 @@
 #include "Facemc_CellCollisionFluxEstimator.hpp"
 #include "Facemc_SurfaceFluxEstimator.hpp"
 #include "Facemc_SurfaceCurrentEstimator.hpp"
+
+#ifdef HAVE_FRENSIE_DAGMC
 #include "Geometry_DagMCHelpers.hpp"
 #include "Geometry_DagMCProperties.hpp"
 #include "Geometry_ModuleInterface.hpp"
+#endif
+
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -372,6 +377,7 @@ void EstimatorHandlerFactory::validateEstimatorRep(
 }
 
 // Create the estimator data maps using DagMC information
+// If DagMC is not enabled this function will be empty
 void EstimatorHandlerFactory::createEstimatorDataMapsUsingDagMC(
 	boost::unordered_map<unsigned,std::string>& estimator_id_type_map,
 	boost::unordered_map<unsigned,std::string>& estimator_id_ptype_map,
@@ -382,6 +388,7 @@ void EstimatorHandlerFactory::createEstimatorDataMapsUsingDagMC(
 	       Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> >&
 	estimator_id_surfaces_map )
 {
+  #ifdef HAVE_FRENSIE_DAGMC
   typedef boost::unordered_map<std::string,
                       std::vector<Geometry::ModuleTraits::InternalCellHandle> >
     EstimatorPropCellIdMap;
@@ -529,9 +536,11 @@ void EstimatorHandlerFactory::createEstimatorDataMapsUsingDagMC(
   testPostcondition( estimator_id_type_map.size() ==
 		     estimator_id_cells_map.size() + 
 		     estimator_id_surfaces_map.size() );
+  #endif // end HAVE_FRENSIE_DAGMC
 }
 
 // Append data to estimator data maps
+// If DagMC is not enabled this function will be empty
 void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
 	const Teuchos::ParameterList& estimator_reps,
 	boost::unordered_map<unsigned,std::string>& estimator_id_type_map,
@@ -543,6 +552,7 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
 	       Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> >&
 	estimator_id_surfaces_map )
 {
+  #ifdef HAVE_FRENSIE_DAGMC
   Teuchos::ParameterList::ConstIterator it = estimator_reps.begin();
 
   while( it != estimator_reps.end() )
@@ -677,15 +687,18 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
   testPostcondition( estimator_id_type_map.size() ==
 		     estimator_id_cells_map.size() + 
 		     estimator_id_surfaces_map.size() );
+  #endif // end HAVE_FRENSIE_DAGMC
 }
 
 // Append cells to assigned cells
+// If DagMC is not enabled, this function will be empty
 void EstimatorHandlerFactory::appendCellsToAssignedCells(
 	      const unsigned estimator_id,
 	      Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
 	      assigned_cells,
 	      const Teuchos::Array<unsigned>& extra_cells )
 {
+  #ifdef HAVE_FRENSIE_DAGMC
   std::set<Geometry::ModuleTraits::InternalCellHandle> 
     cells( assigned_cells.begin(), assigned_cells.end() );
 
@@ -704,15 +717,18 @@ void EstimatorHandlerFactory::appendCellsToAssignedCells(
   
   assigned_cells.clear();
   assigned_cells.assign( cells.begin(), cells.end() );
+  #endif // end HAVE_FRENSIE_DAGMC
 }
 
 // Append surfaces to assigned surfaces
+// If DagMC is not enabled, this function will be empty
 void EstimatorHandlerFactory::appendSurfacesToAssignedSurfaces(
 	   const unsigned estimator_id,
 	   Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>&
 	   assigned_surfaces,
 	   const Teuchos::Array<unsigned>& extra_surfaces )
 {
+  #ifdef HAVE_FRENSIE_DAGMC
   std::set<Geometry::ModuleTraits::InternalSurfaceHandle>
     surfaces( assigned_surfaces.begin(), assigned_surfaces.end() );
 
@@ -732,9 +748,11 @@ void EstimatorHandlerFactory::appendSurfacesToAssignedSurfaces(
   
   assigned_surfaces.clear();
   assigned_surfaces.assign( surfaces.begin(), surfaces.end() );
+  #endif // end HAVE_FRENSIE_DAGMC
 }
 
 // Create the cell volume map
+// If DagMC is not enabled, this function will be empty
 void EstimatorHandlerFactory::createCellVolumeMap(
        const boost::unordered_map<unsigned,
                   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >&
@@ -742,6 +760,7 @@ void EstimatorHandlerFactory::createCellVolumeMap(
        boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,double>&
        cell_volume_map )
 {
+  #ifdef HAVE_FRENSIE_DAGMC
   boost::unordered_map<unsigned,
    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >::const_iterator
     it = estimator_id_cells_map.begin();
@@ -759,9 +778,11 @@ void EstimatorHandlerFactory::createCellVolumeMap(
 
     ++it;
   }
+  #endif // end HAVE_FRENSIE_DAGMC
 }
 
 // Create the surface area map
+// If DagMC is not enabled, this function will be empty
 void EstimatorHandlerFactory::createSurfaceAreaMap(
     const boost::unordered_map<unsigned,
                Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> >&
@@ -769,6 +790,7 @@ void EstimatorHandlerFactory::createSurfaceAreaMap(
     boost::unordered_map<Geometry::ModuleTraits::InternalSurfaceHandle,double>&
     surface_area_map )
 {
+  #ifdef HAVE_FRENSIE_DAGMC
   boost::unordered_map<unsigned,
     Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle> >::const_iterator
     it = estimator_id_surfaces_map.begin();
@@ -788,6 +810,7 @@ void EstimatorHandlerFactory::createSurfaceAreaMap(
     
     ++it;
   }
+  #endif // end HAVE_FRENSIE_DAGMC
 }
 
 // Create a cell pulse height estimator

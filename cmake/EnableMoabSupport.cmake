@@ -18,6 +18,34 @@ MACRO(ENABLE_MOAB_SUPPORT)
     MESSAGE(FATAL_ERROR "The moab library could not be found.")
   ENDIF()
 
+  SET(MOAB ${MOAB} ${MOAB_LIBRARIES})
+
+  IF(FRENSIE_ENABLE_DAGMC)
+    FIND_LIBRARY(DAGMC dagmc ${MOAB_LIBRARY_DIRS})
+
+    IF(${DAGMC} MATCHES NOTFOUND)
+      MESSAGE(FATAL_ERROR "The dagmc library could not be found.")
+    ENDIF()
+
+    SET(MOAB ${DAGMC} ${MOAB})
+
+    SET(HAVE_${PROJECT_NAME}_DAGMC "1")
+  ELSE()
+    MESSAGE(WARNING "The facemc executable cannot be built currently without enabling DagMC!")
+  ENDIF()
+
+  SET(CMAKEDEFINE \#cmakedefine)
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dagmc_config.hpp.in
+    ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_dagmc_config.hpp.in)
+  CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_dagmc_config.hpp.in
+    ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_dagmc_config.hpp)
+  
+  # Set the include paths for Moab
+  INCLUDE_DIRECTORIES(${MOAB_INCLUDE_DIRS})
+
+  # Set the link paths for Moab
+  LINK_DIRECTORIES(${MOAB_LIBRARY_DIRS})
+
   # Verify that the same compiler used to compile moab has been requested
   MESSAGE("-- Checking C compiler and Moab C compiler compatibility")
   COMPARE_COMPILERS(C ${CMAKE_C_COMPILER} ${MOAB_CC})
@@ -51,20 +79,6 @@ MACRO(ENABLE_MOAB_SUPPORT)
   
   UNSET(SAME_VENDOR)
   UNSET(SAME_VERSION)
-
-  FIND_LIBRARY(DAGMC dagmc ${MOAB_LIBRARY_DIRS})
-
-  IF(${DAGMC} MATCHES NOTFOUND)
-    MESSAGE(FATAL_ERROR "The dagmc library could not be found.")
-  ENDIF()
-
-  SET(MOAB ${DAGMC} ${MOAB} ${MOAB_LIBRARIES})
-
-  # Set the include paths for Moab
-  INCLUDE_DIRECTORIES(${MOAB_INCLUDE_DIRS})
-
-  # Set the link paths for Moab
-  LINK_DIRECTORIES(${MOAB_LIBRARY_DIRS})
 
   # Echo the Moab details if a verbose configure was requested
   IF(CMAKE_VERBOSE_CONFIGURE)
