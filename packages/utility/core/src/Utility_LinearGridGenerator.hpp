@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_LinearizeGridGenerator.hpp
+//! \file   Utility_LinearGridGenerator.hpp
 //! \author Alex Robinson
-//! \brief  Linearized grid generator class declaration
+//! \brief  Linear grid generator class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_LINEARIZED_GRID_GENERATOR_HPP
-#define UTILITY_LINEARIZED_GRID_GENERATOR_HPP
+#ifndef UTILITY_LINEAR_GRID_GENERATOR_HPP
+#define UTILITY_LINEAR_GRID_GENERATOR_HPP
 
 // Boost Includes
 #include <boost/function.hpp>
@@ -17,27 +17,28 @@
 
 namespace Utility{
 
-//! The linearized grid generator class
-class LinearizedGridGenerator
+//! The linear grid generator class
+class LinearGridGenerator
 {
   
 public:
 
   //! Constructor
-  LinearizedGridGenerator( const boost::function<double (double x)>& function);
+  LinearGridGenerator( const boost::function<double (double x)>& function);
 
   //! Destructor
-  ~LinearizedGridGenerator()
+  ~LinearGridGenerator()
   { /* ... */ }
 
   //! Reset the function
   void resetFunction( const boost::function<double (double x)>& function );
 
-  //! Generate the linearized grid
+  //! Generate the linear grid
   void generate( Teuchos::Array<double>& linearized_grid,
 		 const Teuchos::Array<double>& initial_grid_points,
 		 const double convergence_tol = 0.001,
-		 const double absolute_diff_tol = 1e-12 ) const;
+		 const double absolute_diff_tol = 1e-12,
+		 const double distance_tol = 1e-14 ) const;
   
 private:
 
@@ -47,8 +48,8 @@ private:
 
 } // end Utility namespace
 
-#endif // end UTILITY_LINEARIZED_GRID_GENERATOR_HPP
+#endif // end UTILITY_LINEAR_GRID_GENERATOR_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_LinearizedGridGenerator.hpp
+// end Utility_LinearGridGenerator.hpp
 //---------------------------------------------------------------------------//

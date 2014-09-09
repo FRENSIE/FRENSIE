@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   Utility_LinearizedGridGenerator.cpp
+//! \file   Utility_LinearGridGenerator.cpp
 //! \author Alex Robinson
-//! \brief  Linearized grid generator class definition
+//! \brief  Linear grid generator class definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -10,7 +10,7 @@
 #include <deque>
 
 // FRENSIE Includes
-#include "Utility_LinearizedGridGenerator.hpp"
+#include "Utility_LinearGridGenerator.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_SortAlgorithms.hpp"
@@ -19,7 +19,7 @@
 namespace Utility{
 
 // Constructor
-LinearizedGridGenerator::LinearizedGridGenerator( 
+LinearGridGenerator::LinearGridGenerator( 
 			   const boost::function<double (double x)>& function )
   : d_function( function )
 {
@@ -28,7 +28,7 @@ LinearizedGridGenerator::LinearizedGridGenerator(
 }
 
 // Reset the function
-void LinearizedGridGenerator::resetFunction( 
+void LinearGridGenerator::resetFunction( 
 			   const boost::function<double (double x)>& function )
 {
   // Make sure the function wrapper is not empty
@@ -49,11 +49,12 @@ void LinearizedGridGenerator::resetFunction(
  * convergence tolerance, the two grid points are kept. Otherwise the midpoint
  * is inserted into the grid and the process is repeated.
  */ 
-void LinearizedGridGenerator::generate( 
+void LinearGridGenerator::generate( 
 			     Teuchos::Array<double>& linearized_grid,
 			     const Teuchos::Array<double>& initial_grid_points,
 			     const double convergence_tol,
-			     const double absolute_diff_tol ) const
+			     const double absolute_diff_tol,
+			     const double distance_tol ) const
 {
   // Make sure at least 2 initial grid points have been given
   testPrecondition( initial_grid_points.size() >= 2 );
@@ -63,6 +64,12 @@ void LinearizedGridGenerator::generate(
   // Make sure the convergence tolerance is valid
   testPrecondition( convergence_tol <= 1.0 );
   testPrecondition( convergence_tol > 0.0 );
+  // Make sure the absolute difference tolerance is valid
+  testPrecondition( absolute_diff_tol <= 1.0 );
+  testPrecondition( absolute_diff_tol >= 0.0 );
+  // Make sure the distance tolerance is valid
+  testPrecondition( distance_tol <= 1.0 );
+  testPrecondition( distance_tol >= 0.0 );
 
   // Clear the linearized grid
   linearized_grid.clear();
@@ -73,7 +80,7 @@ void LinearizedGridGenerator::generate(
   
   // Variables used to calculate the linearized grid
   double x0, x1, x_mid, y0, y1, y_mid_exact, y_mid_estimated;
-  double relative_error, abs_diff;
+  double relative_error, abs_diff, relative_distance;
 
   // Calculate the grid points
   while( grid_queue.size() > 1 )
@@ -96,9 +103,13 @@ void LinearizedGridGenerator::generate(
     
     abs_diff = 
       Teuchos::ScalarTraits<double>::magnitude( y_mid_exact - y_mid_estimated);
+    
+    relative_distance = Utility::Policy::relError( x0, x1 );
               
     // Refine the grid
-    if( relative_error > convergence_tol && abs_diff > absolute_diff_tol )
+    if( relative_error > convergence_tol && 
+	abs_diff > absolute_diff_tol &&
+	relative_distance > distance_tol )
     {
       grid_queue.push_front( x_mid );
       grid_queue.push_front( x0 );
@@ -111,7 +122,6 @@ void LinearizedGridGenerator::generate(
   // Add the last point to the linearized grid
   linearized_grid.push_back( grid_queue.front() );  
 
-
   // Make sure the linearized grid has at least 2 points
   testPostcondition( linearized_grid.size() >= 2 );
   // Make sure the linearized grid is sorted
@@ -122,5 +132,5 @@ void LinearizedGridGenerator::generate(
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_LinearizedGridGenerator.cpp
+// end Utility_LinearGridGenerator.cpp
 //---------------------------------------------------------------------------//

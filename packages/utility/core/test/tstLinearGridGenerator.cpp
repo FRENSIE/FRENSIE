@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstLinearizedGridGenerator.cpp
+//! \file   tstLinearGridGenerator.cpp
 //! \author Alex Robinson
-//! \brief  Linearized grid generator class unit tests
+//! \brief  Linear grid generator class unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -19,7 +19,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "Utility_LinearizedGridGenerator.hpp"
+#include "Utility_LinearGridGenerator.hpp"
 #include "Utility_SortAlgorithms.hpp"
 
 //---------------------------------------------------------------------------//
@@ -46,16 +46,40 @@ private:
   double d_a;
 };
 
+struct xcosxAB
+{
+  xcosxAB( const double a,
+	   const double b )
+    : d_a( a ),
+      d_b( b )
+  { /* ... */ }
+  
+  double operator()( const double x )
+  {
+    if( x < d_a )
+      return 0.0;
+    else if( x > d_b )
+      return 0.0;
+    else
+      return x*cos(x);
+  }
+
+private:
+
+  double d_a;
+  double d_b;
+};
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that a linearized grid can be generated for the functions
-TEUCHOS_UNIT_TEST( LinearizedGridGenerator, generate )
+TEUCHOS_UNIT_TEST( LinearGridGenerator, generate )
 {
   // Create a linearized grid for x^2
   boost::function<double (double x)> function = &x2;
 
-  Utility::LinearizedGridGenerator generator( function );
+  Utility::LinearGridGenerator generator( function );
   
   Teuchos::Array<double> initial_grid( 2 );
   initial_grid[0] = 0.0;
@@ -88,7 +112,6 @@ TEUCHOS_UNIT_TEST( LinearizedGridGenerator, generate )
   x3 x_cubed( 2 );
   function = boost::bind<double>(x_cubed, _1);
 
-
   generator.resetFunction( function );
   
   generator.generate( linearized_grid, initial_grid, 0.001, 1e-12 );
@@ -96,8 +119,29 @@ TEUCHOS_UNIT_TEST( LinearizedGridGenerator, generate )
   TEST_ASSERT( Utility::Sort::isSortedAscending( linearized_grid.begin(),
 						 linearized_grid.end() ) );
   TEST_EQUALITY_CONST( linearized_grid.size(), 708 );
+
+  // Create a linearized grid for x*cos(x) in [-1, 1]
+  xcosxAB x_cos_x( -1, 1 );
+  function = boost::bind<double>(x_cos_x, _1);
+
+  initial_grid.resize( 7 );
+  initial_grid[0] = -2.0;
+  initial_grid[1] = -1.0 - 1e-15;
+  initial_grid[2] = -1.0;
+  initial_grid[3] = 0.0;
+  initial_grid[4] = 1.0;
+  initial_grid[5] = 1.0 + 1e-15;
+  initial_grid[6] = 2.0;
+
+  generator.resetFunction( function );
+
+  generator.generate( linearized_grid, initial_grid, 0.001, 1e-12, 1e-14 );
+
+  TEST_ASSERT( Utility::Sort::isSortedAscending( linearized_grid.begin(),
+						 linearized_grid.end() ) );
+  TEST_EQUALITY_CONST( linearized_grid.size(), 69 );
 }
 
 //---------------------------------------------------------------------------//
-// end tstLinearizedGridGenerator.cpp
+// end tstLinearGridGenerator.cpp
 //---------------------------------------------------------------------------//
