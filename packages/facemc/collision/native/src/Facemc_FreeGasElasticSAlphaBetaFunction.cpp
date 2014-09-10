@@ -14,11 +14,12 @@ namespace Facemc{
 
 // Constructor
 FreeGasElasticSAlphaBetaFunction::FreeGasElasticSAlphaBetaFunction(
-      Teuchos::RCP<Utility::OneDDistribution>& zero_temp_elastic_cross_section,
-      Teuchos::RCP<Facemc::NeutronScatteringAngularDistribution>& 
-      cm_scattering_distribution,
-      const double A,
-      const double kT )
+	      const Teuchos::RCP<Utility::OneDDistribution>& 
+	      zero_temp_elastic_cross_section,
+              const Teuchos::RCP<Facemc::NeutronScatteringAngularDistribution>&
+	      cm_scattering_distribution,
+	      const double A,
+	      const double kT )
   : d_A( A ),
     d_kT( kT ),
     d_kernel_factor( zero_temp_elastic_cross_section,
@@ -29,8 +30,24 @@ FreeGasElasticSAlphaBetaFunction::FreeGasElasticSAlphaBetaFunction(
 		     0.0,
 		     1e-11 )
 {
+  // Make sure the distributions are valid
+  testPrecondition( !zero_temp_elastic_cross_section.is_null() );
+  testPrecondition( !cm_scattering_distribution.is_null() );
   // Make sure the values are valid
   testPrecondition( A > 0.0 );
+  testPrecondition( kT > 0.0 );
+}
+
+// Return the atomic weight ratio
+double FreeGasElasticSAlphaBetaFunction::getAtomicWeightRatio() const
+{
+  return d_A;
+}
+  
+// Return the temperature
+double FreeGasElasticSAlphaBetaFunction::getTemperature() const
+{
+  return d_kT;
 }
 
 // Evaluate the function at a desired alpha, beta and E
@@ -48,12 +65,22 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
   testPrecondition( alpha <= alpha_max );
   testPrecondition( beta >= -E/d_kT );
   
-  d_kernel_factor.setIndependentVariables( alpha, beta, E );
-  
-  double error;
-
-  return sqrt(alpha)*exp(-d_A/2.0*(beta - (d_A+1)*alpha))*
-    d_kernel_factor.getIntegratedValue( error );
+  // Test for special condition (alpha = 0.0)
+  // Note: alpha = 0.0 can only occur when beta = 0.0. If this case occurs it
+  //       is important that the kernel factor is not integrated since it
+  //       will not converge. The multiplication by sqrt(alpha) results in
+  //       a S(alpha,beta) function value that is finite (i.e. zero).
+  if( alpha > 0.0 )
+  {
+    d_kernel_factor.setIndependentVariables( alpha, beta, E );
+    
+    double error;
+    
+    return sqrt(alpha)*exp(-d_A/2.0*(beta - (d_A+1)*alpha))*
+      d_kernel_factor.getIntegratedValue( error );
+  }
+  else // alpha == 0.0
+    return 0.0;
 }
 
 } // end Facemc namespace

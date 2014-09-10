@@ -149,19 +149,21 @@ void GaussKronrodQuadratureKernel::integrateAdaptively(
   // Make sure the rule requested is valid
   testStaticPrecondition( AdaptiveQuadraturePointTraits<Points>::valid_rule );
   // Make sure the integration limits are valid
-  testPrecondition( lower_limit < upper_limit );
+  testPrecondition( lower_limit <= upper_limit );
 
-  // Just-in-time workspace allocation
-  gsl_integration_workspace* workspace = 
-    gsl_integration_workspace_alloc( d_workspace_size );
-  
-  // Create the GSL function
-  gsl_function gsl_function_wrapper;
-  gsl_function_wrapper.function = 
-    &GaussKronrodQuadratureKernel::functorWrapper<Functor>;
-  gsl_function_wrapper.params = &integrand;
-
-  int status = gsl_integration_qag( 
+  if( lower_limit < upper_limit )
+  {
+    // Just-in-time workspace allocation
+    gsl_integration_workspace* workspace = 
+      gsl_integration_workspace_alloc( d_workspace_size );
+    
+    // Create the GSL function
+    gsl_function gsl_function_wrapper;
+    gsl_function_wrapper.function = 
+      &GaussKronrodQuadratureKernel::functorWrapper<Functor>;
+    gsl_function_wrapper.params = &integrand;
+    
+    int status = gsl_integration_qag( 
 			       &gsl_function_wrapper,
 			       lower_limit,
 			       upper_limit,
@@ -173,13 +175,19 @@ void GaussKronrodQuadratureKernel::integrateAdaptively(
 			       &result,
 			       &absolute_error );
 
-  // Verify success
-  TEST_FOR_EXCEPTION( status != GSL_SUCCESS,
-		      Utility::GSLException,
-		      gsl_strerror( status ) );
-
-  // Deallocate workspace
-  gsl_integration_workspace_free( workspace );
+    // Verify success
+    TEST_FOR_EXCEPTION( status != GSL_SUCCESS,
+			Utility::GSLException,
+			gsl_strerror( status ) );
+    
+    // Deallocate workspace
+    gsl_integration_workspace_free( workspace );
+  }
+  else // lower_limit == upper_limit
+  {
+    result = 0.0;
+    absolute_error = 0.0;
+  }
 }					
 
 } // end Utility namespace

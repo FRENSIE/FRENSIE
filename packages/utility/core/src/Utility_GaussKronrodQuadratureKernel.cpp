@@ -31,6 +31,9 @@ GaussKronrodQuadratureKernel::GaussKronrodQuadratureKernel(
   // Make sure the subinterval limit is valid
   testPrecondition( subinterval_limit > 0 );
   testPrecondition( subinterval_limit <= workspace_size );
+
+  // Turn off the gsl error handler
+  gsl_set_error_handler_off();
 }
 
 // Destructor

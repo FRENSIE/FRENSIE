@@ -54,14 +54,15 @@ public:
 
   //! Constructor
   FreeGasElasticScatteringKernelFactor( 
-      Teuchos::RCP<Utility::OneDDistribution>& zero_temp_elastic_cross_section,
-      Teuchos::RCP<Facemc::NeutronScatteringAngularDistribution>& 
-      cm_scattering_distribution,
-      const double A,
-      const double kT,
-      const double alpha,
-      const double beta,
-      const double E );
+	      const Teuchos::RCP<Utility::OneDDistribution>& 
+	      zero_temp_elastic_cross_section,
+              const Teuchos::RCP<Facemc::NeutronScatteringAngularDistribution>&
+	      cm_scattering_distribution,
+	      const double A,
+	      const double kT,
+	      const double alpha,
+	      const double beta,
+	      const double E );
   
   //! Destructor
   ~FreeGasElasticScatteringKernelFactor()

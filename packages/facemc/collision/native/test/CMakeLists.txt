@@ -147,6 +147,11 @@ ADD_EXECUTABLE(tstFreeGasElasticScatteringKernelFactor
 TARGET_LINK_LIBRARIES(tstFreeGasElasticScatteringKernelFactor facemc_collision_native)
 ADD_TEST(FreeGasElasticScatteringKernelFactor_test tstFreeGasElasticScatteringKernelFactor)
 
+ADD_EXECUTABLE(tstFreeGasElasticMarginalAlphaFunction
+  tstFreeGasElasticMarginalAlphaFunction.cpp)
+TARGET_LINK_LIBRARIES(tstFreeGasElasticMarginalAlphaFunction facemc_collision_native)
+ADD_TEST(FreeGasElasticMarginalAlphaFunction_test tstFreeGasElasticMarginalAlphaFunction)
+
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)
 
