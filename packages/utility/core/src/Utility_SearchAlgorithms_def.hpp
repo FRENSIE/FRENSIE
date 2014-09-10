@@ -58,7 +58,7 @@ Iterator binaryLowerBound( Iterator start,
 			   const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
 {
   // The iterators must be random access iterators (support +/- ops)
-  testStaticPrecondition((boost::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value));
+  //testStaticPrecondition((boost::is_same<typename std::iterator_traits<Iterator>::iterator_category,std::random_access_iterator_tag>::value));
   remember( Iterator true_end = end );
   remember( --true_end );
   // The iterators must be from a valid container (size > 0)
@@ -70,15 +70,20 @@ Iterator binaryLowerBound( Iterator start,
   // Remember the end iterator for the Postcondition check
   remember( Iterator invalid = end );
   
+  Iterator mid_point;
+
   typename std::iterator_traits<Iterator>::difference_type distance = 
     std::distance( start, end );
-  
+
   while( distance > 1 )
   {
-    if( value >= get<member>( *(start+distance/2) ) )
-      start += distance/2;
+    mid_point = start;
+    std::advance( mid_point, distance/2 );
+    
+    if( value >= get<member>( *mid_point ) )
+      start = mid_point;
     else
-      end = start+distance/2;
+      end = mid_point;
     
     distance = std::distance( start, end );
   }

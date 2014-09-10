@@ -22,16 +22,23 @@ public:
 
   //! Constructor
   FreeGasElasticSAlphaBetaFunction(
-      Teuchos::RCP<Utility::OneDDistribution>& zero_temp_elastic_cross_section,
-      Teuchos::RCP<Facemc::NeutronScatteringAngularDistribution>& 
-      cm_scattering_distribution,
-      const double A,
-      const double kT );
+	      const Teuchos::RCP<Utility::OneDDistribution>& 
+	      zero_temp_elastic_cross_section,
+              const Teuchos::RCP<Facemc::NeutronScatteringAngularDistribution>&
+	      cm_scattering_distribution,
+	      const double A,
+	      const double kT );
 
   //! Destructor
   ~FreeGasElasticSAlphaBetaFunction()
   { /* ... */ }
   
+  //! Return the atomic weight ratio
+  double getAtomicWeightRatio() const;
+  
+  //! Return the temperature
+  double getTemperature() const;
+
   //! Evaluate the function at a desired alpha, beta and E
   double operator()( const double alpha,
 		     const double beta,

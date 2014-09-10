@@ -27,14 +27,15 @@ double FreeGasElasticScatteringKernelFactor::neutron_kinetic_energy_multiplier=
 
 // Constructor
 FreeGasElasticScatteringKernelFactor::FreeGasElasticScatteringKernelFactor(
-      Teuchos::RCP<Utility::OneDDistribution>& zero_temp_elastic_cross_section,
-      Teuchos::RCP<Facemc::NeutronScatteringAngularDistribution>& 
-      cm_scattering_distribution,
-      const double A,
-      const double kT,
-      const double alpha,
-      const double beta,
-      const double E )
+	      const Teuchos::RCP<Utility::OneDDistribution>&
+	      zero_temp_elastic_cross_section,
+              const Teuchos::RCP<Facemc::NeutronScatteringAngularDistribution>&
+	      cm_scattering_distribution,
+	      const double A,
+	      const double kT,
+	      const double alpha,
+	      const double beta,
+	      const double E )
   : d_kernel( 1e-6 ),
     d_zero_temp_elastic_cross_section( zero_temp_elastic_cross_section ),
     d_cm_scattering_distribution( cm_scattering_distribution ),
@@ -84,13 +85,13 @@ void FreeGasElasticScatteringKernelFactor::setIndependentVariables(
 {
   // Make sure the values are valid
   testPrecondition( E > 0.0 );
+  testPrecondition( beta >= -E/d_kT );
   remember( double alpha_min_arg = sqrt(E)-sqrt(E+beta*d_kT) );
   remember( double alpha_min = alpha_min_arg*alpha_min_arg/(d_A*d_kT) );
   testPrecondition( alpha >= alpha_min );
   remember( double alpha_max_arg = sqrt(E)+sqrt(E+beta*d_kT) );
   remember( double alpha_max = alpha_max_arg*alpha_max_arg/(d_A*d_kT) );
   testPrecondition( alpha <= alpha_max );
-  testPrecondition( beta >= -E/d_kT );
 
   d_alpha = alpha;
   d_beta = beta;
@@ -103,10 +104,17 @@ void FreeGasElasticScatteringKernelFactor::setIndependentVariables(
 
   d_exponential_arg_const = -d_A*d_energy_ratio;
 
-  d_bessel_arg_mult = (d_A+1)/2.0*sqrt(4.0*d_A*d_alpha*d_energy_ratio -
-				       (d_beta - d_A*d_alpha)*
-				       (d_beta - d_A*d_alpha));
+  double bessel_arg_mult_arg = 
+    4.0*d_A*d_alpha*d_energy_ratio -
+    (d_beta - d_A*d_alpha)*(d_beta - d_A*d_alpha);
 
+  // When alpha ~ alpha_min, alpha ~ alpha_max or beta ~ beta_min,
+  // a very small negative argument is possible due to roundoff - set it to 0
+  if( bessel_arg_mult_arg < 0.0 )
+    bessel_arg_mult_arg = 0.0;
+  
+  d_bessel_arg_mult = (d_A+1)/2.0*sqrt(bessel_arg_mult_arg);
+  
   d_relative_velocity_mult = (d_A+1)/d_A*
     sqrt(d_A*d_kT*d_alpha*Utility::PhysicalConstants::speed_of_light*
 	 Utility::PhysicalConstants::speed_of_light/
@@ -166,7 +174,10 @@ double FreeGasElasticScatteringKernelFactor::operator()(
       term_2 = exp( bessel_arg + exp_arg )/
 	sqrt( 2*Utility::PhysicalConstants::pi*bessel_arg );
     }
-
+    
+    // Make sure the return value is valid
+    testPostcondition(!Teuchos::ScalarTraits<double>::isnaninf(term_1*term_2));
+    
     return term_1*term_2;
   }
 }

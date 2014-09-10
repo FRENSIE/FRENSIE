@@ -16,7 +16,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "Facemc_FreeGasElasticScatteringKernelFactor.cpp"
+#include "Facemc_FreeGasElasticScatteringKernelFactor.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
