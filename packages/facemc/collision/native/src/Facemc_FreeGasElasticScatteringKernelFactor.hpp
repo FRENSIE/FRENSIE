@@ -81,6 +81,9 @@ public:
 
 private:
 
+  // Calculate the cached values
+  void calculateCachedValues();
+
   // Find limits to integrate over
   void findLimits( double& lower_limit, double& upper_limit ) const;
 
@@ -90,6 +93,9 @@ private:
 
   // The neutron kinetic energy multiplier
   static double neutron_kinetic_energy_multiplier;
+
+  // The min exponential argument that can be used before returning zero
+  static double min_exp_arg;
 
   // The integration kernel
   Utility::GaussKronrodQuadratureKernel d_kernel;

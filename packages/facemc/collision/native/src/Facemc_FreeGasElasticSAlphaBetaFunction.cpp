@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "Facemc_FreeGasElasticSAlphaBetaFunction.hpp"
+#include "Utility_KinematicHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Facemc{
@@ -57,14 +58,14 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
 {
   // Make sure the values are valid
   testPrecondition( E > 0.0 );
-  remember( double alpha_min_arg = sqrt(E)-sqrt(E+beta*d_kT) );
-  remember( double alpha_min = alpha_min_arg*alpha_min_arg/(d_A*d_kT) );
+  testPrecondition( beta >= Utility::calculateBetaMin( E, d_kT ) );
+  remember( double alpha_min = Utility::calculateAlphaMin(E,beta,d_A,d_kT) );
   testPrecondition( alpha >= alpha_min );
-  remember( double alpha_max_arg = sqrt(E)+sqrt(E+beta*d_kT) );
-  remember( double alpha_max = alpha_max_arg*alpha_max_arg/(d_A*d_kT) );
+  remember( double alpha_max = Utility::calculateAlphaMax(E,beta,d_A,d_kT) );
   testPrecondition( alpha <= alpha_max );
-  testPrecondition( beta >= -E/d_kT );
   
+  double value;
+
   // Test for special condition (alpha = 0.0)
   // Note: alpha = 0.0 can only occur when beta = 0.0. If this case occurs it
   //       is important that the kernel factor is not integrated since it
@@ -74,13 +75,23 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
   {
     d_kernel_factor.setIndependentVariables( alpha, beta, E );
     
-    double error;
+    double multiplier = sqrt(alpha)*exp(-(d_A+1.0)/2.0*(beta - d_A*alpha));
     
-    return sqrt(alpha)*exp(-d_A/2.0*(beta - (d_A+1)*alpha))*
-      d_kernel_factor.getIntegratedValue( error );
+    double error;
+    value = d_kernel_factor.getIntegratedValue( error );
+    
+    // If the integrated kernel factor is zero, the multiplier is likely
+    // infinity - only multiply by it if the factor is non-zero
+    if( value > 0.0 )
+      value *= multiplier;
   }
   else // alpha == 0.0
-    return 0.0;
+    value = 0.0;
+
+  // Make sure the value is valid
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( value ) );
+
+  return value;
 }
 
 } // end Facemc namespace

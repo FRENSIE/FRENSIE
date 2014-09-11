@@ -152,6 +152,11 @@ ADD_EXECUTABLE(tstFreeGasElasticMarginalAlphaFunction
 TARGET_LINK_LIBRARIES(tstFreeGasElasticMarginalAlphaFunction facemc_collision_native)
 ADD_TEST(FreeGasElasticMarginalAlphaFunction_test tstFreeGasElasticMarginalAlphaFunction)
 
+## ADD_EXECUTABLE(tstFreeGasElasticMarginalBetaFunction
+##   tstFreeGasElasticMarginalBetaFunction.cpp)
+## TARGET_LINK_LIBRARIES(tstFreeGasElasticMarginalBetaFunction facemc_collision_native)
+## ADD_TEST(FreeGasElasticMarginalBetaFunction_test tstFreeGasElasticMarginalBetaFunction)
+
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)
 
