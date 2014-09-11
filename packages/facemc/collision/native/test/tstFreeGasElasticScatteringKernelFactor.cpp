@@ -61,8 +61,9 @@ double integratedCrossSectionValue( const double A,
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the integrated value can be returned
 TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
-		   getIntegratedValue )
+		   getIntegratedValue_energy_range )
 {
   // Calculate the integral value at energy 1e-6 MeV
   kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-6 );
@@ -253,6 +254,55 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 
   // Test against the analyticl integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-5 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the integrated value can be returned
+TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
+		   getIntegratedValue_alpha_beta_range )
+{
+  // Calculate the integral value at energy 1e-6 MeV
+  kernel_factor->setIndependentVariables( 450, 700, 1e-6 );
+
+  double value, error;
+  value = kernel_factor->getIntegratedValue( error );
+  std::cout << value << std::endl;
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       450,
+				       700,
+				       1.0e-06,
+				       value );
+  
+  double analytic_value = analyticCrossSectionValue( 0.999167,
+						     2.53010e-8,
+						     450,
+						     700,
+						     1.0e-06 );
+
+  // Test against analytic integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-9 );
+
+  // Calculate the integral value at energy 1e-6 MeV
+  kernel_factor->setIndependentVariables( 1000, 700, 1e-6 );
+
+  value = kernel_factor->getIntegratedValue( error );
+  std::cout << value << std::endl;
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       1000,
+				       700,
+				       1.0e-06,
+				       value );
+  
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      1000,
+					      700,
+					      1.0e-06 );
+
+  // Test against analytic integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
