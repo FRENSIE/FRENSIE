@@ -73,15 +73,15 @@ TEUCHOS_UNIT_TEST( CellTransmutationData, populateMatrix )
    reaction_rates[1].first = 6012;
    reaction_rates[1].second = 10;
 
-   cell_data.setReactionRates( Facemc::N__GAMMA_REACTION, reaction_rates );
+   cell_data.setReactionRates( MonteCarlo::N__GAMMA_REACTION, reaction_rates );
 
    reaction_rates[0].second = 4;
 
-   cell_data.setReactionRates( Facemc::N__2N_REACTION, reaction_rates );
+   cell_data.setReactionRates( MonteCarlo::N__2N_REACTION, reaction_rates );
 
    reaction_rates[0].second = 3;
 
-   cell_data.setReactionRates( Facemc::N__P_REACTION, reaction_rates );
+   cell_data.setReactionRates( MonteCarlo::N__P_REACTION, reaction_rates );
   
    // Set the fission fragments
    Teuchos::Array<std::pair<int,double> > fission_fragments(2);

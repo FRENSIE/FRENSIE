@@ -11,13 +11,13 @@ SET(CLI_TARGETS rng_timer ${CLI_TARGETS})
 # Create the facemc exec
 IF(FRENSIE_ENABLE_DAGMC)
   ADD_EXECUTABLE(facemc facemc.cpp)
-  TARGET_LINK_LIBRARIES(facemc facemc_manager)
+  TARGET_LINK_LIBRARIES(facemc monte_carlo_manager)
   SET(CLI_TARGETS facemc ${CLI_TARGETS})
 ENDIF()
 
 # Create the angle dist sampler exec
 ADD_EXECUTABLE(sample_scattering_distribution sample_scattering_distribution.cpp)
-TARGET_LINK_LIBRARIES(sample_scattering_distribution facemc_manager)
+TARGET_LINK_LIBRARIES(sample_scattering_distribution monte_carlo_manager)
 SET(CLI_TARGETS sample_scattering_distribution ${CLI_TARGETS})
 
 # Create the decay regresssion suite

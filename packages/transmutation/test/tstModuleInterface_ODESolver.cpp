@@ -14,7 +14,7 @@
 // FRENSIE Includes
 #include "Transmutation_ModuleInterface_ODESolver.hpp"
 #include "Geometry_ModuleTraits.hpp"
-#include "Facemc_NuclearReactionType.hpp"
+#include "MonteCarlo_NuclearReactionType.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables 
@@ -51,11 +51,11 @@ TEUCHOS_UNIT_TEST( ModuleInterface, burn )
    reaction_rates[0] = std::pair<int,double>(1001,5e-10);
 
    // Set reaction rates
-   Transmutation::ModuleInterface<Utility::ODESolver>::setReactionRates( Facemc::N__GAMMA_REACTION, reaction_rates, 1);
+   Transmutation::ModuleInterface<Utility::ODESolver>::setReactionRates( MonteCarlo::N__GAMMA_REACTION, reaction_rates, 1);
 
    reaction_rates[0] = std::pair<int,double>(1002,5e-10);
 
-   Transmutation::ModuleInterface<Utility::ODESolver>::setReactionRates( Facemc::N__GAMMA_REACTION, reaction_rates, 5);
+   Transmutation::ModuleInterface<Utility::ODESolver>::setReactionRates( MonteCarlo::N__GAMMA_REACTION, reaction_rates, 5);
 
    number_density_map.clear();
 

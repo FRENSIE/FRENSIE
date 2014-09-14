@@ -19,7 +19,7 @@
 #include "Transmutation_ModuleInterfaceDecl.hpp"
 #include "Transmutation_CellTransmutationData.hpp"
 #include "Geometry_ModuleTraits.hpp"
-#include "Facemc_NuclearReactionType.hpp"
+#include "MonteCarlo_NuclearReactionType.hpp"
 #include "Utility_BoostSolver.hpp"
 
 namespace Transmutation{
@@ -33,7 +33,7 @@ class ModuleInterface<Utility::BoostSolver>
 
 public:
   //! Set the reaction rates
-  static void setReactionRates(const Facemc::NuclearReactionType reaction, 
+  static void setReactionRates(const MonteCarlo::NuclearReactionType reaction, 
                                Teuchos::Array<std::pair<int,double> >& reaction_rates, 
                                const Geometry::ModuleTraits::InternalCellHandle cell_id);
   
