@@ -15,7 +15,7 @@
 #include "Transmutation_IsotopesForDepletion.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
-#include "Facemc_NuclearReactionType.hpp"
+#include "MonteCarlo_NuclearReactionType.hpp"
 
 namespace Transmutation {
 
@@ -55,7 +55,7 @@ void ReactionRateMatrix::addFissionFragments(Teuchos::RCP<Teuchos::SerialDenseMa
    
 void ReactionRateMatrix::addReactionRates(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& reaction_rate_matrix,
                                           Teuchos::Array<std::pair<int,double> >& reaction_rates,
-                                          const Facemc::NuclearReactionType& reaction)
+                                          const MonteCarlo::NuclearReactionType& reaction)
 {
    // Initialize zaids array
    Teuchos::Array<int> zaids;
@@ -119,23 +119,23 @@ bool ReactionRateMatrix::isIsotopeInList(const int input_zaid, const Teuchos::Ar
 }
 
 int ReactionRateMatrix::reactionProduct(const int input_zaid, 
-                                         const Facemc::NuclearReactionType& reaction) 
+                                         const MonteCarlo::NuclearReactionType& reaction) 
 {
    switch ( reaction )
    {
-      case Facemc::N__2N_REACTION:
+      case MonteCarlo::N__2N_REACTION:
          return input_zaid + 1 - 2;
-      case Facemc::N__GAMMA_REACTION:
+      case MonteCarlo::N__GAMMA_REACTION:
          return input_zaid + 1 - 0;
-      case Facemc::N__P_REACTION:
+      case MonteCarlo::N__P_REACTION:
          return input_zaid + 1 - 1000;
-      case Facemc::N__D_REACTION:
+      case MonteCarlo::N__D_REACTION:
          return input_zaid + 1 - 1002;
-      case Facemc::N__T_REACTION:
+      case MonteCarlo::N__T_REACTION:
          return input_zaid + 1 - 1003;
-      case Facemc::N__ALPHA_REACTION:
+      case MonteCarlo::N__ALPHA_REACTION:
          return input_zaid + 1 - 2004;
-      case Facemc::N__HE3_REACTION:
+      case MonteCarlo::N__HE3_REACTION:
          return input_zaid + 1 - 2003;
       default:
          // Error is reaction type is not found

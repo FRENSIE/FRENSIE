@@ -20,7 +20,7 @@
 
 // FRENSIE Includes
 #include "Geometry_ModuleTraits.hpp"
-#include "Facemc_NuclearReactionType.hpp"
+#include "MonteCarlo_NuclearReactionType.hpp"
 
 namespace Transmutation {
 
@@ -41,7 +41,7 @@ public:
   void getNumberDensities(Teuchos::Array<double>& number_densities);
 
   //! Set Reaction Rates
-  void setReactionRates(const Facemc::NuclearReactionType reaction, 
+  void setReactionRates(const MonteCarlo::NuclearReactionType reaction, 
                         const Teuchos::Array<std::pair<int,double> >& reaction_rates);
 
   //! Set Fission Reaction Rates
@@ -67,7 +67,7 @@ private:
   boost::unordered_map<int,double> d_number_densities;
 
   // Map of reaction rates
-  boost::unordered_map<Facemc::NuclearReactionType, Teuchos::Array<std::pair<int,double> > > d_reaction_rates;
+  boost::unordered_map<MonteCarlo::NuclearReactionType, Teuchos::Array<std::pair<int,double> > > d_reaction_rates;
 
   // Map of fission reaction rates
   boost::unordered_map<int,double> d_fission_reaction_rates;

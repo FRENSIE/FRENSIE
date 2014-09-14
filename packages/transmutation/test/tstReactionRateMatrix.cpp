@@ -71,7 +71,7 @@ TEUCHOS_UNIT_TEST( ReactionRateMatrix, addReactionRates )
 
    Transmutation::ReactionRateMatrix::addReactionRates(reaction_rate_matrix,
                                                        reaction_rates,
-                                                       Facemc::N__2N_REACTION);
+                                                       MonteCarlo::N__2N_REACTION);
 
    TEST_FLOATING_EQUALITY((*reaction_rate_matrix)(3,3), -5.0, 1e-15);
    TEST_FLOATING_EQUALITY((*reaction_rate_matrix)(2,3),  5.0, 1e-15);
@@ -81,7 +81,7 @@ TEUCHOS_UNIT_TEST( ReactionRateMatrix, addReactionRates )
 
    Transmutation::ReactionRateMatrix::addReactionRates(reaction_rate_matrix,
                                                        reaction_rates,
-                                                       Facemc::N__GAMMA_REACTION);
+                                                       MonteCarlo::N__GAMMA_REACTION);
 
    TEST_FLOATING_EQUALITY((*reaction_rate_matrix)(0,0), -5.0, 1e-15);
    TEST_FLOATING_EQUALITY((*reaction_rate_matrix)(1,0),  5.0, 1e-15);
@@ -91,7 +91,7 @@ TEUCHOS_UNIT_TEST( ReactionRateMatrix, addReactionRates )
 
    Transmutation::ReactionRateMatrix::addReactionRates(reaction_rate_matrix,
                                                        reaction_rates,
-                                                       Facemc::N__P_REACTION);
+                                                       MonteCarlo::N__P_REACTION);
 
    TEST_FLOATING_EQUALITY((*reaction_rate_matrix)(17,17), -5.0, 1e-15);
    TEST_FLOATING_EQUALITY((*reaction_rate_matrix)(11,17),  5.0, 1e-15);
@@ -101,7 +101,7 @@ TEUCHOS_UNIT_TEST( ReactionRateMatrix, addReactionRates )
 
    Transmutation::ReactionRateMatrix::addReactionRates(reaction_rate_matrix,
                                                        reaction_rates,
-                                                       Facemc::N__D_REACTION);
+                                                       MonteCarlo::N__D_REACTION);
 
    int parent_zaid;
    int daughter_zaid;
@@ -117,7 +117,7 @@ TEUCHOS_UNIT_TEST( ReactionRateMatrix, addReactionRates )
 
    Transmutation::ReactionRateMatrix::addReactionRates(reaction_rate_matrix,
                                                        reaction_rates,
-                                                       Facemc::N__T_REACTION);
+                                                       MonteCarlo::N__T_REACTION);
 
    parent_zaid = Transmutation::IsotopesForDepletion::getLocation( 11023 , zaids ); 
    daughter_zaid = Transmutation::IsotopesForDepletion::getLocation( 10021 , zaids ); 
@@ -130,7 +130,7 @@ TEUCHOS_UNIT_TEST( ReactionRateMatrix, addReactionRates )
 
    Transmutation::ReactionRateMatrix::addReactionRates(reaction_rate_matrix,
                                                        reaction_rates,
-                                                       Facemc::N__ALPHA_REACTION);
+                                                       MonteCarlo::N__ALPHA_REACTION);
 
    parent_zaid = Transmutation::IsotopesForDepletion::getLocation( 16034 , zaids ); 
    daughter_zaid = Transmutation::IsotopesForDepletion::getLocation( 14031 , zaids ); 
@@ -143,7 +143,7 @@ TEUCHOS_UNIT_TEST( ReactionRateMatrix, addReactionRates )
 
    Transmutation::ReactionRateMatrix::addReactionRates(reaction_rate_matrix,
                                                        reaction_rates,
-                                                       Facemc::N__HE3_REACTION);
+                                                       MonteCarlo::N__HE3_REACTION);
 
    parent_zaid = Transmutation::IsotopesForDepletion::getLocation( 26056 , zaids ); 
    daughter_zaid = Transmutation::IsotopesForDepletion::getLocation( 24054 , zaids ); 

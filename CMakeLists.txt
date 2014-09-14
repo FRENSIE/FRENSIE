@@ -122,12 +122,12 @@ INCLUDE_DIRECTORIES(packages/utility/core/src packages/utility/prng/src
 packages/utility/hdf5/src packages/utility/distribution/src
 packages/geometry/core/src packages/geometry/dagmc/src
 packages/geometry/interface packages/data/ace/src packages/data/epdl/src
-packages/facemc/core/src packages/facemc/source/core/src
-packages/facemc/source/interface packages/facemc/source/native/src
-packages/facemc/estimator/core/src packages/facemc/estimator/interface
-packages/facemc/estimator/native/src packages/facemc/collision/core/src
-packages/facemc/collision/interface packages/facemc/collision/native/src
-packages/facemc/manager/src packages/transmutation/src packages/data/decay/src
+packages/monte_carlo/core/src packages/monte_carlo/source/core/src
+packages/monte_carlo/source/interface packages/monte_carlo/source/native/src
+packages/monte_carlo/estimator/core/src packages/monte_carlo/estimator/interface
+packages/monte_carlo/estimator/native/src packages/monte_carlo/collision/core/src
+packages/monte_carlo/collision/interface packages/monte_carlo/collision/native/src
+packages/monte_carlo/manager/src packages/transmutation/src packages/data/decay/src
 packages/data/endf/src)
 
 ADD_SUBDIRECTORY(cli)

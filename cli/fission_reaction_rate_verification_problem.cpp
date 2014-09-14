@@ -16,7 +16,7 @@
 // FRENSIE includes
 #include "Transmutation_ModuleInterface_ODESolver.hpp"
 #include "Geometry_ModuleTraits.hpp"
-#include "Facemc_NuclearReactionType.hpp"
+#include "MonteCarlo_NuclearReactionType.hpp"
 
 
 //---------------------------------------------------------------------------//

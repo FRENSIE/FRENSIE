@@ -17,17 +17,17 @@
 #include <Teuchos_FancyOStream.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
-// Facemc Includes
+// MonteCarlo Includes
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
-#include "Facemc_ElasticNeutronScatteringDistribution.hpp"
-#include "Facemc_NeutronScatteringDistributionFactory.hpp"
-#include "Facemc_NuclearReactionFactory.hpp"
-#include "Facemc_SimulationProperties.hpp"
+#include "MonteCarlo_ElasticNeutronScatteringDistribution.hpp"
+#include "MonteCarlo_NeutronScatteringDistributionFactory.hpp"
+#include "MonteCarlo_NuclearReactionFactory.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_DirectionHelpers.hpp"
 
 // Transparent NeutronScatteringDistributionFactory
-class TransNeutronScatteringDistributionFactory : public Facemc::NeutronScatteringDistributionFactory
+class TransNeutronScatteringDistributionFactory : public MonteCarlo::NeutronScatteringDistributionFactory
 {
 public:
   TransNeutronScatteringDistributionFactory(
@@ -39,7 +39,7 @@ public:
                            const Teuchos::ArrayView<const double>& and_block,
                            const Teuchos::ArrayView<const double>& ldlw_block,
                            const Teuchos::ArrayView<const double>& dlw_block )
-  : Facemc::NeutronScatteringDistributionFactory( table_name,
+  : MonteCarlo::NeutronScatteringDistributionFactory( table_name,
                                                   atomic_weight_ratio,
                                                   mtr_block,
                                                   tyr_block,
@@ -53,7 +53,7 @@ public:
   { /* ... */ }
 
 
-  using Facemc::NeutronScatteringDistributionFactory::getReactionAngularDist;
+  using MonteCarlo::NeutronScatteringDistributionFactory::getReactionAngularDist;
 };
 
 
@@ -93,7 +93,7 @@ int main( int argc, char** argv )
   Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
   Teuchos::RCP<TransNeutronScatteringDistributionFactory> 
     neutron_distribution_factory;
-  Teuchos::RCP<Facemc::NuclearReactionFactory> reaction_factory;
+  Teuchos::RCP<MonteCarlo::NuclearReactionFactory> reaction_factory;
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -118,8 +118,8 @@ int main( int argc, char** argv )
     cross_sections_table_info->get<Teuchos::ParameterList>( isotope );
 
   // Convert the mt number to a reaction type
-  Facemc::NuclearReactionType reaction = 
-    Facemc::convertUnsignedToNuclearReactionType( mt_number );
+  MonteCarlo::NuclearReactionType reaction = 
+    MonteCarlo::convertUnsignedToNuclearReactionType( mt_number );
 
   ace_file_handler.reset( new Data::ACEFileHandler( 
 			      table_info.get<std::string>( "file_path" ),
@@ -144,7 +144,7 @@ int main( int argc, char** argv )
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
-  reaction_factory.reset( new Facemc::NuclearReactionFactory( 
+  reaction_factory.reset( new MonteCarlo::NuclearReactionFactory( 
 				   table_info.get<std::string>( "table_name" ),
 				   ace_file_handler->getTableAtomicWeightRatio(),
 				   ace_file_handler->getTableTemperature(),
@@ -165,25 +165,25 @@ int main( int argc, char** argv )
 				   xss_data_extractor->extractDNEDLBlock(),
 				   xss_data_extractor->extractDNEDBlock() ) );
 
-  Teuchos::RCP<Facemc::NeutronScatteringDistribution> scattering_dist;
+  Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution> scattering_dist;
   
   neutron_distribution_factory->createScatteringDistribution(
 							     reaction,
 							     scattering_dist );
 
-  boost::unordered_map<Facemc::NuclearReactionType,Teuchos::RCP<Facemc::NuclearReaction> >
+  boost::unordered_map<MonteCarlo::NuclearReactionType,Teuchos::RCP<MonteCarlo::NuclearReaction> >
     scattering_reactions;
   
   reaction_factory->createScatteringReactions( scattering_reactions );
   
-  Teuchos::RCP<Facemc::NuclearReaction> scattering_reaction = 
+  Teuchos::RCP<MonteCarlo::NuclearReaction> scattering_reaction = 
     scattering_reactions.find( reaction )->second;
 
   // Turn off free gas treatment
-  Facemc::SimulationProperties::setFreeGasThreshold( 1e-11 );
+  MonteCarlo::SimulationProperties::setFreeGasThreshold( 1e-11 );
 
-  Facemc::NeutronState neutron( 0ull );
-  Facemc::ParticleBank bank;
+  MonteCarlo::NeutronState neutron( 0ull );
+  MonteCarlo::ParticleBank bank;
   neutron.setEnergy( incoming_energy );
   neutron.setDirection( 0.0, 0.0, 1.0 );
   double A = ace_file_handler->getTableAtomicWeightRatio();

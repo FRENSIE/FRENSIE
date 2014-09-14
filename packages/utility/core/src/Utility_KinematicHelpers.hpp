@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Facemc_KinematicHelpers.hpp
+//! \file   MonteCarlo_KinematicHelpers.hpp
 //! \author Alex Bennett
 //! \brief  Kinematic Helpers base class declaration
 //!
@@ -110,6 +110,6 @@ inline double calculateKineticEnergy(
 #endif // end UTILITY_KINEMATIC_HELPERS_HPP
 
 //---------------------------------------------------------------------------//
-// end Facemc_KinematicHelpers.hpp
+// end MonteCarlo_KinematicHelpers.hpp
 //---------------------------------------------------------------------------//
 
