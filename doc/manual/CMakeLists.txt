@@ -4,13 +4,16 @@ FIND_PACKAGE(Doxygen)
 IF(DOXYGEN_FOUND)
 
   # Find doxygen depends
-  FILE(GLOB_RECURSE DOXYGEN_DEPENDS ../../packages/*.cpp ../../packages/*.hpp ../../packages/*.F90 ../../packages/*.dox *.dox *.in)
+  FILE(GLOB_RECURSE DOXYGEN_DEPENDS ../../packages/*.cpp ../../packages/*.hpp ../../packages/*.F90 ../../packages/*.dox *.dox *.in *.xml)
   
   # Configure the Doxygen file
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
   # Configure the html wrapper file
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/manual.html.in ${CMAKE_CURRENT_BINARY_DIR}/manual.html)
+
+  # Configure the doxygen format xml file
+  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/DoxygenLayout.xml.in ${CMAKE_CURRENT_BINARY_DIR}/DoxygenLayout.xml)
 
   # Add a custom doxygen build command
   IF(CMAKE_VERBOSE_CONFIGURE)
@@ -21,7 +24,7 @@ IF(DOXYGEN_FOUND)
     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     DEPENDS ${DOXYGEN_DEPENDS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Generating FACEMC manual with Doxygen" VERBATIM)
+    COMMENT "Generating FRENSIE manual with Doxygen" VERBATIM)
 
   # Add a custom build target
   ADD_CUSTOM_TARGET(manual
