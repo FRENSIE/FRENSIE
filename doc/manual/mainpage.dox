@@ -1,6 +1,6 @@
 // This file is used to add material to the index page.
 
-/*! \mainpage Overview, Theory and Usage
+/*! Overview, Theory and Usage
  * 
  * The Forward Adjoint Continuous Energy Monte Carlo (FACEMC) code is a 
  * shielding code that can be used to model experiments and devices with a

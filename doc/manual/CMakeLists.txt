@@ -4,7 +4,7 @@ FIND_PACKAGE(Doxygen)
 IF(DOXYGEN_FOUND)
 
   # Find doxygen depends
-  FILE(GLOB_RECURSE DOXYGEN_DEPENDS ../../packages/*.cpp ../../packages/*.hpp ../../packages/*.F90 ../../packages/*.dox *.dox *.in *.xml)
+  FILE(GLOB_RECURSE DOXYGEN_DEPENDS ${CMAKE_SOURCE_DIR}/packages/*.cpp ${CMAKE_SOURCE_DIR}/packages/*.hpp ${CMAKE_SOURCE_DIR}/packages/*.F90 ${CMAKE_SOURCE_DIR}/packages/*.dox *.dox *.in *.xml ${CMAKE_SOURCE_DIR}/README.md)
   
   # Configure the Doxygen file
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
