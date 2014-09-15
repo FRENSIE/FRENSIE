@@ -2,4 +2,24 @@
 
 /*! \page utility Utility Package
  *
+ * The utility package provides a collection of low level classes and
+ * functions that can be useful in a variety of applications. The utility
+ * package is further divided into a series of subpackages, which are
+ * listed below.
+ * <ul>
+ *  <li> \subpage core "core"
+ *  <li> \subpage hdf5 "hdf5"
+ *  <li> \subpage prgn "prgn"
+ *  <li> \subpage distribution "distribution"
+ * </ul>
+ *
+ * Developers should refer to the \ref utility_package "utility dev" page for
+ * more information on the utility package.
  */
+
+/*! \defgroup utility_package
+ *
+ * 
+ */
+
+
