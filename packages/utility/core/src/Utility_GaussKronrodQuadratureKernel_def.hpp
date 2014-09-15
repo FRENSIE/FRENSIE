@@ -6,9 +6,6 @@
 //!
 //---------------------------------------------------------------------------//
 
-// GSL Includes
-#include <gsl/gsl_errno.h>
-
 // Boost Includes
 #include <boost/mem_fn.hpp>
 

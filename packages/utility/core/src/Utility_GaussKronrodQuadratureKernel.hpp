@@ -11,6 +11,8 @@
 
 // GSL Includes
 #include <gsl/gsl_integration.h>
+#include <gsl/gsl_errno.h>
+
 
 // Trilinos Includes
 #include <Teuchos_ArrayView.hpp>
@@ -22,6 +24,10 @@ class GaussKronrodQuadratureKernel
 {
 
 public:
+
+  //! Allow the kernel to throw exceptions (default is no)
+  static void throwExceptions( const bool allow_throw );
+  
   
   //! Constructor
   GaussKronrodQuadratureKernel( const double relative_error_tol,
@@ -101,6 +107,9 @@ private:
   // Function wrapper for evaluating the functor
   template<typename Functor>
   static double functorWrapper( const double x, void* indirected_functor );
+
+  // The default gsl error handler
+  static gsl_error_handler_t* default_gsl_error_handler;
 
   // The relative error tolerance
   double d_relative_error_tol;
