@@ -1,0 +1,17 @@
+// This file is used to add material to the tools page of the user manual
+
+/*! \page tools
+ *
+ * Using the FRENSIE packages, tools can and have been created for conducting 
+ * methods research. The primary tool for conducting Monte Carlo methods 
+ * research is the Forward-Adjoint Continuous Energy Monte Carlo code 
+ * (\subpage facemc). Work being done in the transmutation package will 
+ * eventually find its way into the FACEMC tool to provide support for burnup 
+ * calculations. There are also longer term plans to add deterministic 
+ * transport tools for conducting hybrid-methods research. To learn more about 
+ * ongoing work and future work, please refer to the (\subpage future_work) 
+ * page. All of the tools available are listed below.
+ * <ul>
+ *  <li> \subpage facemc
+ * </ul>
+ */ 

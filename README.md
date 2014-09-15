@@ -1,11 +1,7 @@
-FRENSIE: Framework for REsearch in Nuclear ScIence and Engineering {#mainpage}
+Build Procedure {#build_page}
 =====
 
-[TOC]
-
 ## Dependencies 
-Dependencies {#section1}
------
 To promote rapid scientific software development and research, FRENSIE is built
 off of a large number of software libraries. The software that FRENSIE
 depends on is listed below.
@@ -21,13 +17,9 @@ depends on is listed below.
 9. [Boost 1.56.0](http://www.boost.org/)
 10. [GSL 1.16](http://www.gnu.org/software/gsl/)
 
-
-
 FRENSIE also requires a GNU compiler (4.7.3 or greater) and CMake version 3.0.1 to build correctly. All of the above software libraries will be built from source. This process will be described in the next section.
 
 ## Building Dependent Software Libraries
-Building Dependent Software Libraries {#section2}
------
 Before any of the software libraries are built, verify that the system has CMake version 3.0.1 installed. If CMake is not installed or an older version is present, build CMake 3.0.1 using the instructions below.
 
 When building software libraries and executables, the following directory structure should be adopted: software/package/package.xx.xx.xx, software/package/build, software/package/src. "package" will be the name of the particular software package. "package.xx.xx.xx" comes from unpacking the compressed source files (e.g. package.tar.gz). The src directory is created by making a softlink to the package.xx.xx.xx directory. This is done to make the build a bit easier.
