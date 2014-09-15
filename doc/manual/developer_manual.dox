@@ -1,0 +1,12 @@
+// This file is used to add material to the developer manual page
+
+/*! \page developer_manual Developer Manual
+ *
+ * One of the key features of any research code is extensibility and 
+ * accomodating the development of extensible software is one of the priorities
+ * of FRENSIE. The choice of coding language is very important if extensibility
+ * is a priority. While both C++ and Fortran were considered, C++ was 
+ * ultimately chosen (though some Fortran 2003 is also used). In addition to 
+ * coding language the organization of the framework and the software design 
+ * strategies employed are also very important for extensibility.
+ */

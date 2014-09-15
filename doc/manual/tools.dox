@@ -1,6 +1,6 @@
 // This file is used to add material to the tools page of the user manual
 
-/*! \page tools
+/*! \page tools Tools
  *
  * Using the FRENSIE packages, tools can and have been created for conducting 
  * methods research. The primary tool for conducting Monte Carlo methods 

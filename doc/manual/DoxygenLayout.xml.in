@@ -3,7 +3,7 @@
   <!-- Navigation index tabs for HTML output -->
   <navindex>
     <tab type="mainpage" visible="no" title=""/>
-    <tab type="usergroup" title="Developer Manual">
+    <tab type="usergroup" title="API">
       <tab type="pages" visible="yes" title="" intro=""/>
       <tab type="modules" visible="yes" title="" intro=""/>
       <tab type="namespaces" visible="yes" title="Namespaces">

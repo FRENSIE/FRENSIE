@@ -606,7 +606,7 @@ LAYOUT_FILE            =
 # feature you need bibtex and perl available in the search path. Do not use
 # file names with spaces, bibtex cannot handle them.
 
-CITE_BIB_FILES         =
+CITE_BIB_FILES         = ${CMAKE_CURRENT_SOURCE_DIR}/references.bib
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
@@ -1385,7 +1385,7 @@ LATEX_SOURCE_CODE      = YES
 # bibliography, e.g. plainnat, or ieeetr. The default style is "plain". See
 # http://en.wikipedia.org/wiki/BibTeX for more info.
 
-LATEX_BIB_STYLE        = plain
+LATEX_BIB_STYLE        = IEEEtran_custom
 
 #---------------------------------------------------------------------------
 # configuration options related to the RTF output

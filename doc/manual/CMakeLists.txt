@@ -1,10 +1,15 @@
 # Add a target to generate API documentation with Doxygen
-FIND_PACKAGE(Doxygen)
+IF(NOT ${DOXYGEN_PREFIX} EQUAL "")
+  SET(DOXYGEN_EXECUTABLE ${DOXYGEN_PREFIX}/bin/doxygen)
+  SET(DOXYGEN_FOUND 1)
+ELSE()
+  FIND_PACKAGE(Doxygen 1.8.0 REQUIRED)
+ENDIF()
 
 IF(DOXYGEN_FOUND)
 
   # Find doxygen depends
-  FILE(GLOB_RECURSE DOXYGEN_DEPENDS ${CMAKE_SOURCE_DIR}/packages/*.cpp ${CMAKE_SOURCE_DIR}/packages/*.hpp ${CMAKE_SOURCE_DIR}/packages/*.F90 ${CMAKE_SOURCE_DIR}/packages/*.dox *.dox *.in *.xml ${CMAKE_SOURCE_DIR}/README.md)
+  FILE(GLOB_RECURSE DOXYGEN_DEPENDS ${CMAKE_SOURCE_DIR}/packages/*.cpp ${CMAKE_SOURCE_DIR}/packages/*.hpp ${CMAKE_SOURCE_DIR}/packages/*.F90 ${CMAKE_SOURCE_DIR}/packages/*.dox *.dox *.in *.xml *.bib ${CMAKE_SOURCE_DIR}/README.md)
   
   # Configure the Doxygen file
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
@@ -14,6 +19,9 @@ IF(DOXYGEN_FOUND)
 
   # Configure the doxygen format xml file
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/DoxygenLayout.xml.in ${CMAKE_CURRENT_BINARY_DIR}/DoxygenLayout.xml)
+
+  # Configure the IEEEtran_custom format file
+  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/IEEEtran_custom.bst.in ${CMAKE_CURRENT_BINARY_DIR}/IEEEtran_custom.bst)
 
   # Add a custom doxygen build command
   IF(CMAKE_VERBOSE_CONFIGURE)
