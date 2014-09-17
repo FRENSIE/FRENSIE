@@ -146,20 +146,20 @@
  * only open source software that has some continuous energy adjoint 
  * capabilities. Several codes, such as MCNP5 and MORSE have implemented the 
  * adjoint process with a discrete or multigroup energy format.
- * | Code | \f$n\f$ | \f$\gamma\f$ | \f$n^{\dagger}\f$ | \f$gamma^{\dagger}\f$|
+ * | Code | \f$n\f$ | \f$\gamma\f$ | \f$n^{\dagger}\f$ |\f$\gamma^{\dagger}\f$|
  * |:----:|:-------:|:------------:|:-----------------:|:--------------------:|
- * |EGS4  |   -     | \f$\surd\f$  |    -              |   -                  |
- * |EGSnrc|   -     | \f$\surd\f$  |    -              |   -                  |
- * |ITS6  |   -     | \f$\surd\f$  |    -              |   -                  |
- * |PENELOPE| -     | \f$\surd\f$  |    -              |   -                  |
- * |MORSE|    -     | \f$\surd\f$  |    -              |   -                  |
- * |TART2005| \f$\surd\f$ | \f$\surd\f$  |  -          |   -                  |
- * |MCNP5/6|  \f$\surd\f$ |  \f$\surd\f$ |  -          |   -                  |
- * |MCNPX|  \f$\surd\f$ |  \f$\surd\f$ |-              |   -                  |
- * |GEANT4| \f$\surd\f$ |  \f$\surd\f$ |-              |  \f$\surd\f$         |
- * |MCBEND| \f$\surd\f$ |  \f$\surd\f$ |  \f$\surd\f$  |   -                  |
- * |OPENMC| \f$\surd\f$ | -        |    -              |   -                  |
- * |FACEMC| \f$\surd\f$ | \f$\surd\f$ | \f$\surd\f$    |  \f$\surd\f$         |
+ * |<a href=http://rcwww.kek.jp/research/egs/egs4_source.html>EGS4</a>|-|\f$\surd\f$|-|-|
+ * |<a href=http://www.nrc-cnrc.gc.ca/eng/solutions/advisory/egsnrc_index.html>EGSnrc</a>|-|\f$\surd\f$|-|-|
+ * |<a href=https://rsicc.ornl.gov/codes/ccc/ccc7/ccc-792.html>ITS6</a>|-|\f$\surd\f$|-|-|
+ * |<a href=https://rsicc.ornl.gov/codes/ccc/ccc7/ccc-782.html>PENELOPE</a>|-|\f$\surd\f$|-|-|
+ * |<a href=http://www.oecd-nea.org/tools/abstract/detail/ccc-0127/>MORSE</a>|-|\f$\surd\f$|-|-|
+ * |<a href=https://wci.llnl.gov/codes/tart/tart_2005.html>TART2005</a>|\f$\surd\f$|\f$\surd\f$|-|-|
+ * |<a href=https://mcnp.lanl.gov/>MCNP5/6</a>|\f$\surd\f$|\f$\surd\f$|-|-|
+ * |<a href=http://www.oecd-nea.org/tools/abstract/detail/ccc-0740>MCNPX</a>|\f$\surd\f$|\f$\surd\f$|-|-|
+ * |<a href=http://geant4.cern.ch/>GEANT4</a>|\f$\surd\f$|\f$\surd\f$|-|\f$\surd\f$|
+ * |<a href=http://www.answerssoftwareservice.com/mcbend/>MCBEND</a>|\f$\surd\f$|\f$\surd\f$|\f$\surd\f$|-|
+ * |<a href=http://mit-crpg.github.io/openmc/>OPENMC</a>|\f$\surd\f$|-|-|-|
+ * |\ref facemc_man "FACEMC"|\f$\surd\f$|\f$\surd\f$|\f$\surd\f$|\f$\surd\f$|
  * The main reason for the apparent lack of codes that have implemented the 
  * adjoint process on a continuous energy scale is the lack of available 
  * adjoint cross section data necessary for the adjoint process. The popular 
@@ -195,5 +195,5 @@
  *  \section The Fredholm Integral Equation of the Second Kind (FIESK)
  *  ...
  * 
- * \subpage Bibliography
+ * 
  */

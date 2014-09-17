@@ -1,4 +1,4 @@
-Build Procedure {#build_page}
+Installation {#installation}
 =====
 
 ## Dependencies 

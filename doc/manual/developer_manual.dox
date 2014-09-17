@@ -1,12 +1,107 @@
 // This file is used to add material to the developer manual page
 
-/*! \page developer_manual Developer Manual
+/*! \page developer_manual Developer's Manual
  *
- * One of the key features of any research code is extensibility and 
- * accomodating the development of extensible software is one of the priorities
- * of FRENSIE. The choice of coding language is very important if extensibility
- * is a priority. While both C++ and Fortran were considered, C++ was 
- * ultimately chosen (though some Fortran 2003 is also used). In addition to 
- * coding language the organization of the framework and the software design 
- * strategies employed are also very important for extensibility.
+ * \tableofcontents
+ *
+ * \section framework_sec Framework Definition
+ * A framework is a platform for developing software applications. A framework
+ * is similar to an application programming interface (API), though a 
+ * framework will typically include an API (an API provides access to elements
+ * supported by the framework). Using a framework to develop software has
+ * many advantages. First, frameworks promote the development of modular
+ * and therefore resuable code. Frameworks also promote the development of
+ * robust and reliable code through the use of unit and integral testing.
+ * Finally, frameworks allow developers to write less code to achieve their 
+ * goals by optimizing code reuse, which is done through the writing of highly 
+ * modular code. 
+ *
+ * The use of object-oriented programming practices within a framework over
+ * procedure-oriented programming has many advantages as well. To begin, 
+ * the creation of objects (classes) encapsulates data and information. 
+ * Encapsulation further enforces data abstraction and promotes code reuse.
+ * Objects also provide a flexible mechanism for modeling real-world objects.
+ * The relationships between real-world objects can be further modeled with
+ * class hierarchies and containment hierarchies. The use of inheritance
+ * (virtual class interfaces) makes it possible to modify and extend
+ * objects. Software complexity is also reduced because most (if not all)
+ * state information is encapsulated within each object, rather than floating
+ * around as global variables. 
+ *
+ * \section frensie_sec FRENSIE
+ * The Framework for REsearch in Nuclear ScIence and Engineering (FRENSIE)
+ * is a new framework for doing Monte Carlo methods research. One of the key
+ * features of any research code is extensibility and accommodating the
+ * development of extensible software is one of the priorities of FRENSIE. The
+ * choice of coding language is very important if extensibility is a priority.
+ * As explained in the \ref framework_sec "last" section, it is much easier
+ * to make object-oriented software extensible so an object-oriented language
+ * is a natural choice. To popular software languages commonly used to 
+ * develop scientific software are C++ and Fortran. Fortran isn't commonly
+ * thought of as an object-oriented language. However, modern Fortran (2003)
+ * is fully object-oriented. Making a choice between the two came down to
+ * the support in C++ for generic programming (templates), which currently
+ * doesn't have an equivalent in Fortran. In some low-level functions, 
+ * Fortran 2003 is used. The bulk of the code in FRENSIE is written in C++. 
+ *
+ * In addition to coding language, the organization of the framework and the
+ * software design strategies employed are also very important for 
+ * extensibility and code reuse. In the following subsections, both of these
+ * topics will be discussed. The code testing practices that have been 
+ * adopted along with the specific development tools that are used will also
+ * be discussed.
+ *
+ * \subsection frensie_org_subsec Organization and Package Overview
+ * At the highest level, the framework is organized into packages. Each 
+ * package has a particular, clearly defined purpose. Packages are often
+ * further divided into subpackages and in some cases, sub-subpackages. As with
+ * class dependency graph, the package dependency graph should be a directed 
+ * acyclic. Cyclical dependencies indicate code design failures and should
+ * be fixed immediately. All code within a FRENSIE package is also contained
+ * within a common namespace to avoid name collisions with code in other
+ * packages. The following packages are currenly contained within FRENSIE:
+ * <ul>
+ *  <li> \subpage utility "utility" </li>
+ *  <li> \subpage data "data" </li>
+ *  <li> \subpage geometry "geometry" </li>
+ *  <li> \subpage monte_carlo "monte carlo" </li>
+ *  <li> \subpage transmutation "transmutation" </li>
+ * </ul>
+ * 
+ * The \subpage utility "utility" package provides a collection of low-level 
+ * classes and functions that can be useful in a variety of applications. Some
+ * useful algorithms include binary searching, efficient exponentiation and
+ * numeric quadrature. Some useful classes include objects that provide
+ * XML support, HDF5 support, random number generation and sampling from
+ * generic distributions.
+ *
+ * The \subpage data "data" package provides a collection of data file readers.
+ * Currently support for ACE files, EPDL files and some ENDF files is provided.
+ *
+ * The \subpage geometry "geometry" package provides a host of ray tracing
+ * capabilities. The most important low-level class provided by this package
+ * is the Geometry::Ray class. It stores the ray state information and is
+ * used by the generic interface for ray tracing on a geometry model 
+ * (Geometry::ModuleInterface). This generic interface for ray tracing can be 
+ * specialized for a specific tool. Currently, this interface has been 
+ * specialized for the DagMC tool (Geometry::ModuleInterface<moab::DagMC>), 
+ * which allows one to ray trace on CAD geometries. The interface is also being
+ * specialized for the ROOT tool. Any code that uses the generic interface will
+ * be completely agnostic to the type of geometry and ray tracing tool that is 
+ * ultimately used. 
+ *
+ * The functionality necessary to perform Monte Carlo particle simulations
+ * is provided by the \subpage monte_carlo "monte carlo" package. Arguably the
+ * two most important low-level classes are the particle state class 
+ * (MonteCarlo::ParticleState) and the particle bank class
+ * (MonteCarlo::ParticleBank). Instances of these classes are operated on 
+ * by all of the other classes provided by the package. Other classes are
+ * also provided for modeling individual nuclides, material, a variety of
+ * estimators and sources. A series of manager classes are also provided that
+ * manage the simulation of particles (MonteCarlo::ParticleSimulationManager).
+ *
+ * 
+ * \subpage assert
+ * \subpage DBC
+ * \subpage packages
  */
