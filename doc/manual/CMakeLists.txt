@@ -9,16 +9,13 @@ ENDIF()
 IF(DOXYGEN_FOUND)
 
   # Find doxygen depends
-  FILE(GLOB_RECURSE DOXYGEN_DEPENDS ${CMAKE_SOURCE_DIR}/packages/*.cpp ${CMAKE_SOURCE_DIR}/packages/*.hpp ${CMAKE_SOURCE_DIR}/packages/*.F90 ${CMAKE_SOURCE_DIR}/packages/*.dox *.dox *.in *.xml *.bib ${CMAKE_SOURCE_DIR}/README.md)
+  FILE(GLOB_RECURSE DOXYGEN_DEPENDS ${CMAKE_SOURCE_DIR}/packages/*.cpp ${CMAKE_SOURCE_DIR}/packages/*.hpp ${CMAKE_SOURCE_DIR}/packages/*.F90 ${CMAKE_SOURCE_DIR}/packages/*.dox ${CMAKE_SOURCE_DIR}/cli/*.cpp ${CMAKE_SOURCE_DIR}/cli/*.dox *.dox *.in *.bib DoxygenLayout.xml ${CMAKE_SOURCE_DIR}/README.md)
   
   # Configure the Doxygen file
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
   # Configure the html wrapper file
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/manual.html.in ${CMAKE_CURRENT_BINARY_DIR}/manual.html)
-
-  # Configure the doxygen format xml file
-  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/DoxygenLayout.xml.in ${CMAKE_CURRENT_BINARY_DIR}/DoxygenLayout.xml)
 
   # Configure the IEEEtran_custom format file
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/IEEEtran_custom.bst.in ${CMAKE_CURRENT_BINARY_DIR}/IEEEtran_custom.bst)

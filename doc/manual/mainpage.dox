@@ -1,31 +1,26 @@
 // This file is used to add material to the index page.
 
-/*! \mainpage Overview
+/*! \mainpage Manual
  *
  * The Framework for REsearch in Nuclear ScIence and Engineering (FRENSIE)
- * is a code development framework designed for methods research. For more on 
- * the organization of FRENSIE and the software design strategies that have 
- * been employed, please refer to the \ref developer_manual "Developer Manual" 
- * page.
+ * is a code development framework designed for methods research. The manual
+ * has been divided into three parts:
+ * <ul>
+ *  <li> \subpage mc_theory "Monte Carlo Theory" </li>
+ *  <li> \subpage user_manual "User's Manual" </li>
+ *  <li> \subpage developer_manual "Developer's Manual" </li>
+ * </ul>
  *
- * Before using tools and/or contributing code to FRENSIE, the framework must
- * be built. Please refer to the \subpage build_page "build procedure" for
- * instructions on building FRENSIE. For more information on Monte Carlo
- * theory, please refer to the \ref mc_theory "Monte Carlo Theory" page. For
- * the user manuals associated with individual tools, please refer to the 
- * \ref tools "Tools" page. To see who has contributed to FRENSIE, please
- * refer to the \ref contributors "Contributors" page. All feedback and 
- * questions should be directed to 
+ * All feedback and questions regarding the manual should be directed to
  * <a href=https://github.com/aprobinson>Alex Robinson</a>.
- *
- *
+ * 
  * Further Reading:
  * <ul>
- *  <li> \ref build_page "Build Procedure"
- *  <li> \subpage mc_theory "Monte Carlo Theory"
- *  <li> \subpage tools "Tools"
- *  <li> \subpage developer_manual "Developer Manual"
- *  <li> \subpage contributors "Contributors"
+ *  <li> \ref installation "Installation"
+ *  <li> \ref contributors "Contributors"
+ *  <li> \ref license "License"
+ *  <li> \ref todo "Todo List"
+ *  <li> <a href="citelist.html">Bibliography</a>
  * </ul>
  */
 

@@ -1,0 +1,10 @@
+// This file is used to add material to the user's manual page
+
+/*! \page user_manual User's Manual
+ *
+ * Each tool created within the FRENSIE framework has a corresponding user
+ * manual. Navigate to the tool of interest to see its user manual.
+ * <ul>
+ *  <li> \subpage facemc_man "FACEMC" </li>
+ * </ul>
+ */
