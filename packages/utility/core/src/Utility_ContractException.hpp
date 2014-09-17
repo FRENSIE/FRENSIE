@@ -17,11 +17,9 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 
-// Trilinos Includes
-#include <Teuchos_TestForException.hpp>
-
 // FRENSIE Includes
 #include "FRENSIE_config.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 /*! \defgroup contract_exceptions_macros Design-By-Contract Exceptions and Macros
  *
@@ -29,8 +27,7 @@
  * preconditions and postconditions are explicit. When Design-By-Contract
  * functionality is enabled, the program will exit whenever one of these
  * conditions is not met. This functionality is made possible through a series
- * of macros and an exception class. For more information on enabling
- * Design-By-Contract, please refer to the \ref DBC page.
+ * of macros and an exception class.
  */
 
 namespace Utility
@@ -59,64 +56,33 @@ public:
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// Design-by-Contract macros.
+// Design-by-Contract Macros.
 //---------------------------------------------------------------------------//
-/*! \page DBC Design-by-Contract
- *
- * Design-by-Contract (DBC) functionality is provided to verify function
- * preconditions, postconditions, and invariants. These checks are separated
- * from the debug build and can be activated for both release and debug
- * builds. They can be activated by setting the following in a CMake
- * configure:
- *
- * -D FRENSIE_ENABLE_DBC:BOOL=ON
- *
- * By default, DBC is deactivated. Although they will require additional
- * computational overhead, these checks provide a mechanism for veryifing
- * library input arguments. Note that the bounds-checking functionality used
- * within FRENSIE is only provided by a debug build.
- *
- * In addition, remember is provided to store values used only for DBC
- * checks and no other place in executed code.
- *
- * Developers should refer to the \ref contract_exceptions_macros page for more
- * on how this functionality is implemented.
- *
- * Design-by-Contract functionality can also be expanded to compile-time
- * preconditions which can be very useful in templated code where the
- * the template parameter must have certain properties for the desired behavior
- * to be guaranteed. This functionality will always be turned on.
- *
- * Developers should refer to the boost/static_assert.hpp manual for more
- * information on conducting static asserts, which is what the
- * testStaticPrecondition does.
- */
-
 #if HAVE_FRENSIE_DBC
 
 /*! Test a function precondition
  * \ingroup contract_exceptions_macros 
  */
-#define testPrecondition(c) \
-  TEUCHOS_TEST_FOR_EXCEPTION( !(c),					\
-			      Utility::ContractException,		\
-			      "Precondition exception" << std::endl ) 
+#define testPrecondition(c)						\
+  TEST_FOR_EXCEPTION( !(c),						\
+		      Utility::ContractException,			\
+		      "Precondition exception" << std::endl ) 
 
 /*! Test a function postcondition
  * \ingroup contract_exceptions_macros
  */
-#define testPostcondition(c) \
-  TEUCHOS_TEST_FOR_EXCEPTION( !(c),					\
-			      Utility::ContractException,		\
-			      "Postcondition exception" << std::endl ) 
+#define testPostcondition(c)					\
+  TEST_FOR_EXCEPTION( !(c),					\
+		      Utility::ContractException,		\
+		      "Postcondition exception" << std::endl ) 
 
 /*! Test a function invariant
  * \ingroup contract_exceptions_macros
  */
-#define testInvariant(c) \
-  TEUCHOS_TEST_FOR_EXCEPTION( !(c),					\
-                              Utility::ContractException,		\
-			      "Invariant exception" << std::endl )
+#define testInvariant(c)						\
+  TEST_FOR_EXCEPTION( !(c),						\
+		      Utility::ContractException,			\
+		      "Invariant exception" << std::endl )
 
 /*! Remember a variable that is needed for testing DBC conditions
  * \ingroup contract_exceptions_macros
@@ -133,7 +99,7 @@ public:
 #endif // end HAVE_FRENSIE_DBC
 
 /*! test a templated function static precondition
- * \ingroup contract_exception_macros
+ * \ingroup contract_exceptions_macros
  */
 #define testStaticPrecondition(c) \
   BOOST_STATIC_ASSERT( (c) )
