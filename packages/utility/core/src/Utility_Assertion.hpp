@@ -17,6 +17,16 @@
 #include <Teuchos_TestForException.hpp>
 
 /*! \defgroup assertion_exceptions_macros FRENSIE Assertion Exceptions and Macros
+ * Two types of assertions are often needed: assertions used to check for
+ * coding errors (debugging assertions) and assertions that check for user
+ * error. Debugging assertions will only be activated when the code has been
+ * compiled in debug mode. When compiled in release mode, the macro NDEBUG
+ * is set by the compiler, which will prevent the execution of degubbing
+ * assertion code. 
+ *
+ * Use assertions in parts of the code where Design-by-Contract is not used,
+ * when writing new pieces of code that have not been unit tested and when
+ * correct user input is extremely critical to the execution of the program.
  *
  * Use these assertions to check for coding errors (debugging assertions) or
  * to verify user input in parts of the code where Design-By-Contract is not
@@ -64,22 +74,6 @@ public:
 //---------------------------------------------------------------------------//
 // Assertion macros
 //---------------------------------------------------------------------------//
-/*! \page assert FRENSIE Assertion
- *
- * Two types of assertions are often needed: assertions used to check for
- * coding errors (debugging assertions) and assertions that check for user
- * error. Debugging assertions will only be activated when the code has been
- * compiled in debug mode. When compiled in release mode, the macro NDEBUG
- * is set by the compiler, which will prevent the execution of degubbing
- * assertion code. 
- *
- * Use assertions in parts of the code where Design-by-Contract is not used,
- * when writing new pieces of code that have not been unit tested and when
- * correct user input is extremely critical to the execution of the program.
- *
- * Developers whould refer to the \ref assertion_exceptions_macros page
- * for more on how this functionality is implemented.
- */
 
 /*! Assert that a critical (user input) condition is always met.
  * \ingroup assertion_exceptions_macros
