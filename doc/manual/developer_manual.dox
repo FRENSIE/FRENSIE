@@ -36,7 +36,7 @@
  * choice of coding language is very important if extensibility is a priority.
  * As explained in the \ref framework_sec "last" section, it is much easier
  * to make object-oriented software extensible so an object-oriented language
- * is a natural choice. To popular software languages commonly used to 
+ * is a natural choice. Two popular software languages commonly used to 
  * develop scientific software are C++ and Fortran. Fortran isn't commonly
  * thought of as an object-oriented language. However, modern Fortran (2003)
  * is fully object-oriented. Making a choice between the two came down to
@@ -55,11 +55,12 @@
  * At the highest level, the framework is organized into packages. Each 
  * package has a particular, clearly defined purpose. Packages are often
  * further divided into subpackages and in some cases, sub-subpackages. As with
- * class dependency graph, the package dependency graph should be a directed 
- * acyclic. Cyclical dependencies indicate code design failures and should
- * be fixed immediately. All code within a FRENSIE package is also contained
- * within a common namespace to avoid name collisions with code in other
- * packages. The following packages are currently contained within FRENSIE:
+ * the class dependency graph, the package dependency graph should be a 
+ * directed acyclic. Cyclical dependencies indicate code design failures and 
+ * should be fixed immediately. All code within a FRENSIE package is also 
+ * contained within a common namespace to avoid name collisions with code in 
+ * other packages. The following packages are currently contained within 
+ * FRENSIE:
  * <ul>
  *  <li> \subpage utility "utility" </li>
  *  <li> \subpage data "data" </li>
@@ -68,22 +69,26 @@
  *  <li> \subpage transmutation "transmutation" </li>
  * </ul>
  * 
- * The \ref utility "utility" package provides a collection of low-level 
- * classes and functions that can be useful in a variety of applications. Some
- * useful algorithms include binary searching, efficient exponentiation and
- * numeric quadrature. Some useful classes include objects that provide
- * XML support, HDF5 support, random number generation and sampling from
- * generic distributions.
+ * The utility package provides a collection of low-level classes and functions
+ * that can be useful in a variety of applications. Some useful algorithms 
+ * include binary searching, efficient exponentiation and numeric quadrature. 
+ * Some useful classes include objects that provide stream support
+ * (Utility::PrintableObject), XML support (Utilitiy::XMLCompatibleObject), 
+ * HDF5 support (Utility::HDF5FileHandler), random number generation 
+ * (Utility::RandomNumberGenerator) and sampling from generic distributions 
+ * (Utility::OneDDistribution).
  *
- * The \ref data "data" package provides a collection of data file readers.
- * Currently support for ACE files, EPDL files and some ENDF files is provided.
+ * The data package provides a collection of data file readers.Currently 
+ * support for ACE files (Data::ACEFileHandler), EPDL files 
+ * (Data::ENDLIB97FileHandler) and some ENDF files 
+ * (Data::ENDFFissionYieldsFileHandler) is provided.
  *
- * The \ref geometry "geometry" package provides a host of ray tracing
+ * The geometry package provides a host of ray tracing
  * capabilities. The most important low-level class provided by this package
  * is the Geometry::Ray class. It stores the ray state information and is
  * used by the generic interface for ray tracing on a geometry model 
  * (Geometry::ModuleInterface). This generic interface for ray tracing can be 
- * specialized for a specific tool. Currently, this interface has been 
+ * specialized for a specific tool. Currently, the interface has been 
  * specialized for the DagMC tool (Geometry::ModuleInterface<moab::DagMC>), 
  * which allows one to ray trace on CAD geometries. The interface is also being
  * specialized for the ROOT tool. Any code that uses the generic interface will
@@ -91,12 +96,12 @@
  * ultimately used. 
  *
  * The functionality necessary to perform Monte Carlo particle simulations
- * is provided by the \ref monte_carlo "monte carlo" package. Arguably the
+ * is provided by the monte carlo package. Arguably the
  * two most important low-level classes are the particle state class 
  * (MonteCarlo::ParticleState) and the particle bank class
  * (MonteCarlo::ParticleBank). Instances of these classes are operated on 
  * by all of the other classes provided by the package. Other classes are
- * also provided for modeling individual nuclides, material, a variety of
+ * also provided for modeling individual nuclides, materials, and a variety of
  * estimators and sources. A series of manager classes are also provided that
  * manage the simulation of particles (MonteCarlo::ParticleSimulationManager).
  *
@@ -200,7 +205,7 @@
  *
  * \section cpp_primer_sec C++ Primer
  * FRENSIE developers should be familiar with C++ before contributing code.
- * That being said, developers are not expected to be C++ experts. C++ is 
+ * That being said, developers are not expected to be C++ experts. C++ is a
  * complicated language and becoming an expert can take years. This section
  * is geared towards new developers with little to no C++ experience. It
  * is by no means a full C++ course but can be used to gain some insights
@@ -209,7 +214,7 @@
  *
  * \subsection cpp_primer_func_subsec Functions and Procedures
  * A function is a routine that returns a value whereas a procedure is a
- * routine that typically does not return a value. In C++ a function is
+ * routine that typically does not return a value. In C++ a routine is
  * typically declared in a header file (.hpp) and then defined in an
  * implementation file (.cpp). Consider the following header file excerpt:
  * \code{.cpp}
@@ -269,7 +274,7 @@
  * example of self-documenting code (a complexity management strategy).
  *
  * \subsection cpp_primer_inline_subsec Inline Routines 
- * C++ has a build in optimization tool called inlining. Calling a function
+ * C++ has a built in optimization tool called inlining. Calling a function
  * typically has a very small cost. However, when a function is called many
  * times while executing a program, the cost associated with calling the
  * function can be eliminated by inlining the function. Consider the 
@@ -296,7 +301,7 @@
  * a function as inline does not guarantee that the function will be inlined - 
  * the compiler will ultimately make that decision. The use of inlined
  * functions will also result in larger executables. It important to do 
- * function inlining sparingly and only when it is quite certain that a
+ * function inlining sparingly and only when it is quite certain that 
  * a function will be called a large number of times during the execution
  * of a program. 
  *
@@ -367,7 +372,7 @@
  * \subsection cpp_primer_inheritance_subsec Inheritance
  * In the previous section, a simple class was created. In this section,
  * it will be shown how to create a class that can be extended. To begin
- * a the class will be modified slightly:
+ * the particle state class will be modified slightly:
  * \code{.cpp}
  *   class ParticleState
  *   {
@@ -430,11 +435,12 @@
  * getSpeed member function, there is also an "= 0" at the end of the function
  * declaration. These types of functions are called pure virtual. Pure virtual
  * functions provide no default function behavior. Any class that has a pure
- * virtual member function declared with the "= 0" qualifier is referred to as 
- * an abstract base class. An abstract base class can not be instantiated 
- * because of the missing function definition. All derived classes must provide 
- * an implementation for the pure virtual function or they will not be able to 
- * be instantiated either. 
+ * virtual member function is referred to as an abstract base class. An 
+ * abstract base class can not be instantiated because of the missing function 
+ * definition. All derived classes must provide an implementation for the pure 
+ * virtual function or they will not be able to be instantiated either.
+ * Pointers of the abstract base class can be created as long as they only
+ * store the memory address of a derived class.
  *  
  * Consider the following derived class:
  * \code{.cpp}
@@ -507,11 +513,11 @@
  *   advanceParticle( particle_b, 1.0 );
  * }
  * \endcode
- * A base class pointer can be used to store a derived class instance. When
- * the virtual functions are called, the derived class implementation is
- * actually used. Therefore, the behavior of the advanceParticle function
- * will be different depending on the type of derived class that the
- * base class pointer actually points to. 
+ * A base class pointer can be used to store the memory address of a derived 
+ * class instance. When the virtual functions are called, the derived class 
+ * implementation will actually used. Therefore, the behavior of the 
+ * advanceParticle function will be different depending on the type of derived 
+ * class that the base class pointer actually points to. 
  *
  * \subsection cpp_primer_heap_subsec Heap Allocated Variables
  * All local variables are created on the stack. As soon as the variables
@@ -524,7 +530,7 @@
  * Heap allocated variables can be dangerous if used improperly. If a heap
  * allocated variable goes out of scope without being freed (calling
  * "delete" on the variable), it leads to a memory-leak, which is where
- * a particular piece of member cannot be accessed again during the current
+ * a particular piece of memory cannot be accessed again during the current
  * program execution. The best way to avoid memory-leaks is to use a special
  * class called a smart pointer. Smart pointers will automatically deallocate 
  * memory when it is no longer needed. Both the boost and the Teuchos 
@@ -533,7 +539,21 @@
  * \code{.cpp}
  * Teuchos::RCP<double> double_pointer = new double( 3.0 );
  * boost::shared_ptr<ParticleState> = new NeutronState( position, direction, energy );
+ * boost::scoped_ptr<ParticleState> = new PhotonState( position, direction, energy );
  * \endcode
+ *
+ * While there are many types of smart pointers, the one that is used most
+ * often in FRENSIE is the reference counting smart pointer. The reference
+ * counting smart pointer keeps track of the number of other smart pointers
+ * that are storing a particular memory location. Essentially, every time
+ * a particular smart pointer is copied, the reference count goes up by one.
+ * When a smart pointer storing a particular memory location goes out of 
+ * scope of is deleted by some other means, the reference count goes down
+ * by one. If a reference counting smart pointer gets deleted and the
+ * reference count goes to zero, the smart pointer will automatically free
+ * the memory that it stores. Both the Teuchos::RCP and the boost::shared_ptr 
+ * are examples of reference counting smart pointers.  
+ *
  * \subsection cpp_primer_temp_func_subsec Template Functions and Procedures
  * \subsection cpp_primer_temp_class_subsec Template Classes
  * \subsection cpp_primer_traits_policy_subsec Traits and Policies
@@ -547,11 +567,12 @@
  * following naming conventions.
  *
  * \subsection frensie_file_names_conv_subsec File Names
- * File names should start with the package name, followed by an underscore,
- * followed by an appropriate file name and either ".hpp", "_def.hpp", or
- * ".cpp" depending on if the file is a header, a template implementation file 
- * or a standard implementation file respectively. For classes, the class name 
- * should be used. Consider the following examples:
+ * File names should start with the root package name followed by an 
+ * underscore and then followed by an appropriate file name with extension 
+ * (either ".hpp", "_def.hpp", or ".cpp" depending on if the file is a header, 
+ * a template implementation file or a standard implementation file 
+ * respectively). For classes, the class name should be used. Consider the 
+ * following examples:
  * > Package_MyClass.hpp \n
  * > Package_MyClass_def.hpp \n
  * > Package_MyClass.cpp \n
@@ -562,14 +583,14 @@
  * should appear before any declarations but after the header protection macro.
  * Template implementation file includes should appear after all declarations
  * and implementations but before the final preprocessor conditional statement.
- * Consider the following header file example.
+ * Consider the following header file example:
  * \code{.cpp}
  * //---------------------------------------------------------------------------//
- * //<b>!</b>
- * //<b>!</b> \file   Package_MyClass.hpp
- * //<b>!</b> \author John Doe, Jane Doe
- * //<b>!</b> \brief  The MyClass class declaration.
- * //<b>!</b>
+ * // !
+ * // ! \\file   Package_MyClass.hpp
+ * // ! \\author John Doe, Jane Doe
+ * // ! \\brief  The MyClass class declaration.
+ * // !
  * //---------------------------------------------------------------------------//
  *
  * #ifdef PACKAGE_MY_CLASS_HPP
@@ -607,15 +628,15 @@
  * // end Package_MyClass.hpp
  * //---------------------------------------------------------------------------//
  * \endcode
- * 
+ *
  * Now consider the following template implementation file:
  * \code{.cpp}
  * //---------------------------------------------------------------------------//
- * //<b>!</b>
- * //<b>!</b> \file   Package_MyClass_def.hpp
- * //<b>!</b> \author John Doe, Jane Doe
- * //<b>!</b> \brief  The MyClass class template definitions.
- * //<b>!</b>
+ * // !
+ * // ! \file   Package_MyClass_def.hpp
+ * // ! \author John Doe, Jane Doe
+ * // ! \brief  The MyClass class template definitions.
+ * // !
  * //---------------------------------------------------------------------------//
  *
  * #ifdef PACKAGE_MY_CLASS_DEF_HPP
@@ -640,11 +661,11 @@
  * Finally, consider the following standard implementation file:
  * \code{.cpp}
  * //---------------------------------------------------------------------------//
- * //<b>!</b>
- * //<b>!</b> \file   Package_MyClass.cpp
- * //<b>!</b> \author John Doe, Jane Doe
- * //<b>!</b> \brief  The MyClass class definitions.
- * //<b>!</b>
+ * // !
+ * // ! \file   Package_MyClass.cpp
+ * // ! \author John Doe, Jane Doe
+ * // ! \brief  The MyClass class definitions.
+ * // !
  * //---------------------------------------------------------------------------//
  *
  * // FRENSIE Includes
@@ -664,6 +685,11 @@
  * Whenever possible, code should not exceed the 79th character (the 80th
  * is reserved for a special emacs macro).
  *
+ * <b>NOTE:</b> In the header of a file, there should be no space to between
+ * the "//" character sequence and the "!" charater. The \"//&zwj;!\" 
+ * character sequence tells Doxygen that the comments should be parsed. It is 
+ * for this reason that it cannot be added directly to the above code blocks.
+ *
  * \subsection frensie_ifdef_conv_subsec Preprocessor Conditional Statements
  * Preprocessor conditional statements are always closed with a 
  * <em>#endif</em>. When there is a lot of code between conditional statements
@@ -674,9 +700,13 @@
  *
  * \code{.cpp}
  *  #ifdef MACRO_NAME
+ *
  *  ...
+ *
  *  #else
+ *
  *  ...
+ *
  *  #endif // end MACRO_NAME
  * \endcode
  * 
@@ -690,7 +720,7 @@
  * namespace bracket to indicate the the namespace has been closed.
  *
  * \code{.cpp}
- *  #namespace Package{
+ *  namespace Package{
  *
  *  ...
  * 

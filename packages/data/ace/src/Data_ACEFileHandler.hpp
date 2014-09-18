@@ -33,7 +33,7 @@ namespace Data{
  * table contain the XSS array. The contents of each of these arrays depends
  * on the type of table (i.e. continuous energy neutron, continuous energy
  * photon, etc.). The task of reading in this data is handled by the 
- * FACEMC::ACEFileHandler.
+ * Data::ACEFileHandler.
  */
 
 //! The ACE (A Compact ENDF) file handler class
