@@ -15,7 +15,9 @@
 
 namespace MonteCarlo{
 
-//! The inelastic level scattering energy distribution class (ENDF Law 3)
+/*! The inelastic level scattering energy distribution class (ENDF Law 3)
+ * \ingroup ace_laws
+ */
 class AceLaw3NeutronScatteringEnergyDistribution : public NeutronScatteringEnergyDistribution
 {
 

@@ -19,7 +19,10 @@
 
 namespace MonteCarlo{
 
-//! The inelastic equiprobable energy bins scattering eneryg distribution class (ENDF Law 1)
+/*! \brief The inelastic equiprobable energy bins scattering enery 
+ * distribution class (ENDF Law 1)
+ * \ingroup ace_laws
+ */
 class AceLaw1NeutronScatteringEnergyDistribution : public NeutronScatteringEnergyDistribution
 {
 

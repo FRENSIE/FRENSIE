@@ -22,9 +22,10 @@
 
 namespace MonteCarlo{
 
-//! The law 44 scattering energy distribution class (Ace Law 44)
-/*! \details The system conversion policy will convert the sampled energy and
- * scattering angle cosine from the current system to the lab system
+/*! The law 44 scattering energy distribution class (Ace Law 44)
+ * \details The system conversion policy will convert the sampled energy and
+ * scattering angle cosine from the current system to the lab system.
+ * \ingroup ace_laws
  */
 template<typename SystemConversionPolicy>
 class AceLaw44NeutronScatteringDistribution : public NeutronScatteringDistribution
