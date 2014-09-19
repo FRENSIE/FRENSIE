@@ -19,7 +19,9 @@
 
 namespace MonteCarlo{
 
-//! The law 44 AR distribution base class
+/*! The law 44 AR distribution base class
+ * \ingroup ace_laws
+ */
 class AceLaw44ARDistribution
 {
 

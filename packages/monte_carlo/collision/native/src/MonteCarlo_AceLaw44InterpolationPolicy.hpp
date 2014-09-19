@@ -11,6 +11,9 @@
 
 namespace MonteCarlo {
 
+/*! The histogram intropolation policy
+ * \ingroup ace_laws
+ */
 struct AceLaw44HistogramInterpolationPolicy
 {
   //! Return interpolated A or R
@@ -24,6 +27,9 @@ struct AceLaw44HistogramInterpolationPolicy
   }
 };
 
+/*! The linear-linear interpolation policy
+ * \ingroup ace_laws
+ */
 struct AceLaw44LinLinInterpolationPolicy
 {
   //! Return interpolated A or R
