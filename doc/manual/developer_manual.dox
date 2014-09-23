@@ -4,17 +4,19 @@
  *
  * \tableofcontents
  *
- * \section framework_sec Framework Definition
+ * \section framework_sec What is an Object-Oriented Framework?
  * A framework is a platform for developing software applications. A framework
- * is similar to an application programming interface (API), though a 
- * framework will typically include an API (an API provides access to elements
- * supported by the framework). Using a framework to develop software has
- * many advantages. First, frameworks promote the development of modular
- * and therefore reusable code. Frameworks also promote the development of
- * robust and reliable code through the use of unit and integral testing.
- * Finally, frameworks allow developers to write less code to achieve their 
- * goals by optimizing code reuse, which is done through the writing of highly 
- * modular code. 
+ * is similar to an application programming interface (API) in that a set of
+ * "tools" are provided to help develop software. Typically, a framework will
+ * include an API, which provides access to elements supported by the 
+ * framework along with other tools to support software developement.  
+ *
+ * Using a framework to develop software has many advantages. First, 
+ * frameworks promote the development of modular and therefore reusable code. 
+ * This further allows developers to write less code to achieve their goals.
+ * Frameworks also promote the development of robust and reliable code through 
+ * the use of unit and integral testing. Code that is designed to be reusable
+ * must be reliable or developers will not use it.
  *
  * The use of object-oriented programming practices within a framework over
  * procedure-oriented programming has many advantages as well. To begin, 
@@ -158,9 +160,9 @@
  * When a FRENSIE developer has incorporated explicit contracts into their 
  * software, the checking of these contracts can be activated at configure
  * time by setting the <em>FRENSIE_ENABLE_DBC</em> CMake variable to 
- * <em>ON</em>. By default, DBC checks are deactivated. For more information
- * on adding contracts to software, please refer to the 
- * \ref contract_exceptions_macros "Design-by-Contract" page. 
+ * <em>ON</em>. By default, DBC checks are deactivated due to the overhead that
+ * they incur. For more information on adding contracts to software, please 
+ * refer to the \ref contract_exceptions_macros "Design-by-Contract" page. 
  *
  * \subsection frensie_test_subsec Unit and Regression Testing
  * Unit testing is a very important software development practice, especially
@@ -192,7 +194,10 @@
  * are encouraged to go through a 
  * <a href=https://www.atlassian.com/git/tutorials/>git tutorial</a>  before 
  * checking out the FRENSIE git repo. To help with collaboration, the FRENSIE
- * git repo is stored on <a href=https://github.com/>github</a>. 
+ * git repo is stored on <a href=https://github.com/>github</a>. Github also
+ * facilitates the use of a forking development workflow used by FRENSIE
+ * developers. For more information on the forking workflow refer to the 
+ * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow>forking workflow tutorial</a>.
  *
  * CMake is a modern, cross-platform build system. It is used to build the 
  * FRENSIE packages and tools and to run the tests registered with CTest. 
@@ -473,8 +478,7 @@
  *   NeutronState::NeutronState( const double[3] position,
  *         			 const double[3] direction,
  *                               const double energy )
- *   : ParticleState( position, direction, energy )
- *   { /* ... */ }
+ *   : ParticleState( position, direction, energy ){}
  *  
  *   NeutronState::getSpeed() const
  *   {
@@ -515,7 +519,7 @@
  * \endcode
  * A base class pointer can be used to store the memory address of a derived 
  * class instance. When the virtual functions are called, the derived class 
- * implementation will actually used. Therefore, the behavior of the 
+ * implementation will actually be used. Therefore, the behavior of the 
  * advanceParticle function will be different depending on the type of derived 
  * class that the base class pointer actually points to. 
  *
@@ -548,7 +552,7 @@
  * that are storing a particular memory location. Essentially, every time
  * a particular smart pointer is copied, the reference count goes up by one.
  * When a smart pointer storing a particular memory location goes out of 
- * scope of is deleted by some other means, the reference count goes down
+ * scope or is deleted by some other means, the reference count goes down
  * by one. If a reference counting smart pointer gets deleted and the
  * reference count goes to zero, the smart pointer will automatically free
  * the memory that it stores. Both the Teuchos::RCP and the boost::shared_ptr 
@@ -768,20 +772,35 @@
  * Developers who see a use in making that distinction can adopt their own
  * convention (e.g. "_b", "_d", "_m"). 
  *
- * When declaring a class, public typedefs should be declared first. Next, 
- * all private typedefs should be declared. All public static member functions
- * should be declared after the typedefs. All other public member functions
- * should then be declared. The protected member functions should be 
- * declared next. It is uncommon to use protected member data (because it
- * break encapsulation), but this data would be declared next. The private 
- * static member functions should be declared next. All other private member 
- * functions should be declared. Next, all private static member data should be
- * declared. There is no required naming convention for static member data.
- * This is because static member data should be used within member functions
- * using the following convention (/code{.cpp}MyClass::my_static_data/endcode).
- * Finally, all other private member data should be declared. All private
- * member data should start with "d_" to indicate that it is member data
- * inside of a class routine definition. The following class would be an
+ * When creating a class, the following order should be followed in the class
+ * declaration:
+ * <ol>
+ *  <li>public typedefs</li>
+ *  <li>private typedefs</li>
+ *  <li>public static member functions</li>
+ *  <li>public member functions</li>
+ *  <li>protected member functions</li>
+ *  <li>protected member data 
+ *   <ul>
+ *    <li>This should rarely be used because it breaks encapsulation.</li>
+ *   </ul>
+ *  </li>
+ *  <li>private static member functions</li>
+ *  <li>private member functions</li>
+ *  <li>private static member data
+ *   <ul>
+ *    <li>There is no required naming convention for static member data. 
+ *        This is because static member data should be used within member 
+ *        functions using the following convention 
+ *        (MyClass::my_static_data).</li>
+ *   </ul>
+ *  </li>
+ *  <li>private member data: All private member data should start with "d_"
+ *       to indicate that it is member data inside of a class routine
+ *       definition.</li>
+ * </ol>
+ *
+ * The following class would be an
  * example of a class declaration that adheres to the convention outlined:
  * \code{.cpp}
  *  class MyClass

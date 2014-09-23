@@ -14,7 +14,9 @@
 
 namespace MonteCarlo{
 
-//! The standard law 44 AR distribution base class
+/*! The standard law 44 AR distribution base class
+ * \ingroup ace_laws
+ */
 template<typename AceLaw44InterpolationPolicy>
 class StandardAceLaw44ARDistribution : public AceLaw44ARDistribution
 {
