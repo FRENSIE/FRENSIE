@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+#ifndef UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_DEF_HPP
+#define UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_DEF_HPP
+
 // GSL Includes
 #include <gsl/gsl_errno.h>
 
@@ -191,6 +194,8 @@ void GaussKronrodQuadratureKernel::integrateAdaptively(
 }					
 
 } // end Utility namespace
+
+#endif // end UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_GaussKronrodQuadratureKernel_def.hpp

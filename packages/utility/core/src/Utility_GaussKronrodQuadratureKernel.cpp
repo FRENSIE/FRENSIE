@@ -7,8 +7,8 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_ContractException.hpp"
 #include "Utility_GaussKronrodQuadratureKernel.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace Utility{
 
