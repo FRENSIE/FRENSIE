@@ -10,7 +10,7 @@
 #define UTILITY_CONTRACT_EXCEPTION_HPP
 
 // Std Lib Includes
-#include <exception>
+#include <stdexcept>
 #include <string>
 
 // Boost Includes
@@ -30,8 +30,7 @@
  * of macros and an exception class.
  */
 
-namespace Utility
-{
+namespace Utility{
 
 //---------------------------------------------------------------------------//
 // Design-By-Contract Exceptions
