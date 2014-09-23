@@ -35,14 +35,15 @@
  * \subsection mc_core_pstate_subsec Adding State Variables to the Particle State
  * ...
  *
+ * \subsection mc_core_runtime_subsec Configuring Run-Time Behavior
  * It is often desirable to be able to change the behavior of certain classes 
- * at run time. For example, it can be useful to turn off certain physics
- * at run time. To do this, static data in the MonteCarlo::SimulationProperties
- * class should be modified at run time. Classes that need to have run time
+ * at run-time. For example, it can be useful to turn off certain physics
+ * at run-time. To do this, static data in the MonteCarlo::SimulationProperties
+ * class should be modified at run-time. Classes that need to have run-time
  * options should then query the state of this object to determine their
- * run time behavior. This approach works quite well because it provides
+ * run-time behavior. This approach works quite well because it provides
  * a single point of control instead of having to keep track of all of the 
- * individual classes that have configurable run time behavior. 
+ * individual classes that have configurable run-time behavior. 
  *
  * \section mc_collision_sec The Collision Subpackage
  * The collision subpackage provides all of the functions and classes 
@@ -99,3 +100,32 @@
  * \section mc_source_sec The Source Subpackage
  * \section mc_manager_sec The Manager Subpackage
  */ 
+ 
+/*! \defgroup ace_laws ACE Scattering Laws
+ * 
+ * The ACE format specifies a series of scattering laws that can be used 
+ * to represent the outgoing energy (and sometimes angle) distribution of 
+ * a particle. The laws are listed below:
+ * <ul>
+ *  <li> Law 1 (ENDF law 1): Equiprobable energy bins </li>
+ *  <li> Law 2: Discrete photon energy </li>
+ *  <li> Law 3 (ENDF law 3): Inelastic level scattering </li>
+ *  <li> Law 4 (ENDF law 4): Tabular distribution
+ *  <li> Law 5 (ENDF law 5): General evaporation spectrum </li>
+ *  <li> Law 7 (ENDF law 7): Simple Maxwell fission spectrum </li>
+ *  <li> Law 9 (ENDF law 9): Evaporation spectrum </li>
+ *  <li> Law 11 (ENDF law 11): Energy dependent Watt spectrum </li>
+ *  <li> Law 22 (UK law 2): Tabular linear functions of incident energy out </li>
+ *  <li> Law 24 (UK law 6): Equiprobable energy multipliers </li>
+ *  <li> Law 44 (ENDF law 1 lang 2): Kalback-87 correlated energy-angle 
+ *       tabular distribution </li>
+ *  <li> Law 61 (ENDF law 1 lang 0, 12 or 14) correlated energy-angle tabular
+ *       distribution </li>
+ *  <li> Law 66 (ENDF law 6): N-body phase space distribution
+ *   <ul>
+ *    <li> <b>Warning:</b> The documentation in the MCNP5 manual is incorrect!
+ *   </ul>
+ *  </li>
+ *  <li> Law 67 (ENDF law 7): Correlated energy-angle scattering </li>
+ * </ul>
+ */
