@@ -16,15 +16,16 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_FreeGasElasticScatteringKernelFactor.hpp"
+#include "MonteCarlo_FreeGasElasticSAlphaBetaFunction.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_KinematicHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::FreeGasElasticScatteringKernelFactor> kernel_factor;
+Teuchos::RCP<MonteCarlo::FreeGasElasticSAlphaBetaFunction> sab_function;
 
 //---------------------------------------------------------------------------//
 // Testing Functions
@@ -39,8 +40,13 @@ double analyticCrossSectionValue( const double A,
     Utility::PhysicalConstants::pi*
     Utility::PhysicalConstants::pi;
 
-  return (kT*(A+1)*(A+1)/(16*sqrt(pi3)*A*E*sqrt(alpha)))*
-	  exp( -(alpha + beta)*(alpha + beta)/(4*alpha) );
+  if( alpha > 0.0 || beta > 0.0 )
+  {
+    return (kT*(A+1)*(A+1)/(16*sqrt(pi3)*A*E*sqrt(alpha)))*
+      exp( -(alpha + beta)*(alpha + beta)/(4*alpha) );
+  }
+  else
+    return std::numeric_limits<double>::infinity();
 }
 
 double integratedCrossSectionValue( const double A,
@@ -48,35 +54,34 @@ double integratedCrossSectionValue( const double A,
 				    const double alpha,
 				    const double beta,
 				    const double E,
-				    const double integral_value )
+				    const double sab_value )
 {
   double pi3 = Utility::PhysicalConstants::pi*
     Utility::PhysicalConstants::pi*
     Utility::PhysicalConstants::pi;
 
-  return ((A+1)*(A+1)*(A+1)*(A+1)*sqrt(alpha)*kT/(16*sqrt(pi3)*A*E))*
-    exp( -(A+1)/2*(beta - A*alpha) )*integral_value;
+  if( sab_value < std::numeric_limits<double>::infinity() )
+    return ((A+1)*(A+1)*(A+1)*(A+1)*kT/(16*sqrt(pi3)*A*E))*sab_value;
+  else
+    return std::numeric_limits<double>::infinity();
 }
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the integrated value can be returned
-TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
+TEUCHOS_UNIT_TEST( FreeGasElasticSAlphaBetaFunction,
 		   getIntegratedValue_energy_range )
 {
   // Calculate the integral value at energy 1e-6 MeV
-  kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-6 );
+  double sab_value = (*sab_function)( 39.5, 1.0, 1e-6 );
 
-  double value, error;
-  value = kernel_factor->getIntegratedValue( error );
- 
-  value = integratedCrossSectionValue( 0.999167,
-				       2.53010e-8,
-				       39.5,
-				       1.0,
-				       1.0e-06,
-				       value );
+  double value = integratedCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      39.5,
+					      1.0,
+					      1.0e-06,
+					      sab_value );
 
   double analytic_value = analyticCrossSectionValue( 0.999167,
 						     2.53010e-8,
@@ -88,16 +93,14 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-9 );
 
   // Calculate the integral value at energy 1e-5 MeV
-  kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-5 );
-
-  value = kernel_factor->getIntegratedValue( error );
+  sab_value = (*sab_function)( 39.5, 1.0, 1e-5 );
 
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       39.5,
 				       1.0,
 				       1.0e-05,
-				       value );
+				       sab_value );
 
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
@@ -105,20 +108,18 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 					      1.0,
 					      1.0e-05 );
 
-  // Test against the analyticl integral
+  // Test against the analytic integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-3 );
 
   // Calculate the integral value at energy 1e-4 MeV
-  kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-4 );
-
-  value = kernel_factor->getIntegratedValue( error );
+  sab_value = (*sab_function)( 39.5, 1.0, 1e-4 );
 
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       39.5,
 				       1.0,
 				       1.0e-04,
-				       value );
+				       sab_value );
 
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
@@ -126,20 +127,18 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 					      1.0,
 					      1.0e-04 );
 
-  // Test against the analyticl integral
+  // Test against the analytic integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-4 );
 
   // Calculate the integral value at energy 1e-3 MeV
-  kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-3 );
-
-  value = kernel_factor->getIntegratedValue( error );
+  sab_value = (*sab_function)( 39.5, 1.0, 1e-3 );
 
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       39.5,
 				       1.0,
 				       1.0e-03,
-				       value );
+				       sab_value );
 
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
@@ -147,20 +146,18 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 					      1.0,
 					      1.0e-03 );
 
-  // Test against the analyticl integral
+  // Test against the analytic integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-5 );
 
   // Calculate the integral value at energy 1e-2 MeV
-  kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-2 );
-
-  value = kernel_factor->getIntegratedValue( error );
+  sab_value = (*sab_function)( 39.5, 1.0, 1e-2 );
 
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       39.5,
 				       1.0,
 				       1.0e-02,
-				       value );
+				       sab_value );
 
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
@@ -168,20 +165,18 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 					      1.0,
 					      1.0e-02 );
 
-  // Test against the analyticl integral
+  // Test against the analytic integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-6 );
 
   // Calculate the integral value at energy 0.1 MeV
-  kernel_factor->setIndependentVariables( 39.5, 1.0, 1e-1 );
-
-  value = kernel_factor->getIntegratedValue( error );
+  sab_value = (*sab_function)( 39.5, 1.0, 1e-1 );
 
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       39.5,
 				       1.0,
 				       1.0e-01,
-				       value );
+				       sab_value );
 
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
@@ -189,20 +184,18 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 					      1.0,
 					      1.0e-01 );
 
-  // Test against the analyticl integral
+  // Test against the analytic integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-7 );
 
   // Calculate the integral value at energy 1.0 MeV
-  kernel_factor->setIndependentVariables( 39.5, 1.0, 1.0 );
-
-  value = kernel_factor->getIntegratedValue( error );
+  sab_value = (*sab_function)( 39.5, 1.0, 1.0 );
 
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       39.5,
 				       1.0,
 				       1.0,
-				       value );
+				       sab_value );
 
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
@@ -210,20 +203,18 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 					      1.0,
 					      1.0 );
 
-  // Test against the analyticl integral
+  // Test against the analytic integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-7 );
 
   // Calculate the integral value at energy 10.0 MeV
-  kernel_factor->setIndependentVariables( 39.5, 1.0, 10.0 );
-
-  value = kernel_factor->getIntegratedValue( error );
+  sab_value = (*sab_function)( 39.5, 1.0, 10.0 );
 
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       39.5,
 				       1.0,
 				       10.0,
-				       value );
+				       sab_value );
 
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
@@ -231,20 +222,18 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 					      1.0,
 					      10.0 );
 
-  // Test against the analyticl integral
-  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-6 );
+  // Test against the analytic integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-5 );
 
   // Calculate the integral value at energy 19.99 MeV
-  kernel_factor->setIndependentVariables( 39.5, 1.0, 19.99 );
-
-  value = kernel_factor->getIntegratedValue( error );
+  sab_value = (*sab_function)( 39.5, 1.0, 19.99 );
 
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       39.5,
 				       1.0,
 				       19.99,
-				       value );
+				       sab_value );
 
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
@@ -252,7 +241,7 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 					      1.0,
 					      19.99 );
 
-  // Test against the analyticl integral
+  // Test against the analytic integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-5 );
 }
 
@@ -262,38 +251,216 @@ TEUCHOS_UNIT_TEST( FreeGasElasticScatteringKernelFactor,
 		   getIntegratedValue_alpha_beta_range )
 {
   // Calculate the integral value at energy 1e-6 MeV
-  kernel_factor->setIndependentVariables( 450, 700, 1e-6 );
-
-  double value, error;
-  value = kernel_factor->getIntegratedValue( error );
-  std::cout << value << std::endl;
-  value = integratedCrossSectionValue( 0.999167,
-				       2.53010e-8,
-				       450,
-				       700,
-				       1.0e-06,
-				       value );
+  double beta_min = Utility::calculateBetaMin( 1e-6, 
+					       sab_function->getTemperature());
+  double alpha_min = Utility::calculateAlphaMin( 
+					  1e-6,
+					  beta_min,
+					  sab_function->getAtomicWeightRatio(),
+					  sab_function->getTemperature() );
+  
+  double alpha_max = Utility::calculateAlphaMax( 
+					  1e-6,
+					  beta_min,
+					  sab_function->getAtomicWeightRatio(),
+					  sab_function->getTemperature() );
+  
+  double sab_value = (*sab_function)( alpha_min, beta_min, 1e-6 );
+  std::cout << sab_value << std::endl;
+  
+  double value = integratedCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      alpha_min,
+					      beta_min,
+					      1.0e-06,
+					      sab_value );
   
   double analytic_value = analyticCrossSectionValue( 0.999167,
 						     2.53010e-8,
-						     450,
-						     700,
+						     alpha_min,
+						     beta_min,
 						     1.0e-06 );
 
   // Test against analytic integral
   TEST_FLOATING_EQUALITY( value, analytic_value, 1e-9 );
 
   // Calculate the integral value at energy 1e-6 MeV
-  kernel_factor->setIndependentVariables( 1000, 700, 1e-6 );
+  sab_value = (*sab_function)( alpha_max, beta_min, 1e-6 );
+  std::cout << sab_value << std::endl;
+  
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       alpha_max,
+				       beta_min,
+				       1.0e-06,
+				       sab_value );
+  
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      alpha_max,
+					      beta_min,
+					      1.0e-06 );
 
-  value = kernel_factor->getIntegratedValue( error );
+  // Test against analytic integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-9 );
+
+  // Calculate the integral value at energy 1e-6 MeV
+  alpha_min = Utility::calculateAlphaMin( 1e-6,
+					  -15.0,
+					  sab_function->getAtomicWeightRatio(),
+					  sab_function->getTemperature() );
+  
+  alpha_max = Utility::calculateAlphaMax( 1e-6,
+					  -15.0,
+					  sab_function->getAtomicWeightRatio(),
+					  sab_function->getTemperature() );
+
+  sab_value = (*sab_function)( alpha_min, -15.0, 1e-6 );
+  std::cout << sab_value << std::endl;
+  
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       alpha_min,
+				       -15.0,
+				       1.0e-06,
+				       sab_value );
+  
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      alpha_min,
+					      -15.0,
+					      1.0e-06 );
+
+  // Test against analytic integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-9 );
+
+  // Calculate the integral value at energy 1e-6 MeV
+  sab_value = (*sab_function)( alpha_max, -15.0, 1e-6 );
+  std::cout << sab_value << std::endl;
+  
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       alpha_max,
+				       -15.0,
+				       1.0e-06,
+				       sab_value );
+  
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      alpha_max,
+					      -15.0,
+					      1.0e-06 );
+
+  // Calculate the integral value at energy 1e-6 MeV
+  sab_value = (*sab_function)( 15.0, -15.0, 1e-6 );
+  std::cout << sab_value << std::endl;
+  
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       15.0,
+				       -15.0,
+				       1.0e-06,
+				       sab_value );
+  
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      15.0,
+					      -15.0,
+					      1.0e-06 );
+
+  // Test against analytic integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-9 );
+
+  // Calculate the integral value at energy 1e-6 MeV
+  sab_value = (*sab_function)( 1e-9, 0.0, 1e-6 );
+  std::cout << sab_value << std::endl;
+  
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       1e-9,
+				       0.0,
+				       1.0e-06,
+				       sab_value );
+  
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      1e-9,
+					      0.0,
+					      1.0e-06 );
+
+  // Test against analytic integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-7 );
+
+  // Calculate the integral value at energy 1e-6 MeV
+  sab_value = (*sab_function)( 1e-12, 0.0, 1e-6 );
+  std::cout << sab_value << std::endl;
+  
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       1e-12,
+				       0.0,
+				       1.0e-06,
+				       sab_value );
+  
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      1e-12,
+					      0.0,
+					      1.0e-06 );
+
+  // Test against analytic integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-7 );
+
+  // Calculate the integral value at energy 1e-6 MeV
+  sab_value = (*sab_function)( 0.0, 0.0, 1e-6 );
+  std::cout << sab_value << std::endl;
+  
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       0.0,
+				       0.0,
+				       1.0e-06,
+				       sab_value );
+  
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      0.0,
+					      0.0,
+					      1.0e-06 );
+
+  // Test against analytic integral
+  TEST_EQUALITY_CONST( value, analytic_value );
+
+  // Calculate the integral value at energy 1e-6 MeV
+  sab_value = (*sab_function)( 450, 700, 1e-6 );
+  std::cout << sab_value << std::endl;
+  
+  value = integratedCrossSectionValue( 0.999167,
+				       2.53010e-8,
+				       450,
+				       700,
+				       1.0e-06,
+				       sab_value );
+  
+  analytic_value = analyticCrossSectionValue( 0.999167,
+					      2.53010e-8,
+					      450,
+					      700,
+					      1.0e-06 );
+
+  // Test against analytic integral
+  TEST_FLOATING_EQUALITY( value, analytic_value, 1e-9 );
+
+  // Calculate the integral value at energy 1e-6 MeV
+  sab_value = (*sab_function)( 1000, 700, 1e-6 );
+
   std::cout << value << std::endl;
   value = integratedCrossSectionValue( 0.999167,
 				       2.53010e-8,
 				       1000,
 				       700,
 				       1.0e-06,
-				       value );
+				       sab_value );
   
   analytic_value = analyticCrossSectionValue( 0.999167,
 					      2.53010e-8,
@@ -345,15 +512,12 @@ int main( int argc, char** argv )
     scattering_distribution( new MonteCarlo::NeutronScatteringAngularDistribution(
 							      distribution ) );
 
-  // Initialize the kernel factor
-  kernel_factor.reset( new MonteCarlo::FreeGasElasticScatteringKernelFactor(
+  // Initialize the S(alpha,beta) function
+  sab_function.reset( new MonteCarlo::FreeGasElasticSAlphaBetaFunction(
 						    cross_section, 
 						    scattering_distribution,
 						    0.999167,
-						    2.53010e-8,
-						    39.5,
-						    1.0,
-						    1.0e-06 ) );
+						    2.53010e-8 ) );
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );

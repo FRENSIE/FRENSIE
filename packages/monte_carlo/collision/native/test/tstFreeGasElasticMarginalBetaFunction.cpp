@@ -15,7 +15,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "Facemc_FreeGasElasticMarginalBetaFunction.hpp"
+#include "MonteCarlo_FreeGasElasticMarginalBetaFunction.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
@@ -23,7 +23,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Facemc::FreeGasElasticMarginalBetaFunction> beta_function;
+Teuchos::RCP<MonteCarlo::FreeGasElasticMarginalBetaFunction> beta_function;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -103,7 +103,7 @@ int main( int argc, char** argv )
 			  new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
 
   // Initialize the scattering distribution
-  Facemc::NeutronScatteringAngularDistribution::AngularDistribution
+  MonteCarlo::NeutronScatteringAngularDistribution::AngularDistribution
     distribution( 2 );
 
   distribution[0].first = 0.0;
@@ -112,12 +112,12 @@ int main( int argc, char** argv )
   distribution[1].first = 20.0;
   distribution[1].second = isotropic_distribution;
 
-  Teuchos::RCP<Facemc::NeutronScatteringAngularDistribution> 
-    scattering_distribution( new Facemc::NeutronScatteringAngularDistribution(
+  Teuchos::RCP<MonteCarlo::NeutronScatteringAngularDistribution> 
+    scattering_distribution( new MonteCarlo::NeutronScatteringAngularDistribution(
 							      distribution ) );
 
   // Initialize the kernel factor
-  beta_function.reset( new Facemc::FreeGasElasticMarginalBetaFunction(
+  beta_function.reset( new MonteCarlo::FreeGasElasticMarginalBetaFunction(
 						    cross_section, 
 						    scattering_distribution,
 						    0.999167,
