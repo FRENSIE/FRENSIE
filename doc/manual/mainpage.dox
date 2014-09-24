@@ -1,7 +1,33 @@
 // This file is used to add material to the index page.
 
-/*! \mainpage Overview, Theory and Usage
+/*! \mainpage Manual
+ *
+ * The Framework for REsearch in Nuclear ScIence and Engineering (FRENSIE)
+ * is a code development framework designed for methods research. The manual
+ * has been divided into three parts:
+ * <ul>
+ *  <li> \subpage mc_theory "Monte Carlo Theory" </li>
+ *  <li> \subpage user_manual "User's Manual" </li>
+ *  <li> \subpage developer_manual "Developer's Manual" </li>
+ * </ul>
+ *
+ * All feedback and questions regarding the manual should be directed to
+ * <a href=https://github.com/aprobinson>Alex Robinson</a>.
  * 
+ * Further Reading:
+ * <ul>
+ *  <li> \ref installation "Installation"
+ *  <li> \ref contributors "Contributors"
+ *  <li> \ref license "License"
+ *  <li> \ref todo "Todo List"
+ *  <li> <a href="citelist.html">Bibliography</a>
+ * </ul>
+ */
+
+/* \mainpage Overview, Theory and Usage 
+ * One of the
+ * key features of any research code is extensibility and accommodating the
+ * development of extensible software is one of the priorities of FRENSIE.
  * The Forward Adjoint Continuous Energy Monte Carlo (FACEMC) code is a 
  * shielding code that can be used to model experiments and devices with a
  * virtually limitless level of detail. A unique feature of this code is its
@@ -19,7 +45,7 @@
  *  <li> \subpage neutron_transport 
  *  <li> \subpage charged_particle_transport 
  *  <li> \subpage code_design 
- *  <li> \subpage beginner 
+ *  <li> \subpage beginner u
  *  <li> \subpage advanced 
  *  <li> \subpage examples 
  * </ol>

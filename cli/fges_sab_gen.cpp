@@ -20,8 +20,8 @@
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_KinematicHelpers.hpp"
-#include "Facemc_NeutronScatteringAngularDistribution.hpp"
-#include "Facemc_FreeGasElasticSAlphaBetaFunction.hpp"
+#include "MonteCarlo_NeutronScatteringAngularDistribution.hpp"
+#include "MonteCarlo_FreeGasElasticSAlphaBetaFunction.hpp"
 
 int main( int argc, char** argv )
 {
@@ -77,7 +77,7 @@ int main( int argc, char** argv )
 			  new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
 
   // Initialize the scattering distribution
-  Facemc::NeutronScatteringAngularDistribution::AngularDistribution
+  MonteCarlo::NeutronScatteringAngularDistribution::AngularDistribution
     distribution( 2 );
 
   distribution[0].first = 0.0;
@@ -86,12 +86,13 @@ int main( int argc, char** argv )
   distribution[1].first = 20.0;
   distribution[1].second = isotropic_distribution;
 
-  Teuchos::RCP<Facemc::NeutronScatteringAngularDistribution> 
-    scattering_distribution( new Facemc::NeutronScatteringAngularDistribution(
+  Teuchos::RCP<MonteCarlo::NeutronScatteringAngularDistribution> 
+    scattering_distribution( 
+			  new MonteCarlo::NeutronScatteringAngularDistribution(
 							      distribution ) );
   
   // Create the S(alpha,beta,E) function object
-  Facemc::FreeGasElasticSAlphaBetaFunction sab_function(
+  MonteCarlo::FreeGasElasticSAlphaBetaFunction sab_function(
 						       cross_section,
 						       scattering_distribution,
 						       atomic_weight_ratio,

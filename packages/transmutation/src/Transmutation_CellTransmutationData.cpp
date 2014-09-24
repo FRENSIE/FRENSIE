@@ -18,7 +18,7 @@
 #include "Transmutation_DecayMatrix.hpp"
 #include "Transmutation_IsotopesArray.hpp"
 #include "Transmutation_ReactionRateMatrix.hpp"
-#include "Facemc_NuclearReactionType.hpp"
+#include "MonteCarlo_NuclearReactionType.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -52,7 +52,7 @@ void CellTransmutationData::getNumberDensities(Teuchos::Array<double>& number_de
 }
 
 // Set Reaction Rates
-void CellTransmutationData::setReactionRates(const Facemc::NuclearReactionType reaction,
+void CellTransmutationData::setReactionRates(const MonteCarlo::NuclearReactionType reaction,
                                              const Teuchos::Array<std::pair<int,double> >& reaction_rates)
 {
    // Make sure the reaction rate has not already been added 
@@ -88,7 +88,7 @@ void CellTransmutationData::setFissionReactionRates(const int fission_zaid,
 void CellTransmutationData::populateMatrix(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& matrix)
 {
    // Loop through and add all the reaction rates
-   for(boost::unordered_map<Facemc::NuclearReactionType, Teuchos::Array<std::pair<int,double> > >::iterator i = d_reaction_rates.begin();
+   for(boost::unordered_map<MonteCarlo::NuclearReactionType, Teuchos::Array<std::pair<int,double> > >::iterator i = d_reaction_rates.begin();
        i != d_reaction_rates.end(); 
        ++i)
    {

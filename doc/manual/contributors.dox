@@ -1,0 +1,28 @@
+// This file is used to add material to the contributors page
+
+/*! \page contributors Contributors
+ * 
+ * The following people have contributed to FRENSIE:
+ * <ul>
+ *  <li> University of Wisconsin - Madison
+ *   <ul>
+ *    <li> <a href=https://directory.engr.wisc.edu/ep/faculty/henderson_douglass> Douglass Henderson</a> </li>
+ *    <li> <a href=https://github.com/aprobinson>Alex Robinson</a> </li>
+ *    <li> <a href=https://github.com/lkersting>Luke Kersting</a> </li>
+ *    <li> <a href=https://github.com/ecmoll>Eli Moll</a> </li>
+ *   </ul>
+ *  </li>
+ *  <li> University of Michigan
+ *   <ul>
+ *    <li> <a href=https://mcommunity.umich.edu/#profile:bckiedro>Brian Kiedrowski</a> </li>
+ *    <li> <a href=https://github.com/brbass>Brody Basset</a> </li>
+ *    <li> <a href=https://github.com/agtumulak>Aaron Tumulak</a> </li>
+ *   </ul>
+ *  </li>
+ *  <li> Pennsylvania State University
+ *   <ul>
+ *    <li> <a href=https://github.com/alex36036>Alex Bennett</a> </li>
+ *   </ul>
+ *  </li>
+ * </ul>
+ */ 

@@ -17,12 +17,12 @@
 #include <Teuchos_FancyOStream.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
-// Facemc Includes
-#include "Facemc_ParticleSimulationManagerFactory.hpp"
+// FRENSIE Includes
+#include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 
 // The simulation manager
-Teuchos::RCP<Facemc::SimulationManager> simulation_manager;
+Teuchos::RCP<MonteCarlo::SimulationManager> simulation_manager;
 
 // The signal handler
 void signalHandlerWrapper(int signal)
@@ -134,7 +134,7 @@ int main( int argc, char** argv )
 
   // Create the simulation manager
   simulation_manager = 
-    Facemc::ParticleSimulationManagerFactory::createManager( 
+    MonteCarlo::ParticleSimulationManagerFactory::createManager( 
 						*simulation_info,
 						*geometry_definition,
 						*source_definition,

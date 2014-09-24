@@ -122,6 +122,6 @@ inline double calculateKineticEnergy( const double rest_mass_energy,
 #endif // end UTILITY_KINEMATIC_HELPERS_HPP
 
 //---------------------------------------------------------------------------//
-// end Facemc_KinematicHelpers.hpp
+// end MonteCarlo_KinematicHelpers.hpp
 //---------------------------------------------------------------------------//
 

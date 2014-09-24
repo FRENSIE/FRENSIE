@@ -1,16 +1,24 @@
 # Add a target to generate API documentation with Doxygen
-FIND_PACKAGE(Doxygen)
+IF(NOT ${DOXYGEN_PREFIX} EQUAL "")
+  SET(DOXYGEN_EXECUTABLE ${DOXYGEN_PREFIX}/bin/doxygen)
+  SET(DOXYGEN_FOUND 1)
+ELSE()
+  FIND_PACKAGE(Doxygen 1.8.0 REQUIRED)
+ENDIF()
 
 IF(DOXYGEN_FOUND)
 
   # Find doxygen depends
-  FILE(GLOB_RECURSE DOXYGEN_DEPENDS ../../packages/*.cpp ../../packages/*.hpp ../../packages/*.F90 ../../packages/*.dox *.dox *.in)
+  FILE(GLOB_RECURSE DOXYGEN_DEPENDS ${CMAKE_SOURCE_DIR}/packages/*.cpp ${CMAKE_SOURCE_DIR}/packages/*.hpp ${CMAKE_SOURCE_DIR}/packages/*.F90 ${CMAKE_SOURCE_DIR}/packages/*.dox ${CMAKE_SOURCE_DIR}/cli/*.cpp ${CMAKE_SOURCE_DIR}/cli/*.dox *.dox *.in *.bib DoxygenLayout.xml ${CMAKE_SOURCE_DIR}/README.md)
   
   # Configure the Doxygen file
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
 
   # Configure the html wrapper file
   CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/manual.html.in ${CMAKE_CURRENT_BINARY_DIR}/manual.html)
+
+  # Configure the IEEEtran_custom format file
+  CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/IEEEtran_custom.bst.in ${CMAKE_CURRENT_BINARY_DIR}/IEEEtran_custom.bst)
 
   # Add a custom doxygen build command
   IF(CMAKE_VERBOSE_CONFIGURE)
@@ -21,7 +29,7 @@ IF(DOXYGEN_FOUND)
     COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     DEPENDS ${DOXYGEN_DEPENDS}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    COMMENT "Generating FACEMC manual with Doxygen" VERBATIM)
+    COMMENT "Generating FRENSIE manual with Doxygen" VERBATIM)
 
   # Add a custom build target
   ADD_CUSTOM_TARGET(manual

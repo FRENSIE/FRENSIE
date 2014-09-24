@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL
-#define UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL
+#ifndef UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_HPP
+#define UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_HPP
 
 // GSL Includes
 #include <gsl/gsl_integration.h>
@@ -134,7 +134,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_GUASS_KRONROD_QUADRATURE_KERNEL
+#endif // end UTILITY_GUASS_KRONROD_QUADRATURE_KERNEL_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_GaussKronrodQuadratureKernel.hpp

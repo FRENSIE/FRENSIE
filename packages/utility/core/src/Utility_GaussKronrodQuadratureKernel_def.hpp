@@ -6,8 +6,11 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Boost Includes
-#include <boost/mem_fn.hpp>
+#ifndef UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_DEF_HPP
+#define UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_DEF_HPP
+
+// GSL Includes
+#include <gsl/gsl_errno.h>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -497,6 +500,8 @@ void GaussKronrodQuadratureKernel::integrateAdaptivelyWynnEpsilon(
 }
 
 } // end Utility namespace
+
+#endif // end UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_GaussKronrodQuadratureKernel_def.hpp

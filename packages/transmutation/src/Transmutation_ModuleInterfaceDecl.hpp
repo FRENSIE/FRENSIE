@@ -17,7 +17,7 @@
 
 // FRENSIE Includes
 #include "Geometry_ModuleTraits.hpp"
-#include "Facemc_NuclearReactionType.hpp"
+#include "MonteCarlo_NuclearReactionType.hpp"
 
 /*! \defgroup transmutation_module Transmutation Module
  *

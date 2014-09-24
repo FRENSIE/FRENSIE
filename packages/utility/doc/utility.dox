@@ -1,0 +1,84 @@
+// This file is used to add material to the utility package page
+
+/*! \page utility Utility Package
+ *
+ * \tableofcontents
+ *
+ * \section utility_overview_sec Overview
+ * The utility package provides a collection of low level classes and
+ * functions that can be useful in a variety of applications. The utility
+ * package is further divided into a series of subpackages, which are
+ * listed below.
+ * <ul>
+ *  <li>core</li>
+ *  <li>hdf5</li>
+ *  <li>prng</li>
+ *  <li>distribution</li>
+ * </ul>
+ *
+ * \section utility_core_sec The Core Subpackage
+ * The core subpackage provides all of the very low-level classes and
+ * functions that cannot be organized into a more coherent group (misc might
+ * be a more appropriate name for this subpackage...). The capabilities that
+ * are provided by this subpackage are listed below.
+ * <ul>
+ *  <li>XML io (Utility::XMLCompatibleObject)</li>
+ *  <li>xtream output (Utility::PrintableObject)</li>
+ *  <li>binary searching (Utility::SearchAlgorithms)</li>
+ *  <li>sorting (Utility::SortAlgorithms)</li>
+ *  <li>interpolation (Utility::InterpolationPolicy)</li>
+ *  <li>linearized grid generation (Utility::LinearGridGenerator)</li>
+ *  <li>ODE solving (Utility::ODESolver)</li>
+ *  <li>numerical quadrature (Utility::GaussKronrodQuadratureKernel)</li>
+ *  <li>efficient integer exponentiation (Utility::ExponentiationAlgorithms)</li>
+ *  <li>Fortran file ops (Utility::FortranFileHelperWrappers)</li>
+ *  <li>physical constant encapsulation (Utility::PhysicalConstants)</li>
+ *  <li>tuple object creation (Utility::Tuple)</li>
+ *  <li>unit testing helpers (Utility::TestingHelpers)</li>
+ *  <li>kinematic equations (Utility::KinematicHelpers)</li>
+ *  <li>omp helper functions (Utility::GlobalOpenMPSession)</li>
+ *  <li>exception testing (Utility::ExceptionTestMacros)</li>
+ *  <li>exception catching (Utility::ExceptionCatchMacros)</li>
+ *  <li>direction helper functions (Utility::DirectionHelpers)</li>
+ *  <li>simple data processing (Utility::DataProcessor)</li>
+ *  <li>variable comparisons (Utility::ComparePolicy)</li>
+ * </ul>
+ *
+ * When adding new low-level capabilities that do not seem to fit into
+ * another category, add them to this subpackage.
+ *
+ * \section utility_hdf5_sec The HDF5 Subpackage
+ * The hdf5 subpackage provides hdf5 file io functionality. The 
+ * Utility::HDF5FileHandler class is used to interact with hdf5 files
+ * and provides all functions for writing to and reading from hdf5 files. 
+ * The functions are all templates and rely on the Utility::HDF5TypeTraits
+ * class to convert the type of interest to an appropriate hdf5 type. All
+ * types that will be written to and read from hdf5 files must have
+ * a Utility::HDF5TypeTraits specialization or a compile time error will occur.
+ *
+ * \section utility_prng_sec The Prng Subpackage
+ * The prng subpackage provides all of the random number generators. Currently
+ * only one random number generator has been implemented:
+ * Utility::LinearCongruentialGenerator. This generator is based on the
+ * sprng 64-bit linear congruential generator. However, the features required by
+ * Monte Carlo particle simulators have been added (independent streams for
+ * each particle history).
+ *
+ * All packages that need random number generation capabilities should use
+ * the Utility::RandomNumberGenerator class, which is simply a wrapper
+ * around the random number generator classes. It also provides support for
+ * generating random numbers in multithreaded programs. 
+ * 
+ * \section utility_dist_sec The Distribution Subpackage
+ * The distribution subpackage contains a collection of distributions that
+ * can be customized and used for Monte Carlo sampling. All 1D distributions
+ * inherit from the Utility::OneDDistribution base class. There is also
+ * a Utility::SpatialDistribution base class for sampling from 3D distributions
+ * and a Utility::DirectionalDistribution for sampling of directions. All
+ * distribution classes can be written to and read from XML files. For the
+ * 1D distributions, this is accomplished with the 
+ * Utility::XMLCompatibleObject. For details regarding all of the distribution
+ * classes, refer to the \ref distribution "distribution" page. 
+ */
+
+

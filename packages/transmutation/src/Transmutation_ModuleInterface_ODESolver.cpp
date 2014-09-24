@@ -28,7 +28,7 @@ Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> > ModuleInterface<Utility::O
 boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,CellTransmutationData> ModuleInterface<Utility::ODESolver>::cell_data;
 
 //! Set the reaction rates
-void ModuleInterface<Utility::ODESolver>::setReactionRates(const Facemc::NuclearReactionType reaction, 
+void ModuleInterface<Utility::ODESolver>::setReactionRates(const MonteCarlo::NuclearReactionType reaction, 
                                                              Teuchos::Array<std::pair<int,double> >& reaction_rates, 
                                                              const Geometry::ModuleTraits::InternalCellHandle cell_id)
 {

@@ -15,7 +15,7 @@
 #include <Teuchos_SerialDenseMatrix.hpp>
 
 // FRENSIE Includes
-#include "Facemc_NuclearReactionType.hpp"
+#include "MonteCarlo_NuclearReactionType.hpp"
 
 namespace Transmutation {
 
@@ -27,11 +27,11 @@ public:
                                    const Teuchos::Array<std::pair<int,double> >& fission_fragments);
    static void addReactionRates(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& reaction_rate_matrix,
                                 Teuchos::Array<std::pair<int,double> >& reaction_rates,
-                                const Facemc::NuclearReactionType& reaction);
+                                const MonteCarlo::NuclearReactionType& reaction);
 private:
    static int getLocation(const int input_zaid, const Teuchos::Array<int>& zaids);
    static bool isIsotopeInList(const int input_zaid, const Teuchos::Array<int>& zaids);
-   static int reactionProduct(const int input_zaid, const Facemc::NuclearReactionType& reaction); 
+   static int reactionProduct(const int input_zaid, const MonteCarlo::NuclearReactionType& reaction); 
 };
 
 }
