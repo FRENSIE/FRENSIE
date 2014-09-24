@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_NUCLEAR_REACTION_BANK_HPP
-#define FACEMC_NUCLEAR_REACTION_BANK_HPP
+#ifndef MONTE_CARLO_NUCLEAR_REACTION_BANK_HPP
+#define MONTE_CARLO_NUCLEAR_REACTION_BANK_HPP
 
 // Std Lib Includes
 #include <list>

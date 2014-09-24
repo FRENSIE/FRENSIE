@@ -17,6 +17,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 
 //---------------------------------------------------------------------------//

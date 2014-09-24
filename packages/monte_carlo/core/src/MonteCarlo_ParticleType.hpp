@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_TYPE_HPP
-#define FACEMC_PARTICLE_TYPE_HPP
+#ifndef MONTE_CARLO_PARTICLE_TYPE_HPP
+#define MONTE_CARLO_PARTICLE_TYPE_HPP
 
 // HDF5 Includes
 #include <H5Cpp.h>
@@ -20,8 +20,10 @@ namespace MonteCarlo{
 enum ParticleType{
   PHOTON = 0,
   NEUTRON,
+  ELECTRON,
   ADJOINT_PHOTON,
   ADJOINT_NEUTRON,
+  ADJOINT_ELECTRON,
   UNKNOWN_PARTICLE
 };
 
@@ -57,11 +59,19 @@ struct HDF5TypeTraits<MonteCarlo::ParticleType>
     
     particle_type = 2;
     
-    hdf5_particle_type.insert( "ADJOINT_PHOTON", &particle_type );
+    hdf5_particle_type.insert( "ELECTRON", &particle_type );
     
     particle_type = 3;
+
+    hdf5_particle_type.insert( "ADJOINT_PHOTON", &particle_type );
+    
+    particle_type = 4;
     
     hdf5_particle_type.insert( "ADJOINT_NEUTRON", &particle_type );
+
+    particle_type = 5;
+    
+    hdf5_particle_type.insert( "ADJOINT_ELECTRON", &particle_type );
     
     return hdf5_particle_type;
   }
@@ -82,11 +92,17 @@ struct HDF5TypeTraits<MonteCarlo::ParticleType>
   {
     return MonteCarlo::NEUTRON;
   }
+
+  //! Returns the unity value for this type
+  static inline MonteCarlo::ParticleType two()
+  {
+    return MonteCarlo::ELECTRON;
+  }
 };
 
 } // end Utility namespace
 
-#endif // end FACEMC_PARTICLE_TYPE_HPP
+#endif // end MONTE_CARLO_PARTICLE_TYPE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleType.hpp
