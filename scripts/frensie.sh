@@ -11,6 +11,7 @@ ODEPACK_PREFIX_PATH=$HOME/odepack-path
 BOOST_PREFIX_PATH=$HOME/boost-path
 GSL_PREFIX_PATH=$HOME/gsl-path
 MPI_PREFIX_PATH=$HOME/mpi-path
+DOXYGEN_PREFIX_PATH=$HOME/doxygen-path
 FRENSIE_PREFIX_PATH=$HOME/frensie-path
 
 ##---------------------------------------------------------------------------##
@@ -39,6 +40,7 @@ cmake \
     -D BOOST_PREFIX:PATH=$BOOST_PREFIX_PATH \
     -D GSL_PREFIX:PATH=$GSL_PREFIX_PATH \
     -D MPI_PREFIX:PATH=$MPI_PREFIX_PATH \
+    -D DOXYGEN_PREFIX:PATH=$DOXYGEN_PREFIX_PATH \
     $EXTRA_ARGS \
     $FRENSIE_PREFIX_PATH/src
 

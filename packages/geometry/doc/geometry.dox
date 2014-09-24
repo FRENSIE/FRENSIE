@@ -1,0 +1,59 @@
+// This file is used to add material to the geometry package page
+
+/*! \page geometry Geometry Package
+ *
+ * \tableofcontents
+ *
+ * \section geometry_overview_sec Overview
+ * This package provides ray tracing functionality through a generic
+ * interface. This generic interface operates on a Geometry::Ray class, which
+ * stores ray state information. The package is divided into the following
+ * subpackages: 
+ * <ul>
+ *  <li>core</li>
+ *  <li>dagmc</li>
+ *  <li>root</li>
+ *  <li>native</li>
+ * </ul>
+ *
+ * The core subpackage provides the low-level classes and functions required
+ * by the Geometry::ModuleInterface. The most important of which is the
+ * Geometry::Ray class. 
+ *
+ * The dagmc subpackage provides the module interface specialization for the
+ * DagMC tool (Geometry::ModuleInterface<moab::DagMC>). It also provides
+ * some helper functions that can be useful for initializing DagMC.
+ *
+ * The root subpackage is under development but it will provide the
+ * module interface specialization for the ROOT tool. It will also provide
+ * helper functions for initializing ROOT geometries. 
+ *
+ * The native subpackage is also under development. It will provide a very
+ * simple combinatorial geometry capability. A module interface 
+ * specialization for the native ray tracer will also be provided.
+ *
+ * \section geometry_spec_sec Specializing the Geometry Module Interface
+ * Any software tool that can model a geometry and that provides a robust
+ * ray tracing capability can be used in FRENSIE. All ray tracing capabilities
+ * are encapsulated within the Geometry::ModuleInterface, which allows 
+ * other FRENSIE packages that need ray tracing functionality to be
+ * agnostic to the particular type ray tracing tool. 
+ *
+ * To use a new ray tracing tool in FRENSIE, the Geometry::ModuleInterface
+ * must be specialized (template specialization). The Geometry::ModuleInterface
+ * is designed to produce a compile time error when one attempts to use
+ * a tool that does not have a specialization. The Geometry::ModuleInterface
+ * should be used as the template for the specialization - all of the 
+ * types and functions declared in the Geometry::ModuleInterface should
+ * be declared and defined in the specialized interface. Inside of each 
+ * function call of the specialized interface, the appropriate calls to the
+ * tool of interest should be made. It may be necessary to have extra calls
+ * that are not declared in the Geometry::ModuleInterface. Make these extra
+ * calls private whenever possible. If an extra call truely is needed, then
+ * the new must be added to the Geometry::ModuleInterface and all other
+ * interface specializations. Failure to do this will likely break other
+ * FRENSIE packages that rely on the ray tracing interface. 
+ *
+ * For an example of an interface specialization, refer to the 
+ * Geometry::ModuleInterface<moab::DagMC> specialization.
+ */ 

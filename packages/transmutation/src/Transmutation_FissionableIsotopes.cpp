@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <iostream>
+
 // Boost Includes
 #include <boost/unordered_set.hpp>
 #include <boost/assign/list_of.hpp>

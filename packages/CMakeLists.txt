@@ -9,8 +9,8 @@ INCLUDE_DIRECTORIES(geometry/core/src geometry/dagmc/src geometry/interface)
 ADD_SUBDIRECTORY(data)
 INCLUDE_DIRECTORIES(data/ace/src data/epdl/src data/endf/src data/decay/src)
 
-ADD_SUBDIRECTORY(facemc)
-INCLUDE_DIRECTORIES(facemc/core/src)
+ADD_SUBDIRECTORY(monte_carlo)
+INCLUDE_DIRECTORIES(monte_carlo/core/src)
 
 ADD_SUBDIRECTORY(transmutation)
 INCLUDE_DIRECTORIES(transmutation/src)

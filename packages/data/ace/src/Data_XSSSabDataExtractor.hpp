@@ -116,7 +116,7 @@ private:
   Teuchos::ArrayView<const double> d_itce_block;
 };
 
-} // end Facemc namespace
+} // end MonteCarlo namespace
 
 #endif // end DATA_XSS_SAB_DATA_EXTRACTOR_HPP
 
