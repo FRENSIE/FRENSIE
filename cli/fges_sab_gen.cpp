@@ -138,7 +138,7 @@ int main( int argc, char** argv )
 			       linear_alpha_grids,
 			       initial_beta_grid,
 			       convergence_tol,
-			       1e-50,
+			       1e-21,
 			       1e-10 );
 
   *out << "done!" << std::endl << std::endl;

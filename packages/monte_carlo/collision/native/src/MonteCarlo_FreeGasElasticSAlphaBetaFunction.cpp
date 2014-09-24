@@ -69,6 +69,10 @@ FreeGasElasticSAlphaBetaFunction::FreeGasElasticSAlphaBetaFunction(
 		    zero_temp_elastic_cross_section->getUpperBoundOfIndepVar(),
 		    d_average_zero_temp_elastic_cross_section,
 		    error );
+
+  d_average_zero_temp_elastic_cross_section /=
+    (zero_temp_elastic_cross_section->getUpperBoundOfIndepVar() -
+     zero_temp_elastic_cross_section->getLowerBoundOfIndepVar());
 }
 
 // Return the atomic weight ratio
@@ -227,7 +231,7 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
       {
 	std::cerr << "Warning: difficulty computing S("
 		  << alpha << "," << beta << "," << E
-		  << ") using approximate form.";
+		  << ") using approximate form." << std::endl;
 	
 	// Approximate S(alpha,beta) function
 	value = d_average_zero_temp_elastic_cross_section/
@@ -239,7 +243,7 @@ double FreeGasElasticSAlphaBetaFunction::operator()( const double alpha,
       }
     }
     else // alpha == 0.0
-      value = std::numeric_limits<double>::max();
+      value = std::numeric_limits<double>::infinity();
   }
   else
     value = 0.0;
