@@ -27,6 +27,12 @@ double SimulationProperties::min_photon_energy = 1e-3;
 // The max photon energy (MeV)
 double SimulationProperties::max_photon_energy = 20.0;
 
+// The minimum electron energy (MeV)
+double SimulationProperties::min_electron_energy = 1e-3;
+
+// The max neutron energy (MeV)
+double SimulationProperties::max_electron_energy = 20.0;
+
 // The capture mode (true = implicit capture mode on, false = analogue)
 bool SimulationProperties::implicit_capture_mode_on = false;
 
@@ -61,6 +67,16 @@ void SimulationProperties::setMinPhotonEnergy( const double energy )
   testPrecondition( energy < SimulationProperties::max_photon_energy );
   
   SimulationProperties::min_photon_energy = energy;
+}
+
+// Set the minimum electron energy (MeV)
+void SimulationProperties::setMinElectronEnergy( const double energy )
+{
+  // Make sure the energy is valid
+  testPrecondition( energy > 0.0 );
+  testPrecondition( energy < SimulationProperties::max_electron_energy );
+  
+  SimulationProperties::min_electron_energy = energy;
 }
 
 // Set implicit capture mode to on 

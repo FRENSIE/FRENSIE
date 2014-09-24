@@ -13,6 +13,7 @@
 #include "MonteCarlo_ParticleStateFactory.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 
 namespace MonteCarlo{
 
@@ -34,6 +35,9 @@ ParticleState::pointerType ParticleStateFactory::createState(
     break;
   case NEUTRON:
     particle.reset( new NeutronState( history ) );
+    break;
+  case ELECTRON:
+    particle.reset( new ElectronState( history ) );
     break;
   default:
     std::string error_message = "Error: The particle type requested cannot ";
@@ -61,6 +65,9 @@ ParticleState::pointerType ParticleStateFactory::createState(
     break;
   case NEUTRON:
     particle.reset( new NeutronState( core ) );
+    break;
+  case ELECTRON:
+    particle.reset( new ElectronState( core ) );
     break;
   default:
     std::string error_message = "Error: The particle type found in the ";
