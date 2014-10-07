@@ -15,6 +15,11 @@ IF(FRENSIE_ENABLE_DAGMC)
   SET(CLI_TARGETS facemc ${CLI_TARGETS})
 ENDIF()
 
+# Create the free gas elastic scattering S(alpha,beta,E) table generator
+ADD_EXECUTABLE(fges_sab_gen fges_sab_gen.cpp)
+TARGET_LINK_LIBRARIES(fges_sab_gen monte_carlo_collision_native)
+SET(CLI_TARGETS fges_sab_gen ${CLI_TARGETS})
+
 # Create the angle dist sampler exec
 ADD_EXECUTABLE(sample_scattering_distribution sample_scattering_distribution.cpp)
 TARGET_LINK_LIBRARIES(sample_scattering_distribution monte_carlo_manager)

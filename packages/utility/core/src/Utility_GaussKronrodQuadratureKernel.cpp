@@ -12,6 +12,23 @@
 
 namespace Utility{
 
+// Initialize static member data
+gsl_error_handler_t* GaussKronrodQuadratureKernel::default_gsl_error_handler =
+  NULL;
+
+// Allow the kernel to throw exceptions
+void GaussKronrodQuadratureKernel::throwExceptions( const bool allow_throw )
+{
+  if( allow_throw )
+  {
+    GaussKronrodQuadratureKernel::default_gsl_error_handler = 
+      gsl_set_error_handler_off();
+  }
+  else if( default_gsl_error_handler )
+    gsl_set_error_handler( default_gsl_error_handler );
+  // else - default is already being used
+}
+
 // Constructor
 GaussKronrodQuadratureKernel::GaussKronrodQuadratureKernel( 
 				              const double relative_error_tol,
@@ -31,9 +48,6 @@ GaussKronrodQuadratureKernel::GaussKronrodQuadratureKernel(
   // Make sure the subinterval limit is valid
   testPrecondition( subinterval_limit > 0 );
   testPrecondition( subinterval_limit <= workspace_size );
-
-  // Turn off the gsl error handler
-  gsl_set_error_handler_off();
 }
 
 // Destructor
