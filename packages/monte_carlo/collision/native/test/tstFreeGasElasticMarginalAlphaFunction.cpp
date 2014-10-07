@@ -85,8 +85,9 @@ TEUCHOS_UNIT_TEST( FreeGasElasticMarginalAlphaFunction, evaulatePDF )
 
   pdf_value = (*alpha_function)( alpha_function->getAlphaMin() );
   
-  // alpha = 0.0 is the only value that will result in a pdf value of 0.0
-  TEST_EQUALITY_CONST( pdf_value, 0.0 );
+  // alpha = 0.0 is the only value that will result in a pdf value of inf
+  TEST_EQUALITY_CONST( pdf_value, 
+		       std::numeric_limits<double>::infinity() );
   
   pdf_value = (*alpha_function)( (alpha_function->getAlphaMin()+
 				  alpha_function->getAlphaMax())/2 );
