@@ -61,7 +61,7 @@ TEUCHOS_UNIT_TEST( ParticleBank, push )
       TEST_ASSERT( !bank.empty() );
       TEST_EQUALITY_CONST( bank.size(), 2 );
     }
-cd 
+ 
     particle.reset( new MonteCarlo::ElectronState( history_number ) );
       
     bank.push( particle );
