@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_COHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
-#define FACEMC_COHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_COHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_COHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_ArrayView.hpp>
@@ -45,7 +45,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_COHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_COHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CoherentPhotonScatteringDistribution.hpp

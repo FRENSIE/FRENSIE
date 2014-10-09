@@ -25,7 +25,7 @@ Teuchos::RCP<MonteCarlo::ParticleSource> source;
 // Initialize the source
 void initializeSource()
 {
-  Teuchos::ArrayRCP<MonteCarlo::ParticleStateCore> raw_particle_states( 3 );
+  Teuchos::ArrayRCP<MonteCarlo::ParticleStateCore> raw_particle_states( 4 );
 
   MonteCarlo::ParticleStateCore particle_core_1( 1ull,
 					     MonteCarlo::PHOTON,
@@ -62,6 +62,18 @@ void initializeSource()
 					     0.5 );
 
   raw_particle_states[2] = particle_core_3;
+
+  MonteCarlo::ParticleStateCore particle_core_4( 2ull,
+					     MonteCarlo::PHOTON,
+					     1.0, 1.0, 1.0,
+					     0.0, 0.0, 1.0,
+					     3.0,
+					     0.5,
+					     2u,
+					     1u,
+					     0.5 );
+
+  raw_particle_states[3] = particle_core_4;
 
   source.reset( new MonteCarlo::StateSource( raw_particle_states ) );
 }
