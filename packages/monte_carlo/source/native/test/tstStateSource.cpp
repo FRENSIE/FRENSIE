@@ -63,8 +63,8 @@ void initializeSource()
 
   raw_particle_states[2] = particle_core_3;
 
-  MonteCarlo::ParticleStateCore particle_core_4( 2ull,
-					     MonteCarlo::PHOTON,
+  MonteCarlo::ParticleStateCore particle_core_4( 11ull,
+					     MonteCarlo::ELECTRON,
 					     1.0, 1.0, 1.0,
 					     0.0, 0.0, 1.0,
 					     3.0,
@@ -131,7 +131,7 @@ TEUCHOS_UNIT_TEST( StateSource, sampleParticleState )
   TEST_EQUALITY_CONST( bank.size(), 1 );
 
   particle = bank.top();
-  bank.top();
+  bank.pop();
 
   TEST_EQUALITY_CONST( particle->getHistoryNumber(), 1ull );
   TEST_EQUALITY_CONST( particle->getParticleType(), MonteCarlo::NEUTRON );
@@ -146,6 +146,28 @@ TEUCHOS_UNIT_TEST( StateSource, sampleParticleState )
   TEST_EQUALITY_CONST( particle->getCollisionNumber(), 2u );
   TEST_EQUALITY_CONST( particle->getGenerationNumber(), 2u );
   TEST_EQUALITY_CONST( particle->getWeight(), 0.3 );
+
+  // Sample from the source again
+  source->sampleParticleState( bank );
+
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+
+  particle = bank.top();
+  bank.pop();
+
+  TEST_EQUALITY_CONST( particle->getHistoryNumber(), 2ull );
+  TEST_EQUALITY_CONST( particle->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_EQUALITY_CONST( particle->getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle->getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle->getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( particle->getXDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getYDirection(), 0.0 );
+  TEST_EQUALITY_CONST( particle->getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( particle->getEnergy(), 3.0 );
+  TEST_EQUALITY_CONST( particle->getTime(), 0.5 );
+  TEST_EQUALITY_CONST( particle->getCollisionNumber(), 2u );
+  TEST_EQUALITY_CONST( particle->getGenerationNumber(), 1u );
+  TEST_EQUALITY_CONST( particle->getWeight(), 0.5 );
 
   // Attempting to get another particle state should cause an exception
   TEST_THROW( source->sampleParticleState( bank ), std::runtime_error );
