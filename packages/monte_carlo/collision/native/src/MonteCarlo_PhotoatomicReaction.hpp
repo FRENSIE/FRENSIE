@@ -37,10 +37,10 @@ public:
   double getCrossSection( const double energy ) const;
 
   //! Return the number of photons emitted from the rxn at the given energy
-  virtual unsigned getNumberOfEmittedPhotons( const double energy ) const;
+  virtual unsigned getNumberOfEmittedPhotons( const double energy ) const = 0;
 
   //! Simulate the reaction
-  virtual void react( PhotonState& photon, ParticleBank& bank ) const;
+  virtual void react( PhotonState& photon, ParticleBank& bank ) const = 0;
 
 private:
 

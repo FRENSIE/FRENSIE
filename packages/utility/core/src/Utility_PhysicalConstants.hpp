@@ -40,6 +40,9 @@ public:
 
   //! Rest mass of neutron (amu)
   static const double neutron_rest_mass_amu;
+
+  //! The classical electron radius (cm)
+  static const double classical_eletron_radius;
 };
 
 } // end Utility namespace
