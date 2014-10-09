@@ -2,7 +2,7 @@
 //! 
 //! \file   MonteCarlo_IncoherentPhotonScatteringDistribution.hpp
 //! \author Alex Robinson
-//! \brief  The incoherent photon scattering distribution
+//! \brief  The incoherent photon scattering distribution declaration.
 //!
 //---------------------------------------------------------------------------//
 
@@ -27,14 +27,16 @@ class IncoherentPhotonScatteringDistribution : public PhotonScatteringDistributi
 public:
 
   //! The electron momentum distribution array
-  Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >
+  typedef Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >
   ElectronMomentumDistArray;
 
   //! Constructor 
   IncoherentPhotonScatteringDistribution( 
-	      const Teuchos::ArrayView<const double>& recoil_electron_momentum,
-	      const Tuechos::ArrayView<const double>& scattering_function,
-	      const ElectronMomentumDistArray& electron_momentum_dist_array );
+	 const Teuchos::ArrayRCP<const double>& recoil_electron_momentum,
+	 const Tuechos::ArrayView<const double>& scattering_function,
+	 const Teuchos::ArrayRCP<const double>& binding_energy_per_shell,
+	 const Teuchos::ArrayView<const double>& shell_interaction_probability,
+	 const ElectronMomentumDistArray& electron_momentum_dist_array );
 
   //! Destructor
   ~IncoherntPhotonScatteringDistribution()
@@ -49,8 +51,20 @@ public:
 
 private:
 
-  // The scattering function
-  Teuchos::Array<Utility::Pair<double,double> > d_scattering_function;
+  // The Koblinger sampling technique cutoff energy
+  static const double koblinger_cutoff_energy;
+
+  // The recoil electron momentum
+  Teuchos::ArrayRCP<const double> d_recoil_electron_momentum;
+
+  // The scattering function values
+  Teuchos::Array<double> d_scattering_function;
+
+  // The binding energy per shell
+  Teuchos::ArrayRCP<const double> d_binding_energy_per_shell;
+
+  // The shell interaction probabilities
+  Teuchos::Array<double> d_shell_interaction_probability;
 
   // The electron momentum dist array
   // Note: Every electron shell should have a momentum distribution array
