@@ -24,8 +24,6 @@
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that particles can be pushed to the particle bank
-//! \todo Add Electron test
-
 TEUCHOS_UNIT_TEST( ParticleBank, push )
 {
 #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
@@ -62,6 +60,18 @@ TEUCHOS_UNIT_TEST( ParticleBank, push )
     
       TEST_ASSERT( !bank.empty() );
       TEST_EQUALITY_CONST( bank.size(), 2 );
+    }
+cd 
+    particle.reset( new MonteCarlo::ElectronState( history_number ) );
+      
+    bank.push( particle );
+    
+    #pragma omp critical( test_update )
+    {
+      std::cout << particle->getHistoryNumber() << std::endl;
+    
+      TEST_ASSERT( !bank.empty() );
+      TEST_EQUALITY_CONST( bank.size(), 3 );
     }
   
     #pragma omp barrier

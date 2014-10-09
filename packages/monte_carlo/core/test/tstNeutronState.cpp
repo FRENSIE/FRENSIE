@@ -94,7 +94,7 @@ TEUCHOS_UNIT_TEST( NeutronState, copy_constructor )
 {
   MonteCarlo::NeutronState particle_gen_a( 1ull );
   particle_gen_a.setPosition( 1.0, 1.0, 1.0 );
-  particle_gen_a.setPosition( 0.0, 0.0, 1.0 );
+  particle_gen_a.setDirection( 0.0, 0.0, 1.0 );
   particle_gen_a.setEnergy( 1.0 );
   particle_gen_a.setTime( 1.0 );
   particle_gen_a.incrementCollisionNumber();
@@ -220,7 +220,7 @@ TEUCHOS_UNIT_TEST( NeutronState, assignment_operator )
 {
   MonteCarlo::NeutronState particle_gen_a( 1ull );
   particle_gen_a.setPosition( 1.0, 1.0, 1.0 );
-  particle_gen_a.setPosition( 0.0, 0.0, 1.0 );
+  particle_gen_a.setDirection( 0.0, 0.0, 1.0 );
   particle_gen_a.setEnergy( 1.0 );
   particle_gen_a.setTime( 1.0 );
   particle_gen_a.incrementCollisionNumber();
