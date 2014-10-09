@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_COLLISION_MODULE_INTERFACE_DECL_HPP
-#define FACEMC_COLLISION_MODULE_INTERFACE_DECL_HPP
+#ifndef MONTE_CARLO_COLLISION_MODULE_INTERFACE_DECL_HPP
+#define MONTE_CARLO_COLLISION_MODULE_INTERFACE_DECL_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
@@ -89,7 +89,7 @@ inline void setCollisionHandlerInstance(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_COLLISION_MODULE_INTERFACE_DECL_HPP
+#endif // end MONTE_CARLO_COLLISION_MODULE_INTERFACE_DECL_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CollisionModuleInterfaceDecl.hpp
