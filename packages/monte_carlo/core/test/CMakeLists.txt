@@ -22,6 +22,12 @@ ADD_EXECUTABLE(tstNeutronState
 TARGET_LINK_LIBRARIES(tstNeutronState monte_carlo_core)
 ADD_TEST(NeutronState_test tstNeutronState)
 
+ADD_EXECUTABLE(tstElectronState
+  tstElectronState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstElectronState monte_carlo_core)
+ADD_TEST(ElectronState_test tstElectronState)
+
 ADD_EXECUTABLE(tstParticleBank
   tstParticleBank.cpp)
 TARGET_LINK_LIBRARIES(tstParticleBank monte_carlo_core)

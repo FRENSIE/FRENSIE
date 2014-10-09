@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_STATE_FACTORY_HPP
-#define FACEMC_PARTICLE_STATE_FACTORY_HPP
+#ifndef MONTE_CARLO_PARTICLE_STATE_FACTORY_HPP
+#define MONTE_CARLO_PARTICLE_STATE_FACTORY_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
@@ -16,7 +16,9 @@
 
 namespace MonteCarlo{
 
-//! The particle state factory class
+/*! The particle state factory class
+ * \todo unit test
+ */
 class ParticleStateFactory
 {
 
@@ -39,7 +41,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_STATE_FACTORY_HPP
+#endif // end MONTE_CARLO_PARTICLE_STATE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleStateFactory.hpp
