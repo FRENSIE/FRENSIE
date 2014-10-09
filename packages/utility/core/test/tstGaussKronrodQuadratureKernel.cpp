@@ -9,8 +9,13 @@
 // Std Lib Includes
 #include <iostream>
 
+// Boost Includes
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
+#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "Utility_GaussKronrodQuadratureKernel.hpp"
@@ -50,6 +55,21 @@ struct X3Functor
   }
 };
 
+double exp_neg_x( const double x )
+{
+  return exp( -x );
+}
+
+double exp_neg_abs_x( const double x, const double a )
+{
+  return exp( -a*fabs(x) );
+}
+
+double inv_sqrt_abs_x( const double x )
+{
+  return 1/sqrt(fabs(x));
+}
+
 //---------------------------------------------------------------------------//
 // Instantiation macros.
 //---------------------------------------------------------------------------//
@@ -70,7 +90,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodQuadratureKernel,
   double result, absolute_error;
   size_t evals;
 
-  kernel.integrate( Functor(), 0.0, 1.0, result, absolute_error, evals );
+  Functor functor_instance;
+
+  kernel.integrate( functor_instance, 0.0, 1.0, result, absolute_error, evals);
 
   double tol = absolute_error/result;
 
@@ -89,36 +111,58 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodQuadratureKernel,
 
   double result, absolute_error;
 
+  Functor functor_instance;
+
   // Test the 15-point rule
-  kernel.integrateAdaptively<15>( Functor(), 0.0, 1.0, result, absolute_error);
+  kernel.integrateAdaptively<15>( functor_instance, 
+				  0.0, 
+				  1.0, 
+				  result, 
+				  absolute_error );
 
   double tol = absolute_error/result;
 
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 
   // Test the 21-point rule
-  kernel.integrateAdaptively<21>( Functor(), 0.0, 1.0, result, absolute_error);
+  kernel.integrateAdaptively<21>( functor_instance, 
+				  0.0, 
+				  1.0, 
+				  result, 
+				  absolute_error );
 
   tol = absolute_error/result;
 
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 
   // Test the 31-point rule
-  kernel.integrateAdaptively<31>( Functor(), 0.0, 1.0, result, absolute_error);
+  kernel.integrateAdaptively<31>( functor_instance, 
+				  0.0, 
+				  1.0, 
+				  result, 
+				  absolute_error );
 
   tol = absolute_error/result;
 
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 
   // Test the 41-point rule
-  kernel.integrateAdaptively<41>( Functor(), 0.0, 1.0, result, absolute_error);
+  kernel.integrateAdaptively<41>( functor_instance, 
+				  0.0, 
+				  1.0, 
+				  result, 
+				  absolute_error );
 
   tol = absolute_error/result;
 
   TEST_FLOATING_EQUALITY( Functor::getIntegratedValue(), result, tol );
 
   // Test the 51-point rule
-  kernel.integrateAdaptively<51>( Functor(), 0.0, 1.0, result, absolute_error);
+  kernel.integrateAdaptively<51>( functor_instance, 
+				  0.0, 
+				  1.0, 
+				  result, 
+				  absolute_error );
 
   tol = absolute_error/result;
 
@@ -126,6 +170,127 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( GaussKronrodQuadratureKernel,
 }
 
 UNIT_TEST_INSTANTIATION( GaussKronrodQuadratureKernel, integrateAdaptively );
+
+//---------------------------------------------------------------------------//
+// Check that functions can be integrated over a semi-infinite interval
+TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
+		   integrateSemiInfiniteIntervalUpper )
+{
+  boost::function<double (double x)> function_wrapper = exp_neg_x;
+  
+  Utility::GaussKronrodQuadratureKernel kernel( 1e-12 );
+
+  double result, absolute_error;
+
+  kernel.integrateSemiInfiniteIntervalUpper( function_wrapper,
+					     0.0,
+					     result,
+					     absolute_error );
+
+  double tol = absolute_error/result;
+  
+  TEST_FLOATING_EQUALITY( result, 1.0, tol );
+}
+
+//---------------------------------------------------------------------------//
+// Check that functions can be integrated over a semi-infinite interval
+TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
+		   integrateSemiInfiniteIntervalLower )
+{
+  boost::function<double (double x)> function_wrapper = exp;
+
+  Utility::GaussKronrodQuadratureKernel kernel( 1e-12 );
+
+  double result, absolute_error;
+
+  kernel.integrateSemiInfiniteIntervalLower( function_wrapper,
+					     0.0,
+					     result,
+					     absolute_error );
+
+  double tol = absolute_error/result;
+  
+  TEST_FLOATING_EQUALITY( result, 1.0, tol );
+}
+
+//---------------------------------------------------------------------------//
+// Check that functions can be integrated over an infinite interval
+TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
+		   integrateInfiniteInterval )
+{
+  boost::function<double (double x)> function_wrapper = 
+    boost::bind( exp_neg_abs_x, _1, 1.0 );
+
+  Utility::GaussKronrodQuadratureKernel kernel( 1e-12 );
+
+  double result, absolute_error;
+
+  kernel.integrateInfiniteInterval( function_wrapper,
+				    result,
+				    absolute_error );
+
+  double tol = absolute_error/result;
+  
+  TEST_FLOATING_EQUALITY( result, 2.0, tol );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a function with integrable singularities can be integrated
+TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
+		   integrateAdaptivelyWynnEpsilon_basic )
+{
+  boost::function<double (double x)> function_wrapper = inv_sqrt_abs_x;
+
+  Utility::GaussKronrodQuadratureKernel kernel( 1e-12, 0.0, 100000, 100000 );
+
+  double result, absolute_error;
+
+  kernel.integrateAdaptivelyWynnEpsilon( function_wrapper,
+					 0.0,
+					 1.0,
+					 result,
+					 absolute_error );
+
+  double tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( result, 2.0, tol );
+
+  kernel.integrateAdaptivelyWynnEpsilon( function_wrapper,
+					 -1.0,
+					 0.0,
+					 result,
+					 absolute_error );
+
+  tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( result, 2.0, tol );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a function with integrable singularities can be integrated
+TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
+		   integrateAdaptivelyWynnEpsilon_advanced )
+{
+  boost::function<double (double x)> function_wrapper = inv_sqrt_abs_x;
+
+  Teuchos::Array<double> points_of_interest( 3 );
+  points_of_interest[0] = -1.0;
+  points_of_interest[1] = 0.0; // integrable singularity
+  points_of_interest[2] = 1.0;
+
+  Utility::GaussKronrodQuadratureKernel kernel( 1e-12, 0.0, 100000, 100000 );
+
+  double result, absolute_error;
+
+  kernel.integrateAdaptivelyWynnEpsilon( function_wrapper,
+					 points_of_interest(),
+					 result,
+					 absolute_error );
+  
+  double tol = absolute_error/result;
+
+  TEST_FLOATING_EQUALITY( result, 4.0, tol );
+}
 
 //---------------------------------------------------------------------------//
 // end tstGaussKronrodQuadratureKernel.cpp

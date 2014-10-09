@@ -109,7 +109,7 @@ void BilinearGridGenerator::generate(
 				  distance_tol );
     
     double x1 = x_grid_queue.front();
-
+    std::cout << x0 << " " << x1 << std::endl;
     double relative_distance = 
       Utility::Policy::relError( x0, x1 );
 
@@ -146,7 +146,7 @@ void BilinearGridGenerator::generate(
 				    convergence_tol,
 				    absolute_diff_tol,
 				    distance_tol );
-
+      
       bool converged = hasXGridConverged( x0, 
 					  x_mid, 
 					  x1, 
