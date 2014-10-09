@@ -24,6 +24,8 @@
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that particles can be pushed to the particle bank
+//! \todo Add Electron test
+
 TEUCHOS_UNIT_TEST( ParticleBank, push )
 {
 #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
