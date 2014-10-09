@@ -16,7 +16,9 @@
 
 namespace MonteCarlo{
 
-//! The particle state factory class
+/*! The particle state factory class
+ * \todo unit test
+ */
 class ParticleStateFactory
 {
 
