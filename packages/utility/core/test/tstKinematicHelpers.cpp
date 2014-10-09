@@ -51,16 +51,61 @@ TEUCHOS_UNIT_TEST( KinematicHelpers, calculateRelativisticKineticEnergy )
 }
 
 //---------------------------------------------------------------------------//
-// Custom Main Function 
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
+TEUCHOS_UNIT_TEST( KinematicHelpers, calculateBetaMin )
 {
-   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  double E = 1e-6;
+  double kT = 2.53010e-8;
 
-   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-   return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
+  double beta_min = Utility::calculateBetaMin( E, kT );
+  
+  TEST_FLOATING_EQUALITY( beta_min, -E/kT, 1e-12 );
 }
 
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST( KinematicHelpers, calculateAlphaMin )
+{
+  double E = 1e-6;
+  double kT = 2.53010e-8;
+  double beta = -9.9e-7/2.53010e-8;
+  double A = 0.999167;
+
+  double alpha_min = Utility::calculateAlphaMin( E, beta, A, kT );
+
+  TEST_FLOATING_EQUALITY( alpha_min, 32.041235228594, 1e-12 );
+
+  beta = 0.0;
+  alpha_min = Utility::calculateAlphaMin( E, beta, A, kT );
+
+  TEST_FLOATING_EQUALITY( alpha_min, 0.0, 1e-12 );
+
+  beta = 1e-6/2.53010e-8;
+  alpha_min = Utility::calculateAlphaMin( E, beta, A, kT );
+  
+  TEST_FLOATING_EQUALITY( alpha_min, 6.7869220430292, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST( KinematicHelpers, calculateAlphaMax )
+{
+  double E = 1e-6;
+  double kT = 2.53010e-8;
+  double beta = -9.9e-7/2.53010e-8;
+  double A = 0.999167;
+
+  double alpha_max = Utility::calculateAlphaMax( E, beta, A, kT );
+
+  TEST_FLOATING_EQUALITY( alpha_max, 47.864067440246, 1e-12 );
+
+  beta = 0.0;
+  alpha_max = Utility::calculateAlphaMax( E, beta, A, kT );
+
+  TEST_FLOATING_EQUALITY( alpha_max, 158.22832211652, 1e-12 );
+
+  beta = 1e-6/2.53010e-8;
+  alpha_max = Utility::calculateAlphaMax( E, beta, A, kT );
+  
+  TEST_FLOATING_EQUALITY( alpha_max, 230.55556113174, 1e-12 );
+}
 
 
 //---------------------------------------------------------------------------//

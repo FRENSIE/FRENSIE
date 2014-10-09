@@ -13,6 +13,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_FreeGasElasticMarginalAlphaFunction.hpp"
 #include "Utility_SearchAlgorithms.hpp"
+#include "Utility_KinematicHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -39,12 +40,11 @@ FreeGasElasticMarginalAlphaFunction::FreeGasElasticMarginalAlphaFunction(
     d_norm_constant( 1.0 ),
     d_cached_cdf_values()
 {
-
   // Make sure the values are valid
   testPrecondition( A > 0.0 );
   testPrecondition( kT > 0.0 );
   testPrecondition( E > 0.0 );
-  testPrecondition( beta > -E/kT );
+  testPrecondition( beta > Utility::calculateBetaMin( E, kT ) );
   
   updateCachedValues();
 }
@@ -55,7 +55,8 @@ void FreeGasElasticMarginalAlphaFunction::setIndependentVariables(
 							     const double E )
 {
   // Make sure beta is valid
-  testPrecondition( beta > -E/d_sab_function.getTemperature() );
+  remember( double kT = d_sab_function.getTemperature() );
+  testPrecondition( beta > Utility::calculateBetaMin( E, kT ) );
 
   d_beta = beta;
   d_E = E;
@@ -134,21 +135,21 @@ void FreeGasElasticMarginalAlphaFunction::updateCachedValues()
   double A = d_sab_function.getAtomicWeightRatio();
   double kT = d_sab_function.getTemperature();
 
-  double alpha_lim_arg = sqrt(d_E) - sqrt(d_E + d_beta*kT);
-  d_alpha_min = alpha_lim_arg*alpha_lim_arg/(A*kT);
+  d_alpha_min = Utility::calculateAlphaMin( d_E, d_beta, A, kT );
 
-  alpha_lim_arg = sqrt(d_E) + sqrt(d_E + d_beta*kT);
-  d_alpha_max = alpha_lim_arg*alpha_lim_arg/(A*kT);
+  d_alpha_max = Utility::calculateAlphaMax( d_E, d_beta, A, kT );
 
   // Calculate the norm constant
   double norm_constant_error;
 
-  d_kernel.integrateAdaptively<15>( 
-		       boost::bind<double>( d_sab_function, _1, d_beta, d_E ),
-		       d_alpha_min,
-		       d_alpha_max,
-		       d_norm_constant,
-		       norm_constant_error );
+  boost::function<double (double alpha)> sab_function_wrapper = 
+    boost::bind<double>( d_sab_function, _1, d_beta, d_E );
+
+  d_kernel.integrateAdaptively<15>( sab_function_wrapper,
+				    d_alpha_min,
+				    d_alpha_max,
+				    d_norm_constant,
+				    norm_constant_error );
 
   // Reset the cached cdf values
   d_cached_cdf_values.clear();

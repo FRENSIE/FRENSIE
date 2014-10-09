@@ -93,7 +93,8 @@ TARGET_LINK_LIBRARIES(tstBoostSolver utility_core)
 ADD_TEST(BoostSolver_test tstBoostSolver)
 
 ADD_EXECUTABLE(tstKinematicHelpers 
-  tstKinematicHelpers.cpp )
+  tstKinematicHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstKinematicHelpers utility_core)
 ADD_TEST(KinematicHelpers_test tstKinematicHelpers)
 
