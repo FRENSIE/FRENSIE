@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_KinematicHelpers.hpp
-//! \author Alex Bennett
-//! \brief  Kinematic Helpers base class declaration
+//! \file   Utility_KinematicHelpers.hpp
+//! \author Alex Bennett, Alex Robinson
+//! \brief  Kinematic helper function declarations
 //!
 //---------------------------------------------------------------------------//
 
@@ -34,9 +34,25 @@ double calculateSpeed( const double rest_mass_energy,
 double calculateKineticEnergy( const double rest_mass_energy,
                                const double speed );
 
+//! Calculate the beta min value
+double calculateBetaMin( const double kinetic_energy,
+			 const double kT );
+
+//! Calculate the dimensionless alpha min value
+double calculateAlphaMin( const double kinetic_energy,
+			  const double beta,
+			  const double A,
+			  const double kT );
+
+//! Calculate the dimensionless alpha max value
+double calculateAlphaMax( const double kinetic_energy,
+			  const double beta,
+			  const double A,
+			  const double kT );
+
 // Calculate the speed of a massive particle 
 inline double calculateRelativisticSpeed(const double rest_mass_energy,
-                                                        const double kinetic_energy )
+					 const double kinetic_energy )
 {
   // Make sure the rest mass energy is valid
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );
@@ -52,8 +68,7 @@ inline double calculateRelativisticSpeed(const double rest_mass_energy,
 }
 
 // Calculate the kinetic enery of a massive particle (MeV)
-inline double calculateRelativisticKineticEnergy( 
-                                                 const double rest_mass_energy,
+inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
                                                  const double speed )
 { 
   // Make sure the rest mass energy is valid
@@ -86,9 +101,8 @@ inline double calculateSpeed(const double rest_mass_energy,
 }
 
 // Calculate the kinetic enery of a massive particle (MeV)
-inline double calculateKineticEnergy(  
-                                         const double rest_mass_energy,
-                                         const double speed )
+inline double calculateKineticEnergy( const double rest_mass_energy,
+				      const double speed )
 { 
   // Make sure the rest mass energy is valid
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );
@@ -102,8 +116,6 @@ inline double calculateKineticEnergy(
         ( Utility::PhysicalConstants::speed_of_light * 
           Utility::PhysicalConstants::speed_of_light );
 }
-
-
 
 } // end Utility namespace
 
