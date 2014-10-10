@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstNeutronState.cpp
-//! \author Alex Robinson
-//! \brief  Neutron state unit tests.
+//! \file   tstElectronState.cpp
+//! \author Luke Kersting
+//! \brief  Electron state unit tests.
 //!
 //---------------------------------------------------------------------------//
 
@@ -13,30 +13,30 @@
 #include <Teuchos_UnitTestHarness.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Get the particle type
-TEUCHOS_UNIT_TEST( NeutronState, getParticleType )
+TEUCHOS_UNIT_TEST( ElectronState, getParticleType )
 {
-  MonteCarlo::NeutronState particle( 1ull );
+  MonteCarlo::ElectronState particle( 1ull );
 
-  TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::NEUTRON );
+  TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::ELECTRON );
 }
 
 //---------------------------------------------------------------------------//
 // Get the particle speed
-TEUCHOS_UNIT_TEST( NeutronState, getSpeed )
+TEUCHOS_UNIT_TEST( ElectronState, getSpeed )
 {
-  MonteCarlo::NeutronState particle( 1ull );
+  MonteCarlo::ElectronState particle( 1ull );
 
   particle.setEnergy( 1.0 );
  
   double speed_of_light = Utility::PhysicalConstants::speed_of_light;
-  double rest_mass = Utility::PhysicalConstants::neutron_rest_mass_energy;
+  double rest_mass = Utility::PhysicalConstants::electron_rest_mass_energy;
  
   TEST_FLOATING_EQUALITY( particle.getSpeed(),
                           speed_of_light * sqrt( 1.0 - rest_mass * rest_mass /
@@ -46,12 +46,12 @@ TEUCHOS_UNIT_TEST( NeutronState, getSpeed )
 
 //---------------------------------------------------------------------------//
 // Set the particle speed
-TEUCHOS_UNIT_TEST( NeutronState, setSpeed )
+TEUCHOS_UNIT_TEST( ElectronState, setSpeed )
 {
-  MonteCarlo::NeutronState particle( 1ull );
+  MonteCarlo::ElectronState particle( 1ull );
 
   double speed_of_light = Utility::PhysicalConstants::speed_of_light;
-  double rest_mass = Utility::PhysicalConstants::neutron_rest_mass_energy;
+  double rest_mass = Utility::PhysicalConstants::electron_rest_mass_energy;
  
   particle.setSpeed( speed_of_light * sqrt( 1 - rest_mass * rest_mass /
                      ((1 + rest_mass) * (1 + rest_mass))) );
@@ -61,14 +61,14 @@ TEUCHOS_UNIT_TEST( NeutronState, setSpeed )
 
 //---------------------------------------------------------------------------//
 // Advance the particle along its direction by a specified distance
-TEUCHOS_UNIT_TEST( NeutronState, advance )
+TEUCHOS_UNIT_TEST( ElectronState, advance )
 {
   const double position[3] = {1.0, 1.0, 1.0};
   const double direction[3] = {0.5773502691896258, 
 			       0.5773502691896258,
 			       0.5773502691896258};
   
-  MonteCarlo::NeutronState particle( 1ull );
+  MonteCarlo::ElectronState particle( 1ull );
   particle.setPosition( position );
   particle.setDirection( direction );
   particle.setEnergy( 1.0 );
@@ -77,7 +77,7 @@ TEUCHOS_UNIT_TEST( NeutronState, advance )
   particle.advance( 1.7320508075688772 );
 
   double speed_of_light = Utility::PhysicalConstants::speed_of_light;
-  double rest_mass = Utility::PhysicalConstants::neutron_rest_mass_energy;
+  double rest_mass = Utility::PhysicalConstants::electron_rest_mass_energy;
  
   TEST_FLOATING_EQUALITY( particle.getXPosition(), 2.0, 1e-12 );
   TEST_FLOATING_EQUALITY( particle.getYPosition(), 2.0, 1e-12 );
@@ -90,9 +90,9 @@ TEUCHOS_UNIT_TEST( NeutronState, advance )
 
 //---------------------------------------------------------------------------//
 // Create new particles
-TEUCHOS_UNIT_TEST( NeutronState, copy_constructor )
+TEUCHOS_UNIT_TEST( ElectronState, copy_constructor )
 {
-  MonteCarlo::NeutronState particle_gen_a( 1ull );
+  MonteCarlo::ElectronState particle_gen_a( 1ull );
   particle_gen_a.setPosition( 1.0, 1.0, 1.0 );
   particle_gen_a.setDirection( 0.0, 0.0, 1.0 );
   particle_gen_a.setEnergy( 1.0 );
@@ -100,7 +100,7 @@ TEUCHOS_UNIT_TEST( NeutronState, copy_constructor )
   particle_gen_a.incrementCollisionNumber();
   particle_gen_a.setWeight( 0.5 );
 
-  MonteCarlo::NeutronState particle_gen_a_copy( particle_gen_a );
+  MonteCarlo::ElectronState particle_gen_a_copy( particle_gen_a );
 
   TEST_EQUALITY( particle_gen_a_copy.getXPosition(), 
 		 particle_gen_a.getXPosition() );
@@ -128,7 +128,7 @@ TEUCHOS_UNIT_TEST( NeutronState, copy_constructor )
 		 particle_gen_a.getWeight() );
 
   //Create a second generation particle with the same collision number
-  MonteCarlo::NeutronState particle_gen_b( particle_gen_a, true );
+  MonteCarlo::ElectronState particle_gen_b( particle_gen_a, true );
 
   TEST_EQUALITY( particle_gen_b.getXPosition(), 
 		 particle_gen_a.getXPosition() );
@@ -156,7 +156,7 @@ TEUCHOS_UNIT_TEST( NeutronState, copy_constructor )
 		 particle_gen_a.getWeight() );  
 
   // Create a third generation particle and reset the collision counter
-  MonteCarlo::NeutronState particle_gen_c( particle_gen_b, true, true );
+  MonteCarlo::ElectronState particle_gen_c( particle_gen_b, true, true );
 
   TEST_EQUALITY( particle_gen_c.getXPosition(), 
 		 particle_gen_b.getXPosition() );
@@ -185,10 +185,10 @@ TEUCHOS_UNIT_TEST( NeutronState, copy_constructor )
 
 //---------------------------------------------------------------------------//
 // Create new particles
-TEUCHOS_UNIT_TEST( NeutronState, core_constructor )
+TEUCHOS_UNIT_TEST( ElectronState, core_constructor )
 {
   MonteCarlo::ParticleStateCore core( 1ull, 
-				  MonteCarlo::NEUTRON, 
+				  MonteCarlo::ELECTRON, 
 				  1.0, 1.0, 1.0,
 				  0.0, 1.0, 0.0,
 				  2.0,
@@ -197,10 +197,10 @@ TEUCHOS_UNIT_TEST( NeutronState, core_constructor )
 				  2u,
 				  0.25 );
 
-  MonteCarlo::NeutronState particle( core );
+  MonteCarlo::ElectronState particle( core );
 
   TEST_EQUALITY_CONST( particle.getHistoryNumber(), 1ull );
-  TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::NEUTRON );
+  TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::ELECTRON );
   TEST_EQUALITY_CONST( particle.getXPosition(), 1.0 );
   TEST_EQUALITY_CONST( particle.getYPosition(), 1.0 );
   TEST_EQUALITY_CONST( particle.getZPosition(), 1.0 );
@@ -216,9 +216,9 @@ TEUCHOS_UNIT_TEST( NeutronState, core_constructor )
 
 //---------------------------------------------------------------------------//
 // Create new particles
-TEUCHOS_UNIT_TEST( NeutronState, assignment_operator )
+TEUCHOS_UNIT_TEST( ElectronState, assignment_operator )
 {
-  MonteCarlo::NeutronState particle_gen_a( 1ull );
+  MonteCarlo::ElectronState particle_gen_a( 1ull );
   particle_gen_a.setPosition( 1.0, 1.0, 1.0 );
   particle_gen_a.setDirection( 0.0, 0.0, 1.0 );
   particle_gen_a.setEnergy( 1.0 );
@@ -226,7 +226,7 @@ TEUCHOS_UNIT_TEST( NeutronState, assignment_operator )
   particle_gen_a.incrementCollisionNumber();
   particle_gen_a.setWeight( 0.5 );
 
-  MonteCarlo::NeutronState particle_gen_a_copy = particle_gen_a;
+  MonteCarlo::ElectronState particle_gen_a_copy = particle_gen_a;
 
   TEST_EQUALITY( particle_gen_a_copy.getXPosition(), 
 		 particle_gen_a.getXPosition() );
@@ -253,5 +253,5 @@ TEUCHOS_UNIT_TEST( NeutronState, assignment_operator )
 }
 
 //---------------------------------------------------------------------------//
-// end tstNeutronState.cpp
+// end tstElectronState.cpp
 //---------------------------------------------------------------------------//
