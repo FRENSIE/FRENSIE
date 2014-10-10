@@ -67,6 +67,8 @@ PhotonScatteringDistribution::sampleAzimuthalAngle() const
     Utility::RandomNumberGenerator::getRandomNumber<double>();
 }
 
+} // end MonteCarlo namespace
+
 #endif // end FACEMC_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//

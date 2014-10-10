@@ -14,21 +14,17 @@
 
 namespace MonteCarlo{
 
-// Initialize static member data
-const double IncoherentPhotonScatteringDistribution::koblinger_cutoff_energy = 
-  Utility::PhysicalConstants::electron_rest_mass_energy*(1.0 + sqrt(3.0));
-
 // Constructor
 IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
          const Teuchos::ArrayRCP<const double>& recoil_electron_momentum,
-	 const Tuechos::ArrayView<const double>& scattering_function,
+	 const Teuchos::ArrayView<const double>& scattering_function,
 	 const Teuchos::ArrayRCP<const double>& binding_energy_per_shell,
 	 const Teuchos::ArrayView<const double>& shell_interaction_probability,
 	 const ElectronMomentumDistArray& electron_momentum_dist_array )
   : d_recoil_electron_momentum( recoil_electron_momentum ),
     d_scattering_function( scattering_function ),
     d_binding_energy_per_shell( binding_energy_per_shell ),
-    d_shell_interaction_probabilities( shell_interaction_probability ),
+    d_shell_interaction_probability( shell_interaction_probability ),
     d_electron_momentum_distribution( electron_momentum_dist_array )
 {
   // Make sure the arrays are valid
@@ -46,10 +42,6 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
 void IncoherentPhotonScatteringDistribution::scatterPhoton( 
 						    PhotonState& photon ) const
 {
-  // Calculate the relative energy
-  const double alpha = photon.getEnergy()/
-    Utility::PhysicalConstants::electron_rest_mass_energy;
-  
   // The sampled inverse energy loss ratio
   double x;
 

@@ -33,13 +33,13 @@ public:
   //! Constructor 
   IncoherentPhotonScatteringDistribution( 
 	 const Teuchos::ArrayRCP<const double>& recoil_electron_momentum,
-	 const Tuechos::ArrayView<const double>& scattering_function,
+	 const Teuchos::ArrayView<const double>& scattering_function,
 	 const Teuchos::ArrayRCP<const double>& binding_energy_per_shell,
 	 const Teuchos::ArrayView<const double>& shell_interaction_probability,
 	 const ElectronMomentumDistArray& electron_momentum_dist_array );
 
   //! Destructor
-  ~IncoherntPhotonScatteringDistribution()
+  ~IncoherentPhotonScatteringDistribution()
   { /* ... */ }
 
   //! Randomly scatter the photon
@@ -69,7 +69,7 @@ private:
   // The electron momentum dist array
   // Note: Every electron shell should have a momentum distribution array
   ElectronMomentumDistArray d_electron_momentum_distribution;
-}
+};
 
 } // end MonteCarlo namespace
 
