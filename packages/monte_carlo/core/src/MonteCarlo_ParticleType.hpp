@@ -92,12 +92,6 @@ struct HDF5TypeTraits<MonteCarlo::ParticleType>
   {
     return MonteCarlo::NEUTRON;
   }
-
-  //! Returns the unity value for this type
-  static inline MonteCarlo::ParticleType two()
-  {
-    return MonteCarlo::ELECTRON;
-  }
 };
 
 } // end Utility namespace

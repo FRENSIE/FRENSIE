@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //! 
 //! \file   MonteCarlo_ElectronState.hpp
-//! \author Alex Robinson
+//! \author Luke Kersting
 //! \brief  Electron state class declaration
 //!
 //---------------------------------------------------------------------------//
