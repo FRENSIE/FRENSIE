@@ -94,16 +94,20 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
     double arg = 1.0+2.0*alpha;
     
     p1 = 2.0/alpha;
-    p2 = (1.0 - 2.0*(1+alpha)/(alpha*alpha))*log(arg);
-    p3 = p1;
+//    p2 = (1.0 - 2.0*(1+alpha)/(alpha*alpha))*log(arg);
+	p2 = (1.0 - (1.0+arg)/(alpha*alpha))*log(arg)
+    // p3 = p1, just used p1
+//    p3 = p1;
     p4 = 0.5*(1.0 - 1.0/(arg*arg));
 
     // Normalize the probabilities
-    double norm = p1+p2+p3+p4;
+//    double norm = p1+p2+p3+p4;
+	double norm = p1+p2+p1+p4	
     
     p1 /= norm;
     p2 /= norm;
-    p3 /= norm;
+    // p3 = p1, just used p1
+//  p3 /= norm;
     p4 /= norm;
     
     // Sample from the individual pdfs
@@ -116,7 +120,8 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
       x = 1.0 + 2.0*alpha*random_number_2;
     else if( random_number_1 <= p1+p2 )
       x = pow( arg, random_number_2 );
-    else if( random_number_1 <= p1+p2+p3 )
+	else if( random_number_1<= p1+p2+p1 )
+//  else if( random_number_1<= p1+p2+p3 )
       x = arg/(1.0 + 2.0*alpha*random_number_2 );
     else
       x = 1.0/sqrt(1.0 - random_number_2*(1.0 - 1.0/(arg*arg)));
