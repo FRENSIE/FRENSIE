@@ -78,7 +78,7 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
   # Find the standard Teuchos Unit Test main fil  
   # Set the absolute path to the Teuchos standard unit test main file
   SET(TEUCHOS_STD_UNIT_TEST_MAIN 
-    /home/kliberty/frensie/deps/trilinos/src/packages/teuchos/core/test/UnitTest/Teuchos_StandardUnitTestMain.cpp)
+    /home/kliberty/frensie/deps/builds/trilinos/src/packages/teuchos/core/test/UnitTest/Teuchos_StandardUnitTestMain.cpp)
 
   # Set the include paths for Trilinos
   INCLUDE_DIRECTORIES(${Trilinos_INCLUDE_DIRS} ${Trilinos_TPL_INCLUDE_DIRS})
