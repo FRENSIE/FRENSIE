@@ -16,6 +16,7 @@ def main():
     os.symlink('FRENSIE', 'src')
     os.mkdir('deps')
     os.mkdir('deps/install')
+    os.mkdir('deps/tars')
     os.mkdir('build')
     shutil.copyfile('src/scripts/makefile.deps', 'deps/makefile')
     shutil.copyfile('src/scripts/frensie.sh', 'build/frensie.sh')   
