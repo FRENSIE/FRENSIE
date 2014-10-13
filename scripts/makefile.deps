@@ -1,0 +1,134 @@
+TARS:=$(shell pwd)/tars
+INSTALL:=$(shell pwd)
+MAKEFLAGS += -j 10
+
+all: cmake hdf5 trilinos
+
+cmake: setup
+	mkdir builds/cmake
+	mkdir builds/cmake/src
+	mkdir builds/cmake/build
+	cd builds/cmake/src; \
+    tar -xf $(TARS)/cmake.tar --strip-components=1; \
+    cd ../build; \
+    ../src/configure --prefix=$(TARS)/../install/cmake
+	$(MAKE) -C builds/cmake/build 
+	$(MAKE) -C builds/cmake/build test
+	$(MAKE) -C builds/cmake/build install
+
+moab: setup
+	mkdir builds/moab
+	mkdir builds/moab/src
+	mkdir builds/moab/build
+	cd builds/moab/src; \
+    tar -xf $(TARS)/moab.tar --strip-components=1; \
+    cd ../build; \
+    ../src/configure --prefix=$(TARS)/../install/moab --enable-optimize --disable-debug --with-hdf5=$(INSTALL)/hdf5
+	$(MAKE) -C builds/moab/build 
+	$(MAKE) -C builds/moab/build check
+	$(MAKE) -C builds/moab/build install
+
+lapack: setup
+	mkdir builds/lapack
+	mkdir builds/lapack/src
+	mkdir builds/lapack/build
+	cp ../FRENSIE/scripts/lapack.sh builds/lapack/build/
+	cd builds/lapack/src; \
+    tar -xf $(TARS)/lapack.tar --strip-components=1; \
+    cd ../build; \
+	bash lapack.sh
+	
+	$(MAKE) -C builds/lapack/build 
+	$(MAKE) -C builds/lapack/build test
+	$(MAKE) -C builds/lapack/build install
+
+
+
+
+gsl: setup
+	mkdir builds/gsl
+	mkdir builds/gsl/src
+	mkdir builds/gsl/build
+	cd builds/gsl/src; \
+    tar -xf $(TARS)/gsl.tar --strip-components=1; \
+    cd ../build; \
+	../src/configure -prefix=$(INSTALL)/gsl
+	$(MAKE) -C builds/gsl/build 
+	$(MAKE) -C builds/gsl/build test
+	$(MAKE) -C builds/gsl/build install
+
+odepack: setup
+	mkdir builds/odepack
+	mkdir builds/odepack/src
+	ln -s builds/odepack/src builds/odepack/build
+	tar -xf $(TARS)/odepack.tar --strip-components=1
+	cp ../FRENSIE/scripts/odepack.sh builds/odepack/build/
+	bash odepack.sh
+
+boost: setup
+	mkdir builds/boost
+	mkdir builds/boost/src
+	ln -s builds/boost/src builds/boost/build
+	tar -xf $(TARS)/boost.tar --strip-components=1
+	cd builds/boost/build; \
+	./bootstrap.sh --prefix=$(INSTALL)/boost/; \
+	./b2; \
+	./b2 install
+
+
+doxygen: setup
+	mkdir builds/doxygen
+	mkdir builds/doxygen/src
+	mkdir builds/doxygen/build
+	cd builds/doxygen/src; \
+    tar -xf $(TARS)/doxygen.tar --strip-components=1; \
+    cd ../build; \
+    ../src/configure --prefix=$(TARS)/../install/doxygen
+	$(MAKE) -C builds/doxygen/build 
+	$(MAKE) -C builds/doxygen/build test
+	$(MAKE) -C builds/doxygen/build install
+
+mpi: setup
+	mkdir builds/mpi
+	mkdir builds/mpi/src
+	mkdir builds/mpi/build
+	cd builds/mpi/src; \
+    tar -xf $(TARS)/mpi.tar --strip-components=1; \
+    cd ../build; \
+    ../src/configure --prefix=$(TARS)/../install/mpi
+	$(MAKE) -C builds/mpi/build 
+	$(MAKE) -C builds/mpi/build test
+	$(MAKE) -C builds/mpi/build install
+
+
+hdf5: setup
+	mkdir builds/hdf5
+	mkdir builds/hdf5/src
+	mkdir builds/hdf5/build
+	cp ../FRENSIE/scrips/hdf5.sh builds/hdf5/builds/
+	cd builds/hdf5/src; \
+    tar -xf $(TARS)/hdf5.tar --strip-components=1; \
+    cd ../build; \
+	bash hdf5.sh
+	$(MAKE) -C builds/hdf5/build 
+	$(MAKE) -C builds/hdf5/build test
+	$(MAKE) -C builds/hdf5/build install
+
+trilinos: setup
+	mkdir builds/trilinos
+	mkdir builds/trilinos/src
+	mkdir builds/trilinos/build
+	cd builds/trilinos/src; \
+    tar -xf $(TARS)/trilinos.tar --strip-components=1; \
+    cd ../build; \
+    ../src/configure --prefix=$(TARS)/../install/trilinos
+	$(MAKE) -C builds/trilinos/build 
+	$(MAKE) -C builds/trilinos/build test
+	$(MAKE) -C builds/trilinos/build install
+
+setup:
+	mkdir builds
+
+clean:
+	rm -rf builds
+
