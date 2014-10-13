@@ -11,7 +11,6 @@ def gen_cmd(prefix):
     #prefix = os.environ['HOME'] + os.path.sep + '.prefix'
     prefix = os.path.abspath(prefix)
     dirs = sorted([i for i in os.listdir(prefix) if not i.startswith('.') and os.path.isdir(os.path.join(prefix, i))])
-    print  dirs
     
     det = dict()
     det['PATH'] = ['bin']
