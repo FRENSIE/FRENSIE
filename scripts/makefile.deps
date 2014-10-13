@@ -6,7 +6,9 @@ TEST="no"
 MAKEFLAGS += -j6
 
 
-help:  ; echo "Run make all"
+help:
+	@echo "You may run make all. Be warned this will spawn many jobs"
+	@echo "It is advised to run the following in any order:\nmake cmake\nmake tilinos\nmake moab (note: moab builds hdf5)\nmake gsl\nmake doxygen\nmake boost\nmake lapack\nmake odepack"
 
 all: cmake hdf5 trilinos moab gsl doxygen boost lapack odepack
 
