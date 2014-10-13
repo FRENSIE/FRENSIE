@@ -12,6 +12,9 @@ help:
 
 all: cmake hdf5 trilinos moab gsl doxygen boost lapack odepack
 
+source:
+	export `python ../src/scripts/prefix.py install` 
+
 cmake: builds
 	mkdir -p builds/cmake
 	mkdir -p builds/cmake/src
@@ -154,7 +157,7 @@ ifneq ($(TEST), "no")
 endif
 	$(MAKE) -C builds/trilinos/build install
 
-builds: install
+builds: install source
 	mkdir -p builds
 
 install:
