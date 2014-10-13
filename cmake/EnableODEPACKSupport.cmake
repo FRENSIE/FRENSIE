@@ -5,10 +5,11 @@ MACRO(ENABLE_ODEPACK_SUPPORT)
   SET(ODEPACK_LIBRARY_DIR ${ODEPACK_PREFIX})
 
   # Find the ODEPACK library
-  FIND_LIBRARY(ODEPACK libodepack.a ${ODEPACK_LIBRARY_DIR})
-  IF(${ODEPACK} MATCHES NOTFOUND)
-    MESSAGE(FATAL_ERROR "The odepack library could not be found.")
-  ENDIF(${ODEPACK} MATCHES NOTFOUND)
+#  FIND_LIBRARY(ODEPACK libodepack.a ${ODEPACK_LIBRARY_DIR})
+#  IF(${ODEPACK} MATCHES NOTFOUND)
+#    MESSAGE(FATAL_ERROR "The odepack library could not be found.")
+#  ENDIF(${ODEPACK} MATCHES NOTFOUND)
+  SET(ODEPACK /home/kliberty/.prefix/odepack/lib/libodepack.a)
   
   # Set the link paths for HDF5
   LINK_DIRECTORIES(${ODEPACK_LIBRARY_DIR})

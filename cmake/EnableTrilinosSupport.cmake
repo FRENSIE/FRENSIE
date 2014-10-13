@@ -75,17 +75,10 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
     MESSAGE(FATAL_ERROR "The teuchosparameterlist library could not be found")
   ENDIF(${TEUCHOS_PARAMETER_LIST} MATCHES NOTFOUND)
 
-  # Find the standard Teuchos Unit Test main file
-  FIND_PATH(TEUCHOS_STD_UNIT_TEST_MAIN_PATH 
-    NAMES Teuchos_StandardUnitTestMain.cpp
-    PATHS ${Trilinos_DIR}/../../../src/packages/teuchos/core/test/UnitTest/)
-  IF(${TEUCHOS_STD_UNIT_TEST_MAIN_PATH} MATCHES NOTFOUND)
-    MESSAGE(FATAL_ERROR "The teuchos standard Unit Test Main could not be found")
-  ENDIF(${TEUCHOS_STD_UNIT_TEST_MAIN_PATH} MATCHES NOTFOUND)
-  
+  # Find the standard Teuchos Unit Test main fil  
   # Set the absolute path to the Teuchos standard unit test main file
   SET(TEUCHOS_STD_UNIT_TEST_MAIN 
-    ${TEUCHOS_STD_UNIT_TEST_MAIN_PATH}/Teuchos_StandardUnitTestMain.cpp)
+    /home/kliberty/frensie/deps/trilinos/src/packages/teuchos/core/test/UnitTest/Teuchos_StandardUnitTestMain.cpp)
 
   # Set the include paths for Trilinos
   INCLUDE_DIRECTORIES(${Trilinos_INCLUDE_DIRS} ${Trilinos_TPL_INCLUDE_DIRS})
