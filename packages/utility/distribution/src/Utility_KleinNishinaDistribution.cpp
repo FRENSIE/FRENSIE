@@ -305,9 +305,9 @@ double KleinNishinaDistribution::sample()
   ++d_samples;
   
   if( d_alpha < KleinNishinaDistribution::koblinger_cutoff_alpha )
-    sampleKleinNishinaUsingKahnsMethod( d_alpha, d_trials );
+    return sampleKleinNishinaUsingKahnsMethod( d_alpha, d_trials );
   else
-    d_high_energy_sampling_function( d_alpha, d_trials );
+    return d_high_energy_sampling_function( d_alpha, d_trials );
 }
 
 // Return a sample from the distribution
@@ -316,15 +316,34 @@ double KleinNishinaDistribution::sample() const
   unsigned trial_dummy;
 
   if( d_alpha < KleinNishinaDistribution::koblinger_cutoff_alpha )
-    sampleKleinNishinaUsingKahnsMethod( d_alpha, trial_dummy );
+    return sampleKleinNishinaUsingKahnsMethod( d_alpha, trial_dummy );
   else
-    d_high_energy_sampling_function( d_alpha, trial_dummy );
+    return d_high_energy_sampling_function( d_alpha, trial_dummy );
+}
+
+// Return a sample from the distribution
+double KleinNishinaDistribution::sampleOptimal( const double energy )
+{
+  // Make sure the energy is valid
+  testPrecondition( energy > 0.0 );
+  
+  double alpha = energy/PhysicalConstants::electron_rest_mass_energy;
+
+  unsigned trial_dummy;
+
+  if( alpha < KleinNishinaDistribution::koblinger_cutoff_alpha )
+    return sampleKleinNishinaUsingKahnsMethod( alpha, trial_dummy );
+  else
+    return sampleKleinNishinaUsingKoblingersMethod( alpha, trial_dummy );
 }
 
 // Return the sampling efficeincy from the distribution
 double KleinNishinaDistribution::getSamplingEfficiency() const
 {
-  return d_samples/(double)d_trials;
+  if( d_trials > 0u )
+    return d_samples/(double)d_trials;
+  else
+    return 0.0;
 }
 
 // Return the upper bound of the distribution independent variable

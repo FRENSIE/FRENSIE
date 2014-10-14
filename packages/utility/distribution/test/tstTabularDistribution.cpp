@@ -142,6 +142,38 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 UNIT_TEST_INSTANTIATION( TabularDistribution, sample );
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
+				   sample_subrange,
+				   InterpolationPolicy )
+{
+  initializeDistribution<InterpolationPolicy>();
+
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0 - 1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  unsigned bin_index;
+
+  double sample = distribution->sample( 1e-1  );
+  TEST_EQUALITY_CONST( sample, 1e-3 );
+  
+  sample = distribution->sample( 1e-1 );
+  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+  Utility::RandomNumberGenerator::initialize();
+  
+  sample = distribution->sample( 1e-1 );
+  TEST_COMPARE( sample, >=, 1e-3 );
+  TEST_COMPARE( sample, <=, 1e-1 );
+}
+
+UNIT_TEST_INSTANTIATION( TabularDistribution, sample_subrange );
+
+//---------------------------------------------------------------------------//
 // Check that the sampling efficiency can be returned
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   getSamplingEfficiency,

@@ -43,6 +43,9 @@ public:
 
   //! The classical electron radius (cm)
   static const double classical_electron_radius;
+
+  //! The inverse fine structure constant (unitless)
+  static const double inverse_fine_structure_constant;
 };
 
 } // end Utility namespace

@@ -9,6 +9,9 @@
 #ifndef FACEMC_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 #define FACEMC_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
+// Boost Includes
+#include <boost/function.hpp>
+
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_ArrayView.hpp>
@@ -29,14 +32,21 @@ public:
   //! The electron momentum distribution array
   typedef Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >
   ElectronMomentumDistArray;
+  
+  //! Constructor without doppler broadening
+  IncoherentPhotonScatteringDistribution(
+	  const Teuchos::RCP<Utility::OneDDistribution>& scattering_function );
 
-  //! Constructor 
+  /*! Constructor for doppler broadening
+   * \details The shell interaction data object should store the shell binding
+   * energy as the independent values and the shell interaction probabilities
+   * as the dependent values. The sample( bin_index ) member function should
+   * be called to get the index of the sampled shell.
+   */ 
   IncoherentPhotonScatteringDistribution( 
-	 const Teuchos::ArrayRCP<const double>& recoil_electron_momentum,
-	 const Teuchos::ArrayView<const double>& scattering_function,
-	 const Teuchos::ArrayRCP<const double>& binding_energy_per_shell,
-	 const Teuchos::ArrayView<const double>& shell_interaction_probability,
-	 const ElectronMomentumDistArray& electron_momentum_dist_array );
+     const Teuchos::RCP<Utility::OneDDistribution>& scattering_function,
+     const Teuchos::RCP<Utility::OneDDistribution>& shell_interaction_data,
+     const ElectronMomentumDistArray& electron_momentum_dist_array );
 
   //! Destructor
   ~IncoherentPhotonScatteringDistribution()
@@ -51,24 +61,29 @@ public:
 
 private:
 
-  // The Koblinger sampling technique cutoff energy
-  static const double koblinger_cutoff_energy;
+  // Ignore doppler broadening
+  double returnComptonLine( const double initial_energy,
+			    const double compton_line_energy,
+			    const double scattering_angle_cosine ) const;
 
-  // The recoil electron momentum
-  Teuchos::ArrayRCP<const double> d_recoil_electron_momentum;
+  // Doppler broaden a compton line
+  double dopplerBroadenComptonLine( 
+				  const double initial_energy, 
+				  const double compton_line_energy,
+				  const double scattering_angle_cosine ) const;
 
-  // The scattering function values
-  Teuchos::Array<double> d_scattering_function;
+  // The scattering function
+  Teuchos::RCP<Utility::OneDDistribution> d_scattering_function;
 
-  // The binding energy per shell
-  Teuchos::ArrayRCP<const double> d_binding_energy_per_shell;
-
-  // The shell interaction probabilities
-  Teuchos::Array<double> d_shell_interaction_probability;
+  // The binding energy and shell interaction probabilities
+  Teuchos::RCP<Utility::OneDDistribution> d_shell_interaction_data;
 
   // The electron momentum dist array
   // Note: Every electron shell should have a momentum distribution array
   ElectronMomentumDistArray d_electron_momentum_distribution;
+
+  // The doppler broadening function pointer
+  boost::function<double (double, double, double)> d_doppler_broadening_func;
 };
 
 } // end MonteCarlo namespace
