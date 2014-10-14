@@ -205,6 +205,86 @@ TEUCHOS_UNIT_TEST( KleinNishinaDistribution, sample )
   // Koblinger's Method
   distribution->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
 }
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( KleinNishinaDistribution, sampleOptimal )
+{
+  distribution->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
+  
+  // Left branch of Kahn's method
+  std::vector<double> fake_stream( 6 );
+  fake_stream[0] = 0.27;
+  fake_stream[1] = 0.25;
+  fake_stream[2] = 0.90; // reject
+  fake_stream[3] = 0.10;
+  fake_stream[4] = 0.50;
+  fake_stream[5] = 0.999;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double sample = Utility::KleinNishinaDistribution::sampleOptimal( 
+		       Utility::PhysicalConstants::electron_rest_mass_energy );
+
+  TEST_EQUALITY_CONST( sample, 2.0 );
+  
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  // Right branch of Kahn's method
+  fake_stream[0] = 0.273;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 0.459; // reject
+  fake_stream[3] = 0.80;
+  fake_stream[4] = 0.25;
+  fake_stream[5] = 0.25;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sample = Utility::KleinNishinaDistribution::sampleOptimal( 
+		       Utility::PhysicalConstants::electron_rest_mass_energy );
+
+  TEST_EQUALITY_CONST( sample, 2.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  // Koblinger's Method
+  fake_stream.resize( 8 );
+  fake_stream[0] = 0.326;
+  fake_stream[1] = 0.2;
+  fake_stream[2] = 0.432;
+  fake_stream[3] = 0.4;
+  fake_stream[4] = 0.759;
+  fake_stream[5] = 0.6;
+  fake_stream[6] = 0.90;
+  fake_stream[7] = 0.8;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // Sample 1st term
+  sample = Utility::KleinNishinaDistribution::sampleOptimal( 
+		     3*Utility::PhysicalConstants::electron_rest_mass_energy );
+
+  TEST_EQUALITY_CONST( sample, 2.2 );
+
+  // Sample the 2nd term
+  sample = Utility::KleinNishinaDistribution::sampleOptimal( 
+		   3.0*Utility::PhysicalConstants::electron_rest_mass_energy );
+  
+  TEST_FLOATING_EQUALITY( sample, 2.1779064244828, 1e-12 );
+
+  // Sample the 3rd term
+  sample = Utility::KleinNishinaDistribution::sampleOptimal( 
+		   3.0*Utility::PhysicalConstants::electron_rest_mass_energy );
+
+  TEST_FLOATING_EQUALITY( sample, 1.5217391304348, 1e-12 );
+
+  // Sample the 4th term
+  sample = Utility::KleinNishinaDistribution::sampleOptimal( 
+		   3.0*Utility::PhysicalConstants::electron_rest_mass_energy );
+
+  TEST_FLOATING_EQUALITY( sample, 2.1500329089188, 1e-12 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
 
 //---------------------------------------------------------------------------//
 // Check that the sampling efficeincy can be returned

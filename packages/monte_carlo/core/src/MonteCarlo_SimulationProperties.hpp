@@ -11,7 +11,10 @@
 
 namespace MonteCarlo{
 
-//! The simulation properties class
+/*! The simulation properties class
+ * \todo Modify XML parser to handle all options in this class. Use this class
+ * in all parts of code that require runtime configuration.
+ */
 class SimulationProperties
 {
   

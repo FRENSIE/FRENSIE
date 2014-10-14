@@ -51,6 +51,9 @@ public:
   static double evaluateApproximateIntegratedKleinNishinaCrossSection(
 							  const double alpha );
 
+  //! Return a sample from the distribution using the optimal method
+  static double sampleOptimal( const double energy );
+
   //! Return a sample using Kahn's rejection method
   static double sampleKleinNishinaUsingKahnsMethod( 
 						  const double alpha,
