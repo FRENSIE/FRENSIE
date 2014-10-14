@@ -38,9 +38,12 @@ public:
 
 private:
 
-  //! The integrated coherent form factors
+  // The integrated coherent form factors
   Teuchos::Array<Utility::Pair<double,double> > 
   d_integrated_coherent_form_factors;
+
+  // The recoil electron momentum squared
+  Teuchos::ArrayRCP<const double> d_recoil_electron_momentum_squared;
 };
 
 } // end MonteCarlo namespace

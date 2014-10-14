@@ -45,7 +45,7 @@ public:
 
 private:
 
-  // The incoherent scattering distribution
+  // The coherent scattering distribution
   CoherentPhotonScatteringDistribution d_scattering_distribution;
 };
 
