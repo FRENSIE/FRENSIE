@@ -46,35 +46,59 @@ MACRO(ENABLE_MOAB_SUPPORT)
   # Set the link paths for Moab
   LINK_DIRECTORIES(${MOAB_LIBRARY_DIRS})
 
-  # Verify that the same compiler used to compile moab has been requested
-  MESSAGE("-- Checking C compiler and Moab C compiler compatibility")
-  COMPARE_COMPILERS(C ${CMAKE_C_COMPILER} ${MOAB_CC})
-  IF(SAME_VENDOR AND SAME_VERSION)
-    MESSAGE("-- Checking C compiler and Moab C compiler compatibility - done")
-  ELSEIF(NOT SAME_VENDOR)
-    MESSAGE(FATAL_ERROR "Moab was compiled with ${MOAB_CC}, which is incompatible with ${CMAKE_C_COMPILER}")
-  ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
-    MESSAGE(WARNING "Moab was compiled with a different version of ${CMAKE_C_COMPILER}. There may be conflicts!")
+  # Check if C compiler compatibility needs to be checked
+  STRING(COMPARE NOTEQUAL "${MOAB_C_COMPILER}" "${MOAB_CC}" NEW_COMPILER)
+  IF(NEW_COMPILER)
+    # Verify that the same compiler used to compile moab has been requested
+    MESSAGE("-- Checking C compiler and Moab C compiler compatibility")
+    COMPARE_COMPILERS(C ${CMAKE_C_COMPILER} ${MOAB_CC})
+    IF(SAME_VENDOR AND SAME_VERSION)
+      MESSAGE("-- Checking C compiler and Moab C compiler compatibility - done")
+    ELSEIF(NOT SAME_VENDOR)
+      MESSAGE(FATAL_ERROR "Moab was compiled with ${MOAB_CC}, which is incompatible with ${CMAKE_C_COMPILER}")
+    ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
+      MESSAGE(WARNING "Moab was compiled with a different version of ${CMAKE_C_COMPILER}. There may be conflicts!")
+    ENDIF()
+    
+    # Cache the MOAB C compiler
+    SET(MOAB_C_COMPILER ${MOAB_CC} 
+      CACHE STRING "The MOAB C compiler" FORCE)
   ENDIF()
   
-  MESSAGE("-- Checking CXX compiler and Moab CXX compiler compatibility")
-  COMPARE_COMPILERS(CXX ${CMAKE_CXX_COMPILER} ${MOAB_CXX})
-  IF(SAME_VENDOR AND SAME_VERSION)
-    MESSAGE("-- Checking CXX compiler and Moab CXX compiler compatibility - done")
-  ELSEIF(NOT SAME_VENDOR)
-    MESSAGE(FATAL_ERROR "Moab was compiled with ${MOAB_CXX}, which is incompatible with ${CMAKE_CXX_COMPILER}")
-  ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
-    MESSAGE(WARNING "Moab was compiled with a different version of ${CMAKE_CXX_COMPILER}. There may be conflicts!")
+  # Check if the CXX compiler compatibility needs to be checked
+  STRING(COMPARE NOTEQUAL "${MOAB_CXX_COMPILER}" "${MOAB_CXX}" NEW_COMPILER)
+  IF(NEW_COMPILER)
+    MESSAGE("-- Checking CXX compiler and Moab CXX compiler compatibility")
+    COMPARE_COMPILERS(CXX ${CMAKE_CXX_COMPILER} ${MOAB_CXX})
+    IF(SAME_VENDOR AND SAME_VERSION)
+      MESSAGE("-- Checking CXX compiler and Moab CXX compiler compatibility - done")
+    ELSEIF(NOT SAME_VENDOR)
+      MESSAGE(FATAL_ERROR "Moab was compiled with ${MOAB_CXX}, which is incompatible with ${CMAKE_CXX_COMPILER}")
+    ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
+      MESSAGE(WARNING "Moab was compiled with a different version of ${CMAKE_CXX_COMPILER}. There may be conflicts!")
+    ENDIF()
+
+    # Cache the MOAB CXX compiler
+    SET(MOAB_CXX_COMPILER ${MOAB_CXX}
+      CACHE STRING "The MOAB CXX compiler" FORCE)
   ENDIF()
 
-  MESSAGE("-- Checking Fortran compiler and Moab Fortran compiler compatibility")
-  COMPARE_COMPILERS(Fortran ${CMAKE_Fortran_COMPILER} ${MOAB_FC})
-  IF(SAME_VENDOR AND SAME_VERSION)
-  MESSAGE("-- Checking Fortran compiler and Moab Fortran compiler compatibility - done")
-  ELSEIF(NOT SAME_VENDOR)
-    MESSAGE(FATAL_ERROR "Moab was compiled with ${MOAB_FC}, which is incompatible with ${CMAKE_Fortran_COMPILER}")
-  ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
-    MESSAGE(WARNING "Moab was compiled with a different version of ${CMAKE_Fortran_COMPILER}. There may be conflicts!")
+  # Check if the Fortran compiler compatibility needs to be checked
+  STRING(COMPARE NOTEQUAL "${MOAB_Fortran_COMPILER}" "${MOAB_FC}" NEW_COMPILER)
+  IF(NEW_COMPILER)
+    MESSAGE("-- Checking Fortran compiler and Moab Fortran compiler compatibility")
+    COMPARE_COMPILERS(Fortran ${CMAKE_Fortran_COMPILER} ${MOAB_FC})
+    IF(SAME_VENDOR AND SAME_VERSION)
+      MESSAGE("-- Checking Fortran compiler and Moab Fortran compiler compatibility - done")
+    ELSEIF(NOT SAME_VENDOR)
+      MESSAGE(FATAL_ERROR "Moab was compiled with ${MOAB_FC}, which is incompatible with ${CMAKE_Fortran_COMPILER}")
+    ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
+      MESSAGE(WARNING "Moab was compiled with a different version of ${CMAKE_Fortran_COMPILER}. There may be conflicts!")
+    ENDIF()
+
+    # Cache the MOAB Fortran compiler
+    SET(MOAB_Fortran_COMPILER ${MOAB_FC}
+      CACHE STRING "The MOAB Fortran compiler" FORCE)
   ENDIF()
   
   UNSET(SAME_VENDOR)
