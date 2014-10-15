@@ -15,30 +15,7 @@ MACRO(ENABLE_BOOST_SUPPORT)
     SET(Boost_NO_SYSTEM_PATHS ON)
 
     # Check if boost needs to be found
-    IF(NOT DEFINED BOOST_FOUND)
-      SET(FIND_BOOST TRUE)
-    ELSEIF(NOT ${BOOST_FOUND})
-      SET(FIND_BOOST TRUE)
-    ELSEIF(${BOOST_FOUND})
-      STRING(COMPARE NOTEQUAL "${FOUND_BOOST_LIBS}" "${ARGN}" FIND_BOOST)
-    ENDIF()
-    
-    # Find the boost package
-    IF(FIND_BOOST)
-      FIND_PACKAGE(Boost 1.54.0 REQUIRED COMPONENTS ${ARGN})
-
-      # Cache to boost found boolean
-      SET(BOOST_FOUND ON
-	CACHE BOOL "Indicates that boost has been found")
-
-      # Cache the libraries that were found
-      SET(FOUND_BOOST_LIBS "${ARGN}"
-	CACHE STRING "The boost libraries that were found" FORCE)
-      
-      # Cache the library names
-      SET(Boost_LIBRARIES ${Boost_LIBRARIES}
-	CACHE STRING "The boost libraries requested" FORCE)
-    ENDIF()
+    FIND_PACKAGE(Boost 1.54.0 REQUIRED COMPONENTS ${ARGN})
 
     # Set the include paths for Boost
     INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
