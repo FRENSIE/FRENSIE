@@ -21,7 +21,7 @@ MACRO(ENABLE_GSL_SUPPORT)
   IF(${GSL_LIBRARY} MATCHES NOTFOUND)
     MESSAGE(FATAL_ERROR "The gsl library could not be found")
   ENDIF()
-
+  
   # Find the gsl cblas library
   #FIND_LIBRARY(GSL_CBLAS_LIBRARY gslcblas ${GSL_LINK_DIRECTORIES})
   FIND_LIBRARY(GSL_CBLAS_LIBRARY gslcblas ${GSL_PREFIX}/lib)
