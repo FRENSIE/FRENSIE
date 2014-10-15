@@ -10,6 +10,7 @@
 #include "MonteCarlo_CoherentPhotonScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_DirectionHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -20,7 +21,8 @@ CoherentPhotonScatteringDistribution::CoherentPhotonScatteringDistribution(
   : d_form_factor_function_squared( form_factor_function_squared )
 {
   // Make sure the arrays are valid
-  testPrecondition( form_factor_function_squared.size() = 55 );
+  testPrecondition( !form_factor_function_squared.is_null() );
+//  testPrecondition( form_factor_function_squared.size() = 55 );
 }
 
 // Randomly scatter the photon
@@ -37,7 +39,7 @@ void CoherentPhotonScatteringDistribution::scatterPhoton(
 
   // The maximum form factor function squared value
   const double max_form_factor_function_squared_value = 
-             d_scattering_function->evaluate( 1.0/wavelength_sqr );
+             d_form_factor_function_squared->evaluate( 1.0/wavelength_sqr );
   
   // The scattering angle cosine
   double scattering_angle_cosine;
@@ -60,7 +62,7 @@ void CoherentPhotonScatteringDistribution::scatterPhoton(
 
   // Calculate the outgoing photon angle cosine from the sampled form factor 
   double scattering_angle_cosine = 1.0 - 
-                  2.0*wavelength_sqr*form_factor_arg_sqared;
+                  2.0*wavelength_sqr*form_factor_arg_squared;
 
   random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
   }while( random_number > 0.5*( 
