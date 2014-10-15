@@ -102,7 +102,8 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
       sin( acos(scattering_angle_cosine)/2.0 )*inverse_wavelength;
 
      scattering_function_value = d_scattering_function->evaluate( 
-						     scattering_function_arg );
+	
+				     scattering_function_arg );
 
     scaled_random_number = max_scattering_function_value*
       Utility::RandomNumberGenerator::getRandomNumber<double>();

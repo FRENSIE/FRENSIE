@@ -10,24 +10,25 @@
 #define MONTE_CARLO_COHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 // Trilinos Includes
+#include <Teuchos_RCP.hpp>
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonScatteringDistribution.hpp"
+#include "Utility_OneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
 
 //! The coherent scattering distribution class
-class CoherentScatteringDistribution : public PhotonScatteringDistribution
+class CoherentPhotonScatteringDistribution : public PhotonScatteringDistribution
 {
 
 public:
 
   //! Constructor
-  CoherentPhotonScatteringDistribution( 
-    const Teuchos::ArrayView<const double>& recoil_electron_momentum_squared,
-    const Teuchos::ArrayView<const double>& integrated_coherent_form_factors );
+  CoherentPhotonScatteringDistribution(
+  const Teuchos::RCP<Utility::OneDDistribution>& form_factor_function_squared );
 
   //! Destructor
   ~CoherentPhotonScatteringDistribution()
@@ -38,12 +39,9 @@ public:
 
 private:
 
-  // The integrated coherent form factors
-  Teuchos::Array<Utility::Pair<double,double> > 
-  d_integrated_coherent_form_factors;
+  // The coherent form factor function squared
+  Teuchos::RCP<Utility::OneDDistribution> d_form_factor_function_squared;
 
-  // The recoil electron momentum squared
-  Teuchos::ArrayRCP<const double> d_recoil_electron_momentum_squared;
 };
 
 } // end MonteCarlo namespace
