@@ -17,35 +17,63 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
   # Find the Trilinos package available on this system
   FIND_PACKAGE(Trilinos 11.4.1 REQUIRED)
 
-  # Verify that the same compiler used to compile trilinos has been requested
-  MESSAGE("-- Checking C compiler and Trilinos C compiler compatibility")
-  COMPARE_COMPILERS(C ${CMAKE_C_COMPILER} ${Trilinos_C_COMPILER})
-  IF(SAME_VENDOR AND SAME_VERSION)
-    MESSAGE("-- Checking C compiler and Trilinos C compiler compatibility - done")
-  ELSEIF(NOT SAME_VENDOR)
-    MESSAGE(FATAL_ERROR "Trilinos was compiled with ${Trilinos_C_COMPILER}, which is incompatible with ${CMAKE_C_COMPILER}")
-  ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
-    MESSAGE(WARNING "Trilinos was compiled with a different version of ${CMAKE_C_COMPILER}. There may be conflicts!")
+  # Check if C compiler compatibility needs to be checked
+  STRING(COMPARE NOTEQUAL 
+    "${CACHED_TRILINOS_C_COMPILER}" "${Trilinos_C_COMPILER}" NEW_COMPILER)
+  IF(NEW_COMPILER)
+    # Verify that the same compiler used to compile trilinos has been requested
+    MESSAGE("-- Checking C compiler and Trilinos C compiler compatibility")
+    COMPARE_COMPILERS(C ${CMAKE_C_COMPILER} ${Trilinos_C_COMPILER})
+    IF(SAME_VENDOR AND SAME_VERSION)
+      MESSAGE("-- Checking C compiler and Trilinos C compiler compatibility - done")
+    ELSEIF(NOT SAME_VENDOR)
+      MESSAGE(FATAL_ERROR "Trilinos was compiled with ${Trilinos_C_COMPILER}, which is incompatible with ${CMAKE_C_COMPILER}")
+    ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
+      MESSAGE(WARNING "Trilinos was compiled with a different version of ${CMAKE_C_COMPILER}. There may be conflicts!")
+    ENDIF()
+    
+    # Cache the Trilinos C compiler
+    SET(CACHED_TRILINOS_C_COMPILER ${Trilinos_C_COMPILER}
+      CACHE STRING "The Trilinos C compiler" FORCE)
   ENDIF()
   
-  MESSAGE("-- Checking CXX compiler and Trilinos CXX compiler compatibility")
-  COMPARE_COMPILERS(CXX ${CMAKE_CXX_COMPILER} ${Trilinos_CXX_COMPILER})
-  IF(SAME_VENDOR AND SAME_VERSION)
-    MESSAGE("-- Checking CXX compiler and Trilinos CXX compiler compatibility - done")
-  ELSEIF(NOT SAME_VENDOR)
-    MESSAGE(FATAL_ERROR "Trilinos was compiled with ${Trilinos_CXX_COMPILER}, which is incompatible with ${CMAKE_CXX_COMPILER}")
-  ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
-    MESSAGE(WARNING "Trilinos was compiled with a different version of ${CMAKE_CXX_COMPILER}. There may be conflicts!")
+  # Check if CXX compiler compatibility needs to be checked
+  STRING(COMPARE NOTEQUAL 
+    "${CACHED_TRILINOS_CXX_COMPILER}" "${Trilinos_CXX_COMPILER}" NEW_COMPILER)
+  IF(NEW_COMPILER)
+    MESSAGE("-- Checking CXX compiler and Trilinos CXX compiler compatibility")
+    COMPARE_COMPILERS(CXX ${CMAKE_CXX_COMPILER} ${Trilinos_CXX_COMPILER})
+    IF(SAME_VENDOR AND SAME_VERSION)
+      MESSAGE("-- Checking CXX compiler and Trilinos CXX compiler compatibility - done")
+    ELSEIF(NOT SAME_VENDOR)
+      MESSAGE(FATAL_ERROR "Trilinos was compiled with ${Trilinos_CXX_COMPILER}, which is incompatible with ${CMAKE_CXX_COMPILER}")
+    ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
+      MESSAGE(WARNING "Trilinos was compiled with a different version of ${CMAKE_CXX_COMPILER}. There may be conflicts!")
+    ENDIF()
+    
+    # Cache the Trilinos CXX compiler
+    SET(CACHED_TRILINOS_CXX_COMPILER ${Trilinos_CXX_COMPILER}
+      CACHE STRING "The Trilinos CXX compiler" FORCE)
   ENDIF()
 
-  MESSAGE("-- Checking Fortran compiler and Trilinos Fortran compiler compatibility")
-  COMPARE_COMPILERS(Fortran ${CMAKE_Fortran_COMPILER} ${Trilinos_Fortran_COMPILER})
-  IF(SAME_VENDOR AND SAME_VERSION)
-  MESSAGE("-- Checking Fortran compiler and Trilinos Fortran compiler compatibility - done")
-  ELSEIF(NOT SAME_VENDOR)
-    MESSAGE(FATAL_ERROR "Trilinos was compiled with ${Trilinos_Fortran_COMPILER}, which is incompatible with ${CMAKE_Fortran_COMPILER}")
-  ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
-    MESSAGE(WARNING "Trilinos was compiled with a different version of ${CMAKE_Fortran_COMPILER}. There may be conflicts!")
+  # Check if CXX compiler compatibility needs to be checked
+  STRING(COMPARE NOTEQUAL 
+    "${CACHED_TRILINOS_Fortran_COMPILER}" "${Trilinos_Fortran_COMPILER}" 
+    NEW_COMPILER)
+  IF(NEW_COMPILER)
+    MESSAGE("-- Checking Fortran compiler and Trilinos Fortran compiler compatibility")
+    COMPARE_COMPILERS(Fortran ${CMAKE_Fortran_COMPILER} ${Trilinos_Fortran_COMPILER})
+    IF(SAME_VENDOR AND SAME_VERSION)
+      MESSAGE("-- Checking Fortran compiler and Trilinos Fortran compiler compatibility - done")
+    ELSEIF(NOT SAME_VENDOR)
+      MESSAGE(FATAL_ERROR "Trilinos was compiled with ${Trilinos_Fortran_COMPILER}, which is incompatible with ${CMAKE_Fortran_COMPILER}")
+    ELSEIF(SAME_VENDOR AND NOT SAME_VERSION)
+      MESSAGE(WARNING "Trilinos was compiled with a different version of ${CMAKE_Fortran_COMPILER}. There may be conflicts!")
+    ENDIF()
+  
+    # Cache the Trilinos Fortran compiler
+    SET(CACHED_TRILINOS_Fortran_COMPILER ${Trilinos_Fortran_COMPILER}
+      CACHE STRING "The Trilinos Fortran compiler" FORCE)
   ENDIF()
   
   UNSET(SAME_VENDOR)
