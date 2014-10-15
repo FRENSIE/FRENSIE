@@ -5,6 +5,7 @@
 
 EXTRA_ARGS=$@
 TRILINOS_PREFIX_PATH=$(pwd)/../deps/install/trilinos
+TRILINOS_SOURCE_PATH=$(pwd)/../deps/builds/trilinos
 HDF5_PREFIX_PATH=$(pwd)/../deps/install/hdf5
 MOAB_PREFIX_PATH=$(pwd)/../deps/install/moab
 ODEPACK_PREFIX_PATH=$(pwd)/../deps/install/odepack
@@ -36,6 +37,7 @@ cmake \
     -D FRENSIE_ENABLE_MPI:BOOL=ON \
     -D FRENSIE_ENABLE_DAGMC:BOOL=OFF \
     -D TRILINOS_PREFIX:PATH=$TRILINOS_PREFIX_PATH \
+    -D TRILINOS_SOURCE:PATH=$TRILINOS_SOURCE_PATH \
     -D MOAB_PREFIX:PATH=$MOAB_PREFIX_PATH \
     -D HDF5_PREFIX:PATH=$HDF5_PREFIX_PATH \
     -D ODEPACK_PREFIX:PATH=$ODEPACK_PREFIX_PATH \
