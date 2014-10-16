@@ -21,15 +21,23 @@ class PairProductionPhotonScatteringDistribution : public PhotonScatteringDistri
 public:
   
   //! Constructor
-  PairProductionPhotonScatteringDistribution()
-  { /* ... */ }
+  PairProductionPhotonScatteringDistribution(
+const Teuchos::RCP<Utility::OneDDistribution>& pair_production_cross_sections );
 
   //! Destructor
   ~PairProductionPhotonScatteringDistribution()
   { /* ... */ }
 
   //! Randomly scatter the photon
-  void scatterPhoton( PhotonState& photon ) const;
+  void scatterPhoton( PhotonState& photon, 
+                      ParticleBank& particle,
+                      sehll_of_interaction& shell ) const;
+
+private:
+
+  // The combined pair and triplet production cross sections
+  Teuchos::RCP<Utility::OneDDistribution> d_pair_production_cross_sections;
+
 };
 
 } // end MonteCarlo namespace

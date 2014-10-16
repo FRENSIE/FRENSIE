@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo_CoherentPhotonScatteringDistribution.cpp
-//! \author Alex Robinson, Luke Kersting
+//! \author Luke Kersting
 //! \brief  The coherent photon scattering distribution definition.
 //!
 //---------------------------------------------------------------------------//
@@ -20,7 +20,7 @@ CoherentPhotonScatteringDistribution::CoherentPhotonScatteringDistribution(
    const Teuchos::RCP<Utility::OneDDistribution>& form_factor_function_squared )
   : d_form_factor_function_squared( form_factor_function_squared )
 {
-  // Make sure the arrays are valid
+  // Make sure the array is valid
   testPrecondition( !form_factor_function_squared.is_null() );
 //  testPrecondition( form_factor_function_squared.size() = 55 );
 }
