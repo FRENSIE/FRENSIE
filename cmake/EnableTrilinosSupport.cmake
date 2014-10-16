@@ -85,13 +85,11 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
     MESSAGE(FATAL_ERROR "The teuchos standard Unit Test Main could not be found!")
   ENDIF()
   
+  # Set the absolute path to the Teuchos standard unit test main file
   SET(TEUCHOS_STD_UNIT_TEST_MAIN
     ${TEUCHOS_STD_UNIT_TEST_MAIN_PATH}/Teuchos_StandardUnitTestMain.cpp
     CACHE PATH "The standard unit test main file for building unit tests")
     
-  # Set the absolute path to the Teuchos standard unit test main file
-  # SET(TEUCHOS_STD_UNIT_TEST_MAIN 
-  #   /home/kliberty/frensie/deps/builds/trilinos/src/packages/teuchos/core/test/UnitTest/Teuchos_StandardUnitTestMain.cpp)
 
   # Set the include paths for Trilinos
   INCLUDE_DIRECTORIES(${Trilinos_INCLUDE_DIRS} ${Trilinos_TPL_INCLUDE_DIRS})
