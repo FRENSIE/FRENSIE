@@ -162,6 +162,11 @@ ADD_EXECUTABLE(tstIncoherentPhotonScatteringDistribution
 TARGET_LINK_LIBRARIES(tstIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(IncoherentPhotonScatteringDistribution_test tstIncoherentPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p --atomic_number=82)
 
+ADD_EXECUTABLE(tstCoherentPhotonScatteringDistribution
+  tstCoherentPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstCoherentPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(CoherentPhotonScatteringDistribution_test tstCoherentPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p --atomic_number=82)
+
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)
 
