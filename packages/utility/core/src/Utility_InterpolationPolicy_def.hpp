@@ -71,6 +71,26 @@ inline T LogLog::interpolate( const T processed_indep_var_0,
 	      processed_slope*(processed_indep_var - processed_indep_var_0) );
 }
 
+// Process the independent value
+template<typename T>
+inline T LogLog::processIndepVar( const T indep_var )
+{
+  // Make sure the indep var value is valid
+  testPrecondition( indep_var > 0.0 );
+  
+  return log( indep_var );
+}
+
+// Process the dependent value
+template<typename T>
+inline T LogLog::processDepVar( const T dep_var )
+{
+  // Make sure the indep var value is valid
+  testPrecondition( dep_var > 0.0 );
+
+  return log( dep_var );
+}
+
 // The name of the policy
 inline const std::string LogLog::name()
 {

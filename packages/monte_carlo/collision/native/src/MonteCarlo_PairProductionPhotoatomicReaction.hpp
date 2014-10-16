@@ -27,7 +27,8 @@ public:
   //! Constructor
   PairProductionPhotoatomicReaction(
 		const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		const Teuchos::ArrayRCP<const double>& cross_section );
+		const Teuchos::ArrayRCP<const double>& cross_section,
+		const bool use_detailed_electron_emission_physics = true );
 
   //! Destructor
   ~PairProductionPhotoatomicReaction()
@@ -40,6 +41,14 @@ public:
   void react( PhotonState& photon, ParticleBank& bank ) const;
 
 private:
+
+  // The basic pair production model
+  static void basicPairProductionInteraction( PhotonState& photon,
+					      ParticleBank& bank );
+
+  // The detailed pair production model
+  static void detailedPairProductionInteraction( PhotonState& photon,
+						 ParticleBank& banke );
   
   // The pair production scattering distribution
   PairProductionPhotonScatteringDistribution d_scattering_distribution;	      

@@ -151,6 +151,9 @@ public:
   //! Increment the collision number of the particle
   void incrementCollisionNumber();
 
+  //! Reset the collision number of the particle
+  void resetCollisionNumber();
+
   //! Return the generation number of the particle
   generationNumberType getGenerationNumber() const;
 
