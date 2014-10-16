@@ -68,12 +68,14 @@ void CoherentPhotonScatteringDistribution::scatterPhoton(
     // reject with reject function: R( scattering_angle_cosine )
     do{
     // Randomly sample the form factor squared
-    double form_factor_arg_squared = d_form_factor_function_squared->
-                                   sample( max_form_factor_arg_squared );
+    form_factor_arg_squared = d_form_factor_function_squared->
+                                 sample( max_form_factor_arg_squared );
 
     // Calculate the outgoing photon angle cosine from the sampled form factor 
-    double scattering_angle_cosine = 1.0 - 
-                  2.0*wavelength_sqr*form_factor_arg_squared;
+    scattering_angle_cosine = 1.0 - 2.0*wavelength_sqr*form_factor_arg_squared;
+
+   std::cout << scattering_angle_cosine << std::endl;
+   std::cout << form_factor_arg_squared << std::endl;
 
     random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
     }while( random_number > 0.5*( 
