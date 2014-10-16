@@ -20,7 +20,15 @@
 
 namespace MonteCarlo{
 
-//! The coherent scattering distribution class
+/*! The coherent scattering distribution class
+ * \details The distribution class is set to ignore coherent scattering if the 
+ * The recoil electron momentum (form factor function independent variable with
+ * units of inverse wavelength) is greater than the data table provided 
+ * (ie: for high energy photons). 
+ * This is due to the fact that coherent scattering becomes very forward peaked 
+ * at high energies and their effect on the photon path can be ignored.
+ * For the default ACE tables used the max argument is 6 angstroms
+ */
 class CoherentPhotonScatteringDistribution : public PhotonScatteringDistribution
 {
 
@@ -35,7 +43,9 @@ public:
   { /* ... */ }
 
   //! Randomly scatter the photon
-  virtual void scatterPhoton( PhotonState& photon ) const;
+  void scatterPhoton( PhotonState& photon,
+		      ParticleBank& bank,
+		      unsigned& shell_of_interaction ) const;
 
 private:
 

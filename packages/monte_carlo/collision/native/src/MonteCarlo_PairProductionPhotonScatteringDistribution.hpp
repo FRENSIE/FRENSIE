@@ -29,9 +29,9 @@ const Teuchos::RCP<Utility::OneDDistribution>& pair_production_cross_sections );
   { /* ... */ }
 
   //! Randomly scatter the photon
-  void scatterPhoton( PhotonState& photon, 
-                      ParticleBank& particle,
-                      sehll_of_interaction& shell ) const;
+  void scatterPhoton( PhotonState& photon,
+		      ParticleBank& bank,
+		      unsigned& shell_of_interaction ) const;
 
 private:
 
