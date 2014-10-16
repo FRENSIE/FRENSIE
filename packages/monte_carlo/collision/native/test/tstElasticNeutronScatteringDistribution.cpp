@@ -3,6 +3,7 @@
 //! \file   tstElasticNeutronScatteringDistribution.cpp
 //! \author Alex Robinson
 //! \brief  Elastic neutron scattering distribution unit tests
+//!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
