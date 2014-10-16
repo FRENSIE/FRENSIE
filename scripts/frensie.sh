@@ -3,18 +3,19 @@
 ## CONFIGURE FACEMC with CMAKE
 ##---------------------------------------------------------------------------##
 
+ABSPATH="../src/scripts/abspath.py"
 EXTRA_ARGS=$@
-TRILINOS_PREFIX_PATH=$(pwd)/../deps/install/trilinos
-TRILINOS_SOURCE_PATH=$(pwd)/../deps/builds/trilinos
-HDF5_PREFIX_PATH=$(pwd)/../deps/install/hdf5
-MOAB_PREFIX_PATH=$(pwd)/../deps/install/moab
-ODEPACK_PREFIX_PATH=$(pwd)/../deps/install/odepack
-BOOST_PREFIX_PATH=$(pwd)/../deps/install/boost
-GSL_PREFIX_PATH=$(pwd)/../deps/install/gsl
-MPI_PREFIX_PATH=$(pwd)/../deps/install/mpi
-DOXYGEN_PREFIX_PATH=$(pwd)/../deps/install/doxygen
-FRENSIE_SRC=$(pwd)/../src
-FRENSIE_INSTALL=$(pwd)/../frensie_install
+TRILINOS_PREFIX_PATH=$(python $ABSPATH "../deps/install/trilinos")
+TRILINOS_SOURCE_PATH=$(python $ABSPATH "../deps/builds/trilinos")
+HDF5_PREFIX_PATH=$(python $ABSPATH "../deps/install/hdf5")
+MOAB_PREFIX_PATH=$(python $ABSPATH "../deps/install/moab")
+ODEPACK_PREFIX_PATH=$(python $ABSPATH "../deps/install/odepack")
+BOOST_PREFIX_PATH=$(python $ABSPATH "../deps/install/boost")
+GSL_PREFIX_PATH=$(python $ABSPATH "../deps/install/gsl")
+MPI_PREFIX_PATH=$(python $ABSPATH "../deps/install/mpi")
+DOXYGEN_PREFIX_PATH=$(python $ABSPATH "../deps/install/doxygen")
+FRENSIE_SRC=$(python $ABSPATH "../src")
+FRENSIE_INSTALL=$(python $ABSPATH "../frensie_install")
 
 ##---------------------------------------------------------------------------##
 ## The Teuchos_TwoDArray class has a bug that needs to be fixed. This patch
@@ -23,7 +24,7 @@ patch -s -f $TRILINOS_PREFIX_PATH/include/Teuchos_TwoDArray.hpp \
    $FRENSIE_SRC/patches/Teuchos_TwoDArray_patch
 
 source ~/.bashrc
-source `python ../src/scripts/prefix.py ../deps/install`
+`python ../src/scripts/prefix.py ../deps/install`
 
 cmake --version
 
