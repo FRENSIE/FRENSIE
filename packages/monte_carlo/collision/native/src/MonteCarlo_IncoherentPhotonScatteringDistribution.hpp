@@ -37,12 +37,7 @@ public:
   IncoherentPhotonScatteringDistribution(
 	  const Teuchos::RCP<Utility::OneDDistribution>& scattering_function );
 
-  /*! Constructor for doppler broadening
-   * \details The shell interaction data object should store the shell binding
-   * energy as the independent values and the shell interaction probabilities
-   * as the dependent values. The sample( bin_index ) member function should
-   * be called to get the index of the sampled shell.
-   */ 
+  //! Constructor for doppler broadening
   IncoherentPhotonScatteringDistribution( 
      const Teuchos::RCP<Utility::OneDDistribution>& scattering_function,
      const Teuchos::RCP<Utility::OneDDistribution>& shell_interaction_data,
@@ -53,10 +48,8 @@ public:
   { /* ... */ }
 
   //! Randomly scatter the photon
-  void scatterPhoton( PhotonState& photon ) const;
-
-  //! Randomly scatter the photon
   void scatterPhoton( PhotonState& photon,
+		      ParticleBank& bank,
 		      unsigned& shell_of_interaction ) const;
 
 private:
@@ -64,13 +57,15 @@ private:
   // Ignore doppler broadening
   double returnComptonLine( const double initial_energy,
 			    const double compton_line_energy,
-			    const double scattering_angle_cosine ) const;
+			    const double scattering_angle_cosine,
+			    unsigned& shell_of_interaction ) const;
 
   // Doppler broaden a compton line
   double dopplerBroadenComptonLine( 
 				  const double initial_energy, 
 				  const double compton_line_energy,
-				  const double scattering_angle_cosine ) const;
+				  const double scattering_angle_cosine,
+				  unsigned& shell_of_interaction ) const;
 
   // The scattering function
   Teuchos::RCP<Utility::OneDDistribution> d_scattering_function;
@@ -83,7 +78,8 @@ private:
   ElectronMomentumDistArray d_electron_momentum_distribution;
 
   // The doppler broadening function pointer
-  boost::function<double (double, double, double)> d_doppler_broadening_func;
+  boost::function<double (double, double, double, unsigned&)> 
+  d_doppler_broadening_func;
 };
 
 } // end MonteCarlo namespace

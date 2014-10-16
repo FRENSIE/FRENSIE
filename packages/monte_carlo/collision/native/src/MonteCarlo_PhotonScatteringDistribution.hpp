@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ParticleBank.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -30,34 +31,23 @@ class PhotonScatteringDistribution
 public:
 
   //! Constructor
-  PhotonScatteringDistribution();
+  PhotonScatteringDistribution()
+  { /* ... */ }
 
   //! Destructor
   virtual ~PhotonScatteringDistribution()
   { /* ... */ }
 
-  //! Randomly scatter the photon
-  virtual void scatterPhoton( PhotonState& photon ) const = 0;
-
   //! Randomly scatter the photon and return the shell that was interacted with
   virtual void scatterPhoton( PhotonState& photon,
-			      unsigned& shell_of_interaction );
+			      ParticleBank& bank,
+			      unsigned& shell_of_interaction ) const = 0;
 
 protected:
 
   //! Sample an azimuthal angle from a uniform distribution
   double sampleAzimuthalAngle() const;
 };
-
-// Randomly scatter the photon and return the shell that was interacted with
-inline void PhotonScatteringDistribution::scatterPhoton( 
-					       PhotonState& photon,
-					       unsigned& shell_of_interaction )
-{
-  shell_of_interaction = std::numeric_limits<unsigned>::max();
-
-  this->scatterPhoton( photon );
-}
 
 // Sample an azimuthal angle from a uniform distribution
 inline double 
