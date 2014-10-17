@@ -16,21 +16,22 @@
 #include "MonteCarlo_HardElasticElectronScatteringDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_SearchAlgorithms.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! Constructor
 HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribution(
-const Teuchos::RCP<Utility::OneDDistribution>& elastic_scattering_distribution,
+ElasticDistribution& elastic_scattering_distribution,
 const Teuchos::RCP<double>& interpolation_weights )
   : d_elastic_scattering_distribution( elastic_scattering_distribution ),
     d_interpolation_weights( interpolation_weights )
 {
   // Make sure the array is valid
-  testPrecondition( !elastic_scattering_distribution.is_null() );
+  testPrecondition( d_elastic_scattering_distribution.size() > 0 );
 }
-/*
+// /*
 //! Randomly scatter the electron
 void HardElasticElectronScatteringDistribution::scatterElectron( 
                                 ElectronState& electron,
@@ -44,7 +45,7 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
 
   // Check if energy is outside the grid
   if( electron.getEnergy() >= d_elastic_scattering_distribution.front().first 
-                and energy <= d_elastic_scattering_distribution.back().first )
+  and electron.getEnergy() <= d_elastic_scattering_distribution.back().first )
   {
     ElasticDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
 
@@ -74,11 +75,11 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
     {
       energy_prime = lower_bin_boundary->second->sample( outgoing_index );
     }
-
+*/
   }
 
 }
-*/
+// */
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
