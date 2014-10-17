@@ -19,6 +19,8 @@ const double PhysicalConstants::avogadro_constant = 6.0221412927e23;
 const double PhysicalConstants::electron_rest_mass_energy = 0.51099891013;
 const double PhysicalConstants::neutron_rest_mass_energy = 939.56537821;
 const double PhysicalConstants::neutron_rest_mass_amu = 1.0086649160043;
+const double PhysicalConstants::classical_electron_radius = 2.8179403267e-13;
+const double PhysicalConstants::inverse_fine_structure_constant = 137.035999679;
 
 } // end Utility namespace
 

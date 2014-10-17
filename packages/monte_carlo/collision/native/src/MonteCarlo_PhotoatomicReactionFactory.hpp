@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_PhotoatomicReactionFactory.hpp
 //! \author Alex Robinson
-//! \brief  Photoatomic reaction factor class declaration
+//! \brief  Photoatomic reaction factory class declaration
 //!
 //---------------------------------------------------------------------------//
 

@@ -83,6 +83,8 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluatePDF )
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
+/*! \todo Add tests for all versions of the sample function
+ */ 
 TEUCHOS_UNIT_TEST( DiscreteDistribution, sample )
 {
   std::vector<double> fake_stream( 7 );
@@ -95,30 +97,39 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sample )
   fake_stream[6] = 1.0 - 1.0e-15;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned bin_index;
 
   // Test the first bin
-  double sample = distribution->sample();
+  double sample = distribution->sample( bin_index );
   TEST_EQUALITY_CONST( sample, -1.0 );
+  TEST_EQUALITY_CONST( bin_index, 0u );
 
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   TEST_EQUALITY_CONST( sample, -1.0 );
+  TEST_EQUALITY_CONST( bin_index, 0u );
 
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   TEST_EQUALITY_CONST( sample, -1.0 );
+  TEST_EQUALITY_CONST( bin_index, 0u );
 
   // Test the second bin
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( bin_index, 1u );
 
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( bin_index, 1u );
 
   // Test the third bin
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   TEST_EQUALITY_CONST( sample, 1.0 );
+  TEST_EQUALITY_CONST( bin_index, 2u );
 
-  sample = distribution->sample();
+  sample = distribution->sample( bin_index );
   TEST_EQUALITY_CONST( sample, 1.0 );
+  TEST_EQUALITY_CONST( bin_index, 2u );
 }
 
 //---------------------------------------------------------------------------//

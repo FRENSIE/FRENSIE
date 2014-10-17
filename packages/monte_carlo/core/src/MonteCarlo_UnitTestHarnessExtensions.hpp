@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_UNIT_TEST_HARNESS_EXTENSIONS_HPP
-#define FACEMC_UNIT_TEST_HARNESS_EXTENSIONS_HPP
+#ifndef MONTE_CARLO_UNIT_TEST_HARNESS_EXTENSIONS_HPP
+#define MONTE_CARLO_UNIT_TEST_HARNESS_EXTENSIONS_HPP
 
 // FRENSIE Includes
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -35,7 +35,7 @@
 		          Teuchos::FancyOStream &out, bool &success ) const \
     
 
-#endif // end FACEMC_UNIT_TEST_HARNESS_EXTENSIONS_HPP
+#endif // end MONTE_CARLO_UNIT_TEST_HARNESS_EXTENSIONS_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_UnitTestHarnessExtensions.hpp
