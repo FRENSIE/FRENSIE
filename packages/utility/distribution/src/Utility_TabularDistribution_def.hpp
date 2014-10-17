@@ -174,6 +174,73 @@ double TabularDistribution<InterpolationPolicy>::sample(
   return sample;
 }
 
+// Return a random sample from the corresponding CDF in a subrange
+template<typename InterpolationPolicy>
+double TabularDistribution<InterpolationPolicy>::sample( 
+					     const double max_indep_var ) const
+{
+  // Make sure the maximum indep var is valid
+  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
+  testPrecondition( max_indep_var <= this->getUpperBoundOfIndepVar() );
+  
+  if( max_indep_var == this->getLowerBoundOfIndepVar() )
+    return max_indep_var;
+  else if( max_indep_var >= this->getUpperBoundOfIndepVar() )
+    return this->sample();
+  else
+  {
+    // Find the CDF value at the maximum independent variable
+    DistributionArray::const_iterator start, end, lower_bin_boundary;
+    start = d_distribution.begin();
+    end = d_distribution.end();
+
+    lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							  end,
+							  max_indep_var );
+
+    // cdf(x) = cdf(x0) + (x-x0)*pdf(x0) + 0.5*(x-x0)^2*m
+    double indep_value_diff = max_indep_var - lower_bin_boundary->first;
+    double cdf_max = lower_bin_boundary->second + 
+      indep_value_diff*lower_bin_boundary->third +
+      0.5*indep_value_diff*indep_value_diff*lower_bin_boundary->fourth;
+    
+    // Sample a scaled random number
+    double random_number = RandomNumberGenerator::getRandomNumber<double>()*
+      cdf_max;
+
+    start = d_distribution.begin();
+    end = d_distribution.end();
+    
+    lower_bin_boundary = Search::binaryLowerBound<SECOND>( start,
+							   end,
+							   random_number );
+    // Calculate the sampled independent value
+    double sample;
+    
+    double indep_value = lower_bin_boundary->first;
+    double cdf_diff = random_number - lower_bin_boundary->second;
+    double pdf_value = lower_bin_boundary->third;
+    double slope = lower_bin_boundary->fourth;
+    
+    // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m 
+    if( slope != 0.0 )
+    {
+      sample = indep_value + 
+	(sqrt( pdf_value*pdf_value + 2*slope*cdf_diff ) - pdf_value)/slope;
+    }
+    // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
+    else
+      sample =  indep_value + cdf_diff/pdf_value;
+
+    // Make sure a valid cdf value was found
+    testPostcondition( lower_bin_boundary->second <= cdf_max );
+    // Make sure the sample is valid
+    testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( sample ) );
+
+    return sample;
+  }
+}
+
 // Return the sampling efficiency
 template<typename InterpolationPolicy>
 double TabularDistribution<InterpolationPolicy>::getSamplingEfficiency() const

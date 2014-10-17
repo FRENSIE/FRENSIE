@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_PhotonScatteringDistribution.hpp
-//! \author Alex Robinson
-//! \brief  The photon scattering distribution base class
+//! \file   MonteCarlo_ElectronScatteringDistribution.hpp
+//! \author Luke Kersting
+//! \brief  The electron scattering distribution base class
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PHOTON_SCATTERING_DISTRIBUTION_HPP
-#define FACEMC_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_ELECTRON_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
 // Std Lib Includes
 #include <limits>
@@ -16,7 +16,7 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -25,23 +25,22 @@
 namespace MonteCarlo{
 
 //! The scattering distribution base class
-class PhotonScatteringDistribution
+class ElectronScatteringDistribution
 {
 
 public:
 
   //! Constructor
-  PhotonScatteringDistribution()
+  ElectronScatteringDistribution()
   { /* ... */ }
 
   //! Destructor
-  virtual ~PhotonScatteringDistribution()
+  virtual ~ElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Randomly scatter the photon and return the shell that was interacted with
-  virtual void scatterPhoton( PhotonState& photon,
-			      ParticleBank& bank,
-			      unsigned& shell_of_interaction ) const = 0;
+  //! Randomly scatter the electron
+  virtual void scatterElectron( ElectronState& electron,
+			                    ParticleBank& bank) const = 0;
 
 protected:
 
@@ -51,7 +50,7 @@ protected:
 
 // Sample an azimuthal angle from a uniform distribution
 inline double 
-PhotonScatteringDistribution::sampleAzimuthalAngle() const
+ElectronScatteringDistribution::sampleAzimuthalAngle() const
 {
   return 2*Utility::PhysicalConstants::pi*
     Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -59,8 +58,8 @@ PhotonScatteringDistribution::sampleAzimuthalAngle() const
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_PhotonScatteringDistribution.hpp
+// end MonteCarlo_ElectronScatteringDistribution.hpp
 //---------------------------------------------------------------------------//

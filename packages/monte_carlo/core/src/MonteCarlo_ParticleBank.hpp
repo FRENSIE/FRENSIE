@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_BANK_HPP
-#define FACEMC_PARTICLE_BANK_HPP
+#ifndef MONTE_CARLO_PARTICLE_BANK_HPP
+#define MONTE_CARLO_PARTICLE_BANK_HPP
 
 // Std Lib Includes
 #include <deque>

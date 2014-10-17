@@ -17,6 +17,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 
 //---------------------------------------------------------------------------//
@@ -59,6 +60,18 @@ TEUCHOS_UNIT_TEST( ParticleBank, push )
     
       TEST_ASSERT( !bank.empty() );
       TEST_EQUALITY_CONST( bank.size(), 2 );
+    }
+ 
+    particle.reset( new MonteCarlo::ElectronState( history_number ) );
+      
+    bank.push( particle );
+    
+    #pragma omp critical( test_update )
+    {
+      std::cout << particle->getHistoryNumber() << std::endl;
+    
+      TEST_ASSERT( !bank.empty() );
+      TEST_EQUALITY_CONST( bank.size(), 3 );
     }
   
     #pragma omp barrier
