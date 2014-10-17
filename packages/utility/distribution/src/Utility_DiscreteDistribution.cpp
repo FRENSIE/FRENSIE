@@ -98,12 +98,23 @@ double DiscreteDistribution::sample()
 // Return a random sample from the distribution
 double DiscreteDistribution::sample() const
 {
+  unsigned dummy_index;
+
+  return this->sample( dummy_index );
+}
+
+// Return a random sample from the distribution
+double DiscreteDistribution::sample( unsigned& sampled_bin_index ) const
+{
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
   
   Teuchos::Array<Pair<double,double> >::const_iterator sample = 
     Search::binaryUpperBound<SECOND>( d_distribution.begin(),
 				      d_distribution.end(),
 				      random_number );
+
+  // Get the bin index sampled
+  sampled_bin_index = std::distance( d_distribution.begin(), sample );
 
   return sample->first;
 }

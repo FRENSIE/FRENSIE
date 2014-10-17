@@ -6,12 +6,15 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_SIMULATION_PROPERTIES_HPP
-#define FACEMC_SIMULATION_PROPERTIES_HPP
+#ifndef MONTE_CARLO_SIMULATION_PROPERTIES_HPP
+#define MONTE_CARLO_SIMULATION_PROPERTIES_HPP
 
 namespace MonteCarlo{
 
-//! The simulation properties class
+/*! The simulation properties class
+ * \todo Modify XML parser to handle all options in this class. Use this class
+ * in all parts of code that require runtime configuration.
+ */
 class SimulationProperties
 {
   
@@ -41,6 +44,15 @@ public:
   //! Return the maximum photon energy (MeV) - cannot be set at runtime
   static double getMaxPhotonEnergy();
 
+  //! Set the minimum electron energy (MeV)
+  static void setMinElectronEnergy( const double energy );
+
+  //! Return the minimum electron energy (MeV)
+  static double getMinElectronEnergy();
+  
+  //! Return the maximum electron energy (MeV) - cannot be set at runtime
+  static double getMaxElectronEnergy();
+
   //! Set implicit capture mode to on 
   static void setImplicitCaptureModeOn();
 
@@ -67,6 +79,12 @@ private:
 
   // The max photon energy (MeV)
   static double max_photon_energy;
+
+  // The min photon energy (MeV)
+  static double min_electron_energy;
+
+  // The max photon energy (MeV)
+  static double max_electron_energy;
 
   // The capture mode (true = implicit capture mode on, false = analogue)
   static bool implicit_capture_mode_on;
@@ -102,6 +120,18 @@ inline double SimulationProperties::getMaxPhotonEnergy()
   return SimulationProperties::max_photon_energy;
 }
 
+// Return the minimum electron energy (MeV)
+inline double SimulationProperties::getMinElectronEnergy()
+{
+  return SimulationProperties::min_electron_energy;
+}
+  
+// Return the maximum electron energy (MeV) - cannot be set at runtime
+inline double SimulationProperties::getMaxElectronEnergy()
+{
+  return SimulationProperties::max_electron_energy;
+}
+
 // Return if implicit capture mode has been set
 inline bool SimulationProperties::isImplicitCaptureModeOn()
 {
@@ -110,7 +140,7 @@ inline bool SimulationProperties::isImplicitCaptureModeOn()
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_SIMULATION_PROPERTIES_HPP
+#endif // end MONTE_CARLO_SIMULATION_PROPERTIES_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_SimulationProperties.cpp

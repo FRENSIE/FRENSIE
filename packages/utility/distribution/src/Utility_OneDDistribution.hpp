@@ -47,6 +47,9 @@ public:
   //! Return a random sample and sampled index from the corresponding CDF (ignore sample eff.)
   virtual double sample( unsigned& sampled_bin_index ) const;
 
+  //! Return a random sample from the corresponding CDF in a subrange
+  virtual double sample( const double max_indep_var ) const;
+
   //! Return the sampling efficiency from the distribution
   virtual double getSamplingEfficiency() const = 0;
 
@@ -67,6 +70,17 @@ public:
 inline double OneDDistribution::sample( unsigned& sampled_bin_index ) const
 {
   sampled_bin_index = std::numeric_limits<unsigned>::max();
+
+  return this->sample();
+}
+
+//! Return a random sample from the corresponding CDF in a subrange
+inline double OneDDistribution::sample( const double max_indep_var ) const
+{
+  OneDDistributionType type = this->getDistributionType();
+  std::cerr << "Warning: A " << convertOneDDistributionTypeToString( type )
+	    << " cannot return a sample from a sub-interval. A sample from "
+	    << "the entire interval will be returned." << std::endl;
 
   return this->sample();
 }

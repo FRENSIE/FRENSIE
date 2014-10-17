@@ -226,6 +226,15 @@ void ParticleState::incrementCollisionNumber()
   ++d_core.collision_number;
 }
 
+// Reset the collision number
+/*! \details This should rarely be used - try to rely on the contructor to
+ * reset the collision number. 
+ */
+void ParticleState::resetCollisionNumber()
+{
+  d_core.collision_number = 0u;
+}
+
 // Return the generation number of the particle
 ParticleState::generationNumberType ParticleState::getGenerationNumber() const
 {

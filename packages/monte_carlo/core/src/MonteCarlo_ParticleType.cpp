@@ -17,8 +17,10 @@ bool isValidParticleTypeName( const std::string& particle_type_name )
 {
   return particle_type_name.compare( "Photon" ) == 0 ||
     particle_type_name.compare( "Neutron" ) == 0 ||
+    particle_type_name.compare( "Electron" ) == 0 ||
     particle_type_name.compare( "Adjoint Photon" ) == 0 ||
-    particle_type_name.compare( "Adjoint Neutron" ) == 0;
+    particle_type_name.compare( "Adjoint Neutron" ) == 0 ||
+    particle_type_name.compare( "Adjoint Electron" ) == 0;
 }
 
 // Convert the particle type name to a ParticleType enum
@@ -29,10 +31,14 @@ ParticleType convertParticleTypeNameToParticleTypeEnum(
     return PHOTON;
   else if( particle_type_name.compare( "Neutron" ) == 0 )
     return NEUTRON;
+  else if( particle_type_name.compare( "Electron" ) == 0 )
+    return ELECTRON;
   else if( particle_type_name.compare( "Adjoint Photon" ) == 0 )
     return ADJOINT_PHOTON;
   else if( particle_type_name.compare( "Adjoint Neutron" ) == 0 )
     return ADJOINT_NEUTRON;
+  else if( particle_type_name.compare( "Adjoint Electron" ) == 0 )
+    return ADJOINT_ELECTRON;
   else
     return UNKNOWN_PARTICLE;
 }
