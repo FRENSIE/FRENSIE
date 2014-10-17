@@ -29,8 +29,24 @@ struct LogLog
   template<typename T>
   static T interpolate( const T processed_indep_var_0,
 			const T processed_indep_var,
-			const T processed_dep_var,
+			const T processed_dep_var_0,
 			const T processed_slope );
+
+  //! Process the independent value
+  template<typename T>
+  static T processIndepVar( const T indep_var );
+
+  //! Process the dependent value
+  template<typename T>
+  static T processDepVar( const T dep_var );
+
+  //! Recover the processed independent value
+  template<typename T>
+  static T recoverProcessedIndepVar( const T processed_indep_var );
+  
+  //! Recover the processed dependent value
+  template<typename T>
+  static T recoverProcessedDepVar( const T processed_dep_var );
 
   //! The name of the policy
   static const std::string name();
@@ -54,8 +70,24 @@ struct LogLin
   template<typename T>
   static T interpolate( const T processed_indep_var_0,
 			const T processed_indep_var,
-			const T processed_dep_var,
+			const T processed_dep_var_0,
 			const T processed_slope );
+
+  //! Process the independent value
+  template<typename T>
+  static T processIndepVar( const T indep_var );
+
+  //! Process the dependent value
+  template<typename T>
+  static T processDepVar( const T dep_var );
+  
+  //! Recover the processed independent value
+  template<typename T>
+  static T recoverProcessedIndepVar( const T processed_indep_var );
+  
+  //! Recover the processed dependent value
+  template<typename T>
+  static T recoverProcessedDepVar( const T processed_dep_var );
 
   //! The name of the policy
   static const std::string name();
@@ -79,8 +111,24 @@ struct LinLog
   template<typename T>
   static T interpolate( const T processed_indep_var_0,
 			const T processed_indep_var,
-			const T processed_dep_var,
+			const T processed_dep_var_0,
 			const T processed_slope );
+
+  //! Process the independent value
+  template<typename T>
+  static T processIndepVar( const T indep_var );
+
+  //! Process the dependent value
+  template<typename T>
+  static T processDepVar( const T dep_var );
+
+  //! Recover the processed independent value
+  template<typename T>
+  static T recoverProcessedIndepVar( const T processed_indep_var );
+  
+  //! Recover the processed dependent value
+  template<typename T>
+  static T recoverProcessedDepVar( const T processed_dep_var );
 
   //! The name of the policy
   static const std::string name();
@@ -104,8 +152,24 @@ struct LinLin
   template<typename T>
   static T interpolate( const T processed_indep_var_0,
 			const T processed_indep_var,
-			const T processed_dep_var,
+			const T processed_dep_var_0,
 			const T processed_slope );
+  
+  //! Process the independent value
+  template<typename T>
+  static T processIndepVar( const T indep_var );
+
+  //! Process the dependent value
+  template<typename T>
+  static T processDepVar( const T dep_var );
+
+  //! Recover the processed independent value
+  template<typename T>
+  static T recoverProcessedIndepVar( const T processed_indep_var );
+  
+  //! Recover the processed dependent value
+  template<typename T>
+  static T recoverProcessedDepVar( const T processed_dep_var );
 
   //! The name of the policy
   static const std::string name();

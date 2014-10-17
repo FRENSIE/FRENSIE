@@ -63,6 +63,9 @@ public:
   //! Return a random sample from the distribution
   double sample() const;
 
+  //! Return a random sample and sampled index from the corresponding CDF (ignore sample eff.)
+  double sample( unsigned& sampled_bin_index ) const;
+
   //! Return the sampling efficiency from the distribution
   double getSamplingEfficiency() const;
 

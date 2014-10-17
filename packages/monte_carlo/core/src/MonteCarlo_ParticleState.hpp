@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_STATE_HPP
-#define FACEMC_PARTICLE_STATE_HPP
+#ifndef MONTE_CARLO_PARTICLE_STATE_HPP
+#define MONTE_CARLO_PARTICLE_STATE_HPP
 
 // Boost Includes
 #include <boost/shared_ptr.hpp>
@@ -151,6 +151,9 @@ public:
   //! Increment the collision number of the particle
   void incrementCollisionNumber();
 
+  //! Reset the collision number of the particle
+  void resetCollisionNumber();
+
   //! Return the generation number of the particle
   generationNumberType getGenerationNumber() const;
 
@@ -239,7 +242,7 @@ inline const Geometry::Ray& ParticleState::ray() const
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTICLE_STATE_HPP
+#endif // end MONTE_CARLO_PARTICLE_STATE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ParticleState.hpp

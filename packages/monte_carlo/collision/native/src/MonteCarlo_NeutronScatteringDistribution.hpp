@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
-#define FACEMC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -132,7 +132,7 @@ inline void NeutronScatteringDistribution::transformVelocityToLabFrame(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_NeutronScatteringDistribution.hpp

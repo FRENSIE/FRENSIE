@@ -9,6 +9,9 @@
 #ifndef UTILITY_ONE_D_DISTRIBUTION_TYPE_HPP
 #define UTILITY_ONE_D_DISTRIBUTION_TYPE_HPP
 
+// Std Lib Includes
+#include <string>
+
 namespace Utility{
 
 enum OneDDistributionType{
@@ -23,8 +26,13 @@ enum OneDDistributionType{
   POWER_N_DISTRIBUTION,
   TABULAR_DISTRIBUTION,
   UNIFORM_DISTRIBUTION,
-  POLYNOMIAL_DISTRIBUTION
+  POLYNOMIAL_DISTRIBUTION,
+  KLEIN_NISHINA_DISTRIBUTION
 };
+
+//! Convert the OneDDistribution type to a string
+std::string convertOneDDistributionTypeToString( 
+					     const OneDDistributionType type );
 
 } // end Utility namespace
 

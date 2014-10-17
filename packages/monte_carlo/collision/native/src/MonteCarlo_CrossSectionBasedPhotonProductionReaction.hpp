@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
-#define FACEMC_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
+#ifndef MONTE_CARLO_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
+#define MONTE_CARLO_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
 
 // Trilinos Includes
 #include <Teuchos_ArrayRCP.hpp>
@@ -68,7 +68,7 @@ CrossSectionBasedPhotonProductionReaction::getThesholdEnergy() const
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
+#endif // end MONTE_CARLO_CROSS_SECTION_BASED_PHOTON_PRODUCTION_REACTION
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CrossSectionBasedPhotonProductionReaction.hpp
