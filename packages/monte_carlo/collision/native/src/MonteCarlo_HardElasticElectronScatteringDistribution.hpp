@@ -14,10 +14,12 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
+#include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -50,10 +52,10 @@ public:
 private:
 
   // elastic scattering distribution 
-  const Teuchos::RCP<Utility::OneDDistribution>& d_elastic_scattering_distribution
+  Teuchos::RCP<Utility::OneDDistribution> d_elastic_scattering_distribution;
 
   // energy grid interpolation fractions for elastic scattering distributions
-  const Teuchos::RCP<double>& d_interpolation_weights
+  Teuchos::RCP<double> d_interpolation_weights;
 };
 
 } // end MonteCarlo namespace

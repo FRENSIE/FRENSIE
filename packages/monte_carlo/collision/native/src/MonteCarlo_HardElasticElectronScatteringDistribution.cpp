@@ -13,7 +13,7 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_HardElasticElectronScatteringDistribution.cpp"
+#include "MonteCarlo_HardElasticElectronScatteringDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -21,16 +21,16 @@
 namespace MonteCarlo{
 
 //! Constructor
-HardElasticElectronScatteringDistribution(
+HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribution(
 const Teuchos::RCP<Utility::OneDDistribution>& elastic_scattering_distribution,
 const Teuchos::RCP<double>& interpolation_weights )
-  : d_elastic_scattering_distribution( elastic_scattering_distribution )
+  : d_elastic_scattering_distribution( elastic_scattering_distribution ),
     d_interpolation_weights( interpolation_weights )
 {
   // Make sure the array is valid
-  testPrecondition( !elasticPDF.is_null() );
+  testPrecondition( !elastic_scattering_distribution.is_null() );
 }
-
+/*
 //! Randomly scatter the electron
 void HardElasticElectronScatteringDistribution::scatterElectron( 
                                 ElectronState& electron,
@@ -74,11 +74,11 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
     {
       energy_prime = lower_bin_boundary->second->sample( outgoing_index );
     }
-*/
+
   }
 
-};
-
+}
+*/
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
