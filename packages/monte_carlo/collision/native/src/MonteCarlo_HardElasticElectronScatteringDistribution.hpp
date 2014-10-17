@@ -32,9 +32,13 @@ class HardElasticElectronScatteringDistribution : public ElectronScatteringDistr
 
 public:
 
+  //! Typedef for the elastic distribution
+  typedef Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
+                                                        ElasticDistribution;
+
   //! Constructor
   HardElasticElectronScatteringDistribution(
-  const Teuchos::RCP<Utility::OneDDistribution>& elastic_scattering_distribution,
+  ElasticDistribution& elastic_scattering_distribution,
   const Teuchos::RCP<double>& interpolation_weights );
 
   //! Destructor
@@ -45,14 +49,10 @@ public:
   void scatterElectron( ElectronState& electron,
 	                    ParticleBank& bank) const;
 
-  //! Typedef for the elastic distribution
-  typedef Teuchos::Array<Utility::Pair<double,
-          Teuchos::RCP<Utility::OneDDistribution> > > ElasticDistribution;
-
 private:
 
   // elastic scattering distribution 
-  Teuchos::RCP<Utility::OneDDistribution> d_elastic_scattering_distribution;
+  ElasticDistribution d_elastic_scattering_distribution;
 
   // energy grid interpolation fractions for elastic scattering distributions
   Teuchos::RCP<double> d_interpolation_weights;
