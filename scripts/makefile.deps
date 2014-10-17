@@ -1,0 +1,168 @@
+TARS:=$(shell pwd)/tars
+INSTALL:=$(shell pwd)/install
+TEST="no"
+
+#PROCS=$(shell cat /proc/cpuinfo | egrep -c 'vendor_id')
+MAKEFLAGS += -j6
+
+
+help:
+	@echo "You may run make all. Be warned this will spawn many jobs"
+	@echo "It is advised to run the following in any order:\nmake cmake\nmake trilinos\nmake moab (note: moab builds hdf5)\nmake gsl\nmake doxygen\nmake boost\nmake lapack\nmake odepack"
+
+all: cmake hdf5 trilinos moab gsl doxygen boost lapack odepack
+
+source:
+	export `python ../src/scripts/prefix.py install` 
+
+cmake: builds
+	mkdir -p builds/cmake
+	mkdir -p builds/cmake/src
+	mkdir -p builds/cmake/build
+	cd builds/cmake/src && \
+    tar -xf $(TARS)/cmake.tar --strip-components=1 && \
+    cd ../build && \
+    ../src/configure --prefix=$(TARS)/../install/cmake
+	$(MAKE) -C builds/cmake/build 
+ifneq ($(TEST), "no")
+	$(MAKE) -C builds/cmake/build test
+endif
+	$(MAKE) -C builds/cmake/build install
+
+moab: builds hdf5
+	mkdir -p builds/moab
+	mkdir -p builds/moab/src
+	mkdir -p builds/moab/build
+	cd builds/moab/src && \
+    tar -xf $(TARS)/moab.tar --strip-components=1 && \
+    cd ../build && \
+    ../src/configure --prefix=$(TARS)/../install/moab --enable-optimize --disable-debug --with-hdf5=$(INSTALL)/hdf5
+	$(MAKE) -C builds/moab/build 
+ifneq ($(TEST), "no")
+	$(MAKE) -C builds/moab/build check
+endif
+	$(MAKE) -C builds/moab/build install
+
+lapack: builds
+	mkdir -p builds/lapack
+	mkdir -p builds/lapack/src
+	mkdir -p builds/lapack/build
+	cp ../FRENSIE/scripts/lapack.sh builds/lapack/build/
+	cd builds/lapack/src && \
+    tar -xf $(TARS)/lapack.tar --strip-components=1 && \
+    cd ../build && \
+	bash lapack.sh
+	
+	$(MAKE) -C builds/lapack/build 
+ifneq ($(TEST), "no")
+	$(MAKE) -C builds/lapack/build test
+endif
+	$(MAKE) -C builds/lapack/build install
+
+
+
+
+gsl: builds
+	mkdir -p builds/gsl
+	mkdir -p builds/gsl/src
+	mkdir -p builds/gsl/build
+	cd builds/gsl/src && \
+    tar -xf $(TARS)/gsl.tar --strip-components=1 && \
+    cd ../build && \
+	../src/configure --prefix=$(INSTALL)/gsl
+	$(MAKE) -C builds/gsl/build 
+ifneq ($(TEST), "no")
+	$(MAKE) -C builds/gsl/build test
+endif
+	$(MAKE) -C builds/gsl/build install
+
+odepack: builds
+	mkdir -p builds/odepack
+	mkdir -p builds/odepack/src
+	ln -s src builds/odepack/build
+	cp ../FRENSIE/scripts/odepack.sh builds/odepack/build
+	cd builds/odepack/build && \
+    tar -xf $(TARS)/odepack.tar --strip-components=1 && \
+	bash odepack.sh && \
+    mkdir -p $(INSTALL)/odepack/lib && \
+    cp  libodepack.a $(INSTALL)/odepack/lib
+
+boost: builds
+	mkdir -p builds/boost
+	mkdir -p builds/boost/src
+	ln -s src builds/boost/build
+	cd builds/boost/build && \
+	tar -xf $(TARS)/boost.tar --strip-components=1 && \
+	./bootstrap.sh --prefix=$(INSTALL)/boost/ && \
+	./b2 -j 8 && \
+	./b2 install
+
+
+doxygen: builds
+	mkdir -p builds/doxygen
+	mkdir -p builds/doxygen/src
+	ln -s src builds/doxygen/build
+	cd builds/doxygen/src && \
+    tar -xf $(TARS)/doxygen.tar --strip-components=1 && \
+    cd ../build && \
+    ../src/configure --prefix $(INSTALL)/doxygen
+	$(MAKE) -C builds/doxygen/build 
+ifneq ($(TEST), "no")
+	$(MAKE) -C builds/doxygen/build test
+endif
+	$(MAKE) -C builds/doxygen/build install
+
+mpi:  builds
+	mkdir -p builds/mpi
+	mkdir -p builds/mpi/src
+	mkdir -p builds/mpi/build
+	cd builds/mpi/src && \
+    tar -xf $(TARS)/mpi.tar --strip-components=1 && \
+    cd ../build && \
+    ../src/configure --prefix=$(TARS)/../install/mpi
+	$(MAKE) -C builds/mpi/build 
+ifneq ($(TEST), "no")
+	$(MAKE) -C builds/mpi/build test
+endif
+	$(MAKE) -C builds/mpi/build install
+
+
+hdf5: builds
+	mkdir -p builds/hdf5
+	mkdir -p builds/hdf5/src
+	mkdir -p builds/hdf5/build
+	cp ../FRENSIE/scripts/hdf5.sh builds/hdf5/build/
+	cd builds/hdf5/src && \
+    tar -xf $(TARS)/hdf5.tar --strip-components=1 && \
+    cd ../build && \
+	bash hdf5.sh
+	$(MAKE) -C builds/hdf5/build 
+ifneq ($(TEST), "no")
+		$(MAKE) -C builds/hdf5/build test
+endif
+	$(MAKE) -C builds/hdf5/build install
+
+trilinos: builds 
+	mkdir -p builds/trilinos
+	mkdir -p builds/trilinos/src
+	mkdir -p builds/trilinos/build
+	cp ../FRENSIE/scripts/trilinos.sh builds/trilinos/build/
+	cd builds/trilinos/src && \
+    tar -xf $(TARS)/trilinos.tar --strip-components=1 && \
+    cd ../build && \
+	bash trilinos.sh
+	$(MAKE) -C builds/trilinos/build 
+ifneq ($(TEST), "no")
+	$(MAKE) -C builds/trilinos/build test
+endif
+	$(MAKE) -C builds/trilinos/build install
+
+builds: install source
+	mkdir -p builds
+
+install:
+	mkdir -p install
+
+clean:
+	rm -rf builds
+
