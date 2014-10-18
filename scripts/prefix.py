@@ -21,7 +21,6 @@ def dedup(lin):
     return l
 
 def gen_cmd(prefix):
-    #prefix = os.environ['HOME'] + os.path.sep + '.prefix'
     prefix = os.path.abspath(prefix)
     dirs = sorted([i for i in os.listdir(prefix) if not i.startswith('.') and os.path.isdir(os.path.join(prefix, i))])
     
@@ -40,12 +39,15 @@ def gen_cmd(prefix):
             for i in l:
                 path = os.path.join(prefix, install, i)
                 cmds[var] = cmds.get(var, '') + path + ':'
-            cmds[var] = cmds.get(var, '') + getExisting(var)
-            l = cmds[var].split(':')
-            l = dedup(l)
-            cmds[var] = ''.join(map(lambda x: x+':', l)).strip(':')
-            
-         
+    
+    for var, l in cmds.items():
+        cmds[var] = cmds.get(var, '') + getExisting(var)
+        l = cmds[var].strip(':').split(':')
+        l = dedup(l)
+        cmd = ''.join(map(lambda x: x+':', l)).strip(':')
+        cmds[var] = cmd
+    
+    
     cmd = ''
     for var, l in cmds.items():
         cmd += var + '=' + l + ' '
