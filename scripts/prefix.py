@@ -7,6 +7,19 @@ def getExisting(var):
     except:
         return ''
 
+def dedup(lin):
+    l = [i for i in lin]
+    for x in list(set(l)):
+        i = l.index(x)+1
+        while True:
+            try:
+                index = l[i:].index(x)
+            except ValueError:
+                break
+            l.pop(i+index)
+
+    return l
+
 def gen_cmd(prefix):
     #prefix = os.environ['HOME'] + os.path.sep + '.prefix'
     prefix = os.path.abspath(prefix)
@@ -22,19 +35,22 @@ def gen_cmd(prefix):
     cmds = dict()
     
     for install in dirs:
-        
         root = os.path.join(prefix, install)
         for var, l in det.items():
             for i in l:
                 path = os.path.join(prefix, install, i)
                 cmds[var] = cmds.get(var, '') + path + ':'
+            cmds[var] = cmds.get(var, '') + getExisting(var)
+            l = cmds[var].split(':')
+            l = dedup(l)
+            cmds[var] = ''.join(map(lambda x: x+':', l)).strip(':')
+            
          
     cmd = ''
     for var, l in cmds.items():
-        cmd += var + '=' + l + getExisting(var) + ' '
+        cmd += var + '=' + l + ' '
                 
-    #print 'export', cmd
-    return 'export ' + cmd.strip(':')
+    return 'export ' + cmd
 
 def main():
     try:
