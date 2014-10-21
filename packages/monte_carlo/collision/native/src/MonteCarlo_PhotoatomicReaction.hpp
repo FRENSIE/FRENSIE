@@ -30,7 +30,10 @@ public:
   { /* ... */ }
 
   //! Return the cross section at the given energy
-  double getCrossSection( const double energy ) const = 0;
+  virtual double getCrossSection( const double energy ) const = 0;
+
+  //! Return the threshold energy
+  virtual double getThresholdEnergy() const = 0;
 
   //! Return the number of photons emitted from the rxn at the given energy
   virtual unsigned getNumberOfEmittedPhotons( const double energy ) const = 0;
