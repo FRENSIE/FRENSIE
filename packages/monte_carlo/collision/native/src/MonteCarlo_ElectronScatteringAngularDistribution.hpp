@@ -1,27 +1,27 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_NeutronScatteringAngularDistribution.hpp
-//! \author Alex Robinson, Alex Bennett
-//! \brief  The neutron scattering angular distribution base class declaration
+//! \file MonteCarlo_ElectronScatteringAngularDistribution.hpp
+//! \author Luke Kersting
+//! \brief The Electron scattering angular distribution base class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
-#define MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
+#ifndef MONTE_CARLO_ELECTRON_SCATTERING_ANGULAR_DISTRIBUTION_HPP
+#define MONTE_CARLO_ELECTRON_SCATTERING_ANGULAR_DISTRIBUTION_HPP
 
 // Trilinos Includse
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
 
-//! The angular scattering distribution base class
-class NeutronScatteringAngularDistribution
+//! The scattering angular distribution base class
+class ElectronScatteringAngularDistribution
 {
 
 public:
@@ -32,7 +32,7 @@ public:
   AngularDistribution;
   
   //! Constructor
-  NeutronScatteringAngularDistribution( const AngularDistribution& dist );
+  ElectronScatteringAngularDistribution( const AngularDistribution& dist );
 
   //! Destructor
   virtual ~NeutronScatteringAngularDistribution()
@@ -53,8 +53,8 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
+#endif // end MONTE_CARLO_ELECTRON_SCATTERING_ANGULAR_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NeutronScatteringAngularDistribution.hpp
+// end MonteCarlo_ElectronScatteringAngularDistribution.hpp
 //---------------------------------------------------------------------------//
