@@ -194,10 +194,9 @@
  * are encouraged to go through a 
  * <a href=https://www.atlassian.com/git/tutorials/>git tutorial</a>  before 
  * checking out the FRENSIE git repo. To help with collaboration, the FRENSIE
- * git repo is stored on <a href=https://github.com/>github</a>. Github also
- * facilitates the use of a forking development workflow used by FRENSIE
- * developers. For more information on the forking workflow refer to the 
- * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow>forking workflow tutorial</a>.
+ * git repo is stored on <a href=https://github.com/>GitHub</a>. For more on
+ * the collaboration workflow that is employed, please refer to section
+ * \ref{frensie_collab_workflow}. * 
  *
  * CMake is a modern, cross-platform build system. It is used to build the 
  * FRENSIE packages and tools and to run the tests registered with CTest. 
@@ -836,4 +835,11 @@
  *      int d_id;   
  *  };
  * \endcode
+ *
+ * \section frensie_collab_workflow FRENSIE Collaboration Workflow
+ * The official FRENSIE code repository is hosted on 
+ * <a href=https://github.com/aprobinson/FRENSIE>GitHub</a>. A combination of 
+ * the forking and branching workflows has been adopted for collaboration. 
+ *
+ * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow>forking workflow tutorial</a>.
  */
