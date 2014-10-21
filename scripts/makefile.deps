@@ -2,18 +2,19 @@ TARS:=$(shell pwd)/tars
 INSTALL:=$(shell pwd)/install
 TEST="no"
 
-#PROCS=$(shell cat /proc/cpuinfo | egrep -c 'vendor_id')
-MAKEFLAGS += -j6
+PROCS:=$(shell cat /proc/cpuinfo | egrep -c 'vendor_id')
+MAKEFLAGS += -j$(PROCS)
 
 
 help:
-	@echo "You may run make all. Be warned this will spawn many jobs"
-	@echo "It is advised to run the following in any order:\nmake cmake\nmake trilinos\nmake moab (note: moab builds hdf5)\nmake gsl\nmake doxygen\nmake boost\nmake lapack\nmake odepack"
+	@echo "It is advised to run bash lazy.sh\nIf you wish to build dependencies one at a time use the following:\nmake cmake\nmake trilinos\nmake moab (note: moab builds hdf5)\nmake gsl\nmake doxygen\nmake boost\nmake lapack\nmake odepack"
 
-all: cmake hdf5 trilinos moab gsl doxygen boost lapack odepack
+clean:
+	rm -rf builds
 
-source:
-	export `python ../src/scripts/prefix.py install` 
+distclean: clean
+	rm -rf install
+	rm -rf logs
 
 cmake: builds
 	mkdir -p builds/cmake
@@ -157,12 +158,13 @@ ifneq ($(TEST), "no")
 endif
 	$(MAKE) -C builds/trilinos/build install
 
-builds: install source
+builds: install logs
 	mkdir -p builds
 
 install:
 	mkdir -p install
 
-clean:
-	rm -rf builds
+logs:
+	mkdir -p logs
+
 
