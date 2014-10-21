@@ -196,7 +196,7 @@
  * checking out the FRENSIE git repo. To help with collaboration, the FRENSIE
  * git repo is stored on <a href=https://github.com/>GitHub</a>. For more on
  * the collaboration workflow that is employed, please refer to section
- * \ref{frensie_collab_workflow}. * 
+ * \ref{frensie_collab_workflow}. 
  *
  * CMake is a modern, cross-platform build system. It is used to build the 
  * FRENSIE packages and tools and to run the tests registered with CTest. 
