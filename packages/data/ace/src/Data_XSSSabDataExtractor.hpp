@@ -47,7 +47,9 @@ namespace Data{
  * </ul>
  */
 
-//! The XSS S(a,b) data extractor class
+/*! The XSS S(a,b) data extractor class
+ * \ingroup neutron_sab_table
+ */
 class XSSSabDataExtractor
 {
 

@@ -2,7 +2,7 @@
 //!
 //! \file   tstXSSPhotoatomicDataExtractor.cpp
 //! \author Alex Robinson
-//! \brief  XSS neutron data extractor class unit tests.
+//! \brief  XSS photoatomic data extractor class unit tests.
 //!
 //---------------------------------------------------------------------------//
 
