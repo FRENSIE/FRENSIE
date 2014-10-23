@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
-#define FACEMC_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
+#ifndef MONTE_CARLO_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
+#define MONTE_CARLO_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
 
 // Std Lib Includes
 #include <limits>
@@ -67,7 +67,7 @@ inline double NeutronScatteringEnergyDistribution::sampleEnergy(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
+#endif // end MONTE_CARLO_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_NeutronScatteringEnergyDistribution.hpp

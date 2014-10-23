@@ -12,7 +12,6 @@
 // Trilinos Includse
 #include <Teuchos_Array.hpp>
 
-
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
