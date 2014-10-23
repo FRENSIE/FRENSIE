@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_HardElasticElectronScatteringDistribution.hpp
 //! \author Luke Kersting
-//! \brief  The electron hard scattering distribution base class
+//! \brief  The electron hard elastic scattering distribution base class
 //!
 //---------------------------------------------------------------------------//
 
@@ -20,8 +20,6 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
-#include "Utility_PhysicalConstants.hpp"
-#include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
@@ -36,10 +34,13 @@ public:
   typedef Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
                                                         ElasticDistribution;
 
+  //! Typedef for the elastic interpolation array
+  typedef Teuchos::Array< Utility::Pair< double,double > > WeightArray;
+
   //! Constructor
   HardElasticElectronScatteringDistribution(
   ElasticDistribution& elastic_scattering_distribution,
-  const Teuchos::RCP<double>& interpolation_weights );
+  WeightArray& interpolation_weights );
 
   //! Destructor
   virtual ~HardElasticElectronScatteringDistribution()
@@ -55,7 +56,7 @@ private:
   ElasticDistribution d_elastic_scattering_distribution;
 
   // energy grid interpolation fractions for elastic scattering distributions
-  Teuchos::RCP<double> d_interpolation_weights;
+  WeightArray d_interpolation_weights;
 };
 
 } // end MonteCarlo namespace
