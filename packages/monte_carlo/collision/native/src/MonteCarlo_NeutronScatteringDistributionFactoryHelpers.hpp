@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HELPERS_HPP
-#define FACEMC_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HELPERS_HPP
+#ifndef MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HELPERS_HPP
+#define MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HELPERS_HPP
 
 // Trilinos Includes
 #include <Teuchos_ArrayView.hpp>
@@ -23,7 +23,7 @@ void calculateDistArraySizes(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HELPERS_HPP
+#endif // end MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HELPERS_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_NeutronScatteringDistributionFactoryHelpers.hpp

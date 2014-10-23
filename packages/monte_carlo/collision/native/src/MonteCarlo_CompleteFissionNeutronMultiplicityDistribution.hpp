@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_COMPLETE_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
-#define FACEMC_COMPLETE_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_COMPLETE_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
+#define MONTE_CARLO_COMPLETE_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_FissionNeutronMultiplicityDistribution.hpp"
@@ -57,7 +57,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_COMPLETE_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP 
+#endif // end MONTE_CARLO_COMPLETE_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP 
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CompleteFissionNeutronMultiplicityDistribution.hpp

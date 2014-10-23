@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PHOTON_DATA_HPP
-#define FACEMC_PHOTON_DATA_HPP
+#ifndef MONTE_CARLO_PHOTON_DATA_HPP
+#define MONTE_CARLO_PHOTON_DATA_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonDataBasic.hpp"
@@ -132,7 +132,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PHOTON_DATA_HPP
+#endif // end MONTE_CARLO_PHOTON_DATA_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhotonData.hpp

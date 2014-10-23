@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PHOTON_SCATTERING_DISTRIBUTION_HPP
-#define FACEMC_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 // Std Lib Includes
 #include <limits>
@@ -59,7 +59,7 @@ PhotonScatteringDistribution::sampleAzimuthalAngle() const
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhotonScatteringDistribution.hpp

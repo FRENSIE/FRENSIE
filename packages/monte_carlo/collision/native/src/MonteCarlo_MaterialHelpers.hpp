@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_MATERIAL_HELPERS_HPP
-#define FACEMC_MATERIAL_HELPERS_HPP
+#ifndef MONTE_CARLO_MATERIAL_HELPERS_HPP
+#define MONTE_CARLO_MATERIAL_HELPERS_HPP
 
 // Std Lib Includes
 #include <iterator>

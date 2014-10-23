@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_HPP
-#define FACEMC_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_HPP
+#define MONTE_CARLO_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_HPP
 
 // Boost Includes
 #include <boost/function.hpp>
@@ -77,7 +77,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PairProductionPhotoatomicReaction.hpp

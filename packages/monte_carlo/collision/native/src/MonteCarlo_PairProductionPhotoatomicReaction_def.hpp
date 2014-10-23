@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_DEF_HPP
-#define FACEMC_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_DEF_HPP
+#ifndef MONTE_CARLO_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_DEF_HPP
+#define MONTE_CARLO_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_RandomNumberGenerator.hpp"
@@ -136,7 +136,7 @@ unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_DEF_HPP
+#endif // end MONTE_CARLO_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PairProductionPhotoatomicReaction_def.hpp

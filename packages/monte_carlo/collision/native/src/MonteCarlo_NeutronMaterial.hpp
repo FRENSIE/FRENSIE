@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_NEUTRON_MATERIAL_HPP
-#define FACEMC_NEUTRON_MATERIAL_HPP
+#ifndef MONTE_CARLO_NEUTRON_MATERIAL_HPP
+#define MONTE_CARLO_NEUTRON_MATERIAL_HPP
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
@@ -91,7 +91,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_NEUTRON_MATERIAL_HPP
+#endif // end MONTE_CARLO_NEUTRON_MATERIAL_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_NeutronMaterial.hpp

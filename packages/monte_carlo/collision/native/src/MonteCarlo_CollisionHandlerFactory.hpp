@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_COLLISION_HANDLER_FACTORY_HPP
-#define FACEMC_COLLISION_HANDLER_FACTORY_HPP
+#ifndef MONTE_CARLO_COLLISION_HANDLER_FACTORY_HPP
+#define MONTE_CARLO_COLLISION_HANDLER_FACTORY_HPP
 
 // Std Lib Includes
 #include <stdexcept>
@@ -88,7 +88,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_COLLISION_HANDLER_FACTORY_HPP
+#endif // end MONTE_CARLO_COLLISION_HANDLER_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CollisionHandlerFactory.hpp

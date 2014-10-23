@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_PHOTOATOMIC_REACTION_DEF_HPP
-#define FACEMC_STANDARD_PHOTOATOMIC_REACTION_DEF_HPP
+#ifndef MONTE_CARLO_STANDARD_PHOTOATOMIC_REACTION_DEF_HPP
+#define MONTE_CARLO_STANDARD_PHOTOATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardPhotoatomicReaction.hpp"
@@ -164,7 +164,7 @@ double StandardPhotoatomicReaction<InterpPolicy,false>::getThresholdEnergy() con
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_STANDARD_PHOTOATOMIC_REACTION_DEF_HPP
+#endif // end MONTE_CARLO_STANDARD_PHOTOATOMIC_REACTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardPhotoatomicReaction.cpp

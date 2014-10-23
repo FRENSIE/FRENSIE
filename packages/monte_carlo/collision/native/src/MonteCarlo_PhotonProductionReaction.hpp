@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PHOTON_PRODUCTION_REACTION_HPP
-#define FACEMC_PHOTON_PRODUCTION_REACTION_HPP
+#ifndef MONTE_CARLO_PHOTON_PRODUCTION_REACTION_HPP
+#define MONTE_CARLO_PHOTON_PRODUCTION_REACTION_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonProductionDistribution.hpp"
@@ -89,7 +89,7 @@ inline unsigned PhotonProductionReaction::getPhotonProductionId() const
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PHOTON_PRODUCTION_REACTION_HP
+#endif // end MONTE_CARLO_PHOTON_PRODUCTION_REACTION_HP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhotonProductionReaction.hpp
