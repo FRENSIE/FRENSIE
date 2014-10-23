@@ -186,114 +186,104 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
 {
   double outgoing_energy;
   
-  if( scattering_angle_cosine < 0.999 )
-  {    
-    // Record if a valid doppler broadened energy is calculated
-    bool valid_doppler_broadening = true;
-
-    while( true )
-    {
-      // Sample the shell that is interacted with
-      double shell_binding_energy;
-      
-      shell_binding_energy = d_shell_interaction_data->sample( 
+  // Record if a valid doppler broadened energy is calculated
+  bool valid_doppler_broadening = true;
+  
+  while( true )
+  {
+    // Sample the shell that is interacted with
+    double shell_binding_energy;
+    
+    shell_binding_energy = d_shell_interaction_data->sample( 
 							shell_of_interaction );
     
-      // Calculate the maximum outgoing photon energy
-      double energy_max = initial_energy - shell_binding_energy;
-      
-      // Compton scattering can only occur if there is enough energy to release
-      // the electron from its shell - test to be safe!
-      if( energy_max <= 0.0 )
-      {
-	valid_doppler_broadening = false;
-	break;
-      }
-      
-      // Calculate the maximum electron momentum projection
-      double arg = compton_line_energy*energy_max*
-	(1.0 - scattering_angle_cosine);
-      
-      double pz_max = (-shell_binding_energy + arg/
-		       Utility::PhysicalConstants::electron_rest_mass_energy)/
-	sqrt( 2*arg + shell_binding_energy*shell_binding_energy );
-      
-      // Make sure the maximum electron momentum projection is physical
-      if( pz_max <= 0.0 )
-      {
-	valid_doppler_broadening = false;
-	
-	break;
-      }
-
-      // Convert to the correct unitless momentum
-      pz_max *= Utility::PhysicalConstants::inverse_fine_structure_constant;
-      
-      double pz_table_max = 
-	d_electron_momentum_distribution[shell_of_interaction]->getUpperBoundOfIndepVar();
-      if( pz_max > pz_table_max )
-	pz_max = pz_table_max;
-      
-      // Sample an electron momentum projection
-      double pz = 
-	d_electron_momentum_distribution[shell_of_interaction]->sample(pz_max);
-
-      // Convert to the correct unitless momentum
-      pz /= Utility::PhysicalConstants::inverse_fine_structure_constant;
-      
-      // Calculate the doppler broadened energy
-      double pz_sqr = pz*pz;
-      double compton_line_ratio = initial_energy/compton_line_energy;
-      double a = pz_sqr - compton_line_ratio*compton_line_ratio;
-      double b = 2*(-pz_sqr*scattering_angle_cosine + compton_line_ratio);
-      double c = pz_sqr - 1.0;
-      
-      double discriminant = b*b - 4*a*c;
-      
-      if( discriminant < 0.0 )
-      {
-	valid_doppler_broadening = false;
-	
-	break;
-      }
-      
-      if( Utility::RandomNumberGenerator::getRandomNumber<double>() <= 0.5 )
-	outgoing_energy =0.5*(-b+sqrt(discriminant))*initial_energy/a;
-      else
-	outgoing_energy =0.5*(-b-sqrt(discriminant))*initial_energy/a;
-      
-      // Make sure the doppler broadened energy is valid
-      if( outgoing_energy > 0.0 &&
-	  outgoing_energy <= energy_max )
-      {
-	valid_doppler_broadening = true;
-	break;
-      }
-      else
-      {
-	valid_doppler_broadening = false;
-	
-	break;
-      }
+    // Calculate the maximum outgoing photon energy
+    double energy_max = initial_energy - shell_binding_energy;
+    
+    // Compton scattering can only occur if there is enough energy to release
+    // the electron from its shell - test to be safe!
+    if( energy_max <= 0.0 )
+    {
+      valid_doppler_broadening = false;
+      break;
     }
     
-    // Check if a valid doppler broadened energy was calculated
-    if( !valid_doppler_broadening )
-    {
-      // reset the shell of interaction
-      shell_of_interaction = std::numeric_limits<unsigned>::max();
+    // Calculate the maximum electron momentum projection
+    double arg = compton_line_energy*energy_max*
+      (1.0 - scattering_angle_cosine);
     
-      outgoing_energy = compton_line_energy;
+    double pz_max = (-shell_binding_energy + arg/
+		     Utility::PhysicalConstants::electron_rest_mass_energy)/
+      sqrt( 2*arg + shell_binding_energy*shell_binding_energy );
+    
+    // Make sure the maximum electron momentum projection is physical
+    if( pz_max <= 0.0 )
+    {
+      valid_doppler_broadening = false;
+      
+      break;
+    }
+    
+    // Convert to the correct unitless momentum
+    pz_max *= Utility::PhysicalConstants::inverse_fine_structure_constant;
+    
+    double pz_table_max = 
+      d_electron_momentum_distribution[shell_of_interaction]->getUpperBoundOfIndepVar();
+    if( pz_max > pz_table_max )
+      pz_max = pz_table_max;
+    
+    // Sample an electron momentum projection
+    double pz = 
+      d_electron_momentum_distribution[shell_of_interaction]->sample(pz_max);
+    
+    // Convert to the correct unitless momentum
+    pz /= Utility::PhysicalConstants::inverse_fine_structure_constant;
+    
+    // Calculate the doppler broadened energy
+    double pz_sqr = pz*pz;
+    double compton_line_ratio = initial_energy/compton_line_energy;
+    double a = pz_sqr - compton_line_ratio*compton_line_ratio;
+    double b = 2*(-pz_sqr*scattering_angle_cosine + compton_line_ratio);
+    double c = pz_sqr - 1.0;
+    
+    double discriminant = b*b - 4*a*c;
+    
+    if( discriminant < 0.0 )
+    {
+      valid_doppler_broadening = false;
+      
+      break;
+    }
+    
+    if( Utility::RandomNumberGenerator::getRandomNumber<double>() <= 0.5 )
+      outgoing_energy =0.5*(-b+sqrt(discriminant))*initial_energy/a;
+    else
+      outgoing_energy =0.5*(-b-sqrt(discriminant))*initial_energy/a;
+    
+    // Make sure the doppler broadened energy is valid
+    if( outgoing_energy > 0.0 &&
+	outgoing_energy <= energy_max )
+    {
+      valid_doppler_broadening = true;
+      break;
+    }
+    else
+    {
+      valid_doppler_broadening = false;
+      
+      break;
     }
   }
-  // Ignore doppler broadening because of near-miss condition
-  else
+    
+  // Check if a valid doppler broadened energy was calculated
+  if( !valid_doppler_broadening )
   {
+    // reset the shell of interaction
     shell_of_interaction = std::numeric_limits<unsigned>::max();
     
     outgoing_energy = compton_line_energy;
   }
-
+  
   // Make sure the outgoing energy is valid
   testPostcondition( outgoing_energy <= initial_energy );
 

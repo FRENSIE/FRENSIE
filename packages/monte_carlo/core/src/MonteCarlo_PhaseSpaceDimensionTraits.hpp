@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PHASE_SPACE_DIMENSION_TRAITS_HPP
-#define FACEMC_PHASE_SPACE_DIMENSION_TRAITS_HPP
+#ifndef MONTE_CARLO_PHASE_SPACE_DIMENSION_TRAITS_HPP
+#define MONTE_CARLO_PHASE_SPACE_DIMENSION_TRAITS_HPP
 
 // Std Lib Includes
 #include <limits>

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTICLE_STATE_CORE_HPP
-#define FACEMC_PARTICLE_STATE_CORE_HPP
+#ifndef MONTE_CARLO_PARTICLE_STATE_CORE_HPP
+#define MONTE_CARLO_PARTICLE_STATE_CORE_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
@@ -190,7 +190,7 @@ struct HDF5TypeTraits<MonteCarlo::ParticleStateCore>
 
 } // end Utility namespace
 
-#endif // end FACEMC_PARTICLE_STATE_CORE_HPP
+#endif // end MONTE_CARLO_PARTICLE_STATE_CORE_HPP
 
 //---------------------------------------------------------------------------//
 // MonteCarlo_ParticleStateCore.hpp

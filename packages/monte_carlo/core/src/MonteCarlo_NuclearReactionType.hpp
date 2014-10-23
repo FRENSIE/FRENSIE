@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_NUCLEAR_REACTION_TYPE_HPP
-#define FACEMC_NUCLEAR_REACTION_TYPE_HPP
+#ifndef MONTE_CARLO_NUCLEAR_REACTION_TYPE_HPP
+#define MONTE_CARLO_NUCLEAR_REACTION_TYPE_HPP
 
 namespace MonteCarlo{
 
@@ -437,7 +437,7 @@ NuclearReactionType convertUnsignedToNuclearReactionType(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_NUCLEAR_REACTION_TYPE_HPP
+#endif // end MONTE_CARLO_NUCLEAR_REACTION_TYPE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_NuclearReactionType.hpp
