@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HPP
-#define FACEMC_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HPP
+#ifndef MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HPP
+#define MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HPP
 
 // Std Lib Includes
 #include <string>
@@ -160,7 +160,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HPP
+#endif // end MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_NeutronScatteringDistributionFactory.hpp

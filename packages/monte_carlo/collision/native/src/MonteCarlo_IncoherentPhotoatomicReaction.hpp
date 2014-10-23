@@ -6,8 +6,8 @@
 //! 
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_INCOHERENT_PHOTOATOMIC_REACTION_HPP
-#define FACEMC_INCOHERENT_PHOTOATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_INCOHERENT_PHOTOATOMIC_REACTION_HPP
+#define MONTE_CARLO_INCOHERENT_PHOTOATOMIC_REACTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -51,7 +51,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_INCOHERENT_PHOTOATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_INCOHERENT_PHOTOATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_IncoherentPhotoatomicReaction.hpp

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_COLLISION_MODULE_INTERFACE_NATIVE_HPP
-#define FACEMC_COLLISION_MUDULE_INTERFACE_NATIVE_HPP
+#ifndef MONTE_CARLO_COLLISION_MODULE_INTERFACE_NATIVE_HPP
+#define MONTE_CARLO_COLLISION_MUDULE_INTERFACE_NATIVE_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_CollisionModuleInterfaceDecl.hpp"
@@ -120,7 +120,7 @@ CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_COLLISION_MODULE_INTERFACE_NATIVE_HPP
+#endif // end MONTE_CARLO_COLLISION_MODULE_INTERFACE_NATIVE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CollisionModuleInterface_Native.hpp

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
-#define FACEMC_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
+#ifndef MONTE_CARLO_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
+#define MONTE_CARLO_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -70,7 +70,7 @@ inline double YieldBasedPhotonProductionReaction::getThresholdEnegy() const
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
+#endif // end MONTE_CARLO_YIELD_BASED_PHOTON_PRODUCTION_REACTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_YieldBasedPhotonProductionReaction.hpp

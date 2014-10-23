@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_NUCLIDE_HPP
-#define FACEMC_NUCLIDE_HPP
+#ifndef MONTE_CARLO_NUCLIDE_HPP
+#define MONTE_CARLO_NUCLIDE_HPP
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
@@ -173,7 +173,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_NUCLIDE_HPP
+#endif // end MONTE_CARLO_NUCLIDE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_Nuclide.hpp

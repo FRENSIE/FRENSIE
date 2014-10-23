@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_NEUTRON_FISSION_REACTION_HPP
-#define FACEMC_NEUTRON_FISSION_REACTION_HPP
+#ifndef MONTE_CARLO_NEUTRON_FISSION_REACTION_HPP
+#define MONTE_CARLO_NEUTRON_FISSION_REACTION_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReaction.hpp"
@@ -114,7 +114,7 @@ inline double NeutronFissionReaction::getAverageNumberOfDelayedNeutrons(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_NEUTRON_FISSION_REACTION_HPP
+#endif // end MONTE_CARLO_NEUTRON_FISSION_REACTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_NeutronFissionReaction.hpp

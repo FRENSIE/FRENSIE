@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
-#define FACEMC_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 // Boost Includes
 #include <boost/function.hpp>
@@ -84,7 +84,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_IncoherentPhotonScatteringDistribution.hpp

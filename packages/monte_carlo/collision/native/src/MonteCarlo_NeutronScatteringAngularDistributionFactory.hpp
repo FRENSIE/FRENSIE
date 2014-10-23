@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_FACTORY
-#define FACEMC_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_FACTORY
+#ifndef MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_FACTORY
+#define MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_FACTORY
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -48,7 +48,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_FACTORY
+#endif // end MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_FACTORY
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_NeutronScatteringAngularDistributionFactory.hpp

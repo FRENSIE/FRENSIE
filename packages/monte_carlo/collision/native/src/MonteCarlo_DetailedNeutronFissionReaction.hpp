@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_DETAILED_NEUTRON_FISSION_REACTION_HPP
-#define FACEMC_DETAILED_NEUTRON_FISSION_REACTION_HPP
+#ifndef MONTE_CARLO_DETAILED_NEUTRON_FISSION_REACTION_HPP
+#define MONTE_CARLO_DETAILED_NEUTRON_FISSION_REACTION_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_NeutronFissionReaction.hpp"
@@ -54,7 +54,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_DETAILED_NEUTRON_FISSION_REACTION_HPP
+#endif // end MONTE_CARLO_DETAILED_NEUTRON_FISSION_REACTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_DetailedNeutronFissionReaction.hpp

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
-#define FACEMC_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
+#define MONTE_CARLO_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
 
 namespace MonteCarlo{
 
@@ -40,7 +40,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_FissionNeutronMultiplicityDistribution.hpp

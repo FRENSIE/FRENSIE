@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_ACE_LAW_44_AR_DISTRIBUTION_DEF_HPP
-#define FACEMC_STANDARD_ACE_LAW_44_AR_DISTRIBUTION_DEF_HPP
+#ifndef MONTE_CARLO_STANDARD_ACE_LAW_44_AR_DISTRIBUTION_DEF_HPP
+#define MONTE_CARLO_STANDARD_ACE_LAW_44_AR_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardAceLaw44ARDistribution.hpp"
@@ -48,7 +48,7 @@ void StandardAceLaw44ARDistribution<AceLaw44InterpolationPolicy>::sampleAR(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_STANDARD_ACE_LAW_44_AR_DISTRIBUTION_DEF_HPP
+#endif // end MONTE_CARLO_STANDARD_ACE_LAW_44_AR_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardAceLaw44ARDistribution_def.hpp
