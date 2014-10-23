@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PHASE_SPACE_DIMENSION_HPP
-#define FACEMC_PHASE_SPACE_DIMENSION_HPP
+#ifndef MONTE_CARLO_PHASE_SPACE_DIMENSION_HPP
+#define MONTE_CARLO_PHASE_SPACE_DIMENSION_HPP
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
@@ -39,7 +39,7 @@ enum PhaseSpaceDimension{
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PHASE_SPACE_DIMENSION_HPP
+#endif // end MONTE_CARLO_PHASE_SPACE_DIMENSION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhaseSpaceDimension.hpp

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PHASE_SPACE_DIMENSION_TRAITS_DECL_HPP
-#define FACEMC_PHASE_SPACE_DIMENSION_TRAITS_DECL_HPP
+#ifndef MONTE_CARLO_PHASE_SPACE_DIMENSION_TRAITS_DECL_HPP
+#define MONTE_CARLO_PHASE_SPACE_DIMENSION_TRAITS_DECL_HPP
 
 // Std Lib Includes
 #include <string>
@@ -112,7 +112,7 @@ inline Teuchos::any obfuscateValue( const typename PhaseSpaceDimensionTraits<dim
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PHASE_SPACE_DIMENSION_TRAITS_DECL_HPP
+#endif // end MONTE_CARLO_PHASE_SPACE_DIMENSION_TRAITS_DECL_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhaseSpaceDimensionTraits.hpp
