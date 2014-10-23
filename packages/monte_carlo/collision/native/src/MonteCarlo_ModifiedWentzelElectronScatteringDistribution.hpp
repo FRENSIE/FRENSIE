@@ -33,8 +33,7 @@ class ModifiedWentzelElectronScatteringDistribution : public ElectronScatteringD
 public:
 
   //! Typedef for energy dependent modified Wentzel parameter distribution
-  typedef Teuchos::Array<  Utility::Pair< double, Utility::Pair<double,double> >  >
-//  typedef Teuchos::RCP<double>
+  typedef Teuchos::Array<  Utility::Trip<double,double,double>  >
                               MWDistribution;
 
   //! Constructor
@@ -61,13 +60,6 @@ private:
 
   MWDistribution d_modified_wentzel_parameters;
 
-/*
-  // Parameter B in modified Wentzel cdf
-  Teuchos::RCP<double> d_parameter_A;
-
-  // Parameter B in modified Wentzel cdf
-  Teuchos::RCP<double> d_parameter_B;
-*/
   // Average cosine of modified Wentzel distribution
   double d_average_angle_cosine;
 
