@@ -9,7 +9,7 @@
  * is similar to an application programming interface (API) in that a set of
  * "tools" are provided to help develop software. Typically, a framework will
  * include an API, which provides access to elements supported by the 
- * framework along with other tools to support software developement.  
+ * framework along with other tools to support software development.  
  *
  * Using a framework to develop software has many advantages. First, 
  * frameworks promote the development of modular and therefore reusable code. 
@@ -194,10 +194,9 @@
  * are encouraged to go through a 
  * <a href=https://www.atlassian.com/git/tutorials/>git tutorial</a>  before 
  * checking out the FRENSIE git repo. To help with collaboration, the FRENSIE
- * git repo is stored on <a href=https://github.com/>github</a>. Github also
- * facilitates the use of a forking development workflow used by FRENSIE
- * developers. For more information on the forking workflow refer to the 
- * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow>forking workflow tutorial</a>.
+ * git repo is stored on <a href=https://github.com/>GitHub</a>. For more on
+ * the collaboration workflow that is employed, please refer to the
+ * \ref frensie_collab_workflow "collaboration workflow" section. 
  *
  * CMake is a modern, cross-platform build system. It is used to build the 
  * FRENSIE packages and tools and to run the tests registered with CTest. 
@@ -836,4 +835,125 @@
  *      int d_id;   
  *  };
  * \endcode
+ *
+ * \section frensie_collab_workflow FRENSIE Collaboration Workflow
+ * The official FRENSIE code repository is hosted on 
+ * <a href=https://github.com/aprobinson/FRENSIE>GitHub</a>. To check out
+ * this repository, one would simply type 
+ * `git clone git@github.com:aprobinson/FRENSIE.git` in the command line.
+ * While it is acceptable to check out this repository, any pushes made 
+ * directly to the master branch will be erased. Allowing many people to push
+ * directly to the master branch has the potential to cause merge conflicts and
+ * it becomes more difficult to implement quality control measures such as
+ * code reviews. To avoid these problems, a combination of the 
+ * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/forking-workflow>forking</a> 
+ * and 
+ * <a href=https://www.atlassian.com/git/tutorials/comparing-workflows/feature-branch-workflow>branching</a> 
+ * workflows has been adopted for collaboration, which will be called the 
+ * fork-then-branch workflow. 
+ *
+ * \subsection fork_setup Setting Up a Fork
+ * The first step of the fork-then-branch workflow is to fork the main 
+ * FRENSIE repo hosted on 
+ * <a href=https://github.com/aprobinson/FRENSIE>GitHub</a>. Once the repo
+ * has been forked, you will now own a copy of the FRENSIE repo. Go to the
+ * GitHub page for this new fork and create a clone of it on your personal 
+ * computer: `git clone git@github.com:your-moniker/FRENSIE.git`.
+ * You now have a working fork that you can work with to add features to 
+ * FRENSIE. However, there is still one modification to the fork that must
+ * be made before you can start coding, which will be discussed shortly.
+ *
+ * One of the problems that is commonly encountered when doing collaborative
+ * code development has to do with feature branches getting severely out of
+ * sync with the master branch. Often times developers will work on a new
+ * feature for a long period. If the developer of a new feature does not
+ * sync his or her feature branch with the master branch frequently, it is
+ * likely that there will be many merge conflicts when the code maintainer
+ * tries to merge the feature into the master branch. This situation can be
+ * avoided with forks by setting what is called the "upstream" repository, 
+ * which can be "pulled" from to make sure that the fork is up-to-date.  
+ * The upstream repository will be set to the aprobinson/FRENSIE repo, which is
+ * currently functioning as the main repo. To set the upstream repo, first 
+ * enter your FRENSIE fork. Then run the following command: 
+ * `git remote add upstream https://github.com/aprobinson/FRENSIE`.
+ * If you run the command `git remote -v`, you should see an origin (your
+ * fork) and an upstream (main) remote repo. At this point, your fork is ready!
+ *
+ * \subsection fork_then_branch Fork-then-Branch Workflow
+ * The first step of the fork-then-branch workflow, which involves setting
+ * up a fork, has already been completed. The next step has to do with adding
+ * a new feature to FRENSIE. New features will be developed in remote branches
+ * of forks. To create a branch from your fork's master branch, simply type
+ * the command `git checkout -b branch_name`. This creates a local branch
+ * called branch_name that only exists on the current machine that you're
+ * working on. To make it so that this branch is stored along side the
+ * master branch on GitHub, type the command `git push origin branch_name`.
+ * Now a remote tracking branch for your new feature has been created. At
+ * this point the workflow should follow the order listed below.
+ *
+ * <ul>
+ *  <li>Keep the fork up-to-date (always do this first).
+ *   <ol>
+ *     <li>Checkout the master branch:
+ *         `git checkout master`</li>
+ *     <li>Pull changes down from your fork's master to ensure that your local
+ *         copy is up-to-date:
+ *         `git pull origin master`</li>
+ *     <li>Pull changes down from the upstream master to ensure that your fork
+ *         is up-to-date:
+ *         `git pull upstream master`</li>
+ *     <li>Fix merge conflicts (if any) and push changes (if any) to the fork's
+ *         master: `git push origin master`.
+ *         <ul><li><b>Danger:</b> While possible, you should never push 
+                   upstream.
+	   </ul></li>
+ *   </ol></li>
+ * <li>Work on new feature.
+ *  <ol>
+ *    <li>Checkout your feature branch:
+ *        `git checkout branch_name`</li>
+ *    <li>Pull changes down from your fork's remote feature branch to ensure
+ *        that your local copy is up-to-date:
+ *        `git pull origin branch_name`</li>
+ *    <li>Fix merge conflicts (if any).</li> 
+ *    <li>Add new code to or modify existing code in the branch.</li>
+ *    <li>Check that all unit/regression tests pass.</li>
+ *    <li>Commit your changes to your local feature branch:
+ *        `git commit -a -m "detailed commit message describing changes made"`</li>
+ *    <li>Push your changes to you fork's remote feature branch:
+ *        `git push origin branch_name`.</li>
+ *    <li>When the new feature is complete or a milestone is reached, merge
+ *        your fork's master with the feature branch:
+ *        <ol>
+ *          <li>Checkout master branch: `git checkout master`.</li>
+ *          <li>Update local master: `git pull origin master`.</li>
+ *          <li>Merge master with feature branch: 
+ *              `git merge feature_branch`.</li>
+ *          <li>Fix merge conflicts if any and push changes to the fork's
+ *              master branch: `git push origin master`.</li>
+ *        </ol></li>
+ *    <li>If you feel it is time for your new code to become part of the main
+ *        repo, issue a pull request on GitHub. This is where the main repo
+ *        maintainer will conduct a code review to ensure that the new code 
+ *        is acceptable. If the new code is deemed acceptable, the main
+ *        repo maintainer will pull from your fork's master branch.</li>
+ *   </ol></li>
+ * </ul>
+ *
+ * It is important to note that in this workflow everyones master branch
+ * contains the most up-to-date working state (all unit/regression tests
+ * should pass) of a fork. Developers should avoid working on new features 
+ * directly in the master branch to prevent the master from entering a 
+ * non-working state. If small changes need to be made, it is usually okay
+ * to make them directly in the master branch because the cost of creating
+ * a new branch would outweigh the benefits (too much setup time).
+ *
+ * \subsection github_issue_tracker GitHub Issue Tracker
+ * GitHub also allows collaborators to create and assign issues using the
+ * issue tracker. Issues can range from bugs to proposed new features to
+ * pull requests. Each issue is given a unique number that can be used to
+ * reference it. When committing code, one can reference an issue in the
+ * commit message by adding a the # character followed immediately by the
+ * issue number (e.g. "This commit relates to issue #9"). This will allow 
+ * developers to keep track of their progress dealing with a specific issue. 
  */

@@ -83,7 +83,9 @@ namespace Data{
  * </ul>
  */
 
-//! The XSS neutron data extractor class
+/*! The XSS neutron data extractor class
+ * \ingroup continuous_energy_neutron_table
+ */
 class XSSNeutronDataExtractor
 {
 
