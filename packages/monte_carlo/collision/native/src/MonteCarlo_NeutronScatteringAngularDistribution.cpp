@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NeutronScatteringAngularDistribution.hpp"
+#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_SortAlgorithms.hpp"
@@ -36,44 +37,7 @@ double NeutronScatteringAngularDistribution::sampleAngleCosine(
 {
   double angle_cosine;
 
-  if( energy < d_angular_distribution.front().first )
-  {
-    angle_cosine = 
-      d_angular_distribution.front().second->sample();
-  }
-  else if( energy >= d_angular_distribution.back().first )
-  {
-    angle_cosine = 
-      d_angular_distribution.back().second->sample();
-  }
-  else
-  {
-    Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >::const_iterator
-      lower_bin_boundary, upper_bin_boundary;
-    
-    lower_bin_boundary = d_angular_distribution.begin();
-    upper_bin_boundary = d_angular_distribution.end();
-    
-    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
-							  lower_bin_boundary,
-							  upper_bin_boundary,
-							  energy );
-
-    upper_bin_boundary = lower_bin_boundary;
-    ++upper_bin_boundary;
-
-    // Calculate the interpolation fraction
-    double interpolation_fraction = ( energy - lower_bin_boundary->first )/
-      (upper_bin_boundary->first - lower_bin_boundary->first);
-    
-    double random_number = 
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
-    
-    if( random_number < interpolation_fraction )
-      angle_cosine = upper_bin_boundary->second->sample();
-    else
-      angle_cosine = lower_bin_boundary->second->sample();
-  }
+  angle_cosine = sampleTwoDDistribution( energy, d_angular_distribution );
 
   // Due to floating-point roundoff, it is possible for the scattering angle
   // cosine to be outside [-1,1]. When this occurs, manually set to -1 or 1.

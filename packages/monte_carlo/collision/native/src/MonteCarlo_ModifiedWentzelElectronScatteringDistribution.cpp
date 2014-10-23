@@ -45,13 +45,13 @@ void ModifiedWentzelElectronScatteringDistribution::scatterElectron(
   // Get modified Wentzel scattering parameters
   if( electron.getEnergy() < d_modified_wentzel_parameters.front().first )
   {
-    A = d_modified_wentzel_parameters.front().second.first;
-    B = d_modified_wentzel_parameters.front().second.second;
+    A = d_modified_wentzel_parameters.front().second;
+    B = d_modified_wentzel_parameters.front().third;
   }
   else if( electron.getEnergy() >= d_modified_wentzel_parameters.back().first )
   {
-    A = d_modified_wentzel_parameters.back().second.first;
-    B = d_modified_wentzel_parameters.back().second.second;
+    A = d_modified_wentzel_parameters.back().second;
+    B = d_modified_wentzel_parameters.back().third;
   }
   else
   {
@@ -71,19 +71,12 @@ void ModifiedWentzelElectronScatteringDistribution::scatterElectron(
     // Calculate the interpolation fraction
     double interpolation_fraction = ( electron.getEnergy() - lower_bin_boundary->first )/
       ( upper_bin_boundary->first - lower_bin_boundary->first );
-    
-    double random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
-    
-    if( random_number < interpolation_fraction )
-    {
-      A = upper_bin_boundary->second.first;
-      B = upper_bin_boundary->second.second;
-    }
-    else
-    {
-      A = lower_bin_boundary->second.first;
-      B = upper_bin_boundary->second.second;
-    }
+
+    A = lower_bin_boundary->second + interpolation_fraction *
+      ( upper_bin_boundary->second - lower_bin_boundary->second );
+
+    B = lower_bin_boundary->third + interpolation_fraction *
+      ( upper_bin_boundary->third - lower_bin_boundary->third );
   }
 
   if ( B > 0 )

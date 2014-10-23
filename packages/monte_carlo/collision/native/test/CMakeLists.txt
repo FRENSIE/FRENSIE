@@ -177,6 +177,11 @@ ADD_EXECUTABLE(tstPairProductionPhotoatomicReaction
 TARGET_LINK_LIBRARIES(tstPairProductionPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(PairProductionPhotoatomicReaction_test tstPairProductionPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p)
 
+ADD_EXECUTABLE(tstTwoDDistributionHelpers
+  tstTwoDDistributionHelpers.cpp)
+TARGET_LINK_LIBRARIES(tstTwoDDistributionHelpers monte_carlo_collision_native)
+ADD_TEST(TwoDDistributionHelpers_test tstTwoDDistributionHelpers)
+
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)
 

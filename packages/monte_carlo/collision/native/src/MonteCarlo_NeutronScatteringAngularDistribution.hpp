@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
-#define MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
+#ifndef FACEMC_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
+#define FACEMC_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
 
 // Trilinos Includse
 #include <Teuchos_Array.hpp>
@@ -21,6 +21,7 @@
 namespace MonteCarlo{
 
 //! The angular scattering distribution base class
+//! \todo Write unit test for neutron scattering angular distribution class
 class NeutronScatteringAngularDistribution
 {
 
@@ -38,6 +39,7 @@ public:
   virtual ~NeutronScatteringAngularDistribution()
   { /* ... */ }
 
+
   //! Sample a scattering angle cosine
   virtual double sampleAngleCosine( const double energy ) const;
 
@@ -53,7 +55,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
+#endif // end FACEMC_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_NeutronScatteringAngularDistribution.hpp
