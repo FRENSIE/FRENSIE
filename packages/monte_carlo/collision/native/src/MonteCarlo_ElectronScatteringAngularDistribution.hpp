@@ -36,7 +36,7 @@ public:
   ElectronScatteringAngularDistribution( const AngularDistribution& dist );
 
   //! Destructor
-  virtual ~NeutronScatteringAngularDistribution()
+  virtual ~ElectronScatteringAngularDistribution()
   { /* ... */ }
 
   //! Sample a scattering angle cosine
