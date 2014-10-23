@@ -17,8 +17,7 @@
 
 namespace Data{
 
-/*! \defgroup continuous_energy_epr_table Continuous Energy 
- * Electron-Photon-Relaxation Table
+/*! \defgroup continuous_energy_epr_table Continuous Energy Electron-Photon-Relaxation Table
  * \ingroup ace_table
  * \todo Add reference for table layout.
  *

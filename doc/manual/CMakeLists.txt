@@ -1,8 +1,20 @@
 # Add a target to generate API documentation with Doxygen
 IF(NOT ${DOXYGEN_PREFIX} EQUAL "")
-  SET(DOXYGEN_EXECUTABLE ${DOXYGEN_PREFIX}/bin/doxygen)
-  SET(DOXYGEN_FOUND 1)
+  FIND_FILE(DOXYGEN_EXECUTABLE doxygen
+    PATHS ${DOXYGEN_PREFIX} ${DOXYGEN_PREFIX}/bin)
+  IF(${DOXYGEN_EXECUTABLE} MATCHES NOTFOUND)
+    SET(DOXYGEN_FOUND 0)
+    MESSAGE(WARNING "The doxygen executable could not be found in the user "
+      "supplied DOXYGEN_PREFIX (${DOXYGEN_PREFIX};${DOXYGEN_PREFIX}/bin). The "
+      "system will be searched for the doxygen executable.")
+  ELSE()
+    SET(DOXYGEN_FOUND 1)
+  ENDIF()
 ELSE()
+  SET(DOXYGEN_FOUND 0)
+ENDIF()
+
+IF(NOT DOXYGEN_FOUND)
   FIND_PACKAGE(Doxygen 1.8.0 REQUIRED)
 ENDIF()
 
@@ -32,17 +44,13 @@ IF(DOXYGEN_FOUND)
     COMMENT "Generating FRENSIE manual with Doxygen" VERBATIM)
 
   # Add a custom build target
-  ADD_CUSTOM_TARGET(manual
+  ADD_CUSTOM_TARGET(manual 
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/html)
-  
-  # Find the index.html file if it has been created
-  FIND_FILE(INDEX_HTML index.html ${CMAKE_CURRENT_BINARY_DIR}/html)
-  IF(NOT ${INDEX_HTML} MATCHES NOTFOUND)
-    # Install the manuals
-    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/manual.html
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/doc/
-      PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
-  ENDIF()
+
+  # Install the manuals
+  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/manual.html
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/doc/
+    PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
 ELSE()
   MESSAGE(FATAL_ERROR "The Doxygen executable could not be found!")
