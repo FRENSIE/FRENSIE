@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_FREE_GAS_ELASTIC_S_ALPHA_BETA_FUNCTION_HPP
-#define FACEMC_FREE_GAS_ELASTIC_S_ALPHA_BETA_FUNCTION_HPP
+#ifndef MONTE_CARLO_FREE_GAS_ELASTIC_S_ALPHA_BETA_FUNCTION_HPP
+#define MONTE_CARLO_FREE_GAS_ELASTIC_S_ALPHA_BETA_FUNCTION_HPP
 
 // Boost Includes
 #include <boost/math/policies/policy.hpp>
@@ -139,7 +139,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_FREE_GAS_ELASTIC_S_ALPHA_BETA_FUNCTION_HPP
+#endif // end MONTE_CARLO_FREE_GAS_ELASTIC_S_ALPHA_BETA_FUNCTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_FreeGasElasticSAlphaBetaFunction.hpp

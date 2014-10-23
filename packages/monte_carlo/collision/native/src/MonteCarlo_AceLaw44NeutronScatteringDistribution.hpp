@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_HPP
-#define FACEMC_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -73,7 +73,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_AceLaw44NeutronScatteringDistribution.hpp

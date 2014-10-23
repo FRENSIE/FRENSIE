@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_INDEPENDENT_ENERGY_ANGLE_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
-#define FACEMC_INDEPENDENT_ENERGY_ANGLE_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
+#ifndef MONTE_CARLO_INDEPENDENT_ENERGY_ANGLE_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
+#define MONTE_CARLO_INDEPENDENT_ENERGY_ANGLE_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_DirectionHelpers.hpp"
@@ -102,7 +102,7 @@ IndependentEnergyAngleNeutronScatteringDistribution<SystemConversionPolicy>::sca
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_INDEPENDENT_ENERGY_ANGLE_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
+#endif // end MONTE_CARLO_INDEPENDENT_ENERGY_ANGLE_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_IndependentEnergyAngleNeutronScatteringDistribution_def.hpp

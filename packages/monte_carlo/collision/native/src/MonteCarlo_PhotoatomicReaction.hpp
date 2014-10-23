@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PHOTOATOMIC_REACTION_HPP
-#define FACEMC_PHOTOATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_PHOTOATOMIC_REACTION_HPP
+#define MONTE_CARLO_PHOTOATOMIC_REACTION_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonState.hpp"
@@ -44,7 +44,7 @@ public:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PHOTOATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_PHOTOATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhotoatomicReaction.hpp

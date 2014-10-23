@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
-#define FACEMC_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
+#ifndef MONTE_CARLO_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
+#define MONTE_CARLO_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
 
 // Std Lib Includes
 #include <list>
@@ -93,7 +93,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
+#endif // end MONTE_CARLO_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_FreeGasElasticMarginalAlphaFunction.hpp

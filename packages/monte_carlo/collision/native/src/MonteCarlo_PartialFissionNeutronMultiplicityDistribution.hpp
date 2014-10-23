@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTIAL_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
-#define FACEMC_PARTIAL_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_PARTIAL_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
+#define MONTE_CARLO_PARTIAL_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_FissionNeutronMultiplicityDistribution.hpp"
@@ -175,7 +175,7 @@ struct DelayedPromptFissionNeutronMultiplicityPolicy
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_PARTIAL_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_PARTIAL_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PartialFissionNeutronMultiplicityDistribution.hpp

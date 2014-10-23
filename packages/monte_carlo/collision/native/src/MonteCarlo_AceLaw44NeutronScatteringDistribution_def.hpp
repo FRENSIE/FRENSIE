@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
-#define FACEMC_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
+#ifndef MONTE_CARLO_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
+#define MONTE_CARLO_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
 
 // Std Lib Includes
 #include <math.h>
@@ -112,7 +112,7 @@ void AceLaw44NeutronScatteringDistribution<SystemConversionPolicy>::scatterNeutr
 
 } // End MonteCarlo namespace
 
-#endif // end FACEMC_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
+#endif // end MONTE_CARLO_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_AceLaw44NeutronScatteringDistribution_def.hpp

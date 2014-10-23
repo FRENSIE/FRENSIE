@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_COLLISION_HANDLER_HPP
-#define FACEMC_COLLISION_HANDLER_HPP
+#ifndef MONTE_CARLO_COLLISION_HANDLER_HPP
+#define MONTE_CARLO_COLLISION_HANDLER_HPP
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
@@ -64,7 +64,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_COLLISION_HANDLER_HPP
+#endif // end MONTE_CARLO_COLLISION_HANDLER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_CollisionHandler.hpp

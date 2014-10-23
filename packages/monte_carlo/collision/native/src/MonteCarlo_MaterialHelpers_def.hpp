@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_MATERIAL_HELPERS_DEF_HPP
-#define FACEMC_MATERIAL_HELPERS_DEF_HPP
+#ifndef MONTE_CARLO_MATERIAL_HELPERS_DEF_HPP
+#define MONTE_CARLO_MATERIAL_HELPERS_DEF_HPP
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -322,7 +322,7 @@ inline void scaleAtomFractionsByNumberDensity( const double number_density,
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_MATERIAL_HELPERS_DEF_HPP
+#endif // end MONTE_CARLO_MATERIAL_HELPERS_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_MaterialHelpers_def.hpp

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ACE_LAW_44_INTERPOLATION_POLICY 
-#define FACEMC_ACE_LAW_44_INTERPOLATION_POLICY 
+#ifndef MONTE_CARLO_ACE_LAW_44_INTERPOLATION_POLICY 
+#define MONTE_CARLO_ACE_LAW_44_INTERPOLATION_POLICY 
 
 namespace MonteCarlo {
 
@@ -45,7 +45,7 @@ struct AceLaw44LinLinInterpolationPolicy
 
 } // end MonteCarlo namespace
 
-#endif //FACEMC_ACE_LAW_44_INTERPOLATION_POLICY
+#endif //MONTE_CARLO_ACE_LAW_44_INTERPOLATION_POLICY
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_AceLaw44InterpolationPolicy.hpp
