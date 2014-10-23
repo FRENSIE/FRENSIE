@@ -58,7 +58,7 @@ struct TupleMemberTraits
 
   //! Set the value of the desired tuple member
   static inline void set(Tuple &tuple, const tupleMemberType &value)
-  { (void)UndefinedTupleMemberTraits<Tuple,member>::notDefined(); return 0; }
+  { (void)UndefinedTupleMemberTraits<Tuple,member>::notDefined(); }
 };
   
 /*! This function allows access to the get TupleMemberTraits function.

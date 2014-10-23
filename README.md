@@ -221,6 +221,12 @@ At this point all of the dependent software libraries should have been built. If
 9. run `make manual`
 10. run `make install`
 
+Note: The FRENSIE build system needs to know where the Trilinos source files
+are. Therefore, there is an optional CMake variable called TRILINOS_SOURCE that
+can be set if the Trilinos source files are in a non-standard location 
+(not in TRILINOS_PREFIX/src). This variable is shown in the frensie.sh
+script.
+
 Because this will eventually be an open source project, the goal is to be able to build FRENSIE without having to acquire commercial software licenses. Currently, the geometry capabilities within FRENSIE are only activated when the DagMC configure option is set to ON (e.g. `-D FRENSIE_ENABLE_DAGMC:BOOL=ON`), which requires a CUBIT license. In the future, more software libraries will be incorporated into FRENSIE which will allow for geometry capabilities to be built without building DagMC.
 
 Note: There are several other configure options that can be changed in the frensie.sh script. `-D FRENSIE_ENABLE_DBC:BOOL=ON` turns on very thorough Design-by-Contract checks that can be a very useful debugging tool. `-D FRENSIE_ENABLE_OPENMP:BOOL=ON` enables OpenMP thread support. `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support. If your system already has Doxygen 1.8.2 or above, there is no need to install version 1.8.8. Just delete the `-D DOXYGEN_PREFIX` variable from the frensie.sh script.

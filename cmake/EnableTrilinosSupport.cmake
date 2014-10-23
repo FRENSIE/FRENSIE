@@ -104,16 +104,20 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
   ENDIF(${TEUCHOS_PARAMETER_LIST} MATCHES NOTFOUND)
 
   # Find the standard Teuchos Unit Test main file
-  FIND_PATH(TEUCHOS_STD_UNIT_TEST_MAIN_PATH 
+  FIND_PATH(TEUCHOS_STD_UNIT_TEST_MAIN_PATH
     NAMES Teuchos_StandardUnitTestMain.cpp
-    PATHS ${Trilinos_DIR}/../../../src/packages/teuchos/core/test/UnitTest/)
+    PATHS ${Trilinos_DIR}/../../../src/packages/teuchos/core/test/UnitTest/
+      ${TRILINOS_SOURCE}/packages/teuchos/core/test/UnitTest/
+      ${TRILINOS_SOURCE}/src/packages/teuchos/core/test/UnitTest )
   IF(${TEUCHOS_STD_UNIT_TEST_MAIN_PATH} MATCHES NOTFOUND)
-    MESSAGE(FATAL_ERROR "The teuchos standard Unit Test Main could not be found")
-  ENDIF(${TEUCHOS_STD_UNIT_TEST_MAIN_PATH} MATCHES NOTFOUND)
+    MESSAGE(FATAL_ERROR "The teuchos standard Unit Test Main could not be found!")
+  ENDIF()
   
   # Set the absolute path to the Teuchos standard unit test main file
-  SET(TEUCHOS_STD_UNIT_TEST_MAIN 
-    ${TEUCHOS_STD_UNIT_TEST_MAIN_PATH}/Teuchos_StandardUnitTestMain.cpp)
+  SET(TEUCHOS_STD_UNIT_TEST_MAIN
+    ${TEUCHOS_STD_UNIT_TEST_MAIN_PATH}/Teuchos_StandardUnitTestMain.cpp
+    CACHE PATH "The standard unit test main file for building unit tests")
+    
 
   # Set the include paths for Trilinos
   INCLUDE_DIRECTORIES(${Trilinos_INCLUDE_DIRS} ${Trilinos_TPL_INCLUDE_DIRS})

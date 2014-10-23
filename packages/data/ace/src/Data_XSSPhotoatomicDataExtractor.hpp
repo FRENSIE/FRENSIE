@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_XSS_NEUTRON_DATA_EXTRACTOR_HPP
-#define DATA_XSS_NEUTRON_DATA_EXTRACTOR_HPP
+#ifndef DATA_XSS_PHOTOATOMIC_DATA_EXTRACTOR_HPP
+#define DATA_XSS_PHOTOATOMIC_DATA_EXTRACTOR_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -18,6 +18,9 @@ namespace Data{
 /*! \defgroup continuous_energy_photoatomic_table Continuous Energy Photoatomic
  * Table
  * \ingroup ace_table
+ * \note This table format is obsolete. The \ref continuous_energy_epr_table
+ * "EPR Table" is recommended instead.
+ * \todo Add reference for table layout.
  *
  * After a continuous energy photoatomic table has been read by the 
  * Data::ACEFileHandler the individual data blocks must be extracted from the
@@ -25,28 +28,30 @@ namespace Data{
  * and the JXS array are required to successfully extract the blocks. The NXS
  * array elements have the following meanings:
  * <ul>
- *  <li> NXS[0] = length of XSS array
- *  <li> NXS[1] = Z
- *  <li> NXS[2] = number of energies (NES)
- *  <li> NXS[3] = length of fluorescence data divided by 4 (NFLO)
- *  <li> NXS[4] = number of electron shells (NSH)
+ *  <li> NXS[0] = length of XSS array</li>
+ *  <li> NXS[1] = Z</li>
+ *  <li> NXS[2] = number of energies (NES)</li>
+ *  <li> NXS[3] = length of fluorescence data divided by 4 (NFLO)</li>
+ *  <li> NXS[4] = number of electron shells (NSH)</li>
  * </ul>
  * The JXS array elements have the following meanings:
  * <ul>
- *  <li> JXS[0] = location of energy table (ESZG)
- *  <li> JXS[1] = location of incoherent form factors (JINC)
- *  <li> JXS[2] = location of coherent form factors (JCOH)
- *  <li> JXS[3] = location of fluorescense data (JFLO)
- *  <li> JXS[4] = location of heating numbers (LHNM)
- *  <li> JXS[5] = location of the number of electrons per shell (LNEPS)
- *  <li> JXS[6] = location of binding energy per shell (LBEPS)
- *  <li> JXS[7] = location of prob of interacting per shell (LPIPS)
- *  <li> JXS[8] = location of array of offsets to shellwise data (LSWD)
- *  <li> JXS[9] = location of shellwise data in PDF and CDF form (SWD)
+ *  <li> JXS[0] = location of energy table (ESZG)</li>
+ *  <li> JXS[1] = location of incoherent form factors (JINC)</li>
+ *  <li> JXS[2] = location of coherent form factors (JCOH)</li>
+ *  <li> JXS[3] = location of fluorescense data (JFLO)</li>
+ *  <li> JXS[4] = location of heating numbers (LHNM)</li>
+ *  <li> JXS[5] = location of the number of electrons per shell (LNEPS)</li>
+ *  <li> JXS[6] = location of binding energy per shell (LBEPS)</li>
+ *  <li> JXS[7] = location of prob of interacting per shell (LPIPS)</li>
+ *  <li> JXS[8] = location of array of offsets to shellwise data (LSWD)</li>
+ *  <li> JXS[9] = location of shellwise data in PDF and CDF form (SWD)</li>
  * </ul>
  */
 
-//! The XSS photoatomic data extractor class
+/*! The XSS photoatomic data extractor class
+ * \ingroup continuous_energy_photoatomic_table
+ */
 class XSSPhotoatomicDataExtractor
 {
 
@@ -132,7 +137,7 @@ private:
 
 } // end Data namespace
 
-#endif // end DATA_XSS_NEUTRON_DATA_EXTRACTOR_HPP
+#endif // end DATA_XSS_PHOTOATOMIC_DATA_EXTRACTOR_HPP
 
 //---------------------------------------------------------------------------//
 // end Data_XSSPhotoatomicDataExtractor.hpp
