@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_HPP
-#define FACEMC_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_HPP
+#define MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -66,7 +66,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_DelayedNeutronEmissionDistribution.hpp

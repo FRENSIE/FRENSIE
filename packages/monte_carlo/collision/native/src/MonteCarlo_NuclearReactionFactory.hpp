@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_NUCLEAR_REACTION_FACTORY_HPP
-#define FACEMC_NUCLEAR_REACTION_FACTORY_HPP
+#ifndef MONTE_CARLO_NUCLEAR_REACTION_FACTORY_HPP
+#define MONTE_CARLO_NUCLEAR_REACTION_FACTORY_HPP
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
@@ -178,7 +178,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMCNUCLEAR_REACTION_FACTORY_HPP
+#endif // end MONTE_CARLONUCLEAR_REACTION_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_NuclearReactionFactory.hpp

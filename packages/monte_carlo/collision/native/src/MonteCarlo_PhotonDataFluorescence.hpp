@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PHOTON_DATA_FLUORESCENCE_HPP
-#define FACEMC_PHOTON_DATA_FLUORESCENCE_HPP
+#ifndef MONTE_CARLO_PHOTON_DATA_FLUORESCENCE_HPP
+#define MONTE_CARLO_PHOTON_DATA_FLUORESCENCE_HPP
 
 // Std Lib Includes
 #include <map>
@@ -112,7 +112,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PHOTON_DATA_FLUORESCENCE_HPP
+#endif // end MONTE_CARLO_PHOTON_DATA_FLUORESCENCE_HPP
 
 //---------------------------------------------------------------------------//
 //end MonteCarlo_PhotonDataFluorescence.hpp

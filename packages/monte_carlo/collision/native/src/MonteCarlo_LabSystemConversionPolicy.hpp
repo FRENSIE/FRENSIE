@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_LAB_SYSTEM_CONVERSION_POLICY
-#define FACEMC_LAB_SYSTEM_CONVERSION_POLICY
+#ifndef MONTE_CARLO_LAB_SYSTEM_CONVERSION_POLICY
+#define MONTE_CARLO_LAB_SYSTEM_CONVERSION_POLICY
 
 // Std Lib Includes
 #include <math.h>
@@ -74,7 +74,7 @@ struct LabSystemConversionPolicy
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_LAB_SYSTEM_CONVERSION_POLICY
+#endif // end MONTE_CARLO_LAB_SYSTEM_CONVERSION_POLICY
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_LabSystemConversionPolicy.hpp

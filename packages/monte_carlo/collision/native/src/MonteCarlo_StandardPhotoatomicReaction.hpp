@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_STANDARD_PHOTOATOMIC_REACTION_HPP
-#define FACEMC_STANDARD_PHOTOATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_STANDARD_PHOTOATOMIC_REACTION_HPP
+#define MONTE_CARLO_STANDARD_PHOTOATOMIC_REACTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_ArrayRCP.hpp>
@@ -107,7 +107,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end FACEMC_STANDARD_PHOTOATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_STANDARD_PHOTOATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardPhotoatomicReaction.hpp

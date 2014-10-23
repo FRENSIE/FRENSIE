@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ACE_LAW_44_AR_DISTRIBUTION_HPP
-#define FACEMC_ACE_LAW_44_AR_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_ACE_LAW_44_AR_DISTRIBUTION_HPP
+#define MONTE_CARLO_ACE_LAW_44_AR_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_ArrayRCP.hpp>
@@ -98,7 +98,7 @@ inline double AceLaw44ARDistribution::getRValue(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_ACE_LAW_44_AR_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_ACE_LAW_44_AR_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_AceLaw44ARDistribution.hpp

@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_NUCLEAR_REACTION_HPP
-#define FACEMC_NUCLEAR_REACTION_HPP
+#ifndef MONTE_CARLO_NUCLEAR_REACTION_HPP
+#define MONTE_CARLO_NUCLEAR_REACTION_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReactionType.hpp"
@@ -140,7 +140,7 @@ inline unsigned NuclearReaction::sampleNumberOfEmittedNeutrons(
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_NUCLEAR_REACTION_HPP
+#endif // end MONTE_CARLO_NUCLEAR_REACTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_NuclearReaction.hpp

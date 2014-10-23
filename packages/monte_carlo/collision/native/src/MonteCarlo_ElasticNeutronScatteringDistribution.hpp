@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_ELASTIC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
-#define FACEMC_ELASTIC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_ELASTIC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_ELASTIC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -50,7 +50,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_ELASTIC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_ELASTIC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ElasticNeutronScatteringDistribution.hpp

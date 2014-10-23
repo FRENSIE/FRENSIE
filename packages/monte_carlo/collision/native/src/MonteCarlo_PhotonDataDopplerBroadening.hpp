@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PHOTON_DATA_DOPPLER_BROADENING_HPP
-#define FACEMC_PHOTON_DATA_DOPPLER_BROADENING_HPP
+#ifndef MONTE_CARLO_PHOTON_DATA_DOPPLER_BROADENING_HPP
+#define MONTE_CARLO_PHOTON_DATA_DOPPLER_BROADENING_HPP
 
 // Std Lib Includes
 #include <map>
@@ -96,7 +96,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PHOTON_DATA_DOPPLER_BROADENING_HPP
+#endif // end MONTE_CARLO_PHOTON_DATA_DOPPLER_BROADENING_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhotonDataDopplerBroadening.hpp

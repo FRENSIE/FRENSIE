@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_FACTORY_HPP
-#define FACEMC_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_FACTORY_HPP
+#ifndef MONTE_CARLO_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_FACTORY_HPP
+#define MONTE_CARLO_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_FACTORY_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -88,7 +88,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_FACTORY_HPP
+#endif // end MONTE_CARLO_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_FissionNeutronMultiplicityDistributionFactory.hpp

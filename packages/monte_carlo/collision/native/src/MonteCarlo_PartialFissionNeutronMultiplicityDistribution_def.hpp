@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PARTIAL_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_DEF_HPP
-#define FACEMC_PARTIAL_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_DEF_HPP
+#ifndef MONTE_CARLO_PARTIAL_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_DEF_HPP
+#define MONTE_CARLO_PARTIAL_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
@@ -68,7 +68,7 @@ double PartialFissionNeutronMultiplicityDistribution<FissionNeutronMultiplicityD
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PARTIAL_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_DEF_HPP
+#endif // end MONTE_CARLO_PARTIAL_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PartialFissionNeutronMultiplicityDistribution_def.hpp

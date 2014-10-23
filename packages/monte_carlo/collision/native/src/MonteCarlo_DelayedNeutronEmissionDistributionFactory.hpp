@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_FACTORY_HPP
-#define FACEMC_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_FACTORY_HPP
+#ifndef MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_FACTORY_HPP
+#define MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_FACTORY_HPP
 
 // Std Lib Includes
 #include <string>
@@ -92,7 +92,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_FACTORY_HPP
+#endif // end MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_DelayedNeutronEmissionDistributionFactory.hpp
