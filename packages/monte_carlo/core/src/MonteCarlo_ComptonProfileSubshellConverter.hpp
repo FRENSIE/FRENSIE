@@ -29,8 +29,33 @@ public:
   { /* ... */ }
 
   //! Convert a subshell enum to an compton profile subshell index
-  unsigned convertSubshellToIndex( const SubshellType subshell ) const = 0;
+  virtual unsigned convertSubshellToIndex( 
+				       const SubshellType subshell ) const = 0;
+
+  //! Test if a subshell enum is valid
+  virtual bool isSubshellValid( const SubshellType subshell ) const;
 };
+
+// Test if a subshell enum is valid
+/*! \details The default implementation assumes that the 
+ * convertSubshellToIndex implementation will throw a std::logic_error when
+ * the subshell is invalid.
+ */
+inline bool ComptonProfileSubshellConverter::isSubshellValid( 
+					    const SubshellType subshell ) const
+{
+  bool valid_shell = true;
+  
+  try{
+    this->convertSubshellToIndex( subshell );
+  }
+  catch( std::logic_error )
+  {
+    valid_shell = false;
+  }
+
+  return valid_shell;
+}
 
 } // end MonteCarlo namespace
 
