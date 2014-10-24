@@ -110,6 +110,54 @@ SubshellType convertEADLDesignatorToSubshellEnum(
   }
 }
 
+// Convert a Subshell enumeration to a string
+std::string convertSubshellEnumToString( const SubshellType subshell )
+{
+  switch( subshell )
+  {
+  case K_SUBSHELL: return "K";
+  case L1_SUBSHELL: return "L1";
+  case L2_SUBSHELL: return "L2";
+  case L3_SUBSHELL: return "L3";
+  case M1_SUBSHELL: return "M1";
+  case M2_SUBSHELL: return "M2";
+  case M3_SUBSHELL: return "M3";
+  case M4_SUBSHELL: return "M4";
+  case M5_SUBSHELL: return "M5";
+  case N1_SUBSHELL: return "N1";
+  case N2_SUBSHELL: return "N2";
+  case N3_SUBSHELL: return "N3";
+  case N4_SUBSHELL: return "N4";
+  case N5_SUBSHELL: return "N5";
+  case N6_SUBSHELL: return "N6";
+  case N7_SUBSHELL: return "N7";
+  case O1_SUBSHELL: return "O1";
+  case O2_SUBSHELL: return "O2";
+  case O3_SUBSHELL: return "O3";
+  case O4_SUBSHELL: return "O4";
+  case O5_SUBSHELL: return "O5";
+  case O6_SUBSHELL: return "O6";
+  case O7_SUBSHELL: return "O7";
+  case O8_SUBSHELL: return "O8";
+  case O9_SUBSHELL: return "O9";
+  case P1_SUBSHELL: return "P1";
+  case P2_SUBSHELL: return "P2";
+  case P3_SUBSHELL: return "P3";
+  case P4_SUBSHELL: return "P4";
+  case P5_SUBSHELL: return "P5";
+  case P6_SUBSHELL: return "P6";
+  case P7_SUBSHELL: return "P7";
+  case P8_SUBSHELL: return "P8";
+  case P9_SUBSHELL: return "P9";
+  case P10_SUBSHELL: return "P10";
+  case P11_SUBSHELL: return "P11";
+  case Q1_SUBSHELL: return "Q1";
+  case Q2_SUBSHELL: return "Q2";
+  case Q3_SUBSHELL: return "Q3";
+  default: return "Invalid";
+  }
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

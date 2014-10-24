@@ -6,14 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_STANDERD_COMPTON_PROFILE_SUBSHELL_CONVERTER_DEF_HPP
-#define MONTE_CARLO_STANDERD_COMPTON_PROFILE_SUBSHELL_CONVERTER_DEF_HPP
-
-// Std Lib Includes
-#include <stdexcept>
-
-// FRENSIE Includes
-#include "Utility_ExceptionTestMacros.hpp"
+#ifndef MONTE_CARLO_STANDARD_COMPTON_PROFILE_SUBSHELL_CONVERTER_DEF_HPP
+#define MONTE_CARLO_STANDARD_COMPTON_PROFILE_SUBSHELL_CONVERTER_DEF_HPP
 
 namespace MonteCarlo{
 
@@ -64,7 +58,9 @@ struct ComptonProfileTraits<3u>
     case L1_SUBSHELL: return 1u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -93,7 +89,9 @@ struct ComptonProfileTraits<5u>
     case L3_SUBSHELL: return 2u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -159,7 +157,9 @@ struct ComptonProfileTraits<11u>
     case M1_SUBSHELL: return 3u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -191,7 +191,9 @@ struct ComptonProfileTraits<13u>
     case M3_SUBSHELL: return 4u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -260,7 +262,9 @@ struct ComptonProfileTraits<19u>
     case N1_SUBSHELL: return 5u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -275,6 +279,7 @@ struct ComptonProfileTraits<20u>
 };
 
 //! Compton profile traits struct for Z=21
+template<>
 struct ComptonProfileTraits<21u>
 {
   //! Convert a subshell enum to a compton profile index
@@ -294,7 +299,9 @@ struct ComptonProfileTraits<21u>
     case N1_SUBSHELL: return 6u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -381,6 +388,7 @@ struct ComptonProfileTraits<30u>
 };
 
 //! Compton profile traits struct for Z=31
+template<>
 struct ComptonProfileTraits<31u>
 {
   //! Convert a subshell enum to a compton profile index
@@ -402,7 +410,9 @@ struct ComptonProfileTraits<31u>
     case N3_SUBSHELL: return 7u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -444,6 +454,7 @@ struct ComptonProfileTraits<35u>
 };
 
 //! Compton profile traits struct for Z=36
+template<>
 struct ComptonProfileTraits<36u>
 {
   //! Convert a subshell enum to a compton profile index
@@ -465,12 +476,15 @@ struct ComptonProfileTraits<36u>
     case N3_SUBSHELL: return 11u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
 
 //! Compton profile traits struct for Z=37
+template<>
 struct ComptonProfileTraits<37u>
 {
   //! Convert a subshell enum to a compton profile index
@@ -493,7 +507,9 @@ struct ComptonProfileTraits<37u>
     case O1_SUBSHELL: return 12u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -508,6 +524,7 @@ struct ComptonProfileTraits<38u>
 };
 
 //! Compton profile traits struct for Z=39
+template<>
 struct ComptonProfileTraits<39u>
 {
   //! Convert a subshell enum to a compton profile index
@@ -532,7 +549,9 @@ struct ComptonProfileTraits<39u>
     case O1_SUBSHELL: return 13u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -556,6 +575,7 @@ struct ComptonProfileTraits<41u>
 };
 
 //! Compton profile traits struct for Z=42
+template<>
 struct ComptonProfileTraits<42u>
 {
   //! Convert a subshell enum to a compton profile index
@@ -580,7 +600,9 @@ struct ComptonProfileTraits<42u>
     case O1_SUBSHELL: return 14u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -613,6 +635,7 @@ struct ComptonProfileTraits<45u>
 };
 
 //! Compton profile traits struct for Z=46
+template<>
 struct ComptonProfileTraits<46u>
 {
   //! Convert a subshell enum to a compton profile index
@@ -636,7 +659,9 @@ struct ComptonProfileTraits<46u>
     case N5_SUBSHELL: return 13u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -660,6 +685,7 @@ struct ComptonProfileTraits<48u>
 };
 
 //! Compton profile traits struct for Z=49
+template<>
 struct ComptonProfileTraits<49u>
 {
   //! Convert a subshell enum to a compton profile index
@@ -686,7 +712,9 @@ struct ComptonProfileTraits<49u>
     case O3_SUBSHELL: return 15u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -701,6 +729,7 @@ struct ComptonProfileTraits<50u>
 };
 
 //! Compton profile traits struct for Z=51
+template<>
 struct ComptonProfileTraits<51u>
 {
   //! Convert a subshell enum to a compton profile index
@@ -727,7 +756,9 @@ struct ComptonProfileTraits<51u>
     case O3_SUBSHELL: return 16u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -760,6 +791,7 @@ struct ComptonProfileTraits<54u>
 };
 
 //! Compton profile traits struct for Z=55
+template<>
 struct ComptonProfileTraits<55u>
 {
   //! Convert a subshell enum to a compton profile index
@@ -787,7 +819,9 @@ struct ComptonProfileTraits<55u>
     case P1_SUBSHELL: return 17u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -802,6 +836,7 @@ struct ComptonProfileTraits<56u>
 };
 
 //! Compton profile traits struct for Z=57
+template<>
 struct ComptonProfileTraits<57u>
 {
   //! Convert a subshell enum to a compton profile index
@@ -831,7 +866,9 @@ struct ComptonProfileTraits<57u>
     case P1_SUBSHELL: return 18u;
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
@@ -843,6 +880,7 @@ struct ComptonProfileTraits<57u>
  * fill the 4f(5/2) and the 4f(7/2) shells without filling the 5d(3/2) shells.
  * The 5d- compton profile is simply ignored.
  */
+template<>
 struct ComptonProfileTraits<58u>
 {
   //! Convert a subshell enum to a compton profile index
@@ -872,12 +910,15 @@ struct ComptonProfileTraits<58u>
     case P1_SUBSHELL: return 19u; // 18 (5d-) is skipped
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
 
 //! Compton profile traits struct for Z=59
+template<>
 struct ComptonProfileTraits<59u>
 {
   //! Convert a subshell enum to a compton profile index
@@ -907,14 +948,873 @@ struct ComptonProfileTraits<59u>
     case P1_SUBSHELL: return 18u; 
     default:
       THROW_EXCEPTION( std::logic_error, 
-		       "Error: Subshell " << subshell << " is not valid!" );
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
     }
   }
 };
 
+//! Compton profile traits struct for Z=60
+template<>
+struct ComptonProfileTraits<60u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<59u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=61
+template<>
+struct ComptonProfileTraits<61u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<59u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=62
+template<>
+struct ComptonProfileTraits<62u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<59u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=63
+template<>
+struct ComptonProfileTraits<63u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case P1_SUBSHELL: return 19u; 
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+//! Compton profile traits struct for Z=64
+template<>
+struct ComptonProfileTraits<64u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case O4_SUBSHELL: return 19u;
+    case O5_SUBSHELL: return 19u;
+    case P1_SUBSHELL: return 20u; 
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+//! Compton profile traits struct for Z=65
+template<>
+struct ComptonProfileTraits<65u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<63u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=66
+template<>
+struct ComptonProfileTraits<66u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<63u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=67
+template<>
+struct ComptonProfileTraits<67u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<63u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=68
+template<>
+struct ComptonProfileTraits<68u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<63u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=69
+template<>
+struct ComptonProfileTraits<69u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<63u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=70
+template<>
+struct ComptonProfileTraits<70u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<63u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=71
+template<>
+struct ComptonProfileTraits<71u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<64u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=72
+template<>
+struct ComptonProfileTraits<72u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<64u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=73
+template<>
+struct ComptonProfileTraits<73u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<64u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=74
+template<>
+struct ComptonProfileTraits<74u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<64u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=75
+template<>
+struct ComptonProfileTraits<75u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case O4_SUBSHELL: return 19u;
+    case O5_SUBSHELL: return 20u;
+    case P1_SUBSHELL: return 21u; 
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+//! Compton profile traits struct for Z=76
+template<>
+struct ComptonProfileTraits<76u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<75u>::convertToIndex( subshell ); }
+};
+
+/*! Compton profile traits struct for Z=77
+ * \details There is a Compton profile for the P1 subshell but the 
+ * ENDF/EADL libraries do not have a P1 subshell. The Compton profile for
+ * the P1 subshell will be ignored.
+ */
+template<>
+struct ComptonProfileTraits<77u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case O4_SUBSHELL: return 19u;
+    case O5_SUBSHELL: return 20u;
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+//! Compton profile traits struct for Z=78
+template<>
+struct ComptonProfileTraits<78u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<75u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=79
+template<>
+struct ComptonProfileTraits<79u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<75u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=80
+template<>
+struct ComptonProfileTraits<80u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<75u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=81
+template<>
+struct ComptonProfileTraits<81u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case O4_SUBSHELL: return 19u;
+    case O5_SUBSHELL: return 20u;
+    case P1_SUBSHELL: return 21u;
+    case P2_SUBSHELL: return 22u;
+    case P3_SUBSHELL: return 22u;
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+//! Compton profile traits struct for Z=82
+template<>
+struct ComptonProfileTraits<82u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<81u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=83
+template<>
+struct ComptonProfileTraits<83u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case O4_SUBSHELL: return 19u;
+    case O5_SUBSHELL: return 20u;
+    case P1_SUBSHELL: return 21u;
+    case P2_SUBSHELL: return 22u;
+    case P3_SUBSHELL: return 23u;
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+//! Compton profile traits struct for Z=84
+template<>
+struct ComptonProfileTraits<84u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<83u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=85
+template<>
+struct ComptonProfileTraits<85u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<83u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=86
+template<>
+struct ComptonProfileTraits<86u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<83u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=87
+template<>
+struct ComptonProfileTraits<87u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case O4_SUBSHELL: return 19u;
+    case O5_SUBSHELL: return 20u;
+    case P1_SUBSHELL: return 21u;
+    case P2_SUBSHELL: return 22u;
+    case P3_SUBSHELL: return 23u;
+    case Q1_SUBSHELL: return 24u;
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+//! Compton profile traits struct for Z=88
+template<>
+struct ComptonProfileTraits<88u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<87u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=89
+template<>
+struct ComptonProfileTraits<89u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case O4_SUBSHELL: return 19u;
+    case O5_SUBSHELL: return 20u;
+    case P1_SUBSHELL: return 21u;
+    case P2_SUBSHELL: return 22u;
+    case P3_SUBSHELL: return 23u;
+    case P4_SUBSHELL: return 24u;
+    case P5_SUBSHELL: return 24u;
+    case Q1_SUBSHELL: return 25u;
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+//! Compton profile traits struct for Z=90
+template<>
+struct ComptonProfileTraits<90u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<89u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=91
+template<>
+struct ComptonProfileTraits<91u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case O4_SUBSHELL: return 19u;
+    case O5_SUBSHELL: return 20u;
+    case O6_SUBSHELL: return 21u;
+    case O7_SUBSHELL: return 21u;
+    case P1_SUBSHELL: return 22u;
+    case P2_SUBSHELL: return 23u;
+    case P3_SUBSHELL: return 24u;
+    case P4_SUBSHELL: return 25u;
+    case P5_SUBSHELL: return 25u;
+    case Q1_SUBSHELL: return 26u;
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+//! Compton profile traits struct for Z=92
+template<>
+struct ComptonProfileTraits<92u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<91u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=93
+template<>
+struct ComptonProfileTraits<93u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<91u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=94
+template<>
+struct ComptonProfileTraits<94u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case O4_SUBSHELL: return 19u;
+    case O5_SUBSHELL: return 20u;
+    case O6_SUBSHELL: return 21u;
+    case O7_SUBSHELL: return 21u;
+    case P1_SUBSHELL: return 22u;
+    case P2_SUBSHELL: return 23u;
+    case P3_SUBSHELL: return 24u;
+    case Q1_SUBSHELL: return 25u;
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+//! Compton profile traits struct for Z=95
+template<>
+struct ComptonProfileTraits<95u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case O4_SUBSHELL: return 19u;
+    case O5_SUBSHELL: return 20u;
+    case O6_SUBSHELL: return 21u;
+    case O7_SUBSHELL: return 22u;
+    case P1_SUBSHELL: return 23u;
+    case P2_SUBSHELL: return 24u;
+    case P3_SUBSHELL: return 25u;
+    case Q1_SUBSHELL: return 26u;
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+//! Compton profile traits struct for Z=96
+template<>
+struct ComptonProfileTraits<96u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case O4_SUBSHELL: return 19u;
+    case O5_SUBSHELL: return 20u;
+    case O6_SUBSHELL: return 21u;
+    case O7_SUBSHELL: return 22u;
+    case P1_SUBSHELL: return 23u;
+    case P2_SUBSHELL: return 24u;
+    case P3_SUBSHELL: return 25u;
+    case P4_SUBSHELL: return 26u;
+    case P5_SUBSHELL: return 26u;
+    case Q1_SUBSHELL: return 27u;
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+/*! Compton profile traits struct for Z=97
+ * \details There is not a Compton profile for the P4 or P5 subshells, which
+ * contain electrons according to the ENDF/EADL libraries. The P4 subshell
+ * will be assigned to the O6 subshell Compton profile and the P5 subshell
+ * will be assigned to the O7 subshell Compton profile.
+ */
+template<>
+struct ComptonProfileTraits<97u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case O4_SUBSHELL: return 19u;
+    case O5_SUBSHELL: return 20u;
+    case O6_SUBSHELL: return 21u;
+    case O7_SUBSHELL: return 22u;
+    case P1_SUBSHELL: return 23u;
+    case P2_SUBSHELL: return 24u;
+    case P3_SUBSHELL: return 25u;
+    case P4_SUBSHELL: return 21u; // Assigned to O6 due to lack of Compton prof
+    case P5_SUBSHELL: return 22u; // Assigned to O7 due to lack of Compton prof
+    case Q1_SUBSHELL: return 26u;
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+//! Compton profile traits struct for Z=98
+template<>
+struct ComptonProfileTraits<98u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  {
+    switch( subshell )
+    {
+    case K_SUBSHELL: return 0u;
+    case L1_SUBSHELL: return 1u;
+    case L2_SUBSHELL: return 2u;
+    case L3_SUBSHELL: return 3u;
+    case M1_SUBSHELL: return 4u;
+    case M2_SUBSHELL: return 5u;
+    case M3_SUBSHELL: return 6u;
+    case M4_SUBSHELL: return 7u;
+    case M5_SUBSHELL: return 8u;
+    case N1_SUBSHELL: return 9u;
+    case N2_SUBSHELL: return 10u;
+    case N3_SUBSHELL: return 11u;
+    case N4_SUBSHELL: return 12u;
+    case N5_SUBSHELL: return 13u;
+    case N6_SUBSHELL: return 14u;
+    case N7_SUBSHELL: return 15u;
+    case O1_SUBSHELL: return 16u;
+    case O2_SUBSHELL: return 17u;
+    case O3_SUBSHELL: return 18u;
+    case O4_SUBSHELL: return 19u;
+    case O5_SUBSHELL: return 20u;
+    case O6_SUBSHELL: return 21u;
+    case O7_SUBSHELL: return 22u;
+    case P1_SUBSHELL: return 23u;
+    case P2_SUBSHELL: return 24u;
+    case P3_SUBSHELL: return 25u;
+    case Q1_SUBSHELL: return 26u;
+    default:
+      THROW_EXCEPTION( std::logic_error, 
+		       "Error: Subshell " << 
+		       convertSubshellEnumToString( subshell ) <<
+		       " is not valid!" );
+    }
+  }
+};
+
+//! Compton profile traits struct for Z=99
+template<>
+struct ComptonProfileTraits<99u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<98u>::convertToIndex( subshell ); }
+};
+
+//! Compton profile traits struct for Z=100
+template<>
+struct ComptonProfileTraits<100u>
+{
+  //! Convert a subshell enum to a compton profile index
+  static inline unsigned convertToIndex( const SubshellType subshell )
+  { return ComptonProfileTraits<98u>::convertToIndex( subshell ); }
+};
+
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_STANDERD_COMPTON_PROFILE_SUBSHELL_CONVERTER_DEF_HPP
+#endif // end MONTE_CARLO_STANDARD_COMPTON_PROFILE_SUBSHELL_CONVERTER_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardComptonProfileSubshellConverter_def.hpp

@@ -2,21 +2,25 @@
 //!
 //! \file   MonteCarlo_StandardComptonProfileSubshellConverter.hpp
 //! \author Alex Robinson
-//! \brief  Standard Compton profile subshell-to_index converter decl.
+//! \brief  Standard Compton profile subshell-to-index converter decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_STANDERD_COMPTON_PROFILE_SUBSHELL_CONVERTER_HPP
-#define MONTE_CARLO_STANDERD_COMPTON_PROFILE_SUBSHELL_CONVERTER_HPP
+#ifndef MONTE_CARLO_STANDARD_COMPTON_PROFILE_SUBSHELL_CONVERTER_HPP
+#define MONTE_CARLO_STANDARD_COMPTON_PROFILE_SUBSHELL_CONVERTER_HPP
+
+// Std Lib Includes
+#include <stdexcept>
 
 // FRENSIE Includes
 #include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
 
 //! The standard Compton profile subshell-to-index converter
 template<unsigned Z>
-class StandardComptonProfileSubshellConverter : ComptonProfileSubshellConverter
+class StandardComptonProfileSubshellConverter : public ComptonProfileSubshellConverter
 {
  
 public:
@@ -41,7 +45,7 @@ struct ComptonProfileTraits
   static unsigned convertToIndex( const SubshellType subshell )
   {
     THROW_EXCEPTION( std::logic_error, 
-		     "Error: Z (" Z ") is invalid!" )
+		     "Error: Z (" << Z << ") is invalid!" )
   }
 };
 
@@ -55,7 +59,7 @@ struct ComptonProfileTraits
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_STANDERD_COMPTON_PROFILE_SUBSHELL_CONVERTER_HPP
+#endif // end MONTE_CARLO_STANDARD_COMPTON_PROFILE_SUBSHELL_CONVERTER_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_StandardComptonProfileSubshellConverter.hpp

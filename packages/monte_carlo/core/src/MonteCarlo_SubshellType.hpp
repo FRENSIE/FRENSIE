@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_SUBSHELL_TYPE_HPP
 #define MONTE_CARLO_SUBSHELL_TYPE_HPP
 
+// Std Lib Includes
+#include <string>
+
 namespace MonteCarlo{
 
 /*! Subshell identifiers
@@ -65,6 +68,9 @@ SubshellType convertENDFDesignatorToSubshellEnum(
 //! Convert an EADL designator to a Subshell enumeration
 SubshellType convertEADLDesignatorToSubshellEnum( 
 					      const unsigned eadl_designator );
+
+//! Convert a Subshell enumeration to a string
+std::string convertSubshellEnumToString( const SubshellType subshell );
   
 } // end MonteCarlo namespace
 
