@@ -18,6 +18,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonScatteringDistribution.hpp"
+#include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -29,7 +30,7 @@ class IncoherentPhotonScatteringDistribution : public PhotonScatteringDistributi
 
 public:
 
-  //! The electron momentum distribution array
+  //! The electron momentum distribution array (Compton Profiles)
   typedef Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >
   ElectronMomentumDistArray;
   
@@ -40,7 +41,10 @@ public:
   //! Constructor for doppler broadening
   IncoherentPhotonScatteringDistribution( 
      const Teuchos::RCP<Utility::OneDDistribution>& scattering_function,
-     const Teuchos::RCP<Utility::OneDDistribution>& shell_interaction_data,
+     const Teuchos::Array<double>& subshell_binding_energies,
+     const Teuchos::Array<double>& subshell_occupancies,
+     const Teuchos::Array<SubshellType>& subshell_order,
+     const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
      const ElectronMomentumDistArray& electron_momentum_dist_array );
 
   //! Destructor
@@ -50,7 +54,7 @@ public:
   //! Randomly scatter the photon
   void scatterPhoton( PhotonState& photon,
 		      ParticleBank& bank,
-		      unsigned& shell_of_interaction ) const;
+		      SubshellType& shell_of_interaction ) const;
 
 private:
 
@@ -58,14 +62,14 @@ private:
   double returnComptonLine( const double initial_energy,
 			    const double compton_line_energy,
 			    const double scattering_angle_cosine,
-			    unsigned& shell_of_interaction ) const;
+			    SubshellType& shell_of_interaction ) const;
 
   // Doppler broaden a compton line
   double dopplerBroadenComptonLine( 
 				  const double initial_energy, 
 				  const double compton_line_energy,
 				  const double scattering_angle_cosine,
-				  unsigned& shell_of_interaction ) const;
+				  SubshellType& shell_of_interaction ) const;
 
   // The scattering function
   Teuchos::RCP<Utility::OneDDistribution> d_scattering_function;
@@ -73,12 +77,18 @@ private:
   // The binding energy and shell interaction probabilities
   Teuchos::RCP<Utility::OneDDistribution> d_shell_interaction_data;
 
+  // Subshell ordering
+  Teuchos::Array<SubshellType> d_subshell_order;
+
+  // The Compton profile subshell converter
+  Teuchos::RCP<ComptonProfileSubshellConverter> d_subshell_converter;
+
   // The electron momentum dist array
   // Note: Every electron shell should have a momentum distribution array
   ElectronMomentumDistArray d_electron_momentum_distribution;
 
   // The doppler broadening function pointer
-  boost::function<double (double, double, double, unsigned&)> 
+  boost::function<double (double, double, double, SubshellType&)> 
   d_doppler_broadening_func;
 };
 

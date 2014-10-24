@@ -30,9 +30,9 @@ CoherentPhotonScatteringDistribution::CoherentPhotonScatteringDistribution(
 
 // Randomly scatter the photon
 void CoherentPhotonScatteringDistribution::scatterPhoton( 
-					 PhotonState& photon,
-					 ParticleBank& bank,
-					 unsigned& shell_of_interaction ) const
+				     PhotonState& photon,
+				     ParticleBank& bank,
+				     SubshellType& shell_of_interaction ) const
 {
   // The wavelength of the photon (cm)
   const double wavelength = ( Utility::PhysicalConstants::planck_constant*
@@ -57,7 +57,7 @@ void CoherentPhotonScatteringDistribution::scatterPhoton(
   // A random number
   double random_number;
 
-  shell_of_interaction = std::numeric_limits<unsigned>::max();
+  shell_of_interaction = UNKNOWN_SUBSHELL;
 
   // Ignore coherent scattering at energies where scattering is 
   // highly forward peaked

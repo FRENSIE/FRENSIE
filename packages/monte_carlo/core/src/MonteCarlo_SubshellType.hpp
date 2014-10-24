@@ -21,6 +21,7 @@ namespace MonteCarlo{
  */
 enum SubshellType{
   INVALID_SUBSHELL = 0,
+  UNKNOWN_SUBSHELL = INVALID_SUBSHELL,
   K_SUBSHELL = 1,
   L1_SUBSHELL = 2,
   L2_SUBSHELL = 3,
