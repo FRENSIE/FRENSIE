@@ -154,6 +154,7 @@ std::string convertSubshellEnumToString( const SubshellType subshell )
   case Q1_SUBSHELL: return "Q1";
   case Q2_SUBSHELL: return "Q2";
   case Q3_SUBSHELL: return "Q3";
+  case UNKNOWN_SUBSHELL: return "Unknown";
   default: return "Invalid";
   }
 }
