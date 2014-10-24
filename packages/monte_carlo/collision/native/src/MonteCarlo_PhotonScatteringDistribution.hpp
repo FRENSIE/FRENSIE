@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
+#include "MonteCarlo_SubshellType.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_OneDDistribution.hpp"

@@ -11,6 +11,7 @@
 
 // Std Lib Includes
 #include <string>
+#include <iostream>
 
 namespace MonteCarlo{
 
@@ -71,6 +72,15 @@ SubshellType convertEADLDesignatorToSubshellEnum(
 
 //! Convert a Subshell enumeration to a string
 std::string convertSubshellEnumToString( const SubshellType subshell );
+
+//! Stream operator for printing Subshell enums
+inline std::ostream& operator<<( std::ostream& os,
+				 const SubshellType subshell )
+{
+  os << convertSubshellEnumToString( subshell );
+  return os;
+}
+
   
 } // end MonteCarlo namespace
 
