@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_AtomicRelaxationModel.hpp
+//! \file   MonteCarlo_DetailedAtomicRelaxationModel.hpp
 //! \author Alex Robinson
 //! \brief  Detailed atomic relaxation model class declaration.
 //!
@@ -14,9 +14,13 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
+#include "MonteCarlo_SubshellRelaxationModel.hpp"
+
+namespace MonteCarlo{
 
 /*! The detailed atomic relaxation model
  * \details This model accounts for all possible transitions to fill an
@@ -28,12 +32,13 @@ class DetailedAtomicRelaxationModel : public AtomicRelaxationModel
   
 public:
 
-  //! Constructor for ACE data
+  //! Default constructor
+  DetailedAtomicRelaxationModel();
+
+  //! Constructor 
   DetailedAtomicRelaxationModel(
-			 const Teuchos::Array<SubshellType>& subshell_order,
-			 const Teuchos::Array<double>& transition_per_subshell,
-			 const Teuchos::Array<double>& raw_relaxation_data );
-  { /* ... */ }
+                  const Teuchos::Array<Teuchos::RCP<SubshellRelaxationModel> >&
+		  subshell_relaxtion_models ); 
 
   //! Destructor
   ~DetailedAtomicRelaxationModel()
@@ -41,22 +46,17 @@ public:
 
   //! Relax the atom
   void relaxAtom( const SubshellType vacancy_shell,
+		  const ParticleState& particle,
 		  ParticleBank& bank ) const;
 
-protected:
-
-  //! Subshell relaxation class
-  class DetailedSubshellRelaxationModel
-  {
-    
-  };
-
 private:
-
+  
   // The map of subshells and their relaxation data
-  boost::unordered_map<SubshellType,DetailedSubshellRelaxationModel>
+  boost::unordered_map<SubshellType,Teuchos::RCP<SubshellRelaxationModel> >
   d_subshell_relaxation_models;
 }
+
+} // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_DETAILED_ATOMIC_RELAXATION_MODEL_HPP
 

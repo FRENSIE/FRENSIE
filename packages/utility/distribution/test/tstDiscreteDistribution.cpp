@@ -23,30 +23,12 @@
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
-Teuchos::RCP<Utility::OneDDistribution> distribution;
+//---------------------------------------------------------------------------//
+// Testing Variables
+//---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-// Testing Functions
-//---------------------------------------------------------------------------//
-// Initialize the distribution
-void initializeDistribution( 
-			 Teuchos::RCP<Utility::OneDDistribution>& distribution )
-{
-  Teuchos::Array<double> independent_values( 3 );
-  independent_values[0] = -1.0;
-  independent_values[1] = 0.0;
-  independent_values[2] = 1.0;
-  
-  Teuchos::Array<double> dependent_values( 3 );
-  dependent_values[0] = 1.0;
-  dependent_values[1] = 2.0;
-  dependent_values[2] = 1.0;
-  
-  distribution.reset( new Utility::DiscreteDistribution( independent_values,
-							 dependent_values ) );
-  
-  Utility::RandomNumberGenerator::initialize();
-}
+Teuchos::RCP<Utility::OneDDistribution> distribution;
+Teuchos::RCP<Utility::OneDDistribution> cdf_cons_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -54,8 +36,6 @@ void initializeDistribution(
 // Check that the distribution can be evaluated
 TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluate )
 {  
-  initializeDistribution( distribution );
-  
   TEST_EQUALITY_CONST( distribution->evaluate( -2.0 ), 0.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( -1.0 ), 
 		       std::numeric_limits<double>::infinity() );
@@ -66,6 +46,17 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluate )
   TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), 
 		       std::numeric_limits<double>::infinity() );
   TEST_EQUALITY_CONST( distribution->evaluate( 2.0 ), 0.0 );
+
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( -2.0 ), 0.0 );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( -1.0 ), 
+		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( -0.5 ), 0.0 );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( 0.0 ), 
+		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( 0.5 ), 0.0 );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( 1.0 ), 
+		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( 2.0 ), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -79,6 +70,14 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluatePDF )
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.5 ), 0.0 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), 0.25 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 2.0 ), 0.0 );
+
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluatePDF( -2.0 ), 0.0 );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluatePDF( -1.0 ), 0.25 );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluatePDF( -0.5 ), 0.0 );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluatePDF( 0.0 ), 0.50 );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluatePDF( 0.5 ), 0.0 );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluatePDF( 1.0 ), 0.25 );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluatePDF( 2.0 ), 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -130,6 +129,43 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sample )
   sample = distribution->sample( bin_index );
   TEST_EQUALITY_CONST( sample, 1.0 );
   TEST_EQUALITY_CONST( bin_index, 2u );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  // Test the first bin
+  sample = cdf_cons_distribution->sample( bin_index );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  TEST_EQUALITY_CONST( bin_index, 0u );
+
+  sample = cdf_cons_distribution->sample( bin_index );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  TEST_EQUALITY_CONST( bin_index, 0u );
+
+  sample = cdf_cons_distribution->sample( bin_index );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  TEST_EQUALITY_CONST( bin_index, 0u );
+
+  // Test the second bin
+  sample = cdf_cons_distribution->sample( bin_index );
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( bin_index, 1u );
+
+  sample = cdf_cons_distribution->sample( bin_index );
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( bin_index, 1u );
+
+  // Test the third bin
+  sample = cdf_cons_distribution->sample( bin_index );
+  TEST_EQUALITY_CONST( sample, 1.0 );
+  TEST_EQUALITY_CONST( bin_index, 2u );
+
+  sample = cdf_cons_distribution->sample( bin_index );
+  TEST_EQUALITY_CONST( sample, 1.0 );
+  TEST_EQUALITY_CONST( bin_index, 2u );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -137,6 +173,7 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, sample )
 TEUCHOS_UNIT_TEST( DiscreteDistribution, getSamplingEfficiency )
 {
   TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->getSamplingEfficiency(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -145,6 +182,7 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, getSamplingEfficiency )
 TEUCHOS_UNIT_TEST( DiscreteDistribution, getUpperBoundOfIndepVar )
 {
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->getUpperBoundOfIndepVar(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -153,6 +191,7 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, getUpperBoundOfIndepVar )
 TEUCHOS_UNIT_TEST( DiscreteDistribution, getLowerBoundOfIndepVar )
 {
   TEST_EQUALITY_CONST( distribution->getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->getLowerBoundOfIndepVar(),-1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -160,6 +199,8 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, getLowerBoundOfIndepVar )
 TEUCHOS_UNIT_TEST( DiscreteDistribution, getDistributionType )
 {
   TEST_EQUALITY_CONST( distribution->getDistributionType(),
+		       Utility::DISCRETE_DISTRIBUTION );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->getDistributionType(),
 		       Utility::DISCRETE_DISTRIBUTION );
 }
 
@@ -209,6 +250,31 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  // Create a distribution using the standard constructor
+  Teuchos::Array<double> independent_values( 3 );
+  independent_values[0] = -1.0;
+  independent_values[1] = 0.0;
+  independent_values[2] = 1.0;
+  
+  Teuchos::Array<double> dependent_values( 3 );
+  dependent_values[0] = 1.0;
+  dependent_values[1] = 2.0;
+  dependent_values[2] = 1.0;
+  
+  distribution.reset( new Utility::DiscreteDistribution( independent_values,
+							 dependent_values ) );
+  
+  // Create a distribution using the cdf constructor
+  Teuchos::Array<double> cdf_values( 3 );
+  cdf_values[0] = 0.25;
+  cdf_values[1] = 0.75;
+  cdf_values[2] = 1.0;
+
+  cdf_cons_distribution.reset( new Utility::DiscreteDistribution(
+							  independent_values,
+							  cdf_values,
+							  true ) );
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
