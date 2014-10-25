@@ -21,13 +21,38 @@ namespace Utility{
 DiscreteDistribution::DiscreteDistribution()
 { /* ... */ }
 
-// Constructor
+// Constructor 
+/*! \details A precalculated CDF can be passed as the dependent values as
+ * long as the interpret_dependent_values_as_cdf argument is true.
+ */ 
 DiscreteDistribution::DiscreteDistribution( 
 			      const Teuchos::Array<double>& independent_values,
-			      const Teuchos::Array<double>& dependent_values )
-  : d_distribution( independent_values.size() )
+			      const Teuchos::Array<double>& dependent_values,
+			      const bool interpret_dependent_values_as_cdf )
+  : d_distribution( independent_values.size() ),
+    d_norm_constant( 1.0 )
 {
-  initializeDistribution( independent_values, dependent_values );
+  // Make sure that every value has a probability assigned
+  testPrecondition( independent_values.size() == dependent_values.size() );
+  
+  if( interpret_dependent_values_as_cdf )
+  {
+    // Assign the distribution
+    for( unsigned i = 0; i < independent_values.size(); ++i )
+    {
+      d_distribution[i].first = independent_values[i];
+      d_distribution[i].second = dependent_values[i];
+    }
+    
+    // Verify that the CDF is normalized (in event of round-off errors)
+    if( dependent_values.back() != 1.0 )
+    {
+      for( unsigned i = 0; i < d_distribution.size(); ++i )
+	d_distribution[i].second /= d_distribution.back().second;
+    }
+  }
+  else
+    initializeDistribution( independent_values, dependent_values );
 }
 
 // Copy constructor

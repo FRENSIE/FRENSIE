@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SubshellType.hpp"
+#include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 
 //! The atomic relaxation model base class
@@ -29,6 +30,7 @@ public:
 
   //! Relax atom
   virtual void relaxAtom( const SubshellType vacancy_shell,
+			  const ParticleState& particle,
 			  ParticleBank& bank ) const = 0;
 };
 
