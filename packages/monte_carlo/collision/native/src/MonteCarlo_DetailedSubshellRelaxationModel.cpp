@@ -9,6 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_DetailedSubshellRelaxationModel.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_PhotonState.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -26,7 +27,7 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
        const Teuchos::Array<double>& transition_cdf )
   : SubshellRelaxationModel( vacancy_subshell ),
     d_transition_distribution(),
-    d_transition_vacancy_shells( primary_transition_vacancy_shells.size() );
+    d_transition_vacancy_shells( primary_transition_vacancy_shells.size() )
 {
   // Make sure the arrays are valid
   testPrecondition( primary_transition_vacancy_shells.size() > 0 );
@@ -105,16 +106,16 @@ void DetailedSubshellRelaxationModel::relaxSubshell(
       double outgoing_direction[3];
 
       Utility::rotateDirectionThroughPolarAndAzimuthalAngle( 
-							 angle_cosine,
-							 azimuthal_angle,
-							 photon.getDirection(),
-							 outgoing_direction );
+						       angle_cosine,
+						       azimuthal_angle,
+						       particle.getDirection(),
+						       outgoing_direction );
     
       // Set the new energy
-      relaxation_particle.setEnergy( new_particle_energy );
+      relaxation_particle->setEnergy( new_particle_energy );
       
       // Set the new direction
-      relaxation_particle.setDirection( outgoing_direction );
+      relaxation_particle->setDirection( outgoing_direction );
       
       // Bank the relaxation particle
       bank.push( relaxation_particle );
