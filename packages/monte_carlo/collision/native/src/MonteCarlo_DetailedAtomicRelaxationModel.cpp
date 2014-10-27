@@ -10,6 +10,8 @@
 #include "MonteCarlo_DetailedAtomicRelaxationModel.hpp"
 #include "Utility_ContractException.hpp"
 
+namespace MonteCarlo{
+
 // Default constructor
 /*! \details Use this constructor with elements that do not have relaxation
  * info
@@ -31,9 +33,9 @@ DetailedAtomicRelaxationModel::DetailedAtomicRelaxationModel(
       subshell_relaxation_models[i];
     
     // Neglect duplicate models
-    if( d_subshell_relaxation_model.find( model->getVacancySubshell() ) ==
-	d_subshell_relaxation_model.end() )
-      d_subshell_relaxation_model[model->getVacancySubshell()] = model;
+    if( d_subshell_relaxation_models.find( model->getVacancySubshell() ) ==
+	d_subshell_relaxation_models.end() )
+      d_subshell_relaxation_models[model->getVacancySubshell()] = model;
   }
 }
 
@@ -65,6 +67,8 @@ DetailedAtomicRelaxationModel::relaxAtom( const SubshellType vacancy_shell,
     this->relaxAtom( secondary_vacancy_shell, particle, bank );
   }
 }
+
+} // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_DetailedAtomicRelaxationModel.cpp

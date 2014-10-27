@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_SUBSHELL_RELAXATION_MODEL_HPP
-#define MONTE_CARLO_SUBSHELL_RELAXATION_MODEL_HPP
+#ifndef MONTE_CARLO_DETAILED_SUBSHELL_RELAXATION_MODEL_HPP
+#define MONTE_CARLO_DETAILED_SUBSHELL_RELAXATION_MODEL_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -51,7 +51,7 @@ public:
 		      SubshellType& new_secondary_vacancy_shell ) const;
 
 private:
-
+  
   // The transition distribution (also stores the outgoing particle energies )
   boost::scoped_ptr<Utility::OneDDistribution> d_transition_distribution;
 
@@ -62,7 +62,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_SUBSHELL_RELAXATION_MODEL_HPP
+#endif // end MONTE_CARLO_DETAILED_SUBSHELL_RELAXATION_MODEL_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_DetailedSubshellRelaxationModel.hpp

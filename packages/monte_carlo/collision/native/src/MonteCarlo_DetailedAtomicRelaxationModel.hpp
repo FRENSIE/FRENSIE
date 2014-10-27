@@ -54,7 +54,7 @@ private:
   // The map of subshells and their relaxation data
   boost::unordered_map<SubshellType,Teuchos::RCP<SubshellRelaxationModel> >
   d_subshell_relaxation_models;
-}
+};
 
 } // end MonteCarlo namespace
 

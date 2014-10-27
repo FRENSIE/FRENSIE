@@ -14,6 +14,8 @@
 #include "MonteCarlo_ParticleState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 
+namespace MonteCarlo{
+
 //! The atomic relaxation model base class
 class AtomicRelaxationModel
 {
@@ -33,6 +35,8 @@ public:
 			  const ParticleState& particle,
 			  ParticleBank& bank ) const = 0;
 };
+
+} // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_ATOMIC_RELAXATION_MODEL_HPP
 

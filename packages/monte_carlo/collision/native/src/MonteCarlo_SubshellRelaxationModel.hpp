@@ -22,8 +22,7 @@ class SubshellRelaxationModel
 public:
   
   //! Constructor
-  SubshellRelaxationModel( const SubshellType vacancy_subshell )
-  { /* ... */ }
+  SubshellRelaxationModel( const SubshellType vacancy_subshell );
 
   //! Destructor
   ~SubshellRelaxationModel()
