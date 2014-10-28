@@ -1,11 +1,27 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstDetailedSubshellRelaxationModel.cpp
+//! \file   tstDetailedAtomicRelaxationModel.cpp
 //! \author Alex Robinson
-//! \brief  Detailed subshell relaxation model unit tests
+//! \brief  Detailed atomic relaxation model unit tests
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <iostream>
+
+// Trilinos Includes
+#include <Teuchos_UnitTestHarness.hpp>
+#include <Teuchos_VerboseObject.hpp>
+#include <Teuchos_RCP.hpp>
+
+// FRENSIE Includes
+#include "MonteCarlo_DetailedSubshellRelaxationModel.hpp"
+#include "MonteCarlo_DetailedAtomicRelaxationModel.hpp"
+#include "MonteCarlo_PhotonState.hpp"
+#include "Data_ACEFileHandler.hpp"
+#include "Data_XSSEPRDataExtractor.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 // Std Lib Includes
 #include <iostream>
 
@@ -21,45 +37,57 @@
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
-
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::SubshellRelaxationModel>
-detailed_subshell_relaxation_model;
+Teuchos::RCP<MonteCarlo::AtomicRelaxationModel>
+detailed_atomic_relaxation_model;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
-// Check that a subshell can be relaxed
-TEUCHOS_UNIT_TEST( DetailedSubshellRelaxationModel, relaxSubshell )
+// Check that the atom can be relaxed
+TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
 {
   MonteCarlo::PhotonState photon( 1 );
   photon.setEnergy( 1.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   photon.setPosition( 1.0, 1.0, 1.0 );
-  
-  MonteCarlo::ParticleBank bank;
-  
-  MonteCarlo::SubshellType primary_vacancy, secondary_vacancy;
 
-  std::vector<double> fake_stream( 1 );
-  fake_stream[0] = 0.96121; // select radiative transition to P3 subshell
+  MonteCarlo::ParticleBank bank;
+
+  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+
+  std::vector<double> fake_stream( 7 );
+  fake_stream[0] = 0.966; // Choose the non-radiative L1-L2 transition
+  fake_stream[1] = 0.9809; // Chose the radiative P3 transition
+  fake_stream[2] = 0.5; // direction
+  fake_stream[3] = 0.5; // direction
+  fake_stream[4] = 0.40361; // Chose the radiative P1 transition
+  fake_stream[5] = 0.5; // direction
+  fake_stream[6] = 0.5; // direction
+  
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  detailed_subshell_relaxation_model->relaxSubshell( photon,
-						     bank,
-						     primary_vacancy,
-						     secondary_vacancy );
+  detailed_atomic_relaxation_model->relaxAtom( vacancy, photon, bank );
+  
+  // L1 and L2 radiative transitions
+  TEST_EQUALITY_CONST( bank.size(), 2 );
 
-  TEST_EQUALITY_CONST(detailed_subshell_relaxation_model->getVacancySubshell(),
-		      MonteCarlo::K_SUBSHELL );
-  TEST_EQUALITY_CONST( primary_vacancy, MonteCarlo::P3_SUBSHELL );
-  TEST_EQUALITY_CONST( secondary_vacancy, MonteCarlo::INVALID_SUBSHELL );
-  TEST_EQUALITY_CONST( bank.size(), 1 );
-  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 8.828470000000E-02 );
+  // L1 radiative transition
+  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 1.584170000000E-02 );
+  TEST_EQUALITY_CONST( bank.top()->getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top()->getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top()->getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top()->getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( bank.top()->getGenerationNumber(), 1 );
+
+  bank.pop();
+
+  // L2 radiative transition
+  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 1.523590000000E-02 );
   TEST_EQUALITY_CONST( bank.top()->getXPosition(), 1.0 );
   TEST_EQUALITY_CONST( bank.top()->getYPosition(), 1.0 );
   TEST_EQUALITY_CONST( bank.top()->getZPosition(), 1.0 );
@@ -107,49 +135,76 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
-  // Create a subshell transition model for the K subshell
+  // Create a subshell transition model for each subshell
+  Teuchos::ArrayView<const double> raw_subshell_endf_designators =
+    xss_data_extractor->extractSubshellENDFDesignators();
+  
+  Teuchos::Array<MonteCarlo::SubshellType> 
+    subshells( raw_subshell_endf_designators.size() );
+
+  for( unsigned i = 0; i < subshells.size(); ++i )
+  {
+    subshells[i] = MonteCarlo::convertENDFDesignatorToSubshellEnum(
+					    raw_subshell_endf_designators[i] );
+  }
+
   Teuchos::ArrayView<const double> subshell_transitions =
     xss_data_extractor->extractSubshellVacancyTransitionPaths();
-
-  unsigned k_shell_transitions = (unsigned)subshell_transitions[0];
 
   Teuchos::ArrayView<const double> relo_block = 
     xss_data_extractor->extractRELOBlock();
 
-  unsigned k_shell_start = (unsigned)relo_block[0];
-
   Teuchos::ArrayView<const double> xprob_block = 
     xss_data_extractor->extractXPROBBlock();
 
-  Teuchos::Array<MonteCarlo::SubshellType> 
-    primary_transition_shells( k_shell_transitions );
-  Teuchos::Array<MonteCarlo::SubshellType> 
-    secondary_transition_shells( k_shell_transitions );
-  Teuchos::Array<double> 
-    outgoing_particle_energies( k_shell_transitions );
-  Teuchos::Array<double> transition_cdf( k_shell_transitions );
+  Teuchos::Array<Teuchos::RCP<MonteCarlo::SubshellRelaxationModel> > 
+    subshell_relaxation_models;
 
-  for( unsigned i = 0; i < k_shell_transitions; ++i )
+  for( unsigned i = 0; i < subshell_transitions.size(); ++i )
   {
-    primary_transition_shells[i] = 
-      MonteCarlo::convertENDFDesignatorToSubshellEnum(
-					      xprob_block[k_shell_start+i*4] );
+    unsigned shell_transitions = (unsigned)subshell_transitions[i];
+
+    unsigned shell_start = (unsigned)relo_block[i];
     
-    secondary_transition_shells[i] = 
-      MonteCarlo::convertENDFDesignatorToSubshellEnum( 
-					    xprob_block[k_shell_start+i*4+1] );
+    Teuchos::Array<MonteCarlo::SubshellType> 
+      primary_transition_shells( shell_transitions );
+    Teuchos::Array<MonteCarlo::SubshellType> 
+      secondary_transition_shells( shell_transitions );
+    Teuchos::Array<double> 
+      outgoing_particle_energies( shell_transitions );
+    Teuchos::Array<double> transition_cdf( shell_transitions );
+
+    if( shell_transitions > 0 )
+    {
+      for( unsigned j = 0; j < shell_transitions; ++j )
+      {
+	primary_transition_shells[j] = 
+	  MonteCarlo::convertENDFDesignatorToSubshellEnum(
+					        xprob_block[shell_start+j*4] );
     
-    outgoing_particle_energies[i] = xprob_block[k_shell_start+i*4+2];
-    transition_cdf[i] = xprob_block[k_shell_start+i*4+3];
-  }
+	secondary_transition_shells[j] = 
+	  MonteCarlo::convertENDFDesignatorToSubshellEnum( 
+					      xprob_block[shell_start+j*4+1] );
+    
+	outgoing_particle_energies[j] = xprob_block[shell_start+j*4+2];
+	transition_cdf[j] = xprob_block[shell_start+j*4+3];
+      }
   
-  detailed_subshell_relaxation_model.reset( 
+      Teuchos::RCP<MonteCarlo::SubshellRelaxationModel> shell_model(
 			       new MonteCarlo::DetailedSubshellRelaxationModel(
-						   MonteCarlo::K_SUBSHELL,
+						   subshells[i],
 						   primary_transition_shells,
 						   secondary_transition_shells,
 						   outgoing_particle_energies,
 						   transition_cdf ) );
+      
+      subshell_relaxation_models.push_back( shell_model );
+    }
+  }
+
+  detailed_atomic_relaxation_model.reset(
+				 new MonteCarlo::DetailedAtomicRelaxationModel(
+						subshell_relaxation_models ) );
 
   // Clear setup data
   ace_file_handler.reset();
@@ -174,5 +229,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstDetailedSubshellRelaxationModel.cpp
+// end tstDetailedAtomicRelaxationModel.cpp
 //---------------------------------------------------------------------------//
