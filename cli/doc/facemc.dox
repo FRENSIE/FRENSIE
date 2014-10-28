@@ -1,4 +1,321 @@
 // This file is used to add material to the facemc manual page
 
 /*! \page facemc_man FACEMC User's Manual
+ *
+ * \tableofcontents
+ *
+ * The Forward-Adjoint Continuous Energy Monte Carlo (FACEMC) code is 
+ * currently interacted with through XML files and a command line interface.
+ * In the future, a python interface will also be added. In this manual the
+ * individual XML files and the command line interface will be discussed.
+ *
+ * In every simulation, six XML files must be provided. These XML files
+ * specify the geometry, the source, the estimators, the response functions,
+ * the materials, and run time configuration options. The following sections 
+ * will discuss the construction of each of these XML files.
+ *
+ * \section geometry_sec Geometry Construction
+ * Currently, only CAD geometries can be used with FACEMC. The CAD file must
+ * be constructed before the XML file. 
+ *
+ * \subsection dagmc_workflow DAGMC Workflow
+ * The <a href=http://cnerg.github.io/>CNERG</a> group has put together a nice
+ * document on the <a href=http://svalinn.github.io/DAGMC/usersguide/workflow.html>DAGMC workflow</a>.
+ * This workflow will be reiterated and some steps specific to FACEMC will
+ * also be added.
+ *
+ * To construct a CAD file for ray tracing using DAGMC, the following workflow 
+ * should be followed:
+ * <ol>
+ *  <li> Create and/or prepare a solid model using the CAD/solid-modeling tool
+ *       of your choice.</li>
+ *  <li> Pre-process the solid model geometry in CUBIT
+ *   <ul><li> Assign materials and densities</li>
+ *       <li> Define boundary conditions</li>
+ *       <li> Imprint & merge geometry</li>
+ *       <li> Export the processed model in the ACIS format</li></ul>
+ * </ol>     
+ * 
+ * \subsection contructing_cad_geoms Constructing CAD Geometries
+ * When preparing the solid model, any software that supports the ACIS (.sat)
+ * and/or the STEP (.stp, .STEP, etc) can be used. CUBIT can also be used
+ * direcly to construct the geometry. It is important to be aware of gaps
+ * and overlaps in the model as these unwanted features will lead to lost
+ * particles while FACEMC attempts to ray trace on the geometry. It is fairly
+ * common for models constructed for manufacturing purposes to have tolerances
+ * that are undesireable for particle transport applications. Therefore, 
+ * when obtaining a CAD model from another source, it is important to be aware 
+ * of its intended purpose. 
+ *
+ * Once a CAD geometry has been constructed, it is important to assess its
+ * quality by running it in FACEMC and identifying the lost particle rate using
+ * a voided geometry (simply do not define any materials). The CNERG group
+ * usually considers a lost particle rate of 1/50,000 to be an acceptable
+ * threshold. 
+ *
+ * A special volume must be created that surrounds the entire geometry of
+ * interest. This geometry will be used to end particle histories that
+ * enter it (see the "termination.cell" property below).
+ *
+ * \subsection preprocessing_model Pre-processing CAD Model using CUBIT
+ * The first step in pre-processing a CAD model in CUBIT is to import it
+ * into CUBIT. This step can take up to 30 minutes for very complicated CAD
+ * models but will typically only take a few seconds. 
+ *
+ * The second step is to replace coincident surfaces with a single surface. In
+ * CUBIT this is called imprinting and merging. To imprint, use the following
+ * command in cubit:
+ * \code{.unparsed}
+ * imprint body all
+ * \endcode
+ * If the imprint is successful, the geometry must be merged. A tolerance for
+ * this process can be set, which may be useful for certain geometries. To 
+ * set the merge tolerance and to merge the geometry, use the following 
+ * commands:
+ * \code{.unparsed}
+ * merge tol 5e-7
+ * merge all 
+ * \endcode
+ * This process will be quite fast for modest sized geometries. However, expect
+ * up to a few hours for complex geometries.
+ *
+ * The third step is to assign properties to volumes and surfaces. The
+ * assignment of properties to volumes and surfaces is done by creating groups
+ * in CUBIT. The name of the group determines the property of the volumes
+ * and/or surfaces contained in the group. To create a group, the following
+ * command should be used:
+ * \code{.unparsed}
+ * group "group.name" add vol 5 8 10 to 20
+ * group "group.name" add surf 1 2 3
+ * \endcode
+ * There are several properties that are often set in cubit. These properties
+ * have default names, which will be listed below, but any desired alternative 
+ * can be used.
+ * <ul>
+ *  <li> termination.cell </li>
+ *  <li> mat_\#_rho_# </li>
+ *  <li> mat_\#_rho_-# </li>
+ *  <li> estimator_#.surface.current.n </li>
+ *  <li> estimator_#.surface.current.p </li>
+ *  <li> estimator_#.surface.flux.n </li>
+ *  <li> estimator_#.surface.flux.p </li>
+ *  <li> estimator_#.cell.pulse.height.p </li>
+ *  <li> estimator_#.cell.tl.flux.n </li>
+ *  <li> estimator_#.cell.tl.flux.p </li>
+ *  <li> estimator_#.cell.c.flux.n </li>
+ *  <li> estimator_#.cell.c.flux.p </li>
+ * </ul>
+ * The termination.cell, mat, rho and estimator keywords can all be substituted
+ * with an alternative. 
+ *
+ * The final step is to export the geometry. Attributes must be set to on
+ * to save absolute volumes, surface ids and the group specifications. This
+ * is done with the following command:
+ * \code{.unparsed}
+ * set attribute on
+ * \endcode
+ * The geometry must be exported as an ACIS (.sat) file. If the CUBIT version
+ * is greater than 12.x, set the ACIS geometry back to version 19:
+ * \code{.unparsed}
+ * set geom version 1900
+ * \endcode
+ * Use the file pull-down menu to export the geometry.
+ *
+ * \subsection geometry_xml_file Creating the Geometry XML file
+ * The geometry XML file is set up so that it can be read into a 
+ * Teuchos::ParameterList object internally. The only XML elements allowed
+ * are "ParameterList" and "Parameter". The "ParameterList" element only
+ * has one allowed attribute called "name". The "Parameter" element has
+ * three allowed attributes: "name", "type", and "value".
+ *
+ * Three parameter elements must appear in every geometry file. The first
+ * is the handler element, which specifies the geometry handler that will be
+ * used by FACEMC (currently only DAGMC is available). The second is the
+ * CAD file that FACEMC will use. The third is the face tolerance that 
+ * DAGMC will use to facet the CAD geometry. A basic geometry file is
+ * shown below.
+ * \code{.xml}
+ * <ParameterList name="Geometry">
+ *
+ * <Parameter name="Handler" type="string" value="DagMC"/>
+ * <Parameter name="CAD File" type="string" value="water_sphere2.sat"/>
+ * <Parameter name="Facet Tolerance" type="double" value="1e-3"/>
+ * 
+ * </ParameterList>
+ * \endcode
+ *
+ * If different CUBIT keywords were chosen, they must be specified in the
+ * XML file as well:
+ * \code{.xml}
+ * <ParameterList name="Geometry">
+ *
+ * <Parameter name="Handler" type="string" value="DagMC"/>
+ * <Parameter name="CAD File" type="string" value="water_sphere2.sat"/>
+ * <Parameter name="Facet Tolerance" type="double" value="1e-3"/>
+ * <Parameter name="Termination Cell Synonym" type="string" value="termination.cell"/>
+ * <Parameter name="Material Synonym" type="string" value="mat"/>
+ * <Parameter name="Density Synonym" type="string" value="rho"/>
+ * <Parameter name="Estimator Synonym" type="string" value="estimator"/>
+ * 
+ * </ParameterList>
+ * \endcode
+ *
+ * \section material_construction Material Construction
+ * Before discussing how materials are specified, the layout of the directory
+ * containing the cross section tables must be discussed.
+ *
+ * \subsection cross_section_dir Cross Section Directory
+ * The cross section directory must contain all of the cross section tables
+ * that will be used in the simulation. It can be set up in a very similar
+ * fashion to the MCNP_DATA directory used by MCNP. In this directory, an
+ * XML file must be created called "cross_sections.xml", which is very similar
+ * to the xsdir file used by MCNP. The file will have the following form:
+ * \code{.xml}
+ * <ParameterList name="cross sections">
+ * 
+ * <Parameter name="is_ascii" type="bool" value="true"/>
+ * 
+ * <ParameterList name="alias map">
+ *   <Parameter name="1001" type="string" value="H-1_293.6K"/>
+ *   <Parameter name="8016" type="string" value="O-16_293.6K"/>
+ *   <Parameter name="H-1" type="string" value="H-1_239.6K"/>
+ *   <Parameter name="O-16" type="string" value="O-16_239.6K"/>
+ * </ParameterList>
+ * 
+ * <ParameterList name="H-1_293.6K">
+ *   <Parameter name="file_path" type="string" value="endf70a"/>
+ *   <Parameter name="table_name" type="string" value="1001.70c"/>
+ *   <Parameter name="start_line" type="int" value="1"/>
+ *   <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
+ *   <Parameter name="temperature" type="double" value="2.53010e-08"/>
+ *   <Parameter name="atomic_number" type="int" value="1"/>
+ *   <Parameter name="atomic_mass_number" type="int" value="1"/>
+ *   <Parameter name="isomer_number" type="int" value="0"/>
+ * </ParameterList>
+ *
+ * <ParameterList name="O-16_293.6K">
+ *   <Parameter name="file_path" type="string" value="endf70a"/>
+ *   <Parameter name="table_name" type="string" value="8016.70c"/>
+ *   <Parameter name="start_line" type="int" value="1428717"/>
+ *   <Parameter name="atomic_weight_ratio" type="double" value="15.857510"/>
+ *   <Parameter name="temperature" type="double" value="2.53010e-08"/>
+ *   <Parameter name="atomic_number" type="int" value="8"/>
+ *   <Parameter name="atomic_mass_number" type="int" value="16"/>
+ *   <Parameter name="isomer_number" type="int" value="0"/>
+ * </ParameterList>
+ *
+ * </ParameterList>
+ * \endcode
+ * Note that each isotope will have an alias that will be used to refer to it
+ * (as apposed to a zaid number). There is also a set of alternative aliases in
+ * the "alias map" that can be used instead of the default aliases.
+ *
+ * \subsection creating_material_xml_file Creating the Material XML file
+ * Three parameter elements must appear in every material file. The first
+ * is the material id. Note that any material id specified in the CAD file must
+ * have a corresponding material definition in this XML file. The second is
+ * the fractions element, which is used to specify the atom or weight fractions
+ * of each isotope in the material. To specify weight fractions, negative
+ * numbers should be given. Also note that the fractions need not be 
+ * normalized - this will be done internally. The third parameter is the 
+ * isotopes element, which is used to specify the isotopes in the material.
+ * A valid alias (specified in the cross_sections.xml file) must be used
+ * to refer to an isotope. A material XML file that could be used to specify
+ * water is given below.
+ * \code{.xml}
+ * <ParameterList name="Materials">
+ *
+ * <ParameterList name="H Sphere">
+ * <Parameter name="Id" type="unsigned int" value="1"/>
+ * <Parameter name="Fractions" type="Array(double)" value="{1.0,2.0}"/>
+ * <Parameter name="Isotopes" type="Array(string)" value="{O-16_293.6K, H-1_293.6K}"/>
+ * </ParameterList>
+ *
+ * </ParameterList>
+ * \endcode
+ *
+ * \section one_d_distributions One Dimensional Distributions
+ * Before discussing the remaining XML files, a special parameter type must
+ * be discussed: the one dimensional distribution. One dimensional
+ * distributions can be used to represent a sampling distribution or a
+ * weighting distribution. Each distribution and a corresponding example 
+ * parameter element will be shown below.
+ *
+ * <ul>
+ *  <li>Delta distribution
+ *   <ul>
+ *    <li>Models a delta function \f$\delta(x-a)\f$ or single point</li>
+ *    <li>Should almost exclusively be used for sampling purposes</li>
+ *    <li>\code{.xml}
+ *        <Parameter name="example" type="Delta Distribution" value="{0}"/>
+ *        \endcode</li>
+ *    <li>The value attribute specifies the \f$a\f$ value of the delta 
+ *        distribution</li></ul></li>
+ *  <li>Discrete distribution
+ *   <ul>
+ *    <li>Models a sum of delta functions \f$\sum_i c_i\delta(x-a_i)\f$ or 
+ *        series of points with associated weights</li>
+ *    <li>Should almost exclusively be used for sampling purposes</li>
+ *    <li><b>Note:</b> When treated as a sampling distribution it is acceptable
+ *        to have repeated points</li>
+ *    <li>\code{.xml}
+ *        <Parameter name="example" type="Discrete Distribution" value="{{-1.00000000000000000e+00, 0.00000000000000000e+00, 1.00000000000000000e+00},{1.00000000000000000e+00, 2.00000000000000000e+00, 1.00000000000000000e+00}}"/>
+ *        \endcode</li>
+ *    <li>The value attribute specifies the array of points (\f$a_i\f$) and the
+ *        array of point weights (\f$c_i\f$).</li>
+ *    <li>For sampling distributions, the array of weights will be 
+ *        normalized.</li>
+ *    <li>The weights should always be positive.</li></ul></li>
+ *   <li>Exponential distribution
+ *    <ul>
+ *     <li>Models an exponentially decaying function \f$a*\exp(-b*x)\f$</li>
+ *     <li>\code{.xml}
+ *         <Parameter name="example" type="Exponential Distribution" value="{2,3}"/>
+ *          \endcode</li>
+ *     <li>The value attribute specifies the constant multiplier \f$a\f$ and
+ *         the exponent multiplier \f$b\f$, which should always be 
+ *         positive.</li>
+ *     <li>For sampling distributions, the \f$a\f$ value will be
+ *         replaced by a normalization constant. </li></ul></li>
+ *   <li>Histogram distribution
+ *    <ul>
+ *     <li>\code{.xml}
+ *         <Parameter name="example" type="Histogram Distribution" value="{{-2.00000000000000000e+00, -1.00000000000000000e+00, 1.00000000000000000e+00, 2.00000000000000000e+00},{2.00000000000000000e+00, 1.00000000000000000e+00, 2.00000000000000000e+00}}"/>
+ *         \endcode</li>
+ *      <li>The value attribute specifies the \f$n\f$ histogram
+ *          bin boundaries and the \f$n-1\f$ bin values.</li>
+ *      <li>For sampling distributions, the bin values will be normalized. Bin 
+ *          values should always be positive.</li></ul></li>
+ *    <li>Normal distribution
+ *     <ul>
+ *      <li>Models a gaussian function \f$\frac{1}{\sigma\sqrt{2\pi}}\exp{-\frac{(x-\mu)^2}{2\sigma^2}}\f$</li>
+ *      <li>\code{.xml}
+ *          <Parameter name="example" type="Normal Distribution" value="{0,1,-inf,inf}"/>
+ *          \endcode</li>
+ *      <li>The value attribute specifies the mean \f$\mu\f$ and standard
+ *          deviation \f$\sigma\f$ of the gaussian. The distribution can be
+ *          truncated by specifying a lower cutoff and an upper cutoff. The
+ *          special values of "-inf" and "inf" can be used to essentially
+ *          provide no cutoff values.
+ *      <li>The standard deviation must be strictly greater than 
+ *          zero.</li></ul></li>
+ *  </ul>
+ *
+ * \section response_function_construction Response Function Construction
+ * Two types of reponse functions are currently supported: the energy
+ * reponse function and the phase space response function. Both of these
+ * will be discussed before discussing the construction of the response 
+ * function XML file.
+ *
+ * \subsection energy_response_function The Energy Response Function
+ * The energy response function is a user defined function with a dependence
+ * on the particles energy only. 
+ *
+ * \section estimator_construction Estimator Construction
+ * 
+ *
+ * \section source_construction Source Construction
+ *
+ * \section runtime_modifications Run Time Modifications
+ *
  */ 
