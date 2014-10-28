@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_SUBSHELL_RELAXATION_MODEL_HPP
-#define MONTE_CARLO_SUBShELL_RELAXATION_MODEL_HPP
+#define MONTE_CARLO_SUBSHELL_RELAXATION_MODEL_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_SubshellType.hpp"
