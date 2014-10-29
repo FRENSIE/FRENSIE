@@ -134,7 +134,7 @@
  * CAD file that FACEMC will use. The third is the face tolerance that 
  * DAGMC will use to facet the CAD geometry. A basic geometry file is
  * shown below.
- * \code{.xml}
+ * \code
  * <ParameterList name="Geometry">
  *
  * <Parameter name="Handler" type="string" value="DagMC"/>
@@ -146,7 +146,7 @@
  *
  * If different CUBIT keywords were chosen, they must be specified in the
  * XML file as well:
- * \code{.xml}
+ * \code
  * <ParameterList name="Geometry">
  *
  * <Parameter name="Handler" type="string" value="DagMC"/>
@@ -170,7 +170,7 @@
  * fashion to the MCNP_DATA directory used by MCNP. In this directory, an
  * XML file must be created called "cross_sections.xml", which is very similar
  * to the xsdir file used by MCNP. The file will have the following form:
- * \code{.xml}
+ * \code
  * <ParameterList name="cross sections">
  * 
  * <Parameter name="is_ascii" type="bool" value="true"/>
@@ -222,7 +222,7 @@
  * A valid alias (specified in the cross_sections.xml file) must be used
  * to refer to an isotope. A material XML file that could be used to specify
  * water is given below.
- * \code{.xml}
+ * \code
  * <ParameterList name="Materials">
  *
  * <ParameterList name="H Sphere">
@@ -242,23 +242,23 @@
  * parameter element will be shown below.
  *
  * <ul>
- *  <li>Delta distribution
+ *  <li><b>Delta distribution</b>
  *   <ul>
  *    <li>Models a delta function \f$\delta(x-a)\f$ or single point</li>
  *    <li>Should almost exclusively be used for sampling purposes</li>
- *    <li>\code{.xml}
+ *    <li>\code
  *        <Parameter name="example" type="Delta Distribution" value="{0}"/>
  *        \endcode</li>
  *    <li>The value attribute specifies the \f$a\f$ value of the delta 
  *        distribution</li></ul></li>
- *  <li>Discrete distribution
+ *  <li><b>Discrete distribution</b>
  *   <ul>
  *    <li>Models a sum of delta functions \f$\sum_i c_i\delta(x-a_i)\f$ or 
  *        series of points with associated weights</li>
  *    <li>Should almost exclusively be used for sampling purposes</li>
  *    <li><b>Note:</b> When treated as a sampling distribution it is acceptable
  *        to have repeated points</li>
- *    <li>\code{.xml}
+ *    <li>\code
  *        <Parameter name="example" type="Discrete Distribution" value="{{-1.00000000000000000e+00, 0.00000000000000000e+00, 1.00000000000000000e+00},{1.00000000000000000e+00, 2.00000000000000000e+00, 1.00000000000000000e+00}}"/>
  *        \endcode</li>
  *    <li>The value attribute specifies the array of points (\f$a_i\f$) and the
@@ -266,10 +266,10 @@
  *    <li>For sampling distributions, the array of weights will be 
  *        normalized.</li>
  *    <li>The weights should always be positive.</li></ul></li>
- *   <li>Exponential distribution
+ *   <li><b>Exponential distribution</b>
  *    <ul>
  *     <li>Models an exponentially decaying function \f$a*\exp(-b*x)\f$</li>
- *     <li>\code{.xml}
+ *     <li>\code
  *         <Parameter name="example" type="Exponential Distribution" value="{2,3}"/>
  *          \endcode</li>
  *     <li>The value attribute specifies the constant multiplier \f$a\f$ and
@@ -277,28 +277,78 @@
  *         positive.</li>
  *     <li>For sampling distributions, the \f$a\f$ value will be
  *         replaced by a normalization constant. </li></ul></li>
- *   <li>Histogram distribution
+ *   <li><b>Histogram distribution</b>
  *    <ul>
- *     <li>\code{.xml}
+ *     <li>\code
  *         <Parameter name="example" type="Histogram Distribution" value="{{-2.00000000000000000e+00, -1.00000000000000000e+00, 1.00000000000000000e+00, 2.00000000000000000e+00},{2.00000000000000000e+00, 1.00000000000000000e+00, 2.00000000000000000e+00}}"/>
  *         \endcode</li>
  *      <li>The value attribute specifies the \f$n\f$ histogram
  *          bin boundaries and the \f$n-1\f$ bin values.</li>
  *      <li>For sampling distributions, the bin values will be normalized. Bin 
  *          values should always be positive.</li></ul></li>
- *    <li>Normal distribution
+ *    <li><b>Normal distribution</b>
  *     <ul>
  *      <li>Models a gaussian function \f$\frac{1}{\sigma\sqrt{2\pi}}\exp{-\frac{(x-\mu)^2}{2\sigma^2}}\f$</li>
- *      <li>\code{.xml}
+ *      <li>\code
  *          <Parameter name="example" type="Normal Distribution" value="{0,1,-inf,inf}"/>
  *          \endcode</li>
  *      <li>The value attribute specifies the mean \f$\mu\f$ and standard
- *          deviation \f$\sigma\f$ of the gaussian. The distribution can be
- *          truncated by specifying a lower cutoff and an upper cutoff. The
- *          special values of "-inf" and "inf" can be used to essentially
- *          provide no cutoff values.
- *      <li>The standard deviation must be strictly greater than 
- *          zero.</li></ul></li>
+ *          deviation \f$\sigma\f$ of the gaussian. The standard deviation must
+ *          be strictly greater than zero.
+ *      <li>The distribution can be truncated by specifying a lower cutoff and 
+ *          an upper cutoff. The special values of "-inf" and "inf" can be used
+ *          to essentially provide no cutoff values.</li></ul></li>
+ *    <li><b>Polynomial Distribution</b>
+ *     <ul>
+ *      <li>Models the polynomial function \f$\sum_{i=0}^{N-1} c_ix_i\f$ for
+ *          \f$x \in [a,b]\f$</li>
+ *      <li>\code
+ *          <Parameter name="example" type="Polynomial Distribution" value="{{1.00000000000000000e+00, 2.00000000000000000e+00, 3.00000000000000000e+00},0,1}"/>
+ *          \endcode</li>
+ *      <li>The value attribute specifies the array of polynomial coefficients 
+ *          \f$c_i\f$, the minimum \f$x\f$ value \f$a\f$ and the maximum
+ *          \f$x\f$ value \f$b\f$ respectively. For the values to be valid
+ *          every term in the series must be strictly positive over the 
+ *          desired range.
+ *      <li>These distributions are sampled directly using a combination of
+ *          the probability mixing and inverse CDF techniques.</li></ul></li>
+ *    <li><b>Power Distribution</b>
+ *     <ul>
+ *      <li>Models the power function \f$c x^N\f$ for \f$x \in [a,b]\f$, where
+ *          \f$N\f$ is the desired power.</li>
+ *      <li>\code 
+ *          <Parameter name="example 1" type="Power 1 Distribution" value="{2,0,1}"/>
+ *          <Parameter name="example 2" type="Power 2 Distribution" value="{3,0,1}"/>
+ *          \endcode</li>
+ *       <li>The type attribute specifies the power \f$N\f$.</li>
+ *       <li>The value attribute specifies the constant multiplier \f$c\f$,
+ *           the minimum \f$x\f$ value \f$a\f$ and the maximum \f$x\f$ value
+ *           \f$b\f$ respectively. The limits must be strictly positive.</li>
+ *       <li>For sampling distributions, the constant multiplier \f$c\f$ will
+ *           be replaced by a normalization constant.</li></ul></li>
+ *     <li><b>Tabular Distribution</b>
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="example 1" type="Tabular LinLin Distribution" value="{{1.00000000000000002e-03, 1.00000000000000002e-02, 1.00000000000000006e-01, 1.00000000000000000e+00},{1.00000000000000000e+02, 1.00000000000000000e+01, 1.00000000000000000e+00, 1.00000000000000006e-01}}"/>
+ *           <Parameter name="example 2" type="Tabular LinLog Distribution" value="{{1.00000000000000002e-03, 1.00000000000000002e-02, 1.00000000000000006e-01, 1.00000000000000000e+00},{1.00000000000000000e+02, 1.00000000000000000e+01, 1.00000000000000000e+00, 1.00000000000000006e-01}}"/>
+ *            <Parameter name="example 3" type="Tabular LogLin Distribution" value="{{1.00000000000000002e-03, 1.00000000000000002e-02, 1.00000000000000006e-01, 1.00000000000000000e+00},{1.00000000000000000e+02, 1.00000000000000000e+01, 1.00000000000000000e+00, 1.00000000000000006e-01}}"/>
+ *            <Parameter name="example 4" type="Tabular LogLog Distribution" value="{{1.00000000000000002e-03, 1.00000000000000002e-02, 1.00000000000000006e-01, 1.00000000000000000e+00},{1.00000000000000000e+02, 1.00000000000000000e+01, 1.00000000000000000e+00, 1.00000000000000006e-01}}"/>
+ *             \endcode</li>
+ *        <li>The type attribute specifies the type of interpolation to use
+ *            with the table.</li>
+ *        <li>The value attribute specifies the \f$n\f$ independent values and 
+ *            the \f$n\f$ dependent values.</li></ul></li>
+ *      <li><b>Uniform Distribution</b>
+ *       <ul>
+ *        <li>Models the constant function \f$c\f$ for \f$x \in [a,b]\f$.</li>
+ *        <li>\code
+ *            <Parameter name="example" type="Uniform Distribution" value="{-1,1,2}"/>
+ *            \endcode</li>
+ *        <li>The value attribute specifies the minimum \f$x\f$ value
+ *            \f$a\f$, the maximum \f$x\f$ value \f$b\f$ and the
+ *            constant \f$c\f$ respectively.</li>
+ *        <li>For sampling distributions, the constant multiplier \f$c\f$ will
+ *            be replaced by a normalization constant.</li></ul></li>   
  *  </ul>
  *
  * \section response_function_construction Response Function Construction
@@ -309,13 +359,275 @@
  *
  * \subsection energy_response_function The Energy Response Function
  * The energy response function is a user defined function with a dependence
- * on the particles energy only. 
+ * on the particles energy only. Two parameter elements must appear in every
+ * energy response function. The first is the response function id. This
+ * id will be used by estimators. The second is the energy distribution, 
+ * which can be any of the 
+ * \ref one_d_distributions "one dimensional distributions". An example
+ * energy response function is give below.
+ * \code
+ * <ParameterList name="Energy Response">
+ *   <Parameter name="Id" type="unsigned int" value="0"/> 
+ *   <Parameter name="Energy Distribution" type="Histogram Distribution" value="{{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
+ *  </ParameterList>
+ * \endcode
+ *
+ * \subsection phase_space_response_function The Phase Space Response Function
+ * The phase space response function is a generalized version of the 
+ * energy response function that is dependent on the entire phase space. Five
+ * parameter elements must appear in every phase space response function. The
+ * first is the response function id, which will be used by the estimators.
+ * 
+ * The second element is the spatial distribution which is itself a parameter 
+ * list. Three types of spatial distributions are possible: a Cartesian
+ * distribution, a cylindrical distribution and a spherical distribution.
+ * A Cartesian distribution will only have three parameter elements, each
+ * of which is a \ref one_d_distributions "one dimensional distribution". The
+ * three parameters are the x distribution, the y distribution and the z
+ * distribution. A Cylindrical distribution will have seven paremeter 
+ * elements defined. The first three, which are one dimensional distributions,
+ * are the r distribution, the theta (azimuthal) distribution, and the 
+ * axis distribution. The final four parameter elements are the center x
+ * position, the center y position, the center z position and the axis
+ * (orientation of the cylinder), which can be "X", "Y" or "Z". A spherical
+ * distribution will also have seven parameter elements. All of the parameter
+ * elements will be the same as for the cylindrical distribution except for
+ * the axis distribution, which will instead be the mu distribution (polar
+ * angle cosine distribution)."
+ *
+ * The third element is the directional distribution which is also a parameter
+ * list. The two parameter elements in this parameter list are the mu
+ * (polar angle cosine) distribution and the theta (azimuthal) distribution,
+ * which are both \ref one_d_distributions "one dimensional distributions".
+ *
+ * The fourth element is the energy distribution, which is a 
+ * \ref one_d_distributions "one dimensional distribution".
+ *
+ * The fifth element is the time distribution, which is also a
+ * \ref one_d_distributions "one dimensional distribution".
+ *
+ * Some example phase space response functions are given below.
+ * \code
+ * <ParameterList name="Phase Space Response: Cartesian">
+ *  <Parameter name="Id" type="unsigned int" value="1"/>
+ *  <ParameterList name="Spatial Distribution">
+ *    <Parameter name="X Distribution" type="Uniform Distribution" value="{-1e50,1e50,1.0}"/>
+ *    <Parameter name="Y Distribution" type="Uniform Distribution" value="{-1e50,1e50,1.0}"/>
+ *    <Parameter name="Z Distribution" type="Uniform Distribution" value="{-1e50,1e50,1.0}"/>
+ *   </ParameterList>
+ *   <ParameterList name="Directional Distribution">
+ *     <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1.0,1.0,1.0}"/> 
+ *     <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0.0, 6.283185307179586, 1.0}"/>
+ *   </ParameterList>
+ *  <Parameter name="Energy Distribution" type="Histogram Distribution" value="{{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
+ *  <Parameter name="Time Distribution" type="Uniform Distribution" value="{0.0,1e50,1.0}"/>
+ * </ParameterList>
+ *
+ * <ParameterList name="Phase Space Response: Cylindrical">
+ *  <Parameter name="Id" type="unsigned int" value="2"/>
+ *  <ParameterList name="Spatial Distribution">
+ *    <Parameter name="R Distribution" type="Power 1 Distribution" value="{1.0, 0.0, 1.0}"/>
+ *    <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,6.283185307179586,1}"/>
+ *    <Parameter name="Axis Distribution" type="Uniform Distribution" value="{-10,10,1}"/>
+ *    <Parameter name="Center X Position" type="double" value="0.0"/>
+ *    <Parameter name="Center Y Position" type="double" value="0.0"/>
+ *    <Parameter name="Center Z Position" type="double" value="0.0"/>
+ *    <Parameter name="Axis" type="string" value="Z"/>
+ *   </ParameterList>
+ *   <ParameterList name="Directional Distribution">
+ *     <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1.0,1.0,1.0}"/> 
+ *     <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0.0, 6.283185307179586, 1.0}"/>
+ *   </ParameterList>
+ *  <Parameter name="Energy Distribution" type="Histogram Distribution" value="{{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
+ *  <Parameter name="Time Distribution" type="Uniform Distribution" value="{0.0,1e50,1.0}"/>
+ * </ParameterList>
+ *
+ * <ParameterList name="Phase Space Response: Spherical">
+ *  <Parameter name="Id" type="unsigned int" value="3"/>
+ *  <ParameterList name="Spatial Distribution">
+ *    <Parameter name="R Distribution" type="Power 1 Distribution" value="{1.0, 0.0, 1.0}"/>
+ *    <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,6.283185307179586,1}"/>
+ *    <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1,1,1.0}"/>
+ *    <Parameter name="Center X Position" type="double" value="0.0"/>
+ *    <Parameter name="Center Y Position" type="double" value="0.0"/>
+ *    <Parameter name="Center Z Position" type="double" value="0.0"/>
+ *    <Parameter name="Axis" type="string" value="Z"/>
+ *   </ParameterList>
+ *   <ParameterList name="Directional Distribution">
+ *     <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1.0,1.0,1.0}"/> 
+ *     <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0.0, 6.283185307179586, 1.0}"/>
+ *   </ParameterList>
+ *  <Parameter name="Energy Distribution" type="Histogram Distribution" value="{{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
+ *  <Parameter name="Time Distribution" type="Uniform Distribution" value="{0.0,1e50,1.0}"/>
+ * </ParameterList>
+ * \endcode
  *
  * \section estimator_construction Estimator Construction
- * 
+ * There are currently five types of estimators that can be created: the
+ * surface current estimator, the surface flux estimator, the cell track
+ * length flux estimator, the cell collision flux estimator and the 
+ * cell pulse height estimator. Each estimator requires four parameter 
+ * elements. There are also several optional parameter elements.
+ *
+ * The first parameter element that every estimator needs is the id parameter.
+ * Every estimator must have a unique id. If DAGMC is being used, the estimator
+ * id can be specified in CUBIT. To further modify the estimator defined in
+ * CUBIT, the same id must be specified in the id parameter.
+ *
+ * The second parameter element is the type parameter. The following type
+ * parameter value attributes are valid:
+ * <ul>
+ *  <li>surface.current</li>
+ *  <li>surface.flux</li>
+ *  <li>cell.tl.flux</li>
+ *  <li>cell.c.flux</li>
+ *  <li>cell.pulse.height</li>
+ * </ul>
+ * If DAGMC is being used, the estimator type can also be specified in CUBIT.
+ *
+ * The third parameter element is the particle type parameter. This parameter
+ * specifies which particles can contribute to the estimator. Currently, the
+ * only valid particle types are "Neutron" and "Photon". If DAGMC is being
+ * used, the particle type can also be specified in CUBIT.
+ *
+ * The fourth parameter element is the surfaces or cells parameter. This
+ * parameter specifies which surfaces (for surface estimators) or cells (
+ * for cell estimators) the estimator will watch. Every estimator must have at 
+ * least one cell or surface to watch. If DAGMC is being used, the cells or
+ * surfaces associated with an estimator can be specified in CUBIT. Any other
+ * cells or surfaces specified in this parameter element will be added to
+ * the list specified in CUBIT (technically the union will be taken).
+ *
+ * The first optional parameter element is the response function parameter.
+ * This parameter specifies the response functions (ids) that should be
+ * used with the estimator.
+ *
+ * The second optional parameter element is the multiplier parameter. This
+ * parameter specifies the multiplier (or scaling factor) that should be
+ * applied to the multiplier. This will typically be used to scale the
+ * estimator to a specific source strength.
+ *
+ * The final optional parameter element is the bins parameter list. The bins
+ * parameter list will contain the phase space binning desired for the
+ * estimator. The phase space bins that can currently be specified are the
+ * following:
+ * <ul>
+ *  <li>energy bins</li>
+ *  <li>time bins</li>
+ *  <li>cosine bins</li>
+ *  <li>collision number bins</li>
+ *  <li>generation number bins</li>
+ * </ul>
+ * The order that the different phase space bins are specified in is 
+ * important. Later bins are added to all of the bins previously added (they
+ * run the fastest).
+ *
+ * Note that if only basic estimators are required and DAGMC is being used
+ * all of the estimators can be defined in CUBIT. This will leave the 
+ * estimators xml file empty.
+ *
+ * Some example estimators are given below.
+ * \code
+ * <ParameterList name="Estimators">
+ *
+ * <ParameterList name="Cell Track Length Flux Estimator">
+ *   <Parameter name="Id" type="unsigned int" value="1"/>
+ *   <Parameter name="Type" type="string" value="cell.tl.flux"/>
+ *   <Parameter name="Multiplier" type="double" value="2.0"/>
+ *   <Parameter name="Response Functions" type="Array(unsigned int)" value="{0}"/>
+ *   <ParameterList name="Bins">
+ *     <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
+ *     <Parameter name="Time Bins" type="Array(double)" value="{0.0, 1e-9, 1e-8, 1e-7, 1.0}"/>
+ *   </ParameterList>
+ * </ParameterList>
+ *
+ * <ParameterList name="Cell Collision Flux Estimator">
+ *  <Parameter name="Id" type="unsigned int" value="2"/>
+ *  <Parameter name="Type" type="string" value="cell.c.flux"/>
+ *  <Parameter name="Particle Type" type="string" value="Neutron"/>
+ *  <Parameter name="Multiplier" type="double" value="1.0"/>
+ *  <Parameter name="Response Functions" type="Array(unsigned int)" value="{0,1}"/>
+ *  <ParameterList name="Bins">
+ *    <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
+ *    <Parameter name="Collision Number Bins" type="Array(unsigned int)" value="{0, 1, 2, 10}"/>
+ *  </ParameterList>
+ * </ParameterList>
+ *
+ * <ParameterList name="Pulse Height Estimator">
+ *  <Parameter name="Id" type="unsigned int" value="4"/>
+ *  <Parameter name="Type" type="string" value="cell.pulse.height"/>
+ *  <Parameter name="Particle Type" type="string" value="Photon"/>
+ *  <Parameter name="Multiplier" type="double" value="1.0"/>
+ *  <Parameter name="Cells" type="Array(unsigned int)" value="{1,26}"/>
+ *  <Parameter name="Energy Multiplication" type="bool" value="true"/>
+ *  <ParameterList name="Bins">
+ *    <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
+ *  </ParameterList>
+ * </ParameterList>
+
+ * <ParameterList name="Surface Flux Estimator">
+ *  <Parameter name="Id" type="unsigned int" value="9"/>
+ *  <Parameter name="Type" type="string" value="surface.flux"/>
+ *  <Parameter name="Particle Type" type="string" value="Neutron"/>
+ *  <Parameter name="Multiplier" type="double" value="2.0"/>
+ *  <Parameter name="Surfaces" type="Array(unsigned int)" value="{7,16,25}"/>
+ *  <ParameterList name="Bins">
+ *    <Parameter name="Cosine Bins" type="Array(double)" value="{-1.0, -0.5, 0.0, 0.5, 1.0}"/>
+ *    <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
+ *  </ParameterList>
+ * </ParameterList>
+  
+ * <ParameterList name="Surface Current Estimator">
+ *  <Parameter name="Id" type="unsigned int" value="10"/>
+ *  <Parameter name="Type" type="string" value="surface.current"/>
+ *  <Parameter name="Particle Type" type="string" value="Neutron"/>
+ *  <Parameter name="Multiplier" type="double" value="2.0"/>
+ *  <Parameter name="Surfaces" type="Array(unsigned int)" value="{7,16,25}"/>
+ *  <ParameterList name="Bins">
+ *    <Parameter name="Cosine Bins" type="Array(double)" value="{-1.0, -0.5, 0.0, 0.5, 1.0}"/>
+ *    <Parameter name="Collision Number Bins" type="Array(unsigned int)" value="{0, 1, 2, 10}"/>
+ *  </ParameterList>
+ * </ParameterList>
+ *
+ * </ParameterList>
+ * \endcode
  *
  * \section source_construction Source Construction
+ * There are currently two types of sources that can be created: distributed
+ * sources and compound sources. The distributed source is simply a phase
+ * space distribution that can be sampled from to get particle starting points.
+ * The compound source is a series of distributed sources that have been
+ * combined to define a more complicated source. 
  *
- * \section runtime_modifications Run Time Modifications
+ * \subsection distributed_source Distributed Source Construction
+ * Every distributed source requires six parameter elements. The first 
+ * parameter element is the id parameter. This parameter becomes more 
+ * important when defining compound sources.
+ *
+ * The second parameter element is the particle type element. This parameter
+ * specifies the particle type that will be generated by the source. 
+ * Currently, the only valid particle types are "Neutron" and "Photon".
+ *
+ * The third parameter element is the spatial distribution parameter list.
+ * For more on the spatial distribution parameter list, refer to the 
+ * discussion on \ref phase_space_response_function "creating phase space response functions".
+ * 
+ * The fourth parameter element is the directional distribution parameter list.
+ * For more on the directional distribution parameter list, refer to the
+ * discussion on \ref phase_space_response_function "creating phase space response functions".
+ *
+ * The fifth parameter element is the energy distribution parameter, which is
+ * a \ref one_d_distributions "one dimensional distribution".
+ *
+ * The sixth parameter element is the time distribution parameter, which is a
+ * \ref one_d_distributions "one dimensional distribution".
+ *
+ * A number of optional parameter elements can also be used. The first is the
+ * rejection cell parameter. When a sources spatial distribution is to 
+ * complicated to be modeled with a cartesian, cylindrical or spherical 
+ * distribution, one can specify a rejection cell that can be used in 
+ * conjunction with one of the three distributions.
+ *
+ * \section runtime_modifications Runtime Configuration
  *
  */ 
