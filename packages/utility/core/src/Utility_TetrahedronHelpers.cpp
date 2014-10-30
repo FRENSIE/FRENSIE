@@ -45,7 +45,7 @@ double calculateTetrahedronVolume( const double vertex_a[3],
 }
 
 // Calculate the Barycentric Transform Matrix
-double calculateBarycentricTransformMatrix(  const double vertex_a[3],
+double* calculateBarycentricTransformMatrix(  const double vertex_a[3],
 				             const double vertex_b[3],
 				             const double vertex_c[3],
 				             const double vertex_d[3] )
@@ -60,12 +60,11 @@ double calculateBarycentricTransformMatrix(  const double vertex_a[3],
   double t8 = 1.0;//vertex_b[2] - vertex_d[2];
   double t9 = 0.0;//vertex_c[2] - vertex_d[2];
   
-  //double t[9] = { t1, t2, t3, t4, t5, t6, t7, t8, t9 };
+  double* t[9] = { t1, t2, t3, t4, t5, t6, t7, t8, t9 };
   
-  moab::Matrix3 T( t1, t2, t3, t4, t5, t6, t7, t8, t9 );
-  double deter = T.determinant();
+  moab::Matrix3 T( t );
   
-  return deter;
+  return T.array();
 }
 
 } // end Utility namespace
