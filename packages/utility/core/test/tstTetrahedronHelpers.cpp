@@ -8,6 +8,7 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
+#include <Teuchos_LocalTestingHelpers.hpp>
 #include <Teuchos_Utils.hpp>
 
 // FRENSIE Includes
