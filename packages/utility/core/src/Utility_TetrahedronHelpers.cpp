@@ -51,23 +51,14 @@ double* calculateBarycentricTransformMatrix( const double vertex_a[3],
 				             const double vertex_d[3] )
 {				            
   double t1 = vertex_a[0] - vertex_d[0]; 
-  std::cout << t1;
   double t2 = vertex_b[0] - vertex_d[0]; 
-  std::cout << t2;
   double t3 = vertex_c[0] - vertex_d[0];
-  std::cout << t3;
   double t4 = vertex_a[1] - vertex_d[1];
-  std::cout << t4;
   double t5 = vertex_b[1] - vertex_d[1];
-  std::cout << t5;
   double t6 = vertex_c[1] - vertex_d[1];
-  std::cout << t6;
   double t7 = vertex_a[2] - vertex_d[2];
-  std::cout << t7;
   double t8 = vertex_b[2] - vertex_d[2];
-  std::cout << t8;
   double t9 = vertex_c[2] - vertex_d[2];
-  std::cout << t9;
   
   moab::Matrix3 T( t1, t2, t3, t4, t5, t6, t7, t8, t9 );
   T = T.inverse();
