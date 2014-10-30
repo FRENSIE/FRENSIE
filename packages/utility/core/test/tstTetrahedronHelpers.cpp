@@ -60,13 +60,13 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
   double vertex_c[3] = {0.0, 1.0, 0.0};
   double vertex_d[3] = {0.0, 0.0, 1.0};
   
-  double barycentricTransformMatrix[9] = 
+  double* barycentricTransformMatrix = 
                    Utility::calculateBarycentricTransformMatrix( vertex_a,
 						                 vertex_b,
 						                 vertex_c,
 						                 vertex_d );
   
-  double* knonwBarycentricTransformMatrix[9] = { -1.0, -1.0, -1.0,
+  double knonwBarycentricTransformMatrix[9] = { -1.0, -1.0, -1.0,
                                                   1.0,  0.0,  0.0,
                                                   0.0,  1.0,  0.0 };
   
