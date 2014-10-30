@@ -39,6 +39,31 @@ inline double calculateTetrahedronVolume( const moab::CartVect& vertex_a,
 				     vertex_d.array() );
 }
 
+//! Calculate tetrahedron barycentric transform matrix
+double calculateBarycentricTransformMatrix( const double vertex_a[3],
+				            const double vertex_b[3],
+				            const double vertex_c[3],
+				            const double vertex_d[3] );
+
+//! Calculate the volume of a tetrahedron
+double calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
+				            const moab::CartVect& vertex_b,
+				            const moab::CartVect& vertex_c,
+				            const moab::CartVect& vertex_d );
+                
+
+// Calculate the volume of a tetrahedron
+inline double calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
+					           const moab::CartVect& vertex_b,
+					          const moab::CartVect& vertex_c,
+					          const moab::CartVect& vertex_d )
+{
+  return calculateBarycentricTransformMatrix( vertex_a.array(),
+				              vertex_b.array(),
+				              vertex_c.array(),
+				              vertex_d.array() );
+
+
 } // end Utility namespace
 
 #endif // end UTILITY_TETRAHEDRON_HELPERS_HPP
