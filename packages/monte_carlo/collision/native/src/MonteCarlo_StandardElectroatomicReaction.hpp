@@ -52,7 +52,7 @@ public:
 
 private:
 
-  // The incoming energy grid (logarithms)
+  // The incoming energy grid
   Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
 
   // The cross section values evaluated on the incoming erg grid (logarithms)
@@ -86,7 +86,7 @@ class StandardElectroatomicReaction<InterpPolicy,true> : public ElectroatomicRea
 
 private:
 
-  // The incoming energy grid
+  // The incoming energy grid (logarithms)
   Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
 
   // The cross section values evaluated on the incoming energy grid
