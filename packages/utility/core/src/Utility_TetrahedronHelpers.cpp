@@ -45,10 +45,10 @@ double calculateTetrahedronVolume( const double vertex_a[3],
 }
 
 // Calculate the Barycentric Transform Matrix
-double calculateBarycentricTransformMatrix( const double vertex_a[3],
-				            const double vertex_b[3],
-				            const double vertex_c[3],
-				            const double vertex_d[3] )
+double* calculateBarycentricTransformMatrix( const double vertex_a[3],
+				             const double vertex_b[3],
+				             const double vertex_c[3],
+				             const double vertex_d[3] )
 {				            
   double t1 = vertex_a[0] - vertex_d[0];
   double t2 = vertex_b[0] - vertex_d[0];
