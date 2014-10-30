@@ -64,15 +64,15 @@ double calculateBarycentricTransformMatrix(  const double vertex_a[3],
   moab::Matrix3 T( t1, t2, t3, t4, t5, t6, t7, t8, t9 );
   T = T.inverse();
   
-  transform_array[0] = T.operator( 0, 0 );
-  transform_array[1] = T.operator( 0, 1 );
-  transform_array[2] = T.operator( 0, 2 );
-  transform_array[3] = T.operator( 1, 0 );
-  transform_array[4] = T.operator( 1, 1 );
-  transform_array[5] = T.operator( 1, 2 );
-  transform_array[6] = T.operator( 2, 0 );
-  transform_array[7] = T.operator( 2, 1 );
-  transform_array[8] = T.operator( 2, 2 );
+  transform_array[0] = T.operator()( 0, 0 );
+  transform_array[1] = T.operator()( 0, 1 );
+  transform_array[2] = T.operator()( 0, 2 );
+  transform_array[3] = T.operator()( 1, 0 );
+  transform_array[4] = T.operator()( 1, 1 );
+  transform_array[5] = T.operator()( 1, 2 );
+  transform_array[6] = T.operator()( 2, 0 );
+  transform_array[7] = T.operator()( 2, 1 );
+  transform_array[8] = T.operator()( 2, 2 );
   
   return transform_array;
 }
