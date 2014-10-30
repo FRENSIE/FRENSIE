@@ -92,7 +92,8 @@ double NormalDistribution::evaluatePDF( const double indep_var_value ) const
     double argument = -(indep_var_value-d_mean)*(indep_var_value-d_mean)/
       (2*d_standard_deviation*d_standard_deviation);
   
-    return NormalDistribution::constant_multiplier*exp( argument );
+    return NormalDistribution::constant_multiplier*exp( argument )/
+      d_standard_deviation;
   }
 }
 
