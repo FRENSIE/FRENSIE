@@ -57,16 +57,18 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers, calculateTetrahedronVolume_cartvect )
 TEUCHOS_UNIT_TEST( TetrahedronHelpers, 
                    calculateBarycentricTransformMatrix_array )
 {
-  double vertex_a[3] = {0.0, 0.0, 0.0};
-  double vertex_b[3] = {1.0, 0.0, 0.0};
-  double vertex_c[3] = {0.0, 1.0, 0.0};
-  double vertex_d[3] = {0.0, 0.0, 1.0};
+  double vertex_a[3] = { 0.0, 0.0, 0.0 };
+  double vertex_b[3] = { 1.0, 0.0, 0.0 };
+  double vertex_c[3] = { 0.0, 1.0, 0.0 };
+  double vertex_d[3] = { 0.0, 0.0, 1.0 };
+  double transform_array[9] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 }
   
   double barycentricTransformMatrix = 
                    Utility::calculateBarycentricTransformMatrix( vertex_a,
 						                 vertex_b,
 						                 vertex_c,
-						                 vertex_d );
+						                 vertex_d,
+						                 transform_array );
 
   //double* knownBarycentricTransformMatrix[9] = { -1.0, -1.0, -1.0,
   //                                                1.0,  0.0,  0.0,
