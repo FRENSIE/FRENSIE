@@ -45,7 +45,7 @@ double calculateTetrahedronVolume( const double vertex_a[3],
 }
 
 // Calculate the Barycentric Transform Matrix
-double* calculateBarycentricTransformMatrix( const double vertex_a[3],
+double calculateBarycentricTransformMatrix(  const double vertex_a[3],
 				             const double vertex_b[3],
 				             const double vertex_c[3],
 				             const double vertex_d[3] )
