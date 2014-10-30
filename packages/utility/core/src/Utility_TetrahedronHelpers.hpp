@@ -40,20 +40,20 @@ inline double calculateTetrahedronVolume( const moab::CartVect& vertex_a,
 }
 
 //! Calculate tetrahedron barycentric transform matrix
-double calculateBarycentricTransformMatrix( const double vertex_a[3],
+double* calculateBarycentricTransformMatrix( const double vertex_a[3],
 				             const double vertex_b[3],
 				             const double vertex_c[3],
 				             const double vertex_d[3] );
 
 //! Calculate the volume of a tetrahedron
-double calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
+double* calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 				             const moab::CartVect& vertex_b,
 				             const moab::CartVect& vertex_c,
 				             const moab::CartVect& vertex_d );
                 
 
 // Calculate the volume of a tetrahedron
-inline double calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
+inline double* calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 					            const moab::CartVect& vertex_b,
 					            const moab::CartVect& vertex_c,
 					            const moab::CartVect& vertex_d )
