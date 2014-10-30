@@ -68,9 +68,7 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
 						                 vertex_c,
 						                 vertex_d );
   
-  TEST_COMPARE_ARRAYS( barycentricTransformMatrix,
-                                { -1.0, -1.0, -1.0, 1.0,  0.0,  0.0,
-                                   0.0,  1.0,  0.0 });
+ TEST_EQUALITY_CONST( barycentricTransformMatrix[0], -1.0 )
 }
 
 
