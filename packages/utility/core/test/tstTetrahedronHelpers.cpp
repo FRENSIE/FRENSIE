@@ -67,8 +67,12 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
 						                 vertex_b,
 						                 vertex_c,
 						                 vertex_d );
+
+  //double* knownBarycentricTransformMatrix[9] = { -1.0, -1.0, -1.0,
+  //                                                1.0,  0.0,  0.0,
+  //                                                0.0,  1.0,  0.0 };
   
- TEST_EQUALITY_CONST( barycentricTransformMatrix[0], -1.0 )
+ TEST_FLOATING_EQUALITY( barycentricTransformMatrix[0], 0.0, 1e-12 )
 }
 
 
