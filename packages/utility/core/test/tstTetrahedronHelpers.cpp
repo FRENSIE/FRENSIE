@@ -72,7 +72,15 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
   //                                                1.0,  0.0,  0.0,
   //                                                0.0,  1.0,  0.0 };
   
- TEST_FLOATING_EQUALITY( barycentricTransformMatrix[8], -1.0, 1e-12 )
+  TEST_FLOATING_EQUALITY( barycentricTransformMatrix[0], 5.0, 1e-12 )
+  TEST_FLOATING_EQUALITY( barycentricTransformMatrix[1], 5.0, 1e-12 )
+  TEST_FLOATING_EQUALITY( barycentricTransformMatrix[2], 5.0, 1e-12 )
+  TEST_FLOATING_EQUALITY( barycentricTransformMatrix[3], 5.0, 1e-12 )
+  TEST_FLOATING_EQUALITY( barycentricTransformMatrix[4], 5.0, 1e-12 )
+  TEST_FLOATING_EQUALITY( barycentricTransformMatrix[5], 5.0, 1e-12 )
+  TEST_FLOATING_EQUALITY( barycentricTransformMatrix[6], 5.0, 1e-12 )
+  TEST_FLOATING_EQUALITY( barycentricTransformMatrix[7], 5.0, 1e-12 )
+  TEST_FLOATING_EQUALITY( barycentricTransformMatrix[8], 5.0, 1e-12 )
 }
 
 
