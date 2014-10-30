@@ -56,7 +56,8 @@ double calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 inline double calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 					           const moab::CartVect& vertex_b,
 					           const moab::CartVect& vertex_c,
-					           const moab::CartVect& vertex_d )
+					           const moab::CartVect& vertex_d,
+					           double transform_array[] )
 {
   return calculateBarycentricTransformMatrix( vertex_a.array(),
 				              vertex_b.array(),
