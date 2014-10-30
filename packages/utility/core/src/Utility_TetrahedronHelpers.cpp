@@ -74,7 +74,7 @@ double calculateBarycentricTransformMatrix(  const double vertex_a[3],
   transform_array[7] = T.operator( 2, 1 );
   transform_array[8] = T.operator( 2, 2 );
   
-  return tArray;
+  return transform_array;
 }
 
 } // end Utility namespace
