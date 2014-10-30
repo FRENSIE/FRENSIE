@@ -67,9 +67,9 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
 						                 vertex_c,
 						                 vertex_d );
   
-  TEST_COMPARE_FLOATING_ARRAYS( barycentricTransformMatrix,
+  TEST_COMPARE_ARRAYS( barycentricTransformMatrix,
                                 { -1.0, -1.0, -1.0, 1.0,  0.0,  0.0,
-                                   0.0,  1.0,  0.0 }, 1e-12 );
+                                   0.0,  1.0,  0.0 });
 }
 
 
