@@ -12,6 +12,7 @@
 
 // FRENSIE Includes
 #include "Utility_TetrahedronHelpers.hpp"
+#include <moab/Matrix3.hpp>
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -48,6 +49,31 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers, calculateTetrahedronVolume_cartvect )
   
   TEST_EQUALITY_CONST( volume, 1.0/6.0 );
 }
+
+//---------------------------------------------------------------------------//
+// Check that the barycentric transform matrix can be calculated
+TEUCHOS_UNIT_TEST( TetrahedronHelpers, 
+                   calculateBarycentricTransformMatrix_array )
+{
+  double vertex_a[3] = {0.0, 0.0, 0.0};
+  double vertex_b[3] = {1.0, 0.0, 0.0};
+  double vertex_c[3] = {0.0, 1.0, 0.0};
+  double vertex_d[3] = {0.0, 0.0, 1.0};
+  
+  double barycentricTransformMatrix[9] = 
+                   Utility::calculateBarycentricTransformMatrix( vertex_a,
+						                 vertex_b,
+						                 vertex_c,
+						                 vertex_d );
+  
+  double knonwBarycentricTransformMatrix[9] = { -1.0, -1.0, -1.0,
+                                                 1.0,  0.0,  0.0,
+                                                 0.0,  1.0,  0.0 };
+  
+  TEST_COMPARE_FLOATING_ARRAYS( barycentricTransformMatrix,
+                                knownBarycentricTransformMatrix, 1e-12 );
+}
+
 
 //---------------------------------------------------------------------------//
 // end tstTetrahedronHelpers.cpp

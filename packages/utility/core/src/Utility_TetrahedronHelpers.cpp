@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "Utility_TetrahedronHelpers.hpp"
 #include "Utility_ContractException.hpp"
+#include <moab/Matrix3.hpp>
 
 namespace Utility{
 
@@ -43,6 +44,27 @@ double calculateTetrahedronVolume( const double vertex_a[3],
   return volume;
 }
 
+// Calculate the Barycentric Transform Matrix
+double calculateBarycentricTransformMatrix( const double vertex_a[3],
+				            const double vertex_b[3],
+				            const double vertex_c[3],
+				            const double vertex_d[3] )
+{				            
+  double t1 = vertex_a[0] - vertex_d[0];
+  double t2 = vertex_b[0] - vertex_d[0];
+  double t3 = vertex_c[0] - vertex_d[0];
+  double t4 = vertex_a[1] - vertex_d[1];
+  double t5 = vertex_b[1] - vertex_d[1];
+  double t6 = vertex_c[1] - vertex_d[1];
+  double t7 = vertex_a[2] - vertex_d[2];
+  double t8 = vertex_b[2] - vertex_d[2];
+  double t9 = vertex_c[2] - vertex_d[2];
+  
+  moab::Matrix3( t1, t2, t3, t4, t5, t6, t7, t8, t9 ) T;
+  T = T.inverse();
+  
+  return T.array();
+}
 
 
 } // end Utility namespace
