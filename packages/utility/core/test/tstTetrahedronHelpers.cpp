@@ -62,7 +62,7 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
   double vertex_c[3] = {0.0, 1.0, 0.0};
   double vertex_d[3] = {0.0, 0.0, 1.0};
   
-  double* barycentricTransformMatrix = 
+  double barycentricTransformMatrix = 
                    Utility::calculateBarycentricTransformMatrix( vertex_a,
 						                 vertex_b,
 						                 vertex_c,
@@ -72,7 +72,7 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
   //                                                1.0,  0.0,  0.0,
   //                                                0.0,  1.0,  0.0 };
   
-  TEST_FLOATING_EQUALITY( barycentricTransformMatrix[0], 1.0, 1e-12 )
+  TEST_FLOATING_EQUALITY( barycentricTransformMatrix[0], -1.0, 1e-12 )
 }
 
 
