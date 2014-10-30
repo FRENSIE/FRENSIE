@@ -13,6 +13,7 @@
 // FRENSIE Includes
 #include "Utility_TetrahedronHelpers.hpp"
 #include <moab/Matrix3.hpp>
+#include <moab/CartVect.hpp>
 
 //---------------------------------------------------------------------------//
 // Tests.

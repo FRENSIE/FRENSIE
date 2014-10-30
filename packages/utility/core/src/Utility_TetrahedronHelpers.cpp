@@ -16,6 +16,7 @@
 #include "Utility_TetrahedronHelpers.hpp"
 #include "Utility_ContractException.hpp"
 #include <moab/Matrix3.hpp>
+#include <moab>
 
 namespace Utility{
 
@@ -65,7 +66,6 @@ double* calculateBarycentricTransformMatrix( const double vertex_a[3],
   
   return T.array();
 }
-
 
 } // end Utility namespace
 

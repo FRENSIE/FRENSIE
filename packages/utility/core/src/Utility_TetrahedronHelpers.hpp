@@ -62,7 +62,7 @@ inline double* calculateBarycentricTransformMatrix( const moab::CartVect& vertex
 				              vertex_b.array(),
 				              vertex_c.array(),
 				              vertex_d.array() );
-
+}
 
 } // end Utility namespace
 
