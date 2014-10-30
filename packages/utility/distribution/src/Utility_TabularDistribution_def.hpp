@@ -116,6 +116,32 @@ double TabularDistribution<InterpolationPolicy>::evaluatePDF(
   }
 }
 
+// Evaluate the CDF
+template<typename InterpolationPolicy>
+double TabularDistribution<InterpolationPolicy>::evaluateCDF( 
+					   const double indep_var_value ) const
+{
+  if( indep_var_value < d_distribution.front().first )
+    return 0.0;
+  else if( indep_var_value >= d_distribution.back().first )
+    return 1.0;
+  else
+  {
+    DistributionArray::const_iterator start, end, lower_bin_boundary;
+    start = d_distribution.begin();
+    end = d_distribution.end();
+
+    lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							  end,
+							  indep_var_value );
+
+    double indep_diff = indep_var_value - lower_bin_boundary->first;
+
+    return lower_bin_boundary->second + indep_diff*lower_bin_boundary->third +
+           indep_diff*indep_diff/2.0 * lower_bin_boundary->fourth;
+  }
+}
+
 // Return a random sample from the distribution
 template<typename InterpolationPolicy>
 inline double TabularDistribution<InterpolationPolicy>::sample()

@@ -61,7 +61,7 @@ double ElectronScatteringAngularDistribution::sampleAngleCosine(
 
     upper_bin_boundary = lower_bin_boundary;
     ++upper_bin_boundary;
-	//! \todo Ask Alex if it would be better to pass the interpolation weights instead of calculating them? Convert sample angle cosine function into utility form.
+	//! \todo re-write for Ace table data instead of Penelope data
     // Calculate the interpolation fraction
     double interpolation_fraction = ( log( energy ) - log( lower_bin_boundary->first ) )/
       ( log( upper_bin_boundary->first ) - log( lower_bin_boundary->first ) );
