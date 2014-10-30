@@ -67,7 +67,7 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
 						                 vertex_c,
 						                 vertex_d );
   
-  double knownBarycentricTransformMatrix[9] = { -1.0, -1.0, -1.0,
+  double* knownBarycentricTransformMatrix[9] = { -1.0, -1.0, -1.0,
                                                   1.0,  0.0,  0.0,
                                                   0.0,  1.0,  0.0 };
   
