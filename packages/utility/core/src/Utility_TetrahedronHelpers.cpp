@@ -62,8 +62,9 @@ double calculateBarycentricTransformMatrix( const double vertex_a[3],
   
   moab::Matrix3 T( t1, t2, t3, t4, t5, t6, t7, t8, t9 );
   T = T.inverse();
+  double* btm = T.array();
   
-  return T.array();
+  return btm;
 }
 
 
