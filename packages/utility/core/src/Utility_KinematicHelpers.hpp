@@ -18,6 +18,10 @@
 
 namespace Utility{
 
+//! Calculate the dimensionless speed of a massive particle: velocity / speed of light
+double calculateDimensionlessRelativisticSpeed( const double rest_mass_energy,
+                                                const double kinetic_energy );
+
 //! Calculate the speed of a massive particle (cm/s)
 double calculateRelativisticSpeed( const double rest_mass_energy,
                                    const double kinetic_energy );
@@ -34,6 +38,14 @@ double calculateSpeed( const double rest_mass_energy,
 double calculateKineticEnergy( const double rest_mass_energy,
                                const double speed );
 
+//! Calculate the dimensionless momentum of a massive particle ( momentum/mass*c )
+double calculateDimensionlessRelativisticMomentum( const double rest_mass_energy,
+                                                  const double kinetic_energy );
+
+//! Calculate the momentum of a massive particle ( MeV*s/cm )
+double calculateRelativisticMomentum( const double rest_mass_energy,
+                                      const double kinetic_energy );
+
 //! Calculate the beta min value
 double calculateBetaMin( const double kinetic_energy,
 			 const double kT );
@@ -49,6 +61,24 @@ double calculateAlphaMax( const double kinetic_energy,
 			  const double beta,
 			  const double A,
 			  const double kT );
+
+//! Calculate the dimensionless speed of a massive particle (beta = v/c)
+//! \todo Add Unit Test
+inline double calculateDimensionlessRelativisticSpeed( 
+                                                const double rest_mass_energy,
+                                                const double kinetic_energy )
+{
+  // Make sure the rest mass energy is valid
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );
+  testPrecondition( rest_mass_energy > 0.0 );
+  // Make sure the kinetic energy is valid
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( kinetic_energy ) );
+  testPrecondition( kinetic_energy > 0.0 );
+
+  double energy = kinetic_energy + rest_mass_energy;
+
+  return sqrt( 1.0 - rest_mass_energy*rest_mass_energy/(energy*energy) );
+}
 
 // Calculate the speed of a massive particle 
 inline double calculateRelativisticSpeed(const double rest_mass_energy,
@@ -115,6 +145,25 @@ inline double calculateKineticEnergy( const double rest_mass_energy,
   return 0.5 * rest_mass_energy * speed * speed / 
         ( Utility::PhysicalConstants::speed_of_light * 
           Utility::PhysicalConstants::speed_of_light );
+}
+
+// Calculate the dimensionless momentum of a massive particle ( momentum/mass*c )
+//! Write Unit Test
+inline double calculateDimensionlessRelativisticMomentum( 
+                                                  const double rest_mass_energy,
+                                                  const double kinetic_energy )
+{
+  return sqrt( kinetic_energy*( kinetic_energy + 2.0*rest_mass_energy ) )
+             /rest_mass_energy;
+}
+
+// Calculate the momentum of a massive particle ( MeV*s/cm )
+//! Write Unit Test
+inline double calculateRelativisticMomentum( const double rest_mass_energy,
+                                             const double kinetic_energy )
+{
+  return sqrt( kinetic_energy*( kinetic_energy + 2.0*rest_mass_energy ) )
+             /Utility::PhysicalConstants::speed_of_light;
 }
 
 } // end Utility namespace

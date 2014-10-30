@@ -108,6 +108,32 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 UNIT_TEST_INSTANTIATION( TabularDistribution, evaluatePDF );
 
 //---------------------------------------------------------------------------//
+// Check that the CDF can be evaluated 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution, 
+				   evaluateCDF,
+				   InterpolationPolicy )
+{
+  initializeDistribution<InterpolationPolicy>();
+
+  TEST_EQUALITY_CONST( distribution->evaluateCDF( 0.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1e-3 ), 
+			  0.0000000000, 
+			  1e-6 );
+  TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1e-2 ), 
+			  0.33333333333, 
+			  1e-6 );
+  TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1e-1 ), 
+			  0.66666666667, 
+			  1e-6 );
+  TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1.0 ), 
+			  1.0000000000, 
+			  1e-6 );
+  TEST_EQUALITY_CONST( distribution->evaluateCDF( 2.0 ), 1.0 );
+}
+
+UNIT_TEST_INSTANTIATION( TabularDistribution, evaluateCDF );
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 				   sample,

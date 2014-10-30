@@ -12,6 +12,10 @@
 // Std Lib Includes
 #include <limits>
 
+// Boost Includes
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
@@ -30,19 +34,18 @@ class HardElasticElectronScatteringDistribution : public ElectronScatteringDistr
 
 public:
 
-  //! Typedef for the elastic distribution
-  typedef Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
-                                                        ElasticDistribution;
-
-  //! Typedef for the elastic interpolation array
-  typedef Teuchos::Array< Utility::Pair< double,double > > WeightArray;
+  //! Typedef for the  elastic distribution
+  typedef Teuchos::Array<Utility::Pair<double,
+                                     Teuchos::RCP<Utility::OneDDistribution> > >
+                                     ElasticDistribution;
 
   //! Constructor
   HardElasticElectronScatteringDistribution(
-  ElasticDistribution& elastic_scattering_distribution,
-  WeightArray& interpolation_weights );
+                 const int atomic_number,
+                 const double cutoff_angle_cosine,
+                 ElasticDistribution& elastic_scattering_distribution);
 
-  //! Destructor
+  //! Destructor 
   virtual ~HardElasticElectronScatteringDistribution()
   { /* ... */ }
 
@@ -50,13 +53,26 @@ public:
   void scatterElectron( ElectronState& electron,
 	                    ParticleBank& bank) const;
 
+protected:
+
+// Evaluate the screening angle at the given electron energy
+double evaluateScreeningAngle( const double energy ) const;
+
+// Evaluate the scattering angle from the analytical function
+double evaluateScreenedScatteringAngle( const double energy ) const; 
+
 private:
 
-  // elastic scattering distribution 
+  // Atomic number (Z) of the target atom
+  const int d_atomic_number;
+
+  // Cutoff angle cosine between the distribution and analytical function
+  const double d_cutoff_angle_cosine;
+
+  // elastic scattering distribution without forward screening data
   ElasticDistribution d_elastic_scattering_distribution;
 
-  // energy grid interpolation fractions for elastic scattering distributions
-  WeightArray d_interpolation_weights;
+
 };
 
 } // end MonteCarlo namespace

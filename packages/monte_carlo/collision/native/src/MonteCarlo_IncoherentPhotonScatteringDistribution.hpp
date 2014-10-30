@@ -55,7 +55,8 @@ public:
 private:
 
   // Ignore doppler broadening
-  double returnComptonLine( const double initial_energy,
+  double returnComptonLine( 
+                const double initial_energy,
 			    const double compton_line_energy,
 			    const double scattering_angle_cosine,
 			    unsigned& shell_of_interaction ) const;
