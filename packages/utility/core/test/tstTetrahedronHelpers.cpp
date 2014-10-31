@@ -9,6 +9,7 @@
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_Array.hpp>
+#include <Teuchos_Tuple.hpp>
 
 // Moab Includes
 #include <moab/Matrix3.hpp>
@@ -83,6 +84,7 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
   double vertex_d[3] = { 0.0, 0.0, 1.0 };
   double transform_arrays[9]; // no need to initialize
   Teuchos::Array<double> teuchos_transform_array( 9 );
+  Teuchos::Tuple<double,9> teuchos_transform_tuple;
   moab::Matrix3 transform_matrix;
 
   // Usage A Test (safe)
@@ -94,7 +96,7 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
   
   TEST_FLOATING_EQUALITY( transform_arrays[0], -1.0, 1e-12 );
 
-  // Usage B Test (safest)
+  // Usage B Test (safe)
   Utility::calculateBarycentricTransformMatrix( 
 					 vertex_a,
 					 vertex_b,
@@ -104,7 +106,22 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
 
   TEST_FLOATING_EQUALITY( teuchos_transform_array[0], -1.0, 1e-12 );
 
-  // Usage C Test (potentially dangerous!)
+  // Usage C Test (safest)
+  Utility::calculateBarycentricTransformMatrix( 
+					 vertex_a,
+					 vertex_b,
+					 vertex_c,
+					 vertex_d,
+					 teuchos_transform_tuple.getRawPtr() );
+
+  Teuchos::Tuple<double,9> expected_transform_tuple = 
+    Teuchos::tuple<double>( -1.0, -1.0, -1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
+  
+  TEST_COMPARE_FLOATING_ARRAYS( teuchos_transform_tuple, 
+				expected_transform_tuple, 
+				1e-12 );
+
+  // Usage D Test (potentially dangerous)
   Utility::calculateBarycentricTransformMatrix(
 					 vertex_a,
 					 vertex_b,
