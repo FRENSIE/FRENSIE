@@ -8,13 +8,14 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_LocalTestingHelpers.hpp>
-#include <Teuchos_Utils.hpp>
+#include <Teuchos_Array.hpp>
+
+// Moab Includes
+#include <moab/Matrix3.hpp>
+#include <moab/CartVect.hpp>
 
 // FRENSIE Includes
 #include "Utility_TetrahedronHelpers.hpp"
-#include <moab/Matrix3.hpp>
-#include <moab/CartVect.hpp>
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -57,24 +58,61 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers, calculateTetrahedronVolume_cartvect )
 TEUCHOS_UNIT_TEST( TetrahedronHelpers, 
                    calculateBarycentricTransformMatrix_array )
 {
+  // double vertex_a[3] = { 0.0, 0.0, 0.0 };
+  // double vertex_b[3] = { 1.0, 0.0, 0.0 };
+  // double vertex_c[3] = { 0.0, 1.0, 0.0 };
+  // double vertex_d[3] = { 0.0, 0.0, 1.0 };
+  // double transform_arrays[9] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}
+  
+  // double barycentricTransformMatrix = 
+  //                  Utility::calculateBarycentricTransformMatrix( vertex_a,
+  // 						                 vertex_b,
+  // 						                 vertex_c,
+  // 						                 vertex_d,
+  // 				                 double transform_arrays[9]  );
+
+  // //double* knownBarycentricTransformMatrix[9] = { -1.0, -1.0, -1.0,
+  // //                                                1.0,  0.0,  0.0,
+  // //                                                0.0,  1.0,  0.0 };
+  
+  // TEST_FLOATING_EQUALITY( barycentricTransformMatrix[0], -1.0, 1e-12 );
+
   double vertex_a[3] = { 0.0, 0.0, 0.0 };
   double vertex_b[3] = { 1.0, 0.0, 0.0 };
   double vertex_c[3] = { 0.0, 1.0, 0.0 };
   double vertex_d[3] = { 0.0, 0.0, 1.0 };
-  double transform_arrays[9] = {0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0}
-  
-  double barycentricTransformMatrix = 
-                   Utility::calculateBarycentricTransformMatrix( vertex_a,
-						                 vertex_b,
-						                 vertex_c,
-						                 vertex_d,
-				                 double transform_arrays[9]  );
+  double transform_arrays[9]; // no need to initialize
+  Teuchos::Array<double> teuchos_transform_array( 9 );
+  moab::Matrix3 transform_matrix;
 
-  //double* knownBarycentricTransformMatrix[9] = { -1.0, -1.0, -1.0,
-  //                                                1.0,  0.0,  0.0,
-  //                                                0.0,  1.0,  0.0 };
+  // Usage A Test (safe)
+  Utility::calculateBarycentricTransformMatrix( vertex_a,
+						vertex_b,
+						vertex_c,
+						vertex_d,
+						transform_arrays );
   
-  TEST_FLOATING_EQUALITY( barycentricTransformMatrix[0], -1.0, 1e-12 )
+  TEST_FLOATING_EQUALITY( transform_arrays[0], -1.0, 1e-12 );
+
+  // Usage B Test (safest)
+  Utility::calculateBarycentricTransformMatrix( 
+					 vertex_a,
+					 vertex_b,
+					 vertex_c,
+					 vertex_d,
+					 teuchos_transform_array.getRawPtr() );
+
+  TEST_FLOATING_EQUALITY( teuchos_transform_array[0], -1.0, 1e-12 );
+
+  // Usage C Test (potentially dangerous!)
+  Utility::calculateBarycentricTransformMatrix(
+					 vertex_a,
+					 vertex_b,
+					 vertex_c,
+					 vertex_d,
+					 transform_matrix[0] );
+
+  TEST_FLOATING_EQUALITY( transform_matrix( 0, 0 ), -1.0, 1e-12 );
 }
 
 
