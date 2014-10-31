@@ -55,19 +55,18 @@ void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
                 
 
 // Calculate the volume of a tetrahedron
-/* inline double calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
-					           const moab::CartVect& vertex_b,
-					           const moab::CartVect& vertex_c,
-					           const moab::CartVect& vertex_d,
-				              double transform_arrays[9] )
+inline void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
+					         const moab::CartVect& vertex_b,
+					         const moab::CartVect& vertex_c,
+					         const moab::CartVect& vertex_d,
+				                 double transform_arrays[9] )
 {
   return calculateBarycentricTransformMatrix( vertex_a.array(),
 				              vertex_b.array(),
 				              vertex_c.array(),
 				              vertex_d.array(),
-				              transform_arrays[9] );
+				              transform_arrays );
 }
-*/
 } // end Utility namespace
 
 #endif // end UTILITY_TETRAHEDRON_HELPERS_HPP
