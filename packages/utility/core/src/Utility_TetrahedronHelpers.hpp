@@ -108,6 +108,12 @@ inline void calculateBarycentricTransformMatrix( const double vertex_a[3],
   transform_arrays[0] = tmp_matrix( 0, 0 );
   transform_arrays[1] = tmp_matrix( 0, 1 );
   transform_arrays[2] = tmp_matrix( 0, 2 );
+  transform_arrays[3] = tmp_matrix( 1, 0 );
+  transform_arrays[4] = tmp_matrix( 1, 1 );
+  transform_arrays[5] = tmp_matrix( 1, 2 );
+  transform_arrays[6] = tmp_matrix( 2, 0 );
+  transform_arrays[7] = tmp_matrix( 2, 1 );
+  transform_arrays[8] = tmp_matrix( 2, 2 );
 }
 
 
