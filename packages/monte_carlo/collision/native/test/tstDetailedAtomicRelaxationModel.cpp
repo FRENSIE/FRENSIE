@@ -22,21 +22,7 @@
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
-// Std Lib Includes
-#include <iostream>
 
-// Trilinos Includes
-#include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_VerboseObject.hpp>
-#include <Teuchos_RCP.hpp>
-
-// FRENSIE Includes
-#include "MonteCarlo_DetailedSubshellRelaxationModel.hpp"
-#include "MonteCarlo_PhotonState.hpp"
-#include "Data_ACEFileHandler.hpp"
-#include "Data_XSSEPRDataExtractor.hpp"
-#include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_UnitTestHarnessExtensions.hpp"
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
@@ -61,7 +47,7 @@ TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
 
   std::vector<double> fake_stream( 7 );
   fake_stream[0] = 0.966; // Choose the non-radiative L1-L2 transition
-  fake_stream[1] = 0.9809; // Chose the radiative P3 transition
+  fake_stream[1] = 0.09809; // Chose the radiative P3 transition
   fake_stream[2] = 0.5; // direction
   fake_stream[3] = 0.5; // direction
   fake_stream[4] = 0.40361; // Chose the radiative P1 transition
@@ -83,8 +69,9 @@ TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
   TEST_EQUALITY_CONST( bank.top()->getZPosition(), 1.0 );
   TEST_EQUALITY_CONST( bank.top()->getCollisionNumber(), 0 );
   TEST_EQUALITY_CONST( bank.top()->getGenerationNumber(), 1 );
-
+  std::cout << *bank.top() << std::endl;
   bank.pop();
+  std::cout << *bank.top() << std::endl;
 
   // L2 radiative transition
   TEST_EQUALITY_CONST( bank.top()->getEnergy(), 1.523590000000E-02 );
