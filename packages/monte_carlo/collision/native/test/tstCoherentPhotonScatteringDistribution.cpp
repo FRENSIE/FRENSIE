@@ -177,10 +177,10 @@ int main( int argc, char** argv )
   Teuchos::Array<double> form_factor_function_squared_values(jcoh_block(55,55));
 
   for( int i = 0; i < 55; i++)
-   {
-   form_factor_function_squared_values[i] *= 
-   form_factor_function_squared_values[i];
-   };
+  {
+    form_factor_function_squared_values[i] *= 
+    form_factor_function_squared_values[i];
+  };
 
   Teuchos::RCP<Utility::OneDDistribution> form_factor_function_squared(
 			    new Utility::TabularDistribution<Utility::LinLin>( 

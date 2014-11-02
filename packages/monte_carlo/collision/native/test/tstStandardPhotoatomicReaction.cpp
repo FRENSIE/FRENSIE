@@ -58,7 +58,8 @@ public:
   { return 1u; }
 
   void react( MonteCarlo::PhotonState& photon,
-	      MonteCarlo::ParticleBank& bank ) const
+	      MonteCarlo::ParticleBank& bank,
+	      MonteCarlo::SubshellType& shell_of_interaction ) const
   { /* ... */ }
 };
 

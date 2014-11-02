@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
+#include "MonteCarlo_SubshellType.hpp"
 
 namespace MonteCarlo{
 
@@ -39,7 +40,9 @@ public:
   virtual unsigned getNumberOfEmittedPhotons( const double energy ) const = 0;
 
   //! Simulate the reaction
-  virtual void react( PhotonState& photon, ParticleBank& bank ) const = 0;
+  virtual void react( PhotonState& photon, 
+		      ParticleBank& bank,
+		      SubshellType& shell_of_interaction ) const = 0;
 };
 
 } // end MonteCarlo namespace
