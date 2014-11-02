@@ -21,7 +21,7 @@ CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhoto
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const unsigned threshold_energy_index,
 		   const Teuchos::RCP<Utility::OneDDistribution>& form_factor )
-  : StandardPhotoatomicReaction<InterPolicy,processed_cross_section>(
+  : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
                                                       incoming_energy_grid,
 						      cross_section,
                                                       threshold_energy_index ),
@@ -39,7 +39,7 @@ CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::CoherentPhoto
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the form factor is valid
-  testPrecondition( !form_factor->is_null() );
+  testPrecondition( !form_factor.is_null() );
 }
 
 // Return the number of photons emitted from the rxn at the given energy
@@ -56,7 +56,9 @@ void CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution->scatterPhoton( photon, bank );
+  d_scattering_distribution.scatterPhoton( photon, 
+					   bank, 
+					   shell_of_interaction );
 
   // No subshell vacancies are created by this reaction
   shell_of_interaction = UNKNOWN_SUBSHELL;
