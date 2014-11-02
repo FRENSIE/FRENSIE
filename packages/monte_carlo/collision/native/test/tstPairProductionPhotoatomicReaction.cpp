@@ -106,7 +106,9 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, react_ace_basic )
   photon->setDirection( 0.0, 0.0, 1.0 );
   photon->setEnergy( 2.0 );
 
-  ace_basic_pp_reaction->react( *photon, bank );
+  MonteCarlo::SubshellType subshell;
+
+  ace_basic_pp_reaction->react( *photon, bank, subshell );
 
   TEST_EQUALITY_CONST( photon->getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
@@ -119,7 +121,8 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, react_ace_basic )
   UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0, 1e-15 );
-
+  TEST_EQUALITY_CONST( subshell, MonteCarlo::UNKNOWN_SUBSHELL );
+  
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 

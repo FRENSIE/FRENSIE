@@ -42,8 +42,10 @@ public:
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
 
   //! Simulate the reaction
-  void react( PhotonState& photon, ParticleBank& bank ) const;
-
+  void react( PhotonState& photon, 
+	      ParticleBank& bank,
+	      SubshellType& shell_of_interaction ) const;
+    
 private:
 
   // The basic pair production model
