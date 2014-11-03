@@ -13,7 +13,7 @@
 namespace MonteCarlo{
 
 // Constructor
-  ParticleState::ParticleState( 
+ParticleState::ParticleState( 
 			 const ParticleState::historyNumberType history_number,
 			 const ParticleType type )
     : Utility::PrintableObject( "ParticleState" ),
@@ -33,14 +33,17 @@ namespace MonteCarlo{
 { /* ... */ }
 
 // Copy constructor
+/*! \details When copied, the new particle is assumed to not be lost and
+ * not be gone.
+ */
 ParticleState::ParticleState( const ParticleState& existing_base_state,
 			      const ParticleType new_type,
 			      const bool increment_generation_number,
 			      const bool reset_collision_number )
   : d_core( existing_base_state.d_core  ),
     d_cell( existing_base_state.d_cell ),
-    d_lost( existing_base_state.d_lost ),
-    d_gone( existing_base_state.d_gone ),
+    d_lost( false ),
+    d_gone( false ),
     d_ray( &d_core.x_position, &d_core.x_direction, false )
 {
   // Reassign the particle type
