@@ -9,9 +9,6 @@
 #ifndef MONTE_CARLO_PHOTOELECTRIC_PHOTOATOMIC_REACTION_HPP
 #define MONTE_CARLO_PHOTOELECTRIC_PHOTOATOMIC_REACTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_StandardPhotoatomicReaction.hpp"
 
@@ -41,9 +38,9 @@ public:
   unsigned getNumberOfEmittedPhotons( const double energy ) const;
 
   //! Simulate the reaction
-  void react( PhotonState& photon, 
-	      ParticleBank& bank,
-	      Subshell& shell_of_interaction ) const;
+  virtual void react( PhotonState& photon, 
+		      ParticleBank& bank,
+		      SubshellType& shell_of_interaction ) const;
 };
 
 } // end MonteCarlo namespace
