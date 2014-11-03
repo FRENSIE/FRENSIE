@@ -49,7 +49,8 @@ unsigned PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>:
 
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
-void PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
+void 
+PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
 				     PhotonState& photon, 
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
