@@ -22,20 +22,20 @@ namespace Utility{
 double calculateTetrahedronVolume( const double vertex_a[3],
 				   const double vertex_b[3],
 				   const double vertex_c[3],
-				   const double vertex_d[3] );
+				   const double reference_vertex[3] );
 
 //! Calculate the volume of a tetrahedron
 double calculateTetrahedronVolume( const moab::CartVect& vertex_a,
 				   const moab::CartVect& vertex_b,
 				   const moab::CartVect& vertex_c,
-				   const moab::CartVect& vertex_d );
+				   const moab::CartVect& reference_vertex );
 
 //! Calculate tetrahedron barycentric transform matrix
 template<typename Matrix>
 void calculateBarycentricTransformMatrix( const double vertex_a[3],
                                           const double vertex_b[3],
                                           const double vertex_c[3],
-                                          const double vertex_d[3],
+                                          const double reference_vertex[3],
 					  Matrix& matrix );
 
 //! Calculate tetrahedron barycentric transform matrix
@@ -43,33 +43,33 @@ template<typename Matrix>
 void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 					  const moab::CartVect& vertex_b,
 					  const moab::CartVect& vertex_c,
-					  const moab::CartVect& vertex_d,
+					  const moab::CartVect& reference_vertex,
 					  Matrix& matrix );
 
 //! Calculate tetrahedron barycentric transform matrix
 void calculateBarycentricTransformMatrix( const double vertex_a[3],
 					  const double vertex_b[3],
 					  const double vertex_c[3],
-					  const double vertex_d[3],
+					  const double reference_vertex[3],
 					  double transform_arrays[9] );
 
 //! Calculate the volume of a tetrahedron
 void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 					  const moab::CartVect& vertex_b,
 					  const moab::CartVect& vertex_c,
-					  const moab::CartVect& vertex_d,
+					  const moab::CartVect& reference_vertex,
 					  double transform_arrays[9] );
                 
 // Calculate the volume of a tetrahedron
 inline double calculateTetrahedronVolume( const moab::CartVect& vertex_a,
 					  const moab::CartVect& vertex_b,
 					  const moab::CartVect& vertex_c,
-					  const moab::CartVect& vertex_d )
+					  const moab::CartVect& reference_vertex )
 {
   return calculateTetrahedronVolume( vertex_a.array(),
 				     vertex_b.array(),
 				     vertex_c.array(),
-				     vertex_d.array() );
+				     reference_vertex.array() );
 }
 
 // Calculate tetrahedron barycentric transform matrix
@@ -78,13 +78,13 @@ inline void calculateBarycentricTransformMatrix(
 					  const moab::CartVect& vertex_a,
 					  const moab::CartVect& vertex_b,
 					  const moab::CartVect& vertex_c, 
-					  const moab::CartVect& vertex_d,
+					  const moab::CartVect& reference_vertex,
 					  Matrix& matrix )
 {
   calculateBarycentricTransformMatrix( vertex_a.array(),
 				       vertex_b.array(),
 				       vertex_c.array(),
-				       vertex_d.array(),
+				       reference_vertex.array(),
 				       matrix );
 }
 
@@ -92,7 +92,7 @@ inline void calculateBarycentricTransformMatrix(
 inline void calculateBarycentricTransformMatrix( const double vertex_a[3],
 						 const double vertex_b[3],
 						 const double vertex_c[3],
-						 const double vertex_d[3],
+						 const double reference_vertex[3],
 						 double transform_arrays[9] )
 {
   // Create temporary matrix
@@ -101,7 +101,7 @@ inline void calculateBarycentricTransformMatrix( const double vertex_a[3],
   calculateBarycentricTransformMatrix( vertex_a, 
 				       vertex_b,
 				       vertex_c,
-				       vertex_d,
+				       reference_vertex,
 				       tmp_matrix );
 
   // Copy the matrix into the array
@@ -121,13 +121,13 @@ inline void calculateBarycentricTransformMatrix( const double vertex_a[3],
 inline void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 					         const moab::CartVect& vertex_b,
 					         const moab::CartVect& vertex_c,
-					         const moab::CartVect& vertex_d,
+					         const moab::CartVect& reference_vertex,
 				                 double transform_arrays[9] )
 {
   return calculateBarycentricTransformMatrix( vertex_a.array(),
 				              vertex_b.array(),
 				              vertex_c.array(),
-				              vertex_d.array(),
+				              reference_vertex.array(),
 				              transform_arrays );
 }
 
