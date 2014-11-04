@@ -20,8 +20,8 @@ namespace MonteCarlo{
  * and not the EADL subshell designator.
  */
 enum SubshellType{
-  INVALID_SUBSHELL = 0,
-  UNKNOWN_SUBSHELL = INVALID_SUBSHELL,
+  INVALID_SUBSHELL = -1,
+  UNKNOWN_SUBSHELL = 0,
   K_SUBSHELL = 1,
   L1_SUBSHELL = 2,
   L2_SUBSHELL = 3,
