@@ -65,6 +65,10 @@ template<typename Matrix>
 bool isPointInTet( const double point[3],    
 		   Matrix& matrix );
 
+template<>
+bool isPointInTet<moab::Matrix3>( const double point[3],
+				  moab::Matrix3& matrix );
+
 //! Return if a point is in a tet
 template<typename Matrix>                                                      
 bool isPointInTet( const moab::CartVect& point,    
