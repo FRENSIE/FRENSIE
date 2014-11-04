@@ -16,7 +16,7 @@ namespace MonteCarlo{
 
 //! The subshell photoelectric photoatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section = true>
-class SubshellPhotoelectricPhotoatomicReaction : public StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>
+class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>
 {
   
  public:
@@ -26,7 +26,8 @@ class SubshellPhotoelectricPhotoatomicReaction : public StandardPhotoatomicReact
                 const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		const Teuchos::ArrayRCP<const double>& cross_section,
 		const unsigned threshold_energy_index,
-		const SubshellType interaction_subshell );
+		const SubshellType interaction_subshell,
+		const double binding_energy );
 
   //! Destructor
   ~SubshellPhotoelectricPhotoatomicReaction()
@@ -37,10 +38,19 @@ class SubshellPhotoelectricPhotoatomicReaction : public StandardPhotoatomicReact
 	      ParticleBank& bank,
 	      SubshellType& shell_of_interaction ) const;
 
+  //! Get the interaction subshell (non-standard interface)
+  SubshellType getSubshell() const;
+
+  //! Get the subshell binding energy (non-standard interface)
+  double getSubshellBindingEnergy() const;
+
 private:
 
   // The interaction subshell
-  SubshellType d_interaction_subshell;					    
+  SubshellType d_interaction_subshell;	
+
+  // The subshell binding energy
+  double d_binding_energy;
 };
 
 } // end MonteCarlo namespace

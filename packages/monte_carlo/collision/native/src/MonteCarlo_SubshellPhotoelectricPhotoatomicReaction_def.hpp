@@ -20,16 +20,20 @@ SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::
                    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const unsigned threshold_energy_index,
-		   const SubshellType interaction_subshell )
+		   const SubshellType interaction_subshell,
+		   const double binding_energy )
   : PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>( 
 						      incoming_energy_grid,
 						      cross_section,
 						      threshold_energy_index ),
-    d_interaction_subshell( interaction_subshell )
+    d_interaction_subshell( interaction_subshell ),
+    d_binding_energy( binding_energy )
 {
   // Make sure the interaction subshell is valid
-  testPrecondition( interaction_subshell != INVALID_SUBSHELL &&
-		    interaction_subshell != UNKNOWN_SUBSHELL );
+  testPrecondition( interaction_subshell != INVALID_SUBSHELL );
+  testPrecondition( interaction_subshell != UNKNOWN_SUBSHELL );
+  // Make sure the binding energy is valid
+  testPrecondition( binding_energy > 0.0 );
 }
 
 // Simulate the reaction
@@ -44,6 +48,20 @@ void SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_secti
 
   // The interaction subshell is not taken into account in this reaction
   shell_of_interaction = d_interaction_subshell;
+}
+
+// Get the interaction subshell (non-standard interface)
+template<typename InterpPolicy, bool processed_cross_section>
+SubshellType SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::getSubshell() const
+{
+  return d_interaction_subshell;
+}
+
+// Get the subshell binding energy (non-standard interface)
+template<typename InterpPolicy, bool processed_cross_section>
+double SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::getSubshellBindingEnergy() const
+{
+  return d_binding_energy;
 }
 
 } // end MonteCarlo namespace
