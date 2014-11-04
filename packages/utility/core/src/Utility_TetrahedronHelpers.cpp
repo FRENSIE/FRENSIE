@@ -47,11 +47,11 @@ double calculateTetrahedronVolume( const double vertex_a[3],
 // Calculate tetrahedron barycentric transform matrix                        
 template<>
 void calculateBarycentricTransformMatrix<moab::Matrix3>( 
-					             const double vertex_a[3],
-						     const double vertex_b[3],
-						     const double vertex_c[3],
-						     const double reference_vertex[3],
-						     moab::Matrix3& matrix )
+					       const double vertex_a[3],
+					       const double vertex_b[3],
+					       const double vertex_c[3],
+					       const double reference_vertex[3],
+					       moab::Matrix3& matrix )
 {
   matrix( 0, 0 ) = vertex_a[0] - reference_vertex[0];
   matrix( 0, 1 ) = vertex_b[0] - reference_vertex[0];
@@ -68,6 +68,39 @@ void calculateBarycentricTransformMatrix<moab::Matrix3>(
 
   testPrecondition( is_tet_valid );
 } 
+
+// Determine if a point is in a given tet                        
+template<>
+bool isPointInTet<moab::Matrix3>( const double point[3],
+				  moab::Matrix3& matrix )
+{ 
+  double barycentric_location_vector[3];
+  barycentric_location_vector[0] = matrix( 0, 0 )*point[0] +
+                                   matrix( 0, 1 )*point[1] +
+                                   matrix( 0, 2 )*point[2];
+  barycentric_location_vector[1] = matrix( 1, 0 )*point[0] +
+                                   matrix( 1, 1 )*point[1] +
+                                   matrix( 1, 2 )*point[2];
+  barycentric_location_vector[2] = matrix( 2, 0 )*point[0] +
+                                   matrix( 2, 1 )*point[1] +
+                                   matrix( 2, 2 )*point[2];
+
+  double tolerance = -1e-12;
+  
+  if ( barycentric_location_vector[0] <= tolerance ||
+       barycentric_location_vector[1] <= tolerance ||
+       barycentric_location_vector[2] <= tolerance )
+
+  {
+    bool point_in_tet = false;
+    return point_in_tet;
+  }
+  else
+  {
+    bool point_in_tet = true;
+    return point_in_tet;
+  };
+}
 
 } // end Utility namespace
 
