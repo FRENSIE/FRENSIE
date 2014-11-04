@@ -294,17 +294,159 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
 
 //---------------------------------------------------------------------------//
 // Check that the point is in the tet
+
 TEUCHOS_UNIT_TEST( TetrahedronHelpers, 
                    isPointInTet_array_Matrix3 )
 {
-  moab::Matrix3 transform_matrix( 
+  const moab::Matrix3 transform_matrix( 
                             -1.0, -1.0, -1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
                             
-  double point_in[3]  = { 0.25, 0.25, 0.25 };
-  double point_out[3] = { 0.75, 0.75, 0.75 };
+  const double point_in[3] = { 0.25, 0.25, 0.25 };
+  const double point_out[3] = { 0.75, 0.75, 0.75 };
+  const double reference_vertex[3] = { 0.0, 0.0, 1.0 };
  
-  bool is_point_in_in_tet  = Utility::isPointInTet(point_in, transform_matrix);
-  bool is_point_out_in_tet = Utility::isPointInTet(point_out, transform_matrix);
+  bool is_point_in_in_tet  = Utility::isPointInTet(point_in,
+                                                   reference_vertex,
+                                                   transform_matrix);
+  bool is_point_out_in_tet  = Utility::isPointInTet(point_out,
+                                                    reference_vertex,
+                                                    transform_matrix);
+  
+  TEST_ASSERT(is_point_in_in_tet);
+  TEST_ASSERT(!is_point_out_in_tet);
+}
+
+//---------------------------------------------------------------------------//
+// Check that the point is in the tet
+
+TEUCHOS_UNIT_TEST( TetrahedronHelpers, 
+                   isPointInTet_cartvect_Matrix3 )
+{
+  const moab::Matrix3 transform_matrix( 
+                            -1.0, -1.0, -1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
+                            
+  const moab::CartVect point_in( 0.25, 0.25, 0.25 );
+  const moab::CartVect point_out( 0.75, 0.75, 0.75 );
+  const moab::CartVect reference_vertex( 0.0, 0.0, 1.0 );
+ 
+  bool is_point_in_in_tet  = Utility::isPointInTet(point_in,
+                                                   reference_vertex,
+                                                   transform_matrix);
+  bool is_point_out_in_tet  = Utility::isPointInTet(point_out,
+                                                    reference_vertex,
+                                                    transform_matrix);
+  
+  TEST_ASSERT(is_point_in_in_tet);
+  TEST_ASSERT(!is_point_out_in_tet);
+}
+
+//---------------------------------------------------------------------------//
+// Check that the point is in the tet
+
+TEUCHOS_UNIT_TEST( TetrahedronHelpers, 
+                   isPointInTet_array_SerialDenseMatrix )
+{
+  Teuchos::SerialDenseMatrix<int,double> transform_matrix( 3, 3 );
+  transform_matrix( 0, 0 ) = -1.0;
+  transform_matrix( 0, 1 ) = -1.0;
+  transform_matrix( 0, 2 ) = -1.0;
+  transform_matrix( 1, 0 ) =  1.0;
+  transform_matrix( 1, 1 ) =  0.0;
+  transform_matrix( 1, 2 ) =  0.0;
+  transform_matrix( 2, 0 ) =  0.0;
+  transform_matrix( 2, 1 ) =  1.0;
+  transform_matrix( 2, 2 ) =  0.0;
+                            
+  const double point_in[3] = { 0.25, 0.25, 0.25 };
+  const double point_out[3] = { 0.75, 0.75, 0.75 };
+  const double reference_vertex[3] = { 0.0, 0.0, 1.0 };
+ 
+  bool is_point_in_in_tet  = Utility::isPointInTet(point_in,
+                                                   reference_vertex,
+                                                   transform_matrix);
+  bool is_point_out_in_tet  = Utility::isPointInTet(point_out,
+                                                    reference_vertex,
+                                                    transform_matrix);
+  
+  TEST_ASSERT(is_point_in_in_tet);
+  TEST_ASSERT(!is_point_out_in_tet);
+}
+
+//---------------------------------------------------------------------------//
+// Check that the point is in the tet
+
+TEUCHOS_UNIT_TEST( TetrahedronHelpers, 
+                   isPointInTet_cartvect_SerialDenseMatrix )
+{
+  Teuchos::SerialDenseMatrix<int,double> transform_matrix( 3, 3 );
+  transform_matrix( 0, 0 ) = -1.0;
+  transform_matrix( 0, 1 ) = -1.0;
+  transform_matrix( 0, 2 ) = -1.0;
+  transform_matrix( 1, 0 ) =  1.0;
+  transform_matrix( 1, 1 ) =  0.0;
+  transform_matrix( 1, 2 ) =  0.0;
+  transform_matrix( 2, 0 ) =  0.0;
+  transform_matrix( 2, 1 ) =  1.0;
+  transform_matrix( 2, 2 ) =  0.0;
+                            
+  const moab::CartVect point_in( 0.25, 0.25, 0.25 );
+  const moab::CartVect point_out( 0.75, 0.75, 0.75 );
+  const moab::CartVect reference_vertex( 0.0, 0.0, 1.0 );
+  
+  bool is_point_in_in_tet  = Utility::isPointInTet(point_in,
+                                                   reference_vertex,
+                                                   transform_matrix);
+  bool is_point_out_in_tet  = Utility::isPointInTet(point_out,
+                                                    reference_vertex,
+                                                    transform_matrix);
+  
+  TEST_ASSERT(is_point_in_in_tet);
+  TEST_ASSERT(!is_point_out_in_tet);
+}
+
+//---------------------------------------------------------------------------//
+// Check that the point is in the tet
+
+TEUCHOS_UNIT_TEST( TetrahedronHelpers, 
+                   isPointInTet_array_array )
+{                       
+  const double point_in[3] = { 0.25, 0.25, 0.25 };
+  const double point_out[3] = { 0.75, 0.75, 0.75 };
+  const double reference_vertex[3] = { 0.0, 0.0, 1.0 };
+  
+  Teuchos::Tuple<double,9> transform_tuple = 
+    Teuchos::tuple<double>( -1.0, -1.0, -1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
+ 
+  bool is_point_in_in_tet  = Utility::isPointInTet(point_in,
+                                                   reference_vertex,
+                                                   transform_tuple.getRawPtr());
+  bool is_point_out_in_tet  = Utility::isPointInTet(point_out,
+                                                    reference_vertex,
+                                                    transform_tuple.getRawPtr());
+  
+  TEST_ASSERT(is_point_in_in_tet);
+  TEST_ASSERT(!is_point_out_in_tet);
+}
+
+//---------------------------------------------------------------------------//
+// Check that the point is in the tet
+
+TEUCHOS_UNIT_TEST( TetrahedronHelpers, 
+                   isPointInTet_cartvect_array )
+{                       
+  const moab::CartVect point_in( 0.25, 0.25, 0.25 );
+  const moab::CartVect point_out( 0.75, 0.75, 0.75 );
+  const moab::CartVect reference_vertex( 0.0, 0.0, 1.0 );
+  
+  Teuchos::Tuple<double,9> transform_tuple = 
+    Teuchos::tuple<double>( -1.0, -1.0, -1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
+ 
+  bool is_point_in_in_tet  = Utility::isPointInTet(point_in,
+                                                   reference_vertex,
+                                                   transform_tuple.getRawPtr());
+  bool is_point_out_in_tet  = Utility::isPointInTet(point_out,
+                                                    reference_vertex,
+                                                    transform_tuple.getRawPtr());
   
   TEST_ASSERT(is_point_in_in_tet);
   TEST_ASSERT(!is_point_out_in_tet);
