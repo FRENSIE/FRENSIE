@@ -51,32 +51,39 @@ void calculateBarycentricTransformMatrix( const double vertex_a[3],
   testPrecondition( return_value == 0 );
 }
 
-// Determine if a point is in a given tet                        
+// Determine if a point is in a given tet
+/*! \details Make sure the matrix has dimensions 3x3!                        
+ */
 template<typename Matrix>                                                      
 bool isPointInTet( const double point[3], 
                    const double reference_vertex[3],   
 		   const Matrix& matrix ) 
 {
-  // Make sure the matrix is valid
-  testPrecondition( matrix.numRows() == 3 );
-  testPrecondition( matrix.numCols() == 3 );
+  double barycentric_location_vector[3];
+  barycentric_location_vector[0] = matrix( 0, 0 ) *
+                                   (point[0] - reference_vertex[0]) +
+                                   matrix( 0, 1 ) *
+                                   (point[1] - reference_vertex[1]) +
+                                   matrix( 0, 2 ) *
+                                   (point[2] - reference_vertex[2]);
+  barycentric_location_vector[1] = matrix( 1, 0 ) *
+                                   (point[0] - reference_vertex[0]) +
+                                   matrix( 1, 1 ) *
+                                   (point[1] - reference_vertex[1]) +
+                                   matrix( 1, 2 ) *
+                                   (point[2] - reference_vertex[2]);
+  barycentric_location_vector[2] = matrix( 2, 0 ) *
+                                   (point[0] - reference_vertex[0]) +
+                                   matrix( 2, 1 ) *
+                                   (point[1] - reference_vertex[1]) +
+                                   matrix( 2, 2 ) *
+                                   (point[2] - reference_vertex[2]);
   
-  Teuchos::SerialDenseMatrix<int,double> point_vector(3,1);
-  Teuchos::SerialDenseMatrix<int,double> barycentric_location_vector(3,1);
-  point_vector( 0, 0 ) = point[0] - reference_vertex[0];
-  point_vector( 1, 0 ) = point[1] - reference_vertex[1];
-  point_vector( 2, 0 ) = point[2] - reference_vertex[2];
-  
-  barycentric_location_vector.multiply(
-             Teuchos::NO_TRANS,Teuchos::NO_TRANS, 1.0,matrix,point_vector,1.0);
-  
-  if ( ( barycentric_location_vector( 0, 0 ) < 0.0 ||
-         barycentric_location_vector( 0, 1 ) < 0.0 ||
-         barycentric_location_vector( 0, 2 ) < 0.0 )
-     || 
-       ( barycentric_location_vector( 0, 0 ) + 
-         barycentric_location_vector( 0, 1 ) +
-         barycentric_location_vector( 0, 2 ) > 1.0 ) )
+  if ( ( barycentric_location_vector[0] < 0.0 ||
+         barycentric_location_vector[1] < 0.0 ||
+         barycentric_location_vector[2] < 0.0 ) ||
+       ( barycentric_location_vector[0] + barycentric_location_vector[1] +
+         barycentric_location_vector[2] > 1.0 ) )
   {
     bool point_in_tet = false;
     return point_in_tet;
@@ -86,7 +93,6 @@ bool isPointInTet( const double point[3],
     bool point_in_tet = true;
     return point_in_tet;
   }
-  
 }
 
 } // end Utility namespace

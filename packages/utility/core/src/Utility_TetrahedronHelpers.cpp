@@ -69,49 +69,6 @@ void calculateBarycentricTransformMatrix<moab::Matrix3>(
   testPrecondition( is_tet_valid );
 } 
 
-// Determine if a point is in a given tet                        
-template<>
-bool isPointInTet<moab::Matrix3>( const double point[3],
-                                  const double reference_vertex[3],
-				  const moab::Matrix3& matrix )
-{ 
-  double barycentric_location_vector[3];
-  barycentric_location_vector[0] = matrix( 0, 0 ) *
-                                   (point[0] - reference_vertex[0]) +
-                                   matrix( 0, 1 ) *
-                                   (point[1] - reference_vertex[1]) +
-                                   matrix( 0, 2 ) *
-                                   (point[2] - reference_vertex[2]);
-  barycentric_location_vector[1] = matrix( 1, 0 ) *
-                                   (point[0] - reference_vertex[0]) +
-                                   matrix( 1, 1 ) *
-                                   (point[1] - reference_vertex[1]) +
-                                   matrix( 1, 2 ) *
-                                   (point[2] - reference_vertex[2]);
-  barycentric_location_vector[2] = matrix( 2, 0 ) *
-                                   (point[0] - reference_vertex[0]) +
-                                   matrix( 2, 1 ) *
-                                   (point[1] - reference_vertex[1]) +
-                                   matrix( 2, 2 ) *
-                                   (point[2] - reference_vertex[2]);
-  
-  if ( ( barycentric_location_vector[0] < 0.0 ||
-         barycentric_location_vector[1] < 0.0 ||
-         barycentric_location_vector[2] < 0.0 ) ||
-       ( barycentric_location_vector[0] + barycentric_location_vector[1] +
-         barycentric_location_vector[2] > 1.0 ) )
-  {
-    bool point_in_tet = false;
-    return point_in_tet;
-  }
-  else
-  {
-    bool point_in_tet = true;
-    return point_in_tet;
-  }
-  
-}
-
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
