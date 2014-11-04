@@ -12,6 +12,7 @@
 // Trilinos Includes
 #include <Teuchos_SerialDenseSolver.hpp>
 #include <Teuchos_RCP.hpp>
+#include <Teuchos_BLAS_types.hpp>
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
@@ -48,6 +49,40 @@ void calculateBarycentricTransformMatrix( const double vertex_a[3],
 
   // Make sure the tet is valid
   testPrecondition( return_value == 0 );
+}
+
+// Determine if a point is in a given tet                        
+template<typename Matrix>                                                      
+bool isPointInTet( const double point[3],    
+		   Matrix& matrix ) 
+{
+  // Make sure the matrix is valid
+  testPrecondition( matrix.numRows() == 3 );
+  testPrecondition( matrix.numCols() == 3 );
+  
+  Teuchos::SerialDenseMatrix<int,double> point_vector(3,1);
+  Teuchos::SerialDenseMatrix<int,double> barycentric_location_vector(3,1);
+  point_vector( 0, 0 ) = point[0];
+  point_vector( 1, 0 ) = point[1];
+  point_vector( 2, 0 ) = point[2];
+  
+  double tolerance = -1e-12;
+  
+  barycentric_location_vector.multiply(
+             Teuchos::NO_TRANS,Teuchos::NO_TRANS, 1.0,matrix,point_vector,1.0);
+  
+  if ( barycentric_location_vector( 0, 0 ) <= tolerance ||
+       barycentric_location_vector( 0, 1 ) <= tolerance ||
+       barycentric_location_vector( 0, 2 ) <= tolerance )
+  {
+    bool point_in_tet = false;
+    return point_in_tet;
+  }
+  else
+  {
+    bool point_in_tet = true;
+    return point_in_tet;
+  };
 }
 
 } // end Utility namespace

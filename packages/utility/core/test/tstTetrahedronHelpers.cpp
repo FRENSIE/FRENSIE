@@ -293,5 +293,23 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the point is in the tet
+TEUCHOS_UNIT_TEST( TetrahedronHelpers, 
+                   isPointInTet_array_Matrix3 )
+{
+  moab::Matrix3 transform_matrix( 
+                            -1.0, -1.0, -1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
+                            
+  double point_in[3]  = { 0.25, 0.25, 0.25 };
+  double point_out[3] = { 0.75, 0.75, 0.75 };
+ 
+  bool is_point_in_in_tet  = Utility::isPointInTet(point_in, transform_matrix);
+  bool is_point_out_in_tet = Utility::isPointInTet(point_out, transform_matrix);
+  
+  TEST_ASSERT(is_point_in_in_tet);
+  TEST_ASSERT(!is_point_out_in_tet);
+}
+
+//---------------------------------------------------------------------------//
 // end tstTetrahedronHelpers.cpp
 //---------------------------------------------------------------------------//
