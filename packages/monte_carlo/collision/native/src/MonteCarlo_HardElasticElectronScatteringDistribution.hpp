@@ -53,7 +53,7 @@ public:
   void scatterElectron( ElectronState& electron,
 	                    ParticleBank& bank) const;
 
-protected:
+//protected:
 
 // Evaluate the screening angle at the given electron energy
 double evaluateScreeningAngle( const double energy ) const;
