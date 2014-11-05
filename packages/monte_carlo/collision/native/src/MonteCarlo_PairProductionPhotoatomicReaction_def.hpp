@@ -51,6 +51,13 @@ unsigned PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>
     return 0u;
 }
 
+// Return the reaction type
+template<typename InterpPolicy, bool processed_cross_section>
+PhotoatomicReactionType PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
+{
+  return PAIR_PRODUCTION_PHOTOATOMIC_REACTION;
+}
+
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(

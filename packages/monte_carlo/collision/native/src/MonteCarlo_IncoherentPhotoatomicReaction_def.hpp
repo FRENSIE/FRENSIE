@@ -94,7 +94,17 @@ IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentP
 template<typename InterpPolicy, bool processed_cross_section>
 unsigned IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
-  return 1u;
+  if( energy >= this->getThresholdEnergy() )
+    return 1u;
+  else
+    return 0u;
+}
+
+// Return the reaction type
+template<typename InterpPolicy, bool processed_cross_section>
+PhotoatomicReactionType IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
+{
+  return INCOHERENT_PHOTOATOMIC_REACTION;
 }
 
 // Simulate the reaction

@@ -39,6 +39,14 @@ bool notEqualZero( double value )
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
+// Check that the reaction type can be returned
+TEUCHOS_UNIT_TEST( CoherentPhotoatomicReaction, getReactionType_ace )
+{
+  TEST_EQUALITY_CONST( ace_coherent_reaction->getReactionType(),
+		       MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
 TEUCHOS_UNIT_TEST( CoherentPhotoatomicReaction, getThresholdEnergy_ace )
 {

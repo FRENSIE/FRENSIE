@@ -73,6 +73,20 @@ TEUCHOS_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the reaction type can be returned
+TEUCHOS_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction,
+		   getReactionType_ace )
+{
+  TEST_EQUALITY_CONST( 
+		   ace_k_photoelectric_reaction->getReactionType(),
+		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST(
+		  ace_l1_photoelectric_reaction->getReactionType(),
+		  MonteCarlo::L1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
 TEUCHOS_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction,
 		   getThresholdEnergy_ace )
