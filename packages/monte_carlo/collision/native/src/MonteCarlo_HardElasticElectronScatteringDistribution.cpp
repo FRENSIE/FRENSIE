@@ -77,38 +77,45 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
     // Calculate the interpolation fraction
     double interpolation_fraction = ( electron.getEnergy() - lower_bin_boundary->first )/
       (upper_bin_boundary->first - lower_bin_boundary->first);
-    
+     
     double random_number_1 = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
-    
+     
     // Sample from the upper energy bin
     if( random_number_1 < interpolation_fraction )
     {
       sampling_dist = upper_bin_boundary->second;
+std::cout << "sample energy = "<<upper_bin_boundary->first << std::endl;
     }
     // Sample from the lower energy bin
     else
     {
       sampling_dist = lower_bin_boundary->second;
+std::cout << "sample energy = "<<upper_bin_boundary->first << std::endl;
     }
   }
-    
+
   double random_number_2 = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+std::cout << "d_cutoff_angle_cosine = "<<d_cutoff_angle_cosine << std::endl;
 
   // evaluate the cutoff CDF for applying the analytical screening function
   double cutoff_cdf_value = sampling_dist->evaluateCDF( d_cutoff_angle_cosine );
 
+std::cout << "cutoff_cdf_value = "<<cutoff_cdf_value << std::endl;
   // Sample from the distribution
   if( cutoff_cdf_value > random_number_2 )
   {
-    scattering_angle_cosine = sampling_dist->sample();
+    scattering_angle_cosine = sampling_dist->sample(d_cutoff_angle_cosine );
   }
   // Sample from the analytical function
   else
   {
-    double energy = electron.getEnergy();
-    scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
+
+std::cout << "analytical function sampled" << std::endl;
+    scattering_angle_cosine = 
+      evaluateScreenedScatteringAngle( electron.getEnergy() );
   }
 
   // Calculate the outgoing direction
@@ -139,8 +146,9 @@ double HardElasticElectronScatteringDistribution::evaluateScreeningAngle(
                            energy );
 
   // get the velocity of the electron divided by the speed of light beta = v/c
-  double beta = Utility::calculateDimensionlessRelativisticSpeed( energy,
-                Utility::PhysicalConstants::electron_rest_mass_energy );
+  double beta = Utility::calculateDimensionlessRelativisticSpeed( 
+           Utility::PhysicalConstants::electron_rest_mass_energy,
+           energy );
 
  double arg1 = 1.0/( Utility::PhysicalConstants::inverse_fine_structure_constant*
                      0.885 * electron_momentum );
