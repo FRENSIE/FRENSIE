@@ -118,16 +118,16 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
   TEST_EQUALITY_CONST( distribution->evaluateCDF( 0.0 ), 0.0 );
   TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1e-3 ), 
 			  0.0000000000, 
-			  1e-6 );
+			  1e-10 );
   TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1e-2 ), 
 			  0.33333333333, 
-			  1e-6 );
+			  1e-10 );
   TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1e-1 ), 
 			  0.66666666667, 
-			  1e-6 );
+			  1e-10 );
   TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1.0 ), 
 			  1.0000000000, 
-			  1e-6 );
+			  1e-10 );
   TEST_EQUALITY_CONST( distribution->evaluateCDF( 2.0 ), 1.0 );
 }
 
