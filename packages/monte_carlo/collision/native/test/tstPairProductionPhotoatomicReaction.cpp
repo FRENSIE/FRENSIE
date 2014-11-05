@@ -38,6 +38,14 @@ bool notEqualZero( double value )
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
+// Check that the reaction type can be returned
+TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, getReactionType_ace )
+{
+  TEST_EQUALITY_CONST( ace_basic_pp_reaction->getReactionType(),
+		       MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
 TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, getThresholdEnergy_ace )
 {

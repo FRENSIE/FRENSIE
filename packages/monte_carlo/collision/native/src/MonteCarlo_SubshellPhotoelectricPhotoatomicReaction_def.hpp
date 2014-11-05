@@ -10,6 +10,7 @@
 #define MONTE_CARLO_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
+#include "MonteCarlo_PhotoatomicReactionType.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -27,7 +28,9 @@ SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::
 						      cross_section,
 						      threshold_energy_index ),
     d_interaction_subshell( interaction_subshell ),
-    d_binding_energy( binding_energy )
+    d_binding_energy( binding_energy ),
+    d_reaction_type( convertSubshellEnumToPhotoatomicReactionEnum( 
+						       interaction_subshell ) )
 {
   // Make sure the interaction subshell is valid
   testPrecondition( interaction_subshell != INVALID_SUBSHELL );
@@ -48,6 +51,13 @@ void SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_secti
 
   // The interaction subshell is not taken into account in this reaction
   shell_of_interaction = d_interaction_subshell;
+}
+
+// Return the reaction type
+template<typename InterpPolicy, bool processed_cross_section>
+PhotoatomicReactionType SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
+{
+  return d_reaction_type;
 }
 
 // Get the interaction subshell (non-standard interface)

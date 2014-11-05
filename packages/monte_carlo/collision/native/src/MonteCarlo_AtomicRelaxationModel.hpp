@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_AtomicRelaxationModel.hpp
 //! \author Alex Robinson
-//! \brief  Atomic relaxtion model base class declaration.
+//! \brief  Atomic relaxation model base class declaration.
 //!
 //---------------------------------------------------------------------------//
 
@@ -27,7 +27,7 @@ public:
   { /* ... */ }
 
   //! Destructor
-  ~AtomicRelaxationModel()
+  virtual ~AtomicRelaxationModel()
   { /* ... */ }
 
   //! Relax atom

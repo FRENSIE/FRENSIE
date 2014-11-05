@@ -47,6 +47,13 @@ unsigned PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>:
   return 0u;
 }
 
+// Return the reaction type
+template<typename InterpPolicy, bool processed_cross_section>
+PhotoatomicReactionType PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
+{
+  return TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION;
+}
+
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void 

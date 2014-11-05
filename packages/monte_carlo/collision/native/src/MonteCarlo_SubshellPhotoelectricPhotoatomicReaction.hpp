@@ -38,6 +38,9 @@ class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomic
 	      ParticleBank& bank,
 	      SubshellType& shell_of_interaction ) const;
 
+  //! Return the reaction type
+  PhotoatomicReactionType getReactionType() const;
+
   //! Get the interaction subshell (non-standard interface)
   SubshellType getSubshell() const;
 
@@ -51,6 +54,9 @@ private:
 
   // The subshell binding energy
   double d_binding_energy;
+
+  // The reaction type
+  PhotoatomicReactionType d_reaction_type;
 };
 
 } // end MonteCarlo namespace
