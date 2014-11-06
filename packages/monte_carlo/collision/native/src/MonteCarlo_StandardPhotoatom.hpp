@@ -17,15 +17,24 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_Photoatom.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 
 namespace MonteCarlo{
 
-//! The standard photoatom class
-template<typename InterpPolicy, bool processed_cross_sections>
-class StandardPhotatom
+/*! The standard photoatom class
+ * \details Use the InterpPolicy template parameter and the 
+ * process_cross_section template parameter to customize the behavior of
+ * this class. Raw cross section data from the EPDL library would use
+ * a LogLog policy with processed_cross_section = false. Processed cross
+ * section data from an ACE library would use a LogLog policy with
+ * processed_cross_section = true. When data is processed, the policy is
+ * used to indicate how the data was processed.
+ */
+template<typename InterpPolicy, bool processed_cross_section>
+class StandardPhotoatom : public Photoatom
 {
   
 public:
@@ -35,8 +44,8 @@ public:
 	  const std::string& name,
 	  const unsigned atomic_number,
 	  const Teuchos::ArrayRCP<double>& energy_grid,
-	  const boost::unordered_map<PhotoatomicReaction,
-	                       Teuchos::RCP<PhotoatomicReaction> >& reactions,
+	  const Photoatom::ReactionMap& standard_scattering_reactions,
+	  const Photoatom::ReactionMap& standard_absorption_reactions,
 	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model );
 
   //! Destructor
@@ -47,23 +56,7 @@ public:
   double getTotalCrossSection( const double energy ) const;
 
   //! Return the total absorption cross section at the desired energy
-  double getTotalAbsorptionCrossSection( const double energy ) const;
-
-  //! Return the survival probability at the desired energy
-  double getSurvivalProbability( const double energy ) const;
-
-  //! Return the cross section for a specific photoatomic reaction
-  double getReactionCrossSection( 
-			        const double energy,
-			        const PhotoatomicReactionType reaction ) const;
-
-  //! Collide with a photon
-  void collideAnalogue( PhotonState& photon, 
-			ParticleBank& bank ) const;
-
-  //! Collide with a photon and survival bias
-  void collideSurvivalBias( PhotonState& photon, 
-			    ParticleBank& bank ) const;
+  double getAbsorptionCrossSection( const double energy ) const;
 
 private:
 
@@ -73,42 +66,63 @@ private:
   // Calculate the total cross section
   void calculateTotalCrossSection();
 
-  // Sample an absorption reaction
-  void sampleAbsorptionReaction( const double scaled_random_number,
-				 PhotonState& photon,
-				 ParticleBank& bank ) const;
+  // Return the cross section at the desired energy
+  double getCrossSection( const double energy,
+			  const Teuchos::Array<double>& cross_section );
 
-  // Sample a scattering reaction
-  void sampleScatteringReaction( const double scaled_random_number,
-				 PhotonState& photon,
-				 ParticleBank& bank ) const;
-
-  // The incoming energy grid
+  // The processed incoming energy grid
   Teuchos::ArrayRCP<const double> d_energy_grid;
 
-  // The microscopic total cross section
+  // The processed microscopic total cross section
   Teuchos::Array<double> d_total_cross_section;
 
-  // The microscopic absorption cross section
+  // The processed microscopic absorption cross section
   Teuchos::Array<double> d_absorption_cross_section;
+};
 
-  // The scattering reactions
-  boost::unordered_map<PhotoatomicReactionType,
-		       Teuchos::RCP<PhotoatomicReaction> >
-  d_scattering_reactions;
+//! Partial template specialization for raw data
+template<typename InterpPolicy>
+class StandardPhotoatom<InterpPolicy,false> : public Photoatom
+{
+  //! Constructor 
+  StandardPhotoatom(
+	  const std::string& name,
+	  const unsigned atomic_number,
+	  const Teuchos::ArrayRCP<double>& energy_grid,
+	  const Photoatom::ReactionMap& standard_scattering_reactions,
+	  const Photoatom::ReactionMap& standard_absorption_reactions,
+	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model );
 
-  // The absorption reactions
-  boost::unordered_map<PhotoatomicReactionType,
-		       Teuchos::RCP<PhotoatomicReaction> >
-  d_absorption_reactions;
+  //! Destructor
+  ~StandardPhotoatom()
+  { /* ... */ }
 
-  // Miscellaneous reactions
-  boost::unordered_map<PhotoatomicReactionType,
-		       Teuchos::RCP<PhotoatomicReaction> >
-  d_miscellaneous_reactions;  
+  //! Return the total cross section at the desired energy
+  double getTotalCrossSection( const double energy ) const;
 
-  // The atomic relaxation model
-  Teuchos::RCP<const AtomicRelaxationModel> d_relaxation_model;
+  //! Return the total absorption cross section at the desired energy
+  double getAbsorptionCrossSection( const double energy ) const;
+
+private:
+
+  // Calculate the total absorption cross section
+  void calculateTotalAbsorptionCrossSection();
+
+  // Calculate the total cross section
+  void calculateTotalCrossSection();
+
+  // Return the cross section at the desired energy
+  double getCrossSection( const double energy,
+			  const Teuchos::Array<double>& cross_section );
+
+  // The raw incoming energy grid
+  Teuchos::ArrayRCP<const double> d_energy_grid;
+
+  // The raw microscopic total cross section
+  Teuchos::Array<double> d_total_cross_section;
+
+  // The raw microscopic absorption cross section
+  Teuchos::Array<double> d_absorption_cross_section;
 };
 
 } // end MonteCarlo namespace

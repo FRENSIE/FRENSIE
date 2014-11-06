@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_Photoatom.hpp
 //! \author Alex Robinson
-//! \brief  The photo atom base class declaration
+//! \brief  The photoatom base class declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -12,13 +12,26 @@
 // Std Lib Includes
 #include <string>
 
+// Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
+
 namespace MonteCarlo{
 
 //! The atomic class for photoatomic reactions
 class Photoatom
 {
 
+private:
+
+  // Typedef for Teuchos ScalarTraits
+  typedef Teuchos::ScalarTraits<double> ST;
+
 public:
+
+  //! Typedef for the reaction map
+  typedef boost::unordered_map<PhotoatomicReactionType,
+			       Teuchos::RCP<PhotoatomicReaction> >
+  ReactionMap;
 
   //! Set the photoatomic reaction types that will be considered as absorption
   static void setAbsorptionReactionTypes(
@@ -27,15 +40,18 @@ public:
   //! Add a photoatomic reaction type that will be considered as absorption
   static void addAbsorptionReactionType( 
 				      const PhotoatomicReactionType reaction );
-					
-  //! Constructor (no atomic relaxation)
-  Photoatom( const std::string& name,
-	     const unsigned atomic_number );
 
-  //! Constructor (with atomic relaxation)
+  //! Return the reactions that are treated as absorption
+  static const boost::unordered_set<PhotoatomicReactionType>& 
+  getAbsorptionReactionTypes();
+					
+  //! Constructor
   Photoatom( 
 	  const std::string& name,
-	  const unsigned atomic_number );
+	  const unsigned atomic_number,
+	  const ReactionMap& standard_scattering_reactions,
+	  const ReactionMap& standard_absorption_reactions,
+	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model );
 
   //! Destructor
   virtual ~Photoatom()
@@ -45,15 +61,53 @@ public:
   const std::string& getName() const;
 
   //! Return the atomic number
-  const unsigned getAtomicNumber() const;
+  unsigned getAtomicNumber() const;
+
+  //! Return the total cross section at the desired energy
+  virtual double getTotalCrossSection( const double energy ) const = 0;
+
+  //! Return the total absorption cross section at the desired energy
+  virtual double getAbsorptionCrossSection( const double energy ) const = 0;
+
+  //! Return the survival probability at the desired energy
+  double getSurvivalProbability( const double energy ) const;
+
+  //! Return the cross section for a specific photoatomic reaction
+  double getReactionCrossSection( 
+			        const double energy,
+			        const PhotoatomicReactionType reaction ) const;
+
+  //! Collide with a photon
+  void collideAnalogue( PhotonState& photon, 
+			ParticleBank& bank ) const;
+
+  //! Collide with a photon and survival bias
+  void collideSurvivalBias( PhotonState& photon, 
+			    ParticleBank& bank ) const;
 
 protected:
 
-  //! Get the reactions that should be treated as absorption
-  static const boost::unordered_set<PhotoatomicReactionType>& 
-  getAbsorptionReactionTypes();
+  //! Return the scattering reactions
+  const ReactionMap& getScatteringReactions() const;
+
+  //! Return the absorption reactions
+  const ReactionMap& getAbsorptionReactions() const;
 
 private:
+
+  // Set the default absorption reaction types
+  static boost::unordered_set<PhotoatomicReactionTypes>
+  setDefaultAbsorptionReactionTypes();
+
+  // Sample an absorption reaction
+  void sampleAbsorptionReaction( const double scaled_random_number,
+				 PhotonState& photon,
+				 ParticleBank& bank ) const;
+
+  // Sample a scattering reaction
+  void sampleScatteringReaction( const double scaled_random_number,
+				 PhotonState& photon,
+				 ParticleBank& bank ) const;
 
   // Reactions that should be treated as absorption
   static boost::unordered_set<PhotoatomicReactionType> 
@@ -64,6 +118,18 @@ private:
 
   // The atomic number of the nuclide
   unsigned d_atomic_number;
+
+  // The scattering reactions
+  ReactionMap d_scattering_reactions;
+
+  // The absorption reactions
+  ReactionMap d_absorption_reactions;
+
+  // Miscellaneous reactions
+  ReactionMap d_miscellaneous_reactions;  
+
+  // The atomic relaxation model
+  Teuchos::RCP<const AtomicRelaxationModel> d_relaxation_model;
 };
 
 } // end MonteCarlo namespace

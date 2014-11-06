@@ -52,10 +52,10 @@ public:
 
 private:
 
-  // The incoming energy grid (logarithms)
+  // The processed incoming energy grid
   Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
 
-  // The cross section values evaluated on the incoming erg grid (logarithms)
+  // The processed cross section values evaluated on the incoming e. grid 
   Teuchos::ArrayRCP<const double> d_cross_section;
 
   // The threshold energy

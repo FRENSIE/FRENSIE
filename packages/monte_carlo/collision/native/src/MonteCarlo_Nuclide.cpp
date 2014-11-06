@@ -386,7 +386,7 @@ void Nuclide::collideAnalogue( NeutronState& neutron,
   {
     sampleAbsorptionReaction( scaled_random_number, neutron, bank );
 
-    // Set the neutron as gone regardless of the reaction that occured.
+    // Set the neutron as gone regardless of the reaction that occurred.
     neutron.setAsGone(); 
   }
   else
@@ -412,10 +412,10 @@ void Nuclide::collideSurvivalBias( NeutronState& neutron,
 
   double survival_prob = scattering_cross_section/total_cross_section;
   
-  // Multiply the neutrons weight by the survival probability
+  // Multiply the neutron's weight by the survival probability
   if( survival_prob > 0.0 )
   {
-    neutron.multiplyWeight( scattering_cross_section/total_cross_section );
+    neutron.multiplyWeight( survival_prob );
 
     sampleScatteringReaction( random_number*scattering_cross_section,
 			      neutron,
