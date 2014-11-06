@@ -85,25 +85,20 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
     if( random_number_1 < interpolation_fraction )
     {
       sampling_dist = upper_bin_boundary->second;
-std::cout << "sample energy = "<<upper_bin_boundary->first << std::endl;
     }
     // Sample from the lower energy bin
     else
     {
       sampling_dist = lower_bin_boundary->second;
-std::cout << "sample energy = "<<upper_bin_boundary->first << std::endl;
     }
   }
 
   double random_number_2 = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-std::cout << "d_cutoff_angle_cosine = "<<d_cutoff_angle_cosine << std::endl;
-
   // evaluate the cutoff CDF for applying the analytical screening function
   double cutoff_cdf_value = sampling_dist->evaluateCDF( d_cutoff_angle_cosine );
 
-std::cout << "cutoff_cdf_value = "<<cutoff_cdf_value << std::endl;
   // Sample from the distribution
   if( cutoff_cdf_value > random_number_2 )
   {
@@ -112,8 +107,6 @@ std::cout << "cutoff_cdf_value = "<<cutoff_cdf_value << std::endl;
   // Sample from the analytical function
   else
   {
-
-std::cout << "analytical function sampled" << std::endl;
     scattering_angle_cosine = 
       evaluateScreenedScatteringAngle( electron.getEnergy() );
   }
