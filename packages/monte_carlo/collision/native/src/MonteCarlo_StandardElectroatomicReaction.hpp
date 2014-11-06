@@ -22,11 +22,9 @@ namespace MonteCarlo{
 /*! The standard Electroatomic reaction base class
  * \details Use the InterpPolicy template parameter and the
  * processed_cross_section template parameter to customize the behavior of
- * this class. Raw cross section data from the EPDL library would use
- * a LogLog policy with processed_cross_section = false. Raw cross
- * section data from an ACE library would use a LinLin policy with
- * processed_cross_section = false. When data is processed, the policy is used
- * to indicate how the data was processed.
+ * this class. Raw cross section data from a EPR library would use a LinLin 
+ * policy with processed_cross_section = false. When data is processed, 
+ * the policy is used to indicate how the data was processed.
  */
 template<typename InterpPolicy, bool processed_cross_section>
 class StandardElectroatomicReaction : public ElectroatomicReaction
@@ -55,7 +53,7 @@ private:
   // The incoming energy grid
   Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
 
-  // The cross section values evaluated on the incoming erg grid (logarithms)
+  // The cross section values evaluated on the incoming energy grid
   Teuchos::ArrayRCP<const double> d_cross_section;
 
   // The threshold energy
@@ -89,7 +87,7 @@ private:
   // The incoming energy grid (logarithms)
   Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
 
-  // The cross section values evaluated on the incoming energy grid
+  // The cross section values evaluated on the incoming erg grid (logarithms)
   Teuchos::ArrayRCP<const double> d_cross_section;
 
   // The threshold energy

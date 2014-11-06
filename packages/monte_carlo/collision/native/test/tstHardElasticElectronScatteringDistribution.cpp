@@ -84,13 +84,16 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   MonteCarlo::ParticleBank bank;
+  unsigned shell_of_interaction;
   
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 1.1e-3 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   // Analytically scatter electron
-  ace_basic_elastic_distribution->scatterElectron( electron, bank );
+  ace_basic_elastic_distribution->scatterElectron( electron, 
+                                                   bank, 
+                                                   shell_of_interaction );
 
   // Test
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.999999500000, 1e-12 );
@@ -112,13 +115,16 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   MonteCarlo::ParticleBank bank;
+  unsigned shell_of_interaction;
   
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 1.1e-3 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   // Analytically scatter electron
-  ace_basic_elastic_distribution->scatterElectron( electron, bank );
+  ace_basic_elastic_distribution->scatterElectron( electron, 
+                                                   bank, 
+                                                   shell_of_interaction );
 
   // Test
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.9874366113907, 1e-12 );
