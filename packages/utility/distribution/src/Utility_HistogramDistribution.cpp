@@ -24,10 +24,54 @@ HistogramDistribution::HistogramDistribution()
 // Constructor
 HistogramDistribution::HistogramDistribution( 
 				  const Teuchos::Array<double>& bin_boundaries,
-				  const Teuchos::Array<double>& bin_values )
+				  const Teuchos::Array<double>& bin_values, 
+                  const bool interpret_dependent_values_as_cdf )
   : d_distribution( bin_boundaries.size() )
 {
-  initializeDistribution( bin_boundaries, bin_values );
+  if( interpret_dependent_values_as_cdf )
+  {
+  // Make sure that the bin values are sorted
+  testPrecondition( Sort::isSortedAscending( bin_values.begin(), 
+					     bin_values.end() ) );
+
+  // Make sure that for n bin boundaries there are n-1 bin values
+  testPrecondition( bin_boundaries.size()-1 == bin_values.size() );
+
+    // Assign the first cdf value
+    d_distribution[0].first = bin_boundaries[0];
+    d_distribution[0].third = 0.0;
+
+    // Assign the distribution
+    for( unsigned i = 1; i < bin_boundaries.size(); ++i )
+    {
+      d_distribution[i].first = bin_boundaries[i];
+      d_distribution[i].third = bin_values[i-1];
+
+      // Calculate the pdf from the cdf
+      d_distribution[i-1].second = 
+        (d_distribution[i].third - d_distribution[i-1].third)/
+        (d_distribution[i].first - d_distribution[i-1].first);
+    }
+
+    // Last PDF value is unused and can be assigned to the second to last value
+    d_distribution.back().second =
+      d_distribution[d_distribution.size()-2].second;
+
+    // Set normalization constant
+    d_norm_constant = d_distribution.back().third;
+ 
+    // Verify that the CDF is normalized (in event of round-off errors)
+    if( bin_values.back() != 1.0 )
+    {
+      for( unsigned j = 0; j < d_distribution.size(); ++j )
+      {
+        d_distribution[j].second /= d_norm_constant;
+        d_distribution[j].third /= d_norm_constant;
+      }
+    }
+  }
+  else
+    initializeDistribution( bin_boundaries, bin_values );
 }
 
 // Copy constructor
@@ -74,6 +118,33 @@ double HistogramDistribution::evaluatePDF( const double indep_var_value ) const
 				       indep_var_value );
     
     return bin->second;
+  }
+}
+
+// Evaluate the CDF
+double HistogramDistribution::evaluateCDF( const double indep_var_value ) const
+{
+  if( indep_var_value < d_distribution.front().first )
+    return 0.0;
+  else if( indep_var_value >= d_distribution.back().first )
+    return 1.0;
+  else
+  {
+    Teuchos::Array<Trip<double,double,double> >::const_iterator 
+       start, 
+       end, 
+       lower_bin_boundary;
+
+    start = d_distribution.begin();
+    end = d_distribution.end();
+
+    lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							  end,
+							  indep_var_value );
+
+    double indep_diff = indep_var_value - lower_bin_boundary->first;
+
+    return lower_bin_boundary->third + lower_bin_boundary->second * indep_diff;
   }
 } 
 
