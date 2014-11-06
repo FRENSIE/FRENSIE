@@ -40,7 +40,8 @@ public:
 
   //! Randomly scatter the electron
   virtual void scatterElectron( ElectronState& electron,
-			                    ParticleBank& bank) const = 0;
+			                    ParticleBank& bank,
+                                unsigned& shell_of_interaction ) const = 0;
 
 protected:
 

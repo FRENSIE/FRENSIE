@@ -187,6 +187,11 @@ ADD_EXECUTABLE(tstHardElasticElectronScatteringDistribution
 TARGET_LINK_LIBRARIES(tstHardElasticElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(tstHardElasticElectronScatteringDistribution_test tstHardElasticElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+ADD_EXECUTABLE(tstAtomicExcitationElectronScatteringDistribution
+  tstAtomicExcitationElectronScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstAtomicExcitationElectronScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(tstAtomicExcitationElectronScatteringDistribution_test tstAtomicExcitationElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
 
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)

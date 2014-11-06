@@ -23,7 +23,6 @@
 #include "Utility_TabularDistribution.hpp"
 
 namespace MonteCarlo{
-//! \todo Write Unit Test
 // Constructor 
 HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribution(
     const int atomic_number,
@@ -40,7 +39,8 @@ HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribu
 // Randomly scatter the electron
 void HardElasticElectronScatteringDistribution::scatterElectron( 
                                 ElectronState& electron,
-			                    ParticleBank& bank) const
+			                    ParticleBank& bank,
+                                unsigned& shell_of_interaction ) const
 {
   // angle cosine the electron scatters into
   double scattering_angle_cosine;
