@@ -19,7 +19,7 @@
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_TabularDistribution.hpp"
+#include "Utility_HistogramDistribution.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -71,7 +71,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the screened analytical function angle can be evaluated
+// Check that the angle can be evaluated from the screened analytical function
 TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
                    ScatterElectron_analytical )
 {
@@ -94,6 +94,34 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
   // Test
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.999999500000, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.1e-3, 1e-12 );
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the angle can be evaluated from the distribution
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+                   ScatterElectron_distribution )
+{
+  // Set fake random number stream
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.2;
+  fake_stream[1] = 9.9990E-01;
+  fake_stream[2] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::ParticleBank bank;
+  
+  MonteCarlo::ElectronState electron( 0 );
+  electron.setEnergy( 1.1e-3 );
+  electron.setDirection( 0.0, 0.0, 1.0 );
+
+  // Analytically scatter electron
+  ace_basic_elastic_distribution->scatterElectron( electron, bank );
+
+  // Test
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.9874366113907, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.1e-3, 1e-12 );
 
 }
@@ -167,7 +195,8 @@ int main( int argc, char** argv )
     elastic_scattering_distribution[n].second.reset( 
 	  new Utility::HistogramDistribution(
 		 elas_block( offset[n], table_length[n] ),
-		 elas_block( offset[n] + 2 + table_length[n], table_length[n]-1 ) ) );
+		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
+         true ) );
 /*	  new Utility::TabularDistribution<Utility::LinLin>(
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n] ) ) );
@@ -178,7 +207,7 @@ int main( int argc, char** argv )
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 
   // Set the cutoff angle cosine 
-  const double cutoff_angle_cosine = 0.9976001;
+  const double cutoff_angle_cosine = 0.999999;
 
   // Create the distributions
   ace_basic_elastic_distribution.reset(
