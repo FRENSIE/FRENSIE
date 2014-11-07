@@ -33,7 +33,7 @@ namespace MonteCarlo{
  * processed_cross_section = true. When data is processed, the policy is
  * used to indicate how the data was processed.
  */
-template<typename InterpPolicy, bool processed_cross_section>
+template<typename InterpPolicy, bool processed_cross_section = true>
 class StandardPhotoatom : public Photoatom
 {
   
@@ -68,7 +68,7 @@ private:
 
   // Return the cross section at the desired energy
   double getCrossSection( const double energy,
-			  const Teuchos::Array<double>& cross_section );
+			  const Teuchos::Array<double>& cross_section ) const;
 
   // The processed incoming energy grid
   Teuchos::ArrayRCP<const double> d_energy_grid;
@@ -113,7 +113,7 @@ private:
 
   // Return the cross section at the desired energy
   double getCrossSection( const double energy,
-			  const Teuchos::Array<double>& cross_section );
+			  const Teuchos::Array<double>& cross_section ) const;
 
   // The raw incoming energy grid
   Teuchos::ArrayRCP<const double> d_energy_grid;

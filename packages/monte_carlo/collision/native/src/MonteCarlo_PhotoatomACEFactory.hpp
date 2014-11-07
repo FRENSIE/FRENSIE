@@ -25,30 +25,16 @@ class PhotoatomACEFactory
 
 public:
 
-  //! Create a photoatom (and store the atomic relaxation model)
-  static void createPhotoatom( 
-                  const XSSEPRDataExtractor& raw_photoatom_data,
-		  Teuchos::RCP<Photoatom>& photoatom,
-		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-		  const bool use_doppler_broadening_data,
-		  const bool use_atomic_relaxation_data );
-
   //! Create a photoatom (using the provided atomic relaxation model)
-  static void createPhotomatom(
-            const raw_photoatom_data& raw_photoatom_data,
-	    Teuchos::RCP<Photoatom>& photoatom,
+  static void createPhotoatom(
+	    const Data::XSSEPRDataExtractor& raw_photoatom_data,
+	    const std::string& photoatom_name,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	    const bool use_doppler_broadening_data );
+	    Teuchos::RCP<Photoatom>& photoatom,
+	    const bool use_doppler_broadening_data,
+	    const bool use_detailed_pair_production_data,
+	    const bool use_atomic_relaxation_data );
 private:
-
-  //! Create the subshell relaxation models
-  static void createSubshellRelaxationModels(
-		  const Teuchos::Array<SubshellType>& subshell_designators,
-		  const Teuchos::ArrayView<const double>& subshell_transitions,
-		  const Teuchos::ArrayView<const double>& relo_block,
-		  const Teuchos::ArrayView<const double>& xprob_block,
-		  Teuchos::Array<Teuchos::RCP<SubshellRelaxationModel> >&
-		  subshell_relaxation_models );
 
   // Constructor
   PhotoatomACEFactory();
