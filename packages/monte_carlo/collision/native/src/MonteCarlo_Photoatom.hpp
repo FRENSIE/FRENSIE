@@ -12,8 +12,18 @@
 // Std Lib Includes
 #include <string>
 
+// Boost Includes
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+
 // Trilinos Includes
+#include <Teuchos_Array.hpp>
 #include <Teuchos_ScalarTraits.hpp>
+
+// FRENSIE Includes
+#include "MonteCarlo_PhotoatomicReactionType.hpp"
+#include "MonteCarlo_PhotoatomicReaction.hpp"
+#include "MonteCarlo_AtomicRelaxationModel.hpp"
 
 namespace MonteCarlo{
 
@@ -96,7 +106,7 @@ protected:
 private:
 
   // Set the default absorption reaction types
-  static boost::unordered_set<PhotoatomicReactionTypes>
+  static boost::unordered_set<PhotoatomicReactionType>
   setDefaultAbsorptionReactionTypes();
 
   // Sample an absorption reaction

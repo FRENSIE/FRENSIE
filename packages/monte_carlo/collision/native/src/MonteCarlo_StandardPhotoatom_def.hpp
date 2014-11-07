@@ -11,6 +11,8 @@
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_SearchAlgorithms.hpp"
+#include "Utility_InterpolationPolicy.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -47,7 +49,7 @@ StandardPhotoatom<InterpPolicy,processed_cross_section>::StandardPhotoatom(
 
 // Constructor
 template<typename InterpPolicy>
-StandardPhotoatom<InerpPolicy,false>::StandardPhotoatom(
+StandardPhotoatom<InterpPolicy,false>::StandardPhotoatom(
 	  const std::string& name,
 	  const unsigned atomic_number,
 	  const Teuchos::ArrayRCP<double>& energy_grid,
@@ -106,8 +108,8 @@ double StandardPhotoatom<InterpPolicy,false>::getAbsorptionCrossSection( const d
 // Return the cross section at the desired energy
 template<typename InterpPolicy, bool processed_cross_section>
 inline double StandardPhotoatom<InterpPolicy,processed_cross_section>::getCrossSection( 
-				  const double energy,
-				  const Teuchos::Array<double>& cross_section )
+			    const double energy,
+			    const Teuchos::Array<double>& cross_section ) const
 {
   double cross_section_value;
   
@@ -150,8 +152,8 @@ inline double StandardPhotoatom<InterpPolicy,processed_cross_section>::getCrossS
 // Return the cross section at the desired energy
 template<typename InterpPolicy>
 inline double StandardPhotoatom<InterpPolicy,false>::getCrossSection( 
-				  const double energy,
-				  const Teuchos::Array<double>& cross_section )
+			    const double energy,
+			    const Teuchos::Array<double>& cross_section ) const
 {
   double cross_section_value;
   
@@ -167,8 +169,8 @@ inline double StandardPhotoatom<InterpPolicy,false>::getCrossSection(
       InterpPolicy::interpolate( d_energy_grid[index],
 				 d_energy_grid[index+1],
 				 energy,
-				 d_cross_section[index],
-				 d_cross_section[index+1] );
+				 cross_section[index],
+				 cross_section[index+1] );
   }
   else if( energy < d_energy_grid[0] )
     cross_section_value = 0.0;
@@ -191,7 +193,7 @@ void StandardPhotoatom<InterpPolicy,processed_cross_section>::calculateTotalAbso
   testPrecondition( d_absorption_cross_section.size() == 
 		    d_energy_grid.size() );
 
-  PhotoAtom::ReactionMap::const_iterator absorption_reaction;
+  Photoatom::ReactionMap::const_iterator absorption_reaction;
 
   for( unsigned i = 0; i < d_absorption_cross_section.size(); ++i )
   {
@@ -224,7 +226,7 @@ void StandardPhotoatom<InterpPolicy,false>::calculateTotalAbsorptionCrossSection
   testPrecondition( d_absorption_cross_section.size() == 
 		    d_energy_grid.size() );
 
-  PhotoAtom::ReactionMap::const_iterator absorption_reaction;
+  Photoatom::ReactionMap::const_iterator absorption_reaction;
 
   for( unsigned i = 0; i < d_absorption_cross_section.size(); ++i )
   {

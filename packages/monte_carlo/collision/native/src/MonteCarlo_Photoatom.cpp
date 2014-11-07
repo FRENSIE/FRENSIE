@@ -110,8 +110,8 @@ Photoatom::setDefaultAbsorptionReactionTypes()
 }
 
 // Set the photoatomic reaction types that will be considered as absorption
-void Photatom::setAbsorptionReactionType(
-     const Teuchos::Array<PhotoatomicReaciontType>& absorption_reaction_types )
+void Photoatom::setAbsorptionReactionTypes(
+     const Teuchos::Array<PhotoatomicReactionType>& absorption_reaction_types )
 {
   Photoatom::absorption_reaction_types.clear();
 
@@ -149,8 +149,8 @@ Photoatom::Photoatom(
     d_relaxation_model( atomic_relaxation_model )
 {
   // There must be at least one reaction specified
-  testPrecondition( scattering_reactions.size() +
-		    absorption_reactions.size() > 0 );
+  testPrecondition( standard_scattering_reactions.size() +
+		    standard_absorption_reactions.size() > 0 );
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
 
@@ -161,21 +161,21 @@ Photoatom::Photoatom(
   while( rxn_type_pointer != standard_scattering_reactions.end() )
   {
     if( Photoatom::absorption_reaction_types.count( rxn_type_pointer->first ) )
-      d_absorption_reactions.insert( *reaction_type_pointer );
+      d_absorption_reactions.insert( *rxn_type_pointer );
     else
-      d_scattering_reactions.insert( *reaction_type_pointer );
+      d_scattering_reactions.insert( *rxn_type_pointer );
 
     ++rxn_type_pointer;
   }
 
-  reaction_type_pointer = standard_absorption_reactions.begin();
+  rxn_type_pointer = standard_absorption_reactions.begin();
 
   while( rxn_type_pointer != standard_absorption_reactions.end() )
   {
     if( Photoatom::absorption_reaction_types.count( rxn_type_pointer->first ) )
-      d_absorption_reactions.insert( *reaction_type_pointer );
+      d_absorption_reactions.insert( *rxn_type_pointer );
     else
-      d_miscellaneous_reactions.insert( *reaction_type_pointer );
+      d_miscellaneous_reactions.insert( *rxn_type_pointer );
 
     ++rxn_type_pointer;
   }
@@ -226,7 +226,7 @@ double Photoatom::getReactionCrossSection(
     if( photoatomic_reaction != d_scattering_reactions.end() )
       return photoatomic_reaction->second->getCrossSection( energy );
 
-    photoatom_reaction = d_absorption_reactions.find( reaction );
+    photoatomic_reaction = d_absorption_reactions.find( reaction );
 
     if( photoatomic_reaction != d_absorption_reactions.end() )
       return photoatomic_reaction->second->getCrossSection( energy );
@@ -318,7 +318,7 @@ void Photoatom::sampleAbsorptionReaction( const double scaled_random_number,
   ReactionMap::const_iterator photoatomic_reaction = 
     d_absorption_reactions.begin();
 
-  while( absorption_reaction != d_absorption_reactions.end() )
+  while( photoatomic_reaction != d_absorption_reactions.end() )
   {
     partial_cross_section +=
       photoatomic_reaction->second->getCrossSection( photon.getEnergy() );
@@ -353,7 +353,7 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
   ReactionMap::const_iterator photoatomic_reaction = 
     d_scattering_reactions.begin();
   
-  while( photoatomic_reaction != d_scattering_reaction.end() )
+  while( photoatomic_reaction != d_scattering_reactions.end() )
   {
     partial_cross_section +=
       photoatomic_reaction->second->getCrossSection( photon.getEnergy() );
@@ -379,13 +379,13 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
 }
 
 // Return the scattering reactions
-const ReactionMap& Photoatom::getScatteringReactions() const
+const Photoatom::ReactionMap& Photoatom::getScatteringReactions() const
 {
   return d_scattering_reactions;
 }
 
 // Return the absorption reactions
-const ReactionMap& Photoatom::getAbsorptionReactions() const
+const Photoatom::ReactionMap& Photoatom::getAbsorptionReactions() const
 {
   return d_absorption_reactions;
 }

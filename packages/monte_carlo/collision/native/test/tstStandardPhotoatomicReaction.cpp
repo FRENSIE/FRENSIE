@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstStandardPhotoatomicReaction
+//! \file   tstStandardPhotoatomicReaction.cpp
 //! \author Alex Robinson
 //! \brief  Standard photoatomic reaction unit tests.
 //!
