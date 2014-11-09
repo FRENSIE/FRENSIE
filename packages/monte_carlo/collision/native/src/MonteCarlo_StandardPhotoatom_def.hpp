@@ -211,6 +211,9 @@ void StandardPhotoatom<InterpPolicy,processed_cross_section>::calculateTotalAbso
 
       ++absorption_reaction;
     }
+
+    // Make sure the raw cross section is valid
+    testPostcondition( raw_cross_section > 0.0 );
     
     // Process the raw cross section
     d_absorption_cross_section[i] = 
@@ -271,6 +274,9 @@ void StandardPhotoatom<InterpPolicy,processed_cross_section>::calculateTotalCros
       ++scattering_reaction;
     }
     
+    // Make sure the raw cross section is valid
+    testPrecondition( raw_cross_section > 0.0 );
+
     // Process the raw cross section
     d_total_cross_section[i] = 
       InterpPolicy::processDepVar( raw_cross_section );
