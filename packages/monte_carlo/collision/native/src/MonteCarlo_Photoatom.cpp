@@ -200,10 +200,11 @@ double Photoatom::getSurvivalProbability( const double energy ) const
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  double survival_prob = 1.0 - this->getAbsorptionCrossSection( energy )/
-    this->getTotalCrossSection( energy );
+  double survival_prob = 1.0 - (this->getAbsorptionCrossSection( energy )/
+				this->getTotalCrossSection( energy ));
 
   // Make sure the survival probability is valid
+  testPostcondition( !ST::isnaninf( survival_prob ) );
   testPostcondition( survival_prob >= 0.0 );
   testPostcondition( survival_prob <= 1.0 );
 
