@@ -212,8 +212,8 @@ TEUCHOS_UNIT_TEST( StandardPhotoatom, getTotalCrossSection_ace )
     ace_photoatom->getTotalCrossSection( exp( 1.151292546497E+01 ) );
 
   TEST_FLOATING_EQUALITY(cross_section,
-			 exp( -1.115947249407E+01 ) + exp( 3.71803283438E+00 ),
-			 1e-11 );
+			 exp( -1.115947249407E+01 ) + exp( 3.718032834377E+00),
+			 1e-12 );
 
 }
 
@@ -257,12 +257,122 @@ TEUCHOS_UNIT_TEST( Photoatom, getSurvivalProbability )
   TEST_FLOATING_EQUALITY( survival_prob, 0.0, 1e-12 );
 
   survival_prob = 
-    ace_photoatom->getAbsorptionCrossSection( exp( 1.151292546497E+01 ) );
+    ace_photoatom->getSurvivalProbability( exp( 1.151292546497E+01 ) );
 
-  double expected_survival_prob = exp( 3.71803283438E+00 )/
-    (exp( 3.71803283438E+00 ) + exp( -1.115947249407E+01 ));
+  double expected_survival_prob = exp( 3.718032834377E+00 )/
+    (exp( 3.718032834377E+00 ) + exp( -1.115947249407E+01 ));
   
   TEST_FLOATING_EQUALITY( survival_prob, expected_survival_prob, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the reaction cross section can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getReactionCrossSection )
+{
+  // Photoelectric effect
+  double cross_section = ace_photoatom->getReactionCrossSection( 
+			exp( -1.381551055796E+01 ),
+			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+    
+  cross_section = ace_photoatom->getReactionCrossSection( 
+		        exp( -1.214969212306E+01 ),
+			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
+
+  cross_section = 
+    ace_photoatom->getReactionCrossSection( 
+		        exp( -1.214720768866E+01 ),
+			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, exp( 1.718780625507E+01 ), 1e-12 );
+
+  cross_section = 
+    ace_photoatom->getReactionCrossSection( 
+		        exp( 1.151292546497E+01 ),
+			MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-12 );
+
+  // Pair production
+  cross_section = ace_photoatom->getReactionCrossSection(
+			exp( -1.381551055796E+01 ),
+			MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+  
+  cross_section = ace_photoatom->getReactionCrossSection(
+			    exp( 2.480967890857E-02 ),
+			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, exp( -1.431923975437E+01 ), 1e-12 );
+
+  cross_section = ace_photoatom->getReactionCrossSection(
+			    exp( 1.151292546497E+01 ),
+			    MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, exp( 3.718032834377E+00 ), 1e-12 );
+
+  // Incoherent
+  cross_section = ace_photoatom->getReactionCrossSection(
+				 exp( -1.381551055796E+01 ),
+				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = ace_photoatom->getReactionCrossSection(
+				 exp( 2.480967890857E-02 ),
+				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+  
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  
+  cross_section = ace_photoatom->getReactionCrossSection(
+				 exp( 1.151292546497E+01 ),
+				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+  
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  // Coherent
+  cross_section = ace_photoatom->getReactionCrossSection(
+				 exp( -1.381551055796E+01 ),
+				 MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = ace_photoatom->getReactionCrossSection(
+				 exp( 2.480967890857E-02 ),
+				 MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
+  
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  
+  cross_section = ace_photoatom->getReactionCrossSection(
+				 exp( 1.151292546497E+01 ),
+				 MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
+  
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  // Total
+  cross_section = ace_photoatom->getReactionCrossSection( 
+				      exp( -1.214969212306E+01 ),
+				      MonteCarlo::TOTAL_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
+
+  cross_section = ace_photoatom->getReactionCrossSection( 
+				      exp( -1.214720768866E+01 ),
+				      MonteCarlo::TOTAL_PHOTOATOMIC_REACTION );
+  
+  TEST_FLOATING_EQUALITY( cross_section, exp( 1.718780625507E+01 ), 1e-12 );
+
+  cross_section = ace_photoatom->getReactionCrossSection( 
+				      exp( 1.151292546497E+01 ),
+				      MonteCarlo::TOTAL_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY(cross_section,
+			 exp( -1.115947249407E+01 ) + exp( 3.718032834377E+00),
+			 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
