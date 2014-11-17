@@ -212,6 +212,11 @@ ADD_EXECUTABLE(tstStandardPhotoatom
 TARGET_LINK_LIBRARIES(tstStandardPhotoatom monte_carlo_collision_native)
 ADD_TEST(StandardPhotoatom_test tstStandardPhotoatom --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+ADD_EXECUTABLE(tstPhotoatomicReactionACEFactory
+  tstPhotoatomicReactionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstPhotoatomicReactionACEFactory monte_carlo_collision_native)
+ADD_TEST(PhotoatomicReactionACEFactory_test tstPhotoatomicReactionACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)
 
