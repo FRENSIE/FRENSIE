@@ -63,7 +63,7 @@ DetailedAtomicRelaxationModel::relaxAtom( const SubshellType vacancy_shell,
     // Relax the new vacancy
     this->relaxAtom( primary_vacancy_shell, particle, bank );
     
-    // Relas the secondary vacancy
+    // Relax the secondary vacancy
     this->relaxAtom( secondary_vacancy_shell, particle, bank );
   }
 }

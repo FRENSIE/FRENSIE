@@ -54,7 +54,6 @@ TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
   fake_stream[5] = 0.5; // direction
   fake_stream[6] = 0.5; // direction
   
-  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   detailed_atomic_relaxation_model->relaxAtom( vacancy, photon, bank );
@@ -69,10 +68,9 @@ TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
   TEST_EQUALITY_CONST( bank.top()->getZPosition(), 1.0 );
   TEST_EQUALITY_CONST( bank.top()->getCollisionNumber(), 0 );
   TEST_EQUALITY_CONST( bank.top()->getGenerationNumber(), 1 );
-  std::cout << *bank.top() << std::endl;
+  
   bank.pop();
-  std::cout << *bank.top() << std::endl;
-
+  
   // L2 radiative transition
   TEST_EQUALITY_CONST( bank.top()->getEnergy(), 1.523590000000E-02 );
   TEST_EQUALITY_CONST( bank.top()->getXPosition(), 1.0 );
