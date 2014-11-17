@@ -68,7 +68,8 @@ private:
 
   // Return the cross section at the desired energy
   double getCrossSection( const double energy,
-			  const Teuchos::Array<double>& cross_section ) const;
+			  const Teuchos::Array<double>& cross_section,
+			  const unsigned threshold_index ) const;
 
   // The processed incoming energy grid
   Teuchos::ArrayRCP<const double> d_energy_grid;
@@ -78,6 +79,12 @@ private:
 
   // The processed microscopic absorption cross section
   Teuchos::Array<double> d_absorption_cross_section;
+
+  // The total cross section threshold index
+  unsigned d_total_threshold_energy_index;
+
+  // The absorption cross section threshold index
+  unsigned d_absorption_threshold_energy_index;
 };
 
 //! Partial template specialization for raw data

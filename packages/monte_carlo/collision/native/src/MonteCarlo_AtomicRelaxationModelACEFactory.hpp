@@ -32,12 +32,18 @@ class AtomicRelaxationModelACEFactory
 
 public:
 
-  // Constructor
+  //! Create the atomic relaxation model
+  static void createAtomicRelaxationModel(
+		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
+		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+		  const bool use_atomic_relaxation_data );
+
+  //! Constructor
   AtomicRelaxationModelACEFactory()
   { /* ... */ }
 
-  //! Create the atomic relaxation model
-  void createAtomicRelaxationModel(
+  //! Create and cache the atomic relaxation model
+  void createAndCacheAtomicRelaxationModel(
 		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 		  const bool use_atomic_relaxation_data );
@@ -45,7 +51,7 @@ public:
 private:
 
   //! Create the subshell relaxation models
-  void createSubshellRelaxationModels(
+  static void createSubshellRelaxationModels(
 		  const Teuchos::Array<SubshellType>& subshell_designators,
 		  const Teuchos::ArrayView<const double>& subshell_transitions,
 		  const Teuchos::ArrayView<const double>& relo_block,

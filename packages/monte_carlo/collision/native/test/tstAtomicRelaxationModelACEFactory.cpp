@@ -37,11 +37,10 @@ Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
 TEUCHOS_UNIT_TEST( AtomicRelaxationModelACEFactory,
 		   createAtomicRelaxationModel_void )
 {
-  MonteCarlo::AtomicRelaxationModelACEFactory factory;
-  
-  factory.createAtomicRelaxationModel( *xss_data_extractor,
-				       relaxation_model,
-				       false );
+  MonteCarlo::AtomicRelaxationModelACEFactory::createAtomicRelaxationModel( 
+							   *xss_data_extractor,
+							   relaxation_model,
+							   false );
   
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 1.0 );
@@ -64,11 +63,10 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelACEFactory,
 TEUCHOS_UNIT_TEST( AtomicRelaxationModelACEFactory,
 		   createAtomicRelaxationModel_detailed )
 {
-  MonteCarlo::AtomicRelaxationModelACEFactory factory;
-
-  factory.createAtomicRelaxationModel( *xss_data_extractor,
-				       relaxation_model,
-				       true );
+  MonteCarlo::AtomicRelaxationModelACEFactory::createAtomicRelaxationModel( 
+							   *xss_data_extractor,
+							   relaxation_model,
+							   true );
 
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 1.0 );
@@ -115,15 +113,15 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelACEFactory, cache_models )
 {
   MonteCarlo::AtomicRelaxationModelACEFactory factory;
 
-  factory.createAtomicRelaxationModel( *xss_data_extractor,
-				       relaxation_model,
-				       true );
+  factory.createAndCacheAtomicRelaxationModel( *xss_data_extractor,
+					       relaxation_model,
+					       true );
 
   Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> copy_relaxation_model;
   
-  factory.createAtomicRelaxationModel( *xss_data_extractor,
-				       copy_relaxation_model,
-				       true );
+  factory.createAndCacheAtomicRelaxationModel( *xss_data_extractor,
+					       copy_relaxation_model,
+					       true );
 
   TEST_EQUALITY( relaxation_model, copy_relaxation_model );
 }

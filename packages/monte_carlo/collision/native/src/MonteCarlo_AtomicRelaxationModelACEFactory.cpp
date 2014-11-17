@@ -27,18 +27,11 @@ AtomicRelaxationModelACEFactory::default_void_model(
  * ignores relaxation, will be created.
  */
 void AtomicRelaxationModelACEFactory::createAtomicRelaxationModel(
-                  const Data::XSSEPRDataExtractor& raw_photoatom_data,
+		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 		  const bool use_atomic_relaxation_data )
 {
-  // Check if the model for this atom has already been created
-  if( d_relaxation_models.find( raw_photoatom_data.extractAtomicNumber() ) !=
-      d_relaxation_models.end() )
-  {
-    atomic_relaxation_model = 
-      d_relaxation_models[raw_photoatom_data.extractAtomicNumber()];
-  }
-  else if( use_atomic_relaxation_data )
+  if( use_atomic_relaxation_data )
   {
     if( raw_photoatom_data.hasFluorescenceData() )
     {
@@ -69,18 +62,15 @@ void AtomicRelaxationModelACEFactory::createAtomicRelaxationModel(
       Teuchos::Array<Teuchos::RCP<SubshellRelaxationModel> >
 	subshell_relaxation_models;
       
-      this->createSubshellRelaxationModels( subshells,
-					    subshell_transitions,
-					    relo_block,
-					    xprob_block,
-					    subshell_relaxation_models );
+      AtomicRelaxationModelACEFactory::createSubshellRelaxationModels( 
+						  subshells,
+						  subshell_transitions,
+						  relo_block,
+						  xprob_block,
+						  subshell_relaxation_models );
 
       atomic_relaxation_model.reset( new DetailedAtomicRelaxationModel(
 						subshell_relaxation_models ) );
-
-      // Cache the relaxation model
-      d_relaxation_models[raw_photoatom_data.extractAtomicNumber()] = 
-	atomic_relaxation_model;
     }
     // No atomic relaxation date is available
     else
@@ -94,6 +84,43 @@ void AtomicRelaxationModelACEFactory::createAtomicRelaxationModel(
   {
     atomic_relaxation_model = 
       AtomicRelaxationModelACEFactory::default_void_model;
+  }
+}
+
+// Create and cache the atomic relaxation model
+/*! \details If the use of atomic relaxation data is desired and that data
+ * is available for the atom of interest, a detailed atomic relaxation model
+ * will be created for the atom. Otherwise a "void" model, which essentially
+ * ignores relaxation, will be created. To save memory, a relaxation model
+ * can be cached. Calling this function multiple times with the same atomic
+ * data (same atomic number) will return a pointer to the previously created
+ * atomic relaxation model.
+ */
+void AtomicRelaxationModelACEFactory::createAndCacheAtomicRelaxationModel(
+                  const Data::XSSEPRDataExtractor& raw_photoatom_data,
+		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+		  const bool use_atomic_relaxation_data )
+{
+  // Check if the model for this atom has already been created
+  if( d_relaxation_models.find( raw_photoatom_data.extractAtomicNumber() ) !=
+      d_relaxation_models.end() )
+  {
+    atomic_relaxation_model = 
+      d_relaxation_models[raw_photoatom_data.extractAtomicNumber()];
+  }
+  else
+  {
+    AtomicRelaxationModelACEFactory::createAtomicRelaxationModel(
+						  raw_photoatom_data,
+						  atomic_relaxation_model,
+						  use_atomic_relaxation_data );
+
+    // Cache the relaxation model
+    if( use_atomic_relaxation_data )
+    {
+      d_relaxation_models[raw_photoatom_data.extractAtomicNumber()] = 
+	atomic_relaxation_model;
+    }
   }
 }
 
