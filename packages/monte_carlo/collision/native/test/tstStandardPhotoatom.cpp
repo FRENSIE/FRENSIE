@@ -376,6 +376,85 @@ TEUCHOS_UNIT_TEST( Photoatom, getReactionCrossSection )
 }
 
 //---------------------------------------------------------------------------//
+// Check that an analogue collision with the atom can be modeled
+TEUCHOS_UNIT_TEST( Photoatom, collideAnalogue )
+{
+  Teuchos::RCP<MonteCarlo::PhotonState> photon( 
+					    new MonteCarlo::PhotonState( 0 ) );
+  photon->setEnergy( exp( -1.214969212306E+01 ) );
+  photon->setDirection( 0.0, 0.0, 1.0 );
+  photon->setWeight( 1.0 );
+
+  MonteCarlo::ParticleBank bank;
+  
+  ace_photoatom->collideAnalogue( *photon, bank );
+
+  TEST_ASSERT( photon->isGone() );
+  TEST_EQUALITY_CONST( bank.size(), 0 );
+
+  photon->setEnergy( exp( 1.151292546497E+01 ) );
+
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 3.0e-7; // choose absorption rxn
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  ace_photoatom->collideAnalogue( *photon, bank );
+
+  TEST_ASSERT( photon->isGone() );
+  TEST_EQUALITY_CONST( bank.size(), 0 );
+
+  // reset the particle
+  photon.reset( new MonteCarlo::PhotonState( 0 ) );
+  photon->setEnergy( exp( 1.151292546497E+01 ) );
+  photon->setDirection( 0.0, 0.0, 1.0 );
+  photon->setWeight( 1.0 );
+
+  fake_stream[0] = 0.5; // choose scattering rxn
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  ace_photoatom->collideAnalogue( *photon, bank );
+  
+  TEST_ASSERT( !photon->isGone() );
+  TEST_EQUALITY_CONST( photon->getWeight(), 1.0 );
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that a survival biased collision with the atom can be modeled
+TEUCHOS_UNIT_TEST( Photoatom, collideSurvivalBias )
+{  
+  Teuchos::RCP<MonteCarlo::PhotonState> photon( 
+					    new MonteCarlo::PhotonState( 0 ) );
+  photon->setEnergy( exp( -1.214969212306E+01 ) );
+  photon->setDirection( 0.0, 0.0, 1.0 );
+  photon->setWeight( 1.0 );
+  
+  MonteCarlo::ParticleBank bank;
+
+  ace_photoatom->collideSurvivalBias( *photon, bank );
+  
+  TEST_ASSERT( photon->isGone() );
+  TEST_EQUALITY_CONST( bank.size(), 0 );
+  
+  // reset the particle
+  photon.reset( new MonteCarlo::PhotonState( 0 ) );
+  photon->setEnergy( exp( 1.151292546497E+01 ) );
+  photon->setDirection( 0.0, 0.0, 1.0 );
+  photon->setWeight( 1.0 );
+
+  ace_photoatom->collideSurvivalBias( *photon, bank );
+
+  TEST_ASSERT( !photon->isGone() );
+  TEST_FLOATING_EQUALITY( photon->getWeight(), 0.9999996542347203, 1e-15 );
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_FLOATING_EQUALITY( bank.top()->getWeight(), 0.9999996542347203, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
@@ -486,6 +565,9 @@ int main( int argc, char** argv )
 				    absorption_reactions,
 				    relaxation_model ) );
   }
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
