@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_STANDARD_PHOTOATOM_DEF_HPP
 #define MONTE_CARLO_STANDARD_PHOTOATOM_DEF_HPP
 
+// Std Lib Includes
+#include <limits>
+
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -32,8 +35,10 @@ StandardPhotoatom<InterpPolicy,processed_cross_section>::StandardPhotoatom(
 	       standard_absorption_reactions,
 	       atomic_relaxation_model ),
     d_energy_grid( energy_grid ),
-    d_total_cross_section( energy_grid.size() ),
-    d_absorption_cross_section( energy_grid.size() )
+    d_total_cross_section(),
+    d_absorption_cross_section(),
+    d_total_threshold_energy_index( 0u ),
+    d_absorption_threshold_energy_index( 0u )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
@@ -81,7 +86,9 @@ StandardPhotoatom<InterpPolicy,false>::StandardPhotoatom(
 template<typename InterpPolicy, bool processed_cross_section>
 double StandardPhotoatom<InterpPolicy,processed_cross_section>::getTotalCrossSection( const double energy ) const
 {
-  return getCrossSection( energy, d_total_cross_section );
+  return getCrossSection( energy, 
+			  d_total_cross_section,
+			  d_total_threshold_energy_index );
 }
 
 // Return the total cross section at the desired energy
@@ -95,7 +102,9 @@ double StandardPhotoatom<InterpPolicy,false>::getTotalCrossSection( const double
 template<typename InterpPolicy, bool processed_cross_section>
 double StandardPhotoatom<InterpPolicy,processed_cross_section>::getAbsorptionCrossSection( const double energy ) const
 {
-  return getCrossSection( energy, d_absorption_cross_section );
+  return getCrossSection( energy, 
+			  d_absorption_cross_section,
+			  d_absorption_threshold_energy_index );
 }
 
 // Return the total absorption cross section at the desired energy
@@ -109,31 +118,34 @@ double StandardPhotoatom<InterpPolicy,false>::getAbsorptionCrossSection( const d
 template<typename InterpPolicy, bool processed_cross_section>
 inline double StandardPhotoatom<InterpPolicy,processed_cross_section>::getCrossSection( 
 			    const double energy,
-			    const Teuchos::Array<double>& cross_section ) const
+			    const Teuchos::Array<double>& cross_section,
+			    const unsigned threshold_index ) const
 {
   double cross_section_value;
   
   double processed_energy = InterpPolicy::processIndepVar( energy );
 
-  if( processed_energy >= d_energy_grid[0] &&
+  if( processed_energy >= d_energy_grid[threshold_index] &&
       processed_energy < d_energy_grid[d_energy_grid.size()-1] )
   {
-    unsigned index = 
+    unsigned energy_index = 
       Utility::Search::binaryLowerBoundIndex( d_energy_grid.begin(),
 					      d_energy_grid.end(),
 					      processed_energy );
 
+    unsigned cs_index = energy_index - threshold_index;
+
     double processed_slope = 
-      (cross_section[index+1]-cross_section[index])/
-      (d_energy_grid[index+1]-d_energy_grid[index]);
+      (cross_section[cs_index+1]-cross_section[cs_index])/
+      (d_energy_grid[energy_index+1]-d_energy_grid[energy_index]);
 
     cross_section_value = 
-      InterpPolicy::interpolate( d_energy_grid[index],
+      InterpPolicy::interpolate( d_energy_grid[energy_index],
 				 processed_energy,
-				 cross_section[index],
+				 cross_section[cs_index],
 				 processed_slope );
   }
-  else if( processed_energy < d_energy_grid[0] )
+  else if( processed_energy < d_energy_grid[threshold_index] )
     cross_section_value = 0.0;
   else if( processed_energy == d_energy_grid[d_energy_grid.size()-1] )
   {
@@ -189,13 +201,16 @@ inline double StandardPhotoatom<InterpPolicy,false>::getCrossSection(
 template<typename InterpPolicy, bool processed_cross_section>
 void StandardPhotoatom<InterpPolicy,processed_cross_section>::calculateTotalAbsorptionCrossSection()
 {
+  // Make sure the energy grid is valid
+  testPrecondition( d_energy_grid.size() > 1 );
   // Make sure the absorption cross section is sized correctly
-  testPrecondition( d_absorption_cross_section.size() == 
-		    d_energy_grid.size() );
+  testPrecondition( d_absorption_cross_section.size() == 0 );
+  // Make sure the threshold index has been initialized
+  testPrecondition( d_absorption_threshold_energy_index == 0u );
 
   Photoatom::ReactionMap::const_iterator absorption_reaction;
 
-  for( unsigned i = 0; i < d_absorption_cross_section.size(); ++i )
+  for( unsigned i = 0; i < d_energy_grid.size(); ++i )
   {
     absorption_reaction = getAbsorptionReactions().begin();
 
@@ -211,14 +226,31 @@ void StandardPhotoatom<InterpPolicy,processed_cross_section>::calculateTotalAbso
 
       ++absorption_reaction;
     }
-
-    // Make sure the raw cross section is valid
-    testPostcondition( raw_cross_section > 0.0 );
     
-    // Process the raw cross section
-    d_absorption_cross_section[i] = 
-      InterpPolicy::processDepVar( raw_cross_section );
+    if( raw_cross_section > 0.0 )
+    {
+      // Process the raw cross section
+      d_absorption_cross_section.push_back( 
+			    InterpPolicy::processDepVar( raw_cross_section ) );
+    }
+    else
+    {
+      // Ignore this data point
+      ++d_absorption_threshold_energy_index;
+    }
   }
+  
+  // Make sure the absorption cross section is valid
+  remember( Teuchos::Array<double>::const_iterator zero_element = 
+	    std::find( d_absorption_cross_section.begin(),
+		       d_absorption_cross_section.end(),
+		       0.0 ) );
+  testPostcondition( zero_element == d_absorption_cross_section.end() );
+  remember( Teuchos::Array<double>::const_iterator inf_element = 
+	    std::find( d_absorption_cross_section.begin(),
+		       d_absorption_cross_section.end(),
+		       std::numeric_limits<double>::infinity() ) );
+  testPostcondition( inf_element == d_absorption_cross_section.end() );
 }
 
 // Calculate the total absorption cross section
@@ -251,20 +283,32 @@ void StandardPhotoatom<InterpPolicy,false>::calculateTotalAbsorptionCrossSection
 template<typename InterpPolicy, bool processed_cross_section>
 void StandardPhotoatom<InterpPolicy,processed_cross_section>::calculateTotalCrossSection()
 {
+  // Make sure the energy grid is valid
+  testPrecondition( d_energy_grid.size() > 1 );
   // Make sure the total cross section is sized correctly
-  testPrecondition( d_total_cross_section.size() == d_energy_grid.size() );
+  testPrecondition( d_total_cross_section.size() == 0 );
+  // Make sure the threshold index has been initialized
+  testPrecondition( d_total_threshold_energy_index == 0u );
 
   Photoatom::ReactionMap::const_iterator scattering_reaction;
 
-  for( unsigned i = 0; i < d_total_cross_section.size(); ++i )
+  for( unsigned i = 0; i < d_energy_grid.size(); ++i )
   {
-    scattering_reaction = getScatteringReactions().begin();
-
-    double raw_cross_section = 
-      InterpPolicy::recoverProcessedDepVar( d_absorption_cross_section[i] );
+    scattering_reaction = getScatteringReactions().begin(); 
     
     const double raw_energy = 
       InterpPolicy::recoverProcessedIndepVar( d_energy_grid[i] );
+
+    double raw_cross_section;
+
+    if( i < d_absorption_threshold_energy_index )
+      raw_cross_section = 0.0;
+    else
+    {
+      raw_cross_section = 
+	InterpPolicy::recoverProcessedDepVar(
+	   d_absorption_cross_section[i-d_absorption_threshold_energy_index] );
+    }
 
     while( scattering_reaction != getScatteringReactions().end() )
     {
@@ -274,13 +318,30 @@ void StandardPhotoatom<InterpPolicy,processed_cross_section>::calculateTotalCros
       ++scattering_reaction;
     }
     
-    // Make sure the raw cross section is valid
-    testPrecondition( raw_cross_section > 0.0 );
-
-    // Process the raw cross section
-    d_total_cross_section[i] = 
-      InterpPolicy::processDepVar( raw_cross_section );
+    if( raw_cross_section > 0.0 )
+    {
+      // Process the raw cross section
+      d_total_cross_section.push_back( 
+			    InterpPolicy::processDepVar( raw_cross_section ) );
+    }
+    else
+    {
+      // Ignore this data point
+      ++d_total_threshold_energy_index;
+    }
   }
+  
+  // Make sure the absorption cross section is valid
+  remember( Teuchos::Array<double>::const_iterator zero_element = 
+	    std::find( d_total_cross_section.begin(),
+		       d_total_cross_section.end(),
+		       0.0 ) );
+  testPostcondition( zero_element == d_total_cross_section.end() );
+  remember( Teuchos::Array<double>::const_iterator inf_element = 
+	    std::find( d_total_cross_section.begin(),
+		       d_total_cross_section.end(),
+		       std::numeric_limits<double>::infinity() ) );
+  testPostcondition( inf_element == d_total_cross_section.end() );
 }
 
 // Calculate the total cross section

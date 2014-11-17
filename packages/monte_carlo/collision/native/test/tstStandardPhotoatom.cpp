@@ -494,9 +494,9 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableXSSArray() ) );
 
     // Create the pair production and photoelectric effect cross sections
-    Teuchos::ArrayView<const double> raw_energy_grid = 
-      xss_data_extractor->extractPhotonEnergyGrid();
-    
+    Teuchos::ArrayRCP<double> energy_grid;
+    energy_grid.deepCopy( xss_data_extractor->extractPhotonEnergyGrid() );
+        
     Teuchos::ArrayView<const double> raw_pe_cross_section = 
       xss_data_extractor->extractPhotoelectricCrossSection();
     
@@ -508,21 +508,14 @@ int main( int argc, char** argv )
     Teuchos::ArrayRCP<double> pe_cross_section;
     pe_cross_section.assign( start, raw_pe_cross_section.end() );
 
-    unsigned start_energy_bin = std::distance( raw_pe_cross_section.begin(),
-					       start );
+    unsigned pe_threshold_index = 
+      energy_grid.size() - pe_cross_section.size();
 
-    start = raw_energy_grid.begin();
-    std::advance( start, start_energy_bin );
-
-    Teuchos::ArrayRCP<double> energy_grid;
-    energy_grid.assign( start, raw_energy_grid.end() );
-    std::cout << energy_grid.size() << " " << pe_cross_section.size() 
-	      << std::endl;
     Teuchos::RCP<MonteCarlo::PhotoatomicReaction> pe_reaction(
 	    new MonteCarlo::PhotoelectricPhotoatomicReaction<Utility::LogLog>(
 						    energy_grid,
 						    pe_cross_section,
-						    0u ) );
+						    pe_threshold_index ) );
     
     Teuchos::ArrayView<const double> raw_pp_cross_section = 
       xss_data_extractor->extractPairProductionCrossSection();
