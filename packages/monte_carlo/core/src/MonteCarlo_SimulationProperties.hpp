@@ -53,14 +53,29 @@ public:
   //! Return the maximum electron energy (MeV) - cannot be set at runtime
   static double getMaxElectronEnergy();
 
-  //! Set implicit capture mode to on 
+  //! Set implicit capture mode to on (off by default)
   static void setImplicitCaptureModeOn();
-
-  //! Set implicit capture mode to off
-  static void setImplicitCaptureModeOff();
 
   //! Return if implicit capture mode has been set
   static bool isImplicitCaptureModeOn();
+
+  //! Set photon Doppler broadening mode to off (on by default)
+  static void setPhotonDopplerBroadeningModeOff();
+
+  //! Return if photon Doppler broadening mode is on
+  static bool isPhotonDopplerBroadeningModeOn();
+
+  //! Set atomic relaxation mode to off (on by default)
+  static void setAtomicRelaxationModeOff();
+
+  //! Return if atomic relaxation mode is on
+  static bool isAtomicRelaxationModeOn();
+
+  //! Set detailed pair production mode to on (off by default)
+  static void setDetailedPairProductionModeOn();
+
+  //! Return if detailed pair production mode is on
+  static bool isDetailedPairProductionModeOn();
 
 private:
 
@@ -86,8 +101,17 @@ private:
   // The max photon energy (MeV)
   static double max_electron_energy;
 
-  // The capture mode (true = implicit capture mode on, false = analogue)
+  // The capture mode (true = implicit, false = analogue - default)
   static bool implicit_capture_mode_on;
+
+  // The photon Doppler broadening mode (true = on - default, false = off)
+  static bool doppler_broadening_mode_on;
+
+  // The atomic relaxation mode (true = on - default, false = off)
+  static bool atomic_relaxation_mode_on;
+
+  // The detailed pair production mode (true = on, false = off - default)
+  static bool detailed_pair_production_mode_on;
 };
 
 // Return the free gas thermal treatment temperature threshold
@@ -136,6 +160,24 @@ inline double SimulationProperties::getMaxElectronEnergy()
 inline bool SimulationProperties::isImplicitCaptureModeOn()
 {
   return SimulationProperties::implicit_capture_mode_on;
+}
+
+// Return if photon Doppler broadening mode is on
+inline bool SimulationProperties::isPhotonDopplerBroadeningModeOn()
+{
+  return SimulationProperties::doppler_broadening_mode_on;
+}
+
+// Return if atomic relaxation mode is on
+inline bool SimulationProperties::isAtomicRelaxationModeOn()
+{
+  return SimulationProperties::atomic_relaxation_mode_on;
+}
+
+// Return if detailed pair production mode is on
+inline bool SimulationProperties::isDetailedPairProductionModeOn()
+{
+  return SimulationProperties::detailed_pair_production_mode_on;
 }
 
 } // end MonteCarlo namespace

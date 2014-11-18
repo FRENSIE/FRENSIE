@@ -4,6 +4,7 @@
     <Parameter name="file_path" type="string" value="test_h1_ace_file.txt"/>
     <Parameter name="table_name" type="string" value="1001.70c"/>
     <Parameter name="start_line" type="int" value="1"/>
+    <Parameter name="is_ascii" type="bool" value="true"/>
     <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
     <Parameter name="temperature" type="double" value="2.53010e-08"/>
     <Parameter name="atomic_number" type="int" value="1"/>
@@ -14,6 +15,7 @@
     <Parameter name="file_path" type="string" value="test_h1_ace_file.txt"/>
     <Parameter name="table_name" type="string" value="1001.71c"/>
     <Parameter name="start_line" type="int" value="2058"/>
+    <Parameter name="is_ascii" type="bool" value="true"/>
     <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
     <Parameter name="temperature" type="double" value="5.17040e-08"/>
     <Parameter name="atomic_number" type="int" value="1"/>
@@ -24,10 +26,19 @@
     <Parameter name="file_path" type="string" value="test_h1_ace_file.txt"/>
     <Parameter name="table_name" type="string" value="1001.72c"/>
     <Parameter name="start_line" type="int" value="4115"/>
+    <Parameter name="is_ascii" type="bool" value="true"/>
     <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
     <Parameter name="temperature" type="double" value="7.75560e-8"/>
     <Parameter name="atomic_number" type="int" value="1"/>
     <Parameter name="atomic_mass_number" type="int" value="1"/>
     <Parameter name="isomer_number" type="int" value="0"/>
+  </ParameterList>
+  <ParameterList name="H">
+    <Parameter name="file_path" type="string" value="test_pb_epr_ace_file.txt"/>
+    <Parameter name="table_name" type="string" value="82000.12p"/>
+    <Parameter name="start_line" type="int" value="1"/>
+    <Parameter name="atomic_number" type="int" value="1"/>
+    <Parameter name="is_ascii" type="bool" value="true"/>
+    <Parameter name="table_type" type="int" value="0"/>
   </ParameterList>
 </ParameterList>

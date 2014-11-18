@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstAtomicRelaxationModelACEFactory.cpp
+//! \file   tstAtomicRelaxationModelFactory.cpp
 //! \author Alex Robinson
-//! \brief  Atomic relaxation model factory using ACE data unit tests
+//! \brief  Atomic relaxation model factory using  data unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,7 +15,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_AtomicRelaxationModelACEFactory.hpp"
+#include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "Data_ACEFileHandler.hpp"
@@ -34,10 +34,10 @@ Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that a void relaxation model can be created
-TEUCHOS_UNIT_TEST( AtomicRelaxationModelACEFactory,
-		   createAtomicRelaxationModel_void )
+TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
+		   createAtomicRelaxationModel_ace_void )
 {
-  MonteCarlo::AtomicRelaxationModelACEFactory::createAtomicRelaxationModel( 
+  MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel( 
 							   *xss_data_extractor,
 							   relaxation_model,
 							   false );
@@ -60,10 +60,10 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that a detaild relaxation model can be created
-TEUCHOS_UNIT_TEST( AtomicRelaxationModelACEFactory,
-		   createAtomicRelaxationModel_detailed )
+TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
+		   createAtomicRelaxationModel_ace_detailed )
 {
-  MonteCarlo::AtomicRelaxationModelACEFactory::createAtomicRelaxationModel( 
+  MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel( 
 							   *xss_data_extractor,
 							   relaxation_model,
 							   true );
@@ -109,9 +109,9 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that a relaxation model gets cached
-TEUCHOS_UNIT_TEST( AtomicRelaxationModelACEFactory, cache_models )
+TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory, cache_models )
 {
-  MonteCarlo::AtomicRelaxationModelACEFactory factory;
+  MonteCarlo::AtomicRelaxationModelFactory factory;
 
   factory.createAndCacheAtomicRelaxationModel( *xss_data_extractor,
 					       relaxation_model,
@@ -183,5 +183,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstAtomicRelaxationModelACEFactory.cpp
+// end tstAtomicRelaxationModelFactory.cpp
 //---------------------------------------------------------------------------//
