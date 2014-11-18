@@ -23,6 +23,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_Photoatom.hpp"
+#include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 
 namespace MonteCarlo{
 
@@ -34,8 +35,10 @@ public:
 
   //! Constructor
   PhotoatomFactory( const std::string& cross_sections_xml_directory,
-		    const Teuchos::ParameterList& cross_section_table_info,
-		    const boost::unordered_set<std::string>& nuclide_aliases );
+                    const Teuchos::ParameterList& cross_section_table_info,
+                    const boost::unordered_set<std::string>& photoatom_aliases,
+		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+		    atomic_relaxation_model_factory );
 
   //! Destructor
   ~PhotoatomFactory()
@@ -47,6 +50,14 @@ public:
 		    photoatom_map ) const;
 
 private:
+
+  // Create a photoatom from an ACE table
+  void createPhotoatomFromACETable(
+			  const std::string& cross_sections_xml_directory,
+			  const std::string& photoatom_alias,
+			  const Teuchos::ParameterList& photoatom_table_info,
+			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+			  atomic_relaxation_model_factory );
 
   // The photoatom map
   boost::unordered_map<std::string,Teuchos::RCP<Photoatom> > 

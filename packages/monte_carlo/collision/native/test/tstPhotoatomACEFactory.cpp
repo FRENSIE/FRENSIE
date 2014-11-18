@@ -16,7 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomACEFactory.hpp"
-#include "MonteCarlo_AtomicRelaxationModelACEFactory.hpp"
+#include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -574,7 +574,7 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
-    MonteCarlo::AtomicRelaxationModelACEFactory::createAtomicRelaxationModel(
+    MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 							   *xss_data_extractor,
 							   relaxation_model,
 							   true );

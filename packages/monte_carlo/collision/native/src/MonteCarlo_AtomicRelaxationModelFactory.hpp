@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_AtomicRelaxationModelACEFactory.hpp
+//! \file   MonteCarlo_AtomicRelaxationModelFactory.hpp
 //! \author Alex Robinson
-//! \brief  The atomic relaxation model ACE factory class declaration.
+//! \brief  The atomic relaxation model factory class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ATOMIC_RELAXATION_MODEL_ACE_FACTORY_HPP
-#define MONTE_CARLO_ATOMIC_RELAXATION_MODEL_ACE_FACTORY_HPP
+#ifndef MONTE_CARLO_ATOMIC_RELAXATION_MODEL_FACTORY_HPP
+#define MONTE_CARLO_ATOMIC_RELAXATION_MODEL_FACTORY_HPP
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
@@ -22,24 +22,31 @@
 
 namespace MonteCarlo{
 
-/*! The atomic relaxation model factory class that uses ACE data
+/*! The atomic relaxation model factory class 
  * \details This class will cache the relaxation models associated with
  * a particular atom so that they will not be duplicated (e.g. when 
- * constructing a photoatom and an electroatom).
+ * constructing a photoatom and an electroatom). To create an atomic relaxation
+ * model using different data, create an overload of the
+ * createAtomicRelaxationModel static member function and 
+ * createAndCacheAtomicRelaxationModel member function.
  */
-class AtomicRelaxationModelACEFactory
+class AtomicRelaxationModelFactory
 {
 
 public:
 
-  //! Create the atomic relaxation model
+  //! Create the atomic relaxation model (using ACE data)
   static void createAtomicRelaxationModel(
 		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 		  const bool use_atomic_relaxation_data );
 
   //! Constructor
-  AtomicRelaxationModelACEFactory()
+  AtomicRelaxationModelFactory()
+  { /* ... */ }
+  
+  //! Destructor
+  ~AtomicRelaxationModelFactory()
   { /* ... */ }
 
   //! Create and cache the atomic relaxation model
@@ -69,9 +76,9 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_ATOMIC_RELAXATION_MODEL_ACE_FACTORY_HPP
+#endif // end MONTE_CARLO_ATOMIC_RELAXATION_MODEL_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AtomicRelaxationModelACEFactory.hpp
+// end MonteCarlo_AtomicRelaxationModelFactory.hpp
 //---------------------------------------------------------------------------//
 

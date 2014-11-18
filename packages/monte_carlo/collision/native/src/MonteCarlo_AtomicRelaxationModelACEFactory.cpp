@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_AtomicRelaxationModelACEFactory.cpp
+//! \file   MonteCarlo_AtomicRelaxationModelFactory.cpp
 //! \author Alex Robinson
-//! \brief  The atomic relaxation model ACE factory class definitions
+//! \brief  The atomic relaxation model factory class definitions
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_AtomicRelaxationModelACEFactory.hpp"
+#include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_DetailedSubshellRelaxationModel.hpp"
 #include "MonteCarlo_VoidAtomicRelaxationModel.hpp"
 #include "MonteCarlo_DetailedAtomicRelaxationModel.hpp"
@@ -17,7 +17,7 @@ namespace MonteCarlo{
 
 // Initialize static member data
 const Teuchos::RCP<AtomicRelaxationModel> 
-AtomicRelaxationModelACEFactory::default_void_model( 
+AtomicRelaxationModelFactory::default_void_model( 
                                                new VoidAtomicRelaxationModel );
 
 // Create the atomic relaxation model
@@ -26,7 +26,7 @@ AtomicRelaxationModelACEFactory::default_void_model(
  * will be created for the atom. Otherwise a "void" model, which essentially
  * ignores relaxation, will be created.
  */
-void AtomicRelaxationModelACEFactory::createAtomicRelaxationModel(
+void AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 		  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 		  const bool use_atomic_relaxation_data )
@@ -62,7 +62,7 @@ void AtomicRelaxationModelACEFactory::createAtomicRelaxationModel(
       Teuchos::Array<Teuchos::RCP<SubshellRelaxationModel> >
 	subshell_relaxation_models;
       
-      AtomicRelaxationModelACEFactory::createSubshellRelaxationModels( 
+      AtomicRelaxationModelFactory::createSubshellRelaxationModels( 
 						  subshells,
 						  subshell_transitions,
 						  relo_block,
@@ -76,14 +76,14 @@ void AtomicRelaxationModelACEFactory::createAtomicRelaxationModel(
     else
     {
       atomic_relaxation_model = 
-	AtomicRelaxationModelACEFactory::default_void_model;
+	AtomicRelaxationModelFactory::default_void_model;
     }
   }
   // Ignore atomic relaxation
   else
   {
     atomic_relaxation_model = 
-      AtomicRelaxationModelACEFactory::default_void_model;
+      AtomicRelaxationModelFactory::default_void_model;
   }
 }
 
@@ -96,7 +96,7 @@ void AtomicRelaxationModelACEFactory::createAtomicRelaxationModel(
  * data (same atomic number) will return a pointer to the previously created
  * atomic relaxation model.
  */
-void AtomicRelaxationModelACEFactory::createAndCacheAtomicRelaxationModel(
+void AtomicRelaxationModelFactory::createAndCacheAtomicRelaxationModel(
                   const Data::XSSEPRDataExtractor& raw_photoatom_data,
 		  Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 		  const bool use_atomic_relaxation_data )
@@ -110,7 +110,7 @@ void AtomicRelaxationModelACEFactory::createAndCacheAtomicRelaxationModel(
   }
   else
   {
-    AtomicRelaxationModelACEFactory::createAtomicRelaxationModel(
+    AtomicRelaxationModelFactory::createAtomicRelaxationModel(
 						  raw_photoatom_data,
 						  atomic_relaxation_model,
 						  use_atomic_relaxation_data );
@@ -125,7 +125,7 @@ void AtomicRelaxationModelACEFactory::createAndCacheAtomicRelaxationModel(
 }
 
 // Create the subshell relaxation models
-void AtomicRelaxationModelACEFactory::createSubshellRelaxationModels(
+void AtomicRelaxationModelFactory::createSubshellRelaxationModels(
 		  const Teuchos::Array<SubshellType>& subshell_designators,
 		  const Teuchos::ArrayView<const double>& subshell_transitions,
 		  const Teuchos::ArrayView<const double>& relo_block,
@@ -197,5 +197,5 @@ void AtomicRelaxationModelACEFactory::createSubshellRelaxationModels(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AtomicRelaxationModelACEFactory.cpp
+// end MonteCarlo_AtomicRelaxationModelFactory.cpp
 //---------------------------------------------------------------------------//
