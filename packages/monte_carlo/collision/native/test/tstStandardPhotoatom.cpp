@@ -373,6 +373,31 @@ TEUCHOS_UNIT_TEST( Photoatom, getReactionCrossSection )
   TEST_FLOATING_EQUALITY(cross_section,
 			 exp( -1.115947249407E+01 ) + exp( 3.718032834377E+00),
 			 1e-12 );
+
+  // Absorption
+  cross_section = ace_photoatom->getReactionCrossSection( 
+			   exp( -1.381551055796E+01 ),
+			   MonteCarlo::TOTAL_ABSORPTION_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+    
+  cross_section =ace_photoatom->getReactionCrossSection( 
+			   exp( -1.214969212306E+01 ),
+			   MonteCarlo::TOTAL_ABSORPTION_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
+
+  cross_section = ace_photoatom->getReactionCrossSection( 
+			   exp( -1.214720768866E+01 ),
+			   MonteCarlo::TOTAL_ABSORPTION_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, exp( 1.718780625507E+01 ), 1e-12 );
+
+  cross_section = ace_photoatom->getReactionCrossSection( 
+			   exp( 1.151292546497E+01 ),
+			   MonteCarlo::TOTAL_ABSORPTION_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

@@ -220,6 +220,8 @@ double Photoatom::getReactionCrossSection(
   {
   case TOTAL_PHOTOATOMIC_REACTION:
     return this->getTotalCrossSection( energy );
+  case TOTAL_ABSORPTION_PHOTOATOMIC_REACTION:
+    return this->getAbsorptionCrossSection( energy );
   default:
     ReactionMap::const_iterator photoatomic_reaction = 
       d_scattering_reactions.find( reaction );
