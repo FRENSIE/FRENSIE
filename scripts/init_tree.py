@@ -19,7 +19,9 @@ def main():
     os.mkdir('deps/tars')
     os.mkdir('build')
     shutil.copyfile('src/scripts/makefile.deps', 'deps/makefile')
+    shutil.copyfile('src/scripts/lazy.sh', 'deps/lazy.sh')
     shutil.copyfile('src/scripts/frensie.sh', 'build/frensie.sh')   
+    #shutil.copyfile('src/scripts/source_deps.sh', 'build/source_deps.sh')   
 
     print """
 To build dependencies move necessary tars to deps/tars.
