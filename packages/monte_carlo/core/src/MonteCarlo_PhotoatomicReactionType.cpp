@@ -24,6 +24,8 @@ std::string convertPhotoatomicReactionEnumToString(
   {
   case TOTAL_PHOTOATOMIC_REACTION: 
     return "Total Photoatomic Reaction";
+  case TOTAL_ABSORPTION_PHOTOATOMIC_REACTION:
+    return "Total Absorption Photoatomic Reaction";
   case INCOHERENT_PHOTOATOMIC_REACTION: 
     return "Incoherent Photoatomic Reaction";
   case COHERENT_PHOTOATOMIC_REACTION:
@@ -112,6 +114,8 @@ std::string convertPhotoatomicReactionEnumToString(
     return "Q2 Subshell Photoelectric Photoatomic Reaction";
   case Q3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION:
     return "Q3 Subshell Photoelectric Photoatomic Reaction";
+  case HEATING_PHOTOATOMIC_REACTION:
+    return "Heating Photoatomic Reaction";
   default:
     THROW_EXCEPTION( std::logic_error,
 		     "Error: cannot convert the photoatomic reaction type "

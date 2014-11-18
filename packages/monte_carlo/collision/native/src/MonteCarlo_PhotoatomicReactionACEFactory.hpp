@@ -54,6 +54,12 @@ public:
 		Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
 		subshell_photoelectric_reactions );
 
+  //! Create the heating photoatomic reaction
+  static void createHeatingReaction(
+		   const Data::XSSEPRDataExtractor& raw_photoatom_data,
+		   const Teuchos::ArrayRCP<const double>& energy_grid,
+		   Teuchos::RCP<PhotoatomicReaction>& heating_reaction );
+
 protected:
   
   //! Remove the zeros from a processed cross section

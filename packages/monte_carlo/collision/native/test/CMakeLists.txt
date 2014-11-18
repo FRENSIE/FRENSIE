@@ -197,6 +197,11 @@ ADD_EXECUTABLE(tstSubshellPhotoelectricPhotoatomicReaction
 TARGET_LINK_LIBRARIES(tstSubshellPhotoelectricPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(SubshellPhotoelectricPhotoatomicReaction_test tstSubshellPhotoelectricPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+ADD_EXECUTABLE(tstAbsorptionPhotoatomicReaction
+  tstAbsorptionPhotoatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstAbsorptionPhotoatomicReaction monte_carlo_collision_native)
+ADD_TEST(AbsorptionPhotoatomicReaction_test tstAbsorptionPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
 ADD_EXECUTABLE(tstDetailedSubshellRelaxationModel
   tstDetailedSubshellRelaxationModel.cpp)
 TARGET_LINK_LIBRARIES(tstDetailedSubshellRelaxationModel monte_carlo_collision_native)

@@ -104,6 +104,14 @@ void PhotoatomACEFactory::createPhotoatom(
 							    reaction_pointer );
   }
 
+  // Create the heating reaction
+  Photoatom::ReactionMap::mapped_type& reaction_pointer = 
+      absorption_reactions[HEATING_PHOTOATOMIC_REACTION];
+
+  PhotoatomicReactionACEFactory::createHeatingReaction( raw_photoatom_data,
+							energy_grid,
+							reaction_pointer );
+					   
   // Create the photoatom
   photoatom.reset(
 	   new StandardPhotoatom<Utility::LogLog>( 

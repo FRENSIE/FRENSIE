@@ -16,6 +16,7 @@
 #include "MonteCarlo_PairProductionPhotoatomicReaction.hpp"
 #include "MonteCarlo_PhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_SubshellPhotoelectricPhotoatomicReaction.hpp"
+#include "MonteCarlo_AbsorptionPhotoatomicReaction.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -325,6 +326,41 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 
   // Make sure the subshell photoelectric reactions have been created
   testPostcondition( subshell_photoelectric_reactions.size() > 0 );
+}
+
+// Create the heating photoatomic reaction
+void PhotoatomicReactionACEFactory::createHeatingReaction(
+		   const Data::XSSEPRDataExtractor& raw_photoatom_data,
+		   const Teuchos::ArrayRCP<const double>& energy_grid,
+		   Teuchos::RCP<PhotoatomicReaction>& heating_reaction )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
+		    energy_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+						      energy_grid.end() ) );
+
+  // Extract the cross section
+  Teuchos::ArrayRCP<double> heating_cross_section;
+  unsigned threshold_energy_index;
+
+  PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
+			energy_grid,
+			raw_photoatom_data.extractLHNMBlock(),
+			heating_cross_section,
+			threshold_energy_index );
+
+  // Process the heating cross section (the logarithms are not stored)
+  for( unsigned i = 0; i < heating_cross_section.size(); ++i )
+    heating_cross_section[i] = log( heating_cross_section[i] );
+
+  // Create the heating reaction
+  heating_reaction.reset(
+		     new AbsorptionPhotoatomicReaction<Utility::LogLog>(
+					      energy_grid,
+					      heating_cross_section,
+					      threshold_energy_index,
+					      HEATING_PHOTOATOMIC_REACTION ) );
 }
 
 // Remove the zeros from a processed cross section

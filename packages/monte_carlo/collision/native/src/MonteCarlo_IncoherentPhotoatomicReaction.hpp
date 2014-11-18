@@ -46,7 +46,7 @@ public:
        electron_momentum_dist_array );
 
   //! Destructor
-  virtual ~IncoherentPhotoatomicReaction()
+  ~IncoherentPhotoatomicReaction()
   { /* ... */ }
 
   //! Return the number of photons emitted from the rxn at the given energy

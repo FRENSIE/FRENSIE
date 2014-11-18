@@ -308,6 +308,35 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
+// Check that a heating reaction can be created
+TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory, createHeatingReaction )
+{
+  MonteCarlo::PhotoatomicReactionACEFactory::createHeatingReaction(
+							   *xss_data_extractor,
+							   energy_grid,
+							   reaction );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+		       MonteCarlo::HEATING_PHOTOATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(),
+		       exp( -1.381551055796E+01 ) );
+
+  // Test that the stored cross section is correct
+  double cross_section =
+    reaction->getCrossSection( exp( -1.381551055796E+01 ) );
+
+  TEST_FLOATING_EQUALITY( cross_section, 9.916958825662E-07, 1e-12 );
+    
+  cross_section = reaction->getCrossSection( exp( 1.151292546497E+01 ) );
+
+  TEST_FLOATING_EQUALITY( cross_section, 9.999864243970E+04, 1e-12 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
