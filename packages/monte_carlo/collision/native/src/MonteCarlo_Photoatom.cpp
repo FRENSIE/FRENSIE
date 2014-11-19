@@ -138,16 +138,20 @@ Photoatom::getAbsorptionReactionTypes()
 Photoatom::Photoatom(
 	  const std::string& name,
 	  const unsigned atomic_number,
+	  const double atomic_weight,
 	  const Photoatom::ReactionMap& standard_scattering_reactions,
 	  const Photoatom::ReactionMap& standard_absorption_reactions,
 	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model )
   : d_name( name ),
     d_atomic_number( atomic_number ),
+    d_atomic_weight( atomic_weight ),
     d_scattering_reactions(),
     d_absorption_reactions(),
     d_miscellaneous_reactions(),
     d_relaxation_model( atomic_relaxation_model )
 {
+  // Make sure the atomic weight is valid
+  testPrecondition( atomic_weight > 0.0 );
   // There must be at least one reaction specified
   testPrecondition( standard_scattering_reactions.size() +
 		    standard_absorption_reactions.size() > 0 );
@@ -191,6 +195,12 @@ const std::string& Photoatom::getName() const
 unsigned Photoatom::getAtomicNumber() const
 {
   return d_atomic_number;
+}
+
+// Return the atomic weight
+double Photoatom::getAtomicWeight() const
+{
+  return d_atomic_weight;
 }
 
 // Return the survival probability at the desired energy

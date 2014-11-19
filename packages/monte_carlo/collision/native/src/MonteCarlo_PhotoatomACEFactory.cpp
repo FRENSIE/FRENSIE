@@ -28,12 +28,15 @@ namespace MonteCarlo{
 void PhotoatomACEFactory::createPhotoatom(
 	    const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	    const std::string& photoatom_name,
+	    const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Photoatom>& photoatom,
 	    const bool use_doppler_broadening_data,
 	    const bool use_detailed_pair_production_data,
 	    const bool use_atomic_relaxation_data )
 {
+  // Make sure the atomic weight is valid
+  testPrecondition( atomic_weight > 0.0 );
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
 
@@ -117,6 +120,7 @@ void PhotoatomACEFactory::createPhotoatom(
 	   new StandardPhotoatom<Utility::LogLog>( 
 				      photoatom_name,
 				      raw_photoatom_data.extractAtomicNumber(),
+				      atomic_weight,
 				      energy_grid,
 				      scattering_reactions,
 				      absorption_reactions,

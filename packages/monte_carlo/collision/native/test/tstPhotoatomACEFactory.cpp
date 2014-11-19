@@ -21,6 +21,7 @@
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -29,6 +30,7 @@
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
 std::string photoatom_name;
+double atomic_weight;
 Teuchos::RCP<MonteCarlo::Photoatom> atom;
 
 //---------------------------------------------------------------------------//
@@ -39,6 +41,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 {
   MonteCarlo::PhotoatomACEFactory::createPhotoatom( *xss_data_extractor,
 						    photoatom_name,
+						    atomic_weight,
 						    relaxation_model,
 						    atom,
 						    false,
@@ -48,6 +51,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getName(), "82000.12p" );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
+  TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
   // Test that the total cross section can be returned
   double cross_section = 
@@ -190,6 +194,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 {
   MonteCarlo::PhotoatomACEFactory::createPhotoatom( *xss_data_extractor,
 						    photoatom_name,
+						    atomic_weight,
 						    relaxation_model,
 						    atom,
 						    true,
@@ -199,6 +204,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getName(), "82000.12p" );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
+  TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
   // Test that the total cross section can be returned
   double cross_section = 
@@ -366,6 +372,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 // {
 //   MonteCarlo::PhotoatomACEFactory::createPhotoatom( *xss_data_extractor,
 //      						    photoatom_name,
+//                                                          atomic_weight,
 //      						    relaxation_model,
 //      						    atom,
 //      						    false,
@@ -379,6 +386,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
 {
   MonteCarlo::PhotoatomACEFactory::createPhotoatom( *xss_data_extractor,
 						    photoatom_name,
+						    atomic_weight,
 						    relaxation_model,
 						    atom,
 						    false,
@@ -388,6 +396,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getName(), "82000.12p" );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
+  TEST_FLOATING_EQUALITY( atom->getAtomicWeight(), 207.1999470456033, 1e-12 );
 
   // Test that the total cross section can be returned
   double cross_section = 
@@ -580,6 +589,8 @@ int main( int argc, char** argv )
 							   true );
 
     photoatom_name = test_ace_table_name;
+    atomic_weight = ace_file_handler->getTableAtomicWeightRatio()*
+      Utility::PhysicalConstants::neutron_rest_mass_amu;
   }
 
   // Initialize the random number generator

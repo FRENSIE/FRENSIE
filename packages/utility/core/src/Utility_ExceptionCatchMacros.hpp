@@ -74,6 +74,22 @@
     exit(EXIT_FAILURE); \
   } \
 
+//! Catch statement macro for catching of user specified exceptions
+#define EXCEPTION_CATCH_AND_EXIT( Exception, msg ) \
+  catch( const Exception &exception ) \
+  {				      \
+    std::ostringstream oss;	      \
+    oss << " *** Caught " << #Exception << " Exception *** \n\n";	\
+    oss << "File: " << __FILE__ << "\n";				\
+    oss << "Line: " << __LINE__ << "\n";				\
+    oss << msg << "\n";							\
+    Teuchos::OSTab scsi_tab(oss);					\
+    scsi_tab.o() << exception.what() << "\n";				\
+    std::cerr << std::flush;						\
+    std::cerr << oss.str();						\
+    exit(EXIT_FAILURE);							\
+  } 
+
 /*! Catch macro for catching exceptions, adding error info, rethrowing
  * 
  * This macro should be used anywhere an exception is thrown in order to 

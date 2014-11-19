@@ -1,5 +1,10 @@
 <ParameterList name="cross sections">
   <Parameter name="is_ascii" type="bool" value="true"/>
+  <ParameterList name="alias map">
+    <Parameter name="1001" type="string" value="H-1_293.6K"/>
+    <Parameter name="82000" type="string" value="Pb"/>
+    <Parameter name="82" type="string" value="Pb"/>
+  </ParameterList>
   <ParameterList name="H-1_293.6K">
     <Parameter name="file_path" type="string" value="test_h1_ace_file.txt"/>
     <Parameter name="table_name" type="string" value="1001.70c"/>
@@ -33,12 +38,31 @@
     <Parameter name="atomic_mass_number" type="int" value="1"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
-  <ParameterList name="H">
-    <Parameter name="file_path" type="string" value="test_pb_epr_ace_file.txt"/>
-    <Parameter name="table_name" type="string" value="82000.12p"/>
-    <Parameter name="start_line" type="int" value="1"/>
-    <Parameter name="atomic_number" type="int" value="1"/>
-    <Parameter name="is_ascii" type="bool" value="true"/>
-    <Parameter name="table_type" type="int" value="0"/>
+
+  <!-- <ParameterList name="H-1_900K"> -->
+  <!--   <Parameter name="neutron_file_path" type="string" value="test_h1_ace_file.txt"/> -->
+  <!--   <Parameter name="neutron_file_is_ascii" type="bool" value="true"/> -->
+  <!--   <Parameter name="neutron_file_start_line" type="int" value="4115"/> -->
+  <!--   <Parameter name="neutron_table_name" type="string" value="1001.72c"/> -->
+  <!--   <Parameter name="temperature" type="double" value="7.75560e-8"/> -->
+  <!--   <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/> -->
+  <!--   <Parameter name="atomic_number" type="int" value="1"/> -->
+  <!--   <Parameter name="atomic_mass_number" type="int" value="1"/> -->
+  <!--   <Parameter name="isomer_number" type="int" value="0"/> -->
+  <!-- </ParameterList> -->
+  
+  <ParameterList name="Pb">
+    <Parameter name="photon_file_path" type="string" value="test_pb_epr_ace_file.txt"/>
+    <Parameter name="photon_file_is_ascii" type="bool" value="true"/>
+    <Parameter name="photon_file_start_line" type="int" value="1"/>
+    <Parameter name="photon_table_name" type="string" value="82000.12p"/>
+    <Parameter name="photon_table_type" type="string" value="ACE"/>
+    <Parameter name="electron_file_path" type="string" value="test_pb_epr_ace_file.txt"/>
+    <Parameter name="electron_file_is_ascii" type="bool" value="true"/>
+    <Parameter name="electron_file_start_line" type="int" value="1"/>
+    <Parameter name="electron_table_name" type="string" value="82000.12p"/>
+    <Parameter name="electron_table_type" type="string" value="ACE"/>
+    <Parameter name="atomic_number" type="int" value="82"/>
+    <Parameter name="atomic_weight_ratio" type="double" value="205.42"/>
   </ParameterList>
 </ParameterList>

@@ -12,8 +12,10 @@
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 
 namespace MonteCarlo{
 
@@ -35,18 +37,25 @@ PhotoatomFactory::PhotoatomFactory(
       cross_section_table_info.sublist( *photoatom_name );
 
     // Use the appropriate procedure for the particular table type
-    switch( table_info.get<int>( "table_type" ) )
+    std::string table_type;
+    try{
+      table_type = table_info.get<std::string>( "photon_table_type" );
+    }
+    EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
+			      "Error: Invalid cross_sections.xml entry for "
+			      << *photoatom_name );    
+
+    if( table_type == "ACE" )
     {
-    case 0:
       createPhotoatomFromACETable( cross_sections_xml_directory, 
 				   *photoatom_name,
 				   table_info,
 				   atomic_relaxation_model_factory );
-      break;
-    default:
+    }
+    else
+    {
       THROW_EXCEPTION( std::logic_error,
-		       "Error: table type " << 
-		       table_info.get<int>( "table_type" ) << 
+		       "Error: photon table type " << table_type <<
 		       " is not valid!" );
     }
 
@@ -78,22 +87,61 @@ void PhotoatomFactory::createPhotoatomFromACETable(
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory )
 {
-  std::string photoatom_table_name = 
-    photoatom_table_info.get<std::string>( "table_name" );
+  std::string photoatom_table_name;
+  try{
+    photoatom_table_name = 
+      photoatom_table_info.get<std::string>( "photon_table_name" );
+  }
+  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
+			    "Error: Invalid cross_sections.xml entry for "
+			    << photoatom_alias ); 
   
-  std::cout << "Loading ACE cross section table " << photoatom_table_name
-	    << " (" << photoatom_alias << ") ... ";
+  std::cout << "Loading ACE photoatomic cross section table "
+	    << photoatom_table_name << " (" << photoatom_alias << ") ... ";
+
+  // Get the atomic weight of the photoatom
+  double atomic_weight;
+  try{
+    atomic_weight = photoatom_table_info.get<double>( "atomic_weight_ratio" );
+  }
+  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
+			    "Error: Invalid cross_sections.xml entry for "
+			    << photoatom_alias ); 
+  atomic_weight *= Utility::PhysicalConstants::neutron_rest_mass_amu;
 
   // Set the abs. path to the ace library file containing the desired table
-  std::string ace_file_path = cross_sections_xml_directory + "/" +
-    photoatom_table_info.get<std::string>( "file_path" );
+  std::string ace_file_path;
+  try{
+    ace_file_path = cross_sections_xml_directory + "/" +
+      photoatom_table_info.get<std::string>( "photon_file_path" );
+  }
+  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
+			    "Error: Invalid cross_sections.xml entry for "
+			    << photoatom_alias ); 
 
+  int photon_file_start_line;
+  try{
+    photon_file_start_line = 
+      photoatom_table_info.get<int>( "photon_file_start_line" );
+  }
+  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
+			    "Error: Invalid cross_sections.xml entry for "
+			    << photoatom_alias ); 
+
+  bool photon_file_is_ascii;
+  try{
+    photon_file_is_ascii = 
+      photoatom_table_info.get<bool>( "photon_file_is_ascii" );
+  }
+  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
+			    "Error: Invalid cross_sections.xml entry for "
+			    << photoatom_alias );
+  
   // Create the ACEFileHandler
-  Data::ACEFileHandler ace_file_handler( 
-			 ace_file_path,
-			 photoatom_table_name,
-			 photoatom_table_info.get<int>( "start_line" ),
-			 photoatom_table_info.get<bool>( "is_ascii" ) );
+  Data::ACEFileHandler ace_file_handler( ace_file_path,
+					 photoatom_table_name,
+					 photon_file_start_line,
+					 photon_file_is_ascii );
 
   // Create the XSS data extractor
   Data::XSSEPRDataExtractor xss_data_extractor( 
@@ -116,6 +164,7 @@ void PhotoatomFactory::createPhotoatomFromACETable(
   PhotoatomACEFactory::createPhotoatom( 
 		       xss_data_extractor,
 		       photoatom_table_name,
+		       atomic_weight,
 		       atomic_relaxation_model,
 		       photoatom,
 		       SimulationProperties::isPhotonDopplerBroadeningModeOn(),

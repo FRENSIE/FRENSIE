@@ -38,8 +38,8 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap )
   photoatom_factory->createPhotoatomMap( photoatom_map );
 
   TEST_EQUALITY_CONST( photoatom_map.size(), 1 );
-  TEST_ASSERT( photoatom_map.count( "H" ) );
-  TEST_ASSERT( !photoatom_map["H"].is_null() );
+  TEST_ASSERT( photoatom_map.count( "Pb" ) );
+  TEST_ASSERT( !photoatom_map["Pb"].is_null() );
 }
 
 //---------------------------------------------------------------------------//
@@ -81,7 +81,7 @@ int main( int argc, char** argv )
 
     // Create the set of photoatom aliases
     boost::unordered_set<std::string> photoatom_aliases;
-    photoatom_aliases.insert( "H" );
+    photoatom_aliases.insert( "Pb" );
     
     // Create the photoatom factory
     photoatom_factory.reset( new MonteCarlo::PhotoatomFactory(
