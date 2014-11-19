@@ -23,6 +23,7 @@
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -192,6 +193,15 @@ TEUCHOS_UNIT_TEST( Photoatom, getName_ace )
 TEUCHOS_UNIT_TEST( Photoatom, getAtomicNumber_ace )
 {
   TEST_EQUALITY_CONST( ace_photoatom->getAtomicNumber(), 82 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoatom atomic weight can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getAtomicWeight_ace )
+{
+  TEST_FLOATING_EQUALITY( ace_photoatom->getAtomicWeight(), 
+			  207.1999470456033,
+			  1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -573,11 +583,16 @@ int main( int argc, char** argv )
     Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model(
 				   new MonteCarlo::VoidAtomicRelaxationModel );
 
+    // Extract the atomic weight
+    double atomic_weight = ace_file_handler->getTableAtomicWeightRatio()*
+      Utility::PhysicalConstants::neutron_rest_mass_amu;
+
     // Create a test photoatom
     ace_photoatom.reset(
 	       new MonteCarlo::StandardPhotoatom<Utility::LogLog>( 
 				    ace_file_handler->getTableName(),
 				    xss_data_extractor->extractAtomicNumber(),
+				    atomic_weight,
 				    energy_grid,
 				    scattering_reactions,
 				    absorption_reactions,

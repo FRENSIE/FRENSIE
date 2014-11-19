@@ -59,6 +59,7 @@ public:
   Photoatom( 
 	  const std::string& name,
 	  const unsigned atomic_number,
+	  const double atomic_weight,
 	  const ReactionMap& standard_scattering_reactions,
 	  const ReactionMap& standard_absorption_reactions,
 	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model );
@@ -72,6 +73,9 @@ public:
 
   //! Return the atomic number
   unsigned getAtomicNumber() const;
+
+  //! Return the atomic weight 
+  double getAtomicWeight() const;
 
   //! Return the total cross section at the desired energy
   virtual double getTotalCrossSection( const double energy ) const = 0;
@@ -126,8 +130,11 @@ private:
   // The atom name
   std::string d_name;
 
-  // The atomic number of the nuclide
+  // The atomic number of the atom
   unsigned d_atomic_number;
+
+  // The atomic weight of the atom
+  double d_atomic_weight;
 
   // The scattering reactions
   ReactionMap d_scattering_reactions;

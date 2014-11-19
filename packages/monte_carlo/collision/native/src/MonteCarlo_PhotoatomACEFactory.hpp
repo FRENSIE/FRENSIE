@@ -29,6 +29,7 @@ public:
   static void createPhotoatom(
 	    const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	    const std::string& photoatom_name,
+	    const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Photoatom>& photoatom,
 	    const bool use_doppler_broadening_data,

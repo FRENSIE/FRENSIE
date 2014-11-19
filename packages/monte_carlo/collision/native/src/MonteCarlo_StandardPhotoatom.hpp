@@ -44,6 +44,7 @@ public:
   StandardPhotoatom(
 	  const std::string& name,
 	  const unsigned atomic_number,
+	  const double atomic_weight,
 	  const Teuchos::ArrayRCP<double>& energy_grid,
 	  const Photoatom::ReactionMap& standard_scattering_reactions,
 	  const Photoatom::ReactionMap& standard_absorption_reactions,

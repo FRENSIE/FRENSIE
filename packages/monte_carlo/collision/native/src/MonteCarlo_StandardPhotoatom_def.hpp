@@ -25,18 +25,22 @@ template<typename InterpPolicy, bool processed_cross_section>
 StandardPhotoatom<InterpPolicy,processed_cross_section>::StandardPhotoatom(
 	  const std::string& name,
 	  const unsigned atomic_number,
+	  const double atomic_weight,
 	  const Teuchos::ArrayRCP<double>& energy_grid,
 	  const Photoatom::ReactionMap& standard_scattering_reactions,
 	  const Photoatom::ReactionMap& standard_absorption_reactions,
 	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model )
   : Photoatom( name,
 	       atomic_number,
+	       atomic_weight,
 	       standard_scattering_reactions,
 	       standard_absorption_reactions,
 	       atomic_relaxation_model ),
     d_total_reaction(),
     d_total_absorption_reaction()
 {
+  // Make sure the atomic weight is valid
+  testPrecondition( atomic_weight > 0.0 );
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
