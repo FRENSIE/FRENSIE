@@ -293,6 +293,10 @@ ADD_EXECUTABLE(tstAtomicExcitationElectronScatteringDistribution
 TARGET_LINK_LIBRARIES(tstAtomicExcitationElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(tstAtomicExcitationElectronScatteringDistribution_test tstAtomicExcitationElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+ADD_EXECUTABLE(tstBremsstrahlungElectronScatteringDistribution
+  tstBremsstrahlungElectronScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstBremsstrahlungElectronScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(tstBremsstrahlungElectronScatteringDistribution_test tstBremsstrahlungElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)
