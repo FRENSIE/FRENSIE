@@ -31,20 +31,28 @@ public:
   AtomicExcitationElectroatomicReaction(
 		const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		const Teuchos::ArrayRCP<const double>& cross_section,
-		const unsigned threshold_energy_index );
+		const unsigned threshold_energy_index,
+        const Teuchos::RCP<Utility::OneDDistribution>& energy_loss_distribution );
 
   //! Destructor
   ~AtomicExcitationElectroatomicReaction()
   { /* ... */ }
 
-  //! Return the number of photons emitted from the rxn at the given energy
+  //! Return the number of electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const;
 
+  //! Return the number of photons emitted from the rxn at the given energy
+  unsigned getNumberOfEmittedPhotons( const double energy ) const;
+
   //! Simulate the reaction
-  void react( ElectronState& photon, ParticleBank& bank ) const;
+  void react( ElectronState& electron, 
+	      ParticleBank& bank,
+	      SubshellType& shell_of_interaction ) const;
 
 private:
 
+  // The atomic excitation scattering distribution
+  AtomicExcitationElectronScatteringDistribution d_scattering_distribution;
 };
 
 } // end MonteCarlo namespace

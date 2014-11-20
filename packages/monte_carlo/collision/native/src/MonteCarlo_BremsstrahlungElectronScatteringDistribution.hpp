@@ -45,10 +45,10 @@ public:
 
   //! Constructor with detailed tabular photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
-    const double upper_cutoff_energy,
+    const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
+    const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
     const double lower_cutoff_energy,
-    BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
-    Teuchos::RCP<Utility::OneDDistribution>& angular_distribution );
+    const double upper_cutoff_energy );
 
   //! Destructor 
   virtual ~BremsstrahlungElectronScatteringDistribution()

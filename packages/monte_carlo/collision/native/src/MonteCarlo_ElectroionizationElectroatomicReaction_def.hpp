@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElectroionizationElectroatomicReaction.hpp
-//! \author Alex Robinson
+//! \file   MonteCarlo_ElectroionizationElectroatomicReaction_def.hpp
+//! \author Luke Kersting
 //! \brief  The electroionization electroatomic reaction class definition
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ELECTROIONIZATION_PHOTOATOMIC_REACTION_DEF_HPP
-#define MONTE_CARLO_ELECTROIONIZATION_PHOTOATOMIC_REACTION_DEF_HPP
+#ifndef MONTE_CARLO_ELECTROIONIZATION_ELECTROATOMIC_REACTION_DEF_HPP
+#define MONTE_CARLO_ELECTROIONIZATION_ELECTROATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
 #include "Utility_SortAlgorithms.hpp"
@@ -24,7 +24,7 @@ ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::El
        const Teuchos::RCP<Utility::OneDDistribution>& 
                electroionization_subshell_cross_sections,
        const ElectroionizationElectronScatteringDistribution::ElectroionizationDistribution& 
-               electroionization_scattering_distribution ) )
+               electroionization_scattering_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                        incoming_energy_grid,
                                                        cross_section,
@@ -89,7 +89,7 @@ void ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_ELECTROIONIZATION_PHOTOATOMIC_REACTION_DEF_HPP
+#endif // end MONTE_CARLO_ELECTROIONIZATION_ELECTROATOMIC_REACTION_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ElectroionizationElectroatomicReaction_def.hpp

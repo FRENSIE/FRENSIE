@@ -1,42 +1,40 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElectroionizationElectroatomicReaction.hpp
+//! \file   MonteCarlo_BremsstrahlungElectroatomicReaction.hpp
 //! \author Luke Kersting
-//! \brief  The electroionization electroatomic reaction class decl.
+//! \brief  The bremsstrahlung Electroatomic reaction class decl.
 //! 
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ELECTROIONIZATION_ELECTROATOMIC_REACTION_HPP
-#define MONTE_CARLO_ELECTROIONIZATION_ELECTROATOMIC_REACTION_HPP
+#ifndef MONTE_CARLO_BREMSSTRAHLUNG_ELECTROATOMIC_REACTION_HPP
+#define MONTE_CARLO_BREMSSTRAHLUNG_ELECTROATOMIC_REACTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardElectroatomicReaction.hpp"
-#include "MonteCarlo_ElectroionizationElectronScatteringDistribution.hpp"
+#include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
-//! The electroionization electroatomic reaction class
+//! The bremsstrahlung electroatomic reaction class
 template<typename InterpPolicy, bool processed_cross_section>
-class ElectroionizationElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
+class BremsstrahlungElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
 {
 
 public:
 
   //! Constructor
-  ElectroionizationElectroatomicReaction( 
-	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	  const Teuchos::ArrayRCP<const double>& cross_section,
-	  const unsigned threshold_energy_index,
-      const Teuchos::RCP<Utility::OneDDistribution>& electroionization_subshell_cross_sections,
-      const ElectroionizationElectronScatteringDistribution::ElectroionizationDistribution& 
-      electroionization_scattering_distribution );
-
+  BremsstrahlungElectroatomicReaction( 
+      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+      const Teuchos::ArrayRCP<const double>& cross_section,
+      const unsigned threshold_energy_index,
+      const BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
+              bremsstrahlung_scattering_distribution );
 
   //! Destructor
-  ~ElectroionizationElectroatomicReaction()
+  virtual ~BremsstrahlungElectroatomicReaction()
   { /* ... */ }
 
   //! Return the number of electrons emitted from the rxn at the given energy
@@ -55,8 +53,8 @@ public:
 
 private:
 
-  // The electroionization scattering distribution
-  ElectroionizationElectronScatteringDistribution d_scattering_distribution;
+  // The bremsstrahlung scattering distribution
+  BremsstrahlungElectronScatteringDistribution d_scattering_distribution;
 };
 
 } // end MonteCarlo namespace
@@ -65,12 +63,12 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_ElectroionizationElectroatomicReaction_def.hpp"
+#include "MonteCarlo_BremsstrahlungElectroatomicReaction_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_ELECTROIONIZATION_ELECTROATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_BREMSSTRAHLUNG_ELECTROATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElectroionizationElectroatomicReaction.hpp
+// end MonteCarlo_BremsstrahlungElectroatomicReaction.hpp
 //---------------------------------------------------------------------------//
