@@ -16,17 +16,17 @@
 namespace MonteCarlo{
 
 //! The electron/positron reaction base class
-class ElectronReaction
+class ElectroatomicReaction
 {
 
 public:
 
   //!Constructor
-  ElectronReaction();
+  ElectroatomicReaction()
   { /* ... */ }
 
   //!Destructor
-  virtual ~ElectronReaction()
+  virtual ~ElectroatomicReaction()
   { /* ... */}
 	
   //! Return the cross section at the given energy
