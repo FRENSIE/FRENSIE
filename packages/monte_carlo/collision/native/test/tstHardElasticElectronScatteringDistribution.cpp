@@ -175,16 +175,16 @@ int main( int argc, char** argv )
 				      xss_data_extractor->extractELASIBlock() );
   
   // Extract the number of tabulated distributions
-  int N = elasi_block.size()/3;
+  int size = elasi_block.size()/3;
 
   // Extract the energy grid for elastic scattering angular distributions
-  Teuchos::Array<double> energy_grid(elasi_block(0,N));
+  Teuchos::Array<double> energy_grid(elasi_block(0,size));
 
   // Extract the table lengths for elastic scattering angular distributions
-  Teuchos::Array<double> table_length(elasi_block(N,N));
+  Teuchos::Array<double> table_length(elasi_block(size,size));
 
   // Extract the offsets for elastic scattering angular distributions
-  Teuchos::Array<double> offset(elasi_block(2*N,N));
+  Teuchos::Array<double> offset(elasi_block(2*size,size));
 
   // Extract the elastic scattering angular distributions block (elas)
   Teuchos::ArrayView<const double> elas_block = 
@@ -192,9 +192,9 @@ int main( int argc, char** argv )
 
   // Create the elastic scattering distributions
   Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
-    elastic_scattering_distribution( N );
+    elastic_scattering_distribution( size );
   
-  for( unsigned n = 0; n < N; ++n )
+  for( unsigned n = 0; n < size; ++n )
   {
     elastic_scattering_distribution[n].first = energy_grid[n];
 
