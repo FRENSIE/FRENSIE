@@ -23,7 +23,7 @@ namespace MonteCarlo{
 
 // Constructor
 AtomicExcitationElectronScatteringDistribution::AtomicExcitationElectronScatteringDistribution(
-    Teuchos::RCP<Utility::OneDDistribution>& energy_loss_distribution )
+    const Teuchos::RCP<Utility::OneDDistribution>& energy_loss_distribution )
     : d_energy_loss_distribution( energy_loss_distribution )
 {
   // Make sure the array is valid

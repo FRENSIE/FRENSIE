@@ -43,14 +43,14 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
 // Constructor with detailed tabular photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
-    const double upper_cutoff_energy,
+    const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
+    const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
     const double lower_cutoff_energy,
-    BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
-    Teuchos::RCP<Utility::OneDDistribution>& angular_distribution )
-  : d_upper_cutoff_energy( upper_cutoff_energy ),
-    d_lower_cutoff_energy( lower_cutoff_energy ),
-    d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
-    d_angular_distribution( angular_distribution )
+    const double upper_cutoff_energy )
+  : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
+    d_angular_distribution( angular_distribution ),
+    d_lower_cutoff_energy( upper_cutoff_energy ),
+    d_upper_cutoff_energy( lower_cutoff_energy )
 {
   // Make sure the arraies are valid
   testPrecondition( d_bremsstrahlung_scattering_distribution.size() > 0 );
@@ -73,52 +73,12 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   // energy of the bremsstrahlung photon
   double photon_energy;
 
-  // Energy is below the lowest grid point
-  if( electron.getEnergy() < d_bremsstrahlung_scattering_distribution.front().first )
-  {
-    photon_energy = 
-              d_bremsstrahlung_scattering_distribution.front().second->sample();
-  }
-  // Energy is above the highest grid point
-  else if( electron.getEnergy() >= d_bremsstrahlung_scattering_distribution.back().first )
-  {
-    photon_energy = 
-               d_bremsstrahlung_scattering_distribution.back().second->sample();
-  }
-  // Energy is inbetween two grid point
-  else
-  {
-    BremsstrahlungDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
-    
-    lower_bin_boundary = d_bremsstrahlung_scattering_distribution.begin();
-    upper_bin_boundary = d_bremsstrahlung_scattering_distribution.end();
-    
-    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
-							  lower_bin_boundary,
-							  upper_bin_boundary,
-							  electron.getEnergy() );
+  // Incoming electron energy
+  double incoming_energy = electron.getEnergy();
 
-    upper_bin_boundary = lower_bin_boundary;
-    ++upper_bin_boundary;
-
-    // Calculate the interpolation fraction
-    double interpolation_fraction = ( electron.getEnergy() - lower_bin_boundary->first )/
-      (upper_bin_boundary->first - lower_bin_boundary->first);
-     
-    double random_number_1 = 
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
-     
-    // Sample from the upper energy bin
-    if( random_number_1 < interpolation_fraction )
-    {
-      photon_energy = upper_bin_boundary->second->sample();
-    }
-    // Sample from the lower energy bin
-    else
-    {
-      photon_energy = lower_bin_boundary->second->sample();
-    }
-  }
+  // Sample knock-on electron energy
+  photon_energy = sampleTwoDDistribution( electron.getEnergy(),
+                                     d_bremsstrahlung_scattering_distribution );
 
   // Set the new energy
   electron.setEnergy( electron.getEnergy() - photon_energy );
@@ -136,10 +96,7 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   // Sample the photon outgoing angle cosine
   double angle_cosine;
 
-  // Sample the photon outgoing angle cosine
-  double energy = electron.getEnergy();
-
-  angle_cosine = d_angular_distribution_func( energy, photon_energy );
+  angle_cosine = d_angular_distribution_func( incoming_energy, photon_energy );
 
   // Sample the photon outgoing direction
   double outgoing_photon_direction[3];
