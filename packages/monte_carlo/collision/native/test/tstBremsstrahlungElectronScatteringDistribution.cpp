@@ -301,10 +301,11 @@ int main( int argc, char** argv )
 
   detailed_bremsstrahlung_distribution.reset( 
 		      new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-                            upper_cutoff_energy,
-                            lower_cutoff_energy, 
 							energy_loss_distribution,
-							angular_distribution ) );
+							angular_distribution,
+                            lower_cutoff_energy, 
+                            upper_cutoff_energy ) );
+
   // Clear setup data
   ace_file_handler.reset();
   xss_data_extractor.reset();
