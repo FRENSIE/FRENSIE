@@ -36,7 +36,7 @@ public:
 
   //! Constructor
   AtomicExcitationElectronScatteringDistribution(
-    Teuchos::RCP<Utility::OneDDistribution>& energy_loss_distribution );
+    const Teuchos::RCP<Utility::OneDDistribution>& energy_loss_distribution );
 
   //! Destructor 
   virtual ~AtomicExcitationElectronScatteringDistribution()
