@@ -227,15 +227,15 @@ ADD_EXECUTABLE(tstAtomicRelaxationModelFactory
 TARGET_LINK_LIBRARIES(tstAtomicRelaxationModelFactory monte_carlo_collision_native)
 ADD_TEST(AtomicRelaxationModelFactory_test tstAtomicRelaxationModelFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstPhotoatomACEFactory
-  tstPhotoatomACEFactory.cpp)
-TARGET_LINK_LIBRARIES(tstPhotoatomACEFactory monte_carlo_collision_native)
-ADD_TEST(PhotoatomACEFactory_test tstPhotoatomACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+# ADD_EXECUTABLE(tstPhotoatomACEFactory
+#   tstPhotoatomACEFactory.cpp)
+# TARGET_LINK_LIBRARIES(tstPhotoatomACEFactory monte_carlo_collision_native)
+# ADD_TEST(PhotoatomACEFactory_test tstPhotoatomACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
-ADD_EXECUTABLE(tstPhotoatomFactory
-  tstPhotoatomFactory.cpp)
-TARGET_LINK_LIBRARIES(tstPhotoatomFactory monte_carlo_collision_native)
-ADD_TEST(PhotoatomFactory_test tstPhotoatomFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
+# ADD_EXECUTABLE(tstPhotoatomFactory
+#   tstPhotoatomFactory.cpp)
+# TARGET_LINK_LIBRARIES(tstPhotoatomFactory monte_carlo_collision_native)
+# ADD_TEST(PhotoatomFactory_test tstPhotoatomFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
 
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)

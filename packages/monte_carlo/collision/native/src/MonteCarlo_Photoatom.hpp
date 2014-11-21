@@ -24,6 +24,8 @@
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
+#include "MonteCarlo_PhotoatomCore.hpp"
+#include "MonteCarlo_PhotonuclearReaction.hpp"
 
 namespace MonteCarlo{
 
@@ -39,79 +41,151 @@ private:
 public:
 
   //! Typedef for the reaction map
-  typedef boost::unordered_map<PhotoatomicReactionType,
-			       Teuchos::RCP<PhotoatomicReaction> >
-  ReactionMap;
+  typedef PhotoatomCore::ReactionMap ReactionMap;
 
-  //! Set the photoatomic reaction types that will be considered as absorption
-  static void setAbsorptionReactionTypes(
-    const Teuchos::Array<PhotoatomicReactionType>& absorption_reaction_types );
-  
-  //! Add a photoatomic reaction type that will be considered as absorption
-  static void addAbsorptionReactionType( 
-				      const PhotoatomicReactionType reaction );
+  //! Typedef for the const reaction map
+  typedef PhotoatomCore::ConstReactionMap ConstReactionMap;
 
   //! Return the reactions that are treated as absorption
   static const boost::unordered_set<PhotoatomicReactionType>& 
   getAbsorptionReactionTypes();
+
+  //! Create a core
+  template<typename InterpPolicy>
+  static void createCore( 
+	  const Teuchos::ArrayRCP<double>& energy_grid,
+	  const ReactionMap& standard_scattering_reactions,
+	  const ReactionMap& standard_absorption_reactions,
+	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	  const bool processed_atomic_cross_sections,
+	  PhotoatomCore& core );
 					
-  //! Constructor
+  //! Constructor 
+  template<typename InterpPolicy>
   Photoatom( 
 	  const std::string& name,
 	  const unsigned atomic_number,
 	  const double atomic_weight,
+	  const Teuchos::ArrayRCP<double>& energy_grid,
 	  const ReactionMap& standard_scattering_reactions,
 	  const ReactionMap& standard_absorption_reactions,
-	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model );
+	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	  const bool processed_atomic_cross_sections = true );
+
+  //! Constructor (from a core)
+  Photoatom( const std::string& name,
+	     const unsigned atomic_number,
+	     const double atomic_weight,
+	     const PhotoatomCore& core );
 
   //! Destructor
   virtual ~Photoatom()
   { /* ... */ }
 
   //! Return the atom name
-  const std::string& getName() const;
+  const std::string& getAtomName() const;
+
+  //! Return the nuclide name
+  virtual const std::string& getNuclideName() const;
 
   //! Return the atomic number
   unsigned getAtomicNumber() const;
 
+  //! Return the atomic mass number
+  virtual unsigned getAtomicMassNumber() const;
+
+  //! Return the nuclear isomer number
+  virtual unsigned getIsomerNumber() const;
+
   //! Return the atomic weight 
   double getAtomicWeight() const;
 
+  //! Return the temperature of the atom
+  virtual double getTemperature() const;
+
   //! Return the total cross section at the desired energy
-  virtual double getTotalCrossSection( const double energy ) const = 0;
+  double getTotalCrossSection( const double energy ) const;
+
+  //! Return the total cross section from atomic interactions 
+  double getAtomicTotalCrossSection( const double energy ) const;
+
+  //! Return the total cross section from nuclear interactions
+  virtual double getNuclearTotalCrossSection( const double energy ) const;
 
   //! Return the total absorption cross section at the desired energy
-  virtual double getAbsorptionCrossSection( const double energy ) const = 0;
+  double getAbsorptionCrossSection( const double energy ) const;
+
+  //! Return the total absorption cross section from atomic interactions
+  double getAtomicAbsorptionCrossSection( const double energy ) const;
+
+  //! Return the total absorption cross section from nuclear interactions
+  virtual double getNuclearAbsorptionCrossSection( const double energy ) const;
 
   //! Return the survival probability at the desired energy
   double getSurvivalProbability( const double energy ) const;
+
+  //! Return the survival probability from atomic interactions
+  double getAtomicSurvivalProbability( const double energy ) const;
+
+  //! Return the survival probability from nuclear interactions
+  double getNuclearSurvivalProbability( const double energy ) const;
 
   //! Return the cross section for a specific photoatomic reaction
   double getReactionCrossSection( 
 			        const double energy,
 			        const PhotoatomicReactionType reaction ) const;
+  
+  //! Return the crosss ection for a specific photonuclear reaction
+  virtual double getReactionCrossSection(
+			       const double energy,
+			       const PhotonuclearReactionType reaction ) const;
 
   //! Collide with a photon
-  void collideAnalogue( PhotonState& photon, 
-			ParticleBank& bank ) const;
+  virtual void collideAnalogue( PhotonState& photon, 
+				ParticleBank& bank ) const;
 
   //! Collide with a photon and survival bias
-  void collideSurvivalBias( PhotonState& photon, 
-			    ParticleBank& bank ) const;
+  virtual void collideSurvivalBias( PhotonState& photon, 
+				    ParticleBank& bank ) const;
 
-protected:
-
-  //! Return the scattering reactions
-  const ReactionMap& getScatteringReactions() const;
-
-  //! Return the absorption reactions
-  const ReactionMap& getAbsorptionReactions() const;
+  //! Return the core
+  const PhotoatomCore& getCore() const;
 
 private:
 
   // Set the default absorption reaction types
   static boost::unordered_set<PhotoatomicReactionType>
   setDefaultAbsorptionReactionTypes();
+
+  // Create the total absorption reaction
+  template<typename InterpPolicy>
+  static void createTotalAbsorptionReaction(
+		const Teuchos::ArrayRCP<double>& energy_grid,
+		const ConstReactionMap& absorption_reactions,
+		Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction );
+
+  // Create the processed total absorption reaction
+  template<typename InterpPolicy>
+  static void createProcessedTotalAbsorptionReaction(
+		const Teuchos::ArrayRCP<double>& energy_grid,
+		const ConstReactionMap& absorption_reactions,
+		Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction );
+
+  // Create the total reaction
+  template<typename InterpPolicy>
+  static void createTotalReaction(
+	    const Teuchos::ArrayRCP<double>& energy_grid,
+	    const ConstReactionMap& scattering_reactions,
+	    const Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction,
+	    Teuchos::RCP<PhotoatomicReaction>& total_reaction );
+  
+  // Calculate the processed total absorption cross section
+  template<typename InterpPolicy>
+  static void calculateProcessedTotalCrossSection(
+	    const Teuchos::ArrayRCP<double>& energy_grid,
+	    const ConstReactionMap& scattering_reactions,
+	    const Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction,
+	    Teuchos::RCP<PhotoatomicReaction>& total_reaction );
 
   // Sample an absorption reaction
   void sampleAbsorptionReaction( const double scaled_random_number,
@@ -136,20 +210,101 @@ private:
   // The atomic weight of the atom
   double d_atomic_weight;
 
-  // The scattering reactions
-  ReactionMap d_scattering_reactions;
-
-  // The absorption reactions
-  ReactionMap d_absorption_reactions;
-
-  // Miscellaneous reactions
-  ReactionMap d_miscellaneous_reactions;  
-
-  // The atomic relaxation model
-  Teuchos::RCP<const AtomicRelaxationModel> d_relaxation_model;
+  // The photoatom core (storing all reactions, relaxation model)
+  PhotoatomCore d_core;
 };
 
+// Return the nuclide name
+inline const std::string& Photoatom::getNuclideName() const
+{
+  return this->getAtomName();
+}
+
+// Return the atomic mass number
+inline unsigned Photoatom::getAtomicMassNumber() const
+{
+  return 0u;
+}
+
+// Return the nuclear isomer number
+inline unsigned Photoatom::getIsomerNumber() const
+{
+  return 0u;
+}
+
+// Return the temperature of the atom
+/*! \details This information is irrelevant for photoatomic reactions. However,
+ * it my be important for photonuclear reactions where Doppler broadening of
+ * cross sections may be necessary.
+ */ 
+inline double Photoatom::getTemperature() const
+{
+  return 0.0;
+}
+
+// Return the total cross section at the desired energy
+inline double Photoatom::getTotalCrossSection( const double energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( energy > 0.0 );
+  
+  return this->getAtomicTotalCrossSection( energy ) +
+    this->getNuclearTotalCrossSection( energy );
+}
+
+// Return the total cross section from nuclear interactions
+/*! \details By default, photonuclear reactions are not considered.
+ */
+inline double Photoatom::getNuclearTotalCrossSection( const double energy )
+{
+  return 0.0;
+}
+
+// Return the total absorption cross section at the desired energy
+inline double Photoatom::getAbsorptionCrossSection( const double energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
+
+  return this->getAtomicAbsorptionCrossSection( energy ) +
+    this->getNuclearAbsorptionCrossSection( energy );
+}
+
+// Return the total absorption cross section from nuclear interactions
+/*! \details By default, photonuclear reactions are not considered.
+ */
+inline double 
+Photoatom::getNuclearAbsorptionCrossSection( const double energy )
+{
+  return 0.0;
+} 
+
+// Return the crosss ection for a specific photonuclear reaction
+/*! \details By default, photonuclear reactions are not considered.
+ */
+inline double Photoatom::getReactionCrossSection(
+			       const double energy,
+			       const PhotonuclearReactionType reaction ) const
+{
+  return 0.0;
+}
+
+// Return the core
+const PhotoatomCore& Photoatom::getCore() const
+{
+  return d_core;
+}
+
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_Photoatom_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_PHOTOATOM_HPP
 
