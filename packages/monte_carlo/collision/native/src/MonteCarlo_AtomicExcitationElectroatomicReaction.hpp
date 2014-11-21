@@ -9,14 +9,13 @@
 #ifndef MONTE_CARLO_ATOMIC_EXCITATION_ELECTROATOMIC_REACTION_HPP
 #define MONTE_CARLO_ATOMIC_EXCITATION_ELECTROATOMIC_REACTION_HPP
 
-// Boost Includes
-#include <boost/function.hpp>
-
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardElectroatomicReaction.hpp"
+#include "MonteCarlo_AtomicExcitationElectronScatteringDistribution.hpp"
+
 
 namespace MonteCarlo{
 
@@ -47,7 +46,7 @@ public:
   //! Simulate the reaction
   void react( ElectronState& electron, 
 	      ParticleBank& bank,
-	      SubshellType& shell_of_interaction ) const;
+	      unsigned& shell_of_interaction ) const;
 
 private:
 

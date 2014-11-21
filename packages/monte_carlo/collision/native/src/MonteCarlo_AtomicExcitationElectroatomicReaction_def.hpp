@@ -49,14 +49,14 @@ AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::Ato
 /*! \details This does not include photons from atomic relaxation.
  */
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
+unsigned AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedPhotons( const double energy ) const
 {
   return 0u;
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
-unsigned BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
+unsigned AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::getNumberOfEmittedElectrons( const double energy ) const
 {
   return 0u;
 }
@@ -64,8 +64,9 @@ unsigned BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_sectio
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
-						     ElectronState& photon,
-						     ParticleBank& bank ) const
+						     ElectronState& electron,
+						     ParticleBank& bank,
+                             unsigned& shell_of_interaction ) const
 {
   d_scattering_distribution.scatterElectron( electron, 
                                              bank, 
