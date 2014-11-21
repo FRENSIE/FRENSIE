@@ -12,6 +12,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
+//#include "MonteCarlo_SubshellType.hpp"
+#include "MonteCarlo_ElectroatomicReactionType.hpp"
 
 namespace MonteCarlo{
 
@@ -39,7 +41,9 @@ public:
   virtual unsigned getNumberOfEmittedElectrons( const double energy ) const = 0;
 
   //! Simulate the reaction
-  virtual void react( ElectronState& electron, ParticleBank& bank ) const = 0;
+  virtual void react( ElectronState& electron, 
+                      ParticleBank& bank,
+                      unsigned& shell_of_interaction ) const = 0;
 };
 
 } // end MonteCarlo namespace

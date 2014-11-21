@@ -19,19 +19,30 @@
 namespace MonteCarlo{
 
 //! The bremsstrahlung electroatomic reaction class
-template<typename InterpPolicy, bool processed_cross_section>
+template<typename InterpPolicy, bool processed_cross_section = false>
 class BremsstrahlungElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
 {
 
 public:
 
-  //! Constructor
+  //! Constructor with simple analytical photon angular distribution
   BremsstrahlungElectroatomicReaction( 
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
       const BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
               bremsstrahlung_scattering_distribution );
+
+  //! Constructor with detailed photon angular distribution
+  BremsstrahlungElectroatomicReaction(
+       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+       const Teuchos::ArrayRCP<const double>& cross_section,
+       const unsigned threshold_energy_index,
+       const BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
+              bremsstrahlung_scattering_distribution,
+       const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
+       const double lower_cutoff_energy,
+       const double upper_cutoff_energy );
 
   //! Destructor
   virtual ~BremsstrahlungElectroatomicReaction()
@@ -49,7 +60,7 @@ public:
   //! Simulate the reaction
   void react( ElectronState& electron, 
 	      ParticleBank& bank,
-	      SubshellType& shell_of_interaction ) const;
+	      unsigned& shell_of_interaction ) const;
 
 private:
 

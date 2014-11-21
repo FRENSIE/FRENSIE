@@ -65,8 +65,8 @@ StandardElectroatomicReaction<InterpPolicy,true>::StandardElectroatomicReaction(
 }
 
 // Return the cross section at the given energy
-template<typename InterpPolicy, bool processed_cross_section>
-double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( 
+template<typename InterpPolicy>
+double StandardElectroatomicReaction<InterpPolicy,true>::getCrossSection( 
 						    const double energy ) const
 {
   double cross_section;
@@ -111,8 +111,8 @@ double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getC
 }
 
 // Return the cross section at the given energy
-template<typename InterpPolicy>
-double StandardElectroatomicReaction<InterpPolicy,false>::getCrossSection( 
+template<typename InterpPolicy, bool processed_cross_section>
+double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( 
 						    const double energy ) const
 {
   double cross_section;
@@ -148,16 +148,16 @@ double StandardElectroatomicReaction<InterpPolicy,false>::getCrossSection(
 }
 
 // Return the threshold energy
-template<typename InterpPolicy, bool processed_cross_section>
-double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getThresholdEnergy() const
+template<typename InterpPolicy>
+double StandardElectroatomicReaction<InterpPolicy,true>::getThresholdEnergy() const
 {
   return InterpPolicy::recoverProcessedIndepVar( 
 			    d_incoming_energy_grid[d_threshold_energy_index] );
 }
 	
 // Return the threshold energy
-template<typename InterpPolicy>
-double StandardElectroatomicReaction<InterpPolicy,false>::getThresholdEnergy() const
+template<typename InterpPolicy, bool processed_cross_section>
+double StandardElectroatomicReaction<InterpPolicy,processed_cross_section>::getThresholdEnergy() const
 {
   return d_incoming_energy_grid[d_threshold_energy_index];
 }
