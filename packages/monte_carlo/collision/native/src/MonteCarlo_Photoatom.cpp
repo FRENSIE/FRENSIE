@@ -109,24 +109,6 @@ Photoatom::setDefaultAbsorptionReactionTypes()
   return tmp_absorption_reaction_types;
 }
 
-// Set the photoatomic reaction types that will be considered as absorption
-void Photoatom::setAbsorptionReactionTypes(
-     const Teuchos::Array<PhotoatomicReactionType>& absorption_reaction_types )
-{
-  Photoatom::absorption_reaction_types.clear();
-
-  Photoatom::absorption_reaction_types.insert( 
-					     absorption_reaction_types.begin(),
-					     absorption_reaction_types.end() );
-}
-
-// Add a photoatomic reaction type that will be considered as absorption
-void Photoatom::addAbsorptionReactionType(
-				       const PhotoatomicReactionType reaction )
-{
-  Photoatom::absorption_reaction_types.insert( reaction );
-}
-
 // Return the reactions that are treated as absorption
 const boost::unordered_set<PhotoatomicReactionType>& 
 Photoatom::getAbsorptionReactionTypes()
@@ -134,59 +116,25 @@ Photoatom::getAbsorptionReactionTypes()
   return Photoatom::absorption_reaction_types;
 }
 
-// Constructor
-Photoatom::Photoatom(
-	  const std::string& name,
-	  const unsigned atomic_number,
-	  const double atomic_weight,
-	  const Photoatom::ReactionMap& standard_scattering_reactions,
-	  const Photoatom::ReactionMap& standard_absorption_reactions,
-	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model )
+//! Constructor (from a core)
+Photoatom::Photoatom( const std::string& name,
+		      const unsigned atomic_number,
+		      const double atomic_weight,
+		      const PhotoatomCore& core )
   : d_name( name ),
     d_atomic_number( atomic_number ),
     d_atomic_weight( atomic_weight ),
-    d_scattering_reactions(),
-    d_absorption_reactions(),
-    d_miscellaneous_reactions(),
-    d_relaxation_model( atomic_relaxation_model )
+    d_core( core )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
   // There must be at least one reaction specified
-  testPrecondition( standard_scattering_reactions.size() +
-		    standard_absorption_reactions.size() > 0 );
-  // Make sure the atomic relaxation model is valid
-  testPrecondition( !atomic_relaxation_model.is_null() );
-
-  // Place reactions in the appropriate group
-  ReactionMap::const_iterator rxn_type_pointer = 
-    standard_scattering_reactions.begin();
-
-  while( rxn_type_pointer != standard_scattering_reactions.end() )
-  {
-    if( Photoatom::absorption_reaction_types.count( rxn_type_pointer->first ) )
-      d_absorption_reactions.insert( *rxn_type_pointer );
-    else
-      d_scattering_reactions.insert( *rxn_type_pointer );
-
-    ++rxn_type_pointer;
-  }
-
-  rxn_type_pointer = standard_absorption_reactions.begin();
-
-  while( rxn_type_pointer != standard_absorption_reactions.end() )
-  {
-    if( Photoatom::absorption_reaction_types.count( rxn_type_pointer->first ) )
-      d_absorption_reactions.insert( *rxn_type_pointer );
-    else
-      d_miscellaneous_reactions.insert( *rxn_type_pointer );
-
-    ++rxn_type_pointer;
-  }
+  testPrecondition( core.getScatteringReactions().size() +
+		    core.getAbsorptionReactions().size() > 0 );
 }
 
 // Return the atom name
-const std::string& Photoatom::getName() const
+const std::string& Photoatom::getAtomName() const
 {
   return d_name;
 }
@@ -203,6 +151,26 @@ double Photoatom::getAtomicWeight() const
   return d_atomic_weight;
 }
 
+// Return the total cross section from atomic interactions 
+double Photoatom::getAtomicTotalCrossSection( const double energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
+
+  return d_core.getTotalReaction().getCrossSection( energy );
+}
+
+// Return the total absorption cross section from atomic interactions
+double Photoatom::getAtomicAbsorptionCrossSection( const double energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
+
+  return d_core.getTotalAbsorptionReaction().getCrossSection( energy );
+}
+
 // Return the survival probability at the desired energy
 double Photoatom::getSurvivalProbability( const double energy ) const
 {
@@ -210,8 +178,47 @@ double Photoatom::getSurvivalProbability( const double energy ) const
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  double survival_prob = 1.0 - (this->getAbsorptionCrossSection( energy )/
-				this->getTotalCrossSection( energy ));
+  double survival_prob = 
+    1.0 - (this->getAbsorptionCrossSection( energy )/
+	   this->getTotalCrossSection( energy ));
+
+  // Make sure the survival probability is valid
+  testPostcondition( !ST::isnaninf( survival_prob ) );
+  testPostcondition( survival_prob >= 0.0 );
+  testPostcondition( survival_prob <= 1.0 );
+
+  return survival_prob;
+}
+
+// Return the survival probability from atomic interactions
+double Photoatom::getAtomicSurvivalProbability( const double energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
+
+  double survival_prob = 
+    1.0 - (this->getAtomicAbsorptionCrossSection( energy )/
+	   this->getAtomicTotalCrossSection( energy ));
+
+  // Make sure the survival probability is valid
+  testPostcondition( !ST::isnaninf( survival_prob ) );
+  testPostcondition( survival_prob >= 0.0 );
+  testPostcondition( survival_prob <= 1.0 );
+
+  return survival_prob;
+}
+
+// Return the survival probability from nuclear interactions
+double Photoatom::getNuclearSurvivalProbability( const double energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
+
+  double survival_prob = 
+    1.0 - (this->getNuclearAbsorptionCrossSection( energy )/
+	   this->getNuclearTotalCrossSection( energy ));
 
   // Make sure the survival probability is valid
   testPostcondition( !ST::isnaninf( survival_prob ) );
@@ -233,20 +240,20 @@ double Photoatom::getReactionCrossSection(
   case TOTAL_ABSORPTION_PHOTOATOMIC_REACTION:
     return this->getAbsorptionCrossSection( energy );
   default:
-    ReactionMap::const_iterator photoatomic_reaction = 
-      d_scattering_reactions.find( reaction );
+    ConstReactionMap::const_iterator photoatomic_reaction = 
+      d_core.getScatteringReactions().find( reaction );
 
-    if( photoatomic_reaction != d_scattering_reactions.end() )
+    if( photoatomic_reaction != d_core.getScatteringReactions().end() )
       return photoatomic_reaction->second->getCrossSection( energy );
 
-    photoatomic_reaction = d_absorption_reactions.find( reaction );
+    photoatomic_reaction = d_core.getAbsorptionReactions().find( reaction );
 
-    if( photoatomic_reaction != d_absorption_reactions.end() )
+    if( photoatomic_reaction != d_core.getAbsorptionReactions().end() )
       return photoatomic_reaction->second->getCrossSection( energy );
 
-    photoatomic_reaction = d_miscellaneous_reactions.find( reaction );
+    photoatomic_reaction = d_core.getMiscReactions().find( reaction );
 
-    if( photoatomic_reaction != d_miscellaneous_reactions.end() )
+    if( photoatomic_reaction != d_core.getMiscReactions().end() )
       return photoatomic_reaction->second->getCrossSection( energy );
     else // If the reaction does not exist for an atom, return 0
       return 0.0;
@@ -328,10 +335,10 @@ void Photoatom::sampleAbsorptionReaction( const double scaled_random_number,
 {
   double partial_cross_section = 0.0;
   
-  ReactionMap::const_iterator photoatomic_reaction = 
-    d_absorption_reactions.begin();
+  ConstReactionMap::const_iterator photoatomic_reaction = 
+    d_core.getAbsorptionReactions().begin();
 
-  while( photoatomic_reaction != d_absorption_reactions.end() )
+  while( photoatomic_reaction != d_core.getAbsorptionReactions().end() )
   {
     partial_cross_section +=
       photoatomic_reaction->second->getCrossSection( photon.getEnergy() );
@@ -343,7 +350,8 @@ void Photoatom::sampleAbsorptionReaction( const double scaled_random_number,
   }
 
   // Make sure a reaction was selected
-  testPostcondition( photoatomic_reaction != d_absorption_reactions.end() );
+  testPostcondition( photoatomic_reaction != 
+		     d_core.getAbsorptionReactions().end() );
 
   // Undergo reaction selected
   SubshellType subshell_vacancy;
@@ -351,9 +359,9 @@ void Photoatom::sampleAbsorptionReaction( const double scaled_random_number,
   photoatomic_reaction->second->react( photon, bank, subshell_vacancy );
 
   // Relax the atom
-  d_relaxation_model->relaxAtom( subshell_vacancy,
-				 photon,
-				 bank );
+  d_core.getAtomicRelaxationModel().relaxAtom( subshell_vacancy,
+					       photon,
+					       bank );
 }
 
 // Sample a scattering reaction
@@ -363,10 +371,10 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
 {
   double partial_cross_section = 0.0;
   
-  ReactionMap::const_iterator photoatomic_reaction = 
-    d_scattering_reactions.begin();
+  ConstReactionMap::const_iterator photoatomic_reaction = 
+    d_core.getScatteringReactions().begin();
   
-  while( photoatomic_reaction != d_scattering_reactions.end() )
+  while( photoatomic_reaction != d_core.getScatteringReactions().end() )
   {
     partial_cross_section +=
       photoatomic_reaction->second->getCrossSection( photon.getEnergy() );
@@ -378,7 +386,8 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
   }
 
   // Make sure the reaction was found
-  testPostcondition( photoatomic_reaction != d_scattering_reactions.end() );
+  testPostcondition( photoatomic_reaction != 
+		     d_core.getScatteringReactions().end() );
 
   // Undergo reaction selected
   SubshellType subshell_vacancy;
@@ -386,21 +395,9 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
   photoatomic_reaction->second->react( photon, bank, subshell_vacancy );
 
   // Relax the atom
-  d_relaxation_model->relaxAtom( subshell_vacancy,
-				 photon,
-				 bank );
-}
-
-// Return the scattering reactions
-const Photoatom::ReactionMap& Photoatom::getScatteringReactions() const
-{
-  return d_scattering_reactions;
-}
-
-// Return the absorption reactions
-const Photoatom::ReactionMap& Photoatom::getAbsorptionReactions() const
-{
-  return d_absorption_reactions;
+  d_core.getAtomicRelaxationModel().relaxAtom( subshell_vacancy,
+					       photon,
+					       bank );
 }
 
 } // end MonteCarlo namespace

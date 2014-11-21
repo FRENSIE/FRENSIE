@@ -39,17 +39,25 @@
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
 
-  <!-- <ParameterList name="H-1_900K"> -->
-  <!--   <Parameter name="neutron_file_path" type="string" value="test_h1_ace_file.txt"/> -->
-  <!--   <Parameter name="neutron_file_is_ascii" type="bool" value="true"/> -->
-  <!--   <Parameter name="neutron_file_start_line" type="int" value="4115"/> -->
-  <!--   <Parameter name="neutron_table_name" type="string" value="1001.72c"/> -->
-  <!--   <Parameter name="temperature" type="double" value="7.75560e-8"/> -->
-  <!--   <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/> -->
-  <!--   <Parameter name="atomic_number" type="int" value="1"/> -->
-  <!--   <Parameter name="atomic_mass_number" type="int" value="1"/> -->
-  <!--   <Parameter name="isomer_number" type="int" value="0"/> -->
-  <!-- </ParameterList> -->
+  <ParameterList name="H-1_900K-test">
+    <Parameter name="neutron_file_path" type="string" value="test_h1_ace_file.txt"/>
+    <Parameter name="neutron_file_is_ascii" type="bool" value="true"/>
+    <Parameter name="neutron_file_start_line" type="int" value="4115"/>
+    <Parameter name="neutron_table_name" type="string" value="1001.72c"/>
+    <Parameter name="photoatomic_alias" type="string" value="H"/>
+    <Parameter name="electroatomic_alias" type="string" value="H"/>	       
+    <Parameter name="temperature" type="double" value="7.75560e-8"/>
+    <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
+    <Parameter name="atomic_number" type="int" value="1"/>
+    <Parameter name="atomic_mass_number" type="int" value="1"/>
+    <Parameter name="isomer_number" type="int" value="0"/>
+  </ParameterList>
+
+  <ParameterList name="H-Nat_900K">
+    <Parameter name="isotopes" type="Array(string)" value="{H-1_900K,H-2_900K}"/>
+    <Parameter name="weight_fractions" type="Array(double)" value="{0.999885,0.000115}"/>
+    <Parameter name="atom_fractions" type="Array(double)" value="{0.99994245250017,1.1500660779742e-4}"/>
+  </ParameterList>
   
   <ParameterList name="Pb">
     <Parameter name="photon_file_path" type="string" value="test_pb_epr_ace_file.txt"/>
