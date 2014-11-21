@@ -19,7 +19,7 @@
 namespace MonteCarlo{
 
 //! The electroionization electroatomic reaction class
-template<typename InterpPolicy, bool processed_cross_section>
+template<typename InterpPolicy, bool processed_cross_section = false>
 class ElectroionizationElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
 {
 
@@ -51,7 +51,7 @@ public:
   //! Simulate the reaction
   void react( ElectronState& electron, 
 	      ParticleBank& bank,
-	      SubshellType& shell_of_interaction ) const;
+	      unsigned& shell_of_interaction ) const;
 
 private:
 

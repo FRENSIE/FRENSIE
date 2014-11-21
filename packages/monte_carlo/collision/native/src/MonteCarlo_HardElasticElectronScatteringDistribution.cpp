@@ -27,7 +27,7 @@ namespace MonteCarlo{
 HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribution(
     const int atomic_number,
     const double cutoff_angle_cosine,
-    ElasticDistribution& elastic_scattering_distribution)
+    const ElasticDistribution& elastic_scattering_distribution)
   : d_atomic_number( atomic_number ),
     d_cutoff_angle_cosine( cutoff_angle_cosine ),
     d_elastic_scattering_distribution( elastic_scattering_distribution )

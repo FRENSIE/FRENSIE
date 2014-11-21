@@ -43,7 +43,7 @@ public:
   HardElasticElectronScatteringDistribution(
                  const int atomic_number,
                  const double cutoff_angle_cosine,
-                 ElasticDistribution& elastic_scattering_distribution);
+                 const ElasticDistribution& elastic_scattering_distribution);
 
   //! Destructor 
   virtual ~HardElasticElectronScatteringDistribution()
