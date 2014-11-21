@@ -30,7 +30,7 @@ public:
 	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
-      const double atomic_number,
+      const int atomic_number,
       const double cutoff_angle_cosine,
       const HardElasticElectronScatteringDistribution::ElasticDistribution& 
          elastic_scattering_distribution );
@@ -52,7 +52,7 @@ public:
   //! Simulate the reaction
   void react( ElectronState& electron, 
 	      ParticleBank& bank,
-	      SubshellType& shell_of_interaction ) const;
+	      unsigned& shell_of_interaction ) const;
 
 private:
 
