@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstStandardPhotoatom.cpp
+//! \file   tstPhotoatom.cpp
 //! \author Alex Robinson
-//! \brief  Standard photoatom unit tests
+//! \brief  Photoatom unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,7 +16,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardPhotoatom.hpp"
+#include "MonteCarlo_Photoatom.hpp"
 #include "MonteCarlo_PairProductionPhotoatomicReaction.hpp"
 #include "MonteCarlo_PhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_VoidAtomicRelaxationModel.hpp"
@@ -42,8 +42,8 @@ bool notEqualZero( double value )
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the absorption reaction types can be set
-TEUCHOS_UNIT_TEST( Photoatom, getAbsorptionReactionTypes_default )
+// Check that the absorption reaction types can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getAbsorptionReactionTypes )
 {
   const boost::unordered_set<MonteCarlo::PhotoatomicReactionType>&
     absorption_types = MonteCarlo::Photoatom::getAbsorptionReactionTypes();
@@ -140,52 +140,17 @@ TEUCHOS_UNIT_TEST( Photoatom, getAbsorptionReactionTypes_default )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the absorption types can be set
-TEUCHOS_UNIT_TEST( Photoatom, setAbsorptionTypes )
+// Check that the photoatom atom name can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getAtomName_ace )
 {
-  Teuchos::Array<MonteCarlo::PhotoatomicReactionType> absorption_reactions( 1 );
-
-  absorption_reactions[0] = 
-    MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION;
-
-  MonteCarlo::Photoatom::setAbsorptionReactionTypes( absorption_reactions );
-
-  TEST_EQUALITY_CONST( 
-		    MonteCarlo::Photoatom::getAbsorptionReactionTypes().size(),
-		    1 );
-
-  TEST_ASSERT( MonteCarlo::Photoatom::getAbsorptionReactionTypes().count(
-	       MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
+  TEST_EQUALITY_CONST( ace_photoatom->getAtomName(), "82000.12p" );
 }
 
 //---------------------------------------------------------------------------//
-// Check that an absorption type can be added
-TEUCHOS_UNIT_TEST( Photoatom, addAbsorptionReactionType )
+// Check that the photoatom nuclide name can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getNuclideName_ace )
 {
-  Teuchos::Array<MonteCarlo::PhotoatomicReactionType> absorption_reactions( 1 );
-
-  absorption_reactions[0] = 
-    MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION;
-
-  MonteCarlo::Photoatom::setAbsorptionReactionTypes( absorption_reactions );
-  MonteCarlo::Photoatom::addAbsorptionReactionType(
-		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-
-  TEST_EQUALITY_CONST( 
-		    MonteCarlo::Photoatom::getAbsorptionReactionTypes().size(),
-		    2 );
-
-  TEST_ASSERT( MonteCarlo::Photoatom::getAbsorptionReactionTypes().count(
-	       MonteCarlo::TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-  TEST_ASSERT( MonteCarlo::Photoatom::getAbsorptionReactionTypes().count(
-	       MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the photoatom name can be returned
-TEUCHOS_UNIT_TEST( Photoatom, getName_ace )
-{
-  TEST_EQUALITY_CONST( ace_photoatom->getName(), "82000.12p" );
+  TEST_EQUALITY_CONST( ace_photoatom->getNuclideName(), "82000.12p" );
 }
 
 //---------------------------------------------------------------------------//
@@ -193,6 +158,20 @@ TEUCHOS_UNIT_TEST( Photoatom, getName_ace )
 TEUCHOS_UNIT_TEST( Photoatom, getAtomicNumber_ace )
 {
   TEST_EQUALITY_CONST( ace_photoatom->getAtomicNumber(), 82 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoatom atomic mass number can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getAtomicMassNumber_ace )
+{
+  TEST_EQUALITY_CONST( ace_photoatom->getAtomicMassNumber(), 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the photoatom isomer number can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getIsomerNumber_ace )
+{
+  TEST_EQUALITY_CONST( ace_photoatom->getIsomerNumber(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -205,8 +184,15 @@ TEUCHOS_UNIT_TEST( Photoatom, getAtomicWeight_ace )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the photoatom temperature can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getTemperature_ace )
+{
+  TEST_EQUALITY_CONST( ace_photoatom->getTemperature(), 0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the total cross section can be returned
-TEUCHOS_UNIT_TEST( StandardPhotoatom, getTotalCrossSection_ace )
+TEUCHOS_UNIT_TEST( Photoatom, getTotalCrossSection_ace )
 {
   double cross_section = 
     ace_photoatom->getTotalCrossSection( exp( -1.214969212306E+01 ) );
@@ -228,8 +214,44 @@ TEUCHOS_UNIT_TEST( StandardPhotoatom, getTotalCrossSection_ace )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the total atomic cross section can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getAtomicTotalCrossSection_ace )
+{
+  double cross_section = 
+    ace_photoatom->getAtomicTotalCrossSection( exp( -1.214969212306E+01 ) );
+
+  TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
+
+  cross_section = 
+    ace_photoatom->getAtomicTotalCrossSection( exp( -1.214720768866E+01 ) );
+  
+  TEST_FLOATING_EQUALITY( cross_section, exp( 1.718780625507E+01 ), 1e-12 );
+
+  cross_section = 
+    ace_photoatom->getAtomicTotalCrossSection( exp( 1.151292546497E+01 ) );
+
+  TEST_FLOATING_EQUALITY(cross_section,
+			 exp( -1.115947249407E+01 ) + exp( 3.718032834377E+00),
+			 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the total nuclear cross section can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getNuclearTotalCrossSection_ace )
+{
+  double cross_section = 
+    ace_photoatom->getNuclearTotalCrossSection( 1e-3 );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+  
+  cross_section = ace_photoatom->getNuclearTotalCrossSection( 20.0 );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 ); 
+}
+
+//---------------------------------------------------------------------------//
 // Check that the absorption cross section can be returned
-TEUCHOS_UNIT_TEST( StandardPhotoatom, getAbsorptionCrossSection_ace )
+TEUCHOS_UNIT_TEST( Photoatom, getAbsorptionCrossSection_ace )
 {
   double cross_section = 
     ace_photoatom->getAbsorptionCrossSection( exp( -1.381551055796E+01 ) );
@@ -253,8 +275,47 @@ TEUCHOS_UNIT_TEST( StandardPhotoatom, getAbsorptionCrossSection_ace )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the atomic absorption cross section can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getAtomicAbsorptionCrossSection_ace )
+{
+  double cross_section = 
+    ace_photoatom->getAtomicAbsorptionCrossSection( exp( -1.381551055796E+01 ) );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+    
+  cross_section =
+    ace_photoatom->getAtomicAbsorptionCrossSection( exp( -1.214969212306E+01 ) );
+
+  TEST_FLOATING_EQUALITY( cross_section, exp( 1.719257539043E+01 ), 1e-12 );
+
+  cross_section = 
+    ace_photoatom->getAtomicAbsorptionCrossSection( exp( -1.214720768866E+01 ) );
+
+  TEST_FLOATING_EQUALITY( cross_section, exp( 1.718780625507E+01 ), 1e-12 );
+
+  cross_section = 
+    ace_photoatom->getAtomicAbsorptionCrossSection( exp( 1.151292546497E+01 ) );
+
+  TEST_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the nuclear absorption cross section can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getNuclearAbsorptionCrossSection_ace )
+{
+  double cross_section = 
+    ace_photoatom->getNuclearAbsorptionCrossSection( 1e-3 );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = ace_photoatom->getNuclearAbsorptionCrossSection( 20.0 );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the survival probability can be returned
-TEUCHOS_UNIT_TEST( Photoatom, getSurvivalProbability )
+TEUCHOS_UNIT_TEST( Photoatom, getSurvivalProbability_ace )
 {
   double survival_prob = 
     ace_photoatom->getSurvivalProbability( exp( -1.214969212306E+01 ) );
@@ -273,6 +334,43 @@ TEUCHOS_UNIT_TEST( Photoatom, getSurvivalProbability )
     (exp( 3.718032834377E+00 ) + exp( -1.115947249407E+01 ));
   
   TEST_FLOATING_EQUALITY( survival_prob, expected_survival_prob, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the atomic survival probability can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getAtomicSurvivalProbability_ace )
+{
+  double survival_prob = 
+    ace_photoatom->getAtomicSurvivalProbability( exp( -1.214969212306E+01 ) );
+  
+  TEST_FLOATING_EQUALITY( survival_prob, 0.0, 1e-12 );
+
+  survival_prob = 
+    ace_photoatom->getAtomicSurvivalProbability( exp( -1.214720768866E+01 ) );
+
+  TEST_FLOATING_EQUALITY( survival_prob, 0.0, 1e-12 );
+
+  survival_prob = 
+    ace_photoatom->getAtomicSurvivalProbability( exp( 1.151292546497E+01 ) );
+
+  double expected_survival_prob = exp( 3.718032834377E+00 )/
+    (exp( 3.718032834377E+00 ) + exp( -1.115947249407E+01 ));
+  
+  TEST_FLOATING_EQUALITY( survival_prob, expected_survival_prob, 1e-12 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the nuclear survival probability can be returned
+TEUCHOS_UNIT_TEST( Photoatom, getNuclearSurvivalProbability_ace )
+{
+  double survival_prob = 
+    ace_photoatom->getNuclearSurvivalProbability( 1e-3 );
+  
+  TEST_EQUALITY_CONST( survival_prob,1.0 );
+
+  survival_prob = ace_photoatom->getNuclearSurvivalProbability( 20.0 );
+
+  TEST_EQUALITY_CONST( survival_prob, 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -408,6 +506,17 @@ TEUCHOS_UNIT_TEST( Photoatom, getReactionCrossSection )
 			   MonteCarlo::TOTAL_ABSORPTION_PHOTOATOMIC_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.115947249407E+01 ), 1e-12 );
+
+  // Photonuclear total cross section
+  cross_section = ace_photoatom->getReactionCrossSection(
+					   1e-3,
+					   MonteCarlo::GAMMA__TOTAL_REACTION );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = ace_photoatom->getReactionCrossSection(
+					   20.0,
+					   MonteCarlo::GAMMA__TOTAL_REACTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -487,6 +596,56 @@ TEUCHOS_UNIT_TEST( Photoatom, collideSurvivalBias )
   TEST_FLOATING_EQUALITY( photon->getWeight(), 0.9999996542347203, 1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_FLOATING_EQUALITY( bank.top()->getWeight(), 0.9999996542347203, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a photoatom can be constructed from a core
+TEUCHOS_UNIT_TEST( Photoatom, core_constructor )
+{
+  MonteCarlo::Photoatom photoatom_copy( ace_photoatom->getAtomName(),
+  					ace_photoatom->getAtomicNumber(),
+  					ace_photoatom->getAtomicWeight(),
+  					ace_photoatom->getCore() );
+
+  TEST_EQUALITY( photoatom_copy.getAtomName(), 
+		 ace_photoatom->getAtomName() );
+  TEST_EQUALITY( photoatom_copy.getNuclideName(),
+		 ace_photoatom->getNuclideName() );
+  TEST_EQUALITY( photoatom_copy.getAtomicNumber(), 
+		 ace_photoatom->getAtomicNumber() );
+  TEST_EQUALITY( photoatom_copy.getAtomicMassNumber(),
+		 ace_photoatom->getAtomicMassNumber() );
+  TEST_EQUALITY( photoatom_copy.getIsomerNumber(), 
+		 ace_photoatom->getIsomerNumber() );
+  TEST_EQUALITY( photoatom_copy.getAtomicWeight(), 
+		 ace_photoatom->getAtomicWeight() );
+  TEST_EQUALITY( photoatom_copy.getTemperature(),
+		 ace_photoatom->getTemperature() );
+
+  TEST_EQUALITY( photoatom_copy.getTotalCrossSection( 1e-3 ),
+		 ace_photoatom->getTotalCrossSection( 1e-3 ) );
+  TEST_EQUALITY( photoatom_copy.getTotalCrossSection( 20.0 ),
+		 ace_photoatom->getTotalCrossSection( 20.0 ) );
+  TEST_EQUALITY( photoatom_copy.getAtomicTotalCrossSection( 1e-3 ),
+		 ace_photoatom->getAtomicTotalCrossSection( 1e-3 ) );
+  TEST_EQUALITY( photoatom_copy.getAtomicTotalCrossSection( 20.0 ),
+		 ace_photoatom->getAtomicTotalCrossSection( 20.0 ) );
+  TEST_EQUALITY( photoatom_copy.getNuclearTotalCrossSection( 1e-3 ),
+		 ace_photoatom->getNuclearTotalCrossSection( 1e-3 ) );
+  TEST_EQUALITY( photoatom_copy.getNuclearTotalCrossSection( 20.0 ),
+		 ace_photoatom->getNuclearTotalCrossSection( 20.0 ) );
+  TEST_EQUALITY( photoatom_copy.getAbsorptionCrossSection( 1e-3 ),
+		 ace_photoatom->getAbsorptionCrossSection( 1e-3 ) );
+  TEST_EQUALITY( photoatom_copy.getAbsorptionCrossSection( 20.0 ),
+		 ace_photoatom->getAbsorptionCrossSection( 20.0 ) );
+  TEST_EQUALITY( photoatom_copy.getAtomicAbsorptionCrossSection( 1e-3 ),
+		 ace_photoatom->getAtomicAbsorptionCrossSection( 1e-3 ) );
+  TEST_EQUALITY( photoatom_copy.getAtomicAbsorptionCrossSection( 20.0 ),
+		 ace_photoatom->getAtomicAbsorptionCrossSection( 20.0 ) );
+  TEST_EQUALITY( photoatom_copy.getNuclearAbsorptionCrossSection( 1e-3 ),
+		 ace_photoatom->getNuclearAbsorptionCrossSection( 1e-3 ) );
+  TEST_EQUALITY( photoatom_copy.getNuclearAbsorptionCrossSection( 20.0 ),
+		 ace_photoatom->getNuclearAbsorptionCrossSection( 20.0 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -589,14 +748,16 @@ int main( int argc, char** argv )
 
     // Create a test photoatom
     ace_photoatom.reset(
-	       new MonteCarlo::StandardPhotoatom<Utility::LogLog>( 
+	       new MonteCarlo::Photoatom( 
 				    ace_file_handler->getTableName(),
 				    xss_data_extractor->extractAtomicNumber(),
 				    atomic_weight,
 				    energy_grid,
 				    scattering_reactions,
 				    absorption_reactions,
-				    relaxation_model ) );
+				    relaxation_model,
+				    true,
+				    Utility::LogLog() ) );
   }
 
   // Initialize the random number generator
@@ -618,6 +779,6 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstStandardPhotoatom.cpp
+// end tstPhotoatom.cpp
 //---------------------------------------------------------------------------//
 

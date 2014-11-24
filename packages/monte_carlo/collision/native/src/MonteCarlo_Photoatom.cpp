@@ -12,108 +12,13 @@
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
-
 namespace MonteCarlo{
-
-// Initialize the static member data
-boost::unordered_set<PhotoatomicReactionType> 
-Photoatom::absorption_reaction_types = 
-  Photoatom::setDefaultAbsorptionReactionTypes();
-
-// Set the default absorption reaction types
-boost::unordered_set<PhotoatomicReactionType>
-Photoatom::setDefaultAbsorptionReactionTypes()
-{
-  boost::unordered_set<PhotoatomicReactionType> tmp_absorption_reaction_types;
-  tmp_absorption_reaction_types.insert( 
-				    TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			       K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert( 
-			      L1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      L2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      L3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      M1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      M2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      M3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      M4_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      M5_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert( 
-			      N1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      N2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      N3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      N4_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      N5_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      N6_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      N7_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      O1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      O2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      O3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      O4_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      O5_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      O6_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      O7_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      O8_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      O9_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      P1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      P2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      P3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      P4_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      P5_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      P6_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      P7_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      P8_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      P9_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			     P10_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			     P11_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      Q1_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      Q2_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-  tmp_absorption_reaction_types.insert(
-			      Q3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
-
-  return tmp_absorption_reaction_types;
-}
 
 // Return the reactions that are treated as absorption
 const boost::unordered_set<PhotoatomicReactionType>& 
 Photoatom::getAbsorptionReactionTypes()
 {
-  return Photoatom::absorption_reaction_types;
+  return PhotoatomCore::absorption_reaction_types;
 }
 
 //! Constructor (from a core)
@@ -178,9 +83,16 @@ double Photoatom::getSurvivalProbability( const double energy ) const
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  double survival_prob = 
-    1.0 - (this->getAbsorptionCrossSection( energy )/
-	   this->getTotalCrossSection( energy ));
+  double survival_prob;
+  double total_cross_section = this->getTotalCrossSection( energy );
+
+  if( total_cross_section > 0.0 )
+  {
+    survival_prob = 1.0 - 
+      this->getAbsorptionCrossSection( energy )/total_cross_section;
+  }
+  else
+    survival_prob = 1.0;
 
   // Make sure the survival probability is valid
   testPostcondition( !ST::isnaninf( survival_prob ) );
@@ -197,9 +109,16 @@ double Photoatom::getAtomicSurvivalProbability( const double energy ) const
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  double survival_prob = 
-    1.0 - (this->getAtomicAbsorptionCrossSection( energy )/
-	   this->getAtomicTotalCrossSection( energy ));
+  double survival_prob;
+  double total_cross_section = this->getAtomicTotalCrossSection( energy );
+  
+  if( total_cross_section > 0.0 )
+  {
+    survival_prob = 1.0 - 
+      this->getAtomicAbsorptionCrossSection( energy )/total_cross_section;
+  }
+  else
+    survival_prob = 1.0;
 
   // Make sure the survival probability is valid
   testPostcondition( !ST::isnaninf( survival_prob ) );
@@ -216,10 +135,17 @@ double Photoatom::getNuclearSurvivalProbability( const double energy ) const
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  double survival_prob = 
-    1.0 - (this->getNuclearAbsorptionCrossSection( energy )/
-	   this->getNuclearTotalCrossSection( energy ));
-
+  double survival_prob;
+  double total_cross_section = this->getNuclearTotalCrossSection( energy );
+  
+  if( total_cross_section > 0.0 )
+  {
+    survival_prob = 1.0 - 
+      this->getNuclearAbsorptionCrossSection( energy )/total_cross_section;
+  }
+  else
+    survival_prob = 1.0;
+  
   // Make sure the survival probability is valid
   testPostcondition( !ST::isnaninf( survival_prob ) );
   testPostcondition( survival_prob >= 0.0 );

@@ -11,9 +11,11 @@
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_RCP.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
@@ -49,7 +51,24 @@ public:
 			       Teuchos::RCP<const PhotoatomicReaction> >
   ConstReactionMap;
 
-  //! Constructor
+  // Reactions that should be treated as absorption
+  static const boost::unordered_set<PhotoatomicReactionType> 
+  absorption_reaction_types;
+
+  //! Default constructor
+  PhotoatomCore();
+
+  //! Basic constructor
+  template<typename InterpPolicy>
+  PhotoatomCore(
+	  const Teuchos::ArrayRCP<double>& energy_grid,
+	  const ReactionMap& standard_scattering_reactions,
+	  const ReactionMap& standard_absorption_reactions,
+	  const Teuchos::RCP<AtomicRelaxationModel>& relaxation_model,
+	  const bool processed_atomic_cross_sections,
+	  const InterpPolicy policy );
+
+  //! Advanced constructor
   PhotoatomCore( 
       const Teuchos::RCP<const PhotoatomicReaction>& total_reaction,
       const Teuchos::RCP<const PhotoatomicReaction>& total_absorption_reaction,
@@ -87,6 +106,40 @@ public:
   const AtomicRelaxationModel& getAtomicRelaxationModel() const;
 
 private:
+
+  // Set the default absorption reaction types
+  static boost::unordered_set<PhotoatomicReactionType>
+  setDefaultAbsorptionReactionTypes();
+
+  // Create the total absorption reaction
+  template<typename InterpPolicy>
+  static void createTotalAbsorptionReaction(
+		const Teuchos::ArrayRCP<double>& energy_grid,
+		const ConstReactionMap& absorption_reactions,
+		Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction );
+
+  // Create the processed total absorption reaction
+  template<typename InterpPolicy>
+  static void createProcessedTotalAbsorptionReaction(
+		const Teuchos::ArrayRCP<double>& energy_grid,
+		const ConstReactionMap& absorption_reactions,
+		Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction );
+
+  // Create the total reaction
+  template<typename InterpPolicy>
+  static void createTotalReaction(
+      const Teuchos::ArrayRCP<double>& energy_grid,
+      const ConstReactionMap& scattering_reactions,
+      const Teuchos::RCP<const PhotoatomicReaction>& total_absorption_reaction,
+      Teuchos::RCP<PhotoatomicReaction>& total_reaction );
+  
+  // Calculate the processed total absorption cross section
+  template<typename InterpPolicy>
+  static void createProcessedTotalReaction(
+      const Teuchos::ArrayRCP<double>& energy_grid,
+      const ConstReactionMap& scattering_reactions,
+      const Teuchos::RCP<const PhotoatomicReaction>& total_absorption_reaction,
+      Teuchos::RCP<PhotoatomicReaction>& total_reaction );
 
   // The total reaction
   Teuchos::RCP<const PhotoatomicReaction> d_total_reaction;
@@ -149,6 +202,14 @@ PhotoatomCore::getAtomicRelaxationModel() const
 }
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_PhotoatomCore_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_PHOTOATOM_CORE_HPP
 

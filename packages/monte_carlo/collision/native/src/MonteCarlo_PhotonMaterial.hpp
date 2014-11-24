@@ -19,7 +19,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_Photoatom.hpp"
-#include "MonteCarlo_Photonuclide.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
@@ -33,10 +32,6 @@ public:
   //! Typedef for photoatom name map
   typedef boost::unordered_map<std::string,Teuchos::RCP<Photoatom> >
   PhotoatomNameMap;
-
-  //! Typedef for photonuclide name map
-  typedef boost::unordered_map<std::string,Teuchos::RCP<PhotonuclideNameMap> >
-  PhotonuclideNameMap;
 
   // //! Constructor (without photonuclear data)
 //   PhotonMaterial(
