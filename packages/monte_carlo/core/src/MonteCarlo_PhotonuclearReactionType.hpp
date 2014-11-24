@@ -426,7 +426,7 @@ enum PhotonuclearReactionType{
   GAMMA__2N_EXCITED_STATE_14_REACTION = 889,
   GAMMA__2N_EXCITED_STATE_15_REACTION = 890,
   GAMMA__2N_CONTINUUM_REACTION = 891
-}
+};
 
 //! Convert an unsigned int to a PhotonuclearReactionType
 PhotonuclearReactionType convertUnsignedToPhotonuclearReactionType(
@@ -439,7 +439,7 @@ std::string convertPhotonuclearReactionTypeToString(
 
 //! Stream operator for printing PhotonuclearReactionType enums
 inline std::ostream& operator<<( std::ostream& os,
-				 const PhotoatomicReactionType reaction )
+				 const PhotonuclearReactionType reaction )
 {
   os << convertPhotonuclearReactionTypeToString( reaction );
   return os;

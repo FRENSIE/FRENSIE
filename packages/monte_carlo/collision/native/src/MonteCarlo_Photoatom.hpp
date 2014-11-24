@@ -22,10 +22,10 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
+#include "MonteCarlo_PhotonuclearReactionType.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "MonteCarlo_PhotoatomCore.hpp"
-#include "MonteCarlo_PhotonuclearReaction.hpp"
 
 namespace MonteCarlo{
 
@@ -49,16 +49,6 @@ public:
   //! Return the reactions that are treated as absorption
   static const boost::unordered_set<PhotoatomicReactionType>& 
   getAbsorptionReactionTypes();
-
-  //! Create a core
-  template<typename InterpPolicy>
-  static void createCore( 
-	  const Teuchos::ArrayRCP<double>& energy_grid,
-	  const ReactionMap& standard_scattering_reactions,
-	  const ReactionMap& standard_absorption_reactions,
-	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	  const bool processed_atomic_cross_sections,
-	  PhotoatomCore& core );
 					
   //! Constructor 
   template<typename InterpPolicy>
@@ -70,7 +60,8 @@ public:
 	  const ReactionMap& standard_scattering_reactions,
 	  const ReactionMap& standard_absorption_reactions,
 	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	  const bool processed_atomic_cross_sections = true );
+	  const bool processed_atomic_cross_sections,
+	  const InterpPolicy policy );
 
   //! Constructor (from a core)
   Photoatom( const std::string& name,
@@ -153,40 +144,6 @@ public:
 
 private:
 
-  // Set the default absorption reaction types
-  static boost::unordered_set<PhotoatomicReactionType>
-  setDefaultAbsorptionReactionTypes();
-
-  // Create the total absorption reaction
-  template<typename InterpPolicy>
-  static void createTotalAbsorptionReaction(
-		const Teuchos::ArrayRCP<double>& energy_grid,
-		const ConstReactionMap& absorption_reactions,
-		Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction );
-
-  // Create the processed total absorption reaction
-  template<typename InterpPolicy>
-  static void createProcessedTotalAbsorptionReaction(
-		const Teuchos::ArrayRCP<double>& energy_grid,
-		const ConstReactionMap& absorption_reactions,
-		Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction );
-
-  // Create the total reaction
-  template<typename InterpPolicy>
-  static void createTotalReaction(
-	    const Teuchos::ArrayRCP<double>& energy_grid,
-	    const ConstReactionMap& scattering_reactions,
-	    const Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction,
-	    Teuchos::RCP<PhotoatomicReaction>& total_reaction );
-  
-  // Calculate the processed total absorption cross section
-  template<typename InterpPolicy>
-  static void calculateProcessedTotalCrossSection(
-	    const Teuchos::ArrayRCP<double>& energy_grid,
-	    const ConstReactionMap& scattering_reactions,
-	    const Teuchos::RCP<PhotoatomicReaction>& total_absorption_reaction,
-	    Teuchos::RCP<PhotoatomicReaction>& total_reaction );
-
   // Sample an absorption reaction
   void sampleAbsorptionReaction( const double scaled_random_number,
 				 PhotonState& photon,
@@ -196,10 +153,6 @@ private:
   void sampleScatteringReaction( const double scaled_random_number,
 				 PhotonState& photon,
 				 ParticleBank& bank ) const;
-
-  // Reactions that should be treated as absorption
-  static boost::unordered_set<PhotoatomicReactionType> 
-  absorption_reaction_types;
 
   // The atom name
   std::string d_name;
@@ -255,7 +208,8 @@ inline double Photoatom::getTotalCrossSection( const double energy ) const
 // Return the total cross section from nuclear interactions
 /*! \details By default, photonuclear reactions are not considered.
  */
-inline double Photoatom::getNuclearTotalCrossSection( const double energy )
+inline double Photoatom::getNuclearTotalCrossSection( 
+						    const double energy ) const
 {
   return 0.0;
 }
@@ -275,7 +229,7 @@ inline double Photoatom::getAbsorptionCrossSection( const double energy ) const
 /*! \details By default, photonuclear reactions are not considered.
  */
 inline double 
-Photoatom::getNuclearAbsorptionCrossSection( const double energy )
+Photoatom::getNuclearAbsorptionCrossSection( const double energy ) const
 {
   return 0.0;
 } 
@@ -291,7 +245,7 @@ inline double Photoatom::getReactionCrossSection(
 }
 
 // Return the core
-const PhotoatomCore& Photoatom::getCore() const
+inline const PhotoatomCore& Photoatom::getCore() const
 {
   return d_core;
 }

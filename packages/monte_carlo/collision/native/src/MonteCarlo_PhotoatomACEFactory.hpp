@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_Photoatom.hpp"
+#include "MonteCarlo_PhotoatomCore.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 
@@ -24,6 +25,15 @@ class PhotoatomACEFactory
 {
 
 public:
+
+  //! Create a photoatom core (using the provided atomic relaxation model)
+  static void createPhotoatomCore( 
+	    const Data::XSSEPRDataExtractor& raw_photoatom_data,
+	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
+	    Teuchos::RCP<PhotoatomCore>& photoatom_core,
+	    const bool use_doppler_broadening_data,
+	    const bool use_detailed_pair_production_data,
+	    const bool use_atomic_relaxation_data );
 
   //! Create a photoatom (using the provided atomic relaxation model)
   static void createPhotoatom(
