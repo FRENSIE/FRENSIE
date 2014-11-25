@@ -93,9 +93,9 @@ TEUCHOS_UNIT_TEST( CollisionHandler, addMaterial )
   MonteCarlo::CollisionHandler::addMaterial( cold_hydrogen,
 					 cells_containing_material );
 
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 1 ) );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 2 ) );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 3 ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 1, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 2, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 3, MonteCarlo::NEUTRON ) );
 
   cells_containing_material[0] = 4;
   cells_containing_material[1] = 5;
@@ -104,45 +104,45 @@ TEUCHOS_UNIT_TEST( CollisionHandler, addMaterial )
   MonteCarlo::CollisionHandler::addMaterial( hot_hydrogen,
 					 cells_containing_material );
 
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 4 ) );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 5 ) );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 6 ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 4, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 5, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 6, MonteCarlo::NEUTRON ) );
 
-  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 0 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 7 ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 0, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 7, MonteCarlo::NEUTRON ) );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the material contianed in a cell can be retrieved
-TEUCHOS_UNIT_TEST( CollisionHandler, getCellMaterial )
+TEUCHOS_UNIT_TEST( CollisionHandler, getCellNeutronMaterial )
 {
   Teuchos::RCP<MonteCarlo::NeutronMaterial> cell_material = 
-    MonteCarlo::CollisionHandler::getCellMaterial( 1 );
+    MonteCarlo::CollisionHandler::getCellNeutronMaterial( 1 );
 
   TEST_ASSERT( !cell_material.is_null() );
   TEST_EQUALITY_CONST( cell_material->getId(), 0 );
 
-  cell_material = MonteCarlo::CollisionHandler::getCellMaterial( 2 );
+  cell_material = MonteCarlo::CollisionHandler::getCellNeutronMaterial( 2 );
 
   TEST_ASSERT( !cell_material.is_null() );
   TEST_EQUALITY_CONST( cell_material->getId(), 0 );
 
-  cell_material = MonteCarlo::CollisionHandler::getCellMaterial( 3 );
+  cell_material = MonteCarlo::CollisionHandler::getCellNeutronMaterial( 3 );
 
   TEST_ASSERT( !cell_material.is_null() );
   TEST_EQUALITY_CONST( cell_material->getId(), 0 );
 
-  cell_material = MonteCarlo::CollisionHandler::getCellMaterial( 4 );
+  cell_material = MonteCarlo::CollisionHandler::getCellNeutronMaterial( 4 );
 
   TEST_ASSERT( !cell_material.is_null() );
   TEST_EQUALITY_CONST( cell_material->getId(), 1 );
 
-  cell_material = MonteCarlo::CollisionHandler::getCellMaterial( 5 );
+  cell_material = MonteCarlo::CollisionHandler::getCellNeutronMaterial( 5 );
 
   TEST_ASSERT( !cell_material.is_null() );
   TEST_EQUALITY_CONST( cell_material->getId(), 1 );
   
-  cell_material = MonteCarlo::CollisionHandler::getCellMaterial( 6 );
+  cell_material = MonteCarlo::CollisionHandler::getCellNeutronMaterial( 6 );
 
   TEST_ASSERT( !cell_material.is_null() );
   TEST_EQUALITY_CONST( cell_material->getId(), 1 );

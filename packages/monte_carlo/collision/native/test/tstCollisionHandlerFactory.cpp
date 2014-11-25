@@ -55,151 +55,151 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
 					   cross_section_table_info,
 					   test_cross_sections_xml_directory );
 
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 26 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 26 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 27 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 27 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 28 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 28 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 29 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 29 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 30 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 30 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 31 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 31 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 32 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 32 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 33 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 33 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 34 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 34 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 35 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 35 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 36 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 36 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 37 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 37 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 48 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 48 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 49 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 49 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 50 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 50 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 51 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 51 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 52 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 52 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 53 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 53 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 54 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 54 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 55 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 55 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 56 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 56 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 57 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 57 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 58 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 58 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 59 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 59 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 70 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 70 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 71 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 71 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 72 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 72 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 73 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 73 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 74 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 74 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 75 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 75 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 76 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 76 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 77 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 77 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 78 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 78 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 79 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 79 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 80 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 80 )->getId() == 9 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 81 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 81 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 26, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 26 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 27, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 27 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 28, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 28 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 29, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 29 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 30, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 30 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 31, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 31 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 32, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 32 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 33, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 33 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 34, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 34 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 35, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 35 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 36, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 36 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 37, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 37 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 48, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 48 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 49, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 49 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 50, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 50 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 51, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 51 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 52, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 52 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 53, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 53 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 54, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 54 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 55, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 55 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 56, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 56 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 57, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 57 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 58, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 58 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 59, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 59 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 70, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 70 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 71, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 71 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 72, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 72 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 73, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 73 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 74, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 74 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 75, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 75 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 76, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 76 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 77, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 77 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 78, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 78 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 79, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 79 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 80, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 80 )->getId() == 9 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 81, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 81 )->getId() == 9 );
   TEST_FLOATING_EQUALITY( 
-	   MonteCarlo::CollisionHandler::getCellMaterial( 81 )->getNumberDensity(),
+	   MonteCarlo::CollisionHandler::getCellNeutronMaterial( 81 )->getNumberDensity(),
 	   4.6787270057348,
 	   1e-12 );
   
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 9 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 9 )->getId() == 1 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 88 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 88 )->getId() == 1 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 9, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 9 )->getId() == 1 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 88, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 88 )->getId() == 1 );
   TEST_FLOATING_EQUALITY( 
-	   MonteCarlo::CollisionHandler::getCellMaterial( 88 )->getNumberDensity(),
+	   MonteCarlo::CollisionHandler::getCellNeutronMaterial( 88 )->getNumberDensity(),
 	   4.7964421040911,
 	   1e-12 );
   
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 136 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 136 )->getId() == 2);
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 136, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 136 )->getId() == 2);
   TEST_FLOATING_EQUALITY( 
-	  MonteCarlo::CollisionHandler::getCellMaterial( 136 )->getNumberDensity(),
+	  MonteCarlo::CollisionHandler::getCellNeutronMaterial( 136 )->getNumberDensity(),
 	  4.6309239201079,
 	  1e-12 );
   
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 19 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 19 )->getId() == 3 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 41 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 41 )->getId() == 3 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 63 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 63 )->getId() == 3 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 82 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 82 )->getId() == 3 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 152 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 152 )->getId() == 3);
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 166 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 166 )->getId() == 3);
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 184 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 184 )->getId() == 3);
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 19, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 19 )->getId() == 3 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 41, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 41 )->getId() == 3 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 63, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 63 )->getId() == 3 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 82, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 82 )->getId() == 3 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 152, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 152 )->getId() == 3);
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 166, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 166 )->getId() == 3);
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 184, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 184 )->getId() == 3);
   TEST_FLOATING_EQUALITY( 
-	  MonteCarlo::CollisionHandler::getCellMaterial( 184 )->getNumberDensity(),
+	  MonteCarlo::CollisionHandler::getCellNeutronMaterial( 184 )->getNumberDensity(),
 	  9.7578048535952e-4,
 	  1e-12 );
   
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 3 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 3 )->getId() == 4 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 7 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 7 )->getId() == 4 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 3, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 3 )->getId() == 4 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 7, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 7 )->getId() == 4 );
   TEST_FLOATING_EQUALITY( 
-	  MonteCarlo::CollisionHandler::getCellMaterial( 7 )->getNumberDensity(),
+	  MonteCarlo::CollisionHandler::getCellNeutronMaterial( 7 )->getNumberDensity(),
 	  0.59648092706701,
 	  1e-12 );
   
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 5 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 5 )->getId() == 10 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 5, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 5 )->getId() == 10 );
   TEST_FLOATING_EQUALITY( 
-	  MonteCarlo::CollisionHandler::getCellMaterial( 5 )->getNumberDensity(),
+	  MonteCarlo::CollisionHandler::getCellNeutronMaterial( 5 )->getNumberDensity(),
 	  7.9532383711789,
 	  1e-12 );
   
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 1 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 1 )->getId() == 8 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 1, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 1 )->getId() == 8 );
   TEST_FLOATING_EQUALITY( 
-	  MonteCarlo::CollisionHandler::getCellMaterial( 1 )->getNumberDensity(),
+	  MonteCarlo::CollisionHandler::getCellNeutronMaterial( 1 )->getNumberDensity(),
 	  1.1104059252563,
 	  1e-12 );
   
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 13 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 13 )->getId() == 7 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 83 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 83 )->getId() == 7 );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 154 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 154 )->getId() == 7);
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 168 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellMaterial( 168 )->getId() == 7);
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 13, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 13 )->getId() == 7 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 83, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 83 )->getId() == 7 );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 154, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 154 )->getId() == 7);
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 168, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 168 )->getId() == 7);
   TEST_FLOATING_EQUALITY( 
-	  MonteCarlo::CollisionHandler::getCellMaterial( 168 )->getNumberDensity(),
+	  MonteCarlo::CollisionHandler::getCellNeutronMaterial( 168 )->getNumberDensity(),
 	  3.3760929224013,
 	  1e-12 );
 }

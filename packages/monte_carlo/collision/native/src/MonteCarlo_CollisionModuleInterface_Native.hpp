@@ -39,8 +39,8 @@ public:
 	             const Teuchos::RCP<CollisionHandler>& collision_handler );
 
   //! Check if a cell is void
-  static bool isCellVoid(
-		       const Geometry::ModuleTraits::InternalCellHandle cell );
+  static bool isCellVoid(const Geometry::ModuleTraits::InternalCellHandle cell,
+			 const ParticleType particle_type );
 
   //! Get the total macroscopic cross section of a material
   static double getMacroscopicTotalCrossSection(
@@ -50,6 +50,16 @@ public:
   static double getMacroscopicReactionCrossSection(
 					  const ParticleState& particle,
 					  const NuclearReactionType reaction );
+
+  //! Get the macroscopic cross section for a specific reaction
+  static double getMacroscopicReactionCrossSection(
+				      const ParticleState& particle,
+				      const PhotoatomicReactionType reaction );
+
+  //! Get the macroscopic cross section for a specific reaction
+  static double getMacroscopicReactionCrossSection(
+				     const ParticleState& particle,
+				     const PhotonuclearReactionType reaction );
 
   //! Sample the optical path length traveled by a particle before a collision
   static double sampleOpticalPathLength();
@@ -76,9 +86,10 @@ CollisionModuleInterface<CollisionHandler>::setHandlerInstance(
 
 // Check if a cell is void
 inline bool CollisionModuleInterface<CollisionHandler>::isCellVoid(
-		        const Geometry::ModuleTraits::InternalCellHandle cell )
+			 const Geometry::ModuleTraits::InternalCellHandle cell,
+			 const ParticleType particle_type )
 {
-  return CollisionHandler::isCellVoid( cell );
+  return CollisionHandler::isCellVoid( cell, particle_type );
 }
 
 // Get the total macroscopic cross section of a material
@@ -89,11 +100,31 @@ CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
   return CollisionHandler::getMacroscopicTotalCrossSection( particle );
 }
 
-//! Get the macroscopic cross section for a specific reaction
+// Get the macroscopic cross section for a specific reaction
 inline double 
 CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
 					   const ParticleState& particle,
 					   const NuclearReactionType reaction )
+{
+  return CollisionHandler::getMacroscopicReactionCrossSection( particle,
+							       reaction );
+}
+
+// Get the macroscopic cross section for a specific reaction
+inline double 
+CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
+				       const ParticleState& particle,
+				       const PhotoatomicReactionType reaction )
+{
+  return CollisionHandler::getMacroscopicReactionCrossSection( particle,
+							       reaction );
+}
+
+// Get the macroscopic cross section for a specific reaction
+inline double 
+CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
+				      const ParticleState& particle,
+				      const PhotonuclearReactionType reaction )
 {
   return CollisionHandler::getMacroscopicReactionCrossSection( particle,
 							       reaction );
