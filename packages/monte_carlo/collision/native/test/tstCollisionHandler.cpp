@@ -19,65 +19,19 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_NeutronMaterial.hpp"
+#include "MonteCarlo_PhotoatomFactory.hpp"
+#include "MonteCarlo_PhotonMaterial.hpp"
 #include "MonteCarlo_CollisionHandler.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
-std::string test_cross_sections_xml_directory;
 
 Teuchos::RCP<MonteCarlo::NeutronMaterial> cold_hydrogen;
 Teuchos::RCP<MonteCarlo::NeutronMaterial> hot_hydrogen;
 
-//---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-void initializeMaterials()
-{
-  // Assign the name of the cross_sections.xml file with path
-  std::string cross_section_xml_file = test_cross_sections_xml_directory;
-  cross_section_xml_file += "/cross_sections.xml";
+Teuchos::RCP<MonteCarlo::PhotonMaterial> lead;
 
-  // Read in the xml file storing the cross section table information 
-  Teuchos::ParameterList cross_section_table_info;
-  Teuchos::updateParametersFromXmlFile( 
-			         cross_section_xml_file,
-			         Teuchos::inoutArg(cross_section_table_info) );
-
-  boost::unordered_set<std::string> nuclide_aliases;
-  nuclide_aliases.insert( "H-1_293.6K" );
-  nuclide_aliases.insert( "H-1_900K" );
-
-  MonteCarlo::NuclideFactory nuclide_factory( test_cross_sections_xml_directory,
-					  cross_section_table_info,
-					  nuclide_aliases );
-
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > nuclide_map;
-
-  nuclide_factory.createNuclideMap( nuclide_map );
-
-  // Create cold hydrogen
-  Teuchos::Array<double> nuclide_fractions( 1 );
-  Teuchos::Array<std::string> nuclide_names( 1 );
-
-  nuclide_fractions[0] = -1.0;
-  nuclide_names[0] = "H-1_293.6K";
-
-  cold_hydrogen.reset( new MonteCarlo::NeutronMaterial( 0,
-						    -1.0,
-						    nuclide_map,
-						    nuclide_fractions,
-						    nuclide_names ) );
-
-  // Create hot hydrogen
-  nuclide_names[0] = "H-1_900K";
-
-  hot_hydrogen.reset( new MonteCarlo::NeutronMaterial( 1,
-						   -1.0,
-						   nuclide_map,
-						   nuclide_fractions,
-						   nuclide_names ) );
-}
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -91,7 +45,7 @@ TEUCHOS_UNIT_TEST( CollisionHandler, addMaterial )
   cells_containing_material[2] = 3;
   
   MonteCarlo::CollisionHandler::addMaterial( cold_hydrogen,
-					 cells_containing_material );
+					     cells_containing_material );
 
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 1, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 2, MonteCarlo::NEUTRON ) );
@@ -102,7 +56,7 @@ TEUCHOS_UNIT_TEST( CollisionHandler, addMaterial )
   cells_containing_material[2] = 6;
 
   MonteCarlo::CollisionHandler::addMaterial( hot_hydrogen,
-					 cells_containing_material );
+					     cells_containing_material );
 
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 4, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 5, MonteCarlo::NEUTRON ) );
@@ -110,10 +64,19 @@ TEUCHOS_UNIT_TEST( CollisionHandler, addMaterial )
 
   TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 0, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 7, MonteCarlo::NEUTRON ) );
+
+  MonteCarlo::CollisionHandler::addMaterial( lead, cells_containing_material );
+
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 4, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 5, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 6, MonteCarlo::PHOTON ) );
+
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 0, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 7, MonteCarlo::PHOTON ) );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the material contianed in a cell can be retrieved
+// Check that the material contained in a cell can be retrieved
 TEUCHOS_UNIT_TEST( CollisionHandler, getCellNeutronMaterial )
 {
   Teuchos::RCP<MonteCarlo::NeutronMaterial> cell_material = 
@@ -146,6 +109,27 @@ TEUCHOS_UNIT_TEST( CollisionHandler, getCellNeutronMaterial )
 
   TEST_ASSERT( !cell_material.is_null() );
   TEST_EQUALITY_CONST( cell_material->getId(), 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the material contained within a cell can be retrieved
+TEUCHOS_UNIT_TEST( CollisionHandler, getCellPhotonMaterial )
+{
+  Teuchos::RCP<MonteCarlo::PhotonMaterial> cell_material = 
+    MonteCarlo::CollisionHandler::getCellPhotonMaterial( 4 );
+
+  TEST_ASSERT( !cell_material.is_null() );
+  TEST_EQUALITY_CONST( cell_material->getId(), 0 );
+
+  cell_material = MonteCarlo::CollisionHandler::getCellPhotonMaterial( 5 );
+
+  TEST_ASSERT( !cell_material.is_null() );
+  TEST_EQUALITY_CONST( cell_material->getId(), 0 );
+
+  cell_material = MonteCarlo::CollisionHandler::getCellPhotonMaterial( 6 );
+
+  TEST_ASSERT( !cell_material.is_null() );
+  TEST_EQUALITY_CONST( cell_material->getId(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -341,6 +325,8 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial )
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_cross_sections_xml_directory;
+  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_cross_sections_xml_directory",
@@ -358,11 +344,88 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
+  {
+    // Assign the name of the cross_sections.xml file with path
+    std::string cross_section_xml_file = test_cross_sections_xml_directory;
+    cross_section_xml_file += "/cross_sections.xml";
+
+    // Read in the xml file storing the cross section table information 
+    Teuchos::ParameterList cross_section_table_info;
+    Teuchos::updateParametersFromXmlFile( 
+			         cross_section_xml_file,
+			         Teuchos::inoutArg(cross_section_table_info) );
+
+    boost::unordered_set<std::string> nuclide_aliases;
+    nuclide_aliases.insert( "H-1_293.6K" );
+    nuclide_aliases.insert( "H-1_900K" );
+
+    MonteCarlo::NuclideFactory nuclide_factory( 
+					     test_cross_sections_xml_directory,
+					     cross_section_table_info,
+					     nuclide_aliases );
+
+    boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > 
+      nuclide_map;
+
+    nuclide_factory.createNuclideMap( nuclide_map );
+
+    // Create cold hydrogen
+    Teuchos::Array<double> nuclide_fractions( 1 );
+    Teuchos::Array<std::string> nuclide_names( 1 );
+    
+    nuclide_fractions[0] = -1.0;
+    nuclide_names[0] = "H-1_293.6K";
+    
+    cold_hydrogen.reset( new MonteCarlo::NeutronMaterial( 0,
+							  -1.0,
+							  nuclide_map,
+							  nuclide_fractions,
+							  nuclide_names ) );
+
+    // Create hot hydrogen
+    nuclide_names[0] = "H-1_900K";
+    
+    hot_hydrogen.reset( new MonteCarlo::NeutronMaterial( 1,
+							 -1.0,
+							 nuclide_map,
+							 nuclide_fractions,
+							 nuclide_names ) );
+
+    boost::unordered_set<std::string> atom_aliases;
+    atom_aliases.insert( "Pb" );
+
+    // Create the factories
+    Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory> 
+      atomic_relaxation_model_factory(
+				new MonteCarlo::AtomicRelaxationModelFactory );
+    
+    MonteCarlo::PhotoatomFactory factory( test_cross_sections_xml_directory,
+					  cross_section_table_info,
+					  atom_aliases,
+					  atomic_relaxation_model_factory );
+
+    boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
+      atom_map;
+
+    factory.createPhotoatomMap( atom_map );
+
+    // Assign the atom fractions and names
+    Teuchos::Array<double> atom_fractions( 1 );
+    Teuchos::Array<std::string> atom_names( 1 );
+
+    atom_fractions[0] = -1.0; // weight fraction
+    atom_names[0] = "Pb";
+
+    // Create the lead
+    lead.reset( new MonteCarlo::PhotonMaterial( 0,
+						-1.0,
+						atom_map,
+						atom_fractions,
+						atom_names ) );
+  }
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Initialize the materials
-  initializeMaterials();
 
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   
