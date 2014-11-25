@@ -27,124 +27,77 @@ namespace MonteCarlo{
 class PhotonMaterial
 {
 
+private:
+
+  // Typedef for Teuchos ScalarTraits
+  typedef Teuchos::ScalarTraits<double> ST;
+
 public:
   
   //! Typedef for photoatom name map
   typedef boost::unordered_map<std::string,Teuchos::RCP<Photoatom> >
   PhotoatomNameMap;
 
-  // //! Constructor (without photonuclear data)
-//   PhotonMaterial(
-// 		 const ModuleTraits::InternalMaterialHandle id,
-// 		 const double density,
-// 		 const PhotoatomNameMap& photoatom_name_map,
-// 		 const Teuchos::Array<double>& photoatom_fractions,
-// 		 const Teuchos::Array<std::string>& photoatom_names );
+  //! Constructor 
+  PhotonMaterial( const ModuleTraits::InternalMaterialHandle id,
+		  const double density,
+		  const PhotoatomNameMap& photoatom_name_map,
+		  const Teuchos::Array<double>& photoatom_fractions,
+		  const Teuchos::Array<std::string>& photoatom_names );
   
-//   //! Constructor (with photonuclear data)
-//   PhotonMaterial(
-// 		 const ModuleTraits::InternalMaterialHandle id,
-// 		 const double density,
-// 		 const PhotoatomNameMap& photoatom_name_map,
-// 		 const PhotonuclideNameMap& photonuclide_name_map,
-// 		 const Teuchos::Array<double>& photoatom_fractions,
-// 		 const Teuchos::Array<double>& photonuclide_fractions,
-// 		 const Teuchos::Array<std::string>& photoatom_names,
-// 		 const Teuchos::Array<std::string>& photonuclide_names );
+  //! Destructor
+  ~PhotonMaterial()
+  { /* ... */ }
 
-//   //! Destructor
-//   ~PhotonMaterial()
-//   { /* ... */ }
-
-//   //! Return the material id
-//   ModuleTraits::InternalMaterialHandle getId() const;
+  //! Return the material id
+  ModuleTraits::InternalMaterialHandle getId() const;
   
-//   //! Return the atom number density (atom/b-cm)
-//   double getAtomNumberDensity() const;
+  //! Return the number density (atom/b-cm)
+  double getNumberDensity() const;
 
-//   //! Return the nuclide number density (atom/b-cm)
-//   double getNuclideNumberDensity() const;
+  //! Return the macroscopic total cross section (1/cm)
+  double getMacroscopicTotalCrossSection( const double energy ) const;
 
-//   //! Return the macroscopic total cross section (1/cm)
-//   double getMacroscopicTotalCrossSection( const double energy ) const;
+  //! Return the macroscopic absorption cross section (1/cm)
+  double getMacroscopicAbsorptionCrossSection( const double energy ) const;
 
-//   //! Return the atom macroscopic total cross section (1/cm)
-//   double getAtomMacroscopicTotalCrossSection( const double energy ) const;
+  //! Return the survival probability
+  double getSurvivalProbability( const double energy ) const;
 
-//   //! Return the nuclide macroscopic total cross section (1/cm)
-//   double getNuclideMacroscopicTotalCrossSection( const double energy ) const;
+  //! Return the macroscopic cross section (1/cm) for a specific reaction
+  double getMacroscopicReactionCrossSection( 
+				const double energy,
+				const PhotoatomicReactionType reaction ) const;
 
-//   //! Return the macroscopic absorption cross section (1/cm)
-//   double getMacroscopicAbsorptionCrossSection( const double energy ) const;
+  //! Return the macroscopic cross section (1/cm) for a specific reaction
+  double getMacroscopicReactionCrossSection(
+			       const double energy,
+			       const PhotonuclearReactionType reaction ) const;
 
-//   //! Return the atom macroscopic absorption cross section (1/cm)
-//   double getAtomMacroscopicAbsorptionCrossSection( const double energy ) const;
+  //! Collide with a photon
+  void collideAnalogue( PhotonState& photon, ParticleBank& bank ) const;
 
-//   //! Return the nuclide macroscopic absorption cross section (1/cm)
-//   double getNuclideMacroscopicAbsorptionCrossSection( 
-// 						   const double energy ) const;
+  //! Collide with a photon and survival bias
+  void collideSurvivalBias( PhotonState& photon, ParticleBank& bank ) const;
 
-//   //! Return the survival probability
-//   double getSurvivalProbability( const double energy ) const;
+private:
 
-//   //! Return the atom survival probability
-//   double getAtomSurvivalProbability( const double energy ) const;
+  // Get the atomic weight from an atom pointer
+  static double getAtomicWeight(
+	    const Utility::Pair<double,Teuchos::RCP<const Photoatom> >& pair );
 
-//   //! Return the nuclide survival probability
-//   double getNuclideSurvivalProbability( const double energy ) const;
+  // Sample the atom that is collided with
+  unsigned sampleCollisionAtom( const double energy ) const;  
 
-//   //! Return the macroscopic cross section (1/cm) for a specific reaction
-//   double getMacroscopicReactionCrossSection( 
-// 				const double energy,
-// 				const PhotoatomicReactionType reaction ) const;
+  // The material id
+  ModuleTraits::InternalMaterialHandle d_id;
 
-//   //! Return the macroscopic cross section (1/cm) for a specific reaction
-//   double getMacroscopicReactionCrossSection(
-// 			       const double energy,
-// 			       const PhotonuclearReactionType reaction ) const;
+  // The number density of the atoms of the material 
+  double d_number_density;
 
-//   //! Collide with a photon
-//   void collideAnalogue( PhotonState& photon, ParticleBank& bank ) const;
-
-//   //! Collide with a photon and survival bias
-//   void collideSurvivalBias( PhotonState& photon, ParticleBank& bank ) const;
-
-// private:
-
-//   // Get the atomic weight from an atom pointer
-//   static double getAtomAtomicWeight(
-// 		  const Utility::Pair<double,Teuchos::RCP<Photoatom> >& pair );
-
-//   // Get the atomic weight ratio from a photonuclide pointer
-//   static double getNuclideAtomicWeightRatio(
-// 	       const Utility::Pair<double,Teuchos::RCP<Photonuclide> >& pair );
-
-//   // Initialize the atoms
-//   void initializeAtoms( const PhotoatomNameMap& photoatom_name_map,
-// 			const Teuchos::Array<double>& photoatom_fractions,
-// 			const Teuchos::Array<std::string>& photoatom_names );
-
-//   // Initialize the nuclides
-//   void initializeNuclides( 
-// 		       const PhotonuclideNameMap& photonuclide_name_map,
-// 		       const Teuchos::Array<double>& photonuclide_fractions,
-// 		       const Teuchos::Array<std::string>& photonuclide_names );
-
-//   // The material id
-//   ModuleTraits::InternalMaterialHandle d_id;
-
-//   // The number density of the atoms of the material 
-//   double d_atom_number_density;
-
-//   // The number density of the nuclides of the material
-//   double d_nuclide_number_density;
-
-//   // The atoms that make up the material
-//   Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Photoatom> > > d_atoms;
-
-//   // The nuclides that make up the material
-//   Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Photonuclide> > > 
-//   d_nuclides;
+  // The atoms that make up the material
+  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Photoatom> > > 
+  d_atoms;
 };
 
 } // end MonteCarlo namespace

@@ -153,7 +153,7 @@ private:
   // The absorption reactions
   ConstReactionMap d_absorption_reactions;
 
-  // The Miscellaneous reactions
+  // The miscellaneous reactions
   ConstReactionMap d_miscellaneous_reactions;
 
   // The atomic relaxation model

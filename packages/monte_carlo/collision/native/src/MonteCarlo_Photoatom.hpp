@@ -29,7 +29,7 @@
 
 namespace MonteCarlo{
 
-//! The atomic class for photoatomic reactions
+//! The atom class for photoatomic reactions
 class Photoatom
 {
 
@@ -126,7 +126,7 @@ public:
 			        const double energy,
 			        const PhotoatomicReactionType reaction ) const;
   
-  //! Return the crosss ection for a specific photonuclear reaction
+  //! Return the cross section for a specific photonuclear reaction
   virtual double getReactionCrossSection(
 			       const double energy,
 			       const PhotonuclearReactionType reaction ) const;
