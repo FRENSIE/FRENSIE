@@ -12,345 +12,264 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonMaterial.hpp"
 #include "MonteCarlo_MaterialHelpers.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-// // Constructor (without photonuclear data)
-// PhotonMaterial::PhotonMaterial(
-// 		           const ModuleTraits::InternalMaterialHandle id,
-// 			   const double density,
-// 			   const PhotoatomNameMap& photoatom_name_map,
-// 			   const Teuchos::Array<double>& photoatom_fractions,
-// 		           const Teuchos::Array<std::string>& photoatom_names )
-//   : d_id( id ),
-//     d_atom_number_density( density ),
-//     d_nuclide_number_density( 0.0 ),
-//     d_atoms( photoatom_fractions.size() ),
-//     d_nuclides()
-// {
-//   // Make sure the id is valid
-//   testPrecondition( id != ModuleTraits::invalid_interal_material_handle );
-//   // Make sure the density is valid
-//   testPrecondition( density != 0.0 );
-//   // Make sure the fraction values are valid (all positive or all negative)
-//   testPrecondition( areFractionValuesValid( photoatom_fractions.begin(),
-// 					    photoatom_fractions.end() ) );
-//   testPrecondition( photoatom_fractions.size() == photoatom_names.size() );
-// }
+// Constructor (without photonuclear data)
+PhotonMaterial::PhotonMaterial(
+		           const ModuleTraits::InternalMaterialHandle id,
+			   const double density,
+			   const PhotoatomNameMap& photoatom_name_map,
+			   const Teuchos::Array<double>& photoatom_fractions,
+		           const Teuchos::Array<std::string>& photoatom_names )
+  : d_id( id ),
+    d_number_density( density ),
+    d_atoms( photoatom_fractions.size() )
+{
+  // Make sure the id is valid
+  testPrecondition( id != ModuleTraits::invalid_internal_material_handle );
+  // Make sure the density is valid
+  testPrecondition( density != 0.0 );
+  // Make sure the fraction values are valid (all positive or all negative)
+  testPrecondition( areFractionValuesValid( photoatom_fractions.begin(),
+					    photoatom_fractions.end() ) );
+  testPrecondition( photoatom_fractions.size() == photoatom_names.size() );
+
+  // Copy that photoatoms that make up this material
+  for( unsigned i = 0u; i < photoatom_fractions.size(); ++i )
+  {
+    d_atoms[i].first = photoatom_fractions[i];
+
+    PhotoatomNameMap::const_iterator atom = 
+      photoatom_name_map.find( photoatom_names[i] );
+
+    TEST_FOR_EXCEPTION( atom == photoatom_name_map.end(),
+			std::logic_error,
+			"Error: atom " << photoatom_names[i] << 
+			" has not been loaded!" );
+
+    d_atoms[i].second = atom->second;    
+  }
+
+  // Convert weight fractions to atom fractions
+  if( d_atoms.front().first < 0.0 )
+  {
+    convertWeightFractionsToAtomFractions<Utility::FIRST,Utility::SECOND>(
+					    d_atoms.begin(),
+					    d_atoms.end(),
+					    d_atoms.begin(),
+					    d_atoms.end(),
+				            &PhotonMaterial::getAtomicWeight );
+  }
+  else // Normalize the atom fractions
+  {
+    normalizeFractionValues<Utility::FIRST>( d_atoms.begin(), d_atoms.end() );
+  }
   
-// // Constructor (with photonuclear data)
-// PhotonMaterial::PhotonMaterial(
-// 			const ModuleTraits::InternalMaterialHandle id,
-// 			const double density,
-// 			const PhotoatomNameMap& photoatom_name_map,
-// 			const PhotonuclideNameMap& photonuclide_name_map,
-// 			const Teuchos::Array<double>& photoatom_fractions,
-// 			const Teuchos::Array<double>& photonuclide_fractions,
-// 			const Teuchos::Array<std::string>& photoatom_names,
-// 		        const Teuchos::Array<std::string>& photonuclide_names )
-// {
-//   // Make sure the id is valid
-//   testPrecondition( id != ModuleTraits::invalid_interal_material_handle );
-//   // Make sure the fraction values are valid (all positive or all negative)
-//   testPrecondition( areFractionValuesValid( photoatom_fractions.begin(),
-// 					    photoatom_fractions.end() ) );
-//   testPrecondition( photoatom_fractions.size() == photoatom_names.size() );
+  // Convert the mass density to a number density
+  if( density < 0.0 )
+  {
+    d_number_density = 
+      convertMassDensityToNumberDensity<Utility::FIRST,Utility::SECOND>(
+				          -1.0*density,
+					  d_atoms.begin(),
+					  d_atoms.end(),
+					  d_atoms.begin(),
+					  d_atoms.end(),
+				          &PhotonMaterial::getAtomicWeight );
+  }
 
-//   // Copy that photoatoms that make up this material
-//   for( unsigned i = 0u; i < photoatom_fractions.size(); ++i )
-//   {
-//     d_atoms[i].first = photoatom_fractions[i];
+  // Convert the atom fractions to isotopic number densities
+  scaleAtomFractionsByNumberDensity<Utility::FIRST>( d_number_density,
+						     d_atoms.begin(),
+						     d_atoms.end() );
+}
 
-//     d_atoms[i].second = photoatom_name_map.find( photoatom_names[i] )->second;
-
-//     TEST_FOR_EXCEPTION( d_atoms[i].second == photoatom_name_map.end(),
-// 			std::logic_error,
-// 			"Error: atom " << photoatom_names[i] << 
-// 			" has not been loaded!" );
-//   }
-
-//   // Convert weight fractions to atom fractions
-//   if( d_atoms.front().second < 0.0 )
-//   {
-//     convertWeightFractionsToAtomFractions<Utility::FIRST,Utility::SECOND>(
-// 				   d_atoms.begin(),
-// 				   d_atoms.end(),
-// 				   d_atoms.begin(),
-// 				   d_atoms.end(),
-// 				   &PhotonMaterial::getAtomAtomicWeightRatio );
-//   }
-//   else // Normalize the atom fractions
-//   {
-//     normalizeFractionValues<Utility::FIRST>( d_atoms.begin(), d_atoms.end() );
-//   }
+// Return the material id
+ModuleTraits::InternalMaterialHandle PhotonMaterial::getId() const
+{
+  return d_id;
+}
   
-//   // Convert the mass density to a number density
-//   if( density < 0.0 )
-//   {
-//     d_atom_number_density = 
-//       convertMassDensityToNumberDensity<Utility::FIRST,Utility::SECOND>(
-// 				      -1.0*density,
-// 				      d_atoms.begin(),
-// 				      d_atoms.end(),
-// 				      d_atoms.begin(),
-// 				      d_atoms.end(),
-// 				      &PhotonMaterial::getAtomAtomicWeight() );
-//   }
+// Return the number density (atom/b-cm)
+double PhotonMaterial::getNumberDensity() const
+{
+  return d_number_density;
+}
 
-//   // Convert the atom fractions to isotopic number densities
-//   scaleAtomFractionsByNumberDensity<Utility::FIRST>( d_atom_number_density,
-// 						     d_atoms.begin(),
-// 						     d_atoms.end() );
-// }
-
-// // Return the material id
-// ModuleTraits::InternalMaterialHandle PhotonMaterial::getId() const
-// {
-//   return d_id;
-// }
+// Return the macroscopic total cross section (1/cm)
+double PhotonMaterial::getMacroscopicTotalCrossSection( 
+						    const double energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
   
-// // Return the atom number density (atom/b-cm)
-// double PhotonMaterial::getAtomNumberDensity() const
-// {
-//   return d_atom_number_density;
-// }
+  double cross_section = 0.0;
 
-// // Return the nuclide number density (atom/b-cm)
-// double PhotonMaterial::getNuclideNumberDensity() const
-// {
-//   return d_nuclide_number_density;
-// }
+  for( unsigned i = 0u; i < d_atoms.size(); ++i )
+  {
+    cross_section +=
+      d_atoms[i].first*d_atoms[i].second->getTotalCrossSection( energy );
+  }
 
-// // Return the macroscopic total cross section (1/cm)
-// double PhotonMaterial::getMacroscopicTotalCrossSection( 
-// 						    const double energy ) const
-// {
-//   return this->getAtomMacroscopicTotalCrossSection( energy ) +
-//     this->getNuclideMacroscopicTotalCrossSection( energy );
-// }
+  return cross_section;
+}
 
-// // Return the atom macroscopic total cross section (1/cm)
-// double PhotonMaterial::getAtomMacroscopicTotalCrossSection( 
-// 						    const double energy ) const
-// {
-//   double cross_section = 0.0;
+// Return the macroscopic absorption cross section (1/cm)
+double PhotonMaterial::getMacroscopicAbsorptionCrossSection( 
+						    const double energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
 
-//   for( unsigned i = 0u; i < d_atoms.size(); ++i )
-//   {
-//     cross_section +=
-//       d_atoms[i].first*d_atoms[i].second->getTotalCrossSection( energy );
-//   }
+  double cross_section = 0.0;
   
-//   return cross_section;
-// }
+  for( unsigned i = 0u; i < d_atoms.size(); ++i )
+  {
+    cross_section +=
+      d_atoms[i].first*d_atoms[i].second->getAbsorptionCrossSection( energy );
+  }
 
-// // Return the nuclide macroscopic total cross section (1/cm)
-// double PhotonMaterial::getNuclideMacroscopicTotalCrossSection( 
-// 						    const double energy ) const
-// {
-//   double cross_section = 0.0;
+  return cross_section;
+}
+
+// Return the survival probability
+double PhotonMaterial::getSurvivalProbability( const double energy ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
+
+  double survival_prob;
+  double total_cross_sec = this->getMacroscopicTotalCrossSection( energy );
+
+  if( total_cross_sec > 0.0 )
+  {
+    survival_prob = 1.0 - 
+      this->getMacroscopicAbsorptionCrossSection( energy )/total_cross_sec;
+  }
+  else
+    survival_prob = 1.0;
+
+  // Make sure the survival probability is valid
+  testPostcondition( !ST::isnaninf( survival_prob ) );
+  testPostcondition( survival_prob >= 0.0 );
+  testPostcondition( survival_prob <= 1.0 );
+
+  return survival_prob;
+}
+
+// Return the macroscopic cross section (1/cm) for a specific reaction
+double PhotonMaterial::getMacroscopicReactionCrossSection(
+			         const double energy,
+				 const PhotoatomicReactionType reaction ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
   
-//   for( unsigned i = 0u; i < d_nuclides.size(); ++i )
-//   {
-//     cross_section +=
-//       d_nuclides[i].first*d_nuclides[i].second->getTotalCrossSection( energy );
-//   }
+  double cross_section = 0.0;
 
-//   return cross_section;
-// }
+  for( unsigned i = 0u; i < d_atoms.size(); ++i )
+  {
+    cross_section += d_atoms[i].first*
+      d_atoms[i].second->getReactionCrossSection( energy, reaction );
+  }
 
-// // Return the macroscopic absorption cross section (1/cm)
-// double PhotonMaterial::getMacroscopicAbsorptionCrossSection( 
-// 						    const double energy ) const
-// {
-//   return this->getAtomMacroscopicAbsorptionCrossSection( energy ) +
-//     this->getNuclideMacroscopicAbsorptionCrossSection( energy );
-// }
+  return cross_section;
+}
 
-// // Return the atom macroscopic absorption cross section (1/cm)
-// double PhotonMaterial::getAtomMacroscopicAbsorptionCrossSection( 
-// 						    const double energy ) const
-// {
-//   double cross_section = 0.0;
+// Return the macroscopic cross section (1/cm) for a specific reaction
+double PhotonMaterial::getMacroscopicReactionCrossSection(
+				const double energy,
+				const PhotonuclearReactionType reaction ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( !ST::isnaninf( energy ) );
+  testPrecondition( energy > 0.0 );
   
-//   for( unsigned i = 0u; i < d_atoms.size(); ++i )
-//   {
-//     cross_section += 
-//       d_atoms[i].first*d_atoms[i].second->getAbsorptionCrossSection( energy );
-//   }
+  double cross_section = 0.0;
 
-//   return cross_section;
-// }
+  for( unsigned i = 0u; i < d_atoms.size(); ++i )
+  {
+    cross_section += d_atoms[i].first*
+      d_atoms[i].second->getReactionCrossSection( energy, reaction );
+  }
 
-// // Return the nuclide macroscopic absorption cross section (1/cm)
-// double PhotonMaterial::getNuclideMacroscopicAbsorptionCrossSection( 
-// 						    const double energy ) const
-// {
-//   double cross_section = 0.0;
+  return cross_section;
+}
 
-//   for( unsigned i = 0u; i < d_nuclides.size(); ++i )
-//   {
-//     cross_section += d_nuclides[i].first*
-//       d_nuclides[i].second->getAbsorptionCrossSection( energy );
-//   }
 
-//   return cross_section;
-// }
+// Collide with a photon
+void PhotonMaterial::collideAnalogue( PhotonState& photon, 
+				      ParticleBank& bank ) const
+{
+  unsigned atom_index = sampleCollisionAtom( photon.getEnergy() );
 
-// // Collide with a photon
-// void PhotonMaterial::collideAnalogue( PhotonState& photon, 
-// 				      ParticleBank& bank ) const
-// {
-  
-// }
+  d_atoms[atom_index].second->collideAnalogue( photon, bank );
+}
 
-// // Collide with a photon and survival bias
-// void PhotonMaterial::collideSurvivalBias( PhotonState& photon, 
-// 					  ParticleBank& bank ) const
-// {
+// Collide with a photon and survival bias
+/*! \details The method of survival biasing that has been implemented is to
+ * first select the nuclide that is collided with. The particle weight is
+ * then multiplied by the survival probability associated with the 
+ * microscopic cross sections for the collision nuclide. An alternative method
+ * would be to multiply the weight of the particle by the macroscopic
+ * survival probability associated with the material and then sample a 
+ * collision nuclide. The latter method appears to be more involved than the
+ * former, which is why the former was chosen.
+ */
+void PhotonMaterial::collideSurvivalBias( PhotonState& photon, 
+					  ParticleBank& bank ) const
+{
+  unsigned atom_index = sampleCollisionAtom( photon.getEnergy() );
 
-// }
+  d_atoms[atom_index].second->collideSurvivalBias( photon, bank );
+}
 
-// // Get the atomic weight from an atom pointer
-// double PhotonMaterial::getAtomAtomicWeight(
-// 		   const Utility::Pair<double,Teuchos::RCP<Photoatom> >& pair )
-// {
+// Get the atomic weight from an atom pointer
+double PhotonMaterial::getAtomicWeight(
+	     const Utility::Pair<double,Teuchos::RCP<const Photoatom> >& pair )
+{
+  return pair.second->getAtomicWeight();
+}
 
-// }
+// Sample the atom that is collided with
+unsigned PhotonMaterial::sampleCollisionAtom( const double energy ) const
+{
+  double scaled_random_number = 
+    Utility::RandomNumberGenerator::getRandomNumber<double>()*
+    this->getMacroscopicTotalCrossSection( energy );
 
-// // Get the atomic weight ratio from a photonuclide pointer
-// double PhotonMaterial::getNuclideAtomicWeightRatio(
-// 		const Utility::Pair<double,Teuchos::RCP<Photonuclide> >& pair )
-// {
+  double partial_total_cs = 0.0;
 
-// }
+  unsigned collision_atom_index = std::numeric_limits<unsigned>::max();
 
-// // Initialize the atoms
-// void PhotonMaterial::initializeAtoms( 
-// 			  const PhotoatomNameMap& photoatom_name_map,
-// 			  const Teuchos::Array<double>& photoatom_fractions,
-// 			  const Teuchos::Array<std::string>& photoatom_names )
-// {
-//   // Make sure the atom number density has been initialized (in constructor)
-//   testPrecondition( d_atom_number_density != 0.0 );
-//   // Make sure the fraction values are valid (all positive or all negative)
-//   testPrecondition( areFractionValuesValid( photoatom_fractions.begin(),
-// 					    photoatom_fractions.end() ) );
-//   testPrecondition( photoatom_fractions.size() == photoatom_names.size() );
-//   // Make sure the atoms array has been initialized (in constructor)
-//   testPrecondition( d_atoms.size() == photoatom_names.size() );
-  
-//   // Copy the photoatoms that make up this material
-//   for( unsigned i = 0u; i < photoatom_fractions.size(); ++i )
-//   {
-//     d_atoms[i].first = photoatom_fractions[i];
+  for( unsigned i = 0u; i < d_atoms.size(); ++i )
+  {
+    partial_total_cs +=
+      d_atoms[i].first*d_atoms[i].second->getTotalCrossSection( energy );
 
-//     d_atoms[i].second = photoatom_name_map.find( photoatom_names[i] )->second;
+    if( scaled_random_number < partial_total_cs )
+    {
+      collision_atom_index = i;
 
-//     TEST_FOR_EXCEPTION( d_atoms[i].second == photoatom_name_map.end(),
-// 			std::logic_error,
-// 			"Error: atom " << photoatom_names[i] << 
-// 			" has not been loaded!" );
-//   }
+      break;
+    }
+  }
 
-//   // Convert weight fractions to atom fractions
-//   if( d_atoms.front().second < 0.0 )
-//   {
-//     convertWeightFractionsToAtomFractions<Utility::FIRST,Utility::SECOND>(
-// 				   d_atoms.begin(),
-// 				   d_atoms.end(),
-// 				   d_atoms.begin(),
-// 				   d_atoms.end(),
-// 				   &PhotonMaterial::getAtomAtomicWeightRatio );
-//   }
-//   else // Normalize the atom fractions
-//   {
-//     normalizeFractionValues<Utility::FIRST>( d_atoms.begin(), d_atoms.end() );
-//   }
-  
-//   // Convert the mass density to a number density
-//   if( density < 0.0 )
-//   {
-//     d_atom_number_density = 
-//       convertMassDensityToNumberDensity<Utility::FIRST,Utility::SECOND>(
-// 				      -1.0*density,
-// 				      d_atoms.begin(),
-// 				      d_atoms.end(),
-// 				      d_atoms.begin(),
-// 				      d_atoms.end(),
-// 				      &PhotonMaterial::getAtomAtomicWeight() );
-//   }
+  // Make sure a collision index was found
+  testPostcondition( collision_atom_index !=
+		     std::numeric_limits<unsigned>::max() );
 
-//   // Convert the atom fractions to atomic number densities
-//   scaleAtomFractionsByNumberDensity<Utility::FIRST>( d_atom_number_density,
-// 						     d_atoms.begin(),
-// 						     d_atoms.end() );
-// }
-
-// // Initialize the nuclides
-// void PhotonMaterial::initializeNuclides( 
-// 		       const PhotonuclideNameMap& photonuclide_name_map,
-// 		       const Teuchos::Array<double>& photonuclide_fractions,
-// 		       const Teuchos::Array<std::string>& photonuclide_names )
-// {
-//   // Make sure the atom number density has been initialized (in constructor)
-//   testPrecondition( d_nuclide_number_density != 0.0 );
-//   // Make sure the fraction values are valid (all positive or all negative)
-//   testPrecondition( areFractionValuesValid( photoatom_fractions.begin(),
-// 					    photoatom_fractions.end() ) );
-//   testPrecondition( photoatom_fractions.size() == photoatom_names.size() );
-//   // Make sure the atoms array has been initialized (in constructor)
-//   testPrecondition( d_atoms.size() == photoatom_names.size() );
-  
-//   // Copy the photoatoms that make up this material
-//   for( unsigned i = 0u; i < photoatom_fractions.size(); ++i )
-//   {
-//     d_atoms[i].first = photoatom_fractions[i];
-
-//     d_atoms[i].second = photoatom_name_map.find( photoatom_names[i] )->second;
-
-//     TEST_FOR_EXCEPTION( d_atoms[i].second == photoatom_name_map.end(),
-// 			std::logic_error,
-// 			"Error: atom " << photoatom_names[i] << 
-// 			" has not been loaded!" );
-//   }
-
-//   // Convert weight fractions to atom fractions
-//   if( d_atoms.front().second < 0.0 )
-//   {
-//     convertWeightFractionsToAtomFractions<Utility::FIRST,Utility::SECOND>(
-// 				   d_atoms.begin(),
-// 				   d_atoms.end(),
-// 				   d_atoms.begin(),
-// 				   d_atoms.end(),
-// 				   &PhotonMaterial::getAtomAtomicWeightRatio );
-//   }
-//   else // Normalize the atom fractions
-//   {
-//     normalizeFractionValues<Utility::FIRST>( d_atoms.begin(), d_atoms.end() );
-//   }
-  
-//   // Convert the mass density to a number density
-//   if( density < 0.0 )
-//   {
-//     d_atom_number_density = 
-//       convertMassDensityToNumberDensity<Utility::FIRST,Utility::SECOND>(
-// 				      -1.0*density,
-// 				      d_atoms.begin(),
-// 				      d_atoms.end(),
-// 				      d_atoms.begin(),
-// 				      d_atoms.end(),
-// 				      &PhotonMaterial::getAtomAtomicWeight() );
-//   }
-
-//   // Convert the atom fractions to atomic number densities
-//   scaleAtomFractionsByNumberDensity<Utility::FIRST>( d_atom_number_density,
-// 						     d_atoms.begin(),
-// 						     d_atoms.end() );
-// }
+  return collision_atom_index;
+}
 
 } // end MonteCarlo namespace
 

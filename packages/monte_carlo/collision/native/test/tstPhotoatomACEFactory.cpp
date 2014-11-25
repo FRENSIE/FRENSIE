@@ -343,6 +343,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
+  photon.setWeight( 1.0 );
   
   MonteCarlo::SubshellType shell_of_interaction;
 

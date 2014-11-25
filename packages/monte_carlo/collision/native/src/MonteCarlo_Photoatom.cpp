@@ -227,7 +227,7 @@ void Photoatom::collideSurvivalBias( PhotonState& photon,
     this->getAbsorptionCrossSection( photon.getEnergy() );
 
   double survival_prob = scattering_cross_section/total_cross_section;
-
+  
   // Multiply the photon's weigth by the survival probabilty
   if( survival_prob > 0.0 )
   {

@@ -240,6 +240,10 @@ ADD_EXECUTABLE(tstPhotoatomFactory
 TARGET_LINK_LIBRARIES(tstPhotoatomFactory monte_carlo_collision_native)
 ADD_TEST(PhotoatomFactory_test tstPhotoatomFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
 
+ADD_EXECUTABLE(tstPhotonMaterial tstPhotonMaterial.cpp)
+TARGET_LINK_LIBRARIES(tstPhotonMaterial monte_carlo_collision_native)
+ADD_TEST(PhotonMaterial_test tstPhotonMaterial --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
+
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)
 
