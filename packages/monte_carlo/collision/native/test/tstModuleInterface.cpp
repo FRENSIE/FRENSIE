@@ -63,67 +63,67 @@ TEUCHOS_UNIT_TEST( ModuleInterface, isCellVoid )
 {
   typedef MonteCarlo::CollisionModuleInterface<MonteCarlo::CollisionHandler> CMI;
   
-  TEST_ASSERT( !CMI::isCellVoid( 26 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 27 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 28 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 29 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 30 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 31 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 32 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 33 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 34 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 35 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 36 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 37 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 48 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 49 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 50 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 51 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 52 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 53 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 54 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 55 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 56 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 57 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 58 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 59 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 70 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 71 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 72 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 73 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 74 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 75 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 76 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 77 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 78 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 79 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 80 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 81 ) );
+  TEST_ASSERT( !CMI::isCellVoid( 26, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 27, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 28, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 29, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 30, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 31, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 32, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 33, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 34, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 35, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 36, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 37, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 48, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 49, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 50, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 51, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 52, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 53, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 54, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 55, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 56, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 57, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 58, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 59, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 70, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 71, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 72, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 73, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 74, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 75, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 76, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 77, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 78, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 79, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 80, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 81, MonteCarlo::NEUTRON ) );
   
-  TEST_ASSERT( !CMI::isCellVoid( 9 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 88 ) );
+  TEST_ASSERT( !CMI::isCellVoid( 9, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 88, MonteCarlo::NEUTRON ) );
   
-  TEST_ASSERT( !CMI::isCellVoid( 136 ) );
+  TEST_ASSERT( !CMI::isCellVoid( 136, MonteCarlo::NEUTRON ) );
   
-  TEST_ASSERT( !CMI::isCellVoid( 19 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 41 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 63 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 82 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 152 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 166 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 184 ) );
+  TEST_ASSERT( !CMI::isCellVoid( 19, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 41, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 63, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 82, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 152, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 166, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 184, MonteCarlo::NEUTRON ) );
   
-  TEST_ASSERT( !CMI::isCellVoid( 3 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 7 ) );
+  TEST_ASSERT( !CMI::isCellVoid( 3, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 7, MonteCarlo::NEUTRON ) );
   
-  TEST_ASSERT( !CMI::isCellVoid( 5 ) );
+  TEST_ASSERT( !CMI::isCellVoid( 5, MonteCarlo::NEUTRON ) );
   
-  TEST_ASSERT( !CMI::isCellVoid( 1 ) );
+  TEST_ASSERT( !CMI::isCellVoid( 1, MonteCarlo::NEUTRON ) );
   
-  TEST_ASSERT( !CMI::isCellVoid( 13 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 83 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 154 ) );
-  TEST_ASSERT( !CMI::isCellVoid( 168 ) );
+  TEST_ASSERT( !CMI::isCellVoid( 13, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 83, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 154, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 168, MonteCarlo::NEUTRON ) );
 }
 
 //---------------------------------------------------------------------------//

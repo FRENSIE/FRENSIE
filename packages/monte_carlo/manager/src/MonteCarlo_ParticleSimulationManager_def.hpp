@@ -165,7 +165,7 @@ void ParticleSimulationManager<GeometryHandler,
       CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
       // Get the total cross section for the cell
-      if( !CMI::isCellVoid( particle.getCell() ) )
+      if( !CMI::isCellVoid( particle.getCell(), particle.getParticleType() ) )
       {
 	cell_total_macro_cross_section = 
 	  CMI::getMacroscopicTotalCrossSection( particle );
