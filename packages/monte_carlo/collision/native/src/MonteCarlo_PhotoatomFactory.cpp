@@ -9,7 +9,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomFactory.hpp"
 #include "MonteCarlo_PhotoatomACEFactory.hpp"
-#include "MonteCarlo_SimulationProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -25,7 +24,10 @@ PhotoatomFactory::PhotoatomFactory(
 		    const Teuchos::ParameterList& cross_section_table_info,
 		    const boost::unordered_set<std::string>& photoatom_aliases,
 		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-		    atomic_relaxation_model_factory )
+		    atomic_relaxation_model_factory,
+		    const bool use_doppler_broadening_data,
+		    const bool use_detailed_pair_production_data,
+		    const bool use_atomic_relaxation_data )
 {
   // Create each photoatom in the set
   boost::unordered_set<std::string>::const_iterator photoatom_name = 
@@ -50,7 +52,10 @@ PhotoatomFactory::PhotoatomFactory(
       createPhotoatomFromACETable( cross_sections_xml_directory, 
 				   *photoatom_name,
 				   table_info,
-				   atomic_relaxation_model_factory );
+				   atomic_relaxation_model_factory,
+				   use_doppler_broadening_data,
+				   use_detailed_pair_production_data,
+				   use_atomic_relaxation_data );
     }
     else
     {
@@ -85,7 +90,10 @@ void PhotoatomFactory::createPhotoatomFromACETable(
 			  const std::string& photoatom_alias,
 			  const Teuchos::ParameterList& photoatom_table_info,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-			  atomic_relaxation_model_factory )
+			  atomic_relaxation_model_factory,
+			  const bool use_doppler_broadening_data,
+			  const bool use_detailed_pair_production_data,
+			  const bool use_atomic_relaxation_data )
 {
   std::string photoatom_table_name;
   try{
@@ -153,24 +161,23 @@ void PhotoatomFactory::createPhotoatomFromACETable(
   Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model;
 
   atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
-			    xss_data_extractor,
-			    atomic_relaxation_model,
-			    SimulationProperties::isAtomicRelaxationModeOn() );
+						  xss_data_extractor,
+						  atomic_relaxation_model,
+			                          use_atomic_relaxation_data );
 
   // Initialize the new photoatom
   Teuchos::RCP<Photoatom>& photoatom = d_photoatom_name_map[photoatom_alias];
 
   // Create the new photoatom
-  PhotoatomACEFactory::createPhotoatom( 
-		       xss_data_extractor,
-		       photoatom_table_name,
-		       atomic_weight,
-		       atomic_relaxation_model,
-		       photoatom,
-		       SimulationProperties::isPhotonDopplerBroadeningModeOn(),
-		       SimulationProperties::isDetailedPairProductionModeOn(),
-		       SimulationProperties::isAtomicRelaxationModeOn() );
-
+  PhotoatomACEFactory::createPhotoatom( xss_data_extractor,
+					photoatom_table_name,
+					atomic_weight,
+					atomic_relaxation_model,
+					photoatom,
+					use_doppler_broadening_data,
+					use_detailed_pair_production_data,
+					use_atomic_relaxation_data );
+    
   std::cout << "done." << std::endl;
 }
 
