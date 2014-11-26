@@ -38,7 +38,10 @@ public:
                     const Teuchos::ParameterList& cross_section_table_info,
                     const boost::unordered_set<std::string>& photoatom_aliases,
 		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-		    atomic_relaxation_model_factory );
+		    atomic_relaxation_model_factory,
+		    const bool use_doppler_broadening_data,
+		    const bool use_detailed_pair_production_data,
+		    const bool use_atomic_relaxation_data );
 
   //! Destructor
   ~PhotoatomFactory()
@@ -57,7 +60,10 @@ private:
 			  const std::string& photoatom_alias,
 			  const Teuchos::ParameterList& photoatom_table_info,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-			  atomic_relaxation_model_factory );
+			  atomic_relaxation_model_factory,
+			  const bool use_doppler_broadening_data,
+			  const bool use_detailed_pair_production_data,
+			  const bool use_atomic_relaxation_data );
 
   // The photoatom map
   boost::unordered_map<std::string,Teuchos::RCP<Photoatom> > 

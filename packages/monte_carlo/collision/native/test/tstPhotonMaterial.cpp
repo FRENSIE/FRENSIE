@@ -310,7 +310,10 @@ int main( int argc, char** argv )
     MonteCarlo::PhotoatomFactory factory( test_cross_sections_xml_directory,
 					  cross_section_table_info,
 					  atom_aliases,
-					  atomic_relaxation_model_factory );
+					  atomic_relaxation_model_factory,
+					  true,
+					  false,
+					  true );
 
     boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
       atom_map;
