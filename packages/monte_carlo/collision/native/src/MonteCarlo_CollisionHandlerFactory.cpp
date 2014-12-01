@@ -20,6 +20,7 @@
 #endif
 
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -52,16 +53,29 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
   // Validate the material ids
   CollisionHandlerFactory::validateMaterialIdsUsingDagMC( material_reps );
   
-  // Create the set of all nuclides needed to construct materials
-  boost::unordered_set<std::string> nuclide_names;
+  // Extract the cross section table alias map
+  Teuchos::ParameterList alias_map_list;
+  
+  try{
+    alias_map_list = cross_sections_table_info.sublist( "alias map" );
+  }
+  EXCEPTION_CATCH_AND_EXIT( std::exception, 
+			    "The cross_sections.xml file in " 
+			    << cross_sections_xml_directory << 
+			    " is invalid - the 'alias_map' ParameterList "
+			    "is not defined!" );
+  
+  // Create the set of all nuclides/atoms needed to construct materials
+  boost::unordered_set<std::string> aliases;
 
-  CollisionHandlerFactory::createNuclideSet( material_reps, 
-					     nuclide_names );
+  CollisionHandlerFactory::createAliasSet( material_reps, 
+					   alias_map_list,
+					   aliases );
 
   // Load the nuclides of interest
   NuclideFactory nuclide_factory( cross_sections_xml_directory,
 				  cross_sections_table_info,
-				  nuclide_names );
+				  aliases );
 
   boost::unordered_map<std::string,Teuchos::RCP<Nuclide> > nuclide_map;
 
@@ -190,10 +204,11 @@ void CollisionHandlerFactory::validateMaterialIdsUsingDagMC(
   #endif // end HAVE_FRENSIE_DAGMC
 }
 
-// Create the set of all nuclides needed to construct materials
-void CollisionHandlerFactory::createNuclideSet( 
-			          const Teuchos::ParameterList& material_reps,
-				  boost::unordered_set<std::string>& nuclides )
+// Create the set of all nuclides/atoms needed to construct materials
+void CollisionHandlerFactory::createAliasSet( 
+		       const Teuchos::ParameterList& material_reps,
+		       const Teuchos::ParameterList& cross_sections_alias_map,
+		       boost::unordered_set<std::string>& nuclides )
 {
   Teuchos::ParameterList::ConstIterator it = material_reps.begin();
 
@@ -206,7 +221,17 @@ void CollisionHandlerFactory::createNuclideSet(
       material_rep.get<Teuchos::Array<std::string> >( "Isotopes" );
 
     for( unsigned i = 0; i < material_isotopes.size(); ++i )
-      nuclides.insert( material_isotopes[i] );
+    {
+      // The name is a key - store the mapped name
+      if( cross_sections_alias_map.isParameter( material_isotopes[i] ) )
+      {
+	nuclides.insert( 
+	   cross_sections_alias_map.get<std::string>( material_isotopes[i] ) );
+      }
+      // The name is not a key - store the name
+      else
+	nuclides.insert( material_isotopes[i] );
+    }
     
     ++it;
   }

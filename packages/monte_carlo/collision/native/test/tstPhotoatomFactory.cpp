@@ -88,7 +88,8 @@ int main( int argc, char** argv )
 					   cross_sections_xml_directory,
 					   cross_section_table_info,
 					   photoatom_aliases,
-					   atomic_relaxation_model_factory ) );
+					   atomic_relaxation_model_factory,
+							      ) );
   }
   
   // Run the unit tests

@@ -48,9 +48,11 @@ private:
   static void validateMaterialIdsUsingDagMC( 
 				 const Teuchos::ParameterList& material_reps );
 
-  // Create the set of all nuclides needed to construct materials
-  static void createNuclideSet( const Teuchos::ParameterList& material_reps,
-				boost::unordered_set<std::string>& nuclides );
+  // Create the set of all nuclides/atoms needed to construct materials
+  static void createAliasSet( 
+		       const Teuchos::ParameterList& material_reps,
+		       const Teuchos::ParameterList& cross_sections_alias_map,
+		       boost::unordered_set<std::string>& nuclides );
 
   // Create the material id data maps
   static void createMaterialIdDataMaps( 
