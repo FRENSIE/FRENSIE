@@ -33,6 +33,9 @@ double SimulationProperties::min_electron_energy = 1e-3;
 // The max neutron energy (MeV)
 double SimulationProperties::max_electron_energy = 20.0;
 
+// The particle mode
+ParticleModeType SimulationProperties::particle_mode = NEUTRON_MODE;
+
 // The capture mode (true = implicit, false = analogue - default)
 bool SimulationProperties::implicit_capture_mode_on = false;
 
@@ -44,6 +47,9 @@ bool SimulationProperties::atomic_relaxation_mode_on = true;
 
 // The detailed pair production mode (true = on, false = off - default)
 bool SimulationProperties::detailed_pair_production_mode_on = false;
+
+// The photonuclear interaction mode (true = on, false = off - default)
+bool SimulationProperties::photonuclear_interaction_mode_on = false;
 
 // Set the free gas thermal treatment temperature threshold
 /*! \details The value given is the number of times above the material 
@@ -88,6 +94,13 @@ void SimulationProperties::setMinElectronEnergy( const double energy )
   SimulationProperties::min_electron_energy = energy;
 }
 
+// Set the particle mode
+void SimulationProperties::setParticleMode( 
+					 const ParticleModeType particle_mode )
+{
+  SimulationProperties::particle_mode = particle_mode;
+}
+
 // Set implicit capture mode to on (off by default)
 void SimulationProperties::setImplicitCaptureModeOn()
 {
@@ -112,6 +125,11 @@ void SimulationProperties::setDetailedPairProductionModeOn()
   SimulationProperties::detailed_pair_production_mode_on = true;
 }
 
+// Set photonuclear interaction mode to on (off by default)
+void SimulationProperties::setPhotonuclearInteractionModeOn()
+{
+  SimulationProperties::photonuclear_interaction_mode_on = true;
+}
 
 } // end MonteCarlo namespace
 

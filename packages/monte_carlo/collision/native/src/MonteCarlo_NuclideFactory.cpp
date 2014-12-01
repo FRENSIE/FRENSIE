@@ -51,7 +51,7 @@ NuclideFactory::NuclideFactory(
     std::string ace_file_path = cross_sections_xml_directory + "/";
 
     try{
-      ace_file_path += table_info.get<std::string>( "neutron_file_path" );
+      ace_file_path += table_info.get<std::string>( "nuclear_file_path" );
     }
     EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
 			      "Error: cross section table entry "
@@ -62,7 +62,7 @@ NuclideFactory::NuclideFactory(
     std::string file_type;
     
     try{
-      file_type = table_info.get<std::string>( "neutron_file_type" );
+      file_type = table_info.get<std::string>( "nuclear_file_type" );
     }
     EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
 			      "Error: cross section table entry "
@@ -73,7 +73,7 @@ NuclideFactory::NuclideFactory(
     int start_line;
     
     try{
-      start_line = table_info.get<int>( "neutron_file_start_line" );
+      start_line = table_info.get<int>( "nuclear_file_start_line" );
     }
     EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
 			      "Error: cross section table entry "
@@ -84,7 +84,7 @@ NuclideFactory::NuclideFactory(
     std::string table_name;
 
     try{
-      table_name = table_info.get<std::string>( "neutron_table_name" );
+      table_name = table_info.get<std::string>( "nuclear_table_name" );
     }
     EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
 			      "Error: cross section table entry " 

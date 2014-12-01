@@ -39,6 +39,18 @@ ParticleModeType convertParticleModeTypeNameToParticleModeTypeEnum(
 ParticleModeType convertUnsignedToParticleModeTypeEnum(
 					   const unsigned particle_mode_type );
 
+//! Convert a ParticleModeType enumeration to a string
+std::string convertParticleModeTypeEnumToString(
+					const ParticleModeType particle_mode );
+
+//! Stream operator for printing ParticleModeType enums
+inline std::ostream& operator<<( std::ostream& os,
+				 const ParticleModeType particle_mode )
+{
+  os << convertParticleModeTypeEnumToString( particle_mode );
+  return os;
+}
+
 } // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_PARTICLE_MODE_TYPE_HPP

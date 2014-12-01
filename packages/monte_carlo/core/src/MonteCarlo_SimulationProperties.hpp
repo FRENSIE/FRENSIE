@@ -9,6 +9,9 @@
 #ifndef MONTE_CARLO_SIMULATION_PROPERTIES_HPP
 #define MONTE_CARLO_SIMULATION_PROPERTIES_HPP
 
+// FRENSIE Includes
+#include "MonteCarlo_ParticleModeType.hpp"
+
 namespace MonteCarlo{
 
 /*! The simulation properties class
@@ -53,6 +56,12 @@ public:
   //! Return the maximum electron energy (MeV) - cannot be set at runtime
   static double getMaxElectronEnergy();
 
+  //! Set the particle mode
+  static void setParticleMode( const ParticleModeType particle_mode );
+
+  //! Return the particle mode type
+  static ParticleModeType getParticleMode();
+
   //! Set implicit capture mode to on (off by default)
   static void setImplicitCaptureModeOn();
 
@@ -76,6 +85,12 @@ public:
 
   //! Return if detailed pair production mode is on
   static bool isDetailedPairProductionModeOn();
+
+  //! Set photonuclear interaction mode to on (off by default)
+  static void setPhotonuclearInteractionModeOn();
+
+  //! Return if photonuclear interaction mode is on
+  static bool isPhotonuclearInteractionModeOn();
 
 private:
 
@@ -101,6 +116,9 @@ private:
   // The max photon energy (MeV)
   static double max_electron_energy;
 
+  // The particle mode
+  static ParticleModeType particle_mode;
+
   // The capture mode (true = implicit, false = analogue - default)
   static bool implicit_capture_mode_on;
 
@@ -112,6 +130,9 @@ private:
 
   // The detailed pair production mode (true = on, false = off - default)
   static bool detailed_pair_production_mode_on;
+
+  // The photonuclear interaction mode (true = on, false = off - default)
+  static bool photonuclear_interaction_mode_on;
 };
 
 // Return the free gas thermal treatment temperature threshold
@@ -156,6 +177,12 @@ inline double SimulationProperties::getMaxElectronEnergy()
   return SimulationProperties::max_electron_energy;
 }
 
+// Return the particle mode type
+inline ParticleModeType SimulationProperties::getParticleMode()
+{
+  return SimulationProperties::particle_mode;
+}
+
 // Return if implicit capture mode has been set
 inline bool SimulationProperties::isImplicitCaptureModeOn()
 {
@@ -178,6 +205,12 @@ inline bool SimulationProperties::isAtomicRelaxationModeOn()
 inline bool SimulationProperties::isDetailedPairProductionModeOn()
 {
   return SimulationProperties::detailed_pair_production_mode_on;
+}
+
+// Return if photonuclear interaction mode is on
+inline bool SimulationProperties::isPhotonuclearInteractionModeOn()
+{
+  return SimulationProperties::photonuclear_interaction_mode_on;
 }
 
 } // end MonteCarlo namespace

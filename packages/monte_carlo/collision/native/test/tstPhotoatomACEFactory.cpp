@@ -184,6 +184,34 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 			 exp( 1.151292546497E+01 ),
 			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+
+  // Test that the Doppler data is not present
+  MonteCarlo::ParticleBank bank;
+
+  MonteCarlo::PhotonState photon( 0 );
+  photon.setEnergy( 20.0 );
+  photon.setDirection( 0.0, 0.0, 1.0 );
+  photon.setWeight( 1.0 );
+  
+  MonteCarlo::SubshellType shell_of_interaction;
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 4 );
+  fake_stream[0] = 0.1; // select the incoherent reaction
+  fake_stream[1] = 0.001; // sample from first term of koblinger's method
+  fake_stream[2] = 0.5; // x = 40.13902672495315, mu = 0.0
+  fake_stream[3] = 0.5; // accept x in scattering function rejection loop
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  atom->collideAnalogue( photon, bank );
+
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
   // Reset the photoatom
   atom.reset();
 }

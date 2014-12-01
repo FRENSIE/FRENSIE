@@ -22,40 +22,6 @@
 #include "Geometry_DagMCInstanceFactory.hpp"
 
 //---------------------------------------------------------------------------//
-// Testing Variables.
-//---------------------------------------------------------------------------//
-std::string test_cross_sections_xml_directory;
-std::string test_material_xml_file_name;
-std::string test_geom_xml_file_name;
-
-//---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-// Initialize the collision handler
-void initializeCollisionHandler()
-{
-  // Assign the name of the cross_sections.xml file with path
-  std::string cross_section_xml_file = test_cross_sections_xml_directory;
-  cross_section_xml_file += "/cross_sections.xml";
-
-  // Read in the xml file storing the cross section table information 
-  Teuchos::ParameterList cross_section_table_info;
-  Teuchos::updateParametersFromXmlFile( 
-			         cross_section_xml_file,
-			         Teuchos::inoutArg(cross_section_table_info) );
-
-  // Read in the xml file storing the material specifications
-  Teuchos::ParameterList material_reps;
-  Teuchos::updateParametersFromXmlFile( test_material_xml_file_name,
-					Teuchos::inoutArg(material_reps) );
-
-  MonteCarlo::CollisionHandlerFactory::initializeHandlerUsingDagMC( 
-					   material_reps,
-					   cross_section_table_info,
-					   test_cross_sections_xml_directory );
-}
-
-//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check if cells can be tested as void
@@ -226,6 +192,10 @@ TEUCHOS_UNIT_TEST( ModuleInterface, collideWithCellMaterial )
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_cross_sections_xml_directory;
+  std::string test_material_xml_file_name;
+  std::string test_geom_xml_file_name;
+ 
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_cross_sections_xml_directory",
@@ -251,17 +221,37 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
-  // Initialize DagMC
-  Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
-    Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
+  {
+    // Initialize DagMC
+    Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
+      Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
+    
+    Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
+    
+    // Initialize the random number generator
+    Utility::RandomNumberGenerator::createStreams();
+    
+    // Initialize the collison handler
+    // Assign the name of the cross_sections.xml file with path
+    std::string cross_section_xml_file = test_cross_sections_xml_directory;
+    cross_section_xml_file += "/cross_sections.xml";
+    
+    // Read in the xml file storing the cross section table information 
+    Teuchos::ParameterList cross_section_table_info;
+    Teuchos::updateParametersFromXmlFile( 
+			         cross_section_xml_file,
+			         Teuchos::inoutArg(cross_section_table_info) );
 
-  Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
+    // Read in the xml file storing the material specifications
+    Teuchos::ParameterList material_reps;
+    Teuchos::updateParametersFromXmlFile( test_material_xml_file_name,
+					  Teuchos::inoutArg(material_reps) );
 
-  // Initialize the random number generator
-  Utility::RandomNumberGenerator::createStreams();
-
-  // Initialize the collison handler
-  initializeCollisionHandler();
+    MonteCarlo::CollisionHandlerFactory::initializeHandlerUsingDagMC( 
+					   material_reps,
+					   cross_section_table_info,
+					   test_cross_sections_xml_directory );
+  }
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );

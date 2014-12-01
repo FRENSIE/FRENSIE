@@ -35,7 +35,7 @@ bool isValidParticleModeTypeName( const std::string& particle_mode_type_name )
     return true;
   else if( particle_mode_type_name == "ADJOINT_PHOTON_MODE" )
     return true;
-  else if( paticle_mode_type_name == "ADJOINT_ELECTRON_MODE" )
+  else if( particle_mode_type_name == "ADJOINT_ELECTRON_MODE" )
     return true;
   else
     return false;
@@ -46,7 +46,7 @@ ParticleModeType convertParticleModeTypeNameToParticleModeTypeEnum(
 				   const std::string& particle_mode_type_name )
 {
   // Make sure the particle mode type name is valid
-  testPrecondition( isValidParticleModeTypeName( particle_type_name ) );
+  testPrecondition( isValidParticleModeTypeName( particle_mode_type_name ) );
   
   if( particle_mode_type_name == "NEUTRON_MODE" )
     return NEUTRON_MODE;
@@ -64,7 +64,7 @@ ParticleModeType convertParticleModeTypeNameToParticleModeTypeEnum(
     return ADJOINT_NEUTRON_MODE;
   else if( particle_mode_type_name == "ADJOINT_PHOTON_MODE" )
     return ADJOINT_PHOTON_MODE;
-  else if( paticle_mode_type_name == "ADJOINT_ELECTRON_MODE" )
+  else if( particle_mode_type_name == "ADJOINT_ELECTRON_MODE" )
     return ADJOINT_ELECTRON_MODE;
   else
   {
@@ -102,6 +102,27 @@ ParticleModeType convertUnsignedToParticleModeTypeEnum(
     THROW_EXCEPTION( std::logic_error,
 		     "Error: unsigned integer " << particle_mode_type <<
 		     " does not correspond to a particle mode type!" );
+  }
+}
+
+// Convert a ParticleModeType enumeration to a string
+std::string convertParticleModeTypeEnumToString(
+					 const ParticleModeType particle_mode )
+{
+  switch( particle_mode )
+  {
+  case NEUTRON_MODE: return "Neutron Mode";
+  case PHOTON_MODE: return "Photon Mode";
+  case ELECTRON_MODE: return "Electron Mode";
+  case NEUTRON_PHOTON_MODE: return "Neutron-Photon Mode";
+  case PHOTON_ELECTRON_MODE: return "Photon-Electron Mode";
+  case NEUTRON_PHOTON_ELECTRON_MODE: return "Neutron-Photon-Electron Mode";
+  case ADJOINT_NEUTRON_MODE: return "Adjoint Neutron Mode";
+  case ADJOINT_PHOTON_MODE: return "Adjoint Photon Mode";
+  case ADJOINT_ELECTRON_MODE: return "Adjoint Electron Mode";
+  default:
+    THROW_EXCEPTION( std::logic_error,
+		     "Error: unknown particle mode encountered!" );
   }
 }
 

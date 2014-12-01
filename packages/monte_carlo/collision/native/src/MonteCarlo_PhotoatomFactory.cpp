@@ -165,7 +165,7 @@ void PhotoatomFactory::createPhotoatomFromACETable(
 			    " is invalid! Please fix this entry." );
   
   std::cout << "Loading ACE photoatomic cross section table "
-	    << photoatom_table_name << " (" << photoatom_alias << ") ... ";
+	    << photoatomic_table_name << " (" << photoatom_alias << ") ... ";
 
   // Check if the table has already been loaded
   if( d_photoatomic_table_name_map.find( photoatomic_table_name ) ==
@@ -196,7 +196,7 @@ void PhotoatomFactory::createPhotoatomFromACETable(
 
     // Create the new photoatom
     PhotoatomACEFactory::createPhotoatom( xss_data_extractor,
-					  photoatom_table_name,
+					  photoatomic_table_name,
 					  atomic_weight,
 					  atomic_relaxation_model,
 					  photoatom,
@@ -213,8 +213,6 @@ void PhotoatomFactory::createPhotoatomFromACETable(
     d_photoatom_name_map[photoatom_alias] = 
       d_photoatomic_table_name_map[photoatomic_table_name];
   }
-  
-  std::cout << "done." << std::endl;
 }
 
 } // end MonteCarlo namespace

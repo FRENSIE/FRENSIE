@@ -13,6 +13,9 @@
 #include "FRENSIE_dagmc_config.hpp"
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
 #include "MonteCarlo_NuclideFactory.hpp"
+#include "MonteCarlo_PhotoatomFactory.hpp"
+#include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 
 #ifdef HAVE_FRENSIE_DAGMC
 #include "Geometry_DagMCHelpers.hpp"
@@ -26,6 +29,10 @@
 namespace MonteCarlo{
 
 // Initialize the collision handler using DagMC
+/*! \details Make sure the simulation properties have been set 
+ * (in MonteCarlo::SimulationProperties) before running this factory
+ * method. The properties will influence how this factory method behaves.
+ */
 void CollisionHandlerFactory::initializeHandlerUsingDagMC( 
 		       const Teuchos::ParameterList& material_reps,
 		       const Teuchos::ParameterList& cross_sections_table_info,
@@ -60,7 +67,7 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
     alias_map_list = cross_sections_table_info.sublist( "alias map" );
   }
   EXCEPTION_CATCH_AND_EXIT( std::exception, 
-			    "The cross_sections.xml file in " 
+			    "Error: The cross_sections.xml file in " 
 			    << cross_sections_xml_directory << 
 			    " is invalid - the 'alias_map' ParameterList "
 			    "is not defined!" );
@@ -72,56 +79,95 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 					   alias_map_list,
 					   aliases );
 
-  // Load the nuclides of interest
-  NuclideFactory nuclide_factory( cross_sections_xml_directory,
-				  cross_sections_table_info,
-				  aliases );
-
-  boost::unordered_map<std::string,Teuchos::RCP<Nuclide> > nuclide_map;
-
-  nuclide_factory.createNuclideMap( nuclide_map );
-
   // Create the material id data maps
   boost::unordered_map<ModuleTraits::InternalMaterialHandle,
                        Teuchos::Array<double> > material_id_fraction_map;
   boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                       Teuchos::Array<std::string> > material_id_nuclide_map;
+                       Teuchos::Array<std::string> > material_id_component_map;
   
   CollisionHandlerFactory::createMaterialIdDataMaps( material_reps,
 						     material_id_fraction_map,
-						     material_id_nuclide_map );
+						     material_id_component_map );
 
-  // Create the material name data maps
-  boost::unordered_map<std::string,Teuchos::RCP<NeutronMaterial> >
-    material_name_pointer_map;
+  // Create the cell id data maps using DagMC
+  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+		       std::vector<std::string> > cell_id_mat_id_map;
   
-  boost::unordered_map<std::string,
-                   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >
-    material_name_cell_ids_map;
+  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+		       std::vector<std::string> > cell_id_density_map;
 
-  CollisionHandlerFactory::createMaterialNameDataMapsUsingDagMC( 
-						  material_id_fraction_map,
-						  material_id_nuclide_map,
-						  nuclide_map,
-						  material_name_pointer_map,
-						  material_name_cell_ids_map );
+  createCellIdDataMapsUsingDagMC( cell_id_mat_id_map, cell_id_density_map );
 
-  // Initialize the Collision Handler
-  boost::unordered_map<std::string,
-                       Teuchos::RCP<NeutronMaterial> >::const_iterator
-    material_name_pointer_it = material_name_pointer_map.begin();
-  
-  while( material_name_pointer_it != material_name_pointer_map.end() )
+  // Initialize an atomic relaxation model factory
+  Teuchos::RCP<AtomicRelaxationModelFactory> atomic_relaxation_model_factory(
+					    new AtomicRelaxationModelFactory );
+
+  // Load the cross section data
+  switch( SimulationProperties::getParticleMode() )
   {
-    const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-      cells_containing_material = material_name_cell_ids_map.find( 
-				     material_name_pointer_it->first )->second;
-    
-    CollisionHandler::addMaterial( material_name_pointer_it->second,
-				   cells_containing_material );
-
-    ++material_name_pointer_it;
+  case NEUTRON_MODE:
+  {
+    CollisionHandlerFactory::createNeutronMaterials(
+						  cross_sections_table_info,
+						  cross_sections_xml_directory,
+						  material_id_fraction_map,
+						  material_id_component_map,
+						  aliases,
+						  cell_id_mat_id_map,
+						  cell_id_density_map );
+    break;
   }
+  case PHOTON_MODE:
+  {
+    CollisionHandlerFactory::createPhotonMaterials(
+		     cross_sections_table_info,
+		     cross_sections_xml_directory,
+		     material_id_fraction_map,
+		     material_id_component_map,
+		     aliases,
+		     cell_id_mat_id_map,
+		     cell_id_density_map,
+		     atomic_relaxation_model_factory,
+		     SimulationProperties::isPhotonDopplerBroadeningModeOn(),
+		     SimulationProperties::isDetailedPairProductionModeOn(),
+		     SimulationProperties::isAtomicRelaxationModeOn(),
+		     SimulationProperties::isPhotonuclearInteractionModeOn() );
+    break;
+  }
+  case NEUTRON_PHOTON_MODE:
+  {
+    std::cerr << "Warning: Neutron-Photon mode is not fully supported!" 
+	      << std::endl;
+    
+    CollisionHandlerFactory::createNeutronMaterials(
+						  cross_sections_table_info,
+						  cross_sections_xml_directory,
+						  material_id_fraction_map,
+						  material_id_component_map,
+						  aliases,
+						  cell_id_mat_id_map,
+						  cell_id_density_map );
+
+    CollisionHandlerFactory::createPhotonMaterials(
+		     cross_sections_table_info,
+		     cross_sections_xml_directory,
+		     material_id_fraction_map,
+		     material_id_component_map,
+		     aliases,
+		     cell_id_mat_id_map,
+		     cell_id_density_map,
+		     atomic_relaxation_model_factory,
+		     SimulationProperties::isPhotonDopplerBroadeningModeOn(),
+		     SimulationProperties::isDetailedPairProductionModeOn(),
+		     SimulationProperties::isAtomicRelaxationModeOn(),
+		     SimulationProperties::isPhotonuclearInteractionModeOn() );
+    break;
+  }
+  default:
+    THROW_EXCEPTION( std::logic_error,
+		     "Error: " << SimulationProperties::getParticleMode() <<
+		     " is not currently supported!" );
+  }	    
 }
 
 // Validate a material representation
@@ -225,8 +271,17 @@ void CollisionHandlerFactory::createAliasSet(
       // The name is a key - store the mapped name
       if( cross_sections_alias_map.isParameter( material_isotopes[i] ) )
       {
-	nuclides.insert( 
-	   cross_sections_alias_map.get<std::string>( material_isotopes[i] ) );
+	std::string mapped_alias;
+	try{ 
+	  mapped_alias = 
+	    cross_sections_alias_map.get<std::string>( material_isotopes[i] );
+        }
+	EXCEPTION_CATCH_AND_EXIT( Teuchos::Exception::InvalidParameter,
+				  "Error: cross section alias map entry "
+				  << material_isotopes[i] <<
+				  "is invalid! Please fix this entry." );
+
+	nuclides.insert( mapped_alias );	   
       }
       // The name is not a key - store the name
       else
@@ -243,7 +298,7 @@ void CollisionHandlerFactory::createMaterialIdDataMaps(
      boost::unordered_map<ModuleTraits::InternalMaterialHandle,
                           Teuchos::Array<double> >& material_id_fraction_map,
      boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                       Teuchos::Array<std::string> >& material_id_nuclide_map )
+                       Teuchos::Array<std::string> >& material_id_component_map )
 {
   Teuchos::ParameterList::ConstIterator it = material_reps.begin();
 
@@ -267,27 +322,20 @@ void CollisionHandlerFactory::createMaterialIdDataMaps(
     material_id_fraction_map[material_rep.get<unsigned>( "Id" )] = 
       material_fractions;
 
-    material_id_nuclide_map[material_rep.get<unsigned>( "Id" )] = 
+    material_id_component_map[material_rep.get<unsigned>( "Id" )] = 
       material_isotopes;
     
     ++it;
   }
 }
 
-// Create the material name data maps
+// Create the cell id data maps using DagMC
 // If DagMC has not been enabled this function will be empty
-void CollisionHandlerFactory::createMaterialNameDataMapsUsingDagMC(
-     const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                            Teuchos::Array<double> >& material_id_fraction_map,
-     const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                        Teuchos::Array<std::string> >& material_id_nuclide_map,
-     const boost::unordered_map<std::string,Teuchos::RCP<Nuclide> >& 
-     nuclide_map,
-     boost::unordered_map<std::string,Teuchos::RCP<NeutronMaterial> >&
-     material_name_pointer_map,
-     boost::unordered_map<std::string,
-                  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >&
-     material_name_cell_ids_map )
+void CollisionHandlerFactory::createCellIdDataMapsUsingDagMC(
+          boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                               std::vector<std::string> >& cell_id_mat_id_map,
+          boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                              std::vector<std::string> >& cell_id_density_map )
 {
   #ifdef HAVE_FRENSIE_DAGMC
   // Get the cell material property values
@@ -311,69 +359,115 @@ void CollisionHandlerFactory::createMaterialNameDataMapsUsingDagMC(
 		      InvalidMaterialRepresentation,
 		      "Error: DagMC must specify densities with material "
 		      "ids." );
-
-  // Load the nuclide name data maps
-  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                       std::vector<std::string> >::const_iterator 
-    cell_id_mat_id_it = cell_id_mat_id_map.begin();
-
-  while( cell_id_mat_id_it != cell_id_mat_id_map.end() )
-  {
-    TEST_FOR_EXCEPTION( cell_id_mat_id_it->second.size() > 1,
-			InvalidMaterialRepresentation,
-			"Error: DagMC set " 
-			<< cell_id_mat_id_it->second.size() << " material "
-			"ids to cell "
-			<< cell_id_mat_id_it->first << "!" );
-    TEST_FOR_EXCEPTION( cell_id_density_map.find( cell_id_mat_id_it->first )->second.size() > 1,
-			InvalidMaterialRepresentation,
-			"Error: DagMC set " 
-			<< cell_id_mat_id_it->second.size() << " densities "
-			"to cell "
-			<< cell_id_mat_id_it->first << "!" );
-    
-    Teuchos::RCP<std::istringstream> 
-      iss( new std::istringstream( cell_id_mat_id_it->second[0] ) );
-
-    ModuleTraits::InternalMaterialHandle material_id;
-
-    *iss >> material_id;
-
-    Geometry::ModuleTraits::InternalCellHandle cell_id = 
-      cell_id_mat_id_it->first;
-
-    std::string density_string = 
-      cell_id_density_map.find( cell_id_mat_id_it->first )->second[0];
-
-    iss.reset( new std::istringstream( density_string ) );
-
-    double density;
-
-    *iss >> density;
-
-    std::string material_name( cell_id_mat_id_it->second[0] );
-    material_name += "_";
-    material_name += density_string;
-
-    if( material_name_pointer_map.find( material_name ) == 
-	material_name_pointer_map.end() )
-    {
-      Teuchos::RCP<NeutronMaterial>& new_material= 
-	material_name_pointer_map[material_name];
-
-      new_material.reset( new NeutronMaterial( 
-		       material_id,
-		       density,
-		       nuclide_map,
-		       material_id_fraction_map.find( material_id)->second,
-		       material_id_nuclide_map.find( material_id )->second ) );
-    }
-
-    material_name_cell_ids_map[material_name].push_back( cell_id );
-
-    ++cell_id_mat_id_it;
-  }
   #endif // end HAVE_FRENSIE_DAGMC
+}
+
+// Create the neutron materials
+void CollisionHandlerFactory::createNeutronMaterials( 
+   const Teuchos::ParameterList& cross_sections_table_info,
+   const std::string& cross_sections_xml_directory,
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                            Teuchos::Array<double> >& material_id_fraction_map,
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                      Teuchos::Array<std::string> >& material_id_component_map,
+   const boost::unordered_set<std::string>& nuclide_aliases,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                              std::vector<std::string> >& cell_id_mat_id_map,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                             std::vector<std::string> >& cell_id_density_map )
+{
+  // Load the nuclides of interest
+  NuclideFactory nuclide_factory( cross_sections_xml_directory,
+				  cross_sections_table_info,
+				  nuclide_aliases );
+
+  boost::unordered_map<std::string,Teuchos::RCP<Nuclide> > nuclide_map;
+
+  nuclide_factory.createNuclideMap( nuclide_map );
+
+  // Create the material name data maps
+  boost::unordered_map<std::string,Teuchos::RCP<NeutronMaterial> >
+    material_name_pointer_map;
+  
+  boost::unordered_map<std::string,
+                   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >
+    material_name_cell_ids_map;
+
+  CollisionHandlerFactory::createMaterialNameDataMaps( 
+						  material_id_fraction_map,
+						  material_id_component_map,
+						  nuclide_map,
+						  cell_id_mat_id_map,
+						  cell_id_density_map,
+						  material_name_pointer_map,
+						  material_name_cell_ids_map );
+
+  // Register materials with the collision handler
+  CollisionHandlerFactory::registerMaterials( material_name_pointer_map,
+					      material_name_cell_ids_map );
+}
+
+// Create the photon materials
+void CollisionHandlerFactory::createPhotonMaterials(
+   const Teuchos::ParameterList& cross_sections_table_info,
+   const std::string& cross_sections_xml_directory,
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                            Teuchos::Array<double> >& material_id_fraction_map,
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                      Teuchos::Array<std::string> >& material_id_component_map,
+   const boost::unordered_set<std::string>& photoatom_aliases,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                              std::vector<std::string> >& cell_id_mat_id_map,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                               std::vector<std::string> >& cell_id_density_map,
+   const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+   atomic_relaxation_model_factory,
+   const bool use_doppler_broadening_data,
+   const bool use_detailed_pair_production_data,
+   const bool use_atomic_relaxation_data,
+   const bool use_photonuclear_data )
+{
+  boost::unordered_map<std::string,Teuchos::RCP<Photoatom> > photoatom_map;
+
+  // Load the photonuclides of interest
+  if( use_photonuclear_data )
+  {
+    THROW_EXCEPTION( std::logic_error,
+		     "Error: Photonuclear data is not currently supported!" );
+  }
+  // Load the photoatoms of interest
+  else
+  {
+    PhotoatomFactory photoatom_factory( cross_sections_xml_directory,
+					cross_sections_table_info,
+					photoatom_aliases,
+					atomic_relaxation_model_factory,
+					use_doppler_broadening_data,
+					use_detailed_pair_production_data,
+					use_atomic_relaxation_data );
+    photoatom_factory.createPhotoatomMap( nuclide_map );
+  }
+
+  // Create the material name data maps
+  boost::unordered_map<std::string,Teuchos::RCP<NeutronMaterial> >
+    material_name_pointer_map;
+  
+  boost::unordered_map<std::string,
+                   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >
+    material_name_cell_ids_map;
+
+  CollisionHandlerFactory::createMaterialNameDataMaps( 
+						  material_id_fraction_map,
+						  material_id_component_map,
+						  photoatom_map,
+						  cell_id_mat_id_map,
+						  cell_id_density_map,
+						  material_name_pointer_map,
+						  material_name_cell_ids_map );
+
+  // Register materials with the collision handler
+  CollisionHandlerFactory::registerMaterials( material_name_pointer_map,
+					      material_name_cell_ids_map );
 }
 
 } // end MonteCarlo namespace
