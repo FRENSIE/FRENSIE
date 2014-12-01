@@ -1,51 +1,73 @@
 <ParameterList name="cross sections">
-  <Parameter name="is_ascii" type="bool" value="true"/>
+  
   <ParameterList name="alias map">
     <Parameter name="1001" type="string" value="H-1_293.6K"/>
+    <Parameter name="Light-Hydrogen" type="string" value="H-1_293.6K"/>
+    <Parameter name="8016" type="string" value="O-16_293.6K"/>
+    <Parameter name="82208" type="string" value="Pb-208_293.6K"/>
+    <Parameter name="92238" type="string" value="U-238_293.6K"/>
+    <Parameter name="Depleted-Uranium" type="string" value="U-238_293.6K"/>
+    <Parameter name="8000" type="string" value="O"/>
+    <Parameter name="8" type="string" value="O"/>
     <Parameter name="82000" type="string" value="Pb"/>
     <Parameter name="82" type="string" value="Pb"/>
   </ParameterList>
+
+  <!-- Neutron-photon-electron transport data -->
+  
   <ParameterList name="H-1_293.6K">
-    <Parameter name="file_path" type="string" value="test_h1_ace_file.txt"/>
-    <Parameter name="table_name" type="string" value="1001.70c"/>
-    <Parameter name="start_line" type="int" value="1"/>
-    <Parameter name="is_ascii" type="bool" value="true"/>
-    <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
+    <Parameter name="nuclear_file_path" type="string" value="test_h1_ace_file.txt"/>
+    <Parameter name="nuclear_file_type" type="string" value="ACE"/>
+    <Parameter name="nuclear_file_start_line" type="int" value="1"/>
+    <Parameter name="nuclear_table_name" type="string" value="1001.70c"/>
+    <Parameter name="photoatomic_file_path" type="string" value="test_h_epr_ace_file.txt"/>
+    <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="photoatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="photoatomic_table_name" type="string" value="1000.12p"/>
+    <Parameter name="electroatomic_file_path" type="string" value="test_h_epr_ace_file.txt"/>
+    <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="electroatomic_table_name" type="string" value="1000.12p"/>
     <Parameter name="temperature" type="double" value="2.53010e-08"/>
+    <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
     <Parameter name="atomic_number" type="int" value="1"/>
     <Parameter name="atomic_mass_number" type="int" value="1"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
+
   <ParameterList name="H-1_300K">
-    <Parameter name="file_path" type="string" value="test_h1_ace_file.txt"/>
-    <Parameter name="table_name" type="string" value="1001.71c"/>
-    <Parameter name="start_line" type="int" value="2058"/>
-    <Parameter name="is_ascii" type="bool" value="true"/>
-    <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
+    <Parameter name="nuclear_file_path" type="string" value="test_h1_ace_file.txt"/>
+    <Parameter name="nuclear_file_type" type="string" value="ACE"/>
+    <Parameter name="nuclear_file_start_line" type="int" value="2058"/>
+    <Parameter name="nuclear_table_name" type="string" value="1001.71c"/>
+    <Parameter name="photoatomic_file_path" type="string" value="test_h_epr_ace_file.txt"/>
+    <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="photoatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="photoatomic_table_name" type="string" value="1000.12p"/>
+    <Parameter name="electroatomic_file_path" type="string" value="test_h_epr_ace_file.txt"/>
+    <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="electroatomic_table_name" type="string" value="1000.12p"/>
     <Parameter name="temperature" type="double" value="5.17040e-08"/>
+    <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
     <Parameter name="atomic_number" type="int" value="1"/>
     <Parameter name="atomic_mass_number" type="int" value="1"/>
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
+
   <ParameterList name="H-1_900K">
-    <Parameter name="file_path" type="string" value="test_h1_ace_file.txt"/>
-    <Parameter name="table_name" type="string" value="1001.72c"/>
-    <Parameter name="start_line" type="int" value="4115"/>
-    <Parameter name="is_ascii" type="bool" value="true"/>
-    <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
-    <Parameter name="temperature" type="double" value="7.75560e-8"/>
-    <Parameter name="atomic_number" type="int" value="1"/>
-    <Parameter name="atomic_mass_number" type="int" value="1"/>
-    <Parameter name="isomer_number" type="int" value="0"/>
-  </ParameterList>
-
-  <ParameterList name="H-1_900K-test">
-    <Parameter name="neutron_file_path" type="string" value="test_h1_ace_file.txt"/>
-    <Parameter name="neutron_file_is_ascii" type="bool" value="true"/>
-    <Parameter name="neutron_file_start_line" type="int" value="4115"/>
-    <Parameter name="neutron_table_name" type="string" value="1001.72c"/>
-    <Parameter name="photoatomic_alias" type="string" value="H"/>
-    <Parameter name="electroatomic_alias" type="string" value="H"/>	       
+    <Parameter name="nuclear_file_path" type="string" value="test_h1_ace_file.txt"/>
+    <Parameter name="nuclear_file_type" type="string" value="ACE"/>
+    <Parameter name="nuclear_file_start_line" type="int" value="4115"/>
+    <Parameter name="nuclear_table_name" type="string" value="1001.72c"/>
+    <Parameter name="photoatomic_file_path" type="string" value="test_h_epr_ace_file.txt"/>
+    <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="photoatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="photoatomic_table_name" type="string" value="1000.12p"/>
+    <Parameter name="electroatomic_file_path" type="string" value="test_h_epr_ace_file.txt"/>
+    <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="electroatomic_table_name" type="string" value="1000.12p"/>
     <Parameter name="temperature" type="double" value="7.75560e-8"/>
     <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
     <Parameter name="atomic_number" type="int" value="1"/>
@@ -53,24 +75,118 @@
     <Parameter name="isomer_number" type="int" value="0"/>
   </ParameterList>
 
-  <ParameterList name="H-Nat_900K">
-    <Parameter name="isotopes" type="Array(string)" value="{H-1_900K,H-2_900K}"/>
-    <Parameter name="weight_fractions" type="Array(double)" value="{0.999885,0.000115}"/>
-    <Parameter name="atom_fractions" type="Array(double)" value="{0.99994245250017,1.1500660779742e-4}"/>
+  <ParameterList name="O-16_293.6K">
+    <Parameter name="nuclear_file_path" type="string" value="test_o16_ace_file.txt"/>
+    <Parameter name="nuclear_file_type" type="string" value="ACE"/>
+    <Parameter name="nuclear_file_start_line" type="int" value="1"/>
+    <Parameter name="nuclear_table_name" type="string" value="8016.70c"/>
+    <Parameter name="photoatomic_file_path" type="string" value="test_o_epr_ace_file.txt"/>
+    <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="photoatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="photoatomic_table_name" type="string" value="8000.12p"/>
+    <Parameter name="electroatomic_file_path" type="string" value="test_o_epr_ace_file.txt"/>
+    <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="electroatomic_table_name" type="string" value="8000.12p"/>
+    <Parameter name="temperature" type="double" value="2.53010e-08"/>
+    <Parameter name="atomic_weight_ratio" type="double" value="15.857510"/>
+    <Parameter name="atomic_number" type="int" value="8"/>
+    <Parameter name="atomic_mass_number" type="int" value="16"/>
+    <Parameter name="isomer_number" type="int" value="0"/>
+  </ParameterList>
+
+  <ParameterList name="Pb-208_293.6K">
+    <Parameter name="nuclear_file_path" type="string" value="test_pb208_ace_file.txt"/>
+    <Parameter name="nuclear_file_type" type="string" value="ACE"/>
+    <Parameter name="nuclear_file_start_line" type="int" value="1"/>
+    <Parameter name="nuclear_table_name" type="string" value="82208.70c"/>
+    <Parameter name="photoatomic_file_path" type="string" value="test_pb_epr_ace_file.txt"/>
+    <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="photoatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="photoatomic_table_name" type="string" value="82000.12p"/>
+    <Parameter name="electroatomic_file_path" type="string" value="test_pb_epr_ace_file.txt"/>
+    <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="electroatomic_table_name" type="string" value="82000.12p"/>
+    <Parameter name="temperature" type="double" value="2.53010e-08"/>
+    <Parameter name="atomic_weight_ratio" type="double" value="206.190000"/>
+    <Parameter name="atomic_number" type="int" value="82"/>
+    <Parameter name="atomic_mass_number" type="int" value="208"/>
+    <Parameter name="isomer_number" type="int" value="0"/>
+  </ParameterList>
+
+  <ParameterList name="U-238_293.6K">
+    <Parameter name="nuclear_file_path" type="string" value="test_u238_ace_file.txt"/>
+    <Parameter name="nuclear_file_type" type="string" value="ACE"/>
+    <Parameter name="nuclear_file_start_line" type="int" value="1"/>
+    <Parameter name="nuclear_table_name" type="string" value="92238.70c"/>
+    <Parameter name="photoatomic_file_path" type="string" value="test_u_epr_ace_file.txt"/>
+    <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="photoatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="photoatomic_table_name" type="string" value="92000.12p"/>
+    <Parameter name="electroatomic_file_path" type="string" value="test_u_epr_ace_file.txt"/>
+    <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="electroatomic_table_name" type="string" value="92000.12p"/>
+    <Parameter name="temperature" type="double" value="2.53010e-08"/>
+    <Parameter name="atomic_weight_ratio" type="double" value="236.005800"/>
+    <Parameter name="atomic_number" type="int" value="92"/>
+    <Parameter name="atomic_mass_number" type="int" value="238"/>
+    <Parameter name="isomer_number" type="int" value="0"/>
+  </ParameterList>
+
+  <!-- Photon-electron transport data -->
+  
+  <ParameterList name="H">
+    <Parameter name="photoatomic_file_path" type="string" value="test_h_epr_ace_file.txt"/>
+    <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="photoatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="photoatomic_table_name" type="string" value="1000.12p"/>
+    <Parameter name="electroatomic_file_path" type="string" value="test_h_epr_ace_file.txt"/>
+    <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="electroatomic_table_name" type="string" value="1000.12p"/>
+    <Parameter name="atomic_number" type="int" value="1"/>
+    <Parameter name="atomic_weight_ratio" type="double" value="0.999242"/>
+  </ParameterList>
+
+  <ParameterList name="O">
+    <Parameter name="photoatomic_file_path" type="string" value="test_o_epr_ace_file.txt"/>
+    <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="photoatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="photoatomic_table_name" type="string" value="8000.12p"/>
+    <Parameter name="electroatomic_file_path" type="string" value="test_o_epr_ace_file.txt"/>
+    <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="electroatomic_table_name" type="string" value="8000.12p"/>
+    <Parameter name="atomic_number" type="int" value="8"/>
+    <Parameter name="atomic_weight_ratio" type="double" value="15.862000"/>
   </ParameterList>
   
   <ParameterList name="Pb">
-    <Parameter name="photon_file_path" type="string" value="test_pb_epr_ace_file.txt"/>
-    <Parameter name="photon_file_is_ascii" type="bool" value="true"/>
-    <Parameter name="photon_file_start_line" type="int" value="1"/>
-    <Parameter name="photon_table_name" type="string" value="82000.12p"/>
-    <Parameter name="photon_table_type" type="string" value="ACE"/>
-    <Parameter name="electron_file_path" type="string" value="test_pb_epr_ace_file.txt"/>
-    <Parameter name="electron_file_is_ascii" type="bool" value="true"/>
-    <Parameter name="electron_file_start_line" type="int" value="1"/>
-    <Parameter name="electron_table_name" type="string" value="82000.12p"/>
-    <Parameter name="electron_table_type" type="string" value="ACE"/>
+    <Parameter name="photoatomic_file_path" type="string" value="test_pb_epr_ace_file.txt"/>
+    <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="photoatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="photoatomic_table_name" type="string" value="82000.12p"/>
+    <Parameter name="electroatomic_file_path" type="string" value="test_pb_epr_ace_file.txt"/>
+    <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="electroatomic_table_name" type="string" value="82000.12p"/>
     <Parameter name="atomic_number" type="int" value="82"/>
     <Parameter name="atomic_weight_ratio" type="double" value="205.42"/>
   </ParameterList>
+
+  <ParameterList name="U">
+    <Parameter name="photoatomic_file_path" type="string" value="test_u_epr_ace_file.txt"/>
+    <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="photoatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="photoatomic_table_name" type="string" value="92000.12p"/>
+    <Parameter name="electroatomic_file_path" type="string" value="test_u_epr_ace_file.txt"/>
+    <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="electroatomic_table_name" type="string" value="92000.12p"/>
+    <Parameter name="atomic_number" type="int" value="92"/>
+    <Parameter name="atomic_weight_ratio" type="double" value="235.984000"/>
+  </ParameterList>
+
 </ParameterList>
