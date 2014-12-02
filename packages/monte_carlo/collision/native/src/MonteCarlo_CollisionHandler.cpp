@@ -139,41 +139,35 @@ CollisionHandler::getCellPhotonMaterial(
 
 // Get the total macroscopic cross section of a material
 double CollisionHandler::getMacroscopicTotalCrossSection(
-						const ParticleState& particle )
+						const NeutronState& particle )
 {
   // Make sure the cell is not void
-  testPrecondition( !CollisionHandler::isCellVoid(particle.getCell(),
-						  particle.getParticleType()));
+  testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
+						   NEUTRON ) );
   
-  switch( particle.getParticleType() )
-  {
-  case NEUTRON:
-  {
-    Teuchos::RCP<NeutronMaterial>& material = 
-      CollisionHandler::master_neutron_map.find( particle.getCell() )->second;
-    
-    return material->getMacroscopicTotalCrossSection( particle.getEnergy() );
-  }  
-  case PHOTON:
-  {
-    Teuchos::RCP<PhotonMaterial>& material = 
+  Teuchos::RCP<NeutronMaterial>& material = 
+    CollisionHandler::master_neutron_map.find( particle.getCell() )->second;
+}
+
+// Get the total macroscopic cross section of a material
+double CollisionHandler::getMacroscopicTotalCrossSection(
+						  const PhotonState& particle )
+{
+  // Make sure the cell is not void
+  testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
+						   PHOTON ) );
+
+  Teuchos::RCP<PhotonMaterial>& material = 
       CollisionHandler::master_photon_map.find( particle.getCell() )->second;
     
-    return material->getMacroscopicTotalCrossSection( particle.getEnergy() );
-  }  
-  default:
-    return 0.0;
-  }
+  return material->getMacroscopicTotalCrossSection( particle.getEnergy() );
 }
 
 // Get the macroscopic cross section for a specific reaction
 double CollisionHandler::getMacroscopicReactionCrossSection(
-					   const ParticleState& particle,
+					   const NeutronState& particle,
 					   const NuclearReactionType reaction )
 {
-  // Make sure the particle is a neutron
-  testPrecondition( particle.getParticleType() == NEUTRON );
-
   CellIdNeutronMaterialMap::const_iterator it =
     CollisionHandler::master_neutron_map.find( particle.getCell() );
   
@@ -188,12 +182,9 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
 
 // Get the macroscopic cross section for a specific reaction
 double CollisionHandler::getMacroscopicReactionCrossSection(
-				      const ParticleState& particle,
+				      const PhotonState& particle,
 				      const PhotoatomicReactionType reaction )
 {
-  // Make sure the particle is a photon
-  testPrecondition( particle.getParticleType() == PHOTON );
-
   CellIdPhotonMaterialMap::const_iterator it = 
     CollisionHandler::master_photon_map.find( particle.getCell() );
 
@@ -208,12 +199,9 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
 
 // Get the macroscopic cross section for a specific reaction
 double CollisionHandler::getMacroscopicReactionCrossSection(
-				      const ParticleState& particle,
+				      const PhotonState& particle,
 				      const PhotonuclearReactionType reaction )
 {
-  // Make sure the particle is a photon
-  testPrecondition( particle.getParticleType() == PHOTON );
-
   CellIdPhotonMaterialMap::const_iterator it = 
     CollisionHandler::master_photon_map.find( particle.getCell() );
 
@@ -227,53 +215,39 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
 }
 
 // Collide with the material in a cell
-void CollisionHandler::collideWithCellMaterial( ParticleState& particle,
+void CollisionHandler::collideWithCellMaterial( NeutronState& particle,
 						ParticleBank& bank,
 						const bool analogue )
 {
   // Make sure the cell is not void
-  testPrecondition( !CollisionHandler::isCellVoid(particle.getCell(),
-						  particle.getParticleType()));
+  testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
+						   NEUTRON ) );
   
-  switch( particle.getParticleType() )
-  {
-  case NEUTRON:
-  {
-    const Teuchos::RCP<NeutronMaterial>& material = 
-      CollisionHandler::master_neutron_map.find( particle.getCell() )->second;
-
-    if( analogue )
-      material->collideAnalogue( dynamic_cast<NeutronState&>(particle), bank );
-    else
-    {
-      material->collideSurvivalBias( dynamic_cast<NeutronState&>( particle ),
-				     bank );
-    }
-
-    break; 
-  }
+  const Teuchos::RCP<NeutronMaterial>& material = 
+    CollisionHandler::master_neutron_map.find( particle.getCell() )->second;
   
-  case PHOTON:
-  {
-    const Teuchos::RCP<PhotonMaterial>& material = 
-      CollisionHandler::master_photon_map.find( particle.getCell() )->second;
+  if( analogue )
+    material->collideAnalogue( particle, bank );
+  else
+    material->collideSurvivalBias( particle, bank );
+}
 
-    if( analogue )
-      material->collideAnalogue( dynamic_cast<PhotonState&>(particle), bank );
-    else
-    {
-      material->collideSurvivalBias( dynamic_cast<PhotonState&>(particle),
-				     bank );
-    }
-
-    break;
-  }
+// Collide with the material in a cell
+void CollisionHandler::collideWithCellMaterial( PhotonState& particle,
+						ParticleBank& bank,
+						const bool analogue )
+{
+  // Make sure the cell is not void
+  testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
+						   PHOTON ) );
   
-  default:
-    THROW_EXCEPTION( std::logic_error, 
-		     "Error: particle type " << particle.getParticleType() <<
-		     "is not currently supported!" );
-  }
+  const Teuchos::RCP<PhotonMaterial>& material = 
+    CollisionHandler::master_photon_map.find( particle.getCell() )->second;
+  
+  if( analogue )
+    material->collideAnalogue( particle, bank );
+  else
+    material->collideSurvivalBias( particle, bank );   
 }
 
 } // end MonteCarlo namespace

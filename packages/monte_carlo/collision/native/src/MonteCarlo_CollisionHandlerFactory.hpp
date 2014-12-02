@@ -18,6 +18,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CollisionHandler.hpp"
+#include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 
 namespace MonteCarlo{
 
@@ -64,9 +65,9 @@ private:
 
   // Create the cell id data maps using DagMC
   static void createCellIdDataMapsUsingDagMC(
-   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+         boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
                               std::vector<std::string> >& cell_id_mat_id_map,
-   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+	 boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
                              std::vector<std::string> >& cell_id_density_map );
 
   // Create the material name data maps
