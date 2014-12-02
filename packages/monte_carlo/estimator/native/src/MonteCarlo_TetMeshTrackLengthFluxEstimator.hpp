@@ -97,6 +97,10 @@ private:
   // The last cell that was visited
   Geometry::ModuleTraits::InternalCellHandle d_last_visited_cell;
 
+  // The map of tet ids and tet volumes
+  boost::unordered_map<moab::EntityHandle,const double> 
+  d_tet_volumes;
+
   // The map of tet ids and barycentric coordinate transform matrices
   boost::unordered_map<moab::EntityHandle,moab::Matrix3> 
   d_tet_barycentric_transform_matrices;
