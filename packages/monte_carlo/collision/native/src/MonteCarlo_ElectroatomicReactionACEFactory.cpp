@@ -11,10 +11,12 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
+#include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
 #include "MonteCarlo_HardElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
@@ -38,13 +40,7 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
   // Extract the cross section
   Teuchos::ArrayRCP<double> elastic_cross_section;
   unsigned threshold_energy_index;
-/*
-  ElectroatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
-			    energy_grid,
-			    raw_electroatom_data.extractElasticCrossSection(),
-			    elastic_cross_section,
-			    threshold_energy_index );
-*/
+
   // Extract the elastic scattering information data block (ELASI)
   Teuchos::ArrayView<const double> elasi_block(
 				      raw_electroatom_data.extractELASIBlock() );
@@ -93,6 +89,7 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
                           scattering_function ) );
 }
 
+
 // Create an atomic excitation electroatomic reaction
 void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
 			const Data::XSSEPRDataExtractor& raw_electroatom_data,
@@ -108,53 +105,41 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
   // Extract the cross section
   Teuchos::ArrayRCP<double> atomic_excitation_cross_section;
   unsigned threshold_energy_index;
-/*
-  ElectroatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
-			    energy_grid,
-			    raw_electroatom_data.extractExcitationCrossSection(),
-			    atomic_excitation_cross_section,
-			    threshold_energy_index );
 
-  // Create the atomic form factor
-  Teuchos::ArrayView<const double> jcohe_block = 
-    raw_electroatom_data.extractJCOHEBlock();
+  // Extract the elastic scattering information data block (EXCIT)
+  Teuchos::ArrayView<const double> excit_block(
+				      raw_electroatom_data.extractEXCITBlock() );
+  
+  // Extract the number of tabulated energies
+  int size = excit_block.size()/2;
 
-  unsigned form_factor_size = jcohe_block.size()/3;
+  // Extract the energy grid for atomic excitation energy loss
+  Teuchos::Array<double> excitation_energy_grid(excit_block(0,size));
 
-  Teuchos::Array<double> recoil_momentum_squared(
-					  jcohe_block( 0, form_factor_size ) );
+  // Extract the energy loss for atomic excitation
+  Teuchos::Array<double> energy_loss(excit_block(size,size));
 
-  Teuchos::Array<double> form_factor_squared(
-			 jcohe_block( 2*form_factor_size, form_factor_size ) );
+  // Create the energy loss distributions
+  Teuchos::RCP<Utility::OneDDistribution> energy_loss_distribution;
+  
+  energy_loss_distribution.reset( 
+    new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,
+		                                               energy_loss ) );
 
-  // The stored recoil momemtum has units of inverse Angstroms - convert to
-  // inverse cm^2
-  for( unsigned i = 0; i < form_factor_size; ++i )
-  {
-    recoil_momentum_squared[i] *= recoil_momentum_squared[i]*1e16;
-    
-    form_factor_squared[i] *= form_factor_squared[i];
-  }
-
-  Teuchos::RCP<Utility::OneDDistribution> form_factor(
-			     new Utility::TabularDistribution<Utility::LogLog>(
-						      recoil_momentum_squared,
-						      form_factor_squared ) );
-
-  // Create the coherent reaction
-  coherent_reaction.reset(
-			  new CoherentElectroatomicReaction<Utility::LogLog>(
-							energy_grid,
-							coherent_cross_section,
-							threshold_energy_index,
-							form_factor ) );*/
+  atomic_excitation_reaction.reset(
+	new AtomicExcitationElectroatomicReaction<Utility::LinLin>(
+						  energy_grid,
+						  atomic_excitation_cross_section,
+						  threshold_energy_index,				
+                          energy_loss_distribution ) );
 }
 
+/*
 // Create the total electroionization electroatomic reaction
 static void createTotalElectroionizationReaction(
 		   const Data::XSSEPRDataExtractor& raw_electroatom_data,
 		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<ElectroatomicReaction>& electroionization_reaction)
+		   const Teuchos::RCP<ElectroatomicReaction>& electroionization_reaction)
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
@@ -165,12 +150,6 @@ static void createTotalElectroionizationReaction(
   // Extract the cross section
   Teuchos::ArrayRCP<double> electroionization_cross_section;
   unsigned threshold_energy_index;
-/*
-  ElectroatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
-			    energy_grid,
-			    raw_electroatom_data.extractElectroionizationCrossSection(),
-			    electroionization_cross_section,
-			    threshold_energy_index );
 
   // Create the total electroelectric reaction
   electroelectric_reaction.reset(
@@ -178,9 +157,9 @@ static void createTotalElectroionizationReaction(
 						   energy_grid,
 						   electroelectric_cross_section,
 						   threshold_energy_index ) );
-*/
-}
 
+}
+*/
 // Create the subshell electroionization electroatomic reaction
   static void createSubshellElectroionizationReaction(
 		   const Data::XSSEPRDataExtractor& raw_electroatom_data,
@@ -193,8 +172,74 @@ static void createTotalElectroionizationReaction(
 		    energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
+
+  subshell_electroionization_reactions.clear();
 /*
-  subshell_electroelectric_reactions.clear();
+  // Extract the subshell information
+  Teuchos::ArrayView<const double> subshell_endf_designators = 
+    raw_electroatom_data.extractSubshellENDFDesignators();
+
+  Teuchos::Array<SubshellType> subshell_order(
+					    subshell_endf_designators.size() );
+
+    for( unsigned i = 0; i < subshell_order.size(); ++i )
+    {
+      subshell_order[i] = convertENDFDesignatorToSubshellEnum(
+				      (unsigned)subshell_endf_designators[i] );
+    }
+
+  // Extract the electroionization data block (EION)
+  Teuchos::ArrayView<const double> eion_block(
+				      raw_electroatom_data.extractEIONBlock() );
+  
+  // Extract the number of subshells (N_s)
+  int num_shells = subshell_order.size();
+
+  // Extract the number of knock-on tables by subshell (N_i)
+  Teuchos::Array<double> num_tables(eion_block(0,num_shells));
+
+  // Extract the location of info about knock-on tables by subshell
+  Teuchos::Array<double> table_info(eion_block(num_shells,num_shells));
+
+  // Extract the location of knock-on tables by subshell
+  Teuchos::Array<double> table_loc(eion_block(2*num_shells,num_shells));
+
+  for( unsigned shell = 0; shell < subshell_order.size(); ++shell ) 
+  {
+    // Extract the energies for which knock-on sampling tables are given
+    Teuchos::Array<double> table_energy_grid(eion_block( table_info[shell],
+                                                         num_tables[shell] ) );
+ 
+    // Extract the length of the knock-on sampling tables
+    Teuchos::Array<double> table_length(eion_block( 
+                                         table_info[shell] + num_tables[shell],
+                                         num_tables[shell] ) );
+
+    // Extract the offset of the knock-on sampling tables
+    Teuchos::Array<double> table_offset(eion_block( 
+                                        table_info[shell] + 2*num_tables[shell],
+                                        num_tables[shell] ) );
+
+
+    // Create the electroionization sampling table for the subshell
+    Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
+      subshell_distribution( num_tables[shell] );
+  
+  for( unsigned n = 0; n < num_tables[shell]; ++n )
+  {
+    subshell_distribution[n].first = table_energy_grid[n];
+
+    subshell_distribution[n].second.reset( 
+	  new Utility::DiscreteDistribution(
+		 eion_block( table_loc[shell] + table_offset[n], 
+                     table_length[n] ),
+		 eion_block( table_loc[shell] + table_offset[n] + table_length[n], 
+                     table_length[n] ) ) );
+  }
+
+
+/*
+  subshell_electroionization_reactions.clear();
 
   // Extract the subshell information
   Teuchos::ArrayView<const double> subshell_endf_designators = 
@@ -219,7 +264,7 @@ static void createTotalElectroionizationReaction(
   unsigned num_subshells = subshell_order.size();
   unsigned num_energy_points = energy_grid.size();
 
-  Teuchos::RCP<ElectroatomicReaction> subshell_electroelectric_reaction;
+  Teuchos::RCP<ElectroatomicReaction> subshell_electroionization_reaction;
 
   for( unsigned subshell = 0; subshell < num_subshells; ++subshell )
   {
@@ -229,12 +274,6 @@ static void createTotalElectroionizationReaction(
     Teuchos::ArrayView<const double> raw_subshell_cross_section = 
       raw_subshell_cross_sections( subshell*num_energy_points,
 				   num_energy_points );
-
-    ElectroatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
-						    energy_grid,
-		                                    raw_subshell_cross_section,
-						    subshell_cross_section,
-						    threshold_energy_index );
 
     // Create the subshell electroelectric reaction
     subshell_electroelectric_reaction.reset(

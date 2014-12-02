@@ -80,7 +80,7 @@ inline double calculateDimensionlessRelativisticSpeed(
   return sqrt( 1.0 - rest_mass_energy*rest_mass_energy/(energy*energy) );
 }
 
-// Calculate the speed of a massive particle 
+// Calculate the speed of a relativistic particle 
 inline double calculateRelativisticSpeed(const double rest_mass_energy,
 					 const double kinetic_energy )
 {
@@ -97,7 +97,7 @@ inline double calculateRelativisticSpeed(const double rest_mass_energy,
     sqrt( 1.0 - rest_mass_energy*rest_mass_energy/(energy*energy) );
 }
 
-// Calculate the kinetic enery of a massive particle (MeV)
+// Calculate the kinetic enery of a relativistic particle (MeV)
 inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
                                                  const double speed )
 { 
@@ -117,7 +117,7 @@ inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
 
 // Calculate the speed of a massive particle 
 inline double calculateSpeed(const double rest_mass_energy,
-                                            const double kinetic_energy )
+                             const double kinetic_energy )
 {
   // Make sure the rest mass energy is valid
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );
@@ -157,8 +157,8 @@ inline double calculateDimensionlessRelativisticMomentum(
              /rest_mass_energy;
 }
 
-// Calculate the momentum of a massive particle ( MeV*s/cm )
-//! Write Unit Test
+// Calculate the momentum of a relativistic particle ( MeV*s/cm )
+//! \todo Write Unit Test
 inline double calculateRelativisticMomentum( const double rest_mass_energy,
                                              const double kinetic_energy )
 {

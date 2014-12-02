@@ -14,11 +14,14 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardElectroatomicReaction.hpp"
-#include "MonteCarlo_ElectroionizationElectronScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
-//! The electroionization electroatomic reaction class
+/*! The electroionization electroatomic reaction class
+* \details This class should be used to represent the total electroionization
+* reaction and not the reaction with individual subshells.
+*/
+
 template<typename InterpPolicy, bool processed_cross_section = false>
 class ElectroionizationElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
 {
@@ -26,13 +29,10 @@ class ElectroionizationElectroatomicReaction : public StandardElectroatomicReact
 public:
 
   //! Constructor
-  ElectroionizationElectroatomicReaction( 
-	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	  const Teuchos::ArrayRCP<const double>& cross_section,
-	  const unsigned threshold_energy_index,
-      const Teuchos::RCP<Utility::OneDDistribution>& electroionization_subshell_cross_sections,
-      const ElectroionizationElectronScatteringDistribution::ElectroionizationDistribution& 
-      electroionization_scattering_distribution );
+  ElectroionizationElectroatomicReaction(
+  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+  const Teuchos::ArrayRCP<const double>& cross_section,
+  const unsigned threshold_energy_index );
 
 
   //! Destructor
@@ -51,12 +51,7 @@ public:
   //! Simulate the reaction
   void react( ElectronState& electron, 
 	      ParticleBank& bank,
-	      unsigned& shell_of_interaction ) const;
-
-private:
-
-  // The electroionization scattering distribution
-  ElectroionizationElectronScatteringDistribution d_scattering_distribution;
+	      SubshellType& shell_of_interaction ) const;
 };
 
 } // end MonteCarlo namespace

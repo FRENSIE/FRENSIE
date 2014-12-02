@@ -33,7 +33,7 @@ AtomicExcitationElectronScatteringDistribution::AtomicExcitationElectronScatteri
 // Randomly scatter the electron
 void AtomicExcitationElectronScatteringDistribution::scatterElectron( ElectronState& electron,
 	                  ParticleBank& bank,
-                      unsigned& shell_of_interaction ) const
+                      SubshellType& shell_of_interaction ) const
 {
   double energy_loss = d_energy_loss_distribution->evaluate( electron.getEnergy() );
 

@@ -57,7 +57,7 @@ public:
   //! Randomly scatter the electron
   void scatterElectron( ElectronState& electron,
 	                    ParticleBank& bank,
-                        unsigned& shell_of_interaction ) const;
+                        SubshellType& shell_of_interaction ) const;
 
 private:
 
