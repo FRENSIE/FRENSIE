@@ -633,6 +633,7 @@ TEUCHOS_UNIT_TEST( PhotoatomFactory, createPhotoatomMap_pe_subshells )
 TEUCHOS_UNIT_TEST( PhotoatomFactory, no_duplicate_tables )
 {
   // Create the set of photoatom aliases
+  photoatom_aliases.clear();
   photoatom_aliases.insert( "H-1_293.6K" );
   photoatom_aliases.insert( "H-1_300K" );
   

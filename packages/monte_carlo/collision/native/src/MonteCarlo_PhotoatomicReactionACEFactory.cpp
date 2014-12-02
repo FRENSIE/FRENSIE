@@ -41,13 +41,13 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
   // Extract the cross section
   Teuchos::ArrayRCP<double> incoherent_cross_section;
   unsigned threshold_energy_index;
-
+  
   PhotoatomicReactionACEFactory::removeZerosFromProcessedCrossSection(
 			    energy_grid,
 			    raw_photoatom_data.extractIncoherentCrossSection(),
 			    incoherent_cross_section,
 			    threshold_energy_index );
-
+  
   // Create the scattering function
   Teuchos::ArrayView<const double> jince_block = 
     raw_photoatom_data.extractJINCEBlock();
@@ -55,7 +55,7 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
   unsigned scatt_func_size = jince_block.size()/2;
 
   Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ) );
-
+  
   // The stored recoil momemtum has units of inverse Angstroms - convert to
   // inverse cm
   for( unsigned i = 0; i < scatt_func_size; ++i )
@@ -65,13 +65,13 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
 		     new Utility::TabularDistribution<Utility::LogLog>(
 			   recoil_momentum,
 			   jince_block( scatt_func_size, scatt_func_size ) ) );
-
+  
   if( use_doppler_broadening_data )
   {
     // Create the subshell order array
     Teuchos::ArrayView<const double> subshell_endf_designators = 
       raw_photoatom_data.extractSubshellENDFDesignators();
-
+    
     Teuchos::Array<SubshellType> subshell_order(
 					    subshell_endf_designators.size() );
 
@@ -91,13 +91,13 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
     // Create the compton profile distributions
     Teuchos::ArrayView<const double> lswd_block = 
       raw_photoatom_data.extractLSWDBlock();
-
+    
     Teuchos::ArrayView<const double> swd_block = 
       raw_photoatom_data.extractSWDBlock();
 
     Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >
       compton_profiles( lswd_block.size() );
-
+    
     for( unsigned subshell = 0; subshell < lswd_block.size(); ++subshell )
     {
       unsigned subshell_index = lswd_block[subshell]; 
@@ -111,7 +111,7 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
 			  swd_block( subshell_index + 1 + num_momentum_points,
 				     num_momentum_points ) ) );
     }
-
+    
     // Create the incoherent reaction
     incoherent_reaction.reset( 
 		  new IncoherentPhotoatomicReaction<Utility::LogLog>(

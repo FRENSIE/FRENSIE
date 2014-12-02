@@ -453,8 +453,8 @@ template<TupleMember pdfMember,
 	 typename Tuple>
 void DataProcessor::calculateDiscreteCDF( Teuchos::Array<Tuple> &data )
 {
-  // Make sure that the array has more than one element
-  testPrecondition( (data.size() > 1) );
+  // Make sure that the array has at least one element
+  testPrecondition( data.size() > 0 );
   
   typename Teuchos::Array<Tuple>::iterator data_point;
   typename Teuchos::Array<Tuple>::iterator end = data.end();
