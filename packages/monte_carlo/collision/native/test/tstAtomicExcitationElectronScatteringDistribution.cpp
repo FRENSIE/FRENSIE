@@ -42,7 +42,7 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistribution,
   electron.setEnergy( 1.000000000000e-03 );
   electron.setDirection( 0.0, 0.0, 1.0 );
   
-  unsigned shell_of_interaction;
+  MonteCarlo::SubshellType shell_of_interaction;
   double final_energy = (electron.getEnergy() - 9.32298000000E-06);
 
   // Scatter the electron
@@ -99,20 +99,20 @@ int main( int argc, char** argv )
 				      xss_data_extractor->extractEXCITBlock() );
   
   // Extract the number of tabulated energies
-  int N = excit_block.size()/2;
+  int size = excit_block.size()/2;
 
   // Extract the energy grid for atomic excitation energy loss
-  Teuchos::Array<double> energy_grid(excit_block(0,N));
+  Teuchos::Array<double> energy_grid(excit_block(0,size));
 
   // Extract the energy loss for atomic excitation
-  Teuchos::Array<double> energy_loss(excit_block(N,N));
+  Teuchos::Array<double> energy_loss(excit_block(size,size));
 
   // Create the energy loss distributions
   Teuchos::RCP<Utility::OneDDistribution> energy_loss_distribution;
   
   energy_loss_distribution.reset( 
     new Utility::TabularDistribution<Utility::LinLin>( energy_grid,
-		                                                 energy_loss ) );
+		                                               energy_loss ) );
 
   // Create the distribution
   ace_atomic_excitation_distribution.reset(

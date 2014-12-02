@@ -10,7 +10,6 @@
 #define MONTE_CARLO_ELECTROIONIZATION_ELECTROATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
-#include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -20,17 +19,11 @@ template<typename InterpPolicy, bool processed_cross_section>
 ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::ElectroionizationElectroatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
-       const unsigned threshold_energy_index,
-       const Teuchos::RCP<Utility::OneDDistribution>& 
-               electroionization_subshell_cross_sections,
-       const ElectroionizationElectronScatteringDistribution::ElectroionizationDistribution& 
-               electroionization_scattering_distribution )
+       const unsigned threshold_energy_index )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                        incoming_energy_grid,
                                                        cross_section,
-                                                       threshold_energy_index ),
-    d_scattering_distribution( electroionization_subshell_cross_sections,
-                               electroionization_scattering_distribution )
+                                                       threshold_energy_index )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -43,10 +36,6 @@ ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::El
 		    incoming_energy_grid.size() - threshold_energy_index );    
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
-  // Make sure the electroionization subshell cross sections data is valid
-  testPrecondition( !electroionization_subshell_cross_sections.is_null() );
-  // Make sure the electroionization scattering distribution data is valid
-  testPrecondition( electroionization_scattering_distribution.size() > 0 );
 }
 
 // Return the number of photons emitted from the rxn at the given energy
@@ -72,7 +61,7 @@ unsigned ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_sec
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroatomicReactionType ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
-  return ELECTROIONIZATION_ELECTROATOMIC_REACTION;
+  return TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION;
 }
 
 // Simulate the reaction
@@ -80,11 +69,16 @@ template<typename InterpPolicy, bool processed_cross_section>
 void ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>::react( 
 				     ElectronState& electron, 
 				     ParticleBank& bank,
-				     unsigned& shell_of_interaction ) const
+				     SubshellType& shell_of_interaction ) const
 {
+/*! \todo Finish writing react for non-subshell reaction
   d_scattering_distribution.scatterElectron( electron, 
                                              bank, 
                                              shell_of_interaction);
+
+  shell_of_interaction = UNKNOWN_SUBSHELL;
+
+*/
 }
 
 } // end MonteCarlo namespace

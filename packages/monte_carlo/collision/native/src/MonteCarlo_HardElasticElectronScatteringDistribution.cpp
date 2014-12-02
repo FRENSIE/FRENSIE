@@ -40,7 +40,7 @@ HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribu
 void HardElasticElectronScatteringDistribution::scatterElectron( 
                                 ElectronState& electron,
 			                    ParticleBank& bank,
-                                unsigned& shell_of_interaction ) const
+                                SubshellType& shell_of_interaction ) const
 {
   // angle cosine the electron scatters into
   double scattering_angle_cosine;

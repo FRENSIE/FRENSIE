@@ -48,7 +48,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   electron.setEnergy( 0.0009 );
   electron.setDirection( 0.0, 0.0, 1.0 );
   
-  unsigned shell_of_interaction;
+  MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 3 );
@@ -88,7 +88,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   electron.setEnergy( 0.0009 );
   electron.setDirection( 0.0, 0.0, 1.0 );
   
-  unsigned shell_of_interaction;
+  MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 3 );
@@ -128,7 +128,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   electron.setEnergy( 1.0 );
   electron.setDirection( 0.0, 0.0, 1.0 );
   
-  unsigned shell_of_interaction;
+  MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
@@ -168,7 +168,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   electron.setEnergy( 10000 );
   electron.setDirection( 0.0, 0.0, 1.0 );
   
-  unsigned shell_of_interaction;
+  MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 3 );
