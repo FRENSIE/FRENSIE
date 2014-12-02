@@ -147,6 +147,8 @@ double CollisionHandler::getMacroscopicTotalCrossSection(
   
   Teuchos::RCP<NeutronMaterial>& material = 
     CollisionHandler::master_neutron_map.find( particle.getCell() )->second;
+  
+  return material->getMacroscopicTotalCrossSection( particle.getEnergy() );
 }
 
 // Get the total macroscopic cross section of a material
