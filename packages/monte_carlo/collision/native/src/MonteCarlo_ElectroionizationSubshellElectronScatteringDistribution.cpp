@@ -111,12 +111,12 @@ double ElectroionizationSubshellElectronScatteringDistribution::polarDeflectionA
   double outgoing_energy = incoming_energy - knock_on_energy;
 
   // get the incoming momentum
-  double incoming_momentum = calculateRelativisticMomentum( 
+  double incoming_momentum = Utility::calculateRelativisticMomentum( 
                           Utility::PhysicalConstants::electron_rest_mass_energy,
                           incoming_energy );
 
   // get the outgoing momentum
-  double outgoing_momentum = calculateRelativisticMomentum( 
+  double outgoing_momentum = Utility::calculateRelativisticMomentum( 
                           Utility::PhysicalConstants::electron_rest_mass_energy,
                           outgoing_energy );
 
@@ -125,9 +125,8 @@ double ElectroionizationSubshellElectronScatteringDistribution::polarDeflectionA
   ( incoming_momentum*incoming_momentum + outgoing_momentum*outgoing_momentum - 
   knock_on_energy *
   (knock_on_energy + 2.0*Utility::PhysicalConstants::electron_rest_mass_energy )
-  / /( Utility::PhysicalConstants::speed_of_light*
-       Utility::PhysicalConstants::speed_of_light ) )
-  /(2.0*beta*beta_prime);
+  /( Utility::PhysicalConstants::speed_of_light*
+     Utility::PhysicalConstants::speed_of_light ) );
 }
 
 // Calculate the outgoing angle cosine of the knock-on electron
@@ -139,18 +138,18 @@ double ElectroionizationSubshellElectronScatteringDistribution::knockOnDeflectio
   double outgoing_energy = incoming_energy - knock_on_energy;
 
   // get the incoming momentum
-  double incoming_momentum = calculateRelativisticMomentum( 
+  double incoming_momentum = Utility::calculateRelativisticMomentum( 
                           Utility::PhysicalConstants::electron_rest_mass_energy,
                           incoming_energy );
 
   // get the outgoing momentum
-  double outgoing_momentum = calculateRelativisticMomentum( 
+  double outgoing_momentum = Utility::calculateRelativisticMomentum( 
                           Utility::PhysicalConstants::electron_rest_mass_energy,
                           outgoing_energy );
 
   // Outgoing angle cosine of original electron
-  double outgoing_cosine = polarDeflectionAngle( double& incoming_energy,
-                                                 double& knock_on_energy );
+  double outgoing_cosine = polarDeflectionAngle( incoming_energy,
+                                                 knock_on_energy );
 
   // get the momentum transfer
   double transfer_momentum = 
