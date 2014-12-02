@@ -46,6 +46,11 @@ double calculateDimensionlessRelativisticMomentum( const double rest_mass_energy
 double calculateRelativisticMomentum( const double rest_mass_energy,
                                       const double kinetic_energy );
 
+//! Calculate the momentum-energy squared of a massive particle ( MeV^2 )
+//! \todo write unit test
+double calculateRelativisticMomentumSquared( const double rest_mass_energy,
+                                             const double kinetic_energy );
+
 //! Calculate the beta min value
 double calculateBetaMin( const double kinetic_energy,
 			 const double kT );
@@ -147,7 +152,7 @@ inline double calculateKineticEnergy( const double rest_mass_energy,
           Utility::PhysicalConstants::speed_of_light );
 }
 
-// Calculate the dimensionless momentum of a massive particle ( momentum/mass*c )
+// Calculate the dimensionless momentum of a relativistic particle ( momentum/mass*c )
 //! Write Unit Test
 inline double calculateDimensionlessRelativisticMomentum( 
                                                   const double rest_mass_energy,
@@ -157,6 +162,7 @@ inline double calculateDimensionlessRelativisticMomentum(
              /rest_mass_energy;
 }
 
+
 // Calculate the momentum of a relativistic particle ( MeV*s/cm )
 //! \todo Write Unit Test
 inline double calculateRelativisticMomentum( const double rest_mass_energy,
@@ -164,6 +170,15 @@ inline double calculateRelativisticMomentum( const double rest_mass_energy,
 {
   return sqrt( kinetic_energy*( kinetic_energy + 2.0*rest_mass_energy ) )
              /Utility::PhysicalConstants::speed_of_light;
+}
+
+// Calculate the momentum-energy squared of a relativistic particle ( momentum*c )^2
+//! Write Unit Test
+inline double calculateRelativisticMomentumSquared( 
+                                                  const double rest_mass_energy,
+                                                  const double kinetic_energy )
+{
+  return kinetic_energy*( kinetic_energy + 2.0*rest_mass_energy );
 }
 
 } // end Utility namespace

@@ -50,22 +50,17 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
   electron.setEnergy( 1.0 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
-  std::cout << " number of particles = " << bank.size() << std::endl;
-
   // Analytically scatter electron
   ace_electroionization_distribution->scatterElectron( electron, 
                                                    bank, 
                                                    shell_of_interaction );
 
-  std::cout << " number of particles = " << bank.size() << std::endl;
-  std::cout << " top of bank = " << bank.top()->getEnergy() << std::endl;
-
   // Test original electron
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.893535104059E-01, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getEnergy(), 9.589473789423E-01, 1e-12 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 2.794369617654E-01, 1e-12 );
   TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 4.105262105768E-02, 1e-12 );
 
 }
@@ -108,10 +103,6 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
-  // Extract the subshell cross sections
-  Teuchos::ArrayView<const double> electroionization_subshell_cross_sections =
-    xss_data_extractor->extractElectroionizationSubshellCrossSections();
-
   // Extract the cross sections energy grid
   Teuchos::ArrayView<const double> energy_grid =
     xss_data_extractor->extractElectronEnergyGrid() ;
@@ -119,6 +110,10 @@ int main( int argc, char** argv )
   // Extract the subshell information
   Teuchos::ArrayView<const double> subshell_endf_designators = 
     xss_data_extractor->extractSubshellENDFDesignators();
+
+  // Extract the subshell binding energies
+  Teuchos::ArrayView<const double> binding_energies =
+    xss_data_extractor->extractSubshellBindingEnergies();
 
   // Extract the electroionization data block (EION)
   Teuchos::ArrayView<const double> eion_block(
@@ -140,51 +135,41 @@ int main( int argc, char** argv )
   Teuchos::Array<double> table_loc(eion_block(2*num_shells,num_shells));
 
   // Subshell
-  unsigned shell = 0;
+  unsigned subshell = 0;
 
-  // Shell table info realtive to the EION Block
-  unsigned shell_info = table_info[shell]- eion_loc - 1;
+  // Subshell table info realtive to the EION Block
+  unsigned subshell_info = table_info[subshell]- eion_loc - 1;
 
-  // Shell table loc realtive to the EION Block
-  unsigned shell_loc = table_loc[shell]- eion_loc - 1;
+  // Subshell table loc realtive to the EION Block
+  unsigned subshell_loc = table_loc[subshell]- eion_loc - 1;
 
   // Extract the energies for which knock-on sampling tables are given
-  Teuchos::Array<double> table_energy_grid(eion_block( 
-                                                    shell_info,
-                                                    num_tables[shell] ) );
+  Teuchos::Array<double> table_energy_grid(eion_block( subshell_info,
+                                                       num_tables[subshell] ) );
 
   // Extract the length of the knock-on sampling tables
   Teuchos::Array<double> table_length(eion_block( 
-                               shell_info + num_tables[shell],
-                               num_tables[shell] ) );
+                               subshell_info + num_tables[subshell],
+                               num_tables[subshell] ) );
 
   // Extract the offset of the knock-on sampling tables
   Teuchos::Array<double> table_offset(eion_block( 
-                             shell_info + 2*num_tables[shell],
-                             num_tables[shell] ) );
+                             subshell_info + 2*num_tables[subshell],
+                             num_tables[subshell] ) );
+
    // Create the electroionization sampling table for the subshell
-//  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
   MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-      subshell_distribution( num_tables[shell] );
+      subshell_distribution( num_tables[subshell] );
 
-std::cout << "# of tables = " << table_energy_grid.size() << std::endl;
-std::cout << "shell_info = " << shell_info << std::endl;
-std::cout << "shell_loc = " << shell_loc << std::endl;
-std::cout << "eion_loc = " << eion_loc << std::endl;
 
-  for( unsigned n = 0; n < num_tables[shell]; ++n )
+  for( unsigned n = 0; n < num_tables[subshell]; ++n )
   {
-
-std::cout << "table_energy_grid[n] = " << table_energy_grid[n] << std::endl;
-std::cout << "table_length[n] = " << table_length[n] << std::endl;
-std::cout << "table_loc[shell] + table_offset[n] = " << table_loc[shell]+ table_offset[n] << std::endl;
-
     subshell_distribution[n].first = table_energy_grid[n];
 
     subshell_distribution[n].second.reset( 
      new Utility::HistogramDistribution(
-	  eion_block( shell_loc + table_offset[n], table_length[n] ),
-      eion_block( shell_loc + table_offset[n] + table_length[n] + 1, 
+	  eion_block( subshell_loc + table_offset[n], table_length[n] ),
+      eion_block( subshell_loc + table_offset[n] + table_length[n] + 1, 
                   table_length[n] - 1),
       true ) );
   }
@@ -193,7 +178,8 @@ std::cout << "table_loc[shell] + table_offset[n] = " << table_loc[shell]+ table_
   // Create the distributions
   ace_electroionization_distribution.reset(
 		new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution(
-                            subshell_distribution ) );
+                            subshell_distribution,
+                            binding_energies[subshell] ) );
 
   // Clear setup data
   ace_file_handler.reset();

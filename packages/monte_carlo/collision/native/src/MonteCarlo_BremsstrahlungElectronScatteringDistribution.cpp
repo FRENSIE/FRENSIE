@@ -27,7 +27,7 @@
 namespace MonteCarlo{
 // Constructor with simple analytical photon angular distribution
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
-    BremsstrahlungDistribution& bremsstrahlung_scattering_distribution)
+    const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution )
   : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution )
 {
   // Make sure the array is valid

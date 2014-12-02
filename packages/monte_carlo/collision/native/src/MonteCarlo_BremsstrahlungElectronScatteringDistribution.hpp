@@ -41,7 +41,7 @@ public:
 
   //! Constructor with simple analytical photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
-    BremsstrahlungDistribution& bremsstrahlung_scattering_distribution );
+    const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution );
 
   //! Constructor with detailed tabular photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
