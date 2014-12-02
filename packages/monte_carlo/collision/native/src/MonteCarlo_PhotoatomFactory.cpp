@@ -71,7 +71,7 @@ PhotoatomFactory::PhotoatomFactory(
     {
       THROW_EXCEPTION( std::logic_error,
 		       "Error: photoatomic table type " << table_type <<
-		       " is not valid!" );
+		       " is not supported!" );
     }
 
     ++photoatom_name;
@@ -109,7 +109,8 @@ void PhotoatomFactory::createPhotoatomFromACETable(
   std::string ace_file_path = cross_sections_xml_directory + "/";
   
   try{
-    ace_file_path += photoatom_table_info.get<std::string>("photoatomic_file_path");
+    ace_file_path += 
+      photoatom_table_info.get<std::string>("photoatomic_file_path");
   }
   EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
 			    "Error: cross section table entry "

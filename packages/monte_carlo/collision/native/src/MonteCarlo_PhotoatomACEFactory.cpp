@@ -47,7 +47,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
   {
     Photoatom::ReactionMap::mapped_type& reaction_pointer = 
       scattering_reactions[INCOHERENT_PHOTOATOMIC_REACTION];
-
+    
     PhotoatomicReactionACEFactory::createIncoherentReaction(
 						 raw_photoatom_data,
 						 energy_grid,
@@ -59,7 +59,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
   {
     Photoatom::ReactionMap::mapped_type& reaction_pointer = 
       scattering_reactions[COHERENT_PHOTOATOMIC_REACTION];
-
+    
     PhotoatomicReactionACEFactory::createCoherentReaction( raw_photoatom_data,
 							   energy_grid,
 							   reaction_pointer );
