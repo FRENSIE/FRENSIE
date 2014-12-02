@@ -84,7 +84,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   MonteCarlo::ParticleBank bank;
-  unsigned shell_of_interaction;
+  MonteCarlo::SubshellType shell_of_interaction;
   
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 1.1e-3 );
@@ -115,7 +115,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   MonteCarlo::ParticleBank bank;
-  unsigned shell_of_interaction;
+  MonteCarlo::SubshellType shell_of_interaction;
   
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 1.1e-3 );

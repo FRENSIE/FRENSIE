@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
+#include "MonteCarlo_SubshellType.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_OneDDistribution.hpp"
@@ -41,7 +42,7 @@ public:
   //! Randomly scatter the electron
   virtual void scatterElectron( ElectronState& electron,
 			                    ParticleBank& bank,
-                                unsigned& shell_of_interaction ) const = 0;
+                                SubshellType& shell_of_interaction ) const = 0;
 
 protected:
 

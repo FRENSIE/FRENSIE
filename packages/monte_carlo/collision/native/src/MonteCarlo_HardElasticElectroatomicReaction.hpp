@@ -52,7 +52,7 @@ public:
   //! Simulate the reaction
   void react( ElectronState& electron, 
 	      ParticleBank& bank,
-	      unsigned& shell_of_interaction ) const;
+	      SubshellType& shell_of_interaction ) const;
 
 private:
 
