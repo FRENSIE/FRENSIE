@@ -235,6 +235,9 @@ public:
   //! Extract the BREML block
   Teuchos::ArrayView<const double> extractBREMLBlock() const;
 
+  //! Return the EION data block location in xss array
+  unsigned returnEIONLoc() const;
+
 private:
 
   // The nxs array (a copy will be stored)

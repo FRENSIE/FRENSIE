@@ -28,7 +28,7 @@ AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::Ato
 						                         incoming_energy_grid,
 						                         cross_section,
 						                         threshold_energy_index ),
-    AtomicExcitationElectronScatteringDistribution( energy_loss_distribution )
+    d_scattering_distribution( energy_loss_distribution )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -66,7 +66,7 @@ template<typename InterpPolicy, bool processed_cross_section>
 void AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
 						     ElectronState& electron,
 						     ParticleBank& bank,
-                             unsigned& shell_of_interaction ) const
+                             SubshellType& shell_of_interaction ) const
 {
   d_scattering_distribution.scatterElectron( electron, 
                                              bank, 
