@@ -30,7 +30,8 @@ public:
 	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
-      const unsigned interaction_subshell,
+      const SubshellType interaction_subshell,
+      const double binding_energy,   
       const ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution& 
       electroionization_subshell_scattering_distribution );
 
@@ -54,10 +55,11 @@ public:
 private:
 
   // The electroionization subshell scattering distribution
-  ElectroionizationSubshellElectronScatteringDistribution d_scattering_distribution;
+  ElectroionizationSubshellElectronScatteringDistribution
+    d_scattering_distribution;
 
   // The interaction subshell
-  unsigned d_interaction_subshell;
+  SubshellType d_interaction_subshell;
 
   // The reaction type
   ElectroatomicReactionType d_reaction_type;

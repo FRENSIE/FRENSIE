@@ -21,18 +21,20 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
 	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
-      const unsigned interaction_subshell,
+      const SubshellType interaction_subshell,
+      const double binding_energy, 
       const ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution& 
       electroionization_subshell_scattering_distribution )
   : ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                        incoming_energy_grid,
                                                        cross_section,
                                                        threshold_energy_index ),
-    d_interaction_subshell( interaction_subshell ),
+    d_interaction_subshell( interaction_subshell ), 
     d_scattering_distribution( 
-                            electroionization_subshell_scattering_distribution ),
+         electroionization_subshell_scattering_distribution,
+         binding_energy ),
     d_reaction_type( 
-          convertSubshellEnumToElectroatomicReactionEnum( interaction_subshell ) )
+         convertSubshellEnumToElectroatomicReactionEnum( interaction_subshell ) )
 {
   // Make sure the interaction subshell is valid
   testPrecondition( interaction_subshell != INVALID_SUBSHELL );
