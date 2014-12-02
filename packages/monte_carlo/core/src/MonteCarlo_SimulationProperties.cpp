@@ -12,29 +12,56 @@
 
 namespace MonteCarlo{
 
+// The particle mode 
+ParticleModeType SimulationProperties::particle_mode = NEUTRON_MODE;
+
+// The number of histories to run
+unsigned long long SimulationProperties::number_of_histories = 0;
+
 // Initialize the static member data
 double SimulationProperties::free_gas_threshold = 400.0;
 
+// The absolute minimum neutron energy (MeV)
+const double SimulationProperties::absolute_min_neutron_energy = 1e-11;
+
 // The minimum neutron energy (MeV)
-double SimulationProperties::min_neutron_energy = 1e-11;
+double SimulationProperties::min_neutron_energy = 
+  SimulationProperties::absolute_min_neutron_energy;
+
+// The absolute max neutron energy (MeV)
+const double SimulationProperties::absolute_max_neutron_energy = 20.0;
 
 // The max neutron energy (MeV)
-double SimulationProperties::max_neutron_energy = 20.0;
+double SimulationProperties::max_neutron_energy = 
+  SimulationProperties::absolute_max_neutron_energy;
+
+// The absolute min photon energy (MeV)
+const double SimulationProperties::absolute_min_photon_energy = 1e-3;
 
 // The min photon energy (MeV)
-double SimulationProperties::min_photon_energy = 1e-3;
+double SimulationProperties::min_photon_energy =
+  SimulationProperties::absolute_min_photon_energy;
+
+// The absolute max photon energy (MeV)
+const double SimulationProperties::absolute_max_photon_energy = 20.0;
 
 // The max photon energy (MeV)
-double SimulationProperties::max_photon_energy = 20.0;
+double SimulationProperties::max_photon_energy = 
+  SimulationProperties::absolute_max_photon_energy;
+
+// The absolute min electron energy
+const double SimulationProperties::absolute_min_electron_energy = 1e-3;
 
 // The minimum electron energy (MeV)
-double SimulationProperties::min_electron_energy = 1e-3;
+double SimulationProperties::min_electron_energy = 
+  SimulationProperties::absolute_min_electron_energy;
 
-// The max neutron energy (MeV)
-double SimulationProperties::max_electron_energy = 20.0;
+// The absolute max electron energy (MeV)
+const double SimulationProperties::absolute_max_electron_energy = 20.0;
 
-// The particle mode
-ParticleModeType SimulationProperties::particle_mode = NEUTRON_MODE;
+// The max electron energy (MeV)
+double SimulationProperties::max_electron_energy =
+  SimulationProperties::absolute_max_electron_energy;
 
 // The capture mode (true = implicit, false = analogue - default)
 bool SimulationProperties::implicit_capture_mode_on = false;
@@ -50,6 +77,20 @@ bool SimulationProperties::detailed_pair_production_mode_on = false;
 
 // The photonuclear interaction mode (true = on, false = off - default)
 bool SimulationProperties::photonuclear_interaction_mode_on = false;
+
+// Set the particle mode
+void SimulationProperties::setParticleMode( 
+					 const ParticleModeType particle_mode )
+{
+  SimulationProperties::particle_mode = particle_mode;
+}
+
+// Set the number of histories to run
+void SimulationProperties::setNumberOfHistories( 
+					   const unsigned long long histories )
+{
+  SimulationProperties::number_of_histories = histories;
+}
 
 // Set the free gas thermal treatment temperature threshold
 /*! \details The value given is the number of times above the material 
@@ -68,37 +109,60 @@ void SimulationProperties::setFreeGasThreshold( const double threshold )
 void SimulationProperties::setMinNeutronEnergy( const double energy )
 {
   // Make sure the energy is valid
-  testPrecondition( energy > 0.0 );
+  testPrecondition(energy >= SimulationProperties::absolute_min_neutron_energy);
   testPrecondition( energy < SimulationProperties::max_neutron_energy );
   
   SimulationProperties::min_neutron_energy = energy;
+}
+
+// Set the max neutron energy (MeV)
+void SimulationProperties::setMaxNeutronEnergy( const double energy )
+{
+  // Make sure the energy is valid
+  testPrecondition(energy > SimulationProperties::min_neutron_energy );
+  testPrecondition(energy <= SimulationProperties::absolute_max_neutron_energy);
+
+  SimulationProperties::max_neutron_energy = energy;
 }
 
 // Set the minimum photon energy (MeV)
 void SimulationProperties::setMinPhotonEnergy( const double energy )
 {
   // Make sure the energy is valid
-  testPrecondition( energy > 0.0 );
+  testPrecondition(energy >= SimulationProperties::absolute_min_photon_energy);
   testPrecondition( energy < SimulationProperties::max_photon_energy );
   
   SimulationProperties::min_photon_energy = energy;
+}
+
+// Set the max photon energy (MeV)
+void SimulationProperties::setMaxPhotonEnergy( const double energy )
+{
+  // Make sure the energy is valid
+  testPrecondition(energy > SimulationProperties::min_photon_energy );
+  testPrecondition(energy <= SimulationProperties::absolute_max_photon_energy);
+
+  SimulationProperties::max_photon_energy = energy;
 }
 
 // Set the minimum electron energy (MeV)
 void SimulationProperties::setMinElectronEnergy( const double energy )
 {
   // Make sure the energy is valid
-  testPrecondition( energy > 0.0 );
+  testPrecondition(energy >= SimulationProperties::absolute_min_electron_energy);
   testPrecondition( energy < SimulationProperties::max_electron_energy );
   
   SimulationProperties::min_electron_energy = energy;
 }
 
-// Set the particle mode
-void SimulationProperties::setParticleMode( 
-					 const ParticleModeType particle_mode )
+// Set the maximum electron energy (MeV)
+void SimulationProperties::setMaxElectronEnergy( const double energy )
 {
-  SimulationProperties::particle_mode = particle_mode;
+  // Make sure the energy is valid
+  testPrecondition( energy > SimulationProperties::min_electron_energy );
+  testPrecondition(energy <= SimulationProperties::absolute_max_electron_energy);
+
+  SimulationProperties::max_electron_energy = energy;
 }
 
 // Set implicit capture mode to on (off by default)
