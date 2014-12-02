@@ -56,7 +56,9 @@ NuclideFactory::NuclideFactory(
     EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
 			      "Error: cross section table entry "
 			      << *nuclide_name << 
-			      " is invalid! Please fix this entry." );
+			      " is invalid or does not contain neutron data! "
+			      " Please fix this entry or select another "
+			      " isotope." );
 
     // Get the file type
     std::string file_type;
