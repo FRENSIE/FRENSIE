@@ -216,10 +216,24 @@ TARGET_LINK_LIBRARIES(tstCollisionHandler monte_carlo_collision_native)
 ADD_TEST(CollisionHandler_test tstCollisionHandler --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
 
 IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstCollisionHandlerFactory
-    tstCollisionHandlerFactory.cpp)
-  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactory monte_carlo_collision_native)
-  ADD_TEST(CollisionHandlerFactory_test tstCollisionHandlerFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronMode
+    tstCollisionHandlerFactoryNeutronMode.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronMode monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryNeutronMode_test tstCollisionHandlerFactoryNeutronMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryPhotonMode
+    tstCollisionHandlerFactoryPhotonMode.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryPhotonMode monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryPhotonMode_test tstCollisionHandlerFactoryPhotonMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronPhotonMode
+    tstCollisionHandlerFactoryNeutronPhotonMode.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronPhotonMode monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryNeutronPhotonMode_test tstCollisionHandlerFactoryNeutronPhotonMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)

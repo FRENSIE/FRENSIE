@@ -19,6 +19,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
 #include "MonteCarlo_CollisionModuleInterface_Native.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Geometry_DagMCInstanceFactory.hpp"
 
 //---------------------------------------------------------------------------//
@@ -90,6 +91,68 @@ TEUCHOS_UNIT_TEST( ModuleInterface, isCellVoid )
   TEST_ASSERT( !CMI::isCellVoid( 83, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 154, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !CMI::isCellVoid( 168, MonteCarlo::NEUTRON ) );
+
+  TEST_ASSERT( !CMI::isCellVoid( 26, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 27, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 28, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 29, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 30, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 31, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 32, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 33, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 34, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 35, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 36, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 37, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 48, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 49, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 50, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 51, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 52, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 53, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 54, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 55, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 56, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 57, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 58, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 59, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 70, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 71, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 72, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 73, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 74, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 75, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 76, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 77, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 78, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 79, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 80, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 81, MonteCarlo::PHOTON ) );
+  
+  TEST_ASSERT( !CMI::isCellVoid( 9, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 88, MonteCarlo::PHOTON ) );
+  
+  TEST_ASSERT( !CMI::isCellVoid( 136, MonteCarlo::PHOTON ) );
+  
+  TEST_ASSERT( !CMI::isCellVoid( 19, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 41, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 63, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 82, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 152, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 166, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 184, MonteCarlo::PHOTON ) );
+  
+  TEST_ASSERT( !CMI::isCellVoid( 3, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 7, MonteCarlo::PHOTON ) );
+  
+  TEST_ASSERT( !CMI::isCellVoid( 5, MonteCarlo::PHOTON ) );
+  
+  TEST_ASSERT( !CMI::isCellVoid( 1, MonteCarlo::PHOTON ) );
+  
+  TEST_ASSERT( !CMI::isCellVoid( 13, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 83, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 154, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !CMI::isCellVoid( 168, MonteCarlo::PHOTON ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -227,6 +290,9 @@ int main( int argc, char** argv )
       Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
     
     Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
+
+    // Initialize the particle mode
+    MonteCarlo::SimulationProperties::setParticleMode( MonteCarlo::NEUTRON_PHOTON_MODE );
     
     // Initialize the random number generator
     Utility::RandomNumberGenerator::createStreams();
