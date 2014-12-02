@@ -16,7 +16,7 @@ namespace MonteCarlo{
 
 // Create the material name data maps
 template<typename ScatteringCenterType, typename MaterialType>
-void CollisionHandlerFactory::createMaterialNameDataMapsUsingDagMC(
+void CollisionHandlerFactory::createMaterialNameDataMaps(
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
                             Teuchos::Array<double> >& material_id_fraction_map,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
@@ -80,7 +80,7 @@ void CollisionHandlerFactory::createMaterialNameDataMapsUsingDagMC(
     if( material_name_pointer_map.find( material_name ) == 
 	material_name_pointer_map.end() )
     {
-      Teuchos::RCP<NeutronMaterial>& new_material= 
+      Teuchos::RCP<MaterialType>& new_material= 
 	material_name_pointer_map[material_name];
 
       new_material.reset( new MaterialType( 
@@ -106,7 +106,8 @@ void CollisionHandlerFactory::registerMaterials(
                   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >&
    material_name_cell_ids_map )
 {
-  boost::unordered_map<std::string,Teuchos::RCP<MaterialType> >::const_iterator
+  typename boost::unordered_map<std::string,
+				Teuchos::RCP<MaterialType> >::const_iterator
     material_name_pointer_it = material_name_pointer_map.begin();
   
   while( material_name_pointer_it != material_name_pointer_map.end() )

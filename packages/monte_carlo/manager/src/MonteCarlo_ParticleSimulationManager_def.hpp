@@ -102,7 +102,22 @@ void ParticleSimulationManager<GeometryHandler,
 	// This history only ends when the particle bank is empty
 	while( bank.size() > 0 )
 	{
-	  simulateParticle( *bank.top(), bank );
+	  switch( bank.top()->getParticleType() )
+	  {
+	  case NEUTRON: 
+	    simulateParticle( dynamic_cast<NeutronState&>( *bank.top() ), 
+			      bank );
+	    break;
+	  case PHOTON:
+	    simulateParticle( dynamic_cast<PhotonState&>( *bank.top() ),
+			      bank );
+	    break;
+	  default:
+	    THROW_EXCEPTION( std::logic_error,
+			     "Error: particle type "
+			     << bank.top()->getParticleType() <<
+			     " is not currently supported!" );
+	  }
 	  
 	  bank.pop();
 	}
@@ -126,12 +141,13 @@ template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
+template<typename ParticleStateType>
 void ParticleSimulationManager<GeometryHandler,
 			       SourceHandler,
 			       EstimatorHandler,
 			       CollisionHandler>::simulateParticle( 
-				                       ParticleState& particle,
-				                       ParticleBank& bank )
+						   ParticleStateType& particle,
+						   ParticleBank& bank )
 {
   // Particle tracking information
   double distance_to_surface_hit, op_to_surface_hit, remaining_subtrack_op;

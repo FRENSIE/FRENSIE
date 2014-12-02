@@ -15,6 +15,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_NeutronMaterial.hpp"
 #include "MonteCarlo_PhotonMaterial.hpp"
+#include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
 namespace MonteCarlo{
@@ -71,28 +73,35 @@ public:
 		       const Geometry::ModuleTraits::InternalCellHandle cell );
 
   //! Get the total macroscopic cross section of a material
-  static double getMacroscopicTotalCrossSection(
-					       const ParticleState& particle );
+  static double getMacroscopicTotalCrossSection( const NeutronState& particle);
+
+  //! Get the total macroscopic cross section of a material
+  static double getMacroscopicTotalCrossSection( const PhotonState& particle );
 
   //! Get the macroscopic cross section for a specific reaction
   static double getMacroscopicReactionCrossSection(
-					  const ParticleState& particle,
+					  const NeutronState& particle,
 					  const NuclearReactionType reaction );
 
   //! Get the macroscopic cross section for a specific reaction
   static double getMacroscopicReactionCrossSection(
-				      const ParticleState& particle,
+				      const PhotonState& particle,
 				      const PhotoatomicReactionType reaction );
 
   //! Get the macroscopic cross section for a specific reaction
   static double getMacroscopicReactionCrossSection(
-				     const ParticleState& particle,
+				     const PhotonState& particle,
 				     const PhotonuclearReactionType reaction );
 
   //! Collide with the material in a cell
-  static void collideWithCellMaterial( ParticleState& particle,
+  static void collideWithCellMaterial( PhotonState& particle,
 				       ParticleBank& bank,
-				       const bool analogue );	       
+				       const bool analogue );
+  
+  //! Collide with the material in a cell
+  static void collideWithCellMaterial( NeutronState& particle,
+				       ParticleBank& bank,
+				       const bool analogue );
 
 private:
   

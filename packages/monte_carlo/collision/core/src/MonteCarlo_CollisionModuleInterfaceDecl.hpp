@@ -11,7 +11,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
-#include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
@@ -62,24 +63,29 @@ public:
 
   //! Get the total macroscopic cross section of a material
   static inline double getMacroscopicTotalCrossSection(
-					        const ParticleState& particle )
+						 const NeutronState& particle )
+  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); return 0;}
+
+  //! Get the total macroscopic cross section of a material
+  static inline double getMacroscopicTotalCrossSection(
+						 const PhotonState& particle )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); return 0;}
   
   //! Get the macroscopic cross section for a specific reaction
   static inline double getMacroscopicReactionCrossSection(
-					   const ParticleState& particle,
+					   const NeutronState& particle,
 					   const NuclearReactionType reaction )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 
   //! Get the macroscopic cross section for a specific reaction
   static inline double getMacroscopicReactionCrossSection(
-				       const ParticleState& particle,
+				       const PhotonState& particle,
 				       const PhotoatomicReactionType reaction )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 
   //! Get the macroscopic cross section for a specific reaction
   static inline double getMacroscopicReactionCrossSection(
-				      const ParticleState& particle,
+				      const PhotonState& particle,
 				      const PhotonuclearReactionType reaction )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 
@@ -88,7 +94,13 @@ public:
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 
   //! Collide with the material in a cell
-  static inline void collideWithCellMaterial( ParticleState& particle,
+  static inline void collideWithCellMaterial( NeutronState& particle,
+					      ParticleBank& bank,
+					      const bool analogue ) 
+  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
+
+  //! Collide with the material in a cell
+  static inline void collideWithCellMaterial( PhotonState& particle,
 					      ParticleBank& bank,
 					      const bool analogue ) 
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }

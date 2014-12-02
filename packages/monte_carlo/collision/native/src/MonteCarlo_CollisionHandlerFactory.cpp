@@ -96,7 +96,9 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
   boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
 		       std::vector<std::string> > cell_id_density_map;
 
-  createCellIdDataMapsUsingDagMC( cell_id_mat_id_map, cell_id_density_map );
+  CollisionHandlerFactory::createCellIdDataMapsUsingDagMC( 
+							 cell_id_mat_id_map, 
+							 cell_id_density_map );
 
   // Initialize an atomic relaxation model factory
   Teuchos::RCP<AtomicRelaxationModelFactory> atomic_relaxation_model_factory(
@@ -276,7 +278,7 @@ void CollisionHandlerFactory::createAliasSet(
 	  mapped_alias = 
 	    cross_sections_alias_map.get<std::string>( material_isotopes[i] );
         }
-	EXCEPTION_CATCH_AND_EXIT( Teuchos::Exception::InvalidParameter,
+	EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
 				  "Error: cross section alias map entry "
 				  << material_isotopes[i] <<
 				  "is invalid! Please fix this entry." );
@@ -339,17 +341,11 @@ void CollisionHandlerFactory::createCellIdDataMapsUsingDagMC(
 {
   #ifdef HAVE_FRENSIE_DAGMC
   // Get the cell material property values
-  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                       std::vector<std::string> > cell_id_mat_id_map;
-
   Geometry::getCellPropertyValues( 
 			  Geometry::DagMCProperties::getMaterialPropertyName(),
 			  cell_id_mat_id_map );
 
   // Get the cell density property values
-  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                       std::vector<std::string> > cell_id_density_map;
-  
   Geometry::getCellPropertyValues(
 			   Geometry::DagMCProperties::getDensityPropertyName(),
 			   cell_id_density_map );
@@ -445,11 +441,12 @@ void CollisionHandlerFactory::createPhotonMaterials(
 					use_doppler_broadening_data,
 					use_detailed_pair_production_data,
 					use_atomic_relaxation_data );
-    photoatom_factory.createPhotoatomMap( nuclide_map );
+    
+    photoatom_factory.createPhotoatomMap( photoatom_map );
   }
 
   // Create the material name data maps
-  boost::unordered_map<std::string,Teuchos::RCP<NeutronMaterial> >
+  boost::unordered_map<std::string,Teuchos::RCP<PhotonMaterial> >
     material_name_pointer_map;
   
   boost::unordered_map<std::string,
