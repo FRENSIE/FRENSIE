@@ -40,12 +40,12 @@ public:
 		   const Teuchos::ArrayRCP<const double>& energy_grid,
 		   Teuchos::RCP<ElectroatomicReaction>& electroionization_reaction);
 
-  //! Create the subshell electroionization electroatomic reaction
-  static void createSubshellElectroionizationReaction(
+//! Create the subshell electroionization electroatomic reactions
+  static void createSubshellElectroionizationReactions(
 		   const Data::XSSEPRDataExtractor& raw_electroatom_data,
 		   const Teuchos::ArrayRCP<const double>& energy_grid,
 		   Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
-		   subshell_electroionization_reactions );
+		   electroionization_subshell_reactions );
 
   //! Create a bremsstrahlung electroatomic reactions
   static void createBremsstrahlungReactions(
@@ -56,8 +56,8 @@ public:
 
 protected:
   
-  //! Remove the zeros from a processed cross section
-  static void removeZerosFromProcessedCrossSection(
+  //! Remove the zeros from a cross section
+  static void removeZerosFromCrossSection(
 		     const Teuchos::ArrayRCP<const double>& energy_grid,
 		     const Teuchos::ArrayView<const double>& raw_cross_section,
 		     Teuchos::ArrayRCP<double>& cross_section,

@@ -40,8 +40,9 @@ public:
 
   //! Constructor 
   ElectroionizationSubshellElectronScatteringDistribution(
-    ElectroionizationSubshellDistribution& 
-      electroionization_subshell_scattering_distribution );
+    const ElectroionizationSubshellDistribution& 
+      electroionization_subshell_scattering_distribution,
+    const double& binding_energy );
 
   //! Destructor 
   virtual ~ElectroionizationSubshellElectronScatteringDistribution()
@@ -58,13 +59,18 @@ private:
   ElectroionizationSubshellDistribution 
      d_electroionization_subshell_scattering_distribution;
 
+  // Subshell binding energy
+  double d_binding_energy;
+
   // Calculate the outgoing angle cosine of the original electron
-  double polarDeflectionAngle( double& incoming_energy, 
+  double polarDeflectionAngle( double& incoming_momentum_squared,
+                               double& outgoing_momentum_squared,
                                double& knock_on_energy ) const;
 
   // Calculate the outgoing angle cosine of the knock-on electron
-  double knockOnDeflectionAngle( double& incoming_energy, 
-                                 double& knock_on_energy ) const;
+  double knockOnDeflectionAngle( double& incoming_momentum_squared,
+                                 double& outgoing_momentum_squared,
+                                 double& outgoing_cosine ) const;
 
 };
 
