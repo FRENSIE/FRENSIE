@@ -31,7 +31,7 @@ ADD_TEST(CellTransmutationData_test tstCellTransmutationData)
 ADD_EXECUTABLE(tstModuleInterface_ODESolver 
   tstModuleInterface_ODESolver.cpp )
 TARGET_LINK_LIBRARIES(tstModuleInterface_ODESolver transmutation)
-ADD_TEST(ModuleInterfacei_ODESolver_test tstModuleInterface_ODESolver)
+ADD_TEST(ModuleInterface_ODESolver_test tstModuleInterface_ODESolver)
 
 #ADD_EXECUTABLE(tstModuleInterface_BoostSolver 
 #  tstModuleInterface_BoostSolver.cpp )
@@ -43,3 +43,28 @@ ADD_EXECUTABLE(tstIsotopesArray
 TARGET_LINK_LIBRARIES(tstIsotopesArray transmutation)
 ADD_TEST(IsotopesArray_test tstIsotopesArray)
 
+# # Create the decay regresssion suite
+# ADD_EXECUTABLE(decay_regression_suite decay_regression_suite.cpp)
+# TARGET_LINK_LIBRARIES(decay_regression_suite utility_core transmutation)
+
+# # Create a simple decay verification problem
+# ADD_EXECUTABLE(decay_verification_simple_problem decay_verification_simple_problem.cpp)
+# TARGET_LINK_LIBRARIES(decay_verification_simple_problem utility_core transmutation)
+
+# # Create a simple decay verification problem for boost
+# ADD_EXECUTABLE(decay_verification_simple_problem_boost
+# decay_verification_simple_problem_boost.cpp)
+# TARGET_LINK_LIBRARIES(decay_verification_simple_problem_boost utility_core transmutation)
+
+# # Create an intermediate decay verification problem
+# ADD_EXECUTABLE(decay_verification_intermediate_problem decay_verification_intermediate_problem.cpp)
+# TARGET_LINK_LIBRARIES(decay_verification_intermediate_problem utility_core transmutation)
+
+# # Create an advanced decay verification problem
+# ADD_EXECUTABLE(decay_verification_advanced_problem decay_verification_advanced_problem.cpp)
+# TARGET_LINK_LIBRARIES(decay_verification_advanced_problem utility_core transmutation)
+
+# # Create a simple decay verification problem
+# ADD_EXECUTABLE(fission_reaction_rate_verification_problem
+# fission_reaction_rate_verification_problem.cpp)
+# TARGET_LINK_LIBRARIES(fission_reaction_rate_verification_problem utility_core transmutation)
