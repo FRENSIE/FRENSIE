@@ -71,7 +71,7 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
 					 vertex_b,
 					 vertex_c,
 					 vertex_d,
-					 transform_matrix[0] );
+					 transform_matrix );
 					 
   Teuchos::Tuple<double,9> transform_matrix_tuple = 
     Teuchos::tuple<double>( transform_matrix( 0, 0), transform_matrix( 0, 1),
@@ -106,7 +106,7 @@ TEUCHOS_UNIT_TEST( TetrahedronHelpers,
 					 vertex_b,
 					 vertex_c,
 					 vertex_d,
-					 transform_matrix[0] );
+					 transform_matrix );
 					 
   Teuchos::Tuple<double,9> transform_matrix_tuple = 
     Teuchos::tuple<double>( transform_matrix( 0, 0), transform_matrix( 0, 1),

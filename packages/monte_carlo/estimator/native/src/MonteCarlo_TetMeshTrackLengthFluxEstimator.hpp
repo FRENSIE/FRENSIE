@@ -20,7 +20,7 @@
 // Moab Includes
 #include <moab/Interface.hpp>
 #include <moab/AdaptiveKDTree.hpp>
-#include <moab/OreintedBoxTreeTool.hpp>
+#include <moab/OrientedBoxTreeTool.hpp>
 #include <moab/Matrix3.hpp>
 
 // Trilinos Includes
@@ -98,7 +98,7 @@ private:
   Geometry::ModuleTraits::InternalCellHandle d_last_visited_cell;
 
   // The map of tet ids and tet volumes
-  boost::unordered_map<moab::EntityHandle,const double> 
+  boost::unordered_map<moab::EntityHandle,double> 
   d_tet_volumes;
 
   // The map of tet ids and barycentric coordinate transform matrices
@@ -118,8 +118,15 @@ private:
   d_tets_updated_this_history;
 };
   
-
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_TetMeshTrackLengthFluxEstimator_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_TET_MESH_TRACK_LENGTH_FLUX_ESTIMATOR_HPP
 
