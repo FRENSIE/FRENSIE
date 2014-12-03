@@ -84,6 +84,11 @@ Add_EXECUTABLE(tstCellTrackLengthFluxEstimator
 TARGET_LINK_LIBRARIES(tstCellTrackLengthFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(CellTrackLengthFluxEstimator_test tstCellTrackLengthFluxEstimator)
 
+Add_EXECUTABLE(tstTetMeshTrackLengthFluxEstimator
+  tstTetMeshTrackLengthFluxEstimator.cpp)
+TARGET_LINK_LIBRARIES(tstTetMeshTrackLengthFluxEstimator monte_carlo_estimator_native)
+ADD_TEST(TetMeshTrackLengthFluxEstimator_test tstTetMeshTrackLengthFluxEstimator --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
+
 Add_EXECUTABLE(tstParticleCollidingInCellEventDispatcher
   tstParticleCollidingInCellEventDispatcher.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
