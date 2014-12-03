@@ -19,6 +19,7 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_TwoDArray.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_any.hpp>
 
@@ -39,10 +40,10 @@ namespace MonteCarlo{
 class Estimator : public Utility::PrintableObject
 {
 
-protected:
+public:
 
-  //! Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  //! Typedef for estimator id
+  typedef ModuleTraits::InternalEstimatorHandle idType;
 
   //! Typedef for tuple of estimator moments (1st,2nd)
   typedef Utility::Pair<double,double> TwoEstimatorMoments;
@@ -55,15 +56,17 @@ protected:
 
   //! Typedef for the array of estimator moments
   typedef Teuchos::Array<FourEstimatorMoments> FourEstimatorMomentsArray;
+
+protected:
+
+  //! Typedef for Teuchos::ScalarTraits
+  typedef Teuchos::ScalarTraits<double> ST;
   
   // Typedef for map of dimension values
   typedef boost::unordered_map<PhaseSpaceDimension,Teuchos::any> 
   DimensionValueMap;
 
 public:
-
-  //! Typedef for estimator id
-  typedef ModuleTraits::InternalEstimatorHandle idType;
 
   //! Set the number of particle histories that will be simulated
   static void setNumberOfHistories( const unsigned long long num_histories );
@@ -115,6 +118,36 @@ public:
   //! Commit the contribution from the current history to the estimator
   virtual void commitHistoryContribution() = 0;
 
+  //! Export the raw bin data
+  virtual void exportRawBinData( 
+			TwoEstimatorMomentsArray& raw_bin_data,
+			Teuchos::Array<std::string>& response_function_names,
+			Teuchos::Array<PhaseSpaceDimension> dimension_ordering,
+			Teuchos::Array<unsigned> dimension_sizes,
+			Teuchos::Array<std::string>& entity_names ) const = 0;
+
+  //! Import the raw bin data
+  virtual void importRawBinData(
+		  const TwoEstimatorMomentsArray& raw_bin_data,
+		  const Teuchos::Array<std::string>& response_function_names,
+		  const Teuchos::Array<PhaseSpaceDimension> dimension_ordering,
+		  const Teuchos::Array<unsigned> dimension_sizes,
+		  const Teuchos::Array<std::string>& entity_names,
+		  const bool overwrite ) const = 0;
+
+  //! Export the raw total data
+  virtual void exportRawTotalData(
+			 FourEstimatorMomentsArray& raw_total_data,
+			 Teuchos::Array<std::string>& response_function_names,
+			 Teuchos::Array<std::string>& entity_names ) const = 0;
+
+  //! Import the raw total data (this will overwrite the current data)
+  virtual void importRawTotalData(
+		   const FourEstimatorMomentsArray& raw_total_data,
+		   const Teuchos::Array<std::string>& response_function_names,
+		   const Teuchos::Array<std::string>& entity_names,
+		   const bool overwrite ) const = 0;
+  
 protected:
 
   //! Set the has uncommited history contribution flag

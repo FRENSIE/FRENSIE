@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_PhaseSpaceDimension.hpp
 //! \author Alex Robinson
-//! \brief  Phase space dimension enumeration
+//! \brief  Phase space dimension enumeration and helper function decl.
 //!
 //---------------------------------------------------------------------------//
 
@@ -35,7 +35,9 @@ enum PhaseSpaceDimension{
   DIMENSION_end
 };
 
-
+//! Stream operator for printing PhaseSpaceDimension enums
+std::ostream& operator<<( std::ostream& os,
+			  const PhaseSapceDimension dimension );
 
 } // end MonteCarlo namespace
 

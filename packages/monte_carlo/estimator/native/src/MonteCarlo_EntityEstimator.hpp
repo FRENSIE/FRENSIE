@@ -82,6 +82,22 @@ protected:
   //! Print the estimator data
   virtual void printImplementation( std::ostream& os,
 				    const std::string& entity_type ) const;
+
+  //! Export the raw bin data
+  void exportRawBinData(TwoEstimatorMomentsArray& raw_bin_data,
+			Teuchos::Array<std::string>& response_function_names,
+			Teuchos::Array<PhaseSpaceDimension> dimension_ordering,
+			Teuchos::Array<unsigned> dimension_sizes,
+			Teuchos::Array<std::string>& entity_names ) const;
+
+  //! Import the raw bin data (this will overwrite the current data)
+  void importRawBinData(
+		  const TwoEstimatorMomentsArray& raw_bin_data,
+		  const Teuchos::Array<std::string>& response_function_names,
+		  const Teuchos::Array<PhaseSpaceDimension> dimension_ordering,
+		  const Teuchos::Array<unsigned> dimension_sizes,
+		  const Teuchos::Array<std::string>& entity_names,
+		  const bool overwrite ) const;
   
 private:
 

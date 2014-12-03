@@ -148,7 +148,9 @@ int main( int argc, char** argv )
   simulation_manager->runSimulation();
 
   // Print the simulation summary
-  simulation_manager->printSimulationSummary( *out );			  
+  simulation_manager->printSimulationSummary( *out );
+
+  return 0;
 }
 
 //---------------------------------------------------------------------------//
