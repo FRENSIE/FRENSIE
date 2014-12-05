@@ -9,7 +9,11 @@
 #ifndef FACEMC_ENTITY_ESTIMATOR_DEF_HPP
 #define FACEMC_ENTITY_ESTIMATOR_DEF_HPP
 
+// Std Lib Includes
+#include <sstream>
+
 // FRENSIE Includes
+#include "Utility_TestForException.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -77,6 +81,40 @@ void EntityEstimator<EntityId>::getEntityIds(
 
     ++it;
   }
+}
+
+// Export the raw bin data
+template<typename EntityId>
+void EntityEstimator<EntityId>::exportRawBinData(
+			TwoEstimatorMomentsArray& raw_bin_data,
+			Teuchos::Array<std::string>& entity_names ) const
+{
+  EntityEstimatorMomentsArrayMap::const_iterator it = 
+    d_entity_estimator_moments_map.begin();
+
+  raw_bin_data.clear();
+
+  entity_names.clear();
+
+  while( it != d_entity_estimator_moments_map.end() )
+  {
+    ostringstream oss;
+    oss << it->first;
+
+    entity_names.push_back( oss.str() );
+
+    raw_bin_data.insert( raw_bin_data.end(), 
+			 it->second.begin(), 
+			 it->second.end() );
+  }
+
+  // Make sure the arrays have the correct size
+  testPrecondition( raw_bin_data.size() == 
+		    d_entity_estimator_moments_map.size()*
+		    this->getNumberOfBins()*
+		    this->getNumberOfResponseFunctions() );
+  testPrecondition( entity_names.size() == 
+		    d_entity_estimator_moments_map.size() );
 }
 
 // Assign bin boundaries to an estimator dimension

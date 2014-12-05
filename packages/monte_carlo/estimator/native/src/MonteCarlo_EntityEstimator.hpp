@@ -62,6 +62,11 @@ public:
   //! Check if the entity is assigned to this estimator
   bool isEntityAssigned( const EntityId& entity_id ) const;
 
+  //! Export the raw bin data
+  virtual void exportRawBinData(
+			     TwoEstimatorMomentsArray& raw_bin_data,
+			     Teuchos::Array<std::string>& entity_names ) const;
+
 protected:
 
   //! Assign bin boundaries to an estimator dimension
@@ -89,15 +94,6 @@ protected:
 			Teuchos::Array<PhaseSpaceDimension> dimension_ordering,
 			Teuchos::Array<unsigned> dimension_sizes,
 			Teuchos::Array<std::string>& entity_names ) const;
-
-  //! Import the raw bin data (this will overwrite the current data)
-  void importRawBinData(
-		  const TwoEstimatorMomentsArray& raw_bin_data,
-		  const Teuchos::Array<std::string>& response_function_names,
-		  const Teuchos::Array<PhaseSpaceDimension> dimension_ordering,
-		  const Teuchos::Array<unsigned> dimension_sizes,
-		  const Teuchos::Array<std::string>& entity_names,
-		  const bool overwrite ) const;
   
 private:
 
