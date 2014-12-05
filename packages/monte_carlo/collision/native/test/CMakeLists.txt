@@ -303,6 +303,12 @@ ADD_EXECUTABLE(tstElectroionizationSubshellElectronScatteringDistribution
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(tstElectroionizationSubshellElectronScatteringDistribution_test tstElectroionizationSubshellElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+ADD_EXECUTABLE(tstElectroatomicReactionACEFactory
+  tstElectroatomicReactionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstElectroatomicReactionACEFactory monte_carlo_collision_native)
+ADD_TEST(tstElectroatomicReactionACEFactory_test tstElectroatomicReactionACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)
 

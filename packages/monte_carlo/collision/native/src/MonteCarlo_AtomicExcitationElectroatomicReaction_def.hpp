@@ -61,6 +61,13 @@ unsigned AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_sect
   return 0u;
 }
 
+// Return the reaction type
+template<typename InterpPolicy, bool processed_cross_section>
+ElectroatomicReactionType AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
+{
+  return ATOMIC_EXCITATION_ELECTROATOMIC_REACTION;
+}
+
 // Simulate the reaction
 template<typename InterpPolicy, bool processed_cross_section>
 void AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::react(
