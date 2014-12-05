@@ -290,7 +290,7 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
 }
 
 // Create a bremsstrahlung electroatomic reactions
-void ElectroatomicReactionACEFactory::createBremsstrahlungReactions(
+void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 		const Data::XSSEPRDataExtractor& raw_electroatom_data,
 		const Teuchos::ArrayRCP<const double>& energy_grid,
 		Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reaction,

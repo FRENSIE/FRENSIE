@@ -73,7 +73,7 @@ std::string convertElectroatomicReactionEnumToString(
 
 //! Convert a SubshellType enum to a ElectroatomicReactionType enum
 ElectroatomicReactionType convertSubshellEnumToElectroatomicReactionEnum(
-						 const unsigned subshell );
+						 const SubshellType subshell );
 
 //! Stream operator for printing ElectroatomicReactionType enums
 inline std::ostream& operator<<( std::ostream& os,
