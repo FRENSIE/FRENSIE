@@ -33,8 +33,8 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
     d_scattering_distribution( 
          electroionization_subshell_scattering_distribution,
          binding_energy ),
-    d_reaction_type( 
-         convertSubshellEnumToElectroatomicReactionEnum( interaction_subshell ) )
+    d_reaction_type( convertSubshellEnumToElectroatomicReactionEnum( 
+                                                        interaction_subshell ) )
 {
   // Make sure the interaction subshell is valid
   testPrecondition( interaction_subshell != INVALID_SUBSHELL );
