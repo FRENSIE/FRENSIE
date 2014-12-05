@@ -119,24 +119,24 @@ public:
   virtual void commitHistoryContribution() = 0;
 
   //! Export the raw bin data
-  virtual void exportRawBinData( 
-			TwoEstimatorMomentsArray& raw_bin_data,
-			Teuchos::Array<std::string>& entity_names ) const = 0;
+  virtual void exportRawBinData(  
+      boost::unordered_map<std::string,TwoEstimatorMomentsArray>& raw_bin_data,
+      Teuchos::Array<std::string>& entity_names ) const = 0;
 
   //! Export the processed bin data
   virtual void exportProcessedBinData(
-			TwoEstimatorMomentsArray& raw_bin_data,
-			Teuchos::Array<std::string>& entity_names ) const = 0; 
+      boost::unordered_map<std::string,TwoEstimatorMomentsArray>& raw_bin_data,
+      Teuchos::Array<std::string>& entity_names ) const = 0;
 
   //! Export the raw total data
   virtual void exportRawTotalData(
-			 FourEstimatorMomentsArray& raw_total_data,
-			 Teuchos::Array<std::string>& entity_names ) const = 0;
+   boost::unordered_map<std::string,FourEstimatorMomentsArray>& raw_total_data,
+   Teuchos::Array<std::string>& entity_names ) const = 0;
 
   //! Export the processed total data
   virtual void exportProcessedTotalData(
-			 FourEstimatorMomentsArray& raw_total_data,
-			 Teuchos::Array<std::string>& entity_names ) const = 0;
+   boost::unordered_map<std::string,FourEstimatorMomentsArray>& raw_total_data,
+   Teuchos::Array<std::string>& entity_names ) const = 0;
   
 protected:
 
