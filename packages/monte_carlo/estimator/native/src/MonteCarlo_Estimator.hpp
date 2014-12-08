@@ -120,23 +120,23 @@ public:
 
   //! Export the raw bin data
   virtual void exportRawBinData(  
-      boost::unordered_map<std::string,TwoEstimatorMomentsArray>& raw_bin_data,
-      Teuchos::Array<std::string>& entity_names ) const = 0;
+                    boost::unordered_map<std::string,TwoEstimatorMomentsArray>&
+		    raw_bin_data ) const = 0;
 
   //! Export the processed bin data
   virtual void exportProcessedBinData(
-      boost::unordered_map<std::string,TwoEstimatorMomentsArray>& raw_bin_data,
-      Teuchos::Array<std::string>& entity_names ) const = 0;
+                    boost::unordered_map<std::string,TwoEstimatorMomentsArray>&
+		    raw_bin_data ) const = 0;
 
   //! Export the raw total data
   virtual void exportRawTotalData(
-   boost::unordered_map<std::string,FourEstimatorMomentsArray>& raw_total_data,
-   Teuchos::Array<std::string>& entity_names ) const = 0;
+                   boost::unordered_map<std::string,FourEstimatorMomentsArray>&
+		   raw_total_data ) const = 0;
 
   //! Export the processed total data
   virtual void exportProcessedTotalData(
-   boost::unordered_map<std::string,FourEstimatorMomentsArray>& raw_total_data,
-   Teuchos::Array<std::string>& entity_names ) const = 0;
+                   boost::unordered_map<std::string,FourEstimatorMomentsArray>&
+		   raw_total_data ) const = 0;
   
 protected:
 
@@ -194,22 +194,20 @@ protected:
   unsigned calculateBinIndex( const DimensionValueMap& dimension_values,
 			      const unsigned response_function_index ) const; 
 
-  //! Calculate the mean of a set of contributions
-  double calculateMean( const double first_moment_contributions ) const;
+  //! Convert first and second moments to mean and relative error
+  void processMoments( const Utility::Pair<double,double>& moments,
+		       const double norm_constant,
+		       double& mean,
+		       double& relative_error ) const;
 
-  //! Calculate the relative error of a set of contributions
-  double calculateRelativeError( 
-			      const double first_moment_contributions,
-			      const double second_moment_contributions ) const;
-
-  //! Calculate the variance of the variance (VOV) of a set of contributions
-  double calculateVOV( const double first_moment_contributions,
-		       const double second_moment_contributions,
-		       const double third_moment_contributions,
-		       const double fourth_moment_contributions ) const;
-
-  //! Calculate the figure of merit (FOM) of an estimator bin
-  double calculateFOM( const double relative_error ) const;
+  //! Convert first, second, third, fourth moments to mean, rel. er., vov, fom
+  void processMoments( 
+		     const Utility::Quad<double,double,double,double>& moments,
+		     const double norm_constant,
+		     double& mean,
+		     double& relative_error,
+		     double& variance_of_variance,
+		     double& figure_of_merit ) const;
 
 private:
 
@@ -218,6 +216,23 @@ private:
   void convertPartialParticleStateToGenericMap( 
 				   const ParticleState& particle,
 			           DimensionValueMap& dimension_values ) const;
+
+  // Calculate the mean of a set of contributions
+  double calculateMean( const double first_moment_contributions ) const;
+
+  // Calculate the relative error of a set of contributions
+  double calculateRelativeError( 
+			      const double first_moment_contributions,
+			      const double second_moment_contributions ) const;
+
+  // Calculate the variance of the variance (VOV) of a set of contributions
+  double calculateVOV( const double first_moment_contributions,
+		       const double second_moment_contributions,
+		       const double third_moment_contributions,
+		       const double fourth_moment_contributions ) const;
+
+  // Calculate the figure of merit (FOM) of an estimator bin
+  double calculateFOM( const double relative_error ) const;
 			     
 					       
 

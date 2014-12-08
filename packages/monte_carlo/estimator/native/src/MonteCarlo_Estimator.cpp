@@ -187,15 +187,15 @@ void Estimator::printEstimatorBinData(
       // Calculate the bin index for the response function
       unsigned bin_index = i + r*getNumberOfBins();
 
-      // Calculate the estimator bin data
-      double estimator_bin_value = 
-	calculateMean( estimator_moments_data[bin_index].first )*
-	d_multiplier/norm_constant;
       
-      double estimator_bin_rel_err = 
-	calculateRelativeError( 
-			       estimator_moments_data[bin_index].first,
-			       estimator_moments_data[bin_index].second );
+      // Calculate the estimator bin data
+      double estimator_bin_value;
+      double estimator_bin_rel_err;
+
+      processMoments( estimator_moments_data[bin_index],
+		      norm_constant,
+		      estimator_bin_value,
+		      estimator_bin_rel_error );
 
       // Print the estimator bin data
       os << " " << estimator_bin_value << " " 
@@ -221,21 +221,16 @@ void Estimator::printEstimatorTotalData(
   {
     os << "Response Function: " << getResponseFunctionName( i ) << std::endl;
     
-    double estimator_value = 
-    calculateMean( total_estimator_moments_data[i].first )*
-      d_multiplier/norm_constant;
-  
-    double estimator_rel_err = 
-      calculateRelativeError( total_estimator_moments_data[i].first,
-			      total_estimator_moments_data[i].second );
-  
-    double estimator_vov = 
-      calculateVOV( total_estimator_moments_data[i].first,
-		    total_estimator_moments_data[i].second,
-		    total_estimator_moments_data[i].third,
-		    total_estimator_moments_data[i].fourth );
-    
-    double estimator_fom = calculateFOM( estimator_rel_err );
+    double estimator_value;
+    double estimator_rel_err;
+    double estimator_vov;
+    double estimator_fom;
+
+    processMoments( total_estimator_moments_data[i],
+		    estimator_value,
+		    estimator_rel_err,
+		    estimator_vov,
+		    estimator_fom );
     
     os << estimator_value << " " 
        << estimator_rel_err << " "
@@ -311,6 +306,54 @@ unsigned Estimator::calculateBinIndex(
   testPostcondition( bin_index < std::numeric_limits<unsigned>::max() );
 
   return bin_index;
+}
+
+// Convert first and second moments to mean and relative error
+void Estimator::processMoments( const Utility::Pair<double,double>& moments,
+				const double norm_constant,
+				double& mean,
+				double& relative_error ) const
+{
+  // Make sure the moments are valid
+  testPrecondition( !ST::isnaninf( moments.first ) );
+  testPrecondition( !ST::isnaninf( moments.second ) );
+  // Make sure the norm contant is valid
+  testPrecondition( !ST::isnaninf( norm_constant ) );
+  testPrecondition( norm_constant > 0.0 );
+  
+  mean = calculateMean( moments.first )*d_multiplier/norm_constant;
+      
+  relative_error = calculateRelativeError( moments.first, moments.second );
+}
+
+// Convert first, second, third, fourth moments to mean, rel. er., vov, fom
+void Estimator::processMoments( 
+		     const Utility::Quad<double,double,double,double>& moments,
+		     const double norm_constant,
+		     double& mean,
+		     double& relative_error,
+		     double& vov,
+		     double& fom ) const
+{
+  // Make sure the moments are valid
+  testPrecondition( !ST::isnaninf( moments.first ) );
+  testPrecondition( !ST::isnaninf( moments.second ) );
+  testPrecondition( !ST::isnaninf( moments.third ) );
+  testPrecondition( !ST::isnaninf( moments.fourth ) );
+  // Make sure the norm contant is valid
+  testPrecondition( !ST::isnaninf( norm_constant ) );
+  testPrecondition( norm_constant > 0.0 );
+
+  mean = calculateMean( moments.first )*d_multiplier/norm_constant;
+      
+  relative_error = calculateRelativeError( moments.first, moments.second );
+
+  variance_of_variance = calculateVOV( moments.first,
+				       moments.second,
+				       moments.third,
+				       moments.fourth );
+    
+  figure_of_merit = calculateFOM( relative_error );
 }
 
 // Calculate the mean of a set of contributions
