@@ -299,6 +299,23 @@ void ParticleSimulationManager<GeometryHandler,
 			d_end_time );
 }
 
+// Print the data in all estimators to a parameter list
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+void ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::printSimulationSummary( 
+			     Teuchos::ParameterList& simulation_summary ) const
+{
+  EMI::printEstimators( simulation_summary,
+			d_histories_completed,
+			d_start_time,
+			d_end_time );
+}
+
 // Signal handler
 template<typename GeometryHandler,
 	 typename SourceHandler,

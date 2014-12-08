@@ -64,8 +64,13 @@ public:
 
   //! Export the raw bin data
   virtual void exportRawBinData(
-			     TwoEstimatorMomentsArray& raw_bin_data,
-			     Teuchos::Array<std::string>& entity_names ) const;
+                    boost::unordered_map<std::string,TwoEstimatorMomentsArray>&
+		    raw_bin_data ) const;
+
+  //! Export the processed bin data
+  virtual void exportProcessedBinData(
+                    boost::unordered_map<std::string,TwoEstimatorMomentsArray>&
+		    raw_bin_data ) const;  
 
 protected:
 

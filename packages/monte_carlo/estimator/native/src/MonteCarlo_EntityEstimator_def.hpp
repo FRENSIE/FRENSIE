@@ -86,35 +86,66 @@ void EntityEstimator<EntityId>::getEntityIds(
 // Export the raw bin data
 template<typename EntityId>
 void EntityEstimator<EntityId>::exportRawBinData(
-			TwoEstimatorMomentsArray& raw_bin_data,
-			Teuchos::Array<std::string>& entity_names ) const
+                    boost::unordered_map<std::string,TwoEstimatorMomentsArray>&
+		    raw_bin_data ) const
 {
   EntityEstimatorMomentsArrayMap::const_iterator it = 
     d_entity_estimator_moments_map.begin();
 
   raw_bin_data.clear();
 
-  entity_names.clear();
+  while( it != d_entity_estimator_moments_map.end() )
+  {
+    ostringstream oss;
+    oss << it->first;
+
+    raw_bin_data[oss.str()] = it->second;
+  }
+
+  // Make sure all the data has been exported
+  testPostcondition( raw_bin_data.size() == 
+		     d_entity_estimator_moments_map.size() );
+}
+
+// Export the processed bin data
+template<typename EntityId>
+virtual void EntityEstimator<EntityId>::exportProcessedBinData(
+		    boost::unordered_map<std::string,TwoEstimatorMomentsArray>&
+		    raw_bin_data ) const
+{
+  EntityEstimatorMomentsArrayMap::const_iterator it = 
+    d_entity_estimator_moments_map.begin();
+
+  raw_bin_data.clear();
 
   while( it != d_entity_estimator_moments_map.end() )
   {
     ostringstream oss;
     oss << it->first;
 
-    entity_names.push_back( oss.str() );
+    raw_bin_data[oss.str()] = it->second;
 
-    raw_bin_data.insert( raw_bin_data.end(), 
-			 it->second.begin(), 
-			 it->second.end() );
+    TwoEstimatorMomentsArray& raw_array = raw_bin_data[oss.str()];
+
+    for( unsigned r = 0; r < this->getNumberOfResponseFunctions(); ++r )
+    {
+      for( unsigned i = 0; i < this->getNumberOfBins(); ++i )
+      {
+	unsigned bin_index = i + r*getNumberOfBins();
+
+	double estimator_bin_value;
+	double estimator_bin_rel_error;
+
+	processMoments( raw_array[bin_index],
+		        d_entity_norm_constants_map.find( it->first )->second,
+			estimator_bin_value,
+			estimator_bin_rel_error );
+
+	raw_array[bin_index].first = estimator_bin_value;
+	raw_array[bin_index].second = estimator_bin_rel_error;
+      }
+    }
   }
-
-  // Make sure the arrays have the correct size
-  testPrecondition( raw_bin_data.size() == 
-		    d_entity_estimator_moments_map.size()*
-		    this->getNumberOfBins()*
-		    this->getNumberOfResponseFunctions() );
-  testPrecondition( entity_names.size() == 
-		    d_entity_estimator_moments_map.size() );
 }
 
 // Assign bin boundaries to an estimator dimension

@@ -60,6 +60,10 @@ public:
   //! Print the data in all estimators to the desired stream
   void printSimulationSummary( std::ostream &os ) const;
 
+  //! Print the data in all estimators to the desired stream
+  void printSimulationSummary( 
+			    Teuchos::ParameterList& simulation_summary ) const;
+
   // Signal handler
   void signalHandler(int signal);
 
