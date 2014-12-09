@@ -62,15 +62,9 @@ public:
   //! Check if the entity is assigned to this estimator
   bool isEntityAssigned( const EntityId& entity_id ) const;
 
-  //! Export the raw bin data
-  virtual void exportRawBinData(
-                    boost::unordered_map<std::string,TwoEstimatorMomentsArray>&
-		    raw_bin_data ) const;
-
-  //! Export the processed bin data
-  virtual void exportProcessedBinData(
-                    boost::unordered_map<std::string,TwoEstimatorMomentsArray>&
-		    raw_bin_data ) const;  
+  //! Export the estimator data
+  virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,
+			   const bool process_data ) const;
 
 protected:
 
@@ -92,13 +86,6 @@ protected:
   //! Print the estimator data
   virtual void printImplementation( std::ostream& os,
 				    const std::string& entity_type ) const;
-
-  //! Export the raw bin data
-  void exportRawBinData(TwoEstimatorMomentsArray& raw_bin_data,
-			Teuchos::Array<std::string>& response_function_names,
-			Teuchos::Array<PhaseSpaceDimension> dimension_ordering,
-			Teuchos::Array<unsigned> dimension_sizes,
-			Teuchos::Array<std::string>& entity_names ) const;
   
 private:
 

@@ -13,7 +13,6 @@
 #include <sstream>
 
 // FRENSIE Includes
-#include "Utility_TestForException.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -83,70 +82,7 @@ void EntityEstimator<EntityId>::getEntityIds(
   }
 }
 
-// Export the raw bin data
-template<typename EntityId>
-void EntityEstimator<EntityId>::exportRawBinData(
-                    boost::unordered_map<std::string,TwoEstimatorMomentsArray>&
-		    raw_bin_data ) const
-{
-  EntityEstimatorMomentsArrayMap::const_iterator it = 
-    d_entity_estimator_moments_map.begin();
 
-  raw_bin_data.clear();
-
-  while( it != d_entity_estimator_moments_map.end() )
-  {
-    ostringstream oss;
-    oss << it->first;
-
-    raw_bin_data[oss.str()] = it->second;
-  }
-
-  // Make sure all the data has been exported
-  testPostcondition( raw_bin_data.size() == 
-		     d_entity_estimator_moments_map.size() );
-}
-
-// Export the processed bin data
-template<typename EntityId>
-virtual void EntityEstimator<EntityId>::exportProcessedBinData(
-		    boost::unordered_map<std::string,TwoEstimatorMomentsArray>&
-		    raw_bin_data ) const
-{
-  EntityEstimatorMomentsArrayMap::const_iterator it = 
-    d_entity_estimator_moments_map.begin();
-
-  raw_bin_data.clear();
-
-  while( it != d_entity_estimator_moments_map.end() )
-  {
-    ostringstream oss;
-    oss << it->first;
-
-    raw_bin_data[oss.str()] = it->second;
-
-    TwoEstimatorMomentsArray& raw_array = raw_bin_data[oss.str()];
-
-    for( unsigned r = 0; r < this->getNumberOfResponseFunctions(); ++r )
-    {
-      for( unsigned i = 0; i < this->getNumberOfBins(); ++i )
-      {
-	unsigned bin_index = i + r*getNumberOfBins();
-
-	double estimator_bin_value;
-	double estimator_bin_rel_error;
-
-	processMoments( raw_array[bin_index],
-		        d_entity_norm_constants_map.find( it->first )->second,
-			estimator_bin_value,
-			estimator_bin_rel_error );
-
-	raw_array[bin_index].first = estimator_bin_value;
-	raw_array[bin_index].second = estimator_bin_rel_error;
-      }
-    }
-  }
-}
 
 // Assign bin boundaries to an estimator dimension
 template<typename EntityId>
@@ -183,6 +119,67 @@ inline bool EntityEstimator<EntityId>::isEntityAssigned(
 					      const EntityId& entity_id ) const
 {
   return d_entity_norm_constants_map.count( entity_id );
+}
+
+// Export the estimator data
+template<typename EntityId>
+void EntityEstimator<EntityId>::exportData(EstimatorHDF5FileHandler& hdf5_file,
+					   const bool process_data ) const
+{
+  // Export the low level estimator data
+  Estimator::exportData( hdf5_file, process_data );
+  
+  // Export all of the estimator data
+  {
+    Teuchos::Array<Utility::Pair<EntityId,double> > entity_ids_norm_consts(
+				       d_entity_estimator_moments_map.size() );
+    
+    typename EntityEstimatorMomentsArrayMap::const_iterator entity_data;
+    unsigned i;
+    
+    for( i = 0u, entity_data = d_entity_estimator_moments_map.begin();
+	 entity_data != d_entity_estimator_moments_map.end();
+	 ++entity_data, ++i )
+    {
+      const double norm_constant = 
+	d_entity_norm_constants_map.find( entity_data->first )->second;
+
+      entity_ids_norm_consts[i].first = entity_data->first;
+      entity_ids_norm_consts[i].second = norm_constant;
+    
+      // Export the entity norm constant
+      hdf5_file.setEntityNormConstant( this->getId(),
+				       entity_data->first,
+				       norm_constant );
+      
+      // Export the raw entity moment data
+      hdf5_file.setRawEstimatorEntityBinData( this->getId(),
+					      entity_data->first,
+					      entity_data->second );
+      
+      if( process_data )
+      {
+	Teuchos::Array<Utility::Pair<double,double> > processed_data(
+						  entity_data->second.size() );
+
+	for( unsigned j = 0; j < entity_data->second.size(); ++j )
+	{
+	  
+	  this->processMoments( entity_data->second[j],
+				norm_constant,
+				processed_data[j].first,
+				processed_data[j].second );
+	}
+	
+	hdf5_file.setProcessedEstimatorEntityBinData( this->getId(),
+						      entity_data->first,
+						      processed_data );
+      }
+    }
+
+    // Export the estimator entity ids
+    hdf5_file.setEstimatorEntities( this->getId(), entity_ids_norm_consts );
+  }
 }
 
 // Commit history contribution to a bin of an entity

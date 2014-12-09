@@ -57,6 +57,16 @@ void EstimatorHandler::printEstimators( std::ostream& os,
   }
 }
 
+// Export the estimator data
+void EstimatorHandler::exportEstimatorData( const std::string& data_file_name,
+					    const unsigned last_history_number,
+					    const unsigned histories_completed,
+					    const double start_time,
+					    const double end_time )
+{
+  
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

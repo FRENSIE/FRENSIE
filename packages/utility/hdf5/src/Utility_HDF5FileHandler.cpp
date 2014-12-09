@@ -79,6 +79,40 @@ void HDF5FileHandler::closeHDF5File()
   d_hdf5_file.reset();
 }
 
+// Check if the data set exists
+bool HDF5FileHandler::doesDataSetExist( 
+				    const std::string &location_in_file ) const
+{
+  bool data_set_exists = true;
+  
+  try
+  {
+    H5::DataSet dataset( d_hdf5_file->openDataSet( location_in_file ) );
+  }
+  catch( H5::Exception& exception )
+  {
+    data_set_exists = false;
+  }
+
+  return data_set_exists;
+}
+
+// Check if the group exists
+bool HDF5FileHandler::doesGroupExist( const std::string &group_location ) const
+{
+  bool group_exists = true;
+
+  try{
+    H5::Group group( d_hdf5_file->openGroup( group_location ) );
+  }
+  catch( H5::Exception& exception )
+  {
+    group_exists = false;
+  }
+
+  return group_exists;
+}
+
 /*! \details This function can be used to create a group heirarchy or to
  * create a directory at the desired location of the HDF5 file.
  * \param[in] path_name The name of the path containing parent groups that

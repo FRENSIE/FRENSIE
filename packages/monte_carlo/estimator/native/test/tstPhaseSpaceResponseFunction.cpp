@@ -106,6 +106,7 @@ void initializeCartesianResponseFunction( const bool uniform )
   initializeEnergyAndTimeDists( energy_distribution, time_distribution );
 
   response_function.reset( new MonteCarlo::PhaseSpaceResponseFunction(
+						      0,
 						      "cartesian_response",
 						      spatial_distribution,
 						      directional_distribution,
@@ -160,6 +161,7 @@ void initializeCylindricalResponseFunction( const bool uniform )
   initializeEnergyAndTimeDists( energy_distribution, time_distribution );
 
   response_function.reset( new MonteCarlo::PhaseSpaceResponseFunction(
+						      1,
 						      "cylindrical_response",
 						      spatial_distribution,
 						      directional_distribution,
@@ -214,6 +216,7 @@ void initializeSphericalResponseFunction( const bool uniform )
   initializeEnergyAndTimeDists( energy_distribution, time_distribution );
 
   response_function.reset( new MonteCarlo::PhaseSpaceResponseFunction(
+						      2,
 						      "spherical_response",
 						      spatial_distribution,
 						      directional_distribution,
@@ -238,6 +241,23 @@ TEUCHOS_UNIT_TEST( PhaseSpaceResponseFunction, getName )
   initializeSphericalResponseFunction( true );
   
   TEST_EQUALITY( response_function->getName(), "spherical_response" );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the response function id can be returned
+TEUCHOS_UNIT_TEST( PhaseSpaceResponseFunction, getId )
+{
+  initializeCartesianResponseFunction( true );
+
+  TEST_EQUALITY( response_function->getId(), 0 );
+
+  initializeCylindricalResponseFunction( true );
+
+  TEST_EQUALITY( response_function->getId(), 1 );
+
+  initializeSphericalResponseFunction( true );
+  
+  TEST_EQUALITY( response_function->getId(), 2 );
 }
 
 //---------------------------------------------------------------------------//

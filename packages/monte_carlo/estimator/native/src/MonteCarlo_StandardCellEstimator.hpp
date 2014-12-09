@@ -37,6 +37,10 @@ public:
   //! Set the particle types that can contribute to the estimator
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
 
+  //! Export the estimator data
+  void exportData( EstimatorHDF5FileHandler& hdf5_file,
+		   const bool process_data ) const;
+
 private:
 
   // Assign bin boundaries to an estimator dimension
