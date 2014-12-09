@@ -43,6 +43,13 @@ public:
 			       const double start_time,
 			       const double end_time );
 
+  //! Export the estimator data
+  static void exportEstimatorData( const std::string& data_file_name,
+				   const unsigned last_history_number,
+				   const unsigned histories_completed,
+				   const double start_time,
+				   const double end_time );
+
 private:
 
   // Constructor

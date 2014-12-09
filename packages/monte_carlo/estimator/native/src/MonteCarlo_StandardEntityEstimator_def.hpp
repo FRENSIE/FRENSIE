@@ -112,6 +112,75 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
   }
 }
 
+// Export the estimator data
+template<typename EntityId>
+void StandardEntityEstimator<EntityId>::exportData(
+			   EstimatorHDF5FileHandler& hdf5_file,
+			   const bool process_data ) const
+{
+  // Export the lower level data first
+  EntityEstimator<EntityId>::exportData( hdf5_file, process_data );
+
+  // Export the raw total data for each entity
+  {
+    typename EntityEstimatorMomentsArrayMap::const_iterator entity_data = 
+      d_entity_total_estimator_moments_map.begin();
+
+    while( entity_data != d_entity_total_estimator_moments_map.end() )
+    {
+      hdf5_file.setRawEstimatorEntityTotalData( this->getId(),
+						entity_data->first,
+						entity_data->second );
+
+      if( process_data )
+      {
+	Teuchos::Array<Utility::Quad<double,double,double,double> > 
+	  processed_data( entity_data->second.size() );
+	
+	for( unsigned i = 0; i < processed_data.size(); ++i )
+	{
+	  this->processMoments( 
+			     entity_data->second[i],
+			     this->getEntityNormConstant( entity_data->first ),
+			     processed_data[i].first,
+			     processed_data[i].second,
+			     processed_data[i].third,
+			     processed_data[i].fourth );
+	}
+
+	hdf5_file.setProcessedEstimatorEntityTotalData( this->getId(),
+							entity_data->first,
+							processed_data );
+      }
+      
+      ++entity_data;
+    }
+  }
+
+  // Export the raw total data over all entities
+  hdf5_file.setRawEstimatorTotalData( this->getId(), 
+				      d_total_estimator_moments );
+
+  // Export the processed total data over all entities
+  if( process_data )
+  {
+    Teuchos::Array<Utility::Quad<double,double,double,double> > processed_data(
+					    d_total_estimator_moments.size() );
+
+    for( unsigned i = 0; i < d_total_estimator_moments.size(); ++i )
+    {
+      this->processMoments( d_total_estimator_moments[i],
+			    this->getTotalNormConstant(),
+			    processed_data[i].first,
+			    processed_data[i].second,
+			    processed_data[i].third,
+			    processed_data[i].fourth );
+    }
+
+    hdf5_file.setProcessedEstimatorTotalData( this->getId(), processed_data );
+  }
+}
+
 // Assign bin boundaries to an estimator dimension
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::assignBinBoundaries(

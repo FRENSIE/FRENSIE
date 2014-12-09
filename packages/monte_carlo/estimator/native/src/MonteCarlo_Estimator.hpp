@@ -30,6 +30,7 @@
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
 #include "MonteCarlo_EstimatorDimensionDiscretization.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "Utility_PrintableObject.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_ContractException.hpp"
@@ -118,25 +119,9 @@ public:
   //! Commit the contribution from the current history to the estimator
   virtual void commitHistoryContribution() = 0;
 
-  //! Export the raw bin data
-  virtual void exportRawBinData(  
-                    boost::unordered_map<std::string,TwoEstimatorMomentsArray>&
-		    raw_bin_data ) const = 0;
-
-  //! Export the processed bin data
-  virtual void exportProcessedBinData(
-                    boost::unordered_map<std::string,TwoEstimatorMomentsArray>&
-		    raw_bin_data ) const = 0;
-
-  //! Export the raw total data
-  virtual void exportRawTotalData(
-                   boost::unordered_map<std::string,FourEstimatorMomentsArray>&
-		   raw_total_data ) const = 0;
-
-  //! Export the processed total data
-  virtual void exportProcessedTotalData(
-                   boost::unordered_map<std::string,FourEstimatorMomentsArray>&
-		   raw_total_data ) const = 0;
+  //! Export the estimator data
+  virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,
+			   const bool process_data ) const;
   
 protected:
 

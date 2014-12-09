@@ -61,6 +61,10 @@ public:
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution();
 
+  //! Export the estimator data
+  virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,
+			   const bool process_data ) const;
+
 protected:
 
   //! Assign bin boundaries to an estimator dimension

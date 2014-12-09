@@ -9,14 +9,21 @@
 #ifndef MONTE_CARLO_PHASE_SPACE_DIMENSION_HPP
 #define MONTE_CARLO_PHASE_SPACE_DIMENSION_HPP
 
+// Std Lib Includes
+#include <iostream>
+#include <string>
+
 // Boost Includes
 #include <boost/unordered_map.hpp>
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
+// HDF5 Includes
+#include <H5Cpp.h>
+
 // FRENSIE Includes
-#include "Utility_Tuple.hpp"
+#include "Utility_HDF5TypeTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -35,11 +42,53 @@ enum PhaseSpaceDimension{
   DIMENSION_end
 };
 
+//! Convert the PhaseSpaceDimension to a string
+std::string convertPhaseSpaceDimensionToString( 
+				         const PhaseSpaceDimension dimension );
+
 //! Stream operator for printing PhaseSpaceDimension enums
-std::ostream& operator<<( std::ostream& os,
-			  const PhaseSapceDimension dimension );
+inline std::ostream& operator<<( std::ostream& os,
+				 const PhaseSpaceDimension dimension )
+{
+  os << convertPhaseSpaceDimensionToString( dimension );
+
+  return os;
+}
 
 } // end MonteCarlo namespace
+
+namespace Utility{
+
+/*! The specialization of the Utility::HDF5TypeTraits for the
+ * MonteCarlo::PhaseSpaceDimension enum
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<MonteCarlo::PhaseSpaceDimension>
+{
+  //! Return the HDF5 data type
+  static H5::EnumType dataType();
+
+  //! Return the name of the type
+  static inline std::string name()
+  {
+    return "PhaseSpaceDimension";
+  }
+  
+  //! Returns the zero value for this type
+  static inline MonteCarlo::PhaseSpaceDimension zero()
+  {
+    return MonteCarlo::COSINE_DIMENSION;
+  }
+
+  //! Returns the unity value for this type
+  static inline MonteCarlo::PhaseSpaceDimension one()
+  {
+    return MonteCarlo::ENERGY_DIMENSION;
+  }
+};
+
+} // end Utility namespace
 
 #endif // end MONTE_CARLO_PHASE_SPACE_DIMENSION_HPP
 

@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <limits>
+
 // FRENSIE Includes
 #include "MonteCarlo_ResponseFunction.hpp"
 #include "Utility_ContractException.hpp"
@@ -14,14 +17,24 @@ namespace MonteCarlo{
 
 // Initialize the default response function
 const Teuchos::RCP<ResponseFunction> 
-ResponseFunction::default_response_function( new ResponseFunction("default") );
+ResponseFunction::default_response_function( new ResponseFunction(
+					  std::numeric_limits<unsigned>::max(),
+					  "default" ) );
 
 // Constructor
-ResponseFunction::ResponseFunction( const std::string& name )
-  : d_name( name )
+ResponseFunction::ResponseFunction( const unsigned id,
+				    const std::string& name )
+  : d_id( id ),
+    d_name( name )
 {
   // Make sure the name is valid
   testPrecondition( name.size() > 0 );
+}
+
+// Return the id
+unsigned ResponseFunction::getId() const
+{
+  return d_id;
 }
 
 // Return the name of the response function

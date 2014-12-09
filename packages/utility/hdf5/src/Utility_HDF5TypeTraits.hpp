@@ -135,6 +135,63 @@ struct HDF5TypeTraits<unsigned long long>
   { return 1ull; }
 };
 
+/*! \brief The specialization of the Utility::HDF5TypeTraits for char
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<char>
+{
+  //! Returns the HDF5 data type object corresponding to bool
+  static inline H5::PredType dataType()
+  { return H5::PredType::NATIVE_CHAR; }
+
+  //! Returns the zero value for this type
+  static inline char zero()
+  { return '0'; }
+
+  //! Returns the unity value for this type
+  static inline char one()
+  { return '1'; }
+};
+
+/*! \brief The specialization of the Utility::HDF5TypeTraits for signed char
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<signed char>
+{
+  //! Returns the HDF5 data type object corresponding to bool
+  static inline H5::PredType dataType()
+  { return H5::PredType::NATIVE_SCHAR; }
+
+  //! Returns the zero value for this type
+  static inline signed char zero()
+  { return 0; }
+
+  //! Returns the unity value for this type
+  static inline signed char one()
+  { return 1; }
+};
+
+/*! \brief The specialization of the Utility::HDF5TypeTraits for unsigned char
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<unsigned char>
+{
+  //! Returns the HDF5 data type object corresponding to bool
+  static inline H5::PredType dataType()
+  { return H5::PredType::NATIVE_UCHAR; }
+
+  //! Returns the zero value for this type
+  static inline unsigned char zero()
+  { return 0; }
+
+  //! Returns the unity value for this type
+  static inline unsigned char one()
+  { return 1; }
+};
+
 /*! \brief The partial specialization of the Utility::HDF5TypeTraits for the
  * Utility::Pair struct
  * \ingroup hdf5_type_traits

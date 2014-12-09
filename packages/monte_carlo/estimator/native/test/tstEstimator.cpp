@@ -55,10 +55,7 @@ public:
   using MonteCarlo::Estimator::evaluateResponseFunction;
   using MonteCarlo::Estimator::isPointInEstimatorPhaseSpace;
   using MonteCarlo::Estimator::calculateBinIndex;
-  using MonteCarlo::Estimator::calculateMean;
-  using MonteCarlo::Estimator::calculateRelativeError;
-  using MonteCarlo::Estimator::calculateVOV;
-  using MonteCarlo::Estimator::calculateFOM;
+  using MonteCarlo::Estimator::processMoments;
 };
 
 //---------------------------------------------------------------------------//
@@ -167,6 +164,7 @@ TEUCHOS_UNIT_TEST( Estimator, setResponseFunctions )
 			    new Utility::UniformDistribution( 0.0, 10, 1.0 ) );
 
   response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 
+						       0,
 						       "uniform_energy",
 						       energy_distribution ) );
   response_functions[1] = MonteCarlo::ResponseFunction::default_response_function;
@@ -314,44 +312,54 @@ TEUCHOS_UNIT_TEST( Estimator, hasUncommittedHisotryContribution )
 }
 
 //---------------------------------------------------------------------------//
-// Calculate the mean of a set of contributions
-TEUCHOS_UNIT_TEST( Estimator, calculateMean )
+// Process the first and second moments
+TEUCHOS_UNIT_TEST( Estimator, processMoments_two )
 {
   MonteCarlo::Estimator::setNumberOfHistories( 100ull );
 
-  double mean = estimator.calculateMean( 100.00 );
+  double mean;
+  double relative_error;
+
+  Utility::Pair<double,double> moments( 100.0, 150.0 );
+
+  estimator.processMoments( moments,
+			    1.0,
+			    mean,
+			    relative_error );
 
   TEST_EQUALITY_CONST( mean, 1.0 );
+  TEST_FLOATING_EQUALITY( relative_error, 0.070710678118655, 1e-14 );
 }
 
 //---------------------------------------------------------------------------//
-// Calculate the relative error of a set of contributions
-TEUCHOS_UNIT_TEST( Estimator, calculateRelativeError )
+// Process the first, second, third and fourth moments
+TEUCHOS_UNIT_TEST( Estimator, processMoments_four )
 {
-  double rel_err = estimator.calculateRelativeError( 100.0, 150.0 );
-
-  TEST_FLOATING_EQUALITY( rel_err, 0.070710678118655, 1e-14 );
-}
-
-//---------------------------------------------------------------------------//
-// Calculate the variance of the variance of a set of contributions
-TEUCHOS_UNIT_TEST( Estimator, calculateVOV )
-{
-  double vov = estimator.calculateVOV( 100.0, 150.0, 300.0, 800.0 );
-
-  TEST_EQUALITY_CONST( vov, 0.07 );
-}
-
-//---------------------------------------------------------------------------//
-// Calculate the figure of merit of a of an estimator bin
-TEUCHOS_UNIT_TEST( Estimator, calculateFOM )
-{
+  MonteCarlo::Estimator::setNumberOfHistories( 100ull );
   MonteCarlo::Estimator::setStartTime( 0.0 );
   MonteCarlo::Estimator::setEndTime( 1.0 );
 
-  double fom = estimator.calculateFOM( 0.01 );
+  double mean;
+  double relative_error;
+  double variance_of_variance;
+  double figure_of_merit;
 
-  TEST_EQUALITY_CONST( fom, 10000.0 );
+  Utility::Quad<double,double,double,double> moments( 100.0,
+						      150.0,
+						      300.0,
+						      800.0 );
+
+  estimator.processMoments( moments,
+			    1.0,
+			    mean,
+			    relative_error,
+			    variance_of_variance,
+			    figure_of_merit );
+  
+  TEST_EQUALITY_CONST( mean, 1.0 );
+  TEST_FLOATING_EQUALITY( relative_error, 0.070710678118655, 1e-14 );
+  TEST_EQUALITY_CONST( variance_of_variance, 0.07 );
+  TEST_EQUALITY_CONST( figure_of_merit, 200.0 );
 }
 
 //---------------------------------------------------------------------------//

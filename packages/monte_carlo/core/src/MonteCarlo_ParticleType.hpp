@@ -38,7 +38,7 @@ ParticleType convertParticleTypeNameToParticleTypeEnum(
 
 namespace Utility{
 
-/*! The specialization of the MonteCarlo::HDF5TypeTraits for the 
+/*! The specialization of the Utility::HDF5TypeTraits for the 
  * MonteCarlo::ParticleStateCore struct
  * \ingroup hdf5_type_traits
  */

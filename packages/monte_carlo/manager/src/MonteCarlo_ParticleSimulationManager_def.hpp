@@ -36,10 +36,15 @@ ParticleSimulationManager<GeometryHandler,
 			  SourceHandler,
 			  EstimatorHandler,
 			  CollisionHandler>::ParticleSimulationManager( 
-					   const unsigned number_of_histories )
-  : d_history_number_wall( number_of_histories ),
-    d_histories_completed( 0u ),
+				const unsigned number_of_histories,
+				const unsigned start_history,
+				const unsigned previously_completed_histories,
+				const double previous_run_time )
+  : d_start_history( start_history ),
+    d_history_number_wall( start_history + number_of_histories ),
+    d_histories_completed( previously_completed_histories ),
     d_end_simulation( false ),
+    d_previous_run_time( previous_run_time ),
     d_start_time( 0.0 ),
     d_end_time( 0.0 )
 {
@@ -72,7 +77,7 @@ void ParticleSimulationManager<GeometryHandler,
     ParticleBank bank;
 
     #pragma omp for
-    for( unsigned history = 0; history < d_history_number_wall; ++history )
+    for( unsigned history = d_start_history; history < d_history_number_wall; ++history )
     {
       // Do useful work unless the user requests an end to the simulation
       #pragma omp flush( d_end_simulation )
@@ -289,6 +294,7 @@ void ParticleSimulationManager<GeometryHandler,
   os << "!!!Particle Simulation Finished!!!" << std::endl;
   os << "Number of histories completed: " << d_histories_completed <<std::endl;
   os << "Simulation Time (s): " << d_end_time - d_start_time << std::endl;
+  os << "Previous Simulation Time (s): " << d_previous_run_time << std::endl;
   os << std::endl;
   os << "/*---------------------------------------------------------------*/";
   os << "Estimator Data" << std::endl;
@@ -296,7 +302,7 @@ void ParticleSimulationManager<GeometryHandler,
   EMI::printEstimators( os,
 			d_histories_completed,
 			d_start_time,
-			d_end_time );
+			d_end_time+d_previous_run_time );
 }
 
 // Print the data in all estimators to a parameter list
@@ -307,13 +313,14 @@ template<typename GeometryHandler,
 void ParticleSimulationManager<GeometryHandler,
 			       SourceHandler,
 			       EstimatorHandler,
-			       CollisionHandler>::printSimulationSummary( 
-			     Teuchos::ParameterList& simulation_summary ) const
+			       CollisionHandler>::exportSimulationData(
+				      const std::string& data_file_name ) const
 {
-  EMI::printEstimators( simulation_summary,
-			d_histories_completed,
-			d_start_time,
-			d_end_time );
+  // EMI::exportEstimatorData( data_file_name,
+  // 			    d_start_history+d_histories_completed,
+  // 			    d_histories_completed,
+  // 			    d_start_time,
+  // 			    d_end_time+d_previous_run_time );
 }
 
 // Signal handler

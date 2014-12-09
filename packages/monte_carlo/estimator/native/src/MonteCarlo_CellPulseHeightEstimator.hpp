@@ -68,6 +68,10 @@ public:
   //! Print the estimator data
   void print( std::ostream& os ) const;
 
+  //! Export the estimator data
+  void exportData( EstimatorHDF5FileHandler& hdf5_file,
+		   const bool process_data ) const;
+
 private:
 
   //! Assign bin boundaries to an estimator dimension

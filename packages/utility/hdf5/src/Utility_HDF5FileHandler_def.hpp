@@ -48,9 +48,8 @@ namespace Utility{
  * </ul>
  */
 template<typename Array>
-void HDF5FileHandler::writeArrayToDataSet( const Array &data,
-					   const std::string &location_in_file
-					   )
+void HDF5FileHandler::writeArrayToDataSet(const Array &data,
+					  const std::string &location_in_file )
 {
   // The dataset_location must be absolute (start with /)
   testPrecondition( location_in_file.compare( 0, 1, "/" ) == 0 );
@@ -98,9 +97,9 @@ void HDF5FileHandler::writeArrayToDataSet( const Array &data,
  * </ul>
  */
 template<typename Array>
-void HDF5FileHandler::readArrayFromDataSet( Array &data,
-					    const std::string &location_in_file
-					    )
+void HDF5FileHandler::readArrayFromDataSet( 
+				    Array &data,
+				    const std::string &location_in_file ) const
 {
   // The dataset_location must be absolute (start with /)
   testPrecondition( location_in_file.compare( 0, 1, "/" ) == 0 ); 
@@ -166,11 +165,10 @@ void HDF5FileHandler::readArrayFromDataSet( Array &data,
  * </ul>
  */
 template<typename Array>
-void HDF5FileHandler::writeArrayToDataSetAttribute( const Array &data,
-						    const std::string 
-						      &dataset_location,
-						    const std::string
-						      &attribute_name )
+void HDF5FileHandler::writeArrayToDataSetAttribute( 
+					   const Array &data,
+					   const std::string &dataset_location,
+					   const std::string &attribute_name )
 {
   // The dataset_location must be absolute (start with /)
   testPrecondition( (dataset_location.compare( 0, 1, "/" ) == 0) );
@@ -224,11 +222,10 @@ void HDF5FileHandler::writeArrayToDataSetAttribute( const Array &data,
  * </ul>
  */
 template<typename Array>
-void HDF5FileHandler::readArrayFromDataSetAttribute( Array &data,
-						     const std::string 
-						       &dataset_location,
-						     const std::string 
-						       &attribute_name )
+void HDF5FileHandler::readArrayFromDataSetAttribute(
+				      Array &data,
+				      const std::string &dataset_location,
+				      const std::string &attribute_name ) const
 {
   // The dataset_location must be absolute (start with /)
   testPrecondition( (dataset_location.compare( 0, 1, "/" ) == 0) );
@@ -295,11 +292,10 @@ void HDF5FileHandler::readArrayFromDataSetAttribute( Array &data,
  * </ul>
  */
 template<typename T>
-void HDF5FileHandler::writeValueToDataSetAttribute( const T &value,
-						    const std::string 
-						      &dataset_location,
-						    const std::string
-						      &attribute_name )
+void HDF5FileHandler::writeValueToDataSetAttribute( 
+					   const T &value,
+					   const std::string &dataset_location,
+					   const std::string &attribute_name )
 {
   // The dataset_location must be absolute (start with /)
   testPrecondition( (dataset_location.compare( 0, 1, "/" ) == 0) );
@@ -350,11 +346,10 @@ void HDF5FileHandler::writeValueToDataSetAttribute( const T &value,
  * </ul>
  */
 template<typename T>
-void HDF5FileHandler::readValueFromDataSetAttribute( T &value,
-						     const std::string 
-						       &dataset_location,
-						     const std::string 
-						       &attribute_name )
+void HDF5FileHandler::readValueFromDataSetAttribute( 
+				      T &value,
+				      const std::string &dataset_location,
+				      const std::string &attribute_name ) const
 {
   // The dataset_location must be absolute (start with /)
   testPrecondition( (dataset_location.compare( 0, 1, "/" ) == 0) );
@@ -414,11 +409,10 @@ void HDF5FileHandler::readValueFromDataSetAttribute( T &value,
  * </ul>
  */
 template<typename Array>
-void HDF5FileHandler::writeArrayToGroupAttribute( const Array &data,
-						  const std::string 
-						    &group_location,
-						  const std::string
-						    &attribute_name )
+void HDF5FileHandler::writeArrayToGroupAttribute( 
+					    const Array &data,
+					    const std::string &group_location,
+					    const std::string &attribute_name )
 {
   // The dataset_location must be absolute (start with /)
   testPrecondition( (group_location.compare( 0, 1, "/" ) == 0) );
@@ -475,11 +469,10 @@ void HDF5FileHandler::writeArrayToGroupAttribute( const Array &data,
  * </ul>
  */
 template<typename Array>
-void HDF5FileHandler::readArrayFromGroupAttribute( Array &data,
-						   const std::string 
-						     &group_location,
-						   const std::string 
-						     &attribute_name )
+void HDF5FileHandler::readArrayFromGroupAttribute( 
+				      Array &data,
+				      const std::string &group_location,
+				      const std::string &attribute_name ) const
 {
   // The group_location must be absolute (start with /)
   testPrecondition( (group_location.compare( 0, 1, "/" ) == 0) );
@@ -546,11 +539,10 @@ void HDF5FileHandler::readArrayFromGroupAttribute( Array &data,
  * </ul>
  */
 template<typename T>
-void HDF5FileHandler::writeValueToGroupAttribute( const T &value,
-						  const std::string 
-						    &group_location,
-						  const std::string
-						    &attribute_name )
+void HDF5FileHandler::writeValueToGroupAttribute( 
+					    const T &value,
+					    const std::string &group_location,
+					    const std::string &attribute_name )
 {
   // The dataset_location must be absolute (start with /)
   testPrecondition( (group_location.compare( 0, 1, "/" ) == 0) );
@@ -604,11 +596,10 @@ void HDF5FileHandler::writeValueToGroupAttribute( const T &value,
  * </ul>
  */
 template<typename T>
-void HDF5FileHandler::readValueFromGroupAttribute( T &value,
-						   const std::string 
-						     &group_location,
-						   const std::string 
-						     &attribute_name )
+void HDF5FileHandler::readValueFromGroupAttribute( 
+				      T &value,
+				      const std::string &group_location,
+				      const std::string &attribute_name ) const
 {
   // The group_location must be absolute (start with /)
   testPrecondition( (group_location.compare( 0, 1, "/" ) == 0) );

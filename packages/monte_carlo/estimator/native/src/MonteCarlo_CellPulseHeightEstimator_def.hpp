@@ -224,6 +224,43 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::print(
 			       this->getTotalNormConstant() );
 }
 
+// Export the estimator data
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::exportData(
+					   EstimatorHDF5FileHandler& hdf5_file,
+					   const bool process_data ) const
+{
+  // Export the lower level data
+  EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>::exportData(
+								hdf5_file,
+								process_data );
+
+  // Set the estimator as a cell estimator
+  hdf5_file.setCellEstimator( this->getId() );
+
+  // Export the raw total estimator moments for all entities
+  hdf5_file.setRawEstimatorTotalBinData( this->getId(),
+					 d_total_energy_deposition_moments );
+
+  // Export the processed total estimator moments for all entities
+  if( process_data )
+  {
+    Teuchos::Array<Utility::Pair<double,double> > processed_data(
+				    d_total_energy_deposition_moments.size() );
+
+    for( unsigned i = 0; i < d_total_energy_deposition_moments.size(); ++i )
+    {
+      this->processMoments( d_total_energy_deposition_moments[i],
+			    this->getTotalNormConstant(), // 1.0
+			    processed_data[i].first,
+			    processed_data[i].second );
+    }
+
+    hdf5_file.setProcessedEstimatorTotalBinData( this->getId(),
+						 processed_data );
+  }
+}
+
 // Assign bin boundaries to an estimator dimension
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<

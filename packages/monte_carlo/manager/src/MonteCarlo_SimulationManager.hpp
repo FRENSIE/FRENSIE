@@ -37,9 +37,9 @@ public:
   //! Print the data in all estimators to the desired stream
   virtual void printSimulationSummary( std::ostream &os ) const = 0;
 
-  //! Print the data in all estimators to a parameter list
-  virtual void printSimulationSummary( 
-			Teuchos::ParameterList& simulation_summary ) const = 0;
+  //! Export the simulation data
+  virtual void exportSimulationData( 
+				 const std::string& data_file_name ) const = 0;
 
   //! Return a signal handler function
   virtual void signalHandler(int signal) = 0;

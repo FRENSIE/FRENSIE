@@ -110,7 +110,7 @@ struct PhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION>
   typedef ParticleState::collisionNumberType dimensionType;
     
   static inline std::string name()
-  { return "Collision Number"; }
+  { return "Collision_Number"; }
 
   static inline dimensionType lowerBound()
   { return 0u; }

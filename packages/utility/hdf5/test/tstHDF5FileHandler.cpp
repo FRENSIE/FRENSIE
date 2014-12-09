@@ -227,6 +227,22 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, createParentGroups )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the HDF5FileHandler can test if a group exists
+TEUCHOS_UNIT_TEST( HDF5FileHandler, doesGroupExist )
+{
+  TestingHDF5FileHandler hdf5_file_handler;
+
+  hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
+
+  hdf5_file_handler.createParentGroups( "/data/test" );
+  
+  TEST_ASSERT( hdf5_file_handler.doesGroupExist( "/data" ) );
+  TEST_ASSERT( !hdf5_file_handler.doesGroupExist( "/bad_group" ) );
+
+  hdf5_file_handler.closeHDF5File();
+}
+
+//---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can write an Array of Type to a dataset in 
 // an HDF5 file
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, 
@@ -267,6 +283,24 @@ UNIT_TEST_INSTANTIATION_TEUCHOS_ARRAY( HDF5FileHandler,
 				       writeArrayToDataSet, 
 				       ArrayView );
 UNIT_TEST_INSTANTIATION_STD_VECTOR( HDF5FileHandler, writeArrayToDataSet );
+
+//---------------------------------------------------------------------------//
+// Check that the HDF5FileHandler can check if a dataset exists
+TEUCHOS_UNIT_TEST( HDF5FileHandler, doesDataSetExist )
+{
+  Utility::HDF5FileHandler hdf5_file_handler;
+
+  hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
+
+  Teuchos::Array<double> raw_data( 100, 1.0 );
+  
+  hdf5_file_handler.writeArrayToDataSet( raw_data, "/data/test" );
+
+  TEST_ASSERT( hdf5_file_handler.doesDataSetExist( "/data/test" ) );
+  TEST_ASSERT( !hdf5_file_handler.doesDataSetExist( "/data/bad_set" ) );
+
+  hdf5_file_handler.closeHDF5File();
+}
 
 //---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can read an Array of Type from a dataset

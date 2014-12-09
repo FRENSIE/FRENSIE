@@ -83,6 +83,45 @@ void Estimator::setParticleTypes(
     d_particle_types.insert( particle_types[i] );
 }
 
+// Export the estimator data
+void Estimator::exportData( EstimatorHDF5FileHandler& hdf5_file,
+			    const bool process_data ) const
+{
+  // Make sure this estimator has not been exported yet
+  testPrecondition( !hdf5_file.doesEstimatorExist( d_id ) );
+
+  // Export the simulation time used to calculate FOMs
+  hdf5_file.setSimulationTime( Estimator::end_time - Estimator::start_time );
+  
+  // Export the response function ordering
+  {
+    Teuchos::Array<unsigned> response_function_ordering(
+						 d_response_functions.size() );
+    for( unsigned i = 0; i < d_response_functions.size(); ++i )
+      response_function_ordering[i] = d_response_functions[i]->getId();
+      
+    hdf5_file.setEstimatorResponseFunctionOrdering( 
+						  d_id, 
+						  response_function_ordering );
+  }
+
+  // Export the dimension ordering
+  hdf5_file.setEstimatorDimensionOrdering( d_id, d_dimension_ordering );
+
+  // Export the bin boundaries
+  for( unsigned i = 0; i < d_dimension_ordering.size(); ++i )
+  {
+    const Teuchos::RCP<EstimatorDimensionDiscretization>& 
+      dimension_bin_boundaries = d_dimension_bin_boundaries_map.find( 
+					     d_dimension_ordering[i] )->second;
+    
+    dimension_bin_boundaries->exportData( d_id, hdf5_file );
+  }
+
+  // Export the estimator multiplier
+  hdf5_file.setEstimatorMultiplier( d_id, d_multiplier );
+}
+
 // Assign bin boundaries to an estimator dimension
 void Estimator::assignBinBoundaries( 
 	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
@@ -195,7 +234,7 @@ void Estimator::printEstimatorBinData(
       processMoments( estimator_moments_data[bin_index],
 		      norm_constant,
 		      estimator_bin_value,
-		      estimator_bin_rel_error );
+		      estimator_bin_rel_err );
 
       // Print the estimator bin data
       os << " " << estimator_bin_value << " " 
@@ -227,6 +266,7 @@ void Estimator::printEstimatorTotalData(
     double estimator_fom;
 
     processMoments( total_estimator_moments_data[i],
+		    norm_constant,
 		    estimator_value,
 		    estimator_rel_err,
 		    estimator_vov,
@@ -332,8 +372,8 @@ void Estimator::processMoments(
 		     const double norm_constant,
 		     double& mean,
 		     double& relative_error,
-		     double& vov,
-		     double& fom ) const
+		     double& variance_of_variance,
+		     double& figure_of_merit ) const
 {
   // Make sure the moments are valid
   testPrecondition( !ST::isnaninf( moments.first ) );

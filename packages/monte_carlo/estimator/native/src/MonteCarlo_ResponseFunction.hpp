@@ -27,11 +27,15 @@ class ResponseFunction
 public:
 
   //! Constructor
-  ResponseFunction( const std::string& name );
+  ResponseFunction( const unsigned id,
+		    const std::string& name );
 
   //! Destructor
   virtual ~ResponseFunction()
   { /* ... */ }
+
+  //! Return the id
+  unsigned getId() const;
 
   //! Return the name of the response function
   const std::string& getName() const;
@@ -46,6 +50,9 @@ public:
   static const Teuchos::RCP<ResponseFunction> default_response_function;
 
 private:
+
+  // The response function id
+  unsigned d_id;
 
   // The response function name
   std::string d_name;
