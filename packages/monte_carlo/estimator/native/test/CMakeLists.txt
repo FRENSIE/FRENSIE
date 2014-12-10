@@ -18,6 +18,12 @@ ADD_EXECUTABLE(tstPhaseSpaceResponseFunction
 TARGET_LINK_LIBRARIES(tstPhaseSpaceResponseFunction monte_carlo_estimator_native)
 ADD_TEST(PhaseSpaceResponseFunction_test tstPhaseSpaceResponseFunction)
 
+ADD_EXECUTABLE(tstEstimatorHDF5FileHandler
+  tstEstimatorHDF5FileHandler.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEstimatorHDF5FileHandler monte_carlo_estimator_native)
+ADD_TEST(EstimatorHDF5FileHandler_test tstEstimatorHDF5FileHandler)
+
 ADD_EXECUTABLE(tstGeneralEstimatorDimensionDiscretization
   tstGeneralEstimatorDimensionDiscretization.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

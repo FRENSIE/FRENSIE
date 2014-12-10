@@ -112,6 +112,29 @@ struct HDF5TypeTraits<unsigned int>
 };
 
 /*! \brief The specialization of the Utility::HDF5TypeTraits for unsigned long
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<unsigned long>
+{
+  //! Returns the HDF5 data type object corresponding to unsigned int
+  static inline H5::PredType dataType() 
+  { return H5::PredType::NATIVE_ULONG; }
+  
+  //! Returns the name of the type
+  static inline std::string name() 
+  { return "unsigned long int"; }
+  
+  //! Returns the zero value for this type
+  static inline unsigned zero()
+  { return 0ul; }
+
+  //! Returns the unity value for this type
+  static inline unsigned one()
+  { return 1ul; }
+};
+
+/*! \brief The specialization of the Utility::HDF5TypeTraits for unsigned long
  * long
  * \ingroup hdf5_type_traits
  */

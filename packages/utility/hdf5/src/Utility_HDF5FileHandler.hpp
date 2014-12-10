@@ -33,6 +33,12 @@ class HDF5FileHandler
 
 public:
 
+  //! Print error messages
+  static void printErrorMessages();
+
+  //! Throw exceptions
+  static void throwExceptions();  
+
   //! Default Constructor
   HDF5FileHandler();
 
@@ -51,9 +57,23 @@ public:
 
   //! Close an HDF5 file
   void closeHDF5File();
+  
+  //! Check if the handler has an open file
+  bool hasOpenFile() const;
+
+  //! Check if the group exists
+  bool doesGroupExist( const std::string &group_location ) const;
+
+  //! Check if the group attribute exists
+  bool doesGroupAttributeExist( const std::string &group_location,
+				const std::string &attribute_name ) const;
 
   //! Check if the data set exists
-  bool doesDataSetExist( const std::string &location_in_file ) const;
+  bool doesDataSetExist( const std::string &dataset_location ) const;
+
+  //! Check if the data set attribute exists
+  bool doesDataSetAttributeExist( const std::string &dataset_location,
+				  const std::string &attribute_name ) const;
 
   //! Write data in array to HDF5 file data set
   template<typename Array>
@@ -89,9 +109,6 @@ public:
 				     const std::string &dataset_location,
 				     const std::string &attribute_name ) const;
 
-  //! Check if a group exists
-  bool doesGroupExist( const std::string &group_location ) const;
-
   //! Write an attribute to an HDF5 file group
   template<typename Array>
   void writeArrayToGroupAttribute( const Array &data,
@@ -122,6 +139,9 @@ protected:
   void createParentGroups( const std::string &path_name );
 
 private:
+
+  // Error handling behavior (true = print errors and exit, false = throw)
+  static bool print_and_exit;
   
   // HDF5 file identifier
   Teuchos::RCP<H5::H5File> d_hdf5_file;
