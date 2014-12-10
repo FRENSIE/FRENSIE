@@ -119,6 +119,9 @@ public:
   //! Commit the contribution from the current history to the estimator
   virtual void commitHistoryContribution() = 0;
 
+  //! Enable support for multiple threads
+  virtual void enableThreadSupport( const unsigned num_threads ) = 0;
+
   //! Export the estimator data
   virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,
 			   const bool process_data ) const;

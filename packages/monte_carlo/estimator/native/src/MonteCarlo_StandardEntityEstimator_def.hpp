@@ -10,6 +10,7 @@
 #define FACEMC_STANDARD_ENTITY_ESTIMATOR_DEF_HPP
 
 // FRENSIE Includes
+#include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -25,8 +26,8 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 			       multiplier,
 			       entity_ids,
 			       entity_norm_constants ),
-    d_total_estimator_moments( 1 )
-    
+    d_total_estimator_moments( 1 ),
+    d_update_tracker( 1 )
 {
   initializeMomentsMaps( entity_ids );
 }
@@ -38,7 +39,8 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 				   const double multiplier,
 			           const Teuchos::Array<EntityId>& entity_ids )
   : EntityEstimator<EntityId>( id, multiplier, entity_ids ),
-    d_total_estimator_moments( 1 )
+    d_total_estimator_moments( 1 ),
+    d_update_tracker( 1 )
 {
   initializeMomentsMaps( entity_ids );
 }
@@ -61,77 +63,121 @@ void StandardEntityEstimator<EntityId>::setResponseFunctions(
 }
 
 // Commit the contribution from the current history to the estimator
+/*! \details This function must only be called within an omp critical block
+ * if multiple threads are being used. Failure to do this may result in 
+ * race conditions.
+ */ 
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::commitHistoryContribution()
 {
+  // Thread id
+  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  
   // Number of bins per response function
   unsigned num_bins = this->getNumberOfBins();
-  
-  typename EntityEstimatorFirstMomentsArrayMap::iterator entity, end_entity;
-  
-  for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
-  {
-    double total_over_all_entities = 0.0;
-    
-    entity = d_entity_current_history_first_moments_map.begin();
-    end_entity = d_entity_current_history_first_moments_map.end();
-    
-    // Compute the totals
-    while( entity != end_entity )
-    {
-      double total_over_entity = 0.0;
-      
-      for( unsigned j = 0; j < num_bins; ++j )
-      {
-	unsigned bin_index = j + num_bins*i;
-	
-	double bin_contribution = entity->second[bin_index];
 
-	total_over_entity += bin_contribution;
-	
-	total_over_all_entities += bin_contribution;
-	
-	this->commitHistoryContributionToBinOfEntity( entity->first,
-						      bin_index,
-						      bin_contribution );
-      }
+  // Number of response functions
+  unsigned num_response_funcs = this->getNumberOfResponseFunctions();
+
+  // The entity totals
+  Teuchos::Array<double> entity_totals( num_response_funcs, 0.0 );
+
+  // The totals over all entities
+  Teuchos::Array<double> totals( num_response_funcs, 0.0 );
+
+  // The bin totals over all entities
+  Teuchos::Array<double> bin_totals( num_bins*num_response_funcs, 0.0 );
+
+  // Get the entities with updated data
+  typename SerialUpdateTracker::const_iterator entity, end_entity;
+  
+  getEntityIteratorFromUpdateTracker( thread_id, entity, end_entity );
+
+  while( entity != end_entity )
+  {    
+    // Get the bin data for this entity
+    Teuchos::ArrayView<double> entity_bin_data = 
+      d_entity_current_history_first_moments_map.find(entity->first)->second[thread_id];
+    
+    // Loop over each updated bin
+    boost::unordered_set<unsigned>::const_iterator bin_index, end_bin_index;
+    
+    getBinIteratorFromUpdateTrackerIterator( thread_id, 
+					     entity, 
+					     bin_index, 
+					     end_bin_index );
+
+    while( bin_index != end_bin_index )
+    {
+      unsigned response_func_index = *bin_index/num_bins;
+
+      double bin_contribution = entity_bin_data[*bin_index];
+
+      entity_totals[response_func_index] += bin_contribution;
       
+      totals[response_func_index] += bin_contribution;
+      
+      bin_totals[*bin_index] += bin_contribution;
+
+      this->commitHistoryContributionToBinOfEntity( entity->first,
+						    *bin_index,
+						    bin_contribution );
+
+      // Reset the data in this bin
+      entity_bin_data[*bin_index] = 0.0;
+      
+      ++bin_index;
+    }
+
+    // Commit the entity totals
+    for( unsigned i = 0; i < num_response_funcs; ++i )
+    {
       commitHistoryContributionToTotalOfEntity( entity->first,
 						i,
-						total_over_entity );
+						entity_totals[i] );
       
-      ++entity;
+      // Reset the entity totals
+      entity_totals[i] = 0.0;
     }
     
-    commitHistoryContributionToTotalOfEstimator( i, total_over_all_entities );
-
-    // Compute the bin totals
-    for( unsigned j = 0; j < num_bins; ++j )
-    {
-      unsigned bin_index = j + num_bins*i;
-      
-      double bin_contribution = 0.0;
-      
-      entity = d_entity_current_history_first_moments_map.begin();
-      end_entity = d_entity_current_history_first_moments_map.end();
-
-      while( entity != end_entity )
-      {
-	bin_contribution += entity->second[bin_index];
-
-	// Reset the bin
-	entity->second[bin_index] = 0.0;
-
-	++entity;
-      }
-
-      this->commitHistoryContributionToBinOfTotal( bin_index, 
-						   bin_contribution );
-    }      
-
-    // Unset the uncommitted history contribution boolean
-    this->unsetHasUncommittedHistoryContribution();
+    ++entity;
   }
+
+  // Commit the totals over all entities
+  for( unsigned i = 0; i < num_response_funcs; ++i )
+    commitHistoryContributionToTotalOfEstimator( i, totals[i] );
+
+  // Commit the bin totals over all entities
+  for( unsigned i = 0; i < num_bins*num_response_funcs; ++i )
+    this->commitHistoryContributionToBinOfTotal( i, bin_totals[i] );
+
+  // Reset the update tracker
+  resetUpdateTracker( thread_id );
+
+  // Unset the uncommitted history contribution flag
+  this->unsetHasUncommittedHistoryContribution();
+}
+
+// Enable support for multiple threads
+template<typename EntityId>
+void StandardEntityEstimator<EntityId>::enableThreadSupport(
+						  const unsigned num_threads )
+{
+  // Add thread support to current history first moments map
+  typename EntityEstimatorFirstMomentsArrayMap::iterator 
+    entity_data, entity_data_end;
+  entity_data = d_entity_current_history_first_moments_map.begin();
+  entity_data_end = d_entity_current_history_first_moments_map.end();
+  
+  while( entity_data != entity_data_end )
+  {
+    entity_data->second.resizeRows( num_threads );
+
+    ++entity_data;
+  }
+  
+  // Add thread support to update tracker
+  d_update_tracker.resize( num_threads );
 }
 
 // Export the estimator data
@@ -239,9 +285,11 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
   // Only add the contribution if the particle state is in the phase space
   if( this->isPointInEstimatorPhaseSpace( d_dimension_values ) )
   {
-    Teuchos::Array<double>& entity_first_moments_array = 
-      d_entity_current_history_first_moments_map[entity_id];
-  
+    unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+    
+    Teuchos::ArrayView<double> entity_first_moments_array = 
+      d_entity_current_history_first_moments_map[entity_id][thread_id];
+
     unsigned bin_index;
       
     for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
@@ -250,6 +298,8 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
       
       entity_first_moments_array[bin_index] += 
 	contribution*this->evaluateResponseFunction( particle, i );
+
+      addInfoToUpdateTracker( thread_id, entity_id, bin_index );
     }
   }
 
@@ -308,8 +358,8 @@ StandardEntityEstimator<EntityId>::resizeEntityEstimatorFirstMomentsMapArrays()
 
   while( start != end )
   {
-    start->second.resize( this->getNumberOfBins()*
-			  this->getNumberOfResponseFunctions() );
+    start->second.resizeCols( this->getNumberOfBins()*
+			      this->getNumberOfResponseFunctions() );
     ++start;
   }
 }
@@ -421,10 +471,71 @@ void StandardEntityEstimator<EntityId>::initializeMomentsMaps(
       d_entity_total_estimator_moments_map[ entity_ids[i] ].resize( 
 					this->getNumberOfResponseFunctions() );
       
-      d_entity_current_history_first_moments_map[ entity_ids[i] ].resize(
+      Teuchos::TwoDArray<double>& two_d_array = 
+	d_entity_current_history_first_moments_map[ entity_ids[i] ];
+
+      // Initialize this array with support for only one thread
+      two_d_array.resizeCols(
 		this->getNumberOfBins()*this->getNumberOfResponseFunctions() );
+      two_d_array.resizeRows( 1 ); 
     }
   }
+}
+
+// Add info to update tracker
+template<typename EntityId>
+void StandardEntityEstimator<EntityId>::addInfoToUpdateTracker( 
+						     const unsigned thread_id,
+						     const EntityId entity_id,
+						     const unsigned bin_index )
+{
+  // Make sure the thread id is valid
+  testPrecondition( thread_id < d_update_tracker.size() );
+  
+  SerialUpdateTracker& thread_update_tracker = d_update_tracker[thread_id];
+
+  thread_update_tracker[entity_id].insert( bin_index );
+}
+
+// Get the bin iterator from an update tracker iterator
+template<typename EntityId>
+inline void 
+StandardEntityEstimator<EntityId>::getEntityIteratorFromUpdateTracker( 
+	      const unsigned thread_id,
+	      typename SerialUpdateTracker::const_iterator& start_entity,
+	      typename SerialUpdateTracker::const_iterator& end_entity ) const
+{
+  // Make sure the thread is is valid
+  testPrecondition( thread_id < d_update_tracker.size() );
+
+  start_entity = d_update_tracker[thread_id].begin();
+  end_entity = d_update_tracker[thread_id].end();
+}
+
+// Get the bin iterator from an update tracker iterator
+template<typename EntityId>
+inline void 
+StandardEntityEstimator<EntityId>::getBinIteratorFromUpdateTrackerIterator(
+	   const unsigned thread_id,
+	   const typename SerialUpdateTracker::const_iterator& entity_iterator,
+	   boost::unordered_set<unsigned>::const_iterator& start_bin,
+	   boost::unordered_set<unsigned>::const_iterator& end_bin ) const
+{
+  // Make sure the thread id is valid
+  testPrecondition( thread_id < d_update_tracker.size() );
+  // Make sure the entity iterator is valid
+  testPrecondition( entity_iterator != d_update_tracker[thread_id].end() );
+
+  start_bin = entity_iterator->second.begin();
+  end_bin = entity_iterator->second.end();
+}
+
+// Reset the update tracker
+template<typename EntityId>
+void StandardEntityEstimator<EntityId>::resetUpdateTracker( 
+						     const unsigned thread_id )
+{
+  d_update_tracker[thread_id].clear();
 }
 
 } // end MonteCarlo namespace

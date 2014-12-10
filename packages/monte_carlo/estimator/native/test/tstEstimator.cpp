@@ -42,6 +42,9 @@ public:
     printEstimatorBins( os );
   }
 
+  void enableThreadSupport( const unsigned num_threads )
+  { /* ... */ }
+
   void commitHistoryContribution()
   { /* ... */ }
 

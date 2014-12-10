@@ -128,7 +128,10 @@ void ParticleSimulationManager<GeometryHandler,
 	}
 	
 	// Commit all estimator history contributions
-	EMI::commitEstimatorHistoryContributions();
+	#pragma omp critical( estimator_update )
+	{
+	  EMI::commitEstimatorHistoryContributions();
+        }
 	
 	// Increment the number of histories completed
         #pragma omp atomic
