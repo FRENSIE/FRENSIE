@@ -55,6 +55,9 @@ public:
   void print( std::ostream& os ) const
   { this->printImplementation( os, "Surface" ); }
 
+  void enableThreadSupport( const unsigned num_threads )
+  { /* ... */ }
+
   void commitHistoryContribution()
   { /* ... */ }
 

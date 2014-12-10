@@ -10,6 +10,7 @@
 #define FACEMC_CELL_PULSE_HEIGHT_ESTIMATOR_HPP
 
 // Boost Includes
+#include <boost/unordered_set.hpp>
 #include <boost/mpl/vector.hpp>
 
 // FRENSIE Includes
@@ -21,12 +22,29 @@
 
 namespace MonteCarlo{
 
-//! The pulse height entity estimator class
+/*! The pulse height entity estimator class
+ * \details This class has been set up to get correct results with multiple
+ * threads. However, the commitHistoryContribution member function call 
+ * should only appear within an omp critical block. Use the enable thread
+ * support member function to set up an instance of this class for the
+ * requested number of threads. The classes default initialization is for
+ * a single thread.
+ */
 template<typename ContributionMultiplierPolicy = WeightMultiplier>
 class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>, 
 				 public ParticleEnteringCellEventObserver,
 				 public ParticleLeavingCellEventObserver
 {
+
+private:
+
+  // Typedef for the serial update tracker
+  typedef boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>
+  SerialUpdateTracker;
+
+  // Typedef for the parallel update tracker
+  typedef Teuchos::Array<SerialUpdateTracker> 
+  ParallelUpdateTracker;
 
 public:
 
@@ -68,26 +86,46 @@ public:
   //! Print the estimator data
   void print( std::ostream& os ) const;
 
+  //! Enable support for multiple threads
+  void enableThreadSupport( const unsigned num_threads );
+
   //! Export the estimator data
   void exportData( EstimatorHDF5FileHandler& hdf5_file,
 		   const bool process_data ) const;
 
 private:
 
-  //! Assign bin boundaries to an estimator dimension
+  // Assign bin boundaries to an estimator dimension
   void assignBinBoundaries(
 	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
 
-  //! Calculate the estimator contribution from the entire history
+  // Calculate the estimator contribution from the entire history
   double calculateHistoryContribution( const double energy_deposition,
 				       WeightMultiplier );
 
-  //! Calculate the estimator contribution from the entire history
+  // Calculate the estimator contribution from the entire history
   double calculateHistoryContribution( const double energy_deposition,
 				       WeightAndEnergyMultiplier );
 
+  // Add info to update tracker
+  void addInfoToUpdateTracker( const unsigned thread_id,
+			       const cellIdType cell_id );
+
+  // Get the entity iterators from the update tracker
+  void getCellIteratorFromUpdateTracker(
+	        const unsigned thread_id,
+		typename SerialUpdateTracker::const_iterator& start_cell,
+	        typename SerialUpdateTracker::const_iterator& end_cell ) const;
+
+  // Reset the update tracker
+  void resetUpdateTracker( const unsigned thread_id );
+
+  // The entities that have been updated
+  ParallelUpdateTracker d_update_tracker;
+
   // The energy deposited in each cell of interest by the current history
-  boost::unordered_map<cellIdType,double> d_cell_energy_deposition_map;
+  boost::unordered_map<cellIdType,Teuchos::Array<double> > 
+  d_cell_energy_deposition_map;
 
   // The generic particle state map (avoids having to make a new map for cont.)
   Estimator::DimensionValueMap d_dimension_values;

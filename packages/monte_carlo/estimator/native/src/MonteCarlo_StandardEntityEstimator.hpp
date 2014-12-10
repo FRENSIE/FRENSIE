@@ -14,16 +14,34 @@
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
+#include <Teuchos_TwoDArray.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_EntityEstimator.hpp"
 
 namespace MonteCarlo{
 
-//! The standard entity estimator class
+/*! The standard entity estimator class
+ * \details This class has been set up to get correct results with multiple
+ * threads. However, the commitHistoryContribution member function call should 
+ * only appear within an omp critical block. Use the enable thread support 
+ * member function to set up an instance of this class for the requested number
+ * of threads. The classes default initialization is for a single thread.
+ */
 template<typename EntityId>
 class StandardEntityEstimator : public EntityEstimator<EntityId>
 {
+
+private:
+
+  // Typedef for serial update tracker
+  typedef typename boost::unordered_map<EntityId,
+					boost::unordered_set<unsigned> >
+  SerialUpdateTracker;
+
+  // Typedef for parallel update tracker 
+  typedef typename Teuchos::Array<SerialUpdateTracker>
+  ParallelUpdateTracker;
 
 protected:
 
@@ -31,7 +49,7 @@ protected:
   typedef Teuchos::ScalarTraits<double> ST;
 
   // Typedef for the map of entity ids and estimator first moments
-  typedef typename boost::unordered_map<EntityId,Teuchos::Array<double> > 
+  typedef typename boost::unordered_map<EntityId,Teuchos::TwoDArray<double> > 
   EntityEstimatorFirstMomentsArrayMap;
 
   // Typedef for the map of entity ids and estimator moments array
@@ -64,10 +82,13 @@ public:
   //! Commit the contribution from the current history to the estimator
   void commitHistoryContribution();
 
+  //! Enable support for multiple threads
+  void enableThreadSupport( const unsigned num_threads );
+
   //! Export the estimator data
   virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,
 			   const bool process_data ) const;
-
+  
 protected:
 
   //! Assign bin boundaries to an estimator dimension
@@ -105,9 +126,33 @@ private:
 
   // Initialize the moments maps
   void initializeMomentsMaps( const Teuchos::Array<EntityId>& entity_ids );
+  
+  // Add info to update tracker
+  void addInfoToUpdateTracker( const unsigned thread_id,
+			       const EntityId entity_id,
+			       const unsigned bin_index );
+
+  // Get entity iterators from update tracker
+  void getEntityIteratorFromUpdateTracker( 
+	      const unsigned thread_id,
+	      typename SerialUpdateTracker::const_iterator& start_entity,
+	      typename SerialUpdateTracker::const_iterator& end_entity ) const;
+
+  // Get the bin iterator from an update tracker iterator
+  void getBinIteratorFromUpdateTrackerIterator(
+	   const unsigned thread_id,
+	   const typename SerialUpdateTracker::const_iterator& entity_iterator,
+	   boost::unordered_set<unsigned>::const_iterator& start_bin,
+	   boost::unordered_set<unsigned>::const_iterator& end_bin ) const;
+	
+  // Reset the update tracker
+  void resetUpdateTracker( const unsigned thread_id );
 
   // The total estimator moments across all entities and response functions
   Estimator::FourEstimatorMomentsArray d_total_estimator_moments;
+
+  // The entities/bins that have been updated
+  ParallelUpdateTracker d_update_tracker;
 
   // The total estimator moments for each entity and response functions
   EntityEstimatorMomentsArrayMap d_entity_total_estimator_moments_map;
