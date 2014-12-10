@@ -26,8 +26,7 @@ CellPulseHeightEstimator<
        const Teuchos::Array<CellPulseHeightEstimator::cellIdType>& entity_ids )
   : EntityEstimator<cellIdType>( id, multiplier, entity_ids ),
     ParticleEnteringCellEventObserver(),
-    ParticleLeavingCellEventObserver(),
-    d_total_energy_deposition_moments( 1 )
+    ParticleLeavingCellEventObserver()
 {
   // Set up the entity map
   for( unsigned i = 0; i < entity_ids.size(); ++i )
@@ -196,11 +195,8 @@ void CellPulseHeightEstimator<
 					      energy_deposition_in_all_cells,
 					      ContributionMultiplierPolicy() );
 
-    // Compute the moment contributions
-    d_total_energy_deposition_moments[bin_index].first += bin_contribution;
-    
-    bin_contribution *= bin_contribution;
-    d_total_energy_deposition_moments[bin_index].second += bin_contribution;
+    this->commitHistoryContributionToBinOfTotal( bin_index,
+						 bin_contribution );
   }
 
   // Reset the has uncommitted history contribution boolean
@@ -215,13 +211,6 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::print(
   os << "Cell Pulse Height Estimator: " << this->getId() << std::endl;
 
   this->printImplementation( os, "Cell" );
-
-  os << "All Cells" << std::endl;
-  os << "--------" << std::endl;
-
-  this->printEstimatorBinData( os,
-			       d_total_energy_deposition_moments,
-			       this->getTotalNormConstant() );
 }
 
 // Export the estimator data
@@ -237,28 +226,6 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::exportData(
 
   // Set the estimator as a cell estimator
   hdf5_file.setCellEstimator( this->getId() );
-
-  // Export the raw total estimator moments for all entities
-  hdf5_file.setRawEstimatorTotalBinData( this->getId(),
-					 d_total_energy_deposition_moments );
-
-  // Export the processed total estimator moments for all entities
-  if( process_data )
-  {
-    Teuchos::Array<Utility::Pair<double,double> > processed_data(
-				    d_total_energy_deposition_moments.size() );
-
-    for( unsigned i = 0; i < d_total_energy_deposition_moments.size(); ++i )
-    {
-      this->processMoments( d_total_energy_deposition_moments[i],
-			    this->getTotalNormConstant(), // 1.0
-			    processed_data[i].first,
-			    processed_data[i].second );
-    }
-
-    hdf5_file.setProcessedEstimatorTotalBinData( this->getId(),
-						 processed_data );
-  }
 }
 
 // Assign bin boundaries to an estimator dimension
@@ -270,8 +237,6 @@ void CellPulseHeightEstimator<
   if( bin_boundaries->getDimension() == ENERGY_DIMENSION )
   {
     EntityEstimator<cellIdType>::assignBinBoundaries( bin_boundaries );
-
-    d_total_energy_deposition_moments.resize( this->getNumberOfBins() );
   }
   else
   {
