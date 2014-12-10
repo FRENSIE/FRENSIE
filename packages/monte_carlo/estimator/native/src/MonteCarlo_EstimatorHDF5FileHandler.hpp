@@ -16,6 +16,7 @@
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_HDF5FileHandler.hpp"
+#include "Utility_HDF5TypeTraits.hpp"
 
 namespace MonteCarlo{
 
@@ -25,8 +26,21 @@ class EstimatorHDF5FileHandler
 
 public:
 
-  //! Constructor
-  EstimatorHDF5FileHandler( const std::string& hdf5_file_name );
+  //! Enum for file operations
+  enum EstimatorHDF5FileOps{
+    OVERWRITE_ESTIMATOR_HDF5_FILE = 0,
+    APPEND_ESTIMATOR_HDF5_FILE,
+    READ_ONLY_ESTIMATOR_HDF5_FILE
+  };
+
+  //! Constructor (file ownership)
+  EstimatorHDF5FileHandler( 
+	  const std::string& hdf5_file_name,
+	  const EstimatorHDF5FileOps file_op = OVERWRITE_ESTIMATOR_HDF5_FILE );
+
+  //! Constructor (file sharing)
+  EstimatorHDF5FileHandler( 
+		     const Teuchos::RCP<Utility::HDF5FileHandler>& hdf5_file );
 
   //! Destructor
   ~EstimatorHDF5FileHandler();
@@ -160,7 +174,7 @@ public:
 
   //! Get the processed estimator bin data for an entity (mean, relative error)
   template<typename EntityIdType>
-  void getProcessedEstimatorBinData(
+  void getProcessedEstimatorEntityBinData(
      const unsigned estimator_id,
      const EntityIdType entity_id,
      Teuchos::Array<Utility::Pair<double,double> >& processed_bin_data ) const;
@@ -259,6 +273,16 @@ public:
 
 private:
 
+  // Enum for estimator entity type
+  enum EntityType{
+    SURFACE_ENTITY = 0,
+    CELL_ENTITY,
+    MESH_VOLUME_ENTITY,
+  };
+
+  // Allow HDF5 type traits specialization friend access
+  friend class Utility::HDF5TypeTraits<EstimatorHDF5FileHandler::EntityType>;
+
   // Get the estimator location
   std::string getEstimatorGroupLocation( const unsigned estimator_id ) const;
 
@@ -272,10 +296,66 @@ private:
   static const std::string estimator_group_loc_name;
 
   // The HDF5 file handler
-  Utility::HDF5FileHandler d_hdf5_file;
+  Teuchos::RCP<Utility::HDF5FileHandler> d_hdf5_file;
+
+  // The ownership flag
+  bool d_hdf5_file_ownership;
 };
 
 } // end MonteCarlo namespace
+
+namespace Utility{
+
+/*! Specialization of the Utility::HDf5TypeTraits for estimator entity type
+ * \ingroup hdf5_type_traits
+ */
+template<>
+struct HDF5TypeTraits<MonteCarlo::EstimatorHDF5FileHandler::EntityType>
+{
+  //! Return the HDF5 data type
+  static inline H5::EnumType dataType()
+  {
+    H5::EnumType hdf5_estimator_entity_type( 
+		  sizeof( MonteCarlo::EstimatorHDF5FileHandler::EntityType ) );
+    
+    MonteCarlo::EstimatorHDF5FileHandler::EntityType value = 
+      MonteCarlo::EstimatorHDF5FileHandler::SURFACE_ENTITY;
+
+    hdf5_estimator_entity_type.insert( "SURFACE_ENTITY", &value );
+    
+    value = MonteCarlo::EstimatorHDF5FileHandler::CELL_ENTITY;
+
+    hdf5_estimator_entity_type.insert( "CELL_ENTITY", &value );
+
+    value = MonteCarlo::EstimatorHDF5FileHandler::MESH_VOLUME_ENTITY;
+    
+    hdf5_estimator_entity_type.insert( "MESH_VOLUME_ENTITY", &value );
+
+    return hdf5_estimator_entity_type;
+  }
+
+  //! Return the name of the type
+  static inline std::string name()
+  {
+    return "EntityType";
+  }
+
+  //! Returns the zero value for this type
+  static inline MonteCarlo::EstimatorHDF5FileHandler::EntityType
+  zero()
+  {
+    return MonteCarlo::EstimatorHDF5FileHandler::SURFACE_ENTITY;
+  }
+  
+  //! Returns the unit value for this type
+  static inline MonteCarlo::EstimatorHDF5FileHandler::EntityType
+  one()
+  {
+    return MonteCarlo::EstimatorHDF5FileHandler::CELL_ENTITY;
+  }
+};
+
+} // end Utility namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes

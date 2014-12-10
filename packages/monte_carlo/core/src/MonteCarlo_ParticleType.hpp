@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_HDF5TypeTraits.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
@@ -24,7 +25,8 @@ enum ParticleType{
   ADJOINT_PHOTON,
   ADJOINT_NEUTRON,
   ADJOINT_ELECTRON,
-  UNKNOWN_PARTICLE
+  UNKNOWN_PARTICLE,
+  PARTICLE_end
 };
 
 //! Test if the particle type name is valid
@@ -47,29 +49,32 @@ struct HDF5TypeTraits<MonteCarlo::ParticleType>
 {
   static inline H5::EnumType dataType()
   {
-    H5::EnumType hdf5_particle_type( sizeof(short) );
+    // Make sure all particle types will be converted
+    testPrecondition( MonteCarlo::PARTICLE_end == 7 );
+    
+    H5::EnumType hdf5_particle_type( sizeof( MonteCarlo::ParticleType ) );
 
-    short particle_type = 0;
+    MonteCarlo::ParticleType particle_type = MonteCarlo::PHOTON;
     
     hdf5_particle_type.insert( "PHOTON", &particle_type );
     
-    particle_type = 1;
+    particle_type = MonteCarlo::NEUTRON;
     
     hdf5_particle_type.insert( "NEUTRON", &particle_type );
     
-    particle_type = 2;
+    particle_type = MonteCarlo::ELECTRON;
     
     hdf5_particle_type.insert( "ELECTRON", &particle_type );
     
-    particle_type = 3;
+    particle_type = MonteCarlo::ADJOINT_PHOTON;
 
     hdf5_particle_type.insert( "ADJOINT_PHOTON", &particle_type );
     
-    particle_type = 4;
+    particle_type = MonteCarlo::ADJOINT_NEUTRON;
     
     hdf5_particle_type.insert( "ADJOINT_NEUTRON", &particle_type );
 
-    particle_type = 5;
+    particle_type = MonteCarlo::ADJOINT_ELECTRON;
     
     hdf5_particle_type.insert( "ADJOINT_ELECTRON", &particle_type );
     

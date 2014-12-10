@@ -53,6 +53,31 @@
     exit(EXIT_FAILURE); \
   } \
 
+/*! \brief Catch statement macro for catching an H5::Exception and either
+ * exiting with a message or throwing a new exception of user specified type.
+ * \ingroup exception_macros
+ */
+#define HDF5_EXCEPTION_CATCH( NewException, Exit, msg )	\
+  catch( const H5::Exception &exception )		\
+    {							\
+    std::ostringstream oss;				\
+    oss << " *** Caught HDF5 H5::Exception *** \n\n";	\
+    oss << "File: " << __FILE__ << "\n";		\
+    oss << "Line: " << __LINE__ << "\n";		\
+    oss << msg << "\n";					\
+    Teuchos::OSTab scsi_tab(oss);			\
+    scsi_tab.o() << exception.getFuncName() << "\n";	\
+    scsi_tab.o() << exception.getDetailMsg() << "\n";	\
+    if( Exit )						\
+    {							\
+      std::cerr << std::flush;				\
+      std::cerr << oss.str();				\
+      exit(EXIT_FAILURE);				\
+    }							\
+    else						\
+      throw NewException( oss.str() );			\
+  } 
+
 /*! Catch statement macro for catching std::exception Exceptions
  *
  * This macro is based off of the Teuchos_StandardCatchMacro. This macro
@@ -74,7 +99,9 @@
     exit(EXIT_FAILURE); \
   } \
 
-//! Catch statement macro for catching of user specified exceptions
+/*! Catch statement macro for catching of user specified exceptions
+ * \ingroup exception_macros
+ */
 #define EXCEPTION_CATCH_AND_EXIT( Exception, msg ) \
   catch( const Exception &exception ) \
   {				      \
@@ -106,6 +133,29 @@ catch( const Exception &exception )				\
 	       << exception.what() << "\n";			\
   throw Exception(detailed_msg.str());				\
 }
+
+/*! Catch statement macro for catching of user specified exceptions
+ * \ingroup exception_macros
+ */
+#define EXCEPTION_CATCH( Exception, Exit, msg )	\
+  catch( const Exception &exception ) \
+  {				      \
+    std::ostringstream oss;	      \
+    oss << " *** Caught " << #Exception << " Exception *** \n\n";	\
+    oss << "File: " << __FILE__ << "\n";				\
+    oss << "Line: " << __LINE__ << "\n";				\
+    oss << msg << "\n";							\
+    Teuchos::OSTab scsi_tab(oss);					\
+    scsi_tab.o() << exception.what() << "\n";				\
+    if( Exit )								\
+    {									\
+      std::cerr << std::flush;						\
+      std::cerr << oss.str();						\
+      exit(EXIT_FAILURE);						\
+    }									\
+    else								\
+      throw Exception(oss.str());					\
+  } 
  
 
 #endif // end UTILITY_EXCEPTION_CATCH_MACROS_HPP

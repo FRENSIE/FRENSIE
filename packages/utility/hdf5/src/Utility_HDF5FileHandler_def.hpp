@@ -57,24 +57,36 @@ void HDF5FileHandler::writeArrayToDataSet(const Array &data,
   // Type contained in the array
   typedef typename ArrayTraits<Array>::value_type value_type;
   
-  // Create any parent groups that do not exist yet in the location path
-  createParentGroups( location_in_file );
-  
   // HDF5 exceptions can be thrown when creating a dataset or writing to a 
   // dataset
   try
   {
-    hsize_t dim = getArraySize( data );
-    H5::DataSpace space( 1, &dim );
-    H5::DataSet dataset(d_hdf5_file->createDataSet( 
-				location_in_file,
-				HDF5TypeTraits<value_type>::dataType(),
-				space ) );
-    dataset.write( getHeadPtr( data ),
-		   HDF5TypeTraits<value_type>::dataType() );
+    if( this->doesDataSetExist( location_in_file ) )
+    {
+      H5::DataSet dataset( d_hdf5_file->openDataSet( location_in_file ) );
+      
+      dataset.write( getHeadPtr( data ),
+		     HDF5TypeTraits<value_type>::dataType() );
+    }
+    else
+    {
+      // Create any parent groups that do not exist yet in the location path
+      createParentGroups( location_in_file );
+      
+      hsize_t dim = getArraySize( data );
+      H5::DataSpace space( 1, &dim );
+      H5::DataSet dataset( d_hdf5_file->createDataSet( 
+					location_in_file,
+					HDF5TypeTraits<value_type>::dataType(),
+					space ) );
+      dataset.write( getHeadPtr( data ),
+		     HDF5TypeTraits<value_type>::dataType() );
+    }
   }
   
-  HDF5_EXCEPTION_CATCH_AND_EXIT();
+  HDF5_EXCEPTION_CATCH( std::runtime_error,
+			HDF5FileHandler::print_and_exit,
+			"Write Array to Data Set Error" );
 }
 
 // Read in HDF5 file dataset and save the data to an array
@@ -137,7 +149,9 @@ void HDF5FileHandler::readArrayFromDataSet(
 		  HDF5TypeTraits<value_type>::dataType() );
   }
   
-  HDF5_EXCEPTION_CATCH_AND_EXIT();
+  HDF5_EXCEPTION_CATCH( std::runtime_error,
+			HDF5FileHandler::print_and_exit,
+			"Read Array from Data Set Error" );
 }
 
 // Write attribute to HDF5 file dataset
@@ -184,16 +198,29 @@ void HDF5FileHandler::writeArrayToDataSetAttribute(
     hsize_t dim = getArraySize(data);
     H5::DataSpace space( 1, &dim );
     H5::DataSet dataset(d_hdf5_file->openDataSet( dataset_location ) ); 
-    H5::Attribute attribute(dataset.createAttribute( 
+    
+    if( this->doesDataSetAttributeExist( dataset_location, attribute_name ) )
+    {
+      H5::Attribute attribute( dataset.openAttribute( attribute_name ) );
+
+      attribute.write( HDF5TypeTraits<value_type>::dataType(),
+		       getHeadPtr( data ) );
+    }
+    else
+    {
+      H5::Attribute attribute(dataset.createAttribute( 
 				attribute_name, 
 				HDF5TypeTraits<value_type>::dataType(),
 				space ) );
     
-    attribute.write( HDF5TypeTraits<value_type>::dataType(),
-		     getHeadPtr( data ) );  
+      attribute.write( HDF5TypeTraits<value_type>::dataType(),
+		       getHeadPtr( data ) );  
+    }
   }
 
-  HDF5_EXCEPTION_CATCH_AND_EXIT();
+  HDF5_EXCEPTION_CATCH( std::runtime_error,
+			HDF5FileHandler::print_and_exit,
+			"Write Array to Data Set Attribute Error" );
 }
 
 // Read in HDF5 file dataset attribute and save the data to an array
@@ -238,10 +265,10 @@ void HDF5FileHandler::readArrayFromDataSetAttribute(
   // HDF5 exceptions can be thrown when opening and reading from datasets
   try
   {
-    H5::DataSet dataset(d_hdf5_file->openDataSet( dataset_location ) );
+    H5::DataSet dataset( d_hdf5_file->openDataSet( dataset_location ) );
 
     // Get the attribute associated with the dataset
-    H5::Attribute attribute(dataset.openAttribute( attribute_name) );
+    H5::Attribute attribute( dataset.openAttribute( attribute_name) );
     
     // Get the dataspace of the attribute
     H5::DataSpace dataspace = attribute.getSpace();
@@ -265,7 +292,9 @@ void HDF5FileHandler::readArrayFromDataSetAttribute(
 		    getHeadPtr( data ) );
   }
   
-  HDF5_EXCEPTION_CATCH_AND_EXIT();
+  HDF5_EXCEPTION_CATCH( std::runtime_error,
+			HDF5FileHandler::print_and_exit,
+			"Read Array from Data Set Attribute Error" );
 }
 
 // Write attribute to HDF5 file dataset
@@ -308,17 +337,29 @@ void HDF5FileHandler::writeValueToDataSetAttribute(
   {
     hsize_t dim = 1;
     H5::DataSpace space( 1, &dim );
-    H5::DataSet dataset(d_hdf5_file->openDataSet( dataset_location ) ); 
-    H5::Attribute attribute(dataset.createAttribute( 
+    H5::DataSet dataset( d_hdf5_file->openDataSet( dataset_location ) );
+
+    if( this->doesDataSetAttributeExist( dataset_location, attribute_name ) )
+    {
+      H5::Attribute attribute( dataset.openAttribute( attribute_name ) );
+
+      attribute.write( HDF5TypeTraits<T>::dataType(), &value );
+    }
+    else
+    {
+      H5::Attribute attribute( dataset.createAttribute( 
 					 attribute_name, 
 				         HDF5TypeTraits<T>::dataType(),
 					 space ) );
     
-    attribute.write( HDF5TypeTraits<T>::dataType(),
-		     &value );  
+      attribute.write( HDF5TypeTraits<T>::dataType(),
+		       &value );  
+    }
   }
 
-  HDF5_EXCEPTION_CATCH_AND_EXIT();
+  HDF5_EXCEPTION_CATCH( std::runtime_error,
+			HDF5FileHandler::print_and_exit,
+			"Write Value to Data Set Attribute Error" );
 }
 
 // Read in HDF5 file dataset attribute and save the single value
@@ -381,7 +422,9 @@ void HDF5FileHandler::readValueFromDataSetAttribute(
 		    &value );
   }
   
-  HDF5_EXCEPTION_CATCH_AND_EXIT();
+  HDF5_EXCEPTION_CATCH( std::runtime_error,
+			HDF5FileHandler::print_and_exit,
+			"Read Value from Data Set Attribute Error" );
 }
 
 // Write attribute to HDF5 file group
@@ -431,16 +474,29 @@ void HDF5FileHandler::writeArrayToGroupAttribute(
     hsize_t dim = getArraySize( data );
     H5::DataSpace space( 1, &dim );
     H5::Group group(d_hdf5_file->openGroup( group_location ) ); 
-    H5::Attribute attribute(group.createAttribute( 
+
+    if( this->doesGroupAttributeExist( group_location, attribute_name ) )
+    {
+      H5::Attribute attribute( group.openAttribute( attribute_name ) );
+
+      attribute.write( HDF5TypeTraits<value_type>::dataType(),
+		       getHeadPtr( data ) );
+    }
+    else
+    {
+      H5::Attribute attribute( group.createAttribute( 
 				attribute_name, 
 			        HDF5TypeTraits<value_type>::dataType(),
 				space ) );
     
-    attribute.write( HDF5TypeTraits<value_type>::dataType(),
-		     getHeadPtr( data ) );  
+      attribute.write( HDF5TypeTraits<value_type>::dataType(),
+		       getHeadPtr( data ) );  
+    }
   }
 
-  HDF5_EXCEPTION_CATCH_AND_EXIT();
+  HDF5_EXCEPTION_CATCH( std::runtime_error,
+			HDF5FileHandler::print_and_exit,
+			"Write Array to Group Attribute Error" );
 }
 
 // Read in HDF5 file group attribute and save the data to an array
@@ -512,7 +568,9 @@ void HDF5FileHandler::readArrayFromGroupAttribute(
 		    getHeadPtr( data ) );
   }
   
-  HDF5_EXCEPTION_CATCH_AND_EXIT();
+  HDF5_EXCEPTION_CATCH( std::runtime_error,
+			HDF5FileHandler::print_and_exit,
+			"Read Array from Group Attribute Error" );
 }
 
 // Write attribute to HDF5 file group
@@ -558,17 +616,28 @@ void HDF5FileHandler::writeValueToGroupAttribute(
   {
     hsize_t dim = 1;
     H5::DataSpace space( 1, &dim );
-    H5::Group group(d_hdf5_file->openGroup( group_location ) ); 
-    H5::Attribute attribute(group.createAttribute( 
+    H5::Group group(d_hdf5_file->openGroup( group_location ) );
+
+    if( this->doesGroupAttributeExist( group_location, attribute_name ) )
+    {
+      H5::Attribute attribute( group.openAttribute( attribute_name ) );
+
+      attribute.write( HDF5TypeTraits<T>::dataType(), &value );
+    }
+    else
+    {
+      H5::Attribute attribute(group.createAttribute( 
 					 attribute_name, 
 					 HDF5TypeTraits<T>::dataType(),
 					 space ) );
     
-    attribute.write( HDF5TypeTraits<T>::dataType(),
-		     &value );  
+      attribute.write( HDF5TypeTraits<T>::dataType(), &value );  
+    }
   }
 
-  HDF5_EXCEPTION_CATCH_AND_EXIT();
+  HDF5_EXCEPTION_CATCH( std::runtime_error,
+			HDF5FileHandler::print_and_exit,
+			"Write Value to Group Attribute Error" );
 }
 
 // Read in HDF5 file group attribute and save the single value
@@ -632,7 +701,9 @@ void HDF5FileHandler::readValueFromGroupAttribute(
 		    &value );
   }
   
-  HDF5_EXCEPTION_CATCH_AND_EXIT();
+  HDF5_EXCEPTION_CATCH( std::runtime_error,
+			HDF5FileHandler::print_and_exit,
+			"Read Value from Group Attribute Error" );
 }
 
 } // end Utility namespace

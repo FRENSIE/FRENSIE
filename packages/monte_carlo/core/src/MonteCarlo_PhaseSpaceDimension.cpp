@@ -39,31 +39,6 @@ std::string convertPhaseSpaceDimensionToString(
 
 } // end MonteCarlo namespace
 
-namespace Utility{
-
-// Template specialization for Utility::HDF5TypeTraits
-H5::EnumType HDF5TypeTraits<MonteCarlo::PhaseSpaceDimension>::dataType()
-{
-  H5::EnumType hdf5_phase_space_dimension_type( sizeof( short ) );
-  for( short d = MonteCarlo::DIMENSION_start; 
-       d < MonteCarlo::DIMENSION_end; 
-       ++d )
-  {
-    // This is dangerous generally but the enum has been set up to support it
-    MonteCarlo::PhaseSpaceDimension dimension = 
-      static_cast<MonteCarlo::PhaseSpaceDimension>( d );
-
-    std::string dimension_name = 
-      MonteCarlo::convertPhaseSpaceDimensionToString( dimension );
-
-    hdf5_phase_space_dimension_type.insert( dimension_name.c_str(), &d );
-  }
-  
-  return hdf5_phase_space_dimension_type;
-}
-
-} // end Utility namespace
-
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhaseSpaceDimension.cpp
 //---------------------------------------------------------------------------//

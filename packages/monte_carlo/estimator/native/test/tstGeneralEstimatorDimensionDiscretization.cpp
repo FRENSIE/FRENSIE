@@ -86,10 +86,9 @@ void initialize<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the discretized dimension can be returned
-UTILITY_UNIT_TEST_EPSD_TEMPLATE_1_DECL( 
-				       GeneralEstimatorDimensionDiscretization,
-				       getDimension,
-				       dimension )
+MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
+				   getDimension,
+				   dimension )
 {
   Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
 
@@ -104,10 +103,9 @@ UNIT_TEST_INSTANTIATION( GeneralEstimatorDimensionDiscretization,
 
 //---------------------------------------------------------------------------//
 // Check that the number of bins can be returned
-UTILITY_UNIT_TEST_EPSD_TEMPLATE_1_DECL( 
-				       GeneralEstimatorDimensionDiscretization,
-				       getNumberOfBins,
-				       dimension )
+MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
+				   getNumberOfBins,
+				   dimension )
 {
   Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
 
@@ -121,9 +119,9 @@ UNIT_TEST_INSTANTIATION( GeneralEstimatorDimensionDiscretization,
 
 //---------------------------------------------------------------------------//
 // Check if a value is contained in the discretization
-UTILITY_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
-				       isValueInDiscretization,
-				       dimension )
+MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
+				   isValueInDiscretization,
+				   dimension )
 {
   Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
 
@@ -170,10 +168,9 @@ UNIT_TEST_INSTANTIATION( GeneralEstimatorDimensionDiscretization,
 
 //---------------------------------------------------------------------------//
 // Check that a bin index can be calculated
-UTILITY_UNIT_TEST_EPSD_TEMPLATE_1_DECL( 
-				       GeneralEstimatorDimensionDiscretization,
-				       calculateBinIndex,
-				       dimension )
+MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
+				   calculateBinIndex,
+				   dimension )
 {
   Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
 

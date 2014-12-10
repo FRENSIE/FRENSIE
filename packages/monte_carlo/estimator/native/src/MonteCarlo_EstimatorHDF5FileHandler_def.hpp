@@ -17,7 +17,7 @@ bool EstimatorHDF5FileHandler::isEntityAssignedToEstimator(
 					   const unsigned estimator_id,
 				           const EntityIdType entity_id ) const
 {
-  return d_hdf5_file.doesGroupExist(
+  return d_hdf5_file->doesGroupExist(
 	    this->getEstimatorEntityGroupLocation( estimator_id, entity_id ) );
 }
 
@@ -28,10 +28,13 @@ void EstimatorHDF5FileHandler::setEntityNormConstant(
 						  const EntityIdType entity_id,
 						  const double norm_constant )
 {
-  d_hdf5_file.writeValueToGroupAttribute( 
+  try{
+    d_hdf5_file->writeValueToGroupAttribute( 
 	      norm_constant,
 	      this->getEstimatorEntityGroupLocation( estimator_id, entity_id ),
 	      "norm_constant" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, "Set Entity Norm Constant" );
 }
 
 // Get the entity normalization constant
@@ -41,10 +44,13 @@ void EstimatorHDF5FileHandler::getEntityNormConstant(
 						  const EntityIdType entity_id,
 						  double& norm_constant ) const
 {
-  d_hdf5_file.readValueFromGroupAttribute(
+  try{
+    d_hdf5_file->readValueFromGroupAttribute(
 	      norm_constant,
 	      this->getEstimatorEntityGroupLocation( estimator_id, entity_id ),
 	      "norm_constant" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, "Get Entity Norm Constant" );
 }
 
 // Set the estimator bin boundaries
@@ -56,10 +62,13 @@ void EstimatorHDF5FileHandler::setEstimatorBinBoundaries(
   std::string bin_boundary_set = 
     this->getEstimatorGroupLocation( estimator_id );
 
-  bin_boundary_set += "/";
   bin_boundary_set += PhaseSpaceDimensionTraits<dimension>::name();
   
-  d_hdf5_file.writeArrayToDataSet( bin_boundaries, bin_boundary_set );
+  try{
+    d_hdf5_file->writeArrayToDataSet( bin_boundaries, bin_boundary_set );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Set Estimator Bin Boundaries Error" );
 }
 
 // Get the estimator bin boundaries
@@ -71,10 +80,13 @@ void EstimatorHDF5FileHandler::getEstimatorBinBoundaries(
   std::string bin_boundary_set = 
     this->getEstimatorGroupLocation( estimator_id );
 
-  bin_boundary_set += "/";
   bin_boundary_set += PhaseSpaceDimensionTraits<dimension>::name();
 
-  d_hdf5_file.readArrayFromDataSet( bin_boundaries, bin_boundary_set );
+  try{
+    d_hdf5_file->readArrayFromDataSet( bin_boundaries, bin_boundary_set );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get Estimator Bin Boundaries Error" );
 }
 
 // Set the estimator entities and norm constants
@@ -84,10 +96,14 @@ void EstimatorHDF5FileHandler::setEstimatorEntities(
                      const Teuchos::Array<Utility::Pair<EntityIdType,double> >&
 		     entity_id_norms )
 {
-  d_hdf5_file.writeArrayToGroupAttribute(
+  try{
+    d_hdf5_file->writeArrayToGroupAttribute(
 			       entity_id_norms,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "estimator_entity_ids" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Set Estimator Entities Error" );
 }
 
 // Get the estimator entities and norm constants
@@ -97,10 +113,14 @@ void EstimatorHDF5FileHandler::getEstimatorEntities(
                            Teuchos::Array<Utility::Pair<EntityIdType,double> >&
 			   entity_id_norms ) const
 {
-  d_hdf5_file.readArrayFromGroupAttribute(
+  try{
+    d_hdf5_file->readArrayFromGroupAttribute(
 			       entity_id_norms,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "estimator_entity_ids" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get Estimator Entities Error" );
 }
   
 // Set the raw estimator bin data for an entity (1st, 2nd moments)
@@ -115,7 +135,11 @@ void EstimatorHDF5FileHandler::setRawEstimatorEntityBinData(
 
   bin_boundaries_data_set += "raw_bin_data";
   
-  d_hdf5_file.writeArrayToDataSet( raw_bin_data, bin_boundaries_data_set );
+  try{
+    d_hdf5_file->writeArrayToDataSet( raw_bin_data, bin_boundaries_data_set );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Set Raw Estimator Entity Bin Data Error" );
 }
 
 // Get the raw estimator bin data for an entity (1st, 2nd moments)
@@ -130,7 +154,11 @@ void EstimatorHDF5FileHandler::getRawEstimatorEntityBinData(
 
   bin_boundaries_data_set += "raw_bin_data";
 
-  d_hdf5_file.readArrayFromDataSet( raw_bin_data, bin_boundaries_data_set );
+  try{
+    d_hdf5_file->readArrayFromDataSet( raw_bin_data, bin_boundaries_data_set );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get Raw Estimator Entity Bin Data Error" );
 }
 
 // Set the processed estimator bin data for an entity (mean, relative error)
@@ -145,13 +173,17 @@ void EstimatorHDF5FileHandler::setProcessedEstimatorEntityBinData(
 
   bin_boundaries_data_set += "processed_bin_data";
 
-  d_hdf5_file.writeArrayToDataSet( processed_bin_data, 
-				   bin_boundaries_data_set );
+  try{
+    d_hdf5_file->writeArrayToDataSet( processed_bin_data, 
+				      bin_boundaries_data_set );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Set Processed Estimator Entity Bin Data Error" );
 }
 
 // Get the processed estimator bin data for an entity (mean, relative error)
 template<typename EntityIdType>
-void EstimatorHDF5FileHandler::getProcessedEstimatorBinData(
+void EstimatorHDF5FileHandler::getProcessedEstimatorEntityBinData(
      const unsigned estimator_id,
      const EntityIdType entity_id,
      Teuchos::Array<Utility::Pair<double,double> >& processed_bin_data ) const
@@ -161,8 +193,12 @@ void EstimatorHDF5FileHandler::getProcessedEstimatorBinData(
 
   bin_boundaries_data_set += "processed_bin_data";
 
-  d_hdf5_file.readArrayFromDataSet( processed_bin_data, 
-				    bin_boundaries_data_set );
+  try{
+    d_hdf5_file->readArrayFromDataSet( processed_bin_data, 
+				       bin_boundaries_data_set );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get Processed Estimator Entity Bin Data Error" );
 }
 
 // Set the raw estimator total data for an entity 
@@ -178,7 +214,11 @@ void EstimatorHDF5FileHandler::setRawEstimatorEntityTotalData(
 
   total_data_set += "raw_total_data";
 
-  d_hdf5_file.writeArrayToDataSet( raw_total_data, total_data_set );
+  try{
+    d_hdf5_file->writeArrayToDataSet( raw_total_data, total_data_set );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Set Raw Estimator Entity Total Data Error" );
 }
 
 // Get the raw estimator total data for an entity 
@@ -194,7 +234,11 @@ void EstimatorHDF5FileHandler::getRawEstimatorEntityTotalData(
 
   total_data_set += "raw_total_data";
 
-  d_hdf5_file.readArrayFromDataSet( raw_total_data, total_data_set );
+  try{
+    d_hdf5_file->readArrayFromDataSet( raw_total_data, total_data_set );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get Raw Estimator Entity Total Data Error" );
 }
 
 // Set the processed estimator total data for an entity 
@@ -209,8 +253,12 @@ void EstimatorHDF5FileHandler::setProcessedEstimatorEntityTotalData(
     this->getEstimatorEntityGroupLocation( estimator_id, entity_id );
 
   total_data_set += "processed_total_data";
-
-  d_hdf5_file.writeArrayToDataSet( processed_total_data, total_data_set );
+  
+  try{
+    d_hdf5_file->writeArrayToDataSet( processed_total_data, total_data_set );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Set Processed Estimator Entity Total Data Error" );
 }
 
 // Get the processed estimator total data for an entity
@@ -226,7 +274,11 @@ void EstimatorHDF5FileHandler::getProcessedEstimatorEntityTotalData(
 
   total_data_set += "processed_total_data";
 
-  d_hdf5_file.readArrayFromDataSet( processed_total_data, total_data_set );
+  try{
+    d_hdf5_file->readArrayFromDataSet( processed_total_data, total_data_set );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get Processed Estimator Entity Total Data Error" );
 }
 
 // Get the estimator entity location
@@ -235,8 +287,11 @@ std::string EstimatorHDF5FileHandler::getEstimatorEntityGroupLocation(
 					  const unsigned estimator_id,
 					  const EntityIdType entity_id ) const
 {
-  std::ostringstream oss( this->getEstimatorGroupLocation( estimator_id ) );
-  oss << "/" << entity_id;
+  std::ostringstream oss;
+  oss << this->getEstimatorGroupLocation( estimator_id );
+  oss << entity_id << "/";
+
+  return oss.str();
 }
 
 } // end MonteCarlo namespace

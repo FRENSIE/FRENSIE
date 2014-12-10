@@ -24,6 +24,7 @@
 
 // FRENSIE Includes
 #include "Utility_HDF5TypeTraits.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
@@ -67,7 +68,33 @@ template<>
 struct HDF5TypeTraits<MonteCarlo::PhaseSpaceDimension>
 {
   //! Return the HDF5 data type
-  static H5::EnumType dataType();
+  static inline H5::EnumType dataType()
+  {
+    // Make sure every enum will be converted
+    testPrecondition( MonteCarlo::DIMENSION_end == 4 );
+    
+    H5::EnumType hdf5_phase_space_dimension_type( 
+				   sizeof( MonteCarlo::PhaseSpaceDimension ) );
+
+    MonteCarlo::PhaseSpaceDimension value = MonteCarlo::COSINE_DIMENSION;
+
+    hdf5_phase_space_dimension_type.insert( "COSINE_DIMENSION", &value );
+    
+    value = MonteCarlo::ENERGY_DIMENSION;
+
+    hdf5_phase_space_dimension_type.insert( "ENERGY_DIMENSION", &value );
+
+    value = MonteCarlo::TIME_DIMENSION;
+
+    hdf5_phase_space_dimension_type.insert( "TIME_DIMENSION", &value );
+
+    value = MonteCarlo::COLLISION_NUMBER_DIMENSION;
+
+    hdf5_phase_space_dimension_type.insert( "COLLISION_NUMBER_DIMENSION", 
+					    &value );
+
+    return hdf5_phase_space_dimension_type;
+  }
 
   //! Return the name of the type
   static inline std::string name()
