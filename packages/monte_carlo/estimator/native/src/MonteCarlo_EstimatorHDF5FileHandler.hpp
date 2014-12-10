@@ -150,6 +150,14 @@ public:
   void getEntityNormConstant( const unsigned estimator_id,
 			      const EntityIdType entity_id,
 			      double& norm_constant ) const;
+
+  //! Set the total normalization constant
+  void setEstimatorTotalNormConstant( const unsigned estimator_id,
+				      const double total_norm_constant );
+
+  //! Get the total normalization constant
+  void getEstimatorTotalNormConstant( const unsigned estimator_id,
+				      double& total_norm_constant ) const;
   
   //! Set the raw estimator bin data for an entity (1st, 2nd moments)
   template<typename EntityIdType>

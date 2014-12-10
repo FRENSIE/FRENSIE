@@ -76,6 +76,7 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
     entity = d_entity_current_history_first_moments_map.begin();
     end_entity = d_entity_current_history_first_moments_map.end();
     
+    // Compute the totals
     while( entity != end_entity )
     {
       double total_over_entity = 0.0;
@@ -93,9 +94,6 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
 	this->commitHistoryContributionToBinOfEntity( entity->first,
 						      bin_index,
 						      bin_contribution );
-	
-	// Reset the bin
-	entity->second[bin_index] = 0.0;
       }
       
       commitHistoryContributionToTotalOfEntity( entity->first,
@@ -106,7 +104,31 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
     }
     
     commitHistoryContributionToTotalOfEstimator( i, total_over_all_entities );
-    
+
+    // Compute the bin totals
+    for( unsigned j = 0; j < num_bins; ++j )
+    {
+      unsigned bin_index = j + num_bins*i;
+      
+      double bin_contribution = 0.0;
+      
+      entity = d_entity_current_history_first_moments_map.begin();
+      end_entity = d_entity_current_history_first_moments_map.end();
+
+      while( entity != end_entity )
+      {
+	bin_contribution += entity->second[bin_index];
+
+	// Reset the bin
+	entity->second[bin_index] = 0.0;
+
+	++entity;
+      }
+
+      this->commitHistoryContributionToBinOfTotal( bin_index, 
+						   bin_contribution );
+    }      
+
     // Unset the uncommitted history contribution boolean
     this->unsetHasUncommittedHistoryContribution();
   }

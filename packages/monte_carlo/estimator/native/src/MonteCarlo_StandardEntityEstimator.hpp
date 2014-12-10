@@ -9,6 +9,9 @@
 #ifndef FACEMC_STANDARD_ENTITY_ESTIMATOR_HPP
 #define FACEMC_STANDARD_ENTITY_ESTIMATOR_HPP
 
+// Boost Includes
+#include <boost/unordered_set.hpp>
+
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
 

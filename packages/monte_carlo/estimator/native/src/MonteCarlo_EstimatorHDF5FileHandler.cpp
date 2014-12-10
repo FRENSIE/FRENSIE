@@ -316,6 +316,36 @@ void EstimatorHDF5FileHandler::getEstimatorDimensionOrdering(
 			   "Get Estimator Dimension Ordering Error" );
 }
 
+// Set the total normalization constant
+void EstimatorHDF5FileHandler::setEstimatorTotalNormConstant( 
+			     const unsigned estimator_id,
+			     const double total_norm_constant )
+{
+  try{
+    d_hdf5_file->writeValueToGroupAttribute(
+			       total_norm_constant,
+			       this->getEstimatorGroupLocation( estimator_id ),
+			       "total_norm_constant" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Set Total Norm Constant Error" );
+}
+
+// Get the total normalization constant
+void EstimatorHDF5FileHandler::getEstimatorTotalNormConstant( 
+					    const unsigned estimator_id,
+					    double& total_norm_constant ) const
+{
+  try{
+    d_hdf5_file->readValueFromGroupAttribute(
+			       total_norm_constant,
+			       this->getEstimatorGroupLocation( estimator_id ),
+			       "total_norm_constant" );
+  }
+  EXCEPTION_CATCH_RETHROW( std::runtime_error, 
+			   "Get Total Norm Constant Error" );
+}
+
 // Set the raw estimator bin data over all entities (1st, 2nd moments)
 void EstimatorHDF5FileHandler::setRawEstimatorTotalBinData(
 	   const unsigned estimator_id,

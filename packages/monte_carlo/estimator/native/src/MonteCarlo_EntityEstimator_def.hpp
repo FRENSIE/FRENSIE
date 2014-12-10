@@ -29,13 +29,17 @@ EntityEstimator<EntityId>::EntityEstimator(
 			  const Teuchos::Array<double>& entity_norm_constants )
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
-    d_supplied_norm_constants( true )
+    d_supplied_norm_constants( true ),
+    d_estimator_total_bin_data( 1 )
 {
   initializeEntityEstimatorMomentsMap( entity_ids );
   initializeEntityNormConstantsMap( entity_ids, entity_norm_constants );
 
   // Calculate the total normalization constant
   calculateTotalNormalizationConstant();
+
+  // Initialize the total bin data
+  resizeEstimatorTotalArray();
 }
 
 // Constructor (for non-flux estimators)
@@ -49,10 +53,14 @@ EntityEstimator<EntityId>::EntityEstimator(
 				   const Teuchos::Array<EntityId>& entity_ids )
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
-    d_supplied_norm_constants( false )
+    d_supplied_norm_constants( false ),
+    d_estimator_total_bin_data( 1 )
 {
   initializeEntityEstimatorMomentsMap( entity_ids );
   initializeEntityNormConstantsMap( entity_ids );
+
+  // Initialize the total bin data
+  resizeEstimatorTotalArray();
 }
 
 // Set the response functions
@@ -82,8 +90,6 @@ void EntityEstimator<EntityId>::getEntityIds(
   }
 }
 
-
-
 // Assign bin boundaries to an estimator dimension
 template<typename EntityId>
 void EntityEstimator<EntityId>::assignBinBoundaries(
@@ -93,6 +99,9 @@ void EntityEstimator<EntityId>::assignBinBoundaries(
 
   // Resize the entity estimator moments map arrays
   resizeEntityEstimatorMapArrays();
+
+  // Resize the total array
+  resizeEstimatorTotalArray();
 }
 
 // Return the normalization constant for an entity
@@ -180,6 +189,32 @@ void EntityEstimator<EntityId>::exportData(EstimatorHDF5FileHandler& hdf5_file,
     // Export the estimator entity ids
     hdf5_file.setEstimatorEntities( this->getId(), entity_ids_norm_consts );
   }
+
+  // Export the total norm constant
+  hdf5_file.setEstimatorTotalNormConstant( this->getId(), 
+					   d_total_norm_constant );
+
+  // Export the total bin data
+  hdf5_file.setRawEstimatorTotalBinData( this->getId(),
+					 d_estimator_total_bin_data );
+
+  // Export the processed total bin data
+  {
+    Teuchos::Array<Utility::Pair<double,double> > processed_data(
+					   d_estimator_total_bin_data.size() );
+    
+    for( unsigned i = 0; i < processed_data.size(); ++i )
+    {
+      this->processMoments( d_estimator_total_bin_data[i],
+			    d_total_norm_constant,
+			    processed_data[i].first,
+			    processed_data[i].second );
+    }
+
+    
+    hdf5_file.setProcessedEstimatorTotalBinData( this->getId(),
+						 processed_data );
+  }
 }
 
 // Commit history contribution to a bin of an entity
@@ -206,6 +241,25 @@ void EntityEstimator<EntityId>::commitHistoryContributionToBinOfEntity(
   // Add the second moment contribution
   entity_estimator_moments_array[bin_index].second += 
     contribution*contribution;
+}
+
+// Commit history contribution to a bin of the total
+template<typename EntityId>
+void EntityEstimator<EntityId>::commitHistoryContributionToBinOfTotal(
+						   const unsigned bin_index,
+						   const double contribution )
+{
+  // Make sure the bin index is valid
+  testPrecondition( bin_index < 
+		    getNumberOfBins()*getNumberOfResponseFunctions() );
+  // Make sure the contribution is valid
+  testPrecondition( !ST::isnaninf( contribution ) );
+
+  // Add the first moment contribution
+  d_estimator_total_bin_data[bin_index].first += contribution;
+  
+  // Add the second moment contribution  
+  d_estimator_total_bin_data[bin_index].second += contribution*contribution;
 }
 
 // Print the entity ids assigned to the estimator
@@ -301,6 +355,16 @@ void EntityEstimator<EntityId>::printImplementation(
 
     ++entity_data;
   }
+
+  // Print the estimator total bin data
+  os << " Total Bin Data: " << std::endl;
+  os << "--------" << std::endl;
+
+  printEstimatorBinData( os, 
+			 d_estimator_total_bin_data, 
+			 d_total_norm_constant );
+  
+  os << std::endl;
 }
 
 // Initialize entity estimator moments map
@@ -380,6 +444,14 @@ void EntityEstimator<EntityId>::resizeEntityEstimatorMapArrays()
     
     ++start;
   }
+}
+
+// Resize the estimator total array
+template<typename EntityId>
+void EntityEstimator<EntityId>::resizeEstimatorTotalArray()
+{
+  d_estimator_total_bin_data.resize( 
+			    getNumberOfBins()*getNumberOfResponseFunctions() );
 }
 
 // Calculate the total normalization constant

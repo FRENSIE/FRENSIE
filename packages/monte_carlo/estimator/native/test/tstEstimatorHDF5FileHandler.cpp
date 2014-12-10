@@ -241,6 +241,30 @@ TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, set_getEstimatorMultiplier )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the estimator total norm constant can be set
+TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, 
+		   set_getEstimatorTotalNormConstant )
+{
+  MonteCarlo::EstimatorHDF5FileHandler file_handler( hdf5_file_name );
+
+  // Write new multiplier
+  file_handler.setEstimatorTotalNormConstant( 0u, 10.0 );
+  
+  double total_norm_constant;
+  
+  file_handler.getEstimatorTotalNormConstant( 0u, total_norm_constant );
+
+  TEST_EQUALITY_CONST( total_norm_constant, 10.0 );
+
+  // Overwrite the multiplier
+  file_handler.setEstimatorTotalNormConstant( 0u, 20.0 );
+  
+  file_handler.getEstimatorTotalNormConstant( 0u, total_norm_constant );
+
+  TEST_EQUALITY_CONST( total_norm_constant, 20.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check if the estimator response function ordering can be set
 TEUCHOS_UNIT_TEST( EstimatorHDF5FileHandler, 
 		   set_getEstimatorResponseFunctionOrdering )
