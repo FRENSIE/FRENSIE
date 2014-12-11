@@ -64,6 +64,8 @@ void Estimator::setEndTime( const double end_time )
 void Estimator::setResponseFunctions( 
     const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
 {
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure there is at least one response function
   testPrecondition( response_functions.size() >= 1 );
 
@@ -74,6 +76,8 @@ void Estimator::setResponseFunctions(
 void Estimator::setParticleTypes( 
 			   const Teuchos::Array<ParticleType>& particle_types )
 {
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure at least one particle type is specified
   testPrecondition( particle_types.size() > 0 );
   
@@ -86,6 +90,9 @@ void Estimator::setParticleTypes(
 // Enable support for multiple threads
 void Estimator::enableThreadSupport( const unsigned num_threads )
 {
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   d_has_uncommitted_history_contribution.resize( num_threads, false );
 }
 
@@ -93,6 +100,8 @@ void Estimator::enableThreadSupport( const unsigned num_threads )
 void Estimator::exportData( EstimatorHDF5FileHandler& hdf5_file,
 			    const bool process_data ) const
 {
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure this estimator has not been exported yet
   testPrecondition( !hdf5_file.doesEstimatorExist( d_id ) );
 
@@ -132,6 +141,9 @@ void Estimator::exportData( EstimatorHDF5FileHandler& hdf5_file,
 void Estimator::assignBinBoundaries( 
 	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
 {
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   if(d_dimension_bin_boundaries_map.count(bin_boundaries->getDimension()) == 0)
   {
     d_dimension_bin_boundaries_map[bin_boundaries->getDimension()] = 

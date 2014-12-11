@@ -134,10 +134,10 @@ public:
 protected:
 
   //! Set the has uncommited history contribution flag
-  void setHasUncommittedHistoryContribution( const unsigned thread_id = 0u );
+  void setHasUncommittedHistoryContribution( const unsigned thread_id );
 
   //! Unset the has uncommited history contribution flag
-  void unsetHasUncommittedHistoryContribution( const unsigned thread_id = 0u );
+  void unsetHasUncommittedHistoryContribution( const unsigned thread_id );
 
   //! Assign bin boundaries to an estimator dimension
   virtual void assignBinBoundaries( 

@@ -99,10 +99,10 @@ inline void CellPulseHeightEstimator<
     double contribution = particle.getWeight()*particle.getEnergy();
     
     addInfoToUpdateTracker( thread_id, cell_entering, contribution );
+    
+    // Indicate that there is an uncommitted history contribution
+  this->setHasUncommittedHistoryContribution( thread_id );
   }
-
-  // Indicate that there is an uncommitted history contribution
-  this->setHasUncommittedHistoryContribution();
 }
 
 // Add current history estimator contribution
