@@ -34,9 +34,11 @@ class StandardEntityEstimator : public EntityEstimator<EntityId>
 
 private:
 
+  // Typedef for bin contribution map
+  typedef boost::unordered_map<unsigned,double> BinContributionMap;
+
   // Typedef for serial update tracker
-  typedef typename boost::unordered_map<EntityId,
-					boost::unordered_set<unsigned> >
+  typedef typename boost::unordered_map<EntityId,BinContributionMap>
   SerialUpdateTracker;
 
   // Typedef for parallel update tracker 
@@ -91,10 +93,6 @@ public:
   
 protected:
 
-  //! Assign bin boundaries to an estimator dimension
-  virtual void assignBinBoundaries(
-	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
-
   //! Add estimator contribution from a portion of the current history
   void addPartialHistoryContribution( const EntityId entity_id,
 				      const ParticleState& particle,
@@ -106,9 +104,6 @@ protected:
 			    const std::string& entity_type ) const;
 
 private:
-
-  // Resize the entity estimator first moment map arrays
-  void resizeEntityEstimatorFirstMomentsMapArrays();
 
   // Resize the entity total estimator moments map arrays
   void resizeEntityTotalEstimatorMomentsMapArrays();
@@ -126,11 +121,12 @@ private:
 
   // Initialize the moments maps
   void initializeMomentsMaps( const Teuchos::Array<EntityId>& entity_ids );
-  
+
   // Add info to update tracker
   void addInfoToUpdateTracker( const unsigned thread_id,
 			       const EntityId entity_id,
-			       const unsigned bin_index );
+			       const unsigned bin_index,
+			       const double contribution );
 
   // Get entity iterators from update tracker
   void getEntityIteratorFromUpdateTracker( 
@@ -142,24 +138,20 @@ private:
   void getBinIteratorFromUpdateTrackerIterator(
 	   const unsigned thread_id,
 	   const typename SerialUpdateTracker::const_iterator& entity_iterator,
-	   boost::unordered_set<unsigned>::const_iterator& start_bin,
-	   boost::unordered_set<unsigned>::const_iterator& end_bin ) const;
+	   BinContributionMap::const_iterator& start_bin,
+	   BinContributionMap::const_iterator& end_bin ) const;
 	
   // Reset the update tracker
   void resetUpdateTracker( const unsigned thread_id );
 
-  // The total estimator moments across all entities and response functions
-  Estimator::FourEstimatorMomentsArray d_total_estimator_moments;
-
   // The entities/bins that have been updated
   ParallelUpdateTracker d_update_tracker;
 
+  // The total estimator moments across all entities and response functions
+  Estimator::FourEstimatorMomentsArray d_total_estimator_moments;
+
   // The total estimator moments for each entity and response functions
   EntityEstimatorMomentsArrayMap d_entity_total_estimator_moments_map;
-
-  // The estimator first moment for each bin of the current history
-  EntityEstimatorFirstMomentsArrayMap 
-  d_entity_current_history_first_moments_map;
 
   // The generic particle state map (avoids having to make a new map for cont.)
   Estimator::DimensionValueMap d_dimension_values;

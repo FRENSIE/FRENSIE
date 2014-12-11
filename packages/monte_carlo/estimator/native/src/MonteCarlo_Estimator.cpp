@@ -47,7 +47,7 @@ void Estimator::setEndTime( const double end_time )
   : PrintableObject( "//---------------------------------------------------------------------------//" ),
     d_id( id ),
     d_multiplier( multiplier ),
-    d_has_uncommitted_history_contribution( false ),
+    d_has_uncommitted_history_contribution( 1, false ),
     d_response_functions( 1 )
 {
   // Make sure the multiplier is valid
@@ -57,7 +57,7 @@ void Estimator::setEndTime( const double end_time )
   d_response_functions[0] = ResponseFunction::default_response_function;
 
   // Create the default particle types set (all particle types)
-  d_particle_types.insert( PHOTON );
+  // d_particle_types.insert( PHOTON );
 }
 
 // Set the response functions
@@ -81,6 +81,12 @@ void Estimator::setParticleTypes(
 
   for( unsigned i = 0; i < particle_types.size(); ++i )
     d_particle_types.insert( particle_types[i] );
+}
+
+// Enable support for multiple threads
+void Estimator::enableThreadSupport( const unsigned num_threads )
+{
+  d_has_uncommitted_history_contribution.resize( num_threads, false );
 }
 
 // Export the estimator data
@@ -346,6 +352,18 @@ unsigned Estimator::calculateBinIndex(
   testPostcondition( bin_index < std::numeric_limits<unsigned>::max() );
 
   return bin_index;
+}
+
+// Calculate the response function index given a bin index
+unsigned Estimator::calculateResponseFunctionIndex( 
+					       const unsigned bin_index ) const
+{
+  // Make sure the bin index is valid
+  testPrecondition( bin_index < 
+		    getNumberOfBins()*getNumberOfResponseFunctions() );
+  testPrecondition( bin_index < std::numeric_limits<unsigned>::max() );
+
+  return bin_index/getNumberOfBins();
 }
 
 // Convert first and second moments to mean and relative error

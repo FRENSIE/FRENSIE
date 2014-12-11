@@ -39,7 +39,8 @@ class CellPulseHeightEstimator : public EntityEstimator<Geometry::ModuleTraits::
 private:
 
   // Typedef for the serial update tracker
-  typedef boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>
+  typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+			       double>
   SerialUpdateTracker;
 
   // Typedef for the parallel update tracker
@@ -109,7 +110,8 @@ private:
 
   // Add info to update tracker
   void addInfoToUpdateTracker( const unsigned thread_id,
-			       const cellIdType cell_id );
+			       const cellIdType cell_id,
+			       const double contribution );
 
   // Get the entity iterators from the update tracker
   void getCellIteratorFromUpdateTracker(
@@ -122,10 +124,6 @@ private:
 
   // The entities that have been updated
   ParallelUpdateTracker d_update_tracker;
-
-  // The energy deposited in each cell of interest by the current history
-  boost::unordered_map<cellIdType,Teuchos::Array<double> > 
-  d_cell_energy_deposition_map;
 
   // The generic particle state map (avoids having to make a new map for cont.)
   Estimator::DimensionValueMap d_dimension_values;
