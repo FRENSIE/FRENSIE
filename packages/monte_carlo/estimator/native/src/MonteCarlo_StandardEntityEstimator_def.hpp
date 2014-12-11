@@ -26,9 +26,9 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 			       multiplier,
 			       entity_ids,
 			       entity_norm_constants ),
-    d_total_estimator_moments( 1 ),
-    d_update_tracker( 1 )
-{
+    d_update_tracker( 1 ),
+    d_total_estimator_moments( 1 )
+{ 
   initializeMomentsMaps( entity_ids );
 }
 
@@ -39,9 +39,9 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
 				   const double multiplier,
 			           const Teuchos::Array<EntityId>& entity_ids )
   : EntityEstimator<EntityId>( id, multiplier, entity_ids ),
-    d_total_estimator_moments( 1 ),
-    d_update_tracker( 1 )
-{
+    d_update_tracker( 1 ),
+    d_total_estimator_moments( 1 )
+{ 
   initializeMomentsMaps( entity_ids );
 }
 
@@ -51,9 +51,6 @@ void StandardEntityEstimator<EntityId>::setResponseFunctions(
     const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
 {
   EntityEstimator<EntityId>::setResponseFunctions( response_functions );
-
-  // Resize the entity estimator first moment map arrays
-  resizeEntityEstimatorFirstMomentsMapArrays();
 
   // Resize the entity total estimator momens map arrays
   resizeEntityTotalEstimatorMomentsMapArrays();
@@ -86,7 +83,7 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
   Teuchos::Array<double> totals( num_response_funcs, 0.0 );
 
   // The bin totals over all entities
-  Teuchos::Array<double> bin_totals( num_bins*num_response_funcs, 0.0 );
+  BinContributionMap bin_totals;
 
   // Get the entities with updated data
   typename SerialUpdateTracker::const_iterator entity, end_entity;
@@ -95,38 +92,35 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
 
   while( entity != end_entity )
   {    
-    // Get the bin data for this entity
-    Teuchos::ArrayView<double> entity_bin_data = 
-      d_entity_current_history_first_moments_map.find(entity->first)->second[thread_id];
-    
-    // Loop over each updated bin
-    boost::unordered_set<unsigned>::const_iterator bin_index, end_bin_index;
+    // Process each updated bin
+    BinContributionMap::const_iterator bin_data, end_bin_data;
     
     getBinIteratorFromUpdateTrackerIterator( thread_id, 
 					     entity, 
-					     bin_index, 
-					     end_bin_index );
+					     bin_data, 
+					     end_bin_data );
 
-    while( bin_index != end_bin_index )
+    while( bin_data != end_bin_data )
     {
-      unsigned response_func_index = *bin_index/num_bins;
+      unsigned response_func_index = 
+	this->calculateResponseFunctionIndex( bin_data->first );
 
-      double bin_contribution = entity_bin_data[*bin_index];
+      double bin_contribution = bin_data->second;
 
       entity_totals[response_func_index] += bin_contribution;
       
       totals[response_func_index] += bin_contribution;
       
-      bin_totals[*bin_index] += bin_contribution;
+      if( bin_totals.find( bin_data->first ) != bin_totals.end() )
+	bin_totals[bin_data->first] += bin_contribution;
+      else
+	bin_totals[bin_data->first] = bin_contribution;
 
       this->commitHistoryContributionToBinOfEntity( entity->first,
-						    *bin_index,
+						    bin_data->first,
 						    bin_contribution );
 
-      // Reset the data in this bin
-      entity_bin_data[*bin_index] = 0.0;
-      
-      ++bin_index;
+      ++bin_data;
     }
 
     // Commit the entity totals
@@ -148,33 +142,30 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
     commitHistoryContributionToTotalOfEstimator( i, totals[i] );
 
   // Commit the bin totals over all entities
-  for( unsigned i = 0; i < num_bins*num_response_funcs; ++i )
-    this->commitHistoryContributionToBinOfTotal( i, bin_totals[i] );
-
+  BinContributionMap::const_iterator bin_data, end_bin_data;
+  bin_data = bin_totals.begin();
+  end_bin_data = bin_totals.end();
+  
+  while( bin_data != end_bin_data )
+  {
+    this->commitHistoryContributionToBinOfTotal( bin_data->first,
+						 bin_data->second );
+    ++bin_data;    
+  }
+  
   // Reset the update tracker
   resetUpdateTracker( thread_id );
 
   // Unset the uncommitted history contribution flag
-  this->unsetHasUncommittedHistoryContribution();
+  this->unsetHasUncommittedHistoryContribution( thread_id );
 }
 
 // Enable support for multiple threads
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::enableThreadSupport(
 						  const unsigned num_threads )
-{
-  // Add thread support to current history first moments map
-  typename EntityEstimatorFirstMomentsArrayMap::iterator 
-    entity_data, entity_data_end;
-  entity_data = d_entity_current_history_first_moments_map.begin();
-  entity_data_end = d_entity_current_history_first_moments_map.end();
-  
-  while( entity_data != entity_data_end )
-  {
-    entity_data->second.resizeRows( num_threads );
-
-    ++entity_data;
-  }
+{  
+  EntityEstimator<EntityId>::enableThreadSupport( num_threads );
   
   // Add thread support to update tracker
   d_update_tracker.resize( num_threads );
@@ -249,17 +240,6 @@ void StandardEntityEstimator<EntityId>::exportData(
   }
 }
 
-// Assign bin boundaries to an estimator dimension
-template<typename EntityId>
-void StandardEntityEstimator<EntityId>::assignBinBoundaries(
-	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
-{
-  EntityEstimator<EntityId>::assignBinBoundaries( bin_boundaries );
-
-  // Resize the first moment map arrays
-  resizeEntityEstimatorFirstMomentsMapArrays();
-}
-
 // Add estimator contribution from a portion of the current history
 /*! \details The contribution should incorporate the particle weight (and
  * possibly other multiplier(s) ) but not the response function values.
@@ -287,24 +267,24 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
   {
     unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
     
-    Teuchos::ArrayView<double> entity_first_moments_array = 
-      d_entity_current_history_first_moments_map[entity_id][thread_id];
-
     unsigned bin_index;
       
     for( unsigned i = 0; i < this->getNumberOfResponseFunctions(); ++i )
     {
       bin_index = this->calculateBinIndex( d_dimension_values, i );
       
-      entity_first_moments_array[bin_index] += 
+      double processed_contribution = 
 	contribution*this->evaluateResponseFunction( particle, i );
 
-      addInfoToUpdateTracker( thread_id, entity_id, bin_index );
+      addInfoToUpdateTracker( thread_id, 
+			      entity_id, 
+			      bin_index,
+			      processed_contribution );
     }
-  }
 
-  // Indicate that there is an uncommitted history contribution
-  this->setHasUncommittedHistoryContribution();
+    // Indicate that there is an uncommitted history contribution
+    this->setHasUncommittedHistoryContribution( thread_id );
+  }
 }
 
 // Print the estimator data
@@ -344,24 +324,6 @@ void StandardEntityEstimator<EntityId>::printImplementation(
   this->printEstimatorTotalData( os,
 				 d_total_estimator_moments,
 				 this->getTotalNormConstant() );
-}
-
-// Resize the entity estimator first moment map arrays
-template<typename EntityId>
-void 
-StandardEntityEstimator<EntityId>::resizeEntityEstimatorFirstMomentsMapArrays()
-{
-  typename EntityEstimatorFirstMomentsArrayMap::iterator start, end;
-  
-  start = d_entity_current_history_first_moments_map.begin();
-  end = d_entity_current_history_first_moments_map.end();
-
-  while( start != end )
-  {
-    start->second.resizeCols( this->getNumberOfBins()*
-			      this->getNumberOfResponseFunctions() );
-    ++start;
-  }
 }
 
 // Resize the entity total estimator moments map arrays
@@ -466,18 +428,10 @@ void StandardEntityEstimator<EntityId>::initializeMomentsMaps(
   for( unsigned i = 0; i < entity_ids.size(); ++i )
   {
     // Ignore duplicate entity ids
-    if( d_entity_current_history_first_moments_map.count( entity_ids[i] ) == 0)
+    if( d_entity_total_estimator_moments_map.count( entity_ids[i] ) == 0 )
     {
-      d_entity_total_estimator_moments_map[ entity_ids[i] ].resize( 
-					this->getNumberOfResponseFunctions() );
-      
-      Teuchos::TwoDArray<double>& two_d_array = 
-	d_entity_current_history_first_moments_map[ entity_ids[i] ];
-
-      // Initialize this array with support for only one thread
-      two_d_array.resizeCols(
-		this->getNumberOfBins()*this->getNumberOfResponseFunctions() );
-      two_d_array.resizeRows( 1 ); 
+      d_entity_total_estimator_moments_map[ entity_ids[i] ].resize(
+				        this->getNumberOfResponseFunctions() );
     }
   }
 }
@@ -485,16 +439,22 @@ void StandardEntityEstimator<EntityId>::initializeMomentsMaps(
 // Add info to update tracker
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::addInfoToUpdateTracker( 
-						     const unsigned thread_id,
-						     const EntityId entity_id,
-						     const unsigned bin_index )
+						    const unsigned thread_id,
+						    const EntityId entity_id,
+						    const unsigned bin_index,
+						    const double contribution )
 {
   // Make sure the thread id is valid
   testPrecondition( thread_id < d_update_tracker.size() );
   
-  SerialUpdateTracker& thread_update_tracker = d_update_tracker[thread_id];
+  BinContributionMap& thread_entity_bin_contribution_map = 
+    d_update_tracker[thread_id][entity_id];
 
-  thread_update_tracker[entity_id].insert( bin_index );
+  if( thread_entity_bin_contribution_map.find( bin_index ) !=
+      thread_entity_bin_contribution_map.end() )
+    thread_entity_bin_contribution_map[bin_index] += contribution;
+  else
+    thread_entity_bin_contribution_map[bin_index] = contribution;
 }
 
 // Get the bin iterator from an update tracker iterator
@@ -518,8 +478,8 @@ inline void
 StandardEntityEstimator<EntityId>::getBinIteratorFromUpdateTrackerIterator(
 	   const unsigned thread_id,
 	   const typename SerialUpdateTracker::const_iterator& entity_iterator,
-	   boost::unordered_set<unsigned>::const_iterator& start_bin,
-	   boost::unordered_set<unsigned>::const_iterator& end_bin ) const
+	   BinContributionMap::const_iterator& start_bin,
+	   BinContributionMap::const_iterator& end_bin ) const
 {
   // Make sure the thread id is valid
   testPrecondition( thread_id < d_update_tracker.size() );

@@ -13,6 +13,7 @@
 #include <string>
 #include <set>
 #include <map>
+#include <vector>
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
@@ -31,6 +32,7 @@
 #include "MonteCarlo_EstimatorDimensionDiscretization.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_PrintableObject.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_ContractException.hpp"
@@ -114,13 +116,16 @@ public:
   bool isParticleTypeAssigned( const ParticleType particle_type ) const;
 
   //! Check if the estimator has uncommitted history contributions
+  bool hasUncommittedHistoryContribution( const unsigned thread_id ) const;
+
+  //! Check if the estimator has uncommitted history contributions
   bool hasUncommittedHistoryContribution() const;
 
   //! Commit the contribution from the current history to the estimator
   virtual void commitHistoryContribution() = 0;
 
   //! Enable support for multiple threads
-  virtual void enableThreadSupport( const unsigned num_threads ) = 0;
+  virtual void enableThreadSupport( const unsigned num_threads );
 
   //! Export the estimator data
   virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,
@@ -129,10 +134,10 @@ public:
 protected:
 
   //! Set the has uncommited history contribution flag
-  void setHasUncommittedHistoryContribution();
+  void setHasUncommittedHistoryContribution( const unsigned thread_id = 0u );
 
   //! Unset the has uncommited history contribution flag
-  void unsetHasUncommittedHistoryContribution();
+  void unsetHasUncommittedHistoryContribution( const unsigned thread_id = 0u );
 
   //! Assign bin boundaries to an estimator dimension
   virtual void assignBinBoundaries( 
@@ -180,7 +185,10 @@ protected:
 			        
   //! Calculate the bin index for the desired response function
   unsigned calculateBinIndex( const DimensionValueMap& dimension_values,
-			      const unsigned response_function_index ) const; 
+			      const unsigned response_function_index ) const;
+
+  //! Calculate the response function index given a bin index
+  unsigned calculateResponseFunctionIndex( const unsigned bin_index ) const;
 
   //! Convert first and second moments to mean and relative error
   void processMoments( const Utility::Pair<double,double>& moments,
@@ -240,7 +248,7 @@ private:
   double d_multiplier;
 
   // Records if there is an uncommitted history contribution
-  bool d_has_uncommitted_history_contribution;
+  std::vector<bool> d_has_uncommitted_history_contribution;
 
   // The response functions
   Teuchos::Array<Teuchos::RCP<ResponseFunction> > d_response_functions;
@@ -345,27 +353,46 @@ inline void Estimator::convertParticleStateToGenericMap(
 }
 
 // Check if the estimator has uncommitted history contributions
+inline bool Estimator::hasUncommittedHistoryContribution( 
+					       const unsigned thread_id ) const
+{
+  // Make sure the thread is is valid
+  testPrecondition( thread_id < d_has_uncommitted_history_contribution.size());
+  
+  return d_has_uncommitted_history_contribution[thread_id];
+}
+
+// Check if the estimator has uncommitted history contributions
 inline bool Estimator::hasUncommittedHistoryContribution() const
 {
-  return d_has_uncommitted_history_contribution;
+  return hasUncommittedHistoryContribution( 
+				 Utility::GlobalOpenMPSession::getThreadId() );
 }
 
 // Set the has uncommited history contribution flag
 /*! \details This should be called whenever the current history contributes
  * to the estimator.
  */
-inline void Estimator::setHasUncommittedHistoryContribution()
+inline void Estimator::setHasUncommittedHistoryContribution( 
+						     const unsigned thread_id )
 {
-  d_has_uncommitted_history_contribution = true;
+  // Make sure the thread is is valid
+  testPrecondition( thread_id < d_has_uncommitted_history_contribution.size());
+  
+  d_has_uncommitted_history_contribution[thread_id] = true;
 }
 
 // Unset the has uncommited history contribution flag
 /*! \details This should be called when the current history contribution is
  * committed to the estimator
  */
-inline void Estimator::unsetHasUncommittedHistoryContribution()
+inline void Estimator::unsetHasUncommittedHistoryContribution(
+						     const unsigned thread_id )
 {
-  d_has_uncommitted_history_contribution = false;
+  // Make sure the thread is is valid
+  testPrecondition( thread_id < d_has_uncommitted_history_contribution.size());
+  
+  d_has_uncommitted_history_contribution[thread_id] = false;
 }
 
 } // end MonteCarlo namespace

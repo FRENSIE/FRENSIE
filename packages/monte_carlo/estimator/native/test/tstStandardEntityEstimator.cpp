@@ -127,6 +127,10 @@ void initializeStandardEntityEstimator<int>(
 						       entity_ids,
 						       entity_norm_constants));
 
+  Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
+  particle_types[0] = MonteCarlo::PHOTON;
+  estimator->setParticleTypes( particle_types );
+
   // Set the entity estimator bins (and response functions)
   Teuchos::RCP<MonteCarlo::Estimator> base_estimator = 
     Teuchos::rcp_dynamic_cast<MonteCarlo::Estimator>( estimator );
