@@ -30,11 +30,14 @@ ADD_EXECUTABLE(tstGeneralEstimatorDimensionDiscretization
 TARGET_LINK_LIBRARIES(tstGeneralEstimatorDimensionDiscretization monte_carlo_estimator_native)
 ADD_TEST(GeneralEstimatorDimensionDiscretization_test tstGeneralEstimatorDimensionDiscretization)
 
-ADD_EXECUTABLE(tstEstimator
-  tstEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstEstimator tstEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstEstimator monte_carlo_estimator_native)
 ADD_TEST(Estimator_test tstEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelEstimator_2_test tstEstimator --threads=2)
+  ADD_TEST(SharedParallelEstimator_4_test tstEstimator --threads=4)
+ENDIF()
 
 Add_EXECUTABLE(tstEntityEstimator
   tstEntityEstimator.cpp
