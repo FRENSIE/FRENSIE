@@ -104,9 +104,6 @@ void Estimator::exportData( EstimatorHDF5FileHandler& hdf5_file,
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure this estimator has not been exported yet
   testPrecondition( !hdf5_file.doesEstimatorExist( d_id ) );
-
-  // Export the simulation time used to calculate FOMs
-  hdf5_file.setSimulationTime( Estimator::end_time - Estimator::start_time );
   
   // Export the response function ordering
   {
@@ -429,8 +426,6 @@ void Estimator::processMoments(
 // Calculate the mean of a set of contributions
 double Estimator::calculateMean( const double first_moment_contributions) const
 {
-  // Make sure that the number of histories is valid
-  testPrecondition( Estimator::num_histories > 0ull );
   // Make sure the first moment contributions are valid
   testPrecondition( !ST::isnaninf( first_moment_contributions ) );
   testPrecondition( first_moment_contributions >= 0.0 );

@@ -137,12 +137,17 @@ void EntityEstimator<EntityId>::exportData(EstimatorHDF5FileHandler& hdf5_file,
 {
   // Export the low level estimator data
   Estimator::exportData( hdf5_file, process_data );
+
+  // Export the Entity norm constants 
+  hdf5_file.setEstimatorEntities( this->getId(),
+				  d_entity_norm_constants_map );
+
+  // Export the total norm constant
+  hdf5_file.setEstimatorTotalNormConstant( this->getId(), 
+					   d_total_norm_constant );
   
   // Export all of the estimator data
   {
-    Teuchos::Array<Utility::Pair<EntityId,double> > entity_ids_norm_consts(
-				       d_entity_estimator_moments_map.size() );
-    
     typename EntityEstimatorMomentsArrayMap::const_iterator entity_data;
     unsigned i;
     
@@ -153,9 +158,6 @@ void EntityEstimator<EntityId>::exportData(EstimatorHDF5FileHandler& hdf5_file,
       const double norm_constant = 
 	d_entity_norm_constants_map.find( entity_data->first )->second;
 
-      entity_ids_norm_consts[i].first = entity_data->first;
-      entity_ids_norm_consts[i].second = norm_constant;
-    
       // Export the entity norm constant
       hdf5_file.setEntityNormConstant( this->getId(),
 				       entity_data->first,
@@ -185,20 +187,14 @@ void EntityEstimator<EntityId>::exportData(EstimatorHDF5FileHandler& hdf5_file,
 						      processed_data );
       }
     }
-
-    // Export the estimator entity ids
-    hdf5_file.setEstimatorEntities( this->getId(), entity_ids_norm_consts );
   }
-
-  // Export the total norm constant
-  hdf5_file.setEstimatorTotalNormConstant( this->getId(), 
-					   d_total_norm_constant );
 
   // Export the total bin data
   hdf5_file.setRawEstimatorTotalBinData( this->getId(),
 					 d_estimator_total_bin_data );
 
   // Export the processed total bin data
+  if( process_data )
   {
     Teuchos::Array<Utility::Pair<double,double> > processed_data(
 					   d_estimator_total_bin_data.size() );
@@ -236,11 +232,12 @@ void EntityEstimator<EntityId>::commitHistoryContributionToBinOfEntity(
     d_entity_estimator_moments_map[entity_id];
 
   // Add the first moment contribution
+  #pragma omp atomic update
   entity_estimator_moments_array[bin_index].first += contribution;
 
   // Add the second moment contribution
-  entity_estimator_moments_array[bin_index].second += 
-    contribution*contribution;
+  #pragma omp atomic update
+  entity_estimator_moments_array[bin_index].second += contribution*contribution;
 }
 
 // Commit history contribution to a bin of the total
@@ -256,9 +253,11 @@ void EntityEstimator<EntityId>::commitHistoryContributionToBinOfTotal(
   testPrecondition( !ST::isnaninf( contribution ) );
 
   // Add the first moment contribution
+  #pragma omp atomic update
   d_estimator_total_bin_data[bin_index].first += contribution;
   
   // Add the second moment contribution  
+  #pragma omp atomic update
   d_estimator_total_bin_data[bin_index].second += contribution*contribution;
 }
 

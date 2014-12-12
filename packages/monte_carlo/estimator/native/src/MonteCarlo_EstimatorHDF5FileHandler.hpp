@@ -127,12 +127,22 @@ public:
                      const Teuchos::Array<Utility::Pair<EntityIdType,double> >&
 		     entity_id_norms );
 
+  //! Set the estimator entities and norm constants
+  template<typename EntityIdNormConstMap>
+  void setEstimatorEntities( const unsigned estimator_id,
+			     const EntityIdNormConstMap& entity_id_norms );
+
   //! Get the estimator entities and norm constants
   template<typename EntityIdType>
   void getEstimatorEntities(
 		           const unsigned estimator_id,
                            Teuchos::Array<Utility::Pair<EntityIdType,double> >&
 			   entity_id_norms ) const;
+
+  //! Get the estimator entities and norm constants
+  template<typename EntityIdNormConstMap>
+  void getEstimatorEntities( const unsigned estimator_id,
+			     EntityIdNormConstMap& entity_id_norms ) const;
 
   //! Check if an entity is assigned to an estimator
   template<typename EntityIdType>
