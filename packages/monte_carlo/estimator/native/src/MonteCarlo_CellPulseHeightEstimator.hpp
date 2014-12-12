@@ -126,7 +126,7 @@ private:
   ParallelUpdateTracker d_update_tracker;
 
   // The generic particle state map (avoids having to make a new map for cont.)
-  Estimator::DimensionValueMap d_dimension_values;
+  Teuchos::Array<Estimator::DimensionValueMap> d_dimension_values;
 };
 
 } // end MonteCarlo namespace 

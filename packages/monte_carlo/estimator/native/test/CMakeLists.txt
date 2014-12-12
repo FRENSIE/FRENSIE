@@ -72,11 +72,16 @@ Add_EXECUTABLE(tstSurfaceCurrentEstimator
 TARGET_LINK_LIBRARIES(tstSurfaceCurrentEstimator monte_carlo_estimator_native)
 ADD_TEST(SurfaceCurrentEstimator_test tstSurfaceCurrentEstimator)
 
-Add_EXECUTABLE(tstCellPulseHeightEstimator
-  tstCellPulseHeightEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+Add_EXECUTABLE(tstCellPulseHeightEstimator tstCellPulseHeightEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellPulseHeightEstimator monte_carlo_estimator_native)
 ADD_TEST(CellPulseHeightEstimator_test tstCellPulseHeightEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelCellPulseHeightEstimator_2_test 
+    tstCellPulseHeightEstimator --threads=2)
+  ADD_TEST(SharedParallelCellPulseHeightEstimator_4_test 
+    tstCellPulseHeightEstimator --threads=4)
+ENDIF()
 
 Add_EXECUTABLE(tstStandardCellEstimator
   tstStandardCellEstimator.cpp

@@ -28,7 +28,8 @@ CellPulseHeightEstimator<
   : EntityEstimator<cellIdType>( id, multiplier, entity_ids ),
     ParticleEnteringCellEventObserver(),
     ParticleLeavingCellEventObserver(),
-    d_update_tracker( 1 )
+    d_update_tracker( 1 ),
+    d_dimension_values( 1 )
 { /* ... */ }
 
 // Set the response functions
@@ -147,13 +148,17 @@ void CellPulseHeightEstimator<
   unsigned bin_index;
   double bin_contribution;
 
+  Estimator::DimensionValueMap& thread_dimension_values = 
+      d_dimension_values[thread_id];
+
   while( cell_data != end_cell_data )
-  {    
-    d_dimension_values[ENERGY_DIMENSION] = Teuchos::any( cell_data->second );
+  {        
+    thread_dimension_values[ENERGY_DIMENSION] = 
+      Teuchos::any( cell_data->second );
     
-    if( this->isPointInEstimatorPhaseSpace( d_dimension_values ) )
+    if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
     {
-      bin_index = this->calculateBinIndex( d_dimension_values, 0u );
+      bin_index = this->calculateBinIndex( thread_dimension_values, 0u );
       
       bin_contribution = calculateHistoryContribution( 
 					      cell_data->second,
@@ -171,13 +176,13 @@ void CellPulseHeightEstimator<
   }
 
   // Store the total energy deposition in the dimension values map
-  d_dimension_values[ENERGY_DIMENSION] = 
+  thread_dimension_values[ENERGY_DIMENSION] = 
     Teuchos::any( energy_deposition_in_all_cells );
   
   // Determine the pulse bin for the combination of all cells
-  if( this->isPointInEstimatorPhaseSpace( d_dimension_values ) )
+  if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
   {
-    bin_index = this->calculateBinIndex( d_dimension_values, 0u );
+    bin_index = this->calculateBinIndex( thread_dimension_values, 0u );
 
     bin_contribution = calculateHistoryContribution( 
 					      energy_deposition_in_all_cells,
@@ -214,6 +219,9 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::enableThreadSupport(
   
   // Add thread support to update tracker
   d_update_tracker.resize( num_threads );
+
+  // Add thread support to the dimension values
+  d_dimension_values.resize( num_threads );
 }
 
 // Export the estimator data
