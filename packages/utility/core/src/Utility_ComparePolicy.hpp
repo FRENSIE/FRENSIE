@@ -240,7 +240,7 @@ struct ComparePolicy<const int>
       {
 	out << first_name << " = " << first_value
 	    << " == " << second_name << " = " << second_value 
-	    << ": ";
+	    << ": failed!\n";
       }
       
       success = false;
@@ -309,7 +309,7 @@ struct ComparePolicy<const unsigned int>
       {
 	out << first_name << " = " << first_value
 	    << " == " << second_name << " = " << second_value 
-	    << ": ";
+	    << ": failed!\n";
       }
       
       success = false;
@@ -378,7 +378,7 @@ struct ComparePolicy<const unsigned long int>
       {
 	out << first_name << " = " << first_value
 	    << " == " << second_name << " = " << second_value 
-	    << ": ";
+	    << ": failed!\n";
       }
       
       success = false;
@@ -448,7 +448,7 @@ struct ComparePolicy<const unsigned long long int>
       {
 	out << first_name << " = " << first_value
 	    << " == " << second_name << " = " << second_value 
-	    << ": ";
+	    << ": failed!\n";
       }
       
       success = false;
@@ -518,7 +518,7 @@ struct ComparePolicy<const double>
 	{
 	  out << first_name << " = " << first_value
 	      << " == " << second_name << " = " << second_value 
-	      << ": ";
+	      << ": failed!\n";
 	}
 	
 	success = false;

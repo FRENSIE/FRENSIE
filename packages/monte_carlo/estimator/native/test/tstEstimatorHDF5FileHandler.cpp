@@ -362,7 +362,7 @@ DIMENSION_UNIT_TEST_INSTANTIATION( EstimatorHDF5FileHandler,
 //---------------------------------------------------------------------------//
 // Check that the estimator entities can be set
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
-				   set_getEstimatorEntities,
+				   set_getEstimatorEntities_array,
 				   EntityIdType )
 {
   MonteCarlo::EstimatorHDF5FileHandler file_handler( hdf5_file_name );
@@ -396,7 +396,56 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
 }
 
 ENTITY_ID_UNIT_TEST_INSTANTIATION( EstimatorHDF5FileHandler, 
-				   set_getEstimatorEntities );
+				   set_getEstimatorEntities_array );
+
+//---------------------------------------------------------------------------//
+// Check that the estimator entities can be set
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
+				   set_getEstimatorEntities_map,
+				   EntityIdType )
+{
+  MonteCarlo::EstimatorHDF5FileHandler file_handler( hdf5_file_name );
+
+  // Write the new entity data
+  boost::unordered_map<EntityIdType,double> entity_data;
+  entity_data[0] = 1.0;
+  entity_data[1] = 2.0;
+  entity_data[3] = 4.0;
+  entity_data[10] = 7.0;
+
+  file_handler.setEstimatorEntities( 1u, entity_data );
+
+  boost::unordered_map<EntityIdType,double> entity_data_copy;
+
+  file_handler.getEstimatorEntities( 1u, entity_data_copy );
+
+  TEST_EQUALITY( entity_data.size(), entity_data_copy.size() );
+  TEST_EQUALITY_CONST( entity_data_copy.find( 0 )->second, 1.0 );
+  TEST_EQUALITY_CONST( entity_data_copy.find( 1 )->second, 2.0 );
+  TEST_EQUALITY_CONST( entity_data_copy.find( 3 )->second, 4.0 );
+  TEST_EQUALITY_CONST( entity_data_copy.find( 10 )->second, 7.0 );
+
+  // Overwrite the entity data
+  entity_data.clear();
+  entity_data[2] = 2.0;
+  entity_data[3] = 5.0;
+  entity_data[9] = 9.0;
+  entity_data[20] = 1.0;
+
+  file_handler.setEstimatorEntities( 1u, entity_data );
+
+  entity_data_copy.clear();
+  file_handler.getEstimatorEntities( 1u, entity_data_copy );
+
+  TEST_EQUALITY( entity_data.size(), entity_data_copy.size() );
+  TEST_EQUALITY_CONST( entity_data_copy.find( 2 )->second, 2.0 );
+  TEST_EQUALITY_CONST( entity_data_copy.find( 3 )->second, 5.0 );
+  TEST_EQUALITY_CONST( entity_data_copy.find( 9 )->second, 9.0 );
+  TEST_EQUALITY_CONST( entity_data_copy.find( 20 )->second, 1.0 );
+}
+
+ENTITY_ID_UNIT_TEST_INSTANTIATION( EstimatorHDF5FileHandler, 
+				   set_getEstimatorEntities_map );
 
 //---------------------------------------------------------------------------//
 // Check that the estimator entity norm constant can be set

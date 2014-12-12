@@ -106,6 +106,36 @@ void EstimatorHDF5FileHandler::setEstimatorEntities(
 			   "Set Estimator Entities Error" );
 }
 
+// Set the estimator entities and norm constants
+template<typename EntityIdNormConstMap>
+void EstimatorHDF5FileHandler::setEstimatorEntities(
+				  const unsigned estimator_id,
+				  const EntityIdNormConstMap& entity_id_norms )
+{
+  // Make sure the key type is valid
+  testStaticPrecondition( (boost::is_integral<typename EntityIdNormConstMap::key_type>::value) );
+  // Make sure the value type is valid
+  testStaticPrecondition( (boost::is_floating_point<typename EntityIdNormConstMap::mapped_type>::value ) );
+
+  // Construct an array from the map
+  Teuchos::Array<Utility::Pair<typename EntityIdNormConstMap::key_type,
+			       double> > 
+    entity_id_norms_copy( entity_id_norms.size() );
+
+  typename EntityIdNormConstMap::const_iterator entity_data;
+  unsigned i;
+
+  for( entity_data = entity_id_norms.begin(), i = 0; 
+       entity_data != entity_id_norms.end();
+       ++entity_data, ++i )
+  {
+    entity_id_norms_copy[i].first = entity_data->first;
+    entity_id_norms_copy[i].second = entity_data->second;
+  }
+
+  setEstimatorEntities( estimator_id, entity_id_norms_copy );
+}
+
 // Get the estimator entities and norm constants
 template<typename EntityIdType>
 void EstimatorHDF5FileHandler::getEstimatorEntities(
@@ -121,6 +151,31 @@ void EstimatorHDF5FileHandler::getEstimatorEntities(
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
 			   "Get Estimator Entities Error" );
+}
+
+// Get the estimator entities and norm constants
+template<typename EntityIdNormConstMap>
+void EstimatorHDF5FileHandler::getEstimatorEntities(
+				  const unsigned estimator_id,
+				  EntityIdNormConstMap& entity_id_norms ) const
+{
+  // Make sure the key type is valid
+  testStaticPrecondition( (boost::is_integral<typename EntityIdNormConstMap::key_type>::value) );
+  // Make sure the value type is valid
+  testStaticPrecondition( (boost::is_floating_point<typename EntityIdNormConstMap::mapped_type>::value ) );
+
+  Teuchos::Array<Utility::Pair<typename EntityIdNormConstMap::key_type,
+			       double> > 
+    entity_id_norms_copy;
+
+  getEstimatorEntities( estimator_id, entity_id_norms_copy );
+
+  // Convert the array to a map
+  for( unsigned i = 0; i < entity_id_norms_copy.size(); ++i )
+  {
+    entity_id_norms[entity_id_norms_copy[i].first] = 
+      entity_id_norms_copy[i].second;
+  }
 }
   
 // Set the raw estimator bin data for an entity (1st, 2nd moments)
