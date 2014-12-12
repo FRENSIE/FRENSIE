@@ -461,11 +461,15 @@ double Estimator::calculateRelativeError(
       (first_moment_contributions*first_moment_contributions) - 
       1.0/Estimator::num_histories;
     
-    relative_error = ST::squareroot( argument );
+    // Check for roundoff error resulting in a very small negative number
+    if( argument < 0.0 && argument > -ST::eps() )
+      relative_error = 0.0;
+    else
+      relative_error = ST::squareroot( argument );
   }
   else
-    return relative_error = 0.0;
-
+    relative_error = 0.0;
+  
   // Make sure the relative error is valid
   testPostcondition( !ST::isnaninf( relative_error ) );
   testPostcondition( relative_error >= 0.0 );

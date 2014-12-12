@@ -226,26 +226,37 @@ struct ComparePolicy<const int>
   {
     bool success = true;
       
-    if( first_value != second_value )
+    // Array Element Compare
+    if( index >= 0 )
     {
-      // Array Element Compare
-      if( index >= 0 )
-      {
-	out << "\nError, " << first_name << "[" << index << "]" << " = "
-	    << first_value << " == " << second_name << "[" << index << "]" 
-	    << " = " << second_value << ": failed!\n";
+      out << "\nError, " << first_name << "[" << index << "]" << " = "
+	  << first_value << " == " << second_name << "[" << index << "]" 
+	  << " = " << second_value << ": ";
+      if( first_value != second_value )
+      { 
+	out << "failed!\n";
+
+	success = false;
       }
-      // Single Compare
       else
-      {
-	out << first_name << " = " << first_value
-	    << " == " << second_name << " = " << second_value 
-	    << ": failed!\n";
-      }
-      
-      success = false;
+	out << "passed\n";
     }
-      
+    // Single Compare
+    else
+    {
+      out << first_name << " = " << first_value
+	  << " == " << second_name << " = " << second_value 
+	  << ": ";
+      if( first_value != second_value )
+      {
+	out << "failed!\n";
+
+	success = false;
+      }
+      else
+	out << "passed\n";
+    }
+    
     return success;
   }
 };
@@ -295,26 +306,37 @@ struct ComparePolicy<const unsigned int>
   {
     bool success = true;
       
-    if( first_value != second_value )
+    // Array Element Compare
+    if( index >= 0 )
     {
-      // Array Element Compare
-      if( index >= 0 )
+      out << "\nError, " << first_name << "[" << index << "]" << " = "
+	  << first_value << " == " << second_name << "[" << index << "]" 
+	  << " = " << second_value << ": ";
+      if( first_value != second_value )
       {
-	out << "\nError, " << first_name << "[" << index << "]" << " = "
-	    << first_value << " == " << second_name << "[" << index << "]" 
-	    << " = " << second_value << ": failed!\n";
+	out << "failed!\n";
+
+	success = false;
       }
-      // Single Compare
       else
-      {
-	out << first_name << " = " << first_value
-	    << " == " << second_name << " = " << second_value 
-	    << ": failed!\n";
-      }
-      
-      success = false;
+	out << "passed\n";
     }
-      
+    // Single Compare
+    else
+    {
+      out << first_name << " = " << first_value
+	  << " == " << second_name << " = " << second_value 
+	  << ": ";
+      if( first_value != second_value )
+      {
+	out << "failed!\n";
+
+	success = false;
+      }
+      else
+	out << "passed\n";
+    }
+    
     return success;
   }
 };
@@ -364,24 +386,35 @@ struct ComparePolicy<const unsigned long int>
   {
     bool success = true;
       
-    if( first_value != second_value )
+    // Array Element Compare
+    if( index >= 0 )
     {
-      // Array Element Compare
-      if( index >= 0 )
+      out << "\nError, " << first_name << "[" << index << "]" << " = "
+	  << first_value << " == " << second_name << "[" << index << "]" 
+	  << " = " << second_value << ": ";
+      if( first_value != second_value )
       {
-	out << "\nError, " << first_name << "[" << index << "]" << " = "
-	    << first_value << " == " << second_name << "[" << index << "]" 
-	    << " = " << second_value << ": failed!\n";
+	out << "failed!\n";
+
+	success = false;
       }
-      // Single Compare
       else
+	out << "passed\n";
+    }
+    // Single Compare
+    else
+    {
+      out << first_name << " = " << first_value
+	  << " == " << second_name << " = " << second_value 
+	  << ": ";
+      if( first_value != second_value )
       {
-	out << first_name << " = " << first_value
-	    << " == " << second_name << " = " << second_value 
-	    << ": failed!\n";
+	out << "failed!\n";
+
+	success = false;
       }
-      
-      success = false;
+      else
+	out << "passed\n";
     }
       
     return success;
@@ -434,26 +467,37 @@ struct ComparePolicy<const unsigned long long int>
   {
     bool success = true;
       
-    if( first_value != second_value )
+    // Array Element Compare
+    if( index >= 0 )
     {
-      // Array Element Compare
-      if( index >= 0 )
+      out << "\nError, " << first_name << "[" << index << "]" << " = "
+	  << first_value << " == " << second_name << "[" << index << "]" 
+	  << " = " << second_value << ": ";
+      if( first_value != second_value )
       {
-	out << "\nError, " << first_name << "[" << index << "]" << " = "
-	    << first_value << " == " << second_name << "[" << index << "]" 
-	    << " = " << second_value << ": failed!\n";
+	out << "failed!\n";
+
+	success = false;
       }
-      // Single Compare
       else
-      {
-	out << first_name << " = " << first_value
-	    << " == " << second_name << " = " << second_value 
-	    << ": failed!\n";
-      }
-      
-      success = false;
+	out << "passed\n";
     }
-      
+    // Single Compare
+    else
+    {
+      out << first_name << " = " << first_value
+	  << " == " << second_name << " = " << second_value 
+	  << ": ";
+      if( first_value != second_value )
+      {
+	out << "failed!\n";
+
+	success = false;
+      }
+      else
+	out << "passed\n";
+    }
+
     return success;
   }
 };
@@ -504,50 +548,72 @@ struct ComparePolicy<const double>
       
     if( tol == 0.0 )
     {
-      if( first_value != second_value )
+      // Array Element Compare
+      if( index >= 0 )
       {
-	// Array Element Compare
-	if( index >= 0 )
+	out << "\nError, " << first_name << "[" << index << "]" << " = "
+	    << first_value << " == " << second_name << "[" << index << "]" 
+	    << " = " << second_value << ": ";
+	if( first_value != second_value )
 	{
-	  out << "\nError, " << first_name << "[" << index << "]" << " = "
-	      << first_value << " == " << second_name << "[" << index << "]" 
-	      << " = " << second_value << ": failed!\n";
+	  out << "failed!\n";
+
+	  success = false;
 	}
-	// Single Compare
-	else
+	else 
+	  out << "passed\n";
+      }
+      // Single Compare
+      else
+      {
+	out << first_name << " = " << first_value
+	    << " == " << second_name << " = " << second_value 
+	    << ": ";
+	if( first_value != second_value )
 	{
-	  out << first_name << " = " << first_value
-	      << " == " << second_name << " = " << second_value 
-	      << ": failed!\n";
+	  out << "failed!\n";
+
+	  success = false;
 	}
-	
-	success = false;
+	else 
+	  out << "passed\n";
       }
     }
     else
     {
       double err = relError( first_value, second_value );
       
-      if( err > tol )
+      // Array Element Compare
+      if( index >= 0 )
       {
-	// Array Element Compare
-	if( index >= 0 )
+	out << "\nError, relErr(" << first_name << "[" << index << "],"
+	    << second_name << "[" << index << "])" << " = relErr(" 
+	    << first_value << "," << second_value << ") = " << err
+	    << " <= tol = " << tol << ": ";
+	if( err > tol )
 	{
-	  out << "\nError, relErr(" << first_name << "[" << index << "],"
-	      << second_name << "[" << index << "])" << " = relErr(" 
-	      << first_value << "," << second_value << ") = " << err
-	      << " <= tol = " << tol << ": failed!\n";
-	}
-	// Single Compare
-	else
-	{
-	  out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
-	      << "\n= relErr(" << first_value << "," << second_value << ") = "
-	      << err << "\n<= tol = " << tol << ": failed!\n";
-	}
+	  out << "failed!\n";
 
-	success = false;
-      }	  
+	  success = false;
+	}
+	else 
+	  out << "passed\n";
+      }
+      // Single Compare
+      else
+      {
+	out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
+	    << "\n= relErr(" << first_value << "," << second_value << ") = "
+	    << err << "\n<= tol = " << tol << ": ";
+	if( err > tol )
+	{
+	  out << "failed!\n";
+
+	  success = false;
+	}
+	else 
+	  out << "passed\n";
+      }
     }
     
     return success;
@@ -598,50 +664,72 @@ struct ComparePolicy<const float>
       
     if( tol == 0.0f )
     {
-      if( first_value != second_value )
+      // Array Element Compare
+      if( index >= 0 )
       {
-	// Array Element Compare
-	if( index >= 0 )
+	out << "\nError, " << first_name << "[" << index << "]" << " = "
+	    << first_value << " == " << second_name << "[" << index << "]" 
+	    << " = " << second_value << ": ";
+	if( first_value != second_value )
 	{
-	  out << "\nError, " << first_name << "[" << index << "]" << " = "
-	      << first_value << " == " << second_name << "[" << index << "]" 
-	      << " = " << second_value << ": failed!\n";
+	  out << "failed!\n";
+
+	  success = false;
 	}
-	// Single Compare
-	else
+	else 
+	  out << "passed\n";
+      }
+      // Single Compare
+      else
+      {
+	out << first_name << " = " << first_value
+	    << " == " << second_name << " = " << second_value 
+	    << ": ";
+	if( first_value != second_value )
 	{
-	  out << first_name << " = " << first_value
-	      << " == " << second_name << " = " << second_value 
-	      << ": failed!\n";
+	  out << "failed!\n";
+
+	  success = false;
 	}
-	
-	success = false;
+	else 
+	  out << "passed\n";
       }
     }
     else
     {
       float err = relError( first_value, second_value );
       
-      if( err > tol )
+      // Array Element Compare
+      if( index >= 0 )
       {
-	// Array Element Compare
-	if( index >= 0 )
+	out << "\nError, relErr(" << first_name << "[" << index << "],"
+	    << second_name << "[" << index << "])" << " = relErr(" 
+	    << first_value << "," << second_value << ") = " << err
+	    << " <= tol = " << tol << ": ";
+	if( err > tol )
 	{
-	  out << "\nError, relErr(" << first_name << "[" << index << "],"
-	      << second_name << "[" << index << "])" << " = relErr(" 
-	      << first_value << "," << second_value << ") = " << err
-	      << " <= tol = " << tol << ": failed!\n";
-	}
-	// Single Compare
-	else
-	{
-	  out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
-	      << "\n= relErr(" << first_value << "," << second_value << ") = "
-	      << err << "\n<= tol = " << tol << ": failed!\n";
-	}
+	  out << "failed!\n";
 
-	success = false;
-      }	  
+	  success = false;
+	}
+	else
+	  out << "passed\n";
+      }
+      // Single Compare
+      else
+      {
+	out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
+	    << "\n= relErr(" << first_value << "," << second_value << ") = "
+	    << err << "\n<= tol = " << tol << ": ";
+	if( err > tol )
+	{
+	  out << "failed!\n";
+
+	  success = false;
+	}
+	else
+	  out << "passed\n";
+      }
     }
     
     return success;
