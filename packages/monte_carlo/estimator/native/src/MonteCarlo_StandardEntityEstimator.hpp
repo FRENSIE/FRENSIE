@@ -144,6 +144,9 @@ private:
   // Reset the update tracker
   void resetUpdateTracker( const unsigned thread_id );
 
+  // The generic particle state map (avoids having to make a new map for cont.)
+  Teuchos::Array<Estimator::DimensionValueMap> d_dimension_values;
+
   // The entities/bins that have been updated
   ParallelUpdateTracker d_update_tracker;
 
@@ -152,9 +155,6 @@ private:
 
   // The total estimator moments for each entity and response functions
   EntityEstimatorMomentsArrayMap d_entity_total_estimator_moments_map;
-
-  // The generic particle state map (avoids having to make a new map for cont.)
-  Estimator::DimensionValueMap d_dimension_values;
 }; 
 
 } // end MonteCarlo namespace

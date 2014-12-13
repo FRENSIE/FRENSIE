@@ -529,7 +529,7 @@ double Estimator::calculateVOV( const double first_moment_contributions,
     vov = vov_numerator/vov_denominator;   
   else
     vov = 0.0;
-
+  
   // Make sure the variance of the variance is valid
   testPostcondition( !ST::isnaninf( vov ) );
   testPostcondition( vov >= 0.0 );
