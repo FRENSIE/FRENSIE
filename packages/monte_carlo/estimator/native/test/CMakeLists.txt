@@ -48,11 +48,16 @@ IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelEntityEstimator_4_test tstEntityEstimator --threads=4)
 ENDIF()
 
-Add_EXECUTABLE(tstStandardEntityEstimator
-  tstStandardEntityEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+Add_EXECUTABLE(tstStandardEntityEstimator tstStandardEntityEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstStandardEntityEstimator monte_carlo_estimator_native)
 ADD_TEST(StandardEntityEstimator_test tstStandardEntityEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelStandardEntityEstimator_2_test 
+    tstStandardEntityEstimator --threads=2)
+  ADD_TEST(SharedParallelStandardEntityEstimator_4_test 
+    tstStandardEntityEstimator --threads=4)
+ENDIF()
 
 Add_EXECUTABLE(tstStandardSurfaceEstimator
   tstStandardSurfaceEstimator.cpp
