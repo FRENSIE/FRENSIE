@@ -41,10 +41,10 @@ public:
   void exportData( EstimatorHDF5FileHandler& hdf5_file,
 		   const bool process_data ) const;
 
-private:
+protected:
 
-  // Assign bin boundaries to an estimator dimension
-  void assignBinBoundaries(
+  //! Assign bin boundaries to an estimator dimension
+  virtual void assignBinBoundaries(
 	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
 };
 
