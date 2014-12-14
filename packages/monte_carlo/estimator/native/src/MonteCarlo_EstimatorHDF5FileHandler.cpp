@@ -306,11 +306,19 @@ void EstimatorHDF5FileHandler::getEstimatorDimensionOrdering(
 	       const unsigned estimator_id,
 	       Teuchos::Array<PhaseSpaceDimension>& dimension_ordering ) const
 {
+  dimension_ordering.clear();
+  
+  // If an exception is thrown, there are no estimator dimensions
   try{
-    d_hdf5_file->readArrayFromGroupAttribute( 
+    if( d_hdf5_file->doesGroupAttributeExist( 
+			       this->getEstimatorGroupLocation( estimator_id ),
+			       "dimension_ordering" ) )
+    {
+      d_hdf5_file->readArrayFromGroupAttribute( 
 			       dimension_ordering,
 			       this->getEstimatorGroupLocation( estimator_id ),
 			       "dimension_ordering" );
+    }
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
 			   "Get Estimator Dimension Ordering Error" );

@@ -100,11 +100,17 @@ Add_EXECUTABLE(tstCellCollisionFluxEstimator
 TARGET_LINK_LIBRARIES(tstCellCollisionFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(CellCollisionFluxEstimator_test tstCellCollisionFluxEstimator)
 
-Add_EXECUTABLE(tstCellTrackLengthFluxEstimator
-  tstCellTrackLengthFluxEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+Add_EXECUTABLE(tstCellTrackLengthFluxEstimator 
+  tstCellTrackLengthFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellTrackLengthFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(CellTrackLengthFluxEstimator_test tstCellTrackLengthFluxEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_2_test 
+    tstCellTrackLengthFluxEstimator --threads=2)
+  ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_4_test 
+    tstCellTrackLengthFluxEstimator --threads=4)
+ENDIF()
 
 Add_EXECUTABLE(tstParticleCollidingInCellEventDispatcher
   tstParticleCollidingInCellEventDispatcher.cpp
