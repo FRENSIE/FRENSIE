@@ -95,10 +95,16 @@ TARGET_LINK_LIBRARIES(tstStandardCellEstimator monte_carlo_estimator_native)
 ADD_TEST(StandardCellEstimator_test tstStandardCellEstimator)
 
 Add_EXECUTABLE(tstCellCollisionFluxEstimator
-  tstCellCollisionFluxEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstCellCollisionFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellCollisionFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(CellCollisionFluxEstimator_test tstCellCollisionFluxEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelCellCollisionFluxEstimator_2_test 
+    tstCellCollisionFluxEstimator --threads=2)
+  ADD_TEST(SharedParallelCellCollisionFluxEstimator_4_test 
+    tstCellCollisionFluxEstimator --threads=4)
+ENDIF()
 
 Add_EXECUTABLE(tstCellTrackLengthFluxEstimator 
   tstCellTrackLengthFluxEstimator.cpp)

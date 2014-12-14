@@ -187,6 +187,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
   estimator_2->updateFromParticleSubtrackEndingInCellEvent( particle, 1, 1.0 );
 
   TEST_ASSERT( estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_2->hasUncommittedHistoryContribution() );
 
   // bin 1
   particle.setEnergy( 0.1 );
@@ -501,6 +502,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
     estimator_1_base->setParticleTypes( particle_types );
     estimator_2_base->setParticleTypes( particle_types );
 
+    // Enable thread support
     estimator_1_base->enableThreadSupport( 
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
     estimator_2_base->enableThreadSupport(
