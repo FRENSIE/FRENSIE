@@ -39,9 +39,9 @@ public:
   { /* ... */ }
 
   void updateFromParticleCrossingSurfaceEvent(
-	const MonteCarlo::ParticleState& particle,
+  	const MonteCarlo::ParticleState& particle,
         const MonteCarlo::StandardSurfaceEstimator::surfaceIdType surface_crossed,
-	const double angle_cosine )
+  	const double angle_cosine )
   { /* ... */ }
 
   void print( std::ostream& os ) const
@@ -91,8 +91,48 @@ TEUCHOS_UNIT_TEST( StandardSurfaceEstimator, setParticleType )
   TEST_ASSERT( estimator->isParticleTypeAssigned( MonteCarlo::NEUTRON ) );
   TEST_ASSERT( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_PHOTON ) );
   TEST_ASSERT( !estimator->isParticleTypeAssigned( MonteCarlo::ADJOINT_NEUTRON ) );
-
 }
+
+//---------------------------------------------------------------------------//
+// Check that the estimator data can be exported
+TEUCHOS_UNIT_TEST( StandardSurfaceEstimator, exportData )
+{
+  Teuchos::Array<MonteCarlo::StandardSurfaceEstimator::surfaceIdType> 
+    surface_ids( 2 );
+  surface_ids[0] = 0;
+  surface_ids[1] = 1;
+
+  Teuchos::Array<double> surface_norm_consts( 2 );
+  surface_norm_consts[0] = 1.0;
+  surface_norm_consts[1] = 2.0;
+  
+  Teuchos::RCP<MonteCarlo::Estimator> estimator(
+	  new TestStandardSurfaceEstimator( 0ull,
+					    2.0,
+					    surface_ids,
+					    surface_norm_consts ) );
+
+  Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
+  particle_types[0] = MonteCarlo::PHOTON;
+
+  estimator->setParticleTypes( particle_types );
+
+  // Initialize the hdf5 file
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
+					"test_standard_surface_estimator.h5" );
+
+  estimator->exportData( hdf5_file_handler, false );
+
+  // Make sure the estimator has been set as a surface estimator
+  TEST_ASSERT( hdf5_file_handler.isSurfaceEstimator( 0u ) );
+  TEST_ASSERT( !hdf5_file_handler.isCellEstimator( 0u ) );
+
+  // Make sure that there are no dimension bins
+  Teuchos::Array<MonteCarlo::PhaseSpaceDimension> dimension_ordering;
+  hdf5_file_handler.getEstimatorDimensionOrdering( 0u, dimension_ordering );
+
+  TEST_EQUALITY_CONST( dimension_ordering.size(), 0u );
+}  
 
 //---------------------------------------------------------------------------//
 // end tstStandardSurfaceEstimator.cpp

@@ -118,7 +118,8 @@ void Estimator::exportData( EstimatorHDF5FileHandler& hdf5_file,
   }
 
   // Export the dimension ordering
-  hdf5_file.setEstimatorDimensionOrdering( d_id, d_dimension_ordering );
+  if( d_dimension_ordering.size() > 0 )
+    hdf5_file.setEstimatorDimensionOrdering( d_id, d_dimension_ordering );
 
   // Export the bin boundaries
   for( unsigned i = 0; i < d_dimension_ordering.size(); ++i )
@@ -462,7 +463,7 @@ double Estimator::calculateRelativeError(
       1.0/Estimator::num_histories;
     
     // Check for roundoff error resulting in a very small negative number
-    if( argument < 0.0 && argument > -ST::eps() )
+    if( ST::magnitude( argument ) < ST::eps() )
       relative_error = 0.0;
     else
       relative_error = ST::squareroot( argument );
@@ -525,11 +526,11 @@ double Estimator::calculateVOV( const double first_moment_contributions,
   
   double vov;
   
-  if( vov_denominator != 0.0 )
-    vov = vov_numerator/vov_denominator;   
+  if( ST::magnitude( vov_denominator ) > ST::eps() )
+    vov = vov_numerator/vov_denominator;
   else
     vov = 0.0;
-  
+    
   // Make sure the variance of the variance is valid
   testPostcondition( !ST::isnaninf( vov ) );
   testPostcondition( vov >= 0.0 );
