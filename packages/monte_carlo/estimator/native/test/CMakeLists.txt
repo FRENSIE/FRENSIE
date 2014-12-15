@@ -65,11 +65,14 @@ Add_EXECUTABLE(tstStandardSurfaceEstimator
 TARGET_LINK_LIBRARIES(tstStandardSurfaceEstimator monte_carlo_estimator_native)
 ADD_TEST(StandardSurfaceEstimator_test tstStandardSurfaceEstimator)
 
-Add_EXECUTABLE(tstSurfaceFluxEstimator
-  tstSurfaceFluxEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+Add_EXECUTABLE(tstSurfaceFluxEstimator tstSurfaceFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstSurfaceFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(SurfaceFluxEstimator_test tstSurfaceFluxEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelSurfaceFluxEstimator_2_test tstSurfaceFluxEstimator --threads=2)
+  ADD_TEST(SharedParallelSurfaceFluxEstimator_4_test tstSurfaceFluxEstimator --threads=4)
+ENDIF()
 
 Add_EXECUTABLE(tstSurfaceCurrentEstimator
   tstSurfaceCurrentEstimator.cpp

@@ -1214,7 +1214,7 @@ UNIT_TEST_INSTANTIATION( StandardEntityEstimator,
 // Check that a partial history contribution can be added to the estimator
 // in a thread safe way
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
-				   addPartialHistoryContribution_parallel_safe,
+				   addPartialHistoryContribution_thread_safe,
 				   EntityId )
 {
   Teuchos::RCP<MonteCarlo::Estimator> estimator_base;
@@ -1524,7 +1524,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
 }
 
 UNIT_TEST_INSTANTIATION( StandardEntityEstimator,
-			 addPartialHistoryContribution_parallel_safe );
+			 addPartialHistoryContribution_thread_safe );
 
 //---------------------------------------------------------------------------//
 // Custom main function
