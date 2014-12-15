@@ -508,7 +508,7 @@ TEUCHOS_UNIT_TEST( CellCollisionFluxEstimator,
 //---------------------------------------------------------------------------//
 // Check that a partial history contribution can be added to the estimator
 TEUCHOS_UNIT_TEST( CellCollisionFluxEstimator,
-		   updateFromParticleCollidingInCellEvent_parallel_safe )
+		   updateFromParticleCollidingInCellEvent_thread_safe )
 {
   Teuchos::RCP<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightMultiplier> > estimator_1;
   Teuchos::RCP<MonteCarlo::CellCollisionFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> > estimator_2;

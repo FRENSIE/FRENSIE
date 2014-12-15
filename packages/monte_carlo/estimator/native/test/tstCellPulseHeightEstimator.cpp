@@ -647,7 +647,7 @@ TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, updateFromParticleEvent )
 //---------------------------------------------------------------------------//
 // Check that a partial history contribution can be added to the estimator
 TEUCHOS_UNIT_TEST( CellPulseHeightEstimator, 
-		   updateFromParticleEvent_parallel_safe )
+		   updateFromParticleEvent_thread_safe )
 {
   Teuchos::RCP<MonteCarlo::Estimator> estimator_1_base, estimator_2_base;
   Teuchos::RCP<MonteCarlo::CellPulseHeightEstimator<MonteCarlo::WeightMultiplier> > estimator_1;

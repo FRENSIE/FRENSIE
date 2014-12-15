@@ -1005,7 +1005,7 @@ UNIT_TEST_INSTANTIATION( EntityEstimator,
 // Check that a history contribution can be committed to a bin
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( 
 			  EntityEstimator,
-			  commitHistoryContributionToBinOfEntity_parallel_safe,
+			  commitHistoryContributionToBinOfEntity_thread_safe,
 			  EntityId )
 {
   Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
@@ -1139,7 +1139,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL(
 }
 
 UNIT_TEST_INSTANTIATION( EntityEstimator, 
-			 commitHistoryContributionToBinOfEntity_parallel_safe);
+			 commitHistoryContributionToBinOfEntity_thread_safe);
 
 //---------------------------------------------------------------------------//
 // Check that a history contribution can be committed to a bin of the total
@@ -1197,7 +1197,7 @@ UNIT_TEST_INSTANTIATION( EntityEstimator,
 // Check that a history contribution can be committed to a bin of the total
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( 
 			   EntityEstimator,
-			   commitHistoryContributionToBinOfTotal_parallel_safe,
+			   commitHistoryContributionToBinOfTotal_thread_safe,
 			   EntityId )
 {
   Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
@@ -1258,7 +1258,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL(
 }
 
 UNIT_TEST_INSTANTIATION( EntityEstimator, 
-			 commitHistoryContributionToBinOfTotal_parallel_safe );
+			 commitHistoryContributionToBinOfTotal_thread_safe );
 
 //---------------------------------------------------------------------------//
 // Custom main function

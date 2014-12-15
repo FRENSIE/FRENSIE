@@ -439,7 +439,7 @@ TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
 //---------------------------------------------------------------------------//
 // Check that a partial history contribution can be added to the estimator
 TEUCHOS_UNIT_TEST( CellTrackLengthFluxEstimator,
-		   updateFromParticleSubtrackEndingInCellEvent_parallel_safe )
+		   updateFromParticleSubtrackEndingInCellEvent_thread_safe )
 {
   Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> > estimator_1;
   Teuchos::RCP<MonteCarlo::CellTrackLengthFluxEstimator<MonteCarlo::WeightAndEnergyMultiplier> > estimator_2;
