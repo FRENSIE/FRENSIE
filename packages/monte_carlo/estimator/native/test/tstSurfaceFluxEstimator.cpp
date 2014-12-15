@@ -38,9 +38,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( SurfaceFluxEstimator,
 				   ContributionMultiplierPolicy )
 {
   Teuchos::RCP<MonteCarlo::Estimator> estimator;
-  typedef MonteCarlo::SurfaceFluxEstimator<ContributionMultiplierPolicy>
-    SurfaceFluxEstimator;
-
+  
   Teuchos::Array<MonteCarlo::StandardSurfaceEstimator::surfaceIdType>
     surface_ids( 2 );
   surface_ids[0] = 0;

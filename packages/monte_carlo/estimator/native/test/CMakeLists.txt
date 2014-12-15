@@ -74,11 +74,14 @@ IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelSurfaceFluxEstimator_4_test tstSurfaceFluxEstimator --threads=4)
 ENDIF()
 
-Add_EXECUTABLE(tstSurfaceCurrentEstimator
-  tstSurfaceCurrentEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+Add_EXECUTABLE(tstSurfaceCurrentEstimator tstSurfaceCurrentEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstSurfaceCurrentEstimator monte_carlo_estimator_native)
 ADD_TEST(SurfaceCurrentEstimator_test tstSurfaceCurrentEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelSurfaceCurrentEstimator_2_test tstSurfaceCurrentEstimator --threads=2)
+  ADD_TEST(SharedParallelSurfaceCurrentEstimator_4_test tstSurfaceCurrentEstimator --threads=4)
+ENDIF()
 
 Add_EXECUTABLE(tstCellPulseHeightEstimator tstCellPulseHeightEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellPulseHeightEstimator monte_carlo_estimator_native)
