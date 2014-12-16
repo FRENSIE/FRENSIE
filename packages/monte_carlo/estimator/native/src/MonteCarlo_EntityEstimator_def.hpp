@@ -12,8 +12,13 @@
 // Std Lib Includes
 #include <sstream>
 
+// Trilinos Includes
+#include <Teuchos_CommHelpers.hpp>
+
 // FRENSIE Includes
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
+#include "FRENSIE_mpi_config.hpp"
 
 namespace MonteCarlo{
 
@@ -128,6 +133,187 @@ inline bool EntityEstimator<EntityId>::isEntityAssigned(
 					      const EntityId& entity_id ) const
 {
   return d_entity_norm_constants_map.count( entity_id );
+}
+
+// Reduce estimator data on all processes and collect on the root process
+template<typename EntityId>
+void EntityEstimator<EntityId>::reduceEstimatorData(
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process )
+{
+#ifdef HAVE_FRENSIE_MPI
+  // Make sure mpi has been initialized
+  remember( int mpi_initialized );
+  remember( ::MPI_Initialized( &mpi_initialized ) );
+  testPrecondition( mpi_initialized );
+  // Make sure the comm is valid
+  testPrecondition( !comm.is_null() );
+  
+  const Teuchos::MpiComm<unsigned long long>* mpi_comm = 
+    dynamic_cast<const Teuchos::MpiComm<unsigned long long>* >(
+							    comm.getRawPtr() );
+  
+  // Only proceed to the reduce call if the comm is an mpi comm
+  if( mpi_comm != NULL && mpi_comm->getSize() > 1 )
+  {
+    int rank = comm->getRank();
+    MPI_Comm raw_mpi_comm = *(mpi_comm->getRawMpiComm());
+    
+    // Reduce bin data for each entity
+    typename EntityEstimatorMomentsArrayMap::iterator entity_data, 
+      end_entity_data;
+    entity_data = d_entity_estimator_moments_map.begin();
+    end_entity_data = d_entity_estimator_moments_map.end();
+    
+    while( entity_data != end_entity_data )
+    {
+      for( unsigned i = 0; i < entity_data->second.size(); ++i )
+      {
+	int return_value;
+	
+	if( rank == root_process )
+	{
+	  return_value = ::MPI_Reduce( MPI_IN_PLACE,
+				       &entity_data->second[i].first,
+				       1,
+				       MPI_DOUBLE,
+				       MPI_SUM,
+				       root_process,
+				       raw_mpi_comm );
+	}
+	else
+	{
+	  return_value = ::MPI_Reduce( &entity_data->second[i].first,
+				       NULL,
+				       1,
+				       MPI_DOUBLE,
+				       MPI_SUM,
+				       root_process,
+				       raw_mpi_comm );
+	}
+
+	TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
+			    std::runtime_error,
+			    "Error: unable to perform mpi reduction in "
+			    "entity estimator " << this->getId() <<
+			    " for entity " << entity_data->first <<
+			    " and array index " << i << 
+			    "! MPI_Reduce failed with the following error: " 
+			    << return_value );
+
+	if( rank == root_process )
+	{
+	  return_value = ::MPI_Reduce( MPI_IN_PLACE,
+				       &entity_data->second[i].second,
+				       1,
+				       MPI_DOUBLE,
+				       MPI_SUM,
+				       root_process,
+				       raw_mpi_comm );
+	}
+	else
+	{
+	  return_value = ::MPI_Reduce( &entity_data->second[i].second,
+				       NULL,
+				       1,
+				       MPI_DOUBLE,
+				       MPI_SUM,
+				       root_process,
+				       raw_mpi_comm );
+	}
+
+	TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
+			    std::runtime_error,
+			    "Error: unable to perform mpi reduction in "
+			    "entity estimator " << this->getId() <<
+			    " for entity " << entity_data->first <<
+			    " and array index " << i <<
+			    "! MPI_Reduce failed with the following error: " 
+			    << return_value );
+
+	// Reset the data on all but the root process
+	if( rank != root_process )
+	  entity_data->second[i]( 0.0, 0.0 );
+
+	comm->barrier();
+      }
+      
+      ++entity_data;
+    }
+
+    // Reduce bin data of total
+    for( unsigned i = 0; i < d_estimator_total_bin_data.size(); ++i )
+    {
+      int return_value;
+      
+      if( rank == root_process )
+      {
+	return_value = ::MPI_Reduce( MPI_IN_PLACE,
+				     &d_estimator_total_bin_data[i].first,
+				     1,
+				     MPI_DOUBLE,
+				     MPI_SUM,
+				     root_process,
+				     raw_mpi_comm );
+      }
+      else
+      {
+	return_value = ::MPI_Reduce( &d_estimator_total_bin_data[i].first,
+				     NULL,
+				     1,
+				     MPI_DOUBLE,
+				     MPI_SUM,
+				     root_process,
+				     raw_mpi_comm );
+      }
+
+      TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
+			  std::runtime_error,
+			  "Error: unable to perform mpi reduction in "
+			  "entity estimator " << this->getId() <<
+			  " for total " << entity_data->first <<
+			  " and array index " << i <<
+			  "! MPI_Reduce failed with the following error: " 
+			  << return_value );
+
+      if( rank == root_process )
+      {
+	return_value = ::MPI_Reduce( MPI_IN_PLACE,
+				     &d_estimator_total_bin_data[i].second,
+				     1,
+				     MPI_DOUBLE,
+				     MPI_SUM,
+				     root_process,
+				     raw_mpi_comm );
+      }
+      else
+      {
+	return_value = ::MPI_Reduce( &d_estimator_total_bin_data[i].second,
+				     NULL,
+				     1,
+				     MPI_DOUBLE,
+				     MPI_SUM,
+				     root_process,
+				     raw_mpi_comm );
+      }
+
+      TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
+			  std::runtime_error,
+			  "Error: unable to perform mpi reduction in "
+			  "entity estimator " << this->getId() <<
+			  " for total " << entity_data->first <<
+			  " and array index " << i << 
+			  "! MPI_Reduce failed with the following error: " 
+			  << return_value );
+
+      // Reset the data on all but the root process
+      if( rank != root_process )
+	d_estimator_total_bin_data[i]( 0.0, 0.0 );
+
+      comm->barrier();
+    }
+  }
+#endif // end HAVE_FRENSIE_MPI
 }
 
 // Export the estimator data

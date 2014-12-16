@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstEstimator.cpp
+//! \file   tstEntityEstimator.cpp
 //! \author Alex Robinson
 //! \brief  Entity estimator unit tests
 //!

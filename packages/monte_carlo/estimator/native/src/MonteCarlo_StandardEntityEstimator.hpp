@@ -87,6 +87,11 @@ public:
   //! Enable support for multiple threads
   void enableThreadSupport( const unsigned num_threads );
 
+  //! Reduce estimator data on all processes and collect on the root process
+  void reduceEstimatorData(
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process );
+
   //! Export the estimator data
   virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,
 			   const bool process_data ) const;

@@ -23,6 +23,7 @@
 #include <Teuchos_TwoDArray.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_any.hpp>
+#include <Teuchos_Comm.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
@@ -123,6 +124,11 @@ public:
 
   //! Commit the contribution from the current history to the estimator
   virtual void commitHistoryContribution() = 0;
+
+  //! Reduce estimator data on all processes in comm and collect on the root 
+  virtual void reduceEstimatorData( 
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process ) = 0;
 
   //! Enable support for multiple threads
   virtual void enableThreadSupport( const unsigned num_threads );
