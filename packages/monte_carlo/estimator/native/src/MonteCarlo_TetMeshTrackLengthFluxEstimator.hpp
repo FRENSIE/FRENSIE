@@ -27,7 +27,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_Estimator.hpp"
+#include "MonteCarlo_StandardEntityEstimator.hpp"
 #include "MonteCarlo_EstimatorContributionMultiplierPolicy.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
@@ -35,7 +35,7 @@ namespace MonteCarlo{
 
 //! The tet-mesh track length flux estimator class
 template<typename ContributionMutliplierPolicy = WeightMultiplier>
-class TetMeshTrackLengthFluxEstimator : public Estimator
+class TetMeshTrackLengthFluxEstimator : public StandardEntityEstimator<moab::EntityHandle>
 {
 
 public:
@@ -64,8 +64,9 @@ public:
 			      const Geometry::ModuleTraits::InternalCellHandle,
 			      const double track_length );
 
-  //! Commit the contribution from the current history to the estimator
-  void commitHistoryContribution();
+  //! Export the estimator data
+  void exportData( EstimatorHDF5FileHandler& hdf5_file,
+		   const bool process_data ) const;
 
   //! Print the estimator data
   void print( std::ostream& os ) const;
@@ -97,25 +98,9 @@ private:
   // The last cell that was visited
   Geometry::ModuleTraits::InternalCellHandle d_last_visited_cell;
 
-  // The map of tet ids and tet volumes
-  boost::unordered_map<moab::EntityHandle,double> 
-  d_tet_volumes;
-
   // The map of tet ids and barycentric coordinate transform matrices
   boost::unordered_map<moab::EntityHandle,moab::Matrix3> 
   d_tet_barycentric_transform_matrices;
-
-  // The map of tet estimator moments
-  boost::unordered_map<moab::EntityHandle,Teuchos::Array<Utility::Pair<double,double> > >
-  d_tet_estimator_moments;
-
-  // The map of tet current history contributions
-  boost::unordered_map<moab::EntityHandle,Teuchos::Array<double> >
-  d_tet_estimator_current_history_contributions;
-
-  // The set of tet that have been updated
-  boost::unordered_set<moab::EntityHandle>
-  d_tets_updated_this_history;
 };
   
 } // end MonteCarlo namespace
