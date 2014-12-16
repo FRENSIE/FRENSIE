@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <sstream>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
@@ -17,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_GeneralEstimatorDimensionDiscretization.hpp"
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -86,10 +88,9 @@ void initialize<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the discretized dimension can be returned
-UTILITY_UNIT_TEST_EPSD_TEMPLATE_1_DECL( 
-				       GeneralEstimatorDimensionDiscretization,
-				       getDimension,
-				       dimension )
+MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
+				   getDimension,
+				   dimension )
 {
   Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
 
@@ -104,10 +105,9 @@ UNIT_TEST_INSTANTIATION( GeneralEstimatorDimensionDiscretization,
 
 //---------------------------------------------------------------------------//
 // Check that the number of bins can be returned
-UTILITY_UNIT_TEST_EPSD_TEMPLATE_1_DECL( 
-				       GeneralEstimatorDimensionDiscretization,
-				       getNumberOfBins,
-				       dimension )
+MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
+				   getNumberOfBins,
+				   dimension )
 {
   Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
 
@@ -121,9 +121,9 @@ UNIT_TEST_INSTANTIATION( GeneralEstimatorDimensionDiscretization,
 
 //---------------------------------------------------------------------------//
 // Check if a value is contained in the discretization
-UTILITY_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
-				       isValueInDiscretization,
-				       dimension )
+MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
+				   isValueInDiscretization,
+				   dimension )
 {
   Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
 
@@ -170,10 +170,9 @@ UNIT_TEST_INSTANTIATION( GeneralEstimatorDimensionDiscretization,
 
 //---------------------------------------------------------------------------//
 // Check that a bin index can be calculated
-UTILITY_UNIT_TEST_EPSD_TEMPLATE_1_DECL( 
-				       GeneralEstimatorDimensionDiscretization,
-				       calculateBinIndex,
-				       dimension )
+MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
+				   calculateBinIndex,
+				   dimension )
 {
   Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> discretized_dimension;
 
@@ -262,6 +261,77 @@ UTILITY_UNIT_TEST_EPSD_TEMPLATE_1_DECL(
 
 UNIT_TEST_INSTANTIATION( GeneralEstimatorDimensionDiscretization,
 			 calculateBinIndex );
+
+//---------------------------------------------------------------------------//
+// Check that the bin boundaries can be exported
+MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL( GeneralEstimatorDimensionDiscretization,
+				   exportData,
+				   dimension )
+{
+  // Set up the discretization
+  typedef MonteCarlo::PhaseSpaceDimensionTraits<dimension> EPSDT;
+
+  Teuchos::Array<typename EPSDT::dimensionType> discretization;
+  
+  if( dimension != MonteCarlo::COLLISION_NUMBER_DIMENSION )
+  {
+    discretization.resize( 9 );
+    
+    discretization[0] = 0.0;
+    discretization[1] = 1e-5;
+    discretization[2] = 1e-4;
+    discretization[3] = 1e-3;
+    discretization[4] = 1e-3;
+    discretization[5] = 1e-2;
+    discretization[6] = 1e-1;
+    discretization[7] = 1e-1;
+    discretization[8] = 1.0;
+  }
+  else
+  {
+    discretization.resize( 4 );
+    
+    discretization[0] = 0u;
+    discretization[1] = 1u;
+    discretization[2] = 2u;
+    discretization[3] = std::numeric_limits<unsigned>::max();
+  }
+
+  Teuchos::RCP<MonteCarlo::EstimatorDimensionDiscretization> 
+    discretized_dimension( 
+            new MonteCarlo::GeneralEstimatorDimensionDiscretization<dimension>(
+							    discretization ) );
+
+  // Set up the EstimatorHDF5FileHandler
+  std::ostringstream oss;
+  oss << dimension << ".h5";
+  
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( oss.str() );
+  
+  discretized_dimension->exportData( 0u, hdf5_file_handler );
+  discretized_dimension->exportData( 10u, hdf5_file_handler );
+  
+  // Make sure the data was written to the correct estimators
+  Teuchos::Array<typename EPSDT::dimensionType> discretization_copy;
+
+  hdf5_file_handler.getEstimatorBinBoundaries<dimension>( 0u, 
+							  discretization_copy);
+
+  TEST_COMPARE_ARRAYS( discretization, discretization_copy );
+
+  hdf5_file_handler.getEstimatorBinBoundaries<dimension>( 10u,
+							  discretization_copy);
+
+  TEST_COMPARE_ARRAYS( discretization, discretization_copy );
+
+  TEST_THROW( hdf5_file_handler.getEstimatorBinBoundaries<dimension>( 
+							 1u,
+							 discretization_copy ),
+	      std::runtime_error );
+}
+
+UNIT_TEST_INSTANTIATION( GeneralEstimatorDimensionDiscretization,
+			 exportData );
 
 //---------------------------------------------------------------------------//
 // end tstGeneralEstimatorDimensionDiscretization.cpp

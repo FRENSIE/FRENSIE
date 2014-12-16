@@ -13,6 +13,7 @@
 #include <iostream>
 
 // FRENSIE Includes
+#include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -27,16 +28,9 @@ CellPulseHeightEstimator<
   : EntityEstimator<cellIdType>( id, multiplier, entity_ids ),
     ParticleEnteringCellEventObserver(),
     ParticleLeavingCellEventObserver(),
-    d_total_energy_deposition_moments( 1 )
-{
-  // Set up the entity map
-  for( unsigned i = 0; i < entity_ids.size(); ++i )
-  {
-    // Ignore duplicate entity ids
-    if( d_cell_energy_deposition_map.count( entity_ids[i] ) == 0 )
-      d_cell_energy_deposition_map[ entity_ids[i] ] = 0.0;
-  }
-}
+    d_update_tracker( 1 ),
+    d_dimension_values( 1 )
+{ /* ... */ }
 
 // Set the response functions
 template<typename ContributionMultiplierPolicy>
@@ -99,19 +93,17 @@ inline void CellPulseHeightEstimator<
 					       const ParticleState& particle,
 					       const cellIdType cell_entering )
 {
-  // Make sure the cell is in the energy deposition map
-  testPrecondition( d_cell_energy_deposition_map.count( cell_entering ) != 0 );
-  
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {    
-    boost::unordered_map<cellIdType,double>::iterator it = 
-      d_cell_energy_deposition_map.find( cell_entering );
+    unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
     
-    it->second += particle.getWeight()*particle.getEnergy();
+    double contribution = particle.getWeight()*particle.getEnergy();
+    
+    addInfoToUpdateTracker( thread_id, cell_entering, contribution );
+    
+    // Indicate that there is an uncommitted history contribution
+  this->setHasUncommittedHistoryContribution( thread_id );
   }
-
-  // Indicate that there is an uncommitted history contribution
-  this->setHasUncommittedHistoryContribution();
 }
 
 // Add current history estimator contribution
@@ -126,19 +118,17 @@ inline void CellPulseHeightEstimator<
 					        const ParticleState& particle,
 					        const cellIdType cell_leaving )
 {
-  // Make sure the cell is in the energy deposition map
-  testPrecondition( d_cell_energy_deposition_map.count( cell_leaving ) != 0 );
-  
   if( this->isParticleTypeAssigned( particle.getParticleType() ) )
   {    
-    boost::unordered_map<cellIdType,double>::iterator it = 
-      d_cell_energy_deposition_map.find( cell_leaving );
+    unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
     
-    it->second -= particle.getWeight()*particle.getEnergy();
-  }
+    double contribution = -particle.getWeight()*particle.getEnergy();
 
-  // Indicate that there is an uncommitted history contribution
-  this->setHasUncommittedHistoryContribution();
+    addInfoToUpdateTracker( thread_id, cell_leaving, contribution );
+
+    // Indicate that there is an uncommitted history contribution
+    this->setHasUncommittedHistoryContribution( thread_id );
+  }
 }
 
 // Add estimator contribution from a portion of the current history
@@ -146,65 +136,67 @@ template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<
 		     ContributionMultiplierPolicy>::commitHistoryContribution()
 {
-  typename boost::unordered_map<cellIdType,double>::iterator 
-    entity, end_entity;
+  unsigned thread_id = Utility::GlobalOpenMPSession::getThreadId();
+  
+  typename SerialUpdateTracker::const_iterator 
+    cell_data, end_cell_data;
 
-  entity = d_cell_energy_deposition_map.begin();
-  end_entity = d_cell_energy_deposition_map.end();
-
+  getCellIteratorFromUpdateTracker( thread_id, cell_data, end_cell_data );
+  
   double energy_deposition_in_all_cells = 0.0;
   
   unsigned bin_index;
   double bin_contribution;
 
-  while( entity != end_entity )
-  {
-    d_dimension_values[ENERGY_DIMENSION] = Teuchos::any( entity->second );
+  Estimator::DimensionValueMap& thread_dimension_values = 
+      d_dimension_values[thread_id];
+
+  while( cell_data != end_cell_data )
+  {        
+    thread_dimension_values[ENERGY_DIMENSION] = 
+      Teuchos::any( cell_data->second );
     
-    if( this->isPointInEstimatorPhaseSpace( d_dimension_values ) )
+    if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
     {
-      bin_index = this->calculateBinIndex( d_dimension_values, 0u );
+      bin_index = this->calculateBinIndex( thread_dimension_values, 0u );
       
       bin_contribution = calculateHistoryContribution( 
-					      entity->second,
+					      cell_data->second,
 					      ContributionMultiplierPolicy() );
       
-      this->commitHistoryContributionToBinOfEntity( entity->first,
+      this->commitHistoryContributionToBinOfEntity( cell_data->first,
 						    bin_index,
 						    bin_contribution );
       
       // Add the energy deposition in this cell to the total energy deposition
-      energy_deposition_in_all_cells += entity->second;
-
-      // Reset the energy deposition in this cell
-      entity->second = 0.0;
+      energy_deposition_in_all_cells += cell_data->second;
     }
 
-    ++entity;
+    ++cell_data;
   }
 
   // Store the total energy deposition in the dimension values map
-  d_dimension_values[ENERGY_DIMENSION] = 
+  thread_dimension_values[ENERGY_DIMENSION] = 
     Teuchos::any( energy_deposition_in_all_cells );
   
   // Determine the pulse bin for the combination of all cells
-  if( this->isPointInEstimatorPhaseSpace( d_dimension_values ) )
+  if( this->isPointInEstimatorPhaseSpace( thread_dimension_values ) )
   {
-    bin_index = this->calculateBinIndex( d_dimension_values, 0u );
+    bin_index = this->calculateBinIndex( thread_dimension_values, 0u );
 
     bin_contribution = calculateHistoryContribution( 
 					      energy_deposition_in_all_cells,
 					      ContributionMultiplierPolicy() );
 
-    // Compute the moment contributions
-    d_total_energy_deposition_moments[bin_index].first += bin_contribution;
-    
-    bin_contribution *= bin_contribution;
-    d_total_energy_deposition_moments[bin_index].second += bin_contribution;
+    this->commitHistoryContributionToBinOfTotal( bin_index,
+						 bin_contribution );
   }
 
+  // Reset the update tracker
+  resetUpdateTracker( thread_id );
+
   // Reset the has uncommitted history contribution boolean
-  this->unsetHasUncommittedHistoryContribution();
+  this->unsetHasUncommittedHistoryContribution( thread_id );
 }
 
 // Print the estimator data
@@ -215,13 +207,36 @@ void CellPulseHeightEstimator<ContributionMultiplierPolicy>::print(
   os << "Cell Pulse Height Estimator: " << this->getId() << std::endl;
 
   this->printImplementation( os, "Cell" );
+}
 
-  os << "All Cells" << std::endl;
-  os << "--------" << std::endl;
+// Enable support for multiple threads
+template<typename ContributionMultiplierPolicy>
+void 
+CellPulseHeightEstimator<ContributionMultiplierPolicy>::enableThreadSupport(
+						   const unsigned num_threads )
+{
+  EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>::enableThreadSupport( num_threads );
+  
+  // Add thread support to update tracker
+  d_update_tracker.resize( num_threads );
 
-  this->printEstimatorBinData( os,
-			       d_total_energy_deposition_moments,
-			       this->getTotalNormConstant() );
+  // Add thread support to the dimension values
+  d_dimension_values.resize( num_threads );
+}
+
+// Export the estimator data
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::exportData(
+					   EstimatorHDF5FileHandler& hdf5_file,
+					   const bool process_data ) const
+{
+  // Export the lower level data
+  EntityEstimator<Geometry::ModuleTraits::InternalCellHandle>::exportData(
+								hdf5_file,
+								process_data );
+
+  // Set the estimator as a cell estimator
+  hdf5_file.setCellEstimator( this->getId() );
 }
 
 // Assign bin boundaries to an estimator dimension
@@ -233,8 +248,6 @@ void CellPulseHeightEstimator<
   if( bin_boundaries->getDimension() == ENERGY_DIMENSION )
   {
     EntityEstimator<cellIdType>::assignBinBoundaries( bin_boundaries );
-
-    d_total_energy_deposition_moments.resize( this->getNumberOfBins() );
   }
   else
   {
@@ -273,6 +286,50 @@ inline double CellPulseHeightEstimator<
 						WeightAndEnergyMultiplier )
 {
   return energy_deposition;
+}
+
+// Add info to update tracker
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::addInfoToUpdateTracker( 
+						   const unsigned thread_id,
+						   const cellIdType cell_id,
+						   const double contribution )
+{
+  // Make sure the thread id is valid
+  testPrecondition( thread_id < d_update_tracker.size() );
+  
+  SerialUpdateTracker& thread_update_tracker = d_update_tracker[thread_id];
+
+  if( thread_update_tracker.find( cell_id ) != thread_update_tracker.end() )
+    thread_update_tracker[cell_id] += contribution;
+  else
+    thread_update_tracker[cell_id] = contribution;
+}
+
+// Get the entity iterators from the update tracker
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::getCellIteratorFromUpdateTracker(
+	         const unsigned thread_id,
+		 typename SerialUpdateTracker::const_iterator& start_cell,
+	         typename SerialUpdateTracker::const_iterator& end_cell ) const
+{
+  // Make sure the thread id is valid
+  testPrecondition( thread_id < d_update_tracker.size() );
+  
+  start_cell = d_update_tracker[thread_id].begin();
+  end_cell = d_update_tracker[thread_id].end();
+}
+
+// Reset the update tracker
+template<typename ContributionMultiplierPolicy>
+void 
+CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetUpdateTracker( 
+						     const unsigned thread_id )
+{
+  // Make sure the thread id is valid
+  testPrecondition( thread_id < d_update_tracker.size() );
+  
+  d_update_tracker[thread_id].clear();
 }
 
 } // end MonteCarlo namespace

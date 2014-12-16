@@ -9,8 +9,18 @@
 #ifndef FACEMC_ENTITY_ESTIMATOR_DEF_HPP
 #define FACEMC_ENTITY_ESTIMATOR_DEF_HPP
 
+// Std Lib Includes
+#include <sstream>
+
 // FRENSIE Includes
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
+#include "FRENSIE_mpi_config.hpp"
+
+// Trilinos Includes
+#ifdef HAVE_FRENSIE_MPI
+#include <Teuchos_CommHelpers.hpp>
+#endif
 
 namespace MonteCarlo{
 
@@ -26,13 +36,17 @@ EntityEstimator<EntityId>::EntityEstimator(
 			  const Teuchos::Array<double>& entity_norm_constants )
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
-    d_supplied_norm_constants( true )
+    d_supplied_norm_constants( true ),
+    d_estimator_total_bin_data( 1 )
 {
   initializeEntityEstimatorMomentsMap( entity_ids );
   initializeEntityNormConstantsMap( entity_ids, entity_norm_constants );
 
   // Calculate the total normalization constant
   calculateTotalNormalizationConstant();
+
+  // Initialize the total bin data
+  resizeEstimatorTotalArray();
 }
 
 // Constructor (for non-flux estimators)
@@ -46,10 +60,14 @@ EntityEstimator<EntityId>::EntityEstimator(
 				   const Teuchos::Array<EntityId>& entity_ids )
   : Estimator( id, multiplier ),
     d_total_norm_constant( 1.0 ),
-    d_supplied_norm_constants( false )
+    d_supplied_norm_constants( false ),
+    d_estimator_total_bin_data( 1 )
 {
   initializeEntityEstimatorMomentsMap( entity_ids );
   initializeEntityNormConstantsMap( entity_ids );
+
+  // Initialize the total bin data
+  resizeEstimatorTotalArray();
 }
 
 // Set the response functions
@@ -88,6 +106,9 @@ void EntityEstimator<EntityId>::assignBinBoundaries(
 
   // Resize the entity estimator moments map arrays
   resizeEntityEstimatorMapArrays();
+
+  // Resize the total array
+  resizeEstimatorTotalArray();
 }
 
 // Return the normalization constant for an entity
@@ -116,6 +137,270 @@ inline bool EntityEstimator<EntityId>::isEntityAssigned(
   return d_entity_norm_constants_map.count( entity_id );
 }
 
+// Reduce estimator data on all processes and collect on the root process
+template<typename EntityId>
+void EntityEstimator<EntityId>::reduceData(
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process )
+{
+#ifdef HAVE_FRENSIE_MPI
+  // Make sure mpi has been initialized
+  remember( int mpi_initialized );
+  remember( ::MPI_Initialized( &mpi_initialized ) );
+  testPrecondition( mpi_initialized );
+  // Make sure the comm is valid
+  testPrecondition( !comm.is_null() );
+  
+  const Teuchos::MpiComm<unsigned long long>* mpi_comm = 
+    dynamic_cast<const Teuchos::MpiComm<unsigned long long>* >(
+							    comm.getRawPtr() );
+  
+  // Only proceed to the reduce call if the comm is an mpi comm
+  if( mpi_comm != NULL && mpi_comm->getSize() > 1 )
+  {
+    int rank = comm->getRank();
+    MPI_Comm raw_mpi_comm = *(mpi_comm->getRawMpiComm());
+    
+    // Reduce bin data for each entity
+    typename EntityEstimatorMomentsArrayMap::iterator entity_data, 
+      end_entity_data;
+    entity_data = d_entity_estimator_moments_map.begin();
+    end_entity_data = d_entity_estimator_moments_map.end();
+    
+    while( entity_data != end_entity_data )
+    {
+      for( unsigned i = 0; i < entity_data->second.size(); ++i )
+      {
+	int return_value;
+	
+	if( rank == root_process )
+	{
+	  return_value = ::MPI_Reduce( MPI_IN_PLACE,
+				       &entity_data->second[i].first,
+				       1,
+				       MPI_DOUBLE,
+				       MPI_SUM,
+				       root_process,
+				       raw_mpi_comm );
+	}
+	else
+	{
+	  return_value = ::MPI_Reduce( &entity_data->second[i].first,
+				       NULL,
+				       1,
+				       MPI_DOUBLE,
+				       MPI_SUM,
+				       root_process,
+				       raw_mpi_comm );
+	}
+
+	TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
+			    std::runtime_error,
+			    "Error: unable to perform mpi reduction in "
+			    "entity estimator " << this->getId() <<
+			    " for entity " << entity_data->first <<
+			    " and array index " << i << 
+			    "! MPI_Reduce failed with the following error: " 
+			    << return_value );
+
+	if( rank == root_process )
+	{
+	  return_value = ::MPI_Reduce( MPI_IN_PLACE,
+				       &entity_data->second[i].second,
+				       1,
+				       MPI_DOUBLE,
+				       MPI_SUM,
+				       root_process,
+				       raw_mpi_comm );
+	}
+	else
+	{
+	  return_value = ::MPI_Reduce( &entity_data->second[i].second,
+				       NULL,
+				       1,
+				       MPI_DOUBLE,
+				       MPI_SUM,
+				       root_process,
+				       raw_mpi_comm );
+	}
+
+	TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
+			    std::runtime_error,
+			    "Error: unable to perform mpi reduction in "
+			    "entity estimator " << this->getId() <<
+			    " for entity " << entity_data->first <<
+			    " and array index " << i <<
+			    "! MPI_Reduce failed with the following error: " 
+			    << return_value );
+
+	// Reset the data on all but the root process
+	if( rank != root_process )
+	  entity_data->second[i]( 0.0, 0.0 );
+
+	comm->barrier();
+      }
+      
+      ++entity_data;
+    }
+
+    // Reduce bin data of total
+    for( unsigned i = 0; i < d_estimator_total_bin_data.size(); ++i )
+    {
+      int return_value;
+      
+      if( rank == root_process )
+      {
+	return_value = ::MPI_Reduce( MPI_IN_PLACE,
+				     &d_estimator_total_bin_data[i].first,
+				     1,
+				     MPI_DOUBLE,
+				     MPI_SUM,
+				     root_process,
+				     raw_mpi_comm );
+      }
+      else
+      {
+	return_value = ::MPI_Reduce( &d_estimator_total_bin_data[i].first,
+				     NULL,
+				     1,
+				     MPI_DOUBLE,
+				     MPI_SUM,
+				     root_process,
+				     raw_mpi_comm );
+      }
+
+      TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
+			  std::runtime_error,
+			  "Error: unable to perform mpi reduction in "
+			  "entity estimator " << this->getId() <<
+			  " for total " << entity_data->first <<
+			  " and array index " << i <<
+			  "! MPI_Reduce failed with the following error: " 
+			  << return_value );
+
+      if( rank == root_process )
+      {
+	return_value = ::MPI_Reduce( MPI_IN_PLACE,
+				     &d_estimator_total_bin_data[i].second,
+				     1,
+				     MPI_DOUBLE,
+				     MPI_SUM,
+				     root_process,
+				     raw_mpi_comm );
+      }
+      else
+      {
+	return_value = ::MPI_Reduce( &d_estimator_total_bin_data[i].second,
+				     NULL,
+				     1,
+				     MPI_DOUBLE,
+				     MPI_SUM,
+				     root_process,
+				     raw_mpi_comm );
+      }
+
+      TEST_FOR_EXCEPTION( return_value != MPI_SUCCESS,
+			  std::runtime_error,
+			  "Error: unable to perform mpi reduction in "
+			  "entity estimator " << this->getId() <<
+			  " for total " << entity_data->first <<
+			  " and array index " << i << 
+			  "! MPI_Reduce failed with the following error: " 
+			  << return_value );
+
+      // Reset the data on all but the root process
+      if( rank != root_process )
+	d_estimator_total_bin_data[i]( 0.0, 0.0 );
+
+      comm->barrier();
+    }
+  }
+#endif // end HAVE_FRENSIE_MPI
+}
+
+// Export the estimator data
+template<typename EntityId>
+void EntityEstimator<EntityId>::exportData(EstimatorHDF5FileHandler& hdf5_file,
+					   const bool process_data ) const
+{
+  // Export the low level estimator data
+  Estimator::exportData( hdf5_file, process_data );
+
+  // Export the Entity norm constants 
+  hdf5_file.setEstimatorEntities( this->getId(),
+				  d_entity_norm_constants_map );
+
+  // Export the total norm constant
+  hdf5_file.setEstimatorTotalNormConstant( this->getId(), 
+					   d_total_norm_constant );
+  
+  // Export all of the estimator data
+  {
+    typename EntityEstimatorMomentsArrayMap::const_iterator entity_data;
+    unsigned i;
+    
+    for( i = 0u, entity_data = d_entity_estimator_moments_map.begin();
+	 entity_data != d_entity_estimator_moments_map.end();
+	 ++entity_data, ++i )
+    {
+      const double norm_constant = 
+	d_entity_norm_constants_map.find( entity_data->first )->second;
+
+      // Export the entity norm constant
+      hdf5_file.setEntityNormConstant( this->getId(),
+				       entity_data->first,
+				       norm_constant );
+      
+      // Export the raw entity moment data
+      hdf5_file.setRawEstimatorEntityBinData( this->getId(),
+					      entity_data->first,
+					      entity_data->second );
+      
+      if( process_data )
+      {
+	Teuchos::Array<Utility::Pair<double,double> > processed_data(
+						  entity_data->second.size() );
+
+	for( unsigned j = 0; j < entity_data->second.size(); ++j )
+	{
+	  
+	  this->processMoments( entity_data->second[j],
+				norm_constant,
+				processed_data[j].first,
+				processed_data[j].second );
+	}
+	
+	hdf5_file.setProcessedEstimatorEntityBinData( this->getId(),
+						      entity_data->first,
+						      processed_data );
+      }
+    }
+  }
+
+  // Export the total bin data
+  hdf5_file.setRawEstimatorTotalBinData( this->getId(),
+					 d_estimator_total_bin_data );
+
+  // Export the processed total bin data
+  if( process_data )
+  {
+    Teuchos::Array<Utility::Pair<double,double> > processed_data(
+					   d_estimator_total_bin_data.size() );
+    
+    for( unsigned i = 0; i < processed_data.size(); ++i )
+    {
+      this->processMoments( d_estimator_total_bin_data[i],
+			    d_total_norm_constant,
+			    processed_data[i].first,
+			    processed_data[i].second );
+    }
+
+    
+    hdf5_file.setProcessedEstimatorTotalBinData( this->getId(),
+						 processed_data );
+  }
+}
+
 // Commit history contribution to a bin of an entity
 template<typename EntityId>
 void EntityEstimator<EntityId>::commitHistoryContributionToBinOfEntity(
@@ -135,11 +420,33 @@ void EntityEstimator<EntityId>::commitHistoryContributionToBinOfEntity(
     d_entity_estimator_moments_map[entity_id];
 
   // Add the first moment contribution
+  #pragma omp atomic update
   entity_estimator_moments_array[bin_index].first += contribution;
 
   // Add the second moment contribution
-  entity_estimator_moments_array[bin_index].second += 
-    contribution*contribution;
+  #pragma omp atomic update
+  entity_estimator_moments_array[bin_index].second += contribution*contribution;
+}
+
+// Commit history contribution to a bin of the total
+template<typename EntityId>
+void EntityEstimator<EntityId>::commitHistoryContributionToBinOfTotal(
+						   const unsigned bin_index,
+						   const double contribution )
+{
+  // Make sure the bin index is valid
+  testPrecondition( bin_index < 
+		    getNumberOfBins()*getNumberOfResponseFunctions() );
+  // Make sure the contribution is valid
+  testPrecondition( !ST::isnaninf( contribution ) );
+
+  // Add the first moment contribution
+  #pragma omp atomic update
+  d_estimator_total_bin_data[bin_index].first += contribution;
+  
+  // Add the second moment contribution  
+  #pragma omp atomic update
+  d_estimator_total_bin_data[bin_index].second += contribution*contribution;
 }
 
 // Print the entity ids assigned to the estimator
@@ -235,6 +542,16 @@ void EntityEstimator<EntityId>::printImplementation(
 
     ++entity_data;
   }
+
+  // Print the estimator total bin data
+  os << " Total Bin Data: " << std::endl;
+  os << "--------" << std::endl;
+
+  printEstimatorBinData( os, 
+			 d_estimator_total_bin_data, 
+			 d_total_norm_constant );
+  
+  os << std::endl;
 }
 
 // Initialize entity estimator moments map
@@ -314,6 +631,14 @@ void EntityEstimator<EntityId>::resizeEntityEstimatorMapArrays()
     
     ++start;
   }
+}
+
+// Resize the estimator total array
+template<typename EntityId>
+void EntityEstimator<EntityId>::resizeEstimatorTotalArray()
+{
+  d_estimator_total_bin_data.resize( 
+			    getNumberOfBins()*getNumberOfResponseFunctions() );
 }
 
 // Calculate the total normalization constant

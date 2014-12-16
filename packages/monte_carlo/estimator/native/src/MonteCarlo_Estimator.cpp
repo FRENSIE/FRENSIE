@@ -47,7 +47,7 @@ void Estimator::setEndTime( const double end_time )
   : PrintableObject( "//---------------------------------------------------------------------------//" ),
     d_id( id ),
     d_multiplier( multiplier ),
-    d_has_uncommitted_history_contribution( false ),
+    d_has_uncommitted_history_contribution( 1, false ),
     d_response_functions( 1 )
 {
   // Make sure the multiplier is valid
@@ -57,13 +57,15 @@ void Estimator::setEndTime( const double end_time )
   d_response_functions[0] = ResponseFunction::default_response_function;
 
   // Create the default particle types set (all particle types)
-  d_particle_types.insert( PHOTON );
+  // d_particle_types.insert( PHOTON );
 }
 
 // Set the response functions
 void Estimator::setResponseFunctions( 
     const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
 {
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure there is at least one response function
   testPrecondition( response_functions.size() >= 1 );
 
@@ -74,6 +76,8 @@ void Estimator::setResponseFunctions(
 void Estimator::setParticleTypes( 
 			   const Teuchos::Array<ParticleType>& particle_types )
 {
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure at least one particle type is specified
   testPrecondition( particle_types.size() > 0 );
   
@@ -83,10 +87,61 @@ void Estimator::setParticleTypes(
     d_particle_types.insert( particle_types[i] );
 }
 
+// Enable support for multiple threads
+void Estimator::enableThreadSupport( const unsigned num_threads )
+{
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
+  d_has_uncommitted_history_contribution.resize( num_threads, false );
+}
+
+// Export the estimator data
+void Estimator::exportData( EstimatorHDF5FileHandler& hdf5_file,
+			    const bool process_data ) const
+{
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  // Make sure this estimator has not been exported yet
+  testPrecondition( !hdf5_file.doesEstimatorExist( d_id ) );
+  
+  // Export the response function ordering
+  {
+    Teuchos::Array<unsigned> response_function_ordering(
+						 d_response_functions.size() );
+    for( unsigned i = 0; i < d_response_functions.size(); ++i )
+      response_function_ordering[i] = d_response_functions[i]->getId();
+      
+    hdf5_file.setEstimatorResponseFunctionOrdering( 
+						  d_id, 
+						  response_function_ordering );
+  }
+
+  // Export the dimension ordering
+  if( d_dimension_ordering.size() > 0 )
+    hdf5_file.setEstimatorDimensionOrdering( d_id, d_dimension_ordering );
+
+  // Export the bin boundaries
+  for( unsigned i = 0; i < d_dimension_ordering.size(); ++i )
+  {
+    const Teuchos::RCP<EstimatorDimensionDiscretization>& 
+      dimension_bin_boundaries = d_dimension_bin_boundaries_map.find( 
+					     d_dimension_ordering[i] )->second;
+    
+    dimension_bin_boundaries->exportData( d_id, hdf5_file );
+  }
+
+  // Export the estimator multiplier
+  hdf5_file.setEstimatorMultiplier( d_id, d_multiplier );
+}
+
 // Assign bin boundaries to an estimator dimension
 void Estimator::assignBinBoundaries( 
 	 const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
 {
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   if(d_dimension_bin_boundaries_map.count(bin_boundaries->getDimension()) == 0)
   {
     d_dimension_bin_boundaries_map[bin_boundaries->getDimension()] = 
@@ -187,15 +242,15 @@ void Estimator::printEstimatorBinData(
       // Calculate the bin index for the response function
       unsigned bin_index = i + r*getNumberOfBins();
 
-      // Calculate the estimator bin data
-      double estimator_bin_value = 
-	calculateMean( estimator_moments_data[bin_index].first )*
-	d_multiplier/norm_constant;
       
-      double estimator_bin_rel_err = 
-	calculateRelativeError( 
-			       estimator_moments_data[bin_index].first,
-			       estimator_moments_data[bin_index].second );
+      // Calculate the estimator bin data
+      double estimator_bin_value;
+      double estimator_bin_rel_err;
+
+      processMoments( estimator_moments_data[bin_index],
+		      norm_constant,
+		      estimator_bin_value,
+		      estimator_bin_rel_err );
 
       // Print the estimator bin data
       os << " " << estimator_bin_value << " " 
@@ -221,21 +276,17 @@ void Estimator::printEstimatorTotalData(
   {
     os << "Response Function: " << getResponseFunctionName( i ) << std::endl;
     
-    double estimator_value = 
-    calculateMean( total_estimator_moments_data[i].first )*
-      d_multiplier/norm_constant;
-  
-    double estimator_rel_err = 
-      calculateRelativeError( total_estimator_moments_data[i].first,
-			      total_estimator_moments_data[i].second );
-  
-    double estimator_vov = 
-      calculateVOV( total_estimator_moments_data[i].first,
-		    total_estimator_moments_data[i].second,
-		    total_estimator_moments_data[i].third,
-		    total_estimator_moments_data[i].fourth );
-    
-    double estimator_fom = calculateFOM( estimator_rel_err );
+    double estimator_value;
+    double estimator_rel_err;
+    double estimator_vov;
+    double estimator_fom;
+
+    processMoments( total_estimator_moments_data[i],
+		    norm_constant,
+		    estimator_value,
+		    estimator_rel_err,
+		    estimator_vov,
+		    estimator_fom );
     
     os << estimator_value << " " 
        << estimator_rel_err << " "
@@ -313,11 +364,69 @@ unsigned Estimator::calculateBinIndex(
   return bin_index;
 }
 
+// Calculate the response function index given a bin index
+unsigned Estimator::calculateResponseFunctionIndex( 
+					       const unsigned bin_index ) const
+{
+  // Make sure the bin index is valid
+  testPrecondition( bin_index < 
+		    getNumberOfBins()*getNumberOfResponseFunctions() );
+  testPrecondition( bin_index < std::numeric_limits<unsigned>::max() );
+
+  return bin_index/getNumberOfBins();
+}
+
+// Convert first and second moments to mean and relative error
+void Estimator::processMoments( const Utility::Pair<double,double>& moments,
+				const double norm_constant,
+				double& mean,
+				double& relative_error ) const
+{
+  // Make sure the moments are valid
+  testPrecondition( !ST::isnaninf( moments.first ) );
+  testPrecondition( !ST::isnaninf( moments.second ) );
+  // Make sure the norm contant is valid
+  testPrecondition( !ST::isnaninf( norm_constant ) );
+  testPrecondition( norm_constant > 0.0 );
+  
+  mean = calculateMean( moments.first )*d_multiplier/norm_constant;
+      
+  relative_error = calculateRelativeError( moments.first, moments.second );
+}
+
+// Convert first, second, third, fourth moments to mean, rel. er., vov, fom
+void Estimator::processMoments( 
+		     const Utility::Quad<double,double,double,double>& moments,
+		     const double norm_constant,
+		     double& mean,
+		     double& relative_error,
+		     double& variance_of_variance,
+		     double& figure_of_merit ) const
+{
+  // Make sure the moments are valid
+  testPrecondition( !ST::isnaninf( moments.first ) );
+  testPrecondition( !ST::isnaninf( moments.second ) );
+  testPrecondition( !ST::isnaninf( moments.third ) );
+  testPrecondition( !ST::isnaninf( moments.fourth ) );
+  // Make sure the norm contant is valid
+  testPrecondition( !ST::isnaninf( norm_constant ) );
+  testPrecondition( norm_constant > 0.0 );
+
+  mean = calculateMean( moments.first )*d_multiplier/norm_constant;
+      
+  relative_error = calculateRelativeError( moments.first, moments.second );
+
+  variance_of_variance = calculateVOV( moments.first,
+				       moments.second,
+				       moments.third,
+				       moments.fourth );
+    
+  figure_of_merit = calculateFOM( relative_error );
+}
+
 // Calculate the mean of a set of contributions
 double Estimator::calculateMean( const double first_moment_contributions) const
 {
-  // Make sure that the number of histories is valid
-  testPrecondition( Estimator::num_histories > 0ull );
   // Make sure the first moment contributions are valid
   testPrecondition( !ST::isnaninf( first_moment_contributions ) );
   testPrecondition( first_moment_contributions >= 0.0 );
@@ -353,11 +462,15 @@ double Estimator::calculateRelativeError(
       (first_moment_contributions*first_moment_contributions) - 
       1.0/Estimator::num_histories;
     
-    relative_error = ST::squareroot( argument );
+    // Check for roundoff error resulting in a very small negative number
+    if( ST::magnitude( argument ) < ST::eps() )
+      relative_error = 0.0;
+    else
+      relative_error = ST::squareroot( argument );
   }
   else
-    return relative_error = 0.0;
-
+    relative_error = 0.0;
+  
   // Make sure the relative error is valid
   testPostcondition( !ST::isnaninf( relative_error ) );
   testPostcondition( relative_error >= 0.0 );
@@ -413,11 +526,11 @@ double Estimator::calculateVOV( const double first_moment_contributions,
   
   double vov;
   
-  if( vov_denominator != 0.0 )
-    vov = vov_numerator/vov_denominator;   
+  if( ST::magnitude( vov_denominator ) > ST::eps() )
+    vov = vov_numerator/vov_denominator;
   else
     vov = 0.0;
-
+    
   // Make sure the variance of the variance is valid
   testPostcondition( !ST::isnaninf( vov ) );
   testPostcondition( vov >= 0.0 );

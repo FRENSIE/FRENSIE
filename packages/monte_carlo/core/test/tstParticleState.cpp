@@ -339,6 +339,24 @@ TEUCHOS_UNIT_TEST( ParticleState, copy_constructor )
 		 particle_gen_b.getGenerationNumber()+1u );
   TEST_EQUALITY( particle_gen_c.getWeight(),
 		 particle_gen_b.getWeight() );
+
+  // Create a second third generation particle after the second gen particle
+  // has been set to gone
+  particle_gen_b.setAsGone();
+
+  TestParticleState particle_gen_2c( particle_gen_b, true );
+
+  TEST_ASSERT( !particle_gen_2c.isGone() );
+  TEST_ASSERT( !particle_gen_2c.isLost() );
+
+  // Create a second second generation particle after the first gen particle
+  // has been set to lost
+  particle_gen_a.setAsLost();
+
+  TestParticleState particle_gen_2b( particle_gen_a, true );
+
+  TEST_ASSERT( !particle_gen_2b.isGone() );
+  TEST_ASSERT( !particle_gen_2b.isLost() );
 }
 
 //---------------------------------------------------------------------------//

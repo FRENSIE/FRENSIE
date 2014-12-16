@@ -88,6 +88,25 @@ void CellTrackLengthFluxEstimator<
   printImplementation( os, "Cell" );
 }
 
+// Assign bin boundaries to an estimator dimension
+template<typename ContributionMultiplierPolicy>
+void CellTrackLengthFluxEstimator<
+                            ContributionMultiplierPolicy>::assignBinBoundaries(
+         const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
+{
+  if( bin_boundaries->getDimension() == TIME_DIMENSION )
+  {
+    std::cerr << "Warning: " << bin_boundaries->getDimensionName()
+	      << " bins cannot be set for cell track length flux estimators "
+	      << "yet. The bins requested for cell track length flux "
+	      << "estimator " << this->getId() << " will be ignored."
+	      << std::endl;
+  }
+  else
+    StandardCellEstimator::assignBinBoundaries( bin_boundaries );
+
+}
+
 } // end MonteCarlo namespace
 
 #endif // end FACEMC_CELL_TRACK_LENGTH_FLUX_ESTIMATOR_DEF_HPP

@@ -18,6 +18,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CollisionHandler.hpp"
+#include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 
 namespace MonteCarlo{
 
@@ -48,9 +49,11 @@ private:
   static void validateMaterialIdsUsingDagMC( 
 				 const Teuchos::ParameterList& material_reps );
 
-  // Create the set of all nuclides needed to construct materials
-  static void createNuclideSet( const Teuchos::ParameterList& material_reps,
-				boost::unordered_set<std::string>& nuclides );
+  // Create the set of all nuclides/atoms needed to construct materials
+  static void createAliasSet( 
+		       const Teuchos::ParameterList& material_reps,
+		       const Teuchos::ParameterList& cross_sections_alias_map,
+		       boost::unordered_set<std::string>& nuclides );
 
   // Create the material id data maps
   static void createMaterialIdDataMaps( 
@@ -58,21 +61,77 @@ private:
     boost::unordered_map<ModuleTraits::InternalMaterialHandle,
                          Teuchos::Array<double> >& material_id_fraction_map,
     boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                      Teuchos::Array<std::string> >& material_id_nuclide_map );
+                    Teuchos::Array<std::string> >& material_id_component_map );
+
+  // Create the cell id data maps using DagMC
+  static void createCellIdDataMapsUsingDagMC(
+         boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                              std::vector<std::string> >& cell_id_mat_id_map,
+	 boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                             std::vector<std::string> >& cell_id_density_map );
 
   // Create the material name data maps
-  static void createMaterialNameDataMapsUsingDagMC(
-     const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+  template<typename ScatteringCenterType, typename MaterialType>
+  static void createMaterialNameDataMaps(
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
                             Teuchos::Array<double> >& material_id_fraction_map,
-     const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                        Teuchos::Array<std::string> >& material_id_nuclide_map,
-     const boost::unordered_map<std::string,Teuchos::RCP<Nuclide> >& 
-     nuclide_map,
-     boost::unordered_map<std::string,Teuchos::RCP<NeutronMaterial> >&
-     material_name_pointer_map,
-     boost::unordered_map<std::string,
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                      Teuchos::Array<std::string> >& material_id_component_map,
+   const boost::unordered_map<std::string,Teuchos::RCP<ScatteringCenterType> >&
+   scattering_center_map,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                              std::vector<std::string> >& cell_id_mat_id_map,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                               std::vector<std::string> >& cell_id_density_map,
+   boost::unordered_map<std::string,Teuchos::RCP<MaterialType> >&
+   material_name_pointer_map,
+   boost::unordered_map<std::string,
                   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >&
-     material_name_cell_ids_map );  
+   material_name_cell_ids_map );  
+
+  // Register materials with the collision handler
+  template<typename MaterialType>
+  static void registerMaterials(
+   const boost::unordered_map<std::string,Teuchos::RCP<MaterialType> >&
+   material_name_pointer_map,
+   const boost::unordered_map<std::string,
+                  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >&
+   material_name_cell_ids_map );
+  
+  // Create the neutron materials
+  static void createNeutronMaterials( 
+   const Teuchos::ParameterList& cross_sections_table_info,
+   const std::string& cross_sections_xml_directory,
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                            Teuchos::Array<double> >& material_id_fraction_map,
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                      Teuchos::Array<std::string> >& material_id_component_map,
+   const boost::unordered_set<std::string>& nuclide_aliases,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                              std::vector<std::string> >& cell_id_mat_id_map,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                             std::vector<std::string> >& cell_id_density_map );
+   
+  // Create the photon materials
+  static void createPhotonMaterials(
+   const Teuchos::ParameterList& cross_sections_table_info,
+   const std::string& cross_sections_xml_directory,
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                            Teuchos::Array<double> >& material_id_fraction_map,
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                      Teuchos::Array<std::string> >& material_id_component_map,
+   const boost::unordered_set<std::string>& photoatom_aliases,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                              std::vector<std::string> >& cell_id_mat_id_map,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                               std::vector<std::string> >& cell_id_density_map,
+   const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+   atomic_relaxation_model_factory,
+   const bool use_doppler_broadening_data,
+   const bool use_detailed_pair_production_data,
+   const bool use_atomic_relaxation_data,
+   const bool use_photonuclear_data );
+			 
 };
 
 //! The invalid material representation error
@@ -87,6 +146,14 @@ public:
 };
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_CollisionHandlerFactory_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_COLLISION_HANDLER_FACTORY_HPP
 

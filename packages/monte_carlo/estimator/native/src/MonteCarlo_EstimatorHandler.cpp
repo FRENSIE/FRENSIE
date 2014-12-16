@@ -21,6 +21,19 @@ unsigned EstimatorHandler::getNumberOfEstimators()
   return EstimatorHandler::master_array.size();
 }
 
+// Enable support for multiple threads
+void EstimatorHandler::enableThreadSupport( const unsigned num_threads )
+{
+  EstimatorArray::iterator it = EstimatorHandler::master_array.begin();
+  
+  while( it != EstimatorHandler::master_array.end() )
+  {
+    (*it)->enableThreadSupport( num_threads );
+    
+    ++it;
+  }
+}
+
 // Commit the estimator history contributions
 void EstimatorHandler::commitEstimatorHistoryContributions()
 {
@@ -52,6 +65,58 @@ void EstimatorHandler::printEstimators( std::ostream& os,
   while( it != EstimatorHandler::master_array.end() )
   {
     os << *(*it) << std::endl;
+
+    ++it;
+  }
+}
+
+// Reduce the estimator data on all processes in comm and collect on the root
+void EstimatorHandler::reduceEstimatorData(
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process )
+{
+  EstimatorArray::iterator it = EstimatorHandler::master_array.begin();
+
+  while( it != EstimatorHandler::master_array.end() )
+  {
+    (*it)->reduceData( comm, root_process );
+
+    ++it;
+  }
+}
+
+// Export the estimator data
+void EstimatorHandler::exportEstimatorData( 
+				  const std::string& data_file_name,
+				  const unsigned long long last_history_number,
+				  const unsigned long long histories_completed,
+				  const double start_time,
+				  const double end_time,
+				  const bool process_data )
+{
+  // Initialize the HDF5 file
+  EstimatorHDF5FileHandler hdf5_file_handler( data_file_name );
+
+  // Set the simulation time
+  hdf5_file_handler.setSimulationTime( end_time - start_time );
+
+  Estimator::setStartTime( start_time );
+  Estimator::setEndTime( end_time );
+  
+  // Set the last history simulated
+  hdf5_file_handler.setLastHistorySimulated( last_history_number );
+
+  // Set the number of histories simulated
+  hdf5_file_handler.setNumberOfHistoriesSimulated( histories_completed );
+
+  Estimator::setNumberOfHistories( histories_completed );
+
+  // Export the data in each estimator
+  EstimatorArray::iterator it = EstimatorHandler::master_array.begin();
+
+  while( it != EstimatorHandler::master_array.end() )
+  {
+    (*it)->exportData( hdf5_file_handler, process_data );
 
     ++it;
   }

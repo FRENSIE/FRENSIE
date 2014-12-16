@@ -30,9 +30,9 @@ CoherentPhotonScatteringDistribution::CoherentPhotonScatteringDistribution(
 
 // Randomly scatter the photon
 void CoherentPhotonScatteringDistribution::scatterPhoton( 
-					 PhotonState& photon,
-					 ParticleBank& bank,
-					 unsigned& shell_of_interaction ) const
+				     PhotonState& photon,
+				     ParticleBank& bank,
+				     SubshellType& shell_of_interaction ) const
 {
   // The wavelength of the photon (cm)
   const double wavelength = ( Utility::PhysicalConstants::planck_constant*
@@ -57,7 +57,7 @@ void CoherentPhotonScatteringDistribution::scatterPhoton(
   // A random number
   double random_number;
 
-  shell_of_interaction = std::numeric_limits<unsigned>::max();
+  shell_of_interaction = UNKNOWN_SUBSHELL;
 
   // Ignore coherent scattering at energies where scattering is 
   // highly forward peaked
@@ -67,19 +67,18 @@ void CoherentPhotonScatteringDistribution::scatterPhoton(
     // Sample the form factor squared arg from the form factor function squared,
     // reject with reject function: R( scattering_angle_cosine )
     do{
-    // Randomly sample the form factor squared
-    form_factor_arg_squared = d_form_factor_function_squared->
-                                 sample( max_form_factor_arg_squared );
+      // Randomly sample the form factor squared
+      form_factor_arg_squared = 
+	d_form_factor_function_squared->sample( max_form_factor_arg_squared );
+      
+      // Calc. the outgoing photon angle cosine from the sampled form factor 
+      scattering_angle_cosine = 
+	1.0 - 2.0*wavelength_sqr*form_factor_arg_squared;
 
-    // Calculate the outgoing photon angle cosine from the sampled form factor 
-    scattering_angle_cosine = 1.0 - 2.0*wavelength_sqr*form_factor_arg_squared;
-
-   std::cout << scattering_angle_cosine << std::endl;
-   std::cout << form_factor_arg_squared << std::endl;
-
-    random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
-    }while( random_number > 0.5*( 
-            1.0 + scattering_angle_cosine*scattering_angle_cosine ) );
+      random_number = 
+	Utility::RandomNumberGenerator::getRandomNumber<double>();
+    }while( random_number > 
+	    0.5*( 1.0 + scattering_angle_cosine*scattering_angle_cosine ) );
 
     // Calculate the outgoing direction
    double outgoing_photon_direction[3];

@@ -42,6 +42,9 @@ public:
   static void setHandlerInstance(
 	     const Teuchos::RCP<MonteCarlo::EstimatorHandler>& estimator_handler );
 
+  //! Enable support for multiple threads
+  static void enableThreadSupport( const unsigned num_threads );
+
   //! Update the estimators from a particle generation event
   static void updateEstimatorsFromParticleGenerationEvent(
 					       const ParticleState& particle );
@@ -72,6 +75,19 @@ public:
 			       const double start_time,
 			       const double end_time );
 
+  //! Reduce estimator data on all processes in comm and collect on the root
+  static void reduceEstimatorData(
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process );
+
+  //! Export the estimator data
+  static void exportEstimatorData(const std::string& data_file_name,
+				  const unsigned long long last_history_number,
+				  const unsigned long long histories_completed,
+				  const double start_time,
+				  const double end_time,
+				  const bool process_data );
+
   //! Get the internal estimator handle corresponding to the external handle
   static InternalEstimatorHandle getInternalEstimatorHandle(
 			    const ExternalEstimatorHandle estimator_external );
@@ -88,6 +104,12 @@ inline void
 EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::setHandlerInstance(
 	      const Teuchos::RCP<MonteCarlo::EstimatorHandler>& estimator_handler )
 { /* ... */ }
+
+// Enable support for multiple threads
+inline void enableThreadSupport( const unsigned num_threads )
+{
+  EstimatorHandler::enableThreadSupport( num_threads );
+}
 
 // Update the estimators from a particle generation event
 inline void 
@@ -174,6 +196,30 @@ EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::printEstimators(
 					     num_histories,
 					     start_time,
 					     end_time );
+}
+
+// Reduce estimator data on all processes in comm and collect on the root
+inline void reduceEstimatorData(
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process )
+{
+  EstimatorHandler::reduceEstimatorData( comm, root_process );
+}
+
+// Export the estimator data
+inline void exportEstimatorData( const std::string& data_file_name,
+				 const unsigned long long last_history_number,
+				 const unsigned long long histories_completed,
+				 const double start_time,
+				 const double end_time,
+				 const bool process_data )
+{
+  EstimatorHandler::exportEstimatorData( data_file_name,
+					 last_history_number,
+					 histories_completed,
+					 start_time,
+					 end_time,
+					 process_data );
 }
 
 // Get the internal estimator handle corresponding to the external handle

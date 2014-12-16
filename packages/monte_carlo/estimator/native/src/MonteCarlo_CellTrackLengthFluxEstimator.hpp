@@ -54,6 +54,12 @@ public:
 
   //! Print the estimator data
   void print( std::ostream& os ) const;
+
+private:
+
+  // Assign bin boundaries to an estimator dimension
+  void assignBinBoundaries(
+	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
 };
 
 } // end MonteCarlo namespace

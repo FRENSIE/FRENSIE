@@ -37,9 +37,10 @@ public:
   //! Default Constructor
   DiscreteDistribution();
 
-  //! Constructor
+  //! Constructor 
   DiscreteDistribution( const Teuchos::Array<double>& independent_values,
-			const Teuchos::Array<double>& dependent_values );
+			const Teuchos::Array<double>& dependent_values,
+			const bool interpret_dependent_values_as_cdf = false );
   
   //! Copy constructor
   DiscreteDistribution( const DiscreteDistribution& dist_instance );

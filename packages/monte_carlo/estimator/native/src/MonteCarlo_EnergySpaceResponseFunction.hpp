@@ -23,6 +23,7 @@ public:
   
   //! Constructor
   EnergySpaceResponseFunction( 
+	   const unsigned id,
 	   const std::string& name,
 	   const Teuchos::RCP<Utility::OneDDistribution> energy_distribution );
 

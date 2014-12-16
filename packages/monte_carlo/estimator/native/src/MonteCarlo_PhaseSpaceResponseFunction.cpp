@@ -14,13 +14,14 @@ namespace MonteCarlo{
 
 // Constructor
 PhaseSpaceResponseFunction::PhaseSpaceResponseFunction(
+	const unsigned id,
         const std::string& name,			      
 	const Teuchos::RCP<Utility::SpatialDistribution>& spatial_distribution,
 	const Teuchos::RCP<Utility::DirectionalDistribution>& 
 	directional_distribution,
 	const Teuchos::RCP<Utility::OneDDistribution>& energy_distribution,
 	const Teuchos::RCP<Utility::OneDDistribution>& time_distribution )
-  : ResponseFunction( name ),
+  : ResponseFunction( id, name ),
     d_spatial_distribution( spatial_distribution ),
     d_directional_distribution( directional_distribution ),
     d_energy_distribution( energy_distribution ),
