@@ -63,7 +63,7 @@ public:
   bool isEntityAssigned( const EntityId& entity_id ) const;
 
   //! Reduce estimator data on all processes and collect on the root process
-  virtual void reduceEstimatorData(
+  virtual void reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process );
 

@@ -88,7 +88,7 @@ public:
   void enableThreadSupport( const unsigned num_threads );
 
   //! Reduce estimator data on all processes and collect on the root process
-  void reduceEstimatorData(
+  void reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process );
 

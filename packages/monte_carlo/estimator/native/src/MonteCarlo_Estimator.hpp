@@ -122,16 +122,16 @@ public:
   //! Check if the estimator has uncommitted history contributions
   bool hasUncommittedHistoryContribution() const;
 
+  //! Enable support for multiple threads
+  virtual void enableThreadSupport( const unsigned num_threads );
+
   //! Commit the contribution from the current history to the estimator
   virtual void commitHistoryContribution() = 0;
 
   //! Reduce estimator data on all processes in comm and collect on the root 
-  virtual void reduceEstimatorData( 
+  virtual void reduceData( 
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process ) = 0;
-
-  //! Enable support for multiple threads
-  virtual void enableThreadSupport( const unsigned num_threads );
 
   //! Export the estimator data
   virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,

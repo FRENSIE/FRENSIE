@@ -180,7 +180,7 @@ void StandardEntityEstimator<EntityId>::enableThreadSupport(
 
 // Reduce estimator data on all processes and collect on the root process
 template<typename EntityId>
-void StandardEntityEstimator<EntityId>::reduceEstimatorData(
+void StandardEntityEstimator<EntityId>::reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process )  
 {
@@ -192,7 +192,7 @@ void StandardEntityEstimator<EntityId>::reduceEstimatorData(
   // Make sure the comm is valid
   testPrecondition( !comm.is_null() );
 
-  EntityEstimator<EntityId>::reduceEstimatorData( comm, root_process );
+  EntityEstimator<EntityId>::reduceData( comm, root_process );
 
   const Teuchos::MpiComm<unsigned long long>* mpi_comm = 
     dynamic_cast<const Teuchos::MpiComm<unsigned long long>* >( 

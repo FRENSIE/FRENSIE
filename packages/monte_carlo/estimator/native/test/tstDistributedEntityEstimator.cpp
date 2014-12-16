@@ -69,7 +69,7 @@ public:
 //---------------------------------------------------------------------------//
 // Check that estimator data on all processes can be reduced
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
-				   reduceEstimatorData,
+				   reduceData,
 				   EntityId )
 {
   Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
@@ -143,7 +143,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
   
   comm->barrier();
   
-  entity_estimator->reduceEstimatorData( comm, 0 );
+  entity_estimator->reduceData( comm, 0 );
 
   unsigned procs = comm->getSize();
   MonteCarlo::Estimator::setNumberOfHistories( procs );
@@ -234,7 +234,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
   comm->barrier();
 }
 
-UNIT_TEST_INSTANTIATION( EntityEstimator, reduceEstimatorData )
+UNIT_TEST_INSTANTIATION( EntityEstimator, reduceData )
 
 //---------------------------------------------------------------------------//
 // Custom main function
