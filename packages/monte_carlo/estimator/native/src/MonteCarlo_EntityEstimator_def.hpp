@@ -12,13 +12,15 @@
 // Std Lib Includes
 #include <sstream>
 
-// Trilinos Includes
-#include <Teuchos_CommHelpers.hpp>
-
 // FRENSIE Includes
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 #include "FRENSIE_mpi_config.hpp"
+
+// Trilinos Includes
+#ifdef HAVE_FRENSIE_MPI
+#include <Teuchos_CommHelpers.hpp>
+#endif
 
 namespace MonteCarlo{
 
@@ -137,7 +139,7 @@ inline bool EntityEstimator<EntityId>::isEntityAssigned(
 
 // Reduce estimator data on all processes and collect on the root process
 template<typename EntityId>
-void EntityEstimator<EntityId>::reduceEstimatorData(
+void EntityEstimator<EntityId>::reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process )
 {

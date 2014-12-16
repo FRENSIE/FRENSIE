@@ -60,7 +60,7 @@ public:
 //---------------------------------------------------------------------------//
 // Check that a partial history contribution can be added to the estimator
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
-				   addPartialHistoryContribution,
+				   reduceData,
 				   EntityId )
 {
   Teuchos::RCP<MonteCarlo::Estimator> estimator_base;
@@ -244,7 +244,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   comm->barrier();
 
   // Reduce estimator data
-  estimator_base->reduceEstimatorData( comm, 0 );
+  estimator_base->reduceData( comm, 0 );
 
   unsigned procs = comm->getSize();
 
@@ -401,8 +401,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
   comm->barrier();
 }
 
-UNIT_TEST_INSTANTIATION( StandardEntityEstimator,
-			 addPartialHistoryContribution );
+UNIT_TEST_INSTANTIATION( StandardEntityEstimator, reduceData );
 
 //---------------------------------------------------------------------------//
 // Custom main function

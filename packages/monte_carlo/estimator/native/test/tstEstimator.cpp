@@ -47,7 +47,7 @@ public:
   void commitHistoryContribution()
   { /* ... */ }
 
-  void reduceEstimatorData(
+  void reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process )
   { /* ... */ }
