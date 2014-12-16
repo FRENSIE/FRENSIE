@@ -47,6 +47,11 @@ public:
   void commitHistoryContribution()
   { /* ... */ }
 
+  void reduceEstimatorData(
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process )
+  { /* ... */ }
+
   // Allow public access to the estimator protected member functions
   using MonteCarlo::Estimator::DimensionValueMap;
   using MonteCarlo::Estimator::setHasUncommittedHistoryContribution;

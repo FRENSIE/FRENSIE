@@ -62,6 +62,11 @@ public:
   //! Check if the entity is assigned to this estimator
   bool isEntityAssigned( const EntityId& entity_id ) const;
 
+  //! Reduce estimator data on all processes and collect on the root process
+  virtual void reduceEstimatorData(
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process );
+
   //! Export the estimator data
   virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,
 			   const bool process_data ) const;
@@ -129,7 +134,7 @@ private:
   // Bool that records if entity norm constants were supplied
   bool d_supplied_norm_constants;
 
-  // The estimator moments (1st,2nd,3rd,4th) for each bin of the total
+  // The estimator moments (1st,2nd) for each bin of the total
   TwoEstimatorMomentsArray d_estimator_total_bin_data;
 
   // The estimator moments (1st,2nd) for each bin and each entity

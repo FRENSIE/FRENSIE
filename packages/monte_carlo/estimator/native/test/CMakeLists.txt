@@ -48,6 +48,18 @@ IF(${FRENSIE_ENABLE_OPENMP})
   ADD_TEST(SharedParallelEntityEstimator_4_test tstEntityEstimator --threads=4)
 ENDIF()
 
+IF(${FRENSIE_ENABLE_MPI})
+  Add_EXECUTABLE(tstDistributedEntityEstimator 
+    tstDistributedEntityEstimator.cpp)
+  TARGET_LINK_LIBRARIES(tstDistributedEntityEstimator monte_carlo_estimator_native)
+  ADD_TEST(DistributedParallelEntityEstimator_1_test 
+    ${MPIEXEC} -n 2 tstDistributedEntityEstimator)
+  ADD_TEST(DistributedParallelEntityEstimator_2_test 
+    ${MPIEXEC} -n 2 tstDistributedEntityEstimator)
+  ADD_TEST(DistributedParallelEntityEstimator_4_test 
+    ${MPIEXEC} -n 2 tstDistributedEntityEstimator)
+ENDIF()
+
 Add_EXECUTABLE(tstStandardEntityEstimator tstStandardEntityEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstStandardEntityEstimator monte_carlo_estimator_native)
 ADD_TEST(StandardEntityEstimator_test tstStandardEntityEstimator)
@@ -57,6 +69,18 @@ IF(${FRENSIE_ENABLE_OPENMP})
     tstStandardEntityEstimator --threads=2)
   ADD_TEST(SharedParallelStandardEntityEstimator_4_test 
     tstStandardEntityEstimator --threads=4)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_MPI})
+  Add_EXECUTABLE(tstDistributedStandardEntityEstimator 
+    tstDistributedStandardEntityEstimator.cpp)
+  TARGET_LINK_LIBRARIES(tstDistributedStandardEntityEstimator monte_carlo_estimator_native)
+  ADD_TEST(DistributedParallelStandardEntityEstimator_1_test 
+    ${MPIEXEC} -n 2 tstDistributedStandardEntityEstimator)
+  ADD_TEST(DistributedParallelStandardEntityEstimator_2_test 
+    ${MPIEXEC} -n 2 tstDistributedStandardEntityEstimator)
+  ADD_TEST(DistributedParallelStandardEntityEstimator_4_test 
+    ${MPIEXEC} -n 2 tstDistributedStandardEntityEstimator)
 ENDIF()
 
 Add_EXECUTABLE(tstStandardSurfaceEstimator
