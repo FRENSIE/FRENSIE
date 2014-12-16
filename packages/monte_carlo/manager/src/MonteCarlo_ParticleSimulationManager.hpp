@@ -47,8 +47,12 @@ private:
 
 public:
 
-  //! Constructor for multiple threads
-  ParticleSimulationManager( const unsigned number_of_histories );
+  //! Constructor 
+  ParticleSimulationManager( 
+			  const unsigned number_of_histories,
+			  const unsigned start_history = 0u,
+			  const unsigned previously_completed_histories = 0u,
+			  const double previous_run_time = 0.0 );
 
   //! Destructor
   ~ParticleSimulationManager()
@@ -60,17 +64,24 @@ public:
   //! Print the data in all estimators to the desired stream
   void printSimulationSummary( std::ostream &os ) const;
 
+  //! Export the simulation data (to an hdf5 file)
+  void exportSimulationData( const std::string& data_file_name ) const;
+
   // Signal handler
   void signalHandler(int signal);
 
 private:
 
   // Simulate an individual particle
-  void simulateParticle( ParticleState& particle,
+  template<typename ParticleStateType>
+  void simulateParticle( ParticleStateType& particle,
 			 ParticleBank& particle_bank );
 
   // Print simulation state info in collision handler
   void printSimulationStateInfo();
+
+  // Starting history
+  unsigned d_start_history;
   
   // Number of particle histories to simulate
   unsigned d_history_number_wall;
@@ -80,6 +91,9 @@ private:
 
   // Flag for ending simulation early
   bool d_end_simulation;
+
+  // The previous run time
+  double d_previous_run_time;
 
   // The simulation start time
   double d_start_time;

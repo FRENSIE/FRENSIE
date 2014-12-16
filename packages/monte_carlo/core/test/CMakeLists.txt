@@ -53,3 +53,20 @@ IF( ${FRENSIE_ENABLE_OPENMP} AND ${FRENSIE_ENABLE_MPI})
   ADD_TEST(HybridParallelParticleBank_4_4_test
     ${MPIEXEC} -n 4 tstParticleBank --threads=4)
 ENDIF()
+
+ADD_EXECUTABLE(tstStandardComptonProfileSubshellConverter
+  tstStandardComptonProfileSubshellConverter.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstStandardComptonProfileSubshellConverter monte_carlo_core)
+ADD_TEST(StandardComptonProfileSubshellConverter_test tstStandardComptonProfileSubshellConverter)
+
+ADD_EXECUTABLE(tstSimulationProperties 
+  tstSimulationProperties.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSimulationProperties monte_carlo_core)
+ADD_TEST(SimulationProperties_test tstSimulationProperties)
+
+ADD_EXECUTABLE(tstSimulationPropertiesFactory 
+  tstSimulationPropertiesFactory.cpp)
+TARGET_LINK_LIBRARIES(tstSimulationPropertiesFactory monte_carlo_core)
+ADD_TEST(SimulationPropertiesFactory_test tstSimulationPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")

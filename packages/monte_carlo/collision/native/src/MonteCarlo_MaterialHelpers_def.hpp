@@ -142,6 +142,11 @@ inline void normalizeFractionValues( Iterator start, Iterator end )
 }
 
 // Convert a set of weight fractions to atom fractions
+/*! \details The extractor is used to get that atomic weight or
+ * atomic weight ratio (atomic weight divided by the neutron weight) from
+ * the AtomicWgtIterator. Not that extracting either the atomic weight or
+ * the atomic weight ratio is valid due to the normalization that occurs.
+ */
 template<Utility::TupleMember fracMember, 
 	 Utility::TupleMember atomicWgtMember,
 	 typename FracIterator,

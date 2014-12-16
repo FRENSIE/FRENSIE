@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PHOTON_STATE_HPP
-#define FACEMC_PHOTON_STATE_HPP
+#ifndef MONTE_CARLO_PHOTON_STATE_HPP
+#define MONTE_CARLO_PHOTON_STATE_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
@@ -60,7 +60,7 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_PHOTON_STATE_HPP
+#endif // end MONTE_CARLO_PHOTON_STATE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_PhotonState.hpp

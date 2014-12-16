@@ -653,7 +653,7 @@ WARN_LOGFILE           = warn.log
 # with spaces.
 
 INPUT                  = ${CMAKE_SOURCE_DIR}/packages/ \
-		        ${CMAKE_SOURCE_DIR}/cli/ \
+		        ${CMAKE_SOURCE_DIR}/tools/ \
 		        ${CMAKE_SOURCE_DIR}/README.md \
 		        ${CMAKE_CURRENT_SOURCE_DIR} \
 

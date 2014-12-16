@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstStandardPhotoatomicReaction
+//! \file   tstStandardPhotoatomicReaction.cpp
 //! \author Alex Robinson
 //! \brief  Standard photoatomic reaction unit tests.
 //!
@@ -57,8 +57,12 @@ public:
   unsigned getNumberOfEmittedPhotons( const double energy ) const
   { return 1u; }
 
+  MonteCarlo::PhotoatomicReactionType getReactionType() const
+  { return MonteCarlo::TOTAL_PHOTOATOMIC_REACTION; }
+
   void react( MonteCarlo::PhotonState& photon,
-	      MonteCarlo::ParticleBank& bank ) const
+	      MonteCarlo::ParticleBank& bank,
+	      MonteCarlo::SubshellType& shell_of_interaction ) const
   { /* ... */ }
 };
 

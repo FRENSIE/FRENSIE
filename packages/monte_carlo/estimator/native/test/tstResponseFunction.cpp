@@ -31,6 +31,17 @@ TEUCHOS_UNIT_TEST( ResponseFunction, getName )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the response function id can be returned
+TEUCHOS_UNIT_TEST( ResponseFunction, getId )
+{
+  Teuchos::RCP<MonteCarlo::ResponseFunction> response_function= 
+    MonteCarlo::ResponseFunction::default_response_function;
+
+  TEST_EQUALITY_CONST( response_function->getId(), 
+		       std::numeric_limits<unsigned>::max() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the response function can be evaluated
 TEUCHOS_UNIT_TEST( ResponseFunction, evaluate )
 {

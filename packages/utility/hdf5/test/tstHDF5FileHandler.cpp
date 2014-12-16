@@ -208,6 +208,21 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, openHDF5FileAndReadOnly )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the HDF5FileHandler can be return if it has a file open
+TEUCHOS_UNIT_TEST( HDF5FileHandler, hasOpenFile )
+{
+  Utility::HDF5FileHandler hdf5_file_handler;
+
+  hdf5_file_handler.openHDF5FileAndAppend( HDF5_TEST_FILE_NAME );
+
+  TEST_ASSERT( hdf5_file_handler.hasOpenFile() );
+
+  hdf5_file_handler.closeHDF5File();
+
+  TEST_ASSERT( !hdf5_file_handler.hasOpenFile() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can create the necessary parent groups
 // for a dataset
 TEUCHOS_UNIT_TEST( HDF5FileHandler, createParentGroups )
@@ -227,6 +242,82 @@ TEUCHOS_UNIT_TEST( HDF5FileHandler, createParentGroups )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the HDF5FileHandler can test if a group exists
+TEUCHOS_UNIT_TEST( HDF5FileHandler, doesGroupExist )
+{
+  TestingHDF5FileHandler hdf5_file_handler;
+
+  hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
+
+  hdf5_file_handler.createParentGroups( "/data/test" );
+  
+  TEST_ASSERT( hdf5_file_handler.doesGroupExist( "/data" ) );
+  TEST_ASSERT( !hdf5_file_handler.doesGroupExist( "/bad_group" ) );
+
+  hdf5_file_handler.closeHDF5File();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the HDF5FileHandler can test if a group attribute exists
+TEUCHOS_UNIT_TEST( HDF5FileHandler, doesGroupAttributeExist )
+{
+  TestingHDF5FileHandler hdf5_file_handler;
+
+  hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
+
+  hdf5_file_handler.writeValueToGroupAttribute( 1.0, "/data/", "attrib" );
+
+  hdf5_file_handler.createParentGroups( "/data2/test" );
+
+  TEST_ASSERT( hdf5_file_handler.doesGroupAttributeExist( "/data", "attrib" ));
+  TEST_ASSERT(!hdf5_file_handler.doesGroupAttributeExist( "/data2", "attrib"));
+  TEST_ASSERT(!hdf5_file_handler.doesGroupAttributeExist( "/data3", "attrib"));
+}
+
+//---------------------------------------------------------------------------//
+// Check that the HDF5FileHandler can check if a dataset exists
+TEUCHOS_UNIT_TEST( HDF5FileHandler, doesDataSetExist )
+{
+  Utility::HDF5FileHandler hdf5_file_handler;
+
+  hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
+
+  Teuchos::Array<double> raw_data( 100, 1.0 );
+  
+  hdf5_file_handler.writeArrayToDataSet( raw_data, "/data/test" );
+
+  TEST_ASSERT( hdf5_file_handler.doesDataSetExist( "/data/test" ) );
+  TEST_ASSERT( !hdf5_file_handler.doesDataSetExist( "/data/bad_set" ) );
+
+  hdf5_file_handler.closeHDF5File();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the HDF5FileHandler can check if a dataset attribute exists
+TEUCHOS_UNIT_TEST( HDF5FileHandler, doesDataSetAttributeExist )
+{
+  TestingHDF5FileHandler hdf5_file_handler;
+
+  hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
+
+  Teuchos::Array<double> raw_data( 100, 1.0 );
+
+  hdf5_file_handler.writeArrayToDataSet( raw_data, "/data/test" );
+  hdf5_file_handler.writeValueToDataSetAttribute( 1.0,
+						  "/data/test",
+						  "attrib" );
+
+  hdf5_file_handler.writeArrayToDataSet( raw_data, "/data2/test" );
+
+  TEST_ASSERT( hdf5_file_handler.doesDataSetAttributeExist( "/data/test",
+							    "attrib" ) );
+  TEST_ASSERT( !hdf5_file_handler.doesDataSetAttributeExist( "/data2/test",
+							     "attrib" ) );
+  TEST_ASSERT( !hdf5_file_handler.doesDataSetAttributeExist( "/data3/test",
+							     "attrib" ) );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the HDF5FileHandler can write an Array of Type to a dataset in 
 // an HDF5 file
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler, 
@@ -235,6 +326,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 {
   Utility::HDF5FileHandler hdf5_file_handler;
 
+  // Write data to a new data set
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
   typedef typename Utility::ArrayTraits<array>::value_type value_type;
@@ -246,10 +338,16 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   array data;
   Utility::copyArrayView( data, raw_data() );
 
-  // If the dataset is not written successfuly, an exception will be thrown
-  // and caught inside of the member function, causing a program exit.
-  // Therefore, no TEST macro is needed.
-  hdf5_file_handler.writeArrayToDataSet( data, DATASET_NAME );
+  TEST_ASSERT( !hdf5_file_handler.doesDataSetExist( DATASET_NAME ) );
+  TEST_NOTHROW( hdf5_file_handler.writeArrayToDataSet( data, DATASET_NAME ) );
+
+  hdf5_file_handler.closeHDF5File();
+
+  // Write data to an existing data set
+  hdf5_file_handler.openHDF5FileAndAppend( HDF5_TEST_FILE_NAME );
+
+  TEST_ASSERT( hdf5_file_handler.doesDataSetExist( DATASET_NAME ) );
+  TEST_NOTHROW( hdf5_file_handler.writeArrayToDataSet( data, DATASET_NAME ) );
 
   hdf5_file_handler.closeHDF5File();
 }
@@ -318,6 +416,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 				   writeArrayToDataSetAttribute,
 				   array )
 {
+  // Write data to a new data set attribute
   Utility::HDF5FileHandler hdf5_file_handler;
 
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
@@ -336,13 +435,25 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   array data;
   Utility::copyArrayView( data, raw_data() );
 
-  // If the dataset attribute is not written successfuly, an exception will be 
-  // thrown and caught inside of the member function, causing a program exit.
-  // Therefore, no TEST macro is needed.
-  hdf5_file_handler.writeArrayToDataSetAttribute( data,
-						  DATASET_NAME,
-						  ATTRIBUTE_NAME );
+  TEST_ASSERT( !hdf5_file_handler.doesDataSetAttributeExist( DATASET_NAME,
+							     ATTRIBUTE_NAME ));
+  TEST_NOTHROW( hdf5_file_handler.writeArrayToDataSetAttribute( 
+							    data,
+							    DATASET_NAME,
+							    ATTRIBUTE_NAME ) );
   
+  hdf5_file_handler.closeHDF5File();
+
+  // Write data to an existing data set attribute
+  hdf5_file_handler.openHDF5FileAndAppend( HDF5_TEST_FILE_NAME );
+
+  TEST_ASSERT( hdf5_file_handler.doesDataSetAttributeExist( DATASET_NAME,
+							    ATTRIBUTE_NAME ) );
+  TEST_NOTHROW( hdf5_file_handler.writeArrayToDataSetAttribute( 
+							    data,
+							    DATASET_NAME,
+							    ATTRIBUTE_NAME ) );
+
   hdf5_file_handler.closeHDF5File();
 }
 
@@ -421,6 +532,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 {
   Utility::HDF5FileHandler hdf5_file_handler;
 
+  // Write a value to an existing data set attribute
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
   Type test_value = Utility::HDF5TypeTraits<Type>::one();
@@ -430,12 +542,24 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   hdf5_file_handler.writeArrayToDataSet( data,
 					 DATASET_NAME );
 
-  // If the dataset attribute is not written successfuly, an exception will be 
-  // thrown and caught inside of the member function, causing a program exit.
-  // Therefore, no TEST macro is needed.
-  hdf5_file_handler.writeValueToDataSetAttribute( test_value,
-						  DATASET_NAME,
-						  ATTRIBUTE_NAME );
+  TEST_ASSERT( !hdf5_file_handler.doesDataSetAttributeExist( DATASET_NAME,
+							     ATTRIBUTE_NAME ));
+  TEST_NOTHROW( hdf5_file_handler.writeValueToDataSetAttribute( 
+							    test_value,
+							    DATASET_NAME,
+							    ATTRIBUTE_NAME ) );
+
+  hdf5_file_handler.closeHDF5File();
+
+  // Write a value to an existing data set attribute
+  hdf5_file_handler.openHDF5FileAndAppend( HDF5_TEST_FILE_NAME );
+
+  TEST_ASSERT( hdf5_file_handler.doesDataSetAttributeExist( DATASET_NAME,
+							    ATTRIBUTE_NAME ) );
+  TEST_NOTHROW( hdf5_file_handler.writeValueToDataSetAttribute( 
+							    test_value,
+							    DATASET_NAME,
+							    ATTRIBUTE_NAME ) );
 
   hdf5_file_handler.closeHDF5File();
 }
@@ -485,6 +609,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 {
   Utility::HDF5FileHandler hdf5_file_handler;
 
+  // Write array to new group attribute
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
   typedef typename Utility::ArrayTraits<array>::value_type value_type;
@@ -495,12 +620,24 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
   array data;
   Utility::copyArrayView( data, raw_data() );
 
-  // If the group attribute is not written successfuly, an exception will be 
-  // thrown and caught inside of the member function, causing a program exit.
-  // Therefore, no TEST macro is needed.
-  hdf5_file_handler.writeArrayToGroupAttribute( data,
-						CHILD_GROUP,
-						ATTRIBUTE_NAME );
+  TEST_ASSERT( !hdf5_file_handler.doesGroupAttributeExist( CHILD_GROUP,
+							   ATTRIBUTE_NAME ) );
+  TEST_NOTHROW( hdf5_file_handler.writeArrayToGroupAttribute( 
+							    data,
+							    CHILD_GROUP,
+							    ATTRIBUTE_NAME ) );
+
+  hdf5_file_handler.closeHDF5File();
+
+  // Write array to existing group attribute
+  hdf5_file_handler.openHDF5FileAndAppend( HDF5_TEST_FILE_NAME );
+
+  TEST_ASSERT( hdf5_file_handler.doesGroupAttributeExist( CHILD_GROUP,
+							  ATTRIBUTE_NAME ) );
+  TEST_NOTHROW( hdf5_file_handler.writeArrayToGroupAttribute( 
+							    data,
+							    CHILD_GROUP,
+							    ATTRIBUTE_NAME ) );
 
   hdf5_file_handler.closeHDF5File();
 }
@@ -574,21 +711,41 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( HDF5FileHandler,
 {
   Utility::HDF5FileHandler hdf5_file_handler;
 
+  // Write value to new group attribute
   hdf5_file_handler.openHDF5FileAndOverwrite( HDF5_TEST_FILE_NAME );
 
   Type test_value = Utility::HDF5TypeTraits<Type>::one();
  
-  // If the group attribute is not written successfuly, an exception will be 
-  // thrown and caught inside of the member function, causing a program exit.
-  // Therefore, no TEST macro is needed.
-  hdf5_file_handler.writeValueToGroupAttribute( test_value,
-						ROOT_GROUP,
-						ATTRIBUTE_NAME );
-  hdf5_file_handler.writeValueToGroupAttribute( test_value,
-						CHILD_GROUP,
-						ATTRIBUTE_NAME );
+  TEST_ASSERT( !hdf5_file_handler.doesGroupAttributeExist( ROOT_GROUP,
+							   ATTRIBUTE_NAME ) );
+  TEST_NOTHROW( hdf5_file_handler.writeValueToGroupAttribute( 
+							    test_value,
+							    ROOT_GROUP,
+							    ATTRIBUTE_NAME ) );
+  TEST_ASSERT( !hdf5_file_handler.doesGroupAttributeExist( CHILD_GROUP,
+							   ATTRIBUTE_NAME ) );
+  TEST_NOTHROW( hdf5_file_handler.writeValueToGroupAttribute( 
+							    test_value,
+							    CHILD_GROUP,
+							    ATTRIBUTE_NAME ) );
 
   hdf5_file_handler.closeHDF5File();
+  
+  // Write value to existing group attribute
+  hdf5_file_handler.openHDF5FileAndAppend( HDF5_TEST_FILE_NAME );
+
+  TEST_ASSERT( hdf5_file_handler.doesGroupAttributeExist( ROOT_GROUP,
+							  ATTRIBUTE_NAME ) );
+  TEST_NOTHROW( hdf5_file_handler.writeValueToGroupAttribute( 
+							    test_value,
+							    ROOT_GROUP,
+							    ATTRIBUTE_NAME ) );
+  TEST_ASSERT( hdf5_file_handler.doesGroupAttributeExist( CHILD_GROUP,
+							  ATTRIBUTE_NAME ) );
+  TEST_NOTHROW( hdf5_file_handler.writeValueToGroupAttribute( 
+							    test_value,
+							    CHILD_GROUP,
+							    ATTRIBUTE_NAME ) );
 }
 
 UNIT_TEST_INSTANTIATION( HDF5FileHandler, writeValueToGroupAttribute );

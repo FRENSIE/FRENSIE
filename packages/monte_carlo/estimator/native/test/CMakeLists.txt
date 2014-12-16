@@ -18,29 +18,70 @@ ADD_EXECUTABLE(tstPhaseSpaceResponseFunction
 TARGET_LINK_LIBRARIES(tstPhaseSpaceResponseFunction monte_carlo_estimator_native)
 ADD_TEST(PhaseSpaceResponseFunction_test tstPhaseSpaceResponseFunction)
 
+ADD_EXECUTABLE(tstEstimatorHDF5FileHandler
+  tstEstimatorHDF5FileHandler.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstEstimatorHDF5FileHandler monte_carlo_estimator_native)
+ADD_TEST(EstimatorHDF5FileHandler_test tstEstimatorHDF5FileHandler)
+
 ADD_EXECUTABLE(tstGeneralEstimatorDimensionDiscretization
   tstGeneralEstimatorDimensionDiscretization.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstGeneralEstimatorDimensionDiscretization monte_carlo_estimator_native)
 ADD_TEST(GeneralEstimatorDimensionDiscretization_test tstGeneralEstimatorDimensionDiscretization)
 
-ADD_EXECUTABLE(tstEstimator
-  tstEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstEstimator tstEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstEstimator monte_carlo_estimator_native)
 ADD_TEST(Estimator_test tstEstimator)
 
-Add_EXECUTABLE(tstEntityEstimator
-  tstEntityEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelEstimator_2_test tstEstimator --threads=2)
+  ADD_TEST(SharedParallelEstimator_4_test tstEstimator --threads=4)
+ENDIF()
+
+Add_EXECUTABLE(tstEntityEstimator tstEntityEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstEntityEstimator monte_carlo_estimator_native)
 ADD_TEST(EntityEstimator_test tstEntityEstimator)
 
-Add_EXECUTABLE(tstStandardEntityEstimator
-  tstStandardEntityEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelEntityEstimator_2_test tstEntityEstimator --threads=2)
+  ADD_TEST(SharedParallelEntityEstimator_4_test tstEntityEstimator --threads=4)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_MPI})
+  Add_EXECUTABLE(tstDistributedEntityEstimator 
+    tstDistributedEntityEstimator.cpp)
+  TARGET_LINK_LIBRARIES(tstDistributedEntityEstimator monte_carlo_estimator_native)
+  ADD_TEST(DistributedParallelEntityEstimator_1_test 
+    ${MPIEXEC} -n 2 tstDistributedEntityEstimator)
+  ADD_TEST(DistributedParallelEntityEstimator_2_test 
+    ${MPIEXEC} -n 2 tstDistributedEntityEstimator)
+  ADD_TEST(DistributedParallelEntityEstimator_4_test 
+    ${MPIEXEC} -n 2 tstDistributedEntityEstimator)
+ENDIF()
+
+Add_EXECUTABLE(tstStandardEntityEstimator tstStandardEntityEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstStandardEntityEstimator monte_carlo_estimator_native)
 ADD_TEST(StandardEntityEstimator_test tstStandardEntityEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelStandardEntityEstimator_2_test 
+    tstStandardEntityEstimator --threads=2)
+  ADD_TEST(SharedParallelStandardEntityEstimator_4_test 
+    tstStandardEntityEstimator --threads=4)
+ENDIF()
+
+IF(${FRENSIE_ENABLE_MPI})
+  Add_EXECUTABLE(tstDistributedStandardEntityEstimator 
+    tstDistributedStandardEntityEstimator.cpp)
+  TARGET_LINK_LIBRARIES(tstDistributedStandardEntityEstimator monte_carlo_estimator_native)
+  ADD_TEST(DistributedParallelStandardEntityEstimator_1_test 
+    ${MPIEXEC} -n 2 tstDistributedStandardEntityEstimator)
+  ADD_TEST(DistributedParallelStandardEntityEstimator_2_test 
+    ${MPIEXEC} -n 2 tstDistributedStandardEntityEstimator)
+  ADD_TEST(DistributedParallelStandardEntityEstimator_4_test 
+    ${MPIEXEC} -n 2 tstDistributedStandardEntityEstimator)
+ENDIF()
 
 Add_EXECUTABLE(tstStandardSurfaceEstimator
   tstStandardSurfaceEstimator.cpp
@@ -48,23 +89,34 @@ Add_EXECUTABLE(tstStandardSurfaceEstimator
 TARGET_LINK_LIBRARIES(tstStandardSurfaceEstimator monte_carlo_estimator_native)
 ADD_TEST(StandardSurfaceEstimator_test tstStandardSurfaceEstimator)
 
-Add_EXECUTABLE(tstSurfaceFluxEstimator
-  tstSurfaceFluxEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+Add_EXECUTABLE(tstSurfaceFluxEstimator tstSurfaceFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstSurfaceFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(SurfaceFluxEstimator_test tstSurfaceFluxEstimator)
 
-Add_EXECUTABLE(tstSurfaceCurrentEstimator
-  tstSurfaceCurrentEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelSurfaceFluxEstimator_2_test tstSurfaceFluxEstimator --threads=2)
+  ADD_TEST(SharedParallelSurfaceFluxEstimator_4_test tstSurfaceFluxEstimator --threads=4)
+ENDIF()
+
+Add_EXECUTABLE(tstSurfaceCurrentEstimator tstSurfaceCurrentEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstSurfaceCurrentEstimator monte_carlo_estimator_native)
 ADD_TEST(SurfaceCurrentEstimator_test tstSurfaceCurrentEstimator)
 
-Add_EXECUTABLE(tstCellPulseHeightEstimator
-  tstCellPulseHeightEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelSurfaceCurrentEstimator_2_test tstSurfaceCurrentEstimator --threads=2)
+  ADD_TEST(SharedParallelSurfaceCurrentEstimator_4_test tstSurfaceCurrentEstimator --threads=4)
+ENDIF()
+
+Add_EXECUTABLE(tstCellPulseHeightEstimator tstCellPulseHeightEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellPulseHeightEstimator monte_carlo_estimator_native)
 ADD_TEST(CellPulseHeightEstimator_test tstCellPulseHeightEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelCellPulseHeightEstimator_2_test 
+    tstCellPulseHeightEstimator --threads=2)
+  ADD_TEST(SharedParallelCellPulseHeightEstimator_4_test 
+    tstCellPulseHeightEstimator --threads=4)
+ENDIF()
 
 Add_EXECUTABLE(tstStandardCellEstimator
   tstStandardCellEstimator.cpp
@@ -73,16 +125,28 @@ TARGET_LINK_LIBRARIES(tstStandardCellEstimator monte_carlo_estimator_native)
 ADD_TEST(StandardCellEstimator_test tstStandardCellEstimator)
 
 Add_EXECUTABLE(tstCellCollisionFluxEstimator
-  tstCellCollisionFluxEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+  tstCellCollisionFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellCollisionFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(CellCollisionFluxEstimator_test tstCellCollisionFluxEstimator)
 
-Add_EXECUTABLE(tstCellTrackLengthFluxEstimator
-  tstCellTrackLengthFluxEstimator.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelCellCollisionFluxEstimator_2_test 
+    tstCellCollisionFluxEstimator --threads=2)
+  ADD_TEST(SharedParallelCellCollisionFluxEstimator_4_test 
+    tstCellCollisionFluxEstimator --threads=4)
+ENDIF()
+
+Add_EXECUTABLE(tstCellTrackLengthFluxEstimator 
+  tstCellTrackLengthFluxEstimator.cpp)
 TARGET_LINK_LIBRARIES(tstCellTrackLengthFluxEstimator monte_carlo_estimator_native)
 ADD_TEST(CellTrackLengthFluxEstimator_test tstCellTrackLengthFluxEstimator)
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_2_test 
+    tstCellTrackLengthFluxEstimator --threads=2)
+  ADD_TEST(SharedParallelCellTrackLengthFluxEstimator_4_test 
+    tstCellTrackLengthFluxEstimator --threads=4)
+ENDIF()
 
 Add_EXECUTABLE(tstTetMeshTrackLengthFluxEstimator
   tstTetMeshTrackLengthFluxEstimator.cpp)

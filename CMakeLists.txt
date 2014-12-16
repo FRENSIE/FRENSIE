@@ -130,6 +130,6 @@ packages/monte_carlo/collision/interface packages/monte_carlo/collision/native/s
 packages/monte_carlo/manager/src packages/transmutation/src packages/data/decay/src
 packages/data/endf/src)
 
-ADD_SUBDIRECTORY(cli)
+ADD_SUBDIRECTORY(tools)
 
 ADD_SUBDIRECTORY(doc)

@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <limits>
+
 // FRENSIE Includes
 #include "MonteCarlo_ResponseFunctionFactory.hpp"
 #include "MonteCarlo_EnergySpaceResponseFunction.hpp"
@@ -119,6 +122,12 @@ void ResponseFunctionFactory::createEnergySpaceResponseFunction(
 		      "Error: response function id " << id << " is used "
 		      "multiple times!" );
 
+  TEST_FOR_EXCEPTION( id >= std::numeric_limits<unsigned>::max(),
+		      InvalidResponseFunctionRepresentation,
+		      "Error: response function id " << id << " is greater "
+		      "than the max value of "
+		      << std::numeric_limits<unsigned>::max() - 1u << "!" );
+
   // Extract the energy distribution
   Teuchos::RCP<const Teuchos::ParameterEntry> entry = 
     response_rep.getEntryRCP( "Energy Distribution" );
@@ -129,7 +138,8 @@ void ResponseFunctionFactory::createEnergySpaceResponseFunction(
   // Create the response function
   Teuchos::RCP<ResponseFunction>& new_response_function = response_id_map[id];
 
-  new_response_function.reset( new EnergySpaceResponseFunction( 
+  new_response_function.reset( new EnergySpaceResponseFunction(
+			   id,
 			   ResponseFunctionFactory::createName( response_rep ),
 			   energy_distribution ) );
 
@@ -149,6 +159,12 @@ void ResponseFunctionFactory::createPhaseSpaceResponseFunction(
 		      InvalidResponseFunctionRepresentation,
 		      "Error: response function id " << id << " is used "
 		      "multiple times!" );
+
+  TEST_FOR_EXCEPTION( id >= std::numeric_limits<unsigned>::max(),
+		      InvalidResponseFunctionRepresentation,
+		      "Error: response function id " << id << " is greater "
+		      "than the max value of "
+		      << std::numeric_limits<unsigned>::max() - 1u << "!" );
 
   // Extract the spatial distribution
   Teuchos::RCP<const Teuchos::ParameterEntry> entry = 
@@ -214,6 +230,7 @@ void ResponseFunctionFactory::createPhaseSpaceResponseFunction(
   Teuchos::RCP<ResponseFunction>& new_response_function = response_id_map[id];
 
   new_response_function.reset( new PhaseSpaceResponseFunction( 
+			   id,
 			   ResponseFunctionFactory::createName( response_rep ),
 			   spatial_distribution,
 			   directional_distribution,

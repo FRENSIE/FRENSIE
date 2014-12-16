@@ -226,26 +226,37 @@ struct ComparePolicy<const int>
   {
     bool success = true;
       
-    if( first_value != second_value )
+    // Array Element Compare
+    if( index >= 0 )
     {
-      // Array Element Compare
-      if( index >= 0 )
-      {
-	out << "\nError, " << first_name << "[" << index << "]" << " = "
-	    << first_value << " == " << second_name << "[" << index << "]" 
-	    << " = " << second_value << ": failed!\n";
+      out << "\nError, " << first_name << "[" << index << "]" << " = "
+	  << first_value << " == " << second_name << "[" << index << "]" 
+	  << " = " << second_value << ": ";
+      if( first_value != second_value )
+      { 
+	out << "failed!\n";
+
+	success = false;
       }
-      // Single Compare
       else
-      {
-	out << first_name << " = " << first_value
-	    << " == " << second_name << " = " << second_value 
-	    << ": ";
-      }
-      
-      success = false;
+	out << "passed\n";
     }
-      
+    // Single Compare
+    else
+    {
+      out << first_name << " = " << first_value
+	  << " == " << second_name << " = " << second_value 
+	  << ": ";
+      if( first_value != second_value )
+      {
+	out << "failed!\n";
+
+	success = false;
+      }
+      else
+	out << "passed\n";
+    }
+    
     return success;
   }
 };
@@ -295,26 +306,37 @@ struct ComparePolicy<const unsigned int>
   {
     bool success = true;
       
-    if( first_value != second_value )
+    // Array Element Compare
+    if( index >= 0 )
     {
-      // Array Element Compare
-      if( index >= 0 )
+      out << "\nError, " << first_name << "[" << index << "]" << " = "
+	  << first_value << " == " << second_name << "[" << index << "]" 
+	  << " = " << second_value << ": ";
+      if( first_value != second_value )
       {
-	out << "\nError, " << first_name << "[" << index << "]" << " = "
-	    << first_value << " == " << second_name << "[" << index << "]" 
-	    << " = " << second_value << ": failed!\n";
+	out << "failed!\n";
+
+	success = false;
       }
-      // Single Compare
       else
-      {
-	out << first_name << " = " << first_value
-	    << " == " << second_name << " = " << second_value 
-	    << ": ";
-      }
-      
-      success = false;
+	out << "passed\n";
     }
-      
+    // Single Compare
+    else
+    {
+      out << first_name << " = " << first_value
+	  << " == " << second_name << " = " << second_value 
+	  << ": ";
+      if( first_value != second_value )
+      {
+	out << "failed!\n";
+
+	success = false;
+      }
+      else
+	out << "passed\n";
+    }
+    
     return success;
   }
 };
@@ -345,6 +367,168 @@ struct ComparePolicy<unsigned int>
   }
 };
 
+/*! \brief The specialization of the Utility::ComparePolicy for const
+ * unsigned long int.
+ * \ingroup compare_policy
+ */
+template<>
+struct ComparePolicy<const unsigned long int>
+{
+  typedef unsigned int scalarType;
+  
+  static inline bool compare( const unsigned long int &first_value,
+			      const std::string &first_name,
+			      const unsigned long int &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0 )
+  {
+    bool success = true;
+      
+    // Array Element Compare
+    if( index >= 0 )
+    {
+      out << "\nError, " << first_name << "[" << index << "]" << " = "
+	  << first_value << " == " << second_name << "[" << index << "]" 
+	  << " = " << second_value << ": ";
+      if( first_value != second_value )
+      {
+	out << "failed!\n";
+
+	success = false;
+      }
+      else
+	out << "passed\n";
+    }
+    // Single Compare
+    else
+    {
+      out << first_name << " = " << first_value
+	  << " == " << second_name << " = " << second_value 
+	  << ": ";
+      if( first_value != second_value )
+      {
+	out << "failed!\n";
+
+	success = false;
+      }
+      else
+	out << "passed\n";
+    }
+      
+    return success;
+  }
+};
+
+/*! \brief The specialization of the Utility::ComparePolicy for unsigned long 
+ * int.
+ * \ingroup compare_policy
+ */
+template<>
+struct ComparePolicy<unsigned long int>
+{
+  typedef unsigned int scalarType;
+  
+  static inline bool compare( const unsigned long int &first_value,
+			      const std::string &first_name,
+			      const unsigned long int &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0 )
+  {
+    return ComparePolicy<const unsigned long int>::compare( first_value,
+							    first_name,
+							    second_value,
+							    second_name,
+							    out,
+							    index,
+							    tol );
+  }
+};
+
+/*! \brief The specialization of the Utility::ComparePolicy for const
+ * unsigned long long int.
+ * \ingroup compare_policy
+ */
+template<>
+struct ComparePolicy<const unsigned long long int>
+{
+  typedef unsigned int scalarType;
+  
+  static inline bool compare( const unsigned long long int &first_value,
+			      const std::string &first_name,
+			      const unsigned long long int &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0 )
+  {
+    bool success = true;
+      
+    // Array Element Compare
+    if( index >= 0 )
+    {
+      out << "\nError, " << first_name << "[" << index << "]" << " = "
+	  << first_value << " == " << second_name << "[" << index << "]" 
+	  << " = " << second_value << ": ";
+      if( first_value != second_value )
+      {
+	out << "failed!\n";
+
+	success = false;
+      }
+      else
+	out << "passed\n";
+    }
+    // Single Compare
+    else
+    {
+      out << first_name << " = " << first_value
+	  << " == " << second_name << " = " << second_value 
+	  << ": ";
+      if( first_value != second_value )
+      {
+	out << "failed!\n";
+
+	success = false;
+      }
+      else
+	out << "passed\n";
+    }
+
+    return success;
+  }
+};
+
+/*! \brief The specialization of the Utility::ComparePolicy for unsigned long 
+ * long int.
+ * \ingroup compare_policy
+ */
+template<>
+struct ComparePolicy<unsigned long long int>
+{
+  typedef unsigned int scalarType;
+  
+  static inline bool compare( const unsigned long long int &first_value,
+			      const std::string &first_name,
+			      const unsigned long long int &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0 )
+  {
+    return ComparePolicy<const unsigned long long int>::compare( first_value,
+								 first_name,
+								 second_value,
+								 second_name,
+								 out,
+								 index,
+								 tol );
+  }
+};
+
 /*! \brief The specialization of the Utility::ComparePolicy for const double.
  * \ingroup compare_policy
  */
@@ -364,50 +548,72 @@ struct ComparePolicy<const double>
       
     if( tol == 0.0 )
     {
-      if( first_value != second_value )
+      // Array Element Compare
+      if( index >= 0 )
       {
-	// Array Element Compare
-	if( index >= 0 )
+	out << "\nError, " << first_name << "[" << index << "]" << " = "
+	    << first_value << " == " << second_name << "[" << index << "]" 
+	    << " = " << second_value << ": ";
+	if( first_value != second_value )
 	{
-	  out << "\nError, " << first_name << "[" << index << "]" << " = "
-	      << first_value << " == " << second_name << "[" << index << "]" 
-	      << " = " << second_value << ": failed!\n";
+	  out << "failed!\n";
+
+	  success = false;
 	}
-	// Single Compare
-	else
+	else 
+	  out << "passed\n";
+      }
+      // Single Compare
+      else
+      {
+	out << first_name << " = " << first_value
+	    << " == " << second_name << " = " << second_value 
+	    << ": ";
+	if( first_value != second_value )
 	{
-	  out << first_name << " = " << first_value
-	      << " == " << second_name << " = " << second_value 
-	      << ": ";
+	  out << "failed!\n";
+
+	  success = false;
 	}
-	
-	success = false;
+	else 
+	  out << "passed\n";
       }
     }
     else
     {
       double err = relError( first_value, second_value );
       
-      if( err > tol )
+      // Array Element Compare
+      if( index >= 0 )
       {
-	// Array Element Compare
-	if( index >= 0 )
+	out << "\nError, relErr(" << first_name << "[" << index << "],"
+	    << second_name << "[" << index << "])" << " = relErr(" 
+	    << first_value << "," << second_value << ") = " << err
+	    << " <= tol = " << tol << ": ";
+	if( err > tol )
 	{
-	  out << "\nError, relErr(" << first_name << "[" << index << "],"
-	      << second_name << "[" << index << "])" << " = relErr(" 
-	      << first_value << "," << second_value << ") = " << err
-	      << " <= tol = " << tol << ": failed!\n";
-	}
-	// Single Compare
-	else
-	{
-	  out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
-	      << "\n= relErr(" << first_value << "," << second_value << ") = "
-	      << err << "\n<= tol = " << tol << ": failed!\n";
-	}
+	  out << "failed!\n";
 
-	success = false;
-      }	  
+	  success = false;
+	}
+	else 
+	  out << "passed\n";
+      }
+      // Single Compare
+      else
+      {
+	out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
+	    << "\n= relErr(" << first_value << "," << second_value << ") = "
+	    << err << "\n<= tol = " << tol << ": ";
+	if( err > tol )
+	{
+	  out << "failed!\n";
+
+	  success = false;
+	}
+	else 
+	  out << "passed\n";
+      }
     }
     
     return success;
@@ -458,50 +664,72 @@ struct ComparePolicy<const float>
       
     if( tol == 0.0f )
     {
-      if( first_value != second_value )
+      // Array Element Compare
+      if( index >= 0 )
       {
-	// Array Element Compare
-	if( index >= 0 )
+	out << "\nError, " << first_name << "[" << index << "]" << " = "
+	    << first_value << " == " << second_name << "[" << index << "]" 
+	    << " = " << second_value << ": ";
+	if( first_value != second_value )
 	{
-	  out << "\nError, " << first_name << "[" << index << "]" << " = "
-	      << first_value << " == " << second_name << "[" << index << "]" 
-	      << " = " << second_value << ": failed!\n";
+	  out << "failed!\n";
+
+	  success = false;
 	}
-	// Single Compare
-	else
+	else 
+	  out << "passed\n";
+      }
+      // Single Compare
+      else
+      {
+	out << first_name << " = " << first_value
+	    << " == " << second_name << " = " << second_value 
+	    << ": ";
+	if( first_value != second_value )
 	{
-	  out << first_name << " = " << first_value
-	      << " == " << second_name << " = " << second_value 
-	      << ": failed!\n";
+	  out << "failed!\n";
+
+	  success = false;
 	}
-	
-	success = false;
+	else 
+	  out << "passed\n";
       }
     }
     else
     {
       float err = relError( first_value, second_value );
       
-      if( err > tol )
+      // Array Element Compare
+      if( index >= 0 )
       {
-	// Array Element Compare
-	if( index >= 0 )
+	out << "\nError, relErr(" << first_name << "[" << index << "],"
+	    << second_name << "[" << index << "])" << " = relErr(" 
+	    << first_value << "," << second_value << ") = " << err
+	    << " <= tol = " << tol << ": ";
+	if( err > tol )
 	{
-	  out << "\nError, relErr(" << first_name << "[" << index << "],"
-	      << second_name << "[" << index << "])" << " = relErr(" 
-	      << first_value << "," << second_value << ") = " << err
-	      << " <= tol = " << tol << ": failed!\n";
-	}
-	// Single Compare
-	else
-	{
-	  out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
-	      << "\n= relErr(" << first_value << "," << second_value << ") = "
-	      << err << "\n<= tol = " << tol << ": failed!\n";
-	}
+	  out << "failed!\n";
 
-	success = false;
-      }	  
+	  success = false;
+	}
+	else
+	  out << "passed\n";
+      }
+      // Single Compare
+      else
+      {
+	out << "\nCheck: relErr(" << first_name << "," << second_name << ")"
+	    << "\n= relErr(" << first_value << "," << second_value << ") = "
+	    << err << "\n<= tol = " << tol << ": ";
+	if( err > tol )
+	{
+	  out << "failed!\n";
+
+	  success = false;
+	}
+	else
+	  out << "passed\n";
+      }
     }
     
     return success;

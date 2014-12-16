@@ -42,7 +42,9 @@ TEUCHOS_UNIT_TEST( ResponseFunctionFactory, createResponseFunctions )
 
   TEST_EQUALITY_CONST( response_id_map.size(), 2 );
   TEST_EQUALITY_CONST( response_id_map[0]->getName(), "Energy Response" );
+  TEST_EQUALITY_CONST( response_id_map[0]->getId(), 0 );
   TEST_EQUALITY_CONST( response_id_map[1]->getName(), "Phase Space Response" );
+  TEST_EQUALITY_CONST( response_id_map[1]->getId(), 1 );
 }
 
 

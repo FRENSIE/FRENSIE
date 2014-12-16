@@ -39,23 +39,40 @@ public:
 	             const Teuchos::RCP<CollisionHandler>& collision_handler );
 
   //! Check if a cell is void
-  static bool isCellVoid(
-		       const Geometry::ModuleTraits::InternalCellHandle cell );
+  static bool isCellVoid(const Geometry::ModuleTraits::InternalCellHandle cell,
+			 const ParticleType particle_type );
 
   //! Get the total macroscopic cross section of a material
-  static double getMacroscopicTotalCrossSection(
-					       const ParticleState& particle );
+  static double getMacroscopicTotalCrossSection( const NeutronState& particle);
+
+  //! Get the total macroscopic cross section of a material
+  static double getMacroscopicTotalCrossSection( const PhotonState& particle);
 
   //! Get the macroscopic cross section for a specific reaction
   static double getMacroscopicReactionCrossSection(
-					  const ParticleState& particle,
+					  const NeutronState& particle,
 					  const NuclearReactionType reaction );
+
+  //! Get the macroscopic cross section for a specific reaction
+  static double getMacroscopicReactionCrossSection(
+				      const PhotonState& particle,
+				      const PhotoatomicReactionType reaction );
+
+  //! Get the macroscopic cross section for a specific reaction
+  static double getMacroscopicReactionCrossSection(
+				     const PhotonState& particle,
+				     const PhotonuclearReactionType reaction );
 
   //! Sample the optical path length traveled by a particle before a collision
   static double sampleOpticalPathLength();
 
   //! Collide with the material in a cell
-  static void collideWithCellMaterial( ParticleState& particle,
+  static void collideWithCellMaterial( NeutronState& particle,
+				       ParticleBank& bank,
+				       const bool analogue );
+
+  //! Collide with the material in a cell
+  static void collideWithCellMaterial( PhotonState& particle,
 				       ParticleBank& bank,
 				       const bool analogue );
 };
@@ -76,24 +93,53 @@ CollisionModuleInterface<CollisionHandler>::setHandlerInstance(
 
 // Check if a cell is void
 inline bool CollisionModuleInterface<CollisionHandler>::isCellVoid(
-		        const Geometry::ModuleTraits::InternalCellHandle cell )
+			 const Geometry::ModuleTraits::InternalCellHandle cell,
+			 const ParticleType particle_type )
 {
-  return CollisionHandler::isCellVoid( cell );
+  return CollisionHandler::isCellVoid( cell, particle_type );
 }
 
 // Get the total macroscopic cross section of a material
 inline double 
 CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
-					        const ParticleState& particle )
+					        const NeutronState& particle )
 {
   return CollisionHandler::getMacroscopicTotalCrossSection( particle );
 }
 
-//! Get the macroscopic cross section for a specific reaction
+// Get the total macroscopic cross section of a material
+inline double 
+CollisionModuleInterface<CollisionHandler>::getMacroscopicTotalCrossSection(
+					        const PhotonState& particle )
+{
+  return CollisionHandler::getMacroscopicTotalCrossSection( particle );
+}
+
+// Get the macroscopic cross section for a specific reaction
 inline double 
 CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
-					   const ParticleState& particle,
+					   const NeutronState& particle,
 					   const NuclearReactionType reaction )
+{
+  return CollisionHandler::getMacroscopicReactionCrossSection( particle,
+							       reaction );
+}
+
+// Get the macroscopic cross section for a specific reaction
+inline double 
+CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
+				       const PhotonState& particle,
+				       const PhotoatomicReactionType reaction )
+{
+  return CollisionHandler::getMacroscopicReactionCrossSection( particle,
+							       reaction );
+}
+
+// Get the macroscopic cross section for a specific reaction
+inline double 
+CollisionModuleInterface<CollisionHandler>::getMacroscopicReactionCrossSection(
+				      const PhotonState& particle,
+				      const PhotonuclearReactionType reaction )
 {
   return CollisionHandler::getMacroscopicReactionCrossSection( particle,
 							       reaction );
@@ -109,7 +155,19 @@ CollisionModuleInterface<CollisionHandler>::sampleOpticalPathLength()
 // Collide with the material in a cell
 inline void 
 CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial( 
-						       ParticleState& particle,
+						       NeutronState& particle,
+						       ParticleBank& bank,
+						       const bool analogue )
+{
+  CollisionHandler::collideWithCellMaterial( particle,
+					     bank,
+					     analogue );
+}
+
+// Collide with the material in a cell
+inline void 
+CollisionModuleInterface<CollisionHandler>::collideWithCellMaterial( 
+						       PhotonState& particle,
 						       ParticleBank& bank,
 						       const bool analogue )
 {
