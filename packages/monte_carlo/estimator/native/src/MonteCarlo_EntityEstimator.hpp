@@ -73,6 +73,14 @@ public:
 
 protected:
 
+  //! Constructor with no entities (for moab mesh estimators)
+  EntityEstimator( const Estimator::idType id,
+		   const double multiplier );
+
+  //! Assign entities
+  virtual void assignEntities( 
+	       const boost::unordered_map<EntityId,double>& entity_norm_data );
+
   //! Assign bin boundaries to an estimator dimension
   virtual void assignBinBoundaries(
 	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );

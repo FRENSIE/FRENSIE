@@ -98,6 +98,15 @@ public:
   
 protected:
 
+  //! Constructor with no entities (for moab mesh estimators)
+  StandardEntityEstimator( const Estimator::idType id,
+			   const double multiplier );
+
+  //! Assign entities
+  void assignEntities( 
+	       const boost::unordered_map<EntityId,double>& entity_norm_data );
+  
+
   //! Add estimator contribution from a portion of the current history
   void addPartialHistoryContribution( const EntityId entity_id,
 				      const ParticleState& particle,

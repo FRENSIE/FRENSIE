@@ -25,7 +25,7 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
 				      const double multiplier,
 				      const std::string input_mesh_file_name,
 		                      const std::string output_mesh_file_name )
-  : Estimator( id, multiplier ),
+  : StandardEntityEstimator<moab::EntityHandle>( id, multiplier ),
     d_moab_interface( new moab::Core ),
     d_kd_tree( new moab::AdaptiveKDTree( d_moab_interface.getRawPtr() ) ),
     d_kd_tree_root(),
@@ -193,9 +193,35 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromPa
 
 }
 
+// Enable support for multiple threads
+template<typename ContributionMultiplierPolicy>
+void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::enableThreadSupport(
+						   const unsigned num_threads )
+{
+
+}
+
 // Commit the contribution from the current history to the estimator
 template<typename ContributionMultiplierPolicy>
 void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::commitHistoryContribution()
+{
+
+}
+
+// Reduce estimator data on all process in comm and collect on the root
+template<typename ContributionMultiplierPolicy>
+void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::reduceData(
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process )
+{
+  
+}
+
+// Export the estimator data
+template<typename ContributionMultiplierPolicy>
+void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
+                                           EstimatorHDF5FileHandler& hdf5_file,
+					   const bool process_data ) const
 {
 
 }
