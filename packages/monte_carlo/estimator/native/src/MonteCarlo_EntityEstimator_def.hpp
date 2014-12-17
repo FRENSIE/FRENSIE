@@ -79,6 +79,9 @@ void EntityEstimator<EntityId>::setResponseFunctions(
 
   // Resize the entity estimator moment map arrays
   resizeEntityEstimatorMapArrays();
+
+  // Resize the total array
+  resizeEstimatorTotalArray();
 }
 
 // Return the entity ids associated with this estimator
