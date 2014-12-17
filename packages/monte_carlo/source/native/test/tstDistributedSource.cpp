@@ -202,11 +202,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
   
   MonteCarlo::ParticleBank bank;
   
-  source->sampleParticleState( bank );
+  source->sampleParticleState( bank, 0 );
   
   MonteCarlo::ParticleState::pointerType particle = bank.top();
   
   TEST_EQUALITY_CONST( particle->getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( particle->getHistoryNumber(), 0 );
   TEST_COMPARE( particle->getXPosition(), >=, -2.0 );
   TEST_COMPARE( particle->getXPosition(), <=, 2.0 );
   TEST_COMPARE( particle->getYPosition(), >=, -2.0 );
@@ -253,10 +254,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
 
   MonteCarlo::ParticleBank bank;
   
-  source->sampleParticleState( bank );
+  source->sampleParticleState( bank, 0 );
 
   MonteCarlo::ParticleState::pointerType particle = bank.top();
   
+  TEST_EQUALITY_CONST( particle->getHistoryNumber(), 0 );
   TEST_EQUALITY_CONST( particle->getParticleType(), MonteCarlo::PHOTON );
   TEST_EQUALITY_CONST( particle->getXDirection(), 0.0 );
   TEST_EQUALITY_CONST( particle->getYDirection(), 0.0 );
@@ -285,11 +287,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
   
   MonteCarlo::ParticleBank bank;
   
-  source->sampleParticleState( bank );
+  source->sampleParticleState( bank, 0 );
 
   MonteCarlo::ParticleState::pointerType particle = bank.top();
   
   TEST_EQUALITY_CONST( particle->getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( particle->getHistoryNumber(), 0 );
   TEST_COMPARE( particle->getXPosition(), >=, -1.1547005383792 );
   TEST_COMPARE( particle->getXPosition(), <=, 1.1547005383792 );
   TEST_COMPARE( particle->getYPosition(), >=, -1.1547005383792 );
@@ -323,7 +326,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( DistributedSource,
   
   // Conduct 10 samples
   for( unsigned i = 0; i < 10; ++i )
-    source->sampleParticleState( bank );
+    source->sampleParticleState( bank, i );
 
   // Theoretical efficiency: (4/sqrt(3))^3/(4*pi*2^3/3) ~= 0.367552
   TEST_COMPARE( source->getSamplingEfficiency(), >, 0.0 );

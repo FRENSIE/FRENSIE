@@ -13,68 +13,70 @@
 // FRENSIE Includes
 #include "MonteCarlo_StateSource.hpp"
 #include "MonteCarlo_ParticleStateFactory.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
 StateSource::StateSource( 
-	      const Teuchos::ArrayRCP<ParticleStateCore>& raw_particle_states )
-  : d_raw_particle_states( raw_particle_states ),
-    d_next_index( 0u )
+	         const Teuchos::Array<ParticleStateCore>& raw_particle_states )
 { 
   // Make sure that there is at least one state in the array
   testPrecondition( raw_particle_states.size() > 0 );
 
+  // Create a map of the history numbers and 
+  Teuchos::Array<ParticleStateCore> raw_particle_states_copy = 
+    raw_particle_states;
+  
   // Sort the particle state cores
-  std::sort( d_raw_particle_states.begin(),
-	     d_raw_particle_states.end(),
-	     StateSource::compareCores );
+  std::sort( raw_particle_states_copy.begin(),
+  	     raw_particle_states_copy.end(),
+  	     StateSource::compareCores );
 
   // Reset the history numbers
-  ParticleState::historyNumberType reset_history_number = 0ull;
-  ParticleState::historyNumberType current_history_number = 
-    d_raw_particle_states[0].history_number;
+  unsigned long long history_number = 0ull;
+  unsigned long long current_history_number = 
+    raw_particle_states_copy[0].history_number;
   
-  for( unsigned i = 0; i < d_raw_particle_states.size(); ++i )
+  for( unsigned i = 0; i < raw_particle_states_copy.size(); ++i )
   {
-    if( d_raw_particle_states[i].history_number == current_history_number )
-      d_raw_particle_states[i].history_number = reset_history_number;
+    if( raw_particle_states_copy[i].history_number == current_history_number )
+    {
+      raw_particle_states_copy[i].history_number = history_number;
+      
+      d_raw_particle_states[history_number].push_back(
+						 raw_particle_states_copy[i] );
+    }
     else
     {
-      ++reset_history_number;
+      ++history_number;
       
-      current_history_number = d_raw_particle_states[i].history_number;
+      current_history_number = raw_particle_states_copy[i].history_number;
       
-      d_raw_particle_states[i].history_number = reset_history_number;
+      raw_particle_states_copy[i].history_number = history_number;
+      
+      d_raw_particle_states[history_number].push_back(
+						 raw_particle_states_copy[i] );
     }
   }
 }
 
 // Sample a particle state from the source
-void StateSource::sampleParticleState( ParticleBank& bank )
+  void StateSource::sampleParticleState( ParticleBank& bank,
+					 const unsigned long long history )
 {
-  if( d_next_index >= d_raw_particle_states.size() )
-  {
-    std::string error_message = "Error: All particle states in the state ";
-    error_message += "source have been used.\n";
-    
-    throw std::runtime_error( error_message );
-  }
+  TEST_FOR_EXCEPTION( d_raw_particle_states.find( history ) ==
+		      d_raw_particle_states.end(),
+		      std::runtime_error,
+		      "Error: No particle states in the state source were "
+		      "found for history number " << history << "!" );
 
-  ParticleState::historyNumberType history_number = 
-    d_raw_particle_states[d_next_index].history_number;
-
-  while( d_raw_particle_states[d_next_index].history_number == history_number )
+  for( unsigned i = 0; i < d_raw_particle_states[history].size(); ++i )
   {
-    const ParticleStateCore& core = d_raw_particle_states[d_next_index];
+    const ParticleStateCore& core = d_raw_particle_states[history][i];
 
     bank.push( ParticleStateFactory::createState( core ) );
-    
-    ++d_next_index;
-
-    if( d_next_index >= d_raw_particle_states.size() )
-      break;
   }
 }
 

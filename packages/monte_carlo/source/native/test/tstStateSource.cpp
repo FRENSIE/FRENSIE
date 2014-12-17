@@ -11,7 +11,7 @@
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
-#include <Teuchos_ArrayRCP.hpp>
+#include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
@@ -25,7 +25,7 @@ Teuchos::RCP<MonteCarlo::ParticleSource> source;
 // Initialize the source
 void initializeSource()
 {
-  Teuchos::ArrayRCP<MonteCarlo::ParticleStateCore> raw_particle_states( 4 );
+  Teuchos::Array<MonteCarlo::ParticleStateCore> raw_particle_states( 4 );
 
   MonteCarlo::ParticleStateCore particle_core_1( 1ull,
 					     MonteCarlo::PHOTON,
@@ -87,7 +87,7 @@ TEUCHOS_UNIT_TEST( StateSource, sampleParticleState )
   initializeSource();
   
   MonteCarlo::ParticleBank bank;
-  source->sampleParticleState( bank );
+  source->sampleParticleState( bank, 0 );
 
   TEST_EQUALITY_CONST( bank.size(), 2 );
 
@@ -126,7 +126,7 @@ TEUCHOS_UNIT_TEST( StateSource, sampleParticleState )
   TEST_EQUALITY_CONST( particle->getWeight(), 0.5 );
 
   // Sample from the source again
-  source->sampleParticleState( bank );
+  source->sampleParticleState( bank, 1 );
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
 
@@ -148,7 +148,7 @@ TEUCHOS_UNIT_TEST( StateSource, sampleParticleState )
   TEST_EQUALITY_CONST( particle->getWeight(), 0.3 );
 
   // Sample from the source again
-  source->sampleParticleState( bank );
+  source->sampleParticleState( bank, 2 );
 
   TEST_EQUALITY_CONST( bank.size(), 1 );
 
@@ -170,7 +170,7 @@ TEUCHOS_UNIT_TEST( StateSource, sampleParticleState )
   TEST_EQUALITY_CONST( particle->getWeight(), 0.5 );
 
   // Attempting to get another particle state should cause an exception
-  TEST_THROW( source->sampleParticleState( bank ), std::runtime_error );
+  TEST_THROW( source->sampleParticleState( bank, 3 ), std::runtime_error );
 }
 
 //---------------------------------------------------------------------------//

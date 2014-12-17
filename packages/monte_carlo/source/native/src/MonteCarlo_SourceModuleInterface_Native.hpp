@@ -43,7 +43,8 @@ public:
   static void setHandlerInstance( const Teuchos::RCP<ParticleSource>& source );
   
   //! Sample a particle state (or possibly states)
-  static void sampleParticleState( ParticleBank& bank );
+  static void sampleParticleState( ParticleBank& bank,
+				   const unsigned long long history );
 
   //! Return the sampling efficiency
   static double getSamplingEfficiency();
@@ -59,11 +60,12 @@ private:
 
 // Sample the starting particle state
 inline void SourceModuleInterface<ParticleSource>::sampleParticleState( 
-							   ParticleBank& bank )
+					     ParticleBank& bank,
+					     const unsigned long long history )
 {
   testPrecondition( !SourceModuleInterface::source.is_null() );
   
-  SourceModuleInterface::source->sampleParticleState( bank );
+  SourceModuleInterface::source->sampleParticleState( bank, history );
 }
 
 // Get the sampling efficiency
