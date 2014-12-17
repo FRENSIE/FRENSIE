@@ -33,11 +33,7 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
     d_obb_tree_root(),
     d_last_visited_tet(),
     d_last_visited_cell(),
-    d_tet_volumes(),
-    d_tet_barycentric_transform_matrices(),
-    d_tet_estimator_moments(),
-    d_tet_estimator_current_history_contributions(),
-    d_tets_updated_this_history()
+    d_tet_barycentric_transform_matrices()
 {
   // ------------------------ Load Meshset ------------------------------------
 
@@ -93,13 +89,6 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
     {
       moab::EntityHandle tet = *i;
      
-      // Map array for the estimator moments of a specific tetrahdron
-      Teuchos::Array<Utility::Pair<double,double> >& entity_array =
-                                                  d_tet_estimator_moments[tet];
-
-      entity_array.resize( this->getNumberOfBins()*
-			   this->getNumberOfResponseFunctions() );
-     
       // Extract the vertex data for the given tet
       std::vector<moab::EntityHandle> vertex_handles;
       d_moab_interface->get_connectivity( &tet, 1, vertex_handles );
@@ -118,12 +107,6 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
 				      1, 
 				      vertices[j].array() );
       }
-      
-      // Calculate Tetrahedral Volumes
-      d_tet_volumes[tet] = Utility::calculateTetrahedronVolume( vertices[0],
-								vertices[1],
-								vertices[2],
-								vertices[3] );
                                                                 
       // Calculate Barycentric Matrix
       moab::Matrix3& barycentric_transform_matrix = 
@@ -191,30 +174,6 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromPa
 			      const double track_length )
 {
 
-}
-
-// Enable support for multiple threads
-template<typename ContributionMultiplierPolicy>
-void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::enableThreadSupport(
-						   const unsigned num_threads )
-{
-
-}
-
-// Commit the contribution from the current history to the estimator
-template<typename ContributionMultiplierPolicy>
-void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::commitHistoryContribution()
-{
-
-}
-
-// Reduce estimator data on all process in comm and collect on the root
-template<typename ContributionMultiplierPolicy>
-void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::reduceData(
-	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
-	    const int root_process )
-{
-  
 }
 
 // Export the estimator data

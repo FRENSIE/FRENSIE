@@ -70,6 +70,16 @@ EntityEstimator<EntityId>::EntityEstimator(
   resizeEstimatorTotalArray();
 }
 
+// Constructor with no entities (for mesh estimators)
+template<typename EntityId>
+EntityEstimator<EntityId>::EntityEstimator( const Estimator::idType id,
+					    const double multiplier )
+  : Estimator( id, multiplier ),
+    d_total_norm_constant( 1.0 ),
+    d_supplied_norm_constants( false ),
+    d_estimator_total_bin_data( 1 )
+{ /* ... */ }
+
 // Set the response functions
 template<typename EntityId>
 void EntityEstimator<EntityId>::setResponseFunctions( 
@@ -79,6 +89,9 @@ void EntityEstimator<EntityId>::setResponseFunctions(
 
   // Resize the entity estimator moment map arrays
   resizeEntityEstimatorMapArrays();
+
+  // Resize the extimator total array
+  resizeEstimatorTotalArray();
 }
 
 // Return the entity ids associated with this estimator
@@ -95,6 +108,42 @@ void EntityEstimator<EntityId>::getEntityIds(
 
     ++it;
   }
+}
+
+// Assign entities
+template<typename EntityId>
+void EntityEstimator<EntityId>::assignEntities(
+		const boost::unordered_map<EntityId,double>& entity_norm_data )
+{
+  // Make sure there is at least one entity
+  testPrecondition( entity_norm_data.size() > 0 );
+
+  // Reset the estimator data
+  d_total_norm_constant = 1.0;
+  d_supplied_norm_constants = true;
+  d_estimator_total_bin_data.clear();
+  d_entity_estimator_moments_map.clear();
+  d_entity_norm_constants_map = entity_norm_data;
+  
+  // Initialize the entity data
+  typename boost::unordered_map<EntityId,double>::const_iterator entity, 
+    end_entity;
+  entity = entity_norm_data.begin();
+  end_entity = entity_norm_data.end();
+
+  while( entity != end_entity )
+  {
+    d_entity_estimator_moments_map[entity->first];
+
+    ++entity;
+  }
+  
+  // Calculate the total normalization constant
+  calculateTotalNormalizationConstant();
+
+  // Resize the data arrays
+  resizeEntityEstimatorMapArrays();
+  resizeEstimatorTotalArray();
 }
 
 // Assign bin boundaries to an estimator dimension
@@ -552,6 +601,33 @@ void EntityEstimator<EntityId>::printImplementation(
 			 d_total_norm_constant );
   
   os << std::endl;
+}
+
+// Get the total estimator bin data
+/*! \details This function breaks encapsulation and is therefore not ideal.
+ * It is needed by mesh estimators for exporting data in .h5m and .vtk formats.
+ */
+template<typename EntityId>
+const Estimator::TwoEstimatorMomentsArray& 
+EntityEstimator<EntityId>::getTotalBinData() const
+{
+  return d_estimator_total_bin_data;
+}
+
+// Get the bin data for an entity
+/*! \details This function breaks encapsulation and is therefore not ideal.
+ * It is needed by mesh estimators for exporting data in .h5m and .vtk formats.
+ */
+template<typename EntityId>
+const Estimator::TwoEstimatorMomentsArray& 
+EntityEstimator<EntityId>::getEntityTotalBinData( 
+					       const EntityId entity_id ) const
+{
+  // Make sure the entity is valid
+  testPrecondition( d_entity_estimator_moments_map.find( entity_id ) !=
+		    d_entity_estimator_moments_map.end() );
+
+  return d_entity_estimator_moments_map.find( entity_id )->second;
 }
 
 // Initialize entity estimator moments map

@@ -73,7 +73,7 @@ public:
 
 protected:
 
-  //! Constructor with no entities (for moab mesh estimators)
+  //! Constructor with no entities (for mesh estimators)
   EntityEstimator( const Estimator::idType id,
 		   const double multiplier );
 
@@ -103,6 +103,13 @@ protected:
   //! Print the estimator data
   virtual void printImplementation( std::ostream& os,
 				    const std::string& entity_type ) const;
+
+  //! Get the total estimator bin data
+  const Estimator::TwoEstimatorMomentsArray& getTotalBinData() const;
+
+  //! Get the bin data for an entity
+  const Estimator::TwoEstimatorMomentsArray& getEntityTotalBinData(
+					      const EntityId entity_id ) const;
   
 private:
 
