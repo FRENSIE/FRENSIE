@@ -1261,6 +1261,103 @@ UNIT_TEST_INSTANTIATION( EntityEstimator,
 			 commitHistoryContributionToBinOfTotal_thread_safe );
 
 //---------------------------------------------------------------------------//
+// Check that a history contribution can be committed to a bin of the total
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
+				   resetData,
+				   EntityId )
+{
+  Teuchos::RCP<TestEntityEstimator<EntityId> > entity_estimator;
+
+  initializeEntityEstimator( entity_estimator, true );
+
+  unsigned num_estimator_bins = entity_estimator->getNumberOfBins()*
+    entity_estimator->getNumberOfResponseFunctions();
+
+  // Commit one contribution to every bin of the estimator 
+  for( unsigned i = 0u; i < num_estimator_bins; ++i )
+  {
+    entity_estimator->commitHistoryContributionToBinOfTotal( i, 0.5 );
+  }
+
+  // Reset the estimator data
+  entity_estimator->resetData();
+
+  // Make sure the bins have not been changed
+  TEST_EQUALITY_CONST( 
+	     entity_estimator->getNumberOfBins( MonteCarlo::ENERGY_DIMENSION ),
+	     2 );
+  TEST_EQUALITY_CONST( 
+	     entity_estimator->getNumberOfBins( MonteCarlo::TIME_DIMENSION ),
+	     2 );
+  TEST_EQUALITY_CONST( 
+	     entity_estimator->getNumberOfBins( MonteCarlo::COSINE_DIMENSION ),
+	     2 );
+  TEST_EQUALITY_CONST( 
+   entity_estimator->getNumberOfBins( MonteCarlo::COLLISION_NUMBER_DIMENSION ),
+   3 );
+  TEST_EQUALITY_CONST( entity_estimator->getNumberOfBins(), 24 );
+
+  // Make sure the response functions have not changed
+  TEST_EQUALITY_CONST( entity_estimator->getNumberOfResponseFunctions(), 1 );
+  
+  // Initialize the hdf5 file
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler( 
+						 "test_entity_estimator4.h5" );
+
+  // Export the estimator data
+  entity_estimator->exportData( hdf5_file_handler, false );
+
+  // Retrieve the raw bin data for each entity
+  Teuchos::Array<Utility::Pair<double,double> > 
+    raw_bin_data( 24, Utility::Pair<double,double>( 0.0, 0.0 ) ),
+    raw_bin_data_copy;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>( 
+						   0u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>( 
+						   0u, 1u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>( 
+						   0u, 2u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>( 
+						   0u, 3u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>( 
+						   0u, 4u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+					raw_bin_data_copy,
+					1e-15 );
+
+  // Retrieve the total raw total bin data
+  hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_bin_data );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+					raw_bin_data_copy,
+					1e-15 );
+}
+
+UNIT_TEST_INSTANTIATION( EntityEstimator, resetData )
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )

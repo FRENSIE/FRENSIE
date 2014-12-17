@@ -13,6 +13,7 @@
 #include <sstream>
 
 // FRENSIE Includes
+#include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 #include "FRENSIE_mpi_config.hpp"
@@ -105,6 +106,9 @@ template<typename EntityId>
 void EntityEstimator<EntityId>::assignBinBoundaries(
          const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
 {
+  // Make sure only the root thread calls this
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   Estimator::assignBinBoundaries( bin_boundaries );
 
   // Resize the entity estimator moments map arrays
@@ -138,6 +142,29 @@ inline bool EntityEstimator<EntityId>::isEntityAssigned(
 					      const EntityId& entity_id ) const
 {
   return d_entity_norm_constants_map.count( entity_id );
+}
+
+// Reset the estimator data
+template<typename EntityId>
+void EntityEstimator<EntityId>::resetData()
+{
+  // Reset the total bin data
+  for( unsigned i = 0; i < d_estimator_total_bin_data.size(); ++i )
+    d_estimator_total_bin_data[i]( 0.0, 0.0 );
+  
+  // Reset the entity bin data
+  typename EntityEstimatorMomentsArrayMap::iterator entity_data, 
+    end_entity_data;
+  entity_data = d_entity_estimator_moments_map.begin();
+  end_entity_data = d_entity_estimator_moments_map.end();
+
+  while( entity_data != end_entity_data )
+  {
+    for( unsigned i = 0; i < entity_data->second.size(); ++i )
+      entity_data->second[i]( 0.0, 0.0 );
+    
+    ++entity_data;
+  }
 }
 
 // Reduce estimator data on all processes and collect on the root process

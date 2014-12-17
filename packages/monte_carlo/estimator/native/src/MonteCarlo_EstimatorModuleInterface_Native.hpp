@@ -75,6 +75,9 @@ public:
 			       const double start_time,
 			       const double end_time );
 
+  //! Reset the estimator data
+  static void resetEstimatorData();
+
   //! Reduce estimator data on all processes in comm and collect on the root
   static void reduceEstimatorData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
@@ -196,6 +199,12 @@ EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::printEstimators(
 					     num_histories,
 					     start_time,
 					     end_time );
+}
+
+// Reset the estimator data
+inline void resetEstimatorData()
+{
+  EstimatorHandler::resetEstimatorData();
 }
 
 // Reduce estimator data on all processes in comm and collect on the root
