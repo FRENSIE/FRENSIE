@@ -128,6 +128,9 @@ public:
   //! Commit the contribution from the current history to the estimator
   virtual void commitHistoryContribution() = 0;
 
+  //! Reset estimator data
+  virtual void resetData() = 0;
+
   //! Reduce estimator data on all processes in comm and collect on the root 
   virtual void reduceData( 
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
@@ -254,7 +257,7 @@ private:
   double d_multiplier;
 
   // Records if there is an uncommitted history contribution
-  std::vector<bool> d_has_uncommitted_history_contribution;
+  Teuchos::Array<unsigned char> d_has_uncommitted_history_contribution;
 
   // The response functions
   Teuchos::Array<Teuchos::RCP<ResponseFunction> > d_response_functions;
@@ -359,46 +362,10 @@ inline void Estimator::convertParticleStateToGenericMap(
 }
 
 // Check if the estimator has uncommitted history contributions
-inline bool Estimator::hasUncommittedHistoryContribution( 
-					       const unsigned thread_id ) const
-{
-  // Make sure the thread is is valid
-  testPrecondition( thread_id < d_has_uncommitted_history_contribution.size());
-  
-  return d_has_uncommitted_history_contribution[thread_id];
-}
-
-// Check if the estimator has uncommitted history contributions
 inline bool Estimator::hasUncommittedHistoryContribution() const
 {
   return hasUncommittedHistoryContribution( 
 				 Utility::GlobalOpenMPSession::getThreadId() );
-}
-
-// Set the has uncommited history contribution flag
-/*! \details This should be called whenever the current history contributes
- * to the estimator.
- */
-inline void Estimator::setHasUncommittedHistoryContribution( 
-						     const unsigned thread_id )
-{
-  // Make sure the thread is is valid
-  testPrecondition( thread_id < d_has_uncommitted_history_contribution.size());
-  
-  d_has_uncommitted_history_contribution[thread_id] = true;
-}
-
-// Unset the has uncommited history contribution flag
-/*! \details This should be called when the current history contribution is
- * committed to the estimator
- */
-inline void Estimator::unsetHasUncommittedHistoryContribution(
-						     const unsigned thread_id )
-{
-  // Make sure the thread is is valid
-  testPrecondition( thread_id < d_has_uncommitted_history_contribution.size());
-  
-  d_has_uncommitted_history_contribution[thread_id] = false;
 }
 
 } // end MonteCarlo namespace

@@ -224,6 +224,24 @@ CellPulseHeightEstimator<ContributionMultiplierPolicy>::enableThreadSupport(
   d_dimension_values.resize( num_threads );
 }
 
+// Reset the estimator data
+template<typename ContributionMultiplierPolicy>
+void CellPulseHeightEstimator<ContributionMultiplierPolicy>::resetData()
+{
+  // Make sure only the root thread calls this
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
+  EntityEstimator<CellPulseHeightEstimator::cellIdType>::resetData();
+
+  // Reset the update tracker
+  for( unsigned i = 0; i < d_update_tracker.size(); ++i )
+  {
+    d_update_tracker[i].clear();
+    
+    this->unsetHasUncommittedHistoryContribution( i );
+  }
+}
+
 // Export the estimator data
 template<typename ContributionMultiplierPolicy>
 void CellPulseHeightEstimator<ContributionMultiplierPolicy>::exportData(

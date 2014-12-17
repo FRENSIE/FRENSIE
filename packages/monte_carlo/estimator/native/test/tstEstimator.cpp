@@ -47,6 +47,9 @@ public:
   void commitHistoryContribution()
   { /* ... */ }
 
+  void resetData()
+  { /* ... */ }
+
   void reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process )

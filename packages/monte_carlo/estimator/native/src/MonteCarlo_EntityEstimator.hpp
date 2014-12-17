@@ -62,6 +62,9 @@ public:
   //! Check if the entity is assigned to this estimator
   bool isEntityAssigned( const EntityId& entity_id ) const;
 
+  //! Reset estimator data
+  virtual void resetData();
+
   //! Reduce estimator data on all processes and collect on the root process
   virtual void reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,

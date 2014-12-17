@@ -80,7 +80,7 @@ IF(${FRENSIE_ENABLE_MPI})
   ADD_TEST(DistributedParallelStandardEntityEstimator_2_test 
     ${MPIEXEC} -n 2 tstDistributedStandardEntityEstimator)
   ADD_TEST(DistributedParallelStandardEntityEstimator_4_test 
-    ${MPIEXEC} -n 2 tstDistributedStandardEntityEstimator)
+    ${MPIEXEC} -n 4 tstDistributedStandardEntityEstimator)
 ENDIF()
 
 Add_EXECUTABLE(tstStandardSurfaceEstimator
@@ -218,6 +218,18 @@ ADD_EXECUTABLE(tstEstimatorHandler
   tstEstimatorHandler.cpp)
 TARGET_LINK_LIBRARIES(tstEstimatorHandler monte_carlo_estimator_native)
 ADD_TEST(EstimatorHandler_test tstEstimatorHandler)
+
+IF(${FRENSIE_ENABLE_MPI})
+  Add_EXECUTABLE(tstDistributedEstimatorHandler 
+    tstDistributedEstimatorHandler.cpp)
+  TARGET_LINK_LIBRARIES(tstDistributedEstimatorHandler monte_carlo_estimator_native)
+  ADD_TEST(DistributedParallelEstimatorHandler_1_test 
+    ${MPIEXEC} -n 2 tstDistributedEstimatorHandler)
+  ADD_TEST(DistributedParallelEstimatorHandler_2_test 
+    ${MPIEXEC} -n 2 tstDistributedEstimatorHandler)
+  ADD_TEST(DistributedParallelEstimatorHandler_4_test 
+    ${MPIEXEC} -n 4 tstDistributedEstimatorHandler)
+ENDIF()
 
 ADD_EXECUTABLE(tstEstimatorModuleInterface_Native
   tstModuleInterface.cpp)

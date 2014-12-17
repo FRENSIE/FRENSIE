@@ -87,6 +87,9 @@ public:
   //! Enable support for multiple threads
   void enableThreadSupport( const unsigned num_threads );
 
+  //! Reset estimator data
+  virtual void resetData();
+
   //! Reduce estimator data on all processes and collect on the root process
   void reduceData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
