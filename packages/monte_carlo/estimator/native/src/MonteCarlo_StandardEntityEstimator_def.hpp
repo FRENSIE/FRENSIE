@@ -49,6 +49,17 @@ StandardEntityEstimator<EntityId>::StandardEntityEstimator(
   initializeMomentsMaps( entity_ids );
 }
 
+// Constructor with no entities (for mesh estimator)
+template<typename EntityId>
+StandardEntityEstimator<EntityId>::StandardEntityEstimator( 
+				   const Estimator::idType id,
+				   const double multiplier )
+  : EntityEstimator<EntityId>( id, multiplier ),
+    d_dimension_values( 1 ),
+    d_update_tracker( 1 ),
+    d_total_estimator_moments( 1 )
+{ /* ... */ }
+
 // Set the response functions
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::setResponseFunctions(
@@ -550,6 +561,40 @@ void StandardEntityEstimator<EntityId>::exportData(
   }
 }
 
+// Assign entities
+template<typename EntityId>
+void StandardEntityEstimator<EntityId>::assignEntities(
+		const boost::unordered_map<EntityId,double>& entity_norm_data )
+{
+  // Make sure there is at least one entity
+  testPrecondition( entity_norm_data.size() > 0 );
+
+  EntityEstimator<EntityId>::assignEntities( entity_norm_data );
+  
+  // Reset the estimator data
+  d_total_estimator_moments.clear();
+  d_entity_total_estimator_moments_map.clear();
+
+  // Initialize the entity data
+  typename boost::unordered_map<EntityId,double>::const_iterator entity, 
+    end_entity;
+  entity = entity_norm_data.begin();
+  end_entity = entity_norm_data.end();
+
+  while( entity != end_entity )
+  {
+    d_entity_total_estimator_moments_map[entity->first];
+
+    ++entity;
+  }
+
+  // Resize the entity total estimator momens map arrays
+  resizeEntityTotalEstimatorMomentsMapArrays();
+  
+  // Resize the total estimator moments array
+  d_total_estimator_moments.resize( this->getNumberOfResponseFunctions() );
+}
+
 // Add estimator contribution from a portion of the current history
 /*! \details The contribution should incorporate the particle weight (and
  * possibly other multiplier(s) ) but not the response function values.
@@ -640,6 +685,33 @@ void StandardEntityEstimator<EntityId>::printImplementation(
   this->printEstimatorTotalData( os,
 				 d_total_estimator_moments,
 				 this->getTotalNormConstant() );
+}
+
+// Get the total estimator data
+/*! \details This function breaks encapsulation and is therefore not ideal.
+ * It is needed by mesh estimators for exporting data in .h5m and .vtk formats.
+ */
+template<typename EntityId>
+const Estimator::FourEstimatorMomentsArray&
+StandardEntityEstimator<EntityId>::getTotalData() const
+{
+  return d_total_estimator_moments;
+}
+
+// Get the total data for an entity
+/*! \details This function breaks encapsulation and is therefore not ideal.
+ * It is needed by mesh estimators for exporting data in .h5m and .vtk formats.
+ */
+template<typename EntityId>
+const Estimator::FourEstimatorMomentsArray&
+StandardEntityEstimator<EntityId>::getEntityTotalData( 
+					       const EntityId entity_id ) const
+{
+  // Make sure the entity is valid
+  testPrecondition( d_entity_total_estimator_moments_map.find( entity_id ) !=
+		    d_entity_total_estimator_moments_map.end() );
+  
+  return d_entity_total_estimator_moments_map.find( entity_id )->second;
 }
 
 // Resize the entity total estimator moments map arrays
