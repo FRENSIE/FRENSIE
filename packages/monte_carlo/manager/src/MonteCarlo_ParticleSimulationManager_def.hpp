@@ -67,6 +67,10 @@ void ParticleSimulationManager<GeometryHandler,
 
   // Set up the geometry module interface for the number of threads requested
   GMI::initialize();
+
+  // Enable estimator thread support
+  EMI::enableThreadSupport( 
+		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
   // Set the start time
   d_start_time = clock()/((double)CLOCKS_PER_SEC);
@@ -87,7 +91,7 @@ void ParticleSimulationManager<GeometryHandler,
 	Utility::RandomNumberGenerator::initialize( history );
 	
 	// Sample a particle state from the source
-	SMI::sampleParticleState( bank );
+	SMI::sampleParticleState( bank, history );
 	
 	// Determine the starting cell of the particle
 	for( unsigned i = 0; i < bank.size(); ++i )
@@ -128,11 +132,8 @@ void ParticleSimulationManager<GeometryHandler,
 	}
 	
 	// Commit all estimator history contributions
-	#pragma omp critical( estimator_update )
-	{
-	  EMI::commitEstimatorHistoryContributions();
-        }
-	
+	EMI::commitEstimatorHistoryContributions();
+        
 	// Increment the number of histories completed
         #pragma omp atomic
 	++d_histories_completed;
@@ -319,11 +320,12 @@ void ParticleSimulationManager<GeometryHandler,
 			       CollisionHandler>::exportSimulationData(
 				      const std::string& data_file_name ) const
 {
-  // EMI::exportEstimatorData( data_file_name,
-  // 			    d_start_history+d_histories_completed,
-  // 			    d_histories_completed,
-  // 			    d_start_time,
-  // 			    d_end_time+d_previous_run_time );
+  EMI::exportEstimatorData( data_file_name,
+  			    d_start_history+d_histories_completed,
+  			    d_histories_completed,
+  			    d_start_time,
+  			    d_end_time+d_previous_run_time,
+			    true );
 }
 
 // Signal handler

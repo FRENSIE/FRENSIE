@@ -64,7 +64,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createSimpleSource )
 
   for( unsigned i = 0; i < 5; ++i )
   {
-    source->sampleParticleState( bank );
+    source->sampleParticleState( bank, i );
   }
 
   std::cout << std::endl;
@@ -95,7 +95,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createComplexSource )
 
   for( unsigned i = 0; i < 5; ++i )
   {
-    source->sampleParticleState( bank );
+    source->sampleParticleState( bank, i );
   }
 
   std::cout << std::endl;
@@ -126,7 +126,7 @@ TEUCHOS_UNIT_TEST( ParticleSourceFactory, createCompoundSource )
 
   for( unsigned i = 0; i < 5; ++i )
   {
-    source->sampleParticleState( bank );
+    source->sampleParticleState( bank, i );
   }
 
   std::cout << std::endl;
