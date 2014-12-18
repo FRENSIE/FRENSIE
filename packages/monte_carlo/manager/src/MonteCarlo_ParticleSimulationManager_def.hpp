@@ -9,9 +9,6 @@
 #ifndef FACEMC_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 #define FACEMC_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 
-// Std Lib Includes
-#include <time.h>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
@@ -73,7 +70,7 @@ void ParticleSimulationManager<GeometryHandler,
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
   // Set the start time
-  d_start_time = clock()/((double)CLOCKS_PER_SEC);
+  d_start_time = Utility::GlobalOpenMPSession::getTime();
 
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   { 
@@ -142,7 +139,7 @@ void ParticleSimulationManager<GeometryHandler,
   }
     
   // Set the end time
-  d_end_time = clock()/((double)CLOCKS_PER_SEC);
+  d_end_time = Utility::GlobalOpenMPSession::getTime();
 }
 
 // Set the number of particle histories to simulate

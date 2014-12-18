@@ -9,6 +9,9 @@
 #ifndef UTILITY_GLOBAL_OPEN_MP_SESSION_HPP
 #define UTILITY_GLOBAL_OPEN_MP_SESSION_HPP
 
+// Std Lib Includes
+#include <time.h>
+
 // FRENSIE Includes
 #include "FRENSIE_openmp_config.hpp"
 
@@ -31,6 +34,9 @@ public:
   //! Get the thread id within the current scope
   static unsigned getThreadId();
 
+  //! Get the current wall time (s)
+  static double getTime();
+ 
   //! Return if OpenMP has been configured for use
   static bool isOpenMPUsed();
 
@@ -72,6 +78,16 @@ inline unsigned GlobalOpenMPSession::getThreadId()
   return omp_get_thread_num();
 #else
   return 0u;
+#endif
+}
+
+// Get the current wall time (s)
+inline double GlobalOpenMPSession::getTime()
+{
+#ifdef HAVE_FRENSIE_OPENMP
+  return omp_get_wtime();
+#else
+  return cloc()/((double)CLOCKS_PER_SEC);
 #endif
 }
 
