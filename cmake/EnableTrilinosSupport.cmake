@@ -125,6 +125,40 @@ MACRO(ENABLE_TRILINOS_SUPPORT)
   # Set the link paths for Trilinos
   LINK_DIRECTORIES(${Trilinos_LIBRARY_DIRS} ${Trilinos_TPL_LIBRARY_DIRS})
 
+  # Apply the Teuchos::TwoDArray patch 
+  IF((NOT DEFINED TEUCHOS_TWO_D_ARRAY_PATCHED) OR (NOT ${TEUCHOS_TWO_D_ARRAY_PATCHED}))
+    FIND_FILE(TEUCHOS_TWO_D_ARRAY_HPP
+      NAMES "Teuchos_TwoDArray.hpp"
+      PATHS ${Trilinos_INCLUDE_DIRS})
+    IF(${TEUCHOS_TWO_D_ARRAY_HPP} MATCHES NOTFOUND)
+      MESSAGE(FATAL_ERROR "The Teuchos::TwoDArray.hpp file could not be found!")
+    ENDIF()
+        
+    IF(NOT DEFINED TEUCHOS_TWO_D_ARRAY_PATCH)
+      MESSAGE(FATAL_ERROR "The Teuchos::TwoDArray.hpp patch needs to be defined!" )
+    ENDIF()
+
+    IF(NOT DEFINED PATCH_EXEC)
+      MESSAGE(FATAL_ERROR "The patch executable needs to be defined!")
+    ENDIF()
+    
+    EXECUTE_PROCESS(COMMAND ${PATCH_EXEC} -s -N -r ${CMAKE_BINARY_DIR}/Teuchos_TwoDArray.hpp.rej ${TEUCHOS_TWO_D_ARRAY_HPP} 
+      ${TEUCHOS_TWO_D_ARRAY_PATCH}
+      OUTPUT_VARIABLE TEUCHOS_TWO_D_ARRAY_PATCH_OUTPUT
+      ERROR_VARIABLE TEUCHOS_TWO_D_ARRAY_PATCH_ERROR
+      RESULT_VARIABLE TEUCHOS_TWO_D_ARRAY_PATCH_RESULT)
+
+    IF(${TEUCHOS_TWO_D_ARRAY_PATCH_OUTPUT} MATCHES "FAILED")
+      MESSAGE(FATAL_ERROR "The Teuchos::TwoDArray.hpp file could not be patched: ${TEUCHOS_TWO_D_ARRAY_PATCH_OUTPUT}")
+    ELSEIF("TEUCHOS_TWO_D_ARRAY_PATCHED" MATCHES "refusing")
+      MESSAGE(FATAL_ERROR "The Teuchos::TwoDArray.hpp file could not be patched: ${TEUCHOS_TWO_D_ARRAY_PATCH_OUTPUT}")
+    ELSE()
+      SET(TEUCHOS_TWO_D_ARRAY_PATCHED "ON"
+	CACHE BOOL "Flag that indicates if the patch was successful." FORCE)
+      MESSAGE("-- Teuchos_TwoDArray.hpp has been patched!")
+    ENDIF()
+  ENDIF()
+
   # Echo Trilinos build info if a verbose configure is requested
   IF(CMAKE_VERBOSE_CONFIGURE)
     MESSAGE("\nFound Trilinos!  Here are the details: ")
