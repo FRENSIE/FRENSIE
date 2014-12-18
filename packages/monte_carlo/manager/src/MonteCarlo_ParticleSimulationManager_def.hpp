@@ -364,7 +364,7 @@ void ParticleSimulationManager<GeometryHandler,
 			       EstimatorHandler,
 			       CollisionHandler>::printSimulationStateInfo()
 {
-  double time = clock()/((double)(CLOCKS_PER_SEC));
+  double time = Utility::GlobalOpenMPSession::getTime();
   
   #pragma omp critical( ostream_update )
   {
