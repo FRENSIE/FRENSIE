@@ -13,6 +13,7 @@ TRILINOS_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/trilinos")
 TRILINOS_SOURCE_PATH=$(python $ABSPATHEXE "../deps/builds/trilinos")
 HDF5_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/hdf5")
 MOAB_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/moab")
+MOAB_SOURCE_PATH=$(python $ABSPATHEXE "../deps/builds/moab")
 ODEPACK_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/odepack")
 BOOST_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/boost")
 GSL_PREFIX_PATH=$(python $ABSPATHEXE "../deps/install/gsl")
@@ -24,13 +25,6 @@ FRENSIE_INSTALL=$(python $ABSPATHEXE "../frensie_install")
 # No longer needed after this point.
 # Move lower if $ABSPATHEXE needs to be used below this.
 rm "__abspath.py"
-
-
-##---------------------------------------------------------------------------##
-## The Teuchos_TwoDArray class has a bug that needs to be fixed. This patch
-## will work as a temporary solution.
-patch -s -f $TRILINOS_PREFIX_PATH/include/Teuchos_TwoDArray.hpp \
-   $FRENSIE_SRC/patches/Teuchos_TwoDArray_patch
 
 source ~/.bashrc
 `python ../src/scripts/prefix.py ../deps/install`
@@ -49,6 +43,7 @@ cmake \
     -D TRILINOS_PREFIX:PATH=$TRILINOS_PREFIX_PATH \
     -D TRILINOS_SOURCE:PATH=$TRILINOS_SOURCE_PATH \
     -D MOAB_PREFIX:PATH=$MOAB_PREFIX_PATH \
+    -D MOAB_SOURCE:PATH=$MOAB_SOURCE_PATH \
     -D HDF5_PREFIX:PATH=$HDF5_PREFIX_PATH \
     -D ODEPACK_PREFIX:PATH=$ODEPACK_PREFIX_PATH \
     -D BOOST_PREFIX:PATH=$BOOST_PREFIX_PATH \

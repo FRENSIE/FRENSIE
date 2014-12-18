@@ -1,44 +1,32 @@
---- DagMC.cpp-orig	2014-12-18 00:01:58.380591459 -0600
-+++ DagMC.cpp	2014-12-18 00:03:20.236591543 -0600
-@@ -561,12 +561,12 @@
-     dist_limit = user_dist_limit;
- 
-   // don't recreate these every call
--  std::vector<double>       &dists       = distList;
--  std::vector<EntityHandle> &surfs       = surfList;
--  std::vector<EntityHandle> &facets      = facetList;  
--  dists.clear();
--  surfs.clear();
--  facets.clear();
-+  std::vector<double>       dists;//       = distList;
-+  std::vector<EntityHandle> surfs;//       = surfList;
-+  std::vector<EntityHandle> facets;//      = facetList;  
-+  // dists.clear();
-+  // surfs.clear();
-+  // facets.clear();
- 
-   assert(vol - setOffset < rootSets.size());  
-   const EntityHandle root = rootSets[vol - setOffset];
-@@ -711,14 +711,14 @@
- 
-   // Don't recreate these every call. These cannot be the same as the ray_fire
-   // vectors because both are used simultaneously.
--  std::vector<double>       &dists = disList;
--  std::vector<EntityHandle> &surfs = surList;
--  std::vector<EntityHandle> &facets= facList;
--  std::vector<int>          &dirs  = dirList;
--  dists.clear();
--  surfs.clear();
--  facets.clear();
--  dirs.clear();
-+  std::vector<double>       dists;// = disList;
-+  std::vector<EntityHandle> surfs;// = surList;
-+  std::vector<EntityHandle> facets;//= facList;
-+  std::vector<int>          dirs;//  = dirList;
-+  // dists.clear();
-+  // surfs.clear();
-+  // facets.clear();
-+  // dirs.clear();
- 
-   // if uvw is not given or is full of zeros, use a random direction
-   double u = 0, v = 0, w = 0;
+564,569c564,569
+<   std::vector<double>       &dists       = distList;
+<   std::vector<EntityHandle> &surfs       = surfList;
+<   std::vector<EntityHandle> &facets      = facetList;  
+<   dists.clear();
+<   surfs.clear();
+<   facets.clear();
+---
+>   std::vector<double>       dists; //      = distList;
+>   std::vector<EntityHandle> surfs; //      = surfList;
+>   std::vector<EntityHandle> facets; //     = facetList;  
+>   //dists.clear();
+>   //surfs.clear();
+>   //facets.clear();
+714,721c714,721
+<   std::vector<double>       &dists = disList;
+<   std::vector<EntityHandle> &surfs = surList;
+<   std::vector<EntityHandle> &facets= facList;
+<   std::vector<int>          &dirs  = dirList;
+<   dists.clear();
+<   surfs.clear();
+<   facets.clear();
+<   dirs.clear();
+---
+>   std::vector<double>       dists;// = disList;
+>   std::vector<EntityHandle> surfs;// = surList;
+>   std::vector<EntityHandle> facets;//= facList;
+>   std::vector<int>          dirs;//  = dirList;
+>   // dists.clear();
+>   // surfs.clear();
+>   // facets.clear();
+>   // dirs.clear();
