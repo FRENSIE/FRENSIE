@@ -51,7 +51,7 @@ MACRO(ENABLE_MOAB_SUPPORT)
       ELSEIF(DAGMC_THREAD_SAFE_PATCH_RESULT EQUAL "0")
 	MESSAGE(FATAL_ERROR "DagMC.cpp was successfully patched for the first time. Moab needs to be rebuilt before proceeding.")
       ELSE()
-	SET(DAGMC_THEAD_SAFE_PATCHED "ON"
+	SET(DAGMC_THREAD_SAFE_PATCHED "ON"
 	  CACHE BOOL "Flag that indicates if the patch was successful." FORCE)
 	MESSAGE("-- DagMC.cpp has been patched!")
       ENDIF()
