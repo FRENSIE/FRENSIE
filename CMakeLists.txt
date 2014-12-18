@@ -127,9 +127,12 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 # Add an uninstall target
 ADD_UNINSTALL_TARGET()
 
-# Enable testing through CTest
-ENABLE_TESTING()
-INCLUDE(Dart)
+# Set up the testing dashboard
+IF(${SETUP_DASHBOARD_CLIENT})
+  INCLUDE(CTest)
+ELSE()
+  ENABLE_TESTING()
+ENDIF()
 
 # Set up the project directory hierarchy
 ADD_SUBDIRECTORY(packages)
