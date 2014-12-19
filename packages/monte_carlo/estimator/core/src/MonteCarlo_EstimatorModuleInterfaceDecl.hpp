@@ -9,6 +9,13 @@
 #ifndef FACEMC_ESTIMATOR_MODULE_INTERFACE_DECL_HPP
 #define FACEMC_ESTIMATOR_MODULE_INTERFACE_DECL_HPP
 
+// Std Lib Includes
+#include <string>
+#include <iostream>
+
+// Trilinos Includes
+#include <Teuchos_Comm.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_ParticleState.hpp"
@@ -64,6 +71,10 @@ public:
 		      const Teuchos::RCP<EstimatorHandler>& estimator_handler )
   { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
 
+  //! Enable support for multiple threads
+  static inline void enableThreadSupport( const unsigned num_threads )
+  { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
+
   //! Update the estimators from a particle generation event
   static inline void updateEstimatorsFromParticleGenerationEvent(
 					        const ParticleState& particle )
@@ -94,6 +105,26 @@ public:
 
   //! Print the estimator data
   static inline void printEstimators( std::ostream& os )
+  { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
+
+  //! Reset the estimator data
+  static inline void resetEstimatorData()
+  { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
+
+  //! Reduce estimator data on all processes in comm and collect on the root
+  static inline void reduceEstimatorData(
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process )
+  { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
+
+  //! Export the estimator data
+  static inline void exportEstimatorData( 
+				  const std::string& data_file_name,
+				  const unsigned long long last_history_number,
+				  const unsigned long long histories_completed,
+				  const double start_time,
+				  const double end_time,
+				  const bool process_data )
   { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
 
   //! Get the internal estimator handle corresponding to the external handle

@@ -34,6 +34,9 @@ public:
   //! Return the number of estimators that have been added
   static unsigned getNumberOfEstimators();
 
+  //! Enable support for multiple threads
+  static void enableThreadSupport( const unsigned num_threads );
+
   //! Commit the estimator history contributions
   static void commitEstimatorHistoryContributions();
 
@@ -43,6 +46,22 @@ public:
 			       const double start_time,
 			       const double end_time );
 
+  //! Reset estimator data
+  static void resetEstimatorData();
+
+  //! Reduce estimator data on all processes in comm and collect on the root
+  static void reduceEstimatorData( 
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process );
+
+  //! Export the estimator data and process
+  static void exportEstimatorData(const std::string& data_file_name,
+				  const unsigned long long last_history_number,
+				  const unsigned long long histories_completed,
+				  const double start_time,
+				  const double end_time,
+				  const bool process_data );
+  
 private:
 
   // Constructor

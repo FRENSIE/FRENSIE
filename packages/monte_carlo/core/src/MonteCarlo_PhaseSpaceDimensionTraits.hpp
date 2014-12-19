@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_PHASE_SPACE_DIMENSION_TRAITS_HPP
-#define FACEMC_PHASE_SPACE_DIMENSION_TRAITS_HPP
+#ifndef MONTE_CARLO_PHASE_SPACE_DIMENSION_TRAITS_HPP
+#define MONTE_CARLO_PHASE_SPACE_DIMENSION_TRAITS_HPP
 
 // Std Lib Includes
 #include <limits>
@@ -110,7 +110,7 @@ struct PhaseSpaceDimensionTraits<COLLISION_NUMBER_DIMENSION>
   typedef ParticleState::collisionNumberType dimensionType;
     
   static inline std::string name()
-  { return "Collision Number"; }
+  { return "Collision_Number"; }
 
   static inline dimensionType lowerBound()
   { return 0u; }

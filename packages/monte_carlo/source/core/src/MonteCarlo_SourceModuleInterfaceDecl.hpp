@@ -65,7 +65,8 @@ public:
   { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); }
 
   //! Sample a particle state (or possibly states)
-  static inline void sampleParticleState( ParticleBank& bank )
+  static inline void sampleParticleState( ParticleBank& bank,
+					  const unsigned long long history )
   { (void)UndefinedSourceHandler<SourceHandler>::notDefined(); }
 
   //! Return the sampling efficiency

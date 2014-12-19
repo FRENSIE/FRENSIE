@@ -57,6 +57,10 @@ public:
   //! Print the dimension discretization
   void print( std::ostream& os ) const;
 
+  //! Export the bin boundaries
+  void exportData( const unsigned estimator_id,
+		   EstimatorHDF5FileHandler& hdf5_file ) const;
+
 private:
 
   // The dimension bin boundaries
@@ -103,6 +107,10 @@ public:
 
   //! Print the dimension discretization
   void print( std::ostream& os ) const;
+
+  //! Export the bin boundaries
+  void exportData( const unsigned estimator_id,
+		   EstimatorHDF5FileHandler& hdf5_file ) const;
 
 private:
 

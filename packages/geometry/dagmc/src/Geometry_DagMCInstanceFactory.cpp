@@ -77,7 +77,7 @@ void DagMCInstanceFactory::initializeDagMC(
   Geometry::initializeDagMC( cad_file_name, properties, facet_tol );
 
   // Print the unused parameters
-  geom_rep.unused( std::cout );
+  geom_rep.unused( std::cerr );
 }
 
 // Validate a geometry representation

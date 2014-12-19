@@ -19,9 +19,10 @@
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
+#include "MonteCarlo_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
-#include "Data_XSSPhotoatomicDataExtractor.hpp"
-#include "Utility_DiscreteDistribution.hpp"
+#include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_DirectionHelpers.hpp"
@@ -49,7 +50,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   
-  unsigned shell_of_interaction;
+  MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 3 );
@@ -67,8 +68,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, 
-		       std::numeric_limits<unsigned>::max() );
+  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -82,7 +82,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
   photon.setEnergy( 20.0 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   
-  unsigned shell_of_interaction;
+  MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 6 );
@@ -103,7 +103,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
 
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, 0u );
+  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -112,7 +112,6 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
 int main( int argc, char** argv )
 {
   std::string test_ace_file_name, test_ace_table_name;
-  int atomic_number;
   
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
   
@@ -122,10 +121,7 @@ int main( int argc, char** argv )
   clp.setOption( "test_ace_table",
 		 &test_ace_table_name,
 		 "Test ACE table name" );
-  clp.setOption( "atomic_number",
-		 &atomic_number,
-		 "Atomic number" );
-
+  
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -142,52 +138,48 @@ int main( int argc, char** argv )
 				 new Data::ACEFileHandler( test_ace_file_name,
 							   test_ace_table_name,
 							   1u ) );
-  Teuchos::RCP<Data::XSSPhotoatomicDataExtractor> xss_data_extractor(
-                            new Data::XSSPhotoatomicDataExtractor( 
+  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
+                            new Data::XSSEPRDataExtractor( 
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
   
   // Create the scattering function
-  Teuchos::Array<double> recoil_momentum( 22 ); // (1/cm)
-  recoil_momentum[0] = 0.0*1e8;
-  recoil_momentum[1] = 0.005*1e8;
-  recoil_momentum[2] = 0.01*1e8;
-  recoil_momentum[3] = 0.05*1e8;
-  recoil_momentum[4] = 0.1*1e8;
-  recoil_momentum[5] = 0.15*1e8;
-  recoil_momentum[6] = 0.20*1e8;
-  recoil_momentum[7] = 0.3*1e8;
-  recoil_momentum[8] = 0.4*1e8;
-  recoil_momentum[9] = 0.5*1e8;
-  recoil_momentum[10] = 0.6*1e8;
-  recoil_momentum[11] = 0.7*1e8;
-  recoil_momentum[12] = 0.8*1e8;
-  recoil_momentum[13] = 0.9*1e8;
-  recoil_momentum[14] = 1.0*1e8;
-  recoil_momentum[15] = 1.5*1e8;
-  recoil_momentum[16] = 2.0*1e8;
-  recoil_momentum[17] = 3.0*1e8;
-  recoil_momentum[18] = 4.0*1e8;
-  recoil_momentum[19] = 5.0*1e8;
-  recoil_momentum[20] = 8.0*1e8;
-  recoil_momentum[21] = std::numeric_limits<double>::max();
+  Teuchos::ArrayView<const double> jince_block =
+    xss_data_extractor->extractJINCEBlock();
+
+  unsigned scatt_func_size = jince_block.size()/2;
+
+  Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ) );
+
+  for( unsigned i = 0; i < scatt_func_size; ++i )
+    recoil_momentum[i] *= 1e8; // convert from inverse Anstrom to inverse cm
   
-  Teuchos::Array<double> scattering_function_values(
-				      xss_data_extractor->extractJINCBlock() );
-  scattering_function_values.push_back( (double)atomic_number );
-
   Teuchos::RCP<Utility::OneDDistribution> scattering_function(
-			    new Utility::TabularDistribution<Utility::LinLin>( 
-						recoil_momentum,
-						scattering_function_values ) );
+	  new Utility::TabularDistribution<Utility::LinLin>( 
+			   recoil_momentum,
+			   jince_block( scatt_func_size, scatt_func_size ) ) );
 
-  // Create the shell interaction data
-  Teuchos::RCP<Utility::OneDDistribution> shell_interaction_data(
-			      new Utility::DiscreteDistribution( 
-				   xss_data_extractor->extractLBEPSBlock(),
-				   xss_data_extractor->extractLPIPSBlock() ) );
+  // Create the subshell order array
+  Teuchos::ArrayView<const double> subshell_endf_des = 
+    xss_data_extractor->extractSubshellENDFDesignators();
 
+  Teuchos::Array<MonteCarlo::SubshellType> subshell_order( 
+						    subshell_endf_des.size() );
+
+  for( unsigned i = 0; i < subshell_order.size(); ++i )
+  {
+    subshell_order[i] = MonteCarlo::convertENDFDesignatorToSubshellEnum( 
+					      (unsigned)subshell_endf_des[i] );
+  }
+
+  // Create the Compton profile subshell converter
+  Teuchos::RCP<MonteCarlo::ComptonProfileSubshellConverter> converter;
+  
+  MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
+				   converter,
+			           xss_data_extractor->extractAtomicNumber() );
+    
   // Create the compton profile distributions
   Teuchos::ArrayView<const double> lswd_block = 
     xss_data_extractor->extractLSWDBlock();
@@ -217,9 +209,12 @@ int main( int argc, char** argv )
 
   detailed_incoherent_distribution.reset( 
 		      new MonteCarlo::IncoherentPhotonScatteringDistribution( 
-							scattering_function,
-							shell_interaction_data,
-							compton_profiles ) );
+			  scattering_function,
+			  xss_data_extractor->extractSubshellBindingEnergies(),
+			  xss_data_extractor->extractSubshellOccupancies(),
+			  subshell_order,
+			  converter,
+			  compton_profiles ) );
   // Clear setup data
   ace_file_handler.reset();
   xss_data_extractor.reset();

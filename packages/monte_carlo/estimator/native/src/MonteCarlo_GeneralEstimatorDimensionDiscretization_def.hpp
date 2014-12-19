@@ -110,6 +110,16 @@ void GeneralEstimatorDimensionDiscretization<dimension>::print(
     os << d_dimension_bin_boundaries[i] << " ";
 }
 
+// Export the bin boundaries
+template<PhaseSpaceDimension dimension>
+void GeneralEstimatorDimensionDiscretization<dimension>::exportData(
+				    const unsigned estimator_id,
+				    EstimatorHDF5FileHandler& hdf5_file ) const
+{
+  hdf5_file.setEstimatorBinBoundaries<dimension>( estimator_id, 
+						  d_dimension_bin_boundaries );
+}
+
 } // end MonteCarlo namespace						     
 
 #endif // end FACEMC_GENERAL_ESTIMATOR_DIMENSION_DISCRETIZATION_DEF_HPP

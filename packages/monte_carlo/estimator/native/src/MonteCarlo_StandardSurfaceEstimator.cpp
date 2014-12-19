@@ -72,6 +72,20 @@ void StandardSurfaceEstimator::setParticleTypes(
     Estimator::setParticleTypes( particle_types );
 }
 
+// Export the estimator data
+void StandardSurfaceEstimator::exportData(
+					  EstimatorHDF5FileHandler& hdf5_file,
+					  const bool process_data ) const
+{
+  // Export the lower level data first
+  StandardEntityEstimator<Geometry::ModuleTraits::InternalSurfaceHandle>::exportData( 
+								hdf5_file,
+								process_data );
+
+  // Set the estimator as a surface estimator
+  hdf5_file.setSurfaceEstimator( this->getId() );
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

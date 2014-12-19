@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhaseSpaceDimension.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 
 namespace MonteCarlo{
 
@@ -55,6 +56,10 @@ public:
 
   //! Print the dimension discretization
   virtual void print( std::ostream& os ) const = 0;
+
+  //! Export the bin boundaries
+  virtual void exportData( const unsigned estimator_id,
+			   EstimatorHDF5FileHandler& hdf5_file ) const = 0;
 
 private:
 

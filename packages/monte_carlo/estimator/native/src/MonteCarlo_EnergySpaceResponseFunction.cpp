@@ -14,9 +14,10 @@ namespace MonteCarlo{
 
 // Constructor
 EnergySpaceResponseFunction::EnergySpaceResponseFunction(
+	    const unsigned id,
 	    const std::string& name,
 	    const Teuchos::RCP<Utility::OneDDistribution> energy_distribution )
-  : ResponseFunction( name ),
+  : ResponseFunction( id, name ),
     d_energy_distribution( energy_distribution )
 {
   // Make sure the energy distribution is valid

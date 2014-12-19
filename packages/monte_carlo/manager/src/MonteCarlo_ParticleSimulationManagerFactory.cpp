@@ -10,6 +10,8 @@
 #include "FRENSIE_dagmc_config.hpp"
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
 #include "MonteCarlo_ParticleSimulationManager.hpp"
+#include "MonteCarlo_SimulationPropertiesFactory.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "MonteCarlo_StandardParticleSourceFactory.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
 #include "MonteCarlo_EstimatorHandlerFactory.hpp"
@@ -43,6 +45,9 @@ ParticleSimulationManagerFactory::createManager(
 		      "Error: the number of histories to run must be "
 		      "specified!" );
   
+  // Initialize the simulation properties
+  SimulationPropertiesFactory::initializeSimulationProperties(simulation_info);
+
   // Initialize DagMC
   Geometry::DagMCInstanceFactory::initializeDagMC( geom_def );
 
@@ -70,7 +75,7 @@ ParticleSimulationManagerFactory::createManager(
 		                       ParticleSource,
 	                               EstimatorHandler,
 		                       CollisionHandler>(
-			  simulation_info.get<unsigned int>( "Histories" ) ) );
+			      SimulationProperties::getNumberOfHistories() ) );
   #else
   return Teuchos::RCP<SimulationManager>();
   #endif // end HAVE_FRENSIE_DAGMC

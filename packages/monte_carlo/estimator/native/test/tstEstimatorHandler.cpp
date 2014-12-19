@@ -17,13 +17,19 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorHandler.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
 #include "MonteCarlo_CellCollisionFluxEstimator.hpp"
 #include "MonteCarlo_CellTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_CellPulseHeightEstimator.hpp"
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
+#include "MonteCarlo_ParticleCollidingInCellEventDispatcherDB.hpp"
+#include "MonteCarlo_ParticleCrossingSurfaceEventDispatcherDB.hpp"
+#include "MonteCarlo_ParticleEnteringCellEventDispatcherDB.hpp"
+#include "MonteCarlo_ParticleSubtrackEndingInCellEventDispatcherDB.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "Geometry_ModuleTraits.hpp"
+#include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -198,8 +204,33 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, commitEstimatorHistoryContributions )
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
 
+  // Update the cell collision flux estimators
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+
+  MonteCarlo::ParticleCollidingInCellEventDispatcherDB::dispatchParticleCollidingInCellEvent(
+								      particle,
+								      0,
+								      1.0 );
+
+  TEST_ASSERT( estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_2->hasUncommittedHistoryContribution() );
+  
+  // Update the cell track length flux estimators
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() ); 
+
+  MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::dispatchParticleSubtrackEndingInCellEvent(
+								      particle,
+								      0,
+								      1.0 );
+
+  TEST_ASSERT( estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_4->hasUncommittedHistoryContribution() ); 
+
+  // Update the cell pulse height estimators
   TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
-  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() ); 
 
   MonteCarlo::ParticleEnteringCellEventDispatcherDB::dispatchParticleEnteringCellEvent(
 								      particle,
@@ -208,11 +239,440 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, commitEstimatorHistoryContributions )
   
   TEST_ASSERT( estimator_5->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_6->hasUncommittedHistoryContribution() );
+
+  // Update the surface flux and surface current estimators
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+
+  MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::dispatchParticleCrossingSurfaceEvent(
+								      particle,
+								      0,
+								      1.0 );
   
+  TEST_ASSERT( estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( estimator_10->hasUncommittedHistoryContribution() );
+
+  // Commit the contributions
   MonteCarlo::EstimatorHandler::commitEstimatorHistoryContributions();
 
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+
+  // Export the estimator data
+  MonteCarlo::EstimatorHandler::exportEstimatorData( 
+						   "test_estimator_handler.h5",
+						   1,
+						   1,
+						   0.0,
+						   1.0,
+						   false );
+
+  // Open the HDF5 file
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
+	 "test_estimator_handler.h5",
+	 MonteCarlo::EstimatorHDF5FileHandler::READ_ONLY_ESTIMATOR_HDF5_FILE );
+
+  typedef MonteCarlo::StandardCellEstimator::cellIdType cellIdType;
+  typedef MonteCarlo::StandardSurfaceEstimator::surfaceIdType surfaceIdType;
+
+  // Check the bin data
+  Teuchos::Array<Utility::Pair<double,double> >
+    raw_bin_data_used( 1, Utility::Pair<double,double>( 1.0, 1.0 ) ),
+    raw_bin_data_unused( 1, Utility::Pair<double,double>( 0.0, 0.0 ) ),
+    raw_bin_data_copy;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   0u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   0u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   1u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   1u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   2u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   2u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   3u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   3u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   4u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   4u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   5u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   5u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   6u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   6u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   7u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   7u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   8u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   8u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   9u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   9u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
+					raw_bin_data_copy,
+					1e-15 );
+
+  // Reset the estimator data
+  MonteCarlo::EstimatorHandler::resetEstimatorData();
+}
+
+//---------------------------------------------------------------------------//
+// Check that estimator history contributions can be committed
+TEUCHOS_UNIT_TEST( EstimatorHandler, 
+		   commitEstimatorHistoryContributions_thread_safe )
+{
+  unsigned threads = 
+    Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+  
+  // Enable thread support in the estimators
+  MonteCarlo::EstimatorHandler::enableThreadSupport( threads );
+  
+  MonteCarlo::PhotonState particle( 0ull );
+  particle.setWeight( 1.0 );
+  particle.setEnergy( 1.0 );
+
+  // Update the cell collision flux estimators
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+
+  #pragma omp parallel num_threads( threads )
+  {
+  //#pragma omp critical( update )
+    {
+    MonteCarlo::ParticleCollidingInCellEventDispatcherDB::dispatchParticleCollidingInCellEvent(
+								      particle,
+								      0,
+								      1.0 );
+    MonteCarlo::ParticleCollidingInCellEventDispatcherDB::dispatchParticleCollidingInCellEvent(
+								      particle,
+								      1,
+								      1.0 );
+    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::dispatchParticleSubtrackEndingInCellEvent(
+								      particle,
+								      0,
+								      1.0 );
+    MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::dispatchParticleSubtrackEndingInCellEvent(
+								      particle,
+								      1,
+								      1.0 );
+    MonteCarlo::ParticleEnteringCellEventDispatcherDB::dispatchParticleEnteringCellEvent(
+								      particle,
+								      0 );
+    MonteCarlo::ParticleEnteringCellEventDispatcherDB::dispatchParticleEnteringCellEvent(
+								      particle,
+								      1 );
+    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::dispatchParticleCrossingSurfaceEvent(
+								      particle,
+								      0,
+								      1.0 );
+    MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::dispatchParticleCrossingSurfaceEvent(
+								      particle,
+								      1,
+								      1.0 );
+
+    // Commit the contributions
+    MonteCarlo::EstimatorHandler::commitEstimatorHistoryContributions();
+    }
+  }
+
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+
+  // Export the estimator data
+  MonteCarlo::EstimatorHandler::exportEstimatorData( 
+						  "test_estimator_handler2.h5",
+						  threads,
+						  threads,
+						  0.0,
+						  1.0,
+						  false );
+
+  // Open the HDF5 file
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
+	 "test_estimator_handler2.h5",
+	 MonteCarlo::EstimatorHDF5FileHandler::READ_ONLY_ESTIMATOR_HDF5_FILE );
+
+  typedef MonteCarlo::StandardCellEstimator::cellIdType cellIdType;
+  typedef MonteCarlo::StandardSurfaceEstimator::surfaceIdType surfaceIdType;
+
+  // Check the bin data
+  Teuchos::Array<Utility::Pair<double,double> >
+    raw_bin_data( 1, Utility::Pair<double,double>( threads, threads ) ),
+    raw_bin_data_copy;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   0u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   0u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   1u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   1u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   2u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   2u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   3u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   3u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   4u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   4u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   5u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<cellIdType>(
+						   5u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   6u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   6u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   7u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   7u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   8u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   8u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   9u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<surfaceIdType>(
+						   9u, 1u, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-15 );
+
+  // Reset the estimator data
+  MonteCarlo::EstimatorHandler::resetEstimatorData();
 }
 
 //---------------------------------------------------------------------------//
@@ -222,6 +682,12 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
   
+  int threads = 1;
+
+  clp.setOption( "threads",
+		 &threads,
+		 "Number of threads to use" );
+
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -232,6 +698,10 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  // Set up the global OpenMP session
+  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
+    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
   
   // Initialize estimators
   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> cell_ids( 2 );

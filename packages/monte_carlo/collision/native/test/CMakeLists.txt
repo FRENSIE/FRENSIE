@@ -123,16 +123,117 @@ ADD_EXECUTABLE(tstNeutronMaterial
 TARGET_LINK_LIBRARIES(tstNeutronMaterial monte_carlo_collision_native)
 ADD_TEST(NeutronMaterial_test tstNeutronMaterial --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
 
+ADD_EXECUTABLE(tstIncoherentPhotonScatteringDistribution
+  tstIncoherentPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(IncoherentPhotonScatteringDistribution_test tstIncoherentPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstCoherentPhotonScatteringDistribution
+  tstCoherentPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstCoherentPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(CoherentPhotonScatteringDistribution_test tstCoherentPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p --atomic_number=82)
+
+ADD_EXECUTABLE(tstStandardPhotoatomicReaction
+  tstStandardPhotoatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstStandardPhotoatomicReaction monte_carlo_collision_native)
+ADD_TEST(StandardPhotoatomicReaction_test tstStandardPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p)
+
+ADD_EXECUTABLE(tstPairProductionPhotoatomicReaction
+  tstPairProductionPhotoatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstPairProductionPhotoatomicReaction monte_carlo_collision_native)
+ADD_TEST(PairProductionPhotoatomicReaction_test tstPairProductionPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p)
+
+ADD_EXECUTABLE(tstIncoherentPhotoatomicReaction
+  tstIncoherentPhotoatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstIncoherentPhotoatomicReaction monte_carlo_collision_native)
+ADD_TEST(IncoherentPhotoatomicReaction_test tstIncoherentPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstCoherentPhotoatomicReaction
+  tstCoherentPhotoatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstCoherentPhotoatomicReaction monte_carlo_collision_native)
+ADD_TEST(CoherentPhotoatomicReaction_test tstCoherentPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstPhotoelectricPhotoatomicReaction
+  tstPhotoelectricPhotoatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstPhotoelectricPhotoatomicReaction monte_carlo_collision_native)
+ADD_TEST(PhotoelectricPhotoatomicReaction_test tstPhotoelectricPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstSubshellPhotoelectricPhotoatomicReaction
+  tstSubshellPhotoelectricPhotoatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstSubshellPhotoelectricPhotoatomicReaction monte_carlo_collision_native)
+ADD_TEST(SubshellPhotoelectricPhotoatomicReaction_test tstSubshellPhotoelectricPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstAbsorptionPhotoatomicReaction
+  tstAbsorptionPhotoatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstAbsorptionPhotoatomicReaction monte_carlo_collision_native)
+ADD_TEST(AbsorptionPhotoatomicReaction_test tstAbsorptionPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstDetailedSubshellRelaxationModel
+  tstDetailedSubshellRelaxationModel.cpp)
+TARGET_LINK_LIBRARIES(tstDetailedSubshellRelaxationModel monte_carlo_collision_native)
+ADD_TEST(DetailedSubshellRelaxationModel_test tstDetailedSubshellRelaxationModel --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstDetailedAtomicRelaxationModel
+  tstDetailedAtomicRelaxationModel.cpp)
+TARGET_LINK_LIBRARIES(tstDetailedAtomicRelaxationModel monte_carlo_collision_native)
+ADD_TEST(DetailedAtomicRelaxationModel_test tstDetailedAtomicRelaxationModel --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstPhotoatomCore tstPhotoatomCore.cpp)
+TARGET_LINK_LIBRARIES(tstPhotoatomCore monte_carlo_collision_native)
+ADD_TEST(PhotoatomCore_test tstPhotoatomCore --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstPhotoatom tstPhotoatom.cpp)
+TARGET_LINK_LIBRARIES(tstPhotoatom monte_carlo_collision_native)
+ADD_TEST(Photoatom_test tstPhotoatom --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstPhotoatomicReactionACEFactory
+  tstPhotoatomicReactionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstPhotoatomicReactionACEFactory monte_carlo_collision_native)
+ADD_TEST(PhotoatomicReactionACEFactory_test tstPhotoatomicReactionACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstAtomicRelaxationModelFactory
+  tstAtomicRelaxationModelFactory.cpp)
+TARGET_LINK_LIBRARIES(tstAtomicRelaxationModelFactory monte_carlo_collision_native)
+ADD_TEST(AtomicRelaxationModelFactory_test tstAtomicRelaxationModelFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstPhotoatomACEFactory
+  tstPhotoatomACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstPhotoatomACEFactory monte_carlo_collision_native)
+ADD_TEST(PhotoatomACEFactory_test tstPhotoatomACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstPhotoatomFactory
+  tstPhotoatomFactory.cpp)
+TARGET_LINK_LIBRARIES(tstPhotoatomFactory monte_carlo_collision_native)
+ADD_TEST(PhotoatomFactory_test tstPhotoatomFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
+
+ADD_EXECUTABLE(tstPhotonMaterial tstPhotonMaterial.cpp)
+TARGET_LINK_LIBRARIES(tstPhotonMaterial monte_carlo_collision_native)
+ADD_TEST(PhotonMaterial_test tstPhotonMaterial --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
+
 ADD_EXECUTABLE(tstCollisionHandler
   tstCollisionHandler.cpp)
 TARGET_LINK_LIBRARIES(tstCollisionHandler monte_carlo_collision_native)
 ADD_TEST(CollisionHandler_test tstCollisionHandler --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
 
 IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstCollisionHandlerFactory
-    tstCollisionHandlerFactory.cpp)
-  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactory monte_carlo_collision_native)
-  ADD_TEST(CollisionHandlerFactory_test tstCollisionHandlerFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronMode
+    tstCollisionHandlerFactoryNeutronMode.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronMode monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryNeutronMode_test tstCollisionHandlerFactoryNeutronMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryPhotonMode
+    tstCollisionHandlerFactoryPhotonMode.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryPhotonMode monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryPhotonMode_test tstCollisionHandlerFactoryPhotonMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronPhotonMode
+    tstCollisionHandlerFactoryNeutronPhotonMode.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronPhotonMode monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryNeutronPhotonMode_test tstCollisionHandlerFactoryNeutronPhotonMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
@@ -156,26 +257,6 @@ ADD_TEST(FreeGasElasticMarginalAlphaFunction_test tstFreeGasElasticMarginalAlpha
 ##   tstFreeGasElasticMarginalBetaFunction.cpp)
 ## TARGET_LINK_LIBRARIES(tstFreeGasElasticMarginalBetaFunction monte_carlo_collision_native)
 ## ADD_TEST(FreeGasElasticMarginalBetaFunction_test tstFreeGasElasticMarginalBetaFunction)
-
-ADD_EXECUTABLE(tstIncoherentPhotonScatteringDistribution
-  tstIncoherentPhotonScatteringDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(IncoherentPhotonScatteringDistribution_test tstIncoherentPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p --atomic_number=82)
-
-ADD_EXECUTABLE(tstCoherentPhotonScatteringDistribution
-  tstCoherentPhotonScatteringDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstCoherentPhotonScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(CoherentPhotonScatteringDistribution_test tstCoherentPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p --atomic_number=82)
-
-ADD_EXECUTABLE(tstStandardPhotoatomicReaction
-  tstStandardPhotoatomicReaction.cpp)
-TARGET_LINK_LIBRARIES(tstStandardPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(StandardPhotoatomicReaction_test tstStandardPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p)
-
-ADD_EXECUTABLE(tstPairProductionPhotoatomicReaction
-  tstPairProductionPhotoatomicReaction.cpp)
-TARGET_LINK_LIBRARIES(tstPairProductionPhotoatomicReaction monte_carlo_collision_native)
-ADD_TEST(PairProductionPhotoatomicReaction_test tstPairProductionPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_photoatomic_ace_file.txt" --test_ace_table=82000.04p)
 
 ADD_EXECUTABLE(tstTwoDDistributionHelpers
   tstTwoDDistributionHelpers.cpp)
@@ -206,7 +287,6 @@ ADD_EXECUTABLE(tstElectroatomicReactionACEFactory
   tstElectroatomicReactionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomicReactionACEFactory monte_carlo_collision_native)
 ADD_TEST(tstElectroatomicReactionACEFactory_test tstElectroatomicReactionACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
-
 
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)

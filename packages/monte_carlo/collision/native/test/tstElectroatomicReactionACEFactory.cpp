@@ -43,7 +43,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-		       MonteCarlo::HARD_ELASTIC_ELECTROATOMIC_REACTION );
+		       MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
   
   // Test that the stored cross section is correct

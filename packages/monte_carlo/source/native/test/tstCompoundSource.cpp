@@ -167,11 +167,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CompoundSource,
 
   MonteCarlo::ParticleBank bank;
   
-  source->sampleParticleState( bank );
+  source->sampleParticleState( bank, 0 );
 
   TEST_ASSERT( bank.top()->getParticleType() == MonteCarlo::PHOTON ||
 	       bank.top()->getParticleType() == MonteCarlo::NEUTRON );
-  
+  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 0 );
   TEST_COMPARE( bank.top()->getXPosition(), >=, -2.0 );
   TEST_COMPARE( bank.top()->getXPosition(), <=, 2.0 );
   TEST_COMPARE( bank.top()->getYPosition(), >=, -2.0 );
@@ -205,7 +205,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( CompoundSource,
   
   // Conduct 10 samples
   for( unsigned i = 0; i < 10; ++i )
-    source->sampleParticleState( bank );
+    source->sampleParticleState( bank, i );
 
   // Theoretical efficiency: eff_a*eff_b/(p_a*eff_b+p_b*eff_a)
   // eff_a = (4/sqrt(3))^3/(4*pi*2^3/3) ~= 0.367552

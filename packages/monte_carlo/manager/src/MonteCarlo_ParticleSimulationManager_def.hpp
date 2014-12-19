@@ -9,9 +9,6 @@
 #ifndef FACEMC_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 #define FACEMC_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 
-// Std Lib Includes
-#include <time.h>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
@@ -36,10 +33,15 @@ ParticleSimulationManager<GeometryHandler,
 			  SourceHandler,
 			  EstimatorHandler,
 			  CollisionHandler>::ParticleSimulationManager( 
-					   const unsigned number_of_histories )
-  : d_history_number_wall( number_of_histories ),
-    d_histories_completed( 0u ),
+				const unsigned number_of_histories,
+				const unsigned start_history,
+				const unsigned previously_completed_histories,
+				const double previous_run_time )
+  : d_start_history( start_history ),
+    d_history_number_wall( start_history + number_of_histories ),
+    d_histories_completed( previously_completed_histories ),
     d_end_simulation( false ),
+    d_previous_run_time( previous_run_time ),
     d_start_time( 0.0 ),
     d_end_time( 0.0 )
 {
@@ -62,9 +64,13 @@ void ParticleSimulationManager<GeometryHandler,
 
   // Set up the geometry module interface for the number of threads requested
   GMI::initialize();
+
+  // Enable estimator thread support
+  EMI::enableThreadSupport( 
+		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
   // Set the start time
-  d_start_time = clock()/((double)CLOCKS_PER_SEC);
+  d_start_time = Utility::GlobalOpenMPSession::getTime();
 
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   { 
@@ -72,7 +78,7 @@ void ParticleSimulationManager<GeometryHandler,
     ParticleBank bank;
 
     #pragma omp for
-    for( unsigned history = 0; history < d_history_number_wall; ++history )
+    for( unsigned history = d_start_history; history < d_history_number_wall; ++history )
     {
       // Do useful work unless the user requests an end to the simulation
       #pragma omp flush( d_end_simulation )
@@ -82,7 +88,7 @@ void ParticleSimulationManager<GeometryHandler,
 	Utility::RandomNumberGenerator::initialize( history );
 	
 	// Sample a particle state from the source
-	SMI::sampleParticleState( bank );
+	SMI::sampleParticleState( bank, history );
 	
 	// Determine the starting cell of the particle
 	for( unsigned i = 0; i < bank.size(); ++i )
@@ -102,14 +108,29 @@ void ParticleSimulationManager<GeometryHandler,
 	// This history only ends when the particle bank is empty
 	while( bank.size() > 0 )
 	{
-	  simulateParticle( *bank.top(), bank );
+	  switch( bank.top()->getParticleType() )
+	  {
+	  case NEUTRON: 
+	    simulateParticle( dynamic_cast<NeutronState&>( *bank.top() ), 
+			      bank );
+	    break;
+	  case PHOTON:
+	    simulateParticle( dynamic_cast<PhotonState&>( *bank.top() ),
+			      bank );
+	    break;
+	  default:
+	    THROW_EXCEPTION( std::logic_error,
+			     "Error: particle type "
+			     << bank.top()->getParticleType() <<
+			     " is not currently supported!" );
+	  }
 	  
 	  bank.pop();
 	}
 	
 	// Commit all estimator history contributions
 	EMI::commitEstimatorHistoryContributions();
-	
+        
 	// Increment the number of histories completed
         #pragma omp atomic
 	++d_histories_completed;
@@ -118,7 +139,7 @@ void ParticleSimulationManager<GeometryHandler,
   }
     
   // Set the end time
-  d_end_time = clock()/((double)CLOCKS_PER_SEC);
+  d_end_time = Utility::GlobalOpenMPSession::getTime();
 }
 
 // Set the number of particle histories to simulate
@@ -126,12 +147,13 @@ template<typename GeometryHandler,
 	 typename SourceHandler,
 	 typename EstimatorHandler,
 	 typename CollisionHandler>
+template<typename ParticleStateType>
 void ParticleSimulationManager<GeometryHandler,
 			       SourceHandler,
 			       EstimatorHandler,
 			       CollisionHandler>::simulateParticle( 
-				                       ParticleState& particle,
-				                       ParticleBank& bank )
+						   ParticleStateType& particle,
+						   ParticleBank& bank )
 {
   // Particle tracking information
   double distance_to_surface_hit, op_to_surface_hit, remaining_subtrack_op;
@@ -165,7 +187,7 @@ void ParticleSimulationManager<GeometryHandler,
       CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
       // Get the total cross section for the cell
-      if( !CMI::isCellVoid( particle.getCell() ) )
+      if( !CMI::isCellVoid( particle.getCell(), particle.getParticleType() ) )
       {
 	cell_total_macro_cross_section = 
 	  CMI::getMacroscopicTotalCrossSection( particle );
@@ -273,6 +295,7 @@ void ParticleSimulationManager<GeometryHandler,
   os << "!!!Particle Simulation Finished!!!" << std::endl;
   os << "Number of histories completed: " << d_histories_completed <<std::endl;
   os << "Simulation Time (s): " << d_end_time - d_start_time << std::endl;
+  os << "Previous Simulation Time (s): " << d_previous_run_time << std::endl;
   os << std::endl;
   os << "/*---------------------------------------------------------------*/";
   os << "Estimator Data" << std::endl;
@@ -280,7 +303,26 @@ void ParticleSimulationManager<GeometryHandler,
   EMI::printEstimators( os,
 			d_histories_completed,
 			d_start_time,
-			d_end_time );
+			d_end_time+d_previous_run_time );
+}
+
+// Print the data in all estimators to a parameter list
+template<typename GeometryHandler,
+	 typename SourceHandler,
+	 typename EstimatorHandler,
+	 typename CollisionHandler>
+void ParticleSimulationManager<GeometryHandler,
+			       SourceHandler,
+			       EstimatorHandler,
+			       CollisionHandler>::exportSimulationData(
+				      const std::string& data_file_name ) const
+{
+  EMI::exportEstimatorData( data_file_name,
+  			    d_start_history+d_histories_completed,
+  			    d_histories_completed,
+  			    d_start_time,
+  			    d_end_time+d_previous_run_time,
+			    true );
 }
 
 // Signal handler
@@ -322,7 +364,7 @@ void ParticleSimulationManager<GeometryHandler,
 			       EstimatorHandler,
 			       CollisionHandler>::printSimulationStateInfo()
 {
-  double time = clock()/((double)(CLOCKS_PER_SEC));
+  double time = Utility::GlobalOpenMPSession::getTime();
   
   #pragma omp critical( ostream_update )
   {

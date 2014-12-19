@@ -89,6 +89,16 @@ void GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSION>::print(
     os << d_dimension_bin_boundaries[i] << " ";
 }
 
+// Export the bin boundaries
+void GeneralEstimatorDimensionDiscretization<COLLISION_NUMBER_DIMENSION>::exportData(
+				    const unsigned estimator_id,
+				    EstimatorHDF5FileHandler& hdf5_file ) const
+{
+  hdf5_file.setEstimatorBinBoundaries<COLLISION_NUMBER_DIMENSION>( 
+						  estimator_id,
+						  d_dimension_bin_boundaries );
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

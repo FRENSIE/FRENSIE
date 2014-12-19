@@ -44,7 +44,8 @@ CompoundSource::CompoundSource(
 }
 
 // Sample a particle state from the source
-void CompoundSource::sampleParticleState( ParticleBank& bank )
+  void CompoundSource::sampleParticleState( ParticleBank& bank,
+					    const unsigned long long history )
 {
   double random_number = 
     Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -58,9 +59,10 @@ void CompoundSource::sampleParticleState( ParticleBank& bank )
 							d_sources.end(),
 							random_number );
   // Sample from the source
-  selected_source->first->sampleParticleState( bank );
+  selected_source->first->sampleParticleState( bank, history );
   
   // Increment the number of samples from the source
+  #pragma omp atomic update
   ++(selected_source->third);  
 }
 

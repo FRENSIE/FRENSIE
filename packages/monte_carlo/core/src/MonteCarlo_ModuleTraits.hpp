@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_MODULE_TRAITS_HPP
-#define FACEMC_MODULE_TRAITS_HPP
+#ifndef MONTE_CARLO_MODULE_TRAITS_HPP
+#define MONTE_CARLO_MODULE_TRAITS_HPP
 
 // Std Lib Includes
 #include <limits>
@@ -26,7 +26,7 @@ namespace MonteCarlo{
 /*! \brief  The module traits struct
  *
  * This struct specifies the types used by each module interface for 
- * representing Ids and other important information inside of FACEMC. 
+ * representing Ids and other important information inside of MONTE_CARLO. 
  */
 struct ModuleTraits
 {
@@ -49,7 +49,7 @@ struct ModuleTraits
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_MODULE_TRAITS_HPP
+#endif // end MONTE_CARLO_MODULE_TRAITS_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ModuleTraits.hpp

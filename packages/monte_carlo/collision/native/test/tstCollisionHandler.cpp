@@ -19,65 +19,19 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_NeutronMaterial.hpp"
+#include "MonteCarlo_PhotoatomFactory.hpp"
+#include "MonteCarlo_PhotonMaterial.hpp"
 #include "MonteCarlo_CollisionHandler.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
-std::string test_cross_sections_xml_directory;
 
 Teuchos::RCP<MonteCarlo::NeutronMaterial> cold_hydrogen;
 Teuchos::RCP<MonteCarlo::NeutronMaterial> hot_hydrogen;
 
-//---------------------------------------------------------------------------//
-// Testing Functions.
-//---------------------------------------------------------------------------//
-void initializeMaterials()
-{
-  // Assign the name of the cross_sections.xml file with path
-  std::string cross_section_xml_file = test_cross_sections_xml_directory;
-  cross_section_xml_file += "/cross_sections.xml";
+Teuchos::RCP<MonteCarlo::PhotonMaterial> lead;
 
-  // Read in the xml file storing the cross section table information 
-  Teuchos::ParameterList cross_section_table_info;
-  Teuchos::updateParametersFromXmlFile( 
-			         cross_section_xml_file,
-			         Teuchos::inoutArg(cross_section_table_info) );
-
-  boost::unordered_set<std::string> nuclide_aliases;
-  nuclide_aliases.insert( "H-1_293.6K" );
-  nuclide_aliases.insert( "H-1_900K" );
-
-  MonteCarlo::NuclideFactory nuclide_factory( test_cross_sections_xml_directory,
-					  cross_section_table_info,
-					  nuclide_aliases );
-
-  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > nuclide_map;
-
-  nuclide_factory.createNuclideMap( nuclide_map );
-
-  // Create cold hydrogen
-  Teuchos::Array<double> nuclide_fractions( 1 );
-  Teuchos::Array<std::string> nuclide_names( 1 );
-
-  nuclide_fractions[0] = -1.0;
-  nuclide_names[0] = "H-1_293.6K";
-
-  cold_hydrogen.reset( new MonteCarlo::NeutronMaterial( 0,
-						    -1.0,
-						    nuclide_map,
-						    nuclide_fractions,
-						    nuclide_names ) );
-
-  // Create hot hydrogen
-  nuclide_names[0] = "H-1_900K";
-
-  hot_hydrogen.reset( new MonteCarlo::NeutronMaterial( 1,
-						   -1.0,
-						   nuclide_map,
-						   nuclide_fractions,
-						   nuclide_names ) );
-}
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -91,67 +45,98 @@ TEUCHOS_UNIT_TEST( CollisionHandler, addMaterial )
   cells_containing_material[2] = 3;
   
   MonteCarlo::CollisionHandler::addMaterial( cold_hydrogen,
-					 cells_containing_material );
+					     cells_containing_material );
 
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 1 ) );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 2 ) );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 3 ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 1, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 2, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 3, MonteCarlo::NEUTRON ) );
 
   cells_containing_material[0] = 4;
   cells_containing_material[1] = 5;
   cells_containing_material[2] = 6;
 
   MonteCarlo::CollisionHandler::addMaterial( hot_hydrogen,
-					 cells_containing_material );
+					     cells_containing_material );
 
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 4 ) );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 5 ) );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 6 ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 4, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 5, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 6, MonteCarlo::NEUTRON ) );
 
-  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 0 ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 7 ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 0, MonteCarlo::NEUTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 7, MonteCarlo::NEUTRON ) );
+
+  MonteCarlo::CollisionHandler::addMaterial( lead, cells_containing_material );
+
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 4, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 5, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 6, MonteCarlo::PHOTON ) );
+
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 0, MonteCarlo::PHOTON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 7, MonteCarlo::PHOTON ) );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the material contianed in a cell can be retrieved
-TEUCHOS_UNIT_TEST( CollisionHandler, getCellMaterial )
+// Check that the material contained in a cell can be retrieved
+TEUCHOS_UNIT_TEST( CollisionHandler, getCellNeutronMaterial )
 {
   Teuchos::RCP<MonteCarlo::NeutronMaterial> cell_material = 
-    MonteCarlo::CollisionHandler::getCellMaterial( 1 );
+    MonteCarlo::CollisionHandler::getCellNeutronMaterial( 1 );
 
   TEST_ASSERT( !cell_material.is_null() );
   TEST_EQUALITY_CONST( cell_material->getId(), 0 );
 
-  cell_material = MonteCarlo::CollisionHandler::getCellMaterial( 2 );
+  cell_material = MonteCarlo::CollisionHandler::getCellNeutronMaterial( 2 );
 
   TEST_ASSERT( !cell_material.is_null() );
   TEST_EQUALITY_CONST( cell_material->getId(), 0 );
 
-  cell_material = MonteCarlo::CollisionHandler::getCellMaterial( 3 );
+  cell_material = MonteCarlo::CollisionHandler::getCellNeutronMaterial( 3 );
 
   TEST_ASSERT( !cell_material.is_null() );
   TEST_EQUALITY_CONST( cell_material->getId(), 0 );
 
-  cell_material = MonteCarlo::CollisionHandler::getCellMaterial( 4 );
+  cell_material = MonteCarlo::CollisionHandler::getCellNeutronMaterial( 4 );
 
   TEST_ASSERT( !cell_material.is_null() );
   TEST_EQUALITY_CONST( cell_material->getId(), 1 );
 
-  cell_material = MonteCarlo::CollisionHandler::getCellMaterial( 5 );
+  cell_material = MonteCarlo::CollisionHandler::getCellNeutronMaterial( 5 );
 
   TEST_ASSERT( !cell_material.is_null() );
   TEST_EQUALITY_CONST( cell_material->getId(), 1 );
   
-  cell_material = MonteCarlo::CollisionHandler::getCellMaterial( 6 );
+  cell_material = MonteCarlo::CollisionHandler::getCellNeutronMaterial( 6 );
 
   TEST_ASSERT( !cell_material.is_null() );
   TEST_EQUALITY_CONST( cell_material->getId(), 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the material contained within a cell can be retrieved
+TEUCHOS_UNIT_TEST( CollisionHandler, getCellPhotonMaterial )
+{
+  Teuchos::RCP<MonteCarlo::PhotonMaterial> cell_material = 
+    MonteCarlo::CollisionHandler::getCellPhotonMaterial( 4 );
+
+  TEST_ASSERT( !cell_material.is_null() );
+  TEST_EQUALITY_CONST( cell_material->getId(), 0 );
+
+  cell_material = MonteCarlo::CollisionHandler::getCellPhotonMaterial( 5 );
+
+  TEST_ASSERT( !cell_material.is_null() );
+  TEST_EQUALITY_CONST( cell_material->getId(), 0 );
+
+  cell_material = MonteCarlo::CollisionHandler::getCellPhotonMaterial( 6 );
+
+  TEST_ASSERT( !cell_material.is_null() );
+  TEST_EQUALITY_CONST( cell_material->getId(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the macroscopic total cross section in a cell can be retrieved
 TEUCHOS_UNIT_TEST( CollisionHandler, getMacroscopicTotalCrossSection )
 {
+  // Neutron cross sections
   MonteCarlo::NeutronState neutron( 0ull );
   neutron.setEnergy( 1.0e-11 );
   neutron.setCell( 1 );
@@ -197,12 +182,60 @@ TEUCHOS_UNIT_TEST( CollisionHandler, getMacroscopicTotalCrossSection )
     MonteCarlo::CollisionHandler::getMacroscopicTotalCrossSection( neutron );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.28847574157342, 1e-9 );
+
+  // Photon cross sections
+  MonteCarlo::PhotonState photon( 0 );
+  photon.setEnergy( 1.0000000000042743e-06 );
+  photon.setCell( 4 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicTotalCrossSection( photon );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.823831998305667e-05, 1e-12 );
+
+  photon.setEnergy( 99999.99999997711 );
+
+  cross_section =
+    MonteCarlo::CollisionHandler::getMacroscopicTotalCrossSection( photon );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.11970087585747362, 1e-12 );
+
+  photon.setCell( 5 );
+  photon.setEnergy( 1.0000000000042743e-06 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicTotalCrossSection( photon );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.823831998305667e-05, 1e-12 );
+
+  photon.setEnergy( 99999.99999997711 );
+
+  cross_section =
+    MonteCarlo::CollisionHandler::getMacroscopicTotalCrossSection( photon );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.11970087585747362, 1e-12 );
+
+  photon.setCell( 6 );
+  photon.setEnergy( 1.0000000000042743e-06 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicTotalCrossSection( photon );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.823831998305667e-05, 1e-12 );
+
+  photon.setEnergy( 99999.99999997711 );
+
+  cross_section =
+    MonteCarlo::CollisionHandler::getMacroscopicTotalCrossSection( photon );
+
+  TEST_FLOATING_EQUALITY( cross_section, 0.11970087585747362, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the macroscopic reaction cross section in a cell can be retrieved
 TEUCHOS_UNIT_TEST( CollisionHandler, getMacroscopicReactionCrossSection )
 {
+  // Neutron reactions
   MonteCarlo::NeutronState neutron( 0ull );
   neutron.setEnergy( 1.0e-11 );
   neutron.setCell( 1 );
@@ -303,12 +336,106 @@ TEUCHOS_UNIT_TEST( CollisionHandler, getMacroscopicReactionCrossSection )
 					       MonteCarlo::N__FISSION_REACTION );
 
   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-15 );
+
+  // Photoatomic reactions
+  MonteCarlo::PhotonState photon( 0 );
+  photon.setEnergy( 1.0000000000042743e-06 );
+  photon.setCell( 4 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+				 photon,
+				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 4.460222195795113e-09, 1e-12 );
+
+  photon.setEnergy( 99999.99999997711 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+				 photon,
+				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 4.060877396028078e-06, 1e-12 );
+
+  photon.setEnergy( 1.0000000000042743e-06 );
+  
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+				   photon,
+				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.8233859760860873e-05, 1e-12 );
+
+  photon.setEnergy( 99999.99999997711 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+				   photon,
+				   MonteCarlo::COHERENT_PHOTOATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.712301051729535e-13, 1e-12 );
+
+  photon.setEnergy( 1.0000000000042743e-06 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+		   photon,
+		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
+
+   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+
+   photon.setEnergy( 99999.99999997711 );
+
+   cross_section = 
+     MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+		   photon,
+		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
+
+   TEST_FLOATING_EQUALITY( cross_section, 3.4075097760409515e-08, 1e-12 );
+
+   photon.setEnergy( 1.0000000000042743e-06 );
+
+   cross_section = 
+     MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+		  photon,
+		  MonteCarlo::P3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
+
+   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+
+   photon.setEnergy( 99999.99999997711 );
+
+   cross_section = 
+     MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+		  photon,
+		  MonteCarlo::P3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
+
+   TEST_FLOATING_EQUALITY( cross_section, 1.5612230905027824e-13, 1e-12 );
+
+   photon.setEnergy( 1.0000000000042743e-06 );
+
+   cross_section = 
+     MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+		  photon,
+		  MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+
+   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+
+   photon.setEnergy( 99999.99999997711 );
+
+   cross_section = 
+     MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+		  photon,
+		  MonteCarlo::PAIR_PRODUCTION_PHOTOATOMIC_REACTION );
+
+   TEST_FLOATING_EQUALITY( cross_section, 0.11969677359280363, 1e-12 );
 } 
 
 //---------------------------------------------------------------------------//
 // Check that a neutron can collide with the material in a cell
 TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial )
 {
+  // Neutron collision
   MonteCarlo::NeutronState neutron( 0ull );
   neutron.setCell( 1 );
   neutron.setDirection( 0.0, 0.0, 1.0 );
@@ -334,6 +461,32 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial )
   MonteCarlo::CollisionHandler::collideWithCellMaterial( neutron, bank, false );
 
   TEST_FLOATING_EQUALITY( neutron.getWeight(), 0.98581348192787, 1e-14 );
+
+  // Photon collision
+  MonteCarlo::PhotonState photon( 0 );
+  photon.setEnergy( 20.0 );
+  photon.setDirection( 0.0, 0.0, 1.0 );
+  photon.setCell( 4 );
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 8 );
+  fake_stream[0] = 0.5; // select the pb atom
+  fake_stream[1] = 0.1; // select the incoherent reaction
+  fake_stream[2] = 0.001; // sample from first term of koblinger's method
+  fake_stream[3] = 0.5; // x = 40.13902672495315, mu = 0.0
+  fake_stream[4] = 0.5; // accept x in scattering function rejection loop
+  fake_stream[5] = 0.005; // select first shell for collision
+  fake_stream[6] = 6.427713151861e-01; // select pz = 40.0
+  fake_stream[7] = 0.25; // select energy loss
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  MonteCarlo::CollisionHandler::collideWithCellMaterial( photon, bank, true );
+
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -341,6 +494,8 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial )
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_cross_sections_xml_directory;
+  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_cross_sections_xml_directory",
@@ -358,11 +513,91 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
+  {
+    // Assign the name of the cross_sections.xml file with path
+    std::string cross_section_xml_file = test_cross_sections_xml_directory;
+    cross_section_xml_file += "/cross_sections.xml";
+
+    // Read in the xml file storing the cross section table information 
+    Teuchos::ParameterList cross_section_table_info;
+    Teuchos::updateParametersFromXmlFile( 
+			         cross_section_xml_file,
+			         Teuchos::inoutArg(cross_section_table_info) );
+
+    boost::unordered_set<std::string> nuclide_aliases;
+    nuclide_aliases.insert( "H-1_293.6K" );
+    nuclide_aliases.insert( "H-1_900K" );
+
+    MonteCarlo::NuclideFactory nuclide_factory( 
+					     test_cross_sections_xml_directory,
+					     cross_section_table_info,
+					     nuclide_aliases );
+
+    boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Nuclide> > 
+      nuclide_map;
+
+    nuclide_factory.createNuclideMap( nuclide_map );
+
+    // Create cold hydrogen
+    Teuchos::Array<double> nuclide_fractions( 1 );
+    Teuchos::Array<std::string> nuclide_names( 1 );
+    
+    nuclide_fractions[0] = -1.0;
+    nuclide_names[0] = "H-1_293.6K";
+    
+    cold_hydrogen.reset( new MonteCarlo::NeutronMaterial( 0,
+							  -1.0,
+							  nuclide_map,
+							  nuclide_fractions,
+							  nuclide_names ) );
+
+    // Create hot hydrogen
+    nuclide_names[0] = "H-1_900K";
+    
+    hot_hydrogen.reset( new MonteCarlo::NeutronMaterial( 1,
+							 -1.0,
+							 nuclide_map,
+							 nuclide_fractions,
+							 nuclide_names ) );
+
+    boost::unordered_set<std::string> atom_aliases;
+    atom_aliases.insert( "Pb" );
+
+    // Create the factories
+    Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory> 
+      atomic_relaxation_model_factory(
+				new MonteCarlo::AtomicRelaxationModelFactory );
+    
+    MonteCarlo::PhotoatomFactory factory( test_cross_sections_xml_directory,
+					  cross_section_table_info,
+					  atom_aliases,
+					  atomic_relaxation_model_factory,
+					  true,
+					  false,
+					  true );
+
+    boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
+      atom_map;
+
+    factory.createPhotoatomMap( atom_map );
+
+    // Assign the atom fractions and names
+    Teuchos::Array<double> atom_fractions( 1 );
+    Teuchos::Array<std::string> atom_names( 1 );
+
+    atom_fractions[0] = -1.0; // weight fraction
+    atom_names[0] = "Pb";
+
+    // Create the lead
+    lead.reset( new MonteCarlo::PhotonMaterial( 0,
+						-1.0,
+						atom_map,
+						atom_fractions,
+						atom_names ) );
+  }
+
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
-
-  // Initialize the materials
-  initializeMaterials();
 
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   

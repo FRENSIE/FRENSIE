@@ -29,6 +29,8 @@
 Teuchos::RCP<MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution> 
   ace_electroionization_distribution;
 
+double binding_energy;
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -52,15 +54,15 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectronScatteringDistribution,
 
   // Analytically scatter electron
   ace_electroionization_distribution->scatterElectron( electron, 
-                                                   bank, 
-                                                   shell_of_interaction );
+                                                       bank, 
+                                                       shell_of_interaction );
 
   // Test original electron
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.893535104059E-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 9.589473789423E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.932837798441E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 8.706573789423E-01, 1e-12 );
 
   // Test knock-on electron
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 2.794369617654E-01, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 7.032094876704E-01, 1e-12 );
   TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 4.105262105768E-02, 1e-12 );
 
 }
