@@ -25,6 +25,7 @@ public:
 
   //! Constructor
   PhaseSpaceResponseFunction( 
+	const unsigned id,
 	const std::string& name,			      
 	const Teuchos::RCP<Utility::SpatialDistribution>& spatial_distribution,
         const Teuchos::RCP<Utility::DirectionalDistribution>& 

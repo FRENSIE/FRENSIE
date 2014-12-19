@@ -175,7 +175,7 @@ bool compareArrays( const Array1 &a1,
   
   bool success = true;
 
-  out << "Comparing " << a1_name << " == " << a2_name << " ... ";
+  out << "Comparing " << a1_name << " == " << a2_name << " ... " << "\n";
   
   // ArrayViews are used so that TwoDArrays will be linearized
   Teuchos::ArrayView<const value_type> view1 = Utility::getArrayView( a1 );

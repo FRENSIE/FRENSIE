@@ -45,7 +45,7 @@ TEUCHOS_UNIT_TEST( CoherentPhotonScatteringDistribution, scatterPhoton )
   photon.setEnergy( 4.95936772145E-03 );
   photon.setDirection( 0.0, 0.0, 1.0 );
   
-  unsigned shell_of_interaction;
+  MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
@@ -58,16 +58,15 @@ TEUCHOS_UNIT_TEST( CoherentPhotonScatteringDistribution, scatterPhoton )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   coherent_distribution->scatterPhoton( photon,
-						bank,
-						shell_of_interaction );
+					bank,
+					shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 4.95936772145E-03, 1e-15  );
 // \todo Check why z direction test fails if rel err is above 1e-11
   TEST_FLOATING_EQUALITY( photon.getZDirection(), -1.25000000000E-01, 1e-11 );
-  TEST_EQUALITY_CONST( shell_of_interaction, 
-		       std::numeric_limits<unsigned>::max() );
+  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -178,10 +177,10 @@ int main( int argc, char** argv )
   Teuchos::Array<double> form_factor_function_squared_values(jcoh_block(55,55));
 
   for( int i = 0; i < 55; i++)
-   {
-   form_factor_function_squared_values[i] *= 
-   form_factor_function_squared_values[i];
-   };
+  {
+    form_factor_function_squared_values[i] *= 
+    form_factor_function_squared_values[i];
+  };
 
   Teuchos::RCP<Utility::OneDDistribution> form_factor_function_squared(
 			    new Utility::TabularDistribution<Utility::LinLin>( 

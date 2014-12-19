@@ -4,7 +4,6 @@
 //! \author Alex Robinson
 //! \brief  XSS array (from ace table) electron-photon-relaxation extractor dec
 //!
-//!
 //---------------------------------------------------------------------------//
 
 #ifndef DATA_XSS_EPR_DATA_EXTRACTOR_HPP

@@ -222,10 +222,27 @@ At this point all of the dependent software libraries should have been built. If
 10. run `make install`
 
 Note: The FRENSIE build system needs to know where the Trilinos source files
-are. Therefore, there is an optional CMake variable called TRILINOS_SOURCE that
-can be set if the Trilinos source files are in a non-standard location 
-(not in TRILINOS_PREFIX/src). This variable is shown in the frensie.sh
-script.
+and Moab source files are. Therefore, there are two optional CMake variables 
+called TRILINOS_SOURCE and MOAB_SOURCE that can be set if the source files are 
+in a non-standard location (not in TRILINOS_PREFIX/src or MOAB_PREFIX/src ). 
+This variable is shown in the frensie.sh script.
+
+There are two reasons why the Trilinos source file location is needed. The
+first is that Trilinos provides a standard unit test main file that can
+be used to compile basic unit test suites. The second reason is because of
+a bug that has been found in the Teuchos_TwoDArray.hpp file. A patch file
+has been created and will be applied by the build system.
+
+The reason why the moab source file location is needed is because of a race
+condition that was found in the DagMC.cpp file. Without patching this file
+the only safe way to run DagMC with threads is by placing omp critical blocks
+around each DagMC call, which results in very poor thread scaling. A patch
+file has been create which will be applied by the build system. The first time
+the patch is applied, the build system will report an error and indicate that
+moab must be rebuilt before it can proceed. After rebuilding moab (using the
+same steps outlined above), frensie can be reconfigured and the build system
+should report no errors. After applying the patch to fix the race condition,
+close to linear thread scaling should be observed.
 
 Because this will eventually be an open source project, the goal is to be able to build FRENSIE without having to acquire commercial software licenses. Currently, the geometry capabilities within FRENSIE are only activated when the DagMC configure option is set to ON (e.g. `-D FRENSIE_ENABLE_DAGMC:BOOL=ON`), which requires a CUBIT license. In the future, more software libraries will be incorporated into FRENSIE which will allow for geometry capabilities to be built without building DagMC.
 

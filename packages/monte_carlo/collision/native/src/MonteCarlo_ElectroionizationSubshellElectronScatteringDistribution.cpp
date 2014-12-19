@@ -51,7 +51,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
                          d_electroionization_subshell_scattering_distribution );
 
   // Set the new energy of the original electron
-  electron.setEnergy( incoming_energy - knock_on_energy );
+  electron.setEnergy( incoming_energy - knock_on_energy - d_binding_energy);
 
   // Increment the electron generation number
   electron.incrementGenerationNumber();
@@ -69,9 +69,8 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   // The outgoing angle cosine of the knock-on electron
   double knock_on_angle_cosine;
 
-  //! \todo Take into account the binding energy
   // Outgoing Energy
-  double outgoing_energy = incoming_energy - knock_on_energy;
+  double outgoing_energy = incoming_energy - knock_on_energy - d_binding_energy;
 
   // get the incoming momentum_squared
   double incoming_momentum_squared = 
@@ -129,7 +128,7 @@ double ElectroionizationSubshellElectronScatteringDistribution::polarDeflectionA
                                               double& outgoing_momentum_squared,
                                               double& knock_on_energy ) const
 {
-  // Assume the recoil energy = the energy loss
+  // Assume no momentum goes to atom
   return
   ( incoming_momentum_squared + outgoing_momentum_squared - knock_on_energy *
   (knock_on_energy + 2.0*Utility::PhysicalConstants::electron_rest_mass_energy ) ) 

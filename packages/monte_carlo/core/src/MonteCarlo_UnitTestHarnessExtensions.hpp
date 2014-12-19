@@ -16,7 +16,7 @@
  * templated unit test on an PhaseSpaceDimension enum.
  * \ingroup unit_test_harness_extensions
  */
-#define UTILITY_UNIT_TEST_EPSD_TEMPLATE_1_DECL(TEST_GROUP, TEST_NAME, EPSD_VALUE) \
+#define MC_UNIT_TEST_EPSD_TEMPLATE_1_DECL(TEST_GROUP, TEST_NAME, EPSD_VALUE) \
   template<MonteCarlo::PhaseSpaceDimension EPSD_VALUE>		\
   class TEST_GROUP##_##TEST_NAME##_UnitTest : public Teuchos::UnitTestBase \
   {									\

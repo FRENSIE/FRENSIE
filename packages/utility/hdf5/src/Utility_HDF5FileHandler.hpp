@@ -33,6 +33,12 @@ class HDF5FileHandler
 
 public:
 
+  //! Print error messages
+  static void printErrorMessages();
+
+  //! Throw exceptions
+  static void throwExceptions();  
+
   //! Default Constructor
   HDF5FileHandler();
 
@@ -51,6 +57,23 @@ public:
 
   //! Close an HDF5 file
   void closeHDF5File();
+  
+  //! Check if the handler has an open file
+  bool hasOpenFile() const;
+
+  //! Check if the group exists
+  bool doesGroupExist( const std::string &group_location ) const;
+
+  //! Check if the group attribute exists
+  bool doesGroupAttributeExist( const std::string &group_location,
+				const std::string &attribute_name ) const;
+
+  //! Check if the data set exists
+  bool doesDataSetExist( const std::string &dataset_location ) const;
+
+  //! Check if the data set attribute exists
+  bool doesDataSetAttributeExist( const std::string &dataset_location,
+				  const std::string &attribute_name ) const;
 
   //! Write data in array to HDF5 file data set
   template<typename Array>
@@ -60,7 +83,7 @@ public:
   //! Read in HDF5 file dataset and save the data to an array
   template<typename Array>
   void readArrayFromDataSet( Array &data,
-			     const std::string &location_in_file );
+			     const std::string &location_in_file ) const;
 
   //! Write an attribute to an HDF5 file data set
   template<typename Array>
@@ -70,9 +93,9 @@ public:
 
   //! Read in HDF5 file dataset attribute and save the data to an array
   template<typename Array>
-  void readArrayFromDataSetAttribute( Array &data,
-				      const std::string &dataset_location,
-				      const std::string &attribute_name );
+  void readArrayFromDataSetAttribute(Array &data,
+				     const std::string &dataset_location,
+				     const std::string &attribute_name ) const;
 
   //! Write an attribute to an HDF5 file data set
   template<typename T>
@@ -82,9 +105,9 @@ public:
 
   //! Read in HDF5 file dataset attribute and save the single value
   template<typename T>
-  void readValueFromDataSetAttribute( T &value,
-				      const std::string &dataset_location,
-				      const std::string &attribute_name );
+  void readValueFromDataSetAttribute(T &value,
+				     const std::string &dataset_location,
+				     const std::string &attribute_name ) const;
 
   //! Write an attribute to an HDF5 file group
   template<typename Array>
@@ -96,7 +119,7 @@ public:
   template<typename Array>
   void readArrayFromGroupAttribute( Array &data,
 				    const std::string &group_location,
-				    const std::string &attribute_name );
+				    const std::string &attribute_name ) const;
 
   //! Write an attribute to an HDF5 file group
   template<typename T>
@@ -108,7 +131,7 @@ public:
   template<typename T>
   void readValueFromGroupAttribute( T &value,
 				    const std::string &group_location,
-				    const std::string &attribute_name );
+				    const std::string &attribute_name ) const;
 
 protected:
 
@@ -116,6 +139,9 @@ protected:
   void createParentGroups( const std::string &path_name );
 
 private:
+
+  // Error handling behavior (true = print errors and exit, false = throw)
+  static bool print_and_exit;
   
   // HDF5 file identifier
   Teuchos::RCP<H5::H5File> d_hdf5_file;

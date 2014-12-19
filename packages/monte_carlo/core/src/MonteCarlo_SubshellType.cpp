@@ -164,5 +164,3 @@ std::string convertSubshellEnumToString( const SubshellType subshell )
 //---------------------------------------------------------------------------//
 // end MonteCarlo_Subshell.cpp
 //---------------------------------------------------------------------------//
-
-

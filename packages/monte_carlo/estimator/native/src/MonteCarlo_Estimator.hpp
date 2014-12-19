@@ -13,14 +13,17 @@
 #include <string>
 #include <set>
 #include <map>
+#include <vector>
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_TwoDArray.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_any.hpp>
+#include <Teuchos_Comm.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
@@ -29,6 +32,8 @@
 #include "MonteCarlo_PhaseSpaceDimensionTraits.hpp"
 #include "MonteCarlo_EstimatorDimensionDiscretization.hpp"
 #include "MonteCarlo_ModuleTraits.hpp"
+#include "MonteCarlo_EstimatorHDF5FileHandler.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_PrintableObject.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_ContractException.hpp"
@@ -39,10 +44,10 @@ namespace MonteCarlo{
 class Estimator : public Utility::PrintableObject
 {
 
-protected:
+public:
 
-  //! Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
+  //! Typedef for estimator id
+  typedef ModuleTraits::InternalEstimatorHandle idType;
 
   //! Typedef for tuple of estimator moments (1st,2nd)
   typedef Utility::Pair<double,double> TwoEstimatorMoments;
@@ -55,15 +60,17 @@ protected:
 
   //! Typedef for the array of estimator moments
   typedef Teuchos::Array<FourEstimatorMoments> FourEstimatorMomentsArray;
+
+protected:
+
+  //! Typedef for Teuchos::ScalarTraits
+  typedef Teuchos::ScalarTraits<double> ST;
   
   // Typedef for map of dimension values
   typedef boost::unordered_map<PhaseSpaceDimension,Teuchos::any> 
   DimensionValueMap;
 
 public:
-
-  //! Typedef for estimator id
-  typedef ModuleTraits::InternalEstimatorHandle idType;
 
   //! Set the number of particle histories that will be simulated
   static void setNumberOfHistories( const unsigned long long num_histories );
@@ -110,18 +117,36 @@ public:
   bool isParticleTypeAssigned( const ParticleType particle_type ) const;
 
   //! Check if the estimator has uncommitted history contributions
+  bool hasUncommittedHistoryContribution( const unsigned thread_id ) const;
+
+  //! Check if the estimator has uncommitted history contributions
   bool hasUncommittedHistoryContribution() const;
+
+  //! Enable support for multiple threads
+  virtual void enableThreadSupport( const unsigned num_threads );
 
   //! Commit the contribution from the current history to the estimator
   virtual void commitHistoryContribution() = 0;
 
+  //! Reset estimator data
+  virtual void resetData() = 0;
+
+  //! Reduce estimator data on all processes in comm and collect on the root 
+  virtual void reduceData( 
+	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
+	    const int root_process ) = 0;
+
+  //! Export the estimator data
+  virtual void exportData( EstimatorHDF5FileHandler& hdf5_file,
+			   const bool process_data ) const;
+  
 protected:
 
   //! Set the has uncommited history contribution flag
-  void setHasUncommittedHistoryContribution();
+  void setHasUncommittedHistoryContribution( const unsigned thread_id );
 
   //! Unset the has uncommited history contribution flag
-  void unsetHasUncommittedHistoryContribution();
+  void unsetHasUncommittedHistoryContribution( const unsigned thread_id );
 
   //! Assign bin boundaries to an estimator dimension
   virtual void assignBinBoundaries( 
@@ -169,24 +194,25 @@ protected:
 			        
   //! Calculate the bin index for the desired response function
   unsigned calculateBinIndex( const DimensionValueMap& dimension_values,
-			      const unsigned response_function_index ) const; 
+			      const unsigned response_function_index ) const;
 
-  //! Calculate the mean of a set of contributions
-  double calculateMean( const double first_moment_contributions ) const;
+  //! Calculate the response function index given a bin index
+  unsigned calculateResponseFunctionIndex( const unsigned bin_index ) const;
 
-  //! Calculate the relative error of a set of contributions
-  double calculateRelativeError( 
-			      const double first_moment_contributions,
-			      const double second_moment_contributions ) const;
+  //! Convert first and second moments to mean and relative error
+  void processMoments( const Utility::Pair<double,double>& moments,
+		       const double norm_constant,
+		       double& mean,
+		       double& relative_error ) const;
 
-  //! Calculate the variance of the variance (VOV) of a set of contributions
-  double calculateVOV( const double first_moment_contributions,
-		       const double second_moment_contributions,
-		       const double third_moment_contributions,
-		       const double fourth_moment_contributions ) const;
-
-  //! Calculate the figure of merit (FOM) of an estimator bin
-  double calculateFOM( const double relative_error ) const;
+  //! Convert first, second, third, fourth moments to mean, rel. er., vov, fom
+  void processMoments( 
+		     const Utility::Quad<double,double,double,double>& moments,
+		     const double norm_constant,
+		     double& mean,
+		     double& relative_error,
+		     double& variance_of_variance,
+		     double& figure_of_merit ) const;
 
 private:
 
@@ -195,6 +221,23 @@ private:
   void convertPartialParticleStateToGenericMap( 
 				   const ParticleState& particle,
 			           DimensionValueMap& dimension_values ) const;
+
+  // Calculate the mean of a set of contributions
+  double calculateMean( const double first_moment_contributions ) const;
+
+  // Calculate the relative error of a set of contributions
+  double calculateRelativeError( 
+			      const double first_moment_contributions,
+			      const double second_moment_contributions ) const;
+
+  // Calculate the variance of the variance (VOV) of a set of contributions
+  double calculateVOV( const double first_moment_contributions,
+		       const double second_moment_contributions,
+		       const double third_moment_contributions,
+		       const double fourth_moment_contributions ) const;
+
+  // Calculate the figure of merit (FOM) of an estimator bin
+  double calculateFOM( const double relative_error ) const;
 			     
 					       
 
@@ -214,7 +257,7 @@ private:
   double d_multiplier;
 
   // Records if there is an uncommitted history contribution
-  bool d_has_uncommitted_history_contribution;
+  Teuchos::Array<unsigned char> d_has_uncommitted_history_contribution;
 
   // The response functions
   Teuchos::Array<Teuchos::RCP<ResponseFunction> > d_response_functions;
@@ -321,25 +364,8 @@ inline void Estimator::convertParticleStateToGenericMap(
 // Check if the estimator has uncommitted history contributions
 inline bool Estimator::hasUncommittedHistoryContribution() const
 {
-  return d_has_uncommitted_history_contribution;
-}
-
-// Set the has uncommited history contribution flag
-/*! \details This should be called whenever the current history contributes
- * to the estimator.
- */
-inline void Estimator::setHasUncommittedHistoryContribution()
-{
-  d_has_uncommitted_history_contribution = true;
-}
-
-// Unset the has uncommited history contribution flag
-/*! \details This should be called when the current history contribution is
- * committed to the estimator
- */
-inline void Estimator::unsetHasUncommittedHistoryContribution()
-{
-  d_has_uncommitted_history_contribution = false;
+  return hasUncommittedHistoryContribution( 
+				 Utility::GlobalOpenMPSession::getThreadId() );
 }
 
 } // end MonteCarlo namespace

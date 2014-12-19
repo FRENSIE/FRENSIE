@@ -23,21 +23,29 @@ Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
 			   new Utility::UniformDistribution( 0.0, 1e6, 1.0 ) );
 
 Teuchos::RCP<MonteCarlo::EnergySpaceResponseFunction> response_function(
-	      new MonteCarlo::EnergySpaceResponseFunction( "uniform_energy",
+	  new MonteCarlo::EnergySpaceResponseFunction( 0, 
+						       "uniform_energy",
 						       energy_distribution ) );
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the name of the response function can be returned
-TEUCHOS_UNIT_TEST( ResponseFunction, getName )
+TEUCHOS_UNIT_TEST( EnergySpaceResponseFunction, getName )
 {
   TEST_EQUALITY( response_function->getName(), "uniform_energy" );
 }
 
 //---------------------------------------------------------------------------//
+// Check that the response function id can be returned
+TEUCHOS_UNIT_TEST( EnergySpaceResponseFunction, getId )
+{
+  TEST_EQUALITY_CONST( response_function->getId(), 0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the response function can be evaluated
-TEUCHOS_UNIT_TEST( ResponseFunction, evaluate )
+TEUCHOS_UNIT_TEST( EnergySpaceResponseFunction, evaluate )
 {
   MonteCarlo::PhotonState particle( 0ull );
   particle.setEnergy( 1e-11 );
@@ -59,7 +67,7 @@ TEUCHOS_UNIT_TEST( ResponseFunction, evaluate )
 
 //---------------------------------------------------------------------------//
 // Check if the response function is spatially uniform
-TEUCHOS_UNIT_TEST( ResponseFunction, isSpatiallyUniform )
+TEUCHOS_UNIT_TEST( EnergySpaceResponseFunction, isSpatiallyUniform )
 {
   TEST_ASSERT( response_function->isSpatiallyUniform() );
 }

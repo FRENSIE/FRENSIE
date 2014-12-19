@@ -45,6 +45,19 @@ void StandardCellEstimator::setParticleTypes(
     Estimator::setParticleTypes( particle_types );
 }
 
+// Export the estimator data
+void StandardCellEstimator::exportData( EstimatorHDF5FileHandler& hdf5_file,
+					const bool process_data ) const
+{
+  // Export the lower level data first
+  StandardEntityEstimator<Geometry::ModuleTraits::InternalCellHandle>::exportData( 
+								hdf5_file,
+								process_data );
+
+  // Set the estimator as a cell estimator
+  hdf5_file.setCellEstimator( this->getId() );
+}
+
 // Assign bin boundaries to an estimator dimension
 /*! \details The MonteCarlo::COSINE_DIMENSION cannot be discretized in standard
  * cell estimators.
