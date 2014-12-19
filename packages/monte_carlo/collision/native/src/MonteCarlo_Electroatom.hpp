@@ -19,7 +19,7 @@
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_ScalarTraits.hpp>
-
+/*
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 #include "MonteCarlo_ElectronuclearReactionType.hpp"
@@ -28,7 +28,7 @@
 #include "MonteCarlo_ElectroatomCore.hpp"
 
 namespace MonteCarlo{
-/*
+
 //! The atom class for electroatomic reactions
 class Electroatom
 {
@@ -249,9 +249,9 @@ inline const ElectroatomCore& Electroatom::getCore() const
 {
   return d_core;
 }
-*/
-} // end MonteCarlo namespace
 
+} // end MonteCarlo namespace
+*/
 //---------------------------------------------------------------------------//
 // Template Includes
 //---------------------------------------------------------------------------//

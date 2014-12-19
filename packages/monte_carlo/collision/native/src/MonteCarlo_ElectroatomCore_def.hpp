@@ -11,7 +11,6 @@
 
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
-#include "MonteCarlo_AbsorptionElectroatomicReaction.hpp"
 
 namespace MonteCarlo{
 /*
