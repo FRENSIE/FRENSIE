@@ -11,9 +11,9 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
-
-namespace MonteCarlo{
 /*
+namespace MonteCarlo{
+
 // Return the reactions that are treated as absorption
 const boost::unordered_set<ElectroatomicReactionType>& 
 Electroatom::getAbsorptionReactionTypes()
@@ -325,9 +325,9 @@ void Electroatom::sampleScatteringReaction( const double scaled_random_number,
 					       electron,
 					       bank );
 }
-*/
-} // end MonteCarlo namespace
 
+} // end MonteCarlo namespace
+*/
 //---------------------------------------------------------------------------//
 // end MonteCarlo_Electroatom.cpp
 //---------------------------------------------------------------------------//

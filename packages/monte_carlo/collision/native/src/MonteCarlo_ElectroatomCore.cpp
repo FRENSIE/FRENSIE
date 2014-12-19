@@ -9,9 +9,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomCore.hpp"
 #include "Utility_ContractException.hpp"
-
-namespace MonteCarlo{
 /*
+namespace MonteCarlo{
+
 // Initialize the static member data
 const boost::unordered_set<ElectroatomicReactionType> 
 ElectroatomCore::scattering_reaction_types = 
@@ -118,7 +118,7 @@ ElectroatomCore::ElectroatomCore()
     d_scattering_reactions(),
     d_miscellaneous_reactions(),
     d_relaxation_model()
-{ /* ... */ }
+{ /* ... * }
 
 // Advanced constructor
 /*! \details It is assumed that the scattering, absorption and miscellaneous
@@ -182,9 +182,9 @@ ElectroatomCore& ElectroatomCore::operator=( const ElectroatomCore& instance )
   
   return *this;
 }
-*/
-} // end MonteCarlo namespace
 
+} // end MonteCarlo namespace
+*/
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ElectroatomCore.cpp
 //---------------------------------------------------------------------------//

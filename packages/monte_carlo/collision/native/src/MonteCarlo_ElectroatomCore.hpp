@@ -36,6 +36,7 @@ namespace MonteCarlo{
  * share the electroatomic data without copying that data (even if each
  * electronuclide has its own copy of the electroatom core object).
  */
+/*
 class ElectroatomCore
 {
 
@@ -78,7 +79,7 @@ public:
 
   //! Destructor
   ~ElectroatomCore()
-  { /* ... */ }
+  { /* ... * }
   
   //! Return the total reaction
   const ElectroatomicReaction& getTotalReaction() const;
@@ -153,7 +154,7 @@ ElectroatomCore::getAtomicRelaxationModel() const
 {
   return *d_relaxation_model;
 }
-
+*/
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
