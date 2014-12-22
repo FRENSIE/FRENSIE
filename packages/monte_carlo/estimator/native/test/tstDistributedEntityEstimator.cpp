@@ -231,7 +231,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EntityEstimator,
   					  1e-15 );
   }
 
-  comm->barrier();
+  //comm->barrier();
 }
 
 UNIT_TEST_INSTANTIATION( EntityEstimator, reduceData )

@@ -54,10 +54,11 @@ TEUCHOS_UNIT_TEST( ModuleInterface, getParticleState )
 
   MonteCarlo::ParticleBank bank;
 
-  SMI::sampleParticleState( bank );
+  SMI::sampleParticleState( bank, 0 );
 
   TEST_ASSERT( bank.size() > 0 );
   TEST_ASSERT( !bank.top().is_null() );
+  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 0 );
 }
 
 //---------------------------------------------------------------------------//

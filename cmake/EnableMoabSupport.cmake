@@ -21,6 +21,43 @@ MACRO(ENABLE_MOAB_SUPPORT)
   SET(MOAB ${MOAB} ${MOAB_LIBRARIES})
 
   IF(FRENSIE_ENABLE_DAGMC)
+    # Check if the DagMC patch has been applied
+    IF((NOT DEFINED DAGMC_THREAD_SAFE_PATCHED) OR (NOT ${DAGMC_THREAD_SAFE_PATCHED}))
+      FIND_FILE(DAGMC_CPP
+	NAMES "DagMC.cpp"
+	PATHS ${MOAB_PREFIX}/src/tools/dagmc ${MOAB_SOURCE}/tools/dagmc)
+      IF(${DAGMC_CPP} MATCHES NOTFOUND)
+	MESSAGE(FATAL_ERROR "The DagMC.cpp file could not be found!")
+      ENDIF()
+
+      IF(NOT DEFINED DAGMC_THREAD_SAFE_PATCH)
+	MESSAGE(FATAL_ERROR "The DagMC.cpp patch file needs to be defined!")
+      ENDIF()
+
+      IF(NOT DEFINED PATCH_EXEC)
+	MESSAGE(FATAL_ERROR "The patch executable needs to be defined!")
+      ENDIF()
+
+      EXECUTE_PROCESS(COMMAND ${PATCH_EXEC} -s -N -r ${CMAKE_BINARY_DIR}/DagMC.cpp.rej ${DAGMC_CPP}
+	${DAGMC_THREAD_SAFE_PATCH}
+	OUTPUT_VARIABLE DAGMC_THREAD_SAFE_PATCH_OUTPUT
+	ERROR_VARIABLE DAGMC_THREAD_SAFE_PATCH_ERROR
+	RESULT_VARIABLE DAGMC_THREAD_SAFE_PATCH_RESULT)
+
+      IF(${DAGMC_THREAD_SAFE_PATCH_OUTPUT} MATCHES "FAILED")
+	MESSAGE(FATAL_ERROR "The DagMC.cpp file could not be patched: ${DAGMC_THREAD_SAFE_PATCH_OUTPUT}")
+      ELSEIF(${DAGMC_THREAD_SAFE_PATCH_OUTPUT} MATCHES "refusing")
+	MESSAGE(FATAL_ERROR "The DagMC.cpp file could not be patched: ${DAGMC_THREAD_SAFE_PATCH_OUTPUT}")
+      ELSEIF(DAGMC_THREAD_SAFE_PATCH_RESULT EQUAL "0")
+	MESSAGE(FATAL_ERROR "DagMC.cpp was successfully patched for the first time. Moab needs to be rebuilt before proceeding.")
+      ELSE()
+	SET(DAGMC_THREAD_SAFE_PATCHED "ON"
+	  CACHE BOOL "Flag that indicates if the patch was successful." FORCE)
+	MESSAGE("-- DagMC.cpp has been patched!")
+      ENDIF()
+    ENDIF()
+    
+    # DagMC patch has been applied - now find DagMC library
     FIND_LIBRARY(DAGMC dagmc ${MOAB_LIBRARY_DIRS})
 
     IF(${DAGMC} MATCHES NOTFOUND)

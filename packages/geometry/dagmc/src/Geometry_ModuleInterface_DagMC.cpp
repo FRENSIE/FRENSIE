@@ -69,21 +69,26 @@ ModuleInterface<moab::DagMC>::findCellContainingPoint(
   ModuleInterface<moab::DagMC>::testCellsContainingTestPoints(
 						         cell_containing_point,
 							 ray );
-
+    
   // Try all remaining cells if necessary
-  if( cell_containing_point ==
-      ModuleTraits::invalid_internal_cell_handle )
+  if( cell_containing_point == ModuleTraits::invalid_internal_cell_handle )
   {
-    // Prevent potential problematic race conditions by allowing only one
-    // thread to execute this function at a time!
-    #pragma omp critical(dagmc_find_cell)
-    {
+    #pragma omp critical(find_start_cell)                                  
+    {  
       ModuleInterface<moab::DagMC>::testAllRemainingCells( 
 							 cell_containing_point,
 							 ray );
     }
+    
+    // Try the original test one more time (race condition)
+    if( cell_containing_point == ModuleTraits::invalid_internal_cell_handle )
+    {
+      ModuleInterface<moab::DagMC>::testCellsContainingTestPoints( 
+						         cell_containing_point,
+							 ray );
+    }
   }
-
+  
   // Test if the ray is lost
   TEST_FOR_EXCEPTION( 
 	    cell_containing_point ==
@@ -148,15 +153,18 @@ void ModuleInterface<moab::DagMC>::fireRay(
   
   ExternalSurfaceHandle surface_hit_external;
   
-  moab::ErrorCode return_value = 
-    ModuleInterface<moab::DagMC>::dagmc_instance->ray_fire(
+  moab::ErrorCode return_value;
+  //#pragma omp critical(ray_fire)
+  {
+    return_value = ModuleInterface<moab::DagMC>::dagmc_instance->ray_fire(
 			  current_cell_external,
 			  ray.getPosition(),
 			  ray.getDirection(),
 			  surface_hit_external,
 			  distance_to_surface_hit,
 			  &ModuleInterface<moab::DagMC>::ray_history[Utility::GlobalOpenMPSession::getThreadId()] );
-
+  }
+  
   // Check for lost particle
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS, 
 		      Utility::MOABException,
@@ -256,11 +264,17 @@ void ModuleInterface<moab::DagMC>::testCellsContainingTestPoints(
 						      InternalCellHandle& cell,
 						      const Ray& ray )
 {
-  boost::unordered_set<ExternalCellHandle>::const_iterator cell_handle = 
-    ModuleInterface<moab::DagMC>::cells_containing_test_points.begin();
+  boost::unordered_set<ExternalCellHandle>::const_iterator cell_handle,
+    end_cell_handle;
+
+  #pragma omp critical(find_start_cell)
+  {
+    cell_handle = 
+      ModuleInterface<moab::DagMC>::cells_containing_test_points.begin();
     
-  boost::unordered_set<ExternalCellHandle>::const_iterator end_cell_handle = 
-    ModuleInterface<moab::DagMC>::cells_containing_test_points.end();
+    end_cell_handle = 
+      ModuleInterface<moab::DagMC>::cells_containing_test_points.end(); 
+  }
     
   while( cell_handle != end_cell_handle )
   {
@@ -305,7 +319,7 @@ void ModuleInterface<moab::DagMC>::testAllRemainingCells(
 								*cell_handle );
       
       // Add the cell to the set of cells found to contain test points
-	ModuleInterface<moab::DagMC>::cells_containing_test_points.insert( *cell_handle );
+      ModuleInterface<moab::DagMC>::cells_containing_test_points.insert( *cell_handle );
 
       // Remove the entity handle from the remaining cells container so 
       // that it is not checked twice in the future.

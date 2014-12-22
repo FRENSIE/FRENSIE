@@ -107,6 +107,10 @@ public:
   static inline void printEstimators( std::ostream& os )
   { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
 
+  //! Reset the estimator data
+  static inline void resetEstimatorData()
+  { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
+
   //! Reduce estimator data on all processes in comm and collect on the root
   static inline void reduceEstimatorData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,

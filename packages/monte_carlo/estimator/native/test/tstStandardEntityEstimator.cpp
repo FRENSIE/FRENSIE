@@ -1284,11 +1284,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
     estimator_base->enableThreadSupport( 
 	         Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   }
-  
-  TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
 
   unsigned threads = 
     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads();
+  
+  for( unsigned i = 0; i < threads; ++i )
+    TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution( i ) );
 
   #pragma omp parallel num_threads( threads )
   {
@@ -1398,8 +1399,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
     estimator_base->commitHistoryContribution();
   }
 
-  TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
-
+  for( unsigned i = 0; i < threads; ++i )
+    TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution( i ) );
+  
   MonteCarlo::Estimator::setNumberOfHistories( threads );
   MonteCarlo::Estimator::setEndTime( 1.0 );
 
@@ -1525,6 +1527,281 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
 
 UNIT_TEST_INSTANTIATION( StandardEntityEstimator,
 			 addPartialHistoryContribution_thread_safe );
+
+//---------------------------------------------------------------------------//
+// Check that a partial history contribution can be added to the estimator
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( StandardEntityEstimator,
+                                   resetData,
+				   EntityId )
+{
+  Teuchos::RCP<MonteCarlo::Estimator> estimator_base;
+  Teuchos::RCP<TestStandardEntityEstimator<EntityId> > estimator;
+  
+  {
+    // Set the entity ids
+    Teuchos::Array<EntityId> entity_ids( 2 );
+    entity_ids[0] = 0;
+    entity_ids[1] = 1;
+    
+    // Set the entity norm constants
+    Teuchos::Array<double> entity_norm_consts( 2 );
+    entity_norm_consts[0] = 1.0;
+    entity_norm_consts[1] = 2.0;
+
+    estimator.reset(
+	     new TestStandardEntityEstimator<EntityId>( 0u,
+							10.0,
+							entity_ids,
+							entity_norm_consts ) );
+
+    estimator_base = estimator;
+
+    // Set the energy bins
+    Teuchos::Array<double> energy_bin_boundaries( 3 );
+    energy_bin_boundaries[0] = 0.0;
+    energy_bin_boundaries[1] = 0.1;
+    energy_bin_boundaries[2] = 1.0;
+
+    estimator_base->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
+						       energy_bin_boundaries );
+
+    // Set the cosine bins
+    Teuchos::Array<double> cosine_bin_boundaries( 3 );
+    cosine_bin_boundaries[0] = -1.0;
+    cosine_bin_boundaries[1] = 0.0;
+    cosine_bin_boundaries[2] = 1.0;
+
+    estimator_base->setBinBoundaries<MonteCarlo::COSINE_DIMENSION>(
+						       cosine_bin_boundaries );
+
+    // Set the time bins
+    Teuchos::Array<double> time_bin_boundaries( 3 );
+    time_bin_boundaries[0] = 0.0;
+    time_bin_boundaries[1] = 1.0;
+    time_bin_boundaries[2] = 2.0;
+
+    estimator_base->setBinBoundaries<MonteCarlo::TIME_DIMENSION>(
+							 time_bin_boundaries );
+
+    // Set collision number bins
+    Teuchos::Array<unsigned> collision_number_bins( 2 );
+    collision_number_bins[0] = 0u;
+    collision_number_bins[1] = 1u;
+
+    estimator_base->setBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>(
+						       collision_number_bins );
+
+    // Set the particle types
+    Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
+    particle_types[0] = MonteCarlo::PHOTON;
+
+    estimator_base->setParticleTypes( particle_types );
+  }
+  
+  TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
+
+  // bin 0
+  MonteCarlo::PhotonState particle( 0ull );
+  particle.setEnergy( 1.0 );
+  particle.setTime( 2.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+
+  TEST_ASSERT( estimator_base->hasUncommittedHistoryContribution() );
+
+  // bin 1
+  particle.setEnergy( 0.1 );
+
+  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+
+  // bin 2 
+  particle.setEnergy( 1.0 );
+  
+  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+
+  // bin 3
+  particle.setEnergy( 0.1 );
+
+  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+
+  // bin 4
+  particle.setTime( 1.0 );
+  particle.setEnergy( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+
+  // bin 5
+  particle.setEnergy( 0.1 );
+
+  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+
+  // bin 6
+  particle.setEnergy( 1.0 );
+  
+  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  
+  // bin 7
+  particle.setEnergy( 0.1 );
+
+  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+
+  // bin 8
+  particle.incrementCollisionNumber();
+  particle.setTime( 2.0 );
+  particle.setEnergy( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+
+  // bin 9
+  particle.setEnergy( 0.1 );
+
+  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+
+  // bin 10 
+  particle.setEnergy( 1.0 );
+  
+  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+
+  // bin 11
+  particle.setEnergy( 0.1 );
+
+  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+
+  // bin 12
+  particle.setTime( 1.0 );
+  particle.setEnergy( 1.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+
+  // bin 13
+  particle.setEnergy( 0.1 );
+
+  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+
+  // bin 14
+  particle.setEnergy( 1.0 );
+  
+  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  
+  // bin 15
+  particle.setEnergy( 0.1 );
+
+  estimator->addPartialHistoryContribution( 0, particle, 0.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 0.0, 1.0 );
+  
+  // Commit the contributions
+  estimator_base->commitHistoryContribution();
+
+  TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
+
+  // Start a new history
+  particle.setEnergy( 1.0 );
+  particle.setTime( 2.0 );
+
+  estimator->addPartialHistoryContribution( 0, particle, 1.0, 1.0 );
+  estimator->addPartialHistoryContribution( 1, particle, 1.0, 1.0 );
+
+  TEST_ASSERT( estimator_base->hasUncommittedHistoryContribution() );
+
+  // Reset the estimator data
+  estimator_base->resetData();
+
+  // Make sure all partial contributions have been deleted
+  TEST_ASSERT( !estimator_base->hasUncommittedHistoryContribution() );
+
+  // Make sure the bins have not been changed
+  TEST_EQUALITY_CONST( 
+	     estimator_base->getNumberOfBins( MonteCarlo::ENERGY_DIMENSION ),
+	     2 );
+  TEST_EQUALITY_CONST( 
+	     estimator_base->getNumberOfBins( MonteCarlo::TIME_DIMENSION ),
+	     2 );
+  TEST_EQUALITY_CONST( 
+	     estimator_base->getNumberOfBins( MonteCarlo::COSINE_DIMENSION ),
+	     2 );
+  TEST_EQUALITY_CONST( 
+   estimator_base->getNumberOfBins( MonteCarlo::COLLISION_NUMBER_DIMENSION ),
+   2 );
+  TEST_EQUALITY_CONST( estimator_base->getNumberOfBins(), 16 );
+
+  // Make sure the response functions have not changed
+  TEST_EQUALITY_CONST( estimator_base->getNumberOfResponseFunctions(), 1 );
+
+  // Initialize the HDF5 file
+  MonteCarlo::EstimatorHDF5FileHandler hdf5_file_handler(
+				        "test_standard_entity_estimator3.h5" );
+
+  estimator_base->exportData( hdf5_file_handler, false );
+
+  // Retrieve the raw bin data for each entity
+  Teuchos::Array<Utility::Pair<double,double> > 
+    raw_bin_data( 16, Utility::Pair<double,double>( 0.0, 0.0 ) ),
+    raw_bin_data_copy;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>(
+                                                   0u, 0u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+					raw_bin_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<EntityId>( 
+                                                   0u, 1u, raw_bin_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+					raw_bin_data_copy,
+					1e-15 );
+
+  // Retrieve the total raw total bin data
+  hdf5_file_handler.getRawEstimatorTotalBinData( 0u, raw_bin_data );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data, 
+					raw_bin_data_copy,
+					1e-15 );
+
+  // Retrieve the raw total entity data
+  Teuchos::Array<Utility::Quad<double,double,double,double> >
+    raw_total_data( 1, Utility::Quad<double,double,double,double>(0, 0, 0, 0)),
+    raw_total_data_copy;
+
+  hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>( 
+                                                 0u, 0u, raw_total_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+					raw_total_data_copy,
+					1e-15 );
+
+  hdf5_file_handler.getRawEstimatorEntityTotalData<EntityId>( 
+                                                 0u, 1u, raw_total_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+					raw_total_data_copy,
+					1e-15 );
+
+  // Retrieve the raw total data
+  hdf5_file_handler.getRawEstimatorTotalData( 0u, raw_total_data_copy );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_total_data, 
+					raw_total_data_copy,
+					1e-15 );
+}
+
+UNIT_TEST_INSTANTIATION( StandardEntityEstimator, resetData );
 
 //---------------------------------------------------------------------------//
 // Custom main function

@@ -65,6 +65,9 @@ template<typename EntityId>
 void StandardEntityEstimator<EntityId>::setResponseFunctions(
     const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions )
 {
+  // Make sure only the root thread calls this
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   EntityEstimator<EntityId>::setResponseFunctions( response_functions );
 
   // Resize the entity total estimator momens map arrays
@@ -180,6 +183,9 @@ template<typename EntityId>
 void StandardEntityEstimator<EntityId>::enableThreadSupport(
 						  const unsigned num_threads )
 {  
+  // Make sure only the root thread calls this
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   EntityEstimator<EntityId>::enableThreadSupport( num_threads );
   
   // Add thread support to update tracker
@@ -189,6 +195,44 @@ void StandardEntityEstimator<EntityId>::enableThreadSupport(
   d_dimension_values.resize( num_threads );
 }
 
+// Reset the estimator data
+/*! 
+ */
+template<typename EntityId>
+void StandardEntityEstimator<EntityId>::resetData()
+{
+  // Make sure only the root thread calls this
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
+  EntityEstimator<EntityId>::resetData();
+
+  // Reset the total moments
+  for( unsigned i = 0; i < d_total_estimator_moments.size(); ++i )
+    d_total_estimator_moments[i]( 0.0, 0.0, 0.0, 0.0 );
+
+  // Reset the entity total moments
+  typename EntityEstimatorMomentsArrayMap::iterator entity_data, 
+    end_entity_data;
+  entity_data = d_entity_total_estimator_moments_map.begin();
+  end_entity_data = d_entity_total_estimator_moments_map.end();
+
+  while( entity_data != end_entity_data )
+  {
+    for( unsigned i = 0; i < entity_data->second.size(); ++i )
+      entity_data->second[i]( 0.0, 0.0, 0.0, 0.0 );
+    
+    ++entity_data;
+  }
+
+  // Reset the update tracker
+  for( unsigned i = 0; i < d_update_tracker.size(); ++i )
+  {
+    d_update_tracker[i].clear();
+    
+    this->unsetHasUncommittedHistoryContribution( i );
+  }
+}
+
 // Reduce estimator data on all processes and collect on the root process
 template<typename EntityId>
 void StandardEntityEstimator<EntityId>::reduceData(
@@ -196,6 +240,8 @@ void StandardEntityEstimator<EntityId>::reduceData(
 	    const int root_process )  
 {
 #ifdef HAVE_FRENSIE_MPI
+  // Make sure only the root thread calls this
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
   // Make sure that mpi has been initialized
   remember( int mpi_initialized );
   remember( ::MPI_Initialized( &mpi_initialized ) );
@@ -498,6 +544,9 @@ void StandardEntityEstimator<EntityId>::exportData(
 			   EstimatorHDF5FileHandler& hdf5_file,
 			   const bool process_data ) const
 {
+  // Make sure only the root thread calls this
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   // Export the lower level data first
   EntityEstimator<EntityId>::exportData( hdf5_file, process_data );
 
@@ -654,6 +703,9 @@ void StandardEntityEstimator<EntityId>::printImplementation(
 					 std::ostream& os,
 					 const std::string& entity_type ) const
 {
+  // Make sure only the root thread calls this
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   EntityEstimator<EntityId>::printImplementation( os, entity_type );
 
   // Print the entity total estimator data

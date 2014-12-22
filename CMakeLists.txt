@@ -18,6 +18,21 @@ INCLUDE(Macros)
 # Enforce an out-of-source build
 ENFORCE_OUT_OF_SOURCE_BUILD()
 
+# Load the patch files
+SET(TEUCHOS_TWO_D_ARRAY_PATCH 
+  ${CMAKE_SOURCE_DIR}/patches/Teuchos_TwoDArray_patch
+  CACHE STRING "The Teuchos::TwoDArray patch file" FORCE)
+
+SET(DAGMC_THREAD_SAFE_PATCH
+  ${CMAKE_SOURCE_DIR}/patches/DagMC_cpp_patch
+  CACHE STRING "The DagMC.cpp patch file" FORCE)
+
+# Find the patch exec
+FIND_PROGRAM(PATCH_EXEC NAMES patch)
+IF(${PATCH_EXEC} MATCHES NOTFOUND)
+  MESSAGE(FATAL_ERROR "The patch program could not be found!")
+ENDIF()
+
 # Enable OpenMP support
 IF(${${PROJECT_NAME}_ENABLE_OPENMP})
   SET(HAVE_${PROJECT_NAME}_OPENMP "1")
@@ -112,9 +127,12 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 # Add an uninstall target
 ADD_UNINSTALL_TARGET()
 
-# Enable testing through CTest
-ENABLE_TESTING()
-INCLUDE(Dart)
+# Set up the testing dashboard
+IF(${SETUP_DASHBOARD_CLIENT})
+  INCLUDE(CTest)
+ELSE()
+  ENABLE_TESTING()
+ENDIF()
 
 # Set up the project directory hierarchy
 ADD_SUBDIRECTORY(packages)
@@ -133,3 +151,12 @@ packages/data/endf/src)
 ADD_SUBDIRECTORY(tools)
 
 ADD_SUBDIRECTORY(doc)
+
+
+# Add custom build ctest target for continuous integration tests
+ADD_CUSTOM_TARGET(test-fast 
+  COMMAND ctest -E verification
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+ADD_CUSTOM_TARGET(test-slow
+  COMMAND ctest -R verification
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR})

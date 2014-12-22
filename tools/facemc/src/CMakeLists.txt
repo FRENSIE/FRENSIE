@@ -1,5 +1,6 @@
 # Create the facemc exec
 IF(FRENSIE_ENABLE_DAGMC)
+    
   ADD_EXECUTABLE(facemc facemcCore.cpp facemc.cpp)
   TARGET_LINK_LIBRARIES(facemc monte_carlo_manager)
 

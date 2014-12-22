@@ -80,6 +80,9 @@ private:
   // The moab instance that stores all mesh data
   Teuchos::RCP<moab::Interface> d_moab_interface;
 
+  // The tet meshset
+  moab::EntityHandle d_tet_meshset;
+
   // The kd-tree for finding point in tet
   Teuchos::RCP<moab::AdaptiveKDTree> d_kd_tree;
   

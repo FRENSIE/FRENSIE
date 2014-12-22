@@ -5,7 +5,7 @@
  * \tableofcontents
  *
  * The Forward-Adjoint Continuous Energy Monte Carlo (FACEMC) code is 
- * currently interacted with through XML files and a command line interface.
+ * currently interacted with through XML files and a command-line interface.
  * In the future, a python interface will also be added. In this manual the
  * individual XML files and the command line interface will be discussed.
  *
@@ -39,11 +39,11 @@
  * \subsection contructing_cad_geoms Constructing CAD Geometries
  * When preparing the solid model, any software that supports the ACIS (.sat)
  * and/or the STEP (.stp, .STEP, etc) can be used. CUBIT can also be used
- * direcly to construct the geometry. It is important to be aware of gaps
+ * directly to construct the geometry. It is important to be aware of gaps
  * and overlaps in the model as these unwanted features will lead to lost
  * particles while FACEMC attempts to ray trace on the geometry. It is fairly
  * common for models constructed for manufacturing purposes to have tolerances
- * that are undesireable for particle transport applications. Therefore, 
+ * that are undesirable for particle transport applications. Therefore, 
  * when obtaining a CAD model from another source, it is important to be aware 
  * of its intended purpose. 
  *
@@ -173,8 +173,6 @@
  * \code
  * <ParameterList name="cross sections">
  * 
- * <Parameter name="is_ascii" type="bool" value="true"/>
- * 
  * <ParameterList name="alias map">
  *   <Parameter name="1001" type="string" value="H-1_293.6K"/>
  *   <Parameter name="8016" type="string" value="O-16_293.6K"/>
@@ -183,22 +181,40 @@
  * </ParameterList>
  * 
  * <ParameterList name="H-1_293.6K">
- *   <Parameter name="file_path" type="string" value="endf70a"/>
- *   <Parameter name="table_name" type="string" value="1001.70c"/>
- *   <Parameter name="start_line" type="int" value="1"/>
- *   <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
+ *   <Parameter name="nuclear_file_path" type="string" value="endf70a"/>
+ *   <Parameter name="nuclear_file_type" type="string" value="ACE"/>
+ *   <Parameter name="nuclear_file_start_line" type="int" value="1"/>
+ *   <Parameter name="nuclear_table_name" type="string" value="1001.70c"/>
+ *   <Parameter name="photoatomic_file_path" type="string" value="mcplib12"/>
+ *   <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+ *   <Parameter name="photoatomic_file_start_line" type="int" value="1"/>
+ *   <Parameter name="photoatomic_table_name" type="string" value="1000.12p"/>
+ *   <Parameter name="electroatomic_file_path" type="string" value="mcplib12"/>
+ *   <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+ *   <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
+ *   <Parameter name="electroatomic_table_name" type="string" value="1000.12p"/>
  *   <Parameter name="temperature" type="double" value="2.53010e-08"/>
+ *   <Parameter name="atomic_weight_ratio" type="double" value="0.999167"/>
  *   <Parameter name="atomic_number" type="int" value="1"/>
  *   <Parameter name="atomic_mass_number" type="int" value="1"/>
  *   <Parameter name="isomer_number" type="int" value="0"/>
  * </ParameterList>
  *
  * <ParameterList name="O-16_293.6K">
- *   <Parameter name="file_path" type="string" value="endf70a"/>
- *   <Parameter name="table_name" type="string" value="8016.70c"/>
- *   <Parameter name="start_line" type="int" value="1428717"/>
- *   <Parameter name="atomic_weight_ratio" type="double" value="15.857510"/>
+ *   <Parameter name="nuclear_file_path" type="string" value="endf70a"/>
+ *   <Parameter name="nuclear_file_type" type="string" value="ACE"/>
+ *   <Parameter name="nuclear_file_start_line" type="int" value="1428717"/>
+ *   <Parameter name="nuclear_table_name" type="string" value="8016.70c"/>
+ *   <Parameter name="photoatomic_file_path" type="string" value="mcplib12"/>
+ *   <Parameter name="photoatomic_file_type" type="string" value="ACE"/>
+ *   <Parameter name="photoatomic_file_start_line" type="int" value="31405"/>
+ *   <Parameter name="photoatomic_table_name" type="string" value="8000.12p"/>
+ *   <Parameter name="electroatomic_file_path" type="string" value="mcplib12"/>
+ *   <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+ *   <Parameter name="electroatomic_file_start_line" type="int" value="31405"/>
+ *   <Parameter name="electroatomic_table_name" type="string" value="8000.12p"/>
  *   <Parameter name="temperature" type="double" value="2.53010e-08"/>
+ *   <Parameter name="atomic_weight_ratio" type="double" value="15.857510"/>
  *   <Parameter name="atomic_number" type="int" value="8"/>
  *   <Parameter name="atomic_mass_number" type="int" value="16"/>
  *   <Parameter name="isomer_number" type="int" value="0"/>
@@ -288,12 +304,12 @@
  *          values should always be positive.</li></ul></li>
  *    <li><b>Normal distribution</b>
  *     <ul>
- *      <li>Models a gaussian function \f$\frac{1}{\sigma\sqrt{2\pi}}\exp{-\frac{(x-\mu)^2}{2\sigma^2}}\f$</li>
+ *      <li>Models a Gaussian function \f$\frac{1}{\sigma\sqrt{2\pi}}\exp{-\frac{(x-\mu)^2}{2\sigma^2}}\f$</li>
  *      <li>\code
  *          <Parameter name="example" type="Normal Distribution" value="{0,1,-inf,inf}"/>
  *          \endcode</li>
  *      <li>The value attribute specifies the mean \f$\mu\f$ and standard
- *          deviation \f$\sigma\f$ of the gaussian. The standard deviation must
+ *          deviation \f$\sigma\f$ of the Gaussian. The standard deviation must
  *          be strictly greater than zero.
  *      <li>The distribution can be truncated by specifying a lower cutoff and 
  *          an upper cutoff. The special values of "-inf" and "inf" can be used
@@ -352,8 +368,8 @@
  *  </ul>
  *
  * \section response_function_construction Response Function Construction
- * Two types of reponse functions are currently supported: the energy
- * reponse function and the phase space response function. Both of these
+ * Two types of response functions are currently supported: the energy
+ * repines function and the phase space response function. Both of these
  * will be discussed before discussing the construction of the response 
  * function XML file.
  *
@@ -384,7 +400,7 @@
  * A Cartesian distribution will only have three parameter elements, each
  * of which is a \ref one_d_distributions "one dimensional distribution". The
  * three parameters are the x distribution, the y distribution and the z
- * distribution. A Cylindrical distribution will have seven paremeter 
+ * distribution. A Cylindrical distribution will have seven parameter 
  * elements defined. The first three, which are one dimensional distributions,
  * are the r distribution, the theta (azimuthal) distribution, and the 
  * axis distribution. The final four parameter elements are the center x
@@ -538,9 +554,8 @@
  *   <ParameterList name="Bins">
  *     <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
  *     <Parameter name="Time Bins" type="Array(double)" value="{0.0, 1e-9, 1e-8, 1e-7, 1.0}"/>
- *   </ParameterList>
  * </ParameterList>
- *
+ * 
  * <ParameterList name="Cell Collision Flux Estimator">
  *  <Parameter name="Id" type="unsigned int" value="2"/>
  *  <Parameter name="Type" type="string" value="cell.c.flux"/>
@@ -623,11 +638,191 @@
  * \ref one_d_distributions "one dimensional distribution".
  *
  * A number of optional parameter elements can also be used. The first is the
- * rejection cell parameter. When a sources spatial distribution is to 
- * complicated to be modeled with a cartesian, cylindrical or spherical 
+ * rejection cell parameter. When a source's spatial distribution is too 
+ * complicated to be modeled with a Cartesian, cylindrical or spherical 
  * distribution, one can specify a rejection cell that can be used in 
- * conjunction with one of the three distributions.
+ * conjunction with one of the three distributions. A sampled particle position
+ * will only be kept when it falls within the rejection cell.
+ *
+ * The second optional parameter is the importance function. For every phase
+ * space dimension distribution, an importance function can be specified
+ * that describes the true distribution of source particles in that dimension.
+ * Essentially, the source particle's state variable will be sampled from
+ * the distribution parameter and its weight will be set according to the
+ * value of the importance function for the sampled state variable. This
+ * allows the source to be biased.
+ *
+ * Some distributed source examples are given below.
+ * \code
+ * <ParameterList name="Source">
+ * 
+ * <ParameterList name="Basic Distributed Source">
+ *   <Parameter name="Id" type="int" value="1"/>
+ *
+ *  <Parameter name="Particle Type" type="string" value="Neutron"/>
+ *  
+ *  <ParameterList name="Spatial Distribution">
+ *    <Parameter name="X Distribution" type="Delta Distribution" value="{1}"/>
+ *    <Parameter name="Y Distribution" type="Delta Distribution" value="{1}"/>
+ *    <Parameter name="Z Distribution" type="Delta Distribution" value="{1}"/>
+ *  </ParameterList>
+ *  
+ *  <ParameterList name="Directional Distribution">
+ *    <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1,1,2}"/>
+ *    <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,6.283185307179586,1}"/>
+ *  </ParameterList>
+ *  
+ *  <Parameter name="Energy Distribution" type="Exponential Distribution" value="{2,0.5}"/>
+ *
+ *  <Parameter name="Time Distribution" type="Delta Distribution" value="{0}"/>
+ *
+ * </ParameterList>
+ *
+ * </ParameterList>
+ * \endcode
+ *
+ * \code
+ * <ParameterList name="Source">
+ *  
+ * <ParameterList name="Complex Distributed Source">
+ *   <Parameter name="Id" type="int" value="1"/>
+ *
+ *   <ParameterList name="Spatial Distribution">
+ *     <Parameter name="X Distribution" type="Uniform Distribution" value="{0,1,1}"/>
+ *     <Parameter name="Y Distribution" type="Uniform Distribution" value="{0,1,1}"/>
+ *     <Parameter name="Z Distribution" type="Uniform Distribution" value="{0,1,1}"/>
+ *   </ParameterList>
+ *
+ *   <ParameterList name="Spatial Importance Function">
+ *     <Parameter name="X Distribution" type="Histogram Distribution" value="{{0,0.5,1},{2,1}}"/>
+ *     <Parameter name="Y Distribution" type="Histogram Distribution" value="{{0,0.5,1},{2,1}}"/>
+ *     <Parameter name="Z Distribution" type="Histogram Distribution" value="{{0,0.5,1},{2,1}}"/>
+ *   </ParameterList>
+ *  
+ *   <ParameterList name="Directional Distribution">
+ *     <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1,1,2}"/>
+ *     <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,6.283185307179586,1}"/>
+ *   </ParameterList>
+ *  
+ *   <Parameter name="Energy Distribution" type="Uniform Distribution" value="{1e-5,1,1}"/>
+ *    
+ *   <Parameter name="Energy Importance Function" type="Normal Distribution" value="{1,1,1e-5,1}"/>
+ *
+ *   <Parameter name="Time Distribution" type="Delta Distribution" value="{0}"/>
+ *
+ *   <Parameter name="Rejection Cell" type="int" value="2"/>
+ *
+ *   <Parameter name="Particle Type" type="string" value="Neutron"/>
+ * </ParameterList>
+ *
+ * </ParameterList>
+ * \endcode
+ *
+ * \subsection compound_source Compound Source Construction
+ * To construct a compound source, one simply needs to define several sources,
+ * each with a unique id, and assign a weight to each. The weight parameter 
+ * element must be specified for each source. These weights will be used to
+ * sample a source to use for sampling a particle state. Typically, the
+ * weight will be set to the spatial volume occupied by each distributed
+ * source. An example compound source is given below.
+ *
+ * \code
+ * <ParameterList name="Source">
+ *
+ * <ParameterList name="Neutron Source">
+ *   <Parameter name="Id" type="int" value="1"/>
+ *
+ *  <Parameter name="Particle Type" type="string" value="Neutron"/>
+ *  
+ *  <ParameterList name="Spatial Distribution">
+ *    <Parameter name="X Distribution" type="Delta Distribution" value="{0}"/>
+ *    <Parameter name="Y Distribution" type="Delta Distribution" value="{0}"/>
+ *    <Parameter name="Z Distribution" type="Delta Distribution" value="{0}"/>
+ *  </ParameterList>
+ *  
+ *  <ParameterList name="Directional Distribution">
+ *    <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1,1,2}"/>
+ *    <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,6.283185307179586,1}"/>
+ *  </ParameterList>
+ *  
+ *  <Parameter name="Energy Distribution" type="Delta Distribution" value="{1}"/>
+ *    
+ *  <Parameter name="Time Distribution" type="Delta Distribution" value="{0}"/>
+ *  <Parameter name="Weight" type="double" value="0.2"/>
+ * </ParameterList>
+ *
+ * <ParameterList name="Photon Source">
+ *  <Parameter name="Id" type="int" value="2"/>
+ *
+ *  <Parameter name="Particle Type" type="string" value="Photon"/>
+ * 
+ *  <ParameterList name="Spatial Distribution">
+ *    <Parameter name="X Distribution" type="Delta Distribution" value="{0}"/>
+ *    <Parameter name="Y Distribution" type="Delta Distribution" value="{0}"/>
+ *    <Parameter name="Z Distribution" type="Delta Distribution" value="{0}"/>
+ *  </ParameterList>
+ * 
+ *  <ParameterList name="Directional Distribution">
+ *    <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1,1,2}"/>
+ *    <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,6.283185307179586,1}"/>
+ *  </ParameterList>
+ *  
+ *  <Parameter name="Energy Distribution" type="Delta Distribution" value="{1}"/>
+ *    
+ *  <Parameter name="Time Distribution" type="Delta Distribution" value="{0}"/>
+ *  <Parameter name="Weight" type="double" value="0.8"/>
+ * </ParameterList>
+ *
+ * </ParameterList>
+ * \endcode
  *
  * \section runtime_modifications Runtime Configuration
+ * Currently, only the number of particles to run can be set at run time.
+ * See the following example for setting this parameter:
  *
+ * \code
+ * <ParameterList name="Simulation Info">
+ *   <Parameter name="Histories" type="unsigned int" value="1000000"/>
+ * </ParameterList>
+ * \endcode
+ *
+ * In the future, one will also be able to turn on/off certain physics,
+ * set thresholds for certain physics to be turned on/off, set cutoff
+ * energies, void out the geometry (ignore materials), etc.
+ *
+ * \section running_facemc Running FACEMC
+ * Once all of the input XML files have been created, FACEMC can be used. To
+ * see details about the FACEMC command-line interface (CLI), simply type
+ * the following command
+ * \code
+ * facemc --help
+ * \endcode
+ *
+ * Each of command-line arguments are listed below.
+ * <ul>
+ *  <li><b>sim_info</b>: The name of the XML file containing runtime
+ *                       configuration information.</li>
+ *  <li><b>geom_def</b>: The name of the XML file containing geometry
+ *                       information.</li>
+ *  <li><b>mat_def</b>: The name of the XML file containing the material
+ *                      definitions.</li>
+ *  <li><b>resp_def</b>: The name of the XML file containing the response
+ *                       function definitions.</li>
+ *  <li><b>est_def</b>: The name of the XML file containing the estimator
+ *                      definitions.</li>
+ *  <li><b>src_def</b>: The name of the XML file containing the source
+ *                      definitions.</li>
+ *  <li><b>cross_sec_dir</b>: The directory containing the desired cross
+ *                            section tables (cross_sections.xml file).</li>
+ * </ul>
+ *
+ * To run FACEMC, type the following command:
+ * \code
+ * facemc --sim_info=simulation.xml --geom_def=geometry.xml --mat_def=materials.xml --resp_def=responses.xml --est_def=estimators.xml --src_def=sources.xml --cross_sec_dir=/home/me/nuclear_data/
+ * \endcode
+ *
+ * To get status updates on the simulations progress, simply hit control-C. 
+ * This can also be used to end the simulation early. 
+ *
+ * When a simulation finishes, the results will be printed to the screen.
  */ 

@@ -9,9 +9,6 @@
 #ifndef FACEMC_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 #define FACEMC_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 
-// Std Lib Includes
-#include <time.h>
-
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
@@ -67,9 +64,13 @@ void ParticleSimulationManager<GeometryHandler,
 
   // Set up the geometry module interface for the number of threads requested
   GMI::initialize();
+
+  // Enable estimator thread support
+  EMI::enableThreadSupport( 
+		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
   // Set the start time
-  d_start_time = clock()/((double)CLOCKS_PER_SEC);
+  d_start_time = Utility::GlobalOpenMPSession::getTime();
 
   #pragma omp parallel num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   { 
@@ -87,7 +88,7 @@ void ParticleSimulationManager<GeometryHandler,
 	Utility::RandomNumberGenerator::initialize( history );
 	
 	// Sample a particle state from the source
-	SMI::sampleParticleState( bank );
+	SMI::sampleParticleState( bank, history );
 	
 	// Determine the starting cell of the particle
 	for( unsigned i = 0; i < bank.size(); ++i )
@@ -128,11 +129,8 @@ void ParticleSimulationManager<GeometryHandler,
 	}
 	
 	// Commit all estimator history contributions
-	#pragma omp critical( estimator_update )
-	{
-	  EMI::commitEstimatorHistoryContributions();
-        }
-	
+	EMI::commitEstimatorHistoryContributions();
+        
 	// Increment the number of histories completed
         #pragma omp atomic
 	++d_histories_completed;
@@ -141,7 +139,7 @@ void ParticleSimulationManager<GeometryHandler,
   }
     
   // Set the end time
-  d_end_time = clock()/((double)CLOCKS_PER_SEC);
+  d_end_time = Utility::GlobalOpenMPSession::getTime();
 }
 
 // Set the number of particle histories to simulate
@@ -319,11 +317,12 @@ void ParticleSimulationManager<GeometryHandler,
 			       CollisionHandler>::exportSimulationData(
 				      const std::string& data_file_name ) const
 {
-  // EMI::exportEstimatorData( data_file_name,
-  // 			    d_start_history+d_histories_completed,
-  // 			    d_histories_completed,
-  // 			    d_start_time,
-  // 			    d_end_time+d_previous_run_time );
+  EMI::exportEstimatorData( data_file_name,
+  			    d_start_history+d_histories_completed,
+  			    d_histories_completed,
+  			    d_start_time,
+  			    d_end_time+d_previous_run_time,
+			    true );
 }
 
 // Signal handler
@@ -365,7 +364,7 @@ void ParticleSimulationManager<GeometryHandler,
 			       EstimatorHandler,
 			       CollisionHandler>::printSimulationStateInfo()
 {
-  double time = clock()/((double)(CLOCKS_PER_SEC));
+  double time = Utility::GlobalOpenMPSession::getTime();
   
   #pragma omp critical( ostream_update )
   {
