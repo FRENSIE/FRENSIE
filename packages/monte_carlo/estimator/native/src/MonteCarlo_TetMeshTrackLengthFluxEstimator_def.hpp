@@ -27,6 +27,7 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
 		                      const std::string output_mesh_file_name )
   : StandardEntityEstimator<moab::EntityHandle>( id, multiplier ),
     d_moab_interface( new moab::Core ),
+    d_tet_meshset,
     d_kd_tree( new moab::AdaptiveKDTree( d_moab_interface.getRawPtr() ) ),
     d_kd_tree_root(),
     d_obb_tree( new moab::OrientedBoxTreeTool( d_moab_interface.getRawPtr() )),
@@ -38,9 +39,9 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
   // ------------------------ Load Meshset ------------------------------------
 
   // Create empty MOAB meshset
-  moab::EntityHandle meshset_from_input;
+  moab::EntityHandle d_tet_meshset;
   moab::ErrorCode return_value = d_moab_interface->create_meshset(
-					moab::MESHSET_SET, meshset_from_input);
+					moab::MESHSET_SET, d_tet_meshset);
   
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       Utility::MOABException,
@@ -48,7 +49,7 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
 
   // Populate MOAB meshset with data from input file                   
   return_value = d_moab_interface->load_file(
-                            input_mesh_file_name.c_str(), &meshset_from_input);
+                            input_mesh_file_name.c_str(), &d_tet_meshset);
                              
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       Utility::MOABException,
@@ -61,14 +62,14 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
   
   // Extract 3D elements from meshset
   return_value = d_moab_interface->get_entities_by_dimension(
-                        meshset_from_input, 3, all_tet_elements);
+                        d_tet_meshset, 3, all_tet_elements);
   
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       Utility::MOABException,
                       moab::ErrorCodeStr[return_value] );
   
   // Clear the meshset                    
-  return_value = d_moab_interface->clear_meshset(&meshset_from_input, 1);
+  return_value = d_moab_interface->clear_meshset(&d_tet_meshset, 1);
   
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       Utility::MOABException,
@@ -76,7 +77,7 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
                       
   // Reconstruct the meshset using only 3D entitites                    
   return_value = d_moab_interface->add_entities(
-                                         meshset_from_input, all_tet_elements);
+                                         d_tet_meshset, all_tet_elements);
   
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       Utility::MOABException,
@@ -84,14 +85,13 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
   
   unsigned int number_of_tets = all_tet_elements.size();
   
-  for( moab::Range::const_iterator i=all_tet_elements.begin(); 
-                                                i!=all_tet_elements.end(); ++i)
+  for( moab::Range::const_iterator tet = all_tet_elements.begin(); 
+       tet != all_tet_elements.end(); 
+       ++tet )
     {
-      moab::EntityHandle tet = *i;
-     
       // Extract the vertex data for the given tet
       std::vector<moab::EntityHandle> vertex_handles;
-      d_moab_interface->get_connectivity( &tet, 1, vertex_handles );
+      d_moab_interface->get_connectivity( tet, 1, vertex_handles );
      
       // Test that the vertex entity contains four points
       TEST_FOR_EXCEPTION( vertex_handles.size() != 4,
@@ -103,9 +103,9 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
       
       for( unsigned j = 0; j < vertex_handles.size(); ++j )
       {
-	    d_moab_interface->get_coords( &vertex_handles[j], 
-				                      1, 
-				                      vertices[j].array() );
+	d_moab_interface->get_coords( &vertex_handles[j], 
+				      1, 
+				      vertices[j].array() );
       }
                                                                 
       // Calculate Barycentric Matrix
@@ -118,6 +118,17 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
 						                        vertices[2],
 						                        vertices[3],
                                                 barycentric_transform_matrix );
+
+      // Calculate tet volumes
+      boost::unordered_map<moab::EntityHandle,double> entity_volumes;
+      
+      entity_volumes[*tet] = Utility::calculateTetrahedronVolume( vertices[0],
+								  vertices[1],
+								  vertices[2],
+								  vertices[3]);
+
+      // Assign the entity volumes
+      this->assignEntities( entity_volumes );
    }
   
   // ---------------------------- KD Trees ------------------------------------
@@ -200,51 +211,65 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
   {
     moab::Range all_tet_elements;
     moab::ErrorCode return_value = d_moab_interface->get_entities_by_dimension(
-                                       meshset_from_input, 3, all_tet_elements);
+                                       d_tet_meshset, 3, all_tet_elements);
                                        
     TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                         Utility::MOABException,
                         moab::ErrorCodeStr[return_value] );
     
-    for (moab::Range::const_iterator i=all_tet_elements.begin(); 
-         i!=all_tet_elements.end(); ++i)
+    // Process moments
+    for ( moab::Range::const_iterator tet = all_tet_elements.begin(); 
+	  tet != all_tet_elements.end(); 
+	  ++tet )
     {
-      moab::EntityHandle tet = *i;
+      double tet_volume = this->getEntityNormConstant( *tet );
       
-      // Extract the vertex data for the given tet
-      std::vector<moab::EntityHandle> vertex_handles;
-      d_moab_interface->get_connectivity( &tet, 1, vertex_handles );
-     
-      // Test that the vertex entity contains four points
-      TEST_FOR_EXCEPTION( vertex_handles.size() != 4,
-			  Utility::MOABException,
-			  "Error: tet found with incorrect number of vertices "
-			  "(" << vertex_handles.size() << " != 4)" );
-     
-      moab::CartVect vertices[4];
+      const Estimator::TwoEstimatorMomentsArray& tet_bin_data = 
+	this->getEntityBinData( *tet );
       
-      for( unsigned j = 0; j < vertex_handles.size(); ++j )
+      Teuchos::Array<moab::Tag> mean_tag( tet_bin_data.size() ), 
+	relative_error_tag( tet_bin_data.size() );
+
+      std::string mean_tag_prefix = "mean_";
+      std::string relative_error_tag_prefix = "relative_error_";	
+
+      for( unsigned i = 0; i < tet_bin_data.size(); ++i )
       {
-	    d_moab_interface->get_coords( &vertex_handles[j], 
-				                      1, 
-				                      vertices[j].array() );
+	double mean, relative_error;
+	
+	this->processMoments( tet_bin_data[i],
+			      tet_volume,
+			      mean, 
+			      relative_error );
+
+	std::string bin_name = this->getBinName( i );
+	std::string mean_tag_name = mean_tag_prefix + bin_name;
+	std::string relative_error_tag_name = relative_error_tag_prefix +
+	  bin_name;
+	  
+	moab::ErrorCode return_value = 
+	  d_moab_interface->tag_get_handle( 
+				       mean_tag_name.c_str(),
+				       1,
+				       moab::MB_TYPE_DOUBLE,
+				       mean_tag[i],
+				       moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
+
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+                      Utility::MOABException,
+                      moab::ErrorCodeStr[return_value] );
+
+	return_value = d_moab_interface->tag_set_data( mean_tag[i], 
+						       *tet,
+						       1,
+						       mean );
+
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+                      Utility::MOABException,
+                      moab::ErrorCodeStr[return_value] );
       }
-      
-      double tet_volume = Utility::calculateTetrahedronVolumve(vertices[0],
-						                                       vertices[1],
-						                                       vertices[2],
-						                                       vertices[3]);
-      
-      for( unsigned j = 0; j < GET_NUM_ENERGY_BINS; ++j)
-      {
-        std::pair <double,double> tally_moments;
-        
-      }
-      
     }
-    
-  }
-    
+  }   
 }
 
 // Print the estimator data
@@ -260,22 +285,14 @@ template<typename ContributionMultiplierPolicy>
 void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBoundaries(
 	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries )
 {
-  if( bin_boundaries->getDimension() == COSINE_DIMENSION )
-  {
-    std::cerr << "Warning: " << bin_boundaries->getDimensionName()
-	      << " bins cannot be set for standard cell estimators. The bins "
-	      << "requested for tetrahdedral mesh flux estimator " << this->getId()
-	      << " will be ignored."
-	      << std::endl;
-  }
-  else if( bin_boundaries->getDimension() == TIME_DIMENSION )
-  {
-    std::cerr << "Warning: " << bin_boundaries->getDimensionName()
-	      << " bins cannot be set for standard cell estimators. The bins "
-	      << "requested for tetrahedral mesh flux estimator " << this->getId()
-	      << " will be ignored."
-	      << std::endl;
-  }
+  // if( bin_boundaries->getDimension() != ENERGY_DIMENSION )
+  // {
+  //    std::cerr << "Warning: " << bin_boundaries->getDimensionName()
+  // 	      << " bins cannot be set for standard cell estimators. The bins "
+  // 	      << "requested for tetrahdedral mesh flux estimator " << this->getId()
+  // 	      << " will be ignored."
+  // 	      << std::endl;
+  // }
   else
     StandardEntityEstimator<cellIdType>::assignBinBoundaries( bin_boundaries );
 }

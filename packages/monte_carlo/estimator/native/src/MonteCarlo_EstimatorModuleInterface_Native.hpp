@@ -75,6 +75,9 @@ public:
 			       const double start_time,
 			       const double end_time );
 
+  //! Reset the estimator data
+  static void resetEstimatorData();
+
   //! Reduce estimator data on all processes in comm and collect on the root
   static void reduceEstimatorData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
@@ -106,7 +109,9 @@ EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::setHandlerInstance(
 { /* ... */ }
 
 // Enable support for multiple threads
-inline void enableThreadSupport( const unsigned num_threads )
+inline void 
+EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::enableThreadSupport( 
+						   const unsigned num_threads )
 {
   EstimatorHandler::enableThreadSupport( num_threads );
 }
@@ -198,8 +203,16 @@ EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::printEstimators(
 					     end_time );
 }
 
+// Reset the estimator data
+inline void 
+EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::resetEstimatorData()
+{
+  EstimatorHandler::resetEstimatorData();
+}
+
 // Reduce estimator data on all processes in comm and collect on the root
-inline void reduceEstimatorData(
+inline void 
+EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::reduceEstimatorData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process )
 {
@@ -207,7 +220,9 @@ inline void reduceEstimatorData(
 }
 
 // Export the estimator data
-inline void exportEstimatorData( const std::string& data_file_name,
+inline void 
+EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::exportEstimatorData( 
+				 const std::string& data_file_name,
 				 const unsigned long long last_history_number,
 				 const unsigned long long histories_completed,
 				 const double start_time,

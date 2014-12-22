@@ -39,7 +39,8 @@ public:
   { /* ... */ }
 
   //! Sample a particle state from the source
-  void sampleParticleState( ParticleBank& bank );
+  void sampleParticleState( ParticleBank& bank,
+			    const unsigned long long history );
   
   //! Return the sampling efficiency from the source
   double getSamplingEfficiency() const;

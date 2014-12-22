@@ -46,7 +46,6 @@ DistributedSource::DistributedSource(
     d_time_importance_distribution( NULL ),
     d_particle_type( particle_type ),
     d_rejection_cell( Geometry::ModuleTraits::invalid_internal_cell_handle ),
-    d_history_number( 0ull ),
     d_number_of_trials( 0u ),
     d_number_of_samples( 0u ),
     d_get_particle_location_func( get_particle_location_func )
@@ -124,11 +123,12 @@ void DistributedSource::setRejectionCell(
 }
 
 // Sample the particle state from the source
-void DistributedSource::sampleParticleState( ParticleBank& bank )
+void DistributedSource::sampleParticleState( ParticleBank& bank,
+					     const unsigned long long history )
 {  
   // Initialize the particle
   ParticleState::pointerType particle = 
-    ParticleStateFactory::createState( d_particle_type, d_history_number );
+    ParticleStateFactory::createState( d_particle_type, history );
     
   // Initialize the particle weight
   particle->setWeight( 1.0 );
@@ -149,9 +149,6 @@ void DistributedSource::sampleParticleState( ParticleBank& bank )
 
   // Add the particle to the bank
   bank.push( particle );
-
-  // Increment the history number
-  ++d_history_number;
 }
 
 // Get the sampling efficiency from the source distribution
@@ -217,6 +214,7 @@ void DistributedSource::sampleParticlePosition( ParticleState& particle )
       {
 	position_weight = 1.0;
 	
+	#pragma omp atomic update
 	++d_number_of_trials;
       }
     }
@@ -233,7 +231,10 @@ void DistributedSource::sampleParticlePosition( ParticleState& particle )
   particle.multiplyWeight( position_weight );
 
   // Increment the number of trials and samples
+  #pragma omp atomic update
   ++d_number_of_trials;
+
+  #pragma omp atomic update
   ++d_number_of_samples;
 }
 

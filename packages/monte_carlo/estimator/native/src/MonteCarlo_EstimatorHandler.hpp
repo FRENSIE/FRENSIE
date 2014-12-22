@@ -46,12 +46,15 @@ public:
 			       const double start_time,
 			       const double end_time );
 
+  //! Reset estimator data
+  static void resetEstimatorData();
+
   //! Reduce estimator data on all processes in comm and collect on the root
   static void reduceEstimatorData( 
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process );
 
-  //! Export the estimator data
+  //! Export the estimator data and process
   static void exportEstimatorData(const std::string& data_file_name,
 				  const unsigned long long last_history_number,
 				  const unsigned long long histories_completed,

@@ -87,6 +87,16 @@ void Estimator::setParticleTypes(
     d_particle_types.insert( particle_types[i] );
 }
 
+// Check if the estimator has uncommitted history contributions
+bool Estimator::hasUncommittedHistoryContribution( 
+					       const unsigned thread_id ) const
+{
+  // Make sure the thread is is valid
+  testPrecondition( thread_id < d_has_uncommitted_history_contribution.size());
+  
+  return d_has_uncommitted_history_contribution[thread_id];
+}
+
 // Enable support for multiple threads
 void Estimator::enableThreadSupport( const unsigned num_threads )
 {
@@ -133,6 +143,32 @@ void Estimator::exportData( EstimatorHDF5FileHandler& hdf5_file,
 
   // Export the estimator multiplier
   hdf5_file.setEstimatorMultiplier( d_id, d_multiplier );
+}
+
+// Set the has uncommited history contribution flag
+/*! \details This should be called whenever the current history contributes
+ * to the estimator.
+ */
+void Estimator::setHasUncommittedHistoryContribution( 
+						     const unsigned thread_id )
+{
+  // Make sure the thread is is valid
+  testPrecondition( thread_id < d_has_uncommitted_history_contribution.size());
+  
+  d_has_uncommitted_history_contribution[thread_id] = true;
+}
+
+// Unset the has uncommited history contribution flag
+/*! \details This should be called when the current history contribution is
+ * committed to the estimator
+ */
+void Estimator::unsetHasUncommittedHistoryContribution(
+						     const unsigned thread_id )
+{
+  // Make sure the thread is is valid
+  testPrecondition( thread_id < d_has_uncommitted_history_contribution.size());
+  
+  d_has_uncommitted_history_contribution[thread_id] = false;
 }
 
 // Assign bin boundaries to an estimator dimension

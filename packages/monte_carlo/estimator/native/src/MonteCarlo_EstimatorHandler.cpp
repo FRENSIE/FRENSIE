@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorHandler.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -22,8 +23,14 @@ unsigned EstimatorHandler::getNumberOfEstimators()
 }
 
 // Enable support for multiple threads
+/*! \details This should only be called after all of the estimators have been
+ * added.
+ */
 void EstimatorHandler::enableThreadSupport( const unsigned num_threads )
 {
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   EstimatorArray::iterator it = EstimatorHandler::master_array.begin();
   
   while( it != EstimatorHandler::master_array.end() )
@@ -54,6 +61,9 @@ void EstimatorHandler::printEstimators( std::ostream& os,
 					const double start_time,
 					const double end_time )
 {
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   Estimator::setNumberOfHistories( num_histories );
   Estimator::setStartTime( start_time );
   Estimator::setEndTime( end_time );
@@ -70,11 +80,30 @@ void EstimatorHandler::printEstimators( std::ostream& os,
   }
 }
 
+// Reset estimator data
+void EstimatorHandler::resetEstimatorData()
+{
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
+  EstimatorArray::iterator it = EstimatorHandler::master_array.begin();
+
+  while( it != EstimatorHandler::master_array.end() )
+  {
+    (*it)->resetData();
+
+    ++it;
+  }
+}
+
 // Reduce the estimator data on all processes in comm and collect on the root
 void EstimatorHandler::reduceEstimatorData(
 	    const Teuchos::RCP<const Teuchos::Comm<unsigned long long> >& comm,
 	    const int root_process )
 {
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   EstimatorArray::iterator it = EstimatorHandler::master_array.begin();
 
   while( it != EstimatorHandler::master_array.end() )
@@ -94,6 +123,9 @@ void EstimatorHandler::exportEstimatorData(
 				  const double end_time,
 				  const bool process_data )
 {
+  // Make sure only the master thread calls this function
+  testPrecondition( Utility::GlobalOpenMPSession::getThreadId() == 0 );
+  
   // Initialize the HDF5 file
   EstimatorHDF5FileHandler hdf5_file_handler( data_file_name );
 

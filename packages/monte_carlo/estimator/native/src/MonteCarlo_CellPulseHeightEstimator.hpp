@@ -90,6 +90,9 @@ public:
   //! Enable support for multiple threads
   void enableThreadSupport( const unsigned num_threads );
 
+  //! Reset the estimator data
+  void resetData();
+
   //! Export the estimator data
   void exportData( EstimatorHDF5FileHandler& hdf5_file,
 		   const bool process_data ) const;

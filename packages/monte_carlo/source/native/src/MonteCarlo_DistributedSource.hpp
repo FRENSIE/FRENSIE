@@ -79,7 +79,8 @@ public:
 		       const Geometry::ModuleTraits::InternalCellHandle& cell);
 
   //! Sample a particle state from the source
-  void sampleParticleState( ParticleBank& bank );
+  void sampleParticleState( ParticleBank& bank,
+			    const unsigned long long history );
 
   //! Get the sampling efficiency from the source distribution
   double getSamplingEfficiency() const;
@@ -134,9 +135,6 @@ private:
 
   // The cell handle of the cell used for rejection sampling of the position
   Geometry::ModuleTraits::InternalCellHandle d_rejection_cell;
-
-  // The current history number
-  unsigned long long d_history_number;
 
   // The number of trials
   unsigned d_number_of_trials;

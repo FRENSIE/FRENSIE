@@ -49,6 +49,7 @@ int facemcCore( int argc, char** argv )
   std::string material_definition_xml_file;
   std::string cross_section_directory;
   std::string simulation_name = "simulation.h5";
+  int threads = 1;
   
   // Set up the command line options
   Teuchos::CommandLineProcessor facemc_clp;
@@ -88,6 +89,10 @@ int facemcCore( int argc, char** argv )
 			&simulation_name,
 			"Simulation name (default=simulation) - optional",
 			false );
+  facemc_clp.setOption( "threads",
+			&threads,
+			"Number of parallel threads (default=1) - optional",
+			false );
 
   facemc_clp.throwExceptions( false );
 
@@ -120,6 +125,14 @@ int facemcCore( int argc, char** argv )
   
   material_definitions = 
     Teuchos::getParametersFromXmlFile( material_definition_xml_file );
+
+  // Set up the global OpenMP session
+  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
+    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
+
+  // Parse the simulation name
+  if( simulation_name.find( ".h5" ) > simulation_name.size() )
+    simulation_name += ".h5";
 
   // Open the cross_sections.xml file
   std::string cross_sections_xml_file = cross_section_directory;

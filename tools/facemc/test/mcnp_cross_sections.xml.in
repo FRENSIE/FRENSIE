@@ -1,6 +1,19 @@
 <!-- MCNP6 data - equivalent to xsdir file -->
 <ParameterList name="cross sections">
 
+  <ParameterList name="alias map">
+    <Parameter name="1001" type="string" value="H-1_293.6K"/>
+    <Parameter name="Light-Hydrogen" type="string" value="H-1_293.6K"/>
+    <Parameter name="8016" type="string" value="O-16_293.6K"/>
+    <Parameter name="82208" type="string" value="Pb-208_293.6K"/>
+    <Parameter name="92238" type="string" value="U-238_293.6K"/>
+    <Parameter name="Depleted-Uranium" type="string" value="U-238_293.6K"/>
+    <Parameter name="8000" type="string" value="O"/>
+    <Parameter name="8" type="string" value="O"/>
+    <Parameter name="82000" type="string" value="Pb"/>
+    <Parameter name="82" type="string" value="Pb"/>
+  </ParameterList>
+
   <ParameterList name="H-1_293.6K">
     <Parameter name="nuclear_file_path" type="string" value="${MCNP_DATA_DIR_REL_PATH}/endf70a"/>
     <Parameter name="nuclear_file_type" type="string" value="ACE"/>
