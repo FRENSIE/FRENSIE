@@ -24,6 +24,8 @@ std::string convertElectroatomicReactionEnumToString(
   {
   case TOTAL_ELECTROATOMIC_REACTION: 
     return "Total Electroatomic Reaction";
+  case TOTAL_ABSORPTION_ELECTROATOMIC_REACTION: 
+    return "Total Absorption Electroatomic Reaction";
   case ELASTIC_ELECTROATOMIC_REACTION:
     return "Elastic Electroatomic Reaction";
   case BREMSSTRAHLUNG_ELECTROATOMIC_REACTION:
