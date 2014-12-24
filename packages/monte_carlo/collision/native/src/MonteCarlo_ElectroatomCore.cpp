@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomCore.hpp"
 #include "Utility_ContractException.hpp"
-/*
+
 namespace MonteCarlo{
 
 // Initialize the static member data
@@ -115,31 +115,41 @@ ElectroatomCore::setDefaultScatteringReactionTypes()
 // Default constructor
 ElectroatomCore::ElectroatomCore()
   : d_total_reaction(),
+    d_total_absorption_reaction(),
     d_scattering_reactions(),
+    d_absorption_reactions(),
     d_miscellaneous_reactions(),
     d_relaxation_model()
-{ /* ... * }
+{ /* ... */ }
 
 // Advanced constructor
 /*! \details It is assumed that the scattering, absorption and miscellaneous
  * reactions have already been organized appropriately. The total and total
  * absorption cross sections should have been created from the scattering
  * and absorption reactions.
- *
+ */
 ElectroatomCore::ElectroatomCore( 
       const Teuchos::RCP<const ElectroatomicReaction>& total_reaction,
+      const Teuchos::RCP<const ElectroatomicReaction>& total_absorption_reaction,
       const ConstReactionMap& scattering_reactions,
+      const ConstReactionMap& absorption_reactions,
       const ConstReactionMap& miscellaneous_reactions,
       const Teuchos::RCP<const AtomicRelaxationModel> relaxation_model )
   : d_total_reaction( total_reaction ),
+    d_total_absorption_reaction( total_absorption_reaction ),
     d_scattering_reactions( d_scattering_reactions ),
+    d_absorption_reactions( absorption_reactions ),
     d_miscellaneous_reactions( miscellaneous_reactions ),
     d_relaxation_model( relaxation_model )
 {
   // Make sure the total reaction is valid
   testPrecondition( !total_reaction.is_null() );
+  // Make sure the absorption reaction is valid
+  testPrecondition( !total_absorption_reaction.is_null() );
   // Make sure the scattering reactions map is valid
   testPrecondition( scattering_reactions.size() > 0 );  
+  // Make sure the absorption reactions map is valid
+  testPrecondition( absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
   testPrecondition( !relaxation_model.is_null() );
 }
@@ -147,15 +157,19 @@ ElectroatomCore::ElectroatomCore(
 //! Copy constructor
 ElectroatomCore::ElectroatomCore( const ElectroatomCore& instance )
   : d_total_reaction( instance.d_total_reaction ),
+    d_total_absorption_reaction( instance.d_total_absorption_reaction ),
     d_scattering_reactions( instance.d_scattering_reactions ),
+    d_absorption_reactions( instance.d_absorption_reactions ),
     d_miscellaneous_reactions( instance.d_miscellaneous_reactions ),
     d_relaxation_model( instance.d_relaxation_model )
 {
   // Make sure the total reaction is valid
   testPrecondition( !instance.d_total_reaction.is_null() );
-  // Make sure the scattering and miscellaneous reaction maps are valid
+  // Make sure the absorption reaction is valid
+  testPrecondition( !instance.d_total_absorption_reaction.is_null() );
+  // Make sure the scattering and absorption reaction maps are valid
   testPrecondition( instance.d_scattering_reactions.size() +
-		    instance.d_miscellaneous_reactions.size() > 0 );
+		    instance.d_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
   testPrecondition( !instance.d_relaxation_model.is_null() );
 }
@@ -165,9 +179,11 @@ ElectroatomCore& ElectroatomCore::operator=( const ElectroatomCore& instance )
 {
   // Make sure the total reaction is valid
   testPrecondition( !instance.d_total_reaction.is_null() );
-  // Make sure the scattering and miscellaneous reaction maps are valid
+  // Make sure the absorption reaction is valid
+  testPrecondition( !instance.d_total_absorption_reaction.is_null() );
+  // Make sure the scattering and absorption reaction maps are valid
   testPrecondition( instance.d_scattering_reactions.size() +
-		    instance.d_miscellaneous_reactions.size() > 0 );
+		    instance.d_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
   testPrecondition( !instance.d_relaxation_model.is_null() );
 
@@ -175,16 +191,17 @@ ElectroatomCore& ElectroatomCore::operator=( const ElectroatomCore& instance )
   if( this != &instance )
   {
     d_total_reaction = instance.d_total_reaction;
+    d_total_absorption_reaction = instance.d_total_absorption_reaction;
     d_scattering_reactions = instance.d_scattering_reactions;
-    d_absorption_reactions = instance.d_miscellaneous_reactions;
+    d_absorption_reactions = instance.d_absorption_reactions;
     d_relaxation_model = instance.d_relaxation_model;
   }
-  
+   
   return *this;
 }
 
 } // end MonteCarlo namespace
-*/
+
 //---------------------------------------------------------------------------//
 // end MonteCarlo_ElectroatomCore.cpp
 //---------------------------------------------------------------------------//
