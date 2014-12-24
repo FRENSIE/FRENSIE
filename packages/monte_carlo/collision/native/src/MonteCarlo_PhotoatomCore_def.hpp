@@ -297,11 +297,11 @@ void PhotoatomCore::createTotalReaction(
   // Make sure the absorption cross section is valid
   remember( Teuchos::Array<double>::const_iterator zero_element = 
 	    std::find( total_cross_section.begin(),
-		       total_cross_section.end(),
-		       0.0 ) );
+		           total_cross_section.end(),
+		      	   0.0 ) );
   testPostcondition( zero_element == total_cross_section.end() );
   remember( Teuchos::Array<double>::const_iterator inf_element = 
-	    std::find( total_cross_section.begin(),
+	    	   std::find( total_cross_section.begin(),
 		       total_cross_section.end(),
 		       std::numeric_limits<double>::infinity() ) );
   testPostcondition( inf_element == total_cross_section.end() );
@@ -311,10 +311,10 @@ void PhotoatomCore::createTotalReaction(
 
   total_reaction.reset(
       new AbsorptionPhotoatomicReaction<InterpPolicy,false>(
-				                energy_grid,
+						energy_grid,
 						total_cross_section_copy,
-				                total_threshold_energy_index,
-				                TOTAL_PHOTOATOMIC_REACTION ) );
+						total_threshold_energy_index,
+						TOTAL_PHOTOATOMIC_REACTION ) );
 }
   
 // Calculate the processed total absorption cross section
