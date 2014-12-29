@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_FreeGasElasticMarginalAlphaFunction.hpp
+//! \file   DataGen_FreeGasElasticMarginalAlphaFunction.hpp
 //! \author Alex Robinson
 //! \brief  Free gas elastic marginal alpha function declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
-#define MONTE_CARLO_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
+#ifndef DATA_GEN_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
+#define DATA_GEN_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
 
 // Std Lib Includes
 #include <list>
@@ -16,11 +16,11 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_FreeGasElasticSAlphaBetaFunction.hpp"
+#include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
 #include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_Tuple.hpp"
 
-namespace MonteCarlo{
+namespace DataGen{
 
 //! The free gas elastic marginal alpha function 
 class FreeGasElasticMarginalAlphaFunction
@@ -70,7 +70,7 @@ private:
   Utility::GaussKronrodQuadratureKernel d_kernel;
 
   // The free gas elastic S(alpha,beta) function
-  MonteCarlo::FreeGasElasticSAlphaBetaFunction d_sab_function;
+  FreeGasElasticSAlphaBetaFunction d_sab_function;
 
   // The beta value
   double d_beta;
@@ -91,10 +91,10 @@ private:
   std::list<Utility::Pair<double,double> > d_cached_cdf_values;
 };
 
-} // end MonteCarlo namespace
+} // end DataGen namespace
 
-#endif // end MONTE_CARLO_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
+#endif // end DATA_GEN_FREE_GAS_ELASTIC_MARGINAL_ALPHA_FUNCTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_FreeGasElasticMarginalAlphaFunction.hpp
+// end DataGen_FreeGasElasticMarginalAlphaFunction.hpp
 //---------------------------------------------------------------------------//

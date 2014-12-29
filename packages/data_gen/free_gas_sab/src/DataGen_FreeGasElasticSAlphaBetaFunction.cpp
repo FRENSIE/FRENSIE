@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_FreeGasElasticSAlphaBetaFunction.hpp
+//! \file   DataGen_FreeGasElasticSAlphaBetaFunction.hpp
 //! \author Alex Robinson
 //! \brief  Free gas elastic scattering S(alpha,beta) function definition
 //!
@@ -16,13 +16,13 @@
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_FreeGasElasticSAlphaBetaFunction.hpp"
+#include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_ComparePolicy.hpp"
 #include "Utility_ContractException.hpp"
 
-namespace MonteCarlo{
+namespace DataGen{
 
 // Initialize static member data
 double FreeGasElasticSAlphaBetaFunction::neutron_kinetic_energy_multiplier=
@@ -400,8 +400,8 @@ double FreeGasElasticSAlphaBetaFunction::findCMScatteringAngleCosineWithNonZeroI
 							       grid_points );
 }
 
-} // end MonteCarlo namespace
+} // end DataGen namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_FreeGasElasticSAlphaBetaFunction.cpp
+// end DataGen_FreeGasElasticSAlphaBetaFunction.cpp
 //---------------------------------------------------------------------------//

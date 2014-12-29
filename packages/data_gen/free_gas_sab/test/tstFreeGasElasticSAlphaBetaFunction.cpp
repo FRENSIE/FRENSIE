@@ -16,7 +16,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_FreeGasElasticSAlphaBetaFunction.hpp"
+#include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_KinematicHelpers.hpp"
@@ -25,7 +25,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::FreeGasElasticSAlphaBetaFunction> sab_function;
+Teuchos::RCP<DataGen::FreeGasElasticSAlphaBetaFunction> sab_function;
 
 //---------------------------------------------------------------------------//
 // Testing Functions
@@ -513,7 +513,7 @@ int main( int argc, char** argv )
 							      distribution ) );
 
   // Initialize the S(alpha,beta) function
-  sab_function.reset( new MonteCarlo::FreeGasElasticSAlphaBetaFunction(
+  sab_function.reset( new DataGen::FreeGasElasticSAlphaBetaFunction(
 						    cross_section, 
 						    scattering_distribution,
 						    0.999167,

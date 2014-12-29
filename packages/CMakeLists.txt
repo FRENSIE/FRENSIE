@@ -10,7 +10,10 @@ ADD_SUBDIRECTORY(data)
 INCLUDE_DIRECTORIES(data/ace/src data/epdl/src data/endf/src data/decay/src)
 
 ADD_SUBDIRECTORY(monte_carlo)
-INCLUDE_DIRECTORIES(monte_carlo/core/src)
+INCLUDE_DIRECTORIES(monte_carlo/core/src monte_carlo/collision/native/src)
+
+ADD_SUBDIRECTORY(data_gen)
+INCLUDE_DIRECTORIES(data_gen/free_gas_sab/src)
 
 ADD_SUBDIRECTORY(transmutation)
 INCLUDE_DIRECTORIES(transmutation/src)

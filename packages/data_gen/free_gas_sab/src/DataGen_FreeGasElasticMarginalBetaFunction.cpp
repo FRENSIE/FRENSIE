@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_FreeGasElasticMarginalBetaFunction.hpp
+//! \file   DataGen_FreeGasElasticMarginalBetaFunction.hpp
 //! \author Alex Robinson
 //! \brief  Free gas elastic marginal beta function definition
 //!
@@ -13,13 +13,13 @@
 #include <Teuchos_Tuple.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_FreeGasElasticMarginalBetaFunction.hpp"
+#include "DataGen_FreeGasElasticMarginalBetaFunction.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_ComparePolicy.hpp"
 #include "Utility_ContractException.hpp"
 
-namespace MonteCarlo{
+namespace DataGen{
 
 // Constructor
 FreeGasElasticMarginalBetaFunction::FreeGasElasticMarginalBetaFunction(
@@ -206,8 +206,8 @@ double FreeGasElasticMarginalBetaFunction::integratedSAlphaBetaFunction(
   return function_value;
 }
 
-} // end MonteCarlo namespace
+} // end DataGen namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_FreeGasElasticMarginalBetaFunction.cpp
+// end DataGen_FreeGasElasticMarginalBetaFunction.cpp
 //---------------------------------------------------------------------------//

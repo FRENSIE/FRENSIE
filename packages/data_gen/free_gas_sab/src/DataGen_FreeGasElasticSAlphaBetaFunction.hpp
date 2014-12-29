@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_FreeGasElasticScatteringKernelFactor.hpp
+//! \file   DataGen_FreeGasElasticSAlphaBetaFunction.hpp
 //! \author Alex Robinson
-//! \brief  Free gas elastic scattering kernel factor decl.
+//! \brief  Free gas elastic scattering S(alpha,beta) function decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_FREE_GAS_ELASTIC_SCATTERING_KERNEL_FACTOR_HPP
-#define MONTE_CARLO_FREE_GAS_ELASTIC_SCATTERING_KERNEL_FACTOR_HPP
+#ifndef DATA_GEN_FREE_GAS_ELASTIC_S_ALPHA_BETA_FUNCTION_HPP
+#define DATA_GEN_FREE_GAS_ELASTIC_S_ALPHA_BETA_FUNCTION_HPP
 
 // Boost Includes
 #include <boost/math/policies/policy.hpp>
@@ -23,10 +23,10 @@
 #include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_OneDDistribution.hpp"
 
-namespace MonteCarlo{
+namespace DataGen{
 
-//! The free gas elastic scattering kernel factor class
-class FreeGasElasticScatteringKernelFactor
+//! The free gas elastic s(alpha,beta) function
+class FreeGasElasticSAlphaBetaFunction
 {
   
 private:
@@ -53,42 +53,62 @@ private:
 public:
 
   //! Constructor
-  FreeGasElasticScatteringKernelFactor( 
-	      const Teuchos::RCP<Utility::OneDDistribution>& 
-	      zero_temp_elastic_cross_section,
-              const Teuchos::RCP<MonteCarlo::NeutronScatteringAngularDistribution>&
-	      cm_scattering_distribution,
-	      const double A,
-	      const double kT,
-	      const double alpha,
-	      const double beta,
-	      const double E );
-  
+  FreeGasElasticSAlphaBetaFunction(
+	  const Teuchos::RCP<Utility::OneDDistribution>& 
+	  zero_temp_elastic_cross_section,
+          const Teuchos::RCP<MonteCarlo::NeutronScatteringAngularDistribution>&
+	  cm_scattering_distribution,
+	  const double A,
+	  const double kT );
+
   //! Destructor
-  ~FreeGasElasticScatteringKernelFactor()
+  ~FreeGasElasticSAlphaBetaFunction()
   { /* ... */ }
+  
+  //! Return the atomic weight ratio
+  double getAtomicWeightRatio() const;
+  
+  //! Return the temperature
+  double getTemperature() const;
 
-  //! Set the alpha, beta, and energy values
-  void setIndependentVariables( const double alpha,
-				const double beta,
-				const double E );
+  //! Evaluate the kernel factor integrand
+  double evaluateIntegrand( const double alpha,
+			    const double beta,
+			    const double E,
+			    const double mu_cm ) const;
 
-  //! Evaluate the factor at a desired value of the center-of-mass angle cosine
-  double operator()( const double mu_cm ) const;
-
-  //! Get the integrated value (over all mu_cm => [-1,1])
-  double getIntegratedValue( double& error_estimate ) const;
+  //! Evaluate the function at a desired alpha, beta and E
+  double operator()( const double alpha,
+		     const double beta,
+		     const double E ) const;
 
 private:
 
-  // Calculate the cached values
-  void calculateCachedValues();
+  // Calculate the exponential argument constant
+  double calculateExpArgConst( const double alpha,
+			       const double beta,
+			       const double E ) const;
 
-  // Find limits to integrate over
-  void findLimits( double& lower_limit, double& upper_limit ) const;
+  // Calculate the exponential argument multiplier
+  double calculateExpArgMult( const double alpha ) const;
+
+  // Calculate the bessel argument multiplier
+  double calculateBesselArgMult( const double alpha,
+				 const double beta,
+				 const double E ) const;
+
+  // Find the limits to integrate over
+  void findLimits( const double alpha,
+		   const double beta,
+		   const double E,
+		   double& lower_limit, 
+		   double& upper_limit ) const;
 
   // Find a CM scattering angle cosine where the function is non-zero
-  double findCMScatteringAngleCosineWithNonZeroFunctionValue(
+  double findCMScatteringAngleCosineWithNonZeroIntegrandValue(
+				        const double alpha,
+					const double beta,
+					const double E,
 					std::list<double>& grid_points ) const;
 
   // The neutron kinetic energy multiplier
@@ -110,38 +130,17 @@ private:
   // The atomic weight ratio
   double d_A;
 
-  // The temperature value (MeV)
+  // The temperature (MeV)
   double d_kT;
 
-  // The alpha value
-  double d_alpha;
-
-  // The beta value
-  double d_beta;
-
-  // The energy value (MeV)
-  double d_E;
-
-  // Cached energy ratio
-  double d_energy_ratio;
-
-  // Cached exponential argument multiplier
-  double d_exponential_arg_mult;
-
-  // Cached exponential arg constant
-  double d_exponential_arg_const;
-
-  // Cached bessel argument multiplier
-  double d_bessel_arg_mult;
-
-  // Cached relative velocity multiplier
-  double d_relative_velocity_mult;
+  // The average zero temperature cross section
+  double d_average_zero_temp_elastic_cross_section;
 };
 
-} // end MonteCarlo namespace
+} // end DataGen namespace
 
-#endif // end MONTE_CARLO_FREE_GAS_ELASTIC_SCATTERING_KERNEL_FACTOR_HPP
+#endif // end DATA_GEN_FREE_GAS_ELASTIC_S_ALPHA_BETA_FUNCTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_FreeGasElasticScatteringKernelFactor.hpp
+// end DataGen_FreeGasElasticSAlphaBetaFunction.hpp
 //---------------------------------------------------------------------------//
