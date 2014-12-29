@@ -21,7 +21,7 @@
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "MonteCarlo_NeutronScatteringAngularDistribution.hpp"
-#include "MonteCarlo_FreeGasElasticSAlphaBetaFunction.hpp"
+#include "DataGen_FreeGasElasticSAlphaBetaFunction.hpp"
 
 int main( int argc, char** argv )
 {
@@ -92,7 +92,7 @@ int main( int argc, char** argv )
 							      distribution ) );
   
   // Create the S(alpha,beta,E) function object
-  MonteCarlo::FreeGasElasticSAlphaBetaFunction sab_function(
+  DataGen::FreeGasElasticSAlphaBetaFunction sab_function(
 						       cross_section,
 						       scattering_distribution,
 						       atomic_weight_ratio,

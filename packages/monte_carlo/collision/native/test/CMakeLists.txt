@@ -243,21 +243,6 @@ IF(FRENSIE_ENABLE_DAGMC)
   ADD_TEST(CollisionModuleInterface_Native_test tstCollisionModuleInterface_Native --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 ENDIF()
 
-ADD_EXECUTABLE(tstFreeGasElasticSAlphaBetaFunction
-  tstFreeGasElasticSAlphaBetaFunction.cpp)
-TARGET_LINK_LIBRARIES(tstFreeGasElasticSAlphaBetaFunction monte_carlo_collision_native)
-ADD_TEST(FreeGasElasticSAlphaBetaFunction_test tstFreeGasElasticSAlphaBetaFunction)
-
-ADD_EXECUTABLE(tstFreeGasElasticMarginalAlphaFunction
-  tstFreeGasElasticMarginalAlphaFunction.cpp)
-TARGET_LINK_LIBRARIES(tstFreeGasElasticMarginalAlphaFunction monte_carlo_collision_native)
-ADD_TEST(FreeGasElasticMarginalAlphaFunction_test tstFreeGasElasticMarginalAlphaFunction)
-
-## ADD_EXECUTABLE(tstFreeGasElasticMarginalBetaFunction
-##   tstFreeGasElasticMarginalBetaFunction.cpp)
-## TARGET_LINK_LIBRARIES(tstFreeGasElasticMarginalBetaFunction monte_carlo_collision_native)
-## ADD_TEST(FreeGasElasticMarginalBetaFunction_test tstFreeGasElasticMarginalBetaFunction)
-
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)
 

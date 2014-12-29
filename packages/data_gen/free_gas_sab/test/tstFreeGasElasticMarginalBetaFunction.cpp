@@ -15,7 +15,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_FreeGasElasticMarginalBetaFunction.hpp"
+#include "DataGen_FreeGasElasticMarginalBetaFunction.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
@@ -23,7 +23,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::FreeGasElasticMarginalBetaFunction> beta_function;
+Teuchos::RCP<DataGen::FreeGasElasticMarginalBetaFunction> beta_function;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -117,7 +117,7 @@ int main( int argc, char** argv )
 							      distribution ) );
 
   // Initialize the kernel factor
-  beta_function.reset( new MonteCarlo::FreeGasElasticMarginalBetaFunction(
+  beta_function.reset( new DataGen::FreeGasElasticMarginalBetaFunction(
 						    cross_section, 
 						    scattering_distribution,
 						    0.999167,

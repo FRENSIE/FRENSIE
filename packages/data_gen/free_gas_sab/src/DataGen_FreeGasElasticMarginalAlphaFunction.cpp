@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_FreeGasElasticMarginalAlphaFunction.hpp
+//! \file   DataGen_FreeGasElasticMarginalAlphaFunction.hpp
 //! \author Alex Robinson
 //! \brief  Free gas elastic marginal alpha function definition.
 //!
@@ -11,12 +11,12 @@
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_FreeGasElasticMarginalAlphaFunction.hpp"
+#include "DataGen_FreeGasElasticMarginalAlphaFunction.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
-namespace MonteCarlo{
+namespace DataGen{
 
 // Constructor
 FreeGasElasticMarginalAlphaFunction::FreeGasElasticMarginalAlphaFunction(
@@ -162,8 +162,8 @@ void FreeGasElasticMarginalAlphaFunction::updateCachedValues()
   d_cached_cdf_values.push_back( cdf_point );
 }
 
-} // end MonteCarlo namespace
+} // end DataGen namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_FreeGasElasticMarginalAlphaFunction.cpp
+// end DataGen_FreeGasElasticMarginalAlphaFunction.cpp
 //---------------------------------------------------------------------------//

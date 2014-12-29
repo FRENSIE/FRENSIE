@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_FreeGasElasticScatteringKernelFactor.cpp
+//! \file   DataGen_FreeGasElasticScatteringKernelFactor.cpp
 //! \author Alex Robinson
 //! \brief  Free gas elastic scattering kernel factor def.
 //!
@@ -14,13 +14,13 @@
 #include <boost/math/special_functions/bessel.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_FreeGasElasticScatteringKernelFactor.hpp"
+#include "DataGen_FreeGasElasticScatteringKernelFactor.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_ComparePolicy.hpp"
 #include "Utility_ContractException.hpp"
 
-namespace MonteCarlo{
+namespace DataGen{
 
 // Initialize static member data
 double FreeGasElasticScatteringKernelFactor::neutron_kinetic_energy_multiplier=
@@ -298,8 +298,8 @@ double FreeGasElasticScatteringKernelFactor::findCMScatteringAngleCosineWithNonZ
   return findCMScatteringAngleCosineWithNonZeroFunctionValue( grid_points );
 }
 
-} // end MonteCarlo namespace
+} // end DataGen namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_FreeGasElasticScatteringKernelFactor.cpp
+// end DataGen_FreeGasElasticScatteringKernelFactor.cpp
 //---------------------------------------------------------------------------//
