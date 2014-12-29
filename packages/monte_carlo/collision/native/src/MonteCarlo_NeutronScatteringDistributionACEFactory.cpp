@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   NeutronScatteringDistributionFactory.cpp
+//! \file   NeutronScatteringDistributionACEFactory.cpp
 //! \author Alex Robinson
 //! \brief  Neutron scattering distribution factory class definition
 //!
@@ -14,10 +14,10 @@
 #include "Teuchos_ArrayView.hpp"
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringDistributionFactory.hpp"
+#include "MonteCarlo_NeutronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NeutronScatteringDistributionFactoryHelpers.hpp"
-#include "MonteCarlo_NeutronScatteringAngularDistributionFactory.hpp"
-#include "MonteCarlo_NeutronScatteringEnergyDistributionFactory.hpp"
+#include "MonteCarlo_NeutronScatteringAngularDistributionACEFactory.hpp"
+#include "MonteCarlo_NeutronScatteringEnergyDistributionACEFactory.hpp"
 #include "MonteCarlo_ElasticNeutronScatteringDistribution.hpp"
 #include "MonteCarlo_IndependentEnergyAngleNeutronScatteringDistribution.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
@@ -28,29 +28,27 @@
 namespace MonteCarlo{
 
 // Constructor
-NeutronScatteringDistributionFactory::NeutronScatteringDistributionFactory( 
-			   const std::string& table_name,
-			   const double atomic_weight_ratio,
-			   const Teuchos::ArrayView<const double>& mtr_block,
-			   const Teuchos::ArrayView<const double>& tyr_block,
-			   const Teuchos::ArrayView<const double>& land_block,
-			   const Teuchos::ArrayView<const double>& and_block,
-			   const Teuchos::ArrayView<const double>& ldlw_block,
-			   const Teuchos::ArrayView<const double>& dlw_block )
+NeutronScatteringDistributionACEFactory::NeutronScatteringDistributionACEFactory( 
+		       const std::string& table_name,
+		       const double atomic_weight_ratio,
+		       const Data::XSSNeutronDataExtractor& raw_nuclide_data )
   : d_table_name( table_name ),
     d_atomic_weight_ratio( atomic_weight_ratio )
 { 
-  // Make sure there is at least one MT # present
-  testPrecondition( mtr_block.size() > 0 );
-  // Make sure there is a multiplicity value for every reaction type
-  testPrecondition( tyr_block.size() == mtr_block.size() );
-  // Make sure there is an angular distribution index for every reaction type
-  // with outgoing neutrons (plus elastic)
-  testPrecondition( land_block.size() <= mtr_block.size()+1 );
-  // Make sure there is an energy distribution index for every reaction type
-  // with outgoing neutrons
-  testPrecondition( ldlw_block.size() <= mtr_block.size() );
-
+  // Extract the required blocks
+  Teuchos::ArrayView<const double> mtr_block = 
+    raw_nuclide_data.extractMTRBlock();
+  Teuchos::ArrayView<const double> tyr_block = 
+    raw_nuclide_data.extractTYRBlock();
+  Teuchos::ArrayView<const double> land_block = 
+    raw_nuclide_data.extractLANDBlock();
+  Teuchos::ArrayView<const double> and_block = 
+    raw_nuclide_data.extractANDBlock();
+  Teuchos::ArrayView<const double> ldlw_block = 
+    raw_nuclide_data.extractLDLWBlock();
+  Teuchos::ArrayView<const double> dlw_block = 
+    raw_nuclide_data.extractDLWBlock();
+  
   initializeReactionOrderingMap( mtr_block, tyr_block );
   initializeReactionRefFrameMap( mtr_block, tyr_block );
   initializeReactionAngularDistStartIndexMap( land_block );
@@ -60,7 +58,7 @@ NeutronScatteringDistributionFactory::NeutronScatteringDistributionFactory(
 }
 
 // Create a scattering distribution
-void NeutronScatteringDistributionFactory::createScatteringDistribution(
+void NeutronScatteringDistributionACEFactory::createScatteringDistribution(
 	      const NuclearReactionType reaction_type,
 	      Teuchos::RCP<NeutronScatteringDistribution>& distribution ) const
 {
@@ -78,7 +76,7 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
 
     if( !d_reactions_with_isotropic_scattering_only.count( reaction_type ) )
     {
-      NeutronScatteringAngularDistributionFactory::createDistribution(
+      NeutronScatteringAngularDistributionACEFactory::createDistribution(
        d_reaction_angular_dist.find( reaction_type )->second,
        d_reaction_angular_dist_start_index.find( reaction_type )->second,
        d_table_name,
@@ -88,7 +86,7 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
     // Create a purely isotropic scattering angle distribution
     else
     {
-      NeutronScatteringAngularDistributionFactory::createIsotropicDistribution(
+      NeutronScatteringAngularDistributionACEFactory::createIsotropicDistribution(
 							angular_distribution );
     }
 
@@ -112,7 +110,7 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
     {
       Teuchos::RCP<NeutronScatteringEnergyDistribution> energy_distribution;
      
-      NeutronScatteringEnergyDistributionFactory::createDistribution(
+      NeutronScatteringEnergyDistributionACEFactory::createDistribution(
        	      d_reaction_energy_dist.find( reaction_type )->second,
        	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
        	      d_table_name,
@@ -153,7 +151,7 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
   // Create a coupled angular-energy distribution (law 44)
   else
   {
-    NeutronScatteringEnergyDistributionFactory::createAceLaw44Distribution(
+    NeutronScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
               d_atomic_weight_ratio,
      	      d_reaction_energy_dist.find( reaction_type )->second,
      	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
@@ -166,7 +164,7 @@ void NeutronScatteringDistributionFactory::createScatteringDistribution(
 
 // Initialize the reaction type ordering map
 void 
-NeutronScatteringDistributionFactory::initializeReactionOrderingMap( 
+NeutronScatteringDistributionACEFactory::initializeReactionOrderingMap( 
 			    const Teuchos::ArrayView<const double>& mtr_block,
 			    const Teuchos::ArrayView<const double>& tyr_block )
 {
@@ -189,7 +187,7 @@ NeutronScatteringDistributionFactory::initializeReactionOrderingMap(
 
 // Initialize the reaction type scattering ref. frame map
 void 
-NeutronScatteringDistributionFactory::initializeReactionRefFrameMap( 
+NeutronScatteringDistributionACEFactory::initializeReactionRefFrameMap( 
 			    const Teuchos::ArrayView<const double>& mtr_block,
 			    const Teuchos::ArrayView<const double>& tyr_block )
 {
@@ -214,7 +212,7 @@ NeutronScatteringDistributionFactory::initializeReactionRefFrameMap(
 
 // Initialize the reaction type angular distribution start index map
 void 
-NeutronScatteringDistributionFactory::initializeReactionAngularDistStartIndexMap(
+NeutronScatteringDistributionACEFactory::initializeReactionAngularDistStartIndexMap(
 											const Teuchos::ArrayView<const double>& land_block )
 {
   // Add elastic scattering separately (always first in LAND block)
@@ -242,7 +240,7 @@ NeutronScatteringDistributionFactory::initializeReactionAngularDistStartIndexMap
 // NOTE: All LAND block indices correspond to FORTRAN arrays. Subtract 1 from
 // the value to get the index in a C/C++ array.
 void
-NeutronScatteringDistributionFactory::initializeReactionAngularDistMap(
+NeutronScatteringDistributionACEFactory::initializeReactionAngularDistMap(
 			    const Teuchos::ArrayView<const double>& land_block,
 			    const Teuchos::ArrayView<const double>& and_block )
 {
@@ -312,7 +310,7 @@ NeutronScatteringDistributionFactory::initializeReactionAngularDistMap(
 
 // Initialize the reaction type energy distribution start index map
 void 
-NeutronScatteringDistributionFactory::initializeReactionEnergyDistStartIndexMap(
+NeutronScatteringDistributionACEFactory::initializeReactionEnergyDistStartIndexMap(
 											const Teuchos::ArrayView<const double>& ldlw_block )
 {
   // Add all other reactions
@@ -334,7 +332,7 @@ NeutronScatteringDistributionFactory::initializeReactionEnergyDistStartIndexMap(
 
 // Initialize the reaction type energy distribution map
 void 
-NeutronScatteringDistributionFactory::initializeReactionEnergyDistMap(
+NeutronScatteringDistributionACEFactory::initializeReactionEnergyDistMap(
 			    const Teuchos::ArrayView<const double>& ldlw_block,
 			    const Teuchos::ArrayView<const double>& dlw_block )
 {
@@ -374,64 +372,64 @@ NeutronScatteringDistributionFactory::initializeReactionEnergyDistMap(
 
 // Returns a map of the reaction types (MT #s) and their AND block ordering
 const boost::unordered_map<NuclearReactionType,unsigned>& 
-NeutronScatteringDistributionFactory::getReactionOrdering() const
+NeutronScatteringDistributionACEFactory::getReactionOrdering() const
 {
-  return NeutronScatteringDistributionFactory::d_reaction_ordering;
+  return NeutronScatteringDistributionACEFactory::d_reaction_ordering;
 }
 
 // Returns a map of the reaction types (MT #s) and the scattering reference frame
 // Note: True = center-of-mass, False = lab
 const boost::unordered_map<NuclearReactionType,bool>& 
-NeutronScatteringDistributionFactory::getReactionCMScattering() const
+NeutronScatteringDistributionACEFactory::getReactionCMScattering() const
 {
-  return NeutronScatteringDistributionFactory::d_reaction_cm_scattering;
+  return NeutronScatteringDistributionACEFactory::d_reaction_cm_scattering;
 }
 
 // Returns a set of the reaction types (MT #s) with isotropic scattering only
 const boost::unordered_set<NuclearReactionType>& 
-NeutronScatteringDistributionFactory::getReactionsWithIsotropicScatteringOnly() const
+NeutronScatteringDistributionACEFactory::getReactionsWithIsotropicScatteringOnly() const
 {
-  return NeutronScatteringDistributionFactory::d_reactions_with_isotropic_scattering_only;
+  return NeutronScatteringDistributionACEFactory::d_reactions_with_isotropic_scattering_only;
 }
 
 // Returns a set of the reaction types (MT #s) with coupled energy-angle dist
 const boost::unordered_set<NuclearReactionType>& 
-NeutronScatteringDistributionFactory::getReactionsWithCoupledEnergyAngleDist() const
+NeutronScatteringDistributionACEFactory::getReactionsWithCoupledEnergyAngleDist() const
 {
-  return NeutronScatteringDistributionFactory::d_reactions_with_coupled_energy_angle_dist;
+  return NeutronScatteringDistributionACEFactory::d_reactions_with_coupled_energy_angle_dist;
 }
 
 // Returns a map of the reaction types (MT #s) and the corresponding angular dist
 const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
-NeutronScatteringDistributionFactory::getReactionAngularDist() const
+NeutronScatteringDistributionACEFactory::getReactionAngularDist() const
 {
-  return NeutronScatteringDistributionFactory::d_reaction_angular_dist;
+  return NeutronScatteringDistributionACEFactory::d_reaction_angular_dist;
 }
 
 // Returns a map of the reaction types (MT #s) and the angular dist start index
 const boost::unordered_map<NuclearReactionType,unsigned>& 
-NeutronScatteringDistributionFactory::getReactionAngularDistStartIndex() const
+NeutronScatteringDistributionACEFactory::getReactionAngularDistStartIndex() const
 {
-  return NeutronScatteringDistributionFactory::d_reaction_angular_dist_start_index;
+  return NeutronScatteringDistributionACEFactory::d_reaction_angular_dist_start_index;
 }
 
 // Returns a map of the reaction types (MT #s) and the corresponding energy dist
 const boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >&
-NeutronScatteringDistributionFactory::getReactionEnergyDist() const
+NeutronScatteringDistributionACEFactory::getReactionEnergyDist() const
 {
-  return NeutronScatteringDistributionFactory::d_reaction_energy_dist;
+  return NeutronScatteringDistributionACEFactory::d_reaction_energy_dist;
 }
 
 // Returns a map of the reaction types (MT #s) and the energy dist start index
 const boost::unordered_map<NuclearReactionType,unsigned>& 
-NeutronScatteringDistributionFactory::getReactionEnergyDistStartIndex() const
+NeutronScatteringDistributionACEFactory::getReactionEnergyDistStartIndex() const
 {
-  return NeutronScatteringDistributionFactory::d_reaction_energy_dist_start_index;
+  return NeutronScatteringDistributionACEFactory::d_reaction_energy_dist_start_index;
 }
 
 
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NeutronScatteringDistributionFactory.cpp
+// end MonteCarlo_NeutronScatteringDistributionACEFactory.cpp
 //---------------------------------------------------------------------------//
