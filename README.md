@@ -249,7 +249,8 @@ Because this will eventually be an open source project, the goal is to be able t
 Note: There are several other configure options that can be changed in the frensie.sh script. 
  * `-D FRENSIE_ENABLE_DBC:BOOL=ON` turns on very thorough Design-by-Contract checks that can be a very useful debugging tool. 
  * `-D FRENSIE_ENABLE_OPENMP:BOOL=ON` enables OpenMP thread support. 
- * `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support. If your system already has Doxygen 1.8.2 or above, there is no need to install version 1.8.8. Just delete the `-D DOXYGEN_PREFIX` variable from the frensie.sh script. 
+ * `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support. 
+ * `-D DOXYGEN_PREFIX:PATH=path-to-doxygen-install-dir` indicates where the doxygen install directory is located. If your system already has Doxygen 1.8.2 or above, there is no need to install version 1.8.8 and this option can be deleted from the frensie.sh script. 
  * `-D MCNP_DATA_DIR:PATH=path-to-mcnp-data` indicates where the nuclear data used by MCNP6 is located on the system. When this configure option is used, the FACEMC executable can be tested using the nuclear data used by MCNP6 by running `make test` or `make test-slow`. To disable these tests delete this configure option from the frensie.sh script.
 
 ## Dashboard
