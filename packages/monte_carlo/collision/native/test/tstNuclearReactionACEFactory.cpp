@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstNuclearReactionFactory.cpp
+//! \file   tstNuclearReactionACEFactory.cpp
 //! \author Alex Robinson
 //! \brief  Nuclear reaction factory unit tests
 //!
@@ -15,7 +15,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NuclearReactionFactory.hpp"
+#include "MonteCarlo_NuclearReactionACEFactory.hpp"
 #include "MonteCarlo_NuclearReaction.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
@@ -31,16 +31,16 @@ std::string test_o16_ace_table_name;
 // std::string test_ptable_ace_file_name;
 // std::string test_fission_ptable_ace_file_name;
 
-Teuchos::RCP<MonteCarlo::NuclearReactionFactory> h1_reaction_factory;
-Teuchos::RCP<MonteCarlo::NuclearReactionFactory> o16_reaction_factory;
+Teuchos::RCP<MonteCarlo::NuclearReactionACEFactory> h1_reaction_factory;
+Teuchos::RCP<MonteCarlo::NuclearReactionACEFactory> o16_reaction_factory;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
 void initializeReactionFactory( 
-			 Teuchos::RCP<MonteCarlo::NuclearReactionFactory>& factory,
-			 const std::string& ace_file_name,
-			 const std::string& ace_table_name )
+		  Teuchos::RCP<MonteCarlo::NuclearReactionACEFactory>& factory,
+		  const std::string& ace_file_name,
+		  const std::string& ace_table_name )
 {
   Teuchos::RCP<Data::ACEFileHandler>
     ace_file_handler( new Data::ACEFileHandler( ace_file_name,
@@ -54,33 +54,19 @@ void initializeReactionFactory(
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
-  factory.reset( new MonteCarlo::NuclearReactionFactory( 
+  factory.reset( new MonteCarlo::NuclearReactionACEFactory( 
 			      ace_table_name,
 			      ace_file_handler->getTableAtomicWeightRatio(),
 			      ace_file_handler->getTableTemperature(),
 			      energy_grid,
-			      xss_data_extractor->extractElasticCrossSection(),
-			      xss_data_extractor->extractMTRBlock(),
-			      xss_data_extractor->extractLQRBlock(),
-			      xss_data_extractor->extractTYRBlock(),
-			      xss_data_extractor->extractLSIGBlock(),
-			      xss_data_extractor->extractSIGBlock(),
-			      xss_data_extractor->extractLANDBlock(),
-			      xss_data_extractor->extractANDBlock(),
-			      xss_data_extractor->extractLDLWBlock(),
-			      xss_data_extractor->extractDLWBlock(),
-			      xss_data_extractor->extractNUBlock(),
-			      xss_data_extractor->extractDNUBlock(),
-			      xss_data_extractor->extractBDDBlock(),
-			      xss_data_extractor->extractDNEDLBlock(),
-			      xss_data_extractor->extractDNEDBlock() ) );
+			      *xss_data_extractor ) );
 }
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the scattering reaction can be created
-TEUCHOS_UNIT_TEST( NuclearReactionFactory_hydrogen, createScatteringReactions )
+TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_hydrogen, createScatteringReactions )
 {
   boost::unordered_map<MonteCarlo::NuclearReactionType,
 		       Teuchos::RCP<MonteCarlo::NuclearReaction> > reactions;
@@ -105,7 +91,7 @@ TEUCHOS_UNIT_TEST( NuclearReactionFactory_hydrogen, createScatteringReactions )
 
 //---------------------------------------------------------------------------//
 // Check that the absorption reactions can be created
-TEUCHOS_UNIT_TEST( NuclearReactionFactory_hydrogen, createAbsorptionReactions )
+TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_hydrogen, createAbsorptionReactions )
 {
   boost::unordered_map<MonteCarlo::NuclearReactionType,
 		       Teuchos::RCP<MonteCarlo::NuclearReaction> > reactions;
@@ -155,7 +141,7 @@ TEUCHOS_UNIT_TEST( NuclearReactionFactory_hydrogen, createAbsorptionReactions )
 
 //---------------------------------------------------------------------------//
 // Check that the scattering reaction can be created
-TEUCHOS_UNIT_TEST( NuclearReactionFactory_oxygen, createScatteringReactions )
+TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen, createScatteringReactions )
 {
   boost::unordered_map<MonteCarlo::NuclearReactionType,
 		       Teuchos::RCP<MonteCarlo::NuclearReaction> > reactions;
@@ -220,7 +206,7 @@ TEUCHOS_UNIT_TEST( NuclearReactionFactory_oxygen, createScatteringReactions )
 
 //---------------------------------------------------------------------------//
 // Check that the absorption reactions can be created
-TEUCHOS_UNIT_TEST( NuclearReactionFactory_oxygen, 
+TEUCHOS_UNIT_TEST( NuclearReactionACEFactory_oxygen, 
 		   createAbsorptionReactions )
 {
   boost::unordered_map<MonteCarlo::NuclearReactionType,
@@ -326,5 +312,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstNuclearReactionFactory.cpp
+// end tstNuclearReactionACEFactory.cpp
 //---------------------------------------------------------------------------//
