@@ -46,7 +46,8 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
     d_obb_tree_root(),
     d_last_visited_tet(),
     d_last_visited_cell(),
-    d_tet_barycentric_transform_matrices()
+    d_tet_barycentric_transform_matrices(),
+    d_tet_reference_vertices()
 {
   // ------------------------ Load Meshset ------------------------------------
 
@@ -130,6 +131,10 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
 						                        vertices[2],
 						                        vertices[3],
                                                 barycentric_transform_matrix );
+
+      // Assign reference vertices (always fourth vertex)
+      // Check implementation in .hpp (I put double but should I put double[3]?)
+      vertices[3] = d_tet_reference_vertices[tet];
 
       // Calculate tet volumes
       boost::unordered_map<moab::EntityHandle,double> entity_volumes;
@@ -248,9 +253,7 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromPa
   // Account for the case where there are no intersections (entirely in tet)
   if( ray_tet_intersections.size() == 0 )
   {
-    // FIGURE OUT HOW TO ADD TRACK LENGTH TO MESH TALLY
-    // Map of tets and contributionss
-    // Map here consists of [d_last_visited_tet] -> [track_length]
+    
   }
   else                  
   {
@@ -271,7 +274,7 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromPa
       array_of_hit_points.push_back(hit_point);
       tet_centroid = ( (array_of_hit_points[i+1]+array_of_hit_points[i])/2.0 );
       
-      tet = POINT_IN_WHICH_TET ? Do we want to do this???
+      tet = whichTetIsPointIn( tet_centroid );
       
       if( tet > 0 )
       {
@@ -293,13 +296,68 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromPa
       partial_track_length = track_length - 
                        ray_tet_intersections[ray_tet_intersections.size() - 1];
       
-      tet = POINT IN WHICH TET ! Again need to talk about this!!!
+      const double final_location[3];
+      
+      final_location[0] = particle.getXPosition() + 
+                                          particle.getXDirection*track_length;
+      final_location[1] = particle.getYPosition() + 
+                                          particle.getYDirection*track_length;
+      final_location[2] = particle.getZPosition() + 
+                                          particle.getZDirection*track_length;
+      
+      tet = whichTetIsPointIn( final_location );
+      
+      // Update the last visited tet
+      d_last_visited_tet = tet;
       
       // FIGURE OUT HOW TO ADD TRACK LENGTH TO MESH TALLY
       // Map of tets and contributionss           
     }
-    
   }
+}
+
+// Assign bin boundaries to an estimator dimension
+template<typename ContributionMultiplierPolicy>
+moab::EntityHandle TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::whichTetIsPointIn(
+	const double point[3] )
+{
+  // Iteration for looping over the leaves of a tree
+  moab::AdaptiveKDTreeIter kd_tree_iteration;
+  
+  moab::ErrorCode return_value = d_kd_tree->leaf_containing_point(
+                                                         d_kd_tree_root,
+                                                         point.array(),
+                                                         kd_tree_iteration);
+                                                        
+  
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+                      Utility::MOABException,
+                      moab::ErrorCodeStr[return_value] );
+                      
+  moab::EntityHandle leaf = kd_tree_iteration.handle();
+  moab::Range = tets_in_leaf;
+  
+  return_value = d_moab_interface->get_entities_by_dimension( leaf,
+                                                              3,
+                                                              tets_in_leaf,
+                                                              false );
+                                                              
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+                      Utility::MOABException,
+                      moab::ErrorCodeStr[return_value] );                                                            
+                                            
+  for( Range::const_iterator tet = tets_in_leaf.begin(); 
+                                           tet != tets_in_leaf.end();  tet++ )
+  {
+    if( Utility::isPointInTet( point,
+                               d_tet_reference_vertices[tet]*,
+                               d_tet_barycentric_transform_matrices[tet]* ) )
+    {
+      return tet;
+    }
+  }
+  
+  return 0;
 }
 
 // Export the estimator data

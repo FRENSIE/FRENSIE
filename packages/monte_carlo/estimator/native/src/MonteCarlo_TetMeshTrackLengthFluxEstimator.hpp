@@ -104,6 +104,10 @@ private:
   // The map of tet ids and barycentric coordinate transform matrices
   boost::unordered_map<moab::EntityHandle,moab::Matrix3> 
   d_tet_barycentric_transform_matrices;
+  
+  // The map of tet ids and reference vertices
+  boost::unordered_map<moab::EntityHandle,double>
+  d_tet_reference_vertices
 };
   
 } // end MonteCarlo namespace
