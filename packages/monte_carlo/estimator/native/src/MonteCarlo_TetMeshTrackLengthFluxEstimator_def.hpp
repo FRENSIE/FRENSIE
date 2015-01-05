@@ -285,8 +285,11 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromPa
           partial_track_length = ray_tet_intersections[i]j;
       } 
       
-      // FIGURE OUT HOW TO ADD TRACK LENGTH TO MESH TALLY
-      // Map of tets and contributionss
+      // Add partial history contribution
+      addPartialHistoryContribution( tet,
+                                     particle,
+                                     0,
+                                     partial_track_length );
       
     }
     
@@ -310,13 +313,16 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromPa
       // Update the last visited tet
       d_last_visited_tet = tet;
       
-      // FIGURE OUT HOW TO ADD TRACK LENGTH TO MESH TALLY
-      // Map of tets and contributionss           
+      // Add partial history contribution
+      addPartialHistoryContribution( tet,
+                                     particle,
+                                     0,
+                                     partial_track_length );         
     }
   }
 }
 
-// Assign bin boundaries to an estimator dimension
+// Determine which tet a given point is in
 template<typename ContributionMultiplierPolicy>
 moab::EntityHandle TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::whichTetIsPointIn(
 	const double point[3] )
