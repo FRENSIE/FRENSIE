@@ -26,7 +26,7 @@ namespace Utility{
  * variables: the outgoing photon energy and the outgoing photon scattering
  * angle. Because of the one-to-one correspondence between the outgoing photon
  * energy and the outgoing photon angle, the function can be reduced to a
- * function of a single variable - the inverse energy gain ratio 
+ * function of a single variable - the energy gain ratio 
  * (x = 1 + alpha*(1-mu)). This variable x will be sampled from the
  * distribution.
  */
