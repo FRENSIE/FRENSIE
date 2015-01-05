@@ -57,7 +57,7 @@ void calculateBarycentricTransformMatrix( const double vertex_a[3],
 template<typename Matrix>                                                      
 bool isPointInTet( const double point[3], 
                    const double reference_vertex[3],   
-		   const Matrix& matrix ) 
+		           const Matrix& matrix ) 
 {
   double barycentric_location_vector[3];
   barycentric_location_vector[0] = matrix( 0, 0 ) *
@@ -94,6 +94,8 @@ bool isPointInTet( const double point[3],
     return point_in_tet;
   }
 }
+
+
 
 } // end Utility namespace
 
