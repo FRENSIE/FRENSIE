@@ -30,6 +30,7 @@
 #include "MonteCarlo_StandardEntityEstimator.hpp"
 #include "MonteCarlo_EstimatorContributionMultiplierPolicy.hpp"
 #include "Geometry_ModuleTraits.hpp"
+#include "MonteCarlo_ParticleState.hpp"
 
 namespace MonteCarlo{
 
@@ -39,6 +40,8 @@ class TetMeshTrackLengthFluxEstimator : public StandardEntityEstimator<moab::Ent
 {
 
 public:
+
+  typedef Geometry::ModuleTraits::InternalCellHandle cellIdType;
 
   //! Constructor
   TetMeshTrackLengthFluxEstimator(
@@ -70,6 +73,9 @@ public:
 
   //! Print the estimator data
   void print( std::ostream& os ) const;
+  
+  //! Determine which tet the point is in
+  moab::EntityHandle whichTetIsPointIn( const double point[3] );
 
 private:
 
@@ -106,8 +112,8 @@ private:
   d_tet_barycentric_transform_matrices;
   
   // The map of tet ids and reference vertices
-  boost::unordered_map<moab::EntityHandle,double>
-  d_tet_reference_vertices
+  boost::unordered_map<moab::EntityHandle, double[3]>
+  d_tet_reference_vertices;
 };
   
 } // end MonteCarlo namespace
