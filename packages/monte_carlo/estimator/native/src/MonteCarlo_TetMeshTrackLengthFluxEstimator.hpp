@@ -39,6 +39,11 @@ template<typename ContributionMutliplierPolicy = WeightMultiplier>
 class TetMeshTrackLengthFluxEstimator : public StandardEntityEstimator<moab::EntityHandle>
 {
 
+private:
+
+  // Typedef for triangle intersection pairs
+  typedef Utility::Pair<double,moab::EntityHandle> IntersectionData;
+
 public:
 
   typedef Geometry::ModuleTraits::InternalCellHandle cellIdType;
@@ -62,10 +67,10 @@ public:
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
 
   //! Add current history estimator contribution
-  void updateFromParticleSubtrackEndingEvent(
-			      const ParticleState& particle,
-			      const Geometry::ModuleTraits::InternalCellHandle,
-			      const double track_length );
+  void updateFromGlobalParticleSubtrackEndingEvent(
+						 const ParticleState& particle,
+						 const double start_point[3],
+						 const double end_point[3] );
 
   //! Export the estimator data
   void exportData( EstimatorHDF5FileHandler& hdf5_file,
@@ -78,6 +83,10 @@ public:
   moab::EntityHandle whichTetIsPointIn( const double point[3] );
 
 private:
+
+  // Compare intersection data
+  static bool compareIntersections( const IntersectionData& a,
+				    const IntersectionData& b );
 
   // Assign bin boundaries to an estimator dimension
   void assignBinBoundaries(
