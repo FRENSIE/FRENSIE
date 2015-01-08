@@ -11,24 +11,22 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
+#include "Utility_Tuple.hpp"
 #include "Utility_TetrahedronHelpers.hpp"
 #include "Utility_MOABException.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
-// Used for intersection data storage and comparison
-struct ray_data {
-  double intersect;
-  moab::EntityHandle triangle;
-};
+namespace MonteCarlo{
 
 // Compare and sort intersection data
-inline static bool compare(const ray_data &a, const ray_data &b)
+template<typename ContributionMultiplierPolicy>
+inline bool TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::compareIntersections(
+							  const Intersection&a,
+							  const ray_data &b )
 {
-    return a.intersect < b.intersect;
+    return a.first < b.first;
 }
-
-namespace MonteCarlo{
 
 // Constructor
 template<typename ContributionMultiplierPolicy>
@@ -207,26 +205,23 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::setParticleT
 
 // Add current history estimator contribution
 template<typename ContributionMultiplierPolicy>
-void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromParticleSubtrackEndingEvent(
-			      const ParticleState& particle,
-			      const Geometry::ModuleTraits::InternalCellHandle,
-			      const double track_length )
+void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGlobalParticleSubtrackEndingEvent( 
+						 const ParticleState& particle,
+						 const double start_point[3],
+						 const double end_point[3] );
+			      
 {
+  // Calculate the track length
+  double track_length = 0.0;
+
   std::vector<double> ray_tet_intersections;
   std::vector<moab::EntityHandle> tet_surface_triangles;
-
-  // Get all intersections of the ray and the tets
-  const double position[3] = { particle.getXPosition(),
-                               particle.getYPosition(),
-                               particle.getZPosition() };
-  const double direction[3] = { particle.getXDirection(),
-                                particle.getYDirection(),
-                                particle.getZDirection() };                               
+                           
   moab::ErrorCode return_value = 
        d_kd_tree->ray_intersect_triangles( d_kd_tree_root,
                                            1e-6,
-                                           direction,
-                                           position,
+                                           particle.getDirection(),
+                                           start_point,
                                            tet_surface_triangles,
                                            ray_tet_intersections,
                                            0,
@@ -235,42 +230,44 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromPa
   TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                       Utility::MOABException,
                       moab::ErrorCodeStr[return_value] );
-                      
-  // Sort all intersections of the ray with the tets
-  std::vector<ray_data> intersection_data;
-  
-  // Transfer the data to ray_data structures for sorting
-  for( unsigned int i = 0; i < ray_tet_intersections.size(); i++ )
-  {
-    ray_data data;
-    data.intersect = ray_tet_intersections[i];
-    data.triangle  = tet_surface_triangles[i];
-    intersection_data.push_back( data );
-  }
-  
-  std::sort(intersection_data.begin(), intersection_data.end(), compare);
-  
-  // Transfer the data back to the previous data structures
-  for( unsigned int i = 0; i < ray_tet_intersections.size(); i++ )
-  {
-    ray_tet_intersections[i] = intersection_data[i].intersect;
-    tet_surface_triangles[i] = intersection_data[i].triangle;
-  }
-    
+
   // Account for the case where there are no intersections (entirely in tet)
   if( ray_tet_intersections.size() == 0 )
   {
-    
+    // Add partial history contribution
+    addPartialHistoryContribution( d_last_visited_tet,
+				   particle,
+				   0,
+				   track_length );
   }
-  else                  
+  else
   {
+    // Sort all intersections of the ray with the tets
+    std::vector<IntersectionData> intersection_data;
+  
+    // Transfer the data to ray_data structures for sorting
+    for( unsigned int i = 0; i < ray_tet_intersections.size(); i++ )
+    {
+      IntersectionData data;
+      data.first = ray_tet_intersections[i];
+      data.second  = tet_surface_triangles[i];
+      intersection_data.push_back( data );
+    }
+    
+    std::sort( intersection_data.begin(), 
+	       intersection_data.end(), 
+	       compareIntersections );
+    
+    tet_surface_triangles.clear();
+    ray_tet_intersections.clear();
+  
     moab::CartVect hit_point;
     std::vector<moab::CartVect> array_of_hit_points;
     moab::CartVect tet_centroid;
     moab::EntityHandle tet;
-    moab::CartVect initial_position( position[0],
-                                     position[1],
-                                     position[2] );
+    moab::CartVect initial_position( start_point[0],
+                                     start_point[1],
+                                     start_point[2] );
     double partial_track_length;
   
     // Add the origin point of the ray to the array of points
@@ -281,9 +278,9 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromPa
     for( unsigned int i = 0; i < ray_tet_intersections.size(); i++ )
     {
       // Update intersection point
-      hit_point[0] = direction[0]*ray_tet_intersections[i] + position[0];
-      hit_point[1] = direction[1]*ray_tet_intersections[i] + position[1];
-      hit_point[2] = direction[2]*ray_tet_intersections[i] + position[2];
+      hit_point[0] = direction[0]*ray_tet_intersections[i] + start_point[0];
+      hit_point[1] = direction[1]*ray_tet_intersections[i] + start_point[1];
+      hit_point[2] = direction[2]*ray_tet_intersections[i] + start_point[2];
       
       array_of_hit_points.push_back( hit_point );
       tet_centroid = ( (array_of_hit_points[i+1]+array_of_hit_points[i])/2.0 );
@@ -308,18 +305,14 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromPa
     }
     
     // Get any left over track length
-    if ( ray_tet_intersections[ray_tet_intersections.size() -1] < track_length )
+    if ( ray_tet_intersections.back() < track_length )
     {
       partial_track_length = track_length - 
-                       ray_tet_intersections[ray_tet_intersections.size() - 1];
+	ray_tet_intersections.back()
       
       const double final_location[3];
       
-      final_location[0] = position[0] + direction[0]*track_length;
-      final_location[1] = position[1] + direction[1]*track_length;
-      final_location[2] = position[2] + direction[2]*track_length;
-      
-      tet = whichTetIsPointIn( final_location );
+      tet = whichTetIsPointIn( end_location );
       
       // Update the last visited tet
       d_last_visited_tet = tet;
@@ -380,7 +373,7 @@ moab::EntityHandle TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>
 template<typename ContributionMultiplierPolicy>
 void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
                                            EstimatorHDF5FileHandler& hdf5_file,
-					                       const bool process_data ) const
+					   const bool process_data ) const
 {
   // Export data in FRENSIE formatting for data manipulation
   StandardEntityEstimator::exportData( hdf5_file,
@@ -405,12 +398,14 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
       const double tet_volume = this->getEntityNormConstant( *tet );
       
       const Estimator::TwoEstimatorMomentsArray& tet_bin_data = 
-	                                            this->getEntityBinData( *tet );
+	this->getEntityBinData( *tet );
       
-      Teuchos::Array<moab::Tag> mean_tag( tet_bin_data.size() + 1 ), 
-	  relative_error_tag( tet_bin_data.size() + 1 ),
-	  vov_tag( tet_bin_data.size() + 1 ),
-	  fom_tag( tet_bin_data.size() + 1 );
+      Teuchos::Array<moab::Tag> mean_tag( 
+		  tet_bin_data.size() + this->getNumberOfResponseFunctions() ),
+	relative_error_tag( mean_tag.size() );
+      
+      Teuchos::Array<moab::Tag> vov_tag( this->getNumberOfResponseFunctions()),
+	fom_tag( vov_tag.size() );
 
       std::string mean_tag_prefix = "mean_";
       std::string relative_error_tag_prefix = "relative_error_";	
@@ -431,45 +426,45 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
     	std::string relative_error_tag_name = relative_error_tag_prefix +
     	  bin_name;
 	  
-	    // Assign mean tag data
-	    moab::ErrorCode return_value = d_moab_interface->tag_get_handle( 
-		                               mean_tag_name.c_str(),
-	                                   1,
-	                                   moab::MB_TYPE_DOUBLE,
-				                       mean_tag[i],
-				                       moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
+	// Assign mean tag data
+	moab::ErrorCode return_value = d_moab_interface->tag_get_handle( 
+		                       mean_tag_name.c_str(),
+				       1,
+				       moab::MB_TYPE_DOUBLE,
+				       mean_tag[i],
+				       moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
 
-	    TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                             Utility::MOABException,
                             moab::ErrorCodeStr[return_value] );
 
-	    return_value = d_moab_interface->tag_set_data( mean_tag[i], 
-		                        				       &(*tet),
-		                        				       1,
-						                               &mean );
+	return_value = d_moab_interface->tag_set_data( mean_tag[i], 
+						       &(*tet),
+						       1,
+						       &mean );
 
-	    TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                             Utility::MOABException,
                             moab::ErrorCodeStr[return_value] );
         
         // Assign error tag data                    
-	    return_value = d_moab_interface->tag_get_handle( 
-		                               relative_error_tag_name.c_str(),
-	                                   1,
-	                                   moab::MB_TYPE_DOUBLE,
-				                       relative_error_tag[i],
-				                       moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
+	return_value = d_moab_interface->tag_get_handle( 
+				       relative_error_tag_name.c_str(),
+				       1,
+				       moab::MB_TYPE_DOUBLE,
+				       relative_error_tag[i],
+				       moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
 
-	    TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                            Utility::MOABException,
-                            moab::ErrorCodeStr[return_value] );
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+			    Utility::MOABException,
+			    moab::ErrorCodeStr[return_value] );
 
-	    return_value = d_moab_interface->tag_set_data( relative_error_tag[i], 
-		                        				       &(*tet),
-		                        				       1,
-						                               &relative_error );
+	return_value = d_moab_interface->tag_set_data( relative_error_tag[i], 
+						       &(*tet),
+						       1,
+						       &relative_error );
 
-	    TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
                             Utility::MOABException,
                             moab::ErrorCodeStr[return_value] );
       }
@@ -483,102 +478,110 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
       std::string total_fom_tag_name = total_tag_prefix + "fom";
     
       const Estimator::FourEstimatorMomentsArray& total_tet_bin_data = 
-	                                          this->getEntityTotalData( *tet );
+	this->getEntityTotalData( *tet );
 
-      int end = tet_bin_data.size();
-      double mean, relative_error, vov, fom;
+      for( unsigned i = 0; i = total_tet_bin_data.size(); ++i )
+      {
+	double mean, relative_error, vov, fom;
+	
+	this->processMoments( total_tet_bin_data[i],
+			      tet_volume,
+			      mean,
+			      relative_error,
+			      vov,
+			      fom); 
+	
+	unsigned tag_index = this->getNumberOfBins() + i;
 
-      this->processMoments( total_tet_bin_data,
-                            tet_volume,
-                            mean,
-                            relative_error,
-                            vov,
-                            fom); 
+	// Assign total mean tag data                    
+	moab::ErrorCode return_value = d_moab_interface->tag_get_handle( 
+		                       total_mean_tag_name.c_str(),
+				       1,
+				       moab::MB_TYPE_DOUBLE,
+				       mean_tag[tag_index],
+				       moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
 
-      // Assign total mean tag data                    
-	  moab::ErrorCode return_value = d_moab_interface->tag_get_handle( 
-		                             total_mean_tag_name.c_str(),
-	                                 1,
-	                                 moab::MB_TYPE_DOUBLE,
-				                     mean_tag[end],
-				                     moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+			    Utility::MOABException,
+			    moab::ErrorCodeStr[return_value] );
 
-	  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                          Utility::MOABException,
-                          moab::ErrorCodeStr[return_value] );
+	return_value = d_moab_interface->tag_set_data( mean_tag[tag_index],
+						       &(*tet),
+						       1,
+						       &mean );
 
-	  return_value = d_moab_interface->tag_set_data( mean_tag[end], 
-		                         				     &(*tet),
-		                        				     1,
-						                             &mean );
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+			    Utility::MOABException,
+			    moab::ErrorCodeStr[return_value] );
+	
+	// Assign total relative error tag data                    
+	return_value = d_moab_interface->tag_get_handle( 
+		                       total_relative_error_tag_name.c_str(),
+				       1,
+				       moab::MB_TYPE_DOUBLE,
+				       relative_error_tag[tag_index],
+				       moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
 
-	  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                          Utility::MOABException,
-                          moab::ErrorCodeStr[return_value] );
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+			    Utility::MOABException,
+			    moab::ErrorCodeStr[return_value] );
+	
+	return_value = d_moab_interface->tag_set_data( 
+						 relative_error_tag[tag_index],
+						 &(*tet),
+						 1,
+						 &relative_error );
+
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+			    Utility::MOABException,
+			    moab::ErrorCodeStr[return_value] );
                           
-      // Assign total relative error tag data                    
-	  return_value = d_moab_interface->tag_get_handle( 
-		                             total_relative_error_tag_name.c_str(),
-	                                 1,
-	                                 moab::MB_TYPE_DOUBLE,
-				                     relative_error_tag[end],
-				                     moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
+	// Assign total vov tag data                    
+	return_value = d_moab_interface->tag_get_handle( 
+				       total_vov_tag_name.c_str(),
+				       1,
+				       moab::MB_TYPE_DOUBLE,
+				       vov_tag[i],
+				       moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
 
-	  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                          Utility::MOABException,
-                          moab::ErrorCodeStr[return_value] );
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+			    Utility::MOABException,
+			    moab::ErrorCodeStr[return_value] );
+	
+	return_value = d_moab_interface->tag_set_data( vov_tag[i], 
+						       &(*tet),
+						       1,
+						       &vov );
 
-	  return_value = d_moab_interface->tag_set_data( relative_error_tag[end], 
-		                         				     &(*tet),
-		                        				     1,
-						                             &relative_error );
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+			    Utility::MOABException,
+			    moab::ErrorCodeStr[return_value] );
+	  
+	// Assign total fom tag data                    
+	return_value = d_moab_interface->tag_get_handle( 
+				       total_fom_tag_name.c_str(),
+				       1,
+				       moab::MB_TYPE_DOUBLE,
+				       fom_tag[i],
+				       moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
 
-	  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                          Utility::MOABException,
-                          moab::ErrorCodeStr[return_value] );
-                          
-      // Assign total vov tag data                    
-	  return_value = d_moab_interface->tag_get_handle( 
-		                             total_vov_tag_name.c_str(),
-	                                 1,
-	                                 moab::MB_TYPE_DOUBLE,
-				                     vov_tag[end],
-				                     moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+			    Utility::MOABException,
+			    moab::ErrorCodeStr[return_value] );
 
-	  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                          Utility::MOABException,
-                          moab::ErrorCodeStr[return_value] );
+	return_value = d_moab_interface->tag_set_data( fom_tag[i], 
+						       &(*tet),
+						       1,
+						       &fom );
 
-	  return_value = d_moab_interface->tag_set_data( vov_tag[end], 
-		                         				     &(*tet),
-		                        				     1,
-						                             &vov );
-
-	  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                          Utility::MOABException,
-                          moab::ErrorCodeStr[return_value] );                          
-      
-      // Assign total fom tag data                    
-	  return_value = d_moab_interface->tag_get_handle( 
-		                             total_fom_tag_name.c_str(),
-	                                 1,
-	                                 moab::MB_TYPE_DOUBLE,
-				                     fom_tag[end],
-				                     moab::MB_TAG_DENSE|moab::MB_TAG_CREAT );
-
-	  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                          Utility::MOABException,
-                          moab::ErrorCodeStr[return_value] );
-
-	  return_value = d_moab_interface->tag_set_data( fom_tag[end], 
-		                         				     &(*tet),
-		                        				     1,
-						                             &fom );
-
-	  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                          Utility::MOABException,
-                          moab::ErrorCodeStr[return_value] );      
+	TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+			    Utility::MOABException,
+			    moab::ErrorCodeStr[return_value] );      
+      }
     }
+    
+    // Export the mesh
+    
   }   
 }
 
@@ -612,7 +615,10 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::assignBinBou
     	      << std::endl;
   }
   else
-    StandardEntityEstimator<cellIdType>::assignBinBoundaries( bin_boundaries );
+  {
+    StandardEntityEstimator<moab::EntityHandle>::assignBinBoundaries( 
+							      bin_boundaries );
+  }
 }
   
 } // end MonteCarlo namespace
