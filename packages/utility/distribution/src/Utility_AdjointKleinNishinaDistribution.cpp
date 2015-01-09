@@ -49,19 +49,15 @@ AdjointKleinNishinaDistribution::AdjointKleinNishinaDistribution(
 						      const double max_energy )
   : d_alpha( energy/PhysicalConstants::electron_rest_mass_energy ),
     d_alpha_max( max_energy/PhysicalConstants::electron_rest_mass_energy ),
-    d_min_energy_loss_ratio( 0.0 ),
+    d_min_energy_loss_ratio( calculateMinEnergyLossRatio( d_alpha,
+							  d_alpha_max) ),
     d_trials( 0u ),
     d_samples( 0u )
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0.0 );
   // Make sure the max energy is valid
-  testPrecondition( max_energy > energy );
-
-  // Calculate the min energy loss ratio
-  d_min_energy_loss_ratio = 
-    AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio( d_alpha,
-								  d_alpha_max);
+  testPrecondition( energy <= max_energy );
 }
 
 // Copy constructor
@@ -100,7 +96,7 @@ void AdjointKleinNishinaDistribution::setEnergy( const double energy )
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0.0 );
-  testPrecondition( energy < 
+  testPrecondition( energy <= 
 		    d_alpha_max*PhysicalConstants::electron_rest_mass_energy );
 
   d_alpha = energy/PhysicalConstants::electron_rest_mass_energy;
@@ -126,14 +122,14 @@ double AdjointKleinNishinaDistribution::evaluateIntegratedCrossSection() const
   double a = 1.0/alpha_squared;
   double b = 1.0 + 2.0*(d_alpha - 1.0)/alpha_squared;
   double c = (1.0 - 2.0*d_alpha)/alpha_squared;
-
+  
   double min_energy_loss_ratio_squared = 
     d_min_energy_loss_ratio*d_min_energy_loss_ratio;
 
   double min_energy_loss_ratio_cubed = 
     d_min_energy_loss_ratio*min_energy_loss_ratio_squared;
 
-  return k*( a/3.0*(1.0 - min_energy_loss_ratio_cubed)+
+  return k*( a/3.0*(1.0 - min_energy_loss_ratio_cubed) +
 	     b/2.0*(1.0 - min_energy_loss_ratio_squared) + 
 	     c*(1.0 - d_min_energy_loss_ratio) -
 	     log( d_min_energy_loss_ratio ) );
