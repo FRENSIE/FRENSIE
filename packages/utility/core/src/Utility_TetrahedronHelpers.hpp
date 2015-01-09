@@ -69,27 +69,17 @@ void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 					  const moab::CartVect& reference_vertex,
 					  double transform_arrays[9] );
 
+//! Return if a point is in a tet 
+template<typename TestPoint, typename ReferencePoint, typename Matrix>
+bool isPointInTet( const TestPoint& point,
+                   const ReferencePoint& reference_vertex,
+                   const Matrix& matrix );
+                   
 //! Return if a point is in a tet
-template<typename Matrix>                                                      
-bool isPointInTet( const double point[3],
-                   const double reference_vertex[3],    
-		           const Matrix& matrix );
-
-//! Return if a point is in a tet
-template<typename Matrix>                                                      
-bool isPointInTet( const moab::CartVect& point,
-                   const moab::CartVect& reference_vertex,     
-		           const Matrix& matrix );
-
-//! Return if a point is in a tet                                             
-bool isPointInTet( const double point[3],    
-                   const double reference_vertex[3], 
-		           const double barycentric_array[9] );
-
-//! Return if a point is in a tet                                             
-bool isPointInTet( const moab::CartVect& point,
-                   const moab::CartVect& reference_vertex,  
-		           const double barycentric_array[9] );		
+template<typename TestPoint, typename ReferencePoint>
+bool isPointInTet( const TestPoint& point,
+                   const ReferencePoint& reference_vertex,
+                   const double barycentric_array[9] );	
                
 // Calculate the volume of a tetrahedron
 inline double calculateTetrahedronVolume( const moab::CartVect& vertex_a,
@@ -162,20 +152,10 @@ inline void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 				              transform_arrays );
 }
 
-// Return if a point is in a tet
-template<typename Matrix>                                                      
-inline bool isPointInTet( const moab::CartVect& point,
-                          const moab::CartVect& reference_vertex,   
-		          const Matrix& matrix )
-{
-  return isPointInTet( point.array(),
-                       reference_vertex.array(),
-                       matrix );
-}
-
-// Return if a point is in a tet                                                
-inline bool isPointInTet( const double point[3],
-                          const double reference_vertex[3],    
+// Return if a point is in a tet     
+template<typename TestPoint, typename ReferencePoint>                                           
+inline bool isPointInTet( const TestPoint& point,
+                          const ReferencePoint& reference_vertex,    
 		                  double barycentric_array[9] )
 {
   // Create temporary matrix
@@ -193,16 +173,6 @@ inline bool isPointInTet( const double point[3],
   return isPointInTet( point,
                        reference_vertex,
                        tmp_matrix );
-}
-
-// Return if a point is in a tet                                                   
-inline bool isPointInTet( const moab::CartVect& point, 
-                          const moab::CartVect& reference_vertex,   
-		                  double barycentric_array[9] )
-{
-  return isPointInTet( point.array(),
-                       reference_vertex.array(),
-                       barycentric_array);
 }
 
 } // end Utility namespace
