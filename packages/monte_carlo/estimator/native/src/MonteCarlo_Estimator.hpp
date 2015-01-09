@@ -337,16 +337,6 @@ inline const std::string& Estimator::getResponseFunctionName(
   return d_response_functions[response_function_index]->getName();
 }
 
-// Return the bin name
-inline std::string Estimator::getBinName( const unsigned bin_index ) const
-{
-  // Make sure the bin index is valid
-  testPrecondition( bin_index < 
-		    getNumberOfBins()*getNumberOfResponseFunctions() );
-
-  return " ";
-}
-
 // Evaluate the desired response function
 inline double Estimator::evaluateResponseFunction( 
 				 const ParticleState& particle,
