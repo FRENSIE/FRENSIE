@@ -216,7 +216,7 @@ std::string Estimator::getBinName( const unsigned bin_index ) const
   std::ostringstream oss;
 
   // Get a name for each bin
-  unsigned reduced_bin_index = bin_index % getNumberOfBins();
+  //unsigned reduced_bin_index = bin_index % getNumberOfBins();
   
   unsigned total_bins = 1u;
   
@@ -226,14 +226,14 @@ std::string Estimator::getBinName( const unsigned bin_index ) const
     
     unsigned dim_bin_index = (bin_index/total_bins) % dim_bins;
     
-    Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries = 
-      d_dimension_bin_boundaries_map[d_dimension_ordering[i]];
+    const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries = 
+      d_dimension_bin_boundaries_map.find(d_dimension_ordering[i])->second;
     
-    oss << bin_boundaries->getDimensionName() << "_";
+    //oss << bin_boundaries->getDimensionName() << "_";
 
     bin_boundaries->printBoundariesOfBin( oss, dim_bin_index );
 
-    oss << "_";
+    oss << ", ";
 
     total_bins *= dim_bins;
   }
