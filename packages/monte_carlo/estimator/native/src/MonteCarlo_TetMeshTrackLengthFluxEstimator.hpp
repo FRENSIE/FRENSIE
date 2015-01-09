@@ -80,7 +80,7 @@ public:
   void print( std::ostream& os ) const;
 
   //! Get all tet elements
-  void getAllTetElements( const moab::Range all_tet_elements );
+  const moab::Range getAllTetElements() const;
 
   //! Determine which tet the point is in
   moab::EntityHandle whichTetIsPointIn( const double point[3] );
@@ -113,9 +113,6 @@ private:
   // The root of the obb-tree
   moab::EntityHandle d_obb_tree_root;
 
-  // The last tet that was visited
-  moab::EntityHandle d_last_visited_tet;
-
   // The last cell that was visited
   Geometry::ModuleTraits::InternalCellHandle d_last_visited_cell;
 
@@ -124,7 +121,7 @@ private:
   d_tet_barycentric_transform_matrices;
   
   // The map of tet ids and reference vertices
-  boost::unordered_map<moab::EntityHandle, double[3]>
+  boost::unordered_map<moab::EntityHandle, moab::CartVect>
   d_tet_reference_vertices;
   
   // The output mesh file name
