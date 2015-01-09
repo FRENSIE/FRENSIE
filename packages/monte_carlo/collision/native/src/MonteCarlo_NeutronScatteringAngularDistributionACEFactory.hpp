@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_NeutronScatteringAngularDistributionFactory.hpp
+//! \file   MonteCarlo_NeutronScatteringAngularDistributionACEFactory.hpp
 //! \author Alex Robinson, Alex Bennett
 //! \brief  Neutron scattering angular distribution factory class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_FACTORY
-#define MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_FACTORY
+#ifndef MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_ACE_FACTORY
+#define MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_ACE_FACTORY
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -20,7 +20,7 @@
 namespace MonteCarlo{
 
 //! The scattering angular distribution factory class
-class NeutronScatteringAngularDistributionFactory
+class NeutronScatteringAngularDistributionACEFactory
 {
 
 public:
@@ -40,7 +40,7 @@ public:
 private:
 
   //! Constructor
-  NeutronScatteringAngularDistributionFactory();
+  NeutronScatteringAngularDistributionACEFactory();
 
   // The default (isotropic) angle cosine distribution
   static Teuchos::RCP<Utility::OneDDistribution> isotropic_angle_cosine_dist;
@@ -48,8 +48,8 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_FACTORY
+#endif // end MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_ACE_FACTORY
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NeutronScatteringAngularDistributionFactory.hpp
+// end MonteCarlo_NeutronScatteringAngularDistributionACEFactory.hpp
 //---------------------------------------------------------------------------//

@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_NeutronScatteringEnergyDistributionFactory.hpp
+//! \file   MonteCarlo_NeutronScatteringEnergyDistributionACEFactory.hpp
 //! \author Alex Robinson, Alex Bennett
 //! \brief  Neutron scattering energy distribution factory class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_FACTORY
-#define MONTE_CARLO_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_FACTORY
+#ifndef MONTE_CARLO_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_ACE_FACTORY
+#define MONTE_CARLO_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_ACE_FACTORY
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -21,7 +21,7 @@
 namespace MonteCarlo{
 
 //! The scattering angular distribution factory class
-class NeutronScatteringEnergyDistributionFactory
+class NeutronScatteringEnergyDistributionACEFactory
 {
 
 public:
@@ -71,14 +71,14 @@ private:
 	     Teuchos::RCP<NeutronScatteringEnergyDistribution>& distribution );
 
   // Constructor
-  NeutronScatteringEnergyDistributionFactory();
+  NeutronScatteringEnergyDistributionACEFactory();
 
 };
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_FACTORY
+#endif // end MONTE_CARLO_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION_ACE_FACTORY
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NeutronScatteringEnergyDistributionFactory.hpp
+// end MonteCarlo_NeutronScatteringEnergyDistributionACEFactory.hpp
 //---------------------------------------------------------------------------//

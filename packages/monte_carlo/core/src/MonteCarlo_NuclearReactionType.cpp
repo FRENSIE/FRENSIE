@@ -38,7 +38,7 @@ NuclearReactionType convertUnsignedToNuclearReactionType(
   case 23u: return N__N_3ALPHA_REACTION;
   case 24u: return N__2N_ALPHA_REACTION;
   case 25u: return N__3N_ALPHA_REACTION;
-  case 27u: return N__TOTAL_ABSORPTION;
+  case 27u: return N__TOTAL_ABSORPTION_REACTION;
   case 28u: return N__N_P_REACTION;
   case 29u: return N__N_2ALPHA_REACTION;
   case 30u: return N__2N_2ALPHA_REACTION;

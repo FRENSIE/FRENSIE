@@ -21,39 +21,29 @@
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "MonteCarlo_ElasticNeutronScatteringDistribution.hpp"
-#include "MonteCarlo_NeutronScatteringDistributionFactory.hpp"
-#include "MonteCarlo_NuclearReactionFactory.hpp"
+#include "MonteCarlo_NeutronScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_NuclearReactionACEFactory.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_DirectionHelpers.hpp"
 
-// Transparent NeutronScatteringDistributionFactory
-class TransNeutronScatteringDistributionFactory : public MonteCarlo::NeutronScatteringDistributionFactory
+// Transparent NeutronScatteringDistributionACEFactory
+class TransNeutronScatteringDistributionACEFactory : public MonteCarlo::NeutronScatteringDistributionACEFactory
 {
 public:
-  TransNeutronScatteringDistributionFactory(
-                           const std::string& table_name,
-                           const double atomic_weight_ratio,
-                           const Teuchos::ArrayView<const double>& mtr_block,
-                           const Teuchos::ArrayView<const double>& tyr_block,
-                           const Teuchos::ArrayView<const double>& land_block,
-                           const Teuchos::ArrayView<const double>& and_block,
-                           const Teuchos::ArrayView<const double>& ldlw_block,
-                           const Teuchos::ArrayView<const double>& dlw_block )
-  : MonteCarlo::NeutronScatteringDistributionFactory( table_name,
-                                                  atomic_weight_ratio,
-                                                  mtr_block,
-                                                  tyr_block,
-                                                  land_block,
-                                                  and_block,
-                                                  ldlw_block,
-                                                  dlw_block )
+  TransNeutronScatteringDistributionACEFactory(
+                        const std::string& table_name,
+                        const double atomic_weight_ratio,
+                        const Data::XSSNeutronDataExtractor& raw_nuclide_data )
+  : MonteCarlo::NeutronScatteringDistributionACEFactory( table_name,
+							 atomic_weight_ratio,
+							 raw_nuclide_data )
   { /* ... */ }
   
-  ~TransNeutronScatteringDistributionFactory()
+  ~TransNeutronScatteringDistributionACEFactory()
   { /* ... */ }
 
 
-  using MonteCarlo::NeutronScatteringDistributionFactory::getReactionAngularDist;
+  using MonteCarlo::NeutronScatteringDistributionACEFactory::getReactionAngularDist;
 };
 
 
@@ -91,9 +81,9 @@ int main( int argc, char** argv )
 
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler;
   Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
-  Teuchos::RCP<TransNeutronScatteringDistributionFactory> 
+  Teuchos::RCP<TransNeutronScatteringDistributionACEFactory> 
     neutron_distribution_factory;
-  Teuchos::RCP<MonteCarlo::NuclearReactionFactory> reaction_factory;
+  Teuchos::RCP<MonteCarlo::NuclearReactionACEFactory> reaction_factory;
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -131,39 +121,20 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
   neutron_distribution_factory.reset(
-			     new TransNeutronScatteringDistributionFactory(
+			     new TransNeutronScatteringDistributionACEFactory(
 			         table_info.get<std::string>( "table_name" ),
 				 ace_file_handler->getTableAtomicWeightRatio(),
-				 xss_data_extractor->extractMTRBlock(),
-				 xss_data_extractor->extractTYRBlock(),
-				 xss_data_extractor->extractLANDBlock(),
-				 xss_data_extractor->extractANDBlock(),
-				 xss_data_extractor->extractLDLWBlock(),
-				 xss_data_extractor->extractDLWBlock() ) );
+				 *xss_data_extractor ) );
   
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
 
-  reaction_factory.reset( new MonteCarlo::NuclearReactionFactory( 
+  reaction_factory.reset( new MonteCarlo::NuclearReactionACEFactory( 
 				   table_info.get<std::string>( "table_name" ),
 				   ace_file_handler->getTableAtomicWeightRatio(),
 				   ace_file_handler->getTableTemperature(),
 				   energy_grid,
-				   xss_data_extractor->extractElasticCrossSection(),
-				   xss_data_extractor->extractMTRBlock(),
-				   xss_data_extractor->extractLQRBlock(),
-				   xss_data_extractor->extractTYRBlock(),
-				   xss_data_extractor->extractLSIGBlock(),
-				   xss_data_extractor->extractSIGBlock(),
-				   xss_data_extractor->extractLANDBlock(),
-				   xss_data_extractor->extractANDBlock(),
-				   xss_data_extractor->extractLDLWBlock(),
-				   xss_data_extractor->extractDLWBlock(),
-				   xss_data_extractor->extractNUBlock(),
-				   xss_data_extractor->extractDNUBlock(),
-				   xss_data_extractor->extractBDDBlock(),
-				   xss_data_extractor->extractDNEDLBlock(),
-				   xss_data_extractor->extractDNEDBlock() ) );
+				   *xss_data_extractor ) );
 
   Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution> scattering_dist;
   
