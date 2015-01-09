@@ -61,7 +61,7 @@ public:
 
   //! Set the response functions
   void setResponseFunctions(
-   const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
+  const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_functions );
 
   //! Set the particle types that can contribute to the estimator
   void setParticleTypes( const Teuchos::Array<ParticleType>& particle_types );
@@ -123,6 +123,9 @@ private:
   // The map of tet ids and reference vertices
   boost::unordered_map<moab::EntityHandle, double[3]>
   d_tet_reference_vertices;
+  
+  // The output mesh file name
+  std::string d_output_mesh_name;
 };
   
 } // end MonteCarlo namespace
