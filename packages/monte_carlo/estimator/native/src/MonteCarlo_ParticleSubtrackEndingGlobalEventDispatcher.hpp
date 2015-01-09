@@ -39,9 +39,15 @@ public:
   { /* ... */ }
 
   //! Dispatch the new event to the observers
-  void dispatchParticleSubtrackEndingGlobalEvent(const ParticleState& particle,
+  static void dispatchParticleSubtrackEndingGlobalEvent(
+						 const ParticleState& particle,
 						 const double start_point[3],
 						 const double end_point[3] );
+
+private:
+
+  // Constructor
+  ParticleSubtrackEndingGlobalEventDispatcher();
 };
 
 } // end MonteCarlo namespace

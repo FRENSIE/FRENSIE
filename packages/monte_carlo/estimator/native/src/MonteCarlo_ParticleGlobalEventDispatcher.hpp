@@ -30,23 +30,18 @@ public:
   //! Typedef for Observer type
   typedef Observer ObserverType;
 
-  //! Constructor
-  ParticleGlobalEventDispatcher()
-  { /* ... */ }
-
-  //! Destructor
-  virtual ~ParticleGlobalEventDispatcher()
-  { /* ... */ }
-
   //! Attach an observer to the dispatcher
-  void attachObserver( const ModuleTraits::InternalEstimatorHandle id,
-		       Teuchos::RCP<Observer>& observer );
+  static void attachObserver( const ModuleTraits::InternalEstimatorHandle id,
+			      Teuchos::RCP<Observer>& observer );
 
   //! Detach an observer from the dispatcher
-  EntityHandle getId() const;
+  static void detachObserver( const ModuleTraits::InternalEstimatorHandle id );
+
+  //! Detach all observers
+  static void detachAllObservers();
 
   //! Get the number of attached observers
-  unsigned getNumberOfObservers() const;
+  static unsigned getNumberOfObservers();
 
 protected:
 
@@ -55,11 +50,14 @@ protected:
 					Teuchos::RCP<Observer> > ObserverIdMap;
 
   // Get the oberver map
-  ObserverIdMap& observer_id_map();
+  static ObserverIdMap& observer_id_map();
 
 private:
 
-  ObserverIdMap d_observer_map;
+  // Constructor
+  ParticleGlobalEventDispatcher();
+
+  static ObserverIdMap d_observer_map;
 };
 
 } // end MonteCarlo namespace
