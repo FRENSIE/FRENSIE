@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_DelayedNeutronEmissionDistributionFactory.hpp
+//! \file   MonteCarlo_DelayedNeutronEmissionDistributionACEFactory.hpp
 //! \author Alex Robinson
 //! \brief  Delayed neutron emission distribution factory class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_FACTORY_HPP
-#define MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_FACTORY_HPP
+#ifndef MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_ACE_FACTORY_HPP
+#define MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_ACE_FACTORY_HPP
 
 // Std Lib Includes
 #include <string>
@@ -27,13 +27,13 @@ namespace MonteCarlo{
 
 
 //! The delayed neutron emission distribution factory class
-class DelayedNeutronEmissionDistributionFactory
+class DelayedNeutronEmissionDistributionACEFactory
 {
 
 public:
 
   //! Constructor
-  DelayedNeutronEmissionDistributionFactory(
+  DelayedNeutronEmissionDistributionACEFactory(
 		          const std::string& table_name,
 			  const double atomic_weight_ratio,
 			  const Teuchos::ArrayView<const double>& bdd_block,
@@ -41,7 +41,7 @@ public:
 		          const Teuchos::ArrayView<const double>& dned_block );
 
   //! Destructor
-  ~DelayedNeutronEmissionDistributionFactory()
+  ~DelayedNeutronEmissionDistributionACEFactory()
   { /* ... */ }
 
   //! Create the delayed neutron emission distribution
@@ -92,8 +92,8 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_FACTORY_HPP
+#endif // end MONTE_CARLO_DELAYED_NEUTRON_EMISSION_DISTRIBUTION_ACE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_DelayedNeutronEmissionDistributionFactory.hpp
+// end MonteCarlo_DelayedNeutronEmissionDistributionACEFactory.hpp
 //---------------------------------------------------------------------------//

@@ -152,7 +152,6 @@ ADD_SUBDIRECTORY(tools)
 
 ADD_SUBDIRECTORY(doc)
 
-
 # Add custom build ctest target for continuous integration tests
 ADD_CUSTOM_TARGET(test-fast 
   COMMAND ctest -E verification
@@ -160,3 +159,7 @@ ADD_CUSTOM_TARGET(test-fast
 ADD_CUSTOM_TARGET(test-slow
   COMMAND ctest -R verification
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+# Configure the CTestCustom.cake file
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CTestCustom.cmake.in
+  ${CMAKE_BINARY_DIR}/CTestCustom.cmake)

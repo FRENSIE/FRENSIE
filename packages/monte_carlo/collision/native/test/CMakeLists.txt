@@ -23,11 +23,11 @@ tstNeutronScatteringDistributionFactoryHelpers
 --test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt"
 --test_u238_ace_table="92238.70c")
 
-ADD_EXECUTABLE(tstNeutronScatteringDistributionFactory
-  tstNeutronScatteringDistributionFactory.cpp)
-TARGET_LINK_LIBRARIES(tstNeutronScatteringDistributionFactory monte_carlo_collision_native)
-ADD_TEST(NeutronScatteringDistributionFactory_test
-tstNeutronScatteringDistributionFactory
+ADD_EXECUTABLE(tstNeutronScatteringDistributionACEFactory
+  tstNeutronScatteringDistributionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstNeutronScatteringDistributionACEFactory monte_carlo_collision_native)
+ADD_TEST(NeutronScatteringDistributionACEFactory_test
+tstNeutronScatteringDistributionACEFactory
 --test_basic_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt"
 --test_basic_h1_ace_table="1001.70c"
 --test_basic_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt"
@@ -57,20 +57,20 @@ TARGET_LINK_LIBRARIES(tstLabSystemConversionPolicy monte_carlo_collision_native)
 ADD_TEST(LabSystemConversionPolicy_test
 tstLabSystemConversionPolicy)
 
-ADD_EXECUTABLE(tstFissionNeutronMultiplicityDistributionFactory
-  tstFissionNeutronMultiplicityDistributionFactory.cpp)
-TARGET_LINK_LIBRARIES(tstFissionNeutronMultiplicityDistributionFactory monte_carlo_collision_native)
-ADD_TEST(FissionNeutronMultiplicityDistributionFactory_test tstFissionNeutronMultiplicityDistributionFactory --test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
+ADD_EXECUTABLE(tstFissionNeutronMultiplicityDistributionACEFactory
+  tstFissionNeutronMultiplicityDistributionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstFissionNeutronMultiplicityDistributionACEFactory monte_carlo_collision_native)
+ADD_TEST(FissionNeutronMultiplicityDistributionACEFactory_test tstFissionNeutronMultiplicityDistributionACEFactory --test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
 
 ADD_EXECUTABLE(tstFissionNeutronMultiplicityDistribution
   tstFissionNeutronMultiplicityDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstFissionNeutronMultiplicityDistribution monte_carlo_collision_native)
 ADD_TEST(FissionNeutronMultiplicityDistribution_test tstFissionNeutronMultiplicityDistribution --test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
 
-ADD_EXECUTABLE(tstDelayedNeutronEmissionDistributionFactory
-  tstDelayedNeutronEmissionDistributionFactory.cpp)
-TARGET_LINK_LIBRARIES(tstDelayedNeutronEmissionDistributionFactory monte_carlo_collision_native)
-ADD_TEST(DelayedNeutronEmissionDistributionFactory_test tstDelayedNeutronEmissionDistributionFactory --test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
+ADD_EXECUTABLE(tstDelayedNeutronEmissionDistributionACEFactory
+  tstDelayedNeutronEmissionDistributionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstDelayedNeutronEmissionDistributionACEFactory monte_carlo_collision_native)
+ADD_TEST(DelayedNeutronEmissionDistributionACEFactory_test tstDelayedNeutronEmissionDistributionACEFactory --test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt" --test_u238_ace_table="92238.70c")
 
 ADD_EXECUTABLE(tstDelayedNeutronEmissionDistribution
   tstDelayedNeutronEmissionDistribution.cpp)
@@ -97,10 +97,10 @@ ADD_EXECUTABLE(tstNeutronAbsorptionReaction
 TARGET_LINK_LIBRARIES(tstNeutronAbsorptionReaction monte_carlo_collision_native)
 ADD_TEST(NeutronAbsorptionReaction_test tstNeutronAbsorptionReaction --test_basic_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_basic_ace_table="1001.70c")
 
-ADD_EXECUTABLE(tstNuclearReactionFactory
-  tstNuclearReactionFactory.cpp)
-TARGET_LINK_LIBRARIES(tstNuclearReactionFactory monte_carlo_collision_native)
-ADD_TEST(NuclearReactionFactory_test tstNuclearReactionFactory --test_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
+ADD_EXECUTABLE(tstNuclearReactionACEFactory
+  tstNuclearReactionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstNuclearReactionACEFactory monte_carlo_collision_native)
+ADD_TEST(NuclearReactionACEFactory_test tstNuclearReactionACEFactory --test_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
 
 ADD_EXECUTABLE(tstNuclide
   tstNuclide.cpp)
