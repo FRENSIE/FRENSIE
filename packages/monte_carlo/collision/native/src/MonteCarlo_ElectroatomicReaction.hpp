@@ -40,8 +40,12 @@ public:
   //! Return the number of electrons emitted from the rxn at the given energy
   virtual unsigned getNumberOfEmittedElectrons( const double energy ) const = 0;
 
+  //! Return the number of photons emitted from the rxn at the given energy
+  virtual unsigned getNumberOfEmittedPhotons( const double energy ) const = 0;
+
   //! Return reaction type
   virtual ElectroatomicReactionType getReactionType() const = 0;
+
   //! Simulate the reaction
   virtual void react( ElectronState& electron, 
                       ParticleBank& bank,
