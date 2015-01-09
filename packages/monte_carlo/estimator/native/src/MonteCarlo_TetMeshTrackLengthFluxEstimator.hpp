@@ -28,6 +28,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardEntityEstimator.hpp"
+#include "MonteCarlo_ParticleSubtrackEndingGlobalEventObserver.hpp"
 #include "MonteCarlo_EstimatorContributionMultiplierPolicy.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "MonteCarlo_ParticleState.hpp"
@@ -36,7 +37,8 @@ namespace MonteCarlo{
 
 //! The tet-mesh track length flux estimator class
 template<typename ContributionMutliplierPolicy = WeightMultiplier>
-class TetMeshTrackLengthFluxEstimator : public StandardEntityEstimator<moab::EntityHandle>
+class TetMeshTrackLengthFluxEstimator : public StandardEntityEstimator<moab::EntityHandle>,
+  public ParticleSubtrackEndingGlobalEventObserver
 {
 
 private:

@@ -22,6 +22,7 @@
 #include "MonteCarlo_ParticleEnteringCellEventDispatcherDB.hpp"
 #include "MonteCarlo_ParticleLeavingCellEventDispatcherDB.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingInCellEventDispatcherDB.hpp"
+#include "MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp"
 
 namespace MonteCarlo{
 
