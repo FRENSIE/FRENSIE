@@ -46,6 +46,77 @@ TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution,
 									0.5 );
 
   TEST_FLOATING_EQUALITY( min_energy_loss_ratio, 0.8, 1e-15 );
+
+  min_energy_loss_ratio = 
+    Utility::AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio(
+									0.25,
+									0.5 );
+
+  TEST_FLOATING_EQUALITY( min_energy_loss_ratio, 0.5, 1e-15 );
+
+  min_energy_loss_ratio = 
+    Utility::AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio(
+									0.4,
+									0.5 );
+
+  TEST_FLOATING_EQUALITY( min_energy_loss_ratio, 0.8, 1e-15 );
+
+  min_energy_loss_ratio = 
+    Utility::AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio(
+									0.4,
+									12.0 );
+
+  TEST_FLOATING_EQUALITY( min_energy_loss_ratio, 0.2, 1e-15 );
+
+  min_energy_loss_ratio = 
+    Utility::AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio(
+									0.48,
+									12.0 );
+
+  TEST_FLOATING_EQUALITY( min_energy_loss_ratio, 0.04, 1e-15 );
+
+  min_energy_loss_ratio = 
+    Utility::AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio(
+									2.4,
+									12.0 );
+
+  TEST_FLOATING_EQUALITY( min_energy_loss_ratio, 0.2, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the integrated cross section can be evaluated
+TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution,
+		   evaluateIntegratedCrossSection )
+{
+  Teuchos::RCP<Utility::AdjointKleinNishinaDistribution> 
+    distribution( new Utility::AdjointKleinNishinaDistribution( 
+		 Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
+		 Utility::PhysicalConstants::electron_rest_mass_energy/2.0 ) );
+
+  double integrated_cs = distribution->evaluateIntegratedCrossSection();
+
+  UTILITY_TEST_FLOATING_EQUALITY( integrated_cs, 6.7308800297602e-25, 1e-11 );
+
+  distribution->setEnergy( 
+		   Utility::PhysicalConstants::electron_rest_mass_energy/4.0 );
+
+  integrated_cs = distribution->evaluateIntegratedCrossSection();
+
+  UTILITY_TEST_FLOATING_EQUALITY( integrated_cs, 7.3324781943328e-25, 1e-12 );
+
+  distribution->setEnergy( 
+		   Utility::PhysicalConstants::electron_rest_mass_energy/2.5 );
+
+  integrated_cs = distribution->evaluateIntegratedCrossSection();
+
+  UTILITY_TEST_FLOATING_EQUALITY( integrated_cs, 1.9945540106184e-25, 1e-12 );
+
+  distribution->setEnergy( 
+		   Utility::PhysicalConstants::electron_rest_mass_energy/2.0 );
+
+  integrated_cs = distribution->evaluateIntegratedCrossSection();
+
+  UTILITY_TEST_FLOATING_EQUALITY( integrated_cs, 0.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
