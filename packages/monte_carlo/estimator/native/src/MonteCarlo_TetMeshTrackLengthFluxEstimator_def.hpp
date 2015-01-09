@@ -112,7 +112,7 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
       
       for( unsigned j = 0; j < vertex_handles.size(); ++j )
       {
-	d_moab_interface->get_coords( &vertex_handles[j], 
+	    d_moab_interface->get_coords( &vertex_handles[j], 
 				      1, 
 				      vertices[j].array() );
       }
@@ -365,6 +365,19 @@ moab::EntityHandle TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>
   }
   
   return 0;
+}
+
+// Get all tet elements
+template<typename ContributionMultiplierPolicy>
+void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::getAllTetElements(
+                                        const moab::Range all_tet_elements )
+{
+  moab::ErrorCode return_value = d_moab_interface->get_entities_by_dimension(
+                                       d_tet_meshset, 3, all_tet_elements); 
+                                       
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+                      Utility::MOABException,
+                      moab::ErrorCodeStr[return_value] );
 }
 
 // Export the estimator data

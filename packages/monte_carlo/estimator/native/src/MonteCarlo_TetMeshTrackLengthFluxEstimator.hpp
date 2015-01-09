@@ -78,7 +78,10 @@ public:
 
   //! Print the estimator data
   void print( std::ostream& os ) const;
-  
+
+  //! Get all tet elements
+  void getAllTetElements( const moab::Range all_tet_elements );
+
   //! Determine which tet the point is in
   moab::EntityHandle whichTetIsPointIn( const double point[3] );
 
