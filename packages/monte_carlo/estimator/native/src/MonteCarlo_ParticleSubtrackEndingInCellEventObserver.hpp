@@ -28,7 +28,7 @@ public:
   //! The event tag type
   struct ParticleSubtrackEndingInCellEvent{};
 
-  //! Typedef for the observer event tat
+  //! Typedef for the observer event tag
   typedef ParticleSubtrackEndingInCellEvent EventTag;
 
   //! Constructor
