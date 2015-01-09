@@ -107,7 +107,7 @@ public:
 
 private:
 
-  // Set the default absorption reaction types
+  // Set the default scattering reaction types
   static boost::unordered_set<ElectroatomicReactionType>
   setDefaultScatteringReactionTypes();
 

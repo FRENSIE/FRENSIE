@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
 #include "MonteCarlo_AbsorptionElectroatomicReaction.hpp"
+#include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
 
 namespace MonteCarlo{
 
@@ -42,7 +43,7 @@ ElectroatomCore::ElectroatomCore(
 						      energy_grid.end() ) );
   // There must be at least one reaction specified
   testPrecondition( standard_scattering_reactions.size() +
-		    standard_absorption_reactions.size() > 0 );
+		            standard_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
   testPrecondition( !relaxation_model.is_null() );
 
@@ -127,47 +128,49 @@ void ElectroatomCore::createTotalAbsorptionReaction(
   // Make sure the absorption cross section is sized correctly
   testPrecondition( energy_grid.size() > 1 );
 
-  Teuchos::Array<double> absorption_cross_section;
-  unsigned absorption_threshold_energy_index = 0u;
-
-  ConstReactionMap::const_iterator absorption_reaction;
-
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
+  if ( absorption_reactions.size() > 0 )
   {
-    double raw_cross_section = 0.0;
-    
-    absorption_reaction = absorption_reactions.begin();
-    
-    while( absorption_reaction != absorption_reactions.end() )
-    {
-      raw_cross_section +=
-	absorption_reaction->second->getCrossSection( energy_grid[i] );
+    Teuchos::Array<double> absorption_cross_section;
+    unsigned absorption_threshold_energy_index = 0u;
 
-      ++absorption_reaction;
-    }
+    ConstReactionMap::const_iterator absorption_reaction;
 
-    if( raw_cross_section > 0.0 )
+    for( unsigned i = 0; i < energy_grid.size(); ++i )
     {
-      // Process the raw cross section
-      absorption_cross_section.push_back( raw_cross_section );
+      double raw_cross_section = 0.0;
+    
+      absorption_reaction = absorption_reactions.begin();
+    
+      while( absorption_reaction != absorption_reactions.end() )
+      {
+        raw_cross_section +=
+	  absorption_reaction->second->getCrossSection( energy_grid[i] );
+
+        ++absorption_reaction;
+      }
+
+      if( raw_cross_section > 0.0 )
+      {
+        // Process the raw cross section
+        absorption_cross_section.push_back( raw_cross_section );
+      }
+      else
+      {
+        // Ignore this data point
+        ++absorption_threshold_energy_index;
+      }
     }
-    else
-    {
-      // Ignore this data point
-      ++absorption_threshold_energy_index;
-    }
-  }
 
   // Make sure the absorption cross section is valid
   remember( Teuchos::Array<double>::const_iterator zero_element = 
 	    std::find( absorption_cross_section.begin(),
-		       absorption_cross_section.end(),
-		       0.0 ) );
+		           absorption_cross_section.end(),
+		           0.0 ) );
   testPostcondition( zero_element == absorption_cross_section.end() );
   remember( Teuchos::Array<double>::const_iterator inf_element = 
 	    std::find( absorption_cross_section.begin(),
-		       absorption_cross_section.end(),
-		       std::numeric_limits<double>::infinity() ) );
+		           absorption_cross_section.end(),
+		           std::numeric_limits<double>::infinity() ) );
   testPostcondition( inf_element == absorption_cross_section.end() );
 
   Teuchos::ArrayRCP<double> absorption_cross_section_copy;
@@ -179,6 +182,12 @@ void ElectroatomCore::createTotalAbsorptionReaction(
 				     absorption_cross_section_copy,
 				     absorption_threshold_energy_index,
 				     TOTAL_ABSORPTION_ELECTROATOMIC_REACTION ) );
+  }
+  else
+  {
+  total_absorption_reaction.reset(
+      new VoidAbsorptionElectroatomicReaction() );
+  }
 }
 
 // Create the processed total absorption reaction
@@ -190,63 +199,71 @@ void ElectroatomCore::createProcessedTotalAbsorptionReaction(
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
-  
-  Teuchos::Array<double> absorption_cross_section;
-  unsigned absorption_threshold_energy_index = 0u;
 
-  ConstReactionMap::const_iterator absorption_reaction;
+  if ( absorption_reactions.size() > 0 )
+  {  
+    Teuchos::Array<double> absorption_cross_section;
+    unsigned absorption_threshold_energy_index = 0u;
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
-  {
-    absorption_reaction = absorption_reactions.begin();
+    ConstReactionMap::const_iterator absorption_reaction;
 
-    double raw_cross_section = 0.0;
-    
-    const double raw_energy = 
-      InterpPolicy::recoverProcessedIndepVar( energy_grid[i] );
-
-    while( absorption_reaction != absorption_reactions.end() )
+    for( unsigned i = 0; i < energy_grid.size(); ++i )
     {
-      raw_cross_section += 
-	absorption_reaction->second->getCrossSection( raw_energy );
+      absorption_reaction = absorption_reactions.begin();
 
-      ++absorption_reaction;
-    }
+      double raw_cross_section = 0.0;
     
-    if( raw_cross_section > 0.0 )
-    {
-      // Process the raw cross section
-      absorption_cross_section.push_back( 
+      const double raw_energy = 
+        InterpPolicy::recoverProcessedIndepVar( energy_grid[i] );
+
+      while( absorption_reaction != absorption_reactions.end() )
+      {
+        raw_cross_section += 
+	  absorption_reaction->second->getCrossSection( raw_energy );
+
+        ++absorption_reaction;
+      }
+    
+      if( raw_cross_section > 0.0 )
+      {
+        // Process the raw cross section
+        absorption_cross_section.push_back( 
 			    InterpPolicy::processDepVar( raw_cross_section ) );
+      }
+      else
+      {
+        // Ignore this data point
+        ++absorption_threshold_energy_index;
+      }
     }
-    else
-    {
-      // Ignore this data point
-      ++absorption_threshold_energy_index;
-    }
-  }
   
-  // Make sure the absorption cross section is valid
-  remember( Teuchos::Array<double>::const_iterator zero_element = 
-	    std::find( absorption_cross_section.begin(),
-		       absorption_cross_section.end(),
-		       0.0 ) );
-  testPostcondition( zero_element == absorption_cross_section.end() );
-  remember( Teuchos::Array<double>::const_iterator inf_element = 
-	    std::find( absorption_cross_section.begin(),
-		       absorption_cross_section.end(),
-		       std::numeric_limits<double>::infinity() ) );
-  testPostcondition( inf_element == absorption_cross_section.end() );
+    // Make sure the absorption cross section is valid
+    remember( Teuchos::Array<double>::const_iterator zero_element = 
+	            std::find( absorption_cross_section.begin(),
+		                   absorption_cross_section.end(),
+		                   0.0 ) );
+    testPostcondition( zero_element == absorption_cross_section.end() );
+    remember( Teuchos::Array<double>::const_iterator inf_element = 
+	          std::find( absorption_cross_section.begin(),
+		                 absorption_cross_section.end(),
+		                 std::numeric_limits<double>::infinity() ) );
+    testPostcondition( inf_element == absorption_cross_section.end() );
 
-  Teuchos::ArrayRCP<double> absorption_cross_section_copy;
-  absorption_cross_section_copy.deepCopy( absorption_cross_section() );
+    Teuchos::ArrayRCP<double> absorption_cross_section_copy;
+    absorption_cross_section_copy.deepCopy( absorption_cross_section() );
 
-  total_absorption_reaction.reset(
-      new AbsorptionElectroatomicReaction<InterpPolicy,true>(
+    total_absorption_reaction.reset(
+        new AbsorptionElectroatomicReaction<InterpPolicy,true>(
 				     energy_grid,
 				     absorption_cross_section_copy,
 				     absorption_threshold_energy_index,
 				     TOTAL_ABSORPTION_ELECTROATOMIC_REACTION ) );
+  }
+  else
+  {
+  total_absorption_reaction.reset(
+      new VoidAbsorptionElectroatomicReaction() );
+  }
 }
 
 // Create the total reaction
