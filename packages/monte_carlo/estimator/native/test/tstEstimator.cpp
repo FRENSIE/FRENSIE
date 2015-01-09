@@ -62,6 +62,7 @@ public:
   using MonteCarlo::Estimator::assignBinBoundaries;
   using MonteCarlo::Estimator::getMultiplier;
   using MonteCarlo::Estimator::getResponseFunctionName;
+  using MonteCarlo::Estimator::getBinName;
   using MonteCarlo::Estimator::evaluateResponseFunction;
   using MonteCarlo::Estimator::isPointInEstimatorPhaseSpace;
   using MonteCarlo::Estimator::calculateBinIndex;
@@ -786,6 +787,51 @@ TEUCHOS_UNIT_TEST( Estimator, exportData )
 						  collision_number_bins_copy );
 
   TEST_COMPARE_ARRAYS( collision_number_bins, collision_number_bins_copy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bin name can be created
+TEUCHOS_UNIT_TEST( Estimator, getBinName )
+{
+  TestEstimator estimator( 0, 1.0 );
+  
+  Teuchos::Array<double> energy_bin_boundaries( 7 );
+  energy_bin_boundaries[0] = 0.0;
+  energy_bin_boundaries[1] = 1e-1;
+  energy_bin_boundaries[2] = 1e-1;
+  energy_bin_boundaries[3] = 1.0;
+  energy_bin_boundaries[4] = 10.0;
+  energy_bin_boundaries[5] = 10.0;
+  energy_bin_boundaries[6] = 20.0;
+
+  estimator.setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( energy_bin_boundaries);
+
+  Teuchos::Array<double> time_bin_boundaries( 4 );
+  time_bin_boundaries[0] = 0.0;
+  time_bin_boundaries[1] = 1e3;
+  time_bin_boundaries[2] = 1e5;
+  time_bin_boundaries[3] = 1e7;
+
+  estimator.setBinBoundaries<MonteCarlo::TIME_DIMENSION>( time_bin_boundaries);
+  
+  Teuchos::Array<unsigned> collision_number_bins( 4 );
+  collision_number_bins[0] = 0u;
+  collision_number_bins[1] = 1u;
+  collision_number_bins[2] = 2u;
+  collision_number_bins[3] = std::numeric_limits<unsigned>::max();
+
+  estimator.setBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>( 
+						       collision_number_bins );
+  
+  Teuchos::Array<double> cosine_bin_boundaries( 4 );
+  cosine_bin_boundaries[0] = -1.0;
+  cosine_bin_boundaries[1] = -1.0/3.0;
+  cosine_bin_boundaries[2] = 1.0/3.0;
+  cosine_bin_boundaries[3] = 1.0;
+  
+  estimator.setBinBoundaries<MonteCarlo::COSINE_DIMENSION>( cosine_bin_boundaries);
+  
+  
 }
 
 //---------------------------------------------------------------------------//
