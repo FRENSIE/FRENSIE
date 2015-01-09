@@ -20,20 +20,6 @@
 #include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//
-// Testing Variables
-//---------------------------------------------------------------------------//
-
-Teuchos::RCP<Utility::AdjointKleinNishinaDistribution> distribution_1(
-		    new Utility::AdjointKleinNishinaDistribution( 0.1, 0.5 ) );
-
-Teuchos::RCP<Utility::OneDDistribution> distribution_1_base = distribution_1;
-
-Teuchos::RCP<Utility::AdjointKleinNishinaDistribution> distribution_2(
-		   new Utility::AdjointKleinNishinaDistribution( 0.1, 10.0 ) );
-
-Teuchos::RCP<Utility::OneDDistribution> distribution_2_base = distribution_2;
-
-//---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the min energy loss ratio can be calculated
@@ -117,6 +103,56 @@ TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution,
   integrated_cs = distribution->evaluateIntegratedCrossSection();
 
   UTILITY_TEST_FLOATING_EQUALITY( integrated_cs, 0.0, 1e-12 );
+
+  // Use a max energy of 12*me
+  distribution.reset( new Utility::AdjointKleinNishinaDistribution(
+		 Utility::PhysicalConstants::electron_rest_mass_energy/2.5,
+		 Utility::PhysicalConstants::electron_rest_mass_energy*12.0 ));
+  
+  integrated_cs = distribution->evaluateIntegratedCrossSection();
+
+  UTILITY_TEST_FLOATING_EQUALITY( integrated_cs, 9.7049264053602e-25, 1e-12 );
+
+  distribution->setEnergy(
+		  Utility::PhysicalConstants::electron_rest_mass_energy*0.48 );
+
+  integrated_cs = distribution->evaluateIntegratedCrossSection();
+
+  UTILITY_TEST_FLOATING_EQUALITY( integrated_cs, 1.5997478442681e-24, 1e-12 );
+
+  distribution->setEnergy(
+		   Utility::PhysicalConstants::electron_rest_mass_energy*2.4 );
+
+  integrated_cs = distribution->evaluateIntegratedCrossSection();
+
+  UTILITY_TEST_FLOATING_EQUALITY( integrated_cs, 1.9254719348986e-25, 1e-12 );
+
+  distribution->setEnergy(
+		  Utility::PhysicalConstants::electron_rest_mass_energy*12.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution, evaluate )
+{
+  Teuchos::RCP<Utility::AdjointKleinNishinaDistribution> 
+    distribution( new Utility::AdjointKleinNishinaDistribution( 
+		 Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
+		 Utility::PhysicalConstants::electron_rest_mass_energy/2.0 ) );
+
+  Teuchos::RCP<Utility::OneDDistribution> distribution_base = distribution;
+
+  double value = distribution_base->evaluate( 0.79 );
+
+  TEST_EQUALITY_CONST( value, 0.0 );
+
+  value = distribution_base->evaluate( 0.8 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( value, 5.1140776521553e-24, 1e-12 );
+
+  value = distribution_base->evaluate( 1.0 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( value, 4.9893440508832e-24, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
