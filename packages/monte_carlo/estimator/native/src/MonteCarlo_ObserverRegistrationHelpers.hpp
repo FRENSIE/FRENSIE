@@ -35,6 +35,12 @@ struct ObserverRegistrationHelper
   static void registerObserverWithTag(
 			      Teuchos::RCP<Observer>& observer,
 			      const Teuchos::Array<EntityHandle>& entity_ids );
+
+  /*! Register the global observer with the global dispatcher associated with
+   * BeginEventTag tag
+   */
+  template<typename Observer>
+  static void registerGlobalObserverWithTag( Teuchos::RCP<Observer>& observer);
 };
 
 //! Struct for ending iteration through all event tags
@@ -46,12 +52,20 @@ struct ObserverRegistrationHelper<EndEventTagIterator,EndEventTagIterator>
   static void registerObserverWithTag(
 			      Teuchos::RCP<Observer>& observer,
 			      const Teuchos::Array<EntityHandle>& entity_ids );
+
+  //! End global registration iteration
+  template<typename Observer>
+  static void registerGlobalObserverWithTag( Teuchos::RCP<Observer>& observer);
 };
 
 //! Register an observer with the appropriate dispatcher
 template<typename Observer, typename EntityHandle>
 void registerObserver( Teuchos::RCP<Observer>& observer,
 		       const Teuchos::Array<EntityHandle>& entity_ids );
+
+//! Register a global observer with the appropriate dispatcher
+template<typename Observer>
+void registerGlobalObserver( Teuchos::RCP<Observer>& observer );
 
 /*! Register an observer with the appropriate particle colliding in cell event 
  * dispatcher
@@ -94,11 +108,23 @@ inline void registerObserver(
 			 const Teuchos::Array<EntityHandle>& entity_ids,
 			 ParticleSubtrackEndingInCellEventObserver::EventTag );
 
+/*! Register a global observer with the appropraite particle subtrack ending
+ * global event dispatcher
+ */
+template<typename Observer>
+inline void registerGlobalObserver( 
+			 Teuchos::RCP<Observer>& observer,
+			 ParticleSubtrackEndingGlobalEventObserver::EventTag );
+
 } // end MonteCarlo namespace
 
 //! Macro for simple registering of observers
 #define REGISTER_OBSERVER_WITH_DISPATCHERS( observer, entity_ids ) \
   MonteCarlo::registerObserver( observer, entity_ids ) 
+
+//! Macro for simple registering of global observers
+#define REGISTER_GLOBAL_OBSERVER_WITH_DISPATCHERS( observer ) \
+  MonteCarlo::registerGlobalObserver( observer )
 
 //---------------------------------------------------------------------------//
 // Template includes.

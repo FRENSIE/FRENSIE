@@ -30,6 +30,23 @@ ObserverRegistrationHelper<BeginEventTagIterator,
 								  entity_ids );
 }
 
+// Register the global observer with the global dispatcher associated with
+// BeginEventTag tag
+template<typename BeginEventTagIterator, typename EndEventTagIterator>
+template<typename Observer>
+inline void
+ObserverRegistrationHelper<BeginEventTagIterator,
+			   EndEventTagIterator>::registerGlobalObserverWithTag(
+					     Teuchos::RCP<Observer>& observer )
+{
+  registerObserver( observer,
+		    typename boost::mpl::deref<BeginEventTagIterator>::type());
+
+  ObserverRegistrationHelper<typename boost::mpl::next<BeginEventTagIterator>::type,
+			     EndEventTagIterator>::registerObserverWithTag(
+								    observer );
+}
+
 // End registration iteration
 template<typename EndEventTagIterator>
 template<typename Observer, typename EntityHandle>
@@ -38,6 +55,15 @@ ObserverRegistrationHelper<EndEventTagIterator,
 			   EndEventTagIterator>::registerObserverWithTag(
 			       Teuchos::RCP<Observer>& observer,
 			       const Teuchos::Array<EntityHandle>& entity_ids )
+{ /* ... */ }
+
+// End global registration iteration
+template<typename EndEventTagIterator>
+template<typename Observer>
+inline void
+ObserverRegistrationHelper<EndEventTagIterator,
+			   EndEventTagIterator>::registerGlobalObserverWithTag(
+					     Teuchos::RCP<Observer>& observer )
 { /* ... */ }
 
 //! Register an observer with the appropriate dispatcher
@@ -54,6 +80,20 @@ inline void registerObserver( Teuchos::RCP<Observer>& observer,
                              EndEventTagIterator>::registerObserverWithTag(
 								  observer,
 								  entity_ids );
+}
+
+//! Register a global observer with the appropriate dispatcher
+template<typename Observer>
+inline void registerGlobalObserver( Teuchos::RCP<Observer>& observer )
+{
+  typedef typename boost::mpl::begin<typename Observer::EventTags>::type
+    BeginEventTagIterator;
+  typedef typename boost::mpl::end<typename Observer::EventTags>::type
+    EndEventTagIterator;
+
+  ObserverRegistrationHelper<BeginEventTagIterator,
+			   EndEventTagIterator>::registerGlobalObserverWithTag(
+								    observer );
 }
 
 /* Register an observer with the appropriate particle colliding in cell event 
@@ -153,7 +193,7 @@ inline void registerObserver(
 			  const Teuchos::Array<EntityHandle>& entity_ids,
 			  ParticleSubtrackEndingInCellEventObserver::EventTag )
 {
-  // Make sure the Observer class has the corrent event tag
+  // Make sure the Observer class has the expected event tag
   testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleSubtrackEndingInCellEventObserver::EventTag>::value));
   
   Teuchos::RCP<ParticleSubtrackEndingInCellEventObserver> observer_base = 
@@ -167,6 +207,25 @@ inline void registerObserver(
 							     observer->getId(),
 							     observer_base );
   }
+}
+
+/* Register a global observer with the appropraite particle subtrack ending
+ * global event dispatcher
+ */
+template<typename Observer>
+inline void registerGlobalObserver( 
+			 Teuchos::RCP<Observer>& observer,
+			 ParticleSubtrackEndingGlobalEventObserver::EventTag )
+{
+  // Make sure the Observer class has the expected event tag
+  testStaticPrecondition((boost::mpl::contains<typename Observer::EventTags,ParticleSubtrackEndingGlobalEventObserver::EventTag>::value));
+
+  Teuchos::RCP<ParticleSubtrackEndingGlobalEventObserver> observer_base = 
+    observer;
+
+  ParticleSubtrackEndingGlobalEventDispatcher::attachObserver(
+							     observer->getId(),
+							     observer_base );
 }
 
 } // end MonteCarlo namespace
