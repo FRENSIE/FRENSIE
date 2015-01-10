@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set the Continuous Integration Build Directory
-CI_BUILD_DIR=/home/software/frensie-ci/build/
+CI_BUILD_DIR=${CMAKE_BINARY_DIR}
 
 ##---------------------------------------------------------------------------##
 ## Don't modify anything below this line!
