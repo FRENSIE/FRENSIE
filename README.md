@@ -259,5 +259,7 @@ A private [dashboard](http://cdash.ep.wisc.edu) has been set up for developers. 
 
 To set up a dashboard client, simply set the dashboard client setup configure option to on (e.g. `-D SETUP_DASHBOARD_CLIENT:BOOL=ON`). This will add three new make targets: `make Experimental`, `make Nightly` and `make Continuous`. The experimental target should be used to test that the client has been set up correctly. The nightly and continuous targets can be executed on the client machine at regular intervals using cron and crontab (if on a Linux system).
 
+Several scripts can also be found in the scripts directory for running a continuous integration build and a nightly build.
+
 ## Feedback
 If any issues are encountered during the build process please direct your questions to [Alex Robinson](https://github.com/aprobinson)
