@@ -399,7 +399,7 @@ void ElectroatomCore::createProcessedTotalReaction(
   total_cross_section_copy.deepCopy( total_cross_section() );
 
   total_reaction.reset(
-      new StandardElectroatomicReaction<InterpPolicy,true>(
+      new AbsorptionElectroatomicReaction<InterpPolicy,true>(
 				                energy_grid,
 						        total_cross_section_copy,
 				                total_threshold_energy_index,

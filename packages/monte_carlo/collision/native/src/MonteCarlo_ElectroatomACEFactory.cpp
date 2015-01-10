@@ -28,6 +28,8 @@ void ElectroatomACEFactory::createElectroatomCore(
             const Data::XSSEPRDataExtractor& raw_electroatom_data,
             const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
             Teuchos::RCP<ElectroatomCore>& electroatom_core,
+            const double cutoff_angle_cosine,
+            const bool use_detailed_bremsstrahlung_data,
             const bool use_atomic_relaxation_data )
 {
   // Make sure the atomic relaxation model is valid
@@ -41,6 +43,18 @@ void ElectroatomACEFactory::createElectroatomCore(
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( raw_electroatom_data.extractElectronEnergyGrid() );
 
+  // Create the hard elastic scattering reaction
+  {
+    Electroatom::ReactionMap::mapped_type& reaction_pointer = 
+      scattering_reactions[ELASTIC_ELECTROATOMIC_REACTION];
+
+    ElectroatomicReactionACEFactory::createHardElasticReaction(
+					   raw_electroatom_data,
+					   energy_grid,
+					   reaction_pointer,
+					   cutoff_angle_cosine );
+  }
+
   // Create the bremsstrahlung scattering reaction
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
@@ -50,7 +64,7 @@ void ElectroatomACEFactory::createElectroatomCore(
 						 raw_electroatom_data,
 						 energy_grid,
 						 reaction_pointer,
-						 use_doppler_broadening_data );
+                         use_detailed_bremsstrahlung_data);
   }
   
   // Create the atomic excitation scattering reaction
@@ -63,69 +77,51 @@ void ElectroatomACEFactory::createElectroatomCore(
 	                           energy_grid,
                                reaction_pointer );
   }
-  
-  // Create the pair production reaction
-  {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer = 
-      scattering_reactions[PAIR_PRODUCTION_ELECTROATOMIC_REACTION];
-
-    ElectroatomicReactionACEFactory::createPairProductionReaction(
-					   raw_electroatom_data,
-					   energy_grid,
-					   reaction_pointer,
-					   use_detailed_pair_production_data );
-  }
-  
-  // Create the photoelectric reaction(s)
+    
+  // Create the electroionization reaction(s)
   if( use_atomic_relaxation_data )
   {
     Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> > reaction_pointers;
 
-    ElectroatomicReactionACEFactory::createSubshellElectroelectricReactions(
+    ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
 							   raw_electroatom_data,
 							   energy_grid,
 							   reaction_pointers );
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
     {
-      absorption_reactions[reaction_pointers[i]->getReactionType()] = 
-	reaction_pointers[i];
+      scattering_reactions[reaction_pointers[i]->getReactionType()] = 
+        reaction_pointers[i];
     }
   }
   else
   {
+   /*! \todo Get data for Total Electroionization Reaction
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
-      absorption_reactions[TOTAL_ELECTROELECTRIC_ELECTROATOMIC_REACTION];
+      scattering_reactions[TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionACEFactory::createTotalElectroelectricReaction(
 							    raw_electroatom_data,
 							    energy_grid,
 							    reaction_pointer );
+   */
   }
-
-  // Create the heating reaction
-  Electroatom::ReactionMap::mapped_type& reaction_pointer = 
-      absorption_reactions[HEATING_ELECTROATOMIC_REACTION];
-
-  ElectroatomicReactionACEFactory::createHeatingReaction( raw_electroatom_data,
-							energy_grid,
-							reaction_pointer );
 			
   // Create the electroatom core
   electroatom_core.reset( new ElectroatomCore( energy_grid,
-					   scattering_reactions,
-					   absorption_reactions,
-					   atomic_relaxation_model,
-					   true,
-					   Utility::LogLog() ) );	   
+                                               scattering_reactions,
+                                               absorption_reactions,
+                                               atomic_relaxation_model,
+                                               false,
+                                               Utility::LinLin() ) );	   
 }
 
 // Create a electroatom (using the provided atomic relaxation model)
 /*! \details The provided atomic relaxation model will be used with this
  * atom. Special care must be taken to assure that the model corresponds to
  * the atom of interest. If the use of atomic relaxation data has been
- * requested, a photoelectric reaction for each subshell will be created. 
- * Otherwise a single total photoelectric reaction will be created.
+ * requested, a electroionization reaction for each subshell will be created. 
+ * Otherwise a single total electroionization reaction will be created.
  */
 void ElectroatomACEFactory::createElectroatom(
 	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
@@ -133,8 +129,8 @@ void ElectroatomACEFactory::createElectroatom(
 	    const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Electroatom>& electroatom,
-	    const bool use_doppler_broadening_data,
-	    const bool use_detailed_pair_production_data,
+        const double cutoff_angle_cosine,
+        const bool use_detailed_bremsstrahlung_data,
 	    const bool use_atomic_relaxation_data )
 {
   // Make sure the atomic weight is valid
@@ -144,12 +140,12 @@ void ElectroatomACEFactory::createElectroatom(
   
   Teuchos::RCP<ElectroatomCore> core;
 
-  ElectroatomACEFactory::createElectroatomCore( raw_electroatom_data,
-					    atomic_relaxation_model,
-					    core,
-					    use_doppler_broadening_data,
-					    use_detailed_pair_production_data,
-					    use_atomic_relaxation_data );
+  ElectroatomACEFactory::createElectroatomCore(raw_electroatom_data,
+                                               atomic_relaxation_model,
+                                               core,
+                                               cutoff_angle_cosine,
+                                               use_detailed_bremsstrahlung_data,
+                                               use_atomic_relaxation_data );
 					    
   // Create the electroatom
   electroatom.reset( new Electroatom( electroatom_name,
