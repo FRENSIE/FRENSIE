@@ -31,6 +31,8 @@ public:
 	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<ElectroatomCore>& electroatom_core,
+        const double cutoff_angle_cosine,
+        const bool use_detailed_bremsstrahlung_data,
 	    const bool use_atomic_relaxation_data );
 
   //! Create a electroatom (using the provided atomic relaxation model)
@@ -40,6 +42,8 @@ public:
 	    const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Electroatom>& electroatom,
+        const double cutoff_angle_cosine,
+        const bool use_detailed_bremsstrahlung_data,
 	    const bool use_atomic_relaxation_data );
 private:
 
