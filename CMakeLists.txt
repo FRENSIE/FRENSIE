@@ -135,6 +135,8 @@ ELSE()
 ENDIF()
 
 # Set up the project directory hierarchy
+ADD_SUBDIRECTORY(scripts)
+
 ADD_SUBDIRECTORY(packages)
 INCLUDE_DIRECTORIES(packages/utility/core/src packages/utility/prng/src
 packages/utility/hdf5/src packages/utility/distribution/src
