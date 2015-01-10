@@ -5,7 +5,7 @@
 //! \brief  Sorting algorithm declarations.
 //!
 //---------------------------------------------------------------------------//
-
+ 
 #ifndef UTILITY_SORT_ALGORITHMS_HPP
 #define UTILITY_SORT_ALGORITHMS_HPP
 
