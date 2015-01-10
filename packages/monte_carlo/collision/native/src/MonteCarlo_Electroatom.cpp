@@ -11,21 +11,21 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
-/*
+
 namespace MonteCarlo{
 
-// Return the reactions that are treated as absorption
+// Return the reactions that are treated as scattering
 const boost::unordered_set<ElectroatomicReactionType>& 
-Electroatom::getAbsorptionReactionTypes()
+Electroatom::getScatteringReactionTypes()
 {
-  return ElectroatomCore::absorption_reaction_types;
+  return ElectroatomCore::scattering_reaction_types;
 }
 
 //! Constructor (from a core)
 Electroatom::Electroatom( const std::string& name,
-		      const unsigned atomic_number,
-		      const double atomic_weight,
-		      const ElectroatomCore& core )
+                          const unsigned atomic_number,
+                          const double atomic_weight,
+                          const ElectroatomCore& core )
   : d_name( name ),
     d_atomic_number( atomic_number ),
     d_atomic_weight( atomic_weight ),
@@ -35,7 +35,7 @@ Electroatom::Electroatom( const std::string& name,
   testPrecondition( atomic_weight > 0.0 );
   // There must be at least one reaction specified
   testPrecondition( core.getScatteringReactions().size() +
-		    core.getAbsorptionReactions().size() > 0 );
+                    core.getAbsorptionReactions().size() > 0 );
 }
 
 // Return the atom name
@@ -56,8 +56,8 @@ double Electroatom::getAtomicWeight() const
   return d_atomic_weight;
 }
 
-// Return the total cross section from atomic interactions 
-double Electroatom::getAtomicTotalCrossSection( const double energy ) const
+// Return the total cross section
+double Electroatom::getTotalCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
@@ -66,8 +66,8 @@ double Electroatom::getAtomicTotalCrossSection( const double energy ) const
   return d_core.getTotalReaction().getCrossSection( energy );
 }
 
-// Return the total absorption cross section from atomic interactions
-double Electroatom::getAtomicAbsorptionCrossSection( const double energy ) const
+// Return the total cross section
+double Electroatom::getAbsorptionCrossSection( const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
@@ -94,58 +94,6 @@ double Electroatom::getSurvivalProbability( const double energy ) const
   else
     survival_prob = 1.0;
 
-  // Make sure the survival probability is valid
-  testPostcondition( !ST::isnaninf( survival_prob ) );
-  testPostcondition( survival_prob >= 0.0 );
-  testPostcondition( survival_prob <= 1.0 );
-
-  return survival_prob;
-}
-
-// Return the survival probability from atomic interactions
-double Electroatom::getAtomicSurvivalProbability( const double energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
-
-  double survival_prob;
-  double total_cross_section = this->getAtomicTotalCrossSection( energy );
-  
-  if( total_cross_section > 0.0 )
-  {
-    survival_prob = 1.0 - 
-      this->getAtomicAbsorptionCrossSection( energy )/total_cross_section;
-  }
-  else
-    survival_prob = 1.0;
-
-  // Make sure the survival probability is valid
-  testPostcondition( !ST::isnaninf( survival_prob ) );
-  testPostcondition( survival_prob >= 0.0 );
-  testPostcondition( survival_prob <= 1.0 );
-
-  return survival_prob;
-}
-
-// Return the survival probability from nuclear interactions
-double Electroatom::getNuclearSurvivalProbability( const double energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
-
-  double survival_prob;
-  double total_cross_section = this->getNuclearTotalCrossSection( energy );
-  
-  if( total_cross_section > 0.0 )
-  {
-    survival_prob = 1.0 - 
-      this->getNuclearAbsorptionCrossSection( energy )/total_cross_section;
-  }
-  else
-    survival_prob = 1.0;
-  
   // Make sure the survival probability is valid
   testPostcondition( !ST::isnaninf( survival_prob ) );
   testPostcondition( survival_prob >= 0.0 );
@@ -188,14 +136,14 @@ double Electroatom::getReactionCrossSection(
 
 // Collide with a electron
 void Electroatom::collideAnalogue( ElectronState& electron, 
-				 ParticleBank& bank ) const
+                                   ParticleBank& bank ) const
 {
   double total_cross_section = 
     this->getTotalCrossSection( electron.getEnergy() );
 
   double scaled_random_number = 
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
-    total_cross_section;
+      total_cross_section;
 
   double absorption_cross_section = 
     this->getAbsorptionCrossSection( electron.getEnergy() );
@@ -211,14 +159,14 @@ void Electroatom::collideAnalogue( ElectronState& electron,
   else
   {
     sampleScatteringReaction( scaled_random_number - absorption_cross_section,
-			      electron, 
-			      bank );
+                              electron, 
+                              bank );
   }
 }
 
 // Collide with a electron and survival bias
 void Electroatom::collideSurvivalBias( ElectronState& electron, 
-				     ParticleBank& bank ) const
+                                       ParticleBank& bank ) const
 {
   double total_cross_section = 
     this->getTotalCrossSection( electron.getEnergy() );
@@ -256,8 +204,8 @@ void Electroatom::collideSurvivalBias( ElectronState& electron,
 
 // Sample an absorption reaction
 void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
-					  ElectronState& electron,
-					  ParticleBank& bank ) const
+                                            ElectronState& electron,
+                                            ParticleBank& bank ) const
 {
   double partial_cross_section = 0.0;
   
@@ -277,7 +225,7 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
 
   // Make sure a reaction was selected
   testPostcondition( electroatomic_reaction != 
-		     d_core.getAbsorptionReactions().end() );
+                       d_core.getAbsorptionReactions().end() );
 
   // Undergo reaction selected
   SubshellType subshell_vacancy;
@@ -286,14 +234,14 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
 
   // Relax the atom
   d_core.getAtomicRelaxationModel().relaxAtom( subshell_vacancy,
-					       electron,
-					       bank );
+                                               electron,
+                                               bank );
 }
 
 // Sample a scattering reaction
 void Electroatom::sampleScatteringReaction( const double scaled_random_number,
-					  ElectronState& electron,
-					  ParticleBank& bank ) const
+                                            ElectronState& electron,
+                                            ParticleBank& bank ) const
 {
   double partial_cross_section = 0.0;
   
@@ -313,7 +261,7 @@ void Electroatom::sampleScatteringReaction( const double scaled_random_number,
 
   // Make sure the reaction was found
   testPostcondition( electroatomic_reaction != 
-		     d_core.getScatteringReactions().end() );
+                     d_core.getScatteringReactions().end() );
 
   // Undergo reaction selected
   SubshellType subshell_vacancy;
@@ -322,12 +270,12 @@ void Electroatom::sampleScatteringReaction( const double scaled_random_number,
 
   // Relax the atom
   d_core.getAtomicRelaxationModel().relaxAtom( subshell_vacancy,
-					       electron,
-					       bank );
+                                               electron,
+                                               bank );
 }
 
 } // end MonteCarlo namespace
-*/
+
 //---------------------------------------------------------------------------//
 // end MonteCarlo_Electroatom.cpp
 //---------------------------------------------------------------------------//

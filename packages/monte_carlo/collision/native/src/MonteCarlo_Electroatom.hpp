@@ -19,10 +19,9 @@
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_ScalarTraits.hpp>
-/*
+
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
-#include "MonteCarlo_ElectronuclearReactionType.hpp"
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "MonteCarlo_AtomicRelaxationModel.hpp"
 #include "MonteCarlo_ElectroatomCore.hpp"
@@ -46,9 +45,9 @@ public:
   //! Typedef for the const reaction map
   typedef ElectroatomCore::ConstReactionMap ConstReactionMap;
 
-  //! Return the reactions that are treated as absorption
+  //! Return the reactions that are treated as scattering
   static const boost::unordered_set<ElectroatomicReactionType>& 
-  getAbsorptionReactionTypes();
+  getScatteringReactionTypes();
 					
   //! Constructor 
   template<typename InterpPolicy>
@@ -60,7 +59,7 @@ public:
 	  const ReactionMap& standard_scattering_reactions,
 	  const ReactionMap& standard_absorption_reactions,
 	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	  const bool processed_atomic_cross_sections,
+	  const bool processed_cross_sections,
 	  const InterpPolicy policy );
 
   //! Constructor (from a core)
@@ -71,7 +70,7 @@ public:
 
   //! Destructor
   virtual ~Electroatom()
-  { /* ... * }
+  { /* ... */ }
 
   //! Return the atom name
   const std::string& getAtomName() const;
@@ -97,39 +96,16 @@ public:
   //! Return the total cross section at the desired energy
   double getTotalCrossSection( const double energy ) const;
 
-  //! Return the total cross section from atomic interactions 
-  double getAtomicTotalCrossSection( const double energy ) const;
-
-  //! Return the total cross section from nuclear interactions
-  virtual double getNuclearTotalCrossSection( const double energy ) const;
-
   //! Return the total absorption cross section at the desired energy
   double getAbsorptionCrossSection( const double energy ) const;
 
-  //! Return the total absorption cross section from atomic interactions
-  double getAtomicAbsorptionCrossSection( const double energy ) const;
-
-  //! Return the total absorption cross section from nuclear interactions
-  virtual double getNuclearAbsorptionCrossSection( const double energy ) const;
-
   //! Return the survival probability at the desired energy
   double getSurvivalProbability( const double energy ) const;
-
-  //! Return the survival probability from atomic interactions
-  double getAtomicSurvivalProbability( const double energy ) const;
-
-  //! Return the survival probability from nuclear interactions
-  double getNuclearSurvivalProbability( const double energy ) const;
 
   //! Return the cross section for a specific electroatomic reaction
   double getReactionCrossSection( 
 			        const double energy,
 			        const ElectroatomicReactionType reaction ) const;
-  
-  //! Return the cross section for a specific electronuclear reaction
-  virtual double getReactionCrossSection(
-			       const double energy,
-			       const ElectronuclearReactionType reaction ) const;
 
   //! Collide with a electron
   virtual void collideAnalogue( ElectronState& electron, 
@@ -146,13 +122,13 @@ private:
 
   // Sample an absorption reaction
   void sampleAbsorptionReaction( const double scaled_random_number,
-				 ElectronState& electron,
-				 ParticleBank& bank ) const;
+                                 ElectronState& electron,
+                                 ParticleBank& bank ) const;
 
   // Sample a scattering reaction
   void sampleScatteringReaction( const double scaled_random_number,
-				 ElectronState& electron,
-				 ParticleBank& bank ) const;
+                                 ElectronState& electron,
+                                 ParticleBank& bank ) const;
 
   // The atom name
   std::string d_name;
@@ -189,57 +165,8 @@ inline unsigned Electroatom::getIsomerNumber() const
 /*! \details This information is irrelevant for electroatomic reactions. However,
  * it my be important for photonuclear reactions where Doppler broadening of
  * cross sections may be necessary.
- *
+ */
 inline double Electroatom::getTemperature() const
-{
-  return 0.0;
-}
-
-// Return the total cross section at the desired energy
-inline double Electroatom::getTotalCrossSection( const double energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( energy > 0.0 );
-  
-  return this->getAtomicTotalCrossSection( energy ) +
-    this->getNuclearTotalCrossSection( energy );
-}
-
-// Return the total cross section from nuclear interactions
-/*! \details By default, electronuclear reactions are not considered.
- *
-inline double Electroatom::getNuclearTotalCrossSection( 
-						    const double energy ) const
-{
-  return 0.0;
-}
-
-// Return the total absorption cross section at the desired energy
-inline double Electroatom::getAbsorptionCrossSection( const double energy ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
-
-  return this->getAtomicAbsorptionCrossSection( energy ) +
-    this->getNuclearAbsorptionCrossSection( energy );
-}
-
-// Return the total absorption cross section from nuclear interactions
-/*! \details By default, electronuclear reactions are not considered.
- *
-inline double 
-Electroatom::getNuclearAbsorptionCrossSection( const double energy ) const
-{
-  return 0.0;
-} 
-
-// Return the cross section for a specific electronuclear reaction
-/*! \details By default, electronuclear reactions are not considered.
- *
-inline double Electroatom::getReactionCrossSection(
-			       const double energy,
-			       const ElectronuclearReactionType reaction ) const
 {
   return 0.0;
 }
@@ -251,7 +178,7 @@ inline const ElectroatomCore& Electroatom::getCore() const
 }
 
 } // end MonteCarlo namespace
-*/
+
 //---------------------------------------------------------------------------//
 // Template Includes
 //---------------------------------------------------------------------------//
