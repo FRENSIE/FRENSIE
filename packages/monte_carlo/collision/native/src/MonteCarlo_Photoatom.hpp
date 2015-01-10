@@ -60,7 +60,7 @@ public:
 	  const ReactionMap& standard_scattering_reactions,
 	  const ReactionMap& standard_absorption_reactions,
 	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	  const bool processed_atomic_cross_sections,
+	  const bool processed_cross_sections,
 	  const InterpPolicy policy );
 
   //! Constructor (from a core)
@@ -97,20 +97,8 @@ public:
   //! Return the total cross section at the desired energy
   double getTotalCrossSection( const double energy ) const;
 
-  //! Return the total cross section from atomic interactions 
-  double getAtomicTotalCrossSection( const double energy ) const;
-
-  //! Return the total cross section from nuclear interactions
-  virtual double getNuclearTotalCrossSection( const double energy ) const;
-
   //! Return the total absorption cross section at the desired energy
   double getAbsorptionCrossSection( const double energy ) const;
-
-  //! Return the total absorption cross section from atomic interactions
-  double getAtomicAbsorptionCrossSection( const double energy ) const;
-
-  //! Return the total absorption cross section from nuclear interactions
-  virtual double getNuclearAbsorptionCrossSection( const double energy ) const;
 
   //! Return the survival probability at the desired energy
   double getSurvivalProbability( const double energy ) const;
@@ -130,7 +118,6 @@ public:
   virtual double getReactionCrossSection(
 			       const double energy,
 			       const PhotonuclearReactionType reaction ) const;
-
   //! Collide with a photon
   virtual void collideAnalogue( PhotonState& photon, 
 				ParticleBank& bank ) const;
@@ -153,7 +140,7 @@ private:
   void sampleScatteringReaction( const double scaled_random_number,
 				 PhotonState& photon,
 				 ParticleBank& bank ) const;
-
+  
   // The atom name
   std::string d_name;
 

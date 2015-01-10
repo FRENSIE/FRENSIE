@@ -334,7 +334,7 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
   Teuchos::ArrayView<const double> breme_block = 
     raw_electroatom_data.extractBREMEBlock();
 
-  // Create the elastic scattering distributions
+  // Create the bremsstrahlung scattering distributions
   Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
     energy_loss_distribution( N );
   

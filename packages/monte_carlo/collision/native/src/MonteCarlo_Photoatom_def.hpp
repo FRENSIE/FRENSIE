@@ -24,7 +24,7 @@ Photoatom::Photoatom(
 	  const Photoatom::ReactionMap& standard_scattering_reactions,
 	  const Photoatom::ReactionMap& standard_absorption_reactions,
 	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
-	  const bool processed_atomic_cross_sections,
+	  const bool processed_cross_sections,
 	  const InterpPolicy policy )
   : d_name( name ),
     d_atomic_number( atomic_number ),
@@ -36,10 +36,11 @@ Photoatom::Photoatom(
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
+                                                      energy_grid.end() ) );
   // There must be at least one reaction specified
   testPrecondition( standard_scattering_reactions.size() +
 		    standard_absorption_reactions.size() > 0 );
+
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );  
 

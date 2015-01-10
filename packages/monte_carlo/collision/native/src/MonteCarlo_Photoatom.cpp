@@ -35,7 +35,7 @@ Photoatom::Photoatom( const std::string& name,
   testPrecondition( atomic_weight > 0.0 );
   // There must be at least one reaction specified
   testPrecondition( core.getScatteringReactions().size() +
-		    core.getAbsorptionReactions().size() > 0 );
+                    core.getAbsorptionReactions().size() > 0 );
 }
 
 // Return the atom name
@@ -195,7 +195,7 @@ void Photoatom::collideAnalogue( PhotonState& photon,
 
   double scaled_random_number = 
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
-    total_cross_section;
+      total_cross_section;
 
   double absorption_cross_section = 
     this->getAbsorptionCrossSection( photon.getEnergy() );
@@ -278,7 +278,7 @@ void Photoatom::sampleAbsorptionReaction( const double scaled_random_number,
   // Make sure a reaction was selected
   testPostcondition( photoatomic_reaction != 
 		     d_core.getAbsorptionReactions().end() );
-
+  
   // Undergo reaction selected
   SubshellType subshell_vacancy;
   
