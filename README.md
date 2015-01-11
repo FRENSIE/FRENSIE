@@ -257,7 +257,13 @@ Note: There are several other configure options that can be changed in the frens
 ## Dashboard
 A private [dashboard](http://cdash.ep.wisc.edu) has been set up for developers. Please register with the dashboard and send an email to [Alex Robinson](https://github.com/aprobinson) indicating that you would like to have access to the dashboard.
 
-To set up a dashboard client, simply set the dashboard client setup configure option to on (e.g. `-D SETUP_DASHBOARD_CLIENT:BOOL=ON`). This will add three new make targets: `make Experimental`, `make Nightly` and `make Continuous`. The experimental target should be used to test that the client has been set up correctly. The nightly and continuous targets can be executed on the client machine at regular intervals using cron and crontab (if on a Linux system).
+To set up a dashboard client, simply set the dashboard client setup configure option to on (e.g. `-D SETUP_DASHBOARD_CLIENT:BOOL=ON`). This will add three new make targets: `make Experimental`, `make Nightly` and `make Continuous`. The experimental target should be used to test that the client has been set up correctly. The nightly and continuous targets can be executed on the client machine at regular intervals using cron and crontab (if on a Linux system). However, it is recommended that these targets are never used and instead the shell scripts frensie-run-nightly.sh and frensie-run-ci.sh (found in the scripts directory) are used. Because cron only loads a few environment variables when it executes commands, it is necessary to write shell scripts that load the necessary environment variables, which is what the two scripts do. 
+
+Before setting up the crontab entries, a separate frensie build should be created (following the steps above) for nightly builds (e.g. software/frensie-nightly) and for continuous builds (e.g. software/frensie-ci, if a continuous integration system is desired). Once those builds have been completed, the crontab entries can be created by executing `crontab -e`. This will open up the table with the default text editor. At the bottom of this file, add the following lines:
+* `0 1 * * * abs-path-to-nightly-build-dir/frensie-run-nightly.sh`
+* `*/5 * * * * abs-path-to-ci-build-dir/frensie-run-ci.sh`
+
+The second line can be omitted if the client will only do nightly builds. Note that the first line tells cron to run the nightly script every day at 1:00 AM. The second line tells cron to run the ci script every 5 minutes (if no changes to the master branch have occured nothing happens).
 
 ## Feedback
 If any issues are encountered during the build process please direct your questions to [Alex Robinson](https://github.com/aprobinson)

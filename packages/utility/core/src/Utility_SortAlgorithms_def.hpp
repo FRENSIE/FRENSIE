@@ -38,7 +38,8 @@ bool isSortedAscending( Iterator start, Iterator end )
   {
     if( get<member>( *element_a ) > get<member>( *element_b ) )
     {
-      is_sorted = false;
+      is_sorted = false;      
+      
       break;
     }
 
