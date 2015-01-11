@@ -153,6 +153,110 @@ TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution, evaluate )
   value = distribution_base->evaluate( 1.0 );
 
   UTILITY_TEST_FLOATING_EQUALITY( value, 4.9893440508832e-24, 1e-12 );
+
+  value = distribution_base->evaluate( 1.01 );
+
+  TEST_EQUALITY_CONST( value, 0.0 );
+
+  distribution->setEnergy( 
+		  Utility::PhysicalConstants::electron_rest_mass_energy*0.25 );
+
+  value = distribution_base->evaluate( 0.49 );
+
+  TEST_EQUALITY_CONST( value, 0.0 );
+
+  value = distribution_base->evaluate( 0.5 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( value, 2.4946720254416257e-24, 1e-12 );
+
+  value = distribution_base->evaluate( 1.0 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( value, 1.9957376203533005e-24, 1e-12 );
+
+  value = distribution_base->evaluate( 1.01 );
+
+  TEST_EQUALITY_CONST( value, 0.0 );
+
+  distribution->setEnergy(
+		   Utility::PhysicalConstants::electron_rest_mass_energy*0.4 );
+
+  value = distribution_base->evaluate( 0.79 );
+
+  TEST_EQUALITY_CONST( value, 0.0 );
+
+  value = distribution_base->evaluate( 0.8 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( value, 8.107684082685284e-25, 1e-12 );
+
+  value = distribution_base->evaluate( 1.0 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( value, 1.247336012720813e-24, 1e-12 );
+
+  value = distribution_base->evaluate( 1.01 );
+
+  TEST_EQUALITY_CONST( value, 0.0 );
+
+  // Set a new max energy
+  distribution.reset(
+	   new Utility::AdjointKleinNishinaDistribution( 
+		Utility::PhysicalConstants::electron_rest_mass_energy*0.4,
+		Utility::PhysicalConstants::electron_rest_mass_energy*12.0 ) );
+
+  distribution_base = distribution;
+
+  value = distribution_base->evaluate( 0.19 );
+
+  TEST_EQUALITY_CONST( value, 0.0 );
+
+  value = distribution_base->evaluate( 0.2 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( value, 3.2430736330741126e-24, 1e-12 );
+
+  value = distribution_base->evaluate( 1.0 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( value, 1.247336012720813e-24, 1e-12 );
+
+  value = distribution_base->evaluate( 1.01 );
+
+  TEST_EQUALITY_CONST( value, 0.0 );
+
+  distribution->setEnergy( 
+		  Utility::PhysicalConstants::electron_rest_mass_energy*0.48 );
+
+  value = distribution_base->evaluate( 0.039 );
+
+  TEST_EQUALITY_CONST( value, 0.0 );
+
+  value = distribution_base->evaluate( 0.04 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( value, 1.3013872399387147e-23, 1e-12 );
+
+  value = distribution_base->evaluate( 1.0 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( value, 1.0394466772673439e-24, 1e-12 );
+
+  value = distribution_base->evaluate( 1.01 );
+  
+  TEST_EQUALITY_CONST( value, 0.0 );
+
+  distribution->setEnergy(
+		   Utility::PhysicalConstants::electron_rest_mass_energy*2.4 );
+
+  value = distribution_base->evaluate( 0.19 );
+
+  TEST_EQUALITY_CONST( value, 0.0 );
+
+  value = distribution_base->evaluate( 0.2 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( value, 4.827652345530553e-25, 1e-12 );
+
+  value = distribution_base->evaluate( 1.0 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( value, 2.078893354534688e-25, 1e-12 );
+
+  value = distribution_base->evaluate( 1.01 );
+
+  TEST_EQUALITY_CONST( value, 0.0 );
 }
 
 //---------------------------------------------------------------------------//

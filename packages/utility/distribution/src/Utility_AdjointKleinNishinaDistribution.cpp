@@ -139,12 +139,8 @@ double AdjointKleinNishinaDistribution::evaluateIntegratedCrossSection() const
 double AdjointKleinNishinaDistribution::evaluate( 
 					   const double indep_var_value ) const
 {
-  // Make sure the independent variable is valid
-  testPrecondition( indep_var_value <= 1.0 );
-  testPrecondition( indep_var_value >= d_min_energy_loss_ratio );
-  
   if( indep_var_value >= d_min_energy_loss_ratio &&
-      indep_var_value < 1.0 )
+      indep_var_value <= 1.0 )
   {
     double alpha_squared = d_alpha*d_alpha;
     
