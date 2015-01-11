@@ -129,6 +129,7 @@ ADD_UNINSTALL_TARGET()
 
 # Set up the testing dashboard
 IF(${SETUP_DASHBOARD_CLIENT})
+  SET(DART_TESTING_TIMEOUT "43200" CACHE STRING "Amount of time (s) to wait for processes to complete during testing." FORCE)
   INCLUDE(CTest)
 ELSE()
   ENABLE_TESTING()
