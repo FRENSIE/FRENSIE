@@ -163,10 +163,6 @@ double AdjointKleinNishinaDistribution::evaluate(
 double AdjointKleinNishinaDistribution::evaluatePDF( 
 					   const double indep_var_value ) const
 {
-  // Make sure the independent variable is valid
-  testPrecondition( indep_var_value <= 1.0 );
-  testPrecondition( indep_var_value >= d_min_energy_loss_ratio );
-  
   return this->evaluate( indep_var_value )/
     this->evaluateIntegratedCrossSection();
 }
@@ -175,14 +171,6 @@ double AdjointKleinNishinaDistribution::evaluatePDF(
 double AdjointKleinNishinaDistribution::evaluateEnergyPDF(
 					   const double outgoing_energy ) const
 {
-  // Make sure the outgoing energy is valid
-  remember( double energy = 
-	    d_alpha*PhysicalConstants::electron_rest_mass_energy );
-  remember( double energy_max = 
-	    d_alpha_max*PhysicalConstants::electron_rest_mass_energy );
-  testPrecondition( outgoing_energy <= energy_max );
-  testPrecondition( outgoing_energy >= energy );
-
   double energy_loss_ratio = 
     d_alpha*PhysicalConstants::electron_rest_mass_energy/outgoing_energy;
   
@@ -222,7 +210,7 @@ double AdjointKleinNishinaDistribution::sample(
   double term_1 = -3.0*log_min_energy_loss_ratio*alpha_squared*
     (1.0 - d_min_energy_loss_ratio);
   
-  double term_2 = -3.0/2.0*alpha_squared*
+  double term_2 = 3.0/2.0*alpha_squared*
     (1.0 - d_min_energy_loss_ratio*d_min_energy_loss_ratio);
   
   double term_3_arg = d_min_energy_loss_ratio - 1.0 + d_alpha;
@@ -231,14 +219,14 @@ double AdjointKleinNishinaDistribution::sample(
   double denom = term_1+term_2+term_3;
   
   double sampled_energy_loss_ratio;
-
+  
   while( true )
   {
     ++number_of_trials;
     
     double scaled_random_number = 
       RandomNumberGenerator::getRandomNumber<double>()*denom;
-
+    
     if( scaled_random_number < term_1 )
     {
       sampled_energy_loss_ratio = 
@@ -247,16 +235,19 @@ double AdjointKleinNishinaDistribution::sample(
 
       double rejection_cutoff = (1.0 - sampled_energy_loss_ratio)/
 	(1.0 - d_min_energy_loss_ratio);
-
-      if( RandomNumberGenerator::getRandomNumber<double>() >= rejection_cutoff)
+      
+      if( RandomNumberGenerator::getRandomNumber<double>() <= rejection_cutoff)
 	break;
     }
-    else if( scaled_random_number < term_2 )
+    else if( scaled_random_number < term_1 + term_2 )
     {
+      double min_energy_loss_ratio_squared = 
+	d_min_energy_loss_ratio*d_min_energy_loss_ratio;
+      
       sampled_energy_loss_ratio = 
 	sqrt( RandomNumberGenerator::getRandomNumber<double>()*
-	      (1.0 - d_min_energy_loss_ratio)*(1.0 - d_min_energy_loss_ratio) +
-	      d_min_energy_loss_ratio*d_min_energy_loss_ratio );
+	      (1.0 - min_energy_loss_ratio_squared) +
+	      min_energy_loss_ratio_squared );
       
       break;
     }
@@ -268,9 +259,25 @@ double AdjointKleinNishinaDistribution::sample(
       double arg_2 = RandomNumberGenerator::getRandomNumber<double>()*
 	(d_alpha*d_alpha*d_alpha - arg_1_cubed) + arg_1_cubed;
       
+      // Check for a negative argument (acceptable since taking cubed root)
+      if( arg_2 < 0.0 )
+	sampled_energy_loss_ratio = 1.0 - d_alpha - pow( fabs(arg_2), 1/3.0 ); 
+      else
+	sampled_energy_loss_ratio = 1.0 - d_alpha + pow( arg_2, 1/3.0 );
+      
       break;
     }
   }
+
+  // Make sure all of the branching values were positive
+  testPostcondition( term_1 >= 0.0 );
+  testPostcondition( term_2 >= 0.0 );
+  testPostcondition( term_3 >= 0.0 );
+  testPostcondition( term_1+term_2+term_3 > 0.0 );
+  // Make sure the sampled value is valid
+  testPostcondition( !ST::isnaninf( sampled_energy_loss_ratio ) );
+  testPostcondition( sampled_energy_loss_ratio <= 1.0 );
+  testPostcondition( sampled_energy_loss_ratio >= d_min_energy_loss_ratio );
 
   return sampled_energy_loss_ratio;
 }
@@ -278,7 +285,10 @@ double AdjointKleinNishinaDistribution::sample(
 // Return the sampling efficiency from the distribution
 double AdjointKleinNishinaDistribution::getSamplingEfficiency() const
 {
-  return (double)d_trials/d_samples;
+  if( d_trials > 0 )
+    return (double)d_samples/d_trials;
+  else
+    return 1.0;
 }
 
 // Return the upper bound of the distribution independent variable
