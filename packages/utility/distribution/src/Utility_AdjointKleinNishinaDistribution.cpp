@@ -106,10 +106,28 @@ void AdjointKleinNishinaDistribution::setEnergy( const double energy )
 								  d_alpha_max);
 }
 
+// Get the energy (MeV)
+double AdjointKleinNishinaDistribution::getEnergy() const
+{
+  return d_alpha*PhysicalConstants::electron_rest_mass_energy;
+}
+
+// Get the unitless energy (MeV)
+double AdjointKleinNishinaDistribution::getAlpha() const
+{
+  return d_alpha;
+}
+
 // Get the max energy (MeV)
 double AdjointKleinNishinaDistribution::getMaxEnergy() const
 {
   return d_alpha_max*PhysicalConstants::electron_rest_mass_energy;
+}
+
+// Get the max unitless energy
+double AdjointKleinNishinaDistribution::getMaxAlpha() const
+{
+  return d_alpha_max;
 }
 
 // Evaluate the integrated adjoint Klein-Nishina cross section

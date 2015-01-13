@@ -61,8 +61,17 @@ public:
   //! Set the energy (MeV)
   void setEnergy( const double energy );
 
+  //! Get the energy (MeV)
+  double getEnergy() const;
+
+  //! Get the unitless energy
+  double getAlpha() const;
+
   //! Get the max energy (MeV)
   double getMaxEnergy() const;
+
+  //! Get the max unitless energy
+  double getMaxAlpha() const;
 
   //! Evaluate the integrated adjoint Klein-Nishina cross section
   double evaluateIntegratedCrossSection() const;
