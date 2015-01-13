@@ -153,6 +153,11 @@ Add_EXECUTABLE(tstTetMeshTrackLengthFluxEstimator
 TARGET_LINK_LIBRARIES(tstTetMeshTrackLengthFluxEstimator monte_carlo_estimator_native ${MOAB})
 ADD_TEST(TetMeshTrackLengthFluxEstimator_test tstTetMeshTrackLengthFluxEstimator --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
 
+Add_EXECUTABLE(tstParticleSubtrackEndingGlobalEventDispatcher
+  tstParticleSubtrackEndingGlobalEventDispatcher.cpp)
+TARGET_LINK_LIBRARIES(tstParticleSubtrackEndingGlobalEventDispatcher monte_carlo_estimator_native ${MOAB})
+ADD_TEST(ParticleSubtrackEndingGlobalEventDispatcher_test tstParticleSubtrackEndingGlobalEventDispatcher --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
+
 Add_EXECUTABLE(tstParticleCollidingInCellEventDispatcher
   tstParticleCollidingInCellEventDispatcher.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
