@@ -29,10 +29,6 @@ class ParticleSubtrackEndingGlobalEventDispatcher :
 {
   
 public:
-  
-  //! Constructor
-  ParticleSubtrackEndingGlobalEventDispatcher()
-  { /* ... */ }
 
   //! Destructor
   ~ParticleSubtrackEndingGlobalEventDispatcher()
