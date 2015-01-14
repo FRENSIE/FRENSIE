@@ -19,8 +19,11 @@ const double AdjointKleinNishinaDistribution::cross_section_multiplier =
   PhysicalConstants::pi*PhysicalConstants::classical_electron_radius*
   PhysicalConstants::classical_electron_radius;
 
-// Calculate the min energy loss ratio
-double AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio(
+// Calculate the min inverse energy gain ratio
+/*! \details Alpha is the energy divided by the electron rest mass energy.
+ * Alpha_max is the max energy divided by the electron rest mass energy.
+ */
+double AdjointKleinNishinaDistribution::calculateMinInverseEnergyGainRatio(
 						      const double alpha,
 						      const double alpha_max )
 {
@@ -38,7 +41,7 @@ double AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio(
 AdjointKleinNishinaDistribution::AdjointKleinNishinaDistribution()
   : d_alpha( 0.0 ),
     d_alpha_max( 0.0 ),
-    d_min_energy_loss_ratio( 0.0 ),
+    d_min_inverse_energy_gain_ratio( 0.0 ),
     d_trials( 0u ),
     d_samples( 0u )
 { /* ... */ }
@@ -49,8 +52,8 @@ AdjointKleinNishinaDistribution::AdjointKleinNishinaDistribution(
 						      const double max_energy )
   : d_alpha( energy/PhysicalConstants::electron_rest_mass_energy ),
     d_alpha_max( max_energy/PhysicalConstants::electron_rest_mass_energy ),
-    d_min_energy_loss_ratio( calculateMinEnergyLossRatio( d_alpha,
-							  d_alpha_max) ),
+    d_min_inverse_energy_gain_ratio( 
+		   calculateMinInverseEnergyGainRatio( d_alpha, d_alpha_max) ),
     d_trials( 0u ),
     d_samples( 0u )
 {
@@ -65,7 +68,8 @@ AdjointKleinNishinaDistribution::AdjointKleinNishinaDistribution(
 			 const AdjointKleinNishinaDistribution& dist_instance )
   : d_alpha( dist_instance.d_alpha ),
     d_alpha_max( dist_instance.d_alpha_max ),
-    d_min_energy_loss_ratio( dist_instance.d_min_energy_loss_ratio ),
+    d_min_inverse_energy_gain_ratio( 
+			       dist_instance.d_min_inverse_energy_gain_ratio ),
     d_trials( 0u ),
     d_samples( 0u )
 {
@@ -83,7 +87,8 @@ AdjointKleinNishinaDistribution& AdjointKleinNishinaDistribution::operator=(
   {
     d_alpha = dist_instance.d_alpha;
     d_alpha_max = dist_instance.d_alpha_max;
-    d_min_energy_loss_ratio = dist_instance.d_min_energy_loss_ratio;
+    d_min_inverse_energy_gain_ratio = 
+      dist_instance.d_min_inverse_energy_gain_ratio;
     d_trials = dist_instance.d_trials;
     d_samples = dist_instance.d_samples;
   }
@@ -101,9 +106,10 @@ void AdjointKleinNishinaDistribution::setEnergy( const double energy )
 
   d_alpha = energy/PhysicalConstants::electron_rest_mass_energy;
   
-  d_min_energy_loss_ratio = 
-    AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio( d_alpha,
-								  d_alpha_max);
+  d_min_inverse_energy_gain_ratio = 
+    AdjointKleinNishinaDistribution::calculateMinInverseEnergyGainRatio( 
+								 d_alpha,
+								 d_alpha_max );
 }
 
 // Get the energy (MeV)
@@ -142,22 +148,22 @@ double AdjointKleinNishinaDistribution::evaluateIntegratedCrossSection() const
   double c = (1.0 - 2.0*d_alpha)/alpha_squared;
   
   double min_energy_loss_ratio_squared = 
-    d_min_energy_loss_ratio*d_min_energy_loss_ratio;
+    d_min_inverse_energy_gain_ratio*d_min_inverse_energy_gain_ratio;
 
   double min_energy_loss_ratio_cubed = 
-    d_min_energy_loss_ratio*min_energy_loss_ratio_squared;
+    d_min_inverse_energy_gain_ratio*min_energy_loss_ratio_squared;
 
   return k*( a/3.0*(1.0 - min_energy_loss_ratio_cubed) +
 	     b/2.0*(1.0 - min_energy_loss_ratio_squared) + 
-	     c*(1.0 - d_min_energy_loss_ratio) -
-	     log( d_min_energy_loss_ratio ) );
+	     c*(1.0 - d_min_inverse_energy_gain_ratio) -
+	     log( d_min_inverse_energy_gain_ratio ) );
 }
 
 // Evaluate the distribution
 double AdjointKleinNishinaDistribution::evaluate( 
 					   const double indep_var_value ) const
 {
-  if( indep_var_value >= d_min_energy_loss_ratio &&
+  if( indep_var_value >= d_min_inverse_energy_gain_ratio &&
       indep_var_value <= 1.0 )
   {
     double alpha_squared = d_alpha*d_alpha;
@@ -222,16 +228,16 @@ double AdjointKleinNishinaDistribution::sample() const
 double AdjointKleinNishinaDistribution::sample( 
 					     unsigned& number_of_trials ) const
 {
-  double log_min_energy_loss_ratio = log( d_min_energy_loss_ratio );
+  double log_min_energy_loss_ratio = log( d_min_inverse_energy_gain_ratio );
   double alpha_squared = d_alpha*d_alpha;
   
   double term_1 = -3.0*log_min_energy_loss_ratio*alpha_squared*
-    (1.0 - d_min_energy_loss_ratio);
+    (1.0 - d_min_inverse_energy_gain_ratio);
   
   double term_2 = 3.0/2.0*alpha_squared*
-    (1.0 - d_min_energy_loss_ratio*d_min_energy_loss_ratio);
+    (1.0 - d_min_inverse_energy_gain_ratio*d_min_inverse_energy_gain_ratio);
   
-  double term_3_arg = d_min_energy_loss_ratio - 1.0 + d_alpha;
+  double term_3_arg = d_min_inverse_energy_gain_ratio - 1.0 + d_alpha;
   double term_3 = alpha_squared*d_alpha - term_3_arg*term_3_arg*term_3_arg;
 
   double denom = term_1+term_2+term_3;
@@ -248,11 +254,11 @@ double AdjointKleinNishinaDistribution::sample(
     if( scaled_random_number < term_1 )
     {
       sampled_energy_loss_ratio = 
-	pow( d_min_energy_loss_ratio, 
+	pow( d_min_inverse_energy_gain_ratio, 
 	     RandomNumberGenerator::getRandomNumber<double>() );
 
       double rejection_cutoff = (1.0 - sampled_energy_loss_ratio)/
-	(1.0 - d_min_energy_loss_ratio);
+	(1.0 - d_min_inverse_energy_gain_ratio);
       
       if( RandomNumberGenerator::getRandomNumber<double>() <= rejection_cutoff)
 	break;
@@ -260,7 +266,7 @@ double AdjointKleinNishinaDistribution::sample(
     else if( scaled_random_number < term_1 + term_2 )
     {
       double min_energy_loss_ratio_squared = 
-	d_min_energy_loss_ratio*d_min_energy_loss_ratio;
+	d_min_inverse_energy_gain_ratio*d_min_inverse_energy_gain_ratio;
       
       sampled_energy_loss_ratio = 
 	sqrt( RandomNumberGenerator::getRandomNumber<double>()*
@@ -271,7 +277,7 @@ double AdjointKleinNishinaDistribution::sample(
     }
     else
     {
-      double arg_1 = d_min_energy_loss_ratio - 1.0 + d_alpha;
+      double arg_1 = d_min_inverse_energy_gain_ratio - 1.0 + d_alpha;
       double arg_1_cubed = arg_1*arg_1*arg_1;
       
       double arg_2 = RandomNumberGenerator::getRandomNumber<double>()*
@@ -295,7 +301,7 @@ double AdjointKleinNishinaDistribution::sample(
   // Make sure the sampled value is valid
   testPostcondition( !ST::isnaninf( sampled_energy_loss_ratio ) );
   testPostcondition( sampled_energy_loss_ratio <= 1.0 );
-  testPostcondition( sampled_energy_loss_ratio >= d_min_energy_loss_ratio );
+  testPostcondition( sampled_energy_loss_ratio >= d_min_inverse_energy_gain_ratio );
 
   return sampled_energy_loss_ratio;
 }
@@ -318,7 +324,7 @@ double AdjointKleinNishinaDistribution::getUpperBoundOfIndepVar() const
 // Return the lower bound of the distribution independent variable
 double AdjointKleinNishinaDistribution::getLowerBoundOfIndepVar() const
 {
-  return d_min_energy_loss_ratio;
+  return d_min_inverse_energy_gain_ratio;
 }
 
 // Return the distribution type

@@ -22,8 +22,8 @@ namespace Utility{
  * coupled variables: the outgoing adjoint photon energy and the outgoing
  * adjoint photon scattering angle. Because of the one-to-one correspondence
  * between these two variables, the function can be reduced to a function
- * of a single variable - the energy loss ratio (x = 1 - alpha*(1-mu)). This 
- * variable x will be sampled from the distribution.
+ * of a single variable - the inverse energy gain ratio (x = 1 - alpha*(1-mu)).
+ * This variable x will be sampled from the distribution.
  */
 class AdjointKleinNishinaDistribution : public OneDDistribution
 {
@@ -35,9 +35,9 @@ private:
 
 public:
 
-  //! Calculate the min energy loss ratio
-  static double calculateMinEnergyLossRatio( const double alpha,
-					     const double alpha_max );
+  //! Calculate the min inverse energy gain ratio
+  static double calculateMinInverseEnergyGainRatio( const double alpha,
+						    const double alpha_max );
 
   //! Default constructor
   AdjointKleinNishinaDistribution();
@@ -122,7 +122,7 @@ private:
   double d_alpha_max;
 
   // The min energy loss ratio
-  double d_min_energy_loss_ratio;
+  double d_min_inverse_energy_gain_ratio;
 
   // The number of trials
   unsigned d_trials;
