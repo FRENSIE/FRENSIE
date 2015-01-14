@@ -68,7 +68,7 @@ public:
 				    const double inverse_total_cross_section );
 
   //! Update the global estimators from a collision event
-  static void updateEstimatorsFromParticleCollidingGlobaEvent(
+  static void updateEstimatorsFromParticleCollidingGlobalEvent(
 						 const ParticleState& particle,
 						 const double start_point[3],
 						 const double end_point[3] );
@@ -191,7 +191,7 @@ EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::updateEstimatorsFromPart
 
 // Update the global estimators from a collision event
 inline void 
-EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::updateEstimatorsFromParticleCollidingGlobaEvent(
+EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::updateEstimatorsFromParticleCollidingGlobalEvent(
 						 const ParticleState& particle,
 						 const double start_point[3],
 						 const double end_point[3] )
