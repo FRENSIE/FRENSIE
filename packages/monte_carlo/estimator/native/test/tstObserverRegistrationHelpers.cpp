@@ -163,16 +163,14 @@ void initializeSurfaceCurrentEstimator(
 }
 
 // Initialize the estimator
-void initializeTetMeshEstimator( const unsigned estimator_id,
-                                 Teuchos::RCP<MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> > estimator,
-                                 std::string test_input_mesh_file )
+void initializeTetMeshEstimator( const unsigned estimator_id )
 {
 
-  estimator.reset(
+  tet_mesh_estimator.reset(
   new MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier>(
                          estimator_id,
                          1.0,
-                         test_input_mesh_file,
+                         test_input_mesh_file_name,
                          "unit_cube_output.vtk" ) );
     
   // Assign energy bins
@@ -180,14 +178,14 @@ void initializeTetMeshEstimator( const unsigned estimator_id,
   energy_bin_boundaries[0] = 0.0;
   energy_bin_boundaries[1] = 1.0;
     
-  estimator->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
+  tet_mesh_estimator->setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>(
                              energy_bin_boundaries );     
                              
   // Set the particle types
   Teuchos::Array<MonteCarlo::ParticleType> particle_types ( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
     
-  estimator->setParticleTypes( particle_types );
+  tet_mesh_estimator->setParticleTypes( particle_types );
 }
 
 //---------------------------------------------------------------------------//
@@ -264,7 +262,7 @@ int main( int argc, char** argv )
   surface_ids[0] = 0;
   surface_ids[1] = 1;
   
-  initializeTetMeshEstimator( 10u, tet_mesh_estimator, test_input_mesh_file_name );
+  initializeTetMeshEstimator( 10u );
   
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   
