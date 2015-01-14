@@ -238,13 +238,13 @@ ENDIF()
 IF(${FRENSIE_ENABLE_MPI})
   Add_EXECUTABLE(tstDistributedEstimatorHandler 
     tstDistributedEstimatorHandler.cpp)
-  TARGET_LINK_LIBRARIES(tstDistributedEstimatorHandler monte_carlo_estimator_native)
+  TARGET_LINK_LIBRARIES(tstDistributedEstimatorHandler monte_carlo_estimator_native ${MOAB})
   ADD_TEST(DistributedParallelEstimatorHandler_1_test 
-    ${MPIEXEC} -n 2 tstDistributedEstimatorHandler)
+    ${MPIEXEC} -n 1 tstDistributedEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
   ADD_TEST(DistributedParallelEstimatorHandler_2_test 
-    ${MPIEXEC} -n 2 tstDistributedEstimatorHandler)
+    ${MPIEXEC} -n 2 tstDistributedEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
   ADD_TEST(DistributedParallelEstimatorHandler_4_test 
-    ${MPIEXEC} -n 4 tstDistributedEstimatorHandler)
+    ${MPIEXEC} -n 4 tstDistributedEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
 ENDIF()
 
 ADD_EXECUTABLE(tstEstimatorModuleInterface_Native

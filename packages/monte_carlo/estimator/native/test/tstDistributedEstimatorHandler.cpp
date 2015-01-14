@@ -24,10 +24,12 @@
 #include "MonteCarlo_CellPulseHeightEstimator.hpp"
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
+#include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_ParticleCollidingInCellEventDispatcherDB.hpp"
 #include "MonteCarlo_ParticleCrossingSurfaceEventDispatcherDB.hpp"
 #include "MonteCarlo_ParticleEnteringCellEventDispatcherDB.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingInCellEventDispatcherDB.hpp"
+#include "MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -64,6 +66,9 @@ estimator_9;
 
 Teuchos::RCP<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_10;
+
+Teuchos::RCP<MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
+mesh_estimator;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -156,6 +161,24 @@ void initializeSurfaceCurrentEstimator(
   estimator->setParticleTypes( particle_types );
 }
 
+// Initialize the estimator
+template<typename MeshEstimator>
+void initializeMeshEstimator( const unsigned estimator_id,
+			      const std::string& mesh_file_name,
+			      Teuchos::RCP<MeshEstimator>& estimator )
+{
+  estimator.reset( new MeshEstimator( estimator_id,
+				      1.0,
+				      mesh_file_name,
+				      "unit_cube_output.vtk" ) );
+  
+  // Set the particle types
+  Teuchos::Array<MonteCarlo::ParticleType> particle_types ( 1 );
+  particle_types[0] = MonteCarlo::PHOTON;
+    
+  estimator->setParticleTypes( particle_types );
+}
+
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -218,13 +241,67 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, reduceData )
   TEST_ASSERT( estimator_9->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_10->hasUncommittedHistoryContribution() );
 
+  // Update the mesh estimators
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+
+  double start_point_1[3] = { 0.25, 0.0, 0.75 };
+    double start_point_2[3] = { 0.0, 0.25, 0.75 };
+    double start_point_3[3] = { 0.75, 0.0, 0.25 };
+    double start_point_4[3] = { 0.0, 0.75, 0.25 };
+    double start_point_5[3] = { 0.75, 0.25, 0.0 };
+    double start_point_6[3] = { 0.25, 0.75, 0.0 };
+    
+    double end_point_1[3] = { 0.75, 0.25, 1.0 };
+    double end_point_2[3] = { 0.25, 0.75, 1.0 };
+    double end_point_3[3] = { 1.0, 0.25, 0.75 };
+    double end_point_4[3] = { 0.25, 1.0, 0.75 };
+    double end_point_5[3] = { 1.0, 0.75, 0.25 };
+    double end_point_6[3] = { 0.75, 1.0, 0.25 };
+  
+  MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_1,
+								 end_point_1 );
+  
+    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_2,
+								 end_point_2 );
+
+    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_3,
+								 end_point_3 );
+
+    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_4,
+								 end_point_4 );
+
+    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_5,
+								 end_point_5 );
+    
+    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_6,
+								 end_point_6 );
+
   // Commit the contributions
   MonteCarlo::EstimatorHandler::commitEstimatorHistoryContributions();
 
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
   Teuchos::RCP<const Teuchos::Comm<unsigned long long> > comm = 
     Teuchos::DefaultComm<unsigned long long>::getComm();
@@ -400,6 +477,64 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, reduceData )
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_unused,
 					  raw_bin_data_copy,
 					  1e-15 );
+
+    double track_length = 0.6123724356957940;
+    raw_bin_data_used[0]( procs*track_length, procs*track_length*track_length);
+    
+    const moab::Range all_tet_elements = mesh_estimator->getAllTetElements();
+    moab::Range::const_iterator tet = all_tet_elements.begin();
+    
+    hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					  raw_bin_data_copy,
+					  1e-12 );
+
+    ++tet;
+    
+    hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					  raw_bin_data_copy,
+					  1e-12 );
+
+    ++tet;
+    
+    hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					  raw_bin_data_copy,
+					  1e-12 );
+
+    ++tet;
+    
+    hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					  raw_bin_data_copy,
+					  1e-12 );
+
+    ++tet;
+    
+    hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					  raw_bin_data_copy,
+					  1e-12 );
+
+    ++tet;
+    
+    hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					  raw_bin_data_copy,
+					  1e-12 );  
   }
   // Make sure estimators on other processes were reset
   else
@@ -563,6 +698,61 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, reduceData )
     UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					  raw_bin_data_copy,
 					  1e-15 );
+
+    const moab::Range all_tet_elements = mesh_estimator->getAllTetElements();
+    moab::Range::const_iterator tet = all_tet_elements.begin();
+    
+    hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					  raw_bin_data_copy,
+					  1e-12 );
+
+    ++tet;
+    
+    hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					  raw_bin_data_copy,
+					  1e-12 );
+
+    ++tet;
+    
+    hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					  raw_bin_data_copy,
+					  1e-12 );
+
+    ++tet;
+    
+    hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					  raw_bin_data_copy,
+					  1e-12 );
+
+    ++tet;
+    
+    hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					  raw_bin_data_copy,
+					  1e-12 );
+
+    ++tet;
+    
+    hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+    UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					  raw_bin_data_copy,
+					  1e-12 );  
   }
 
   //comm->barrier();
@@ -577,6 +767,12 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, reduceData )
 int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+
+  std::string test_input_mesh_file_name;
+
+  clp.setOption( "test_input_mesh_file_name",
+		 &test_input_mesh_file_name,
+		 "Test input mesh file name" );
   
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -628,6 +824,10 @@ int main( int argc, char** argv )
   MonteCarlo::EstimatorHandler::addEstimator( estimator_8, surface_ids );
   MonteCarlo::EstimatorHandler::addEstimator( estimator_9, surface_ids );
   MonteCarlo::EstimatorHandler::addEstimator( estimator_10, surface_ids );
+
+  initializeMeshEstimator( 10u, test_input_mesh_file_name, mesh_estimator );
+
+  MonteCarlo::EstimatorHandler::addGlobalEstimator( mesh_estimator );
 
   const bool success = Teuchos::UnitTestRepository::runUnitTests(*out);
 
