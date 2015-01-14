@@ -249,8 +249,8 @@ ENDIF()
 
 ADD_EXECUTABLE(tstEstimatorModuleInterface_Native
   tstModuleInterface.cpp)
-TARGET_LINK_LIBRARIES(tstEstimatorModuleInterface_Native monte_carlo_estimator_native)
-ADD_TEST(EstimatorModuleInterface_Native_test tstEstimatorModuleInterface_Native)
+TARGET_LINK_LIBRARIES(tstEstimatorModuleInterface_Native monte_carlo_estimator_native ${MOAB})
+ADD_TEST(EstimatorModuleInterface_Native_test tstEstimatorModuleInterface_Native --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
 
 ADD_EXECUTABLE(tstResponseFunctionFactory
   tstResponseFunctionFactory.cpp)
