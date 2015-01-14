@@ -221,12 +221,12 @@ ADD_TEST(ParticleSubtrackEndingInCellEventDispatcherDB_test tstParticleSubtrackE
 ADD_EXECUTABLE(tstObserverRegistrationHelpers
   tstObserverRegistrationHelpers.cpp)
 TARGET_LINK_LIBRARIES(tstObserverRegistrationHelpers monte_carlo_estimator_native ${MOAB})
-ADD_TEST(ObserverRegistrationHelpers_test tstObserverRegistrationHelpers)
+ADD_TEST(ObserverRegistrationHelpers_test tstObserverRegistrationHelpers --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
 
 ADD_EXECUTABLE(tstEstimatorHandler
   tstEstimatorHandler.cpp)
 TARGET_LINK_LIBRARIES(tstEstimatorHandler monte_carlo_estimator_native)
-ADD_TEST(EstimatorHandler_test tstEstimatorHandler)
+ADD_TEST(EstimatorHandler_test tstEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
 
 IF(${FRENSIE_ENABLE_MPI})
   Add_EXECUTABLE(tstDistributedEstimatorHandler 
