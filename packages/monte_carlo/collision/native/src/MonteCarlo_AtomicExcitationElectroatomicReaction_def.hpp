@@ -78,6 +78,9 @@ void AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>
   d_scattering_distribution.scatterElectron( electron, 
                                              bank, 
                                              shell_of_interaction);
+
+  // The shell of interaction is currently ignored
+  shell_of_interaction = UNKNOWN_SUBSHELL;
 }
 
 } // end MonteCarlo namespace
