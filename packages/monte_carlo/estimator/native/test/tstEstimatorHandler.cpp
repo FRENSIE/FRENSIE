@@ -510,6 +510,64 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, commitEstimatorHistoryContributions )
 					raw_bin_data_copy,
 					1e-15 );
 
+  double track_length = 0.6123724356957940;
+  raw_bin_data_used[0]( track_length, track_length*track_length );
+
+  const moab::Range all_tet_elements = mesh_estimator->getAllTetElements();
+  moab::Range::const_iterator tet = all_tet_elements.begin();
+  
+  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-12 );
+
+  ++tet;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-12 );
+
+  ++tet;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-12 );
+
+  ++tet;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-12 );
+
+  ++tet;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-12 );
+
+  ++tet;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data_used,
+					raw_bin_data_copy,
+					1e-12 );  
+
   // Reset the estimator data
   MonteCarlo::EstimatorHandler::resetEstimatorData();
 }
@@ -540,11 +598,10 @@ TEUCHOS_UNIT_TEST( EstimatorHandler,
   TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
   #pragma omp parallel num_threads( threads )
   {
-  //#pragma omp critical( update )
-    {
     MonteCarlo::ParticleCollidingInCellEventDispatcherDB::dispatchParticleCollidingInCellEvent(
 								      particle,
 								      0,
@@ -576,9 +633,52 @@ TEUCHOS_UNIT_TEST( EstimatorHandler,
 								      1,
 								      1.0 );
 
+    double start_point_1[3] = { 0.25, 0.0, 0.75 };
+    double start_point_2[3] = { 0.0, 0.25, 0.75 };
+    double start_point_3[3] = { 0.75, 0.0, 0.25 };
+    double start_point_4[3] = { 0.0, 0.75, 0.25 };
+    double start_point_5[3] = { 0.75, 0.25, 0.0 };
+    double start_point_6[3] = { 0.25, 0.75, 0.0 };
+    
+    double end_point_1[3] = { 0.75, 0.25, 1.0 };
+    double end_point_2[3] = { 0.25, 0.75, 1.0 };
+    double end_point_3[3] = { 1.0, 0.25, 0.75 };
+    double end_point_4[3] = { 0.25, 1.0, 0.75 };
+    double end_point_5[3] = { 1.0, 0.75, 0.25 };
+    double end_point_6[3] = { 0.75, 1.0, 0.25 };
+
+    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_1,
+								 end_point_1 );
+  
+    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_2,
+								 end_point_2 );
+
+    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_3,
+								 end_point_3 );
+
+    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_4,
+								 end_point_4 );
+
+    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_5,
+								 end_point_5 );
+    
+    MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_6,
+								 end_point_6 );
+
     // Commit the contributions
     MonteCarlo::EstimatorHandler::commitEstimatorHistoryContributions();
-    }
   }
 
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
@@ -591,6 +691,7 @@ TEUCHOS_UNIT_TEST( EstimatorHandler,
   TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
   // Export the estimator data
   MonteCarlo::EstimatorHandler::exportEstimatorData( 
@@ -753,6 +854,64 @@ TEUCHOS_UNIT_TEST( EstimatorHandler,
   UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
 					raw_bin_data_copy,
 					1e-15 );
+
+  double track_length = 0.6123724356957940;
+  raw_bin_data[0]( threads*track_length, threads*track_length*track_length );
+
+  const moab::Range all_tet_elements = mesh_estimator->getAllTetElements();
+  moab::Range::const_iterator tet = all_tet_elements.begin();
+  
+  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-12 );
+
+  ++tet;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-12 );
+
+  ++tet;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-12 );
+
+  ++tet;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-12 );
+
+  ++tet;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-12 );
+
+  ++tet;
+
+  hdf5_file_handler.getRawEstimatorEntityBinData<moab::EntityHandle>(
+						10u, *tet, raw_bin_data_copy );
+  
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( raw_bin_data,
+					raw_bin_data_copy,
+					1e-12 );  
 
   // Reset the estimator data
   MonteCarlo::EstimatorHandler::resetEstimatorData();
