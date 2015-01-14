@@ -22,51 +22,51 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that the min energy loss ratio can be calculated
+// Check that the min inverse energy gain ratio can be calculated
 TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution,
-		   calculateMinEnergyLossRatio )
+		   calculateMinInverseEnergyGainRatio )
 {
-  double min_energy_loss_ratio = 
-    Utility::AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio(
+  double min_inverse_energy_gain_ratio = 
+    Utility::AdjointKleinNishinaDistribution::calculateMinInverseEnergyGainRatio(
 									0.1,
 									0.5 );
 
-  TEST_FLOATING_EQUALITY( min_energy_loss_ratio, 0.8, 1e-15 );
+  TEST_FLOATING_EQUALITY( min_inverse_energy_gain_ratio, 0.8, 1e-15 );
 
-  min_energy_loss_ratio = 
-    Utility::AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio(
+  min_inverse_energy_gain_ratio = 
+    Utility::AdjointKleinNishinaDistribution::calculateMinInverseEnergyGainRatio(
 									0.25,
 									0.5 );
 
-  TEST_FLOATING_EQUALITY( min_energy_loss_ratio, 0.5, 1e-15 );
+  TEST_FLOATING_EQUALITY( min_inverse_energy_gain_ratio, 0.5, 1e-15 );
 
-  min_energy_loss_ratio = 
-    Utility::AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio(
+  min_inverse_energy_gain_ratio = 
+    Utility::AdjointKleinNishinaDistribution::calculateMinInverseEnergyGainRatio(
 									0.4,
 									0.5 );
 
-  TEST_FLOATING_EQUALITY( min_energy_loss_ratio, 0.8, 1e-15 );
+  TEST_FLOATING_EQUALITY( min_inverse_energy_gain_ratio, 0.8, 1e-15 );
 
-  min_energy_loss_ratio = 
-    Utility::AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio(
+  min_inverse_energy_gain_ratio = 
+    Utility::AdjointKleinNishinaDistribution::calculateMinInverseEnergyGainRatio(
 									0.4,
 									12.0 );
 
-  TEST_FLOATING_EQUALITY( min_energy_loss_ratio, 0.2, 1e-15 );
+  TEST_FLOATING_EQUALITY( min_inverse_energy_gain_ratio, 0.2, 1e-15 );
 
-  min_energy_loss_ratio = 
-    Utility::AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio(
+  min_inverse_energy_gain_ratio = 
+    Utility::AdjointKleinNishinaDistribution::calculateMinInverseEnergyGainRatio(
 									0.48,
 									12.0 );
 
-  TEST_FLOATING_EQUALITY( min_energy_loss_ratio, 0.04, 1e-15 );
+  TEST_FLOATING_EQUALITY( min_inverse_energy_gain_ratio, 0.04, 1e-15 );
 
-  min_energy_loss_ratio = 
-    Utility::AdjointKleinNishinaDistribution::calculateMinEnergyLossRatio(
+  min_inverse_energy_gain_ratio = 
+    Utility::AdjointKleinNishinaDistribution::calculateMinInverseEnergyGainRatio(
 									2.4,
 									12.0 );
 
-  TEST_FLOATING_EQUALITY( min_energy_loss_ratio, 0.2, 1e-15 );
+  TEST_FLOATING_EQUALITY( min_inverse_energy_gain_ratio, 0.2, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//

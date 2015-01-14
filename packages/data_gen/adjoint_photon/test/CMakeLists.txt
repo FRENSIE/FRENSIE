@@ -1,0 +1,4 @@
+ADD_EXECUTABLE(tstAdjointIncoherentGridGenerator
+  tstAdjointIncoherentGridGenerator.cpp)
+TARGET_LINK_LIBRARIES(tstAdjointIncoherentGridGenerator data_gen_adjoint_photon)
+ADD_TEST(AdjointIncoherentGridGenerator_test tstAdjointIncoherentGridGenerator)
