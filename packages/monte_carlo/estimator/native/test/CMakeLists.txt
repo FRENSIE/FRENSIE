@@ -225,8 +225,15 @@ ADD_TEST(ObserverRegistrationHelpers_test tstObserverRegistrationHelpers --test_
 
 ADD_EXECUTABLE(tstEstimatorHandler
   tstEstimatorHandler.cpp)
-TARGET_LINK_LIBRARIES(tstEstimatorHandler monte_carlo_estimator_native)
+TARGET_LINK_LIBRARIES(tstEstimatorHandler monte_carlo_estimator_native ${MOAB})
 ADD_TEST(EstimatorHandler_test tstEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(EstimatorHandler_2_test 
+    tstEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=2)
+  ADD_TEST(EstimatorHandler_4_test 
+    tstEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=4)
+ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
   Add_EXECUTABLE(tstDistributedEstimatorHandler 
