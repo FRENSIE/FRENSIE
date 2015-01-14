@@ -17,6 +17,7 @@
 #include "MonteCarlo_ParticleEnteringCellEventDispatcherDB.hpp"
 #include "MonteCarlo_ParticleLeavingCellEventDispatcherDB.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingInCellEventDispatcherDB.hpp"
+#include "MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp"
 #include "Utility_DirectionHelpers.hpp"
 
 namespace MonteCarlo{
@@ -65,6 +66,12 @@ public:
 				    const double particle_subtrack_length,
 				    const double subtrack_start_time,
 				    const double inverse_total_cross_section );
+
+  //! Update the global estimators from a collision event
+  static void updateEstimatorsFromParticleCollidingGlobaEvent(
+						 const ParticleState& particle,
+						 const double start_point[3],
+						 const double end_point[3] );
 
   //! Commit the estimator history constributions
   static void commitEstimatorHistoryContributions();
@@ -180,6 +187,19 @@ EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::updateEstimatorsFromPart
 						 particle,
 						 particle.getCell(),
 						 inverse_total_cross_section );
+}
+
+// Update the global estimators from a collision event
+inline void 
+EstimatorModuleInterface<MonteCarlo::EstimatorHandler>::updateEstimatorsFromParticleCollidingGlobaEvent(
+						 const ParticleState& particle,
+						 const double start_point[3],
+						 const double end_point[3] )
+{
+  ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+								   particle,
+								   start_point,
+								   end_point );
 }
 
 // Commit the estimator history constributions

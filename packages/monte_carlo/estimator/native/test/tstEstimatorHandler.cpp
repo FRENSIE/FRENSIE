@@ -23,10 +23,12 @@
 #include "MonteCarlo_CellPulseHeightEstimator.hpp"
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
+#include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_ParticleCollidingInCellEventDispatcherDB.hpp"
 #include "MonteCarlo_ParticleCrossingSurfaceEventDispatcherDB.hpp"
 #include "MonteCarlo_ParticleEnteringCellEventDispatcherDB.hpp"
 #include "MonteCarlo_ParticleSubtrackEndingInCellEventDispatcherDB.hpp"
+#include "MonteCarlo_ParticleSubtrackEndingGlobalEventDispatcher.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
@@ -63,6 +65,9 @@ estimator_9;
 
 Teuchos::RCP<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_10;
+
+Teuchos::RCP<MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
+mesh_estimator;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -155,6 +160,24 @@ void initializeSurfaceCurrentEstimator(
   estimator->setParticleTypes( particle_types );
 }
 
+// Initialize the estimator
+template<typename MeshEstimator>
+void initializeMeshEstimator( const unsigned estimator_id,
+			      const std::string& mesh_file_name,
+			      Teuchos::RCP<MeshEstimator>& estimator )
+{
+  estimator.reset( new MeshEstimator( estimator_id,
+				      1.0,
+				      mesh_file_name,
+				      "unit_cube_output.vtk" ) );
+  
+  // Set the particle types
+  Teuchos::Array<MonteCarlo::ParticleType> particle_types ( 1 );
+  particle_types[0] = MonteCarlo::PHOTON;
+    
+  estimator->setParticleTypes( particle_types );
+}
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -181,6 +204,8 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, addEstimator)
   MonteCarlo::EstimatorHandler::addEstimator( estimator_9, surface_ids );
   MonteCarlo::EstimatorHandler::addEstimator( estimator_10, surface_ids );
 
+  MonteCarlo::EstimatorHandler::addGlobalEstimator( mesh_estimator );
+
   TEST_EQUALITY_CONST( MonteCarlo::ParticleCollidingInCellEventDispatcherDB::getDispatcher( 0 )->getNumberOfObservers(), 2 );
   TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingInCellEventDispatcherDB::getDispatcher( 0 )->getNumberOfObservers(), 2 );
   TEST_EQUALITY_CONST( MonteCarlo::ParticleEnteringCellEventDispatcherDB::getDispatcher( 0 )->getNumberOfObservers(), 2 );
@@ -193,7 +218,9 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, addEstimator)
   TEST_EQUALITY_CONST( MonteCarlo::ParticleLeavingCellEventDispatcherDB::getDispatcher( 1 )->getNumberOfObservers(), 2 );
   TEST_EQUALITY_CONST( MonteCarlo::ParticleCrossingSurfaceEventDispatcherDB::getDispatcher( 1 )->getNumberOfObservers(), 4 );
 
-  TEST_EQUALITY_CONST( MonteCarlo::EstimatorHandler::getNumberOfEstimators(), 10 );
+  TEST_EQUALITY_CONST( MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::getNumberOfObservers(), 1 );
+
+  TEST_EQUALITY_CONST( MonteCarlo::EstimatorHandler::getNumberOfEstimators(), 11 );
 }
 
 //---------------------------------------------------------------------------//
@@ -256,13 +283,69 @@ TEUCHOS_UNIT_TEST( EstimatorHandler, commitEstimatorHistoryContributions )
   TEST_ASSERT( estimator_9->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_10->hasUncommittedHistoryContribution() );
 
+  // Update the mesh estimators
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
+
+  double start_point_1[3] = { 0.25, 0.0, 0.75 };
+  double start_point_2[3] = { 0.0, 0.25, 0.75 };
+  double start_point_3[3] = { 0.75, 0.0, 0.25 };
+  double start_point_4[3] = { 0.0, 0.75, 0.25 };
+  double start_point_5[3] = { 0.75, 0.25, 0.0 };
+  double start_point_6[3] = { 0.25, 0.75, 0.0 };
+  
+  double end_point_1[3] = { 0.75, 0.25, 1.0 };
+  double end_point_2[3] = { 0.25, 0.75, 1.0 };
+  double end_point_3[3] = { 1.0, 0.25, 0.75 };
+  double end_point_4[3] = { 0.25, 1.0, 0.75 };
+  double end_point_5[3] = { 1.0, 0.75, 0.25 };
+  double end_point_6[3] = { 0.75, 1.0, 0.25 };
+
+  MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_1,
+								 end_point_1 );
+  
+  MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_2,
+								 end_point_2 );
+
+  MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_3,
+								 end_point_3 );
+
+  MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_4,
+								 end_point_4 );
+
+  MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_5,
+								 end_point_5 );
+
+  MonteCarlo::ParticleSubtrackEndingGlobalEventDispatcher::dispatchParticleSubtrackEndingGlobalEvent(
+							         particle,
+							         start_point_6,
+								 end_point_6 );
+
+  TEST_ASSERT( mesh_estimator->hasUncommittedHistoryContribution() );
+
   // Commit the contributions
   MonteCarlo::EstimatorHandler::commitEstimatorHistoryContributions();
 
+  TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_5->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !estimator_6->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_7->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_8->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_9->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_10->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
   // Export the estimator data
   MonteCarlo::EstimatorHandler::exportEstimatorData( 
@@ -682,7 +765,13 @@ int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
   
+  std::string test_input_mesh_file_name;
+
   int threads = 1;
+
+  clp.setOption( "test_input_mesh_file_name",
+		 &test_input_mesh_file_name,
+		 "Test input mesh file name" );
 
   clp.setOption( "threads",
 		 &threads,
@@ -723,6 +812,8 @@ int main( int argc, char** argv )
   initializeSurfaceFluxEstimator( 7u, surface_ids, estimator_8 );
   initializeSurfaceCurrentEstimator( 8u, surface_ids, estimator_9 );
   initializeSurfaceCurrentEstimator( 9u, surface_ids, estimator_10 );
+
+  initializeMeshEstimator( 10u, test_input_mesh_file_name, mesh_estimator );
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
