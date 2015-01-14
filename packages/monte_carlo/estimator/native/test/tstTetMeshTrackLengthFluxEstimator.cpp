@@ -102,6 +102,8 @@ TEUCHOS_UNIT_TEST( TetMeshTrackLengthFluxEstimator, data_analysis )
   MonteCarlo::PhotonState particle( 0ull );
   particle.setWeight( 1.0 );
   particle.setEnergy( 1.0 );
+
+  TEST_ASSERT( !estimator->hasUncommittedHistoryContribution() );
   
   estimator->updateFromGlobalParticleSubtrackEndingEvent( particle,
                                                           start_point_1,
@@ -126,6 +128,8 @@ TEUCHOS_UNIT_TEST( TetMeshTrackLengthFluxEstimator, data_analysis )
   estimator->updateFromGlobalParticleSubtrackEndingEvent( particle,
                                                           start_point_6,
                                                           end_point_6 );
+
+  TEST_ASSERT( estimator->hasUncommittedHistoryContribution() );
                                                           
   // bin 1
   particle.setEnergy( 0.1 );
@@ -156,6 +160,8 @@ TEUCHOS_UNIT_TEST( TetMeshTrackLengthFluxEstimator, data_analysis )
   
   // Commit history contributions
   estimator_base->commitHistoryContribution(); 
+
+  TEST_ASSERT( !estimator->hasUncommittedHistoryContribution() );
   
   MonteCarlo::Estimator::setNumberOfHistories( 1.0 );
   MonteCarlo::Estimator::setEndTime( 1.0 );
