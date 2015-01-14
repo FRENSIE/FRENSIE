@@ -158,6 +158,12 @@ void ParticleSimulationManager<GeometryHandler,
   // Particle tracking information
   double distance_to_surface_hit, op_to_surface_hit, remaining_subtrack_op;
   double subtrack_start_time;
+  double ray_start_point[3];
+  
+  // Cache the start point of the ray
+  ray_start_point[0] = particle.getXPosition();
+  ray_start_point[1] = particle.getYPosition();
+  ray_start_point[2] = particle.getZPosition();
 
   // Surface information
   typename GMI::InternalSurfaceHandle surface_hit;
@@ -261,11 +267,23 @@ void ParticleSimulationManager<GeometryHandler,
 					  subtrack_start_time,
 					  1.0/cell_total_macro_cross_section );
 
+	
+
+	EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
+						      particle,
+						      ray_start_point,
+						      particle.getPosition() );
+
 	// Undergo a collision with the material in the cell
 	CMI::collideWithCellMaterial( particle, bank, true );
 
 	// Indicate that a collision has occurred
 	GMI::newRay();
+
+	// Cache the current position of the new ray
+	ray_start_point[0] = particle.getXPosition();
+	ray_start_point[1] = particle.getYPosition();
+	ray_start_point[2] = particle.getZPosition();
 
 	// Make sure the energy is above the cutoff
 	if( particle.getEnergy() < 1e-11 )

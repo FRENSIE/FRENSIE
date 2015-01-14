@@ -229,11 +229,14 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
   {
     moab::EntityHandle tet = whichTetIsPointIn( start_point );
     
-    // Add partial history contribution
-    addPartialHistoryContribution( tet,
-				   particle,
-				   0,
-				   track_length );
+    if( tet != 0 )
+    {
+      // Add partial history contribution
+      addPartialHistoryContribution( tet,
+				     particle,
+				     0,
+				     track_length );
+    }
   }
   else
   {
@@ -295,13 +298,13 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                         
         else
           partial_track_length = intersection_data[i].first;
-      } 
       
-      // Add partial history contribution
-      addPartialHistoryContribution( tet,
-                                     particle,
-                                     0,
-                                     partial_track_length );
+	// Add partial history contribution
+	addPartialHistoryContribution( tet,
+				       particle,
+				       0,
+				       partial_track_length );
+      }
       
     }
     
@@ -313,10 +316,13 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
       tet = whichTetIsPointIn( end_point );
       
       // Add partial history contribution
-      addPartialHistoryContribution( tet,
-                                     particle,
-                                     0,
-                                     partial_track_length );         
+      if( tet != 0 )
+      {
+	addPartialHistoryContribution( tet,
+				       particle,
+				       0,
+				       partial_track_length );         
+      }
     }
   }
 }
@@ -330,38 +336,42 @@ moab::EntityHandle TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>
   moab::AdaptiveKDTreeIter kd_tree_iteration;
   
   moab::ErrorCode return_value = d_kd_tree->point_search( point,
-                                                          kd_tree_iteration);
+                                                          kd_tree_iteration );
                                                         
   
-  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS &&
+		      return_value != moab::MB_ENTITY_NOT_FOUND,
                       Utility::MOABException,
                       moab::ErrorCodeStr[return_value] );
-                      
-  moab::EntityHandle leaf = kd_tree_iteration.handle();
-  moab::Range tets_in_leaf;
-  
-  return_value = d_moab_interface->get_entities_by_dimension( leaf,
-                                                              3,
-                                                              tets_in_leaf,
-                                                              false );
-                                                              
-  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                      Utility::MOABException,
-                      moab::ErrorCodeStr[return_value] );                                                            
-                                            
-  for( moab::Range::const_iterator tet = tets_in_leaf.begin(); 
-                                           tet != tets_in_leaf.end();  tet++ )
+
+  moab::EntityHandle tet_handle = 0;
+
+  // The point is in the mesh
+  if( return_value == moab::MB_SUCCESS )
   {
-    if( Utility::isPointInTet( 
-                        point,
-                        d_tet_reference_vertices[*tet],
-                        d_tet_barycentric_transform_matrices[*tet] ) )
+    moab::EntityHandle leaf = kd_tree_iteration.handle();
+    moab::Range tets_in_leaf;
+    
+    return_value = d_moab_interface->get_entities_by_dimension( leaf,
+								3,
+								tets_in_leaf,
+								false );
+                                                              
+    TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+			Utility::MOABException,
+			moab::ErrorCodeStr[return_value] );     
+    
+    for( moab::Range::const_iterator tet = tets_in_leaf.begin(); 
+                                           tet != tets_in_leaf.end();  tet++ )
     {
-      return *tet;
+      if( Utility::isPointInTet( point,
+				 d_tet_reference_vertices[*tet],
+				 d_tet_barycentric_transform_matrices[*tet] ) )
+	tet_handle = *tet;
     }
   }
   
-  return 0;
+  return tet_handle;
 }
 
 // Get all tet elements
