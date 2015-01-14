@@ -29,6 +29,7 @@ void ParticleGlobalEventDispatcher<Observer>::attachObserver(
 				const ModuleTraits::InternalEstimatorHandle id,
 			    Teuchos::RCP<Observer>& observer  )
 {
+  std::cout << observer << std::endl;
   // Make sure the observer has not been attached yet
   testPrecondition( d_observer_map.find( id ) == d_observer_map.end() );
   
