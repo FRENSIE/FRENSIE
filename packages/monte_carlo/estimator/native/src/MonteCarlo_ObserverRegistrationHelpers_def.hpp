@@ -39,11 +39,11 @@ ObserverRegistrationHelper<BeginEventTagIterator,
 			   EndEventTagIterator>::registerGlobalObserverWithTag(
 					     Teuchos::RCP<Observer>& observer )
 {
-  registerObserver( observer,
+  registerGlobalObserver( observer,
 		    typename boost::mpl::deref<BeginEventTagIterator>::type());
 
   ObserverRegistrationHelper<typename boost::mpl::next<BeginEventTagIterator>::type,
-			     EndEventTagIterator>::registerObserverWithTag(
+			     EndEventTagIterator>::registerGlobalObserverWithTag(
 								    observer );
 }
 

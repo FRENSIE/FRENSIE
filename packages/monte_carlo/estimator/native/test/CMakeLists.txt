@@ -219,9 +219,8 @@ TARGET_LINK_LIBRARIES(tstParticleSubtrackEndingInCellEventDispatcherDB monte_car
 ADD_TEST(ParticleSubtrackEndingInCellEventDispatcherDB_test tstParticleSubtrackEndingInCellEventDispatcherDB)
 
 ADD_EXECUTABLE(tstObserverRegistrationHelpers
-  tstObserverRegistrationHelpers.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstObserverRegistrationHelpers monte_carlo_estimator_native)
+  tstObserverRegistrationHelpers.cpp)
+TARGET_LINK_LIBRARIES(tstObserverRegistrationHelpers monte_carlo_estimator_native ${MOAB})
 ADD_TEST(ObserverRegistrationHelpers_test tstObserverRegistrationHelpers)
 
 ADD_EXECUTABLE(tstEstimatorHandler
