@@ -171,7 +171,7 @@ ElectroatomCore::ElectroatomCore( const ElectroatomCore& instance )
   testPrecondition( !instance.d_total_absorption_reaction.is_null() );
   // Make sure the scattering and absorption reaction maps are valid
   testPrecondition( instance.d_scattering_reactions.size() +
-		    instance.d_absorption_reactions.size() > 0 );
+                    instance.d_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
   testPrecondition( !instance.d_relaxation_model.is_null() );
 }
@@ -185,7 +185,7 @@ ElectroatomCore& ElectroatomCore::operator=( const ElectroatomCore& instance )
   testPrecondition( !instance.d_total_absorption_reaction.is_null() );
   // Make sure the scattering and absorption reaction maps are valid
   testPrecondition( instance.d_scattering_reactions.size() +
-		    instance.d_absorption_reactions.size() > 0 );
+                    instance.d_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
   testPrecondition( !instance.d_relaxation_model.is_null() );
 
