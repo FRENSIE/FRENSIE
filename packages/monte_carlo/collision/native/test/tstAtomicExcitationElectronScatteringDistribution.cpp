@@ -94,7 +94,7 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
-  // Extract the elastic scattering information data block (EXCIT)
+  // Extract the atomic excitation information data block (EXCIT)
   Teuchos::ArrayView<const double> excit_block(
 				      xss_data_extractor->extractEXCITBlock() );
   

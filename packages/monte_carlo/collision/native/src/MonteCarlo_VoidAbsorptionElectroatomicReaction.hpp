@@ -13,7 +13,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_StandardElectroatomicReaction.hpp"
+#include "MonteCarlo_ElectroatomicReaction.hpp"
 
 namespace MonteCarlo{
 
@@ -69,27 +69,27 @@ inline double VoidAbsorptionElectroatomicReaction::getThresholdEnergy() const
 }
 
 // Return the number of electrons emitted from the rxn at the given energy
-unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedElectrons( 
+inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedElectrons( 
                                                      const double energy ) const
 {
   return 0u;
 }
 
 // Return the number of photons emitted from the rxn at the given energy
-unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedPhotons( 
+inline unsigned VoidAbsorptionElectroatomicReaction::getNumberOfEmittedPhotons( 
                                                      const double energy ) const
 {
   return 0u;
 }
 
 // Return reaction type
-ElectroatomicReactionType VoidAbsorptionElectroatomicReaction::getReactionType() const
+inline ElectroatomicReactionType VoidAbsorptionElectroatomicReaction::getReactionType() const
 {
   return TOTAL_ABSORPTION_ELECTROATOMIC_REACTION;
 }
 
 // Simulate the reaction
-void VoidAbsorptionElectroatomicReaction::react( 
+inline void VoidAbsorptionElectroatomicReaction::react( 
        ElectronState& electron, 
        ParticleBank& bank,
        SubshellType& shell_of_interaction ) const
