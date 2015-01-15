@@ -283,10 +283,30 @@ ADD_EXECUTABLE(tstElectroionizationSubshellElectronScatteringDistribution
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellElectronScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(tstElectroionizationSubshellElectronScatteringDistribution_test tstElectroionizationSubshellElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+ADD_EXECUTABLE(tstAbsorptionElectroatomicReaction
+  tstAbsorptionElectroatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstAbsorptionElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(tstAbsorptionElectroatomicReaction_test tstAbsorptionElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstAtomicExcitationElectroatomicReaction
+  tstAtomicExcitationElectroatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstAtomicExcitationElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(tstAtomicExcitationElectroatomicReaction_test tstAtomicExcitationElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstBremsstrahlungElectroatomicReaction
+  tstBremsstrahlungElectroatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstBremsstrahlungElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(tstBremsstrahlungElectroatomicReaction_test tstBremsstrahlungElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
 ADD_EXECUTABLE(tstElectroatomicReactionACEFactory
   tstElectroatomicReactionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomicReactionACEFactory monte_carlo_collision_native)
 ADD_TEST(tstElectroatomicReactionACEFactory_test tstElectroatomicReactionACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstElectroatomCore
+  tstElectroatomCore.cpp)
+TARGET_LINK_LIBRARIES(tstElectroatomCore monte_carlo_collision_native)
+ADD_TEST(tstElectroatomCore_test tstElectroatomCore --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 # ADD_EXECUTABLE(tstPhotonDataBasic
 #   tstPhotonDataBasic.cpp)

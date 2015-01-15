@@ -68,11 +68,11 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-15 );
-/*
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 1.49055124391153000e-05 , 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0557151835328 , 1e-15 );
-  TEST_EQUALITY_CONST( photon.getHistoryNumber(), 1 );
-*/
+
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.49055124391153e-05 , 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0557151835328 , 1e-12 );
+  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
+
 }
 
 //---------------------------------------------------------------------------//
@@ -108,11 +108,11 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-15 );
-/*
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 1.49055124391153000e-05 , 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0557151835328 , 1e-15 );
-  TEST_EQUALITY_CONST( photon.getHistoryNumber(), 1 );
-*/
+
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.49055124391153000e-05 , 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0592724905908 , 1e-15 );
+  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
+
 }
 
 //---------------------------------------------------------------------------//
@@ -147,11 +147,11 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-15 );
-/*
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 1.11123878505389000E-04, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getZDirection(), 4.999444880552E-01, 1e-15 );
-  TEST_EQUALITY_CONST( photon.getHistoryNumber(), 1 );
-*/
+
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.11123878505389000E-04, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.9410792343028, 1e-15 );
+  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
+
 }
 
 //---------------------------------------------------------------------------//
@@ -179,8 +179,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   basic_bremsstrahlung_distribution->scatterElectron( electron,
-						bank,
-						shell_of_interaction );
+                                                      bank,
+                                                      shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -188,11 +188,11 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-15 );
-/*
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 7.19800305553610000e-02 , 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.9999999999869 , 1e-15 );
-  TEST_EQUALITY_CONST( photon.getHistoryNumber(), 1 );
-*/
+
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 7.19800305553610000e-02 , 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.9999999986945 , 1e-15 );
+  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
+
 }
 
 //---------------------------------------------------------------------------//
@@ -240,6 +240,7 @@ int main( int argc, char** argv )
   energy_bins[1] = 1.0;
   energy_bins[2] = 1e5;
   
+  //! \todo Find real bremsstrahlung photon angular distribution
   Teuchos::Array<double> angular_distribution_values( 3 );
   angular_distribution_values[0] =  0.0;
   angular_distribution_values[1] =  0.5;
@@ -270,15 +271,15 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> breme_block = 
     xss_data_extractor->extractBREMEBlock();
 
-  // Create the elastic scattering distributions
+  // Create the bremsstrahlung scattering distributions
   Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
-    energy_loss_distribution( N );
+    scattering_distribution( N );
   
   for( unsigned n = 0; n < N; ++n )
   {
-    energy_loss_distribution[n].first = energy_grid[n];
+    scattering_distribution[n].first = energy_grid[n];
 
-    energy_loss_distribution[n].second.reset( 
+    scattering_distribution[n].second.reset( 
 	  new Utility::HistogramDistribution(
 		 breme_block( offset[n], table_length[n] ),
 		 breme_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
@@ -293,7 +294,7 @@ int main( int argc, char** argv )
   // Create the scattering distributions
   basic_bremsstrahlung_distribution.reset( 
 		   new MonteCarlo::BremsstrahlungElectronScatteringDistribution( 
-						       energy_loss_distribution ) );
+						       scattering_distribution ) );
 
 
   double upper_cutoff_energy = 1000;
@@ -301,7 +302,7 @@ int main( int argc, char** argv )
 
   detailed_bremsstrahlung_distribution.reset( 
 		      new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
-							energy_loss_distribution,
+							scattering_distribution,
 							angular_distribution,
                             lower_cutoff_energy, 
                             upper_cutoff_energy ) );

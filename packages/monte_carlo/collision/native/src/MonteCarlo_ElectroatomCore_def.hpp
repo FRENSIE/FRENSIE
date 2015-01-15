@@ -20,7 +20,9 @@ namespace MonteCarlo{
 /*! \details The scattering absorption and miscellaneous reactions will be
  * organized using the standard scattering reactions, standard absorption
  * reactions and the default scattering type map. Once organized, the 
- * total and absorption reactions will be created.
+ * total and absorption reactions will be created. If there is not standard 
+ * absorption reaction a void absorption reaction will be inserted for the 
+ * TotalAbsorptionReaction
  */ 
 template<typename InterpPolicy>
 ElectroatomCore::ElectroatomCore(
@@ -115,7 +117,7 @@ ElectroatomCore::ElectroatomCore(
 
   // Make sure the reactions have been organized appropriately
   testPostcondition( d_scattering_reactions.size() > 0 );
-  testPostcondition( d_absorption_reactions.size() > 0 );
+//  testPostcondition( d_absorption_reactions.size() > 0 );
 }
 
 // Create the total absorption reaction
@@ -185,9 +187,26 @@ void ElectroatomCore::createTotalAbsorptionReaction(
   }
   else
   {
+  // Create void absorption reaction
   total_absorption_reaction.reset(
       new VoidAbsorptionElectroatomicReaction() );
+
+  Teuchos::RCP<ElectroatomicReaction> reaction_pointer;
+
+  reaction_pointer.reset(
+      new VoidAbsorptionElectroatomicReaction() );
+
+/*
+  ElectroatomCore::ReactionMap void_absorption;
+
+  void_absorption[reaction_pointer->getReactionType()] = reaction_pointer;
+
+  ReactionMap::const_iterator void_rxn_type_pointer = void_absorption.begin();
+
+  absorption_reactions.insert( *void_rxn_type_pointer );
+*/
   }
+
 }
 
 // Create the processed total absorption reaction
