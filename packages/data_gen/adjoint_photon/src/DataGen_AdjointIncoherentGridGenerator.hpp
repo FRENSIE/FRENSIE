@@ -11,6 +11,7 @@
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
+#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
@@ -71,11 +72,6 @@ private:
 
   // Get the log energy of the cross section peak for a given log max energy
   static double getLogEnergyOfCrossSectionPeak( const double log_max_energy );
-
-  // Evaluate the differential adjoint incoherent cross section (dc/dx)
-  double evaluateDifferentialAdjointIncoherentCrossSection(
-	  const double inverse_energy_gain_ratio, 
-	  const Utility::AdjointKleinNishinaDistribution& distribution ) const;
 
   // Evaluate the log of the adjoint incoherent cross section
   double evaluateLogAdjointIncoherentCrossSection( 
