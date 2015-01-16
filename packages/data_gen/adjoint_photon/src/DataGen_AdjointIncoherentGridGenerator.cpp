@@ -110,103 +110,103 @@ void AdjointIncoherentGridGenerator::generate(
   // 						 lower_energy_limit_function,
   // 						 upper_energy_limit_function );
 
-  // Use a queue data structure to calculate the max energy grid points
-  std::deque<double> log_max_energy_grid_queue(
-					   initial_log_max_energy_grid.begin(),
-					   initial_log_max_energy_grid.end() );
+  // // Use a queue data structure to calculate the max energy grid points
+  // std::deque<double> log_max_energy_grid_queue(
+  // 					   initial_log_max_energy_grid.begin(),
+  // 					   initial_log_max_energy_grid.end() );
 
-  // Calculate the max energy grid points
-  while( log_max_energy_grid_queue.size() > 1 )
-  {
-    // Generate the log energy grid at the first max energy
-    double log_max_energy_0 = log_max_energy_grid_queue.front();
+  // // Calculate the max energy grid points
+  // while( log_max_energy_grid_queue.size() > 1 )
+  // {
+  //   // Generate the log energy grid at the first max energy
+  //   double log_max_energy_0 = log_max_energy_grid_queue.front();
 
-    log_max_energy_grid_queue.pop_front();
+  //   log_max_energy_grid_queue.pop_front();
 
-    boost::function<double (double y)> log_max_energy_0_cross_secion = 
-      boost::bind( &AdjointIncoherentGridGenerator::evaluateLogAdjointIncoherentCrossSection,
-		   boost::ref( *this ),
-		   log_max_energy_0,
-		   _1 );
+  //   boost::function<double (double y)> log_max_energy_0_cross_secion = 
+  //     boost::bind( &AdjointIncoherentGridGenerator::evaluateLogAdjointIncoherentCrossSection,
+  // 		   boost::ref( *this ),
+  // 		   log_max_energy_0,
+  // 		   _1 );
 
-    Teuchos::Array<double> log_max_energy_0_initial_log_energy_grid( 3 );
-    log_max_energy_0_log_energy_grid[0] = 
-      AdjointIncoherentGridGenerator::getLowerLogEnergyLimit(log_max_energy_0);
-    log_max_energy_0_log_energy_grid[1] = 
-      AdjointIncoherentGridGenerator::getLogEnergyOfCrossSectionPeak(
-							    log_max_energy_0 );
-    log_max_energy_0_log_energy_grid[2] = 
-      AdjointIncoherentGridGenerator::getUpperLogEnergyLimit(log_max_energy_0);
+  //   Teuchos::Array<double> log_max_energy_0_initial_log_energy_grid( 3 );
+  //   log_max_energy_0_log_energy_grid[0] = 
+  //     AdjointIncoherentGridGenerator::getLowerLogEnergyLimit(log_max_energy_0);
+  //   log_max_energy_0_log_energy_grid[1] = 
+  //     AdjointIncoherentGridGenerator::getLogEnergyOfCrossSectionPeak(
+  // 							    log_max_energy_0 );
+  //   log_max_energy_0_log_energy_grid[2] = 
+  //     AdjointIncoherentGridGenerator::getUpperLogEnergyLimit(log_max_energy_0);
 
-    Teuchos::Array<double> log_max_energy_0_log_energy_grid;
+  //   Teuchos::Array<double> log_max_energy_0_log_energy_grid;
 
-    Utility::LinearGridGenerator log_max_energy_0_log_energy_grid_generator(
-					       log_max_energy_0_cross_secion );
+  //   Utility::LinearGridGenerator log_max_energy_0_log_energy_grid_generator(
+  // 					       log_max_energy_0_cross_secion );
 
-    log_max_energy_0_log_energy_grid_generator.generate( 
-				      log_max_energy_0_log_energy_grid,
-				      log_max_energy_0_initial_log_energy_grid,
-				      convergence_tol,
-				      absolute_diff_tol,
-				      distance_tol );
+  //   log_max_energy_0_log_energy_grid_generator.generate( 
+  // 				      log_max_energy_0_log_energy_grid,
+  // 				      log_max_energy_0_initial_log_energy_grid,
+  // 				      convergence_tol,
+  // 				      absolute_diff_tol,
+  // 				      distance_tol );
 
-    // Generate the log energy grid at the second max energy
-    double log_max_energy_1 = log_max_energy_grid_queue.front();
+  //   // Generate the log energy grid at the second max energy
+  //   double log_max_energy_1 = log_max_energy_grid_queue.front();
 
-    boost::function<double (double y)> log_max_energy_1_cross_secion = 
-      boost::bind( &AdjointIncoherentGridGenerator::evaluateLogAdjointIncoherentCrossSection,
-		   boost::ref( *this ),
-		   log_max_energy_1,
-		   _1 );
+  //   boost::function<double (double y)> log_max_energy_1_cross_secion = 
+  //     boost::bind( &AdjointIncoherentGridGenerator::evaluateLogAdjointIncoherentCrossSection,
+  // 		   boost::ref( *this ),
+  // 		   log_max_energy_1,
+  // 		   _1 );
     
-    Teuchos::Array<double> log_max_energy_1_initial_log_energy_grid( 3 );
-    log_max_energy_1_log_energy_grid[0] = 
-      AdjointIncoherentGridGenerator::getLowerLogEnergyLimit(log_max_energy_0);
-    log_max_energy_1_log_energy_grid[1] = 
-      AdjointIncoherentGridGenerator::getLogEnergyOfCrossSectionPeak(
-							    log_max_energy_0 );
-    log_max_energy_1_log_energy_grid[2] = 
-      AdjointIncoherentGridGenerator::getUpperLogEnergyLimit(log_max_energy_0);
+  //   Teuchos::Array<double> log_max_energy_1_initial_log_energy_grid( 3 );
+  //   log_max_energy_1_log_energy_grid[0] = 
+  //     AdjointIncoherentGridGenerator::getLowerLogEnergyLimit(log_max_energy_0);
+  //   log_max_energy_1_log_energy_grid[1] = 
+  //     AdjointIncoherentGridGenerator::getLogEnergyOfCrossSectionPeak(
+  // 							    log_max_energy_0 );
+  //   log_max_energy_1_log_energy_grid[2] = 
+  //     AdjointIncoherentGridGenerator::getUpperLogEnergyLimit(log_max_energy_0);
 
-    Teuchos::Array<double> log_max_energy_1_log_energy_grid;
+  //   Teuchos::Array<double> log_max_energy_1_log_energy_grid;
 
-    Utility::LinearGridGenerator log_max_energy_1_log_energy_grid_generator(
-					       log_max_energy_1_cross_secion );
+  //   Utility::LinearGridGenerator log_max_energy_1_log_energy_grid_generator(
+  // 					       log_max_energy_1_cross_secion );
 
-    log_max_energy_1_log_energy_grid_generator.generate( 
-				      log_max_energy_1_log_energy_grid,
-				      log_max_energy_1_initial_log_energy_grid,
-				      convergence_tol,
-				      absolute_diff_tol,
-				      distance_tol );
+  //   log_max_energy_1_log_energy_grid_generator.generate( 
+  // 				      log_max_energy_1_log_energy_grid,
+  // 				      log_max_energy_1_initial_log_energy_grid,
+  // 				      convergence_tol,
+  // 				      absolute_diff_tol,
+  // 				      distance_tol );
     
-    // Test if the distance tolerance has been satisfied
-    double relative_distance = 
-      Utility::Policy::relError( log_max_energy_0, log_max_energy_1 );
+  //   // Test if the distance tolerance has been satisfied
+  //   double relative_distance = 
+  //     Utility::Policy::relError( log_max_energy_0, log_max_energy_1 );
     
-    if( relative_distance > distance_tol )
-    {
-      // Check if the local 2D grid has converged
-      double log_max_energy_grid_mid = 
-	0.5*(log_max_energy_0 + log_max_energy_1 );
+  //   if( relative_distance > distance_tol )
+  //   {
+  //     // Check if the local 2D grid has converged
+  //     double log_max_energy_grid_mid = 
+  // 	0.5*(log_max_energy_0 + log_max_energy_1 );
 
-      boost::function<double (double y)> log_max_energy_mid_cross_secion = 
-      boost::bind( &AdjointIncoherentGridGenerator::evaluateLogAdjointIncoherentCrossSection,
-		   boost::ref( *this ),
-		   log_max_energy_mid,
-		   _1 );
+  //     boost::function<double (double y)> log_max_energy_mid_cross_secion = 
+  //     boost::bind( &AdjointIncoherentGridGenerator::evaluateLogAdjointIncoherentCrossSection,
+  // 		   boost::ref( *this ),
+  // 		   log_max_energy_mid,
+  // 		   _1 );
 
-      double L0 = log_max_energy_0_log_energy_grid.back() - 
-	log_max_energy_0_log_energy_grid.front();
-      double L1 = log_max_energy_1_log_energy_grid.back() -
-	log_max_energy_1_log_energy_grid.front();
-      double Lx = 
-	AdjointIncoherentGridGenerator::getUpperLogEnergyLimit( 
-							 log_max_energy_mid ) -
-	AdjointIncoherentGridGenerator::getLowerLogEnergyLimit( 
-							  log_max_energy_mid );
-    }
-  }
+  //     double L0 = log_max_energy_0_log_energy_grid.back() - 
+  // 	log_max_energy_0_log_energy_grid.front();
+  //     double L1 = log_max_energy_1_log_energy_grid.back() -
+  // 	log_max_energy_1_log_energy_grid.front();
+  //     double Lx = 
+  // 	AdjointIncoherentGridGenerator::getUpperLogEnergyLimit( 
+  // 							 log_max_energy_mid ) -
+  // 	AdjointIncoherentGridGenerator::getLowerLogEnergyLimit( 
+  // 							  log_max_energy_mid );
+  //   }
+  // }
   
 }
 
@@ -252,60 +252,13 @@ double AdjointIncoherentGridGenerator::getUpperLogEnergyLimit(
   return log_max_energy;
 }
 
-// Evaluate the differential adjoint incoherent cross section (dc/dx)
-double AdjointIncoherentGridGenerator::evaluateDifferentialAdjointIncoherentCrossSection(
-	  const double inverse_energy_gain_ratio, 
-	  const Utility::AdjointKleinNishinaDistribution& distribution ) const
-{
-  double inverse_wavelength = distribution.getEnergy()/
-    (Utility::PhysicalConstants::planck_constant*
-     Utility::PhysicalConstants::speed_of_light);
-  
-  double scat_func_arg = 
-    sqrt( (1.0 - inverse_energy_gain_ratio)/distribution.getAlpha() )*
-    inverse_wavelength;
-  
-  return distribution.evaluate( inverse_energy_gain_ratio )*
-    d_scattering_function->evaluate( scat_func_arg );
-    
-}
-
 // Evaluate the log of the incoherent cross section
 double
 AdjointIncoherentGridGenerator::evaluateLogAdjointIncoherentCrossSection(
 						const double log_max_energy, 
 					        const double log_energy ) const
 {
-  // Make sure the energies are valid
-  testPrecondition( log_max_energy >= log_energy );
   
-  if( log_energy < log_max_energy )
-  {
-    Utility::AdjointKleinNishinaDistribution distribution(exp(log_energy),
-							  exp(log_max_energy));
-
-    boost::function<double (double energy)> adjoint_kn_dist_wrapper = 
-      boost::bind<double>( &AdjointIncoherentGridGenerator::evaluateDifferentialAdjointIncoherentCrossSection,
-			   boost::ref( *this ),
-			   _1,
-			   distribution );
-
-    double cross_section;
-    double abs_error;
-        
-    d_quadrature_kernel.integrateAdaptively<21>( 
-					adjoint_kn_dist_wrapper,
-					distribution.getLowerBoundOfIndepVar(),
-					distribution.getUpperBoundOfIndepVar(),
-					cross_section,
-					abs_error );
-					
-    return log( cross_section );
-  }
-  else if( log_energy == log_max_energy )
-    return log( std::numeric_limits<double>::min() );
-  else
-    return 0.0;
 }
 
 } // end DataGen namespace

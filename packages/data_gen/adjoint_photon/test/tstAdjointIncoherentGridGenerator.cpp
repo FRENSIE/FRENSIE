@@ -2,7 +2,7 @@
 //!
 //! \file   tstAdjointIncoherentGridGenerator.cpp
 //! \author Alex Robinson
-//! \brief  Adjoint incoherent grid generator
+//! \brief  Adjoint incoherent grid generator unit tests
 //! 
 //---------------------------------------------------------------------------//
 
