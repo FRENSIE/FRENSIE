@@ -298,6 +298,11 @@ ADD_EXECUTABLE(tstBremsstrahlungElectroatomicReaction
 TARGET_LINK_LIBRARIES(tstBremsstrahlungElectroatomicReaction monte_carlo_collision_native)
 ADD_TEST(tstBremsstrahlungElectroatomicReaction_test tstBremsstrahlungElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+ADD_EXECUTABLE(tstHardElasticElectroatomicReaction
+  tstHardElasticElectroatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstHardElasticElectroatomicReaction monte_carlo_collision_native)
+ADD_TEST(tstHardElasticElectroatomicReaction_test tstHardElasticElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
 ADD_EXECUTABLE(tstElectroatomicReactionACEFactory
   tstElectroatomicReactionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomicReactionACEFactory monte_carlo_collision_native)

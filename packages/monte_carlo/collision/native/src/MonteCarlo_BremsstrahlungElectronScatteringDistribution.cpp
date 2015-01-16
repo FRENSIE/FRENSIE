@@ -56,7 +56,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
   testPrecondition( d_bremsstrahlung_scattering_distribution.size() > 0 );
   testPrecondition( !d_angular_distribution.is_null() );
 
-  // Use simple analytical photon angular distribution
+  // Use detailed photon angular distribution
   d_angular_distribution_func = boost::bind<double>( 
 		    &BremsstrahlungElectronScatteringDistribution::SampleDetailedAngle,
 		    boost::cref( *this ),
@@ -128,7 +128,7 @@ double BremsstrahlungElectronScatteringDistribution::SampleSimpleAngle(
     2.0 * Utility::RandomNumberGenerator::getRandomNumber<double>();
   
   double parameter = -( 1.0 + beta );
-
+                 
   return ( scaled_random_number        + parameter )/ 
          ( scaled_random_number * beta + parameter ); 
 }
