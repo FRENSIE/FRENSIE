@@ -54,7 +54,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 9.465e-03; // Sample the 7.9496800E-04 MeV distribution
   fake_stream[1] = 0.5; // Sample a photon energy of 1.49055124391153000E-05 MeV
-  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function 
+  fake_stream[2] = 0.5; // Sample angle 0.0557151835328 from analytical function 
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -64,13 +64,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 8.850944875608850E-04, 1e-15 );
-  TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 8.85094487560885E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
 
   TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.49055124391153e-05 , 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0557151835328 , 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0592724905908 , 1e-12 );
   TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
 
 }
@@ -94,8 +94,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 9.465e-03; // Sample the 7.9496800E-04 MeV distribution
   fake_stream[1] = 0.5; // Sample a photon energy of 1.49055124391153000E-05 MeV
-  fake_stream[1] = 0.5; // Sample angle 0.0557151835328 from analytical function  
-  
+  fake_stream[2] = 0.5; // Sample angle 0.0557151835328 from analytical function  
+
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   basic_bremsstrahlung_distribution->scatterElectron( electron,
@@ -104,13 +104,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 8.850944875608850E-04, 1e-15 );
-  TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 8.85094487560885E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.49055124391153000e-05 , 1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0592724905908 , 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.49055124391153e-05 , 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0592724905908 , 1e-12 );
   TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
 
 }
@@ -131,9 +131,9 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 4.061e-01; // Sample the 7.9496800E-04 MeV distribution
-  fake_stream[1] = 0.5; // Sample a photon energy of 1.11123878505389000E-04 MeV
+  std::vector<double> fake_stream( 1 );
+  //fake_stream[0] = 4.061e-01; // Sample the 7.9496800E-04 MeV distribution
+  fake_stream[0] = 0.5; // Sample a photon energy of 1.11123878505389000E-04 MeV
  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -143,13 +143,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 9.99888876121495000E-01 , 1e-15 );
-  TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 9.99888876121495E-01 , 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.11123878505389000E-04, 1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.9410792343028, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.11123878505389E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.9410792343028, 1e-12 );
   TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
 
 }
@@ -174,7 +174,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 9.980E-02; // Sample the upper energy distribution
   fake_stream[1] = 0.5; // Sample a photon energy of 7.19800305553610000E-02 MeV
-  fake_stream[1] = 0.5; // Sample angle 0.9999999999869 from analytical function  
+  fake_stream[2] = 0.5; // Sample angle 0.9999999999869 from analytical function  
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -184,13 +184,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 9.99992801996944000E+03 , 1e-15 );
-  TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 9.99992801996944000E+03 , 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 7.19800305553610000e-02 , 1e-15 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.9999999986945 , 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 7.19800305553610000e-02 , 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.9999999986945 , 1e-12 );
   TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
 
 }
