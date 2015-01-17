@@ -24,6 +24,9 @@
 
 namespace DataGen{
 
+// Initialize the static member data
+const double AdjointIncoherentCrossSectionEvaluator::default_quadrature_precision = 1e-6;
+
 // Return the energy of the max cross section value
 double AdjointIncoherentCrossSectionEvaluator::getEnergyOfMaxCrossSection( 
 						      const double max_energy )
@@ -63,28 +66,40 @@ double AdjointIncoherentCrossSectionEvaluator::getMaxEnergyResultingInMaxCrossSe
 AdjointIncoherentCrossSectionEvaluator::AdjointIncoherentCrossSectionEvaluator()
   : d_scattering_function( new Utility::UniformDistribution( 
 			      0.0, std::numeric_limits<double>::max(), 1.0 ) ),
-    d_quadrature_kernel( new Utility::GaussKronrodQuadratureKernel( 1e-6 ) )
-{ /* ... */ }
+    d_quadrature_kernel( new Utility::GaussKronrodQuadratureKernel( 
+       AdjointIncoherentCrossSectionEvaluator::default_quadrature_precision ) )
+{ 
+  // Force the quadrature kernel throw exceptions
+  Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
+}
 
 // Constructor
+/*! \details The scattering function must have the electrom recoil momentum,
+ * in units of inverse cm (not inverse Angstroms), as the inpependent
+ * variable.
+ */
 AdjointIncoherentCrossSectionEvaluator::AdjointIncoherentCrossSectionEvaluator(
     const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function )
   : d_scattering_function( scattering_function ),
-    d_quadrature_kernel( new Utility::GaussKronrodQuadratureKernel( 1e-6 ) )
+    d_quadrature_kernel( new Utility::GaussKronrodQuadratureKernel( 
+       AdjointIncoherentCrossSectionEvaluator::default_quadrature_precision ) )
 {
   // Make sure the scattering function is valid
   testPrecondition( !scattering_function.is_null() );
+
+  // Force the quadrature kernel throw exceptions
+  Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
 }
 
 // Return the cross section value at a given energy and max energy
 double AdjointIncoherentCrossSectionEvaluator::evaluateCrossSection( 
-						const double energy, 
-					        const double max_energy ) const
+						      const double energy, 
+					              const double max_energy )
 {
   // Make sure the energies are valid
   testPrecondition( energy <= max_energy );
 
-  double cross_section;
+  double cross_section = 0.0;
 
   if( energy < max_energy )
   {
@@ -97,13 +112,51 @@ double AdjointIncoherentCrossSectionEvaluator::evaluateCrossSection(
 			   distribution );
 
     double abs_error;
+    double precision = 
+      AdjointIncoherentCrossSectionEvaluator::default_quadrature_precision;
     
-    d_quadrature_kernel->integrateAdaptively<21>(
+    // Modify the precision if necessary to get allow the integral to converge
+    while( precision <= 1e-2 )
+    {
+      if( precision != 1e-2 )
+      {
+	try{
+	  d_quadrature_kernel->integrateAdaptively<21>(
 					diff_adjoint_incoh_wrapper,
 					distribution.getLowerBoundOfIndepVar(),
 					distribution.getUpperBoundOfIndepVar(),
 					cross_section,
 					abs_error );
+	}
+	catch( Utility::GSLException )
+	{
+	  precision *= 10.0;
+	
+	  d_quadrature_kernel.reset( new Utility::GaussKronrodQuadratureKernel(
+								 precision ) );
+
+	  continue;
+	}
+      }
+      else // Throw error if integral still doesn't converge
+      {
+	d_quadrature_kernel->integrateAdaptively<21>(
+					diff_adjoint_incoh_wrapper,
+					distribution.getLowerBoundOfIndepVar(),
+					distribution.getUpperBoundOfIndepVar(),
+					cross_section,
+					abs_error );
+      }
+
+      break;
+    }
+
+    if( precision != 
+	AdjointIncoherentCrossSectionEvaluator::default_quadrature_precision )
+    {
+      d_quadrature_kernel.reset( new Utility::GaussKronrodQuadratureKernel( 
+       AdjointIncoherentCrossSectionEvaluator::default_quadrature_precision ));
+    }
   }
   else
     cross_section = 0.0;

@@ -51,7 +51,7 @@ public:
 
   //! Return the cross section value at a given energy and max energy
   double evaluateCrossSection( const double energy, 
-			       const double max_energy ) const;
+			       const double max_energy );
 
 private:
 
@@ -59,6 +59,9 @@ private:
   double evaluateDifferentialAdjointIncoherentCrossSection(
 	  const double inverse_energy_gain_ratio, 
 	  const Utility::AdjointKleinNishinaDistribution& distribution ) const;
+
+  // The default quadrature kernel precision
+  static const double default_quadrature_precision;
 
   // The scattering function
   Teuchos::RCP<const Utility::OneDDistribution> d_scattering_function;
