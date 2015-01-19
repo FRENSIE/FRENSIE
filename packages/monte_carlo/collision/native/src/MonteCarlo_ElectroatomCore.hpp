@@ -156,6 +156,9 @@ private:
   // The miscellaneous reactions
   ConstReactionMap d_miscellaneous_reactions;
 
+  // The void reactions
+  ConstReactionMap d_void_reactions;
+
   // The atomic relaxation model
   Teuchos::RCP<const AtomicRelaxationModel> d_relaxation_model;
 };
@@ -184,7 +187,28 @@ ElectroatomCore::getScatteringReactions() const
 inline const ElectroatomCore::ConstReactionMap& 
 ElectroatomCore::getAbsorptionReactions() const
 {
-  return d_absorption_reactions;
+  if ( d_absorption_reactions.size() > 0 )
+  {
+    return d_absorption_reactions;
+  }
+  else
+  {
+    MonteCarlo::ElectroatomCore::ConstReactionMap va_reaction;
+
+    va_reaction[d_total_absorption_reaction->getReactionType()] = d_total_absorption_reaction;
+
+    ConstReactionMap::const_iterator void_rxn_type_pointer = 
+      va_reaction.begin();
+
+std::cout << " Void Reaction = " << va_reaction.begin()->second->getReactionType() << std::endl;
+
+std::cout << " va_reaction size = " << va_reaction.size() << std::endl;
+/*
+    d_void_reactions.insert( d_total_absorption_reaction->getReactionType(),
+                             d_total_absorption_reaction );
+*/
+    return va_reaction;
+  }
 }
 
 // Return the miscellaneous reactions

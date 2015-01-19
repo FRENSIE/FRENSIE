@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
 #include "MonteCarlo_AbsorptionElectroatomicReaction.hpp"
+#include "MonteCarlo_VoidElectroatomicReaction.hpp"
 #include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
 
 namespace MonteCarlo{
@@ -130,11 +131,12 @@ void ElectroatomCore::createTotalAbsorptionReaction(
   // Make sure the absorption cross section is sized correctly
   testPrecondition( energy_grid.size() > 1 );
 
+  unsigned absorption_threshold_energy_index = 0u;
+
   if ( absorption_reactions.size() > 0 )
   {
     Teuchos::Array<double> absorption_cross_section;
-    unsigned absorption_threshold_energy_index = 0u;
-
+ 
     ConstReactionMap::const_iterator absorption_reaction;
 
     for( unsigned i = 0; i < energy_grid.size(); ++i )
@@ -187,18 +189,28 @@ void ElectroatomCore::createTotalAbsorptionReaction(
   }
   else
   {
+/*
   // Create void absorption reaction
   total_absorption_reaction.reset(
-      new VoidAbsorptionElectroatomicReaction() );
-
-  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> va_reaction(
 	  new VoidAbsorptionElectroatomicReaction() );
+*/
+  // Create void absorption reaction
+  total_absorption_reaction.reset(
+      new VoidElectroatomicReaction<InterpPolicy,false>(
+			energy_grid,
+			energy_grid,
+			absorption_threshold_energy_index,
+			TOTAL_ABSORPTION_ELECTROATOMIC_REACTION ) );
 
+  MonteCarlo::ElectroatomCore::ConstReactionMap va_reaction;
+
+  va_reaction[total_absorption_reaction->getReactionType()] = total_absorption_reaction;
+/*
   ReactionMap::const_iterator void_rxn_type_pointer = 
     va_reaction.begin();
 
   absorption_reactions.insert( *void_rxn_type_pointer );
-/**/
+*/
   }
 
 }
