@@ -73,7 +73,7 @@ ElectroatomCore::ElectroatomCore(
     else
       d_miscellaneous_reactions.insert( *rxn_type_pointer );
 
-    ++rxn_type_pointer;
+    ++rxn_type_pointer; 
   }
   
   // Create the total absorption and total reactions
@@ -191,20 +191,14 @@ void ElectroatomCore::createTotalAbsorptionReaction(
   total_absorption_reaction.reset(
       new VoidAbsorptionElectroatomicReaction() );
 
-  Teuchos::RCP<ElectroatomicReaction> reaction_pointer;
+  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> va_reaction(
+	  new VoidAbsorptionElectroatomicReaction() );
 
-  reaction_pointer.reset(
-      new VoidAbsorptionElectroatomicReaction() );
-
-/*
-  ElectroatomCore::ReactionMap void_absorption;
-
-  void_absorption[reaction_pointer->getReactionType()] = reaction_pointer;
-
-  ReactionMap::const_iterator void_rxn_type_pointer = void_absorption.begin();
+  ReactionMap::const_iterator void_rxn_type_pointer = 
+    va_reaction.begin();
 
   absorption_reactions.insert( *void_rxn_type_pointer );
-*/
+/**/
   }
 
 }

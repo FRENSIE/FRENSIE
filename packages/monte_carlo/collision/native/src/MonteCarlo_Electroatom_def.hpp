@@ -46,6 +46,7 @@ Electroatom::Electroatom(
   // Populate the core
   d_core = ElectroatomCore( energy_grid,
                             standard_scattering_reactions,
+                            standard_absorption_reactions,
                             atomic_relaxation_model,
                             processed_cross_sections,
                             policy );

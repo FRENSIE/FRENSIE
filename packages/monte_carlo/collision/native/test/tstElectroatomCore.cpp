@@ -235,7 +235,7 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
-    // Create the atomic excitation, bremsstrahlung and void absorption cross sections
+    // Create the atomic excitation, bremsstrahlung cross sections
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.deepCopy( xss_data_extractor->extractElectronEnergyGrid() );
         
@@ -367,8 +367,6 @@ int main( int argc, char** argv )
     scattering_reactions[ae_reaction->getReactionType()] = ae_reaction;
 
     scattering_reactions[b_reaction->getReactionType()] = b_reaction;
-    
- //   absorption_reactions[va_reaction->getReactionType()] = va_reaction;
     
     // Create a void atomic relaxation model
     Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model(
