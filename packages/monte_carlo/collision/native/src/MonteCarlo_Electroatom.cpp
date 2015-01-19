@@ -176,7 +176,7 @@ void Electroatom::collideSurvivalBias( ElectronState& electron,
 
   double survival_prob = scattering_cross_section/total_cross_section;
   
-  // Multiply the electron's weigth by the survival probabilty
+  // Multiply the electron's weight by the survival probabilty
   if( survival_prob > 0.0 )
   {
     // Create a copy of the electron for sampling the absorption reaction
@@ -193,10 +193,10 @@ void Electroatom::collideSurvivalBias( ElectronState& electron,
     electron_copy.multiplyWeight( 1.0 - survival_prob );
 
     sampleAbsorptionReaction(
-		     Utility::RandomNumberGenerator::getRandomNumber<double>()*
-		     (total_cross_section - scattering_cross_section),
-		     electron_copy,
-		     bank );
+                      Utility::RandomNumberGenerator::getRandomNumber<double>()*
+                      (total_cross_section - scattering_cross_section),
+                      electron_copy,
+                      bank );
   }
   else
     electron.setAsGone();
