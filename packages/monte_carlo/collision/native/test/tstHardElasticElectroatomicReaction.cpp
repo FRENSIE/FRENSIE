@@ -215,7 +215,7 @@ int main( int argc, char** argv )
   
   // Create the reaction
   ace_elastic_reaction.reset(
-		new MonteCarlo::HardElasticElectroatomicReaction<Utility::LogLog>(
+		new MonteCarlo::HardElasticElectroatomicReaction<Utility::LinLin>(
 						      energy_grid,
 						      elastic_cross_section,
 						      elastic_threshold_index,
