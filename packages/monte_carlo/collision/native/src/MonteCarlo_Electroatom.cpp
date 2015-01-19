@@ -223,6 +223,9 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
     ++electroatomic_reaction;
   }
 
+std::cout << " electroatomic Reaction = " << d_core.getAbsorptionReactions().begin()->second->getReactionType() << std::endl;
+std::cout << " size = " << d_core.getAbsorptionReactions().size() << std::endl;
+
   // Make sure a reaction was selected
   testPostcondition( electroatomic_reaction != 
                        d_core.getAbsorptionReactions().end() );

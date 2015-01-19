@@ -18,7 +18,7 @@ namespace MonteCarlo{
  * \details This reaction should be used to represent miscellaneous
  * absorption reactions (e.g. heating).
  */
-template<typename InterpPolicy, bool processed_cross_section = true>
+template<typename InterpPolicy, bool processed_cross_section = false>
 class AbsorptionElectroatomicReaction : public StandardElectroatomicReaction<InterpPolicy,processed_cross_section>
 {
   
