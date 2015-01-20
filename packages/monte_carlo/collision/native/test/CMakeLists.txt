@@ -344,14 +344,9 @@ ADD_EXECUTABLE(tstElectroatom
 TARGET_LINK_LIBRARIES(tstElectroatom monte_carlo_collision_native)
 ADD_TEST(tstElectroatom_test tstElectroatom --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
-# ADD_EXECUTABLE(tstPhotonDataBasic
-#   tstPhotonDataBasic.cpp)
+ADD_EXECUTABLE(tstElectroatomACEFactory
+  tstElectroatomACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstElectroatomACEFactory monte_carlo_collision_native)
+ADD_TEST(tstElectroatomACEFactory_test tstElectroatomACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
-# ADD_EXECUTABLE(tstPhotonDataFluorescence
-#   tstPhotonDataFluorescence.cpp)
 
-# ADD_EXECUTABLE(tstPhotonDataDopplerBroadening
-#   tstPhotonDataDopplerBroadening.cpp)
-
-# ADD_EXECUTABLE(tstPhotonData
-#   tstPhotonData.cpp)

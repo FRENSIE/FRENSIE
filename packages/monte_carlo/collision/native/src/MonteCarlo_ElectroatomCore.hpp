@@ -55,6 +55,10 @@ public:
   static const boost::unordered_set<ElectroatomicReactionType> 
   scattering_reaction_types;
 
+  // Reactions that should be treated as void
+  static const boost::unordered_set<ElectroatomicReactionType> 
+  void_reaction_types;
+
   //! Default constructor
   ElectroatomCore();
 
@@ -110,6 +114,10 @@ private:
   // Set the default scattering reaction types
   static boost::unordered_set<ElectroatomicReactionType>
   setDefaultScatteringReactionTypes();
+
+  // Set the default void reaction type
+  static boost::unordered_set<ElectroatomicReactionType>
+  setDefaultVoidReactionType();
 
   // Create the total absorption reaction
   template<typename InterpPolicy>
@@ -193,21 +201,7 @@ ElectroatomCore::getAbsorptionReactions() const
   }
   else
   {
-    MonteCarlo::ElectroatomCore::ConstReactionMap va_reaction;
-
-    va_reaction[d_total_absorption_reaction->getReactionType()] = d_total_absorption_reaction;
-
-    ConstReactionMap::const_iterator void_rxn_type_pointer = 
-      va_reaction.begin();
-
-std::cout << " Void Reaction = " << va_reaction.begin()->second->getReactionType() << std::endl;
-
-std::cout << " va_reaction size = " << va_reaction.size() << std::endl;
-/*
-    d_void_reactions.insert( d_total_absorption_reaction->getReactionType(),
-                             d_total_absorption_reaction );
-*/
-    return va_reaction;
+    return d_void_reactions;
   }
 }
 
