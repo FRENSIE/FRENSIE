@@ -17,6 +17,10 @@ const boost::unordered_set<ElectroatomicReactionType>
 ElectroatomCore::scattering_reaction_types = 
   ElectroatomCore::setDefaultScatteringReactionTypes();
 
+const boost::unordered_set<ElectroatomicReactionType> 
+ElectroatomCore::void_reaction_types = 
+  ElectroatomCore::setDefaultVoidReactionType();
+
 // Set the default scattering reaction types
 boost::unordered_set<ElectroatomicReactionType>
 ElectroatomCore::setDefaultScatteringReactionTypes()
@@ -114,6 +118,17 @@ ElectroatomCore::setDefaultScatteringReactionTypes()
   return tmp_scattering_reaction_types;
 }
 
+// Set the default void reaction type
+boost::unordered_set<ElectroatomicReactionType>
+ElectroatomCore::setDefaultVoidReactionType()
+{
+  boost::unordered_set<ElectroatomicReactionType> tmp_void_reaction_type;
+  tmp_void_reaction_type.insert( 
+				  TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
+
+  return tmp_void_reaction_type;
+}
+
 // Default constructor
 ElectroatomCore::ElectroatomCore()
   : d_total_reaction(),
@@ -163,6 +178,7 @@ ElectroatomCore::ElectroatomCore( const ElectroatomCore& instance )
     d_scattering_reactions( instance.d_scattering_reactions ),
     d_absorption_reactions( instance.d_absorption_reactions ),
     d_miscellaneous_reactions( instance.d_miscellaneous_reactions ),
+    d_void_reactions( instance.d_void_reactions ),
     d_relaxation_model( instance.d_relaxation_model )
 {
   // Make sure the total reaction is valid
@@ -196,6 +212,7 @@ ElectroatomCore& ElectroatomCore::operator=( const ElectroatomCore& instance )
     d_total_absorption_reaction = instance.d_total_absorption_reaction;
     d_scattering_reactions = instance.d_scattering_reactions;
     d_absorption_reactions = instance.d_absorption_reactions;
+    d_void_reactions = instance.d_void_reactions;
     d_relaxation_model = instance.d_relaxation_model;
   }
    

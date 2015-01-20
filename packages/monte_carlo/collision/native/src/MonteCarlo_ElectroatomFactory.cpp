@@ -25,10 +25,10 @@ ElectroatomFactory::ElectroatomFactory(
 		    const boost::unordered_set<std::string>& electroatom_aliases,
 		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 		    atomic_relaxation_model_factory,
-		    const bool use_doppler_broadening_data,
-		    const bool use_detailed_pair_production_data,
-		    const bool use_atomic_relaxation_data )
-{
+            const double elastic_cutoff_angle,
+            const bool use_detailed_bremsstrahlung_data,
+            const bool use_atomic_relaxation_data )
+{/*
   // Create each electroatom in the set
   boost::unordered_set<std::string>::const_iterator electroatom_name = 
     electroatom_aliases.begin();
@@ -79,6 +79,7 @@ ElectroatomFactory::ElectroatomFactory(
 
   // Make sure that every electroatom has been created
   testPostcondition( d_electroatom_name_map.size() == electroatom_aliases.size() );
+*/
 }
 
 // Create the map of electroatoms
@@ -101,10 +102,11 @@ void ElectroatomFactory::createElectroatomFromACETable(
 			  const Teuchos::ParameterList& electroatom_table_info,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
-			  const bool use_doppler_broadening_data,
-			  const bool use_detailed_pair_production_data,
-			  const bool use_atomic_relaxation_data )
+              const double elastic_cutoff_angle,
+              const bool use_detailed_bremsstrahlung_data,
+              const bool use_atomic_relaxation_data )
 {
+/*
   // Set the abs. path to the ace library file containing the desired table
   std::string ace_file_path = cross_sections_xml_directory + "/";
   
@@ -198,6 +200,7 @@ void ElectroatomFactory::createElectroatomFromACETable(
     // Create the new electroatom
     ElectroatomACEFactory::createElectroatom( xss_data_extractor,
 					  electroatomic_table_name,
+                      elastic_cutoff_angle,
 					  atomic_weight,
 					  atomic_relaxation_model,
 					  electroatom,
@@ -214,6 +217,7 @@ void ElectroatomFactory::createElectroatomFromACETable(
     d_electroatom_name_map[electroatom_alias] = 
       d_electroatomic_table_name_map[electroatomic_table_name];
   }
+*/
 }
 
 } // end MonteCarlo namespace
