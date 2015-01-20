@@ -175,10 +175,11 @@ void Electroatom::collideSurvivalBias( ElectronState& electron,
     this->getAbsorptionCrossSection( electron.getEnergy() );
 
   double survival_prob = scattering_cross_section/total_cross_section;
-  
+ 
   // Multiply the electron's weight by the survival probabilty
   if( survival_prob > 0.0 )
   {
+
     // Create a copy of the electron for sampling the absorption reaction
     ElectronState electron_copy( electron, false, false );
     
@@ -189,7 +190,7 @@ void Electroatom::collideSurvivalBias( ElectronState& electron,
 		     scattering_cross_section,
 		     electron,
 		     bank );
-
+ 
     electron_copy.multiplyWeight( 1.0 - survival_prob );
 
     sampleAbsorptionReaction(
@@ -208,7 +209,7 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
                                             ParticleBank& bank ) const
 {
   double partial_cross_section = 0.0;
-  
+
   ConstReactionMap::const_iterator electroatomic_reaction = 
     d_core.getAbsorptionReactions().begin();
 
@@ -217,14 +218,11 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
     partial_cross_section +=
       electroatomic_reaction->second->getCrossSection( electron.getEnergy() );
 
-    if( scaled_random_number < partial_cross_section )
+    if( scaled_random_number <= partial_cross_section )
       break;
 
     ++electroatomic_reaction;
   }
-
-std::cout << " electroatomic Reaction = " << d_core.getAbsorptionReactions().begin()->second->getReactionType() << std::endl;
-std::cout << " size = " << d_core.getAbsorptionReactions().size() << std::endl;
 
   // Make sure a reaction was selected
   testPostcondition( electroatomic_reaction != 

@@ -12,7 +12,6 @@
 // FRENSIE Includes
 #include "Utility_ContractException.hpp"
 #include "MonteCarlo_AbsorptionElectroatomicReaction.hpp"
-#include "MonteCarlo_VoidElectroatomicReaction.hpp"
 #include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
 
 namespace MonteCarlo{
@@ -38,6 +37,7 @@ ElectroatomCore::ElectroatomCore(
     d_scattering_reactions(),
     d_absorption_reactions(),
     d_miscellaneous_reactions(),
+    d_void_reactions(),
     d_relaxation_model( relaxation_model )
 {
   // Make sure the energy grid is valid
@@ -59,6 +59,8 @@ ElectroatomCore::ElectroatomCore(
   {
     if( ElectroatomCore::scattering_reaction_types.count( rxn_type_pointer->first ) )
       d_scattering_reactions.insert( *rxn_type_pointer );
+    else if( ElectroatomCore::void_reaction_types.count( rxn_type_pointer->first ) )
+      d_void_reactions.insert( *rxn_type_pointer );
     else
       d_absorption_reactions.insert( *rxn_type_pointer );
 
@@ -71,12 +73,13 @@ ElectroatomCore::ElectroatomCore(
   {
     if( ElectroatomCore::scattering_reaction_types.count( rxn_type_pointer->first ) )
       d_scattering_reactions.insert( *rxn_type_pointer );
+    else if( ElectroatomCore::void_reaction_types.count( rxn_type_pointer->first ) )
+      d_void_reactions.insert( *rxn_type_pointer );
     else
       d_miscellaneous_reactions.insert( *rxn_type_pointer );
 
     ++rxn_type_pointer; 
   }
-  
   // Create the total absorption and total reactions
   Teuchos::RCP<ElectroatomicReaction> total_absorption_reaction;
   Teuchos::RCP<ElectroatomicReaction> total_reaction;
@@ -118,7 +121,10 @@ ElectroatomCore::ElectroatomCore(
 
   // Make sure the reactions have been organized appropriately
   testPostcondition( d_scattering_reactions.size() > 0 );
-//  testPostcondition( d_absorption_reactions.size() > 0 );
+  if ( d_absorption_reactions.size() < 1 )
+    {
+    testPostcondition( d_void_reactions.size() > 0 );
+    }
 }
 
 // Create the total absorption reaction
@@ -189,27 +195,16 @@ void ElectroatomCore::createTotalAbsorptionReaction(
   }
   else
   {
+
+  // Create void absorption reaction
+  total_absorption_reaction.reset(
+      new VoidAbsorptionElectroatomicReaction() );
 /*
-  // Create void absorption reaction
-  total_absorption_reaction.reset(
-	  new VoidAbsorptionElectroatomicReaction() );
-*/
-  // Create void absorption reaction
-  total_absorption_reaction.reset(
       new VoidElectroatomicReaction<InterpPolicy,false>(
 			energy_grid,
 			energy_grid,
 			absorption_threshold_energy_index,
 			TOTAL_ABSORPTION_ELECTROATOMIC_REACTION ) );
-
-  MonteCarlo::ElectroatomCore::ConstReactionMap va_reaction;
-
-  va_reaction[total_absorption_reaction->getReactionType()] = total_absorption_reaction;
-/*
-  ReactionMap::const_iterator void_rxn_type_pointer = 
-    va_reaction.begin();
-
-  absorption_reactions.insert( *void_rxn_type_pointer );
 */
   }
 
