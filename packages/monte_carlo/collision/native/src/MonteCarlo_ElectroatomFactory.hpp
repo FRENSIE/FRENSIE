@@ -39,8 +39,8 @@ public:
                    const boost::unordered_set<std::string>& electroatom_aliases,
                    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
                    atomic_relaxation_model_factory,
-                   const bool use_doppler_broadening_data,
-                   const bool use_detailed_pair_production_data,
+                   const double elastic_cutoff_angle,
+                   const bool use_detailed_bremsstrahlung_data,
                    const bool use_atomic_relaxation_data );
 
   //! Destructor
@@ -61,9 +61,9 @@ private:
 			  const Teuchos::ParameterList& electroatom_table_info,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
-			  const bool use_doppler_broadening_data,
-			  const bool use_detailed_pair_production_data,
-			  const bool use_atomic_relaxation_data );
+              const double elastic_cutoff_angle,
+              const bool use_detailed_bremsstrahlung_data,
+              const bool use_atomic_relaxation_data );
 
   // The electroatom map
   boost::unordered_map<std::string,Teuchos::RCP<Electroatom> > 

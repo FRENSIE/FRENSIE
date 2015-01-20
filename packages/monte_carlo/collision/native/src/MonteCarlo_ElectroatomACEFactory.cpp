@@ -26,9 +26,9 @@ namespace MonteCarlo{
  */
 void ElectroatomACEFactory::createElectroatomCore(
             const Data::XSSEPRDataExtractor& raw_electroatom_data,
+            const double elastic_cutoff_angle,
             const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
             Teuchos::RCP<ElectroatomCore>& electroatom_core,
-            const double cutoff_angle_cosine,
             const bool use_detailed_bremsstrahlung_data,
             const bool use_atomic_relaxation_data )
 {
@@ -52,7 +52,7 @@ void ElectroatomACEFactory::createElectroatomCore(
 					   raw_electroatom_data,
 					   energy_grid,
 					   reaction_pointer,
-					   cutoff_angle_cosine );
+					   elastic_cutoff_angle );
   }
 
   // Create the bremsstrahlung scattering reaction
@@ -106,6 +106,17 @@ void ElectroatomACEFactory::createElectroatomCore(
 							    reaction_pointer );
    */
   }
+
+  // Create the void absorption reaction
+  {
+    Electroatom::ReactionMap::mapped_type& reaction_pointer = 
+      absorption_reactions[TOTAL_ABSORPTION_ELECTROATOMIC_REACTION];
+    
+    ElectroatomicReactionACEFactory::createAtomicExcitationReaction( 
+                               raw_electroatom_data,
+	                           energy_grid,
+                               reaction_pointer );
+  }
 			
   // Create the electroatom core
   electroatom_core.reset( new ElectroatomCore( energy_grid,
@@ -126,10 +137,10 @@ void ElectroatomACEFactory::createElectroatomCore(
 void ElectroatomACEFactory::createElectroatom(
 	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
 	    const std::string& electroatom_name,
-	    const double atomic_weight,
+        const double elastic_cutoff_angle,
+        const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Electroatom>& electroatom,
-        const double cutoff_angle_cosine,
         const bool use_detailed_bremsstrahlung_data,
 	    const bool use_atomic_relaxation_data )
 {
@@ -141,17 +152,18 @@ void ElectroatomACEFactory::createElectroatom(
   Teuchos::RCP<ElectroatomCore> core;
 
   ElectroatomACEFactory::createElectroatomCore(raw_electroatom_data,
+                                               elastic_cutoff_angle,
                                                atomic_relaxation_model,
                                                core,
-                                               cutoff_angle_cosine,
                                                use_detailed_bremsstrahlung_data,
                                                use_atomic_relaxation_data );
 					    
   // Create the electroatom
-  electroatom.reset( new Electroatom( electroatom_name,
-				  raw_electroatom_data.extractAtomicNumber(),
-				  atomic_weight,
-				  *core ) );
+  electroatom.reset(
+    new Electroatom( electroatom_name,
+                     raw_electroatom_data.extractAtomicNumber(),
+                     atomic_weight,
+                     *core ) );
 }
 
 } // end MonteCarlo namespace
