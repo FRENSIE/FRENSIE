@@ -202,7 +202,7 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
   // Clear the reaction
   reaction.reset();
 }
-
+//! \todo Write detailed bremsstrahlung reaction test
 //---------------------------------------------------------------------------//
 // Check that a detailed bremsstrahlung reaction can be created
 // TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
@@ -210,6 +210,42 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 // {
   
 // }
+
+
+//---------------------------------------------------------------------------//
+// Check that a void absorption reaction can be created
+TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory, 
+                   createVoidAbsorptionReaction )
+{
+  MonteCarlo::ElectroatomicReactionACEFactory::createVoidAbsorptionReaction(
+                                                reaction );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+		       MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
+
+  // Test that the stored cross section is correct
+  double cross_section = 
+    reaction->getCrossSection( reaction->getThresholdEnergy() );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0);
+
+  cross_section = reaction->getCrossSection( 1.00000e-4 );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0);
+
+  cross_section = reaction->getCrossSection( 1.79008e-4 );
+
+  TEST_EQUALITY_CONST( cross_section, 0.0);
+  
+  cross_section = reaction->getCrossSection( 1.00000e+5 );
+  
+  TEST_EQUALITY_CONST( cross_section, 0.0);
+
+  // Clear the reaction
+  reaction.reset();
+}
 
 //---------------------------------------------------------------------------//
 // Custom main function

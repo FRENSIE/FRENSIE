@@ -35,11 +35,11 @@ public:
 
   //! Constructor
   ElectroatomFactory( const std::string& cross_sections_xml_directory,
-                   const Teuchos::ParameterList& cross_section_table_info,
                    const boost::unordered_set<std::string>& electroatom_aliases,
+                   const double elastic_cutoff_angle,
+                   const Teuchos::ParameterList& cross_section_table_info,
                    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
                    atomic_relaxation_model_factory,
-                   const double elastic_cutoff_angle,
                    const bool use_detailed_bremsstrahlung_data,
                    const bool use_atomic_relaxation_data );
 
@@ -58,10 +58,10 @@ private:
   void createElectroatomFromACETable(
 			  const std::string& cross_sections_xml_directory,
 			  const std::string& electroatom_alias,
+              const double elastic_cutoff_angle,
 			  const Teuchos::ParameterList& electroatom_table_info,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
-              const double elastic_cutoff_angle,
               const bool use_detailed_bremsstrahlung_data,
               const bool use_atomic_relaxation_data );
 

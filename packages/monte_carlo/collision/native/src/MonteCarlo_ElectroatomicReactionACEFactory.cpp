@@ -17,6 +17,7 @@
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
+#include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
@@ -112,7 +113,7 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
 
-  // Extract the elastic scattering information data block (EXCIT)
+  // Extract the atomic excitation scattering information data block (EXCIT)
   Teuchos::ArrayView<const double> excit_block(
 				      raw_electroatom_data.extractEXCITBlock() );
   
@@ -152,6 +153,39 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
 						  threshold_energy_index,				
                           energy_loss_distribution ) );
 }
+
+// Create the total electroionization electroatomic reaction
+void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
+			const Data::XSSEPRDataExtractor& raw_electroatom_data,
+			const Teuchos::ArrayRCP<const double>& energy_grid,
+			Teuchos::RCP<ElectroatomicReaction>& total_electroionization_reaction )
+{
+  // Make sure the energy grid is valid
+  testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
+		    energy_grid.size() );
+  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
+						      energy_grid.end() ) );
+
+  // Atomic Excitation cross section with zeros removed
+  Teuchos::ArrayRCP<double> total_electroionization_cross_section;
+  
+  // Index of first non zero cross section in the energy grid
+  unsigned threshold_energy_index;
+
+  // Remove all cross sections equal to zero
+  ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
+                           energy_grid,
+                           raw_electroatom_data.extractElectroionizationCrossSection(),
+                           total_electroionization_cross_section,
+                           threshold_energy_index );
+
+  total_electroionization_reaction.reset(
+	new ElectroionizationElectroatomicReaction<Utility::LinLin>(
+						  energy_grid,
+						  total_electroionization_cross_section,
+						  threshold_energy_index ) );
+}
+
 
 // Create the subshell electroionization electroatomic reactions
 void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
@@ -365,6 +399,15 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 					      threshold_energy_index,
 					      energy_loss_distribution ) );
   }
+}
+
+// Create a void absorption electroatomic reaction
+void ElectroatomicReactionACEFactory::createVoidAbsorptionReaction(
+      Teuchos::RCP<ElectroatomicReaction>& void_absorption_reaction )
+{
+  // Create the void absorption reaction
+  void_absorption_reaction.reset(
+		     new VoidAbsorptionElectroatomicReaction() );
 }
 
 // Remove the zeros from a cross section
