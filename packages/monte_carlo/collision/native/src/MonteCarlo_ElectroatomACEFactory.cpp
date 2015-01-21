@@ -96,15 +96,14 @@ void ElectroatomACEFactory::createElectroatomCore(
   }
   else
   {
-   /*! \todo Get data for Total Electroionization Reaction
+   //! \todo Get data for Total Electroionization Reaction
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
       scattering_reactions[TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION];
 
-    ElectroatomicReactionACEFactory::createTotalElectroelectricReaction(
+    ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
 							    raw_electroatom_data,
 							    energy_grid,
 							    reaction_pointer );
-   */
   }
 
   // Create the void absorption reaction
@@ -112,9 +111,7 @@ void ElectroatomACEFactory::createElectroatomCore(
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
       absorption_reactions[TOTAL_ABSORPTION_ELECTROATOMIC_REACTION];
     
-    ElectroatomicReactionACEFactory::createAtomicExcitationReaction( 
-                               raw_electroatom_data,
-	                           energy_grid,
+    ElectroatomicReactionACEFactory::createVoidAbsorptionReaction( 
                                reaction_pointer );
   }
 			

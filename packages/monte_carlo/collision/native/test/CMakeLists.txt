@@ -328,4 +328,9 @@ ADD_EXECUTABLE(tstElectroatomACEFactory
 TARGET_LINK_LIBRARIES(tstElectroatomACEFactory monte_carlo_collision_native)
 ADD_TEST(tstElectroatomACEFactory_test tstElectroatomACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+ADD_EXECUTABLE(tstElectroatomFactory
+  tstElectroatomFactory.cpp)
+TARGET_LINK_LIBRARIES(tstElectroatomFactory monte_carlo_collision_native)
+ADD_TEST(tstElectroatomFactory_test tstElectroatomFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
+
 
