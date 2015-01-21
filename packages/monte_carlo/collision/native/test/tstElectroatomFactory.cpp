@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstElectroatomACEFactory.cpp
+//! \file   tstElectroatomFactory.cpp
 //! \author Luke Kersting
-//! \brief  Electroatom factory using ACE data unit tests
+//! \brief  Electroatom factory unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -13,41 +13,56 @@
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_VerboseObject.hpp>
 #include <Teuchos_RCP.hpp>
+#include <Teuchos_XMLParameterListCoreHelpers.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ElectroatomACEFactory.hpp"
+#include "MonteCarlo_ElectroatomFactory.hpp"
+#include "MonteCarlo_ElectroatomFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
-#include "Data_ACEFileHandler.hpp"
-#include "Data_XSSEPRDataExtractor.hpp"
-#include "Utility_InterpolationPolicy.hpp"
+#include "MonteCarlo_ParticleBank.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
-Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
-std::string electroatom_name;
-double atomic_weight;
+std::string cross_sections_xml_directory;
+Teuchos::ParameterList cross_section_table_info;
+boost::unordered_set<std::string> electroatom_aliases;
+Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory> 
+atomic_relaxation_model_factory;
+Teuchos::RCP<MonteCarlo::ElectroatomFactory> electroatom_factory;
 double elastic_cutoff_angle = 0.999999;
-Teuchos::RCP<MonteCarlo::Electroatom> atom;
 
 //---------------------------------------------------------------------------//
-// Tests.
+// Tests
 //---------------------------------------------------------------------------//
-// Check that a basic electroatom can be created
-TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
+// Check that a electroatom map can be created (only basic data)
+TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_basic )
 {
-  MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
-                                                        electroatom_name,
-                                                        elastic_cutoff_angle,
-                                                        atomic_weight,
-                                                        relaxation_model,
-                                                        atom,
-                                                        false,
-                                                        false );
+  // Create the set of electroatom aliases
+  electroatom_aliases.insert( "Pb" );
+  
+  electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
+                                              cross_sections_xml_directory,
+                                              electroatom_aliases,
+                                              elastic_cutoff_angle,
+                                              cross_section_table_info,
+                                              atomic_relaxation_model_factory,
+                                              false,
+                                              false ) );
+
+  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+    electroatom_map;
+
+  electroatom_factory->createElectroatomMap( electroatom_map );
+
+  TEST_EQUALITY_CONST( electroatom_map.size(), 1 );
+  TEST_ASSERT( electroatom_map.count( "Pb" ) );
+  TEST_ASSERT( !electroatom_map["Pb"].is_null() );
+
+  Teuchos::RCP<MonteCarlo::Electroatom>& atom = electroatom_map["Pb"];
 
   // Test the electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
@@ -187,36 +202,64 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
                     MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
   
   TEST_FLOATING_EQUALITY( cross_section, 8.887469904554E+08, 1e-12 );
+
+  // Reset the electroatom factory
+  electroatom_factory.reset();
 }
 /*
 //---------------------------------------------------------------------------//
-// Check that a electroatom with detailed bremsstrahlung data can be created
-TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
+// Check that a electroatom map can be created (detailed bremsstrahlung data)
+// TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_detailed_brem )
 {
-  MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
-                                                        electroatom_name,
-                                                        elastic_cutoff_angle,
-                                                        atomic_weight,
-                                                        relaxation_model,
-                                                        atom,
-                                                        true,
-                                                        false );
+  // Create the set of electroatom aliases
+  electroatom_aliases.insert( "Pb" );
+  
+  electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
+                                              cross_sections_xml_directory,
+                                              electroatom_aliases,
+                                              elastic_cutoff_angle,
+                                              cross_section_table_info,
+                                              atomic_relaxation_model_factory,
+                                              true,
+                                              false ) );
+
+  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+    electroatom_map;
+
+  electroatom_factory->createElectroatomMap( electroatom_map );
+
+  TEST_EQUALITY_CONST( electroatom_map.size(), 1 );
+  TEST_ASSERT( electroatom_map.count( "Pb" ) );
+  TEST_ASSERT( !electroatom_map["Pb"].is_null() );
 }
 */
-
 //---------------------------------------------------------------------------//
-// Check that a electroatom with electroionization subshell data can be created
-TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_ionization_subshells )
+// Check that a electroatom map can be created (electroionization subshell data)
+TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ionization_subshells )
 {
-  MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
-                                                        electroatom_name,
-                                                        elastic_cutoff_angle,
-                                                        atomic_weight,
-                                                        relaxation_model,
-                                                        atom,
-                                                        false,
-                                                        true );
+  // Create the set of electroatom aliases
+  electroatom_aliases.insert( "Pb" );
   
+  electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
+                                              cross_sections_xml_directory,
+                                              electroatom_aliases,
+                                              elastic_cutoff_angle,
+                                              cross_section_table_info,
+                                              atomic_relaxation_model_factory,
+                                              false,
+                                              true ) );
+
+  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+    electroatom_map;
+
+  electroatom_factory->createElectroatomMap( electroatom_map );
+
+  TEST_EQUALITY_CONST( electroatom_map.size(), 1 );
+  TEST_ASSERT( electroatom_map.count( "Pb" ) );
+  TEST_ASSERT( !electroatom_map["Pb"].is_null() );
+
+  Teuchos::RCP<MonteCarlo::Electroatom>& atom = electroatom_map["Pb"];
+
   // Test the electroatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
@@ -373,20 +416,49 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_ionization_subshells
 }
 
 //---------------------------------------------------------------------------//
+// Check that tables are not duplicated
+TEUCHOS_UNIT_TEST( ElectroatomFactory, no_duplicate_tables )
+{
+  // Create the set of electroatom aliases
+  electroatom_aliases.clear();
+  electroatom_aliases.insert( "H-1_293.6K" );
+  electroatom_aliases.insert( "H-1_300K" );
+  
+  electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
+                                              cross_sections_xml_directory,
+                                              electroatom_aliases,
+                                              elastic_cutoff_angle,
+                                              cross_section_table_info,
+                                              atomic_relaxation_model_factory,
+                                              false,
+                                              true ) );
+
+  boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
+    electroatom_map;
+
+  electroatom_factory->createElectroatomMap( electroatom_map );
+
+  TEST_EQUALITY_CONST( electroatom_map.size(), 2 );
+  
+  TEST_ASSERT( electroatom_map.count( "H-1_293.6K" ) );
+  TEST_ASSERT( !electroatom_map["H-1_293.6K"].is_null() );
+
+  TEST_ASSERT( electroatom_map.count( "H-1_300K" ) );
+  TEST_ASSERT( !electroatom_map["H-1_300K"].is_null() );
+  
+  TEST_EQUALITY( electroatom_map["H-1_293.6K"], electroatom_map["H-1_300K"] );
+} 
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  std::string test_ace_file_name, test_ace_table_name;
-
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
-  clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
-  clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
+  clp.setOption( "test_cross_sections_xml_directory",
+                 &cross_sections_xml_directory,
+                 "Test cross_sections.xml file name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -398,26 +470,19 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
-  
+
   {
-    // Create a file handler and data extractor
-    Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
-				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
-    xss_data_extractor.reset( new Data::XSSEPRDataExtractor( 
-				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
-				      ace_file_handler->getTableXSSArray() ) );
+    std::string cross_sections_xml_file = cross_sections_xml_directory;
+    cross_sections_xml_file += "/cross_sections.xml";
+    
+    // Read in the xml file storing the cross section table info
+    Teuchos::updateParametersFromXmlFile(
+			       cross_sections_xml_file,
+			       Teuchos::inoutArg( cross_section_table_info ) );
 
-    MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel(
-							   *xss_data_extractor,
-							   relaxation_model,
-							   true );
-
-    electroatom_name = test_ace_table_name;
-    atomic_weight = ace_file_handler->getTableAtomicWeightRatio()*
-      Utility::PhysicalConstants::neutron_rest_mass_amu;
+    // Create the atomic relaxation model factory
+    atomic_relaxation_model_factory.reset(
+				new MonteCarlo::AtomicRelaxationModelFactory );
   }
 
   // Initialize the random number generator
@@ -438,6 +503,7 @@ int main( int argc, char** argv )
   return (success ? 0 : 1);
 }
 
+
 //---------------------------------------------------------------------------//
-// end tstElectroatomACEFactory.cpp
+// end tstElectroatomFactory.cpp
 //---------------------------------------------------------------------------//

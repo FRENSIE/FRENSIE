@@ -38,9 +38,9 @@ public:
   static void createTotalElectroionizationReaction(
 		   const Data::XSSEPRDataExtractor& raw_electroatom_data,
 		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<ElectroatomicReaction>& electroionization_reaction);
+		   Teuchos::RCP<ElectroatomicReaction>& electroionization_reaction );
 
-//! Create the subshell electroionization electroatomic reactions
+  //! Create the subshell electroionization electroatomic reactions
   static void createSubshellElectroionizationReactions(
 		   const Data::XSSEPRDataExtractor& raw_electroatom_data,
 		   const Teuchos::ArrayRCP<const double>& energy_grid,
@@ -53,6 +53,10 @@ public:
 		const Teuchos::ArrayRCP<const double>& energy_grid,
 		Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reactions,
 		const bool use_detailed_bremsstrahlung_data );
+
+  //! Create a void absorption electroatomic reaction
+  static void createVoidAbsorptionReaction(
+        Teuchos::RCP<ElectroatomicReaction>& void_absorption_reaction );
 
 protected:
   
