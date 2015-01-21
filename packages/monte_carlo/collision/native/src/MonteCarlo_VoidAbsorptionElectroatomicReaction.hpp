@@ -65,7 +65,7 @@ inline double VoidAbsorptionElectroatomicReaction::getCrossSection(
 //! Return the threshold energy
 inline double VoidAbsorptionElectroatomicReaction::getThresholdEnergy() const
 { 
-  return 0.0;
+  return 1.00000e-5;
 }
 
 // Return the number of electrons emitted from the rxn at the given energy

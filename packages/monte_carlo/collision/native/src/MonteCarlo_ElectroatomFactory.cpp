@@ -21,14 +21,14 @@ namespace MonteCarlo{
 // Constructor
 ElectroatomFactory::ElectroatomFactory(
 		    const std::string& cross_sections_xml_directory,
-		    const Teuchos::ParameterList& cross_section_table_info,
 		    const boost::unordered_set<std::string>& electroatom_aliases,
+            const double elastic_cutoff_angle,
+		    const Teuchos::ParameterList& cross_section_table_info,
 		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 		    atomic_relaxation_model_factory,
-            const double elastic_cutoff_angle,
             const bool use_detailed_bremsstrahlung_data,
             const bool use_atomic_relaxation_data )
-{/*
+{
   // Create each electroatom in the set
   boost::unordered_set<std::string>::const_iterator electroatom_name = 
     electroatom_aliases.begin();
@@ -60,12 +60,12 @@ ElectroatomFactory::ElectroatomFactory(
     if( table_type == "ACE" )
     {
       createElectroatomFromACETable( cross_sections_xml_directory, 
-				   *electroatom_name,
-				   table_info,
-				   atomic_relaxation_model_factory,
-				   use_doppler_broadening_data,
-				   use_detailed_pair_production_data,
-				   use_atomic_relaxation_data );
+                                     *electroatom_name,
+                                     elastic_cutoff_angle,
+                                     table_info,
+                                     atomic_relaxation_model_factory,
+                                     use_detailed_bremsstrahlung_data,
+                                     use_atomic_relaxation_data );
     }
     else
     {
@@ -79,7 +79,7 @@ ElectroatomFactory::ElectroatomFactory(
 
   // Make sure that every electroatom has been created
   testPostcondition( d_electroatom_name_map.size() == electroatom_aliases.size() );
-*/
+
 }
 
 // Create the map of electroatoms
@@ -99,14 +99,14 @@ void ElectroatomFactory::createElectroatomMap(
 void ElectroatomFactory::createElectroatomFromACETable(
 			  const std::string& cross_sections_xml_directory,
 			  const std::string& electroatom_alias,
+              const double elastic_cutoff_angle,
 			  const Teuchos::ParameterList& electroatom_table_info,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
-              const double elastic_cutoff_angle,
               const bool use_detailed_bremsstrahlung_data,
               const bool use_atomic_relaxation_data )
 {
-/*
+
   // Set the abs. path to the ace library file containing the desired table
   std::string ace_file_path = cross_sections_xml_directory + "/";
   
@@ -199,14 +199,13 @@ void ElectroatomFactory::createElectroatomFromACETable(
 
     // Create the new electroatom
     ElectroatomACEFactory::createElectroatom( xss_data_extractor,
-					  electroatomic_table_name,
-                      elastic_cutoff_angle,
-					  atomic_weight,
-					  atomic_relaxation_model,
-					  electroatom,
-					  use_doppler_broadening_data,
-					  use_detailed_pair_production_data,
-					  use_atomic_relaxation_data );
+                                              electroatomic_table_name,
+                                              elastic_cutoff_angle,
+                                              atomic_weight,
+                                              atomic_relaxation_model,
+                                              electroatom,
+                                              use_detailed_bremsstrahlung_data,
+                                              use_atomic_relaxation_data );
 
     // Cache the new electroatom in the table name map
     d_electroatomic_table_name_map[electroatomic_table_name] = electroatom;
@@ -217,7 +216,6 @@ void ElectroatomFactory::createElectroatomFromACETable(
     d_electroatom_name_map[electroatom_alias] = 
       d_electroatomic_table_name_map[electroatomic_table_name];
   }
-*/
 }
 
 } // end MonteCarlo namespace

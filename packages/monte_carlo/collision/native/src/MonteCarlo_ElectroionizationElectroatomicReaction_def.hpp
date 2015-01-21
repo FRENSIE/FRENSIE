@@ -75,10 +75,12 @@ void ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section
   d_scattering_distribution.scatterElectron( electron, 
                                              bank, 
                                              shell_of_interaction);
-
+*/
   shell_of_interaction = UNKNOWN_SUBSHELL;
 
-*/
+  THROW_EXCEPTION( std::logic_error, 
+        "Error! The total electroionization reaction scatter function has not been implemented");
+
 }
 
 } // end MonteCarlo namespace
