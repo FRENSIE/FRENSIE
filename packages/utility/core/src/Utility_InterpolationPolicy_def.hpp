@@ -31,18 +31,20 @@ inline T LogLog::interpolate( const T indep_var_0,
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the independent variables are valid
-  testPrecondition( indep_var_0 == indep_var_0 );
-  testPrecondition( indep_var_1 == indep_var_1 );
-  testPrecondition( indep_var == indep_var );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_1 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var ) );
+  testPrecondition( LogLog::isIndepVarInValidRange( indep_var_0 ) );
+  testPrecondition( LogLog::isIndepVarInValidRange( indep_var_1 ) );
+  testPrecondition( LogLog::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var_0 < indep_var_1 );
-  testPrecondition( indep_var_0 > 0.0 );
   testPrecondition( indep_var >= indep_var_0 );
   testPrecondition( indep_var <= indep_var_1 );
   // Make sure the dependent variables are valid
-  testPrecondition( dep_var_0 == dep_var_0 );
-  testPrecondition( dep_var_1 == dep_var_1 );
-  testPrecondition( dep_var_0 > 0.0 );
-  testPrecondition( dep_var_1 > 0.0 );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var_1 ) );
+  testPrecondition( LogLog::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LogLog::isDepVarInValidRange( dep_var_1 ) );
 
   return dep_var_0*
     pow((dep_var_1/dep_var_0),
@@ -59,13 +61,16 @@ inline T LogLog::interpolate( const T processed_indep_var_0,
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( processed_indep_var_0 == processed_indep_var_0 );
-  testPrecondition( processed_indep_var == processed_indep_var );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+						     processed_indep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( processed_dep_var_0 == processed_dep_var_0 );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+						       processed_dep_var_0 ) );
   // Make sure that the slope is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf(processed_slope));
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
   
   return exp( processed_dep_var_0 + 
 	      processed_slope*(processed_indep_var - processed_indep_var_0) );
@@ -76,7 +81,7 @@ template<typename T>
 inline T LogLog::processIndepVar( const T indep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( indep_var > 0.0 );
+  testPrecondition( LogLog::isIndepVarInValidRange( indep_var ) );
   
   return log( indep_var );
 }
@@ -86,7 +91,7 @@ template<typename T>
 inline T LogLog::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( dep_var > 0.0 );
+  testPrecondition( LogLog::isIndepVarInValidRange( dep_var ) );
 
   return log( dep_var );
 }
@@ -103,6 +108,26 @@ template<typename T>
 inline T LogLog::recoverProcessedDepVar( const T processed_dep_var )
 {
   return exp( processed_dep_var );
+}
+
+// Test if the independent value is in a valid range (doesn't check nan/inf)
+template<typename T>
+inline bool LogLog::isIndepVarInValidRange( const T indep_var )
+{
+  // Make sure the indep var is not inf or nan
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var ) );
+    
+  return indep_var > 0.0;
+}
+
+// Test if the dependent value is in a valid range (doesn't check nan/inf)
+template<typename T>
+inline bool LogLog::isDepVarInValidRange( const T dep_var )
+{
+  // Make sure the indep var is not inf or nan
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var ) );
+    
+  return dep_var > 0.0;
 }
 
 // The name of the policy
@@ -122,17 +147,20 @@ inline T LogLin::interpolate( const T indep_var_0,
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( indep_var_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( indep_var ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_1 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var ) );
+  testPrecondition( LogLin::isIndepVarInValidRange( indep_var_0 ) );
+  testPrecondition( LogLin::isIndepVarInValidRange( indep_var_1 ) );
+  testPrecondition( LogLin::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var_0 < indep_var_1 );
   testPrecondition( indep_var >= indep_var_0 );
   testPrecondition( indep_var <= indep_var_1 );
   // Make sure the dependent variables are valid
-  testPrecondition( dep_var_0 == dep_var_0 );
-  testPrecondition( dep_var_1 == dep_var_1 );
-  testPrecondition( dep_var_0 > 0.0 );
-  testPrecondition( dep_var_1 > 0.0 );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var_1 ) );
+  testPrecondition( LogLin::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LogLin::isDepVarInValidRange( dep_var_1 ) );
 
   return dep_var_0*pow((dep_var_1/dep_var_0), (indep_var-indep_var_0)/(indep_var_1-indep_var_0));
 }
@@ -147,13 +175,16 @@ inline T LogLin::interpolate( const T processed_indep_var_0,
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
 						     processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( 
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( processed_dep_var_0 == processed_dep_var_0 );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+						       processed_dep_var_0 ) );
+  // Make sure that the slope is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
   
   return exp( processed_dep_var_0 + 
 	      processed_slope*(processed_indep_var - processed_indep_var_0) );
@@ -164,7 +195,7 @@ template<typename T>
 inline T LogLin::processIndepVar( const T indep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( indep_var > 0.0 );
+  testPrecondition( LogLin::isIndepVarInValidRange( indep_var ) );
   
   return indep_var;
 }
@@ -174,7 +205,7 @@ template<typename T>
 inline T LogLin::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( dep_var > 0.0 );
+  testPrecondition( LogLin::isDepVarInValidRange( dep_var ) );
 
   return log( dep_var );
 }
@@ -191,6 +222,26 @@ template<typename T>
 inline T LogLin::recoverProcessedDepVar( const T processed_dep_var )
 {
   return exp( processed_dep_var );
+}
+
+// Test if the independent value is in a valid range (doesn't check nan/inf)
+template<typename T>
+inline bool LogLin::isIndepVarInValidRange( const T indep_var )
+{
+  // Make sure the indep var is not inf or nan
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var ) );
+    
+  return true;
+}
+
+// Test if the dependent value is in a valid range (doesn't check nan/inf)
+template<typename T>
+inline bool LogLin::isDepVarInValidRange( const T dep_var )
+{
+  // Make sure the indep var is not inf or nan
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var ) );
+    
+  return dep_var > 0.0;
 }
 
 // The name of the policy
@@ -210,16 +261,20 @@ inline T LinLog::interpolate( const T indep_var_0,
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the independent variables are valid
-  testPrecondition( indep_var_0 == indep_var_0 );
-  testPrecondition( indep_var_1 == indep_var_1 );
-  testPrecondition( indep_var == indep_var );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_1 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var ) );
+  testPrecondition( LinLog::isIndepVarInValidRange( indep_var_0 ) );
+  testPrecondition( LinLog::isIndepVarInValidRange( indep_var_1 ) );
+  testPrecondition( LinLog::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var_0 < indep_var_1 );
-  testPrecondition( indep_var_0 > 0.0 );
   testPrecondition( indep_var >= indep_var_0 );
   testPrecondition( indep_var <= indep_var_1 );
   // Make sure the dependent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( dep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( dep_var_1 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var_1 ) );
+  testPrecondition( LinLog::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LinLog::isDepVarInValidRange( dep_var_1 ) );
 
   return dep_var_0 + (dep_var_1 - dep_var_0)*log(indep_var/indep_var_0)/
     log(indep_var_1/indep_var_0);
@@ -235,13 +290,16 @@ inline T LinLog::interpolate( const T processed_indep_var_0,
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( processed_indep_var_0 == processed_indep_var_0 );
-  testPrecondition( processed_indep_var == processed_indep_var );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+						     processed_indep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( processed_dep_var_0 == processed_dep_var_0 );
-  // Make sure the slope is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf(processed_slope));
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+						       processed_dep_var_0 ) );
+  // Make sure that the slope is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
   
   return processed_dep_var_0 + 
     processed_slope*(processed_indep_var - processed_indep_var_0 );
@@ -252,7 +310,7 @@ template<typename T>
 inline T LinLog::processIndepVar( const T indep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( indep_var > 0.0 );
+  testPrecondition( LinLog::isIndepVarInValidRange( indep_var ) );
   
   return log( indep_var );
 }
@@ -262,7 +320,7 @@ template<typename T>
 inline T LinLog::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( dep_var > 0.0 );
+  testPrecondition( LinLog::isIndepVarInValidRange( dep_var ) );
 
   return dep_var;
 }
@@ -279,6 +337,26 @@ template<typename T>
 inline T LinLog::recoverProcessedDepVar( const T processed_dep_var )
 {
   return processed_dep_var;
+}
+
+// Test if the independent value is in a valid range (doesn't check nan/inf)
+template<typename T>
+inline bool LinLog::isIndepVarInValidRange( const T indep_var )
+{
+  // Make sure the indep var is not inf or nan
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var ) );
+    
+  return indep_var > 0.0;
+}
+
+// Test if the dependent value is in a valid range (doesn't check nan/inf)
+template<typename T>
+inline bool LinLog::isDepVarInValidRange( const T dep_var )
+{
+  // Make sure the indep var is not inf or nan
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var ) );
+    
+  return true;
 }
 
 // The name of the policy
@@ -298,15 +376,20 @@ inline T LinLin::interpolate( const T indep_var_0,
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( indep_var_1 ) );
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( indep_var ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_1 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var ) );
+  testPrecondition( LinLin::isIndepVarInValidRange( indep_var_0 ) );
+  testPrecondition( LinLin::isIndepVarInValidRange( indep_var_1 ) );
+  testPrecondition( LinLin::isIndepVarInValidRange( indep_var ) );
   testPrecondition( indep_var_0 < indep_var_1 );
   testPrecondition( indep_var >= indep_var_0 );
   testPrecondition( indep_var <= indep_var_1 );
   // Make sure the dependent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( dep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( dep_var_1 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var_1 ) );
+  testPrecondition( LinLin::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LinLin::isDepVarInValidRange( dep_var_1 ) );
 
   return dep_var_0 + (dep_var_1 - dep_var_0)/(indep_var_1 - indep_var_0)*
     (indep_var - indep_var_0);
@@ -322,16 +405,16 @@ inline T LinLin::interpolate( const T processed_indep_var_0,
   // T must be a floating point type
   testStaticPrecondition( (boost::is_floating_point<T>::value) );
   // Make sure the processed independent variables are valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf(
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						     processed_indep_var_0 ) );
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf(
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_indep_var ) );
   testPrecondition( processed_indep_var_0 <= processed_indep_var );
   // Make sure the processed dependent variable is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf(
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(
 						       processed_dep_var_0 ) );
   // Make sure the slope is valid
-  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf(processed_slope));
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf(processed_slope));
   
   return processed_dep_var_0 + 
     processed_slope*(processed_indep_var - processed_indep_var_0 );
@@ -342,7 +425,7 @@ template<typename T>
 inline T LinLin::processIndepVar( const T indep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( indep_var > 0.0 );
+  testPrecondition( LinLin::isIndepVarInValidRange( indep_var  ) );
   
   return indep_var;
 }
@@ -352,7 +435,7 @@ template<typename T>
 inline T LinLin::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( dep_var > 0.0 );
+  testPrecondition( LinLin::isIndepVarInValidRange( dep_var ) );
 
   return dep_var;
 }
@@ -369,6 +452,26 @@ template<typename T>
 inline T LinLin::recoverProcessedDepVar( const T processed_dep_var )
 {
   return processed_dep_var;
+}
+
+// Test if the independent value is in a valid range (doesn't check nan/inf)
+template<typename T>
+inline bool LinLin::isIndepVarInValidRange( const T indep_var )
+{
+  // Make sure the indep var is not inf or nan
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var ) );
+    
+  return true;
+}
+
+// Test if the dependent value is in a valid range (doesn't check nan/inf)
+template<typename T>
+inline bool LinLin::isDepVarInValidRange( const T dep_var )
+{
+  // Make sure the indep var is not inf or nan
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var ) );
+    
+  return true;
 }
 
 // The name of the policy
