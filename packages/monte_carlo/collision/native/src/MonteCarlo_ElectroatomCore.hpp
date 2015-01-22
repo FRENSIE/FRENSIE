@@ -115,10 +115,6 @@ private:
   static boost::unordered_set<ElectroatomicReactionType>
   setDefaultScatteringReactionTypes();
 
-  // Set the default void reaction type
-  static boost::unordered_set<ElectroatomicReactionType>
-  setDefaultVoidReactionType();
-
   // Create the total absorption reaction
   template<typename InterpPolicy>
   static void createTotalAbsorptionReaction(
@@ -164,9 +160,6 @@ private:
   // The miscellaneous reactions
   ConstReactionMap d_miscellaneous_reactions;
 
-  // The void reactions
-  ConstReactionMap d_void_reactions;
-
   // The atomic relaxation model
   Teuchos::RCP<const AtomicRelaxationModel> d_relaxation_model;
 };
@@ -195,14 +188,7 @@ ElectroatomCore::getScatteringReactions() const
 inline const ElectroatomCore::ConstReactionMap& 
 ElectroatomCore::getAbsorptionReactions() const
 {
-  if ( d_absorption_reactions.size() > 0 )
-  {
-    return d_absorption_reactions;
-  }
-  else
-  {
-    return d_void_reactions;
-  }
+  return d_absorption_reactions;
 }
 
 // Return the miscellaneous reactions
