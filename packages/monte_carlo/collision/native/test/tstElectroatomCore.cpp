@@ -141,25 +141,7 @@ TEUCHOS_UNIT_TEST( ElectroatomCore, getAbsorptionReactions )
   const MonteCarlo::ElectroatomCore::ConstReactionMap& absorption_reactions =
     ace_electroatom_core->getAbsorptionReactions();
 
-  const MonteCarlo::ElectroatomicReaction& va_reaction = 
-    *(absorption_reactions.find(MonteCarlo::TOTAL_ABSORPTION_ELECTROATOMIC_REACTION)->second);
-
-  double cross_section = 
-    va_reaction.getCrossSection( 1.000000000E-02 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
-    
-  cross_section = va_reaction.getCrossSection( 2.000000000000E-03 );
-  
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
-
-  cross_section = va_reaction.getCrossSection( 4.000000000000E-04 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
-
-  cross_section = va_reaction.getCrossSection( 9.000000000000E-05 );
-
-  TEST_FLOATING_EQUALITY( cross_section, 0.000000000000, 1e-12 );
+  TEST_EQUALITY_CONST( absorption_reactions.size(), 0 );
 
 }
 
@@ -358,10 +340,6 @@ int main( int argc, char** argv )
                             lower_cutoff_energy,
                             upper_cutoff_energy ) );
 
-    // Create void absorption reaction
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction> va_reaction(
-	  new MonteCarlo::VoidAbsorptionElectroatomicReaction() );
-
     // Create the reaction maps
     MonteCarlo::ElectroatomCore::ReactionMap scattering_reactions, 
       absorption_reactions;
@@ -369,8 +347,6 @@ int main( int argc, char** argv )
     scattering_reactions[ae_reaction->getReactionType()] = ae_reaction;
 
     scattering_reactions[b_reaction->getReactionType()] = b_reaction;
-
-    absorption_reactions[va_reaction->getReactionType()] = va_reaction;
     
     // Create a void atomic relaxation model
     Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model(
