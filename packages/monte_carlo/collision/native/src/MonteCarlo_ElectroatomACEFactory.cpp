@@ -105,15 +105,6 @@ void ElectroatomACEFactory::createElectroatomCore(
 							    energy_grid,
 							    reaction_pointer );
   }
-
-  // Create the void absorption reaction
-  {
-    Electroatom::ReactionMap::mapped_type& reaction_pointer = 
-      absorption_reactions[TOTAL_ABSORPTION_ELECTROATOMIC_REACTION];
-    
-    ElectroatomicReactionACEFactory::createVoidAbsorptionReaction( 
-                               reaction_pointer );
-  }
 			
   // Create the electroatom core
   electroatom_core.reset( new ElectroatomCore( energy_grid,
