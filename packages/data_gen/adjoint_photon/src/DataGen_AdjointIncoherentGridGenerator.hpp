@@ -14,9 +14,9 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
+#include "DataGen_AdjointIncoherentCrossSectionEvaluator.hpp"
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_AdjointKleinNishinaDistribution.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
+#include "Utility_InterpolationPolicy.hpp"
 
 namespace DataGen{
 
@@ -47,36 +47,32 @@ public:
   { /* ... */ }
 
   //! Generate the bilinear grid
-  void generate( Teuchos::Array<double>& log_max_energy_grid,
-		 Teuchos::Array<Teuchos::Array<double> >& log_energy_grids,
-		 const Teuchos::Array<double>& initial_log_max_energy_grid,
+  template<typename InterpPolicy>
+  void generate( Teuchos::Array<double>& energy_grid,
+		 Teuchos::Array<Teuchos::Array<double> >& max_energy_grids,
+		 const Teuchos::Array<double>& initial_energy_grid,
 		 const double convergence_tol = 0.001,
 		 const double absolute_diff_tol = 1e-12,
-		 const double distance_tol = 1e-14 ) const;
+		 const double distance_tol = 1e-14 );
+
+  //! Generate a max energy at the desired energy
+  template<typename InterpPolicy>
+  void generate( Teuchos::Array<double>& max_energy_grid,
+		 const double energy,
+		 const double convergence_tol = 0.001,
+		 const double absolute_diff_tol = 1e-12,
+		 const double distance_tol = 1e-14 );
 
   //! Evaluate the log adjoint incoherent cross section on the specified grid
-  void evaluateLogCrossSectionOnGrid( 
-			     const Teuchos::Array<double>& log_max_energy_grid,
+  template<typename InterpPolicy>
+  void evaluateCrossSectionOnGrid( 
+			     const Teuchos::Array<double>& energy_grid,
 			     const Teuchos::Array<Teuchos::Array<double> >&
-			     log_energy_grids,
+			     max_energy_grids,
                              Teuchos::Array<Teuchos::Array<double> >&
-			     log_adjoint_incoherent_cross_section ) const;
+			     adjoint_incoherent_cross_section );
 			     
 private:
-
-  // Get the lower log energy limit for a given log max energy
-  static double getLowerLogEnergyLimit( const double log_max_energy );
-
-  // Get the upper log energy limit for a given log max energy
-  static double getUpperLogEnergyLimit( const double log_max_energy );
-
-  // Get the log energy of the cross section peak for a given log max energy
-  static double getLogEnergyOfCrossSectionPeak( const double log_max_energy );
-
-  // Evaluate the log of the adjoint incoherent cross section
-  double evaluateLogAdjointIncoherentCrossSection( 
-					       const double log_max_energy, 
-					       const double log_energy ) const;
 
   // The min table energy
   static double min_table_energy;
@@ -84,11 +80,10 @@ private:
   // The max table energy
   static double max_table_energy;
   
-  // The scattering function
-  Teuchos::RCP<const Utility::OneDDistribution> d_scattering_function;
+  // The adjoint incoherent cross section evaluator
+  AdjointIncoherentCrossSectionEvaluator d_adjoint_incoherent_cross_section;
 
-  // The quadrature kernel
-  Utility::GaussKronrodQuadratureKernel d_quadrature_kernel;
+  
 };
 
 } // end DataGen namespace

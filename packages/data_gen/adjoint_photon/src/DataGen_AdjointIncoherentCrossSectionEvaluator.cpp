@@ -92,6 +92,9 @@ AdjointIncoherentCrossSectionEvaluator::AdjointIncoherentCrossSectionEvaluator(
 }
 
 // Return the cross section value at a given energy and max energy
+/*! \details If the cross section fails to converge, the desired tolerance
+ * will be increased in the quadrature kernel until convergence is achieved.
+ */
 double AdjointIncoherentCrossSectionEvaluator::evaluateCrossSection( 
 						      const double energy, 
 					              const double max_energy )

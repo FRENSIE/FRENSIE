@@ -48,6 +48,14 @@ struct LogLog
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );
 
+  //! Test if the independent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isIndepVarInValidRange( const T indep_var );
+
+  //! Test if the dependent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isDepVarInValidRange( const T dep_var );
+
   //! The name of the policy
   static const std::string name();
 };
@@ -88,6 +96,14 @@ struct LogLin
   //! Recover the processed dependent value
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );
+
+  //! Test if the independent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isIndepVarInValidRange( const T indep_var );
+
+  //! Test if the dependent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isDepVarInValidRange( const T dep_var );
 
   //! The name of the policy
   static const std::string name();
@@ -130,6 +146,14 @@ struct LinLog
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );
 
+  //! Test if the independent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isIndepVarInValidRange( const T indep_var );
+
+  //! Test if the dependent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isDepVarInValidRange( const T dep_var );
+
   //! The name of the policy
   static const std::string name();
 };
@@ -170,6 +194,14 @@ struct LinLin
   //! Recover the processed dependent value
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );
+
+  //! Test if the independent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isIndepVarInValidRange( const T indep_var );
+
+  //! Test if the dependent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isDepVarInValidRange( const T dep_var );
 
   //! The name of the policy
   static const std::string name();

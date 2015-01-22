@@ -17,6 +17,8 @@
 #include "Utility_DataProcessingPolicy.hpp"
 
 //---------------------------------------------------------------------------//
+// Tests.
+//---------------------------------------------------------------------------//
 // Check that linear-linear interpolation between two points can be done
 TEUCHOS_UNIT_TEST( LinLin, interpolate_raw )
 {
