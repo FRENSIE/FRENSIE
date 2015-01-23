@@ -454,7 +454,6 @@ TEUCHOS_UNIT_TEST( Electroatom, collideSurvivalBias )
   TEST_ASSERT( !electron->isGone() );
   TEST_FLOATING_EQUALITY( electron->getWeight(), 1.0, 1e-15 );
   TEST_EQUALITY_CONST( bank.size(), 0 );
-  TEST_FLOATING_EQUALITY( bank.top()->getWeight(), 0.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -655,10 +654,6 @@ int main( int argc, char** argv )
                             lower_cutoff_energy,
                             upper_cutoff_energy ) );
 
-    // Create void absorption reaction
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction> va_reaction(
-      new MonteCarlo::VoidAbsorptionElectroatomicReaction() );
-
     // Create the reaction maps
     MonteCarlo::ElectroatomCore::ReactionMap scattering_reactions, 
       absorption_reactions;
@@ -666,8 +661,6 @@ int main( int argc, char** argv )
     scattering_reactions[ae_reaction->getReactionType()] = ae_reaction;
 
     scattering_reactions[b_reaction->getReactionType()] = b_reaction;
-
-    absorption_reactions[va_reaction->getReactionType()] = va_reaction;
     
     // Create a void atomic relaxation model
     Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model(

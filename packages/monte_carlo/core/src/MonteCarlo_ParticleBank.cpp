@@ -32,12 +32,18 @@ ParticleBank::size_type ParticleBank::size() const
 // Access the top element
 ParticleBank::reference ParticleBank::top()
 {
+  // Make sure there is at least one particle in the bank
+  testPrecondition( this->size() > 0 );
+
   return d_particle_states.front();
 }
 
 // Access the top element
 ParticleBank::const_reference ParticleBank::top() const
 {
+  // Make sure there is at least one particle in the bank
+  testPrecondition( this->size() > 0 );
+
   return d_particle_states.front();
 }
 

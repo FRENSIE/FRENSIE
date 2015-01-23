@@ -176,31 +176,40 @@ void Electroatom::collideSurvivalBias( ElectronState& electron,
 
   double survival_prob = scattering_cross_section/total_cross_section;
  
-  // Multiply the electron's weight by the survival probabilty
-  if( survival_prob > 0.0 )
+  sampleScatteringReaction(
+	 	     Utility::RandomNumberGenerator::getRandomNumber<double>()*
+		     scattering_cross_section,
+		     electron,
+		     bank );
+
+  if( survival_prob < 1.0 )
   {
+    // Multiply the electron's weight by the survival probabilty
+    if( survival_prob > 0.0 )
+    {
 
-    // Create a copy of the electron for sampling the absorption reaction
-    ElectronState electron_copy( electron, false, false );
+      // Create a copy of the electron for sampling the absorption reaction
+      ElectronState electron_copy( electron, false, false );
     
-    electron.multiplyWeight( survival_prob );
+      electron.multiplyWeight( survival_prob );
 
-    sampleScatteringReaction(
-		     Utility::RandomNumberGenerator::getRandomNumber<double>()*
+      sampleScatteringReaction(
+	 	     Utility::RandomNumberGenerator::getRandomNumber<double>()*
 		     scattering_cross_section,
 		     electron,
 		     bank );
  
-    electron_copy.multiplyWeight( 1.0 - survival_prob );
+      electron_copy.multiplyWeight( 1.0 - survival_prob );
 
-    sampleAbsorptionReaction(
+      sampleAbsorptionReaction(
                       Utility::RandomNumberGenerator::getRandomNumber<double>()*
                       (total_cross_section - scattering_cross_section),
                       electron_copy,
                       bank );
+    }
+    else
+      electron.setAsGone();
   }
-  else
-    electron.setAsGone();
 }
 
 // Sample an absorption reaction
@@ -208,6 +217,9 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
                                             ElectronState& electron,
                                             ParticleBank& bank ) const
 {
+  // Make sure there is at least one absorption reaction
+  testPrecondition( d_core.getAbsorptionReactions().size() > 0 );
+
   double partial_cross_section = 0.0;
 
   ConstReactionMap::const_iterator electroatomic_reaction = 
@@ -218,7 +230,7 @@ void Electroatom::sampleAbsorptionReaction( const double scaled_random_number,
     partial_cross_section +=
       electroatomic_reaction->second->getCrossSection( electron.getEnergy() );
 
-    if( scaled_random_number <= partial_cross_section )
+    if( scaled_random_number < partial_cross_section )
       break;
 
     ++electroatomic_reaction;
