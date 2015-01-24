@@ -21,37 +21,107 @@ template<typename ZYInterpPolicy,
 	 typename RXInterpPolicy>
 struct UnitBaseImpl
 {
-  //! Interpolate between four points (x0,y00), (x0,y01), (x1,y10), (x0,y11)
+  //! Calculate the intermediate range of the Y independent variable
   template<typename T>
-  static T interpolate( const T indep_var_x_0,
-			const T indep_var_x_1,
-			const T indep_var_x,
-			const T indep_var_y_0_0,
-			const T indep_var_y_0_1,
-			const T indep_var_y_0_range,
-			const T indep_var_y_1_0,
-			const T indep_var_y_1_1,
-			const T indep_var_y_1_range,
-			const T indep_var_y,
-			const T dep_var_0_0,
-			const T dep_var_0_1,
-			const T dep_var_1_0,
-			const T dep_var_1_1 );
+  static T calculateIntermediateRange( const T indep_var_x_0,
+				       const T indep_var_x_1,
+				       const T indep_var_x,
+				       const T indep_var_y_0_range,
+				       const T indep_var_y_1_range );
 
-  //! Interpolate between four processed points
+  //! Calculate the intermediate min Y independent variable
   template<typename T>
-  static T interpolate( const T processed_indep_var_x_0,
-			const T processed_indep_var_x_1,
-			const T processed_indep_var_x,
-			const T processed_indep_var_y_0_0,
-			const T indep_var_y_0_range,
-			const T processed_dep_var_0_0,
-			const T processed_slope_0,
-			const T processed_indep_var_y_1_0,
-			const T indep_var_y_1_range,
-			const T processed_dep_var_1_0,
-			const T processed_slope_1,
-			const T processed_indep_var_y );
+  static T calculateIntermediateMinYIndepValue( const T indep_var_x_0,
+						const T indep_var_x_1,
+						const T indep_var_x,
+						const T min_indep_var_y_0,
+						const T min_indep_var_y_1 );
+
+  //! Calculate the unit base y independent variable
+  template<typename T>
+  static T calculateUnitBaseIndepYVariable( const T indep_var_y,
+					    const T min_indep_var_y,
+					    const T indep_var_y_range );
+  
+  //! Calculate the independent y variable
+  template<typename T>
+  static T calculateIndepYVariable( const T unit_base_indep_var_y,
+				    const T min_indep_var_y,
+				    const T indep_var_y_range );
+  
+  //! Conduct unit base interpolation between two grids
+  template<TupleMember YIndepMember,
+	   TupleMember DepMember,
+	   typename T, 
+	   typename Iterator>
+  static T interpolateGrids( const T indep_var_x_0,
+			     const T indep_var_x_1,
+			     const T indep_var_x,
+			     const T indep_var_y,
+			     Iterator start_indep_var_y_0,
+			     Iterator end_indep_var_y_0,
+			     Iterator start_dep_var_0,
+			     Iterator end_dep_var_0,
+			     Iterator start_indep_var_y_1,
+			     Iterator end_indep_var_y_1,
+			     Iterator start_dep_var_1,
+			     Iterator end_dep_var_1 );
+
+  //! Conduct unit base interpolation between two grids (no tuples)
+  template<typename T, typename Iterator>
+  static T interpolateGrids( const T indep_var_x_0,
+			     const T indep_var_x_1,
+			     const T indep_var_x,
+			     const T indep_var_y,
+			     Iterator start_indep_var_y_0,
+			     Iterator end_indep_var_y_0,
+			     Iterator start_dep_var_0,
+			     Iterator end_dep_var_0,
+			     Iterator start_indep_var_y_1,
+			     Iterator end_indep_var_y_1,
+			     Iterator start_dep_var_1,
+			     Iterator end_dep_var_1 );
+
+  //! Conduct unit base interpolation between two processed grids
+  template<TupleMember YIndepMember,
+	   TupleMember DepMember,
+	   typename T, 
+	   typename Iterator>
+  static T interpolateProcessedGrids( const T processed_indep_var_x_0,
+				      const T processed_indep_var_x_1,
+				      const T processed_indep_var_x,
+				      const T processed_indep_var_y,
+				      Iterator start_indep_var_y_0,
+				      Iterator end_indep_var_y_0,
+				      Iterator start_dep_var_0,
+				      Iterator end_dep_var_0,
+				      Iterator start_indep_var_y_1,
+				      Iterator end_indep_var_y_1,
+				      Iterator start_dep_var_1,
+				      Iterator end_dep_var_1 );
+
+  //! Conduct unit base interpolation between two processed grids (no tuples)
+  template<typename T, typename Iterator>
+  static T interpolateProcessedGrids( const T processed_indep_var_x_0,
+				      const T processed_indep_var_x_1,
+				      const T processed_indep_var_x,
+				      const T processed_indep_var_y,
+				      Iterator start_indep_var_y_0,
+				      Iterator end_indep_var_y_0,
+				      Iterator start_dep_var_0,
+				      Iterator end_dep_var_0,
+				      Iterator start_indep_var_y_1,
+				      Iterator end_indep_var_y_1,
+				      Iterator start_dep_var_1,
+				      Iterator end_dep_var_1 );
+
+  //! Conduct the unit base interpolation between two distributions
+  double interpolateDistributions( const T indep_var_x_0,
+				   const T indep_var_x_1,
+				   const T indep_var_x,
+				   const T indep_var_y,
+				   const OneDDistribution& first_distribution,
+				   const OneDDistribution& second_distribution );
 };
 
 /*! \brief Policy struct for interpolating 2D tables using the unit 

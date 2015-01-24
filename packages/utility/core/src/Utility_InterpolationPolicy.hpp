@@ -11,12 +11,30 @@
 
 namespace Utility{
 
+//! The log independent variable processing tag
+struct LogIndepVarProcessingTag{};
+
+//! The lin independent variable processing tag
+struct LinIndepVarProcessingTag{};
+
+//! The log dependent variable processing tag
+struct LogDepVarProcessingTag{};
+
+//! The lin dependent variable processing tag
+struct LinDepVarProcessingTag{};
+
 /*! \brief Policy struct for interpolating data tables that require log-log 
  * interpolation between evaluated points.
  * \ingroup policies
  */
 struct LogLog
 {
+  //! Independent variable processing tag
+  typedef LogIndepVarProcessingTag IndepVarProcessingTag;
+
+  //! Dependent variable processing tag
+  typedef LogDepVarProcessingTag DepVarProcessingTag;
+  
   //! Interpolate between two points
   template<typename T>
   static T interpolate( const T indep_var_0,
@@ -66,6 +84,12 @@ struct LogLog
  */
 struct LogLin
 {
+  //! Independent variable processing tag
+  typedef LinIndepVarProcessingTag IndepVarProcessingTag;
+
+  //! Dependent variable processing tag
+  typedef LogDepVarProcessingTag DepVarProcessingTag;
+  
   //! Interpolate between two points
   template<typename T>
   static T interpolate( const T indep_var_0,
@@ -115,6 +139,12 @@ struct LogLin
  */
 struct LinLog
 {
+  //! Independent variable processing tag
+  typedef LogIndepVarProcessingTag IndepVarProcessingTag;
+
+  //! Dependent variable processing tag
+  typedef LinDepVarProcessingTag DepVarProcessingTag;
+  
   //! Interpolate between two points
   template<typename T>
   static T interpolate( const T indep_var_0,
@@ -164,6 +194,12 @@ struct LinLog
  */
 struct LinLin
 {
+  //! Independent variable processing tag
+  typedef LinIndepVarProcessingTag IndepVarProcessingTag;
+
+  //! Dependent variable processing tag
+  typedef LinDepVarProcessingTag DepVarProcessingTag;
+  
   //! Interpolate between two points
   template<typename T>
   static T interpolate( const T indep_var_0,
