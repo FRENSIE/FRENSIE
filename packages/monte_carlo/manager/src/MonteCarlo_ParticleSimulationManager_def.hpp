@@ -59,6 +59,9 @@ void ParticleSimulationManager<GeometryHandler,
 			       EstimatorHandler,
 			       CollisionHandler>::runSimulation()
 {
+  std::cout << "Starting simulation ... ";
+  std::cout.flush();
+  
   // Set up the random number generator for the number of threads requested
   Utility::RandomNumberGenerator::createStreams();
 
@@ -140,6 +143,8 @@ void ParticleSimulationManager<GeometryHandler,
     
   // Set the end time
   d_end_time = Utility::GlobalOpenMPSession::getTime();
+
+  std::cout << "done." << std::endl;
 }
 
 // Set the number of particle histories to simulate
@@ -295,6 +300,12 @@ void ParticleSimulationManager<GeometryHandler,
     }	     
   }
 
+  // Update the global estimators
+  EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
+						      particle,
+						      ray_start_point,
+						      particle.getPosition() );
+
   // Indicate that this particle history is complete
   GMI::newRay();
 }
@@ -335,12 +346,17 @@ void ParticleSimulationManager<GeometryHandler,
 			       CollisionHandler>::exportSimulationData(
 				      const std::string& data_file_name ) const
 {
+  std::cout << "Exporting simulation data ... ";
+  std::cout.flush();
+  
   EMI::exportEstimatorData( data_file_name,
   			    d_start_history+d_histories_completed,
   			    d_histories_completed,
   			    d_start_time,
   			    d_end_time+d_previous_run_time,
 			    true );
+
+  std::cout << "done." << std::endl;
 }
 
 // Signal handler
