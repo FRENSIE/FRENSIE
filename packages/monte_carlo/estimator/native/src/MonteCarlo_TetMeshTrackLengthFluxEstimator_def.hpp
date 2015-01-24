@@ -56,7 +56,11 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
                       Utility::MOABException,
                       moab::ErrorCodeStr[return_value] );
 
-  // Populate MOAB meshset with data from input file                   
+  // Populate MOAB meshset with data from input file
+  std::cout << "Loading tetrahedral mesh from file "
+	    << input_mesh_file_name << " ... ";
+  std::cout.flush();
+  
   return_value = d_moab_interface->load_file(
                             input_mesh_file_name.c_str(), &d_tet_meshset);
                              
@@ -165,8 +169,18 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
   
   const char settings[]="MESHSET_FLAGS=0x1;TAG_NAME=0";
   moab::FileOptions fileopts(settings);
-  
+
+  std::cout << "(constructed " << entity_volumes.size() 
+	    << " tetrahedrons) done." << std::endl;
+    
+  // Create the kd-tree
+  std::cout << "Constructing kd-tree for tetrahedral mesh from file "
+	    << input_mesh_file_name << " ... ";
+  std::cout.flush();
+    
   d_kd_tree->build_tree(all_tet_elements, &d_kd_tree_root, &fileopts);
+
+  std::cout << "done." << std::endl;
 } 
 
 // Set the response functions
@@ -629,12 +643,13 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::exportData(
 }
 
 // Print the estimator data
+/*! \details Due to the large number of tets that are likely to be printed,
+ * printing of data to the screen will not be done.
+ */
 template<typename ContributionMultiplierPolicy>
 void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::print( 
 						       std::ostream& os ) const
-{
-  printImplementation( os, "Tet" );
-}
+{ /* ... */ }
 
 // Assign bin boundaries to an estimator dimension
 template<typename ContributionMultiplierPolicy>
