@@ -54,10 +54,11 @@ void calculateBarycentricTransformMatrix( const double vertex_a[3],
 // Determine if a point is in a given tet
 /*! \details Make sure the matrix has dimensions 3x3!                        
  */
-template<typename TestPoint, typename ReferencePoint, typename Matrix>                                                      
+template<typename TestPoint, typename ReferencePoint, typename Matrix>      
 bool isPointInTet( const TestPoint& point, 
                    const ReferencePoint& reference_vertex,   
-		           const Matrix& matrix ) 
+		   const Matrix& matrix,
+		   const double tol )
 {
   double barycentric_location_vector[3];
   barycentric_location_vector[0] = matrix( 0, 0 ) *
@@ -79,19 +80,17 @@ bool isPointInTet( const TestPoint& point,
                                    matrix( 2, 2 ) *
                                    (point[2] - reference_vertex[2]);
   
-  if ( ( barycentric_location_vector[0] < 0.0 ||
-         barycentric_location_vector[1] < 0.0 ||
-         barycentric_location_vector[2] < 0.0 ) ||
+  if ( ( barycentric_location_vector[0] < -tol ||
+         barycentric_location_vector[1] < -tol ||
+         barycentric_location_vector[2] < -tol ) ||
        ( barycentric_location_vector[0] + barycentric_location_vector[1] +
-         barycentric_location_vector[2] > 1.0 ) )
+         barycentric_location_vector[2] > 1.0 + tol ) )
   {
-    bool point_in_tet = false;
-    return point_in_tet;
+    return false;
   }
   else
   {
-    bool point_in_tet = true;
-    return point_in_tet;
+    return true;
   }
 }
 

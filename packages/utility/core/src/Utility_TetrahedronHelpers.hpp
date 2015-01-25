@@ -73,13 +73,14 @@ void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 template<typename TestPoint, typename ReferencePoint, typename Matrix>
 bool isPointInTet( const TestPoint& point,
                    const ReferencePoint& reference_vertex,
-                   const Matrix& matrix );
+                   const Matrix& matrix,
+		   const double tol = 1e-6 );
                    
 //! Return if a point is in a tet
 template<typename TestPoint, typename ReferencePoint>
 bool isPointInTet( const TestPoint& point,
                    const ReferencePoint& reference_vertex,
-                   const double barycentric_array[9] );	
+		   const double barycentric_array[9] );
                
 // Calculate the volume of a tetrahedron
 inline double calculateTetrahedronVolume( const moab::CartVect& vertex_a,
@@ -153,10 +154,10 @@ inline void calculateBarycentricTransformMatrix( const moab::CartVect& vertex_a,
 }
 
 // Return if a point is in a tet     
-template<typename TestPoint, typename ReferencePoint>                                           
+template<typename TestPoint, typename ReferencePoint>                         
 inline bool isPointInTet( const TestPoint& point,
                           const ReferencePoint& reference_vertex,    
-		                  double barycentric_array[9] )
+			  double barycentric_array[9] )
 {
   // Create temporary matrix
   Teuchos::SerialDenseMatrix<int,double> tmp_matrix( 3, 3 );
@@ -170,9 +171,7 @@ inline bool isPointInTet( const TestPoint& point,
   tmp_matrix( 2, 1 ) = barycentric_array[7];
   tmp_matrix( 2, 2 ) = barycentric_array[8];
   
-  return isPointInTet( point,
-                       reference_vertex,
-                       tmp_matrix );
+  return isPointInTet( point, reference_vertex, tmp_matrix );
 }
 
 } // end Utility namespace

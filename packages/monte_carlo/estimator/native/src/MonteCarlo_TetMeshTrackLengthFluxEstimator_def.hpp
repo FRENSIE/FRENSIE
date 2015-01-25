@@ -92,50 +92,55 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::TetMeshTrackLengt
   for( moab::Range::const_iterator tet = all_tet_elements.begin(); 
        tet != all_tet_elements.end(); 
        ++tet )
-    {
-      // Extract the vertex data for the given tet
-      std::vector<moab::EntityHandle> vertex_handles;
-      moab::EntityHandle current_tet = *tet;
-      d_moab_interface->get_connectivity( &current_tet, 1, vertex_handles );
-     
-      // Test that the vertex entity contains four points
-      TEST_FOR_EXCEPTION( vertex_handles.size() != 4,
-			  Utility::MOABException,
-			  "Error: tet found with incorrect number of vertices "
-			  "(" << vertex_handles.size() << " != 4)" );
-     
-      moab::CartVect vertices[4];
-
-      for( unsigned j = 0; j != vertex_handles.size(); ++j )
-      {
-	    d_moab_interface->get_coords( &vertex_handles[j], 
-				      1, 
-				      vertices[j].array() );
-      }
-                                                                
-      // Calculate Barycentric Matrix
-      moab::Matrix3& barycentric_transform_matrix = 
-	  d_tet_barycentric_transform_matrices[*tet];
+  {
+    // Make sure the tet is valid
+    TEST_FOR_EXCEPTION( *tet == 0,
+			Utility::MOABException,
+			moab::ErrorCodeStr[return_value] );
       
-      Utility::calculateBarycentricTransformMatrix( 
-						                        vertices[0],
-						                        vertices[1],
-						                        vertices[2],
-						                        vertices[3],
+    // Extract the vertex data for the given tet
+    std::vector<moab::EntityHandle> vertex_handles;
+    moab::EntityHandle current_tet = *tet;
+    d_moab_interface->get_connectivity( &current_tet, 1, vertex_handles );
+    
+    // Test that the vertex entity contains four points
+    TEST_FOR_EXCEPTION( vertex_handles.size() != 4,
+			Utility::MOABException,
+			"Error: tet found with incorrect number of vertices "
+			"(" << vertex_handles.size() << " != 4)" );
+     
+    moab::CartVect vertices[4];
+    
+    for( unsigned j = 0; j != vertex_handles.size(); ++j )
+    {
+      d_moab_interface->get_coords( &vertex_handles[j], 
+				    1, 
+				    vertices[j].array() );
+    }
+    
+    // Calculate Barycentric Matrix
+    moab::Matrix3& barycentric_transform_matrix = 
+      d_tet_barycentric_transform_matrices[*tet];
+    
+    Utility::calculateBarycentricTransformMatrix( 
+						vertices[0],
+						vertices[1],
+						vertices[2],
+						vertices[3],
                                                 barycentric_transform_matrix );
 
-      // Assign reference vertices (always fourth vertex)
-      d_tet_reference_vertices[*tet] = vertices[3];
-
-      // Calculate tet volumes
-      entity_volumes[*tet] = Utility::calculateTetrahedronVolume( vertices[0],
-								  vertices[1],
-								  vertices[2],
-								  vertices[3]);
-   }
-   
-   // Assign the entity volumes
-   this->assignEntities( entity_volumes );
+    // Assign reference vertices (always fourth vertex)
+    d_tet_reference_vertices[*tet] = vertices[3];
+    
+    // Calculate tet volumes
+    entity_volumes[*tet] = Utility::calculateTetrahedronVolume( vertices[0],
+								vertices[1],
+								vertices[2],
+								vertices[3]);
+  }
+  
+  // Assign the entity volumes
+  this->assignEntities( entity_volumes );
   
   int current_dimension;
   
@@ -206,16 +211,18 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
 						 const double start_point[3],
 						 const double end_point[3] )
 {
-  // Calculate the track length
-  double track_length = sqrt(
+  if( this->isParticleTypeAssigned( particle.getParticleType() ) )
+  {
+    // Calculate the track length
+    double track_length = sqrt(
                 (end_point[0]-start_point[0])*(end_point[0]-start_point[0]) +
                 (end_point[1]-start_point[1])*(end_point[1]-start_point[1]) +
                 (end_point[2]-start_point[2])*(end_point[2]-start_point[2]) );
 
-  std::vector<double> ray_tet_intersections;
-  std::vector<moab::EntityHandle> tet_surface_triangles;
+    std::vector<double> ray_tet_intersections;
+    std::vector<moab::EntityHandle> tet_surface_triangles;
                            
-  moab::ErrorCode return_value = 
+    moab::ErrorCode return_value = 
        d_kd_tree->ray_intersect_triangles( d_kd_tree_root,
                                            1e-6,
                                            particle.getDirection(),
@@ -225,101 +232,108 @@ void TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::updateFromGl
                                            0,
                                            track_length );
 
-  // Clear the moab surface triangle entity handles - not used
-  tet_surface_triangles.clear();
-                                           
-  TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-                      Utility::MOABException,
-                      moab::ErrorCodeStr[return_value] );
-  
-  if( ray_tet_intersections.size() > 0 )
-  {
-    // Sort all intersections of the ray with the tets
-    std::sort( ray_tet_intersections.begin(),
-	       ray_tet_intersections.end() );
-  
-    // Calculate the tet intersection points and partial track lengths
-    std::vector<moab::CartVect> array_of_hit_points;
-        
-    // Add the origin point
-    {
-      moab::CartVect start_point_cv( start_point[0], 
-				     start_point[1], 
-				     start_point[2] );
-      
-      array_of_hit_points.push_back( start_point_cv );
-    }
-
-    for( unsigned i = 0; i < ray_tet_intersections.size(); ++i )
-    {
-      moab::CartVect hit_point;
-
-      hit_point[0] = particle.getXDirection() * ray_tet_intersections[i]
-	+ start_point[0];
-      hit_point[1] = particle.getYDirection() * ray_tet_intersections[i]
-	+ start_point[1];
-      hit_point[2] = particle.getZDirection() * ray_tet_intersections[i]
-	+ start_point[2];
-      
-      array_of_hit_points.push_back( hit_point );      
-    }
-
-    // Add the end point if it doesn't lie on an intersection point
-    if( track_length > ray_tet_intersections.back() )
-    {
-      moab::CartVect end_point_cv( end_point[0], end_point[1], end_point[2] );
-
-      array_of_hit_points.push_back( end_point_cv );
-      
-      ray_tet_intersections.push_back( track_length );
-    }
+    // Clear the moab surface triangle entity handles - not used
+    tet_surface_triangles.clear();
     
-    // Compute and add the partial history contribution to the appropriate tet
-    for( unsigned int i = 0; i < array_of_hit_points.size(); ++i )
+    TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
+			Utility::MOABException,
+			moab::ErrorCodeStr[return_value] );
+    
+    if( ray_tet_intersections.size() > 0 )
     {
-      moab::CartVect tet_centroid = ( (array_of_hit_points[i+1] + 
-				       array_of_hit_points[i])/2.0 );
-      
-      // Check that the centroid falls in the mesh - if the mesh
-      // is concave its possible that it falls outside
-      if( this->isPointInMesh( tet_centroid.array() ) )
+      // Sort all intersections of the ray with the tets
+      std::sort( ray_tet_intersections.begin(),
+		 ray_tet_intersections.end() );
+  
+      // Calculate the tet intersection points and partial track lengths
+      std::vector<moab::CartVect> array_of_hit_points;
+        
+      // Add the origin point
       {
-	moab::EntityHandle tet = whichTetIsPointIn( tet_centroid.array() );
+	moab::CartVect start_point_cv( start_point[0], 
+				       start_point[1], 
+				       start_point[2] );
 	
-	double partial_track_length;
+	array_of_hit_points.push_back( start_point_cv );
+      }
+      
+      for( unsigned i = 0; i < ray_tet_intersections.size(); ++i )
+      {
+	moab::CartVect hit_point;
+
+	hit_point[0] = particle.getXDirection() * ray_tet_intersections[i]
+	  + start_point[0];
+	hit_point[1] = particle.getYDirection() * ray_tet_intersections[i]
+	  + start_point[1];
+	hit_point[2] = particle.getZDirection() * ray_tet_intersections[i]
+	  + start_point[2];
 	
-	if( i != 0)
-	{ 
-	  partial_track_length = ray_tet_intersections[i] - 
-	    ray_tet_intersections[i-1];
-	}
-	else
-	  partial_track_length = ray_tet_intersections[i];
+	array_of_hit_points.push_back( hit_point );      
+      }
+      
+      // Add the end point if it doesn't lie on an intersection point
+      if( track_length > ray_tet_intersections.back() )
+      {
+	moab::CartVect end_point_cv(end_point[0], end_point[1], end_point[2]);
+	
+	array_of_hit_points.push_back( end_point_cv );
+	
+	ray_tet_intersections.push_back( track_length );
+      }
+      
+      // Compute and add the partial history contribution to appropriate tet
+      for( unsigned int i = 0; i < array_of_hit_points.size(); ++i )
+      {
+	moab::CartVect tet_centroid = ( (array_of_hit_points[i+1] + 
+					 array_of_hit_points[i])/2.0 );
+      
+	// Check that the centroid falls in the mesh - if the mesh
+	// is concave its possible that it falls outside
+	if( this->isPointInMesh( tet_centroid.array() ) )
+	{
+	  moab::EntityHandle tet = whichTetIsPointIn( tet_centroid.array() );
+	
+	  // Make sure a tet was found (tolerance issues may prevent this)
+	  if( tet == 0 )
+	    continue;
 	  
-	// Handle the special case where the first point is on a mesh surface
-        if( partial_track_length > 0.0 )
-	{	
-	  // Add partial history contribution
-	  addPartialHistoryContribution( tet,
-					 particle,
-					 0,
-					 partial_track_length );
+	  double partial_track_length;
+	  
+	  if( i != 0)
+	  { 
+	    partial_track_length = ray_tet_intersections[i] - 
+	      ray_tet_intersections[i-1];
+	  }
+	  else
+	    partial_track_length = ray_tet_intersections[i];
+	  
+	  // Handle the special case where the first point is on a mesh surface
+	  if( partial_track_length > 0.0 )
+	  {	
+	    // Add partial history contribution
+	    addPartialHistoryContribution( tet,
+					   particle,
+					   0,
+					   partial_track_length );
+	  }
 	}
       }
     }
-  }
-  // Account for the case where there are no intersections
-  else
-  {
-    // case 1: track is entirely in one tet
-    if( this->isPointInMesh( start_point ) )
+    // Account for the cases where there are no intersections
+    else
     {
-      moab::EntityHandle tet = whichTetIsPointIn( start_point );
-    
-      // Add partial history contribution
-      addPartialHistoryContribution( tet, particle, 0, track_length );
+      // case 1: track is entirely in one tet
+      if( this->isPointInMesh( start_point ) )
+      {
+	moab::EntityHandle tet = whichTetIsPointIn( start_point );
+      	
+	// Add partial history contribution if tet was found (tolerance
+	// issues may prevent this)
+	if( tet != 0 )
+	  addPartialHistoryContribution( tet, particle, 0, track_length );
+      }
+      // case 2: track entirely misses mesh - do nothing
     }
-    // case 2: track entirely misses mesh - do nothing
   }
 }
 
@@ -372,20 +386,41 @@ moab::EntityHandle TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>
 		      Utility::MOABException,
 		      moab::ErrorCodeStr[return_value] );     
     
+  // A tet must be found since a leaf was found - failure to find a tet
+  // indicates a tolerance issue
   moab::EntityHandle tet_handle = 0;
-
+    
   for( moab::Range::const_iterator tet = tets_in_leaf.begin(); 
-       tet != tets_in_leaf.end();  tet++ )
+       tet != tets_in_leaf.end();  
+       ++tet )
   {
-    if( Utility::isPointInTet( point,
-			       d_tet_reference_vertices[*tet],
-			       d_tet_barycentric_transform_matrices[*tet] ) )
+    if( Utility::isPointInTet( 
+		  point,
+		  d_tet_reference_vertices.find( *tet )->second,
+		  d_tet_barycentric_transform_matrices.find( *tet )->second,
+		  1e-9 ) )
+    {
       tet_handle = *tet;
+      
+      break;
+    }
   }
-
+    
   // Make sure the tet has been found
-  testPostcondition( tet_handle != 0 );
+  if( tet_handle == 0 )
+  {
+    #pragma omp critical( point_in_tet_warning_message )
+    {
+      std::cerr << "Warning: the tetrahedron containing point {"
+		<< point[0] << "," << point[1] << "," << point[2]
+		<< "} could not be found (" << tets_in_leaf.size()
+		<< " tets in leaf)!." << std::endl;
+    }
+  }
   
+  // Make sure the leaf is valid
+  testPostcondition( tets_in_leaf.size() > 0 );
+		      
   return tet_handle;
 }
 
