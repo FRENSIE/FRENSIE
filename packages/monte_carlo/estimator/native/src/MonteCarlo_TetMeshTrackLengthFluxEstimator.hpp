@@ -41,11 +41,6 @@ class TetMeshTrackLengthFluxEstimator : public StandardEntityEstimator<moab::Ent
   public ParticleSubtrackEndingGlobalEventObserver
 {
 
-private:
-
-  // Typedef for triangle intersection pairs
-  typedef Utility::Pair<double,moab::EntityHandle> IntersectionData;
-
 public:
 
   //! Typedef for the cell id type
@@ -89,14 +84,13 @@ public:
   //! Get all tet elements
   const moab::Range getAllTetElements() const;
 
+  //! Test if a point is in the mesh
+  bool isPointInMesh( const double point[3] );
+
   //! Determine which tet the point is in
   moab::EntityHandle whichTetIsPointIn( const double point[3] );
 
 private:
-
-  // Compare intersection data
-  static bool compareIntersections( const IntersectionData& a,
-				    const IntersectionData& b );
 
   // Assign bin boundaries to an estimator dimension
   void assignBinBoundaries(
