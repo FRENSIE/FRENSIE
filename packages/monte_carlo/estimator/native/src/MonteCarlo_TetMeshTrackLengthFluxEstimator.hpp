@@ -35,7 +35,11 @@
 
 namespace MonteCarlo{
 
-//! The tet-mesh track length flux estimator class
+/*! The tet-mesh track length flux estimator class
+ * \details This class is based off of the TrackLengthMeshTally written by
+ * Kerry Dunn (UW-Madison CNERG group). The DAGMC repo that contains her
+ * class can be found at https://github.com/svalinn/DAGMC.
+ */
 template<typename ContributionMutliplierPolicy = WeightMultiplier>
 class TetMeshTrackLengthFluxEstimator : public StandardEntityEstimator<moab::EntityHandle>,
   public ParticleSubtrackEndingGlobalEventObserver

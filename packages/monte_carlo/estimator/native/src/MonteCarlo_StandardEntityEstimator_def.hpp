@@ -658,8 +658,6 @@ void StandardEntityEstimator<EntityId>::addPartialHistoryContribution(
   // Make sure the thread id is valid
   testPrecondition( Utility::GlobalOpenMPSession::getThreadId() <
 		    d_dimension_values.size() );
-  if( !this->isEntityAssigned( entity_id ) )
-    std::cout << entity_id << std::endl;
   // Make sure the entity is assigned to the estimator
   testPrecondition( this->isEntityAssigned( entity_id ) );
   // Make sure the particle type can contribute
