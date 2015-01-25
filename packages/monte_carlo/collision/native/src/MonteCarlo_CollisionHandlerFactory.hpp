@@ -110,7 +110,9 @@ private:
    const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
                               std::vector<std::string> >& cell_id_mat_id_map,
    const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                             std::vector<std::string> >& cell_id_density_map );
+                               std::vector<std::string> >& cell_id_density_map,
+   const bool use_unresolved_resonance_data,
+   const bool use_photon_production_data );
    
   // Create the photon materials
   static void createPhotonMaterials(

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_NeutronScatteringAngularDistributionFactory.cpp
+//! \file   MonteCarlo_NeutronScatteringAngularDistributionACEFactory.cpp
 //! \author Alex Robinson, Alex Bennett
 //! \brief  Neutron scattering angular distribution factory class declaration
 //!
@@ -10,7 +10,7 @@
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringAngularDistributionFactory.hpp"
+#include "MonteCarlo_NeutronScatteringAngularDistributionACEFactory.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -22,11 +22,11 @@ namespace MonteCarlo{
 
 // Initialize the static member data
 Teuchos::RCP<Utility::OneDDistribution> 
-NeutronScatteringAngularDistributionFactory::isotropic_angle_cosine_dist(
+NeutronScatteringAngularDistributionACEFactory::isotropic_angle_cosine_dist(
 			  new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
 // Create the angular distribution
-void NeutronScatteringAngularDistributionFactory::createDistribution(
+void NeutronScatteringAngularDistributionACEFactory::createDistribution(
 	     const Teuchos::ArrayView<const double>& and_block_array,
 	     const unsigned and_block_array_start_index,
 	     const std::string& table_name,
@@ -138,7 +138,7 @@ void NeutronScatteringAngularDistributionFactory::createDistribution(
 }
 
 // Create an isotropic angular distribution
-void NeutronScatteringAngularDistributionFactory::createIsotropicDistribution(
+void NeutronScatteringAngularDistributionACEFactory::createIsotropicDistribution(
 	     Teuchos::RCP<NeutronScatteringAngularDistribution>& distribution )
 {
   NeutronScatteringAngularDistribution::AngularDistribution
@@ -157,5 +157,5 @@ void NeutronScatteringAngularDistributionFactory::createIsotropicDistribution(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NeutronScatteringAngularDistributionFactory.cpp
+// end MonteCarlo_NeutronScatteringAngularDistributionACEFactory.cpp
 //---------------------------------------------------------------------------//

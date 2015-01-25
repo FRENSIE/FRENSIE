@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_NeutronScatteringEnergyDistributionFactory.cpp
+//! \file   MonteCarlo_NeutronScatteringEnergyDistributionACEFactory.cpp
 //! \author Alex Robinson, Alex Bennett
 //! \brief  Neutron scattering energy distribution factory class declaration
 //!
@@ -14,8 +14,8 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringEnergyDistributionFactory.hpp"
-#include "MonteCarlo_NeutronScatteringAngularDistributionFactory.hpp"
+#include "MonteCarlo_NeutronScatteringEnergyDistributionACEFactory.hpp"
+#include "MonteCarlo_NeutronScatteringAngularDistributionACEFactory.hpp"
 #include "MonteCarlo_AceLaw1NeutronScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw3NeutronScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw4NeutronScatteringEnergyDistribution.hpp"
@@ -32,7 +32,7 @@
 namespace MonteCarlo{
 
 // Create the energy distribution
-void NeutronScatteringEnergyDistributionFactory::createDistribution(
+void NeutronScatteringEnergyDistributionACEFactory::createDistribution(
 	     const Teuchos::ArrayView<const double>& dlw_block_array,
 	     const unsigned dlw_block_array_start_index,
 	     const std::string& table_name,
@@ -90,7 +90,7 @@ void NeutronScatteringEnergyDistributionFactory::createDistribution(
 }
 
 // Create the ENDF law 44 coupled energy-angle distribution
-void NeutronScatteringEnergyDistributionFactory::createAceLaw44Distribution(
+void NeutronScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
                     const double atomic_weight_ratio,
 	            const Teuchos::ArrayView<const double>& dlw_block_array,
 		    const unsigned dlw_block_array_start_index,
@@ -247,7 +247,7 @@ void NeutronScatteringEnergyDistributionFactory::createAceLaw44Distribution(
 }
 
 // Create a AceLaw 1 energy distribution
-void NeutronScatteringEnergyDistributionFactory::createAceLaw1EnergyDistribution( 
+void NeutronScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribution( 
 	      const Teuchos::ArrayView<const double>& dlw_block_array,
 	      const unsigned dlw_block_array_start_index,
 	      const std::string& table_name,
@@ -301,7 +301,7 @@ void NeutronScatteringEnergyDistributionFactory::createAceLaw1EnergyDistribution
 }
 
 // Create a AceLaw 3 energy distribution
-void NeutronScatteringEnergyDistributionFactory::createAceLaw3EnergyDistribution(
+void NeutronScatteringEnergyDistributionACEFactory::createAceLaw3EnergyDistribution(
 	      const Teuchos::ArrayView<const double>& dlw_block_array,
 	      const unsigned dlw_block_array_start_index,
 	      const std::string& table_name,
@@ -327,7 +327,7 @@ void NeutronScatteringEnergyDistributionFactory::createAceLaw3EnergyDistribution
 }
 
 // Create a AceLaw 4 energy distribution
-void NeutronScatteringEnergyDistributionFactory::createAceLaw4EnergyDistribution(
+void NeutronScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribution(
 	      const Teuchos::ArrayView<const double>& dlw_block_array,
 	      const unsigned dlw_block_array_start_index,
 	      const std::string& table_name,
@@ -428,5 +428,5 @@ void NeutronScatteringEnergyDistributionFactory::createAceLaw4EnergyDistribution
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NeutronScatteringEnergyDistributionFactory.cpp
+// end MonteCarlo_NeutronScatteringEnergyDistributionACEFactory.cpp
 //---------------------------------------------------------------------------//

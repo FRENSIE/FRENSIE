@@ -34,7 +34,9 @@ public:
   //! Constructor
   NuclideFactory( const std::string& cross_sections_xml_directory,
 		  const Teuchos::ParameterList& cross_section_table_info,
-		  const boost::unordered_set<std::string>& nuclide_aliases );
+		  const boost::unordered_set<std::string>& nuclide_aliases,
+		  const bool use_unresolved_resonance_data,
+		  const bool use_photon_production_data );
 
   //! Destructor
   ~NuclideFactory()
@@ -46,6 +48,14 @@ public:
 		      nuclide_map ) const;
 
 private:
+
+  // Create a nuclide from an ACE table
+  void createNuclideFromACETable(
+			      const std::string& cross_sections_xml_directory,
+			      const std::string& nuclide_alias,
+			      const Teuchos::ParameterList& nuclide_table_info,
+			      const bool use_unresolved_resonance_data,
+			      const bool use_photon_production_data );
 
   // The nuclide id map
   boost::unordered_map<std::string,Teuchos::RCP<Nuclide> > d_nuclide_name_map;

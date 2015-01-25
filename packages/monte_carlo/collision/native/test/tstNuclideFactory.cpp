@@ -48,7 +48,9 @@ void initializeNuclideFactory()
   nuclide_factory.reset( new MonteCarlo::NuclideFactory( 
 					     test_cross_sections_xml_directory,
 					     cross_section_table_info,
-					     nuclide_aliases ) );
+					     nuclide_aliases,
+					     false,
+					     false ) );
 }
 
 //---------------------------------------------------------------------------//

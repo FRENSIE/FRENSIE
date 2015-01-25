@@ -12,6 +12,7 @@
 // Boost Includes
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
+#include <boost/scoped_ptr.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReaction.hpp"
@@ -33,6 +34,15 @@ private:
 
 public:
 
+  //! Typedef for the reaction map
+  typedef boost::unordered_map<NuclearReactionType,
+			       Teuchos::RCP<NuclearReaction> > ReactionMap;
+
+  //! Typedef for the const reaction map
+  typedef boost::unordered_map<NuclearReactionType,
+			       Teuchos::RCP<const NuclearReaction> > 
+  ConstReactionMap;
+
   //! Set the nuclear reaction types that will be considered as absorption
   static void setAbsorptionReactionTypes( 
 	const Teuchos::Array<NuclearReactionType>& absorption_reaction_types );
@@ -51,8 +61,9 @@ public:
 	   const unsigned isomer_number,
 	   const double atomic_weight_ratio,
 	   const double temperature,
-	   const Data::XSSNeutronDataExtractor& raw_nuclide_data );
-  
+	   const Teuchos::ArrayRCP<double>& energy_grid,
+	   const ReactionMap& standard_scattering_reactions,
+	   const ReactionMap& standard_absorption_reactions );  
 
   //! Destructor
   ~Nuclide()
@@ -104,16 +115,12 @@ private:
   static boost::unordered_set<NuclearReactionType> 
   setDefaultAbsorptionReactionTypes();
 
-  // Check that the total cross section is valid
-  static bool isCalculatedTotalCrossSectionValid( 
-	          Teuchos::Array<double>& calculated_total_cross_section,
-	          Teuchos::ArrayView<const double> table_total_cross_section );
-
   // Calculate the total absorption cross section
-  void calculateTotalAbsorptionCrossSection();
+  void calculateTotalAbsorptionReaction(
+			        const Teuchos::ArrayRCP<double>& energy_grid );
 
   // Calculate the total cross section
-  void calculateTotalCrossSection();
+  void calculateTotalReaction( const Teuchos::ArrayRCP<double>& energy_grid );
 
   // Sample an absorption reaction
   void sampleAbsorptionReaction( const double scaled_random_number,
@@ -149,26 +156,20 @@ private:
   // The temperature of the nuclide (MeV)
   double d_temperature;
 
-  // The incoming energy grid for all nuclide cross sections
-  Teuchos::ArrayRCP<double> d_energy_grid;
+  // The total reaction
+  boost::scoped_ptr<const NuclearReaction> d_total_reaction;
 
-  // The microscopic total cross sections
-  Teuchos::Array<double> d_total_cross_section;
-
-  // The microscopic absorption cross section
-  Teuchos::Array<double> d_absorption_cross_section;
+  // The total absorption reaction
+  boost::scoped_ptr<const NuclearReaction> d_total_absorption_reaction;
 
   // The scattering reactions
-  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
-  d_scattering_reactions;
+  ConstReactionMap d_scattering_reactions;
 
   // The absorption reactions
-  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
-  d_absorption_reactions;
+  ConstReactionMap d_absorption_reactions;
 
   // Miscellaneous reactions
-  boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >
-  d_miscellaneous_reactions;
+  ConstReactionMap d_miscellaneous_reactions;
 };
 
 } // end MonteCarlo namespace

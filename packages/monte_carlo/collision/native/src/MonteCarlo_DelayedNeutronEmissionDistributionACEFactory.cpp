@@ -1,16 +1,16 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_DelayedNeutronEmissionDistributionFactory.cpp
+//! \file   MonteCarlo_DelayedNeutronEmissionDistributionACEFactory.cpp
 //! \author Alex Robinson
 //! \brief  Delayed neutron emission distribution factory class definition
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_DelayedNeutronEmissionDistributionFactory.hpp"
+#include "MonteCarlo_DelayedNeutronEmissionDistributionACEFactory.hpp"
 #include "MonteCarlo_DelayedNeutronEmissionDistribution.hpp"
-#include "MonteCarlo_NeutronScatteringEnergyDistributionFactory.hpp"
-#include "MonteCarlo_NeutronScatteringAngularDistributionFactory.hpp"
+#include "MonteCarlo_NeutronScatteringEnergyDistributionACEFactory.hpp"
+#include "MonteCarlo_NeutronScatteringAngularDistributionACEFactory.hpp"
 #include "MonteCarlo_NeutronScatteringDistributionFactoryHelpers.hpp"
 #include "MonteCarlo_IndependentEnergyAngleNeutronScatteringDistribution.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
@@ -21,7 +21,7 @@
 namespace MonteCarlo{
 
 // Constructor
-DelayedNeutronEmissionDistributionFactory::DelayedNeutronEmissionDistributionFactory(
+DelayedNeutronEmissionDistributionACEFactory::DelayedNeutronEmissionDistributionACEFactory(
 			   const std::string& table_name,
 			   const double atomic_weight_ratio,
 			   const Teuchos::ArrayView<const double>& bdd_block,
@@ -37,7 +37,7 @@ DelayedNeutronEmissionDistributionFactory::DelayedNeutronEmissionDistributionFac
 }
 
 // Create the delayed neutron emission distribution
-void DelayedNeutronEmissionDistributionFactory::createEmissionDistribution(
+void DelayedNeutronEmissionDistributionACEFactory::createEmissionDistribution(
 	      Teuchos::RCP<NeutronScatteringDistribution>& distribution ) const
 {
   distribution.reset( new DelayedNeutronEmissionDistribution(
@@ -49,27 +49,27 @@ void DelayedNeutronEmissionDistributionFactory::createEmissionDistribution(
 
 // Return the precursor group decay constants
 const Teuchos::Array<double>& 
-DelayedNeutronEmissionDistributionFactory::getPrecursorGroupDecayConsts() const
+DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupDecayConsts() const
 {
   return d_precursor_group_decay_consts;
 }
 
 // Return the precursor group probability distributions
 const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >&
-DelayedNeutronEmissionDistributionFactory::getPrecursorGroupProbDists() const
+DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupProbDists() const
 {
   return d_precursor_group_prob_distributions;
 }
 
 // Return the precursor group emission distributions
 const Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >&
-DelayedNeutronEmissionDistributionFactory::getPrecursorGroupEmissionDists() const
+DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupEmissionDists() const
 {
   return d_precursor_group_emission_distributions;
 }
 
 // Initialize basic delayed neutron data
-void DelayedNeutronEmissionDistributionFactory::initializeBasicDelayedNeutronData( 
+void DelayedNeutronEmissionDistributionACEFactory::initializeBasicDelayedNeutronData( 
 			    const std::string& table_name,
 			    const Teuchos::ArrayView<const double>& bdd_block )
 {
@@ -131,7 +131,7 @@ void DelayedNeutronEmissionDistributionFactory::initializeBasicDelayedNeutronDat
 
 // Initialize the emission distributions
 void 
-DelayedNeutronEmissionDistributionFactory::initializeEmissionDistributions(
+DelayedNeutronEmissionDistributionACEFactory::initializeEmissionDistributions(
 			   const std::string& table_name,
 			   const double atomic_weight_ratio,
 			   const Teuchos::ArrayView<const double>& dnedl_block,
@@ -141,7 +141,7 @@ DelayedNeutronEmissionDistributionFactory::initializeEmissionDistributions(
   Teuchos::RCP<NeutronScatteringAngularDistribution> 
     default_angular_distribution;
 
-  NeutronScatteringAngularDistributionFactory::createIsotropicDistribution(
+  NeutronScatteringAngularDistributionACEFactory::createIsotropicDistribution(
 						default_angular_distribution );
 
   // Create the energy distributions
@@ -166,7 +166,7 @@ DelayedNeutronEmissionDistributionFactory::initializeEmissionDistributions(
 
     if( ace_law != 44 )
     {
-      NeutronScatteringEnergyDistributionFactory::createDistribution( 
+      NeutronScatteringEnergyDistributionACEFactory::createDistribution( 
 						     energy_dist_array,
 						     dist_index,
 						     table_name,
@@ -181,7 +181,7 @@ DelayedNeutronEmissionDistributionFactory::initializeEmissionDistributions(
     }
     else
     {
-      NeutronScatteringEnergyDistributionFactory::createAceLaw44Distribution(
+      NeutronScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
 						     atomic_weight_ratio,
 						     energy_dist_array,
 						     dist_index,
@@ -198,5 +198,5 @@ DelayedNeutronEmissionDistributionFactory::initializeEmissionDistributions(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_DelayedNeutronEmissionDistributionFactory.cpp
+// end MonteCarlo_DelayedNeutronEmissionDistributionACEFactory.cpp
 //---------------------------------------------------------------------------//
