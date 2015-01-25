@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_FissionNeutronMultiplicityDistributionFactory.cpp
+//! \file   MonteCarlo_FissionNeutronMultiplicityDistributionACEFactory.cpp
 //! \author Alex Robinson
 //! \brief  The fission neutron multiplicity distribution factory class def.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_FissionNeutronMultiplicityDistributionFactory.hpp"
+#include "MonteCarlo_FissionNeutronMultiplicityDistributionACEFactory.hpp"
 #include "MonteCarlo_CompleteFissionNeutronMultiplicityDistribution.hpp"
 #include "MonteCarlo_PartialFissionNeutronMultiplicityDistribution.hpp"
 #include "Utility_PolynomialDistribution.hpp"
@@ -18,7 +18,7 @@
 namespace MonteCarlo{
 
 // Constructor
-FissionNeutronMultiplicityDistributionFactory::FissionNeutronMultiplicityDistributionFactory(
+FissionNeutronMultiplicityDistributionACEFactory::FissionNeutronMultiplicityDistributionACEFactory(
 			    const std::string& table_name,
 			    const Teuchos::ArrayView<const double>& nu_block,
 			    const Teuchos::ArrayView<const double>& dnu_block )
@@ -71,7 +71,7 @@ FissionNeutronMultiplicityDistributionFactory::FissionNeutronMultiplicityDistrib
 }
 
 // Create the fission neutron multiplicity distribution
-void FissionNeutronMultiplicityDistributionFactory::createDistribution(
+void FissionNeutronMultiplicityDistributionACEFactory::createDistribution(
      Teuchos::RCP<FissionNeutronMultiplicityDistribution>& distribution ) const
 {
   if( d_prompt_dist_exists && d_delayed_dist_exists && d_total_dist_exists )
@@ -102,7 +102,7 @@ void FissionNeutronMultiplicityDistributionFactory::createDistribution(
 }
 
 // Create the partial distribution from a raw distribution array
-void FissionNeutronMultiplicityDistributionFactory::createPartialDistribution(
+void FissionNeutronMultiplicityDistributionACEFactory::createPartialDistribution(
 	  const std::string& table_name,
 	  const Teuchos::ArrayView<const double>& distribution_array,
 	  Teuchos::RCP<Utility::OneDDistribution>& partial_distribution ) const
@@ -158,41 +158,41 @@ void FissionNeutronMultiplicityDistributionFactory::createPartialDistribution(
 }
 
 // Return if a prompt distribution exists
-bool FissionNeutronMultiplicityDistributionFactory::doesPromptDistExist() const
+bool FissionNeutronMultiplicityDistributionACEFactory::doesPromptDistExist() const
 {
   return d_prompt_dist_exists;
 }
 
 // Return if a delayed distribution exists
 bool 
-FissionNeutronMultiplicityDistributionFactory::doesDelayedDistExist() const
+FissionNeutronMultiplicityDistributionACEFactory::doesDelayedDistExist() const
 {
   return d_delayed_dist_exists;
 }
 
 // Return if a total distribution exists
-bool FissionNeutronMultiplicityDistributionFactory::doesTotalDistExist() const
+bool FissionNeutronMultiplicityDistributionACEFactory::doesTotalDistExist() const
 {
   return d_total_dist_exists;
 }
 
 // Return the prompt multiplicity distribution
 const Teuchos::RCP<Utility::OneDDistribution>& 
-FissionNeutronMultiplicityDistributionFactory::getPromptMultDist() const
+FissionNeutronMultiplicityDistributionACEFactory::getPromptMultDist() const
 {
   return d_prompt_multiplicity_distribution;
 }
 
 // Return the delayed multiplicity distribution
 const Teuchos::RCP<Utility::OneDDistribution>& 
-FissionNeutronMultiplicityDistributionFactory::getDelayedMultDist() const
+FissionNeutronMultiplicityDistributionACEFactory::getDelayedMultDist() const
 {
   return d_delayed_multiplicity_distribution;
 }
 
 // Return the total multiplicity distribution
 const Teuchos::RCP<Utility::OneDDistribution>& 
-FissionNeutronMultiplicityDistributionFactory::getTotalMultDist() const
+FissionNeutronMultiplicityDistributionACEFactory::getTotalMultDist() const
 {
   return d_total_multiplicity_distribution;
 }
@@ -200,5 +200,5 @@ FissionNeutronMultiplicityDistributionFactory::getTotalMultDist() const
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_FissionNeutronMultiplicityDistributionFactory.cpp
+// end MonteCarlo_FissionNeutronMultiplicityDistributionACEFactory.cpp
 //---------------------------------------------------------------------------//

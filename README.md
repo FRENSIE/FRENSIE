@@ -246,7 +246,18 @@ close to linear thread scaling should be observed.
 
 Because this will eventually be an open source project, the goal is to be able to build FRENSIE without having to acquire commercial software licenses. Currently, the geometry capabilities within FRENSIE are only activated when the DagMC configure option is set to ON (e.g. `-D FRENSIE_ENABLE_DAGMC:BOOL=ON`), which requires a CUBIT license. In the future, more software libraries will be incorporated into FRENSIE which will allow for geometry capabilities to be built without building DagMC.
 
-Note: There are several other configure options that can be changed in the frensie.sh script. `-D FRENSIE_ENABLE_DBC:BOOL=ON` turns on very thorough Design-by-Contract checks that can be a very useful debugging tool. `-D FRENSIE_ENABLE_OPENMP:BOOL=ON` enables OpenMP thread support. `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support. If your system already has Doxygen 1.8.2 or above, there is no need to install version 1.8.8. Just delete the `-D DOXYGEN_PREFIX` variable from the frensie.sh script.
+Note: There are several other configure options that can be changed in the frensie.sh script. 
+ * `-D FRENSIE_ENABLE_DBC:BOOL=ON` turns on very thorough Design-by-Contract checks that can be a very useful debugging tool. 
+ * `-D FRENSIE_ENABLE_OPENMP:BOOL=ON` enables OpenMP thread support. 
+ * `-D FRENSIE_ENABLE_MPI:BOOL=ON` enables MPI support. 
+ * `-D DOXYGEN_PREFIX:PATH=path-to-doxygen-install-dir` indicates where the doxygen install directory is located. If your system already has Doxygen 1.8.2 or above, there is no need to install version 1.8.8 and this option can be deleted from the frensie.sh script. 
+ * `-D MCNP_DATA_DIR:PATH=path-to-mcnp-data` indicates where the nuclear data used by MCNP6 is located on the system. When this configure option is used, the FACEMC executable can be tested using the nuclear data used by MCNP6 by running `make test` or `make test-slow`. To disable these tests delete this configure option from the frensie.sh script.
+ * `-D SETUP_DASHBOARD_CLIENT:BOOL=ON` allows the machine to be used as a dashboard client (see the next section).
+
+## Dashboard
+A private [dashboard](http://cdash.ep.wisc.edu) has been set up for developers. Please register with the dashboard and send an email to [Alex Robinson](https://github.com/aprobinson) indicating that you would like to have access to the dashboard.
+
+To set up a dashboard client, simply set the dashboard client setup configure option to on (e.g. `-D SETUP_DASHBOARD_CLIENT:BOOL=ON`). This will add three new make targets: `make Experimental`, `make Nightly` and `make Continuous`. The experimental target should be used to test that the client has been set up correctly. The nightly and continuous targets can be executed on the client machine at regular intervals using cron and crontab (if on a Linux system).
 
 ## Feedback
 If any issues are encountered during the build process please direct your questions to [Alex Robinson](https://github.com/aprobinson)

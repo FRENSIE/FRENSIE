@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstFissionNeutronMultiplicityDistributionFactory.cpp
+//! \file   tstFissionNeutronMultiplicityDistributionACEFactory.cpp
 //! \author Alex Robinson
 //! \brief  Fission neutron multiplicity distribution factory unit tests
 //!
@@ -16,34 +16,34 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_FissionNeutronMultiplicityDistributionFactory.hpp"
+#include "MonteCarlo_FissionNeutronMultiplicityDistributionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-class TestFissionNeutronMultiplicityDistributionFactory : public MonteCarlo::FissionNeutronMultiplicityDistributionFactory
+class TestFissionNeutronMultiplicityDistributionACEFactory : public MonteCarlo::FissionNeutronMultiplicityDistributionACEFactory
 {
 public:
-  TestFissionNeutronMultiplicityDistributionFactory(
+  TestFissionNeutronMultiplicityDistributionACEFactory(
 			    const std::string& table_name,
 			    const Teuchos::ArrayView<const double>& nu_block,
 			    const Teuchos::ArrayView<const double>& dnu_block )
-    : FissionNeutronMultiplicityDistributionFactory( table_name,
+    : FissionNeutronMultiplicityDistributionACEFactory( table_name,
 						     nu_block,
 						     dnu_block )
   { /* ... */ }
 
-  ~TestFissionNeutronMultiplicityDistributionFactory()
+  ~TestFissionNeutronMultiplicityDistributionACEFactory()
   { /* ... */ }
 
-  using MonteCarlo::FissionNeutronMultiplicityDistributionFactory::doesPromptDistExist;
-  using MonteCarlo::FissionNeutronMultiplicityDistributionFactory::doesDelayedDistExist;
-  using MonteCarlo::FissionNeutronMultiplicityDistributionFactory::doesTotalDistExist;
-  using MonteCarlo::FissionNeutronMultiplicityDistributionFactory::getPromptMultDist;
-  using MonteCarlo::FissionNeutronMultiplicityDistributionFactory::getDelayedMultDist;
-  using MonteCarlo::FissionNeutronMultiplicityDistributionFactory::getTotalMultDist;
+  using MonteCarlo::FissionNeutronMultiplicityDistributionACEFactory::doesPromptDistExist;
+  using MonteCarlo::FissionNeutronMultiplicityDistributionACEFactory::doesDelayedDistExist;
+  using MonteCarlo::FissionNeutronMultiplicityDistributionACEFactory::doesTotalDistExist;
+  using MonteCarlo::FissionNeutronMultiplicityDistributionACEFactory::getPromptMultDist;
+  using MonteCarlo::FissionNeutronMultiplicityDistributionACEFactory::getDelayedMultDist;
+  using MonteCarlo::FissionNeutronMultiplicityDistributionACEFactory::getTotalMultDist;
 };
 
 //---------------------------------------------------------------------------//
@@ -54,14 +54,14 @@ std::string test_u238_ace_table_name;
 
 Teuchos::RCP<Data::ACEFileHandler> ace_file_handler;
 Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
-Teuchos::RCP<TestFissionNeutronMultiplicityDistributionFactory> 
+Teuchos::RCP<TestFissionNeutronMultiplicityDistributionACEFactory> 
 multiplicity_dist_factory;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the prompt distribution can be found
-TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionFactory,
+TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionACEFactory,
 		   doesPromptDistExist )
 {
   TEST_ASSERT( multiplicity_dist_factory->doesPromptDistExist() );
@@ -69,7 +69,7 @@ TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the delayed distribution can be found
-TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionFactory,
+TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionACEFactory,
 		   doesDelayedDistExist )
 {
   TEST_ASSERT( multiplicity_dist_factory->doesDelayedDistExist() );
@@ -77,7 +77,7 @@ TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the total distribution can be found
-TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionFactory,
+TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionACEFactory,
 		   doesTotalDistExist )
 {
   TEST_ASSERT( multiplicity_dist_factory->doesTotalDistExist() );
@@ -85,7 +85,7 @@ TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the prompt distribution is valid
-TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionFactory,
+TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionACEFactory,
 		   getPromptMultDist )
 {
   const Teuchos::RCP<Utility::OneDDistribution>& prompt_dist = 
@@ -98,7 +98,7 @@ TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the delayed distribution is valid
-TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionFactory,
+TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionACEFactory,
 		   getDelayedMultDist )
 {
   const Teuchos::RCP<Utility::OneDDistribution>& delayed_dist = 
@@ -111,7 +111,7 @@ TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the total distribution is valid
-TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionFactory,
+TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionACEFactory,
 		   getTotalMultDist )
 {
   const Teuchos::RCP<Utility::OneDDistribution>& total_dist = 
@@ -124,7 +124,7 @@ TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the FissionNeutronMultiplicityDistribution can be created
-TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionFactory,
+TEUCHOS_UNIT_TEST( FissionNeutronMultiplicityDistributionACEFactory,
 		   createDistribution )
 {
   Teuchos::RCP<MonteCarlo::FissionNeutronMultiplicityDistribution> distribution;
@@ -176,7 +176,7 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableXSSArray() ) );
 
   multiplicity_dist_factory.reset(
-		    new TestFissionNeutronMultiplicityDistributionFactory( 
+		    new TestFissionNeutronMultiplicityDistributionACEFactory( 
 				     ace_file_handler->getTableName(),
 				     xss_data_extractor->extractNUBlock(),
 				     xss_data_extractor->extractDNUBlock() ) );
@@ -197,5 +197,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstFissionNeutronMultiplicityDistributionFactory.cpp
+// end tstFissionNeutronMultiplicityDistributionACEFactory.cpp
 //---------------------------------------------------------------------------//

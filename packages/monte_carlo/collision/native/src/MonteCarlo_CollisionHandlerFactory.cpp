@@ -116,7 +116,9 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 						  material_id_component_map,
 						  aliases,
 						  cell_id_mat_id_map,
-						  cell_id_density_map );
+						  cell_id_density_map,
+						  false,
+						  false );
     break;
   }
   case PHOTON_MODE:
@@ -148,7 +150,9 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 						  material_id_component_map,
 						  aliases,
 						  cell_id_mat_id_map,
-						  cell_id_density_map );
+						  cell_id_density_map,
+						  false,
+						  true );
 
     CollisionHandlerFactory::createPhotonMaterials(
 		     cross_sections_table_info,
@@ -370,12 +374,16 @@ void CollisionHandlerFactory::createNeutronMaterials(
    const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
                               std::vector<std::string> >& cell_id_mat_id_map,
    const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                             std::vector<std::string> >& cell_id_density_map )
+                               std::vector<std::string> >& cell_id_density_map,
+   const bool use_unresolved_resonance_data,
+   const bool use_photon_production_data )
 {
   // Load the nuclides of interest
   NuclideFactory nuclide_factory( cross_sections_xml_directory,
 				  cross_sections_table_info,
-				  nuclide_aliases );
+				  nuclide_aliases,
+				  use_unresolved_resonance_data,
+				  use_photon_production_data );
 
   boost::unordered_map<std::string,Teuchos::RCP<Nuclide> > nuclide_map;
 

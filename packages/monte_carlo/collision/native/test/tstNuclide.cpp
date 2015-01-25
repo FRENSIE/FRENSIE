@@ -15,9 +15,10 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_Nuclide.hpp"
+#include "MonteCarlo_NuclearReactionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
-#include "MonteCarlo_Nuclide.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -52,6 +53,23 @@ void initializeNuclide( Teuchos::RCP<MonteCarlo::Nuclide>& nuclide,
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray()));
 
+  Teuchos::ArrayRCP<double> energy_grid;
+  energy_grid.deepCopy( xss_data_extractor->extractEnergyGrid() );
+
+  MonteCarlo::NuclearReactionACEFactory reaction_factory( 
+				 ace_table_name,
+				 ace_file_handler->getTableAtomicWeightRatio(),
+				 ace_file_handler->getTableTemperature(),
+				 energy_grid,
+				 *xss_data_extractor );
+  
+  MonteCarlo::Nuclide::ReactionMap standard_scattering_reactions;
+  reaction_factory.createScatteringReactions( standard_scattering_reactions );
+  reaction_factory.createFissionReactions( standard_scattering_reactions );
+
+  MonteCarlo::Nuclide::ReactionMap standard_absorption_reactions;
+  reaction_factory.createAbsorptionReactions( standard_absorption_reactions );
+
   nuclide.reset( new MonteCarlo::Nuclide( 
 				 ace_table_name,
 				 1u,
@@ -59,7 +77,9 @@ void initializeNuclide( Teuchos::RCP<MonteCarlo::Nuclide>& nuclide,
 				 0u,
 				 ace_file_handler->getTableAtomicWeightRatio(),
 				 ace_file_handler->getTableTemperature(),
-				 *xss_data_extractor ) );
+				 energy_grid,
+				 standard_scattering_reactions,
+				 standard_absorption_reactions ) );
 }
   
 //---------------------------------------------------------------------------//

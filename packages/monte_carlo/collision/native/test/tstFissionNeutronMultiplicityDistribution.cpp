@@ -16,7 +16,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_FissionNeutronMultiplicityDistributionFactory.hpp"
+#include "MonteCarlo_FissionNeutronMultiplicityDistributionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 
@@ -115,9 +115,9 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
-  Teuchos::RCP<MonteCarlo::FissionNeutronMultiplicityDistributionFactory>
+  Teuchos::RCP<MonteCarlo::FissionNeutronMultiplicityDistributionACEFactory>
   multiplicity_dist_factory(
-		    new MonteCarlo::FissionNeutronMultiplicityDistributionFactory( 
+	      new MonteCarlo::FissionNeutronMultiplicityDistributionACEFactory(
 				     ace_file_handler->getTableName(),
 				     xss_data_extractor->extractNUBlock(),
 				     xss_data_extractor->extractDNUBlock() ) );
