@@ -159,6 +159,9 @@ protected:
   const std::string& getResponseFunctionName( 
 				const unsigned response_function_index ) const;
 
+  //! Return the name of the bin (with response function)
+  std::string getBinName( const unsigned bin_index ) const;
+
   //! Print the estimator response function names
   void printEstimatorResponseFunctionNames( std::ostream& os ) const;
 
