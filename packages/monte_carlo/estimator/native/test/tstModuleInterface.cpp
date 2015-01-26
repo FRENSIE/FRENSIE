@@ -22,6 +22,7 @@
 #include "MonteCarlo_CellPulseHeightEstimator.hpp"
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
+#include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
 #include "MonteCarlo_EstimatorModuleInterface_Native.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 
@@ -57,6 +58,9 @@ estimator_9;
 
 Teuchos::RCP<MonteCarlo::SurfaceCurrentEstimator<MonteCarlo::WeightAndEnergyMultiplier> >
 estimator_10;
+
+Teuchos::RCP<MonteCarlo::TetMeshTrackLengthFluxEstimator<MonteCarlo::WeightMultiplier> >
+mesh_estimator;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -148,6 +152,24 @@ void initializeSurfaceCurrentEstimator(
   Teuchos::Array<MonteCarlo::ParticleType> particle_types( 1 );
   particle_types[0] = MonteCarlo::PHOTON;
 
+  estimator->setParticleTypes( particle_types );
+}
+
+// Initialize the estimator
+template<typename MeshEstimator>
+void initializeMeshEstimator( const unsigned estimator_id,
+			      const std::string& mesh_file_name,
+			      Teuchos::RCP<MeshEstimator>& estimator )
+{
+  estimator.reset( new MeshEstimator( estimator_id,
+				      1.0,
+				      mesh_file_name,
+				      "unit_cube_output.vtk" ) );
+  
+  // Set the particle types
+  Teuchos::Array<MonteCarlo::ParticleType> particle_types ( 1 );
+  particle_types[0] = MonteCarlo::PHOTON;
+    
   estimator->setParticleTypes( particle_types );
 }
 
@@ -251,20 +273,29 @@ TEUCHOS_UNIT_TEST( EstimatorModuleInterface,
   surface_normal[1] = 0.0;
   surface_normal[2] = 0.0;
   
+  double start_point[3] = { 0.25, 0.0, 0.75 };
+  double end_point[3] = { 0.75, 0.25, 1.0 };
+  
   TEST_ASSERT( !estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 
   EMI::updateEstimatorsFromParticleCollidingInCellEvent( particle,
 							 1.0,
 							 0.0,
 							 1.0 );
+							 
+  EMI::updateEstimatorsFromParticleCollidingGlobalEvent( particle,
+                                                         start_point,
+                                                         end_point );
 
   TEST_ASSERT( estimator_1->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_2->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_3->hasUncommittedHistoryContribution() );
   TEST_ASSERT( estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( mesh_estimator->hasUncommittedHistoryContribution() );
 
   EMI::commitEstimatorHistoryContributions();
 
@@ -272,6 +303,7 @@ TEUCHOS_UNIT_TEST( EstimatorModuleInterface,
   TEST_ASSERT( !estimator_2->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_3->hasUncommittedHistoryContribution() );
   TEST_ASSERT( !estimator_4->hasUncommittedHistoryContribution() );
+  TEST_ASSERT( !mesh_estimator->hasUncommittedHistoryContribution() );
 }
 
 //---------------------------------------------------------------------------//
@@ -280,6 +312,12 @@ TEUCHOS_UNIT_TEST( EstimatorModuleInterface,
 int main( int argc, char** argv )
 {
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  
+  std::string test_input_mesh_file_name;
+
+  clp.setOption( "test_input_mesh_file_name",
+		 &test_input_mesh_file_name,
+		 "Test input mesh file name" );
   
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -324,6 +362,10 @@ int main( int argc, char** argv )
   MonteCarlo::EstimatorHandler::addEstimator( estimator_8, surface_ids );
   MonteCarlo::EstimatorHandler::addEstimator( estimator_9, surface_ids );
   MonteCarlo::EstimatorHandler::addEstimator( estimator_10, surface_ids );
+  
+  initializeMeshEstimator( 10u, test_input_mesh_file_name, mesh_estimator );
+  
+  MonteCarlo::EstimatorHandler::addGlobalEstimator( mesh_estimator );
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );

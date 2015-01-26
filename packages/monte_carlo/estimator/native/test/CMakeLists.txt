@@ -148,6 +148,16 @@ IF(${FRENSIE_ENABLE_OPENMP})
     tstCellTrackLengthFluxEstimator --threads=4)
 ENDIF()
 
+Add_EXECUTABLE(tstTetMeshTrackLengthFluxEstimator
+  tstTetMeshTrackLengthFluxEstimator.cpp)
+TARGET_LINK_LIBRARIES(tstTetMeshTrackLengthFluxEstimator monte_carlo_estimator_native ${MOAB})
+ADD_TEST(TetMeshTrackLengthFluxEstimator_test tstTetMeshTrackLengthFluxEstimator --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
+
+Add_EXECUTABLE(tstParticleSubtrackEndingGlobalEventDispatcher
+  tstParticleSubtrackEndingGlobalEventDispatcher.cpp)
+TARGET_LINK_LIBRARIES(tstParticleSubtrackEndingGlobalEventDispatcher monte_carlo_estimator_native ${MOAB})
+ADD_TEST(ParticleSubtrackEndingGlobalEventDispatcher_test tstParticleSubtrackEndingGlobalEventDispatcher --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
+
 Add_EXECUTABLE(tstParticleCollidingInCellEventDispatcher
   tstParticleCollidingInCellEventDispatcher.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -209,32 +219,38 @@ TARGET_LINK_LIBRARIES(tstParticleSubtrackEndingInCellEventDispatcherDB monte_car
 ADD_TEST(ParticleSubtrackEndingInCellEventDispatcherDB_test tstParticleSubtrackEndingInCellEventDispatcherDB)
 
 ADD_EXECUTABLE(tstObserverRegistrationHelpers
-  tstObserverRegistrationHelpers.cpp
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstObserverRegistrationHelpers monte_carlo_estimator_native)
-ADD_TEST(ObserverRegistrationHelpers_test tstObserverRegistrationHelpers)
+  tstObserverRegistrationHelpers.cpp)
+TARGET_LINK_LIBRARIES(tstObserverRegistrationHelpers monte_carlo_estimator_native ${MOAB})
+ADD_TEST(ObserverRegistrationHelpers_test tstObserverRegistrationHelpers --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
 
 ADD_EXECUTABLE(tstEstimatorHandler
   tstEstimatorHandler.cpp)
-TARGET_LINK_LIBRARIES(tstEstimatorHandler monte_carlo_estimator_native)
-ADD_TEST(EstimatorHandler_test tstEstimatorHandler)
+TARGET_LINK_LIBRARIES(tstEstimatorHandler monte_carlo_estimator_native ${MOAB})
+ADD_TEST(EstimatorHandler_test tstEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
+
+IF(${FRENSIE_ENABLE_OPENMP})
+  ADD_TEST(EstimatorHandler_2_test 
+    tstEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=2)
+  ADD_TEST(EstimatorHandler_4_test 
+    tstEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk" --threads=4)
+ENDIF()
 
 IF(${FRENSIE_ENABLE_MPI})
   Add_EXECUTABLE(tstDistributedEstimatorHandler 
     tstDistributedEstimatorHandler.cpp)
-  TARGET_LINK_LIBRARIES(tstDistributedEstimatorHandler monte_carlo_estimator_native)
+  TARGET_LINK_LIBRARIES(tstDistributedEstimatorHandler monte_carlo_estimator_native ${MOAB})
   ADD_TEST(DistributedParallelEstimatorHandler_1_test 
-    ${MPIEXEC} -n 2 tstDistributedEstimatorHandler)
+    ${MPIEXEC} -n 1 tstDistributedEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
   ADD_TEST(DistributedParallelEstimatorHandler_2_test 
-    ${MPIEXEC} -n 2 tstDistributedEstimatorHandler)
+    ${MPIEXEC} -n 2 tstDistributedEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
   ADD_TEST(DistributedParallelEstimatorHandler_4_test 
-    ${MPIEXEC} -n 4 tstDistributedEstimatorHandler)
+    ${MPIEXEC} -n 4 tstDistributedEstimatorHandler --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
 ENDIF()
 
 ADD_EXECUTABLE(tstEstimatorModuleInterface_Native
   tstModuleInterface.cpp)
-TARGET_LINK_LIBRARIES(tstEstimatorModuleInterface_Native monte_carlo_estimator_native)
-ADD_TEST(EstimatorModuleInterface_Native_test tstEstimatorModuleInterface_Native)
+TARGET_LINK_LIBRARIES(tstEstimatorModuleInterface_Native monte_carlo_estimator_native ${MOAB})
+ADD_TEST(EstimatorModuleInterface_Native_test tstEstimatorModuleInterface_Native --test_input_mesh_file_name="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_unit_cube_tets-6.vtk")
 
 ADD_EXECUTABLE(tstResponseFunctionFactory
   tstResponseFunctionFactory.cpp)
@@ -245,5 +261,5 @@ IF(FRENSIE_ENABLE_DAGMC)
 ADD_EXECUTABLE(tstEstimatorHandlerFactory
   tstEstimatorHandlerFactory.cpp)
 TARGET_LINK_LIBRARIES(tstEstimatorHandlerFactory monte_carlo_estimator_native)
-ADD_TEST(EstimatorHandlerFactory_test tstEstimatorHandlerFactory --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml" --test_estimator_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_estimators.xml")
+ADD_TEST(EstimatorHandlerFactory_test tstEstimatorHandlerFactory --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml" --test_resp_func_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_response_functions.xml" --test_estimator_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_estimators.xml")
 ENDIF()
