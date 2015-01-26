@@ -59,6 +59,9 @@ void ParticleSimulationManager<GeometryHandler,
 			       EstimatorHandler,
 			       CollisionHandler>::runSimulation()
 {
+  std::cout << "Starting simulation ... ";
+  std::cout.flush();
+  
   // Set up the random number generator for the number of threads requested
   Utility::RandomNumberGenerator::createStreams();
 
@@ -140,6 +143,8 @@ void ParticleSimulationManager<GeometryHandler,
     
   // Set the end time
   d_end_time = Utility::GlobalOpenMPSession::getTime();
+
+  std::cout << "done." << std::endl;
 }
 
 // Set the number of particle histories to simulate
@@ -158,6 +163,12 @@ void ParticleSimulationManager<GeometryHandler,
   // Particle tracking information
   double distance_to_surface_hit, op_to_surface_hit, remaining_subtrack_op;
   double subtrack_start_time;
+  double ray_start_point[3];
+  
+  // Cache the start point of the ray
+  ray_start_point[0] = particle.getXPosition();
+  ray_start_point[1] = particle.getYPosition();
+  ray_start_point[2] = particle.getZPosition();
 
   // Surface information
   typename GMI::InternalSurfaceHandle surface_hit;
@@ -261,11 +272,23 @@ void ParticleSimulationManager<GeometryHandler,
 					  subtrack_start_time,
 					  1.0/cell_total_macro_cross_section );
 
+	
+
+	EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
+						      particle,
+						      ray_start_point,
+						      particle.getPosition() );
+
 	// Undergo a collision with the material in the cell
 	CMI::collideWithCellMaterial( particle, bank, true );
 
 	// Indicate that a collision has occurred
 	GMI::newRay();
+
+	// Cache the current position of the new ray
+	ray_start_point[0] = particle.getXPosition();
+	ray_start_point[1] = particle.getYPosition();
+	ray_start_point[2] = particle.getZPosition();
 
 	// Make sure the energy is above the cutoff
 	if( particle.getEnergy() < 1e-11 )
@@ -276,6 +299,12 @@ void ParticleSimulationManager<GeometryHandler,
       }
     }	     
   }
+
+  // Update the global estimators
+  EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
+						      particle,
+						      ray_start_point,
+						      particle.getPosition() );
 
   // Indicate that this particle history is complete
   GMI::newRay();
@@ -317,12 +346,17 @@ void ParticleSimulationManager<GeometryHandler,
 			       CollisionHandler>::exportSimulationData(
 				      const std::string& data_file_name ) const
 {
+  std::cout << "Exporting simulation data ... ";
+  std::cout.flush();
+  
   EMI::exportEstimatorData( data_file_name,
   			    d_start_history+d_histories_completed,
   			    d_histories_completed,
   			    d_start_time,
   			    d_end_time+d_previous_run_time,
 			    true );
+
+  std::cout << "done." << std::endl;
 }
 
 // Signal handler

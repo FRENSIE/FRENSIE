@@ -35,6 +35,23 @@ void EstimatorHandler::addEstimator(
   EstimatorHandler::master_array.push_back( estimator );
 }
 
+// Add a global estimator to the handler
+/*! \details The estimator will be registered with the appropriate dispatchers.
+ */
+template<typename EstimatorType>
+void EstimatorHandler::addGlobalEstimator( 
+				       Teuchos::RCP<EstimatorType>& estimator )
+{
+  // Make sure estimator is valid
+  testPrecondition( !estimator.is_null() );
+ 
+  // Register the estimator with the particle global event dispatchers
+  REGISTER_GLOBAL_OBSERVER_WITH_DISPATCHERS( estimator );
+
+  // Add the estimator to the master list
+  EstimatorHandler::master_array.push_back( estimator );
+}
+
 } // end MonteCarlo namespace
 
 #endif // end FACEMC_ESTIMATOR_HANDLER_DEF_HPP

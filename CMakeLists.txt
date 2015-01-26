@@ -129,12 +129,15 @@ ADD_UNINSTALL_TARGET()
 
 # Set up the testing dashboard
 IF(${SETUP_DASHBOARD_CLIENT})
+  SET(DART_TESTING_TIMEOUT "43200" CACHE STRING "Amount of time (s) to wait for processes to complete during testing." FORCE)
   INCLUDE(CTest)
 ELSE()
   ENABLE_TESTING()
 ENDIF()
 
 # Set up the project directory hierarchy
+ADD_SUBDIRECTORY(scripts)
+
 ADD_SUBDIRECTORY(packages)
 INCLUDE_DIRECTORIES(packages/utility/core/src packages/utility/prng/src
 packages/utility/hdf5/src packages/utility/distribution/src
