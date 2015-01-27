@@ -152,6 +152,17 @@ private:
 	 const bool energy_multiplication = false,
 	 const Teuchos::ParameterList* bins = NULL );
 
+  // Create a tet mesh track length flux estimator
+  static void createTetMeshTrackLengthFluxEstimator(
+	 const unsigned id,
+	 const double multiplier,
+	 const Teuchos::Array<ParticleType> particle_types,
+	 const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+	 const std::string& mesh_file_name,
+	 const std::string& output_mesh_file_name,
+	 const bool energy_multiplication = false,
+	 const Teuchos::ParameterList* bins = NULL );
+
   // Assign bins to an estimator
   static void assignBinsToEstimator( const Teuchos::ParameterList& bins,
 				     Teuchos::RCP<Estimator>& estimator ); 
@@ -169,7 +180,10 @@ private:
       surfaces,
       const boost::unordered_map<Geometry::ModuleTraits::InternalSurfaceHandle,
                                  double>& surface_area_map,
-      Teuchos::Array<double>& surface_areas );		    
+      Teuchos::Array<double>& surface_areas );	
+
+  // Check if the mesh estimator type is valid
+  static bool isMeshEstimatorTypeValid( const std::string& estimator_type );
 };
 
 //! The invalid estimator representation error

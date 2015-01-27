@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_FissionNeutronMultiplicityDistributionFactory.hpp
+//! \file   MonteCarlo_FissionNeutronMultiplicityDistributionACEFactory.hpp
 //! \author Alex Robinson
 //! \brief  The fission neutron multiplicity distribution factory class decl
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_FACTORY_HPP
-#define MONTE_CARLO_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_FACTORY_HPP
+#ifndef MONTE_CARLO_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_ACE_FACTORY_HPP
+#define MONTE_CARLO_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_ACE_FACTORY_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -20,19 +20,19 @@
 namespace MonteCarlo{
 
 //! The fission neutron multiplicity distribution factory
-class FissionNeutronMultiplicityDistributionFactory
+class FissionNeutronMultiplicityDistributionACEFactory
 {
 
 public:
   
   //! Constructor
-  FissionNeutronMultiplicityDistributionFactory( 
+  FissionNeutronMultiplicityDistributionACEFactory( 
 			   const std::string& table_name,
 			   const Teuchos::ArrayView<const double>& nu_block,
 			   const Teuchos::ArrayView<const double>& dnu_block );
 
   //! Destructor
-  ~FissionNeutronMultiplicityDistributionFactory()
+  ~FissionNeutronMultiplicityDistributionACEFactory()
   { /* ... */ }
 
   //! Create the fission neutron multiplicity distribution
@@ -88,8 +88,8 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_FACTORY_HPP
+#endif // end MONTE_CARLO_FISSION_NEUTRON_MULTIPLICITY_DISTRIBUTION_ACE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_FissionNeutronMultiplicityDistributionFactory.hpp
+// end MonteCarlo_FissionNeutronMultiplicityDistributionACEFactory.hpp
 //---------------------------------------------------------------------------//

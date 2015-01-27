@@ -62,6 +62,7 @@ public:
   using MonteCarlo::Estimator::assignBinBoundaries;
   using MonteCarlo::Estimator::getMultiplier;
   using MonteCarlo::Estimator::getResponseFunctionName;
+  using MonteCarlo::Estimator::getBinName;
   using MonteCarlo::Estimator::evaluateResponseFunction;
   using MonteCarlo::Estimator::isPointInEstimatorPhaseSpace;
   using MonteCarlo::Estimator::calculateBinIndex;
@@ -786,6 +787,176 @@ TEUCHOS_UNIT_TEST( Estimator, exportData )
 						  collision_number_bins_copy );
 
   TEST_COMPARE_ARRAYS( collision_number_bins, collision_number_bins_copy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bin name can be created
+TEUCHOS_UNIT_TEST( Estimator, getBinName )
+{
+  TestEstimator estimator( 0, 1.0 );
+  
+  Teuchos::Array<double> energy_bin_boundaries( 7 );
+  energy_bin_boundaries[0] = 0.0;
+  energy_bin_boundaries[1] = 1e-1;
+  energy_bin_boundaries[2] = 1e-1;
+  energy_bin_boundaries[3] = 1.0;
+  energy_bin_boundaries[4] = 10.0;
+  energy_bin_boundaries[5] = 10.0;
+  energy_bin_boundaries[6] = 20.0;
+
+  estimator.setBinBoundaries<MonteCarlo::ENERGY_DIMENSION>( energy_bin_boundaries);
+
+  Teuchos::Array<double> time_bin_boundaries( 4 );
+  time_bin_boundaries[0] = 0.0;
+  time_bin_boundaries[1] = 1.0;
+  time_bin_boundaries[2] = 2.0;
+  time_bin_boundaries[3] = 3.0;
+
+  estimator.setBinBoundaries<MonteCarlo::TIME_DIMENSION>( time_bin_boundaries);
+  
+  Teuchos::Array<unsigned> collision_number_bins( 4 );
+  collision_number_bins[0] = 0u;
+  collision_number_bins[1] = 1u;
+  collision_number_bins[2] = 2u;
+  collision_number_bins[3] = 10u;
+
+  estimator.setBinBoundaries<MonteCarlo::COLLISION_NUMBER_DIMENSION>( 
+						       collision_number_bins );
+  
+  Teuchos::Array<double> cosine_bin_boundaries( 4 );
+  cosine_bin_boundaries[0] = -1.0;
+  cosine_bin_boundaries[1] = -0.5;
+  cosine_bin_boundaries[2] = 0.5;
+  cosine_bin_boundaries[3] = 1.0;
+  
+  estimator.setBinBoundaries<MonteCarlo::COSINE_DIMENSION>( cosine_bin_boundaries);
+  
+  Teuchos::Array<Teuchos::RCP<MonteCarlo::ResponseFunction> > 
+    response_functions( 2 );
+  
+  Teuchos::RCP<Utility::OneDDistribution> energy_distribution(
+			    new Utility::UniformDistribution( 0.0, 10, 1.0 ) );
+
+  response_functions[0].reset( new MonteCarlo::EnergySpaceResponseFunction( 
+						       0,
+						       "Uniform Energy Resp.",
+						       energy_distribution ) );
+  response_functions[1] = 
+    MonteCarlo::ResponseFunction::default_response_function;
+
+  estimator.setResponseFunctions( response_functions );
+
+  std::string bin_name = estimator.getBinName( 0u );
+  std::string true_bin_name = "Energy Bin: [0,0.1], Time Bin: [0,1], ";
+  true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
+  true_bin_name += "Uniform Energy Resp.";
+    
+  TEST_EQUALITY( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 5u );
+  true_bin_name = "Energy Bin: (10,20], Time Bin: [0,1], ";
+  true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
+  true_bin_name += "Uniform Energy Resp.";
+
+  TEST_EQUALITY( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 12u );
+  true_bin_name = "Energy Bin: [0,0.1], Time Bin: (2,3], ";
+  true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
+  true_bin_name += "Uniform Energy Resp.";
+
+  TEST_EQUALITY( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 17u );
+  true_bin_name = "Energy Bin: (10,20], Time Bin: (2,3], ";
+  true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
+  true_bin_name += "Uniform Energy Resp.";
+
+  TEST_EQUALITY( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 54u );
+  true_bin_name = "Energy Bin: [0,0.1], Time Bin: [0,1], ";
+  true_bin_name += "Collision Number Bin: [3,10], Cosine Bin: [-1,-0.5], ";
+  true_bin_name += "Uniform Energy Resp.";
+
+  TEST_EQUALITY( bin_name, true_bin_name );
+  
+  bin_name = estimator.getBinName( 71u );
+  true_bin_name = "Energy Bin: (10,20], Time Bin: (2,3], ";
+  true_bin_name += "Collision Number Bin: [3,10], Cosine Bin: [-1,-0.5], ";
+  true_bin_name += "Uniform Energy Resp.";
+
+  TEST_EQUALITY( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 144u );
+  true_bin_name = "Energy Bin: [0,0.1], Time Bin: [0,1], ";
+  true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: (0.5,1], ";
+  true_bin_name += "Uniform Energy Resp.";
+
+  TEST_EQUALITY( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 215u );
+  true_bin_name = "Energy Bin: (10,20], Time Bin: (2,3], ";
+  true_bin_name += "Collision Number Bin: [3,10], Cosine Bin: (0.5,1], ";
+  true_bin_name += "Uniform Energy Resp.";
+  
+  TEST_EQUALITY( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 216u );
+  true_bin_name = "Energy Bin: [0,0.1], Time Bin: [0,1], ";
+  true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
+  true_bin_name += "default";
+    
+  TEST_EQUALITY( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 221u );
+  true_bin_name = "Energy Bin: (10,20], Time Bin: [0,1], ";
+  true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
+  true_bin_name += "default";
+
+  TEST_EQUALITY( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 228u );
+  true_bin_name = "Energy Bin: [0,0.1], Time Bin: (2,3], ";
+  true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
+  true_bin_name += "default";
+
+  TEST_EQUALITY( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 233u );
+  true_bin_name = "Energy Bin: (10,20], Time Bin: (2,3], ";
+  true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: [-1,-0.5], ";
+  true_bin_name += "default";
+
+  TEST_EQUALITY( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 270u );
+  true_bin_name = "Energy Bin: [0,0.1], Time Bin: [0,1], ";
+  true_bin_name += "Collision Number Bin: [3,10], Cosine Bin: [-1,-0.5], ";
+  true_bin_name += "default";
+
+  TEST_EQUALITY( bin_name, true_bin_name );
+  
+  bin_name = estimator.getBinName( 287u );
+  true_bin_name = "Energy Bin: (10,20], Time Bin: (2,3], ";
+  true_bin_name += "Collision Number Bin: [3,10], Cosine Bin: [-1,-0.5], ";
+  true_bin_name += "default";
+
+  TEST_EQUALITY( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 360u );
+  true_bin_name = "Energy Bin: [0,0.1], Time Bin: [0,1], ";
+  true_bin_name += "Collision Number Bin: [0,0], Cosine Bin: (0.5,1], ";
+  true_bin_name += "default";
+
+  TEST_EQUALITY( bin_name, true_bin_name );
+
+  bin_name = estimator.getBinName( 431u );
+  true_bin_name = "Energy Bin: (10,20], Time Bin: (2,3], ";
+  true_bin_name += "Collision Number Bin: [3,10], Cosine Bin: (0.5,1], ";
+  true_bin_name += "default";
+  
+  TEST_EQUALITY( bin_name, true_bin_name );
 }
 
 //---------------------------------------------------------------------------//

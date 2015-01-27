@@ -129,12 +129,15 @@ ADD_UNINSTALL_TARGET()
 
 # Set up the testing dashboard
 IF(${SETUP_DASHBOARD_CLIENT})
+  SET(DART_TESTING_TIMEOUT "43200" CACHE STRING "Amount of time (s) to wait for processes to complete during testing." FORCE)
   INCLUDE(CTest)
 ELSE()
   ENABLE_TESTING()
 ENDIF()
 
 # Set up the project directory hierarchy
+ADD_SUBDIRECTORY(scripts)
+
 ADD_SUBDIRECTORY(packages)
 INCLUDE_DIRECTORIES(packages/utility/core/src packages/utility/prng/src
 packages/utility/hdf5/src packages/utility/distribution/src
@@ -152,7 +155,6 @@ ADD_SUBDIRECTORY(tools)
 
 ADD_SUBDIRECTORY(doc)
 
-
 # Add custom build ctest target for continuous integration tests
 ADD_CUSTOM_TARGET(test-fast 
   COMMAND ctest -E verification
@@ -160,3 +162,7 @@ ADD_CUSTOM_TARGET(test-fast
 ADD_CUSTOM_TARGET(test-slow
   COMMAND ctest -R verification
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+
+# Configure the CTestCustom.cake file
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CTestCustom.cmake.in
+  ${CMAKE_BINARY_DIR}/CTestCustom.cmake)

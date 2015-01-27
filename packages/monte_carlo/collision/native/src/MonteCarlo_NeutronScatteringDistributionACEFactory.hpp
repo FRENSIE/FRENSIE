@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_NeutronScatteringDistributionFactory.hpp
+//! \file   MonteCarlo_NeutronScatteringDistributionACEFactory.hpp
 //! \author Alex Robinson
 //! \brief  Neutron scattering distribution factory class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HPP
-#define MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HPP
+#ifndef MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
+#define MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 
 // Std Lib Includes
 #include <string>
@@ -24,28 +24,24 @@
 #include "MonteCarlo_NeutronScatteringDistribution.hpp"
 #include "MonteCarlo_ElasticNeutronScatteringDistribution.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
+#include "Data_XSSNeutronDataExtractor.hpp"
 
 namespace MonteCarlo{
 
 //! The scattering distribution factory class
-class NeutronScatteringDistributionFactory
+class NeutronScatteringDistributionACEFactory
 {
   
 public:
 
   //! Constructor 
-  NeutronScatteringDistributionFactory( 
-			   const std::string& table_name,
-			   const double atomic_weight_ratio,
-			   const Teuchos::ArrayView<const double>& mtr_block,
-			   const Teuchos::ArrayView<const double>& tyr_block,
-			   const Teuchos::ArrayView<const double>& land_block,
-			   const Teuchos::ArrayView<const double>& and_block,
-			   const Teuchos::ArrayView<const double>& ldlw_block,
-			   const Teuchos::ArrayView<const double>& dlw_block );
-
+  NeutronScatteringDistributionACEFactory( 
+		       const std::string& table_name,
+		       const double atomic_weight_ratio,
+		       const Data::XSSNeutronDataExtractor& raw_nuclide_data );
+			
   //! Destructor
-  ~NeutronScatteringDistributionFactory()
+  ~NeutronScatteringDistributionACEFactory()
   { /* ... */ }
 
   //! Create a scattering distribution 
@@ -160,8 +156,8 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_FACTORY_HPP
+#endif // end MONTE_CARLO_NEUTRON_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NeutronScatteringDistributionFactory.hpp
+// end MonteCarlo_NeutronScatteringDistributionACEFactory.hpp
 //---------------------------------------------------------------------------//
