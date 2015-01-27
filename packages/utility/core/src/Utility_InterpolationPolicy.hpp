@@ -50,6 +50,21 @@ struct LogLog
 			const T processed_dep_var_0,
 			const T processed_slope );
 
+  //! Interpolate between two points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T indep_var_0,
+				  const T indep_var_1,
+				  const T indep_var,
+				  const T dep_var_0,
+				  const T dep_var_1 );
+
+  //! Interpolate between two processed points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T processed_indep_var_0,
+				  const T processed_indep_var,
+				  const T processed_dep_var_0,
+				  const T processed_slope );
+
   //! Process the independent value
   template<typename T>
   static T processIndepVar( const T indep_var );
@@ -104,6 +119,21 @@ struct LogLin
 			const T processed_indep_var,
 			const T processed_dep_var_0,
 			const T processed_slope );
+
+  //! Interpolate between two points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T indep_var_0,
+				  const T indep_var_1,
+				  const T indep_var,
+				  const T dep_var_0,
+				  const T dep_var_1 );
+
+  //! Interpolate between two processed points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T processed_indep_var_0,
+				  const T processed_indep_var,
+				  const T processed_dep_var_0,
+				  const T processed_slope );
 
   //! Process the independent value
   template<typename T>
@@ -160,6 +190,21 @@ struct LinLog
 			const T processed_dep_var_0,
 			const T processed_slope );
 
+  //! Interpolate between two points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T indep_var_0,
+				  const T indep_var_1,
+				  const T indep_var,
+				  const T dep_var_0,
+				  const T dep_var_1 );
+
+  //! Interpolate between two processed points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T processed_indep_var_0,
+				  const T processed_indep_var,
+				  const T processed_dep_var_0,
+				  const T processed_slope );
+
   //! Process the independent value
   template<typename T>
   static T processIndepVar( const T indep_var );
@@ -214,7 +259,30 @@ struct LinLin
 			const T processed_indep_var,
 			const T processed_dep_var_0,
 			const T processed_slope );
+
+  //! Interpolate between two points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T indep_var_0,
+				  const T indep_var_1,
+				  const T indep_var,
+				  const T dep_var_0,
+				  const T dep_var_1 );
+
+  //! Interpolate between two processed points and return the processed value
+  template<typename T>
+  static T interpolateAndProcess( const T processed_indep_var_0,
+				  const T processed_indep_var,
+				  const T processed_dep_var_0,
+				  const T processed_slope );
   
+  //! Test if the independent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isIndepVarInValidRange( const T indep_var );
+
+  //! Test if the dependent value is in a valid range (doesn't check nan/inf)
+  template<typename T>
+  static bool isDepVarInValidRange( const T dep_var );
+
   //! Process the independent value
   template<typename T>
   static T processIndepVar( const T indep_var );
@@ -230,14 +298,6 @@ struct LinLin
   //! Recover the processed dependent value
   template<typename T>
   static T recoverProcessedDepVar( const T processed_dep_var );
-
-  //! Test if the independent value is in a valid range (doesn't check nan/inf)
-  template<typename T>
-  static bool isIndepVarInValidRange( const T indep_var );
-
-  //! Test if the dependent value is in a valid range (doesn't check nan/inf)
-  template<typename T>
-  static bool isDepVarInValidRange( const T dep_var );
 
   //! The name of the policy
   static const std::string name();

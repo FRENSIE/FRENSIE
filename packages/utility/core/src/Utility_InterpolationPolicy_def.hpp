@@ -76,6 +76,61 @@ inline T LogLog::interpolate( const T processed_indep_var_0,
 	      processed_slope*(processed_indep_var - processed_indep_var_0) );
 }
 
+// Interpolate between two points and return the processed value
+template<typename T>
+inline T LogLog::interpolateAndProcess( const T indep_var_0,
+					const T indep_var_1,
+					const T indep_var,
+					const T dep_var_0,
+					const T dep_var_1 )
+{
+  // T must be a floating point type
+  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  // Make sure the independent variables are valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_1 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var ) );
+  testPrecondition( LogLog::isIndepVarInValidRange( indep_var_0 ) );
+  testPrecondition( LogLog::isIndepVarInValidRange( indep_var_1 ) );
+  testPrecondition( LogLog::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( indep_var_0 < indep_var_1 );
+  testPrecondition( indep_var >= indep_var_0 );
+  testPrecondition( indep_var <= indep_var_1 );
+  // Make sure the dependent variables are valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var_1 ) );
+  testPrecondition( LogLog::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LogLog::isDepVarInValidRange( dep_var_1 ) );
+
+  return log( dep_var_0 ) + log ( dep_var_1/dep_var_0 )*
+    log( indep_var/indep_var_0 )/log( indep_var_1/indep_var_0 );
+}
+
+// Interpolate between two processed points and return the processed value
+template<typename T>
+inline T LogLog::interpolateAndProcess( const T processed_indep_var_0,
+					const T processed_indep_var,
+					const T processed_dep_var_0,
+					const T processed_slope )
+{
+  // T must be a floating point type
+  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  // Make sure the processed independent variables are valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+						     processed_indep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+						       processed_indep_var ) );
+  testPrecondition( processed_indep_var_0 <= processed_indep_var );
+  // Make sure the processed dependent variable is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+						       processed_dep_var_0 ) );
+  // Make sure that the slope is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
+  
+  return processed_dep_var_0 + 
+    processed_slope*(processed_indep_var - processed_indep_var_0);
+}
+
 // Process the independent value
 template<typename T>
 inline T LogLog::processIndepVar( const T indep_var )
@@ -188,6 +243,61 @@ inline T LogLin::interpolate( const T processed_indep_var_0,
   
   return exp( processed_dep_var_0 + 
 	      processed_slope*(processed_indep_var - processed_indep_var_0) );
+}
+
+// Interpolate between two points and return the processed value
+template<typename T>
+inline T LogLin::interpolateAndProcess( const T indep_var_0,
+					const T indep_var_1,
+					const T indep_var,
+					const T dep_var_0,
+					const T dep_var_1 )
+{
+  // T must be a floating point type
+  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  // Make sure the independent variables are valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var_1 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( indep_var ) );
+  testPrecondition( LogLin::isIndepVarInValidRange( indep_var_0 ) );
+  testPrecondition( LogLin::isIndepVarInValidRange( indep_var_1 ) );
+  testPrecondition( LogLin::isIndepVarInValidRange( indep_var ) );
+  testPrecondition( indep_var_0 < indep_var_1 );
+  testPrecondition( indep_var >= indep_var_0 );
+  testPrecondition( indep_var <= indep_var_1 );
+  // Make sure the dependent variables are valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( dep_var_1 ) );
+  testPrecondition( LogLin::isDepVarInValidRange( dep_var_0 ) );
+  testPrecondition( LogLin::isDepVarInValidRange( dep_var_1 ) );
+
+  return log( dep_var_0 ) + log( dep_var_1/dep_var_0 )*
+    (indep_var-indep_var_0)/(indep_var_1-indep_var_0);
+}
+
+// Interpolate between two processed points and return the processed value
+template<typename T>
+inline T LogLin::interpolateAndProcess( const T processed_indep_var_0,
+					const T processed_indep_var,
+					const T processed_dep_var_0,
+					const T processed_slope )
+{
+  // T must be a floating point type
+  testStaticPrecondition( (boost::is_floating_point<T>::value) );
+  // Make sure the processed independent variables are valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+						     processed_indep_var_0 ) );
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+						       processed_indep_var ) );
+  testPrecondition( processed_indep_var_0 <= processed_indep_var );
+  // Make sure the processed dependent variable is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( 
+						       processed_dep_var_0 ) );
+  // Make sure that the slope is valid
+  testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( processed_slope ) );
+  
+  return processed_dep_var_0 + 
+    processed_slope*(processed_indep_var - processed_indep_var_0);
 }
 
 // Process the independent value
@@ -305,6 +415,34 @@ inline T LinLog::interpolate( const T processed_indep_var_0,
     processed_slope*(processed_indep_var - processed_indep_var_0 );
 }
 
+// Interpolate between two points and return the processed value
+template<typename T>
+inline T LinLog::interpolateAndProcess( const T indep_var_0,
+					const T indep_var_1,
+					const T indep_var,
+					const T dep_var_0,
+					const T dep_var_1 )
+{
+  return interpolate( indep_var_0, 
+		      indep_var_1, 
+		      indep_var, 
+		      dep_var_0, 
+		      dep_var_1 );
+}
+
+// Interpolate between two processed points and return the processed value
+template<typename T>
+inline T LinLog::interpolateAndProcess( const T processed_indep_var_0,
+					const T processed_indep_var,
+					const T processed_dep_var_0,
+					const T processed_slope )
+{  
+  return interpolate( processed_indep_var_0,
+		      processed_indep_var,
+		      processed_dep_var_0,
+		      processed_slope );
+}
+
 // Process the independent value
 template<typename T>
 inline T LinLog::processIndepVar( const T indep_var )
@@ -320,7 +458,7 @@ template<typename T>
 inline T LinLog::processDepVar( const T dep_var )
 {
   // Make sure the indep var value is valid
-  testPrecondition( LinLog::isIndepVarInValidRange( dep_var ) );
+  testPrecondition( LinLog::isDepVarInValidRange( dep_var ) );
 
   return dep_var;
 }
@@ -418,6 +556,34 @@ inline T LinLin::interpolate( const T processed_indep_var_0,
   
   return processed_dep_var_0 + 
     processed_slope*(processed_indep_var - processed_indep_var_0 );
+}
+
+// Interpolate between two points and return the processed value
+template<typename T>
+inline T LinLin::interpolateAndProcess( const T indep_var_0,
+					const T indep_var_1,
+					const T indep_var,
+					const T dep_var_0,
+					const T dep_var_1 )
+{
+  return interpolate( indep_var_0,
+		      indep_var_1,
+		      indep_var,
+		      dep_var_0,
+		      dep_var_1 );
+}
+
+// Interpolate between two processed points and return the processed value
+template<typename T>
+inline T LinLin::interpolateAndProcess( const T processed_indep_var_0,
+					const T processed_indep_var,
+					const T processed_dep_var_0,
+					const T processed_slope )
+{
+  return interpolate( processed_indep_var_0,
+		      processed_indep_var,
+		      processed_dep_var_0,
+		      processed_slope );
 }
 
 // Process the independent value
