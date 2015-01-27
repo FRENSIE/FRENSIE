@@ -1,23 +1,24 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_NuclearReactionFactory.hpp
+//! \file   MonteCarlo_NuclearReactionACEFactory.hpp
 //! \author Alex Robinson
 //! \brief  Nuclear reaction factory class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_NUCLEAR_REACTION_FACTORY_HPP
-#define MONTE_CARLO_NUCLEAR_REACTION_FACTORY_HPP
+#ifndef MONTE_CARLO_NUCLEAR_REACTION_ACE_FACTORY_HPP
+#define MONTE_CARLO_NUCLEAR_REACTION_ACE_FACTORY_HPP
 
 // Boost Includes
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 
-// Std Lib Includes
+// FRENSIE Includes
 #include "MonteCarlo_NuclearReaction.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
-#include "MonteCarlo_NeutronScatteringDistributionFactory.hpp"
+#include "MonteCarlo_NeutronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_FissionNeutronMultiplicityDistribution.hpp"
+#include "Data_XSSNeutronDataExtractor.hpp"
 
 namespace MonteCarlo{
 
@@ -27,35 +28,21 @@ namespace MonteCarlo{
  * The array parameters used in the class constructor have the same name as 
  * the corresponding ACE data block.
  */
-class NuclearReactionFactory
+class NuclearReactionACEFactory
 {
 
 public:
 
   //! Constructor
-  NuclearReactionFactory( 
+  NuclearReactionACEFactory( 
 		 const std::string& table_name,
 		 const double atomic_weight_ratio,
 		 const double temperature,
 		 const Teuchos::ArrayRCP<const double>& energy_grid,
-		 const Teuchos::ArrayView<const double>& elastic_cross_section,
-		 const Teuchos::ArrayView<const double>& mtr_block, 
-		 const Teuchos::ArrayView<const double>& lqr_block,
-		 const Teuchos::ArrayView<const double>& tyr_block,
-		 const Teuchos::ArrayView<const double>& lsig_block,
-		 const Teuchos::ArrayView<const double>& sig_block,
-		 const Teuchos::ArrayView<const double>& land_block,
-		 const Teuchos::ArrayView<const double>& and_block,
-		 const Teuchos::ArrayView<const double>& ldlw_block,
-		 const Teuchos::ArrayView<const double>& dlw_block,
-		 const Teuchos::ArrayView<const double>& nu_block,
-		 const Teuchos::ArrayView<const double>& dnu_block,
-		 const Teuchos::ArrayView<const double>& bdd_block,
-		 const Teuchos::ArrayView<const double>& dnedl_block,
-		 const Teuchos::ArrayView<const double>& dned_block );
-
+		 const Data::XSSNeutronDataExtractor& raw_nuclide_data );
+		 
   //! Destructor
-  ~NuclearReactionFactory()
+  ~NuclearReactionACEFactory()
   { /* ... */ }
 
   //! Create the scattering reactions 
@@ -129,7 +116,7 @@ private:
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
     reaction_cross_section,
-    const NeutronScatteringDistributionFactory& scattering_dist_factory );
+    const NeutronScatteringDistributionACEFactory& scattering_dist_factory );
 
   // Initialize the absorption reactions
   void initializeAbsorptionReactions(
@@ -156,7 +143,7 @@ private:
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
     reaction_cross_section,
-    const NeutronScatteringDistributionFactory& scattering_dist_factory,
+    const NeutronScatteringDistributionACEFactory& scattering_dist_factory,
     const Teuchos::RCP<FissionNeutronMultiplicityDistribution>&
     fission_neutron_multiplicity_distribution,
     const Teuchos::RCP<NeutronScatteringDistribution>& 
@@ -178,8 +165,8 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLONUCLEAR_REACTION_FACTORY_HPP
+#endif // end MONTE_CARLONUCLEAR_REACTION_ACE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NuclearReactionFactory.hpp
+// end MonteCarlo_NuclearReactionACEFactory.hpp
 //---------------------------------------------------------------------------//

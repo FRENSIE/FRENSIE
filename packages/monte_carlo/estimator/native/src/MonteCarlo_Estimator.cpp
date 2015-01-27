@@ -206,6 +206,43 @@ void Estimator::assignBinBoundaries(
   }
 }
 
+// Return the bin name
+std::string Estimator::getBinName( const unsigned bin_index ) const
+{
+  // Make sure the bin index is valid
+  testPrecondition( bin_index < 
+		    getNumberOfBins()*getNumberOfResponseFunctions() );
+
+  std::ostringstream oss;
+
+  // Get a name for each bin
+  //unsigned reduced_bin_index = bin_index % getNumberOfBins();
+  
+  unsigned total_bins = 1u;
+  
+  for( unsigned i = 0; i < d_dimension_ordering.size(); ++i )
+  {
+    unsigned dim_bins = getNumberOfBins( d_dimension_ordering[i] );
+    
+    unsigned dim_bin_index = (bin_index/total_bins) % dim_bins;
+    
+    const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries = 
+      d_dimension_bin_boundaries_map.find(d_dimension_ordering[i])->second;
+    
+    //oss << bin_boundaries->getDimensionName() << "_";
+
+    bin_boundaries->printBoundariesOfBin( oss, dim_bin_index );
+
+    oss << ", ";
+
+    total_bins *= dim_bins;
+  }
+
+  oss << getResponseFunctionName( calculateResponseFunctionIndex( bin_index ));
+
+  return oss.str();
+}
+
 // Print the estimator response function names
 void Estimator::printEstimatorResponseFunctionNames( std::ostream& os ) const
 {

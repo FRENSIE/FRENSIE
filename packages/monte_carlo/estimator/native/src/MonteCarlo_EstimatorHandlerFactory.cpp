@@ -18,6 +18,7 @@
 #include "MonteCarlo_CellCollisionFluxEstimator.hpp"
 #include "MonteCarlo_SurfaceFluxEstimator.hpp"
 #include "MonteCarlo_SurfaceCurrentEstimator.hpp"
+#include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
 
 #ifdef HAVE_FRENSIE_DAGMC
 #include "Geometry_DagMCHelpers.hpp"
@@ -208,10 +209,13 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
 							energy_mult,
 							estimator_bins );
       }
+     
+      estimator_id_cells_map.erase( id );
     }
 
     // Create surface estimator
-    else
+    else if( estimator_id_surfaces_map.find( id ) != 
+	     estimator_id_surfaces_map.end() )
     {
       Teuchos::Array<Geometry::ModuleTraits::InternalSurfaceHandle>& 
 	surfaces = estimator_id_surfaces_map[id];
@@ -245,12 +249,43 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
 							energy_mult,
 							estimator_bins );
       }
+
+      estimator_id_surfaces_map.erase( id );
+    }
+
+    // Create a tet mesh track length flux estimator
+    else if( estimator_id_type_map[id] == "tet.mesh.tl.flux" )
+    {
+      TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Mesh File Name" ),
+			  InvalidEstimatorRepresentation,
+			  "Error: mesh estimator " << id <<
+			  " does not have a mesh file name specified!" );
+
+      std::string mesh_file_name = estimator_rep.get<std::string>( 
+							    "Mesh File Name" );
+
+      TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Output Mesh File Name"),
+			  InvalidEstimatorRepresentation,
+			  "Error: mesh estimator " << id <<
+			  " does not have an output file name specified! ");
+
+      std::string output_mesh_file_name = estimator_rep.get<std::string>(
+						     "Output Mesh File Name" );
+
+      EstimatorHandlerFactory::createTetMeshTrackLengthFluxEstimator(
+							 id,
+							 multiplier,
+							 particle_types,
+							 response_functions,
+							 mesh_file_name,
+							 output_mesh_file_name,
+							 energy_mult,
+							 estimator_bins );
     }
 
     // Remove the ids from the maps
     estimator_id_type_map.erase( id );
     estimator_id_ptype_map.erase( id );
-    estimator_id_cells_map.erase( id );
 
     estimator_rep.unused( std::cout );
     
@@ -621,7 +656,8 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
 
       TEST_FOR_EXCEPTION( 
        !Geometry::DagMCProperties::isCellEstimatorTypeValid(estimator_type) &&
-       !Geometry::DagMCProperties::isSurfaceEstimatorTypeValid(estimator_type),
+       !Geometry::DagMCProperties::isSurfaceEstimatorTypeValid(estimator_type) &&
+       !EstimatorHandlerFactory::isMeshEstimatorTypeValid(estimator_type),
        InvalidEstimatorRepresentation,
        "Error: estimator " << id << " has estimator type " 
        << estimator_type << " specified in the xml file, which is "
@@ -661,7 +697,7 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
 						    estimator_id_cells_map[id],
 						    cells );
       }
-      else
+      else if( Geometry::DagMCProperties::isSurfaceEstimatorTypeValid(estimator_type) )
       {
 	TEST_FOR_EXCEPTION( !estimator_rep.isParameter( "Surfaces" ),
 			    InvalidEstimatorRepresentation,
@@ -684,7 +720,7 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
   // Make sure the maps have the correct sizes
   testPostcondition( estimator_id_type_map.size() ==
 		     estimator_id_ptype_map.size() );
-  testPostcondition( estimator_id_type_map.size() ==
+  testPostcondition( estimator_id_type_map.size() >=
 		     estimator_id_cells_map.size() + 
 		     estimator_id_surfaces_map.size() );
   #endif // end HAVE_FRENSIE_DAGMC
@@ -1103,6 +1139,65 @@ void EstimatorHandlerFactory::createSurfaceCurrentEstimator(
   }
 }
 
+// Create a tet mesh track length flux estimator
+void EstimatorHandlerFactory::createTetMeshTrackLengthFluxEstimator(
+	 const unsigned id,
+	 const double multiplier,
+	 const Teuchos::Array<ParticleType> particle_types,
+	 const Teuchos::Array<Teuchos::RCP<ResponseFunction> >& response_funcs,
+	 const std::string& mesh_file_name,
+	 const std::string& output_mesh_file_name,
+	 const bool energy_multiplication,
+	 const Teuchos::ParameterList* bins )
+{
+  // Create the estimator
+  Teuchos::RCP<Estimator> estimator;
+  
+  if( energy_multiplication )
+  {
+    estimator.reset( new TetMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier>(
+						     id,
+						     multiplier,
+						     mesh_file_name,
+						     output_mesh_file_name ) );
+  }
+  else
+  {
+    estimator.reset( new TetMeshTrackLengthFluxEstimator<WeightMultiplier>(
+						     id,
+						     multiplier,
+						     mesh_file_name,
+						     output_mesh_file_name ) );
+  }
+
+  // Set the particle type
+  estimator->setParticleTypes( particle_types );
+
+  // Set the response functions
+  if( response_funcs.size() > 0 )
+    estimator->setResponseFunctions( response_funcs );
+
+  // Assign estimator bins
+  if( bins )
+    EstimatorHandlerFactory::assignBinsToEstimator( *bins, estimator );
+
+  // Add this estimator to the handler
+  if( energy_multiplication )
+  {
+    Teuchos::RCP<TetMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier> > 
+      derived_estimator = Teuchos::rcp_dynamic_cast<TetMeshTrackLengthFluxEstimator<WeightAndEnergyMultiplier> >( estimator );
+
+    EstimatorHandler::addGlobalEstimator( derived_estimator );
+  }
+  else
+  {
+    Teuchos::RCP<TetMeshTrackLengthFluxEstimator<WeightMultiplier> >
+      derived_estimator = Teuchos::rcp_dynamic_cast<TetMeshTrackLengthFluxEstimator<WeightMultiplier> >( estimator );
+
+    EstimatorHandler::addGlobalEstimator( derived_estimator );
+  }
+}
+
 // Assign bins to an estimator
 void EstimatorHandlerFactory::assignBinsToEstimator( 
 					   const Teuchos::ParameterList& bins,
@@ -1207,6 +1302,16 @@ void EstimatorHandlerFactory::fillSurfaceAreasArray(
 
   for( unsigned i = 0; i < surfaces.size(); ++i )
     surface_areas[i] = surface_area_map.find( surfaces[i] )->second;
+}
+
+// Check if the mesh estimator type is valid
+bool EstimatorHandlerFactory::isMeshEstimatorTypeValid(
+					   const std::string& estimator_type )
+{
+  if( estimator_type == "tet.mesh.tl.flux" )
+    return true;
+  else
+    return false;
 }
 
 } // end MonteCarlo namespace

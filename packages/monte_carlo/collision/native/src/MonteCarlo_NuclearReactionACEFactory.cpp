@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_NuclearReactionFactory.cpp
+//! \file   MonteCarlo_NuclearReactionACEFactory.cpp
 //! \author Alex Robinson
 //! \brief  Nuclear reaction factory class declaration
 //!
@@ -13,14 +13,15 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NuclearReactionFactory.hpp"
+#include "MonteCarlo_NuclearReactionACEFactory.hpp"
+#include "MonteCarlo_NeutronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NeutronScatteringReaction.hpp"
 #include "MonteCarlo_NeutronAbsorptionReaction.hpp"
 #include "MonteCarlo_NeutronFissionReaction.hpp"
 #include "MonteCarlo_DetailedNeutronFissionReaction.hpp"
 #include "MonteCarlo_EnergyDependentNeutronMultiplicityReaction.hpp"
-#include "MonteCarlo_FissionNeutronMultiplicityDistributionFactory.hpp"
-#include "MonteCarlo_DelayedNeutronEmissionDistributionFactory.hpp"
+#include "MonteCarlo_FissionNeutronMultiplicityDistributionACEFactory.hpp"
+#include "MonteCarlo_DelayedNeutronEmissionDistributionACEFactory.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -28,103 +29,71 @@ namespace MonteCarlo{
 
 // Constructor
 /*! \details All blocks from the ACE file will be stored. 
- * \param[in] mtr_block The MTR block stores the ENDF reactions available for 
- * the nuclide.
- * \param[in] lqr_block The LQR block stores the Q-values for each ENDF 
- * reaction. 
- * \param[in] tyr_block The TYR block stores the number of neutrons released 
- * for each ENDF reaction. If the value is negative, scattering takes place in 
- * the CM system. If the value is positive, scattering takes place in the LAB 
- * system. A value of 19 indicates fission. A value of 0 indicates absorption. 
- * A value > 100 indicates non-fission reactions with energy-dependent neutron 
- * multiplicities. 
- * \param[in] lsig_block The LSIG block stores the location of the cross 
- * section for each ENDF reaction in the SIG block. 
- * \param[in] sig_block The SIG block stores the cross section for each ENDF 
- * reaction. 
- * \param[in] land_block The LAND block stores the location of the angular 
- * distribution in the AND block for each ENDF reaction. 
- * \param[in] and_block The AND block stores the angular distribution for each 
- * ENDF reaction. 
- * \param[in] ldlw_block The LDLW block stores the location of the energy 
- * distribution for each ENDF reaction.
- * \param[in] dlw_block The DLW block stores the energy distribution for each 
- * ENDF reaction.
- * \param[in] nu_block The NU block stores the nu-bar data for fission. This
- * block is only present (not empty) if there are fission reactions
- * \param[in] delayed_ldlw_block The delayed fission neutron LDLW block stores
- * the location of the energy distribution for each delayed neutron precursor
- * group. This block is only present (not empty) if delayed neutron data is
- * provided in the ACE file
- * \param[in] delayed_dlw_block The delayed fission neutron DLW block stores
- * the energy distribution for each delayed neutron precursor group. This block
- * is only present (not empty) if delayed neutron data is provided in the
- * ACE file
+ * \param[in] raw_nuclide_data The necessary data blocks will be extracted 
+ * using the data extractor.
  */
-NuclearReactionFactory::NuclearReactionFactory( 
+NuclearReactionACEFactory::NuclearReactionACEFactory( 
 		 const std::string& table_name,
 		 const double atomic_weight_ratio,
 		 const double temperature,
 		 const Teuchos::ArrayRCP<const double>& energy_grid,
-		 const Teuchos::ArrayView<const double>& elastic_cross_section,
-		 const Teuchos::ArrayView<const double>& mtr_block, 
-		 const Teuchos::ArrayView<const double>& lqr_block,
-		 const Teuchos::ArrayView<const double>& tyr_block,
-		 const Teuchos::ArrayView<const double>& lsig_block,
-		 const Teuchos::ArrayView<const double>& sig_block,
-		 const Teuchos::ArrayView<const double>& land_block,
-		 const Teuchos::ArrayView<const double>& and_block,
-		 const Teuchos::ArrayView<const double>& ldlw_block,
-		 const Teuchos::ArrayView<const double>& dlw_block,
-		 const Teuchos::ArrayView<const double>& nu_block,
-		 const Teuchos::ArrayView<const double>& dnu_block,
-		 const Teuchos::ArrayView<const double>& bdd_block,
-		 const Teuchos::ArrayView<const double>& dnedl_block,
-		 const Teuchos::ArrayView<const double>& dned_block )
+		 const Data::XSSNeutronDataExtractor& raw_nuclide_data )
 { 
-  // Make sure there is at least one MT # present
-  testPrecondition( mtr_block.size() > 0 );
-  // Make sure there is a Q-value for every reaction type
-  testPrecondition( lqr_block.size() == mtr_block.size() );
-  // Make sure there is a multiplicity value for every reaction type
-  testPrecondition( tyr_block.size() == mtr_block.size() );
-  // Make sure there is a cross section array index for every reaction type
-  testPrecondition( lsig_block.size() == mtr_block.size() );
-  // Make sure there is an angular distribution index for every reaction type
-  // with outgoing neutrons (plus elastic)
-  testPrecondition( land_block.size() <= mtr_block.size()+1 );
-  // Make sure there is an energy distribution index for every reaction type
-  // with outgoing neutrons
-  testPrecondition( ldlw_block.size() <= mtr_block.size() );
-
   // Create the scattering distribution factory
-  NeutronScatteringDistributionFactory 
+  NeutronScatteringDistributionACEFactory 
     scattering_dist_factory( table_name,
 			     atomic_weight_ratio,
-			     mtr_block,
-			     tyr_block,
-			     land_block,
-			     and_block,
-			     ldlw_block,
-			     dlw_block );
+			     raw_nuclide_data );
+
+  // Extract the required blocks
+  Teuchos::ArrayView<const double> elastic_cross_section = 
+    raw_nuclide_data.extractElasticCrossSection();
+  Teuchos::ArrayView<const double> mtr_block = 
+    raw_nuclide_data.extractMTRBlock();
+  Teuchos::ArrayView<const double> lqr_block = 
+    raw_nuclide_data.extractLQRBlock();
+  Teuchos::ArrayView<const double> tyr_block = 
+    raw_nuclide_data.extractTYRBlock();
+  Teuchos::ArrayView<const double> lsig_block = 
+    raw_nuclide_data.extractLSIGBlock();
+  Teuchos::ArrayView<const double> sig_block = 
+    raw_nuclide_data.extractSIGBlock();
+  Teuchos::ArrayView<const double> land_block = 
+    raw_nuclide_data.extractLANDBlock();
+  Teuchos::ArrayView<const double> and_block = 
+    raw_nuclide_data.extractANDBlock();
+  Teuchos::ArrayView<const double> ldlw_block = 
+    raw_nuclide_data.extractLDLWBlock();
+  Teuchos::ArrayView<const double> dlw_block = 
+    raw_nuclide_data.extractDLWBlock();
+  Teuchos::ArrayView<const double> nu_block = 
+    raw_nuclide_data.extractNUBlock();
+  Teuchos::ArrayView<const double> dnu_block = 
+    raw_nuclide_data.extractDNUBlock();
+  Teuchos::ArrayView<const double> bdd_block = 
+    raw_nuclide_data.extractBDDBlock();
+  Teuchos::ArrayView<const double> dnedl_block = 
+    raw_nuclide_data.extractDNEDLBlock();
+  Teuchos::ArrayView<const double> dned_block = 
+    raw_nuclide_data.extractDNEDBlock();
 
   // Create a map of the reaction types and their table ordering
   boost::unordered_map<NuclearReactionType,unsigned> reaction_ordering;
-  NuclearReactionFactory::createReactionOrderingMap( mtr_block,
-						     reaction_ordering );
+  NuclearReactionACEFactory::createReactionOrderingMap( mtr_block,
+							reaction_ordering );
 
   // Create a map of the reaction types and the corresponding Q-value
   boost::unordered_map<NuclearReactionType,double> reaction_q_value;
-  NuclearReactionFactory::createReactionQValueMap( lqr_block,
-						   reaction_ordering,
-						   reaction_q_value );
+  NuclearReactionACEFactory::createReactionQValueMap( lqr_block,
+						      reaction_ordering,
+						      reaction_q_value );
   
   // Create a map of the reaction types and the corresponding multiplicity
   boost::unordered_map<NuclearReactionType,unsigned> 
     reaction_multiplicity;
   boost::unordered_map<NuclearReactionType,Teuchos::ArrayView<const double> >
     reaction_energy_dependent_multiplicity;
-  NuclearReactionFactory::createReactionMultiplicityMap(
+  NuclearReactionACEFactory::createReactionMultiplicityMap(
 				      table_name,
 				      tyr_block,
 				      dlw_block,
@@ -134,15 +103,16 @@ NuclearReactionFactory::NuclearReactionFactory(
   
   // Create a map of the reaction types and the corresponding threshold index
   boost::unordered_map<NuclearReactionType,unsigned> reaction_threshold_index;
-  NuclearReactionFactory::createReactionThresholdMap(lsig_block,
-						     sig_block,
-						     reaction_ordering,
-						     reaction_threshold_index);
+  NuclearReactionACEFactory::createReactionThresholdMap(
+						    lsig_block,
+						    sig_block,
+						    reaction_ordering,
+						    reaction_threshold_index );
   
   // Create a map of the reaction types and the corresponding cross section
   boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >
     reaction_cross_section;
-  NuclearReactionFactory::createReactionCrossSectionMap(
+  NuclearReactionACEFactory::createReactionCrossSectionMap(
 						      lsig_block,
 						      sig_block,
 						      elastic_cross_section,
@@ -155,7 +125,7 @@ NuclearReactionFactory::NuclearReactionFactory(
 
   if( nu_block.size() > 0 )
   {
-    FissionNeutronMultiplicityDistributionFactory
+    FissionNeutronMultiplicityDistributionACEFactory
       fission_multiplicity_factory( table_name,
 				    nu_block,
 				    dnu_block );
@@ -169,7 +139,7 @@ NuclearReactionFactory::NuclearReactionFactory(
   
   if( dnedl_block.size() > 0 )
   {
-    DelayedNeutronEmissionDistributionFactory 
+    DelayedNeutronEmissionDistributionACEFactory 
       delayed_neutron_emission_factory( table_name,
 					atomic_weight_ratio,
 					bdd_block,
@@ -208,7 +178,7 @@ NuclearReactionFactory::NuclearReactionFactory(
 }
 
 // Create the scattering reactions 
-void NuclearReactionFactory::createScatteringReactions( 
+void NuclearReactionACEFactory::createScatteringReactions( 
       boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >&
       scattering_reactions ) const
 {
@@ -217,7 +187,7 @@ void NuclearReactionFactory::createScatteringReactions(
 }
 
 // Create the absorption reactions 
-void NuclearReactionFactory::createAbsorptionReactions(
+void NuclearReactionACEFactory::createAbsorptionReactions(
       boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >&
       absorption_reactions ) const
 {
@@ -226,7 +196,7 @@ void NuclearReactionFactory::createAbsorptionReactions(
 }	     
 
 // Create the fission reactions
-void NuclearReactionFactory::createFissionReactions(
+void NuclearReactionACEFactory::createFissionReactions(
       boost::unordered_map<NuclearReactionType,Teuchos::RCP<NuclearReaction> >&
       fission_reactions ) const
 {
@@ -235,7 +205,7 @@ void NuclearReactionFactory::createFissionReactions(
 }
 
 // Create the reaction type ordering map
-void NuclearReactionFactory::createReactionOrderingMap( 
+void NuclearReactionACEFactory::createReactionOrderingMap( 
         const Teuchos::ArrayView<const double>& mtr_block,
         boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering )
 
@@ -256,7 +226,7 @@ void NuclearReactionFactory::createReactionOrderingMap(
 }
 
 // Create the reaction type Q-value map
-void NuclearReactionFactory::createReactionQValueMap(
+void NuclearReactionACEFactory::createReactionQValueMap(
    const Teuchos::ArrayView<const double>& lqr_block,
    const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
    boost::unordered_map<NuclearReactionType,double>& reaction_q_value )
@@ -286,7 +256,7 @@ void NuclearReactionFactory::createReactionQValueMap(
  * values in the TYR block. The reaction_energy_dependent_multiplicity stores
  * the raw ACE table array that provides the energy dependent multiplicity
  */
-void NuclearReactionFactory::createReactionMultiplicityMap(
+void NuclearReactionACEFactory::createReactionMultiplicityMap(
    const std::string& table_name,
    const Teuchos::ArrayView<const double>& tyr_block,
    const Teuchos::ArrayView<const double>& dlw_block,
@@ -347,7 +317,7 @@ void NuclearReactionFactory::createReactionMultiplicityMap(
 // Create the reaction type threshold and cross section map
 // NOTE: All LSIG block indices correspond to FORTRAN arrays. Subtract 1 from
 // the value to get the index in a C/C++ array.
-void NuclearReactionFactory::createReactionThresholdMap(
+void NuclearReactionACEFactory::createReactionThresholdMap(
    const Teuchos::ArrayView<const double>& lsig_block,
    const Teuchos::ArrayView<const double>& sig_block,
    const boost::unordered_map<NuclearReactionType,unsigned>& reaction_ordering,
@@ -381,7 +351,7 @@ void NuclearReactionFactory::createReactionThresholdMap(
 // Create the reaction type threshold and cross section map
 // NOTE: All LSIG block indices correspond to FORTRAN arrays. Subtract 1 from
 // the value to get the index in a C/C++ array.
-void NuclearReactionFactory::createReactionCrossSectionMap(
+void NuclearReactionACEFactory::createReactionCrossSectionMap(
    const Teuchos::ArrayView<const double>& lsig_block,
    const Teuchos::ArrayView<const double>& sig_block,
    const Teuchos::ArrayView<const double>& elastic_cross_section,
@@ -424,7 +394,7 @@ void NuclearReactionFactory::createReactionCrossSectionMap(
 }
 
 // Initialize the scattering reactions
-void NuclearReactionFactory::initializeScatteringReactions(
+void NuclearReactionACEFactory::initializeScatteringReactions(
     const double temperature,
     const Teuchos::ArrayRCP<const double> energy_grid,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
@@ -436,7 +406,7 @@ void NuclearReactionFactory::initializeScatteringReactions(
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
     reaction_cross_section,
-    const NeutronScatteringDistributionFactory& scattering_dist_factory )
+    const NeutronScatteringDistributionACEFactory& scattering_dist_factory )
 				
 {
   // Make sure the maps have the correct number of elements
@@ -515,7 +485,7 @@ void NuclearReactionFactory::initializeScatteringReactions(
 }
 
 // Initialize the absorption reactions
-void NuclearReactionFactory::initializeAbsorptionReactions(
+void NuclearReactionACEFactory::initializeAbsorptionReactions(
     const double temperature,
     const Teuchos::ArrayRCP<const double> energy_grid,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
@@ -564,7 +534,7 @@ void NuclearReactionFactory::initializeAbsorptionReactions(
 }
 
 // Initialize the fission reactions
-void NuclearReactionFactory::initializeFissionReactions(
+void NuclearReactionACEFactory::initializeFissionReactions(
     const double temperature,
     const Teuchos::ArrayRCP<const double> energy_grid,
     const boost::unordered_map<NuclearReactionType,double>& reaction_q_value,
@@ -574,7 +544,7 @@ void NuclearReactionFactory::initializeFissionReactions(
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
     reaction_cross_section,
-    const NeutronScatteringDistributionFactory& scattering_dist_factory,
+    const NeutronScatteringDistributionACEFactory& scattering_dist_factory,
     const Teuchos::RCP<FissionNeutronMultiplicityDistribution>&
     fission_neutron_multiplicity_distribution,
     const Teuchos::RCP<NeutronScatteringDistribution>& 
@@ -649,5 +619,5 @@ void NuclearReactionFactory::initializeFissionReactions(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NuclearReactionFactory.cpp
+// end MonteCarlo_NuclearReactionACEFactory.cpp
 //---------------------------------------------------------------------------//

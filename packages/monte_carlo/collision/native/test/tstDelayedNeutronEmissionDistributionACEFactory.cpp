@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstDelayedNeutronEmissionDistributionFactory.cpp
+//! \file   tstDelayedNeutronEmissionDistributionACEFactory.cpp
 //! \author Alex Robinson
 //! \brief  Delayed neutron emission distribution factory unit tests
 //!
@@ -16,47 +16,47 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_DelayedNeutronEmissionDistributionFactory.hpp"
+#include "MonteCarlo_DelayedNeutronEmissionDistributionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-class TestDelayedNeutronEmissionDistributionFactory : public MonteCarlo::DelayedNeutronEmissionDistributionFactory
+class TestDelayedNeutronEmissionDistributionACEFactory : public MonteCarlo::DelayedNeutronEmissionDistributionACEFactory
 {
 public:
-  TestDelayedNeutronEmissionDistributionFactory(
+  TestDelayedNeutronEmissionDistributionACEFactory(
 			   const std::string& table_name,
 			   const double atomic_weight_ratio,
 			   const Teuchos::ArrayView<const double>& bdd_block,
 			   const Teuchos::ArrayView<const double>& dnedl_block,
 		           const Teuchos::ArrayView<const double>& dned_block )
-    : MonteCarlo::DelayedNeutronEmissionDistributionFactory( table_name,
+    : MonteCarlo::DelayedNeutronEmissionDistributionACEFactory( table_name,
 							 atomic_weight_ratio,
 							 bdd_block,
 							 dnedl_block,
 							 dned_block )
   { /* ... */ }
 
-  ~TestDelayedNeutronEmissionDistributionFactory()
+  ~TestDelayedNeutronEmissionDistributionACEFactory()
   { /* ... */ }
 
-  using MonteCarlo::DelayedNeutronEmissionDistributionFactory::getPrecursorGroupDecayConsts;
-  using MonteCarlo::DelayedNeutronEmissionDistributionFactory::getPrecursorGroupProbDists;
-  using MonteCarlo::DelayedNeutronEmissionDistributionFactory::getPrecursorGroupEmissionDists;
+  using MonteCarlo::DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupDecayConsts;
+  using MonteCarlo::DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupProbDists;
+  using MonteCarlo::DelayedNeutronEmissionDistributionACEFactory::getPrecursorGroupEmissionDists;
 };
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
-Teuchos::RCP<TestDelayedNeutronEmissionDistributionFactory> factory;
+Teuchos::RCP<TestDelayedNeutronEmissionDistributionACEFactory> factory;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the precursor group decay constants are correct
-TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionFactory,
+TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
 		   getPrecursorGroupDecayConsts )
 {
   const Teuchos::Array<double>& group_consts = 
@@ -73,7 +73,7 @@ TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the precursor group probability distributions are correct
-TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionFactory,
+TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
 		   getPrecursorGroupProbDists )
 {
   const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >& prob_dists =
@@ -142,7 +142,7 @@ TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionFactory,
 
 //---------------------------------------------------------------------------//
 // Check that the emission distribution can be constructed
-TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionFactory,
+TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
 		   createEmissionDistribution )
 {
   Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution> distribution;
@@ -192,7 +192,7 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
-  factory.reset( new TestDelayedNeutronEmissionDistributionFactory(
+  factory.reset( new TestDelayedNeutronEmissionDistributionACEFactory(
 				 ace_file_handler->getTableName(),
 				 ace_file_handler->getTableAtomicWeightRatio(),
 				 xss_data_extractor->extractBDDBlock(),    
@@ -215,5 +215,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstDelayedNeutronEmissionDistributionFactory.cpp
+// end tstDelayedNeutronEmissionDistributionACEFactory.cpp
 //---------------------------------------------------------------------------//

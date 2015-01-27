@@ -26,3 +26,8 @@
 EPDL
 EADL
 EEDL
+include
+lib
+bin
+CMakeFiles
+CMakeCache.txt

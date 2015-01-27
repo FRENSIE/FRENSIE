@@ -16,7 +16,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_DelayedNeutronEmissionDistributionFactory.hpp"
+#include "MonteCarlo_DelayedNeutronEmissionDistributionACEFactory.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -94,8 +94,8 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
 
-  Teuchos::RCP<MonteCarlo::DelayedNeutronEmissionDistributionFactory>
-    factory( new MonteCarlo::DelayedNeutronEmissionDistributionFactory(
+  Teuchos::RCP<MonteCarlo::DelayedNeutronEmissionDistributionACEFactory>
+    factory( new MonteCarlo::DelayedNeutronEmissionDistributionACEFactory(
 				 ace_file_handler->getTableName(),
 				 ace_file_handler->getTableAtomicWeightRatio(),
 				 xss_data_extractor->extractBDDBlock(),    
