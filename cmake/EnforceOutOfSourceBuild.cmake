@@ -16,6 +16,8 @@ MACRO(ENFORCE_OUT_OF_SOURCE_BUILD)
     MESSAGE(STATUS "  7.) Change the SRC_DIR variable in the script to ${CMAKE_SOURCE_DIR}.")
     MESSAGE(STATUS "  8.) Run the configure.sh script from the build directory")
     MESSAGE(FATAL_ERROR "In-source build detected!")
+  ELSEIF(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_INSTALL_PREFIX})
+    MESSAGE(FATAL_ERROR "This project cannot be installed in the source directory.")
   ENDIF()
 ENDMACRO()
       

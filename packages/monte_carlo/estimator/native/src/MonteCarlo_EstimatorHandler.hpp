@@ -31,6 +31,10 @@ public:
   static void addEstimator( Teuchos::RCP<EstimatorType>& estimator,
 			    const Teuchos::Array<EntityHandle>& entity_ids );
 
+  //! Add a global estimator to the handler
+  template<typename EstimatorType>
+  static void addGlobalEstimator( Teuchos::RCP<EstimatorType>& estimator );
+
   //! Return the number of estimators that have been added
   static unsigned getNumberOfEstimators();
 
