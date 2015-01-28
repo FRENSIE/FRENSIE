@@ -115,3 +115,9 @@ ADD_EXECUTABLE(tstBilinearGridGenerator
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstBilinearGridGenerator utility_core)
 ADD_TEST(BilinearGridGenerator_test tstBilinearGridGenerator)
+
+ADD_EXECUTABLE(tstTetrahedronHelpers
+  tstTetrahedronHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstTetrahedronHelpers utility_core)
+ADD_TEST(TetrahedronHelpers_test tstTetrahedronHelpers)

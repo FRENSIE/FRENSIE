@@ -76,6 +76,14 @@ public:
 
 protected:
 
+  //! Constructor with no entities (for mesh estimators)
+  EntityEstimator( const Estimator::idType id,
+		   const double multiplier );
+
+  //! Assign entities
+  virtual void assignEntities( 
+	       const boost::unordered_map<EntityId,double>& entity_norm_data );
+
   //! Assign bin boundaries to an estimator dimension
   virtual void assignBinBoundaries(
 	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
@@ -98,6 +106,13 @@ protected:
   //! Print the estimator data
   virtual void printImplementation( std::ostream& os,
 				    const std::string& entity_type ) const;
+
+  //! Get the total estimator bin data
+  const Estimator::TwoEstimatorMomentsArray& getTotalBinData() const;
+
+  //! Get the bin data for an entity
+  const Estimator::TwoEstimatorMomentsArray& getEntityBinData(
+					      const EntityId entity_id ) const;
   
 private:
 

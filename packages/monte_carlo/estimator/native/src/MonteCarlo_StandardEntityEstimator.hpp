@@ -101,6 +101,15 @@ public:
   
 protected:
 
+  //! Constructor with no entities (for mesh estimators)
+  StandardEntityEstimator( const Estimator::idType id,
+			   const double multiplier );
+
+  //! Assign entities
+  void assignEntities( 
+	       const boost::unordered_map<EntityId,double>& entity_norm_data );
+  
+
   //! Add estimator contribution from a portion of the current history
   void addPartialHistoryContribution( const EntityId entity_id,
 				      const ParticleState& particle,
@@ -110,6 +119,13 @@ protected:
   //! Print the estimator data
   void printImplementation( std::ostream& os,
 			    const std::string& entity_type ) const;
+
+  //! Get the total estimator data
+  const Estimator::FourEstimatorMomentsArray& getTotalData() const;
+
+  //! Get the total data for an entity
+  const Estimator::FourEstimatorMomentsArray& 
+  getEntityTotalData( const EntityId entity_id ) const;
 
 private:
 
