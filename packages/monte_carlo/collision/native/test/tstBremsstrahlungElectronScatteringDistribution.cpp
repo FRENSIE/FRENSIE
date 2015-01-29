@@ -98,7 +98,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  basic_bremsstrahlung_distribution->scatterElectron( electron,
+  detailed_bremsstrahlung_distribution->scatterElectron( electron,
 						bank,
 						shell_of_interaction );
 
@@ -137,7 +137,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  basic_bremsstrahlung_distribution->scatterElectron( electron,
+  detailed_bremsstrahlung_distribution->scatterElectron( electron,
 						bank,
 						shell_of_interaction );
 
@@ -149,7 +149,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
 
   TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.11123878505389E-04, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.9410792343028, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 9.912140279513E-03, 1e-12 );
   TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
 
 }
@@ -160,12 +160,12 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
  * is generated using the upper energy function
  */
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
-		   detailedBremsstrahlung_upper_energy )
+                   detailedBremsstrahlung_upper_energy )
 {
   MonteCarlo::ParticleBank bank;
   
   MonteCarlo::ElectronState electron( 1 );
-  electron.setEnergy( 10000 );
+  electron.setEnergy( 1E04 );
   electron.setDirection( 0.0, 0.0, 1.0 );
   
   MonteCarlo::SubshellType shell_of_interaction;
@@ -174,25 +174,24 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 9.980E-02; // Sample the upper energy distribution
   fake_stream[1] = 0.5; // Sample a photon energy of 7.19800305553610000E-02 MeV
-  fake_stream[2] = 0.5; // Sample angle 0.9999999999869 from analytical function  
+  fake_stream[2] = 0.5; // Sample angle 0.9999999986945 from analytical function  
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  basic_bremsstrahlung_distribution->scatterElectron( electron,
+  detailed_bremsstrahlung_distribution->scatterElectron( electron,
                                                       bank,
                                                       shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 9.99992801996944000E+03 , 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 9.99992801996944E+03, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
 
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 7.19800305553610000e-02 , 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.9999999986945 , 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 7.1980030555361e-02, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.9999999986945, 1e-12 );
   TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
-
 }
 
 //---------------------------------------------------------------------------//
@@ -236,14 +235,14 @@ int main( int argc, char** argv )
   
   // Create the tabular angular distribution
   Teuchos::Array<double> energy_bins( 3 ); // (MeV)
-  energy_bins[0] = 1e-7;
-  energy_bins[1] = 1.0;
+  energy_bins[0] = 1e-6;
+  energy_bins[1] = 1e-2;
   energy_bins[2] = 1e5;
   
   //! \todo Find real bremsstrahlung photon angular distribution
   Teuchos::Array<double> angular_distribution_values( 3 );
   angular_distribution_values[0] =  0.0;
-  angular_distribution_values[1] =  0.5;
+  angular_distribution_values[1] =  0.9;
   angular_distribution_values[2] =  1.0;
 
   Teuchos::RCP<Utility::OneDDistribution> angular_distribution(
@@ -304,6 +303,7 @@ int main( int argc, char** argv )
 		      new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
 							scattering_distribution,
 							angular_distribution,
+                            xss_data_extractor->extractAtomicNumber(),
                             lower_cutoff_energy, 
                             upper_cutoff_energy ) );
 
