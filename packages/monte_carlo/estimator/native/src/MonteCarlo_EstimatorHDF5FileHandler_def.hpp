@@ -96,11 +96,19 @@ void EstimatorHDF5FileHandler::setEstimatorEntities(
                      const Teuchos::Array<Utility::Pair<EntityIdType,double> >&
 		     entity_id_norms )
 {
+  std::string estimator_entities_data_set = 
+    this->getEstimatorGroupLocation( estimator_id );
+  
+  estimator_entities_data_set += "entity_norm_constants";
+  
   try{
-    d_hdf5_file->writeArrayToGroupAttribute(
-			       entity_id_norms,
-			       this->getEstimatorGroupLocation( estimator_id ),
-			       "estimator_entity_ids" );
+    d_hdf5_file->writeArrayToDataSet( entity_id_norms,
+				      estimator_entities_data_set );
+
+    // d_hdf5_file->writeArrayToGroupAttribute(
+    // 			       entity_id_norms,
+    // 			       this->getEstimatorGroupLocation( estimator_id ),
+    // 			       "estimator_entity_ids" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
 			   "Set Estimator Entities Error" );
@@ -143,11 +151,19 @@ void EstimatorHDF5FileHandler::getEstimatorEntities(
                            Teuchos::Array<Utility::Pair<EntityIdType,double> >&
 			   entity_id_norms ) const
 {
+  std::string estimator_entities_data_set = 
+    this->getEstimatorGroupLocation( estimator_id );
+  
+  estimator_entities_data_set += "entity_norm_constants";
+  
   try{
-    d_hdf5_file->readArrayFromGroupAttribute(
-			       entity_id_norms,
-			       this->getEstimatorGroupLocation( estimator_id ),
-			       "estimator_entity_ids" );
+    d_hdf5_file->readArrayFromDataSet( entity_id_norms,
+				       estimator_entities_data_set );
+    
+    // d_hdf5_file->readArrayFromGroupAttribute(
+    // 			       entity_id_norms,
+    // 			       this->getEstimatorGroupLocation( estimator_id ),
+    // 			       "estimator_entity_ids" );
   }
   EXCEPTION_CATCH_RETHROW( std::runtime_error, 
 			   "Get Estimator Entities Error" );

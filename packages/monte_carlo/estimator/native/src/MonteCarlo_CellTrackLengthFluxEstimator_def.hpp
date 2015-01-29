@@ -59,8 +59,6 @@ void CellTrackLengthFluxEstimator<
 {
   // Make sure the cell is assigned to this estimator
   testPrecondition( isEntityAssigned( cell_of_subtrack ) );
-  // Make sure the particle type is assigned
-  testPrecondition( isParticleTypeAssigned( particle.getParticleType() ) );
   // Make sure the subtrack length is valid
   testPrecondition( !ST::isnaninf( track_length ) );
     

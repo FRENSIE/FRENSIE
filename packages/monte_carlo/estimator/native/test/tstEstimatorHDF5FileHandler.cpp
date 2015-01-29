@@ -365,7 +365,8 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
 				   set_getEstimatorEntities_array,
 				   EntityIdType )
 {
-  MonteCarlo::EstimatorHDF5FileHandler file_handler( hdf5_file_name );
+  Teuchos::RCP<MonteCarlo::EstimatorHDF5FileHandler> 
+    file_handler( new MonteCarlo::EstimatorHDF5FileHandler( hdf5_file_name ) );
 
   // Write the new entity data
   Teuchos::Array<Utility::Pair<EntityIdType,double> > entity_data( 4 );
@@ -374,23 +375,28 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( EstimatorHDF5FileHandler,
   entity_data[2]( 3, 4.0 );
   entity_data[3]( 10, 7.0 );
 
-  file_handler.setEstimatorEntities( 1u, entity_data );
+  file_handler->setEstimatorEntities( 1u, entity_data );
 
   Teuchos::Array<Utility::Pair<EntityIdType,double> > entity_data_copy;
 
-  file_handler.getEstimatorEntities( 1u, entity_data_copy );
+  file_handler->getEstimatorEntities( 1u, entity_data_copy );
 
   UTILITY_TEST_COMPARE_ARRAYS( entity_data, entity_data_copy );
 
-  // Overwrite the entity data
-  entity_data[0]( 2, 2.0 );
-  entity_data[1]( 3, 5.0 );
-  entity_data[2]( 9, 9.0 );
-  entity_data[3]( 20, 1.0 );
+  // Overwrite the entity data (make sure large arrays can be written)
+  file_handler.reset();
+  file_handler.reset( new MonteCarlo::EstimatorHDF5FileHandler( 
+       hdf5_file_name,
+       MonteCarlo::EstimatorHDF5FileHandler::OVERWRITE_ESTIMATOR_HDF5_FILE ) );
+  
+  entity_data.resize( 500000 );
 
-  file_handler.setEstimatorEntities( 1u, entity_data );
+  for( unsigned i = 0; i < entity_data.size(); ++i )
+    entity_data[i]( i, i+1.0 );
 
-  file_handler.getEstimatorEntities( 1u, entity_data_copy );
+  file_handler->setEstimatorEntities( 1u, entity_data );
+
+  file_handler->getEstimatorEntities( 1u, entity_data_copy );
 
   UTILITY_TEST_COMPARE_ARRAYS( entity_data, entity_data_copy );
 }
