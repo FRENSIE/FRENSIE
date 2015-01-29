@@ -43,7 +43,7 @@ TEUCHOS_UNIT_TEST( EstimatorHandlerFactory, initializeHandlerUsingDagMC )
 							     *response_reps,
 							     *estimator_reps );
 
-  TEST_EQUALITY_CONST( MonteCarlo::EstimatorHandler::getNumberOfEstimators(), 11 );
+  TEST_EQUALITY_CONST( MonteCarlo::EstimatorHandler::getNumberOfEstimators(), 12 );
 }
 
 //---------------------------------------------------------------------------//

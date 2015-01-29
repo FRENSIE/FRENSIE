@@ -99,6 +99,13 @@ public:
 				     const double inverse_total_cross_section )
   { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
 
+  //! Update the global estimators from a collision event
+  static inline void updateEstimatorsFromParticleCollidingGlobalEvent(
+						 const ParticleState& particle,
+						 const double start_point[3],
+						 const double end_point[3] )
+  { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
+
   //! Commit the estimator history contributions
   static inline void commitEstimatorHistoryContributions()
   { (void)UndefinedEstimatorHandler<EstimatorHandler>::notDefined(); }
