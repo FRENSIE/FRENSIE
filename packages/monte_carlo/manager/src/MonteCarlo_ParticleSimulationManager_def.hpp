@@ -121,6 +121,10 @@ void ParticleSimulationManager<GeometryHandler,
 	    simulateParticle( dynamic_cast<PhotonState&>( *bank.top() ),
 			      bank );
 	    break;
+	  case ELECTRON:
+	    simulateParticle( dynamic_cast<ElectronState&>( *bank.top() ),
+			      bank );
+	    break;
 	  default:
 	    THROW_EXCEPTION( std::logic_error,
 			     "Error: particle type "
