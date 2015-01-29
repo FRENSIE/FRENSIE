@@ -54,6 +54,7 @@ BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::Brems
        const BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
               bremsstrahlung_scattering_distribution,
        const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
+       const int atomic_number,
        const double lower_cutoff_energy,
        const double upper_cutoff_energy )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
@@ -62,6 +63,7 @@ BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::Brems
                                                        threshold_energy_index ),
     d_scattering_distribution( bremsstrahlung_scattering_distribution,
                                angular_distribution,
+                               atomic_number,
                                lower_cutoff_energy,
                                upper_cutoff_energy )
 {

@@ -55,8 +55,8 @@ namespace Data{
  *  <li> JXS[3] = location of Riley cross section evaluation<li>
  *  <li> JXS[4] = location of ITS3.0 bremsstrahlung production database</li>
  *  <li> JXS[5] = unused</li>
- *  <li> JXS[6] = location of internally calculated Riley cross sections</li>
- *  <li> JXS[7] = location of internally calculated functions of Z</li>
+ *  <li> JXS[6] = offset for internally calculated Riley cross sections</li>
+ *  <li> JXS[7] = offset for internally calculated functions of Z</li>
  *  <li> JXS[8] = location of photon energy ratios (rkt)</li>
  *  <li> JXS[9] = location of photon energy ratio for angular distribution (rka)</li>
  *  <li> JXS[10] = location of oscillator descriptions for density effect
@@ -80,13 +80,16 @@ public:
   ~XSSElectronDataExtractor()
   { /* ... */ }
 
+  //! Extract the atomic number
+  unsigned extractAtomicNumber() const;
+
   //! Extract the K edge below which no electron induced relaxation will occur (edg)
   double extractKEdge() const;
 
   //! Extract the Auger electron emission energy (eek) = (E_K - 2*E_L)
   double extractAugerEmissionEnergy() const;
 
-  //! Extract the energy points for radiation stopping power interpolation
+  //! Extract the radiation stopping power interpolation data block
   Teuchos::ArrayView<const double> extractStoppingPowersBlock() const;
   
   //! Extract the Mott scattering correction points data block
@@ -98,23 +101,11 @@ public:
   //! Extract the Bremsstrahlung interpolation data block
   Teuchos::ArrayView<const double> extractBremsstrahlungInterpolationBlock() const;
 
-  //! Extract the parameter used for riley cross section evaluation
-  double extractRileyOffset() const;
-
-  //! Extract the atomic number (Z) to the power of 1/3
-  double extractAtomicNumberToOneThirdPower() const;
-
-  //! Extract the log of the atomic number (Z)
-  double extractAtomicNumberLog() const;
-
-  //! Extract a parameter dependent on the atomic number (Z) and atomic mass number (A)
-  Teuchos::ArrayView<const double> extractAtomicNumberParameter() const;
-
   //! Extract the photon to electron energy ratios for spectrum calculations (rkt)
-  Teuchos::ArrayView<const double> extractRKTBlock() const;
+  Teuchos::ArrayView<const double> extractEnergySpectrumRatios() const;
 
   //! Extract the photon to electron energy ratios for angular distribution calculations (rka)
-  Teuchos::ArrayView<const double> extractRKABlock() const;
+  Teuchos::ArrayView<const double> extractEnergyAngularRatios() const;
 
   //! Extract the occupation number of electron for each level
   Teuchos::ArrayView<const double> extractOccupationNumbers() const;
