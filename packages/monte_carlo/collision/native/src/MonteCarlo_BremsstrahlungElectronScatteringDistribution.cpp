@@ -45,12 +45,14 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
     const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
     const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
+    const int atomic_number,
     const double lower_cutoff_energy,
     const double upper_cutoff_energy )
   : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
     d_angular_distribution( angular_distribution ),
-    d_lower_cutoff_energy( upper_cutoff_energy ),
-    d_upper_cutoff_energy( lower_cutoff_energy )
+    d_atomic_number( atomic_number ),
+    d_lower_cutoff_energy( lower_cutoff_energy ),
+    d_upper_cutoff_energy( upper_cutoff_energy )
 {
   // Make sure the arraies are valid
   testPrecondition( d_bremsstrahlung_scattering_distribution.size() > 0 );
@@ -116,8 +118,8 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 
 // Sample the outgoing photon direction from the analytical function
 double BremsstrahlungElectronScatteringDistribution::SampleSimpleAngle( 
-                                                   double& electron_energy, 
-                                                   double& photon_energy ) const 
+                                                  double& electron_energy, 
+                                                  double& photon_energy  ) const 
 {
   // get the velocity of the electron divided by the speed of light beta = v/c
   double beta = Utility::calculateDimensionlessRelativisticSpeed( 
@@ -133,23 +135,129 @@ double BremsstrahlungElectronScatteringDistribution::SampleSimpleAngle(
          ( scaled_random_number * beta + parameter ); 
 }
 
+/* Sample the outgoing photon direction using the 2BS sampling routine of 
+ * Kock and Motz
+ */
+double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle( 
+                                        double& incoming_electron_energy, 
+                                        double& outgoing_electron_energy ) const 
+{
+  double ratio = outgoing_electron_energy/incoming_electron_energy;
+  double two_ratio = 2.0*ratio;
+  double parameter = ( 1.0 + ratio*ratio );
+
+  // calculate the minimum, mid, and maximum values of x
+  double x_min = 0;
+  double x_mid = 1.0;
+  double x_max = Utility::PhysicalConstants::pi*Utility::PhysicalConstants::pi*
+                 incoming_electron_energy*incoming_electron_energy;
+
+  // Calculate the rejection function, g(x), for the minimum, mid, and maximum values of x
+  double g_x_min = Calculate2BSRejection( outgoing_electron_energy, 
+                                          two_ratio,
+                                          parameter, 
+                                          x_min );
+  double g_x_mid = Calculate2BSRejection( outgoing_electron_energy, 
+                                          two_ratio,
+                                          parameter, 
+                                          x_mid );
+  double g_x_max = Calculate2BSRejection( outgoing_electron_energy, 
+                                          two_ratio,
+                                          parameter, 
+                                          x_max );
+
+  bool rejected = true;
+
+  while( rejected )
+  {
+    double rand = Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+    // sample for theta
+    double theta = sqrt( rand/( 1.0 - rand + 1.0/x_max ) )/
+                   incoming_electron_energy;
+  
+    double x = sqrt( incoming_electron_energy*theta );
+
+    // Calculate the rejection function
+    double g = Calculate2BSRejection( outgoing_electron_energy, 
+                                      two_ratio,
+                                      parameter, 
+                                      x );
+
+    // Normalized the rejection function
+    if( g_x_min < g_x_mid && g_x_min < g_x_max )
+    {
+      if( g_x_mid < g_x_max )
+      {  
+        g /= g_x_max;
+      }
+      else 
+      {
+        g /= g_x_mid;
+      }
+    }
+    else
+    {
+      g /= g_x_min;
+    }
+   
+    // Apply rejection scheme
+    double rand1 = Utility::RandomNumberGenerator::getRandomNumber<double>();
+    if( rand1 < g )
+    {
+      rejected = false;
+    }
+    else
+    {
+        return cos(theta); 
+    }
+  }
+}
+
+// Calculate the rejection function for the 2BS sampling routine
+double BremsstrahlungElectronScatteringDistribution::Calculate2BSRejection( 
+                                               double& outgoing_electron_energy,
+                                               double& two_ratio,
+                                               double& parameter1,
+                                               double& x ) const
+{
+  double parameter2 = ( 1.0 + x )*( 1.0 + x );
+
+  double m = log( ( parameter1 - two_ratio )/
+             ( 4.0*outgoing_electron_energy*outgoing_electron_energy ) +
+             pow( d_atomic_number, 2.0/3.0)/( 12321*parameter2 ) );
+
+  double g = 3.0*parameter1 - two_ratio - 
+             ( 4.0 + m )*( parameter1 - 2.0*x*two_ratio/parameter2 );
+}
+
 // Sample the detailed outgoing photon direction
 double BremsstrahlungElectronScatteringDistribution::SampleDetailedAngle( 
                                                    double& electron_energy, 
                                                    double& photon_energy ) const
 {
-    if ( electron_energy < d_upper_cutoff_energy )
+    if ( electron_energy > d_upper_cutoff_energy )
   {
+std::cout << "upper cutoff energy = " << d_upper_cutoff_energy << std::endl;
+std::cout << "upper energy sampled" << std::endl;
     return SampleSimpleAngle( electron_energy, photon_energy );
   }
-  else if ( electron_energy > d_lower_cutoff_energy )
+  else 
   {
-    return d_angular_distribution->evaluate( photon_energy );
-  }
-  else
-  {
+    if ( electron_energy > d_lower_cutoff_energy )
+    {
+std::cout << "mid energy sampled" << std::endl;
+    double outgoing_electron_energy = electron_energy - photon_energy;
+
+//      return Sample2BSAngle( electron_energy, outgoing_electron_energy);
+      return d_angular_distribution->evaluate( photon_energy );
+    }
+    else
+    {
+std::cout << "lower energy sampled" << std::endl;
     return SampleSimpleAngle( electron_energy, photon_energy );
-  } 
+    } 
+  }
 }
 
 } // end MonteCarlo namespace
