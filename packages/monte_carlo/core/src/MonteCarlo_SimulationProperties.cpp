@@ -50,7 +50,7 @@ double SimulationProperties::max_photon_energy =
   SimulationProperties::absolute_max_photon_energy;
 
 // The absolute min electron energy
-const double SimulationProperties::absolute_min_electron_energy = 1e-3;
+const double SimulationProperties::absolute_min_electron_energy = 1e-5;
 
 // The minimum electron energy (MeV)
 double SimulationProperties::min_electron_energy = 
