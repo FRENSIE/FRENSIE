@@ -9,7 +9,56 @@
 #ifndef UTILITY_TWO_D_INTERPOLATION_POLICY_HPP
 #define UTILITY_TWO_D_INTERPOLATION_POLICY_HPP
 
+// Std Lib Includes
+#include <iterator>
+
+// FRENSIE Includes
+#include "Utility_InterpolationPolicy.hpp"
+#include "Utility_Tuple.hpp"
+#include "Utility_TupleMemberTraits.hpp"
+
 namespace Utility{
+
+namespace {
+
+//! Helper class used by unit base interpolation methods (Lin-Lin)
+template<typename YProcessingTag, typename XProcessingTag>
+struct UnitBaseHelper
+{ /* ... */ };
+
+//! Helper class used by unit base interpolation methods (Lin-Lin)
+template<>
+struct UnitBaseHelper<LinIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The YX interpolation policy
+  typedef LinLin YXInterpPolicy;
+};
+
+//! Helper class used by unit base interpolation methods (Lin-Log)
+template<>
+struct UnitBaseHelper<LinIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The YX interpolation policy
+  typedef LinLog YXInterpPolicy;
+};
+  
+//! Helper class used by unit base interpolation methods (Log-Lin)
+template<>
+struct UnitBaseHelper<LogIndepVarProcessingTag,LinIndepVarProcessingTag>
+{
+  //! The YX interpolation policy
+  typedef LogLin YXInterpPolicy;
+};
+
+//! Helper class used by unit base interpolation methods (Log-Lin)
+template<>
+struct UnitBaseHelper<LogIndepVarProcessingTag,LogIndepVarProcessingTag>
+{
+  //! The YX interpolation policy
+  typedef LogLog YXInterpPolicy;
+};
+
+} // end local namespace
 
 /*! \brief Policy struct for interpolating 2D tables
  * \details A Z-Y interpolation policy and a Z-X interpolation policy must
@@ -18,101 +67,149 @@ namespace Utility{
 template<typename ZYInterpPolicy,typename ZXInterpPolicy>
 struct TwoDInterpolationPolicyImpl
 {
+
+private:
+
+  //! Typedef for interp policy between y min and x
+  typedef typename UnitBaseHelper<typename ZYInterpPolicy::IndepVarProcessingTag,typename ZXInterpPolicy::IndepVarProcessingTag>::YXInterpPolicy
+  YMinXInterpPolicy;
+
+  //! Typedef for interp policy between grid length and x
+  typedef typename UnitBaseHelper<LinIndepVarProcessingTag,typename ZXInterpPolicy::IndepVarProcessingTag>::YXInterpPolicy
+  LXInterpPolicy;
+
+public:
+  
   //! Conduct the interpolation between two grids
   template<TupleMember YIndepMember,
 	   TupleMember DepMember,
-	   typename T, 
 	   typename YIterator,
-	   typename ZIterator>
-  static T interpolateGrids( const T indep_var_x_0,
-			     const T indep_var_x_1,
-			     const T indep_var_x,
-			     const T indep_var_y,
-			     YIterator start_indep_y_grid_0,
-			     YIterator end_indep_y_grid_0,
-			     ZIterator start_dep_grid_0,
-			     ZIterator end_dep_grid_0,
-			     YIterator start_indep_y_grid_1,
-			     YIterator end_indep_y_grid_1,
-			     ZIterator start_dep_grid_1,
-			     ZIterator end_dep_grid_1 );
+	   typename ZIterator,
+	   typename T >
+  static T interpolate( const T indep_var_x_0,
+			const T indep_var_x_1,
+			const T indep_var_x,
+			const T indep_var_y,
+			YIterator start_indep_y_grid_0,
+			YIterator end_indep_y_grid_0,
+			ZIterator start_dep_grid_0,
+			ZIterator end_dep_grid_0,
+			YIterator start_indep_y_grid_1,
+			YIterator end_indep_y_grid_1,
+			ZIterator start_dep_grid_1,
+			ZIterator end_dep_grid_1 );
 
   //! Conduct the interpolation between two grids
   template<TupleMember YIndepMember,
 	   TupleMember DepMember,
-	   typename T,
-	   typename Iterator>
-  static T interpolateGrids( const T indep_var_x_0,
-			     const T indep_var_x_1,
-			     const T indep_var_x,
-			     const T indep_var_y,
-			     Iterator start_grid_0,
-			     Iterator end_grid_0,
-			     Iterator start_grid_1,
-			     Iterator end_grid_1 );
-
+	   typename Iterator,
+	   typename T >
+  static T interpolate( const T indep_var_x_0,
+			const T indep_var_x_1,
+			const T indep_var_x,
+			const T indep_var_y,
+			Iterator start_grid_0,
+			Iterator end_grid_0,
+			Iterator start_grid_1,
+			Iterator end_grid_1 );
+  
   //! Conduct the interpolation between two grids (no tuples)
-  template<typename T, typename YIterator, typename ZIterator>
-  static T interpolateGrids( const T indep_var_x_0,
-			     const T indep_var_x_1,
-			     const T indep_var_x,
-			     const T indep_var_y,
-			     YIterator start_indep_var_y_0,
-			     YIterator end_indep_var_y_0,
-			     ZIterator start_dep_var_0,
-			     ZIterator end_dep_var_0,
-			     YIterator start_indep_var_y_1,
-			     YIterator end_indep_var_y_1,
-			     ZIterator start_dep_var_1,
-			     ZIterator end_dep_var_1 );
+  template<typename YIterator, typename ZIterator, typename T>
+  static T interpolate( const T indep_var_x_0,
+			const T indep_var_x_1,
+			const T indep_var_x,
+			const T indep_var_y,
+			YIterator start_indep_var_y_0,
+			YIterator end_indep_var_y_0,
+			ZIterator start_dep_var_0,
+			ZIterator end_dep_var_0,
+			YIterator start_indep_var_y_1,
+			YIterator end_indep_var_y_1,
+			ZIterator start_dep_var_1,
+			ZIterator end_dep_var_1 );
 
   //! Conduct unit base interpolation between two grids
   template<TupleMember YIndepMember,
 	   TupleMember DepMember,
-	   typename T, 
 	   typename YIterator,
-	   typename ZIterator>
-  static T interpolateGridsUnitBase( const T indep_var_x_0,
-				     const T indep_var_x_1,
-				     const T indep_var_x,
-				     const T indep_var_y,
-				     YIterator start_indep_y_grid_0,
-				     YIterator end_indep_y_grid_0,
-				     ZIterator start_dep_grid_0,
-				     ZIterator end_dep_grid_0,
-				     YIterator start_indep_y_grid_1,
-				     YIterator end_indep_y_grid_1,
-				     ZIterator start_dep_grid_1,
-				     ZIterator end_dep_grid_1 );
+	   typename ZIterator,
+	   typename T >
+  static T interpolateUnitBase( const T indep_var_x_0,
+				const T indep_var_x_1,
+				const T indep_var_x,
+				const T indep_var_y,
+				YIterator start_indep_y_grid_0,
+				YIterator end_indep_y_grid_0,
+				ZIterator start_dep_grid_0,
+				ZIterator end_dep_grid_0,
+				YIterator start_indep_y_grid_1,
+				YIterator end_indep_y_grid_1,
+				ZIterator start_dep_grid_1,
+				ZIterator end_dep_grid_1 );
 
   //! Conduct the interpolation between two grids
   template<TupleMember YIndepMember,
 	   TupleMember DepMember,
-	   typename T,
-	   typename Iterator>
-  static T interpolateGridsUnitBase( const T indep_var_x_0,
-				     const T indep_var_x_1,
-				     const T indep_var_x,
-				     const T indep_var_y,
-				     Iterator start_grid_0,
-				     Iterator end_grid_0,
-				     Iterator start_grid_1,
-				     Iterator end_grid_1 );
+	   typename Iterator,
+	   typename T>
+  static T interpolateUnitBase( const T indep_var_x_0,
+				const T indep_var_x_1,
+				const T indep_var_x,
+				const T indep_var_y,
+				Iterator start_grid_0,
+				Iterator end_grid_0,
+				Iterator start_grid_1,
+				Iterator end_grid_1 );
 
   //! Conduct unit base interpolation between two grids (no tuples)
-  template<typename T, typename YIterator, typename ZIterator>
-  static T interpolateGridsUnitBase( const T indep_var_x_0,
-				     const T indep_var_x_1,
-				     const T indep_var_x,
-				     const T indep_var_y,
-				     YIterator start_indep_var_y_0,
-				     YIterator end_indep_var_y_0,
-				     ZIterator start_dep_var_0,
-				     ZIterator end_dep_var_0,
-				     YIterator start_indep_var_y_1,
-				     YIterator end_indep_var_y_1,
-				     ZIterator start_dep_var_1,
-				     ZIterator end_dep_var_1 );
+  template<typename YIterator, typename ZIterator, typename T>
+  static T interpolateUnitBase( const T indep_var_x_0,
+				const T indep_var_x_1,
+				const T indep_var_x,
+				const T indep_var_y,
+				YIterator start_indep_var_y_0,
+				YIterator end_indep_var_y_0,
+				ZIterator start_dep_var_0,
+				ZIterator end_dep_var_0,
+				YIterator start_indep_var_y_1,
+				YIterator end_indep_var_y_1,
+				ZIterator start_dep_var_1,
+				ZIterator end_dep_var_1 );
+  
+  //! Calculate the length of a grid
+  template<TupleMember YIndepMember,
+	   typename YIterator>
+  static typename TupleMemberTraits<typename std::iterator_traits<YIterator>::value_type,YIndepMember>::tupleMemberType calculateGridLength( 
+						  YIterator start_indep_y_grid,
+						  YIterator end_indep_y_grid );
+
+  //! Calculate the length of an intermediate grid
+  template<typename T>
+  static T calculateIntermediateGridLength( const T indep_var_x_0,
+					    const T indep_var_x_1,
+					    const T indep_var_x,
+					    const T grid_0_length,
+					    const T grid_1_length );
+
+  //! Calculate the min value of an intermediate grid
+  template<typename T>
+  static T calculateIntermediateGridMin( const T indep_var_x_0,
+					 const T indep_var_x_1,
+					 const T indep_var_x,
+					 const T grid_0_y_min,
+					 const T grid_1_y_min );
+
+  //! Calculate the unit base independent variable (eta)
+  template<typename T>
+  static T calculateUnitBaseIndepVar( const T indep_var_y,
+				      const T intermediate_indep_var_y_min,
+				      const T intermediate_grid_length );
+
+  //! Calculate the independent y variable on a grid given eta
+  template<typename T>
+  static T calculateGridIndepVar( const T eta,
+				  const T grid_indep_var_min,
+				  const T grid_length );
   
   //! Conduct the interpolation between two processed grids
   template<TupleMember YIndepMember,
@@ -120,7 +217,7 @@ struct TwoDInterpolationPolicyImpl
 	   typename T, 
 	   typename YIterator,
 	   typename ZIterator>
-  static T interpolateProcessedGrids( const T processed_indep_var_x_0,
+  static T interpolateProcessed( const T processed_indep_var_x_0,
 				      const T processed_indep_var_x_1,
 				      const T processed_indep_var_x,
 				      const T processed_indep_var_y,
@@ -138,7 +235,7 @@ struct TwoDInterpolationPolicyImpl
 	   TupleMember DepMember,
 	   typename T, 
 	   typename Iterator>
-  static T interpolateProcessedGrids( const T processed_indep_var_x_0,
+  static T interpolateProcessed( const T processed_indep_var_x_0,
 				      const T processed_indep_var_x_1,
 				      const T processed_indep_var_x,
 				      const T processed_indep_var_y,
@@ -149,7 +246,7 @@ struct TwoDInterpolationPolicyImpl
 
   //! Conduct the interpolation between two processed grids (no tuples)
   template<typename T, typename YIterator, typename ZIterator>
-  static T interpolateProcessedGrids( const T processed_indep_var_x_0,
+  static T interpolateProcessed( const T processed_indep_var_x_0,
 				      const T processed_indep_var_x_1,
 				      const T processed_indep_var_x,
 				      const T processed_indep_var_y,
@@ -214,60 +311,67 @@ struct TwoDInterpolationPolicyImpl
 				      ZIterator start_processed_dep_grid_1,
 				      ZIterator end_processed_dep_grid_1 );
 
-  //! Calculate the unit base y independent variable
-  template<typename T>
-  static T calculateUnitBaseIndepYVariable( const T indep_var_y,
-					    const T min_indep_var_y,
-					    const T indep_var_y_range );
-  
-  //! Calculate the independent y variable
-  template<typename T>
-  static T calculateIndepYVariable( const T unit_base_indep_var_y,
-				    const T min_indep_var_y,
-				    const T indep_var_y_range );
-};
+private:
 
-//! Helper class used by unit base interpolation methods (Lin-Lin)
-template<typename YProcessingTag, typename XProcessingTag>
-struct UnitBaseHelper
-{ /* ... */ };
-
-//! Helper class used by unit base interpolation methods (Lin-Lin)
-template<typename LinIndepVarProcessingTag, typename LinIndepVarProcessingTag>
-struct UnitBaseHelper
-{
-  //! The YX interpolation policy
-  typedef LinLin YXInterpPolicy;
-};
-
-//! Helper class used by unit base interpolation methods (Lin-Log)
-template<typename LinIndepVarProcessingTag, typename LogIndepVarProcessingTag>
-struct UnitBaseHelper
-{
-  //! The YX interpolation policy
-  typedef LinLog YXInterpPolicy;
-};
-
-//! Helper class used by unit base interpolation methods (Log-Lin)
-template<typename LogIndepVarProcessingTag, typename LinIndepVarProcessingTag>
-struct UnitBaseHelper
-{
-  //! The YX interpolation policy
-  typedef LogLin YXInterpPolicy;
-};
-
-//! Helper class used by unit base interpolation methods (Log-Lin)
-template<typename LogIndepVarProcessingTag, typename LogIndepVarProcessingTag>
-struct UnitBaseHelper
-{
-  //! The YX interpolation policy
-  typedef LogLog YXInterpPolicy;
+  // Interpolate on the specified y grid
+  template<TupleMember YIndepMember,
+	   TupleMember DepMember,
+	   typename YIterator,
+	   typename ZIterator,
+	   typename T>
+  static T interpolateAndProcessOnYGrid( const T indep_var_y,
+					 YIterator start_indep_y_grid_0,
+					 YIterator end_indep_y_grid_0,
+					 ZIterator start_dep_grid_0,
+					 ZIterator end_dep_grid_0 );
 };
 
 /*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
  * is Lin-Lin and Z-X policy interpolation policy is Lin-Lin).
  */
 struct LinLinLin : public TwoDInterpolationPolicyImpl<LinLin,LinLin>
+{ /* ... */ };
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Lin-Log and Z-X policy interpolation policy is Lin-Lin).
+ */
+struct LinLogLin : public TwoDInterpolationPolicyImpl<LinLog,LinLin>
+{ /* ... */ };
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Lin-Lin and Z-X policy interpolation policy is Lin-Log).
+ */
+struct LinLinLog : public TwoDInterpolationPolicyImpl<LinLin,LinLog>
+{ /* ... */ };
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Lin-Log and Z-X policy interpolation policy is Lin-Log).
+ */
+struct LinLogLog : public TwoDInterpolationPolicyImpl<LinLog,LinLog>
+{ /* ... */ };
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Log-Lin and Z-X policy interpolation policy is Log-Lin).
+ */
+struct LogLinLin : public TwoDInterpolationPolicyImpl<LogLin,LogLin>
+{ /* ... */ };
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Log-Log and Z-X policy interpolation policy is Log-Lin).
+ */
+struct LogLogLin : public TwoDInterpolationPolicyImpl<LogLog,LogLin>
+{ /* ... */ };
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Log-Lin and Z-X policy interpolation policy is Log-Log).
+ */
+struct LogLinLog : public TwoDInterpolationPolicyImpl<LogLin,LogLog>
+{ /* ... */ };
+
+/*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
+ * is Log-Log and Z-X policy interpolation policy is Log-Log).
+ */
+struct LogLogLog : public TwoDInterpolationPolicyImpl<LogLog,LogLog>
 { /* ... */ };
 
 } // end Utility namespace
