@@ -337,6 +337,7 @@ int main( int argc, char** argv )
 							b_threshold_index,
                             b_scattering_distribution,
                             b_angular_distribution,
+                            xss_data_extractor->extractAtomicNumber(),
                             lower_cutoff_energy,
                             upper_cutoff_energy ) );
 

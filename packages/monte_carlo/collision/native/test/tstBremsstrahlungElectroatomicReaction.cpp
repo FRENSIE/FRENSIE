@@ -301,6 +301,7 @@ int main( int argc, char** argv )
 						      bremsstrahlung_threshold_index,
 						      scattering_distribution,
 							  angular_distribution,
+                              xss_data_extractor->extractAtomicNumber(),
                               lower_cutoff_energy, 
                               upper_cutoff_energy ) );
  

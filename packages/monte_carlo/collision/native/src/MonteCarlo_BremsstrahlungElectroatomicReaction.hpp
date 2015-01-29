@@ -41,6 +41,7 @@ public:
        const BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
               bremsstrahlung_scattering_distribution,
        const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
+       const int atomic_number,
        const double lower_cutoff_energy,
        const double upper_cutoff_energy );
 
