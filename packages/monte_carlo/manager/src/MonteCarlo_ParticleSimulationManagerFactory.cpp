@@ -72,10 +72,10 @@ ParticleSimulationManagerFactory::createManager(
 
   return Teuchos::rcp( 
          new ParticleSimulationManager<moab::DagMC,
-		                       ParticleSource,
-	                               EstimatorHandler,
-		                       CollisionHandler>(
-			      SimulationProperties::getNumberOfHistories() ) );
+                                       ParticleSource,
+                                       EstimatorHandler,
+                                       CollisionHandler>(
+                               SimulationProperties::getNumberOfHistories() ) );
   #else
   return Teuchos::RCP<SimulationManager>();
   #endif // end HAVE_FRENSIE_DAGMC
