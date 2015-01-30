@@ -29,7 +29,6 @@ public:
   //! Create a electroatom core (using the provided atomic relaxation model)
   static void createElectroatomCore( 
 	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
-        const double elastic_cutoff_angle,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<ElectroatomCore>& electroatom_core,
         const bool use_detailed_bremsstrahlung_data,
@@ -39,7 +38,6 @@ public:
   static void createElectroatom(
 	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
 	    const std::string& electroatom_name,
-        const double elastic_cutoff_angle,
         const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Electroatom>& electroatom,

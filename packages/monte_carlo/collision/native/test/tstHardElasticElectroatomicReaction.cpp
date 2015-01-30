@@ -209,9 +209,6 @@ int main( int argc, char** argv )
 
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
-
-  // Set the cutoff angle cosine 
-  const double cutoff_angle_cosine = 0.999999;
   
   // Create the reaction
   ace_elastic_reaction.reset(
@@ -220,7 +217,6 @@ int main( int argc, char** argv )
 						      elastic_cross_section,
 						      elastic_threshold_index,
 						      atomic_number,
-                              cutoff_angle_cosine,
                               elastic_scattering_distribution ) );
 
   // Clear setup data

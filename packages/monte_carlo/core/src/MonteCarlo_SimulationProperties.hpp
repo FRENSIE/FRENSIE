@@ -95,12 +95,6 @@ public:
   //! Return the absolute maximum electron energy (MeV)
   static double getAbsoluteMaxElectronEnergy();
 
-  //! Set the elastic electron scattering angle analytic function cutoff 
-  static void setElasticAngleAnalyticCutoff( const double cosine_theta );
-
-  //! Return the maximum electron energy (MeV)
-  static double getElasticAngleAnalyticCutoff();
-
   //! Set implicit capture mode to on (off by default)
   static void setImplicitCaptureModeOn();
 
@@ -184,9 +178,6 @@ private:
 
   // The absolute maximum electron energy (MeV)
   static const double absolute_max_electron_energy;
-
-  // The elastic electron scattering angle analytic function cutoff 
-  static const double elastic_angle_analytic_cutoff;
 
   // The capture mode (true = implicit, false = analogue - default)
   static bool implicit_capture_mode_on;
@@ -293,12 +284,6 @@ inline double SimulationProperties::getMaxElectronEnergy()
 
 // Return the absolute maximum electron energy (MeV)
 inline double SimulationProperties::getAbsoluteMaxElectronEnergy()
-{
-  return SimulationProperties::absolute_max_electron_energy;
-}
-
-// Return the absolute maximum electron energy (MeV)
-inline double SimulationProperties::getElasticAngleAnalyticCutoff()
 {
   return SimulationProperties::absolute_max_electron_energy;
 }

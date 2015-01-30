@@ -30,8 +30,7 @@ namespace MonteCarlo{
 void ElectroatomicReactionACEFactory::createHardElasticReaction(
 			const Data::XSSEPRDataExtractor& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-            const double cutoff_angle_cosine )
+			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
@@ -96,7 +95,6 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
 						  elastic_cross_section,
 						  threshold_energy_index,				
                           atomic_number,
-                          cutoff_angle_cosine,
                           scattering_function ) );
 }
 
