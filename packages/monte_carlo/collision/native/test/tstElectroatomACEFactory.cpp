@@ -17,6 +17,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomACEFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -32,6 +33,7 @@ Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
 std::string electroatom_name;
 double atomic_weight;
 Teuchos::RCP<MonteCarlo::Electroatom> atom;
+MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -39,12 +41,14 @@ Teuchos::RCP<MonteCarlo::Electroatom> atom;
 // Check that a basic electroatom can be created
 TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
 {
+  photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
+
   MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
                                                         electroatom_name,
                                                         atomic_weight,
                                                         relaxation_model,
                                                         atom,
-                                                        false,
+                                                        photon_distribution_function,
                                                         false );
 
   // Test the electroatom properties
@@ -188,15 +192,36 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
 }
 /*
 //---------------------------------------------------------------------------//
-// Check that a electroatom with detailed bremsstrahlung data can be created
+/* Check that a electroatom with detailed tabular photon angular distribution 
+ * data can be created
+ *
 TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
 {
+  photon_distribution_function = MonteCarlo::TABULAR_DISTRIBUTION;
+
   MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
                                                         electroatom_name,
                                                         atomic_weight,
                                                         relaxation_model,
                                                         atom,
-                                                        true,
+                                                        photon_distribution_function,
+                                                        false );
+}
+
+//---------------------------------------------------------------------------//
+/* Check that a electroatom with detailed 2BS photon angular distribution 
+ * data can be created
+ *
+TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
+{
+  photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
+
+  MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
+                                                        electroatom_name,
+                                                        atomic_weight,
+                                                        relaxation_model,
+                                                        atom,
+                                                        photon_distribution_function,
                                                         false );
 }
 */
@@ -205,12 +230,14 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
 // Check that a electroatom with electroionization subshell data can be created
 TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_ionization_subshells )
 {
+  photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
+
   MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
                                                         electroatom_name,
                                                         atomic_weight,
                                                         relaxation_model,
                                                         atom,
-                                                        false,
+                                                        photon_distribution_function,
                                                         true );
   
   // Test the electroatom properties

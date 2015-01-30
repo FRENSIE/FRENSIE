@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -25,6 +26,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
+MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::RCP<MonteCarlo::ElectroatomicReaction> reaction;
@@ -166,15 +168,17 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-// Check that a basic bremsstrahlung reaction can be created
+// Check that a basic (dipole distribution) bremsstrahlung reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory, 
-		   createPairBremsstrahlungReaction_basic )
+                   createBremsstrahlungReaction_dipole )
 {
+  photon_distribution_function = MonteCarlo::DIPOLE_DISTRIBUTION;
+
   MonteCarlo::ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 							   *xss_data_extractor,
 							   energy_grid,
 							   reaction,
-							   false );
+							   photon_distribution_function );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
@@ -203,13 +207,65 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
   reaction.reset();
 }
 //! \todo Write detailed bremsstrahlung reaction test
+/*
 //---------------------------------------------------------------------------//
-// Check that a detailed bremsstrahlung reaction can be created
-// TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
-// 		   createBremsstrahlungReaction_detailed )
-// {
+/* Check that a electroatom with detailed tabular photon angular distribution 
+ * data can be created
+ *
+TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory, 
+                   createBremsstrahlungReaction_tabular )
+{
+  photon_distribution_function = MonteCarlo::TABULAR_DISTRIBUTION;
+
+  MonteCarlo::ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
+							   *xss_data_extractor,
+							   energy_grid,
+							   reaction,
+							   photon_distribution_function );
+}
+*/
+//---------------------------------------------------------------------------//
+/* Check that a electroatom with detailed 2BS photon angular distribution 
+ * data can be created
+ */
+TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory, 
+                   createBremsstrahlungReaction_2bs )
+{
+  photon_distribution_function = MonteCarlo::TWOBS_DISTRIBUTION;
+
+  MonteCarlo::ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
+							   *xss_data_extractor,
+							   energy_grid,
+							   reaction,
+							   photon_distribution_function );
+
+  // Test reaction properties
+  TEST_EQUALITY_CONST( reaction->getReactionType(),
+		       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
+
+  // Test that the stored cross section is correct
+  double cross_section = 
+    reaction->getCrossSection( reaction->getThresholdEnergy() );
+
+  TEST_FLOATING_EQUALITY( cross_section, 4.869800000000e+3, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 1.00000e-4 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 7.363889022643e+3, 1e-12 );
+
+  cross_section = reaction->getCrossSection( 1.79008e-4 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 8.026497035136e+3, 1e-12 );
   
-// }
+  cross_section = reaction->getCrossSection( 1.00000e+5 );
+  
+  TEST_EQUALITY_CONST( cross_section, 1.954170000000e+3 );
+
+  // Clear the reaction
+  reaction.reset();
+}
+
 
 
 //---------------------------------------------------------------------------//

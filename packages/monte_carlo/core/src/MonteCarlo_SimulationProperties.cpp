@@ -78,8 +78,10 @@ bool SimulationProperties::detailed_pair_production_mode_on = false;
 // The photonuclear interaction mode (true = on, false = off - default)
 bool SimulationProperties::photonuclear_interaction_mode_on = false;
 
-// The detailed bremsstrahlung mode (true = on, false = off - default)
-bool SimulationProperties::detailed_bremsstrahlung_mode_on = false;
+// The bremsstrahlung photon angular distribution function (2BS by default)
+BremsstrahlungAngularDistributionType 
+  SimulationProperties::bremsstrahlung_angular_distribution_function = 
+                             TWOBS_DISTRIBUTION;
 
 // Set the particle mode
 void SimulationProperties::setParticleMode( 
@@ -198,10 +200,11 @@ void SimulationProperties::setPhotonuclearInteractionModeOn()
   SimulationProperties::photonuclear_interaction_mode_on = true;
 }
 
-// Set detailed bremsstrahlung mode to on (off by default)
-void SimulationProperties::setDetailedBremsstrahlungModeOn()
+// Set the bremsstrahlung photon angular distribution function (2BS by default)
+void SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
+                          const BremsstrahlungAngularDistributionType function )
 {
-  SimulationProperties::detailed_bremsstrahlung_mode_on = true;
+  SimulationProperties::bremsstrahlung_angular_distribution_function = function;
 }
 
 } // end MonteCarlo namespace

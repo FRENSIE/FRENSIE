@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -28,10 +29,13 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::ElectroatomicReaction> 
-  ace_detailed_bremsstrahlung_reaction;
+  ace_dipole_bremsstrahlung_reaction;
 
 Teuchos::RCP<MonteCarlo::ElectroatomicReaction> 
-  ace_basic_bremsstrahlung_reaction;
+  ace_tabular_bremsstrahlung_reaction;
+
+Teuchos::RCP<MonteCarlo::ElectroatomicReaction> 
+  ace_twobs_bremsstrahlung_reaction;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -47,10 +51,13 @@ bool notEqualZero( double value )
 // Check that the reaction type can be returned
 TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getReactionType_ace )
 {
-  TEST_EQUALITY_CONST( ace_detailed_bremsstrahlung_reaction->getReactionType(),
+  TEST_EQUALITY_CONST( ace_twobs_bremsstrahlung_reaction->getReactionType(),
 		       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 
-  TEST_EQUALITY_CONST( ace_basic_bremsstrahlung_reaction->getReactionType(),
+  TEST_EQUALITY_CONST( ace_tabular_bremsstrahlung_reaction->getReactionType(),
+		       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+
+  TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getReactionType(),
 		       MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
 }
 
@@ -58,10 +65,13 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getReactionType_ace )
 // Check that the threshold energy can be returned
 TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getThresholdEnergy_ace )
 {
-  TEST_EQUALITY_CONST( ace_detailed_bremsstrahlung_reaction->getThresholdEnergy(),
+  TEST_EQUALITY_CONST( ace_twobs_bremsstrahlung_reaction->getThresholdEnergy(),
                        1.000000000000E-05 );
 
-  TEST_EQUALITY_CONST( ace_basic_bremsstrahlung_reaction->getThresholdEnergy(),
+  TEST_EQUALITY_CONST( ace_tabular_bremsstrahlung_reaction->getThresholdEnergy(),
+                       1.000000000000E-05 );
+
+  TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getThresholdEnergy(),
                        1.000000000000E-05 );
 }
 
@@ -69,16 +79,24 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getThresholdEnergy_ace )
 // Check that the number of electrons emitted from the rxn can be returned
 TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getNumberOfEmittedElectrons_ace )
 {
-  TEST_EQUALITY_CONST( ace_detailed_bremsstrahlung_reaction->getNumberOfEmittedElectrons(1e-8),
+  TEST_EQUALITY_CONST( ace_twobs_bremsstrahlung_reaction->getNumberOfEmittedElectrons(1e-8),
                        0u );
 
-  TEST_EQUALITY_CONST( ace_detailed_bremsstrahlung_reaction->getNumberOfEmittedElectrons(20.0),
+  TEST_EQUALITY_CONST( ace_twobs_bremsstrahlung_reaction->getNumberOfEmittedElectrons(20.0),
                        0u );
 
-  TEST_EQUALITY_CONST( ace_basic_bremsstrahlung_reaction->getNumberOfEmittedElectrons(1e-8),
+
+  TEST_EQUALITY_CONST( ace_tabular_bremsstrahlung_reaction->getNumberOfEmittedElectrons(1e-8),
                        0u );
 
-  TEST_EQUALITY_CONST( ace_basic_bremsstrahlung_reaction->getNumberOfEmittedElectrons(20.0),
+  TEST_EQUALITY_CONST( ace_tabular_bremsstrahlung_reaction->getNumberOfEmittedElectrons(20.0),
+                       0u );
+
+
+  TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getNumberOfEmittedElectrons(1e-8),
+                       0u );
+
+  TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getNumberOfEmittedElectrons(20.0),
                        0u );      
 }
 
@@ -86,16 +104,24 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getNumberOfEmittedElectr
 // Check that the number of photons emitted from the rxn can be returned
 TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getNumberOfEmittedPhotons_ace )
 {
-  TEST_EQUALITY_CONST( ace_detailed_bremsstrahlung_reaction->getNumberOfEmittedPhotons(1e-8),
+  TEST_EQUALITY_CONST( ace_twobs_bremsstrahlung_reaction->getNumberOfEmittedPhotons(1e-8),
                        0u );
 
-  TEST_EQUALITY_CONST( ace_detailed_bremsstrahlung_reaction->getNumberOfEmittedPhotons(20.0),
+  TEST_EQUALITY_CONST( ace_twobs_bremsstrahlung_reaction->getNumberOfEmittedPhotons(20.0),
                        1u );  
 
-  TEST_EQUALITY_CONST( ace_basic_bremsstrahlung_reaction->getNumberOfEmittedPhotons(1e-8),
+
+  TEST_EQUALITY_CONST( ace_tabular_bremsstrahlung_reaction->getNumberOfEmittedPhotons(1e-8),
                        0u );
 
-  TEST_EQUALITY_CONST( ace_basic_bremsstrahlung_reaction->getNumberOfEmittedPhotons(20.0),
+  TEST_EQUALITY_CONST( ace_tabular_bremsstrahlung_reaction->getNumberOfEmittedPhotons(20.0),
+                       1u );  
+
+
+  TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getNumberOfEmittedPhotons(1e-8),
+                       0u );
+
+  TEST_EQUALITY_CONST( ace_dipole_bremsstrahlung_reaction->getNumberOfEmittedPhotons(20.0),
                        1u );    
 }
 
@@ -103,40 +129,58 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getNumberOfEmittedPhoton
 // Check that the cross section can be returned
 TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, getCrossSection_ace )
 {
+  // 2BS
   double cross_section = 
-    ace_detailed_bremsstrahlung_reaction->getCrossSection( 9.000000000000E-05 );
+    ace_tabular_bremsstrahlung_reaction->getCrossSection( 9.000000000000E-05 );
 
   TEST_FLOATING_EQUALITY( cross_section, 7.249970966838E+03, 1e-12 );
   
   cross_section =
-    ace_detailed_bremsstrahlung_reaction->getCrossSection( 4.000000000000E-04 );
+    ace_tabular_bremsstrahlung_reaction->getCrossSection( 4.000000000000E-04 );
   
   TEST_FLOATING_EQUALITY( cross_section, 8.914234996439E+03, 1e-12 );
 
   cross_section = 
-    ace_detailed_bremsstrahlung_reaction->getCrossSection( 2.000000000000E-03 );
+    ace_tabular_bremsstrahlung_reaction->getCrossSection( 2.000000000000E-03 );
 
   TEST_FLOATING_EQUALITY( cross_section, 9.258661418255E+03, 1e-12 );
 
-cross_section = 
-    ace_basic_bremsstrahlung_reaction->getCrossSection( 9.000000000000E-05 );
+  // Tabular
+  cross_section = 
+    ace_tabular_bremsstrahlung_reaction->getCrossSection( 9.000000000000E-05 );
 
   TEST_FLOATING_EQUALITY( cross_section, 7.249970966838E+03, 1e-12 );
   
   cross_section =
-    ace_basic_bremsstrahlung_reaction->getCrossSection( 4.000000000000E-04 );
+    ace_tabular_bremsstrahlung_reaction->getCrossSection( 4.000000000000E-04 );
   
   TEST_FLOATING_EQUALITY( cross_section, 8.914234996439E+03, 1e-12 );
 
   cross_section = 
-    ace_basic_bremsstrahlung_reaction->getCrossSection( 2.000000000000E-03 );
+    ace_tabular_bremsstrahlung_reaction->getCrossSection( 2.000000000000E-03 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 9.258661418255E+03, 1e-12 );
+
+  // Dipole
+  cross_section = 
+    ace_dipole_bremsstrahlung_reaction->getCrossSection( 9.000000000000E-05 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 7.249970966838E+03, 1e-12 );
+  
+  cross_section =
+    ace_dipole_bremsstrahlung_reaction->getCrossSection( 4.000000000000E-04 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 8.914234996439E+03, 1e-12 );
+
+  cross_section = 
+    ace_dipole_bremsstrahlung_reaction->getCrossSection( 2.000000000000E-03 );
 
   TEST_FLOATING_EQUALITY( cross_section, 9.258661418255E+03, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the detailed bremsstrahlung reaction can be simulated
-TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, react_detailed_ace )
+// Check that the detailed 2BS bremsstrahlung reaction can be simulated
+TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, react_detailed_2BS_ace )
 {
   MonteCarlo::ElectronState electron( 0 );
   electron.setEnergy( 20 );
@@ -146,7 +190,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, react_detailed_ace )
 
   MonteCarlo::SubshellType shell_of_interaction;
 
-  ace_detailed_bremsstrahlung_reaction->react( electron, bank, shell_of_interaction );
+  ace_twobs_bremsstrahlung_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_ASSERT( electron.getEnergy() < 20.0 );
   TEST_EQUALITY_CONST( electron.getZDirection(), 1.0 );
@@ -155,7 +199,28 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, react_detailed_ace )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the basic bremsstrahlung reaction can be simulated
+// Check that the detailed tabular bremsstrahlung reaction can be simulated
+TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, 
+                   react_detailed_tabular_ace )
+{
+  MonteCarlo::ElectronState electron( 0 );
+  electron.setEnergy( 20 );
+  electron.setDirection( 0.0, 0.0, 1.0 );
+
+  MonteCarlo::ParticleBank bank;
+
+  MonteCarlo::SubshellType shell_of_interaction;
+
+  ace_tabular_bremsstrahlung_reaction->react( electron, bank, shell_of_interaction );
+
+  TEST_ASSERT( electron.getEnergy() < 20.0 );
+  TEST_EQUALITY_CONST( electron.getZDirection(), 1.0 );
+  TEST_ASSERT( !bank.empty() );
+  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the basic dipole bremsstrahlung reaction can be simulated
 TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, react_basic_ace )
 {
   MonteCarlo::ElectronState electron( 0 );
@@ -166,7 +231,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectroatomicReaction, react_basic_ace )
 
   MonteCarlo::SubshellType shell_of_interaction;
 
-  ace_basic_bremsstrahlung_reaction->react( electron, bank, shell_of_interaction );
+  ace_dipole_bremsstrahlung_reaction->react( electron, bank, shell_of_interaction );
 
   TEST_ASSERT( electron.getEnergy() < 20.0 );
   TEST_EQUALITY_CONST( electron.getZDirection(), 1.0 );
@@ -285,26 +350,32 @@ int main( int argc, char** argv )
   double upper_cutoff_energy = 1000;
   double lower_cutoff_energy = 0.001;
   
-
-  ace_basic_bremsstrahlung_reaction.reset( 
+  // Create the reactions
+  ace_dipole_bremsstrahlung_reaction.reset( 
 		new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>( 
 						      energy_grid,
 						      bremsstrahlung_cross_section,
 						      bremsstrahlung_threshold_index,
 						      scattering_distribution ) );
 
-  // Create the reaction
-  ace_detailed_bremsstrahlung_reaction.reset(
+  ace_tabular_bremsstrahlung_reaction.reset(
 		new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
 						      energy_grid,
 						      bremsstrahlung_cross_section,
 						      bremsstrahlung_threshold_index,
 						      scattering_distribution,
 							  angular_distribution,
-                              xss_data_extractor->extractAtomicNumber(),
                               lower_cutoff_energy, 
                               upper_cutoff_energy ) );
  
+  ace_twobs_bremsstrahlung_reaction.reset(
+		new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
+						      energy_grid,
+						      bremsstrahlung_cross_section,
+						      bremsstrahlung_threshold_index,
+						      scattering_distribution,
+                              xss_data_extractor->extractAtomicNumber() ) );
+
   // Clear setup data
   ace_file_handler.reset();
   xss_data_extractor.reset();
