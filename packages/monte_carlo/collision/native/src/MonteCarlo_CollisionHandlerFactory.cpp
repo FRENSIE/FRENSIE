@@ -181,7 +181,7 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 		     cell_id_mat_id_map,
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
-		     SimulationProperties::isDetailedBremsstrahlungModeOn(),
+		     SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
 		     SimulationProperties::isAtomicRelaxationModeOn() );
     break;
   }
@@ -506,7 +506,7 @@ void CollisionHandlerFactory::createElectronMaterials(
                                std::vector<std::string> >& cell_id_density_map,
    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
    atomic_relaxation_model_factory,
-   const bool use_detailed_bremsstrahlung_data,
+   const BremsstrahlungAngularDistributionType photon_distribution_function,
    const bool use_atomic_relaxation_data )
 {
   boost::unordered_map<std::string,Teuchos::RCP<Electroatom> > electroatom_map;
@@ -515,7 +515,7 @@ void CollisionHandlerFactory::createElectronMaterials(
                                           electroatom_aliases,
                                           cross_sections_table_info,
                                           atomic_relaxation_model_factory,
-                                          use_detailed_bremsstrahlung_data,
+                                          photon_distribution_function,
                                           use_atomic_relaxation_data );
     
   electroatom_factory.createElectroatomMap( electroatom_map );

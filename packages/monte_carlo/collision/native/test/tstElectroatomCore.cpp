@@ -325,10 +325,6 @@ int main( int argc, char** argv )
            true ) );
     }
 
-    // Set the upper and lower energy cutoff for the photon angular distribution
-    double upper_cutoff_energy = 1000;
-    double lower_cutoff_energy = 0.001;
-
     // Create the bremsstrahlung scattering reaction
     Teuchos::RCP<MonteCarlo::ElectroatomicReaction> b_reaction(
 	    new MonteCarlo::BremsstrahlungElectroatomicReaction<Utility::LinLin>(
@@ -336,10 +332,7 @@ int main( int argc, char** argv )
 							b_cross_section,
 							b_threshold_index,
                             b_scattering_distribution,
-                            b_angular_distribution,
-                            xss_data_extractor->extractAtomicNumber(),
-                            lower_cutoff_energy,
-                            upper_cutoff_energy ) );
+                            xss_data_extractor->extractAtomicNumber() ) );
 
     // Create the reaction maps
     MonteCarlo::ElectroatomCore::ReactionMap scattering_reactions, 

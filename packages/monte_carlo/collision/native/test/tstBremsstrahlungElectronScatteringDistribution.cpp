@@ -30,17 +30,22 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::ElectronScatteringDistribution>
-  basic_bremsstrahlung_distribution;
+  dipole_bremsstrahlung_distribution;
 
 Teuchos::RCP<MonteCarlo::ElectronScatteringDistribution>
-  detailed_bremsstrahlung_distribution;
+  tabular_bremsstrahlung_distribution;
+
+Teuchos::RCP<MonteCarlo::ElectronScatteringDistribution>
+  twobs_bremsstrahlung_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that an electron can be bremsstrahlung scattered and a simple photon is generated
+/* Check that an electron can be bremsstrahlung scattered and a simple 
+ * (dipole distribution) photon is generated
+ */
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
-		   simpleBremsstrahlung )
+                   DipoleBremsstrahlung )
 {
   MonteCarlo::ParticleBank bank;
   
@@ -58,7 +63,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  basic_bremsstrahlung_distribution->scatterElectron( electron,
+  dipole_bremsstrahlung_distribution->scatterElectron( electron,
 						bank,
 						shell_of_interaction );
 
@@ -76,51 +81,11 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
-/* Check that an electron can be bremsstrahlung scattered and a detailed photon
- * is generated using the lower energy function
+/* Check that an electron can be bremsstrahlung scattered and a detailed 2BS
+ * photon is generated using the lower energy function
  */
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
-		   detailedBremsstrahlung_lower_energy )
-{
-  MonteCarlo::ParticleBank bank;
-  
-  MonteCarlo::ElectronState electron( 1 );
-  electron.setEnergy( 0.0009 );
-  electron.setDirection( 0.0, 0.0, 1.0 );
-  
-  MonteCarlo::SubshellType shell_of_interaction;
-
-  // Set up the random number stream
-  std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 9.465e-03; // Sample the 7.9496800E-04 MeV distribution
-  fake_stream[1] = 0.5; // Sample a photon energy of 1.49055124391153000E-05 MeV
-  fake_stream[2] = 0.5; // Sample angle 0.0557151835328 from analytical function  
-
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-
-  detailed_bremsstrahlung_distribution->scatterElectron( electron,
-						bank,
-						shell_of_interaction );
-
-  Utility::RandomNumberGenerator::unsetFakeStream();
-
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 8.85094487560885E-04, 1e-12 );
-  TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-12 );
-  TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
-
-  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.49055124391153e-05 , 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0592724905908 , 1e-12 );
-  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
-
-}
-
-//---------------------------------------------------------------------------//
-/* Check that an electron can be bremsstrahlung scattered and a detailed photon 
- * is generated using the middle energy function
- */
-TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
-		   detailedBremsstrahlung_middle_energy )
+                   2BS_bremsstrahlung )
 {
   MonteCarlo::ParticleBank bank;
   
@@ -142,7 +107,87 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  detailed_bremsstrahlung_distribution->scatterElectron( electron,
+  twobs_bremsstrahlung_distribution->scatterElectron( electron,
+                                                      bank,
+                                                      shell_of_interaction );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 9.99888876121495E-01 , 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
+
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.11123878505389E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.612270260118, 1e-12 );
+  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
+
+}
+
+//---------------------------------------------------------------------------//
+/* Check that an electron can be bremsstrahlung scattered and a detailed tabular
+ * photon is generated using the lower energy function
+ */
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
+		   tabular_bremsstrahlung_lower_energy )
+{
+  MonteCarlo::ParticleBank bank;
+  
+  MonteCarlo::ElectronState electron( 1 );
+  electron.setEnergy( 0.0009 );
+  electron.setDirection( 0.0, 0.0, 1.0 );
+  
+  MonteCarlo::SubshellType shell_of_interaction;
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 9.465e-03; // Sample the 7.9496800E-04 MeV distribution
+  fake_stream[1] = 0.5; // Sample a photon energy of 1.49055124391153000E-05 MeV
+  fake_stream[2] = 0.5; // Sample angle 0.0557151835328 from analytical function  
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  tabular_bremsstrahlung_distribution->scatterElectron( electron,
+						bank,
+						shell_of_interaction );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 8.85094487560885E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getXDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getYDirection(), 0.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
+
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.49055124391153e-05 , 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0592724905908 , 1e-12 );
+  TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
+
+}
+
+//---------------------------------------------------------------------------//
+/* Check that an electron can be bremsstrahlung scattered and a detailed tabular 
+ * photon is generated using the middle energy function
+ */
+TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
+		   tabular_bremsstrahlung_middle_energy )
+{
+  MonteCarlo::ParticleBank bank;
+  
+  MonteCarlo::ElectronState electron( 1 );
+  electron.setEnergy( 1.0 );
+  electron.setDirection( 0.0, 0.0, 1.0 );
+  
+  MonteCarlo::SubshellType shell_of_interaction;
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.5; // Sample electron energy bin of 3.1622800E-01 MeV
+  fake_stream[1] = 0.5; // Sample a photon energy of 1.11123878505389000E-04 MeV
+  fake_stream[2] = 0.5; // Sample a photon angle of 9.912140279513E-03
+ 
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  tabular_bremsstrahlung_distribution->scatterElectron( electron,
 						bank,
 						shell_of_interaction );
 
@@ -154,19 +199,18 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
 
   TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.11123878505389E-04, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.612270260118, 1e-12 );
-//  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 9.912140279513E-03, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 9.912140279513E-03, 1e-12 );
   TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
 
 }
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-/* Check that an electron can be bremsstrahlung scattered and a detailed photon 
- * is generated using the upper energy function
+/* Check that an electron can be bremsstrahlung scattered and a detailed tabular 
+ * photon is generated using the upper energy function
  */
 TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
-                   detailedBremsstrahlung_upper_energy )
+                   tabular_bremsstrahlung_upper_energy )
 {
   MonteCarlo::ParticleBank bank;
   
@@ -184,7 +228,7 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  detailed_bremsstrahlung_distribution->scatterElectron( electron,
+  tabular_bremsstrahlung_distribution->scatterElectron( electron,
                                                       bank,
                                                       shell_of_interaction );
 
@@ -297,7 +341,7 @@ int main( int argc, char** argv )
   }
 
   // Create the scattering distributions
-  basic_bremsstrahlung_distribution.reset( 
+  dipole_bremsstrahlung_distribution.reset( 
 		   new MonteCarlo::BremsstrahlungElectronScatteringDistribution( 
 						       scattering_distribution ) );
 
@@ -305,13 +349,17 @@ int main( int argc, char** argv )
   double upper_cutoff_energy = 1000;
   double lower_cutoff_energy = 0.001;
 
-  detailed_bremsstrahlung_distribution.reset( 
+  tabular_bremsstrahlung_distribution.reset( 
 		      new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
 							scattering_distribution,
 							angular_distribution,
-                            xss_data_extractor->extractAtomicNumber(),
                             lower_cutoff_energy, 
                             upper_cutoff_energy ) );
+
+  twobs_bremsstrahlung_distribution.reset( 
+		      new MonteCarlo::BremsstrahlungElectronScatteringDistribution(
+							scattering_distribution,
+                            xss_data_extractor->extractAtomicNumber() ) );
 
   // Clear setup data
   ace_file_handler.reset();
