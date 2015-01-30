@@ -212,14 +212,10 @@ int main( int argc, char** argv )
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 
-  // Set the cutoff angle cosine 
-  const double cutoff_angle_cosine = 0.999999;
-
   // Create the distributions
   ace_basic_elastic_distribution.reset(
 		new MonteCarlo::HardElasticElectronScatteringDistribution(
 						    atomic_number,
-						    cutoff_angle_cosine,
 						    elastic_scattering_distribution ) );
 
   // Clear setup data
