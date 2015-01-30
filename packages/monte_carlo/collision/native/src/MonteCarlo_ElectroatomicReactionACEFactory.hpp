@@ -46,7 +46,7 @@ public:
 		   Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
 		   electroionization_subshell_reactions );
 
-  //! Create a bremsstrahlung electroatomic reaction
+  //! Create a simple (dipole distribution) bremsstrahlung electroatomic reaction
   static void createBremsstrahlungReaction(
 		const Data::XSSEPRDataExtractor& raw_electroatom_data,
 		const Teuchos::ArrayRCP<const double>& energy_grid,
