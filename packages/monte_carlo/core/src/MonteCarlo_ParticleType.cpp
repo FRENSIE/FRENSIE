@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleType.hpp"
-#include "DagMCProperties.hpp"
+#include "Geometry_DagMCProperties.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -32,13 +32,13 @@ std::string convertShortParticleTypeNameToVerboseParticleTypeName(
 				 const std::string& short_particle_type_name )
 {
   // Make sure the shorthand name is valid
-  testPrecondition( Geometry::isParticleTypeValid( short_particle_type_name ));
+  testPrecondition( Geometry::DagMCProperties::isParticleTypeValid( short_particle_type_name ));
   
-  if( particle_type == "n" )
+  if( short_particle_type_name == "n" )
     return "Neutron";
-  else if( particle_type == "p" )
+  else if( short_particle_type_name == "p" )
     return "Photon";
-  else if( particle_type == "e" )
+  else if( short_particle_type_name == "e" )
     return "Electron";
 }
 

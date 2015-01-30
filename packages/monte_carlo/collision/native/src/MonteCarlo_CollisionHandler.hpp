@@ -15,8 +15,10 @@
 // FRENSIE Includes
 #include "MonteCarlo_NeutronMaterial.hpp"
 #include "MonteCarlo_PhotonMaterial.hpp"
+#include "MonteCarlo_ElectronMaterial.hpp"
 #include "MonteCarlo_NeutronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "Geometry_ModuleTraits.hpp"
 
 namespace MonteCarlo{
@@ -36,6 +38,11 @@ private:
   typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
 			       Teuchos::RCP<PhotonMaterial> >
   CellIdPhotonMaterialMap;
+
+  // Typedef for cell id electron material map
+  typedef boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+			       Teuchos::RCP<ElectronMaterial> >
+  CellIdElectronMaterialMap;
 
 public:
 
@@ -57,6 +64,12 @@ public:
 	      const Teuchos::RCP<PhotonMaterial>& photon_material,
 	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
 	      cells_containing_material );
+
+  //! Add a material to the collision handler
+  static void addMaterial(
+	      const Teuchos::RCP<ElectronMaterial>& material,
+	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+	      cells_containing_material );
   
   //! Check if a cell is void
   static bool isCellVoid(const Geometry::ModuleTraits::InternalCellHandle cell,
@@ -72,11 +85,19 @@ public:
   getCellPhotonMaterial(
 		       const Geometry::ModuleTraits::InternalCellHandle cell );
 
+  //! Get the electron material contained in a cell
+  static const Teuchos::RCP<ElectronMaterial>&
+  getCellElectronMaterial(
+		       const Geometry::ModuleTraits::InternalCellHandle cell );
+
   //! Get the total macroscopic cross section of a material
   static double getMacroscopicTotalCrossSection( const NeutronState& particle);
 
   //! Get the total macroscopic cross section of a material
   static double getMacroscopicTotalCrossSection( const PhotonState& particle );
+
+  //! Get the total macroscopic cross section of a material
+  static double getMacroscopicTotalCrossSection( const ElectronState& particle );
 
   //! Get the macroscopic cross section for a specific reaction
   static double getMacroscopicReactionCrossSection(
@@ -93,6 +114,11 @@ public:
 				     const PhotonState& particle,
 				     const PhotonuclearReactionType reaction );
 
+  //! Get the macroscopic cross section for a specific reaction
+  static double getMacroscopicReactionCrossSection(
+				      const ElectronState& particle,
+				      const ElectroatomicReactionType reaction );
+
   //! Collide with the material in a cell
   static void collideWithCellMaterial( PhotonState& particle,
 				       ParticleBank& bank,
@@ -103,12 +129,19 @@ public:
 				       ParticleBank& bank,
 				       const bool analogue );
 
+  //! Collide with the material in a cell
+  static void collideWithCellMaterial( ElectronState& particle,
+				       ParticleBank& bank,
+				       const bool analogue );
+
 private:
   
   // The cell id neutron material map
   static CellIdNeutronMaterialMap master_neutron_map;
   
   static CellIdPhotonMaterialMap master_photon_map;
+
+  static CellIdElectronMaterialMap master_electron_map;
 };
 
 } // end MonteCarlo namespace

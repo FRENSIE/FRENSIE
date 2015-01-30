@@ -23,6 +23,9 @@ CollisionHandler::master_neutron_map;
 CollisionHandler::CellIdPhotonMaterialMap
 CollisionHandler::master_photon_map;
 
+CollisionHandler::CellIdElectronMaterialMap
+CollisionHandler::master_electron_map;
+
 // Add a material to the collision handler
 void CollisionHandler::addMaterial(
 	      const Teuchos::RCP<NeutronMaterial>& material,
@@ -115,6 +118,31 @@ bool CollisionHandler::isCellVoid(
   }
 }
 
+// Add a material to the collision handler
+void CollisionHandler::addMaterial(
+	      const Teuchos::RCP<ElectronMaterial>& material,
+	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+	      cells_containing_material )
+{
+  // Make sure the material pointer is valid
+  testPrecondition( !material.is_null() );
+  // Make sure the cells are valid
+  testPrecondition( cells_containing_material.size() > 0 );
+  
+  for( unsigned i = 0u; i < cells_containing_material.size(); ++i )
+  {
+    TEST_FOR_EXCEPTION(
+      CollisionHandler::master_electron_map.find(cells_containing_material[i]) !=
+      CollisionHandler::master_electron_map.end(),
+      std::logic_error,
+      "Error:: cell " << cells_containing_material[i] << " already has a "
+      "material assigned!" );
+    
+    CollisionHandler::master_electron_map[cells_containing_material[i]] = 
+      material;
+  }
+}
+
 // Get the neutron material contained in a cell
 const Teuchos::RCP<NeutronMaterial>&
 CollisionHandler::getCellNeutronMaterial( 
@@ -135,6 +163,17 @@ CollisionHandler::getCellPhotonMaterial(
   testPrecondition( !CollisionHandler::isCellVoid( cell, PHOTON ) );
 
   return CollisionHandler::master_photon_map.find( cell )->second;
+}
+
+// Get the electron material contained in a cell
+const Teuchos::RCP<ElectronMaterial>&
+CollisionHandler::getCellElectronMaterial(
+			const Geometry::ModuleTraits::InternalCellHandle cell )
+{
+  // Make sure the cell is not void
+  testPrecondition( !CollisionHandler::isCellVoid( cell, ELECTRON ) );
+
+  return CollisionHandler::master_electron_map.find( cell )->second;
 }
 
 // Get the total macroscopic cross section of a material
@@ -161,6 +200,20 @@ double CollisionHandler::getMacroscopicTotalCrossSection(
 
   Teuchos::RCP<PhotonMaterial>& material = 
       CollisionHandler::master_photon_map.find( particle.getCell() )->second;
+    
+  return material->getMacroscopicTotalCrossSection( particle.getEnergy() );
+}
+
+// Get the total macroscopic cross section of a material
+double CollisionHandler::getMacroscopicTotalCrossSection(
+						  const ElectronState& particle )
+{
+  // Make sure the cell is not void
+  testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
+						   ELECTRON ) );
+
+  Teuchos::RCP<ElectronMaterial>& material = 
+      CollisionHandler::master_electron_map.find( particle.getCell() )->second;
     
   return material->getMacroscopicTotalCrossSection( particle.getEnergy() );
 }
@@ -216,6 +269,23 @@ double CollisionHandler::getMacroscopicReactionCrossSection(
     return 0.0;
 }
 
+// Get the macroscopic cross section for a specific reaction
+double CollisionHandler::getMacroscopicReactionCrossSection(
+				      const ElectronState& particle,
+				      const ElectroatomicReactionType reaction )
+{
+  CellIdElectronMaterialMap::const_iterator it = 
+    CollisionHandler::master_electron_map.find( particle.getCell() );
+
+  if( it != CollisionHandler::master_electron_map.end() )
+  {
+    return it->second->getMacroscopicReactionCrossSection(particle.getEnergy(),
+							  reaction );
+  }
+  else
+    return 0.0;
+}
+
 // Collide with the material in a cell
 void CollisionHandler::collideWithCellMaterial( NeutronState& particle,
 						ParticleBank& bank,
@@ -245,6 +315,24 @@ void CollisionHandler::collideWithCellMaterial( PhotonState& particle,
   
   const Teuchos::RCP<PhotonMaterial>& material = 
     CollisionHandler::master_photon_map.find( particle.getCell() )->second;
+  
+  if( analogue )
+    material->collideAnalogue( particle, bank );
+  else
+    material->collideSurvivalBias( particle, bank );   
+}
+
+// Collide with the material in a cell
+void CollisionHandler::collideWithCellMaterial( ElectronState& particle,
+						ParticleBank& bank,
+						const bool analogue )
+{
+  // Make sure the cell is not void
+  testPrecondition( !CollisionHandler::isCellVoid( particle.getCell(),
+						   ELECTRON ) );
+  
+  const Teuchos::RCP<ElectronMaterial>& material = 
+    CollisionHandler::master_electron_map.find( particle.getCell() )->second;
   
   if( analogue )
     material->collideAnalogue( particle, bank );
