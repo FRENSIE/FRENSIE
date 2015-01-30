@@ -26,7 +26,6 @@ namespace MonteCarlo{
  */
 void ElectroatomACEFactory::createElectroatomCore(
             const Data::XSSEPRDataExtractor& raw_electroatom_data,
-            const double elastic_cutoff_angle,
             const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
             Teuchos::RCP<ElectroatomCore>& electroatom_core,
             const bool use_detailed_bremsstrahlung_data,
@@ -51,8 +50,7 @@ void ElectroatomACEFactory::createElectroatomCore(
     ElectroatomicReactionACEFactory::createHardElasticReaction(
 					   raw_electroatom_data,
 					   energy_grid,
-					   reaction_pointer,
-					   elastic_cutoff_angle );
+					   reaction_pointer );
   }
 
   // Create the bremsstrahlung scattering reaction
@@ -125,7 +123,6 @@ void ElectroatomACEFactory::createElectroatomCore(
 void ElectroatomACEFactory::createElectroatom(
 	    const Data::XSSEPRDataExtractor& raw_electroatom_data,
 	    const std::string& electroatom_name,
-        const double elastic_cutoff_angle,
         const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Electroatom>& electroatom,
@@ -140,7 +137,6 @@ void ElectroatomACEFactory::createElectroatom(
   Teuchos::RCP<ElectroatomCore> core;
 
   ElectroatomACEFactory::createElectroatomCore(raw_electroatom_data,
-                                               elastic_cutoff_angle,
                                                atomic_relaxation_model,
                                                core,
                                                use_detailed_bremsstrahlung_data,

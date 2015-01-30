@@ -42,7 +42,6 @@ public:
   //! Constructor
   HardElasticElectronScatteringDistribution(
                  const int atomic_number,
-                 const double cutoff_angle_cosine,
                  const ElasticDistribution& elastic_scattering_distribution);
 
   //! Destructor 
@@ -68,7 +67,7 @@ private:
   const int d_atomic_number;
 
   // Cutoff angle cosine between the distribution and analytical function
-  const double d_cutoff_angle_cosine;
+  double cutoff_angle_cosine;
 
   // elastic scattering distribution without forward screening data
   ElasticDistribution d_elastic_scattering_distribution;

@@ -22,7 +22,6 @@ HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HardElas
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
        const int atomic_number,
-       const double cutoff_angle_cosine,
        const HardElasticElectronScatteringDistribution::ElasticDistribution& 
          elastic_scattering_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
@@ -30,7 +29,6 @@ HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HardElas
                                                        cross_section,
                                                        threshold_energy_index ),
     d_scattering_distribution( atomic_number,
-                               cutoff_angle_cosine,
                                elastic_scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
@@ -46,8 +44,6 @@ HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HardElas
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the atomic number data is valid
   testPrecondition( atomic_number > 0 );
-  // Make sure the cuttoff angle cosine data is valid
-  testPrecondition( cutoff_angle_cosine > 0 );
   // Make sure the elastic scattering distribution data is valid
   testPrecondition( elastic_scattering_distribution.size() > 0 );
 }

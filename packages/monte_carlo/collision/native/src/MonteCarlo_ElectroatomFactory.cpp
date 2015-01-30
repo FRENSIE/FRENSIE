@@ -22,7 +22,6 @@ namespace MonteCarlo{
 ElectroatomFactory::ElectroatomFactory(
 		    const std::string& cross_sections_xml_directory,
 		    const boost::unordered_set<std::string>& electroatom_aliases,
-            const double elastic_cutoff_angle,
 		    const Teuchos::ParameterList& cross_section_table_info,
 		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 		    atomic_relaxation_model_factory,
@@ -61,7 +60,6 @@ ElectroatomFactory::ElectroatomFactory(
     {
       createElectroatomFromACETable( cross_sections_xml_directory, 
                                      *electroatom_name,
-                                     elastic_cutoff_angle,
                                      table_info,
                                      atomic_relaxation_model_factory,
                                      use_detailed_bremsstrahlung_data,
@@ -99,7 +97,6 @@ void ElectroatomFactory::createElectroatomMap(
 void ElectroatomFactory::createElectroatomFromACETable(
 			  const std::string& cross_sections_xml_directory,
 			  const std::string& electroatom_alias,
-              const double elastic_cutoff_angle,
 			  const Teuchos::ParameterList& electroatom_table_info,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
@@ -200,7 +197,6 @@ void ElectroatomFactory::createElectroatomFromACETable(
     // Create the new electroatom
     ElectroatomACEFactory::createElectroatom( xss_data_extractor,
                                               electroatomic_table_name,
-                                              elastic_cutoff_angle,
                                               atomic_weight,
                                               atomic_relaxation_model,
                                               electroatom,
