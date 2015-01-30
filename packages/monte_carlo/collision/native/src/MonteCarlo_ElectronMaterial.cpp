@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_PhotonMaterial.cpp
-//! \author Alex Robinson
-//! \brief  Photon material class definition
+//! \file   MonteCarlo_ElectronMaterial.cpp
+//! \author Luke Kersting
+//! \brief  Electron material class definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -10,7 +10,7 @@
 #include <stdexcept>
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonMaterial.hpp"
+#include "MonteCarlo_ElectronMaterial.hpp"
 #include "MonteCarlo_MaterialHelpers.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -19,37 +19,37 @@
 
 namespace MonteCarlo{
 
-// Constructor (without photonuclear data)
-PhotonMaterial::PhotonMaterial(
-		           const ModuleTraits::InternalMaterialHandle id,
+// Constructor
+ElectronMaterial::ElectronMaterial(
+			   const ModuleTraits::InternalMaterialHandle id,
 			   const double density,
-			   const PhotoatomNameMap& photoatom_name_map,
-			   const Teuchos::Array<double>& photoatom_fractions,
-		           const Teuchos::Array<std::string>& photoatom_names )
+			   const ElectroatomNameMap& electroatom_name_map,
+			   const Teuchos::Array<double>& electroatom_fractions,
+			   const Teuchos::Array<std::string>& electroatom_names )
   : d_id( id ),
     d_number_density( density ),
-    d_atoms( photoatom_fractions.size() )
+    d_atoms( electroatom_fractions.size() )
 {
   // Make sure the id is valid
   testPrecondition( id != ModuleTraits::invalid_internal_material_handle );
   // Make sure the density is valid
   testPrecondition( density != 0.0 );
   // Make sure the fraction values are valid (all positive or all negative)
-  testPrecondition( areFractionValuesValid( photoatom_fractions.begin(),
-					    photoatom_fractions.end() ) );
-  testPrecondition( photoatom_fractions.size() == photoatom_names.size() );
+  testPrecondition( areFractionValuesValid( electroatom_fractions.begin(),
+					    electroatom_fractions.end() ) );
+  testPrecondition( electroatom_fractions.size() == electroatom_names.size() );
 
-  // Copy the photoatoms that make up this material
-  for( unsigned i = 0u; i < photoatom_fractions.size(); ++i )
+  // Copy the electroatoms that make up this material
+  for( unsigned i = 0u; i < electroatom_fractions.size(); ++i )
   {
-    d_atoms[i].first = photoatom_fractions[i];
+    d_atoms[i].first = electroatom_fractions[i];
 
-    PhotoatomNameMap::const_iterator atom = 
-      photoatom_name_map.find( photoatom_names[i] );
+    ElectroatomNameMap::const_iterator atom = 
+      electroatom_name_map.find( electroatom_names[i] );
 
-    TEST_FOR_EXCEPTION( atom == photoatom_name_map.end(),
+    TEST_FOR_EXCEPTION( atom == electroatom_name_map.end(),
 			std::logic_error,
-			"Error: atom " << photoatom_names[i] << 
+			"Error: atom " << electroatom_names[i] << 
 			" has not been loaded!" );
 
     d_atoms[i].second = atom->second;    
@@ -63,7 +63,7 @@ PhotonMaterial::PhotonMaterial(
 					    d_atoms.end(),
 					    d_atoms.begin(),
 					    d_atoms.end(),
-				            &PhotonMaterial::getAtomicWeight );
+					    &ElectronMaterial::getAtomicWeight );
   }
   else // Normalize the atom fractions
   {
@@ -75,34 +75,34 @@ PhotonMaterial::PhotonMaterial(
   {
     d_number_density = 
       convertMassDensityToNumberDensity<Utility::FIRST,Utility::SECOND>(
-				          -1.0*density,
+					  -1.0*density,
 					  d_atoms.begin(),
 					  d_atoms.end(),
 					  d_atoms.begin(),
 					  d_atoms.end(),
-				          &PhotonMaterial::getAtomicWeight );
+					  &ElectronMaterial::getAtomicWeight );
   }
 
   // Convert the atom fractions to isotopic number densities
   scaleAtomFractionsByNumberDensity<Utility::FIRST>( d_number_density,
-						     d_atoms.begin(),
-						     d_atoms.end() );
+                                                     d_atoms.begin(),
+                                                     d_atoms.end() );
 }
 
 // Return the material id
-ModuleTraits::InternalMaterialHandle PhotonMaterial::getId() const
+ModuleTraits::InternalMaterialHandle ElectronMaterial::getId() const
 {
   return d_id;
 }
   
 // Return the number density (atom/b-cm)
-double PhotonMaterial::getNumberDensity() const
+double ElectronMaterial::getNumberDensity() const
 {
   return d_number_density;
 }
 
 // Return the macroscopic total cross section (1/cm)
-double PhotonMaterial::getMacroscopicTotalCrossSection( 
+double ElectronMaterial::getMacroscopicTotalCrossSection( 
 						    const double energy ) const
 {
   // Make sure the energy is valid
@@ -121,7 +121,7 @@ double PhotonMaterial::getMacroscopicTotalCrossSection(
 }
 
 // Return the macroscopic absorption cross section (1/cm)
-double PhotonMaterial::getMacroscopicAbsorptionCrossSection( 
+double ElectronMaterial::getMacroscopicAbsorptionCrossSection( 
 						    const double energy ) const
 {
   // Make sure the energy is valid
@@ -140,7 +140,7 @@ double PhotonMaterial::getMacroscopicAbsorptionCrossSection(
 }
 
 // Return the survival probability
-double PhotonMaterial::getSurvivalProbability( const double energy ) const
+double ElectronMaterial::getSurvivalProbability( const double energy ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
@@ -166,29 +166,9 @@ double PhotonMaterial::getSurvivalProbability( const double energy ) const
 }
 
 // Return the macroscopic cross section (1/cm) for a specific reaction
-double PhotonMaterial::getMacroscopicReactionCrossSection(
+double ElectronMaterial::getMacroscopicReactionCrossSection(
 			         const double energy,
-				 const PhotoatomicReactionType reaction ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( !ST::isnaninf( energy ) );
-  testPrecondition( energy > 0.0 );
-  
-  double cross_section = 0.0;
-
-  for( unsigned i = 0u; i < d_atoms.size(); ++i )
-  {
-    cross_section += d_atoms[i].first*
-      d_atoms[i].second->getReactionCrossSection( energy, reaction );
-  }
-
-  return cross_section;
-}
-
-// Return the macroscopic cross section (1/cm) for a specific reaction
-double PhotonMaterial::getMacroscopicReactionCrossSection(
-				const double energy,
-				const PhotonuclearReactionType reaction ) const
+				 const ElectroatomicReactionType reaction ) const
 {
   // Make sure the energy is valid
   testPrecondition( !ST::isnaninf( energy ) );
@@ -206,16 +186,16 @@ double PhotonMaterial::getMacroscopicReactionCrossSection(
 }
 
 
-// Collide with a photon
-void PhotonMaterial::collideAnalogue( PhotonState& photon, 
+// Collide with a electron
+void ElectronMaterial::collideAnalogue( ElectronState& electron, 
 				      ParticleBank& bank ) const
 {
-  unsigned atom_index = sampleCollisionAtom( photon.getEnergy() );
+  unsigned atom_index = sampleCollisionAtom( electron.getEnergy() );
 
-  d_atoms[atom_index].second->collideAnalogue( photon, bank );
+  d_atoms[atom_index].second->collideAnalogue( electron, bank );
 }
 
-// Collide with a photon and survival bias
+// Collide with a electron and survival bias
 /*! \details The method of survival biasing that has been implemented is to
  * first select the nuclide that is collided with. The particle weight is
  * then multiplied by the survival probability associated with the 
@@ -225,23 +205,23 @@ void PhotonMaterial::collideAnalogue( PhotonState& photon,
  * collision nuclide. The latter method appears to be more involved than the
  * former, which is why the former was chosen.
  */
-void PhotonMaterial::collideSurvivalBias( PhotonState& photon, 
+void ElectronMaterial::collideSurvivalBias( ElectronState& electron, 
 					  ParticleBank& bank ) const
 {
-  unsigned atom_index = sampleCollisionAtom( photon.getEnergy() );
+  unsigned atom_index = sampleCollisionAtom( electron.getEnergy() );
 
-  d_atoms[atom_index].second->collideSurvivalBias( photon, bank );
+  d_atoms[atom_index].second->collideSurvivalBias( electron, bank );
 }
 
 // Get the atomic weight from an atom pointer
-double PhotonMaterial::getAtomicWeight(
-	     const Utility::Pair<double,Teuchos::RCP<const Photoatom> >& pair )
+double ElectronMaterial::getAtomicWeight(
+	     const Utility::Pair<double,Teuchos::RCP<const Electroatom> >& pair )
 {
   return pair.second->getAtomicWeight();
 }
 
 // Sample the atom that is collided with
-unsigned PhotonMaterial::sampleCollisionAtom( const double energy ) const
+unsigned ElectronMaterial::sampleCollisionAtom( const double energy ) const
 {
   double scaled_random_number = 
     Utility::RandomNumberGenerator::getRandomNumber<double>()*
@@ -274,5 +254,5 @@ unsigned PhotonMaterial::sampleCollisionAtom( const double energy ) const
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_PhotonMaterial.cpp
+// end MonteCarlo_ElectronMaterial.cpp
 //---------------------------------------------------------------------------//
