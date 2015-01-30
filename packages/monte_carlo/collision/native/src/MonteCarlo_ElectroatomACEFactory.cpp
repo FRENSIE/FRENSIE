@@ -28,7 +28,8 @@ void ElectroatomACEFactory::createElectroatomCore(
             const Data::XSSEPRDataExtractor& raw_electroatom_data,
             const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
             Teuchos::RCP<ElectroatomCore>& electroatom_core,
-            const bool use_detailed_bremsstrahlung_data,
+            const BremsstrahlungAngularDistributionType 
+                    photon_distribution_function,
             const bool use_atomic_relaxation_data )
 {
   // Make sure the atomic relaxation model is valid
@@ -61,8 +62,8 @@ void ElectroatomACEFactory::createElectroatomCore(
     ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 						 raw_electroatom_data,
 						 energy_grid,
-						 reaction_pointer,
-                         use_detailed_bremsstrahlung_data);
+						 reaction_pointer, 
+                         photon_distribution_function );
   }
   
   // Create the atomic excitation scattering reaction
@@ -126,7 +127,8 @@ void ElectroatomACEFactory::createElectroatom(
         const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Electroatom>& electroatom,
-        const bool use_detailed_bremsstrahlung_data,
+        const BremsstrahlungAngularDistributionType 
+                photon_distribution_function,
 	    const bool use_atomic_relaxation_data )
 {
   // Make sure the atomic weight is valid
@@ -139,7 +141,7 @@ void ElectroatomACEFactory::createElectroatom(
   ElectroatomACEFactory::createElectroatomCore(raw_electroatom_data,
                                                atomic_relaxation_model,
                                                core,
-                                               use_detailed_bremsstrahlung_data,
+                                               photon_distribution_function,
                                                use_atomic_relaxation_data );
 					    
   // Create the electroatom

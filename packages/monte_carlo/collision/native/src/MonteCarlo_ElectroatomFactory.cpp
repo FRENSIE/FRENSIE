@@ -25,7 +25,8 @@ ElectroatomFactory::ElectroatomFactory(
 		    const Teuchos::ParameterList& cross_section_table_info,
 		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 		    atomic_relaxation_model_factory,
-            const bool use_detailed_bremsstrahlung_data,
+            const BremsstrahlungAngularDistributionType 
+                    photon_distribution_function,
             const bool use_atomic_relaxation_data )
 {
   // Create each electroatom in the set
@@ -62,7 +63,7 @@ ElectroatomFactory::ElectroatomFactory(
                                      *electroatom_name,
                                      table_info,
                                      atomic_relaxation_model_factory,
-                                     use_detailed_bremsstrahlung_data,
+                                     photon_distribution_function,
                                      use_atomic_relaxation_data );
     }
     else
@@ -100,7 +101,8 @@ void ElectroatomFactory::createElectroatomFromACETable(
 			  const Teuchos::ParameterList& electroatom_table_info,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
-              const bool use_detailed_bremsstrahlung_data,
+              const BremsstrahlungAngularDistributionType 
+                     photon_distribution_function,
               const bool use_atomic_relaxation_data )
 {
 
@@ -200,7 +202,7 @@ void ElectroatomFactory::createElectroatomFromACETable(
                                               atomic_weight,
                                               atomic_relaxation_model,
                                               electroatom,
-                                              use_detailed_bremsstrahlung_data,
+                                              photon_distribution_function,
                                               use_atomic_relaxation_data );
 
     // Cache the new electroatom in the table name map
