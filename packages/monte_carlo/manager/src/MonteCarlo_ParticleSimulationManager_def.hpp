@@ -18,6 +18,10 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
+#include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_NeutronState.hpp"
+
 
 namespace MonteCarlo{
 
