@@ -649,11 +649,7 @@ int main( int argc, char** argv )
 							energy_grid,
 							b_cross_section,
 							b_threshold_index,
-                            b_scattering_distribution,
-                            b_angular_distribution,
-                            xss_data_extractor->extractAtomicNumber(),
-                            lower_cutoff_energy,
-                            upper_cutoff_energy ) );
+                            b_scattering_distribution ) );
 
     // Create the reaction maps
     MonteCarlo::ElectroatomCore::ReactionMap scattering_reactions, 
