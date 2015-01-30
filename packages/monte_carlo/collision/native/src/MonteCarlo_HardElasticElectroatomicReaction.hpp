@@ -31,7 +31,6 @@ public:
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
       const int atomic_number,
-      const double cutoff_angle_cosine,
       const HardElasticElectronScatteringDistribution::ElasticDistribution& 
          elastic_scattering_distribution );
 

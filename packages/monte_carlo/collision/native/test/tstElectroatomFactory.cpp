@@ -33,7 +33,6 @@ boost::unordered_set<std::string> electroatom_aliases;
 Teuchos::RCP<MonteCarlo::AtomicRelaxationModelFactory> 
 atomic_relaxation_model_factory;
 Teuchos::RCP<MonteCarlo::ElectroatomFactory> electroatom_factory;
-double elastic_cutoff_angle = 0.999999;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -47,7 +46,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_basic )
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
                                               electroatom_aliases,
-                                              elastic_cutoff_angle,
                                               cross_section_table_info,
                                               atomic_relaxation_model_factory,
                                               false,
@@ -217,7 +215,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_basic )
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
                                               electroatom_aliases,
-                                              elastic_cutoff_angle,
                                               cross_section_table_info,
                                               atomic_relaxation_model_factory,
                                               true,
@@ -243,7 +240,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ionization_subshells
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
                                               electroatom_aliases,
-                                              elastic_cutoff_angle,
                                               cross_section_table_info,
                                               atomic_relaxation_model_factory,
                                               false,
@@ -427,7 +423,6 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, no_duplicate_tables )
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
                                               electroatom_aliases,
-                                              elastic_cutoff_angle,
                                               cross_section_table_info,
                                               atomic_relaxation_model_factory,
                                               false,

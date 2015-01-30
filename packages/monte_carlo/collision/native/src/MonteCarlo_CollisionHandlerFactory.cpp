@@ -181,7 +181,6 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 		     cell_id_mat_id_map,
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
-             SimulationProperties::elastic_cutoff_angle,
 		     SimulationProperties::isDetailedBremsstrahlungModeOn(),
 		     SimulationProperties::isAtomicRelaxationModeOn() );
     break;
@@ -507,7 +506,6 @@ void CollisionHandlerFactory::createElectronMaterials(
                                std::vector<std::string> >& cell_id_density_map,
    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
    atomic_relaxation_model_factory,
-   const double elastic_cutoff_angle,
    const bool use_detailed_bremsstrahlung_data,
    const bool use_atomic_relaxation_data )
 {
@@ -516,7 +514,6 @@ void CollisionHandlerFactory::createElectronMaterials(
   ElectroatomFactory electroatom_factory( cross_sections_xml_directory,
                                           electroatom_aliases,
                                           cross_sections_table_info,
-                                          elastic_cutoff_angle,
                                           atomic_relaxation_model_factory,
                                           use_detailed_bremsstrahlung_data,
                                           use_atomic_relaxation_data );

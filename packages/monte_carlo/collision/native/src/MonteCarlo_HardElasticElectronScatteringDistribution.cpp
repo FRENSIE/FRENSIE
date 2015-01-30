@@ -26,14 +26,15 @@ namespace MonteCarlo{
 // Constructor 
 HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribution(
     const int atomic_number,
-    const double cutoff_angle_cosine,
     const ElasticDistribution& elastic_scattering_distribution)
   : d_atomic_number( atomic_number ),
-    d_cutoff_angle_cosine( cutoff_angle_cosine ),
     d_elastic_scattering_distribution( elastic_scattering_distribution )
 {
   // Make sure the array is valid
   testPrecondition( d_elastic_scattering_distribution.size() > 0 );
+
+  // Cutoff angle cosine between the distribution and analytical function
+  cutoff_angle_cosine = 0.999999;
 }
 
 // Randomly scatter the electron
@@ -97,12 +98,12 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
       Utility::RandomNumberGenerator::getRandomNumber<double>();
 
   // evaluate the cutoff CDF for applying the analytical screening function
-  double cutoff_cdf_value = sampling_dist->evaluateCDF( d_cutoff_angle_cosine );
+  double cutoff_cdf_value = sampling_dist->evaluateCDF( cutoff_angle_cosine );
 
   // Sample from the distribution
   if( cutoff_cdf_value > random_number_2 )
   {
-    scattering_angle_cosine = sampling_dist->sample(d_cutoff_angle_cosine );
+    scattering_angle_cosine = sampling_dist->sample(cutoff_angle_cosine );
   }
   // Sample from the analytical function
   else

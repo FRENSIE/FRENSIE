@@ -31,7 +31,6 @@ Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::RCP<MonteCarlo::AtomicRelaxationModel> relaxation_model;
 std::string electroatom_name;
 double atomic_weight;
-double elastic_cutoff_angle = 0.999999;
 Teuchos::RCP<MonteCarlo::Electroatom> atom;
 
 //---------------------------------------------------------------------------//
@@ -42,7 +41,6 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
 {
   MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
                                                         electroatom_name,
-                                                        elastic_cutoff_angle,
                                                         atomic_weight,
                                                         relaxation_model,
                                                         atom,
@@ -195,7 +193,6 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
 {
   MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
                                                         electroatom_name,
-                                                        elastic_cutoff_angle,
                                                         atomic_weight,
                                                         relaxation_model,
                                                         atom,
@@ -210,7 +207,6 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_ionization_subshells
 {
   MonteCarlo::ElectroatomACEFactory::createElectroatom( *xss_data_extractor,
                                                         electroatom_name,
-                                                        elastic_cutoff_angle,
                                                         atomic_weight,
                                                         relaxation_model,
                                                         atom,
