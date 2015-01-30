@@ -55,9 +55,13 @@ double sampleTwoDDistribution(
       Utility::RandomNumberGenerator::getRandomNumber<double>();
     
     if( random_number < interpolation_fraction )
+    {
       return upper_bin_boundary->second->sample();
+    }
     else
+    {
       return lower_bin_boundary->second->sample();
+    }
   }
 }
 
