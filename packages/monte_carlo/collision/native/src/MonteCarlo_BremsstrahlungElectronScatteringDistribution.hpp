@@ -24,6 +24,7 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{

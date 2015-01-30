@@ -19,6 +19,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_CollisionHandler.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
 namespace MonteCarlo{
 
@@ -149,7 +150,7 @@ private:
                                std::vector<std::string> >& cell_id_density_map,
    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
    atomic_relaxation_model_factory,
-   const bool use_detailed_bremsstrahlung_data,
+   const BremsstrahlungAngularDistributionType photon_distribution_function,
    const bool use_atomic_relaxation_data );
 			 
 };
