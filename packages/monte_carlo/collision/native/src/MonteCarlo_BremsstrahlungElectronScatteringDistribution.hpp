@@ -39,7 +39,7 @@ public:
                                      Teuchos::RCP<Utility::OneDDistribution> > >
                                      BremsstrahlungDistribution;
 
-  //! Constructor with simple analytical photon angular distribution
+  //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
     const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution );
 
@@ -47,9 +47,13 @@ public:
   BremsstrahlungElectronScatteringDistribution(
     const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
     const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
-    const int atomic_number,
     const double lower_cutoff_energy,
     const double upper_cutoff_energy );
+
+  //! Constructor with detailed 2BS photon angular distribution
+  BremsstrahlungElectronScatteringDistribution(
+    const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
+    const int atomic_number );
 
   //! Destructor 
   virtual ~BremsstrahlungElectronScatteringDistribution()
@@ -77,19 +81,17 @@ private:
   // bremsstrahlung angular distribution of generated photons
   Teuchos::RCP<Utility::OneDDistribution> d_angular_distribution;
 
-  // Sample the outgoing photon angle from a distribution 
-  inline double SampleDetailedAngle(  double& electron_energy, 
-                                      double& photon_energy ) const ;
+  // Sample the outgoing photon angle from a tabular distribution 
+  double SampleTabularAngle(  double& incoming_electron_energy, 
+                              double& photon_energy ) const ;
 
-  // Sample the outgoing photon angle for energies outside the condensed-history limit
-  inline double SampleSimpleAngle(  double& electron_energy, 
-                                    double& photon_energy ) const ;
+  // Sample the outgoing photon angle from a dipole distribution
+  double SampleDipoleAngle(  double& incoming_electron_energy, 
+                             double& photon_energy ) const ;
 
-  /* Sample the outgoing photon angle using the 2BS sampling routine of 
-   * Kock and Motz
-   */
-  double Sample2BSAngle( double& incoming_electron_energy, 
-                         double& outgoing_electron_energy ) const;
+  // Sample the outgoing photon angle using the 2BS sampling routine of Kock and Motz
+  double Sample2BSAngle(  double& incoming_electron_energy, 
+                          double& photon_energy ) const ;
 
   // Calculate the rejection function for the 2BS sampling routine
   double Calculate2BSRejection( double& outgoing_electron_energy,

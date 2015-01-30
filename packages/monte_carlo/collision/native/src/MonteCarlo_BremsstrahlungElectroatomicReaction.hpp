@@ -25,7 +25,7 @@ class BremsstrahlungElectroatomicReaction : public StandardElectroatomicReaction
 
 public:
 
-  //! Constructor with simple analytical photon angular distribution
+  //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectroatomicReaction( 
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
@@ -33,7 +33,7 @@ public:
       const BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
               bremsstrahlung_scattering_distribution );
 
-  //! Constructor with detailed photon angular distribution
+  //! Constructor with detailed tabular photon angular distribution
   BremsstrahlungElectroatomicReaction(
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
@@ -41,9 +41,18 @@ public:
        const BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
               bremsstrahlung_scattering_distribution,
        const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
-       const int atomic_number,
        const double lower_cutoff_energy,
        const double upper_cutoff_energy );
+
+  //! Constructor with 2BS photon angular distribution
+  BremsstrahlungElectroatomicReaction(
+       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+       const Teuchos::ArrayRCP<const double>& cross_section,
+       const unsigned threshold_energy_index,
+       const BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
+              bremsstrahlung_scattering_distribution,
+       const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
+       const int atomic_number );
 
   //! Destructor
   virtual ~BremsstrahlungElectroatomicReaction()

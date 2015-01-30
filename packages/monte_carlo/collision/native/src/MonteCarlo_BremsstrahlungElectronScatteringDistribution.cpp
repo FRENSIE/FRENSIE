@@ -35,7 +35,7 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
   // Use simple analytical photon angular distribution
   d_angular_distribution_func = boost::bind<double>( 
-		    &BremsstrahlungElectronScatteringDistribution::SampleSimpleAngle,
+		    &BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle,
 		    boost::cref( *this ),
 		    _1,
             _2 );
@@ -45,12 +45,10 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
     const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
     const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
-    const int atomic_number,
     const double lower_cutoff_energy,
     const double upper_cutoff_energy )
   : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
     d_angular_distribution( angular_distribution ),
-    d_atomic_number( atomic_number ),
     d_lower_cutoff_energy( lower_cutoff_energy ),
     d_upper_cutoff_energy( upper_cutoff_energy )
 {
@@ -60,7 +58,25 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
   // Use detailed photon angular distribution
   d_angular_distribution_func = boost::bind<double>( 
-		    &BremsstrahlungElectronScatteringDistribution::SampleDetailedAngle,
+		    &BremsstrahlungElectronScatteringDistribution::SampleTabularAngle,
+		    boost::cref( *this ),
+		    _1,
+            _2 );
+}
+
+// Constructor with detailed 2BS photon angular distribution
+BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDistribution(
+  const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution,
+  const int atomic_number )
+  : d_bremsstrahlung_scattering_distribution( bremsstrahlung_scattering_distribution ),
+    d_atomic_number( atomic_number )
+{
+  // Make sure the arraies are valid
+  testPrecondition( d_bremsstrahlung_scattering_distribution.size() > 0 );
+
+  // Use detailed photon angular distribution
+  d_angular_distribution_func = boost::bind<double>( 
+		    &BremsstrahlungElectronScatteringDistribution::Sample2BSAngle,
 		    boost::cref( *this ),
 		    _1,
             _2 );
@@ -117,14 +133,14 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 }
 
 // Sample the outgoing photon direction from the analytical function
-double BremsstrahlungElectronScatteringDistribution::SampleSimpleAngle( 
-                                                  double& electron_energy, 
-                                                  double& photon_energy  ) const 
+double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle( 
+                                               double& incoming_electron_energy, 
+                                               double& photon_energy  ) const 
 {
   // get the velocity of the electron divided by the speed of light beta = v/c
   double beta = Utility::calculateDimensionlessRelativisticSpeed( 
                   Utility::PhysicalConstants::electron_rest_mass_energy,
-                  electron_energy );
+                  incoming_electron_energy );
 
   double scaled_random_number = 
     2.0 * Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -140,8 +156,9 @@ double BremsstrahlungElectronScatteringDistribution::SampleSimpleAngle(
  */
 double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle( 
                                         double& incoming_electron_energy, 
-                                        double& outgoing_electron_energy ) const 
+                                        double& photon_energy ) const 
 {
+  double outgoing_electron_energy = incoming_electron_energy - photon_energy;
   double ratio = outgoing_electron_energy/incoming_electron_energy;
   double two_ratio = 2.0*ratio;
   double parameter = ( 1.0 + ratio*ratio );
@@ -236,26 +253,23 @@ double BremsstrahlungElectronScatteringDistribution::Calculate2BSRejection(
 }
 
 // Sample the detailed outgoing photon direction
-double BremsstrahlungElectronScatteringDistribution::SampleDetailedAngle( 
-                                                   double& electron_energy, 
-                                                   double& photon_energy ) const
+double BremsstrahlungElectronScatteringDistribution::SampleTabularAngle( 
+                                               double& incoming_electron_energy, 
+                                               double& photon_energy ) const
 {
-    if ( electron_energy > d_upper_cutoff_energy )
+    if ( incoming_electron_energy > d_upper_cutoff_energy )
   {
-    return SampleSimpleAngle( electron_energy, photon_energy );
+    return SampleDipoleAngle( incoming_electron_energy, photon_energy );
   }
   else 
   {
-    if ( electron_energy > d_lower_cutoff_energy )
+    if ( incoming_electron_energy > d_lower_cutoff_energy )
     {
-    double outgoing_electron_energy = electron_energy - photon_energy;
-
-      return Sample2BSAngle( electron_energy, outgoing_electron_energy);
-//      return d_angular_distribution->evaluate( photon_energy );
+      return d_angular_distribution->evaluate( photon_energy );
     }
     else
     {
-    return SampleSimpleAngle( electron_energy, photon_energy );
+    return SampleDipoleAngle( incoming_electron_energy, photon_energy );
     } 
   }
 }
