@@ -185,7 +185,7 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
                                       x );
 
     // Normalized the rejection function
-    if( g_x_min < g_x_mid && g_x_min < g_x_max )
+    if( g_x_min < g_x_mid )
     {
       if( g_x_mid < g_x_max )
       {  
@@ -198,18 +198,21 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
     }
     else
     {
-      g /= g_x_min;
+      if( g_x_min < g_x_max )
+      {  
+        g /= g_x_max;
+      }
+      else 
+      {
+        g /= g_x_min;
+      }
     }
    
     // Apply rejection scheme
     double rand1 = Utility::RandomNumberGenerator::getRandomNumber<double>();
     if( rand1 < g )
     {
-      rejected = false;
-    }
-    else
-    {
-        return cos(theta); 
+      return cos(theta);
     }
   }
 }
@@ -227,8 +230,9 @@ double BremsstrahlungElectronScatteringDistribution::Calculate2BSRejection(
              ( 4.0*outgoing_electron_energy*outgoing_electron_energy ) +
              pow( d_atomic_number, 2.0/3.0)/( 12321*parameter2 ) );
 
-  double g = 3.0*parameter1 - two_ratio - 
-             ( 4.0 + m )*( parameter1 - 2.0*x*two_ratio/parameter2 );
+  return 3.0*parameter1 - two_ratio - 
+         ( 4.0 + m )*( parameter1 - 2.0*x*two_ratio/parameter2 );
+
 }
 
 // Sample the detailed outgoing photon direction
@@ -238,23 +242,19 @@ double BremsstrahlungElectronScatteringDistribution::SampleDetailedAngle(
 {
     if ( electron_energy > d_upper_cutoff_energy )
   {
-std::cout << "upper cutoff energy = " << d_upper_cutoff_energy << std::endl;
-std::cout << "upper energy sampled" << std::endl;
     return SampleSimpleAngle( electron_energy, photon_energy );
   }
   else 
   {
     if ( electron_energy > d_lower_cutoff_energy )
     {
-std::cout << "mid energy sampled" << std::endl;
     double outgoing_electron_energy = electron_energy - photon_energy;
 
-//      return Sample2BSAngle( electron_energy, outgoing_electron_energy);
-      return d_angular_distribution->evaluate( photon_energy );
+      return Sample2BSAngle( electron_energy, outgoing_electron_energy);
+//      return d_angular_distribution->evaluate( photon_energy );
     }
     else
     {
-std::cout << "lower energy sampled" << std::endl;
     return SampleSimpleAngle( electron_energy, photon_energy );
     } 
   }
