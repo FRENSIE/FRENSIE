@@ -34,11 +34,35 @@ ADD_EXECUTABLE(tstInterpolationPolicy
 TARGET_LINK_LIBRARIES(tstInterpolationPolicy utility_core)
 ADD_TEST(InterpolationPolicy_test tstInterpolationPolicy)
 
-ADD_EXECUTABLE(tstTwoDInterpolationPolicy
-  tstTwoDInterpolationPolicy.cpp
+ADD_EXECUTABLE(tstLinLinLinTwoDInterpolationPolicy
+  tstLinLinLinTwoDInterpolationPolicy.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
-TARGET_LINK_LIBRARIES(tstTwoDInterpolationPolicy utility_core)
-ADD_TEST(TwoDInterpolationPolicy_test tstTwoDInterpolationPolicy)
+TARGET_LINK_LIBRARIES(tstLinLinLinTwoDInterpolationPolicy utility_core)
+ADD_TEST(LinLinLinTwoDInterpolationPolicy_test tstLinLinLinTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLinLinLogTwoDInterpolationPolicy
+  tstLinLinLogTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLinLinLogTwoDInterpolationPolicy utility_core)
+ADD_TEST(LinLinLogTwoDInterpolationPolicy_test tstLinLinLogTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLinLogLinTwoDInterpolationPolicy
+  tstLinLogLinTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLinLogLinTwoDInterpolationPolicy utility_core)
+ADD_TEST(LinLogLinTwoDInterpolationPolicy_test tstLinLogLinTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLinLogLogTwoDInterpolationPolicy
+  tstLinLogLogTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLinLogLogTwoDInterpolationPolicy utility_core)
+ADD_TEST(LinLogLogTwoDInterpolationPolicy_test tstLinLogLogTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLogLinLinTwoDInterpolationPolicy
+  tstLogLinLinTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLogLinLinTwoDInterpolationPolicy utility_core)
+ADD_TEST(LogLinLinTwoDInterpolationPolicy_test tstLogLinLinTwoDInterpolationPolicy)
 
 ADD_EXECUTABLE(tstSetOperationFunctor 
   tstSetOperationFunctor.cpp 

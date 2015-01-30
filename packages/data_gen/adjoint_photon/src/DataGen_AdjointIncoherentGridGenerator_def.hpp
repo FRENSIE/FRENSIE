@@ -22,27 +22,27 @@ void AdjointIncoherentGridGenerator::generate(
 		     const double absolute_diff_tol,
 		     const double distance_tol ) const
 {
-  // Make sure the initial grid is valid
-  testPrecondition( initial_energy_grid.size() > 1 );
-  testPrecondition( Utility::Sort::isSortedAscending( 
-					         initial_energy_grid.begin(),
-				                 initial_energy_grid.end() ) );
-  // Make sure the tolerances are valid
-  testPrecondition( convergence_tol > 0.0 );
-  testPrecondition( convergence_tol <= 1.0 );
-  testPrecondition( absolute_diff_tol > 0.0 );
-  testPrecondition( distance_tol > 0.0 );
+  // // Make sure the initial grid is valid
+  // testPrecondition( initial_energy_grid.size() > 1 );
+  // testPrecondition( Utility::Sort::isSortedAscending( 
+  // 					         initial_energy_grid.begin(),
+  // 				                 initial_energy_grid.end() ) );
+  // // Make sure the tolerances are valid
+  // testPrecondition( convergence_tol > 0.0 );
+  // testPrecondition( convergence_tol <= 1.0 );
+  // testPrecondition( absolute_diff_tol > 0.0 );
+  // testPrecondition( distance_tol > 0.0 );
 
-  energy_grid.clear();
-  energy_grid.resize( 3 );
+  // energy_grid.clear();
+  // energy_grid.resize( 3 );
   
-  energy_grid[0] = AdjointIncoherentGridGenerator::min_table_energy;
-  energy_grid[1] = 
-    AdjointIncoherentCrossSectionEvaluator::getEnergyOfMaxCrossSection( 
-			    AdjointIncoherentGridGenerator::max_table_energy );
-  energy_grid[2] = AdjointIncoherentGridGenerator::max_table_energy;
+  // energy_grid[0] = AdjointIncoherentGridGenerator::min_table_energy;
+  // energy_grid[1] = 
+  //   AdjointIncoherentCrossSectionEvaluator::getEnergyOfMaxCrossSection( 
+  // 			    AdjointIncoherentGridGenerator::max_table_energy );
+  // energy_grid[2] = AdjointIncoherentGridGenerator::max_table_energy;
   
-  max_energy_grids.clear();
+  // max_energy_grids.clear();
 
   // while( log_max_energy_grid_queue.size() > 1 )
   // {
@@ -147,50 +147,50 @@ void AdjointIncoherentGridGenerator::generate(
 				       const double absolute_diff_tol,
 				       const double distance_tol )
 {
-  // Make sure the energy is valid
-  testPrecondition( raw_energy > 0.0 );
-  testPrecondition( raw_energy <= 
-		    AdjointIncoherentCrossSectionEvaluator::max_table_energy );
-  // Make sure the tolerances are valid
-  testPrecondition( convergence_tol > 0.0 );
-  testPrecondition( convergence_tol <= 1.0 );
-  testPrecondition( absolute_diff_tol > 0.0 );
-  testPrecondition( distance_tol > 0.0 );
+  // // Make sure the energy is valid
+  // testPrecondition( raw_energy > 0.0 );
+  // testPrecondition( raw_energy <= 
+  // 		    AdjointIncoherentCrossSectionEvaluator::max_table_energy );
+  // // Make sure the tolerances are valid
+  // testPrecondition( convergence_tol > 0.0 );
+  // testPrecondition( convergence_tol <= 1.0 );
+  // testPrecondition( absolute_diff_tol > 0.0 );
+  // testPrecondition( distance_tol > 0.0 );
   
-  // Load the initial max energy grid
-  Teuchos::Array<double> initial_max_energy_grid;
+  // // Load the initial max energy grid
+  // Teuchos::Array<double> initial_max_energy_grid;
   
-  if( AdjointIncoherentCrossSectionEvaluator::doesEnergyCorrespondeToAMaxCrossSectionValue( raw_energy ) )
-  {
-    initial_max_energy_grid.resize( 3 );
+  // if( AdjointIncoherentCrossSectionEvaluator::doesEnergyCorrespondeToAMaxCrossSectionValue( raw_energy ) )
+  // {
+  //   initial_max_energy_grid.resize( 3 );
 
-    initial_max_energy_grid[0] = InterpPolicy::processIndepVar( raw_energy );
-    initial_max_energy_grid[1] = InterpPolicy::processIndepVar( AdjointIncoherentCrossSectionEvaluator::getMaxEnergyResultingInMaxCrossSectionValueAtEnergy( raw_energy ) );
-    initial_max_energy_grid[2] = InterpPolicy::processIndepVar( AdjointIncoherentGridGenerator::getMaxTableEnergy() );
-  }
-  else
-  {
-    initial_max_energy_grid.resize( 2 );
+  //   initial_max_energy_grid[0] = InterpPolicy::processIndepVar( raw_energy );
+  //   initial_max_energy_grid[1] = InterpPolicy::processIndepVar( AdjointIncoherentCrossSectionEvaluator::getMaxEnergyResultingInMaxCrossSectionValueAtEnergy( raw_energy ) );
+  //   initial_max_energy_grid[2] = InterpPolicy::processIndepVar( AdjointIncoherentGridGenerator::getMaxTableEnergy() );
+  // }
+  // else
+  // {
+  //   initial_max_energy_grid.resize( 2 );
     
-    initial_max_energy_grid[0] = InterpPolicy::processIndepVar( raw_energy );
-    initial_max_energy_grid[1] = InterpPolicy::processIndepVar( AdjointIncoherentGridGenerator::getMaxTableEnergy() );
-  }
+  //   initial_max_energy_grid[0] = InterpPolicy::processIndepVar( raw_energy );
+  //   initial_max_energy_grid[1] = InterpPolicy::processIndepVar( AdjointIncoherentGridGenerator::getMaxTableEnergy() );
+  // }
 
-  // Create the boost function that returns the processed cross section
-  boost::function<double (double max_energy)> grid_function = boost::bind( 
-    &InterpPolicy::processDepVar,
-    boost::bind( &AdjointIncoherentCrossSectionEvaluator::evaluateCrossSection,
-		 boost::ref( d_adjoint_incoherent_cross_section ),
-		 raw_energy,
-		 boost::bind( &InterpPolicy::recoverProcessedIndepVar, _1 )) );
+  // // Create the boost function that returns the processed cross section
+  // boost::function<double (double max_energy)> grid_function = boost::bind( 
+  //   &InterpPolicy::processDepVar,
+  //   boost::bind( &AdjointIncoherentCrossSectionEvaluator::evaluateCrossSection,
+  // 		 boost::ref( d_adjoint_incoherent_cross_section ),
+  // 		 raw_energy,
+  // 		 boost::bind( &InterpPolicy::recoverProcessedIndepVar, _1 )) );
 
-  Utility::LinearGridGenerator max_grid_generator( grid_function );
+  // Utility::LinearGridGenerator max_grid_generator( grid_function );
 
-  max_grid_generator.generate( max_energy_grid,
-			       initial_max_energy_grid,
-			       convergence_tol,
-			       absolute_diff_tol,
-			       distance_tol );
+  // max_grid_generator.generate( max_energy_grid,
+  // 			       initial_max_energy_grid,
+  // 			       convergence_tol,
+  // 			       absolute_diff_tol,
+  // 			       distance_tol );
 }
 
 // Evaluate the log adjoint incoherent cross section on the specified grid
@@ -202,31 +202,31 @@ void AdjointIncoherentGridGenerator::evaluateCrossSectionOnGrid(
 			     Teuchos::Array<Teuchos::Array<double> >&
 			     adjoint_incoherent_cross_section )
 {
-  // Make sure the grid is valid
-  testPrecondition( energy_grid.size() > 1 );
-  testPrecondition( energy_grid.size() == max_energy_grids.size() );
+  // // Make sure the grid is valid
+  // testPrecondition( energy_grid.size() > 1 );
+  // testPrecondition( energy_grid.size() == max_energy_grids.size() );
 
-  adjoint_incoherent_cross_section.resize( max_energy_grids.size() );
+  // adjoint_incoherent_cross_section.resize( max_energy_grids.size() );
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
-  {
-    adjoint_incoherent_cross_section[i].resize( max_energy_grids[i].size() );
+  // for( unsigned i = 0; i < energy_grid.size(); ++i )
+  // {
+  //   adjoint_incoherent_cross_section[i].resize( max_energy_grids[i].size() );
 
-    double energy = InterpPolicy::recoverProcessedIndepVar( energy_grid[i] );
+  //   double energy = InterpPolicy::recoverProcessedIndepVar( energy_grid[i] );
     
-    for( unsigned j = 0; j < max_energy_grids[i].size(); ++j )
-    {
-      double max_energy = 
-	InterpPolicy::recoverProcessedIndepVar( max_energy_grids[i][j] );
+  //   for( unsigned j = 0; j < max_energy_grids[i].size(); ++j )
+  //   {
+  //     double max_energy = 
+  // 	InterpPolicy::recoverProcessedIndepVar( max_energy_grids[i][j] );
     
-      double raw_cross_section =
-	d_adjoint_incoherent_cross_section.evaluateCrossSection( energy,
-								 max_energy );
+  //     double raw_cross_section =
+  // 	d_adjoint_incoherent_cross_section.evaluateCrossSection( energy,
+  // 								 max_energy );
  
-      adjoint_incoherent_cross_section[i][j] = 
-	InterpPolicy::processDepVar( raw_cross_section );
-    }
-  }
+  //     adjoint_incoherent_cross_section[i][j] = 
+  // 	InterpPolicy::processDepVar( raw_cross_section );
+  //   }
+  // }
 }
 
 } // end DataGen

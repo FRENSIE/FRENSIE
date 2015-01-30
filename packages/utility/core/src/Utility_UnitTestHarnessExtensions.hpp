@@ -94,6 +94,85 @@
   TEST_GROUP##_##TEST_NAME##_UnitTest<Utility::MEMBER, TUPLE>		\
   instance_##TEST_GROUP##_##MEMBER##_##TUPLE##_##TEST_NAME##_UnitTest(#MEMBER,#TUPLE);
 
+/*! \brief A macro for the Teuchos Unit Test Harness for creating a 
+ * templated unit test on two Tuple Member and a tuple type.
+ * \ingroup unit_test_harness_extensions
+ */
+#define UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL(TEST_GROUP, TEST_NAME, MEMBER1, MEMBER2, TUPLE) \
+  template<Utility::TupleMember MEMBER1, Utility::TupleMember MEMBER2, typename TUPLE> \
+  class TEST_GROUP##_##TEST_NAME##_UnitTest : public Teuchos::UnitTestBase \
+  {									\
+  public:								\
+    TEST_GROUP##_##TEST_NAME##_UnitTest(				\
+      const std::string& member1Name,					\
+      const std::string& member2Name,					\
+      const std::string& tupleName					\
+    )                                                                   \
+    : Teuchos::UnitTestBase(						\
+	#TEST_GROUP, std::string(#TEST_NAME)+"_"+member1Name+"_"+member2Name+"_"+tupleName ) \
+    {}									\
+    void runUnitTestImpl( Teuchos::FancyOStream &out, bool &success ) const; \
+    virtual std::string unitTestFile() const { return __FILE__; }	\
+    virtual long int unitTestFileLineNumber() const { return __LINE__; } \
+  };									\
+									\
+    template<Utility::TupleMember MEMBER1, Utility::TupleMember MEMBER2, typename TUPLE> \
+    void TEST_GROUP##_##TEST_NAME##_UnitTest<MEMBER1,MEMBER2,TUPLE>::runUnitTestImpl( \
+         Teuchos::FancyOStream &out, bool &success ) const \
+
+/*! \brief A macro for the Teuchos Unit Test Harness for instantiating a
+ * templated unit test on two Tuple Members and a tuple type.
+ * \ingroup unit_test_harness_extensions
+ */
+#define UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_INSTANT(TEST_GROUP, TEST_NAME, MEMBER1, MEMBER2, TUPLE) \
+  template class TEST_GROUP##_##TEST_NAME##_UnitTest<Utility::MEMBER1, Utility::MEMBER2, TUPLE>; \
+  TEST_GROUP##_##TEST_NAME##_UnitTest<Utility::MEMBER1, Utility::MEMBER2, TUPLE> \
+  instance_##TEST_GROUP##_##MEMBER1##_##MEMBER2##_##TUPLE##_##TEST_NAME##_UnitTest(#MEMBER1,#MEMBER2,#TUPLE);
+
+/*! \brief A macro for the Teuchos Unit Test Harness for creating a 
+ * templated unit test on two Tuple Members and two tuple types.
+ * \ingroup unit_test_harness_extensions
+ */
+#define UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_DECL(TEST_GROUP, TEST_NAME, MEMBER1, MEMBER2, TUPLE1, TUPLE2) \
+  template<Utility::TupleMember MEMBER1,				\
+	   Utility::TupleMember MEMBER2,				\
+	   typename TUPLE1,						\
+	   typename TUPLE2>						\
+  class TEST_GROUP##_##TEST_NAME##_UnitTest : public Teuchos::UnitTestBase \
+  {									\
+  public:								\
+    TEST_GROUP##_##TEST_NAME##_UnitTest(				\
+      const std::string& member1Name,					\
+      const std::string& member2Name,					\
+      const std::string& tuple1Name,					\
+      const std::string& tuple2Name					\
+    )                                                                   \
+    : Teuchos::UnitTestBase(						\
+	#TEST_GROUP,				                        \
+	std::string(#TEST_NAME)+"_"+member1Name+"_"+tuple1Name+		\
+	"_"+member2Name+"_"+tuple2Name )				\
+    {}									\
+    void runUnitTestImpl( Teuchos::FancyOStream &out, bool &success ) const; \
+    virtual std::string unitTestFile() const { return __FILE__; }	\
+    virtual long int unitTestFileLineNumber() const { return __LINE__; } \
+  };									\
+									\
+  template<Utility::TupleMember MEMBER1,				\
+	   Utility::TupleMember MEMBER2,				\
+	   typename TUPLE1,						\
+	   typename TUPLE2>						\
+  void TEST_GROUP##_##TEST_NAME##_UnitTest<MEMBER1,MEMBER2,TUPLE1,TUPLE2>::runUnitTestImpl( \
+         Teuchos::FancyOStream &out, bool &success ) const \
+
+/*! \brief A macro for the Teuchos Unit Test Harness for instantiating a
+ * templated unit test on two Tuple Member and two tuple types.
+ * \ingroup unit_test_harness_extensions
+ */
+#define UTILITY_UNIT_TEST_MEMBER_2_TUPLE_2_TEMPLATE_INSTANT(TEST_GROUP, TEST_NAME, MEMBER1, MEMBER2, TUPLE1, TUPLE2 ) \
+  template class TEST_GROUP##_##TEST_NAME##_UnitTest<Utility::MEMBER1, Utility::MEMBER2, TUPLE1, TUPLE2>; \
+  TEST_GROUP##_##TEST_NAME##_UnitTest<Utility::MEMBER1, Utility::MEMBER2, TUPLE1, TUPLE2> \
+  instance_##TEST_GROUP##_##MEMBER1##_##TUPLE1##_##MEMBER2##_##TUPLE2##TEST_NAME##_UnitTest(#MEMBER1,#MEMBER2,#TUPLE1,#TUPLE2);
+
 /*! \brief A macro for the Teuchos Unit Test Harness for creating a templated 
  * unit test on two Tuple Member enums, one Tuple and a Teuchos Array.
  * \ingroup unit_test_harness_extensions

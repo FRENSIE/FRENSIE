@@ -130,6 +130,9 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
 						Iterator start_grid_1,
 						Iterator end_grid_1 )
 {
+  // Make sure the tuple members are valid
+  testStaticPrecondition( YIndepMember != DepMember );
+  
   return TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate<YIndepMember,DepMember>(
 						                 indep_var_x_0,
 								 indep_var_x_1,
@@ -165,7 +168,6 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate(
 {
   // Make sure no tuples are being used
   testStaticPrecondition( (boost::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
-  
   return TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate<FIRST,FIRST>( 
 							  indep_var_x_0,
 							  indep_var_x_1,
@@ -329,6 +331,9 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,
 				     Iterator start_grid_1,
 				     Iterator end_grid_1 )
 {
+  // Make sure the tuple members are valid
+  testStaticPrecondition( YIndepMember != DepMember );
+  
   return TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase<YIndepMember,DepMember>(
 							         indep_var_x_0,
 								 indep_var_x_1,
@@ -365,7 +370,7 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,
   // Make sure no tuples are being used
   testStaticPrecondition( (boost::is_floating_point<typename std::iterator_traits<YIterator>::value_type>::value) );
   
-  TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase<FIRST,FIRST>(
+  return TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolateUnitBase<FIRST,FIRST>(
 							   indep_var_x_0,
 							   indep_var_x_1,
 							   indep_var_x,
