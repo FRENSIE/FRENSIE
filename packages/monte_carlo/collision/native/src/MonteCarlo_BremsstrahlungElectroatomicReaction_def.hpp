@@ -114,8 +114,6 @@ BremsstrahlungElectroatomicReaction<InterpPolicy,processed_cross_section>::Brems
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
   // Make sure the bremsstrahlung scattering distribution data is valid
   testPrecondition( bremsstrahlung_scattering_distribution.size() > 0 );
-  // Make sure the angular distribution data is valid
-  testPrecondition( !angular_distribution.is_null() );
 }
 
 // Return the number of photons emitted from the rxn at the given energy
