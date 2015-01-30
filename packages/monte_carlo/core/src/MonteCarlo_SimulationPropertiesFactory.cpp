@@ -33,6 +33,8 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
       mode = PHOTON_MODE;
     else if( raw_mode == "NP" || raw_mode == "np" || raw_mode == "Neutron-Photon" )
       mode = NEUTRON_PHOTON_MODE;
+    else if( raw_mode == "E" || raw_mode == "e" || raw_mode == "Electron" )
+      mode = ELECTRON_MODE;
     else
     {
       THROW_EXCEPTION( std::runtime_error,
