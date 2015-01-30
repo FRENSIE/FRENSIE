@@ -87,8 +87,8 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
                        Teuchos::Array<std::string> > material_id_component_map;
   
   CollisionHandlerFactory::createMaterialIdDataMaps( material_reps,
-						     material_id_fraction_map,
-						     material_id_component_map );
+                                                     material_id_fraction_map,
+                                                     material_id_component_map );
 
   // Create the cell id data maps using DagMC
   boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
@@ -169,6 +169,7 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 		     SimulationProperties::isAtomicRelaxationModeOn(),
 		     SimulationProperties::isPhotonuclearInteractionModeOn() );
     break;
+  }
   case ELECTRON_MODE:
   {
     CollisionHandlerFactory::createElectronMaterials(
@@ -180,6 +181,7 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 		     cell_id_mat_id_map,
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
+             SimulationProperties::elastic_cutoff_angle,
 		     SimulationProperties::isDetailedBremsstrahlungModeOn(),
 		     SimulationProperties::isAtomicRelaxationModeOn() );
     break;
@@ -505,6 +507,7 @@ void CollisionHandlerFactory::createElectronMaterials(
                                std::vector<std::string> >& cell_id_density_map,
    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
    atomic_relaxation_model_factory,
+   const double elastic_cutoff_angle,
    const bool use_detailed_bremsstrahlung_data,
    const bool use_atomic_relaxation_data )
 {

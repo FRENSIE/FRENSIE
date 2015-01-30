@@ -95,6 +95,12 @@ public:
   //! Return the absolute maximum electron energy (MeV)
   static double getAbsoluteMaxElectronEnergy();
 
+  //! Set the elastic electron scattering angle analytic function cutoff 
+  static void setElasticAngleAnalyticCutoff( const double cosine_theta );
+
+  //! Return the maximum electron energy (MeV)
+  static double getElasticAngleAnalyticCutoff();
+
   //! Set implicit capture mode to on (off by default)
   static void setImplicitCaptureModeOn();
 
@@ -124,6 +130,12 @@ public:
 
   //! Return if photonuclear interaction mode is on
   static bool isPhotonuclearInteractionModeOn();
+
+  //! Set detailed bremsstrahlung mode to on (off by default)
+  static void setDetailedBremsstrahlungModeOn();
+
+  //! Return if photonuclear interaction mode is on
+  static bool isDetailedBremsstrahlungModeOn();
 
 private:
 
@@ -164,14 +176,17 @@ private:
   // The absolute minimum electron energy
   static const double absolute_min_electron_energy;
 
-  // The minimum photon energy (MeV)
+  // The minimum electron energy (MeV)
   static double min_electron_energy;
 
-  // The maximum photon energy (MeV)
+  // The maximum electron energy (MeV)
   static double max_electron_energy;
 
-  // The absolute maximum photon energy (MeV)
+  // The absolute maximum electron energy (MeV)
   static const double absolute_max_electron_energy;
+
+  // The elastic electron scattering angle analytic function cutoff 
+  static const double elastic_angle_analytic_cutoff;
 
   // The capture mode (true = implicit, false = analogue - default)
   static bool implicit_capture_mode_on;
@@ -187,6 +202,9 @@ private:
 
   // The photonuclear interaction mode (true = on, false = off - default)
   static bool photonuclear_interaction_mode_on;
+
+  // The detailed bremsstrahlung mode (true = on, false = off - default)
+  static bool detailed_bremsstrahlung_mode_on;
 };
 
 // Return the particle mode type
@@ -279,6 +297,12 @@ inline double SimulationProperties::getAbsoluteMaxElectronEnergy()
   return SimulationProperties::absolute_max_electron_energy;
 }
 
+// Return the absolute maximum electron energy (MeV)
+inline double SimulationProperties::getElasticAngleAnalyticCutoff()
+{
+  return SimulationProperties::absolute_max_electron_energy;
+}
+
 
 // Return if implicit capture mode has been set
 inline bool SimulationProperties::isImplicitCaptureModeOn()
@@ -308,6 +332,12 @@ inline bool SimulationProperties::isDetailedPairProductionModeOn()
 inline bool SimulationProperties::isPhotonuclearInteractionModeOn()
 {
   return SimulationProperties::photonuclear_interaction_mode_on;
+}
+
+// Return if detailed bremsstrahlung mode is on
+inline bool SimulationProperties::isDetailedBremsstrahlungModeOn()
+{
+  return SimulationProperties::detailed_bremsstrahlung_mode_on;
 }
 
 } // end MonteCarlo namespace
