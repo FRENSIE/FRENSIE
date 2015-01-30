@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_StandardElectroatomicReaction.hpp"
 #include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
 namespace MonteCarlo{
 
@@ -51,7 +52,6 @@ public:
        const unsigned threshold_energy_index,
        const BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution& 
               bremsstrahlung_scattering_distribution,
-       const Teuchos::RCP<Utility::OneDDistribution>& angular_distribution,
        const int atomic_number );
 
   //! Destructor

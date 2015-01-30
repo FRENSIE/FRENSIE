@@ -18,7 +18,7 @@
 
 namespace MonteCarlo{
   
-//! The photoatomic reaction type enum.
+//! The electroatomic reaction type enum.
 enum ElectroatomicReactionType{
   TOTAL_ELECTROATOMIC_REACTION = 1,
   TOTAL_ABSORPTION_ELECTROATOMIC_REACTION = 2,
