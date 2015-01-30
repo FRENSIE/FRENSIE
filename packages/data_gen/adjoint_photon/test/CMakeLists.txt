@@ -3,7 +3,7 @@ ADD_EXECUTABLE(tstAdjointIncoherentCrossSectionEvaluator
 TARGET_LINK_LIBRARIES(tstAdjointIncoherentCrossSectionEvaluator data_gen_adjoint_photon)
 ADD_TEST(AdjointIncoherentCrossSectionEvaluator_test tstAdjointIncoherentCrossSectionEvaluator --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_ace_table="1000.12p")
 
-ADD_EXECUTABLE(tstAdjointIncoherentGridGenerator
-  tstAdjointIncoherentGridGenerator.cpp)
-TARGET_LINK_LIBRARIES(tstAdjointIncoherentGridGenerator data_gen_adjoint_photon)
-ADD_TEST(AdjointIncoherentGridGenerator_test tstAdjointIncoherentGridGenerator)
+# ADD_EXECUTABLE(tstAdjointIncoherentGridGenerator
+#   tstAdjointIncoherentGridGenerator.cpp)
+# TARGET_LINK_LIBRARIES(tstAdjointIncoherentGridGenerator data_gen_adjoint_photon)
+# ADD_TEST(AdjointIncoherentGridGenerator_test tstAdjointIncoherentGridGenerator)
