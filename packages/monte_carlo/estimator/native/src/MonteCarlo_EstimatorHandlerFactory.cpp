@@ -481,20 +481,18 @@ void EstimatorHandlerFactory::createEstimatorDataMapsUsingDagMC(
 	     InvalidEstimatorRepresentation,
 	     "Error: estimator " << id << " has particle type " 
 	     << particle_type << " specified in the .sat file, which is "
-	     "not valid (choose n or p)!" );
+	     "not valid (choose n, p or e)!" );
     
     TEST_FOR_EXCEPTION( estimator_type == "cell.pulse.height" &&
 			particle_type == "n",
 			InvalidEstimatorRepresentation,
 			"Error: pulse height estimator " << id << " has "
 			"been assigned a particle type of neutron (only "
-			"photons can be assigned)" );
+			"photons or electrons can be assigned)" );
 			
 
-    if( particle_type == "n" )
-      estimator_id_ptype_map[id] = "Neutron";
-    else if( particle_type == "p" )
-      estimator_id_ptype_map[id] = "Photon";
+    estimator_id_ptype_map[id] = 
+      convertShortParticleTypeNameToVerboseParticleTypeName( particle_type );
 
     // Store the cells assigned to the estimator
     TEST_FOR_EXCEPTION( cell_it->second.size() == 0,
@@ -546,13 +544,11 @@ void EstimatorHandlerFactory::createEstimatorDataMapsUsingDagMC(
 	     InvalidEstimatorRepresentation,
 	     "Error: estimator " << id << " has particle type " 
 	     << particle_type << " specified in the .sat file, which is "
-	     "not valid (choose n or p)!" );
+	     "not valid (choose n, p or e)!" );
 
-    if( particle_type == "n" )
-      estimator_id_ptype_map[id] = "Neutron";
-    else if( particle_type == "p" )
-      estimator_id_ptype_map[id] = "Photon";
-
+    estimator_id_ptype_map[id] = 
+      convertShortParticleTypeNameToVerboseParticleTypeName( particle_type );
+    
     // Store the cells assigned to the estimator
     TEST_FOR_EXCEPTION( surface_it->second.size() == 0,
 			InvalidEstimatorRepresentation,

@@ -32,6 +32,10 @@ enum ParticleType{
 //! Test if the particle type name is valid
 bool isValidParticleTypeName( const std::string& particle_type_name );
 
+//! Convert shorthand particle type name to verbose particle type name
+std::string convertShortParticleTypeNameToVerboseParticleTypeName(
+				 const std::string& short_particle_type_name );
+
 //! Convert the particle type name to a ParticleType enum
 ParticleType convertParticleTypeNameToParticleTypeEnum( 
 				       const std::string& particle_type_name );

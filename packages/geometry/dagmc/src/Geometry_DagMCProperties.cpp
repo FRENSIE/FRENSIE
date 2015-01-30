@@ -114,7 +114,8 @@ bool DagMCProperties::isSurfaceEstimatorTypeValid(
 bool DagMCProperties::isParticleTypeValid( const std::string& particle_type )
 {
   return particle_type.compare( "n" ) == 0 ||
-    particle_type.compare( "p" ) == 0;
+    particle_type.compare( "p" ) == 0 ||
+    particle_type.compare( "e" ) == 0;
 }
 
 // Get all of the properties
