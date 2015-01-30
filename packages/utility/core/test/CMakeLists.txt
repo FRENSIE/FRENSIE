@@ -64,6 +64,24 @@ ADD_EXECUTABLE(tstLogLinLinTwoDInterpolationPolicy
 TARGET_LINK_LIBRARIES(tstLogLinLinTwoDInterpolationPolicy utility_core)
 ADD_TEST(LogLinLinTwoDInterpolationPolicy_test tstLogLinLinTwoDInterpolationPolicy)
 
+ADD_EXECUTABLE(tstLogLogLinTwoDInterpolationPolicy
+  tstLogLogLinTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLogLogLinTwoDInterpolationPolicy utility_core)
+ADD_TEST(LogLogLinTwoDInterpolationPolicy_test tstLogLogLinTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLogLinLogTwoDInterpolationPolicy
+  tstLogLinLogTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLogLinLogTwoDInterpolationPolicy utility_core)
+ADD_TEST(LogLinLogTwoDInterpolationPolicy_test tstLogLinLogTwoDInterpolationPolicy)
+
+ADD_EXECUTABLE(tstLogLogLogTwoDInterpolationPolicy
+  tstLogLogLogTwoDInterpolationPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLogLogLogTwoDInterpolationPolicy utility_core)
+ADD_TEST(LogLogLogTwoDInterpolationPolicy_test tstLogLogLogTwoDInterpolationPolicy)
+
 ADD_EXECUTABLE(tstSetOperationFunctor 
   tstSetOperationFunctor.cpp 
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

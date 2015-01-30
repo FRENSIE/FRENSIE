@@ -358,7 +358,7 @@ UTILITY_UNIT_TEST_MEMBER_1_TUPLE_1_TEMPLATE_DECL( LinLogLog,
   Utility::set<member>( tuple_grid[2], 1e-1 );
   Utility::set<member>( tuple_grid[3], 1.0 );
     
-  double grid_length = Utility::LinLogLin::calculateGridLength<member>(
+  double grid_length = Utility::LinLogLog::calculateGridLength<member>(
 							    tuple_grid.begin(),
 							    tuple_grid.end() );
 
@@ -378,7 +378,7 @@ TEUCHOS_UNIT_TEST( LinLogLog, calculateGridLength_no_tuple )
   grid[3] = 1.0;
 
   double grid_length = 
-    Utility::LinLogLin::calculateGridLength<Utility::FIRST>( grid.begin(),
+    Utility::LinLogLog::calculateGridLength<Utility::FIRST>( grid.begin(),
 							     grid.end() );
 
   TEST_FLOATING_EQUALITY( grid_length, 6.9077552789821, 1e-12 );
@@ -685,7 +685,7 @@ UNIT_TEST_INSTANTIATION_2_TUPLE( LinLogLog,
 				 interpolateUnitBase_raw_separate_tuple_grids);
 
 //---------------------------------------------------------------------------//
-// Check that the linear-linear-log unit base interpolation policy between
+// Check that the linear-log-log unit base interpolation policy between
 // four points can be done
 UTILITY_UNIT_TEST_MEMBER_2_TUPLE_1_TEMPLATE_DECL( 
 				  LinLogLog, 
