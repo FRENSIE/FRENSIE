@@ -24,6 +24,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_Electroatom.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
 namespace MonteCarlo{
 
@@ -39,7 +40,8 @@ public:
                    const Teuchos::ParameterList& cross_section_table_info,
                    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
                    atomic_relaxation_model_factory,
-                   const bool use_detailed_bremsstrahlung_data,
+                   const BremsstrahlungAngularDistributionType 
+                           photon_distribution_function,
                    const bool use_atomic_relaxation_data );
 
   //! Destructor
@@ -60,7 +62,8 @@ private:
 			  const Teuchos::ParameterList& electroatom_table_info,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
-              const bool use_detailed_bremsstrahlung_data,
+              const BremsstrahlungAngularDistributionType 
+                     photon_distribution_function,
               const bool use_atomic_relaxation_data );
 
   // The electroatom map

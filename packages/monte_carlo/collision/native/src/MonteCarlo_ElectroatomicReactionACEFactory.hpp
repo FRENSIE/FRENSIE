@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
 namespace MonteCarlo{
 
@@ -46,12 +47,12 @@ public:
 		   Teuchos::Array<Teuchos::RCP<ElectroatomicReaction> >&
 		   electroionization_subshell_reactions );
 
-  //! Create a simple (dipole distribution) bremsstrahlung electroatomic reaction
+  //! Create the bremsstrahlung electroatomic reaction
   static void createBremsstrahlungReaction(
 		const Data::XSSEPRDataExtractor& raw_electroatom_data,
 		const Teuchos::ArrayRCP<const double>& energy_grid,
 		Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reactions,
-		const bool use_detailed_bremsstrahlung_data );
+		BremsstrahlungAngularDistributionType photon_distribution_function );
 
   //! Create a void absorption electroatomic reaction
   static void createVoidAbsorptionReaction(
