@@ -78,6 +78,9 @@ bool SimulationProperties::detailed_pair_production_mode_on = false;
 // The photonuclear interaction mode (true = on, false = off - default)
 bool SimulationProperties::photonuclear_interaction_mode_on = false;
 
+// The detailed bremsstrahlung mode (true = on, false = off - default)
+bool SimulationProperties::detailed_bremsstrahlung_mode_on = false;
+
 // Set the particle mode
 void SimulationProperties::setParticleMode( 
 					 const ParticleModeType particle_mode )
@@ -193,6 +196,12 @@ void SimulationProperties::setDetailedPairProductionModeOn()
 void SimulationProperties::setPhotonuclearInteractionModeOn()
 {
   SimulationProperties::photonuclear_interaction_mode_on = true;
+}
+
+// Set detailed bremsstrahlung mode to on (off by default)
+void SimulationProperties::setDetailedBremsstrahlungModeOn()
+{
+  SimulationProperties::detailed_bremsstrahlung_mode_on = true;
 }
 
 } // end MonteCarlo namespace
