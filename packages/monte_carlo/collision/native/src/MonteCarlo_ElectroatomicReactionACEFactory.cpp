@@ -326,7 +326,7 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 		const Data::XSSEPRDataExtractor& raw_electroatom_data,
 		const Teuchos::ArrayRCP<const double>& energy_grid,
 		Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reaction,
-		const bool use_detailed_bremsstrahlung_data )
+		BremsstrahlungAngularDistributionType photon_distribution_function )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
@@ -381,13 +381,7 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
          true ) );
   }
 
-  if( use_detailed_bremsstrahlung_data )
-  {
-    //! \todo Find detailed bremsstrahlung data and implement
-  THROW_EXCEPTION( std::logic_error, 
-          "Error! The detailed bremsstrahlung reaction has not been implemented");
-  }
-  else
+  if( photon_distribution_function = DIPOLE_DISTRIBUTION )
   {
   // Create the bremsstrahlung reaction
   bremsstrahlung_reaction.reset(
@@ -396,6 +390,23 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 					      bremsstrahlung_cross_section,
 					      threshold_energy_index,
 					      energy_loss_distribution ) );
+  }
+  else if( photon_distribution_function = TABULAR_DISTRIBUTION )
+  {
+    //! \todo Find detailed bremsstrahlung data and implement
+  THROW_EXCEPTION( std::logic_error, 
+          "Error! The detailed bremsstrahlung reaction has not been implemented");
+  }
+  else if( photon_distribution_function = TWOBS_DISTRIBUTION )
+  {
+  // Create the bremsstrahlung reaction
+  bremsstrahlung_reaction.reset(
+		     new BremsstrahlungElectroatomicReaction<Utility::LinLin>(
+					      energy_grid,
+					      bremsstrahlung_cross_section,
+					      threshold_energy_index,
+					      energy_loss_distribution,
+                          raw_electroatom_data.extractAtomicNumber() ) );
   }
 }
 
