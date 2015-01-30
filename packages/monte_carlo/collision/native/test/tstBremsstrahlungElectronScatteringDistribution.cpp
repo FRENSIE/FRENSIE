@@ -131,9 +131,14 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 1 );
-  //fake_stream[0] = 4.061e-01; // Sample the 7.9496800E-04 MeV distribution
-  fake_stream[0] = 0.5; // Sample a photon energy of 1.11123878505389000E-04 MeV
+  std::vector<double> fake_stream( 6 );
+  fake_stream[0] = 0.5; // Sample electron energy bin of 3.1622800E-01 MeV
+  fake_stream[1] = 0.5; // Sample a photon energy of 1.11123878505389000E-04 MeV
+  fake_stream[2] = 0.5; // Sample a photon angle of 0.9118675275
+  fake_stream[3] = 0.49; // Reject the angle
+  fake_stream[4] = 0.5; // Sample a photon angle of 0.9118675275
+  fake_stream[5] = 0.48; // Accept the angle
+
  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -149,7 +154,8 @@ TEUCHOS_UNIT_TEST( BremsstrahlungElectronScatteringDistribution,
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
 
   TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 1.11123878505389E-04, 1e-12 );
-  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 9.912140279513E-03, 1e-12 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.612270260118, 1e-12 );
+//  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 9.912140279513E-03, 1e-12 );
   TEST_EQUALITY_CONST( bank.top()->getHistoryNumber(), 1 );
 
 }
