@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_SimulationPropertiesFactory.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -213,6 +214,19 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
   {
     if( properties.get<bool>( "Photonuclear Interaction" ) )
       SimulationProperties::setPhotonuclearInteractionModeOn();
+  }
+
+  // Get the bremsstrahlung photon angular distribution function - optional
+  if( properties.isParameter( "Bremsstrahlung Angular Distribution" ) )
+  {
+    MonteCarlo::BremsstrahlungAngularDistributionType function;
+
+    function = 
+      properties.get<MonteCarlo::BremsstrahlungAngularDistributionType>( 
+                                       "Bremsstrahlung Angular Distribution" );
+
+     SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
+                                                                     function );
   }
   
   properties.unused( std::cerr );
