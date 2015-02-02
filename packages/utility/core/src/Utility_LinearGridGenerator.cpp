@@ -60,6 +60,52 @@ void LinearGridGenerator::generate(
   testPrecondition( initial_grid_points.size() >= 2 );
   // Make sure the intial grid points are sorted
   testPrecondition( Sort::isSortedAscending( initial_grid_points.begin(),
+					     initial_grid_points.end(),
+					     true ) );
+  // Make sure the convergence tolerance is valid
+  testPrecondition( convergence_tol <= 1.0 );
+  testPrecondition( convergence_tol > 0.0 );
+  // Make sure the absolute difference tolerance is valid
+  testPrecondition( absolute_diff_tol <= 1.0 );
+  testPrecondition( absolute_diff_tol >= 0.0 );
+  // Make sure the distance tolerance is valid
+  testPrecondition( distance_tol <= 1.0 );
+  testPrecondition( distance_tol >= 0.0 );
+  
+  Teuchos::Array<double> evaluated_function;
+
+  this->generate( linearized_grid,
+		  evaluated_function,
+		  initial_grid_points,
+		  convergence_tol,
+		  absolute_diff_tol,
+		  distance_tol );
+}
+
+// Generate the linearized grid
+/*! \details There must be at least two initial grid points given (the lower
+ * grid boundary and the upper grid boundary). If there are discontinuities in
+ * the function, the grid points just below and just above the discontinuity
+ * should also be given to speed up the algorithm. The convergence tolerance
+ * is used to determine if two consecutive grid points are acceptable - if
+ * the relative error between the estimated value of the function (from 
+ * lin-lin interpolation) at the midpoint between two grid points end the
+ * actual value of the function at the midpoint is less that or equal to the
+ * convergence tolerance, the two grid points are kept. Otherwise the midpoint
+ * is inserted into the grid and the process is repeated.
+ */ 
+void LinearGridGenerator::generate( 
+			     Teuchos::Array<double>& linearized_grid,
+			     Teuchos::Array<double>& evaluated_function,
+			     const Teuchos::Array<double>& initial_grid_points,
+			     const double convergence_tol,
+			     const double absolute_diff_tol,
+			     const double distance_tol ) const
+{
+  // Make sure at least 2 initial grid points have been given
+  testPrecondition( initial_grid_points.size() >= 2 );
+  // Make sure the intial grid points are sorted
+  testPrecondition( Sort::isSortedAscending( initial_grid_points.begin(),
 					     initial_grid_points.end() ) );
   // Make sure the convergence tolerance is valid
   testPrecondition( convergence_tol <= 1.0 );
@@ -73,6 +119,7 @@ void LinearGridGenerator::generate(
 
   // Clear the linearized grid
   linearized_grid.clear();
+  evaluated_function.clear();
 
   // Use a queue data structure to calculate the grid points
   std::deque<double> grid_queue( initial_grid_points.begin(),
@@ -82,48 +129,58 @@ void LinearGridGenerator::generate(
   double x0, x1, x_mid, y0, y1, y_mid_exact, y_mid_estimated;
   double relative_error, abs_diff, relative_distance;
 
-  // Calculate the grid points
-  while( grid_queue.size() > 1 )
-  {
-    x0 = grid_queue.front();
-    
-    grid_queue.pop_front();
+  // Evaluate the first grid point
+  x0 = grid_queue.front();
+  grid_queue.pop_front();
 
+  y0 = d_function( x0 );
+  
+  // Calculate the grid points
+  while( !grid_queue.empty() )
+  {
     x1 = grid_queue.front();
 
     x_mid = 0.5*(x0 + x1);
-
-    y0 = d_function( x0 );
+    
     y1 = d_function( x1 );
     y_mid_exact = d_function( x_mid );
 
     y_mid_estimated = 0.5*(y0 + y1);
 
-    relative_error = Utility::Policy::relError( y_mid_exact, y_mid_estimated );
+    relative_error = Policy::relError( y_mid_exact, y_mid_estimated );
     
     abs_diff = 
       Teuchos::ScalarTraits<double>::magnitude( y_mid_exact - y_mid_estimated);
     
-    relative_distance = Utility::Policy::relError( x0, x1 );
+    relative_distance = Policy::relError( x0, x1 );
               
+    // Keep the grid points
+    if( relative_error <= convergence_tol ||
+	abs_diff <= absolute_diff_tol ||
+	relative_distance <= distance_tol )
+    {
+      linearized_grid.push_back( x0 );
+      evaluated_function.push_back( y0 );
+
+      x0 = x1;
+      grid_queue.pop_front();
+      
+      y0 = y1;
+    }
     // Refine the grid
-    if( relative_error > convergence_tol && 
-	abs_diff > absolute_diff_tol &&
-	relative_distance > distance_tol )
+    else
     {
       grid_queue.push_front( x_mid );
-      grid_queue.push_front( x0 );
     }
-    // Keep the grid points
-    else
-      linearized_grid.push_back( x0 );
   }
 
   // Add the last point to the linearized grid
-  linearized_grid.push_back( grid_queue.front() );  
-
+  linearized_grid.push_back( x0 );
+  evaluated_function.push_back( y0 );
+  
   // Make sure the linearized grid has at least 2 points
   testPostcondition( linearized_grid.size() >= 2 );
+  testPostcondition( linearized_grid.size() == evaluated_function.size() );
   // Make sure the linearized grid is sorted
   testPostcondition( Sort::isSortedAscending( linearized_grid.begin(),
 					      linearized_grid.end() ) );

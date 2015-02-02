@@ -16,7 +16,7 @@
 // FRENSIE Includes
 #include "DataGen_AdjointIncoherentCrossSectionEvaluator.hpp"
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_InterpolationPolicy.hpp"
+#include "Utility_TwoDInterpolationPolicy.hpp"
 
 namespace DataGen{
 
@@ -47,46 +47,68 @@ public:
   { /* ... */ }
 
   //! Generate the bilinear grid
-  template<typename InterpPolicy>
+  template<typename TwoDInerpPolicy>
   void generate( Teuchos::Array<double>& energy_grid,
 		 Teuchos::Array<Teuchos::Array<double> >& max_energy_grids,
-		 const Teuchos::Array<double>& initial_energy_grid,
+		 Teuchos::Array<Teuchos::Array<double> >& cross_section,
 		 const double convergence_tol = 0.001,
 		 const double absolute_diff_tol = 1e-12,
 		 const double distance_tol = 1e-14 );
 
-  //! Generate a max energy at the desired energy
-  template<typename InterpPolicy>
-  void generate( Teuchos::Array<double>& max_energy_grid,
-		 const double energy,
+  //! Generate a max energy grid at the desired energy
+  template<typename TwoDInterpPolicy>
+  void generate( Teuchos::Array<double>& processed_max_energy_grid,
+		 Teuchos::Array<double>& processed_cross_section,
+		 const double processed_energy,
 		 const double convergence_tol = 0.001,
 		 const double absolute_diff_tol = 1e-12,
 		 const double distance_tol = 1e-14 );
 
-  //! Evaluate the log adjoint incoherent cross section on the specified grid
-  template<typename InterpPolicy>
-  void evaluateCrossSectionOnGrid( 
-			     const Teuchos::Array<double>& energy_grid,
-			     const Teuchos::Array<Teuchos::Array<double> >&
-			     max_energy_grids,
-                             Teuchos::Array<Teuchos::Array<double> >&
-			     adjoint_incoherent_cross_section );
+  //! Evaluate the processed adjoint incoherent cross section
+  template<typename TwoDInterpPolicy>
+  double evaluateProcessedCrossSection( const double processed_energy,
+					const double processed_max_energy );
+
+  //! Check for 2D grid convergence
+  template<typename TwoDInterpPolicy>
+  bool hasGridConverged( 
+		   const double processed_energy_0,
+		   const double processed_energy_1,
+		   const Teuchos::Array<double>& processed_max_energy_grid_0,
+		   const Teuchos::Array<double>& processed_max_energy_grid_1,
+		   const Teuchos::Array<double>& processed_cross_section_0,
+		   const Teuchos::Array<double>& processed_cross_section_1,
+		   const double convergence_tol = 0.001,
+		   const double absolute_diff_tol = 1e-12,
+		   const double distance_tol = 1e-14 );
 			     
 private:
 
   // The min table energy
-  static double min_table_energy;
+  static double s_min_table_energy;
 
-  // The max table energy
-  static double max_table_energy;
+  // The max table energy (highest energy grid point)
+  static double s_max_table_energy;
+
+  // The max table energy increase factor
+  static double s_max_table_energy_nudge_factor;
+
+  // The max table energy (highest max energy grid point)
+  static double s_nudged_max_table_energy;
   
   // The adjoint incoherent cross section evaluator
-  AdjointIncoherentCrossSectionEvaluator d_adjoint_incoherent_cross_section;
-
-  
+  AdjointIncoherentCrossSectionEvaluator d_adjoint_incoherent_cross_section;  
 };
 
 } // end DataGen namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "DataGen_AdjointIncoherentGridGenerator_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end DATA_GEN_ADJOINT_INCOHERENT_GRID_GENERATOR_HPP
 

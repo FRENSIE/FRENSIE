@@ -21,8 +21,11 @@
 namespace DataGen{
 
 // Initialize the static member data
-double AdjointIncoherentGridGenerator::min_table_energy = 0.0001;
-double AdjointIncoherentGridGenerator::max_table_energy = 20.0;
+double AdjointIncoherentGridGenerator::s_min_table_energy = 0.0001;
+double AdjointIncoherentGridGenerator::s_max_table_energy = 20;
+double AdjointIncoherentGridGenerator::s_max_table_energy_nudge_factor = 0.01;
+double AdjointIncoherentGridGenerator::s_nudged_max_table_energy = 
+  s_max_table_energy*(1.0+s_max_table_energy_nudge_factor);
 
 //! Set the min table energy (default is 0.0001 MeV)
 void AdjointIncoherentGridGenerator::setMinTableEnergy( 
@@ -30,16 +33,15 @@ void AdjointIncoherentGridGenerator::setMinTableEnergy(
 {
   // Make sure the min energy is valid
   testPrecondition( min_energy > 0.0 );
-  testPrecondition( min_energy < 
-		    AdjointIncoherentGridGenerator::max_table_energy );
+  testPrecondition( min_energy < s_max_table_energy );
 
-  AdjointIncoherentGridGenerator::min_table_energy = min_energy;
+  s_min_table_energy = min_energy;
 }
 
 // Get the min table energy
 double AdjointIncoherentGridGenerator::getMinTableEnergy()
 {
-  return AdjointIncoherentGridGenerator::min_table_energy;
+  return s_min_table_energy;
 }
 
 // Set the max table energy (default is 20.0 MeV)
@@ -48,16 +50,17 @@ void AdjointIncoherentGridGenerator::setMaxTableEnergy(
 {
   // Make sure the max energy is valid
   testPrecondition( max_energy > 0.0 );
-  testPrecondition( max_energy > 
-		    AdjointIncoherentGridGenerator::min_table_energy );
+  testPrecondition( max_energy > s_min_table_energy );
 
-  AdjointIncoherentGridGenerator::max_table_energy = max_energy;
+  s_max_table_energy = max_energy;
+  s_nudged_max_table_energy = 
+    s_max_table_energy*(1.0+s_max_table_energy_nudge_factor);
 }
 
 // Get the max table energy
 double AdjointIncoherentGridGenerator::getMaxTableEnergy()
 {
-  return AdjointIncoherentGridGenerator::max_table_energy;
+  return s_max_table_energy;
 }
 
 // Constructor

@@ -83,6 +83,17 @@ private:
 
 public:
 
+  //! Dependent variable processing tag
+  typedef typename ZYInterpPolicy::DepVarProcessingTag DepVarProcessingTag;
+  
+  //! Second independent variable processing tag
+  typedef typename ZYInterpPolicy::IndepVarProcessingTag 
+  SecondIndepVarProcessingTag;
+
+  //! First independent variable processing tag
+  typedef typename ZXInterpPolicy::IndepVarProcessingTag 
+  FirstIndepVarProcessingTag;
+
   //! Process the dependent variable (z - ZYX)
   template<typename T>
   static T processDepVar( const T dep_var );

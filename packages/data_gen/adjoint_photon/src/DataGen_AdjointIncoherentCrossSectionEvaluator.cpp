@@ -100,6 +100,7 @@ double AdjointIncoherentCrossSectionEvaluator::evaluateCrossSection(
 					              const double max_energy )
 {
   // Make sure the energies are valid
+  testPrecondition( energy > 0.0 );
   testPrecondition( energy <= max_energy );
 
   double cross_section = 0.0;

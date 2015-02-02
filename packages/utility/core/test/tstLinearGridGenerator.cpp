@@ -85,15 +85,21 @@ TEUCHOS_UNIT_TEST( LinearGridGenerator, generate )
   initial_grid[0] = 0.0;
   initial_grid[1] = 10.0;
 
-  Teuchos::Array<double> linearized_grid;
+  Teuchos::Array<double> linearized_grid, evaluated_function;
   
-  generator.generate( linearized_grid, initial_grid, 0.001, 1e-12 );
+  generator.generate( linearized_grid, 
+		      evaluated_function,
+		      initial_grid, 
+		      0.001, 
+		      1e-12 );
 
   TEST_ASSERT( Utility::Sort::isSortedAscending( linearized_grid.begin(),
 						 linearized_grid.end() ) );
   TEST_EQUALITY_CONST( linearized_grid.size(), 321 );
+  TEST_EQUALITY_CONST( evaluated_function.size(), 321 );
 
   linearized_grid.clear();
+  evaluated_function.clear();
 
   // Create a linearized grid for cos(x)
   function = &cos;
