@@ -26,10 +26,8 @@ void AdjointIncoherentGridGenerator::generate(
 		     Teuchos::Array<Teuchos::Array<double> >& cross_section,
 		     const double convergence_tol,
 		     const double absolute_diff_tol,
-		     const double distance_tol )
+		     const double distance_tol ) const
 {
-  // Make sure only linear interpolation is used for the cross section
-  testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::DepVarProcessingTag,Utility::LinDepVarProcessingTag>::value) );
   // Make sure the same inerpolation is used for the energy and max energy
   testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::FirstIndepVarProcessingTag,typename TwoDInterpPolicy::SecondIndepVarProcessingTag>::value) );
   // Make sure the tolerances are valid
@@ -89,7 +87,7 @@ void AdjointIncoherentGridGenerator::generate(
 				      convergence_tol,
 				      absolute_diff_tol,
 				      distance_tol );
-
+    
     bool converged = this->hasGridConverged<TwoDInterpPolicy>( 
 							  energy_0, 
 							  energy_1, 
@@ -107,7 +105,15 @@ void AdjointIncoherentGridGenerator::generate(
       energy_grid.push_back( energy_0 );
       max_energy_grids.push_back( max_energy_grid_0 );
       cross_section.push_back( cross_section_grid_0 );
-
+      
+      if( s_verbose )
+      {
+	std::cout.precision( 18 );
+	std::cout << "Added " << energy_0 << " (" 
+		  << energy_grid.size()-1 << ")"
+		  << std::endl;
+      }
+      
       energy_0 = energy_1;
       energy_grid_queue.pop_front();
 
@@ -140,10 +146,10 @@ void AdjointIncoherentGridGenerator::generate(
 			     const double processed_energy,
 			     const double convergence_tol,
 			     const double absolute_diff_tol,
-			     const double distance_tol )
+			     const double distance_tol ) const
 {
-  // Make sure only linear interpolation is used for the cross section
-  testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::DepVarProcessingTag,Utility::LinDepVarProcessingTag>::value) );
+  // Make sure the same inerpolation is used for the energy and max energy
+  testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::FirstIndepVarProcessingTag,typename TwoDInterpPolicy::SecondIndepVarProcessingTag>::value) );
   // Make sure the energy is valid
   testPrecondition(
 	    processed_energy <= 
@@ -169,7 +175,8 @@ void AdjointIncoherentGridGenerator::generate(
       initial_processed_max_energy_grid.resize( 3 );
       
       initial_processed_max_energy_grid[0] = 
-	TwoDInterpPolicy::processSecondIndepVar( raw_energy );
+	TwoDInterpPolicy::processSecondIndepVar( 
+		      raw_energy*(1.0 + s_energy_to_max_energy_nudge_factor) );
       initial_processed_max_energy_grid[1] = 
 	TwoDInterpPolicy::processSecondIndepVar( max_energy_of_max_cs );
       initial_processed_max_energy_grid[2] = 
@@ -180,7 +187,8 @@ void AdjointIncoherentGridGenerator::generate(
       initial_processed_max_energy_grid.resize( 2 );
     
       initial_processed_max_energy_grid[0] = 
-	TwoDInterpPolicy::processSecondIndepVar( raw_energy );
+	TwoDInterpPolicy::processSecondIndepVar( 
+		      raw_energy*(1.0 + s_energy_to_max_energy_nudge_factor) );
     
       initial_processed_max_energy_grid[1] = 
 	TwoDInterpPolicy::processSecondIndepVar( s_nudged_max_table_energy );
@@ -191,7 +199,8 @@ void AdjointIncoherentGridGenerator::generate(
     initial_processed_max_energy_grid.resize( 2 );
     
     initial_processed_max_energy_grid[0] = 
-      TwoDInterpPolicy::processSecondIndepVar( raw_energy );
+      TwoDInterpPolicy::processSecondIndepVar( 
+		       raw_energy*(1.0+ s_energy_to_max_energy_nudge_factor) );
     
     initial_processed_max_energy_grid[1] = 
       TwoDInterpPolicy::processSecondIndepVar( s_nudged_max_table_energy );
@@ -217,16 +226,24 @@ void AdjointIncoherentGridGenerator::generate(
 // Evaluate the processed adjoint incoherent cross section
 template<typename TwoDInterpPolicy>
 double AdjointIncoherentGridGenerator::evaluateProcessedCrossSection( 
-					    const double processed_energy,
-					    const double processed_max_energy )
+				      const double processed_energy,
+				      const double processed_max_energy ) const
 {
-  // Make sure only linear interpolation is used for the cross section
-  testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::DepVarProcessingTag,Utility::LinDepVarProcessingTag>::value) );
+  // Make sure the same inerpolation is used for the energy and max energy
+  testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::FirstIndepVarProcessingTag,typename TwoDInterpPolicy::SecondIndepVarProcessingTag>::value) );
   
-  return TwoDInterpPolicy::processDepVar( 
-   d_adjoint_incoherent_cross_section.evaluateCrossSection( 
-    TwoDInterpPolicy::recoverProcessedFirstIndepVar( processed_energy ),
-    TwoDInterpPolicy::recoverProcessedSecondIndepVar( processed_max_energy )));
+  double cross_section = 
+    d_adjoint_incoherent_cross_section.evaluateCrossSection( 
+      TwoDInterpPolicy::recoverProcessedFirstIndepVar( processed_energy ),
+      TwoDInterpPolicy::recoverProcessedSecondIndepVar( processed_max_energy ),
+      1e-3 );
+
+  if( cross_section > 0.0 )
+    return TwoDInterpPolicy::processDepVar( cross_section );
+  else
+  {
+    return TwoDInterpPolicy::processDepVar(std::numeric_limits<double>::min());
+  }
 }
 
 // Check for 2D grid convergence
@@ -240,10 +257,10 @@ bool AdjointIncoherentGridGenerator::hasGridConverged(
 		    const Teuchos::Array<double>& processed_cross_section_1,
 		    const double convergence_tol,
 		    const double absolute_diff_tol,
-		    const double distance_tol )
+		    const double distance_tol ) const
 {
-  // Make sure only linear interpolation is used for the cross section
-  testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::DepVarProcessingTag,Utility::LinDepVarProcessingTag>::value) );
+  // Make sure the same inerpolation is used for the energy and max energy
+  testStaticPrecondition( (boost::is_same<typename TwoDInterpPolicy::FirstIndepVarProcessingTag,typename TwoDInterpPolicy::SecondIndepVarProcessingTag>::value) );
   // Make sure the process energies are valid
   testPrecondition( processed_energy_0 < processed_energy_1 );
   // Make sure the processed max energy grids are valid
@@ -261,8 +278,10 @@ bool AdjointIncoherentGridGenerator::hasGridConverged(
 
   bool converged = true;
 
-  if( Utility::Policy::relError( processed_energy_0, processed_energy_1 ) >
-      distance_tol )
+  double distance = 
+    Utility::Policy::relError( processed_energy_0, processed_energy_1 );
+
+  if( distance > distance_tol )
   {
     // Generate an optimized grid at the intermediate energy
     const double intermediate_processed_energy = 
@@ -280,7 +299,7 @@ bool AdjointIncoherentGridGenerator::hasGridConverged(
     for( unsigned i = 0; i < max_energy_grid_mid.size(); ++i )
     {
       // Check for convergence at the grid point
-      double interp_processed_cross_section = 
+      double interp_processed_cross_section = TwoDInterpPolicy::processDepVar(
 	TwoDInterpPolicy::interpolateProcessedUnitBase( 
 					   processed_energy_0,
 					   processed_energy_1,
@@ -293,7 +312,7 @@ bool AdjointIncoherentGridGenerator::hasGridConverged(
 					   processed_max_energy_grid_1.begin(),
 					   processed_max_energy_grid_1.end(),
 					   processed_cross_section_1.begin(),
-					   processed_cross_section_1.end() );
+					   processed_cross_section_1.end() ) );
     
       double relative_error =
 	Utility::Policy::relError( cross_section_grid_mid[i],
@@ -306,8 +325,18 @@ bool AdjointIncoherentGridGenerator::hasGridConverged(
 	abs_diff > absolute_diff_tol )
       {
 	converged = false;
-
+	
 	break;
+      }
+      else if( relative_error > convergence_tol &&
+	       abs_diff <= absolute_diff_tol )
+      {
+	std::cerr << "Warning: absolute difference tolerance hit before "
+		  << "convergence - processed_energy_0="
+		  << processed_energy_0 << ", processed_energy_1="
+		  << processed_energy_1 << ", processed_max_energy="
+		  << max_energy_grid_mid[i] << ", abs_diff_cs="
+		  << abs_diff << std::endl;
       }
 
       // Check for convergence at the grid mid point
@@ -316,7 +345,7 @@ bool AdjointIncoherentGridGenerator::hasGridConverged(
 	double max_energy_mid_point = 0.5*(max_energy_grid_mid[i]+
 					   max_energy_grid_mid[i+1]);
 	
-	interp_processed_cross_section = 
+	interp_processed_cross_section = TwoDInterpPolicy::processDepVar(
 	  TwoDInterpPolicy::interpolateProcessedUnitBase( 
 					   processed_energy_0,
 					   processed_energy_1,
@@ -329,7 +358,7 @@ bool AdjointIncoherentGridGenerator::hasGridConverged(
 					   processed_max_energy_grid_1.begin(),
 					   processed_max_energy_grid_1.end(),
 					   processed_cross_section_1.begin(),
-					   processed_cross_section_1.end() );
+					   processed_cross_section_1.end() ) );
     
 	double true_processed_cross_section = 
 	  this->evaluateProcessedCrossSection<TwoDInterpPolicy>( 
@@ -350,8 +379,25 @@ bool AdjointIncoherentGridGenerator::hasGridConverged(
 	  
 	  break;
 	}
+	else if( relative_error > convergence_tol &&
+	       abs_diff <= absolute_diff_tol )
+	{
+	  std::cerr << "Warning: absolute difference tolerance hit before "
+		    << "convergence - processed_energy_0="
+		    << processed_energy_0 << ", processed_energy_1="
+		    << processed_energy_1 << ", processed_max_energy="
+		    << max_energy_grid_mid[i] << ", abs_diff_cs="
+		    << abs_diff << std::endl;
+	}
       }
     }    
+  }
+  else
+  {
+    std::cerr << "Warning: distance tolerance hit before convergence - "
+	      << "relError(processed_energy_0,processed_energy_1) =\n" 
+	      << "relError(" << processed_energy_0 << "," 
+	      << processed_energy_1 << ") = " << distance << std::endl;
   }
     
   return converged;
