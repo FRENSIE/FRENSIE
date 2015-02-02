@@ -14,5 +14,8 @@
   <Parameter name="Atomic Relaxation" type="bool" value="false"/>
   <Parameter name="Detailed Pair Production" type="bool" value="true"/>
   <Parameter name="Photonuclear Interaction" type="bool" value="true"/>
+  <Parameter name="Bremsstrahlung Angular Distribution" 
+               type="MonteCarlo::BremsstrahlungAngularDistributionType" 
+               value="MonteCarlo::DIPOLE_DISTRIBUTION"/>
 
 </ParameterList>
