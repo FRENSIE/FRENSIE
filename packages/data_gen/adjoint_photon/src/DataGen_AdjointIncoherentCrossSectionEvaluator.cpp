@@ -24,9 +24,6 @@
 
 namespace DataGen{
 
-// Initialize the static member data
-const double AdjointIncoherentCrossSectionEvaluator::default_quadrature_precision = 1e-6;
-
 // Return the energy of the max cross section value
 double AdjointIncoherentCrossSectionEvaluator::getEnergyOfMaxCrossSection( 
 						      const double max_energy )
@@ -65,9 +62,7 @@ double AdjointIncoherentCrossSectionEvaluator::getMaxEnergyResultingInMaxCrossSe
  */
 AdjointIncoherentCrossSectionEvaluator::AdjointIncoherentCrossSectionEvaluator()
   : d_scattering_function( new Utility::UniformDistribution( 
-			      0.0, std::numeric_limits<double>::max(), 1.0 ) ),
-    d_quadrature_kernel( new Utility::GaussKronrodQuadratureKernel( 
-       AdjointIncoherentCrossSectionEvaluator::default_quadrature_precision ) )
+			      0.0, std::numeric_limits<double>::max(), 1.0 ) )
 { 
   // Force the quadrature kernel throw exceptions
   Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
@@ -80,9 +75,7 @@ AdjointIncoherentCrossSectionEvaluator::AdjointIncoherentCrossSectionEvaluator()
  */
 AdjointIncoherentCrossSectionEvaluator::AdjointIncoherentCrossSectionEvaluator(
     const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function )
-  : d_scattering_function( scattering_function ),
-    d_quadrature_kernel( new Utility::GaussKronrodQuadratureKernel( 
-       AdjointIncoherentCrossSectionEvaluator::default_quadrature_precision ) )
+  : d_scattering_function( scattering_function )
 {
   // Make sure the scattering function is valid
   testPrecondition( !scattering_function.is_null() );
@@ -96,8 +89,9 @@ AdjointIncoherentCrossSectionEvaluator::AdjointIncoherentCrossSectionEvaluator(
  * will be increased in the quadrature kernel until convergence is achieved.
  */
 double AdjointIncoherentCrossSectionEvaluator::evaluateCrossSection( 
-						      const double energy, 
-					              const double max_energy )
+						 const double energy, 
+						 const double max_energy,
+						 const double precision ) const
 {
   // Make sure the energies are valid
   testPrecondition( energy > 0.0 );
@@ -110,57 +104,21 @@ double AdjointIncoherentCrossSectionEvaluator::evaluateCrossSection(
     Utility::AdjointKleinNishinaDistribution distribution( energy, max_energy);
 
     boost::function<double (double x)> diff_adjoint_incoh_wrapper = 
-      boost::bind<double>( &AdjointIncoherentCrossSectionEvaluator::evaluateDifferentialAdjointIncoherentCrossSection,
+      boost::bind<double>( &AdjointIncoherentCrossSectionEvaluator::evaluateDifferentialCrossSection,
 			   boost::cref( *this ),
 			   _1,
 			   distribution );
 
     double abs_error;
-    double precision = 
-      AdjointIncoherentCrossSectionEvaluator::default_quadrature_precision;
     
-    // Modify the precision if necessary to get allow the integral to converge
-    while( precision <= 1e-2 )
-    {
-      if( precision != 1e-2 )
-      {
-	try{
-	  d_quadrature_kernel->integrateAdaptively<21>(
+    Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
+
+    quadrature_kernel.integrateAdaptively<15>(
 					diff_adjoint_incoh_wrapper,
 					distribution.getLowerBoundOfIndepVar(),
 					distribution.getUpperBoundOfIndepVar(),
 					cross_section,
 					abs_error );
-	}
-	catch( Utility::GSLException )
-	{
-	  precision *= 10.0;
-	
-	  d_quadrature_kernel.reset( new Utility::GaussKronrodQuadratureKernel(
-								 precision ) );
-
-	  continue;
-	}
-      }
-      else // Throw error if integral still doesn't converge
-      {
-	d_quadrature_kernel->integrateAdaptively<21>(
-					diff_adjoint_incoh_wrapper,
-					distribution.getLowerBoundOfIndepVar(),
-					distribution.getUpperBoundOfIndepVar(),
-					cross_section,
-					abs_error );
-      }
-
-      break;
-    }
-
-    if( precision != 
-	AdjointIncoherentCrossSectionEvaluator::default_quadrature_precision )
-    {
-      d_quadrature_kernel.reset( new Utility::GaussKronrodQuadratureKernel( 
-       AdjointIncoherentCrossSectionEvaluator::default_quadrature_precision ));
-    }
   }
   else
     cross_section = 0.0;
@@ -169,26 +127,41 @@ double AdjointIncoherentCrossSectionEvaluator::evaluateCrossSection(
 }
 
 // Evaluate the differential adjoint incoherent cross section (dc/dx)
-double AdjointIncoherentCrossSectionEvaluator::evaluateDifferentialAdjointIncoherentCrossSection(
+double 
+AdjointIncoherentCrossSectionEvaluator::evaluateDifferentialCrossSection(
 	   const double inverse_energy_gain_ratio, 
 	   const Utility::AdjointKleinNishinaDistribution& distribution ) const
 {
-  double inverse_wavelength = distribution.getEnergy()/
+  // Make sure the inverse energy gain ratio is valid
+  testPrecondition( inverse_energy_gain_ratio >=
+		    distribution.getLowerBoundOfIndepVar() );
+  testPrecondition( inverse_energy_gain_ratio <=
+		    distribution.getUpperBoundOfIndepVar() );
+  // The inverse wavelength of the outgoing energy must be calculated
+  const double outgoing_energy = 
+    distribution.getEnergy()/inverse_energy_gain_ratio;
+  
+  const double inverse_wavelength = outgoing_energy/
     (Utility::PhysicalConstants::planck_constant*
      Utility::PhysicalConstants::speed_of_light);
   
-  double scattering_angle_cosine = 
+  const double scattering_angle_cosine = 
     1.0 - (1.0 - inverse_energy_gain_ratio)/distribution.getAlpha();
 
-  double scat_func_arg = 
+  const double scat_func_arg = 
     sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength;
+  
+  const double scattering_function_value = 
+    d_scattering_function->evaluate( scat_func_arg );
   
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
+  testPostcondition( scattering_function_value >= 0.0 );
+  testPostcondition( scattering_function_value <= 100.0 );
 
   return distribution.evaluate( inverse_energy_gain_ratio )*
-    d_scattering_function->evaluate( scat_func_arg );
+    scattering_function_value;
 }
 
 } // end DataGen namespace

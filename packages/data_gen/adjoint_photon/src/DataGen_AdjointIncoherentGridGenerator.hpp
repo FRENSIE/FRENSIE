@@ -37,6 +37,18 @@ public:
 
   //! Get the max table energy
   static double getMaxTableEnergy();
+
+  //! Set the energy to max energy nudge factor
+  static void setEnergyToMaxEnergyNudgeFactor( const double factor );
+
+  //! Get the energy to max energy nudge factor
+  static double getEnergyToMaxEnergyNudgeFactor();
+
+  //! Set verbose mode to on
+  static void setVerboseOn();
+
+  //! Set verbose mode to off
+  static void setVerboseOff();
   
   //! Constructor
   AdjointIncoherentGridGenerator( 
@@ -53,7 +65,7 @@ public:
 		 Teuchos::Array<Teuchos::Array<double> >& cross_section,
 		 const double convergence_tol = 0.001,
 		 const double absolute_diff_tol = 1e-12,
-		 const double distance_tol = 1e-14 );
+		 const double distance_tol = 1e-14 ) const;
 
   //! Generate a max energy grid at the desired energy
   template<typename TwoDInterpPolicy>
@@ -62,12 +74,13 @@ public:
 		 const double processed_energy,
 		 const double convergence_tol = 0.001,
 		 const double absolute_diff_tol = 1e-12,
-		 const double distance_tol = 1e-14 );
+		 const double distance_tol = 1e-14 ) const;
 
   //! Evaluate the processed adjoint incoherent cross section
   template<typename TwoDInterpPolicy>
-  double evaluateProcessedCrossSection( const double processed_energy,
-					const double processed_max_energy );
+  double evaluateProcessedCrossSection( 
+				     const double processed_energy,
+				     const double processed_max_energy ) const;
 
   //! Check for 2D grid convergence
   template<typename TwoDInterpPolicy>
@@ -80,7 +93,7 @@ public:
 		   const Teuchos::Array<double>& processed_cross_section_1,
 		   const double convergence_tol = 0.001,
 		   const double absolute_diff_tol = 1e-12,
-		   const double distance_tol = 1e-14 );
+		   const double distance_tol = 1e-14 ) const;
 			     
 private:
 
@@ -95,6 +108,12 @@ private:
 
   // The max table energy (highest max energy grid point)
   static double s_nudged_max_table_energy;
+
+  // The energy to max energy nudge factor
+  static double s_energy_to_max_energy_nudge_factor;
+
+  // The verbose mode
+  static bool s_verbose;
   
   // The adjoint incoherent cross section evaluator
   AdjointIncoherentCrossSectionEvaluator d_adjoint_incoherent_cross_section;  

@@ -20,7 +20,7 @@ namespace Utility{
 // Initialize static member data
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>
 const double TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::s_tol=
-  1e-12;
+  1e-3;
 
 // Process the dependent variable (z - ZYX)
 template<typename ZYInterpPolicy, typename ZXInterpPolicy>

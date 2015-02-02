@@ -51,23 +51,18 @@ public:
 
   //! Return the cross section value at a given energy and max energy
   double evaluateCrossSection( const double energy, 
-			       const double max_energy );
-
-private:
+			       const double max_energy,
+			       const double precision = 1e-6 ) const;
 
   // Evaluate the differential adjoint incoherent cross section (dc/dx)
-  double evaluateDifferentialAdjointIncoherentCrossSection(
+  double evaluateDifferentialCrossSection(
 	  const double inverse_energy_gain_ratio, 
 	  const Utility::AdjointKleinNishinaDistribution& distribution ) const;
 
-  // The default quadrature kernel precision
-  static const double default_quadrature_precision;
+private:
 
   // The scattering function
   Teuchos::RCP<const Utility::OneDDistribution> d_scattering_function;
-
-  // The quadrature kernel
-  boost::scoped_ptr<Utility::GaussKronrodQuadratureKernel> d_quadrature_kernel;
 };
 
 } // end DataGen namespace
