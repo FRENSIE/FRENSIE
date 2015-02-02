@@ -39,6 +39,14 @@ public:
 		 const double convergence_tol = 0.001,
 		 const double absolute_diff_tol = 1e-12,
 		 const double distance_tol = 1e-14 ) const;
+
+  //! Generate the linear grid (return evaluated function on grid)
+  void generate( Teuchos::Array<double>& linearized_grid,
+		 Teuchos::Array<double>& evaluated_function,
+		 const Teuchos::Array<double>& initial_grid_points,
+		 const double convergence_tol = 0.001,
+		 const double absolute_diff_tol = 1e-12,
+		 const double distance_tol = 1e-14 ) const;
   
 private:
 
