@@ -219,12 +219,24 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
   // Get the bremsstrahlung photon angular distribution function - optional
   if( properties.isParameter( "Bremsstrahlung Angular Distribution" ) )
   {
-    MonteCarlo::BremsstrahlungAngularDistributionType function;
-
-    function = 
-      properties.get<MonteCarlo::BremsstrahlungAngularDistributionType>( 
-                                       "Bremsstrahlung Angular Distribution" );
-
+    std::string raw_function = 
+           properties.get<std::string>( "Bremsstrahlung Angular Distribution" );
+    
+     MonteCarlo::BremsstrahlungAngularDistributionType function;
+    
+    if( raw_function == "Dipole" || raw_function == "dipole" || raw_function == "DIPOLE" )
+      function = MonteCarlo::DIPOLE_DISTRIBUTION;
+    else if( raw_function == "Tabular" || raw_function == "tabular" || raw_function == "TABULAR" )
+      function = MonteCarlo::DIPOLE_DISTRIBUTION;
+    else if( raw_function == "2BS" || raw_function == "2bs" || raw_function == "twobs" )
+      function = MonteCarlo::TWOBS_DISTRIBUTION;
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+		       "Error: bremsstrahlung angular distribution " << raw_function << 
+               " is not currently supported!" );
+    }
+   
      SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
                                                                      function );
   }
