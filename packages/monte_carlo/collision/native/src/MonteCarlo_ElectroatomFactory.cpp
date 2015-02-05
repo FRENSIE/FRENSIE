@@ -214,6 +214,8 @@ void ElectroatomFactory::createElectroatomFromACETable(
     d_electroatom_name_map[electroatom_alias] = 
       d_electroatomic_table_name_map[electroatomic_table_name];
   }
+
+  std::cout << "done." << std::endl;
 }
 
 } // end MonteCarlo namespace

@@ -242,7 +242,8 @@ private:
   // Calculate the figure of merit (FOM) of an estimator bin
   double calculateFOM( const double relative_error ) const;
 			     
-					       
+  // The tolerance used for relative error and vov calculations
+  static double tol;
 
   // The number of particle histories that will be run
   static unsigned long long num_histories;
