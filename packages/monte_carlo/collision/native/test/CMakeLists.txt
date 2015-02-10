@@ -313,6 +313,13 @@ IF(FRENSIE_ENABLE_DAGMC)
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryElectronMode
+    tstCollisionHandlerFactoryElectronMode.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryElectronMode monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryElectronMode_test tstCollisionHandlerFactoryElectronMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_DAGMC)
   ADD_EXECUTABLE(tstCollisionModuleInterface_Native
     tstModuleInterface.cpp)
   TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_Native monte_carlo_collision_native)
