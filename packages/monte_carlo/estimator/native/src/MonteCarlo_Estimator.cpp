@@ -15,6 +15,7 @@
 namespace MonteCarlo{
 
 // Initialize the number of histories run
+double Estimator::tol = 1e-8;
 unsigned long long Estimator::num_histories = 0ull;
 double Estimator::start_time = 0.0;
 double Estimator::end_time = Estimator::start_time;
@@ -536,7 +537,7 @@ double Estimator::calculateRelativeError(
       1.0/Estimator::num_histories;
     
     // Check for roundoff error resulting in a very small negative number
-    if( ST::magnitude( argument ) < ST::eps() )
+    if( argument < 0.0 && argument > -Estimator::tol )
       relative_error = 0.0;
     else
       relative_error = ST::squareroot( argument );
@@ -599,10 +600,13 @@ double Estimator::calculateVOV( const double first_moment_contributions,
   
   double vov;
   
-  if( ST::magnitude( vov_denominator ) > ST::eps() )
-    vov = vov_numerator/vov_denominator;
-  else
+  // Check for roundoff errors resulting in a very small negative number
+  if( vov_denominator <= 0.0 && vov_denominator > -Estimator::tol )
     vov = 0.0;
+  else if( vov_numerator <= 0.0 && vov_denominator > -Estimator::tol )
+    vov = 0.0;
+  else
+    vov = vov_numerator/vov_denominator;
     
   // Make sure the variance of the variance is valid
   testPostcondition( !ST::isnaninf( vov ) );
