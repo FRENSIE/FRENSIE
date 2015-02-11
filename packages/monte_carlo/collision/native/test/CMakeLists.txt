@@ -218,72 +218,72 @@ ADD_TEST(PhotonMaterial_test tstPhotonMaterial --test_cross_sections_xml_directo
 ADD_EXECUTABLE(tstHardElasticElectronScatteringDistribution
   tstHardElasticElectronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstHardElasticElectronScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(tstHardElasticElectronScatteringDistribution_test tstHardElasticElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(HardElasticElectronScatteringDistribution_test tstHardElasticElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstAtomicExcitationElectronScatteringDistribution
   tstAtomicExcitationElectronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstAtomicExcitationElectronScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(tstAtomicExcitationElectronScatteringDistribution_test tstAtomicExcitationElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(AtomicExcitationElectronScatteringDistribution_test tstAtomicExcitationElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstBremsstrahlungElectronScatteringDistribution
   tstBremsstrahlungElectronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstBremsstrahlungElectronScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(tstBremsstrahlungElectronScatteringDistribution_test tstBremsstrahlungElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(BremsstrahlungElectronScatteringDistribution_test tstBremsstrahlungElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstElectroionizationSubshellElectronScatteringDistribution
   tstElectroionizationSubshellElectronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellElectronScatteringDistribution monte_carlo_collision_native)
-ADD_TEST(tstElectroionizationSubshellElectronScatteringDistribution_test tstElectroionizationSubshellElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(ElectroionizationSubshellElectronScatteringDistribution_test tstElectroionizationSubshellElectronScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstAbsorptionElectroatomicReaction
   tstAbsorptionElectroatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstAbsorptionElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(tstAbsorptionElectroatomicReaction_test tstAbsorptionElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(AbsorptionElectroatomicReaction_test tstAbsorptionElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstAtomicExcitationElectroatomicReaction
   tstAtomicExcitationElectroatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstAtomicExcitationElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(tstAtomicExcitationElectroatomicReaction_test tstAtomicExcitationElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(AtomicExcitationElectroatomicReaction_test tstAtomicExcitationElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstBremsstrahlungElectroatomicReaction
   tstBremsstrahlungElectroatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstBremsstrahlungElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(tstBremsstrahlungElectroatomicReaction_test tstBremsstrahlungElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(BremsstrahlungElectroatomicReaction_test tstBremsstrahlungElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstElectroionizationSubshellElectroatomicReaction
   tstElectroionizationSubshellElectroatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstElectroionizationSubshellElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(tstElectroionizationSubshellElectroatomicReaction_test tstElectroionizationSubshellElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(ElectroionizationSubshellElectroatomicReaction_test tstElectroionizationSubshellElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstHardElasticElectroatomicReaction
   tstHardElasticElectroatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstHardElasticElectroatomicReaction monte_carlo_collision_native)
-ADD_TEST(tstHardElasticElectroatomicReaction_test tstHardElasticElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(HardElasticElectroatomicReaction_test tstHardElasticElectroatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstElectroatomicReactionACEFactory
   tstElectroatomicReactionACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomicReactionACEFactory monte_carlo_collision_native)
-ADD_TEST(tstElectroatomicReactionACEFactory_test tstElectroatomicReactionACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(ElectroatomicReactionACEFactory_test tstElectroatomicReactionACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstElectroatomCore
   tstElectroatomCore.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomCore monte_carlo_collision_native)
-ADD_TEST(tstElectroatomCore_test tstElectroatomCore --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(ElectroatomCore_test tstElectroatomCore --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstElectroatom
   tstElectroatom.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatom monte_carlo_collision_native)
-ADD_TEST(tstElectroatom_test tstElectroatom --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(Electroatom_test tstElectroatom --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstElectroatomACEFactory
   tstElectroatomACEFactory.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomACEFactory monte_carlo_collision_native)
-ADD_TEST(tstElectroatomACEFactory_test tstElectroatomACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(ElectroatomACEFactory_test tstElectroatomACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
 ADD_EXECUTABLE(tstElectroatomFactory
   tstElectroatomFactory.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomFactory monte_carlo_collision_native)
-ADD_TEST(tstElectroatomFactory_test tstElectroatomFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
+ADD_TEST(ElectroatomFactory_test tstElectroatomFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
 
 ADD_EXECUTABLE(tstCollisionHandler
   tstCollisionHandler.cpp)
@@ -309,6 +309,13 @@ IF(FRENSIE_ENABLE_DAGMC)
     tstCollisionHandlerFactoryNeutronPhotonMode.cpp)
   TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronPhotonMode monte_carlo_collision_native)
   ADD_TEST(CollisionHandlerFactoryNeutronPhotonMode_test tstCollisionHandlerFactoryNeutronPhotonMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryElectronMode
+    tstCollisionHandlerFactoryElectronMode.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryElectronMode monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryElectronMode_test tstCollisionHandlerFactoryElectronMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 ENDIF()
 
 IF(FRENSIE_ENABLE_DAGMC)
