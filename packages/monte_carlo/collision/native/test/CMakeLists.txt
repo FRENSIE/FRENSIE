@@ -1,5 +1,10 @@
 ADD_SUBDIRECTORY(test_files)
 
+ADD_EXECUTABLE(tstTwoDDistributionHelpers
+  tstTwoDDistributionHelpers.cpp)
+TARGET_LINK_LIBRARIES(tstTwoDDistributionHelpers monte_carlo_collision_native)
+ADD_TEST(TwoDDistributionHelpers_test tstTwoDDistributionHelpers)
+
 ADD_EXECUTABLE(tstNeutronScatteringDistribution
   tstNeutronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstNeutronScatteringDistribution monte_carlo_collision_native)
@@ -210,66 +215,6 @@ ADD_EXECUTABLE(tstPhotonMaterial tstPhotonMaterial.cpp)
 TARGET_LINK_LIBRARIES(tstPhotonMaterial monte_carlo_collision_native)
 ADD_TEST(PhotonMaterial_test tstPhotonMaterial --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
 
-ADD_EXECUTABLE(tstCollisionHandler
-  tstCollisionHandler.cpp)
-TARGET_LINK_LIBRARIES(tstCollisionHandler monte_carlo_collision_native)
-ADD_TEST(CollisionHandler_test tstCollisionHandler --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
-
-IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronMode
-    tstCollisionHandlerFactoryNeutronMode.cpp)
-  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronMode monte_carlo_collision_native)
-  ADD_TEST(CollisionHandlerFactoryNeutronMode_test tstCollisionHandlerFactoryNeutronMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-ENDIF()
-
-IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstCollisionHandlerFactoryPhotonMode
-    tstCollisionHandlerFactoryPhotonMode.cpp)
-  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryPhotonMode monte_carlo_collision_native)
-  ADD_TEST(CollisionHandlerFactoryPhotonMode_test tstCollisionHandlerFactoryPhotonMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-ENDIF()
-
-IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronPhotonMode
-    tstCollisionHandlerFactoryNeutronPhotonMode.cpp)
-  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronPhotonMode monte_carlo_collision_native)
-  ADD_TEST(CollisionHandlerFactoryNeutronPhotonMode_test tstCollisionHandlerFactoryNeutronPhotonMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-ENDIF()
-
-IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstCollisionHandlerFactoryElectronMode
-    tstCollisionHandlerFactoryElectronMode.cpp)
-  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryElectronMode monte_carlo_collision_native)
-  ADD_TEST(CollisionHandlerFactoryElectronMode_test tstCollisionHandlerFactoryElectronMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-ENDIF()
-
-IF(FRENSIE_ENABLE_DAGMC)
-  ADD_EXECUTABLE(tstCollisionModuleInterface_Native
-    tstModuleInterface.cpp)
-  TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_Native monte_carlo_collision_native)
-  ADD_TEST(CollisionModuleInterface_Native_test tstCollisionModuleInterface_Native --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
-ENDIF()
-
-ADD_EXECUTABLE(tstFreeGasElasticSAlphaBetaFunction
-  tstFreeGasElasticSAlphaBetaFunction.cpp)
-TARGET_LINK_LIBRARIES(tstFreeGasElasticSAlphaBetaFunction monte_carlo_collision_native)
-ADD_TEST(FreeGasElasticSAlphaBetaFunction_test tstFreeGasElasticSAlphaBetaFunction)
-
-ADD_EXECUTABLE(tstFreeGasElasticMarginalAlphaFunction
-  tstFreeGasElasticMarginalAlphaFunction.cpp)
-TARGET_LINK_LIBRARIES(tstFreeGasElasticMarginalAlphaFunction monte_carlo_collision_native)
-ADD_TEST(FreeGasElasticMarginalAlphaFunction_test tstFreeGasElasticMarginalAlphaFunction)
-
-## ADD_EXECUTABLE(tstFreeGasElasticMarginalBetaFunction
-##   tstFreeGasElasticMarginalBetaFunction.cpp)
-## TARGET_LINK_LIBRARIES(tstFreeGasElasticMarginalBetaFunction monte_carlo_collision_native)
-## ADD_TEST(FreeGasElasticMarginalBetaFunction_test tstFreeGasElasticMarginalBetaFunction)
-
-ADD_EXECUTABLE(tstTwoDDistributionHelpers
-  tstTwoDDistributionHelpers.cpp)
-TARGET_LINK_LIBRARIES(tstTwoDDistributionHelpers monte_carlo_collision_native)
-ADD_TEST(TwoDDistributionHelpers_test tstTwoDDistributionHelpers)
-
 ADD_EXECUTABLE(tstHardElasticElectronScatteringDistribution
   tstHardElasticElectronScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstHardElasticElectronScatteringDistribution monte_carlo_collision_native)
@@ -339,5 +284,53 @@ ADD_EXECUTABLE(tstElectroatomFactory
   tstElectroatomFactory.cpp)
 TARGET_LINK_LIBRARIES(tstElectroatomFactory monte_carlo_collision_native)
 ADD_TEST(tstElectroatomFactory_test tstElectroatomFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
+
+ADD_EXECUTABLE(tstCollisionHandler
+  tstCollisionHandler.cpp)
+TARGET_LINK_LIBRARIES(tstCollisionHandler monte_carlo_collision_native)
+ADD_TEST(CollisionHandler_test tstCollisionHandler --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
+
+IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronMode
+    tstCollisionHandlerFactoryNeutronMode.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronMode monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryNeutronMode_test tstCollisionHandlerFactoryNeutronMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryPhotonMode
+    tstCollisionHandlerFactoryPhotonMode.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryPhotonMode monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryPhotonMode_test tstCollisionHandlerFactoryPhotonMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(tstCollisionHandlerFactoryNeutronPhotonMode
+    tstCollisionHandlerFactoryNeutronPhotonMode.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionHandlerFactoryNeutronPhotonMode monte_carlo_collision_native)
+  ADD_TEST(CollisionHandlerFactoryNeutronPhotonMode_test tstCollisionHandlerFactoryNeutronPhotonMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+ENDIF()
+
+IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(tstCollisionModuleInterface_Native
+    tstModuleInterface.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_Native monte_carlo_collision_native)
+  ADD_TEST(CollisionModuleInterface_Native_test tstCollisionModuleInterface_Native --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+ENDIF()
+
+ADD_EXECUTABLE(tstFreeGasElasticSAlphaBetaFunction
+  tstFreeGasElasticSAlphaBetaFunction.cpp)
+TARGET_LINK_LIBRARIES(tstFreeGasElasticSAlphaBetaFunction monte_carlo_collision_native)
+ADD_TEST(FreeGasElasticSAlphaBetaFunction_test tstFreeGasElasticSAlphaBetaFunction)
+
+ADD_EXECUTABLE(tstFreeGasElasticMarginalAlphaFunction
+  tstFreeGasElasticMarginalAlphaFunction.cpp)
+TARGET_LINK_LIBRARIES(tstFreeGasElasticMarginalAlphaFunction monte_carlo_collision_native)
+ADD_TEST(FreeGasElasticMarginalAlphaFunction_test tstFreeGasElasticMarginalAlphaFunction)
+
+## ADD_EXECUTABLE(tstFreeGasElasticMarginalBetaFunction
+##   tstFreeGasElasticMarginalBetaFunction.cpp)
+## TARGET_LINK_LIBRARIES(tstFreeGasElasticMarginalBetaFunction monte_carlo_collision_native)
+## ADD_TEST(FreeGasElasticMarginalBetaFunction_test tstFreeGasElasticMarginalBetaFunction)
 
 
