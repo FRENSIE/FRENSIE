@@ -265,6 +265,51 @@ TEUCHOS_UNIT_TEST( CollisionHandler, getMacroscopicTotalCrossSection )
   TEST_FLOATING_EQUALITY( cross_section, 0.11970087585747362, 1e-12 );
   
   // Electron cross sections
+  MonteCarlo::ElectronState electron( 0 );
+  electron.setEnergy( 1.00000e-05 );
+  electron.setCell( 4 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicTotalCrossSection( electron );
+
+  TEST_FLOATING_EQUALITY( cross_section, 7.641204418336E+06, 1e-12 );
+
+  electron.setEnergy( 1.00000e+05 );
+
+  cross_section =
+    MonteCarlo::CollisionHandler::getMacroscopicTotalCrossSection( electron );
+
+  TEST_FLOATING_EQUALITY( cross_section, 8.269992326372E+03, 1e-12 );
+
+  electron.setCell( 5 );
+  electron.setEnergy( 1.00000e-05 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicTotalCrossSection( electron );
+
+  TEST_FLOATING_EQUALITY( cross_section, 7.641204418336E+06, 1e-12 );
+
+  electron.setEnergy( 1.00000e+05 );
+
+  cross_section =
+    MonteCarlo::CollisionHandler::getMacroscopicTotalCrossSection( electron );
+
+  TEST_FLOATING_EQUALITY( cross_section, 8.269992326372E+03, 1e-12 );
+
+  electron.setCell( 6 );
+  electron.setEnergy( 1.00000e-05 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicTotalCrossSection( electron );
+
+  TEST_FLOATING_EQUALITY( cross_section, 7.641204418336E+06, 1e-12 );
+
+  electron.setEnergy( 1.00000e+05 );
+
+  cross_section =
+    MonteCarlo::CollisionHandler::getMacroscopicTotalCrossSection( electron );
+
+  TEST_FLOATING_EQUALITY( cross_section, 8.269992326372E+03, 1e-12 );
   
 }
 
@@ -468,6 +513,97 @@ TEUCHOS_UNIT_TEST( CollisionHandler, getMacroscopicReactionCrossSection )
    TEST_FLOATING_EQUALITY( cross_section, 0.11969677359280363, 1e-12 );
 
    // Electroatomic reactions
+  MonteCarlo::ElectronState electron( 0 );
+  electron.setEnergy( 1.00000E-05 );
+  electron.setCell( 4 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+				 electron,
+				 MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.545329003693E+04, 1e-12 );
+
+  electron.setEnergy( 1.00000E+05 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+				 electron,
+				 MonteCarlo::ATOMIC_EXCITATION_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 4.588134602166E+03, 1e-12 );
+
+  electron.setEnergy( 1.00000E-05 );
+  
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+				   electron,
+				   MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 1.415377951846E+01, 1e-12 );
+
+  electron.setEnergy( 1.00000E+05 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+				   electron,
+				   MonteCarlo::BREMSSTRAHLUNG_ELECTROATOMIC_REACTION );
+
+  TEST_FLOATING_EQUALITY( cross_section, 5.679677054824E+00, 1e-12 );
+
+  electron.setEnergy( 1.00000E-05 );
+
+  cross_section = 
+    MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+		   electron,
+		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+
+   TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+
+   electron.setEnergy( 1.00000E+05 );
+
+   cross_section = 
+     MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+		   electron,
+		   MonteCarlo::K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+
+   TEST_FLOATING_EQUALITY( cross_section, 1.060615028974E-01, 1e-12 );
+
+   electron.setEnergy( 1.00000E-05 );
+
+   cross_section = 
+     MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+		  electron,
+		  MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+
+   TEST_FLOATING_EQUALITY( cross_section, 3.096230095899E+05, 1e-12 );
+
+   electron.setEnergy( 1.00000E+05 );
+
+   cross_section = 
+     MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+		  electron,
+		  MonteCarlo::P3_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION );
+
+   TEST_FLOATING_EQUALITY( cross_section, 5.296521123591E+02, 1e-12 );
+
+   electron.setEnergy( 1.00000E-05 );
+
+   cross_section = 
+     MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+		  electron,
+		  MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+
+   TEST_FLOATING_EQUALITY( cross_section, 7.234825686582E+06, 1e-12 );
+
+   electron.setEnergy( 1.00000E+05 );
+
+   cross_section = 
+     MonteCarlo::CollisionHandler::getMacroscopicReactionCrossSection(
+		  electron,
+		  MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+
+   TEST_FLOATING_EQUALITY( cross_section, 2.566534386946E-04, 1e-12 );
    
 } 
 
@@ -638,10 +774,10 @@ int main( int argc, char** argv )
 
     // Create lead for photons
     photon_lead.reset( new MonteCarlo::PhotonMaterial( 0,
-						       -1.0,
-						       photoatom_map,
-						       atom_fractions,
-						       atom_names ) );
+                                                       -1.0,
+                                                       photoatom_map,
+                                                       atom_fractions,
+                                                       atom_names ) );
 
     // Create the electroatom factory
     MonteCarlo::ElectroatomFactory electroatom_factory( 
@@ -659,10 +795,10 @@ int main( int argc, char** argv )
 
     // Create lead for electrons
     electron_lead.reset( new MonteCarlo::ElectronMaterial( 0,
-							   -1.0,
-							   electroatom_map,
-							   atom_fractions,
-							   atom_names ) );
+                                                           -1.0,
+                                                           electroatom_map,
+                                                           atom_fractions,
+                                                           atom_names ) );
   }
 
   // Initialize the random number generator
