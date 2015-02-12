@@ -94,6 +94,31 @@ void CollisionHandler::addMaterial(
   CollisionHandler::addMaterial( photon_material, cells_containing_material );
 }
 
+// Add a material to the collision handler
+void CollisionHandler::addMaterial(
+	      const Teuchos::RCP<ElectronMaterial>& material,
+	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
+	      cells_containing_material )
+{
+  // Make sure the material pointer is valid
+  testPrecondition( !material.is_null() );
+  // Make sure the cells are valid
+  testPrecondition( cells_containing_material.size() > 0 );
+  
+  for( unsigned i = 0u; i < cells_containing_material.size(); ++i )
+  {
+    TEST_FOR_EXCEPTION(
+      CollisionHandler::master_electron_map.find(cells_containing_material[i]) !=
+      CollisionHandler::master_electron_map.end(),
+      std::logic_error,
+      "Error:: cell " << cells_containing_material[i] << " already has a "
+      "material assigned!" );
+    
+    CollisionHandler::master_electron_map[cells_containing_material[i]] = 
+      material;
+  }
+}
+
 // Check if a cell is void
 bool CollisionHandler::isCellVoid(
 			 const Geometry::ModuleTraits::InternalCellHandle cell,
@@ -121,31 +146,6 @@ bool CollisionHandler::isCellVoid(
       return false;
   default:
     return true;
-  }
-}
-
-// Add a material to the collision handler
-void CollisionHandler::addMaterial(
-	      const Teuchos::RCP<ElectronMaterial>& material,
-	      const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
-	      cells_containing_material )
-{
-  // Make sure the material pointer is valid
-  testPrecondition( !material.is_null() );
-  // Make sure the cells are valid
-  testPrecondition( cells_containing_material.size() > 0 );
-  
-  for( unsigned i = 0u; i < cells_containing_material.size(); ++i )
-  {
-    TEST_FOR_EXCEPTION(
-      CollisionHandler::master_electron_map.find(cells_containing_material[i]) !=
-      CollisionHandler::master_electron_map.end(),
-      std::logic_error,
-      "Error:: cell " << cells_containing_material[i] << " already has a "
-      "material assigned!" );
-    
-    CollisionHandler::master_electron_map[cells_containing_material[i]] = 
-      material;
   }
 }
 
