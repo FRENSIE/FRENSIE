@@ -1,4 +1,7 @@
 # Set up the data gen package directory hierarchy
+ADD_SUBDIRECTORY(photon)
+INCLUDE_DIRECTORIES(photon/src)
+
 ADD_SUBDIRECTORY(adjoint_photon)
 INCLUDE_DIRECTORIES(adjoint_photon/src)
 

@@ -75,8 +75,8 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
 
   Teuchos::RCP<Utility::OneDDistribution> scattering_function(
 		     new Utility::TabularDistribution<Utility::LogLog>(
-						   recoil_momentum,
-						   scattering_function_values )
+						recoil_momentum,
+						scattering_function_values ) );
   
   if( use_doppler_broadening_data )
   {
