@@ -72,6 +72,9 @@ public:
   //! Return a random sample and bin index from the distribution
   double sample( unsigned& sampled_bin_index ) const;
 
+  //! Return a random sample from the corresponding CDF in a subrange
+  double sample( const double max_indep_var ) const;
+
   //! Return the sampling efficiency from the distribution
   double getSamplingEfficiency() const;
 

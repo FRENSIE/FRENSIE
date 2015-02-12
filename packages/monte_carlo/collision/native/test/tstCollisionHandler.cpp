@@ -645,17 +645,17 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial )
   photon.setCell( 4 );
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 8 );
-  fake_stream[0] = 0.5; // select the pb atom
-  fake_stream[1] = 0.1; // select the incoherent reaction
-  fake_stream[2] = 0.001; // sample from first term of koblinger's method
-  fake_stream[3] = 0.5; // x = 40.13902672495315, mu = 0.0
-  fake_stream[4] = 0.5; // accept x in scattering function rejection loop
-  fake_stream[5] = 0.005; // select first shell for collision
-  fake_stream[6] = 6.427713151861e-01; // select pz = 40.0
-  fake_stream[7] = 0.25; // select energy loss
+  std::vector<double> fake_photon_stream( 8 );
+  fake_photon_stream[0] = 0.5; // select the pb atom
+  fake_photon_stream[1] = 0.1; // select the incoherent reaction
+  fake_photon_stream[2] = 0.001; // sample from first term of koblinger's method
+  fake_photon_stream[3] = 0.5; // x = 40.13902672495315, mu = 0.0
+  fake_photon_stream[4] = 0.5; // accept x in scattering function rejection loop
+  fake_photon_stream[5] = 0.005; // select first shell for collision
+  fake_photon_stream[6] = 6.427713151861e-01; // select pz = 40.0
+  fake_photon_stream[7] = 0.25; // select energy loss
 
-  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  Utility::RandomNumberGenerator::setFakeStream( fake_photon_stream );
 
   MonteCarlo::CollisionHandler::collideWithCellMaterial( photon, bank, true );
 
@@ -665,6 +665,27 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial )
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Electron collision
+  MonteCarlo::ElectronState electron( 0 );
+  electron.setEnergy( 1e-3 );
+  electron.setDirection( 0.0, 0.0, 1.0 );
+  electron.setCell( 4 );
+
+  // Set up the random number stream
+  std::vector<double> fake_electron_stream( 5 );
+  fake_electron_stream[0] = 0.5; // select the pb atom
+  fake_electron_stream[1] = 0.36; // select the elastic reaction
+  fake_electron_stream[2] = 0.2; // sample upper energy bin
+  fake_electron_stream[3] = 9.9990E-01; // choose angle from distribution
+  fake_electron_stream[4] = 0.5; // sample mu = 0.9874366113907
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_electron_stream );
+
+  MonteCarlo::CollisionHandler::collideWithCellMaterial( electron, bank, true );
+
+  TEST_EQUALITY_CONST( electron.getEnergy(), 1e-3 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.9874366113907, 1e-12 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
   
 }
 
