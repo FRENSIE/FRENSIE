@@ -8,9 +8,5 @@
   <Parameter name="Material Synonym" type="string" value="mat"/>
   <Parameter name="Density Synonym" type="string" value="rho"/>
   <Parameter name="Estimator Synonym" type="string" value="tally"/>
-  <Parameter name="Cell Track Length Flux Estimator Synonym" type="string"
-	     value="cell.flux"/>
-  <Parameter name="Surface Flux Estimator Synonym" type="string"
-	     value="surf.flux"/>
-
+  
 </ParameterList>

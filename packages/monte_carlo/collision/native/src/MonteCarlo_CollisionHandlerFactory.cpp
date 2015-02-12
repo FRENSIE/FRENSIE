@@ -512,8 +512,8 @@ void CollisionHandlerFactory::createElectronMaterials(
   boost::unordered_map<std::string,Teuchos::RCP<Electroatom> > electroatom_map;
 
   ElectroatomFactory electroatom_factory( cross_sections_xml_directory,
-                                          electroatom_aliases,
                                           cross_sections_table_info,
+					  electroatom_aliases,
                                           atomic_relaxation_model_factory,
                                           photon_distribution_function,
                                           use_atomic_relaxation_data );
