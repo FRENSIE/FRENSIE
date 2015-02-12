@@ -47,68 +47,80 @@ OccupationNumberEvaluator::OccupationNumberEvaluator(
   testPrecondition( compton_profile.back() > 0.0 );
   testPrecondition( compton_profile.size() == 
 		    electron_momentum_projections.size() );
-  
-  // Convert the electron momentum projections from atomic units to me*c units
-  for( unsigned i = 0u; i < electron_momentum_projections.size(); ++i )
-  {
-    electron_momentum_projections[i] /= 
-      Utility::PhysicalConstants::inverse_fine_structure_constant;
-  }
-  
-  // Convert the Compton profile from inverse atomic units to 1/(me*c) units
-  for( unsigned i = 0u; i < compton_profile.size(); ++i )
-  {
-    compton_profiles[i] *=
-      Utility::PhysicalConstants::inverse_fine_structure_constant;
-  }
 
-  // Extend the electron momentum projections to 1 me*c (if not already)
-  if( electron_momentum_projections.back() < 1.0 )
+  // Force the quadrature kernel throw exceptions
+  Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
+
+  // Create the complete compton profile and convert to me*c units
+  Teuchos::Array<double> complete_electron_momentum_projections;
+  Teuchos::Array<double> complete_compton_profile;
+  unsigned middle_index;
+
+  // Check if the grid needs to be extended
+  if( electron_momentum_projections.back() <  
+      Utility::PhysicalConstants::inverse_fine_structure_constant )
   {
-    electron_momentum_projections.push_back( 1.0 );
-    compton_profiles.push_back( std::numeric_limits<double>::min() );
+    complete_electron_momentum_projections.resize( 
+			       (electron_momentum_projections.size()+1)*2 - 1);
+    complete_compton_profile.resize( (compton_profile.size()+1)*2 - 1 );
+
+    middle_index = electron_momentum_projections.size();
   }
+  else
+  {
+    complete_electron_momentum_projections.resize( 
+				   electron_momentum_projections.size()*2 - 1);
+    complete_compton_profile.resize( compton_profile.size()*2 - 1 );
 
-  // Create the complete compton profile
-  Teuchos::Array<double> complete_electron_momentum_projections( 
-				  electron_momentum_projections.size()*2 - 1 );
-  Teuchos::Array<double> complete_compton_profile(
-						compton_profile.size()*2 - 1 );
-
-  unsigned middle_index = electron_momentum_projections.size() - 1;
+    middle_index = electron_momentum_projections.size() - 1;
+  }
 
   for( unsigned i = 0u; i < electron_momentum_projections.size(); ++i )
   {    
+    double scaled_electron_momentum_proj = electron_momentum_projections[i]/
+	Utility::PhysicalConstants::inverse_fine_structure_constant;
+
+    double scaled_compton_profile = compton_profile[i]*
+	Utility::PhysicalConstants::inverse_fine_structure_constant;      
+    
     if( i != 0u )
     {
       // Positive side of profile
       complete_electron_momentum_projections[middle_index+i] = 
-	electron_momentum_projections[i];
+	scaled_electron_momentum_proj;
     
-      complete_compton_profile[middle_index+i] = 
-	compton_profile[i];
+      complete_compton_profile[middle_index+i] = scaled_compton_profile;
 
       // Negative side of profile
       complete_electron_momentum_projections[middle_index-i] = 
-	-electron_momentum_projections[i];
+	-scaled_electron_momentum_proj;
     
-      complete_compton_profile[middle_index-i] = 
-	compton_profile[i];
+      complete_compton_profile[middle_index-i] = scaled_compton_profile;
     }
-    else // Middel of profile (pz = 0.0)
+    else // Middle of profile (pz = 0.0)
     {
-      complete_electron_momentum_projections[middle_index] = 
-	electron_momentum_projections[i];
+      complete_electron_momentum_projections[middle_index] = 0.0;	
       
-      complete_compton_profile[middle_index] = 
-	compton_profile[i];
+      complete_compton_profile[middle_index] = scaled_compton_profile;
     }
   }
 
+  // Check if the grid needs to be extended
+  if( electron_momentum_projections.back() <  
+      Utility::PhysicalConstants::inverse_fine_structure_constant )
+  {
+    complete_electron_momentum_projections.front() = -1.0;
+    complete_compton_profile.front() = std::numeric_limits<double>::min();
+    
+    complete_electron_momentum_projections.back() = 1.0;
+    complete_compton_profile.back() = std::numeric_limits<double>::min();
+  }
+  std::cout << complete_electron_momentum_projections << std::endl;
+  std::cout << complete_compton_profile << std::endl;
   // Store the profile in a tabular distribution for quick interpolation
   d_compton_profile.reset( new Utility::TabularDistribution<Utility::LogLin>(
 					complete_electron_momentum_projections,
-					complete_compton_profiles ) );
+					complete_compton_profile ) );
 }
 
 // Evaluate the compton profile
@@ -116,7 +128,7 @@ double OccupationNumberEvaluator::evaluateComptonProfile(
 			      const double electron_momentum_projection ) const
 {
   // Make sure the electron momentum projection is valid
-  testPrecondition( Teuchos::ScalarTraits<double>::isnaninf(
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf(
 					      electron_momentum_projection ) );
 
   return d_compton_profile->evaluate( electron_momentum_projection );
@@ -128,7 +140,7 @@ double OccupationNumberEvaluator::evaluateOccupationNumber(
 				     const double precision ) const
 {
   // Make sure the electron momentum projection is valid
-  testPrecondition( Teuchos::ScalarTraits<double>::isnaninf(
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf(
 					      electron_momentum_projection ) );
 
   double occupation_number;
@@ -153,7 +165,7 @@ double OccupationNumberEvaluator::evaluateOccupationNumber(
     if( electron_momentum_projection < 
 	d_compton_profile->getUpperBoundOfIndepVar() )
     {
-      quadrature_kernel.intergrateAdaptively<15>(
+      quadrature_kernel.integrateAdaptively<15>(
 				  compton_profile_wrapper,
 				  d_compton_profile->getLowerBoundOfIndepVar(),
 				  electron_momentum_projection,
@@ -162,7 +174,7 @@ double OccupationNumberEvaluator::evaluateOccupationNumber(
     }
     else
     {
-      quadrature_kernel.intergrateAdaptively<15>(
+      quadrature_kernel.integrateAdaptively<15>(
 				  compton_profile_wrapper,
 				  d_compton_profile->getLowerBoundOfIndepVar(),
 				  d_compton_profile->getUpperBoundOfIndepVar(),
