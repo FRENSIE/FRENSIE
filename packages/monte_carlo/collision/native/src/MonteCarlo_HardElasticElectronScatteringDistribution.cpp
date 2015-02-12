@@ -103,7 +103,9 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
   // Sample from the distribution
   if( cutoff_cdf_value > random_number_2 )
   {
-    scattering_angle_cosine = sampling_dist->sample(cutoff_angle_cosine );
+    scattering_angle_cosine = sampling_dist->sample( cutoff_angle_cosine );
+//! \todo Write a Histogram function to sample from the corresponding CDF in a subrange
+//    scattering_angle_cosine = sampling_dist->sample( );
   }
   // Sample from the analytical function
   else

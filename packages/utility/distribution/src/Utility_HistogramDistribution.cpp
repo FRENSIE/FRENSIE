@@ -164,6 +164,63 @@ double HistogramDistribution::sample( unsigned& sampled_bin_index ) const
   return bin->first + (random_number - bin->third)/bin->second;
 }
 
+// Return a random sample from the corresponding CDF in a subrange
+double HistogramDistribution::sample( const double max_indep_var ) const
+{
+  // Make sure the maximum indep var is valid
+  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
+  testPrecondition( max_indep_var <= this->getUpperBoundOfIndepVar() );
+  
+  if( max_indep_var == this->getLowerBoundOfIndepVar() )
+    return max_indep_var;
+  else if( max_indep_var >= this->getUpperBoundOfIndepVar() )
+    return this->sample();
+  else
+  {
+    // Find the CDF value at the maximum independent variable
+    Teuchos::Array<Trip<double,double,double> >::const_iterator start, end, lower_bin_boundary;
+    start = d_distribution.begin();
+    end = d_distribution.end();
+
+    lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							  end,
+							  max_indep_var );
+
+    // cdf(x) = cdf(x0) + (x-x0)*pdf(x0)
+    double indep_value_diff = max_indep_var - lower_bin_boundary->first;
+    double cdf_max = lower_bin_boundary->third + 
+      indep_value_diff*lower_bin_boundary->second;
+    
+    // Sample a scaled random number
+    double random_number = RandomNumberGenerator::getRandomNumber<double>()*
+      cdf_max;
+
+    start = d_distribution.begin();
+    end = d_distribution.end();
+    
+    lower_bin_boundary = Search::binaryLowerBound<THIRD>( start,
+							   end,
+							   random_number );
+    // Calculate the sampled independent value
+    double sample;
+    
+    double indep_value = lower_bin_boundary->first;
+    double cdf_diff = random_number - lower_bin_boundary->third;
+    double pdf_value = lower_bin_boundary->second;
+    
+    // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) 
+
+    sample = indep_value + (cdf_diff )/pdf_value;
+
+    // Make sure a valid cdf value was found
+    testPostcondition( lower_bin_boundary->third <= cdf_max );
+    // Make sure the sample is valid
+    testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( sample ) );
+
+    return sample;
+  }
+}
+
 // Return the sampling efficiency from the distribution
 double HistogramDistribution::getSamplingEfficiency() const
 {
