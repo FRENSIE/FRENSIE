@@ -1,0 +1,47 @@
+;; prevent emacs from adding a newline character at end of file
+(setq next-line-add-newlines nil)
+;; set the default column width
+(setq-default fill-column 79)
+;; shown the column-number
+(column-number-mode 1)
+
+;;---------------------------------------------------------------------------;;
+;; Add Cuda extension to c++ mode
+;;---------------------------------------------------------------------------;;
+(add-to-list 'auto-mode-alist '("\\.cu$" . c++-mode))
+
+;;---------------------------------------------------------------------------;;
+;; Add .dox extension to c++ mode
+;;---------------------------------------------------------------------------;;
+(add-to-list 'auto-mode-alist '("\\.dox$" . c++-mode))
+
+;;---------------------------------------------------------------------------;;
+;; Add pdf_tex to latex mode
+;;---------------------------------------------------------------------------;;
+(add-to-list 'auto-mode-alist '("\\.pdf_tex$" . latex-mode))
+
+;;---------------------------------------------------------------------------;;
+;; special comment line function
+;;---------------------------------------------------------------------------;;
+(defun comment-line ()
+  (interactive)
+  (setq comment-string (prin1-to-string comment-start))
+  (setq comment-char (substring comment-string 1 2))
+  (insert comment-char comment-char "---------------------------------------------------------------------------" comment-char comment-char "\n")
+  )
+;;---------------------------------------------------------------------------;;
+;; special comment start function
+;;---------------------------------------------------------------------------;;
+(defun comment-line-start ()
+  (interactive)
+  (setq comment-string (prin1-to-string comment-start))
+  (setq comment-char (substring comment-string 1 2))
+  (insert comment-char comment-char)
+)
+
+;;---------------------------------------------------------------------------;;
+;; assign the comment helper functions
+;;---------------------------------------------------------------------------;;
+(global-set-key (kbd "C-x c") 'comment-or-uncomment-region)
+(global-set-key (kbd "C-x n") 'comment-line)
+(global-set-key (kbd "C-;") 'comment-line-start)
