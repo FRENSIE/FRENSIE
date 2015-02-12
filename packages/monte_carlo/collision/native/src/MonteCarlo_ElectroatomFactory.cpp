@@ -91,7 +91,7 @@ void ElectroatomFactory::createElectroatomMap(
 
   // Copy the stored map
   electroatom_map.insert( d_electroatom_name_map.begin(), 
-			d_electroatom_name_map.end() );
+			              d_electroatom_name_map.end() );
 }
 
 // Create a electroatom from an ACE table

@@ -39,7 +39,7 @@ public:
                    const boost::unordered_set<std::string>& electroatom_aliases,
                    const Teuchos::ParameterList& cross_section_table_info,
                    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
-                   atomic_relaxation_model_factory,
+                           atomic_relaxation_model_factory,
                    const BremsstrahlungAngularDistributionType 
                            photon_distribution_function,
                    const bool use_atomic_relaxation_data );

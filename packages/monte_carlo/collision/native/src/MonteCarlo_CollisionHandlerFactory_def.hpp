@@ -114,10 +114,10 @@ void CollisionHandlerFactory::registerMaterials(
   {
     const Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle>&
       cells_containing_material = material_name_cell_ids_map.find( 
-				     material_name_pointer_it->first )->second;
+                                  material_name_pointer_it->first )->second;
     
     CollisionHandler::addMaterial( material_name_pointer_it->second,
-				   cells_containing_material );
+                                   cells_containing_material );
 
     ++material_name_pointer_it;
   }
