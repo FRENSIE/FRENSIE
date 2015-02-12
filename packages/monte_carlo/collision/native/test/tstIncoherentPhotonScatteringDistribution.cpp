@@ -197,7 +197,7 @@ int main( int argc, char** argv )
     unsigned num_mom_vals = swd_block[shell_index];
 
     compton_profiles[shell].reset( 
-	  new Utility::TabularDistribution<Utility::LinLin>(
+	  new Utility::TabularDistribution<Utility::LogLin>(
 		 swd_block( shell_index + 1, num_mom_vals ),
 		 swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) ) );
   }

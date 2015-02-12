@@ -2,7 +2,7 @@
 //!
 //! \file   DataGen_AdjointIncoherentCrossSectionEvaluator.hpp
 //! \author Alex Robinson
-//! \brief  Adjoint incoherent cross section declaration
+//! \brief  Adjoint incoherent cross section evaluator declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -38,10 +38,10 @@ public:
   static double getMaxEnergyResultingInMaxCrossSectionValueAtEnergy( 
 						         const double energy );
 
-  //! Default constructor
+  //! Default constructor (free electron)
   AdjointIncoherentCrossSectionEvaluator();
 
-  //! Constructor
+  //! Constructor (bound electrons)
   AdjointIncoherentCrossSectionEvaluator(
     const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function );
 
@@ -49,15 +49,15 @@ public:
   ~AdjointIncoherentCrossSectionEvaluator()
   { /* ... */ }
 
+  //! Evaluate the differential adjoint incoherent cross section (dc/dx)
+  double evaluateDifferentialCrossSection(
+	  const double inverse_energy_gain_ratio, 
+	  const Utility::AdjointKleinNishinaDistribution& distribution ) const;
+
   //! Return the cross section value at a given energy and max energy
   double evaluateCrossSection( const double energy, 
 			       const double max_energy,
 			       const double precision = 1e-6 ) const;
-
-  // Evaluate the differential adjoint incoherent cross section (dc/dx)
-  double evaluateDifferentialCrossSection(
-	  const double inverse_energy_gain_ratio, 
-	  const Utility::AdjointKleinNishinaDistribution& distribution ) const;
 
 private:
 
