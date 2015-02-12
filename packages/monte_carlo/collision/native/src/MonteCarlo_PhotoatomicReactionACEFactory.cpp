@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <algorithm>
+#include <limits>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReactionACEFactory.hpp"
@@ -61,10 +62,21 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
   for( unsigned i = 0; i < scatt_func_size; ++i )
     recoil_momentum[i] *= 1e8;
 
+  // Log-Log interpolation is required but first recoil momentum may be 0.0
+  if( recoil_momentum.front() == 0.0 )
+    recoil_momentum.front() = std::numeric_limits<double>::min();
+
+  Teuchos::Array<double> scattering_function_values( 
+			     jince_block( scatt_func_size, scatt_func_size ) );
+
+  // Log-Log interpolation is required but first value may be 0.0
+  if( scattering_function_values.front() == 0.0 )
+    scattering_function_values.front() = std::numeric_limits<double>::min();
+
   Teuchos::RCP<Utility::OneDDistribution> scattering_function(
 		     new Utility::TabularDistribution<Utility::LogLog>(
-			   recoil_momentum,
-			   jince_block( scatt_func_size, scatt_func_size ) ) );
+						   recoil_momentum,
+						   scattering_function_values )
   
   if( use_doppler_broadening_data )
   {
@@ -106,7 +118,7 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
       
       // Ignore interp parameter (always assume log-log inerpolation)
       compton_profiles[subshell].reset(
-	       new Utility::TabularDistribution<Utility::LogLog>(
+	       new Utility::TabularDistribution<Utility::LogLin>(
 			  swd_block( subshell_index + 1, num_momentum_points ),
 			  swd_block( subshell_index + 1 + num_momentum_points,
 				     num_momentum_points ) ) );
@@ -171,7 +183,7 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
   Teuchos::Array<double> form_factor_squared(
 			 jcohe_block( 2*form_factor_size, form_factor_size ) );
 
-  // The stored recoil momemtum has units of inverse Angstroms - convert to
+  // The stored recoil momentum has units of inverse Angstroms - convert to
   // inverse cm^2
   for( unsigned i = 0; i < form_factor_size; ++i )
   {
@@ -179,6 +191,14 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
     
     form_factor_squared[i] *= form_factor_squared[i];
   }
+
+  // Log-Log interpolation is required but the last recoil momentum may be 0.0
+  if( recoil_momentum_squared.back() == 0.0 )
+    recoil_momentum_squared.back() = std::numeric_limits<double>::min();
+
+  // Log-Log interpolation is required but the last form factor value may be 0
+  if( form_factor_squared.back() == 0.0 )
+    form_factor_squared.back() = std::numeric_limits<double>::min();
 
   Teuchos::RCP<Utility::OneDDistribution> form_factor(
 			     new Utility::TabularDistribution<Utility::LogLog>(
