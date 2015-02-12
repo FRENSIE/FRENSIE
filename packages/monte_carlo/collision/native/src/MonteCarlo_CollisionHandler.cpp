@@ -113,6 +113,12 @@ bool CollisionHandler::isCellVoid(
       return true;
     else
       return false;
+  case ELECTRON:
+    if( CollisionHandler::master_electron_map.find( cell ) ==
+	CollisionHandler::master_electron_map.end() )
+      return true;
+    else
+      return false;
   default:
     return true;
   }
