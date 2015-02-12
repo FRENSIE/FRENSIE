@@ -50,9 +50,9 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_basic )
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
+					      cross_section_table_info,
                                               electroatom_aliases,
-                                              cross_section_table_info,
-                                              atomic_relaxation_model_factory,
+					      atomic_relaxation_model_factory,
                                               function,
                                               false ) );
 
@@ -252,9 +252,9 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_2BS_brem )
 
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
+					      cross_section_table_info,
                                               electroatom_aliases,
-                                              cross_section_table_info,
-                                              atomic_relaxation_model_factory,
+					      atomic_relaxation_model_factory,
                                               function,
                                               false ) );
 
@@ -424,9 +424,9 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ionization_subshells
   
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
+					      cross_section_table_info,
                                               electroatom_aliases,
-                                              cross_section_table_info,
-                                              atomic_relaxation_model_factory,
+					      atomic_relaxation_model_factory,
                                               function,
                                               true ) );
 
@@ -610,9 +610,9 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, no_duplicate_tables )
   
   electroatom_factory.reset( new MonteCarlo::ElectroatomFactory(
                                               cross_sections_xml_directory,
+					      cross_section_table_info,
                                               electroatom_aliases,
-                                              cross_section_table_info,
-                                              atomic_relaxation_model_factory,
+					      atomic_relaxation_model_factory,
                                               function,
                                               true ) );
 

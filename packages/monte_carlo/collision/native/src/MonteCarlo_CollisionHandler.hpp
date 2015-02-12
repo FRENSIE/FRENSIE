@@ -74,7 +74,7 @@ public:
   //! Check if a cell is void
   static bool isCellVoid(const Geometry::ModuleTraits::InternalCellHandle cell,
 			 const ParticleType particle_type );
-
+    
   //! Get the neutron material contained in a cell
   static const Teuchos::RCP<NeutronMaterial>& 
   getCellNeutronMaterial( 

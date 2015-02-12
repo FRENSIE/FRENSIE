@@ -93,9 +93,9 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
 	new HardElasticElectroatomicReaction<Utility::LinLin>(
 						  energy_grid,
 						  elastic_cross_section,
-						  threshold_energy_index,				
-                          atomic_number,
-                          scattering_function ) );
+						  threshold_energy_index,
+						  atomic_number,
+						  scattering_function ) );
 }
 
 
