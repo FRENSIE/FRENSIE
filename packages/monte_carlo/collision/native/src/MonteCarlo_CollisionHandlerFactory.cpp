@@ -77,8 +77,8 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
   boost::unordered_set<std::string> aliases;
 
   CollisionHandlerFactory::createAliasSet( material_reps, 
-					   alias_map_list,
-					   aliases );
+                                           alias_map_list,
+                                           aliases );
 
   // Create the material id data maps
   boost::unordered_map<ModuleTraits::InternalMaterialHandle,
@@ -539,7 +539,7 @@ void CollisionHandlerFactory::createElectronMaterials(
 
   // Register materials with the collision handler
   CollisionHandlerFactory::registerMaterials( material_name_pointer_map,
-					      material_name_cell_ids_map );
+                                              material_name_cell_ids_map );
 }
 
 } // end MonteCarlo namespace
