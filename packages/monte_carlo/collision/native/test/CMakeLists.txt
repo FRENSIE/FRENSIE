@@ -286,6 +286,10 @@ ADD_EXECUTABLE(tstElectroatomFactory
 TARGET_LINK_LIBRARIES(tstElectroatomFactory monte_carlo_collision_native)
 ADD_TEST(ElectroatomFactory_test tstElectroatomFactory --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
 
+ADD_EXECUTABLE(tstElectronMaterial tstElectronMaterial.cpp)
+TARGET_LINK_LIBRARIES(tstElectronMaterial monte_carlo_collision_native)
+ADD_TEST(ElectronMaterial_test tstElectronMaterial --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files/")
+
 ADD_EXECUTABLE(tstCollisionHandler
   tstCollisionHandler.cpp)
 TARGET_LINK_LIBRARIES(tstCollisionHandler monte_carlo_collision_native)

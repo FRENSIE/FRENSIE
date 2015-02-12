@@ -187,6 +187,77 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be sampled from a subrange
+TEUCHOS_UNIT_TEST( HistogramDistribution, sample_subrange )
+{
+  std::vector<double> fake_stream( 6 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15 ;
+  fake_stream[3] = 0.0;
+  fake_stream[4] = 0.5;
+  fake_stream[5] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // PDF Histogram
+  // Test max independent value 2nd bin
+  double max_indep_val = -1.0;
+
+  double sample = pdf_distribution->sample( max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+
+  sample = pdf_distribution->sample( max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -1.5, 1e-14 ); 
+
+  sample = pdf_distribution->sample( max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+  
+  // Test max independent value 3rd bin
+  max_indep_val = 1.0;
+
+  sample = pdf_distribution->sample( max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+
+  sample = pdf_distribution->sample( max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 ); 
+
+  sample = pdf_distribution->sample( max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // CDF Histogram
+  // Test max independent value 2nd bin
+  max_indep_val = -1.0;
+
+  sample = cdf_distribution->sample( max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+
+  sample = cdf_distribution->sample( max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -1.5, 1e-14 );
+
+  sample = cdf_distribution->sample( max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+  
+  // Test max independent value 3rd bin
+  max_indep_val = 1.0;
+
+  sample = cdf_distribution->sample( max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+
+  sample = cdf_distribution->sample( max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+
+  sample = cdf_distribution->sample( max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
 // Check that the sampling efficiency can be returned
 TEUCHOS_UNIT_TEST( HistogramDistribution, getSamplingEfficiency )
 {

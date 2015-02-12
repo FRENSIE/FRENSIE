@@ -168,10 +168,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 UNIT_TEST_INSTANTIATION( TabularDistribution, sample );
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be sampled
+// Check that the distribution can be sampled from a subrange
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
-				   sample_subrange,
-				   InterpolationPolicy )
+                                   sample_subrange,
+                                   InterpolationPolicy )
 {
   initializeDistribution<InterpolationPolicy>();
 

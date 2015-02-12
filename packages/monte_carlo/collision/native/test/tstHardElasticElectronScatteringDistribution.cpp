@@ -127,7 +127,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                                                    shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 0.9874366113907, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.874339332031E-01, 1e-12 );
   TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.1e-3, 1e-12 );
 
 }
