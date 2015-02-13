@@ -21,6 +21,7 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 
 
 namespace MonteCarlo{
@@ -119,15 +120,15 @@ void ParticleSimulationManager<GeometryHandler,
 	  {
 	  case NEUTRON: 
 	    simulateParticle( dynamic_cast<NeutronState&>( *bank.top() ), 
-			      bank );
+                          bank );
 	    break;
 	  case PHOTON:
 	    simulateParticle( dynamic_cast<PhotonState&>( *bank.top() ),
-			      bank );
+                          bank );
 	    break;
 	  case ELECTRON:
 	    simulateParticle( dynamic_cast<ElectronState&>( *bank.top() ),
-			      bank );
+                          bank );
 	    break;
 	  default:
 	    THROW_EXCEPTION( std::logic_error,
@@ -135,7 +136,7 @@ void ParticleSimulationManager<GeometryHandler,
 			     << bank.top()->getParticleType() <<
 			     " is not currently supported!" );
 	  }
-	  
+  
 	  bank.pop();
 	}
 	
@@ -157,16 +158,16 @@ void ParticleSimulationManager<GeometryHandler,
 
 // Set the number of particle histories to simulate
 template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
+         typename SourceHandler,
+         typename EstimatorHandler,
+         typename CollisionHandler>
 template<typename ParticleStateType>
 void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::simulateParticle( 
-						   ParticleStateType& particle,
-						   ParticleBank& bank )
+                               SourceHandler,
+                               EstimatorHandler,
+                               CollisionHandler>::simulateParticle( 
+                                                    ParticleStateType& particle,
+                                                    ParticleBank& bank )
 {
   // Particle tracking information
   double distance_to_surface_hit, op_to_surface_hit, remaining_subtrack_op;
@@ -213,15 +214,6 @@ void ParticleSimulationManager<GeometryHandler,
       }
       else
 	cell_total_macro_cross_section = 0.0;
-/*/////
-double elastic_macro_cross_section = 
-CMI::getMacroscopicReactionCrossSection( particle, 
-                                         MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
-std::cout << "cell_total_macro_cross_section = " << cell_total_macro_cross_section << std::endl;
-std::cout << "elastic_macro_cross_section    = " << elastic_macro_cross_section << std::endl;
-std::cout << "Different in cross sections    = " << cell_total_macro_cross_section-elastic_macro_cross_section << std::endl<< std::endl;
-
-/*/////
 
       // Convert the distance to the surface to optical path
       op_to_surface_hit = 
@@ -306,9 +298,11 @@ std::cout << "Different in cross sections    = " << cell_total_macro_cross_secti
 	ray_start_point[0] = particle.getXPosition();
 	ray_start_point[1] = particle.getYPosition();
 	ray_start_point[2] = particle.getZPosition();
-std::cout << "Particle energy = " << particle.getEnergy() << std::endl;
+
 	// Make sure the energy is above the cutoff
-	if( particle.getEnergy() < 1e-11 )
+    //! \todo implement a general cutoff function for all particle types
+//	if( particle.getEnergy() < 1e-11 )
+	if( particle.getEnergy() < MonteCarlo::SimulationProperties::getMinElectronEnergy() )
 	  particle.setAsGone();
 
 	// This subtrack is finished

@@ -39,7 +39,7 @@ double calculateKineticEnergy( const double rest_mass_energy,
                                const double speed );
 
 //! Calculate the dimensionless momentum of a massive particle ( momentum/mass*c )
-double calculateDimensionlessRelativisticMomentum( const double rest_mass_energy,
+double calculateDimensionlessRelativisticMomentum(const double rest_mass_energy,
                                                   const double kinetic_energy );
 
 //! Calculate the momentum of a massive particle ( MeV*s/cm )
@@ -53,7 +53,7 @@ double calculateRelativisticMomentumSquared( const double rest_mass_energy,
 
 //! Calculate the beta min value
 double calculateBetaMin( const double kinetic_energy,
-			 const double kT );
+                         const double kT );
 
 //! Calculate the dimensionless alpha min value
 double calculateAlphaMin( const double kinetic_energy,
@@ -87,7 +87,7 @@ inline double calculateDimensionlessRelativisticSpeed(
 
 // Calculate the speed of a relativistic particle 
 inline double calculateRelativisticSpeed(const double rest_mass_energy,
-					 const double kinetic_energy )
+                                         const double kinetic_energy )
 {
   // Make sure the rest mass energy is valid
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );
@@ -121,8 +121,8 @@ inline double calculateRelativisticKineticEnergy(const double rest_mass_energy,
 }
 
 // Calculate the speed of a massive particle 
-inline double calculateSpeed(const double rest_mass_energy,
-                             const double kinetic_energy )
+inline double calculateSpeed( const double rest_mass_energy,
+                              const double kinetic_energy )
 {
   // Make sure the rest mass energy is valid
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( rest_mass_energy ) );

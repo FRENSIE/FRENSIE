@@ -49,9 +49,16 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   knock_on_energy = sampleTwoDDistribution( 
                          electron.getEnergy(),
                          d_electroionization_subshell_scattering_distribution );
-
+std::cout << "electroionization scattering called" << std::endl;
   // Set the new energy of the original electron
-  electron.setEnergy( incoming_energy - knock_on_energy - d_binding_energy);
+  if( incoming_energy - knock_on_energy - d_binding_energy > 0 )
+  {
+    electron.setEnergy( incoming_energy - knock_on_energy - d_binding_energy);
+  }
+  else
+  {
+    electron.setEnergy( 1e-15 );
+  }
 
   // Increment the electron generation number
   electron.incrementGenerationNumber();
@@ -70,7 +77,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   double knock_on_angle_cosine;
 
   // Outgoing Energy
-  double outgoing_energy = incoming_energy - knock_on_energy - d_binding_energy;
+  double outgoing_energy = electron.getEnergy();
 
   // get the incoming momentum_squared
   double incoming_momentum_squared = 

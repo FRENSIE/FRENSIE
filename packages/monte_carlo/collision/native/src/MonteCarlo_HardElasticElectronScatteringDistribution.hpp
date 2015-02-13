@@ -35,7 +35,7 @@ class HardElasticElectronScatteringDistribution : public ElectronScatteringDistr
 public:
 
   //! Typedef for the  elastic distribution
-  typedef Teuchos::Array<Utility::Pair<double,
+  typedef Teuchos::Array<Utility::Pair< double,
                                      Teuchos::RCP<Utility::OneDDistribution> > >
                                      ElasticDistribution;
 
