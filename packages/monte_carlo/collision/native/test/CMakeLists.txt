@@ -329,6 +329,13 @@ IF(FRENSIE_ENABLE_DAGMC)
   ADD_TEST(CollisionModuleInterface_Native_test tstCollisionModuleInterface_Native --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 ENDIF()
 
+IF(FRENSIE_ENABLE_DAGMC)
+  ADD_EXECUTABLE(tstCollisionModuleInterface_NativeElectronMode
+    tstModuleInterface_ElectronMode.cpp)
+  TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_NativeElectronMode monte_carlo_collision_native)
+  ADD_TEST(CollisionModuleInterface_NativeElectronMode_test tstCollisionModuleInterface_NativeElectronMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
+ENDIF()
+
 ADD_EXECUTABLE(tstFreeGasElasticSAlphaBetaFunction
   tstFreeGasElasticSAlphaBetaFunction.cpp)
 TARGET_LINK_LIBRARIES(tstFreeGasElasticSAlphaBetaFunction monte_carlo_collision_native)
