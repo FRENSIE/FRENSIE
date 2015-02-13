@@ -213,6 +213,15 @@ void ParticleSimulationManager<GeometryHandler,
       }
       else
 	cell_total_macro_cross_section = 0.0;
+/*/////
+double elastic_macro_cross_section = 
+CMI::getMacroscopicReactionCrossSection( particle, 
+                                         MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+std::cout << "cell_total_macro_cross_section = " << cell_total_macro_cross_section << std::endl;
+std::cout << "elastic_macro_cross_section    = " << elastic_macro_cross_section << std::endl;
+std::cout << "Different in cross sections    = " << cell_total_macro_cross_section-elastic_macro_cross_section << std::endl<< std::endl;
+
+/*/////
 
       // Convert the distance to the surface to optical path
       op_to_surface_hit = 
@@ -297,7 +306,7 @@ void ParticleSimulationManager<GeometryHandler,
 	ray_start_point[0] = particle.getXPosition();
 	ray_start_point[1] = particle.getYPosition();
 	ray_start_point[2] = particle.getZPosition();
-
+std::cout << "Particle energy = " << particle.getEnergy() << std::endl;
 	// Make sure the energy is above the cutoff
 	if( particle.getEnergy() < 1e-11 )
 	  particle.setAsGone();
