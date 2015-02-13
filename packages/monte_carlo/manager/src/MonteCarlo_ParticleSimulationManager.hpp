@@ -75,7 +75,7 @@ private:
   // Simulate an individual particle
   template<typename ParticleStateType>
   void simulateParticle( ParticleStateType& particle,
-			 ParticleBank& particle_bank );
+                         ParticleBank& particle_bank );
 
   // Print simulation state info in collision handler
   void printSimulationStateInfo();

@@ -126,7 +126,7 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
-
+std::cout << " elastic called" << std::endl;
   // Set the new direction
   electron.setDirection( outgoing_electron_direction );
 }
