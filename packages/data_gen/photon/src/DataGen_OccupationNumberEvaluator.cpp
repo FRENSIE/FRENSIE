@@ -35,6 +35,7 @@ namespace DataGen{
 OccupationNumberEvaluator::OccupationNumberEvaluator(
 		    const Teuchos::Array<double> electron_momentum_projections,
 		    const Teuchos::Array<double> compton_profile )
+  : d_compton_profile_norm_constant( 1.0 )
 {
   // Make sure the electron momentum projections are valid
   testPrecondition( electron_momentum_projections.front() == 0.0 );
@@ -109,18 +110,43 @@ OccupationNumberEvaluator::OccupationNumberEvaluator(
   if( electron_momentum_projections.back() <  
       Utility::PhysicalConstants::inverse_fine_structure_constant )
   {
-    complete_electron_momentum_projections.front() = -1.0;
-    complete_compton_profile.front() = std::numeric_limits<double>::min();
+    double profile_0 = 
+      complete_compton_profile[complete_compton_profile.size()-3];
+    double profile_1 = 
+      complete_compton_profile[complete_compton_profile.size()-2];
+    double projection_0 = 
+      complete_electron_momentum_projections[complete_electron_momentum_projections.size()-3];
+    double projection_1 = 
+      complete_electron_momentum_projections[complete_electron_momentum_projections.size()-2];
+
+    double processed_slope = (log(profile_1)-log(profile_0))/
+      (projection_1-projection_0);
+
+    double extrapolated_profile = exp( log(profile_0) + 
+				       processed_slope*(1.0-projection_0) );
     
+    complete_electron_momentum_projections.front() = -1.0;
+    complete_compton_profile.front() = extrapolated_profile;
+        
     complete_electron_momentum_projections.back() = 1.0;
-    complete_compton_profile.back() = std::numeric_limits<double>::min();
+    complete_compton_profile.back() = extrapolated_profile;
   }
-  std::cout << complete_electron_momentum_projections << std::endl;
-  std::cout << complete_compton_profile << std::endl;
+  
   // Store the profile in a tabular distribution for quick interpolation
   d_compton_profile.reset( new Utility::TabularDistribution<Utility::LogLin>(
 					complete_electron_momentum_projections,
 					complete_compton_profile ) );
+  
+  // Roundoff errors are common in the available Compton profile tables - 
+  // renormalize the table
+  d_compton_profile_norm_constant = this->evaluateOccupationNumber( 
+			 complete_electron_momentum_projections.back(), 1e-4 );
+}
+
+// Return the normalization constant used with the Compton profile
+double OccupationNumberEvaluator::getComptonProfileNormConstant() const
+{
+  return d_compton_profile_norm_constant;
 }
 
 // Evaluate the compton profile
@@ -131,7 +157,8 @@ double OccupationNumberEvaluator::evaluateComptonProfile(
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf(
 					      electron_momentum_projection ) );
 
-  return d_compton_profile->evaluate( electron_momentum_projection );
+  return d_compton_profile->evaluate( electron_momentum_projection )/
+    d_compton_profile_norm_constant;
 }
 
 // Evaluate the occupation number at a given electron momentum projection
@@ -185,7 +212,6 @@ double OccupationNumberEvaluator::evaluateOccupationNumber(
   
   // Make sure the occupation number is valid
   testPostcondition( occupation_number >= 0.0 );
-  testPostcondition( occupation_number <= 1.0 );
 
   return occupation_number;
 }
