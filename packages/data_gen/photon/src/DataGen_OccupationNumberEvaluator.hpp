@@ -35,6 +35,9 @@ public:
   ~OccupationNumberEvaluator()
   { /* ... */ }
 
+  //! Return the normalization constant used with the Compton profile
+  double getComptonProfileNormConstant() const;
+
   //! Evaluate the compton profile
   double evaluateComptonProfile( 
 			     const double electron_momentum_projection ) const;
@@ -44,6 +47,9 @@ public:
 				   const double precision = 1e-6 ) const;
 
 private:
+
+  // The compton profile normalization constant (rounding error issue)
+  double d_compton_profile_norm_constant;
 
   // The compton profile
   boost::scoped_ptr<const Utility::TabularDistribution<Utility::LogLin> >

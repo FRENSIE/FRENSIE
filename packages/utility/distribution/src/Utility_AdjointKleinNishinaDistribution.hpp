@@ -61,16 +61,16 @@ public:
   //! Set the energy (MeV)
   void setEnergy( const double energy );
 
-  //! Get the energy (MeV)
+  //! Return the energy (MeV)
   double getEnergy() const;
 
-  //! Get the unitless energy
+  //! Return the unitless energy
   double getAlpha() const;
 
-  //! Get the max energy (MeV)
+  //! Return the max energy (MeV)
   double getMaxEnergy() const;
 
-  //! Get the max unitless energy
+  //! Return the max unitless energy
   double getMaxAlpha() const;
 
   //! Evaluate the integrated adjoint Klein-Nishina cross section

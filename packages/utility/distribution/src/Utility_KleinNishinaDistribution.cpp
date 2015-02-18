@@ -267,6 +267,18 @@ void KleinNishinaDistribution::setEnergy( const double energy )
   d_samples = 0u;
 }
 
+// Return the energy (MeV)
+double KleinNishinaDistribution::getEnergy() const
+{
+  return d_alpha*PhysicalConstants::electron_rest_mass_energy;
+}
+
+// Return the unitless energy
+double KleinNishinaDistribution::getAlpha() const
+{
+  return d_alpha;
+}
+
 // Evaluate the distribution
 double KleinNishinaDistribution::evaluate( const double indep_var_value ) const
 {
