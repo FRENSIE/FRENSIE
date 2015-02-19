@@ -14,6 +14,7 @@
 #include "MonteCarlo_SourceModuleInterface.hpp"
 #include "MonteCarlo_EstimatorModuleInterface.hpp"
 #include "MonteCarlo_CollisionModuleInterface.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Geometry_ModuleInterface.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
@@ -177,6 +178,10 @@ void ParticleSimulationManager<GeometryHandler,
   // Cell information
   typename GMI::InternalCellHandle cell_entering, cell_leaving;
   double cell_total_macro_cross_section;
+
+  // Check if the particle energy is below the cutoff
+  if( particle.getEnergy() < SimulationProperties::getMinParticleEnergy<ParticleStateType>() )
+    particle.setAsGone();
   
   while( !particle.isLost() && !particle.isGone() )
   {
@@ -291,7 +296,7 @@ void ParticleSimulationManager<GeometryHandler,
 	ray_start_point[2] = particle.getZPosition();
 
 	// Make sure the energy is above the cutoff
-	if( particle.getEnergy() < 1e-11 )
+	if( particle.getEnergy() < SimulationProperties::getMinParticleEnergy<ParticleStateType>() )
 	  particle.setAsGone();
 
 	// This subtrack is finished
