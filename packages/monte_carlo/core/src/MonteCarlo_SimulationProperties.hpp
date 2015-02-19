@@ -99,14 +99,13 @@ public:
   //! Return the absolute maximum electron energy (MeV)
   static double getAbsoluteMaxElectronEnergy();
 
-  //! Return the minimum particle energy (MeV)
-  static double getMinParticleEnergy( NeutronState& paticle );
+  //! Return the min particle energy
+  template<typename ParticleType>
+  static double getMinParticleEnergy();
 
-  //! Return the minimum particle energy (MeV)
-  static double getMinParticleEnergy( PhotonState& paticle );
-
-  //! Return the minimum particle energy (MeV)
-  static double getMinParticleEnergy( ElectronState& paticle );
+  //! Return the max particle energy
+  template<typename ParticleType>
+  static double getMaxParticleEnergy();
 
   //! Set implicit capture mode to on (off by default)
   static void setImplicitCaptureModeOn();
@@ -304,27 +303,6 @@ inline double SimulationProperties::getAbsoluteMaxElectronEnergy()
   return SimulationProperties::absolute_max_electron_energy;
 }
 
-// Return the minimum particle energy (MeV)
-inline double SimulationProperties::getMinParticleEnergy( 
-                                          NeutronState& particle )
-{
-  return SimulationProperties::min_neutron_energy;
-}
-
-// Return the minimum particle energy (MeV)
-inline double SimulationProperties::getMinParticleEnergy( 
-                                          PhotonState& particle )
-{
-  return SimulationProperties::min_photon_energy;
-}
-
-// Return the minimum particle energy (MeV)
-inline double SimulationProperties::getMinParticleEnergy( 
-                                          ElectronState& particle )
-{
-  return SimulationProperties::min_electron_energy;
-}
-
 // Return if implicit capture mode has been set
 inline bool SimulationProperties::isImplicitCaptureModeOn()
 {
@@ -363,6 +341,14 @@ inline BremsstrahlungAngularDistributionType
 }
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_SimulationProperties_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_SIMULATION_PROPERTIES_HPP
 
