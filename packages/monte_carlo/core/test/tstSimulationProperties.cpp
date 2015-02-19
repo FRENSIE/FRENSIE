@@ -256,6 +256,70 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setMaxElectronEnergy )
 }
 
 //---------------------------------------------------------------------------//
+// Test that the min particle energy can be returned
+TEUCHOS_UNIT_TEST( SimulationProperties, getMinParticleEnergy )
+{
+  double default_value_neutron = 
+    MonteCarlo::SimulationProperties::getMinNeutronEnergy();
+
+  MonteCarlo::SimulationProperties::setMinNeutronEnergy( 1e-8 );
+  
+  double default_value_photon = 
+    MonteCarlo::SimulationProperties::getMinPhotonEnergy();
+
+  MonteCarlo::SimulationProperties::setMinPhotonEnergy( 1e-2 );
+  
+  double default_value_electron = 
+    MonteCarlo::SimulationProperties::getMinElectronEnergy();
+
+  MonteCarlo::SimulationProperties::setMinElectronEnergy( 1e-2 );
+
+  TEST_EQUALITY( MonteCarlo::SimulationProperties::getMinParticleEnergy<MonteCarlo::NeutronState>(),
+		 1e-8 );
+  TEST_EQUALITY( MonteCarlo::SimulationProperties::getMinParticleEnergy<MonteCarlo::PhotonState>(),
+		 1e-2 );
+  TEST_EQUALITY( MonteCarlo::SimulationProperties::getMinParticleEnergy<MonteCarlo::ElectronState>(),
+		 1e-2 );
+
+  // Reset the default values
+  MonteCarlo::SimulationProperties::setMinNeutronEnergy( default_value_neutron );
+  MonteCarlo::SimulationProperties::setMinPhotonEnergy( default_value_photon );
+  MonteCarlo::SimulationProperties::setMinElectronEnergy( default_value_electron );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the max particle energy can be returned
+TEUCHOS_UNIT_TEST( SimulationProperties, getMaxParticleEnergy )
+{
+  double default_value_neutron = 
+    MonteCarlo::SimulationProperties::getMaxNeutronEnergy();
+
+  MonteCarlo::SimulationProperties::setMaxNeutronEnergy( 15.0 );
+  
+  double default_value_photon = 
+    MonteCarlo::SimulationProperties::getMaxPhotonEnergy();
+
+  MonteCarlo::SimulationProperties::setMaxPhotonEnergy( 15.0 );
+  
+  double default_value_electron = 
+    MonteCarlo::SimulationProperties::getMaxElectronEnergy();
+
+  MonteCarlo::SimulationProperties::setMaxElectronEnergy( 15.0 );
+
+  TEST_EQUALITY( MonteCarlo::SimulationProperties::getMaxParticleEnergy<MonteCarlo::NeutronState>(),
+		 15.0 );
+  TEST_EQUALITY( MonteCarlo::SimulationProperties::getMaxParticleEnergy<MonteCarlo::PhotonState>(),
+		 15.0 );
+  TEST_EQUALITY( MonteCarlo::SimulationProperties::getMaxParticleEnergy<MonteCarlo::ElectronState>(),
+		 15.0 );
+
+  // Reset the default values
+  MonteCarlo::SimulationProperties::setMaxNeutronEnergy( default_value_neutron );
+  MonteCarlo::SimulationProperties::setMaxPhotonEnergy( default_value_photon );
+  MonteCarlo::SimulationProperties::setMaxElectronEnergy( default_value_electron );
+}
+
+//---------------------------------------------------------------------------//
 // Test that implicit capture mode can be turned on
 TEUCHOS_UNIT_TEST( SimulationProperties, setImplicitCaptureModeOn )
 {
