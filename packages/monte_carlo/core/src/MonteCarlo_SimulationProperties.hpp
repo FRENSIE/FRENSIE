@@ -12,6 +12,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 
 namespace MonteCarlo{
 
@@ -95,6 +98,15 @@ public:
 
   //! Return the absolute maximum electron energy (MeV)
   static double getAbsoluteMaxElectronEnergy();
+
+  //! Return the minimum particle energy (MeV)
+  static double getMinParticleEnergy( NeutronState& paticle );
+
+  //! Return the minimum particle energy (MeV)
+  static double getMinParticleEnergy( PhotonState& paticle );
+
+  //! Return the minimum particle energy (MeV)
+  static double getMinParticleEnergy( ElectronState& paticle );
 
   //! Set implicit capture mode to on (off by default)
   static void setImplicitCaptureModeOn();
@@ -292,6 +304,26 @@ inline double SimulationProperties::getAbsoluteMaxElectronEnergy()
   return SimulationProperties::absolute_max_electron_energy;
 }
 
+// Return the minimum particle energy (MeV)
+inline double SimulationProperties::getMinParticleEnergy( 
+                                          NeutronState& particle )
+{
+  return SimulationProperties::min_neutron_energy;
+}
+
+// Return the minimum particle energy (MeV)
+inline double SimulationProperties::getMinParticleEnergy( 
+                                          PhotonState& particle )
+{
+  return SimulationProperties::min_photon_energy;
+}
+
+// Return the minimum particle energy (MeV)
+inline double SimulationProperties::getMinParticleEnergy( 
+                                          ElectronState& particle )
+{
+  return SimulationProperties::min_electron_energy;
+}
 
 // Return if implicit capture mode has been set
 inline bool SimulationProperties::isImplicitCaptureModeOn()

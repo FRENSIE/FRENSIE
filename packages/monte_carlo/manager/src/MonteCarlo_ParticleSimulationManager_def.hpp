@@ -255,7 +255,8 @@ void ParticleSimulationManager<GeometryHandler,
   typename GMI::InternalCellHandle cell_entering, cell_leaving;
   double cell_total_macro_cross_section;
 
-  if( particle.getEnergy() < MonteCarlo::SimulationProperties::getMinElectronEnergy() )
+  if( particle.getEnergy() < 
+      MonteCarlo::SimulationProperties::getMinParticleEnergy( particle ) )
     particle.setAsGone();
   
   while( !particle.isLost() && !particle.isGone() )
@@ -372,8 +373,8 @@ void ParticleSimulationManager<GeometryHandler,
 
 	// Make sure the energy is above the cutoff
     //! \todo implement a general cutoff function for all particle types
-//	if( particle.getEnergy() < 1e-11 )
-	if( particle.getEnergy() < MonteCarlo::SimulationProperties::getMinElectronEnergy() )
+	if( particle.getEnergy() < 
+        MonteCarlo::SimulationProperties::getMinParticleEnergy( particle ) )
 	  particle.setAsGone();
 
 	// This subtrack is finished
