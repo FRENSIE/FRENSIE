@@ -49,7 +49,6 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   knock_on_energy = sampleTwoDDistribution( 
                          electron.getEnergy(),
                          d_electroionization_subshell_scattering_distribution );
-  std::cout << "electroionization scattering called" << std::endl;
   // Set the new energy of the original electron
 
   electron.setEnergy( incoming_energy - knock_on_energy );

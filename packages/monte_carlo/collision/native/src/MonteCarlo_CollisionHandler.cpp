@@ -145,7 +145,9 @@ bool CollisionHandler::isCellVoid(
     else
       return false;
   default:
-    return true;
+    THROW_EXCEPTION( std::logic_error,
+		     "Error: particle type " << particle_type <<
+		     " is not recognized by the collision handler!" );
   }
 }
 

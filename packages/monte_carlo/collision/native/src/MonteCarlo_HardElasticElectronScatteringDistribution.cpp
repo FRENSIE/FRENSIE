@@ -23,6 +23,11 @@
 #include "Utility_TabularDistribution.hpp"
 
 namespace MonteCarlo{
+
+// Initialize static member data
+double HardElasticElectronScatteringDistribution::s_cutoff_angle_cosine = 
+  0.999999;
+
 // Constructor 
 HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribution(
     const int atomic_number,
@@ -32,9 +37,6 @@ HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribu
 {
   // Make sure the array is valid
   testPrecondition( d_elastic_scattering_distribution.size() > 0 );
-
-  // Cutoff angle cosine between the distribution and analytical function
-  cutoff_angle_cosine = 0.999999;
 }
 
 // Randomly scatter the electron
@@ -46,18 +48,19 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
   // angle cosine the electron scatters into
   double scattering_angle_cosine;
 
-  // The distribution to be sampled
-  Teuchos::RCP<Utility::OneDDistribution> sampling_dist;
-
   // Energy is below the lowest grid point
   if( electron.getEnergy() < d_elastic_scattering_distribution.front().first )
   {
-    sampling_dist    = d_elastic_scattering_distribution.front().second;
+    scattering_angle_cosine = this->sampleScatteringAngleCosine(
+			      d_elastic_scattering_distribution.front().second,
+			      electron.getEnergy() );
   }
   // Energy is above the highest grid point
   else if( electron.getEnergy() >= d_elastic_scattering_distribution.back().first )
   {
-    sampling_dist    = d_elastic_scattering_distribution.back().second;
+    scattering_angle_cosine = this->sampleScatteringAngleCosine(
+			       d_elastic_scattering_distribution.back().second,
+			       electron.getEnergy() );
   }
   // Energy is inbetween two grid point
   else
@@ -85,33 +88,17 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
     // Sample from the upper energy bin
     if( random_number_1 < interpolation_fraction )
     {
-      sampling_dist = upper_bin_boundary->second;
+      scattering_angle_cosine = this->sampleScatteringAngleCosine(
+						    upper_bin_boundary->second,
+						    electron.getEnergy() );
     }
     // Sample from the lower energy bin
     else
     {
-      sampling_dist = lower_bin_boundary->second;
+      scattering_angle_cosine = this->sampleScatteringAngleCosine(
+						    lower_bin_boundary->second,
+						    electron.getEnergy() );
     }
-  }
-
-  double random_number_2 = 
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-  // evaluate the cutoff CDF for applying the analytical screening function
-  double cutoff_cdf_value = sampling_dist->evaluateCDF( cutoff_angle_cosine );
-
-  // Sample from the distribution
-  if( cutoff_cdf_value > random_number_2 )
-  {
-    scattering_angle_cosine = sampling_dist->sample( cutoff_angle_cosine );
-//! \todo Write a Histogram function to sample from the corresponding CDF in a subrange
-//    scattering_angle_cosine = sampling_dist->sample( );
-  }
-  // Sample from the analytical function
-  else
-  {
-    scattering_angle_cosine = 
-      evaluateScreenedScatteringAngle( electron.getEnergy() );
   }
 
   // Calculate the outgoing direction
@@ -126,7 +113,7 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
-std::cout << " elastic called" << std::endl;
+  
   // Set the new direction
   electron.setDirection( outgoing_electron_direction );
 }
@@ -170,6 +157,41 @@ double HardElasticElectronScatteringDistribution::evaluateScreenedScatteringAngl
   double arg = (1.0 - random_number_3)/( screening_angle + 0.000001 );
 
   return screening_angle + 1.0 - 1.0/(arg + random_number_3/screening_angle);
+}
+
+// Sample a scattering angle cosine
+double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
+ 			   const Teuchos::RCP<const Utility::OneDDistribution>&
+			   elastic_scattering_distribution,
+			   const double energy ) const
+{
+  double scattering_angle_cosine;
+  
+  double random_number = 
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  // evaluate the cutoff CDF for applying the analytical screening function
+  double cutoff_cdf_value = 
+    elastic_scattering_distribution->evaluateCDF( s_cutoff_angle_cosine );
+    
+  // Sample from the distribution
+  //! \todo Write a Histogram function to sample from the corresponding CDF in a subrange
+  if( cutoff_cdf_value > random_number )
+  {
+    scattering_angle_cosine =  
+      elastic_scattering_distribution->sample( s_cutoff_angle_cosine );
+  }
+  // Sample from the analytical function
+  else
+  {
+    scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
+  }
+
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( scattering_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine <= 1.0 );
+
+  return scattering_angle_cosine;
 }
 
 } // end MonteCarlo namespace
