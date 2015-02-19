@@ -59,7 +59,7 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
     raw_electroatom_data.extractELASBlock();
 
   // Create the elastic scattering distributions
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
+  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::OneDDistribution> > >
     scattering_function( size );
   
   for( unsigned n = 0; n < size; ++n )
@@ -67,7 +67,7 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
     scattering_function[n].first = angular_energy_grid[n];
 
     scattering_function[n].second.reset( 
-	  new Utility::HistogramDistribution(
+	  new const Utility::HistogramDistribution(
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
          true ) );

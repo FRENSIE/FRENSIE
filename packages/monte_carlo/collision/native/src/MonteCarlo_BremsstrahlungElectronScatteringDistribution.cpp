@@ -97,7 +97,7 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   // Sample knock-on electron energy
   photon_energy = sampleTwoDDistribution( electron.getEnergy(),
                                      d_bremsstrahlung_scattering_distribution );
-std::cout << " bremmstrahlung called" << std::endl;
+  //std::cout << " bremmstrahlung called" << std::endl;
   // Set the new energy
   electron.setEnergy( electron.getEnergy() - photon_energy );
 
