@@ -935,12 +935,13 @@ int main( int argc, char** argv )
     initial_momentum_projection[1] = 0.0;
     initial_momentum_projection[2] = 1.0;
 
-    occupation_number_grid_generator.generate( momentum_projection,
-					       occupation_number,
-					       initial_momentum_projection,
-					       1e-3,
-					       1e-12,
-					       1e-12 );
+    occupation_number_grid_generator.generateAndEvaluate( 
+						   momentum_projection,
+						   occupation_number,
+						   initial_momentum_projection,
+						   1e-3,
+						   1e-12,
+						   1e-12 );
 
     // Fix the grid rounding errors
     Teuchos::Array<double>::iterator full_occupancy = 
@@ -1140,12 +1141,13 @@ int main( int argc, char** argv )
     initial_momentum_projection[1] = 0.0;
     initial_momentum_projection[2] = 1.0;
 
-    occupation_number_grid_generator.generate( momentum_projection,
-					       occupation_number,
-					       initial_momentum_projection,
-					       1e-3,
-					       1e-12,
-					       1e-12 );
+    occupation_number_grid_generator.generateAndEvaluate( 
+						   momentum_projection,
+						   occupation_number,
+						   initial_momentum_projection,
+						   1e-3,
+						   1e-12,
+						   1e-12 );
 
     // Fix the grid rounding errors
     Teuchos::Array<double>::iterator full_occupancy = 
@@ -1174,12 +1176,13 @@ int main( int argc, char** argv )
 
     occupation_number_grid_generator.resetFunction( grid_function );
 
-    occupation_number_grid_generator.generate( momentum_projection,
-					       occupation_number,
-					       initial_momentum_projection,
-					       1e-3,
-					       1e-12,
-					       1e-12 );
+    occupation_number_grid_generator.generateAndEvaluate( 
+						   momentum_projection,
+						   occupation_number,
+						   initial_momentum_projection,
+						   1e-3,
+						   1e-12,
+						   1e-12 );
 
     // Fix the grid rounding errors
     full_occupancy = std::find_if( occupation_number.begin(),
@@ -1207,12 +1210,13 @@ int main( int argc, char** argv )
 
     occupation_number_grid_generator.resetFunction( grid_function );
 
-    occupation_number_grid_generator.generate( momentum_projection,
-					       occupation_number,
-					       initial_momentum_projection,
-					       1e-3,
-					       1e-12,
-					       1e-12 );
+    occupation_number_grid_generator.generateAndEvaluate( 
+						   momentum_projection,
+						   occupation_number,
+						   initial_momentum_projection,
+						   1e-3,
+						   1e-12,
+						   1e-12 );
 
     // Fix the grid rounding errors
     full_occupancy = std::find_if( occupation_number.begin(),
@@ -1240,12 +1244,13 @@ int main( int argc, char** argv )
 
     occupation_number_grid_generator.resetFunction( grid_function );
 
-    occupation_number_grid_generator.generate( momentum_projection,
-					       occupation_number,
-					       initial_momentum_projection,
-					       1e-3,
-					       1e-12,
-					       1e-12 );
+    occupation_number_grid_generator.generateAndEvaluate( 
+						   momentum_projection,
+						   occupation_number,
+						   initial_momentum_projection,
+						   1e-3,
+						   1e-12,
+						   1e-12 );
 
     // Fix the grid rounding errors
     full_occupancy = std::find_if( occupation_number.begin(),
