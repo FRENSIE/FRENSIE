@@ -36,8 +36,8 @@ public:
 
   //! Typedef for the  elastic distribution
   typedef Teuchos::Array<Utility::Pair< double,
-                                     Teuchos::RCP<Utility::OneDDistribution> > >
-                                     ElasticDistribution;
+                              Teuchos::RCP<const Utility::OneDDistribution> > >
+  ElasticDistribution;
 
   //! Constructor
   HardElasticElectronScatteringDistribution(
@@ -63,16 +63,20 @@ double evaluateScreenedScatteringAngle( const double energy ) const;
 
 private:
 
-  // Atomic number (Z) of the target atom
-  const int d_atomic_number;
+  // Sample a scattering angle cosine
+  double sampleScatteringAngleCosine( 
+		           const Teuchos::RCP<const Utility::OneDDistribution>&
+			   elastic_scattering_distribution,
+			   const double energy ) const;
 
   // Cutoff angle cosine between the distribution and analytical function
-  double cutoff_angle_cosine;
+  static double s_cutoff_angle_cosine;
+
+  // Atomic number (Z) of the target atom
+  int d_atomic_number;
 
   // elastic scattering distribution without forward screening data
   ElasticDistribution d_elastic_scattering_distribution;
-
-
 };
 
 } // end MonteCarlo namespace

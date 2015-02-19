@@ -9,6 +9,9 @@
 #ifndef FACEMC_PARTICLE_SIMULATION_MANAGER_HPP
 #define FACEMC_PARTICLE_SIMULATION_MANAGER_HPP
 
+// Boost Function
+#include <boost/function.hpp>
+
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
 
@@ -75,7 +78,12 @@ private:
   // Simulate an individual particle
   template<typename ParticleStateType>
   void simulateParticle( ParticleStateType& particle,
-                         ParticleBank& particle_bank );
+                         ParticleBank& particle_bank ) const;
+
+  // Dummy function for ignoring a particle
+  template<typename ParticleStateType>
+  void ignoreParticle( ParticleStateType& particle,
+		       ParticleBank& particle_bank ) const;
 
   // Print simulation state info in collision handler
   void printSimulationStateInfo();
@@ -100,6 +108,15 @@ private:
 
   // The simulation end time
   double d_end_time;
+
+  // The neutron simulation function
+  boost::function<void (NeutronState&, ParticleBank&)> d_simulate_neutron;
+
+  // The photon simulation function
+  boost::function<void (PhotonState&, ParticleBank&)> d_simulate_photon;
+
+  // The electron simulation function
+  boost::function<void (ElectronState&, ParticleBank&)> d_simulate_electron;
 };
 
 //! Macro for catching a lost particle and breaking a loop
@@ -118,7 +135,7 @@ private:
     std::cout << particle.getZDirection() << std::endl;			\
     particle.setAsLost();						\
     break;								\
-  }
+    }
 
 //! Macro for catching a lost source particle
 #define CATCH_LOST_SOURCE_PARTICLE_AND_CONTINUE( bank )			\
