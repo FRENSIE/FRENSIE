@@ -83,6 +83,31 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, evaluatePDF )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the CDF can be evaluated
+TEUCHOS_UNIT_TEST( HistogramDistribution, evaluateCDF )
+{
+  TEST_EQUALITY_CONST(   pdf_distribution->evaluateCDF(-3.0 ), 0.0 );
+  TEST_EQUALITY_CONST(   pdf_distribution->evaluateCDF(-2.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY(pdf_distribution->evaluateCDF(-1.5 ), 1.0/6.0, 1e-14 );
+  TEST_EQUALITY_CONST(   pdf_distribution->evaluateCDF(-1.0 ), 1.0/3.0 );
+  TEST_FLOATING_EQUALITY(pdf_distribution->evaluateCDF( 0.0 ), 0.5, 1e-14 );
+  TEST_EQUALITY_CONST(   pdf_distribution->evaluateCDF( 1.0 ), 2.0/3.0 );
+  TEST_FLOATING_EQUALITY(pdf_distribution->evaluateCDF( 1.5 ), 5.0/6.0, 1e-14 );
+  TEST_EQUALITY_CONST(   pdf_distribution->evaluateCDF( 2.0 ), 1.0 );
+  TEST_EQUALITY_CONST(   pdf_distribution->evaluateCDF( 3.0 ), 1.0 );
+
+  TEST_EQUALITY_CONST(   cdf_distribution->evaluateCDF(-3.0 ), 0.0 );
+  TEST_EQUALITY_CONST(   cdf_distribution->evaluateCDF(-2.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY(cdf_distribution->evaluateCDF(-1.5 ), 1.0/6.0, 1e-14 );
+  TEST_EQUALITY_CONST(   cdf_distribution->evaluateCDF(-1.0 ), 1.0/3.0 );
+  TEST_FLOATING_EQUALITY(cdf_distribution->evaluateCDF( 0.0 ), 0.5, 1e-14 );
+  TEST_EQUALITY_CONST(   cdf_distribution->evaluateCDF( 1.0 ), 2.0/3.0 );
+  TEST_FLOATING_EQUALITY(cdf_distribution->evaluateCDF( 1.5 ), 5.0/6.0, 1e-14 );
+  TEST_EQUALITY_CONST(   cdf_distribution->evaluateCDF( 2.0 ), 1.0 );
+  TEST_EQUALITY_CONST(   cdf_distribution->evaluateCDF( 3.0 ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( HistogramDistribution, sample )
 {
