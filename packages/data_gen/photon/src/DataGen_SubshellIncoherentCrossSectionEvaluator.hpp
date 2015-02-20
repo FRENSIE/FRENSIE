@@ -16,10 +16,10 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_SubshellType.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_KleinNishinaDistribution.hpp"
 #include "Utility_GaussKronrodQuadratureKernel.hpp"
-#include "MonteCarlo_SubshellType.hpp"
 
 namespace DataGen{
 
@@ -29,9 +29,6 @@ class SubshellIncoherentCrossSectionEvaluator
 
 public:
 
-  //! Default constructor (free electron)
-  SubshellIncoherentCrossSectionEvaluator();
-
   //! Constructor (bound electron)
   SubshellIncoherentCrossSectionEvaluator(
                            const MonteCarlo::SubshellType subshell,
@@ -40,14 +37,27 @@ public:
                            const Teuchos::RCP<const Utility::OneDDistribution>&
 			   subshell_occupation_number );
 
+  //! Return the subshell
+  MonteCarlo::SubshellType getSubshell() const;
+
+  //! Return the number of electrons that occupy the subshell
+  double getNumberOfElectronsInSubshell() const;
+
+  //! Return the binding energy of the subshell
+  double getSubshellBindingEnergy() const;
+
   //! Return the maximum electron momentum projection
   double getMaxElectronMomentumProjection( const double energy,
 					   const double angle_cosine ) const;
 
-  //! Evaluate the differential adjoint incoherent cross section (dc/dx)
+  //! Evaluate the differential subshell incoherent cross section (dc/dx)
   double evaluateDifferentialCrossSection(
-		 const double inverse_energy_gain_ratio,
+		 const double inverse_energy_loss_ratio,
 		 const Utility::KleinNishinaDistribution& distribution ) const;
+
+  //! Evaluate the subshell incoherent cross section
+  double evaluateCrossSection( const double energy,
+			       const double precision = 1e-6 ) const;
 
 private:
 
@@ -58,7 +68,7 @@ private:
   double d_num_electrons_in_subshell;
 
   // The binding energy of the subshell (MeV)
-  double d_subshell_binding_energy
+  double d_subshell_binding_energy;
 
   // The occupation number of the subshell
   Teuchos::RCP<const Utility::OneDDistribution> d_subshell_occupation_number;

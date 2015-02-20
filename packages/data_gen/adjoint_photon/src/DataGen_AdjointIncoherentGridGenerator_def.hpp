@@ -161,8 +161,6 @@ void AdjointIncoherentGridGenerator::generate(
   testPrecondition( distance_tol > 0.0 );
   
   // Load the initial max energy grid
-  Teuchos::Array<double> initial_processed_max_energy_grid;
-
   double raw_energy = 
       TwoDInterpPolicy::recoverProcessedFirstIndepVar( processed_energy );
   
@@ -172,37 +170,37 @@ void AdjointIncoherentGridGenerator::generate(
     
     if( max_energy_of_max_cs < s_nudged_max_table_energy )
     {
-      initial_processed_max_energy_grid.resize( 3 );
+      processed_max_energy_grid.resize( 3 );
       
-      initial_processed_max_energy_grid[0] = 
+      processed_max_energy_grid[0] = 
 	TwoDInterpPolicy::processSecondIndepVar( 
 		      raw_energy*(1.0 + s_energy_to_max_energy_nudge_factor) );
-      initial_processed_max_energy_grid[1] = 
+      processed_max_energy_grid[1] = 
 	TwoDInterpPolicy::processSecondIndepVar( max_energy_of_max_cs );
-      initial_processed_max_energy_grid[2] = 
+      processed_max_energy_grid[2] = 
 	TwoDInterpPolicy::processSecondIndepVar( s_nudged_max_table_energy );
     }
     else
     {
-      initial_processed_max_energy_grid.resize( 2 );
+      processed_max_energy_grid.resize( 2 );
     
-      initial_processed_max_energy_grid[0] = 
+      processed_max_energy_grid[0] = 
 	TwoDInterpPolicy::processSecondIndepVar( 
 		      raw_energy*(1.0 + s_energy_to_max_energy_nudge_factor) );
     
-      initial_processed_max_energy_grid[1] = 
+      processed_max_energy_grid[1] = 
 	TwoDInterpPolicy::processSecondIndepVar( s_nudged_max_table_energy );
     }
   }
   else
   {
-    initial_processed_max_energy_grid.resize( 2 );
+    processed_max_energy_grid.resize( 2 );
     
-    initial_processed_max_energy_grid[0] = 
+    processed_max_energy_grid[0] = 
       TwoDInterpPolicy::processSecondIndepVar( 
 		       raw_energy*(1.0+ s_energy_to_max_energy_nudge_factor) );
     
-    initial_processed_max_energy_grid[1] = 
+    processed_max_energy_grid[1] = 
       TwoDInterpPolicy::processSecondIndepVar( s_nudged_max_table_energy );
   }
 
@@ -215,12 +213,11 @@ void AdjointIncoherentGridGenerator::generate(
 
   Utility::LinearGridGenerator max_grid_generator( grid_function );
   
-  max_grid_generator.generate( processed_max_energy_grid,
-			       processed_cross_section,
-  			       initial_processed_max_energy_grid,
-  			       convergence_tol,
-  			       absolute_diff_tol,
-  			       distance_tol );
+  max_grid_generator.generateAndEvaluateInPlace( processed_max_energy_grid,
+						 processed_cross_section,
+						 convergence_tol,
+						 absolute_diff_tol,
+						 distance_tol );
 }
 
 // Evaluate the processed adjoint incoherent cross section

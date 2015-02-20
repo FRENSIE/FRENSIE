@@ -86,6 +86,12 @@ public:
   //! Set the energy (MeV)
   void setEnergy( const double energy );
 
+  //! Return the energy (MeV)
+  double getEnergy() const;
+
+  //! Return the unitless energy
+  double getAlpha() const;
+
   //! Evaluate the distribution
   double evaluate( const double indep_var_value ) const;
 
