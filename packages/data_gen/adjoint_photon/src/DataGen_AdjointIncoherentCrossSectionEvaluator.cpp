@@ -70,7 +70,7 @@ AdjointIncoherentCrossSectionEvaluator::AdjointIncoherentCrossSectionEvaluator()
 
 // Constructor
 /*! \details The scattering function must have the electrom recoil momentum,
- * in units of inverse cm (not inverse Angstroms), as the inpependent
+ * in units of inverse cm (not inverse Angstroms), as the independent
  * variable.
  */
 AdjointIncoherentCrossSectionEvaluator::AdjointIncoherentCrossSectionEvaluator(
@@ -157,6 +157,7 @@ AdjointIncoherentCrossSectionEvaluator::evaluateDifferentialCrossSection(
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
+  // Make sure the scattering function value is valid
   testPostcondition( scattering_function_value >= 0.0 );
   testPostcondition( scattering_function_value <= 100.0 );
 

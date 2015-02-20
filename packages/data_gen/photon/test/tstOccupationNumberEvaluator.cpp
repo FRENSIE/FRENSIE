@@ -44,6 +44,9 @@ Teuchos::RCP<DataGen::OccupationNumberEvaluator>
 // Check that the Compton profile can be evaluated
 TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateComptonProfile_h )
 {
+  double norm_constant = 
+    occupation_number_h_k->getComptonProfileNormConstant();
+  
   double compton_profile_value = 
     occupation_number_h_k->evaluateComptonProfile( -1.1 );
 
@@ -52,31 +55,36 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateComptonProfile_h )
   compton_profile_value = 
     occupation_number_h_k->evaluateComptonProfile( -1.0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
+				  2.22639294755139392e-09/norm_constant, 
+				  1e-15 );
 
   compton_profile_value = 
     occupation_number_h_k->evaluateComptonProfile( -0.5837882030079395 );
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
-				  4.561986437562962e-09,
+				  4.561986437562962e-09/norm_constant,
 				  1e-15 );
 
   compton_profile_value =
     occupation_number_h_k->evaluateComptonProfile( 0.0 );
 
-  TEST_FLOATING_EQUALITY( compton_profile_value, 115.83526012799598, 1e-15 );
+  TEST_FLOATING_EQUALITY( compton_profile_value, 
+			  115.83526012799598/norm_constant, 1e-15 );
 
   compton_profile_value = 
     occupation_number_h_k->evaluateComptonProfile( 0.5837882030079395 );
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
-				  4.561986437562962e-09,
+				  4.561986437562962e-09/norm_constant,
 				  1e-15 );
   
   compton_profile_value = 
     occupation_number_h_k->evaluateComptonProfile( 1.0 );
   
-  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
+				  2.22639294755139392e-09/norm_constant, 
+				  1e-15 );
 
   compton_profile_value =
     occupation_number_h_k->evaluateComptonProfile( 1.1 );
@@ -88,6 +96,9 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateComptonProfile_h )
 // Check that the Compton profile can be evaluated
 TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateComptonProfile_pb )
 {
+  double norm_constant = 
+    occupation_number_pb_k->getComptonProfileNormConstant();
+  
   // K-shell
   double compton_profile_value = 
     occupation_number_pb_k->evaluateComptonProfile( -1.1 );
@@ -97,31 +108,37 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateComptonProfile_pb )
   compton_profile_value = 
     occupation_number_pb_k->evaluateComptonProfile( -1.0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
+				  5.20373615890446367e-02/norm_constant, 
+				  1e-15 );
 
   compton_profile_value = 
     occupation_number_pb_k->evaluateComptonProfile( -0.5837882030079395 );
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
-				  0.26118480303735186,
+				  0.26118480303735186/norm_constant,
 				  1e-15 );
 
   compton_profile_value =
     occupation_number_pb_k->evaluateComptonProfile( 0.0 );
 
-  TEST_FLOATING_EQUALITY( compton_profile_value, 1.3083852583290587, 1e-15 );
+  TEST_FLOATING_EQUALITY( compton_profile_value, 
+			  1.3083852583290587/norm_constant, 
+			  1e-15 );
 
   compton_profile_value = 
     occupation_number_pb_k->evaluateComptonProfile( 0.5837882030079395 );
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
-				  0.26118480303735186,
+				  0.26118480303735186/norm_constant,
 				  1e-15 );
   
   compton_profile_value = 
     occupation_number_pb_k->evaluateComptonProfile( 1.0 );
   
-  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
+				  5.20373615890446367e-02/norm_constant, 
+				  1e-15 );
 
   compton_profile_value =
     occupation_number_pb_k->evaluateComptonProfile( 1.1 );
@@ -129,6 +146,8 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateComptonProfile_pb )
   TEST_EQUALITY_CONST( compton_profile_value, 0.0 );
 
   // P3-shell
+  norm_constant = occupation_number_pb_p3->getComptonProfileNormConstant();
+  
   compton_profile_value = 
     occupation_number_pb_p3->evaluateComptonProfile( -1.1 );
 
@@ -137,31 +156,37 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateComptonProfile_pb )
   compton_profile_value = 
     occupation_number_pb_p3->evaluateComptonProfile( -1.0 );
 
-  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
+				  1.55571233220910706e-06/norm_constant, 
+				  1e-15 );
 
   compton_profile_value = 
     occupation_number_pb_p3->evaluateComptonProfile( -0.5837882030079395 );
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
-				  4.269136342282414e-05,
+				  4.269136342282414e-05/norm_constant,
 				  1e-15 );
 
   compton_profile_value =
     occupation_number_pb_p3->evaluateComptonProfile( 0.0 );
 
-  TEST_FLOATING_EQUALITY( compton_profile_value, 110.18902693969845, 1e-15 );
+  TEST_FLOATING_EQUALITY( compton_profile_value, 
+			  110.18902693969845/norm_constant, 
+			  1e-15 );
 
   compton_profile_value = 
     occupation_number_pb_p3->evaluateComptonProfile( 0.5837882030079395 );
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
-				  4.269136342282414e-05,
+				  4.269136342282414e-05/norm_constant,
 				  1e-15 );
   
   compton_profile_value = 
     occupation_number_pb_p3->evaluateComptonProfile( 1.0 );
   
-  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
+				  1.55571233220910706e-06/norm_constant, 
+				  1e-15 );
 
   compton_profile_value =
     occupation_number_pb_p3->evaluateComptonProfile( 1.1 );
@@ -186,19 +211,17 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateOccupationNumber_h )
   occupation_number = 
     occupation_number_h_k->evaluateOccupationNumber( 0.0, 1e-5 );
 
-  // Large error from poor table resolution (needs a finer grid)
-  TEST_FLOATING_EQUALITY( occupation_number, 0.5, 1e-2 );
+  TEST_FLOATING_EQUALITY( occupation_number, 0.5, 1e-6 );
 
   occupation_number = 
     occupation_number_h_k->evaluateOccupationNumber( 1.0, 1e-4 );
 
-  // Large error from poor table resolution (needs a finer grid)
-  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-2 );
+  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-15 );
 
   occupation_number = 
     occupation_number_h_k->evaluateOccupationNumber( 1.1, 1e-4 );
 
-  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-2 );
+  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -219,19 +242,17 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateOccupationNumber_pb )
   occupation_number = 
     occupation_number_pb_k->evaluateOccupationNumber( 0.0, 1e-5 );
   
-  // Large error from poor table resolution (needs a finer grid)
-  TEST_FLOATING_EQUALITY( occupation_number, 0.5, 5e-2 );
+  TEST_FLOATING_EQUALITY( occupation_number, 0.5, 1e-5 );
 
   occupation_number = 
     occupation_number_pb_k->evaluateOccupationNumber( 1.0, 1e-4 );
-
-  // Large error from poor table resolution (needs a finer grid)
-  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 5e-2 );
+  
+  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-15 );
 
   occupation_number = 
     occupation_number_pb_k->evaluateOccupationNumber( 1.1, 1e-4 );
 
-  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 5e-2 );
+  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-15 );
 
   // P3-shell
   occupation_number = 
@@ -247,19 +268,17 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateOccupationNumber_pb )
   occupation_number = 
     occupation_number_pb_p3->evaluateOccupationNumber( 0.0, 1e-5 );
   
-  // Large error from poor table resolution (needs a finer grid)
-  TEST_FLOATING_EQUALITY( occupation_number, 0.5, 1e-2 );
+  TEST_FLOATING_EQUALITY( occupation_number, 0.5, 1e-6 );
 
   occupation_number = 
     occupation_number_pb_p3->evaluateOccupationNumber( 1.0, 1e-4 );
 
-  // Large error from poor table resolution (needs a finer grid)
-  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-2 );
+  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-15 );
 
   occupation_number = 
     occupation_number_pb_p3->evaluateOccupationNumber( 1.1, 1e-4 );
 
-  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-2 );
+  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
