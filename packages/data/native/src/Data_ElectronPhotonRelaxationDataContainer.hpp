@@ -1,37 +1,47 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Data_ElectronPhotonRelaxationContainer.hpp
+//! \file   Data_ElectronPhotonRelaxationDataContainer.hpp
 //! \author Alex Robinson
 //! \brief  The native electron-photon-relaxation data container class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_ELECTRON_PHOTON_RELAXATION_CONTAINER_HPP
-#define DATA_ELECTRON_PHOTON_RELAXATION_CONTAINER_HPP
+#ifndef DATA_ELECTRON_PHOTON_RELAXATION_DATA_CONTAINER_HPP
+#define DATA_ELECTRON_PHOTON_RELAXATION_DATA_CONTAINER_HPP
 
 // Std Lib Includes
 #include <vector>
 #include <set>
 #include <map>
-#include <pair>
+#include <utility>
+#include <string>
 
 // Boost Includes
 #include <boost/serialization/split_member.hpp>
 
+// FRENSIE Includes
+#include "Utility_SerializableObject.hpp"
+
 namespace Data{
 
 //! The electron-photon-relaxation data container
-class ElectronPhotonRelaxationContainer
+class ElectronPhotonRelaxationDataContainer : public Utility::SerializableObject
 {
 
 public:
 
   //! Default constructor
-  ElectronPhotonRelaxationContainer()
+  ElectronPhotonRelaxationDataContainer()
   { /* ... */ }
 
+  //! Constructor (from saved archive)
+  ElectronPhotonRelaxationDataContainer( 
+		  const std::string& archive_name,
+                  const Utility::SerializableObject::ArchiveType archive_type =
+		  Utility::SerializableObject::XML_ARCHIVE);
+
   //! Destructor
-  virtual ~ElectronPhotonRelaxationContainer()
+  ~ElectronPhotonRelaxationDataContainer()
   { /* ... */ }
 
   //! Return the atomic number
@@ -46,6 +56,12 @@ public:
   //! Return the binding energy for a subshell
   double getSubshellBindingEnergy( const unsigned subshell ) const;
 
+  //! Return if there is relaxation data
+  bool hasRelaxationData() const;
+
+  //! Return if the subshell has relaxation data
+  bool hasSubshellRelaxationData( const unsigned subshell ) const;
+
   //! Return the number of transitions that can fill a subshell vacancy
   unsigned getSubshellRelaxationTransitions( const unsigned subshell ) const;
 
@@ -57,8 +73,8 @@ public:
   const std::vector<double>& getSubshellRelaxationParticleEnergies(
 					       const unsigned subshell ) const;
 
-  //! Return the relaxation CDF for a subshell
-  const std::vector<double>& getSubshellRelaxationCDF(
+  //! Return the relaxation probabilities for a subshell
+  const std::vector<double>& getSubshellRelaxationProbabilities(
 					       const unsigned subshell ) const;
 
   //! Return the Compton profile momentum grid 
@@ -125,7 +141,7 @@ public:
   getWallerHartreeCoherentCrossSection() const;
 
   //! Return the Waller-Hartree coherent cs threshold energy bin index
-  const std::vector<double>&
+  unsigned
   getWallerHartreeCoherentCrossSectionThresholdEnergyIndex() const;
 
   //! Return the pair production cross section
@@ -184,9 +200,10 @@ public:
 		     const unsigned subshell,
 		     const std::vector<double>& relaxation_particle_energies );
 
-  //! Set the relaxation CDF for a subshell
-  void setSubshellRelaxationCDF( const unsigned subshell,
-				 const std::vector<double>& relaxation_cdf );
+  //! Set the relaxation probabilities for a subshell
+  void setSubshellRelaxationProbabilities( 
+			 const unsigned subshell,
+			 const std::vector<double>& relaxation_probabilities );
   
   //! Set the Compton profile momentum grid 
   void setComptonProfileMomentumGrid( 
@@ -293,14 +310,30 @@ public:
   //! Set the impulse approx. total cross section
   void setImpulseApproxTotalCrossSection(
 			      const std::vector<double>& total_cross_section );
+
+  //! Export the data in the container to the desired archive type
+  void exportData( 
+	   const std::string& archive_name,
+	   const Utility::SerializableObject::ArchiveType archive_type ) const;
+
+  //! Import data from the desired archive
+  void importData( 
+		 const std::string& archive_name,
+		 const Utility::SerializableObject::ArchiveType archive_type );
+
+  //! Pack the data in the container into a string
+  std::string packDataInString() const;
+
+  //! Unpack the data from a string and store in the container
+  void unpackDataFromString( const std::string& packed_string );
   
 private:
 
   // Test if a value is less than or equal to zero
-  static isValueLessThanOrEqualToZero( const double value );
+  static bool isValueLessThanOrEqualToZero( const double value );
 
   // Test if a value is less than zero
-  static isValueLessThanZero( const double value );
+  static bool isValueLessThanZero( const double value );
 
   // Save the data to an archive
   template<typename Archive>
@@ -337,8 +370,8 @@ private:
   // The subshell relaxation particle energies
   std::map<unsigned,std::vector<double> > d_relaxation_particle_energies;
 
-  // The subshell relaxation cdf
-  std::map<unsigned,std::vector<double> > d_relaxation_cdf;
+  // The subshell relaxation probabilities
+  std::map<unsigned,std::vector<double> > d_relaxation_probabilities;
 
   // The Compton profile momentum grids (me*c units)
   std::vector<double> d_compton_profile_momentum_grid;
@@ -429,13 +462,13 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "Data_ElectronPhotonRelaxationContainer_def.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end DATA_ELECTRON_PHOTON_RELAXATION_CONTAINER_HPP
+#endif // end DATA_ELECTRON_PHOTON_RELAXATION_DATA_CONTAINER_HPP
 
 //---------------------------------------------------------------------------//
-// end Data_ElectronPhotonRelaxationContainer.hpp
+// end Data_ElectronPhotonRelaxationDataContainer.hpp
 //---------------------------------------------------------------------------//
 
