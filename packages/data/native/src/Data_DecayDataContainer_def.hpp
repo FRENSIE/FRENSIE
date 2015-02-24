@@ -6,8 +6,8 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_DECAY_DATA_CONTAINER_HPP
-#define DATA_DECAY_DATA_CONTAINER_HPP
+#ifndef DATA_DECAY_DATA_CONTAINER_DEF_HPP
+#define DATA_DECAY_DATA_CONTAINER_DEF_HPP
 
 // Boost Includes
 #include <boost/serialization/map.hpp>
@@ -24,7 +24,7 @@ void DecayDataContainer::serialize( Archive& ar, const unsigned int version )
 
 } // end Data namespace
 
-#endif // end DATA_DECAY_DATA_CONTAINER_HPP
+#endif // end DATA_DECAY_DATA_CONTAINER_DEF_HPP
 
 //---------------------------------------------------------------------------//
 // end Data_DecayDataContainer_def.hpp

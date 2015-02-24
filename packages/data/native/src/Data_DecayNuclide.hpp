@@ -70,10 +70,10 @@ public:
   unsigned getNumberOfDecayBranches() const;
 
   //! Return the branching ratio of the desired decay branch
-  unsigned getBranchingRatio( const unsigned branch ) const;
+  double getBranchingRatio( const unsigned branch ) const;
 
   //! Return the branching ratio error of the desired decay branch
-  unsigned getBranchingRatioErr( const unsigned branch ) const;
+  double getBranchingRatioError( const unsigned branch ) const;
 
   //! Return the daughter from the desired decay branch
   unsigned getDaughter( const unsigned branch ) const;

@@ -115,13 +115,13 @@ unsigned DecayNuclide::getNumberOfDecayBranches() const
 }
 
 // Return the branching ratio of the desired decay branch
-unsigned DecayNuclide::getBranchingRatio( const unsigned branch ) const
+double DecayNuclide::getBranchingRatio( const unsigned branch ) const
 {
   return d_decay_branches[branch].branching_ratio;
 }
 
 // Return the branching ratio error of the desired decay branch
-unsigned DecayNuclide::getBranchingRatioErr( const unsigned branch ) const
+double DecayNuclide::getBranchingRatioError( const unsigned branch ) const
 {
   return d_decay_branches[branch].branching_ratio_error;
 }
