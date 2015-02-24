@@ -19,6 +19,7 @@
 // FRENSIE Includes
 #include "DataGen_AdjointIncoherentCrossSectionEvaluator.hpp"
 #include "Utility_UniformDistribution.hpp"
+#include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -80,13 +81,57 @@ AdjointIncoherentCrossSectionEvaluator::AdjointIncoherentCrossSectionEvaluator(
   // Make sure the scattering function is valid
   testPrecondition( !scattering_function.is_null() );
 
-  // Force the quadrature kernel throw exceptions
+  // Force the quadrature kernel to throw exceptions
   Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
 }
 
+// Evaluate the differential adjoint incoherent cross section (dc/dx)
+/*! \details The returned cross section will have units of barns.
+ */
+double 
+AdjointIncoherentCrossSectionEvaluator::evaluateDifferentialCrossSection(
+	   const double inverse_energy_gain_ratio, 
+	   const Utility::AdjointKleinNishinaDistribution& distribution ) const
+{
+  // Make sure the inverse energy gain ratio is valid
+  testPrecondition( inverse_energy_gain_ratio >=
+		    distribution.getLowerBoundOfIndepVar() );
+  testPrecondition( inverse_energy_gain_ratio <=
+		    distribution.getUpperBoundOfIndepVar() );
+  // The inverse wavelength of the outgoing energy must be calculated
+  const double outgoing_energy = 
+    distribution.getEnergy()/inverse_energy_gain_ratio;
+  
+  const double inverse_wavelength = outgoing_energy/
+    (Utility::PhysicalConstants::planck_constant*
+     Utility::PhysicalConstants::speed_of_light);
+  
+  double scattering_angle_cosine = 
+    1.0 - (1.0 - inverse_energy_gain_ratio)/distribution.getAlpha();
+  
+  // Check for roundoff error
+  if( Teuchos::ScalarTraits<double>::magnitude(scattering_angle_cosine) >1.0 )
+    scattering_angle_cosine = copysign( 1.0, scattering_angle_cosine );
+
+  const double scattering_function_arg = 
+    sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength;
+  
+  const double scattering_function_value = 
+    d_scattering_function->evaluate( scattering_function_arg );
+  
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( scattering_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine <= 1.0 );
+  // Make sure the scattering function value is valid
+  testPostcondition( scattering_function_value >= 0.0 );
+  testPostcondition( scattering_function_value <= 100.0 );
+
+  return distribution.evaluate( inverse_energy_gain_ratio )*
+    scattering_function_value/1e-24;
+}
+
 // Return the cross section value at a given energy and max energy
-/*! \details If the cross section fails to converge, the desired tolerance
- * will be increased in the quadrature kernel until convergence is achieved.
+/*! \details The returned cross section will have units of barns.
  */
 double AdjointIncoherentCrossSectionEvaluator::evaluateCrossSection( 
 						 const double energy, 
@@ -124,45 +169,6 @@ double AdjointIncoherentCrossSectionEvaluator::evaluateCrossSection(
     cross_section = 0.0;
 
   return cross_section;
-}
-
-// Evaluate the differential adjoint incoherent cross section (dc/dx)
-double 
-AdjointIncoherentCrossSectionEvaluator::evaluateDifferentialCrossSection(
-	   const double inverse_energy_gain_ratio, 
-	   const Utility::AdjointKleinNishinaDistribution& distribution ) const
-{
-  // Make sure the inverse energy gain ratio is valid
-  testPrecondition( inverse_energy_gain_ratio >=
-		    distribution.getLowerBoundOfIndepVar() );
-  testPrecondition( inverse_energy_gain_ratio <=
-		    distribution.getUpperBoundOfIndepVar() );
-  // The inverse wavelength of the outgoing energy must be calculated
-  const double outgoing_energy = 
-    distribution.getEnergy()/inverse_energy_gain_ratio;
-  
-  const double inverse_wavelength = outgoing_energy/
-    (Utility::PhysicalConstants::planck_constant*
-     Utility::PhysicalConstants::speed_of_light);
-  
-  const double scattering_angle_cosine = 
-    1.0 - (1.0 - inverse_energy_gain_ratio)/distribution.getAlpha();
-
-  const double scat_func_arg = 
-    sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength;
-  
-  const double scattering_function_value = 
-    d_scattering_function->evaluate( scat_func_arg );
-  
-  // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= -1.0 );
-  testPostcondition( scattering_angle_cosine <= 1.0 );
-  // Make sure the scattering function value is valid
-  testPostcondition( scattering_function_value >= 0.0 );
-  testPostcondition( scattering_function_value <= 100.0 );
-
-  return distribution.evaluate( inverse_energy_gain_ratio )*
-    scattering_function_value;
 }
 
 } // end DataGen namespace

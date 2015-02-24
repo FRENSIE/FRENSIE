@@ -23,7 +23,10 @@
 
 namespace DataGen{
 
-//! The subshell incoherent cross section class
+/*! The subshell incoherent cross section evaluator class
+ * \details This class generates the subshell incoherent cross section
+ * using the impulse approximation (and not Waller-Hartree theory).
+ */
 class SubshellIncoherentCrossSectionEvaluator
 {
 
@@ -36,6 +39,10 @@ public:
 			   const double subshell_binding_energy,
                            const Teuchos::RCP<const Utility::OneDDistribution>&
 			   subshell_occupation_number );
+
+  //! Destructor
+  ~SubshellIncoherentCrossSectionEvaluator()
+  { /* ... */ }
 
   //! Return the subshell
   MonteCarlo::SubshellType getSubshell() const;
