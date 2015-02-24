@@ -20,28 +20,25 @@
 #include <boost/serialization/split_member.hpp>
 
 // FRENSIE Includes
-#include "Utility_SerializableObject.hpp"
+#include "Utility_StandardArchivableObject.hpp"
+#include "Utility_StandardSerializableObject.hpp"
 
 namespace Data{
 
 //! The electron-photon-relaxation data container
-class ElectronPhotonRelaxationDataContainer : public Utility::SerializableObject
+class ElectronPhotonRelaxationDataContainer : public Utility::StandardArchivableObject<ElectronPhotonRelaxationDataContainer,false>, public Utility::StandardSerializableObject<ElectronPhotonRelaxationDataContainer,false>
 {
 
 public:
 
-  //! Default constructor
-  ElectronPhotonRelaxationDataContainer()
-  { /* ... */ }
-
   //! Constructor (from saved archive)
   ElectronPhotonRelaxationDataContainer( 
 		  const std::string& archive_name,
-                  const Utility::SerializableObject::ArchiveType archive_type =
-		  Utility::SerializableObject::XML_ARCHIVE);
+                  const Utility::ArchivableObject::ArchiveType archive_type =
+		  Utility::ArchivableObject::XML_ARCHIVE );
 
   //! Destructor
-  ~ElectronPhotonRelaxationDataContainer()
+  virtual ~ElectronPhotonRelaxationDataContainer()
   { /* ... */ }
 
   //! Return the atomic number
@@ -171,6 +168,12 @@ public:
 
   //! Return the impulse approx. total cross section
   const std::vector<double>& getImpulseApproxTotalCrossSection() const;
+
+protected:
+
+  //! Default constructor
+  ElectronPhotonRelaxationDataContainer()
+  { /* ... */ }
 
   //! Set the atomic number
   void setAtomicNumber( const unsigned atomic_number );
@@ -310,22 +313,6 @@ public:
   //! Set the impulse approx. total cross section
   void setImpulseApproxTotalCrossSection(
 			      const std::vector<double>& total_cross_section );
-
-  //! Export the data in the container to the desired archive type
-  void exportData( 
-	   const std::string& archive_name,
-	   const Utility::SerializableObject::ArchiveType archive_type ) const;
-
-  //! Import data from the desired archive
-  void importData( 
-		 const std::string& archive_name,
-		 const Utility::SerializableObject::ArchiveType archive_type );
-
-  //! Pack the data in the container into a string
-  std::string packDataInString() const;
-
-  //! Unpack the data from a string and store in the container
-  void unpackDataFromString( const std::string& packed_string );
   
 private:
 
