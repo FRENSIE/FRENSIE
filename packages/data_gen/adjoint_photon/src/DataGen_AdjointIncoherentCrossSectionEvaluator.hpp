@@ -15,7 +15,6 @@
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_AdjointKleinNishinaDistribution.hpp"
-#include "Utility_GaussKronrodQuadratureKernel.hpp"
 
 namespace DataGen{
 
