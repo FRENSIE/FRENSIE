@@ -1,34 +1,34 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_XMLCompatibleObject_def.hpp
+//! \file   Utility_ParameterListCompatibleObject_def.hpp
 //! \author Alex Robinson
-//! \brief  XML compatible object base class definition
+//! \brief  ParameterList compatible object base class definition
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_XML_COMPATIBLE_OBJECT_DEF_HPP
-#define UTILITY_XML_COMPATIBLE_OBJECT_DEF_HPP
+#ifndef UTILITY_PARAMETER_LIST_COMPATIBLE_OBJECT_DEF_HPP
+#define UTILITY_PARAMETER_LIST_COMPATIBLE_OBJECT_DEF_HPP
 
 // Trilinos Includes
 #include <Teuchos_StandardParameterEntryXMLConverters.hpp>
 #include <Teuchos_ParameterEntryXMLConverterDB.hpp>
 
 // FRENSIE Includes
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 
 namespace Utility{
 
 // Constructor
 template<typename DerivedType>
-XMLCompatibleObject<DerivedType>::XMLCompatibleObject()
+ParameterListCompatibleObject<DerivedType>::ParameterListCompatibleObject()
 {
   TEUCHOS_ADD_TYPE_CONVERTER( DerivedType );
 }
 
 } // end Utility namespace
 
-#endif // end UTILITY_XML_COMPATIBLE_OBJECT_DEF_HPP
+#endif // end UTILITY_PARAMETER_LIST_COMPATIBLE_OBJECT_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_XMLCompatibleObject_def.hpp
+// end Utility_ParameterListCompatibleObject_def.hpp
 //---------------------------------------------------------------------------//

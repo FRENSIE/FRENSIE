@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_XMLCompatibleObject.hpp
+//! \file   Utility_ParameterListCompatibleObject.hpp
 //! \author Alex Robinson
-//! \brief  XML compatible object base class declaration
+//! \brief  ParameterList compatible object base class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_XML_COMPATIBLE_OBJECT_HPP
-#define UTILITY_XML_COMPATIBLE_OBJECT_HPP
+#ifndef UTILITY_PARAMETER_LIST_COMPATIBLE_OBJECT_HPP
+#define UTILITY_PARAMETER_LIST_COMPATIBLE_OBJECT_HPP
 
 // Std Lib Includes
 #include <string>
@@ -17,20 +17,23 @@
 // Teuchos Includes
 #include <Teuchos_TypeNameTraits.hpp>
 
+// FRENSIE Includes
+#include "Utility_SerializableObject.hpp"
+
 namespace Utility{
 
-//! The base class for XML compatible objects
+//! The base class for ParameterList compatible objects
 template<typename DerivedType>
-class XMLCompatibleObject
+class ParameterListCompatibleObject : public SerializableObject
 {
 
 public:
 
   //! Constructor
-  XMLCompatibleObject();
+  ParameterListCompatibleObject();
   
   //! Destructor
-  virtual ~XMLCompatibleObject()
+  virtual ~ParameterListCompatibleObject()
   { /* ... */ }
 
   //! Method for placing the object in an output stream
@@ -42,31 +45,30 @@ public:
   //! Method for testing if two objects are equivalent
   virtual bool isEqual( const DerivedType& other ) const = 0;
 
-  //! Method for placing the object in a string
-  void toString( std::string& obj_string ) const;
+  //! Pack the data in the container into a string
+  std::string packDataInString() const;
 
-  //! Method for initializing an object from a string
-  void fromString( const std::string& obj_string );
+  //! Unpack the data from a string and store in the container
+  void unpackDataFromString( const std::string& packed_string );
 };
 
 // Method for placing the object in a string
 template<typename DerivedType>
-inline void XMLCompatibleObject<DerivedType>::toString( 
-					        std::string& obj_string ) const
+inline std::string ParameterListCompatibleObject<DerivedType>::packDataInString() const
 {
   std::ostringstream oss;
 
   this->toStream( oss );
 
-  obj_string = oss.str();
+  return oss.str();
 }
 
 // Method for initializing an object from a string
 template<typename DerivedType>
-inline void XMLCompatibleObject<DerivedType>::fromString( 
-						const std::string& obj_string )
+inline void ParameterListCompatibleObject<DerivedType>::unpackDataFromString(
+					     const std::string& packed_string )
 {
-  std::istringstream iss( obj_string );
+  std::istringstream iss( packed_string );
 
   this->fromStream( iss );
 }
@@ -74,8 +76,8 @@ inline void XMLCompatibleObject<DerivedType>::fromString(
 //! Stream operator for placing an object in an output stream
 template<typename DerivedType>
 inline std::ostream& operator<<( 
-			 std::ostream &os,
-			 const Utility::XMLCompatibleObject<DerivedType> &obj )
+	       std::ostream &os,
+	       const Utility::ParameterListCompatibleObject<DerivedType> &obj )
 {
   obj.toStream( os );
 }
@@ -84,15 +86,15 @@ inline std::ostream& operator<<(
 template<typename DerivedType>
 inline std::istream& operator>>( 
 			       std::istream &is,
-			       Utility::XMLCompatibleObject<DerivedType> &obj )
+			       Utility::ParameterListCompatibleObject<DerivedType> &obj )
 {
   obj.fromStream( is );
 }
 
 //! Method for testing if two objects are equal
 template<typename DerivedTypeA, typename DerivedTypeB>
-inline bool operator==(const Utility::XMLCompatibleObject<DerivedTypeA> &obj_a,
-		       const Utility::XMLCompatibleObject<DerivedTypeB> &obj_b)
+inline bool operator==(const Utility::ParameterListCompatibleObject<DerivedTypeA> &obj_a,
+		       const Utility::ParameterListCompatibleObject<DerivedTypeB> &obj_b)
 {
   if( Teuchos::TypeNameTraits<DerivedTypeA>::name() ==
       Teuchos::TypeNameTraits<DerivedTypeB>::name() )
@@ -112,12 +114,12 @@ inline bool operator==(const Utility::XMLCompatibleObject<DerivedTypeA> &obj_a,
 // Template Includes.
 //---------------------------------------------------------------------------//
 
-#include "Utility_XMLCompatibleObject_def.hpp"
+#include "Utility_ParameterListCompatibleObject_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_XML_COMPATIBLE_OBJECT_HPP
+#endif // end UTILITY_PARAMETER_LIST_COMPATIBLE_OBJECT_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_XMLCompatibleObject.hpp
+// end Utility_ParameterListCompatibleObject.hpp
 //---------------------------------------------------------------------------//
