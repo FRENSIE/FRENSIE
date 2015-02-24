@@ -15,14 +15,14 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace Utility{
 
 //! Polynomial distribution class
 class PolynomialDistribution : public OneDDistribution,
-			       public XMLCompatibleObject<PolynomialDistribution>
+			       public ParameterListCompatibleObject<PolynomialDistribution>
 {
 
 private:

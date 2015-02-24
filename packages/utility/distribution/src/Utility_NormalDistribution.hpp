@@ -17,13 +17,13 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 
 namespace Utility{
 
 //! Normal distribution class
 class NormalDistribution : public OneDDistribution,
-			   public XMLCompatibleObject<NormalDistribution>
+			   public ParameterListCompatibleObject<NormalDistribution>
 {
 
 private:
