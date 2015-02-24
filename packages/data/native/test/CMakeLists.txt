@@ -3,3 +3,7 @@ ADD_EXECUTABLE(tstElectronPhotonRelaxationDataContainer
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstElectronPhotonRelaxationDataContainer data_native)
 ADD_TEST(ElectronPhotonRelaxationDataContainer_test tstElectronPhotonRelaxationDataContainer)
+
+ADD_EXECUTABLE(tstDecayDataContainer tstDecayDataContainer.cpp)
+TARGET_LINK_LIBRARIES(tstDecayDataContainer data_native)
+ADD_TEST(DecayDataContainer_test tstDecayDataContainer --test_native_decay_data_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/endf7.dk.xml")
