@@ -15,6 +15,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
+#include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
@@ -23,7 +24,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Data::ElectronPhotonRelaxationDataContainer epr_data_container;
+Data::ElectronPhotonRelaxationVolatileDataContainer epr_data_container;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -528,11 +529,11 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   const std::string test_ascii_file_name( "test_epr_data_container.txt" );
 
   epr_data_container.exportData( test_ascii_file_name,
-				 Utility::SerializableObject::ASCII_ARCHIVE );
+				 Utility::ArchivableObject::ASCII_ARCHIVE );
 
   const Data::ElectronPhotonRelaxationDataContainer 
     epr_data_container_copy( test_ascii_file_name, 
-			     Utility::SerializableObject::ASCII_ARCHIVE );
+			     Utility::ArchivableObject::ASCII_ARCHIVE );
 
   TEST_EQUALITY_CONST( epr_data_container_copy.getAtomicNumber(), 1 );
   TEST_ASSERT( epr_data_container_copy.getSubshells().count( 1 ) );
@@ -613,11 +614,11 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   const std::string test_binary_file_name( "test_epr_data_container.bin" );
 
   epr_data_container.exportData( test_binary_file_name,
-				 Utility::SerializableObject::BINARY_ARCHIVE );
+				 Utility::ArchivableObject::BINARY_ARCHIVE );
 
   const Data::ElectronPhotonRelaxationDataContainer 
     epr_data_container_copy( test_binary_file_name, 
-			     Utility::SerializableObject::BINARY_ARCHIVE );
+			     Utility::ArchivableObject::BINARY_ARCHIVE );
 
   TEST_EQUALITY_CONST( epr_data_container_copy.getAtomicNumber(), 1 );
   TEST_ASSERT( epr_data_container_copy.getSubshells().count( 1 ) );
@@ -698,11 +699,11 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   const std::string test_xml_file_name( "test_epr_data_container.xml" );
 
   epr_data_container.exportData( test_xml_file_name,
-				 Utility::SerializableObject::XML_ARCHIVE );
+				 Utility::ArchivableObject::XML_ARCHIVE );
 
   const Data::ElectronPhotonRelaxationDataContainer 
     epr_data_container_copy( test_xml_file_name, 
-			     Utility::SerializableObject::XML_ARCHIVE );
+			     Utility::ArchivableObject::XML_ARCHIVE );
 
   TEST_EQUALITY_CONST( epr_data_container_copy.getAtomicNumber(), 1 );
   TEST_ASSERT( epr_data_container_copy.getSubshells().count( 1 ) );
@@ -782,7 +783,7 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 {
   std::string packed_data = epr_data_container.packDataInString();
 
-  Data::ElectronPhotonRelaxationDataContainer epr_data_container_copy;
+  Data::ElectronPhotonRelaxationVolatileDataContainer epr_data_container_copy;
   
   epr_data_container_copy.unpackDataFromString( packed_data );
   

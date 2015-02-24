@@ -29,8 +29,8 @@ namespace Data{
 
 // Constructor (from saved archive)
 ElectronPhotonRelaxationDataContainer::ElectronPhotonRelaxationDataContainer( 
-		  const std::string& archive_name,
-		  const Utility::SerializableObject::ArchiveType archive_type )
+		    const std::string& archive_name,
+		    const Utility::ArchivableObject::ArchiveType archive_type )
 {
   // Import the data in the archive - no way to use initializer list :(
   this->importData( archive_name, archive_type );
@@ -834,95 +834,6 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxTotalCrossSection(
 		    total_cross_section.end() );
   
   d_impulse_approx_total_cross_section = total_cross_section;
-}
-
-// Export the data in the container to the desired archive type
-void ElectronPhotonRelaxationDataContainer::exportData( 
-	    const std::string& archive_name,
-	    const Utility::SerializableObject::ArchiveType archive_type ) const
-{
-  std::ofstream ofs( archive_name.c_str() );
-
-  switch( archive_type )
-  {
-    case Utility::SerializableObject::ASCII_ARCHIVE:
-    {
-      boost::archive::text_oarchive ar(ofs);
-      ar << *this;
-      
-      break;
-    }
-    case Utility::SerializableObject::BINARY_ARCHIVE:
-    {
-      boost::archive::binary_oarchive ar(ofs);
-      ar << *this;
-      
-      break;
-    }
-    case Utility::SerializableObject::XML_ARCHIVE:
-    {
-      boost::archive::xml_oarchive ar(ofs);
-      ar << boost::serialization::make_nvp( typeid(*this).name(), *this );
-
-      break;
-    }
-  }
-}
-
-// Import data from the desired archive
-void ElectronPhotonRelaxationDataContainer::importData( 
-		  const std::string& archive_name,
-		  const Utility::SerializableObject::ArchiveType archive_type )
-{
-  std::ifstream ifs( archive_name.c_str() );
-
-  switch( archive_type )
-  {
-    case Utility::SerializableObject::ASCII_ARCHIVE:
-    {
-      boost::archive::text_iarchive ar(ifs);
-      ar >> *this;
-      
-      break;
-    }
-    case Utility::SerializableObject::BINARY_ARCHIVE:
-    {
-      boost::archive::binary_iarchive ar(ifs);
-      ar >> *this;
-
-      break;
-    }
-    case Utility::SerializableObject::XML_ARCHIVE:
-    {
-      boost::archive::xml_iarchive ar(ifs);
-      ar >> boost::serialization::make_nvp( typeid(*this).name(), *this );
-
-      break;
-    }   
-  }
-}
-
-// Pack the data in the container into a string
-std::string ElectronPhotonRelaxationDataContainer::packDataInString() const
-{
-  std::ostringstream oss;
-
-  boost::archive::binary_oarchive ar(oss);
-
-  ar << *this;
-  
-  return oss.str();
-}
-
-// Unpack the data from a string and store in the container
-void ElectronPhotonRelaxationDataContainer::unpackDataFromString( 
-					     const std::string& packed_string )
-{
-  std::istringstream iss( packed_string );
-
-  boost::archive::binary_iarchive ar(iss);
-
-  ar >> *this;
 }
 
 // Test if a value is less than or equal to zero
