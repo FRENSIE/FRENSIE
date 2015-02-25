@@ -423,49 +423,73 @@ private:
  * is Lin-Lin and Z-X policy interpolation policy is Lin-Lin).
  */
 struct LinLinLin : public TwoDInterpolationPolicyImpl<LinLin,LinLin>
-{ /* ... */ };
+{ 
+  typedef LinLin ZYInterpPolicy;
+  typedef LinLin ZXInterpPolicy;
+};
 
 /*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
  * is Lin-Log and Z-X policy interpolation policy is Lin-Lin).
  */
 struct LinLogLin : public TwoDInterpolationPolicyImpl<LinLog,LinLin>
-{ /* ... */ };
+{ 
+  typedef LinLog ZYInterpPolicy;
+  typedef LinLin ZXInterpPolicy;
+};
 
 /*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
  * is Lin-Lin and Z-X policy interpolation policy is Lin-Log).
  */
 struct LinLinLog : public TwoDInterpolationPolicyImpl<LinLin,LinLog>
-{ /* ... */ };
+{ 
+  typedef LinLin ZYInterpPolicy;
+  typedef LinLog ZXInterpPolicy;
+};
 
 /*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
  * is Lin-Log and Z-X policy interpolation policy is Lin-Log).
  */
 struct LinLogLog : public TwoDInterpolationPolicyImpl<LinLog,LinLog>
-{ /* ... */ };
+{ 
+  typedef LinLog ZYInterpPolicy;
+  typedef LinLog ZXInterpPolicy;
+};
 
 /*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
  * is Log-Lin and Z-X policy interpolation policy is Log-Lin).
  */
 struct LogLinLin : public TwoDInterpolationPolicyImpl<LogLin,LogLin>
-{ /* ... */ };
+{ 
+  typedef LogLin ZYInterpPolicy;
+  typedef LogLin ZXInterpPolicy;
+};
 
 /*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
  * is Log-Log and Z-X policy interpolation policy is Log-Lin).
  */
 struct LogLogLin : public TwoDInterpolationPolicyImpl<LogLog,LogLin>
-{ /* ... */ };
+{ 
+  typedef LogLog ZYInterpPolicy;
+  typedef LogLin ZXInterpPolicy;
+};
 
 /*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
  * is Log-Lin and Z-X policy interpolation policy is Log-Log).
  */
 struct LogLinLog : public TwoDInterpolationPolicyImpl<LogLin,LogLog>
-{ /* ... */ };
+{ 
+  typedef LogLin ZYInterpPolicy;
+  typedef LogLog ZXInterpPolicy;
+};
 
 /*! \brief Policy struct for interpolating 2D tables (Z-Y interpolation policy
  * is Log-Log and Z-X policy interpolation policy is Log-Log).
  */
 struct LogLogLog : public TwoDInterpolationPolicyImpl<LogLog,LogLog>
-{ /* ... */ };
+{
+  typedef LogLog ZYInterpPolicy;
+  typedef LogLog ZXInterpPolicy;
+};
 
 } // end Utility namespace
 

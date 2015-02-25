@@ -28,7 +28,8 @@ namespace DataGen{
 // Default Constructor (free electron)
 IncoherentCrossSectionEvaluator::IncoherentCrossSectionEvaluator()
   : d_scattering_function( new Utility::UniformDistribution(
-			      0.0, std::numeric_limits<double>::max(), 1.0 ) );
+			       0.0, std::numeric_limits<double>::max(), 1.0 ) )
+{ /* ... */ }
 
 // Constructor (bound electron)
 IncoherentCrossSectionEvaluator::IncoherentCrossSectionEvaluator(
@@ -40,7 +41,7 @@ IncoherentCrossSectionEvaluator::IncoherentCrossSectionEvaluator(
   testPrecondition( !scattering_function.is_null() );
 
   // Force the quadrature kernel to throw exceptions
-  Utility::GaussKronrodQuadraturekernel::throwExceptions( true );
+  Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
 }
 
 // Evaluate the differential incoherent cross section (dc/dx)
@@ -62,7 +63,7 @@ double IncoherentCrossSectionEvaluator::evaluateDifferentialCrossSection(
      Utility::PhysicalConstants::speed_of_light);
 
   double scattering_angle_cosine = 
-    1.0 - (inverse_energy_gain_ratio-1.0)/distribution.getAlpha();
+    1.0 - (inverse_energy_loss_ratio-1.0)/distribution.getAlpha();
 
   // Check for roundoff error
   if( Teuchos::ScalarTraits<double>::magnitude(scattering_angle_cosine) >1.0 )
@@ -81,7 +82,7 @@ double IncoherentCrossSectionEvaluator::evaluateDifferentialCrossSection(
   testPostcondition( scattering_function_value >= 0.0 );
   testPostcondition( scattering_function_value <= 100.0 );
 
-  return distribution.evaluate( inverse_energy_gain_ratio )*
+  return distribution.evaluate( inverse_energy_loss_ratio )*
     scattering_function_value/1e-24;
 }
 

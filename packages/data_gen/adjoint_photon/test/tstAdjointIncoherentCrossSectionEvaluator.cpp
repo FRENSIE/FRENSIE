@@ -131,7 +131,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						       *free_distribution );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  1.2752875406768333e-22,
+				  1.2752875406768333e-22/1e-24,
 				  1e-15 );
 
   diff_cross_section = 
@@ -139,7 +139,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						       *free_distribution );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  1.5796027186150774e-22,
+				  1.5796027186150774e-22/1e-24,
 				  1e-15 );
 
   diff_cross_section = 
@@ -147,7 +147,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						       *free_distribution );
   
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section, 
-				  2.5495493722278393e-22,
+				  2.5495493722278393e-22/1e-24,
 				  1e-15 );
 
   // Evaluate the differential cross section at E = 1.0
@@ -159,7 +159,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						       *free_distribution );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  2.462197064530928e-24,
+				  2.462197064530928e-24/1e-24,
 				  1e-15 );
 
   diff_cross_section = 
@@ -167,7 +167,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						       *free_distribution );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  2.6187454952849134e-25,
+				  2.6187454952849134e-25/1e-24,
 				  1e-15 );
 
   diff_cross_section = 
@@ -175,7 +175,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						       *free_distribution );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  2.54954937226494e-25,
+				  2.54954937226494e-25/1e-24,
 				  1e-15 );
 }
 
@@ -192,7 +192,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						    *free_distribution );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  1.7166517186844102e-23,
+				  1.7166517186844102e-23/1e-24,
 				  1e-15 );
 
   diff_cross_section = 
@@ -200,7 +200,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						    *free_distribution );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  1.1113108842743224e-23,
+				  1.1113108842743224e-23/1e-24,
 				  1e-15 );
 
   diff_cross_section = 
@@ -218,7 +218,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						    *free_distribution );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  2.462197064530928e-24,
+				  2.462197064530928e-24/1e-24,
 				  1e-15 );
 
   diff_cross_section = 
@@ -226,7 +226,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						    *free_distribution );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  2.6187454952849134e-25,
+				  2.6187454952849134e-25/1e-24,
 				  1e-15 );
 
   diff_cross_section = 
@@ -234,7 +234,7 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						    *free_distribution );
 
   UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
-				  2.54954937226494e-25,
+				  0.0,
 				  1e-15 );
 }
 
@@ -258,9 +258,9 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 								0.001002 ) );
   
   UTILITY_TEST_FLOATING_EQUALITY( 
-				cross_section,
-				distribution->evaluateIntegratedCrossSection(),
-				1e-8 );
+			  cross_section,
+			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-8 );
 
   cross_section = adjoint_free_cs->evaluateCrossSection( 
 						       0.001, 
@@ -272,9 +272,9 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						     0.0010039292814978508 ) );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
-			       cross_section, 
-			       distribution->evaluateIntegratedCrossSection(),
-			       1e-9 );
+			  cross_section, 
+			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-9 );
 
   // Note: The cross section won't change once the peak has been reached for
   //       this energy
@@ -283,18 +283,18 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 							 1e-6 );
   
   UTILITY_TEST_FLOATING_EQUALITY( 
-			       cross_section,
-			       distribution->evaluateIntegratedCrossSection(),
-			       1e-9 );
+			  cross_section,
+			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-9 );
 
   cross_section = adjoint_free_cs->evaluateCrossSection( 0.001, 
 							 20.0,
 							 1e-6 );
   
   UTILITY_TEST_FLOATING_EQUALITY( 
-			       cross_section,
-			       distribution->evaluateIntegratedCrossSection(),
-			       1e-9 );
+			  cross_section,
+			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-9 );
 
   // Set a new energy
   cross_section = adjoint_free_cs->evaluateCrossSection( 0.01, 
@@ -311,9 +311,9 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						                    0.0103 ) );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
-			       cross_section,
-			       distribution->evaluateIntegratedCrossSection(),
-			       1e-11 );
+			  cross_section,
+			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-11 );
 
   cross_section = adjoint_free_cs->evaluateCrossSection( 
 							0.01, 
@@ -325,18 +325,18 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 						      0.010407332879714635 ) );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
-			       cross_section,
-			       distribution->evaluateIntegratedCrossSection(),
-			       1e-12 );
+			  cross_section,
+			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-12 );
 
   cross_section = adjoint_free_cs->evaluateCrossSection( 0.01, 
 							 20.0,
 							 1e-6 );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
-			       cross_section,
-			       distribution->evaluateIntegratedCrossSection(),
-			       1e-12 );
+			  cross_section,
+			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-12 );
 
   // Set a new energy
   cross_section = adjoint_free_cs->evaluateCrossSection( 0.25227662801581613,
@@ -354,9 +354,9 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 							   10.0 ) );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
-			       cross_section, 
-			       distribution->evaluateIntegratedCrossSection(),
-			       1e-14 );
+			  cross_section, 
+			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-14 );
   
   cross_section = adjoint_free_cs->evaluateCrossSection( 0.25227662801581613,
 							 20.0,
@@ -367,9 +367,9 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 							   20.0 ) );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
-			       cross_section, 
-			       distribution->evaluateIntegratedCrossSection(),
-			       1e-14 );
+			  cross_section, 
+			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-14 );
 
   cross_section = adjoint_free_cs->evaluateCrossSection( 0.25227662801581613,
 							 100.0,
@@ -380,9 +380,9 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 							   100.0 ) );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
-			       cross_section, 
-			       distribution->evaluateIntegratedCrossSection(),
-			       1e-14 );
+			  cross_section, 
+			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-14 );
 
   // Set a new energy
   cross_section = adjoint_free_cs->evaluateCrossSection( 10.0, 
@@ -399,9 +399,9 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 								    20.0 ) );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
-			       cross_section, 
-			       distribution->evaluateIntegratedCrossSection(),
-			       1e-15 );
+			  cross_section, 
+			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-15 );
 
   cross_section = adjoint_free_cs->evaluateCrossSection( 10.0, 
 							 100.0,
@@ -411,9 +411,9 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 								    100.0 ) );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
-			       cross_section, 
-			       distribution->evaluateIntegratedCrossSection(),
-			       1e-14 );
+			  cross_section, 
+			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-14 );
 
   cross_section = adjoint_free_cs->evaluateCrossSection( 10.0, 
 							 1000.0,
@@ -423,9 +423,9 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
 								    1000.0 ) );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
-			       cross_section, 
-			       distribution->evaluateIntegratedCrossSection(),
-			       1e-12 );
+			  cross_section, 
+			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -443,10 +443,11 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
     distribution( new Utility::AdjointKleinNishinaDistribution( 0.001,
   								0.001002 ) );
   
-  TEST_ASSERT( cross_section < distribution->evaluateIntegratedCrossSection());
+  TEST_ASSERT( cross_section < 
+	       distribution->evaluateIntegratedCrossSection()/1e-24 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-				  2.05061392743816141e-26,
+				  2.05061392743816141e-26/1e-24,
   				  1e-15 );
 
   cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 
@@ -457,28 +458,31 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
   						     0.001,
   						     0.0010039292814978508 ) );
 
-  TEST_ASSERT( cross_section < distribution->evaluateIntegratedCrossSection());
+  TEST_ASSERT( cross_section < 
+	       distribution->evaluateIntegratedCrossSection()/1e-24 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section, 
-				  8.52311999219016714e-26,
+				  8.52311999219016714e-26/1e-24,
   				  1e-15 );
 
   // Note: The cross section won't change once the peak has been reached for
   //       this energy
   cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 0.002, 1e-4 );
   
-  TEST_ASSERT( cross_section < distribution->evaluateIntegratedCrossSection());
+  TEST_ASSERT( cross_section < 
+	       distribution->evaluateIntegratedCrossSection()/1e-24 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-				  8.52311999219016714e-26,
+				  8.52311999219016714e-26/1e-24,
   				  1e-15 );
 
   cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 20.0, 1e-4 );
   
-  TEST_ASSERT( cross_section < distribution->evaluateIntegratedCrossSection());
+  TEST_ASSERT( cross_section < 
+	       distribution->evaluateIntegratedCrossSection()/1e-24 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-				  8.52311999219016714e-26,
+				  8.52311999219016714e-26/1e-24,
   				  1e-15 );
 
     // Set a new energy
@@ -490,9 +494,10 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
   
   distribution.reset( new Utility::AdjointKleinNishinaDistribution( 0.01,
   						                    0.0103 ) );
-  TEST_ASSERT( cross_section < distribution->evaluateIntegratedCrossSection());
+  TEST_ASSERT( cross_section < 
+	       distribution->evaluateIntegratedCrossSection()/1e-24 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-				  4.23357639660378708e-25,
+				  4.23357639660378708e-25/1e-24,
   				  1e-15 );
 
   cross_section = adjoint_h_cs->evaluateCrossSection( 0.01, 
@@ -504,13 +509,13 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
   						      0.010407332879714635 ) );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-				  6.24561487820609666e-25,
+				  6.24561487820609666e-25/1e-24,
   				  1e-15 );
 
   cross_section = adjoint_h_cs->evaluateCrossSection( 0.01, 20.0, 1e-4 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-				  6.24561487820609666e-25,
+				  6.24561487820609666e-25/1e-24,
   				  1e-12 );
 
   // Set a new energy
@@ -526,10 +531,11 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
   							   0.25227662801581613,
   							   10.0 ) );
   
-  TEST_ASSERT( cross_section < distribution->evaluateIntegratedCrossSection());
+  TEST_ASSERT( cross_section < 
+	       distribution->evaluateIntegratedCrossSection()/1e-24 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section,
-				  1.7793996774557439e-24,
+				  1.7793996774557439e-24/1e-24,
   				  1e-15 );
   
   cross_section = adjoint_h_cs->evaluateCrossSection( 0.25227662801581613,
@@ -539,10 +545,11 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
   							   0.25227662801581613,
   							   20.0 ) );
 
-  TEST_ASSERT( cross_section < distribution->evaluateIntegratedCrossSection());
+  TEST_ASSERT( cross_section < 
+	       distribution->evaluateIntegratedCrossSection()/1e-24 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section, 
-				  2.12961181703444872e-24,
+				  2.12961181703444872e-24/1e-24,
   				  1e-15 );
 
   cross_section = adjoint_h_cs->evaluateCrossSection( 0.25227662801581613,
@@ -552,10 +559,11 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
   							   0.25227662801581613,
   							   100.0 ) );
 
-  TEST_ASSERT( cross_section < distribution->evaluateIntegratedCrossSection());
+  TEST_ASSERT( cross_section < 
+	       distribution->evaluateIntegratedCrossSection()/1e-24 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section, 
-				  2.12961181703444872e-24,
+				  2.12961181703444872e-24/1e-24,
   				  1e-15 );
 
   // Set a new energy
@@ -569,9 +577,9 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
   								    20.0 ) );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
-  			       cross_section, 
-  			       distribution->evaluateIntegratedCrossSection(),
-  			       1e-15 );
+			  cross_section, 
+  			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-15 );
 
   cross_section = adjoint_h_cs->evaluateCrossSection( 10.0, 100.0 );
   
@@ -579,9 +587,9 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
   								    100.0 ) );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
-  			       cross_section, 
-  			       distribution->evaluateIntegratedCrossSection(),
-  			       1e-14 );
+			  cross_section, 
+  			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-14 );
 
   cross_section = adjoint_h_cs->evaluateCrossSection( 10.0, 1000.0 );
   
@@ -589,9 +597,9 @@ TEUCHOS_UNIT_TEST( AdjointIncoherentCrossSectionEvaluator,
   								    1000.0 ) );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
-  			       cross_section, 
-  			       distribution->evaluateIntegratedCrossSection(),
-  			       1e-12 );
+			  cross_section, 
+  			  distribution->evaluateIntegratedCrossSection()/1e-24,
+			  1e-12 );
 }
 
 
