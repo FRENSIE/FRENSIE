@@ -6,29 +6,22 @@
 //!
 //---------------------------------------------------------------------------//
 
-// Std Lib Includes
-#include <deque>
-
-// Boost Includes
-#include <boost/bind.hpp>
-
 // FRENSIE Includes
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_SortAlgorithms.hpp"
-
+#include "Utility_ContractException.hpp"
 
 namespace DataGen{
 
 // Initialize the static member data
 double AdjointIncoherentGridGenerator::s_min_table_energy = 0.0001;
 double AdjointIncoherentGridGenerator::s_max_table_energy = 20;
-double AdjointIncoherentGridGenerator::s_max_table_energy_nudge_factor = 0.01;
+const double AdjointIncoherentGridGenerator::s_max_table_energy_nudge_factor = 
+  0.01;
 double AdjointIncoherentGridGenerator::s_nudged_max_table_energy = 
   s_max_table_energy*(1.0+s_max_table_energy_nudge_factor);
 double AdjointIncoherentGridGenerator::s_energy_to_max_energy_nudge_factor = 
   1e-6;
-bool AdjointIncoherentGridGenerator::s_verbose = false;
 
 //! Set the min table energy (default is 0.0001 MeV)
 void AdjointIncoherentGridGenerator::setMinTableEnergy( 
@@ -66,6 +59,12 @@ double AdjointIncoherentGridGenerator::getMaxTableEnergy()
   return s_max_table_energy;
 }
 
+//! Get the max table energy nudge factor
+double AdjointIncoherentGridGenerator::getNudgedMaxTableEnergy()
+{
+  return s_nudged_max_table_energy;
+}
+
 // Set the energy to max energy nudge factor
 /*! \details Setting a factor of 0.0 means that every max energy grid will
  * start at the corresponding energy. This can be problematic for log
@@ -90,30 +89,7 @@ double AdjointIncoherentGridGenerator::getEnergyToMaxEnergyNudgeFactor()
   return s_energy_to_max_energy_nudge_factor;
 }
 
-// Set verbose mode to on
-/*! \details Verbose mode is off by default.
- */
-void AdjointIncoherentGridGenerator::setVerboseOn()
-{
-  s_verbose = true;
-}
 
-// Set verbose mode to off
-/*! \details Verbose mode is off by default.
- */
-void AdjointIncoherentGridGenerator::setVerboseOff()
-{
-  s_verbose = false;
-}
-
-// Constructor
-AdjointIncoherentGridGenerator::AdjointIncoherentGridGenerator(
-     const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function )
-  : d_adjoint_incoherent_cross_section( scattering_function )
-{
-  // Make sure the scattering function is valid
-  testPrecondition( !scattering_function.is_null() );
-}
 
 } // end DataGen namespace
 

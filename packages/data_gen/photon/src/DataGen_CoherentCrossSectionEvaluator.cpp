@@ -28,7 +28,7 @@ namespace DataGen{
 // Default constructor (free electron)
 CoherentCrossSectionEvaluator::CoherentCrossSectionEvaluator()
   : d_atomic_form_factor( new Utility::UniformDistribution( 
-			      0.0, std::numeric_limits<double>::max(), 1.0 ) );
+			       0.0, std::numeric_limits<double>::max(), 1.0 ) )
 { /* ... */ }
 
 // Constructor (bound electron)
@@ -41,21 +41,24 @@ CoherentCrossSectionEvaluator::CoherentCrossSectionEvaluator(
   testPrecondition( !atomic_form_factor.is_null() );
   
   // Force the quadrature kernel to throw exceptions
-  Utility::GaussKronrodQuadraturekernel::throwExceptions( true );
+  Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
 }
 
 // Evaluate the differential coherent cross section (dc/dmu)
 /*! \details The returned cross section will have units of barns
  */
 double CoherentCrossSectionEvaluator::evaluateDifferentialCrossSection(
+				   const double energy,
 				   const double scattering_angle_cosine ) const
 {
+  // Make sure the energy is valid
+  testPrecondition( energy > 0.0 );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // The inverse wavelength of the incoming energy must be calculated
-  const double inverse_wavelength = distribution.getEnergy()/
+  const double inverse_wavelength = energy/
     (Utility::PhysicalConstants::planck_constant*
      Utility::PhysicalConstants::speed_of_light);
 
@@ -69,7 +72,7 @@ double CoherentCrossSectionEvaluator::evaluateDifferentialCrossSection(
   testPostcondition( atomic_form_factor_value >= 0.0 );
   testPostcondition( atomic_form_factor_value <= 100.0 );
 
-  return Utility::*PhysicalConstants::pi*
+  return Utility::PhysicalConstants::pi*
     Utility::PhysicalConstants::classical_electron_radius*
     Utility::PhysicalConstants::classical_electron_radius*
     (1.0+scattering_angle_cosine*scattering_angle_cosine)*
@@ -90,8 +93,9 @@ double CoherentCrossSectionEvaluator::evaluateCrossSection(
   double cross_section = 0.0;
 
   boost::function<double (double mu)> diff_cs_wrapper = 
-    boost::bind<double>( &CoherentCrossSectionEvaluator::evaluateDifferenetialCrossSection,
+    boost::bind<double>( &CoherentCrossSectionEvaluator::evaluateDifferentialCrossSection,
 			 boost::cref( *this ),
+			 energy,
 			 _1 );
 
   double abs_error;

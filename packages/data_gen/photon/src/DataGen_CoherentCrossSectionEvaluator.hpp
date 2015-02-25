@@ -40,6 +40,7 @@ public:
 
   //! Evaluate the differential coherent cross section (dc/dmu)
   double evaluateDifferentialCrossSection(
+				  const double energy,
 				  const double scattering_angle_cosine ) const;
 
   //! Evaluate the coherent cross section

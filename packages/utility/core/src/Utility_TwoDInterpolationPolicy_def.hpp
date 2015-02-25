@@ -663,10 +663,18 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,
   // Make sure the grid length is valid
   testPrecondition( !Teuchos::ScalarTraits<T>::isnaninf( grid_length ) );
   testPrecondition( grid_length >= 0.0 );
-  
-  return ZYInterpPolicy::recoverProcessedIndepVar( 
+
+  double grid_indep_var = 
+    ZYInterpPolicy::recoverProcessedIndepVar( 
 	                ZYInterpPolicy::processIndepVar( grid_indep_var_min ) +
 			grid_length*eta );
+
+  // Check for rounding errors
+  if( grid_indep_var < grid_indep_var_min &&
+      Policy::relError( grid_indep_var, grid_indep_var_min ) <= s_tol )
+    grid_indep_var = grid_indep_var_min;
+
+  return grid_indep_var;
 }
 
 // Interpolate on the specified y grid
@@ -701,8 +709,8 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,
 				get<YIndepMember>( *start_indep_y_grid ) ) );
   remember( YIterator true_end_indep_y_grid_test = end_indep_y_grid );
   remember( --true_end_indep_y_grid_test );
-  testPrecondition( indep_var_y <= 
-		    get<YIndepMember>(*true_end_indep_y_grid_test) );
+  testPrecondition( indep_var_y <= get<YIndepMember>(*true_end_indep_y_grid_test) ||
+		    Policy::relError( indep_var_y, get<YIndepMember>(*true_end_indep_y_grid_test) ) <= s_tol );
   // Make sure the dependent variables are valid
   testPrecondition( start_dep_grid != end_dep_grid );
   testPrecondition( std::distance( start_indep_y_grid, end_indep_y_grid )==
@@ -739,6 +747,15 @@ TwoDInterpolationPolicyImpl<ZYInterpPolicy,
 				  get<DepMember>( *upper_dep_bin_boundary ) ); 
   }
   else if( indep_var_y == get<YIndepMember>( *true_end_indep_y_grid ) )
+  {
+    ZIterator true_end_dep_grid = end_dep_grid;
+    --true_end_dep_grid;
+    
+    processed_dep_var = ZYInterpPolicy::processDepVar( 
+					get<DepMember>( *true_end_dep_grid ) );
+  }
+  else if( indep_var_y > get<YIndepMember>( *true_end_indep_y_grid ) &&
+	   Policy::relError( indep_var_y, get<YIndepMember>( *true_end_indep_y_grid ) ) <= s_tol )
   {
     ZIterator true_end_dep_grid = end_dep_grid;
     --true_end_dep_grid;
@@ -1430,7 +1447,15 @@ inline T TwoDInterpolationPolicyImpl<ZYInterpPolicy,ZXInterpPolicy>::interpolate
 				  get<DepMember>( *lower_dep_bin_boundary ),
 				  processed_slope );
   }
-  else if( Policy::relError( 
+  else if( processed_indep_var_y == get<YIndepMember>( *true_end_processed_indep_y_grid ) )
+  {
+    ZIterator true_end_processed_dep_grid = end_processed_dep_grid;
+    --true_end_processed_dep_grid;
+    
+    processed_dep_var = get<DepMember>( *true_end_processed_dep_grid );
+  }
+  else if( processed_indep_var_y > get<YIndepMember>( *true_end_processed_indep_y_grid ) &&
+	   Policy::relError( 
 	     processed_indep_var_y, 
 	     get<YIndepMember>( *true_end_processed_indep_y_grid ) ) <= s_tol )
   {
