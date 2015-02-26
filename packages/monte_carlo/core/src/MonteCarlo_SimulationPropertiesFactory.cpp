@@ -178,6 +178,13 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
     }
   }
 
+  // Get the warnings mode - optional
+  if( properties.isParameter( "Warnings" ) )
+  {
+    if( !properties.get<bool>( "Warnings" ) )
+      SimulationProperties::setWarningsOff();
+  }
+
   // Get the capture mode - optional
   if( properties.isParameter( "Implicit Capture" ) )
   {

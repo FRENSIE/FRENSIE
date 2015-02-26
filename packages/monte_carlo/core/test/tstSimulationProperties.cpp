@@ -59,6 +59,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_EQUALITY_CONST(
 	      MonteCarlo::SimulationProperties::getAbsoluteMaxElectronEnergy(),
 	      20.0 );
+  TEST_ASSERT( MonteCarlo::SimulationProperties::displayWarnings() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isImplicitCaptureModeOn() );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isPhotonDopplerBroadeningModeOn() );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isAtomicRelaxationModeOn() );
@@ -313,6 +314,17 @@ TEUCHOS_UNIT_TEST( SimulationProperties, getMaxParticleEnergy )
   MonteCarlo::SimulationProperties::setMaxNeutronEnergy( default_value_neutron );
   MonteCarlo::SimulationProperties::setMaxPhotonEnergy( default_value_photon );
   MonteCarlo::SimulationProperties::setMaxElectronEnergy( default_value_electron );
+}
+
+//---------------------------------------------------------------------------//
+// Test that warnings can be disabled
+TEUCHOS_UNIT_TEST( SimulationProperties, setWarningsOff )
+{
+  TEST_ASSERT( MonteCarlo::SimulationProperties::displayWarnings() );
+
+  MonteCarlo::SimulationProperties::setWarningsOff();
+
+  TEST_ASSERT( !MonteCarlo::SimulationProperties::displayWarnings() );
 }
 
 //---------------------------------------------------------------------------//

@@ -20,7 +20,6 @@
 // Moab Includes
 #include <moab/Interface.hpp>
 #include <moab/AdaptiveKDTree.hpp>
-#include <moab/OrientedBoxTreeTool.hpp>
 #include <moab/Matrix3.hpp>
 
 // Trilinos Includes
@@ -100,6 +99,9 @@ private:
   void assignBinBoundaries(
 	const Teuchos::RCP<EstimatorDimensionDiscretization>& bin_boundaries );
 
+  // The tolerance used for geometric tests
+  static const double s_tol;
+
   // The moab instance that stores all mesh data
   Teuchos::RCP<moab::Interface> d_moab_interface;
 
@@ -111,15 +113,6 @@ private:
   
   // The root of the kd-tree
   moab::EntityHandle d_kd_tree_root;
-  
-  // The oriented box tree for finding intersections with the mesh
-  Teuchos::RCP<moab::OrientedBoxTreeTool> d_obb_tree;
-
-  // The root of the obb-tree
-  moab::EntityHandle d_obb_tree_root;
-
-  // The last cell that was visited
-  Geometry::ModuleTraits::InternalCellHandle d_last_visited_cell;
 
   // The map of tet ids and barycentric coordinate transform matrices
   boost::unordered_map<moab::EntityHandle,moab::Matrix3> 

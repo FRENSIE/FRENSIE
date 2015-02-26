@@ -311,6 +311,26 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
     ++photoatomic_reaction;
   }
 
+  if( photoatomic_reaction == d_core.getAbsorptionReactions().end() )
+  {
+    #pragma omp critical
+    {
+      std::cerr.precision( 18 );
+      std::cout << "Warning: the scaled random number (" 
+		<< scaled_random_number << "/" 
+		<< this->getTotalCrossSection( photon.getEnergy() ) -
+	this->getAbsorptionCrossSection( photon.getEnergy() )
+		<< ") is larger than the "
+		<< "scattering cross section ("
+		<< partial_cross_section << ")" << std::endl;
+    }
+
+    photoatomic_reaction = d_core.getAbsorptionReactions().begin();
+    
+    std::advance( photoatomic_reaction,
+		  d_core.getAbsorptionReactions().size()-1 );
+  }
+
   // Make sure the reaction was found
   testPostcondition( photoatomic_reaction != 
 		     d_core.getScatteringReactions().end() );

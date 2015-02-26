@@ -63,6 +63,9 @@ const double SimulationProperties::absolute_max_electron_energy = 20.0;
 double SimulationProperties::max_electron_energy =
   SimulationProperties::absolute_max_electron_energy;
 
+// The warning message flag
+bool SimulationProperties::display_warnings = true;
+
 // The capture mode (true = implicit, false = analogue - default)
 bool SimulationProperties::implicit_capture_mode_on = false;
 
@@ -163,6 +166,12 @@ void SimulationProperties::setMaxElectronEnergy( const double energy )
   testPrecondition(energy <= SimulationProperties::absolute_max_electron_energy);
 
   SimulationProperties::max_electron_energy = energy;
+}
+
+// Turn off warnings
+void SimulationProperties::setWarningsOff()
+{
+  SimulationProperties::display_warnings = false;
 }
 
 // Set implicit capture mode to on (off by default)
