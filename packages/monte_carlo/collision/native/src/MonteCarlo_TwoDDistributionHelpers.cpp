@@ -17,7 +17,7 @@ namespace MonteCarlo{
 /*! \details This function is designed for lin-lin base interpolation data and 
  *  is not appropriate for unit base interpolations
  */  
-double sampleTwoDDistribution( 
+double sampleTwoDDistribution(
    const double independent_variable,
    const Teuchos::Array<Utility::Pair<double,
      Teuchos::RCP<Utility::OneDDistribution> > >& dependent_distribution )
@@ -34,33 +34,34 @@ double sampleTwoDDistribution(
   else
   {
     Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >::const_iterator
-      lower_bin_boundary, upper_bin_boundary;
+      lower_dist_boundary, upper_dist_boundary;
     
-    lower_bin_boundary = dependent_distribution.begin();
-    upper_bin_boundary = dependent_distribution.end();
+    lower_dist_boundary = dependent_distribution.begin();
+    upper_dist_boundary = dependent_distribution.end();
     
-    lower_bin_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
-							  lower_bin_boundary,
-							  upper_bin_boundary,
+    lower_dist_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
+							  lower_dist_boundary,
+							  upper_dist_boundary,
 							  independent_variable );
 
-    upper_bin_boundary = lower_bin_boundary;
-    ++upper_bin_boundary;
+    upper_dist_boundary = lower_dist_boundary;
+    ++upper_dist_boundary;
 
     // Calculate the interpolation fraction
-    double interpolation_fraction = ( independent_variable - lower_bin_boundary->first )/
-      (upper_bin_boundary->first - lower_bin_boundary->first);
+    double interpolation_fraction = ( independent_variable - lower_dist_boundary->first )/
+      (upper_dist_boundary->first - lower_dist_boundary->first);
     
+    // Sample the upper and lower distributions using the same random number
     double random_number = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
     
     double upper_bin_dependent_variable = 
-                    upper_bin_boundary->second->sampleCDFValue( random_number );
+                   upper_dist_boundary->second->sampleCDFValue( random_number );
 
     double lower_bin_dependent_variable = 
-                    lower_bin_boundary->second->sampleCDFValue( random_number );
+                   lower_dist_boundary->second->sampleCDFValue( random_number );
 
-    // Linearly interpolate between the upper and lower bin
+    // Linearly interpolate between the upper and lower distributions
     return lower_bin_dependent_variable + interpolation_fraction*
                   (upper_bin_dependent_variable - lower_bin_dependent_variable);
   }
