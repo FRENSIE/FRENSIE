@@ -124,7 +124,7 @@ void StandardEntityEstimator<EntityId>::commitHistoryContribution()
 	this->calculateResponseFunctionIndex( bin_data->first );
 
       double bin_contribution = bin_data->second;
-
+      
       entity_totals[response_func_index] += bin_contribution;
       
       totals[response_func_index] += bin_contribution;

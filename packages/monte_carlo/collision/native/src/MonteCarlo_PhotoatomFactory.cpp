@@ -214,6 +214,8 @@ void PhotoatomFactory::createPhotoatomFromACETable(
     d_photoatom_name_map[photoatom_alias] = 
       d_photoatomic_table_name_map[photoatomic_table_name];
   }
+
+  std::cout << "done." << std::endl;
 }
 
 } // end MonteCarlo namespace

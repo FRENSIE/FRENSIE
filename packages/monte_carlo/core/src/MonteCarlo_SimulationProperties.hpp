@@ -103,6 +103,12 @@ public:
   template<typename ParticleType>
   static double getMaxParticleEnergy();
 
+  //! Turn off warnings
+  static void setWarningsOff();
+
+  //! Return if warnings should be printed
+  static bool displayWarnings();
+
   //! Set implicit capture mode to on (off by default)
   static void setImplicitCaptureModeOn();
 
@@ -180,6 +186,9 @@ private:
 
   // The absolute maximum photon energy (MeV)
   static const double absolute_max_electron_energy;
+
+  // The warning message flag
+  static bool display_warnings;
 
   // The capture mode (true = implicit, false = analogue - default)
   static bool implicit_capture_mode_on;
@@ -287,6 +296,11 @@ inline double SimulationProperties::getAbsoluteMaxElectronEnergy()
   return SimulationProperties::absolute_max_electron_energy;
 }
 
+//! Return if warnings should be printed
+inline bool SimulationProperties::displayWarnings()
+{
+  return SimulationProperties::display_warnings;
+}
 
 // Return if implicit capture mode has been set
 inline bool SimulationProperties::isImplicitCaptureModeOn()

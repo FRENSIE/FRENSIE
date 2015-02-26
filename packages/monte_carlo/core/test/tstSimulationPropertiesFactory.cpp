@@ -53,6 +53,7 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
 		      1e-2 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMaxPhotonEnergy(),
 		       10.0 );
+  TEST_ASSERT( !MonteCarlo::SimulationProperties::displayWarnings() );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isImplicitCaptureModeOn() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isPhotonDopplerBroadeningModeOn() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isAtomicRelaxationModeOn() );
