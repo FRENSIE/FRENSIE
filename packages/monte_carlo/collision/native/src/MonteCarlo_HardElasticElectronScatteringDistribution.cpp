@@ -140,6 +140,7 @@ double HardElasticElectronScatteringDistribution::evaluateScreeningAngle(
           ( Utility::PhysicalConstants::inverse_fine_structure_constant * beta );
 
  // Calculate the screening angle
+ // Derive this better
  return arg1*arg1/4.0 * pow(d_atomic_number, 2.0/3.0)*( 1.13 + 3.76*arg2*arg2 );
 }
 
@@ -175,7 +176,6 @@ double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
     elastic_scattering_distribution->evaluateCDF( s_cutoff_angle_cosine );
     
   // Sample from the distribution
-  //! \todo Write a Histogram function to sample from the corresponding CDF in a subrange
   if( cutoff_cdf_value > random_number )
   {
     scattering_angle_cosine =  

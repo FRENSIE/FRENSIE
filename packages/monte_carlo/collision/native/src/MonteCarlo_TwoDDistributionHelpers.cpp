@@ -54,14 +54,15 @@ double sampleTwoDDistribution(
     double random_number = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
     
-    if( random_number < interpolation_fraction )
-    {
-      return upper_bin_boundary->second->sample();
-    }
-    else
-    {
-      return lower_bin_boundary->second->sample();
-    }
+    double upper_bin_dependent_variable = 
+                    upper_bin_boundary->second->sampleCDFValue( random_number );
+
+    double lower_bin_dependent_variable = 
+                    lower_bin_boundary->second->sampleCDFValue( random_number );
+
+    // Linearly interpolate between the upper and lower bin
+    return lower_bin_dependent_variable + interpolation_fraction*
+                  (upper_bin_dependent_variable - lower_bin_dependent_variable);
   }
 }
 
