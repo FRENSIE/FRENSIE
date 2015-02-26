@@ -95,6 +95,14 @@ public:
   //! Return the absolute maximum electron energy (MeV)
   static double getAbsoluteMaxElectronEnergy();
 
+  //! Return the min particle energy
+  template<typename ParticleType>
+  static double getMinParticleEnergy();
+
+  //! Return the max particle energy
+  template<typename ParticleType>
+  static double getMaxParticleEnergy();
+
   //! Set implicit capture mode to on (off by default)
   static void setImplicitCaptureModeOn();
 
@@ -311,6 +319,14 @@ inline bool SimulationProperties::isPhotonuclearInteractionModeOn()
 }
 
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_SimulationProperties_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_SIMULATION_PROPERTIES_HPP
 
