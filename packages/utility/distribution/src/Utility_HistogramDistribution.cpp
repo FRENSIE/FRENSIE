@@ -114,8 +114,8 @@ double HistogramDistribution::evaluatePDF( const double indep_var_value ) const
   {
     Teuchos::Array<Trip<double,double,double> >::const_iterator bin = 
       Search::binaryLowerBound<FIRST>( d_distribution.begin(),
-				       d_distribution.end(),
-				       indep_var_value );
+                                       d_distribution.end(),
+                                       indep_var_value );
     
     return bin->second;
   }
@@ -130,21 +130,14 @@ double HistogramDistribution::evaluateCDF( const double indep_var_value ) const
     return 1.0;
   else
   {
-    Teuchos::Array<Trip<double,double,double> >::const_iterator 
-       start, 
-       end, 
-       lower_bin_boundary;
+    Teuchos::Array<Trip<double,double,double> >::const_iterator lower_bin = 
+      Search::binaryLowerBound<FIRST>( d_distribution.begin(),
+                                       d_distribution.end(),
+                                       indep_var_value );
 
-    start = d_distribution.begin();
-    end = d_distribution.end();
+    double indep_diff = indep_var_value - lower_bin->first;
 
-    lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
-							  end,
-							  indep_var_value );
-
-    double indep_diff = indep_var_value - lower_bin_boundary->first;
-
-    return lower_bin_boundary->third + lower_bin_boundary->second * indep_diff;
+    return lower_bin->third + lower_bin->second * indep_diff;
   }
 } 
 
@@ -156,8 +149,8 @@ double HistogramDistribution::sample( unsigned& sampled_bin_index ) const
   
   Teuchos::Array<Trip<double,double,double> >::const_iterator bin = 
     Search::binaryLowerBound<THIRD>( d_distribution.begin(),
-				     d_distribution.end(),
-				     random_number );
+                                     d_distribution.end(),
+                                     random_number );
 
   sampled_bin_index = std::distance( d_distribution.begin(), bin );
 
@@ -199,8 +192,8 @@ double HistogramDistribution::sample( const double max_indep_var ) const
     end = d_distribution.end();
     
     lower_bin_boundary = Search::binaryLowerBound<THIRD>( start,
-							   end,
-							   random_number );
+                                                          end,
+                                                          random_number );
     // Calculate the sampled independent value
     double sample;
     
@@ -219,6 +212,17 @@ double HistogramDistribution::sample( const double max_indep_var ) const
 
     return sample;
   }
+}
+
+// Return a random sample from the distribution at the given CDF value
+double HistogramDistribution::sampleCDFValue( const double CDF_value ) const
+{
+  Teuchos::Array<Trip<double,double,double> >::const_iterator bin = 
+    Search::binaryLowerBound<THIRD>( d_distribution.begin(),
+                                     d_distribution.end(),
+                                     CDF_value );
+
+  return bin->first + (CDF_value - bin->third)/bin->second;
 }
 
 // Return the sampling efficiency from the distribution
