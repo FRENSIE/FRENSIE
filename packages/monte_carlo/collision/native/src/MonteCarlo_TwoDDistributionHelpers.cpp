@@ -19,8 +19,7 @@ namespace MonteCarlo{
  */  
 double sampleTwoDDistribution(
    const double independent_variable,
-   const Teuchos::Array<Utility::Pair<double,
-     Teuchos::RCP<Utility::OneDDistribution> > >& dependent_distribution )
+   const TwoDDistribution& dependent_distribution )
 {
 
   if( independent_variable < dependent_distribution.front().first )
@@ -33,7 +32,7 @@ double sampleTwoDDistribution(
   }
   else
   {
-    Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >::const_iterator
+    TwoDDistribution::const_iterator
       lower_dist_boundary, upper_dist_boundary;
     
     lower_dist_boundary = dependent_distribution.begin();
@@ -50,21 +49,74 @@ double sampleTwoDDistribution(
     // Calculate the interpolation fraction
     double interpolation_fraction = ( independent_variable - lower_dist_boundary->first )/
       (upper_dist_boundary->first - lower_dist_boundary->first);
+
+    return correlatedSample( upper_dist_boundary->second,
+                             lower_dist_boundary->second,
+                             interpolation_fraction );
+  }
+}
+
+// Sample an upper and lower distribution using a common random variable
+double correlatedSample(
+   const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
+   const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
+   const double interpolation_fraction )
+{  
+  double random_number = 
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
     
+  double upper_dist_dependent_variable = 
+                   upper_distribution->sampleWithValue( random_number );
+
+  double lower_dist_dependent_variable = 
+                   lower_distribution->sampleWithValue( random_number );
+
+  // Linearly interpolate between the upper and lower distributions
+  return lower_dist_dependent_variable + interpolation_fraction*
+                (upper_dist_dependent_variable - lower_dist_dependent_variable);
+}
+
+// Sample an upper and lower distribution using a common random variable in a subrange
+double correlatedSample(
+   const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
+   const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
+   const double interpolation_fraction,
+   const double cutoff_cdf )
+{  
     // Sample the upper and lower distributions using the same random number
     double random_number = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
     
-    double upper_bin_dependent_variable = 
-                   upper_dist_boundary->second->sampleCDFValue( random_number );
+    double upper_dist_dependent_variable = 
+                     upper_distribution->sampleWithValue( random_number,
+                                                          cutoff_cdf );
 
-    double lower_bin_dependent_variable = 
-                   lower_dist_boundary->second->sampleCDFValue( random_number );
+    double lower_dist_dependent_variable = 
+                     lower_distribution->sampleWithValue( random_number,
+                                                          cutoff_cdf );
 
     // Linearly interpolate between the upper and lower distributions
-    return lower_bin_dependent_variable + interpolation_fraction*
-                  (upper_bin_dependent_variable - lower_bin_dependent_variable);
-  }
+    return lower_dist_dependent_variable + interpolation_fraction*
+                (upper_dist_dependent_variable - lower_dist_dependent_variable);
+}
+
+// Evaluate a correlated cdf value
+double evaluateCorrelatedCDF(
+ 			   const Teuchos::RCP<const Utility::OneDDistribution>&
+			     upper_distribution,
+ 			   const Teuchos::RCP<const Utility::OneDDistribution>&
+			     lower_distribution,
+			   const double interpolation_fraction,
+               const double independent_value )
+{
+  double upper_cdf = 
+    upper_distribution->evaluateCDF( independent_value );
+
+  double lower_cdf = 
+    lower_distribution->evaluateCDF( independent_value );
+
+  // Linearly interpolate between the upper and lower cdf values
+  return interpolation_fraction*(upper_cdf - lower_cdf) + lower_cdf;
 }
 
 } // end MonteCarlo namespace
