@@ -53,22 +53,26 @@ public:
 	                    ParticleBank& bank,
                         SubshellType& shell_of_interaction ) const;
 
-//protected:
+  // Evaluate the screening angle at the given electron energy
+  double evaluateScreeningFactor( const double energy ) const;
 
-// Evaluate the screening angle at the given electron energy
-double evaluateScreeningAngle( const double energy ) const;
-
-// Evaluate the scattering angle from the analytical function
-double evaluateScreenedScatteringAngle( const double energy ) const; 
-
-private:
+  // Evaluate the scattering angle from the analytical function
+  double evaluateScreenedScatteringAngle( const double energy ) const; 
 
   // Sample a scattering angle cosine
-  double sampleScatteringAngleCosine( 
-		           const Teuchos::RCP<const Utility::OneDDistribution>&
-			   elastic_scattering_distribution,
-			   const double energy ) const;
+  double sampleScatteringAngleCosine( const double energy ) const;
 
+private:
+/*
+  // Evaluate the screening angle at the given electron energy
+  double evaluateScreeningFactor( const double energy ) const;
+
+  // Evaluate the scattering angle from the analytical function
+  double evaluateScreenedScatteringAngle( const double energy ) const; 
+
+  // Sample a scattering angle cosine
+  double sampleScatteringAngleCosine( const double energy ) const;
+*/
   // Cutoff angle cosine between the distribution and analytical function
   static double s_cutoff_angle_cosine;
 

@@ -247,7 +247,8 @@ int main( int argc, char** argv )
     Teuchos::Array<double> energy_loss(excit_block(size,size));
 
     // Create the energy loss distributions
-    Teuchos::RCP<Utility::OneDDistribution> ae_energy_loss_distribution;
+    MonteCarlo::AtomicExcitationElectronScatteringDistribution::AtomicDistribution
+     ae_energy_loss_distribution;
   
     ae_energy_loss_distribution.reset( 
       new Utility::TabularDistribution<Utility::LinLin>( ae_energy_grid,
@@ -285,7 +286,7 @@ int main( int argc, char** argv )
     b_angular_distribution_values[1] =  0.5;
     b_angular_distribution_values[2] =  1.0;
 
-    Teuchos::RCP<Utility::OneDDistribution> b_angular_distribution(
+    Teuchos::RCP<const Utility::OneDDistribution> b_angular_distribution(
 	  		    new Utility::TabularDistribution<Utility::LinLin>( 
 						b_energy_bins,
 						b_angular_distribution_values ) );
@@ -311,7 +312,7 @@ int main( int argc, char** argv )
       xss_data_extractor->extractBREMEBlock();
 
     // Create the bremsstrahlung scattering distributions
-    Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
+    MonteCarlo::BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
       b_scattering_distribution( N );
   
     for( unsigned n = 0; n < N; ++n )

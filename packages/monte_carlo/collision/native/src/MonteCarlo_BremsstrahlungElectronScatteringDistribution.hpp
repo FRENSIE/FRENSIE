@@ -37,8 +37,8 @@ public:
 
   //! Typedef for the  bremsstrahlung distribution
   typedef Teuchos::Array<Utility::Pair<double,
-                                     Teuchos::RCP<Utility::OneDDistribution> > >
-                                     BremsstrahlungDistribution;
+                               Teuchos::RCP<const Utility::OneDDistribution> > >
+                               BremsstrahlungDistribution;
 
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(

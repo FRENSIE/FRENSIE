@@ -29,7 +29,7 @@ public:
 
   //! Typedef for energy dependent angular distribution
   typedef Teuchos::Array<Utility::Pair<double,
-			       Teuchos::RCP<Utility::OneDDistribution> > > 
+			       Teuchos::RCP<const Utility::OneDDistribution> > > 
   AngularDistribution;
   
   //! Constructor

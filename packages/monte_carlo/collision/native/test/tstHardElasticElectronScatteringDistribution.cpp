@@ -34,14 +34,14 @@ Teuchos::RCP<MonteCarlo::HardElasticElectronScatteringDistribution>
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
-                   evaluateScreeningAngle )
+                   evaluateScreeningFactor )
 {
   // Set energy in MeV
   double energy = 1.0;
 
   // Calculate scrrening angle
   double screening_angle = 
-    ace_basic_elastic_distribution->evaluateScreeningAngle( energy );
+    ace_basic_elastic_distribution->evaluateScreeningFactor( energy );
 
   // Test
   TEST_FLOATING_EQUALITY( screening_angle, 1.097978859364e-4, 1e-12 );

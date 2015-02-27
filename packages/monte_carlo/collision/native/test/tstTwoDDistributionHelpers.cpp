@@ -25,8 +25,7 @@
 // Testing Variable
 //---------------------------------------------------------------------------//
 
-Teuchos::Array<Utility::Pair<double,
-       Teuchos::RCP<Utility::OneDDistribution> > > twod_distribution;
+MonteCarlo::TwoDDistribution twod_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.

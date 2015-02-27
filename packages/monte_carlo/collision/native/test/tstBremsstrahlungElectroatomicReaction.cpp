@@ -16,6 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
+#include "MonteCarlo_BremsstrahlungElectronScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -333,7 +334,7 @@ int main( int argc, char** argv )
     xss_data_extractor->extractBREMEBlock();
 
   // Create the bremsstrahlung scattering distributions
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
+  MonteCarlo::BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
     scattering_distribution( N );
   
   for( unsigned n = 0; n < N; ++n )

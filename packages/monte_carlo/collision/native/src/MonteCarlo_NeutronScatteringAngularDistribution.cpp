@@ -70,8 +70,7 @@ double NeutronScatteringAngularDistribution::evaluatePDF(
   }
   else
   {
-    Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >::const_iterator
-      lower_bin_boundary, upper_bin_boundary;
+    AngularDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
     
     lower_bin_boundary = d_angular_distribution.begin();
     upper_bin_boundary = d_angular_distribution.end();

@@ -35,8 +35,8 @@ public:
 
   //! Typedef for the  electroionization subshell distribution
   typedef Teuchos::Array<Utility::Pair<double,
-                                     Teuchos::RCP<Utility::OneDDistribution> > >
-                                       ElectroionizationSubshellDistribution;
+                         Teuchos::RCP<const Utility::OneDDistribution> > >
+                            ElectroionizationSubshellDistribution;
 
   //! Constructor 
   ElectroionizationSubshellElectronScatteringDistribution(
