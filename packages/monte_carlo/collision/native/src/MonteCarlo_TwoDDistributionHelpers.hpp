@@ -45,12 +45,10 @@ double correlatedSample(
 
 //! Evaluate a correlated cdf value
 double evaluateCorrelatedCDF(
- 			   const Teuchos::RCP<const Utility::OneDDistribution>&
-			     upper_elastic_scattering_distribution,
- 			   const Teuchos::RCP<const Utility::OneDDistribution>&
-			     lower_elastic_scattering_distribution,
-			   const double interpolation_fraction,
-               const double independent_value );
+   const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
+   const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
+   const double interpolation_fraction,
+   const double independent_value );
 
 } // end MonteCarlo namespace
 
