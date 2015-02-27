@@ -81,7 +81,7 @@ double correlatedSample(
    const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
    const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
    const double interpolation_fraction,
-   const double cutoff_cdf )
+   const double max_indep_var )
 {  
     // Sample the upper and lower distributions using the same random number
     double random_number = 
@@ -89,11 +89,11 @@ double correlatedSample(
     
     double upper_dist_dependent_variable = 
                      upper_distribution->sampleWithValue( random_number,
-                                                          cutoff_cdf );
+                                                          max_indep_var );
 
     double lower_dist_dependent_variable = 
                      lower_distribution->sampleWithValue( random_number,
-                                                          cutoff_cdf );
+                                                          max_indep_var );
 
     // Linearly interpolate between the upper and lower distributions
     return lower_dist_dependent_variable + interpolation_fraction*
@@ -102,12 +102,10 @@ double correlatedSample(
 
 // Evaluate a correlated cdf value
 double evaluateCorrelatedCDF(
- 			   const Teuchos::RCP<const Utility::OneDDistribution>&
-			     upper_distribution,
- 			   const Teuchos::RCP<const Utility::OneDDistribution>&
-			     lower_distribution,
-			   const double interpolation_fraction,
-               const double independent_value )
+    const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
+    const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
+    const double interpolation_fraction,
+    const double independent_value )
 {
   double upper_cdf = 
     upper_distribution->evaluateCDF( independent_value );

@@ -18,7 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
-#include "Utility_DeltaDistribution.hpp"
+#include "Utility_HistogramDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
 //---------------------------------------------------------------------------//
@@ -26,6 +26,8 @@
 //---------------------------------------------------------------------------//
 
 MonteCarlo::TwoDDistribution twod_distribution;
+double interpolation_fraction;
+double independent_value;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -35,9 +37,15 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistribution_below )
 {
   double sampled_variable;
 
+  // Set up the random number stream
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 3.0/18.0; // sample the first distribution
+ 
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
   sampled_variable = MonteCarlo::sampleTwoDDistribution( 0.0001, twod_distribution );
 
-  TEST_FLOATING_EQUALITY( sampled_variable, 0.000000000000, 1e-15  );
+  TEST_FLOATING_EQUALITY( sampled_variable, -1.5, 1e-15  );
 }
 
 //---------------------------------------------------------------------------//
@@ -46,20 +54,26 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistribution_above )
 {
   double sampled_variable;
 
+  // Set up the random number stream
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 0.5; // sample the last distribution
+ 
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
   sampled_variable = MonteCarlo::sampleTwoDDistribution( 1.0, twod_distribution );
 
-  TEST_FLOATING_EQUALITY( sampled_variable, 2.000000000000, 1e-15  );
+  TEST_FLOATING_EQUALITY( sampled_variable, 2.0, 1e-15  );
 }
 
 //---------------------------------------------------------------------------//
-// Check that lower bin is sample for independent variable inbetween bins
-TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistribution_lower )
+// Check the sample for independent variable inbetween bins
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistribution_inbetween )
 {
   double sampled_variable;
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.4; // sample lower bin (1.0)
+  std::vector<double> fake_stream( 1 );
+  fake_stream[0] = 0.5; // sample between the middle and last distribution
  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -67,26 +81,51 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistribution_lower )
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( sampled_variable, 2.000000000000, 1e-15  );
+  TEST_FLOATING_EQUALITY( sampled_variable, 13.0/9.0, 1e-15  );
 }
 
 //---------------------------------------------------------------------------//
-// Check that upper bin is sample for independent variable inbetween bins
-TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistribution_upper )
+// Check the correlation sample for two bins
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, correlatedSample )
 {
   double sampled_variable;
 
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.6; // sample upper bin (2.0)
+  fake_stream[0] = 0.5; // sample upper bin (2.0)
  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sampled_variable = MonteCarlo::sampleTwoDDistribution( 0.05, twod_distribution );
+  sampled_variable = MonteCarlo::correlatedSample( twod_distribution[2].second,
+                                                   twod_distribution[1].second,
+                                                   interpolation_fraction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( sampled_variable, 1.000000000000, 1e-15  );
+  TEST_FLOATING_EQUALITY( sampled_variable, 13.0/9.0, 1e-15  );
+}
+
+//---------------------------------------------------------------------------//
+// Check the correlated cdf value can be evaluated
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateCorrelatedCDF )
+{
+  double sampled_variable;
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.5; // sample upper bin (2.0)
+ 
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sampled_variable = MonteCarlo::evaluateCorrelatedCDF( 
+                                                   twod_distribution[2].second,
+                                                   twod_distribution[1].second,
+                                                   interpolation_fraction,
+                                                   independent_value );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 0.4259259259259260, 1e-15  );
 }
 
 //---------------------------------------------------------------------------//
@@ -110,11 +149,53 @@ int main( int argc, char** argv )
   // Create the two dimensional distribution
   twod_distribution.resize(3);
   twod_distribution[0].first = 0.001;
-  twod_distribution[0].second.reset( new Utility::DeltaDistribution(0.0) );
+
+  // Create a first fake histogram distribution
+  Teuchos::Array<double> dist_1_bin_boundaries( 4 );
+  dist_1_bin_boundaries[0] = -2.0;
+  dist_1_bin_boundaries[1] = -1.0;
+  dist_1_bin_boundaries[2] = 1.0;
+  dist_1_bin_boundaries[3] = 2.0;
+  
+  Teuchos::Array<double> bin_values( 3 );
+  bin_values[0] = 2.0;
+  bin_values[1] = 1.0;
+  bin_values[2] = 2.0;
+
+  twod_distribution[0].second.reset( new Utility::HistogramDistribution( 
+                                                          dist_1_bin_boundaries,
+							                              bin_values) );
+
   twod_distribution[1].first = 0.01;
-  twod_distribution[1].second.reset( new Utility::DeltaDistribution(1.0) );
+
+  // Create a second fake histogram distribution
+  Teuchos::Array<double> dist_2_bin_boundaries( 4 );
+  dist_2_bin_boundaries[0] = -1.0;
+  dist_2_bin_boundaries[1] = 0.0;
+  dist_2_bin_boundaries[2] = 2.0;
+  dist_2_bin_boundaries[3] = 3.0;
+
+  twod_distribution[1].second.reset( new Utility::HistogramDistribution( 
+                                                          dist_2_bin_boundaries,
+							                              bin_values) );
+
   twod_distribution[2].first = 0.1;
-  twod_distribution[2].second.reset( new Utility::DeltaDistribution(2.0) );
+
+  // Create a third fake histogram distribution
+  Teuchos::Array<double> dist_3_bin_boundaries( 4 );
+  dist_3_bin_boundaries[0] = 0.0;
+  dist_3_bin_boundaries[1] = 1.0;
+  dist_3_bin_boundaries[2] = 3.0;
+  dist_3_bin_boundaries[3] = 4.0; 
+
+  twod_distribution[2].second.reset( new Utility::HistogramDistribution( 
+                                                          dist_3_bin_boundaries,
+							                              bin_values) );
+
+  independent_value = 1.0;
+
+  interpolation_fraction = ( 0.05 - twod_distribution[1].first )/
+                 ( twod_distribution[2].first  - twod_distribution[1].first );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

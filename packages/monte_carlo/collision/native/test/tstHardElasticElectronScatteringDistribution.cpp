@@ -44,7 +44,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
     ace_basic_elastic_distribution->evaluateScreeningFactor( energy );
 
   // Test
-  TEST_FLOATING_EQUALITY( screening_angle, 1.097978859364e-4, 1e-12 );
+  TEST_FLOATING_EQUALITY( screening_angle, 2.195957718728E-04, 1e-12 );
 
 }
 
@@ -67,7 +67,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
     ace_basic_elastic_distribution->evaluateScreenedScatteringAngle( energy );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999502267, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999501136, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -76,10 +76,9 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    ScatterElectron_analytical )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 0.2;
-  fake_stream[1] = 9.9991E-01;
-  fake_stream[2] = 0.5;
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 9.9991E-01;
+  fake_stream[1] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -107,10 +106,9 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    ScatterElectron_distribution )
 {
   // Set fake random number stream
-  std::vector<double> fake_stream( 3 );
-  fake_stream[0] = 0.2;
-  fake_stream[1] = 9.9990E-01;
-  fake_stream[2] = 0.5;
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 9.9990E-01;
+  fake_stream[1] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -118,7 +116,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   MonteCarlo::SubshellType shell_of_interaction;
   
   MonteCarlo::ElectronState electron( 0 );
-  electron.setEnergy( 1.1e-3 );
+  electron.setEnergy( 1.0e-3 );
   electron.setDirection( 0.0, 0.0, 1.0 );
 
   // Analytically scatter electron
@@ -128,7 +126,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
   // Test
   TEST_FLOATING_EQUALITY( electron.getZDirection(), 9.874339332031E-01, 1e-12 );
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.1e-3, 1e-12 );
+  TEST_FLOATING_EQUALITY( electron.getEnergy(), 1.0e-3, 1e-12 );
 
 }
 
