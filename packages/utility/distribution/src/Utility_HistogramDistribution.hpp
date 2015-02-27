@@ -76,7 +76,11 @@ public:
   double sample( const double max_indep_var ) const;
 
   //! Return a random sample from the distribution at the given CDF value
-  double sampleCDFValue( const double CDF_value ) const;
+  double sampleWithValue( const double CDF_value ) const;
+
+  //! Return a random sample from the distribution at the given CDF value in a subrange
+  double sampleWithValue( const double CDF_value,
+                          const double max_indep_var ) const;
 
   //! Return the sampling efficiency from the distribution
   double getSamplingEfficiency() const;

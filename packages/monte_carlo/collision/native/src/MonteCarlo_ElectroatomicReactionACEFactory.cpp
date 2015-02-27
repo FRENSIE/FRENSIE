@@ -59,7 +59,7 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
     raw_electroatom_data.extractELASBlock();
 
   // Create the elastic scattering distributions
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::OneDDistribution> > >
+  HardElasticElectronScatteringDistribution::ElasticDistribution
     scattering_function( size );
   
   for( unsigned n = 0; n < size; ++n )
@@ -125,7 +125,8 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
   Teuchos::Array<double> energy_loss(excit_block(size,size));
 
   // Create the energy loss distributions
-  Teuchos::RCP<Utility::OneDDistribution> energy_loss_distribution;
+  AtomicExcitationElectronScatteringDistribution::AtomicDistribution
+    energy_loss_distribution;
   
   energy_loss_distribution.reset( 
     new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,
@@ -271,7 +272,7 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
 
 
     // Create the electroionization sampling table for the subshell
-    Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
+    ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
       subshell_distribution( num_tables[subshell] );
   
     for( unsigned n = 0; n < num_tables[subshell]; ++n )
@@ -367,7 +368,7 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
     raw_electroatom_data.extractBREMEBlock();
 
   // Create the bremsstrahlung scattering distributions
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
+  BremsstrahlungElectronScatteringDistribution::BremsstrahlungDistribution
     energy_loss_distribution( N );
   
   for( unsigned n = 0; n < N; ++n )

@@ -23,7 +23,8 @@ AtomicExcitationElectroatomicReaction<InterpPolicy,processed_cross_section>::Ato
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const unsigned threshold_energy_index,
-           const Teuchos::RCP<Utility::OneDDistribution>& energy_loss_distribution )
+           const AtomicExcitationElectronScatteringDistribution::AtomicDistribution&
+             energy_loss_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
 						                         incoming_energy_grid,
 						                         cross_section,
