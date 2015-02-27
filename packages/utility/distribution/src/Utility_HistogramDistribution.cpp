@@ -176,8 +176,8 @@ double HistogramDistribution::sample( const double max_indep_var ) const
     end = d_distribution.end();
 
     lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
-							  end,
-							  max_indep_var );
+                                                          end,
+                                                          max_indep_var );
 
     // cdf(x) = cdf(x0) + (x-x0)*pdf(x0)
     double indep_value_diff = max_indep_var - lower_bin_boundary->first;
@@ -215,14 +215,55 @@ double HistogramDistribution::sample( const double max_indep_var ) const
 }
 
 // Return a random sample from the distribution at the given CDF value
-double HistogramDistribution::sampleCDFValue( const double CDF_value ) const
+double HistogramDistribution::sampleWithValue( const double cdf_value ) const
 {
+  // Make sure the cdf value is valid
+  testPrecondition( cdf_value >= 0.0 );
+  testPrecondition( cdf_value <= 1.0 );
+
   Teuchos::Array<Trip<double,double,double> >::const_iterator bin = 
     Search::binaryLowerBound<THIRD>( d_distribution.begin(),
                                      d_distribution.end(),
-                                     CDF_value );
+                                     cdf_value );
 
-  return bin->first + (CDF_value - bin->third)/bin->second;
+  return bin->first + (cdf_value - bin->third)/bin->second;
+}
+
+// Return a random sample from the distribution at the given cdf value in a subrange
+double HistogramDistribution::sampleWithValue( 
+                                             const double cdf_value,
+                                             const double max_indep_var ) const
+{
+  // Make sure the cdf value is valid
+  testPrecondition( cdf_value >= 0.0 );
+  testPrecondition( cdf_value <= 1.0 );
+
+  // Make sure the maximum indep var is valid
+  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
+  testPrecondition( max_indep_var <= this->getUpperBoundOfIndepVar() );
+  
+  if( max_indep_var == this->getLowerBoundOfIndepVar() )
+    return max_indep_var;
+  else if( max_indep_var >= this->getUpperBoundOfIndepVar() )
+    return this->sample();
+  else
+  {
+    // Find the cdf value at the maximum independent variable
+    Teuchos::Array<Trip<double,double,double> >::const_iterator lower_bin_boundary = 
+      Search::binaryLowerBound<FIRST>( d_distribution.begin(),
+                                       d_distribution.end(),
+                                       max_indep_var );
+
+    // cdf(x) = cdf(x0) + (x-x0)*pdf(x0)
+    double indep_value_diff = max_indep_var - lower_bin_boundary->first;
+    double cdf_max = lower_bin_boundary->third + 
+      indep_value_diff*lower_bin_boundary->second;
+    
+    // Sample a scaled cdf value
+    double scaled_cdf_value = cdf_value*cdf_max;
+
+    return this->sampleWithValue( scaled_cdf_value );
+  }
 }
 
 // Return the sampling efficiency from the distribution

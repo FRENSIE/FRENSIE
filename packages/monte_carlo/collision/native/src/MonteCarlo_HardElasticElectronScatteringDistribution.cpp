@@ -45,75 +45,10 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
 			                    ParticleBank& bank,
                                 SubshellType& shell_of_interaction ) const
 {
-  // angle cosine the electron scatters into
-  double scattering_angle_cosine;
-
-  // The cutoff CDF for applying the analytical screening function
-  double cutoff_cdf_value;
-
-  // Energy is below the lowest grid point
-  if( electron.getEnergy() < d_elastic_scattering_distribution.front().first )
-  {
-  cutoff_cdf_value = 
-    d_elastic_scattering_distribution.front().second->evaluateCDF( 
-                                                       s_cutoff_angle_cosine );
-  }
-  // Energy is above the highest grid point
-  else if( electron.getEnergy() >= d_elastic_scattering_distribution.back().first )
-  {
-  cutoff_cdf_value = 
-    d_elastic_scattering_distribution.back().second->evaluateCDF( 
-                                                       s_cutoff_angle_cosine );
-  }
-  // Energy is inbetween two grid point
-  else
-  {
-    ElasticDistribution::const_iterator lower_dist_boundary, upper_dist_boundary;
-    
-    lower_dist_boundary = d_elastic_scattering_distribution.begin();
-    upper_dist_boundary = d_elastic_scattering_distribution.end();
-    
-    lower_dist_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
-							  lower_dist_boundary,
-							  upper_dist_boundary,
-							  electron.getEnergy() );
-
-    upper_dist_boundary = lower_dist_boundary;
-    ++upper_dist_boundary;
-
-    // Calculate the interpolation fraction
-    interpolation_fraction = 
-       ( electron.getEnergy() - lower_dist_boundary->first )/
-       ( upper_dist_boundary->first - lower_dist_boundary->first );
-
-    // evaluate the cutoff CDF for applying the analytical screening function
-    double cutoff_cdf_value = this->evaluateCorrelatedCDF( 
-                                     upper_dist_boundary->second,
-                                     lower_dist_boundary->second,
-                                     interpolation_fraction );
-     
-    double random_number = 
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-  // Sample from the distribution
-  if( cutoff_cdf_value > random_number )
-  {
-    scattering_angle_cosine =  
-      elastic_scattering_distribution->sample( s_cutoff_angle_cosine );
-  }
-  // Sample from the analytical function
-  else
-  {
-    scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
-  }
-
-  // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= -1.0 );
-  testPostcondition( scattering_angle_cosine <= 1.0 );
-
-  return scattering_angle_cosine;
-    }
-  }
+  // Sample the scattering angle cosine
+  double scattering_angle_cosine = 
+   HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine( 
+                                                         electron.getEnergy() );
 
   // Calculate the outgoing direction
   double outgoing_electron_direction[3];
@@ -154,8 +89,7 @@ double HardElasticElectronScatteringDistribution::evaluateScreeningFactor(
           ( Utility::PhysicalConstants::inverse_fine_structure_constant * beta );
 
  // Calculate the screening angle
- // Derive this better
- return arg1*arg1/4.0 * pow(d_atomic_number, 2.0/3.0)*( 1.13 + 3.76*arg2*arg2 );
+ return arg1*arg1/2.0 * pow(d_atomic_number, 2.0/3.0)*( 1.13 + 3.76*arg2*arg2 );
 }
 
 // Evaluate the scattering angle from the analytical function
@@ -174,33 +108,104 @@ double HardElasticElectronScatteringDistribution::evaluateScreenedScatteringAngl
   return screening_angle + 1.0 - 1.0/(arg + random_number/screening_angle);
 }
 
+
 // Sample a scattering angle cosine
 double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
- 			   const Teuchos::RCP<const Utility::OneDDistribution>&
-			     upper_elastic_scattering_distribution,
- 			   const Teuchos::RCP<const Utility::OneDDistribution>&
-			     lower_elastic_scattering_distribution,
-			   const double energy ) const
+                                                      double const energy) const
 {
+  // angle cosine the electron scatters into
   double scattering_angle_cosine;
-  
-  double random_number = 
-    Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  // evaluate the cutoff CDF for applying the analytical screening function
-  double cutoff_cdf_value = 
-    elastic_scattering_distribution->evaluateCDF( s_cutoff_angle_cosine );
-    
-  // Sample from the distribution
-  if( cutoff_cdf_value > random_number )
+  // The cutoff CDF for applying the analytical screening function
+  double cutoff_cdf_value;
+
+  double random_number;
+
+  // Energy is below the lowest grid point
+  if( energy < d_elastic_scattering_distribution.front().first )
   {
-    scattering_angle_cosine =  
-      elastic_scattering_distribution->sample( s_cutoff_angle_cosine );
+    cutoff_cdf_value = 
+      d_elastic_scattering_distribution.front().second->evaluateCDF( 
+                                                       s_cutoff_angle_cosine );
+
+    random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+    // Correlated sample from the distribution
+    if( cutoff_cdf_value > random_number )
+    {
+      scattering_angle_cosine = 
+        d_elastic_scattering_distribution.front().second->sample( cutoff_cdf_value );
+    }
+    // Sample from the analytical function
+    else
+    {
+      scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
+    }
   }
-  // Sample from the analytical function
+  // Energy is above the highest grid point
+  else if( energy >= d_elastic_scattering_distribution.back().first )
+  {
+    cutoff_cdf_value = 
+      d_elastic_scattering_distribution.back().second->evaluateCDF( 
+                                                       s_cutoff_angle_cosine );
+
+    random_number = Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+    // Correlated sample from the distribution
+    if( cutoff_cdf_value > random_number )
+    {
+      scattering_angle_cosine = 
+        d_elastic_scattering_distribution.back().second->sample( cutoff_cdf_value );
+    }
+    // Sample from the analytical function
+    else
+    {
+      scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
+    }
+  }
+  // Energy is inbetween two grid point
   else
   {
-    scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
+    ElasticDistribution::const_iterator lower_dist_boundary, upper_dist_boundary;
+    
+    lower_dist_boundary = d_elastic_scattering_distribution.begin();
+    upper_dist_boundary = d_elastic_scattering_distribution.end();
+    
+    lower_dist_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
+							  lower_dist_boundary,
+							  upper_dist_boundary,
+							  energy );
+
+    upper_dist_boundary = lower_dist_boundary;
+    ++upper_dist_boundary;
+
+    // Calculate the interpolation fraction
+    double interpolation_fraction = 
+       ( energy - lower_dist_boundary->first )/
+       ( upper_dist_boundary->first - lower_dist_boundary->first );
+
+    // evaluate the cutoff CDF for applying the analytical screening function
+    cutoff_cdf_value = evaluateCorrelatedCDF( upper_dist_boundary->second,
+                                              lower_dist_boundary->second,
+                                              interpolation_fraction,
+                                              s_cutoff_angle_cosine );
+     
+    double random_number = 
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+    // Correlated sample from the distribution
+    if( cutoff_cdf_value > random_number )
+    {
+    scattering_angle_cosine = correlatedSample( upper_dist_boundary->second,
+                                                lower_dist_boundary->second,
+                                                interpolation_fraction,
+                                                cutoff_cdf_value );
+    }
+    // Sample from the analytical function
+    else
+    {
+      scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
+    }
   }
 
   // Make sure the scattering angle cosine is valid
@@ -208,25 +213,6 @@ double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
   testPostcondition( scattering_angle_cosine <= 1.0 );
 
   return scattering_angle_cosine;
-}
-
-// Evaluate a correlated cdf value
-double HardElasticElectronScatteringDistribution::evaluateCorrelatedCDF(
- 			   const Teuchos::RCP<const Utility::OneDDistribution>&
-			     upper_elastic_scattering_distribution,
- 			   const Teuchos::RCP<const Utility::OneDDistribution>&
-			     lower_elastic_scattering_distribution,
-			   const double interpolation_fraction ) const
-{
-  double upper_cutoff_cdf = 
-    upper_elastic_scattering_distribution->evaluateCDF( s_cutoff_angle_cosine );
-
-  double lower_cutoff_cdf = 
-    lower_elastic_scattering_distribution->evaluateCDF( s_cutoff_angle_cosine );
-
-  // Linearly interpolate between the upper and lower cdf values
-  return interpolation_fraction*(upper_cutoff_cdf - lower_cutoff_cdf) +
-         lower_cutoff_cdf;
 }
 
 } // end MonteCarlo namespace

@@ -34,9 +34,12 @@ class AtomicExcitationElectronScatteringDistribution : public ElectronScattering
 
 public:
 
+  //! Typedef for the atomic excitation distribution
+  typedef Teuchos::RCP<const Utility::OneDDistribution> AtomicDistribution;
+
   //! Constructor
   AtomicExcitationElectronScatteringDistribution(
-    const Teuchos::RCP<Utility::OneDDistribution>& energy_loss_distribution );
+    const AtomicDistribution& energy_loss_distribution );
 
   //! Destructor 
   virtual ~AtomicExcitationElectronScatteringDistribution()
@@ -50,7 +53,7 @@ public:
 private:
 
   // elastic scattering distribution without forward screening data
-  Teuchos::RCP<Utility::OneDDistribution> d_energy_loss_distribution;
+  AtomicDistribution d_energy_loss_distribution;
 
 
 };
