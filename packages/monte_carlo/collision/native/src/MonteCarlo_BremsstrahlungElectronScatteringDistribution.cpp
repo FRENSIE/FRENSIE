@@ -185,9 +185,11 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
 
   bool rejected = true;
 
+  double rand1, rand;
+
   while( rejected )
   {
-    double rand = Utility::RandomNumberGenerator::getRandomNumber<double>();
+    rand = Utility::RandomNumberGenerator::getRandomNumber<double>();
 
     // sample for theta
     double theta = sqrt( rand/( 1.0 - rand + 1.0/x_max ) )/
@@ -224,9 +226,10 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
         g /= g_x_min;
       }
     }
-   
+ 
     // Apply rejection scheme
-    double rand1 = Utility::RandomNumberGenerator::getRandomNumber<double>();
+    rand1 = Utility::RandomNumberGenerator::getRandomNumber<double>();
+
     if( rand1 < g )
     {
       return cos(theta);

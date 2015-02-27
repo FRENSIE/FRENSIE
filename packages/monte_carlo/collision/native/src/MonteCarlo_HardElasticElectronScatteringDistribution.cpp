@@ -199,7 +199,7 @@ double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
     scattering_angle_cosine = correlatedSample( upper_dist_boundary->second,
                                                 lower_dist_boundary->second,
                                                 interpolation_fraction,
-                                                cutoff_cdf_value );
+                                                s_cutoff_angle_cosine );
     }
     // Sample from the analytical function
     else
