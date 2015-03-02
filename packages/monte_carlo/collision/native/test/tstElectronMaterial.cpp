@@ -183,12 +183,11 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, collideAnalogue )
   electron.setCell( 4 );
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 5 );
+  std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5; // select the pb atom
   fake_stream[1] = 0.36; // select the elastic reaction
-  fake_stream[2] = 0.2; // sample upper energy bin
-  fake_stream[3] = 9.9990E-01; // choose angle from distribution
-  fake_stream[4] = 0.5; // sample mu = 0.9874366113907
+  fake_stream[2] = 9.9990E-01; // choose angle from distribution
+  fake_stream[3] = 0.5; // sample mu = 0.9874366113907
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -213,12 +212,11 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, collideSurvivalBias )
   electron.setCell( 4 );
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 5 );
+  std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5; // select the pb atom
   fake_stream[1] = 0.36; // select the elastic reaction
-  fake_stream[2] = 0.2; // sample upper energy bin
-  fake_stream[3] = 9.9990E-01; // choose angle from distribution
-  fake_stream[4] = 0.5; // sample mu = 0.9874366113907
+  fake_stream[2] = 9.9990E-01; // sample angle from distribution
+  fake_stream[3] = 0.5; // sample mu = 0.9874366113907
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 

@@ -41,7 +41,7 @@ double correlatedSample(
    const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
    const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
    const double interpolation_fraction,
-   const double cutoff_cdf );
+   const double max_indep_var );
 
 //! Evaluate a correlated cdf value
 double evaluateCorrelatedCDF(

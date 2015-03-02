@@ -92,7 +92,7 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, correlatedSample )
 
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.5; // sample upper bin (2.0)
+  fake_stream[0] = 0.5; // sample between the middle and last distribution
  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -106,6 +106,28 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, correlatedSample )
 }
 
 //---------------------------------------------------------------------------//
+// Check the correlation sample for two bins in a subrange
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, correlatedSample_subrange )
+{
+  double sampled_variable;
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.5; // sample between the middle and last distribution
+ 
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  sampled_variable = MonteCarlo::correlatedSample( twod_distribution[2].second,
+                                                   twod_distribution[1].second,
+                                                   interpolation_fraction,
+                                                   3.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_FLOATING_EQUALITY( sampled_variable, 1.0, 1e-15  );
+}
+
+//---------------------------------------------------------------------------//
 // Check the correlated cdf value can be evaluated
 TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateCorrelatedCDF )
 {
@@ -113,7 +135,7 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, evaluateCorrelatedCDF )
 
   // Set up the random number stream
   std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 0.5; // sample upper bin (2.0)
+  fake_stream[0] = 0.5; // sample between the middle and last distribution
  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 

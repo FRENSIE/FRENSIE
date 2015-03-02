@@ -240,12 +240,12 @@ double HistogramDistribution::sampleWithValue(
 
   // Make sure the maximum indep var is valid
   testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
-  testPrecondition( max_indep_var <= this->getUpperBoundOfIndepVar() );
+  //testPrecondition( max_indep_var <= this->getUpperBoundOfIndepVar() );
   
   if( max_indep_var == this->getLowerBoundOfIndepVar() )
     return max_indep_var;
   else if( max_indep_var >= this->getUpperBoundOfIndepVar() )
-    return this->sample();
+    return this->sampleWithValue( cdf_value );
   else
   {
     // Find the cdf value at the maximum independent variable
