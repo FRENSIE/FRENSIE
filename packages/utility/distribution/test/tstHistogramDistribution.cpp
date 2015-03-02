@@ -283,6 +283,186 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, sample_subrange )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be sampled from a subrange
+TEUCHOS_UNIT_TEST( HistogramDistribution, sampleWithValue )
+{
+  std::vector<double> fake_stream( 8 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0/6.0;
+  fake_stream[2] = 1.0/3.0 - 1e-15;
+  fake_stream[3] = 1.0/3.0;
+  fake_stream[4] = 2.0/3.0 - 1e-15;
+  fake_stream[5] = 2.0/3.0;
+  fake_stream[6] = 5.0/6.0;
+  fake_stream[7] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // PDF Histogram
+
+  // Test the first bin
+  double cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  double sample = pdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = pdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, -1.5, 1e-14 ); 
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = pdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+  
+  // Test the second bin
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = pdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = pdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+
+  // Test the third bin
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = pdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = pdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, 1.5, 1e-14 ); 
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = pdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, 2.0, 1e-14 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // CDF Histogram
+
+  // Test the first bin
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, -1.5, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+  
+  // Test the second bin
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+
+  // Test the third bin
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, 1.5, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, 2.0, 1e-14 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled from a subrange
+TEUCHOS_UNIT_TEST( HistogramDistribution, sampleWithValue_subrange )
+{
+  std::vector<double> fake_stream( 6 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15 ;
+  fake_stream[3] = 0.0;
+  fake_stream[4] = 0.5;
+  fake_stream[5] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // PDF Histogram
+  // Test max independent value 2nd bin
+  double max_indep_val = -1.0;
+
+  double cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  double sample = pdf_distribution->sampleWithValue( cdf_value, max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = pdf_distribution->sampleWithValue( cdf_value, max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -1.5, 1e-14 ); 
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = pdf_distribution->sampleWithValue( cdf_value, max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+  
+  // Test max independent value 3rd bin
+  max_indep_val = 1.0;
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = pdf_distribution->sampleWithValue( cdf_value, max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = pdf_distribution->sampleWithValue( cdf_value, max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 ); 
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = pdf_distribution->sampleWithValue( cdf_value, max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  // CDF Histogram
+  // Test max independent value 2nd bin
+  max_indep_val = -1.0;
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value, max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value, max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -1.5, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value, max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+  
+  // Test max independent value 3rd bin
+  max_indep_val = 1.0;
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value, max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -2.0, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value, max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, -1.0, 1e-14 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = cdf_distribution->sampleWithValue( cdf_value, max_indep_val );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
 // Check that the sampling efficiency can be returned
 TEUCHOS_UNIT_TEST( HistogramDistribution, getSamplingEfficiency )
 {
