@@ -87,20 +87,20 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
  
   // Sample the azimuthal angle
   double azimuthal_angle = 2*Utility::PhysicalConstants::pi*
-    2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-  double outgoing_direction[3];
-
-  Utility::rotateDirectionThroughPolarAndAzimuthalAngle( angle_cosine,
-							 azimuthal_angle,
-							 photon.getDirection(),
-							 outgoing_direction );
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( angle_cosine >= -1.0 );
+  testPostcondition( angle_cosine <= 1.0 );
+  // Make sure the azimuthal angle is valid
+  testPostcondition( azimuthal_angle >= 0.0 );
+  testPostcondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
 
   // Set the new energy
   photon.setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
 
   // Set the new direction
-  photon.setDirection( outgoing_direction );
+  photon.rotateDirection( angle_cosine, azimuthal_angle );
 
   // Reset the collision number since this is technically a new photon
   photon.resetCollisionNumber();
