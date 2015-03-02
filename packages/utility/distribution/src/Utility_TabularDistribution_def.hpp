@@ -313,6 +313,40 @@ double TabularDistribution<InterpolationPolicy>::sample(
   }
 }
 
+// Return a sample from the distribution at the given CDF value
+template<typename InterpolationPolicy>
+double TabularDistribution<InterpolationPolicy>::sampleWithValue( 
+					    const double cdf_value ) const
+{
+  DistributionArray::const_iterator lower_bin_boundary = 
+                       Search::binaryLowerBound<SECOND>( d_distribution.begin(),
+                                                         d_distribution.end(),
+                                                         cdf_value );
+
+  // Calculate the sampled independent value
+  double sample;
+  
+  double indep_value = lower_bin_boundary->first;
+  double cdf_diff = cdf_value - lower_bin_boundary->second;
+  double pdf_value = lower_bin_boundary->third;
+  double slope = lower_bin_boundary->fourth;
+
+  // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m 
+  if( slope != 0.0 )
+  {
+    sample = indep_value + 
+      (sqrt( pdf_value*pdf_value + 2*slope*cdf_diff ) - pdf_value)/slope;
+  }
+  // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
+  else
+    sample =  indep_value + cdf_diff/pdf_value;
+
+  // Make sure the sample is valid
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( sample ) );
+
+  return sample;
+}
+
 // Return the sampling efficiency
 template<typename InterpolationPolicy>
 double TabularDistribution<InterpolationPolicy>::getSamplingEfficiency() const
