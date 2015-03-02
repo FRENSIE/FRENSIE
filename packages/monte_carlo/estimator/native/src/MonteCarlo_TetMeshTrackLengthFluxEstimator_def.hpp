@@ -347,7 +347,7 @@ bool
 TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::isPointInMesh( 
 						        const double point[3] )
 {
-  bool point_in_mesh = true;
+  bool point_in_mesh = false;
 
   // Find the leaf that the point is in (if there is one)
   moab::AdaptiveKDTreeIter kd_tree_iteration;
@@ -376,19 +376,14 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::isPointInMesh(
 	 tet != tets_in_leaf.end();
 	 ++tet )
     {
-      // Get the bounding box of the tets
-      moab::BoundBox bounding_box;
-      
-      return_value = bounding_box.update( *d_moab_interface, *tet );
-      
-      TEST_FOR_EXCEPTION( return_value != moab::MB_SUCCESS,
-			  Utility::MOABException,
-			  moab::ErrorCodeStr[return_value] );
-
-      if( bounding_box.contains_point( point, s_tol ) )
+      if( Utility::isPointInTet( 
+		  point,
+		  d_tet_reference_vertices.find( *tet )->second,
+		  d_tet_barycentric_transform_matrices.find( *tet )->second,
+		  s_tol ) )
       {
 	point_in_mesh = true;
-	
+
 	break;
       }
     }
@@ -401,6 +396,13 @@ TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::isPointInMesh(
 }
 
 // Determine which tet a given point is in
+/*! \details This function should only be called after testing if the point
+ * is in the mesh. If the point is in the mesh, it is still possible that
+ * this function will not be able to find the correct tet due to numerical
+ * precision. In that event the return value will be zero. It is therefore
+ * important to test that the return value from this function is not zero
+ * before using it. 
+ */
 template<typename ContributionMultiplierPolicy>
 moab::EntityHandle TetMeshTrackLengthFluxEstimator<ContributionMultiplierPolicy>::whichTetIsPointIn(
 	                                                const double point[3] )
