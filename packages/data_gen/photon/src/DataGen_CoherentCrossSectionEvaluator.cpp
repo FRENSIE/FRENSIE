@@ -65,8 +65,18 @@ double CoherentCrossSectionEvaluator::evaluateDifferentialCrossSection(
   const double atomic_form_factor_arg = 
     sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength;
 
-  const double atomic_form_factor_value = 
-    d_atomic_form_factor->evaluate( atomic_form_factor_arg );
+  double atomic_form_factor_value;
+
+  if( atomic_form_factor_arg == 0.0 ) 
+  {
+    atomic_form_factor_value = d_atomic_form_factor->evaluate(
+			     d_atomic_form_factor->getLowerBoundOfIndepVar() );
+  }
+  else
+  {
+    atomic_form_factor_value = 
+      d_atomic_form_factor->evaluate( atomic_form_factor_arg );
+  }
 
   // Make sure the atomic form factor is valid
   testPostcondition( atomic_form_factor_value >= 0.0 );
@@ -77,7 +87,7 @@ double CoherentCrossSectionEvaluator::evaluateDifferentialCrossSection(
     Utility::PhysicalConstants::classical_electron_radius*
     (1.0+scattering_angle_cosine*scattering_angle_cosine)*
     atomic_form_factor_value*
-    atomic_form_factor_value;
+    atomic_form_factor_value/1e-24;
 }
 
 // Evaluate the coherent cross section
