@@ -107,8 +107,8 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 {
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
-  fake_stream[0] = 9.9990E-01;
-  fake_stream[1] = 0.5;
+  fake_stream[0] = 9.9990E-01; // sample angle from distribution
+  fake_stream[1] = 0.5; // sample mu = 0.9874366113907
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
