@@ -2,8 +2,8 @@
 ADD_SUBDIRECTORY(photon)
 INCLUDE_DIRECTORIES(photon/src)
 
-ADD_SUBDIRECTORY(adjoint_photon)
-INCLUDE_DIRECTORIES(adjoint_photon/src)
+# ADD_SUBDIRECTORY(adjoint_photon)
+# INCLUDE_DIRECTORIES(adjoint_photon/src)
 
 ADD_SUBDIRECTORY(free_gas_sab)
 INCLUDE_DIRECTORIES(free_gas_sab/src)

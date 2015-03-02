@@ -59,14 +59,6 @@ void ElasticNeutronScatteringDistribution::scatterNeutron(
       (2*A*cm_scattering_angle_cosine + 1 + A*A)/((A+1)*(A+1));
     double lab_scattering_angle_cosine = (A*cm_scattering_angle_cosine + 1)/
       sqrt(2*A*cm_scattering_angle_cosine + 1 + A*A);
-    
-    double outgoing_neutron_direction[3];
-    
-    Utility::rotateDirectionThroughPolarAndAzimuthalAngle( 
-						lab_scattering_angle_cosine,
-						sampleAzimuthalAngle(),
-						neutron.getDirection(),
-						outgoing_neutron_direction);
 
     // Make sure the lab scattering angle cosine is in [-1,1]
     testPostcondition( lab_scattering_angle_cosine >= -1.0 );
@@ -74,7 +66,8 @@ void ElasticNeutronScatteringDistribution::scatterNeutron(
     
     neutron.setEnergy( outgoing_neutron_energy );
     
-    neutron.setDirection( outgoing_neutron_direction );
+    neutron.rotateDirection( lab_scattering_angle_cosine, 
+			     sampleAzimuthalAngle() );
   }
   // Use the free gas thermal model
  else

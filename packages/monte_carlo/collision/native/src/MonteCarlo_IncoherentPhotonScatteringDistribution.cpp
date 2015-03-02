@@ -151,15 +151,6 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
 						     scattering_angle_cosine,
 						     shell_of_interaction );
 
-  // Calculate the outgoing direction
-  double outgoing_photon_direction[3];
-
-  Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
-						   scattering_angle_cosine,
-						   sampleAzimuthalAngle(),
-						   photon.getDirection(),
-						   outgoing_photon_direction );
-
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
@@ -171,7 +162,7 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
   photon.setEnergy( outgoing_energy );
 
   // Set the new direction
-  photon.setDirection( outgoing_photon_direction );
+  photon.rotateDirection( scattering_angle_cosine, sampleAzimuthalAngle() );
 }
 
 // Ignore doppler broadening

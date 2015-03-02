@@ -94,20 +94,15 @@ void AceLaw44NeutronScatteringDistribution<SystemConversionPolicy>::scatterNeutr
 						sys_scattering_angle_cosine,
 						this->getAtomicWeightRatio() );
 
-  // Rotate the neutron to the new angle
-  double outgoing_neutron_direction[3];
-  
-  Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
-						  scattering_angle_cosine,
-						  sampleAzimuthalAngle(),
-						  neutron.getDirection(),
-						  outgoing_neutron_direction );
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( scattering_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine <= 1.0 );
 
   // Set the new energy
   neutron.setEnergy( outgoing_energy );
   
   // Set the new direction
-  neutron.setDirection( outgoing_neutron_direction );
+  neutron.rotateDirection( scattering_angle_cosine, sampleAzimuthalAngle() );
 }
 
 } // End MonteCarlo namespace

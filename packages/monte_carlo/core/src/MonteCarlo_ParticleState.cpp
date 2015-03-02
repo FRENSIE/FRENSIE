@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleState.hpp"
+#include "Utility_PhysicalConstants.hpp"
 #include "Utility_DirectionHelpers.hpp"
 
 namespace MonteCarlo{
@@ -176,6 +177,36 @@ void ParticleState::setDirection( const double x_direction,
   d_core.x_direction = x_direction;
   d_core.y_direction = y_direction;
   d_core.z_direction = z_direction;
+}
+
+// Rotate the direction of the particle using polar a. cosine and azimuthal a.
+/*! \details The polar angle cosine and azimuthal angle are w.r.t. the
+ * current particle direction and not the global coordinate system. These
+ * are the variables the commonly occur when sampling a new direction
+ * for the particle from a scattering distribution. This function is therefore
+ * meant to avoid duplicate code that would otherwise arise when determining
+ * the new particle direction
+ */
+void ParticleState::rotateDirection( const double polar_angle_cosine,
+				     const double azimuthal_angle )
+{
+  // Make sure the current particle direction is valid (initialized)
+  testPrecondition( Utility::validDirection( this->getDirection() ) );
+  // Make sure the polar angle cosine is valid
+  testPrecondition( polar_angle_cosine >= -1.0 );
+  testPrecondition( polar_angle_cosine <= 1.0 );
+  // Make sure the azimuthal angle is valid
+  testPrecondition( azimuthal_angle >= 0.0 );
+  testPrecondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
+  
+  double outgoing_direction[3];
+
+  Utility::rotateDirectionThroughPolarAndAzimuthalAngle( polar_angle_cosine,
+							 azimuthal_angle,
+							 this->getDirection(),
+							 outgoing_direction );
+
+  this->setDirection( outgoing_direction );
 }
 
 // Advance the particle along its direction by the requested distance

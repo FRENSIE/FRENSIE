@@ -100,22 +100,21 @@ void DetailedSubshellRelaxationModel::relaxSubshell(
 	2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
 
       // Sample the azimuthal angle
-      double azimuthal_angle = 2*Utility::PhysicalConstants::pi*
-	2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
+      double azimuthal_angle = 2.0*Utility::PhysicalConstants::pi*
+	Utility::RandomNumberGenerator::getRandomNumber<double>();
 
-      double outgoing_direction[3];
-
-      Utility::rotateDirectionThroughPolarAndAzimuthalAngle( 
-						       angle_cosine,
-						       azimuthal_angle,
-						       particle.getDirection(),
-						       outgoing_direction );
+      // Make sure the scattering angle cosine is valid
+      testPostcondition( angle_cosine >= -1.0 );
+      testPostcondition( angle_cosine <= 1.0 );
+      // Make sure the azimuthal angle is valid
+      testPostcondition( azimuthal_angle >= 0.0 );
+      testPostcondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
     
       // Set the new energy
       relaxation_particle->setEnergy( new_particle_energy );
       
       // Set the new direction
-      relaxation_particle->setDirection( outgoing_direction );
+      relaxation_particle->rotateDirection( angle_cosine, azimuthal_angle );
       
       // Bank the relaxation particle
       bank.push( relaxation_particle );
