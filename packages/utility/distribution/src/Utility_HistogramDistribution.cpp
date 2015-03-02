@@ -214,7 +214,7 @@ double HistogramDistribution::sample( const double max_indep_var ) const
   }
 }
 
-// Return a random sample from the distribution at the given CDF value
+// Return a sample from the distribution at the given CDF value
 double HistogramDistribution::sampleWithValue( const double cdf_value ) const
 {
   // Make sure the cdf value is valid
@@ -229,7 +229,7 @@ double HistogramDistribution::sampleWithValue( const double cdf_value ) const
   return bin->first + (cdf_value - bin->third)/bin->second;
 }
 
-// Return a random sample from the distribution at the given cdf value in a subrange
+// Return a sample from the distribution at the given cdf value in a subrange
 double HistogramDistribution::sampleWithValue( 
                                              const double cdf_value,
                                              const double max_indep_var ) const
