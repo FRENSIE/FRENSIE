@@ -18,7 +18,7 @@ namespace Data{
 
 /*! \defgroup photonulcear_table Photonuclear Table
  * \ingroup ace_table
- * \todo Add reference for table layout.
+ * \todo Ensure SIG and ISX block are correct.
  *
  * After a photonuclear transport table has been read by the 
  * Data::ACEFileHandler the individual data blocks must be extracted from the
@@ -58,7 +58,7 @@ namespace Data{
 /*! The XSS photonuclear data extractor class
  * \ingroup photonuclear_table
  */
-class XSSEPRDataExtractor
+class XSSPhotonuclearDataExtractor
 {
   
 public:
@@ -72,6 +72,12 @@ public:
   ~XSSPhotonuclearDataExtractor()
   { /* ... */ }
 
+  // Check if elastic scattering data exists
+  bool hasElasticScatteringData() const;
+
+  // Check if average heating number data exists
+  bool hasHeatingNumberData() const;
+  
   //! Extract the ESZ block
   Teuchos::ArrayView<const double> extractESZBlock() const;
 
@@ -101,43 +107,7 @@ public:
 
   //! Extract the IXS block
   Teuchos::ArrayView<const double> extractIXSBlock() const;
-
-  //! Extract the IPT block
-  Teuchos::ArrayView<const double> extractIPTBlock() const;
-
-  //! Extract the NTRP block
-  Teuchos::ArrayView<const double> extractNTRPBlock() const;
-
-  //! Extract the PXS block
-  Teuchos::ArrayView<const double> extractPXSBlock() const;
-
-  //! Extract the PHN block
-  Teuchos::ArrayView<const double> extractPHNBlock() const;
-
-  //! Extract the MTRP block
-  Teuchos::ArrayView<const double> extractMTRPBlock() const;
-
-  //! Extract the TYRP block
-  Teuchos::ArrayView<const double> extractTYRPBlock() const;
-
-  //! Extract the LSIGP block
-  Teuchos::ArrayView<const double> extracLSIGPBlock() const;
-
-  //! Extract the SIGP block
-  Teuchos::ArrayView<const double> extractSIGPBlock() const;
-
-  //! Extract the LANDP block
-  Teuchos::ArrayView<const double> extractLANDPBlock() const;
-
-  //! Extract the ANDP block
-  Teuchos::ArrayView<const double> extractANDPBlock() const;
-
-  //! Extract the LDLWP block
-  Teuchos::ArrayView<const double> extractLDLWPBlock() const;
-
-  //! Extract the DLWP block
-  Teuchos::ArrayView<const double> extractDLWPBlock() const;
-
+ 
 private:
 
   // The nxs array (a copy will be stored)
