@@ -9,7 +9,7 @@
 #ifndef MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
 #define MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
 
-// Trilinos Includse
+// Trilinos Includes
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
