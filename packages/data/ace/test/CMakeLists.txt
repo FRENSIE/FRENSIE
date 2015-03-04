@@ -36,8 +36,3 @@ ADD_EXECUTABLE(tstXSSElectronDataExtractor
   tstXSSElectronDataExtractor.cpp)
 TARGET_LINK_LIBRARIES(tstXSSElectronDataExtractor data_ace)
 ADD_TEST(XSSElectronDataExtractor_test tstXSSElectronDataExtractor --pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_electron_ace_file.txt" --pb_ace_table="82000.03e" --b_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_b_electron_ace_file.txt" --b_ace_table="5000.03e")
-
-ADD_EXECUTABLE(tstXSSPhotonuclearDataExtractor 
-  tstXSSPhotonuclearDataExtractor.cpp)
-TARGET_LINK_LIBRARIES(tstXSSPhotonuclearDataExtractor data_ace)
-ADD_TEST(XSSPhotonuclearDataExtractor_test tstXSSPhotonuclearDataExtractor --h2_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h2_photonuclear_ace_file.txt" --h2_ace_table=1002.24u)

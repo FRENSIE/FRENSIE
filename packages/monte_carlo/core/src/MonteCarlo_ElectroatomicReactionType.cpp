@@ -36,10 +36,6 @@ std::string convertElectroatomicReactionEnumToString(
     return "Inelastic Electroatomic Reaction";
   case ATOMIC_EXCITATION_ELECTROATOMIC_REACTION: 
     return "Atomic Excitation Electroatomic Reaction";
-  case HARD_ELASTIC_ELECTROATOMIC_REACTION:
-    return "Hard Elastic Electroatomic Reaction";
-  case BREMSSTRAHLUNG_ELECTROATOMIC_REACTION:
-    return "Bremsstrahlung Electroatomic Reaction";
   case TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
     return "Total Electroionization Electroatomic Reaction";
   case K_SUBSHELL_ELECTROIONIZATION_ELECTROATOMIC_REACTION:
