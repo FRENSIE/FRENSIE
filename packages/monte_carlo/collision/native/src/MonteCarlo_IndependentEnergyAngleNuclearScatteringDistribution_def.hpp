@@ -27,7 +27,7 @@ IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,
 		     energy_scattering_distribution,
 		     const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		     angular_scattering_distribution )
-  : NuclearScatteringDistribution( atomic_weight_ratio ),
+  : NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>( atomic_weight_ratio ),
     d_energy_scattering_distribution( energy_scattering_distribution ),
     d_angular_scattering_distribution( angular_scattering_distribution )
 {
@@ -44,9 +44,9 @@ template<typename IncomingParticleType,
 void 
 IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,
 						    OutgoingParticleType,
-						    SystemConversionPolicy>::scatterNuclear(
-			        const IncomingParticleState& incoming_particle,
-				OutgoingParticleState& outgoing_particle,
+						    SystemConversionPolicy>::scatterParticle(
+			        const IncomingParticleType& incoming_particle,
+				OutgoingParticleType& outgoing_particle,
 				const double temperature ) const
 {
   double outgoing_sys_energy = 
@@ -77,7 +77,7 @@ IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,
 
   Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
 					      scattering_angle_cosine,
-					      sampleAzimuthalAngle(),
+					      this->sampleAzimuthalAngle(),
 					      incoming_particle.getDirection(),
 					      outgoing_particle_direction );
 
@@ -89,7 +89,7 @@ IndependentEnergyAngleNuclearScatteringDistribution<IncomingParticleType,
   outgoing_particle.setEnergy( outgoing_energy );
 
   // Set the new direction
-  outgoing_particle.setDirection( outgoing_neutron_direction );
+  outgoing_particle.setDirection( outgoing_particle_direction );
 }
 
 } // end MonteCarlo namespace

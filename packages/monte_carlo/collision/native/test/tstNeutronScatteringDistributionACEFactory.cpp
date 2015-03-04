@@ -414,7 +414,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
 		   createScatteringDistribution_elastic )
 {
-  Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution> scattering_dist;
+  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
 
   // Sample the hydrogen elastic scattering distribution
   neutron_distribution_factory_h1->createScatteringDistribution(
@@ -426,23 +426,23 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
   neutron.setEnergy( 1.0 );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
+  scattering_dist->scatterParticle( neutron, 
 				   ace_file_handler_h1->getTableTemperature() );
   
   std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
+  scattering_dist->scatterParticle( neutron, 
   				   ace_file_handler_h1->getTableTemperature() );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
+  scattering_dist->scatterParticle( neutron, 
   				   ace_file_handler_h1->getTableTemperature() );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
+  scattering_dist->scatterParticle( neutron, 
   				   ace_file_handler_h1->getTableTemperature() );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
+  scattering_dist->scatterParticle( neutron, 
   				   ace_file_handler_h1->getTableTemperature() );
 
   std::cout << neutron << std::endl;
@@ -456,23 +456,23 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
   neutron.setEnergy( 1.0 );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
+  scattering_dist->scatterParticle( neutron, 
 				   ace_file_handler_o16->getTableTemperature() );
   
   std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
+  scattering_dist->scatterParticle( neutron, 
   				   ace_file_handler_o16->getTableTemperature() );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
+  scattering_dist->scatterParticle( neutron, 
   				   ace_file_handler_o16->getTableTemperature() );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
+  scattering_dist->scatterParticle( neutron, 
   				   ace_file_handler_o16->getTableTemperature() );
 
   std::cout << neutron << std::endl;
-  scattering_dist->scatterNeutron( neutron, 
+  scattering_dist->scatterParticle( neutron, 
   				   ace_file_handler_o16->getTableTemperature() );
 
   std::cout << neutron << std::endl;
@@ -483,7 +483,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
 		   createScatteringDistribution_all )
 {
-  Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution> scattering_dist;
+  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
   
   neutron_distribution_factory_o16->createScatteringDistribution( 
 					       MonteCarlo::N__ANYTHING_REACTION,

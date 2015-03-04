@@ -17,6 +17,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DelayedNeutronEmissionDistributionACEFactory.hpp"
+#include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_NeutronState.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -24,7 +26,7 @@
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution> distribution;
+Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -46,7 +48,7 @@ TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistribution, scatterNeutron )
   neutron.setTime( 0.0 );
   neutron.setDirection( 0.0, 0.0, 1.0 );
 
-  distribution->scatterNeutron( neutron, 1.0 );
+  distribution->scatterParticle( neutron, 1.0 );
 
   TEST_FLOATING_EQUALITY( neutron.getTime(), 5.978622815721089, 1e-15 );
 }

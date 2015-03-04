@@ -17,6 +17,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_NeutronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NeutronScatteringReaction.hpp"
+#include "MonteCarlo_NeutronState.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 
@@ -42,7 +43,7 @@ void initializeReaction()
 	     ace_file_handler->getTableAtomicWeightRatio(),
 	     *xss_data_extractor );
 
-  Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution> scattering_dist;
+  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
   
   factory.createScatteringDistribution( MonteCarlo::N__N_ELASTIC_REACTION,
 					scattering_dist );

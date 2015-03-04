@@ -14,7 +14,7 @@
 #include "Teuchos_ArrayView.hpp"
 
 // FRENSIE Includes
-#include "MonteCarlo_NuclearScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_NeutronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearScatteringDistributionFactoryHelpers.hpp"
 #include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearScatteringEnergyDistributionACEFactory.hpp"
@@ -59,8 +59,9 @@ NeutronScatteringDistributionACEFactory::NeutronScatteringDistributionACEFactory
 
 // Create a scattering distribution
 void NeutronScatteringDistributionACEFactory::createScatteringDistribution(
-	      const NuclearReactionType reaction_type,
-	      Teuchos::RCP<NuclearScatteringDistribution>& distribution ) const
+       const NuclearReactionType reaction_type,
+       Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
+       distribution ) const
 {
   // Make sure the reaction type has a scattering distribution (mult > 0)
   remember( bool valid_reaction_type = 

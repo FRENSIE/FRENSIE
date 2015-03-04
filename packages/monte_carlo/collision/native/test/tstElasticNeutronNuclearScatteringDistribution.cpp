@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstElasticNeutronScatteringDistribution.cpp
+//! \file   tstElasticNeutronNuclearScatteringDistribution.cpp
 //! \author Alex Robinson
 //! \brief  Elastic neutron scattering distribution unit tests
 //!
@@ -16,8 +16,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
-#include "MonteCarlo_ElasticNeutronScatteringDistribution.hpp"
-#include "MonteCarlo_ParticleScatteringAngularDistribution.hpp"
+#include "MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_DirectionHelpers.hpp"
@@ -25,14 +25,14 @@
 //---------------------------------------------------------------------------//
 // Testing Structs
 //---------------------------------------------------------------------------//
-class TestElasticNeutronScatteringDistribution : public MonteCarlo::ElasticNeutronScatteringDistribution
+class TestElasticNeutronScatteringDistribution : public MonteCarlo::ElasticNeutronNuclearScatteringDistribution
 {
 public:
   TestElasticNeutronScatteringDistribution( 
 	 const double atomic_weight_ratio,
-	 const Teuchos::RCP<MonteCarlo::ParticleScatteringAngularDistribution>&
+	 const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
 	 angular_scattering_distribution )
-    : MonteCarlo::ElasticNeutronScatteringDistribution( 
+    : MonteCarlo::ElasticNeutronNuclearScatteringDistribution( 
 					      atomic_weight_ratio,
 					      angular_scattering_distribution )
   { /* ... */ }
@@ -40,15 +40,11 @@ public:
   ~TestElasticNeutronScatteringDistribution()
   { /* ... */ }
 
-  void scatterNeutron( MonteCarlo::NeutronState& particle,
-		       const double temperature ) const
-  { /* ... */ }
-
   // Allow public access to the protected member functions
-  using MonteCarlo::ElasticNeutronScatteringDistribution::calculateCenterOfMassVelocity;
-  using MonteCarlo::ElasticNeutronScatteringDistribution::transformVelocityToCenterOfMassFrame;
-  using MonteCarlo::ElasticNeutronScatteringDistribution::transformVelocityToLabFrame;
-  using MonteCarlo::ElasticNeutronScatteringDistribution::sampleTargetVelocity;
+  using MonteCarlo::ElasticNeutronNuclearScatteringDistribution::calculateCenterOfMassVelocity;
+  using MonteCarlo::ElasticNeutronNuclearScatteringDistribution::transformVelocityToCenterOfMassFrame;
+  using MonteCarlo::ElasticNeutronNuclearScatteringDistribution::transformVelocityToLabFrame;
+  using MonteCarlo::ElasticNeutronNuclearScatteringDistribution::sampleTargetVelocity;
 };
 
 //---------------------------------------------------------------------------//
@@ -57,7 +53,7 @@ public:
 template<typename DistType>
 void initializeScatteringDistribution( 
   const double atomic_weight_ratio,
-  Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution>& scattering_dist )
+  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >& scattering_dist )
 {
   Teuchos::RCP<Utility::OneDDistribution> uniform_dist( 
 			  new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
@@ -77,8 +73,8 @@ void initializeScatteringDistribution(
   raw_scattering_distribution[4].first = 1.0;
   raw_scattering_distribution[4].second = uniform_dist;
 
-  Teuchos::RCP<MonteCarlo::ParticleScatteringAngularDistribution> angular_dist(
-                         new MonteCarlo::ParticleScatteringAngularDistribution(
+  Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution> angular_dist(
+                         new MonteCarlo::NuclearScatteringAngularDistribution(
 					       raw_scattering_distribution ) );
   
   scattering_dist.reset( new DistType( atomic_weight_ratio, angular_dist ) );
@@ -88,10 +84,10 @@ void initializeScatteringDistribution(
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the center of mass velocity can be calculated
-TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution, 
 		   calculateCenterOfMassVelocity )
 {
-  Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution>
+  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >
     base_distribution;
 
   initializeScatteringDistribution<TestElasticNeutronScatteringDistribution>( 
@@ -129,10 +125,10 @@ TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a lab velocity can be converted to a center-of-mass velocity
-TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution, 
 		   transformVelocityToCenterOfMassFrame )
 {
-  Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution>
+  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >
     base_distribution;
 
   initializeScatteringDistribution<TestElasticNeutronScatteringDistribution>( 
@@ -167,10 +163,10 @@ TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a center-of-mass velocity can be converted to a lab velocity
-TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution, 
 		   transformVelocityToLabFrame )
 {
-  Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution>
+  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> >
     base_distribution;
 
   initializeScatteringDistribution<TestElasticNeutronScatteringDistribution>( 
@@ -205,12 +201,12 @@ TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that an incoming neutron can be scattered
-TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( ElasticNeutronNuclearScatteringDistribution, 
 		   scatterNeutron )
 {
-  Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution> scattering_dist;
+  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
   
-  initializeScatteringDistribution<MonteCarlo::ElasticNeutronScatteringDistribution>( 2.0, scattering_dist );
+  initializeScatteringDistribution<MonteCarlo::ElasticNeutronNuclearScatteringDistribution>( 2.0, scattering_dist );
   
   MonteCarlo::NeutronState neutron( 0ull );
   double initial_angle[3];
@@ -227,7 +223,7 @@ TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution,
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  scattering_dist->scatterNeutron( neutron, 2.53010e-8 );
+  scattering_dist->scatterParticle( neutron, 2.53010e-8 );
 
   double angle = Utility::calculateCosineOfAngleBetweenVectors( 
 					      initial_angle, 
@@ -244,7 +240,7 @@ TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution,
   neutron.setDirection( initial_angle );
   neutron.setEnergy( start_energy );
 
-  scattering_dist->scatterNeutron( neutron, 2.53010e-8 );
+  scattering_dist->scatterParticle( neutron, 2.53010e-8 );
 
   angle = Utility::calculateCosineOfAngleBetweenVectors( 
 					      initial_angle, 
@@ -261,7 +257,7 @@ TEUCHOS_UNIT_TEST( ElasticNeutronScatteringDistribution,
   neutron.setDirection( initial_angle );
   neutron.setEnergy( start_energy );
 
-  scattering_dist->scatterNeutron( neutron, 2.53010e-8 );
+  scattering_dist->scatterParticle( neutron, 2.53010e-8 );
 
   angle = Utility::calculateCosineOfAngleBetweenVectors( 
 					      initial_angle, 
@@ -285,5 +281,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// tstElasticNeutronScatteringDistribution.cpp
+// tstElasticNeutronNuclearScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

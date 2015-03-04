@@ -23,6 +23,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
+#include "MonteCarlo_NeutronState.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 
 namespace MonteCarlo{

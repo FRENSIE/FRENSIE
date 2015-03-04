@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstAceLaw1ParticleScatteringEnergyDistribution.cpp
+//! \file   tstAceLaw1NuclearScatteringEnergyDistribution.cpp
 //! \author Alex Bennett
 //! \brief  Ace law 1 neutron scattering energy distribution unit tests
 //!
@@ -16,17 +16,17 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
-#include "MonteCarlo_AceLaw1ParticleScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw1NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw1ParticleScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw1NuclearScatteringEnergyDistribution, 
 		   sampleEnergy_lower_bound )
 {
-   MonteCarlo::AceLaw1ParticleScatteringEnergyDistribution::EnergyDistArray 
+   MonteCarlo::AceLaw1NuclearScatteringEnergyDistribution::EnergyDistArray 
      energy_grid;
 
    energy_grid.resize(2);
@@ -53,16 +53,16 @@ TEUCHOS_UNIT_TEST( AceLaw1ParticleScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   MonteCarlo::AceLaw1ParticleScatteringEnergyDistribution distribution( energy_grid );
+   MonteCarlo::AceLaw1NuclearScatteringEnergyDistribution distribution( energy_grid );
 
    TEST_COMPARE(distribution.sampleEnergy(0.5) ,==, 3)
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw1ParticleScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw1NuclearScatteringEnergyDistribution, 
 		   sampleEnergy_upper_bound )
 {
-   MonteCarlo::AceLaw1ParticleScatteringEnergyDistribution::EnergyDistArray energy_grid;
+   MonteCarlo::AceLaw1NuclearScatteringEnergyDistribution::EnergyDistArray energy_grid;
 
    energy_grid.resize(2);
 
@@ -88,16 +88,16 @@ TEUCHOS_UNIT_TEST( AceLaw1ParticleScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   MonteCarlo::AceLaw1ParticleScatteringEnergyDistribution distribution( energy_grid );
+   MonteCarlo::AceLaw1NuclearScatteringEnergyDistribution distribution( energy_grid );
 
    TEST_COMPARE(distribution.sampleEnergy(3.0) ,==, 4)
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw1ParticleScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw1NuclearScatteringEnergyDistribution, 
 		   sampleEnergy )
 {
-   MonteCarlo::AceLaw1ParticleScatteringEnergyDistribution::EnergyDistArray energy_grid;
+   MonteCarlo::AceLaw1NuclearScatteringEnergyDistribution::EnergyDistArray energy_grid;
 
    energy_grid.resize(2);
 
@@ -125,7 +125,7 @@ TEUCHOS_UNIT_TEST( AceLaw1ParticleScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   MonteCarlo::AceLaw1ParticleScatteringEnergyDistribution distribution( energy_grid );
+   MonteCarlo::AceLaw1NuclearScatteringEnergyDistribution distribution( energy_grid );
 
    TEST_COMPARE(distribution.sampleEnergy(1.5) ,==, 4)
 }
@@ -146,5 +146,5 @@ int main( int argc, char** argv )
 
 
 //---------------------------------------------------------------------------//
-// tstAceLaw1ParticleScatteringDistribution.cpp
+// tstAceLaw1NuclearScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

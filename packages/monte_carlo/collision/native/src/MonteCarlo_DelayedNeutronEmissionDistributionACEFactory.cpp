@@ -176,7 +176,9 @@ DelayedNeutronEmissionDistributionACEFactory::initializeEmissionDistributions(
 						     energy_distribution );
 
       emission_distribution.reset( 
-	  new IndependentEnergyAngleNuclearScatteringDistribution<LabSystemConversionPolicy>( 
+	new IndependentEnergyAngleNuclearScatteringDistribution<NeutronState,
+	                                                        NeutronState,
+	                                                        LabSystemConversionPolicy>( 
 					      atomic_weight_ratio,
 					      energy_distribution,
 					      default_angular_distribution ) );

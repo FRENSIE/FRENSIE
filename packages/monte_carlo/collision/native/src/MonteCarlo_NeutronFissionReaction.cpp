@@ -102,7 +102,7 @@ void NeutronFissionReaction::reactImplementation(
     Teuchos::RCP<NeutronState> new_neutron(
 				    new NeutronState( neutron, true, false ) );
 
-    d_prompt_neutron_emission_distribution->scatterNeutron( 
+    d_prompt_neutron_emission_distribution->scatterParticle( 
 						      *new_neutron,
 						      this->getTemperature() );
     

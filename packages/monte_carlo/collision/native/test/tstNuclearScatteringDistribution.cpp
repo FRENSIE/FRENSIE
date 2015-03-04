@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstNeutronScatteringDistribution.cpp
+//! \file   tstNuclearScatteringDistribution.cpp
 //! \author Alex Robinson
-//! \brief  Neutron-neutron scattering distribution unit tests
+//! \brief  Nuclear scattering distribution unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,36 +16,38 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
-#include "MonteCarlo_NeutronScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistribution.hpp"
+#include "MonteCarlo_NeutronState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Structs
 //---------------------------------------------------------------------------//
-class TestScatteringDistribution : public MonteCarlo::NeutronScatteringDistribution
+class TestScatteringDistribution : public MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState>
 {
 public:
   TestScatteringDistribution( const double atomic_weight_ratio )
-  : MonteCarlo::NeutronScatteringDistribution( atomic_weight_ratio )
+  : MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState>( atomic_weight_ratio )
   { /* ... */ }
 
   ~TestScatteringDistribution()
   { /* ... */ }
 
-  void scatterNeutron( MonteCarlo::NeutronState& particle,
-		       const double temperature ) const
+  void scatterParticle( const MonteCarlo::NeutronState& incoming_neutron,
+			MonteCarlo::NeutronState& outgoing_neutron,
+			const double temperature ) const
   { /* ... */ }
 
   // Allow public access to the protected member functions
-  using MonteCarlo::NeutronScatteringDistribution::getAtomicWeightRatio;
-  using MonteCarlo::NeutronScatteringDistribution::sampleAzimuthalAngle;
+  using MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState>::getAtomicWeightRatio;
+  using MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState>::sampleAzimuthalAngle;
 };
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the atomic weight ratio can be returned
-TEUCHOS_UNIT_TEST( NeutronScatteringDistribution, getAtomicWeightRatio )
+TEUCHOS_UNIT_TEST( NuclearScatteringDistribution, getAtomicWeightRatio )
 {
   TestScatteringDistribution scattering_distribution( 2.0 );
   
@@ -54,7 +56,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistribution, getAtomicWeightRatio )
 
 //---------------------------------------------------------------------------//
 // Check that the azimuthal angle can be sampled
-TEUCHOS_UNIT_TEST( NeutronScatteringDistribution, sampleAzimuthalAngle )
+TEUCHOS_UNIT_TEST( NuclearScatteringDistribution, sampleAzimuthalAngle )
 {
   std::vector<double> fake_stream( 3 );
   fake_stream[0] = 0.0;
@@ -94,5 +96,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// tstNeutronScatteringDistribution.cpp
+// tstNuclearScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

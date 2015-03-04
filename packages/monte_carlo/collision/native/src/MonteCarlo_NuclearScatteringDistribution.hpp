@@ -61,7 +61,7 @@ private:
  * incoming and outgoing particle types that are the same.
  */
 template<typename ParticleType>
-class NuclearScatteringDistribution<ParticleType,ParticleType> : public 
+class NuclearScatteringDistribution<ParticleType,ParticleType> : public ScatteringDistribution
 {
 
 public:
@@ -80,16 +80,16 @@ public:
   { /* ... */ }
 
   //! Sample an outgoing particle state given an incoming particle state
-  virtual void scatterParticle( const IncomingParticleState& incoming_particle,
-				OutgoingParticleState& outgoing_particle,
+  virtual void scatterParticle( const ParticleType& incoming_particle,
+				ParticleType& outgoing_particle,
 				const double temperature ) const = 0;
 
   //! Sample an outgoing particle state given an incoming particle state
-  virtual void scatterParticle( ParticleState& particle,
+  virtual void scatterParticle( ParticleType& particle,
 				const double temperature ) const;
 
   //! Sample an outgoing particle state given an incoming particle state
-  void scatterParticle( ParticleState& particle ) const;
+  void scatterParticle( ParticleType& particle ) const;
 
 protected:
 
@@ -105,7 +105,7 @@ private:
 // Sample an outgoing particle state given an incoming particle state
 template<typename ParticleType>
 inline void NuclearScatteringDistribution<ParticleType,ParticleType>::scatterParticle( 
-					       ParticleState& particle,
+					       ParticleType& particle,
 					       const double temperature ) const
 {
   this->scatterParticle( particle, particle, temperature );
@@ -114,8 +114,8 @@ inline void NuclearScatteringDistribution<ParticleType,ParticleType>::scatterPar
 // Sample an outgoing particle state given an incoming particle state
 template<typename IncomingParticleType, typename OutgoingParticleType>
 inline void NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>::scatterParticle( 
-			       const IncomingParticleState& incoming_particle,
-			       OutgoingParticleState& outgoing_particle ) const
+			       const IncomingParticleType& incoming_particle,
+			       OutgoingParticleType& outgoing_particle ) const
 {
   this->scatterParticle( incoming_particle, outgoing_particle, 0.0 );
 }
@@ -123,7 +123,7 @@ inline void NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleT
 // Sample an outgoing particle state given an incoming particle state
 template<typename ParticleType>
 inline void NuclearScatteringDistribution<ParticleType,ParticleType>::scatterParticle( 
- 				                ParticleState& particle ) const
+ 				                ParticleType& particle ) const
 {
   this->scatterParticle( particle, 0.0 );
 }

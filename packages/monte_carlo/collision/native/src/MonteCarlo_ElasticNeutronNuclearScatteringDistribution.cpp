@@ -41,12 +41,12 @@ ElasticNeutronNuclearScatteringDistribution::ElasticNeutronNuclearScatteringDist
  * target-at-rest frame as recommended in the MCNP manual.
  */ 
 void ElasticNeutronNuclearScatteringDistribution::scatterParticle( 
-				        const NeutronState& incoming_particle,
-					NeutronState& outgoing_particle,
+				        const NeutronState& incoming_neutron,
+					NeutronState& outgoing_neutron,
 					const double temperature ) const
 {
   // Use the target-at-rest kinematics
-  if( incoming_particle.getEnergy() > 
+  if( incoming_neutron.getEnergy() > 
       SimulationProperties::getFreeGasThreshold()*temperature &&
       this->getAtomicWeightRatio() > 1.0 )
   {
@@ -55,50 +55,50 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
     // Sample the CM scattering angle cosine
     double cm_scattering_angle_cosine = 
       d_angular_scattering_distribution->sampleAngleCosine( 
-					       incoming_particle.getEnergy() );
-    double outgoing_particle_energy = incoming_particle.getEnergy()*
+					       incoming_neutron.getEnergy() );
+    double outgoing_neutron_energy = incoming_neutron.getEnergy()*
       (2*A*cm_scattering_angle_cosine + 1 + A*A)/((A+1)*(A+1));
     double lab_scattering_angle_cosine = (A*cm_scattering_angle_cosine + 1)/
       sqrt(2*A*cm_scattering_angle_cosine + 1 + A*A);
     
-    double outgoing_particle_direction[3];
+    double outgoing_neutron_direction[3];
     
     Utility::rotateDirectionThroughPolarAndAzimuthalAngle( 
 						lab_scattering_angle_cosine,
 						sampleAzimuthalAngle(),
-						incoming_particle.getDirection(),
-						outgoing_particle_direction);
+						incoming_neutron.getDirection(),
+						outgoing_neutron_direction);
 
     // Make sure the lab scattering angle cosine is in [-1,1]
     testPostcondition( lab_scattering_angle_cosine >= -1.0 );
     testPostcondition( lab_scattering_angle_cosine <= 1.0 );
     
-    outgoing_particle.setEnergy( outgoing_particle_energy );
+    outgoing_neutron.setEnergy( outgoing_neutron_energy );
     
-    outgoing_particle.setDirection( outgoing_particle_direction );
+    outgoing_neutron.setDirection( outgoing_neutron_direction );
   }
   // Use the free gas thermal model
  else
  {
-   // NOTE: A relativistic treatment is used to convert the particle energy
+   // NOTE: A relativistic treatment is used to convert the neutron energy
    // to a speed and vice versa. To be consistent with the above treatment of
    // elastic scattering, a classical treatment must be used in the free gas
    // model.
    
-   // Calculate the particle velocity (classical)
-   double incoming_particle_speed = Utility::calculateSpeed( 
+   // Calculate the neutron velocity (classical)
+   double incoming_neutron_speed = Utility::calculateSpeed( 
 			  Utility::PhysicalConstants::neutron_rest_mass_energy,
-			  neutron.getEnergy() );
+			  incoming_neutron.getEnergy() );
   
    double neutron_velocity[3] = 
-     {neutron.getXDirection()*incoming_neutron_speed,
-      neutron.getYDirection()*incoming_neutron_speed,
-      neutron.getZDirection()*incoming_neutron_speed};
+     {incoming_neutron.getXDirection()*incoming_neutron_speed,
+      incoming_neutron.getYDirection()*incoming_neutron_speed,
+      incoming_neutron.getZDirection()*incoming_neutron_speed};
 
    // Sample the target velocity
    double target_velocity[3];
    
-   sampleTargetVelocity( neutron, temperature, target_velocity );
+   sampleTargetVelocity( incoming_neutron, temperature, target_velocity );
    
    // Calculate the center-of-mass velocity
    double center_of_mass_velocity[3];
@@ -122,7 +122,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
    // Sample the CM scattering angle cosine
    double cm_scattering_angle_cosine = 
      d_angular_scattering_distribution->sampleAngleCosine( 
-							 neutron.getEnergy() );
+					       incoming_neutron.getEnergy() );
    
    // Rotate the neutron velocity vector to the new angle
    // Note: The speed of the neutron does not change in the center-of-mass
@@ -152,11 +152,11 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 			  outgoing_neutron_speed );
 
    // Set the new neutron direction
-   neutron.setDirection( neutron_velocity[0]/outgoing_neutron_speed,
-			 neutron_velocity[1]/outgoing_neutron_speed,
-			 neutron_velocity[2]/outgoing_neutron_speed );
+   outgoing_neutron.setDirection( neutron_velocity[0]/outgoing_neutron_speed,
+				   neutron_velocity[1]/outgoing_neutron_speed,
+				   neutron_velocity[2]/outgoing_neutron_speed);
    
-   neutron.setEnergy( outgoing_neutron_energy );
+   outgoing_neutron.setEnergy( outgoing_neutron_energy );
  }
 }
 
@@ -164,7 +164,7 @@ void ElasticNeutronNuclearScatteringDistribution::scatterParticle(
 /*! \details the temperature should be in units of MeV (kT)
  */ 
 void ElasticNeutronNuclearScatteringDistribution::sampleTargetVelocity(
-					      ParticleState& neutron,
+					      const ParticleState& neutron,
 					      const double temperature,
 				              double target_velocity[3] ) const
 {
@@ -212,7 +212,7 @@ void ElasticNeutronNuclearScatteringDistribution::sampleTargetVelocity(
 /*! \details the temperature should be in units of MeV (kT)
  */
 double ElasticNeutronNuclearScatteringDistribution::sampleTargetSpeed( 
-					      ParticleState& neutron,
+					      const ParticleState& neutron,
 					      const double temperature ) const
 {
   double target_speed;

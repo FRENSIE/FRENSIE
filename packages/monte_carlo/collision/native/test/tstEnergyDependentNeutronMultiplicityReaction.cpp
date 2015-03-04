@@ -43,7 +43,7 @@ void initializeReaction()
 	     ace_file_handler->getTableAtomicWeightRatio(),
 	     *xss_data_extractor );
   
-  Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution> scattering_dist;
+  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
   
   factory.createScatteringDistribution( MonteCarlo::N__ANYTHING_REACTION,
 					scattering_dist );

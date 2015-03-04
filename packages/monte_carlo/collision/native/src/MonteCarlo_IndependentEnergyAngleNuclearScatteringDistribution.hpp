@@ -45,8 +45,8 @@ public:
   { /* ... */ }
 
   //! Randomly scatter the particle
-  void scatterParticle( const IncomingParticleState& incoming_particle,
-			OutgoingParticleState& outgoing_particle,
+  void scatterParticle( const IncomingParticleType& incoming_particle,
+			OutgoingParticleType& outgoing_particle,
 			const double temperature ) const;
 
 private:
