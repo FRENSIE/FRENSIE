@@ -21,12 +21,15 @@ namespace MonteCarlo{
 //! Typedef for the  bremsstrahlung distribution
 typedef Teuchos::Array<Utility::Pair<double,
                        Teuchos::RCP<const Utility::OneDDistribution> > >
-                          TwoDDistribution;
+TwoDDistribution;
 
-/*! Sample a two dimensional ditribution consisting of an array pair of double 
- *  and OneDDistribution
- */ 
-double sampleTwoDDistribution( 
+//! Sample a two dimensional distribution using correlated sampling 
+double sampleTwoDDistributionCorrelated( 
+    const double independent_variable,
+    const TwoDDistribution& dependent_distribution );
+
+//! Sample a two dimensional distribution using independent sampling
+double sampleTwoDDistributionIndependent(
     const double independent_variable,
     const TwoDDistribution& dependent_distribution );
 
@@ -49,6 +52,12 @@ double evaluateCorrelatedCDF(
    const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
    const double interpolation_fraction,
    const double independent_value );
+
+//! Sample from either the lower or upper distribution depending on interp frac
+double independentSample(
+   const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
+   const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
+   const double interpolation_fraction );
 
 } // end MonteCarlo namespace
 

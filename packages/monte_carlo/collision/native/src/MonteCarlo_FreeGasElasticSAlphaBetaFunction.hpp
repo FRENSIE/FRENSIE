@@ -19,7 +19,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringAngularDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_OneDDistribution.hpp"
 
@@ -56,7 +56,7 @@ public:
   FreeGasElasticSAlphaBetaFunction(
 	      const Teuchos::RCP<Utility::OneDDistribution>& 
 	      zero_temp_elastic_cross_section,
-              const Teuchos::RCP<MonteCarlo::NeutronScatteringAngularDistribution>&
+              const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
 	      cm_scattering_distribution,
 	      const double A,
 	      const double kT );
@@ -124,7 +124,7 @@ private:
   Teuchos::RCP<Utility::OneDDistribution> d_zero_temp_elastic_cross_section;
 
   // The cm scattering angle PDF
-  Teuchos::RCP<MonteCarlo::NeutronScatteringAngularDistribution>
+  Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>
   d_cm_scattering_distribution;
 
   // The atomic weight ratio

@@ -14,16 +14,15 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringDistribution.hpp"
-#include "MonteCarlo_NeutronScatteringEnergyDistribution.hpp"
-#include "MonteCarlo_NeutronScatteringAngularDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistribution.hpp"
+#include "MonteCarlo_NeutronState.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
 
 //! The delayed neutron emission distribution class 
-class DelayedNeutronEmissionDistribution : public NeutronScatteringDistribution
+class DelayedNeutronEmissionDistribution : public NuclearScatteringDistribution<NeutronState,NeutronState>
 {
   
 public:
@@ -34,7 +33,7 @@ public:
       const Teuchos::Array<double>& precursor_group_decay_consts,
       const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >& 
       precursor_group_prob_distributions,
-      const Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >&
+      const Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >&
       precursor_group_emission_distributions );
 
   //! Destructor
@@ -42,8 +41,9 @@ public:
   { /* ... */ }
 
   //! Randomly "scatter" the neutron
-  void scatterNeutron( NeutronState& neutron,
-		       const double temperature ) const;
+  void scatterParticle( const NeutronState& incoming_neutron,
+		        NeutronState& outgoing_neutron,
+			const double temperature ) const;
 
 protected:
 
@@ -60,7 +60,7 @@ private:
   d_precursor_group_prob_distributions;
 
   // The delayed neutron precursor group energy distributions
-  Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >
+  Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >
   d_precursor_group_emission_distributions;
 };
 

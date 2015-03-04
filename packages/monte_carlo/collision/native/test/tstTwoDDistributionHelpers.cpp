@@ -33,7 +33,7 @@ double independent_value;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that lower bin is sample for independent variable < lower boundary
-TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistribution_below )
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistributionCorrelated_below )
 {
   double sampled_variable;
 
@@ -43,14 +43,14 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistribution_below )
  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sampled_variable = MonteCarlo::sampleTwoDDistribution( 0.0001, twod_distribution );
+  sampled_variable = MonteCarlo::sampleTwoDDistributionCorrelated( 0.0001, twod_distribution );
 
   TEST_FLOATING_EQUALITY( sampled_variable, -1.5, 1e-15  );
 }
 
 //---------------------------------------------------------------------------//
 // Check that upper bin is sample for independent variable > upper boundary
-TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistribution_above )
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistributionCorrelated_above )
 {
   double sampled_variable;
 
@@ -60,14 +60,14 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistribution_above )
  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sampled_variable = MonteCarlo::sampleTwoDDistribution( 1.0, twod_distribution );
+  sampled_variable = MonteCarlo::sampleTwoDDistributionCorrelated( 1.0, twod_distribution );
 
   TEST_FLOATING_EQUALITY( sampled_variable, 2.0, 1e-15  );
 }
 
 //---------------------------------------------------------------------------//
 // Check the sample for independent variable inbetween bins
-TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistribution_inbetween )
+TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistributionCorrelated_inbetween )
 {
   double sampled_variable;
 
@@ -77,7 +77,7 @@ TEUCHOS_UNIT_TEST( TwoDDistributionHelpers, sampleTwoDDistribution_inbetween )
  
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  sampled_variable = MonteCarlo::sampleTwoDDistribution( 0.05, twod_distribution );
+  sampled_variable = MonteCarlo::sampleTwoDDistributionCorrelated( 0.05, twod_distribution );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
