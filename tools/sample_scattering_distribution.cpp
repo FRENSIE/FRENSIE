@@ -21,29 +21,29 @@
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 #include "MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp"
-#include "MonteCarlo_NeutronScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_NeutronNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_DirectionHelpers.hpp"
 
-// Transparent NeutronScatteringDistributionACEFactory
-class TransNeutronScatteringDistributionACEFactory : public MonteCarlo::NeutronScatteringDistributionACEFactory
+// Transparent NeutronNuclearScatteringDistributionACEFactory
+class TransNeutronNuclearScatteringDistributionACEFactory : public MonteCarlo::NeutronNuclearScatteringDistributionACEFactory
 {
 public:
-  TransNeutronScatteringDistributionACEFactory(
+  TransNeutronNuclearScatteringDistributionACEFactory(
                         const std::string& table_name,
                         const double atomic_weight_ratio,
                         const Data::XSSNeutronDataExtractor& raw_nuclide_data )
-  : MonteCarlo::NeutronScatteringDistributionACEFactory( table_name,
+  : MonteCarlo::NeutronNuclearScatteringDistributionACEFactory( table_name,
 							 atomic_weight_ratio,
 							 raw_nuclide_data )
   { /* ... */ }
   
-  ~TransNeutronScatteringDistributionACEFactory()
+  ~TransNeutronNuclearScatteringDistributionACEFactory()
   { /* ... */ }
 
 
-  using MonteCarlo::NeutronScatteringDistributionACEFactory::getReactionAngularDist;
+  using MonteCarlo::NeutronNuclearScatteringDistributionACEFactory::getReactionAngularDist;
 };
 
 
@@ -81,7 +81,7 @@ int main( int argc, char** argv )
 
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler;
   Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor;
-  Teuchos::RCP<TransNeutronScatteringDistributionACEFactory> 
+  Teuchos::RCP<TransNeutronNuclearScatteringDistributionACEFactory> 
     neutron_distribution_factory;
   Teuchos::RCP<MonteCarlo::NuclearReactionACEFactory> reaction_factory;
 
@@ -121,7 +121,7 @@ int main( int argc, char** argv )
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
   neutron_distribution_factory.reset(
-			     new TransNeutronScatteringDistributionACEFactory(
+			     new TransNeutronNuclearScatteringDistributionACEFactory(
 			         table_info.get<std::string>( "table_name" ),
 				 ace_file_handler->getTableAtomicWeightRatio(),
 				 *xss_data_extractor ) );
