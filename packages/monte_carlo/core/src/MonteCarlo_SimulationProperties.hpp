@@ -303,27 +303,6 @@ inline double SimulationProperties::getAbsoluteMaxElectronEnergy()
   return SimulationProperties::absolute_max_electron_energy;
 }
 
-// Return the minimum particle energy (MeV)
-inline double SimulationProperties::getMinParticleEnergy( 
-                                          NeutronState& particle )
-{
-  return SimulationProperties::min_neutron_energy;
-}
-
-// Return the minimum particle energy (MeV)
-inline double SimulationProperties::getMinParticleEnergy( 
-                                          PhotonState& particle )
-{
-  return SimulationProperties::min_photon_energy;
-}
-
-// Return the minimum particle energy (MeV)
-inline double SimulationProperties::getMinParticleEnergy( 
-                                          ElectronState& particle )
-{
-  return SimulationProperties::min_electron_energy;
-}
-
 // Return if implicit capture mode has been set
 inline bool SimulationProperties::isImplicitCaptureModeOn()
 {

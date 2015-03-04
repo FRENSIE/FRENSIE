@@ -68,7 +68,7 @@ unsigned HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>:
 template<typename InterpPolicy, bool processed_cross_section>
 ElectroatomicReactionType HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
-  return HARD_ELASTIC_ELECTROATOMIC_REACTION;
+  return ELASTIC_ELECTROATOMIC_REACTION;
 }
 
 // Simulate the reaction
