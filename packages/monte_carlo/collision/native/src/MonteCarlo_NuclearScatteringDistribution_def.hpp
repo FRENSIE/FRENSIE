@@ -25,7 +25,7 @@ NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>::Nuclea
 
 // Constructor
 template<typename ParticleType>
-NuclearScatteringDistribution<ParticleType>::NuclearScatteringDistribution( const double atomic_weight_ratio )
+NuclearScatteringDistribution<ParticleType,ParticleType>::NuclearScatteringDistribution( const double atomic_weight_ratio )
   : d_atomic_weight_ratio( atomic_weight_ratio )
 {
   // Make sure the atomic weight ratio is valid

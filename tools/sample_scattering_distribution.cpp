@@ -20,7 +20,7 @@
 // MonteCarlo Includes
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
-#include "MonteCarlo_ElasticNeutronScatteringDistribution.hpp"
+#include "MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NeutronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
@@ -136,7 +136,7 @@ int main( int argc, char** argv )
 				   energy_grid,
 				   *xss_data_extractor ) );
 
-  Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution> scattering_dist;
+  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
   
   neutron_distribution_factory->createScatteringDistribution(
 							     reaction,

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstAceLaw44NeutronScatteringDistribution.cpp
+//! \file   tstAceLaw44NuclearScatteringDistribution.cpp
 //! \author Alex Bennett
 //! \brief  Law 44 neutron scattering distribution unit tests
 //---------------------------------------------------------------------------//
@@ -14,14 +14,15 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_AceLaw44NeutronScatteringDistribution.hpp"
-#include "MonteCarlo_AceLaw4ParticleScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw44NuclearScatteringDistribution.hpp"
+#include "MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw44ARDistribution.hpp"
 #include "MonteCarlo_StandardAceLaw44ARDistribution.hpp"
 #include "MonteCarlo_AceLaw44InterpolationPolicy.hpp"
-#include "MonteCarlo_NeutronScatteringDistribution.hpp"
-#include "MonteCarlo_ParticleScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
+#include "MonteCarlo_NeutronState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -31,10 +32,10 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw44NeutronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw44NuclearScatteringDistribution, 
 		   sampleAngle )
 {
-   MonteCarlo::AceLaw4ParticleScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution::EnergyDistribution 
      energy_distribution(2);
 
    Teuchos::Array<Teuchos::RCP<MonteCarlo::AceLaw44ARDistribution> > 
@@ -130,15 +131,16 @@ TEUCHOS_UNIT_TEST( AceLaw44NeutronScatteringDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   Teuchos::RCP<MonteCarlo::ParticleScatteringEnergyDistribution> 
+   Teuchos::RCP<MonteCarlo::NuclearScatteringEnergyDistribution> 
    energy_scattering_distribution;
 
    energy_scattering_distribution.reset( 
-		   new MonteCarlo::AceLaw4ParticleScatteringEnergyDistribution(
+		   new MonteCarlo::AceLaw4NuclearScatteringEnergyDistribution(
 							 energy_distribution));
 
-   MonteCarlo::AceLaw44NeutronScatteringDistribution<MonteCarlo::LabSystemConversionPolicy> 
-     distribution( 1.0, energy_scattering_distribution, ar_distribution );
+   
+
+   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > distribution( new MonteCarlo::AceLaw44NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState,MonteCarlo::LabSystemConversionPolicy>( 1.0, energy_scattering_distribution, ar_distribution ) );
 
    MonteCarlo::NeutronState neutron( 0ull );
    
@@ -150,7 +152,7 @@ TEUCHOS_UNIT_TEST( AceLaw44NeutronScatteringDistribution,
    neutron.setDirection( initial_angle );
    neutron.setEnergy( 1.5 );
 
-   distribution.scatterNeutron( neutron, 1.0 );
+   distribution->scatterParticle( neutron, 1.0 );
 
    double angle = 
      Utility::calculateCosineOfAngleBetweenVectors( initial_angle, 
@@ -174,7 +176,7 @@ TEUCHOS_UNIT_TEST( AceLaw44NeutronScatteringDistribution,
    neutron.setDirection( initial_angle );
    neutron.setEnergy( 1.5 );
 
-   distribution.scatterNeutron( neutron, 1.0 );
+   distribution->scatterParticle( neutron, 1.0 );
 
    angle = Utility::calculateCosineOfAngleBetweenVectors( 
 						      initial_angle, 
@@ -198,7 +200,7 @@ TEUCHOS_UNIT_TEST( AceLaw44NeutronScatteringDistribution,
    neutron.setDirection( initial_angle );
    neutron.setEnergy( 1.5 );
 
-   distribution.scatterNeutron( neutron, 1.0 );
+   distribution->scatterParticle( neutron, 1.0 );
 
    angle = Utility::calculateCosineOfAngleBetweenVectors( 
 						      initial_angle, 
@@ -222,7 +224,7 @@ TEUCHOS_UNIT_TEST( AceLaw44NeutronScatteringDistribution,
    neutron.setDirection( initial_angle );
    neutron.setEnergy( 0.5 );
 
-   distribution.scatterNeutron( neutron, 1.0 );
+   distribution->scatterParticle( neutron, 1.0 );
 
    angle = Utility::calculateCosineOfAngleBetweenVectors( 
 						      initial_angle, 
@@ -245,7 +247,7 @@ TEUCHOS_UNIT_TEST( AceLaw44NeutronScatteringDistribution,
    neutron.setDirection( initial_angle );
    neutron.setEnergy( 2.5 );
 
-   distribution.scatterNeutron( neutron, 1.0 );
+   distribution->scatterParticle( neutron, 1.0 );
 
    angle = Utility::calculateCosineOfAngleBetweenVectors( 
 						      initial_angle, 
@@ -270,5 +272,5 @@ int main( int argc, char** argv )
 
 
 //---------------------------------------------------------------------------//
-// tstAceLaw44NeutronScatteringDistribution.cpp
+// tstAceLaw44NuclearScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

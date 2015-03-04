@@ -60,14 +60,14 @@ protected:
 				    double velocity[3] ) const;
 
   //! Sample the velocity of the target nucleus
-  void sampleTargetVelocity( ParticleState& neutron,
+  void sampleTargetVelocity( const ParticleState& neutron,
 			     const double temperature,
 			     double target_velocity[3] ) const;
 
 private:
 
   // Sample the speed of the target nucleus
-  double sampleTargetSpeed( ParticleState& neutron,
+  double sampleTargetSpeed( const ParticleState& neutron,
 			    const double temperature ) const;
 
   // The incoming energy dependent angular scattering distribution

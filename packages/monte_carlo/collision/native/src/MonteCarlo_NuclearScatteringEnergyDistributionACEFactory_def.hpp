@@ -13,6 +13,8 @@
 #include "MonteCarlo_AceLaw44InterpolationPolicy.hpp"
 #include "MonteCarlo_StandardAceLaw44ARDistribution.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
+#include "Utility_HistogramDistribution.hpp"
+#include "Utility_TabularDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -29,13 +31,13 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
 		    const bool is_cm_distribution,
 		    Teuchos::RCP<ScatteringDistributionBaseType>& distribution )
 {
-  typedef AceLaw44NuclearScatteringDistribution<ScatteringDistributionBaseType::IncomingParticleState,
-						ScatteringDistributionBaseType::IncomingParticleState,
+  typedef AceLaw44NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
+						typename ScatteringDistributionBaseType::IncomingParticleState,
 						LabSystemConversionPolicy> 
     AceLaw44NuclearScatteringDistributionLab;
 
-  typedef AceLaw44NuclearScatteringDistribution<ScatteringDistributionBaseType::IncomingParticleState,
-						ScatteringDistributionBaseType::IncomingParticleState,
+  typedef AceLaw44NuclearScatteringDistribution<typename ScatteringDistributionBaseType::IncomingParticleState,
+						typename ScatteringDistributionBaseType::IncomingParticleState,
 						CMSystemConversionPolicy> 
     AceLaw44NuclearScatteringDistributionCM;
 						
@@ -83,7 +85,7 @@ void NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
     energy_distribution( incoming_energies );
 
   // Initialize the AR distribution array
-  AceLaw44NuclearScatteringDistributionCM::ARDistributions 
+  typename AceLaw44NuclearScatteringDistributionCM::ARDistributions 
     ar_distribution( incoming_energies );
 
   // Loop through the incoming energies

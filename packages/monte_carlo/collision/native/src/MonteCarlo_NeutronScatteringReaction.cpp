@@ -63,16 +63,16 @@ void NeutronScatteringReaction::react( NeutronState& neutron,
     Teuchos::RCP<NeutronState> new_neutron(
 				   new NeutronState( neutron, true, false ) );
 					   
-    d_scattering_distribution->scatterNeutron( *new_neutron, 
-					       this->getTemperature() );
+    d_scattering_distribution->scatterParticle( *new_neutron, 
+						this->getTemperature() );
 
     // Add the new neutron to the bank
     bank.push( new_neutron, this->getReactionType() );
   }
   
   // Scatter the "original" neutron
-  d_scattering_distribution->scatterNeutron( neutron,
-					     this->getTemperature() );
+  d_scattering_distribution->scatterParticle( neutron,
+					      this->getTemperature() );
 }
 
 } // end MonteCarlo namespace

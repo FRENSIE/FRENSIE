@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   tstNeutronScatteringDistributionFactoryHelpers.cpp
+//! \file   tstNuclearScatteringDistributionFactoryHelpers.cpp
 //! \author Alex Robinson
 //! \brief  Neutron scattering distribution factory helpers unit tests
 //!
@@ -16,7 +16,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringDistributionFactoryHelpers.hpp"
+#include "MonteCarlo_NuclearScatteringDistributionFactoryHelpers.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
@@ -35,7 +35,7 @@ Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor_u238;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the size of the arrays in the and block can be calculated
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactoryHelpers,
+TEUCHOS_UNIT_TEST( NuclearScatteringDistributionFactoryHelpers,
 		   calculateDistArraySizes_and_block )
 {
   Teuchos::Array<unsigned> dist_array_sizes;
@@ -96,7 +96,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactoryHelpers,
 
 //---------------------------------------------------------------------------//
 // Check that the size of the arrays in the and block can be calculated
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactoryHelpers,
+TEUCHOS_UNIT_TEST( NuclearScatteringDistributionFactoryHelpers,
 		   calculateDistArraySizes_dlw_block )
 {
   Teuchos::Array<unsigned> dist_array_sizes;
@@ -156,7 +156,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactoryHelpers,
 
 //---------------------------------------------------------------------------//
 // Check that the size of the arrays in the and block can be calculated
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionFactoryHelpers,
+TEUCHOS_UNIT_TEST( NuclearScatteringDistributionFactoryHelpers,
 		   calculateDistArraySizes_dned_block )
 {
   Teuchos::Array<unsigned> dist_array_sizes;
@@ -226,6 +226,6 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstNeutronScatteringDistributionFactoryHelpers.cpp
+// end tstNuclearScatteringDistributionFactoryHelpers.cpp
 //---------------------------------------------------------------------------//
 

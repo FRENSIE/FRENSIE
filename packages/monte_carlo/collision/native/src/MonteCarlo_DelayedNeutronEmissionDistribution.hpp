@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
+#include "MonteCarlo_NeutronState.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -40,7 +41,7 @@ public:
   { /* ... */ }
 
   //! Randomly "scatter" the neutron
-  void scatterParticle( const NeutronState& incoming_neutron
+  void scatterParticle( const NeutronState& incoming_neutron,
 		        NeutronState& outgoing_neutron,
 			const double temperature ) const;
 

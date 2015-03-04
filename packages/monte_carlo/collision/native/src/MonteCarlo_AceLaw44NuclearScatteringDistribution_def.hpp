@@ -32,8 +32,8 @@ AceLaw44NuclearScatteringDistribution<IncomingParticleType,
 		   const Teuchos::RCP<NuclearScatteringEnergyDistribution>& 
 		   energy_scattering_distribution,
 		   const Teuchos::Array<Teuchos::RCP<AceLaw44ARDistribution> >&
-		      ar_distributions )
-   : NuclearScatteringDistribution( atomic_weight_ratio ),
+		   ar_distributions )
+  : NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>( atomic_weight_ratio ),
      d_energy_scattering_distribution( energy_scattering_distribution ),
      d_ar_distributions( ar_distributions )
 {
@@ -48,8 +48,8 @@ template<typename IncomingParticleType,
 void AceLaw44NuclearScatteringDistribution<IncomingParticleType,
 					   OutgoingParticleType,
 					   SystemConversionPolicy>::scatterParticle(
-				const IncomingParticleState& incoming_particle,
-				OutgoingParticleState& outgoing_particle,
+				const IncomingParticleType& incoming_particle,
+				OutgoingParticleType& outgoing_particle,
 				const double temperature ) const
 {
   unsigned outgoing_bin_index, incoming_bin_index;
@@ -108,12 +108,12 @@ void AceLaw44NuclearScatteringDistribution<IncomingParticleType,
   
   Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
 					      scattering_angle_cosine,
-					      sampleAzimuthalAngle(),
+					      this->sampleAzimuthalAngle(),
 					      incoming_particle.getDirection(),
 					      outgoing_particle_direction );
 
   // Set the new energy
-  neutron.setEnergy( outgoing_energy );
+  outgoing_particle.setEnergy( outgoing_energy );
   
   // Set the new direction
   outgoing_particle.setDirection( outgoing_particle_direction );

@@ -20,7 +20,7 @@
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_KinematicHelpers.hpp"
-#include "MonteCarlo_ParticleScatteringAngularDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "MonteCarlo_FreeGasElasticSAlphaBetaFunction.hpp"
 
 int main( int argc, char** argv )
@@ -77,7 +77,7 @@ int main( int argc, char** argv )
 			  new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
 
   // Initialize the scattering distribution
-  MonteCarlo::ParticleScatteringAngularDistribution::AngularDistribution
+  MonteCarlo::NuclearScatteringAngularDistribution::AngularDistribution
     distribution( 2 );
 
   distribution[0].first = 0.0;
@@ -86,9 +86,9 @@ int main( int argc, char** argv )
   distribution[1].first = 20.0;
   distribution[1].second = isotropic_distribution;
 
-  Teuchos::RCP<MonteCarlo::ParticleScatteringAngularDistribution> 
+  Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution> 
     scattering_distribution( 
-			 new MonteCarlo::ParticleScatteringAngularDistribution(
+			 new MonteCarlo::NuclearScatteringAngularDistribution(
 							      distribution ) );
   
   // Create the S(alpha,beta,E) function object
