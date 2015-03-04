@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleScatteringAngularDistribution.cpp
+//! \file   MonteCarlo_NuclearScatteringAngularDistribution.cpp
 //! \author Alex Robinson, Alex Bennett
-//! \brief  The particle scattering angular distribution base class definition
+//! \brief  The nuclear scattering angular distribution base class definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -10,7 +10,7 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleScatteringAngularDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -21,8 +21,8 @@
 namespace MonteCarlo{
 
 // Constructor
-ParticleScatteringAngularDistribution::ParticleScatteringAngularDistribution( 
-	const ParticleScatteringAngularDistribution::AngularDistribution& dist )
+NuclearScatteringAngularDistribution::NuclearScatteringAngularDistribution( 
+	const NuclearScatteringAngularDistribution::AngularDistribution& dist )
   : d_angular_distribution( dist )
 {
   // Make sure the array has at least one value
@@ -34,7 +34,7 @@ ParticleScatteringAngularDistribution::ParticleScatteringAngularDistribution(
 }
 
 // Sample a scattering angle cosine
-double ParticleScatteringAngularDistribution::sampleAngleCosine( 
+double NuclearScatteringAngularDistribution::sampleAngleCosine( 
 						    const double energy ) const
 {
   double angle_cosine;
@@ -54,7 +54,7 @@ double ParticleScatteringAngularDistribution::sampleAngleCosine(
 }
 
 // Evaluate the PDF
-double ParticleScatteringAngularDistribution::evaluatePDF( 
+double NuclearScatteringAngularDistribution::evaluatePDF( 
 				const double energy,
 				const double scattering_angle_cosine ) const
 {
@@ -106,5 +106,5 @@ double ParticleScatteringAngularDistribution::evaluatePDF(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleScatteringAngularDistribution.cpp
+// end MonteCarlo_NuclearScatteringAngularDistribution.cpp
 //---------------------------------------------------------------------------//

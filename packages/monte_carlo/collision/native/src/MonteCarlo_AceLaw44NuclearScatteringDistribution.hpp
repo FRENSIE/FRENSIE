@@ -1,22 +1,23 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_AceLaw44NeutronScatteringDistribution.hpp
-//! \author Alex Bennett
+//! \file   MonteCarlo_AceLaw44NuclearScatteringDistribution.hpp
+//! \author Alex Bennett, Alex Robinson
 //! \brief  The law 44 scattering distribution class
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_HPP
-#define MONTE_CARLO_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_ACE_LAW_44_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_ACE_LAW_44_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringDistribution.hpp"
-#include "MonteCarlo_ParticleScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw44ARDistribution.hpp"
+#include "MonteCarlo_LabSystemConversionPolicy.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -27,8 +28,10 @@ namespace MonteCarlo{
  * scattering angle cosine from the current system to the lab system.
  * \ingroup ace_laws
  */
-template<typename SystemConversionPolicy>
-class AceLaw44NeutronScatteringDistribution : public NeutronScatteringDistribution
+template<typename IncomingParticleType,
+	 typename OutgoingParticleType,
+	 typename SystemConversionPolicy = LabSystemConversionPolicy>
+class AceLaw44NuclearScatteringDistribution : public NuclearScatteringDistribution<IncomingParticleType,OutgoingParticleType>
 {
 
 public:
@@ -38,25 +41,26 @@ public:
   ARDistributions;
  
   //! Constructor
-  AceLaw44NeutronScatteringDistribution( 
+  AceLaw44NuclearScatteringDistribution( 
 		   const double atomic_weight_ratio,
-		   const Teuchos::RCP<ParticleScatteringEnergyDistribution>&
+		   const Teuchos::RCP<NuclearScatteringEnergyDistribution>&
 		   energy_scattering_distribution,
                    const Teuchos::Array<Teuchos::RCP<AceLaw44ARDistribution> >&
 		   ar_distributions );
                                               
   //! Destructor
-  ~AceLaw44NeutronScatteringDistribution()
+  ~AceLaw44NuclearScatteringDistribution()
   { /* ... */ }
   
-  //! Randomly scatter the neutron
-  void scatterNeutron( NeutronState& neutron,
-		       const double temperature ) const;
+  //! Randomly scatter the particle
+  void scatterParticle( const IncomingParticleState& incoming_particle,
+			OutgoingParticleState& outgoing_particle,
+			const double temperature ) const;
 
 private:
 
   // The energy distribution (only a law 4 distribution should be stored)
-  Teuchos::RCP<ParticleScatteringEnergyDistribution> 
+  Teuchos::RCP<NuclearScatteringEnergyDistribution> 
   d_energy_scattering_distribution;
 
   // The AR distributions
@@ -69,13 +73,13 @@ private:
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_AceLaw44NeutronScatteringDistribution_def.hpp"
+#include "MonteCarlo_AceLaw44NuclearScatteringDistribution_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_ACE_LAW_44_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_ACE_LAW_44_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AceLaw44NeutronScatteringDistribution.hpp
+// end MonteCarlo_AceLaw44NuclearScatteringDistribution.hpp
 //---------------------------------------------------------------------------//
 

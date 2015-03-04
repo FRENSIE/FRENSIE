@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_NeutronScatteringDistributionFactoryHelpers.cpp
+//! \file   MonteCarlo_NuclearScatteringDistributionFactoryHelpers.cpp
 //! \author Alex Robinson
-//! \brief  Neutron scattering distribution factory helper function defs.
+//! \brief  Nuclear scattering distribution factory helper function defs.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringDistributionFactoryHelpers.hpp"
+#include "MonteCarlo_NuclearScatteringDistributionFactoryHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -74,5 +74,5 @@ void calculateDistArraySizes(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NeutronScatteringDistributionFactoryHelpers.cpp
+// end MonteCarlo_NuclearScatteringDistributionFactoryHelpers.cpp
 //---------------------------------------------------------------------------//

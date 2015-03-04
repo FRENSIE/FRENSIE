@@ -11,7 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReactionType.hpp"
-#include "MonteCarlo_NeutronScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"

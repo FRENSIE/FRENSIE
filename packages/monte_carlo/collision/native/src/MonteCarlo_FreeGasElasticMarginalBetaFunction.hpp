@@ -35,7 +35,7 @@ public:
   FreeGasElasticMarginalBetaFunction(
 	      const Teuchos::RCP<Utility::OneDDistribution>& 
 	      zero_temp_elastic_cross_section,
-              const Teuchos::RCP<MonteCarlo::ParticleScatteringAngularDistribution>&
+              const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
 	      cm_scattering_distribution,
 	      const double A,
 	      const double kT,

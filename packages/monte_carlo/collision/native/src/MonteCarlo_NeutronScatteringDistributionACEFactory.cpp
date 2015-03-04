@@ -14,12 +14,12 @@
 #include "Teuchos_ArrayView.hpp"
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringDistributionACEFactory.hpp"
-#include "MonteCarlo_NeutronScatteringDistributionFactoryHelpers.hpp"
-#include "MonteCarlo_NeutronScatteringAngularDistributionACEFactory.hpp"
-#include "MonteCarlo_NeutronScatteringEnergyDistributionACEFactory.hpp"
-#include "MonteCarlo_ElasticNeutronScatteringDistribution.hpp"
-#include "MonteCarlo_IndependentEnergyAngleNeutronScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_NuclearScatteringDistributionFactoryHelpers.hpp"
+#include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
+#include "MonteCarlo_NuclearScatteringEnergyDistributionACEFactory.hpp"
+#include "MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp"
+#include "MonteCarlo_IndependentEnergyAngleNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -60,7 +60,7 @@ NeutronScatteringDistributionACEFactory::NeutronScatteringDistributionACEFactory
 // Create a scattering distribution
 void NeutronScatteringDistributionACEFactory::createScatteringDistribution(
 	      const NuclearReactionType reaction_type,
-	      Teuchos::RCP<NeutronScatteringDistribution>& distribution ) const
+	      Teuchos::RCP<NuclearScatteringDistribution>& distribution ) const
 {
   // Make sure the reaction type has a scattering distribution (mult > 0)
   remember( bool valid_reaction_type = 
@@ -72,11 +72,11 @@ void NeutronScatteringDistributionACEFactory::createScatteringDistribution(
   // Create an angular distribution if scattering law 44 is not used
   if( !d_reactions_with_coupled_energy_angle_dist.count( reaction_type ) )
   {
-    Teuchos::RCP<ParticleScatteringAngularDistribution> angular_distribution;
+    Teuchos::RCP<NuclearScatteringAngularDistribution> angular_distribution;
 
     if( !d_reactions_with_isotropic_scattering_only.count( reaction_type ) )
     {
-      NeutronScatteringAngularDistributionACEFactory::createDistribution(
+      NuclearScatteringAngularDistributionACEFactory::createDistribution(
        d_reaction_angular_dist.find( reaction_type )->second,
        d_reaction_angular_dist_start_index.find( reaction_type )->second,
        d_table_name,
@@ -86,7 +86,7 @@ void NeutronScatteringDistributionACEFactory::createScatteringDistribution(
     // Create a purely isotropic scattering angle distribution
     else
     {
-      NeutronScatteringAngularDistributionACEFactory::createIsotropicDistribution(
+      NuclearScatteringAngularDistributionACEFactory::createIsotropicDistribution(
 							angular_distribution );
     }
 
@@ -102,15 +102,15 @@ void NeutronScatteringDistributionACEFactory::createScatteringDistribution(
 			  "CM system, which indicates that there is a problem "
 			  "in the ACE table!" );
       distribution.reset( 
-	  new ElasticNeutronScatteringDistribution( d_atomic_weight_ratio,
-						    angular_distribution ) );
+	new ElasticNeutronNuclearScatteringDistribution( d_atomic_weight_ratio,
+							 angular_distribution ) );
     }
     // Create all other scattering distributions using the energy dist factory
     else
     {
-      Teuchos::RCP<ParticleScatteringEnergyDistribution> energy_distribution;
+      Teuchos::RCP<NuclearScatteringEnergyDistribution> energy_distribution;
      
-      NeutronScatteringEnergyDistributionACEFactory::createDistribution(
+      NuclearScatteringEnergyDistributionACEFactory::createDistribution(
        	      d_reaction_energy_dist.find( reaction_type )->second,
        	      d_reaction_energy_dist_start_index.find( reaction_type )->second,
        	      d_table_name,
@@ -133,7 +133,7 @@ void NeutronScatteringDistributionACEFactory::createScatteringDistribution(
       if( d_reaction_cm_scattering.find( reaction_type )->second )
       {
 	distribution.reset(
-	     new IndependentEnergyAngleNeutronScatteringDistribution<CMSystemConversionPolicy>( 
+			   new IndependentEnergyAngleNuclearScatteringDistribution<NeutronState,NeutronState,CMSystemConversionPolicy>( 
 						      d_atomic_weight_ratio,
 						      energy_distribution,
 						      angular_distribution ) );
@@ -141,7 +141,7 @@ void NeutronScatteringDistributionACEFactory::createScatteringDistribution(
       else
       {
 	distribution.reset(
-	     new IndependentEnergyAngleNeutronScatteringDistribution<LabSystemConversionPolicy>( 
+			   new IndependentEnergyAngleNuclearScatteringDistribution<NeutronState,NeutronState,LabSystemConversionPolicy>( 
 						      d_atomic_weight_ratio,
 						      energy_distribution,
 						      angular_distribution ) );
@@ -151,7 +151,7 @@ void NeutronScatteringDistributionACEFactory::createScatteringDistribution(
   // Create a coupled angular-energy distribution (law 44)
   else
   {
-    NeutronScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
+    NuclearScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
               d_atomic_weight_ratio,
      	      d_reaction_energy_dist.find( reaction_type )->second,
      	      d_reaction_energy_dist_start_index.find( reaction_type )->second,

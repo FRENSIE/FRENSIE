@@ -1,26 +1,26 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_NeutronScatteringAngularDistributionACEFactory.hpp
+//! \file   MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp
 //! \author Alex Robinson, Alex Bennett
-//! \brief  Neutron scattering angular distribution factory class declaration
+//! \brief  Nuclear scattering angular distribution factory class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_ACE_FACTORY
-#define MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_ACE_FACTORY
+#ifndef MONTE_CARLO_NUCLEAR_SCATTERING_ANGULAR_DISTRIBUTION_ACE_FACTORY
+#define MONTE_CARLO_NUCLEAR_SCATTERING_ANGULAR_DISTRIBUTION_ACE_FACTORY
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleScatteringAngularDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
 
 namespace MonteCarlo{
 
 //! The scattering angular distribution factory class
-class NeutronScatteringAngularDistributionACEFactory
+class NuclearScatteringAngularDistributionACEFactory
 {
 
 public:
@@ -30,17 +30,17 @@ public:
 	   const Teuchos::ArrayView<const double>& and_block_array,
 	   const unsigned and_block_array_start_index,
 	   const std::string& table_name,
-	   const NuclearReactionType reaction,
-	   Teuchos::RCP<ParticleScatteringAngularDistribution>& distribution );
+	   const unsigned reaction,
+	   Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution );
   
   //! Create an isotropic angular distribution
   static void createIsotropicDistribution(
-	   Teuchos::RCP<ParticleScatteringAngularDistribution>& distribution );
+	   Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution );
 
 private:
 
   //! Constructor
-  NeutronScatteringAngularDistributionACEFactory();
+  NuclearScatteringAngularDistributionACEFactory();
 
   // The default (isotropic) angle cosine distribution
   static Teuchos::RCP<Utility::OneDDistribution> isotropic_angle_cosine_dist;
@@ -48,8 +48,8 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION_ACE_FACTORY
+#endif // end MONTE_CARLO_NUCLEAR_SCATTERING_ANGULAR_DISTRIBUTION_ACE_FACTORY
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NeutronScatteringAngularDistributionACEFactory.hpp
+// end MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp
 //---------------------------------------------------------------------------//

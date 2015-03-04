@@ -21,8 +21,7 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringDistribution.hpp"
-#include "MonteCarlo_ElasticNeutronScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistribution.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 
@@ -46,8 +45,9 @@ public:
 
   //! Create a scattering distribution 
   void createScatteringDistribution( 
-	      const NuclearReactionType reaction_type,
-	      Teuchos::RCP<NeutronScatteringDistribution>& distribution) const;
+       const NuclearReactionType reaction_type,
+       Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
+       distribution ) const;
 
 protected:
 

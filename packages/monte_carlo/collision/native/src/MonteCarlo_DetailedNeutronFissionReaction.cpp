@@ -22,9 +22,9 @@ DetailedNeutronFissionReaction::DetailedNeutronFissionReaction(
 		   const Teuchos::ArrayRCP<const double>& cross_section,
 		   const Teuchos::RCP<FissionNeutronMultiplicityDistribution>&
 		   fission_neutron_multiplicity_distribution,
-		   const Teuchos::RCP<NeutronScatteringDistribution>&
+		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
 		   prompt_neutron_emission_distribution,
-		   const Teuchos::RCP<NeutronScatteringDistribution>&
+		   const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
 		   delayed_neutron_emission_distribution )
   : NeutronFissionReaction( reaction_type,
 			    temperature,

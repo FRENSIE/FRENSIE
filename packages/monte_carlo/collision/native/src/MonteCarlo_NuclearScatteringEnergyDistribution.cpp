@@ -1,24 +1,24 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleScatteringEnergyDistribution.cpp
+//! \file   MonteCarlo_NuclearScatteringEnergyDistribution.cpp
 //! \author Alex Robinson, Alex Bennett
 //! \brief  The neutron scattering energy distribution base class declaration
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
-ParticleScatteringEnergyDistribution::ParticleScatteringEnergyDistribution( 
+NuclearScatteringEnergyDistribution::NuclearScatteringEnergyDistribution( 
 						      const unsigned law )
   : d_law( law )
 { /* ... */ }
 
 // Return the scattering law
-unsigned ParticleScatteringEnergyDistribution::getLaw() const
+unsigned NuclearScatteringEnergyDistribution::getLaw() const
 {
   return d_law;
 }
@@ -26,5 +26,5 @@ unsigned ParticleScatteringEnergyDistribution::getLaw() const
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleScatteringEnergyDistribution.cpp
+// end MonteCarlo_NuclearScatteringEnergyDistribution.cpp
 //---------------------------------------------------------------------------//
