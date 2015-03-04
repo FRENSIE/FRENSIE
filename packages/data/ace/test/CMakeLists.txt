@@ -27,6 +27,11 @@ ADD_EXECUTABLE(tstXSSEPRDataExtractor
 TARGET_LINK_LIBRARIES(tstXSSEPRDataExtractor data_ace)
 ADD_TEST(XSSEPRDataExtractor_test tstXSSEPRDataExtractor --pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --pb_ace_table="82000.12p" --b_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_b_epr_ace_file.txt" --b_ace_table="5000.12p")
 
+ADD_EXECUTABLE(tstXSSPhotonuclearDataExtractor 
+  tstXSSPhotonuclearDataExtractor.cpp)
+TARGET_LINK_LIBRARIES(tstXSSPhotonuclearDataExtractor data_ace)
+ADD_TEST(XSSPhotonuclearDataExtractor_test tstXSSPhotonuclearDataExtractor --h2_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h2_photonuclear_ace_file.txt" --h2_ace_table=1002.24u)
+
 ADD_EXECUTABLE(tstXSSElectronDataExtractor
   tstXSSElectronDataExtractor.cpp)
 TARGET_LINK_LIBRARIES(tstXSSElectronDataExtractor data_ace)

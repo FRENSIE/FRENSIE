@@ -46,7 +46,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   double knock_on_energy;
 
   // Sample knock-on electron energy
-  knock_on_energy = sampleTwoDDistribution( 
+  knock_on_energy = sampleTwoDDistributionCorrelated( 
                          electron.getEnergy(),
                          d_electroionization_subshell_scattering_distribution );
   //std::cout << "electroionization scattering called" << std::endl;

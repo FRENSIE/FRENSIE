@@ -23,13 +23,13 @@ namespace MonteCarlo{
 
 // Constructor
 FreeGasElasticMarginalBetaFunction::FreeGasElasticMarginalBetaFunction(
-	      const Teuchos::RCP<Utility::OneDDistribution>& 
-	      zero_temp_elastic_cross_section,
-              const Teuchos::RCP<MonteCarlo::NeutronScatteringAngularDistribution>&
-	      cm_scattering_distribution,
-	      const double A,
-	      const double kT,
-	      const double E )
+	  const Teuchos::RCP<Utility::OneDDistribution>& 
+	  zero_temp_elastic_cross_section,
+          const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
+	  cm_scattering_distribution,
+	  const double A,
+	  const double kT,
+	  const double E )
   : d_alpha_kernel( 1e-4, 0.0, 10000, 10000 ),
     d_beta_kernel( 1e-4, 0.0, 10000, 10000 ),
     d_sab_function( zero_temp_elastic_cross_section,
