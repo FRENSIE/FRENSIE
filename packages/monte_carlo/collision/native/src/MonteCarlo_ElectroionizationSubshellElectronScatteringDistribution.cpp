@@ -46,7 +46,7 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   double knock_on_energy;
 
   // Sample knock-on electron energy
-  knock_on_energy = sampleTwoDDistribution( 
+  knock_on_energy = sampleTwoDDistributionCorrelated( 
                          electron.getEnergy(),
                          d_electroionization_subshell_scattering_distribution );
   // Set the new energy of the original electron

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstNeutronScatteringDistributionACEFactory.cpp
+//! \file   tstNeutronNuclearScatteringDistributionACEFactory.cpp
 //! \author Alex Robinson
 //! \brief  Neutron-neutron scattering distribution factory unit tests
 //!
@@ -15,7 +15,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_NeutronNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
@@ -23,29 +23,29 @@
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-class TestNeutronScatteringDistributionACEFactory : public MonteCarlo::NeutronScatteringDistributionACEFactory
+class TestNeutronNuclearScatteringDistributionACEFactory : public MonteCarlo::NeutronNuclearScatteringDistributionACEFactory
 {
 public:
-  TestNeutronScatteringDistributionACEFactory(
+  TestNeutronNuclearScatteringDistributionACEFactory(
                          const std::string& table_name,
 			 const double atomic_weight_ratio,
 			 const Data::XSSNeutronDataExtractor raw_nuclide_data )
-    : MonteCarlo::NeutronScatteringDistributionACEFactory( table_name,
+    : MonteCarlo::NeutronNuclearScatteringDistributionACEFactory( table_name,
                                                            atomic_weight_ratio,
 							   raw_nuclide_data )
   { /* ... */ }
   
-  ~TestNeutronScatteringDistributionACEFactory()
+  ~TestNeutronNuclearScatteringDistributionACEFactory()
   { /* ... */ }
 
-  using MonteCarlo::NeutronScatteringDistributionACEFactory::getReactionOrdering;
-  using MonteCarlo::NeutronScatteringDistributionACEFactory::getReactionCMScattering;
-  using MonteCarlo::NeutronScatteringDistributionACEFactory::getReactionsWithIsotropicScatteringOnly;
-  using MonteCarlo::NeutronScatteringDistributionACEFactory::getReactionsWithCoupledEnergyAngleDist;
-  using MonteCarlo::NeutronScatteringDistributionACEFactory::getReactionAngularDist;
-  using MonteCarlo::NeutronScatteringDistributionACEFactory::getReactionAngularDistStartIndex;
-  using MonteCarlo::NeutronScatteringDistributionACEFactory::getReactionEnergyDist;
-  using MonteCarlo::NeutronScatteringDistributionACEFactory::getReactionEnergyDistStartIndex;
+  using MonteCarlo::NeutronNuclearScatteringDistributionACEFactory::getReactionOrdering;
+  using MonteCarlo::NeutronNuclearScatteringDistributionACEFactory::getReactionCMScattering;
+  using MonteCarlo::NeutronNuclearScatteringDistributionACEFactory::getReactionsWithIsotropicScatteringOnly;
+  using MonteCarlo::NeutronNuclearScatteringDistributionACEFactory::getReactionsWithCoupledEnergyAngleDist;
+  using MonteCarlo::NeutronNuclearScatteringDistributionACEFactory::getReactionAngularDist;
+  using MonteCarlo::NeutronNuclearScatteringDistributionACEFactory::getReactionAngularDistStartIndex;
+  using MonteCarlo::NeutronNuclearScatteringDistributionACEFactory::getReactionEnergyDist;
+  using MonteCarlo::NeutronNuclearScatteringDistributionACEFactory::getReactionEnergyDistStartIndex;
 };
 //---------------------------------------------------------------------------//
 // Testing Variables.
@@ -55,18 +55,18 @@ std::string test_basic_h1_ace_table_name;
 
 Teuchos::RCP<Data::ACEFileHandler> ace_file_handler_h1;
 Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor_h1;
-Teuchos::RCP<TestNeutronScatteringDistributionACEFactory> neutron_distribution_factory_h1;
+Teuchos::RCP<TestNeutronNuclearScatteringDistributionACEFactory> neutron_distribution_factory_h1;
 
 std::string test_basic_o16_ace_file_name;
 std::string test_basic_o16_ace_table_name;
 
 Teuchos::RCP<Data::ACEFileHandler> ace_file_handler_o16;
 Teuchos::RCP<Data::XSSNeutronDataExtractor> xss_data_extractor_o16;
-Teuchos::RCP<TestNeutronScatteringDistributionACEFactory> neutron_distribution_factory_o16;
+Teuchos::RCP<TestNeutronNuclearScatteringDistributionACEFactory> neutron_distribution_factory_o16;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionOrdering_h1 )
 {
 
@@ -80,9 +80,9 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
                                       ace_file_handler_h1->getTableJXSArray(),
                                       ace_file_handler_h1->getTableXSSArray()));
    
-//  MonteCarlo::NeutronScatteringDistributionACEFactory
+//  MonteCarlo::NeutronNuclearScatteringDistributionACEFactory
   neutron_distribution_factory_h1.reset( 
-    new TestNeutronScatteringDistributionACEFactory(
+    new TestNeutronNuclearScatteringDistributionACEFactory(
                              test_basic_h1_ace_table_name,
                              ace_file_handler_h1->getTableAtomicWeightRatio(),
 			     *xss_data_extractor_h1 ) );
@@ -91,7 +91,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionOrdering_o16 )
 {
 
@@ -105,9 +105,9 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
                                       ace_file_handler_o16->getTableJXSArray(),
                                       ace_file_handler_o16->getTableXSSArray()));
    
-//  MonteCarlo::NeutronScatteringDistributionACEFactory
+//  MonteCarlo::NeutronNuclearScatteringDistributionACEFactory
   neutron_distribution_factory_o16.reset( 
-    new TestNeutronScatteringDistributionACEFactory(
+    new TestNeutronNuclearScatteringDistributionACEFactory(
 			     test_basic_o16_ace_table_name,
                              ace_file_handler_o16->getTableAtomicWeightRatio(),
 			     *xss_data_extractor_o16 ) );
@@ -118,7 +118,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionCMScattering_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionCMScattering().size() ,==, 1);
@@ -126,7 +126,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionCMScattering_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionCMScattering().size() ,==, 18);
@@ -136,14 +136,14 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionsWithIsotropicScatteringOnly_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionsWithIsotropicScatteringOnly().size() ,==, 0 );
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionsWithIsotropicScatteringOnly_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionsWithIsotropicScatteringOnly().size() ,==, 2 );
@@ -154,14 +154,14 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionWithCoupledEnergyAngleDist_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionsWithCoupledEnergyAngleDist().size() ,==, 0 );
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionWithCoupledEnergyAngleDist_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionsWithCoupledEnergyAngleDist().size() ,==, 10 );
@@ -190,7 +190,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionAngularDist_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionAngularDist().size() ,==, 1 );
@@ -202,7 +202,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionAngularDist_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDist().size() ,==, 6 );
@@ -246,7 +246,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionAngularDistStartIndex_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionAngularDistStartIndex().size() ,==, 1 );
@@ -254,7 +254,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionAngularDistStartIndex_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionAngularDistStartIndex().size() ,==, 6 );
@@ -267,14 +267,14 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionEnergyDist_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionEnergyDist().size() ,==, 0 );
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionEnergyDist_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDist().size() ,==, 17 );
@@ -380,14 +380,14 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionEnergyDistStartIndex_h1 )
 {
   TEST_COMPARE( neutron_distribution_factory_h1->getReactionEnergyDistStartIndex().size() ,==, 0 );
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   getReactionEnergyDistStartIndex_o16 )
 {
   TEST_COMPARE( neutron_distribution_factory_o16->getReactionEnergyDistStartIndex().find(MonteCarlo::N__ANYTHING_REACTION)->second ,==, 34 );
@@ -411,7 +411,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that an elastic scattering distribution can be constructed
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   createScatteringDistribution_elastic )
 {
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
@@ -480,7 +480,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 
 //---------------------------------------------------------------------------//
 // Check that all other scattering distributions can be constructed
-TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory, 
+TEUCHOS_UNIT_TEST( NeutronNuclearScatteringDistributionACEFactory, 
 		   createScatteringDistribution_all )
 {
   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > scattering_dist;
@@ -589,7 +589,7 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistributionACEFactory,
 //  {
 //    std::cout << "MT number " << i->first << std::endl;
 //
-//    Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution> dist;
+//    Teuchos::RCP<MonteCarlo::NeutronNuclearScatteringDistribution> dist;
 //
 //    neutron_distribution_factory_o16->createScatteringDistribution( i->first, dist );
 //
@@ -627,5 +627,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstNeutronScatteringDistributionACEFactory.cpp
+// end tstNeutronNuclearScatteringDistributionACEFactory.cpp
 //---------------------------------------------------------------------------//

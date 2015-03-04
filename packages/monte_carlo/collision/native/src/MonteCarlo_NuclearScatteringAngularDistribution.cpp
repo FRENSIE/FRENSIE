@@ -39,7 +39,8 @@ double NuclearScatteringAngularDistribution::sampleAngleCosine(
 {
   double angle_cosine;
 
-  angle_cosine = sampleTwoDDistribution( energy, d_angular_distribution );
+  angle_cosine = 
+    sampleTwoDDistributionIndependent( energy, d_angular_distribution );
 
   // Due to floating-point roundoff, it is possible for the scattering angle
   // cosine to be outside [-1,1]. When this occurs, manually set to -1 or 1.

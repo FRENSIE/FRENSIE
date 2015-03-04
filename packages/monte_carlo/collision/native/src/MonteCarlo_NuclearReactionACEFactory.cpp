@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReactionACEFactory.hpp"
-#include "MonteCarlo_NeutronScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_NeutronNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_NeutronScatteringReaction.hpp"
 #include "MonteCarlo_NeutronAbsorptionReaction.hpp"
 #include "MonteCarlo_NeutronFissionReaction.hpp"
@@ -40,7 +40,7 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
 		 const Data::XSSNeutronDataExtractor& raw_nuclide_data )
 { 
   // Create the scattering distribution factory
-  NeutronScatteringDistributionACEFactory 
+  NeutronNuclearScatteringDistributionACEFactory 
     scattering_dist_factory( table_name,
 			     atomic_weight_ratio,
 			     raw_nuclide_data );
@@ -407,7 +407,7 @@ void NuclearReactionACEFactory::initializeScatteringReactions(
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
     reaction_cross_section,
-    const NeutronScatteringDistributionACEFactory& scattering_dist_factory )
+    const NeutronNuclearScatteringDistributionACEFactory& scattering_dist_factory )
 				
 {
   // Make sure the maps have the correct number of elements
@@ -546,7 +546,7 @@ void NuclearReactionACEFactory::initializeFissionReactions(
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
     reaction_cross_section,
-    const NeutronScatteringDistributionACEFactory& scattering_dist_factory,
+    const NeutronNuclearScatteringDistributionACEFactory& scattering_dist_factory,
     const Teuchos::RCP<FissionNeutronMultiplicityDistribution>&
     fission_neutron_multiplicity_distribution,
     const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& 

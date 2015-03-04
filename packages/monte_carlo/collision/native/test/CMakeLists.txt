@@ -28,11 +28,11 @@ tstNuclearScatteringDistributionFactoryHelpers
 --test_u238_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_u238_ace_file.txt"
 --test_u238_ace_table="92238.70c")
 
-ADD_EXECUTABLE(tstNeutronScatteringDistributionACEFactory
-  tstNeutronScatteringDistributionACEFactory.cpp)
-TARGET_LINK_LIBRARIES(tstNeutronScatteringDistributionACEFactory monte_carlo_collision_native)
-ADD_TEST(NeutronScatteringDistributionACEFactory_test
-tstNeutronScatteringDistributionACEFactory
+ADD_EXECUTABLE(tstNeutronNuclearScatteringDistributionACEFactory
+  tstNeutronNuclearScatteringDistributionACEFactory.cpp)
+TARGET_LINK_LIBRARIES(tstNeutronNuclearScatteringDistributionACEFactory monte_carlo_collision_native)
+ADD_TEST(NeutronNuclearScatteringDistributionACEFactory_test
+tstNeutronNuclearScatteringDistributionACEFactory
 --test_basic_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt"
 --test_basic_h1_ace_table="1001.70c"
 --test_basic_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt"
