@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElasticNeutronScatteringDistribution.cpp
+//! \file   MonteCarlo_ElasticNeutronNuclearScatteringDistribution_def.hpp
 //! \author Alex Robinson
 //! \brief  The elastic scattering distribution class definition
 //!
@@ -10,7 +10,7 @@
 #include <math.h>
 
 // FRENSIE Includes
-#include "MonteCarlo_ElasticNeutronScatteringDistribution.hpp"
+#include "MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_DirectionHelpers.hpp"
@@ -21,11 +21,11 @@
 namespace MonteCarlo{
 
 // Constructor
-ElasticNeutronScatteringDistribution::ElasticNeutronScatteringDistribution(
+ElasticNeutronNuclearScatteringDistribution::ElasticNeutronNuclearScatteringDistribution(
 		     const double atomic_weight_ratio,
-		     const Teuchos::RCP<ParticleScatteringAngularDistribution>&
+		     const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		     angular_scattering_distribution )
-  : NeutronScatteringDistribution( atomic_weight_ratio ),
+  : NuclearScatteringDistribution( atomic_weight_ratio ),
     d_angular_scattering_distribution( angular_scattering_distribution )
 { 
   // Make sure the atomic weight ratio is valid
@@ -34,18 +34,19 @@ ElasticNeutronScatteringDistribution::ElasticNeutronScatteringDistribution(
   testPrecondition( !angular_scattering_distribution.is_null() );
 }
 
-// Randomly scatter the neutron
-/*! \details The energy of the neutron in the lab frame is used to sample
+// Randomly scatter the nuclear
+/*! \details The energy of the nuclear in the lab frame is used to sample
  * a center-of-mass scattering angle cosine (this is also done in openmc). It
- * may be more appropriate to instead use the energy of the neutron in the
+ * may be more appropriate to instead use the energy of the nuclear in the
  * target-at-rest frame as recommended in the MCNP manual.
  */ 
-void ElasticNeutronScatteringDistribution::scatterNeutron( 
-					      NeutronState& neutron,
-					      const double temperature ) const
+void ElasticNeutronNuclearScatteringDistribution::scatterParticle( 
+				        const NeutronState& incoming_particle,
+					NeutronState& outgoing_particle,
+					const double temperature ) const
 {
   // Use the target-at-rest kinematics
-  if( neutron.getEnergy() > 
+  if( incoming_particle.getEnergy() > 
       SimulationProperties::getFreeGasThreshold()*temperature &&
       this->getAtomicWeightRatio() > 1.0 )
   {
@@ -54,27 +55,27 @@ void ElasticNeutronScatteringDistribution::scatterNeutron(
     // Sample the CM scattering angle cosine
     double cm_scattering_angle_cosine = 
       d_angular_scattering_distribution->sampleAngleCosine( 
-							 neutron.getEnergy() );
-    double outgoing_neutron_energy = neutron.getEnergy()*
+					       incoming_particle.getEnergy() );
+    double outgoing_particle_energy = incoming_particle.getEnergy()*
       (2*A*cm_scattering_angle_cosine + 1 + A*A)/((A+1)*(A+1));
     double lab_scattering_angle_cosine = (A*cm_scattering_angle_cosine + 1)/
       sqrt(2*A*cm_scattering_angle_cosine + 1 + A*A);
     
-    double outgoing_neutron_direction[3];
+    double outgoing_particle_direction[3];
     
     Utility::rotateDirectionThroughPolarAndAzimuthalAngle( 
 						lab_scattering_angle_cosine,
 						sampleAzimuthalAngle(),
-						neutron.getDirection(),
-						outgoing_neutron_direction);
+						incoming_particle.getDirection(),
+						outgoing_particle_direction);
 
     // Make sure the lab scattering angle cosine is in [-1,1]
     testPostcondition( lab_scattering_angle_cosine >= -1.0 );
     testPostcondition( lab_scattering_angle_cosine <= 1.0 );
     
-    neutron.setEnergy( outgoing_neutron_energy );
+    outgoing_particle.setEnergy( outgoing_particle_energy );
     
-    neutron.setDirection( outgoing_neutron_direction );
+    outgoing_particle.setDirection( outgoing_particle_direction );
   }
   // Use the free gas thermal model
  else
@@ -84,8 +85,8 @@ void ElasticNeutronScatteringDistribution::scatterNeutron(
    // elastic scattering, a classical treatment must be used in the free gas
    // model.
    
-   // Calculate the neutron velocity (classical)
-   double incoming_neutron_speed = Utility::calculateSpeed( 
+   // Calculate the particle velocity (classical)
+   double incoming_particle_speed = Utility::calculateSpeed( 
 			  Utility::PhysicalConstants::neutron_rest_mass_energy,
 			  neutron.getEnergy() );
   
@@ -162,7 +163,7 @@ void ElasticNeutronScatteringDistribution::scatterNeutron(
 // Sample the velociy of the target nucleus
 /*! \details the temperature should be in units of MeV (kT)
  */ 
-void ElasticNeutronScatteringDistribution::sampleTargetVelocity(
+void ElasticNeutronNuclearScatteringDistribution::sampleTargetVelocity(
 					      ParticleState& neutron,
 					      const double temperature,
 				              double target_velocity[3] ) const
@@ -210,7 +211,7 @@ void ElasticNeutronScatteringDistribution::sampleTargetVelocity(
 // Sample the speed of the target nucleus
 /*! \details the temperature should be in units of MeV (kT)
  */
-double ElasticNeutronScatteringDistribution::sampleTargetSpeed( 
+double ElasticNeutronNuclearScatteringDistribution::sampleTargetSpeed( 
 					      ParticleState& neutron,
 					      const double temperature ) const
 {
@@ -264,5 +265,5 @@ double ElasticNeutronScatteringDistribution::sampleTargetSpeed(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElasticNeutronScatteringDistribution.cpp
+// end MonteCarlo_ElasticNeutronNuclearScatteringDistribution_def.hpp
 //---------------------------------------------------------------------------//

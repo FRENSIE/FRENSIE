@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_NeutronScatteringAngularDistributionACEFactory.cpp
+//! \file   MonteCarlo_NuclearScatteringAngularDistributionACEFactory.cpp
 //! \author Alex Robinson, Alex Bennett
-//! \brief  Neutron scattering angular distribution factory class declaration
+//! \brief  Nuclear scattering angular distribution factory class declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -13,7 +13,7 @@
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringAngularDistributionACEFactory.hpp"
+#include "MonteCarlo_NuclearScatteringAngularDistributionACEFactory.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -25,16 +25,16 @@ namespace MonteCarlo{
 
 // Initialize the static member data
 Teuchos::RCP<Utility::OneDDistribution> 
-NeutronScatteringAngularDistributionACEFactory::isotropic_angle_cosine_dist(
+NuclearScatteringAngularDistributionACEFactory::isotropic_angle_cosine_dist(
 			  new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
 // Create the angular distribution
-void NeutronScatteringAngularDistributionACEFactory::createDistribution(
+void NuclearScatteringAngularDistributionACEFactory::createDistribution(
 	    const Teuchos::ArrayView<const double>& and_block_array,
 	    const unsigned and_block_array_start_index,
 	    const std::string& table_name,
-	    const NuclearReactionType reaction,
-	    Teuchos::RCP<ParticleScatteringAngularDistribution>& distribution )
+	    const unsigned reaction,
+	    Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution )
 {
   // Make sure the and block array is "valid"
   testPrecondition( and_block_array.size() > 0 );
@@ -52,7 +52,7 @@ void NeutronScatteringAngularDistributionACEFactory::createDistribution(
 		     num_tabulated_energies );
  
   // Initialize the angular distribution array
-  ParticleScatteringAngularDistribution::AngularDistribution
+  NuclearScatteringAngularDistribution::AngularDistribution
     angular_distribution( num_tabulated_energies );
 
   for( unsigned i = 0u; i < energy_grid.size(); ++i )
@@ -137,14 +137,14 @@ void NeutronScatteringAngularDistributionACEFactory::createDistribution(
 
   // Create the angular distribution
   distribution.reset( 
-	   new ParticleScatteringAngularDistribution( angular_distribution ) );
+	   new NuclearScatteringAngularDistribution( angular_distribution ) );
 }
 
 // Create an isotropic angular distribution
-void NeutronScatteringAngularDistributionACEFactory::createIsotropicDistribution(
-	    Teuchos::RCP<ParticleScatteringAngularDistribution>& distribution )
+void NuclearScatteringAngularDistributionACEFactory::createIsotropicDistribution(
+	    Teuchos::RCP<NuclearScatteringAngularDistribution>& distribution )
 {
-  ParticleScatteringAngularDistribution::AngularDistribution
+  NuclearScatteringAngularDistribution::AngularDistribution
     angular_distribution( 2 );
 
   angular_distribution[0].first = 0.0;
@@ -154,11 +154,11 @@ void NeutronScatteringAngularDistributionACEFactory::createIsotropicDistribution
   angular_distribution[1].second = isotropic_angle_cosine_dist;
 
   distribution.reset( 
-	   new ParticleScatteringAngularDistribution( angular_distribution ) );
+	   new NuclearScatteringAngularDistribution( angular_distribution ) );
 }
 
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NeutronScatteringAngularDistributionACEFactory.cpp
+// end MonteCarlo_NuclearScatteringAngularDistributionACEFactory.cpp
 //---------------------------------------------------------------------------//

@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_AceLaw4ParticleScatteringEnergyDistribution.cpp
+//! \file   MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.cpp
 //! \author Alex Bennett
-//! \brief  The particle law 4 scattering energy distribution class
+//! \brief  The nuclear law 4 scattering energy distribution class
 //!
 //---------------------------------------------------------------------------//
 
@@ -13,7 +13,7 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_AceLaw4ParticleScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -22,8 +22,8 @@
 namespace MonteCarlo{
 
 // Constructor
-AceLaw4ParticleScatteringEnergyDistribution::AceLaw4ParticleScatteringEnergyDistribution( EnergyDistribution& energy_distribution )
-  : ParticleScatteringEnergyDistribution( 4u ),
+AceLaw4NuclearScatteringEnergyDistribution::AceLaw4NuclearScatteringEnergyDistribution( EnergyDistribution& energy_distribution )
+  : NuclearScatteringEnergyDistribution( 4u ),
     d_energy_distribution( energy_distribution )
 {
   // Check to make sure the energy grid is filled
@@ -32,7 +32,7 @@ AceLaw4ParticleScatteringEnergyDistribution::AceLaw4ParticleScatteringEnergyDist
 
 
 // Sample a scattering energy
-double AceLaw4ParticleScatteringEnergyDistribution::sampleEnergy( const double energy ) const
+double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy( const double energy ) const
 {
   unsigned incoming_index, outgoing_index;
 
@@ -43,7 +43,7 @@ double AceLaw4ParticleScatteringEnergyDistribution::sampleEnergy( const double e
 
 
 // Sample a scattering energy
-double AceLaw4ParticleScatteringEnergyDistribution::sampleEnergy( const double energy, 
+double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy( const double energy, 
                                                               unsigned& incoming_index, 
                                                               unsigned& outgoing_index,
                                                               double& energy_prime) const
@@ -130,5 +130,5 @@ double AceLaw4ParticleScatteringEnergyDistribution::sampleEnergy( const double e
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AceLaw4ParticleScatteringEnergyDistribution.cpp
+// end MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.cpp
 //---------------------------------------------------------------------------//

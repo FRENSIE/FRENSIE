@@ -146,7 +146,7 @@ private:
     const NeutronScatteringDistributionACEFactory& scattering_dist_factory,
     const Teuchos::RCP<FissionNeutronMultiplicityDistribution>&
     fission_neutron_multiplicity_distribution,
-    const Teuchos::RCP<NeutronScatteringDistribution>& 
+    const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& 
     delayed_neutron_emission_distribution );
 				    
 

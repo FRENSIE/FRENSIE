@@ -1,16 +1,16 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_AceLaw3ParticleScatteringEnergyDistribution.hpp
+//! \file   MonteCarlo_AceLaw3NuclearScatteringEnergyDistribution.hpp
 //! \author Alex Robinson, Alex Bennett
-//! \brief  The particle inelastic level scattering energy distribution class
+//! \brief  The nuclear inelastic level scattering energy distribution class
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ACE_LAW_3_PARTICLE_SCATTERING_ENERGY_DISTRIBUTION_HPP
-#define MONTE_CARLO_ACE_LAW_3_PARTICLE_SCATTERING_ENERGY_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_ACE_LAW_3_NUCLEAR_SCATTERING_ENERGY_DISTRIBUTION_HPP
+#define MONTE_CARLO_ACE_LAW_3_NUCLEAR_SCATTERING_ENERGY_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -18,17 +18,17 @@ namespace MonteCarlo{
 /*! The inelastic level scattering energy distribution class (ENDF Law 3)
  * \ingroup ace_laws
  */
-class AceLaw3ParticleScatteringEnergyDistribution : public ParticleScatteringEnergyDistribution
+class AceLaw3NuclearScatteringEnergyDistribution : public NuclearScatteringEnergyDistribution
 {
 
 public:
   
   //! Constructor
-  AceLaw3ParticleScatteringEnergyDistribution( const double param_a,
+  AceLaw3NuclearScatteringEnergyDistribution( const double param_a,
 					       const double param_b );
   
   //! Destructor
-  ~AceLaw3ParticleScatteringEnergyDistribution()
+  ~AceLaw3NuclearScatteringEnergyDistribution()
   { /* ... */ }
   
   //! Sample a scattering energy
@@ -45,8 +45,8 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_ACE_LAW_3_PARTICLE_SCATTERING_ENERGY_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_ACE_LAW_3_NUCLEAR_SCATTERING_ENERGY_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AceLaw3ParticleScatteringEnergyDistribution.hpp
+// end MonteCarlo_AceLaw3NuclearScatteringEnergyDistribution.hpp
 //---------------------------------------------------------------------------//

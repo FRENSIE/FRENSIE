@@ -33,15 +33,15 @@ double FreeGasElasticScatteringKernelFactor::min_exp_arg =
 
 // Constructor
 FreeGasElasticScatteringKernelFactor::FreeGasElasticScatteringKernelFactor(
-	      const Teuchos::RCP<Utility::OneDDistribution>&
-	      zero_temp_elastic_cross_section,
-              const Teuchos::RCP<MonteCarlo::ParticleScatteringAngularDistribution>&
-	      cm_scattering_distribution,
-	      const double A,
-	      const double kT,
-	      const double alpha,
-	      const double beta,
-	      const double E )
+	  const Teuchos::RCP<Utility::OneDDistribution>&
+	  zero_temp_elastic_cross_section,
+          const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
+	  cm_scattering_distribution,
+	  const double A,
+	  const double kT,
+	  const double alpha,
+	  const double beta,
+	  const double E )
   : d_kernel( 1e-6 ),
     d_zero_temp_elastic_cross_section( zero_temp_elastic_cross_section ),
     d_cm_scattering_distribution( cm_scattering_distribution ),

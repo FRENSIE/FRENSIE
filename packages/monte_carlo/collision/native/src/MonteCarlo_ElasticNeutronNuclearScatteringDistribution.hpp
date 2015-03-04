@@ -1,45 +1,47 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ElasticNeutronScatteringDistribution.hpp
+//! \file   MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp
 //! \author Alex Robinson
 //! \brief  The elastic scattering distribution class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ELASTIC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
-#define MONTE_CARLO_ELASTIC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_ELASTIC_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_ELASTIC_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringDistribution.hpp"
-#include "MonteCarlo_ParticleScatteringAngularDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
+#include "MonteCarlo_NeutronState.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
 
 //! The elastic scattering distribution class
-class ElasticNeutronScatteringDistribution : public NeutronScatteringDistribution
+class ElasticNeutronNuclearScatteringDistribution : public NuclearScatteringDistribution<NeutronState,NeutronState>
 {
 
 public:
   
   //! Constructor
-  ElasticNeutronScatteringDistribution( 
+  ElasticNeutronNuclearScatteringDistribution( 
 		     const double atomic_weight_ratio,
-                     const Teuchos::RCP<ParticleScatteringAngularDistribution>&
+                     const Teuchos::RCP<NuclearScatteringAngularDistribution>&
 		     angular_scattering_distribution );
 
   //! Destructor
-  ~ElasticNeutronScatteringDistribution()
+  ~ElasticNeutronNuclearScatteringDistribution()
   { /* ... */ }
   
-  //! Randomly scatter the neutron
-  void scatterNeutron( NeutronState& neutron,
-		       const double temperature ) const;
+  //! Randomly scatter the particle
+  void scatterParticle( const NeutronState& incoming_particle,
+			NeutronState& outgoing_particle,
+			const double temperature ) const;
 
 protected:
   
@@ -69,13 +71,13 @@ private:
 			    const double temperature ) const;
 
   // The incoming energy dependent angular scattering distribution
-  Teuchos::RCP<ParticleScatteringAngularDistribution> 
+  Teuchos::RCP<NuclearScatteringAngularDistribution> 
   d_angular_scattering_distribution;
 };
 
 // Calculate the center-of-mass velocity
 inline void 
-ElasticNeutronScatteringDistribution::calculateCenterOfMassVelocity( 
+ElasticNeutronNuclearScatteringDistribution::calculateCenterOfMassVelocity( 
 				      const double neutron_velocity[3],
 				      const double target_velocity[3],
 				      double center_of_mass_velocity[3] ) const
@@ -95,7 +97,7 @@ ElasticNeutronScatteringDistribution::calculateCenterOfMassVelocity(
 
 // Transform a velocity in lab frame to the center-of-mass frame
 inline void 
-ElasticNeutronScatteringDistribution::transformVelocityToCenterOfMassFrame( 
+ElasticNeutronNuclearScatteringDistribution::transformVelocityToCenterOfMassFrame( 
 				       const double center_of_mass_velocity[3],
 				       double velocity[3] ) const
 {
@@ -105,7 +107,7 @@ ElasticNeutronScatteringDistribution::transformVelocityToCenterOfMassFrame(
 }
 
 // Transform a velocity in the center-of-mass frame to the lab frame
-inline void ElasticNeutronScatteringDistribution::transformVelocityToLabFrame( 
+inline void ElasticNeutronNuclearScatteringDistribution::transformVelocityToLabFrame( 
 				       const double center_of_mass_velocity[3],
 				       double velocity[3] ) const
 {
@@ -117,8 +119,8 @@ inline void ElasticNeutronScatteringDistribution::transformVelocityToLabFrame(
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_ELASTIC_NEUTRON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_ELASTIC_NUCLEAR_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ElasticNeutronScatteringDistribution.hpp
+// end MonteCarlo_ElasticNeutronNuclearScatteringDistribution.hpp
 //---------------------------------------------------------------------------//

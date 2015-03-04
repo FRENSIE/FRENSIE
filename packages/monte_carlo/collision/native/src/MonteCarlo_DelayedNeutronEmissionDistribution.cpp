@@ -25,9 +25,9 @@ DelayedNeutronEmissionDistribution::DelayedNeutronEmissionDistribution(
       const Teuchos::Array<double>& precursor_group_decay_consts,
       const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >& 
       precursor_group_prob_distributions,
-      const Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >&
+      const Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >&
       precursor_group_emission_distributions )
-  : NeutronScatteringDistribution( atomic_weight_ratio ),
+  : NuclearScatteringDistribution<NeutronState,NeutronState>( atomic_weight_ratio ),
     d_precursor_group_decay_consts( precursor_group_decay_consts ),
     d_precursor_group_prob_distributions( precursor_group_prob_distributions ),
     d_precursor_group_emission_distributions( 

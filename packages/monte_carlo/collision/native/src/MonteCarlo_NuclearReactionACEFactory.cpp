@@ -135,7 +135,8 @@ NuclearReactionACEFactory::NuclearReactionACEFactory(
   }
 
   // Create the delayed neutron emission distributions
-  Teuchos::RCP<NeutronScatteringDistribution> delayed_neutron_emission_dist;
+  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > 
+    delayed_neutron_emission_dist;
   
   if( dnedl_block.size() > 0 )
   {
@@ -422,7 +423,8 @@ void NuclearReactionACEFactory::initializeScatteringReactions(
 
   NuclearReactionType reaction_type;
 
-  Teuchos::RCP<NeutronScatteringDistribution> scattering_distribution;
+  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > 
+    scattering_distribution;
   
   while( reaction_type_multiplicity != end_reaction_type_multiplicity )
   {
@@ -547,7 +549,7 @@ void NuclearReactionACEFactory::initializeFissionReactions(
     const NeutronScatteringDistributionACEFactory& scattering_dist_factory,
     const Teuchos::RCP<FissionNeutronMultiplicityDistribution>&
     fission_neutron_multiplicity_distribution,
-    const Teuchos::RCP<NeutronScatteringDistribution>& 
+    const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& 
     delayed_neutron_emission_distribution )
 {
   // Make sure the maps have the correct number of elements
@@ -563,7 +565,7 @@ void NuclearReactionACEFactory::initializeFissionReactions(
 
   NuclearReactionType reaction_type;
 
-  Teuchos::RCP<NeutronScatteringDistribution> 
+  Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > 
     prompt_neutron_emission_distribution;
   
   while( reaction_type_multiplicity != end_reaction_type_multiplicity )

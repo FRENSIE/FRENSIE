@@ -1,20 +1,20 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_AceLaw4ParticleScatteringEnergyDistribution.hpp
+//! \file   MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.hpp
 //! \author Alex Bennett
 //! \brief  The law 4 scattering energy distribution class
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ACE_LAW_4_PARTICLE_SCATTERING_ENERGY_DISTRIBUTION_HPP
-#define MONTE_CARLO_ACE_LAW_4_PARTICLE_SCATTERING_ENERGY_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_ACE_LAW_4_NUCLEAR_SCATTERING_ENERGY_DISTRIBUTION_HPP
+#define MONTE_CARLO_ACE_LAW_4_NUCLEAR_SCATTERING_ENERGY_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_ArrayRCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringEnergyDistribution.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -23,7 +23,7 @@ namespace MonteCarlo{
 /*! The law 4 scattering eneryg distribution class (Ace Law 4)
  * \ingroup ace_laws
  */
-class AceLaw4ParticleScatteringEnergyDistribution : public ParticleScatteringEnergyDistribution
+class AceLaw4NuclearScatteringEnergyDistribution : public NuclearScatteringEnergyDistribution
 {
 
 public:
@@ -32,11 +32,11 @@ public:
   typedef Teuchos::Array<Utility::Pair<double,Teuchos::RCP<Utility::OneDDistribution> > >
                                                         EnergyDistribution;
   //! Constructor
-  AceLaw4ParticleScatteringEnergyDistribution( 
+  AceLaw4NuclearScatteringEnergyDistribution( 
 				     EnergyDistribution& energy_distribution );
 
   //! Destructor
-  ~AceLaw4ParticleScatteringEnergyDistribution()
+  ~AceLaw4NuclearScatteringEnergyDistribution()
   { /* ... */ }
 
   //! Sample a scattering energy
@@ -56,9 +56,9 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_ACE_LAW_4_PARTICLE_SCATTERING_ENERGY_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_ACE_LAW_4_NUCLEAR_SCATTERING_ENERGY_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AceLaw4ParticleScatteringEnergyDistribution.hpp
+// end MonteCarlo_AceLaw4NuclearScatteringEnergyDistribution.hpp
 //---------------------------------------------------------------------------//
 

@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ParticleScatteringAngularDistribution.hpp
+//! \file   MonteCarlo_NuclearScatteringAngularDistribution.hpp
 //! \author Alex Robinson, Alex Bennett
-//! \brief  The particle scattering angular distribution base class declaration
+//! \brief  The nuclear scattering angular distribution base class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PARTICLE_SCATTERING_ANGULAR_DISTRIBUTION
-#define MONTE_CARLO_PARTICLE_SCATTERING_ANGULAR_DISTRIBUTION
+#ifndef MONTE_CARLO_NUCLEAR_SCATTERING_ANGULAR_DISTRIBUTION
+#define MONTE_CARLO_NUCLEAR_SCATTERING_ANGULAR_DISTRIBUTION
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -18,9 +18,9 @@
 namespace MonteCarlo{
 
 //! The angular scattering distribution base class
-/*! \todo Write unit test for particle scattering angular distribution class
+/*! \todo Write unit test for nuclear scattering angular distribution class
  */
-class ParticleScatteringAngularDistribution
+class NuclearScatteringAngularDistribution
 {
 
 public:
@@ -31,10 +31,10 @@ public:
   AngularDistribution;
   
   //! Constructor
-  ParticleScatteringAngularDistribution( const AngularDistribution& dist );
+  NuclearScatteringAngularDistribution( const AngularDistribution& dist );
 
   //! Destructor
-  virtual ~ParticleScatteringAngularDistribution()
+  virtual ~NuclearScatteringAngularDistribution()
   { /* ... */ }
 
 
@@ -53,8 +53,8 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_PARTICLE_SCATTERING_ANGULAR_DISTRIBUTION
+#endif // end MONTE_CARLO_NUCLEAR_SCATTERING_ANGULAR_DISTRIBUTION
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ParticleScatteringAngularDistribution.hpp
+// end MonteCarlo_NuclearScatteringAngularDistribution.hpp
 //---------------------------------------------------------------------------//
