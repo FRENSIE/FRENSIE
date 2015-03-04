@@ -72,7 +72,7 @@ void NeutronScatteringDistributionACEFactory::createScatteringDistribution(
   // Create an angular distribution if scattering law 44 is not used
   if( !d_reactions_with_coupled_energy_angle_dist.count( reaction_type ) )
   {
-    Teuchos::RCP<NeutronScatteringAngularDistribution> angular_distribution;
+    Teuchos::RCP<ParticleScatteringAngularDistribution> angular_distribution;
 
     if( !d_reactions_with_isotropic_scattering_only.count( reaction_type ) )
     {
@@ -108,7 +108,7 @@ void NeutronScatteringDistributionACEFactory::createScatteringDistribution(
     // Create all other scattering distributions using the energy dist factory
     else
     {
-      Teuchos::RCP<NeutronScatteringEnergyDistribution> energy_distribution;
+      Teuchos::RCP<ParticleScatteringEnergyDistribution> energy_distribution;
      
       NeutronScatteringEnergyDistributionACEFactory::createDistribution(
        	      d_reaction_energy_dist.find( reaction_type )->second,

@@ -39,10 +39,6 @@ public:
   // Allow public access to the protected member functions
   using MonteCarlo::NeutronScatteringDistribution::getAtomicWeightRatio;
   using MonteCarlo::NeutronScatteringDistribution::sampleAzimuthalAngle;
-  using MonteCarlo::NeutronScatteringDistribution::calculateCenterOfMassVelocity;
-  using MonteCarlo::NeutronScatteringDistribution::transformVelocityToCenterOfMassFrame;
-  using MonteCarlo::NeutronScatteringDistribution::transformVelocityToLabFrame;
-  using MonteCarlo::NeutronScatteringDistribution::sampleTargetVelocity;
 };
 
 //---------------------------------------------------------------------------//
@@ -82,102 +78,6 @@ TEUCHOS_UNIT_TEST( NeutronScatteringDistribution, sampleAzimuthalAngle )
   TEST_FLOATING_EQUALITY( azimuthal_angle, 
 			  2*Utility::PhysicalConstants::pi,
 			  1e-15 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that the center of mass velocity can be calculated
-TEUCHOS_UNIT_TEST( NeutronScatteringDistribution, 
-		   calculateCenterOfMassVelocity )
-{
-  TestScatteringDistribution scattering_distribution( 2.0 );
-
-  Teuchos::Array<double> neutron_velocity( 3 );
-  neutron_velocity[0] = 1.0;
-  neutron_velocity[1] = 1.0;
-  neutron_velocity[2] = 1.0;
-  
-  Teuchos::Array<double> target_velocity( 3 );
-  target_velocity[0] = 1.0;
-  target_velocity[1] = 1.0;
-  target_velocity[2] = -1.0;
-  
-  Teuchos::Array<double> center_of_mass_velocity( 3 );
-
-  scattering_distribution.calculateCenterOfMassVelocity( 
-					 neutron_velocity.getRawPtr(),
-					 target_velocity.getRawPtr(),
-					 center_of_mass_velocity.getRawPtr() );
-
-  Teuchos::Array<double> ref_center_of_mass_velocity( 3 );
-  ref_center_of_mass_velocity[0] = 1.0;
-  ref_center_of_mass_velocity[1] = 1.0;
-  ref_center_of_mass_velocity[2] = -1.0/3.0;
-  
-  TEST_COMPARE_FLOATING_ARRAYS( center_of_mass_velocity,
-				ref_center_of_mass_velocity,
-				1e-15 );
-}
-
-//---------------------------------------------------------------------------//
-// Check that a lab velocity can be converted to a center-of-mass velocity
-TEUCHOS_UNIT_TEST( NeutronScatteringDistribution, 
-		   transformVelocityToCenterOfMassFrame )
-{
-  TestScatteringDistribution scattering_distribution( 2.0 );
-
-  Teuchos::Array<double> neutron_velocity( 3 );
-  neutron_velocity[0] = 1.0;
-  neutron_velocity[1] = 1.0;
-  neutron_velocity[2] = 1.0;
-  
-  Teuchos::Array<double> center_of_mass_velocity( 3 );
-  center_of_mass_velocity[0] = 1.0;
-  center_of_mass_velocity[1] = 1.0;
-  center_of_mass_velocity[2] = -1.0/3.0;
-
-  scattering_distribution.transformVelocityToCenterOfMassFrame( 
-					   center_of_mass_velocity.getRawPtr(),
-					   neutron_velocity.getRawPtr() );
-  
-  Teuchos::Array<double> cm_neutron_velocity( 3 );
-  cm_neutron_velocity[0] = 0.0;
-  cm_neutron_velocity[1] = 0.0;
-  cm_neutron_velocity[2] = 4.0/3.0;
-
-  TEST_COMPARE_FLOATING_ARRAYS( cm_neutron_velocity,
-				neutron_velocity,
-				1e-15 );				
-}
-
-//---------------------------------------------------------------------------//
-// Check that a center-of-mass velocity can be converted to a lab velocity
-TEUCHOS_UNIT_TEST( NeutronScatteringDistribution, 
-		   transformVelocityToLabFrame )
-{
-  TestScatteringDistribution scattering_distribution( 2.0 );
-
-  Teuchos::Array<double> neutron_velocity( 3 );
-  neutron_velocity[0] = 0.0;
-  neutron_velocity[1] = 0.0;
-  neutron_velocity[2] = 4.0/3.0;
-
-  Teuchos::Array<double> center_of_mass_velocity( 3 );
-  center_of_mass_velocity[0] = 1.0;
-  center_of_mass_velocity[1] = 1.0;
-  center_of_mass_velocity[2] = -1.0/3.0;
-
-  scattering_distribution.transformVelocityToLabFrame(
-					   center_of_mass_velocity.getRawPtr(),
-					   neutron_velocity.getRawPtr() );
-
-  Teuchos::Array<double> lab_neutron_velocity( 3 );
-  lab_neutron_velocity[0] = 1.0;
-  lab_neutron_velocity[1] = 1.0;
-  lab_neutron_velocity[2] = 1.0;
-
-  TEST_COMPARE_FLOATING_ARRAYS( lab_neutron_velocity,
-				neutron_velocity,
-				1e-15 );
 }
 
 //---------------------------------------------------------------------------//

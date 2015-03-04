@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_NeutronScatteringEnergyDistribution.hpp
+//! \file   MonteCarlo_ParticleScatteringEnergyDistribution.hpp
 //! \author Alex Robinson, Alex Bennett
-//! \brief  The neutron scattering energy distribution base class declaration
+//! \brief  The particle scattering energy distribution base class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
-#define MONTE_CARLO_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
+#ifndef MONTE_CARLO_PARTICLE_SCATTERING_ENERGY_DISTRIBUTION
+#define MONTE_CARLO_PARTICLE_SCATTERING_ENERGY_DISTRIBUTION
 
 // Std Lib Includes
 #include <limits>
@@ -21,16 +21,16 @@
 namespace MonteCarlo{
 
 //! The energy scattering distribution base class
-class NeutronScatteringEnergyDistribution
+class ParticleScatteringEnergyDistribution
 {
 
 public:
 
   //! Constructor
-  NeutronScatteringEnergyDistribution( const unsigned law );
+  ParticleScatteringEnergyDistribution( const unsigned law );
 
   //! Destructor
-  virtual ~NeutronScatteringEnergyDistribution()
+  virtual ~ParticleScatteringEnergyDistribution()
   { /* ... */ }
 
    //! Sample a scattering energy
@@ -52,7 +52,7 @@ private:
 };
 
 // Sample a scattering energy (and return the sampled bin index)
-inline double NeutronScatteringEnergyDistribution::sampleEnergy( 
+inline double ParticleScatteringEnergyDistribution::sampleEnergy( 
 					    const double energy, 
 					    unsigned& incoming_bin_index,
 					    unsigned& outgoing_bin_index,
@@ -67,8 +67,8 @@ inline double NeutronScatteringEnergyDistribution::sampleEnergy(
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_NEUTRON_SCATTERING_ENERGY_DISTRIBUTION
+#endif // end MONTE_CARLO_PARTICLE_SCATTERING_ENERGY_DISTRIBUTION
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NeutronScatteringEnergyDistribution.hpp
+// end MonteCarlo_ParticleScatteringEnergyDistribution.hpp
 //---------------------------------------------------------------------------//

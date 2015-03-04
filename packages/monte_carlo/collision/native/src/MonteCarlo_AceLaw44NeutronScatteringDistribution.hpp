@@ -15,7 +15,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NeutronScatteringDistribution.hpp"
-#include "MonteCarlo_NeutronScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_ParticleScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw44ARDistribution.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_Tuple.hpp"
@@ -40,7 +40,7 @@ public:
   //! Constructor
   AceLaw44NeutronScatteringDistribution( 
 		   const double atomic_weight_ratio,
-		   const Teuchos::RCP<NeutronScatteringEnergyDistribution>&
+		   const Teuchos::RCP<ParticleScatteringEnergyDistribution>&
 		   energy_scattering_distribution,
                    const Teuchos::Array<Teuchos::RCP<AceLaw44ARDistribution> >&
 		   ar_distributions );
@@ -56,7 +56,7 @@ public:
 private:
 
   // The energy distribution (only a law 4 distribution should be stored)
-  Teuchos::RCP<NeutronScatteringEnergyDistribution> 
+  Teuchos::RCP<ParticleScatteringEnergyDistribution> 
   d_energy_scattering_distribution;
 
   // The AR distributions

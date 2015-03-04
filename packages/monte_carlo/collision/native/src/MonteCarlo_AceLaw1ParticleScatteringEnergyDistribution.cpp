@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //! 
-//! \file   MonteCarlo_AceLaw1NeutronScatteringEnergyDistribution.cpp
+//! \file   MonteCarlo_AceLaw1ParticleScatteringEnergyDistribution.cpp
 //! \author Alex Bennett
-//! \brief  The neutron equiprobable bin scattering energy distribution class
+//! \brief  The particle equiprobable bin scattering energy distribution class
 //!
 //---------------------------------------------------------------------------//
 
@@ -11,7 +11,7 @@
 #include <math.h>
 
 // FRENSIE Includes
-#include "MonteCarlo_AceLaw1NeutronScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw1ParticleScatteringEnergyDistribution.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_SearchAlgorithms.hpp"
@@ -20,9 +20,9 @@
 namespace MonteCarlo{
 
 // Constructor
-AceLaw1NeutronScatteringEnergyDistribution::AceLaw1NeutronScatteringEnergyDistribution( 
+AceLaw1ParticleScatteringEnergyDistribution::AceLaw1ParticleScatteringEnergyDistribution( 
 						 EnergyDistArray& energy_grid )
-  : NeutronScatteringEnergyDistribution( 1u ),
+  : ParticleScatteringEnergyDistribution( 1u ),
     d_energy_grid( energy_grid )
 {
   // Check to make sure the energy grid is filled
@@ -30,7 +30,7 @@ AceLaw1NeutronScatteringEnergyDistribution::AceLaw1NeutronScatteringEnergyDistri
 }
 
 // Sample a scattering energy
-double AceLaw1NeutronScatteringEnergyDistribution::sampleEnergy( 
+double AceLaw1ParticleScatteringEnergyDistribution::sampleEnergy( 
 						    const double energy ) const
 {
   // Make sure the energy is valid
@@ -111,5 +111,5 @@ double AceLaw1NeutronScatteringEnergyDistribution::sampleEnergy(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AceLaw1NeutronScatteringEnergyDistribution.cpp
+// end MonteCarlo_AceLaw1ParticleScatteringEnergyDistribution.cpp
 //---------------------------------------------------------------------------//

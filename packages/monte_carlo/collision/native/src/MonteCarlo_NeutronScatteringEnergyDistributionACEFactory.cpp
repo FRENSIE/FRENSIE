@@ -16,9 +16,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_NeutronScatteringEnergyDistributionACEFactory.hpp"
 #include "MonteCarlo_NeutronScatteringAngularDistributionACEFactory.hpp"
-#include "MonteCarlo_AceLaw1NeutronScatteringEnergyDistribution.hpp"
-#include "MonteCarlo_AceLaw3NeutronScatteringEnergyDistribution.hpp"
-#include "MonteCarlo_AceLaw4NeutronScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw1ParticleScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw3ParticleScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw4ParticleScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw44NeutronScatteringDistribution.hpp"
 #include "MonteCarlo_AceLaw44ARDistribution.hpp"
 #include "MonteCarlo_AceLaw44InterpolationPolicy.hpp"
@@ -37,7 +37,7 @@ void NeutronScatteringEnergyDistributionACEFactory::createDistribution(
 	     const unsigned dlw_block_array_start_index,
 	     const std::string& table_name,
 	     const NuclearReactionType reaction,
-	     Teuchos::RCP<NeutronScatteringEnergyDistribution>& distribution )
+	     Teuchos::RCP<ParticleScatteringEnergyDistribution>& distribution )
 {
   // Make sure the dlw block array is valid
   testPrecondition( dlw_block_array.size() > 0 );
@@ -139,7 +139,7 @@ void NeutronScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
 		     incoming_energies); 
 
   // Initialize the energy distribution array
-  AceLaw4NeutronScatteringEnergyDistribution::EnergyDistribution 
+  AceLaw4ParticleScatteringEnergyDistribution::EnergyDistribution 
     energy_distribution( incoming_energies );
 
   // Initialize the AR distribution array
@@ -223,15 +223,15 @@ void NeutronScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
     } 
   }
 
-  Teuchos::RCP<NeutronScatteringEnergyDistribution> energy_out_distribution; 
+  Teuchos::RCP<ParticleScatteringEnergyDistribution> energy_out_distribution; 
 
   energy_out_distribution.reset( 
-	  new AceLaw4NeutronScatteringEnergyDistribution( energy_distribution ) );
+      new AceLaw4ParticleScatteringEnergyDistribution( energy_distribution ) );
 
   if( is_cm_distribution )
   {
     distribution.reset( 
-	   new AceLaw44NeutronScatteringDistribution<CMSystemConversionPolicy>(
+	  new AceLaw44NeutronScatteringDistribution<CMSystemConversionPolicy>(
 						       atomic_weight_ratio,
 						       energy_out_distribution,
 						       ar_distribution ) );
@@ -248,11 +248,11 @@ void NeutronScatteringEnergyDistributionACEFactory::createAceLaw44Distribution(
 
 // Create a AceLaw 1 energy distribution
 void NeutronScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribution( 
-	      const Teuchos::ArrayView<const double>& dlw_block_array,
-	      const unsigned dlw_block_array_start_index,
-	      const std::string& table_name,
-	      const NuclearReactionType reaction,
-	      Teuchos::RCP<NeutronScatteringEnergyDistribution>& distribution )
+	     const Teuchos::ArrayView<const double>& dlw_block_array,
+	     const unsigned dlw_block_array_start_index,
+	     const std::string& table_name,
+	     const NuclearReactionType reaction,
+	     Teuchos::RCP<ParticleScatteringEnergyDistribution>& distribution )
 {
   // Start index for ldat data
     int ldat_start_index = dlw_block_array[2] - dlw_block_array_start_index - 2;
@@ -269,7 +269,7 @@ void NeutronScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribut
     int incoming_energies = dlw_block_array[ldat_start_index + 2];
 
     // Initialize the energy grid
-    AceLaw1NeutronScatteringEnergyDistribution::EnergyDistArray energy_grid;
+    AceLaw1ParticleScatteringEnergyDistribution::EnergyDistArray energy_grid;
 
     energy_grid.resize(incoming_energies);
 
@@ -297,16 +297,16 @@ void NeutronScatteringEnergyDistributionACEFactory::createAceLaw1EnergyDistribut
 
     // Create the equiprobable bin scattering energy distriubtion (law 1)
     distribution.reset( 
-	       new AceLaw1NeutronScatteringEnergyDistribution( energy_grid ) );
+	       new AceLaw1ParticleScatteringEnergyDistribution( energy_grid ) );
 }
 
 // Create a AceLaw 3 energy distribution
 void NeutronScatteringEnergyDistributionACEFactory::createAceLaw3EnergyDistribution(
-	      const Teuchos::ArrayView<const double>& dlw_block_array,
-	      const unsigned dlw_block_array_start_index,
-	      const std::string& table_name,
-	      const NuclearReactionType reaction,
-	      Teuchos::RCP<NeutronScatteringEnergyDistribution>& distribution )
+	     const Teuchos::ArrayView<const double>& dlw_block_array,
+	     const unsigned dlw_block_array_start_index,
+	     const std::string& table_name,
+	     const NuclearReactionType reaction,
+	     Teuchos::RCP<ParticleScatteringEnergyDistribution>& distribution )
 {
   // Verify that there isn't multiple interpolation regions
   TEST_FOR_EXCEPTION( dlw_block_array[3] != 0,
@@ -323,16 +323,16 @@ void NeutronScatteringEnergyDistributionACEFactory::createAceLaw3EnergyDistribut
 
   // Create the inelastic level scattering energy distribution (law 3)
   distribution.reset( 
-	      new AceLaw3NeutronScatteringEnergyDistribution( ldat1, ldat2 ) );
+	      new AceLaw3ParticleScatteringEnergyDistribution( ldat1, ldat2 ) );
 }
 
 // Create a AceLaw 4 energy distribution
 void NeutronScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribution(
-	      const Teuchos::ArrayView<const double>& dlw_block_array,
-	      const unsigned dlw_block_array_start_index,
-	      const std::string& table_name,
-	      const NuclearReactionType reaction,
-	      Teuchos::RCP<NeutronScatteringEnergyDistribution>& distribution )
+	     const Teuchos::ArrayView<const double>& dlw_block_array,
+	     const unsigned dlw_block_array_start_index,
+	     const std::string& table_name,
+	     const NuclearReactionType reaction,
+	     Teuchos::RCP<ParticleScatteringEnergyDistribution>& distribution )
 {
   // Verify that it is law 4
      TEST_FOR_EXCEPTION( dlw_block_array[1] != 4,
@@ -362,7 +362,7 @@ void NeutronScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
                                                                   incoming_energies); 
 
      // Initialize the energy distribution array
-     AceLaw4NeutronScatteringEnergyDistribution::EnergyDistribution 
+     AceLaw4ParticleScatteringEnergyDistribution::EnergyDistribution 
        energy_distribution( incoming_energies );
 
      // Loop through the incoming energies
@@ -422,7 +422,7 @@ void NeutronScatteringEnergyDistributionACEFactory::createAceLaw4EnergyDistribut
      }
 
      distribution.reset( 
-       new AceLaw4NeutronScatteringEnergyDistribution( energy_distribution ) );
+      new AceLaw4ParticleScatteringEnergyDistribution( energy_distribution ) );
 }
 
 } // end MonteCarlo namespace

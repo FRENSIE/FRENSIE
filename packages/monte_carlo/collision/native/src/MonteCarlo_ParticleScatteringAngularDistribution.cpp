@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_NeutronScatteringAngularDistribution.cpp
+//! \file   MonteCarlo_ParticleScatteringAngularDistribution.cpp
 //! \author Alex Robinson, Alex Bennett
-//! \brief  The neutron scattering angular distribution base class definition
+//! \brief  The particle scattering angular distribution base class definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -10,17 +10,19 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringAngularDistribution.hpp"
+#include "MonteCarlo_ParticleScatteringAngularDistribution.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_PhysicalConstants.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_SortAlgorithms.hpp"
 
 namespace MonteCarlo{
 
 // Constructor
-NeutronScatteringAngularDistribution::NeutronScatteringAngularDistribution( 
-	const NeutronScatteringAngularDistribution::AngularDistribution& dist )
+ParticleScatteringAngularDistribution::ParticleScatteringAngularDistribution( 
+	const ParticleScatteringAngularDistribution::AngularDistribution& dist )
   : d_angular_distribution( dist )
 {
   // Make sure the array has at least one value
@@ -32,7 +34,7 @@ NeutronScatteringAngularDistribution::NeutronScatteringAngularDistribution(
 }
 
 // Sample a scattering angle cosine
-double NeutronScatteringAngularDistribution::sampleAngleCosine( 
+double ParticleScatteringAngularDistribution::sampleAngleCosine( 
 						    const double energy ) const
 {
   double angle_cosine;
@@ -52,21 +54,21 @@ double NeutronScatteringAngularDistribution::sampleAngleCosine(
 }
 
 // Evaluate the PDF
-double NeutronScatteringAngularDistribution::evaluatePDF( 
+double ParticleScatteringAngularDistribution::evaluatePDF( 
 				const double energy,
-				const double cm_scattering_angle_cosine ) const
+				const double scattering_angle_cosine ) const
 {
   double pdf_value;
   
   if( energy < d_angular_distribution.front().first )
   {
     pdf_value = d_angular_distribution.front().second->evaluatePDF( 
-						  cm_scattering_angle_cosine );
+						  scattering_angle_cosine );
   }
   else if( energy >= d_angular_distribution.back().first )
   {
     pdf_value = d_angular_distribution.back().second->evaluatePDF(
-						  cm_scattering_angle_cosine );
+						  scattering_angle_cosine );
   }
   else
   {
@@ -85,9 +87,9 @@ double NeutronScatteringAngularDistribution::evaluatePDF(
 
     // Get the PDF value on the two grid points
     double pdf_low = lower_bin_boundary->second->evaluatePDF( 
-						  cm_scattering_angle_cosine );
+						  scattering_angle_cosine );
     double pdf_high = upper_bin_boundary->second->evaluatePDF(
-						  cm_scattering_angle_cosine );
+						  scattering_angle_cosine );
 
     // Use linear interpolation to evaluate the PDF at the desired energy
     pdf_value = pdf_low + 
@@ -104,5 +106,5 @@ double NeutronScatteringAngularDistribution::evaluatePDF(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NeutronScatteringAngularDistribution.cpp
+// end MonteCarlo_ParticleScatteringAngularDistribution.cpp
 //---------------------------------------------------------------------------//

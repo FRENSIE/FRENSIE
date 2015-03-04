@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AceLaw44NeutronScatteringDistribution.hpp"
-#include "MonteCarlo_NeutronScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_ParticleScatteringEnergyDistribution.hpp"
 #include "Utility_DirectionHelpers.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -24,10 +24,10 @@ namespace MonteCarlo{
 // Constructor
 template<typename SystemConversionPolicy>
 AceLaw44NeutronScatteringDistribution<SystemConversionPolicy>::AceLaw44NeutronScatteringDistribution( 
-                      const double atomic_weight_ratio,
-		      const Teuchos::RCP<NeutronScatteringEnergyDistribution>& 
-		      energy_scattering_distribution,
-		      const Teuchos::Array<Teuchos::RCP<AceLaw44ARDistribution> >&
+                   const double atomic_weight_ratio,
+		   const Teuchos::RCP<ParticleScatteringEnergyDistribution>& 
+		   energy_scattering_distribution,
+		   const Teuchos::Array<Teuchos::RCP<AceLaw44ARDistribution> >&
 		      ar_distributions )
    : NeutronScatteringDistribution( atomic_weight_ratio ),
      d_energy_scattering_distribution( energy_scattering_distribution ),
