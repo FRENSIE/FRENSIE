@@ -14,8 +14,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NeutronScatteringDistribution.hpp"
-#include "MonteCarlo_NeutronScatteringAngularDistribution.hpp"
-#include "MonteCarlo_NeutronScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_ParticleScatteringAngularDistribution.hpp"
+#include "MonteCarlo_ParticleScatteringEnergyDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -31,11 +31,11 @@ public:
 
   //! Constructor
   IndependentEnergyAngleNeutronScatteringDistribution( 
-		      const double atomic_weight_ratio,
-		      const Teuchos::RCP<NeutronScatteringEnergyDistribution>&
-		      energy_scattering_distribution,
-		      const Teuchos::RCP<NeutronScatteringAngularDistribution>&
-		      angular_scattering_distribution );
+		     const double atomic_weight_ratio,
+		     const Teuchos::RCP<ParticleScatteringEnergyDistribution>&
+		     energy_scattering_distribution,
+		     const Teuchos::RCP<ParticleScatteringAngularDistribution>&
+		     angular_scattering_distribution );
 
   //! Destructor
   ~IndependentEnergyAngleNeutronScatteringDistribution()
@@ -48,11 +48,11 @@ public:
 private:
 
   // The energy scattering distribution
-  Teuchos::RCP<NeutronScatteringEnergyDistribution>
+  Teuchos::RCP<ParticleScatteringEnergyDistribution>
   d_energy_scattering_distribution;
   
   // The angular scattering distribution
-  Teuchos::RCP<NeutronScatteringAngularDistribution> 
+  Teuchos::RCP<ParticleScatteringAngularDistribution> 
   d_angular_scattering_distribution;
 };
 

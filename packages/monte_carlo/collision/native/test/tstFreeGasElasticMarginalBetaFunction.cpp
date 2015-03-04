@@ -103,7 +103,7 @@ int main( int argc, char** argv )
 			  new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
 
   // Initialize the scattering distribution
-  MonteCarlo::NeutronScatteringAngularDistribution::AngularDistribution
+  MonteCarlo::ParticleScatteringAngularDistribution::AngularDistribution
     distribution( 2 );
 
   distribution[0].first = 0.0;
@@ -112,8 +112,9 @@ int main( int argc, char** argv )
   distribution[1].first = 20.0;
   distribution[1].second = isotropic_distribution;
 
-  Teuchos::RCP<MonteCarlo::NeutronScatteringAngularDistribution> 
-    scattering_distribution( new MonteCarlo::NeutronScatteringAngularDistribution(
+  Teuchos::RCP<MonteCarlo::ParticleScatteringAngularDistribution> 
+    scattering_distribution( 
+			 new MonteCarlo::ParticleScatteringAngularDistribution(
 							      distribution ) );
 
   // Initialize the kernel factor

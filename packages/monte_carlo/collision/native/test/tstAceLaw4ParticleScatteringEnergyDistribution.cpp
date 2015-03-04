@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstAceLaw4NeutronScatteringDistribution.cpp
+//! \file   tstAceLaw4ParticleScatteringDistribution.cpp
 //! \author Alex Bennett
 //! \brief  Law 4 neutron scattering distribution unit tests
 //---------------------------------------------------------------------------//
@@ -15,7 +15,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
-#include "MonteCarlo_AceLaw4NeutronScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw4ParticleScatteringEnergyDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -24,10 +24,10 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw4NeutronScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw4ParticleScatteringEnergyDistribution, 
 		   sampleEnergy_lower_bound_histogram )
 {
-   MonteCarlo::AceLaw4NeutronScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw4ParticleScatteringEnergyDistribution::EnergyDistribution 
      energy_distribution(2);
 
    energy_distribution[0].first = 1.0;
@@ -73,17 +73,17 @@ TEUCHOS_UNIT_TEST( AceLaw4NeutronScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   MonteCarlo::AceLaw4NeutronScatteringEnergyDistribution 
+   MonteCarlo::AceLaw4ParticleScatteringEnergyDistribution 
      distribution( energy_distribution );
 
    TEST_FLOATING_EQUALITY(distribution.sampleEnergy(0.5), 3.0, 1e-15);
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw4NeutronScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw4ParticleScatteringEnergyDistribution, 
 		   sampleEnergy_upper_bound_histogram )
 {
-   MonteCarlo::AceLaw4NeutronScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw4ParticleScatteringEnergyDistribution::EnergyDistribution 
      energy_distribution(2);
 
    energy_distribution[0].first = 1.0;
@@ -129,17 +129,17 @@ TEUCHOS_UNIT_TEST( AceLaw4NeutronScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   MonteCarlo::AceLaw4NeutronScatteringEnergyDistribution 
+   MonteCarlo::AceLaw4ParticleScatteringEnergyDistribution 
      distribution( energy_distribution );
 
    TEST_FLOATING_EQUALITY(distribution.sampleEnergy(2.5), 4.0, 1e-15);
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( AceLaw4NeutronScatteringEnergyDistribution, 
+TEUCHOS_UNIT_TEST( AceLaw4ParticleScatteringEnergyDistribution, 
 		   sampleEnergy_histogram )
 {
-   MonteCarlo::AceLaw4NeutronScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw4ParticleScatteringEnergyDistribution::EnergyDistribution 
      energy_distribution(2);
 
    energy_distribution[0].first = 1.0;
@@ -186,7 +186,7 @@ TEUCHOS_UNIT_TEST( AceLaw4NeutronScatteringEnergyDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   MonteCarlo::AceLaw4NeutronScatteringEnergyDistribution 
+   MonteCarlo::AceLaw4ParticleScatteringEnergyDistribution 
      distribution( energy_distribution );
 
    TEST_FLOATING_EQUALITY(distribution.sampleEnergy(1.5), 3.5, 1e-15);
@@ -208,5 +208,5 @@ int main( int argc, char** argv )
 
 
 //---------------------------------------------------------------------------//
-// tstAceLaw4NeutronScatteringDistribution.cpp
+// tstAceLaw4ParticleScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

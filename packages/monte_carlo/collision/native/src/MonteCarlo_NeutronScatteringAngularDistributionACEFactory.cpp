@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <limits>
+
 // Trilinos Includes
 #include <Teuchos_ArrayView.hpp>
 
@@ -27,11 +30,11 @@ NeutronScatteringAngularDistributionACEFactory::isotropic_angle_cosine_dist(
 
 // Create the angular distribution
 void NeutronScatteringAngularDistributionACEFactory::createDistribution(
-	     const Teuchos::ArrayView<const double>& and_block_array,
-	     const unsigned and_block_array_start_index,
-	     const std::string& table_name,
-	     const NuclearReactionType reaction,
-	     Teuchos::RCP<NeutronScatteringAngularDistribution>& distribution )
+	    const Teuchos::ArrayView<const double>& and_block_array,
+	    const unsigned and_block_array_start_index,
+	    const std::string& table_name,
+	    const NuclearReactionType reaction,
+	    Teuchos::RCP<ParticleScatteringAngularDistribution>& distribution )
 {
   // Make sure the and block array is "valid"
   testPrecondition( and_block_array.size() > 0 );
@@ -49,7 +52,7 @@ void NeutronScatteringAngularDistributionACEFactory::createDistribution(
 		     num_tabulated_energies );
  
   // Initialize the angular distribution array
-  NeutronScatteringAngularDistribution::AngularDistribution
+  ParticleScatteringAngularDistribution::AngularDistribution
     angular_distribution( num_tabulated_energies );
 
   for( unsigned i = 0u; i < energy_grid.size(); ++i )
@@ -134,24 +137,24 @@ void NeutronScatteringAngularDistributionACEFactory::createDistribution(
 
   // Create the angular distribution
   distribution.reset( 
-	    new NeutronScatteringAngularDistribution( angular_distribution ) );
+	   new ParticleScatteringAngularDistribution( angular_distribution ) );
 }
 
 // Create an isotropic angular distribution
 void NeutronScatteringAngularDistributionACEFactory::createIsotropicDistribution(
-	     Teuchos::RCP<NeutronScatteringAngularDistribution>& distribution )
+	    Teuchos::RCP<ParticleScatteringAngularDistribution>& distribution )
 {
-  NeutronScatteringAngularDistribution::AngularDistribution
+  ParticleScatteringAngularDistribution::AngularDistribution
     angular_distribution( 2 );
 
-  angular_distribution[0].first = 1e-11;
+  angular_distribution[0].first = 0.0;
   angular_distribution[0].second = isotropic_angle_cosine_dist;
 
-  angular_distribution[1].first = 20.0;
+  angular_distribution[1].first = std::numeric_limits<double>::max();
   angular_distribution[1].second = isotropic_angle_cosine_dist;
 
   distribution.reset( 
-	    new NeutronScatteringAngularDistribution( angular_distribution ) );
+	   new ParticleScatteringAngularDistribution( angular_distribution ) );
 }
 
 } // end MonteCarlo namespace

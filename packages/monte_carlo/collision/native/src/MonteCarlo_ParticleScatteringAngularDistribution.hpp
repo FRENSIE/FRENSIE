@@ -1,28 +1,26 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_NeutronScatteringAngularDistribution.hpp
+//! \file   MonteCarlo_ParticleScatteringAngularDistribution.hpp
 //! \author Alex Robinson, Alex Bennett
-//! \brief  The neutron scattering angular distribution base class declaration
+//! \brief  The particle scattering angular distribution base class declaration
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef FACEMC_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
-#define FACEMC_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
+#ifndef MONTE_CARLO_PARTICLE_SCATTERING_ANGULAR_DISTRIBUTION
+#define MONTE_CARLO_PARTICLE_SCATTERING_ANGULAR_DISTRIBUTION
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronState.hpp"
-#include "Utility_PhysicalConstants.hpp"
-#include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The angular scattering distribution base class
-//! \todo Write unit test for neutron scattering angular distribution class
-class NeutronScatteringAngularDistribution
+/*! \todo Write unit test for particle scattering angular distribution class
+ */
+class ParticleScatteringAngularDistribution
 {
 
 public:
@@ -33,10 +31,10 @@ public:
   AngularDistribution;
   
   //! Constructor
-  NeutronScatteringAngularDistribution( const AngularDistribution& dist );
+  ParticleScatteringAngularDistribution( const AngularDistribution& dist );
 
   //! Destructor
-  virtual ~NeutronScatteringAngularDistribution()
+  virtual ~ParticleScatteringAngularDistribution()
   { /* ... */ }
 
 
@@ -45,7 +43,7 @@ public:
 
   //! Evaluate the PDF
   double evaluatePDF( const double energy,
-		      const double cm_scattering_angle_cosine ) const;
+		      const double scattering_angle_cosine ) const;
 
 private:
 
@@ -55,8 +53,8 @@ private:
 
 } // end MonteCarlo namespace
 
-#endif // end FACEMC_NEUTRON_SCATTERING_ANGULAR_DISTRIBUTION
+#endif // end MONTE_CARLO_PARTICLE_SCATTERING_ANGULAR_DISTRIBUTION
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_NeutronScatteringAngularDistribution.hpp
+// end MonteCarlo_ParticleScatteringAngularDistribution.hpp
 //---------------------------------------------------------------------------//

@@ -14,7 +14,7 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringAngularDistribution.hpp"
+#include "MonteCarlo_ParticleScatteringAngularDistribution.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
 
 namespace MonteCarlo{
@@ -27,15 +27,15 @@ public:
 
   //! Create the angular distribution
   static void createDistribution( 
-	    const Teuchos::ArrayView<const double>& and_block_array,
-	    const unsigned and_block_array_start_index,
-	    const std::string& table_name,
-	    const NuclearReactionType reaction,
-	    Teuchos::RCP<NeutronScatteringAngularDistribution>& distribution );
-
+	   const Teuchos::ArrayView<const double>& and_block_array,
+	   const unsigned and_block_array_start_index,
+	   const std::string& table_name,
+	   const NuclearReactionType reaction,
+	   Teuchos::RCP<ParticleScatteringAngularDistribution>& distribution );
+  
   //! Create an isotropic angular distribution
   static void createIsotropicDistribution(
-	    Teuchos::RCP<NeutronScatteringAngularDistribution>& distribution );
+	   Teuchos::RCP<ParticleScatteringAngularDistribution>& distribution );
 
 private:
 

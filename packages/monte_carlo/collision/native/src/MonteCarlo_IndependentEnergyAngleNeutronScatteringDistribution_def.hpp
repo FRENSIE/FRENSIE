@@ -18,11 +18,11 @@ namespace MonteCarlo{
 // Constructor
 template<typename SystemConversionPolicy>
 IndependentEnergyAngleNeutronScatteringDistribution<SystemConversionPolicy>::IndependentEnergyAngleNeutronScatteringDistribution( 
-		      const double atomic_weight_ratio,
-		      const Teuchos::RCP<NeutronScatteringEnergyDistribution>&
-		      energy_scattering_distribution,
-		      const Teuchos::RCP<NeutronScatteringAngularDistribution>&
-		      angular_scattering_distribution )
+		     const double atomic_weight_ratio,
+		     const Teuchos::RCP<ParticleScatteringEnergyDistribution>&
+		     energy_scattering_distribution,
+		     const Teuchos::RCP<ParticleScatteringAngularDistribution>&
+		     angular_scattering_distribution )
   : NeutronScatteringDistribution( atomic_weight_ratio ),
     d_energy_scattering_distribution( energy_scattering_distribution ),
     d_angular_scattering_distribution( angular_scattering_distribution )

@@ -16,7 +16,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_IndependentEnergyAngleNeutronScatteringDistribution.hpp"
-#include "MonteCarlo_AceLaw3NeutronScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw3ParticleScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
@@ -41,15 +41,15 @@ void initializeScatteringDistribution(
   raw_scattering_distribution[1].first = 2e1;
   raw_scattering_distribution[1].second = delta_dist;
 
-  Teuchos::RCP<MonteCarlo::NeutronScatteringAngularDistribution> angular_dist(
-                             new MonteCarlo::NeutronScatteringAngularDistribution(
+  Teuchos::RCP<MonteCarlo::ParticleScatteringAngularDistribution> angular_dist(
+                         new MonteCarlo::ParticleScatteringAngularDistribution(
 					       raw_scattering_distribution ) );
 
   // Q value is 1 and A is 1
   // param_a = (A + 1)/A * |Q| = 2.0
   // param_b = (A/(A + 1)^2 = 0.25
-  Teuchos::RCP<MonteCarlo::NeutronScatteringEnergyDistribution> energy_dist( 
-       new MonteCarlo::AceLaw3NeutronScatteringEnergyDistribution( 6.516454, 0.8848775 ) );
+  Teuchos::RCP<MonteCarlo::ParticleScatteringEnergyDistribution> energy_dist( 
+       new MonteCarlo::AceLaw3ParticleScatteringEnergyDistribution( 6.516454, 0.8848775 ) );
   
   scattering_dist.reset( 
    new MonteCarlo::IndependentEnergyAngleNeutronScatteringDistribution<MonteCarlo::CMSystemConversionPolicy>( 

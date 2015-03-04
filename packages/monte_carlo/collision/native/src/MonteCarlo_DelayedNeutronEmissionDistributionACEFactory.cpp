@@ -138,7 +138,7 @@ DelayedNeutronEmissionDistributionACEFactory::initializeEmissionDistributions(
 			   const Teuchos::ArrayView<const double>& dned_block )
 {
   // Create the default (isotropic in lab system)
-  Teuchos::RCP<NeutronScatteringAngularDistribution> 
+  Teuchos::RCP<ParticleScatteringAngularDistribution> 
     default_angular_distribution;
 
   NeutronScatteringAngularDistributionACEFactory::createIsotropicDistribution(
@@ -153,7 +153,7 @@ DelayedNeutronEmissionDistributionACEFactory::initializeEmissionDistributions(
   unsigned dist_index, ace_law;
   
   Teuchos::RCP<NeutronScatteringDistribution> emission_distribution;
-  Teuchos::RCP<NeutronScatteringEnergyDistribution> energy_distribution;
+  Teuchos::RCP<ParticleScatteringEnergyDistribution> energy_distribution;
   
   for( unsigned i = 0u; i < dnedl_block.size(); ++i )
   {

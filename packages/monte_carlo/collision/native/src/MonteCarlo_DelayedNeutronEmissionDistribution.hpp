@@ -15,8 +15,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_NeutronScatteringDistribution.hpp"
-#include "MonteCarlo_NeutronScatteringEnergyDistribution.hpp"
-#include "MonteCarlo_NeutronScatteringAngularDistribution.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 

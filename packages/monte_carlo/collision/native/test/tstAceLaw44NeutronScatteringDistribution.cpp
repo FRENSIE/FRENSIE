@@ -15,12 +15,12 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AceLaw44NeutronScatteringDistribution.hpp"
-#include "MonteCarlo_AceLaw4NeutronScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_AceLaw4ParticleScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_AceLaw44ARDistribution.hpp"
 #include "MonteCarlo_StandardAceLaw44ARDistribution.hpp"
 #include "MonteCarlo_AceLaw44InterpolationPolicy.hpp"
 #include "MonteCarlo_NeutronScatteringDistribution.hpp"
-#include "MonteCarlo_NeutronScatteringEnergyDistribution.hpp"
+#include "MonteCarlo_ParticleScatteringEnergyDistribution.hpp"
 #include "MonteCarlo_LabSystemConversionPolicy.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_HistogramDistribution.hpp"
@@ -34,7 +34,7 @@
 TEUCHOS_UNIT_TEST( AceLaw44NeutronScatteringDistribution, 
 		   sampleAngle )
 {
-   MonteCarlo::AceLaw4NeutronScatteringEnergyDistribution::EnergyDistribution 
+   MonteCarlo::AceLaw4ParticleScatteringEnergyDistribution::EnergyDistribution 
      energy_distribution(2);
 
    Teuchos::Array<Teuchos::RCP<MonteCarlo::AceLaw44ARDistribution> > 
@@ -130,11 +130,11 @@ TEUCHOS_UNIT_TEST( AceLaw44NeutronScatteringDistribution,
 
    Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-   Teuchos::RCP<MonteCarlo::NeutronScatteringEnergyDistribution> 
+   Teuchos::RCP<MonteCarlo::ParticleScatteringEnergyDistribution> 
    energy_scattering_distribution;
 
    energy_scattering_distribution.reset( 
-	            new MonteCarlo::AceLaw4NeutronScatteringEnergyDistribution(
+		   new MonteCarlo::AceLaw4ParticleScatteringEnergyDistribution(
 							 energy_distribution));
 
    MonteCarlo::AceLaw44NeutronScatteringDistribution<MonteCarlo::LabSystemConversionPolicy> 

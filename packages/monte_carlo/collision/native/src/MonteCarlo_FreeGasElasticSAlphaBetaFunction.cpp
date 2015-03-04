@@ -37,7 +37,7 @@ double FreeGasElasticSAlphaBetaFunction::min_exp_arg =
 FreeGasElasticSAlphaBetaFunction::FreeGasElasticSAlphaBetaFunction(
 	      const Teuchos::RCP<Utility::OneDDistribution>& 
 	      zero_temp_elastic_cross_section,
-              const Teuchos::RCP<MonteCarlo::NeutronScatteringAngularDistribution>&
+              const Teuchos::RCP<MonteCarlo::ParticleScatteringAngularDistribution>&
 	      cm_scattering_distribution,
 	      const double A,
 	      const double kT )
