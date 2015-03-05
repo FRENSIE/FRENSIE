@@ -382,8 +382,6 @@ int main( int argc, char** argv )
 
       if( form_factor[i] == 0.0 )
 	form_factor[i] = std::numeric_limits<double>::min();
-
-      std::cout << recoil_momentum[i] << " " << form_factor[i] << std::endl;
     }
   
     Teuchos::RCP<Utility::OneDDistribution> form_factor_dist(

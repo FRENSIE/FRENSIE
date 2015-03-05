@@ -145,9 +145,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   compton_profile_momentum_grid[2] = 1.0;
 
   epr_data_container.setComptonProfileMomentumGrid( 
-					       compton_profile_momentum_grid );
+					    1, compton_profile_momentum_grid );
   
-  TEST_COMPARE_ARRAYS( epr_data_container.getComptonProfileMomentumGrid(),
+  TEST_COMPARE_ARRAYS( epr_data_container.getComptonProfileMomentumGrid( 1 ),
 		       compton_profile_momentum_grid );
 }
 
@@ -177,9 +177,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
   momentum_grid[1] = 0.0;
   momentum_grid[2] = 1.0;
 
-  epr_data_container.setOccupancyNumberMomentumGrid( momentum_grid );
+  epr_data_container.setOccupancyNumberMomentumGrid( 1, momentum_grid );
 
-  TEST_COMPARE_ARRAYS( epr_data_container.getOccupancyNumberMomentumGrid(),
+  TEST_COMPARE_ARRAYS( epr_data_container.getOccupancyNumberMomentumGrid( 1 ),
 		       momentum_grid );
 }
 
@@ -552,11 +552,11 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       1 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
 		       1 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid().size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(),
 		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumberMomentumGrid().size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumberMomentumGrid( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumber( 1 ).size(),
 		       3 );
@@ -637,11 +637,11 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       1 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
 		       1 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid().size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(),
 		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumberMomentumGrid().size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumberMomentumGrid( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumber( 1 ).size(),
 		       3 );
@@ -722,11 +722,11 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       1 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
 		       1 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid().size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(),
 		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumberMomentumGrid().size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumberMomentumGrid( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumber( 1 ).size(),
 		       3 );
@@ -804,11 +804,11 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       1 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getSubshellRelaxationProbabilities( 1 ).size(),
 		       1 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid().size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfileMomentumGrid( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(),
 		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumberMomentumGrid().size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumberMomentumGrid( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumber( 1 ).size(),
 		       3 );
