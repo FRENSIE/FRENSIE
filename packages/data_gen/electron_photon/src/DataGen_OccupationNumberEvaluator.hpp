@@ -28,8 +28,9 @@ public:
   
   //! Constructor
   OccupationNumberEvaluator(
-		    const Teuchos::Array<double> electron_momentum_projections,
-		    const Teuchos::Array<double> compton_profile );
+		   const Teuchos::Array<double>& electron_momentum_projections,
+		   const Teuchos::Array<double>& compton_profile,
+		   const double norm_constant_precision = 1e-6 );
 
   //! Destructor
   ~OccupationNumberEvaluator()

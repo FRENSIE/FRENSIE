@@ -75,13 +75,15 @@ public:
 					       const unsigned subshell ) const;
 
   //! Return the Compton profile momentum grid 
-  const std::vector<double>& getComptonProfileMomentumGrid() const;
+  const std::vector<double>& getComptonProfileMomentumGrid(
+					       const unsigned subshell ) const;
 
   //! Return the Compton profile for a subshell
   const std::vector<double>& getComptonProfile(const unsigned subshell ) const;
 
   //! Return the occupancy number momentum grid 
-  const std::vector<double>& getOccupancyNumberMomentumGrid() const;
+  const std::vector<double>& getOccupancyNumberMomentumGrid(
+					       const unsigned subshell ) const;
   
   //! Return the occupancy number for a subshell
   const std::vector<double>& getOccupancyNumber(
@@ -209,7 +211,8 @@ protected:
 			 const std::vector<double>& relaxation_probabilities );
   
   //! Set the Compton profile momentum grid 
-  void setComptonProfileMomentumGrid( 
+  void setComptonProfileMomentumGrid(
+		    const unsigned subshell,
 		    const std::vector<double>& compton_profile_momentum_grid );
   
   //! Set the Compton profile for a subshell
@@ -218,6 +221,7 @@ protected:
   
   //! Set the occupancy number momentum grid 
   void setOccupancyNumberMomentumGrid( 
+		   const unsigned subshell,
 		   const std::vector<double>& occupancy_number_momentum_grid );
   
   //! Set the occupancy number for a subshell
@@ -361,13 +365,13 @@ private:
   std::map<unsigned,std::vector<double> > d_relaxation_probabilities;
 
   // The Compton profile momentum grids (me*c units)
-  std::vector<double> d_compton_profile_momentum_grid;
+  std::map<unsigned,std::vector<double> > d_compton_profile_momentum_grids;
 
   // The subshell Compton profiles ((me*c)^-1 units)
   std::map<unsigned,std::vector<double> > d_compton_profiles;
 
   // The occupancy number momentum grids
-  std::vector<double> d_occupancy_number_momentum_grid;
+  std::map<unsigned,std::vector<double> > d_occupancy_number_momentum_grids;
 
   // The subshell occupancy numbers
   std::map<unsigned,std::vector<double> > d_occupancy_numbers;

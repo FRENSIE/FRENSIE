@@ -37,12 +37,12 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
 				       d_relaxation_particle_energies );
   ar & boost::serialization::make_nvp( "relaxation_probabilities", 
 				       d_relaxation_probabilities );
-  ar & boost::serialization::make_nvp( "compton_profile_momentum_grid", 
-				       d_compton_profile_momentum_grid );
+  ar & boost::serialization::make_nvp( "compton_profile_momentum_grids", 
+				       d_compton_profile_momentum_grids );
   ar & boost::serialization::make_nvp( "comton_profiles", 
 				       d_compton_profiles );
-  ar & boost::serialization::make_nvp( "occupancy_number_momentum_grid", 
-				       d_occupancy_number_momentum_grid );
+  ar & boost::serialization::make_nvp( "occupancy_number_momentum_grids", 
+				       d_occupancy_number_momentum_grids );
   ar & boost::serialization::make_nvp( "occupancy_numbers",
 				       d_occupancy_numbers );
   ar & boost::serialization::make_nvp( "waller_hartree_scattering_function_momentum_grid",
@@ -110,12 +110,12 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
 				       d_relaxation_particle_energies );
   ar & boost::serialization::make_nvp( "relaxation_probabilities", 
 				       d_relaxation_probabilities );
-  ar & boost::serialization::make_nvp( "compton_profile_momentum_grid", 
-				       d_compton_profile_momentum_grid );
+  ar & boost::serialization::make_nvp( "compton_profile_momentum_grids", 
+				       d_compton_profile_momentum_grids );
   ar & boost::serialization::make_nvp( "comton_profiles", 
 				       d_compton_profiles );
-  ar & boost::serialization::make_nvp( "occupancy_number_momentum_grid", 
-				       d_occupancy_number_momentum_grid );
+  ar & boost::serialization::make_nvp( "occupancy_number_momentum_grids", 
+				       d_occupancy_number_momentum_grids );
   ar & boost::serialization::make_nvp( "occupancy_numbers",
 				       d_occupancy_numbers );
   ar & boost::serialization::make_nvp( "waller_hartree_scattering_function_momentum_grid",

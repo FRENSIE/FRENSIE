@@ -138,9 +138,14 @@ ElectronPhotonRelaxationDataContainer::getSubshellRelaxationProbabilities(
 
 // Return the Compton profile momentum grid for a subshell
 const std::vector<double>& 
-ElectronPhotonRelaxationDataContainer::getComptonProfileMomentumGrid() const
+ElectronPhotonRelaxationDataContainer::getComptonProfileMomentumGrid(
+					        const unsigned subshell ) const
 {
-  return d_compton_profile_momentum_grid;
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() );
+  
+  return d_compton_profile_momentum_grids.find( subshell )->second;
 }
 
 // Return the Compton profile for a subshell
@@ -157,9 +162,14 @@ ElectronPhotonRelaxationDataContainer::getComptonProfile(
 
 // Return the occupancy number momentum grid for a subshell
 const std::vector<double>& 
-ElectronPhotonRelaxationDataContainer::getOccupancyNumberMomentumGrid() const
+ElectronPhotonRelaxationDataContainer::getOccupancyNumberMomentumGrid(
+						const unsigned subshell ) const
 {
-  return d_occupancy_number_momentum_grid;
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != 
+		    d_subshells.end() );
+  
+  return d_occupancy_number_momentum_grids.find( subshell )->second;
 }
   
 // Return the occupancy number for a subshell
@@ -453,9 +463,12 @@ void ElectronPhotonRelaxationDataContainer::setSubshellRelaxationProbabilities(
 }
   
 // Set the Compton profile momentum grid for a subshell
-void ElectronPhotonRelaxationDataContainer::setComptonProfileMomentumGrid( 
+void ElectronPhotonRelaxationDataContainer::setComptonProfileMomentumGrid(
+		     const unsigned subshell,
 		     const std::vector<double>& compton_profile_momentum_grid )
 {
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the momentum grid is valid
   testPrecondition( compton_profile_momentum_grid.size() > 1 );
   testPrecondition( Utility::Sort::isSortedAscending( 
@@ -463,7 +476,7 @@ void ElectronPhotonRelaxationDataContainer::setComptonProfileMomentumGrid(
 				       compton_profile_momentum_grid.end() ) );
   testPrecondition( compton_profile_momentum_grid.front() == -1.0 );
 
-  d_compton_profile_momentum_grid = compton_profile_momentum_grid;
+  d_compton_profile_momentum_grids[subshell] = compton_profile_momentum_grid;
 }
   
 // Set the Compton profile for a subshell
@@ -486,8 +499,11 @@ void ElectronPhotonRelaxationDataContainer::setComptonProfile(
   
 // Set the occupancy number momentum grid for a subshell
 void ElectronPhotonRelaxationDataContainer::setOccupancyNumberMomentumGrid( 
+		    const unsigned subshell,
 		    const std::vector<double>& occupancy_number_momentum_grid )
 {
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the occupancy number momentum grid is valid
   testPrecondition( occupancy_number_momentum_grid.size() > 1 );
   testPrecondition( Utility::Sort::isSortedAscending( 
@@ -495,7 +511,7 @@ void ElectronPhotonRelaxationDataContainer::setOccupancyNumberMomentumGrid(
 					occupancy_number_momentum_grid.end()));
   testPrecondition( occupancy_number_momentum_grid.front() == -1.0 );
 
-  d_occupancy_number_momentum_grid = occupancy_number_momentum_grid;
+  d_occupancy_number_momentum_grids[subshell] = occupancy_number_momentum_grid;
 }
   
 // Set the occupancy number for a subshell
