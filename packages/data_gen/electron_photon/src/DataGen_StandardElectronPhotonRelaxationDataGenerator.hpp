@@ -27,7 +27,11 @@ public:
   //! Constructor
   StandardElectronPhotonRelaxationDataGenerator( 
 	   const unsigned atomic_number,
-	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data );
+	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
+	   const double min_photon_energy,
+	   const double occupation_number_evaluation_tolerance,
+	   const double subshell_incoherent_evaluation_tolerance,
+	   const double grid_tolerance = 0.001 );
 
   //! Destructor
   ~StandardElectronPhotonRelaxationDataGenerator()
@@ -94,28 +98,71 @@ private:
 			   std::vector<double>& half_profile ) const;
 
   // Extract the average photon heating numbers
-  void extractAveragePhotonHeatingNumbers(
-	Teuchos::RCP<const Utility::OneDDistribution>& heating_numbers ) const;
+  void extractCrossSection(
+	  Teuchos::ArrayView<const double> raw_energy_grid,
+	  Teuchos::ArrayView<const double> raw_cross_section,
+	  Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const;
 
-  // Extract the Waller-Hartree incoherent cross section
-  void extractWallerHartreeIncoherentCrossSection(
-	  Teuchos::RCP<const Utility::OneDDistribution>& incoherent_cs ) const;
+  // Extract the subshell photoelectric cross sections
+  void extractSubshellPhotoelectricCrossSections( Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const Utility::OneDDistribution> >& cross_sections ) const;
 
-  // Extract the Waller-Hartree coherent cross section
-  void extractWallerHartreeCoherentCrossSection(
-	    Teuchos::RCP<const Utility::OneDDistribution>& coherent_cs ) const;
+  // Create the subshell impulse approx incoherent cross section evaluators
+  void createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
+     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+     Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const SubshellIncoherentCrossSectionEvaluator> > >& evaluators ) const;
 
-  // Extract the pair production cross section
-  void extractPairProductionCrossSection(
-     Teuchos::RCP<const Utility::OneDDistribution>& pair_production_cs ) const;
+  // Initialize the photon union energy grid
+  void initializePhotonUnionEnergyGrid( 
+     const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
+     std::list<double>& union_energy_grid ) const;
 
-  // Extract the subshell photoelectric effect cross section
-  void extractSubshellPhotoelectricEffectCrossSection(
-       const unsigned subshell,
-       Teuchos::RCP<const Utility::OneDDistribution>& photoelectric_cs ) const;
+  // Create the cross section on the union energy grid
+  void createCrossSectionOnUnionEnergyGrid(
+   const std::list<double>& union_energy_grid,
+   const Teuchos::RCP<const Utility::OneDDistribution>& original_cross_section,
+   std::vector<double>& cross_section ) const;
 
-  // The ace epr data
+  // Create the cross section on the union energy grid
+  void createCrossSectionOnUnionEnergyGrid(
+	     const std::list<double>& union_energy_grid,
+	     const Teuchos::RCP<const SubshellIncoherentCrossSectionEvaluator>&
+	     original_cross_section,
+	     std::vector<double>& cross_section ) const;
+
+  // Calculate the total photoelectric cross section
+  void calculateTotalPhotoelectricCrossSection( 
+	                   Data::ElectronPhotonRelaxationVolatileDataContainer&
+			   data_container ) const;
+
+  // Calculate the total impulse approx. incoherent cross section
+  void calculateImpulseApproxTotalIncoherentCrossSection(
+		           Data::ElectronPhotonRelaxationVolatileDataContainer&
+			   data_container ) const;
+
+  // Calculate the Waller-Hartree total cross section
+  void calculateWallerHartreeTotalCrossSection(
+		          Data::ElectronPhotonRelaxationVolatileDataContainer&
+			  data_container ) const;
+
+  // Calculate the impulse approx total cross section
+  void calculateImpulseApproxTotalCrossSection(
+		          Data::ElectronPhotonRelaxationVolatileDataContainer&
+			  data_container ) const;
+
+  // The ACE data
   Teuchos::RCP<const Data::XSSEPRDataExtractor> d_ace_epr_data;
+
+  // The min photon energy
+  double d_min_photon_energy;
+
+  // The occupation number evaluation tolerance
+  double d_occupation_number_evaluation_tolerance;
+
+  // The subshell incoherent evaluation tolerance
+  double d_subshell_incoherent_evaluation_tolerance;
+  
+  // The grid tolerance
+  double d_grid_tolerance;
 };
 
 // Test if a value is greater than or equal to one
