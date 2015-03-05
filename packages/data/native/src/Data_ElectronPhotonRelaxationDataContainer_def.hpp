@@ -59,32 +59,18 @@ void ElectronPhotonRelaxationDataContainer::save( Archive& ar,
 				       d_average_photon_heating_numbers );
   ar & boost::serialization::make_nvp( "waller_hartree_incoherent_cross_section",
 				       d_waller_hartree_incoherent_cross_section );
-  ar & boost::serialization::make_nvp( "waller_hartree_incoherent_cross_section_threshold_index",
-				       d_waller_hartree_incoherent_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "impulse_approx_incoherent_cross_section",
 				       d_impulse_approx_incoherent_cross_section );
-  ar & boost::serialization::make_nvp( "impulse_approx_incoherent_cross_section_threshold_index",
-				       d_impulse_approx_incoherent_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "impulse_approx_subshell_incoherent_cross_sections",
 				       d_impulse_approx_subshell_incoherent_cross_sections );
-  ar & boost::serialization::make_nvp( "d_impulse_approx_subshell_incoherent_cross_section_theshold_indices",
-				       d_impulse_approx_subshell_incoherent_cross_section_theshold_indices );
   ar & boost::serialization::make_nvp( "waller_hartree_coherent_cross_section",
 				       d_waller_hartree_coherent_cross_section );
-  ar & boost::serialization::make_nvp( "waller_hartree_coherent_cross_section_threshold_index",
-				       d_waller_hartree_coherent_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "pair_production_cross_section",
 				       d_pair_production_cross_section );
-  ar & boost::serialization::make_nvp( "pair_production_cross_section_threshold_index",
-				       d_pair_production_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "photoelectric_cross_section",
 				       d_photoelectric_cross_section );
-  ar & boost::serialization::make_nvp( "photoelectric_cross_section_threshold_index",
-				       d_photoelectric_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "subshell_photoelectric_cross_sections",
 				       d_subshell_photoelectric_cross_sections );
-  ar & boost::serialization::make_nvp( "subshell_photoelectric_cross_section_threshold_indices",
-				       d_subshell_photoelectric_cross_section_threshold_indices );
   ar & boost::serialization::make_nvp( "waller_hartree_total_cross_section",
 				       d_waller_hartree_total_cross_section );
   ar & boost::serialization::make_nvp( "impulse_approx_total_cross_section",
@@ -132,32 +118,18 @@ void ElectronPhotonRelaxationDataContainer::load( Archive& ar,
 				       d_average_photon_heating_numbers );
   ar & boost::serialization::make_nvp( "waller_hartree_incoherent_cross_section",
 				       d_waller_hartree_incoherent_cross_section );
-  ar & boost::serialization::make_nvp( "waller_hartree_incoherent_cross_section_threshold_index",
-				       d_waller_hartree_incoherent_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "impulse_approx_incoherent_cross_section",
 				       d_impulse_approx_incoherent_cross_section );
-  ar & boost::serialization::make_nvp( "impulse_approx_incoherent_cross_section_threshold_index",
-				       d_impulse_approx_incoherent_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "impulse_approx_subshell_incoherent_cross_sections",
 				       d_impulse_approx_subshell_incoherent_cross_sections );
-  ar & boost::serialization::make_nvp( "d_impulse_approx_subshell_incoherent_cross_section_theshold_indices",
-				       d_impulse_approx_subshell_incoherent_cross_section_theshold_indices );
   ar & boost::serialization::make_nvp( "waller_hartree_coherent_cross_section",
 				       d_waller_hartree_coherent_cross_section );
-  ar & boost::serialization::make_nvp( "waller_hartree_coherent_cross_section_threshold_index",
-				       d_waller_hartree_coherent_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "pair_production_cross_section",
 				       d_pair_production_cross_section );
-  ar & boost::serialization::make_nvp( "pair_production_cross_section_threshold_index",
-				       d_pair_production_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "photoelectric_cross_section",
 				       d_photoelectric_cross_section );
-  ar & boost::serialization::make_nvp( "photoelectric_cross_section_threshold_index",
-				       d_photoelectric_cross_section_threshold_index );
   ar & boost::serialization::make_nvp( "subshell_photoelectric_cross_sections",
 				       d_subshell_photoelectric_cross_sections );
-  ar & boost::serialization::make_nvp( "subshell_photoelectric_cross_section_threshold_indices",
-				       d_subshell_photoelectric_cross_section_threshold_indices );
   ar & boost::serialization::make_nvp( "waller_hartree_total_cross_section",
 				       d_waller_hartree_total_cross_section );
   ar & boost::serialization::make_nvp( "impulse_approx_total_cross_section",
