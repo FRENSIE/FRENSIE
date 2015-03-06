@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_ComptonProfileHelpers_def.hpp
+//! \file   MonteCarlo_ComptonProfileHelpers_def.hpp
 //! \author Alex Robinson
 //! \brief  The Compton profile helper function template definitions
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_COMPTON_PROFILE_HELPERS_DEF_HPP
-#define DATA_GEN_COMPTON_PROFILE_HELPERS_DEF_HPP
+#ifndef MONTE_CARLO_COMPTON_PROFILE_HELPERS_DEF_HPP
+#define MONTE_CARLO_COMPTON_PROFILE_HELPERS_DEF_HPP
 
 // Std Lib Includes
 #include <iterator>
@@ -17,8 +17,7 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 
-
-namespace DataGen{
+namespace MonteCarlo{
 
 // Create a full profile from a doubled half profile
 /*! \details Compton profiles are typically only given on the positive half
@@ -33,7 +32,7 @@ template<typename GridIterator,
 	 typename ProfileIterator, 
 	 typename STLCompliantArrayA,
 	 typename STLCompliantArrayB>
-void createFullProfileFromDoubledHalfProfile( 
+void createFullProfileFromHalfProfile( 
 			      const GridIterator half_momentum_grid_start,
 			      const GridIterator half_momentum_grid_end,
 			      const ProfileIterator half_profile_start,
@@ -47,7 +46,7 @@ void createFullProfileFromDoubledHalfProfile(
 				   half_momentum_grid_end ) ==
 		    std::distance( half_profile_start, half_profile_end ) );
   // Make sure the half momentum grid starts at 0.0
-  testPrecondition( *half_momentum_grid == 0.0 );
+  testPrecondition( *half_momentum_grid_start == 0.0 );
   // Make sure the half profile grid is valid
   testPrecondition( Utility::Sort::isSortedAscending(half_momentum_grid_start,
 						     half_momentum_grid_end) );
@@ -145,13 +144,15 @@ void createFullProfileFromDoubledHalfProfile(
     double processed_slope = (log(profile_1)-log(profile_0))/
       (momentum_1-momentum_0);
 
-    double extrapolated_profile = exp( log(profile_0) +
-				       processed_slope*(1.0-momentum_0) );
+    double extrapolated_profile = exp( log(profile_0) +processed_slope*(
+     Utility::PhysicalConstants::inverse_fine_structure_constant-momentum_0) );
 
-    full_momentum_grid.front() = -1.0;
+    full_momentum_grid.front() = 
+      -Utility::PhysicalConstants::inverse_fine_structure_constant;
     full_profile.front() = extrapolated_profile;
 
-    full_momentum_grid.back() = 1.0;
+    full_momentum_grid.back() = 
+      Utility::PhysicalConstants::inverse_fine_structure_constant;
     full_profile.back() = extrapolated_profile;
   }
 }
@@ -190,10 +191,10 @@ void convertProfileToInverseMeCUnits( ProfileIterator profile_start,
   }
 }
 
-} // end DataGen namespace
+} // end MonteCarlo namespace
 
-#endif // end DATA_GEN_COMPTON_PROFILE_HELPERS_DEF_HPP
+#endif // end MONTE_CARLO_COMPTON_PROFILE_HELPERS_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_ComptonProfileHelpers_def.hpp
+// end MonteCarlo_ComptonProfileHelpers_def.hpp
 //---------------------------------------------------------------------------//

@@ -23,6 +23,7 @@
 // FRENSIE Includes
 #include "DataGen_SubshellIncoherentCrossSectionEvaluator.hpp"
 #include "DataGen_OccupationNumberEvaluator.hpp"
+#include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
@@ -907,18 +908,38 @@ int main( int argc, char** argv )
     unsigned profile_index = lswd_block[k_shell_index]; // ignore interp param
     
     unsigned num_mom_vals = swd_block[profile_index];
+    
+    Teuchos::ArrayView<const double> raw_momentum_grid = 
+      swd_block( profile_index + 1, num_mom_vals );
 
-    Teuchos::Array<double> compton_profile = 
+    Teuchos::ArrayView<const double> raw_compton_profile = 
       swd_block( profile_index + 1 + num_mom_vals, num_mom_vals );
 
-    // Divide profile values by 2 since they are multiplied by 2 in epr tables
-    for( unsigned i = 0u; i < compton_profile.size(); ++i )
-      compton_profile[i] /= 2.0;
-
-    DataGen::OccupationNumberEvaluator occupation_number_h_k(
-				  swd_block( profile_index + 1, num_mom_vals ),
-				  compton_profile );
+    std::cout.precision( 18 );
+    for( unsigned i = 0; i < raw_momentum_grid.size(); ++i )
+      std::cout << raw_momentum_grid[i] << " " << raw_compton_profile[i] << std::endl;
     
+    std::vector<double> full_momentum_grid, full_compton_profile;
+
+    MonteCarlo::createFullProfileFromHalfProfile( raw_momentum_grid.begin(),
+						  raw_momentum_grid.end(),
+						  raw_compton_profile.begin(),
+						  raw_compton_profile.end(),
+						  full_momentum_grid,
+						  full_compton_profile,
+						  true );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
+					       full_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( full_compton_profile.begin(),
+						 full_compton_profile.end() );
+    
+    DataGen::OccupationNumberEvaluator occupation_number_h_k(
+							  full_momentum_grid,
+							  full_compton_profile,
+							  1e-4 );
+
     // Create the occupation number grid
     boost::function<double (double pz)> grid_function = 
       boost::bind( &DataGen::OccupationNumberEvaluator::evaluateOccupationNumber,
@@ -1057,16 +1078,32 @@ int main( int argc, char** argv )
     
     unsigned num_mom_vals = swd_block[profile_index];
 
-    Teuchos::Array<double> compton_profile = 
+    Teuchos::ArrayView<const double> raw_momentum_grid = 
+      swd_block( profile_index + 1, num_mom_vals );
+
+    Teuchos::ArrayView<const double> raw_compton_profile = 
       swd_block( profile_index + 1 + num_mom_vals, num_mom_vals );
 
-    // Divide profile values by 2 since they are multiplied by 2 in epr tables
-    for( unsigned i = 0u; i < compton_profile.size(); ++i )
-      compton_profile[i] /= 2.0;
+    std::vector<double> full_momentum_grid, full_compton_profile;
 
+    MonteCarlo::createFullProfileFromHalfProfile( raw_momentum_grid.begin(),
+						  raw_momentum_grid.end(),
+						  raw_compton_profile.begin(),
+						  raw_compton_profile.end(),
+						  full_momentum_grid,
+						  full_compton_profile,
+						  true );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
+					       full_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( full_compton_profile.begin(),
+						 full_compton_profile.end() );
+    
     DataGen::OccupationNumberEvaluator occupation_number_b_k(
-				  swd_block( profile_index + 1, num_mom_vals ),
-				  compton_profile );
+							  full_momentum_grid,
+							  full_compton_profile,
+							  1e-4 );
 
     // Pull out the l1-shell compton profile for boron
     unsigned l1_shell_index = converter->convertSubshellToIndex(
@@ -1076,16 +1113,31 @@ int main( int argc, char** argv )
     
     num_mom_vals = swd_block[profile_index];
 
-    compton_profile = 
+    raw_momentum_grid = swd_block( profile_index + 1, num_mom_vals );
+
+    raw_compton_profile = 
       swd_block( profile_index + 1 + num_mom_vals, num_mom_vals );
 
-    // Divide profile values by 2 since they are multiplied by 2 in epr tables
-    for( unsigned i = 0u; i < compton_profile.size(); ++i )
-      compton_profile[i] /= 2.0;
+    full_momentum_grid, full_compton_profile;
 
+    MonteCarlo::createFullProfileFromHalfProfile( raw_momentum_grid.begin(),
+						  raw_momentum_grid.end(),
+						  raw_compton_profile.begin(),
+						  raw_compton_profile.end(),
+						  full_momentum_grid,
+						  full_compton_profile,
+						  true );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
+					       full_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( full_compton_profile.begin(),
+						 full_compton_profile.end() );
+    
     DataGen::OccupationNumberEvaluator occupation_number_b_l1(
-				  swd_block( profile_index + 1, num_mom_vals ),
-				  compton_profile );
+							  full_momentum_grid,
+							  full_compton_profile,
+							  1e-4 );
 
     // Pull out the l2-shell compton profile for boron
     unsigned l2_shell_index = converter->convertSubshellToIndex(
@@ -1095,16 +1147,31 @@ int main( int argc, char** argv )
     
     num_mom_vals = swd_block[profile_index];
 
-    compton_profile = 
+    raw_momentum_grid = swd_block( profile_index + 1, num_mom_vals );
+
+    raw_compton_profile = 
       swd_block( profile_index + 1 + num_mom_vals, num_mom_vals );
 
-    // Divide profile values by 2 since they are multiplied by 2 in epr tables
-    for( unsigned i = 0u; i < compton_profile.size(); ++i )
-      compton_profile[i] /= 2.0;
+    full_momentum_grid, full_compton_profile;
 
+    MonteCarlo::createFullProfileFromHalfProfile( raw_momentum_grid.begin(),
+						  raw_momentum_grid.end(),
+						  raw_compton_profile.begin(),
+						  raw_compton_profile.end(),
+						  full_momentum_grid,
+						  full_compton_profile,
+						  true );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
+					       full_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( full_compton_profile.begin(),
+						 full_compton_profile.end() );
+    
     DataGen::OccupationNumberEvaluator occupation_number_b_l2(
-				  swd_block( profile_index + 1, num_mom_vals ),
-				  compton_profile );
+							  full_momentum_grid,
+							  full_compton_profile,
+							  1e-4 );
 
     // Pull out the l3-shell compton profile for boron
     unsigned l3_shell_index = converter->convertSubshellToIndex(
@@ -1114,16 +1181,31 @@ int main( int argc, char** argv )
     
     num_mom_vals = swd_block[profile_index];
 
-    compton_profile = 
+    raw_momentum_grid = swd_block( profile_index + 1, num_mom_vals );
+
+    raw_compton_profile = 
       swd_block( profile_index + 1 + num_mom_vals, num_mom_vals );
 
-    // Divide profile values by 2 since they are multiplied by 2 in epr tables
-    for( unsigned i = 0u; i < compton_profile.size(); ++i )
-      compton_profile[i] /= 2.0;
+    full_momentum_grid, full_compton_profile;
 
+    MonteCarlo::createFullProfileFromHalfProfile( raw_momentum_grid.begin(),
+						  raw_momentum_grid.end(),
+						  raw_compton_profile.begin(),
+						  raw_compton_profile.end(),
+						  full_momentum_grid,
+						  full_compton_profile,
+						  true );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
+					       full_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( full_compton_profile.begin(),
+						 full_compton_profile.end() );
+    
     DataGen::OccupationNumberEvaluator occupation_number_b_l3(
-				  swd_block( profile_index + 1, num_mom_vals ),
-				  compton_profile );
+							  full_momentum_grid,
+							  full_compton_profile,
+							  1e-4 );
     
     // Create the occupation number grids for the k-shell
     boost::function<double (double pz)> grid_function = 

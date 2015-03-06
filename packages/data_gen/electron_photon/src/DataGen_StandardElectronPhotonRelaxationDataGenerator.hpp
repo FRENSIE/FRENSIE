@@ -9,12 +9,18 @@
 #ifndef DATA_GEN_STANDARD_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 #define DATA_GEN_STANDARD_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 
+// Std Lib Includes
+#include <utility>
+
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
+#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "DataGen_ElectronPhotonRelaxationDataGenerator.hpp"
+#include "DataGen_SubshellIncoherentCrossSectionEvaluator.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Utility_OneDDistribution.hpp"
 
 namespace DataGen{
 
@@ -87,7 +93,7 @@ private:
   // Set the transition data
   void setTransitionData( const unsigned subshell,
 			  const unsigned transitions,
-			  const unsigned subshell_data_start_index;
+			  const unsigned subshell_data_start_index,
 			  Data::ElectronPhotonRelaxationVolatileDataContainer&
 			  data_container ) const;
 
@@ -104,7 +110,7 @@ private:
 	  Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const;
 
   // Extract the subshell photoelectric cross sections
-  void extractSubshellPhotoelectricCrossSections( Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const Utility::OneDDistribution> >& cross_sections ) const;
+  void extractSubshellPhotoelectricCrossSections( Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const Utility::OneDDistribution> > >& cross_sections ) const;
 
   // Create the subshell impulse approx incoherent cross section evaluators
   void createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
@@ -120,14 +126,16 @@ private:
   void createCrossSectionOnUnionEnergyGrid(
    const std::list<double>& union_energy_grid,
    const Teuchos::RCP<const Utility::OneDDistribution>& original_cross_section,
-   std::vector<double>& cross_section ) const;
+   std::vector<double>& cross_section,
+   unsigned& threshold_index ) const;
 
   // Create the cross section on the union energy grid
   void createCrossSectionOnUnionEnergyGrid(
 	     const std::list<double>& union_energy_grid,
 	     const Teuchos::RCP<const SubshellIncoherentCrossSectionEvaluator>&
 	     original_cross_section,
-	     std::vector<double>& cross_section ) const;
+	     std::vector<double>& cross_section,
+	     unsigned& threshold_index ) const;
 
   // Calculate the total photoelectric cross section
   void calculateTotalPhotoelectricCrossSection( 
@@ -148,6 +156,9 @@ private:
   void calculateImpulseApproxTotalCrossSection(
 		          Data::ElectronPhotonRelaxationVolatileDataContainer&
 			  data_container ) const;
+
+  // The threshold energy nudge factor
+  static const double s_threshold_energy_nudge_factor;
 
   // The ACE data
   Teuchos::RCP<const Data::XSSEPRDataExtractor> d_ace_epr_data;
@@ -171,6 +182,13 @@ StandardElectronPhotonRelaxationDataGenerator::greaterThanOrEqualToOne(
 							   const double value )
 {
   return value >= 1.0;
+}
+
+// The if a value is not equal to zero
+inline bool StandardElectronPhotonRelaxationDataGenerator::notEqualZero( 
+							   const double value )
+{
+  return value != 0.0;
 }
 
 } // end DataGen namespace
