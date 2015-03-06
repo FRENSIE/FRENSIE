@@ -1,18 +1,18 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_ComptonProfileHelpers.cpp
+//! \file   MonteCarlo_ComptonProfileHelpers.cpp
 //! \author Alex Robinson
 //! \brief  The Compton profile helper function declarations.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_COMPTON_PROFILE_HELPERS_HPP
-#define DATA_GEN_COMPTON_PROFILE_HELPERS_HPP
+#ifndef MONTE_CARLO_COMPTON_PROFILE_HELPERS_HPP
+#define MONTE_CARLO_COMPTON_PROFILE_HELPERS_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 
-namespace DataGen{
+namespace MonteCarlo{
 
 //! Create a full profile from a doubled half profile
 template<typename GridIterator, 
@@ -38,18 +38,18 @@ template<typename ProfileIterator>
 void convertProfileToInverseMeCUnits( ProfileIterator profile_start,
 				      ProfileIterator profile_end );
 
-} // end DataGen namespace
+} // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
 // Template Includes
 //---------------------------------------------------------------------------//
 
-#include "DataGen_ComptonProfileHelpers_def.hpp"
+#include "MonteCarlo_ComptonProfileHelpers_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end DATA_GEN_COMPTON_PROFILE_HELPERS_HPP
+#endif // end MONTE_CARLO_COMPTON_PROFILE_HELPERS_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_ComptonProfileHelpers.hpp
+// end MonteCarlo_ComptonProfileHelpers.hpp
 //---------------------------------------------------------------------------//

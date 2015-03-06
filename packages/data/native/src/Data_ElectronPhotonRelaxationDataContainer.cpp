@@ -232,11 +232,25 @@ ElectronPhotonRelaxationDataContainer::getWallerHartreeIncoherentCrossSection() 
   return d_waller_hartree_incoherent_cross_section;
 }
 
+// Return the WH incoherent photon cross section threshold energy bin index
+unsigned
+ElectronPhotonRelaxationDataContainer::getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex() const
+{
+  return d_waller_hartree_incoherent_cross_section_threshold_index;
+}
+
 // Return the impluse approx. (IA) incoherent photon cross section
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getImpulseApproxIncoherentCrossSection() const
 {
   return d_impulse_approx_incoherent_cross_section;
+}
+
+// Return the IA incoherent photon cross section threshold energy bin index
+unsigned
+ElectronPhotonRelaxationDataContainer::getImpulseApproxIncoherentCrossSectionThresholdEnergyIndex() const
+{
+  return d_impulse_approx_incoherent_cross_section_threshold_index;
 }
 
 // Return the subshell Impulse approx. incoherent photon cross section
@@ -251,11 +265,30 @@ ElectronPhotonRelaxationDataContainer::getImpulseApproxSubshellIncoherentCrossSe
   return d_impulse_approx_subshell_incoherent_cross_sections.find( subshell )->second;
 }
 
+// Return the subshell IA incoherent photon cs threshold energy bin index
+unsigned
+ElectronPhotonRelaxationDataContainer::getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( 
+					        const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() );
+
+  return d_impulse_approx_subshell_incoherent_cross_section_theshold_indices.find( subshell )->second;
+}
+
 // Return the Waller-Hartree coherent cross section
 const std::vector<double>&
 ElectronPhotonRelaxationDataContainer::getWallerHartreeCoherentCrossSection() const
 {
   return d_waller_hartree_coherent_cross_section;
+}
+
+// Return the Waller-Hartree coherent cs threshold energy bin index
+unsigned
+ElectronPhotonRelaxationDataContainer::getWallerHartreeCoherentCrossSectionThresholdEnergyIndex() const
+{
+  return d_waller_hartree_coherent_cross_section_threshold_index;
 }
 
 // Return the pair production cross section
@@ -265,10 +298,22 @@ ElectronPhotonRelaxationDataContainer::getPairProductionCrossSection() const
   return d_pair_production_cross_section;
 }
 
+// Return the pair production cross section threshold energy bin index
+unsigned ElectronPhotonRelaxationDataContainer::getPairProductionCrossSectionThresholdEnergyIndex() const
+{
+  return d_pair_production_cross_section_threshold_index;
+}
+
 // Return the Photoelectric effect cross section
 const std::vector<double>& ElectronPhotonRelaxationDataContainer::getPhotoelectricCrossSection() const
 {
   return d_photoelectric_cross_section;
+}
+
+// Return the Photoelectric effect cross section theshold energy bin index
+unsigned ElectronPhotonRelaxationDataContainer::getPhotoelectricCrossSectionThresholdEnergyIndex() const
+{
+  return d_photoelectric_cross_section_threshold_index;
 }
 
 // Return the Photoelectric effect cross section for a subshell
@@ -281,6 +326,18 @@ ElectronPhotonRelaxationDataContainer::getSubshellPhotoelectricCrossSection(
 		    d_subshells.end() );
 
   return d_subshell_photoelectric_cross_sections.find( subshell )->second;
+}
+
+// Return the subshell Photoelectric effect cross section threshold index
+unsigned
+ElectronPhotonRelaxationDataContainer::getSubshellPhotoelectricCrossSectionThresholdEnergyIndex( 
+					        const unsigned subshell ) const
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) !=
+		    d_subshells.end() );
+
+  return d_subshell_photoelectric_cross_section_threshold_indices.find( subshell )->second;
 }
 
 // Return the Waller-Hartree total cross section
@@ -431,7 +488,7 @@ void ElectronPhotonRelaxationDataContainer::setComptonProfile(
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the compton_profile is valid
   testPrecondition( compton_profile.size() ==
-		    d_compton_profile_momentum_grid.size() );
+		    d_compton_profile_momentum_grids.find( subshell )->second.size() );
   testPrecondition( std::find_if( compton_profile.begin(),
 				  compton_profile.end(),
 				  isValueLessThanOrEqualToZero ) ==
@@ -466,7 +523,7 @@ void ElectronPhotonRelaxationDataContainer::setOccupancyNumber(
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
   // Make sure the occupancy number is valid
   testPrecondition( occupancy_number.size() ==
-		    d_occupancy_number_momentum_grid.size() );
+		    d_occupancy_number_momentum_grids.find( subshell )->second.size() );
   testPrecondition( Utility::Sort::isSortedAscending( occupancy_number.begin(),
 						      occupancy_number.end()));
   testPrecondition( occupancy_number.front() == 0.0 );
@@ -581,6 +638,17 @@ void ElectronPhotonRelaxationDataContainer::setWallerHartreeIncoherentCrossSecti
   d_waller_hartree_incoherent_cross_section = incoherent_cross_section;
 }
 
+// Set the WH incoherent cross section threshold energy bin index
+void ElectronPhotonRelaxationDataContainer::setWallerHartreeIncoherentCrossSectionThresholdEnergyIndex(
+						         const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition( d_waller_hartree_incoherent_cross_section.size() + index ==
+		    d_photon_energy_grid.size() );
+  
+  d_waller_hartree_incoherent_cross_section_threshold_index = index;
+}
+  
 // Set the incoherent photon cross section using the impulse approx. (IA)
 void ElectronPhotonRelaxationDataContainer::setImpulseApproxIncoherentCrossSection(
 			  const std::vector<double>& incoherent_cross_section )
@@ -594,6 +662,17 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxIncoherentCrossSecti
 		    incoherent_cross_section.end() );
   
   d_impulse_approx_incoherent_cross_section = incoherent_cross_section;
+}
+
+// Set the IA incoherent photon cross section threshold energy bin index
+void ElectronPhotonRelaxationDataContainer::setImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(
+							 const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition( d_impulse_approx_incoherent_cross_section.size() + index ==
+		    d_photon_energy_grid.size() );
+  
+  d_impulse_approx_incoherent_cross_section_threshold_index = index;
 }
 
 // Set the IA subshell incoherent photon cross section
@@ -615,6 +694,25 @@ void ElectronPhotonRelaxationDataContainer::setImpulseApproxSubshellIncoherentCr
     incoherent_cross_section;
 }
 
+// Set the IA subshell incoherent photon cs threshold energy bin index
+void ElectronPhotonRelaxationDataContainer::setImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(
+						       const unsigned subshell,
+						       const unsigned index )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the threshold index is valid
+  testPrecondition( d_impulse_approx_subshell_incoherent_cross_sections.find( subshell ) !=
+		    d_impulse_approx_subshell_incoherent_cross_sections.end());
+  remember( const std::vector<double>& incoherent_cross_section = 
+	    d_impulse_approx_subshell_incoherent_cross_sections.find( subshell )->second );
+  testPrecondition( incoherent_cross_section.size() + index ==
+		    d_photon_energy_grid.size() );
+  
+  d_impulse_approx_subshell_incoherent_cross_section_theshold_indices[subshell] =
+    index;
+}
+  
 // Set the WH coherent cross section 
 void ElectronPhotonRelaxationDataContainer::setWallerHartreeCoherentCrossSection(
 			    const std::vector<double>& coherent_cross_section )
@@ -630,6 +728,17 @@ void ElectronPhotonRelaxationDataContainer::setWallerHartreeCoherentCrossSection
   d_waller_hartree_coherent_cross_section = coherent_cross_section;
 }
 
+// Set the WH coherent cross section threshold energy bin index
+void ElectronPhotonRelaxationDataContainer::setWallerHartreeCoherentCrossSectionThresholdEnergyIndex(
+							 const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition( d_waller_hartree_coherent_cross_section.size() + index ==
+		    d_photon_energy_grid.size() );
+  
+  d_waller_hartree_coherent_cross_section_threshold_index = index;
+}
+  
 // Set the pair production cross section
 void ElectronPhotonRelaxationDataContainer::setPairProductionCrossSection(
 		     const std::vector<double>& pair_production_cross_section )
@@ -645,6 +754,17 @@ void ElectronPhotonRelaxationDataContainer::setPairProductionCrossSection(
   d_pair_production_cross_section = pair_production_cross_section;
 }
 
+// Set the pair production cross section threshold energy bin index
+void ElectronPhotonRelaxationDataContainer::setPairProductionCrossSectionThresholdEnergyIndex( 
+							 const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition( d_pair_production_cross_section.size() + index ==
+		    d_photon_energy_grid.size() );
+  
+  d_pair_production_cross_section_threshold_index = index;
+}
+
 // Set the Photoelectric effect cross section
 void ElectronPhotonRelaxationDataContainer::setPhotoelectricCrossSection(
 		       const std::vector<double>& photoelectric_cross_section )
@@ -656,6 +776,17 @@ void ElectronPhotonRelaxationDataContainer::setPhotoelectricCrossSection(
   d_photoelectric_cross_section = photoelectric_cross_section;
 }
 
+// Set the Photoelectric effect cross section threshold energy bin index
+void ElectronPhotonRelaxationDataContainer::setPhotoelectricCrossSectionThresholdEnergyIndex(
+							 const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition( d_photoelectric_cross_section.size() + index ==
+		    d_photon_energy_grid.size() );
+  
+  d_photoelectric_cross_section_threshold_index = index;
+}
+  
 // Set the Photoelectric effect cross section for a subshell
 void ElectronPhotonRelaxationDataContainer::setSubshellPhotoelectricCrossSection( 
 		       const unsigned subshell,
@@ -675,6 +806,24 @@ void ElectronPhotonRelaxationDataContainer::setSubshellPhotoelectricCrossSection
     photoelectric_cross_section;
 }
   
+// Set the subshell Photoelectric effect cross section threshold index
+void ElectronPhotonRelaxationDataContainer::setSubshellPhotoelectricCrossSectionThresholdEnergyIndex(
+						       const unsigned subshell,
+						       const unsigned index )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+  // Make sure the index is valid
+  testPrecondition( d_subshell_photoelectric_cross_sections.find( subshell ) !=
+		    d_subshell_photoelectric_cross_sections.end() );
+  remember( const std::vector<double> photoelectric_cross_section = 
+	    d_subshell_photoelectric_cross_sections.find( subshell )->second );
+  testPrecondition( photoelectric_cross_section.size() + index ==
+		    d_photon_energy_grid.size() );
+  
+  d_subshell_photoelectric_cross_section_threshold_indices[subshell] = index;
+}
+
 // Set the Waller-Hartree total cross section
 void ElectronPhotonRelaxationDataContainer::setWallerHartreeTotalCrossSection( 
 			       const std::vector<double>& total_cross_section )

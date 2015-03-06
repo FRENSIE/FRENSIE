@@ -113,29 +113,57 @@ public:
   const std::vector<double>& 
   getWallerHartreeIncoherentCrossSection() const;
 
+  //! Return the WH incoherent photon cross section threshold energy bin index
+  unsigned
+  getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex() const;
+
   //! Return the impluse approx. (IA) incoherent photon cross section
   const std::vector<double>&
   getImpulseApproxIncoherentCrossSection() const;
+
+  //! Return the IA incoherent photon cross section threshold energy bin index
+  unsigned
+  getImpulseApproxIncoherentCrossSectionThresholdEnergyIndex() const;
 
   //! Return the subshell Impulse approx. incoherent photon cross section
   const std::vector<double>&
   getImpulseApproxSubshellIncoherentCrossSection( 
 					       const unsigned subshell ) const;
 
+  //! Return the subshell IA incoherent photon cs threshold energy bin index
+  unsigned
+  getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex( 
+					       const unsigned subshell ) const;
+
   //! Return the Waller-Hartree coherent cross section
   const std::vector<double>&
   getWallerHartreeCoherentCrossSection() const;
+
+  //! Return the Waller-Hartree coherent cs threshold energy bin index
+  unsigned
+  getWallerHartreeCoherentCrossSectionThresholdEnergyIndex() const;
 
   //! Return the pair production cross section
   const std::vector<double>&
   getPairProductionCrossSection() const;
 
+  //! Return the pair production cross section threshold energy bin index
+  unsigned getPairProductionCrossSectionThresholdEnergyIndex() const;
+
   //! Return the Photoelectric effect cross section
   const std::vector<double>& getPhotoelectricCrossSection() const;
+
+  //! Return the Photoelectric effect cross section theshold energy bin index
+  unsigned getPhotoelectricCrossSectionThresholdEnergyIndex() const;
 
   //! Return the Photoelectric effect cross section for a subshell
   const std::vector<double>&
   getSubshellPhotoelectricCrossSection( const unsigned subshell ) const;
+
+  //! Return the subshell Photoelectric effect cross section threshold index
+  unsigned
+  getSubshellPhotoelectricCrossSectionThresholdEnergyIndex( 
+					       const unsigned subshell ) const;
 
   //! Return the Waller-Hartree total cross section
   const std::vector<double>& getWallerHartreeTotalCrossSection() const;
@@ -227,32 +255,61 @@ protected:
   void setWallerHartreeIncoherentCrossSection(
 			 const std::vector<double>& incoherent_cross_section );
 
+  //! Set the WH incoherent cross section threshold energy bin index
+  void setWallerHartreeIncoherentCrossSectionThresholdEnergyIndex(
+						        const unsigned index );
+  
   //! Set the incoherent photon cross section using the impulse approx. (IA)
   void setImpulseApproxIncoherentCrossSection(
 			 const std::vector<double>& incoherent_cross_section );
+
+  //! Set the IA incoherent photon cross section threshold energy bin index
+  void setImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(
+							const unsigned index );
 
   //! Set the IA subshell incoherent photon cross section
   void setImpulseApproxSubshellIncoherentCrossSection(
 			 const unsigned subshell,
 			 const std::vector<double>& incoherent_cross_section );
 
+  //! Set the IA subshell incoherent photon cs threshold energy bin index
+  void setImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(
+						       const unsigned subshell,
+						       const unsigned index );
+  
   //! Set the WH coherent cross section 
   void setWallerHartreeCoherentCrossSection(
 			   const std::vector<double>& coherent_cross_section );
 
+  //! Set the WH coherent cross section threshold energy bin index
+  void setWallerHartreeCoherentCrossSectionThresholdEnergyIndex(
+							const unsigned index );
+  
   //! Set the pair production cross section
   void setPairProductionCrossSection(
 		    const std::vector<double>& pair_production_cross_section );
+
+  //! Set the pair production cross section threshold energy bin index
+  void setPairProductionCrossSectionThresholdEnergyIndex( 
+							const unsigned index );
 
   //! Set the Photoelectric effect cross section
   void setPhotoelectricCrossSection(
 		      const std::vector<double>& photoelectric_cross_section );
 
+  //! Set the Photoelectric effect cross section threshold energy bin index
+  void setPhotoelectricCrossSectionThresholdEnergyIndex(const unsigned index );
+  
   //! Set the Photoelectric effect cross section for a subshell
   void setSubshellPhotoelectricCrossSection( 
 		      const unsigned subshell,
 		      const std::vector<double>& photoelectric_cross_section );
   
+  //! Set the subshell Photoelectric effect cross section threshold index
+  void setSubshellPhotoelectricCrossSectionThresholdEnergyIndex(
+						       const unsigned subshell,
+						       const unsigned index );
+
   //! Set the Waller-Hartree total cross section
   void setWallerHartreeTotalCrossSection( 
 			      const std::vector<double>& total_cross_section );
@@ -340,25 +397,48 @@ private:
   // The Waller-Hartree incoherent photon cross section (b)
   std::vector<double> d_waller_hartree_incoherent_cross_section;
 
+  // The Waller-Hartree incoherent photon cross section threshold energy index
+  unsigned d_waller_hartree_incoherent_cross_section_threshold_index;
+
   // The impulse approx. incoherent photon cross section (b)
   std::vector<double> d_impulse_approx_incoherent_cross_section;
+
+  // The impulse approx. incoherent photon cross section threshold energy index
+  unsigned d_impulse_approx_incoherent_cross_section_threshold_index;
 
   // The impulse approx. subshell incoherent photon cross sections (b)
   std::map<unsigned,std::vector<double> > 
   d_impulse_approx_subshell_incoherent_cross_sections;
 
+  // The impulse approx. subshell incoherent photon cross section thes. indices
+  std::map<unsigned,unsigned> 
+  d_impulse_approx_subshell_incoherent_cross_section_theshold_indices;
+
   // The Waller-Hartree coherent cross section (b)
   std::vector<double> d_waller_hartree_coherent_cross_section;
+
+  // The Waller-Hartree coherent cross section threshold energy index
+  unsigned d_waller_hartree_coherent_cross_section_threshold_index;
 
   // The pair production cross section (b)
   std::vector<double> d_pair_production_cross_section;
   
+  // The pair production cross section threshold energy index
+  unsigned d_pair_production_cross_section_threshold_index;
+
   // The photoelectric effect cross section (b)
   std::vector<double> d_photoelectric_cross_section;
+
+  // The photoelectric effect cross section energy index
+  unsigned d_photoelectric_cross_section_threshold_index;
 
   // The subshell photoelectric effect cross sections (b)
   std::map<unsigned,std::vector<double> > 
   d_subshell_photoelectric_cross_sections;
+
+  // The subshell photoelectric effect cross section threshold indices
+  std::map<unsigned,unsigned> 
+  d_subshell_photoelectric_cross_section_threshold_indices;
 
   // The Waller-Hartree total cross section (b)
   std::vector<double> d_waller_hartree_total_cross_section;

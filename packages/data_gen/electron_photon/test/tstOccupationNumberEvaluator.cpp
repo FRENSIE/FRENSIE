@@ -17,6 +17,7 @@
 
 // FRENSIE Includes
 #include "DataGen_OccupationNumberEvaluator.hpp"
+#include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
@@ -57,34 +58,34 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateComptonProfile_h )
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
 				  2.22639294755139392e-09/norm_constant, 
-				  1e-15 );
+				  1e-12 );
 
   compton_profile_value = 
     occupation_number_h_k->evaluateComptonProfile( -0.5837882030079395 );
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
 				  4.561986437562962e-09/norm_constant,
-				  1e-15 );
+				  1e-12 );
 
   compton_profile_value =
     occupation_number_h_k->evaluateComptonProfile( 0.0 );
 
   TEST_FLOATING_EQUALITY( compton_profile_value, 
-			  115.83526012799598/norm_constant, 1e-15 );
+			  115.83526012799598/norm_constant, 1e-12 );
 
   compton_profile_value = 
     occupation_number_h_k->evaluateComptonProfile( 0.5837882030079395 );
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
 				  4.561986437562962e-09/norm_constant,
-				  1e-15 );
+				  1e-12 );
   
   compton_profile_value = 
     occupation_number_h_k->evaluateComptonProfile( 1.0 );
   
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
 				  2.22639294755139392e-09/norm_constant, 
-				  1e-15 );
+				  1e-12 );
 
   compton_profile_value =
     occupation_number_h_k->evaluateComptonProfile( 1.1 );
@@ -110,35 +111,35 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateComptonProfile_pb )
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
 				  5.20373615890446367e-02/norm_constant, 
-				  1e-15 );
+				  1e-12 );
 
   compton_profile_value = 
     occupation_number_pb_k->evaluateComptonProfile( -0.5837882030079395 );
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
 				  0.26118480303735186/norm_constant,
-				  1e-15 );
+				  1e-12 );
 
   compton_profile_value =
     occupation_number_pb_k->evaluateComptonProfile( 0.0 );
 
   TEST_FLOATING_EQUALITY( compton_profile_value, 
 			  1.3083852583290587/norm_constant, 
-			  1e-15 );
+			  1e-12 );
 
   compton_profile_value = 
     occupation_number_pb_k->evaluateComptonProfile( 0.5837882030079395 );
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
 				  0.26118480303735186/norm_constant,
-				  1e-15 );
+				  1e-12 );
   
   compton_profile_value = 
     occupation_number_pb_k->evaluateComptonProfile( 1.0 );
   
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
 				  5.20373615890446367e-02/norm_constant, 
-				  1e-15 );
+				  1e-12 );
 
   compton_profile_value =
     occupation_number_pb_k->evaluateComptonProfile( 1.1 );
@@ -158,35 +159,35 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateComptonProfile_pb )
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
 				  1.55571233220910706e-06/norm_constant, 
-				  1e-15 );
+				  1e-12 );
 
   compton_profile_value = 
     occupation_number_pb_p3->evaluateComptonProfile( -0.5837882030079395 );
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
 				  4.269136342282414e-05/norm_constant,
-				  1e-15 );
+				  1e-12 );
 
   compton_profile_value =
     occupation_number_pb_p3->evaluateComptonProfile( 0.0 );
 
   TEST_FLOATING_EQUALITY( compton_profile_value, 
 			  110.18902693969845/norm_constant, 
-			  1e-15 );
+			  1e-12 );
 
   compton_profile_value = 
     occupation_number_pb_p3->evaluateComptonProfile( 0.5837882030079395 );
 
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value,
 				  4.269136342282414e-05/norm_constant,
-				  1e-15 );
+				  1e-12 );
   
   compton_profile_value = 
     occupation_number_pb_p3->evaluateComptonProfile( 1.0 );
   
   UTILITY_TEST_FLOATING_EQUALITY( compton_profile_value, 
 				  1.55571233220910706e-06/norm_constant, 
-				  1e-15 );
+				  1e-12 );
 
   compton_profile_value =
     occupation_number_pb_p3->evaluateComptonProfile( 1.1 );
@@ -216,12 +217,12 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateOccupationNumber_h )
   occupation_number = 
     occupation_number_h_k->evaluateOccupationNumber( 1.0, 1e-4 );
 
-  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-12 );
 
   occupation_number = 
     occupation_number_h_k->evaluateOccupationNumber( 1.1, 1e-4 );
 
-  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -247,12 +248,12 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateOccupationNumber_pb )
   occupation_number = 
     occupation_number_pb_k->evaluateOccupationNumber( 1.0, 1e-4 );
   
-  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-12 );
 
   occupation_number = 
     occupation_number_pb_k->evaluateOccupationNumber( 1.1, 1e-4 );
 
-  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-12 );
 
   // P3-shell
   occupation_number = 
@@ -273,12 +274,12 @@ TEUCHOS_UNIT_TEST( OccupationNumberEvaluator, evaluateOccupationNumber_pb )
   occupation_number = 
     occupation_number_pb_p3->evaluateOccupationNumber( 1.0, 1e-4 );
 
-  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-12 );
 
   occupation_number = 
     occupation_number_pb_p3->evaluateOccupationNumber( 1.1, 1e-4 );
 
-  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( occupation_number, 1.0, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -349,16 +350,32 @@ int main( int argc, char** argv )
     
     unsigned num_mom_vals = swd_block[profile_index];
 
-    Teuchos::Array<double> compton_profile = 
+    Teuchos::ArrayView<const double> raw_momentum_grid = 
+      swd_block( profile_index + 1, num_mom_vals );
+
+    Teuchos::ArrayView<const double> raw_compton_profile = 
       swd_block( profile_index + 1 + num_mom_vals, num_mom_vals );
 
-    // Divide profile values by 2 since they are multiplied by 2 in epr tables
-    for( unsigned i = 0u; i < compton_profile.size(); ++i )
-      compton_profile[i] /= 2.0;
+    std::vector<double> full_momentum_grid, full_compton_profile;
 
+    MonteCarlo::createFullProfileFromHalfProfile( raw_momentum_grid.begin(),
+						  raw_momentum_grid.end(),
+						  raw_compton_profile.begin(),
+						  raw_compton_profile.end(),
+						  full_momentum_grid,
+						  full_compton_profile,
+						  true );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
+					       full_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( full_compton_profile.begin(),
+						 full_compton_profile.end() );
+    
     occupation_number_h_k.reset( new DataGen::OccupationNumberEvaluator(
-	       swd_block( profile_index + 1, num_mom_vals ),
-	       compton_profile ) );
+							  full_momentum_grid,
+							  full_compton_profile,
+							  1e-4 ) );
   }
 
   {
@@ -398,31 +415,60 @@ int main( int argc, char** argv )
     
     unsigned num_mom_vals = swd_block[profile_index];
 
-    Teuchos::Array<double> compton_profile = 
+    Teuchos::ArrayView<const double> raw_momentum_grid = 
+      swd_block( profile_index + 1, num_mom_vals );
+
+    Teuchos::ArrayView<const double> raw_compton_profile = 
       swd_block( profile_index + 1 + num_mom_vals, num_mom_vals );
 
-    // Divide profile values by 2 since they are multiplied by 2 in epr tables
-    for( unsigned i = 0u; i < compton_profile.size(); ++i )
-      compton_profile[i] /= 2.0;
+    std::vector<double> full_momentum_grid, full_compton_profile;
+
+    MonteCarlo::createFullProfileFromHalfProfile( raw_momentum_grid.begin(),
+						  raw_momentum_grid.end(),
+						  raw_compton_profile.begin(),
+						  raw_compton_profile.end(),
+						  full_momentum_grid,
+						  full_compton_profile,
+						  true );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
+					       full_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( full_compton_profile.begin(),
+						 full_compton_profile.end() );
 
     occupation_number_pb_k.reset( new DataGen::OccupationNumberEvaluator(
-				  swd_block( profile_index + 1, num_mom_vals ),
-				  compton_profile ) );
-
+							  full_momentum_grid,
+							  full_compton_profile,
+							  1e-4 ) );
+    
     profile_index = lswd_block[p3_shell_index];
 
     num_mom_vals = swd_block[profile_index];
 
-    compton_profile = 
+    raw_momentum_grid = swd_block( profile_index + 1, num_mom_vals );
+
+    raw_compton_profile = 
       swd_block( profile_index + 1 + num_mom_vals, num_mom_vals );
 
-    // Divide profile values by 2 since they are multiplied by 2 in epr tables
-    for( unsigned i = 0u; i < compton_profile.size(); ++i )
-      compton_profile[i] /= 2.0;
+    MonteCarlo::createFullProfileFromHalfProfile( raw_momentum_grid.begin(),
+						  raw_momentum_grid.end(),
+						  raw_compton_profile.begin(),
+						  raw_compton_profile.end(),
+						  full_momentum_grid,
+						  full_compton_profile,
+						  true );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
+					       full_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( full_compton_profile.begin(),
+						 full_compton_profile.end() );
 
     occupation_number_pb_p3.reset( new DataGen::OccupationNumberEvaluator(
-				  swd_block( profile_index + 1, num_mom_vals ),
-				  compton_profile ) );
+							  full_momentum_grid,
+							  full_compton_profile,
+							  1e-4 ) );
   }
 
   // Run the unit tests

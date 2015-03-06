@@ -18,7 +18,7 @@
 
 // FRENSIE Includes
 #include "DataGen_OccupationNumberEvaluator.hpp"
-#include "DataGen_ComptonProfileHelpers_def.hpp"
+#include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_GaussKronrodQuadratureKernel.hpp"
@@ -33,7 +33,7 @@ namespace DataGen{
 OccupationNumberEvaluator::OccupationNumberEvaluator(
 		   const Teuchos::Array<double>& electron_momentum_projections,
 		   const Teuchos::Array<double>& compton_profile,
-		   const double norm_constant_precision 1e-4 )
+		   const double norm_constant_precision )
   : d_compton_profile_norm_constant( 1.0 )
 {
   // Make sure the electron momentum projections are valid
@@ -61,8 +61,8 @@ OccupationNumberEvaluator::OccupationNumberEvaluator(
   // Roundoff errors are common in the available Compton profile tables - 
   // renormalize the table
   d_compton_profile_norm_constant = this->evaluateOccupationNumber( 
-			 complete_electron_momentum_projections.back(), 
-			 norm_constant_precision );
+			                  electron_momentum_projections.back(),
+					  norm_constant_precision );
 }
 
 // Return the normalization constant used with the Compton profile
