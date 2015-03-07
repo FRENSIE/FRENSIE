@@ -160,28 +160,28 @@ ElectronPhotonRelaxationDataContainer::getComptonProfile(
   return d_compton_profiles.find( subshell )->second;
 }
 
-// Return the occupancy number momentum grid for a subshell
+// Return the occupation number momentum grid for a subshell
 const std::vector<double>& 
-ElectronPhotonRelaxationDataContainer::getOccupancyNumberMomentumGrid(
+ElectronPhotonRelaxationDataContainer::getOccupationNumberMomentumGrid(
 						const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != 
 		    d_subshells.end() );
   
-  return d_occupancy_number_momentum_grids.find( subshell )->second;
+  return d_occupation_number_momentum_grids.find( subshell )->second;
 }
   
-// Return the occupancy number for a subshell
+// Return the occupation number for a subshell
 const std::vector<double>& 
-ElectronPhotonRelaxationDataContainer::getOccupancyNumber(
+ElectronPhotonRelaxationDataContainer::getOccupationNumber(
 					        const unsigned subshell ) const
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) !=
 		    d_subshells.end() );
   
-  return d_occupancy_numbers.find( subshell )->second;
+  return d_occupation_numbers.find( subshell )->second;
 }
 
 // Return the Waller-Hartree scattering function momentum grid
@@ -497,39 +497,39 @@ void ElectronPhotonRelaxationDataContainer::setComptonProfile(
   d_compton_profiles[subshell] = compton_profile;
 }
   
-// Set the occupancy number momentum grid for a subshell
-void ElectronPhotonRelaxationDataContainer::setOccupancyNumberMomentumGrid( 
+// Set the occupation number momentum grid for a subshell
+void ElectronPhotonRelaxationDataContainer::setOccupationNumberMomentumGrid( 
 		    const unsigned subshell,
-		    const std::vector<double>& occupancy_number_momentum_grid )
+		    const std::vector<double>& occupation_number_momentum_grid )
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the occupancy number momentum grid is valid
-  testPrecondition( occupancy_number_momentum_grid.size() > 1 );
+  // Make sure the occupation number momentum grid is valid
+  testPrecondition( occupation_number_momentum_grid.size() > 1 );
   testPrecondition( Utility::Sort::isSortedAscending( 
-					occupancy_number_momentum_grid.begin(),
-					occupancy_number_momentum_grid.end()));
-  testPrecondition( occupancy_number_momentum_grid.front() == -1.0 );
+					occupation_number_momentum_grid.begin(),
+					occupation_number_momentum_grid.end()));
+  testPrecondition( occupation_number_momentum_grid.front() == -1.0 );
 
-  d_occupancy_number_momentum_grids[subshell] = occupancy_number_momentum_grid;
+  d_occupation_number_momentum_grids[subshell] = occupation_number_momentum_grid;
 }
   
-// Set the occupancy number for a subshell
-void ElectronPhotonRelaxationDataContainer::setOccupancyNumber( 
+// Set the occupation number for a subshell
+void ElectronPhotonRelaxationDataContainer::setOccupationNumber( 
 				  const unsigned subshell,
-				  const std::vector<double>& occupancy_number )
+				  const std::vector<double>& occupation_number )
 {
   // Make sure the subshell is valid
   testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
-  // Make sure the occupancy number is valid
-  testPrecondition( occupancy_number.size() ==
-		    d_occupancy_number_momentum_grids.find( subshell )->second.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( occupancy_number.begin(),
-						      occupancy_number.end()));
-  testPrecondition( occupancy_number.front() == 0.0 );
-  testPrecondition( occupancy_number.back() <= 1.0 );
+  // Make sure the occupation number is valid
+  testPrecondition( occupation_number.size() ==
+		    d_occupation_number_momentum_grids.find( subshell )->second.size() );
+  testPrecondition( Utility::Sort::isSortedAscending( occupation_number.begin(),
+						      occupation_number.end()));
+  testPrecondition( occupation_number.front() == 0.0 );
+  testPrecondition( occupation_number.back() <= 1.0 );
 
-  d_occupancy_numbers[subshell] = occupancy_number;
+  d_occupation_numbers[subshell] = occupation_number;
 }
 
 // Set the Waller-Hartree scattering function momentum grid

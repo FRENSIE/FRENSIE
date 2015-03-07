@@ -81,12 +81,12 @@ public:
   //! Return the Compton profile for a subshell
   const std::vector<double>& getComptonProfile(const unsigned subshell ) const;
 
-  //! Return the occupancy number momentum grid 
-  const std::vector<double>& getOccupancyNumberMomentumGrid(
+  //! Return the occupation number momentum grid 
+  const std::vector<double>& getOccupationNumberMomentumGrid(
 					       const unsigned subshell ) const;
   
-  //! Return the occupancy number for a subshell
-  const std::vector<double>& getOccupancyNumber(
+  //! Return the occupation number for a subshell
+  const std::vector<double>& getOccupationNumber(
 					       const unsigned subshell ) const;
 
   //! Return the Waller-Hartree scattering function momentum grid
@@ -219,14 +219,14 @@ protected:
   void setComptonProfile( const unsigned subshell,
 			  const std::vector<double>& compton_profile );
   
-  //! Set the occupancy number momentum grid 
-  void setOccupancyNumberMomentumGrid( 
+  //! Set the occupation number momentum grid 
+  void setOccupationNumberMomentumGrid( 
 		   const unsigned subshell,
-		   const std::vector<double>& occupancy_number_momentum_grid );
+		   const std::vector<double>& occupation_number_momentum_grid );
   
-  //! Set the occupancy number for a subshell
-  void setOccupancyNumber( const unsigned subshell,
-			   const std::vector<double>& occupancy_number );
+  //! Set the occupation number for a subshell
+  void setOccupationNumber( const unsigned subshell,
+			   const std::vector<double>& occupation_number );
 
   //! Set the Waller-Hartree scattering function momentum grid
   void setWallerHartreeScatteringFunctionMomentumGrid(
@@ -370,11 +370,11 @@ private:
   // The subshell Compton profiles ((me*c)^-1 units)
   std::map<unsigned,std::vector<double> > d_compton_profiles;
 
-  // The occupancy number momentum grids
-  std::map<unsigned,std::vector<double> > d_occupancy_number_momentum_grids;
+  // The occupation number momentum grids
+  std::map<unsigned,std::vector<double> > d_occupation_number_momentum_grids;
 
-  // The subshell occupancy numbers
-  std::map<unsigned,std::vector<double> > d_occupancy_numbers;
+  // The subshell occupation numbers
+  std::map<unsigned,std::vector<double> > d_occupation_numbers;
 
   // The Waller-Hartree scattering function momentum grid (1/cm)
   std::vector<double> d_waller_hartree_scattering_function_momentum_grid;

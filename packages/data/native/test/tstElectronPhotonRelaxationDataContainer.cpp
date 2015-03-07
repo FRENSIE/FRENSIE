@@ -168,35 +168,35 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 } 
 
 //---------------------------------------------------------------------------//
-// Check that the occupancy number momentum grid can be set
+// Check that the occupation number momentum grid can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setOccupancyNumberMomentumGrid )
+		   setOccupationNumberMomentumGrid )
 {
   std::vector<double> momentum_grid( 3 );
   momentum_grid[0] = -1.0;
   momentum_grid[1] = 0.0;
   momentum_grid[2] = 1.0;
 
-  epr_data_container.setOccupancyNumberMomentumGrid( 1, momentum_grid );
+  epr_data_container.setOccupationNumberMomentumGrid( 1, momentum_grid );
 
-  TEST_COMPARE_ARRAYS( epr_data_container.getOccupancyNumberMomentumGrid( 1 ),
+  TEST_COMPARE_ARRAYS( epr_data_container.getOccupationNumberMomentumGrid( 1 ),
 		       momentum_grid );
 }
 
 //---------------------------------------------------------------------------//
-// Check that the occupancy number for a subshell can be set
+// Check that the occupation number for a subshell can be set
 TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
-		   setOccupancyNumber )
+		   setOccupationNumber )
 {
-  std::vector<double> occupancy_number( 3 );
-  occupancy_number[0] = 0.0;
-  occupancy_number[1] = 0.5;
-  occupancy_number[2] = 1.0;
+  std::vector<double> occupation_number( 3 );
+  occupation_number[0] = 0.0;
+  occupation_number[1] = 0.5;
+  occupation_number[2] = 1.0;
 
-  epr_data_container.setOccupancyNumber( 1, occupancy_number );
+  epr_data_container.setOccupationNumber( 1, occupation_number );
 
-  TEST_COMPARE_ARRAYS( epr_data_container.getOccupancyNumber( 1 ),
-		       occupancy_number );
+  TEST_COMPARE_ARRAYS( epr_data_container.getOccupationNumber( 1 ),
+		       occupation_number );
 }
 
 //---------------------------------------------------------------------------//
@@ -556,9 +556,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(),
 		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumberMomentumGrid( 1 ).size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumberMomentumGrid( 1 ).size(),
 		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumber( 1 ).size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumber( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunctionMomentumGrid().size(),
 		       4 );
@@ -641,9 +641,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(),
 		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumberMomentumGrid( 1 ).size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumberMomentumGrid( 1 ).size(),
 		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumber( 1 ).size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumber( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunctionMomentumGrid().size(),
 		       4 );
@@ -726,9 +726,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(),
 		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumberMomentumGrid( 1 ).size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumberMomentumGrid( 1 ).size(),
 		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumber( 1 ).size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumber( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunctionMomentumGrid().size(),
 		       4 );
@@ -808,9 +808,9 @@ TEUCHOS_UNIT_TEST( ElectronPhotonRelaxationDataContainer,
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getComptonProfile( 1 ).size(),
 		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumberMomentumGrid( 1 ).size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumberMomentumGrid( 1 ).size(),
 		       3 );
-  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupancyNumber( 1 ).size(),
+  TEST_EQUALITY_CONST( epr_data_container_copy.getOccupationNumber( 1 ).size(),
 		       3 );
   TEST_EQUALITY_CONST( epr_data_container_copy.getWallerHartreeScatteringFunctionMomentumGrid().size(),
 		       4 );

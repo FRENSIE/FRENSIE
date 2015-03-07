@@ -30,20 +30,29 @@ StandardElectronPhotonRelaxationDataGenerator::StandardElectronPhotonRelaxationD
 	   const unsigned atomic_number,
 	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
 	   const double min_photon_energy,
+	   const double max_photon_energy,
 	   const double occupation_number_evaluation_tolerance,
 	   const double subshell_incoherent_evaluation_tolerance,
-	   const double grid_tolerance )
+	   const double grid_convergence_tol,
+	   const double grid_absolute_diff_tol,
+	   const double grid_distance_tol )
   : ElectronPhotonRelaxationDataGenerator( atomic_number ),
-      d_ace_epr_data( ace_epr_data ),
-      d_min_photon_energy( min_photon_energy ),
-      d_occupation_number_evaluation_tolerance( occupation_number_evaluation_tolerance ),
-      d_subshell_incoherent_evaluation_tolerance( subshell_incoherent_evaluation_tolerance ),
-      d_grid_tolerance( grid_tolerance )
+    d_ace_epr_data( ace_epr_data ),
+    d_min_photon_energy( min_photon_energy ),
+    d_max_photon_energy( max_photon_energy ),
+    d_occupation_number_evaluation_tolerance( occupation_number_evaluation_tolerance ),
+    d_subshell_incoherent_evaluation_tolerance( subshell_incoherent_evaluation_tolerance ),
+    d_grid_convergence_tol( grid_convergence_tol ),
+    d_grid_absolute_diff_tol( grid_absolute_diff_tol ),
+    d_grid_distance_tol( grid_distance_tol )
 {
   // Make sure the atomic number is valid
   testPrecondition( atomic_number <= 100u );
   // Make sure the ace data is valid
   testPrecondition( !ace_epr_data.is_null() );
+  // Make sure the photon energy limits are valid
+  testPrecondition( min_photon_energy > 0.0 );
+  testPrecondition( min_photon_energy < max_photon_energy );
 }
 
 // Populate the electron-photon-relaxation data container
@@ -55,21 +64,36 @@ void StandardElectronPhotonRelaxationDataGenerator::populateEPRDataContainer(
   this->setAtomicNumber( data_container );
 
   // Set the relaxation data
+  std::cout << "Setting the relaxation data...";
+  std::cout.flush();
   this->setRelaxationData( data_container );
+  std::cout << "done." << std::endl;
 
   // Set the Compton profile data
+  std::cout << "Setting the Compton profile data...";
+  std::cout.flush();
   this->setComptonProfileData( data_container );
+  std::cout << "done." << std::endl;
 
   // Set the occupation number data
+  std::cout << "Setting the occupation number data...";
+  std::cout.flush();
   this->setOccupationNumberData( data_container );
+  std::cout << "done." << std::endl;
 
   // Set the Waller-Hartree scattering function data
+  std::cout << "Setting the Waller-Hartree scattering function data...";
+  std::cout.flush();
   this->setWallerHartreeScatteringFunctionData( data_container );
+  std::cout << "done." << std::endl;
 
   // Set the Waller-Hartree atomic form factor data
+  std::cout << "Setting the Waller-Hartree atomic form factor data...";
   this->setWallerHartreeAtomicFormFactorData( data_container );
+  std::cout << "done." << std::endl;
 
   // Set the photon data
+  std::cout << "Setting the photon cross section data: " << std::endl;
   this->setPhotonData( data_container );
 
   // Set the electron data
@@ -116,17 +140,17 @@ void StandardElectronPhotonRelaxationDataGenerator::setRelaxationData(
   {
     data_container.setSubshellOccupancy( subshell_designators[i],
 					 subshell_occupancies[i] );
-
+    
     data_container.setSubshellBindingEnergy( subshell_designators[i],
 					     subshell_binding_energies[i] );
-
+    
     unsigned transitions = (unsigned)subshell_vacancy_transitions[i];
-
-    data_container.setSubshellRelaxationTransitions( subshell_designators[i],
-						     transitions );
-
+    
     if( transitions > 0 )
     {
+      data_container.setSubshellRelaxationTransitions( subshell_designators[i],
+						       transitions );
+      
       this->setTransitionData( subshell_designators[i],
 			       transitions,
 			       (unsigned)relo_block[i],
@@ -271,9 +295,9 @@ void StandardElectronPhotonRelaxationDataGenerator::setOccupationNumberData(
     occupation_number_momentum_grid[2] = 1.0;
 
     Utility::GridGenerator<Utility::LinLin> occupation_number_grid_generator(
-							      d_grid_tolerance,
-							      1e-12,
-							      1e-12 );
+						      d_grid_convergence_tol,
+						      d_grid_absolute_diff_tol,
+						      d_grid_distance_tol );
 
     occupation_number_grid_generator.generateAndEvaluateInPlace(
 					       occupation_number_momentum_grid,
@@ -281,22 +305,22 @@ void StandardElectronPhotonRelaxationDataGenerator::setOccupationNumberData(
 					       grid_function );
 
     // Fix the grid rounding errors
-    std::vector<double>::iterator unity_occupancy = 
+    std::vector<double>::iterator unity_occupation = 
       std::find_if( occupation_number.begin(),
 		    occupation_number.end(),
 		    greaterThanOrEqualToOne );
 
-    while( unity_occupancy != occupation_number.end() )
+    while( unity_occupation != occupation_number.end() )
     {
-      *unity_occupancy = 1.0;
+      *unity_occupation = 1.0;
 
-      ++unity_occupancy;
+      ++unity_occupation;
     }
 
-    data_container.setOccupancyNumberMomentumGrid( 
+    data_container.setOccupationNumberMomentumGrid( 
 					     *subshell, 
 					     occupation_number_momentum_grid );
-    data_container.setOccupancyNumber( *subshell, occupation_number );
+    data_container.setOccupationNumber( *subshell, occupation_number );
 
     ++subshell;
   }
@@ -390,28 +414,31 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   // Extract the heating numbers
   Teuchos::RCP<const Utility::OneDDistribution> heating_numbers;
 
-  this->extractCrossSection( d_ace_epr_data->extractPhotonEnergyGrid(),
-			     d_ace_epr_data->extractLHNMBlock(),
-			     heating_numbers );
+  this->extractCrossSection<Utility::LinLog>( 
+				     d_ace_epr_data->extractPhotonEnergyGrid(),
+				     d_ace_epr_data->extractLHNMBlock(),
+				     heating_numbers );
 
   // Extract the Waller-Hartree incoherent cross section
   Teuchos::RCP<const Utility::OneDDistribution> waller_hartree_incoherent_cs;
 
-  this->extractCrossSection( d_ace_epr_data->extractPhotonEnergyGrid(),
-			     d_ace_epr_data->extractIncoherentCrossSection(),
-			     waller_hartree_incoherent_cs );
+  this->extractCrossSection<Utility::LogLog>( 
+			       d_ace_epr_data->extractPhotonEnergyGrid(),
+			       d_ace_epr_data->extractIncoherentCrossSection(),
+			       waller_hartree_incoherent_cs );
 
   // Extract the Waller-Hartree coherent cross section
   Teuchos::RCP<const Utility::OneDDistribution> waller_hartree_coherent_cs;
 
-  this->extractCrossSection( d_ace_epr_data->extractPhotonEnergyGrid(),
-			     d_ace_epr_data->extractCoherentCrossSection(),
-			     waller_hartree_coherent_cs );
+  this->extractCrossSection<Utility::LogLog>( 
+				 d_ace_epr_data->extractPhotonEnergyGrid(),
+				 d_ace_epr_data->extractCoherentCrossSection(),
+				 waller_hartree_coherent_cs );
 
   // Extract the pair production cross section
   Teuchos::RCP<const Utility::OneDDistribution> pair_production_cs;
 
-  this->extractCrossSection(
+  this->extractCrossSection<Utility::LogLog>(
 			   d_ace_epr_data->extractPhotonEnergyGrid(),
 			   d_ace_epr_data->extractPairProductionCrossSection(),
 			   pair_production_cs );
@@ -432,16 +459,17 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 				     impulse_approx_incoherent_cs_evaluators );
 
   // Create the union energy grid
+  std::cout << " Creating union energy grid";
+  std::cout.flush();
   std::list<double> union_energy_grid;
   
   this->initializePhotonUnionEnergyGrid( data_container, union_energy_grid );
 
-  // Create the grid generator
-  Utility::GridGenerator<Utility::LogLog> 
-    union_energy_grid_generator( d_grid_tolerance,
-				 1e-12,
-				 1e-12 );
-
+  Utility::GridGenerator<Utility::LinLin> 
+    union_energy_grid_generator( d_grid_convergence_tol,
+				 d_grid_absolute_diff_tol,
+				 d_grid_distance_tol );
+  
   // Calculate the union energy grid
   boost::function<double (double pz)> grid_function = 
     boost::bind( &Utility::OneDDistribution::evaluate,
@@ -450,28 +478,36 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 
   union_energy_grid_generator.generateInPlace( union_energy_grid,
 					       grid_function );
-
+  std::cout << ".";
+  std::cout.flush();
+  
   grid_function = boost::bind( &Utility::OneDDistribution::evaluate,
 			       boost::cref( *waller_hartree_incoherent_cs ),
 			       _1 );
 
   union_energy_grid_generator.generateInPlace( union_energy_grid,
 					       grid_function );
-
+  std::cout << ".";
+  std::cout.flush();
+  
   grid_function = boost::bind( &Utility::OneDDistribution::evaluate,
 			       boost::cref( *waller_hartree_coherent_cs ),
 			       _1 );
-
+  
   union_energy_grid_generator.generateInPlace( union_energy_grid,
 					       grid_function );
-
+  std::cout << ".";
+  std::cout.flush();
+  
   grid_function = boost::bind( &Utility::OneDDistribution::evaluate,
 			       boost::cref( *pair_production_cs ),
 			       _1 );
 
   union_energy_grid_generator.generateInPlace( union_energy_grid,
 					       grid_function );
-
+  std::cout << ".";
+  std::cout.flush();
+  
   for( unsigned i = 0; i < subshell_photoelectric_effect_css.size(); ++i )
   {
     grid_function = boost::bind( 
@@ -481,6 +517,8 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 
     union_energy_grid_generator.generateInPlace( union_energy_grid,
 						 grid_function );
+    std::cout << ".";
+    std::cout.flush();
   }
 
   for( unsigned i = 0; i < impulse_approx_incoherent_cs_evaluators.size(); ++i)
@@ -493,7 +531,11 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 
     union_energy_grid_generator.generateInPlace( union_energy_grid,
 						 grid_function );
+    std::cout << ".";
+    std::cout.flush();
   }
+  
+  std::cout << "done." << std::endl;
 
   // Set the union energy grid
   std::vector<double> energy_grid;
@@ -502,26 +544,34 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   
   data_container.setPhotonEnergyGrid( energy_grid );
 
-  // Create and set the heating numbers
+  // Create and set the cross sections
   std::vector<double> cross_section;
   unsigned threshold;
 
+  std::cout << " Setting the average heating numbers...";
+  std::cout.flush();
   this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
 					     heating_numbers,
 					     cross_section,
 					     threshold );
 
   data_container.setAveragePhotonHeatingNumbers( cross_section );
-
+  std::cout << "done." << std::endl;
+  
+  std::cout << " Setting the Waller-Hartree incoherent cross section...";
+  std::cout.flush();
   this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
 					     waller_hartree_incoherent_cs,
 					     cross_section,
 					     threshold );
-
+  
   data_container.setWallerHartreeIncoherentCrossSection( cross_section );
   data_container.setWallerHartreeIncoherentCrossSectionThresholdEnergyIndex( 
 								   threshold );
+  std::cout << "done." << std::endl;
 
+  std::cout << " Setting the Waller-Hartree coherent cross section...";
+  std::cout.flush();
   this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
 					     waller_hartree_coherent_cs,
 					     cross_section,
@@ -530,7 +580,10 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   data_container.setWallerHartreeCoherentCrossSection( cross_section );
   data_container.setWallerHartreeCoherentCrossSectionThresholdEnergyIndex(
 								   threshold );
+  std::cout << "done." << std::endl;
 
+  std::cout << " Setting the pair production cross section...";
+  std::cout.flush();
   this->createCrossSectionOnUnionEnergyGrid( union_energy_grid,
 					     pair_production_cs,
 					     cross_section,
@@ -539,9 +592,14 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   data_container.setPairProductionCrossSection( cross_section );
   data_container.setPairProductionCrossSectionThresholdEnergyIndex(
 								   threshold );
+  std::cout << "done." << std::endl;
   
   for( unsigned i = 0; i < subshell_photoelectric_effect_css.size(); ++i )
   {
+    std::cout << " Setting subshell " 
+	      << subshell_photoelectric_effect_css[i].first 
+	      << " photoelectric cross section...";
+    std::cout.flush();
     this->createCrossSectionOnUnionEnergyGrid( 
 				   union_energy_grid,
 				   subshell_photoelectric_effect_css[i].second,
@@ -554,10 +612,15 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
     data_container.setSubshellPhotoelectricCrossSectionThresholdEnergyIndex(
 				    subshell_photoelectric_effect_css[i].first,
 				    threshold );
+    std::cout << "done." << std::endl;
   }
   
   for( unsigned i = 0; i < impulse_approx_incoherent_cs_evaluators.size(); ++i)
   {
+    std::cout << " Setting subshell "
+	      << impulse_approx_incoherent_cs_evaluators[i].first
+	      << " impusle approx incoherent cross section...";
+    std::cout.flush();
     this->createCrossSectionOnUnionEnergyGrid(
 			     union_energy_grid,
 			     impulse_approx_incoherent_cs_evaluators[i].second,
@@ -570,12 +633,28 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
     data_container.setImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(
 			      impulse_approx_incoherent_cs_evaluators[i].first,
 			      threshold );
+    std::cout << "done." << std::endl;
   }
   
+  std::cout << " Setting the total photoelectric cross section...";
+  std::cout.flush();
   this->calculateTotalPhotoelectricCrossSection( data_container );
+  std::cout << "done." << std::endl;
+  
+  std::cout << " Setting the impulse approx total incoherent cross section...";
+  std::cout.flush();
   this->calculateImpulseApproxTotalIncoherentCrossSection( data_container );
+  std::cout << "done." << std::endl;
+
+  std::cout << " Setting the Waller-Hartree total cross section...";
+  std::cout.flush();
   this->calculateWallerHartreeTotalCrossSection( data_container );
+  std::cout << "done." << std::endl;
+
+  std::cout << " Setting the impulse approx total cross section...";
+  std::cout.flush();
   this->calculateImpulseApproxTotalCrossSection( data_container );
+  std::cout << "done." << std::endl;
 }
 
 // Extract the half Compton profile from the ACE table
@@ -621,13 +700,13 @@ void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
       swd_block( profile_index + 1 + grid_size, grid_size );
     
     // Make sure the ACE data has the expected properties
-    TEST_FOR_EXCEPTION( raw_compton_profile_momentum_grid.front() == 0.0,
+    TEST_FOR_EXCEPTION( raw_compton_profile_momentum_grid.front() != 0.0,
 			std::runtime_error,
 			"Error: The Compton profile momentum grid extracted "
 			"from the ACE table does not have the expected "
 			"properties (grid.front() == 0.0)!" );
     
-    TEST_FOR_EXCEPTION( raw_compton_profile_momentum_grid.back() <
+    TEST_FOR_EXCEPTION( raw_compton_profile_momentum_grid.back() >=
 			Utility::PhysicalConstants::inverse_fine_structure_constant,
 			std::runtime_error,
 			"Error: The Compton profile momentum grid extracted "
@@ -641,43 +720,6 @@ void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
   }
 }
 
-// Extract the average photon heating numbers
-void StandardElectronPhotonRelaxationDataGenerator::extractCrossSection(
-	   Teuchos::ArrayView<const double> raw_energy_grid,
-	   Teuchos::ArrayView<const double> raw_cross_section,
-	   Teuchos::RCP<const Utility::OneDDistribution>& cross_section ) const
-{
-  // Find the first non-zero cross section value
-  Teuchos::ArrayView<const double>::iterator start = 
-    std::find_if( raw_cross_section.begin(),
-		  raw_cross_section.end(),
-		  notEqualZero );
-
-  Teuchos::Array<double> processed_cross_section;
-  processed_cross_section.assign( start, raw_cross_section.end() );
-
-  unsigned start_energy_index = 
-    raw_energy_grid.size() - processed_cross_section.size();
-
-  start = raw_energy_grid.begin();
-  std::advance( start, start_energy_index );
-  
-  Teuchos::Array<double> energy_grid;
-  energy_grid.assign( start, raw_energy_grid.end() );
-
-  // Recover the original energy grid and cross_section
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
-  {
-    energy_grid[i] = exp( energy_grid[i] );
-    
-    processed_cross_section[i] = exp( processed_cross_section[i] );
-  }
-
-  cross_section.reset( new Utility::TabularDistribution<Utility::LogLog>(
-						   energy_grid,
-						   processed_cross_section ) );
-}
-
 // Extract the subshell photoelectric effect cross section
 void StandardElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectricCrossSections(
 	  Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const Utility::OneDDistribution> > >& cross_sections ) const
@@ -685,23 +727,25 @@ void StandardElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectric
   Teuchos::ArrayView<const double> subshell_ordering = 
     d_ace_epr_data->extractSubshellENDFDesignators();
 
+  Teuchos::ArrayView<const double> energy_grid = 
+      d_ace_epr_data->extractPhotonEnergyGrid();
+
   Teuchos::ArrayView<const double> raw_subshell_pe_cross_sections = 
     d_ace_epr_data->extractSPHELBlock();
+
+  cross_sections.resize( subshell_ordering.size() );
 
   for( unsigned i = 0; i < subshell_ordering.size(); ++i )
   {
     cross_sections[i].first = (unsigned)subshell_ordering[i];
 
-    Teuchos::ArrayView<const double> energy_grid = 
-      d_ace_epr_data->extractPhotonEnergyGrid();
-
     Teuchos::ArrayView<const double> raw_subshell_pe_cross_section = 
       raw_subshell_pe_cross_sections( i*energy_grid.size(), 
 				      energy_grid.size() );
 
-    this->extractCrossSection( energy_grid,
-			       raw_subshell_pe_cross_section,
-			       cross_sections[i].second );
+    this->extractCrossSection<Utility::LogLog>( energy_grid,
+						raw_subshell_pe_cross_section,
+						cross_sections[i].second );
   }
 }
 
@@ -713,6 +757,8 @@ void StandardElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxI
   Teuchos::ArrayView<const double> subshell_ordering = 
     d_ace_epr_data->extractSubshellENDFDesignators();
 
+  evaluators.resize( subshell_ordering.size() );
+
   for( unsigned i = 0; i < subshell_ordering.size(); ++i )
   {
     unsigned subshell = (unsigned)subshell_ordering[i];
@@ -720,20 +766,20 @@ void StandardElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxI
     evaluators[i].first = subshell;
 
     const std::vector<double>& momentum_grid = 
-      data_container.getOccupancyNumberMomentumGrid( subshell );
+      data_container.getOccupationNumberMomentumGrid( subshell );
 
-    const std::vector<double>& occupancy_number = 
-      data_container.getOccupancyNumber( subshell );
+    const std::vector<double>& occupation_number = 
+      data_container.getOccupationNumber( subshell );
 
-    Teuchos::RCP<const Utility::OneDDistribution> occupancy_number_dist(
+    Teuchos::RCP<const Utility::OneDDistribution> occupation_number_dist(
        new Utility::TabularDistribution<Utility::LogLin>( momentum_grid,
-							  occupancy_number ) );
+							  occupation_number ) );
 
     evaluators[i].second.reset( new SubshellIncoherentCrossSectionEvaluator( 
 		   MonteCarlo::convertENDFDesignatorToSubshellEnum( subshell ),
 		   data_container.getSubshellOccupancy( subshell ),
 		   data_container.getSubshellBindingEnergy( subshell ),
-		   occupancy_number_dist ) );
+		   occupation_number_dist ) );
   }
 }
 
@@ -761,6 +807,8 @@ void StandardElectronPhotonRelaxationDataGenerator::initializePhotonUnionEnergyG
       union_energy_grid.push_back( binding_energy*
 				   s_threshold_energy_nudge_factor );
     }
+
+    ++subshell;
   }
 
   // Add the pair production threshold
@@ -773,6 +821,9 @@ void StandardElectronPhotonRelaxationDataGenerator::initializePhotonUnionEnergyG
     union_energy_grid.push_back( pp_threshold*
 				 s_threshold_energy_nudge_factor );
   }
+
+  // Add the max photon energy
+  union_energy_grid.push_back( d_max_photon_energy );
 
   // Sort the union energy grid
   union_energy_grid.sort();
@@ -826,7 +877,7 @@ void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEne
   
   while( energy_grid_pt != union_energy_grid.end() )
   {
-    cross_section[index] = original_cross_section->evaluateCrossSection( 
+    raw_cross_section[index] = original_cross_section->evaluateCrossSection( 
 				  *energy_grid_pt, 
 				  d_subshell_incoherent_evaluation_tolerance );
     
@@ -862,9 +913,12 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateTotalPhotoelectricC
   {
     const std::vector<double>& subshell_photoelectric_cs = 
       data_container.getSubshellPhotoelectricCrossSection( *subshell );
+
+    unsigned start_index = 
+      energy_grid.size() - subshell_photoelectric_cs.size();
     
-    for( unsigned i = 0; i < energy_grid.size(); ++i )
-      raw_cross_section[i] += subshell_photoelectric_cs[i];
+    for( unsigned i = 0; i < subshell_photoelectric_cs.size(); ++i )
+      raw_cross_section[start_index+i] += subshell_photoelectric_cs[i];
         
     ++subshell;
   }
@@ -902,8 +956,10 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateImpulseApproxTotalI
     const std::vector<double>& subshell_incoherent_cs = 
       data_container.getImpulseApproxSubshellIncoherentCrossSection(*subshell);
     
-    for( unsigned i = 0; i < energy_grid.size(); ++i )
-      raw_cross_section[i] += subshell_incoherent_cs[i];
+    unsigned start_index = energy_grid.size() - subshell_incoherent_cs.size();
+
+    for( unsigned i = 0; i < subshell_incoherent_cs.size(); ++i )
+      raw_cross_section[start_index+i] += subshell_incoherent_cs[i];
         
     ++subshell;
   }
@@ -936,26 +992,34 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateWallerHartreeTotalC
   const std::vector<double>& incoherent_cs = 
     data_container.getWallerHartreeIncoherentCrossSection();
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
-    cross_section[i] += incoherent_cs[i];
+  unsigned start_index = energy_grid.size() - incoherent_cs.size();
+
+  for( unsigned i = 0; i < incoherent_cs.size(); ++i )
+    cross_section[start_index+i] += incoherent_cs[i];
   
   const std::vector<double>& coherent_cs = 
     data_container.getWallerHartreeCoherentCrossSection();
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
-    cross_section[i] += coherent_cs[i];
+  start_index = energy_grid.size() - coherent_cs.size();
+
+  for( unsigned i = 0; i < coherent_cs.size(); ++i )
+    cross_section[start_index+i] += coherent_cs[i];
   
   const std::vector<double>& pair_production_cs = 
     data_container.getPairProductionCrossSection();
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
-    cross_section[i] += pair_production_cs[i];
+  start_index = energy_grid.size() - pair_production_cs.size();
+
+  for( unsigned i = 0; i < pair_production_cs.size(); ++i )
+    cross_section[start_index+i] += pair_production_cs[i];
 
   const std::vector<double>& photoelectric_cs = 
     data_container.getPhotoelectricCrossSection();
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
-    cross_section[i] += photoelectric_cs[i];
+  start_index = energy_grid.size() - photoelectric_cs.size();
+
+  for( unsigned i = 0; i < photoelectric_cs.size(); ++i )
+    cross_section[start_index+i] += photoelectric_cs[i];
   
   data_container.setWallerHartreeTotalCrossSection( cross_section );
 }
@@ -973,26 +1037,34 @@ void StandardElectronPhotonRelaxationDataGenerator::calculateImpulseApproxTotalC
   const std::vector<double>& incoherent_cs = 
     data_container.getImpulseApproxIncoherentCrossSection();
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
-    cross_section[i] += incoherent_cs[i];
+  unsigned start_index = energy_grid.size() - incoherent_cs.size();
+  
+  for( unsigned i = 0; i < incoherent_cs.size(); ++i )
+    cross_section[start_index+i] += incoherent_cs[i];
   
   const std::vector<double>& coherent_cs = 
     data_container.getWallerHartreeCoherentCrossSection();
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
-    cross_section[i] += coherent_cs[i];
+  start_index = energy_grid.size() - coherent_cs.size();
+
+  for( unsigned i = 0; i < coherent_cs.size(); ++i )
+    cross_section[start_index+i] += coherent_cs[i];
   
   const std::vector<double>& pair_production_cs = 
     data_container.getPairProductionCrossSection();
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
-    cross_section[i] += pair_production_cs[i];
+  start_index = energy_grid.size() - pair_production_cs.size();
+
+  for( unsigned i = 0; i < pair_production_cs.size(); ++i )
+    cross_section[start_index+i] += pair_production_cs[i];
 
   const std::vector<double>& photoelectric_cs = 
     data_container.getPhotoelectricCrossSection();
 
-  for( unsigned i = 0; i < energy_grid.size(); ++i )
-    cross_section[i] += photoelectric_cs[i];
+  start_index = energy_grid.size() - photoelectric_cs.size();
+
+  for( unsigned i = 0; i < photoelectric_cs.size(); ++i )
+    cross_section[start_index+i] += photoelectric_cs[i];
   
   data_container.setImpulseApproxTotalCrossSection( cross_section );
 }
