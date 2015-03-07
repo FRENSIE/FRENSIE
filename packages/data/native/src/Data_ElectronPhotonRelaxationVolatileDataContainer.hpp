@@ -39,8 +39,8 @@ public:
   using ElectronPhotonRelaxationDataContainer::setSubshellRelaxationProbabilities;
   using ElectronPhotonRelaxationDataContainer::setComptonProfileMomentumGrid;
   using ElectronPhotonRelaxationDataContainer::setComptonProfile;
-  using ElectronPhotonRelaxationDataContainer::setOccupancyNumberMomentumGrid;
-  using ElectronPhotonRelaxationDataContainer::setOccupancyNumber;
+  using ElectronPhotonRelaxationDataContainer::setOccupationNumberMomentumGrid;
+  using ElectronPhotonRelaxationDataContainer::setOccupationNumber;
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeScatteringFunctionMomentumGrid;
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeScatteringFunction;
   using ElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFactorMomentumGrid;

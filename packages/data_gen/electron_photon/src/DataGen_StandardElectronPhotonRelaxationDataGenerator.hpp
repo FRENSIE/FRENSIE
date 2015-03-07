@@ -35,9 +35,12 @@ public:
 	   const unsigned atomic_number,
 	   const Teuchos::RCP<const Data::XSSEPRDataExtractor>& ace_epr_data,
 	   const double min_photon_energy,
+	   const double max_photon_energy,
 	   const double occupation_number_evaluation_tolerance,
 	   const double subshell_incoherent_evaluation_tolerance,
-	   const double grid_tolerance = 0.001 );
+	   const double grid_convergence_tol = 0.001,
+	   const double grid_absolute_diff_tol = 1e-13,
+	   const double grid_distance_tol = 1e-13 );
 
   //! Destructor
   ~StandardElectronPhotonRelaxationDataGenerator()
@@ -104,6 +107,7 @@ private:
 			   std::vector<double>& half_profile ) const;
 
   // Extract the average photon heating numbers
+  template<typename InterpPolicy>
   void extractCrossSection(
 	  Teuchos::ArrayView<const double> raw_energy_grid,
 	  Teuchos::ArrayView<const double> raw_cross_section,
@@ -166,14 +170,23 @@ private:
   // The min photon energy
   double d_min_photon_energy;
 
+  // The max photon energy
+  double d_max_photon_energy;
+
   // The occupation number evaluation tolerance
   double d_occupation_number_evaluation_tolerance;
 
   // The subshell incoherent evaluation tolerance
   double d_subshell_incoherent_evaluation_tolerance;
   
-  // The grid tolerance
-  double d_grid_tolerance;
+  // The grid convergence tolerance
+  double d_grid_convergence_tol;
+
+  // The grid absolute difference tolerance
+  double d_grid_absolute_diff_tol;
+
+  // The grid distance tolerance
+  double d_grid_distance_tol;
 };
 
 // Test if a value is greater than or equal to one
@@ -192,6 +205,14 @@ inline bool StandardElectronPhotonRelaxationDataGenerator::notEqualZero(
 }
 
 } // end DataGen namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "DataGen_StandardElectronPhotonRelaxationDataGenerator_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end DATA_GEN_STANDARD_ELECTRON_PHOTON_RELAXATION_DATA_GENERATOR_HPP
 
