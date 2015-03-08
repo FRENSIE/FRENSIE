@@ -524,8 +524,6 @@ void ElectronPhotonRelaxationDataContainer::setOccupationNumber(
   // Make sure the occupation number is valid
   testPrecondition( occupation_number.size() ==
 		    d_occupation_number_momentum_grids.find( subshell )->second.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( occupation_number.begin(),
-						      occupation_number.end()));
   testPrecondition( occupation_number.front() == 0.0 );
   testPrecondition( occupation_number.back() <= 1.0 );
 
@@ -555,9 +553,6 @@ void ElectronPhotonRelaxationDataContainer::setWallerHartreeScatteringFunction(
   // Make sure the scattering function is valid
   testPrecondition( scattering_function.size() == 
 		    d_waller_hartree_scattering_function_momentum_grid.size());
-  testPrecondition( Utility::Sort::isSortedAscending( 
-						 scattering_function.begin(),
-						 scattering_function.end() ) );
   testPrecondition( scattering_function.front() >= 0.0 );
   testPrecondition( scattering_function.back() == d_atomic_number );
 
