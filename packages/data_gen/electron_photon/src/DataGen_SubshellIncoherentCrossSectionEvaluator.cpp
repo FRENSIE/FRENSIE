@@ -155,7 +155,6 @@ SubshellIncoherentCrossSectionEvaluator::evaluateCrossSection(
 {
   // Make sure the energy is valid
   testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( energy ) );
-  testPrecondition( energy >= d_subshell_binding_energy );
 
   double cross_section = 0.0;
 

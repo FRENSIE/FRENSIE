@@ -32,7 +32,7 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<const DataGen::StandardElectronPhotonRelaxationDataGenerator>
-  data_generator_h, data_generator_pb;
+  data_generator_h, data_generator_c;
 
 //---------------------------------------------------------------------------//
 // Tests
@@ -52,6 +52,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
   TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy( 1 ),
 		       1.361000000000E-05 );
   TEST_ASSERT( !data_container.hasRelaxationData() );
+  TEST_ASSERT( !data_container.hasSubshellRelaxationData( 1 ) );
   TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(1).size(),
 		       63 );
   TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(1).front(),
@@ -137,7 +138,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		727 );
   TEST_EQUALITY_CONST(
 	       data_container.getImpulseApproxIncoherentCrossSection().front(),
-	       2.31128632327596700e-02 );
+	       2.31173952527717226e-02 );
   TEST_EQUALITY_CONST(
 	        data_container.getImpulseApproxIncoherentCrossSection().back(),
 		3.02498575770965249e-02 );
@@ -149,7 +150,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
        727 );
   TEST_EQUALITY_CONST(
       data_container.getImpulseApproxSubshellIncoherentCrossSection(1).front(),
-      2.31128632327596700e-02 );
+      2.31173952527717226e-02 );
   TEST_EQUALITY_CONST(
        data_container.getImpulseApproxSubshellIncoherentCrossSection(1).back(),
        3.02498575770965249e-02 );
@@ -211,30 +212,386 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		     727 );
   TEST_EQUALITY_CONST(
 		    data_container.getImpulseApproxTotalCrossSection().front(),
-		    1.20133188430816471e+01 );
+		    1.20133233751016597e+01 );
   TEST_EQUALITY_CONST(
 		     data_container.getImpulseApproxTotalCrossSection().back(),
 		     3.59008691830915022e-02 );
 
   data_container.exportData( "test_h_epr.xml",
 			     Utility::ArchivableObject::XML_ARCHIVE );
-  
-  // Teuchos::Array<double> grid_wrapper( data_container.getWallerHartreeAtomicFormFactorMomentumGrid() );
-  // Teuchos::Array<double> data_wrapper( data_container.getImpulseApproxTotalCrossSection() );
-  // std::cout << grid_wrapper.size() << std::endl;
-  // std::cout << grid_wrapper << std::endl;
-  // std::cout << data_wrapper.size() << std::endl;
-  // std::cout << data_wrapper << std::endl;
 }
 
 //---------------------------------------------------------------------------//
 // Check that a data container can be populated
 TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
-		   populateEPRDataContainer_pb )
+		   populateEPRDataContainer_c )
 {
-  // Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
+  Data::ElectronPhotonRelaxationVolatileDataContainer data_container;
 
-  // data_generator_pb->populateEPRDataContainer( data_container );
+  data_generator_c->populateEPRDataContainer( data_container );
+
+  TEST_EQUALITY_CONST( data_container.getAtomicNumber(), 6 );
+  TEST_EQUALITY_CONST( data_container.getSubshells().size(), 4 );
+  TEST_ASSERT( data_container.getSubshells().count( 1 ) );
+  TEST_ASSERT( data_container.getSubshells().count( 2 ) );
+  TEST_ASSERT( data_container.getSubshells().count( 3 ) );
+  TEST_ASSERT( data_container.getSubshells().count( 4 ) );
+  TEST_EQUALITY_CONST( data_container.getSubshellOccupancy( 1 ), 2 );
+  TEST_EQUALITY_CONST( data_container.getSubshellOccupancy( 2 ), 2 );
+  TEST_EQUALITY_CONST( data_container.getSubshellOccupancy( 3 ), 0.67 );
+  TEST_EQUALITY_CONST( data_container.getSubshellOccupancy( 4 ), 1.33 );
+  TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy( 1 ),
+		       2.9101e-4 );
+  TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy( 2 ),
+		       1.7560e-5 );
+  TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy( 3 ),
+		       8.9900e-6 );
+  TEST_EQUALITY_CONST( data_container.getSubshellBindingEnergy( 4 ),
+		       8.9800e-6 );
+  TEST_ASSERT( data_container.hasRelaxationData() );
+  TEST_ASSERT( data_container.hasSubshellRelaxationData( 1 ) );
+  TEST_ASSERT( !data_container.hasSubshellRelaxationData( 2 ) );
+  TEST_ASSERT( !data_container.hasSubshellRelaxationData( 3 ) );
+  TEST_ASSERT( !data_container.hasSubshellRelaxationData( 4 ) );
+  TEST_EQUALITY_CONST( data_container.getSubshellRelaxationTransitions( 1 ),
+		       8 );
+  TEST_EQUALITY_CONST(
+		     data_container.getSubshellRelaxationVacancies(1).size(),
+		     8 );
+  TEST_EQUALITY_CONST(
+		data_container.getSubshellRelaxationVacancies(1).front().first,
+		3 );
+  TEST_EQUALITY_CONST(
+	       data_container.getSubshellRelaxationVacancies(1).front().second,
+	       0 );
+  TEST_EQUALITY_CONST(
+		 data_container.getSubshellRelaxationVacancies(1).back().first,
+		 4 );
+  TEST_EQUALITY_CONST(
+	        data_container.getSubshellRelaxationVacancies(1).back().second,
+		4 );   
+  TEST_EQUALITY_CONST( 
+		data_container.getSubshellRelaxationParticleEnergies(1).size(),
+		8 );
+  TEST_EQUALITY_CONST(
+	       data_container.getSubshellRelaxationParticleEnergies(1).front(),
+	       2.8202e-4 );
+  TEST_EQUALITY_CONST(
+		data_container.getSubshellRelaxationParticleEnergies(1).back(),
+		2.7305e-4 );
+  TEST_EQUALITY_CONST(
+		   data_container.getSubshellRelaxationProbabilities(1).size(),
+		   8 );
+  TEST_EQUALITY_CONST(
+		  data_container.getSubshellRelaxationProbabilities(1).front(),
+		  5.614877933725e-04 );
+  TEST_EQUALITY_CONST(
+		   data_container.getSubshellRelaxationProbabilities(1).back(),
+		   6.32007767421e-02 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(1).size(),
+		       63 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(1).front(),
+		       -1.0 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(1).back(),
+		       1.0 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(2).size(),
+		       63 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(2).front(),
+		       -1.0 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(2).back(),
+		       1.0 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(3).size(),
+		       63 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(3).front(),
+		       -1.0 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(3).back(),
+		       1.0 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(4).size(),
+		       63 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(4).front(),
+		       -1.0 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfileMomentumGrid(4).back(),
+		       1.0 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfile(1).size(), 63 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfile(1).front(), 
+		       4.76097060872893390e-08 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfile(1).back(),
+		       4.76097060872893390e-08 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfile(2).size(), 63 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfile(2).front(), 
+		       2.22296316538757494e-09 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfile(2).back(), 
+		       2.22296316538757494e-09 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfile(3).size(), 63 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfile(3).front(), 
+		       2.46239750889935041e-13 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfile(3).back(), 
+		       2.46239750889935041e-13 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfile(4).size(), 63 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfile(4).front(),
+		       2.46239750889935041e-13 );
+  TEST_EQUALITY_CONST( data_container.getComptonProfile(4).back(), 
+		       2.46239750889935041e-13 );
+  TEST_EQUALITY_CONST(data_container.getOccupationNumberMomentumGrid(1).size(),
+		      442 );
+  TEST_EQUALITY_CONST(
+		     data_container.getOccupationNumberMomentumGrid(1).front(),
+		     -1.0 );
+  TEST_EQUALITY_CONST(data_container.getOccupationNumberMomentumGrid(1).back(),
+		      1.0 );
+  TEST_EQUALITY_CONST(data_container.getOccupationNumberMomentumGrid(2).size(),
+		      399 );
+  TEST_EQUALITY_CONST(
+		     data_container.getOccupationNumberMomentumGrid(2).front(),
+		     -1.0 );
+  TEST_EQUALITY_CONST(data_container.getOccupationNumberMomentumGrid(2).back(),
+		      1.0 );
+  TEST_EQUALITY_CONST(data_container.getOccupationNumberMomentumGrid(3).size(),
+		      573 );
+  TEST_EQUALITY_CONST(
+		     data_container.getOccupationNumberMomentumGrid(3).front(),
+		     -1.0 );
+  TEST_EQUALITY_CONST(data_container.getOccupationNumberMomentumGrid(3).back(),
+		      1.0 );
+  TEST_EQUALITY_CONST(data_container.getOccupationNumberMomentumGrid(4).size(),
+		      573 );
+  TEST_EQUALITY_CONST(
+		     data_container.getOccupationNumberMomentumGrid(4).front(),
+		     -1.0 );
+  TEST_EQUALITY_CONST(data_container.getOccupationNumber(4).back(),
+		      1.0 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).size(), 442 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).front(),
+		       0.0 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(1).back(),
+		       9.99999999999999556e-01 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(2).size(), 399 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(2).front(),
+		       0.0 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(2).back(),
+		       1.0 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(3).size(), 573 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(3).front(),
+		       0.0 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(3).back(),
+		       1.0 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(4).size(), 573 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(4).front(),
+		       0.0 );
+  TEST_EQUALITY_CONST( data_container.getOccupationNumber(4).back(),
+		       1.0 );
+  TEST_EQUALITY_CONST( 
+	data_container.getWallerHartreeScatteringFunctionMomentumGrid().size(),
+	142 );
+  TEST_EQUALITY_CONST(
+       data_container.getWallerHartreeScatteringFunctionMomentumGrid().front(),
+       std::numeric_limits<double>::min() );   
+  TEST_EQUALITY_CONST(
+	data_container.getWallerHartreeScatteringFunctionMomentumGrid().back(),
+	1e17 );  
+  TEST_EQUALITY_CONST( 
+		    data_container.getWallerHartreeScatteringFunction().size(),
+		    142 );
+  TEST_EQUALITY_CONST(
+		   data_container.getWallerHartreeScatteringFunction().front(),
+		   std::numeric_limits<double>::min() );   
+  TEST_EQUALITY_CONST(
+		    data_container.getWallerHartreeScatteringFunction().back(),
+		    6.0 );  
+  TEST_EQUALITY_CONST( 
+	  data_container.getWallerHartreeAtomicFormFactorMomentumGrid().size(),
+	  138 );
+  TEST_EQUALITY_CONST(
+	 data_container.getWallerHartreeAtomicFormFactorMomentumGrid().front(),
+	 std::numeric_limits<double>::min() );
+  TEST_EQUALITY_CONST(
+	  data_container.getWallerHartreeAtomicFormFactorMomentumGrid().back(),
+	  1e17 );
+  TEST_EQUALITY_CONST(data_container.getWallerHartreeAtomicFormFactor().size(),
+		      138 );
+  TEST_EQUALITY_CONST(
+		     data_container.getWallerHartreeAtomicFormFactor().front(),
+		     6.0 );
+  TEST_EQUALITY_CONST(data_container.getWallerHartreeAtomicFormFactor().back(),
+		      1.68099999999999989e-29 );
+  TEST_EQUALITY_CONST( data_container.getPhotonEnergyGrid().size(), 775 );
+  TEST_EQUALITY_CONST( data_container.getPhotonEnergyGrid().front(), 
+		       0.001 );
+  TEST_EQUALITY_CONST( data_container.getPhotonEnergyGrid().back(),
+		       20.0 );
+  TEST_EQUALITY_CONST( data_container.getAveragePhotonHeatingNumbers().size(),
+		       775 );
+  TEST_EQUALITY_CONST( data_container.getAveragePhotonHeatingNumbers().front(),
+		       9.99436862257738331e-04 );
+  TEST_EQUALITY_CONST( data_container.getAveragePhotonHeatingNumbers().back(),
+		       1.64023854081998266e+01 );
+  TEST_EQUALITY_CONST( 
+		data_container.getWallerHartreeIncoherentCrossSection().size(),
+		775 );
+  TEST_EQUALITY_CONST( 
+	       data_container.getWallerHartreeIncoherentCrossSection().front(),
+	       2.52250000000042829e-01 );
+  TEST_EQUALITY_CONST( 
+		data_container.getWallerHartreeIncoherentCrossSection().back(),
+		1.81486137923699387e-01 );
+  TEST_EQUALITY_CONST(
+   data_container.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex(),
+   0 );
+  TEST_EQUALITY_CONST(
+		data_container.getImpulseApproxIncoherentCrossSection().size(),
+		775 );
+  TEST_EQUALITY_CONST(
+	       data_container.getImpulseApproxIncoherentCrossSection().front(),
+	       2.68987544277024593e-01 );
+  TEST_EQUALITY_CONST(
+	        data_container.getImpulseApproxIncoherentCrossSection().back(),
+		1.81499083920324933e-01 );
+  TEST_EQUALITY_CONST( 
+   data_container.getImpulseApproxIncoherentCrossSectionThresholdEnergyIndex(),
+   0 );
+  TEST_EQUALITY_CONST(
+       data_container.getImpulseApproxSubshellIncoherentCrossSection(1).size(),
+       775 );
+  TEST_EQUALITY_CONST(
+      data_container.getImpulseApproxSubshellIncoherentCrossSection(1).front(),
+      6.79748237018359703e-05 );
+  TEST_EQUALITY_CONST(
+       data_container.getImpulseApproxSubshellIncoherentCrossSection(1).back(),
+       6.04996536119388195e-02 );
+  TEST_EQUALITY_CONST( data_container.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(1),
+		       0 );
+  TEST_EQUALITY_CONST(
+       data_container.getImpulseApproxSubshellIncoherentCrossSection(2).size(),
+       775 );
+  TEST_EQUALITY_CONST(
+      data_container.getImpulseApproxSubshellIncoherentCrossSection(2).front(),
+      3.49837181487809915e-02 );
+  TEST_EQUALITY_CONST(
+       data_container.getImpulseApproxSubshellIncoherentCrossSection(2).back(),
+       6.04997151541930497e-02 );
+  TEST_EQUALITY_CONST( data_container.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(2),
+		       0 );
+  TEST_EQUALITY_CONST(
+       data_container.getImpulseApproxSubshellIncoherentCrossSection(3).size(),
+       775 );
+  TEST_EQUALITY_CONST(
+      data_container.getImpulseApproxSubshellIncoherentCrossSection(3).front(),
+      7.82914013606348658e-02 );
+  TEST_EQUALITY_CONST(
+       data_container.getImpulseApproxSubshellIncoherentCrossSection(3).back(),
+       2.02674045766546712e-02 );
+  TEST_EQUALITY_CONST( data_container.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(3),
+		       0 );
+  TEST_EQUALITY_CONST(
+       data_container.getImpulseApproxSubshellIncoherentCrossSection(4).size(),
+       775 );
+  TEST_EQUALITY_CONST(
+      data_container.getImpulseApproxSubshellIncoherentCrossSection(4).front(),
+      1.55644449943906887e-01 );
+  TEST_EQUALITY_CONST(
+       data_container.getImpulseApproxSubshellIncoherentCrossSection(4).back(),
+       4.02323105775383993e-02 );
+  TEST_EQUALITY_CONST( data_container.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(4),
+		       0 );
+  TEST_EQUALITY_CONST( 
+		  data_container.getWallerHartreeCoherentCrossSection().size(),
+		  775 );
+  TEST_EQUALITY_CONST( 
+		 data_container.getWallerHartreeCoherentCrossSection().front(),
+		 2.45600299049398139e+01 );
+  TEST_EQUALITY_CONST( 
+		  data_container.getWallerHartreeCoherentCrossSection().back(),
+		  1.92198769740615498e-06 );
+  TEST_EQUALITY_CONST( 
+     data_container.getWallerHartreeCoherentCrossSectionThresholdEnergyIndex(),
+     0 );
+  TEST_EQUALITY_CONST( data_container.getPairProductionCrossSection().size(),
+		       280 );
+  TEST_EQUALITY_CONST( data_container.getPairProductionCrossSection().front(),
+		       3.71284984483754554e-09 );
+  TEST_EQUALITY_CONST( data_container.getPairProductionCrossSection().back(),
+		       1.31849999999978429e-01 );
+  TEST_EQUALITY_CONST( 
+	    data_container.getPairProductionCrossSectionThresholdEnergyIndex(),
+	    495 );
+  TEST_EQUALITY_CONST( data_container.getPhotoelectricCrossSection().size(),
+		       775 ); 
+  TEST_EQUALITY_CONST( data_container.getPhotoelectricCrossSection().front(),
+		       4.40346567781178965e+04 ); 
+  TEST_EQUALITY_CONST( data_container.getPhotoelectricCrossSection().back(),
+		       4.78641586632171115e-07 ); 
+  TEST_EQUALITY_CONST( 
+	     data_container.getPhotoelectricCrossSectionThresholdEnergyIndex(),
+	     0 ); 
+  TEST_EQUALITY_CONST(
+		 data_container.getSubshellPhotoelectricCrossSection(1).size(),
+		 775 );
+  TEST_EQUALITY_CONST(
+		data_container.getSubshellPhotoelectricCrossSection(1).front(),
+		4.20106634766030475e+04 );
+  TEST_EQUALITY_CONST(
+		 data_container.getSubshellPhotoelectricCrossSection(1).back(),
+		 4.54467548753621960e-07 );
+  TEST_EQUALITY_CONST(
+    data_container.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex(1),
+    0 );
+  TEST_EQUALITY_CONST(
+		 data_container.getSubshellPhotoelectricCrossSection(2).size(),
+		 775 );
+  TEST_EQUALITY_CONST(
+		data_container.getSubshellPhotoelectricCrossSection(2).front(),
+		1.92946542999592748e+03 );
+  TEST_EQUALITY_CONST(
+		 data_container.getSubshellPhotoelectricCrossSection(2).back(),
+		 2.41672669261238441e-08 );
+  TEST_EQUALITY_CONST(
+    data_container.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex(2),
+    0 );
+  TEST_EQUALITY_CONST(
+		 data_container.getSubshellPhotoelectricCrossSection(3).size(),
+		 775 );
+  TEST_EQUALITY_CONST(
+		data_container.getSubshellPhotoelectricCrossSection(3).front(),
+		3.16445995519961478e+01 );
+  TEST_EQUALITY_CONST(
+		 data_container.getSubshellPhotoelectricCrossSection(3).back(),
+		 2.04871323525023182e-12 );
+  TEST_EQUALITY_CONST(
+    data_container.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex(3),
+    0 );
+  TEST_EQUALITY_CONST(
+		 data_container.getSubshellPhotoelectricCrossSection(4).size(),
+		 775 );
+  TEST_EQUALITY_CONST(
+		data_container.getSubshellPhotoelectricCrossSection(4).front(),
+		6.28832719669201197e+01 );
+  TEST_EQUALITY_CONST(
+		 data_container.getSubshellPhotoelectricCrossSection(4).back(),
+		 4.72223919011517413e-12 );
+  TEST_EQUALITY_CONST(
+    data_container.getSubshellPhotoelectricCrossSectionThresholdEnergyIndex(4),
+    0 );
+  TEST_EQUALITY_CONST(
+		     data_container.getWallerHartreeTotalCrossSection().size(),
+		     775 );
+  TEST_EQUALITY_CONST(
+		    data_container.getWallerHartreeTotalCrossSection().front(),
+		    4.40594690580228344e+04 );
+  TEST_EQUALITY_CONST(
+		     data_container.getWallerHartreeTotalCrossSection().back(),
+		     3.13338538552961843e-01 );
+  TEST_EQUALITY_CONST(
+		     data_container.getImpulseApproxTotalCrossSection().size(),
+		     775 );
+  TEST_EQUALITY_CONST(
+		    data_container.getImpulseApproxTotalCrossSection().front(),
+		    4.40594857955671105e+04 );
+  TEST_EQUALITY_CONST(
+		     data_container.getImpulseApproxTotalCrossSection().back(),
+		     3.13351484549587445e-01 );
+		       
+  data_container.exportData( "test_c_epr.xml",
+			     Utility::ArchivableObject::XML_ARCHIVE );
 }
 
 //---------------------------------------------------------------------------//
@@ -243,7 +600,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 int main( int argc, char** argv )
 {
   std::string test_h_ace_file_name, test_h_ace_table_name;
-  std::string test_pb_ace_file_name, test_pb_ace_table_name;
+  std::string test_c_ace_file_name, test_c_ace_table_name;
   
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
@@ -253,11 +610,11 @@ int main( int argc, char** argv )
   clp.setOption( "test_h_ace_table",
 		 &test_h_ace_table_name,
 		 "Test ACE table name" );
-  clp.setOption( "test_pb_ace_file",
-		 &test_pb_ace_file_name,
+  clp.setOption( "test_c_ace_file",
+		 &test_c_ace_file_name,
 		 "Test ACE file name" );
-  clp.setOption( "test_pb_ace_table",
-		 &test_pb_ace_table_name,
+  clp.setOption( "test_c_ace_table",
+		 &test_c_ace_table_name,
 		 "Test ACE table name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
@@ -291,36 +648,36 @@ int main( int argc, char** argv )
 				     0.001,
 				     20.0,
 				     1e-4,
-				     1e-4,
+				     1e-3,
 				     0.001,
 				     1e-15,
 				     1e-15 ) );
   }
 
   {
-    // Create the file handler and data extractor for boron
+    // Create the file handler and data extractor for hydrogen
     Teuchos::RCP<Data::ACEFileHandler> ace_file_handler(
-			      new Data::ACEFileHandler( test_pb_ace_file_name,
-							test_pb_ace_table_name,
-							1u ) );
+			       new Data::ACEFileHandler( test_c_ace_file_name,
+							 test_c_ace_table_name,
+							 1u ) );
 
     Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
 				new Data::XSSEPRDataExtractor( 
 				      ace_file_handler->getTableNXSArray(),
 				      ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
-    
-    data_generator_pb.reset( 
+
+    data_generator_c.reset( 
 		   new DataGen::StandardElectronPhotonRelaxationDataGenerator(
 				     xss_data_extractor->extractAtomicNumber(),
 				     xss_data_extractor,
 				     0.001,
 				     20.0,
-				     1e-4,
-				     1e-4,
+				     1e-3,
+				     1e-3,
 				     0.001,
-				     1e-14,
-				     1e-14 ) );
+				     1e-19,
+				     1e-16) );
   }
 
   // Run the unit tests

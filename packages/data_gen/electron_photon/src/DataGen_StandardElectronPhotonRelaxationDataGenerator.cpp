@@ -242,13 +242,13 @@ void StandardElectronPhotonRelaxationDataGenerator::setComptonProfileData(
 						  full_momentum_grid,
 						  full_profile,
 						  true );
-
+    
     MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
 					       full_momentum_grid.end() );
 
     MonteCarlo::convertProfileToInverseMeCUnits( full_profile.begin(), 
 						 full_profile.end());
-
+    
     data_container.setComptonProfileMomentumGrid( *subshell,
 						  full_momentum_grid );
     
@@ -321,7 +321,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setOccupationNumberData(
 					     *subshell, 
 					     occupation_number_momentum_grid );
     data_container.setOccupationNumber( *subshell, occupation_number );
-
+    
     ++subshell;
   }
 }
@@ -663,10 +663,6 @@ void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
 				      std::vector<double>& half_momentum_grid,
 				      std::vector<double>& half_profile ) const
 {
-  // Extract the subshell ENDF designators 
-  Teuchos::ArrayView<const double> subshell_designators = 
-    d_ace_epr_data->extractSubshellENDFDesignators();
-
   // Extract the raw Compton profile data
   Teuchos::ArrayView<const double> lswd_block = 
     d_ace_epr_data->extractLSWDBlock();
@@ -681,43 +677,39 @@ void StandardElectronPhotonRelaxationDataGenerator::extractHalfComptonProfile(
 						     converter,
 						     this->getAtomicNumber() );
   
-  // Assign the Compton profile for each subshell
-  for( unsigned i = 0; i < subshell_designators.size(); ++i )
-  {
-    unsigned compton_subshell_index = converter->convertSubshellToIndex(
+  unsigned compton_subshell_index = converter->convertSubshellToIndex(
 			      MonteCarlo::convertENDFDesignatorToSubshellEnum( 
-						   subshell_designators[i] ) );
+								  subshell ) );
     
-    unsigned profile_index = lswd_block[compton_subshell_index];
-
-    unsigned grid_size = swd_block[profile_index];
-    
-    // Extract and modify the profile
-    Teuchos::ArrayView<const double> raw_compton_profile_momentum_grid = 
-      swd_block( profile_index + 1, grid_size );
-
-    Teuchos::ArrayView<const double> raw_compton_profile = 
-      swd_block( profile_index + 1 + grid_size, grid_size );
-    
-    // Make sure the ACE data has the expected properties
-    TEST_FOR_EXCEPTION( raw_compton_profile_momentum_grid.front() != 0.0,
-			std::runtime_error,
-			"Error: The Compton profile momentum grid extracted "
-			"from the ACE table does not have the expected "
-			"properties (grid.front() == 0.0)!" );
-    
-    TEST_FOR_EXCEPTION( raw_compton_profile_momentum_grid.back() >=
-			Utility::PhysicalConstants::inverse_fine_structure_constant,
-			std::runtime_error,
-			"Error: The Compton profile momentum grid extracted "
-			"from the ACE table does not have the expected "
-			"properties (grid.back() < IFSC)!" );
-
-    half_momentum_grid.assign( raw_compton_profile_momentum_grid.begin(),
-			       raw_compton_profile_momentum_grid.end() );
-    half_profile.assign( raw_compton_profile.begin(),
-			 raw_compton_profile.end() );
-  }
+  unsigned profile_index = lswd_block[compton_subshell_index];
+  
+  unsigned grid_size = swd_block[profile_index];
+  
+  // Extract the profile
+  Teuchos::ArrayView<const double> raw_compton_profile_momentum_grid = 
+    swd_block( profile_index + 1, grid_size );
+  
+  Teuchos::ArrayView<const double> raw_compton_profile = 
+    swd_block( profile_index + 1 + grid_size, grid_size );
+  
+  // Make sure the ACE data has the expected properties
+  TEST_FOR_EXCEPTION( raw_compton_profile_momentum_grid.front() != 0.0,
+		      std::runtime_error,
+		      "Error: The Compton profile momentum grid extracted "
+		      "from the ACE table does not have the expected "
+		      "properties (grid.front() == 0.0)!" );
+  
+  TEST_FOR_EXCEPTION( raw_compton_profile_momentum_grid.back() >=
+		      Utility::PhysicalConstants::inverse_fine_structure_constant,
+		      std::runtime_error,
+		      "Error: The Compton profile momentum grid extracted "
+		      "from the ACE table does not have the expected "
+		      "properties (grid.back() < IFSC)!" );
+  
+  half_momentum_grid.assign( raw_compton_profile_momentum_grid.begin(),
+			     raw_compton_profile_momentum_grid.end() );
+  half_profile.assign( raw_compton_profile.begin(),
+		       raw_compton_profile.end() );
 }
 
 // Extract the subshell photoelectric effect cross section
@@ -772,7 +764,7 @@ void StandardElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxI
       data_container.getOccupationNumber( subshell );
 
     Teuchos::RCP<const Utility::OneDDistribution> occupation_number_dist(
-       new Utility::TabularDistribution<Utility::LogLin>( momentum_grid,
+       new Utility::TabularDistribution<Utility::LinLin>( momentum_grid,
 							  occupation_number ) );
 
     evaluators[i].second.reset( new SubshellIncoherentCrossSectionEvaluator( 
