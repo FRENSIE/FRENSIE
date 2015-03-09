@@ -58,7 +58,10 @@ private:
   void createPhotoatomFromACETable(
 			  const std::string& cross_sections_xml_directory,
 			  const std::string& photoatom_alias,
-			  const Teuchos::ParameterList& photoatom_table_info,
+			  const std::string& ace_file_path,
+			  const std::string& photoatomic_table_name,
+			  const int photoatomic_file_start_line,
+			  const double atomic_weight,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
 			  const bool use_doppler_broadening_data,

@@ -9,6 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomFactory.hpp"
 #include "MonteCarlo_PhotoatomACEFactory.hpp"
+#include "MonteCarlo_CrossSectionInfoHelpers.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -33,35 +34,31 @@ PhotoatomFactory::PhotoatomFactory(
   boost::unordered_set<std::string>::const_iterator photoatom_name = 
     photoatom_aliases.begin();
 
+  std::string photoatom_file_path, photoatom_file_type, photoatom_table_name;
+  int photoatom_file_start_line;
+  double atomic_weight;
+
   while( photoatom_name != photoatom_aliases.end() )
   {
-    Teuchos::ParameterList table_info;
-
-    try{
-      table_info = cross_section_table_info.sublist( *photoatom_name );
-    }
-    EXCEPTION_CATCH_AND_EXIT( std::exception,
-			      "There is no data present in the "
-			      "cross_sections.xml file at "
-			      << cross_sections_xml_directory <<
-			      " for atom " << *photoatom_name << "!" );
-
-    // Use the appropriate procedure for the particular table type
-    std::string table_type;
     
-    try{
-      table_type = table_info.get<std::string>( "photoatomic_file_type" );
-    }
-    EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-			      "Error: cross section table entry "
-			      << *photoatom_name << 
-			      " is invalid! Please fix this entry." );
-
-    if( table_type == "ACE" )
+    extractInfoFromPhotoatomTableInfoParameterList(
+						  cross_sections_xml_directory,
+						  *photoatom_name,
+						  cross_section_table_info,
+						  photoatom_file_path,
+						  photoatom_file_type,
+						  photoatom_table_name,
+						  photoatom_file_start_line,
+						  atomic_weight );
+						   
+    if( photoatom_file_type == "ACE" )
     {
       createPhotoatomFromACETable( cross_sections_xml_directory, 
 				   *photoatom_name,
-				   table_info,
+				   photoatom_file_path,
+				   photoatom_table_name,
+				   photoatom_file_start_line,
+				   atomic_weight,
 				   atomic_relaxation_model_factory,
 				   use_doppler_broadening_data,
 				   use_detailed_pair_production_data,
@@ -70,7 +67,8 @@ PhotoatomFactory::PhotoatomFactory(
     else
     {
       THROW_EXCEPTION( std::logic_error,
-		       "Error: photoatomic table type " << table_type <<
+		       "Error: photoatomic file type " 
+		       << photoatom_file_type <<
 		       " is not supported!" );
     }
 
@@ -98,73 +96,16 @@ void PhotoatomFactory::createPhotoatomMap(
 void PhotoatomFactory::createPhotoatomFromACETable(
 			  const std::string& cross_sections_xml_directory,
 			  const std::string& photoatom_alias,
-			  const Teuchos::ParameterList& photoatom_table_info,
+			  const std::string& ace_file_path,
+			  const std::string& photoatomic_table_name,
+			  const int photoatomic_file_start_line,
+			  const double atomic_weight,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
 			  const bool use_doppler_broadening_data,
 			  const bool use_detailed_pair_production_data,
 			  const bool use_atomic_relaxation_data )
 {
-  // Set the abs. path to the ace library file containing the desired table
-  std::string ace_file_path = cross_sections_xml_directory + "/";
-  
-  try{
-    ace_file_path += 
-      photoatom_table_info.get<std::string>("photoatomic_file_path");
-  }
-  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-			    "Error: cross section table entry "
-			    << photoatom_alias <<
-			    "is invalid! Please fix this entry." );
-
-  // Get the start line
-  int photoatomic_file_start_line;
-  
-  try{
-    photoatomic_file_start_line = 
-      photoatom_table_info.get<int>( "photoatomic_file_start_line" );
-  }
-  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-			    "Error: cross section table entry "
-			    << photoatom_alias <<
-			    " is invalid! Please fix this entry." );
-  
-  // Get the table name
-  std::string photoatomic_table_name;
-  
-  try{
-    photoatomic_table_name = 
-      photoatom_table_info.get<std::string>( "photoatomic_table_name" );
-  }
-  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-			    "Error: cross section table entry "
-			    << photoatom_alias <<
-			    " is invalid! Please fix this entry." );
-
-  // Get the atomic weight of the photoatom
-  double atomic_weight;
-  
-  try{
-    atomic_weight = photoatom_table_info.get<double>( "atomic_weight_ratio" );
-  }
-  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-			    "Error: cross section table entry "
-			    << photoatom_alias <<
-			    " is invalid! Please fix this entry." );
-  
-  atomic_weight *= Utility::PhysicalConstants::neutron_rest_mass_amu;
-
-  bool photoatomic_file_is_ascii;
-  try{
-    photoatomic_file_is_ascii = 
-      (photoatom_table_info.get<std::string>( "photoatomic_file_type" ) ==
-       "ACE");
-  }
-  EXCEPTION_CATCH_AND_EXIT( Teuchos::Exceptions::InvalidParameter,
-			    "Error: cross section table entry "
-			    << photoatom_alias <<
-			    " is invalid! Please fix this entry." );
-  
   std::cout << "Loading ACE photoatomic cross section table "
 	    << photoatomic_table_name << " (" << photoatom_alias << ") ... ";
 
@@ -176,7 +117,7 @@ void PhotoatomFactory::createPhotoatomFromACETable(
     Data::ACEFileHandler ace_file_handler( ace_file_path,
 					   photoatomic_table_name,
 					   photoatomic_file_start_line,
-					   photoatomic_file_is_ascii );
+					   true );
     
     // Create the XSS data extractor
     Data::XSSEPRDataExtractor xss_data_extractor( 
