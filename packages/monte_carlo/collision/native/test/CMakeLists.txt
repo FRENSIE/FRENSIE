@@ -107,6 +107,11 @@ ADD_EXECUTABLE(tstNuclide
 TARGET_LINK_LIBRARIES(tstNuclide monte_carlo_collision_native)
 ADD_TEST(Nuclide_test tstNuclide --test_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
 
+ADD_EXECUTABLE(tstCrossSectionInfoHelpers
+  tstCrossSectionInfoHelpers.cpp)
+TARGET_LINK_LIBRARIES(tstCrossSectionInfoHelpers monte_carlo_collision_native)
+ADD_TEST(CrossSectionInfoHelpers_test tstCrossSectionInfoHelpers --test_cross_sections_xml_directory="{CMAKE_CURRENT_SOURCE_DIR}/test_files")
+
 ADD_EXECUTABLE(tstNuclideFactory
   tstNuclideFactory.cpp)
 TARGET_LINK_LIBRARIES(tstNuclideFactory monte_carlo_collision_native)

@@ -53,7 +53,14 @@ private:
   void createNuclideFromACETable(
 			      const std::string& cross_sections_xml_directory,
 			      const std::string& nuclide_alias,
-			      const Teuchos::ParameterList& nuclide_table_info,
+			      const std::string& ace_file_path,
+			      const std::string& nuclear_table_name,
+			      const int nuclide_file_start_line,
+			      const int atomic_number,
+			      const int atomic_mass_number,
+			      const int isomer_number,
+			      const double atomic_weight_ratio,
+			      const double temperature,
 			      const bool use_unresolved_resonance_data,
 			      const bool use_photon_production_data );
 
