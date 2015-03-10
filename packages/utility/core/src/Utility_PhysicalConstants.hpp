@@ -46,6 +46,9 @@ public:
 
   //! The inverse fine structure constant (unitless)
   static const double inverse_fine_structure_constant;
+
+  //! The boltzmann constant (MeV/K)
+  static const double boltzmann_constant;
 };
 
 } // end Utility namespace

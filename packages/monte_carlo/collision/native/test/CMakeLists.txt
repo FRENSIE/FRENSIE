@@ -110,7 +110,7 @@ ADD_TEST(Nuclide_test tstNuclide --test_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}
 ADD_EXECUTABLE(tstCrossSectionInfoHelpers
   tstCrossSectionInfoHelpers.cpp)
 TARGET_LINK_LIBRARIES(tstCrossSectionInfoHelpers monte_carlo_collision_native)
-ADD_TEST(CrossSectionInfoHelpers_test tstCrossSectionInfoHelpers --test_cross_sections_xml_directory="{CMAKE_CURRENT_SOURCE_DIR}/test_files")
+ADD_TEST(CrossSectionInfoHelpers_test tstCrossSectionInfoHelpers --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
 
 ADD_EXECUTABLE(tstNuclideFactory
   tstNuclideFactory.cpp)

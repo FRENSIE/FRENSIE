@@ -27,6 +27,8 @@ INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/packages/utility/core/src"
 
 ADD_SUBDIRECTORY(rng_timer)
 
+#ADD_SUBDIRECTORY(xsdirtoxml)
+
 ADD_SUBDIRECTORY(facemc)
 
 ADD_SUBDIRECTORY(epr_generator)
