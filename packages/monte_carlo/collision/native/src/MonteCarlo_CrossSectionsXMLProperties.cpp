@@ -24,6 +24,15 @@ const std::string CrossSectionsXMLProperties::nuclear_table_name_prop =
   "nuclear_table_name";
 const std::string CrossSectionsXMLProperties::nuclear_file_start_line_prop = 
   "nuclear_file_start_line";
+const std::string CrossSectionsXMLProperties::s_alpha_beta_file_path_prop =  
+  "s_alpha_beta_file_path";
+const std::string CrossSectionsXMLProperties::s_alpha_beta_file_type_prop = 
+  "s_alpha_beta_file_type";
+const std::string CrossSectionsXMLProperties::s_alpha_beta_table_name_prop = 
+  "s_alpha_beta_table_name";
+const std::string 
+CrossSectionsXMLProperties::s_alpha_beta_file_start_line_prop = 
+  "s_alpha_beta_file_start_line";
 const std::string CrossSectionsXMLProperties::photoatomic_file_path_prop = 
   "photoatomic_file_path";
 const std::string CrossSectionsXMLProperties::photoatomic_file_type_prop = 

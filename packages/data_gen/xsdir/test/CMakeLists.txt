@@ -9,3 +9,21 @@ ADD_EXECUTABLE(tstContinuousEnergyNeutronXsdirEntry
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstContinuousEnergyNeutronXsdirEntry data_gen_xsdir)
 ADD_TEST(ContinuousEnergyNeutronXsdirEntry_test tstContinuousEnergyNeutronXsdirEntry)
+
+ADD_EXECUTABLE(tstSAlphaBetaXsdirEntry 
+  tstSAlphaBetaXsdirEntry.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSAlphaBetaXsdirEntry data_gen_xsdir)
+ADD_TEST(SAlphaBetaXsdirEntry_test tstSAlphaBetaXsdirEntry)
+
+ADD_EXECUTABLE(tstElectronPhotonRelaxationXsdirEntry 
+  tstElectronPhotonRelaxationXsdirEntry.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstElectronPhotonRelaxationXsdirEntry data_gen_xsdir)
+ADD_TEST(ElectronPhotonRelaxationXsdirEntry_test tstElectronPhotonRelaxationXsdirEntry)
+
+ADD_EXECUTABLE(tstPhotonuclearXsdirEntry 
+  tstPhotonuclearXsdirEntry.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstPhotonuclearXsdirEntry data_gen_xsdir)
+ADD_TEST(PhotonuclearXsdirEntry_test tstPhotonuclearXsdirEntry)
