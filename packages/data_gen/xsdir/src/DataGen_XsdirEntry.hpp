@@ -62,6 +62,9 @@ public:
   //! Return the table name
   const std::string& getTableName() const;
 
+  //! Return the table alias
+  virtual const std::string& getTableAlias() const = 0;
+
   //! Return the table type
   TableType getTableType() const;
 

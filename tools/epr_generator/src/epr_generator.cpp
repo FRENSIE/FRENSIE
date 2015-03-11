@@ -19,7 +19,7 @@
 
 // FRENSIE Includes
 #include "DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp"
-#include "MonteCarlo_CrossSectionInfoHelpers.hpp"
+#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
@@ -107,7 +107,7 @@ int main( int argc, char** argv )
   int data_file_start_line, atomic_number;
   double atomic_weight;
     
-  MonteCarlo::extractInfoFromPhotoatomTableInfoParameterList( 
+  MonteCarlo::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList( 
 						    cross_section_directory,
 						    cross_section_alias,
 						    *cross_sections_table_info,
