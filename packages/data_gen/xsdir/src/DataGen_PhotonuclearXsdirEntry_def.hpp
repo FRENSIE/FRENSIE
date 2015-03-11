@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_ContinuousEnergyNeutronXsdirEntry_def.hpp
+//! \file   DataGen_PhotonuclearXsdirEntry_def.hpp
 //! \author Alex Robinson
-//! \brief  The continuous energy neutron xsdir entry class template defs.
+//! \brief  The photonuclear xsdir entry class template definitions
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_CONTINUOUS_ENERGY_NEUTRON_XSDIR_ENTRY_DEF_HPP
-#define DATA_GEN_CONTINUOUS_ENERGY_NEUTRON_XSDIR_ENTRY_DEF_HPP
+#ifndef DATA_GEN_PHOTONUCLEAR_XSDIR_ENTRY_DEF_HPP
+#define DATA_GEN_PHOTONUCLEAR_XSDIR_ENTRY_DEF_HPP
 
 // Std Lib Includes
 #include <sstream>
@@ -20,7 +20,7 @@ namespace DataGen{
 
 // Constructor
 template<typename STLCompliantContainer>
-ContinuousEnergyNeutronXsdirEntry::ContinuousEnergyNeutronXsdirEntry( 
+PhotonuclearXsdirEntry::PhotonuclearXsdirEntry( 
 				    const STLCompliantContainer& entry_tokens )
   : XsdirEntry( entry_tokens ),
     d_atomic_number(),
@@ -30,7 +30,7 @@ ContinuousEnergyNeutronXsdirEntry::ContinuousEnergyNeutronXsdirEntry(
 { 
   // Make sure the table type is valid
   testPrecondition( extractTableTypeFromEntryTokens( entry_tokens ) ==
-		    CONTINUOUS_ENERGY_NEUTRON_TABLE );
+		    PHOTONUCLEAR_TABLE );
 
   unsigned zaid = extractZaidFromTableName( this->getTableName() );
 
@@ -43,8 +43,7 @@ ContinuousEnergyNeutronXsdirEntry::ContinuousEnergyNeutronXsdirEntry(
   std::ostringstream oss;
   oss.precision( 1 );
   oss << MonteCarlo::convertAtomTypeEnumToString( atom )
-      << "-" << d_atomic_mass_number << "_"
-      << std::fixed << this->getTableTemperatureKelvin() << "K_v"
+      << "-" << d_atomic_mass_number << "_v"
       << this->getTableVersion()/10;
 
   d_alias = oss.str();  
@@ -59,8 +58,8 @@ ContinuousEnergyNeutronXsdirEntry::ContinuousEnergyNeutronXsdirEntry(
 
 } // end DataGen namespace
 
-#endif // end DATA_GEN_CONTINUOUS_ENERGY_NEUTRON_XSDIR_ENTRY_DEF_HPP
+#endif // end DATA_GEN_PHOTONUCLEAR_XSDIR_ENTRY_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_ContinuousEnergyNeutronXsdirEntry_def.hpp
+// end DataGen_PhotonuclearXsdirEntry_def.hpp
 //---------------------------------------------------------------------------//

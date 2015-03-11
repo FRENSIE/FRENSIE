@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_ContinuousEnergyNeutronXsdirEntry_def.hpp
+//! \file   DataGen_ElectronPhotonRelaxationXsdirEntry_def.hpp
 //! \author Alex Robinson
-//! \brief  The continuous energy neutron xsdir entry class template defs.
+//! \brief  The electron-photon-relaxation xsdir entry class template defs.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef DATA_GEN_CONTINUOUS_ENERGY_NEUTRON_XSDIR_ENTRY_DEF_HPP
-#define DATA_GEN_CONTINUOUS_ENERGY_NEUTRON_XSDIR_ENTRY_DEF_HPP
+#ifndef DATA_GEN_ELECTRON_PHOTON_RELAXATION_XSDIR_ENTRY_DEF_HPP
+#define DATA_GEN_ELECTRON_PHOTON_RELAXATION_XSDIR_ENTRY_DEF_HPP
 
 // Std Lib Includes
 #include <sstream>
@@ -20,47 +20,33 @@ namespace DataGen{
 
 // Constructor
 template<typename STLCompliantContainer>
-ContinuousEnergyNeutronXsdirEntry::ContinuousEnergyNeutronXsdirEntry( 
+ElectronPhotonRelaxationXsdirEntry::ElectronPhotonRelaxationXsdirEntry( 
 				    const STLCompliantContainer& entry_tokens )
   : XsdirEntry( entry_tokens ),
     d_atomic_number(),
-    d_atomic_mass_number(),
-    d_isomer_number( 0 ),
     d_alias()
-{ 
+{
   // Make sure the table type is valid
   testPrecondition( extractTableTypeFromEntryTokens( entry_tokens ) ==
-		    CONTINUOUS_ENERGY_NEUTRON_TABLE );
+		    ELECTRON_PHOTON_RELAXATION_TABLE );
 
   unsigned zaid = extractZaidFromTableName( this->getTableName() );
-
   d_atomic_number = extractAtomicNumberFromZaid( zaid );
-  d_atomic_mass_number = extractAtomicMassNumberFromZaid( zaid );
 
-  MonteCarlo::AtomType atom = 
+  MonteCarlo::AtomType atom =
     MonteCarlo::convertAtomicNumberToAtomTypeEnum( d_atomic_number );
 
-  std::ostringstream oss;
-  oss.precision( 1 );
-  oss << MonteCarlo::convertAtomTypeEnumToString( atom )
-      << "-" << d_atomic_mass_number << "_"
-      << std::fixed << this->getTableTemperatureKelvin() << "K_v"
-      << this->getTableVersion()/10;
+  d_alias = MonteCarlo::convertAtomTypeEnumToString( atom );
 
-  d_alias = oss.str();  
-  
   // Make sure the atomic number is valid
   testPostcondition( d_atomic_number > 0 );
   testPostcondition( d_atomic_number <= 100 );
-  // Make sure the atomic mass number is valid
-  testPostcondition( d_atomic_mass_number > 0 );
-  testPostcondition( d_atomic_mass_number < 300 );
 }
 
 } // end DataGen namespace
 
-#endif // end DATA_GEN_CONTINUOUS_ENERGY_NEUTRON_XSDIR_ENTRY_DEF_HPP
+#endif // end DATA_GEN_ELECTRON_PHOTON_RELAXATION_XSDIR_ENTRY_DEF_HPP
 
 //---------------------------------------------------------------------------//
-// end DataGen_ContinuousEnergyNeutronXsdirEntry_def.hpp
+// end DataGen_ElectronPhotonRelaxationXsdirEntry_def.hpp
 //---------------------------------------------------------------------------//
