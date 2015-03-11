@@ -3,3 +3,9 @@ ADD_EXECUTABLE(tstXsdirEntry
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstXsdirEntry data_gen_xsdir)
 ADD_TEST(XsdirEntry_test tstXsdirEntry)
+
+ADD_EXECUTABLE(tstContinuousEnergyNeutronXsdirEntry 
+  tstContinuousEnergyNeutronXsdirEntry.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstContinuousEnergyNeutronXsdirEntry data_gen_xsdir)
+ADD_TEST(ContinuousEnergyNeutronXsdirEntry_test tstContinuousEnergyNeutronXsdirEntry)

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstCrossSectionInfoHelpers.cpp
+//! \file   tstCrossSectionXMLProperties.cpp
 //! \author Alex Robinson
 //! \brief  Cross section info helper function unit tests
 //!
@@ -16,7 +16,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_CrossSectionInfoHelpers.hpp"
+#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//
@@ -29,14 +29,42 @@ std::string cross_sections_xml_directory;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that photoatom cross section info can be extracted
-TEUCHOS_UNIT_TEST( CrossSectionInfoHelpers, 
+TEUCHOS_UNIT_TEST( CrossSectionXMLProperties, 
 		   extractInfoFromPhotoatomTableInfoParameterList )
 {
   std::string data_file_path, data_file_type, data_file_table_name;
   int data_file_start_line;
   double atomic_weight;
 
-  MonteCarlo::extractInfoFromPhotoatomTableInfoParameterList(
+  MonteCarlo::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
+						  cross_sections_xml_directory,
+						  "H",
+						  *cross_section_info,
+						  data_file_path,
+						  data_file_type,
+						  data_file_table_name,
+						  data_file_start_line,
+						  atomic_weight );
+
+  TEST_EQUALITY( data_file_path, 
+		 cross_sections_xml_directory + "/test_h_epr_ace_file.txt" );
+  TEST_EQUALITY_CONST( data_file_type, "ACE" );
+  TEST_EQUALITY_CONST( data_file_table_name, "1000.12p" );
+  TEST_EQUALITY_CONST( data_file_start_line, 1 );
+  TEST_EQUALITY_CONST( atomic_weight, 
+		       0.999242*Utility::PhysicalConstants::neutron_rest_mass_amu );
+}
+
+//---------------------------------------------------------------------------//
+// Check that electroatom cross section info can be extracted
+TEUCHOS_UNIT_TEST( CrossSectionXMLProperties, 
+		   extractInfoFromElectroatomTableInfoParameterList )
+{
+  std::string data_file_path, data_file_type, data_file_table_name;
+  int data_file_start_line;
+  double atomic_weight;
+
+  MonteCarlo::CrossSectionsXMLProperties::extractInfoFromElectroatomTableInfoParameterList(
 						  cross_sections_xml_directory,
 						  "H",
 						  *cross_section_info,
@@ -57,7 +85,7 @@ TEUCHOS_UNIT_TEST( CrossSectionInfoHelpers,
 
 //---------------------------------------------------------------------------//
 // Check that nuclide cross section info can be extracted
-TEUCHOS_UNIT_TEST( CrossSectionInfoHelpers,
+TEUCHOS_UNIT_TEST( CrossSectionXMLProperties,
 		   extractInfoFromNuclideTableInfoParameterList )
 {
   std::string data_file_path, data_file_type, data_file_table_name;
@@ -65,7 +93,7 @@ TEUCHOS_UNIT_TEST( CrossSectionInfoHelpers,
   int atomic_number, atomic_mass_number, isomer_number;
   double atomic_weight_ratio, temperature;
 
-  MonteCarlo::extractInfoFromNuclideTableInfoParameterList(
+  MonteCarlo::CrossSectionsXMLProperties::extractInfoFromNuclideTableInfoParameterList(
 						  cross_sections_xml_directory,
 						  "H-1_293.6K",
 						  *cross_section_info,
@@ -135,5 +163,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstCrossSectionInfoHelpers.cpp
+// end tstCrossSectionXMLProperties.cpp
 //---------------------------------------------------------------------------//

@@ -35,6 +35,9 @@ struct TestXsdirEntry : public DataGen::XsdirEntry
 
   ~TestXsdirEntry()
   { /* ... */ }
+
+  const std::string& getTableAlias() const
+  { return d_test_string; }
   
   void addInfoToParameterList( Teuchos::ParameterList& parameter_list ) const
   { /* ... */ }
@@ -48,6 +51,10 @@ struct TestXsdirEntry : public DataGen::XsdirEntry
   using DataGen::XsdirEntry::extractZaidFromTableName;
   using DataGen::XsdirEntry::extractAtomicNumberFromZaid;
   using DataGen::XsdirEntry::extractAtomicMassNumberFromZaid;
+
+private:
+
+  std::string d_test_string;
 };
 
 //---------------------------------------------------------------------------//

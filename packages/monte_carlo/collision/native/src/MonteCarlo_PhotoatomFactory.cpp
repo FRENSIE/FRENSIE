@@ -9,7 +9,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomFactory.hpp"
 #include "MonteCarlo_PhotoatomACEFactory.hpp"
-#include "MonteCarlo_CrossSectionInfoHelpers.hpp"
+#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -41,7 +41,7 @@ PhotoatomFactory::PhotoatomFactory(
   while( photoatom_name != photoatom_aliases.end() )
   {
     
-    extractInfoFromPhotoatomTableInfoParameterList(
+    CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
 						  cross_sections_xml_directory,
 						  *photoatom_name,
 						  cross_section_table_info,
@@ -51,7 +51,7 @@ PhotoatomFactory::PhotoatomFactory(
 						  photoatom_file_start_line,
 						  atomic_weight );
 						   
-    if( photoatom_file_type == "ACE" )
+    if( photoatom_file_type == CrossSectionsXMLProperties::ace_file )
     {
       createPhotoatomFromACETable( cross_sections_xml_directory, 
 				   *photoatom_name,
