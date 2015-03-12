@@ -22,12 +22,13 @@ INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/packages/utility/core/src"
 "${CMAKE_SOURCE_DIR}/packages/monte_carlo/manager/src"
 "${CMAKE_SOURCE_DIR}/packages/transmutation/src"
 "${CMAKE_SOURCE_DIR}/packages/data/decay/src"
+"${CMAKE_SOURCE_DIR}/packages/data_gen/xsdir/src"
 "${CMAKE_SOURCE_DIR}/packages/data_gen/free_gas_sab/src"
 "${CMAKE_SOURCE_DIR}/packages/data_gen/electron_photon/src")
 
 ADD_SUBDIRECTORY(rng_timer)
 
-#ADD_SUBDIRECTORY(xsdirtoxml)
+ADD_SUBDIRECTORY(xsdirtoxml)
 
 ADD_SUBDIRECTORY(facemc)
 

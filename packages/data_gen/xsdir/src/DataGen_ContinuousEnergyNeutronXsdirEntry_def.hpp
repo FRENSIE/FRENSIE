@@ -37,13 +37,28 @@ ContinuousEnergyNeutronXsdirEntry::ContinuousEnergyNeutronXsdirEntry(
   d_atomic_number = extractAtomicNumberFromZaid( zaid );
   d_atomic_mass_number = extractAtomicMassNumberFromZaid( zaid );
 
+  // Check if a metastable state is present
+  if( d_atomic_mass_number > 400 )
+  {
+    d_atomic_mass_number %= 400;
+
+    d_isomer_number = 1;
+  }
+
   MonteCarlo::AtomType atom = 
     MonteCarlo::convertAtomicNumberToAtomTypeEnum( d_atomic_number );
 
   std::ostringstream oss;
   oss.precision( 1 );
-  oss << MonteCarlo::convertAtomTypeEnumToString( atom )
-      << "-" << d_atomic_mass_number << "_"
+  oss << MonteCarlo::convertAtomTypeEnumToString( atom );
+
+  if( d_atomic_mass_number > 0 )
+    oss << "-" << d_atomic_mass_number;
+
+  if( d_isomer_number > 0 )
+    oss << "m";
+  
+  oss << "_"
       << std::fixed << this->getTableTemperatureKelvin() << "K_v"
       << this->getTableVersion()/10;
 
@@ -53,8 +68,8 @@ ContinuousEnergyNeutronXsdirEntry::ContinuousEnergyNeutronXsdirEntry(
   testPostcondition( d_atomic_number > 0 );
   testPostcondition( d_atomic_number <= 100 );
   // Make sure the atomic mass number is valid
-  testPostcondition( d_atomic_mass_number > 0 );
-  testPostcondition( d_atomic_mass_number < 300 );
+  testPostcondition( d_atomic_mass_number >= 0 );
+  testPostcondition( d_atomic_mass_number < 400 );
 }
 
 } // end DataGen namespace
