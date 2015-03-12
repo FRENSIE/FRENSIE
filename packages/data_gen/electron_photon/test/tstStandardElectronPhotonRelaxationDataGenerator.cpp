@@ -78,33 +78,33 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		       1.00000000000000000e+00 );
   TEST_EQUALITY_CONST( 
 	data_container.getWallerHartreeScatteringFunctionMomentumGrid().size(),
-	94 );
+	365 );
   TEST_EQUALITY_CONST(
        data_container.getWallerHartreeScatteringFunctionMomentumGrid().front(),
-       std::numeric_limits<double>::min() );
+       0.0 );
   TEST_EQUALITY_CONST(
 	data_container.getWallerHartreeScatteringFunctionMomentumGrid().back(),
 	1.00000000000000000e+17 );
   TEST_EQUALITY_CONST(
 		    data_container.getWallerHartreeScatteringFunction().size(),
-		    94 );
+		    365 );
   TEST_EQUALITY_CONST( 
 		   data_container.getWallerHartreeScatteringFunction().front(),
-		   std::numeric_limits<double>::min() );
+		   0.0 );
   TEST_EQUALITY_CONST(
 		    data_container.getWallerHartreeScatteringFunction().back(),
 		    1.00000000000000000e+00 );
   TEST_EQUALITY_CONST( 
 	  data_container.getWallerHartreeAtomicFormFactorMomentumGrid().size(),
-	  90 );
+	  1583 );
   TEST_EQUALITY_CONST(
 	 data_container.getWallerHartreeAtomicFormFactorMomentumGrid().front(),
-	 std::numeric_limits<double>::min() );
+	 0.0 );
   TEST_EQUALITY_CONST(
 	  data_container.getWallerHartreeAtomicFormFactorMomentumGrid().back(),
 	  1.00000000000000000e+17 );
   TEST_EQUALITY_CONST(data_container.getWallerHartreeAtomicFormFactor().size(),
-		      90 );
+		      1583 );
   TEST_EQUALITY_CONST(
 		     data_container.getWallerHartreeAtomicFormFactor().front(),
 		     1.00000000000000000e+00 );
@@ -382,33 +382,33 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		       1.0 );
   TEST_EQUALITY_CONST( 
 	data_container.getWallerHartreeScatteringFunctionMomentumGrid().size(),
-	142 );
+	379 );
   TEST_EQUALITY_CONST(
        data_container.getWallerHartreeScatteringFunctionMomentumGrid().front(),
-       std::numeric_limits<double>::min() );   
+       0.0 );
   TEST_EQUALITY_CONST(
 	data_container.getWallerHartreeScatteringFunctionMomentumGrid().back(),
 	1e17 );  
   TEST_EQUALITY_CONST( 
 		    data_container.getWallerHartreeScatteringFunction().size(),
-		    142 );
+		    379 );
   TEST_EQUALITY_CONST(
 		   data_container.getWallerHartreeScatteringFunction().front(),
-		   std::numeric_limits<double>::min() );   
+		   0.0 );
   TEST_EQUALITY_CONST(
 		    data_container.getWallerHartreeScatteringFunction().back(),
 		    6.0 );  
   TEST_EQUALITY_CONST( 
 	  data_container.getWallerHartreeAtomicFormFactorMomentumGrid().size(),
-	  138 );
+	  1259 );
   TEST_EQUALITY_CONST(
 	 data_container.getWallerHartreeAtomicFormFactorMomentumGrid().front(),
-	 std::numeric_limits<double>::min() );
+	 0.0 );
   TEST_EQUALITY_CONST(
 	  data_container.getWallerHartreeAtomicFormFactorMomentumGrid().back(),
 	  1e17 );
   TEST_EQUALITY_CONST(data_container.getWallerHartreeAtomicFormFactor().size(),
-		      138 );
+		      1259 );
   TEST_EQUALITY_CONST(
 		     data_container.getWallerHartreeAtomicFormFactor().front(),
 		     6.0 );
@@ -650,7 +650,7 @@ int main( int argc, char** argv )
 				     1e-4,
 				     1e-3,
 				     0.001,
-				     1e-15,
+				     1e-42,
 				     1e-15 ) );
   }
 
@@ -676,7 +676,7 @@ int main( int argc, char** argv )
 				     1e-3,
 				     1e-3,
 				     0.001,
-				     1e-19,
+				     1e-32,
 				     1e-16) );
   }
 
