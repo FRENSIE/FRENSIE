@@ -540,7 +540,7 @@ void ElectronPhotonRelaxationDataContainer::setWallerHartreeScatteringFunctionMo
 						      momentum_grid.end() ) );
   testPrecondition( std::find_if( momentum_grid.begin(),
 				  momentum_grid.end(),
-				  isValueLessThanOrEqualToZero ) ==
+				  isValueLessThanZero ) ==
 		    momentum_grid.end() );
   
   d_waller_hartree_scattering_function_momentum_grid = momentum_grid;
@@ -569,7 +569,7 @@ void ElectronPhotonRelaxationDataContainer::setWallerHartreeAtomicFormFactorMome
 						      momentum_grid.end() ) );
   testPrecondition( std::find_if( momentum_grid.begin(),
 				  momentum_grid.end(),
-				  isValueLessThanOrEqualToZero ) ==
+				  isValueLessThanZero ) ==
 		    momentum_grid.end() );
   
   d_waller_hartree_atomic_form_factor_momentum_grid = momentum_grid;

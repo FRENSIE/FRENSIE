@@ -337,34 +337,59 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeScatteringFu
   unsigned scatt_func_size = jince_block.size()/2;
 
   Teuchos::ArrayView<const double> raw_recoil_momentum(
-					   jince_block( 0, scatt_func_size ) );
+					 jince_block( 1, scatt_func_size-1 ) );
 
   Teuchos::ArrayView<const double> raw_scattering_function(
-			     jince_block( scatt_func_size, scatt_func_size ) );
+			 jince_block( scatt_func_size+1, scatt_func_size-1 ) );
 
-  std::vector<double> recoil_momentum, scattering_function;
+  std::vector<double> scaled_recoil_momentum;
   
-  recoil_momentum.assign( raw_recoil_momentum.begin(),
-			  raw_recoil_momentum.end() );
+  scaled_recoil_momentum.assign( raw_recoil_momentum.begin(),
+				 raw_recoil_momentum.end() );
   
-  scattering_function.assign( raw_scattering_function.begin(),
-			      raw_scattering_function.end() );
-
   // Convert from inverse Angstroms to inverse cm
-  for( unsigned i = 0; i < recoil_momentum.size(); ++i )
-  {
-    recoil_momentum[i] *= 1e8;
+  for( unsigned i = 0; i < scaled_recoil_momentum.size(); ++i )
+    scaled_recoil_momentum[i] *= 1e8;
 
-    if( recoil_momentum[i] == 0.0 )
-      recoil_momentum[i] = std::numeric_limits<double>::min();
+  Teuchos::RCP<Utility::OneDDistribution> scattering_function_dist( 
+              new Utility::TabularDistribution<Utility::LogLog>( 
+						   scaled_recoil_momentum,
+						   raw_scattering_function ) );
 
-    if( scattering_function[i] == 0.0 )
-      scattering_function[i] = std::numeric_limits<double>::min();
-  }
+  boost::function<double (double x)> grid_function = 
+    boost::bind( &Utility::OneDDistribution::evaluate,
+		 boost::cref( *scattering_function_dist ),
+		 _1 );
+
+  Utility::GridGenerator<Utility::LinLin> 
+    scattering_func_grid_generator( d_grid_convergence_tol,
+				    d_grid_absolute_diff_tol,
+				    d_grid_distance_tol );
+
+  std::list<double> recoil_momentum_grid, scattering_function;
+  recoil_momentum_grid.push_back( scaled_recoil_momentum.front() );
+  recoil_momentum_grid.push_back( scaled_recoil_momentum.back() );
+
+  scattering_func_grid_generator.generateAndEvaluateInPlace( 
+							  recoil_momentum_grid,
+							  scattering_function,
+							  grid_function );
+
+  recoil_momentum_grid.push_front( jince_block[0]*1e8 );
+  scattering_function.push_front( jince_block[scatt_func_size] );
+
+  std::vector<double> refined_recoil_momentum, refined_scattering_function;
+  
+  refined_recoil_momentum.assign( recoil_momentum_grid.begin(),
+				  recoil_momentum_grid.end() );
+
+  refined_scattering_function.assign( scattering_function.begin(),
+				      scattering_function.end() );
 
   data_container.setWallerHartreeScatteringFunctionMomentumGrid(
-							     recoil_momentum );
-  data_container.setWallerHartreeScatteringFunction( scattering_function );
+						     refined_recoil_momentum );
+  data_container.setWallerHartreeScatteringFunction( 
+						 refined_scattering_function );
 }
 
 // Set the Waller-Hartree atomic form factor data
@@ -378,32 +403,60 @@ void StandardElectronPhotonRelaxationDataGenerator::setWallerHartreeAtomicFormFa
   unsigned form_factor_size = jcohe_block.size()/3;
 
   Teuchos::ArrayView<const double> raw_recoil_momentum( 
-					  jcohe_block( 0, form_factor_size ) );
+					jcohe_block( 1, form_factor_size-1 ) );
 
   Teuchos::ArrayView<const double> raw_form_factor(
-			 jcohe_block( 2*form_factor_size, form_factor_size ) );
+		     jcohe_block( 2*form_factor_size+1, form_factor_size-1 ) );
   
-  std::vector<double> recoil_momentum, form_factor;
+  std::vector<double> scaled_recoil_momentum;
 
-  recoil_momentum.assign( raw_recoil_momentum.begin(),
-			  raw_recoil_momentum.end() );
-
-  form_factor.assign( raw_form_factor.begin(), raw_form_factor.end() );
+  scaled_recoil_momentum.assign( raw_recoil_momentum.begin(),
+				 raw_recoil_momentum.end() );
 
   // Convert from inverse Angstroms to inverse cm
-  for( unsigned i = 0; i < recoil_momentum.size(); ++i )
-  {
-    recoil_momentum[i] *= 1e8;
+  for( unsigned i = 0; i < scaled_recoil_momentum.size(); ++i )
+    scaled_recoil_momentum[i] *= 1e8;
 
-    if( recoil_momentum[i] == 0.0 )
-      recoil_momentum[i] = std::numeric_limits<double>::min();
-    
-    if( form_factor[i] == 0.0 )
-      form_factor[i] = std::numeric_limits<double>::min();
-  }
+  Teuchos::RCP<Utility::OneDDistribution> form_factor_dist(
+			    new Utility::TabularDistribution<Utility::LogLog>(
+						        scaled_recoil_momentum,
+							raw_form_factor ) );
 
-  data_container.setWallerHartreeAtomicFormFactorMomentumGrid(recoil_momentum);
-  data_container.setWallerHartreeAtomicFormFactor( form_factor );
+  boost::function<double (double x)> grid_function = 
+    boost::bind( &Utility::OneDDistribution::evaluate,
+		 boost::cref( *form_factor_dist ),
+		 _1 );
+
+  Utility::GridGenerator<Utility::LinLin>
+    form_factor_grid_generator( d_grid_convergence_tol,
+				d_grid_absolute_diff_tol,
+				d_grid_distance_tol );
+
+  std::list<double> recoil_momentum_grid, form_factor;
+  recoil_momentum_grid.push_back( scaled_recoil_momentum.front() );
+  recoil_momentum_grid.push_back( scaled_recoil_momentum.back() );
+
+  form_factor_grid_generator.generateAndEvaluateInPlace( recoil_momentum_grid,
+							 form_factor,
+							 grid_function );
+
+  recoil_momentum_grid.push_front( jcohe_block.front()*1e8 );
+  recoil_momentum_grid.push_back( jcohe_block[form_factor_size-1]*1e8 );
+  
+  form_factor.push_front( jcohe_block[2*form_factor_size] );
+  form_factor.push_back( jcohe_block.back() );
+
+  std::vector<double> refined_recoil_momentum, refined_form_factor;
+
+  refined_recoil_momentum.assign( recoil_momentum_grid.begin(),
+				  recoil_momentum_grid.end() );
+
+  refined_form_factor.assign( form_factor.begin(),
+			      form_factor.end() );
+  
+  data_container.setWallerHartreeAtomicFormFactorMomentumGrid(
+						     refined_recoil_momentum );
+  data_container.setWallerHartreeAtomicFormFactor( refined_form_factor );
 }
 
 // Set the photon data
