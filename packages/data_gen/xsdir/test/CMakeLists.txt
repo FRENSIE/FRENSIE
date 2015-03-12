@@ -27,3 +27,13 @@ ADD_EXECUTABLE(tstPhotonuclearXsdirEntry
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstPhotonuclearXsdirEntry data_gen_xsdir)
 ADD_TEST(PhotonuclearXsdirEntry_test tstPhotonuclearXsdirEntry)
+
+ADD_EXECUTABLE(tstXsdirEntryFactory 
+  tstXsdirEntryFactory.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstXsdirEntryFactory data_gen_xsdir)
+ADD_TEST(XsdirEntryFactory_test tstXsdirEntryFactory)
+
+ADD_EXECUTABLE(tstXsdir tstXsdir.cpp )
+TARGET_LINK_LIBRARIES(tstXsdir data_gen_xsdir)
+ADD_TEST(Xsdir_test tstXsdir --test_xsdir_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_xsdir")

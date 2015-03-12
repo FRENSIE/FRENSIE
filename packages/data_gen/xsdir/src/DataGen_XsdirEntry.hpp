@@ -51,6 +51,15 @@ public:
   static TableType extractTableTypeFromEntryTokens(
 				const STLCompliantContainer& entry_tokens );
 
+  //! Extract zaid from table name
+  static unsigned extractZaidFromTableName( const std::string& table_name );
+
+  //! Extract atomic number from zaid
+  static unsigned extractAtomicNumberFromZaid( const unsigned zaid );
+
+  //! Extract atomic mass number from zaid
+  static unsigned extractAtomicMassNumberFromZaid( const unsigned zaid );
+
   //! Constructor
   template<typename STLCompliantContainer>
   XsdirEntry( const STLCompliantContainer& entry_tokens );
@@ -124,15 +133,6 @@ protected:
   template<typename STLCompliantContainer>
   static double extractTableTemperatureFromEntryTokens(
 				const STLCompliantContainer& entry_tokens );
-
-  //! Extract zaid from table name
-  static unsigned extractZaidFromTableName( const std::string& table_name );
-
-  //! Extract atomic number from zaid
-  static unsigned extractAtomicNumberFromZaid( const unsigned zaid );
-
-  //! Extract atomic mass number from zaid
-  static unsigned extractAtomicMassNumberFromZaid( const unsigned zaid );
 					   
 
 private:

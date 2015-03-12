@@ -60,25 +60,25 @@ private:
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
-std::string line_a( "" );
-std::string line_b( "atomic weight ratios" );
-std::string line_c( "   0001  1.000000   0001  1.000000" );
-std::string line_d( "                   1004   3.99320563   1005   4.99205575   1006   5.99301364" );
-std::string line_e( "01/01/1111" );
-std::string line_f( "directory" );
-std::string line_g( " 93000.01g 235.011799 mgxsnp 0 1 66417 479" );
-std::string line_h( " 94238.50m 236.005745 mgxsnp 0 1 66549 2442" );
-std::string line_i( " 96244.50d 241.966000 dre5 0 1 155585 9509 0 0 2.5300E-08" );
-std::string line_j( "  1000.04p      0.999242  mcplib04 0 1        1     1898 0 0 0.00000E+00" );
-std::string line_k( " 1000.03e  0.999317 el03 0 1       1    2329 0 0  .0" );
-std::string line_l( " 15031.70h 30.707680 endf70prot 0 1 178992 85621" );
-std::string line_m( " 98252.30y 252.082000 llldos 0 1 42508 467" );
-std::string line_n( " 1001.70c 0.999167 endf70a 0 1 1 8177 0 0 2.5301E-08" );
-std::string line_o( " smeth.60t  0.999170 sab2002 0 1 823113 53047 0 0 1.89580E-09" );
+const std::string line_a( "" );
+const std::string line_b( "atomic weight ratios" );
+const std::string line_c( "   0001  1.000000   0001  1.000000" );
+const std::string line_d( "                   1004   3.99320563   1005   4.99205575   1006   5.99301364" );
+const std::string line_e( "01/01/1111" );
+const std::string line_f( "directory" );
+const std::string line_g( " 93000.01g 235.011799 mgxsnp 0 1 66417 479" );
+const std::string line_h( " 94238.50m 236.005745 mgxsnp 0 1 66549 2442" );
+const std::string line_i( " 96244.50d 241.966000 dre5 0 1 155585 9509 0 0 2.5300E-08" );
+const std::string line_j( "  1000.04p      0.999242  mcplib04 0 1        1     1898 0 0 0.00000E+00" );
+const std::string line_k( " 1000.03e  0.999317 el03 0 1       1    2329 0 0  .0" );
+const std::string line_l( " 15031.70h 30.707680 endf70prot 0 1 178992 85621" );
+const std::string line_m( " 98252.30y 252.082000 llldos 0 1 42508 467" );
+const std::string line_n( " 1001.70c 0.999167 endf70a 0 1 1 8177 0 0 2.5301E-08" );
+const std::string line_o( " smeth.60t  0.999170 sab2002 0 1 823113 53047 0 0 1.89580E-09" );
 
-std::string line_p( "  1000.12p      0.999242  mcplib12 0 1        1     1898 0 0 0.00000E+00" );
+const std::string line_p( "  1000.12p      0.999242  mcplib12 0 1        1     1898 0 0 0.00000E+00" );
 
-std::string line_q( "  1002.24u     1.996300 data/la150u 0 1 216233   3686  0 0 0.000E+00" );
+const std::string line_q( "  1002.24u     1.996300 data/la150u 0 1 216233   3686  0 0 0.000E+00" );
 
 //---------------------------------------------------------------------------//
 // Tests
