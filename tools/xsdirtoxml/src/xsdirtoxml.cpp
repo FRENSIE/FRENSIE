@@ -22,12 +22,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "DataGen_StandardElectronPhotonRelaxationDataGenerator.hpp"
-#include "MonteCarlo_CrossSectionInfoHelpers.hpp"
-#include "Data_ACEFileHandler.hpp"
-#include "Data_XSSEPRDataExtractor.hpp"
-#include "Data_ElectronPhotonRelaxationVolatileDataContainer.hpp"
-#include "Utility_PhysicalConstants.hpp"
+#include "DataGen_Xsdir.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
 int main( int argc, char** argv )
@@ -38,16 +33,16 @@ int main( int argc, char** argv )
   // Set up the command line options
   Teuchos::CommandLineProcessor xsdirtoxml_clp;
 
-  std::string xsdir_file( "xsdir" );
+  std::string xsdir_file_name( "xsdir" );
   bool overwrite = false;
 
   xsdirtoxml_clp.setDocString( "xsdir to cross_sections.xml converter\n" );
   xsdirtoxml_clp.setOption( "xsdir_file",
-			    &xsdir_file,
+			    &xsdir_file_name,
 			    "The name of the xsdir file to convert" );
   xsdirtoxml_clp.setOption( "overwrite",
 			    "append",
-			    overwrite,
+			    &overwrite,
 			    "Overwrite or append the current "
 			    "cross_sections.xml file" );
 
@@ -62,20 +57,20 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
-  // Open the xsdir file
-  ifstream xsdir_file_stream( xsdir_file.c_str() );
-  
-  if( !xsdir_file_stream.good() )
-  {
-    std::cerr << "Error: the xsdir file " << xsdir_file 
-	      << " cannot be opened!" << std::endl;
+  // Create the xsdir object
+  Teuchos::RCP<DataGen::Xsdir> xsdir;
 
-    return 1;
+  try{
+    xsdir.reset( new DataGen::Xsdir( xsdir_file_name.c_str() ) );
   }
+  EXCEPTION_CATCH_AND_EXIT( std::exception, 
+			    "Error creating the xsdir object!" );
 
   // Open the cross_sections.xml file
-  Teuchos::RCP<Teuchos::ParameterList> cross_sections_xml;
+  Teuchos::RCP<Teuchos::ParameterList> cross_sections_xml( 
+		    new Teuchos::ParameterList( "Cross Sections Directory" ) );
 
+  if( !overwrite )
   {
     std::ifstream file( "cross_sections.xml" );
 
@@ -86,52 +81,13 @@ int main( int argc, char** argv )
     }
   }
 
-  // Loop through the xsdir file and construct the cross_sections.xml file
-  std::string xsdir_line;
-  std::vector<std::string> xsdir_line_elems;
-  
-  while( !xsdir_file_stream.eof() )
-  {
-    std::getline( xsdir_file_stream, line );
+  // Export the xsdir info
+  xsdir->exportInfo( *cross_sections_xml );
 
-    // Make sure the file stream is still valid
-    if( !xsdir_file_stream.eof() )
-    {
-      boost::split( xsdir_line_elems, xsdir_line, boost::is_any_of( " " ) );
+  Teuchos::writeParameterListToXmlFile( *cross_sections_xml, 
+					"cross_sections.xml" );
 
-      
-      if( xsdir_line_elems.front().find( "." ) <
-	  xsdir_line_elems.front().size() )
-      {
-	std::vector<std::string> zaid_type;
-
-	boost::split( zaid_type, 
-		      xsdir_line_elems.front(), 
-		      boost::is_any_of( "." ) );
-
-	std::ostringstream iss( zaid_type.front() );	  
-	int zaid;
-	iss >> zaid;
-
-	iss.str( zaid_type.back()[0] );
-	int version;
-	iss >> version;
-
-	// Continuous energy neutron table
-	if( zaid_type.back().find( "c" ) <
-	    zaid_type.back().size() )
-	{
-	  
-	}
-
-	// Electron-photon-relaxation table
-	if( zaid_type.back() == "12p" )
-	{
-	  
-	}
-      }
-    }
-  }
+  return 0;
 }
 
 //---------------------------------------------------------------------------//
