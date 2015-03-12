@@ -30,6 +30,8 @@ ADD_SUBDIRECTORY(rng_timer)
 
 ADD_SUBDIRECTORY(xsdirtoxml)
 
+ADD_SUBDIRECTORY(listcs)
+
 ADD_SUBDIRECTORY(facemc)
 
 ADD_SUBDIRECTORY(epr_generator)

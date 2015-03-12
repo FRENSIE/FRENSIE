@@ -11,9 +11,6 @@
 #include <sstream>
 #include <fstream>
 
-// Boost Includes
-#include <boost/algorithm/string/split.hpp>
-
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>

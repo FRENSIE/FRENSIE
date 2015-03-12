@@ -59,14 +59,6 @@ const std::string CrossSectionsXMLProperties::electroatomic_table_name_prop =
 const std::string 
 CrossSectionsXMLProperties::electroatomic_file_start_line_prop = 
   "electroatomic_file_start_line";
-const std::string CrossSectionsXMLProperties::sab_file_path_prop = 
-  "sab_file_path";
-const std::string CrossSectionsXMLProperties::sab_file_type_prop = 
-  "sab_file_type";
-const std::string CrossSectionsXMLProperties::sab_table_name_prop = 
-  "sab_table_name";
-const std::string CrossSectionsXMLProperties::sab_file_start_line_prop = 
-  "sab_file_start_line";
 const std::string CrossSectionsXMLProperties::atomic_number_prop = 
   "atomic_number";
 const std::string CrossSectionsXMLProperties::atomic_mass_number_prop = 

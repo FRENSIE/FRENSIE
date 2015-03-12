@@ -44,10 +44,6 @@ public:
   static const std::string electroatomic_file_type_prop;
   static const std::string electroatomic_table_name_prop;
   static const std::string electroatomic_file_start_line_prop;
-  static const std::string sab_file_path_prop;
-  static const std::string sab_file_type_prop;
-  static const std::string sab_table_name_prop;
-  static const std::string sab_file_start_line_prop;
   static const std::string atomic_number_prop;
   static const std::string atomic_mass_number_prop;
   static const std::string isomer_number_prop;
