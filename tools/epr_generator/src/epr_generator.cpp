@@ -39,11 +39,11 @@ int main( int argc, char** argv )
 
   std::string cross_section_directory, cross_section_alias;
   double min_photon_energy = 0.001, max_photon_energy = 20.0;
-  double occupation_number_evaluation_tol = 1e-4;
-  double subshell_incoherent_evaluation_tol = 1e-4;
+  double occupation_number_evaluation_tol = 1e-3;
+  double subshell_incoherent_evaluation_tol = 1e-3;
   double grid_convergence_tol = 0.001;
-  double grid_absolute_diff_tol = 1e-13;
-  double grid_distance_tol = 1e-13;
+  double grid_absolute_diff_tol = 1e-42;
+  double grid_distance_tol = 1e-16;
   bool modify_cs_xml_file = false;
 
   epr_generator_clp.setDocString( "Electron-Photon-Relaxation Native Data File"
@@ -171,18 +171,26 @@ int main( int argc, char** argv )
     std::string new_cross_section_alias( cross_section_alias );
     new_cross_section_alias += "-Native";
 
+    Teuchos::ParameterList& old_table_info = 
+      cross_sections_table_info->sublist( cross_section_alias );
+    
     Teuchos::ParameterList& new_table_info = 
       cross_sections_table_info->sublist( new_cross_section_alias );
+
+    new_table_info.setParameters( old_table_info );
     
-    new_table_info.set( "photoatomic_file_path", oss.str() );
-    new_table_info.set<std::string>( "photoatomic_file_type",
-				     "native-epr" );
-    new_table_info.set( "photoatomic_file_start_line", -1 );
-    new_table_info.set<std::string>( "photoatomic_table_name", "" );
-    new_table_info.set( "atomic_number", atomic_number );
     new_table_info.set( 
-	     "atomic_weight_ratio",
-	     atomic_weight/Utility::PhysicalConstants::neutron_rest_mass_amu );
+	    MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_path_prop,
+	    oss.str() );
+    new_table_info.set( 
+	    MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_type_prop,
+	    MonteCarlo::CrossSectionsXMLProperties::native_file );
+    new_table_info.set( 
+      MonteCarlo::CrossSectionsXMLProperties::photoatomic_file_start_line_prop,
+      -1 );
+    new_table_info.set( 
+	   MonteCarlo::CrossSectionsXMLProperties::photoatomic_table_name_prop,
+	   "" );
   }
   else
     new_file_name = oss.str();
