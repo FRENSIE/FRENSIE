@@ -30,7 +30,7 @@ public:
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
-      const Teuchos::RCP<Utility::OneDDistribution>& form_factor );
+      const Teuchos::RCP<const Utility::OneDDistribution>& form_factor );
 
   //! Destructor
   virtual ~CoherentPhotoatomicReaction()

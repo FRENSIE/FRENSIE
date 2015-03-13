@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_DiscreteDistribution.hpp"
@@ -28,13 +29,13 @@ namespace MonteCarlo{
  * variable) should have units of 1/cm.
  */ 
 IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
-	   const Teuchos::RCP<Utility::OneDDistribution>& scattering_function )
+     const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function )
   : d_scattering_function( scattering_function )
 {
   // Make sure the scattering function is valid
   testPrecondition( !scattering_function.is_null() );
 
-  // Ignore doppler broadening
+  // Ignore Doppler broadening
   d_doppler_broadening_func = boost::bind<double>( 
 		    &IncoherentPhotonScatteringDistribution::returnComptonLine,
 		    boost::cref( *this ),
@@ -49,7 +50,7 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
  * variable) should have units of 1/cm. 
  */  
 IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
-     const Teuchos::RCP<Utility::OneDDistribution>& scattering_function,
+     const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
      const Teuchos::Array<double>& subshell_binding_energies,
      const Teuchos::Array<double>& subshell_occupancies,
      const Teuchos::Array<SubshellType>& subshell_order,
@@ -78,13 +79,28 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
 						subshell_occupancies ) );
 
   // Doppler broaden compton lines
-  d_doppler_broadening_func = boost::bind<double>( 
+  if(d_electron_momentum_distribution.front()->getLowerBoundOfIndepVar() < 0.0)
+  {
+    // The full profile is required for the new Doppler broadening method
+    d_doppler_broadening_func = boost::bind<double>( 
 	    &IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine,
 	    boost::cref( *this ),
 	    _1,
 	    _2,
 	    _3,
 	    _4 );
+  }
+  else
+  {
+    // Only half of the profile is required for the old method
+    d_doppler_broadening_func = boost::bind<double>( 
+	 &IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLineOld,
+	 boost::cref( *this ),
+	 _1,
+	 _2,
+	 _3,
+	 _4 );
+  }
 }
 
 // Randomly scatter the photon
@@ -178,11 +194,120 @@ double IncoherentPhotonScatteringDistribution::returnComptonLine(
 }
 
 // Doppler broaden a compton line
-/*! \todo Figure out why the (alpha_final/alpha_orig) rejection is not
- * necessary!
- *  \todo Prevent the sampling of an energetically impossible subshell.
+/*! \details This procedure is a revision of the commonly used method. It
+ * requires the full Compton profile and not just the positive half.
  */
-double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine( 
+double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
+				     const double initial_energy,
+				     const double compton_line_energy,
+				     const double scattering_angle_cosine,
+				     SubshellType& shell_of_interaction ) const
+{
+  double outgoing_energy;
+  
+  // Record if a valid Doppler broadening energy is calculated
+  bool valid_doppler_broadening = true;
+
+  while( true )
+  {
+    // Sample the shell that is interacted with
+    double shell_binding_energy;
+    unsigned shell_index;
+
+    shell_binding_energy = d_shell_interaction_data->sample( shell_index );
+
+    // Convert to a Compton profile shell
+    shell_of_interaction = d_subshell_order[shell_index];
+
+    unsigned compton_shell_index = 
+      d_subshell_converter->convertSubshellToIndex( shell_of_interaction );
+
+    // Calculate the maximum outgoing photon energy
+    double energy_max = initial_energy - shell_binding_energy;
+
+    // Compton scattering can only occur if there is enough energy to release
+    // the electron from its shell
+    if( energy_max <= 0.0 )
+    {
+      valid_doppler_broadening = false;
+      break;
+    }
+
+    // Calculate the maximum electron momentum projection
+    double pz_max = calculateMaxElectronMomentumProjection( 
+						     initial_energy,
+						     shell_binding_energy,
+						     scattering_angle_cosine );
+
+    // Make sure the maximum electron momentum projection is physical (>-1.0)
+    if( pz_max < d_electron_momentum_distribution[compton_shell_index]->getLowerBoundOfIndepVar() )
+    {
+      valid_doppler_broadening = false;
+
+      break;
+    }
+    
+    // Convert to atomic units
+    pz_max *= Utility::PhysicalConstants::inverse_fine_structure_constant;
+
+    double pz_table_max = 
+      d_electron_momentum_distribution[compton_shell_index]->getUpperBoundOfIndepVar();
+
+    if( pz_max > pz_table_max )
+      pz_max = pz_table_max;
+    
+    // Sample an electron momentum projection
+    double pz = 
+      d_electron_momentum_distribution[compton_shell_index]->sample( pz_max );
+
+    // Convert to me*c units
+    pz /= Utility::PhysicalConstants::inverse_fine_structure_constant;
+
+    // Calculate the doppler broadened energy
+    bool energetically_possible;
+
+    outgoing_energy = calculateDopplerBroadenedEnergy(pz,
+						      initial_energy,
+						      scattering_angle_cosine,
+						      energetically_possible );
+
+    if( !energetically_possible || outgoing_energy == 0.0 )
+    {
+      valid_doppler_broadening = false;
+	
+      break;
+    }
+    else
+    {
+      valid_doppler_broadening = true;
+
+      break;
+    }
+  }
+
+  if( !valid_doppler_broadening )
+  {
+    // reset the shell of interaction
+    shell_of_interaction = UNKNOWN_SUBSHELL;
+    
+    // reset the outgoing energy
+    outgoing_energy = compton_line_energy;
+  }
+
+  // Make sure the outgoing energy is valid
+  testPostcondition( outgoing_energy <= initial_energy );
+  testPostcondition( outgoing_energy > 0.0 );
+
+  return outgoing_energy;
+}
+
+// Doppler broaden a compton line using the old method
+/*! \details This is the procedure outlined in many papers, which recommend
+ * the use of only 1/2 of the Compton profile (0 to 100 in 
+ * atomic momentum units). The validity of this approach seems questionable
+ * so use the revised version when possible.
+ */
+double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLineOld( 
 				   const double initial_energy,
 				   const double compton_line_energy,
 				   const double scattering_angle_cosine,
@@ -219,12 +344,12 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
     }
     
     // Calculate the maximum electron momentum projection
-    double arg = compton_line_energy*energy_max*
-      (1.0 - scattering_angle_cosine);
+    double arg = initial_energy*energy_max*(1.0 - scattering_angle_cosine);
     
-    double pz_max = (-shell_binding_energy + arg/
-		     Utility::PhysicalConstants::electron_rest_mass_energy)/
-      sqrt( 2*arg + shell_binding_energy*shell_binding_energy );
+    double pz_max = calculateMaxElectronMomentumProjection( 
+						     initial_energy,
+						     shell_binding_energy,
+						     scattering_angle_cosine );
     
     // Make sure the maximum electron momentum projection is physical
     if( pz_max <= 0.0 )
@@ -234,7 +359,7 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
       break;
     }
     
-    // Convert to the correct unitless momentum
+    // Convert to the atomic unitless momentum
     pz_max *= Utility::PhysicalConstants::inverse_fine_structure_constant;
     
     double pz_table_max = 
@@ -246,10 +371,12 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
     double pz = 
       d_electron_momentum_distribution[compton_shell_index]->sample(pz_max);
     
-    // Convert to the correct unitless momentum
+    // Convert to the me*c unitless momentum
     pz /= Utility::PhysicalConstants::inverse_fine_structure_constant;
     
     // Calculate the doppler broadened energy
+    bool energetically_possible;
+
     double pz_sqr = pz*pz;
     double compton_line_ratio = initial_energy/compton_line_energy;
     double a = pz_sqr - compton_line_ratio*compton_line_ratio;

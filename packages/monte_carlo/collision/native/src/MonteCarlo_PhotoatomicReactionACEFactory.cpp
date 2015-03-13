@@ -107,7 +107,7 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
     Teuchos::ArrayView<const double> swd_block = 
       raw_photoatom_data.extractSWDBlock();
 
-    Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >
+    Teuchos::Array<Teuchos::RCP<const Utility::OneDDistribution> >
       compton_profiles( lswd_block.size() );
     
     for( unsigned subshell = 0; subshell < lswd_block.size(); ++subshell )

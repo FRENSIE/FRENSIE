@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ComptonProfileHelpers.cpp
+//! \file   MonteCarlo_ComptonProfileHelpers.npp
 //! \author Alex Robinson
 //! \brief  The Compton profile helper function declarations.
 //!
@@ -37,6 +37,25 @@ void convertMomentumGridToMeCUnits( GridIterator momentum_grid_start,
 template<typename ProfileIterator>
 void convertProfileToInverseMeCUnits( ProfileIterator profile_start,
 				      ProfileIterator profile_end );
+
+//! Calculate the electron momentum projection
+double calculateElectronMomentumProjection(
+					const double initial_energy,
+					const double final_energy,
+					const double scattering_angle_cosine );
+
+//! Calculate the maximum electron momentum projection
+double calculateMaxElectronMomentumProjection(
+				  const double initial_energy,
+				  const double binding_energy,
+				  const double scattering_angle_cosine );
+
+//! Calculate the Doppler broadened energy
+double calculateDopplerBroadenedEnergy(
+				     const double electron_momentum_projection,
+				     const double initial_energy,
+				     const double scattering_angle_cosine,
+				     bool& energetically_possible );
 
 } // end MonteCarlo namespace
 
