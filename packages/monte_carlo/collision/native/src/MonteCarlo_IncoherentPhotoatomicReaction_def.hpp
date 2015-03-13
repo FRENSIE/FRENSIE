@@ -18,10 +18,10 @@ namespace MonteCarlo{
 // Constructor without doppler broadening
 template<typename InterpPolicy, bool processed_cross_section>
 IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentPhotoatomicReaction(
-           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	   const Teuchos::ArrayRCP<const double>& cross_section,
-	   const unsigned threshold_energy_index,
-	   const Teuchos::RCP<Utility::OneDDistribution>& scattering_function )
+     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+     const Teuchos::ArrayRCP<const double>& cross_section,
+     const unsigned threshold_energy_index,
+     const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
                                                       incoming_energy_grid,
 						      cross_section,
@@ -46,16 +46,16 @@ IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentP
 // Constructor for doppler broadening
 template<typename InterpPolicy, bool processed_cross_section>
 IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::IncoherentPhotoatomicReaction( 
-       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-       const Teuchos::ArrayRCP<const double>& cross_section,
-       const unsigned threshold_energy_index,
-       const Teuchos::RCP<Utility::OneDDistribution>& scattering_function,
-       const Teuchos::Array<double>& subshell_binding_energies,
-       const Teuchos::Array<double>& subshell_occupancies,
-       const Teuchos::Array<SubshellType>& subshell_order,
-       const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
-       const IncoherentPhotonScatteringDistribution::ElectronMomentumDistArray&
-       electron_momentum_dist_array )
+      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+      const Teuchos::ArrayRCP<const double>& cross_section,
+      const unsigned threshold_energy_index,
+      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
+      const Teuchos::Array<double>& subshell_binding_energies,
+      const Teuchos::Array<double>& subshell_occupancies,
+      const Teuchos::Array<SubshellType>& subshell_order,
+      const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
+      const IncoherentPhotonScatteringDistribution::ElectronMomentumDistArray&
+      electron_momentum_dist_array )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
                                                       incoming_energy_grid,
 						      cross_section,

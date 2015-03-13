@@ -187,9 +187,7 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentCrossSectionEvaluator,
   max_electron_momentum_projection = 
     incoherent_cs_h_k->getMaxElectronMomentumProjection( 1e-3, 1.0 );
 
-  TEST_FLOATING_EQUALITY( max_electron_momentum_projection, 
-			  -1.0000000000002907,
-			  1e-12 );
+  TEST_FLOATING_EQUALITY( max_electron_momentum_projection, -1.0, 1e-15 );
 
   max_electron_momentum_projection = 
     incoherent_cs_h_k->getMaxElectronMomentumProjection( 1.0, -1.0 );
@@ -208,9 +206,7 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentCrossSectionEvaluator,
   max_electron_momentum_projection = 
     incoherent_cs_h_k->getMaxElectronMomentumProjection( 1.0, 1.0 );
 
-  TEST_FLOATING_EQUALITY( max_electron_momentum_projection, 
-			  -1.0000000161624103,
-			  1e-6 );
+  TEST_FLOATING_EQUALITY( max_electron_momentum_projection, -1.0, 1e-15 );
 
   max_electron_momentum_projection = 
     incoherent_cs_h_k->getMaxElectronMomentumProjection( 20.0, -1.0 );
@@ -229,9 +225,7 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentCrossSectionEvaluator,
   max_electron_momentum_projection = 
     incoherent_cs_h_k->getMaxElectronMomentumProjection( 20.0, 1.0 );
 
-  TEST_FLOATING_EQUALITY( max_electron_momentum_projection, 
-			  -1.0000978412230426,
-			  1e-12 );
+  TEST_FLOATING_EQUALITY( max_electron_momentum_projection, -1.0, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//

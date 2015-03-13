@@ -20,7 +20,8 @@ namespace MonteCarlo{
 
 // Constructor
 CoherentPhotonScatteringDistribution::CoherentPhotonScatteringDistribution(
-   const Teuchos::RCP<Utility::OneDDistribution>& form_factor_function_squared )
+                           const Teuchos::RCP<const Utility::OneDDistribution>&
+			   form_factor_function_squared )
   : d_form_factor_function_squared( form_factor_function_squared )
 {
   // Make sure the array is valid

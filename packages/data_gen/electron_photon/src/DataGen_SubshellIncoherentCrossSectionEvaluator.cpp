@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "DataGen_SubshellIncoherentCrossSectionEvaluator.hpp"
+#include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -81,19 +82,10 @@ double SubshellIncoherentCrossSectionEvaluator::getMaxElectronMomentumProjection
   testPrecondition( angle_cosine >= -1.0 );
   testPrecondition( angle_cosine <= 1.0 );
 
-  double energy_diff = energy - d_subshell_binding_energy;
-
-  double max_electron_momentum_projection = (-d_subshell_binding_energy + 
-	  energy*energy_diff*(1.0-angle_cosine)/
-	  Utility::PhysicalConstants::electron_rest_mass_energy)/
-    sqrt( energy*energy + energy_diff*energy_diff - 
-	  2*energy*energy_diff*angle_cosine );
-
-  // Make sure the projection is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( 
-					  max_electron_momentum_projection ) );
-
-  return max_electron_momentum_projection;
+  return MonteCarlo::calculateMaxElectronMomentumProjection( 
+						     energy,
+						     d_subshell_binding_energy,
+						     angle_cosine );
 }
 
 // Evaluate the differential subshell incoherent cross section (dc/dx) 
