@@ -23,6 +23,8 @@
 namespace MonteCarlo{
 
 // Constructor without Doppler broadening
+/*! \details The occupation number grid must be in me*c units.
+ */
 SubshellIncoherentPhotonScatteringDistribution::SubshellIncoherentPhotonScatteringDistribution(
        const SubshellType interaction_subshell,
        const double binding_energy,
@@ -51,6 +53,9 @@ SubshellIncoherentPhotonScatteringDistribution::SubshellIncoherentPhotonScatteri
 }
 
 // Constructor for Doppler broadening
+/*! \details The occupation number and Compton profile grid be in me*c units.
+ * The Compton profile must be in inverse me*c units.
+ */
 SubshellIncoherentPhotonScatteringDistribution::SubshellIncoherentPhotonScatteringDistribution(
 	const SubshellType interaction_subshell,
 	const double binding_energy,

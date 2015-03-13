@@ -47,7 +47,10 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
 
 // Constructor for doppler broadening
 /*! \details The recoil electron momentum (scattering function independent 
- * variable) should have units of 1/cm. 
+ * variable) should have units of 1/cm. The Compton profile grids must
+ * be in atomic units (not me*c units). The Compton profiles must be in 
+ * inverse atomic units (not inverse me*c units). If only half profiles are
+ * provided, the old Doppler broadening method will be used."
  */  
 IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
@@ -262,7 +265,7 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
 
     // Convert to me*c units
     pz /= Utility::PhysicalConstants::inverse_fine_structure_constant;
-
+    
     // Calculate the doppler broadened energy
     bool energetically_possible;
 

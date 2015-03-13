@@ -442,7 +442,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
 		775 );
   TEST_EQUALITY_CONST(
 	       data_container.getImpulseApproxIncoherentCrossSection().front(),
-	       2.68987544277024593e-01 );
+	       2.68987544277024648e-01 );
   TEST_EQUALITY_CONST(
 	        data_container.getImpulseApproxIncoherentCrossSection().back(),
 		1.81499083920324933e-01 );
@@ -454,7 +454,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
        775 );
   TEST_EQUALITY_CONST(
       data_container.getImpulseApproxSubshellIncoherentCrossSection(1).front(),
-      6.79748237018359703e-05 );
+      6.79748237018359838e-05 );
   TEST_EQUALITY_CONST(
        data_container.getImpulseApproxSubshellIncoherentCrossSection(1).back(),
        6.04996536119388195e-02 );
@@ -476,7 +476,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
        775 );
   TEST_EQUALITY_CONST(
       data_container.getImpulseApproxSubshellIncoherentCrossSection(3).front(),
-      7.82914013606348658e-02 );
+      7.82914013606348935e-02 );
   TEST_EQUALITY_CONST(
        data_container.getImpulseApproxSubshellIncoherentCrossSection(3).back(),
        2.02674045766546712e-02 );
@@ -487,7 +487,7 @@ TEUCHOS_UNIT_TEST( StandardElectronPhotonRelaxationDataGenerator,
        775 );
   TEST_EQUALITY_CONST(
       data_container.getImpulseApproxSubshellIncoherentCrossSection(4).front(),
-      1.55644449943906887e-01 );
+      1.55644449943906915e-01 );
   TEST_EQUALITY_CONST(
        data_container.getImpulseApproxSubshellIncoherentCrossSection(4).back(),
        4.02323105775383993e-02 );
