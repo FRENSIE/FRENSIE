@@ -25,7 +25,9 @@
 
 namespace Data{
 
-//! The electron-photon-relaxation data container
+/*! The electron-photon-relaxation data container
+ * \details Linear-linear interpolation should be used for all data.
+ */
 class ElectronPhotonRelaxationDataContainer : public Utility::StandardArchivableObject<ElectronPhotonRelaxationDataContainer,false>, public Utility::StandardSerializableObject<ElectronPhotonRelaxationDataContainer,false>
 {
 

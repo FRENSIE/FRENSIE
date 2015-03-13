@@ -191,11 +191,14 @@ int main( int argc, char** argv )
     new_table_info.set( 
 	   MonteCarlo::CrossSectionsXMLProperties::photoatomic_table_name_prop,
 	   "" );
+    
+    Teuchos::writeParameterListToXmlFile( *cross_sections_table_info,
+					  cross_sections_xml_file );
   }
   else
     new_file_name = oss.str();
   
-  data_container.exportData( oss.str(), 
+  data_container.exportData( new_file_name,
 			     Utility::ArchivableObject::XML_ARCHIVE );
 									      
   return 0;
