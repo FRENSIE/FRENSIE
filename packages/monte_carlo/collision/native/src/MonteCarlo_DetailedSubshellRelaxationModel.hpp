@@ -38,7 +38,8 @@ public:
        const Teuchos::Array<SubshellType>& primary_transition_vacancy_shells,
        const Teuchos::Array<SubshellType>& secondary_transition_vacancy_shells,
        const Teuchos::Array<double>& outgoing_particle_energies,
-       const Teuchos::Array<double>& transition_cdf );
+       const Teuchos::Array<double>& transition_pdf_or_cdf,
+       const bool interpret_as_cdf = true );
 
   //! Destructor
   ~DetailedSubshellRelaxationModel()

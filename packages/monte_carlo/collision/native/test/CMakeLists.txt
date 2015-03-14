@@ -204,7 +204,7 @@ ADD_TEST(PhotoatomicReactionACEFactory_test tstPhotoatomicReactionACEFactory --t
 ADD_EXECUTABLE(tstAtomicRelaxationModelFactory
   tstAtomicRelaxationModelFactory.cpp)
 TARGET_LINK_LIBRARIES(tstAtomicRelaxationModelFactory monte_carlo_collision_native)
-ADD_TEST(AtomicRelaxationModelFactory_test tstAtomicRelaxationModelFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(AtomicRelaxationModelFactory_test tstAtomicRelaxationModelFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
 
 ADD_EXECUTABLE(tstPhotoatomACEFactory
   tstPhotoatomACEFactory.cpp)
