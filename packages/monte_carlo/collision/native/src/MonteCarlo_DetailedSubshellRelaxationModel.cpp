@@ -10,6 +10,7 @@
 #include "MonteCarlo_DetailedSubshellRelaxationModel.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -24,25 +25,29 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
        const Teuchos::Array<SubshellType>& primary_transition_vacancy_shells,
        const Teuchos::Array<SubshellType>& secondary_transition_vacancy_shells,
        const Teuchos::Array<double>& outgoing_particle_energies,
-       const Teuchos::Array<double>& transition_cdf )
+       const Teuchos::Array<double>& transition_pdf_or_cdf,
+       const bool interpret_as_cdf )
   : SubshellRelaxationModel( vacancy_subshell ),
     d_transition_distribution(),
     d_transition_vacancy_shells( primary_transition_vacancy_shells.size() )
 {
+  // Make sure the vacancy subshell is valid
+  testPrecondition( vacancy_subshell != INVALID_SUBSHELL );
+  testPrecondition( vacancy_subshell != UNKNOWN_SUBSHELL );
   // Make sure the arrays are valid
   testPrecondition( primary_transition_vacancy_shells.size() > 0 );
   testPrecondition( secondary_transition_vacancy_shells.size() == 
 		    primary_transition_vacancy_shells.size() );
   testPrecondition( outgoing_particle_energies.size() ==
 		    primary_transition_vacancy_shells.size() );
-  testPrecondition( transition_cdf.size() ==
+  testPrecondition( transition_pdf_or_cdf.size() ==
 		    primary_transition_vacancy_shells.size() );
 
   // Create the transition distribution
   d_transition_distribution.reset( new Utility::DiscreteDistribution(
 						    outgoing_particle_energies,
-						    transition_cdf,
-						    true ) );
+						    transition_pdf_or_cdf,
+						    interpret_as_cdf ) );
 
   // Store the transition vacancy shells
   for( unsigned i = 0; i < primary_transition_vacancy_shells.size(); ++i )
@@ -86,39 +91,40 @@ void DetailedSubshellRelaxationModel::relaxSubshell(
   new_secondary_vacancy_shell = 
     d_transition_vacancy_shells[transition_index].second;
 
-  // Create the new particle (only photons currently)
-  if( new_secondary_vacancy_shell == INVALID_SUBSHELL )
+  // Create the new particle if it is above the cutoff energy
+  if( new_particle_energy >= SimulationProperties::getMinPhotonEnergy() )
   {
-    // Only create the new particle if it is above the cutoff energy
-    if( new_particle_energy >= SimulationProperties::getMinPhotonEnergy() )
-    {
-      Teuchos::RCP<ParticleState> relaxation_particle(
-				     new PhotonState( particle, true, true ) );
-
-      // Sample an isotropic outgoing angle cosine for the relaxation particle
-      double angle_cosine = -1.0 + 
-	2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-      // Sample the azimuthal angle
-      double azimuthal_angle = 2.0*Utility::PhysicalConstants::pi*
-	Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-      // Make sure the scattering angle cosine is valid
-      testPostcondition( angle_cosine >= -1.0 );
-      testPostcondition( angle_cosine <= 1.0 );
-      // Make sure the azimuthal angle is valid
-      testPostcondition( azimuthal_angle >= 0.0 );
-      testPostcondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
+    Teuchos::RCP<ParticleState> relaxation_particle;
     
-      // Set the new energy
-      relaxation_particle->setEnergy( new_particle_energy );
-      
-      // Set the new direction
-      relaxation_particle->rotateDirection( angle_cosine, azimuthal_angle );
-      
-      // Bank the relaxation particle
-      bank.push( relaxation_particle );
-    }
+    if( new_secondary_vacancy_shell == INVALID_SUBSHELL ||
+	new_secondary_vacancy_shell == UNKNOWN_SUBSHELL )
+      relaxation_particle.reset( new PhotonState( particle, true, true ) );
+    else
+      relaxation_particle.reset( new ElectronState( particle, true, true ) );
+
+    // Sample an isotropic outgoing angle cosine for the relaxation particle
+    double angle_cosine = -1.0 + 
+      2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
+    
+    // Sample the azimuthal angle
+    double azimuthal_angle = 2.0*Utility::PhysicalConstants::pi*
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+    
+    // Make sure the scattering angle cosine is valid
+    testPostcondition( angle_cosine >= -1.0 );
+    testPostcondition( angle_cosine <= 1.0 );
+    // Make sure the azimuthal angle is valid
+    testPostcondition( azimuthal_angle >= 0.0 );
+    testPostcondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
+    
+    // Set the new energy
+    relaxation_particle->setEnergy( new_particle_energy );
+    
+    // Set the new direction
+    relaxation_particle->rotateDirection( angle_cosine, azimuthal_angle );
+    
+    // Bank the relaxation particle
+    bank.push( relaxation_particle ); 
   }
 }
 
