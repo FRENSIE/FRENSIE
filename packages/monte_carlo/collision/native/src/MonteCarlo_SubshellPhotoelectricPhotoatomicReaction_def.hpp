@@ -11,6 +11,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
+#include "MonteCarlo_ElectronState.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -40,17 +42,48 @@ SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::
 }
 
 // Simulate the reaction
+/*! \details The electron is assumed to be emitted isotropically. Please review
+ * the validity of this model and update if necessary.
+ */
 template<typename InterpPolicy, bool processed_cross_section>
 void SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
 				     PhotonState& photon, 
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
 {
+  // Make sure the photon energy is valid
+  testPrecondition( photon.getEnergy() > d_binding_energy );
+  
+  // Create the emitted electron
+  Teuchos::RCP<ParticleState> electron(
+				     new ElectronState( photon, true, true ) );
+
+  electron->setEnergy( photon.getEnergy() - d_binding_energy );
+  
+  // Sample an isotropic outgoing angle for the emitted angle
+  double angle_cosine = -1.0 + 
+    2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  // Sample the azimuthal angle
+  double azimuthal_angle = 2*Utility::PhysicalConstants::pi*
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+  electron->rotateDirection( angle_cosine, azimuthal_angle );
+  
+  bank.push( electron );
+
   // End the photon history
   photon.setAsGone();
 
-  // The interaction subshell is not taken into account in this reaction
+  // Set the interaction subshell
   shell_of_interaction = d_interaction_subshell;
+
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( angle_cosine >= -1.0 );
+  testPostcondition( angle_cosine <= 1.0 );
+  // Make sure the azimuthal angle is valid
+  testPostcondition( azimuthal_angle >= 0.0 );
+  testPostcondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
 }
 
 // Return the reaction type

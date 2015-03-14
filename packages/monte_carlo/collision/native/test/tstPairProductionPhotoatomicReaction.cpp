@@ -103,18 +103,18 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, react_ace_basic )
 {
   Teuchos::RCP<MonteCarlo::PhotonState> photon(new MonteCarlo::PhotonState(0));
  
+  photon->setDirection( 0.0, 0.0, 1.0 );
+  photon->setEnergy( 2.0 );
+
   MonteCarlo::ParticleBank bank;
+
+  MonteCarlo::SubshellType subshell;
 
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5;
   fake_stream[1] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
-  photon->setDirection( 0.0, 0.0, 1.0 );
-  photon->setEnergy( 2.0 );
-
-  MonteCarlo::SubshellType subshell;
 
   ace_basic_pp_reaction->react( *photon, bank, subshell );
 
@@ -123,7 +123,16 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, react_ace_basic )
   UTILITY_TEST_FLOATING_EQUALITY( photon->getZDirection(), 0.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon->getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon->getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.size(), 2 );
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_EQUALITY_CONST( bank.top()->getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( 
+	       bank.top()->getEnergy(),
+	       2.0 - 2*Utility::PhysicalConstants::electron_rest_mass_energy );
+  
+  bank.pop();
+
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::PHOTON );
   TEST_EQUALITY_CONST( bank.top()->getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0, 1e-15 );

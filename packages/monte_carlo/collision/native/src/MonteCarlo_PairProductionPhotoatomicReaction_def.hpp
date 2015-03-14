@@ -10,6 +10,7 @@
 #define MONTE_CARLO_PAIR_PRODUCTION_PHOTOATOMIC_REACTION_DEF_HPP
 
 // FRENSIE Includes
+#include "MonteCarlo_ElectronState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_DirectionHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -81,6 +82,16 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
 							   PhotonState& photon,
 							   ParticleBank& bank )
 {
+  // Assume that the outgoing electron is emitted in the same direction
+  // as the original photon with the net kinetic energy (not correct!)
+  Teuchos::RCP<ParticleState> electron(
+				     new ElectronState( photon, true, true ) );
+
+  electron->setEnergy( photon.getEnergy() - 
+		     2*Utility::PhysicalConstants::electron_rest_mass_energy );
+  
+  bank.push( electron );
+
   // Sample an isotropic outgoing angle for the annihilation photon 
   double angle_cosine = -1.0 +
     2.0*Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -88,13 +99,6 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
   // Sample the azimuthal angle
   double azimuthal_angle = 2*Utility::PhysicalConstants::pi*
     Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-  // Make sure the scattering angle cosine is valid
-  testPostcondition( angle_cosine >= -1.0 );
-  testPostcondition( angle_cosine <= 1.0 );
-  // Make sure the azimuthal angle is valid
-  testPostcondition( azimuthal_angle >= 0.0 );
-  testPostcondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
 
   // Set the new energy
   photon.setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
@@ -119,6 +123,13 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
 
   // Increment the original photon generation number
   photon.incrementGenerationNumber();
+
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( angle_cosine >= -1.0 );
+  testPostcondition( angle_cosine <= 1.0 );
+  // Make sure the azimuthal angle is valid
+  testPostcondition( azimuthal_angle >= 0.0 );
+  testPostcondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
 }
   
 // The detailed pair production model
