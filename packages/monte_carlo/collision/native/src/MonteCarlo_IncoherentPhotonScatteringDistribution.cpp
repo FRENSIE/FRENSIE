@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_DiscreteDistribution.hpp"
@@ -107,11 +108,13 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
 }
 
 // Randomly scatter the photon
-/*! \details The particle bank can be used to store the electron that is
- * freed from the collision. If doppler broadening of the compton line is
- * done, the interaction shell (where the void is located) will also be 
- * passed out of the function. If doppler broadening is not done, the
- * shell of interaction will be set to std::numeric_limits<unsigned>::max().
+/*! \details The particle bank is used to store the electron that is emitted
+ * from the collision. Whether or not Doppler broadening is done, the 
+ * energy and direction of the outgoing electron is calculated as if it were
+ * at rest initially (feel free to update this model!). If Doppler broadening 
+ * of the compton line is done, the interaction shell (where the void is 
+ * located) will also be passed out of the function. If doppler broadening is 
+ * not done, the shell of interaction will be set to UNKNOWN_SUBSHELL.
  */ 
 void IncoherentPhotonScatteringDistribution::scatterPhoton( 
 				     PhotonState& photon,
@@ -170,18 +173,60 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
 						     scattering_angle_cosine,
 						     shell_of_interaction );
 
+  double electron_energy = photon.getEnergy() - compton_line_energy;
+
+  double electron_scattering_angle_cosine = 
+    (photon.getEnergy() - compton_line_energy*scattering_angle_cosine)/
+    sqrt(electron_energy*electron_energy + 2*electron_energy*
+	 Utility::PhysicalConstants::electron_rest_mass_energy );
+
+  // Due to floating-point roundoff, it is possible for the scattering angle
+  // cosine to be outside [-1,1]. When this occurs, manually set to -1 or 1.
+  if( fabs( electron_scattering_angle_cosine ) > 1.0 )
+  {
+    electron_scattering_angle_cosine = 
+      copysign( 1.0, electron_scattering_angle_cosine );
+  }
+
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
   // Make sure the compton line energy is valid
   testPostcondition( compton_line_energy <= photon.getEnergy() );
   testPostcondition( compton_line_energy >= photon.getEnergy()/(1+2*alpha) );
+  // Make sure the electron scattering angle cosine is valid
+  testPostcondition( electron_scattering_angle_cosine >= -1.0 );
+  testPostcondition( electron_scattering_angle_cosine <= 1.0 );
+
+  // Sample the azimuthal angle of the outgoing photon
+  double azimuthal_angle = sampleAzimuthalAngle();
+
+  // Create the new electron
+  if( electron_energy > 0.0 )
+  {
+    Teuchos::RCP<ParticleState> electron( 
+				     new ElectronState( photon, true, true ) );
+
+    electron->setEnergy( electron_energy );
+    
+    double electron_azimuthal_angle = azimuthal_angle;
+    
+    if( azimuthal_angle <= Utility::PhysicalConstants::pi )
+      electron_azimuthal_angle += Utility::PhysicalConstants::pi;
+    else
+      electron_azimuthal_angle -= Utility::PhysicalConstants::pi;
+
+    electron->rotateDirection( electron_scattering_angle_cosine,
+			       electron_azimuthal_angle );
+
+    bank.push( electron );
+  }
   
   // Set the new energy
   photon.setEnergy( outgoing_energy );
 
   // Set the new direction
-  photon.rotateDirection( scattering_angle_cosine, sampleAzimuthalAngle() );
+  photon.rotateDirection( scattering_angle_cosine, azimuthal_angle );
 }
 
 // Ignore doppler broadening

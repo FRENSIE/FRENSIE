@@ -44,7 +44,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-		       MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+		       MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(),
 		       exp( -1.381551055796E+01 ) );
   
@@ -79,7 +79,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-		       MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+		       MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(),
 		       exp( -1.381551055796E+01 ) );
   

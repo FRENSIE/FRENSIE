@@ -46,7 +46,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
   // Create the incoherent scattering reaction
   {
     Photoatom::ReactionMap::mapped_type& reaction_pointer = 
-      scattering_reactions[INCOHERENT_PHOTOATOMIC_REACTION];
+      scattering_reactions[TOTAL_INCOHERENT_PHOTOATOMIC_REACTION];
     
     PhotoatomicReactionACEFactory::createIncoherentReaction(
 						 raw_photoatom_data,

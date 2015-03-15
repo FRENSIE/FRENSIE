@@ -130,7 +130,7 @@ TEUCHOS_UNIT_TEST( Photoatom, getAbsorptionReactionTypes )
 	       MonteCarlo::Q3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
 
   TEST_ASSERT( !absorption_types.count(
-	       MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION ) );
+	       MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION ) );
   TEST_ASSERT( !absorption_types.count(
 	       MonteCarlo::COHERENT_PHOTOATOMIC_REACTION ) );
   TEST_ASSERT( !absorption_types.count(
@@ -425,20 +425,20 @@ TEUCHOS_UNIT_TEST( Photoatom, getReactionCrossSection )
 
   // Incoherent
   cross_section = ace_photoatom->getReactionCrossSection(
-				 exp( -1.381551055796E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( -1.381551055796E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = ace_photoatom->getReactionCrossSection(
-				 exp( 2.480967890857E-02 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( 2.480967890857E-02 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
   
   TEST_EQUALITY_CONST( cross_section, 0.0 );
   
   cross_section = ace_photoatom->getReactionCrossSection(
-				 exp( 1.151292546497E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( 1.151292546497E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
   
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 

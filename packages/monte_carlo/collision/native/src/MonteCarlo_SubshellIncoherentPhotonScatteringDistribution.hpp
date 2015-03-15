@@ -46,6 +46,12 @@ public:
   ~SubshellIncoherentPhotonScatteringDistribution()
   { /* ... */ }
 
+  //! Return the subshell
+  SubshellType getSubshell() const;
+
+  //! Return the binding energy
+  double getBindingEnergy() const;
+
   //! Randomly scatter the photon
   void scatterPhoton( PhotonState& photon,
 		      ParticleBank& bank,

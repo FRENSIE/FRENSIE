@@ -57,10 +57,11 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
   MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 3 );
+  std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.001; // sample from first term of koblinger's method
   fake_stream[1] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[2] = 0.5; // accept x in scattering function rejection loop
+  fake_stream[3] = 0.5; // azimuthal_angle = pi
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -70,8 +71,22 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+			  19.50173181484825,
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 
+			  0.9996898054103247, 
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
+			  -0.024905681252821114, 
+			  1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }
 
@@ -89,13 +104,14 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
   MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 6 );
+  std::vector<double> fake_stream( 7 );
   fake_stream[0] = 0.001; // sample from first term of koblinger's method
   fake_stream[1] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[2] = 0.5; // accept x in scattering function rejection loop
   fake_stream[3] = 0.005; // select first shell for collision
   fake_stream[4] = 6.427713151861e-01; // select pz = 40.0
   fake_stream[5] = 0.25; // select energy loss
+  fake_stream[6] = 0.5; // azimuthal_angle = pi
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -105,8 +121,22 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+			  19.50173181484825,
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 
+			  0.9996898054103247, 
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
+			  -0.024905681252821114, 
+			  1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
 }
 
@@ -130,18 +160,33 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
   fake_stream[2] = 0.5; // accept x in scattering function rejection loop
   fake_stream[3] = 0.005; // select first shell for collision
   fake_stream[4] = 0.5; // select pz = 0.0
+  fake_stream[5] = 0.5; // azimuthal_angle = pi
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   detailed_incoherent_distribution_new->scatterPhoton( photon,
-						       bank,
-						       shell_of_interaction );
+  						       bank,
+  						       shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+  			  19.50173181484825,
+  			  1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 
+  			  0.9996898054103247, 
+  			  1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
+  			  -0.024905681252821114, 
+  			  1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
-  TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
+  // TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//

@@ -38,6 +38,40 @@ Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution>
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the subshell can be returned
+TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+		   getSubshell )
+{
+  Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
+    derived_basic_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( basic_subshell_incoherent_distribution );
+
+  TEST_EQUALITY_CONST( derived_basic_dist->getSubshell(), 
+		       MonteCarlo::K_SUBSHELL);
+
+  Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
+    derived_detailed_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( detailed_subshell_incoherent_distribution );
+  TEST_EQUALITY_CONST( derived_detailed_dist->getSubshell(),
+		       MonteCarlo::K_SUBSHELL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the binding energy can be returned
+TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+		   getBindingEnergy )
+{
+  Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
+    derived_basic_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( basic_subshell_incoherent_distribution );
+
+  TEST_EQUALITY_CONST( derived_basic_dist->getBindingEnergy(), 
+		       8.82899999999999935e-02 );
+
+  Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
+    derived_detailed_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( detailed_subshell_incoherent_distribution );
+  TEST_EQUALITY_CONST( derived_detailed_dist->getBindingEnergy(),
+		       8.82899999999999935e-02 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a photon can be scattered incoherently without Doppler broadening
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   scatterPhoton_no_doppler )
@@ -51,10 +85,11 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
   MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 3 );
+  std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.001; // sample from first term of koblinger's method
   fake_stream[1] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[2] = 1.0-1e-15; // accept x in occupation number rejection loop
+  fake_stream[3] = 0.5; // azimuthal_angle = pi
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -64,8 +99,22 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+			  19.50173181484825,
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 
+			  0.9996898054103247, 
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
+			  -0.024905681252821114, 
+			  1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
 }
 
@@ -83,11 +132,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
   MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 4 );
+  std::vector<double> fake_stream( 5 );
   fake_stream[0] = 0.001; // sample from first term of koblinger's method
   fake_stream[1] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[2] = 1.0-1e-15; // accept x in occupation number rejection loop
   fake_stream[3] = 0.5; // select pz = 0.0
+  fake_stream[4] = 0.5; // azimuthal_angle = pi
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -97,8 +147,22 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+			  19.50173181484825,
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 
+			  0.9996898054103247, 
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
+			  -0.024905681252821114, 
+			  1e-12 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
 }
 

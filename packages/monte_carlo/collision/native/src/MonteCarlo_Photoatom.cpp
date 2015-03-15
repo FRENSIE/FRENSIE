@@ -199,7 +199,8 @@ void Photoatom::collideAnalogue( PhotonState& photon,
 
   double absorption_cross_section = 
     this->getAbsorptionCrossSection( photon.getEnergy() );
-
+  std::cout << scaled_random_number << " " << absorption_cross_section
+	    << std::endl;
   // Check if absorption occurs 
   if( scaled_random_number < absorption_cross_section )
   {
@@ -304,7 +305,7 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
   {
     partial_cross_section +=
       photoatomic_reaction->second->getCrossSection( photon.getEnergy() );
-
+    
     if( scaled_random_number < partial_cross_section )
       break;
 
@@ -313,17 +314,17 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
 
   if( photoatomic_reaction == d_core.getAbsorptionReactions().end() )
   {
-    #pragma omp critical
-    {
-      std::cerr.precision( 18 );
-      std::cout << "Warning: the scaled random number (" 
-		<< scaled_random_number << "/" 
-		<< this->getTotalCrossSection( photon.getEnergy() ) -
-	this->getAbsorptionCrossSection( photon.getEnergy() )
-		<< ") is larger than the "
-		<< "scattering cross section ("
-		<< partial_cross_section << ")" << std::endl;
-    }
+    // #pragma omp critical
+    // {
+    //   std::cerr.precision( 18 );
+    //   std::cout << "Warning: the scaled random number (" 
+    // 		<< scaled_random_number << "/" 
+    // 		<< this->getTotalCrossSection( photon.getEnergy() ) -
+    // 	this->getAbsorptionCrossSection( photon.getEnergy() )
+    // 		<< ") is larger than the "
+    // 		<< "scattering cross section ("
+    // 		<< partial_cross_section << ")" << std::endl;
+    // }
 
     photoatomic_reaction = d_core.getAbsorptionReactions().begin();
     
