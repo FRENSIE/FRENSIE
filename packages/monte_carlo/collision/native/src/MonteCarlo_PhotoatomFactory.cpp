@@ -9,9 +9,11 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomFactory.hpp"
 #include "MonteCarlo_PhotoatomACEFactory.hpp"
+#include "MonteCarlo_PhotoatomNativeFactory.hpp"
 #include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -26,6 +28,7 @@ PhotoatomFactory::PhotoatomFactory(
 		    const boost::unordered_set<std::string>& photoatom_aliases,
 		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 		    atomic_relaxation_model_factory,
+		    const bool use_impulse_approximation_data,
 		    const bool use_doppler_broadening_data,
 		    const bool use_detailed_pair_production_data,
 		    const bool use_atomic_relaxation_data )
@@ -60,9 +63,22 @@ PhotoatomFactory::PhotoatomFactory(
 				   photoatom_file_start_line,
 				   atomic_weight,
 				   atomic_relaxation_model_factory,
+				   use_impulse_approximation_data,
 				   use_doppler_broadening_data,
 				   use_detailed_pair_production_data,
 				   use_atomic_relaxation_data );
+    }
+    else if( photoatom_file_type == CrossSectionXMLProperties::native_file )
+    {
+      createPhotoatomFromNativeTable( cross_sections_xml_directory,
+				      *photoatom_name,
+				      photoatom_file_path,
+				      atomic_weight,
+				      atomic_relaxation_model_factory,
+				      use_impulse_approximation,
+				      use_doppler_broadening_data,
+				      use_detailed_pair_production_data,
+				      use_atomic_relaxation_data );
     }
     else
     {
@@ -102,12 +118,18 @@ void PhotoatomFactory::createPhotoatomFromACETable(
 			  const double atomic_weight,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
+			  const bool use_impulse_approximation_data,
 			  const bool use_doppler_broadening_data,
 			  const bool use_detailed_pair_production_data,
 			  const bool use_atomic_relaxation_data )
 {
   std::cout << "Loading ACE photoatomic cross section table "
 	    << photoatomic_table_name << " (" << photoatom_alias << ") ... ";
+
+  if( use_impulse_approximation_data )
+  {
+    std::cout << "Warning: impulse approximation data is not available in "
+	      << photoatomic_table_name << std::endl;
 
   // Check if the table has already been loaded
   if( d_photoatomic_table_name_map.find( photoatomic_table_name ) ==
@@ -154,6 +176,65 @@ void PhotoatomFactory::createPhotoatomFromACETable(
   {
     d_photoatom_name_map[photoatom_alias] = 
       d_photoatomic_table_name_map[photoatomic_table_name];
+  }
+
+  std::cout << "done." << std::endl;
+}
+
+// Create a photoatom from a Native table
+void PhotoatomFactory::createPhotoatomFromNativeTable(
+			  const std::string& cross_sections_xml_directory,
+			  const std::string& photoatom_alias,
+			  const std::string& native_file_path,
+			  const double atomic_weight,
+			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
+			  atomic_relaxation_model_factory,
+			  const bool use_impulse_approximation_data,
+			  const bool use_doppler_broadening_data,
+			  const bool use_detailed_pair_production_data,
+			  const bool use_atomic_relaxation_data )
+{
+  std::cout << "Loading native photoatomic cross section table "
+	    << photoatom_alias << " ... ";
+  
+  // Check if the table has already been loaded
+  if( d_photoatomic_table_name_map.find( native_file_path ) ==
+      d_photoatomic_table_name_map.end() )
+  {
+    // Create the epr data container
+    Data::ElectronPhotonRelaxationDataContainer 
+      data_container( native_file_path );
+  
+    // Create the atomic relaxation model
+    Teuchos::RCP<AtomicRelaxationModel> atomic_relaxation_model;
+    
+    atomic_relaxation_model_factory->createAndCacheAtomicRelaxationModel(
+						  data_container,
+						  atomic_relaxation_model,
+			                          use_atomic_relaxation_data );
+
+    // Initialize the new photoatom
+    Teuchos::RCP<Photoatom>& photoatom = d_photoatom_name_map[photoatom_alias];
+
+    // Create the new photoatom
+    PhotoatomNativeFactory::createPhotoatom( data_container,
+					     native_file_path,
+					     atomic_weight,
+					     atomic_relaxation_model,
+					     photoatom,
+					     use_impulse_approximation_data,
+					     use_doppler_broadening_data,
+					     use_detailed_pair_production_data,
+					     use_atomic_relaxation_data );
+
+    // Cache the new photoatom in the table name map
+    d_photoatomic_table_name_map[native_file_path] = photoatom;
+  }
+  // The table has already been loaded
+  else
+  {
+    d_photoatom_name_map[photoatom_alias] = 
+      d_photoatomic_table_name_map[native_file_path];
   }
 
   std::cout << "done." << std::endl;
