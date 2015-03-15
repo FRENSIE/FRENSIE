@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_PhotoatomicReactionACEFactory.hpp
 //! \author Alex Robinson
-//! \brief  The incoherent photoatomic reaction ACE data factory declaration
+//! \brief  The photoatomic reaction ACE data factory declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,7 +15,7 @@
 
 namespace MonteCarlo{
 
-//! The incoherent photoatomic reaction factory class that uses ACE data
+//! The photoatomic reaction factory class that uses ACE data
 class PhotoatomicReactionACEFactory
 {
 
