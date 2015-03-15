@@ -31,7 +31,7 @@ SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::
 						      threshold_energy_index ),
     d_interaction_subshell( interaction_subshell ),
     d_binding_energy( binding_energy ),
-    d_reaction_type( convertSubshellEnumToPhotoatomicReactionEnum( 
+    d_reaction_type( convertSubshellEnumToPhotoelectricPhotoatomicReactionEnum(
 						       interaction_subshell ) )
 {
   // Make sure the interaction subshell is valid

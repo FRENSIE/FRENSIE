@@ -104,7 +104,7 @@ unsigned IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::ge
 template<typename InterpPolicy, bool processed_cross_section>
 PhotoatomicReactionType IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::getReactionType() const
 {
-  return INCOHERENT_PHOTOATOMIC_REACTION;
+  return TOTAL_INCOHERENT_PHOTOATOMIC_REACTION;
 }
 
 // Simulate the reaction
