@@ -12,7 +12,7 @@
 namespace MonteCarlo{
 
 //! The void Compton profile subshell-to-index converter
-class VoidComptonProfileSubshellConverter
+class VoidComptonProfileSubshellConverter : public ComptonProfileSubshellConverter
 {
 
 public:

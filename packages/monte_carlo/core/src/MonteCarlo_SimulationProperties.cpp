@@ -69,6 +69,9 @@ bool SimulationProperties::display_warnings = true;
 // The capture mode (true = implicit, false = analogue - default)
 bool SimulationProperties::implicit_capture_mode_on = false;
 
+// The impulse approximation mode (true = on, false = off - default)
+bool SimulationProperties::impulse_approximation_mode_on = false;
+
 // The photon Doppler broadening mode (true = on - default, false = off)
 bool SimulationProperties::doppler_broadening_mode_on = true;
 
@@ -178,6 +181,12 @@ void SimulationProperties::setWarningsOff()
 void SimulationProperties::setImplicitCaptureModeOn()
 {
   SimulationProperties::implicit_capture_mode_on = true;
+}
+
+// Set impulse approximation mode to on (off by default)
+void SimulationProperties::setImpulseApproximationModeOn()
+{
+  SimulationProperties::impulse_approximation_mode_on = true;
 }
 
 // Set photon Doppler broadening mode to off (on by default)

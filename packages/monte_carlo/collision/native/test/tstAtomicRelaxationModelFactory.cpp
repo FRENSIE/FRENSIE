@@ -122,6 +122,32 @@ TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 }
 
 //---------------------------------------------------------------------------//
+// Check that a void relaxation model can be created
+TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
+		   createAtomicRelaxationModel_native_void )
+{
+  MonteCarlo::AtomicRelaxationModelFactory::createAtomicRelaxationModel( 
+						        *native_data_container,
+							relaxation_model,
+							false );
+  
+  MonteCarlo::PhotonState photon( 0 );
+  photon.setEnergy( 1.0 );
+  photon.setDirection( 0.0, 0.0, 1.0 );
+
+  MonteCarlo::ParticleBank bank;
+
+  MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
+
+  relaxation_model->relaxAtom( vacancy, photon, bank );
+
+  TEST_EQUALITY_CONST( bank.size(), 0 );
+
+  // Clear the relaxation model
+  relaxation_model.reset();
+}
+
+//---------------------------------------------------------------------------//
 // Check that a detailed relaxation model can be created
 TEUCHOS_UNIT_TEST( AtomicRelaxationModelFactory,
 		   createAtomicRelaxationModel_native_detailed )

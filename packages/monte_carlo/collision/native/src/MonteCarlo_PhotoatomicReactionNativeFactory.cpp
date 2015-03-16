@@ -11,7 +11,7 @@
 #include <limits>
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotoatomicReactionACEFactory.hpp"
+#include "MonteCarlo_PhotoatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_IncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_CoherentPhotoatomicReaction.hpp"
@@ -46,7 +46,7 @@ void PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
   Teuchos::ArrayRCP<double> incoherent_cross_section;
   incoherent_cross_section.assign( 
 	   raw_photoatom_data.getWallerHartreeIncoherentCrossSection().begin(),
-	   raw_photoatom_data.getWallerHartreeIncoherentCrossSection().end );
+	   raw_photoatom_data.getWallerHartreeIncoherentCrossSection().end() );
 
   unsigned threshold_index = 
     raw_photoatom_data.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex();
@@ -110,7 +110,7 @@ void PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
 						     subshell_occupancies,
 						     subshell_order,
 						     converter,
-						     compton_profils ) );
+						     compton_profiles ) );
   }
   // Ignore Doppler broadening
   else
@@ -229,7 +229,7 @@ void PhotoatomicReactionNativeFactory::createCoherentReaction(
   Teuchos::Array<double> form_factor_squared = 
     raw_photoatom_data.getWallerHartreeAtomicFormFactor();
 
-  for( unsigned i = 0; i < recoil_momentum_squared; ++i )
+  for( unsigned i = 0; i < recoil_momentum_squared.size(); ++i )
   {
     recoil_momentum_squared[i] *= recoil_momentum_squared[i];
 
@@ -269,10 +269,10 @@ void PhotoatomicReactionNativeFactory::createPairProductionReaction(
 	     raw_photoatom_data.getPairProductionCrossSection().end() );
 
   unsigned threshold_index = 
-    raw_photoatom_data.getPairProductionCrosSectionThresholdEnergyIndex();
+    raw_photoatom_data.getPairProductionCrossSectionThresholdEnergyIndex();
 
-  pair_production_cross_section.reset(
-			 new PairProductionCrossSection<Utility::LinLin,false>(
+  pair_production_reaction.reset(
+		  new PairProductionPhotoatomicReaction<Utility::LinLin,false>(
 					 energy_grid,
 					 pair_production_cross_section,
 					 threshold_index,
@@ -330,8 +330,8 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
   while( subshell_it != raw_photoatom_data.getSubshells().end() )
   {
     // Extract the cross section
-    Teuchos::ArrayRCP<double> subshell_incoherent_cross_section;
-    subshell_incoherent_cross_section.assign(
+    Teuchos::ArrayRCP<double> subshell_photoelectric_cross_section;
+    subshell_photoelectric_cross_section.assign(
       raw_photoatom_data.getSubshellPhotoelectricCrossSection(*subshell_it).begin(),
       raw_photoatom_data.getSubshellPhotoelectricCrossSection(*subshell_it).end() );
 
@@ -341,7 +341,7 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
     subshell_photoelectric_reaction.reset(
 	   new SubshellPhotoelectricPhotoatomicReaction<Utility::LinLin,false>(
 	       energy_grid,
-	       subshell_cross_section,
+	       subshell_photoelectric_cross_section,
 	       subshell_threshold_index,
 	       convertENDFDesignatorToSubshellEnum( *subshell_it ),
 	       raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ) ) );
@@ -350,6 +350,7 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
 					     subshell_photoelectric_reaction );
 
     ++subshell_it;
+  }
 }
 
 // Create the heating photoatomic reaction

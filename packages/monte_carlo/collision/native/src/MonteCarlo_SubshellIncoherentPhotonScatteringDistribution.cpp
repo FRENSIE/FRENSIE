@@ -209,7 +209,7 @@ void SubshellIncoherentPhotonScatteringDistribution::scatterPhoton(
   shell_of_interaction = d_subshell;
 
   double azimuthal_angle = sampleAzimuthalAngle();
-
+  
   // Create the new electron
   if( electron_energy > 0.0 )
   {
@@ -219,15 +219,14 @@ void SubshellIncoherentPhotonScatteringDistribution::scatterPhoton(
     electron->setEnergy( electron_energy );
 
     double electron_azimuthal_angle = azimuthal_angle;
-
+    
     if( azimuthal_angle <= Utility::PhysicalConstants::pi )
       electron_azimuthal_angle += Utility::PhysicalConstants::pi;
     else
       electron_azimuthal_angle -= Utility::PhysicalConstants::pi;
-
-    electron->rotateDirection( 
-			    electron_scattering_angle_cosine,
-			    azimuthal_angle - Utility::PhysicalConstants::pi );
+    
+    electron->rotateDirection( electron_scattering_angle_cosine,
+			       electron_azimuthal_angle );
 
     bank.push( electron );
   }

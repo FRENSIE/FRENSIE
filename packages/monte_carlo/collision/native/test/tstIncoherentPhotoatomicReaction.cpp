@@ -17,6 +17,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
+#include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -275,10 +276,22 @@ int main( int argc, char** argv )
 
     unsigned num_mom_vals = swd_block[shell_index];
 
+    Teuchos::Array<double> half_momentum_grid( 
+				  swd_block( shell_index + 1, num_mom_vals ) );
+
+    Teuchos::Array<double> half_profile(
+		   swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( half_momentum_grid.begin(),
+					       half_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( half_profile.begin(),
+						 half_profile.end() );
+
     compton_profiles[shell].reset( 
-	  new Utility::TabularDistribution<Utility::LinLin>(
-		 swd_block( shell_index + 1, num_mom_vals ),
-		 swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) ) );
+	 new Utility::TabularDistribution<Utility::LogLin>( half_momentum_grid,
+							    half_profile ) );
+		 
   }
 
   // Create the reactions

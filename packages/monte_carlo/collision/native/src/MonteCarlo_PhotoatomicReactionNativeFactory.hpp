@@ -9,6 +9,10 @@
 #ifndef MONTE_CARLO_PHOTOATOMIC_REACTION_NATIVE_FACTORY_HPP
 #define MONTE_CARLO_PHOTOATOMIC_REACTION_NATIVE_FACTORY_HPP
 
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
+#include <Teuchos_RCP.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"

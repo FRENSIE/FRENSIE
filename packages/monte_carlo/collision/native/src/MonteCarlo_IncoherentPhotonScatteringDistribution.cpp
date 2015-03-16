@@ -49,9 +49,9 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
 // Constructor for doppler broadening
 /*! \details The recoil electron momentum (scattering function independent 
  * variable) should have units of 1/cm. The Compton profile grids must
- * be in atomic units (not me*c units). The Compton profiles must be in 
- * inverse atomic units (not inverse me*c units). If only half profiles are
- * provided, the old Doppler broadening method will be used."
+ * be in me*c units (not atomic units). The Compton profiles must be in 
+ * inverse me*c units (not inverse atomic units). If only half profiles are
+ * provided, the old Doppler broadening method will be used.
  */  
 IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
@@ -76,6 +76,8 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
 		    subshell_binding_energies.size() );
   // Make sure the comptron profile array is valid
   testPrecondition( electron_momentum_dist_array.size() > 0 );
+  testPrecondition( electron_momentum_dist_array.front()->getUpperBoundOfIndepVar() <= 1.0 );
+  testPrecondition( electron_momentum_dist_array.back()->getUpperBoundOfIndepVar() <= 1.0 );
 
   // Create the shell interaction data distribution
   d_shell_interaction_data.reset(
@@ -266,7 +268,7 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
 
     // Convert to a Compton profile shell
     shell_of_interaction = d_subshell_order[shell_index];
-
+    
     unsigned compton_shell_index = 
       d_subshell_converter->convertSubshellToIndex( shell_of_interaction );
 
@@ -295,21 +297,15 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
       break;
     }
     
-    // Convert to atomic units
-    pz_max *= Utility::PhysicalConstants::inverse_fine_structure_constant;
-
     double pz_table_max = 
       d_electron_momentum_distribution[compton_shell_index]->getUpperBoundOfIndepVar();
-
+    
     if( pz_max > pz_table_max )
       pz_max = pz_table_max;
     
     // Sample an electron momentum projection
     double pz = 
       d_electron_momentum_distribution[compton_shell_index]->sample( pz_max );
-
-    // Convert to me*c units
-    pz /= Utility::PhysicalConstants::inverse_fine_structure_constant;
     
     // Calculate the doppler broadened energy
     bool energetically_possible;
@@ -407,9 +403,6 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLineOld(
       break;
     }
     
-    // Convert to the atomic unitless momentum
-    pz_max *= Utility::PhysicalConstants::inverse_fine_structure_constant;
-    
     double pz_table_max = 
       d_electron_momentum_distribution[compton_shell_index]->getUpperBoundOfIndepVar();
     if( pz_max > pz_table_max )
@@ -418,9 +411,6 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLineOld(
     // Sample an electron momentum projection
     double pz = 
       d_electron_momentum_distribution[compton_shell_index]->sample(pz_max);
-    
-    // Convert to the me*c unitless momentum
-    pz /= Utility::PhysicalConstants::inverse_fine_structure_constant;
     
     // Calculate the doppler broadened energy
     bool energetically_possible;

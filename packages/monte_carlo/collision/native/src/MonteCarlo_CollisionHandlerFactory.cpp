@@ -132,6 +132,7 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 		     cell_id_mat_id_map,
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
+		     SimulationProperties::isImpulseApproximationModeOn(),
 		     SimulationProperties::isPhotonDopplerBroadeningModeOn(),
 		     SimulationProperties::isDetailedPairProductionModeOn(),
 		     SimulationProperties::isAtomicRelaxationModeOn(),
@@ -163,6 +164,7 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 		     cell_id_mat_id_map,
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
+		     SimulationProperties::isImpulseApproximationModeOn(),
 		     SimulationProperties::isPhotonDopplerBroadeningModeOn(),
 		     SimulationProperties::isDetailedPairProductionModeOn(),
 		     SimulationProperties::isAtomicRelaxationModeOn(),
@@ -426,6 +428,7 @@ void CollisionHandlerFactory::createPhotonMaterials(
                                std::vector<std::string> >& cell_id_density_map,
    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
    atomic_relaxation_model_factory,
+   const bool use_impulse_approximation_data,
    const bool use_doppler_broadening_data,
    const bool use_detailed_pair_production_data,
    const bool use_atomic_relaxation_data,
@@ -446,6 +449,7 @@ void CollisionHandlerFactory::createPhotonMaterials(
 					cross_sections_table_info,
 					photoatom_aliases,
 					atomic_relaxation_model_factory,
+					use_impulse_approximation_data,
 					use_doppler_broadening_data,
 					use_detailed_pair_production_data,
 					use_atomic_relaxation_data );

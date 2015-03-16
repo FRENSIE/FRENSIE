@@ -192,6 +192,13 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
       SimulationProperties::setImplicitCaptureModeOn();
   }
 
+  // Get the impulse approximation mode - optional
+  if( properties.isParameter( "Impulse Approximation" ) )
+  {
+    if( properties.get<bool>( "Impulse Approximation" ) )
+      SimulationProperties::setImpulseApproximationModeOn();
+  }
+
   // Get the photon Doppler broadening mode - optional
   if( properties.isParameter( "Photon Doppler Broadening" ) )
   {

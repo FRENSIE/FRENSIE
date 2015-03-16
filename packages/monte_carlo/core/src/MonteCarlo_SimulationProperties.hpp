@@ -115,6 +115,12 @@ public:
   //! Return if implicit capture mode has been set
   static bool isImplicitCaptureModeOn();
 
+  //! Set impulse approximation mode to on (off by default)
+  static void setImpulseApproximationModeOn();
+
+  //! Return if impulse approximation mode is on
+  static bool isImpulseApproximationModeOn();
+
   //! Set photon Doppler broadening mode to off (on by default)
   static void setPhotonDopplerBroadeningModeOff();
 
@@ -192,6 +198,9 @@ private:
 
   // The capture mode (true = implicit, false = analogue - default)
   static bool implicit_capture_mode_on;
+
+  // The impulse approximation mode (true = on, false = off - default)
+  static bool impulse_approximation_mode_on;
 
   // The photon Doppler broadening mode (true = on - default, false = off)
   static bool doppler_broadening_mode_on;
@@ -306,6 +315,12 @@ inline bool SimulationProperties::displayWarnings()
 inline bool SimulationProperties::isImplicitCaptureModeOn()
 {
   return SimulationProperties::implicit_capture_mode_on;
+}
+
+// Return if impulse approximation mode has been set
+inline bool SimulationProperties::isImpulseApproximationModeOn()
+{
+  return SimulationProperties::impulse_approximation_mode_on;
 }
 
 // Return if photon Doppler broadening mode is on

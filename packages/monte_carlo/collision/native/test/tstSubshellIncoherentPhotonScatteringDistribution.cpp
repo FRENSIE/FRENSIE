@@ -137,11 +137,11 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
   fake_stream[1] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[2] = 1.0-1e-15; // accept x in occupation number rejection loop
   fake_stream[3] = 0.5; // select pz = 0.0
-  fake_stream[4] = 0.5; // azimuthal_angle = pi
+  fake_stream[4] = 0.0; // azimuthal_angle = pi
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  basic_subshell_incoherent_distribution->scatterPhoton( photon,
+  detailed_subshell_incoherent_distribution->scatterPhoton( photon,
 							 bank,
 							 shell_of_interaction);
 
@@ -156,12 +156,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 			  0.9996898054103247, 
 			  1e-15 );
   TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
-			  -0.024905681252821114, 
+			  0.024905681252821114, 
 			  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
 }
