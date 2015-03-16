@@ -160,7 +160,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
   fake_stream[2] = 0.5; // accept x in scattering function rejection loop
   fake_stream[3] = 0.005; // select first shell for collision
   fake_stream[4] = 0.5; // select pz = 0.0
-  fake_stream[5] = 0.5; // azimuthal_angle = pi
+  fake_stream[5] = 0.0; // azimuthal_angle = pi
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -179,14 +179,14 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
   			  0.9996898054103247, 
   			  1e-15 );
   TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
-  			  -0.024905681252821114, 
+  			  0.024905681252821114, 
   			  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  // TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -280,11 +280,11 @@ int main( int argc, char** argv )
 
     unsigned num_mom_vals = swd_block[shell_index];
 
-    Teuchos::ArrayView<const double> half_momentum_grid = 
-      swd_block( shell_index + 1, num_mom_vals );
+    Teuchos::Array<double> half_momentum_grid( 
+				  swd_block( shell_index + 1, num_mom_vals ) );
 
-    Teuchos::ArrayView<const double> half_profile = 
-      swd_block( shell_index + 1 + num_mom_vals, num_mom_vals );
+    Teuchos::Array<double> half_profile(
+		   swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) );
 
     Teuchos::Array<double> full_momentum_grid, full_profile;
     
@@ -294,6 +294,18 @@ int main( int argc, char** argv )
 						  half_profile.end(),
 						  full_momentum_grid,
 						  full_profile );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( half_momentum_grid.begin(),
+					       half_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( half_profile.begin(),
+						 half_profile.end() );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
+					       full_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( full_profile.begin(),
+						 full_profile.end() );
 
     half_compton_profiles[shell].reset(
 	 new Utility::TabularDistribution<Utility::LogLin>( half_momentum_grid,

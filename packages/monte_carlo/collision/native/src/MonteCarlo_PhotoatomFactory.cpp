@@ -68,14 +68,14 @@ PhotoatomFactory::PhotoatomFactory(
 				   use_detailed_pair_production_data,
 				   use_atomic_relaxation_data );
     }
-    else if( photoatom_file_type == CrossSectionXMLProperties::native_file )
+    else if( photoatom_file_type == CrossSectionsXMLProperties::native_file )
     {
       createPhotoatomFromNativeTable( cross_sections_xml_directory,
 				      *photoatom_name,
 				      photoatom_file_path,
 				      atomic_weight,
 				      atomic_relaxation_model_factory,
-				      use_impulse_approximation,
+				      use_impulse_approximation_data,
 				      use_doppler_broadening_data,
 				      use_detailed_pair_production_data,
 				      use_atomic_relaxation_data );
@@ -130,6 +130,7 @@ void PhotoatomFactory::createPhotoatomFromACETable(
   {
     std::cout << "Warning: impulse approximation data is not available in "
 	      << photoatomic_table_name << std::endl;
+  }
 
   // Check if the table has already been loaded
   if( d_photoatomic_table_name_map.find( photoatomic_table_name ) ==

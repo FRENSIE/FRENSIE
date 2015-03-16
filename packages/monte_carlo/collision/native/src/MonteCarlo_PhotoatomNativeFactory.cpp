@@ -112,7 +112,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
     Photoatom::ReactionMap::mapped_type& reaction_pointer = 
       absorption_reactions[TOTAL_PHOTOELECTRIC_PHOTOATOMIC_REACTION];
 
-    PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
+    PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
 							    raw_photoatom_data,
 							    energy_grid,
 							    reaction_pointer );
@@ -120,11 +120,11 @@ void PhotoatomNativeFactory::createPhotoatomCore(
 
   // Create the heating reaction
   Photoatom::ReactionMap::mapped_type& reaction_pointer = 
-    absoprtion_reactions[HEATING_PHOTOATOMIC_REACTION];
+    absorption_reactions[HEATING_PHOTOATOMIC_REACTION];
 
-  PhotoatomicReactionACEFactory::createHeatingReaction( raw_photoatom_data,
-							energy_grid,
-							reaction_pointer );
+  PhotoatomicReactionNativeFactory::createHeatingReaction( raw_photoatom_data,
+							   energy_grid,
+							   reaction_pointer );
 
   // Create the photoatom core
   photoatom_core.reset( new PhotoatomCore( energy_grid,

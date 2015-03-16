@@ -19,6 +19,7 @@
 #include "MonteCarlo_SubshellPhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_AbsorptionPhotoatomicReaction.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
+#include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
@@ -115,13 +116,24 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
       unsigned subshell_index = lswd_block[subshell]; 
 
       unsigned num_momentum_points = swd_block[subshell_index];
+
+      Teuchos::Array<double> half_momentum_grid( 
+			swd_block( subshell_index + 1, num_momentum_points ) );
+
+      Teuchos::Array<double> half_profile(
+                           swd_block( subshell_index + 1 + num_momentum_points,
+				      num_momentum_points ) );
+
+      MonteCarlo::convertMomentumGridToMeCUnits( half_momentum_grid.begin(),
+					       half_momentum_grid.end() );
+
+      MonteCarlo::convertProfileToInverseMeCUnits( half_profile.begin(),
+						   half_profile.end() );
       
       // Ignore interp parameter (always assume log-log inerpolation)
       compton_profiles[subshell].reset(
-	       new Utility::TabularDistribution<Utility::LogLin>(
-			  swd_block( subshell_index + 1, num_momentum_points ),
-			  swd_block( subshell_index + 1 + num_momentum_points,
-				     num_momentum_points ) ) );
+	 new Utility::TabularDistribution<Utility::LogLin>( half_momentum_grid,
+							    half_profile ) );
     }
     
     // Create the incoherent reaction

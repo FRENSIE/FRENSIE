@@ -199,8 +199,7 @@ void Photoatom::collideAnalogue( PhotonState& photon,
 
   double absorption_cross_section = 
     this->getAbsorptionCrossSection( photon.getEnergy() );
-  std::cout << scaled_random_number << " " << absorption_cross_section
-	    << std::endl;
+  
   // Check if absorption occurs 
   if( scaled_random_number < absorption_cross_section )
   {

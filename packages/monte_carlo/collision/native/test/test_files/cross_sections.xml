@@ -176,6 +176,19 @@
     <Parameter name="atomic_weight_ratio" type="double" value="205.42"/>
   </ParameterList>
 
+  <ParameterList name="Pb-Native">
+    <Parameter name="photoatomic_file_path" type="string" value="test_epr_82_native.xml"/>
+    <Parameter name="photoatomic_file_type" type="string" value="Native"/>
+    <Parameter name="photoatomic_file_start_line" type="int" value="-1"/>
+    <Parameter name="photoatomic_table_name" type="string" value=""/>
+    <Parameter name="electroatomic_file_path" type="string" value="test_pb_epr_ace_file.txt"/>
+    <Parameter name="electroatomic_file_type" type="string" value="ACE"/>
+    <Parameter name="electroatomic_file_start_line" type="int" value="1"/>
+    <Parameter name="electroatomic_table_name" type="string" value="82000.12p"/>
+    <Parameter name="atomic_number" type="int" value="82"/>
+    <Parameter name="atomic_weight_ratio" type="double" value="205.42"/>
+  </ParameterList>
+
   <ParameterList name="U">
     <Parameter name="photoatomic_file_path" type="string" value="test_u_epr_ace_file.txt"/>
     <Parameter name="photoatomic_file_type" type="string" value="ACE"/>

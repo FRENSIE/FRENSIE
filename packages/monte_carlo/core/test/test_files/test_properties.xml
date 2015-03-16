@@ -10,6 +10,7 @@
   <Parameter name="Min Electron Energy" type="double" value="1e-2"/>
   <Parameter name="Max Electron Energy" type="double" value="10.0"/>
   <Parameter name="Implicit Capture" type="bool" value="true"/>
+  <Parameter name="Impulse Approximation" type="bool" value="true"/>
   <Parameter name="Photon Doppler Broadening" type="bool" value="false"/>
   <Parameter name="Atomic Relaxation" type="bool" value="false"/>
   <Parameter name="Detailed Pair Production" type="bool" value="true"/>

@@ -61,6 +61,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
 	      20.0 );
   TEST_ASSERT( MonteCarlo::SimulationProperties::displayWarnings() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isImplicitCaptureModeOn() );
+  TEST_ASSERT( !MonteCarlo::SimulationProperties::isImpulseApproximationModeOn() );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isPhotonDopplerBroadeningModeOn() );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isAtomicRelaxationModeOn() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isDetailedPairProductionModeOn() );
@@ -336,6 +337,17 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setImplicitCaptureModeOn )
   MonteCarlo::SimulationProperties::setImplicitCaptureModeOn();
 
   TEST_ASSERT( MonteCarlo::SimulationProperties::isImplicitCaptureModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Test that impulse approximation mode can be turned on
+TEUCHOS_UNIT_TEST( SimulationProperties, setImpulseApproximationModeOn )
+{
+  TEST_ASSERT( !MonteCarlo::SimulationProperties::isImpulseApproximationModeOn() );
+
+  MonteCarlo::SimulationProperties::setImpulseApproximationModeOn();
+
+  TEST_ASSERT( MonteCarlo::SimulationProperties::isImpulseApproximationModeOn() );
 }
 
 //---------------------------------------------------------------------------//
