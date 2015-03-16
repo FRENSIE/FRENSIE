@@ -78,6 +78,13 @@ int main( int argc, char** argv )
     }
   }
 
+  // Add the alias map sublist if necessary
+  if( !cross_sections_xml->isSublist( "alias map" ) )
+  {
+    Teuchos::ParameterList& alias_map_list = 
+      cross_sections_xml->sublist( "alias map" );
+  }
+
   // Export the xsdir info
   xsdir->exportInfo( *cross_sections_xml );
 
