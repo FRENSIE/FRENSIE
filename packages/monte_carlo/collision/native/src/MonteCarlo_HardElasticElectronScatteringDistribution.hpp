@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_HardElasticElectronScatteringDistribution.hpp
 //! \author Luke Kersting
-//! \brief  The electron hard scattering distribution base class
+//! \brief  The electron hard elastic scattering distribution base class
 //!
 //---------------------------------------------------------------------------//
 
@@ -12,6 +12,10 @@
 // Std Lib Includes
 #include <limits>
 
+// Boost Includes
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_RCP.hpp>
@@ -20,8 +24,6 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
-#include "Utility_PhysicalConstants.hpp"
-#include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
@@ -32,30 +34,53 @@ class HardElasticElectronScatteringDistribution : public ElectronScatteringDistr
 
 public:
 
+  //! Typedef for the  elastic distribution
+  typedef Teuchos::Array<Utility::Pair< double,
+                              Teuchos::RCP<const Utility::OneDDistribution> > >
+  ElasticDistribution;
+
   //! Constructor
   HardElasticElectronScatteringDistribution(
-  const Teuchos::RCP<Utility::OneDDistribution>& elastic_scattering_distribution,
-  const Teuchos::RCP<double>& interpolation_weights );
+                 const int atomic_number,
+                 const ElasticDistribution& elastic_scattering_distribution);
 
-  //! Destructor
+  //! Destructor 
   virtual ~HardElasticElectronScatteringDistribution()
   { /* ... */ }
 
   //! Randomly scatter the electron
   void scatterElectron( ElectronState& electron,
-	                    ParticleBank& bank) const;
+	                    ParticleBank& bank,
+                        SubshellType& shell_of_interaction ) const;
 
-  //! Typedef for the elastic distribution
-  typedef Teuchos::Array<Utility::Pair<double,
-          Teuchos::RCP<Utility::OneDDistribution> > > ElasticDistribution;
+  // Evaluate the screening angle at the given electron energy
+  double evaluateScreeningFactor( const double energy ) const;
+
+  // Evaluate the scattering angle from the analytical function
+  double evaluateScreenedScatteringAngle( const double energy ) const; 
+
+  // Sample a scattering angle cosine
+  double sampleScatteringAngleCosine( const double energy ) const;
 
 private:
+/*
+  // Evaluate the screening angle at the given electron energy
+  double evaluateScreeningFactor( const double energy ) const;
 
-  // elastic scattering distribution 
-  Teuchos::RCP<Utility::OneDDistribution> d_elastic_scattering_distribution;
+  // Evaluate the scattering angle from the analytical function
+  double evaluateScreenedScatteringAngle( const double energy ) const; 
 
-  // energy grid interpolation fractions for elastic scattering distributions
-  Teuchos::RCP<double> d_interpolation_weights;
+  // Sample a scattering angle cosine
+  double sampleScatteringAngleCosine( const double energy ) const;
+*/
+  // Cutoff angle cosine between the distribution and analytical function
+  static double s_cutoff_angle_cosine;
+
+  // Atomic number (Z) of the target atom
+  int d_atomic_number;
+
+  // elastic scattering distribution without forward screening data
+  ElasticDistribution d_elastic_scattering_distribution;
 };
 
 } // end MonteCarlo namespace

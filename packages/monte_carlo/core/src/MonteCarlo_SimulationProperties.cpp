@@ -50,7 +50,7 @@ double SimulationProperties::max_photon_energy =
   SimulationProperties::absolute_max_photon_energy;
 
 // The absolute min electron energy
-const double SimulationProperties::absolute_min_electron_energy = 1e-3;
+const double SimulationProperties::absolute_min_electron_energy = 1.5e-5;
 
 // The minimum electron energy (MeV)
 double SimulationProperties::min_electron_energy = 
@@ -83,6 +83,11 @@ bool SimulationProperties::detailed_pair_production_mode_on = false;
 
 // The photonuclear interaction mode (true = on, false = off - default)
 bool SimulationProperties::photonuclear_interaction_mode_on = false;
+
+// The bremsstrahlung photon angular distribution function (2BS by default)
+BremsstrahlungAngularDistributionType 
+  SimulationProperties::bremsstrahlung_angular_distribution_function = 
+                             TWOBS_DISTRIBUTION;
 
 // Set the particle mode
 void SimulationProperties::setParticleMode( 
@@ -211,6 +216,13 @@ void SimulationProperties::setDetailedPairProductionModeOn()
 void SimulationProperties::setPhotonuclearInteractionModeOn()
 {
   SimulationProperties::photonuclear_interaction_mode_on = true;
+}
+
+// Set the bremsstrahlung photon angular distribution function (2BS by default)
+void SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
+                          const BremsstrahlungAngularDistributionType function )
+{
+  SimulationProperties::bremsstrahlung_angular_distribution_function = function;
 }
 
 } // end MonteCarlo namespace

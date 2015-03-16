@@ -9,6 +9,9 @@
 #ifndef FACEMC_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 #define FACEMC_PARTICLE_SIMULATION_MANAGER_DEF_HPP
 
+// Boost Includes
+#include <boost/bind.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
@@ -19,6 +22,11 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
+#include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
+
 
 namespace MonteCarlo{
 
@@ -48,6 +56,65 @@ ParticleSimulationManager<GeometryHandler,
 {
   // At least one history must be simulated
   testPrecondition( number_of_histories > 0 );
+
+  // Assign the functions based on the mode
+  ParticleModeType mode = SimulationProperties::getParticleMode();
+  
+  switch( mode )
+  {
+  case NEUTRON_MODE:
+  {
+    d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<NeutronState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );
+    d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<PhotonState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );
+    d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<ElectronState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );		   
+    break;
+  }
+  case PHOTON_MODE:
+  {
+    d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<PhotonState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );
+    d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<NeutronState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );
+    d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<ElectronState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );
+    break;
+  }
+  case ELECTRON_MODE:
+  {
+    d_simulate_electron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::simulateParticle<ElectronState>,
+					     boost::cref( *this ),
+					     _1,
+					     _2 );
+    d_simulate_neutron = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<NeutronState>,
+					    boost::cref( *this ),
+					    _1,
+					    _2 );
+    d_simulate_photon = boost::bind<void>( &ParticleSimulationManager<GeometryHandler,SourceHandler,EstimatorHandler,CollisionHandler>::ignoreParticle<PhotonState>,
+					   boost::cref( *this ),
+					   _1,
+					   _2 );
+    break;
+  }
+  default:
+    THROW_EXCEPTION( std::runtime_error,
+		     "Error: particle mode " << mode << " is not currently "
+		     << "supported by the particle simulation manager." );
+  }
 }
 
 // Run the simulation set up by the user
@@ -115,12 +182,22 @@ void ParticleSimulationManager<GeometryHandler,
 	  switch( bank.top()->getParticleType() )
 	  {
 	  case NEUTRON: 
-	    simulateParticle( dynamic_cast<NeutronState&>( *bank.top() ), 
-			      bank );
+	    d_simulate_neutron( dynamic_cast<NeutronState&>( *bank.top() ),
+				bank );
+	    // simulateParticle( dynamic_cast<NeutronState&>( *bank.top() ), 
+            //               bank );
 	    break;
 	  case PHOTON:
-	    simulateParticle( dynamic_cast<PhotonState&>( *bank.top() ),
-			      bank );
+	    d_simulate_photon( dynamic_cast<PhotonState&>( *bank.top() ),
+			       bank );
+	    // simulateParticle( dynamic_cast<PhotonState&>( *bank.top() ),
+            //               bank );
+	    break;
+	  case ELECTRON:
+	    d_simulate_electron( dynamic_cast<ElectronState&>( *bank.top() ),
+				 bank );
+	    // simulateParticle( dynamic_cast<ElectronState&>( *bank.top() ),
+            //               bank );
 	    break;
 	  default:
 	    THROW_EXCEPTION( std::logic_error,
@@ -128,7 +205,7 @@ void ParticleSimulationManager<GeometryHandler,
 			     << bank.top()->getParticleType() <<
 			     " is not currently supported!" );
 	  }
-	  
+  
 	  bank.pop();
 	}
 	
@@ -150,16 +227,16 @@ void ParticleSimulationManager<GeometryHandler,
 
 // Set the number of particle histories to simulate
 template<typename GeometryHandler,
-	 typename SourceHandler,
-	 typename EstimatorHandler,
-	 typename CollisionHandler>
+         typename SourceHandler,
+         typename EstimatorHandler,
+         typename CollisionHandler>
 template<typename ParticleStateType>
 void ParticleSimulationManager<GeometryHandler,
-			       SourceHandler,
-			       EstimatorHandler,
-			       CollisionHandler>::simulateParticle( 
-						   ParticleStateType& particle,
-						   ParticleBank& bank )
+                               SourceHandler,
+                               EstimatorHandler,
+                               CollisionHandler>::simulateParticle( 
+                                                   ParticleStateType& particle,
+						   ParticleBank& bank ) const
 {
   // Particle tracking information
   double distance_to_surface_hit, op_to_surface_hit, remaining_subtrack_op;
@@ -313,6 +390,22 @@ void ParticleSimulationManager<GeometryHandler,
 
   // Indicate that this particle history is complete
   GMI::newRay();
+}
+
+// Set the number of particle histories to simulate
+template<typename GeometryHandler,
+         typename SourceHandler,
+         typename EstimatorHandler,
+         typename CollisionHandler>
+template<typename ParticleStateType>
+void ParticleSimulationManager<GeometryHandler,
+                               SourceHandler,
+                               EstimatorHandler,
+                               CollisionHandler>::ignoreParticle( 
+                                                   ParticleStateType& particle,
+						   ParticleBank& bank ) const
+{
+  particle.setAsGone();
 }
 
 // Print the data in all estimators to the desired stream

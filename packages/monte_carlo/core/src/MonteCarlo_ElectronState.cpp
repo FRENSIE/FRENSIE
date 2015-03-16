@@ -23,23 +23,23 @@ ElectronState::ElectronState(
 
 // Copy constructor (with possible creation of new generation)
 ElectronState::ElectronState( const ElectronState& existing_electron_state,
-			    const bool increment_generation_number,
-			    const bool reset_collision_number )
+                              const bool increment_generation_number,
+                              const bool reset_collision_number )
   : ParticleState( existing_electron_state, 
-		   ELECTRON,
-		   increment_generation_number,
-		   reset_collision_number ),
+                   ELECTRON,
+                   increment_generation_number,
+                   reset_collision_number ),
     d_speed( existing_electron_state.d_speed )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
 ElectronState::ElectronState( const ParticleState& existing_base_state,
-			    const bool increment_generation_number,
-			    const bool reset_collision_number )
+                              const bool increment_generation_number,
+                              const bool reset_collision_number )
   : ParticleState( existing_base_state, 
-		   ELECTRON,
-		   increment_generation_number,
-		   reset_collision_number ),
+                   ELECTRON,
+                   increment_generation_number,
+                   reset_collision_number ),
     d_speed()
 {
   d_speed = Utility::calculateRelativisticSpeed( 

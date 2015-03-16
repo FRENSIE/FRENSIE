@@ -60,6 +60,10 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isAtomicRelaxationModeOn() );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isDetailedPairProductionModeOn() );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isPhotonuclearInteractionModeOn() );
+
+  TEST_EQUALITY_CONST( 
+    MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
+	MonteCarlo::DIPOLE_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//

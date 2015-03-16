@@ -108,10 +108,36 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 UNIT_TEST_INSTANTIATION( TabularDistribution, evaluatePDF );
 
 //---------------------------------------------------------------------------//
+// Check that the CDF can be evaluated 
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution, 
+				   evaluateCDF,
+				   InterpolationPolicy )
+{
+  initializeDistribution<InterpolationPolicy>();
+
+  TEST_EQUALITY_CONST( distribution->evaluateCDF( 0.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1e-3 ), 
+			  0.0000000000, 
+			  1e-10 );
+  TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1e-2 ), 
+			  0.33333333333, 
+			  1e-10 );
+  TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1e-1 ), 
+			  0.66666666667, 
+			  1e-10 );
+  TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1.0 ), 
+			  1.0000000000, 
+			  1e-10 );
+  TEST_EQUALITY_CONST( distribution->evaluateCDF( 2.0 ), 1.0 );
+}
+
+UNIT_TEST_INSTANTIATION( TabularDistribution, evaluateCDF );
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
-				   sample,
-				   InterpolationPolicy )
+                                   sample,
+                                   InterpolationPolicy )
 {
   initializeDistribution<InterpolationPolicy>();
 
@@ -142,10 +168,10 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 UNIT_TEST_INSTANTIATION( TabularDistribution, sample );
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be sampled
+// Check that the distribution can be sampled from a subrange
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
-				   sample_subrange,
-				   InterpolationPolicy )
+                                   sample_subrange,
+                                   InterpolationPolicy )
 {
   initializeDistribution<InterpolationPolicy>();
 
@@ -172,6 +198,39 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 }
 
 UNIT_TEST_INSTANTIATION( TabularDistribution, sample_subrange );
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
+                                   sampleWithValue,
+                                   InterpolationPolicy )
+{
+  initializeDistribution<InterpolationPolicy>();
+
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0 - 1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  double cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  double sample = distribution->sampleWithValue( cdf_value );
+  TEST_EQUALITY_CONST( sample, 1e-3 );
+
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = distribution->sampleWithValue( cdf_value );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+  Utility::RandomNumberGenerator::initialize();
+  
+  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
+  sample = distribution->sampleWithValue( cdf_value );
+  TEST_COMPARE( sample, >=, 1e-3 );
+  TEST_COMPARE( sample, <=, 1.0 );
+}
+
+UNIT_TEST_INSTANTIATION( TabularDistribution, sampleWithValue );
 
 //---------------------------------------------------------------------------//
 // Check that the sampling efficiency can be returned

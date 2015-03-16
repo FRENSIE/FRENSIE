@@ -34,11 +34,57 @@ TabularDistribution<InterpolationPolicy>::TabularDistribution()
 template<typename InterpolationPolicy>
 TabularDistribution<InterpolationPolicy>::TabularDistribution( 
 			      const Teuchos::Array<double>& independent_values,
-			      const Teuchos::Array<double>& dependent_values )
+			      const Teuchos::Array<double>& dependent_values,
+                  const bool interpret_dependent_values_as_cdf )
   : d_distribution( independent_values.size() ),
     d_norm_constant( 0.0 )
 {
-  initializeDistribution( independent_values, dependent_values );
+  if( interpret_dependent_values_as_cdf )
+  {
+    // Make sure that the bin values are sorted
+    testPrecondition( Sort::isSortedAscending( dependent_values.begin(), 
+					     dependent_values.end() ) );
+
+    // Make sure that for n bin boundaries there are n bin values
+    testPrecondition( independent_values.size() == dependent_values.size() );
+
+    d_distribution[0].first = independent_values[0];
+    d_distribution[0].second = dependent_values[0];
+    // Arbitrarily set the first pdf value to 1.0
+    d_distribution[0].third = 1.0;
+
+    // Assign the distribution
+    for( unsigned i = 1; i < independent_values.size(); ++i )
+    {
+      d_distribution[i].first = independent_values[i];
+      d_distribution[i].second = dependent_values[i];
+
+      // Calculate the pdf from the cdf
+      d_distribution[i].third = -d_distribution[i-1].third + 2.0 *
+        (d_distribution[i].second - d_distribution[i-1].second)/
+        (d_distribution[i].first - d_distribution[i-1].first);
+    }
+
+    // Set normalization constant
+    d_norm_constant = d_distribution.back().second;
+ 
+    // Verify that the CDF is normalized (in event of round-off errors)
+    if( dependent_values.back() != 1.0 )
+    {
+      for( unsigned j = 0; j < d_distribution.size(); ++j )
+      {
+        d_distribution[j].second /= d_norm_constant;
+        d_distribution[j].third /= d_norm_constant;
+      }
+    }
+
+    // Calculate the slopes of the PDF
+    DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_distribution );
+  }
+  else
+  {
+    initializeDistribution( independent_values, dependent_values );
+  }
 }
 
 // Copy constructor
@@ -113,6 +159,32 @@ double TabularDistribution<InterpolationPolicy>::evaluatePDF(
 					     indep_var_value,
 					     lower_pdf_value,
 					     upper_pdf_value );
+  }
+}
+
+// Evaluate the CDF
+template<typename InterpolationPolicy>
+double TabularDistribution<InterpolationPolicy>::evaluateCDF( 
+					   const double indep_var_value ) const
+{
+  if( indep_var_value < d_distribution.front().first )
+    return 0.0;
+  else if( indep_var_value >= d_distribution.back().first )
+    return 1.0;
+  else
+  {
+    DistributionArray::const_iterator start, end, lower_bin_boundary;
+    start = d_distribution.begin();
+    end = d_distribution.end();
+
+    lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
+							  end,
+							  indep_var_value );
+
+    double indep_diff = indep_var_value - lower_bin_boundary->first;
+
+    return lower_bin_boundary->second + indep_diff*lower_bin_boundary->third +
+           indep_diff*indep_diff/2.0 * lower_bin_boundary->fourth;
   }
 }
 
@@ -239,6 +311,40 @@ double TabularDistribution<InterpolationPolicy>::sample(
 
     return sample;
   }
+}
+
+// Return a sample from the distribution at the given CDF value
+template<typename InterpolationPolicy>
+double TabularDistribution<InterpolationPolicy>::sampleWithValue( 
+					    const double cdf_value ) const
+{
+  DistributionArray::const_iterator lower_bin_boundary = 
+                       Search::binaryLowerBound<SECOND>( d_distribution.begin(),
+                                                         d_distribution.end(),
+                                                         cdf_value );
+
+  // Calculate the sampled independent value
+  double sample;
+  
+  double indep_value = lower_bin_boundary->first;
+  double cdf_diff = cdf_value - lower_bin_boundary->second;
+  double pdf_value = lower_bin_boundary->third;
+  double slope = lower_bin_boundary->fourth;
+
+  // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m 
+  if( slope != 0.0 )
+  {
+    sample = indep_value + 
+      (sqrt( pdf_value*pdf_value + 2*slope*cdf_diff ) - pdf_value)/slope;
+  }
+  // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
+  else
+    sample =  indep_value + cdf_diff/pdf_value;
+
+  // Make sure the sample is valid
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( sample ) );
+
+  return sample;
 }
 
 // Return the sampling efficiency

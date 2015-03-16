@@ -21,7 +21,9 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_NeutronScatteringDistribution.hpp"
+#include "MonteCarlo_NuclearScatteringDistribution.hpp"
+#include "MonteCarlo_NeutronState.hpp"
+#include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -46,7 +48,8 @@ public:
 
   //! Create the delayed neutron emission distribution
   void createEmissionDistribution(
-	     Teuchos::RCP<NeutronScatteringDistribution>& distribution ) const;
+       Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >&
+       distribution ) const;
 
 protected:
 
@@ -58,7 +61,7 @@ protected:
   getPrecursorGroupProbDists() const;
 
   //! Return the precursor group emission distributions
-  const Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >&
+  const Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >&
   getPrecursorGroupEmissionDists() const;
 
 private:
@@ -86,7 +89,7 @@ private:
   d_precursor_group_prob_distributions;
 
   // The precursor group emission distributions
-  Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >
+  Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >
   d_precursor_group_emission_distributions;
 };
 

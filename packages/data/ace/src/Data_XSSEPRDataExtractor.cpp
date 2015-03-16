@@ -328,6 +328,13 @@ XSSEPRDataExtractor::extractEIONBlock() const
   return d_xss( d_jxs[22], d_jxs[23] - d_jxs[22] );
 }
 
+// Return the EION data block location in xss array
+unsigned
+XSSEPRDataExtractor::returnEIONLoc() const
+{
+  return d_jxs[22];
+}
+
 // Extract the BREMI block
 Teuchos::ArrayView<const double> 
 XSSEPRDataExtractor::extractBREMIBlock() const
