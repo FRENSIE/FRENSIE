@@ -14,6 +14,7 @@
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_PhotoatomFactory.hpp"
+#include "MonteCarlo_ElectroatomFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 
@@ -76,8 +77,8 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
   boost::unordered_set<std::string> aliases;
 
   CollisionHandlerFactory::createAliasSet( material_reps, 
-					   alias_map_list,
-					   aliases );
+                                           alias_map_list,
+                                           aliases );
 
   // Create the material id data maps
   boost::unordered_map<ModuleTraits::InternalMaterialHandle,
@@ -86,8 +87,8 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
                        Teuchos::Array<std::string> > material_id_component_map;
   
   CollisionHandlerFactory::createMaterialIdDataMaps( material_reps,
-						     material_id_fraction_map,
-						     material_id_component_map );
+                                                     material_id_fraction_map,
+                                                     material_id_component_map );
 
   // Create the cell id data maps using DagMC
   boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
@@ -169,6 +170,21 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 		     SimulationProperties::isDetailedPairProductionModeOn(),
 		     SimulationProperties::isAtomicRelaxationModeOn(),
 		     SimulationProperties::isPhotonuclearInteractionModeOn() );
+    break;
+  }
+  case ELECTRON_MODE:
+  {
+    CollisionHandlerFactory::createElectronMaterials(
+		     cross_sections_table_info,
+		     cross_sections_xml_directory,
+		     material_id_fraction_map,
+		     material_id_component_map,
+		     aliases,
+		     cell_id_mat_id_map,
+		     cell_id_density_map,
+		     atomic_relaxation_model_factory,
+		     SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
+		     SimulationProperties::isAtomicRelaxationModeOn() );
     break;
   }
   default:
@@ -477,6 +493,57 @@ void CollisionHandlerFactory::createPhotonMaterials(
   // Register materials with the collision handler
   CollisionHandlerFactory::registerMaterials( material_name_pointer_map,
 					      material_name_cell_ids_map );
+}
+
+// Create the electron materials
+void CollisionHandlerFactory::createElectronMaterials(
+   const Teuchos::ParameterList& cross_sections_table_info,
+   const std::string& cross_sections_xml_directory,
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                            Teuchos::Array<double> >& material_id_fraction_map,
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                      Teuchos::Array<std::string> >& material_id_component_map,
+   const boost::unordered_set<std::string>& electroatom_aliases,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                              std::vector<std::string> >& cell_id_mat_id_map,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                               std::vector<std::string> >& cell_id_density_map,
+   const Teuchos::RCP<AtomicRelaxationModelFactory>& 
+   atomic_relaxation_model_factory,
+   const BremsstrahlungAngularDistributionType photon_distribution_function,
+   const bool use_atomic_relaxation_data )
+{
+  boost::unordered_map<std::string,Teuchos::RCP<Electroatom> > electroatom_map;
+
+  ElectroatomFactory electroatom_factory( cross_sections_xml_directory,
+                                          cross_sections_table_info,
+					  electroatom_aliases,
+                                          atomic_relaxation_model_factory,
+                                          photon_distribution_function,
+                                          use_atomic_relaxation_data );
+    
+  electroatom_factory.createElectroatomMap( electroatom_map );
+
+  // Create the material name data maps
+  boost::unordered_map<std::string,Teuchos::RCP<ElectronMaterial> >
+    material_name_pointer_map;
+  
+  boost::unordered_map<std::string,
+                   Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >
+    material_name_cell_ids_map;
+
+  CollisionHandlerFactory::createMaterialNameDataMaps( 
+						  material_id_fraction_map,
+						  material_id_component_map,
+						  electroatom_map,
+						  cell_id_mat_id_map,
+						  cell_id_density_map,
+						  material_name_pointer_map,
+						  material_name_cell_ids_map );
+
+  // Register materials with the collision handler
+  CollisionHandlerFactory::registerMaterials( material_name_pointer_map,
+                                              material_name_cell_ids_map );
 }
 
 } // end MonteCarlo namespace

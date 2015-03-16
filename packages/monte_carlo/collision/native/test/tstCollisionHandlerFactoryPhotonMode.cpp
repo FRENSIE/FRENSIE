@@ -263,6 +263,62 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 83, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 154, MonteCarlo::NEUTRON ) );
   TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 168, MonteCarlo::NEUTRON ) );
+
+  // Electrons
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 26, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 27, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 28, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 29, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 30, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 31, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 32, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 33, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 34, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 35, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 36, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 37, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 48, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 49, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 50, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 51, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 52, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 53, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 54, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 55, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 56, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 57, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 58, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 59, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 70, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 71, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 72, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 73, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 74, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 75, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 76, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 77, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 78, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 79, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 80, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 81, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 9, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 88, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 136, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 19, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 41, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 63, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 82, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 152, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 166, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 184, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 3, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 7, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 5, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 1, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 13, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 83, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 154, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 168, MonteCarlo::ELECTRON ) );
 }
 
 //---------------------------------------------------------------------------//

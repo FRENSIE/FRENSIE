@@ -11,10 +11,12 @@
 
 // Std Lib Includes
 #include <limits>
+#include <stdexcept>
 
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
 #include "Utility_ComparePolicy.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Utility{
 
@@ -38,6 +40,9 @@ public:
   //! Evaluate the PDF
   virtual double evaluatePDF( const double indep_var_value ) const = 0;
 
+  //! Evaluate the CDF
+  virtual double evaluateCDF( const double indep_var_value ) const;
+
   //! Return a random sample from the corresponding CDF (log sampling eff.)
   virtual double sample() = 0;
 
@@ -49,6 +54,13 @@ public:
 
   //! Return a random sample from the corresponding CDF in a subrange
   virtual double sample( const double max_indep_var ) const;
+
+  //! Return a random sample from the distribution at the given CDF value
+  virtual double sampleWithValue( const double CDF_value ) const;
+
+  //! Return a random sample from the distribution at the given CDF value in a subrange
+  virtual double sampleWithValue( const double CDF_value,
+                                  const double max_indep_var ) const;
 
   //! Return the sampling efficiency from the distribution
   virtual double getSamplingEfficiency() const = 0;
@@ -66,7 +78,14 @@ public:
   bool hasSameBounds( const OneDDistribution& distribution ) const;
 };
 
-//! Return a random sample and sampled index from the corresponding CDF (ignore sample eff.)
+// Evaluate the CDF
+inline double OneDDistribution::evaluateCDF( const double indep_var_value ) const
+{
+  THROW_EXCEPTION( std::logic_error, 
+          "Error! Please implement this function for desired OneDDistribution");
+}
+
+// Return a random sample and sampled index from the corresponding CDF (ignore sample eff.)
 inline double OneDDistribution::sample( unsigned& sampled_bin_index ) const
 {
   sampled_bin_index = std::numeric_limits<unsigned>::max();
@@ -74,7 +93,7 @@ inline double OneDDistribution::sample( unsigned& sampled_bin_index ) const
   return this->sample();
 }
 
-//! Return a random sample from the corresponding CDF in a subrange
+// Return a random sample from the corresponding CDF in a subrange
 inline double OneDDistribution::sample( const double max_indep_var ) const
 {
   OneDDistributionType type = this->getDistributionType();
@@ -83,6 +102,22 @@ inline double OneDDistribution::sample( const double max_indep_var ) const
 	    << "the entire interval will be returned." << std::endl;
 
   return this->sample();
+}
+
+// Return a random sample from the distribution at the given CDF value
+inline double OneDDistribution::sampleWithValue( const double CDF_value ) const
+{
+  THROW_EXCEPTION( std::logic_error, 
+          "Error! Please implement this function for desired OneDDistribution");
+}
+
+// Return a random sample from the distribution at the given CDF value in a subrange
+inline double OneDDistribution::sampleWithValue( 
+                                              const double CDF_value,
+                                              const double max_indep_var ) const
+{
+  THROW_EXCEPTION( std::logic_error, 
+          "Error! Please implement this function for desired OneDDistribution");
 }
 
 // Test if the distribution has the same bounds

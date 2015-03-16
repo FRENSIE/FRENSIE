@@ -16,7 +16,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclearReaction.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
-#include "MonteCarlo_NeutronScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_NeutronNuclearScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_FissionNeutronMultiplicityDistribution.hpp"
 #include "Data_XSSNeutronDataExtractor.hpp"
 
@@ -116,7 +116,7 @@ private:
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
     reaction_cross_section,
-    const NeutronScatteringDistributionACEFactory& scattering_dist_factory );
+    const NeutronNuclearScatteringDistributionACEFactory& scattering_dist_factory );
 
   // Initialize the absorption reactions
   void initializeAbsorptionReactions(
@@ -143,10 +143,10 @@ private:
     reaction_threshold_index,
     const boost::unordered_map<NuclearReactionType,Teuchos::ArrayRCP<double> >&
     reaction_cross_section,
-    const NeutronScatteringDistributionACEFactory& scattering_dist_factory,
+    const NeutronNuclearScatteringDistributionACEFactory& scattering_dist_factory,
     const Teuchos::RCP<FissionNeutronMultiplicityDistribution>&
     fission_neutron_multiplicity_distribution,
-    const Teuchos::RCP<NeutronScatteringDistribution>& 
+    const Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> >& 
     delayed_neutron_emission_distribution );
 				    
 

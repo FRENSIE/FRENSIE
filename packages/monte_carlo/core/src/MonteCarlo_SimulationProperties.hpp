@@ -11,6 +11,10 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 
 namespace MonteCarlo{
 
@@ -145,6 +149,14 @@ public:
   //! Return if photonuclear interaction mode is on
   static bool isPhotonuclearInteractionModeOn();
 
+  //! Set the bremsstrahlung photon angular distribution function (2BS by default)
+  static void setBremsstrahlungAngularDistributionFunction( 
+                         const BremsstrahlungAngularDistributionType function );
+
+  //! Return the bremsstrahlung photon angular distribution function
+  static BremsstrahlungAngularDistributionType 
+          getBremsstrahlungAngularDistributionFunction();
+
 private:
 
   // The particle mode
@@ -184,13 +196,13 @@ private:
   // The absolute minimum electron energy
   static const double absolute_min_electron_energy;
 
-  // The minimum photon energy (MeV)
+  // The minimum electron energy (MeV)
   static double min_electron_energy;
 
-  // The maximum photon energy (MeV)
+  // The maximum electron energy (MeV)
   static double max_electron_energy;
 
-  // The absolute maximum photon energy (MeV)
+  // The absolute maximum electron energy (MeV)
   static const double absolute_max_electron_energy;
 
   // The warning message flag
@@ -213,6 +225,10 @@ private:
 
   // The photonuclear interaction mode (true = on, false = off - default)
   static bool photonuclear_interaction_mode_on;
+
+  // The bremsstrahlung photon angular distribution function (default is 2BS)
+  static BremsstrahlungAngularDistributionType 
+           bremsstrahlung_angular_distribution_function;
 };
 
 // Return the particle mode type
@@ -345,6 +361,13 @@ inline bool SimulationProperties::isDetailedPairProductionModeOn()
 inline bool SimulationProperties::isPhotonuclearInteractionModeOn()
 {
   return SimulationProperties::photonuclear_interaction_mode_on;
+}
+
+// Return if detailed bremsstrahlung mode is on
+inline BremsstrahlungAngularDistributionType 
+  SimulationProperties::getBremsstrahlungAngularDistributionFunction()
+{
+  return SimulationProperties::bremsstrahlung_angular_distribution_function;
 }
 
 } // end MonteCarlo namespace

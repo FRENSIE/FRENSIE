@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -22,40 +23,40 @@
 TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
 {
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getParticleMode(),
-		       MonteCarlo::NEUTRON_MODE );
+                       MonteCarlo::NEUTRON_MODE );
   TEST_EQUALITY_CONST(MonteCarlo::SimulationProperties::getNumberOfHistories(),
-		      0 );
+                      0 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getFreeGasThreshold(),
-		       400.0 );
+                       400.0 );
   TEST_EQUALITY_CONST( 
-	       MonteCarlo::SimulationProperties::getAbsoluteMinNeutronEnergy(),
-	       1e-11 );
+               MonteCarlo::SimulationProperties::getAbsoluteMinNeutronEnergy(),
+               1e-11 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMinNeutronEnergy(),
-		       1e-11 );
+                       1e-11 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMaxNeutronEnergy(),
-		       20.0 );
+                       20.0 );
   TEST_EQUALITY_CONST( 
-	       MonteCarlo::SimulationProperties::getAbsoluteMaxNeutronEnergy(),
-	       20.0 );
+               MonteCarlo::SimulationProperties::getAbsoluteMaxNeutronEnergy(),
+               20.0 );
   TEST_EQUALITY_CONST(
-		MonteCarlo::SimulationProperties::getAbsoluteMinPhotonEnergy(),
-		1e-3 );
+               MonteCarlo::SimulationProperties::getAbsoluteMinPhotonEnergy(),
+               1e-3 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMinPhotonEnergy(),
 		       1e-3 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMaxPhotonEnergy(),
-		       20.0 );
+                       20.0 );
   TEST_EQUALITY_CONST( 
-		MonteCarlo::SimulationProperties::getAbsoluteMaxPhotonEnergy(),
-		20.0 );    
+                MonteCarlo::SimulationProperties::getAbsoluteMaxPhotonEnergy(),
+                20.0 );    
   TEST_EQUALITY_CONST(
-	      MonteCarlo::SimulationProperties::getAbsoluteMinElectronEnergy(),
-	      1e-3 );
+               MonteCarlo::SimulationProperties::getAbsoluteMinElectronEnergy(),
+               1.5e-5 );
   TEST_EQUALITY_CONST(
-		     MonteCarlo::SimulationProperties::getMinElectronEnergy(),
-		     1e-3 );
+               MonteCarlo::SimulationProperties::getMinElectronEnergy(),
+               1.5e-5 );
   TEST_EQUALITY_CONST(
-		     MonteCarlo::SimulationProperties::getMaxElectronEnergy(),
-		     20.0 );
+               MonteCarlo::SimulationProperties::getMaxElectronEnergy(),
+               20.0 );
   TEST_EQUALITY_CONST(
 	      MonteCarlo::SimulationProperties::getAbsoluteMaxElectronEnergy(),
 	      20.0 );
@@ -66,6 +67,9 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_ASSERT( MonteCarlo::SimulationProperties::isAtomicRelaxationModeOn() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isDetailedPairProductionModeOn() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isPhotonuclearInteractionModeOn() );
+  TEST_EQUALITY_CONST( 
+    MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
+	MonteCarlo::TWOBS_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -392,6 +396,44 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setPhotonuclearInteractionModeOn )
   MonteCarlo::SimulationProperties::setPhotonuclearInteractionModeOn();
 
   TEST_ASSERT( MonteCarlo::SimulationProperties::isPhotonuclearInteractionModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the bremsstrahlung angular distribution function can be turned to Dipole
+TEUCHOS_UNIT_TEST( SimulationProperties, setBremsstrahlungAngularDistributionFunction_Dipole )
+{
+  TEST_EQUALITY_CONST( 
+    MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
+	MonteCarlo::TWOBS_DISTRIBUTION );
+  
+  MonteCarlo::BremsstrahlungAngularDistributionType function;
+  function = MonteCarlo::DIPOLE_DISTRIBUTION;
+
+  MonteCarlo::SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
+                          function );
+
+  TEST_EQUALITY_CONST( 
+    MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
+	MonteCarlo::DIPOLE_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the bremsstrahlung angular distribution function can be turned to Tabular
+TEUCHOS_UNIT_TEST( SimulationProperties, setBremsstrahlungAngularDistributionFunction_Tabular )
+{
+  TEST_EQUALITY_CONST( 
+    MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
+	MonteCarlo::DIPOLE_DISTRIBUTION );
+  
+  MonteCarlo::BremsstrahlungAngularDistributionType function;
+  function = MonteCarlo::TABULAR_DISTRIBUTION;
+
+  MonteCarlo::SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
+                          function );
+
+  TEST_EQUALITY_CONST( 
+    MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
+	MonteCarlo::TABULAR_DISTRIBUTION );
 }
 
 //---------------------------------------------------------------------------//

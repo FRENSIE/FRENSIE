@@ -13,10 +13,12 @@
 #include "MonteCarlo_ModuleTraits.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NeutronState.hpp"
+#include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
 #include "MonteCarlo_PhotoatomicReactionType.hpp"
 #include "MonteCarlo_PhotonuclearReactionType.hpp"
+#include "MonteCarlo_ElectroatomicReactionType.hpp"
 
 /*! \defgroup collision_module Collision Module
  * \ingroup physics_simulation_modules
@@ -70,6 +72,11 @@ public:
   static inline double getMacroscopicTotalCrossSection(
 						 const PhotonState& particle )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); return 0;}
+
+  //! Get the total macroscopic cross section of a material
+  static inline double getMacroscopicTotalCrossSection(
+						 const ElectronState& particle )
+  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); return 0;}
   
   //! Get the macroscopic cross section for a specific reaction
   static inline double getMacroscopicReactionCrossSection(
@@ -89,6 +96,12 @@ public:
 				      const PhotonuclearReactionType reaction )
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 
+  //! Get the macroscopic cross section for a specific reaction
+  static inline double getMacroscopicReactionCrossSection(
+				       const ElectronState& particle,
+				       const ElectroatomicReactionType reaction )
+  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
+
   //! Sample the optical path length traveled by a particle before a collision
   static inline double sampleOpticalPathLength()
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
@@ -103,6 +116,12 @@ public:
   static inline void collideWithCellMaterial( PhotonState& particle,
 					      ParticleBank& bank,
 					      const bool analogue ) 
+  { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
+
+  //! Collide with the material in a cell
+  static inline void collideWithCellMaterial( ElectronState& particle,
+                                              ParticleBank& bank,
+                                              const bool analogue ) 
   { (void)UndefinedCollisionHandler<CollisionHandler>::notDefined(); }
 };
 

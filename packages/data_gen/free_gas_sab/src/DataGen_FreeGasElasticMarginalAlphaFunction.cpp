@@ -20,14 +20,14 @@ namespace DataGen{
 
 // Constructor
 FreeGasElasticMarginalAlphaFunction::FreeGasElasticMarginalAlphaFunction(
-	      const Teuchos::RCP<Utility::OneDDistribution>& 
-	      zero_temp_elastic_cross_section,
-              const Teuchos::RCP<MonteCarlo::NeutronScatteringAngularDistribution>&
-	      cm_scattering_distribution,
-	      const double A,
-	      const double kT,
-	      const double beta,
-	      const double E )
+	  const Teuchos::RCP<Utility::OneDDistribution>& 
+	  zero_temp_elastic_cross_section,
+          const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
+	  cm_scattering_distribution,
+	  const double A,
+	  const double kT,
+	  const double beta,
+	  const double E )
   : d_kernel( 1e-4 ),
     d_sab_function( zero_temp_elastic_cross_section,
 		    cm_scattering_distribution,

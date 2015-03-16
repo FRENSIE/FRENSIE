@@ -154,6 +154,8 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 		   exp( 1.151292546497E+01 ),
 		   MonteCarlo::K_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION );
 
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+
   // Test that the pair production cross section can be returned
   cross_section = atom->getReactionCrossSection(
 			    exp( -1.381551055796E+01 ),

@@ -7,6 +7,7 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 #include "MonteCarlo_SimulationPropertiesFactory.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -33,6 +34,8 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
       mode = PHOTON_MODE;
     else if( raw_mode == "NP" || raw_mode == "np" || raw_mode == "Neutron-Photon" )
       mode = NEUTRON_PHOTON_MODE;
+    else if( raw_mode == "E" || raw_mode == "e" || raw_mode == "Electron" )
+      mode = ELECTRON_MODE;
     else
     {
       THROW_EXCEPTION( std::runtime_error,
@@ -225,6 +228,31 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
   {
     if( properties.get<bool>( "Photonuclear Interaction" ) )
       SimulationProperties::setPhotonuclearInteractionModeOn();
+  }
+
+  // Get the bremsstrahlung photon angular distribution function - optional
+  if( properties.isParameter( "Bremsstrahlung Angular Distribution" ) )
+  {
+    std::string raw_function = 
+           properties.get<std::string>( "Bremsstrahlung Angular Distribution" );
+    
+     MonteCarlo::BremsstrahlungAngularDistributionType function;
+    
+    if( raw_function == "Dipole" || raw_function == "dipole" || raw_function == "DIPOLE" )
+      function = MonteCarlo::DIPOLE_DISTRIBUTION;
+    else if( raw_function == "Tabular" || raw_function == "tabular" || raw_function == "TABULAR" )
+      function = MonteCarlo::DIPOLE_DISTRIBUTION;
+    else if( raw_function == "2BS" || raw_function == "2bs" || raw_function == "twobs" )
+      function = MonteCarlo::TWOBS_DISTRIBUTION;
+    else
+    {
+      THROW_EXCEPTION( std::runtime_error,
+		       "Error: bremsstrahlung angular distribution " << raw_function << 
+               " is not currently supported!" );
+    }
+   
+     SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
+                                                                     function );
   }
   
   properties.unused( std::cerr );

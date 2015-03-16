@@ -145,7 +145,8 @@ TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
 TEUCHOS_UNIT_TEST( DelayedNeutronEmissionDistributionACEFactory,
 		   createEmissionDistribution )
 {
-  Teuchos::RCP<MonteCarlo::NeutronScatteringDistribution> distribution;
+  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::NeutronState,MonteCarlo::NeutronState> > 
+    distribution;
 
   factory->createEmissionDistribution( distribution );
 

@@ -25,9 +25,9 @@ DelayedNeutronEmissionDistribution::DelayedNeutronEmissionDistribution(
       const Teuchos::Array<double>& precursor_group_decay_consts,
       const Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >& 
       precursor_group_prob_distributions,
-      const Teuchos::Array<Teuchos::RCP<NeutronScatteringDistribution> >&
+      const Teuchos::Array<Teuchos::RCP<NuclearScatteringDistribution<NeutronState,NeutronState> > >&
       precursor_group_emission_distributions )
-  : NeutronScatteringDistribution( atomic_weight_ratio ),
+  : NuclearScatteringDistribution<NeutronState,NeutronState>( atomic_weight_ratio ),
     d_precursor_group_decay_consts( precursor_group_decay_consts ),
     d_precursor_group_prob_distributions( precursor_group_prob_distributions ),
     d_precursor_group_emission_distributions( 
@@ -42,9 +42,10 @@ DelayedNeutronEmissionDistribution::DelayedNeutronEmissionDistribution(
 }
 
 // Randomly "scatter" the neutron
-void DelayedNeutronEmissionDistribution::scatterNeutron( 
-					       NeutronState& neutron,
-					       const double temperature ) const
+void DelayedNeutronEmissionDistribution::scatterParticle( 
+				          const NeutronState& incoming_neutron,
+					  NeutronState& outgoing_neutron,
+					  const double temperature ) const
 {
   // Sample the precursor group that generates the neutron
   unsigned precursor_group;
@@ -57,7 +58,7 @@ void DelayedNeutronEmissionDistribution::scatterNeutron(
   for( unsigned i = 0u; i < d_precursor_group_prob_distributions.size(); ++i )
   {
     partial_cdf += d_precursor_group_prob_distributions[i]->evaluate( 
-							 neutron.getEnergy() );
+						incoming_neutron.getEnergy() );
 
     if( random_number < partial_cdf )
     {
@@ -72,12 +73,13 @@ void DelayedNeutronEmissionDistribution::scatterNeutron(
     sampleEmissionTime( d_precursor_group_decay_consts[precursor_group] );
 
   // Sample the state after emission
-  d_precursor_group_emission_distributions[precursor_group]->scatterNeutron(
-								 neutron,
-								 temperature );
+  d_precursor_group_emission_distributions[precursor_group]->scatterParticle(
+							      incoming_neutron,
+							      outgoing_neutron,
+							      temperature );
  
   // Set the new neutron time
-  neutron.setTime( neutron.getTime() + emission_time );
+  outgoing_neutron.setTime( incoming_neutron.getTime() + emission_time );
 }
 
 // Sample the emission time (s)

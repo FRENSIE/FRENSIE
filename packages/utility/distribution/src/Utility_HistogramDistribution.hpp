@@ -40,7 +40,8 @@ public:
 
   //! Constructor (data owning)
   HistogramDistribution( const Teuchos::Array<double>& bin_boundaries,
-			 const Teuchos::Array<double>& bin_values );
+			             const Teuchos::Array<double>& bin_values,
+                         const bool interpret_dependent_values_as_cdf = false );
 
   //! Copy constructor
   HistogramDistribution( const HistogramDistribution& dist_instance );
@@ -59,6 +60,9 @@ public:
   //! Evaluate the PDF
   double evaluatePDF( const double indep_var_value ) const;
 
+  //! Evaluate the CDF
+  double evaluateCDF( const double indep_var_value ) const;
+
   //! Return a random sample from the distribution
   double sample();
 
@@ -67,6 +71,16 @@ public:
 
   //! Return a random sample and bin index from the distribution
   double sample( unsigned& sampled_bin_index ) const;
+
+  //! Return a random sample from the corresponding CDF in a subrange
+  double sample( const double max_indep_var ) const;
+
+  //! Return a sample from the distribution at the given CDF value
+  double sampleWithValue( const double cdf_value ) const;
+
+  //! Return a sample from the distribution at the given CDF value in a subrange
+  double sampleWithValue( const double cdf_value,
+                          const double max_indep_var ) const;
 
   //! Return the sampling efficiency from the distribution
   double getSamplingEfficiency() const;
@@ -93,7 +107,7 @@ private:
 
   // Initialize the distribution
   void initializeDistribution( const Teuchos::Array<double>& bin_boundaries,
-			       const Teuchos::Array<double>& bin_values );
+			                   const Teuchos::Array<double>& bin_values );
 
   // The distribution type
   static const OneDDistributionType distribution_type = HISTOGRAM_DISTRIBUTION;

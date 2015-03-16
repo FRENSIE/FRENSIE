@@ -30,14 +30,14 @@ public:
 
   //! Constructor
   FreeGasElasticMarginalAlphaFunction(
-              const Teuchos::RCP<Utility::OneDDistribution>& 
-	      zero_temp_elastic_cross_section,
-              const Teuchos::RCP<MonteCarlo::NeutronScatteringAngularDistribution>&
-	      cm_scattering_distribution,
-	      const double A,
-	      const double kT,
-	      const double beta,
-	      const double E );
+         const Teuchos::RCP<Utility::OneDDistribution>& 
+	 zero_temp_elastic_cross_section,
+         const Teuchos::RCP<MonteCarlo::NuclearScatteringAngularDistribution>&
+	 cm_scattering_distribution,
+	 const double A,
+	 const double kT,
+	 const double beta,
+	 const double E );
 
   //! Destructor
   ~FreeGasElasticMarginalAlphaFunction()

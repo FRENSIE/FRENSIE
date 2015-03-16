@@ -33,7 +33,8 @@ public:
 
   //! Constructor
   TabularDistribution( const Teuchos::Array<double>& independent_values,
-		       const Teuchos::Array<double>& dependent_values );
+		               const Teuchos::Array<double>& dependent_values,
+                       const bool interpret_dependent_values_as_cdf = false );
 
   //! Copy constructor
   TabularDistribution( 
@@ -49,6 +50,9 @@ public:
   //! Evaluate the PDF
   double evaluatePDF( const double indep_var_value ) const;
 
+  //! Evaluate the CDF
+  double evaluateCDF( const double indep_var_value ) const;
+
   //! Return a random sample from the distribution
   double sample();
 
@@ -60,6 +64,9 @@ public:
 
   //! Return a random sample from the corresponding CDF in a subrange
   double sample( const double max_indep_var ) const;
+
+  //! Return a sample from the distribution at the given CDF value
+  double sampleWithValue( const double cdf_value ) const;
 
   //! Return the sampling efficiency from the distribution
   double getSamplingEfficiency() const;
