@@ -71,6 +71,8 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::re
 
   d_interaction_model( photon, bank );
 
+  photon.incrementCollisionNumber();
+
   // The shell of interaction, which will be important for triplet production
   // is currently ignored
   shell_of_interaction = UNKNOWN_SUBSHELL;

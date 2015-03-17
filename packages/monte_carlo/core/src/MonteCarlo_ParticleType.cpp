@@ -7,8 +7,13 @@
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
+#include "FRENSIE_dagmc_config.hpp"
 #include "MonteCarlo_ParticleType.hpp"
+
+#ifdef HAVE_FRENSIE_DAGMC
 #include "Geometry_DagMCProperties.hpp"
+#endif 
+
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -32,8 +37,10 @@ std::string convertShortParticleTypeNameToVerboseParticleTypeName(
 				 const std::string& short_particle_type_name )
 {
   // Make sure the shorthand name is valid
+  #ifdef HAVE_FRENSIE_DAGMC
   testPrecondition( Geometry::DagMCProperties::isParticleTypeValid( short_particle_type_name ));
-  
+  #endif
+
   if( short_particle_type_name == "n" )
     return "Neutron";
   else if( short_particle_type_name == "p" )
@@ -60,6 +67,22 @@ ParticleType convertParticleTypeNameToParticleTypeEnum(
     return ADJOINT_ELECTRON;
   else
     return UNKNOWN_PARTICLE;
+}
+
+// Convert the ParticleType enum to a string
+std::string convertParticleTypeEnumToString( const ParticleType particle_type )
+{
+  switch( particle_type )
+  {
+  case PHOTON: return "Photon";
+  case NEUTRON: return "Neutron";
+  case ELECTRON: return "Electron";
+  case ADJOINT_PHOTON: return "Adjoint Photon";
+  case ADJOINT_NEUTRON: return "Adjoint Neutron";
+  case ADJOINT_ELECTRON: return "Adjoint Electron";
+  default:
+    return "Unknown Particle";
+  }
 }
 
 } // end MonteCarlo namespace

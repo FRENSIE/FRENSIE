@@ -146,11 +146,13 @@ private:
 
   // Sample an absorption reaction
   void sampleAbsorptionReaction( const double scaled_random_number,
+				 const unsigned energy_grid_bin,
 				 PhotonState& photon,
 				 ParticleBank& bank ) const;
 
   // Sample a scattering reaction
   void sampleScatteringReaction( const double scaled_random_number,
+				 const unsigned energy_grid_bin,
 				 PhotonState& photon,
 				 ParticleBank& bank ) const;
 

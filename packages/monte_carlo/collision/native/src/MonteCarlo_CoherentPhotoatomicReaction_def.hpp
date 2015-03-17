@@ -70,6 +70,8 @@ void CoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
 					   bank, 
 					   shell_of_interaction );
 
+  photon.incrementCollisionNumber();
+
   // No subshell vacancies are created by this reaction
   shell_of_interaction = UNKNOWN_SUBSHELL;
 }

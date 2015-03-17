@@ -79,7 +79,7 @@ int main( int argc, char** argv )
 			       &grid_distance_tol,
 			       "Grid absolute distance tolerance" );
   epr_generator_clp.setOption( "modify_cs_xml_file",
-			       "do_not_modity_cs_xml_file",
+			       "do_not_modify_cs_xml_file",
 			       &modify_cs_xml_file,
 			       "Modify the cross_sections.xml file?" );
 

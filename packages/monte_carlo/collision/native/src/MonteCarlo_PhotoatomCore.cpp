@@ -194,6 +194,36 @@ PhotoatomCore& PhotoatomCore::operator=( const PhotoatomCore& instance )
   return *this;
 }
 
+// Test if all of the reactions share a common energy grid
+bool PhotoatomCore::hasSharedEnergyGrid() const
+{
+  if( !d_total_reaction->isEnergyGridShared( *d_total_absorption_reaction ) )
+    return false; 
+
+  ConstReactionMap::const_iterator reaction_it = 
+    d_scattering_reactions.begin();
+
+  while( reaction_it != d_scattering_reactions.end() )
+  {
+    if( !d_total_reaction->isEnergyGridShared( *reaction_it->second ) )
+      return false;
+    
+    ++reaction_it;
+  }
+
+  reaction_it = d_absorption_reactions.begin();
+
+  while( reaction_it != d_scattering_reactions.end() )
+  {
+    if( !d_total_reaction->isEnergyGridShared( *reaction_it->second ) )
+      return false;
+
+    ++reaction_it;
+  }
+  
+  return true;
+}
+
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//

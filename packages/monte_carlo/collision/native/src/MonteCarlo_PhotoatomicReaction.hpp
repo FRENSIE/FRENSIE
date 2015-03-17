@@ -30,9 +30,22 @@ public:
   //! Destructor
   virtual ~PhotoatomicReaction()
   { /* ... */ }
+  
+  //! Test if two photoatomic reactions share the same energy grid
+  bool isEnergyGridShared( const PhotoatomicReaction& other_reaction ) const;
+  
+  //! Test if the energy falls within the energy grid
+  virtual bool isEnergyWithinEnergyGrid( const double energy ) const = 0;
+
+  //! Return the index of the energy grid bin that the energy falls in
+  virtual unsigned getEnergyGridBinIndex( const double energy ) const = 0;
 
   //! Return the cross section at the given energy
   virtual double getCrossSection( const double energy ) const = 0;
+
+  //! Return the cross section at the given energy (efficient)
+  virtual double getCrossSection( const double energy,
+				  const unsigned bin_index ) const = 0;
 
   //! Return the threshold energy
   virtual double getThresholdEnergy() const = 0;
@@ -47,7 +60,19 @@ public:
   virtual void react( PhotonState& photon, 
 		      ParticleBank& bank,
 		      SubshellType& shell_of_interaction ) const = 0;
+
+protected:
+
+  //! Return the head of the energy grid
+  virtual const double* getEnergyGridHead() const = 0;
 };
+
+// Test if two photoatomic reactions share the same energy grid
+inline bool PhotoatomicReaction::isEnergyGridShared( 
+			      const PhotoatomicReaction& other_reaction ) const
+{
+  return this->getEnergyGridHead() == other_reaction.getEnergyGridHead();
+}
 
 } // end MonteCarlo namespace
 

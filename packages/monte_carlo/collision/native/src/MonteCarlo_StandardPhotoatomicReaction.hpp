@@ -44,11 +44,26 @@ public:
   virtual ~StandardPhotoatomicReaction()
   { /* ... */ }
 
+  //! Test if the energy falls within the energy grid
+  bool isEnergyWithinEnergyGrid( const double energy ) const;
+
+  //! Return the index of the energy grid bin that the energy falls in
+  unsigned getEnergyGridBinIndex( const double energy ) const;
+
   //! Return the cross section at the given energy
   double getCrossSection( const double energy ) const;
 
+  //! Return the cross section at the given energy (efficient)
+  double getCrossSection( const double energy,
+			  const unsigned bin_index ) const;
+
   //! Return the threshold energy
   double getThresholdEnergy() const;
+
+protected:
+
+  //! Return the head of the energy grid
+  const double* getEnergyGridHead() const;
 
 private:
 
@@ -78,11 +93,26 @@ class StandardPhotoatomicReaction<InterpPolicy,false> : public PhotoatomicReacti
   virtual ~StandardPhotoatomicReaction()
   { /* ... */ }
 
+  //! Test if the energy falls within the energy grid
+  bool isEnergyWithinEnergyGrid( const double energy ) const;
+
+  //! Return the index of the energy grid bin that the energy falls in
+  unsigned getEnergyGridBinIndex( const double energy ) const;
+
   //! Return the cross section at the given energy
   double getCrossSection( const double energy ) const;
+  
+  //! Return the cross section at the given energy (efficient)
+  double getCrossSection( const double energy,
+			  const unsigned bin_index ) const;
 
   //! Return the threshold energy
   double getThresholdEnergy() const;
+
+protected:
+
+  //! Return the head of the energy grid
+  const double* getEnergyGridHead() const;
 
 private:
 

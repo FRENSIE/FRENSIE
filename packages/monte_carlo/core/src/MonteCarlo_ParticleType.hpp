@@ -40,6 +40,17 @@ std::string convertShortParticleTypeNameToVerboseParticleTypeName(
 ParticleType convertParticleTypeNameToParticleTypeEnum( 
 				       const std::string& particle_type_name );
 
+//! Convert the ParticleType enum to a string
+std::string convertParticleTypeEnumToString( const ParticleType particle_type);
+
+//! Stream operator for print ParticleType enums
+inline std::ostream& operator<<( std::ostream& os,
+				 const ParticleType particle_type )
+{
+  os << convertParticleTypeEnumToString( particle_type );
+  return os;
+}
+
 } // end MonteCarlo namespace
 
 namespace Utility{
