@@ -64,6 +64,67 @@ StandardPhotoatomicReaction<InterpPolicy,false>::StandardPhotoatomicReaction(
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
 }
 
+// Test if the energy falls within the energy grid
+template<typename InterpPolicy, bool processed_cross_section>
+bool StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::isEnergyWithinEnergyGrid(
+						    const double energy ) const
+{
+  double processed_energy = InterpPolicy::processIndepVar( energy );
+  
+  return processed_energy >= d_incoming_energy_grid[0] &&
+    processed_energy <= d_incoming_energy_grid[d_incoming_energy_grid.size()-1];
+}
+
+// Test if the energy falls within the energy grid
+template<typename InterpPolicy>
+bool StandardPhotoatomicReaction<InterpPolicy,false>::isEnergyWithinEnergyGrid(
+						    const double energy ) const
+{
+  return energy >= d_incoming_energy_grid[0] &&
+    energy <= d_incoming_energy_grid[d_incoming_energy_grid.size()-1];
+}
+
+// Return the index of the energy bin that the energy falls in
+template<typename InterpPolicy, bool processed_cross_section>
+unsigned StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::getEnergyGridBinIndex(
+						    const double energy ) const
+{
+  // Make sure the energy is within the energy grid
+  testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
+  
+  double processed_energy = InterpPolicy::processIndepVar( energy );
+
+  if( processed_energy < 
+      d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
+  {
+    return Utility::Search::binaryLowerBoundIndex(
+						d_incoming_energy_grid.begin(),
+						d_incoming_energy_grid.end(),
+						processed_energy );
+  }
+  else
+    return d_incoming_energy_grid.size()-2;
+}
+
+// Return the index of the energy bin that the energy falls in
+template<typename InterpPolicy>
+unsigned StandardPhotoatomicReaction<InterpPolicy,false>::getEnergyGridBinIndex(
+						    const double energy ) const
+{
+  // Make sure the energy is within the energy grid
+  testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
+
+  if( energy < d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
+  {
+    return Utility::Search::binaryLowerBoundIndex(
+						d_incoming_energy_grid.begin(),
+						d_incoming_energy_grid.end(),
+						energy );
+  }
+  else
+    return d_incoming_energy_grid.size()-2;
+}
+
 // Return the cross section at the given energy
 template<typename InterpPolicy, bool processed_cross_section>
 double StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( 
@@ -147,9 +208,65 @@ double StandardPhotoatomicReaction<InterpPolicy,false>::getCrossSection(
   return cross_section;
 }
 
+// Return the cross section at the given energy (efficient)
+template<typename InterpPolicy, bool processed_cross_section>
+inline double StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( 
+			                       const double energy,
+				               const unsigned bin_index ) const
+{
+  // Make sure the bin index is valid
+  testPrecondition( d_incoming_energy_grid[bin_index] <=
+		    InterpPolicy::processIndepVar( energy ) );
+  testPrecondition( d_incoming_energy_grid[bin_index+1] >=
+		    InterpPolicy::processIndepVar( energy ) );
+
+  if( bin_index >= d_threshold_energy_index )
+  {
+    unsigned cs_index = bin_index - d_threshold_energy_index;
+    
+    double processed_slope = 
+      (d_cross_section[cs_index+1]-d_cross_section[cs_index])/
+      (d_incoming_energy_grid[bin_index+1]-
+       d_incoming_energy_grid[bin_index]);
+
+    double processed_energy = InterpPolicy::processIndepVar( energy );
+    
+    return InterpPolicy::interpolate( d_incoming_energy_grid[bin_index],
+				      processed_energy,
+				      d_cross_section[cs_index],
+				      processed_slope );
+  }
+  else
+    return 0.0;
+}
+
+// Return the cross section at the given energy (efficient)
+template<typename InterpPolicy>
+inline double StandardPhotoatomicReaction<InterpPolicy,false>::getCrossSection( 
+			                       const double energy,
+				               const unsigned bin_index ) const
+{
+  // Make sure the bin index is valid
+  testPrecondition( d_incoming_energy_grid[bin_index] <= energy );
+  testPrecondition( d_incoming_energy_grid[bin_index+1] >= energy );
+
+  if( bin_index >= d_threshold_energy_index )
+  {
+    unsigned cs_index = bin_index - d_threshold_energy_index;
+
+    return InterpPolicy::interpolate( d_incoming_energy_grid[bin_index],
+				      d_incoming_energy_grid[bin_index+1],
+				      energy,
+				      d_cross_section[cs_index],
+				      d_cross_section[cs_index+1] );
+  }
+  else
+    return 0.0;
+}
+
 // Return the threshold energy
 template<typename InterpPolicy, bool processed_cross_section>
-double StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::getThresholdEnergy() const
+inline double StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::getThresholdEnergy() const
 {
   return InterpPolicy::recoverProcessedIndepVar( 
 			    d_incoming_energy_grid[d_threshold_energy_index] );
@@ -157,9 +274,23 @@ double StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::getThr
 	
 // Return the threshold energy
 template<typename InterpPolicy>
-double StandardPhotoatomicReaction<InterpPolicy,false>::getThresholdEnergy() const
+inline double StandardPhotoatomicReaction<InterpPolicy,false>::getThresholdEnergy() const
 {
   return d_incoming_energy_grid[d_threshold_energy_index];
+}
+
+// Return the head of the energy grid
+template<typename InterpPolicy, bool processed_cross_section>
+inline const double* StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::getEnergyGridHead() const
+{
+  return d_incoming_energy_grid.getRawPtr();
+}
+
+// Return the head of the energy grid
+template<typename InterpPolicy>
+inline const double* StandardPhotoatomicReaction<InterpPolicy,false>::getEnergyGridHead() const
+{
+  return d_incoming_energy_grid.getRawPtr();
 }
 
 } // end MonteCarlo namespace

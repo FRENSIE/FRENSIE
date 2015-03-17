@@ -115,6 +115,8 @@ void IncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::react(
 				     SubshellType& shell_of_interaction ) const
 {
   d_scattering_distribution.scatterPhoton( photon, bank, shell_of_interaction);
+
+  photon.incrementCollisionNumber();
 }
 
 } // end MonteCarlo namespace

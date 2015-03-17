@@ -105,6 +105,9 @@ public:
   //! Return the atomic relaxation model
   const AtomicRelaxationModel& getAtomicRelaxationModel() const;
 
+  //! Test if all of the reactions share a common energy grid
+  bool hasSharedEnergyGrid() const;
+
 private:
 
   // Set the default absorption reaction types

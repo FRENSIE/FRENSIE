@@ -175,29 +175,25 @@ void ParticleSimulationManager<GeometryHandler,
 	  
 	  EMI::updateEstimatorsFromParticleGenerationEvent( *bank.top() );
 	}
-	
+	//std::cout << "history: " << history << std::endl;
 	// This history only ends when the particle bank is empty
 	while( bank.size() > 0 )
 	{
+	  // std::cout << bank.size() << " " 
+	  // 	    << bank.top()->getParticleType() << std::endl;
 	  switch( bank.top()->getParticleType() )
 	  {
 	  case NEUTRON: 
 	    d_simulate_neutron( dynamic_cast<NeutronState&>( *bank.top() ),
 				bank );
-	    // simulateParticle( dynamic_cast<NeutronState&>( *bank.top() ), 
-            //               bank );
 	    break;
 	  case PHOTON:
 	    d_simulate_photon( dynamic_cast<PhotonState&>( *bank.top() ),
 			       bank );
-	    // simulateParticle( dynamic_cast<PhotonState&>( *bank.top() ),
-            //               bank );
 	    break;
 	  case ELECTRON:
 	    d_simulate_electron( dynamic_cast<ElectronState&>( *bank.top() ),
-				 bank );
-	    // simulateParticle( dynamic_cast<ElectronState&>( *bank.top() ),
-            //               bank );
+	    			 bank );
 	    break;
 	  default:
 	    THROW_EXCEPTION( std::logic_error,
@@ -262,6 +258,13 @@ void ParticleSimulationManager<GeometryHandler,
   
   while( !particle.isLost() && !particle.isGone() )
   {
+    // std::cout << particle.getHistoryNumber() << " " 
+    // 	      << particle.getCollisionNumber() << " "
+    // 	      << particle.getEnergy() << " "
+    // 	      << sqrt(particle.getXPosition()*particle.getXPosition()+
+    // 		      particle.getYPosition()*particle.getYPosition()+
+    // 		      particle.getZPosition()*particle.getZPosition())
+    // 	      << std::endl;
     // Sample the mfp traveled by the particle on this subtrack
     remaining_subtrack_op = CMI::sampleOpticalPathLength();
     
@@ -424,9 +427,7 @@ void ParticleSimulationManager<GeometryHandler,
   os << "Simulation Time (s): " << d_end_time - d_start_time << std::endl;
   os << "Previous Simulation Time (s): " << d_previous_run_time << std::endl;
   os << std::endl;
-  os << "/*---------------------------------------------------------------*/";
-  os << "Estimator Data" << std::endl;
-  os << "/*---------------------------------------------------------------*/";
+  
   EMI::printEstimators( os,
 			d_histories_completed,
 			d_start_time,
