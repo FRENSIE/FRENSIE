@@ -61,6 +61,8 @@ public:
 	  const ReactionMap& standard_absorption_reactions,
 	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	  const bool processed_atomic_cross_sections,
+	  const Teuchos::RCP<const Utility::HashBasedGridSearcher>& 
+	  grid_searcher,
 	  const InterpPolicy policy );
 
   //! Constructor (from a core)

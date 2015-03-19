@@ -60,6 +60,9 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
   TEST_EQUALITY_CONST(
 	      MonteCarlo::SimulationProperties::getAbsoluteMaxElectronEnergy(),
 	      20.0 );
+  TEST_EQUALITY_CONST(
+	     MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins(),
+	     1000 );
   TEST_ASSERT( MonteCarlo::SimulationProperties::displayWarnings() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isImplicitCaptureModeOn() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isImpulseApproximationModeOn() );
@@ -219,6 +222,26 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setMaxPhotonEnergy )
 
   // Reset the default value
   MonteCarlo::SimulationProperties::setMaxPhotonEnergy( default_value );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the number of photon hash grid bins can be set
+TEUCHOS_UNIT_TEST( SimulationProperties, setNumberOfPhotonHashGridBins )
+{
+  unsigned default_value = 
+    MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins();
+
+  SimulationProperties::setNumberOfPhotonHashGridBins( 500 );
+
+  TEST_ASSERT( 
+	  MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins() !=
+	  default_value );
+  TEST_EQUALITY_CONST( 
+	     MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins(),
+	     500 );
+  
+  // Reset the default value
+  SimulationProperties::setNumberOfPhotonHashGridBins( default_value );
 }
 
 //---------------------------------------------------------------------------//

@@ -29,10 +29,11 @@ namespace MonteCarlo{
 
 // Create an incoherent scattering photoatomic reaction
 void PhotoatomicReactionACEFactory::createIncoherentReaction(
-			const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<PhotoatomicReaction>& incoherent_reaction,
-			const bool use_doppler_broadening_data )
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& incoherent_reaction,
+       const bool use_doppler_broadening_data )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
@@ -142,6 +143,7 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
 			   energy_grid,
 			   incoherent_cross_section,
 			   threshold_energy_index,
+			   grid_searcher,
 			   scattering_function,
 			   raw_photoatom_data.extractSubshellBindingEnergies(),
 			   raw_photoatom_data.extractSubshellOccupancies(),
@@ -157,15 +159,17 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
 						    energy_grid,
 						    incoherent_cross_section,
 						    threshold_energy_index,
+						    grid_searcher,
 						    scattering_function ) );
   }
 }
 
 // Create a coherent scattering photoatomic reaction
 void PhotoatomicReactionACEFactory::createCoherentReaction(
-			const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<PhotoatomicReaction>& coherent_reaction )
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& coherent_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
@@ -223,15 +227,17 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
 							energy_grid,
 							coherent_cross_section,
 							threshold_energy_index,
+							grid_searcher,
 							form_factor ) );
 }
 
 // Create a pair production photoatomic reaction
 void PhotoatomicReactionACEFactory::createPairProductionReaction(
-		   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<PhotoatomicReaction>& pair_production_reaction,
-		   const bool use_detailed_pair_production_data )
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& pair_production_reaction,
+       const bool use_detailed_pair_production_data )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
@@ -255,14 +261,16 @@ void PhotoatomicReactionACEFactory::createPairProductionReaction(
 					 energy_grid,
 					 pair_production_cross_section,
 					 threshold_energy_index,
+					 grid_searcher,
 					 use_detailed_pair_production_data ) );
 }
 
 // Create the total photoelectric photoatomic reaction
 void PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
-		   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction )
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
@@ -285,15 +293,17 @@ void PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
 		     new PhotoelectricPhotoatomicReaction<Utility::LogLog>(
 						   energy_grid,
 						   photoelectric_cross_section,
-						   threshold_energy_index ) );
+						   threshold_energy_index,
+						   grid_searcher ) );
 }
 
 // Create the subshell photoelectric photoatomic reactions
 void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
-		const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		const Teuchos::ArrayRCP<const double>& energy_grid,
-		Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
-		subshell_photoelectric_reactions )
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
+       subshell_photoelectric_reactions )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
@@ -349,6 +359,7 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 						energy_grid,
 						subshell_cross_section,
 						threshold_energy_index,
+						grid_searcher,
 						subshell_order[subshell],
 					        binding_energies[subshell] ) );
 
@@ -362,9 +373,10 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 
 // Create the heating photoatomic reaction
 void PhotoatomicReactionACEFactory::createHeatingReaction(
-		   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<PhotoatomicReaction>& heating_reaction )
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& heating_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
@@ -392,6 +404,7 @@ void PhotoatomicReactionACEFactory::createHeatingReaction(
 					      energy_grid,
 					      heating_cross_section,
 					      threshold_energy_index,
+					      grid_searcher,
 					      HEATING_PHOTOATOMIC_REACTION ) );
 }
 

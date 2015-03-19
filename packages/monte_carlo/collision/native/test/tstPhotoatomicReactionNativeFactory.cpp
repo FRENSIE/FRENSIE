@@ -19,6 +19,7 @@
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_InterpolationPolicy.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
 //---------------------------------------------------------------------------//
@@ -27,6 +28,7 @@
 
 Teuchos::RCP<Data::ElectronPhotonRelaxationDataContainer> data_container;
 Teuchos::ArrayRCP<double> energy_grid;
+Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher;
 Teuchos::RCP<MonteCarlo::PhotoatomicReaction> reaction;
 
 //---------------------------------------------------------------------------//
@@ -39,6 +41,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   MonteCarlo::PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
 							       *data_container,
 							       energy_grid,
+							       grid_searcher,
 							       reaction,
 							       false );
 
@@ -69,6 +72,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   MonteCarlo::PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
 							       *data_container,
 							       energy_grid,
+							       grid_searcher,
 							       reaction,
 							       true );
 
@@ -140,6 +144,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   MonteCarlo::PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
 							       *data_container,
 							       energy_grid,
+							       grid_searcher,
 							       reactions,
 							       false );
 
@@ -185,6 +190,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   MonteCarlo::PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
 							       *data_container,
 							       energy_grid,
+							       grid_searcher,
 							       reactions,
 							       true );
 
@@ -296,6 +302,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   MonteCarlo::PhotoatomicReactionNativeFactory::createCoherentReaction(
 							       *data_container,
 							       energy_grid,
+							       grid_searcher,
 							       reaction );
 
   // Test the reaction properties
@@ -322,6 +329,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   MonteCarlo::PhotoatomicReactionNativeFactory::createPairProductionReaction(
 							       *data_container,
 							       energy_grid,
+							       grid_searcher,
 							       reaction,
 							       false );
 
@@ -353,6 +361,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   MonteCarlo::PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
 							       *data_container,
 							       energy_grid,
+							       grid_searcher,
 							       reaction );
 
   // Test the reaction properties
@@ -381,6 +390,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   MonteCarlo::PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
 							       *data_container,
 							       energy_grid,
+							       grid_searcher,
 							       reactions );
 
   TEST_EQUALITY_CONST( reactions.size(), 24 );
@@ -425,6 +435,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   MonteCarlo::PhotoatomicReactionNativeFactory::createHeatingReaction(
 							       *data_container,
 							       energy_grid,
+							       grid_searcher,
 							       reaction );
   
   // Test the reaction properties
@@ -476,6 +487,13 @@ int main( int argc, char** argv )
     // Extract the common energy grid
     energy_grid.assign( data_container->getPhotonEnergyGrid().begin(),
 			data_container->getPhotonEnergyGrid().end() );
+
+    // Create the hash-based grid searcher
+    grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,true>( 
+					     energy_grid,
+					     energy_grid[0],
+					     energy_grid[energy_grid.size()-1],
+					     100 ) );
   }
 
   // Initialize the random number generator

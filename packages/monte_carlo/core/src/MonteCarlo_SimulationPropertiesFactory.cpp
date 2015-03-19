@@ -181,6 +181,14 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
     }
   }
 
+  // Get the number of photon hash grid bins - optional
+  if( properties.isParameter( "Photon Hash Grid Bins" ) )
+  {
+    unsigned bins = properties.get<unsigned>( "Photon Hash Grid Bins" );
+
+    SimulationProperties::setNumberOfPhotonHashGridBins( bins );
+  }
+
   // Get the warnings mode - optional
   if( properties.isParameter( "Warnings" ) )
   {

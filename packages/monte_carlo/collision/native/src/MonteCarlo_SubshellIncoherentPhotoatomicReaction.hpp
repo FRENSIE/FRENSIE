@@ -25,7 +25,7 @@ class SubshellIncoherentPhotoatomicReaction : public StandardPhotoatomicReaction
 
 public:
 
-  //! Constructor without Doppler broadening
+  //! Basic constructor without Doppler broadening
   SubshellIncoherentPhotoatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
@@ -34,11 +34,32 @@ public:
       const double binding_energy,
       const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number );
 
+  //! Constructor without Doppler broadening
+  SubshellIncoherentPhotoatomicReaction(
+      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+      const Teuchos::ArrayRCP<const double>& cross_section,
+      const unsigned threshold_energy_index,
+      const Teuchos::RCP<const HashBasedGridSearcher>& grid_searcher,
+      const SubshellType interaction_subshell,
+      const double binding_energy,
+      const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number );
+
+  //! Basic constructor for Doppler broadening
+  SubshellIncoherentPhotoatomicReaction(
+      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+      const Teuchos::ArrayRCP<const double>& cross_section,
+      const unsigned threshold_energy_index,
+      const SubshellType interaction_subshell,
+      const double binding_energy,
+      const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
+      const Teuchos::RCP<const Utility::OneDDistribution>& compton_profile );
+
   //! Constructor for Doppler broadening
   SubshellIncoherentPhotoatomicReaction(
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
+      const Teuchos::RCP<const HashBasedGridSearcher>& grid_searcher,
       const SubshellType interaction_subshell,
       const double binding_energy,
       const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,

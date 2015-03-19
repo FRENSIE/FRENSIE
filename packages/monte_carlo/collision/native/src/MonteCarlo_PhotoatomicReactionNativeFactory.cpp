@@ -31,10 +31,11 @@ namespace MonteCarlo{
 /*! \details This will use the Waller-Hartree incoherent cross section
  */
 void PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 const Teuchos::ArrayRCP<const double>& energy_grid,
-	 Teuchos::RCP<PhotoatomicReaction>& incoherent_reaction,
-	 const bool use_doppler_broadening_data )
+       const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& incoherent_reaction,
+       const bool use_doppler_broadening_data )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
@@ -105,6 +106,7 @@ void PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
 						     energy_grid,
 						     incoherent_cross_section,
 						     threshold_index,
+						     grid_searcher,
 						     scattering_function,
 						     subshell_binding_energies,
 						     subshell_occupancies,
@@ -120,6 +122,7 @@ void PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
 						      energy_grid,
 						      incoherent_cross_section,
 						      threshold_index,
+						      grid_searcher,
 						      scattering_function ) );
   }
 }
@@ -128,11 +131,12 @@ void PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
 /*! \details This will use the impulse approximation incoherent cross sections
  */ 
 void PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 const Teuchos::ArrayRCP<const double>& energy_grid,
-	 Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
-	 subshell_incoherent_reactions,
-	 const bool use_doppler_broadening_data )
+       const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
+       subshell_incoherent_reactions,
+       const bool use_doppler_broadening_data )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
@@ -178,6 +182,7 @@ void PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
 		   energy_grid,
 		   subshell_incoherent_cross_section,
 		   subshell_threshold_index,
+		   grid_searcher,
 		   convertENDFDesignatorToSubshellEnum( *subshell_it ),
 		   raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ),
 		   occupation_number,
@@ -191,6 +196,7 @@ void PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
 		   energy_grid,
 		   subshell_incoherent_cross_section,
 		   subshell_threshold_index,
+		   grid_searcher,
 		   convertENDFDesignatorToSubshellEnum( *subshell_it ),
 		   raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ),
 		   occupation_number ) );
@@ -204,9 +210,10 @@ void PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
 
 // Create the coherent scattering photoatomic reaction
 void PhotoatomicReactionNativeFactory::createCoherentReaction(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 const Teuchos::ArrayRCP<const double>& energy_grid,
-	 Teuchos::RCP<PhotoatomicReaction>& coherent_reaction )
+       const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& coherent_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
@@ -247,15 +254,17 @@ void PhotoatomicReactionNativeFactory::createCoherentReaction(
 							energy_grid,
 							coherent_cross_section,
 							threshold_index,
+							grid_searcher,
 							form_factor ) );
 }
 
 // Create the pair production photoatomic reaction
 void PhotoatomicReactionNativeFactory::createPairProductionReaction(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 const Teuchos::ArrayRCP<const double>& energy_grid,
-	 Teuchos::RCP<PhotoatomicReaction>& pair_production_reaction,
-	 const bool use_detailed_pair_production_data )
+       const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& pair_production_reaction,
+       const bool use_detailed_pair_production_data )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
@@ -276,14 +285,16 @@ void PhotoatomicReactionNativeFactory::createPairProductionReaction(
 					 energy_grid,
 					 pair_production_cross_section,
 					 threshold_index,
+					 grid_searcher,
 					 use_detailed_pair_production_data ) );
 }
 
 // Create the total photoelectric photoatomic reaction
 void PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 const Teuchos::ArrayRCP<const double>& energy_grid,
-	 Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction )
+       const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
@@ -304,15 +315,17 @@ void PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
 		   new PhotoelectricPhotoatomicReaction<Utility::LinLin,false>(
 						   energy_grid,
 						   photoelectric_cross_section,
-						   threshold_index ) );
+						   threshold_index,
+						   grid_searcher ) );
 }
 					       
 // Create the subshell photoelectric photoatomic reactions
 void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 const Teuchos::ArrayRCP<const double>& energy_grid,
-	 Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
-	 subshell_photoelectric_reactions )
+       const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
+       subshell_photoelectric_reactions )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
@@ -343,6 +356,7 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
 	       energy_grid,
 	       subshell_photoelectric_cross_section,
 	       subshell_threshold_index,
+	       grid_searcher,
 	       convertENDFDesignatorToSubshellEnum( *subshell_it ),
 	       raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ) ) );
 
@@ -355,9 +369,10 @@ void PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
 
 // Create the heating photoatomic reaction
 void PhotoatomicReactionNativeFactory::createHeatingReaction(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 const Teuchos::ArrayRCP<const double>& energy_grid,
-	 Teuchos::RCP<PhotoatomicReaction>& heating_reaction )
+       const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& heating_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
@@ -378,6 +393,7 @@ void PhotoatomicReactionNativeFactory::createHeatingReaction(
 					      energy_grid,
 					      heating_cross_section,
 					      threshold_index,
+					      grid_searcher,
 					      HEATING_PHOTOATOMIC_REACTION ) );
 }
 

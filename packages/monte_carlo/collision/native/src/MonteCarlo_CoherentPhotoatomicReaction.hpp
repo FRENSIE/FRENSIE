@@ -25,11 +25,19 @@ class CoherentPhotoatomicReaction : public StandardPhotoatomicReaction<InterpPol
 
 public:
 
+  //! Basic Constructor
+  CoherentPhotoatomicReaction( 
+      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+      const Teuchos::ArrayRCP<const double>& cross_section,
+      const unsigned threshold_energy_index,
+      const Teuchos::RCP<const Utility::OneDDistribution>& form_factor );
+
   //! Constructor
   CoherentPhotoatomicReaction( 
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       const Teuchos::RCP<const Utility::OneDDistribution>& form_factor );
 
   //! Destructor

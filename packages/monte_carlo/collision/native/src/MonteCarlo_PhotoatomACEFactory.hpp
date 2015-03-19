@@ -31,6 +31,9 @@ public:
 	    const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<PhotoatomCore>& photoatom_core,
+	    const unsigned hash_grid_bins,
+	    const double min_problem_energy,
+	    const double max_problem_energy,
 	    const bool use_doppler_broadening_data,
 	    const bool use_detailed_pair_production_data,
 	    const bool use_atomic_relaxation_data );
@@ -42,6 +45,9 @@ public:
 	    const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Photoatom>& photoatom,
+	    const unsigned hash_grid_bins,
+	    const double min_problem_energy,
+	    const double max_problem_energy,
 	    const bool use_doppler_broadening_data,
 	    const bool use_detailed_pair_production_data,
 	    const bool use_atomic_relaxation_data );

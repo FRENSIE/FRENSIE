@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardPhotoatomicReaction.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -18,12 +19,12 @@
 
 namespace MonteCarlo{
 
-// Constructor
+// Basic constructor
 template<typename InterpPolicy, bool processed_cross_section>
 StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::StandardPhotoatomicReaction(
-		  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		  const Teuchos::ArrayRCP<const double>& cross_section,
-		  const unsigned threshold_energy_index )
+	       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	       const Teuchos::ArrayRCP<const double>& cross_section,
+	       const unsigned threshold_energy_index )
   : d_incoming_energy_grid( incoming_energy_grid ),
     d_cross_section( cross_section ),
     d_threshold_energy_index( threshold_energy_index )
@@ -39,17 +40,89 @@ StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::StandardPhoto
 		    incoming_energy_grid.size() - threshold_energy_index );    
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
+  // Make sure the grid searcher is valid
+  testPrecondition( !grid_searcher.is_null() );
+
+  // Construct the grid searcher
+  d_grid_searcher.reset( 
+	new StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double,true>(
+			   incoming_energy_grid,
+			   incoming_energy_grid[0],
+			   incoming_energy_grid[incoming_energy_grid.size()-1],
+			   incoming_energy_grid.size()/10+1 ) );
+}
+
+// Basic constructor
+template<typename InterpPolicy>
+StandardPhotoatomicReaction<InterpPolicy,false>::StandardPhotoatomicReaction(
+	       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	       const Teuchos::ArrayRCP<const double>& cross_section,
+	       const unsigned threshold_energy_index )
+  : d_incoming_energy_grid( incoming_energy_grid ),
+    d_cross_section( cross_section ),
+    d_threshold_energy_index( threshold_energy_index )
+{
+  // Make sure the incoming energy grid is valid
+  testPrecondition( incoming_energy_grid.size() > 0 );
+  testPrecondition( Utility::Sort::isSortedAscending(
+						incoming_energy_grid.begin(),
+						incoming_energy_grid.end() ) );
+  // Make sure the cross section is valid
+  testPrecondition( cross_section.size() > 0 );
+  testPrecondition( cross_section.size() == 
+		    incoming_energy_grid.size() - threshold_energy_index );    
+  // Make sure the threshold energy is valid
+  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
+  // Make sure the grid searcher is valid
+  testPrecondition( !grid_searcher.is_null() );
+
+  // Construct the grid searcher
+  d_grid_searcher.reset( 
+      new StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+			   incoming_energy_grid,
+			   incoming_energy_grid[0],
+			   incoming_energy_grid[incoming_energy_grid.size()-1],
+			   incoming_energy_grid.size()/10+1 ) );
+}
+
+// Constructor
+template<typename InterpPolicy, bool processed_cross_section>
+StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::StandardPhotoatomicReaction(
+      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+      const Teuchos::ArrayRCP<const double>& cross_section,
+      const unsigned threshold_energy_index,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher )
+  : d_incoming_energy_grid( incoming_energy_grid ),
+    d_cross_section( cross_section ),
+    d_threshold_energy_index( threshold_energy_index ),
+    d_grid_searcher( grid_searcher )
+{
+  // Make sure the incoming energy grid is valid
+  testPrecondition( incoming_energy_grid.size() > 0 );
+  testPrecondition( Utility::Sort::isSortedAscending(
+						incoming_energy_grid.begin(),
+						incoming_energy_grid.end() ) );
+  // Make sure the cross section is valid
+  testPrecondition( cross_section.size() > 0 );
+  testPrecondition( cross_section.size() == 
+		    incoming_energy_grid.size() - threshold_energy_index );    
+  // Make sure the threshold energy is valid
+  testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
+  // Make sure the grid searcher is valid
+  testPrecondition( !grid_searcher.is_null() );
 }
 
 // Constructor
 template<typename InterpPolicy>
 StandardPhotoatomicReaction<InterpPolicy,false>::StandardPhotoatomicReaction(
-		  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		  const Teuchos::ArrayRCP<const double>& cross_section,
-		  const unsigned threshold_energy_index )
+      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+      const Teuchos::ArrayRCP<const double>& cross_section,
+      const unsigned threshold_energy_index,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher )
   : d_incoming_energy_grid( incoming_energy_grid ),
     d_cross_section( cross_section ),
-    d_threshold_energy_index( threshold_energy_index )
+    d_threshold_energy_index( threshold_energy_index ),
+    d_grid_searcher( grid_searcher )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -62,67 +135,24 @@ StandardPhotoatomicReaction<InterpPolicy,false>::StandardPhotoatomicReaction(
 		    incoming_energy_grid.size() - threshold_energy_index );    
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
+  // Make sure the grid searcher is valid
+  testPrecondition( !grid_searcher.is_null() );
 }
 
 // Test if the energy falls within the energy grid
 template<typename InterpPolicy, bool processed_cross_section>
-bool StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::isEnergyWithinEnergyGrid(
+inline bool StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::isEnergyWithinEnergyGrid(
 						    const double energy ) const
 {
-  double processed_energy = InterpPolicy::processIndepVar( energy );
-  
-  return processed_energy >= d_incoming_energy_grid[0] &&
-    processed_energy <= d_incoming_energy_grid[d_incoming_energy_grid.size()-1];
+  return d_grid_searcher->isValueWithinGridBounds( energy );
 }
 
 // Test if the energy falls within the energy grid
 template<typename InterpPolicy>
-bool StandardPhotoatomicReaction<InterpPolicy,false>::isEnergyWithinEnergyGrid(
+inline bool StandardPhotoatomicReaction<InterpPolicy,false>::isEnergyWithinEnergyGrid(
 						    const double energy ) const
 {
-  return energy >= d_incoming_energy_grid[0] &&
-    energy <= d_incoming_energy_grid[d_incoming_energy_grid.size()-1];
-}
-
-// Return the index of the energy bin that the energy falls in
-template<typename InterpPolicy, bool processed_cross_section>
-unsigned StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::getEnergyGridBinIndex(
-						    const double energy ) const
-{
-  // Make sure the energy is within the energy grid
-  testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
-  
-  double processed_energy = InterpPolicy::processIndepVar( energy );
-
-  if( processed_energy < 
-      d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
-  {
-    return Utility::Search::binaryLowerBoundIndex(
-						d_incoming_energy_grid.begin(),
-						d_incoming_energy_grid.end(),
-						processed_energy );
-  }
-  else
-    return d_incoming_energy_grid.size()-2;
-}
-
-// Return the index of the energy bin that the energy falls in
-template<typename InterpPolicy>
-unsigned StandardPhotoatomicReaction<InterpPolicy,false>::getEnergyGridBinIndex(
-						    const double energy ) const
-{
-  // Make sure the energy is within the energy grid
-  testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
-
-  if( energy < d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
-  {
-    return Utility::Search::binaryLowerBoundIndex(
-						d_incoming_energy_grid.begin(),
-						d_incoming_energy_grid.end(),
-						energy );
-  }
-  else
-    return d_incoming_energy_grid.size()-2;
+  return d_grid_searcher->isValueWithinGridBounds( energy );
 }
 
 // Return the cross section at the given energy
@@ -130,20 +160,17 @@ template<typename InterpPolicy, bool processed_cross_section>
 double StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( 
 						    const double energy ) const
 {
+  // Make sure the energy falls within the energy grid
+  testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
+
   double cross_section;
-  
-  double processed_energy = InterpPolicy::processIndepVar( energy );
-  
-  if( energy >= this->getThresholdEnergy() &&
-      processed_energy < d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
+
+  if( energy >= this->getThresholdEnergy() )
   {
-    unsigned energy_index = 
-      Utility::Search::binaryLowerBoundIndex( d_incoming_energy_grid.begin(),
-					      d_incoming_energy_grid.end(),
-					      processed_energy );
-
+    unsigned energy_index = d_grid_searcher->findLowerBinIndex( energy );
+    
     unsigned cs_index = energy_index - d_threshold_energy_index;
-
+    
     double processed_slope = 
       (d_cross_section[cs_index+1]-d_cross_section[cs_index])/
       (d_incoming_energy_grid[energy_index+1]-
@@ -151,20 +178,13 @@ double StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::getCro
     
     cross_section =
       InterpPolicy::interpolate( d_incoming_energy_grid[energy_index],
-				 processed_energy,
+				 InterpPolicy::processIndepVar( energy ),
 				 d_cross_section[cs_index],
 				 processed_slope );
   }
-  else if( energy < this->getThresholdEnergy() )
+  else
     cross_section = 0.0;
-  else if( processed_energy == d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
-  {
-    cross_section = InterpPolicy::recoverProcessedDepVar( 
-				   d_cross_section[d_cross_section.size()-1] );
-  }
-  else // energy > max_energy_grid_pt
-    cross_section = 0.0;
-
+  
   // Make sure the cross section is valid
   testPostcondition( cross_section >= 0.0 );
 
@@ -176,16 +196,15 @@ template<typename InterpPolicy>
 double StandardPhotoatomicReaction<InterpPolicy,false>::getCrossSection( 
 						    const double energy ) const
 {
+  // Make sure the energy falls within the energy grid
+  testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
+  
   double cross_section;
   
-  if( energy >= this->getThresholdEnergy() &&
-      energy < d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
+  if( energy >= this->getThresholdEnergy() )
   {
-    unsigned energy_index = 
-      Utility::Search::binaryLowerBoundIndex( d_incoming_energy_grid.begin(),
-					      d_incoming_energy_grid.end(),
-					      energy );
-
+    unsigned energy_index = d_grid_searcher->findLowerBinIndex( energy );
+    
     unsigned cs_index = energy_index - d_threshold_energy_index;
 
     cross_section =
@@ -197,11 +216,7 @@ double StandardPhotoatomicReaction<InterpPolicy,false>::getCrossSection(
   }
   else if( energy < this->getThresholdEnergy() )
     cross_section = 0.0;
-  else if( energy == d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
-    cross_section = d_cross_section[d_cross_section.size()-1];
-  else // energy > max_energy_grid_pt
-    cross_section = 0.0;
-
+  
   // Make sure the cross section is valid
   testPostcondition( cross_section >= 0.0 );
 
