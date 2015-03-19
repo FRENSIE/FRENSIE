@@ -33,13 +33,17 @@ Teuchos::RCP<Utility::HashBasedGridSearcher> processed_grid_searcher;
 // Check that a value can be tested for containment within the grid
 TEUCHOS_UNIT_TEST( HashBasedGridGenerator, isValueWithinGridBounds )
 {
+  TEST_ASSERT( !grid_searcher->isValueWithinGridBounds( 0.5 ) );
   TEST_ASSERT( grid_searcher->isValueWithinGridBounds( 1.0 ) );
   TEST_ASSERT( grid_searcher->isValueWithinGridBounds( 500.0 ) );
   TEST_ASSERT( grid_searcher->isValueWithinGridBounds( 1000.0 ) );
+  TEST_ASSERT( !grid_searcher->isValueWithinGridBounds( 1000.5 ) );
 
+  TEST_ASSERT( !processed_grid_searcher->isValueWithinGridBounds( 0.5 ) );
   TEST_ASSERT( processed_grid_searcher->isValueWithinGridBounds( 1.0 ) );
   TEST_ASSERT( processed_grid_searcher->isValueWithinGridBounds( 500.0 ) );
   TEST_ASSERT( processed_grid_searcher->isValueWithinGridBounds( 1000.0 ) );
+  TEST_ASSERT( !processed_grid_searcher->isValueWithinGridBounds( 1000.5 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -72,7 +76,7 @@ TEUCHOS_UNIT_TEST( HashBasedGridGenerator, findLowerBinIndex )
 
   grid_index = grid_searcher->findLowerBinIndex( 1000.0 );
 
-  TEST_EQUALITY_CONST( grid_index, 999u );
+  TEST_EQUALITY_CONST( grid_index, 998u );
 }
 
 //---------------------------------------------------------------------------//
@@ -105,7 +109,7 @@ TEUCHOS_UNIT_TEST( HashBasedGridGenerator, findLowerBinIndex_processed )
 
   grid_index = processed_grid_searcher->findLowerBinIndex( 1000.0 );
 
-  TEST_EQUALITY_CONST( grid_index, 999u );
+  TEST_EQUALITY_CONST( grid_index, 998u );
 }
 
 

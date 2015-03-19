@@ -307,9 +307,9 @@ inline double SimulationProperties::getAbsoluteMaxPhotonEnergy()
 }
 
 // Get the number of photon hash grid bins
-inline double SimulationProperties::getNumberOfPhotonHashGridBins()
+inline unsigned SimulationProperties::getNumberOfPhotonHashGridBins()
 {
-  return SimulationProperties::num_photon_hash_grid_bis;
+  return SimulationProperties::num_photon_hash_grid_bins;
 }
 
 // Return the minimum electron energy (MeV)

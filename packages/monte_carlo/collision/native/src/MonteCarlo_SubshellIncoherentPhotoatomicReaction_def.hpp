@@ -184,7 +184,7 @@ SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::Sub
   // Make sure the compton profile is valid
   testPrecondition( !compton_profile.is_null() );
   // Make sure the grid searcher is valid
-  testPrecondition( grid_searcher.is_null() );
+  testPrecondition( !grid_searcher.is_null() );
 }
 
 // Return the number of photons emitted from the rxn at the given energy

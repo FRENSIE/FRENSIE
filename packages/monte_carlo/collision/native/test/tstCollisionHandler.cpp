@@ -786,6 +786,7 @@ int main( int argc, char** argv )
 					  cross_section_table_info,
 					  atom_aliases,
 					  atomic_relaxation_model_factory,
+					  1000,
 					  false,
 					  true,
 					  false,

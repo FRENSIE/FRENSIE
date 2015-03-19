@@ -489,7 +489,7 @@ int main( int argc, char** argv )
 			data_container->getPhotonEnergyGrid().end() );
 
     // Create the hash-based grid searcher
-    grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,true>( 
+    grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>( 
 					     energy_grid,
 					     energy_grid[0],
 					     energy_grid[energy_grid.size()-1],

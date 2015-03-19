@@ -91,10 +91,6 @@ class StandardPhotoatomicReaction<InterpPolicy,false> : public PhotoatomicReacti
 {
 public:
 
-  //! Typedef for the hash-based grid searcher
-  typedef Utility::HashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>
-  HashBasedGridSearcher;
-
   //! Basic constructor
   StandardPhotoatomicReaction( 
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
@@ -103,10 +99,10 @@ public:
 
   //! Constructor
   StandardPhotoatomicReaction( 
-	      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	      const Teuchos::ArrayRCP<const double>& cross_section,
-	      const unsigned threshold_energy_index,
-	      const Teuchos::RCP<const HashBasedGridSearcher>& grid_searcher );
+     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+     const Teuchos::ArrayRCP<const double>& cross_section,
+     const unsigned threshold_energy_index,
+     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
 
   //! Destructor
   virtual ~StandardPhotoatomicReaction()
@@ -142,7 +138,7 @@ private:
   const unsigned d_threshold_energy_index;
 
   // The hash-based grid searcher
-  Teuchos::RCP<const HashBasedGridSearcher> d_grid_searcher;
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 

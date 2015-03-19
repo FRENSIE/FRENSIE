@@ -690,6 +690,13 @@ int main( int argc, char** argv )
     // Create the pair production and photoelectric effect cross sections
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.deepCopy( xss_data_extractor->extractPhotonEnergyGrid() );
+
+    Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+        new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,true>( 
+					     energy_grid,
+					     energy_grid[0],
+					     energy_grid[energy_grid.size()-1],
+					     1000 ) );
         
     Teuchos::ArrayView<const double> raw_pe_cross_section = 
       xss_data_extractor->extractPhotoelectricCrossSection();
@@ -753,6 +760,7 @@ int main( int argc, char** argv )
 				    xss_data_extractor->extractAtomicNumber(),
 				    atomic_weight,
 				    energy_grid,
+				    grid_searcher,
 				    scattering_reactions,
 				    absorption_reactions,
 				    relaxation_model,

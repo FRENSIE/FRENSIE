@@ -28,7 +28,7 @@
 
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::ArrayRCP<double> energy_grid;
-Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher,
+Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher;
 Teuchos::RCP<MonteCarlo::PhotoatomicReaction> reaction;
 
 //---------------------------------------------------------------------------//
@@ -172,12 +172,8 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
 		       exp( 2.480967890857E-02 ) );
 
   // Test that the stored cross section is correct
-  double cross_section =
-    reaction->getCrossSection( 1e-4 );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = reaction->getCrossSection( reaction->getThresholdEnergy() );
+  double cross_section = 
+    reaction->getCrossSection( reaction->getThresholdEnergy() );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.431923975437E+01 ), 1e-12 );
 
@@ -189,10 +185,6 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionACEFactory,
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 3.718032834377E+00 ), 1e-12 );
   
-  cross_section = reaction->getCrossSection( exp( 12.0 ) );
-  
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
   // Clear the reaction
   reaction.reset();
 }

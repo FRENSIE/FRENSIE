@@ -45,8 +45,6 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 						    relaxation_model,
 						    atom,
 						    100,
-						    1.0000000000042743e-06,
-						    99999.99999997711,
 						    false,
 						    false,
 						    false );
@@ -232,8 +230,6 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 						    relaxation_model,
 						    atom,
 						    100,
-						    1.0000000000042743e-06,
-						    99999.99999997711,
 						    true,
 						    false,
 						    false );
@@ -429,8 +425,6 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
 						    relaxation_model,
 						    atom,
 						    100,
-						    1.0000000000042743e-06,
-						    99999.99999997711,
 						    false,
 						    false,
 						    true );

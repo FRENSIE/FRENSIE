@@ -72,12 +72,7 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction,
 // Check that the cross section can be returned
 TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, getCrossSection_ace )
 {
-  double cross_section = 
-    ace_basic_pp_reaction->getCrossSection( 1e-4 );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = ace_basic_pp_reaction->getCrossSection( 
+  double cross_section = ace_basic_pp_reaction->getCrossSection( 
                                  ace_basic_pp_reaction->getThresholdEnergy() );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -3.84621780013E+01 ), 1e-12 );
@@ -91,10 +86,6 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, getCrossSection_ace )
     ace_basic_pp_reaction->getCrossSection( exp( 1.15129254650E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 3.71803283438E+00 ), 1e-12 );
-  
-  cross_section = ace_basic_pp_reaction->getCrossSection( exp( 12.0 ) );
-  
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
