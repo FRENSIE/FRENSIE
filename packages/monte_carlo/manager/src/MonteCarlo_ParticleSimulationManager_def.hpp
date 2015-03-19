@@ -202,7 +202,7 @@ void ParticleSimulationManager<GeometryHandler,
 			     " is not currently supported!" );
 	  }
   
-	  bank.pop();
+	bank.pop();
 	}
 	
 	// Commit all estimator history contributions
@@ -273,123 +273,123 @@ void ParticleSimulationManager<GeometryHandler,
     {
       // Fire a ray at the cell currently containing the particle
       try{
-	distance_to_surface_hit = 0.0;
+  	distance_to_surface_hit = 0.0;
 	
-	GMI::fireRay( particle.ray(),
-		      particle.getCell(),
-		      surface_hit,
-		      distance_to_surface_hit );
+  	GMI::fireRay( particle.ray(),
+  		      particle.getCell(),
+  		      surface_hit,
+  		      distance_to_surface_hit );
       }
       CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
       // Get the total cross section for the cell
       if( !CMI::isCellVoid( particle.getCell(), particle.getParticleType() ) )
       {
-	cell_total_macro_cross_section = 
-	  CMI::getMacroscopicTotalCrossSection( particle );
+  	cell_total_macro_cross_section = 
+  	  CMI::getMacroscopicTotalCrossSection( particle );
       }
       else
-	cell_total_macro_cross_section = 0.0;
+  	cell_total_macro_cross_section = 0.0;
 
       // Convert the distance to the surface to optical path
       op_to_surface_hit = 
-	distance_to_surface_hit*cell_total_macro_cross_section;
+  	distance_to_surface_hit*cell_total_macro_cross_section;
 
       // Get the start time of this subtrack
       subtrack_start_time = particle.getTime();
 
       if( op_to_surface_hit < remaining_subtrack_op )
       {
-	// Advance the particle to the cell boundary
-	particle.advance( distance_to_surface_hit );
+  	// Advance the particle to the cell boundary
+  	particle.advance( distance_to_surface_hit );
 
-	// Get the surface normal at the intersection point
-	GMI::getSurfaceNormal( surface_hit,
-			       particle.getPosition(),
-			       surface_normal.getRawPtr() );		       
+  	// Get the surface normal at the intersection point
+  	GMI::getSurfaceNormal( surface_hit,
+  			       particle.getPosition(),
+  			       surface_normal.getRawPtr() );		       
 
-	cell_leaving = particle.getCell();
+  	cell_leaving = particle.getCell();
 	
-	// Find the cell on the other side of the surface hit
-	try{
-	  cell_entering = GMI::findCellContainingPoint( particle.ray(),
-							cell_leaving,
-							surface_hit );
-	}
-	CATCH_LOST_PARTICLE_AND_BREAK( particle );
+  	// Find the cell on the other side of the surface hit
+  	try{
+  	  cell_entering = GMI::findCellContainingPoint( particle.ray(),
+  							cell_leaving,
+  							surface_hit );
+  	}
+  	CATCH_LOST_PARTICLE_AND_BREAK( particle );
 
-	particle.setCell( cell_entering );
+  	particle.setCell( cell_entering );
 
-	// Update estimators
-	EMI::updateEstimatorsFromParticleCrossingSurfaceEvent(
-						  particle,
-						  cell_entering,
-						  cell_leaving,
-						  surface_hit,
-						  distance_to_surface_hit,
-						  subtrack_start_time,
-						  surface_normal.getRawPtr() );
+  	// Update estimators
+  	// EMI::updateEstimatorsFromParticleCrossingSurfaceEvent(
+  	// 					  particle,
+  	// 					  cell_entering,
+  	// 					  cell_leaving,
+  	// 					  surface_hit,
+  	// 					  distance_to_surface_hit,
+  	// 					  subtrack_start_time,
+  	// 					  surface_normal.getRawPtr() );
 
-	// Check if a termination cell was encountered
-	if( GMI::isTerminationCell( particle.getCell() ) )
-	{
-	  particle.setAsGone();
+  	// Check if a termination cell was encountered
+  	if( GMI::isTerminationCell( particle.getCell() ) )
+  	{
+  	  particle.setAsGone();
 
-	  break;
-	}
+  	  break;
+  	}
 
-	// Update the remaining subtrack mfp
-	remaining_subtrack_op -= op_to_surface_hit;
+  	// Update the remaining subtrack mfp
+  	remaining_subtrack_op -= op_to_surface_hit;
       } 
       
       // A collision occurs in this cell
       else
       {
-	// Advance the particle to the collision site
-	double distance = remaining_subtrack_op/cell_total_macro_cross_section;
+  	// Advance the particle to the collision site
+  	double distance = remaining_subtrack_op/cell_total_macro_cross_section;
 	
-	particle.advance( distance );
+  	particle.advance( distance );
 	
-	// Update estimators
-	EMI::updateEstimatorsFromParticleCollidingInCellEvent(
-					  particle,
-					  distance,
-					  subtrack_start_time,
-					  1.0/cell_total_macro_cross_section );
+  	// Update estimators
+  	// EMI::updateEstimatorsFromParticleCollidingInCellEvent(
+  	// 				  particle,
+  	// 				  distance,
+  	// 				  subtrack_start_time,
+  	// 				  1.0/cell_total_macro_cross_section );
 
 	
 
-	EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
-						      particle,
-						      ray_start_point,
-						      particle.getPosition() );
+  	// EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
+  	// 					      particle,
+  	// 					      ray_start_point,
+  	// 					      particle.getPosition() );
 
-	// Undergo a collision with the material in the cell
-	CMI::collideWithCellMaterial( particle, bank, true );
+  	// Undergo a collision with the material in the cell
+  	//CMI::collideWithCellMaterial( particle, bank, true );
 
-	// Indicate that a collision has occurred
-	GMI::newRay();
+  	// Indicate that a collision has occurred
+  	GMI::newRay();
 
-	// Cache the current position of the new ray
-	ray_start_point[0] = particle.getXPosition();
-	ray_start_point[1] = particle.getYPosition();
-	ray_start_point[2] = particle.getZPosition();
+  	// Cache the current position of the new ray
+  	ray_start_point[0] = particle.getXPosition();
+  	ray_start_point[1] = particle.getYPosition();
+  	ray_start_point[2] = particle.getZPosition();
 
-	// Make sure the energy is above the cutoff
-	if( particle.getEnergy() < SimulationProperties::getMinParticleEnergy<ParticleStateType>() )
-	  particle.setAsGone();
+  	// Make sure the energy is above the cutoff
+  	if( particle.getEnergy() < SimulationProperties::getMinParticleEnergy<ParticleStateType>() )
+  	  particle.setAsGone();
 
-	// This subtrack is finished
-	break;
+  	// This subtrack is finished
+  	break;
       }
     }	     
   }
 
   // Update the global estimators
-  EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
-						      particle,
-						      ray_start_point,
-						      particle.getPosition() );
+  // EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
+  // 						      particle,
+  // 						      ray_start_point,
+  // 						      particle.getPosition() );
 
   // Indicate that this particle history is complete
   GMI::newRay();
