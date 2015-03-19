@@ -18,7 +18,7 @@
 
 namespace MonteCarlo{
 
-// Constructor
+// Basic constructor
 template<typename InterpPolicy, bool processed_cross_section>
 PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::PairProductionPhotoatomicReaction(
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
@@ -30,6 +30,35 @@ PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::PairPro
 						       cross_section,
 						       threshold_energy_index )
 {
+  if( use_detailed_electron_emission_physics )
+  {
+    d_interaction_model = detailedInteraction;
+    d_interaction_model_emission = detailedInteractionPhotonEmission;
+  }
+  else
+  {
+    d_interaction_model = basicInteraction;
+    d_interaction_model_emission = basicInteractionPhotonEmission;
+  }
+}
+
+// Constructor
+template<typename InterpPolicy, bool processed_cross_section>
+PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::PairProductionPhotoatomicReaction(
+       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+       const Teuchos::ArrayRCP<const double>& cross_section,
+       const unsigned threshold_energy_index,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const bool use_detailed_electron_emission_physics )
+  : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
+						       incoming_energy_grid,
+						       cross_section,
+						       threshold_energy_index,
+						       grid_searcher )
+{
+  // Make sure the grid searcher is valid
+  testPrecondition( !grid_searcher.is_null() );
+  
   if( use_detailed_electron_emission_physics )
   {
     d_interaction_model = detailedInteraction;

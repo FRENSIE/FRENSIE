@@ -23,18 +23,20 @@ namespace MonteCarlo{
  */ 
 template<typename InterpPolicy>
 PhotoatomCore::PhotoatomCore(
-	  const Teuchos::ArrayRCP<double>& energy_grid,
-	  const ReactionMap& standard_scattering_reactions,
-	  const ReactionMap& standard_absorption_reactions,
-	  const Teuchos::RCP<AtomicRelaxationModel>& relaxation_model,
-	  const bool processed_atomic_cross_sections,
-	  const InterpPolicy policy )
+       const Teuchos::ArrayRCP<double>& energy_grid,
+       const ReactionMap& standard_scattering_reactions,
+       const ReactionMap& standard_absorption_reactions,
+       const Teuchos::RCP<AtomicRelaxationModel>& relaxation_model,
+       const bool processed_atomic_cross_sections,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const InterpPolicy policy )
   : d_total_reaction(),
     d_total_absorption_reaction(),
     d_scattering_reactions(),
     d_absorption_reactions(),
     d_miscellaneous_reactions(),
-    d_relaxation_model( relaxation_model )
+    d_relaxation_model( relaxation_model ),
+    d_grid_searcher( grid_searcher )
 {
   // Make sure the energy grid is valid
   testPrecondition( energy_grid.size() > 1 );
@@ -45,9 +47,10 @@ PhotoatomCore::PhotoatomCore(
 		    standard_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
   testPrecondition( !relaxation_model.is_null() );
+  // Make sure the hash-based grid searcher is valid
+  testPrecondition( !grid_searcher.is_null() );
 
   // Place reactions in the appropriate group
-    
   ReactionMap::const_iterator rxn_type_pointer = 
     standard_scattering_reactions.begin();
 

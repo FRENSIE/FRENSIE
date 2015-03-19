@@ -16,6 +16,7 @@
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
+#include "Utility_HashBasedGridSearcher.hpp"
 
 namespace MonteCarlo{
 
@@ -34,11 +35,18 @@ class StandardPhotoatomicReaction : public PhotoatomicReaction
 
 public:
 
+  //! Basic constructor
+  StandardPhotoatomicReaction(
+		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+		   const Teuchos::ArrayRCP<const double>& cross_section,
+		   const unsigned threshold_energy_index );
+
   //! Constructor
   StandardPhotoatomicReaction( 
-		  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		  const Teuchos::ArrayRCP<const double>& cross_section,
-		  const unsigned threshold_energy_index );
+     const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+     const Teuchos::ArrayRCP<const double>& cross_section,
+     const unsigned threshold_energy_index,
+     const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher );
 
   //! Destructor
   virtual ~StandardPhotoatomicReaction()
@@ -46,9 +54,6 @@ public:
 
   //! Test if the energy falls within the energy grid
   bool isEnergyWithinEnergyGrid( const double energy ) const;
-
-  //! Return the index of the energy grid bin that the energy falls in
-  unsigned getEnergyGridBinIndex( const double energy ) const;
 
   //! Return the cross section at the given energy
   double getCrossSection( const double energy ) const;
@@ -75,19 +80,33 @@ private:
 
   // The threshold energy
   unsigned d_threshold_energy_index;
+  
+  // The hash-based grid searcher
+  Teuchos::RCP<const Utility::HashBasedGridSearcher> d_grid_searcher;
 };
 
 //! Partial template specialization for raw data
 template<typename InterpPolicy>
 class StandardPhotoatomicReaction<InterpPolicy,false> : public PhotoatomicReaction
 {
-  public:
+public:
+
+  //! Typedef for the hash-based grid searcher
+  typedef Utility::HashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>
+  HashBasedGridSearcher;
+
+  //! Basic constructor
+  StandardPhotoatomicReaction( 
+		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+		   const Teuchos::ArrayRCP<const double>& cross_section,
+		   const unsigned threshold_energy_index );
 
   //! Constructor
   StandardPhotoatomicReaction( 
-		  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		  const Teuchos::ArrayRCP<const double>& cross_section,
-		  const unsigned threshold_energy_index );
+	      const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+	      const Teuchos::ArrayRCP<const double>& cross_section,
+	      const unsigned threshold_energy_index,
+	      const Teuchos::RCP<const HashBasedGridSearcher>& grid_searcher );
 
   //! Destructor
   virtual ~StandardPhotoatomicReaction()
@@ -95,9 +114,6 @@ class StandardPhotoatomicReaction<InterpPolicy,false> : public PhotoatomicReacti
 
   //! Test if the energy falls within the energy grid
   bool isEnergyWithinEnergyGrid( const double energy ) const;
-
-  //! Return the index of the energy grid bin that the energy falls in
-  unsigned getEnergyGridBinIndex( const double energy ) const;
 
   //! Return the cross section at the given energy
   double getCrossSection( const double energy ) const;
@@ -124,6 +140,9 @@ private:
 
   // The threshold energy
   const unsigned d_threshold_energy_index;
+
+  // The hash-based grid searcher
+  Teuchos::RCP<const HashBasedGridSearcher> d_grid_searcher;
 };
 
 

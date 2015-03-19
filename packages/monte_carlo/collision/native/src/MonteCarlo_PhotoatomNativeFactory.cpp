@@ -13,6 +13,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomNativeFactory.hpp"
 #include "MonteCarlo_PhotoatomicReactionNativeFactory.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -22,6 +23,9 @@ void PhotoatomNativeFactory::createPhotoatomCore(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	 Teuchos::RCP<PhotoatomCore>& photoatom_core,
+	 const unsigned hash_grid_bins,
+	 const double min_problem_energy,
+	 const double max_problem_energy,
 	 const bool use_impulse_approximation_data,
 	 const bool use_doppler_broadening_data,
 	 const bool use_detailed_pair_production_data,
@@ -38,6 +42,26 @@ void PhotoatomNativeFactory::createPhotoatomCore(
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.assign( raw_photoatom_data.getPhotonEnergyGrid().begin(),
 		      raw_photoatom_data.getPhotonEnergyGrid().end() );
+  
+  // Construct the hash-based grid searcher for this atom
+  double min_grid_energy, max_grid_energy;
+  
+  if( min_problem_energy > energy_grid[0] )
+    min_grid_energy = min_problem_energy;
+  else
+    min_grid_energy = energy_grid[0];
+
+  if( max_problem_energy < energy_grid[energy_grid.size()-1] )
+    max_grid_energy = max_problem_energy;
+  else
+    max_grid_energy = energy_grid[energy_grid.size()-1];
+
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, false>(
+						     energy_grid,
+						     min_grid_energy,
+						     max_grid_energy,
+						     hash_grid_bins ) );
 
   // Create the incoherent scattering reaction(s)
   if( use_impulse_approximation_data )
@@ -47,6 +71,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
     PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
 						 raw_photoatom_data,
 						 energy_grid,
+						 grid_searcher,
 						 reaction_pointers,
 						 use_doppler_broadening_data );
 
@@ -64,6 +89,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
     PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
 						 raw_photoatom_data,
 						 energy_grid,
+						 grid_searcher,
 						 reaction_pointer,
 						 use_doppler_broadening_data );
   }
@@ -87,6 +113,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
     PhotoatomicReactionNativeFactory::createPairProductionReaction(
 					   raw_photoatom_data,
 					   energy_grid,
+					   grid_searcher,
 					   reaction_pointer,
 					   use_detailed_pair_production_data );
   }
@@ -99,6 +126,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
     PhotoatomicReactionNativeFactory::createSubshellPhotoelectricReactions(
 							   raw_photoatom_data,
 							   energy_grid,
+							   grid_searcher,
 							   reaction_pointers );
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
@@ -115,6 +143,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
     PhotoatomicReactionNativeFactory::createTotalPhotoelectricReaction(
 							    raw_photoatom_data,
 							    energy_grid,
+							    grid_searcher,
 							    reaction_pointer );
   }
 
@@ -124,6 +153,7 @@ void PhotoatomNativeFactory::createPhotoatomCore(
 
   PhotoatomicReactionNativeFactory::createHeatingReaction( raw_photoatom_data,
 							   energy_grid,
+							   grid_searcher,
 							   reaction_pointer );
 
   // Create the photoatom core
@@ -152,6 +182,9 @@ void PhotoatomNativeFactory::createPhotoatom(
 	 const double atomic_weight,
 	 const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	 Teuchos::RCP<Photoatom>& photoatom,
+	 const unsigned hash_grid_bins,
+	 const double min_problem_energy,
+	 const double max_problem_energy,
 	 const bool use_impulse_approximation_data,
 	 const bool use_doppler_broadening_data,
 	 const bool use_detailed_pair_production_data,
@@ -168,6 +201,9 @@ void PhotoatomNativeFactory::createPhotoatom(
 					     raw_photoatom_data,
 					     atomic_relaxation_model,
 					     core,
+					     hash_grid_bins,
+					     min_problem_energy,
+					     max_problem_energy,
 					     use_impulse_approximation_data,
 					     use_doppler_broadening_data,
 					     use_detailed_pair_production_data,

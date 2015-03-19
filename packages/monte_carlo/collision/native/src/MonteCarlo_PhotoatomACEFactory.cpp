@@ -13,6 +13,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomACEFactory.hpp"
 #include "MonteCarlo_PhotoatomicReactionACEFactory.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -28,6 +29,9 @@ void PhotoatomACEFactory::createPhotoatomCore(
             const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<PhotoatomCore>& photoatom_core,
+	    const unsigned hash_grid_bins,
+	    const double min_problem_energy,
+	    const double max_problem_energy,
 	    const bool use_doppler_broadening_data,
 	    const bool use_detailed_pair_production_data,
 	    const bool use_atomic_relaxation_data )
@@ -43,6 +47,26 @@ void PhotoatomACEFactory::createPhotoatomCore(
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( raw_photoatom_data.extractPhotonEnergyGrid() );
 
+  // Construct the hash-based grid searcher for this atom
+  double min_grid_energy, max_grid_energy;
+
+  if( log( min_problem_energy ) > energy_grid[0] )
+    min_grid_energy = log( min_problem_energy );
+  else
+    min_grid_energy = energy_grid[0];
+
+  if( log( max_problem_energy ) < energy_grid[energy_grid.size()-1] )
+    max_grid_energy = log( max_problem_energy );
+  else
+    max_grid_energy = energy_grid[energy_grid.size()-1];
+  
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, true>(
+						     energy_grid,
+						     min_grid_energy,
+						     max_grid_energy,
+						     hash_grid_bins ) );
+
   // Create the incoherent scattering reaction
   {
     Photoatom::ReactionMap::mapped_type& reaction_pointer = 
@@ -51,6 +75,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
     PhotoatomicReactionACEFactory::createIncoherentReaction(
 						 raw_photoatom_data,
 						 energy_grid,
+						 grid_searcher
 						 reaction_pointer,
 						 use_doppler_broadening_data );
   }
@@ -62,6 +87,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
     
     PhotoatomicReactionACEFactory::createCoherentReaction( raw_photoatom_data,
 							   energy_grid,
+							   grid_searcher,
 							   reaction_pointer );
   }
   
@@ -73,6 +99,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
     PhotoatomicReactionACEFactory::createPairProductionReaction(
 					   raw_photoatom_data,
 					   energy_grid,
+					   grid_searcher,
 					   reaction_pointer,
 					   use_detailed_pair_production_data );
   }
@@ -85,6 +112,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
     PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 							   raw_photoatom_data,
 							   energy_grid,
+							   grid_searcher,
 							   reaction_pointers );
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
@@ -101,6 +129,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
     PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
 							    raw_photoatom_data,
 							    energy_grid,
+							    grid_searcher,
 							    reaction_pointer );
   }
 
@@ -110,6 +139,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
 
   PhotoatomicReactionACEFactory::createHeatingReaction( raw_photoatom_data,
 							energy_grid,
+							grid_searcher,
 							reaction_pointer );
 			
   // Create the photoatom core
@@ -134,6 +164,9 @@ void PhotoatomACEFactory::createPhotoatom(
 	    const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Photoatom>& photoatom,
+	    const unsigned hash_grid_bins,
+	    const double min_problem_energy,
+	    const double max_problem_energy,
 	    const bool use_doppler_broadening_data,
 	    const bool use_detailed_pair_production_data,
 	    const bool use_atomic_relaxation_data )
@@ -148,6 +181,9 @@ void PhotoatomACEFactory::createPhotoatom(
   PhotoatomACEFactory::createPhotoatomCore( raw_photoatom_data,
 					    atomic_relaxation_model,
 					    core,
+					    has_grid_bins,
+					    min_problem_energy,
+					    max_problem_energy,
 					    use_doppler_broadening_data,
 					    use_detailed_pair_production_data,
 					    use_atomic_relaxation_data );

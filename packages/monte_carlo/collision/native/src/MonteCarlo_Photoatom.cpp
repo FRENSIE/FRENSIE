@@ -91,7 +91,7 @@ double Photoatom::getSurvivalProbability( const double energy ) const
   if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( energy ) )
   {
     unsigned energy_grid_bin = 
-      d_core.getTotalReaction().getEnergyGridBinIndex( energy );
+      d_core.getGridSearcher.findLowerBinIndex( energy );
 
     double total_cross_section = 
       d_core.getTotalReaction().getCrossSection( energy, energy_grid_bin );
@@ -129,7 +129,7 @@ double Photoatom::getAtomicSurvivalProbability( const double energy ) const
   if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( energy ) )
   {
     unsigned energy_grid_bin = 
-      d_core.getTotalReaction().getEnergyGridBinIndex( energy );
+      d_core.getGridSearcher.findLowerBinIndex( energy );
     
     double total_cross_section = 
       d_core.getTotalReaction().getCrossSection( energy, energy_grid_bin );
@@ -220,7 +220,7 @@ void Photoatom::collideAnalogue( PhotonState& photon,
   if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( photon.getEnergy() ))
   {
     unsigned energy_grid_bin = 
-      d_core.getTotalReaction().getEnergyGridBinIndex( photon.getEnergy() );
+      d_core.getGridSearcher().findLowerBinIndex( photon.getEnergy() );
   
     double total_cross_section = 
       d_core.getTotalReaction().getCrossSection( photon.getEnergy(), 
@@ -262,7 +262,7 @@ void Photoatom::collideSurvivalBias( PhotonState& photon,
   if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( photon.getEnergy() ))
   {
     unsigned energy_grid_bin = 
-      d_core.getTotalReaction().getEnergyGridBinIndex( photon.getEnergy() );
+      d_core.getGridSearcher().findLowerBinIndex( photon.getEnergy() );
     
     double total_cross_section = 
       d_core.getTotalReaction().getCrossSection( photon.getEnergy(),
@@ -364,7 +364,7 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
     ++photoatomic_reaction;
   }
 
-  if( photoatomic_reaction == d_core.getAbsorptionReactions().end() )
+  if( photoatomic_reaction == d_core.getScatteringReactions().end() )
   {
     // #pragma omp critical
     // {

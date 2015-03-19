@@ -39,6 +39,9 @@ public:
                     const boost::unordered_set<std::string>& photoatom_aliases,
 		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 		    atomic_relaxation_model_factory,
+		    const unsigned hash_grid_bins,
+		    const double min_problem_energy,
+		    const double max_problem_energy,
 		    const bool use_impulse_approximation_data,
 		    const bool use_doppler_broadening_data,
 		    const bool use_detailed_pair_production_data,
@@ -65,6 +68,9 @@ private:
 			  const double atomic_weight,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
+			  const unsigned hash_grid_bins,
+			  const double min_problem_energy,
+			  const double max_problem_energy,
 			  const bool use_impulse_approximation_data,
 			  const bool use_doppler_broadening_data,
 			  const bool use_detailed_pair_production_data,
@@ -78,6 +84,9 @@ private:
 			  const double atomic_weight,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
 			  atomic_relaxation_model_factory,
+			  const unsigned hash_grid_bins,
+			  const double min_problem_energy,
+			  const double max_problem_energy,
 			  const bool use_impulse_approximation_data,
 			  const bool use_doppler_broadening_data,
 			  const bool use_detailed_pair_production_data,

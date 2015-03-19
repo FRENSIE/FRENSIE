@@ -37,9 +37,6 @@ public:
   //! Test if the energy falls within the energy grid
   virtual bool isEnergyWithinEnergyGrid( const double energy ) const = 0;
 
-  //! Return the index of the energy grid bin that the energy falls in
-  virtual unsigned getEnergyGridBinIndex( const double energy ) const = 0;
-
   //! Return the cross section at the given energy
   virtual double getCrossSection( const double energy ) const = 0;
 

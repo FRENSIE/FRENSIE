@@ -113,7 +113,8 @@ PhotoatomCore::PhotoatomCore()
     d_scattering_reactions(),
     d_absorption_reactions(),
     d_miscellaneous_reactions(),
-    d_relaxation_model()
+    d_relaxation_model(),
+    d_grid_searcher()
 { /* ... */ }
 
 // Advanced constructor
@@ -128,13 +129,15 @@ PhotoatomCore::PhotoatomCore(
       const ConstReactionMap& scattering_reactions,
       const ConstReactionMap& absorption_reactions,
       const ConstReactionMap& miscellaneous_reactions,
-      const Teuchos::RCP<const AtomicRelaxationModel> relaxation_model )
+      const Teuchos::RCP<const AtomicRelaxationModel>& relaxation_model,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher )
   : d_total_reaction( total_reaction ),
     d_total_absorption_reaction( total_absorption_reaction ),
     d_scattering_reactions( d_scattering_reactions ),
     d_absorption_reactions( absorption_reactions ),
     d_miscellaneous_reactions( miscellaneous_reactions ),
-    d_relaxation_model( relaxation_model )
+    d_relaxation_model( relaxation_model ),
+    d_grid_searcher( grid_searcher )
 {
   // Make sure the total reaction is valid
   testPrecondition( !total_reaction.is_null() );
@@ -146,6 +149,8 @@ PhotoatomCore::PhotoatomCore(
   testPrecondition( absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
   testPrecondition( !relaxation_model.is_null() );
+  // Make sure the grid searcher is valid
+  testPrecondition( !d_grid_searcher.is_null() );
 }
 
 //! Copy constructor

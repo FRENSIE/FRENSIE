@@ -81,6 +81,12 @@ public:
   //! Return the absolute maximum photon energy (MeV)
   static double getAbsoluteMaxPhotonEnergy();
 
+  //! Set the number of photon hash grid bins
+  static void setNumberOfPhotonHashGridBins( const unsigned bins );
+
+  //! Get the number of photon hash grid bins
+  static unsigned getNumberOfPhotonHashGridBins();
+
   //! Set the minimum electron energy (MeV)
   static void setMinElectronEnergy( const double energy );
 
@@ -193,6 +199,9 @@ private:
   // The absolute maximum photon energy
   static const double absolute_max_photon_energy;
 
+  // The number of photon hash grid bins
+  static unsigned num_photon_hash_grid_bins;
+
   // The absolute minimum electron energy
   static const double absolute_min_electron_energy;
 
@@ -295,6 +304,12 @@ inline double SimulationProperties::getMaxPhotonEnergy()
 inline double SimulationProperties::getAbsoluteMaxPhotonEnergy()
 {
   return SimulationProperties::absolute_max_photon_energy;
+}
+
+// Get the number of photon hash grid bins
+inline double SimulationProperties::getNumberOfPhotonHashGridBins()
+{
+  return SimulationProperties::num_photon_hash_grid_bis;
 }
 
 // Return the minimum electron energy (MeV)

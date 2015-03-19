@@ -17,7 +17,7 @@
 
 namespace MonteCarlo{
 
-// Constructor
+// Basic constructor
 template<typename InterpPolicy, bool processed_cross_section>
 SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::SubshellPhotoelectricPhotoatomicReaction(
                    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
@@ -39,6 +39,34 @@ SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::
   testPrecondition( interaction_subshell != UNKNOWN_SUBSHELL );
   // Make sure the binding energy is valid
   testPrecondition( binding_energy > 0.0 );
+}
+
+// Constructor
+template<typename InterpPolicy, bool processed_cross_section>
+SubshellPhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>::SubshellPhotoelectricPhotoatomicReaction(
+       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+       const Teuchos::ArrayRCP<const double>& cross_section,
+       const unsigned threshold_energy_index,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const SubshellType interaction_subshell,
+       const double binding_energy )
+  : PhotoelectricPhotoatomicReaction<InterpPolicy,processed_cross_section>( 
+						      incoming_energy_grid,
+						      cross_section,
+						      threshold_energy_index,
+						      grid_searcher ),
+    d_interaction_subshell( interaction_subshell ),
+    d_binding_energy( binding_energy ),
+    d_reaction_type( convertSubshellEnumToPhotoelectricPhotoatomicReactionEnum(
+						       interaction_subshell ) )
+{
+  // Make sure the interaction subshell is valid
+  testPrecondition( interaction_subshell != INVALID_SUBSHELL );
+  testPrecondition( interaction_subshell != UNKNOWN_SUBSHELL );
+  // Make sure the binding energy is valid
+  testPrecondition( binding_energy > 0.0 );
+  // Make sure he grid searcher is valid
+  testPrecondition( !grid_searcher.is_null() );
 }
 
 // Simulate the reaction
