@@ -231,7 +231,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setNumberOfPhotonHashGridBins )
   unsigned default_value = 
     MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins();
 
-  SimulationProperties::setNumberOfPhotonHashGridBins( 500 );
+  MonteCarlo::SimulationProperties::setNumberOfPhotonHashGridBins( 500 );
 
   TEST_ASSERT( 
 	  MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins() !=
@@ -241,7 +241,7 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setNumberOfPhotonHashGridBins )
 	     500 );
   
   // Reset the default value
-  SimulationProperties::setNumberOfPhotonHashGridBins( default_value );
+  MonteCarlo::SimulationProperties::setNumberOfPhotonHashGridBins( default_value );
 }
 
 //---------------------------------------------------------------------------//

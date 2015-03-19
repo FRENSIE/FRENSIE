@@ -40,12 +40,9 @@ StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::StandardPhoto
 		    incoming_energy_grid.size() - threshold_energy_index );    
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
-  // Make sure the grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
 
   // Construct the grid searcher
-  d_grid_searcher.reset( 
-	new StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double,true>(
+  d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,true>(
 			   incoming_energy_grid,
 			   incoming_energy_grid[0],
 			   incoming_energy_grid[incoming_energy_grid.size()-1],
@@ -73,12 +70,9 @@ StandardPhotoatomicReaction<InterpPolicy,false>::StandardPhotoatomicReaction(
 		    incoming_energy_grid.size() - threshold_energy_index );    
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
-  // Make sure the grid searcher is valid
-  testPrecondition( !grid_searcher.is_null() );
-
+  
   // Construct the grid searcher
-  d_grid_searcher.reset( 
-      new StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
+  d_grid_searcher.reset( new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,false>(
 			   incoming_energy_grid,
 			   incoming_energy_grid[0],
 			   incoming_energy_grid[incoming_energy_grid.size()-1],
@@ -160,9 +154,9 @@ template<typename InterpPolicy, bool processed_cross_section>
 double StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>::getCrossSection( 
 						    const double energy ) const
 {
-  // Make sure the energy falls within the energy grid
+  // Make sure the energy is valid
   testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
-
+  
   double cross_section;
 
   if( energy >= this->getThresholdEnergy() )
@@ -196,7 +190,7 @@ template<typename InterpPolicy>
 double StandardPhotoatomicReaction<InterpPolicy,false>::getCrossSection( 
 						    const double energy ) const
 {
-  // Make sure the energy falls within the energy grid
+  // Make sure the energy is valid
   testPrecondition( this->isEnergyWithinEnergyGrid( energy ) );
   
   double cross_section;

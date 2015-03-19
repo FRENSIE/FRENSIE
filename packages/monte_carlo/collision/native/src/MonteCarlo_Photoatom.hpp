@@ -57,12 +57,12 @@ public:
 	  const unsigned atomic_number,
 	  const double atomic_weight,
 	  const Teuchos::ArrayRCP<double>& energy_grid,
+	  const Teuchos::RCP<const Utility::HashBasedGridSearcher>& 
+	  grid_searcher,
 	  const ReactionMap& standard_scattering_reactions,
 	  const ReactionMap& standard_absorption_reactions,
 	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	  const bool processed_atomic_cross_sections,
-	  const Teuchos::RCP<const Utility::HashBasedGridSearcher>& 
-	  grid_searcher,
 	  const InterpPolicy policy );
 
   //! Constructor (from a core)

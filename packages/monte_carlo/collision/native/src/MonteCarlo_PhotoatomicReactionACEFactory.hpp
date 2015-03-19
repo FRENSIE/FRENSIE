@@ -47,9 +47,10 @@ public:
 
   //! Create the total photoelectric photoatomic reaction
   static void createTotalPhotoelectricReaction(
-		   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction );
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,	
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction );
 
   //! Create the subshell photoelectric photoatomic reactions
   static void createSubshellPhotoelectricReactions(

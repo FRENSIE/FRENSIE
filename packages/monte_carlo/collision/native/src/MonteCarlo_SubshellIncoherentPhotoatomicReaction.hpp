@@ -39,7 +39,7 @@ public:
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
-      const Teuchos::RCP<const HashBasedGridSearcher>& grid_searcher,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       const SubshellType interaction_subshell,
       const double binding_energy,
       const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number );
@@ -59,7 +59,7 @@ public:
       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
       const Teuchos::ArrayRCP<const double>& cross_section,
       const unsigned threshold_energy_index,
-      const Teuchos::RCP<const HashBasedGridSearcher>& grid_searcher,
+      const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
       const SubshellType interaction_subshell,
       const double binding_energy,
       const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,

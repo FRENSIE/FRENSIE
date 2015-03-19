@@ -30,8 +30,6 @@ void PhotoatomACEFactory::createPhotoatomCore(
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<PhotoatomCore>& photoatom_core,
 	    const unsigned hash_grid_bins,
-	    const double min_problem_energy,
-	    const double max_problem_energy,
 	    const bool use_doppler_broadening_data,
 	    const bool use_detailed_pair_production_data,
 	    const bool use_atomic_relaxation_data )
@@ -46,25 +44,10 @@ void PhotoatomACEFactory::createPhotoatomCore(
   // Extract the common energy grid used for this atom
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( raw_photoatom_data.extractPhotonEnergyGrid() );
-
-  // Construct the hash-based grid searcher for this atom
-  double min_grid_energy, max_grid_energy;
-
-  if( log( min_problem_energy ) > energy_grid[0] )
-    min_grid_energy = log( min_problem_energy );
-  else
-    min_grid_energy = energy_grid[0];
-
-  if( log( max_problem_energy ) < energy_grid[energy_grid.size()-1] )
-    max_grid_energy = log( max_problem_energy );
-  else
-    max_grid_energy = energy_grid[energy_grid.size()-1];
   
   Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
      new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, true>(
 						     energy_grid,
-						     min_grid_energy,
-						     max_grid_energy,
 						     hash_grid_bins ) );
 
   // Create the incoherent scattering reaction
@@ -75,7 +58,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
     PhotoatomicReactionACEFactory::createIncoherentReaction(
 						 raw_photoatom_data,
 						 energy_grid,
-						 grid_searcher
+						 grid_searcher,
 						 reaction_pointer,
 						 use_doppler_broadening_data );
   }
@@ -144,6 +127,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
 			
   // Create the photoatom core
   photoatom_core.reset( new PhotoatomCore( energy_grid,
+					   grid_searcher,
 					   scattering_reactions,
 					   absorption_reactions,
 					   atomic_relaxation_model,
@@ -165,8 +149,6 @@ void PhotoatomACEFactory::createPhotoatom(
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Photoatom>& photoatom,
 	    const unsigned hash_grid_bins,
-	    const double min_problem_energy,
-	    const double max_problem_energy,
 	    const bool use_doppler_broadening_data,
 	    const bool use_detailed_pair_production_data,
 	    const bool use_atomic_relaxation_data )
@@ -181,9 +163,7 @@ void PhotoatomACEFactory::createPhotoatom(
   PhotoatomACEFactory::createPhotoatomCore( raw_photoatom_data,
 					    atomic_relaxation_model,
 					    core,
-					    has_grid_bins,
-					    min_problem_energy,
-					    max_problem_energy,
+					    hash_grid_bins,
 					    use_doppler_broadening_data,
 					    use_detailed_pair_production_data,
 					    use_atomic_relaxation_data );

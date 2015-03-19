@@ -160,7 +160,8 @@ PhotoatomCore::PhotoatomCore( const PhotoatomCore& instance )
     d_scattering_reactions( instance.d_scattering_reactions ),
     d_absorption_reactions( instance.d_absorption_reactions ),
     d_miscellaneous_reactions( instance.d_miscellaneous_reactions ),
-    d_relaxation_model( instance.d_relaxation_model )
+    d_relaxation_model( instance.d_relaxation_model ),
+    d_grid_searcher( instance.d_grid_searcher )
 {
   // Make sure the total reaction is valid
   testPrecondition( !instance.d_total_reaction.is_null() );
@@ -171,6 +172,8 @@ PhotoatomCore::PhotoatomCore( const PhotoatomCore& instance )
 		    instance.d_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
   testPrecondition( !instance.d_relaxation_model.is_null() );
+  // Make sure the grid searcher is valid
+  testPrecondition( !instance.d_grid_searcher.is_null() );
 }
 
 //! Assignment Operator
@@ -185,6 +188,8 @@ PhotoatomCore& PhotoatomCore::operator=( const PhotoatomCore& instance )
 		    instance.d_absorption_reactions.size() > 0 );
   // Make sure the relaxation model is valid
   testPrecondition( !instance.d_relaxation_model.is_null() );
+  // Make sure the grid searcher is valid
+  testPrecondition( !instance.d_grid_searcher.is_null() );
 
   // Avoid self-assignment
   if( this != &instance )
@@ -194,6 +199,7 @@ PhotoatomCore& PhotoatomCore::operator=( const PhotoatomCore& instance )
     d_scattering_reactions = instance.d_scattering_reactions;
     d_absorption_reactions = instance.d_absorption_reactions;
     d_relaxation_model = instance.d_relaxation_model;
+    d_grid_searcher = instance.d_grid_searcher;
   }
   
   return *this;

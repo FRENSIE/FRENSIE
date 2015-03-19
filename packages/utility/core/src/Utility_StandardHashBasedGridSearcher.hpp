@@ -30,6 +30,10 @@ class StandardHashBasedGridSearcher : public HashBasedGridSearcher
 
 public:
 
+  //! Basic constructor
+  StandardHashBasedGridSearcher( const STLCompliantArray grid,
+				 const unsigned hash_grid_bins );
+
   //! Constructor
   StandardHashBasedGridSearcher( const STLCompliantArray grid,
 			 const double min_grid_value,
@@ -48,11 +52,17 @@ public:
 
   private:
 
+  // Initialize the hash grid
+  void initializeHashGrid();
+
   // The hash grid size
   unsigned d_hash_grid_size;
 
   // The minimum hash grid value
   double d_hash_grid_min;
+
+  // The max hash grid value (stored to avoid roundoff issues)
+  double d_hash_grid_max;
 
   // The hash grid length
   double d_hash_grid_length;
@@ -77,6 +87,10 @@ class StandardHashBasedGridSearcher<STLCompliantArray,false> : public HashBasedG
   
 public:
 
+  //! Basic constructor
+  StandardHashBasedGridSearcher( const STLCompliantArray grid,
+				 const unsigned hash_grid_bins );
+
   //! Constructor
   StandardHashBasedGridSearcher( const STLCompliantArray grid,
 				 const double min_grid_value,
@@ -98,11 +112,17 @@ public:
   // Test if a value is less than or equal to zero
   static bool lessThanOrEqualToZero( const double value );
 
+  // Initialize the hash grid
+  void initializeHashGrid();
+
   // The hash grid size
   unsigned d_hash_grid_size;
 
   // The minimum hash grid value
   double d_hash_grid_min;
+
+  // The max hash grid value (stored to avoid roundoff issues)
+  double d_hash_grid_max;
 
   // The hash grid length
   double d_hash_grid_length;

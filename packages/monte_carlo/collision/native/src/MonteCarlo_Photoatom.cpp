@@ -91,7 +91,7 @@ double Photoatom::getSurvivalProbability( const double energy ) const
   if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( energy ) )
   {
     unsigned energy_grid_bin = 
-      d_core.getGridSearcher.findLowerBinIndex( energy );
+      d_core.getGridSearcher().findLowerBinIndex( energy );
 
     double total_cross_section = 
       d_core.getTotalReaction().getCrossSection( energy, energy_grid_bin );
@@ -129,7 +129,7 @@ double Photoatom::getAtomicSurvivalProbability( const double energy ) const
   if( d_core.getTotalReaction().isEnergyWithinEnergyGrid( energy ) )
   {
     unsigned energy_grid_bin = 
-      d_core.getGridSearcher.findLowerBinIndex( energy );
+      d_core.getGridSearcher().findLowerBinIndex( energy );
     
     double total_cross_section = 
       d_core.getTotalReaction().getCrossSection( energy, energy_grid_bin );

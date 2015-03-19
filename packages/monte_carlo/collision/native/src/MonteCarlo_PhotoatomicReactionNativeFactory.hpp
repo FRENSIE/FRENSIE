@@ -16,6 +16,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Utility_HashBasedGridSearcher.hpp"
 
 namespace MonteCarlo{
 
