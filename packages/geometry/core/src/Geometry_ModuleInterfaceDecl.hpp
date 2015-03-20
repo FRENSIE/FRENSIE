@@ -80,8 +80,12 @@ public:
 		        const Teuchos::RCP<GeometryHandler>& handler_instance )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
-  //! Do just in time initialization of the interface that my be required
+  //! Do just in time initialization interface members
   static inline void initialize()
+  { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
+
+  //! Enable support for multiple threads
+  static void enableThreadSupport( const unsigned num_threads )
   { (void)UndefinedGeometryHandler<GeometryHandler>::notDefined(); }
 
   /*! Find the cell that contains a given point (start of history)

@@ -133,9 +133,10 @@ void ParticleSimulationManager<GeometryHandler,
   // Set up the random number generator for the number of threads requested
   Utility::RandomNumberGenerator::createStreams();
 
-  // Set up the geometry module interface for the number of threads requested
-  GMI::initialize();
-
+  // Enable geometry thread support
+  GMI::enableThreadSupport(
+	         Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+  
   // Enable estimator thread support
   EMI::enableThreadSupport( 
 		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
@@ -175,12 +176,10 @@ void ParticleSimulationManager<GeometryHandler,
 	  
 	  EMI::updateEstimatorsFromParticleGenerationEvent( *bank.top() );
 	}
-	//std::cout << "history: " << history << std::endl;
+	
 	// This history only ends when the particle bank is empty
 	while( bank.size() > 0 )
 	{
-	  // std::cout << bank.size() << " " 
-	  // 	    << bank.top()->getParticleType() << std::endl;
 	  switch( bank.top()->getParticleType() )
 	  {
 	  case NEUTRON: 
@@ -258,13 +257,6 @@ void ParticleSimulationManager<GeometryHandler,
   
   while( !particle.isLost() && !particle.isGone() )
   {
-    // std::cout << particle.getHistoryNumber() << " " 
-    // 	      << particle.getCollisionNumber() << " "
-    // 	      << particle.getEnergy() << " "
-    // 	      << sqrt(particle.getXPosition()*particle.getXPosition()+
-    // 		      particle.getYPosition()*particle.getYPosition()+
-    // 		      particle.getZPosition()*particle.getZPosition())
-    // 	      << std::endl;
     // Sample the mfp traveled by the particle on this subtrack
     remaining_subtrack_op = CMI::sampleOpticalPathLength();
     
@@ -285,8 +277,8 @@ void ParticleSimulationManager<GeometryHandler,
       // Get the total cross section for the cell
       if( !CMI::isCellVoid( particle.getCell(), particle.getParticleType() ) )
       {
-  	cell_total_macro_cross_section = 
-  	  CMI::getMacroscopicTotalCrossSection( particle );
+      	cell_total_macro_cross_section = 
+      	  CMI::getMacroscopicTotalCrossSection( particle );
       }
       else
   	cell_total_macro_cross_section = 0.0;
@@ -321,14 +313,14 @@ void ParticleSimulationManager<GeometryHandler,
   	particle.setCell( cell_entering );
 
   	// Update estimators
-  	// EMI::updateEstimatorsFromParticleCrossingSurfaceEvent(
-  	// 					  particle,
-  	// 					  cell_entering,
-  	// 					  cell_leaving,
-  	// 					  surface_hit,
-  	// 					  distance_to_surface_hit,
-  	// 					  subtrack_start_time,
-  	// 					  surface_normal.getRawPtr() );
+  	EMI::updateEstimatorsFromParticleCrossingSurfaceEvent(
+  						  particle,
+  						  cell_entering,
+  						  cell_leaving,
+  						  surface_hit,
+  						  distance_to_surface_hit,
+  						  subtrack_start_time,
+  						  surface_normal.getRawPtr() );
 
   	// Check if a termination cell was encountered
   	if( GMI::isTerminationCell( particle.getCell() ) )
@@ -351,21 +343,21 @@ void ParticleSimulationManager<GeometryHandler,
   	particle.advance( distance );
 	
   	// Update estimators
-  	// EMI::updateEstimatorsFromParticleCollidingInCellEvent(
-  	// 				  particle,
-  	// 				  distance,
-  	// 				  subtrack_start_time,
-  	// 				  1.0/cell_total_macro_cross_section );
+  	EMI::updateEstimatorsFromParticleCollidingInCellEvent(
+  					  particle,
+  					  distance,
+  					  subtrack_start_time,
+  					  1.0/cell_total_macro_cross_section );
 
 	
 
-  	// EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
-  	// 					      particle,
-  	// 					      ray_start_point,
-  	// 					      particle.getPosition() );
+  	EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
+  						      particle,
+  						      ray_start_point,
+  						      particle.getPosition() );
 
   	// Undergo a collision with the material in the cell
-  	//CMI::collideWithCellMaterial( particle, bank, true );
+  	CMI::collideWithCellMaterial( particle, bank, true );
 
   	// Indicate that a collision has occurred
   	GMI::newRay();
@@ -386,10 +378,10 @@ void ParticleSimulationManager<GeometryHandler,
   }
 
   // Update the global estimators
-  // EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
-  // 						      particle,
-  // 						      ray_start_point,
-  // 						      particle.getPosition() );
+  EMI::updateEstimatorsFromParticleCollidingGlobalEvent(
+  						      particle,
+  						      ray_start_point,
+  						      particle.getPosition() );
 
   // Indicate that this particle history is complete
   GMI::newRay();
