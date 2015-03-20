@@ -20,7 +20,8 @@ namespace MonteCarlo{
 
 // Constructor
 CoherentPhotonScatteringDistribution::CoherentPhotonScatteringDistribution(
-   const Teuchos::RCP<Utility::OneDDistribution>& form_factor_function_squared )
+                           const Teuchos::RCP<const Utility::OneDDistribution>&
+			   form_factor_function_squared )
   : d_form_factor_function_squared( form_factor_function_squared )
 {
   // Make sure the array is valid
@@ -61,8 +62,8 @@ void CoherentPhotonScatteringDistribution::scatterPhoton(
 
   // Ignore coherent scattering at energies where scattering is 
   // highly forward peaked
-  if ( max_form_factor_arg_squared <= d_form_factor_function_squared-> 
-                                      getUpperBoundOfIndepVar() )
+  if ( max_form_factor_arg_squared <= 
+       d_form_factor_function_squared->getUpperBoundOfIndepVar() )
   {
     // Sample the form factor squared arg from the form factor function squared,
     // reject with reject function: R( scattering_angle_cosine )
@@ -74,27 +75,18 @@ void CoherentPhotonScatteringDistribution::scatterPhoton(
       // Calc. the outgoing photon angle cosine from the sampled form factor 
       scattering_angle_cosine = 
 	1.0 - 2.0*wavelength_sqr*form_factor_arg_squared;
-
+      
       random_number = 
 	Utility::RandomNumberGenerator::getRandomNumber<double>();
     }while( random_number > 
 	    0.5*( 1.0 + scattering_angle_cosine*scattering_angle_cosine ) );
-
-    // Calculate the outgoing direction
-   double outgoing_photon_direction[3];
-
-    Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
-	  					   scattering_angle_cosine,
-		  				   sampleAzimuthalAngle(),
-			  			   photon.getDirection(),
-				  		   outgoing_photon_direction );
 
     // Make sure the scattering angle cosine is valid
     testPostcondition( scattering_angle_cosine >= -1.0 );
     testPostcondition( scattering_angle_cosine <= 1.0 );
 
     // Set the new direction
-    photon.setDirection( outgoing_photon_direction );
+    photon.rotateDirection( scattering_angle_cosine, sampleAzimuthalAngle() );
   }
 }
 

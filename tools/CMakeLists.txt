@@ -1,21 +1,37 @@
 # Set up the directory hierarchy
-ADD_SUBDIRECTORY(facemc)
+INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/packages/utility/core/src" 
+"${CMAKE_SOURCE_DIR}/packages/utility/prng/src"
+"${CMAKE_SOURCE_DIR}/packages/utility/hdf5/src" 
+"${CMAKE_SOURCE_DIR}/packages/utility/distribution/src"
+"${CMAKE_SOURCE_DIR}/packages/data/endf/src"
+"${CMAKE_SOURCE_DIR}/packages/geometry/core/src" 
+"${CMAKE_SOURCE_DIR}/packages/geometry/dagmc/src"
+"${CMAKE_SOURCE_DIR}/packages/geometry/interface"
+"${CMAKE_SOURCE_DIR}/packages/data/ace/src" 
+"${CMAKE_SOURCE_DIR}/packages/data/native/src"
+"${CMAKE_SOURCE_DIR}/packages/monte_carlo/core/src" 
+"${CMAKE_SOURCE_DIR}/packages/monte_carlo/source/core/src"
+"${CMAKE_SOURCE_DIR}/packages/monte_carlo/source/interface" 
+"${CMAKE_SOURCE_DIR}/packages/monte_carlo/source/native/src"
+"${CMAKE_SOURCE_DIR}/packages/monte_carlo/estimator/core/src"
+"${CMAKE_SOURCE_DIR}/packages/monte_carlo/estimator/interface"
+"${CMAKE_SOURCE_DIR}/packages/monte_carlo/estimator/native/src"
+"${CMAKE_SOURCE_DIR}/packages/monte_carlo/collision/core/src"
+"${CMAKE_SOURCE_DIR}/packages/monte_carlo/collision/interface" 
+"${CMAKE_SOURCE_DIR}/packages/monte_carlo/collision/native/src"
+"${CMAKE_SOURCE_DIR}/packages/monte_carlo/manager/src"
+"${CMAKE_SOURCE_DIR}/packages/transmutation/src"
+"${CMAKE_SOURCE_DIR}/packages/data/decay/src"
+"${CMAKE_SOURCE_DIR}/packages/data_gen/xsdir/src"
+"${CMAKE_SOURCE_DIR}/packages/data_gen/free_gas_sab/src"
+"${CMAKE_SOURCE_DIR}/packages/data_gen/electron_photon/src")
 
 ADD_SUBDIRECTORY(rng_timer)
 
-# Create the data processor
-# ADD_EXECUTABLE(process_data process_data.cpp)
-# TARGET_LINK_LIBRARIES(process_data )
+ADD_SUBDIRECTORY(xsdirtoxml)
 
-# Create the free gas elastic scattering S(alpha,beta,E) table generator
-ADD_EXECUTABLE(fges_sab_gen fges_sab_gen.cpp)
-TARGET_LINK_LIBRARIES(fges_sab_gen monte_carlo_collision_native)
-SET(CLI_TARGETS fges_sab_gen ${CLI_TARGETS})
+ADD_SUBDIRECTORY(listcs)
 
-# Create the angle dist sampler exec
-ADD_EXECUTABLE(sample_scattering_distribution sample_scattering_distribution.cpp)
-TARGET_LINK_LIBRARIES(sample_scattering_distribution monte_carlo_manager)
-SET(CLI_TARGETS sample_scattering_distribution ${CLI_TARGETS})
+ADD_SUBDIRECTORY(facemc)
 
-INSTALL(TARGETS ${CLI_TARGETS}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+ADD_SUBDIRECTORY(epr_generator)

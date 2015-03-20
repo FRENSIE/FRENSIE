@@ -17,6 +17,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
+#include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
@@ -46,10 +47,10 @@ bool notEqualZero( double value )
 TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, getReactionType_ace )
 {
   TEST_EQUALITY_CONST( ace_basic_incoherent_reaction->getReactionType(),
-		       MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+		       MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( ace_detailed_incoherent_reaction->getReactionType(),
-		       MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+		       MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 }
 
 //---------------------------------------------------------------------------//
@@ -143,7 +144,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, react_ace_basic )
   
   TEST_ASSERT( photon.getEnergy() >= min_energy );
   TEST_ASSERT( photon.getEnergy() <= 20.0 );
-  TEST_ASSERT( bank.empty() );
+  TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }
 
@@ -163,7 +164,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, react_ace_detailed )
 					   bank, 
 					   shell_of_interaction );
 
-  TEST_ASSERT( bank.empty() );
+  TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_ASSERT( shell_of_interaction != MonteCarlo::UNKNOWN_SUBSHELL );
 }
 
@@ -266,7 +267,7 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> swd_block = 
     xss_data_extractor->extractSWDBlock();
 
-  Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >
+  Teuchos::Array<Teuchos::RCP<const Utility::OneDDistribution> >
     compton_profiles( lswd_block.size() );
   
   for( unsigned shell = 0; shell < lswd_block.size(); ++shell )
@@ -275,10 +276,22 @@ int main( int argc, char** argv )
 
     unsigned num_mom_vals = swd_block[shell_index];
 
+    Teuchos::Array<double> half_momentum_grid( 
+				  swd_block( shell_index + 1, num_mom_vals ) );
+
+    Teuchos::Array<double> half_profile(
+		   swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( half_momentum_grid.begin(),
+					       half_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( half_profile.begin(),
+						 half_profile.end() );
+
     compton_profiles[shell].reset( 
-	  new Utility::TabularDistribution<Utility::LinLin>(
-		 swd_block( shell_index + 1, num_mom_vals ),
-		 swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) ) );
+	 new Utility::TabularDistribution<Utility::LogLin>( half_momentum_grid,
+							    half_profile ) );
+		 
   }
 
   // Create the reactions

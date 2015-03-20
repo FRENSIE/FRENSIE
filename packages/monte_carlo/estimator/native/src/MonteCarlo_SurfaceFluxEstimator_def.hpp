@@ -55,7 +55,7 @@ void SurfaceFluxEstimator<
       contribution = 1.0/ST::magnitude( angle_cosine );
     else
       contribution = StandardSurfaceEstimator::getAngleCosineCutoff()/2;
-    
+
     contribution *= ContributionMultiplierPolicy::multiplier( particle );
   
     StandardEntityEstimator<

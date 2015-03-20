@@ -53,7 +53,7 @@ namespace Search{
  */ 
 template<TupleMember member, 
 	 typename Iterator>
-Iterator binaryLowerBound( Iterator start,
+inline Iterator binaryLowerBound( Iterator start,
 			   Iterator end,
 			   const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
 {
@@ -195,7 +195,7 @@ binaryLowerBoundIndex( Iterator start,
  * iterator).
  */
 template<TupleMember member, typename Iterator>
-Iterator binaryUpperBound( Iterator start,
+inline Iterator binaryUpperBound( Iterator start,
 			   Iterator end,
 			   const typename TupleMemberTraits<typename std::iterator_traits<Iterator>::value_type,member>::tupleMemberType value )
 {

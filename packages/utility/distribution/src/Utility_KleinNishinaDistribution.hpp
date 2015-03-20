@@ -26,7 +26,7 @@ namespace Utility{
  * variables: the outgoing photon energy and the outgoing photon scattering
  * angle. Because of the one-to-one correspondence between the outgoing photon
  * energy and the outgoing photon angle, the function can be reduced to a
- * function of a single variable - the inverse energy gain ratio 
+ * function of a single variable - the inverse energy loss ratio 
  * (x = 1 + alpha*(1-mu)). This variable x will be sampled from the
  * distribution.
  */
@@ -85,6 +85,12 @@ public:
 
   //! Set the energy (MeV)
   void setEnergy( const double energy );
+
+  //! Return the energy (MeV)
+  double getEnergy() const;
+
+  //! Return the unitless energy
+  double getAlpha() const;
 
   //! Evaluate the distribution
   double evaluate( const double indep_var_value ) const;

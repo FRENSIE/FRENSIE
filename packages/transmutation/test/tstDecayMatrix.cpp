@@ -38,17 +38,6 @@ TEUCHOS_UNIT_TEST( DecayMatrix, getDecayMatrix )
    TEST_FLOATING_EQUALITY((*decay_matrix)(25,25) , -1.507428938751673e-07 , 1e-15);
    TEST_FLOATING_EQUALITY((*decay_matrix)(18,25) ,  1.507428938751673e-07 , 1e-15);
 }
-//---------------------------------------------------------------------------//
-// Custom Main Function 
-//---------------------------------------------------------------------------//
-int main( int argc, char** argv )
-{
-   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-
-   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
-   return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
-}
-
  
 //---------------------------------------------------------------------------//
 // end tstDecayMatrix.cpp 

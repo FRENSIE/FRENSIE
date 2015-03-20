@@ -13,6 +13,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomACEFactory.hpp"
 #include "MonteCarlo_PhotoatomicReactionACEFactory.hpp"
+#include "Utility_StandardHashBasedGridSearcher.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -28,6 +29,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
             const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<PhotoatomCore>& photoatom_core,
+	    const unsigned hash_grid_bins,
 	    const bool use_doppler_broadening_data,
 	    const bool use_detailed_pair_production_data,
 	    const bool use_atomic_relaxation_data )
@@ -42,15 +44,21 @@ void PhotoatomACEFactory::createPhotoatomCore(
   // Extract the common energy grid used for this atom
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( raw_photoatom_data.extractPhotonEnergyGrid() );
+  
+  Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+     new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>, true>(
+						     energy_grid,
+						     hash_grid_bins ) );
 
   // Create the incoherent scattering reaction
   {
     Photoatom::ReactionMap::mapped_type& reaction_pointer = 
-      scattering_reactions[INCOHERENT_PHOTOATOMIC_REACTION];
+      scattering_reactions[TOTAL_INCOHERENT_PHOTOATOMIC_REACTION];
     
     PhotoatomicReactionACEFactory::createIncoherentReaction(
 						 raw_photoatom_data,
 						 energy_grid,
+						 grid_searcher,
 						 reaction_pointer,
 						 use_doppler_broadening_data );
   }
@@ -62,6 +70,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
     
     PhotoatomicReactionACEFactory::createCoherentReaction( raw_photoatom_data,
 							   energy_grid,
+							   grid_searcher,
 							   reaction_pointer );
   }
   
@@ -73,6 +82,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
     PhotoatomicReactionACEFactory::createPairProductionReaction(
 					   raw_photoatom_data,
 					   energy_grid,
+					   grid_searcher,
 					   reaction_pointer,
 					   use_detailed_pair_production_data );
   }
@@ -85,6 +95,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
     PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 							   raw_photoatom_data,
 							   energy_grid,
+							   grid_searcher,
 							   reaction_pointers );
 
     for( unsigned i = 0; i < reaction_pointers.size(); ++i )
@@ -101,6 +112,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
     PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
 							    raw_photoatom_data,
 							    energy_grid,
+							    grid_searcher,
 							    reaction_pointer );
   }
 
@@ -110,10 +122,12 @@ void PhotoatomACEFactory::createPhotoatomCore(
 
   PhotoatomicReactionACEFactory::createHeatingReaction( raw_photoatom_data,
 							energy_grid,
+							grid_searcher,
 							reaction_pointer );
 			
   // Create the photoatom core
   photoatom_core.reset( new PhotoatomCore( energy_grid,
+					   grid_searcher,
 					   scattering_reactions,
 					   absorption_reactions,
 					   atomic_relaxation_model,
@@ -123,7 +137,7 @@ void PhotoatomACEFactory::createPhotoatomCore(
 
 // Create a photoatom (using the provided atomic relaxation model)
 /*! \details The provided atomic relaxation model will be used with this
- * atom. Special care must be taken to assure that the model corresponds to
+ * atom. Special care must be taken to assure that the model corresponds with
  * the atom of interest. If the use of atomic relaxation data has been
  * requested, a photoelectric reaction for each subshell will be created. 
  * Otherwise a single total photoelectric reaction will be created.
@@ -134,6 +148,7 @@ void PhotoatomACEFactory::createPhotoatom(
 	    const double atomic_weight,
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Photoatom>& photoatom,
+	    const unsigned hash_grid_bins,
 	    const bool use_doppler_broadening_data,
 	    const bool use_detailed_pair_production_data,
 	    const bool use_atomic_relaxation_data )
@@ -148,6 +163,7 @@ void PhotoatomACEFactory::createPhotoatom(
   PhotoatomACEFactory::createPhotoatomCore( raw_photoatom_data,
 					    atomic_relaxation_model,
 					    core,
+					    hash_grid_bins,
 					    use_doppler_broadening_data,
 					    use_detailed_pair_production_data,
 					    use_atomic_relaxation_data );

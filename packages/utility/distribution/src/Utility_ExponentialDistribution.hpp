@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -24,7 +24,7 @@ namespace Utility{
  * exponent is always assumed to be negative)
  */
 class ExponentialDistribution : public OneDDistribution,
-			    public XMLCompatibleObject<ExponentialDistribution>
+			    public ParameterListCompatibleObject<ExponentialDistribution>
 {
 
 private:

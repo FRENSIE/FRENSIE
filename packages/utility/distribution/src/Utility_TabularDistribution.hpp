@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -23,7 +23,7 @@ namespace Utility{
 //! The interpolated distribution class declaration
 template<typename InterpolationPolicy>
 class TabularDistribution : public OneDDistribution,
-	  public XMLCompatibleObject<TabularDistribution<InterpolationPolicy> >
+	  public ParameterListCompatibleObject<TabularDistribution<InterpolationPolicy> >
 {
 
 public:

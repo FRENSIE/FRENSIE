@@ -54,6 +54,11 @@ ADD_EXECUTABLE(tstKleinNishinaDistribution
 TARGET_LINK_LIBRARIES(tstKleinNishinaDistribution utility_core utility_prng utility_dist)
 ADD_TEST(KleinNishinaDistribution_test tstKleinNishinaDistribution)
 
+ADD_EXECUTABLE(tstAdjointKleinNishinaDistribution
+  tstAdjointKleinNishinaDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstAdjointKleinNishinaDistribution utility_core utility_prng utility_dist)
+ADD_TEST(AdjointKleinNishinaDistribution_test tstAdjointKleinNishinaDistribution)
+
 ADD_EXECUTABLE(tstOneDDistribution
   tstOneDDistribution.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

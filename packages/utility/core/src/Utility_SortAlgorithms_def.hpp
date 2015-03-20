@@ -23,7 +23,7 @@ namespace Sort{
  * linear in the number of elements in the container.
  */
 template<TupleMember member, typename Iterator>
-bool isSortedAscending( Iterator start, Iterator end )
+bool isSortedAscending( Iterator start, Iterator end, const bool verbose )
 {
   // Make sure the container is not empty
   testPrecondition( start != end );
@@ -38,7 +38,13 @@ bool isSortedAscending( Iterator start, Iterator end )
   {
     if( get<member>( *element_a ) > get<member>( *element_b ) )
     {
-      is_sorted = false;      
+      is_sorted = false;
+
+      if( verbose )
+      {
+	std::cout << get<member>( *element_a ) << " " 
+		  << get<member>( *element_b ) << std::endl;
+      }
       
       break;
     }
@@ -52,9 +58,11 @@ bool isSortedAscending( Iterator start, Iterator end )
 
 // Test if an array is sorted in ascending order
 template<typename Iterator>
-inline bool isSortedAscending( Iterator start, Iterator end )
+inline bool isSortedAscending( Iterator start, 
+			       Iterator end, 
+			       const bool verbose )
 {
-  return isSortedAscending<FIRST>( start, end );
+  return isSortedAscending<FIRST>( start, end, verbose );
 }
 
 } // end Sort namespace

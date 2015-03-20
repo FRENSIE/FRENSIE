@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_PhotoatomicReactionACEFactory.hpp
 //! \author Alex Robinson
-//! \brief  The incoherent photoatomic reaction ACE data factory declaration
+//! \brief  The photoatomic reaction ACE data factory declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -12,10 +12,11 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Utility_HashBasedGridSearcher.hpp"
 
 namespace MonteCarlo{
 
-//! The incoherent photoatomic reaction factory class that uses ACE data
+//! The photoatomic reaction factory class that uses ACE data
 class PhotoatomicReactionACEFactory
 {
 
@@ -23,42 +24,48 @@ public:
 
   //! Create an incoherent scattering photoatomic reaction
   static void createIncoherentReaction(
-			const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<PhotoatomicReaction>& incoherent_reaction,
-			const bool use_doppler_broadening_data );
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& incoherent_reaction,
+       const bool use_doppler_broadening_data );
 
   //! Create a coherent scattering photoatomic reaction
   static void createCoherentReaction(
-			const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<PhotoatomicReaction>& coherent_reaction );
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& coherent_reaction );
 
   //! Create a pair production photoatomic reaction
   static void createPairProductionReaction(
-		   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<PhotoatomicReaction>& pair_production_reaction,
-		   const bool use_detailed_pair_production_data );
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& pair_production_reaction,
+       const bool use_detailed_pair_production_data );
 
   //! Create the total photoelectric photoatomic reaction
   static void createTotalPhotoelectricReaction(
-		   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction );
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,	
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction );
 
   //! Create the subshell photoelectric photoatomic reactions
   static void createSubshellPhotoelectricReactions(
-		const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		const Teuchos::ArrayRCP<const double>& energy_grid,
-		Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
-		subshell_photoelectric_reactions );
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
+       subshell_photoelectric_reactions );
 
   //! Create the heating photoatomic reaction
   static void createHeatingReaction(
-		   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<PhotoatomicReaction>& heating_reaction );
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& heating_reaction );
 
 protected:
   

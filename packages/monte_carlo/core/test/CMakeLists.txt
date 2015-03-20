@@ -60,6 +60,12 @@ ADD_EXECUTABLE(tstStandardComptonProfileSubshellConverter
 TARGET_LINK_LIBRARIES(tstStandardComptonProfileSubshellConverter monte_carlo_core)
 ADD_TEST(StandardComptonProfileSubshellConverter_test tstStandardComptonProfileSubshellConverter)
 
+ADD_EXECUTABLE(tstComptonProfileHelpers
+  tstComptonProfileHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstComptonProfileHelpers monte_carlo_core)
+ADD_TEST(ComptonProfileHelpers_test tstComptonProfileHelpers)
+
 ADD_EXECUTABLE(tstSimulationProperties 
   tstSimulationProperties.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

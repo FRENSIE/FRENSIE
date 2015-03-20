@@ -181,6 +181,18 @@ TEUCHOS_UNIT_TEST( PhotoatomCore, getAtomicRelaxationModel )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the hash-based grid searcher can be returned
+TEUCHOS_UNIT_TEST( PhotoatomCore, getGridSearcher )
+{
+  const Utility::HashBasedGridSearcher& grid_searcher = 
+    ace_photoatom_core->getGridSearcher();
+
+  unsigned grid_index = grid_searcher.findLowerBinIndex( 1e-3 );
+
+  TEST_EQUALITY_CONST( grid_index, 1912 );
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
@@ -222,6 +234,13 @@ int main( int argc, char** argv )
     // Create the pair production and photoelectric effect cross sections
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.deepCopy( xss_data_extractor->extractPhotonEnergyGrid() );
+
+    Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+        new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,true>( 
+					     energy_grid,
+					     energy_grid[0],
+					     energy_grid[energy_grid.size()-1],
+					     100 ) );
         
     Teuchos::ArrayView<const double> raw_pe_cross_section = 
       xss_data_extractor->extractPhotoelectricCrossSection();
@@ -241,7 +260,8 @@ int main( int argc, char** argv )
 	    new MonteCarlo::PhotoelectricPhotoatomicReaction<Utility::LogLog>(
 						    energy_grid,
 						    pe_cross_section,
-						    pe_threshold_index ) );
+						    pe_threshold_index,
+						    grid_searcher ) );
     
     Teuchos::ArrayView<const double> raw_pp_cross_section = 
       xss_data_extractor->extractPairProductionCrossSection();
@@ -260,7 +280,8 @@ int main( int argc, char** argv )
 	    new MonteCarlo::PairProductionPhotoatomicReaction<Utility::LogLog>(
 							energy_grid,
 							pp_cross_section,
-							pp_threshold_index ) );
+							pp_threshold_index,
+							grid_searcher ) );
 
     // Create the reaction maps
     MonteCarlo::PhotoatomCore::ReactionMap scattering_reactions, 
@@ -277,6 +298,7 @@ int main( int argc, char** argv )
     // Create a test photoatom core
     ace_photoatom_core.reset(
 			  new MonteCarlo::PhotoatomCore( energy_grid,
+							 grid_searcher,
 							 scattering_reactions,
 							 absorption_reactions,
 							 relaxation_model,

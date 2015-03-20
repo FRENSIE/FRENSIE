@@ -16,7 +16,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
@@ -25,7 +25,7 @@ namespace Utility{
 
 //! Histogram distribution class
 class HistogramDistribution : public OneDDistribution,
-			      public XMLCompatibleObject<HistogramDistribution>
+			      public ParameterListCompatibleObject<HistogramDistribution>
 {
 
 private:

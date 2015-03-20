@@ -15,7 +15,7 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_Tuple.hpp"
 #include "Utility_ContractException.hpp"
@@ -24,7 +24,7 @@ namespace Utility{
 
 //! Discrete distribution class
 class DiscreteDistribution : public OneDDistribution,
-			     public XMLCompatibleObject<DiscreteDistribution>
+			     public ParameterListCompatibleObject<DiscreteDistribution>
 {
 
 private:

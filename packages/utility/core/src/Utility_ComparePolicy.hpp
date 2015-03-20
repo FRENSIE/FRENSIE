@@ -837,6 +837,82 @@ struct ComparePolicy<Pair<T,T2> >
   }
 };
 
+/*! \brief The partial specialization of the Utility::ComparePolicy for
+ * const std::pair.
+ * \ingroup compare_policy
+ */
+template<typename T, typename T2>
+struct ComparePolicy<const std::pair<T,T2> >
+{
+  typedef const double scalarType;
+  static inline bool compare( const std::pair<T,T2> &first_value,
+			      const std::string &first_name,
+			      const std::pair<T,T2> &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0.0 )
+  {
+    bool success = true;
+    
+    // Compare the first tuple members
+    {
+      bool local_success = true;
+      local_success = compareFirstTupleMembers<T>( first_value.first,
+						   first_name,
+						   second_value.first,
+						   second_name,
+						   out,
+						   index,
+						   tol );
+      if( !local_success )
+	success = false;
+    }
+
+    // Compare the second tuple members
+    {
+      bool local_success = true;
+      local_success = compareSecondTupleMembers<T2>( first_value.second,
+						     first_name,
+						     second_value.second,
+						     second_name,
+						     out,
+						     index,
+						     tol );
+      if( !local_success )
+	success = false;
+    }
+
+    return success;
+  }
+};
+
+/*! \brief The partial specialization of the Utility::ComparePolicy for
+ * std::pair.
+ * \ingroup compare_policy
+ */
+template<typename T, typename T2>
+struct ComparePolicy<std::pair<T,T2> >
+{
+  typedef const double scalarType;
+  static inline bool compare( const std::pair<T,T2> &first_value,
+			      const std::string &first_name,
+			      const std::pair<T,T2> &second_value,
+			      const std::string &second_name,
+			      Teuchos::FancyOStream &out,
+			      const int index = -1,
+			      const scalarType tol = 0.0 )
+  {
+    return ComparePolicy<const std::pair<T,T2> >::compare( first_value,
+							   first_name,
+							   second_value,
+							   second_name,
+							   out,
+							   index,
+							   tol );
+  }
+};
+
 /*! \brief The partial specialization of the Utility::ComparePolicy for 
  * const Utility::Trip. 
  * \ingroup compare_policy

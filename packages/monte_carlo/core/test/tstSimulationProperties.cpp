@@ -58,9 +58,14 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
                MonteCarlo::SimulationProperties::getMaxElectronEnergy(),
                20.0 );
   TEST_EQUALITY_CONST(
-               MonteCarlo::SimulationProperties::getAbsoluteMaxElectronEnergy(),
-               20.0 );
+	      MonteCarlo::SimulationProperties::getAbsoluteMaxElectronEnergy(),
+	      20.0 );
+  TEST_EQUALITY_CONST(
+	     MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins(),
+	     1000 );
+  TEST_ASSERT( MonteCarlo::SimulationProperties::displayWarnings() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isImplicitCaptureModeOn() );
+  TEST_ASSERT( !MonteCarlo::SimulationProperties::isImpulseApproximationModeOn() );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isPhotonDopplerBroadeningModeOn() );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isAtomicRelaxationModeOn() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isDetailedPairProductionModeOn() );
@@ -220,6 +225,26 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setMaxPhotonEnergy )
 }
 
 //---------------------------------------------------------------------------//
+// Test that the number of photon hash grid bins can be set
+TEUCHOS_UNIT_TEST( SimulationProperties, setNumberOfPhotonHashGridBins )
+{
+  unsigned default_value = 
+    MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins();
+
+  MonteCarlo::SimulationProperties::setNumberOfPhotonHashGridBins( 500 );
+
+  TEST_ASSERT( 
+	  MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins() !=
+	  default_value );
+  TEST_EQUALITY_CONST( 
+	     MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins(),
+	     500 );
+  
+  // Reset the default value
+  MonteCarlo::SimulationProperties::setNumberOfPhotonHashGridBins( default_value );
+}
+
+//---------------------------------------------------------------------------//
 // Test that the min electron energy can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setMinElectronEnergy )
 {
@@ -320,6 +345,17 @@ TEUCHOS_UNIT_TEST( SimulationProperties, getMaxParticleEnergy )
 }
 
 //---------------------------------------------------------------------------//
+// Test that warnings can be disabled
+TEUCHOS_UNIT_TEST( SimulationProperties, setWarningsOff )
+{
+  TEST_ASSERT( MonteCarlo::SimulationProperties::displayWarnings() );
+
+  MonteCarlo::SimulationProperties::setWarningsOff();
+
+  TEST_ASSERT( !MonteCarlo::SimulationProperties::displayWarnings() );
+}
+
+//---------------------------------------------------------------------------//
 // Test that implicit capture mode can be turned on
 TEUCHOS_UNIT_TEST( SimulationProperties, setImplicitCaptureModeOn )
 {
@@ -328,6 +364,17 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setImplicitCaptureModeOn )
   MonteCarlo::SimulationProperties::setImplicitCaptureModeOn();
 
   TEST_ASSERT( MonteCarlo::SimulationProperties::isImplicitCaptureModeOn() );
+}
+
+//---------------------------------------------------------------------------//
+// Test that impulse approximation mode can be turned on
+TEUCHOS_UNIT_TEST( SimulationProperties, setImpulseApproximationModeOn )
+{
+  TEST_ASSERT( !MonteCarlo::SimulationProperties::isImpulseApproximationModeOn() );
+
+  MonteCarlo::SimulationProperties::setImpulseApproximationModeOn();
+
+  TEST_ASSERT( MonteCarlo::SimulationProperties::isImpulseApproximationModeOn() );
 }
 
 //---------------------------------------------------------------------------//

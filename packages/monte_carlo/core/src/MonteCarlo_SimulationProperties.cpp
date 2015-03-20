@@ -49,6 +49,9 @@ const double SimulationProperties::absolute_max_photon_energy = 20.0;
 double SimulationProperties::max_photon_energy = 
   SimulationProperties::absolute_max_photon_energy;
 
+// The number of photon has grid bins
+unsigned SimulationProperties::num_photon_hash_grid_bins = 1000;
+
 // The absolute min electron energy
 const double SimulationProperties::absolute_min_electron_energy = 1.5e-5;
 
@@ -63,8 +66,14 @@ const double SimulationProperties::absolute_max_electron_energy = 20.0;
 double SimulationProperties::max_electron_energy =
   SimulationProperties::absolute_max_electron_energy;
 
+// The warning message flag
+bool SimulationProperties::display_warnings = true;
+
 // The capture mode (true = implicit, false = analogue - default)
 bool SimulationProperties::implicit_capture_mode_on = false;
+
+// The impulse approximation mode (true = on, false = off - default)
+bool SimulationProperties::impulse_approximation_mode_on = false;
 
 // The photon Doppler broadening mode (true = on - default, false = off)
 bool SimulationProperties::doppler_broadening_mode_on = true;
@@ -150,6 +159,15 @@ void SimulationProperties::setMaxPhotonEnergy( const double energy )
   SimulationProperties::max_photon_energy = energy;
 }
 
+// Set the number of photon hash grid bins
+void SimulationProperties::setNumberOfPhotonHashGridBins( const unsigned bins )
+{
+  // Make sure the number of bins is valid
+  testPrecondition( bins >= 1 );
+
+  SimulationProperties::num_photon_hash_grid_bins = bins;
+}
+
 // Set the minimum electron energy (MeV)
 void SimulationProperties::setMinElectronEnergy( const double energy )
 {
@@ -170,10 +188,22 @@ void SimulationProperties::setMaxElectronEnergy( const double energy )
   SimulationProperties::max_electron_energy = energy;
 }
 
+// Turn off warnings
+void SimulationProperties::setWarningsOff()
+{
+  SimulationProperties::display_warnings = false;
+}
+
 // Set implicit capture mode to on (off by default)
 void SimulationProperties::setImplicitCaptureModeOn()
 {
   SimulationProperties::implicit_capture_mode_on = true;
+}
+
+// Set impulse approximation mode to on (off by default)
+void SimulationProperties::setImpulseApproximationModeOn()
+{
+  SimulationProperties::impulse_approximation_mode_on = true;
 }
 
 // Set photon Doppler broadening mode to off (on by default)

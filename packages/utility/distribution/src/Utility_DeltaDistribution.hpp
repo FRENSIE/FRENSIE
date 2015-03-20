@@ -15,13 +15,13 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 
 namespace Utility{
 
 //! Delta distribution class
 class DeltaDistribution : public OneDDistribution,
-			  public XMLCompatibleObject<DeltaDistribution>
+			  public ParameterListCompatibleObject<DeltaDistribution>
 {
 
 private:

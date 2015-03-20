@@ -21,13 +21,22 @@ class SubshellPhotoelectricPhotoatomicReaction : public PhotoelectricPhotoatomic
   
  public:
 
-  //! Constructor
+  //! Basic constructor
   SubshellPhotoelectricPhotoatomicReaction(
                 const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		const Teuchos::ArrayRCP<const double>& cross_section,
 		const unsigned threshold_energy_index,
 		const SubshellType interaction_subshell,
 		const double binding_energy );
+
+  //! Constructor
+  SubshellPhotoelectricPhotoatomicReaction(
+       const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+       const Teuchos::ArrayRCP<const double>& cross_section,
+       const unsigned threshold_energy_index,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       const SubshellType interaction_subshell,
+       const double binding_energy );
 
   //! Destructor
   ~SubshellPhotoelectricPhotoatomicReaction()

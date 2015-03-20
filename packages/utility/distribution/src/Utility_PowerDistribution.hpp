@@ -14,14 +14,14 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 
 namespace Utility{
 
 //! Power distribution class (N > 2)
 template<unsigned N>
 class PowerDistribution : public OneDDistribution,
-			  public XMLCompatibleObject<PowerDistribution<N> >
+			  public ParameterListCompatibleObject<PowerDistribution<N> >
 {
 
 private:
@@ -109,7 +109,7 @@ private:
 //! Power distribution class (N = 2)
 template<>
 class PowerDistribution<2u> : public OneDDistribution,
-			     public XMLCompatibleObject<PowerDistribution<2u> >
+			     public ParameterListCompatibleObject<PowerDistribution<2u> >
 {
 
 private:
@@ -195,7 +195,7 @@ private:
 //! Power distribution class (N = 1)
 template<>
 class PowerDistribution<1u> : public OneDDistribution,
-			     public XMLCompatibleObject<PowerDistribution<1u> >
+			     public ParameterListCompatibleObject<PowerDistribution<1u> >
 {
 
 private:
