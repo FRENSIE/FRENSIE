@@ -51,17 +51,6 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
                          electron.getEnergy(),
                          d_electroionization_subshell_scattering_distribution );
 
-/*
-  // Set the new energy of the original electron
-  if( incoming_energy - knock_on_energy - d_binding_energy > 0 )
-  {
-    electron.setEnergy( incoming_energy - knock_on_energy - d_binding_energy);
-  }
-  else
-  {
-    electron.setEnergy( 1e-15 );
-  }
-*/
   electron.setEnergy( std::max( 1e-15,
                       incoming_energy - knock_on_energy - d_binding_energy ) );
 

@@ -204,28 +204,7 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
                                       x );
 
     // Normalized the rejection function
-    if( g_x_min < g_x_mid )
-    {
-      if( g_x_mid < g_x_max )
-      {  
-        g /= g_x_max;
-      }
-      else 
-      {
-        g /= g_x_mid;
-      }
-    }
-    else
-    {
-      if( g_x_min < g_x_max )
-      {  
-        g /= g_x_max;
-      }
-      else 
-      {
-        g /= g_x_min;
-      }
-    }
+    g /= std::max( std::max( g_x_min, g_x_max ), g_x_mid );
  
     // Apply rejection scheme
     rand1 = Utility::RandomNumberGenerator::getRandomNumber<double>();
