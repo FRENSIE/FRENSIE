@@ -53,6 +53,13 @@ double evaluateCorrelatedCDF(
    const double interpolation_fraction,
    const double independent_value );
 
+//! Evaluate a correlated pdf value
+double evaluateCorrelatedPDF(
+   const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
+   const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
+   const double interpolation_fraction,
+   const double independent_value );
+
 //! Sample from either the lower or upper distribution depending on interp frac
 double independentSample(
    const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,

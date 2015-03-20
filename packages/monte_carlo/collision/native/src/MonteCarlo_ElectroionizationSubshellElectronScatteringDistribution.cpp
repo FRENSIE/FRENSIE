@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <limits>
+#include <algorithm>
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
@@ -49,7 +50,8 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   knock_on_energy = sampleTwoDDistributionCorrelated( 
                          electron.getEnergy(),
                          d_electroionization_subshell_scattering_distribution );
-  //std::cout << "electroionization scattering called" << std::endl;
+
+/*
   // Set the new energy of the original electron
   if( incoming_energy - knock_on_energy - d_binding_energy > 0 )
   {
@@ -59,6 +61,9 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   {
     electron.setEnergy( 1e-15 );
   }
+*/
+  electron.setEnergy( std::max( 1e-15,
+                      incoming_energy - knock_on_energy - d_binding_energy ) );
 
   // Increment the electron generation number
   electron.incrementGenerationNumber();
@@ -70,36 +75,16 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   // Set electron energy
   knock_on_electron->setEnergy( knock_on_energy );
 
-  // The outgoing angle cosine of the original electron
-  double outgoing_angle_cosine;
+  // The normalized incoming electron energy
+  double normalized_incoming_energy = 
+          incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
 
-  // The outgoing angle cosine of the knock-on electron
-  double knock_on_angle_cosine;
+  // The energy ratio of the original electron
+  double outgoing_energy_ratio = electron.getEnergy()/incoming_energy;
 
-  // Outgoing Energy
-  double outgoing_energy = electron.getEnergy();
-
-  // get the incoming momentum_squared
-  double incoming_momentum_squared = 
-           Utility::calculateRelativisticMomentumSquared( 
-                          Utility::PhysicalConstants::electron_rest_mass_energy,
-                          incoming_energy );
-
-  // get the outgoing momentum_squared
-  double outgoing_momentum_squared = 
-          Utility::calculateRelativisticMomentumSquared( 
-                          Utility::PhysicalConstants::electron_rest_mass_energy,
-                          outgoing_energy );
-
-  // Calculate the outgoing angle cosine of the original electron
-  outgoing_angle_cosine = polarDeflectionAngle( incoming_momentum_squared, 
-                                                outgoing_momentum_squared,
-                                                knock_on_energy );
-
-  // Calculate the outgoing angle cosine of the knock-on electron
-  knock_on_angle_cosine = knockOnDeflectionAngle( incoming_momentum_squared, 
-                                                  outgoing_momentum_squared, 
-                                                  outgoing_angle_cosine );
+  // Calculate the outgoing angle cosine for the original electron
+  double outgoing_angle_cosine = outgoingAngle( normalized_incoming_energy,
+                                                outgoing_energy_ratio );
 
   // Sample the electron outgoing direction
   double outgoing_electron_direction[3];
@@ -109,6 +94,13 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
 		  				   sampleAzimuthalAngle(),
 			  			   electron.getDirection(),
 				  		   outgoing_electron_direction );
+
+  // The energy ratio of the knock-on electron
+  double knock_on_energy_ratio = knock_on_energy/incoming_energy;
+
+  // Calculate the outgoing angle cosine for the knock on electron
+  double knock_on_angle_cosine = outgoingAngle( normalized_incoming_energy,
+                                                knock_on_energy_ratio );
 
   // Sample the knock-on electron outgoing direction
   double knock_on_electron_direction[3];
@@ -129,39 +121,14 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   bank.push( knock_on_electron );
 }
 
-// Calculate the outgoing angle cosine of the original electron
-double ElectroionizationSubshellElectronScatteringDistribution::polarDeflectionAngle( 
-                                              double& incoming_momentum_squared,
-                                              double& outgoing_momentum_squared,
-                                              double& knock_on_energy ) const
+// Calculate the outgoing angle cosine
+double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle( 
+                                             double& normalized_incoming_energy,
+                                             double& energy_ratio ) const
 {
-  // Assume no momentum goes to atom
-  return
-  ( incoming_momentum_squared + outgoing_momentum_squared - knock_on_energy *
-  (knock_on_energy + 2.0*Utility::PhysicalConstants::electron_rest_mass_energy ) ) 
-  /( 2.0 * sqrt(incoming_momentum_squared) * sqrt(outgoing_momentum_squared) );
-}
-
-// Calculate the outgoing angle cosine of the knock-on electron
-double ElectroionizationSubshellElectronScatteringDistribution::knockOnDeflectionAngle( 
-                                              double& incoming_momentum_squared,
-                                              double& outgoing_momentum_squared,
-                                              double& outgoing_cosine ) const
-{
-  // get the incoming momentum
-  double incoming_momentum = sqrt(incoming_momentum_squared);
-
-  // get the outgoing momentum
-  double outgoing_momentum = sqrt(outgoing_momentum_squared);
-
-  // get the momentum transfer
-  double transfer_momentum = 
-                   sqrt( incoming_momentum_squared + outgoing_momentum_squared -
-                   2.0*incoming_momentum*outgoing_momentum*outgoing_cosine );
-
-  // Assume the recoil energy = the erngy loss
-  return
-  ( incoming_momentum - outgoing_momentum * outgoing_cosine )/transfer_momentum;
+  // Randomly select the plane of scattering
+  return sqrt( energy_ratio*( normalized_incoming_energy + 2.0 )/
+             ( energy_ratio*normalized_incoming_energy + 2.0 ) );
 }
 
 } // end MonteCarlo namespace
