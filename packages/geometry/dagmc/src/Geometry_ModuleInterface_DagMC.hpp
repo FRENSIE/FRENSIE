@@ -11,6 +11,7 @@
 
 // Boost Includes
 #include <boost/unordered_set.hpp>
+#include <boost/unordered_map.hpp>
 
 // Moab Includes
 #include <DagMC.hpp>
@@ -70,8 +71,11 @@ public:
   static void setHandlerInstance( 
 			   const Teuchos::RCP<moab::DagMC>& handler_instance );
 
-  //! Do just in time initialization required for interface to work properly
+  //! Do just in time initialization of interface members
   static void initialize();  
+
+  //! Enable support for multiple threads
+  static void enableThreadSupport( const unsigned num_threads );
 
   //! Find the cell that contains a given point (start of history)
   static InternalCellHandle findCellContainingPoint( const Ray& ray );
@@ -151,6 +155,9 @@ private:
   //! Get all the cells contained in the geometry
   static void getAllCells();
 
+  //! Get all of the surfaces contained in the geometry
+  static void getAllSurfaces();
+
   //! Test the cells found to contain test points for point containment
   static void testCellsContainingTestPoints( InternalCellHandle& cell,
 					     const Ray& ray );
@@ -167,6 +174,14 @@ private:
 
   // The collection of all cells in the geometry
   static moab::Range all_cells;
+
+  // The map of cell ids and cell entity handles
+  static boost::unordered_map<InternalCellHandle,ExternalCellHandle> 
+  cell_handle_map;
+
+  // The map of surface ids and surface entity handles
+  static boost::unordered_map<InternalSurfaceHandle,ExternalSurfaceHandle>
+  surface_handle_map;
 
   // The DagMC::RayHistory for ray tracing (one for each thread)
   static std::vector<moab::DagMC::RayHistory> ray_history;
@@ -367,11 +382,15 @@ inline ModuleInterface<moab::DagMC>::ExternalSurfaceHandle
 ModuleInterface<moab::DagMC>::getExternalSurfaceHandle(
 					  const InternalSurfaceHandle surface )
 {
-  testPrecondition( doesSurfaceExist( 
-		                 static_cast<ExternalSurfaceId>( surface ) ) );
+  // testPrecondition( doesSurfaceExist( 
+  // 		                 static_cast<ExternalSurfaceId>( surface ) ) );
+  testPrecondition( surface_handle_map.find( surface ) != 
+		    surface_handle_map.end() );
   
-  return ModuleInterface<moab::DagMC>::dagmc_instance->entity_by_id(
-				2, static_cast<ExternalSurfaceId>( surface ) );
+  return surface_handle_map.find( surface )->second;
+  
+  // return ModuleInterface<moab::DagMC>::dagmc_instance->entity_by_id(
+  // 				2, static_cast<ExternalSurfaceId>( surface ) );
 }
   
 // Get the external cell handle corresponding to the internal cell handle
@@ -379,10 +398,13 @@ inline ModuleInterface<moab::DagMC>::ExternalCellHandle
 ModuleInterface<moab::DagMC>::getExternalCellHandle(
 					        const InternalCellHandle cell )
 {
-  testPrecondition( doesCellExist( static_cast<ExternalCellId>( cell ) ) );
+  // testPrecondition( doesCellExist( static_cast<ExternalCellId>( cell ) ) );
+  testPrecondition( cell_handle_map.find( cell ) != cell_handle_map.end() );
+
+  return cell_handle_map.find( cell )->second;
   
-  return ModuleInterface<moab::DagMC>::dagmc_instance->entity_by_id(
-				      3, static_cast<ExternalCellId>( cell ) );
+  // return ModuleInterface<moab::DagMC>::dagmc_instance->entity_by_id(
+  // 				      3, static_cast<ExternalCellId>( cell ) );
 }
 
 } // end Geometry namespace

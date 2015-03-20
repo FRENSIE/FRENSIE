@@ -130,7 +130,7 @@ TEUCHOS_UNIT_TEST( Photoatom, getAbsorptionReactionTypes )
 	       MonteCarlo::Q3_SUBSHELL_PHOTOELECTRIC_PHOTOATOMIC_REACTION ) );
 
   TEST_ASSERT( !absorption_types.count(
-	       MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION ) );
+	       MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION ) );
   TEST_ASSERT( !absorption_types.count(
 	       MonteCarlo::COHERENT_PHOTOATOMIC_REACTION ) );
   TEST_ASSERT( !absorption_types.count(
@@ -425,20 +425,20 @@ TEUCHOS_UNIT_TEST( Photoatom, getReactionCrossSection )
 
   // Incoherent
   cross_section = ace_photoatom->getReactionCrossSection(
-				 exp( -1.381551055796E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( -1.381551055796E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
 
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
   cross_section = ace_photoatom->getReactionCrossSection(
-				 exp( 2.480967890857E-02 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( 2.480967890857E-02 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
   
   TEST_EQUALITY_CONST( cross_section, 0.0 );
   
   cross_section = ace_photoatom->getReactionCrossSection(
-				 exp( 1.151292546497E+01 ),
-				 MonteCarlo::INCOHERENT_PHOTOATOMIC_REACTION );
+			   exp( 1.151292546497E+01 ),
+			   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
   
   TEST_EQUALITY_CONST( cross_section, 0.0 );
 
@@ -562,7 +562,7 @@ TEUCHOS_UNIT_TEST( Photoatom, collideAnalogue )
   
   TEST_ASSERT( !photon->isGone() );
   TEST_EQUALITY_CONST( photon->getWeight(), 1.0 );
-  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.size(), 2 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -594,7 +594,7 @@ TEUCHOS_UNIT_TEST( Photoatom, collideSurvivalBias )
 
   TEST_ASSERT( !photon->isGone() );
   TEST_FLOATING_EQUALITY( photon->getWeight(), 0.9999996542347203, 1e-15 );
-  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.size(), 2 );
   TEST_FLOATING_EQUALITY( bank.top()->getWeight(), 0.9999996542347203, 1e-15 );
 }
 
@@ -690,6 +690,13 @@ int main( int argc, char** argv )
     // Create the pair production and photoelectric effect cross sections
     Teuchos::ArrayRCP<double> energy_grid;
     energy_grid.deepCopy( xss_data_extractor->extractPhotonEnergyGrid() );
+
+    Teuchos::RCP<Utility::HashBasedGridSearcher> grid_searcher(
+        new Utility::StandardHashBasedGridSearcher<Teuchos::ArrayRCP<const double>,true>( 
+					     energy_grid,
+					     energy_grid[0],
+					     energy_grid[energy_grid.size()-1],
+					     1000 ) );
         
     Teuchos::ArrayView<const double> raw_pe_cross_section = 
       xss_data_extractor->extractPhotoelectricCrossSection();
@@ -753,6 +760,7 @@ int main( int argc, char** argv )
 				    xss_data_extractor->extractAtomicNumber(),
 				    atomic_weight,
 				    energy_grid,
+				    grid_searcher,
 				    scattering_reactions,
 				    absorption_reactions,
 				    relaxation_model,

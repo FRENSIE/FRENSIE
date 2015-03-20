@@ -8,6 +8,7 @@
 
 // Std Lib Includes
 #include <algorithm>
+#include <limits>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReactionACEFactory.hpp"
@@ -18,6 +19,7 @@
 #include "MonteCarlo_SubshellPhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_AbsorptionPhotoatomicReaction.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
+#include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
@@ -27,10 +29,11 @@ namespace MonteCarlo{
 
 // Create an incoherent scattering photoatomic reaction
 void PhotoatomicReactionACEFactory::createIncoherentReaction(
-			const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<PhotoatomicReaction>& incoherent_reaction,
-			const bool use_doppler_broadening_data )
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& incoherent_reaction,
+       const bool use_doppler_broadening_data )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
@@ -61,10 +64,21 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
   for( unsigned i = 0; i < scatt_func_size; ++i )
     recoil_momentum[i] *= 1e8;
 
+  // Log-Log interpolation is required but first recoil momentum may be 0.0
+  if( recoil_momentum.front() == 0.0 )
+    recoil_momentum.front() = std::numeric_limits<double>::min();
+
+  Teuchos::Array<double> scattering_function_values( 
+			     jince_block( scatt_func_size, scatt_func_size ) );
+
+  // Log-Log interpolation is required but first value may be 0.0
+  if( scattering_function_values.front() == 0.0 )
+    scattering_function_values.front() = std::numeric_limits<double>::min();
+
   Teuchos::RCP<Utility::OneDDistribution> scattering_function(
 		     new Utility::TabularDistribution<Utility::LogLog>(
-			   recoil_momentum,
-			   jince_block( scatt_func_size, scatt_func_size ) ) );
+						recoil_momentum,
+						scattering_function_values ) );
   
   if( use_doppler_broadening_data )
   {
@@ -95,7 +109,7 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
     Teuchos::ArrayView<const double> swd_block = 
       raw_photoatom_data.extractSWDBlock();
 
-    Teuchos::Array<Teuchos::RCP<Utility::OneDDistribution> >
+    Teuchos::Array<Teuchos::RCP<const Utility::OneDDistribution> >
       compton_profiles( lswd_block.size() );
     
     for( unsigned subshell = 0; subshell < lswd_block.size(); ++subshell )
@@ -103,13 +117,24 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
       unsigned subshell_index = lswd_block[subshell]; 
 
       unsigned num_momentum_points = swd_block[subshell_index];
+
+      Teuchos::Array<double> half_momentum_grid( 
+			swd_block( subshell_index + 1, num_momentum_points ) );
+
+      Teuchos::Array<double> half_profile(
+                           swd_block( subshell_index + 1 + num_momentum_points,
+				      num_momentum_points ) );
+
+      MonteCarlo::convertMomentumGridToMeCUnits( half_momentum_grid.begin(),
+					       half_momentum_grid.end() );
+
+      MonteCarlo::convertProfileToInverseMeCUnits( half_profile.begin(),
+						   half_profile.end() );
       
       // Ignore interp parameter (always assume log-log inerpolation)
       compton_profiles[subshell].reset(
-	       new Utility::TabularDistribution<Utility::LogLog>(
-			  swd_block( subshell_index + 1, num_momentum_points ),
-			  swd_block( subshell_index + 1 + num_momentum_points,
-				     num_momentum_points ) ) );
+	 new Utility::TabularDistribution<Utility::LogLin>( half_momentum_grid,
+							    half_profile ) );
     }
     
     // Create the incoherent reaction
@@ -118,6 +143,7 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
 			   energy_grid,
 			   incoherent_cross_section,
 			   threshold_energy_index,
+			   grid_searcher,
 			   scattering_function,
 			   raw_photoatom_data.extractSubshellBindingEnergies(),
 			   raw_photoatom_data.extractSubshellOccupancies(),
@@ -133,15 +159,17 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
 						    energy_grid,
 						    incoherent_cross_section,
 						    threshold_energy_index,
+						    grid_searcher,
 						    scattering_function ) );
   }
 }
 
 // Create a coherent scattering photoatomic reaction
 void PhotoatomicReactionACEFactory::createCoherentReaction(
-			const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<PhotoatomicReaction>& coherent_reaction )
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& coherent_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
@@ -171,7 +199,7 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
   Teuchos::Array<double> form_factor_squared(
 			 jcohe_block( 2*form_factor_size, form_factor_size ) );
 
-  // The stored recoil momemtum has units of inverse Angstroms - convert to
+  // The stored recoil momentum has units of inverse Angstroms - convert to
   // inverse cm^2
   for( unsigned i = 0; i < form_factor_size; ++i )
   {
@@ -179,6 +207,14 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
     
     form_factor_squared[i] *= form_factor_squared[i];
   }
+
+  // Log-Log interpolation is required but the last recoil momentum may be 0.0
+  if( recoil_momentum_squared.back() == 0.0 )
+    recoil_momentum_squared.back() = std::numeric_limits<double>::min();
+
+  // Log-Log interpolation is required but the last form factor value may be 0
+  if( form_factor_squared.back() == 0.0 )
+    form_factor_squared.back() = std::numeric_limits<double>::min();
 
   Teuchos::RCP<Utility::OneDDistribution> form_factor(
 			     new Utility::TabularDistribution<Utility::LogLog>(
@@ -191,15 +227,17 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
 							energy_grid,
 							coherent_cross_section,
 							threshold_energy_index,
+							grid_searcher,
 							form_factor ) );
 }
 
 // Create a pair production photoatomic reaction
 void PhotoatomicReactionACEFactory::createPairProductionReaction(
-		   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<PhotoatomicReaction>& pair_production_reaction,
-		   const bool use_detailed_pair_production_data )
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& pair_production_reaction,
+       const bool use_detailed_pair_production_data )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
@@ -223,14 +261,16 @@ void PhotoatomicReactionACEFactory::createPairProductionReaction(
 					 energy_grid,
 					 pair_production_cross_section,
 					 threshold_energy_index,
+					 grid_searcher,
 					 use_detailed_pair_production_data ) );
 }
 
 // Create the total photoelectric photoatomic reaction
 void PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
-		   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction )
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& photoelectric_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
@@ -253,15 +293,17 @@ void PhotoatomicReactionACEFactory::createTotalPhotoelectricReaction(
 		     new PhotoelectricPhotoatomicReaction<Utility::LogLog>(
 						   energy_grid,
 						   photoelectric_cross_section,
-						   threshold_energy_index ) );
+						   threshold_energy_index,
+						   grid_searcher ) );
 }
 
 // Create the subshell photoelectric photoatomic reactions
 void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
-		const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		const Teuchos::ArrayRCP<const double>& energy_grid,
-		Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
-		subshell_photoelectric_reactions )
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
+       subshell_photoelectric_reactions )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
@@ -317,6 +359,7 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 						energy_grid,
 						subshell_cross_section,
 						threshold_energy_index,
+						grid_searcher,
 						subshell_order[subshell],
 					        binding_energies[subshell] ) );
 
@@ -330,9 +373,10 @@ void PhotoatomicReactionACEFactory::createSubshellPhotoelectricReactions(
 
 // Create the heating photoatomic reaction
 void PhotoatomicReactionACEFactory::createHeatingReaction(
-		   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<PhotoatomicReaction>& heating_reaction )
+       const Data::XSSEPRDataExtractor& raw_photoatom_data,
+       const Teuchos::ArrayRCP<const double>& energy_grid,
+       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
+       Teuchos::RCP<PhotoatomicReaction>& heating_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
@@ -360,6 +404,7 @@ void PhotoatomicReactionACEFactory::createHeatingReaction(
 					      energy_grid,
 					      heating_cross_section,
 					      threshold_energy_index,
+					      grid_searcher,
 					      HEATING_PHOTOATOMIC_REACTION ) );
 }
 

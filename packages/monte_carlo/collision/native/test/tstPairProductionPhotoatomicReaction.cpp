@@ -72,12 +72,7 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction,
 // Check that the cross section can be returned
 TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, getCrossSection_ace )
 {
-  double cross_section = 
-    ace_basic_pp_reaction->getCrossSection( 1e-4 );
-
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
-
-  cross_section = ace_basic_pp_reaction->getCrossSection( 
+  double cross_section = ace_basic_pp_reaction->getCrossSection( 
                                  ace_basic_pp_reaction->getThresholdEnergy() );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( -3.84621780013E+01 ), 1e-12 );
@@ -91,10 +86,6 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, getCrossSection_ace )
     ace_basic_pp_reaction->getCrossSection( exp( 1.15129254650E+01 ) );
 
   TEST_FLOATING_EQUALITY( cross_section, exp( 3.71803283438E+00 ), 1e-12 );
-  
-  cross_section = ace_basic_pp_reaction->getCrossSection( exp( 12.0 ) );
-  
-  TEST_EQUALITY_CONST( cross_section, 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -103,31 +94,40 @@ TEUCHOS_UNIT_TEST( PairProductionPhotoatomicReaction, react_ace_basic )
 {
   Teuchos::RCP<MonteCarlo::PhotonState> photon(new MonteCarlo::PhotonState(0));
  
+  photon->setDirection( 0.0, 0.0, 1.0 );
+  photon->setEnergy( 2.0 );
+
   MonteCarlo::ParticleBank bank;
+
+  MonteCarlo::SubshellType subshell;
 
   std::vector<double> fake_stream( 2 );
   fake_stream[0] = 0.5;
   fake_stream[1] = 0.5;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
-  
-  photon->setDirection( 0.0, 0.0, 1.0 );
-  photon->setEnergy( 2.0 );
-
-  MonteCarlo::SubshellType subshell;
 
   ace_basic_pp_reaction->react( *photon, bank, subshell );
 
   TEST_EQUALITY_CONST( photon->getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   UTILITY_TEST_FLOATING_EQUALITY( photon->getZDirection(), 0.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( photon->getYDirection(), -1.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( photon->getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon->getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.size(), 2 );
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_EQUALITY_CONST( bank.top()->getZDirection(), 1.0 );
+  TEST_EQUALITY_CONST( 
+	       bank.top()->getEnergy(),
+	       2.0 - 2*Utility::PhysicalConstants::electron_rest_mass_energy );
+  
+  bank.pop();
+
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::PHOTON );
   TEST_EQUALITY_CONST( bank.top()->getEnergy(),
 		       Utility::PhysicalConstants::electron_rest_mass_energy );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0, 1e-15 );
-  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 1.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( subshell, MonteCarlo::UNKNOWN_SUBSHELL );
   

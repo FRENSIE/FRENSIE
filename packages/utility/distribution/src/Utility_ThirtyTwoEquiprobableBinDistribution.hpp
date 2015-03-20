@@ -15,13 +15,13 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 
 namespace Utility{
 
 //! The 32 equiprobable bin distribution class
   class ThirtyTwoEquiprobableBinDistribution : public OneDDistribution,
-	       public XMLCompatibleObject<ThirtyTwoEquiprobableBinDistribution>
+	       public ParameterListCompatibleObject<ThirtyTwoEquiprobableBinDistribution>
 {
 
 private:

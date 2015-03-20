@@ -11,7 +11,7 @@ IF(${FRENSIE_ENABLE_DAGMC})
     # Check if the mcnp data dir is valid
     IF(NOT EXISTS ${MCNP_DATA_DIR})
       MESSAGE(FATAL_ERROR "The supplied mcnp data directory is not valid!" )
-    ELSEIF(NOT EXISTS ${MCNP_DATA_DIR}/endf70a)
+    ELSEIF(NOT EXISTS ${MCNP_DATA_DIR}/xsdir)
       MESSAGE(FATAL_ERROR "The supplied mcnp data directory is not valid!" )
     ENDIF()
     

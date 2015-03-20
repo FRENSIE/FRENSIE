@@ -181,11 +181,33 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
     }
   }
 
+  // Get the number of photon hash grid bins - optional
+  if( properties.isParameter( "Photon Hash Grid Bins" ) )
+  {
+    unsigned bins = properties.get<unsigned>( "Photon Hash Grid Bins" );
+
+    SimulationProperties::setNumberOfPhotonHashGridBins( bins );
+  }
+
+  // Get the warnings mode - optional
+  if( properties.isParameter( "Warnings" ) )
+  {
+    if( !properties.get<bool>( "Warnings" ) )
+      SimulationProperties::setWarningsOff();
+  }
+
   // Get the capture mode - optional
   if( properties.isParameter( "Implicit Capture" ) )
   {
     if( properties.get<bool>( "Implicit Capture" ) )
       SimulationProperties::setImplicitCaptureModeOn();
+  }
+
+  // Get the impulse approximation mode - optional
+  if( properties.isParameter( "Impulse Approximation" ) )
+  {
+    if( properties.get<bool>( "Impulse Approximation" ) )
+      SimulationProperties::setImpulseApproximationModeOn();
   }
 
   // Get the photon Doppler broadening mode - optional

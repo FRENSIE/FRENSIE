@@ -42,6 +42,8 @@ void initializeDagMC()
   Geometry::initializeDagMC( test_geometry_file_name,
 			     property_names,
 			     1e-3 );
+
+  Geometry::ModuleInterface<moab::DagMC>::initialize();
 }
 
 //---------------------------------------------------------------------------//

@@ -18,6 +18,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_EstimatorHandlerFactory.hpp"
 #include "Geometry_DagMCInstanceFactory.hpp"
+#include "Geometry_ModuleInterface.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 
 //---------------------------------------------------------------------------//
@@ -83,6 +84,8 @@ int main( int argc, char** argv )
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
 
   Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
+
+  Geometry::ModuleInterface<moab::DagMC>::initialize();
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );

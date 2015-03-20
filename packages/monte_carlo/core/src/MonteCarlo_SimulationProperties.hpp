@@ -81,6 +81,12 @@ public:
   //! Return the absolute maximum photon energy (MeV)
   static double getAbsoluteMaxPhotonEnergy();
 
+  //! Set the number of photon hash grid bins
+  static void setNumberOfPhotonHashGridBins( const unsigned bins );
+
+  //! Get the number of photon hash grid bins
+  static unsigned getNumberOfPhotonHashGridBins();
+
   //! Set the minimum electron energy (MeV)
   static void setMinElectronEnergy( const double energy );
 
@@ -107,11 +113,23 @@ public:
   template<typename ParticleType>
   static double getMaxParticleEnergy();
 
+  //! Turn off warnings
+  static void setWarningsOff();
+
+  //! Return if warnings should be printed
+  static bool displayWarnings();
+
   //! Set implicit capture mode to on (off by default)
   static void setImplicitCaptureModeOn();
 
   //! Return if implicit capture mode has been set
   static bool isImplicitCaptureModeOn();
+
+  //! Set impulse approximation mode to on (off by default)
+  static void setImpulseApproximationModeOn();
+
+  //! Return if impulse approximation mode is on
+  static bool isImpulseApproximationModeOn();
 
   //! Set photon Doppler broadening mode to off (on by default)
   static void setPhotonDopplerBroadeningModeOff();
@@ -181,6 +199,9 @@ private:
   // The absolute maximum photon energy
   static const double absolute_max_photon_energy;
 
+  // The number of photon hash grid bins
+  static unsigned num_photon_hash_grid_bins;
+
   // The absolute minimum electron energy
   static const double absolute_min_electron_energy;
 
@@ -193,8 +214,14 @@ private:
   // The absolute maximum electron energy (MeV)
   static const double absolute_max_electron_energy;
 
+  // The warning message flag
+  static bool display_warnings;
+
   // The capture mode (true = implicit, false = analogue - default)
   static bool implicit_capture_mode_on;
+
+  // The impulse approximation mode (true = on, false = off - default)
+  static bool impulse_approximation_mode_on;
 
   // The photon Doppler broadening mode (true = on - default, false = off)
   static bool doppler_broadening_mode_on;
@@ -279,6 +306,12 @@ inline double SimulationProperties::getAbsoluteMaxPhotonEnergy()
   return SimulationProperties::absolute_max_photon_energy;
 }
 
+// Get the number of photon hash grid bins
+inline unsigned SimulationProperties::getNumberOfPhotonHashGridBins()
+{
+  return SimulationProperties::num_photon_hash_grid_bins;
+}
+
 // Return the minimum electron energy (MeV)
 inline double SimulationProperties::getMinElectronEnergy()
 {
@@ -303,10 +336,22 @@ inline double SimulationProperties::getAbsoluteMaxElectronEnergy()
   return SimulationProperties::absolute_max_electron_energy;
 }
 
+//! Return if warnings should be printed
+inline bool SimulationProperties::displayWarnings()
+{
+  return SimulationProperties::display_warnings;
+}
+
 // Return if implicit capture mode has been set
 inline bool SimulationProperties::isImplicitCaptureModeOn()
 {
   return SimulationProperties::implicit_capture_mode_on;
+}
+
+// Return if impulse approximation mode has been set
+inline bool SimulationProperties::isImpulseApproximationModeOn()
+{
+  return SimulationProperties::impulse_approximation_mode_on;
 }
 
 // Return if photon Doppler broadening mode is on

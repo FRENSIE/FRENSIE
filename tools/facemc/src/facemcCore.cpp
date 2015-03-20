@@ -27,7 +27,6 @@ Teuchos::RCP<MonteCarlo::SimulationManager> facemc_manager;
  * function around it. If desired a signal handler can also be attached
  */
 int facemcCore( int argc, char** argv )
-
 {
   Utility::OneDDistributionEntryConverterDB::standardInitialization();
   

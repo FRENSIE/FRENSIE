@@ -168,7 +168,64 @@ TEUCHOS_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction,
   TEST_FLOATING_EQUALITY( cross_section, exp( -1.347975286228E+01 ), 1e-12 );
 }
 
-//7.578565567350E+00 ) );
+//---------------------------------------------------------------------------//
+// Check that the reaction can be modeled
+TEUCHOS_UNIT_TEST( SubshellPhotoelectricPhotoatomicReaction, react_ace )
+{
+  Teuchos::RCP<MonteCarlo::PhotonState> photon(new MonteCarlo::PhotonState(0));
+ 
+  photon->setDirection( 0.0, 0.0, 1.0 );
+  photon->setEnergy( 2.0 );
+
+  MonteCarlo::ParticleBank bank;
+  
+  MonteCarlo::SubshellType subshell;
+
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.5;
+  fake_stream[0] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  ace_k_photoelectric_reaction->react( *photon, bank, subshell );
+
+  TEST_ASSERT( photon->isGone() );
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+			  2.0 - 8.829000000000E-02,
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), -1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
+
+  bank.pop();
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  photon.reset( new MonteCarlo::PhotonState(0) );
+ 
+  photon->setDirection( 0.0, 0.0, 1.0 );
+  photon->setEnergy( 2.0 );
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  ace_l1_photoelectric_reaction->react( *photon, bank, subshell );
+
+  TEST_ASSERT( photon->isGone() );
+  TEST_EQUALITY_CONST( bank.size(), 1 );
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_FLOATING_EQUALITY( bank.top()->getEnergy(), 
+			  2.0 - 1.584700000000E-02,
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getZDirection(), 0.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), -1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
+
+  bank.pop();
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
 
 //---------------------------------------------------------------------------//
 // Custom main function
@@ -271,6 +328,9 @@ int main( int argc, char** argv )
   // Clear setup data
   ace_file_handler.reset();
   xss_data_extractor.reset();
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );

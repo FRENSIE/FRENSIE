@@ -15,7 +15,7 @@
 #include <Teuchos_SerialDenseMatrix.hpp>
 
 // FRENSIE Includes
-#include "Data_DecayData.hpp"
+#include "Data_DecayNuclide.hpp"
 
 namespace Transmutation {
 
@@ -26,13 +26,13 @@ public:
 private: 
    static void addDecayIsotopes(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& decay_matrix, 
                                              Teuchos::Array<int>& zaids, 
-                                             data::DecayData& decay_data,
+                                             Data::DecayNuclide& decay_nuclide,
                                              const int i); 
    static void addSpontaneousFissionYields(Teuchos::RCP<Teuchos::SerialDenseMatrix<int,double> >& decay_matrix, 
                                                         Teuchos::Array<int>& zaids_array,
-                                                        data::DecayData& decay_data,
+                                                        Data::DecayNuclide& decay_nuclide,
                                                         const int i);
-   static double getSpontaneousFissionBranchingRatio(const data::DecayData& decay_data);
+   static double getSpontaneousFissionBranchingRatio( const Data::DecayNuclide& decay_nuclide );
    static const std::string default_data_file;
 };
 

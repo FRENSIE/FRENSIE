@@ -108,6 +108,27 @@ ELSE()
   SET(HAVE_${PROJECT_NAME}_DBC "0")
 ENDIF()
 
+# Enable profiling support if requested
+IF(${${PROJECT_NAME}_ENABLE_PROFILING})
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -pg")
+  SET(CMAKE_Fortran_FLAGS_DEBUG "${CMAKE_Fortran_FLAGS_DEBUG} -pg")
+  SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS} -pg")
+  
+  IF(NOT ${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
+    MESSAGE(WARNING "profiling can only be done in debug builds!")
+  ENDIF()
+ENDIF()
+
+# Enable coverage support if requested
+IF(${${PROJECT_NAME}_ENABLE_COVERAGE})
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings -fprofile-arcs -ftest-coverage")
+  SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+
+  IF(NOT ${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
+    MESSAGE(WARNING "coverage testing can only be done in debug builds!")
+  ENDIF()
+ENDIF()
+
 # Parse the DBC configure file so it can be used in the source files
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dbc_config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
 
@@ -139,17 +160,6 @@ ENDIF()
 ADD_SUBDIRECTORY(scripts)
 
 ADD_SUBDIRECTORY(packages)
-INCLUDE_DIRECTORIES(packages/utility/core/src packages/utility/prng/src
-packages/utility/hdf5/src packages/utility/distribution/src
-packages/geometry/core/src packages/geometry/dagmc/src
-packages/geometry/interface packages/data/ace/src packages/data/epdl/src
-packages/monte_carlo/core/src packages/monte_carlo/source/core/src
-packages/monte_carlo/source/interface packages/monte_carlo/source/native/src
-packages/monte_carlo/estimator/core/src packages/monte_carlo/estimator/interface
-packages/monte_carlo/estimator/native/src packages/monte_carlo/collision/core/src
-packages/monte_carlo/collision/interface packages/monte_carlo/collision/native/src
-packages/monte_carlo/manager/src packages/transmutation/src packages/data/decay/src
-packages/data/endf/src)
 
 ADD_SUBDIRECTORY(tools)
 

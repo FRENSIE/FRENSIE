@@ -112,6 +112,11 @@ ADD_EXECUTABLE(tstNuclide
 TARGET_LINK_LIBRARIES(tstNuclide monte_carlo_collision_native)
 ADD_TEST(Nuclide_test tstNuclide --test_h1_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h1_ace_file.txt" --test_h1_ace_table="1001.70c" --test_o16_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_o16_ace_file.txt" --test_o16_ace_table="8016.70c")
 
+ADD_EXECUTABLE(tstCrossSectionsXMLProperties
+  tstCrossSectionsXMLProperties.cpp)
+TARGET_LINK_LIBRARIES(tstCrossSectionsXMLProperties monte_carlo_collision_native)
+ADD_TEST(CrossSectionsXMLProperties_test tstCrossSectionsXMLProperties --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files")
+
 ADD_EXECUTABLE(tstNuclideFactory
   tstNuclideFactory.cpp)
 TARGET_LINK_LIBRARIES(tstNuclideFactory monte_carlo_collision_native)
@@ -133,6 +138,11 @@ ADD_EXECUTABLE(tstIncoherentPhotonScatteringDistribution
 TARGET_LINK_LIBRARIES(tstIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
 ADD_TEST(IncoherentPhotonScatteringDistribution_test tstIncoherentPhotonScatteringDistribution --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+ADD_EXECUTABLE(tstSubshellIncoherentPhotonScatteringDistribution
+  tstSubshellIncoherentPhotonScatteringDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstSubshellIncoherentPhotonScatteringDistribution monte_carlo_collision_native)
+ADD_TEST(SubshellIncoherentPhotonScatteringDistribution_test tstSubshellIncoherentPhotonScatteringDistribution --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
+
 ADD_EXECUTABLE(tstCoherentPhotonScatteringDistribution
   tstCoherentPhotonScatteringDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstCoherentPhotonScatteringDistribution monte_carlo_collision_native)
@@ -152,6 +162,11 @@ ADD_EXECUTABLE(tstIncoherentPhotoatomicReaction
   tstIncoherentPhotoatomicReaction.cpp)
 TARGET_LINK_LIBRARIES(tstIncoherentPhotoatomicReaction monte_carlo_collision_native)
 ADD_TEST(IncoherentPhotoatomicReaction_test tstIncoherentPhotoatomicReaction --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+
+ADD_EXECUTABLE(tstSubshellIncoherentPhotoatomicReaction
+  tstSubshellIncoherentPhotoatomicReaction.cpp)
+TARGET_LINK_LIBRARIES(tstSubshellIncoherentPhotoatomicReaction monte_carlo_collision_native)
+ADD_TEST(SubshellIncoherentPhotoatomicReaction_test tstSubshellIncoherentPhotoatomicReaction --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
 
 ADD_EXECUTABLE(tstCoherentPhotoatomicReaction
   tstCoherentPhotoatomicReaction.cpp)
@@ -196,10 +211,15 @@ ADD_EXECUTABLE(tstPhotoatomicReactionACEFactory
 TARGET_LINK_LIBRARIES(tstPhotoatomicReactionACEFactory monte_carlo_collision_native)
 ADD_TEST(PhotoatomicReactionACEFactory_test tstPhotoatomicReactionACEFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
 
+ADD_EXECUTABLE(tstPhotoatomicReactionNativeFactory
+  tstPhotoatomicReactionNativeFactory.cpp)
+TARGET_LINK_LIBRARIES(tstPhotoatomicReactionNativeFactory monte_carlo_collision_native)
+ADD_TEST(PhotoatomicReactionNativeFactory_test tstPhotoatomicReactionNativeFactory --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
+
 ADD_EXECUTABLE(tstAtomicRelaxationModelFactory
   tstAtomicRelaxationModelFactory.cpp)
 TARGET_LINK_LIBRARIES(tstAtomicRelaxationModelFactory monte_carlo_collision_native)
-ADD_TEST(AtomicRelaxationModelFactory_test tstAtomicRelaxationModelFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p)
+ADD_TEST(AtomicRelaxationModelFactory_test tstAtomicRelaxationModelFactory --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table=82000.12p --test_native_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_epr_82_native.xml")
 
 ADD_EXECUTABLE(tstPhotoatomACEFactory
   tstPhotoatomACEFactory.cpp)
@@ -335,20 +355,4 @@ IF(FRENSIE_ENABLE_DAGMC)
   TARGET_LINK_LIBRARIES(tstCollisionModuleInterface_NativeElectronMode monte_carlo_collision_native)
   ADD_TEST(CollisionModuleInterface_NativeElectronMode_test tstCollisionModuleInterface_NativeElectronMode --test_cross_sections_xml_directory="${CMAKE_CURRENT_SOURCE_DIR}/test_files" --test_mat_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_material.xml" --test_geom_xml_file="${CMAKE_CURRENT_BINARY_DIR}/test_files/test_geom.xml")
 ENDIF()
-
-ADD_EXECUTABLE(tstFreeGasElasticSAlphaBetaFunction
-  tstFreeGasElasticSAlphaBetaFunction.cpp)
-TARGET_LINK_LIBRARIES(tstFreeGasElasticSAlphaBetaFunction monte_carlo_collision_native)
-ADD_TEST(FreeGasElasticSAlphaBetaFunction_test tstFreeGasElasticSAlphaBetaFunction)
-
-ADD_EXECUTABLE(tstFreeGasElasticMarginalAlphaFunction
-  tstFreeGasElasticMarginalAlphaFunction.cpp)
-TARGET_LINK_LIBRARIES(tstFreeGasElasticMarginalAlphaFunction monte_carlo_collision_native)
-ADD_TEST(FreeGasElasticMarginalAlphaFunction_test tstFreeGasElasticMarginalAlphaFunction)
-
-## ADD_EXECUTABLE(tstFreeGasElasticMarginalBetaFunction
-##   tstFreeGasElasticMarginalBetaFunction.cpp)
-## TARGET_LINK_LIBRARIES(tstFreeGasElasticMarginalBetaFunction monte_carlo_collision_native)
-## ADD_TEST(FreeGasElasticMarginalBetaFunction_test tstFreeGasElasticMarginalBetaFunction)
-
 

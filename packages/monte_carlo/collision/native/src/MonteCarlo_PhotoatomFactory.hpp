@@ -39,6 +39,8 @@ public:
                     const boost::unordered_set<std::string>& photoatom_aliases,
 		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 		    atomic_relaxation_model_factory,
+		    const unsigned hash_grid_bins,
+		    const bool use_impulse_approximation_data,
 		    const bool use_doppler_broadening_data,
 		    const bool use_detailed_pair_production_data,
 		    const bool use_atomic_relaxation_data );
@@ -58,9 +60,28 @@ private:
   void createPhotoatomFromACETable(
 			  const std::string& cross_sections_xml_directory,
 			  const std::string& photoatom_alias,
-			  const Teuchos::ParameterList& photoatom_table_info,
+			  const std::string& ace_file_path,
+			  const std::string& photoatomic_table_name,
+			  const int photoatomic_file_start_line,
+			  const double atomic_weight,
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
+			  const unsigned hash_grid_bins,
+			  const bool use_impulse_approximation_data,
+			  const bool use_doppler_broadening_data,
+			  const bool use_detailed_pair_production_data,
+			  const bool use_atomic_relaxation_data );
+
+  // Create a photoatom from a Native table
+  void createPhotoatomFromNativeTable(
+			  const std::string& cross_sections_xml_directory,
+			  const std::string& photoatom_alias,
+			  const std::string& native_file_path,
+			  const double atomic_weight,
+			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
+			  atomic_relaxation_model_factory,
+			  const unsigned hash_grid_bins,
+			  const bool use_impulse_approximation_data,
 			  const bool use_doppler_broadening_data,
 			  const bool use_detailed_pair_production_data,
 			  const bool use_atomic_relaxation_data );

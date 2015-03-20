@@ -57,6 +57,8 @@ public:
 	  const unsigned atomic_number,
 	  const double atomic_weight,
 	  const Teuchos::ArrayRCP<double>& energy_grid,
+	  const Teuchos::RCP<const Utility::HashBasedGridSearcher>& 
+	  grid_searcher,
 	  const ReactionMap& standard_scattering_reactions,
 	  const ReactionMap& standard_absorption_reactions,
 	  const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
@@ -146,11 +148,13 @@ private:
 
   // Sample an absorption reaction
   void sampleAbsorptionReaction( const double scaled_random_number,
+				 const unsigned energy_grid_bin,
 				 PhotonState& photon,
 				 ParticleBank& bank ) const;
 
   // Sample a scattering reaction
   void sampleScatteringReaction( const double scaled_random_number,
+				 const unsigned energy_grid_bin,
 				 PhotonState& photon,
 				 ParticleBank& bank ) const;
 

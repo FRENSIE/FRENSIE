@@ -130,6 +130,8 @@ private:
                                std::vector<std::string> >& cell_id_density_map,
    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
    atomic_relaxation_model_factory,
+   const unsigned hash_grid_bins,
+   const bool use_impulse_approximation_data,
    const bool use_doppler_broadening_data,
    const bool use_detailed_pair_production_data,
    const bool use_atomic_relaxation_data,

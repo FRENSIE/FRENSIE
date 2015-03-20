@@ -45,24 +45,37 @@ TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
 
   MonteCarlo::SubshellType vacancy = MonteCarlo::K_SUBSHELL;
 
-  std::vector<double> fake_stream( 7 );
+  std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.966; // Choose the non-radiative L1-L2 transition
-  fake_stream[1] = 0.09809; // Chose the radiative P3 transition
+  fake_stream[1] = 0.5; // direction
   fake_stream[2] = 0.5; // direction
-  fake_stream[3] = 0.5; // direction
-  fake_stream[4] = 0.40361; // Chose the radiative P1 transition
+  fake_stream[3] = 0.09809; // Chose the radiative P3 transition
+  fake_stream[4] = 0.5; // direction
   fake_stream[5] = 0.5; // direction
-  fake_stream[6] = 0.5; // direction
+  fake_stream[6] = 0.40361; // Chose the radiative P1 transition
+  fake_stream[7] = 0.5; // direction
+  fake_stream[8] = 0.5; // direction
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   detailed_atomic_relaxation_model->relaxAtom( vacancy, photon, bank );
-  
-  // L1 and L2 radiative transitions
-  TEST_EQUALITY_CONST( bank.size(), 2 );
 
+  TEST_EQUALITY_CONST( bank.size(), 3 );
+
+  // K non-radiative transition
+  TEST_EQUALITY_CONST( bank.top()->getEnergy(), 5.71919999999999998e-02 );
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::ELECTRON );
+  TEST_EQUALITY_CONST( bank.top()->getXPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top()->getYPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top()->getZPosition(), 1.0 );
+  TEST_EQUALITY_CONST( bank.top()->getCollisionNumber(), 0 );
+  TEST_EQUALITY_CONST( bank.top()->getGenerationNumber(), 1 );
+
+  bank.pop();
+  
   // L1 radiative transition
   TEST_EQUALITY_CONST( bank.top()->getEnergy(), 1.584170000000E-02 );
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::PHOTON );
   TEST_EQUALITY_CONST( bank.top()->getXPosition(), 1.0 );
   TEST_EQUALITY_CONST( bank.top()->getYPosition(), 1.0 );
   TEST_EQUALITY_CONST( bank.top()->getZPosition(), 1.0 );
@@ -73,6 +86,7 @@ TEUCHOS_UNIT_TEST( DetailedAtomicRelaxationModel, relaxAtom )
   
   // L2 radiative transition
   TEST_EQUALITY_CONST( bank.top()->getEnergy(), 1.523590000000E-02 );
+  TEST_EQUALITY_CONST( bank.top()->getParticleType(), MonteCarlo::PHOTON );
   TEST_EQUALITY_CONST( bank.top()->getXPosition(), 1.0 );
   TEST_EQUALITY_CONST( bank.top()->getYPosition(), 1.0 );
   TEST_EQUALITY_CONST( bank.top()->getZPosition(), 1.0 );
@@ -142,7 +156,7 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> xprob_block = 
     xss_data_extractor->extractXPROBBlock();
 
-  Teuchos::Array<Teuchos::RCP<MonteCarlo::SubshellRelaxationModel> > 
+  Teuchos::Array<Teuchos::RCP<const MonteCarlo::SubshellRelaxationModel> > 
     subshell_relaxation_models;
 
   for( unsigned i = 0; i < subshell_transitions.size(); ++i )
@@ -175,7 +189,7 @@ int main( int argc, char** argv )
 	transition_cdf[j] = xprob_block[shell_start+j*4+3];
       }
   
-      Teuchos::RCP<MonteCarlo::SubshellRelaxationModel> shell_model(
+      Teuchos::RCP<const MonteCarlo::SubshellRelaxationModel> shell_model(
 			       new MonteCarlo::DetailedSubshellRelaxationModel(
 						   subshells[i],
 						   primary_transition_shells,

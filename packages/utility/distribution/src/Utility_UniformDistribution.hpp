@@ -15,14 +15,14 @@
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
-#include "Utility_XMLCompatibleObject.hpp"
+#include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
 
 //! Uniform distribution class
 class UniformDistribution : public OneDDistribution,
-			    public XMLCompatibleObject<UniformDistribution>
+			    public ParameterListCompatibleObject<UniformDistribution>
 {
 
 private:

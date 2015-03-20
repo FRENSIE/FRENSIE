@@ -37,8 +37,8 @@ public:
 
   //! Constructor 
   DetailedAtomicRelaxationModel(
-                  const Teuchos::Array<Teuchos::RCP<SubshellRelaxationModel> >&
-		  subshell_relaxtion_models ); 
+	    const Teuchos::Array<Teuchos::RCP<const SubshellRelaxationModel> >&
+	    subshell_relaxtion_models ); 
 
   //! Destructor
   ~DetailedAtomicRelaxationModel()
@@ -52,7 +52,8 @@ public:
 private:
   
   // The map of subshells and their relaxation data
-  boost::unordered_map<SubshellType,Teuchos::RCP<SubshellRelaxationModel> >
+  boost::unordered_map<SubshellType,
+		       Teuchos::RCP<const SubshellRelaxationModel> >
   d_subshell_relaxation_models;
 };
 

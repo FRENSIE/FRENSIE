@@ -28,7 +28,7 @@ public:
   ~ComptonProfileSubshellConverter()
   { /* ... */ }
 
-  //! Convert a subshell enum to an compton profile subshell index
+  //! Convert a subshell enum to a compton profile subshell index
   virtual unsigned convertSubshellToIndex( 
 				       const SubshellType subshell ) const = 0;
 
