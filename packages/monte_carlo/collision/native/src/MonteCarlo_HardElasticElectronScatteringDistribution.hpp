@@ -63,18 +63,15 @@ public:
   double sampleScatteringAngleCosine( const double energy ) const;
 
 private:
-/*
-  // Evaluate the screening angle at the given electron energy
-  double evaluateScreeningFactor( const double energy ) const;
 
-  // Evaluate the scattering angle from the analytical function
-  double evaluateScreenedScatteringAngle( const double energy ) const; 
-
-  // Sample a scattering angle cosine
-  double sampleScatteringAngleCosine( const double energy ) const;
-*/
   // Cutoff angle cosine between the distribution and analytical function
-  static double s_cutoff_angle_cosine;
+  static double s_mu_cutoff;
+
+  // Difference btw cutoff angle cosine and forward peak (mu = 1)
+  static double s_delta_cutoff;
+
+  // The fine structure constant squared
+  static double s_fine_structure_const_square;
 
   // Atomic number (Z) of the target atom
   int d_atomic_number;

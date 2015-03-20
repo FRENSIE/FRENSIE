@@ -171,6 +171,23 @@ double evaluateCorrelatedCDF(
   return interpolation_fraction*(upper_cdf - lower_cdf) + lower_cdf;
 }
 
+// Evaluate a correlated pdf value
+double evaluateCorrelatedPDF(
+    const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
+    const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
+    const double interpolation_fraction,
+    const double independent_value )
+{
+  double upper_pdf = 
+    upper_distribution->evaluatePDF( independent_value );
+
+  double lower_pdf = 
+    lower_distribution->evaluatePDF( independent_value );
+
+  // Linearly interpolate between the upper and lower cdf values
+  return interpolation_fraction*(upper_pdf - lower_pdf) + lower_pdf;
+}
+
 // Sample from either the lower or upper distribution depending on interp frac
 double independentSample(
    const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
