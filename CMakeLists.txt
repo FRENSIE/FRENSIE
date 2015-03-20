@@ -119,6 +119,16 @@ IF(${${PROJECT_NAME}_ENABLE_PROFILING})
   ENDIF()
 ENDIF()
 
+# Enable coverage support if requested
+IF(${${PROJECT_NAME}_ENABLE_COVERAGE})
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0 -Wall -W -Wshadow -Wunused-variable -Wunused-parameter -Wunused-function -Wunused -Wno-system-headers -Wno-deprecated -Woverloaded-virtual -Wwrite-strings -fprofile-arcs -ftest-coverage")
+  SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+
+  IF(NOT ${CMAKE_BUILD_TYPE} STREQUAL "DEBUG")
+    MESSAGE(WARNING "coverage testing can only be done in debug builds!")
+  ENDIF()
+ENDIF()
+
 # Parse the DBC configure file so it can be used in the source files
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/dbc_config.hpp.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_config.hpp)
 
