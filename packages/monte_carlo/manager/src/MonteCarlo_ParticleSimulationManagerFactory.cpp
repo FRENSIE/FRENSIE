@@ -16,6 +16,7 @@
 #include "MonteCarlo_SourceModuleInterface.hpp"
 #include "MonteCarlo_EstimatorHandlerFactory.hpp"
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
+#include "Geometry_ModuleInterface.hpp"
 
 #ifdef HAVE_FRENSIE_DAGMC
 #include "Geometry_DagMCInstanceFactory.hpp"
@@ -48,8 +49,11 @@ ParticleSimulationManagerFactory::createManager(
   // Initialize the simulation properties
   SimulationPropertiesFactory::initializeSimulationProperties(simulation_info);
 
-  // Initialize DagMC
+  // Initialize DagMC 
   Geometry::DagMCInstanceFactory::initializeDagMC( geom_def );
+
+  // Initialize the geometry handler
+  Geometry::ModuleInterface<moab::DagMC>::initialize();
 
   // Initialize the source handler
   Teuchos::RCP<ParticleSourceFactory> source_factory =
