@@ -59,6 +59,12 @@ ADD_EXECUTABLE(tstAdjointKleinNishinaDistribution
 TARGET_LINK_LIBRARIES(tstAdjointKleinNishinaDistribution utility_core utility_prng utility_dist)
 ADD_TEST(AdjointKleinNishinaDistribution_test tstAdjointKleinNishinaDistribution)
 
+ADD_EXECUTABLE(tstHydrogenFormFactorDistribution
+  tstHydrogenFormFactorDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstHydrogenFormFactorDistribution utility_core utility_prng utility_dist)
+ADD_TEST(HydrogenFormFactorDistribution_test tstHydrogenFormFactorDistribution)
+
 ADD_EXECUTABLE(tstOneDDistribution
   tstOneDDistribution.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

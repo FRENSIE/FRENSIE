@@ -22,6 +22,7 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_HydrogenFormFactorDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -52,33 +53,40 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
 			    threshold_energy_index );
   
   // Create the scattering function
-  Teuchos::ArrayView<const double> jince_block = 
-    raw_photoatom_data.extractJINCEBlock();
+  Teuchos::RCP<Utility::OneDDistribution> scattering_function;
 
-  unsigned scatt_func_size = jince_block.size()/2;
+  if( raw_photoatom_data.extractAtomicNumber() != 1 )
+  {
+    Teuchos::ArrayView<const double> jince_block = 
+      raw_photoatom_data.extractJINCEBlock();
 
-  Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ) );
+    unsigned scatt_func_size = jince_block.size()/2;
+
+    Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ));
   
-  // The stored recoil momemtum has units of inverse Angstroms - convert to
-  // inverse cm
-  for( unsigned i = 0; i < scatt_func_size; ++i )
-    recoil_momentum[i] *= 1e8;
+    // The stored recoil momemtum has units of inverse Angstroms - convert to
+    // inverse cm
+    for( unsigned i = 0; i < scatt_func_size; ++i )
+      recoil_momentum[i] *= 1e8;
 
-  // Log-Log interpolation is required but first recoil momentum may be 0.0
-  if( recoil_momentum.front() == 0.0 )
-    recoil_momentum.front() = std::numeric_limits<double>::min();
-
-  Teuchos::Array<double> scattering_function_values( 
+    // Log-Log interpolation is required but first recoil momentum may be 0.0
+    if( recoil_momentum.front() == 0.0 )
+      recoil_momentum.front() = std::numeric_limits<double>::min();
+    
+    Teuchos::Array<double> scattering_function_values( 
 			     jince_block( scatt_func_size, scatt_func_size ) );
 
-  // Log-Log interpolation is required but first value may be 0.0
-  if( scattering_function_values.front() == 0.0 )
-    scattering_function_values.front() = std::numeric_limits<double>::min();
+    // Log-Log interpolation is required but first value may be 0.0
+    if( scattering_function_values.front() == 0.0 )
+      scattering_function_values.front() = std::numeric_limits<double>::min();
 
-  Teuchos::RCP<Utility::OneDDistribution> scattering_function(
+    scattering_function.reset(
 		     new Utility::TabularDistribution<Utility::LogLog>(
 						recoil_momentum,
 						scattering_function_values ) );
+  }
+  else // Hydrogen - use analytic scattering function
+    scattering_function.reset( new Utility::HydrogenFormFactorDistribution() );
   
   if( use_doppler_broadening_data )
   {
