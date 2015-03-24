@@ -65,7 +65,16 @@ double Photoatom::getAtomicTotalCrossSection( const double energy ) const
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  return d_core.getTotalReaction().getCrossSection( energy );
+  unsigned energy_grid_bin = 
+      d_core.getGridSearcher().findLowerBinIndex( energy );
+
+  double cross_section = 
+    this->getAtomicScatteringCrossSection( energy, energy_grid_bin );
+
+  cross_section += 
+    this->getAtomicAbsorptionCrossSection( energy, energy_grid_bin );
+
+  return cross_section;
 }
 
 // Return the total absorption cross section from atomic interactions
@@ -75,7 +84,10 @@ double Photoatom::getAtomicAbsorptionCrossSection( const double energy ) const
   testPrecondition( !ST::isnaninf( energy ) );
   testPrecondition( energy > 0.0 );
 
-  return d_core.getTotalAbsorptionReaction().getCrossSection( energy );
+  unsigned energy_grid_bin = 
+    d_core.getGridSearcher().findLowerBinIndex( energy );
+  
+  return this->getAtomicAbsorptionCrossSection( energy, energy_grid_bin );
 }
 
 // Return the survival probability at the desired energy
@@ -222,17 +234,17 @@ void Photoatom::collideAnalogue( PhotonState& photon,
     unsigned energy_grid_bin = 
       d_core.getGridSearcher().findLowerBinIndex( photon.getEnergy() );
   
-    double total_cross_section = 
-      d_core.getTotalReaction().getCrossSection( photon.getEnergy(), 
-						 energy_grid_bin );
+    double scattering_cross_section = 
+      this->getAtomicScatteringCrossSection( photon.getEnergy(),
+					     energy_grid_bin );
 
+    double absorption_cross_section =
+      this->getAtomicAbsorptionCrossSection( photon.getEnergy(),
+					     energy_grid_bin );
+    
     double scaled_random_number = 
       Utility::RandomNumberGenerator::getRandomNumber<double>()*
-      total_cross_section;
-    
-    double absorption_cross_section = 
-      d_core.getTotalAbsorptionReaction().getCrossSection( photon.getEnergy(),
-							   energy_grid_bin );
+      (scattering_cross_section+absorption_cross_section);    
     
     // Check if absorption occurs 
     if( scaled_random_number < absorption_cross_section )
@@ -330,13 +342,13 @@ void Photoatom::sampleAbsorptionReaction( const double scaled_random_number,
   // the cross sections are stored on a log-log grid, the absorption cross 
   // section won't be exactly equal to the sum of the stored cross sections. 
   // This test ensures that a valid reaction is always sampled.
-  if( photoatomic_reaction == d_core.getAbsorptionReactions().end() )
-  {
-    photoatomic_reaction = d_core.getAbsorptionReactions().begin();
+  // if( photoatomic_reaction == d_core.getAbsorptionReactions().end() )
+  // {
+  //   photoatomic_reaction = d_core.getAbsorptionReactions().begin();
     
-    std::advance( photoatomic_reaction,
-		  d_core.getAbsorptionReactions().size()-1 );
-  }
+  //   std::advance( photoatomic_reaction,
+  // 		  d_core.getAbsorptionReactions().size()-1 );
+  // }
 
   // Make sure a reaction was selected
   testPostcondition( photoatomic_reaction != 
@@ -380,13 +392,13 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
   // cross sections are stored on a log-log grid, the total cross section 
   // won't be exactly equal to the sum of the stored cross sections. This
   // test ensures that a valid reaction is always sampled
-  if( photoatomic_reaction == d_core.getScatteringReactions().end() )
-  {
-    photoatomic_reaction = d_core.getScatteringReactions().begin();
+  // if( photoatomic_reaction == d_core.getScatteringReactions().end() )
+  // {
+  //   photoatomic_reaction = d_core.getScatteringReactions().begin();
     
-    std::advance( photoatomic_reaction,
-		  d_core.getScatteringReactions().size()-1 );
-  }
+  //   std::advance( photoatomic_reaction,
+  // 		  d_core.getScatteringReactions().size()-1 );
+  // }
 
   // Make sure the reaction was found
   testPostcondition( photoatomic_reaction != 
