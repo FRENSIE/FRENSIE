@@ -21,7 +21,7 @@
 #include "Utility_SphericalSpatialDistribution.hpp"
 #include "Utility_CylindricalSpatialDistribution.hpp"
 #include "Utility_CartesianSpatialDistribution.hpp"
-#include "Utility_DirectionalDistribution.hpp"
+#include "Utility_SphericalDirectionalDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
@@ -63,7 +63,7 @@ void initializeDirectionalDistribution(
   Teuchos::RCP<Utility::OneDDistribution>
     mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
   
-  directional_distribution.reset( new Utility::DirectionalDistribution( 
+  directional_distribution.reset( new Utility::SphericalDirectionalDistribution( 
 							   theta_distribution,
 							   mu_distribution ) );
 }

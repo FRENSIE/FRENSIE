@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_DirectionalDistribution.cpp
+//! \file   Utility_SphericalDirectionalDistribution.hpp
 //! \author Alex Robinson
-//! \brief  Directional distribution class definition.
+//! \brief  Spherical directional distribution class definition.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "Utility_DirectionalDistribution.hpp"
+#include "Utility_SphericalDirectionalDistribution.hpp"
 #include "Utility_SphericalCoordinateHelpers.hpp"
 #include "Utility_DirectionHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -16,7 +16,7 @@
 namespace Utility{
 
 // Constructor
-DirectionalDistribution::DirectionalDistribution( 
+SphericalDirectionalDistribution::SphericalDirectionalDistribution( 
 		      const Teuchos::RCP<OneDDistribution>& theta_distribution,
 		      const Teuchos::RCP<OneDDistribution>& mu_distribution,
 		      const Axis axis )
@@ -40,7 +40,7 @@ DirectionalDistribution::DirectionalDistribution(
 }
 
 // Evaluate the direction distribution
-double DirectionalDistribution::evaluate( 
+double SphericalDirectionalDistribution::evaluate( 
 				        const double cartesian_point[3] ) const
 {
   // Make sure that the point is a valid direction
@@ -48,7 +48,7 @@ double DirectionalDistribution::evaluate(
   
   double spherical_point[3];
 
-  DirectionalDistribution::convertCartesianCoordsToSpherical(cartesian_point,
+  SphericalDirectionalDistribution::convertCartesianCoordsToSpherical(cartesian_point,
 							     spherical_point );
 
   double distribution_value = 
@@ -67,7 +67,7 @@ double DirectionalDistribution::evaluate(
 }
 
 // Evaluate the directional distribution PDF
-double DirectionalDistribution::evaluatePDF( 
+double SphericalDirectionalDistribution::evaluatePDF( 
 					const double cartesian_point[3] ) const
 {
   // Make sure that the point is a valid direction
@@ -75,7 +75,7 @@ double DirectionalDistribution::evaluatePDF(
   
   double spherical_point[3];
 
-  DirectionalDistribution::convertCartesianCoordsToSpherical(cartesian_point,
+  SphericalDirectionalDistribution::convertCartesianCoordsToSpherical(cartesian_point,
 							     spherical_point );
   double pdf_value = d_theta_distribution->evaluatePDF( spherical_point[1] );
   pdf_value *= d_mu_distribution->evaluatePDF( spherical_point[2] );
@@ -87,7 +87,7 @@ double DirectionalDistribution::evaluatePDF(
 }
 
 // Return a random (cartesian) sample from the distribution (u, v, w)
-void DirectionalDistribution::sample( double sampled_direction[3] ) const
+void SphericalDirectionalDistribution::sample( double sampled_direction[3] ) const
 {
   // Sample from the distributions
   const double spherical_point[3] = {1.0,
@@ -100,8 +100,14 @@ void DirectionalDistribution::sample( double sampled_direction[3] ) const
 				     d_axis );
 }
 
+// Return the distribution type
+DirectionalDistributionType SphericalDirectionalDistribution::getDistributionType() const
+{
+  return SPHERICAL_DIRECTIONAL_DISTRIBUTION;
+}
+
 // Convert a cartesian coordinate to a spherical coordinate
-void DirectionalDistribution::convertCartesianCoordsToSpherical( 
+void SphericalDirectionalDistribution::convertCartesianCoordsToSpherical( 
 					      const double cartesian_point[3],
 					      double spherical_point[3] ) const
 {
@@ -113,9 +119,41 @@ void DirectionalDistribution::convertCartesianCoordsToSpherical(
 					      d_axis );
 }
 
+// Check if the distribution has the same bounds
+bool SphericalDirectionalDistribution::hasSameBounds( 
+			    const DirectionalDistribution& distribution ) const
+{
+  if( this->getDistributionType() == distribution.getDistributionType() )
+  {
+    const SphericalDirectionalDistribution& true_dist = 
+      dynamic_cast<const SphericalDirectionalDistribution&>( distribution );
+
+    
+    if( d_axis == true_dist.d_axis )
+    {
+      return 
+	Policy::relError(d_theta_distribution->getLowerBoundOfIndepVar(),
+		  true_dist.d_theta_distribution->getLowerBoundOfIndepVar())
+	< 1e-9 &&
+	  Policy::relError(d_theta_distribution->getUpperBoundOfIndepVar(),
+		  true_dist.d_theta_distribution->getUpperBoundOfIndepVar())
+	< 1e-9 &&
+	  Policy::relError(d_mu_distribution->getLowerBoundOfIndepVar(),
+		     true_dist.d_mu_distribution->getLowerBoundOfIndepVar())
+	< 1e-9 &&
+	  Policy::relError(d_mu_distribution->getUpperBoundOfIndepVar(),
+		     true_dist.d_mu_distribution->getUpperBoundOfIndepVar())
+	< 1e-9;
+    }
+    else
+      return false;
+  }
+  else
+    return false;
+}
 
 } // end Utility namespace
 
 //---------------------------------------------------------------------------//
-// end Utility_DirectionalDistribution.cpp
+// end Utility_SphericalDirectionalDistribution.cpp
 //---------------------------------------------------------------------------//

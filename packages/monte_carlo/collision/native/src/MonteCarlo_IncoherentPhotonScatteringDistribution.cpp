@@ -130,7 +130,8 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
 
   // The maximum scattering function value
   const double max_scattering_function_value = 
-    d_scattering_function->evaluate( inverse_wavelength );
+    d_scattering_function->evaluate( inverse_wavelength// /1e8
+				     );
 
   // The photon energy relative to the electron rest mass energy
   const double alpha = photon.getEnergy()/
@@ -157,7 +158,8 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
     scattering_angle_cosine = 1.0 - (inverse_energy_loss_ratio - 1.0)/alpha;
 
     double scattering_function_arg = 
-      sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength;
+      sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength// /1e8
+      ;
     
     scattering_function_value = d_scattering_function->evaluate( 
 						     scattering_function_arg );
