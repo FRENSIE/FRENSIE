@@ -9,14 +9,8 @@
 #ifndef UTILITY_DIRECTIONAL_DISTRIBUTION_HPP
 #define UTILITY_DIRECTIONAL_DISTRIBUTION_HPP
 
-// Trilinos Includes
-#include <Teuchos_RCP.hpp>
-#include <Teuchos_ScalarTraits.hpp>
-
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
-#include "Utility_Axis.hpp"
-#include "Utility_ComparePolicy.hpp"
+#include "Utility_DirectionalDistributionType.hpp"
 
 namespace Utility{
 
@@ -24,76 +18,32 @@ namespace Utility{
 class DirectionalDistribution
 {
 
-private:
-
-  // Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
-
 public:
 
   //! Constructor
-  DirectionalDistribution( 
-		      const Teuchos::RCP<OneDDistribution>& theta_distribution,
-		      const Teuchos::RCP<OneDDistribution>& mu_distribution,
-		      const Axis axis = Z_AXIS );
+  DirectionalDistribution()
+  { /* ... */ }
 
   //! Destructor
-  ~DirectionalDistribution()
+  virtual ~DirectionalDistribution()
   { /* ... */ } 
 
   //! Evaluate the directional distribution
-  double evaluate( const double cartesian_point[3] ) const;
+  virtual double evaluate( const double cartesian_point[3] ) const = 0;
 
   //! Evaluate the directional distribution PDF
-  double evaluatePDF( const double cartesian_point[3] ) const;
+  virtual double evaluatePDF( const double cartesian_point[3] ) const = 0;
 
   //! Return a random (cartesian) sample from the distribution (u, v, w)
-  void sample( double sampled_direction[3] ) const;
+  virtual void sample( double sampled_direction[3] ) const = 0;
+
+  //! Return the distribution type
+  virtual DirectionalDistributionType getDistributionType() const = 0;
 
   //! Check if the distribution has the same bounds
-  bool hasSameBounds( const DirectionalDistribution& distribution ) const;
-
-protected:
-  
-  //! Convert a cartesian coordinate to a spherical coordinate
-  void convertCartesianCoordsToSpherical( const double cartesian_point[3],
-					  double spherical_point[3] ) const; 
-
-private:
-
-  // The theta distribution
-  Teuchos::RCP<OneDDistribution> d_theta_distribution;
-
-  // The mu distribution
-  Teuchos::RCP<OneDDistribution> d_mu_distribution;
-
-  // The spherical axis (direction of the mu distribution)
-  Axis d_axis;
+  virtual bool hasSameBounds( 
+		       const DirectionalDistribution& distribution ) const = 0;
 };
-
-// Check if the distribution has the same bounds
-inline bool DirectionalDistribution::hasSameBounds( 
-			    const DirectionalDistribution& distribution ) const
-{
-  if( d_axis == distribution.d_axis )
-  {
-    return 
-      Policy::relError(d_theta_distribution->getLowerBoundOfIndepVar(),
-		  distribution.d_theta_distribution->getLowerBoundOfIndepVar())
-      < 1e-9 &&
-      Policy::relError(d_theta_distribution->getUpperBoundOfIndepVar(),
-		  distribution.d_theta_distribution->getUpperBoundOfIndepVar())
-      < 1e-9 &&
-      Policy::relError(d_mu_distribution->getLowerBoundOfIndepVar(),
-		     distribution.d_mu_distribution->getLowerBoundOfIndepVar())
-      < 1e-9 &&
-      Policy::relError(d_mu_distribution->getUpperBoundOfIndepVar(),
-		     distribution.d_mu_distribution->getUpperBoundOfIndepVar())
-      < 1e-9;
-  }
-  else
-    return false;
-}
 
 } // end Utility namespace
 

@@ -11,11 +11,13 @@
 
 namespace Utility{
 
-  enum SpatialDistributionType{
-    CARTESIAN_SPATIAL_DISTRIBUTION,
-    CYLINDRICAL_SPATIAL_DISTRIBUTION,
-    SPHERICAL_SPATIAL_DISTRIBUTION
-  };
+//! The spatial distribution type enum
+enum SpatialDistributionType{
+  CARTESIAN_SPATIAL_DISTRIBUTION,
+  CYLINDRICAL_SPATIAL_DISTRIBUTION,
+  SPHERICAL_SPATIAL_DISTRIBUTION,
+  POINT_SPATIAL_DISTRIBUTION
+};
 
 } // end Utility namespace
 

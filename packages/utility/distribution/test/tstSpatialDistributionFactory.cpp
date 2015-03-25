@@ -115,6 +115,33 @@ TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createSphericalDistribution )
 }
 
 //---------------------------------------------------------------------------//
+// Check that all distributions of interest can be constructed from
+// parameter entries
+TEUCHOS_UNIT_TEST( SpatialDistributionFactory, createPointDistribution )
+{  
+  Teuchos::RCP<Teuchos::ParameterList> parameter_list = 
+    Teuchos::getParametersFromXmlFile( test_xml_file_name );
+
+  Teuchos::ParameterList spatial_distribution_rep = 
+    parameter_list->get<Teuchos::ParameterList>( 
+					  "Point Distribution Example" );
+  
+  Teuchos::RCP<Utility::SpatialDistribution> distribution = 
+    Utility::SpatialDistributionFactory::createDistribution( 
+						    spatial_distribution_rep );
+  
+  TEST_ASSERT( !distribution.is_null() );
+  
+  double position[3];
+
+  distribution->sample( position );
+
+  TEST_EQUALITY_CONST( position[0], 1.0 );
+  TEST_EQUALITY_CONST( position[1], 1.0 );
+  TEST_EQUALITY_CONST( position[2], 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )

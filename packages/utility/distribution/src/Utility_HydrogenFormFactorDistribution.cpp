@@ -35,6 +35,10 @@ double HydrogenFormFactorDistribution::evaluate(
       PhysicalConstants::inverse_fine_structure_constant*
       indep_var_value*indep_var_value*1e-16/2.0;
 
+    // double arg = 1.0 + PhysicalConstants::inverse_fine_structure_constant*
+    //   PhysicalConstants::inverse_fine_structure_constant*
+    //   indep_var_value*indep_var_value/2.0;
+
     return 1 - 1.0/(arg*arg*arg*arg);
   }
   else
