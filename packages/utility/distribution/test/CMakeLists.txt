@@ -59,6 +59,12 @@ ADD_EXECUTABLE(tstAdjointKleinNishinaDistribution
 TARGET_LINK_LIBRARIES(tstAdjointKleinNishinaDistribution utility_core utility_prng utility_dist)
 ADD_TEST(AdjointKleinNishinaDistribution_test tstAdjointKleinNishinaDistribution)
 
+ADD_EXECUTABLE(tstHydrogenFormFactorDistribution
+  tstHydrogenFormFactorDistribution.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstHydrogenFormFactorDistribution utility_core utility_prng utility_dist)
+ADD_TEST(HydrogenFormFactorDistribution_test tstHydrogenFormFactorDistribution)
+
 ADD_EXECUTABLE(tstOneDDistribution
   tstOneDDistribution.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -80,6 +86,11 @@ ADD_EXECUTABLE(tstSphericalSpatialDistribution
 TARGET_LINK_LIBRARIES(tstSphericalSpatialDistribution utility_core utility_prng utility_dist)
 ADD_TEST(SphericalSpatialDistribution_test tstSphericalSpatialDistribution)
 
+ADD_EXECUTABLE(tstPointSpatialDistribution 
+  tstPointSpatialDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstPointSpatialDistribution utility_core utility_prng utility_dist)
+ADD_TEST(PointSpatialDistribution_test tstPointSpatialDistribution)
+
 ADD_EXECUTABLE(tstSpatialDistribution 
   tstSpatialDistribution.cpp 
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -91,10 +102,15 @@ ADD_EXECUTABLE(tstSpatialDistributionFactory
 TARGET_LINK_LIBRARIES(tstSpatialDistributionFactory utility_core utility_prng utility_dist)
 ADD_TEST(SpatialDistributionFactory_test tstSpatialDistributionFactory --test_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_spatial_distributions.xml")
 
-ADD_EXECUTABLE(tstDirectionalDistribution 
-  tstDirectionalDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstDirectionalDistribution utility_core utility_prng utility_dist)
-ADD_TEST(DirectionalDistribution_test tstDirectionalDistribution)
+ADD_EXECUTABLE(tstSphericalDirectionalDistribution 
+  tstSphericalDirectionalDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstSphericalDirectionalDistribution utility_core utility_prng utility_dist)
+ADD_TEST(SphericalDirectionalDistribution_test tstSphericalDirectionalDistribution)
+
+ADD_EXECUTABLE(tstMonoDirectionalDistribution 
+  tstMonoDirectionalDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstMonoDirectionalDistribution utility_core utility_prng utility_dist)
+ADD_TEST(MonoDirectionalDistribution_test tstMonoDirectionalDistribution)
 
 ADD_EXECUTABLE(tstDirectionalDistributionFactory 
   tstDirectionalDistributionFactory.cpp )

@@ -15,4 +15,8 @@
     <Parameter name="Axis" type="string" value="Y"/>
   </ParameterList>
 
+  <ParameterList name="Directional Distribution C">
+    <Parameter name="Direction" type="Array(double)" value="{1.0,-1.0,1.0}"/>
+  </ParameterList>
+
 </ParameterList>

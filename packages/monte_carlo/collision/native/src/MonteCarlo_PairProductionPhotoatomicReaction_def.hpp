@@ -134,7 +134,8 @@ void PairProductionPhotoatomicReaction<InterpPolicy,processed_cross_section>::ba
   // Set the new energy
   photon.setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
 
-  // Set the new direction
+  // Set the new direction (w.r.t. global reference frame)
+  photon.setDirection( 0.0, 0.0, 1.0 );
   photon.rotateDirection( angle_cosine, azimuthal_angle );
 
   // Reset the collision number since this is technically a new photon

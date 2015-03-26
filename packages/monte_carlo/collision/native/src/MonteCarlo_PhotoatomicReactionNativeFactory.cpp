@@ -22,6 +22,7 @@
 #include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_HydrogenFormFactorDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -53,10 +54,17 @@ void PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
     raw_photoatom_data.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex();
 
   // Create the scattering function
-  Teuchos::RCP<Utility::OneDDistribution> scattering_function(
-     new Utility::TabularDistribution<Utility::LinLin>(
+  Teuchos::RCP<Utility::OneDDistribution> scattering_function;
+  
+  if( raw_photoatom_data.getAtomicNumber() != 1 )
+  {
+    scattering_function.reset(
+       new Utility::TabularDistribution<Utility::LinLin>(
 	   raw_photoatom_data.getWallerHartreeScatteringFunctionMomentumGrid(),
 	   raw_photoatom_data.getWallerHartreeScatteringFunction() ) );
+  }
+  else
+    scattering_function.reset( new Utility::HydrogenFormFactorDistribution() );
 
   // Extract the binding energies, occupancies and order
   Teuchos::Array<double> subshell_binding_energies, subshell_occupancies;

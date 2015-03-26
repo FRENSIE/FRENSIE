@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstDirectionalDistribution.cpp
+//! \file   tstSphericalDirectionalDistribution.cpp
 //! \author Alex Robinson
-//! \brief  Directional distribution unit tests.
+//! \brief  Spherical directional distribution unit tests.
 //!
 //---------------------------------------------------------------------------//
 
@@ -20,7 +20,7 @@
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
-#include "Utility_DirectionalDistribution.hpp"
+#include "Utility_SphericalDirectionalDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
@@ -29,7 +29,7 @@ Teuchos::RCP<Utility::DirectionalDistribution> directional_distribution;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( DirectionalDistribution, evaluate )
+TEUCHOS_UNIT_TEST( SphericalDirectionalDistribution, evaluate )
 {
   double cartesian_point[3] = {0.0, 0.0, 1.0};
   TEST_EQUALITY_CONST( directional_distribution->evaluate( cartesian_point ),
@@ -60,7 +60,7 @@ TEUCHOS_UNIT_TEST( DirectionalDistribution, evaluate )
 
 //---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated
-TEUCHOS_UNIT_TEST( DirectionalDistribution, evaluatePDF )
+TEUCHOS_UNIT_TEST( SphericalDirectionalDistribution, evaluatePDF )
 {
   double pdf_value = 1.0/(Utility::PhysicalConstants::pi*4);
 
@@ -93,7 +93,7 @@ TEUCHOS_UNIT_TEST( DirectionalDistribution, evaluatePDF )
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled from
-TEUCHOS_UNIT_TEST( DirectionalDistribution, sample )
+TEUCHOS_UNIT_TEST( SphericalDirectionalDistribution, sample )
 {
   std::vector<double> fake_stream( 6 );
   fake_stream[0] = 0.0;
@@ -126,8 +126,16 @@ TEUCHOS_UNIT_TEST( DirectionalDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution type can be returned
+TEUCHOS_UNIT_TEST( SphericalDirectionalDistribution, getDistributionType )
+{
+  TEST_EQUALITY_CONST( directional_distribution->getDistributionType(),
+		       Utility::SPHERICAL_DIRECTIONAL_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the bounds of two distributions can be tested
-TEUCHOS_UNIT_TEST( DirectionalDistribution, hasSameBounds )
+TEUCHOS_UNIT_TEST( SphericalDirectionalDistribution, hasSameBounds )
 {
   Teuchos::RCP<Utility::OneDDistribution> theta_distribution( 
 	    new Utility::UniformDistribution( 0.0,
@@ -147,22 +155,22 @@ TEUCHOS_UNIT_TEST( DirectionalDistribution, hasSameBounds )
 
   
   Teuchos::RCP<Utility::DirectionalDistribution> directional_dist_a(
-		    new Utility::DirectionalDistribution( theta_distribution,
+	   new Utility::SphericalDirectionalDistribution( theta_distribution,
 							  uniform_distribution,
 							  Utility::Y_AXIS ) );
 
   Teuchos::RCP<Utility::DirectionalDistribution> directional_dist_b(
-		    new Utility::DirectionalDistribution( theta_distribution,
+	   new Utility::SphericalDirectionalDistribution( theta_distribution,
 							  uniform_distribution,
 							  Utility::X_AXIS ) );
 
   Teuchos::RCP<Utility::DirectionalDistribution> directional_dist_c(
-		  new Utility::DirectionalDistribution( theta_distribution,
+	 new Utility::SphericalDirectionalDistribution( theta_distribution,
 							histogram_distribution,
 							Utility::Z_AXIS ) );
 
   Teuchos::RCP<Utility::DirectionalDistribution> directional_dist_d(
-		  new Utility::DirectionalDistribution( theta_distribution,
+	 new Utility::SphericalDirectionalDistribution( theta_distribution,
 							discrete_distribution,
 							Utility::Z_AXIS ) );
 
@@ -191,7 +199,7 @@ int main( int argc, char** argv )
   Teuchos::RCP<Utility::OneDDistribution>
     mu_distribution( new Utility::UniformDistribution( -1.0, 1.0, 1.0 ) );
 
-  directional_distribution.reset( new Utility::DirectionalDistribution(
+  directional_distribution.reset( new Utility::SphericalDirectionalDistribution(
 							   theta_distribution,
 							   mu_distribution ) );
 

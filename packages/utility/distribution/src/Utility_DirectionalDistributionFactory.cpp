@@ -8,6 +8,8 @@
 
 // FRENSIE Includes
 #include "Utility_DirectionalDistributionFactory.hpp"
+#include "Utility_SphericalDirectionalDistribution.hpp"
+#include "Utility_MonoDirectionalDistribution.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace Utility{
@@ -20,47 +22,77 @@ DirectionalDistributionFactory::createDistribution(
   // Validate the distribution representation
   DirectionalDistributionFactory::validateDistributionRep( distribution_rep );
 
-  Teuchos::RCP<const Teuchos::ParameterEntry> entry =
-    distribution_rep.getEntryRCP( "Theta Distribution" );
-  
-  // Create the directional distribution
-  Teuchos::RCP<OneDDistribution> theta_distribution = 
-    OneDDistributionEntryConverterDB::convertEntry( entry );
-  
-  entry = distribution_rep.getEntryRCP( "Mu Distribution" );
+  if( distribution_rep.isParameter( "Direction" ) )
+  {
+    Teuchos::Array<double> direction = 
+      distribution_rep.get<Teuchos::Array<double> >( "Direction" );
 
-  Teuchos::RCP<OneDDistribution> mu_distribution = 
-    OneDDistributionEntryConverterDB::convertEntry( entry );
+    TEST_FOR_EXCEPTION( direction.size() != 3,
+			InvalidDirectionalDistributionRepresentation,
+			"Error: the direction is invalid - size ("
+			<< direction.size() << ") != 3" );
 
-  // Optional argument
-  std::string axis_name;
-  
-  if( distribution_rep.isParameter( "Axis" ) )
-    axis_name = distribution_rep.get<std::string>( "Axis" );
+    return Teuchos::RCP<DirectionalDistribution>(
+			     new MonoDirectionalDistribution( direction[0],
+							      direction[1],
+							      direction[2] ) );
+  }
   else
-    axis_name = "Z";
+  {
+    Teuchos::RCP<const Teuchos::ParameterEntry> entry =
+      distribution_rep.getEntryRCP( "Theta Distribution" );
+    
+    // Create the directional distribution
+    Teuchos::RCP<OneDDistribution> theta_distribution = 
+      OneDDistributionEntryConverterDB::convertEntry( entry );
+    
+    entry = distribution_rep.getEntryRCP( "Mu Distribution" );
+    
+    Teuchos::RCP<OneDDistribution> mu_distribution = 
+      OneDDistributionEntryConverterDB::convertEntry( entry );
+    
+    // Optional argument
+    std::string axis_name;
+    
+    if( distribution_rep.isParameter( "Axis" ) )
+      axis_name = distribution_rep.get<std::string>( "Axis" );
+    else
+      axis_name = "Z";
 
-  Axis axis = convertAxisNameToAxisEnum( axis_name );
-
-  return Teuchos::RCP<DirectionalDistribution>(
-			       new DirectionalDistribution( theta_distribution,
-							    mu_distribution,
-							    axis ) );
+    DirectionalDistributionFactory::validateAxisName( axis_name );
+    
+    Axis axis = convertAxisNameToAxisEnum( axis_name );
+    
+    return Teuchos::RCP<DirectionalDistribution>(
+		     new SphericalDirectionalDistribution( theta_distribution,
+							   mu_distribution,
+							   axis ) );
+  }
 }
 
 // Validate a distribution representation
 void DirectionalDistributionFactory::validateDistributionRep( 
 			       const Teuchos::ParameterList& distribution_rep )
 {
-  TEST_FOR_EXCEPTION( !distribution_rep.isParameter( "Theta Distribution" ),
-		      InvalidDirectionalDistributionRepresentation,
-		      "Error: A directional distribution needs to "
-		      "have the mu distribution specified!" );
+  if( !distribution_rep.isParameter( "Direction" ) )
+  {
+    TEST_FOR_EXCEPTION( !distribution_rep.isParameter( "Theta Distribution" ),
+			InvalidDirectionalDistributionRepresentation,
+			"Error: A spherical directional distribution needs to "
+			"have the mu distribution specified!" );
   
-  TEST_FOR_EXCEPTION( !distribution_rep.isParameter( "Mu Distribution" ),
-		      InvalidDirectionalDistributionRepresentation,
-		      "Error: A directional distribution needs to "
-		      "have the mu distribution specified!" );
+    TEST_FOR_EXCEPTION( !distribution_rep.isParameter( "Mu Distribution" ),
+			InvalidDirectionalDistributionRepresentation,
+			"Error: A spherical directional distribution needs to "
+			"have the mu distribution specified!" );
+  }
+  else
+  {
+    TEST_FOR_EXCEPTION( !distribution_rep.isParameter( "Direction" ),
+			InvalidDirectionalDistributionRepresentation,
+			"Error: A mono directional distribution needs to "
+			"have the direction specified!" );
+  }
 }
 
 // Validate the axis name

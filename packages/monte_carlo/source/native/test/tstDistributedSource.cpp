@@ -27,6 +27,7 @@
 #include "Geometry_DagMCHelpers.hpp"
 #include "Geometry_ModuleInterface.hpp"
 #include "Utility_SphericalSpatialDistribution.hpp"
+#include "Utility_SphericalDirectionalDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
@@ -82,7 +83,7 @@ void initializeSource( const bool set_importance_functions = false,
 
   // Create the directional distribution
   Teuchos::RCP<Utility::DirectionalDistribution>
-    directional_distribution( new Utility::DirectionalDistribution( 
+    directional_distribution( new Utility::SphericalDirectionalDistribution( 
 							   theta_distribution,
 							   mu_distribution ) );
 
@@ -136,7 +137,8 @@ void initializeSource( const bool set_importance_functions = false,
     // Create the directional importance distribution
     Teuchos::RCP<Utility::DirectionalDistribution>
       directional_importance_distribution( 
-	   new Utility::DirectionalDistribution( theta_importance_distribution,
+	   new Utility::SphericalDirectionalDistribution( 
+						 theta_importance_distribution,
 						 mu_distribution ) );
 
     // Create the energy importance distribution
