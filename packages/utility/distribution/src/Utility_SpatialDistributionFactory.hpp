@@ -55,6 +55,10 @@ private:
   static Teuchos::RCP<Utility::SpatialDistribution> 
   createSphericalDistribution(const Teuchos::ParameterList& distribution_rep );
 
+  // Create a point distribution
+  static Teuchos::RCP<Utility::SpatialDistribution>
+  createPointDistribution( const Teuchos::ParameterList& distribution_rep );
+
   // Constructor
   SpatialDistributionFactory();
 };

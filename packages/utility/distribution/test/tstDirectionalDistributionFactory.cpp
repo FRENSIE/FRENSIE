@@ -83,6 +83,32 @@ TEUCHOS_UNIT_TEST( DirectionalDistributionFactory, createSpecificDistribution )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution of interest can be constructed from parameter
+// entries
+TEUCHOS_UNIT_TEST( DirectionalDistributionFactory, createMonoDistribution )
+{
+  Teuchos::RCP<Teuchos::ParameterList> parameter_list = 
+    Teuchos::getParametersFromXmlFile( test_xml_file_name );
+
+  Teuchos::ParameterList directional_distribution_rep = 
+    parameter_list->get<Teuchos::ParameterList>("Directional Distribution C" );
+
+  Teuchos::RCP<Utility::DirectionalDistribution> distribution = 
+    Utility::DirectionalDistributionFactory::createDistribution(
+						directional_distribution_rep );
+  
+  TEST_ASSERT( !distribution.is_null() );
+
+  Teuchos::Array<double> sampled_dir( 3 );
+  
+  distribution->sample( sampled_dir.getRawPtr() );
+
+  TEST_FLOATING_EQUALITY( sampled_dir[0], 0.5773502691896258, 1e-15 );
+  TEST_FLOATING_EQUALITY( sampled_dir[1], -0.5773502691896258, 1e-15 );
+  TEST_FLOATING_EQUALITY( sampled_dir[2], 0.5773502691896258, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
