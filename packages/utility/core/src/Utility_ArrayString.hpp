@@ -53,7 +53,7 @@ public:
   { /* ... */ }
 
   //! Return the parsed array string
-  const std::string& getArrayString() const;
+  const std::string& getString() const;
 
   //! Return the concrete array
   template<typename T>
@@ -78,6 +78,11 @@ public:
   bool isEqual( const ArrayString& other ) const;
 
 private:
+
+  // replace occurances of pi within a substring
+  static void replacePiInSubstring( const std::string::size_type start,
+				    const std::string::size_type true_end,
+				    std::string& array_string );
 
   // The array representation string
   std::string d_array_string;  

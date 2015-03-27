@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <sstream>
+
 // FRENSIE Includes
 #include "Utility_ArrayString.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -16,13 +19,69 @@ namespace Utility{
 // Replace all occurances of pi with the number
 void ArrayString::locateAndReplacePi( std::string& array_string )
 {
+  // Loop through all element tokens of the array string
+  std::string::size_type elem_start_pos = array_string.find( "{" );
+  ++elem_start_pos;
+  
+  std::string::size_type elem_end_pos = array_string.find( "," );
+
+  std::string::size_type pi_pos;
+  
+  while( elem_start_pos < array_string.size() )
+  {
+    ArrayString::replacePiInSubstring( elem_start_pos, elem_end_pos - 1 );
+
+    elem_start_pos = elem_end_pos+1;
+
+    elem_end_pos = array_string.find_first_of( ",}" );
+  }
+  
+  // // Search for and replace "2pi"
+  // {
+  //   std::ostringstream oss;
+  //   oss.precision( 18 );
+  //   oss << 2*Utility::PhysicalConstants::pi;
+    
+  //   std::string::size_type pos = 0;
+  
+  //   while( pos < array_string.size() )
+  //   {
+  //     pos = array_string.find( "2pi" );
+
+  //     if( pos < array_string.size() )
+  // 	array_string.replace( pos, 3, oss.str() );
+  //   }
+  // }
+
+  // // Search for and replace "pi"
+  // {
+  //   std::ostringstream oss;
+  //   oss.precision( 18 );
+  //   oss << Utility::PhysicalConstants::pi;
+    
+  //   std::string::size_type pos = 0;
+    
+  //   while( pos < array_string.size() )
+  //   {
+  //     pos = array_string.find( "pi" );
+      
+  //     if( pos < array_string.size() )
+  // 	array_string.replace( pos, 2, oss.str() );
+  //   }
+  // }
+}
+
+void ArrayString::replacePiInSubstring( const std::string::size_type start,
+					const std::string::size_type true_end,
+					std::string& array_string )
+{
   
 }
 
 // Replace all occurances of i with an appropriate subarray
 void ArrayString::locateAndReplaceIntervalOperator( std::string& array_string )
 {
-
+  
 }
 
 // Replace all occurances of ilog with an appropriate subarray
@@ -55,7 +114,7 @@ ArrayString::ArrayString( const std::string& array_string )
 
 // Copy constructor
 ArrayString::ArrayString( const ArrayString& other )
-  : d_array_string( other.array_string )
+  : d_array_string( other.d_array_string )
 {
   // Make sure the array rep is valid
   testPrecondition( other.d_array_string.size() >= 2 );
@@ -68,7 +127,7 @@ ArrayString& ArrayString::operator=( const ArrayString& other )
   // Make sure the 
   testPrecondition( other.d_array_string.size() >= 2 );
 
-  if( &parser != this )
+  if( &other != this )
   {
     d_array_string = other.d_array_string;
   }
@@ -77,7 +136,7 @@ ArrayString& ArrayString::operator=( const ArrayString& other )
 }
 
 // Return the parsed array string
-const std::string& ArrayString::getParsedArrayString() const
+const std::string& ArrayString::getString() const
 {
   return d_array_string;
 }
@@ -113,7 +172,7 @@ void ArrayString::toStream( std::ostream& os ) const
 // Method for initializing the object from an input stream
 void ArrayString::fromStream( std::istream& is )
 {
-  os >> d_array_string;
+  is >> d_array_string;
 
   // Replace all occurances of pi with the number
   locateAndReplacePi( d_array_string );
