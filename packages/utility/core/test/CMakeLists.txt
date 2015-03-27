@@ -168,3 +168,9 @@ ADD_EXECUTABLE(tstStandardHashBasedGridSearcher
   tstStandardHashBasedGridSearcher.cpp)
 TARGET_LINK_LIBRARIES(tstStandardHashBasedGridSearcher utility_core)
 ADD_TEST(StandardHashBasedGridSearcher_test tstStandardHashBasedGridSearcher)
+
+ADD_EXECUTABLE(tstArrayString 
+  tstArrayString.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstArrayString utility_core)
+ADD_TEST(ArrayString_test tstArrayString)
