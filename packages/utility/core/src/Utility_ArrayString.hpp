@@ -33,9 +33,6 @@ public:
   //! Replace all occurances of i with an appropriate subarray
   static void locateAndReplaceIntervalOperator( std::string& array_string );
 
-  //! Replace all occurances of ilog with an appropriate subarray
-  static void locateAndReplaceLogIntervalOperator( std::string& array_string );
-
   //! Default constructor
   ArrayString();
 
@@ -83,6 +80,12 @@ private:
   static void replacePiInSubstring( const std::string::size_type start,
 				    const std::string::size_type true_end,
 				    std::string& array_string );
+
+  // replace occurances of interval operator within a substring
+  static void replaceIntervalOperatorInSubstring( 
+					    const std::string& left_element,
+					    std::string& middle_element,
+					    const std::string& right_element );
 
   // The array representation string
   std::string d_array_string;  

@@ -9,9 +9,13 @@
 // Std Lib Includes
 #include <sstream>
 
+// Boost Includes
+#include <boost/algorithm/string.hpp>
+
 // FRENSIE Includes
 #include "Utility_ArrayString.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -23,72 +27,222 @@ void ArrayString::locateAndReplacePi( std::string& array_string )
   std::string::size_type elem_start_pos = array_string.find( "{" );
   ++elem_start_pos;
   
-  std::string::size_type elem_end_pos = array_string.find( "," );
+  std::string::size_type elem_end_pos = array_string.find_first_of( ",}", 
+							   elem_start_pos );
 
-  std::string::size_type pi_pos;
+  std::string::size_type orig_string_size = array_string.size();
   
-  while( elem_start_pos < array_string.size() )
+  while( elem_end_pos < array_string.size() )
   {
-    ArrayString::replacePiInSubstring( elem_start_pos, elem_end_pos - 1 );
+    ArrayString::replacePiInSubstring( elem_start_pos, 
+				       elem_end_pos - 1,
+				       array_string );
 
-    elem_start_pos = elem_end_pos+1;
+    if( orig_string_size != array_string.size() )
+    {
+      elem_start_pos = array_string.find( "{" );
 
-    elem_end_pos = array_string.find_first_of( ",}" );
-  }
-  
-  // // Search for and replace "2pi"
-  // {
-  //   std::ostringstream oss;
-  //   oss.precision( 18 );
-  //   oss << 2*Utility::PhysicalConstants::pi;
-    
-  //   std::string::size_type pos = 0;
-  
-  //   while( pos < array_string.size() )
-  //   {
-  //     pos = array_string.find( "2pi" );
-
-  //     if( pos < array_string.size() )
-  // 	array_string.replace( pos, 3, oss.str() );
-  //   }
-  // }
-
-  // // Search for and replace "pi"
-  // {
-  //   std::ostringstream oss;
-  //   oss.precision( 18 );
-  //   oss << Utility::PhysicalConstants::pi;
-    
-  //   std::string::size_type pos = 0;
-    
-  //   while( pos < array_string.size() )
-  //   {
-  //     pos = array_string.find( "pi" );
+      elem_end_pos = array_string.find_first_of( ",}", elem_start_pos );
       
-  //     if( pos < array_string.size() )
-  // 	array_string.replace( pos, 2, oss.str() );
-  //   }
-  // }
+      orig_string_size = array_string.size();
+    }
+    else
+    {
+      elem_start_pos = elem_end_pos+1;
+
+      elem_end_pos = array_string.find_first_of( ",}", elem_start_pos );
+    }
+  }
 }
 
 void ArrayString::replacePiInSubstring( const std::string::size_type start,
 					const std::string::size_type true_end,
 					std::string& array_string )
 {
-  
+  std::string::size_type pi_pos = array_string.find( "pi", start );
+
+  TEST_FOR_EXCEPTION( array_string.find( "pi", pi_pos+2 ) < true_end,
+		      std::runtime_error,
+		      "Error: 'pi' cannot occur multiple times in the same "
+		      "array element!" );
+
+  if( pi_pos >= start && pi_pos < true_end )
+  {
+    double front_value = 1.0, end_value = 1.0;
+
+    std::string front_string = array_string.substr( start, pi_pos-start );
+
+    if( front_string.find_first_of( "0123456789" ) < front_string.size() )
+    {
+      std::istringstream iss( front_string );
+      
+      iss >> front_value;
+    }
+
+    std::string::size_type div_pos = array_string.find_first_of( "/", start );
+    
+    if( div_pos < true_end && div_pos > pi_pos )
+    {
+      std::string end_string = 
+	array_string.substr( div_pos+1, true_end - div_pos );
+      
+      if( end_string.find_first_of( "0123456789" ) < 
+	  end_string.size() )
+      {
+	std::istringstream iss( end_string );
+      
+	iss >> end_value;
+      }
+    }
+    else if( div_pos < pi_pos )
+    {
+      THROW_EXCEPTION( std::runtime_error,
+		       "Error: invalid array element value ("
+		       << array_string.substr( start, true_end )
+		       << ")! " );
+    }
+      
+    std::ostringstream oss;
+    oss.precision( 18 );
+    
+    oss << front_value*Utility::PhysicalConstants::pi/end_value;
+    
+    array_string.replace( start, true_end - start + 1, oss.str() );
+  }
 }
 
 // Replace all occurances of i with an appropriate subarray
 void ArrayString::locateAndReplaceIntervalOperator( std::string& array_string )
 {
+  // Loop through all array elements
+  boost::trim( array_string );
+
+  Teuchos::Array<std::string> array_elements;
   
+  boost::split( array_elements,
+		array_string,
+		boost::is_any_of( "," ) );		
+  
+  TEST_FOR_EXCEPTION( array_elements.front().find( "i" ) < 
+		      array_elements.front().size(),
+		      std::runtime_error,
+		      "Error: the first array element cannot have an "
+		      "interval operator!" );
+
+  TEST_FOR_EXCEPTION( array_elements.back().find( "i" ) <
+		      array_elements.back().size(),
+		      std::runtime_error,
+		      "Error: the last array element cannot have an "
+		      "interval operator!" );
+
+  std::string::size_type bracket_pos = array_elements.front().find( "{" );
+
+  if( bracket_pos < array_elements.front().size() )
+    array_elements.front().erase( bracket_pos, 1 );
+
+  bracket_pos = array_elements.back().find( "}" );
+  
+  if( bracket_pos < array_elements.back().size() )
+    array_elements.back().erase( bracket_pos, 1 );
+  
+  for( unsigned i = 1; i < array_elements.size()-1; ++i )
+  {
+    ArrayString::replaceIntervalOperatorInSubstring( array_elements[i-1],
+						     array_elements[i],
+						     array_elements[i+1] );
+  }
+
+  // Reconstruct the array string
+  array_string = "{";
+  array_string += array_elements.front();
+  
+  for( unsigned i = 1; i < array_elements.size(); ++i )
+  {
+    array_string += ",";
+    array_string += array_elements[i];
+  }
+
+  array_string += "}";
 }
 
-// Replace all occurances of ilog with an appropriate subarray
-void ArrayString::locateAndReplaceLogIntervalOperator( 
-						    std::string& array_string )
+// replace occurances of interval operator within a substring
+void ArrayString::replaceIntervalOperatorInSubstring( 
+					    const std::string& left_element,
+					    std::string& middle_element,
+					    const std::string& right_element )
 {
+  TEST_FOR_EXCEPTION( left_element.find( "i" ) < left_element.size(),
+		      std::runtime_error,
+		      "Error: interval operators cannot occur in "
+		      "consecutive array elements!" );
 
+  TEST_FOR_EXCEPTION( right_element.find( "i" ) < right_element.size(),
+		      std::runtime_error,
+		      "Error: interval operators cannot occur in "
+		      "consecutive array elements!" );
+
+  bool raw_left_element = left_element.find( "," ) > left_element.size();
+  bool raw_right_element = right_element.find( "," ) > right_element.size();
+
+  std::string::size_type op_pos = middle_element.find( "i" );
+
+  if( raw_left_element && raw_right_element &&
+      op_pos < middle_element.size() )
+  {
+    double left_value, right_value;
+    
+    {
+      std::istringstream iss( left_element );
+
+      iss >> left_value;
+    }
+
+    {
+      std::istringstream iss( right_element );
+
+      iss >> right_value;
+    }
+
+    TEST_FOR_EXCEPTION( left_value > right_value,
+			std::runtime_error,
+			"Error: the array elements must be in ascending "
+			"order (" << left_value << " !<= " << right_value <<
+			")!" );
+
+    int intervals;
+
+    {
+      std::istringstream iss( middle_element.substr( 0, op_pos ) );
+
+      iss >> intervals;
+    }
+
+    TEST_FOR_EXCEPTION( intervals <= 0,
+			std::runtime_error,
+			"Error: a positive integer must be specified with "
+			"the interval operator!" );
+
+    // Increment the interval value to account for the last element
+    ++intervals;
+
+    double step_size = (right_value-left_value)/intervals;
+    
+    // Replace the interval operator with the new array elements
+    middle_element.clear();
+    
+    for( unsigned i = 1; i < intervals; ++i )
+    {
+      std::ostringstream oss;
+      oss.precision( 18 );
+      
+      oss << left_value + step_size*i;
+      
+      middle_element += oss.str();
+
+      if( i < intervals-1 )
+	middle_element += ",";
+    }
+  }
 }
 
 // Default constructor
@@ -107,9 +261,6 @@ ArrayString::ArrayString( const std::string& array_string )
 
   // Replace all occurances of i with an appropriate subarray
   locateAndReplaceIntervalOperator( d_array_string );
-
-  // Replace all occurances of ilog with an appropriate subarray
-  locateAndReplaceLogIntervalOperator( d_array_string );
 }
 
 // Copy constructor
@@ -179,9 +330,6 @@ void ArrayString::fromStream( std::istream& is )
 
   // Replace all occurances of i with an appropriate subarray
   locateAndReplaceIntervalOperator( d_array_string );
-
-  // Replace all occurances of ilog with an appropriate subarray
-  locateAndReplaceLogIntervalOperator( d_array_string );
 }
 
 // Method for testing if two objects are equivalent
