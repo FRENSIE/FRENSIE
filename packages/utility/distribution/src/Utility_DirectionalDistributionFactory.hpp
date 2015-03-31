@@ -18,6 +18,8 @@
 
 // FRENSIE Includes
 #include "Utility_DirectionalDistribution.hpp"
+#include "Utility_SphericalDirectionalDistribution.hpp"
+#include "Utility_UniformDistribution.hpp"
 #include "Utility_OneDDistributionEntryConverterDB.hpp"
 #include "Utility_Axis.hpp"
 
@@ -33,6 +35,10 @@ public:
   static Teuchos::RCP<DirectionalDistribution>
   createDistribution( const Teuchos::ParameterList& distribution_rep );
 
+  //! Create an isotropic distribution
+  static Teuchos::RCP<DirectionalDistribution>
+  createIsotropicDistribution();
+
 private:
 
   // Validate a distribution representation
@@ -41,6 +47,16 @@ private:
 
   // Validate the axis name
   static void validateAxisName( const std::string& axis_name );
+
+  //! The default mu distribution
+  static const Teuchos::RCP<Utility::OneDDistribution> s_default_mu_dist;
+
+  //! The default theta distribution
+  static const Teuchos::RCP<Utility::OneDDistribution> s_default_theta_dist;
+
+  //! The default spherical directional distribution
+  static const Teuchos::RCP<Utility::SphericalDirectionalDistribution>
+  s_isotropic_directional_dist;
 
   // Constructor
   DirectionalDistributionFactory();
