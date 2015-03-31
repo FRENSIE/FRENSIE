@@ -26,8 +26,8 @@ double HydrogenFormFactorDistribution::evaluate(
 					   const double indep_var_value ) const
 {
   // Make sure the value is valid
-  testPrecondition( !ST::isnaninf( value ) );
-  testPrecondition( value >= 0.0 );
+  testPrecondition( !ST::isnaninf( indep_var_value ) );
+  testPrecondition( indep_var_value >= 0.0 );
   
   if( indep_var_value >= 0.0 )
   {
