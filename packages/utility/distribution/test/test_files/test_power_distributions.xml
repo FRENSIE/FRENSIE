@@ -1,0 +1,16 @@
+<ParameterList name="Power Distributions">
+
+  <Parameter name="Power Distribution A" type="Power 1 Distribution"
+	     value="{2,0,1}"/>
+  <Parameter name="Power Distribution B" type="Power 1 Distribution"
+	     value="{0,pi/2}"/>
+  <Parameter name="Power Distribution C" type="Power 2 Distribution"
+	     value="{3,0,2pi}"/>
+  <Parameter name="Power Distribution D" type="Power 2 Distribution"
+	     value="{0,3pi/4}"/>
+  <Parameter name="Power Distribution E" type="Power 3 Distribution"
+	     value="{4,0,pi}"/>
+  <Parameter name="Power Distribution F" type="Power 3 Distribution"
+	     value="{0,5*pi/4}"/>
+
+</ParameterList>

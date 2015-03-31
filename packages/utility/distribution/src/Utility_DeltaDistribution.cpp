@@ -11,7 +11,9 @@
 
 // FRENSIE Includes
 #include "Utility_DeltaDistribution.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -111,19 +113,25 @@ void DeltaDistribution::fromStream( std::istream& is )
   std::getline( is, dist_rep, '}' );
   dist_rep += '}';
 
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( dist_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the delta distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+
   Teuchos::Array<double> distribution;
   try{
     distribution = Teuchos::fromStringToArray<double>( dist_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the delta distribution cannot be constructed "
-			 "because the representation is not valid (see "
-			 "details below)!\n" );
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
-  }
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the delta distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
 
   TEST_FOR_EXCEPTION( distribution.size() != 1,
 		      InvalidDistributionStringRepresentation,

@@ -9,6 +9,9 @@
 // FRENSIE Includes
 #include "Utility_PowerDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ArrayString.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -303,28 +306,37 @@ void PowerDistribution<2u>::fromStream( std::istream& is )
   std::getline( is, dist_rep, '}' );
   dist_rep += '}';
 
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( dist_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the power 2 distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+
   Teuchos::Array<double> distribution;
   try{
     distribution = Teuchos::fromStringToArray<double>( dist_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the power 2 distribution cannot be "
-			 "constructed because the representation is not valid "
-			 "(see details below)!\n" );
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
-  }
-
-  TEST_FOR_EXCEPTION( distribution.size() != 3,
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the power 2 distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+  
+  TEST_FOR_EXCEPTION( distribution.size() < 2 || distribution.size() > 3,
 		      InvalidDistributionStringRepresentation,
 		      "Error: the power 2 distribution cannot be constructed "
 		      "because the representation is not valid "
-		      "(only 3 values may be specified)!" );
+		      "(either 2 or 3 values may be specified)!" );
 
   // Set the constant multiplier
-  d_constant_multiplier = distribution[0];
+  if( distribution.size() == 3 )
+    d_constant_multiplier = distribution[0];
+  else
+    d_constant_multiplier = 1.0;
   
   TEST_FOR_EXCEPTION( ST::isnaninf( d_constant_multiplier ),
 		      InvalidDistributionStringRepresentation,
@@ -333,7 +345,10 @@ void PowerDistribution<2u>::fromStream( std::istream& is )
 		      "valid!" );
   
   // Set the min independent limit
-  d_min_indep_limit = distribution[1];
+  if( distribution.size() == 3 )
+    d_min_indep_limit = distribution[1];
+  else
+    d_min_indep_limit = distribution[0];
   
   TEST_FOR_EXCEPTION( ST::isnaninf( d_min_indep_limit ),
 		      InvalidDistributionStringRepresentation,
@@ -351,7 +366,10 @@ void PowerDistribution<2u>::fromStream( std::istream& is )
     d_min_indep_limit*d_min_indep_limit*d_min_indep_limit;
 
   // Set the max independent limit
-  d_max_indep_limit = distribution[2];
+  if( distribution.size() == 3 )
+    d_max_indep_limit = distribution[2];
+  else
+    d_max_indep_limit = distribution[1];
 
   TEST_FOR_EXCEPTION( ST::isnaninf( d_max_indep_limit ),
 		      InvalidDistributionStringRepresentation,
@@ -377,28 +395,37 @@ void PowerDistribution<1u>::fromStream( std::istream& is )
   std::getline( is, dist_rep, '}' );
   dist_rep += '}';
 
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( dist_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the power 1 distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+
   Teuchos::Array<double> distribution;
   try{
     distribution = Teuchos::fromStringToArray<double>( dist_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the power 2 distribution cannot be "
-			 "constructed because the representation is not valid "
-			 "(see details below)!\n" );
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
-  }
-
-  TEST_FOR_EXCEPTION( distribution.size() != 3,
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the power 1 distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+  
+  TEST_FOR_EXCEPTION( distribution.size() < 2 || distribution.size() > 3,
 		      InvalidDistributionStringRepresentation,
 		      "Error: the power 1 distribution cannot be constructed "
 		      "because the representation is not valid "
-		      "(only 3 values may be specified)!" );
+		      "(either 2 or 3 values may be specified)!" );
 
   // Set the constant multiplier
-  d_constant_multiplier = distribution[0];
+  if( distribution.size() == 3 )
+    d_constant_multiplier = distribution[0];
+  else
+    d_constant_multiplier = 1.0;
   
   TEST_FOR_EXCEPTION( ST::isnaninf( d_constant_multiplier ),
 		      InvalidDistributionStringRepresentation,
@@ -407,7 +434,10 @@ void PowerDistribution<1u>::fromStream( std::istream& is )
 		      "valid!" );
   
   // Read the min independent limit
-  d_min_indep_limit = distribution[1];
+  if( distribution.size() == 3 )
+    d_min_indep_limit = distribution[1];
+  else
+    d_min_indep_limit = distribution[0];
 
   TEST_FOR_EXCEPTION( ST::isnaninf( d_min_indep_limit ),
 		      InvalidDistributionStringRepresentation,
@@ -424,7 +454,10 @@ void PowerDistribution<1u>::fromStream( std::istream& is )
   d_min_indep_limit_squared = d_min_indep_limit*d_min_indep_limit;
 
   // Read the max independent limit
-  d_max_indep_limit = distribution[2];
+  if( distribution.size() == 3 )
+    d_max_indep_limit = distribution[2];
+  else
+    d_max_indep_limit = distribution[1];
   
   TEST_FOR_EXCEPTION( ST::isnaninf( d_max_indep_limit ),
 		      InvalidDistributionStringRepresentation,
