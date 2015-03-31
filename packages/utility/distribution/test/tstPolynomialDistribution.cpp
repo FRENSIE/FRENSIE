@@ -22,6 +22,13 @@
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_PolynomialDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_PhysicalConstants.hpp"
+
+//---------------------------------------------------------------------------//
+// Testing Variables
+//---------------------------------------------------------------------------//
+
+Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 
 Teuchos::RCP<Utility::OneDDistribution> distribution;
 
@@ -124,7 +131,7 @@ TEUCHOS_UNIT_TEST( PolynomialDistribution, getDistributionType )
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be written to and read from an xml file
-TEUCHOS_UNIT_TEST( PolynomialDistribution, toFromParameterList )
+TEUCHOS_UNIT_TEST( PolynomialDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::PolynomialDistribution> true_distribution = 
     Teuchos::rcp_dynamic_cast<Utility::PolynomialDistribution>( distribution );
@@ -152,12 +159,36 @@ TEUCHOS_UNIT_TEST( PolynomialDistribution, toFromParameterList )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be read from an xml file
+TEUCHOS_UNIT_TEST( PolynomialDistribution, fromParameterList )
+{
+  Utility::PolynomialDistribution distribution = 
+    test_dists_list->get<Utility::PolynomialDistribution>( "Polynomial Distribution A" );
+
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 1.0 );
+
+  distribution = 
+    test_dists_list->get<Utility::PolynomialDistribution>( "Polynomial Distribution B" );
+
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 
+		       Utility::PhysicalConstants::pi/2 );
+} 
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_dists_xml_file;
+  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
   
+  clp.setOption( "test_dists_xml_file",
+		 &test_dists_xml_file,
+		 "Test distributions xml file name" );
+
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -168,6 +199,10 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::PolynomialDistribution );
+
+  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

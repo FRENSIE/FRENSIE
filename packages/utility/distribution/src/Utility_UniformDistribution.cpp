@@ -9,7 +9,9 @@
 // FRENSIE Includes
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
 
@@ -146,21 +148,27 @@ void UniformDistribution::fromStream( std::istream& is )
   std::getline( is, dist_rep, '}' );
   dist_rep += '}';
 
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( dist_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the exponential distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (only three values may be specified)!" );
+
   Teuchos::Array<double> distribution;
   try{
     distribution = Teuchos::fromStringToArray<double>( dist_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the uniform distribution cannot be "
-			 "constructed because the representation is not valid "
-			 "(see details below)!\n" );
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
-  }
-
-  TEST_FOR_EXCEPTION( distribution.size() != 3,
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the uniform distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+  
+  TEST_FOR_EXCEPTION( distribution.size() < 2 || distribution.size() > 3,
 		      InvalidDistributionStringRepresentation,
 		      "Error: the exponential distribution cannot be "
 		      "constructed because the representation is not valid "
@@ -187,7 +195,10 @@ void UniformDistribution::fromStream( std::istream& is )
 		      "Error: the uniform distribution cannot be "
 		      "constructed because of invalid independent values!" );
 
-  d_dependent_value = distribution[2];
+  if( distribution.size() == 3 )
+    d_dependent_value = distribution[2];
+  else
+    d_dependent_value = 1.0;
 
   TEST_FOR_EXCEPTION( ST::isnaninf( d_dependent_value ),
 		      InvalidDistributionStringRepresentation,
