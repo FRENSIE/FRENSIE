@@ -30,7 +30,7 @@ public:
   //! Replace all occurances of pi with the number
   static void locateAndReplacePi( std::string& array_string );
 
-  //! Replace all occurances of i with an appropriate subarray
+  //! Replace all occurances of i or l with an appropriate subarray
   static void locateAndReplaceIntervalOperator( std::string& array_string );
 
   //! Default constructor

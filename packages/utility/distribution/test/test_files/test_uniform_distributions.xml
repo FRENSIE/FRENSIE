@@ -1,0 +1,7 @@
+<ParameterList name="Uniform Distributions">
+
+  <Parameter name="Uniform Distribution A" type="Uniform Distribution"
+	     value="{-1.0, 1.0, 2}"/>
+  <Parameter name="Uniform Distribution B" type="Uniform Distribution"
+	     value="{0,2pi}"/>
+</ParameterList>

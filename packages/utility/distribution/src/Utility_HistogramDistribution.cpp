@@ -13,7 +13,9 @@
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SortAlgorithms.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
 
@@ -324,21 +326,28 @@ void HistogramDistribution::fromStream( std::istream& is )
   std::string bin_boundaries_rep;
   std::getline( is, bin_boundaries_rep, '}' );
   bin_boundaries_rep += "}";
+
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( bin_boundaries_rep );
+    ArrayString::locateAndReplaceIntervalOperator( bin_boundaries_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the histogram distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
   
   Teuchos::Array<double> bin_boundaries;
   try{
     bin_boundaries = Teuchos::fromStringToArray<double>( bin_boundaries_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the histogram distribution cannot be "
-			 "constructed because the representation is not valid "
-			 "(see details below)!\n" );
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
-  }
-
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the histogram distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+  
   TEST_FOR_EXCEPTION( !Sort::isSortedAscending( bin_boundaries.begin(),
 						bin_boundaries.end() ),
 		      InvalidDistributionStringRepresentation,
@@ -353,21 +362,28 @@ void HistogramDistribution::fromStream( std::istream& is )
   std::string bin_values_rep;
   std::getline( is, bin_values_rep, '}' );
   bin_values_rep += "}";
+
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( bin_values_rep );
+    ArrayString::locateAndReplaceIntervalOperator( bin_values_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the histogram distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
   
   Teuchos::Array<double> bin_values;
   try{
     bin_values = Teuchos::fromStringToArray<double>( bin_values_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the histogram distribution cannot be "
-			 "constructed because the representation is not valid "
-			 "(see details below)!\n" );
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
-  }
-
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the histogram distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+  
   TEST_FOR_EXCEPTION( bin_boundaries.size()-1 != bin_values.size(),
 		      InvalidDistributionStringRepresentation, 
 		      "Error: the histogram distribution "

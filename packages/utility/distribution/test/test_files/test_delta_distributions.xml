@@ -1,0 +1,10 @@
+<ParameterList name="Delta Distributions">
+  
+  <Parameter name="Delta Distribution A" type="Delta Distribution"
+	     value="{0}"/>
+  <Parameter name="Delta Distribution B" type="Delta Distribution"
+	     value="{pi}"/>
+  <Parameter name="Delta Distribution C" type="Delta Distribution"
+	     value="{-pi/2}"/>
+
+</ParameterList>

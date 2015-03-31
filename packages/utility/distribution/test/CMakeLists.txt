@@ -1,23 +1,21 @@
-ADD_EXECUTABLE(tstDeltaDistribution 
-  tstDeltaDistribution.cpp 
-  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+ADD_EXECUTABLE(tstDeltaDistribution tstDeltaDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstDeltaDistribution utility_core utility_prng utility_dist)
-ADD_TEST(DeltaDistribution_test tstDeltaDistribution)
+ADD_TEST(DeltaDistribution_test tstDeltaDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_delta_distributions.xml")
 
 ADD_EXECUTABLE(tstDiscreteDistribution 
   tstDiscreteDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstDiscreteDistribution utility_core utility_prng utility_dist)
-ADD_TEST(DiscreteDistribution_test tstDiscreteDistribution)
+ADD_TEST(DiscreteDistribution_test tstDiscreteDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_discrete_distributions.xml")
 
 ADD_EXECUTABLE(tstUniformDistribution 
   tstUniformDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstUniformDistribution utility_core utility_prng utility_dist)
-ADD_TEST(UniformDistribution_test tstUniformDistribution)
+ADD_TEST(UniformDistribution_test tstUniformDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_uniform_distributions.xml")
 
 ADD_EXECUTABLE(tstHistogramDistribution 
   tstHistogramDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstHistogramDistribution utility_core utility_prng utility_dist)
-ADD_TEST(HistogramDistribution_test tstHistogramDistribution)
+ADD_TEST(HistogramDistribution_test tstHistogramDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_histogram_distributions.xml")
 
 ADD_EXECUTABLE(tstThirtyTwoEquiprobableBinDistribution 
   tstThirtyTwoEquiprobableBinDistribution.cpp)
@@ -27,27 +25,27 @@ ADD_TEST(ThirtyTwoEquiprobableBinDistribution_test tstThirtyTwoEquiprobableBinDi
 ADD_EXECUTABLE(tstTabularDistribution 
   tstTabularDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstTabularDistribution utility_core utility_prng utility_dist)
-ADD_TEST(TabularDistribution_test tstTabularDistribution)
+ADD_TEST(TabularDistribution_test tstTabularDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_tabular_distributions.xml")
 
 ADD_EXECUTABLE(tstExponentialDistribution 
   tstExponentialDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstExponentialDistribution utility_core utility_prng utility_dist)
-ADD_TEST(ExponentialDistribution_test tstExponentialDistribution)
+ADD_TEST(ExponentialDistribution_test tstExponentialDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_exponential_distributions.xml")
 
 ADD_EXECUTABLE(tstNormalDistribution 
   tstNormalDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstNormalDistribution utility_core utility_prng utility_dist)
-ADD_TEST(NormalDistribution_test tstNormalDistribution)
+ADD_TEST(NormalDistribution_test tstNormalDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_normal_distributions.xml")
 
 ADD_EXECUTABLE(tstPowerDistribution 
   tstPowerDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstPowerDistribution utility_core utility_prng utility_dist)
-ADD_TEST(PowerDistribution_test tstPowerDistribution)
+ADD_TEST(PowerDistribution_test tstPowerDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_power_distributions.xml")
 
 ADD_EXECUTABLE(tstPolynomialDistribution 
   tstPolynomialDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstPolynomialDistribution utility_core utility_prng utility_dist)
-ADD_TEST(PolynomialDistribution_test tstPolynomialDistribution)
+ADD_TEST(PolynomialDistribution_test tstPolynomialDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_polynomial_distributions.xml")
 
 ADD_EXECUTABLE(tstKleinNishinaDistribution
   tstKleinNishinaDistribution.cpp)

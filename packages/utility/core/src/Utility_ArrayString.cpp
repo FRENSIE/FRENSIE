@@ -78,6 +78,8 @@ void ArrayString::replacePiInSubstring( const std::string::size_type start,
       
       iss >> front_value;
     }
+    else if( front_string.find( "-" ) < front_string.size() )
+      front_value = -1.0;
 
     std::string::size_type div_pos = array_string.find_first_of( "/", start );
     
@@ -123,13 +125,13 @@ void ArrayString::locateAndReplaceIntervalOperator( std::string& array_string )
 		array_string,
 		boost::is_any_of( "," ) );		
   
-  TEST_FOR_EXCEPTION( array_elements.front().find( "i" ) < 
+  TEST_FOR_EXCEPTION( array_elements.front().find_first_of( "il" ) < 
 		      array_elements.front().size(),
 		      std::runtime_error,
 		      "Error: the first array element cannot have an "
 		      "interval operator!" );
 
-  TEST_FOR_EXCEPTION( array_elements.back().find( "i" ) <
+  TEST_FOR_EXCEPTION( array_elements.back().find_first_of( "il" ) <
 		      array_elements.back().size(),
 		      std::runtime_error,
 		      "Error: the last array element cannot have an "
@@ -171,24 +173,26 @@ void ArrayString::replaceIntervalOperatorInSubstring(
 					    std::string& middle_element,
 					    const std::string& right_element )
 {
-  TEST_FOR_EXCEPTION( left_element.find( "i" ) < left_element.size(),
-		      std::runtime_error,
-		      "Error: interval operators cannot occur in "
-		      "consecutive array elements!" );
-
-  TEST_FOR_EXCEPTION( right_element.find( "i" ) < right_element.size(),
-		      std::runtime_error,
-		      "Error: interval operators cannot occur in "
-		      "consecutive array elements!" );
-
   bool raw_left_element = left_element.find( "," ) > left_element.size();
   bool raw_right_element = right_element.find( "," ) > right_element.size();
 
-  std::string::size_type op_pos = middle_element.find( "i" );
+  std::string::size_type op_pos = middle_element.find_first_of( "il" );
 
   if( raw_left_element && raw_right_element &&
       op_pos < middle_element.size() )
   {
+    TEST_FOR_EXCEPTION( left_element.find_first_of( "il" ) < 
+			left_element.size(),
+			std::runtime_error,
+			"Error: interval operators cannot occur in "
+			"consecutive array elements!" );
+
+    TEST_FOR_EXCEPTION( right_element.find_first_of( "il" ) < 
+			right_element.size(),
+			std::runtime_error,
+			"Error: interval operators cannot occur in "
+			"consecutive array elements!" );
+    
     double left_value, right_value;
     
     {
@@ -225,47 +229,80 @@ void ArrayString::replaceIntervalOperatorInSubstring(
     // Increment the interval value to account for the last element
     ++intervals;
 
-    double step_size = (right_value-left_value)/intervals;
-    
-    // Replace the interval operator with the new array elements
-    middle_element.clear();
-    
-    for( unsigned i = 1; i < intervals; ++i )
+    // Linear increments
+    if( middle_element[op_pos] == 'i' )
     {
-      std::ostringstream oss;
-      oss.precision( 18 );
+      double step_size = (right_value-left_value)/intervals;
+    
+      // Replace the interval operator with the new array elements
+      middle_element.clear();
       
-      oss << left_value + step_size*i;
-      
-      middle_element += oss.str();
+      for( unsigned i = 1; i < intervals; ++i )
+      {
+	std::ostringstream oss;
+	oss.precision( 18 );
+	
+	oss << left_value + step_size*i;
+	
+	middle_element += oss.str();
+	
+	if( i < intervals-1 )
+	  middle_element += ",";
+      }
+    }
+    else // log increments
+    {
+      TEST_FOR_EXCEPTION( left_value <= 0.0,
+			  std::runtime_error,
+			  "Error: the starting value ( "
+			  << left_value << ") must be positive when "
+			  "using the log interval operator (l)!" );
 
-      if( i < intervals-1 )
-	middle_element += ",";
+      double step_size = log(right_value/left_value)/intervals;
+      
+      // Replace the interval operator with the new array elements
+      middle_element.clear();
+
+      for( unsigned i = 1; i < intervals; ++i )
+      {
+	std::ostringstream oss;
+	oss.precision( 18 );
+
+	oss << exp( log(left_value) + step_size*i );
+
+	middle_element += oss.str();
+
+	if( i < intervals-1 )
+	  middle_element += ",";
+      }
     }
   }
 }
 
 // Default constructor
 ArrayString::ArrayString()
+  : ParameterListCompatibleObject<ArrayString>()
 { /* ... */ }
 
 // Constructor
 ArrayString::ArrayString( const std::string& array_string )
-  : d_array_string( array_string )
+  : ParameterListCompatibleObject<ArrayString>(),
+    d_array_string( array_string )
 {
   // Make sure the array rep is valid
   testPrecondition( array_string.size() >= 2 );
 
   // Replace all occurances of pi with the number
   locateAndReplacePi( d_array_string );
-
+  
   // Replace all occurances of i with an appropriate subarray
   locateAndReplaceIntervalOperator( d_array_string );
 }
 
 // Copy constructor
 ArrayString::ArrayString( const ArrayString& other )
-  : d_array_string( other.d_array_string )
+  : ParameterListCompatibleObject<ArrayString>(),
+    d_array_string( other.d_array_string )
 {
   // Make sure the array rep is valid
   testPrecondition( other.d_array_string.size() >= 2 );
@@ -295,13 +332,13 @@ const std::string& ArrayString::getString() const
 // Test if boolean data is present
 bool ArrayString::isBooleanDataPresent() const
 {
-  d_array_string.find_first_not_of( "01" ) > d_array_string.size();
+  return d_array_string.find_first_not_of( "01,{} " ) >= d_array_string.size();
 }
 
 // Test if floating point data is present
 bool ArrayString::isFloatingPointDataPresent() const
 {
-  d_array_string.find_first_of( ".eE" ) < d_array_string.size();
+  return d_array_string.find_first_of( ".eE" ) < d_array_string.size();
 }
 
 // Test if the string represents a multidimentional array
@@ -323,7 +360,10 @@ void ArrayString::toStream( std::ostream& os ) const
 // Method for initializing the object from an input stream
 void ArrayString::fromStream( std::istream& is )
 {
-  is >> d_array_string;
+  std::getline( is, d_array_string, '}' );
+
+  if( d_array_string[d_array_string.size()-1] != '}' )
+    d_array_string.push_back( '}' );
 
   // Replace all occurances of pi with the number
   locateAndReplacePi( d_array_string );
