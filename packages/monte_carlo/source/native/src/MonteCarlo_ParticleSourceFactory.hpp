@@ -74,6 +74,9 @@ private:
   static void
   createCompoundSource( const Teuchos::ParameterList& compound_source,
 			Teuchos::RCP<ParticleSource>& source );
+
+  // The default time distribution
+  static const Teuchos::RCP<Utility::OneDDistribution> s_default_time_dist;
 };
 
 //! The invalid particle source representation error
