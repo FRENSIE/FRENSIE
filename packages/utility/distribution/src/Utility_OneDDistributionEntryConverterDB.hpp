@@ -49,14 +49,14 @@ public:
   //! Get the OneDDistribution from the given parameter entry
   static Teuchos::RCP<OneDDistribution> convertEntry(
 		    const Teuchos::RCP<const Teuchos::ParameterEntry>& entry );
-
-  //! Standard initialization
-  static void standardInitialization();
   
 private:
 
   // Constructor
   OneDDistributionEntryConverterDB();
+
+  // Initialize the class
+  static bool initialize();
 
   // Typedef for the converter map
   typedef boost::unordered_map<std::string,
@@ -64,6 +64,9 @@ private:
   ConverterMap;
 
   static ConverterMap master_map;
+
+  // Records if the class has been initialized
+  static const bool initialized;
 };
 
 } // end Utility namespace

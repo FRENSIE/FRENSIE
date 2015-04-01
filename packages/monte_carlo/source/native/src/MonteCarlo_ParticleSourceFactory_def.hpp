@@ -202,14 +202,11 @@ double ParticleSourceFactory::createDistributedSource(
 	Utility::SpatialDistributionFactory::createDistribution( 
 							    spatial_dist_rep );
     }
-    catch( Utility::InvalidSpatialDistributionRepresentation& error )
-    {
-      std::string message = "Error: An invalid spatial importance function ";
-	message += "was specified in the distributed source!";
-      message += error.what();
-    
-      throw InvalidParticleSourceRepresentation( message );
-    }
+    EXCEPTION_CATCH_RETHROW_AS(
+			     Utility::InvalidSpatialDistributionRepresentation,
+			     InvalidParticleSourceRepresentation,
+			     "Error: An invalid spatial importance function "
+			     "was specified in the distributed source!" );
 
     // Make sure the importance function is compatible with the spatial dist
     TEST_FOR_EXCEPTION( 
@@ -234,14 +231,11 @@ double ParticleSourceFactory::createDistributedSource(
 	Utility::DirectionalDistributionFactory::createDistribution(
 							directional_dist_rep );
     }
-    catch( Utility::InvalidDirectionalDistributionRepresentation& error )
-    {
-      std::string message = "Error: An invalid direcional importance ";
-	message += "function was specified in the distributed source!";
-      message += error.what();
-    
-      throw InvalidParticleSourceRepresentation( message );
-    }
+    EXCEPTION_CATCH_RETHROW_AS( 
+		         Utility::InvalidDirectionalDistributionRepresentation,
+			 InvalidParticleSourceRepresentation,
+			 "Error: An invalid direcional importance "
+			 "function was specified in the distributed source!" );
 
     // Make sure the importance function is compatible with the direct. dist
     TEST_FOR_EXCEPTION( 

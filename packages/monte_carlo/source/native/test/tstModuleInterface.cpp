@@ -68,8 +68,6 @@ TEUCHOS_UNIT_TEST( ModuleInterface, getParticleState )
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  Utility::OneDDistributionEntryConverterDB::standardInitialization();
-  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_source_xml_file",

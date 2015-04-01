@@ -224,8 +224,6 @@ int main( int argc, char** argv )
     return parse_return;
   }
 
-  Utility::OneDDistributionEntryConverterDB::standardInitialization();
-
   parameter_list = Teuchos::getParametersFromXmlFile( test_xml_file_name );
 
   // Initialize the random number generator
