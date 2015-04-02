@@ -15,7 +15,9 @@
 // FRENSIE Includes
 #include "Utility_ExponentialDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
 
@@ -152,27 +154,36 @@ void ExponentialDistribution::fromStream( std::istream& is )
   std::getline( is, dist_rep, '}' );
   dist_rep += '}';
 
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( dist_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the exponential distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+
   Teuchos::Array<double> distribution;
   try{
     distribution = Teuchos::fromStringToArray<double>( dist_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the exponential distribution cannot be "
-			 "constructed because the representation is not valid "
-			 "(see details below)!\n" );
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
-  }
-
-  TEST_FOR_EXCEPTION( distribution.size() != 2,
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the exponential distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+  
+  TEST_FOR_EXCEPTION( distribution.size() < 1 || distribution.size() > 2,
 		      InvalidDistributionStringRepresentation,
 		      "Error: the exponential distribution cannot be "
 		      "constructed because the representation is not valid "
-		      "(only two values may be specified)!" );
+		      "(either one or two values may be specified)!" );
 
-  d_constant_multiplier = distribution[0];
+  if( distribution.size() == 2 )
+    d_constant_multiplier = distribution[0];
+  else
+    d_constant_multiplier = 1.0;
 
   TEST_FOR_EXCEPTION( ST::isnaninf( d_constant_multiplier ),
 		      InvalidDistributionStringRepresentation,
@@ -180,7 +191,10 @@ void ExponentialDistribution::fromStream( std::istream& is )
 		      "constructed because of an invalid constant "
 		      "multiplier " << d_constant_multiplier );
 
-  d_exponent_multiplier = distribution[1];
+  if( distribution.size() == 2 )
+    d_exponent_multiplier = distribution[1];
+  else
+    d_exponent_multiplier = distribution[0];
 
   TEST_FOR_EXCEPTION( ST::isnaninf( d_exponent_multiplier ),
 		      InvalidDistributionStringRepresentation,

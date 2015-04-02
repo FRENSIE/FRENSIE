@@ -9,8 +9,10 @@
 // FRENSIE Includes
 #include "Utility_NormalDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
@@ -208,20 +210,26 @@ void NormalDistribution::fromStream( std::istream& is )
   std::getline( is, dist_rep, '}' );
   dist_rep += '}';
 
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( dist_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the normal distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+
   Teuchos::Array<std::string> distribution;
   try{
     distribution = Teuchos::fromStringToArray<std::string>( dist_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the normal distribution cannot be "
-			 "constructed because the representation is not valid "
-			 "(see details below)!\n" );
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
-  }
-
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the normal distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+  
   TEST_FOR_EXCEPTION( distribution.size() < 2 || distribution.size() > 4,
 		      InvalidDistributionStringRepresentation,
 		      "Error: the normal distribution cannot be constructed "
@@ -229,7 +237,7 @@ void NormalDistribution::fromStream( std::istream& is )
 		      "(only 2, 3, or 4 values may be specified)!" );
 
   // Set the mean
-  TEST_FOR_EXCEPTION( distribution[0].find_first_not_of( " -0123456789.e" ) <
+  TEST_FOR_EXCEPTION( distribution[0].find_first_not_of( " -0123456789.eE" ) <
 		      distribution[0].size(),
 		      InvalidDistributionStringRepresentation,
 		      "Error: the normal distribution cannot be "
@@ -246,7 +254,7 @@ void NormalDistribution::fromStream( std::istream& is )
 		      "because of an invalid mean " << d_mean );
   
   // Set the standard deviation
-  TEST_FOR_EXCEPTION( distribution[1].find_first_not_of( " 0123456789.e" ) <
+  TEST_FOR_EXCEPTION( distribution[1].find_first_not_of( " 0123456789.eE" ) <
 		      distribution[1].size(),
 		      InvalidDistributionStringRepresentation,
 		      "Error: the normal distribution cannot be "

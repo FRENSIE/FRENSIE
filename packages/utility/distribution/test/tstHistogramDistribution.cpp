@@ -22,10 +22,13 @@
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
+
+Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 
 Teuchos::RCP<Utility::OneDDistribution> pdf_distribution;
 Teuchos::RCP<Utility::OneDDistribution> cdf_distribution;
@@ -500,8 +503,8 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to and read from an xml file
-TEUCHOS_UNIT_TEST( HistogramDistribution, toFromParameterList )
+// Check that the distribution can be written to an xml file
+TEUCHOS_UNIT_TEST( HistogramDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::HistogramDistribution> true_distribution =
   Teuchos::rcp_dynamic_cast<Utility::HistogramDistribution>( pdf_distribution );
@@ -530,11 +533,35 @@ TEUCHOS_UNIT_TEST( HistogramDistribution, toFromParameterList )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be written to an xml file
+TEUCHOS_UNIT_TEST( HistogramDistribution, fromParameterList )
+{
+  Utility::HistogramDistribution distribution = 
+    test_dists_list->get<Utility::HistogramDistribution>( "Histogram Distribution A" );
+
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), -2.0 );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 
+		       Utility::PhysicalConstants::pi );
+
+  distribution = 
+    test_dists_list->get<Utility::HistogramDistribution>( "Histogram Distribution B" );
+
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_dists_xml_file;
+  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+
+  clp.setOption( "test_dists_xml_file",
+		 &test_dists_xml_file,
+		 "Test distributions xml file name" );
   
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -546,6 +573,10 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::HistogramDistribution );
+
+  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
 
   // Create a distribution using the standard constructor
   Teuchos::Array<double> bin_boundaries( 4 );

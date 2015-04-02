@@ -8,10 +8,13 @@
 
 // FRENSIE Includes
 #include "Utility_PolynomialDistribution.hpp"
-#include "Utility_ContractException.hpp"
 #include "Utility_ExponentiationAlgorithms.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_PhysicalConstants.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace Utility{
 
@@ -195,20 +198,26 @@ void PolynomialDistribution::fromStream( std::istream& is )
   std::getline( is, coeffs_rep, '}' );
   coeffs_rep += '}';
 
+  // Parse special characters
+  try{
+    ArrayString::locateAndReplacePi( coeffs_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the polynomial distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+
   d_coefficients.clear();
   try{
     d_coefficients = Teuchos::fromStringToArray<double>( coeffs_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the polynomial distribution cannot be "
-			 "constructed because the representation is not valid "
-			 "(see details below)!\n" );
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
-  }
-
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the polynomial distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+  
   // Read the ","
   std::string separator;
   std::getline( is, separator, ',' );
@@ -221,22 +230,26 @@ void PolynomialDistribution::fromStream( std::istream& is )
   
   limits_rep += raw_limits_rep;
 
+  try{
+    ArrayString::locateAndReplacePi( limits_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the polynomial distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+
   Teuchos::Array<double> independent_limits;
   try{
     independent_limits = 
       Teuchos::fromStringToArray<double>( limits_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the polynomial distribution cannot be "
-			 "constructed because the representation is not valid "
-			 "(see details below)!\n" );
-
-    message += error.what();
-
-    throw InvalidDistributionStringRepresentation( message );
-  }
-  
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the polynomial distribution cannot be "
+			      "constructed because the representation is not "
+			      "valid (see details below)!\n" );
+    
   TEST_FOR_EXCEPTION( independent_limits.size() != 2,
 		      InvalidDistributionStringRepresentation,
 		      "Error: the polynomial distribution cannot be "

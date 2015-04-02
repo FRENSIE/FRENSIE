@@ -22,10 +22,13 @@
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
+
+Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 
 Teuchos::RCP<Utility::OneDDistribution> distribution;
 Teuchos::RCP<Utility::OneDDistribution> cdf_cons_distribution;
@@ -205,8 +208,8 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to and read from an xml file
-TEUCHOS_UNIT_TEST( DiscreteDistribution, toFromParameterList )
+// Check that the distribution can be written to an xml file
+TEUCHOS_UNIT_TEST( DiscreteDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::DiscreteDistribution> true_distribution =
     Teuchos::rcp_dynamic_cast<Utility::DiscreteDistribution>( distribution );
@@ -234,12 +237,46 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, toFromParameterList )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be read from an xml file
+TEUCHOS_UNIT_TEST( DiscreteDistribution, fromParameterList )
+{
+  Utility::DiscreteDistribution distribution = 
+    test_dists_list->get<Utility::DiscreteDistribution>( "Discrete Distribution A" );
+  
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( distribution.evaluatePDF( -1.0 ), 0.25 );
+  TEST_EQUALITY_CONST( distribution.evaluatePDF( 0.0 ), 0.5 );
+  TEST_EQUALITY_CONST( distribution.evaluatePDF( 1.0 ), 0.25 );
+
+  distribution = 
+    test_dists_list->get<Utility::DiscreteDistribution>( "Discrete Distribution B" );
+
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 
+		       -Utility::PhysicalConstants::pi/2 );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(),
+		       Utility::PhysicalConstants::pi );
+  TEST_FLOATING_EQUALITY( distribution.evaluatePDF(-Utility::PhysicalConstants::pi/2),
+			  0.2,
+			  1e-15 );
+  TEST_FLOATING_EQUALITY( distribution.evaluatePDF(Utility::PhysicalConstants::pi),
+			  0.2,
+			  1e-15 );
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_dists_xml_file;
+  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
   
+  clp.setOption( "test_dists_xml_file",
+		 &test_dists_xml_file,
+		 "Test distributions xml file name" );
+
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -250,6 +287,10 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::DiscreteDistribution );
+  
+  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
 
   // Create a distribution using the standard constructor
   Teuchos::Array<double> independent_values( 3 );

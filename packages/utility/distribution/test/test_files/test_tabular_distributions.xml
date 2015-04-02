@@ -1,0 +1,11 @@
+<ParameterList name="Tabular Distributions">
+
+  <Parameter name="Tabular Distribution A" type="Tabular LinLin Distribution"
+	     value="{{0.001,0.01,0.1,pi},{100,10,1,0.1}}"/>
+  <Parameter name="Tabular Distribution B" type="Tabular LinLin Distribution"
+	     value="{{0.001, 2i, 1.0},{100,10,1,0.1}}"/>
+
+  <Parameter name="Tabular Distribution C" type="Tabular LogLog Distribution"
+	     value="{{0.001, 3l, 10.0},{pi, 10.0, 100.0, 1000.0, 10000.0}}"/>
+
+</ParameterList>
