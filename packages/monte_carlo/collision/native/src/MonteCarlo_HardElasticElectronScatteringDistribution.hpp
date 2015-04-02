@@ -70,11 +70,20 @@ private:
   // Difference btw cutoff angle cosine and forward peak (mu = 1)
   static double s_delta_cutoff;
 
-  // The fine structure constant squared
-  static double s_fine_structure_const_square;
+  // The fine structure constant (fsc) squared
+  static double s_fine_structure_const_squared;
+
+  // A parameter for moliere's screening factor  (1/2*(fsc/0.885)**2)
+  static double s_screening_param1;
 
   // Atomic number (Z) of the target atom
   int d_atomic_number;
+
+  // Atomic number (Z) of the target atom to the 2/3 power (Z^2/3)
+  double d_Z_two_thirds_power;
+
+  // A parameter for moliere's screening factor (3.76*fsc**2*Z**2)
+  double d_screening_param2;
 
   // elastic scattering distribution without forward screening data
   ElasticDistribution d_elastic_scattering_distribution;

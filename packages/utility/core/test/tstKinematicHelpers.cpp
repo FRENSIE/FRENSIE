@@ -17,10 +17,13 @@
 //---------------------------------------------------------------------------//
 // Tests 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( KinematicHelpers, calculateSpeed )
+TEUCHOS_UNIT_TEST( KinematicHelpers, calculateRelativisticKineticEnergy )
 {
-  double speed = Utility::calculateSpeed(8.0,1.0);
-  TEST_FLOATING_EQUALITY(speed, Utility::PhysicalConstants::speed_of_light/2.0, 1e-15);
+  double energy = Utility::calculateRelativisticKineticEnergy(1.0,1.0);
+  double speed_of_light = Utility::PhysicalConstants::speed_of_light;
+  double result = speed_of_light * speed_of_light * ( speed_of_light /
+        sqrt( speed_of_light * speed_of_light - 1 ) - 1 );
+  TEST_FLOATING_EQUALITY(energy, result, 1e-15);
 }
 
 //---------------------------------------------------------------------------//
@@ -29,6 +32,15 @@ TEUCHOS_UNIT_TEST( KinematicHelpers, calculateKineticEnergy )
   double energy = Utility::calculateKineticEnergy(8.0,1.0);
   double speed_of_light = Utility::PhysicalConstants::speed_of_light;
   TEST_FLOATING_EQUALITY(energy, 4.0/( speed_of_light * speed_of_light ), 1e-15);
+}
+
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST( KinematicHelpers, calculateDimensionlessRelativisticSpeedSquared )
+{
+  double speed_squared = 
+               Utility::calculateDimensionlessRelativisticSpeedSquared(1.0,1.0);
+  double result = 3.0 / 4.0; 
+  TEST_FLOATING_EQUALITY(speed_squared, result, 1e-15);
 }
 
 //---------------------------------------------------------------------------//
@@ -41,13 +53,38 @@ TEUCHOS_UNIT_TEST( KinematicHelpers, calculateRelativisticSpeed )
 }
 
 //---------------------------------------------------------------------------//
-TEUCHOS_UNIT_TEST( KinematicHelpers, calculateRelativisticKineticEnergy )
+TEUCHOS_UNIT_TEST( KinematicHelpers, calculateSpeed )
 {
-  double energy = Utility::calculateRelativisticKineticEnergy(1.0,1.0);
-  double speed_of_light = Utility::PhysicalConstants::speed_of_light;
-  double result = speed_of_light * speed_of_light * ( speed_of_light /
-        sqrt( speed_of_light * speed_of_light - 1 ) - 1 );
-  TEST_FLOATING_EQUALITY(energy, result, 1e-15);
+  double speed = Utility::calculateSpeed(8.0,1.0);
+  double result = Utility::PhysicalConstants::speed_of_light/2.0; 
+  TEST_FLOATING_EQUALITY(speed, result, 1e-15);
+}
+
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST( KinematicHelpers, calculateRelativisticMomentumEnergySquared )
+{
+  double momentum_squared = 
+               Utility::calculateRelativisticMomentumEnergySquared( 1.0, 1.0 );
+  double result = 3.0; 
+  TEST_FLOATING_EQUALITY( momentum_squared, result, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST( KinematicHelpers, calculateDimensionlessRelativisticMomentumSquared )
+{
+  double momentum_squared = 
+         Utility::calculateDimensionlessRelativisticMomentumSquared( 1.0, 1.0 );
+  double result = 3.0; 
+  TEST_FLOATING_EQUALITY( momentum_squared, result, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+TEUCHOS_UNIT_TEST( KinematicHelpers, calculateRelativisticMomentum )
+{
+  double momentum_squared = 
+               Utility::calculateRelativisticMomentum( 1.0, 1.0 );
+  double result = sqrt( 3.0 )/Utility::PhysicalConstants::speed_of_light; 
+  TEST_FLOATING_EQUALITY( momentum_squared, result, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
