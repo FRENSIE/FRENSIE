@@ -32,7 +32,6 @@ public:
 			        const Teuchos::ParameterList& response_reps,
 				const Teuchos::ParameterList& estimator_reps );
 
-
 private:
 
   // Constructor
