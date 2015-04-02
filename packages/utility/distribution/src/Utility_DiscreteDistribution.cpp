@@ -13,7 +13,9 @@
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_DataProcessor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
+#include "Utility_ExceptionCatchMacros.hpp"
 
 namespace Utility{
 
@@ -221,22 +223,29 @@ void DiscreteDistribution::fromStream( std::istream& is )
   std::string independent_values_rep;
   std::getline( is, independent_values_rep, '}' );
   independent_values_rep += "}";
+
+  // Parse special charaters
+  try{
+    ArrayString::locateAndReplacePi( independent_values_rep );
+    ArrayString::locateAndReplaceIntervalOperator( independent_values_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the discrete distribution cannot be "
+			      "constructed because the independent values are "
+			      "not valid (see details below)!\n" );
   
   Teuchos::Array<double> independent_values;
   try{
     independent_values = 
       Teuchos::fromStringToArray<double>( independent_values_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the discrete distribution cannot be "
-			 "constructed because the independent values are "
-			 "not valid (see details below)!\n" );
-    message += error.what();
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the discrete distribution cannot be "
+			      "constructed because the independent values are "
+			      "not valid (see details below)!\n" );
     
-    throw InvalidDistributionStringRepresentation( message );
-  }
-  
   // Read the ","
   std::string separator;
   std::getline( is, separator, ',' );
@@ -244,22 +253,29 @@ void DiscreteDistribution::fromStream( std::istream& is )
   std::string dependent_values_rep;
   std::getline( is, dependent_values_rep, '}' );
   dependent_values_rep += "}";
+
+  // Parse special charaters
+  try{
+    ArrayString::locateAndReplacePi( dependent_values_rep );
+    ArrayString::locateAndReplaceIntervalOperator( dependent_values_rep );
+  }
+  EXCEPTION_CATCH_RETHROW_AS( std::runtime_error,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the discrete distribution cannot be "
+			      "constructed because the dependent values are "
+			      "not valid (see details below)!\n" );
   
   Teuchos::Array<double> dependent_values;
   try{
     dependent_values = 
       Teuchos::fromStringToArray<double>( dependent_values_rep );
   }
-  catch( Teuchos::InvalidArrayStringRepresentation& error )
-  {
-    std::string message( "Error: the discrete distribution cannot be "
-			 "constructed because the dependent values are "
-			 "not valid (see details below)!\n" );
-    message += error.what();
-    
-    throw InvalidDistributionStringRepresentation( message );
-  }
-
+  EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+			      InvalidDistributionStringRepresentation,
+			      "Error: the discrete distribution cannot be "
+			      "constructed because the dependent values are "
+			      "not valid (see details below)!\n" );
+  
   TEST_FOR_EXCEPTION( independent_values.size() != dependent_values.size(),
 		      InvalidDistributionStringRepresentation, 
 		      "Error: the discrete distribution "
@@ -267,7 +283,7 @@ void DiscreteDistribution::fromStream( std::istream& is )
 		      << dependent_values_rep << "} "
 		      "cannot be constructed because the number of "
 		      "independent values does not match the number of "
-		      " dependent values!" );
+		      "dependent values!" );
   
   initializeDistribution( independent_values, dependent_values );
 }

@@ -24,6 +24,12 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
+//---------------------------------------------------------------------------//
+// Testing Variables
+//---------------------------------------------------------------------------//
+
+Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
+
 Teuchos::RCP<Utility::OneDDistribution> distribution(
 				 new Utility::NormalDistribution( 0.0, 1.0 ) );
 
@@ -119,8 +125,8 @@ TEUCHOS_UNIT_TEST( NormalDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to and read from an xml file
-TEUCHOS_UNIT_TEST( NormalDistribution, toFromParameterList )
+// Check that the distribution can be written to an xml file
+TEUCHOS_UNIT_TEST( NormalDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::NormalDistribution> true_distribution =
     Teuchos::rcp_dynamic_cast<Utility::NormalDistribution>( distribution );
@@ -148,11 +154,46 @@ TEUCHOS_UNIT_TEST( NormalDistribution, toFromParameterList )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be read from an xml file
+TEUCHOS_UNIT_TEST( NormalDistribution, fromParameterList )
+{
+  Utility::NormalDistribution distribution = 
+    test_dists_list->get<Utility::NormalDistribution>( "Normal Distribution A" );
+
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(),
+		       -std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(),
+		       std::numeric_limits<double>::infinity() );
+
+  distribution = 
+    test_dists_list->get<Utility::NormalDistribution>( "Normal Distribution B" );
+  
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(),
+		       -Utility::PhysicalConstants::pi );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(),
+		       Utility::PhysicalConstants::pi );
+
+  distribution = 
+    test_dists_list->get<Utility::NormalDistribution>( "Normal Distribution C" );
+
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(),
+		       -std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(),
+		       std::numeric_limits<double>::infinity() );
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_dists_xml_file;
+  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+  
+  clp.setOption( "test_dists_xml_file",
+		 &test_dists_xml_file,
+		 "Test distributions xml file name" );
   
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -164,6 +205,10 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::NormalDistribution );
+
+  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

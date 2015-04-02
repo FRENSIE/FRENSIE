@@ -134,6 +134,24 @@ catch( const Exception &exception )				\
   throw Exception(detailed_msg.str());				\
 }
 
+/*! Catch macro for catching exceptions, adding error info, and rethrowing
+ *
+ * This macro should be used anywhere an exception is thrown in order to
+ * properly document the exception and add additional information to it before
+ * throwing it again. This macro should also be used when the exception to
+ * throw is different than the caught exception.
+ * \ingroup exception_macros
+ */
+#define EXCEPTION_CATCH_RETHROW_AS( ExceptionIn, ExceptionOut, msg )	\
+catch( const ExceptionIn &exception )					\
+{									\
+  std::ostringstream detailed_msg;					\
+  detailed_msg << __FILE__ << ":" << __LINE__ << ":\n\n"		\
+               << msg << "\n"						\
+               << exception.what() << "\n";				\
+  throw ExceptionOut(detailed_msg.str());				\
+}
+
 /*! Catch statement macro for catching of user specified exceptions
  * \ingroup exception_macros
  */

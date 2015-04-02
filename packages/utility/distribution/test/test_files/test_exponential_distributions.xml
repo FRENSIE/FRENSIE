@@ -1,0 +1,8 @@
+<ParameterList name="Exponential Distributions">
+
+  <Parameter name="Exponential Distribution A" type="Exponential Distribution"
+	     value="{pi,3}"/>
+  <Parameter name="Exponential Distribution B" type="Exponential Distribution"
+	     value="{pi}"/>
+
+</ParameterList>

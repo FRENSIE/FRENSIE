@@ -1,0 +1,10 @@
+<ParameterList name="Normal Distributions">
+
+  <Parameter name="Normal Distribution A" type="Normal Distribution"
+	     value="{0,1,-inf,inf}"/>
+  <Parameter name="Normal Distribution B" type="Normal Distribution"
+	     value="{0,1,-pi,pi}"/>
+  <Parameter name="Normal Distribution C" type="Normal Distribution"
+	     value="{1,1}"/>
+
+</ParameterList>

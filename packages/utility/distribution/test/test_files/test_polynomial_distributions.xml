@@ -1,0 +1,8 @@
+<ParameterList name="Polynomial Distributions">
+
+  <Parameter name="Polynomial Distribution A" type="Polynomial Distribution"
+	     value="{{1.0, 2.0, 3.0},0,1}"/>
+  <Parameter name="Polynomial Distribution B" type="Polynomial Distribution"
+	     value="{{1.0, 2.0, 3.0},0, pi/2}"/>
+
+</ParameterList>
