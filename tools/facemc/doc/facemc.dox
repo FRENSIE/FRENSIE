@@ -89,24 +89,31 @@
  * group "group.name" add surf 1 2 3
  * \endcode
  * There are several properties that are often set in cubit. These properties
- * have default names, which will be listed below, but any desired alternative 
- * can be used.
+ * have default names, which will be listed below.
  * <ul>
  *  <li> termination.cell </li>
  *  <li> mat_\#_rho_# </li>
  *  <li> mat_\#_rho_-# </li>
  *  <li> estimator_#.surface.current.n </li>
  *  <li> estimator_#.surface.current.p </li>
+ *  <li> estimator_#.surface.current.e </li>
  *  <li> estimator_#.surface.flux.n </li>
  *  <li> estimator_#.surface.flux.p </li>
+ *  <li> estimator_#.surface.flux.e </li>
  *  <li> estimator_#.cell.pulse.height.p </li>
+ *  <li> estimator_#.cell.pulse.height.e </li>
+ *  <li> estimator_#.cell.pulse.height.pe </li>
  *  <li> estimator_#.cell.tl.flux.n </li>
  *  <li> estimator_#.cell.tl.flux.p </li>
+ *  <li> estimator_#.cell.tl.flux.e </li>
  *  <li> estimator_#.cell.c.flux.n </li>
  *  <li> estimator_#.cell.c.flux.p </li>
+ *  <li> estimator_#.cell.c.flux.e </li>
  * </ul>
- * The termination.cell, mat, rho and estimator keywords can all be substituted
- * with an alternative. 
+ * The termination.cell, mat, rho, estimator, surface.current, surface.flux,
+ * cell.pulse.height, cell.tl.flux, cell.c.flux keywords can all be substituted
+ * with any alternative of your choosing (these alternatives must be specified
+ * in the \ref geometry_xml_file "geometry xml file"). 
  *
  * The final step is to export the geometry. Attributes must be set to on
  * to save absolute volumes, surface ids and the group specifications. This
@@ -150,15 +157,22 @@
  * <ParameterList name="Geometry">
  *
  * <Parameter name="Handler" type="string" value="DagMC"/>
- * <Parameter name="CAD File" type="string" value="water_sphere2.sat"/>
+ * <Parameter name="CAD File" type="string" value="my_cad_geom.sat"/>
  * <Parameter name="Facet Tolerance" type="double" value="1e-3"/>
  * <Parameter name="Termination Cell Synonym" type="string" value="termination.cell"/>
  * <Parameter name="Material Synonym" type="string" value="mat"/>
  * <Parameter name="Density Synonym" type="string" value="rho"/>
  * <Parameter name="Estimator Synonym" type="string" value="estimator"/>
+ * <Parameter name="Surface Current Synonym" type="string" value="surface.current"/>
+ * <Parameter name="Surface Flux Synonym" type="string" value="surface.flux"/>
+ * <Parameter name="Cell Pulse Height Synonym" type="string" value="cell.pulse.height"/>
+ * <Parameter name="Cell Track-Length Flux Synonym" type="string" value="cell.tl.flux"/>
+ * <Parameter name="Cell Collision Flux Synonym" type="string" value="cell.c.flux"/>
  * 
  * </ParameterList>
  * \endcode
+ * Please note that keyword synonyms may not use the underscore ("_") character
+ * as this is a reserved character in DagMC.
  *
  * \section material_construction Material Construction
  * Before discussing how materials are specified, the layout of the directory
@@ -346,9 +360,9 @@
  *          <Parameter name="example a" type="Power 1 Distribution" value="{2,0,1}"/>
  *          <Parameter name="example b" type="Power 1 Distribution" avlue="{0,1}"/>
  *          <Parameter name="example c" type="Power 2 Distribution" value="{3,1,2}"/>
- *          <Parameter name="example d" type="Power 2 Distribution" value="{1,2}/>
- *          <Parameter name="example e" type="Power 10 Distribution" value="{1.0,1.5,5.5}/>
- *          <Parameter name="example f" type="Power 10 Distribution" value="{1.5,5.5}/>
+ *          <Parameter name="example d" type="Power 2 Distribution" value="{1,2}"/>
+ *          <Parameter name="example e" type="Power 10 Distribution" value="{1.0,1.5,5.5}"/>
+ *          <Parameter name="example f" type="Power 10 Distribution" value="{1.5,5.5}"/>
  *          \endcode</li>
  *      <li>Models the power function \f$c x^N\f$ for \f$x \in [a,b]\f$, where
  *          \f$N\f$ is the desired power.</li>
@@ -506,40 +520,84 @@
  * \endcode
  *
  * \section estimator_construction Estimator Construction
- * There are currently five types of estimators that can be created: the
- * surface current estimator, the surface flux estimator, the cell track
- * length flux estimator, the cell collision flux estimator and the 
- * cell pulse height estimator. Each estimator requires four parameter 
- * elements. There are also several optional parameter elements.
+ * There are currently six types of estimators that can be created: the
+ * surface current estimator, the surface flux estimator, the cell track-length
+ * flux estimator, the cell collision flux estimator, the cell pulse height 
+ * estimator and the tet mesh track-length flux estimator. Each estimator 
+ * requires four parameter elements. There are also several optional parameter 
+ * elements.
  *
- * The first parameter element that every estimator needs is the id parameter.
- * Every estimator must have a unique id. If DAGMC is being used, the estimator
- * id can be specified in CUBIT. To further modify the estimator defined in
- * CUBIT, the same id must be specified in the id parameter.
+ * \subsection required_estimator_parameters Required Estimator Parameters
+ * <ol>
+ *  <li>The first parameter element that every estimator needs is the id 
+ *      parameter. Every estimator must have a unique id. If DAGMC is being 
+ *      used, the estimator id can be specified in CUBIT. To further modify 
+ *      the estimator defined in CUBIT, the same id must be specified in the 
+ *      id parameter.</li>
  *
- * The second parameter element is the type parameter. The following type
- * parameter value attributes are valid:
- * <ul>
- *  <li>surface.current</li>
- *  <li>surface.flux</li>
- *  <li>cell.tl.flux</li>
- *  <li>cell.c.flux</li>
- *  <li>cell.pulse.height</li>
- * </ul>
- * If DAGMC is being used, the estimator type can also be specified in CUBIT.
+ *  <li>The second parameter element is the type parameter. The following type
+ *      parameter value attributes are valid:
+ *      <ul>
+ *       <li>Surface Current</li>
+ *       <li>Surface Flux</li>
+ *       <li>Cell Track-Length Flux</li>
+ *       <li>Cell Collision Flux</li>
+ *       <li>Cell Pulse Height</li>
+ *       <li>Tet Mesh Track-Length Flux</li>
+ *      </ul>
+ *      If DAGMC is being used, the estimator type can also be specified in 
+ *      CUBIT (except for the tet mesh estimator). The default type keywords 
+ *      are the following:
+ *      <ul>
+ *       <li>surface.current (Surface Current),</li>
+ *       <li>surface.flux (Surface Flux),</li>
+ *       <li>cell.tl.flux (Cell Track-Length Flux),</li>
+ *       <li>cell.c.flux (Cell Collision Flux),</li>
+ *       <li>cell.pulse.height (Cell Pulse Height).</li>
+ *      </ul>
+ *      However, these keywords can be substituted with any alternative of your
+ *      choosing (these alternatives must be specified in the 
+ *      \ref geometry_xml_file "geometry xml file").</li>
+ *  <li>The third parameter element is the particle type parameter. This 
+ *      parameter specifies which particles can contribute to the estimator. 
+ *      Currently, the only valid particle types are :
+ *      <ul>
+ *       <li>Neutron,</li>
+ *       <li>Photon,</li>
+ *       <li>Electron.</li>
+ *      </ul>
+ *      If DAGMC is being used, the particle type can also be specified in 
+ *      CUBIT using a corresponding shorthand:
+ *      <ul>
+ *       <li>n for Neutron</li>
+ *       <li>p for Photon</li>
+ *       <li>e for electron</li>
+ *      </ul></li>
  *
- * The third parameter element is the particle type parameter. This parameter
- * specifies which particles can contribute to the estimator. Currently, the
- * only valid particle types are "Neutron" and "Photon". If DAGMC is being
- * used, the particle type can also be specified in CUBIT.
+ *  <li>
+ *    <ul>
+ *     <li><b>Tet Mesh Track-Length Flux Estimator:</b> The fourth parameter
+ *         element is the mesh file name parameter. The tet mesh must be
+ *         preconstructed and stored in an h5m or vtk file. This parameter
+ *         specifies the desired mesh file.</li>
  *
- * The fourth parameter element is the surfaces or cells parameter. This
- * parameter specifies which surfaces (for surface estimators) or cells (
- * for cell estimators) the estimator will watch. Every estimator must have at 
- * least one cell or surface to watch. If DAGMC is being used, the cells or
- * surfaces associated with an estimator can be specified in CUBIT. Any other
- * cells or surfaces specified in this parameter element will be added to
- * the list specified in CUBIT (technically the union will be taken).
+ *     <li><b>Non Mesh Estimators:</b>The fourth parameter element is the 
+ *         surfaces or cells parameter. This parameter specifies which surfaces
+ *         (for surface estimators) or cells (for cell estimators) the 
+ *         estimator will watch. Every estimator must have at least one cell or
+ *         surface to watch. If DAGMC is being used, the cells or surfaces 
+ *         associated with an estimator can be specified in CUBIT. Any other
+ *         cells or surfaces specified in this parameter element will be added
+ *         to the list specified in CUBIT (technically the union will be 
+ *         taken).</li>
+ *    </ul></li>
+ *  <li>
+ *   <ul>
+ *    <li><b>Tet Mesh Track-Length Flux Estimator:</b> The fifth parameter
+ *        element is the output mesh file name. The output file type can 
+ *        be specified using the suffix ".vtk" for VTK files or ".h5m" for
+ *        H5M files.</li></ul></li>
+ * </ol>
  *
  * The first optional parameter element is the response function parameter.
  * This parameter specifies the response functions (ids) that should be
