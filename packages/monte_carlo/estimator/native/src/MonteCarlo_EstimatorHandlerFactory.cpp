@@ -26,6 +26,7 @@
 #include "Geometry_ModuleInterface.hpp"
 #endif
 
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -138,8 +139,19 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
 
     if( estimator_rep.isParameter( "Response Functions" ) )
     {  
-      const Teuchos::Array<unsigned>& requested_response_functions = 
-	estimator_rep.get<Teuchos::Array<unsigned> >( "Response Functions" );
+      const Utility::ArrayString& array_string = 
+	estimator_rep.get<Utility::ArrayString>( "Response Functions" );
+      
+      Teuchos::Array<unsigned> requested_response_functions;
+
+      try{
+	requested_response_functions = 
+	  array_string.getConcreteArray<unsigned>();
+      }
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the response functions requested for"
+				  " estimator " << id << " are not valid!" );
 
       response_functions.resize( requested_response_functions.size() );
 
@@ -622,12 +634,23 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
       {
 	if( estimator_rep.isParameter( "Cells" ) )
 	{
-	  const Teuchos::Array<unsigned>& extra_cells =
-	    estimator_rep.get<Teuchos::Array<unsigned int> >( "Cells" );
+	  const Utility::ArrayString& array_string = 
+	    estimator_rep.get<Utility::ArrayString>( "Cells" );
+	  
+	  Teuchos::Array<unsigned> extra_cells;
 
+	  try{
+	    extra_cells = array_string.getConcreteArray<unsigned>();
+	  }
+	  EXCEPTION_CATCH_RETHROW_AS(Teuchos::InvalidArrayStringRepresentation,
+				     InvalidEstimatorRepresentation,
+				     "Error: the cells requested for "
+				     "estimator " << id << 
+				     " are not valid!" );
+	    
 	  EstimatorHandlerFactory::appendCellsToAssignedCells( 
 						    id,
-						    estimator_id_cells_map[id],
+				                    estimator_id_cells_map[id],
 						    extra_cells );
 	}
       }
@@ -635,8 +658,18 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
       {
 	if( estimator_rep.isParameter( "Surfaces" ) )
 	{
-	  const Teuchos::Array<unsigned>& extra_surfaces = 
-	    estimator_rep.get<Teuchos::Array<unsigned int> >( "Surfaces" );
+	  const Utility::ArrayString& array_string = 
+	    estimator_rep.get<Utility::ArrayString>( "Surfaces" );
+	  
+	  Teuchos::Array<unsigned> extra_surfaces;
+
+	  try{
+	    extra_surfaces = array_string.getConcreteArray<unsigned>();
+	  }
+	  EXCEPTION_CATCH_RETHROW_AS(Teuchos::InvalidArrayStringRepresentation,
+				     InvalidEstimatorRepresentation,
+				     "Error: the surfaces requested for "
+				     "estimator " << id << " are not valid!" );
 
 	  EstimatorHandlerFactory::appendSurfacesToAssignedSurfaces(
 						 id,
@@ -684,9 +717,20 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
 			    InvalidEstimatorRepresentation,
 			    "Error: estimator " << id << " does not have "
 			    "cells specified!" );
+
+	const Utility::ArrayString& array_string = 
+	  estimator_rep.get<Utility::ArrayString>( "Cells" );
 	
-	const Teuchos::Array<unsigned>& cells = 
-	  estimator_rep.get<Teuchos::Array<unsigned int> >( "Cells" );
+	Teuchos::Array<unsigned> cells;
+
+	try{
+	  cells = array_string.getConcreteArray<unsigned>();
+	}
+	EXCEPTION_CATCH_RETHROW_AS(Teuchos::InvalidArrayStringRepresentation,
+				   InvalidEstimatorRepresentation,
+				   "Error: the cells requested for "
+				   "estimator " << id << 
+				   " are not valid!" );
 	
 	EstimatorHandlerFactory::appendCellsToAssignedCells( 
 						    id,
@@ -700,8 +744,18 @@ void EstimatorHandlerFactory::appendDataToEstimatorDataMaps(
 			    "Error: estimator " << id << " does not have "
 			    "surfaces specified!" );
 
-	const Teuchos::Array<unsigned>& surfaces = 
-	  estimator_rep.get<Teuchos::Array<unsigned int> >( "Surfaces" );
+	const Utility::ArrayString& array_string = 
+	    estimator_rep.get<Utility::ArrayString>( "Surfaces" );
+	  
+	Teuchos::Array<unsigned> surfaces;
+
+	try{
+	  surfaces = array_string.getConcreteArray<unsigned>();
+	}
+	EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				    InvalidEstimatorRepresentation,
+				    "Error: the surfaces requested for "
+				    "estimator " << id << " are not valid!" );
 
 	EstimatorHandlerFactory::appendSurfacesToAssignedSurfaces(
 						 id,
@@ -1205,8 +1259,19 @@ void EstimatorHandlerFactory::assignBinsToEstimator(
   {
     if( bins.name( it ) == "Energy Bins" )
     {
-      const Teuchos::Array<double>& energy_bins = 
-	Teuchos::any_cast<Teuchos::Array<double> >( it->second.getAny() );
+      const Utility::ArrayString& array_string = 
+	Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
+      
+      Teuchos::Array<double> energy_bins;
+      
+      try{
+	energy_bins = array_string.getConcreteArray<double>();
+      }
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the energy bins requested for "
+				  "estimator " << estimator->getId() << 
+				  " are not valid!" );
       
       TEST_FOR_EXCEPTION(!Utility::Sort::isSortedAscending(energy_bins.begin(),
 							   energy_bins.end() ),
@@ -1220,8 +1285,19 @@ void EstimatorHandlerFactory::assignBinsToEstimator(
 
     else if( bins.name( it ) == "Time Bins" )
     {
-      const Teuchos::Array<double>& time_bins = 
-	Teuchos::any_cast<Teuchos::Array<double> >( it->second.getAny() );
+      const Utility::ArrayString& array_string = 
+	Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
+      
+      Teuchos::Array<double> time_bins;
+
+      try{
+	time_bins = array_string.getConcreteArray<double>();
+      }
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the time bins requested for "
+				  "estimator " << estimator->getId() << 
+				  " are not valid!" );
       
       TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending( time_bins.begin(),
 							     time_bins.end() ),
@@ -1235,8 +1311,19 @@ void EstimatorHandlerFactory::assignBinsToEstimator(
 
     else if( bins.name( it ) == "Collision Number Bins" )
     {
-      const Teuchos::Array<unsigned>& col_num_bins = 
-	Teuchos::any_cast<Teuchos::Array<unsigned int> >( it->second.getAny());
+      const Utility::ArrayString& array_string = 
+	Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
+      
+      Teuchos::Array<unsigned> col_num_bins;
+      
+      try{
+	col_num_bins = array_string.getConcreteArray<unsigned>();
+      }
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the collision number bins requested "
+				  "for estimator " << estimator->getId() << 
+				  " are not valid!" );
       
       TEST_FOR_EXCEPTION( !Utility::Sort::isSortedAscending(
 							  col_num_bins.begin(),
@@ -1251,8 +1338,20 @@ void EstimatorHandlerFactory::assignBinsToEstimator(
 
     else if( bins.name( it ) == "Cosine Bins" )
     {
-      const Teuchos::Array<double>& cosine_bins = 
-	Teuchos::any_cast<Teuchos::Array<double> >( it->second.getAny() );
+      const Utility::ArrayString& array_string = 
+	Teuchos::any_cast<Utility::ArrayString>( it->second.getAny() );
+      
+      Teuchos::Array<double> cosine_bins;
+
+      try{
+	cosine_bins = array_string.getConcreteArray<double>();
+      }
+
+      EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				  InvalidEstimatorRepresentation,
+				  "Error: the cosine bins requested "
+				  "for estimator " << estimator->getId() << 
+				  " are not valid!" );
       
       TEST_FOR_EXCEPTION(!Utility::Sort::isSortedAscending(cosine_bins.begin(),
 							   cosine_bins.end() ),

@@ -2,7 +2,7 @@
 
   <ParameterList name="Directional Distribution A">
     <Parameter name="Theta Distribution" type="Uniform Distribution"
-	       value="{0,6.283185307179586,1}"/>
+	       value="{0,2pi,1}"/>
     <Parameter name="Mu Distribution" type="Uniform Distribution"
 	       value="{-1.0,1.0,2}"/>
   </ParameterList>
@@ -16,6 +16,11 @@
   </ParameterList>
 
   <ParameterList name="Directional Distribution C">
+    <Parameter name="Mu Distribution" type="Delta Distribution"
+	       value="{-pi/4}"/>
+  </ParameterList>
+
+  <ParameterList name="Directional Distribution D">
     <Parameter name="Direction" type="Array(double)" value="{1.0,-1.0,1.0}"/>
   </ParameterList>
 

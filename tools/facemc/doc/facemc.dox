@@ -243,7 +243,7 @@
  *
  * <ParameterList name="H Sphere">
  * <Parameter name="Id" type="unsigned int" value="1"/>
- * <Parameter name="Fractions" type="Array(double)" value="{1.0,2.0}"/>
+ * <Parameter name="Fractions" type="Array" value="{1.0,2.0}"/>
  * <Parameter name="Isotopes" type="Array(string)" value="{O-16_293.6K, H-1_293.6K}"/>
  * </ParameterList>
  *
@@ -260,54 +260,66 @@
  * <ul>
  *  <li><b>Delta distribution</b>
  *   <ul>
- *    <li>Models a delta function \f$\delta(x-a)\f$ or single point</li>
- *    <li>Should almost exclusively be used for sampling purposes</li>
  *    <li>\code
  *        <Parameter name="example" type="Delta Distribution" value="{0}"/>
  *        \endcode</li>
+ *    <li>Models a delta function \f$\delta(x-a)\f$ or single point</li>
+ *    <li>Should almost exclusively be used for sampling purposes</li>
  *    <li>The value attribute specifies the \f$a\f$ value of the delta 
  *        distribution</li></ul></li>
  *  <li><b>Discrete distribution</b>
  *   <ul>
+ *    <li>\code
+ *        <Parameter name="example a" type="Discrete Distribution" value="{{-1.0, 0.0, 1.0},{1.0, 2.0, 1.0}}"/>
+ *        <Parameter name="example b" type="Discrete Distribution" value="{{-1.0, 3i, 1.0},{0.25, 0.5, 1.0, 0.5, 0.25}}"/>
+ *        <Parameter name="example c" type="Discrete Distribution" value="{{1e-4, 3l, 1.0},{1.0, 3i, 1.0}}"/>
+ *        \endcode</li>
  *    <li>Models a sum of delta functions \f$\sum_i c_i\delta(x-a_i)\f$ or 
  *        series of points with associated weights</li>
  *    <li>Should almost exclusively be used for sampling purposes</li>
  *    <li><b>Note:</b> When treated as a sampling distribution it is acceptable
  *        to have repeated points</li>
- *    <li>\code
- *        <Parameter name="example" type="Discrete Distribution" value="{{-1.00000000000000000e+00, 0.00000000000000000e+00, 1.00000000000000000e+00},{1.00000000000000000e+00, 2.00000000000000000e+00, 1.00000000000000000e+00}}"/>
- *        \endcode</li>
  *    <li>The value attribute specifies the array of points (\f$a_i\f$) and the
  *        array of point weights (\f$c_i\f$).</li>
  *    <li>For sampling distributions, the array of weights will be 
  *        normalized.</li>
- *    <li>The weights should always be positive.</li></ul></li>
+ *    <li>The weights should always be positive.</li>
+ *    <li>\ref interval_operators "Interval operators" can be used when 
+ *        specifying this distribution.</li></ul></li>
  *   <li><b>Exponential distribution</b>
  *    <ul>
- *     <li>Models an exponentially decaying function \f$a*\exp(-b*x)\f$</li>
  *     <li>\code
- *         <Parameter name="example" type="Exponential Distribution" value="{2,3}"/>
+ *         <Parameter name="example a" type="Exponential Distribution" value="{2,3}"/>
+ *         <Parameter name="example b" type="Exponential Distribution" value="{3}"/>
  *          \endcode</li>
- *     <li>The value attribute specifies the constant multiplier \f$a\f$ and
- *         the exponent multiplier \f$b\f$, which should always be 
- *         positive.</li>
+ *     <li>Models an exponentially decaying function \f$a*\exp(-b*x)\f$</li>
+ *     <li>The value attribute specifies the constant multiplier \f$a\f$ 
+ *         (optional) and the exponent multiplier \f$b\f$, which should always 
+ *         be positive.</li>
+ *     <li>The default value of \f$a\f$ is 1.0.</li>
  *     <li>For sampling distributions, the \f$a\f$ value will be
  *         replaced by a normalization constant. </li></ul></li>
  *   <li><b>Histogram distribution</b>
  *    <ul>
  *     <li>\code
- *         <Parameter name="example" type="Histogram Distribution" value="{{-2.00000000000000000e+00, -1.00000000000000000e+00, 1.00000000000000000e+00, 2.00000000000000000e+00},{2.00000000000000000e+00, 1.00000000000000000e+00, 2.00000000000000000e+00}}"/>
+ *         <Parameter name="example a" type="Histogram Distribution" value="{{-2.0, -1.0, 1.0, 2.0},{2.0, 1.0, 2.0}}"/>
+ *         <Parameter name="example b" type="Histogram Distribution" value="{{-2.0, 3i, 2.0},{2.0, 1.0, 1.0, 2.0}}"/>
+ *         <Parameter name="example c" type="Histogram Distribution" value="{{1e-4, 3l, 1.0},{1.0, 2i, 1.0}}"/>
  *         \endcode</li>
  *      <li>The value attribute specifies the \f$n\f$ histogram
  *          bin boundaries and the \f$n-1\f$ bin values.</li>
  *      <li>For sampling distributions, the bin values will be normalized. Bin 
- *          values should always be positive.</li></ul></li>
+ *          values should always be positive.</li>
+ *    <li>\ref interval_operators "Interval operators" can be used when 
+ *        specifying this distribution.</li></ul></li>
  *    <li><b>Normal distribution</b>
  *     <ul>
- *      <li>Models a Gaussian function \f$\frac{1}{\sigma\sqrt{2\pi}}\exp{-\frac{(x-\mu)^2}{2\sigma^2}}\f$</li>
  *      <li>\code
- *          <Parameter name="example" type="Normal Distribution" value="{0,1,-inf,inf}"/>
+ *          <Parameter name="example a" type="Normal Distribution" value="{0,1,-inf,inf}"/>
+ *          <Parameter name="example b" type="Normal Distribution" value="{0,1}"/>
+ *          <Parameter name="example c" type="Normal Distribution" value="{1.5,0.25,-10,10}"/>
  *          \endcode</li>
+ *      <li>Models a Gaussian function \f$\frac{1}{\sigma\sqrt{2\pi}}\exp{-\frac{(x-\mu)^2}{2\sigma^2}}\f$</li>
  *      <li>The value attribute specifies the mean \f$\mu\f$ and standard
  *          deviation \f$\sigma\f$ of the Gaussian. The standard deviation must
  *          be strictly greater than zero.
@@ -316,11 +328,11 @@
  *          to essentially provide no cutoff values.</li></ul></li>
  *    <li><b>Polynomial Distribution</b>
  *     <ul>
- *      <li>Models the polynomial function \f$\sum_{i=0}^{N-1} c_ix_i\f$ for
- *          \f$x \in [a,b]\f$</li>
  *      <li>\code
  *          <Parameter name="example" type="Polynomial Distribution" value="{{1.00000000000000000e+00, 2.00000000000000000e+00, 3.00000000000000000e+00},0,1}"/>
  *          \endcode</li>
+ *      <li>Models the polynomial function \f$\sum_{i=0}^{N-1} c_ix_i\f$ for
+ *          \f$x \in [a,b]\f$</li>
  *      <li>The value attribute specifies the array of polynomial coefficients 
  *          \f$c_i\f$, the minimum \f$x\f$ value \f$a\f$ and the maximum
  *          \f$x\f$ value \f$b\f$ respectively. For the values to be valid
@@ -330,42 +342,57 @@
  *          the probability mixing and inverse CDF techniques.</li></ul></li>
  *    <li><b>Power Distribution</b>
  *     <ul>
+ *      <li>\code 
+ *          <Parameter name="example a" type="Power 1 Distribution" value="{2,0,1}"/>
+ *          <Parameter name="example b" type="Power 1 Distribution" avlue="{0,1}"/>
+ *          <Parameter name="example c" type="Power 2 Distribution" value="{3,1,2}"/>
+ *          <Parameter name="example d" type="Power 2 Distribution" value="{1,2}/>
+ *          <Parameter name="example e" type="Power 10 Distribution" value="{1.0,1.5,5.5}/>
+ *          <Parameter name="example f" type="Power 10 Distribution" value="{1.5,5.5}/>
+ *          \endcode</li>
  *      <li>Models the power function \f$c x^N\f$ for \f$x \in [a,b]\f$, where
  *          \f$N\f$ is the desired power.</li>
- *      <li>\code 
- *          <Parameter name="example 1" type="Power 1 Distribution" value="{2,0,1}"/>
- *          <Parameter name="example 2" type="Power 2 Distribution" value="{3,0,1}"/>
- *          \endcode</li>
  *       <li>The type attribute specifies the power \f$N\f$.</li>
- *       <li>The value attribute specifies the constant multiplier \f$c\f$,
- *           the minimum \f$x\f$ value \f$a\f$ and the maximum \f$x\f$ value
- *           \f$b\f$ respectively. The limits must be strictly positive.</li>
+ *       <li>The value attribute specifies the constant multiplier \f$c\f$
+ *           (optional), the minimum \f$x\f$ value \f$a\f$ and the 
+ *           maximum \f$x\f$ value \f$b\f$ respectively. The limits must be 
+ *           strictly positive.</li>
+ *       <li>The default value of \f$c\f$ is 1.0.
  *       <li>For sampling distributions, the constant multiplier \f$c\f$ will
  *           be replaced by a normalization constant.</li></ul></li>
  *     <li><b>Tabular Distribution</b>
  *      <ul>
  *       <li>\code
- *           <Parameter name="example 1" type="Tabular LinLin Distribution" value="{{1.00000000000000002e-03, 1.00000000000000002e-02, 1.00000000000000006e-01, 1.00000000000000000e+00},{1.00000000000000000e+02, 1.00000000000000000e+01, 1.00000000000000000e+00, 1.00000000000000006e-01}}"/>
- *           <Parameter name="example 2" type="Tabular LinLog Distribution" value="{{1.00000000000000002e-03, 1.00000000000000002e-02, 1.00000000000000006e-01, 1.00000000000000000e+00},{1.00000000000000000e+02, 1.00000000000000000e+01, 1.00000000000000000e+00, 1.00000000000000006e-01}}"/>
- *            <Parameter name="example 3" type="Tabular LogLin Distribution" value="{{1.00000000000000002e-03, 1.00000000000000002e-02, 1.00000000000000006e-01, 1.00000000000000000e+00},{1.00000000000000000e+02, 1.00000000000000000e+01, 1.00000000000000000e+00, 1.00000000000000006e-01}}"/>
- *            <Parameter name="example 4" type="Tabular LogLog Distribution" value="{{1.00000000000000002e-03, 1.00000000000000002e-02, 1.00000000000000006e-01, 1.00000000000000000e+00},{1.00000000000000000e+02, 1.00000000000000000e+01, 1.00000000000000000e+00, 1.00000000000000006e-01}}"/>
+ *           <Parameter name="example a" type="Tabular LinLin Distribution" value="{{-1.0, -0.5, 0.0, 0.5, 1.0},{0.0, 1.0, 2.0, 3.0, 4.0 }}"/>
+ *           <Parameter name="example b" type="Tabular LinLog Distribution" value="{{1e-3, 3l, 10.0},{-1.0, 3i, 1.0}}"/>
+ *            <Parameter name="example c" type="Tabular LogLin Distribution" value="{{-1.0, 3i, 1.0},{1e-3, 3l, 10.0}}"/>
+ *            <Parameter name="example d" type="Tabular LogLog Distribution" value="{{1e-3, 3l, 10.0},{1.0, 3l, 1e4}"/>
  *             \endcode</li>
  *        <li>The type attribute specifies the type of interpolation to use
  *            with the table.</li>
  *        <li>The value attribute specifies the \f$n\f$ independent values and 
- *            the \f$n\f$ dependent values.</li></ul></li>
+ *            the \f$n\f$ dependent values.</li>
+ *    <li>\ref interval_operators "Interval operators" can be used when 
+ *        specifying this distribution.</li></ul></li>
  *      <li><b>Uniform Distribution</b>
  *       <ul>
- *        <li>Models the constant function \f$c\f$ for \f$x \in [a,b]\f$.</li>
  *        <li>\code
- *            <Parameter name="example" type="Uniform Distribution" value="{-1,1,2}"/>
+ *            <Parameter name="example a" type="Uniform Distribution" value="{-1,1,2}"/>
+ *            <Parameter name="example b" type="Uniform Distribution" value="{-1,1}"/>
  *            \endcode</li>
+ *        <li>Models the constant function \f$c\f$ for \f$x \in [a,b]\f$.</li>
  *        <li>The value attribute specifies the minimum \f$x\f$ value
  *            \f$a\f$, the maximum \f$x\f$ value \f$b\f$ and the
- *            constant \f$c\f$ respectively.</li>
+ *            constant \f$c\f$ (optional) respectively.</li>
+ *        <li>The default value of \f$c\f$ is 1.0.</li>
  *        <li>For sampling distributions, the constant multiplier \f$c\f$ will
  *            be replaced by a normalization constant.</li></ul></li>   
  *  </ul>
+ *
+ * One more special operator that can be used with all one dimensional 
+ * distributions is the "pi" operator. Any "pi" value that appears will 
+ * be replaced by the value of pi. It is also valid to multiply and divide
+ * this pi operator (e.g. 2*pi, 2pi, 3*pi/4, 2pi / 5, etc.). 
  *
  * \section response_function_construction Response Function Construction
  * Two types of response functions are currently supported: the energy
@@ -775,6 +802,12 @@
  *
  * </ParameterList>
  * \endcode
+ *
+ * \section interval_operators Interval Operators
+ * To avoid having to write out long sequences of values, two interval
+ * operators have been defined: the linear interval operator (i) and the 
+ * logarithmic interval operator (l). These operators are identical to the
+ * "i" operator and "ilog" operators in MCNP.
  *
  * \section runtime_modifications Runtime Configuration
  * Currently, only the number of particles to run can be set at run time.
