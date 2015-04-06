@@ -12,7 +12,7 @@
 namespace MonteCarlo{
 
 // Initialize the static member data
-double StandardSurfaceEstimator::angle_cosine_cutoff = 0.001;
+double StandardSurfaceEstimator::angle_cosine_cutoff = 0.1;
 
 // Set the angle cosine cutoff value
 void StandardSurfaceEstimator::setAngleCosineCutoff(

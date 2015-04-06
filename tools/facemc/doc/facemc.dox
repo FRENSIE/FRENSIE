@@ -533,17 +533,26 @@
  *      parameter. Every estimator must have a unique id. If DAGMC is being 
  *      used, the estimator id can be specified in CUBIT. To further modify 
  *      the estimator defined in CUBIT, the same id must be specified in the 
- *      id parameter.</li>
+ *      id parameter.
+ *   <ul>
+ *    <li>\code
+ *        <Parameter name="Id" type="unsigned int" value="1"/>
+ *        \endcode</li>
+ *   </ul></li>
  *
  *  <li>The second parameter element is the type parameter. The following type
- *      parameter value attributes are valid:
+ *      parameter value attributes are valid: Surface Current, Surface Flux, 
+ *      Cell Track-Length Flux, Cell Collision Flux, Cell Pulse Height and
+ *      Tet Mesh Track-Length Flux.
  *      <ul>
- *       <li>Surface Current</li>
- *       <li>Surface Flux</li>
- *       <li>Cell Track-Length Flux</li>
- *       <li>Cell Collision Flux</li>
- *       <li>Cell Pulse Height</li>
- *       <li>Tet Mesh Track-Length Flux</li>
+ *       <li>\code
+ *           <Parameter name="Type" type="string" value="Surface Current"/>
+ *           <Parameter name="Type" type="string" value="Surface Flux"/>
+ *           <Parameter name="Type" type="string" value="Cell Track-Length Flux"/>
+ *           <Parameter name="Type" type="string" value="Cell Collision Flux"/>
+ *           <Parameter name="Type" type="string" value="Cell Pulse Height"/>
+ *           <Parameter name="Type" type="string" value="Tet Mesh Track-Length Flux"/>
+ *           \endcode</li>
  *      </ul>
  *      If DAGMC is being used, the estimator type can also be specified in 
  *      CUBIT (except for the tet mesh estimator). The default type keywords 
@@ -560,28 +569,35 @@
  *      \ref geometry_xml_file "geometry xml file").</li>
  *  <li>The third parameter element is the particle type parameter. This 
  *      parameter specifies which particles can contribute to the estimator. 
- *      Currently, the only valid particle types are :
+ *      Currently, the only valid particle types are: Neutron, Photon
+ *      and Electron.
  *      <ul>
- *       <li>Neutron,</li>
- *       <li>Photon,</li>
- *       <li>Electron.</li>
+ *       <li>\code
+ *           <Parameter name="Particle Type" type="string" value="Neutron"/>
+ *           <Parameter name="Particle Type" type="string" value="Photon"/>
+ *           <Parameter name="Particle Type" type="string" value="Electron"/>
+ *           \endcode</li>
  *      </ul>
  *      If DAGMC is being used, the particle type can also be specified in 
  *      CUBIT using a corresponding shorthand:
  *      <ul>
- *       <li>n for Neutron</li>
- *       <li>p for Photon</li>
- *       <li>e for electron</li>
+ *       <li>n (Neutron)</li>
+ *       <li>p (Photon)</li>
+ *       <li>e (electron)</li>
  *      </ul></li>
  *
- *  <li>
- *    <ul>
- *     <li><b>Tet Mesh Track-Length Flux Estimator:</b> The fourth parameter
+ *  <li><b>Tet Mesh Track-Length Flux Estimator:</b> The fourth parameter
  *         element is the mesh file name parameter. The tet mesh must be
  *         preconstructed and stored in an h5m or vtk file. This parameter
- *         specifies the desired mesh file.</li>
+ *         specifies the desired mesh file.
+ *         <ul>
+ *          <li>\code
+ *              <Parameter name="Mesh File Name" type="string" value="mesh_name.vtk"/>
+ *              <Parameter name="Mesh File Name" type="string" value="mesh_name.h5m"/>
+ *              \endcode</li>
+ *         </ul>
  *
- *     <li><b>Non Mesh Estimators:</b>The fourth parameter element is the 
+ *      <b>Non Mesh Estimators:</b>The fourth parameter element is the 
  *         surfaces or cells parameter. This parameter specifies which surfaces
  *         (for surface estimators) or cells (for cell estimators) the 
  *         estimator will watch. Every estimator must have at least one cell or
@@ -589,39 +605,82 @@
  *         associated with an estimator can be specified in CUBIT. Any other
  *         cells or surfaces specified in this parameter element will be added
  *         to the list specified in CUBIT (technically the union will be 
- *         taken).</li>
- *    </ul></li>
- *  <li>
- *   <ul>
- *    <li><b>Tet Mesh Track-Length Flux Estimator:</b> The fifth parameter
+ *         taken).
+ *         <ul>
+ *          <li>\code
+ *              <Parameter name="Surfaces" type="Array" value="{1,2,3}"/>
+ *              <Parameter name="Cells" type="Array" value="{4,5}"/>
+ *              \endcode</li>
+ *         </ul></li>
+ *  <li><b>Tet Mesh Track-Length Flux Estimator:</b> The fifth parameter
  *        element is the output mesh file name. The output file type can 
  *        be specified using the suffix ".vtk" for VTK files or ".h5m" for
- *        H5M files.</li></ul></li>
+ *        H5M files.
+ *        <ul>
+ *         <li>\code
+ *             <Parameter name="Output Mesh File Name" type="string" value="output_mesh_name.vtk"/>
+ *             <Parameter name="Output Mesh File Name" type="string" value="output_mesh_name.h5m"/>
+ *             \endcode</li>
+ *        </ul></li>
  * </ol>
  *
- * The first optional parameter element is the response function parameter.
- * This parameter specifies the response functions (ids) that should be
- * used with the estimator.
+ * \subsection optional_estimator_parameters Optional Estimator Parameters
+ * <ol> 
+ *  <li>The first optional parameter element is the response function 
+ *      parameter. This parameter specifies the response functions (ids) that 
+ *      should be used with the estimator.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Response Functions" type="Array" value="{0,1}"/>
+ *           \endcode</li>
+ *      </ul></li>
  *
- * The second optional parameter element is the multiplier parameter. This
- * parameter specifies the multiplier (or scaling factor) that should be
- * applied to the multiplier. This will typically be used to scale the
- * estimator to a specific source strength.
+ *  <li>The second optional parameter element is the multiplier parameter. This
+ *      parameter specifies the multiplier (or scaling factor) that should be
+ *      applied to the multiplier. This will typically be used to scale the
+ *      estimator to a specific source strength.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Multiplier" type="double" value="1.0"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *  
+ *  <li>The third optional argument is the energy multiplication parameter.
+ *      This parameter is used to indicate that estimator results should be
+ *      multiplied by the particle energy.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Energy Multiplication" type="bool" value="true"/>
+ *           \endcode</li>
+ *      </ul></li>
  *
- * The final optional parameter element is the bins parameter list. The bins
- * parameter list will contain the phase space binning desired for the
- * estimator. The phase space bins that can currently be specified are the
- * following:
- * <ul>
- *  <li>energy bins</li>
- *  <li>time bins</li>
- *  <li>cosine bins</li>
- *  <li>collision number bins</li>
- *  <li>generation number bins</li>
- * </ul>
- * The order that the different phase space bins are specified in is 
- * important. Later bins are added to all of the bins previously added (they
- * run the fastest).
+ *  <li>The final optional parameter element is the bins parameter list. The 
+ *      bins parameter list will contain the phase space binning desired for 
+ *      the estimator. The phase space bins that can currently be specified are
+ *      the following:
+ *      <ul>
+ *       <li>Energy Bins</li>
+ *       <li>Time Bins</li>
+ *       <li>Cosine Bins</li>
+ *       <li>Collision Number Bins</li>
+ *       <li>Generation Number Bins</li>
+ *      </ul>
+ *      The order that the different phase space bins are specified in is 
+ *      important. Later bins are added to all of the bins previously added 
+ *      (they run the fastest). \ref interval_operators "Interval operators" 
+ *      can be used when specifying estimator bins.
+ *      <ul>
+ *       <li>\code
+ *        <ParameterList name="Bins">
+ *         <Parameter name="Energy Bins" type="Array" value="{1e-3,2l,1.0}"/>
+ *         <Parameter name="Time Bins" type="Array" value="{0.0, 2i, 10.0}"/>
+ *         <Parameter name="Cosine Bins" type="Array" value="{-1.0, 3i, 1.0}"/>
+ *         <Parameter name="Collision Number Bins" type="Array" value="{0 1 2 3 10}"/>
+ *         <Parameter name="Generation Number Bins" type="Array" value="{0 1 2 10}"/>
+ *        </ParameterList>
+ *        \endcode</li>
+ *      </ul></li>
+ * </ol>
  *
  * Note that if only basic estimators are required and DAGMC is being used
  * all of the estimators can be defined in CUBIT. This will leave the 
@@ -633,61 +692,72 @@
  *
  * <ParameterList name="Cell Track Length Flux Estimator">
  *   <Parameter name="Id" type="unsigned int" value="1"/>
- *   <Parameter name="Type" type="string" value="cell.tl.flux"/>
+ *   <Parameter name="Type" type="string" value="Cell Track-Length Flux"/>
  *   <Parameter name="Multiplier" type="double" value="2.0"/>
- *   <Parameter name="Response Functions" type="Array(unsigned int)" value="{0}"/>
+ *   <Parameter name="Response Functions" type="Array" value="{0}"/>
  *   <ParameterList name="Bins">
- *     <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
- *     <Parameter name="Time Bins" type="Array(double)" value="{0.0, 1e-9, 1e-8, 1e-7, 1.0}"/>
+ *     <Parameter name="Energy Bins" type="Array" value="{1e-3,2l,1.0,8i,10.0,20.0}"/>
+ *     <Parameter name="Time Bins" type="Array" value="{0.0, 1e-9, 1e-8, 1e-7, 1.0}"/>
  * </ParameterList>
  * 
  * <ParameterList name="Cell Collision Flux Estimator">
  *  <Parameter name="Id" type="unsigned int" value="2"/>
- *  <Parameter name="Type" type="string" value="cell.c.flux"/>
+ *  <Parameter name="Type" type="string" value="Cell Collision Flux"/>
  *  <Parameter name="Particle Type" type="string" value="Neutron"/>
  *  <Parameter name="Multiplier" type="double" value="1.0"/>
- *  <Parameter name="Response Functions" type="Array(unsigned int)" value="{0,1}"/>
+ *  <Parameter name="Response Functions" type="Array" value="{0,1}"/>
  *  <ParameterList name="Bins">
- *    <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
- *    <Parameter name="Collision Number Bins" type="Array(unsigned int)" value="{0, 1, 2, 10}"/>
+ *    <Parameter name="Energy Bins" type="Array" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
+ *    <Parameter name="Collision Number Bins" type="Array" value="{0, 1, 2, 10}"/>
  *  </ParameterList>
  * </ParameterList>
  *
  * <ParameterList name="Pulse Height Estimator">
- *  <Parameter name="Id" type="unsigned int" value="4"/>
- *  <Parameter name="Type" type="string" value="cell.pulse.height"/>
+ *  <Parameter name="Id" type="unsigned int" value="3"/>
+ *  <Parameter name="Type" type="string" value="Cell Pulse Height"/>
  *  <Parameter name="Particle Type" type="string" value="Photon"/>
  *  <Parameter name="Multiplier" type="double" value="1.0"/>
- *  <Parameter name="Cells" type="Array(unsigned int)" value="{1,26}"/>
+ *  <Parameter name="Cells" type="Array" value="{1,26}"/>
  *  <Parameter name="Energy Multiplication" type="bool" value="true"/>
  *  <ParameterList name="Bins">
- *    <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
+ *    <Parameter name="Energy Bins" type="Array" value="{1e-3,2l,1.0,8i,10.0,20.0}"/>
  *  </ParameterList>
  * </ParameterList>
 
  * <ParameterList name="Surface Flux Estimator">
- *  <Parameter name="Id" type="unsigned int" value="9"/>
- *  <Parameter name="Type" type="string" value="surface.flux"/>
+ *  <Parameter name="Id" type="unsigned int" value="4"/>
+ *  <Parameter name="Type" type="string" value="Surface Flux"/>
  *  <Parameter name="Particle Type" type="string" value="Neutron"/>
  *  <Parameter name="Multiplier" type="double" value="2.0"/>
- *  <Parameter name="Surfaces" type="Array(unsigned int)" value="{7,16,25}"/>
+ *  <Parameter name="Surfaces" type="Array" value="{7,16,25}"/>
  *  <ParameterList name="Bins">
- *    <Parameter name="Cosine Bins" type="Array(double)" value="{-1.0, -0.5, 0.0, 0.5, 1.0}"/>
- *    <Parameter name="Energy Bins" type="Array(double)" value="{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0}"/>
+ *    <Parameter name="Cosine Bins" type="Array" value="{-1.0, -0.5, 0.0, 0.5, 1.0}"/>
+ *    <Parameter name="Energy Bins" type="Array" value="{1e-3,2l,1.0,8i,10.0,20.0}"/>
  *  </ParameterList>
  * </ParameterList>
   
  * <ParameterList name="Surface Current Estimator">
- *  <Parameter name="Id" type="unsigned int" value="10"/>
+ *  <Parameter name="Id" type="unsigned int" value="5"/>
  *  <Parameter name="Type" type="string" value="surface.current"/>
  *  <Parameter name="Particle Type" type="string" value="Neutron"/>
  *  <Parameter name="Multiplier" type="double" value="2.0"/>
- *  <Parameter name="Surfaces" type="Array(unsigned int)" value="{7,16,25}"/>
+ *  <Parameter name="Surfaces" type="Array" value="{7,16,25}"/>
  *  <ParameterList name="Bins">
- *    <Parameter name="Cosine Bins" type="Array(double)" value="{-1.0, -0.5, 0.0, 0.5, 1.0}"/>
- *    <Parameter name="Collision Number Bins" type="Array(unsigned int)" value="{0, 1, 2, 10}"/>
+ *    <Parameter name="Cosine Bins" type="Array" value="{-1.0, -0.5, 0.0, 0.5, 1.0}"/>
+ *    <Parameter name="Collision Number Bins" type="Array" value="{0, 1, 2, 10}"/>
  *  </ParameterList>
  * </ParameterList>
+ *
+ * <ParameterList name="Tet Mesh Estimator">
+ *  <Parameter name="Id" type="unsigned int" value="6"/>
+ *  <Parameter name="Type" type="string" value="Tet Mesh Track-Length Flux"/>
+ *  <Parameter name="Particle Type" type="string" value="Neutron"/>
+ *  <Parameter name="Multiplier" type="double" value="1.0"/>
+ *  <Parameter name="Mesh File Name" type="string" value="my_mesh.vtk"/>
+ *  <Parameter name="Output Mesh File Name" type="string" value="my_mesh_data.vtk"/>
+ *  <ParameterList name="Bins">
+ *   <Parameter name="Energy Bins" type="Array" value="{1e-3,2l,1.0,8i,10.0,20.0}"/>
+ *  </ParameterList>
  *
  * </ParameterList>
  * \endcode
