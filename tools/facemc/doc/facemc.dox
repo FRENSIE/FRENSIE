@@ -264,9 +264,9 @@
  * </ParameterList>
  * \endcode
  *
- * \section one_d_distributions One Dimensional Distributions
+ * \section one_d_distributions One-Dimensional Distributions
  * Before discussing the remaining XML files, a special parameter type must
- * be discussed: the one dimensional distribution. One dimensional
+ * be discussed: the one-dimensional distribution. one-dimensional
  * distributions can be used to represent a sampling distribution or a
  * weighting distribution. Each distribution and a corresponding example 
  * parameter element will be shown below.
@@ -403,10 +403,65 @@
  *            be replaced by a normalization constant.</li></ul></li>   
  *  </ul>
  *
- * One more special operator that can be used with all one dimensional 
+ * One more special operator that can be used with all one-dimensional 
  * distributions is the "pi" operator. Any "pi" value that appears will 
  * be replaced by the value of pi. It is also valid to multiply and divide
  * this pi operator (e.g. 2*pi, 2pi, 3*pi/4, 2pi / 5, etc.). 
+ *
+ * \section spatial_distributions Spatial Distributions
+ * Before discussing the remaining XML files, a special parameter must be
+ * discussed: the spatial distribution. Spatial distributions can be used to
+ * represent a sampling distribution or a weighting function, much like the
+ * one-dimensional distributions. Each distribution and a corresponding
+ * example parameter list will be shown below.
+ * <ul>
+ *  <li><b>Point Distribution</b>
+ *      <ul>
+ *       <li>\code
+ *           <ParameterList name="Spatial Distribution">
+ *             <Parameter name="Position" type="Array(double)" value="{0.0,0.0,-501}"/>
+ *           </ParameterList>
+ *           \endcode</li>
+ *      </ul></li>
+ *   
+ *  <li><b>Cartesian Distribution</b>
+ *      <ul>
+ *       <li>\code
+ *           <ParameterList name="Spatial Distribution">
+ *             <Parameter name="X Distribution" type="Uniform Distribution" value="{-10,-10,-10}"/>
+ *             <Parameter name="Y Distribution" type="Uniform Distribution" value="{-10,-10,-10}"/>
+ *             <Parameter name="Z Distribution" type="Uniform Distribution" value="{-10,-10,-10}"/>
+ *           </ParameterList>
+ *           \endcode</li>
+ *      </ul></li>
+ *      
+ *  <li><b>Cylindrical Distribution</b>
+ *      <ul>
+ *       <li>\code
+ *           <ParameterList name="Spatial Distribution">
+ *             <Parameter name="R Distribution" type="Power 1 Distribution" value="{1.0, 0.0, 1.0}"/>
+ *             <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,2pi,1}"/>
+ *             <Parameter name="Axis Distribution" type="Uniform Distribution" value="{-10,10,1}"/>
+ *             <Parameter name="Center X Position" type="double" value="0.0"/>
+ *             <Parameter name="Center Y Position" type="double" value="0.0"/>
+ *             <Parameter name="Center Z Position" type="double" value="0.0"/>
+ *             <Parameter name="Axis" type="string" value="Z"/>
+ *           </ParameterList>
+ *           \endcode</li>
+ *      </ul></li>
+ *
+ *  <li><b>Spherical Distribution</b>
+ *      <ul>
+ *       <li>\code
+ *           <ParameterList name="Spatial Distribution"
+ *             <Parameter name="R Distribution" type="Power 2 Distribution" value="{2.0, 0.0, 1.0}"/>
+ *             <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,2pi,1}"/>
+ *             <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1,1,1.0}"/>
+ *           </ParameterList>
+ *           \endcode</li>
+ *      </ul></li>
+ *
+ * </ul>
  *
  * \section response_function_construction Response Function Construction
  * Two types of response functions are currently supported: the energy
@@ -420,7 +475,7 @@
  * energy response function. The first is the response function id. This
  * id will be used by estimators. The second is the energy distribution, 
  * which can be any of the 
- * \ref one_d_distributions "one dimensional distributions". An example
+ * \ref one_d_distributions "one-dimensional distributions". An example
  * energy response function is give below.
  * \code
  * <ParameterList name="Energy Response">
@@ -439,10 +494,10 @@
  * list. Three types of spatial distributions are possible: a Cartesian
  * distribution, a cylindrical distribution and a spherical distribution.
  * A Cartesian distribution will only have three parameter elements, each
- * of which is a \ref one_d_distributions "one dimensional distribution". The
+ * of which is a \ref one_d_distributions "one-dimensional distribution". The
  * three parameters are the x distribution, the y distribution and the z
  * distribution. A Cylindrical distribution will have seven parameter 
- * elements defined. The first three, which are one dimensional distributions,
+ * elements defined. The first three, which are one-dimensional distributions,
  * are the r distribution, the theta (azimuthal) distribution, and the 
  * axis distribution. The final four parameter elements are the center x
  * position, the center y position, the center z position and the axis
@@ -455,13 +510,13 @@
  * The third element is the directional distribution which is also a parameter
  * list. The two parameter elements in this parameter list are the mu
  * (polar angle cosine) distribution and the theta (azimuthal) distribution,
- * which are both \ref one_d_distributions "one dimensional distributions".
+ * which are both \ref one_d_distributions "one-dimensional distributions".
  *
  * The fourth element is the energy distribution, which is a 
- * \ref one_d_distributions "one dimensional distribution".
+ * \ref one_d_distributions "one-dimensional distribution".
  *
  * The fifth element is the time distribution, which is also a
- * \ref one_d_distributions "one dimensional distribution".
+ * \ref one_d_distributions "one-dimensional distribution".
  *
  * Some example phase space response functions are given below.
  * \code
@@ -524,8 +579,7 @@
  * surface current estimator, the surface flux estimator, the cell track-length
  * flux estimator, the cell collision flux estimator, the cell pulse height 
  * estimator and the tet mesh track-length flux estimator. Each estimator 
- * requires four parameter elements. There are also several optional parameter 
- * elements.
+ * requires several parameters. There are also several optional parameters.
  *
  * \subsection required_estimator_parameters Required Estimator Parameters
  * <ol>
@@ -770,15 +824,33 @@
  * combined to define a more complicated source. 
  *
  * \subsection distributed_source Distributed Source Construction
- * Every distributed source requires six parameter elements. The first 
- * parameter element is the id parameter. This parameter becomes more 
- * important when defining compound sources.
+ * Every distributed source requires six parameter elements. 
+ * <ol> 
+ *  <li>The first parameter element is the id parameter. This parameter becomes
+ *      more important when defining compound sources.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Id" type="int" value="1"/>
+ *           \endcode</li>
+ *      </ul></li>
  *
- * The second parameter element is the particle type element. This parameter
- * specifies the particle type that will be generated by the source. 
- * Currently, the only valid particle types are "Neutron" and "Photon".
+ *  <li>The second parameter element is the particle type element. This 
+ *      parameter specifies the particle type that will be generated by the 
+ *      source. Currently, the only valid particle types are "Neutron," 
+ *      "Photon" and "Electron".
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Particle Type" type="string" value="Neutron"/>
+ *           <Parameter name="Particle Type" type="string" value="Photon"/>
+ *           <Parameter name="Particle Type" type="string" value="Electron"/>
+ *           \endcode</li>
+ *      </ul></li>
  *
- * The third parameter element is the spatial distribution parameter list.
+ *  <li>The third parameter element is the spatial distribution parameter list.
+ *      Four types of spatial distributions are possible: the Cartesian
+ *      distribution, the cylindrical distribution, the spherical 
+ *      distribution and the simple point "distribution".
+ *   
  * For more on the spatial distribution parameter list, refer to the 
  * discussion on \ref phase_space_response_function "creating phase space response functions".
  * 
@@ -787,10 +859,10 @@
  * discussion on \ref phase_space_response_function "creating phase space response functions".
  *
  * The fifth parameter element is the energy distribution parameter, which is
- * a \ref one_d_distributions "one dimensional distribution".
+ * a \ref one_d_distributions "one-dimensional distribution".
  *
  * The sixth parameter element is the time distribution parameter, which is a
- * \ref one_d_distributions "one dimensional distribution".
+ * \ref one_d_distributions "one-dimensional distribution".
  *
  * A number of optional parameter elements can also be used. The first is the
  * rejection cell parameter. When a source's spatial distribution is too 
