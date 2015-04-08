@@ -412,8 +412,8 @@
  * Before discussing the remaining XML files, a special parameter must be
  * discussed: the spatial distribution. Spatial distributions can be used to
  * represent a sampling distribution or a weighting function, much like the
- * one-dimensional distributions. Each distribution and a corresponding
- * example parameter list will be shown below.
+ * \ref one_d_distributions "one-dimensional distributions". Each spatial 
+ * distribution and a corresponding example parameter list will be shown below.
  * <ul>
  *  <li><b>Point Distribution</b>
  *      <ul>
@@ -422,6 +422,10 @@
  *             <Parameter name="Position" type="Array(double)" value="{0.0,0.0,-501}"/>
  *           </ParameterList>
  *           \endcode</li>
+ *       <li>Only one parameter element is required for this distribution: the
+ *           "Position".
+ *       <li>This distribution is for convenience since the Cartesian
+ *           distribution can also be used to model a point.</li>
  *      </ul></li>
  *   
  *  <li><b>Cartesian Distribution</b>
@@ -433,6 +437,12 @@
  *             <Parameter name="Z Distribution" type="Uniform Distribution" value="{-10,-10,-10}"/>
  *           </ParameterList>
  *           \endcode</li>
+ *       <li>Three parameters are required for this distribution: the "X 
+ *           Distribution", the "Y Distribution" and the "Z Distribution".</li>
+ *       <li>The type attribute for each parameter must be a 
+ *           \ref one_d_distributions "one-d distribution".</li> 
+ *       <li>The example distribution could be used to sample uniformly from a 
+ *           cuboid volume.</li>
  *      </ul></li>
  *      
  *  <li><b>Cylindrical Distribution</b>
@@ -448,6 +458,19 @@
  *             <Parameter name="Axis" type="string" value="Z"/>
  *           </ParameterList>
  *           \endcode</li>
+ *       <li>Seven parameters are required for this distribution: the "R
+ *           Distribution", the "Theta Distribution", the "Axis Distribution",
+ *           the "Center X Position", the "Center Y Position", the
+ *           "Center Z Position" and the "Axis".</li>
+ *       <li>The "Axis Distribution" specifies the distribution along the
+ *           axis of the cylinder, the orientation of which can be specified
+ *           using the "Axis" parameter.</li>
+ *       <li>The type attribute for each of the distribution parameters must be
+ *           a \ref one_d_distributions "one-d distribution".</li>
+ *       <li>There are three valid values for the "Axis" parameter: "X", "Y"
+ *           and "Z".
+ *       <li>The example distribution could be used to sample uniformly from a
+ *           right circular cylindrical volume.</li>
  *      </ul></li>
  *
  *  <li><b>Spherical Distribution</b>
@@ -457,120 +480,187 @@
  *             <Parameter name="R Distribution" type="Power 2 Distribution" value="{2.0, 0.0, 1.0}"/>
  *             <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,2pi,1}"/>
  *             <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1,1,1.0}"/>
+ *             <Parameter name="Center X Position" type="double" value="0.0"/>
+ *             <Parameter name="Center Y Position" type="double" value="0.0"/>
+ *             <Parameter name="Center Z Position" type="double" value="0.0"/>
+ *             <Parameter name="Axis" type="string" value="Z"/>
  *           </ParameterList>
  *           \endcode</li>
+ *       <li>Seven parameters are required for this distribution: the "R
+ *           Distribution", the "Theta distribution", the "Mu Distribution",
+ *           the "Center X Position", the "Center Y Position", the "Center Z
+ *           Position" and the "Axis".</li>
+ *       <li>The "Theta Distribution" specifies the distribution of the
+ *           azimuthal angle while the "Mu Distribution" specifies the
+ *           distribution of the polar angle cosine.</li>
+ *       <li>The "Axis" parameter is used to specify the axis from which the
+ *           the polar angle cosine is measured. The three valid values are
+ *           "X", "Y" and "Z".
+ *       <li>The type attribute for each of the distribution parameters must be
+ *           a \ref one_d_distributions "one-d distribution".</li>
+ *       <li>The example distribution could be used to sample uniformly from
+ *           a spherical volume.</li>
  *      </ul></li>
  *
  * </ul>
  *
+ * \section directional_distributions Directional Distributions
+ * The final special parameter that must be discussed is the directional
+ * distribution. Directional distributions can be used to represent a
+ * sampling distribution or a weighting function, much like the 
+ * \ref one_d_distributions "one-dimensional distributions" and the 
+ * \ref spatial_distributions "spatial distributions". Each directional 
+ * distribution and a corresponding example parameter list will be shown below.
+ * <ul>
+ *  <li><b>Mono-directional Distribution</b>
+ *      <ul>
+ *       <li>\code
+ *           <ParameterList name="Directional Distribution">
+ *             <Parameter name="Direction" type="Array(double)" value="{1.0,1.0,1.0}"/>
+ *           </ParameterList>
+ *           \endcode</li>
+ *       <li>Only one parameter element is required for this distribution: the
+ *           "Direction".</li>
+ *       <li>The direction specified does not need to be normalized. It will
+ *           be normalized upon being read in.</li>
+ *       <li>This distribution is for convenience since the spherical 
+ *           distribution can also be used to model a mono-directional
+ *           distribution.</li>
+ *      </ul></li>
+ * 
+ *  <li><b>Spherical Distribution</b>
+ *      <ul>
+ *       <li>\code
+ *           <ParameterList name="Directional Distribution">
+ *             <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1.0,1.0,2}"/>
+ *             <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,2pi,1}"/>
+ *             <Parameter name="Axis" type="string" value="Z"/>
+ *           </ParameterList>
+ *           \endcode</li>
+ *       <li>Only one parameter element is required for this distribution: the
+ *           "Mu Distribution".</li>
+ *       <li>The "Mu Distribution" parameter specifies the distribution of the 
+ *           polar angle cosine.</li>
+ *       <li>If the optional "Axis" parameter is specified, the polar angle
+ *           cosine will be measured with respect to the specified axis. The
+ *           three valid axis values are "X", "Y" and "Z" (default).</li>
+ *       <li>The "Theta Distribution" parameter specifies the distribution of
+ *           the azimuthal angle. If it is not specified, the azimuthal angle
+ *           will be sampled uniformly.</li>
+ *       <li>The type attribute for the two distribution parameters must be
+ *           a \ref one_d_distributions "one-d distribution".</li>
+ *      </ul></li>
+ *
  * \section response_function_construction Response Function Construction
  * Two types of response functions are currently supported: the energy
- * repines function and the phase space response function. Both of these
+ * response function and the phase space response function. Both of these
  * will be discussed before discussing the construction of the response 
  * function XML file.
  *
  * \subsection energy_response_function The Energy Response Function
  * The energy response function is a user defined function with a dependence
  * on the particles energy only. Two parameter elements must appear in every
- * energy response function. The first is the response function id. This
- * id will be used by estimators. The second is the energy distribution, 
- * which can be any of the 
- * \ref one_d_distributions "one-dimensional distributions". An example
- * energy response function is give below.
- * \code
- * <ParameterList name="Energy Response">
- *   <Parameter name="Id" type="unsigned int" value="0"/> 
- *   <Parameter name="Energy Distribution" type="Histogram Distribution" value="{{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
- *  </ParameterList>
- * \endcode
+ * energy response function. These required parameters will be described below.
+ * <ol>
+ *  <li>The first parameter element is the response function id. Every
+ *      response function needs to have a unique id, which can be used by the
+ *      estimators. 
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Id" type="unsigned int" value="1"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *
+ *  <li>The second parameter element is the energy distribution, which can be 
+ *      any of the \ref one_d_distributions "one-dimensional distributions". 
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Energy Distribution" type="Histogram Distribution" value="{{1e-3,2l,1.0,8i,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
+ *           \endcode</li>
+ *      </ul></li>
  *
  * \subsection phase_space_response_function The Phase Space Response Function
  * The phase space response function is a generalized version of the 
  * energy response function that is dependent on the entire phase space. Five
- * parameter elements must appear in every phase space response function. The
- * first is the response function id, which will be used by the estimators.
- * 
- * The second element is the spatial distribution which is itself a parameter 
- * list. Three types of spatial distributions are possible: a Cartesian
- * distribution, a cylindrical distribution and a spherical distribution.
- * A Cartesian distribution will only have three parameter elements, each
- * of which is a \ref one_d_distributions "one-dimensional distribution". The
- * three parameters are the x distribution, the y distribution and the z
- * distribution. A Cylindrical distribution will have seven parameter 
- * elements defined. The first three, which are one-dimensional distributions,
- * are the r distribution, the theta (azimuthal) distribution, and the 
- * axis distribution. The final four parameter elements are the center x
- * position, the center y position, the center z position and the axis
- * (orientation of the cylinder), which can be "X", "Y" or "Z". A spherical
- * distribution will also have seven parameter elements. All of the parameter
- * elements will be the same as for the cylindrical distribution except for
- * the axis distribution, which will instead be the mu distribution (polar
- * angle cosine distribution)."
+ * parameter elements must appear in every phase space response function. These
+ * required parameters will be described below.
+ * <ol>
+ *  <li>The first parameter element is the response function id, which can be
+ *      used by the estimators.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Id" type="unsigned int" value="1"/>
+ *           \endcode</li>
+ *      </ul></li>
  *
- * The third element is the directional distribution which is also a parameter
- * list. The two parameter elements in this parameter list are the mu
- * (polar angle cosine) distribution and the theta (azimuthal) distribution,
- * which are both \ref one_d_distributions "one-dimensional distributions".
+ *  <li>The second element is the spatial distribution which is itself a 
+ *      parameter list. Please refer to the
+ *      \ref spatial_distributions "spatial distributions" section for
+ *      information regarding the construction of spatial distributions.
+ *      <ul>
+ *       <li>\code
+ *           <ParameterList name="Spatial Distribution">
+ *             <Parameter name="X Distribution" type="Uniform Distribution" value="{-10,10,1.0}"/>
+ *             <Parameter name="Y Distribution" type="Uniform Distribution" value="{-10,10,1.0}"/>
+ *             <Parameter name="Z Distribution" type="Uniform Distribution" value="{-10,10,1.0}"/>
+ *           </ParameterList>
+ *           \endcode</li>
+ *      </ul></li>
  *
- * The fourth element is the energy distribution, which is a 
- * \ref one_d_distributions "one-dimensional distribution".
+ *  <li>The third element is the directional distribution which is also a 
+ *      parameter list. Please refer to the
+ *      \ref directional_distributions "directional distributions" section for
+ *      information regarding the construction of directional distributions.
+ *      <ul>
+ *       <li>\code
+ *           <ParameterList name="Directional Distribution">
+ *             <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1.0,1.0,1.0}"/>
+ *             <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,2pi,1}"/>
+ *           </ParameterList>
+ *           \endcode</li>
+ *      </ul></li>
  *
- * The fifth element is the time distribution, which is also a
- * \ref one_d_distributions "one-dimensional distribution".
+ *  <li>The fourth parameter element is the energy distribution, which can be 
+ *      any of the \ref one_d_distributions "one-dimensional distributions". 
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Energy Distribution" type="Histogram Distribution" value="{{1e-3,2l,1.0,8i,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
+ *           \endcode</li>
+ *      </ul></li>
  *
- * Some example phase space response functions are given below.
+ *  <li>The fifth element is the time distribution, which can also be any
+ *      of the \ref one_d_distributions "one-dimensional distributions".
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Time Distribution" type="Uniform Distribution" value="{0.0,1e10,1.0}"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *
+ * \subsection example_resp_func_xml_file Example Response Function XML File
+ * An example response function xml file is given below.
  * \code
- * <ParameterList name="Phase Space Response: Cartesian">
- *  <Parameter name="Id" type="unsigned int" value="1"/>
- *  <ParameterList name="Spatial Distribution">
- *    <Parameter name="X Distribution" type="Uniform Distribution" value="{-1e50,1e50,1.0}"/>
- *    <Parameter name="Y Distribution" type="Uniform Distribution" value="{-1e50,1e50,1.0}"/>
- *    <Parameter name="Z Distribution" type="Uniform Distribution" value="{-1e50,1e50,1.0}"/>
+ * <ParameterList name="Response Functions">
+ *   
+ *   <ParameterList name="Energy Response">
+ *     <Parameter name="Id" type="unsigned int" value="0"/> 
+ *     <Parameter name="Energy Distribution" type="Histogram Distribution" value="{{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
  *   </ParameterList>
- *   <ParameterList name="Directional Distribution">
- *     <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1.0,1.0,1.0}"/> 
- *     <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0.0, 6.283185307179586, 1.0}"/>
- *   </ParameterList>
- *  <Parameter name="Energy Distribution" type="Histogram Distribution" value="{{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
- *  <Parameter name="Time Distribution" type="Uniform Distribution" value="{0.0,1e50,1.0}"/>
- * </ParameterList>
  *
- * <ParameterList name="Phase Space Response: Cylindrical">
- *  <Parameter name="Id" type="unsigned int" value="2"/>
- *  <ParameterList name="Spatial Distribution">
- *    <Parameter name="R Distribution" type="Power 1 Distribution" value="{1.0, 0.0, 1.0}"/>
- *    <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,6.283185307179586,1}"/>
- *    <Parameter name="Axis Distribution" type="Uniform Distribution" value="{-10,10,1}"/>
- *    <Parameter name="Center X Position" type="double" value="0.0"/>
- *    <Parameter name="Center Y Position" type="double" value="0.0"/>
- *    <Parameter name="Center Z Position" type="double" value="0.0"/>
- *    <Parameter name="Axis" type="string" value="Z"/>
+ *   <ParameterList name="Phase Space Response: Cartesian">
+ *     <Parameter name="Id" type="unsigned int" value="1"/>
+ *     <ParameterList name="Spatial Distribution">
+ *       <Parameter name="X Distribution" type="Uniform Distribution" value="{-1e50,1e50,1.0}"/>
+ *       <Parameter name="Y Distribution" type="Uniform Distribution" value="{-1e50,1e50,1.0}"/>
+ *       <Parameter name="Z Distribution" type="Uniform Distribution" value="{-1e50,1e50,1.0}"/>
+ *     </ParameterList>
+ *     <ParameterList name="Directional Distribution">
+ *       <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1.0,1.0,1.0}"/> 
+ *       <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0.0, 6.283185307179586, 1.0}"/>
+ *     </ParameterList>
+ *     <Parameter name="Energy Distribution" type="Histogram Distribution" value="{{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
+ *     <Parameter name="Time Distribution" type="Uniform Distribution" value="{0.0,1e50,1.0}"/>
  *   </ParameterList>
- *   <ParameterList name="Directional Distribution">
- *     <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1.0,1.0,1.0}"/> 
- *     <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0.0, 6.283185307179586, 1.0}"/>
- *   </ParameterList>
- *  <Parameter name="Energy Distribution" type="Histogram Distribution" value="{{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
- *  <Parameter name="Time Distribution" type="Uniform Distribution" value="{0.0,1e50,1.0}"/>
- * </ParameterList>
  *
- * <ParameterList name="Phase Space Response: Spherical">
- *  <Parameter name="Id" type="unsigned int" value="3"/>
- *  <ParameterList name="Spatial Distribution">
- *    <Parameter name="R Distribution" type="Power 1 Distribution" value="{1.0, 0.0, 1.0}"/>
- *    <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,6.283185307179586,1}"/>
- *    <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1,1,1.0}"/>
- *    <Parameter name="Center X Position" type="double" value="0.0"/>
- *    <Parameter name="Center Y Position" type="double" value="0.0"/>
- *    <Parameter name="Center Z Position" type="double" value="0.0"/>
- *    <Parameter name="Axis" type="string" value="Z"/>
- *   </ParameterList>
- *   <ParameterList name="Directional Distribution">
- *     <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1.0,1.0,1.0}"/> 
- *     <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0.0, 6.283185307179586, 1.0}"/>
- *   </ParameterList>
- *  <Parameter name="Energy Distribution" type="Histogram Distribution" value="{{1e-3,1e-2,1e-1,1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,10.0,20.0},{0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.35,0.3,0.25,0.2,0.15,0.1}}"/>
- *  <Parameter name="Time Distribution" type="Uniform Distribution" value="{0.0,1e50,1.0}"/>
  * </ParameterList>
  * \endcode
  *
@@ -740,7 +830,8 @@
  * all of the estimators can be defined in CUBIT. This will leave the 
  * estimators xml file empty.
  *
- * Some example estimators are given below.
+ * \subsection example_estimator_xml_file Example Estimator XML File
+ * An example estimator xml file is given below.
  * \code
  * <ParameterList name="Estimators">
  *
@@ -817,16 +908,18 @@
  * \endcode
  *
  * \section source_construction Source Construction
- * There are currently two types of sources that can be created: distributed
- * sources and compound sources. The distributed source is simply a phase
- * space distribution that can be sampled from to get particle starting points.
- * The compound source is a series of distributed sources that have been
- * combined to define a more complicated source. 
+ * There are currently two types of sources that can be created: the 
+ * distributed source and the compound source. 
+ *  The compound source is a series of distributed sources that have 
+ * been combined to define a more complicated source. 
  *
  * \subsection distributed_source Distributed Source Construction
- * Every distributed source requires six parameter elements. 
+ * The distributed source is simply a phase space distribution that can be 
+ * sampled from to get particle starting states. Every distributed source 
+ * requires four parameter elements. There are also two optional parameter
+ * elements. These parameter elements will be described below.
  * <ol> 
- *  <li>The first parameter element is the id parameter. This parameter becomes
+ *  <li>The first required parameter element is the id. This parameter becomes
  *      more important when defining compound sources.
  *      <ul>
  *       <li>\code
@@ -834,7 +927,7 @@
  *           \endcode</li>
  *      </ul></li>
  *
- *  <li>The second parameter element is the particle type element. This 
+ *  <li>The second required parameter element is the particle type. This 
  *      parameter specifies the particle type that will be generated by the 
  *      source. Currently, the only valid particle types are "Neutron," 
  *      "Photon" and "Electron".
@@ -846,15 +939,102 @@
  *           \endcode</li>
  *      </ul></li>
  *
- *  <li>The third parameter element is the spatial distribution parameter list.
- *      Four types of spatial distributions are possible: the Cartesian
- *      distribution, the cylindrical distribution, the spherical 
- *      distribution and the simple point "distribution".
- *   
- * For more on the spatial distribution parameter list, refer to the 
- * discussion on \ref phase_space_response_function "creating phase space response functions".
+ *  <li>The third required element is the spatial distribution, which is itself
+ *      a parameter list. Please refer to the
+ *      \ref spatial_distributions "spatial distributions" section for 
+ *      information regarding the construction of spatial distributions.
+ *      <ul>
+ *       <li>\code
+ *           <ParameterList name="Spatial Distribution">
+ *             <Parameter name="X Distribution" type="Uniform Distribution" value="{-10,10}"/>
+ *             <Parameter name="Y Distribution" type="Uniform Distribution" value="{-10,10}"/>
+ *             <Parameter name="Z Distribution" type="Uniform Distribution" value="{-10,10}"/>
+ *           </ParameterList>
+ *           \endcode</li>
+ *      </ul></li>
+ *  
+ *  <li>The last required element is the energy distribution, which can be any
+ *      of the \ref one_d_distributions "one-dimensional distributions".
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Energy Distribution" type="Exponential Distribution" value="{0.5}"/>
+ *           \endcode</li>
+ *      </ul></li>
+ * </ol>
  * 
- * The fourth parameter element is the directional distribution parameter list.
+ * <ol>
+ *  <li>The first optional element is the directional distribution, which is 
+ *      also a parameter list. Please refer to the 
+ *      \ref directional_distributions "directional distributions" section for
+ *      information regarding the construction of directional distributions.
+ *      The default directional distribution is isotropic.
+ *       <ul>
+ *        <li>\code
+ *            <ParameterList name="Directional Distribution">
+ *              <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1.0,1.0}"/>
+ *            </ParameterList>
+ *            \endcode</li>
+ *       </ul></li>
+ *
+ *  <li>The second optional element is the time distribution, which can be any
+ *      of the \ref one_d_distributions "one-dimensional distributions".
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Time Distribution" type="Delta Distribution" value="{0}"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *
+ *  <li>The third optional element is the rejection cell. When a source's
+ *      spatial distribution is too complicated to be modeled with one of
+ *      the available spatial distribution types, one can specify a rejection
+ *      cell that will be used in conjunction with the defined spatial 
+ *      distribution. After a point is sampled from the spatial distribution,
+ *      the point is only used if it falls within the rejection cell. 
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Rejection Cell" type="int" value="2"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *
+ *  <li>The fourth optional element is the spatial importance function. When
+ *      the spatial importance function is specified, it is treated as the
+ *      true distribution of particle positions. The particle position is
+ *      first sampled from the spatial distribution and then the particle
+ *      weight at that point is determined from the spatial importance
+ *      function. Please refer to the
+ *      \ref spatial_distributions "spatial distributions" section for 
+ *      information regarding the construction of spatial importance functions.
+ *      It is important that the spatial distribution type and the
+ *      spatial importance function type are the same.
+ *      <ul>
+ *       <li>\code
+ *           <ParameterList name="Spatial Importance Function">
+ *             <Parameter name="X Distribution" type="Histogram Distribution" value="{{-10,0,10},{2,1}}"/>
+ *             <Parameter name="Y Distribution" type="Histogram Distribution" value="{{-10,0,10},{2,1}}"/>
+ *             <Parameter name="Z Distribution" type="Histogram Distribution" value="{{-10,0,10},{2,1}}"/>
+ *           </ParameterList>
+ *           \endcode</li>
+ *      </ul></li>
+ *   
+ *  <li>The fifth optional element is the directional importance function. When
+ *      the directional importance function is specified, it is treated as the
+ *      true distribution of particle directions. The particle direction is
+ *      first sampled from the directional distribution and then the particle
+ *      weight at that direction is determined from the directional importance
+ *      function. Please refer to the
+ *      \ref directional_distributions "directional distributions" section for
+ *      information regarding the construction of directional importance 
+ *      functions. It is important that the directional distribution type and
+ *      the directional importance function type are the same.
+ *      <ul>
+ *       <li>\code
+ *           <ParameterList name="Directional Importance Function"/>
+ *             <Parameter name="Mu Distribution" type="Histogram Distribution" value="{{-1,0,1},{1,2}}"/>
+ *             <Parameter name="Theta Distribution" type="Histogram Distribution" value="{{0,pi,2pi},{1,2}}"/>
+ *           </ParameterList>
+ *           \endcode</li>
+ *      </ul></li>
+ *
  * For more on the directional distribution parameter list, refer to the
  * discussion on \ref phase_space_response_function "creating phase space response functions".
  *
