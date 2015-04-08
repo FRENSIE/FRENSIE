@@ -408,6 +408,12 @@
  * be replaced by the value of pi. It is also valid to multiply and divide
  * this pi operator (e.g. 2*pi, 2pi, 3*pi/4, 2pi / 5, etc.). 
  *
+ * \section interval_operators Interval Operators
+ * To avoid having to write out long sequences of values, two interval
+ * operators have been defined: the linear interval operator (i) and the 
+ * logarithmic interval operator (l). These operators are identical to the
+ * "i" operator and "ilog" operators in MCNP.
+ *
  * \section spatial_distributions Spatial Distributions
  * Before discussing the remaining XML files, a special parameter must be
  * discussed: the spatial distribution. Spatial distributions can be used to
@@ -918,6 +924,8 @@
  * sampled from to get particle starting states. Every distributed source 
  * requires four parameter elements. There are also two optional parameter
  * elements. These parameter elements will be described below.
+ *
+ * <b>Required Parameters:</b>
  * <ol> 
  *  <li>The first required parameter element is the id. This parameter becomes
  *      more important when defining compound sources.
@@ -962,6 +970,7 @@
  *      </ul></li>
  * </ol>
  * 
+ * <b>Optional Parameters:</b>
  * <ol>
  *  <li>The first optional element is the directional distribution, which is 
  *      also a parameter list. Please refer to the 
@@ -1035,32 +1044,52 @@
  *           \endcode</li>
  *      </ul></li>
  *
- * For more on the directional distribution parameter list, refer to the
- * discussion on \ref phase_space_response_function "creating phase space response functions".
+ *  <li>The sixth optional parameter element is the energy importance 
+ *      function. When the energy importance function is specified, it is
+ *      treated as the true distribution of particle energies. The particle
+ *      energy is first sampled from the energy distribution and then the
+ *      particle weight at that energy is determined from the energy 
+ *      importance function. The energy importance function can be any of the
+ *      \ref one_d_distributions "one-dimensional distributions". It is
+ *      important that the energy importance function and the energy 
+ *      distribution share the same energy bounds.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Energy Importance Function" type="Normal Distribution" value="{1,1,0,inf}"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *   
+ *  <li>The seventh optional parameter element is the time importance
+ *      function. When the time importance function is specified, it is
+ *      treated as the true distribution of particle times. The particle
+ *      time is first sampled from the time distribution and then the
+ *      particle weight at that time is determined from the time importance
+ *      function. The time importance function can be any of the \ref
+ *      one_d_distributions "one-dimensional distributions". It is important
+ *      that the time importance function and the time distribution share
+ *      the same time bounds.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Time Importance Function" type="Uniform Distribution" value="{0,1e10,1}"/>
+ *           \endcode</li>
+ *      </ul></li>
  *
- * The fifth parameter element is the energy distribution parameter, which is
- * a \ref one_d_distributions "one-dimensional distribution".
+ *  <li>The final optional parameter element is the source weight. This
+ *      parameter is only used when there are multiple sources defined (see
+ *      the next subsection on 
+ *      \ref compound_source "compound source construction". The compound
+ *      source uses this parameter to determine which distributed source
+ *      to sample from.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Weight" type="double" value="1.0"/>
+ *           \endcode</li>
+ *      </ul></li>
+ * </ol>
  *
- * The sixth parameter element is the time distribution parameter, which is a
- * \ref one_d_distributions "one-dimensional distribution".
- *
- * A number of optional parameter elements can also be used. The first is the
- * rejection cell parameter. When a source's spatial distribution is too 
- * complicated to be modeled with a Cartesian, cylindrical or spherical 
- * distribution, one can specify a rejection cell that can be used in 
- * conjunction with one of the three distributions. A sampled particle position
- * will only be kept when it falls within the rejection cell.
- *
- * The second optional parameter is the importance function. For every phase
- * space dimension distribution, an importance function can be specified
- * that describes the true distribution of source particles in that dimension.
- * Essentially, the source particle's state variable will be sampled from
- * the distribution parameter and its weight will be set according to the
- * value of the importance function for the sampled state variable. This
- * allows the source to be biased.
- *
- * Some distributed source examples are given below.
- * \code
+ * <b>Example Source XML Files:</b>
+ * <ul>
+ *  <li>\code
  * <ParameterList name="Source">
  * 
  * <ParameterList name="Basic Distributed Source">
@@ -1074,21 +1103,14 @@
  *    <Parameter name="Z Distribution" type="Delta Distribution" value="{1}"/>
  *  </ParameterList>
  *  
- *  <ParameterList name="Directional Distribution">
- *    <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1,1,2}"/>
- *    <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,6.283185307179586,1}"/>
- *  </ParameterList>
- *  
  *  <Parameter name="Energy Distribution" type="Exponential Distribution" value="{2,0.5}"/>
  *
- *  <Parameter name="Time Distribution" type="Delta Distribution" value="{0}"/>
- *
  * </ParameterList>
  *
  * </ParameterList>
- * \endcode
+ * \endcode</li>
  *
- * \code
+ * <li>\code
  * <ParameterList name="Source">
  *  
  * <ParameterList name="Complex Distributed Source">
@@ -1108,7 +1130,7 @@
  *  
  *   <ParameterList name="Directional Distribution">
  *     <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1,1,2}"/>
- *     <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,6.283185307179586,1}"/>
+ *     <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,2pi,1}"/>
  *   </ParameterList>
  *  
  *   <Parameter name="Energy Distribution" type="Uniform Distribution" value="{1e-5,1,1}"/>
@@ -1123,75 +1145,116 @@
  * </ParameterList>
  *
  * </ParameterList>
- * \endcode
+ * \endcode</li>
+ * </ul>
  *
  * \subsection compound_source Compound Source Construction
  * To construct a compound source, one simply needs to define several sources,
  * each with a unique id, and assign a weight to each. The weight parameter 
- * element must be specified for each source. These weights will be used to
- * sample a source to use for sampling a particle state. Typically, the
- * weight will be set to the spatial volume occupied by each distributed
- * source. An example compound source is given below.
+ * element must be specified for each source. If the weight parameter is
+ * not specified for a source, a default value of 1.0 will be used. These 
+ * weights will be used to sample a source to use for sampling a particle 
+ * state. Typically, the weight will be set to the spatial volume occupied by 
+ * each distributed source. The weights do not need to be normalized - they
+ * will be normalized once they have been read in.
+ *
+ * <b>Example Source XML File:</b>
  *
  * \code
  * <ParameterList name="Source">
  *
- * <ParameterList name="Neutron Source">
- *   <Parameter name="Id" type="int" value="1"/>
+ *   <ParameterList name="Neutron Source">
+ *     <Parameter name="Id" type="int" value="1"/>
  *
- *  <Parameter name="Particle Type" type="string" value="Neutron"/>
+ *     <Parameter name="Particle Type" type="string" value="Neutron"/>
  *  
- *  <ParameterList name="Spatial Distribution">
- *    <Parameter name="X Distribution" type="Delta Distribution" value="{0}"/>
- *    <Parameter name="Y Distribution" type="Delta Distribution" value="{0}"/>
- *    <Parameter name="Z Distribution" type="Delta Distribution" value="{0}"/>
- *  </ParameterList>
+ *     <ParameterList name="Spatial Distribution">
+ *       <Parameter name="X Distribution" type="Delta Distribution" value="{0}"/>
+ *       <Parameter name="Y Distribution" type="Delta Distribution" value="{0}"/>
+ *       <Parameter name="Z Distribution" type="Delta Distribution" value="{0}"/>
+ *     </ParameterList>
  *  
- *  <ParameterList name="Directional Distribution">
- *    <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1,1,2}"/>
- *    <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,6.283185307179586,1}"/>
- *  </ParameterList>
- *  
- *  <Parameter name="Energy Distribution" type="Delta Distribution" value="{1}"/>
- *    
- *  <Parameter name="Time Distribution" type="Delta Distribution" value="{0}"/>
- *  <Parameter name="Weight" type="double" value="0.2"/>
- * </ParameterList>
+ *     <Parameter name="Energy Distribution" type="Delta Distribution" value="{1}"/>
  *
- * <ParameterList name="Photon Source">
- *  <Parameter name="Id" type="int" value="2"/>
+ *     <Parameter name="Weight" type="double" value="1.0"/>
+ *   </ParameterList>
  *
- *  <Parameter name="Particle Type" type="string" value="Photon"/>
+ *   <ParameterList name="Photon Source">
+ *     <Parameter name="Id" type="int" value="2"/>
+ *
+ *     <Parameter name="Particle Type" type="string" value="Photon"/>
  * 
- *  <ParameterList name="Spatial Distribution">
- *    <Parameter name="X Distribution" type="Delta Distribution" value="{0}"/>
- *    <Parameter name="Y Distribution" type="Delta Distribution" value="{0}"/>
- *    <Parameter name="Z Distribution" type="Delta Distribution" value="{0}"/>
- *  </ParameterList>
+ *     <ParameterList name="Spatial Distribution">
+ *       <Parameter name="X Distribution" type="Delta Distribution" value="{0}"/>
+ *       <Parameter name="Y Distribution" type="Delta Distribution" value="{0}"/>
+ *       <Parameter name="Z Distribution" type="Delta Distribution" value="{0}"/>
+ *     </ParameterList>
  * 
- *  <ParameterList name="Directional Distribution">
- *    <Parameter name="Mu Distribution" type="Uniform Distribution" value="{-1,1,2}"/>
- *    <Parameter name="Theta Distribution" type="Uniform Distribution" value="{0,6.283185307179586,1}"/>
- *  </ParameterList>
- *  
- *  <Parameter name="Energy Distribution" type="Delta Distribution" value="{1}"/>
+ *     <Parameter name="Energy Distribution" type="Delta Distribution" value="{1}"/>
  *    
- *  <Parameter name="Time Distribution" type="Delta Distribution" value="{0}"/>
- *  <Parameter name="Weight" type="double" value="0.8"/>
- * </ParameterList>
+ *     <Parameter name="Weight" type="double" value="4.0"/>
+ *   </ParameterList>
  *
  * </ParameterList>
  * \endcode
  *
- * \section interval_operators Interval Operators
- * To avoid having to write out long sequences of values, two interval
- * operators have been defined: the linear interval operator (i) and the 
- * logarithmic interval operator (l). These operators are identical to the
- * "i" operator and "ilog" operators in MCNP.
+ * \section runtime_configuration Runtime Configuration
+ * There are many runtime configuration options available. Only two of these
+ * options are required. These options will be listed below.
  *
- * \section runtime_modifications Runtime Configuration
- * Currently, only the number of particles to run can be set at run time.
- * See the following example for setting this parameter:
+ * \subsection required_runtime_options
+ * <ol>
+ *  <li>The first required runtime configuration parameter is the mode. The
+ *      mode is used by facemc to determine which cross section info needs
+ *      to be loaded. The acceptable modes are: "Electron", "Photon" and
+ *      "Neutron". Coupled physics modes will be available in the future.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Mode" type="string" value="Neutron"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *
+ *  <li>The second required runtime configuration parameter is the number
+ *      of histories to simulate. Please note that scientific notation is not
+ *      allowed when specifying the number of histories
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Histories" type="unsigned int" value="1000000"/>
+ *           \endcode</li>
+ *      </ul></li>
+ * </ol>
+ *
+ * \subsection optional_runtime_options
+ * <ol>
+ *  <li>The first optional runtime configuration parameter is the surface flux
+ *      angle cosine cutoff. This value is used by surface flux estimators
+ *      to avoid a divide-by-zero that is possible in the calculation of
+ *      surface flux contributions. When the angle cosine is below the angle
+ *      cosine cutoff, an approximation for the surface flux contribution is
+ *      used. The value must be between 0 and 1. The default value is 0.001 
+ *      (MCNP uses a default value of 0.1). 
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Surface Flux Angle Cosine Cutoff" type="double" value="0.1"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *
+ *  <li>The second optional runtime configuration parameter is the free gas
+ *      threshold. This value is used by elastic neutron scattering 
+ *      to determine when the free gas thermal treatment should be used. 
+ *      The threshold is the number of times above the material temperature
+ *      that the energy of neutron can be before the free gas thermal treatment
+ *      is no longer used. The default value is 400.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Free Gas Threshold" type="double" value="600.0"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *
+ *  <li>      
+ *      
+ *
+ * \subsection Example Runtime Configuration XML File
  *
  * \code
  * <ParameterList name="Simulation Info">
