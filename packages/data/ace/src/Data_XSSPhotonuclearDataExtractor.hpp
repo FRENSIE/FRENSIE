@@ -9,6 +9,9 @@
 #ifndef DATA_XSS_PHOTONUCLEAR_DATA_EXTRACTOR_HPP
 #define DATA_XSS_PHOTONUCLEAR_DATA_EXTRACTOR_HPP
 
+// Std Lib Includes
+#include <set>
+
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
 #include <Teuchos_ArrayView.hpp>
@@ -72,11 +75,17 @@ public:
   ~XSSPhotonuclearDataExtractor()
   { /* ... */ }
 
-  // Check if elastic scattering data exists
+  //! Check if this secondary particle type exists in this data
+  bool hasSecondaryParticleType(const unsigned secondary_particle_type) const;
+
+  //! Check if elastic scattering data exists
   bool hasElasticScatteringData() const;
 
-  // Check if average heating number data exists
+  //! Check if average heating number data exists
   bool hasHeatingNumberData() const;
+
+  //! Return secondary particle types
+  const std::set<unsigned>& getSecondaryParticleTypes() const;  
   
   //! Extract the ESZ block
   Teuchos::ArrayView<const double> extractESZBlock() const;
@@ -107,6 +116,36 @@ public:
 
   //! Extract the IXS block
   Teuchos::ArrayView<const double> extractIXSBlock() const;
+
+  //! Extract the PXS block for secondary particle
+  Teuchos::ArrayView<const double> extractPXSBlock( const unsigned secondary_particle_type ) const;
+
+  //! Extract the PHN block for secondary particle
+  Teuchos::ArrayView<const double> extractPHNBlock( const unsigned secondary_particle_type ) const;
+
+  //! Extract the MTRP block for secondary particle
+  Teuchos::ArrayView<const double> extractMTRPBlock( const unsigned secondary_particle_type ) const;
+
+  //! Extract the TYRP block for secondary particle
+  Teuchos::ArrayView<const double> extractTYRPBlock( const unsigned secondary_particle_type ) const;
+
+  //! Extract the LSIGP block for secondary particle
+  Teuchos::ArrayView<const double> extractLSIGPBlock( const unsigned secondary_particle_type ) const;
+
+  //! Extract the SIGP block for secondary particle
+  Teuchos::ArrayView<const double> extractSIGPBlock( const unsigned secondary_particle_type ) const;
+
+  //! Extract the LANDP block for secondary particle
+  Teuchos::ArrayView<const double> extractLANDPBlock( const unsigned secondary_particle_type ) const;
+
+  //! Extract the ANDP block for secondary particle
+  Teuchos::ArrayView<const double> extractANDPBlock( const unsigned secondary_particle_type ) const;
+
+  //! Extract the LDLWP block for secondary particle
+  Teuchos::ArrayView<const double> extractLDLWPBlock( const unsigned secondary_particle_type ) const;
+
+  //! Extract the DLWP block for secondary particle
+  Teuchos::ArrayView<const double> extractDLWPBlock( const unsigned secondary_particle_type ) const;
  
 private:
 
@@ -119,6 +158,11 @@ private:
   // The xss array (data in this array should never be directly modified)
   Teuchos::ArrayRCP<const double> d_xss;
 
+  // The secondary particle types within the data
+  std::set<unsigned> d_secondary_particle_types;
+
+  // The order of which the secondary particles occur within the IXS block
+  std::map<unsigned,unsigned> d_secondary_particle_order;
 };
 
 } // end Data namespace

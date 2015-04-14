@@ -66,6 +66,19 @@ public:
 			  Teuchos::RCP<DistributionType>& distribution ) const;
 
 protected:
+
+  //! Basic Constructor
+  NuclearScatteringDistributionACEFactory( const std::string& table_name,
+					  const double atomic_weight_ratio,
+					  const bool explicit_elastic = false );
+
+  //! Initialize the factory
+  void initialize( const Teuchos::ArrayView<const double> mtr_block,
+		   const Teuchos::ArrayView<const double> tyr_block,
+		   const Teuchos::ArrayView<const double> land_block,
+		   const Teuchos::ArrayView<const double> and_block,
+		   const Teuchos::ArrayView<const double> ldlw_block,
+		   const Teuchos::ArrayView<const double> dlw_block );
   
   // Returns a map of the reaction types (MT #s) and their AND block ordering
   const boost::unordered_map<unsigned,unsigned>& 

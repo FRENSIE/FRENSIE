@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   NeutronNuclearScatteringDistributionACEFactory.cpp
+//! \file   MonteCarlo_NeutronNuclearScatteringDistributionACEFactory.cpp
 //! \author Alex Robinson
 //! \brief  Neutron nuclear scattering distribution factory class definition
 //!
