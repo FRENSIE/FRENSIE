@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo_PhotonuclearReaction.hpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Ryan Pease
 //! \brief  The photonuclear reaction base class declaration
 //!
 //---------------------------------------------------------------------------//
@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonuclearReactionType.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
+#include "MonteCarlo_PhotonState.hpp"
 
 namespace MonteCarlo{
 
@@ -32,8 +33,7 @@ public:
   //! Constructor
   PhotonuclearReaction( 
 		   const PhotonuclearReactionType reaction_type,
-		   const double temperature,
-		   const double q_value,
+      		   const double q_value,
 		   const unsigned threshold_energy_index,
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section );
@@ -45,9 +45,6 @@ public:
   //! Return the reaction type
   PhotonuclearReactionType getReactionType() const;
 
-  //! Return the temperature (in MeV) at wich the reactions occur
-  double getTemperature() const;
-
   //! Return the reaction Q value
   double getQValue() const;
 
@@ -57,11 +54,19 @@ public:
   //! Return the cross section at a given energy
   double getCrossSection( const double energy ) const;
 
+
   //! Return the number of photons emitted from the rxn at the given energy
   virtual unsigned getNumberOfEmittedPhotons( const double energy ) const = 0;
 
   //! Return the average number of photons emitted from the rxn
   virtual double getAverageNumberOfEmittedPhotons( const double energy ) const;
+
+  //! Return the number of neutrons emitted from the rxn at the given energy
+  virtual unsigned getNumberOfEmittedNeutrons( const double energy) const = 0;
+
+  //! Return the average number of neutrons emitted from the rxn
+  virtual double getAverageNumberOfEmittedNeutrons( const double energy) const;
+
 
   //! Simulate the reaction
   virtual void react( PhotonState& photon, ParticleBank& bank ) const = 0;
@@ -72,13 +77,14 @@ protected:
   unsigned sampleNumberOfEmittedPhotons(
 				     const double average_multiplicity ) const;
 
+  //! Return an integer number of emitted photons given a non-integer value
+  unsigned sampleNumberOfEmittedNeutrons(
+				     const double average_multiplicity ) const;
+
 private:
 
   // The photonuclear reaction type
   PhotonuclearReactionType d_reaction_type;
-
-  // The temperature (in MeV) at which the reaction occurs
-  double d_temperature;
 
   // The Q value for the reaction
   double d_q_value;
