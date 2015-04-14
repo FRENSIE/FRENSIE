@@ -1202,7 +1202,7 @@
  * There are many runtime configuration options available. Only two of these
  * options are required. These options will be listed below.
  *
- * \subsection required_runtime_options
+ * \subsection required_runtime_options Required Runtime Configurations
  * <ol>
  *  <li>The first required runtime configuration parameter is the mode. The
  *      mode is used by facemc to determine which cross section info needs
@@ -1224,7 +1224,7 @@
  *      </ul></li>
  * </ol>
  *
- * \subsection optional_runtime_options
+ * \subsection optional_runtime_options Optional Runtime Configurations
  * <ol>
  *  <li>The first optional runtime configuration parameter is the surface flux
  *      angle cosine cutoff. This value is used by surface flux estimators
@@ -1243,7 +1243,7 @@
  *      threshold. This value is used by elastic neutron scattering 
  *      to determine when the free gas thermal treatment should be used. 
  *      The threshold is the number of times above the material temperature
- *      that the energy of neutron can be before the free gas thermal treatment
+ *      that the neutron energy can be before the free gas thermal treatment
  *      is no longer used. The default value is 400.
  *      <ul>
  *       <li>\code
@@ -1251,20 +1251,96 @@
  *           \endcode</li>
  *      </ul></li>
  *
- *  <li>      
+ *  <li>The third optional runtime configuration parameter is the minimum
+ *      neutron energy. Once the energy of a neutron falls below this value
+ *      the neutron history is ended. The default value is 1e-11 MeV.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Min Neutron Energy" type="double" value="1e-10"/>
+ *           \endcode</li>
+ *      </ul></li>
  *      
+ *  <li>The fourth optional runtime configuration parameter is the minimum
+ *      photon energy. Once the energy of a photon falls below this value
+ *      the photon history is ended. The default value is 0.001 MeV.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Min Photon Energy" type="double" value="1e-2"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *  <li>The fifth optional runtime configuration parameter is the minimum
+ *      electron energy. Once the energy of an electron falls below this value
+ *      the electron history is ended. The default value is 1.5e-5 MeV.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Min Electron Energy" type="double" value="1e-3"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *  <li>The sixth optional runtime configuration parameter is for enabling or
+ *      disabling the usage of impulse approximation photon data. The impulse 
+ *      approximation is an alternative to the standard Waller-Hartree theory
+ *      and will modify the incoherent cross section and the photon
+ *      Doppler broadening treatment. This feature is disabled by default.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Impulse Approximation" type="bool" value="true"/>
+ *           \endcode</li>
+ *      </ul></li>
  *
- * \subsection Example Runtime Configuration XML File
+ *  <li>The seventh optional runtime configuration parameter is for enabling
+ *      or disabling photon Doppler broadening. If this feature is enabled,
+ *      Compton profiles will be loaded so that the photon energy from an
+ *      incoherent scattering event can be broadened by the motion of the
+ *      bound electrons (characterized by the Compton profile). This feature
+ *      is enabled by default.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Photon Doppler Broadening" type="bool" value="false"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *  
+ *  <li>The eigth optional runtime configuration parameter is for enabling
+ *      or disabling atomic relaxation. If this feature is enabled, atomic
+ *      relaxation data will be loaded and atomic relaxation will be loaded.
+ *      Both electrons and photons can be generated from atomic relaxation.
+ *      In addition, both photon and electron interactions can cause subshell
+ *      vacancies. This feature is enabled by default.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Atomic Relaxation" type="bool" value="false"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *   
+ *  <li>The nineth optional runtime configuration parameter is the number
+ *      of photon has grid bins. To speed up photon energy look-ups a
+ *      hash-based scheme has been employed. The speed up is loosely 
+ *      correlated with the number of hash grid bins, though the correlation
+ *      is system dependent. The cost of increasing the number of hash grid 
+ *      bins is an increase in memory overhead, though this increase should
+ *      be relatively small. The default number of hash grid bins is 1000.
+ *      <ul>
+ *       <li>\code
+ *           <Parameter name="Photon Hash Grid Bins" type="unsigned int" value="500"/>
+ *           \endcode</li>
+ *      </ul></li>
+ *
+ * \subsection example_runtime_config_xml_file Example Runtime Configuration XML File
  *
  * \code
- * <ParameterList name="Simulation Info">
+ * <ParameterList name="Runtime Configuration">
+ *   <Parameter name="Mode" type="string" value="Photon"/>
  *   <Parameter name="Histories" type="unsigned int" value="1000000"/>
+ *   <Parameter name="Surface Flux Angle Cosine Cutoff" type="double" value="0.001"/>
+ *   <Parameter name="Free Gas Threshold" type="double" value="600.0"/>
+ *   <Parameter name="Min Neutron Energy" type="double" value="1e-2"/>
+ *   <Parameter name="Min Photon Energy" type="double" value="1e-2"/>
+ *   <Parameter name="Min Electron Energy" type="double" value="1e-2"/>
+ *   <Parameter name="Impulse Approximation" type="bool" value="true"/>
+ *   <Parameter name="Photon Doppler Broadening" type="bool" value="false"/>
+ *   <Parameter name="Atomic Relaxation" type="bool" value="false"/>
+ *   <Parameter name="Detailed Pair Production" type="bool" value="true"/>
  * </ParameterList>
  * \endcode
- *
- * In the future, one will also be able to turn on/off certain physics,
- * set thresholds for certain physics to be turned on/off, set cutoff
- * energies, void out the geometry (ignore materials), etc.
  *
  * \section running_facemc Running FACEMC
  * Once all of the input XML files have been created, FACEMC can be used. To
@@ -1290,15 +1366,20 @@
  *                      definitions.</li>
  *  <li><b>cross_sec_dir</b>: The directory containing the desired cross
  *                            section tables (cross_sections.xml file).</li>
+ *  <li><b>threads</b>: The number of threads to use (default=1, optional).</li>
  * </ul>
  *
- * To run FACEMC, type the following command:
+ * The following example shows how one could use the command-line interface:
  * \code
- * facemc --sim_info=simulation.xml --geom_def=geometry.xml --mat_def=materials.xml --resp_def=responses.xml --est_def=estimators.xml --src_def=sources.xml --cross_sec_dir=/home/me/nuclear_data/
+ * facemc --sim_info=simulation.xml --geom_def=geometry.xml --mat_def=materials.xml --resp_def=responses.xml --est_def=estimators.xml --src_def=sources.xml --cross_sec_dir=/home/me/nuclear_data/ --threads=2
  * \endcode
  *
  * To get status updates on the simulations progress, simply hit control-C. 
- * This can also be used to end the simulation early. 
+ * This can also be used to end the simulation early. Please not that this
+ * can sometimes lead to code hangs (the developers are investigating the
+ * cause of these hangs).
  *
- * When a simulation finishes, the results will be printed to the screen.
+ * When a simulation finishes, a summary of the results will be printed to the 
+ * screen. The results can be found in an HDF5 file called simulation.h5. This
+ * file can be interacted with through python using the h5py package.
  */ 
