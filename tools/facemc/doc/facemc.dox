@@ -92,8 +92,8 @@
  * have default names, which will be listed below.
  * <ul>
  *  <li> termination.cell </li>
- *  <li> mat_\#_rho_# </li>
- *  <li> mat_\#_rho_-# </li>
+ *  <li> material_\#_density_# </li>
+ *  <li> material_\#_density_-# </li>
  *  <li> estimator_#.surface.current.n </li>
  *  <li> estimator_#.surface.current.p </li>
  *  <li> estimator_#.surface.current.e </li>
@@ -110,10 +110,10 @@
  *  <li> estimator_#.cell.c.flux.p </li>
  *  <li> estimator_#.cell.c.flux.e </li>
  * </ul>
- * The termination.cell, mat, rho, estimator, surface.current, surface.flux,
- * cell.pulse.height, cell.tl.flux, cell.c.flux keywords can all be substituted
- * with any alternative of your choosing (these alternatives must be specified
- * in the \ref geometry_xml_file "geometry xml file"). 
+ * The termination.cell, material, density, estimator, surface.current, 
+ * surface.flux, cell.pulse.height, cell.tl.flux, cell.c.flux keywords can all 
+ * be substituted with any alternative of your choosing (these alternatives 
+ * must be specified in the \ref geometry_xml_file "geometry xml file"). 
  *
  * The final step is to export the geometry. Attributes must be set to on
  * to save absolute volumes, surface ids and the group specifications. This
@@ -816,9 +816,9 @@
  *       <li>Generation Number Bins</li>
  *      </ul>
  *      The order that the different phase space bins are specified in is 
- *      important. Later bins are added to all of the bins previously added 
- *      (they run the fastest). \ref interval_operators "Interval operators" 
- *      can be used when specifying estimator bins.
+ *      important. The first bins specified will run the fastest (they will be
+ *      added to all of the later bins specified). \ref interval_operators 
+ *      "Interval operators" can be used when specifying estimator bins.
  *      <ul>
  *       <li>\code
  *        <ParameterList name="Bins">

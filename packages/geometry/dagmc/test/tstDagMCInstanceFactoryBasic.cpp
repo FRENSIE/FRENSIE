@@ -39,17 +39,27 @@ TEUCHOS_UNIT_TEST( DagMCInstanceFactory, initializeDagMC )
 {
   Teuchos::RCP<Teuchos::ParameterList> geom_rep = 
     Teuchos::getParametersFromXmlFile( test_geom_xml_file_name );
-
+  
   Geometry::DagMCInstanceFactory::initializeDagMC( *geom_rep );
 
   TEST_EQUALITY_CONST( Geometry::DagMCProperties::getTerminationCellPropertyName(),
-		       "graveyard" );
+		       "termination.cell" );
   TEST_EQUALITY_CONST( Geometry::DagMCProperties::getMaterialPropertyName(),
-		       "mat" );
+		       "material" );
   TEST_EQUALITY_CONST( Geometry::DagMCProperties::getDensityPropertyName(),
-		       "rho" );
+		       "density" );
   TEST_EQUALITY_CONST( Geometry::DagMCProperties::getEstimatorPropertyName(),
-		       "tally" );
+		       "estimator" );
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getSurfaceCurrentName(),
+		       "surface.current" );
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getSurfaceFluxName(),
+		       "surface.flux" );
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getCellPulseHeightName(),
+		       "cell.pulse.height" );
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getCellTrackLengthFluxName(),
+		       "cell.tl.flux" );
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getCellCollisionFluxName(),
+		       "cell.c.flux" );
 
   boost::unordered_map<std::string,
 		      std::vector<Geometry::ModuleTraits::InternalCellHandle> >
