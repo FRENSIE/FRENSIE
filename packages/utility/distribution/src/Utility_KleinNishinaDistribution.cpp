@@ -19,7 +19,9 @@ const double KleinNishinaDistribution::cross_section_multiplier =
   PhysicalConstants::pi*PhysicalConstants::classical_electron_radius*
   PhysicalConstants::classical_electron_radius;
 
-const double KleinNishinaDistribution::koblinger_cutoff_alpha = 1 + sqrt(3.0);
+// True cutoff is 1 + sqrt(3) - set higher to avoid numerical instability
+const double KleinNishinaDistribution::koblinger_cutoff_alpha = 
+  3/PhysicalConstants::electron_rest_mass_energy;
 
 // Get the Koblinger cutoff energy
 double KleinNishinaDistribution::getKoblingerCutoffEnergy()
@@ -167,6 +169,11 @@ double KleinNishinaDistribution::sampleKleinNishinaUsingKoblingersMethod(
     x = 1.0/sqrt(1.0 - random_number_2*(1.0 - 1.0/(arg*arg)));
   
   // Make sure the sampled inverse energy loss ratio is valid
+  testPostcondition( p1 >= 0.0 );
+  testPostcondition( p2 >= 0.0 );
+  testPostcondition( p3 >= 0.0 );
+  testPostcondition( p4 >= 0.0 );
+  testPostcondition( p1+p2+p3+p4 <= 1.0 );
   testPostcondition( x >= 1.0 );
   testPostcondition( x <= 1.0 + 2.0*alpha );
 
