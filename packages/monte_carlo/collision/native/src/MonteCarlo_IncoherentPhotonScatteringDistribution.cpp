@@ -155,7 +155,7 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
     inverse_energy_loss_ratio = 
       Utility::KleinNishinaDistribution::sampleOptimal( photon.getEnergy() );
 
-    scattering_angle_cosine = 1.0 - (inverse_energy_loss_ratio - 1.0)/alpha;
+    scattering_angle_cosine = 1.0 + (1.0 - inverse_energy_loss_ratio)/alpha;
 
     double scattering_function_arg = 
       sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength// /1e8

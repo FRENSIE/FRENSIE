@@ -36,7 +36,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaDistribution, getKoblingerCutoffEnergy )
 {
   TEST_FLOATING_EQUALITY( 
 		 Utility::KleinNishinaDistribution::getKoblingerCutoffEnergy(),
-		 1.3960749850875,
+		 3.0,
 		 1e-12 );
 }
 
@@ -162,14 +162,14 @@ TEUCHOS_UNIT_TEST( KleinNishinaDistribution, sample )
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   // Koblinger's Method
-  distribution->setEnergy( 3.0*Utility::PhysicalConstants::electron_rest_mass_energy );
+  distribution->setEnergy( 3.1 );
 
   fake_stream.resize( 8 );
-  fake_stream[0] = 0.326;
+  fake_stream[0] = 0.120;
   fake_stream[1] = 0.2;
-  fake_stream[2] = 0.432;
+  fake_stream[2] = 0.698;
   fake_stream[3] = 0.4;
-  fake_stream[4] = 0.759;
+  fake_stream[4] = 0.818;
   fake_stream[5] = 0.6;
   fake_stream[6] = 0.90;
   fake_stream[7] = 0.8;
@@ -179,25 +179,25 @@ TEUCHOS_UNIT_TEST( KleinNishinaDistribution, sample )
   // Sample 1st term
   sample = base_distribution->sample();
 
-  TEST_EQUALITY_CONST( sample, 2.2 );
+  TEST_FLOATING_EQUALITY( sample, 3.426619656947095, 1e-12 );
   TEST_EQUALITY_CONST( base_distribution->getSamplingEfficiency(), 1.0 );
 
   // Sample the 2nd term
   sample = base_distribution->sample();
   
-  TEST_FLOATING_EQUALITY( sample, 2.1779064244828, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 2.8012178026643353, 1e-12 );
   TEST_EQUALITY_CONST( base_distribution->getSamplingEfficiency(), 1.0 );
 
   // Sample the 3rd term
   sample = base_distribution->sample();
 
-  TEST_FLOATING_EQUALITY( sample, 1.5217391304348, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 1.5861499973593234, 1e-12 );
   TEST_EQUALITY_CONST( base_distribution->getSamplingEfficiency(), 1.0 );
 
   // Sample the 4th term
   sample = base_distribution->sample();
 
-  TEST_FLOATING_EQUALITY( sample, 2.1500329089188, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 2.2105817334378988, 1e-12 );
   TEST_EQUALITY_CONST( base_distribution->getSamplingEfficiency(), 1.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -248,11 +248,11 @@ TEUCHOS_UNIT_TEST( KleinNishinaDistribution, sampleOptimal )
 
   // Koblinger's Method
   fake_stream.resize( 8 );
-  fake_stream[0] = 0.326;
+  fake_stream[0] = 0.120;
   fake_stream[1] = 0.2;
-  fake_stream[2] = 0.432;
+  fake_stream[2] = 0.698;
   fake_stream[3] = 0.4;
-  fake_stream[4] = 0.759;
+  fake_stream[4] = 0.818;
   fake_stream[5] = 0.6;
   fake_stream[6] = 0.90;
   fake_stream[7] = 0.8;
@@ -260,28 +260,24 @@ TEUCHOS_UNIT_TEST( KleinNishinaDistribution, sampleOptimal )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Sample 1st term
-  sample = Utility::KleinNishinaDistribution::sampleOptimal( 
-		     3*Utility::PhysicalConstants::electron_rest_mass_energy );
+  sample = Utility::KleinNishinaDistribution::sampleOptimal( 3.1 );
 
-  TEST_EQUALITY_CONST( sample, 2.2 );
+  TEST_FLOATING_EQUALITY( sample, 3.426619656947095, 1e-12 );
 
   // Sample the 2nd term
-  sample = Utility::KleinNishinaDistribution::sampleOptimal( 
-		   3.0*Utility::PhysicalConstants::electron_rest_mass_energy );
+  sample = Utility::KleinNishinaDistribution::sampleOptimal( 3.1 );
   
-  TEST_FLOATING_EQUALITY( sample, 2.1779064244828, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 2.8012178026643353, 1e-12 );
 
   // Sample the 3rd term
-  sample = Utility::KleinNishinaDistribution::sampleOptimal( 
-		   3.0*Utility::PhysicalConstants::electron_rest_mass_energy );
+  sample = Utility::KleinNishinaDistribution::sampleOptimal( 3.1 );
 
-  TEST_FLOATING_EQUALITY( sample, 1.5217391304348, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 1.5861499973593234, 1e-12 );
 
   // Sample the 4th term
-  sample = Utility::KleinNishinaDistribution::sampleOptimal( 
-		   3.0*Utility::PhysicalConstants::electron_rest_mass_energy );
+  sample = Utility::KleinNishinaDistribution::sampleOptimal( 3.1 );
 
-  TEST_FLOATING_EQUALITY( sample, 2.1500329089188, 1e-12 );
+  TEST_FLOATING_EQUALITY( sample, 2.2105817334378988, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -297,7 +293,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaDistribution, getSamplingEfficeincy )
   TEST_ASSERT( base_distribution->getSamplingEfficiency() < 1.0 );
   TEST_ASSERT( base_distribution->getSamplingEfficiency() > 0.0 );
   
-  distribution->setEnergy( 1.5 );
+  distribution->setEnergy( 3.1 );
 
   for( unsigned i = 0; i < 10; ++i )
     base_distribution->sample();
