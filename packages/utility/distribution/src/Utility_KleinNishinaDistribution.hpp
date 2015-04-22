@@ -52,7 +52,8 @@ public:
 							  const double alpha );
 
   //! Return a sample from the distribution using the optimal method
-  static double sampleOptimal( const double energy );
+  static double sampleOptimal( const double energy,
+			       unsigned& number_of_trials );
 
   //! Return a sample using Kahn's rejection method
   static double sampleKleinNishinaUsingKahnsMethod( 
