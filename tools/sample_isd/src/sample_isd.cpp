@@ -23,6 +23,7 @@
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
 int main( int argc, char** argv )
@@ -96,7 +97,7 @@ int main( int argc, char** argv )
   }
 
   // Create the incoherent scattering distribution
-  Teuchos::RCP<MonteCarlo::IncoherentPhotonScatteringDistribution> 
+  Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution> 
     scattering_dist;
   
   {
@@ -129,19 +130,48 @@ int main( int argc, char** argv )
 
     MonteCarlo::PhotoatomCore core( photoatom_map.begin()->second->getCore() );
 
-    Teuchos::RCP<MonteCarlo::PhotoatomicReaction> incoherent_reaction_base = 
+    Teuchos::RCP<MonteCarlo::PhotoatomicReaction> incoherent_reaction = 
       core.getScatteringReactions().find(
 		   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION )->second;
 
-    Teuchos::RCP<MonteCarlo::IncoherentPhotoatomicReaction> 
-      incoherent_reaction = 
-      Teuchos::rcp_dynamic_cast<MonteCarlo::IncoherentPhotoatomicReaction>(
-						    incoherent_reaction_base );
-
+    // Make sure the total incoherent reaction is available
+    TEST_FOR_EXCEPTION( incoherent_reaction.is_null(),
+			std::logic_error,
+			"Error: the incoherent reaction is not available!" );
+    
     scattering_dist = incoherent_reaction->getScatteringDistribution();
   }
 
+  // Make the requested number of samples
+  unsigned trials = 0u;
+  MonteCarlo::PhotonState photon( 0 );
+  MonteCarlo::ParticleBank bank;
+  MonteCarlo::SubshellType shell_of_interaction;
+  std::vector<double> sampled_cosines( samples );
+  double start_time, end_time;
   
+  start_time = Utility::GlobalOpenMPSession::getTime();
+  
+  for( unsigned i = 0; i < samples; ++i )
+  {
+    photon.setEnergy( initial_photon_energy );
+    photon.setDirection( 0.0, 0.0, 1.0 );
+
+    scattering_dist->scatterPhoton(photon, bank, shell_of_interaction, trials);
+
+    sampled_energies[i] = photon.getEnergy();
+  }
+  
+  end_time = Utility::GlobalOpenMPSession::getTime();
+  
+  // Print the efficiency and timing data
+  std::cout.precision( 18 );
+  std::cout << "Photon Energy: " << initial_photon_energy << std::endl;
+  std::cout << "Efficiency: " << samples/(double)trials << std::endl;
+  std::cout << "Timing (" << samples << " samples): " 
+	    << end_time - start_time << std::endl;
+
+  // 
 
   return 0;
 }

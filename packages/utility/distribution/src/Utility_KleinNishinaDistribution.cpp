@@ -341,19 +341,18 @@ double KleinNishinaDistribution::sample() const
 }
 
 // Return a sample from the distribution
-double KleinNishinaDistribution::sampleOptimal( const double energy )
+double KleinNishinaDistribution::sampleOptimal( const double energy,
+						unsigned number_of_trials )
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0.0 );
   
   double alpha = energy/PhysicalConstants::electron_rest_mass_energy;
 
-  unsigned trial_dummy;
-
   if( alpha < KleinNishinaDistribution::koblinger_cutoff_alpha )
-    return sampleKleinNishinaUsingKahnsMethod( alpha, trial_dummy );
+    return sampleKleinNishinaUsingKahnsMethod( alpha, number_of_trials );
   else
-    return sampleKleinNishinaUsingKoblingersMethod( alpha, trial_dummy );
+    return sampleKleinNishinaUsingKoblingersMethod( alpha, number_of_trials );
 }
 
 // Return the sampling efficeincy from the distribution

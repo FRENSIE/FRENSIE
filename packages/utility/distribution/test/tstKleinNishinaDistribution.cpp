@@ -211,6 +211,8 @@ TEUCHOS_UNIT_TEST( KleinNishinaDistribution, sampleOptimal )
 {
   distribution->setEnergy( Utility::PhysicalConstants::electron_rest_mass_energy );
   
+  unsigned trials;
+
   // Left branch of Kahn's method
   std::vector<double> fake_stream( 6 );
   fake_stream[0] = 0.27;
@@ -223,7 +225,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaDistribution, sampleOptimal )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   double sample = Utility::KleinNishinaDistribution::sampleOptimal( 
-		       Utility::PhysicalConstants::electron_rest_mass_energy );
+	       Utility::PhysicalConstants::electron_rest_mass_energy, trials );
 
   TEST_EQUALITY_CONST( sample, 2.0 );
   
@@ -240,7 +242,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaDistribution, sampleOptimal )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   sample = Utility::KleinNishinaDistribution::sampleOptimal( 
-		       Utility::PhysicalConstants::electron_rest_mass_energy );
+	       Utility::PhysicalConstants::electron_rest_mass_energy, trials );
 
   TEST_EQUALITY_CONST( sample, 2.0 );
 
@@ -260,22 +262,22 @@ TEUCHOS_UNIT_TEST( KleinNishinaDistribution, sampleOptimal )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   // Sample 1st term
-  sample = Utility::KleinNishinaDistribution::sampleOptimal( 3.1 );
+  sample = Utility::KleinNishinaDistribution::sampleOptimal( 3.1, trials );
 
   TEST_FLOATING_EQUALITY( sample, 3.426619656947095, 1e-12 );
 
   // Sample the 2nd term
-  sample = Utility::KleinNishinaDistribution::sampleOptimal( 3.1 );
+  sample = Utility::KleinNishinaDistribution::sampleOptimal( 3.1, trials );
   
   TEST_FLOATING_EQUALITY( sample, 2.8012178026643353, 1e-12 );
 
   // Sample the 3rd term
-  sample = Utility::KleinNishinaDistribution::sampleOptimal( 3.1 );
+  sample = Utility::KleinNishinaDistribution::sampleOptimal( 3.1, trials );
 
   TEST_FLOATING_EQUALITY( sample, 1.5861499973593234, 1e-12 );
 
   // Sample the 4th term
-  sample = Utility::KleinNishinaDistribution::sampleOptimal( 3.1 );
+  sample = Utility::KleinNishinaDistribution::sampleOptimal( 3.1, trials );
 
   TEST_FLOATING_EQUALITY( sample, 2.2105817334378988, 1e-12 );
 
