@@ -18,7 +18,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
@@ -28,8 +28,11 @@
 
 Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 
+Teuchos::RCP<Utility::TabularOneDDistribution>
+  tab_distribution( new Utility::DeltaDistribution( 0.0 ) );
+
 Teuchos::RCP<Utility::OneDDistribution>
-  distribution( new Utility::DeltaDistribution( 0.0 ) );
+  distribution( tab_distribution );
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -53,6 +56,15 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, evaluatePDF )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the CDF can be evaluated
+TEUCHOS_UNIT_TEST( DeltaDistribution, evaluateCDF )
+{
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 0.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 1.0 ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( DeltaDistribution, sample )
 {
@@ -60,10 +72,65 @@ TEUCHOS_UNIT_TEST( DeltaDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the sampling efficiency can be returned
-TEUCHOS_UNIT_TEST( DeltaDistribution, getSamplingEfficiency )
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( DeltaDistribution, sampleAndRecordTrials )
 {
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  unsigned trials = 0;
+  double sample = distribution->sampleAndRecordTrials( trials );
+  
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( trials, 1 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( DeltaDistribution, sampleAndRecordBinIndex )
+{
+  unsigned bin_index = 0;
+  double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
+  
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( bin_index, 0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( DeltaDistribution, sampleWithRandomNumber )
+{
+  double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
+  
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleWithRandomNumber( 0.5 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( DeltaDistribution, sampleInSubrange )
+{
+  double sample = tab_distribution->sampleInSubrange( 1.0 );
+  
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleInSubrange( 1.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( DeltaDistribution, sampleWithRandomNumberInSubrange )
+{
+  double sample = 
+    tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 1.0 );
+  
+  TEST_EQUALITY_CONST( sample, 0.0 );
+
+  sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.5, 2.0 );
+
+  TEST_EQUALITY_CONST( sample, 0.0 );
 }
 
 //---------------------------------------------------------------------------//

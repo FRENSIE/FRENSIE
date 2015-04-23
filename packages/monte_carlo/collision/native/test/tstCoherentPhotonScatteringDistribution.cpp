@@ -182,7 +182,7 @@ int main( int argc, char** argv )
     form_factor_function_squared_values[i];
   };
 
-  Teuchos::RCP<Utility::OneDDistribution> form_factor_function_squared(
+  Teuchos::RCP<Utility::TabularOneDDistribution> form_factor_function_squared(
 			    new Utility::TabularDistribution<Utility::LinLin>( 
 						form_factor_argument_squared,
 						form_factor_function_squared_values ) );

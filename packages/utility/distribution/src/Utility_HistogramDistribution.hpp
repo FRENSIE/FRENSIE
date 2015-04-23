@@ -144,7 +144,7 @@ inline double HistogramDistribution::sampleImplementation(
 }
 
 // Return a sample from the distribution at the given CDF value in a subrange
-double HistogramDistribution::sampleWithRandomNumberInSubrange( 
+inline double HistogramDistribution::sampleWithRandomNumberInSubrange( 
 					     const double random_number,
 					     const double max_indep_var ) const
 {

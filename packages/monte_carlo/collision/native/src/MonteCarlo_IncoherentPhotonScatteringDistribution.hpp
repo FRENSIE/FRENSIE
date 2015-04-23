@@ -19,7 +19,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonScatteringDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
@@ -31,7 +31,7 @@ class IncoherentPhotonScatteringDistribution : public PhotonScatteringDistributi
 public:
 
   //! The electron momentum distribution array (Compton Profiles)
-  typedef Teuchos::Array<Teuchos::RCP<const Utility::OneDDistribution> >
+  typedef Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
   ElectronMomentumDistArray;
   
   //! Constructor without Doppler broadening
@@ -81,7 +81,8 @@ private:
   Teuchos::RCP<const Utility::OneDDistribution> d_scattering_function;
 
   // The binding energy and shell interaction probabilities
-  Teuchos::RCP<const Utility::OneDDistribution> d_shell_interaction_data;
+  Teuchos::RCP<const Utility::TabularOneDDistribution> 
+  d_shell_interaction_data;
 
   // Subshell ordering
   Teuchos::Array<SubshellType> d_subshell_order;

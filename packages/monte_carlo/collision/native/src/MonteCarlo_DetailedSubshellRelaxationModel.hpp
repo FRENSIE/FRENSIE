@@ -18,7 +18,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SubshellRelaxationModel.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_DiscreteDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{

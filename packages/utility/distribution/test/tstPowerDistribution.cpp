@@ -116,24 +116,45 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, sample, N )
 UNIT_TEST_INSTANTIATION( PowerDistribution, sample );
 
 //---------------------------------------------------------------------------//
-// Check that the sampling efficiency can be returned
+// Check that the distribution can be sampled
 UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, 
-					   getSamplingEfficiency, 
-					   N )
+					    sampleAndRecordTrials, 
+					    N )
 {
   initializeDistribution<N>( distribution );
+  
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
 
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned trials = 0;
+
+  double sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, pow(0.5, 1.0/(N+1u)) );
+  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-15 );
+  TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
-UNIT_TEST_INSTANTIATION( PowerDistribution, getSamplingEfficiency );
+UNIT_TEST_INSTANTIATION( PowerDistribution, sampleAndRecordTrials );
 
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the distribution independent variable can be
 // returned
 UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, 
-					   getUpperBoundOfIndepVar,
-					   N )
+					    getUpperBoundOfIndepVar,
+					    N )
 {
   initializeDistribution<N>( distribution );
   
@@ -146,8 +167,8 @@ UNIT_TEST_INSTANTIATION( PowerDistribution, getUpperBoundOfIndepVar );
 // Check that the lower bound of the distribution independent variable can be
 // returned
 UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution, 
-					   getLowerBoundOfIndepVar,
-					   N )
+					    getLowerBoundOfIndepVar,
+					    N )
 {
   initializeDistribution<N>( distribution );
   
@@ -182,6 +203,32 @@ UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
 }
 
 UNIT_TEST_INSTANTIATION( PowerDistribution, getDistributionType );
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is tabular
+UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
+					    isTabular,
+					    N )
+{
+  initializeDistribution<N>( distribution );
+  
+  TEST_ASSERT( !distribution->isTabular() );
+}
+
+UNIT_TEST_INSTANTIATION( PowerDistribution, isTabular );
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is continuous
+UTILITY_UNIT_TEST_UNSIGNED_TEMPLATE_1_DECL( PowerDistribution,
+					    isContinuous,
+					    N )
+{
+  initializeDistribution<N>( distribution );
+  
+  TEST_ASSERT( distribution->isContinuous() );
+}
+
+UNIT_TEST_INSTANTIATION( PowerDistribution, isContinuous );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be written to an xml file

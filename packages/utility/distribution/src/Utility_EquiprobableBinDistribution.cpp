@@ -112,9 +112,11 @@ double EquiprobableBinDistribution::evaluateCDF(
 				     indep_var_value );
 
     unsigned bins = d_bin_boundaries.size()-1;
-    return bin_index/bins + 
-      (1.0/bins)*(indep_var_value - d_bin_boundaries[bin_index])/
+    
+    double bin_contribution = (indep_var_value - d_bin_boundaries[bin_index])/
       (d_bin_boundaries[bin_index+1] - d_bin_boundaries[bin_index]);
+
+    return (bin_index + bin_contribution)/bins;
   }
 }
 

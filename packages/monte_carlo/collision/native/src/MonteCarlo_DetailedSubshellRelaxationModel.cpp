@@ -82,7 +82,7 @@ void DetailedSubshellRelaxationModel::relaxSubshell(
   // Sample the transition that occurs
   unsigned transition_index;
   double new_particle_energy =
-    d_transition_distribution->sample( transition_index );
+    d_transition_distribution->sampleAndRecordBinIndex( transition_index );
 
   // Set the new vacancies shells
   new_primary_vacancy_shell = 

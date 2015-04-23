@@ -61,7 +61,8 @@ SubshellIncoherentPhotonScatteringDistribution::SubshellIncoherentPhotonScatteri
 	const SubshellType interaction_subshell,
 	const double binding_energy,
 	const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
-	const Teuchos::RCP<const Utility::OneDDistribution>& compton_profile )
+	const Teuchos::RCP<const Utility::TabularOneDDistribution>& 
+	compton_profile )
   : d_subshell( interaction_subshell ),
     d_binding_energy( binding_energy ),
     d_occupation_number( occupation_number ),
@@ -150,11 +151,14 @@ void SubshellIncoherentPhotonScatteringDistribution::scatterPhoton(
   // The scaled random number
   double scaled_random_number;
 
+  unsigned trial_dummy;
+
   // Sample a value from the Klein-Nishina distribution, reject with the
   // scattering function
   do{
     inverse_energy_loss_ratio = 
-      Utility::KleinNishinaDistribution::sampleOptimal( photon.getEnergy() );
+      Utility::KleinNishinaDistribution::sampleOptimal( photon.getEnergy(),
+							trial_dummy );
 
     scattering_angle_cosine = 1.0 - (inverse_energy_loss_ratio - 1.0)/alpha;
 
@@ -269,7 +273,8 @@ SubshellIncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
   testPrecondition( initial_energy > d_binding_energy );
 
   // Sample an electron momentum projection
-  double pz = d_compton_profile->sample( max_electron_momentum_projection );
+  double pz = 
+    d_compton_profile->sampleInSubrange( max_electron_momentum_projection );
     
   // Calculate the doppler broadened energy
   bool energetically_possible;

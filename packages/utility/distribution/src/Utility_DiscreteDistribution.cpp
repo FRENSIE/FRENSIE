@@ -97,13 +97,12 @@ DiscreteDistribution& DiscreteDistribution::operator=(
  */
 double DiscreteDistribution::evaluate( const double indep_var_value ) const 
 {
-  for( unsigned i = 0; i < d_distribution.size(); ++i )
-  {
-    if( indep_var_value == d_distribution[i].first )
-      return std::numeric_limits<double>::infinity();
-  }
+  double value = this->evaluatePDF( indep_var_value );
 
-  return 0.0;
+  if( value != 0.0 )
+    value = std::numeric_limits<double>::infinity();
+
+  return value;
 }
 
 // Evaluate the PDF
