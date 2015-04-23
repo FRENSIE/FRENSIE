@@ -30,8 +30,10 @@
 
 Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 
-Teuchos::RCP<Utility::OneDDistribution> distribution( 
-			   new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
+Teuchos::RCP<Utility::TabularOneDDistribution> t_distribution( 
+			  new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
+
+Teuchos::RCP<Utility::OneDDistribution> distribution = t_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -55,6 +57,17 @@ TEUCHOS_UNIT_TEST( UniformDistribution, evaluatePDF )
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), 0.5 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), 0.5 );
   TEST_EQUALITY_CONST( distribution->evaluatePDF( 2.0 ), 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the CDF can be evaluated
+TEUCHOS_UNIT_TEST( UniformDistribution, evaluateCDF )
+{
+  TEST_EQUALITY_CONST( distribution->evaluateCDF( -2.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateCDF( -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateCDF( 0.0 ), 0.5 );
+  TEST_EQUALITY_CONST( distribution->evaluateCDF( 1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( distribution->evaluateCDF( 2.0 ), 1.0 );
 }
 
 //---------------------------------------------------------------------------//

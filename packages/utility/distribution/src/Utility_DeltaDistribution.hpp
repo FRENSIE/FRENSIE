@@ -54,13 +54,10 @@ public:
   double evaluatePDF( const double indep_var_value ) const;
 
   //! Return a random sample from the corresponding CDF
-  double sample();
-
-  //! Return a random sample from the corresponding CDF
   double sample() const;
 
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
+  //! Return a random sample from the corresponding CDF and record the number of trials
+  double sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
@@ -70,6 +67,9 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Test if the distribution is continuous
+  bool isContinuous() const;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const;

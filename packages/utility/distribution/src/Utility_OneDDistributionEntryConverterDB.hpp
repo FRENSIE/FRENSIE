@@ -26,7 +26,7 @@
 #include "Utility_NormalDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_ThirtyTwoEquiprobableBinDistribution.hpp"
+#include "Utility_EquiprobableBinDistribution.hpp"
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_PolynomialDistribution.hpp"
 
@@ -89,7 +89,7 @@ private:
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(TabularDistribution<LogLin>);\
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(TabularDistribution<LinLog>);\
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(TabularDistribution<LogLog>);\
-  UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(ThirtyTwoEquiprobableBinDistribution); \
+  UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(EquiprobableBinDistribution); \
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(UniformDistribution);	\
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(PolynomialDistribution)
 

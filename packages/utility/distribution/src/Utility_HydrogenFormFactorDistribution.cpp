@@ -35,10 +35,6 @@ double HydrogenFormFactorDistribution::evaluate(
       PhysicalConstants::inverse_fine_structure_constant*
       indep_var_value*indep_var_value*1e-16/2.0;
 
-    // double arg = 1.0 + PhysicalConstants::inverse_fine_structure_constant*
-    //   PhysicalConstants::inverse_fine_structure_constant*
-    //   indep_var_value*indep_var_value/2.0;
-
     return 1 - 1.0/(arg*arg*arg*arg);
   }
   else
@@ -56,12 +52,6 @@ double HydrogenFormFactorDistribution::evaluatePDF(
 }
 
 // Return a random sample from the distribution
-double HydrogenFormFactorDistribution::sample()
-{
-  return (const_cast<const HydrogenFormFactorDistribution*>(this))->sample();
-}
-
-// Return a random sample from the distribution
 double HydrogenFormFactorDistribution::sample() const
 {
   THROW_EXCEPTION( std::logic_error,
@@ -70,13 +60,13 @@ double HydrogenFormFactorDistribution::sample() const
   return 0.0;
 }
 
-// Return the sampling efficiency from the distribution
-double HydrogenFormFactorDistribution::getSamplingEfficiency() const
+// Return a random sample and record the number of trials
+double HydrogenFormFactorDistribution::sampleAndRecordTrials( 
+						       unsigned& trials ) const
 {
-  THROW_EXCEPTION( std::logic_error,
-		   "Error: This function has not been implemented yet!" );
+  ++trials;
 
-  return 1.0;
+  return this->sample();
 }
 
 // Return the upper bound of the distribution independent variable
@@ -95,6 +85,12 @@ double HydrogenFormFactorDistribution::getLowerBoundOfIndepVar() const
 OneDDistributionType HydrogenFormFactorDistribution::getDistributionType() const
 {
   return HYDROGEN_FORM_FACTOR_DISTRIBUTION;
+}
+
+// Test if the distribution is continuous
+bool HydrogenFormFactorDistribution::isContinuous() const
+{
+  return true;
 }
 
 } // end Utility namespace

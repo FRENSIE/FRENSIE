@@ -43,12 +43,14 @@ TabularDistribution<InterpolationPolicy>::TabularDistribution(
 {
   if( interpret_dependent_values_as_cdf )
   {
-    // Make sure that the bin values are sorted
-    testPrecondition( Sort::isSortedAscending( dependent_values.begin(), 
-					     dependent_values.end() ) );
-
     // Make sure that for n bin boundaries there are n bin values
     testPrecondition( independent_values.size() == dependent_values.size() );
+    // Make sure that the bins are sorted
+    testPrecondition( Sort::isSortedAscending( independent_values.begin(),
+					       independent_values.end() ) );
+    // Make sure that the bin values are sorted
+    testPrecondition( Sort::isSortedAscending( dependent_values.begin(), 
+					       dependent_values.end() ) );
 
     d_distribution[0].first = independent_values[0];
     d_distribution[0].second = dependent_values[0];
@@ -192,26 +194,89 @@ double TabularDistribution<InterpolationPolicy>::evaluateCDF(
 
 // Return a random sample from the distribution
 template<typename InterpolationPolicy>
-inline double TabularDistribution<InterpolationPolicy>::sample()
-{
-  return (const_cast<const TabularDistribution<InterpolationPolicy>*>(this))->sample();
-}
-
-// Return a random sample from the distribution
-template<typename InterpolationPolicy>
 inline double TabularDistribution<InterpolationPolicy>::sample() const
 {
-  unsigned bin_index;
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
   
-  return this->sample( bin_index );
+  unsigned dummy_index;
+  
+  return this->sampleImplementation( random_number, dummy_index );
+}
+
+// Return a random sample and record the number of trials
+template<typename InterpolationPolicy>
+double TabularDistribution<InterpolationPolicy>::sampleAndRecordTrials( 
+						       unsigned& trials ) const
+{
+  ++trials;
+
+  return this->sample();
 }
 
 // Return a random sample and bin index from the distribution
 template<typename InterpolationPolicy>
-double TabularDistribution<InterpolationPolicy>::sample( 
+double TabularDistribution<InterpolationPolicy>::sampleAndRecordBinIndex( 
 					    unsigned& sampled_bin_index ) const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
+
+  return this->sampleImplementation( random_number, sampled_bin_index );
+}
+
+// Return a sample from the distribution at the given CDF value
+template<typename InterpolationPolicy>
+double TabularDistribution<InterpolationPolicy>::sampleWithRandomNumber( 
+					     const double random_number ) const
+{
+  unsigned dummy_index;
+
+  return this->sampleImplementation( random_number, dummy_index );
+}
+
+// Return a random sample from the corresponding CDF in a subrange
+template<typename InterpolationPolicy>
+double TabularDistribution<InterpolationPolicy>::sampleInSubrange( 
+					     const double max_indep_var ) const
+{
+  // Make sure the maximum indep var is valid
+  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
+    
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+
+  return this->sampleWithRandomNumberInSubrange( random_number,
+						 max_indep_var );
+}
+
+// Return a random sample from the distribution at the given CDF value in a subrange
+template<typename InterpolationPolicy>
+inline double TabularDistribution<InterpolationPolicy>::sampleWithRandomNumberInSubrange( 
+					     const double random_number,
+					     const double max_indep_var ) const
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
+  // Make sure the maximum indep var is valid
+  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
+  
+  // Calculate a scaled random number
+  double scaled_random_number = 
+    random_number*this->evaluateCDF( max_indep_var );
+    
+  unsigned dummy_index;
+
+  return this->sampleImplementation( scaled_random_number, dummy_index );
+}
+
+// Return a random sample using the random number and record the bin index
+template<typename InterpolationPolicy>
+double TabularDistribution<InterpolationPolicy>::sampleImplementation( 
+					    double random_number,
+					    unsigned& sampled_bin_index ) const
+{
+  // Make sure the random number is valid
+  testPrecondition( random_number >= 0.0 );
+  testPrecondition( random_number <= 1.0 );
 
   DistributionArray::const_iterator start, end, lower_bin_boundary;
   start = d_distribution.begin();
@@ -248,114 +313,6 @@ double TabularDistribution<InterpolationPolicy>::sample(
   return sample;
 }
 
-// Return a random sample from the corresponding CDF in a subrange
-template<typename InterpolationPolicy>
-double TabularDistribution<InterpolationPolicy>::sample( 
-					     const double max_indep_var ) const
-{
-  // Make sure the maximum indep var is valid
-  testPrecondition( max_indep_var >= this->getLowerBoundOfIndepVar() );
-  testPrecondition( max_indep_var <= this->getUpperBoundOfIndepVar() );
-  
-  if( max_indep_var == this->getLowerBoundOfIndepVar() )
-    return max_indep_var;
-  else if( max_indep_var >= this->getUpperBoundOfIndepVar() )
-    return this->sample();
-  else
-  {
-    // Find the CDF value at the maximum independent variable
-    DistributionArray::const_iterator start, end, lower_bin_boundary;
-    start = d_distribution.begin();
-    end = d_distribution.end();
-
-    lower_bin_boundary = Search::binaryLowerBound<FIRST>( start,
-							  end,
-							  max_indep_var );
-
-    // cdf(x) = cdf(x0) + (x-x0)*pdf(x0) + 0.5*(x-x0)^2*m
-    double indep_value_diff = max_indep_var - lower_bin_boundary->first;
-    double cdf_max = lower_bin_boundary->second + 
-      indep_value_diff*lower_bin_boundary->third +
-      0.5*indep_value_diff*indep_value_diff*lower_bin_boundary->fourth;
-    
-    // Sample a scaled random number
-    double random_number = RandomNumberGenerator::getRandomNumber<double>()*
-      cdf_max;
-
-    start = d_distribution.begin();
-    end = d_distribution.end();
-    
-    lower_bin_boundary = Search::binaryLowerBound<SECOND>( start,
-							   end,
-							   random_number );
-    // Calculate the sampled independent value
-    double sample;
-    
-    double indep_value = lower_bin_boundary->first;
-    double cdf_diff = random_number - lower_bin_boundary->second;
-    double pdf_value = lower_bin_boundary->third;
-    double slope = lower_bin_boundary->fourth;
-    
-    // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m 
-    if( slope != 0.0 )
-    {
-      sample = indep_value + 
-	(sqrt( pdf_value*pdf_value + 2*slope*cdf_diff ) - pdf_value)/slope;
-    }
-    // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
-    else
-      sample =  indep_value + cdf_diff/pdf_value;
-
-    // Make sure a valid cdf value was found
-    testPostcondition( lower_bin_boundary->second <= cdf_max );
-    // Make sure the sample is valid
-    testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( sample ) );
-
-    return sample;
-  }
-}
-
-// Return a sample from the distribution at the given CDF value
-template<typename InterpolationPolicy>
-double TabularDistribution<InterpolationPolicy>::sampleWithValue( 
-					    const double cdf_value ) const
-{
-  DistributionArray::const_iterator lower_bin_boundary = 
-                       Search::binaryLowerBound<SECOND>( d_distribution.begin(),
-                                                         d_distribution.end(),
-                                                         cdf_value );
-
-  // Calculate the sampled independent value
-  double sample;
-  
-  double indep_value = lower_bin_boundary->first;
-  double cdf_diff = cdf_value - lower_bin_boundary->second;
-  double pdf_value = lower_bin_boundary->third;
-  double slope = lower_bin_boundary->fourth;
-
-  // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m 
-  if( slope != 0.0 )
-  {
-    sample = indep_value + 
-      (sqrt( pdf_value*pdf_value + 2*slope*cdf_diff ) - pdf_value)/slope;
-  }
-  // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
-  else
-    sample =  indep_value + cdf_diff/pdf_value;
-
-  // Make sure the sample is valid
-  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( sample ) );
-
-  return sample;
-}
-
-// Return the sampling efficiency
-template<typename InterpolationPolicy>
-double TabularDistribution<InterpolationPolicy>::getSamplingEfficiency() const
-{
-  return 1.0;
-}
-
 // Return the upper bound of the distribution independent variable
 template<typename InterpolationPolicy>
 double 
@@ -378,6 +335,13 @@ OneDDistributionType
 TabularDistribution<InterpolationPolicy>::getDistributionType() const
 {
   return TabularDistribution<InterpolationPolicy>::distribution_type;
+}
+
+// Test if the distribution is continuous
+template<typename InterpolationPolicy>
+bool TabularDistribution<InterpolationPolicy>::isContinuous() const
+{
+  return true;
 }
 
 // Method for placing the object in an output stream

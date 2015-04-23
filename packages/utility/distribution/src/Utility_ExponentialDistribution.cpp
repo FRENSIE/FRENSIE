@@ -94,14 +94,6 @@ double ExponentialDistribution::evaluatePDF(
 // Return a sample from the distribution
 /*! \details x = -ln(rnd)/m
  */
-double ExponentialDistribution::sample()
-{
-  return (const_cast<const ExponentialDistribution*>(this))->sample();
-}
-
-// Return a sample from the distribution
-/*! \details x = -ln(rnd)/m
- */
 double ExponentialDistribution::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
@@ -109,10 +101,12 @@ double ExponentialDistribution::sample() const
   return -log( random_number )/d_exponent_multiplier;
 }
 
-// Return the sampling efficiency
-double ExponentialDistribution::getSamplingEfficiency() const
+// Return a random sample and record the number of trials
+double ExponentialDistribution::sampleAndRecordTrials( unsigned& trials ) const
 {
-  return 1.0;
+  ++trials;
+  
+  return this->sample();
 }
 
 // Return the upper bound of the distribution independent variable
@@ -138,6 +132,12 @@ double ExponentialDistribution::evaluateExponential(
 OneDDistributionType ExponentialDistribution::getDistributionType() const
 {
   return ExponentialDistribution::distribution_type;
+}
+
+// Test if the distribution is continuous
+bool ExponentialDistribution::isContinuous() const
+{
+  return true;
 }
 
 // Method for placing the object in an output stream
