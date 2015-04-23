@@ -149,11 +149,14 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
   // The scaled random number
   double scaled_random_number;
 
+  unsigned trial_dummy;
+
   // Sample a value from the Klein-Nishina distribution, reject with the
   // scattering function
   do{
     inverse_energy_loss_ratio = 
-      Utility::KleinNishinaDistribution::sampleOptimal( photon.getEnergy() );
+      Utility::KleinNishinaDistribution::sampleOptimal( photon.getEnergy(),
+							trial_dummy );
 
     scattering_angle_cosine = 1.0 + (1.0 - inverse_energy_loss_ratio)/alpha;
 
@@ -266,7 +269,8 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
     double shell_binding_energy;
     unsigned shell_index;
 
-    shell_binding_energy = d_shell_interaction_data->sample( shell_index );
+    shell_binding_energy = 
+      d_shell_interaction_data->sampleAndRecordBinIndex( shell_index );
 
     // Convert to a Compton profile shell
     shell_of_interaction = d_subshell_order[shell_index];
@@ -307,7 +311,8 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
     
     // Sample an electron momentum projection
     double pz = 
-      d_electron_momentum_distribution[compton_shell_index]->sample( pz_max );
+      d_electron_momentum_distribution[compton_shell_index]->sampleInSubrange( 
+								      pz_max );
     
     // Calculate the doppler broadened energy
     bool energetically_possible;
@@ -370,7 +375,8 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLineOld(
     double shell_binding_energy;
     unsigned shell_index;
     
-    shell_binding_energy = d_shell_interaction_data->sample( shell_index );
+    shell_binding_energy = 
+      d_shell_interaction_data->sampleAndRecordBinIndex( shell_index );
 
     // Convert to a Compton profile shell
     shell_of_interaction = d_subshell_order[shell_index];
@@ -412,7 +418,8 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLineOld(
     
     // Sample an electron momentum projection
     double pz = 
-      d_electron_momentum_distribution[compton_shell_index]->sample(pz_max);
+      d_electron_momentum_distribution[compton_shell_index]->sampleInSubrange( 
+								      pz_max );
     
     // Calculate the doppler broadened energy
     bool energetically_possible;

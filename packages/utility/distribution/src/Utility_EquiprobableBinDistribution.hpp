@@ -133,7 +133,7 @@ inline double EquiprobableBinDistribution::sampleImplementation(
 }
 
 // Return a random sample from the distribution at the given CDF value in a subrange
-double EquiprobableBinDistribution::sampleWithRandomNumberInSubrange( 
+inline double EquiprobableBinDistribution::sampleWithRandomNumberInSubrange( 
 					     const double random_number,
 					     const double max_indep_var ) const
 {

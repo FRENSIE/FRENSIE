@@ -16,6 +16,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_NuclearScatteringAngularDistribution.hpp"
 #include "MonteCarlo_NuclearReactionType.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -43,7 +44,8 @@ private:
   NuclearScatteringAngularDistributionACEFactory();
 
   // The default (isotropic) angle cosine distribution
-  static Teuchos::RCP<Utility::OneDDistribution> isotropic_angle_cosine_dist;
+  static Teuchos::RCP<Utility::TabularOneDDistribution> 
+  isotropic_angle_cosine_dist;
 };
 
 } // end MonteCarlo namespace

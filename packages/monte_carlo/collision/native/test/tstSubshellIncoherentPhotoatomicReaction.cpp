@@ -344,7 +344,7 @@ int main( int argc, char** argv )
       data_container.getOccupationNumber( 1 );
     
     // Create the Compton profile and occupation number distributions
-    Teuchos::RCP<const Utility::OneDDistribution> compton_profile_s1_dist(
+    Teuchos::RCP<const Utility::TabularOneDDistribution> compton_profile_s1_dist(
 			    new Utility::TabularDistribution<Utility::LinLin>( 
 						       compton_profile_grid_s1,
 						       compton_profile_s1 ) );

@@ -270,7 +270,7 @@ int main( int argc, char** argv )
   Teuchos::ArrayView<const double> swd_block = 
     xss_data_extractor->extractSWDBlock();
 
-  Teuchos::Array<Teuchos::RCP<const Utility::OneDDistribution> >
+  Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
     half_compton_profiles( lswd_block.size() ),
     full_compton_profiles( lswd_block.size() );
   

@@ -63,6 +63,15 @@ double DeltaDistribution::evaluatePDF( const double indep_var_value ) const
     return 0.0;
 }
 
+// Evaluate the CDF
+double DeltaDistribution::evaluateCDF( const double indep_var_value ) const
+{
+  if( indep_var_value < d_location )
+    return 0.0;
+  else
+    return 1.0;
+}
+
 // Return a random sample from the distribution
 double DeltaDistribution::sample() const
 {
@@ -74,7 +83,49 @@ double DeltaDistribution::sampleAndRecordTrials( unsigned& trials ) const
 {
   ++trials;
   
-  return this->sample();
+  return d_location;
+}
+
+// Return a random sample from the distribution and the sampled index 
+double DeltaDistribution::sampleAndRecordBinIndex( 
+					    unsigned& sampled_bin_index ) const
+{
+  sampled_bin_index = 0;
+
+  return d_location;
+}
+
+// Return a random sample from the distribution at the given CDF value
+/*! \details The random number will be ignored since only a single value can
+ * every be returned
+ */
+double DeltaDistribution::sampleWithRandomNumber( 
+					     const double random_number ) const
+{
+  return d_location;
+}
+
+// Return a random sample from the distribution in a subrange
+double DeltaDistribution::sampleInSubrange( const double max_indep_var ) const
+{
+  // Make sure the max independent variable is valid
+  testPrecondition( max_indep_var >= d_location );
+
+  return d_location;
+}
+
+// Return a random sample from the distribution at the given CDF value in a subrange
+/*! \details The random number will be ignored since only a single value can
+ * every be returned
+ */
+double DeltaDistribution::sampleWithRandomNumberInSubrange( 
+					     const double random_number,
+					     const double max_indep_var ) const
+{
+  // Make sure the max independent variable is valid
+  testPrecondition( max_indep_var >= d_location );
+
+  return d_location;
 }
 
 // Return the maximum point at which the distribution is non-zero

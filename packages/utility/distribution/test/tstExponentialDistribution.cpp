@@ -77,10 +77,31 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the sampling efficiency can be returned
-TEUCHOS_UNIT_TEST( ExponentialDistribution, getSamplingEfficiency )
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( ExponentialDistribution, sampleAndRecordTrials )
 {
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0 - 1e-15;
+  fake_stream[2] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned trials = 0;
+  
+  double sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( trials, 1 );
+
+  sample = distribution->sampleAndRecordTrials( trials ); 
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0, 1e-15 );
+  TEST_EQUALITY_CONST( trials, 2 );
+
+  sample = distribution->sampleAndRecordTrials( trials ); 
+  TEST_FLOATING_EQUALITY( sample, -log(0.5)/3.0, 1e-12 );
+  TEST_EQUALITY_CONST( trials, 3 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -106,6 +127,20 @@ TEUCHOS_UNIT_TEST( ExponentialDistribution, getDistributionType )
 {
   TEST_EQUALITY_CONST( distribution->getDistributionType(),
 		       Utility::EXPONENTIAL_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is tabular
+TEUCHOS_UNIT_TEST( ExponentialDistribution, isTabular )
+{
+  TEST_ASSERT( !distribution->isTabular() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is continuous
+TEUCHOS_UNIT_TEST( ExponentialDistribution, isContinuous )
+{
+  TEST_ASSERT( distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//

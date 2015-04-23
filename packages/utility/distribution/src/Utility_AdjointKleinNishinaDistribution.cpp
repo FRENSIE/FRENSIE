@@ -197,9 +197,9 @@ double AdjointKleinNishinaDistribution::evaluateEnergyPDF(
 // Return a random sample from the distribution
 double AdjointKleinNishinaDistribution::sample() const
 {
-  unsigned number_of_trials;
+  unsigned trial_dummy;
 
-  return this->sample( number_of_trials );
+  return this->sampleAndRecordTrials( trial_dummy );
 }
 
 // Sample a value from the distribution, count the number of trials

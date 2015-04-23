@@ -13,7 +13,7 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -27,7 +27,7 @@ public:
 
   //! Typedef for energy dependent angular distribution
   typedef Teuchos::Array<Utility::Pair<double,
-			       Teuchos::RCP<const Utility::OneDDistribution> > > 
+		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
   AngularDistribution;
   
   //! Constructor
