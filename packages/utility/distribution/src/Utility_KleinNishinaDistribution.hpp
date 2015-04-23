@@ -99,14 +99,11 @@ public:
   //! Evaluate the PDF
   double evaluatePDF( const double indep_var_value ) const;
 
-  //! Return a random sample from the distribution
-  double sample();
-
   //! Return a sample from the distribution
   double sample() const;
 
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
+  //! Return a random sample and record the number of trials
+  double sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
@@ -116,6 +113,9 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  // Test if the distribution is continuous
+  bool isContinuous() const;
 
 private:
   
@@ -131,12 +131,6 @@ private:
 
   // The dimensionless energy
   double d_alpha;
-
-  // The number of trials
-  unsigned d_trials;
-
-  // The number of samples
-  unsigned d_samples;
 
   // The high-energy sampling function
   boost::function<double (double, unsigned&)> d_high_energy_sampling_function;

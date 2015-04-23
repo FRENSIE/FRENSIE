@@ -1,30 +1,29 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_DiscreteDistribution.hpp
+//! \file   Utility_EquiprobableBinDistribution.hpp
 //! \author Alex Robinson
-//! \brief  Discrete distribution class declaration.
+//! \brief  Equiprobable bin distribution class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef UTILITY_DISCRETE_DISTRIBUTION_HPP
-#define UTILITY_DISCRETE_DISTRIBUTION_HPP
+#ifndef TWO_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
+#define TWO_EQUIPROBABLE_BIN_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_ArrayRCP.hpp>
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
-#include "Utility_SearchAlgorithms.hpp"
-#include "Utility_Tuple.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace Utility{
 
-//! Discrete distribution class
-class DiscreteDistribution : public TabularOneDDistribution,
-			     public ParameterListCompatibleObject<DiscreteDistribution>
+//! The equiprobable bin distribution class
+  class EquiprobableBinDistribution : public TabularOneDDistribution,
+	       public ParameterListCompatibleObject<EquiprobableBinDistribution>
 {
 
 private:
@@ -34,22 +33,22 @@ private:
 
 public:
 
-  //! Default Constructor
-  DiscreteDistribution();
+  //! Default constructor
+  EquiprobableBinDistribution();
 
-  //! Constructor 
-  DiscreteDistribution( const Teuchos::Array<double>& independent_values,
-			const Teuchos::Array<double>& dependent_values,
-			const bool interpret_dependent_values_as_cdf = false );
-  
+  //! Constructor
+  EquiprobableBinDistribution( const Teuchos::Array<double>& bin_boundaries);
+
   //! Copy constructor
-  DiscreteDistribution( const DiscreteDistribution& dist_instance );
+  EquiprobableBinDistribution(
+			    const EquiprobableBinDistribution& dist_instance );
 
   //! Assignment operator
-  DiscreteDistribution& operator=( const DiscreteDistribution& dist_instance );
+  EquiprobableBinDistribution& operator=(
+		            const EquiprobableBinDistribution& dist_instance );
 
   //! Destructor
-  ~DiscreteDistribution()
+  ~EquiprobableBinDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -67,7 +66,7 @@ public:
   //! Return a random sample and record the number of trials
   double sampleAndRecordTrials( unsigned& trials ) const;
 
-  //! Return a random sample and sampled index from the distribution
+  //! Return a random sample from the distribution and the sampled index 
   double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
 
   //! Return a random sample from the distribution at the given CDF value
@@ -79,12 +78,11 @@ public:
   //! Return a random sample from the distribution at the given CDF value in a subrange
   double sampleWithRandomNumberInSubrange( const double random_number,
 					   const double max_indep_var ) const;
-  
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
 
-  //! Return the lower bound of the independent variable
+  //! Return the lower bound of the distribution independent variable
   double getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
@@ -100,7 +98,7 @@ public:
   void fromStream( std::istream& is );
 
   //! Method for testing if two objects are equivalent
-  bool isEqual( const DiscreteDistribution& other ) const;
+  bool isEqual( const EquiprobableBinDistribution& other ) const;
 
 private:
 
@@ -108,43 +106,34 @@ private:
   double sampleImplementation( double random_number,
 			       unsigned& sampled_bin_index ) const;
 
-  // Initialize the distribution
-  void initializeDistribution( 
-			      const Teuchos::Array<double>& independent_values,
-			      const Teuchos::Array<double>& dependent_values );
+  // The disribution type
+  static const OneDDistributionType distribution_type = 
+    EQUIPROBABLE_BIN_DISTRIBUTION;
 
-  // The distribution type
-  static const OneDDistributionType distribution_type = DISCRETE_DISTRIBUTION;
-
-  // The distribution (first = independent value, second = CDF)
-  Teuchos::Array<Pair<double,double> > d_distribution;
-
-  // The distribution normalization constant
-  double d_norm_constant;
+  // The distribution
+  Teuchos::Array<double> d_bin_boundaries;
 };
 
 // Return a random sample using the random number and record the bin index
-inline double DiscreteDistribution::sampleImplementation( 
-					    double random_number,
-					    unsigned& sampled_bin_index ) const
+inline double EquiprobableBinDistribution::sampleImplementation( 
+				            double random_number,
+				            unsigned& sampled_bin_index ) const
 {
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
+
+  double bin_location = random_number*(d_bin_boundaries.size()-1);
   
-  Teuchos::Array<Pair<double,double> >::const_iterator sample = 
-    Search::binaryUpperBound<SECOND>( d_distribution.begin(),
-				      d_distribution.end(),
-				      random_number );
-
-  // Get the bin index sampled
-  sampled_bin_index = std::distance( d_distribution.begin(), sample );
-
-  return sample->first;
+  sampled_bin_index = (unsigned)floor(bin_location);
+  
+  return d_bin_boundaries[sampled_bin_index] + 
+    (bin_location - sampled_bin_index)*(d_bin_boundaries[sampled_bin_index+1]-
+					d_bin_boundaries[sampled_bin_index]);
 }
 
 // Return a random sample from the distribution at the given CDF value in a subrange
-inline double DiscreteDistribution::sampleWithRandomNumberInSubrange( 
+double EquiprobableBinDistribution::sampleWithRandomNumberInSubrange( 
 					     const double random_number,
 					     const double max_indep_var ) const
 {
@@ -152,36 +141,37 @@ inline double DiscreteDistribution::sampleWithRandomNumberInSubrange(
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
   // Make sure the max independent variable is valid
-  testPrecondition( max_indep_var >= d_distribution.front().first );
+  testPrecondition( max_indep_var >= d_bin_boundaries.front() );
 
-  // Scale the random number to the cdf at the max indep var
+  // Compute the scaled random number
   double scaled_random_number = 
     random_number*this->evaluateCDF( max_indep_var );
 
   unsigned dummy_index;
-  
+
   return this->sampleImplementation( scaled_random_number, dummy_index );
 }
-
+  
 } // end Utility namespace
 
 namespace Teuchos{
 
-/*! Type name traits specialization for the Utility::DiscreteDistribution
+/*! Type name traits specialization for the 
+ * Utility::EquiprobableBinDistribution
  *
  * \details The name function will set the type name that must be used in
  * xml files.
  */
 template<>
-class TypeNameTraits<Utility::DiscreteDistribution>
+class TypeNameTraits<Utility::EquiprobableBinDistribution>
 {
 public:
   static std::string name()
   {
-    return "Discrete Distribution";
+    return "Equiprobable Bin Distribution";
   }
   static std::string concreteName( 
-				const Utility::DiscreteDistribution& instance )
+		const Utility::EquiprobableBinDistribution& instance )
   {
     return name();
   }
@@ -189,8 +179,8 @@ public:
 
 } // end Teuchos namespace
 
-#endif // end UTILITY_DISCRETE_DISTRIBUTION_HPP
+#endif // end EQUIPROBABLE_BIN_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end Utility_DiscreteDistribution.hpp
+// end Utility_EquiprobableBinDistribution.hpp
 //---------------------------------------------------------------------------//

@@ -131,13 +131,6 @@ double PowerDistribution<N>::evaluatePDF( const double indep_var_value ) const
 
 // Return a random sample from the distribution
 template<unsigned N>
-double PowerDistribution<N>::sample()
-{
-  return (const_cast<const PowerDistribution<N>*>(this))->sample();
-}
-
-// Return a random sample from the distribution
-template<unsigned N>
 double PowerDistribution<N>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
@@ -149,11 +142,13 @@ double PowerDistribution<N>::sample() const
   return pow( argument, 1.0/(N+1u) );
 }
 
-// Return the sampling efficiency from the distribution
+// Return a random sample and record the number of trials
 template<unsigned N>
-double PowerDistribution<N>::getSamplingEfficiency() const
+double PowerDistribution<N>::sampleAndRecordTrials( unsigned& trials ) const
 {
-  return 1.0;
+  ++trials;
+
+  return this->sample();
 }
 
 // Return the upper bound of the distribution independent variable
@@ -175,6 +170,13 @@ template<unsigned N>
 OneDDistributionType PowerDistribution<N>::getDistributionType() const
 {
   return PowerDistribution<N>::distribution_type;
+}
+
+// Test if the distribution is continuous
+template<unsigned N>
+bool PowerDistribution<N>::isContinuous() const
+{
+  return true;
 }
 
 // Method for placing the object in an output stream

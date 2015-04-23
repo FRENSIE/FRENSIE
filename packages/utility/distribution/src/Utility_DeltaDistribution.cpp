@@ -64,21 +64,17 @@ double DeltaDistribution::evaluatePDF( const double indep_var_value ) const
 }
 
 // Return a random sample from the distribution
-double DeltaDistribution::sample()
-{
-  return (const_cast<const DeltaDistribution*>(this))->sample();
-}
-
-// Return a random sample from the distribution
 double DeltaDistribution::sample() const
 {
   return d_location;
 }
 
-// Return the sampling efficiency from this distribution
-double DeltaDistribution::getSamplingEfficiency() const
+//! Return a random sample from the corresponding CDF and record the number of trials
+double DeltaDistribution::sampleAndRecordTrials( unsigned& trials ) const
 {
-  return 1.0;
+  ++trials;
+  
+  return this->sample();
 }
 
 // Return the maximum point at which the distribution is non-zero
@@ -97,6 +93,16 @@ double DeltaDistribution::getLowerBoundOfIndepVar() const
 OneDDistributionType DeltaDistribution::getDistributionType() const
 {
   return DeltaDistribution::distribution_type;
+}
+
+// Test if the distribution is continuous
+/*! \details Though the delta distribution is technically continuous 
+ * because it is only non-zero at the specified point it will be treated as
+ * a discrete distribution.
+ */
+bool DeltaDistribution::isContinuous() const
+{
+  return false;
 }
 
 // Method for placing the object in an output stream
