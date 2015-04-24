@@ -32,6 +32,16 @@ class IncoherentDistribution : public KleinNishinaDistribution
 
 public:
 
+  //! Calculate the scattering angle cosine
+  static double calculateScatteringAngleCosine( 
+				      const double initial_unitless_energy,
+			              const double inverse_energy_loss_ratio );
+  
+  //! Calculate the outgoing energy
+  static double calculateOutgoingEnergy( 
+				      const double initial_unitless_energy,
+				      const double inverse_energy_loss_ratio );
+  
   //! Default constructor
   IncoherentDistribution();
 
@@ -53,6 +63,12 @@ public:
   ~IncoherentDistribution()
   { /* ... */ }
 
+  //! Set the energy (MeV)
+  void setEnergy( const double energy );
+
+  //! Return the integrated cross section
+  double getIntegratedCrossSection() const;
+
   //! Evaluate the distribution
   double evaluate( const double indep_var_value ) const;
 
@@ -70,12 +86,36 @@ public:
 
 private:
 
+  // Calculate the inverse wavelength (modifies cached value)
+  void calculateInverseWavelength();
+
+  // Calculate the scattering angle cosine
+  double calculateScatteringAngleCosine( 
+				const double inverse_energy_loss_ratio ) const;
+
+  // Calculate the scattering function argument
+  double calculateScatteringFunctionArgument(
+				const double inverse_energy_loss_ratio ) const;
+
+  // Calculate the scattering function value
+  double calculateScatteringFunctionValue(
+				const double inverse_energy_loss_ratio ) const;
+
+  // Evaluate the integrated cross section
+  void evaluateIntegratedCrossSection();
+
   // The distribution type
   static const OneDDistributionType distribution_type = 
     INCOHERENT_DISTRIBUTION;
 
   // The scattering function
   Teuchos::RCP<const OneDDistribution> d_scattering_function;
+
+  // The cached inverse wavelength of the photon (1/cm)
+  double d_inverse_wavelength;
+  
+  // The cached integrated cross section for the current energy
+  double d_integrated_cross_section;
 };
 
 } // end Utility namespace
