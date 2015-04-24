@@ -82,9 +82,12 @@ private:
 
   // The binding energy and shell interaction probabilities
   Teuchos::RCP<const Utility::TabularOneDDistribution> 
-  d_shell_interaction_data;
+  d_subshell_occupancy_distribution;
 
-  // Subshell ordering
+  // The subshell binding energy
+  Teuchos::Array<double> d_subshell_binding_energy;
+
+  // The subshell ordering
   Teuchos::Array<SubshellType> d_subshell_order;
 
   // The Compton profile subshell converter

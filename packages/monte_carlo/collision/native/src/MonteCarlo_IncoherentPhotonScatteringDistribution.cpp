@@ -61,7 +61,8 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
      const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
      const ElectronMomentumDistArray& electron_momentum_dist_array )
   : d_scattering_function( scattering_function ),
-    d_shell_interaction_data(),
+    d_subshell_occupancy_distribution(),
+    d_subshell_binding_energy( subshell_binding_energies ),
     d_subshell_order( subshell_order ),
     d_subshell_converter( subshell_converter ),
     d_electron_momentum_distribution( electron_momentum_dist_array )
@@ -80,9 +81,11 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
   testPrecondition( electron_momentum_dist_array.back()->getUpperBoundOfIndepVar() <= 1.0 );
 
   // Create the shell interaction data distribution
-  d_shell_interaction_data.reset(
-	     new Utility::DiscreteDistribution( subshell_binding_energies,
-						subshell_occupancies ) );
+  Teuchos::Array<double> dummy_indep_vals( subshell_occupancies.size() );
+  
+  d_subshell_occupancy_distribution.reset(
+	           new Utility::DiscreteDistribution( dummy_indep_vals,
+						      subshell_occupancies ) );
 
   // Doppler broaden compton lines
   if(d_electron_momentum_distribution.front()->getLowerBoundOfIndepVar() < 0.0)
@@ -266,11 +269,11 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
   while( true )
   {
     // Sample the shell that is interacted with
-    double shell_binding_energy;
     unsigned shell_index;
 
-    shell_binding_energy = 
-      d_shell_interaction_data->sampleAndRecordBinIndex( shell_index );
+    d_subshell_occupancy_distribution->sampleAndRecordBinIndex( shell_index );
+
+    double shell_binding_energy = d_subshell_binding_energy[shell_index];
 
     // Convert to a Compton profile shell
     shell_of_interaction = d_subshell_order[shell_index];
@@ -372,11 +375,11 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLineOld(
   while( true )
   {
     // Sample the shell that is interacted with
-    double shell_binding_energy;
     unsigned shell_index;
-    
-    shell_binding_energy = 
-      d_shell_interaction_data->sampleAndRecordBinIndex( shell_index );
+
+    d_subshell_occupancy_distribution->sampleAndRecordBinIndex( shell_index );
+
+    double shell_binding_energy = d_subshell_binding_energy[shell_index];
 
     // Convert to a Compton profile shell
     shell_of_interaction = d_subshell_order[shell_index];

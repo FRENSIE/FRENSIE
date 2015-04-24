@@ -29,6 +29,7 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
        const bool interpret_as_cdf )
   : SubshellRelaxationModel( vacancy_subshell ),
     d_transition_distribution(),
+    d_outgoing_particle_energies( outgoing_particle_energies ),
     d_transition_vacancy_shells( primary_transition_vacancy_shells.size() )
 {
   // Make sure the vacancy subshell is valid
@@ -44,10 +45,12 @@ DetailedSubshellRelaxationModel::DetailedSubshellRelaxationModel(
 		    primary_transition_vacancy_shells.size() );
 
   // Create the transition distribution
+  Teuchos::Array<double> dummy_indep_values( transition_pdf_or_cdf.size() );
+  
   d_transition_distribution.reset( new Utility::DiscreteDistribution(
-						    outgoing_particle_energies,
-						    transition_pdf_or_cdf,
-						    interpret_as_cdf ) );
+						         dummy_indep_values,
+						         transition_pdf_or_cdf,
+							 interpret_as_cdf ) );
 
   // Store the transition vacancy shells
   for( unsigned i = 0; i < primary_transition_vacancy_shells.size(); ++i )
@@ -81,8 +84,10 @@ void DetailedSubshellRelaxationModel::relaxSubshell(
 {
   // Sample the transition that occurs
   unsigned transition_index;
-  double new_particle_energy =
-    d_transition_distribution->sampleAndRecordBinIndex( transition_index );
+  
+  d_transition_distribution->sampleAndRecordBinIndex( transition_index );
+
+  double new_particle_energy = d_outgoing_particle_energies[transition_index];
 
   // Set the new vacancies shells
   new_primary_vacancy_shell = 
