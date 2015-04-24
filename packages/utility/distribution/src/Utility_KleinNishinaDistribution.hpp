@@ -85,7 +85,7 @@ public:
   { /* ... */ }
 
   //! Set the energy (MeV)
-  void setEnergy( const double energy );
+  virtual void setEnergy( const double energy );
 
   //! Return the energy (MeV)
   double getEnergy() const;

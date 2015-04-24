@@ -277,8 +277,8 @@ double KleinNishinaDistribution::getAlpha() const
 // Evaluate the distribution
 double KleinNishinaDistribution::evaluate( const double indep_var_value ) const
 {
-  if( indep_var_value >= 1.0 &&
-      indep_var_value <= 1.0 + 2.0*d_alpha )
+  if( indep_var_value >= this->getLowerBoundOfIndepVar() &&
+      indep_var_value <= this->getUpperBoundOfIndepVar() )
   {
     const double k = PhysicalConstants::pi*
       PhysicalConstants::classical_electron_radius*
