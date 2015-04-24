@@ -150,7 +150,7 @@ double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
     {
       scattering_angle_cosine = 
         d_elastic_scattering_distribution.front().second->sampleInSubrange( 
-						       s_cutoff_angle_cosine );
+						       s_mu_cutoff );
     }
     // Sample from the analytical function
     else
@@ -169,7 +169,7 @@ double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
     {
       scattering_angle_cosine = 
         d_elastic_scattering_distribution.back().second->sampleInSubrange( 
-						       s_cutoff_angle_cosine );
+						       s_mu_cutoff );
     }
     // Sample from the analytical function
     else
