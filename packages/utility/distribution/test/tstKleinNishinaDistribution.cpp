@@ -217,7 +217,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaDistribution, sampleAndRecordTrials )
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned trials;
+  unsigned trials = 0;
 
   double sample = base_distribution->sampleAndRecordTrials( trials );
 
