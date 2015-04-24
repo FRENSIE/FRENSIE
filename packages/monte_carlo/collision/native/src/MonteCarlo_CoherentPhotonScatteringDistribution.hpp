@@ -15,7 +15,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonScatteringDistribution.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
@@ -36,8 +36,8 @@ public:
 
   //! Constructor
   CoherentPhotonScatteringDistribution(
-                           const Teuchos::RCP<const Utility::OneDDistribution>&
-			   form_factor_function_squared );
+		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    form_factor_function_squared );
 
   //! Destructor
   ~CoherentPhotonScatteringDistribution()
@@ -51,7 +51,8 @@ public:
 private:
 
   // The coherent form factor function squared
-  Teuchos::RCP<const Utility::OneDDistribution> d_form_factor_function_squared;
+  Teuchos::RCP<const Utility::TabularOneDDistribution> 
+  d_form_factor_function_squared;
 
 };
 

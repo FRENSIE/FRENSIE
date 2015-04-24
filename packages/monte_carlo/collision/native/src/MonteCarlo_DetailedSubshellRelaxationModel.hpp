@@ -18,7 +18,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SubshellRelaxationModel.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_DiscreteDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
@@ -54,7 +54,10 @@ public:
 private:
   
   // The transition distribution (also stores the outgoing particle energies )
-  boost::scoped_ptr<Utility::OneDDistribution> d_transition_distribution;
+  boost::scoped_ptr<Utility::DiscreteDistribution> d_transition_distribution;
+
+  // The outgoing partiel energies
+  Teuchos::Array<double> d_outgoing_particle_energies;
 
   // The transition vacancy shells (first = primary, second = secondary)
   Teuchos::Array<Utility::Pair<SubshellType,SubshellType> > 

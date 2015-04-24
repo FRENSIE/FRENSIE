@@ -94,7 +94,7 @@ void PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
 				   new VoidComptonProfileSubshellConverter() );
 
     // Create the compton profile distributions
-    Teuchos::Array<Teuchos::RCP<const Utility::OneDDistribution> >
+    Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
       compton_profiles( subshell_order.size() );
 
     Teuchos::Array<SubshellType> subshell_order_copy = subshell_order;
@@ -179,7 +179,7 @@ void PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
     if( use_doppler_broadening_data )
     {
       // Create the Compton profile
-      Teuchos::RCP<Utility::OneDDistribution> compton_profile(
+      Teuchos::RCP<Utility::TabularOneDDistribution> compton_profile(
 	new Utility::TabularDistribution<Utility::LinLin>(
 	      raw_photoatom_data.getComptonProfileMomentumGrid( *subshell_it ),
 	      raw_photoatom_data.getComptonProfile( *subshell_it ) ) );
@@ -251,7 +251,7 @@ void PhotoatomicReactionNativeFactory::createCoherentReaction(
     form_factor_squared[i] *= form_factor_squared[i];
   }
 
-  Teuchos::RCP<Utility::OneDDistribution> form_factor(
+  Teuchos::RCP<Utility::TabularOneDDistribution> form_factor(
 			     new Utility::TabularDistribution<Utility::LinLin>(
 						       recoil_momentum_squared,
 						       form_factor_squared ) );

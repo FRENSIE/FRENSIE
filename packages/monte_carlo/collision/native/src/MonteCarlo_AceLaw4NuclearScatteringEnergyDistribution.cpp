@@ -82,14 +82,16 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
 
     if( random_num < interpolation_fraction )
     {
-      energy_prime = upper_bin_boundary->second->sample( outgoing_index );
+      energy_prime = 
+	upper_bin_boundary->second->sampleAndRecordBinIndex( outgoing_index );
 
       incoming_index = std::distance( d_energy_distribution.begin(), 
 				      upper_bin_boundary);
     }
     else
     {
-      energy_prime = lower_bin_boundary->second->sample( outgoing_index );
+      energy_prime = 
+	lower_bin_boundary->second->sampleAndRecordBinIndex( outgoing_index );
    
       incoming_index = std::distance( d_energy_distribution.begin(), 
 				      lower_bin_boundary);
@@ -127,7 +129,8 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
   else if( energy < d_energy_distribution.front().first ) 
   {
     outgoing_energy = 
-      d_energy_distribution.front().second->sample( outgoing_index);
+      d_energy_distribution.front().second->sampleAndRecordBinIndex( 
+							       outgoing_index);
     
     energy_prime = outgoing_energy;
     incoming_index = 0;
@@ -135,7 +138,8 @@ double AceLaw4NuclearScatteringEnergyDistribution::sampleEnergy(
   else
   {  
     outgoing_energy = 
-      d_energy_distribution.back().second->sample( outgoing_index );
+      d_energy_distribution.back().second->sampleAndRecordBinIndex( 
+							      outgoing_index );
     
     energy_prime = outgoing_energy;
     incoming_index = d_energy_distribution.size() - 1; 

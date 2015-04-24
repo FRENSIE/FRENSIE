@@ -20,8 +20,8 @@ namespace MonteCarlo{
 
 // Constructor
 CoherentPhotonScatteringDistribution::CoherentPhotonScatteringDistribution(
-                           const Teuchos::RCP<const Utility::OneDDistribution>&
-			   form_factor_function_squared )
+		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    form_factor_function_squared )
   : d_form_factor_function_squared( form_factor_function_squared )
 {
   // Make sure the array is valid
@@ -70,7 +70,8 @@ void CoherentPhotonScatteringDistribution::scatterPhoton(
     do{
       // Randomly sample the form factor squared
       form_factor_arg_squared = 
-	d_form_factor_function_squared->sample( max_form_factor_arg_squared );
+	d_form_factor_function_squared->sampleInSubrange( 
+						 max_form_factor_arg_squared );
       
       // Calc. the outgoing photon angle cosine from the sampled form factor 
       scattering_angle_cosine = 

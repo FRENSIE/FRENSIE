@@ -19,7 +19,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -40,7 +40,8 @@ public:
 	const SubshellType interaction_subshell,
 	const double binding_energy,
 	const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
-	const Teuchos::RCP<const Utility::OneDDistribution>& compton_profile );
+        const Teuchos::RCP<const Utility::TabularOneDDistribution>& 
+	compton_profile );
 
   //! Destructor
   ~SubshellIncoherentPhotonScatteringDistribution()
@@ -83,7 +84,7 @@ private:
   Teuchos::RCP<const Utility::OneDDistribution> d_occupation_number;
 
   // The compton profile distribution
-  Teuchos::RCP<const Utility::OneDDistribution> d_compton_profile;
+  Teuchos::RCP<const Utility::TabularOneDDistribution> d_compton_profile;
 
   // The Doppler broadening function pointer
   boost::function<double (double, double, double, double)>

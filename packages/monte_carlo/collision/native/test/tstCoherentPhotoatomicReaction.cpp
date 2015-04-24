@@ -181,7 +181,7 @@ int main( int argc, char** argv )
     form_factor_squared[i] *= form_factor_squared[i];
   }
     
-  Teuchos::RCP<Utility::OneDDistribution> form_factor(
+  Teuchos::RCP<Utility::TabularOneDDistribution> form_factor(
                              new Utility::TabularDistribution<Utility::LogLog>(
                                                        recoil_momentum_squared,
 						       form_factor_squared ) );

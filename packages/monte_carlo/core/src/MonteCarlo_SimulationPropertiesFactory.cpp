@@ -53,6 +53,25 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
   
   SimulationProperties::setNumberOfHistories( 
 				 properties.get<unsigned int>( "Histories" ) );
+
+  // Get the angle cosine cutoff value for surface flux estimators - optional
+  if( properties.isParameter( "Surface Flux Angle Cosine Cutoff" ) )
+  {
+    double cutoff = 
+      properties.get<double>( "Surface Flux Angle Cosine Cutoff" );
+
+    TEST_FOR_EXCEPTION( cutoff < 0.0,
+			std::runtime_error,
+			"Error: The surface flux angle cosine cutoff must "
+                        "be a positive number!" );
+
+    TEST_FOR_EXCEPTION( cutoff > 1.0,
+			std::runtime_error,
+			"Error: The surface flux angle cosine cutoff must "
+			"be less than 1.0!" );
+
+    SimulationProperties::setSurfaceFluxEstimatorAngleCosineCutoff( cutoff );
+  }
   
   // Get the free gas thermal treatment temperature threshold - optional
   if( properties.isParameter( "Free Gas Threshold" ) )

@@ -52,7 +52,8 @@ public:
       const SubshellType interaction_subshell,
       const double binding_energy,
       const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
-      const Teuchos::RCP<const Utility::OneDDistribution>& compton_profile );
+      const Teuchos::RCP<const Utility::TabularOneDDistribution>& 
+      compton_profile );
 
   //! Constructor for Doppler broadening
   SubshellIncoherentPhotoatomicReaction(
@@ -63,7 +64,8 @@ public:
       const SubshellType interaction_subshell,
       const double binding_energy,
       const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
-      const Teuchos::RCP<const Utility::OneDDistribution>& compton_profile );
+      const Teuchos::RCP<const Utility::TabularOneDDistribution>& 
+      compton_profile );
 
   //! Destructor
   ~SubshellIncoherentPhotoatomicReaction()

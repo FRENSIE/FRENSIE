@@ -25,7 +25,7 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -37,8 +37,8 @@ public:
 
   //! Typedef for the  bremsstrahlung distribution
   typedef Teuchos::Array<Utility::Pair<double,
-                               Teuchos::RCP<const Utility::OneDDistribution> > >
-                               BremsstrahlungDistribution;
+		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+  BremsstrahlungDistribution;
 
   //! Constructor with simple dipole photon angular distribution
   BremsstrahlungElectronScatteringDistribution(
