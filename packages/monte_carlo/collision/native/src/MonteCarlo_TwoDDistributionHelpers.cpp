@@ -112,18 +112,20 @@ double sampleTwoDDistributionIndependent(
 
 // Sample an upper and lower distribution using a common random variable
 double correlatedSample(
-   const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
-   const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
-   const double interpolation_fraction )
+                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    upper_distribution,
+		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    lower_distribution,
+		    const double interpolation_fraction )
 {  
   double random_number = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
     
   double upper_dist_dependent_variable = 
-                   upper_distribution->sampleWithValue( random_number );
+                   upper_distribution->sampleWithRandomNumber( random_number );
 
   double lower_dist_dependent_variable = 
-                   lower_distribution->sampleWithValue( random_number );
+                   lower_distribution->sampleWithRandomNumber( random_number );
 
   // Linearly interpolate between the upper and lower distributions
   return lower_dist_dependent_variable + interpolation_fraction*
@@ -132,34 +134,38 @@ double correlatedSample(
 
 // Sample an upper and lower distribution using a common random variable in a subrange
 double correlatedSample(
-   const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
-   const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
-   const double interpolation_fraction,
-   const double max_indep_var )
+                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    upper_distribution,
+		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    lower_distribution,
+		    const double interpolation_fraction,
+		    const double max_indep_var )
 {  
-    // Sample the upper and lower distributions using the same random number
-    double random_number = 
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
-    
-    double upper_dist_dependent_variable = 
-                     upper_distribution->sampleWithValue( random_number,
-                                                          max_indep_var );
+  // Sample the upper and lower distributions using the same random number
+  double random_number = 
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
+  
+  double upper_dist_dependent_variable = 
+    upper_distribution->sampleWithRandomNumberInSubrange( random_number,
+							  max_indep_var );
 
-    double lower_dist_dependent_variable = 
-                     lower_distribution->sampleWithValue( random_number,
-                                                          max_indep_var );
+  double lower_dist_dependent_variable = 
+    lower_distribution->sampleWithRandomNumberInSubrange( random_number,
+							  max_indep_var );
 
-    // Linearly interpolate between the upper and lower distributions
-    return lower_dist_dependent_variable + interpolation_fraction*
-                (upper_dist_dependent_variable - lower_dist_dependent_variable);
+  // Linearly interpolate between the upper and lower distributions
+  return lower_dist_dependent_variable + interpolation_fraction*
+    (upper_dist_dependent_variable - lower_dist_dependent_variable);
 }
 
 // Evaluate a correlated cdf value
 double evaluateCorrelatedCDF(
-    const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
-    const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
-    const double interpolation_fraction,
-    const double independent_value )
+                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    upper_distribution,
+		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    lower_distribution,
+		    const double interpolation_fraction,
+		    const double independent_value )
 {
   double upper_cdf = 
     upper_distribution->evaluateCDF( independent_value );
@@ -190,9 +196,11 @@ double evaluateCorrelatedPDF(
 
 // Sample from either the lower or upper distribution depending on interp frac
 double independentSample(
-   const Teuchos::RCP<const Utility::OneDDistribution>& upper_distribution,
-   const Teuchos::RCP<const Utility::OneDDistribution>& lower_distribution,
-   const double interpolation_fraction )
+                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    upper_distribution,
+		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    lower_distribution,
+		    const double interpolation_fraction )
 {
   double random_number = 
     Utility::RandomNumberGenerator::getRandomNumber<double>();

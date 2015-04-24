@@ -86,13 +86,10 @@ public:
   double evaluateEnergyPDF( const double outgoing_energy ) const;
 
   //! Return a random sample from the distribution
-  double sample();
-
-  //! Return a random sample from the distribution
   double sample() const;
 
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
+  //! Return a random sample and record the number of trials
+  double sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
@@ -102,6 +99,9 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Test if the distribution is continuous
+  bool isContinuous() const;
 
 private:
 
@@ -123,12 +123,6 @@ private:
 
   // The min energy loss ratio
   double d_min_inverse_energy_gain_ratio;
-
-  // The number of trials
-  unsigned d_trials;
-
-  // The number of samples
-  unsigned d_samples;
 };
 
 } // end Utility namespace

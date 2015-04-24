@@ -106,7 +106,8 @@ SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::Sub
        const SubshellType interaction_subshell,
        const double binding_energy,
        const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
-       const Teuchos::RCP<const Utility::OneDDistribution>& compton_profile )
+       const Teuchos::RCP<const Utility::TabularOneDDistribution>& 
+       compton_profile )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
                                                       incoming_energy_grid,
 						      cross_section,
@@ -150,7 +151,8 @@ SubshellIncoherentPhotoatomicReaction<InterpPolicy,processed_cross_section>::Sub
        const SubshellType interaction_subshell,
        const double binding_energy,
        const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
-       const Teuchos::RCP<const Utility::OneDDistribution>& compton_profile )
+       const Teuchos::RCP<const Utility::TabularOneDDistribution>& 
+       compton_profile )
   : StandardPhotoatomicReaction<InterpPolicy,processed_cross_section>(
                                                       incoming_energy_grid,
 						      cross_section,

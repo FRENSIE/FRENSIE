@@ -18,7 +18,7 @@
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -30,6 +30,7 @@
 Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 
 Teuchos::RCP<Utility::OneDDistribution> distribution;
+Teuchos::RCP<Utility::TabularOneDDistribution> tab_distribution;
 
 //---------------------------------------------------------------------------//
 // Instantiation Macros.
@@ -63,9 +64,10 @@ void initializeDistribution()
   dependent_values[2] = 1.0;
   dependent_values[3] = 1e-1;
 
-  distribution.reset( new Utility::TabularDistribution<InterpolationPolicy>(
+  tab_distribution.reset(new Utility::TabularDistribution<InterpolationPolicy>(
 							  independent_values,
 							  dependent_values ) );
+  distribution = tab_distribution;
 }
 
 //---------------------------------------------------------------------------//
@@ -122,20 +124,20 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 {
   initializeDistribution<InterpolationPolicy>();
 
-  TEST_EQUALITY_CONST( distribution->evaluateCDF( 0.0 ), 0.0 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1e-3 ), 
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 0.0 ), 0.0 );
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-3 ), 
 			  0.0000000000, 
 			  1e-10 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1e-2 ), 
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-2 ), 
 			  0.33333333333, 
 			  1e-10 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1e-1 ), 
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1e-1 ), 
 			  0.66666666667, 
 			  1e-10 );
-  TEST_FLOATING_EQUALITY( distribution->evaluateCDF( 1.0 ), 
+  TEST_FLOATING_EQUALITY( tab_distribution->evaluateCDF( 1.0 ), 
 			  1.0000000000, 
 			  1e-10 );
-  TEST_EQUALITY_CONST( distribution->evaluateCDF( 2.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 2.0 ), 1.0 );
 }
 
 UNIT_TEST_INSTANTIATION( TabularDistribution, evaluateCDF );
@@ -154,15 +156,11 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  unsigned bin_index;
-
-  double sample = distribution->sample( bin_index );
+  double sample = distribution->sample();
   TEST_EQUALITY_CONST( sample, 1e-3 );
-  TEST_EQUALITY_CONST( bin_index, 0u );
 
-  sample = distribution->sample( bin_index );
+  sample = distribution->sample();
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
-  TEST_EQUALITY_CONST( bin_index, 2u );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
@@ -175,9 +173,44 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 UNIT_TEST_INSTANTIATION( TabularDistribution, sample );
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be sampled from a subrange
+// Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
-                                   sample_subrange,
+                                   sampleAndRecordTrials,
+                                   InterpolationPolicy )
+{
+  initializeDistribution<InterpolationPolicy>();
+
+  std::vector<double> fake_stream( 2 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 1.0 - 1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  unsigned trials = 0;
+
+  double sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 1e-3 );
+  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+  Utility::RandomNumberGenerator::initialize();
+  
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_COMPARE( sample, >=, 1e-3 );
+  TEST_COMPARE( sample, <=, 1.0 );
+  TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
+}
+
+UNIT_TEST_INSTANTIATION( TabularDistribution, sampleAndRecordTrials );
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
+                                   sampleAndRecordBinIndex,
                                    InterpolationPolicy )
 {
   initializeDistribution<InterpolationPolicy>();
@@ -190,26 +223,45 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 
   unsigned bin_index;
 
-  double sample = distribution->sample( 1e-1  );
+  double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_EQUALITY_CONST( sample, 1e-3 );
-  
-  sample = distribution->sample( 1e-1 );
-  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
+  TEST_EQUALITY_CONST( bin_index, 0u );
+
+  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+  TEST_EQUALITY_CONST( bin_index, 2u );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
   
-  sample = distribution->sample( 1e-1 );
+  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
   TEST_COMPARE( sample, >=, 1e-3 );
-  TEST_COMPARE( sample, <=, 1e-1 );
+  TEST_COMPARE( sample, <=, 1.0 );
 }
 
-UNIT_TEST_INSTANTIATION( TabularDistribution, sample_subrange );
+UNIT_TEST_INSTANTIATION( TabularDistribution, sampleAndRecordBinIndex );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
-                                   sampleWithValue,
+                                   sampleWithRandomNumber,
+                                   InterpolationPolicy )
+{
+  initializeDistribution<InterpolationPolicy>();
+
+  double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
+  TEST_EQUALITY_CONST( sample, 1e-3 );
+
+  sample = tab_distribution->sampleWithRandomNumber( 1.0 - 1e-15 );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+}
+
+UNIT_TEST_INSTANTIATION( TabularDistribution, sampleWithRandomNumber );
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled from a subrange
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
+                                   sampleInSubrange,
                                    InterpolationPolicy )
 {
   initializeDistribution<InterpolationPolicy>();
@@ -220,37 +272,40 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  double cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
-  double sample = distribution->sampleWithValue( cdf_value );
+  double sample = tab_distribution->sampleInSubrange( 1e-1  );
   TEST_EQUALITY_CONST( sample, 1e-3 );
-
-  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
-  sample = distribution->sampleWithValue( cdf_value );
-  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-12 );
+  
+  sample = tab_distribution->sampleInSubrange( 1e-1 );
+  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
   Utility::RandomNumberGenerator::initialize();
   
-  cdf_value = Utility::RandomNumberGenerator::getRandomNumber<double>();
-  sample = distribution->sampleWithValue( cdf_value );
+  sample = tab_distribution->sampleInSubrange( 1e-1 );
   TEST_COMPARE( sample, >=, 1e-3 );
-  TEST_COMPARE( sample, <=, 1.0 );
+  TEST_COMPARE( sample, <=, 1e-1 );
 }
 
-UNIT_TEST_INSTANTIATION( TabularDistribution, sampleWithValue );
+UNIT_TEST_INSTANTIATION( TabularDistribution, sampleInSubrange );
 
 //---------------------------------------------------------------------------//
-// Check that the sampling efficiency can be returned
+// Check that the distribution can be sampled from a subrange
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
-				   getSamplingEfficiency,
-				   InterpolationPolicy )
+                                   sampleWithRandomNumberInSubrange,
+                                   InterpolationPolicy )
 {
   initializeDistribution<InterpolationPolicy>();
 
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  double sample = 
+    tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 1e-1  );
+  TEST_EQUALITY_CONST( sample, 1e-3 );
+  
+  sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 1e-1 );
+  TEST_FLOATING_EQUALITY( sample, 1e-1, 1e-12 );
 }
 
-UNIT_TEST_INSTANTIATION( TabularDistribution, getSamplingEfficiency );
+UNIT_TEST_INSTANTIATION( TabularDistribution, 
+			 sampleWithRandomNumberInSubrange );
 
 //---------------------------------------------------------------------------//
 // Check that the upper bound of the distribution independent variable can be
@@ -293,6 +348,32 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
 }
 
 UNIT_TEST_INSTANTIATION( TabularDistribution, getDistributionType );
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is tabular
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
+				   isTabular,
+				   InterpolationPolicy )
+{
+  initializeDistribution<InterpolationPolicy>();
+
+  TEST_ASSERT( distribution->isTabular() );
+}
+
+UNIT_TEST_INSTANTIATION( TabularDistribution, isTabular );
+
+//---------------------------------------------------------------------------//
+// Check that the distribution is continuous
+TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( TabularDistribution,
+				   isContinuous,
+				   InterpolationPolicy )
+{
+  initializeDistribution<InterpolationPolicy>();
+
+  TEST_ASSERT( distribution->isContinuous() );
+}
+
+UNIT_TEST_INSTANTIATION( TabularDistribution, isContinuous );
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be written to an xml file

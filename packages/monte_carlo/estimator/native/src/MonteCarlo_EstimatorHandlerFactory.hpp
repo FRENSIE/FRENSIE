@@ -43,6 +43,10 @@ private:
 	  const boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> >&
 	  response_id_map );
 
+  // Test if two estimator types are equivalent
+  static bool areEstimatorTypesEquivalent( const std::string& dagmc_type,
+					   const std::string& xml_type );
+  
   // Create the estimator data maps using DagMC information
   static void createEstimatorDataMapsUsingDagMC(
 	boost::unordered_map<unsigned,std::string>& estimator_id_type_map,
@@ -181,8 +185,35 @@ private:
                                  double>& surface_area_map,
       Teuchos::Array<double>& surface_areas );	
 
-  // Check if the mesh estimator type is valid
+  // Check if the estimator type is valid
+  static bool isEstimatorTypeValid( const std::string& estimator_type );
+
+  // Check if a cell estimator type is valid
+  static bool isCellEstimatorTypeValid( const std::string& estimator_type );
+
+  // Check if a surface estimator type is valid
+  static bool isSurfaceEstimatorTypeValid( const std::string& estimator_type );
+  
+  // Check if a mesh estimator type is valid
   static bool isMeshEstimatorTypeValid( const std::string& estimator_type );
+
+  // The surface current estimator name
+  static const std::string surface_current_name;
+
+  // The surface flux estimator name
+  static const std::string surface_flux_name;
+
+  // The cell pulse height estimator name
+  static const std::string cell_pulse_height_name;
+
+  // The cell track-length flux estimator name
+  static const std::string cell_track_length_flux_name;
+
+  // The cell collision flux estimator name
+  static const std::string cell_collision_flux_name;
+
+  // The tet mesh track-length flux estimator name
+  static const std::string tet_mesh_track_length_flux_name;
 };
 
 //! The invalid estimator representation error

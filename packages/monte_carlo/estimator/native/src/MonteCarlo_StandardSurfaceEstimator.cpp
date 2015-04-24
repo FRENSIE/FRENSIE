@@ -11,20 +11,6 @@
 
 namespace MonteCarlo{
 
-// Initialize the static member data
-double StandardSurfaceEstimator::angle_cosine_cutoff = 0.001;
-
-// Set the angle cosine cutoff value
-void StandardSurfaceEstimator::setAngleCosineCutoff(
-					     const double angle_cosine_cutoff )
-{
-  // Make sure the angle cosine cutoff is valid
-  testPrecondition( angle_cosine_cutoff > 0.0 );
-  testPrecondition( angle_cosine_cutoff < 1.0 );
-  
-  StandardSurfaceEstimator::angle_cosine_cutoff = angle_cosine_cutoff;
-}
-
 // Constructor (for flux estimators)
 StandardSurfaceEstimator::StandardSurfaceEstimator(
     const Estimator::idType id,

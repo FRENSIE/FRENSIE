@@ -18,6 +18,9 @@ ParticleModeType SimulationProperties::particle_mode = NEUTRON_MODE;
 // The number of histories to run
 unsigned long long SimulationProperties::number_of_histories = 0;
 
+// The angle cosine cutoff value for surface flux estimators
+double SimulationProperties::surface_flux_estimator_angle_cosine_cutoff =0.001;
+
 // Initialize the static member data
 double SimulationProperties::free_gas_threshold = 400.0;
 
@@ -104,6 +107,21 @@ void SimulationProperties::setNumberOfHistories(
 					   const unsigned long long histories )
 {
   SimulationProperties::number_of_histories = histories;
+}
+
+// Set the angle cosine cutoff value for surface flux estimators
+/*! \details When the angle cosine falls below the given cutoff an
+ * approximation is used for the angle cosine to help bound the flux (avoids
+ * a possible divide by zero).
+ */
+void SimulationProperties::setSurfaceFluxEstimatorAngleCosineCutoff( 
+							  const double cutoff )
+{
+  // Make sure the cutoff is valid
+  testPrecondition( cutoff > 0.0 );
+  testPrecondition( cutoff < 1.0 );
+
+  SimulationProperties::surface_flux_estimator_angle_cosine_cutoff = cutoff;
 }
 
 // Set the free gas thermal treatment temperature threshold

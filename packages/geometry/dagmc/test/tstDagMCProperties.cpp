@@ -62,8 +62,83 @@ TEUCHOS_UNIT_TEST( DagMCProperties, setEstimatorPropertyName )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the surface current name can be set
+TEUCHOS_UNIT_TEST( DagMCProperties, setSurfaceCurrentName )
+{
+  std::string default_name = 
+    Geometry::DagMCProperties::getSurfaceCurrentName();
+  
+  Geometry::DagMCProperties::setSurfaceCurrentName( "s.cur" );
+
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getSurfaceCurrentName(),
+		       "s.cur" );
+
+  Geometry::DagMCProperties::setSurfaceCurrentName( default_name );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the surface flux name can be set
+TEUCHOS_UNIT_TEST( DagMCProperties, setSurfaceFluxName )
+{
+  std::string default_name = 
+    Geometry::DagMCProperties::getSurfaceFluxName();
+  
+  Geometry::DagMCProperties::setSurfaceFluxName( "s.flux" );
+
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getSurfaceFluxName(),
+		       "s.flux" );
+
+  Geometry::DagMCProperties::setSurfaceFluxName( default_name );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cell pulse height name can be set
+TEUCHOS_UNIT_TEST( DagMCProperties, setCellPulseHeightName )
+{
+  std::string default_name = 
+    Geometry::DagMCProperties::getCellPulseHeightName();
+  
+  Geometry::DagMCProperties::setCellPulseHeightName( "c.pulse" );
+
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getCellPulseHeightName(),
+		       "c.pulse" );
+
+  Geometry::DagMCProperties::setCellPulseHeightName( default_name );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cell track-length flux name can be set
+TEUCHOS_UNIT_TEST( DagMCProperties, setCellTrackLengthFluxName )
+{
+  std::string default_name = 
+    Geometry::DagMCProperties::getCellTrackLengthFluxName();
+
+  Geometry::DagMCProperties::setCellTrackLengthFluxName( "c.tl" );
+
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getCellTrackLengthFluxName(),
+		       "c.tl" );
+
+  Geometry::DagMCProperties::setCellTrackLengthFluxName( default_name );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the cell collision flux name can be set
+TEUCHOS_UNIT_TEST( DagMCProperties, setCellCollisionFluxName )
+{
+  std::string default_name = 
+    Geometry::DagMCProperties::getCellCollisionFluxName();
+
+  Geometry::DagMCProperties::setCellCollisionFluxName( "c.c" );
+
+  TEST_EQUALITY_CONST( Geometry::DagMCProperties::getCellCollisionFluxName(),
+		       "c.c" );
+
+  Geometry::DagMCProperties::setCellCollisionFluxName( default_name );
+}
+
+//---------------------------------------------------------------------------//
 // Check that a cell estimator type can be tested 
-TEUCHOS_UNIT_TEST( DagMCProperties, isCellEstimatorTypeValid )
+TEUCHOS_UNIT_TEST( DagMCProperties, isCellEstimatorTypeValid_default )
 {
   std::string e_type = "cell.pulse.height";
 
@@ -87,8 +162,43 @@ TEUCHOS_UNIT_TEST( DagMCProperties, isCellEstimatorTypeValid )
 }
 
 //---------------------------------------------------------------------------//
+// Check that a cell estimator type can be tested
+TEUCHOS_UNIT_TEST( DagMCProperties, isCellEstimatorTypeValid_custom )
+{
+  std::string e_type = "c.p.h";
+
+  Geometry::DagMCProperties::setCellPulseHeightName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isCellEstimatorTypeValid( e_type ) );
+
+  e_type = "c.tl.f";
+
+  Geometry::DagMCProperties::setCellTrackLengthFluxName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isCellEstimatorTypeValid( e_type ) );
+
+  e_type = "c.c.f";
+
+  Geometry::DagMCProperties::setCellCollisionFluxName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isCellEstimatorTypeValid( e_type ) );
+
+  e_type = "cell.pulse.height";
+
+  TEST_ASSERT( !Geometry::DagMCProperties::isCellEstimatorTypeValid( e_type ));
+
+  e_type = "cell.tl.flux";
+
+  TEST_ASSERT( !Geometry::DagMCProperties::isCellEstimatorTypeValid( e_type ));
+
+  e_type = "cell.c.flux";
+
+  TEST_ASSERT( !Geometry::DagMCProperties::isCellEstimatorTypeValid( e_type ));
+}
+
+//---------------------------------------------------------------------------//
 // Check that a surface estimator type can be tested
-TEUCHOS_UNIT_TEST( DagMCProperties, isSurfaceEstimatorTypeValid )
+TEUCHOS_UNIT_TEST( DagMCProperties, isSurfaceEstimatorTypeValid_default )
 {
   std::string e_type = "surface.flux";
 
@@ -105,6 +215,31 @@ TEUCHOS_UNIT_TEST( DagMCProperties, isSurfaceEstimatorTypeValid )
   e_type = "bad.type";
 
   TEST_ASSERT(!Geometry::DagMCProperties::isSurfaceEstimatorTypeValid(e_type));
+}
+
+//---------------------------------------------------------------------------//
+// Check that a surface estimator type can be tested
+TEUCHOS_UNIT_TEST( DagMCProperties, isSurfaceEstimatorTypeValid_custom )
+{
+  std::string e_type = "s.f";
+
+  Geometry::DagMCProperties::setSurfaceFluxName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isSurfaceEstimatorTypeValid( e_type ) );
+  
+  e_type = "s.c";
+
+  Geometry::DagMCProperties::setSurfaceCurrentName( e_type );
+
+  TEST_ASSERT( Geometry::DagMCProperties::isSurfaceEstimatorTypeValid( e_type ) );
+
+  e_type = "surface.flux";
+
+  TEST_ASSERT( !Geometry::DagMCProperties::isSurfaceEstimatorTypeValid( e_type ) );
+  
+  e_type = "surface.current";
+
+  TEST_ASSERT( !Geometry::DagMCProperties::isSurfaceEstimatorTypeValid( e_type ) );
 }
 
 //---------------------------------------------------------------------------//
