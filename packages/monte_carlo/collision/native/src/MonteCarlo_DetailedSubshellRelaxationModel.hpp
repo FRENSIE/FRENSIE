@@ -56,6 +56,9 @@ private:
   // The transition distribution (also stores the outgoing particle energies )
   boost::scoped_ptr<Utility::DiscreteDistribution> d_transition_distribution;
 
+  // The outgoing partiel energies
+  Teuchos::Array<double> d_outgoing_particle_energies;
+
   // The transition vacancy shells (first = primary, second = secondary)
   Teuchos::Array<Utility::Pair<SubshellType,SubshellType> > 
   d_transition_vacancy_shells;
