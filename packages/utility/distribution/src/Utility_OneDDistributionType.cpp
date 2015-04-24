@@ -33,7 +33,10 @@ std::string convertOneDDistributionTypeToString(
   case TABULAR_DISTRIBUTION: return "Tabular Distribution";
   case UNIFORM_DISTRIBUTION: return "Uniform Distribution";
   case POLYNOMIAL_DISTRIBUTION: return "Polynomial Distribution";
-  case KLEIN_NISHINA_DISTRIBUTION: return "Klien-Nishina Distribution";
+  case KLEIN_NISHINA_DISTRIBUTION: return "Klein-Nishina Distribution";
+  case INCOHERENT_DISTRIBUTION: return "Incoherent Distribution";
+  case ADJOINT_KLEIN_NISHINA_DISTRIBUTION: return "Adjoint Klein-Nishina Distribution";
+  case HYDROGEN_FORM_FACTOR_DISTRIBUTION: return "Hydrogen Form Factor Distribution";
   default:
     THROW_EXCEPTION( std::logic_error, 
 		     "The distribution type is missin a name. Please add it!");

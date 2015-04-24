@@ -33,7 +33,7 @@ namespace Utility{
 class KleinNishinaDistribution : public OneDDistribution
 {
 
-private:
+protected:
 
   // Typedef for Teuchos Scalar Traits
   typedef Teuchos::ScalarTraits<double> ST;
@@ -81,7 +81,7 @@ public:
 			       const KleinNishinaDistribution& dist_instance );
 
   //! Destructor
-  ~KleinNishinaDistribution()
+  virtual ~KleinNishinaDistribution()
   { /* ... */ }
 
   //! Set the energy (MeV)
@@ -94,16 +94,16 @@ public:
   double getAlpha() const;
 
   //! Evaluate the distribution
-  double evaluate( const double indep_var_value ) const;
+  virtual double evaluate( const double indep_var_value ) const;
 
   //! Evaluate the PDF
-  double evaluatePDF( const double indep_var_value ) const;
+  virtual double evaluatePDF( const double indep_var_value ) const;
 
   //! Return a sample from the distribution
-  double sample() const;
+  virtual double sample() const;
 
   //! Return a random sample and record the number of trials
-  double sampleAndRecordTrials( unsigned& trials ) const;
+  virtual double sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
@@ -112,7 +112,7 @@ public:
   double getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
-  OneDDistributionType getDistributionType() const;
+  virtual OneDDistributionType getDistributionType() const;
 
   // Test if the distribution is continuous
   bool isContinuous() const;
