@@ -39,7 +39,7 @@ KleinNishinaPhotonScatteringDistribution::KleinNishinaPhotonScatteringDistributi
 /*! The cross section (cm^2) differential in the inverse energy loss ratio is 
  * returned from this function. 
  */
-KleinNishinaPhotonScatteringDistribution::evaluate( 
+double KleinNishinaPhotonScatteringDistribution::evaluate( 
 			           const double incoming_energy,
 			           const double scattering_angle_cosine ) const
 {
@@ -52,9 +52,9 @@ KleinNishinaPhotonScatteringDistribution::evaluate(
 
   const double alpha_sqr = alpha*alpha;
 
-  const double k = PhysicalConstants::pi*
-    PhysicalConstants::classical_electron_radius*
-      PhysicalConstants::classical_electron_radius/d_alpha;
+  const double k = Utility::PhysicalConstants::pi*
+    Utility::PhysicalConstants::classical_electron_radius*
+    Utility::PhysicalConstants::classical_electron_radius/alpha;
 
   const double inverse_energy_loss_ratio = 
     1.0 + alpha*(1.0 - scattering_angle_cosine);
@@ -94,14 +94,15 @@ double KleinNishinaPhotonScatteringDistribution::evaluatePDF(
   
   const double term_3 = -(arg + alpha)/(arg*arg);
 
-  const double cross_section = 2.0*PhysicalConstants::pi*
-    PhysicalConstants::classical_electron_radius*
-    PhysicalConstants::classical_electron_radius*(term_1 + term_2 + term_3);
+  const double cross_section = 2.0*Utility::PhysicalConstants::pi*
+    Utility::PhysicalConstants::classical_electron_radius*
+    Utility::PhysicalConstants::classical_electron_radius*
+    (term_1 + term_2 + term_3);
 
   // Make sure the cross section is valid
   testPostcondition( cross_section > 0.0 );
 
-  return this->evaluatePDF( incoming_energy, scattering_angle_cosine )/
+  return this->evaluate( incoming_energy, scattering_angle_cosine )/
     cross_section;
 }
 
@@ -161,7 +162,7 @@ void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
 	Utility::RandomNumberGenerator::getRandomNumber<double>();
       
       // Increment the number of trials
-      ++number_of_trials;
+      ++trials;
       
       // Take the first branch
       if( random_number_1 <= branching_ratio )
@@ -187,7 +188,7 @@ void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
   else
   {
     // Increment the number of trials
-    ++number_of_trials;
+    ++trials;
 
     // The mixing probabilities
     double p1 = 2.0/alpha;
@@ -207,7 +208,7 @@ void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
       Utility::RandomNumberGenerator::getRandomNumber<double>();
     double random_number_2 = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
-
+    
     if( random_number_1 <= p1 )
       x = 1.0 + 2.0*alpha*random_number_2;
     else if( random_number_1 <= p1+p2 )
@@ -222,10 +223,25 @@ void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
   testPostcondition( x >= 1.0 );
   testPostcondition( x <= 1.0 + 2.0*alpha );
 
-  // Calculate the outgoing variables
+  // Calculate the outgoing energy
   outgoing_energy = incoming_energy/x;
+  
+  // Calculate the outgoing scattering angle cosine
   scattering_angle_cosine = 1.0 - (x - 1.0)/alpha;
+  
+  // Check for roundoff error
+  if( fabs( scattering_angle_cosine ) > 1.0 )
+    scattering_angle_cosine = copysign( 1.0, scattering_angle_cosine );
+
+  // The shell is not relevant for free electron scattering
   shell_of_interaction = UNKNOWN_SUBSHELL;
+
+  // Make sure the compton line energy is valid
+  testPostcondition( outgoing_energy <= incoming_energy );
+  testPostcondition( outgoing_energy >= incoming_energy/(1+2*alpha) );
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( scattering_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 
 // Randomly scatter the photon and return the shell that was interacted with

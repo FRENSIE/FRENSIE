@@ -26,7 +26,43 @@ CoherentPhotonScatteringDistribution::CoherentPhotonScatteringDistribution(
 {
   // Make sure the array is valid
   testPrecondition( !form_factor_function_squared.is_null() );
-//  testPrecondition( form_factor_function_squared.size() = 55 );
+}
+
+// Evaluate the distribution
+double CoherentPhotonScatteringDistribution::evaluate( 
+			           const double incoming_energy,
+			           const double scattering_angle_cosine ) const
+{
+
+}
+
+// Evaluate the PDF
+double CoherentPhotonScatteringDistribution::evaluatePDF( 
+				   const double incoming_energy,
+				   const double scattering_angle_cosine ) const
+{
+
+}
+
+// Sample an outgoing energy and direction from the distribution
+void CoherentPhotonScatteringDistribution::sample( 
+				     const double incoming_energy,
+				     double& outgoing_energy,
+				     double& scattering_angle_cosine,
+				     SubshellType& shell_of_interaction ) const
+{
+
+}
+
+// Sample an outgoing energy and direction and record the number of trials
+void CoherentPhotonScatteringDistribution::sampleAndRecordTrials( 
+				            const double incoming_energy,
+					    double& outgoing_energy,
+					    double& scattering_angle_cosine,
+				            SubshellType& shell_of_interaction,
+					    unsigned& trials ) const
+{
+
 }
 
 // Randomly scatter the photon

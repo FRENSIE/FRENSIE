@@ -19,8 +19,7 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_DiscreteDistribution.hpp"
-#include "Utility_KleinNishinaDistribution.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -44,6 +43,9 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
 		    _2,
 		    _3,
 		    _4 );
+
+  // Force the quadrature kernel to throw exceptions
+  Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
 }
 
 // Constructor for doppler broadening
@@ -110,6 +112,174 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
 	 _3,
 	 _4 );
   }
+
+  // Force the quadrature kernel to throw exceptions
+  Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
+}
+
+// Evaluate the distribution
+/*! The cross section (cm^2) differential in the inverse energy loss ratio is 
+ * returned from this function. 
+ */
+double IncoherentPhotonScatteringDistribution::evaluate( 
+				   const double incoming_energy,
+				   const double scattering_angle_cosine ) const
+{
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  const double scattering_function_value = 
+    this->evaluateScatteringFunction( incoming_energy, 
+				      scattering_angle_cosine );
+
+  return scattering_function_value*
+    KleinNishinaPhotonScatteringDistribution::evaluate( 
+						     incoming_energy,
+						     scattering_angle_cosine );
+}
+
+// Evaluate the PDF
+double IncoherentPhotonScatteringDistribution::evaluatePDF( 
+				   const double incoming_energy,
+				   const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+  
+  // Evaluate the integrated cross section
+  boost::function<double (double x)> diff_cs_wrapper = 
+    boost::bind<double>( &IncoherentPhotonScatteringDistribution::evaluate,
+			 boost::cref( *this ),
+			 incoming_energy,
+			 _1 );
+
+  double abs_error, integrated_cs;
+
+  Utility::GaussKronrodQuadratureKernel quadrature_kernel( 1e-3 );
+
+  quadrature_kernel.integrateAdaptively<15>( diff_cs_wrapper,
+					     -1.0,
+					     1.0,
+					     integrated_cs,
+					     abs_error );
+
+  // Make sure the integrated cross section is valid
+  testPostcondition( integrated_cs > 0.0 );
+
+  return this->evaluate( incoming_energy, scattering_angle_cosine )/
+    this->evaluateIntegratedCrossSection( incoming_energy, 1e-3 );
+}
+
+// Evaluate the integrated cross section
+double IncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection( 
+						 const double incoming_energy,
+						 const double precision ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  
+  // Evaluate the integrated cross section
+  boost::function<double (double x)> diff_cs_wrapper = 
+    boost::bind<double>( &IncoherentPhotonScatteringDistribution::evaluate,
+			 boost::cref( *this ),
+			 incoming_energy,
+			 _1 );
+
+  double abs_error, integrated_cs;
+
+  Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
+
+  quadrature_kernel.integrateAdaptively<15>( diff_cs_wrapper,
+					     -1.0,
+					     1.0,
+					     integrated_cs,
+					     abs_error );
+
+  // Make sure the integrated cross section is valid
+  testPostcondition( integrated_cs > 0.0 );
+
+  return integrated_cs;
+}
+
+// Evaluate the scattering function
+double IncoherentPhotonScatteringDistribution::evaluateScatteringFunction( 
+				   const double incoming_energy,
+				   const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  // The inverse wavelength of the photon (1/cm)
+  const double inverse_wavelength = incoming_energy/
+    (Utility::PhysicalConstants::planck_constant*
+     Utility::PhysicalConstants::speed_of_light);
+
+  const double scattering_function_arg = 
+    sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength;
+    
+  return d_scattering_function->evaluate( scattering_function_arg );
+}
+
+// Sample an outgoing energy and direction from the distribution
+void IncoherentPhotonScatteringDistribution::sample( 
+				     const double incoming_energy,
+				     double& outgoing_energy,
+				     double& scattering_angle_cosine,
+				     SubshellType& shell_of_interaction ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  
+  unsigned trial_dummy;
+  
+  return this->sampleAndRecordTrials( incoming_energy,
+				      outgoing_energy,
+				      scattering_angle_cosine,
+				      shell_of_interaction,
+				      trial_dummy );
+}
+
+// Sample an outgoing energy and direction and record the number of trials
+void IncoherentPhotonScatteringDistribution::sampleAndRecordTrials( 
+					    const double incoming_energy,
+					    double& outgoing_energy,
+					    double& scattering_angle_cosine,
+					    SubshellType& shell_of_interaction,
+					    unsigned& trials ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  
+  // Evaluate the maximum scattering function value
+  const double max_scattering_function_value = 
+    this->evaluateScatteringFunction( incoming_energy, -1.0 );
+
+  while( true )
+  {
+    KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
+						       incoming_energy,
+						       outgoing_energy,
+						       scattering_angle_cosine,
+						       shell_of_interaction,
+						       trials );
+
+    const double scattering_function_value = 
+      this->evaluateScatteringFunction( incoming_energy, 
+					scattering_angle_cosine );
+
+    const double scaled_random_number = max_scattering_function_value*
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+
+    if( scaled_random_number <= scattering_function_value )
+      break;
+  }
 }
 
 // Randomly scatter the photon
@@ -126,58 +296,15 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
 {
-  // The inverse wavelength of the photon (1/cm)
-  const double inverse_wavelength = photon.getEnergy()/
-    (Utility::PhysicalConstants::planck_constant*
-     Utility::PhysicalConstants::speed_of_light);
+  double compton_line_energy, scattering_angle_cosine;
 
-  // The maximum scattering function value
-  const double max_scattering_function_value = 
-    d_scattering_function->evaluate( inverse_wavelength// /1e8
-				     );
+  // Sample an outgoing energy and direction
+  this->sample( photon.getEnergy(),
+		compton_line_energy,
+		scattering_angle_cosine,
+		shell_of_interaction );
 
-  // The photon energy relative to the electron rest mass energy
-  const double alpha = photon.getEnergy()/
-    Utility::PhysicalConstants::electron_rest_mass_energy;
-  
-  // The scattering angle cosine
-  double scattering_angle_cosine;
-
-  // Sample the inverse energy loss ratio
-  double inverse_energy_loss_ratio;
-  
-  // The scattering function value corresponding to the outgoing angle
-  double scattering_function_value;
-
-  // The scaled random number
-  double scaled_random_number;
-
-  unsigned trial_dummy;
-
-  // Sample a value from the Klein-Nishina distribution, reject with the
-  // scattering function
-  do{
-    inverse_energy_loss_ratio = 
-      Utility::KleinNishinaDistribution::sampleOptimal( photon.getEnergy(),
-							trial_dummy );
-
-    scattering_angle_cosine = 1.0 + (1.0 - inverse_energy_loss_ratio)/alpha;
-
-    double scattering_function_arg = 
-      sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength// /1e8
-      ;
-    
-    scattering_function_value = d_scattering_function->evaluate( 
-						     scattering_function_arg );
-
-    scaled_random_number = max_scattering_function_value*
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
-  }while( scaled_random_number > scattering_function_value );
-    
-  // Calculate the compton line energy
-  double compton_line_energy = photon.getEnergy()/inverse_energy_loss_ratio;
-  
-  // Doppler broaden the compton lines
+  // Doppler broaden the compton line energy
   double outgoing_energy = d_doppler_broadening_func(photon.getEnergy(),
 						     compton_line_energy,
 						     scattering_angle_cosine,
@@ -203,13 +330,15 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
   testPostcondition( scattering_angle_cosine <= 1.0 );
   // Make sure the compton line energy is valid
   testPostcondition( compton_line_energy <= photon.getEnergy() );
+  remember( double alpha = photon.getEnergy()/
+	    Utility::PhysicalConstants::electron_rest_mass_energy );
   testPostcondition( compton_line_energy >= photon.getEnergy()/(1+2*alpha) );
   // Make sure the electron scattering angle cosine is valid
   testPostcondition( electron_scattering_angle_cosine >= -1.0 );
   testPostcondition( electron_scattering_angle_cosine <= 1.0 );
 
   // Sample the azimuthal angle of the outgoing photon
-  double azimuthal_angle = sampleAzimuthalAngle();
+  double azimuthal_angle = this->sampleAzimuthalAngle();
 
   // Create the new electron
   if( electron_energy > 0.0 )

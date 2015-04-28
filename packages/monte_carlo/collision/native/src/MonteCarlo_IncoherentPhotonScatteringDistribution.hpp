@@ -17,15 +17,14 @@
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonScatteringDistribution.hpp"
+#include "MonteCarlo_KleinNishinaPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
-#include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
 
 //! The incoherent photon scattering distribution class
-class IncoherentPhotonScatteringDistribution : public PhotonScatteringDistribution
+class IncoherentPhotonScatteringDistribution : public KleinNishinaPhotonScatteringDistribution
 {
 
 public:
@@ -51,10 +50,42 @@ public:
   ~IncoherentPhotonScatteringDistribution()
   { /* ... */ }
 
+  //! Evaluate the distribution
+  double evaluate( const double incoming_energy,
+		   const double scattering_angle_cosine ) const;
+
+  //! Evaluate the PDF
+  double evaluatePDF( const double incoming_energy,
+		      const double scattering_angle_cosine ) const;
+
+  //! Evaluate the integrated cross section
+  double evaluateIntegratedCrossSection( const double incoming_energy,
+					 const double precision = 1e-6 ) const;
+
+  //! ample an outgoing energy and direction from the distribution
+  void sample( const double incoming_energy,
+	       double& outgoing_energy,
+	       double& scattering_angle_cosine,
+	       SubshellType& shell_of_interaction ) const;
+
+  //! Sample an outgoing energy and direction and record the number of trials
+  void sampleAndRecordTrials( const double incoming_energy,
+			      double& outgoing_energy,
+			      double& scattering_angle_cosine,
+			      SubshellType& shell_of_interaction,
+			      unsigned& trials ) const;
+
   //! Randomly scatter the photon
   void scatterPhoton( PhotonState& photon,
 		      ParticleBank& bank,
 		      SubshellType& shell_of_interaction ) const;
+
+protected:
+  
+  //! Evaluate the scattering function
+  double evaluateScatteringFunction( 
+				  const double incoming_energy,
+				  const double scattering_angle_cosine ) const;
 
 private:
 

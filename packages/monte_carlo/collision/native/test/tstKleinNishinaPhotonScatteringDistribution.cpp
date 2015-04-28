@@ -52,13 +52,13 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, evaluatePDF )
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 1.0 );
   
-  TEST_FLOATING_EQUALITY( dist_value, 1.7412387289976, 1e-15 );
+  TEST_FLOATING_EQUALITY( pdf_value, 1.7412387289976, 1e-12 );
 
-  dist_value = distribution->evaluatePDF( 
+  pdf_value = distribution->evaluatePDF( 
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
   
-  TEST_FLOATING_EQUALITY( dist_value, 0.32245161648103, 1e-15 );
+  TEST_FLOATING_EQUALITY( pdf_value, 0.32245161648103, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -114,8 +114,6 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, sample )
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 
   // Koblinger's Method
-  distribution->setEnergy( 3.1 );
-
   fake_stream.resize( 8 );
   fake_stream[0] = 0.120;
   fake_stream[1] = 0.2;
@@ -240,8 +238,6 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution,
   TEST_EQUALITY_CONST( 2.0/trials, 0.5 );
 
   // Koblinger's Method
-  distribution->setEnergy( 3.1 );
-
   fake_stream.resize( 8 );
   fake_stream[0] = 0.120;
   fake_stream[1] = 0.2;
@@ -373,21 +369,19 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, scatterPhoton )
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   
   // Koblinger's Method
-  distribution->setEnergy( 3.1 );
-
-  fake_stream.resize( 13 );
+  fake_stream.resize( 12 );
   fake_stream[0] = 0.120;
   fake_stream[1] = 0.2;
-  fake_stream[3] = 0.0;
-  fake_stream[4] = 0.698;
-  fake_stream[5] = 0.4;
-  fake_stream[6] = 0.0;
-  fake_stream[7] = 0.818;
-  fake_stream[8] = 0.6;
-  fake_stream[9] = 0.0;
-  fake_stream[10] = 0.90;
-  fake_stream[11] = 0.8;
-  fake_stream[12] = 0.0;
+  fake_stream[2] = 0.0;
+  fake_stream[3] = 0.698;
+  fake_stream[4] = 0.4;
+  fake_stream[5] = 0.0;
+  fake_stream[6] = 0.818;
+  fake_stream[7] = 0.6;
+  fake_stream[8] = 0.0;
+  fake_stream[9] = 0.90;
+  fake_stream[10] = 0.8;
+  fake_stream[11] = 0.0;
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -441,6 +435,18 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, scatterPhoton )
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
     
   Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Custom main function
+//---------------------------------------------------------------------------//
+int main( int argc, char** argv )
+{
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
+
+  Teuchos::GlobalMPISession mpiSession( &argc, &argv );
+  return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );
 }
 
 //---------------------------------------------------------------------------//
