@@ -17,7 +17,6 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_KleinNishinaDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -105,6 +104,43 @@ double SubshellIncoherentPhotonScatteringDistribution::getBindingEnergy() const
   return d_binding_energy;
 }
 
+// Evaluate the distribution
+double SubshellIncoherentPhotonScatteringDistribution::evaluate( 
+			           const double incoming_energy,
+			           const double scattering_angle_cosine ) const
+{
+
+}
+
+// Evaluate the PDF
+double SubshellIncoherentPhotonScatteringDistribution::evaluatePDF( 
+				   const double incoming_energy,
+				   const double scattering_angle_cosine ) const
+{
+
+}
+
+// Sample an outgoing energy and direction from the distribution
+void SubshellIncoherentPhotonScatteringDistribution::sample( 
+				     const double incoming_energy,
+				     double& outgoing_energy,
+				     double& scattering_angle_cosine,
+				     SubshellType& shell_of_interaction ) const
+{
+
+}
+
+// Sample an outgoing energy and direction and record the number of trials
+void SubshellIncoherentPhotonScatteringDistribution::sampleAndRecordTrials( 
+					    const double incoming_energy,
+					    double& outgoing_energy,
+					    double& scattering_angle_cosine,
+					    SubshellType& shell_of_interaction,
+					    unsigned& trials ) const
+{
+
+}
+
 // Randomly scatter the photon
 /*! \details The particle bank is used to store the electron that is emitted
  * from the collision. Whether or not Doppler broadening is done, the 
@@ -156,9 +192,9 @@ void SubshellIncoherentPhotonScatteringDistribution::scatterPhoton(
   // Sample a value from the Klein-Nishina distribution, reject with the
   // scattering function
   do{
-    inverse_energy_loss_ratio = 
-      Utility::KleinNishinaDistribution::sampleOptimal( photon.getEnergy(),
-							trial_dummy );
+    // inverse_energy_loss_ratio = 
+    //   Utility::KleinNishinaDistribution::sampleOptimal( photon.getEnergy(),
+    // 							trial_dummy );
 
     scattering_angle_cosine = 1.0 - (inverse_energy_loss_ratio - 1.0)/alpha;
 
