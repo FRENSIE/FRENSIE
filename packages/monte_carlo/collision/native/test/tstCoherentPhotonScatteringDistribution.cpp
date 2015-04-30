@@ -36,6 +36,42 @@ Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution>
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( CoherentPhotonScatteringDistribution, evaluate )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution pdf can be evaluated
+TEUCHOS_UNIT_TEST( CoherentPhotonScatteringDistribution, evaluatePDF )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the integrated cross section can be evaluated
+TEUCHOS_UNIT_TEST( CoherentPhotonScatteringDistribution, 
+		   evaluateIntegratedCrossSection )
+{
+  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled from
+TEUCHOS_UNIT_TEST( CoherentPhotonScatteringDistribution, sample )
+{
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled from
+TEUCHOS_UNIT_TEST( CoherentPhotonScatteringDistribution, sampleAndRecordTrials)
+{
+  
+}
+
+//---------------------------------------------------------------------------//
 // Check that a photon can be scattered coherently
 TEUCHOS_UNIT_TEST( CoherentPhotonScatteringDistribution, scatterPhoton )
 {
