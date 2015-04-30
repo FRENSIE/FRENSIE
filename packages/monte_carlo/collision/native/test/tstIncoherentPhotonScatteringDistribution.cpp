@@ -41,8 +41,225 @@ Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution>
 Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution>
   detailed_incoherent_distribution_new;
 
+Teuchos::RCP<Utility::OneDDistribution> incoherent_cs;
+
+//---------------------------------------------------------------------------//
+// Testing Functions.
+//---------------------------------------------------------------------------//
+bool notEqualZero( const double value )
+{
+  return value != 0.0;
+}
+
 //---------------------------------------------------------------------------//
 // Tests.
+//---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution, evaluate )
+{
+  double dist_value = basic_incoherent_distribution->evaluate(
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 1.0 );
+  
+  TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
+
+  dist_value = basic_incoherent_distribution->evaluate( 
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 -1.0 );
+  
+  TEST_FLOATING_EQUALITY( dist_value, 7.575780417613796e-24, 1e-15 );
+
+  dist_value = basic_incoherent_distribution->evaluate( 1.0, 1.0 );
+  
+  TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
+  
+  dist_value = basic_incoherent_distribution->evaluate( 1.0, 0.0 );
+
+  TEST_FLOATING_EQUALITY( dist_value, 5.369480917669441e-24, 1e-15 );
+
+  dist_value = basic_incoherent_distribution->evaluate( 1.0, -1.0 );
+
+  TEST_FLOATING_EQUALITY( dist_value, 4.3353499509629834e-24, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution, evaluatePDF )
+{
+  double pdf_value = basic_incoherent_distribution->evaluatePDF(
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 1.0 );
+  
+  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-15 );
+  
+  pdf_value = basic_incoherent_distribution->evaluatePDF( 
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 -1.0 );
+  
+  TEST_FLOATING_EQUALITY( pdf_value, 0.329438478611696395, 1e-15 );
+
+  pdf_value = basic_incoherent_distribution->evaluatePDF( 1.0, 1.0 );
+  
+  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-15 );
+  
+  pdf_value = basic_incoherent_distribution->evaluatePDF( 1.0, 0.0 );
+  
+  TEST_FLOATING_EQUALITY( pdf_value, 0.312736983381781464, 1e-15 );
+
+  pdf_value = basic_incoherent_distribution->evaluatePDF( 1.0, -1.0 );
+  
+  TEST_FLOATING_EQUALITY( pdf_value, 0.25250564930902053, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the integrated cross section can be evaluated
+TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
+		   evaluateIntegratedCrossSection )
+{
+  double cross_section = 
+    basic_incoherent_distribution->evaluateIntegratedCrossSection(0.001, 1e-4);
+
+  TEST_FLOATING_EQUALITY( cross_section*1e24, 
+			  incoherent_cs->evaluate( 0.001 ),
+			  2e-3 );
+
+  cross_section = 
+    basic_incoherent_distribution->evaluateIntegratedCrossSection( 0.1, 1e-3 );
+
+  TEST_FLOATING_EQUALITY( cross_section*1e24, 
+			  incoherent_cs->evaluate( 0.1 ),
+			  1e-3 );
+
+  cross_section = 
+    basic_incoherent_distribution->evaluateIntegratedCrossSection(20.0, 1e-3);
+
+  TEST_FLOATING_EQUALITY( cross_section*1e24, 
+			  incoherent_cs->evaluate( 20.0 ),
+			  1e-3 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an outgoing energy and direction can be sampled
+TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution, sample )
+{
+  double outgoing_energy, scattering_angle_cosine;
+  MonteCarlo::SubshellType shell_of_interaction;
+  
+  // Left branch of Kahn's method
+  std::vector<double> fake_stream( 7 );
+  fake_stream[0] = 0.27;
+  fake_stream[1] = 0.25;
+  fake_stream[2] = 0.90; // reject
+  fake_stream[3] = 0.10;
+  fake_stream[4] = 0.50;
+  fake_stream[5] = 0.999;
+  fake_stream[6] = 0.989; // accept based on scattering function
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  basic_incoherent_distribution->sample( 
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 outgoing_energy,
+			 scattering_angle_cosine,
+			 shell_of_interaction );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_FLOATING_EQUALITY(
+		       outgoing_energy, 
+		       Utility::PhysicalConstants::electron_rest_mass_energy/2,
+		       1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
+  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+
+  // Koblinger's method
+  fake_stream.resize( 5 );
+  fake_stream[0] = 0.818; // third term
+  fake_stream[1] = 0.6;
+  fake_stream[2] = 0.99997; // reject based on scattering function
+  fake_stream[3] = 0.120; // first term
+  fake_stream[4] = 0.2;
+  fake_stream[5] = 1.0; // accept based on scattering function
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  basic_incoherent_distribution->sample( 3.1,
+					 outgoing_energy,
+					 scattering_angle_cosine,
+					 shell_of_interaction );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_FLOATING_EQUALITY( outgoing_energy, 0.9046816718380433, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
+  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that an outgoing energy and direction can be sampled
+TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution, 
+		   sampleAndRecordTrials )
+{
+  double outgoing_energy, scattering_angle_cosine;
+  MonteCarlo::SubshellType shell_of_interaction;
+  unsigned trials = 0;
+  
+  // Left branch of Kahn's method
+  std::vector<double> fake_stream( 7 );
+  fake_stream[0] = 0.27;
+  fake_stream[1] = 0.25;
+  fake_stream[2] = 0.90; // reject
+  fake_stream[3] = 0.10;
+  fake_stream[4] = 0.50;
+  fake_stream[5] = 0.999;
+  fake_stream[6] = 0.989; // accept based on scattering function
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  basic_incoherent_distribution->sampleAndRecordTrials( 
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 outgoing_energy,
+			 scattering_angle_cosine,
+			 shell_of_interaction,
+			 trials );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_FLOATING_EQUALITY(
+		       outgoing_energy, 
+		       Utility::PhysicalConstants::electron_rest_mass_energy/2,
+		       1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
+  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( 1.0/trials, 0.5 );
+
+  // Koblinger's method
+  fake_stream.resize( 5 );
+  fake_stream[0] = 0.818; // third term
+  fake_stream[1] = 0.6;
+  fake_stream[2] = 0.99997; // reject based on scattering function
+  fake_stream[3] = 0.120; // first term
+  fake_stream[4] = 0.2;
+  fake_stream[5] = 1.0; // accept based on scattering function
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  trials = 0;
+
+  basic_incoherent_distribution->sampleAndRecordTrials(3.1,
+						       outgoing_energy,
+					               scattering_angle_cosine,
+						       shell_of_interaction,
+						       trials );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_FLOATING_EQUALITY( outgoing_energy, 0.9046816718380433, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
+  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_EQUALITY_CONST( 1.0/trials, 0.5 );
+}
+
 //---------------------------------------------------------------------------//
 // Check that a photon can be scattered incoherently without Doppler broadening
 TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistribution,
@@ -234,14 +451,19 @@ int main( int argc, char** argv )
   unsigned scatt_func_size = jince_block.size()/2;
 
   Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ) );
+  Teuchos::Array<double> scat_func_values( jince_block( scatt_func_size, 
+							scatt_func_size ) );
 
   for( unsigned i = 0; i < scatt_func_size; ++i )
     recoil_momentum[i] *= 1e8; // convert from inverse Anstrom to inverse cm
+
+  for( unsigned i = 0; i < scatt_func_size; ++i )
+    std::cout << recoil_momentum[i] << " " << scat_func_values[i] << std::endl;
   
   Teuchos::RCP<Utility::OneDDistribution> scattering_function(
 	  new Utility::TabularDistribution<Utility::LinLin>( 
-			   recoil_momentum,
-			   jince_block( scatt_func_size, scatt_func_size ) ) );
+							  recoil_momentum,
+			                                  scat_func_values ) );
 
   // Create the subshell order array
   Teuchos::ArrayView<const double> subshell_endf_des = 
@@ -339,6 +561,47 @@ int main( int argc, char** argv )
 			  subshell_order,
 			  converter,
 			  full_compton_profiles ) );
+  
+  // Extract the incoherent cross section
+  {
+    // Extract the incoherent cross section
+    Teuchos::ArrayView<const double> raw_energy_grid = 
+      xss_data_extractor->extractPhotonEnergyGrid();
+     
+    Teuchos::ArrayView<const double> raw_incoherent_cross_section = 
+      xss_data_extractor->extractIncoherentCrossSection();
+    
+    Teuchos::ArrayView<const double>::iterator start = 
+      std::find_if( raw_incoherent_cross_section.begin(),
+		    raw_incoherent_cross_section.end(),
+		    notEqualZero );
+
+    Teuchos::Array<double> incoherent_cross_section;
+    incoherent_cross_section.assign( start, 
+				     raw_incoherent_cross_section.end() );
+    
+    unsigned start_index = std::distance( raw_incoherent_cross_section.begin(),
+					  start );
+
+    start = raw_energy_grid.begin();
+    
+    std::advance( start, start_index );
+    
+    Teuchos::Array<double> energy_grid;
+    energy_grid.assign( start, raw_energy_grid.end() );
+    
+    // Extract the original energy and cross section values
+    for( unsigned i = 0; i < energy_grid.size(); ++i )
+    {
+      energy_grid[i] = exp( energy_grid[i] );
+      incoherent_cross_section[i] = exp( incoherent_cross_section[i] );
+    }
+
+    incoherent_cs.reset( new Utility::TabularDistribution<Utility::LogLog>(
+						  energy_grid,
+						  incoherent_cross_section ) );
+  }
+
   // Clear setup data
   ace_file_handler.reset();
   xss_data_extractor.reset();

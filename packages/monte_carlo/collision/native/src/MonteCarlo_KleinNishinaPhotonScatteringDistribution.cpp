@@ -36,52 +36,60 @@ KleinNishinaPhotonScatteringDistribution::KleinNishinaPhotonScatteringDistributi
 }
 
 // Evaluate the distribution
-/*! The cross section (cm^2) differential in the inverse energy loss ratio is 
- * returned from this function. 
+/*! The cross section (cm^2) differential in the scattering angle cosine
+ * will be returned.
  */
 double KleinNishinaPhotonScatteringDistribution::evaluate( 
 			           const double incoming_energy,
 			           const double scattering_angle_cosine ) const
 {
+  // Make sure the energy is valid
+  testPrecondition( incoming_energy > 0.0 );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  const double alpha = 
-    incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
-
-  const double alpha_sqr = alpha*alpha;
-
-  const double k = Utility::PhysicalConstants::pi*
+  const double mult = Utility::PhysicalConstants::pi*
     Utility::PhysicalConstants::classical_electron_radius*
-    Utility::PhysicalConstants::classical_electron_radius/alpha;
+    Utility::PhysicalConstants::classical_electron_radius;
 
-  const double inverse_energy_loss_ratio = 
-    1.0 + alpha*(1.0 - scattering_angle_cosine);
+  const double outgoing_energy = incoming_energy/
+    (1.0 + incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy*
+     (1.0-scattering_angle_cosine) );
 
-  const double a = 1/alpha_sqr;
-  const double b = 1.0 - 2.0*(alpha + 1.0)/alpha_sqr;
-  const double c = (1.0 + 2.0*alpha)/alpha_sqr;
-
-  return k*(a + b/inverse_energy_loss_ratio +
-	    c/(inverse_energy_loss_ratio*inverse_energy_loss_ratio) +
-	    1.0/(inverse_energy_loss_ratio*inverse_energy_loss_ratio*
-		 inverse_energy_loss_ratio));
+  return mult*((outgoing_energy*outgoing_energy)/
+	    (incoming_energy*incoming_energy))*
+    (outgoing_energy/incoming_energy + incoming_energy/outgoing_energy - 1.0 +
+     scattering_angle_cosine*scattering_angle_cosine);
 }
 
 // Evaluate the PDF
-/*! The pdf differential in the inverse energy loss ratio is returned
- * from this function. 
+/*! The pdf differential in the scattering angle cosine
+ * will be returned.
  */
 double KleinNishinaPhotonScatteringDistribution::evaluatePDF( 
 			           const double incoming_energy,
 			           const double scattering_angle_cosine ) const
 {
+  // Make sure the energy is valid
+  testPrecondition( incoming_energy > 0.0 );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  // Evaluate the integrated Klein-Nishina cross section at the incoming energy
+  return this->evaluate( incoming_energy, scattering_angle_cosine )/
+    this->evaluateIntegratedCrossSection( incoming_energy, 1e-6 );
+}
+
+// Evaluate the integrated cross section (cm^2)
+double 
+KleinNishinaPhotonScatteringDistribution::evaluateIntegratedCrossSection(
+						const double incoming_energy,
+						const double precision ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  
   const double alpha = 
     incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
   
@@ -102,17 +110,19 @@ double KleinNishinaPhotonScatteringDistribution::evaluatePDF(
   // Make sure the cross section is valid
   testPostcondition( cross_section > 0.0 );
 
-  return this->evaluate( incoming_energy, scattering_angle_cosine )/
-    cross_section;
+  return cross_section;
 }
 
-// ample an outgoing energy and direction from the distribution
+// Sample an outgoing energy and direction from the distribution
 void KleinNishinaPhotonScatteringDistribution::sample( 
 				     const double incoming_energy,
 				     double& outgoing_energy,
 				     double& scattering_angle_cosine,
 				     SubshellType& shell_of_interaction ) const
 {
+  // Make sure the energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  
   unsigned trial_dummy;
 
   this->sampleAndRecordTrials( incoming_energy,
@@ -219,10 +229,6 @@ void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
       x = 1.0/sqrt(1.0 - random_number_2*(1.0 - 1.0/(arg*arg)));
   }
 
-  // Make sure the sampled inverse energy loss ratio is valid
-  testPostcondition( x >= 1.0 );
-  testPostcondition( x <= 1.0 + 2.0*alpha );
-
   // Calculate the outgoing energy
   outgoing_energy = incoming_energy/x;
   
@@ -235,7 +241,10 @@ void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
 
   // The shell is not relevant for free electron scattering
   shell_of_interaction = UNKNOWN_SUBSHELL;
-
+  
+  // Make sure the sampled inverse energy loss ratio is valid
+  testPostcondition( x >= 1.0 );
+  testPostcondition( x <= 1.0 + 2.0*alpha );
   // Make sure the compton line energy is valid
   testPostcondition( outgoing_energy <= incoming_energy );
   testPostcondition( outgoing_energy >= incoming_energy/(1+2*alpha) );

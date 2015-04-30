@@ -1,34 +1,30 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_KleinNishinaPhotonScatteringDistribution.hpp
+//! \file   MonteCarlo_ThompsonPhotonScatteringDistribution.hpp
 //! \author Alex Robinson
-//! \brief  The Klein-Nishina photon scattering distribution declaration.
+//! \brief  The Thompson photon scattering distribution class decl.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_KLEIN_NISHINA_PHOTON_SCATTERING_DISTRIBUTION_HPP
-#define MONTE_CARLO_KLEIN_NISHINA_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_THOMPSON_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_THOMPSON_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
-//! The Klein-Nishina photon scattering distribution class
-class KleinNishinaPhotonScatteringDistribution : public PhotonScatteringDistribution
+//! The Thompson scattering distribution class
+class ThompsonPhotonScatteringDistribution : public PhotonScatteringDistribution
 {
 
 public:
-  
-  //! Default Constructor
-  KleinNishinaPhotonScatteringDistribution();
 
-  //! Constructor
-  KleinNishinaPhotonScatteringDistribution( 
-				    const double kahn_sampling_cutoff_energy );
+  //! Default constructor
+  ThompsonPhotonScatteringDistribution();
 
   //! Destructor
-  virtual ~KleinNishinaPhotonScatteringDistribution()
+  virtual ~ThompsonPhotonScatteringDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -43,7 +39,7 @@ public:
   virtual double evaluateIntegratedCrossSection(const double incoming_energy,
 						const double precision ) const;
 
-  //! ample an outgoing energy and direction from the distribution
+  //! Sample an outgoing energy and direction from the distribution
   virtual void sample( const double incoming_energy,
 		       double& outgoing_energy,
 		       double& scattering_angle_cosine,
@@ -56,24 +52,16 @@ public:
 				      SubshellType& shell_of_interaction,
 				      unsigned& trials ) const;
 
-  //! Randomly scatter the photon and return the shell that was interacted with
+  //! Randomly scatter the photon
   virtual void scatterPhoton( PhotonState& photon,
 			      ParticleBank& bank,
 			      SubshellType& shell_of_interaction ) const;
-
-private:
-
-  // The min cutoff energy
-  static const double s_min_kahn_sampling_cutoff_energy;
-
-  // The Kahn rejection sampling cutoff energy
-  double d_kahn_sampling_cutoff_energy;
 };
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_KLEIN_NISHINA_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_THOMPSON_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_KleinNishinaPhotonScatteringDistribution.hpp
+// end MonteCarlo_ThompsonPhotonScatteringDistribution.hpp
 //---------------------------------------------------------------------------//

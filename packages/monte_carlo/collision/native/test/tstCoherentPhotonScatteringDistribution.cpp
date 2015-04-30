@@ -64,7 +64,6 @@ TEUCHOS_UNIT_TEST( CoherentPhotonScatteringDistribution, scatterPhoton )
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 4.95936772145E-03, 1e-15  );
-// \todo Check why z direction test fails if rel err is above 1e-11
   TEST_FLOATING_EQUALITY( photon.getZDirection(), -1.25000000000E-01, 1e-11 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }

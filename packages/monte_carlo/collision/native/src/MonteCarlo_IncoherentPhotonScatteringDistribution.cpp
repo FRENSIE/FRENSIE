@@ -125,6 +125,8 @@ double IncoherentPhotonScatteringDistribution::evaluate(
 				   const double incoming_energy,
 				   const double scattering_angle_cosine ) const
 {
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
@@ -149,32 +151,12 @@ double IncoherentPhotonScatteringDistribution::evaluatePDF(
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
-  
-  // Evaluate the integrated cross section
-  boost::function<double (double x)> diff_cs_wrapper = 
-    boost::bind<double>( &IncoherentPhotonScatteringDistribution::evaluate,
-			 boost::cref( *this ),
-			 incoming_energy,
-			 _1 );
-
-  double abs_error, integrated_cs;
-
-  Utility::GaussKronrodQuadratureKernel quadrature_kernel( 1e-3 );
-
-  quadrature_kernel.integrateAdaptively<15>( diff_cs_wrapper,
-					     -1.0,
-					     1.0,
-					     integrated_cs,
-					     abs_error );
-
-  // Make sure the integrated cross section is valid
-  testPostcondition( integrated_cs > 0.0 );
 
   return this->evaluate( incoming_energy, scattering_angle_cosine )/
     this->evaluateIntegratedCrossSection( incoming_energy, 1e-3 );
 }
 
-// Evaluate the integrated cross section
+// Evaluate the integrated cross section (cm^2)
 double IncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection( 
 						 const double incoming_energy,
 						 const double precision ) const
@@ -221,8 +203,12 @@ double IncoherentPhotonScatteringDistribution::evaluateScatteringFunction(
     (Utility::PhysicalConstants::planck_constant*
      Utility::PhysicalConstants::speed_of_light);
 
+  // The scattering function argument
   const double scattering_function_arg = 
     sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength;
+
+  // Make sure the scattering function argument is valid
+  testPostcondition( scattering_function_arg >= 0.0 );
     
   return d_scattering_function->evaluate( scattering_function_arg );
 }
