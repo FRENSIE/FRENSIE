@@ -54,7 +54,6 @@ public:
   //! Return the cross section at a given energy
   double getCrossSection( const double energy ) const;
 
-
   //! Return the number of photons emitted from the rxn at the given energy
   virtual unsigned getNumberOfEmittedPhotons( const double energy ) const = 0;
 
@@ -98,6 +97,34 @@ private:
   // The cross section values evaluated on the incoming energy grid
   Teuchos::ArrayRCP<const double> d_cross_section;
 };
+
+// Return the average number of photons emitted from the rxn
+/*! \details If the neutron multiplicity for the reaction is not an integer
+ * at the desired energy, this function should be overridden in the derived
+ * class. It will be used in implicit multiplication weighting games.
+ */
+  inline double PhotonuclearReaction::getAverageNumberOfEmittedPhotons(
+								       const double energy) const
+  {
+    return this->getNumberOfEmittedPhotons( energy );
+  }
+
+// Return the average number of neutrosn emitted from the rxn
+/*! \details If the neutron multiplicity for the reaction is not an integer
+ * at the desired energy, this function should be overridden in the derived
+ * class. It will be used in implicit multiplication weighting games.
+ */
+  inline double PhotonuclearReaction::getAverageNumberOfEmittedNeutrons(
+								       const double energy) const
+  {
+    return this->getNumberOfEmittedNeutrons( energy );
+  }
+
+// Return the threshold energy
+inline double PhotonuclearReaction::getThresholdEnergy() const
+{
+  return d_incoming_energy_grid[d_threshold_energy_index];
+}
 
 } // end MonteCarlo namespace
 

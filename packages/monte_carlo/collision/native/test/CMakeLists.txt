@@ -365,7 +365,7 @@ TARGET_LINK_LIBRARIES(tstPhotonuclearScatteringDistributionACEFactory
 ADD_TEST(PhotonuclearScatteringDistributionACEFactory_test tstPhotonuclearScatteringDistributonACEFactory --test_basic_c12_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c12_photonuclear_ace_file.txt" --test_basic_c12_ace_table=6012.24u )
 
 ADD_EXECUTABLE(tstPhotonuclearReaction
-	tstPhotonuclearReaction.cpp)
+               tstPhotonuclearReaction.cpp)
 TARGET_LINK_LIBRARIES(tstPhotonuclearReaction
- monte_carlo_collision_native)
-ADD_TEST(PhotonuclearReaction_test tstPhotonuclearReaction --test_basic_h2_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h2_photonuclear_ace_file.txt" --test_basic_h2_ace_table=1002.24u --test_basic_c12_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c12_photonuclear_ace_file.txt" --test_basic_c12_ace_table=6012.24u)
+  monte_carlo_collision_native)
+ADD_TEST(PhotonuclearReaction_test tstPhotonuclearReaction --h2_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h2_photonuclear_ace_file.txt" --h2_ace_table=1002.24u --c12_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c12_photonuclear_ace_file.txt" --c12_ace_table=6012.24u)
