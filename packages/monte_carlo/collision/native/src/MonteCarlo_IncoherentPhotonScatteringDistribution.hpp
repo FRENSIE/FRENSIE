@@ -58,11 +58,11 @@ public:
   double evaluatePDF( const double incoming_energy,
 		      const double scattering_angle_cosine ) const;
 
-  //! Evaluate the integrated cross section
+  //! Evaluate the integrated cross section (cm^2)
   double evaluateIntegratedCrossSection( const double incoming_energy,
-					 const double precision = 1e-6 ) const;
+					 const double precision ) const;
 
-  //! ample an outgoing energy and direction from the distribution
+  //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
 	       double& outgoing_energy,
 	       double& scattering_angle_cosine,

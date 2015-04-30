@@ -120,6 +120,14 @@ double SubshellIncoherentPhotonScatteringDistribution::evaluatePDF(
 
 }
 
+// Evaluate the integrated cross section (cm^2)
+double SubshellIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection( 
+						 const double incoming_energy,
+						 const double precision ) const
+{
+  
+}
+
 // Sample an outgoing energy and direction from the distribution
 void SubshellIncoherentPhotonScatteringDistribution::sample( 
 				     const double incoming_energy,

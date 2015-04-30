@@ -14,7 +14,7 @@
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonScatteringDistribution.hpp"
+#include "MonteCarlo_ThompsonPhotonScatteringDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
@@ -27,9 +27,8 @@ namespace MonteCarlo{
  * (ie: for high energy photons). 
  * This is due to the fact that coherent scattering becomes very forward peaked 
  * at high energies and their effect on the photon path can be ignored.
- * For the default ACE tables used the max argument is 6 angstroms
  */
-class CoherentPhotonScatteringDistribution : public PhotonScatteringDistribution
+class CoherentPhotonScatteringDistribution : public ThompsonPhotonScatteringDistribution
 {
 
 public:
@@ -51,6 +50,10 @@ public:
   double evaluatePDF( const double incoming_energy,
 		      const double scattering_angle_cosine ) const;
 
+  //! Evaluate the integrated cross section (cm^2)
+  double evaluateIntegratedCrossSection( const double incoming_energy,
+					 const double precision ) const;
+
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
 	       double& outgoing_energy,
@@ -68,6 +71,13 @@ public:
   void scatterPhoton( PhotonState& photon,
 		      ParticleBank& bank,
 		      SubshellType& shell_of_interaction ) const;
+
+protected:
+
+  //! Evaluate the form factor squared
+  double evaluateFormFactorSquared( 
+				  const double incoming_energy,
+				  const double scattering_angle_cosine ) const;
 
 private:
 

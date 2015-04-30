@@ -12,6 +12,7 @@
   
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
+#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
@@ -42,6 +43,18 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, evaluate )
 			 -1.0 );
   
   TEST_FLOATING_EQUALITY( dist_value, 9.2395260201544e-26, 1e-15 );
+
+  dist_value = distribution->evaluate( 1.0, 1.0 );
+  
+  TEST_FLOATING_EQUALITY( dist_value, 4.989344050883251e-25, 1e-15 );
+  
+  dist_value = distribution->evaluate( 1.0, 0.0 );
+
+  TEST_FLOATING_EQUALITY( dist_value, 6.54837903834309e-26, 1e-15 );
+
+  dist_value = distribution->evaluate( 1.0, -1.0 );
+
+  TEST_FLOATING_EQUALITY( dist_value, 5.287012135320711e-26, 1e-15 );	      
 }
 
 //---------------------------------------------------------------------------//
@@ -59,6 +72,38 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, evaluatePDF )
 			 -1.0 );
   
   TEST_FLOATING_EQUALITY( pdf_value, 0.32245161648103, 1e-12 );
+
+  pdf_value = distribution->evaluatePDF( 1.0, 1.0 );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 2.3622907264473127, 1e-15 );
+
+  pdf_value = distribution->evaluatePDF( 1.0, 0.0 );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 0.3100442646924977, 1e-15 );
+
+  pdf_value = distribution->evaluatePDF( 1.0, -1.0 );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 0.2503226799056189, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the integrated cross section can be evaluated
+TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution,
+		   evaluateIntegratedCrossSection )
+{
+  double cross_section = distribution->evaluateIntegratedCrossSection( 
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 1e-6 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.8653991941448027e-25, 1e-15 );
+
+  cross_section = distribution->evaluateIntegratedCrossSection( 1.0, 1e-6 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.1120787526380407e-25, 1e-15 );
+
+  cross_section = distribution->evaluateIntegratedCrossSection( 20.0, 1e-6 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 3.02498575770817e-26, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -130,8 +175,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, sample )
   distribution->sample( 3.1,
 			outgoing_energy,
 			scattering_angle_cosine,
-			shell_of_interaction );
-				
+			shell_of_interaction );			
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.9046816718380433, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
