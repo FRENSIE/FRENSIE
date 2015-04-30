@@ -146,7 +146,7 @@ public:
 
   //! Extract the DLWP block for secondary particle
   Teuchos::ArrayView<const double> extractDLWPBlock( const unsigned secondary_particle_type ) const;
- 
+
 private:
 
   // The nxs array (a copy will be stored)
