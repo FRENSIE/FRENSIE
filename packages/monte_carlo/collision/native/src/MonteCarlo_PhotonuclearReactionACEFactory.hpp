@@ -38,7 +38,7 @@ public:
 		 const std::string& table_name,
 		 const double atomic_weight_ratio,
 		 const Teuchos::ArrayRCP<const double>& energy_grid,
-		 const Data::XSSNeutronDataExtractor& raw_nuclide_data );
+		 const Data::XSSPhotonnuclearDataExtractor& raw_nuclide_data );
 		 
   //! Destructor
   ~PhotonuclearReactionACEFactory()

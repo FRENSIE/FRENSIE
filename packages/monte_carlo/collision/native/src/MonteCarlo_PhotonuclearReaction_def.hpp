@@ -1,22 +1,25 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_PhotonuclearReaction.cpp
+//! \file   MonteCarlo_PhotonuclearReaction_def.hpp
 //! \author Ryan Pease
 //! \brief  The photonuclear reaction base class definition
 //!
 //---------------------------------------------------------------------------//
 
+#ifndef MONTE_CARLO_PHOTONUCLEAR_REACTION_DEF_HPP
+#define MONTE_CARLO_PHOTONUCLEAR_REACTION_DEF_HPP
+
 // FRENSIE Includes
-#include "MonteCarlo_PhotonuclearReaction.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
-
-  //! Constructor
-  PhotonuclearReaction::PhotonuclearReaction( 
+  
+// Constructor
+template<typename OutgoingParticleType>
+PhotonuclearReaction<OutgoingParticleType>::PhotonuclearReaction( 
 		   const PhotonuclearReactionType reaction_type,
 		   const double q_value,
 		   const unsigned threshold_energy_index,
@@ -45,19 +48,24 @@ namespace MonteCarlo{
 }
 
 // Return the reaction type
-PhotonuclearReactionType PhotonuclearReaction::getReactionType() const
+template<typename OutgoingParticleType>
+PhotonuclearReactionType 
+PhotonuclearReaction<OutgoingParticleType>::getReactionType() const
 {
   return d_reaction_type;
 }
 
 // Return the reaction Q value
-double PhotonuclearReaction::getQValue() const
+template<typename OutgoingParticleType>
+double PhotonuclearReaction<OutgoingParticleType>::getQValue() const
 {
   return d_q_value;
 }
 
 // Return the cross section value at a given energy
-double PhotonuclearReaction::getCrossSection( const double energy ) const
+template<typename OutgoingParticleType>
+double PhotonuclearReaction<OutgoingParticleType>::getCrossSection( 
+						    const double energy ) const
 {
   if( energy >= this->getThresholdEnergy() &&
       energy < d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
@@ -86,6 +94,8 @@ double PhotonuclearReaction::getCrossSection( const double energy ) const
 
 } // end MonteCarlo namespace
 
+#endif // end MONTE_CARLO_PHOTONUCLEAR_REACTION_DEF_HPP
+
 //---------------------------------------------------------------------------//
-// end MonteCarlo_PhotonuclearReaction.cpp
+// end MonteCarlo_PhotonuclearReaction_def.hpp
 //---------------------------------------------------------------------------//
