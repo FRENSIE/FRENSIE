@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstThompsonPhotonScatteringDistribution.cpp
+//! \file   tstThompsonScatteringDistribution.cpp
 //! \author Alex Robinson
-//! \brief  Thompson photon scattering distribution unit tests
+//! \brief  Thompson scattering distribution unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -16,7 +16,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
-#include "MonteCarlo_ThompsonPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_ThompsonScatteringDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
 //---------------------------------------------------------------------------//
@@ -24,13 +24,13 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution>
-  distribution( new MonteCarlo::ThompsonPhotonScatteringDistribution() );
+  distribution( new MonteCarlo::ThompsonScatteringDistribution() );
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( ThompsonPhotonScatteringDistribution, evaluate )
+TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, evaluate )
 {
   double dist_value = distribution->evaluate( 0.1, 1.0 );
 
@@ -59,7 +59,7 @@ TEUCHOS_UNIT_TEST( ThompsonPhotonScatteringDistribution, evaluate )
 
 //---------------------------------------------------------------------------//
 // Check that the distribution PDF can be evaluated
-TEUCHOS_UNIT_TEST( ThompsonPhotonScatteringDistribution, evaluatePDF )
+TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, evaluatePDF )
 {
   double pdf_value = distribution->evaluatePDF( 0.1, 1.0 );
 
@@ -88,7 +88,7 @@ TEUCHOS_UNIT_TEST( ThompsonPhotonScatteringDistribution, evaluatePDF )
 
 //---------------------------------------------------------------------------//
 // Check that the integrated cross section can be evaluated
-TEUCHOS_UNIT_TEST( ThompsonPhotonScatteringDistribution, 
+TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, 
 		   evaluateIntegratedCrossSection )
 {
   double cross_section = 
@@ -103,7 +103,7 @@ TEUCHOS_UNIT_TEST( ThompsonPhotonScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the outgoing direction can be sampled
-TEUCHOS_UNIT_TEST( ThompsonPhotonScatteringDistribution, sample )
+TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, sample )
 {
   double outgoing_energy, scattering_angle_cosine;
   MonteCarlo::SubshellType shell_of_interaction;
@@ -166,7 +166,7 @@ TEUCHOS_UNIT_TEST( ThompsonPhotonScatteringDistribution, sample )
 	
 //---------------------------------------------------------------------------//
 // Check that outgoing direction can be sampled and the trials can be recoreded
-TEUCHOS_UNIT_TEST( ThompsonPhotonScatteringDistribution, 
+TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, 
 		   sampleAndRecordTrials )   
 {
   double outgoing_energy, scattering_angle_cosine;
@@ -239,7 +239,7 @@ TEUCHOS_UNIT_TEST( ThompsonPhotonScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a photon can be randomly scattered
-TEUCHOS_UNIT_TEST( ThompsonPhotonScatteringDistribution, scatterPhoton )
+TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, scatterPhoton )
 {
   MonteCarlo::PhotonState photon( 0 );
   photon.setEnergy( 0.1 );
@@ -316,6 +316,6 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstThompsonPhotonScatteringDistribution.cpp
+// end tstThompsonScatteringDistribution.cpp
 //---------------------------------------------------------------------------//
 
