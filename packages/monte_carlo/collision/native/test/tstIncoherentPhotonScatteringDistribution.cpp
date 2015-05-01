@@ -457,9 +457,6 @@ int main( int argc, char** argv )
   for( unsigned i = 0; i < scatt_func_size; ++i )
     recoil_momentum[i] *= 1e8; // convert from inverse Anstrom to inverse cm
 
-  for( unsigned i = 0; i < scatt_func_size; ++i )
-    std::cout << recoil_momentum[i] << " " << scat_func_values[i] << std::endl;
-  
   Teuchos::RCP<Utility::OneDDistribution> scattering_function(
 	  new Utility::TabularDistribution<Utility::LinLin>( 
 							  recoil_momentum,

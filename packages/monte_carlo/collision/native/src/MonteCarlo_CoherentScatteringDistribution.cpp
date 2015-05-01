@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_CoherentPhotonScatteringDistribution.cpp
+//! \file   MonteCarlo_CoherentScatteringDistribution.cpp
 //! \author Luke Kersting
 //! \brief  The coherent photon scattering distribution definition.
 //!
@@ -14,8 +14,7 @@
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_CoherentPhotonScatteringDistribution.hpp"
-#include "Utility_RandomNumberGenerator.hpp"
+#include "MonteCarlo_CoherentScatteringDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_ContractException.hpp"
@@ -23,17 +22,18 @@
 namespace MonteCarlo{
 
 // Constructor
-CoherentPhotonScatteringDistribution::CoherentPhotonScatteringDistribution(
+CoherentScatteringDistribution::CoherentScatteringDistribution(
 		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
 		    form_factor_function_squared )
-  : d_form_factor_function_squared( form_factor_function_squared )
+  : PhotonScatteringDistribution(),
+    d_form_factor_function_squared( form_factor_function_squared )
 {
   // Make sure the array is valid
   testPrecondition( !form_factor_function_squared.is_null() );
 }
 
 // Evaluate the distribution
-double CoherentPhotonScatteringDistribution::evaluate( 
+double CoherentScatteringDistribution::evaluate( 
 			           const double incoming_energy,
 			           const double scattering_angle_cosine ) const
 {
@@ -43,16 +43,19 @@ double CoherentPhotonScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
+  const double mult = Utility::PhysicalConstants::pi*
+    Utility::PhysicalConstants::classical_electron_radius*
+    Utility::PhysicalConstants::classical_electron_radius;
+
   const double form_factor_squared = 
     this->evaluateFormFactorSquared( incoming_energy, scattering_angle_cosine);
 
-  return form_factor_squared*
-    ThompsonPhotonScatteringDistribution::evaluate( incoming_energy,
-						    scattering_angle_cosine );
+  return mult*(1.0 + scattering_angle_cosine*scattering_angle_cosine)*
+    form_factor_squared;    
 }
 
 // Evaluate the PDF
-double CoherentPhotonScatteringDistribution::evaluatePDF( 
+double CoherentScatteringDistribution::evaluatePDF( 
 				   const double incoming_energy,
 				   const double scattering_angle_cosine ) const
 {
@@ -67,7 +70,7 @@ double CoherentPhotonScatteringDistribution::evaluatePDF(
 }
 
 // Evaluate the integrated cross section (cm^2)
-double CoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection( 
+double CoherentScatteringDistribution::evaluateIntegratedCrossSection( 
 					         const double incoming_energy,
 					         const double precision ) const
 {
@@ -76,7 +79,7 @@ double CoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection(
 
   // Evaluate the integrated cross section
   boost::function<double (double x)> diff_cs_wrapper = 
-    boost::bind<double>( &CoherentPhotonScatteringDistribution::evaluate,
+    boost::bind<double>( &CoherentScatteringDistribution::evaluate,
 			 boost::cref( *this ),
 			 incoming_energy,
 			 _1 );
@@ -97,8 +100,27 @@ double CoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection(
   return integrated_cs;
 }
 
+// Randomly scatter the photon
+void CoherentScatteringDistribution::scatterPhoton( 
+				     PhotonState& photon,
+				     ParticleBank& bank,
+				     SubshellType& shell_of_interaction ) const
+{
+  double outgoing_energy, scattering_angle_cosine;
+
+  // Sample an outgoing direction
+  this->sample( photon.getEnergy(),
+		outgoing_energy,
+		scattering_angle_cosine,
+		shell_of_interaction );
+
+  // Set the new direction
+  photon.rotateDirection( scattering_angle_cosine, 
+			  this->sampleAzimuthalAngle() );
+}
+
 // Evaluate the form factor squared
-double CoherentPhotonScatteringDistribution::evaluateFormFactorSquared( 
+double CoherentScatteringDistribution::evaluateFormFactorSquared( 
 				  const double incoming_energy,
 				  const double scattering_angle_cosine ) const
 {
@@ -117,88 +139,46 @@ double CoherentPhotonScatteringDistribution::evaluateFormFactorSquared(
   return d_form_factor_function_squared->evaluate( form_factor_arg_squared );
 }
 
-// Sample an outgoing energy and direction from the distribution
-void CoherentPhotonScatteringDistribution::sample( 
-				     const double incoming_energy,
-				     double& outgoing_energy,
-				     double& scattering_angle_cosine,
-				     SubshellType& shell_of_interaction ) const
-{
-  unsigned trial_dummy;
-
-  this->sampleAndRecordTrials( incoming_energy,
-			       outgoing_energy,
-			       scattering_angle_cosine,
-			       shell_of_interaction,
-			       trial_dummy );
-}
-
-// Sample an outgoing energy and direction and record the number of trials
-void CoherentPhotonScatteringDistribution::sampleAndRecordTrials( 
-				            const double incoming_energy,
+// Basic sampling implementation
+void CoherentScatteringDistribution::sampleAndRecordTrialsBasicImpl( 
+					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
-				            SubshellType& shell_of_interaction,
+					    SubshellType& shell_of_interaction,
 					    unsigned& trials ) const
 {
-  // The wavelength of the photon (cm)
-  const double wavelength = Utility::PhysicalConstants::planck_constant*
-    Utility::PhysicalConstants::speed_of_light/incoming_energy;
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
 
-  // The squared wavelength of the photon (cm^2)
-  const double wavelength_sqr = wavelength*wavelength;
+  // Increment the number of trials
+  ++trials;
 
-  // The max form factor arg squared (1/cm^2)
-  const double max_form_factor_arg_squared = 1.0/wavelength_sqr;
-
-  // The form factor function squared value corresponding to the outgoing angle
-  double form_factor_function_squared_value;
-
-  // The sampled form factor argument squared
-  double form_factor_arg_squared;
-
-  shell_of_interaction = UNKNOWN_SUBSHELL;
-
-  if( max_form_factor_arg_squared <= 
-      d_form_factor_function_squared->getUpperBoundOfIndepVar() )
-  {
-    while( true )
-    {
-      // Increment the number of trials
-      ++trials;
-      
-      // Randomly sample the form factor squared
-      form_factor_arg_squared = 
-	d_form_factor_function_squared->sampleInSubrange( 
-						 max_form_factor_arg_squared );
-      
-      // Calc. the outgoing photon angle cosine from the sampled form factor 
-      scattering_angle_cosine = 
-	1.0 - 2.0*wavelength_sqr*form_factor_arg_squared;
-      
-      double random_number = 
-	Utility::RandomNumberGenerator::getRandomNumber<double>();
-
-      if( random_number <=
-	  0.5*( 1.0 + scattering_angle_cosine*scattering_angle_cosine ) )
-	break;
-    }
-  }
-  // Ignore coherent scattering at energies where scattering is 
-  // highly forward peaked
+  // Use the probability mixing technique to sample an outgoing angle
+  double random_number_1 = 
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
+  double random_number_2 = 
+    Utility::RandomNumberGenerator::getRandomNumber<double>();
+    
+  if( random_number_1 <= 0.75 )
+    scattering_angle_cosine = 2*random_number_2 - 1.0;
   else
-    scattering_angle_cosine = 1.0;
+  {
+    scattering_angle_cosine = pow( fabs(2*random_number_2 - 1.0), 1.0/3.0 );
+
+    if( random_number_2 < 0.5 )
+      scattering_angle_cosine *= -1.0;
+  }
 
   // Check for roundoff error
   if( fabs( scattering_angle_cosine ) > 1.0 )
     scattering_angle_cosine = copysign( 1.0, scattering_angle_cosine );
-  
-  // There is no change in energy for coherent scattering
+
+  // There is no change in energy for Thompson scattering
   outgoing_energy = incoming_energy;
   
-  // The shell cannot be determined for coherent scattering
+  // The shell is not relevant for free electron scattering
   shell_of_interaction = UNKNOWN_SUBSHELL;
-    
+
   // Make sure the outgoing energy is valid
   testPostcondition( outgoing_energy == incoming_energy );
   // Make sure the scattering angle cosine is valid
@@ -206,27 +186,15 @@ void CoherentPhotonScatteringDistribution::sampleAndRecordTrials(
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 
-// Randomly scatter the photon
-void CoherentPhotonScatteringDistribution::scatterPhoton( 
-				     PhotonState& photon,
-				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+// Return the form factor function squared distribution
+const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+CoherentScatteringDistribution::getFormFactorSquaredDistribution() const
 {
-  double outgoing_energy, scattering_angle_cosine;
-
-  // Sample an outgoing direction
-  this->sample( photon.getEnergy(),
-		outgoing_energy,
-		scattering_angle_cosine,
-		shell_of_interaction );
-
-  // Set the new direction
-  photon.rotateDirection( scattering_angle_cosine, 
-			  this->sampleAzimuthalAngle() );
+  return d_form_factor_function_squared;
 }
 
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_IncoherentPhotonScatteringDistribution.cpp
+// end MonteCarlo_IncoherentScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

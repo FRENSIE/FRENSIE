@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_StandardPhotoatomicReaction.hpp"
-#include "MonteCarlo_CoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_EfficientCoherentScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -58,7 +58,7 @@ public:
 private:
 
   // The coherent scattering distribution
-  CoherentPhotonScatteringDistribution d_scattering_distribution;
+  EfficientCoherentScatteringDistribution d_scattering_distribution;
 };
 
 } // end MonteCarlo namespace
