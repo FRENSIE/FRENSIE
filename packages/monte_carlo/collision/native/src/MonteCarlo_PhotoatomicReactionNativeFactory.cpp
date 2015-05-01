@@ -13,7 +13,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReactionNativeFactory.hpp"
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_CoherentPhotonScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_CoherentScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_IncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_CoherentPhotoatomicReaction.hpp"
@@ -22,12 +22,13 @@
 #include "MonteCarlo_SubshellPhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_AbsorptionPhotoatomicReaction.hpp"
 #include "MonteCarlo_SubshellType.hpp"
+#include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Create the total incoherent photoatomic reaction
-/*! \details This will use the Waller-Hartree incoherent cross section
+/*! \details This will use the Waller-Hartree incoherent cross section.
  */
 void PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
@@ -56,7 +57,7 @@ void PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
 
   if( use_doppler_broadening_data )
   {
-    IncoherentPhotonScatteringDistributionNativeFactory::createAdvancedDopplerBroadeningIncoherentDistribution( 
+    IncoherentPhotonScatteringDistributionNativeFactory::createAdvancedDopplerBroadenedIncoherentDistribution( 
 							    raw_photoatom_data,
 							    distribution,
 							    3.0 );
@@ -195,7 +196,7 @@ void PhotoatomicReactionNativeFactory::createCoherentReaction(
 							coherent_cross_section,
 							threshold_index,
 							grid_searcher,
-							distribution );
+							distribution ) );
 }
 
 // Create the pair production photoatomic reaction

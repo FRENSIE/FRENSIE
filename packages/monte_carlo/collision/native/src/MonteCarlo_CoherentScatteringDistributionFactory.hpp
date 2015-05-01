@@ -15,6 +15,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_CoherentScatteringDistribution.hpp"
 
+namespace MonteCarlo{
+
 //! The coherent scattering distribution factory base class
 class CoherentScatteringDistributionFactory
 {
@@ -32,6 +34,8 @@ private:
   static Teuchos::RCP<const CoherentScatteringDistribution> 
   s_thompson_distribution;
 };
+
+} // end MonteCarlo namespace
 
 #endif // end MONTE_CARLO_COHERENT_SCATTERING_DISTRIBUTION_FACTORY_HPP
 

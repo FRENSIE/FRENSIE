@@ -15,6 +15,7 @@
 #include "MonteCarlo_ThompsonScatteringDistribution.hpp"
 #include "MonteCarlo_BasicCoherentScatteringDistribution.hpp"
 #include "MonteCarlo_EfficientCoherentScatteringDistribution.hpp"
+#include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -28,7 +29,9 @@ void CoherentScatteringDistributionACEFactory::createBasicCoherentDistribution(
   // Create the form factor squared
   Teuchos::RCP<const Utility::TabularOneDDistribution> form_factor_squared;
 
-  createFormFactor( raw_photoatom_data, form_factor_squared );
+  CoherentScatteringDistributionACEFactory::createFormFactorSquared( 
+							 raw_photoatom_data,
+							 form_factor_squared );
 
   coherent_distribution.reset( 
 	      new BasicCoherentScatteringDistribution( form_factor_squared ) );
@@ -43,7 +46,9 @@ void CoherentScatteringDistributionACEFactory::createEfficientCoherentDistributi
   // Create the form factor squared
   Teuchos::RCP<const Utility::TabularOneDDistribution> form_factor_squared;
 
-  createFormFactor( raw_photoatom_data, form_factor_squared );
+  CoherentScatteringDistributionACEFactory::createFormFactorSquared( 
+							 raw_photoatom_data,
+							 form_factor_squared );
   
   coherent_distribution.reset( 
 	  new EfficientCoherentScatteringDistribution( form_factor_squared ) );

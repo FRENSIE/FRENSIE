@@ -14,7 +14,7 @@
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_BasicDopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_AdvancedDopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
+#include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -38,7 +38,9 @@ void IncoherentPhotonScatteringDistributionACEFactory::createIncoherentDistribut
   // Create the scattering function
   Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
 
-  createScatteringFunction( scattering_function );
+  IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction( 
+							 raw_photoatom_data,
+							 scattering_function );
 
   incoherent_distribution.reset( new IncoherentPhotonScatteringDistribution( 
 					       scattering_function,
@@ -59,7 +61,9 @@ void IncoherentPhotonScatteringDistributionACEFactory::createBasicDopplerBroaden
   // Create the scattering function
   Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
 
-  createScatteringFunction( scattering_function );
+  IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction( 
+							 raw_photoatom_data,
+							 scattering_function );
 
   // Create the subshell order array
   Teuchos::ArrayView<const double> subshell_endf_designators = 
@@ -141,7 +145,9 @@ void IncoherentPhotonScatteringDistributionACEFactory::createAdvancedDopplerBroa
   // Create the scattering function
   Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
 
-  createScatteringFunction( scattering_function );
+  IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction(
+							 raw_photoatom_data,
+							 scattering_function );
 
   // Create the subshell order array
   Teuchos::ArrayView<const double> subshell_endf_designators = 
