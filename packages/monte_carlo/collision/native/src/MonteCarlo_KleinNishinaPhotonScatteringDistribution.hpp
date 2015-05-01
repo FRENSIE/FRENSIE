@@ -34,6 +34,24 @@ public:
   //! Evaluate the integrated cross section (cm^2)
   double evaluateIntegratedCrossSection( const double incoming_energy,
 					 const double precision ) const;
+
+  //! Sample an outgoing energy and direction from the distribution
+  void sample( const double incoming_energy,
+	       double& outgoing_energy,
+	       double& scattering_angle_cosine,
+	       SubshellType& shell_of_interaction ) const;
+
+  //! Sample an outgoing energy and direction and record the number of trials
+  void sampleAndRecordTrials( const double incoming_energy,
+			      double& outgoing_energy,
+			      double& scattering_angle_cosine,
+			      SubshellType& shell_of_interaction,
+			      unsigned& trials ) const;
+
+  //! Randomly scatter the photon and return the shell that was interacted with
+  void scatterPhoton( PhotonState& photon,
+		      ParticleBank& bank,
+		      SubshellType& shell_of_interaction ) const;
 };
 
 } // end MonteCarlo namespace

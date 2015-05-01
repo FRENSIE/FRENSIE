@@ -35,10 +35,10 @@ public:
      const Teuchos::Array<double>& subshell_occupancies,
      const Teuchos::Array<SubshellType>& subshell_order,
      const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
-     const ElectronMomentumDistArray& electron_momentum_dist_array );
+     const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Doppler broaden a compton line energy
-  double sampleDopplerBroadenedComptonLineEnergy( 
+  virtual double sampleDopplerBroadenedComptonLineEnergy( 
 				const double incoming_energy,
 				const double scattering_angle_cosine,
 				SubshellType& shell_of_interaction ) const = 0;
@@ -47,6 +47,13 @@ public:
   void scatterPhoton( PhotonState& photon,
 		      ParticleBank& bank,
 		      SubshellType& shell_of_interaction ) const;
+
+protected:
+
+  //! Sample the subshell that is interacted with
+  void sampleSubshell( SubshellType& shell_of_interaction,
+		       double& subshell_binding_energy,
+		       unsigned& compton_shell_index ) const;
 
 private:
 
@@ -62,10 +69,6 @@ private:
 
   // The Compton profile subshell converter
   Teuchos::RCP<ComptonProfileSubshellConverter> d_subshell_converter;
-
-  // The electron momentum dist array
-  // Note: Every electron shell should have a momentum distribution array
-  ElectronMomentumDistArray d_electron_momentum_distribution;
 };
 
 } // end MonteCarlo namespace

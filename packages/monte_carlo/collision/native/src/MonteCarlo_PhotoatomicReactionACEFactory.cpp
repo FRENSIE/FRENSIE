@@ -12,17 +12,16 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReactionACEFactory.hpp"
+#include "MonteCarlo_IncoherentPhotonScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_CoherentScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_IncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_CoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_PairProductionPhotoatomicReaction.hpp"
 #include "MonteCarlo_PhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_SubshellPhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_AbsorptionPhotoatomicReaction.hpp"
-#include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
-#include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_IncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_SubshellType.hpp"
-#include "Utility_TabularDistribution.hpp"
-#include "Utility_HydrogenFormFactorDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -52,124 +51,31 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
 			    incoherent_cross_section,
 			    threshold_energy_index );
   
-  // Create the scattering function
-  Teuchos::RCP<Utility::OneDDistribution> scattering_function;
-
-  if( raw_photoatom_data.extractAtomicNumber() != 1 )
-  {
-    Teuchos::ArrayView<const double> jince_block = 
-      raw_photoatom_data.extractJINCEBlock();
-
-    unsigned scatt_func_size = jince_block.size()/2;
-
-    Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ));
-  
-    // The stored recoil momemtum has units of inverse Angstroms - convert to
-    // inverse cm
-    for( unsigned i = 0; i < scatt_func_size; ++i )
-      recoil_momentum[i] *= 1e8;
-
-    // Log-Log interpolation is required but first recoil momentum may be 0.0
-    if( recoil_momentum.front() == 0.0 )
-      recoil_momentum.front() = std::numeric_limits<double>::min();
-    
-    Teuchos::Array<double> scattering_function_values( 
-			     jince_block( scatt_func_size, scatt_func_size ) );
-
-    // Log-Log interpolation is required but first value may be 0.0
-    if( scattering_function_values.front() == 0.0 )
-      scattering_function_values.front() = std::numeric_limits<double>::min();
-
-    scattering_function.reset(
-		     new Utility::TabularDistribution<Utility::LogLog>(
-						recoil_momentum,
-						scattering_function_values ) );
-  }
-  else // Hydrogen - use analytic scattering function
-    scattering_function.reset( new Utility::HydrogenFormFactorDistribution() );
+  // Create the scattering distribution
+  Teuchos::RCP<const IncoherentPhotonScatteringDistribution> distribution;
   
   if( use_doppler_broadening_data )
   {
-    // Create the subshell order array
-    Teuchos::ArrayView<const double> subshell_endf_designators = 
-      raw_photoatom_data.extractSubshellENDFDesignators();
-    
-    Teuchos::Array<SubshellType> subshell_order(
-					    subshell_endf_designators.size() );
-
-    for( unsigned i = 0; i < subshell_order.size(); ++i )
-    {
-      subshell_order[i] = convertENDFDesignatorToSubshellEnum(
-				      (unsigned)subshell_endf_designators[i] );
-    }
-    
-    // Create the Compton profile subshell converter
-    Teuchos::RCP<ComptonProfileSubshellConverter> converter;
-
-    ComptonProfileSubshellConverterFactory::createConverter(
-				    converter,
-				    raw_photoatom_data.extractAtomicNumber() );
-  
-    // Create the compton profile distributions
-    Teuchos::ArrayView<const double> lswd_block = 
-      raw_photoatom_data.extractLSWDBlock();
-    
-    Teuchos::ArrayView<const double> swd_block = 
-      raw_photoatom_data.extractSWDBlock();
-
-    Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
-      compton_profiles( lswd_block.size() );
-    
-    for( unsigned subshell = 0; subshell < lswd_block.size(); ++subshell )
-    {
-      unsigned subshell_index = lswd_block[subshell]; 
-
-      unsigned num_momentum_points = swd_block[subshell_index];
-
-      Teuchos::Array<double> half_momentum_grid( 
-			swd_block( subshell_index + 1, num_momentum_points ) );
-
-      Teuchos::Array<double> half_profile(
-                           swd_block( subshell_index + 1 + num_momentum_points,
-				      num_momentum_points ) );
-
-      MonteCarlo::convertMomentumGridToMeCUnits( half_momentum_grid.begin(),
-					       half_momentum_grid.end() );
-
-      MonteCarlo::convertProfileToInverseMeCUnits( half_profile.begin(),
-						   half_profile.end() );
-      
-      // Ignore interp parameter (always assume log-log inerpolation)
-      compton_profiles[subshell].reset(
-	 new Utility::TabularDistribution<Utility::LogLin>( half_momentum_grid,
-							    half_profile ) );
-    }
-    
-    // Create the incoherent reaction
-    incoherent_reaction.reset( 
-		  new IncoherentPhotoatomicReaction<Utility::LogLog>(
-			   energy_grid,
-			   incoherent_cross_section,
-			   threshold_energy_index,
-			   grid_searcher,
-			   scattering_function,
-			   raw_photoatom_data.extractSubshellBindingEnergies(),
-			   raw_photoatom_data.extractSubshellOccupancies(),
-			   subshell_order,
-			   converter,
-			   compton_profiles ) );
+    IncoherentPhotonScatteringDistributionACEFactory::createBasicDopplerBroadenedIncoherentDistribution( 
+							 raw_photoatom_data,
+							 distribution,
+							 3.0 );
   }
-  // Ignore Doppler broadening
   else
   {
-    incoherent_reaction.reset(
-		 new IncoherentPhotoatomicReaction<Utility::LogLog>(
-						    energy_grid,
-						    incoherent_cross_section,
-						    threshold_energy_index,
-						    grid_searcher,
-						    scattering_function ) );
+    IncoherentPhotonScatteringDistributionACEFactory::createIncoherentDistribution( 
+							 raw_photoatom_data,
+							 distribution,
+							 3.0 );
   }
+    
+  // Create the incoherent reaction
+  incoherent_reaction.reset(new IncoherentPhotoatomicReaction<Utility::LogLog>(
+						      energy_grid,
+			                              incoherent_cross_section,
+						      threshold_energy_index,
+						      grid_searcher,
+						      distribution ) );
 }
 
 // Create a coherent scattering photoatomic reaction
@@ -195,48 +101,20 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
 			    coherent_cross_section,
 			    threshold_energy_index );
 
-  // Create the atomic form factor
-  Teuchos::ArrayView<const double> jcohe_block = 
-    raw_photoatom_data.extractJCOHEBlock();
+  // Create the coherent scattering distribution
+  Teuchos::RCP<const CoherentScatteringDistribution> distribution;
 
-  unsigned form_factor_size = jcohe_block.size()/3;
-
-  Teuchos::Array<double> recoil_momentum_squared(
-					  jcohe_block( 0, form_factor_size ) );
-
-  Teuchos::Array<double> form_factor_squared(
-			 jcohe_block( 2*form_factor_size, form_factor_size ) );
-
-  // The stored recoil momentum has units of inverse Angstroms - convert to
-  // inverse cm^2
-  for( unsigned i = 0; i < form_factor_size; ++i )
-  {
-    recoil_momentum_squared[i] *= recoil_momentum_squared[i]*1e16;
-    
-    form_factor_squared[i] *= form_factor_squared[i];
-  }
-
-  // Log-Log interpolation is required but the last recoil momentum may be 0.0
-  if( recoil_momentum_squared.back() == 0.0 )
-    recoil_momentum_squared.back() = std::numeric_limits<double>::min();
-
-  // Log-Log interpolation is required but the last form factor value may be 0
-  if( form_factor_squared.back() == 0.0 )
-    form_factor_squared.back() = std::numeric_limits<double>::min();
-
-  Teuchos::RCP<Utility::TabularOneDDistribution> form_factor(
-			     new Utility::TabularDistribution<Utility::LogLog>(
-						      recoil_momentum_squared,
-						      form_factor_squared ) );
+  CoherentScatteringDistributionACEFactory::createEfficientCoherentDistribution(
+					                    raw_photoatom_data,
+							    distribution );  
 
   // Create the coherent reaction
-  coherent_reaction.reset(
-			  new CoherentPhotoatomicReaction<Utility::LogLog>(
+  coherent_reaction.reset(new CoherentPhotoatomicReaction<Utility::LogLog>(
 							energy_grid,
 							coherent_cross_section,
 							threshold_energy_index,
 							grid_searcher,
-							form_factor ) );
+							distribution ) );
 }
 
 // Create a pair production photoatomic reaction
