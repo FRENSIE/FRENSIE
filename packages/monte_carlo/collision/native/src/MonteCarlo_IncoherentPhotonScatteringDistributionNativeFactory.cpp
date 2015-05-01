@@ -11,10 +11,10 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_IncoherentPhotonScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_IncoherentPhotonScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_BasicDopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_AdvancedDopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
+#include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -37,7 +37,9 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistri
   // Create the scattering function
   Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
 
-  createScatteringFunction( scattering_function );
+  IncoherentPhotonScatteringDistributionNativeFactory::createScatteringFunction(
+							 raw_photoatom_data,
+							 scattering_function );
 
   incoherent_distribution.reset( new IncoherentPhotonScatteringDistribution( 
 					       scattering_function,
@@ -58,7 +60,9 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createAdvancedDopplerB
   // Create the scattering function
   Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
 
-  createScatteringFunction( scattering_function );
+  IncoherentPhotonScatteringDistributionNativeFactory::createScatteringFunction( 
+							 raw_photoatom_data,
+							 scattering_function );
 
   // Extract the binding energies, occupancies and order
   Teuchos::Array<double> subshell_binding_energies, subshell_occupancies;

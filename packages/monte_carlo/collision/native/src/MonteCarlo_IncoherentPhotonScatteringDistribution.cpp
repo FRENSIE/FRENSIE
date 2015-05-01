@@ -10,6 +10,7 @@
 #include <limits>
 
 // Boost Includes
+#include <boost/function.hpp>
 #include <boost/bind.hpp>
 
 // FRENSIE Includes
@@ -23,10 +24,10 @@
 namespace MonteCarlo{
 
 // Initialize static memeber data
-const double KleinNishinaPhotonScatteringDistribution::s_min_kahn_sampling_cutoff_energy = (1.0 + sqrt(3.0))*Utility::PhysicalConstants::electron_rest_mass_energy;
+const double IncoherentPhotonScatteringDistribution::s_min_kahn_sampling_cutoff_energy = (1.0 + sqrt(3.0))*Utility::PhysicalConstants::electron_rest_mass_energy;
 
 // Return the min cutoff energy
-double KleinNishinaPhotonScatteringDistribution::getMinKahnCutoffEnergy()
+double IncoherentPhotonScatteringDistribution::getMinKahnCutoffEnergy()
 {
   return s_min_kahn_sampling_cutoff_energy;
 }

@@ -294,13 +294,18 @@ int main( int argc, char** argv )
 		 
   }
 
+  // Create the incoherent scattering distributions
+  Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution>
+    basic_distribution( new MonteCarlo::IncoherentPhotonScatteringDistribution(
+						       scattering_function ) );
+
   // Create the reactions
   ace_basic_incoherent_reaction.reset(
 		new MonteCarlo::IncoherentPhotoatomicReaction<Utility::LogLog>(
 						    energy_grid,
 						    incoherent_cross_section,
 						    incoherent_threshold_index,
-						    scattering_function ) );
+						    basic_distribution ) );
 
   ace_detailed_incoherent_reaction.reset(
 		new MonteCarlo::IncoherentPhotoatomicReaction<Utility::LogLog>(

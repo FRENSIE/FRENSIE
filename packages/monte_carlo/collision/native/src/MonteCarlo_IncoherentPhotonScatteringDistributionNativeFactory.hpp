@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_IncoherentPhotonScatteringDistributionFactory.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 
 namespace MonteCarlo{

@@ -19,7 +19,7 @@
 namespace MonteCarlo{
 
 //! The coherent scattering distribution factory class that uses native data
-class CoherentScatteringDistributionNATIVEFactory : public CoherentScatteringDistributionFactory
+class CoherentScatteringDistributionNativeFactory : public CoherentScatteringDistributionFactory
 {
 
 public:
