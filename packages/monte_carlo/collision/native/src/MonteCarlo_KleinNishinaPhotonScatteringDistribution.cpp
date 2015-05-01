@@ -6,19 +6,20 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Std Lib Includes
+#include <limits>
+
 // FRENSIE Includes
 #include "MonteCarlo_KleinNishinaPhotonScatteringDistribution.hpp"
+#include "Utility_UniformDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-// Initialize static memeber data
-const double KleinNishinaPhotonScatteringDistribution::s_min_kahn_sampling_cutoff_energy = (1.0 + sqrt(3.0))*Utility::PhysicalConstants::electron_rest_mass_energy;
-
 // Default Constructor
 KleinNishinaPhotonScatteringDistribution::KleinNishinaPhotonScatteringDistribution()
-  : d_kahn_sampling_cutoff_energy( 3.0 )
+  : IncoherentPhotonScatteringDistribution( Teuchos::RCP<const Utility::OneDDistribution>( new Utility::UniformDistribution( 0.0, std::numeric_limits<double>::max(), 1.0 ) ), 3.0 )
 { /* ... */ }
 
 // Constructor
@@ -28,57 +29,9 @@ KleinNishinaPhotonScatteringDistribution::KleinNishinaPhotonScatteringDistributi
  */
 KleinNishinaPhotonScatteringDistribution::KleinNishinaPhotonScatteringDistribution(
 				     const double kahn_sampling_cutoff_energy )
-  : d_kahn_sampling_cutoff_energy( kahn_sampling_cutoff_energy )
+  : IncoherentPhotonScatteringDistribution( Teuchos::RCP<const Utility::OneDDistribution>( new Utility::UniformDistribution( 0.0, std::numeric_limits<double>::max(), 1.0 ) ), 3.0 )
 {
-  // Make sure the cutoff energy is valid
-  testPrecondition( kahn_sampling_cutoff_energy >= 
-		    s_min_kahn_sampling_cutoff_energy );
-}
-
-// Evaluate the distribution
-/*! The cross section (cm^2) differential in the scattering angle cosine
- * will be returned.
- */
-double KleinNishinaPhotonScatteringDistribution::evaluate( 
-			           const double incoming_energy,
-			           const double scattering_angle_cosine ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-  // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  const double mult = Utility::PhysicalConstants::pi*
-    Utility::PhysicalConstants::classical_electron_radius*
-    Utility::PhysicalConstants::classical_electron_radius;
-
-  const double outgoing_energy = incoming_energy/
-    (1.0 + incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy*
-     (1.0-scattering_angle_cosine) );
-
-  return mult*((outgoing_energy*outgoing_energy)/
-	    (incoming_energy*incoming_energy))*
-    (outgoing_energy/incoming_energy + incoming_energy/outgoing_energy - 1.0 +
-     scattering_angle_cosine*scattering_angle_cosine);
-}
-
-// Evaluate the PDF
-/*! The pdf differential in the scattering angle cosine
- * will be returned.
- */
-double KleinNishinaPhotonScatteringDistribution::evaluatePDF( 
-			           const double incoming_energy,
-			           const double scattering_angle_cosine ) const
-{
-  // Make sure the energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-  // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  return this->evaluate( incoming_energy, scattering_angle_cosine )/
-    this->evaluateIntegratedCrossSection( incoming_energy, 1e-6 );
+  
 }
 
 // Evaluate the integrated cross section (cm^2)

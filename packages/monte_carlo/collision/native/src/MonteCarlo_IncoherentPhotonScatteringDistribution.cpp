@@ -24,25 +24,25 @@
 
 namespace MonteCarlo{
 
+// Initialize static memeber data
+const double KleinNishinaPhotonScatteringDistribution::s_min_kahn_sampling_cutoff_energy = (1.0 + sqrt(3.0))*Utility::PhysicalConstants::electron_rest_mass_energy;
+
 // Constructor without doppler broadening
 /*! \details The recoil electron momentum (scattering function independent 
  * variable) should have units of 1/cm.
  */ 
 IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
-     const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function )
-  : d_scattering_function( scattering_function )
+      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
+      const double kahn_sampling_cutoff_energy )
+  : d_scattering_function( scattering_function ),
+    d_kahn_sampling_cutoff_energy( kahn_sampling_cutoff_energy )
 {
   // Make sure the scattering function is valid
   testPrecondition( !scattering_function.is_null() );
 
-  // Ignore Doppler broadening
-  d_doppler_broadening_func = boost::bind<double>( 
-		    &IncoherentPhotonScatteringDistribution::returnComptonLine,
-		    boost::cref( *this ),
-		    _1,
-		    _2,
-		    _3,
-		    _4 );
+  // Make sure the cutoff energy is valid
+  testPrecondition( kahn_sampling_cutoff_energy >= 
+		    s_min_kahn_sampling_cutoff_energy );
 
   // Force the quadrature kernel to throw exceptions
   Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
@@ -131,14 +131,22 @@ double IncoherentPhotonScatteringDistribution::evaluate(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
+  const double mult = Utility::PhysicalConstants::pi*
+    Utility::PhysicalConstants::classical_electron_radius*
+    Utility::PhysicalConstants::classical_electron_radius;
+
+  const double outgoing_energy = incoming_energy/
+    (1.0 + incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy*
+     (1.0-scattering_angle_cosine) );
+
   const double scattering_function_value = 
     this->evaluateScatteringFunction( incoming_energy, 
 				      scattering_angle_cosine );
 
-  return scattering_function_value*
-    KleinNishinaPhotonScatteringDistribution::evaluate( 
-						     incoming_energy,
-						     scattering_angle_cosine );
+  return mult*((outgoing_energy*outgoing_energy)/
+	    (incoming_energy*incoming_energy))*
+    (outgoing_energy/incoming_energy + incoming_energy/outgoing_energy - 1.0 +
+     scattering_angle_cosine*scattering_angle_cosine)*scattering_function_value;
 }
 
 // Evaluate the PDF
