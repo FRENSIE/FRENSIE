@@ -12,6 +12,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotoatomicReactionNativeFactory.hpp"
+#include "MonteCarlo_IncoherentPhotonScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_CoherentPhotonScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_IncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_CoherentPhotoatomicReaction.hpp"
@@ -19,11 +21,7 @@
 #include "MonteCarlo_PhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_SubshellPhotoelectricPhotoatomicReaction.hpp"
 #include "MonteCarlo_AbsorptionPhotoatomicReaction.hpp"
-#include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
 #include "MonteCarlo_SubshellType.hpp"
-#include "Utility_TabularDistribution.hpp"
-#include "Utility_HydrogenFormFactorDistribution.hpp"
-#include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -53,86 +51,32 @@ void PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
   unsigned threshold_index = 
     raw_photoatom_data.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex();
 
-  // Create the scattering function
-  Teuchos::RCP<Utility::OneDDistribution> scattering_function;
-  
-  if( raw_photoatom_data.getAtomicNumber() != 1 )
-  {
-    scattering_function.reset(
-       new Utility::TabularDistribution<Utility::LinLin>(
-	   raw_photoatom_data.getWallerHartreeScatteringFunctionMomentumGrid(),
-	   raw_photoatom_data.getWallerHartreeScatteringFunction() ) );
-  }
-  else
-    scattering_function.reset( new Utility::HydrogenFormFactorDistribution() );
-
-  // Extract the binding energies, occupancies and order
-  Teuchos::Array<double> subshell_binding_energies, subshell_occupancies;
-  Teuchos::Array<SubshellType> subshell_order;
-
-  std::set<unsigned>::const_iterator subshell_it = 
-    raw_photoatom_data.getSubshells().begin();
-
-  while( subshell_it != raw_photoatom_data.getSubshells().end() )
-  {
-    subshell_order.push_back( 
-			 convertENDFDesignatorToSubshellEnum( *subshell_it ) );
-
-    subshell_binding_energies.push_back( 
-		 raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ) );
-
-    subshell_occupancies.push_back(
-		     raw_photoatom_data.getSubshellOccupancy( *subshell_it ) );
-
-    ++subshell_it;
-  }
+  // Create the scattering distribution
+  Teuchos::RCP<const IncoherentPhotonScatteringDistribution> distribution;
 
   if( use_doppler_broadening_data )
   {
-    // Create the Compton profile subshell converter
-    Teuchos::RCP<ComptonProfileSubshellConverter> converter(
-				   new VoidComptonProfileSubshellConverter() );
-
-    // Create the compton profile distributions
-    Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
-      compton_profiles( subshell_order.size() );
-
-    Teuchos::Array<SubshellType> subshell_order_copy = subshell_order;
-    std::sort( subshell_order_copy.begin(), subshell_order_copy.end() );
-
-    for( unsigned i = 0; i < subshell_order_copy.size(); ++i )
-    {
-      compton_profiles[i].reset(
-      new Utility::TabularDistribution<Utility::LinLin>(
-      raw_photoatom_data.getComptonProfileMomentumGrid(subshell_order_copy[i]),
-      raw_photoatom_data.getComptonProfile( subshell_order_copy[i] ) ) );
-    }
-
-    // Create the incoherent reaction
-    incoherent_reaction.reset(
+    IncoherentPhotonScatteringDistributionNativeFactory::createAdvancedDopplerBroadeningIncoherentDistribution( 
+							    raw_photoatom_data,
+							    distribution,
+							    3.0 );
+  }
+  else
+  {
+    IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistribution( 
+							    raw_photoatom_data,
+							    distribution,
+							    3.0 );
+  }
+  
+  // Create the incoherent reaction
+  incoherent_reaction.reset(
 		      new IncoherentPhotoatomicReaction<Utility::LinLin,false>(
 						     energy_grid,
 						     incoherent_cross_section,
 						     threshold_index,
 						     grid_searcher,
-						     scattering_function,
-						     subshell_binding_energies,
-						     subshell_occupancies,
-						     subshell_order,
-						     converter,
-						     compton_profiles ) );
-  }
-  // Ignore Doppler broadening
-  else
-  {
-    incoherent_reaction.reset(
-		    new IncoherentPhotoatomicReaction<Utility::LinLin,false>(
-						      energy_grid,
-						      incoherent_cross_section,
-						      threshold_index,
-						      grid_searcher,
-						      scattering_function ) );
-  }
+						     distribution ) );
 }
 
 // Create the subshell incoherent photoatomic reactions
@@ -237,25 +181,13 @@ void PhotoatomicReactionNativeFactory::createCoherentReaction(
   unsigned threshold_index = 
     raw_photoatom_data.getWallerHartreeCoherentCrossSectionThresholdEnergyIndex();
 
-  // Create the form factor distribution
-  Teuchos::Array<double> recoil_momentum_squared = 
-    raw_photoatom_data.getWallerHartreeAtomicFormFactorMomentumGrid();
+  // Create the coherent scattering distribution
+  Teuchos::RCP<const CoherentScatteringDistribution> distribution;
 
-  Teuchos::Array<double> form_factor_squared = 
-    raw_photoatom_data.getWallerHartreeAtomicFormFactor();
-
-  for( unsigned i = 0; i < recoil_momentum_squared.size(); ++i )
-  {
-    recoil_momentum_squared[i] *= recoil_momentum_squared[i];
-
-    form_factor_squared[i] *= form_factor_squared[i];
-  }
-
-  Teuchos::RCP<Utility::TabularOneDDistribution> form_factor(
-			     new Utility::TabularDistribution<Utility::LinLin>(
-						       recoil_momentum_squared,
-						       form_factor_squared ) );
-
+  CoherentScatteringDistributionNativeFactory::createEfficientCoherentDistribution(
+					                    raw_photoatom_data,
+							    distribution ); 
+  
   // Create the coherent reaction
   coherent_reaction.reset(
 		        new CoherentPhotoatomicReaction<Utility::LinLin,false>(
@@ -263,7 +195,7 @@ void PhotoatomicReactionNativeFactory::createCoherentReaction(
 							coherent_cross_section,
 							threshold_index,
 							grid_searcher,
-							form_factor ) );
+							distribution );
 }
 
 // Create the pair production photoatomic reaction
