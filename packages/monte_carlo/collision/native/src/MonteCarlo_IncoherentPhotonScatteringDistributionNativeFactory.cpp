@@ -14,6 +14,8 @@
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionNativeFactory.hpp"
 #include "MonteCarlo_BasicDopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_AdvancedDopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
@@ -113,6 +115,59 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createAdvancedDopplerB
 			   converter,
 			   compton_profiles,
 			   kahn_sampling_cutoff_energy ) );
+}
+
+// Create a basic subshell incoherent distribution
+void IncoherentPhotonScatteringDistributionNativeFactory::createSubshellIncoherentDistribution(
+	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+	 const unsigned endf_subshell,
+	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	 incoherent_distribution,
+	 const double kahn_sampling_cutoff_energy )
+{
+  // Create the occupation number distribution
+  Teuchos::RCP<Utility::OneDDistribution> occupation_number(
+     new Utility::TabularDistribution<Utility::LinLin>( 
+	   raw_photoatom_data.getOccupationNumberMomentumGrid( endf_subshell ),
+	   raw_photoatom_data.getOccupationNumber( endf_subshell ) ) );
+
+  incoherent_distribution.reset( 
+	   new SubshellIncoherentPhotonScatteringDistribution(
+		  convertENDFDesignatorToSubshellEnum( endf_subshell ),
+		  raw_photoatom_data.getSubshellOccupancy( endf_subshell ),
+		  raw_photoatom_data.getSubshellBindingEnergy( endf_subshell ),
+		  occupation_number,
+		  kahn_sampling_cutoff_energy ) );
+}
+
+// Create a Doppler broadened subshell incoherent distribution
+void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadenedSubshellIncoherentDistribution(
+	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+	 const unsigned endf_subshell,
+	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	 incoherent_distribution,
+	 const double kahn_sampling_cutoff_energy )
+{
+  // Create the occupation number distribution
+  Teuchos::RCP<Utility::OneDDistribution> occupation_number(
+     new Utility::TabularDistribution<Utility::LinLin>( 
+	   raw_photoatom_data.getOccupationNumberMomentumGrid( endf_subshell ),
+	   raw_photoatom_data.getOccupationNumber( endf_subshell ) ) );
+
+  // Create the Compton profile
+  Teuchos::RCP<Utility::TabularOneDDistribution> compton_profile(
+       new Utility::TabularDistribution<Utility::LinLin>(
+	     raw_photoatom_data.getComptonProfileMomentumGrid( endf_subshell ),
+	     raw_photoatom_data.getComptonProfile( endf_subshell ) ) );
+
+  incoherent_distribution.reset( 
+	    new DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
+		  convertENDFDesignatorToSubshellEnum( endf_subshell ),
+		  raw_photoatom_data.getSubshellOccupancy( endf_subshell ),
+		  raw_photoatom_data.getSubshellBindingEnergy( endf_subshell ),
+		  occupation_number,
+		  compton_profile,
+		  kahn_sampling_cutoff_energy ) );
 }
 
 // Create the scattering function

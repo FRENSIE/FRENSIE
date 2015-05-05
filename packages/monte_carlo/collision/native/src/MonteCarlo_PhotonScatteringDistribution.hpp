@@ -9,20 +9,11 @@
 #ifndef MONTE_CARLO_PHOTON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
-// Std Lib Includes
-#include <limits>
-
-// Trilinos Includes
-#include <Teuchos_Array.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "MonteCarlo_ScatteringDistribution.hpp"
-#include "Utility_PhysicalConstants.hpp"
-#include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
 

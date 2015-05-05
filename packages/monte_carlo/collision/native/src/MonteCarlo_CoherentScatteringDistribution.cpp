@@ -33,6 +33,9 @@ CoherentScatteringDistribution::CoherentScatteringDistribution(
 }
 
 // Evaluate the distribution
+/*! The cross section (b) differential in the scattering angle cosine is
+ * returned from this function.
+ */
 double CoherentScatteringDistribution::evaluate( 
 			           const double incoming_energy,
 			           const double scattering_angle_cosine ) const
@@ -50,7 +53,7 @@ double CoherentScatteringDistribution::evaluate(
   const double form_factor_squared = 
     this->evaluateFormFactorSquared( incoming_energy, scattering_angle_cosine);
 
-  return mult*(1.0 + scattering_angle_cosine*scattering_angle_cosine)*
+  return mult*1e24*(1.0 + scattering_angle_cosine*scattering_angle_cosine)*
     form_factor_squared;    
 }
 

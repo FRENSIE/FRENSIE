@@ -245,15 +245,15 @@ void IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction(
 
     // Log-Log interpolation is required but first recoil momentum may be 0.0
     if( recoil_momentum.front() == 0.0 )
-      recoil_momentum.front() = std::numeric_limits<double>::min();
+      recoil_momentum.front() = 1e-30;
     
     Teuchos::Array<double> scattering_function_values( 
 			     jince_block( scatt_func_size, scatt_func_size ) );
 
     // Log-Log interpolation is required but first value may be 0.0
     if( scattering_function_values.front() == 0.0 )
-      scattering_function_values.front() = std::numeric_limits<double>::min();
-
+      scattering_function_values.front() = 1e-30;
+    
     scattering_function.reset(
 		     new Utility::TabularDistribution<Utility::LogLog>(
 						recoil_momentum,

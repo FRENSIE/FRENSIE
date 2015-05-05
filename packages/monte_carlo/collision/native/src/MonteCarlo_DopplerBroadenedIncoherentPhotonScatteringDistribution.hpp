@@ -15,11 +15,12 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_DopplerBroadenedComptonLineEnergyDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The Doppler broadenend incoherent photon scattering distribution class
-class DopplerBroadenedIncoherentPhotonScatteringDistribution : public IncoherentPhotonScatteringDistribution
+class DopplerBroadenedIncoherentPhotonScatteringDistribution : public IncoherentPhotonScatteringDistribution, public DopplerBroadenedComptonLineEnergyDistribution
 {
 
 public:
@@ -36,12 +37,6 @@ public:
      const Teuchos::Array<SubshellType>& subshell_order,
      const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
      const double kahn_sampling_cutoff_energy = 3.0 );
-
-  //! Doppler broaden a compton line energy
-  virtual double sampleDopplerBroadenedComptonLineEnergy( 
-				const double incoming_energy,
-				const double scattering_angle_cosine,
-				SubshellType& shell_of_interaction ) const = 0;
 
   //! Randomly scatter the photon and return the shell that was interacted with
   void scatterPhoton( PhotonState& photon,

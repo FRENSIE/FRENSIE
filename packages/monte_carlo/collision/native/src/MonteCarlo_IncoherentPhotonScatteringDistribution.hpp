@@ -68,9 +68,9 @@ public:
 			      SubshellType& shell_of_interaction ) const;
 
 protected:
-  
-  //! Evaluate the scattering function
-  double evaluateScatteringFunction( 
+
+  //! Calculate the scattering function argument
+  virtual double calculateScatteringFunctionArgument( 
 				  const double incoming_energy,
 				  const double scattering_angle_cosine ) const;
 
@@ -94,6 +94,11 @@ protected:
 			      
 private:
 
+  // Evaluate the scattering function 
+  double evaluateScatteringFunction( 
+				  const double incoming_energy,
+				  const double scattering_angle_cosine ) const;
+
   // The scattering function
   Teuchos::RCP<const Utility::OneDDistribution> d_scattering_function;
 
@@ -103,6 +108,64 @@ private:
   // The Kahn rejection sampling cutoff energy
   double d_kahn_sampling_cutoff_energy;
 };
+
+// Calculate the scattering function argument
+/*! \details The default implementation calculates the standard scattering
+ * function argument (arg = sin(theta/2)/lamda).
+ */ 
+inline double IncoherentPhotonScatteringDistribution::calculateScatteringFunctionArgument( 
+				  const double incoming_energy,
+				  const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+  
+  // The inverse wavelength of the photon (1/cm)
+  const double inverse_wavelength = incoming_energy/
+    (Utility::PhysicalConstants::planck_constant*
+     Utility::PhysicalConstants::speed_of_light);
+
+  // The scattering function argument
+  const double scattering_function_arg = 
+    sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength;
+
+  // Make sure the scattering function argument is valid
+  testPostcondition( scattering_function_arg >= 0.0 );
+    
+  return d_scattering_function->evaluate( scattering_function_arg );
+}
+
+// Evaluate the scattering function 
+inline double 
+IncoherentPhotonScatteringDistribution::evaluateScatteringFunction( 
+				   const double incoming_energy,
+				   const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+  
+  double scattering_function_arg = 
+    this->calculateScatteringFunctionArgument( incoming_energy,
+					       scattering_angle_cosine );
+
+  if( scattering_function_arg <
+      d_scattering_function->getLowerBoundOfIndepVar() );
+  scattering_function_arg = d_scattering_function->getLowerBoundOfIndepVar();
+
+  // Make sure the scattering function arg is valid
+  testPostcondition( scattering_function_arg >= 
+		     d_scattering_function->getLowerBoundOfIndepVar() );
+  testPostcondition( scattering_function_arg <=
+		     d_scattering_function->getUpperBoundOfIndepVar() );
+
+  return d_scattering_function->evaluate( scattering_function_arg );
+}
 
 } // end MonteCarlo namespace
 

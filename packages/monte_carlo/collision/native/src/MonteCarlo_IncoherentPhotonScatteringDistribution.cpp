@@ -53,8 +53,8 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
 }
 
 // Evaluate the distribution
-/*! The cross section (cm^2) differential in the inverse energy loss ratio is 
- * returned from this function. 
+/*! The cross section (b) differential in the scattering angle cosine is
+ * returned from this function.
  */
 double IncoherentPhotonScatteringDistribution::evaluate( 
 				   const double incoming_energy,
@@ -78,7 +78,7 @@ double IncoherentPhotonScatteringDistribution::evaluate(
     this->evaluateScatteringFunction( incoming_energy, 
 				      scattering_angle_cosine );
 
-  return mult*((outgoing_energy*outgoing_energy)/
+  return mult*1e24*((outgoing_energy*outgoing_energy)/
 	    (incoming_energy*incoming_energy))*
     (outgoing_energy/incoming_energy + incoming_energy/outgoing_energy - 1.0 +
      scattering_angle_cosine*scattering_angle_cosine)*scattering_function_value;
@@ -128,32 +128,6 @@ double IncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection(
   testPostcondition( integrated_cs > 0.0 );
 
   return integrated_cs;
-}
-
-// Evaluate the scattering function
-double IncoherentPhotonScatteringDistribution::evaluateScatteringFunction( 
-				   const double incoming_energy,
-				   const double scattering_angle_cosine ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-  // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  // The inverse wavelength of the photon (1/cm)
-  const double inverse_wavelength = incoming_energy/
-    (Utility::PhysicalConstants::planck_constant*
-     Utility::PhysicalConstants::speed_of_light);
-
-  // The scattering function argument
-  const double scattering_function_arg = 
-    sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength;
-
-  // Make sure the scattering function argument is valid
-  testPostcondition( scattering_function_arg >= 0.0 );
-    
-  return d_scattering_function->evaluate( scattering_function_arg );
 }
 
 // Sample an outgoing energy and direction from the distribution

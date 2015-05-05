@@ -45,8 +45,8 @@ AdvancedDopplerBroadenedIncoherentPhotonScatteringDistribution::AdvancedDopplerB
 		    subshell_binding_energies.size() );
   // Make sure the comptron profile array is valid
   testPrecondition( electron_momentum_dist_array.size() > 0 );
-  testPrecondition( electron_momentum_dist_array.front()->getLowerBoundOfIndepVar() == 0.0 );
-  testPrecondition( electron_momentum_dist_array.back()->getLowerBoundOfIndepVar() == 0.0 );
+  testPrecondition( electron_momentum_dist_array.front()->getLowerBoundOfIndepVar() == -1.0 );
+  testPrecondition( electron_momentum_dist_array.back()->getLowerBoundOfIndepVar() == -1.0 );
   testPrecondition( electron_momentum_dist_array.front()->getUpperBoundOfIndepVar() <= 1.0 );
   testPrecondition( electron_momentum_dist_array.back()->getUpperBoundOfIndepVar() <= 1.0 );
 }
