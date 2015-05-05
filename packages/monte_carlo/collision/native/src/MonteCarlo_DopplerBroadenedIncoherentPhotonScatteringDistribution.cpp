@@ -69,7 +69,7 @@ void DopplerBroadenedIncoherentPhotonScatteringDistribution::scatterPhoton(
 		shell_of_interaction );
 
   // Doppler broaden the compton line
-  double outgoing_energy = this->sampleDopplerBroadenedComptonLineEnergy(
+  double outgoing_energy = this->sampleDopplerBroadenedComptonLineEnergy( 
 						       photon.getEnergy(),
 						       scattering_angle_cosine,
 						       shell_of_interaction );

@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstSubshellIncoherentPhotonScatteringDistribution.cpp
+//! \file tstDopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.cpp
 //! \author Alex Robinson
 //! \brier  Subshell incoherent photon scattering distribution unit tests
 //!
@@ -18,7 +18,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
-#include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -39,10 +39,11 @@ Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution>
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   getSubshell )
 {
-  Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
+Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
     derived_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( distribution );
 
-  TEST_EQUALITY_CONST( derived_dist->getSubshell(), MonteCarlo::K_SUBSHELL);
+  TEST_EQUALITY_CONST( derived_dist->getSubshell(),
+		       MonteCarlo::K_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -52,13 +53,13 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 {
   Teuchos::RCP<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
     derived_dist = Teuchos::rcp_dynamic_cast<MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>( distribution );
-
-  TEST_EQUALITY_CONST( derived_dist->getBindingEnergy(), 
+  
+  TEST_EQUALITY_CONST( derived_dist->getBindingEnergy(),
 		       8.82899999999999935e-02 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a photon can be scattered incoherently without Doppler broadening
+// Check that a photon can be scattered incoherently with Doppler broadening
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   scatterPhoton )
 {
@@ -71,11 +72,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
   MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 4 );
+  std::vector<double> fake_stream( 5 );
   fake_stream[0] = 0.001; // sample from first term of koblinger's method
   fake_stream[1] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[2] = 1.0-1e-15; // accept x in occupation number rejection loop
-  fake_stream[3] = 0.5; // azimuthal_angle = pi
+  fake_stream[3] = 0.5; // select pz = 0.0
+  fake_stream[4] = 0.0; // azimuthal_angle = pi
 
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -94,12 +96,12 @@ TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 			  0.9996898054103247, 
 			  1e-15 );
   TEST_FLOATING_EQUALITY( bank.top()->getYDirection(), 
-			  -0.024905681252821114, 
+			  0.024905681252821114, 
 			  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
 }
@@ -160,11 +162,12 @@ int main( int argc, char** argv )
 
     // Create the subshell incoherent distributions
     distribution.reset(
-		new MonteCarlo::SubshellIncoherentPhotonScatteringDistribution(
+       new MonteCarlo::DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
 			  MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
 			  data_container.getSubshellOccupancy( 1 ),
 			  data_container.getSubshellBindingEnergy( 1 ),
 			  occupation_number_s1_dist,
+			  compton_profile_s1_dist,
 			  3.0 ) );
   }
 
@@ -187,5 +190,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstSubshellIncoherentPhotonScatteringDistribution.cpp
+// end tstDopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

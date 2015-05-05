@@ -13,16 +13,20 @@
 
 // Trilinos Includes
 #include <Teuchos_ParameterList.hpp>
+#include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_CommandLineProcessor.hpp>
 #include <Teuchos_FancyOStream.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_IncoherentPhotonScatteringDistributionNativeFactory.hpp"
+#include "MonteCarlo_IncoherentPhotonScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_PhotoatomFactory.hpp"
+#include "MonteCarlo_CrossSectionsXMLProperties.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
@@ -39,7 +43,7 @@ int main( int argc, char** argv )
   std::string dist_output_file( "dist.txt" );
 
   // The number of samples
-  unsigned samples;
+  int samples;
   
   // The cross section alias for scattering distributions
   std::string cross_section_alias;
@@ -50,11 +54,14 @@ int main( int argc, char** argv )
   // The initial photon energy
   double initial_photon_energy;
 
-  // Use the impulse approximation
-  bool use_impulse_approx = false;
+  // The energy range
+  std::string energy_range;
 
-  sample_isd_clp.setDocString( "sample from a distribution and output the"
-			       "results\n" );
+  // The subshell
+  int subshell = 0;
+
+  sample_isd_clp.setDocString( "sample from a distribution and output "
+			       "the results\n" );
   sample_isd_clp.setOption( "s",
 			    &samples,
 			    "The number of samples",
@@ -65,25 +72,28 @@ int main( int argc, char** argv )
 			    true );
   sample_isd_clp.setOption( "cs_dir",
 			    &cross_section_directory,
-			    "The directory containing the desired cross "
-			    "section tables",
+			    "The directory containing the desired "
+			    "cross section tables",
 			    true );
   sample_isd_clp.setOption( "e",
 			    &initial_photon_energy,
 			    "The initial photon energy",
 			    true );
+  // sampe_isd_clp.setOption( "energies",
+  // 				   &energies,
+  // 				   "The energies that will be used to "
+  // 				   "calculate efficiencies" );
+  sample_isd_clp.setOption( "subshell",
+			    &subshell,
+			    "The subshell of interest" );
   sample_isd_clp.setOption( "sofile",
 			    &sample_output_file,
-			    "The output file where the samples will be "
-			    "output" );
+			    "The output file where the samples will be"
+			    " output" );
   sample_isd_clp.setOption( "dofile",
 			    &dist_output_file,
-			    "The output file where the distribution pdf will "
-			    "be output" );
-  // sample_isd_clp.setOption( "impulse_approx",
-  // 			    "waller_hartree",
-  // 			    &use_impulse_approx,
-  // 			    "Use the impulse approximation?" );
+			    "The output file where the distribution "
+			    "pdf will be output" );
   
   // Parse the command line
   Teuchos::CommandLineProcessor::EParseCommandLineReturn
@@ -111,68 +121,148 @@ int main( int argc, char** argv )
     Teuchos::RCP<Teuchos::ParameterList> cross_sections_table_info = 
       Teuchos::getParametersFromXmlFile( cross_sections_xml_file );
     
-    Teuchos::RCP<MonteCarlo::AtomicRelaxationFactory> relax_factory;
+    std::string photoatom_file_path, photoatom_file_type, photoatom_table_name;
+    int photoatom_file_start_line;
+    double atomic_weight;
 
-    MonteCarlo::PhotoatomFactory factory( cross_sections_xml_directory,
-					  cross_sections_table_info,
-					  photoatom_aliases,
-					  relax_factory,
-					  1,
-					  use_impulse_approx,
-					  false,
-					  false,
-					  false );
+    MonteCarlo::CrossSectionsXMLProperties::extractInfoFromPhotoatomTableInfoParameterList(
+						  cross_section_directory,
+						  cross_section_alias,
+						  *cross_sections_table_info,
+						  photoatom_file_path,
+						  photoatom_file_type,
+						  photoatom_table_name,
+						  photoatom_file_start_line,
+						  atomic_weight );
 
-    boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
-      photoatom_map;
+    if( photoatom_file_type == MonteCarlo::CrossSectionsXMLProperties::ace_file )
+    {
+      std::cerr << "Loading ACE photoatomic cross section table "
+		<< photoatom_table_name << " (" << cross_section_alias 
+		<< ") ... ";
 
-    factory.createPhotoatomMap( photoatom_map );
+      if( subshell != 0 )
+      {
+	std::cerr << "Warning: impulse approximation data is not available in "
+		  << photoatom_table_name << std::endl;
+      }
 
-    MonteCarlo::PhotoatomCore core( photoatom_map.begin()->second->getCore() );
-
-    Teuchos::RCP<MonteCarlo::PhotoatomicReaction> incoherent_reaction = 
-      core.getScatteringReactions().find(
-		   MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION )->second;
-
-    // Make sure the total incoherent reaction is available
-    TEST_FOR_EXCEPTION( incoherent_reaction.is_null(),
-			std::logic_error,
-			"Error: the incoherent reaction is not available!" );
+      // Create the ACEFileHandler
+      Data::ACEFileHandler ace_file_handler( photoatom_file_path,
+					     photoatom_table_name,
+					     photoatom_file_start_line,
+					     true );
     
-    scattering_dist = incoherent_reaction->getScatteringDistribution();
+      // Create the XSS data extractor
+      Data::XSSEPRDataExtractor xss_data_extractor( 
+					 ace_file_handler.getTableNXSArray(),
+					 ace_file_handler.getTableJXSArray(),
+					 ace_file_handler.getTableXSSArray() );
+
+      std::cerr << "done." << std::endl;
+
+      MonteCarlo::IncoherentPhotonScatteringDistributionACEFactory::createIncoherentDistribution(
+						            xss_data_extractor,
+							    scattering_dist,
+							    3.0 );
+    }
+    else if( photoatom_file_type == MonteCarlo::CrossSectionsXMLProperties::native_file )
+    {
+      std::cerr << "Loading native photoatomic cross section table "
+		<< photoatom_table_name << " ... ";
+
+      // Create the epr data container
+      Data::ElectronPhotonRelaxationDataContainer 
+	data_container( photoatom_file_path );
+
+      std::cerr << "done." << std::endl;
+
+      if( subshell == 0 )
+      {
+	MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistribution(
+							       data_container,
+							       scattering_dist,
+							       3.0 );
+      }
+      else if( data_container.getSubshells().count( subshell ) )
+      {
+	MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createSubshellIncoherentDistribution(
+							       data_container,
+							       subshell,
+							       scattering_dist,
+							       3.0 );
+      }
+      else
+      {
+	THROW_EXCEPTION( std::runtime_error,
+			 "Error: the requested subshell ( " << subshell <<
+			 ") does not exist!" );
+      }
+    }
+    else
+    {
+      THROW_EXCEPTION( std::logic_error,
+		       "Error: photoatomic file type " 
+		       << photoatom_file_type <<
+		       " is not supported!" );
+    }
   }
+
+  // Initialize the random number generator
+  Utility::RandomNumberGenerator::createStreams();
 
   // Make the requested number of samples
   unsigned trials = 0u;
-  MonteCarlo::PhotonState photon( 0 );
-  MonteCarlo::ParticleBank bank;
-  MonteCarlo::SubshellType shell_of_interaction;
   std::vector<double> sampled_cosines( samples );
+  double outgoing_energy, scattering_angle_cosine;
+  MonteCarlo::SubshellType sampled_subshell;
   double start_time, end_time;
   
   start_time = Utility::GlobalOpenMPSession::getTime();
   
   for( unsigned i = 0; i < samples; ++i )
   {
-    photon.setEnergy( initial_photon_energy );
-    photon.setDirection( 0.0, 0.0, 1.0 );
+    scattering_dist->sampleAndRecordTrials( initial_photon_energy,
+					    outgoing_energy,
+					    scattering_angle_cosine,
+					    sampled_subshell,
+					    trials );
 
-    scattering_dist->scatterPhoton(photon, bank, shell_of_interaction, trials);
-
-    sampled_energies[i] = photon.getEnergy();
+    sampled_cosines[i] = scattering_angle_cosine;
   }
   
   end_time = Utility::GlobalOpenMPSession::getTime();
   
   // Print the efficiency and timing data
+  std::cout << "# Energy Efficiency Timing" << std::endl;
   std::cout.precision( 18 );
-  std::cout << "Photon Energy: " << initial_photon_energy << std::endl;
-  std::cout << "Efficiency: " << samples/(double)trials << std::endl;
-  std::cout << "Timing (" << samples << " samples): " 
+  std::cout << initial_photon_energy << " " 
+	    << samples/(double)trials << " "
 	    << end_time - start_time << std::endl;
 
-  // 
+  // Output the sampled data
+  std::ofstream sofile( sample_output_file.c_str() );
+  std::ofstream dofile( dist_output_file.c_str() );
+  
+  sofile.precision( 18 );
+  dofile.precision( 18 );
 
+  for( unsigned i = 0; i < samples; ++i )
+    sofile << sampled_cosines[i] << std::endl;
+  
+  for( unsigned i = 0; i <= 1e3; ++i )
+  {
+    double scattering_angle_cosine = -1.0 + 2.0*i/1e3;
+    
+    dofile << scattering_angle_cosine << " "
+	   << scattering_dist->evaluatePDF( initial_photon_energy,
+					    scattering_angle_cosine )
+	   << std::endl;
+  }
+
+  sofile.close();
+  dofile.close();
+  
   return 0;
 }
 

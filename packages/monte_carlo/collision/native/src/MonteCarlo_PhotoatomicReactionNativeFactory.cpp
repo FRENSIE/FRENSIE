@@ -115,45 +115,38 @@ void PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
     unsigned subshell_threshold_index = 
       raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(*subshell_it);
 
-    // Create the occupation number distribution
-    Teuchos::RCP<Utility::OneDDistribution> occupation_number(
-       new Utility::TabularDistribution<Utility::LinLin>( 
-	    raw_photoatom_data.getOccupationNumberMomentumGrid( *subshell_it ),
-	    raw_photoatom_data.getOccupationNumber( *subshell_it ) ) );
-
+    // Create the subshell incoherent distribution
+    Teuchos::RCP<const IncoherentPhotonScatteringDistribution> 
+      base_distribution;
+   
     if( use_doppler_broadening_data )
     {
-      // Create the Compton profile
-      Teuchos::RCP<Utility::TabularOneDDistribution> compton_profile(
-	new Utility::TabularDistribution<Utility::LinLin>(
-	      raw_photoatom_data.getComptonProfileMomentumGrid( *subshell_it ),
-	      raw_photoatom_data.getComptonProfile( *subshell_it ) ) );
-
-      // Create the subshell incoherent reaction
-      subshell_incoherent_reaction.reset(
-	      new SubshellIncoherentPhotoatomicReaction<Utility::LinLin,false>(
-		   energy_grid,
-		   subshell_incoherent_cross_section,
-		   subshell_threshold_index,
-		   grid_searcher,
-		   convertENDFDesignatorToSubshellEnum( *subshell_it ),
-		   raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ),
-		   occupation_number,
-		   compton_profile ) );
+      IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadenedSubshellIncoherentDistribution(
+							    raw_photoatom_data,
+							    *subshell_it,
+							    base_distribution,
+							    3.0 );
     }
     // Ignore Doppler broadening
     else
     {
-      subshell_incoherent_reaction.reset(
-	      new SubshellIncoherentPhotoatomicReaction<Utility::LinLin,false>(
+      IncoherentPhotonScatteringDistributionNativeFactory::createSubshellIncoherentDistribution( 
+						            raw_photoatom_data,
+							    *subshell_it,
+							    base_distribution,
+							    3.0 );
+    }
+
+    Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution> 
+      distribution = Teuchos::rcp_dynamic_cast<const SubshellIncoherentPhotonScatteringDistribution>( base_distribution );
+
+    subshell_incoherent_reaction.reset(
+	   new SubshellIncoherentPhotoatomicReaction<Utility::LinLin,false>(
 		   energy_grid,
 		   subshell_incoherent_cross_section,
 		   subshell_threshold_index,
 		   grid_searcher,
-		   convertENDFDesignatorToSubshellEnum( *subshell_it ),
-		   raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ),
-		   occupation_number ) );
-    }
+		   distribution ) );
 
     subshell_incoherent_reactions.push_back( subshell_incoherent_reaction );
 

@@ -41,12 +41,33 @@ public:
 	 incoherent_distribution,
 	 const double kahn_sampling_cutoff_energy );
 
+  //! Create a basic subshell incoherent distribution
+  static void createSubshellIncoherentDistribution(
+	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+	 const unsigned endf_subshell,
+	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	 incoherent_distribution,
+	 const double kahn_sampling_cutoff_energy );
+
+  //! Create a Doppler broadened subshell incoherent distribution
+  static void createDopplerBroadenedSubshellIncoherentDistribution(
+	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+	 const unsigned endf_subshell,
+	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	 incoherent_distribution,
+	 const double kahn_sampling_cutoff_energy );
+
 protected:
 
   //! Create the scattering function
   static void createScatteringFunction( 
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<const Utility::OneDDistribution>& scattering_function );
+
+  //! Create the occupation number distribution
+  static void createOccupationNumberDistribution(
+	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+	 Teuchos::RCP<const Utility::OneDDistribution>& occupation_number );
 };
 
 } // end MonteCarlo namespace
