@@ -22,6 +22,8 @@ HydrogenFormFactorDistribution::HydrogenFormFactorDistribution()
 { /* ... */ }
 
 // Evaluate the distribution
+/*! \details The independent variable must have units of 1/cm.
+ */
 double HydrogenFormFactorDistribution::evaluate( 
 					   const double indep_var_value ) const
 {
@@ -31,11 +33,12 @@ double HydrogenFormFactorDistribution::evaluate(
   
   if( indep_var_value >= 0.0 )
   {
-    double arg = 1.0 + PhysicalConstants::inverse_fine_structure_constant*
-      PhysicalConstants::inverse_fine_structure_constant*
-      indep_var_value*indep_var_value*1e-16/2.0;
+    double arg_1 = PhysicalConstants::inverse_fine_structure_constant*
+      indep_var_value*1e-8;
+    
+    double arg_2 = 1.0 + arg_1*arg_1/2.0;
 
-    return 1 - 1.0/(arg*arg*arg*arg);
+    return 1.0 - 1.0/(arg_2*arg_2*arg_2*arg_2);
   }
   else
     return 0.0;

@@ -99,7 +99,7 @@ double IncoherentPhotonScatteringDistribution::evaluatePDF(
     this->evaluateIntegratedCrossSection( incoming_energy, 1e-3 );
 }
 
-// Evaluate the integrated cross section (cm^2)
+// Evaluate the integrated cross section (b)
 double IncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection( 
 						 const double incoming_energy,
 						 const double precision ) const

@@ -20,7 +20,6 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_HydrogenFormFactorDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -175,15 +174,10 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createScatteringFuncti
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<const Utility::OneDDistribution>& scattering_function )
 {
-  if( raw_photoatom_data.getAtomicNumber() != 1 )
-  {
-    scattering_function.reset(
+  scattering_function.reset(
        new Utility::TabularDistribution<Utility::LinLin>(
 	   raw_photoatom_data.getWallerHartreeScatteringFunctionMomentumGrid(),
 	   raw_photoatom_data.getWallerHartreeScatteringFunction() ) );
-  }
-  else
-    scattering_function.reset( new Utility::HydrogenFormFactorDistribution() );
 }
 
 } // end MonteCarlo namespace

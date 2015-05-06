@@ -27,7 +27,7 @@ public:
   virtual ~ThompsonScatteringDistribution()
   { /* ... */ }
 
-  //! Evaluate the integrated cross section (cm^2)
+  //! Evaluate the integrated cross section (b)
   double evaluateIntegratedCrossSection( const double incoming_energy,
 					 const double precision ) const;
 

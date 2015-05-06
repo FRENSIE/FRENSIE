@@ -22,7 +22,7 @@ ThompsonScatteringDistribution::ThompsonScatteringDistribution()
   : CoherentScatteringDistribution( Teuchos::RCP<const Utility::TabularOneDDistribution>( new Utility::UniformDistribution( 0.0, std::numeric_limits<double>::max(), 1.0 ) ) )
 { /* ... */ }
 
-// Evaluate the integrated cross section (cm^2)
+// Evaluate the integrated cross section (b)
 double ThompsonScatteringDistribution::evaluateIntegratedCrossSection(
 						 const double incoming_energy,
 						 const double precision ) const
@@ -30,7 +30,7 @@ double ThompsonScatteringDistribution::evaluateIntegratedCrossSection(
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
 
-  return (8.0/3.0)*Utility::PhysicalConstants::pi*
+  return (8.0/3.0)*1e24*Utility::PhysicalConstants::pi*
     Utility::PhysicalConstants::classical_electron_radius*
     Utility::PhysicalConstants::classical_electron_radius;
 }

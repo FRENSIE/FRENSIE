@@ -60,7 +60,7 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedIncoherentPhotonScatteringDistributio
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 -1.0 );
   
-  TEST_FLOATING_EQUALITY( dist_value, 7.575780417613796e-24, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist_value, 7.575780417613796, 1e-12 );
 
   dist_value = distribution->evaluate( 1.0, 1.0 );
   
@@ -68,11 +68,11 @@ TEUCHOS_UNIT_TEST( AdvancedDopplerBroadenedIncoherentPhotonScatteringDistributio
   
   dist_value = distribution->evaluate( 1.0, 0.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 5.369480917669441e-24, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist_value, 5.369480917669441, 1e-15 );
 
   dist_value = distribution->evaluate( 1.0, -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 4.3353499509629834e-24, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist_value, 4.3353499509629834, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -113,21 +113,21 @@ TEUCHOS_UNIT_TEST( DopplerBroadenedIncoherentPhotonScatteringDistribution,
   double cross_section = 
     distribution->evaluateIntegratedCrossSection(0.001, 1e-4);
 
-  TEST_FLOATING_EQUALITY( cross_section*1e24, 
+  TEST_FLOATING_EQUALITY( cross_section, 
 			  incoherent_cs->evaluate( 0.001 ),
 			  2e-3 );
 
   cross_section = 
     distribution->evaluateIntegratedCrossSection( 0.1, 1e-3 );
 
-  TEST_FLOATING_EQUALITY( cross_section*1e24, 
+  TEST_FLOATING_EQUALITY( cross_section, 
 			  incoherent_cs->evaluate( 0.1 ),
 			  1e-3 );
 
   cross_section = 
     distribution->evaluateIntegratedCrossSection(20.0, 1e-3);
 
-  TEST_FLOATING_EQUALITY( cross_section*1e24, 
+  TEST_FLOATING_EQUALITY( cross_section, 
 			  incoherent_cs->evaluate( 20.0 ),
 			  1e-3 );
 }

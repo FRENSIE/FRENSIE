@@ -18,7 +18,6 @@
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_HydrogenFormFactorDistribution.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -229,38 +228,25 @@ void IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction(
 	  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	  Teuchos::RCP<const Utility::OneDDistribution>& scattering_function )
 {
-  if( raw_photoatom_data.extractAtomicNumber() != 1 )
-  {
-    Teuchos::ArrayView<const double> jince_block = 
-      raw_photoatom_data.extractJINCEBlock();
-
-    unsigned scatt_func_size = jince_block.size()/2;
-
-    Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ));
+  Teuchos::ArrayView<const double> jince_block = 
+    raw_photoatom_data.extractJINCEBlock();
   
-    // The stored recoil momemtum has units of inverse Angstroms - convert to
-    // inverse cm
-    for( unsigned i = 0; i < scatt_func_size; ++i )
-      recoil_momentum[i] *= 1e8;
-
-    // Log-Log interpolation is required but first recoil momentum may be 0.0
-    if( recoil_momentum.front() == 0.0 )
-      recoil_momentum.front() = 1e-30;
-    
-    Teuchos::Array<double> scattering_function_values( 
+  unsigned scatt_func_size = jince_block.size()/2;
+  
+  Teuchos::Array<double> recoil_momentum( jince_block( 0, scatt_func_size ));
+  
+  // The stored recoil momemtum has units of inverse Angstroms - convert to
+  // inverse cm
+  for( unsigned i = 0; i < scatt_func_size; ++i )
+    recoil_momentum[i] *= 1e8;
+  
+  Teuchos::Array<double> scattering_function_values( 
 			     jince_block( scatt_func_size, scatt_func_size ) );
-
-    // Log-Log interpolation is required but first value may be 0.0
-    if( scattering_function_values.front() == 0.0 )
-      scattering_function_values.front() = 1e-30;
-    
-    scattering_function.reset(
-		     new Utility::TabularDistribution<Utility::LogLog>(
+  
+  scattering_function.reset(
+		     new Utility::TabularDistribution<Utility::LinLin>(
 						recoil_momentum,
 						scattering_function_values ) );
-  }
-  else // Hydrogen - use analytic scattering function
-    scattering_function.reset( new Utility::HydrogenFormFactorDistribution() );
 }
 
 } // end MonteCarlo namespace
