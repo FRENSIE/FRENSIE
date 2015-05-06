@@ -72,7 +72,7 @@ double CoherentScatteringDistribution::evaluatePDF(
     this->evaluateIntegratedCrossSection( incoming_energy, 1e-3 );
 }
 
-// Evaluate the integrated cross section (cm^2)
+// Evaluate the integrated cross section (b)
 double CoherentScatteringDistribution::evaluateIntegratedCrossSection( 
 					         const double incoming_energy,
 					         const double precision ) const

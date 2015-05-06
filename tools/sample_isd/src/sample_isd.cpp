@@ -94,6 +94,8 @@ int main( int argc, char** argv )
 			    &dist_output_file,
 			    "The output file where the distribution "
 			    "pdf will be output" );
+
+  sample_isd_clp.throwExceptions( false );
   
   // Parse the command line
   Teuchos::CommandLineProcessor::EParseCommandLineReturn
@@ -250,10 +252,19 @@ int main( int argc, char** argv )
   for( unsigned i = 0; i < samples; ++i )
     sofile << sampled_cosines[i] << std::endl;
   
+  for( unsigned i = 0; i < 1e3; ++i )
+  {
+    double scattering_angle_cosine = -1.0 + 1.9*i/1e3;
+    
+    dofile << scattering_angle_cosine << " "
+	   << scattering_dist->evaluatePDF( initial_photon_energy,
+					    scattering_angle_cosine )
+	   << std::endl;
+  }
   for( unsigned i = 0; i <= 1e3; ++i )
   {
-    double scattering_angle_cosine = -1.0 + 2.0*i/1e3;
-    
+    double scattering_angle_cosine = 0.9 + 0.1*i/1e3;
+
     dofile << scattering_angle_cosine << " "
 	   << scattering_dist->evaluatePDF( initial_photon_energy,
 					    scattering_angle_cosine )

@@ -45,7 +45,7 @@ public:
   virtual double evaluatePDF( const double incoming_energy,
 			      const double scattering_angle_cosine ) const;
 
-  //! Evaluate the integrated cross section (cm^2)
+  //! Evaluate the integrated cross section (b)
   virtual double evaluateIntegratedCrossSection( const double incoming_energy,
 						 const double precision) const;
 
@@ -135,7 +135,7 @@ inline double IncoherentPhotonScatteringDistribution::calculateScatteringFunctio
   // Make sure the scattering function argument is valid
   testPostcondition( scattering_function_arg >= 0.0 );
     
-  return d_scattering_function->evaluate( scattering_function_arg );
+  return scattering_function_arg;
 }
 
 // Evaluate the scattering function 
@@ -153,10 +153,6 @@ IncoherentPhotonScatteringDistribution::evaluateScatteringFunction(
   double scattering_function_arg = 
     this->calculateScatteringFunctionArgument( incoming_energy,
 					       scattering_angle_cosine );
-
-  if( scattering_function_arg <
-      d_scattering_function->getLowerBoundOfIndepVar() );
-  scattering_function_arg = d_scattering_function->getLowerBoundOfIndepVar();
 
   // Make sure the scattering function arg is valid
   testPostcondition( scattering_function_arg >= 

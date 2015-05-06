@@ -53,7 +53,7 @@ KleinNishinaPhotonScatteringDistribution::evaluateIntegratedCrossSection(
   
   const double term_3 = -(arg + alpha)/(arg*arg);
 
-  const double cross_section = 2.0*Utility::PhysicalConstants::pi*
+  const double cross_section = 2.0*1e24*Utility::PhysicalConstants::pi*
     Utility::PhysicalConstants::classical_electron_radius*
     Utility::PhysicalConstants::classical_electron_radius*
     (term_1 + term_2 + term_3);

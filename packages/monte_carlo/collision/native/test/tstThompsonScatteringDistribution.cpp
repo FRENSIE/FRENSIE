@@ -34,27 +34,27 @@ TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, evaluate )
 {
   double dist_value = distribution->evaluate( 0.1, 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 4.989344050883251e-25, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist_value, 4.989344050883251e-1, 1e-15 );
 
   dist_value = distribution->evaluate( 0.1, 0.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 2.4946720254416256e-25, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist_value, 2.4946720254416256e-1, 1e-15 );
 
   dist_value = distribution->evaluate( 0.1, -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 4.989344050883251e-25, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist_value, 4.989344050883251e-1, 1e-15 );
 
   dist_value = distribution->evaluate( 1.0, 1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 4.989344050883251e-25, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist_value, 4.989344050883251e-1, 1e-15 );
 
   dist_value = distribution->evaluate( 1.0, 0.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 2.4946720254416256e-25, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist_value, 2.4946720254416256e-1, 1e-15 );
 
   dist_value = distribution->evaluate( 1.0, -1.0 );
 
-  TEST_FLOATING_EQUALITY( dist_value, 4.989344050883251e-25, 1e-15 );
+  TEST_FLOATING_EQUALITY( dist_value, 4.989344050883251e-1, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -94,11 +94,11 @@ TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution,
   double cross_section = 
     distribution->evaluateIntegratedCrossSection( 0.1, 1e-16 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.652458734511002e-25, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.652458734511002e-1, 1e-15 );
 
   cross_section = distribution->evaluateIntegratedCrossSection( 1.0, 1e-16 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 6.652458734511002e-25, 1e-15 );
+  TEST_FLOATING_EQUALITY( cross_section, 6.652458734511002e-1, 1e-15 );
 }
 
 //---------------------------------------------------------------------------//
