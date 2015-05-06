@@ -154,6 +154,10 @@ IncoherentPhotonScatteringDistribution::evaluateScatteringFunction(
     this->calculateScatteringFunctionArgument( incoming_energy,
 					       scattering_angle_cosine );
 
+  if( scattering_function_arg >= 
+      d_scattering_function->getUpperBoundOfIndepVar() )
+    scattering_function_arg = d_scattering_function->getUpperBoundOfIndepVar();
+
   // Make sure the scattering function arg is valid
   testPostcondition( scattering_function_arg >= 
 		     d_scattering_function->getLowerBoundOfIndepVar() );
