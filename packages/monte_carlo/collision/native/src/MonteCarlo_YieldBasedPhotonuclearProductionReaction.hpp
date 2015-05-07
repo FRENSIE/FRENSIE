@@ -16,7 +16,7 @@ namespace MonteCarlo{
 
 //! The yield-based photonuclear reaction class
 template<typename OutgoingParticleType>
-class YieldBasedPhotonuclearReaction : public PhotonuclearReaction
+class YieldBasedPhotonuclearReaction : public PhotonuclearReaction<OutgoingParticleType>
 {
 
 public:

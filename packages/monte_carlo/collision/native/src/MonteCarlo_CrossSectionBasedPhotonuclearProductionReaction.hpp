@@ -10,13 +10,13 @@
 #define MONTE_CARLO_CROSS_SECTION_BASED_PHOTONUCLEAR_PRODUCTION_REACTION_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonuclearProductionReaction.hpp"
+#include "MonteCarlo_PhotonuclearReaction.hpp"
 
 namespace MonteCarlo{
 
 //! The cross section based photonuclear reaction class
 template<typename OutgoingParticleType>
-class CrossSectionBasedPhotonuclearProductionReaction
+class CrossSectionBasedPhotonuclearProductionReaction : public PhotonuclearReaction<OutgoingParticleType>
 {
 
 public:
