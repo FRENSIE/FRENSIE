@@ -165,20 +165,20 @@ TEUCHOS_UNIT_TEST( PhotonuclearReaction_total, getReactionType )
 TEUCHOS_UNIT_TEST( PhotonuclearReaction_total, getQValue )
 {
  
-  // TEST_EQUALITY_CONST( h2_photonuclear_reaction->getQValue(), 0 );
+   TEST_EQUALITY_CONST( h2_photonuclear_reaction->getQValue(), 0 );
 
-  //  TEST_EQUALITY_CONST( c12_photonuclear_reaction->getQValue(), 0 );
+   TEST_EQUALITY_CONST( c12_photonuclear_reaction->getQValue(), 0 );
 }
 
 //---------------------------------------------------------------------------//
 // Check that the threshold energy can be returned
 TEUCHOS_UNIT_TEST( PhotonuclearReaction_total, getThresholdEnergy )
 {
-  //TEST_EQUALITY_CONST( h2_photonuclear_reaction->getThresholdEnergy(), 
-  //		       2.2246 );
+  TEST_EQUALITY_CONST( h2_photonuclear_reaction->getThresholdEnergy(), 
+  		       2.2246 );
 
-// TEST_EQUALITY_CONST( c12_photonuclear_reaction->getThresholdEnergy(),
-  //                   7.366593 );
+  TEST_EQUALITY_CONST( c12_photonuclear_reaction->getThresholdEnergy(),
+                     7.366593 );
 }
 
 //---------------------------------------------------------------------------//
@@ -190,54 +190,54 @@ TEUCHOS_UNIT_TEST( PhotonuclearReaction_total, getCrossSection )
   double h2_cross_section =
     h2_photonuclear_reaction->getCrossSection( 2.2246 );
 
-  // TEST_EQUALITY_CONST( h2_cross_section , 0 );
+   TEST_EQUALITY_CONST( h2_cross_section , 0 );
 
-  // h2_cross_section = h2_photonuclear_reaction->getCrossSection( 2.4);
+   h2_cross_section = h2_photonuclear_reaction->getCrossSection( 2.4);
 
-  // TEST_EQUALITY_CONST( h2_cross_section , 8.9519e-4 );
+   TEST_EQUALITY_CONST( h2_cross_section , 8.9519e-4 );
 
-  // h2_cross_section = h2_photonuclear_reaction->getCrossSection( 2.6);
+   h2_cross_section = h2_photonuclear_reaction->getCrossSection( 2.6);
 
-  //TEST_EQUALITY_CONST( h2_cross_section , 1.1567e-3 );
+   TEST_EQUALITY_CONST( h2_cross_section , 1.1567e-3 );
 
-  // h2_cross_section = h2_photonuclear_reaction->getCrossSection( 20 );
+   h2_cross_section = h2_photonuclear_reaction->getCrossSection( 20 );
 
-  //TEST_EQUALITY_CONST( h2_cross_section , 5.9811e-4);
+   TEST_EQUALITY_CONST( h2_cross_section , 5.9811e-4);
 
-  // h2_cross_section = h2_photonuclear_reaction->getCrossSection( 25 );
+   h2_cross_section = h2_photonuclear_reaction->getCrossSection( 25 );
 
-  // TEST_EQUALITY_CONST( h2_cross_section , 4.3855e-4 );
+   TEST_EQUALITY_CONST( h2_cross_section , 4.3855e-4 );
 
-  //h2_cross_section = h2_photonuclear_reaction->getCrossSection( 30 );
+   h2_cross_section = h2_photonuclear_reaction->getCrossSection( 30 );
 
-  // TEST_EQUALITY_CONST( h2_cross_section , 3.549e-4 );
+   TEST_EQUALITY_CONST( h2_cross_section , 3.549e-4 );
 
 
   // C-12 CrossSection Test
   double c12_cross_section = 
     c12_photonuclear_reaction->getCrossSection( 7.336593);
 
-  // TEST_EQUALITY_CONST( c12_cross_section , 0 );
+   TEST_EQUALITY_CONST( c12_cross_section , 0 );
 
-  // c12_cross_section = c12_photonuclear_reaction->getCrossSection( 7.3666 );
+   c12_cross_section = c12_photonuclear_reaction->getCrossSection( 7.3666 );
 
-  //TEST_EQUALITY_CONST( c12_cross_section , 0 );
+   TEST_EQUALITY_CONST( c12_cross_section , 0 );
 
-  //c12_cross_section = c12_photonuclear_reaction->getCrossSection( 7.5 );
+   c12_cross_section = c12_photonuclear_reaction->getCrossSection( 7.5 );
 
-  //TEST_EQUALITY_CONST( c12_cross_section , 1.3019e-6 );
+   TEST_EQUALITY_CONST( c12_cross_section , 1.3019e-6 );
 
-  //c12_cross_section = c12_photonuclear_reaction->getCrossSection( 145 );
+   c12_cross_section = c12_photonuclear_reaction->getCrossSection( 145 );
 
-  //TEST_EQUALITY_CONST( c12_cross_section , 7.47069582e-4 );
+   TEST_EQUALITY_CONST( c12_cross_section , 7.47069582e-4 );
 
-  //c12_cross_section = c12_photonuclear_reaction->getCrossSection( 147.5 );
+   c12_cross_section = c12_photonuclear_reaction->getCrossSection( 147.5 );
 
-  //TEST_EQUALITY_CONST( c12_cross_section , 8.7044537e-4 );
+   TEST_EQUALITY_CONST( c12_cross_section , 8.7044537e-4 );
 
-  //c12_cross_section = c12_photonuclear_reaction->getCrossSection( 150 );
+   c12_cross_section = c12_photonuclear_reaction->getCrossSection( 150 );
 
-  //TEST_EQUALITY_CONST( c12_cross_section , 1.0447981e-3 );
+   TEST_EQUALITY_CONST( c12_cross_section , 1.0447981e-3 );
 
 }
 
