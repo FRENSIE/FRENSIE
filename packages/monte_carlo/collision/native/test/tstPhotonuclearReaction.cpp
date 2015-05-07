@@ -32,21 +32,16 @@ std::string c12_ace_table_name;
 Teuchos::RCP<Data::ACEFileHandler> h2_ace_file_handler;
 Teuchos::RCP<Data::XSSPhotonuclearDataExtractor> h2_xss_data_extractor;
 Teuchos::RCP<MonteCarlo::PhotonuclearReaction<MonteCarlo::PhotonState> > h2_photonuclear_reaction;
-Teuchos::RCP<MonteCalro::NuclearScatteringDistribution
-	     <MonteCarlo::PhotonState, MonteCarlo::PhotonState> > 
-             h2_scattering_distribution;
 
 Teuchos::RCP<Data::ACEFileHandler> c12_ace_file_handler;
 Teuchos::RCP<Data::XSSPhotonuclearDataExtractor> c12_xss_data_extractor;
 Teuchos::RCP<MonteCarlo::PhotonuclearReaction<MonteCarlo::NeutronState> > c12_photonuclear_reaction;
-Teuchos::RCP<MonteCalro::NuclearScatteringDistribution
-	     <MonteCarlo::PhotonState, MonteCarlo::NeutronState> > 
-             c12_scattering_distribution;
 
 //---------------------------------------------------------------------------//
 // Testing Structs.
 //---------------------------------------------------------------------------//
-class TestPhotonuclearReaction : public MonteCarlo::PhotonuclearReaction<MonteCarlo::PhotonState>
+template<typename OutgoingParticleType>
+class TestPhotonuclearReaction : public MonteCarlo::PhotonuclearReaction<OutgoingParticleType>
 {
 public:
   TestPhotonuclearReaction( 
@@ -55,9 +50,9 @@ public:
 		   const unsigned threshold_energy_index,
 	           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const Teuchos::ArrayRCP< NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >& 
+		   const Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::PhotonState,OutgoingParticleType> >& 
 		   outgoing_particle_distribution)
-    : MonteCarlo::PhotonuclearReaction<MonteCarlo::PhotonState,OutgoingParticleType>(
+    : MonteCarlo::PhotonuclearReaction<OutgoingParticleType>(
 			       reaction_type,
       			       q_value,
 			       threshold_energy_index,
@@ -69,13 +64,27 @@ public:
   ~TestPhotonuclearReaction()
   { /* ... */ }
   
-  unsigned getNumberOfEmittedPhotons( const double energy ) const
+  unsigned getNumberOfEmittedParticles( const double energy ) const
   { return 0u; }
 
-  unsigned getNumberOfEmittedNeutrons( const double energy) const
-  { return 0u; } 
-
   void react( MonteCarlo::PhotonState& photon, MonteCarlo::ParticleBank& bank ) const
+  { /* ... */ }
+};
+
+template<typename OutgoingParticleType>
+class TestScatteringDistribution : public MonteCarlo::NuclearScatteringDistribution<MonteCarlo::PhotonState,OutgoingParticleType>
+{
+public:
+  TestScatteringDistribution( const double atomic_weight_ratio )
+  : MonteCarlo::NuclearScatteringDistribution<MonteCarlo::PhotonState,OutgoingParticleType>( atomic_weight_ratio )
+  { /* ... */ }
+
+  ~TestScatteringDistribution()
+  { /* ... */ }
+
+  void scatterParticle( const MonteCarlo::PhotonState& incoming_neutron,
+			OutgoingParticleType& outgoing_neutron,
+			const double temperature ) const
   { /* ... */ }
 };
 
@@ -91,6 +100,9 @@ void initializeOutGammaReaction()
    new Data::XSSPhotonuclearDataExtractor( h2_ace_file_handler->getTableNXSArray(),
 				      h2_ace_file_handler->getTableJXSArray(),
 				      h2_ace_file_handler->getTableXSSArray()));
+  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution
+	     <MonteCarlo::PhotonState, MonteCarlo::PhotonState> > 
+    h2_scattering_distribution( new TestScatteringDistribution<MonteCarlo::PhotonState>( h2_ace_file_handler->getTableAtomicWeightRatio() ) );
    
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( h2_xss_data_extractor->extractESZBlock() );
@@ -98,13 +110,13 @@ void initializeOutGammaReaction()
   Teuchos::ArrayRCP<double> cross_section;
   cross_section.deepCopy( h2_xss_data_extractor->extractTOTBlock() );
 
-  h2_photonuclear_reaction.reset( new TestPhotonuclearReaction( 
+  h2_photonuclear_reaction.reset( new TestPhotonuclearReaction<MonteCarlo::PhotonState>( 
 			               MonteCarlo::GAMMA__ANYTHING_REACTION,
 				       0,
 				       0u,
 				       energy_grid,
 				       cross_section,
-				       h2_scattering_distribution& ) );
+				       h2_scattering_distribution ) );
 }
 
 void initializeOutNeutronReaction()
@@ -117,25 +129,28 @@ void initializeOutNeutronReaction()
   				      c12_ace_file_handler->getTableJXSArray(),
   				      c12_ace_file_handler->getTableXSSArray()));
    
+   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution
+	     <MonteCarlo::PhotonState, MonteCarlo::NeutronState> > 
+    c12_scattering_distribution( new TestScatteringDistribution<MonteCarlo::NeutronState>( c12_ace_file_handler->getTableAtomicWeightRatio() ) );
+   
   Teuchos::ArrayRCP<double> energy_grid;
    energy_grid.deepCopy( c12_xss_data_extractor->extractESZBlock() );
  
   Teuchos::ArrayRCP<double> cross_section;
   cross_section.deepCopy( c12_xss_data_extractor->extractTOTBlock() );
 
- c12_photonuclear_reaction.reset( new TestPhotonuclearReaction( 
+  c12_photonuclear_reaction.reset( new TestPhotonuclearReaction<MonteCarlo::NeutronState>( 
   			       MonteCarlo::GAMMA__N_EXCITED_STATE_0_REACTION,
   				       0,
   				       0u,
   				       energy_grid,
 			               cross_section,
-			               c12_scattering_distribution& ) );
+			               c12_scattering_distribution ) );
 }
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-
 // Check that the reaction type of an elastic reaction can be returned
 TEUCHOS_UNIT_TEST( PhotonuclearReaction_total, getReactionType )
 {
@@ -160,10 +175,10 @@ TEUCHOS_UNIT_TEST( PhotonuclearReaction_total, getQValue )
 TEUCHOS_UNIT_TEST( PhotonuclearReaction_total, getThresholdEnergy )
 {
   //TEST_EQUALITY_CONST( h2_photonuclear_reaction->getThresholdEnergy(), 
-		       2.2246 );
+  //		       2.2246 );
 
 // TEST_EQUALITY_CONST( c12_photonuclear_reaction->getThresholdEnergy(),
-                       7.366593 );
+  //                   7.366593 );
 }
 
 //---------------------------------------------------------------------------//
