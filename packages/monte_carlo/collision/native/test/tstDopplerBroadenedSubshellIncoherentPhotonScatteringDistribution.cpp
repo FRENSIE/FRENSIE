@@ -35,6 +35,86 @@ Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution>
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
+// Check that the distribution can be evaluated
+TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+		   evaluate )
+{
+  double dist_value = distribution->evaluate(
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 1.0 );
+  
+  TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
+
+  dist_value = distribution->evaluate( 
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 -1.0 );
+  
+  TEST_FLOATING_EQUALITY( dist_value, 0.18204031443868224, 1e-6 );
+
+  dist_value = distribution->evaluate( 1.0, 1.0 );
+  
+  TEST_FLOATING_EQUALITY( dist_value, 0.0, 1e-15 );
+  
+  dist_value = distribution->evaluate( 1.0, 0.0 );
+
+  TEST_FLOATING_EQUALITY( dist_value, 0.1309675807668618, 1e-15 );
+
+  dist_value = distribution->evaluate( 1.0, -1.0 );
+
+  TEST_FLOATING_EQUALITY( dist_value, 0.10574024270641422, 1e-15 );	
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution pdf can be evaluated
+TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+		   evaluatePDF )
+{
+  double pdf_value = distribution->evaluatePDF( 
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 1.0 );
+  
+  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-15 );
+
+  pdf_value = distribution->evaluatePDF( 
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 -1.0 );
+  
+  TEST_FLOATING_EQUALITY( pdf_value, 0.23410347913716015, 1e-6 );
+
+  pdf_value = distribution->evaluatePDF( 1.0, 1.0 );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 0.0, 1e-15 );
+
+  pdf_value = distribution->evaluatePDF( 1.0, 0.0 );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 0.18052763492462426, 1e-15 );
+
+  pdf_value = distribution->evaluatePDF( 1.0, -1.0 );
+
+  TEST_FLOATING_EQUALITY( pdf_value, 0.14575390199904137, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the integrated cross section can be evaluated
+TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
+		   evaluateIntegratedCrossSection )
+{
+  double cross_section = distribution->evaluateIntegratedCrossSection( 
+			 Utility::PhysicalConstants::electron_rest_mass_energy,
+			 1e-3 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 0.777606189833794259, 1e-15 );
+
+  cross_section = distribution->evaluateIntegratedCrossSection( 1.0, 1e-3 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 0.725471093783202292, 1e-15 );
+
+  cross_section = distribution->evaluateIntegratedCrossSection( 20.0, 1e-3 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 0.120620123031366933, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the subshell can be returned
 TEUCHOS_UNIT_TEST( SubshellIncoherentPhotonScatteringDistribution,
 		   getSubshell )
