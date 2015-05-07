@@ -101,7 +101,7 @@ private:
  * at the desired energy, this function should be overridden in the derived
  * class. It will be used in implicit multiplication weighting games.
  */
-tempate<typename OutgoingParticleType>
+template<typename OutgoingParticleType>
 inline double PhotonuclearReaction<OutgoingParticleType>::getAverageNumberOfEmittedParticles(
 						     const double energy) const
 {
@@ -109,7 +109,7 @@ inline double PhotonuclearReaction<OutgoingParticleType>::getAverageNumberOfEmit
 }
 
 // Return the threshold energy
-tempate<typename OutgoingParticleType>
+template<typename OutgoingParticleType>
 inline double PhotonuclearReaction<OutgoingParticleType>::getThresholdEnergy() const
 {
   return d_incoming_energy_grid[d_threshold_energy_index];
