@@ -18,6 +18,8 @@
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_PhotonState.hpp"
 #include "MonteCarlo_NuclearScatteringDistribution.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
@@ -39,9 +41,7 @@ public:
       		   const double q_value,
 		   const unsigned threshold_energy_index,
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-                   const Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >&
-		   outgoing_particle_distribution );
+		   const Teuchos::ArrayRCP<const double>& cross_section );
 
   //! Destructor
   virtual ~PhotonuclearReaction()
@@ -90,10 +90,6 @@ private:
 
   // The cross section values evaluated on the incoming energy grid
   Teuchos::ArrayRCP<const double> d_cross_section;
-
-  // The outgoing particle distribution (energy and angle)
-  Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >
-  d_outgoing_particle_distribution;
 };
 
 // Return the average number of particles emitted from the rxn
@@ -113,6 +109,25 @@ template<typename OutgoingParticleType>
 inline double PhotonuclearReaction<OutgoingParticleType>::getThresholdEnergy() const
 {
   return d_incoming_energy_grid[d_threshold_energy_index];
+}
+
+// Return an integer number of emitted particles given a non-integer value
+template<typename OutgoingParticleType>
+unsigned PhotonuclearReaction<OutgoingParticleType>::sampleNumberOfEmittedParticles(
+				      const double average_multiplicity ) const
+{
+  // Make sure the average multiplicity is valid
+  testPrecondition( average_multiplicity >= 0.0 );
+
+  double floor_multiplicity;
+  double round_down_prob = 1.0 - modf( average_multiplicity,
+				       &floor_multiplicity );
+
+  if( Utility::RandomNumberGenerator::getRandomNumber<double>() <
+      round_down_prob )
+    return (unsigned)floor_multiplicity;
+  else
+    return (unsigned)floor_multiplicity + 1u;
 }
 
 } // end MonteCarlo namespace

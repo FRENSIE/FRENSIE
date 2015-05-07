@@ -34,17 +34,14 @@ public:
 		   outgoing_particle_distribution );
 
   //! Destructor
-  ~YieldBasedPhotonuclearProductionReaction()
+  virtual ~YieldBasedPhotonuclearProductionReaction()
   { /* ... */ }
-
-  //! Return the cross section at a given energy
-  double getCrossSection( const double energy ) const;
   
   //! Return the number of particle emitted from the rxn at the given energy
-  unsigned getNumberOfEmittedParticles( const double energy) const;
+  unsigned getNumberOfEmittedParticles( const double energy ) const;
 
   //! Return the average number of particles emitted from the rxn
-  double getAverageNumberOfEmittedParticles(const double energy) const;
+  double getAverageNumberOfEmittedParticles( const double energy ) const;
 
   //! Simulate the reaction
   void react( PhotonState& photon, ParticleBank& bank ) const;
@@ -56,6 +53,10 @@ private:
 
   // The photon production yield
   Teuchos::ArrayRCP<const double> d_yield;
+
+  // The outgoing particle distribution (energy and angle)
+  Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >
+  d_outgoing_particle_distribution;
 };
 
 } // end MonteCarlo namespace
