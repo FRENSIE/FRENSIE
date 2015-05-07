@@ -1,13 +1,16 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo_CrossSectionBasedPhotonuclearProductionReaction.hpp
-//! \author Alex Robinson
-//! \brief  The cross section based photonuclear production reaction
+//! \author Alex Robinson, Ryan Pease
+//! \brief  The cross section based photonuclear production reaction decl.
 //!
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_CROSS_SECTION_BASED_PHOTONUCLEAR_PRODUCTION_REACTION_HPP
 #define MONTE_CARLO_CROSS_SECTION_BASED_PHOTONUCLEAR_PRODUCTION_REACTION_HPP
+
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonuclearReaction.hpp"
@@ -29,21 +32,18 @@ public:
 		   const unsigned threshold_energy_index,
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 		   const Teuchos::ArrayRCP<const double>& cross_section,
-                   const Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >&
-		   outgoing_particle_distribution );
+                   const Teuchos::Array<Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >&
+		   outgoing_particle_distributions );
 
   //! Destructor
   ~CrossSectionBasedPhotonuclearProductionReaction()
   { /* ... */ }
 
-  //! Return the photon production id
-  unsigned getPhotonProductionId() const;
+  //! Return the photon production ids
+  const Teuchos::Array<unsigned>& getPhotonProductionIds() const;
 
   //! Return the number of particle emitted from the rxn at the given energy
   unsigned getNumberOfEmittedParticles( const double energy) const;
-
-  //! Return the average number of particles emitted from the rxn
-  double getAverageNumberOfEmittedParticles(const double energy) const;
 
   //! Simulate the reaction
   void react( PhotonState& photon, ParticleBank& bank ) const;
@@ -51,7 +51,11 @@ public:
 private:
   
   // The photon production id
-  unsigned d_photon_production_id;
+  Teuchos::Array<unsigned> d_photon_production_ids;
+
+  // The outgoing particle distribution (energy and angle)
+  Teuchos::Array<Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> > >
+  d_outgoing_particle_distributions;
 }; 
 
 } // end MonteCarlo namespace

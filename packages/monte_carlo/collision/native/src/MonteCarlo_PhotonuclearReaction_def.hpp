@@ -24,15 +24,12 @@ PhotonuclearReaction<OutgoingParticleType>::PhotonuclearReaction(
 		   const double q_value,
 		   const unsigned threshold_energy_index,
 		   const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const Teuchos::RCP<const NuclearScatteringDistribution<PhotonState,OutgoingParticleType> >&
-		   outgoing_particle_distribution )
+		   const Teuchos::ArrayRCP<const double>& cross_section )
     : d_reaction_type( reaction_type),
       d_q_value( q_value),
       d_threshold_energy_index( threshold_energy_index),
       d_incoming_energy_grid( incoming_energy_grid),
-      d_cross_section( cross_section),
-      d_outgoing_particle_distribution( outgoing_particle_distribution )
+      d_cross_section( cross_section)
 {
   // Make sure the Q value is valid
   testPrecondition( !ST::isnaninf( q_value ) );
@@ -70,6 +67,9 @@ template<typename OutgoingParticleType>
 double PhotonuclearReaction<OutgoingParticleType>::getCrossSection( 
 						    const double energy ) const
 {
+  // Make sure the energy is valid
+  testPrecondition( energy > 0.0 );
+  
   if( energy >= this->getThresholdEnergy() &&
       energy < d_incoming_energy_grid[d_incoming_energy_grid.size()-1] )
   {

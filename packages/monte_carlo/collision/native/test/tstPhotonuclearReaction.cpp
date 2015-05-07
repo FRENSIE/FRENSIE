@@ -49,16 +49,13 @@ public:
 		   const double q_value,
 		   const unsigned threshold_energy_index,
 	           const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-		   const Teuchos::ArrayRCP<const double>& cross_section,
-		   const Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution<MonteCarlo::PhotonState,OutgoingParticleType> >& 
-		   outgoing_particle_distribution)
+		   const Teuchos::ArrayRCP<const double>& cross_section )
     : MonteCarlo::PhotonuclearReaction<OutgoingParticleType>(
 			       reaction_type,
       			       q_value,
 			       threshold_energy_index,
 			       incoming_energy_grid,
-			       cross_section,
-			       outgoing_particle_distribution)
+			       cross_section )
   { /* ... */ }
 
   ~TestPhotonuclearReaction()
@@ -68,23 +65,6 @@ public:
   { return 0u; }
 
   void react( MonteCarlo::PhotonState& photon, MonteCarlo::ParticleBank& bank ) const
-  { /* ... */ }
-};
-
-template<typename OutgoingParticleType>
-class TestScatteringDistribution : public MonteCarlo::NuclearScatteringDistribution<MonteCarlo::PhotonState,OutgoingParticleType>
-{
-public:
-  TestScatteringDistribution( const double atomic_weight_ratio )
-  : MonteCarlo::NuclearScatteringDistribution<MonteCarlo::PhotonState,OutgoingParticleType>( atomic_weight_ratio )
-  { /* ... */ }
-
-  ~TestScatteringDistribution()
-  { /* ... */ }
-
-  void scatterParticle( const MonteCarlo::PhotonState& incoming_neutron,
-			OutgoingParticleType& outgoing_neutron,
-			const double temperature ) const
   { /* ... */ }
 };
 
@@ -100,9 +80,6 @@ void initializeOutGammaReaction()
    new Data::XSSPhotonuclearDataExtractor( h2_ace_file_handler->getTableNXSArray(),
 				      h2_ace_file_handler->getTableJXSArray(),
 				      h2_ace_file_handler->getTableXSSArray()));
-  Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution
-	     <MonteCarlo::PhotonState, MonteCarlo::PhotonState> > 
-    h2_scattering_distribution( new TestScatteringDistribution<MonteCarlo::PhotonState>( h2_ace_file_handler->getTableAtomicWeightRatio() ) );
    
   Teuchos::ArrayRCP<double> energy_grid;
   energy_grid.deepCopy( h2_xss_data_extractor->extractESZBlock() );
@@ -115,8 +92,7 @@ void initializeOutGammaReaction()
 				       0,
 				       0u,
 				       energy_grid,
-				       cross_section,
-				       h2_scattering_distribution ) );
+				       cross_section ) );
 }
 
 void initializeOutNeutronReaction()
@@ -129,10 +105,6 @@ void initializeOutNeutronReaction()
   				      c12_ace_file_handler->getTableJXSArray(),
   				      c12_ace_file_handler->getTableXSSArray()));
    
-   Teuchos::RCP<MonteCarlo::NuclearScatteringDistribution
-	     <MonteCarlo::PhotonState, MonteCarlo::NeutronState> > 
-    c12_scattering_distribution( new TestScatteringDistribution<MonteCarlo::NeutronState>( c12_ace_file_handler->getTableAtomicWeightRatio() ) );
-   
   Teuchos::ArrayRCP<double> energy_grid;
    energy_grid.deepCopy( c12_xss_data_extractor->extractESZBlock() );
  
@@ -144,8 +116,7 @@ void initializeOutNeutronReaction()
   				       0,
   				       0u,
   				       energy_grid,
-			               cross_section,
-			               c12_scattering_distribution ) );
+			               cross_section ) );
 }
 
 //---------------------------------------------------------------------------//
