@@ -198,8 +198,7 @@ TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution,
 					shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
-  std::cout.precision( 18 );
-  std::cout << photon.getZDirection() << std::endl;
+  
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 4.95936772145E-03, 1e-15  );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), -0.125019990362325473, 1e-15 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );

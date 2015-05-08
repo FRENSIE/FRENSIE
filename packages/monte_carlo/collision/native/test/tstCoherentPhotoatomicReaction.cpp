@@ -102,6 +102,7 @@ TEUCHOS_UNIT_TEST( CoherentPhotoatomicReaction, react_ace )
 
   TEST_EQUALITY_CONST( photon.getEnergy(), 20.0 );
   TEST_ASSERT( photon.getZDirection() < 1.0 );
+  TEST_EQUALITY_CONST( photon.getCollisionNumber(), 1 );
   TEST_ASSERT( bank.empty() );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }

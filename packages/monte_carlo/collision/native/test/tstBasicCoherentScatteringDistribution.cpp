@@ -313,8 +313,6 @@ int main( int argc, char** argv )
 	recoil_momentum_squared[i]*1e16; // conver from A^-2 to cm^-2
       
       form_factor_squared[i] *= form_factor_squared[i];
-      
-      std::cout << recoil_momentum_squared[i] << " " << form_factor_squared[i] << std::endl;
     }
   
     Teuchos::RCP<Utility::TabularOneDDistribution> form_factor_function_squared(
