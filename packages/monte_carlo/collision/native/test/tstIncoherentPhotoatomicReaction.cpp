@@ -145,6 +145,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, react_ace_basic )
   
   TEST_ASSERT( photon.getEnergy() >= min_energy );
   TEST_ASSERT( photon.getEnergy() <= 20.0 );
+  TEST_EQUALITY_CONST( photon.getCollisionNumber(), 1 );
   TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }
@@ -164,7 +165,9 @@ TEUCHOS_UNIT_TEST( IncoherentPhotoatomicReaction, react_ace_detailed )
   ace_detailed_incoherent_reaction->react( photon, 
 					   bank, 
 					   shell_of_interaction );
-
+  
+  TEST_ASSERT( photon.getEnergy() <= 20.0 );
+  TEST_EQUALITY_CONST( photon.getCollisionNumber(), 1 );
   TEST_EQUALITY_CONST( bank.size(), 1 );
   TEST_ASSERT( shell_of_interaction != MonteCarlo::UNKNOWN_SUBSHELL );
 }

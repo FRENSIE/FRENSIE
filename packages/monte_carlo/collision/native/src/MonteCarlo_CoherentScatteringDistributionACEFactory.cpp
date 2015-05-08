@@ -79,15 +79,7 @@ void CoherentScatteringDistributionACEFactory::createFormFactorSquared(
     form_factor_squared[i] *= form_factor_squared[i];
   }
 
-  // Log-Log interpolation is required but the last recoil momentum may be 0.0
-  if( recoil_momentum_squared.back() == 0.0 )
-    recoil_momentum_squared.back() = std::numeric_limits<double>::min();
-
-  // Log-Log interpolation is required but the last form factor value may be 0
-  if( form_factor_squared.back() == 0.0 )
-    form_factor_squared.back() = std::numeric_limits<double>::min();
-
-  form_factor.reset( new Utility::TabularDistribution<Utility::LogLog>(
+  form_factor.reset( new Utility::TabularDistribution<Utility::LinLin>(
 						      recoil_momentum_squared,
 						      form_factor_squared ) );
 }
