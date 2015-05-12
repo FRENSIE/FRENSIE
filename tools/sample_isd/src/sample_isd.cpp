@@ -17,6 +17,7 @@
 #include <Teuchos_CommandLineProcessor.hpp>
 #include <Teuchos_FancyOStream.hpp>
 #include <Teuchos_VerboseObject.hpp>
+#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionNativeFactory.hpp"
@@ -28,7 +29,77 @@
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_GlobalOpenMPSession.hpp"
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
+
+// Generate the samples from the distribution
+void generateSamples( 
+  const double energy,
+  const unsigned samples,
+  const Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution>&
+  scattering_dist,
+  Teuchos::RCP<std::ofstream> sample_ofile,
+  Teuchos::RCP<std::ofstream> dist_ofile )
+{
+  // Make the requested number of samples
+  unsigned trials = 0u;
+  std::vector<double> sampled_cosines( samples );
+  double outgoing_energy, scattering_angle_cosine;
+  MonteCarlo::SubshellType sampled_subshell;
+  
+  double start_time = Utility::GlobalOpenMPSession::getTime();
+  
+  for( unsigned i = 0; i < samples; ++i )
+  {
+    scattering_dist->sampleAndRecordTrials( energy,
+					    outgoing_energy,
+					    scattering_angle_cosine,
+					    sampled_subshell,
+					    trials );
+
+    sampled_cosines[i] = scattering_angle_cosine;
+  }
+  
+  double end_time = Utility::GlobalOpenMPSession::getTime();
+  
+  // Print the efficiency and timing data
+  std::cout.precision( 18 );
+  std::cout << energy << " " 
+	    << samples/(double)trials << " "
+	    << end_time - start_time << std::endl;
+
+  if( !sample_ofile.is_null() )
+  {
+    for( unsigned i = 0; i < samples; ++i )
+      (*sample_ofile) << sampled_cosines[i] << std::endl;
+  }
+
+  if( !dist_ofile.is_null() )
+  {
+    // Evaluate the distribution in the smooth region (-1,0.9)
+    for( unsigned i = 0; i < 1e3; ++i )
+    {
+      double scattering_angle_cosine = -1.0 + 1.9*i/1e3;
+      
+      (*dist_ofile) << scattering_angle_cosine << " "
+		    << scattering_dist->evaluatePDF( energy,
+						     scattering_angle_cosine )
+		    << std::endl;
+    }
+    
+    // Evaluate the distribution in the high gradient region (0.9,1.0)
+    for( unsigned i = 0; i <= 1e3; ++i )
+    {
+      double scattering_angle_cosine = 0.9 + 0.1*i/1e3;
+      
+      (*dist_ofile) << scattering_angle_cosine << " "
+		    << scattering_dist->evaluatePDF( energy,
+						     scattering_angle_cosine )
+		    << std::endl;
+    }
+  }
+}
+		      
 
 int main( int argc, char** argv )
 {
@@ -51,11 +122,9 @@ int main( int argc, char** argv )
   // The cross section directory
   std::string cross_section_directory;
 
-  // The initial photon energy
-  double initial_photon_energy;
-
   // The energy range
   std::string energy_range;
+  Teuchos::Array<double> energies;
 
   // The subshell
   int subshell = 0;
@@ -76,13 +145,10 @@ int main( int argc, char** argv )
 			    "cross section tables",
 			    true );
   sample_isd_clp.setOption( "e",
-			    &initial_photon_energy,
-			    "The initial photon energy",
+			    &energy_range,
+			    "The initial photon energy (or energy range "
+			    "\"{e0,e1,...,en})\"",
 			    true );
-  // sampe_isd_clp.setOption( "energies",
-  // 				   &energies,
-  // 				   "The energies that will be used to "
-  // 				   "calculate efficiencies" );
   sample_isd_clp.setOption( "subshell",
 			    &subshell,
 			    "The subshell of interest" );
@@ -106,6 +172,22 @@ int main( int argc, char** argv )
     sample_isd_clp.printHelpMessage( argv[0], *out );
 
     return parse_return;
+  }
+  
+  // Extract the energy (range)
+  if( energy_range.find( "{" ) >= energy_range.size() &&
+      energy_range.find( "}" ) >= energy_range.size() )
+  {
+    std::istringstream iss( energy_range );
+    
+    energies.resize( 1 );
+    iss >> energies[0];
+  }
+  else
+  {
+    Utility::ArrayString array_string( energy_range );
+
+    energies = array_string.getConcreteArray<double>();
   }
 
   // Create the incoherent scattering distribution
@@ -213,66 +295,38 @@ int main( int argc, char** argv )
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
 
-  // Make the requested number of samples
-  unsigned trials = 0u;
-  std::vector<double> sampled_cosines( samples );
-  double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType sampled_subshell;
-  double start_time, end_time;
-  
-  start_time = Utility::GlobalOpenMPSession::getTime();
-  
-  for( unsigned i = 0; i < samples; ++i )
+  // Initialize the output files
+  Teuchos::RCP<std::ofstream> sofile, dofile;
+
+  if( energies.size() == 1 )
   {
-    scattering_dist->sampleAndRecordTrials( initial_photon_energy,
-					    outgoing_energy,
-					    scattering_angle_cosine,
-					    sampled_subshell,
-					    trials );
-
-    sampled_cosines[i] = scattering_angle_cosine;
-  }
-  
-  end_time = Utility::GlobalOpenMPSession::getTime();
-  
-  // Print the efficiency and timing data
-  std::cout << "# Energy Efficiency Timing" << std::endl;
-  std::cout.precision( 18 );
-  std::cout << initial_photon_energy << " " 
-	    << samples/(double)trials << " "
-	    << end_time - start_time << std::endl;
-
-  // Output the sampled data
-  std::ofstream sofile( sample_output_file.c_str() );
-  std::ofstream dofile( dist_output_file.c_str() );
-  
-  sofile.precision( 18 );
-  dofile.precision( 18 );
-
-  for( unsigned i = 0; i < samples; ++i )
-    sofile << sampled_cosines[i] << std::endl;
-  
-  for( unsigned i = 0; i < 1e3; ++i )
-  {
-    double scattering_angle_cosine = -1.0 + 1.9*i/1e3;
+    sofile.reset( new std::ofstream( sample_output_file.c_str() ) );
+    dofile.reset( new std::ofstream( dist_output_file.c_str() ) );
     
-    dofile << scattering_angle_cosine << " "
-	   << scattering_dist->evaluatePDF( initial_photon_energy,
-					    scattering_angle_cosine )
-	   << std::endl;
+    sofile->precision( 18 );
+    dofile->precision( 18 );
   }
-  for( unsigned i = 0; i <= 1e3; ++i )
+  else
   {
-    double scattering_angle_cosine = 0.9 + 0.1*i/1e3;
-
-    dofile << scattering_angle_cosine << " "
-	   << scattering_dist->evaluatePDF( initial_photon_energy,
-					    scattering_angle_cosine )
-	   << std::endl;
+    std::cerr << "Note: the samples and pdf will not be printed because "
+	      << "multiple energies have been requested."
+	      << std::endl;
   }
 
-  sofile.close();
-  dofile.close();
+  std::cout << "# Energy Efficiency Timing" << std::endl;
+  
+  for( unsigned i = 0; i < energies.size(); ++i )
+  {
+    generateSamples( energies[i],
+		     samples,
+		     scattering_dist,
+		     sofile,
+		     dofile );
+  }
+
+  // Close the output files
+  sofile->close();
+  dofile->close();
   
   return 0;
 }
