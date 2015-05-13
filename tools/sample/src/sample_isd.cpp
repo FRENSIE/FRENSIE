@@ -42,30 +42,36 @@ void generateSamples(
   Teuchos::RCP<std::ofstream> dist_ofile )
 {
   // Make the requested number of samples
-  unsigned trials = 0u;
-  std::vector<double> sampled_cosines( samples );
-  double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType sampled_subshell;
+  std::vector<unsigned> trials( 
+	     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads(), 0u );
+  std::vector<double> sampled_cosines( samples ), sampled_energies( samples );
+  std::vector<MonteCarlo::SubshellType> sampled_subshells( samples );
   
   double start_time = Utility::GlobalOpenMPSession::getTime();
-  
+
+  #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
   for( unsigned i = 0; i < samples; ++i )
   {
-    scattering_dist->sampleAndRecordTrials( energy,
-					    outgoing_energy,
-					    scattering_angle_cosine,
-					    sampled_subshell,
-					    trials );
-
-    sampled_cosines[i] = scattering_angle_cosine;
+    scattering_dist->sampleAndRecordTrials( 
+                         energy,
+			 sampled_energies[i],
+			 sampled_cosines[i],
+			 sampled_subshells[i],
+                         trials[Utility::GlobalOpenMPSession::getThreadId()] );
   }
   
   double end_time = Utility::GlobalOpenMPSession::getTime();
+
+  // Do a reduction on the trials array
+  unsigned total_trials = 0u;
+
+  for( unsigned i = 0; i < trials.size(); ++i )
+    total_trials += trials[i];
   
   // Print the efficiency and timing data
   std::cout.precision( 18 );
   std::cout << energy << " " 
-	    << samples/(double)trials << " "
+	    << samples/(double)total_trials << " "
 	    << end_time - start_time << std::endl;
 
   if( !sample_ofile.is_null() )
@@ -76,25 +82,37 @@ void generateSamples(
 
   if( !dist_ofile.is_null() )
   {
+    std::vector<double> scattering_angle_cosines( 2001 ), pdf_values( 2001 );
+
     // Evaluate the distribution in the smooth region (-1,0.9)
-    for( unsigned i = 0; i < 1e3; ++i )
+    #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
+    for( unsigned i = 0; i < 1000; ++i )
     {
       double scattering_angle_cosine = -1.0 + 1.9*i/1e3;
-      
-      (*dist_ofile) << scattering_angle_cosine << " "
-		    << scattering_dist->evaluatePDF( energy,
-						     scattering_angle_cosine )
-		    << std::endl;
+
+      scattering_angle_cosines[i] = scattering_angle_cosine;
+
+      pdf_values[i] = 
+	scattering_dist->evaluatePDF( energy, scattering_angle_cosine );
     }
     
     // Evaluate the distribution in the high gradient region (0.9,1.0)
-    for( unsigned i = 0; i <= 1e3; ++i )
+    #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
+    for( unsigned i = 0; i <= 1000; ++i )
     {
       double scattering_angle_cosine = 0.9 + 0.1*i/1e3;
+
+      scattering_angle_cosines[i+1000] = scattering_angle_cosine;
       
-      (*dist_ofile) << scattering_angle_cosine << " "
-		    << scattering_dist->evaluatePDF( energy,
-						     scattering_angle_cosine )
+      pdf_values[i+1000] = 
+	scattering_dist->evaluatePDF( energy, scattering_angle_cosine );
+    }
+
+    // Print the pdf values
+    for( unsigned i = 0; i < pdf_values.size(); ++i )
+    {
+      (*dist_ofile) << scattering_angle_cosines[i] << " "
+		    << pdf_values[i]
 		    << std::endl;
     }
   }
@@ -129,6 +147,13 @@ int main( int argc, char** argv )
   // The subshell
   int subshell = 0;
 
+  // The kahn rejection sampling cutoff energy
+  double kahn_cutoff_energy = 
+    MonteCarlo::IncoherentPhotonScatteringDistribution::getMinKahnCutoffEnergy();
+
+  // The number of threads
+  int threads = 1;
+
   sample_isd_clp.setDocString( "sample from a distribution and output "
 			       "the results\n" );
   sample_isd_clp.setOption( "s",
@@ -137,8 +162,9 @@ int main( int argc, char** argv )
 			    true );
   sample_isd_clp.setOption( "cs",
 			    &cross_section_alias,
-			    "The photon cross section table alias",
-			    true );
+			    "The photon cross section table alias. If no "
+			    "alias is specified the Klein-Nishina "
+			    "distribution will be used." );
   sample_isd_clp.setOption( "cs_dir",
 			    &cross_section_directory,
 			    "The directory containing the desired "
@@ -152,6 +178,9 @@ int main( int argc, char** argv )
   sample_isd_clp.setOption( "subshell",
 			    &subshell,
 			    "The subshell of interest" );
+  sample_isd_clp.setOption( "kahn_ecut",
+                            &kahn_cutoff_energy,
+                            "The Kahn rejection sampling cutoff energy" );
   sample_isd_clp.setOption( "sofile",
 			    &sample_output_file,
 			    "The output file where the samples will be"
@@ -160,6 +189,9 @@ int main( int argc, char** argv )
 			    &dist_output_file,
 			    "The output file where the distribution "
 			    "pdf will be output" );
+  sample_isd_clp.setOption( "threads",
+                            &threads,
+                            "Number of parallel threads" );
 
   sample_isd_clp.throwExceptions( false );
   
@@ -173,6 +205,10 @@ int main( int argc, char** argv )
 
     return parse_return;
   }
+
+  // Set up the global OpenMP session
+  if( Utility::GlobalOpenMPSession::isOpenMPUsed() )
+    Utility::GlobalOpenMPSession::setNumberOfThreads( threads );
   
   // Extract the energy (range)
   if( energy_range.find( "{" ) >= energy_range.size() &&
@@ -190,10 +226,22 @@ int main( int argc, char** argv )
     energies = array_string.getConcreteArray<double>();
   }
 
+  // Check if the kahn cutoff energy is valid
+  if( kahn_cutoff_energy < MonteCarlo::IncoherentPhotonScatteringDistribution::getMinKahnCutoffEnergy() )
+  {
+    std::cerr << "Error: the Kahn rejection cutoff energy must not be less "
+	      << "than "
+	      << MonteCarlo::IncoherentPhotonScatteringDistribution::getMinKahnCutoffEnergy()
+	      << "!" << std::endl;
+
+    return 1;
+  }
+
   // Create the incoherent scattering distribution
   Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution> 
     scattering_dist;
   
+  if( cross_section_alias.size() > 0 )
   {
     boost::unordered_set<std::string> photoatom_aliases;
     photoatom_aliases.insert( cross_section_alias );
@@ -246,9 +294,9 @@ int main( int argc, char** argv )
       std::cerr << "done." << std::endl;
 
       MonteCarlo::IncoherentPhotonScatteringDistributionACEFactory::createIncoherentDistribution(
-						            xss_data_extractor,
-							    scattering_dist,
-							    3.0 );
+						          xss_data_extractor,
+							  scattering_dist,
+							  kahn_cutoff_energy );
     }
     else if( photoatom_file_type == MonteCarlo::CrossSectionsXMLProperties::native_file )
     {
@@ -264,17 +312,17 @@ int main( int argc, char** argv )
       if( subshell == 0 )
       {
 	MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistribution(
-							       data_container,
-							       scattering_dist,
-							       3.0 );
+							  data_container,
+							  scattering_dist,
+							  kahn_cutoff_energy );
       }
       else if( data_container.getSubshells().count( subshell ) )
       {
 	MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createSubshellIncoherentDistribution(
-							       data_container,
-							       subshell,
-							       scattering_dist,
-							       3.0 );
+							  data_container,
+							  subshell,
+							  scattering_dist,
+							  kahn_cutoff_energy );
       }
       else
       {
@@ -290,6 +338,13 @@ int main( int argc, char** argv )
 		       << photoatom_file_type <<
 		       " is not supported!" );
     }
+  }
+  // Create a Klein-Nishina distribution
+  else
+  {
+    MonteCarlo::IncoherentPhotonScatteringDistributionACEFactory::createKleinNishinaDistribution( 
+							  scattering_dist,
+							  kahn_cutoff_energy );
   }
 
   // Initialize the random number generator
@@ -325,8 +380,8 @@ int main( int argc, char** argv )
   }
 
   // Close the output files
-  sofile->close();
-  dofile->close();
+  // sofile->close();
+  // dofile->close();
   
   return 0;
 }
