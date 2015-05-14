@@ -36,4 +36,4 @@ ADD_SUBDIRECTORY(facemc)
 
 #ADD_SUBDIRECTORY(epr_generator)
 
-ADD_SUBDIRECTORY(sample_isd)
+ADD_SUBDIRECTORY(sample)
