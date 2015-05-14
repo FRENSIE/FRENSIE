@@ -31,94 +31,9 @@
 #include "Utility_GlobalOpenMPSession.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
-
-// Generate the samples from the distribution
-void generateSamples( 
-  const double energy,
-  const unsigned samples,
-  const Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution>&
-  scattering_dist,
-  Teuchos::RCP<std::ofstream> sample_ofile,
-  Teuchos::RCP<std::ofstream> dist_ofile )
-{
-  // Make the requested number of samples
-  std::vector<unsigned> trials( 
-	     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads(), 0u );
-  std::vector<double> sampled_cosines( samples ), sampled_energies( samples );
-  std::vector<MonteCarlo::SubshellType> sampled_subshells( samples );
-  
-  double start_time = Utility::GlobalOpenMPSession::getTime();
-
-  #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
-  for( unsigned i = 0; i < samples; ++i )
-  {
-    scattering_dist->sampleAndRecordTrials( 
-                         energy,
-			 sampled_energies[i],
-			 sampled_cosines[i],
-			 sampled_subshells[i],
-                         trials[Utility::GlobalOpenMPSession::getThreadId()] );
-  }
-  
-  double end_time = Utility::GlobalOpenMPSession::getTime();
-
-  // Do a reduction on the trials array
-  unsigned total_trials = 0u;
-
-  for( unsigned i = 0; i < trials.size(); ++i )
-    total_trials += trials[i];
-  
-  // Print the efficiency and timing data
-  std::cout.precision( 18 );
-  std::cout << energy << " " 
-	    << samples/(double)total_trials << " "
-	    << end_time - start_time << std::endl;
-
-  if( !sample_ofile.is_null() )
-  {
-    for( unsigned i = 0; i < samples; ++i )
-      (*sample_ofile) << sampled_cosines[i] << std::endl;
-  }
-
-  if( !dist_ofile.is_null() )
-  {
-    std::vector<double> scattering_angle_cosines( 2001 ), pdf_values( 2001 );
-
-    // Evaluate the distribution in the smooth region (-1,0.9)
-    #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
-    for( unsigned i = 0; i < 1000; ++i )
-    {
-      double scattering_angle_cosine = -1.0 + 1.9*i/1e3;
-
-      scattering_angle_cosines[i] = scattering_angle_cosine;
-
-      pdf_values[i] = 
-	scattering_dist->evaluatePDF( energy, scattering_angle_cosine );
-    }
-    
-    // Evaluate the distribution in the high gradient region (0.9,1.0)
-    #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
-    for( unsigned i = 0; i <= 1000; ++i )
-    {
-      double scattering_angle_cosine = 0.9 + 0.1*i/1e3;
-
-      scattering_angle_cosines[i+1000] = scattering_angle_cosine;
-      
-      pdf_values[i+1000] = 
-	scattering_dist->evaluatePDF( energy, scattering_angle_cosine );
-    }
-
-    // Print the pdf values
-    for( unsigned i = 0; i < pdf_values.size(); ++i )
-    {
-      (*dist_ofile) << scattering_angle_cosines[i] << " "
-		    << pdf_values[i]
-		    << std::endl;
-    }
-  }
-}
+#include "samplePhotonDistributionCore.hpp"
 		      
-
+//! Main function for the sample_isd (Incoherent Scattering Dist.) tool
 int main( int argc, char** argv )
 {
   Teuchos::RCP<Teuchos::FancyOStream> out = 
@@ -368,22 +283,28 @@ int main( int argc, char** argv )
 	      << std::endl;
   }
 
-  std::cout << "# Energy Efficiency Timing" << std::endl;
+  // Populate the evaluation cosines array
+  Teuchos::Array<double> pdf_evaluation_cosines( 2001 );
   
-  for( unsigned i = 0; i < energies.size(); ++i )
-  {
-    generateSamples( energies[i],
-		     samples,
-		     scattering_dist,
-		     sofile,
-		     dofile );
-  }
+  #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
+  for( unsigned i = 0; i < 1000; ++i )
+    pdf_evaluation_cosines[i] = -1.0 + 1.9*i/1e3;
+      
+  #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
+  for( unsigned i = 0; i <= 1000; ++i )
+    pdf_evaluation_cosines[i+1000] = 0.9 + 0.1*i/1e3;
 
-  // Close the output files
-  // sofile->close();
-  // dofile->close();
-  
-  return 0;
+  // Generate the samples
+  Teuchos::RCP<const MonteCarlo::PhotonScatteringDistribution> 
+    base_scattering_dist =
+    Teuchos::rcp_dynamic_cast<const MonteCarlo::PhotonScatteringDistribution>( 
+							     scattering_dist );
+  return samplePhotonDistributionCore( base_scattering_dist,
+                                       energies,
+                                       samples,
+                                       pdf_evaluation_cosines,
+                                       sofile,
+                                       dofile );
 }
 
 //---------------------------------------------------------------------------//
