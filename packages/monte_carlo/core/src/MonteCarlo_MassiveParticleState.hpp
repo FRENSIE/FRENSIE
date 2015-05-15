@@ -10,7 +10,7 @@
 #define MONTE_CARLO_MASSIVE_PARTICLE_STATE_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_MassiveParticleState.hpp"
+#include "MonteCarlo_ParticleState.hpp"
 
 namespace MonteCarlo{
 
@@ -32,17 +32,20 @@ public:
   //! Copy constructor (with possible creation of new generation)
   MassiveParticleState( const ParticleState& existing_base_state,
 			const ParticleType new_type,
+			const double new_rest_mass_energy,
 			const bool increment_generation_number,
 			const bool reset_collision_number );
 
   //! Copy constructor (with possible creation of new generation)
-  MassiveParticleState( const MasslessParticleState& existing_state,
+  MassiveParticleState( const MassiveParticleState& existing_state,
 			const ParticleType new_type,
+			const double new_rest_mass_energy,
 			const bool increment_generation_number,
 			const bool reset_collision_number );
 
   //! Core constructor
-  MassiveParticleState( const ParticleStateCore& core );
+  MassiveParticleState( const ParticleStateCore& core,
+			const double new_rest_mass_energy );
 
   //! Destructor
   virtual ~MassiveParticleState()
@@ -64,12 +67,6 @@ private:
 
   // Calculate the time to traverse a distance
   ParticleState::timeType calculateTraversalTime( const double distance) const;
-
-  // Calculate the speed from the current energy
-  void calculateSpeedFromCurrentEnergy();
-
-  // Calculate the energy from the current speed
-  void calculateEnergyFromCurrentSpeed();
 
   // The speed of the particle
   double d_speed;

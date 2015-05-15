@@ -27,13 +27,13 @@ public:
 
   //! Constructor
   MasslessParticleState( const historyNumberType history_number,
-		 const ParticleType type );
+			 const ParticleType type );
 
   //! Copy constructor (with possible creation of new generation)
   MasslessParticleState( const ParticleState& existing_base_state,
-		 const ParticleType new_type,
-		 const bool increment_generation_number,
-		 const bool reset_collision_number );
+			 const ParticleType new_type,
+			 const bool increment_generation_number,
+			 const bool reset_collision_number );
 
   //! Core constructor
   MasslessParticleState( const ParticleStateCore& core );

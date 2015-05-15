@@ -39,6 +39,11 @@ public:
 	       const bool increment_generation_number = false,
 	       const bool reset_collision_number = false );
 
+  //! Copy constructor (with possible creation of new generation)
+  PhotonState( const PhotonState& existing_base_state,
+	       const bool increment_generation_number = false,
+	       const bool reset_collision_number = false );
+
   //! Core constructor
   PhotonState( const ParticleStateCore& core );
 

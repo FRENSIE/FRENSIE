@@ -20,28 +20,31 @@ NeutronState::NeutronState(
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
-NeutronState::NeutronState( const NeutronState& existing_neutron_state,
-			    const bool increment_generation_number,
-			    const bool reset_collision_number )
-  : MassiveParticleState( existing_neutron_state, 
-			  NEUTRON,
-			  increment_generation_number,
-			  reset_collision_number )
-{ /* ... */ }
-
-// Copy constructor (with possible creation of new generation)
 NeutronState::NeutronState( const ParticleState& existing_base_state,
 			    const bool increment_generation_number,
 			    const bool reset_collision_number )
   : MassiveParticleState( existing_base_state, 
 			  NEUTRON,
+			  Utility::PhysicalConstants::neutron_rest_mass_energy,
+			  increment_generation_number,
+			  reset_collision_number )
+{ /* ... */ }
+
+// Copy constructor (with possible creation of new generation)
+NeutronState::NeutronState( const NeutronState& existing_state,
+			    const bool increment_generation_number,
+			    const bool reset_collision_number )
+  : MassiveParticleState( existing_state, 
+			  NEUTRON,
+			  Utility::PhysicalConstants::neutron_rest_mass_energy,
 			  increment_generation_number,
 			  reset_collision_number )
 { /* ... */ }
 
 // Core constructor
 NeutronState::NeutronState( const ParticleStateCore& core )
-  : MassiveParticleState( core )
+  : MassiveParticleState(core, 
+			 Utility::PhysicalConstants::neutron_rest_mass_energy )
 {
   // Make sure the core is a neutron core
   testPrecondition( core.particle_type == NEUTRON );

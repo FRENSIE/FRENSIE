@@ -6,15 +6,17 @@
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ADJOINT_PHOTON_STATE_HPP
-#define MONTE_CARLO_ADJOINT_PHOTON_STATE_HPP
+#ifndef MONTE_CARLO_ADJOINT_PHOTON_PROBE_STATE_HPP
+#define MONTE_CARLO_ADJOINT_PHOTON_PROBE_STATE_HPP
 
 // FRENSIE Includes
-#Include "MonteCarlo_AdjointPhotonState.hpp"
+#include "MonteCarlo_AdjointPhotonState.hpp"
 
 namespace MonteCarlo{
 
-//! The adjoint photon probe state class
+/*! The adjoint photon probe state class
+ * \details The probe state get killed when its energy changes.
+ */
 class AdjointPhotonProbeState : public AdjointPhotonState
 {
 
@@ -30,8 +32,13 @@ public:
   AdjointPhotonProbeState( 
 		       const ParticleState::historyNumberType history_number );
 
-  //! Copy constructor
+  //! Copy constructor (with possible creation of new generation)
   AdjointPhotonProbeState( const ParticleState& existing_base_state,
+			   const bool increment_generation_number = false,
+			   const bool reset_collision_number = false );
+
+  //! Copy constructor (with possible creation of new generation)
+  AdjointPhotonProbeState( const AdjointPhotonProbeState& existing_base_state,
 			   const bool increment_generation_number = false,
 			   const bool reset_collision_number = false );
 
@@ -47,9 +54,16 @@ public:
 
   //! Print the adjoint photon state
   void print( std::ostream& os ) const;
+
+private:
+
+  // Flag that indicates if the initial energy has been set
+  bool d_initial_energy_set;
 };
 
 } // end MonteCarlo namespace
+
+#endif // end MONTE_CARLO_ADJOINT_PHOTON_PROBE_STATE_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_AdjointPhotonProbeState.hpp

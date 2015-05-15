@@ -28,6 +28,16 @@ PhotonState::PhotonState( const ParticleState& existing_base_state,
 			   reset_collision_number )
 { /* ... */ }
 
+// Copy constructor (with possible creation of new generation)
+PhotonState::PhotonState( const PhotonState& existing_base_state,
+			  const bool increment_generation_number,
+			  const bool reset_collision_number )
+  : MasslessParticleState( existing_base_state, 
+			   PHOTON,
+			   increment_generation_number,
+			   reset_collision_number )
+{ /* ... */ }
+
 // Core constructor
 PhotonState::PhotonState( const ParticleStateCore& core )
   : MasslessParticleState( core )
