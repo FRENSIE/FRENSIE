@@ -23,6 +23,7 @@
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_ExponentialDistribution.hpp"
 #include "Utility_HistogramDistribution.hpp"
+#include "Utility_MaxwellFissionDistribution.hpp"
 #include "Utility_NormalDistribution.hpp"
 #include "Utility_PowerDistribution.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -82,6 +83,7 @@ private:
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(DiscreteDistribution); \
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(ExponentialDistribution); \
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(HistogramDistribution); \
+  UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(MaxwellFissionDistribution); \
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(NormalDistribution);	\
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(PowerDistribution<1u>); \
   UTILITY_ADD_ONE_D_DISTRIBUTION_ENTRY_CONVERTER(PowerDistribution<2u>); \
