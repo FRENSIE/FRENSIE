@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstPhotonState.cpp
+//! \file   tstAdjointPhotonProbeState.cpp
 //! \author Alex Robinson
-//! \brief  Photon state unit tests.
+//! \brief  Adjoint photon probe state unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -13,40 +13,66 @@
 #include <Teuchos_UnitTestHarness.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonState.hpp"
+#include "MonteCarlo_AdjointPhotonProbeState.hpp"
 #include "Utility_PhysicalConstants.hpp"
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Get the particle type
-TEUCHOS_UNIT_TEST( PhotonState, getParticleType )
+TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, getParticleType )
 {
-  MonteCarlo::PhotonState particle( 1ull );
+  MonteCarlo::AdjointPhotonProbeState particle( 1ull );
 
-  TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::PHOTON );
+  TEST_EQUALITY_CONST( particle.getParticleType(), 
+		       MonteCarlo::ADJOINT_PHOTON_PROBE );
 }
 
 //---------------------------------------------------------------------------//
 // Get the particle speed
-TEUCHOS_UNIT_TEST( PhotonState, getSpeed )
+TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, getSpeed )
 {
-  MonteCarlo::PhotonState particle( 1ull );
+  MonteCarlo::AdjointPhotonProbeState particle( 1ull );
 
   TEST_EQUALITY_CONST( particle.getSpeed(), 
 		       Utility::PhysicalConstants::speed_of_light );
 }
 
 //---------------------------------------------------------------------------//
+// Check that the adjoint photon probe behaves correctly when its energy is set
+TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, setEnergy )
+{
+  MonteCarlo::AdjointPhotonProbeState particle_a( 1ull );
+
+  TEST_ASSERT( !particle_a.isGone() );
+
+  particle_a.setEnergy( 1.0 );
+
+  TEST_ASSERT( !particle_a.isGone() );
+
+  particle_a.setEnergy( 2.0 );
+
+  TEST_ASSERT( particle_a.isGone() );
+
+  MonteCarlo::AdjointPhotonProbeState particle_b( particle_a, true );
+
+  TEST_ASSERT( !particle_b.isGone() );
+
+  particle_b.setEnergy( 10.0 );
+
+  TEST_ASSERT( particle_b.isGone() );
+}
+
+//---------------------------------------------------------------------------//
 // Advance the particle along its direction by a specified distance
-TEUCHOS_UNIT_TEST( PhotonState, advance )
+TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, advance )
 {
   const double position[3] = {1.0, 1.0, 1.0};
   const double direction[3] = {0.5773502691896258, 
 			       0.5773502691896258,
 			       0.5773502691896258};
   
-  MonteCarlo::PhotonState particle( 1ull );
+  MonteCarlo::AdjointPhotonProbeState particle( 1ull );
   particle.setPosition( position );
   particle.setDirection( direction );
   particle.setEnergy( 1.0 );
@@ -62,9 +88,9 @@ TEUCHOS_UNIT_TEST( PhotonState, advance )
 
 //---------------------------------------------------------------------------//
 // Create new particles
-TEUCHOS_UNIT_TEST( PhotonState, copy_constructor )
+TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, copy_constructor )
 {
-  MonteCarlo::PhotonState particle_gen_a( 1ull );
+  MonteCarlo::AdjointPhotonProbeState particle_gen_a( 1ull );
   particle_gen_a.setPosition( 1.0, 1.0, 1.0 );
   particle_gen_a.setPosition( 0.0, 0.0, 1.0 );
   particle_gen_a.setEnergy( 1.0 );
@@ -72,7 +98,7 @@ TEUCHOS_UNIT_TEST( PhotonState, copy_constructor )
   particle_gen_a.incrementCollisionNumber();
   particle_gen_a.setWeight( 0.5 );
 
-  MonteCarlo::PhotonState particle_gen_a_copy( particle_gen_a );
+  MonteCarlo::AdjointPhotonProbeState particle_gen_a_copy( particle_gen_a );
   
   TEST_EQUALITY( particle_gen_a_copy.getXPosition(), 
 		 particle_gen_a.getXPosition() );
@@ -100,7 +126,7 @@ TEUCHOS_UNIT_TEST( PhotonState, copy_constructor )
 		 particle_gen_a.getWeight() );
 
   // Create a second generation particle with the same collision number
-  MonteCarlo::PhotonState particle_gen_b( particle_gen_a, true );
+  MonteCarlo::AdjointPhotonProbeState particle_gen_b( particle_gen_a, true );
 
   TEST_EQUALITY( particle_gen_b.getXPosition(), 
 		 particle_gen_a.getXPosition() );
@@ -126,7 +152,7 @@ TEUCHOS_UNIT_TEST( PhotonState, copy_constructor )
 		 particle_gen_a.getWeight() );  
 
   // Create a third generation particle and reset the collision counter
-  MonteCarlo::PhotonState particle_gen_c( particle_gen_b, true, true );
+  MonteCarlo::AdjointPhotonProbeState particle_gen_c( particle_gen_b, true, true );
 
   TEST_EQUALITY( particle_gen_c.getXPosition(), 
 		 particle_gen_b.getXPosition() );
@@ -152,36 +178,5 @@ TEUCHOS_UNIT_TEST( PhotonState, copy_constructor )
 }
 
 //---------------------------------------------------------------------------//
-// Create new particles
-TEUCHOS_UNIT_TEST( PhotonState, core_constructor )
-{
-  MonteCarlo::ParticleStateCore core( 1ull, 
-				  MonteCarlo::PHOTON, 
-				  1.0, 1.0, 1.0,
-				  0.0, 1.0, 0.0,
-				  2.0,
-				  0.5,
-				  1u,
-				  2u,
-				  0.25 );
-
-  MonteCarlo::PhotonState particle( core );
-
-  TEST_EQUALITY_CONST( particle.getHistoryNumber(), 1ull );
-  TEST_EQUALITY_CONST( particle.getParticleType(), MonteCarlo::PHOTON );
-  TEST_EQUALITY_CONST( particle.getXPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getYPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getZPosition(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getXDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle.getYDirection(), 1.0 );
-  TEST_EQUALITY_CONST( particle.getZDirection(), 0.0 );
-  TEST_EQUALITY_CONST( particle.getEnergy(), 2.0 );
-  TEST_EQUALITY_CONST( particle.getTime(), 0.5 );
-  TEST_EQUALITY_CONST( particle.getCollisionNumber(), 1u );
-  TEST_EQUALITY_CONST( particle.getGenerationNumber(), 2u );
-  TEST_EQUALITY_CONST( particle.getWeight(), 0.25 );
-}
-
-//---------------------------------------------------------------------------//
-// end tstPhotonState.cpp
+// end tstAdjointPhotonProbeState.cpp
 //---------------------------------------------------------------------------//

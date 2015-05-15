@@ -35,12 +35,12 @@ public:
   NeutronState( const ParticleState::historyNumberType history_number );
 
   //! Copy constructor (with possible creation of new generation)
-  NeutronState( const NeutronState& existing_neutron_state,
+  NeutronState( const ParticleState& existing_base_state,
 		const bool increment_generation_number = false,
 		const bool reset_collision_number = false );
 
   //! Copy constructor (with possible creation of new generation)
-  NeutronState( const ParticleState& existing_base_state,
+  NeutronState( const NeutronState& existing_base_state,
 		const bool increment_generation_number = false,
 		const bool reset_collision_number = false );
 
@@ -59,6 +59,7 @@ public:
 
   //! Print the neutron state
   void print( std::ostream& os ) const;
+
 };
 
 } // end MonteCarlo namespace
