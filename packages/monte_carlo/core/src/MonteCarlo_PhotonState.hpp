@@ -10,12 +10,12 @@
 #define MONTE_CARLO_PHOTON_STATE_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_MasslessParticleState.hpp"
 
 namespace MonteCarlo{
 
 //! The photon state class
-class PhotonState : public ParticleState
+class PhotonState : public MasslessParticleState
 {
 
 private:
@@ -46,16 +46,8 @@ public:
   ~PhotonState()
   { /* ... */ }
 
-  //! Return the speed of the particle (cm/s)
-  double getSpeed() const;
-
   //! Print the photon state
   void print( std::ostream& os ) const;
-
-private:
-  
-  //! Calculate the time to traverse a distance
-  ParticleState::timeType calculateTraversalTime( const double distance) const;
 };
 
 } // end MonteCarlo namespace

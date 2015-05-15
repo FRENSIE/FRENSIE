@@ -10,12 +10,12 @@
 #define MONTE_CARLO_ELECTRON_STATE_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_MassiveParticleState.hpp"
 
 namespace MonteCarlo{
 
 //! The electron state class
-class ElectronState : public ParticleState
+class ElectronState : public MassiveParticleState
 {
   
 private:
@@ -54,25 +54,11 @@ public:
   ~ElectronState()
   { /* ... */ }
 
-  //! Set the energy of the electron (MeV)
-  void setEnergy( const ParticleState::energyType energy );
-
-  //! Return the speed of the electron (cm/s)
-  double getSpeed() const;
-
-  //! Set the speed of the electron (cm/s)
-  void setSpeed( const double speed );
+  // Return the rest mass energy of the electron (MeV)
+  double getRestMassEnergy() const;
 
   //! Print the electron state
   void print( std::ostream& os ) const;
-
-private:
-
-  //! Calculate the time to traverse a distance
-  ParticleState::timeType calculateTraversalTime( const double distance) const;
-
-  // The speed of the particle
-  double d_speed;
 };
 
 } // end MonteCarlo namespace
