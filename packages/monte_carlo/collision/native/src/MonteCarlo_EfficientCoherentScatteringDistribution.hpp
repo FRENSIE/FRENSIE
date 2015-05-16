@@ -32,18 +32,12 @@ public:
   ~EfficientCoherentScatteringDistribution()
   { /* ... */ }
 
-  //! Sample an outgoing energy and direction from the distribution
-  void sample( const double incoming_energy,
-	       double& outgoing_energy,
-	       double& scattering_angle_cosine,
-	       SubshellType& shell_of_interaction ) const;
+private:
 
-  //! Sample an outgoing energy and direction and record the number of trials
-  void sampleAndRecordTrials( const double incoming_energy,
-			      double& outgoing_energy,
-			      double& scattering_angle_cosine,
-			      SubshellType& shell_of_interaction,
-			      unsigned& trials ) const;
+  // Sample an outgoing direction from the distribution
+  void sampleAndRecordTrialsImpl( const double incoming_energy,
+				  double& scattering_angle_cosine,
+				  unsigned& trials ) const;
 };
 
 } // end MonteCarlo namespace

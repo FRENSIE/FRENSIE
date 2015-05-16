@@ -21,29 +21,6 @@ EfficientCoherentScatteringDistribution::EfficientCoherentScatteringDistribution
   : CoherentScatteringDistribution( form_factor_function_squared )
 { /* ... */ }
 
-// Sample an outgoing energy and direction from the distribution
-/*! \details The sampling routine is set to ignore coherent scattering if the
- * recoil electron momentum (form factor function independent variable with
- * units of inverse cm^2) is greater than the data table provided 
- * (ie: for high energy photons). This is due to the fact that coherent 
- * scattering becomes very forward peaked at high energies and their effect on 
- * the photon path can be ignored.
- */
-void EfficientCoherentScatteringDistribution::sample( 
-				     const double incoming_energy,
-				     double& outgoing_energy,
-				     double& scattering_angle_cosine,
-				     SubshellType& shell_of_interaction ) const
-{
-  unsigned trial_dummy;
-
-  this->sampleAndRecordTrials( incoming_energy,
-			       outgoing_energy,
-			       scattering_angle_cosine,
-			       shell_of_interaction,
-			       trial_dummy );
-}
-
 // Sample an outgoing energy and direction and record the number of trials
 /*! \details The sampling routine is set to ignore coherent scattering if the
  * recoil electron momentum (form factor function independent variable with
@@ -52,12 +29,10 @@ void EfficientCoherentScatteringDistribution::sample(
  * scattering becomes very forward peaked at high energies and their effect on 
  * the photon path can be ignored.
  */
-void EfficientCoherentScatteringDistribution::sampleAndRecordTrials( 
-				            const double incoming_energy,
-					    double& outgoing_energy,
-					    double& scattering_angle_cosine,
-				            SubshellType& shell_of_interaction,
-					    unsigned& trials ) const
+void EfficientCoherentScatteringDistribution::sampleAndRecordTrialsImpl( 
+					       const double incoming_energy,
+					       double& scattering_angle_cosine,
+					       unsigned& trials ) const
 {
   // The wavelength of the photon (cm)
   const double wavelength = Utility::PhysicalConstants::planck_constant*
@@ -108,15 +83,7 @@ void EfficientCoherentScatteringDistribution::sampleAndRecordTrials(
   // Check for roundoff error
   if( fabs( scattering_angle_cosine ) > 1.0 )
     scattering_angle_cosine = copysign( 1.0, scattering_angle_cosine );
-  
-  // There is no change in energy for coherent scattering
-  outgoing_energy = incoming_energy;
-  
-  // The shell cannot be determined for coherent scattering
-  shell_of_interaction = UNKNOWN_SUBSHELL;
     
-  // Make sure the outgoing energy is valid
-  testPostcondition( outgoing_energy == incoming_energy );
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
