@@ -14,7 +14,6 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonScatteringDistribution.hpp"
-#include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
@@ -34,7 +33,7 @@ public:
       const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor
-  ~IncoherentPhotonScatteringDistribution()
+  virtual ~IncoherentPhotonScatteringDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
