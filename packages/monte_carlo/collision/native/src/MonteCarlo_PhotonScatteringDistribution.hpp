@@ -17,7 +17,7 @@
 
 namespace MonteCarlo{
 
-//! The scattering distribution base class
+//! The photon scattering distribution base class
 class PhotonScatteringDistribution : public ScatteringDistribution
 {
 
@@ -57,10 +57,9 @@ public:
 				      SubshellType& shell_of_interaction,
 				      unsigned& trials ) const = 0;
 
-  //! Randomly scatter the photon and return the shell that was interacted with
-  virtual void scatterPhoton( PhotonState& photon,
-			      ParticleBank& bank,
-			      SubshellType& shell_of_interaction ) const = 0;
+  //! Randomly scatter the adjoint photon and return the shell that was interacted with
+  virtual void scatterAdjointPhoton( AdjointPhotonState& photon,
+				     ParticleBank& bank ) const = 0;
 };
 
 } // end MonteCarlo namespace
