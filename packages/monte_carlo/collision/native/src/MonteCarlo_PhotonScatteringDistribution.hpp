@@ -57,9 +57,9 @@ public:
 				      SubshellType& shell_of_interaction,
 				      unsigned& trials ) const = 0;
 
-  //! Randomly scatter the adjoint photon and return the shell that was interacted with
-  virtual void scatterAdjointPhoton( AdjointPhotonState& photon,
-				     ParticleBank& bank ) const = 0;
+  //! Randomly scatter the photon and return the shell that was interacted with
+  virtual void scatterPhoton( PhotonState& photon,
+			      ParticleBank& bank ) const = 0;
 };
 
 } // end MonteCarlo namespace
