@@ -33,6 +33,9 @@
 Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution>
   distribution;
 
+Teuchos::RCP<MonteCarlo::AdjointPhotonScatteringDistribution>
+  adjoint_distribution;
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -205,6 +208,45 @@ TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
+// Check that an adjoint photon can be scattered coherently
+TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution, 
+		   scatterAdjointPhoton )
+{
+  MonteCarlo::ParticleBank bank;
+  
+  MonteCarlo::AdjointPhotonState adjoint_photon( 0 );
+  adjoint_photon.setEnergy( 4.95936772145E-03 );
+  adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
+  
+  MonteCarlo::SubshellType shell_of_interaction;
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 5 );
+  fake_stream[0] = 1.00475965594E-03; // sample form factor function squared (y = 1E6 cm)
+  fake_stream[1] = 9.98800000000E-01; // reject the cosine scattering angle form function rejection loop
+  fake_stream[2] = 6.50327467413E-01; // sample form factor function squared (y = 3E7 cm)
+  fake_stream[3] = 5.07800000000E-01; // accept the cosine scattering angle form function rejection loop
+  fake_stream[4] = 0.0;
+
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  adjoint_distribution->scatterAdjointPhoton( adjoint_photon,
+					      bank,
+					      shell_of_interaction );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+  
+  TEST_FLOATING_EQUALITY( adjoint_photon.getEnergy(), 
+			  4.95936772145E-03, 
+			  1e-15  );
+  TEST_FLOATING_EQUALITY( adjoint_photon.getZDirection(), 
+			  -0.125019990362325473, 
+			  1e-15 );
+  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
@@ -271,6 +313,10 @@ int main( int argc, char** argv )
 
     // Create the scattering distribution
     distribution.reset( 
+		new MonteCarlo::EfficientCoherentScatteringDistribution( 
+					      form_factor_function_squared ) );
+
+    adjoint_distribution.reset( 
 		new MonteCarlo::EfficientCoherentScatteringDistribution( 
 					      form_factor_function_squared ) );
   }
