@@ -103,23 +103,87 @@ double CoherentScatteringDistribution::evaluateIntegratedCrossSection(
   return integrated_cs;
 }
 
+// Sample an outgoing energy and direction from the distribution
+void CoherentScatteringDistribution::sample( 
+				     const double incoming_energy,
+				     double& outgoing_energy,
+				     double& scattering_angle_cosine,
+				     SubshellType& shell_of_interaction ) const
+{
+  // The outgoing energy is always equal to the incoming energy
+  outgoing_energy = incoming_energy;
+
+  unsigned trial_dummy;
+
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( incoming_energy,
+				   scattering_angle_cosine,
+				   trial_dummy );
+
+  shell_of_interaction = UNKNOWN_SUBSHELL;
+}
+
+// Sample an outgoing energy and direction and record the number of trials
+void CoherentScatteringDistribution::sampleAndRecordTrials( 
+					    const double incoming_energy,
+					    double& outgoing_energy,
+					    double& scattering_angle_cosine,
+					    SubshellType& shell_of_interaction,
+					    unsigned& trials ) const
+{
+  // The outgoing energy is always equal to the incoming energy
+  outgoing_energy = incoming_energy;
+  
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( incoming_energy,
+				   scattering_angle_cosine,
+				   trials );
+
+  shell_of_interaction = UNKNOWN_SUBSHELL;
+}
+
 // Randomly scatter the photon
 void CoherentScatteringDistribution::scatterPhoton( 
 				     PhotonState& photon,
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
 {
-  double outgoing_energy, scattering_angle_cosine;
+  double scattering_angle_cosine;
+
+  unsigned trial_dummy;
 
   // Sample an outgoing direction
-  this->sample( photon.getEnergy(),
-		outgoing_energy,
-		scattering_angle_cosine,
-		shell_of_interaction );
+  this->sampleAndRecordTrialsImpl( photon.getEnergy(),
+				   scattering_angle_cosine,
+				   trial_dummy );
+
+  shell_of_interaction = UNKNOWN_SUBSHELL;
 
   // Set the new direction
   photon.rotateDirection( scattering_angle_cosine, 
 			  this->sampleAzimuthalAngle() );
+}
+
+// Randomly scatter the adjoint photon
+void CoherentScatteringDistribution::scatterAdjointPhoton( 
+				     AdjointPhotonState& adjoint_photon,
+				     ParticleBank& bank,
+				     SubshellType& shell_of_interaction ) const
+{
+  double scattering_angle_cosine;
+
+  unsigned trial_dummy;
+
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( adjoint_photon.getEnergy(),
+				   scattering_angle_cosine,
+				   trial_dummy );
+  
+  shell_of_interaction = UNKNOWN_SUBSHELL;
+
+  // Set the new direction
+  adjoint_photon.rotateDirection( scattering_angle_cosine, 
+				  this->sampleAzimuthalAngle() );
 }
 
 // Evaluate the form factor squared
@@ -145,9 +209,7 @@ double CoherentScatteringDistribution::evaluateFormFactorSquared(
 // Basic sampling implementation
 void CoherentScatteringDistribution::sampleAndRecordTrialsBasicImpl( 
 					    const double incoming_energy,
-					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
-					    SubshellType& shell_of_interaction,
 					    unsigned& trials ) const
 {
   // Make sure the incoming energy is valid
@@ -176,14 +238,6 @@ void CoherentScatteringDistribution::sampleAndRecordTrialsBasicImpl(
   if( fabs( scattering_angle_cosine ) > 1.0 )
     scattering_angle_cosine = copysign( 1.0, scattering_angle_cosine );
 
-  // There is no change in energy for Thompson scattering
-  outgoing_energy = incoming_energy;
-  
-  // The shell is not relevant for free electron scattering
-  shell_of_interaction = UNKNOWN_SUBSHELL;
-
-  // Make sure the outgoing energy is valid
-  testPostcondition( outgoing_energy == incoming_energy );
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );

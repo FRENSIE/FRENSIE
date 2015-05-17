@@ -16,6 +16,18 @@ ADD_EXECUTABLE(tstPhotonState
 TARGET_LINK_LIBRARIES(tstPhotonState monte_carlo_core)
 ADD_TEST(PhotonState_test tstPhotonState)
 
+ADD_EXECUTABLE(tstAdjointPhotonState
+  tstAdjointPhotonState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointPhotonState monte_carlo_core)
+ADD_TEST(AdjointPhotonState_test tstAdjointPhotonState)
+
+ADD_EXECUTABLE(tstAdjointPhotonProbeState
+  tstAdjointPhotonProbeState.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointPhotonProbeState monte_carlo_core)
+ADD_TEST(AdjointPhotonProbeState_test tstAdjointPhotonProbeState)
+
 ADD_EXECUTABLE(tstNeutronState
   tstNeutronState.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
