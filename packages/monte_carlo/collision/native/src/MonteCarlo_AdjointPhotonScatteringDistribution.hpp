@@ -1,34 +1,31 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_PhotonScatteringDistribution.hpp
+//! \file   MonteCarlo_AdjointPhotonScatteringDistribution.hpp
 //! \author Alex Robinson
-//! \brief  The photon scattering distribution base class
+//! \brief  The adjoint photon scattering distribution base class
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_PHOTON_SCATTERING_DISTRIBUTION_HPP
-#define MONTE_CARLO_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonState.hpp"
-#include "MonteCarlo_ParticleBank.hpp"
-#include "MonteCarlo_SubshellType.hpp"
-#include "MonteCarlo_ScatteringDistribution.hpp"
+#include "MonteCarlo_AdjointPhotonState.hpp"
 
 namespace MonteCarlo{
 
-//! The scattering distribution base class
-class PhotonScatteringDistribution : public virtual ScatteringDistribution
+//! The adjoint photon scattering distribution base class
+class AdjointPhotonScatteringDistribution : public virtual ScatteringDistribution
 {
 
 public:
 
   //! Constructor
-  PhotonScatteringDistribution()
+  AdjointPhotonScatteringDistribution()
   { /* ... */ }
 
   //! Destructor
-  virtual ~PhotonScatteringDistribution()
+  virtual ~AdjointPhotonScatteringDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
@@ -58,15 +55,16 @@ public:
 				      unsigned& trials ) const = 0;
 
   //! Randomly scatter the photon and return the shell that was interacted with
-  virtual void scatterPhoton( PhotonState& photon,
-			      ParticleBank& bank,
-			      SubshellType& shell_of_interaction ) const = 0;
+  virtual void scatterAdjointPhoton( 
+				AdjointPhotonState& adjoint_photon,
+				ParticleBank& bank,
+				SubshellType& shell_of_interaction ) const = 0;
 };
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_PHOTON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_PhotonScatteringDistribution.hpp
+// end MonteCarlo_AdjointPhotonScatteringDistribution.hpp
 //---------------------------------------------------------------------------//

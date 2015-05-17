@@ -15,13 +15,16 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_PhotonScatteringDistribution.hpp"
+#include "MonteCarlo_AdjointPhotonScatteringDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_Tuple.hpp"
 
 namespace MonteCarlo{
 
 //! The coherent scattering distribution class
-class CoherentScatteringDistribution : public PhotonScatteringDistribution
+class CoherentScatteringDistribution : public PhotonScatteringDistribution,
+				       public AdjointPhotonScatteringDistribution
+					 
 {
 
 public:
@@ -47,12 +50,36 @@ public:
   virtual double evaluateIntegratedCrossSection( const double incoming_energy,
 						 const double precision) const;
 
+  //! Sample an outgoing energy and direction from the distribution
+  void sample( const double incoming_energy,
+	       double& outgoing_energy,
+	       double& scattering_angle_cosine,
+	       SubshellType& shell_of_interaction ) const;
+
+  //! Sample an outgoing energy and direction and record the number of trials
+  void sampleAndRecordTrials( const double incoming_energy,
+			      double& outgoing_energy,
+			      double& scattering_angle_cosine,
+			      SubshellType& shell_of_interaction,
+			      unsigned& trials ) const;
+
   //! Randomly scatter the photon
   void scatterPhoton( PhotonState& photon,
 		      ParticleBank& bank,
 		      SubshellType& shell_of_interaction ) const;
 
+  //! Randomly scatter the adjoint photon
+  void scatterAdjointPhoton( AdjointPhotonState& adjoint_photon,
+			     ParticleBank& bank,
+			     SubshellType& shell_of_interaction ) const;
+
 protected:
+
+  //! Sample an outgoing direction from the distribution
+  virtual void sampleAndRecordTrialsImpl( 
+				   const double incoming_energy,
+				   double& scattering_angle_cosine,
+				   unsigned& trials ) const = 0;
 
   //! Evaluate the form factor squared
   double evaluateFormFactorSquared( 
@@ -61,9 +88,7 @@ protected:
 
   //! Basic sampling implementation
   void sampleAndRecordTrialsBasicImpl( const double incoming_energy,
-				       double& outgoing_energy,
 				       double& scattering_angle_cosine,
-				       SubshellType& shell_of_interaction,
 				       unsigned& trials ) const;
 
   //! Return the form factor function squared distribution

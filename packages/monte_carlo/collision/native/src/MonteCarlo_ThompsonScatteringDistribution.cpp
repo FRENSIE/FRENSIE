@@ -36,36 +36,38 @@ double ThompsonScatteringDistribution::evaluateIntegratedCrossSection(
 }
 
 // Sample an outgoing energy and direction from the distribution
-void ThompsonScatteringDistribution::sample( 
-				     const double incoming_energy,
-				     double& outgoing_energy,
-				     double& scattering_angle_cosine,
-				     SubshellType& shell_of_interaction ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
+// void ThompsonScatteringDistribution::sample( 
+// 				     const double incoming_energy,
+// 				     double& outgoing_energy,
+// 				     double& scattering_angle_cosine,
+// 				     SubshellType& shell_of_interaction ) const
+// {
+//   // Make sure the incoming energy is valid
+//   testPrecondition( incoming_energy > 0.0 );
 
-  unsigned trial_dummy;
+//   unsigned trial_dummy;
 
-  this->sampleAndRecordTrials( incoming_energy,
-			       outgoing_energy,
-			       scattering_angle_cosine,
-			       shell_of_interaction,
-			       trial_dummy );
-}
+//   this->sampleAndRecordTrials( incoming_energy,
+// 			       outgoing_energy,
+// 			       scattering_angle_cosine,
+// 			       shell_of_interaction,
+// 			       trial_dummy );
+// }
 
 // Sample an outgoing energy and direction and record the number of trials
-void ThompsonScatteringDistribution::sampleAndRecordTrials( 
+// void ThompsonScatteringDistribution::sampleAndRecordTrials( 
+// 					    const double incoming_energy,
+// 					    double& outgoing_energy,
+// 					    double& scattering_angle_cosine,
+// 					    SubshellType& shell_of_interaction,
+// 					    unsigned& trials ) const
+void ThompsonScatteringDistribution::sampleAndRecordTrialsImpl( 
 					    const double incoming_energy,
-					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
-					    SubshellType& shell_of_interaction,
 					    unsigned& trials ) const
 {
   this->sampleAndRecordTrialsBasicImpl( incoming_energy,
-					outgoing_energy,
 					scattering_angle_cosine,
-					shell_of_interaction,
 					trials );
 }
 
