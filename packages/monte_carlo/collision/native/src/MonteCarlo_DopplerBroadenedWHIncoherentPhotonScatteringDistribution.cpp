@@ -1,35 +1,30 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file MonteCarlo_DopplerBroadenedIncoherentPhotonScatteringDistribution.cpp
+//! \file MonteCarlo_DopplerBroadenedWHIncoherentPhotonScatteringDistribution.cpp
 //! \author Alex Robinson
-//! \brief  The Doppler broadened incoherent photon scattering dist. def.
+//! \brief  The Doppler broadened Waller-Hartree incoherent photon scattering dist. def.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_DopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
-#include "Utility_DiscreteDistribution.hpp"
-#include "Utility_PhysicalConstants.hpp"
+#include "MonteCarlo_DopplerBroadenedWHIncoherentPhotonScatteringDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-// Constructor
-/*! \details The recoil electron momentum (scattering function independent 
- * variable) should have units of 1/cm. 
- */  
-DopplerBroadenedIncoherentPhotonScatteringDistribution::DopplerBroadenedIncoherentPhotonScatteringDistribution( 
+// Constructor  
+DopplerBroadenedWHIncoherentPhotonScatteringDistribution::DopplerBroadenedWHIncoherentPhotonScatteringDistribution( 
       const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
       const Teuchos::Array<double>& subshell_binding_energies,
       const Teuchos::Array<double>& subshell_occupancies,
       const Teuchos::Array<SubshellType>& subshell_order,
       const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
       const double kahn_sampling_cutoff_energy )
-  : IncoherentPhotonScatteringDistribution( scattering_function,
-					    kahn_sampling_cutoff_energy ),
-    d_subshell_occupancy_distribution(),
-    d_subshell_binding_energy( subshell_binding_energies ),
-    d_subshell_order( subshell_order ),
+  : WHIncoherentPhotonScatteringDistribution( scattering_function,
+					      subshell_binding_energies,
+					      subshell_occupancies,
+					      subshell_order,
+					      kahn_sampling_cutoff_energy ),
     d_subshell_converter( subshell_converter )
 {
   // Make sure the scattering function is valid
@@ -40,13 +35,8 @@ DopplerBroadenedIncoherentPhotonScatteringDistribution::DopplerBroadenedIncohere
 		    subshell_binding_energies.size() );
   testPrecondition( subshell_order.size() == 
 		    subshell_binding_energies.size() );
-
-  // Create the shell interaction data distribution
-  Teuchos::Array<double> dummy_indep_vals( subshell_occupancies.size() );
-  
-  d_subshell_occupancy_distribution.reset(
-	           new Utility::DiscreteDistribution( dummy_indep_vals,
-						      subshell_occupancies ) );
+  // Make sure the subshell converter is valid
+  testPrecondition( !subshell_converter.is_null() );
 }
 
 // Randomly scatter the photon and return the shell that was interacted with
@@ -55,7 +45,7 @@ DopplerBroadenedIncoherentPhotonScatteringDistribution::DopplerBroadenedIncohere
  * calculated as if it were at rest initially (feel free to update this 
  * model!).
  */ 
-void DopplerBroadenedIncoherentPhotonScatteringDistribution::scatterPhoton( 
+void DopplerBroadenedWHIncoherentPhotonScatteringDistribution::scatterPhoton( 
 				     PhotonState& photon,
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
@@ -91,22 +81,15 @@ void DopplerBroadenedIncoherentPhotonScatteringDistribution::scatterPhoton(
 }
 
 // Sample the subshell that is interacted with
-void DopplerBroadenedIncoherentPhotonScatteringDistribution::sampleSubshell( 
+void DopplerBroadenedWHIncoherentPhotonScatteringDistribution::sampleInteractionSubshell( 
 				          SubshellType& shell_of_interaction,
 					  double& subshell_binding_energy,
 				          unsigned& compton_shell_index ) const
 {
-  // Sample the shell that is interacted with
-  unsigned shell_index;
+  WHIncoherentPhotonScatteringDistribution::sampleInteractionSubshell( 
+						     shell_of_interaction,
+						     subshell_binding_energy );
 
-  d_subshell_occupancy_distribution->sampleAndRecordBinIndex( shell_index );
-
-  shell_of_interaction = d_subshell_order[shell_index];
-
-  // Get the binding energy
-  subshell_binding_energy = d_subshell_binding_energy[shell_index];
-
-  // Get the Compton profile index
   compton_shell_index = 
     d_subshell_converter->convertSubshellToIndex( shell_of_interaction );
 }

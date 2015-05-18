@@ -12,8 +12,9 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_BasicDopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_AdvancedDopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_WHIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
@@ -42,8 +43,34 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistri
 							 raw_photoatom_data,
 							 scattering_function );
 
-  incoherent_distribution.reset( new IncoherentPhotonScatteringDistribution( 
+  // Create the subshell binding energy, occupancy and order arrays
+  const std::set<unsigned>& subshells = raw_photoatom_data.getSubshells();
+
+  std::set<unsigned>::const_iterator subshell_it = subshells.begin();
+
+  Teuchos::Array<double> binding_energies, occupancy_numbers;
+
+  Teuchos::Array<SubshellType> subshell_order;
+  
+  while( subshell_it != subshells.end() )
+  {
+    binding_energies.push_back( 
+		 raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ) );
+    
+    occupancy_numbers.push_back(
+		     raw_photoatom_data.getSubshellOccupancy( *subshell_it ) );
+
+    subshell_order.push_back( 
+			 convertENDFDesignatorToSubshellEnum( *subshell_it ) );
+    
+    ++subshell_it;
+  }
+
+  incoherent_distribution.reset( new WHIncoherentPhotonScatteringDistribution( 
 					       scattering_function,
+					       binding_energies,
+					       occupancy_numbers,
+					       subshell_order,
 					       kahn_sampling_cutoff_energy ) );
 }
 
@@ -106,7 +133,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createAdvancedDopplerB
   }
 
   incoherent_distribution.reset( 
-	   new AdvancedDopplerBroadenedIncoherentPhotonScatteringDistribution( 
+	 new AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribution( 
 			   scattering_function,
 			   subshell_binding_energies,
 			   subshell_occupancies,

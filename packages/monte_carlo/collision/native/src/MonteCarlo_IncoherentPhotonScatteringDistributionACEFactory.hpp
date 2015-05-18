@@ -16,6 +16,7 @@
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionFactory.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
+#include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -54,6 +55,11 @@ protected:
   static void createScatteringFunction( 
 	  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	  Teuchos::RCP<const Utility::OneDDistribution>& scattering_function );
+
+  //! Create the subshell order array
+  static void createSubshellOrderArray(
+			   const Data::XSSEPRDataExtractor& raw_photoatom_data,
+			   Teuchos::Array<SubshellType>& subshell_order );
 };
 
 } // end MonteCarlo namespace

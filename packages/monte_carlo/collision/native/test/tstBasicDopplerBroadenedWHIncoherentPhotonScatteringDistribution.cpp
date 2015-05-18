@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstBasicDopplerBroadenedIncoherentPhotonScatteringDistribution.cpp
+//! \file   tstBasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution.cpp
 //! \author Alex Robinson
-//! \brief  Incoherent photon scattering distribution unit tests
+//! \brief  Basic Doppler broadened Waller-Hartree incoherent photon scattering distribution unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -18,7 +18,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
-#include "MonteCarlo_BasicDopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_SubshellType.hpp"
@@ -47,7 +47,7 @@ bool notEqualZero( const double value )
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( BasicDopplerBroadenedIncoherentPhotonScatteringDistribution,
+TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution,
 		   evaluate )
 {
   double dist_value = distribution->evaluate(
@@ -77,7 +77,7 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedIncoherentPhotonScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( BasicDopplerBroadenedIncoherentPhotonScatteringDistribution,
+TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution,
 		   evaluatePDF )
 {
   double pdf_value = distribution->evaluatePDF(
@@ -107,7 +107,7 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedIncoherentPhotonScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that the integrated cross section can be evaluated
-TEUCHOS_UNIT_TEST( DopplerBroadenedIncoherentPhotonScatteringDistribution,
+TEUCHOS_UNIT_TEST( DopplerBroadenedWHIncoherentPhotonScatteringDistribution,
 		   evaluateIntegratedCrossSection )
 {
   double cross_section = 
@@ -134,7 +134,7 @@ TEUCHOS_UNIT_TEST( DopplerBroadenedIncoherentPhotonScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that an outgoing energy and direction can be sampled
-TEUCHOS_UNIT_TEST( BasicDopplerBroadenedIncoherentPhotonScatteringDistribution,
+TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution,
 		   sample )
 {
   double outgoing_energy, scattering_angle_cosine;
@@ -191,7 +191,7 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedIncoherentPhotonScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that an outgoing energy and direction can be sampled
-TEUCHOS_UNIT_TEST( BasicDopplerBroadenedIncoherentPhotonScatteringDistribution,
+TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution,
 		   sampleAndRecordTrials )
 {
   double outgoing_energy, scattering_angle_cosine;
@@ -256,7 +256,7 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedIncoherentPhotonScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that a photon can be scattered incoherently with Doppler broadening
-TEUCHOS_UNIT_TEST( BasicDopplerBroadenedIncoherentPhotonScatteringDistribution,
+TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution,
 		   scatterPhoton )
 {
   MonteCarlo::ParticleBank bank;
@@ -415,7 +415,7 @@ int main( int argc, char** argv )
 
   // Create the scattering distribution
   distribution.reset( 
-   new MonteCarlo::BasicDopplerBroadenedIncoherentPhotonScatteringDistribution(
+   new MonteCarlo::BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution(
 			  scattering_function,
 			  xss_data_extractor->extractSubshellBindingEnergies(),
 			  xss_data_extractor->extractSubshellOccupancies(),
@@ -486,5 +486,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstBasicDopplerBroadenedIncoherentPhotonScatteringDistribution.cpp
+// end tstBasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution.cpp
 //---------------------------------------------------------------------------//
