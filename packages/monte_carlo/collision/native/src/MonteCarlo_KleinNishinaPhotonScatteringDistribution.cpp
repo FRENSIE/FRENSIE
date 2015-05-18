@@ -19,7 +19,7 @@ namespace MonteCarlo{
 
 // Default Constructor
 KleinNishinaPhotonScatteringDistribution::KleinNishinaPhotonScatteringDistribution()
-  : IncoherentPhotonScatteringDistribution( Teuchos::RCP<const Utility::OneDDistribution>( new Utility::UniformDistribution( 0.0, std::numeric_limits<double>::max(), 1.0 ) ), 3.0 )
+  : IncoherentPhotonScatteringDistribution( 3.0 )
 { /* ... */ }
 
 // Constructor
@@ -29,10 +29,25 @@ KleinNishinaPhotonScatteringDistribution::KleinNishinaPhotonScatteringDistributi
  */
 KleinNishinaPhotonScatteringDistribution::KleinNishinaPhotonScatteringDistribution(
 				     const double kahn_sampling_cutoff_energy )
-  : IncoherentPhotonScatteringDistribution( Teuchos::RCP<const Utility::OneDDistribution>( new Utility::UniformDistribution( 0.0, std::numeric_limits<double>::max(), 1.0 ) ), 3.0 )
+  : IncoherentPhotonScatteringDistribution( kahn_sampling_cutoff_energy )
 { /* ... */ }
 
-// Evaluate the integrated cross section (cm^2)
+// Evaluate the distribution
+double KleinNishinaPhotonScatteringDistribution::evaluate( 
+				   const double incoming_energy,
+				   const double scattering_angle_cosine ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+  
+  return this->evaluateKleinNishinaDist( incoming_energy,
+					 scattering_angle_cosine );
+}
+
+// Evaluate the integrated cross section (b)
 double 
 KleinNishinaPhotonScatteringDistribution::evaluateIntegratedCrossSection(
 						const double incoming_energy,
@@ -76,11 +91,11 @@ void KleinNishinaPhotonScatteringDistribution::sample(
   
   unsigned trial_dummy;
 
-  this->sampleAndRecordTrials( incoming_energy,
-			       outgoing_energy,
-			       scattering_angle_cosine,
-			       shell_of_interaction,
-			       trial_dummy );
+  this->sampleAndRecordTrialsKleinNishina( incoming_energy,
+					   outgoing_energy,
+					   scattering_angle_cosine,
+					   shell_of_interaction,
+					   trial_dummy );
 }
 
 // Sample an outgoing energy and direction and record the number of trials
@@ -94,11 +109,11 @@ void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
   
-  this->sampleAndRecordTrialsBasicImpl( incoming_energy,
-					outgoing_energy,
-					scattering_angle_cosine,
-					shell_of_interaction,
-					trials );
+  this->sampleAndRecordTrialsKleinNishina( incoming_energy,
+					   outgoing_energy,
+					   scattering_angle_cosine,
+					   shell_of_interaction,
+					   trials );
 }
 
 // Randomly scatter the photon and return the shell that was interacted with

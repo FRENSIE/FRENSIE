@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_BasicDopplerBroadenedIncoherentPhotonScatteringDistribution.cpp
+//! \file   MonteCarlo_BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution.cpp
 //! \author Alex Robinson
-//! \brief  THe basic Doppler broadened incoherent photon scattering dist decl.
+//! \brief  THe basic Doppler broadened Waller-Hartree incoherent photon scattering dist decl.
 //!
 //---------------------------------------------------------------------------//
 
 // FRENSIE Includes
-#include "MonteCarlo_BasicDopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 
 namespace MonteCarlo{
@@ -18,7 +18,7 @@ namespace MonteCarlo{
  * atomic units). Only half profiles should be provided (grid ranges from 0.0 
  * to 1.0).
  */
-BasicDopplerBroadenedIncoherentPhotonScatteringDistribution::BasicDopplerBroadenedIncoherentPhotonScatteringDistribution(
+BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution::BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution(
      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
      const Teuchos::Array<double>& subshell_binding_energies,
      const Teuchos::Array<double>& subshell_occupancies,
@@ -26,7 +26,7 @@ BasicDopplerBroadenedIncoherentPhotonScatteringDistribution::BasicDopplerBroaden
      const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
      const ElectronMomentumDistArray& electron_momentum_dist_array,
      const double kahn_sampling_cutoff_energy )
-  : DopplerBroadenedIncoherentPhotonScatteringDistribution( 
+  : DopplerBroadenedWHIncoherentPhotonScatteringDistribution( 
 						 scattering_function,
 						 subshell_binding_energies,
 						 subshell_occupancies,
@@ -43,6 +43,8 @@ BasicDopplerBroadenedIncoherentPhotonScatteringDistribution::BasicDopplerBroaden
 		    subshell_binding_energies.size() );
   testPrecondition( subshell_order.size() == 
 		    subshell_binding_energies.size() );
+  // Make sure the subshell converter is valid
+  testPrecondition( !subshell_converter.is_null() );
   // Make sure the comptron profile array is valid
   testPrecondition( electron_momentum_dist_array.size() > 0 );
   testPrecondition( electron_momentum_dist_array.front()->getLowerBoundOfIndepVar() == 0.0 );
@@ -57,7 +59,7 @@ BasicDopplerBroadenedIncoherentPhotonScatteringDistribution::BasicDopplerBroaden
  * atomic momentum units). The validity of this approach seems questionable
  * so use the revised version when possible.
  */
-double BasicDopplerBroadenedIncoherentPhotonScatteringDistribution::sampleDopplerBroadenedComptonLineEnergy( 
+double BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution::sampleDopplerBroadenedComptonLineEnergy( 
 				     const double incoming_energy,
 				     const double scattering_angle_cosine,
 				     SubshellType& shell_of_interaction ) const
@@ -83,9 +85,9 @@ double BasicDopplerBroadenedIncoherentPhotonScatteringDistribution::sampleDopple
     double subshell_binding_energy;
     unsigned compton_shell_index;
 
-    this->sampleSubshell( shell_of_interaction,
-			  subshell_binding_energy,
-			  compton_shell_index );
+    this->sampleInteractionSubshell( shell_of_interaction,
+				     subshell_binding_energy,
+				     compton_shell_index );
 
     // Calculate the maximum outgoing photon energy
     double energy_max = incoming_energy - subshell_binding_energy;
@@ -177,5 +179,5 @@ double BasicDopplerBroadenedIncoherentPhotonScatteringDistribution::sampleDopple
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_BasicDopplerBroadenedIncoherentPhotonScatteringDistribution.cpp
+// end MonteCarlo_BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

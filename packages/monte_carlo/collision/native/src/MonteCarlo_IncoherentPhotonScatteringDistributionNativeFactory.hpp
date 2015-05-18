@@ -16,6 +16,7 @@
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionFactory.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
+#include "Utility_OneDDistribution.hpp"
 
 namespace MonteCarlo{
 

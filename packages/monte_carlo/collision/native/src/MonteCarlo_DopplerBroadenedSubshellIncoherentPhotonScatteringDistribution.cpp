@@ -53,7 +53,7 @@ double DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::sampleDop
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // Calculate the max electron momentum projection
-  double pz_max = this->calculateScatteringFunctionArgument(
+  double pz_max = this->calculateOccupationNumberArgument(
 					             incoming_energy,
 					             scattering_angle_cosine );
 

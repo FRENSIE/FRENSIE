@@ -12,8 +12,9 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionACEFactory.hpp"
-#include "MonteCarlo_BasicDopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_AdvancedDopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_WHIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
@@ -41,9 +42,19 @@ void IncoherentPhotonScatteringDistributionACEFactory::createIncoherentDistribut
 							 raw_photoatom_data,
 							 scattering_function );
 
-  incoherent_distribution.reset( new IncoherentPhotonScatteringDistribution( 
-					       scattering_function,
-					       kahn_sampling_cutoff_energy ) );
+  // Create the subshell order array
+  Teuchos::Array<SubshellType> subshell_order;
+
+  IncoherentPhotonScatteringDistributionACEFactory::createSubshellOrderArray(
+							    raw_photoatom_data,
+							    subshell_order );
+
+  incoherent_distribution.reset( new WHIncoherentPhotonScatteringDistribution( 
+			   scattering_function,
+			   raw_photoatom_data.extractSubshellBindingEnergies(),
+			   raw_photoatom_data.extractSubshellOccupancies(),
+			   subshell_order,
+			   kahn_sampling_cutoff_energy ) );
 }
 
 // Create a basic Doppler broadened incoherent distribution
@@ -65,17 +76,11 @@ void IncoherentPhotonScatteringDistributionACEFactory::createBasicDopplerBroaden
 							 scattering_function );
 
   // Create the subshell order array
-  Teuchos::ArrayView<const double> subshell_endf_designators = 
-    raw_photoatom_data.extractSubshellENDFDesignators();
-  
-  Teuchos::Array<SubshellType> subshell_order(
-					    subshell_endf_designators.size() );
+  Teuchos::Array<SubshellType> subshell_order;
 
-  for( unsigned i = 0; i < subshell_order.size(); ++i )
-  {
-    subshell_order[i] = convertENDFDesignatorToSubshellEnum(
-				      (unsigned)subshell_endf_designators[i] );
-  }
+  IncoherentPhotonScatteringDistributionACEFactory::createSubshellOrderArray(
+							    raw_photoatom_data,
+							    subshell_order );
     
   // Create the Compton profile subshell converter
   Teuchos::RCP<ComptonProfileSubshellConverter> converter;
@@ -120,7 +125,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createBasicDopplerBroaden
   }
 
   incoherent_distribution.reset( 
-	      new BasicDopplerBroadenedIncoherentPhotonScatteringDistribution( 
+	    new BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution( 
 			   scattering_function,
 			   raw_photoatom_data.extractSubshellBindingEnergies(),
 			   raw_photoatom_data.extractSubshellOccupancies(),
@@ -149,17 +154,11 @@ void IncoherentPhotonScatteringDistributionACEFactory::createAdvancedDopplerBroa
 							 scattering_function );
 
   // Create the subshell order array
-  Teuchos::ArrayView<const double> subshell_endf_designators = 
-    raw_photoatom_data.extractSubshellENDFDesignators();
-  
-  Teuchos::Array<SubshellType> subshell_order(
-					    subshell_endf_designators.size() );
+  Teuchos::Array<SubshellType> subshell_order;
 
-  for( unsigned i = 0; i < subshell_order.size(); ++i )
-  {
-    subshell_order[i] = convertENDFDesignatorToSubshellEnum(
-				      (unsigned)subshell_endf_designators[i] );
-  }
+  IncoherentPhotonScatteringDistributionACEFactory::createSubshellOrderArray(
+							    raw_photoatom_data,
+							    subshell_order );
     
   // Create the Compton profile subshell converter
   Teuchos::RCP<ComptonProfileSubshellConverter> converter;
@@ -213,7 +212,7 @@ void IncoherentPhotonScatteringDistributionACEFactory::createAdvancedDopplerBroa
   }
 
   incoherent_distribution.reset( 
-	   new AdvancedDopplerBroadenedIncoherentPhotonScatteringDistribution( 
+	 new AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribution( 
 			   scattering_function,
 			   raw_photoatom_data.extractSubshellBindingEnergies(),
 			   raw_photoatom_data.extractSubshellOccupancies(),
@@ -247,6 +246,24 @@ void IncoherentPhotonScatteringDistributionACEFactory::createScatteringFunction(
 		     new Utility::TabularDistribution<Utility::LinLin>(
 						recoil_momentum,
 						scattering_function_values ) );
+}
+
+// Create the subshell order array
+void 
+IncoherentPhotonScatteringDistributionACEFactory::createSubshellOrderArray(
+			   const Data::XSSEPRDataExtractor& raw_photoatom_data,
+			   Teuchos::Array<SubshellType>& subshell_order )
+{
+  Teuchos::ArrayView<const double> subshell_endf_designators = 
+    raw_photoatom_data.extractSubshellENDFDesignators();
+  
+  subshell_order.resize( subshell_endf_designators.size() );
+
+  for( unsigned i = 0; i < subshell_order.size(); ++i )
+  {
+    subshell_order[i] = convertENDFDesignatorToSubshellEnum(
+				      (unsigned)subshell_endf_designators[i] );
+  }
 }
 
 } // end MonteCarlo namespace

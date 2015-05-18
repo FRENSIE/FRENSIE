@@ -16,7 +16,8 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotoatomicReaction.hpp"
-#include "MonteCarlo_BasicDopplerBroadenedIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_WHIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
@@ -300,11 +301,14 @@ int main( int argc, char** argv )
 
   // Create the incoherent scattering distributions
   Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution>
-    basic_distribution( new MonteCarlo::IncoherentPhotonScatteringDistribution(
-						       scattering_function ) );
+    basic_distribution( new MonteCarlo::WHIncoherentPhotonScatteringDistribution(
+			  scattering_function,
+			  xss_data_extractor->extractSubshellBindingEnergies(),
+			  xss_data_extractor->extractSubshellOccupancies(),
+			  subshell_order ) );
 
   Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution>
-    detailed_distribution( new MonteCarlo::BasicDopplerBroadenedIncoherentPhotonScatteringDistribution(
+    detailed_distribution( new MonteCarlo::BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution(
 			  scattering_function,
 			  xss_data_extractor->extractSubshellBindingEnergies(),
 			  xss_data_extractor->extractSubshellOccupancies(),

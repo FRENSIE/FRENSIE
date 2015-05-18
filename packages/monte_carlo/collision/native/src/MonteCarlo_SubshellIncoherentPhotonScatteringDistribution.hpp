@@ -75,9 +75,13 @@ public:
 
 protected:
 
-  // Calculate the scattering function argument
-  double calculateScatteringFunctionArgument( 
+  // Calculate the occupation number argument (pz max)
+  double calculateOccupationNumberArgument(
 				  const double incoming_energy,
+				  const double scattering_angle_cosine ) const;
+
+  // Evaluate the occupation number 
+  double evaluateOccupationNumber(const double incoming_energy,
 				  const double scattering_angle_cosine ) const;
 
 private:
@@ -90,6 +94,9 @@ private:
 
   // The subshell binding energy
   double d_binding_energy;
+  
+  // The occupation number
+  Teuchos::RCP<const Utility::OneDDistribution> d_occupation_number;
 };
 
 } // end MonteCarlo namespace
