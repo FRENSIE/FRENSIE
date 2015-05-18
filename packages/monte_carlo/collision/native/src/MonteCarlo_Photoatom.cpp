@@ -338,18 +338,6 @@ void Photoatom::sampleAbsorptionReaction( const double scaled_random_number,
     ++photoatomic_reaction;
   }
 
-  // Note: the absorption cross section is calculated at run time. However, if 
-  // the cross sections are stored on a log-log grid, the absorption cross 
-  // section won't be exactly equal to the sum of the stored cross sections. 
-  // This test ensures that a valid reaction is always sampled.
-  // if( photoatomic_reaction == d_core.getAbsorptionReactions().end() )
-  // {
-  //   photoatomic_reaction = d_core.getAbsorptionReactions().begin();
-    
-  //   std::advance( photoatomic_reaction,
-  // 		  d_core.getAbsorptionReactions().size()-1 );
-  // }
-
   // Make sure a reaction was selected
   testPostcondition( photoatomic_reaction != 
 		     d_core.getAbsorptionReactions().end() );
@@ -387,18 +375,6 @@ void Photoatom::sampleScatteringReaction( const double scaled_random_number,
 
     ++photoatomic_reaction;
   }
-
-  // Note: the total cross section is calculated at run time. However, if the
-  // cross sections are stored on a log-log grid, the total cross section 
-  // won't be exactly equal to the sum of the stored cross sections. This
-  // test ensures that a valid reaction is always sampled
-  // if( photoatomic_reaction == d_core.getScatteringReactions().end() )
-  // {
-  //   photoatomic_reaction = d_core.getScatteringReactions().begin();
-    
-  //   std::advance( photoatomic_reaction,
-  // 		  d_core.getScatteringReactions().size()-1 );
-  // }
 
   // Make sure the reaction was found
   testPostcondition( photoatomic_reaction != 

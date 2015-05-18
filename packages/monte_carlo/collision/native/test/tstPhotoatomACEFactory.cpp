@@ -370,6 +370,8 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 			 exp( 1.151292546497E+01 ),
 			 MonteCarlo::TRIPLET_PRODUCTION_PHOTOATOMIC_REACTION );
 
+  TEST_FLOATING_EQUALITY( cross_section, 0.0, 1e-12 );
+
   // Test that the Doppler data is present
   MonteCarlo::ParticleBank bank;
 

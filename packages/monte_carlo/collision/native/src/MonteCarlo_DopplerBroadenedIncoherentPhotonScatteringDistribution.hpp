@@ -16,6 +16,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_DopplerBroadenedComptonLineEnergyDistribution.hpp"
+#include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
 
 namespace MonteCarlo{
 

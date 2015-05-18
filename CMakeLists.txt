@@ -167,7 +167,7 @@ ADD_SUBDIRECTORY(doc)
 
 # Add custom build ctest target for continuous integration tests
 ADD_CUSTOM_TARGET(test-fast 
-  COMMAND ctest -E verification
+  COMMAND ctest -E Facemc
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
 ADD_CUSTOM_TARGET(test-facemc
   COMMAND ctest -R Facemc
