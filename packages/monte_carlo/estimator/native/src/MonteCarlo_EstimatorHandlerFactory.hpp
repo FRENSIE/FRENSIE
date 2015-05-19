@@ -17,7 +17,12 @@
 #include <Teuchos_ParameterList.hpp>
 
 // FRENSIE Includes
+#include "FRENSIE_dagmc_config.hpp"
 #include "MonteCarlo_EstimatorHandler.hpp"
+
+#ifdef HAVE_FRENSIE_DAGMC
+#include "Geometry_DagMCProperties.hpp"
+#endif
 
 namespace MonteCarlo{
 
@@ -46,6 +51,22 @@ private:
   // Test if two estimator types are equivalent
   static bool areEstimatorTypesEquivalent( const std::string& dagmc_type,
 					   const std::string& xml_type );
+
+  // Test if an estimator type is a cell pulse height estimator
+  static bool isCellPulseHeightEstimator( const std::string& estimator_name );
+
+  // Test if an estimator type is a cell track length flux estimator
+  static bool isCellTrackLengthFluxEstimator( 
+					   const std::string& estimator_name );
+
+  // Test if an estimator type is a cell collision flux estimator
+  static bool isCellCollisionFluxEstimator(const std::string& estimator_name );
+
+  // Test if an estimator type is a surface flux estimator
+  static bool isSurfaceFluxEstimator( const std::string& estimator_name );
+
+  // Test if an estimator type is a surface current estimator
+  static bool isSurfaceCurrentEstimator( const std::string& estimator_name );
   
   // Create the estimator data maps using DagMC information
   static void createEstimatorDataMapsUsingDagMC(
@@ -226,6 +247,77 @@ public:
     : std::logic_error( what_arg )
   { /* ... */ }
 };
+
+// Test if an estimator type is a cell pulse height estimator
+inline bool EstimatorHandlerFactory::isCellPulseHeightEstimator( 
+					    const std::string& estimator_name )
+{
+#ifdef HAVE_FRENSIE_DAGMC
+  return (estimator_name == 
+	  Geometry::DagMCProperties::getCellPulseHeightName() ||
+	  estimator_name ==
+	  EstimatorHandlerFactory::cell_pulse_height_name);
+#else
+  return estimator_name == EstimatorHandlerFactory::cell_pulse_height_name;
+#endif
+}
+
+// Test if an estimator type is a cell track length flux estimator
+inline bool EstimatorHandlerFactory::isCellTrackLengthFluxEstimator( 
+					    const std::string& estimator_name )
+{
+#ifdef HAVE_FRENSIE_DAGMC
+  return (estimator_name == 
+	  Geometry::DagMCProperties::getCellTrackLengthFluxName() ||
+	  estimator_name ==
+	  EstimatorHandlerFactory::cell_track_length_flux_name);
+#else
+  return estimator_name ==
+    EstimatorHandlerFactory::cell_track_length_flux_name;
+#endif
+}
+
+// Test if an estimator type is a cell collision flux estimator
+inline bool EstimatorHandlerFactory::isCellCollisionFluxEstimator(
+					    const std::string& estimator_name )
+{
+#ifdef HAVE_FRENSIE_DAGMC
+  return (estimator_name == 
+          Geometry::DagMCProperties::getCellCollisionFluxName() ||
+          estimator_name ==
+          EstimatorHandlerFactory::cell_collision_flux_name);
+#else
+  return estimator_name == EstimatorHandlerFactory::cell_collision_flux_name;
+#endif
+}
+
+// Test if an estimator type is a surface flux estimator
+inline bool EstimatorHandlerFactory::isSurfaceFluxEstimator(
+					    const std::string& estimator_name )
+{
+#ifdef HAVE_FRENSIE_DAGMC
+  return (estimator_name == 
+	  Geometry::DagMCProperties::getSurfaceFluxName() ||
+	  estimator_name == 
+	  EstimatorHandlerFactory::surface_flux_name);
+#else
+  return estimator_name == EstimatorHandlerFactory::surface_flux_name;
+#endif
+}
+
+// Test if an estimator type is a surface current estimator
+inline bool EstimatorHandlerFactory::isSurfaceCurrentEstimator( 
+					    const std::string& estimator_name )
+{
+#ifdef HAVE_FRENSIE_DAGMC
+  return (estimator_name == 
+	  Geometry::DagMCProperties::getSurfaceCurrentName() ||
+	  estimator_name == 
+	  EstimatorHandlerFactory::surface_current_name);
+#else
+  return estimator_name == EstimatorHandlerFactory::surface_current_name;
+#endif
+}
 
 } // end MonteCarlo namespace
 

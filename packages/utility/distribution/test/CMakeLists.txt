@@ -17,6 +17,12 @@ ADD_EXECUTABLE(tstHistogramDistribution
 TARGET_LINK_LIBRARIES(tstHistogramDistribution utility_core utility_prng utility_dist)
 ADD_TEST(HistogramDistribution_test tstHistogramDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_histogram_distributions.xml")
 
+ADD_EXECUTABLE(tstMaxwellFissionDistribution 
+  tstMaxwellFissionDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstMaxwellFissionDistribution utility_core utility_prng utility_dist)
+ADD_TEST(MaxwellFissionDistribution_test tstMaxwellFissionDistribution
+--test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_maxwell_fission_distributions.xml")
+
 ADD_EXECUTABLE(tstEquiprobableBinDistribution 
   tstEquiprobableBinDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstEquiprobableBinDistribution utility_core utility_prng utility_dist)
