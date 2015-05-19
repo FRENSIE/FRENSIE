@@ -10,7 +10,6 @@
 #include <set>
 
 // FRENSIE Includes
-#include "FRENSIE_dagmc_config.hpp"
 #include "MonteCarlo_EstimatorHandlerFactory.hpp"
 #include "MonteCarlo_ResponseFunctionFactory.hpp"
 #include "MonteCarlo_CellPulseHeightEstimator.hpp"
@@ -22,7 +21,6 @@
 
 #ifdef HAVE_FRENSIE_DAGMC
 #include "Geometry_DagMCHelpers.hpp"
-#include "Geometry_DagMCProperties.hpp"
 #include "Geometry_ModuleInterface.hpp"
 #endif
 
@@ -56,6 +54,7 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
 				 const Teuchos::ParameterList& response_reps,
 				 const Teuchos::ParameterList& estimator_reps )
 {
+#ifdef HAVE_FRENSIE_DAGMC
   // Create the response functions
   boost::unordered_map<unsigned,Teuchos::RCP<ResponseFunction> > 
     response_id_map;
@@ -197,10 +196,7 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
     
       Teuchos::Array<double> cell_volumes;
     
-      if( estimator_id_type_map[id] == 
-	  Geometry::DagMCProperties::getCellPulseHeightName() ||
-	  estimator_id_type_map[id] ==
-	  EstimatorHandlerFactory::cell_pulse_height_name )
+      if( EstimatorHandlerFactory::isCellPulseHeightEstimator( estimator_id_type_map[id] ) )
       {
 	EstimatorHandlerFactory::createPulseHeightEstimator(
 							id,
@@ -211,10 +207,7 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
 							energy_mult,
 							estimator_bins );
       }
-      else if( estimator_id_type_map[id] == 
-	       Geometry::DagMCProperties::getCellTrackLengthFluxName() ||
-	       estimator_id_type_map[id] ==
-	       EstimatorHandlerFactory::cell_track_length_flux_name )
+      else if( EstimatorHandlerFactory::isCellTrackLengthFluxEstimator( estimator_id_type_map[id] ) )
       {
 	EstimatorHandlerFactory::fillCellVolumesArray( cells,
 						       cell_volume_map,
@@ -230,10 +223,7 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
 							energy_mult,
 							estimator_bins );
       }
-      else if( estimator_id_type_map[id] == 
-	       Geometry::DagMCProperties::getCellCollisionFluxName() ||
-	       estimator_id_type_map[id] ==
-	       EstimatorHandlerFactory::cell_collision_flux_name )
+      else if( EstimatorHandlerFactory::isCellCollisionFluxEstimator( estimator_id_type_map[id] ) )
       {
 	EstimatorHandlerFactory::fillCellVolumesArray( cells,
 						       cell_volume_map,
@@ -262,10 +252,7 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
     
       Teuchos::Array<double> surface_areas;
       
-      if( estimator_id_type_map[id] == 
-	  Geometry::DagMCProperties::getSurfaceFluxName() ||
-	  estimator_id_type_map[id] == 
-	  EstimatorHandlerFactory::surface_flux_name )
+      if( EstimatorHandlerFactory::isSurfaceFluxEstimator( estimator_id_type_map[id] ) )
       {
 	EstimatorHandlerFactory::fillSurfaceAreasArray( surfaces,
 							surface_area_map,
@@ -437,7 +424,8 @@ void EstimatorHandlerFactory::initializeHandlerUsingDagMC(
     estimator_id_type_map.erase( id );
     estimator_id_ptype_map.erase( id );
     estimator_id_cells_map.erase( id );
-  }    
+  }
+#endif  
 }
 
 // Validate an estimator representation

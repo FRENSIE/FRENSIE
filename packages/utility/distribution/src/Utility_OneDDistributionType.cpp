@@ -34,6 +34,7 @@ std::string convertOneDDistributionTypeToString(
   case UNIFORM_DISTRIBUTION: return "Uniform Distribution";
   case POLYNOMIAL_DISTRIBUTION: return "Polynomial Distribution";
   case HYDROGEN_FORM_FACTOR_DISTRIBUTION: return "Hydrogen Form Factor Distribution";
+  case MAXWELLFISSION_DISTRIBUTION: return "Maxwell Fission Distribution";
   default:
     THROW_EXCEPTION( std::logic_error, 
 		     "The distribution type is missin a name. Please add it!");
