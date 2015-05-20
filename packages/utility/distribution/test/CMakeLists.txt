@@ -23,6 +23,12 @@ TARGET_LINK_LIBRARIES(tstMaxwellFissionDistribution utility_core utility_prng ut
 ADD_TEST(MaxwellFissionDistribution_test tstMaxwellFissionDistribution
 --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_maxwell_fission_distributions.xml")
 
+ADD_EXECUTABLE(tstWattDistribution 
+  tstWattDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstWattDistribution utility_core utility_prng utility_dist)
+ADD_TEST(WattDistribution_test tstWattDistribution
+--test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_watt_distributions.xml")
+
 ADD_EXECUTABLE(tstEquiprobableBinDistribution 
   tstEquiprobableBinDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstEquiprobableBinDistribution utility_core utility_prng utility_dist)
