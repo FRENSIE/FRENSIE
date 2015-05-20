@@ -103,11 +103,11 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, sampleAndRecordTrials )
 
   double sample = distribution->sampleAndRecordTrials( trials );
   TEST_FLOATING_EQUALITY( sample, 0.78269807500829, 1e-14 );
-  TEST_EQUALITY_CONST( 1.0/trials, 0.25 );
+  TEST_EQUALITY_CONST( trials, 1.0 );
 
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_FLOATING_EQUALITY( sample, 0.89106359701991, 1e-14 );
-  TEST_EQUALITY_CONST( 2.0/trials, 0.25 );
+  TEST_EQUALITY_CONST( trials, 3.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
