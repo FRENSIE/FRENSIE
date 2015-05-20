@@ -106,8 +106,7 @@ double MaxwellFissionDistribution::sample() const
 }
 
 // Return a random sample and record the number of trials
-double MaxwellFissionDistribution::sampleAndRecordTrials( 
-						       unsigned& trials ) const
+double MaxwellFissionDistribution::sampleAndRecordTrials( unsigned& trials ) const
 {
   return MaxwellFissionDistribution::sampleAndRecordTrials( 
   d_incident_energy,
@@ -150,16 +149,21 @@ double MaxwellFissionDistribution::sampleAndRecordTrials(
   return sample;
 }
 
-// Return the normalization constant of the distribution, pass in parameters
+// Return the normalization constant of the distribution
 /*!
  * As given by ENDF Law 7
  * c^(-1) = T^(3/2)*[(sqrt(pi)/2)*erf(sqrt((E-U)/T)) - sqrt((E-U)/T)*exp(-(E-U)/T)]
  */
-double MaxwellFissionDistribution::getNormalizationConstant( const double incident_energy, const double nuclear_temperature, const double restriction_energy ) const
+double MaxwellFissionDistribution::getNormalizationConstant( 
+  const double incident_energy,
+  const double nuclear_temperature,
+  const double restriction_energy ) const
 {
   double argument = (incident_energy - restriction_energy) / nuclear_temperature;
 
-  double normalizationConstantInverse = pow( nuclear_temperature, 3.0 * 0.5 ) * ( sqrt( PhysicalConstants::pi ) * 0.5 * erf( sqrt(argument) ) - sqrt(argument) * exp(-argument) );
+  double normalizationConstantInverse = pow( nuclear_temperature, 3.0 * 0.5 )
+    * ( sqrt( PhysicalConstants::pi ) * 0.5 * erf( sqrt(argument) ) - sqrt(argument)
+    * exp(-argument) );
 
   return pow( normalizationConstantInverse, -1.0 );
 }

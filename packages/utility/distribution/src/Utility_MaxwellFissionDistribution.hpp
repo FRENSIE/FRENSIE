@@ -61,7 +61,11 @@ public:
   double sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return a random sample from the corresponding CDF and record the number of trials
-  static double sampleAndRecordTrials( const double incident_energy, const double nuclear_temperature, const double restriction_energy, unsigned& trials );
+  static double sampleAndRecordTrials(
+    const double incident_energy,
+    const double nuclear_temperature,
+    const double restriction_energy,
+    unsigned& trials );
 
   //! Test if the distribution is continuous
   bool isContinuous() const;
@@ -87,7 +91,10 @@ public:
 private:
 
   // Return the normalization constant of the distribution, pass in parameters
-  double getNormalizationConstant( const double incident_energy, const double nuclear_temperature, const double restriction_energy ) const;
+  double getNormalizationConstant(
+    const double incident_energy,
+    const double nuclear_temperature,
+    const double restriction_energy ) const;
  
   // The distribution type
   static const OneDDistributionType distribution_type = MAXWELLFISSION_DISTRIBUTION;

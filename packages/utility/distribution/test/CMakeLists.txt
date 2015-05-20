@@ -33,6 +33,12 @@ ADD_EXECUTABLE(tstTabularDistribution
 TARGET_LINK_LIBRARIES(tstTabularDistribution utility_core utility_prng utility_dist)
 ADD_TEST(TabularDistribution_test tstTabularDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_tabular_distributions.xml")
 
+ADD_EXECUTABLE(tstEvaporationDistribution 
+  tstEvaporationDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstEvaporationDistribution utility_core utility_prng utility_dist)
+ADD_TEST(EvaporationDistribution_test tstEvaporationDistribution
+--test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_evaporation_distributions.xml")
+
 ADD_EXECUTABLE(tstExponentialDistribution 
   tstExponentialDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstExponentialDistribution utility_core utility_prng utility_dist)
