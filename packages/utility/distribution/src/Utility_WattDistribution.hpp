@@ -114,12 +114,6 @@ private:
   
   // The restriction energy of the distribution
   double d_restriction_energy;
-
-  // The number of trials
-  unsigned d_trials;
-
-  // The number of random samples returned
-  unsigned d_samples;
 };
 
 } // end Utility namespace

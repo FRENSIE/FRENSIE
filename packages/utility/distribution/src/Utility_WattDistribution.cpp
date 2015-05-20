@@ -146,10 +146,13 @@ double WattDistribution::sampleAndRecordTrials(
   while( true )
   {
     // Sample Maxwell Fission Distribution
-    Teuchos::RCP<Utility::MaxwellFissionDistribution> distribution(
-                                 new Utility::MaxwellFissionDistribution( incident_energy, a_parameter, restriction_energy) );
+    unsigned maxwell_trials = 0;
 
-    maxwell_sample = distribution->sample(); 
+    maxwell_sample = Utility::MaxwellFissionDistribution::sampleAndRecordTrials(
+      incident_energy,
+      a_parameter,
+      restriction_energy,
+      maxwell_trials ); 
    
     // Sample random number 
     random_number = RandomNumberGenerator::getRandomNumber<double>();
