@@ -135,7 +135,7 @@ double MaxwellFissionDistribution::sampleAndRecordTrials(
     
     term_1 = log(random_number_1);
     term_2 = log(random_number_2)
-      + pow( cos( PhysicalConstants::pi * random_number_3 * 0.5 ), 2.0 );
+      * pow( cos( PhysicalConstants::pi * random_number_3 * 0.5 ), 2.0 );
     sample = -nuclear_temperature * ( term_1 + term_2 );
   
     if( sample <= (incident_energy - restriction_energy) )
