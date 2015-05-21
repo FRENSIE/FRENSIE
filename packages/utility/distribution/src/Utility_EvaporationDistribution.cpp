@@ -30,8 +30,8 @@ EvaporationDistribution::EvaporationDistribution(
   testPrecondition( !ST::isnaninf( incident_energy ) );
   testPrecondition( !ST::isnaninf( nuclear_temperature ) );
   testPrecondition( !ST::isnaninf( restriction_energy ) );
-  // Make sure that incident energy is non-negative, nuclear temperature is positive
-  testPrecondition( incident_energy >= 0.0 );
+  // Make sure that incident energy and nuclear temperature are positive
+  testPrecondition( incident_energy > 0.0 );
   testPrecondition( nuclear_temperature > 0.0 );
 }
 
@@ -46,8 +46,8 @@ EvaporationDistribution::EvaporationDistribution(
   testPrecondition( !ST::isnaninf( dist_instance.d_incident_energy ) );
   testPrecondition( !ST::isnaninf( dist_instance.d_nuclear_temperature) );
   testPrecondition( !ST::isnaninf( dist_instance.d_restriction_energy) );
-  // Make sure that incident energy is non-negative, nuclear temperature is positive
-  testPrecondition( dist_instance.d_incident_energy >= 0.0 );
+  // Make sure that incident energy and nuclear temperature are positive
+  testPrecondition( dist_instance.d_incident_energy > 0.0 );
   testPrecondition( dist_instance.d_nuclear_temperature > 0.0 );
 }
 
@@ -59,7 +59,7 @@ EvaporationDistribution& EvaporationDistribution::operator=(
   testPrecondition( !ST::isnaninf( dist_instance.d_incident_energy ) );
   testPrecondition( !ST::isnaninf( dist_instance.d_nuclear_temperature ) );
   testPrecondition( !ST::isnaninf( dist_instance.d_restriction_energy ) );
-  testPrecondition( dist_instance.d_incident_energy >= 0.0 );
+  testPrecondition( dist_instance.d_incident_energy > 0.0 );
   testPrecondition( dist_instance.d_nuclear_temperature > 0.0 );
 
   if( this != &dist_instance )

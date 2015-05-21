@@ -34,9 +34,8 @@ WattDistribution::WattDistribution(
   testPrecondition( !ST::isnaninf( a_parameter ) );
   testPrecondition( !ST::isnaninf( b_parameter ) );
   testPrecondition( !ST::isnaninf( restriction_energy ) );
-  // Make sure that incident energy is non-negative, a_parameter is positive,
-  // b_parameter is positive
-  testPrecondition( incident_energy >= 0.0 );
+  // Make sure that incident energy, a_parameter, and b_parameter are positive
+  testPrecondition( incident_energy > 0.0 );
   testPrecondition( a_parameter > 0.0 );
   testPrecondition( b_parameter > 0.0 );
 }
@@ -54,9 +53,8 @@ WattDistribution::WattDistribution(
   testPrecondition( !ST::isnaninf( dist_instance.d_a_parameter ) );
   testPrecondition( !ST::isnaninf( dist_instance.d_b_parameter ) );
   testPrecondition( !ST::isnaninf( dist_instance.d_restriction_energy) );
-  // Make sure that incident energy is non-negative, a_parameter is positive,
-  // b_parameter is positive
-  testPrecondition( dist_instance.d_incident_energy >= 0.0 );
+  // Make sure that incident energy, a_parameter, and b_parameter are positive
+  testPrecondition( dist_instance.d_incident_energy > 0.0 );
   testPrecondition( dist_instance.d_a_parameter > 0.0 );
   testPrecondition( dist_instance.d_b_parameter > 0.0 );
 }
@@ -70,7 +68,7 @@ WattDistribution& WattDistribution::operator=(
   testPrecondition( !ST::isnaninf( dist_instance.d_a_parameter ) );
   testPrecondition( !ST::isnaninf( dist_instance.d_b_parameter ) );
   testPrecondition( !ST::isnaninf( dist_instance.d_restriction_energy ) );
-  testPrecondition( dist_instance.d_incident_energy >= 0.0 );
+  testPrecondition( dist_instance.d_incident_energy > 0.0 );
   testPrecondition( dist_instance.d_a_parameter > 0.0 );
   testPrecondition( dist_instance.d_b_parameter > 0.0 );
 
