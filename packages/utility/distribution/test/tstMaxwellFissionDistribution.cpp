@@ -30,7 +30,7 @@
 
 Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 
-Teuchos::RCP<Utility::MaxwellFissionDistribution> distribution(
+Teuchos::RCP<Utility::OneDDistribution> distribution(
 				 new Utility::MaxwellFissionDistribution( 1.0, 1.0, 0.1 ) );
 
 //---------------------------------------------------------------------------//
@@ -144,14 +144,14 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution,
   nuclear_temperature = 0.1;
   restriction_energy = 0.01;
 
-  sample = distribution->sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
+  sample = Utility::MaxwellFissionDistribution::sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
   TEST_FLOATING_EQUALITY( sample, 0.20924646054839, 1e-13 );
   
   incident_energy = 0.75;
   nuclear_temperature = 0.5;
   restriction_energy = 0.25;
 
-  sample = distribution->sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
+  sample = Utility::MaxwellFissionDistribution::sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
   TEST_FLOATING_EQUALITY( sample, 0.41023025568120, 1e-13 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -228,20 +228,41 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, toParameterList )
 // Check that the distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, fromParameterList )
 {
+  double test_value_1;
+  double test_value_2;
+
   Utility::MaxwellFissionDistribution distribution = 
     test_dists_list->get<Utility::MaxwellFissionDistribution>( "Maxwell Fission Distribution A" );
 
-  TEST_EQUALITY_CONST( 0.0 , 0.0 );
+  test_value_1 = 0.0 ;
+  test_value_2 = ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(0.9)) - sqrt(0.9) * exp(-0.9) );
+  test_value_2 = pow( test_value_2, -1.0 );
+  test_value_2 = test_value_2 * exp( -1.0 );
+  
+  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( distribution.evaluate( 1.0 ), test_value_2 );
 
   distribution = 
     test_dists_list->get<Utility::MaxwellFissionDistribution>( "Maxwell Fission Distribution B" );
   
-  TEST_EQUALITY_CONST( 0.0 , 0.0 );
+  test_value_1 = 0.0 ;
+  test_value_2 = pow( 2.0, 1.5 ) * ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(1.0)) - sqrt(1.0) * exp(-1.0) );
+  test_value_2 = pow( test_value_2, -1.0 );
+  test_value_2 = test_value_2 * exp( -0.5 );
+  
+  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( distribution.evaluate( 1.0 ), test_value_2 );
 
   distribution = 
     test_dists_list->get<Utility::MaxwellFissionDistribution>( "Maxwell Fission Distribution C" );
 
-  TEST_EQUALITY_CONST( 0.0 , 0.0 );
+  test_value_1 = 0.0 ;
+  test_value_2 = ( sqrt( Utility::PhysicalConstants::pi) * 0.5 * erf(sqrt(1.0)) - sqrt(1.0) * exp(-1.0) );
+  test_value_2 = pow( test_value_2, -1.0 );
+  test_value_2 = test_value_2 * exp( -1.0 );
+  
+  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( distribution.evaluate( 1.0 ), test_value_2 );
 }
 
 //---------------------------------------------------------------------------//
