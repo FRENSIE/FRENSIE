@@ -24,6 +24,12 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
+//---------------------------------------------------------------------------//
+// Testing Variables
+//---------------------------------------------------------------------------//
+
+Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
+
 Teuchos::RCP<Utility::MaxwellFissionDistribution> distribution(
 				 new Utility::MaxwellFissionDistribution( 1.0, 1.0, 0.1 ) );
 
@@ -176,33 +182,66 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to and read from an xml file
-TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, toFromParameterList )
+// Check if the distribution is tabular
+TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, isTabular )
+{
+  TEST_ASSERT( !distribution->isTabular() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is continuous
+TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, isContinuous )
+{
+  TEST_ASSERT( distribution->isContinuous() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to an xml file
+TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::MaxwellFissionDistribution> true_distribution =
-  Teuchos::rcp_dynamic_cast<Utility::MaxwellFissionDistribution>( distribution );
+    Teuchos::rcp_dynamic_cast<Utility::MaxwellFissionDistribution>( distribution );
   
   Teuchos::ParameterList parameter_list;
   
-  parameter_list.set<Utility::MaxwellFissionDistribution>( "test distribution",
-                                                  *true_distribution );
-  
-  Teuchos::writeParameterListToXmlFile( parameter_list,
-                                       "maxwellfission_dist_test_list.xml" );
-  
-  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
-  Teuchos::getParametersFromXmlFile( "maxwellfission_dist_test_list.xml" );
+  parameter_list.set<Utility::MaxwellFissionDistribution>( "test distribution", 
+						     *true_distribution );
 
-  // TEST_EQUALITY( parameter_list, *read_parameter_list );
-  TEST_EQUALITY( *read_parameter_list, parameter_list );
+  Teuchos::writeParameterListToXmlFile( parameter_list,
+					"maxwellfission_dist_test_list.xml" );
   
-  Teuchos::RCP<Utility::MaxwellFissionDistribution>
-  copy_distribution( new Utility::MaxwellFissionDistribution );
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+    Teuchos::getParametersFromXmlFile( "maxwellfission_dist_test_list.xml" );
   
+  TEST_EQUALITY( parameter_list, *read_parameter_list );
+
+  Teuchos::RCP<Utility::MaxwellFissionDistribution> 
+    copy_distribution( new Utility::MaxwellFissionDistribution );
+
   *copy_distribution = read_parameter_list->get<Utility::MaxwellFissionDistribution>(
-                                                                             "test distribution");
-  
+							  "test distribution");
+
   TEST_EQUALITY( *copy_distribution, *true_distribution );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be read from an xml file
+TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, fromParameterList )
+{
+  Utility::MaxwellFissionDistribution distribution = 
+    test_dists_list->get<Utility::MaxwellFissionDistribution>( "Maxwell Fission Distribution A" );
+
+  TEST_EQUALITY_CONST( 0.0 , 0.0 );
+
+  distribution = 
+    test_dists_list->get<Utility::MaxwellFissionDistribution>( "Maxwell Fission Distribution B" );
+  
+  TEST_EQUALITY_CONST( 0.0 , 0.0 );
+
+  distribution = 
+    test_dists_list->get<Utility::MaxwellFissionDistribution>( "Maxwell Fission Distribution C" );
+
+  TEST_EQUALITY_CONST( 0.0 , 0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -210,8 +249,14 @@ TEUCHOS_UNIT_TEST( MaxwellFissionDistribution, toFromParameterList )
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_dists_xml_file;
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
-  
+
+  clp.setOption( "test_dists_xml_file",
+		 &test_dists_xml_file,
+		 "Test distributions xml file name" );
+
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 
@@ -222,6 +267,10 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::MaxwellFissionDistribution );
+
+  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
