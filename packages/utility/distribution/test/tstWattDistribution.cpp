@@ -24,7 +24,13 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
-Teuchos::RCP<Utility::WattDistribution> distribution(
+//---------------------------------------------------------------------------//
+// Testing Variables
+//---------------------------------------------------------------------------//
+
+Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
+
+Teuchos::RCP<Utility::OneDDistribution> distribution(
 				 new Utility::WattDistribution( 1.0, 1.0, 1.0, 0.1 ) );
 
 //---------------------------------------------------------------------------//
@@ -117,7 +123,7 @@ TEUCHOS_UNIT_TEST( WattDistribution, sampleAndRecordTrials_pass_parameters )
   b_parameter = 0.3;
   restriction_energy = 0.4;
 
-  sample = distribution->sampleAndRecordTrials(incident_energy, a_parameter, b_parameter, restriction_energy, trials);
+  sample = Utility::WattDistribution::sampleAndRecordTrials(incident_energy, a_parameter, b_parameter, restriction_energy, trials);
   TEST_FLOATING_EQUALITY( sample, 0.07927727029875, 1e-13 );
   TEST_EQUALITY_CONST( trials, 1.0 );
   
@@ -126,7 +132,7 @@ TEUCHOS_UNIT_TEST( WattDistribution, sampleAndRecordTrials_pass_parameters )
   b_parameter = 0.1;
   restriction_energy = 0.25;
 
-  sample = distribution->sampleAndRecordTrials(incident_energy, a_parameter, b_parameter, restriction_energy, trials);
+  sample = Utility::WattDistribution::sampleAndRecordTrials(incident_energy, a_parameter, b_parameter, restriction_energy, trials);
   TEST_FLOATING_EQUALITY( sample, 0.04844237604136, 1e-13 );
   TEST_EQUALITY_CONST( trials, 3.0 );
 
@@ -158,8 +164,22 @@ TEUCHOS_UNIT_TEST( WattDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to and read from an xml file
-TEUCHOS_UNIT_TEST( WattDistribution, toFromParameterList )
+// Check if the distribution is tabular
+TEUCHOS_UNIT_TEST( WattDistribution, isTabular )
+{
+  TEST_ASSERT( !distribution->isTabular() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is continuous
+TEUCHOS_UNIT_TEST( WattDistribution, isContinuous )
+{
+  TEST_ASSERT( distribution->isContinuous() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to an xml file
+TEUCHOS_UNIT_TEST( WattDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::WattDistribution> true_distribution =
   Teuchos::rcp_dynamic_cast<Utility::WattDistribution>( distribution );
@@ -175,8 +195,7 @@ TEUCHOS_UNIT_TEST( WattDistribution, toFromParameterList )
   Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
   Teuchos::getParametersFromXmlFile( "watt_dist_test_list.xml" );
 
-  // TEST_EQUALITY( parameter_list, *read_parameter_list );
-  TEST_EQUALITY( *read_parameter_list, *read_parameter_list );
+  TEST_EQUALITY( parameter_list, *read_parameter_list );
   
   Teuchos::RCP<Utility::WattDistribution>
   copy_distribution( new Utility::WattDistribution );
@@ -188,11 +207,49 @@ TEUCHOS_UNIT_TEST( WattDistribution, toFromParameterList )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be read from an xml file
+TEUCHOS_UNIT_TEST( WattDistribution, fromParameterList )
+{
+  double test_value_1;
+  double test_value_2;
+
+  Utility::WattDistribution distribution = 
+    test_dists_list->get<Utility::WattDistribution>( "Watt Distribution A" );
+
+  test_value_1 = 0.0 ;
+  test_value_2 = 0.25 * sqrt( Utility::PhysicalConstants::pi ) * exp( 0.25 ) * ( erf( sqrt(0.9) - sqrt(0.25) ) + erf( sqrt(0.9) + sqrt(0.25) ) ) - exp( -0.9 ) * sinh( sqrt(0.9) );
+  test_value_2 = pow( test_value_2, -1.0 ) * exp( -1.0 ) * sinh( 1.0 );
+  
+  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( distribution.evaluate( 1.0 ), test_value_2 );
+
+   distribution = 
+    test_dists_list->get<Utility::WattDistribution>( "Watt Distribution B" );
+
+  test_value_1 = 0.0 ;
+  test_value_2 = 0.25 * sqrt( Utility::PhysicalConstants::pi * pow( 2.0, 3.0 ) * 1.0 )
+    * exp( 0.25 * 2.0 ) * ( erf( sqrt( 1.5 ) - sqrt( 0.25 * 2.0 ) )
+    + erf( sqrt( 1.5 ) + sqrt( 0.25 * 2.0 ) ) )
+    - 2.0 * exp( - 1.5 ) * sinh( sqrt( 3.0 ) );
+  test_value_2 = pow( test_value_2, -1.0 ) * exp( -0.5 ) * sinh( 1.0 );
+ 
+  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( distribution.evaluate( 1.0 ), test_value_2 );
+
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_dists_xml_file;
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+
+  clp.setOption( "test_dists_xml_file",
+		 &test_dists_xml_file,
+		 "Test distributions xml file name" );
   
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -204,6 +261,10 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::WattDistribution );
+
+  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
@@ -226,4 +287,3 @@ int main( int argc, char** argv )
 //---------------------------------------------------------------------------//
 // end tstWattDistribution.cpp
 //---------------------------------------------------------------------------//
-

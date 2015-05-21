@@ -157,7 +157,7 @@ TEUCHOS_UNIT_TEST( EvaporationDistribution, isContinuous )
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be written to an xml file
-TEUCHOS_UNIT_TEST( EvaporationDistribution, toFromParameterList )
+TEUCHOS_UNIT_TEST( EvaporationDistribution, toParameterList )
 {
   Teuchos::RCP<Utility::EvaporationDistribution> true_distribution =
   Teuchos::rcp_dynamic_cast<Utility::EvaporationDistribution>( distribution );
