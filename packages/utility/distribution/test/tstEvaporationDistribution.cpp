@@ -24,7 +24,13 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 
-Teuchos::RCP<Utility::EvaporationDistribution> distribution(
+//---------------------------------------------------------------------------//
+// Testing Variables
+//---------------------------------------------------------------------------//
+
+Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
+
+Teuchos::RCP<Utility::OneDDistribution> distribution(
 				 new Utility::EvaporationDistribution( 1.0, 1.0, 0.1 ) );
 
 //---------------------------------------------------------------------------//
@@ -96,7 +102,7 @@ TEUCHOS_UNIT_TEST( EvaporationDistribution, sampleAndRecordTrials_pass_parameter
   nuclear_temperature = 0.1;
   restriction_energy = 0.01;
 
-  sample = distribution->sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
+  sample = Utility::EvaporationDistribution::sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
   TEST_FLOATING_EQUALITY( sample, 0.13885427138954, 1e-13 );
   TEST_EQUALITY_CONST( trials, 1.0 );
 
@@ -104,7 +110,7 @@ TEUCHOS_UNIT_TEST( EvaporationDistribution, sampleAndRecordTrials_pass_parameter
   nuclear_temperature = 0.5;
   restriction_energy = 0.25;
 
-  sample = distribution->sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
+  sample = Utility::EvaporationDistribution::sampleAndRecordTrials(incident_energy, nuclear_temperature, restriction_energy, trials);
   TEST_FLOATING_EQUALITY( sample, 0.43320278283758, 1e-13 );
   TEST_EQUALITY_CONST( trials, 3.0 );
 
@@ -136,7 +142,21 @@ TEUCHOS_UNIT_TEST( EvaporationDistribution, getDistributionType )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the distribution can be written to and read from an xml file
+// Check if the distribution is tabular
+TEUCHOS_UNIT_TEST( EvaporationDistribution, isTabular )
+{
+  TEST_ASSERT( !distribution->isTabular() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is continuous
+TEUCHOS_UNIT_TEST( EvaporationDistribution, isContinuous )
+{
+  TEST_ASSERT( distribution->isContinuous() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be written to an xml file
 TEUCHOS_UNIT_TEST( EvaporationDistribution, toFromParameterList )
 {
   Teuchos::RCP<Utility::EvaporationDistribution> true_distribution =
@@ -153,8 +173,7 @@ TEUCHOS_UNIT_TEST( EvaporationDistribution, toFromParameterList )
   Teuchos::RCP<Teuchos::ParameterList> read_parameter_list =
   Teuchos::getParametersFromXmlFile( "evaporation_dist_test_list.xml" );
 
-  // TEST_EQUALITY( parameter_list, *read_parameter_list );
-  TEST_EQUALITY( *read_parameter_list, *read_parameter_list );
+  TEST_EQUALITY( parameter_list, *read_parameter_list );
   
   Teuchos::RCP<Utility::EvaporationDistribution>
   copy_distribution( new Utility::EvaporationDistribution );
@@ -166,11 +185,53 @@ TEUCHOS_UNIT_TEST( EvaporationDistribution, toFromParameterList )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the distribution can be read from an xml file
+TEUCHOS_UNIT_TEST( EvaporationDistribution, fromParameterList )
+{
+  double test_value_1;
+  double test_value_2;
+  Utility::EvaporationDistribution distribution = 
+    test_dists_list->get<Utility::EvaporationDistribution>( "Evaporation Distribution A" );
+
+  test_value_1 = 0.0 ;
+  test_value_2 = pow( 1.0 - exp(-0.9) * (1.0 + 0.9), -1.0 ) * exp( -1.0 );
+
+  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( distribution.evaluate( 1.0 ), test_value_2 );
+
+  distribution = 
+    test_dists_list->get<Utility::EvaporationDistribution>( "Evaporation Distribution B" );
+
+  test_value_1 = 0.0 ;
+  test_value_2 = pow( 2.0, 2.0) * ( 1.0 - exp(-1.0) * (1.0 + 1.0) );
+  test_value_2 = pow( test_value_2, -1.0 ) * exp( -0.5 );
+
+  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( distribution.evaluate( 1.0 ), test_value_2 );
+
+  distribution = 
+    test_dists_list->get<Utility::EvaporationDistribution>( "Evaporation Distribution C" );
+
+  test_value_1 = 0.0 ;
+  test_value_2 = 1.0 - exp(-1.0) * (1.0 + 1.0) ;
+  test_value_2 = pow( test_value_2, -1.0 ) * exp( -1.0 );
+
+  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( distribution.evaluate( 1.0 ), test_value_2 );
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
+  std::string test_dists_xml_file;
+
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
+
+  clp.setOption( "test_dists_xml_file",
+		 &test_dists_xml_file,
+		 "Test distributions xml file name" );
   
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -182,6 +243,10 @@ int main( int argc, char** argv )
     *out << "\nEnd Result: TEST FAILED" << std::endl;
     return parse_return;
   }
+
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::EvaporationDistribution );
+
+  test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
