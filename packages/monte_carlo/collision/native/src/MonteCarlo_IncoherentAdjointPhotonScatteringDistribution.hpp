@@ -11,6 +11,8 @@
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
+#include <Teuchos_ArrayRCP.hpp>
+#include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotonScatteringDistribution.hpp"
@@ -22,87 +24,73 @@ namespace MonteCarlo{
 class IncoherentAdjointPhotonScatteringDistribution : public AdjointPhotonScatteringDistribution
 {
 
+protected:
+
+  //! Typedef for ArrayRCP const iterator
+  typedef Teuchos::ArrayRCP<const double>::const_iterator LineEnergyIterator;
+
 public:
 
   //! Constructor
   IncoherentAdjointPhotonScatteringDistribution(
-      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
-      const double max_energy );
+	       const double max_energy,
+	       const Teuchos::ArrayRCP<const double>& critical_line_energies );
 
   //! Destructor
   virtual ~IncoherentAdjointPhotonScatteringDistribution()
   { /* ... */ }
 
-  //! Evaluate the distribution
-  virtual double evaluate( const double incoming_energy,
-			   const double scattering_angle_cosine ) const;
-
   //! Evaluate the pdf
-  virtual double evaluatePDF( const double incoming_energy,
-			      const double scattering_angle_cosine ) const;
-
-  //! Evaluate the integrated cross section (b)
-  virtual double evaluateIntegratedCrossSection(const double incoming_energy,
-						const double precision ) const;
-
-  //! Sample an outgoing energy and direction from the distribution
-  virtual void sample( const double incoming_energy,
-		       double& outgoing_energy,
-		       double& scattering_angle_cosine,
-		       SubshellType& shell_of_interaction ) const;
-
-  //! Sample an outgoing energy and direction and record the number of trials
-  virtual void sampleAndRecordTrials( const double incoming_energy,
-				      double& outgoing_energy,
-				      double& scattering_angle_cosine,
-				      SubshellType& shell_of_interaction,
-				      unsigned& trials ) const;
-
-  //! Randomly scatter the adjoint photon and return the shell that was interacted with
-  virtual void scatterAdjointPhoton( AdjointPhotonState& photon,
-				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction) const;
-
+  double evaluatePDF( const double incoming_energy,
+		      const double scattering_angle_cosine ) const;
+  
 protected:
 
-  //! Calculate the scattering function argument
-  virtual double calculateScatteringFunctionArgument(
-			          const double incoming_energy,
-				  const double scattering_angle_cosine ) const;
+  //! Check if an energy is in the scattering window
+  virtual bool isEnergyInScatteringWindow( 
+				       const double energy_of_interest,
+				       const double initial_energy ) const = 0;
+
+  //! Return the max energy
+  double getMaxEnergy() const;
+
+  //! Return only the critical line energies that can be scattered into
+  void getCriticalLineEnergiesInScatteringWindow( 
+					const double energy,
+				        LineEnergyIterator& start_energy,
+					LineEnergyIterator& end_energy ) const;
+
+  //! Calculate the minimum scattering angle cosine
+  double calculateMinScatteringAngleCosine( 
+					  const double incoming_energy ) const;
+					     
 
   //! Calculate the adjoint Compton line energy
-  double calculateComptonLineEnergy(
+  double calculateAdjointComptonLineEnergy( 
+				  const double incoming_energy,
+				  const double scattering_angle_cosine ) const;
+
+  //! Evaluate the adjoint Klein-Nishina distribution
+  double evaluateAdjointKleinNishinaDist( 
 				  const double incoming_energy,
 				  const double scattering_angle_cosine ) const;
 
   //! Basic sampling implementation
-  void sampleAndRecordTrialsBasicImpl( const double incoming_energy,
-				       double& outgoing_energy,
-				       double& scattering_angle_cosine,
-				       SubshellType& shell_of_interaction,
-				       unsigned& trials ) const;
-
+  void sampleAndRecordTrialsAdjointKleinNishina( 
+					    const double incoming_energy,
+					    double& outgoing_energy,
+					    double& scattering_angle_cosine,
+					    SubshellType& shell_of_interaction,
+					    unsigned& trials ) const;
+  
 private:
 
-  // Evaluate the scattering function
-  double evaluateScatteringFunction(
-				  const double incoming_energy,
-				  const double scattering_angle_cosine ) const;
+  // The maximum energy
+  double d_max_energy;
 
-  // The scattering function
-  Teuchos::RCP<const Utility::OneDDistribution> d_scattering_function;
+  // The critical line energies
+  Teuchos::ArrayRCP<const double> d_critical_line_energies;
 };
-
-// Calculate the scattering function argument
-/*! \details The default implementation calculates the standard scattering
- * function argument (arg = sin(theta/2)/lamda_out)
- */
-inline double IncoherentAdjointPhotonScatteringDistribution::calculateScatteringFunctionArgument(
-                                  const double incoming_energy,
-				  const double scattering_angle_cosine ) const
-{
-  
-}
 
 } // end MonteCarlo namespace
 
