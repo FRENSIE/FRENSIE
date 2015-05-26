@@ -118,9 +118,9 @@ void IncoherentPhotonScatteringDistributionACEFactory::createBasicDopplerBroaden
     MonteCarlo::convertProfileToInverseMeCUnits( half_profile.begin(),
 						 half_profile.end() );
     
-    // Ignore interp parameter (always assume log-lin inerpolation)
+    // Ignore interp parameter (always assume lin-lin interpolation)
     compton_profiles[subshell].reset(
-	 new Utility::TabularDistribution<Utility::LogLin>( half_momentum_grid,
+	 new Utility::TabularDistribution<Utility::LinLin>( half_momentum_grid,
 							    half_profile ) );
   }
 
@@ -205,9 +205,9 @@ void IncoherentPhotonScatteringDistributionACEFactory::createAdvancedDopplerBroa
     MonteCarlo::convertProfileToInverseMeCUnits( full_profile.begin(),
 						 full_profile.end() );
     
-    // Ignore interp parameter (always assume log-lin inerpolation)
+    // Ignore interp parameter (always assume lin-lin inerpolation)
     compton_profiles[subshell].reset(
-	 new Utility::TabularDistribution<Utility::LogLin>( full_momentum_grid,
+	 new Utility::TabularDistribution<Utility::LinLin>( full_momentum_grid,
 							    full_profile ) );
   }
 

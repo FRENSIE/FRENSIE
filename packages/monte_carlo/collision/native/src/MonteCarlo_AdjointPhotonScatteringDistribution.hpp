@@ -11,6 +11,9 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotonState.hpp"
+#include "MonteCarlo_SubshellType.hpp"
+#include "MonteCarlo_ParticleBank.hpp"
+#include "MonteCarlo_ScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
