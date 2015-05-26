@@ -326,6 +326,35 @@
  *          values should always be positive.</li>
  *    <li>\ref interval_operators "Interval operators" can be used when 
  *        specifying this distribution.</li></ul></li>
+ *   <li><b>Evaporation distribution</b>
+ *    <ul>
+ *     <li>\code
+ *         <Parameter name="example a" type="Evaporation Distribution" value="{1.0,1.0,0.1}"/>
+ *         <Parameter name="example b" type="Evaporation Distribution" value="{3.0,2.0,1.0}"/>
+ *         <Parameter name="example c" type="Evaporation Distribution" value="{1.0,1.0,0.0}"/>
+ *         \endcode</li>
+ *     <li> Models an evaporation distribution \f$CE_{out}e^{-E_{out}/T(E_{in})}\f$ where \f$C^{-1}=T^{2}[1-e^{-(E_{in}-U)/T}(1+(E_{in}-U)/T)]\f$.</li>
+ *     <li> The value attribute specifies the incident neutron energy \f$E_{in}\f$, the nuclear temperature \f$T(E_{in})\f$, and the restriction energy \f$U\f$. The incident neutron energy and nuclear temperature must be strictly positive.</li>
+ *     <li> The default values are 1.0 for \f$E_{in}\f$, 1.0 for \f$T(E_{in})\f$, and 0.0 for \f$U\f$.</li></ul></li>
+ *   <li><b>Maxwell Fission distribution</b>
+ *    <ul>
+ *     <li>\code
+ *         <Parameter name="example a" type="Maxwell Fission Distribution" value="{1.0,1.0,0.1}"/>
+ *         <Parameter name="example b" type="Maxwell Fission Distribution" value="{3.0,2.0,1.0}"/>
+ *         <Parameter name="example c" type="Maxwell Fission Distribution" value="{1.0,1.0,0.0}"/>
+ *         \endcode</li>
+ *     <li> Models a Maxwell fission spectrum \f$C\sqrt{E_{out}}e^{-E_{out}/T(E_{in})}\f$ where \f$C^{-1}=T^{3/2}[(\frac{\sqrt{\pi}}{2})erf(\sqrt{\frac{E_{in}-U}{T}})-\sqrt{\frac{E_{in}-U}{T}}e^{-(E_{in}-U)/T}]\f$.</li>
+ *     <li> The value attribute specifies the incident neutron energy \f$E_{in}\f$, the nuclear temperature \f$T(E_{in})\f$, and the restriction energy \f$U\f$. The incident neutron energy and nuclear temperature must be strictly positive.</li>
+ *     <li> The default values are 1.0 for \f$E_{in}\f$, 1.0 for \f$T(E_{in})\f$, and 0.0 for \f$U\f$.</li></ul></li>
+ *   <li><b>Watt distribution</b>
+ *    <ul>
+ *     <li>\code
+ *         <Parameter name="example a" type="Watt Distribution" value="{1.0,1.0,1.0,0.1}"/>
+ *         <Parameter name="example b" type="Watt Distribution" value="{3.0,2.0,1.0,0.0}"/>
+ *         \endcode</li>
+ *     <li> Models a Watt spectrum \f$Ce^{-E_{out}/a(E_{in})}sinh\sqrt{b(E_{in})E_{out}}\f$ where \f$C^{-1}=\frac{1}{2}\sqrt{\frac{\pi a^{3}b}{4}}exp(\frac{ab}{4})[erf(\sqrt{\frac{E_{in}-U}{a}}-\sqrt{\frac{ab}{4}})+erf(\sqrt{\frac{E_{in}-U}{a}}+\sqrt{\frac{ab}{4}})]-aexp[-\frac{E_{in}-U}{a}]sinh\sqrt{b(E_{in}-U)}\f$.</li>
+ *     <li> The value attribute specifies the incident neutron energy \f$E_{in}\f$, the isotope and energy dependent paramters \f$a\f$ and \f$b\f$, and the restriction energy \f$U\f$. The incident neutron energy and nuclear temperature must be strictly positive.</li>
+ *     <li> The default values are 1.0 for \f$E_{in}\f$, 1.0 for \f$a\f$, 1.0 for \f$b\f$ and 0.0 for \f$U\f$.</li></ul></li>
  *    <li><b>Normal distribution</b>
  *     <ul>
  *      <li>\code
