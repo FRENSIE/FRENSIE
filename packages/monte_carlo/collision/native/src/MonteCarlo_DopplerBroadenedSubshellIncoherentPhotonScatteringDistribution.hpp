@@ -14,7 +14,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_DopplerBroadenedComptonLineEnergyDistribution.hpp"
+#include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
@@ -22,30 +22,24 @@ namespace MonteCarlo{
 /*! The Doppler broadened subshell incoherent photon scattering distribution 
  * class
  */
-class DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution : public SubshellIncoherentPhotonScatteringDistribution, public DopplerBroadenedComptonLineEnergyDistribution
+class DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution : public SubshellIncoherentPhotonScatteringDistribution
 {
 
 public:
 
   //! Constructor
   DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
-	const SubshellType interaction_subshell,
-	const double num_electrons_in_subshell,
-	const double binding_energy,
-	const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
-	const Teuchos::RCP<const Utility::TabularOneDDistribution>& 
-	compton_profile,
-	const double kahn_sampling_cutoff_energy = 3.0 );
+    const SubshellType interaction_subshell,
+    const double num_electrons_in_subshell,
+    const double binding_energy,
+    const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
+    const Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
+    doppler_broadened_energy_dist,
+    const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor
   ~DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution()
   { /* ... */ }
-
-  //! Sample an outgoing energy from the differential distribution
-  double sampleDopplerBroadenedComptonLineEnergy( 
-				    const double incoming_energy,
-				    const double scattering_angle_cosine,
-				    SubshellType& shell_of_interaction ) const;
 
   //! Randomly scatter the photon and return the shell that was interacted with
   void scatterPhoton( PhotonState& photon,
@@ -55,7 +49,8 @@ public:
 private:
 
   // The compton profile for the subshell
-  Teuchos::RCP<const Utility::TabularOneDDistribution> d_compton_profile;
+  Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution> 
+  d_doppler_broadened_energy_dist;
 };
 
 } // end MonteCarlo namespace

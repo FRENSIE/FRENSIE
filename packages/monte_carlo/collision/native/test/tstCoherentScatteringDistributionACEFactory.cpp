@@ -63,12 +63,10 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
   // Sample 1st term
   distribution->sample( 0.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -96,8 +94,7 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
   TEST_FLOATING_EQUALITY( dist_value, 3.59244179705391486, 1e-15 );
 
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
-  
+    
   std::vector<double> fake_stream( 6 );
   fake_stream[0] = 0.75;
   fake_stream[1] = 0.5;
@@ -110,13 +107,11 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 
   distribution->sample( 0.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
   
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
-
+  
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -131,8 +126,7 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 
   // Test distribution properties
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
-
+  
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5;
   fake_stream[1] = 0.942; // reject
@@ -143,12 +137,10 @@ TEUCHOS_UNIT_TEST( CoherentScatteringDistributionACEFactory,
 
   distribution->sample( 0.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
   
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.940007827406442842, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }

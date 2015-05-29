@@ -18,62 +18,26 @@ namespace MonteCarlo{
  * The Compton profile must be in inverse me*c units.
  */
 DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
-	const SubshellType interaction_subshell,
-	const double num_electrons_in_subshell,
-	const double binding_energy,
-	const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
-	const Teuchos::RCP<const Utility::TabularOneDDistribution>& 
-	compton_profile,
-	const double kahn_sampling_cutoff_energy )
+    const SubshellType interaction_subshell,
+    const double num_electrons_in_subshell,
+    const double binding_energy,
+    const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
+    const Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
+    doppler_broadened_energy_dist,
+    const double kahn_sampling_cutoff_energy )
   : SubshellIncoherentPhotonScatteringDistribution( interaction_subshell,
 						    num_electrons_in_subshell,
 						    binding_energy,
 						    occupation_number,
 						    kahn_sampling_cutoff_energy ),
-    d_compton_profile( compton_profile )
+    d_doppler_broadened_energy_dist( doppler_broadened_energy_dist )
 {
-  // Make sure the Compton profile is valid
-  testPrecondition( !compton_profile.is_null() );
-  testPrecondition( compton_profile->getLowerBoundOfIndepVar() == -1.0 );
-  testPrecondition( compton_profile->getLowerBoundOfIndepVar() < 0.0 );
-  testPrecondition( compton_profile->getLowerBoundOfIndepVar() ==
-		    occupation_number->getLowerBoundOfIndepVar() );
-}
-
-// Sample an outgoing energy from the differential distribution
-double DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::sampleDopplerBroadenedComptonLineEnergy( 
-				     const double incoming_energy,
-				     const double scattering_angle_cosine,
-				     SubshellType& shell_of_interaction ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy >= this->getBindingEnergy() );
-  // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  // Calculate the max electron momentum projection
-  double pz_max = this->calculateOccupationNumberArgument(
-					             incoming_energy,
-					             scattering_angle_cosine );
-
-  // Sample an electron momentum projection
-  double pz = d_compton_profile->sampleInSubrange( pz_max );
-
-  // Calculate the doppler broadened energy
-  bool energetically_possible;
-
-  double outgoing_energy = calculateDopplerBroadenedEnergy(
-						      pz,
-						      incoming_energy,
-						      scattering_angle_cosine,
-						      energetically_possible );
-
-  // Make sure the outgoing energy is valid
-  testPostcondition( energetically_possible );
-  testPostcondition( outgoing_energy >= 0.0 );
-
-  return outgoing_energy;
+  // Make sure the Doppler broadened energy dist is valid
+  testPrecondition( !doppler_broadened_energy_dist.is_null() );
+  testPrecondition( doppler_broadened_energy_dist->getSubshell() ==
+		    interaction_subshell );
+  testPrecondition( doppler_broadened_energy_dist->getBindingEnergy() ==
+		    binding_energy );
 }
 
 // Randomly scatter the photon and return the shell that was interacted with
@@ -82,20 +46,19 @@ void DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::scatterPhot
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
 {
-  double compton_line_energy, scattering_angle_cosine;
+  double outgoing_energy, scattering_angle_cosine;
 
   // Sample an outgoing energy and direction
   this->sample( photon.getEnergy(),
-		compton_line_energy,
-		scattering_angle_cosine,
-		shell_of_interaction );
+		outgoing_energy,
+		scattering_angle_cosine );
 
   // Doppler broaden the compton line
-  double outgoing_energy = this->sampleDopplerBroadenedComptonLineEnergy( 
-						       photon.getEnergy(),
-						       scattering_angle_cosine,
-						       shell_of_interaction );
-
+  d_doppler_broadened_energy_dist->sample( photon.getEnergy(),
+					   scattering_angle_cosine,
+					   outgoing_energy,
+					   shell_of_interaction );
+  
   // Sample an azimuthal angle
   const double azimuthal_angle = this->sampleAzimuthalAngle();
 

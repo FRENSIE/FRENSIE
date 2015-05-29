@@ -83,8 +83,7 @@ KleinNishinaPhotonScatteringDistribution::evaluateIntegratedCrossSection(
 void KleinNishinaPhotonScatteringDistribution::sample( 
 				     const double incoming_energy,
 				     double& outgoing_energy,
-				     double& scattering_angle_cosine,
-				     SubshellType& shell_of_interaction ) const
+				     double& scattering_angle_cosine ) const
 {
   // Make sure the energy is valid
   testPrecondition( incoming_energy > 0.0 );
@@ -94,7 +93,6 @@ void KleinNishinaPhotonScatteringDistribution::sample(
   this->sampleAndRecordTrialsKleinNishina( incoming_energy,
 					   outgoing_energy,
 					   scattering_angle_cosine,
-					   shell_of_interaction,
 					   trial_dummy );
 }
 
@@ -103,7 +101,6 @@ void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
-					    SubshellType& shell_of_interaction,
 					    unsigned& trials ) const
 {
   // Make sure the incoming energy is valid
@@ -112,7 +109,6 @@ void KleinNishinaPhotonScatteringDistribution::sampleAndRecordTrials(
   this->sampleAndRecordTrialsKleinNishina( incoming_energy,
 					   outgoing_energy,
 					   scattering_angle_cosine,
-					   shell_of_interaction,
 					   trials );
 }
 
@@ -126,8 +122,9 @@ void KleinNishinaPhotonScatteringDistribution::scatterPhoton(
 
   this->sample( photon.getEnergy(),
 		outgoing_energy,
-		scattering_angle_cosine,
-		shell_of_interaction );
+		scattering_angle_cosine );
+
+  shell_of_interaction = UNKNOWN_SUBSHELL;
 
   photon.setEnergy( outgoing_energy );
 

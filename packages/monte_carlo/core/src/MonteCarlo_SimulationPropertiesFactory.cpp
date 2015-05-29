@@ -200,6 +200,27 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
     }
   }
 
+  // Get the kahn sampling cutoff energy - optional
+  if( properties.isParameter( "Kahn Sampling Cutoff Energy" ) )
+  {
+    double energy = properties.get<double>( "Kahn Sampling Cutoff Energy" );
+
+    if( energy >= SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() )
+    {
+      SimulationProperties::setKahnSamplingCutoffEnergy( energy );
+    }
+    else
+    {
+      std::cerr << "Warning: the Kahn sampling cutoff energy must be greater "
+		<< "than "
+		<< SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy()
+		<< " MeV. The default value of "
+		<< SimulationProperties::getKahnSamplingCutoffEnergy()
+		<< " MeV will be used instead of " << energy << "." 
+		<< std::endl;
+    }
+  }
+
   // Get the number of photon hash grid bins - optional
   if( properties.isParameter( "Photon Hash Grid Bins" ) )
   {
@@ -222,18 +243,27 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
       SimulationProperties::setImplicitCaptureModeOn();
   }
 
-  // Get the impulse approximation mode - optional
-  if( properties.isParameter( "Impulse Approximation" ) )
+  // Get the incohernt scattering model - optional
+  if( properties.isParameter( "Incoherent Photon Scattering Model" ) )
   {
-    if( properties.get<bool>( "Impulse Approximation" ) )
-      SimulationProperties::setImpulseApproximationModeOn();
-  }
+    std::string model_name = 
+      properties.get<std::string>( "Incoherent Photon Scattering Model" );
 
-  // Get the photon Doppler broadening mode - optional
-  if( properties.isParameter( "Photon Doppler Broadening" ) )
-  {
-    if( !properties.get<bool>( "Photon Doppler Broadening" ) )
-      SimulationProperties::setPhotonDopplerBroadeningModeOff();
+    IncoherentModelType model;
+    
+    try{
+      model = convertStringToIncoherentModelTypeEnum( model_name );
+    }
+    catch( std::logic_error )
+    {
+      model = SimulationProperties::getIncoherentModelType();
+      
+      std::cerr << "Warning: incohernt photon scattering model "
+		<< model_name << " is unknown. The default model "
+		<< model << " will be used instead." << std::endl;
+    }
+
+    SimulationProperties::setIncoherentModelType( model );
   }
 
   // Get the atomic relaxation mode - optional

@@ -130,8 +130,7 @@ double SubshellIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSe
 void SubshellIncoherentPhotonScatteringDistribution::sample( 
 				     const double incoming_energy,
 				     double& outgoing_energy,
-				     double& scattering_angle_cosine,
-				     SubshellType& shell_of_interaction ) const
+				     double& scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > d_binding_energy );
@@ -141,7 +140,6 @@ void SubshellIncoherentPhotonScatteringDistribution::sample(
   return this->sampleAndRecordTrials( incoming_energy,
 				      outgoing_energy,
 				      scattering_angle_cosine,
-				      shell_of_interaction,
 				      trial_dummy );
 }
 
@@ -153,7 +151,6 @@ void SubshellIncoherentPhotonScatteringDistribution::sampleAndRecordTrials(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
-					    SubshellType& shell_of_interaction,
 					    unsigned& trials ) const
 {
   // Make sure the incoming energy is valid
@@ -168,7 +165,6 @@ void SubshellIncoherentPhotonScatteringDistribution::sampleAndRecordTrials(
     this->sampleAndRecordTrialsKleinNishina( incoming_energy,
 					     outgoing_energy,
 					     scattering_angle_cosine,
-					     shell_of_interaction,
 					     trials );
 
     const double occupation_number = 
@@ -181,8 +177,6 @@ void SubshellIncoherentPhotonScatteringDistribution::sampleAndRecordTrials(
     if( scaled_random_number <= occupation_number )
       break;
   }
-
-  shell_of_interaction = d_subshell;
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
@@ -260,8 +254,10 @@ void SubshellIncoherentPhotonScatteringDistribution::scatterPhoton(
   // Sample an outgoing energy and direction
   this->sample( photon.getEnergy(),
 		outgoing_energy,
-		scattering_angle_cosine,
-		shell_of_interaction );
+		scattering_angle_cosine );
+
+  // Set the interaction subshell
+  shell_of_interaction = d_subshell;
 
   // Sample the azimuthal angle of the outgoing photon
   const double azimuthal_angle = this->sampleAzimuthalAngle();

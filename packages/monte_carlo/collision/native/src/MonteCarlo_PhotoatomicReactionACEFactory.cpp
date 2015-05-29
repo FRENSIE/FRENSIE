@@ -33,7 +33,8 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
        const Teuchos::ArrayRCP<const double>& energy_grid,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        Teuchos::RCP<PhotoatomicReaction>& incoherent_reaction,
-       const bool use_doppler_broadening_data )
+       const IncoherentModelType incoherent_model,
+       const double kahn_sampling_cutoff_energy )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.extractPhotonEnergyGrid().size() == 
@@ -53,21 +54,12 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
   
   // Create the scattering distribution
   Teuchos::RCP<const IncoherentPhotonScatteringDistribution> distribution;
-  
-  if( use_doppler_broadening_data )
-  {
-    IncoherentPhotonScatteringDistributionACEFactory::createBasicDopplerBroadenedIncoherentDistribution( 
-							 raw_photoatom_data,
-							 distribution,
-							 3.0 );
-  }
-  else
-  {
-    IncoherentPhotonScatteringDistributionACEFactory::createIncoherentDistribution( 
-							 raw_photoatom_data,
-							 distribution,
-							 3.0 );
-  }
+
+  IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
+						 raw_photoatom_data,
+						 distribution,
+						 incoherent_model,
+						 kahn_sampling_cutoff_energy );
     
   // Create the incoherent reaction
   incoherent_reaction.reset(new IncoherentPhotoatomicReaction<Utility::LogLog>(

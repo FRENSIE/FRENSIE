@@ -21,7 +21,7 @@ namespace MonteCarlo{
 class IncoherentPhotonScatteringDistributionFactory
 {
 
-public:
+protected:
 
   //! Create a Klein-Nishina distribution
   static void createKleinNishinaDistribution( 

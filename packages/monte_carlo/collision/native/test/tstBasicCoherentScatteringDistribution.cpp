@@ -114,8 +114,7 @@ TEUCHOS_UNIT_TEST( BasicCoherentScatteringDistribution,
 TEUCHOS_UNIT_TEST( BasicCoherentScatteringDistribution, sample )
 {
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
-
+  
   // Set up the random number stream
   std::vector<double> fake_stream( 9 );
   fake_stream[0] = 0.75;
@@ -133,22 +132,18 @@ TEUCHOS_UNIT_TEST( BasicCoherentScatteringDistribution, sample )
   // Sample from the 1st branch
   distribution->sample( 0.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
   
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 
   // Sample from the second branch
   distribution->sample( 0.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.9283177667225558, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -159,7 +154,6 @@ TEUCHOS_UNIT_TEST( BasicCoherentScatteringDistribution,
 		   sampleAndRecordTrials )
 {
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
   unsigned trials = 0;
   
   // Set up the random number stream
@@ -180,24 +174,20 @@ TEUCHOS_UNIT_TEST( BasicCoherentScatteringDistribution,
   distribution->sampleAndRecordTrials( 0.1,
 				       outgoing_energy,
 				       scattering_angle_cosine,
-				       shell_of_interaction,
 				       trials );
   
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 1.0/trials, 0.5 );
 
   // Sample from the second branch
   distribution->sampleAndRecordTrials( 0.1,
 				       outgoing_energy,
 				       scattering_angle_cosine,
-				       shell_of_interaction,
 				       trials );
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.9283177667225558, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.9283177667225558, 1e-15 )
   TEST_EQUALITY_CONST( 2.0/trials, 2.0/3.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();

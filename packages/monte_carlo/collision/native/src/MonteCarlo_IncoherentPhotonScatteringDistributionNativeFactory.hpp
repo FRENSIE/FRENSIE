@@ -15,6 +15,9 @@
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionFactory.hpp"
+#include "MonteCarlo_CompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_IncoherentModelType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_OneDDistribution.hpp"
 
@@ -28,47 +31,57 @@ class IncoherentPhotonScatteringDistributionNativeFactory : public IncoherentPho
 
 public:
 
-  //! Create a basic incoherent distribution
+  //! Create an incoherent distribution
   static void createIncoherentDistribution( 
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
-	 const double kahn_sampling_cutoff_energy );
-
-  //! Create an advanced Doppler broadened incoherent distribution
-  static void createAdvancedDopplerBroadenedIncoherentDistribution(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-	 incoherent_distribution,
-	 const double kahn_sampling_cutoff_energy );
-
-  //! Create a basic subshell incoherent distribution
-  static void createSubshellIncoherentDistribution(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 const unsigned endf_subshell,
-	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-	 incoherent_distribution,
-	 const double kahn_sampling_cutoff_energy );
-
-  //! Create a Doppler broadened subshell incoherent distribution
-  static void createDopplerBroadenedSubshellIncoherentDistribution(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 const unsigned endf_subshell,
-	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-	 incoherent_distribution,
-	 const double kahn_sampling_cutoff_energy );
+	 const IncoherentModelType incoherent_model,
+	 const double kahn_sampling_cutoff_energy,
+	 const unsigned endf_subshell = 0u );
 
 protected:
 
+  //! Create a Waller-Hartree incoherent distribution
+  static void createWallerHartreeDistribution(
+	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	 incoherent_distribution,
+	 const double kahn_sampling_cutoff_energy );			       
+  
+  //! Create a Doppler broadened hybrid incoherent distribution
+  static void createDopplerBroadenedHybridDistribution(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+    const Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
+    doppler_broadened_dist,
+    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+    incoherent_distribution,     
+    const double kahn_sampling_cutoff_energy );
+
+  //! Create a subshell incohrent distribution
+  static void createSubshellDistribution(
+	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+	 const unsigned endf_subshell,
+	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	 incoherent_distribution,
+	 const double kahn_sampling_cutoff_energy );
+  
+  //! Create a Doppler broadened subshell incoherent distribution
+  static void createDopplerBroadenedSubshellDistribution(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+    const unsigned endf_subshell,
+    const Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
+    doppler_broadened_dist,
+    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+    incoherent_distribution,
+    const double kahn_sampling_cutoff_energy );
+
+private:
+  
   //! Create the scattering function
   static void createScatteringFunction( 
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<const Utility::OneDDistribution>& scattering_function );
-
-  //! Create the occupation number distribution
-  static void createOccupationNumberDistribution(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const Utility::OneDDistribution>& occupation_number );
 };
 
 } // end MonteCarlo namespace

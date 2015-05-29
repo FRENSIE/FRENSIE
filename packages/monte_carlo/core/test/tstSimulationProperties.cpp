@@ -63,12 +63,15 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
 	      MonteCarlo::SimulationProperties::getAbsoluteMaxElectronEnergy(),
 	      20.0 );
   TEST_EQUALITY_CONST(
+	       MonteCarlo::SimulationProperties::getKahnSamplingCutoffEnergy(),
+	       3.0 );
+  TEST_EQUALITY_CONST(
 	     MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins(),
 	     1000 );
   TEST_ASSERT( MonteCarlo::SimulationProperties::displayWarnings() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isImplicitCaptureModeOn() );
-  TEST_ASSERT( !MonteCarlo::SimulationProperties::isImpulseApproximationModeOn() );
-  TEST_ASSERT( MonteCarlo::SimulationProperties::isPhotonDopplerBroadeningModeOn() );
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getIncoherentModelType(),
+		       MonteCarlo::COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isAtomicRelaxationModeOn() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isDetailedPairProductionModeOn() );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isPhotonuclearInteractionModeOn() );
@@ -246,6 +249,27 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setMaxPhotonEnergy )
 }
 
 //---------------------------------------------------------------------------//
+// Test that the Kahn sampling cutoff energy can be set
+TEUCHOS_UNIT_TEST( SimulationProperties, setKahnSamplingCutoffEnergy )
+{
+  double default_value = 
+    MonteCarlo::SimulationProperties::getKahnSamplingCutoffEnergy();
+
+  MonteCarlo::SimulationProperties::setKahnSamplingCutoffEnergy( 2.5 );
+
+  TEST_ASSERT( 
+	    MonteCarlo::SimulationProperties::getKahnSamplingCutoffEnergy() !=
+	    default_value );
+  TEST_EQUALITY_CONST(
+	      MonteCarlo::SimulationProperties::getKahnSamplingCutoffEnergy(),
+	      2.5 );
+  
+  // Reset the default value
+  MonteCarlo::SimulationProperties::setKahnSamplingCutoffEnergy( 
+							       default_value );
+}
+
+//---------------------------------------------------------------------------//
 // Test that the number of photon hash grid bins can be set
 TEUCHOS_UNIT_TEST( SimulationProperties, setNumberOfPhotonHashGridBins )
 {
@@ -388,25 +412,23 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setImplicitCaptureModeOn )
 }
 
 //---------------------------------------------------------------------------//
-// Test that impulse approximation mode can be turned on
-TEUCHOS_UNIT_TEST( SimulationProperties, setImpulseApproximationModeOn )
+// Test that the incoherent model type can be set
+TEUCHOS_UNIT_TEST( SimulationProperties, setIncoherentModelType )
 {
-  TEST_ASSERT( !MonteCarlo::SimulationProperties::isImpulseApproximationModeOn() );
+  MonteCarlo::IncoherentModelType default_model = 
+    MonteCarlo::SimulationProperties::getIncoherentModelType();
 
-  MonteCarlo::SimulationProperties::setImpulseApproximationModeOn();
+  MonteCarlo::SimulationProperties::setIncoherentModelType(
+					     MonteCarlo::KN_INCOHERENT_MODEL );
 
-  TEST_ASSERT( MonteCarlo::SimulationProperties::isImpulseApproximationModeOn() );
-}
-
-//---------------------------------------------------------------------------//
-// Test that photon Doppler broadening mode can be turned off
-TEUCHOS_UNIT_TEST( SimulationProperties, setPhotonDopplerBroadeningModeOff )
-{
-  TEST_ASSERT( MonteCarlo::SimulationProperties::isPhotonDopplerBroadeningModeOn() );
+  TEST_ASSERT( MonteCarlo::SimulationProperties::getIncoherentModelType() !=
+	       default_model );
+  TEST_EQUALITY_CONST(
+		    MonteCarlo::SimulationProperties::getIncoherentModelType(),
+		    MonteCarlo::KN_INCOHERENT_MODEL );
   
-  MonteCarlo::SimulationProperties::setPhotonDopplerBroadeningModeOff();
-
-  TEST_ASSERT( !MonteCarlo::SimulationProperties::isPhotonDopplerBroadeningModeOn() );
+  // Reset the default model
+  MonteCarlo::SimulationProperties::setIncoherentModelType( default_model );
 }
 
 //---------------------------------------------------------------------------//
