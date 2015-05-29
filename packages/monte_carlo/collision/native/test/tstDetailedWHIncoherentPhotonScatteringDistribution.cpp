@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstBasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution.cpp
+//! \file   tstWHIncoherentPhotonScatteringDistribution.cpp
 //! \author Alex Robinson
-//! \brief  Basic Doppler broadened Waller-Hartree incoherent photon scattering distribution unit tests
+//! \brief  Waller-Hartree incoherent photon scattering distribution unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -18,20 +18,20 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
-#include "MonteCarlo_BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_ComptonProfileHelpers.hpp"
-#include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
+#include "MonteCarlo_DetailedWHIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "Utility_DirectionHelpers.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution> distribution;
+Teuchos::RCP<MonteCarlo::PhotonScatteringDistribution>
+  distribution;
 
 Teuchos::RCP<Utility::OneDDistribution> incoherent_cs;
 
@@ -47,8 +47,7 @@ bool notEqualZero( const double value )
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution,
-		   evaluate )
+TEUCHOS_UNIT_TEST( WHIncoherentPhotonScatteringDistribution, evaluate )
 {
   double dist_value = distribution->evaluate(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
@@ -77,8 +76,7 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
 
 //---------------------------------------------------------------------------//
 // Check that the distribution can be evaluated
-TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution,
-		   evaluatePDF )
+TEUCHOS_UNIT_TEST( WHIncoherentPhotonScatteringDistribution, evaluatePDF )
 {
   double pdf_value = distribution->evaluatePDF(
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
@@ -107,7 +105,7 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
 
 //---------------------------------------------------------------------------//
 // Check that the integrated cross section can be evaluated
-TEUCHOS_UNIT_TEST( DopplerBroadenedWHIncoherentPhotonScatteringDistribution,
+TEUCHOS_UNIT_TEST( WHIncoherentPhotonScatteringDistribution,
 		   evaluateIntegratedCrossSection )
 {
   double cross_section = 
@@ -134,12 +132,10 @@ TEUCHOS_UNIT_TEST( DopplerBroadenedWHIncoherentPhotonScatteringDistribution,
 
 //---------------------------------------------------------------------------//
 // Check that an outgoing energy and direction can be sampled
-TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution,
-		   sample )
+TEUCHOS_UNIT_TEST( WHIncoherentPhotonScatteringDistribution, sample )
 {
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
-  
+    
   // Left branch of Kahn's method
   std::vector<double> fake_stream( 7 );
   fake_stream[0] = 0.27;
@@ -154,8 +150,7 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
 
   distribution->sample( Utility::PhysicalConstants::electron_rest_mass_energy,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -164,8 +159,7 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
 		       Utility::PhysicalConstants::electron_rest_mass_energy/2,
 		       1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
-
+  
   // Koblinger's method
   fake_stream.resize( 5 );
   fake_stream[0] = 0.818; // third term
@@ -179,23 +173,20 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
 
   distribution->sample( 3.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.9046816718380433, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
 // Check that an outgoing energy and direction can be sampled
-TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution,
+TEUCHOS_UNIT_TEST( WHIncoherentPhotonScatteringDistribution, 
 		   sampleAndRecordTrials )
 {
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
   unsigned trials = 0;
   
   // Left branch of Kahn's method
@@ -214,7 +205,6 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 outgoing_energy,
 			 scattering_angle_cosine,
-			 shell_of_interaction,
 			 trials );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -224,7 +214,6 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
 		       Utility::PhysicalConstants::electron_rest_mass_energy/2,
 		       1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 1.0/trials, 0.5 );
 
   // Koblinger's method
@@ -243,21 +232,18 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
   distribution->sampleAndRecordTrials( 3.1,
 				       outgoing_energy,
 				       scattering_angle_cosine,
-				       shell_of_interaction,
 				       trials );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.9046816718380433, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 1.0/trials, 0.5 );
 }
 
 //---------------------------------------------------------------------------//
-// Check that a photon can be scattered incoherently with Doppler broadening
-TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution,
-		   scatterPhoton )
+// Check that a photon can be scattered incoherently without Doppler broadening
+TEUCHOS_UNIT_TEST( WHIncoherentPhotonScatteringDistribution, scatterPhoton )
 {
   MonteCarlo::ParticleBank bank;
   
@@ -268,14 +254,12 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
   MonteCarlo::SubshellType shell_of_interaction;
 
   // Set up the random number stream
-  std::vector<double> fake_stream( 7 );
+  std::vector<double> fake_stream( 5 );
   fake_stream[0] = 0.001; // sample from first term of koblinger's method
   fake_stream[1] = 0.5; // x = 40.13902672495315, mu = 0.0
   fake_stream[2] = 0.5; // accept x in scattering function rejection loop
-  fake_stream[3] = 0.005; // select first shell for collision
-  fake_stream[4] = 6.427713151861e-01; // select pz = 40.0
-  fake_stream[5] = 0.25; // select energy loss
-  fake_stream[6] = 0.5; // azimuthal_angle = pi
+  fake_stream[3] = 0.2; // select M3 subshell
+  fake_stream[4] = 0.5; // azimuthal_angle = pi
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
@@ -297,11 +281,11 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
 			  -0.024905681252821114, 
 			  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::M3_SUBSHELL );
 }
 
 //---------------------------------------------------------------------------//
@@ -361,67 +345,23 @@ int main( int argc, char** argv )
 			                                  scat_func_values ) );
 
   // Create the subshell order array
-  Teuchos::ArrayView<const double> subshell_endf_des = 
+  Teuchos::ArrayView<const double> subshell_endf_designators = 
     xss_data_extractor->extractSubshellENDFDesignators();
-
+  
   Teuchos::Array<MonteCarlo::SubshellType> subshell_order( 
-						    subshell_endf_des.size() );
-
+					    subshell_endf_designators.size() );
+  
   for( unsigned i = 0; i < subshell_order.size(); ++i )
   {
-    subshell_order[i] = MonteCarlo::convertENDFDesignatorToSubshellEnum( 
-					      (unsigned)subshell_endf_des[i] );
+    subshell_order[i] = MonteCarlo::convertENDFDesignatorToSubshellEnum(
+				      (unsigned)subshell_endf_designators[i] );
   }
-
-  // Create the Compton profile subshell converter
-  Teuchos::RCP<MonteCarlo::ComptonProfileSubshellConverter> converter;
   
-  MonteCarlo::ComptonProfileSubshellConverterFactory::createConverter(
-				   converter,
-			           xss_data_extractor->extractAtomicNumber() );
-    
-  // Create the compton profile distributions
-  Teuchos::ArrayView<const double> lswd_block = 
-    xss_data_extractor->extractLSWDBlock();
-
-  Teuchos::ArrayView<const double> swd_block = 
-    xss_data_extractor->extractSWDBlock();
-
-  Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
-    half_compton_profiles( lswd_block.size() );
-  
-  for( unsigned shell = 0; shell < lswd_block.size(); ++shell )
-  {
-    unsigned shell_index = lswd_block[shell]; // ignore interp parameter
-
-    unsigned num_mom_vals = swd_block[shell_index];
-
-    Teuchos::Array<double> half_momentum_grid( 
-				  swd_block( shell_index + 1, num_mom_vals ) );
-
-    Teuchos::Array<double> half_profile(
-		   swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) );
-
-    MonteCarlo::convertMomentumGridToMeCUnits( half_momentum_grid.begin(),
-					       half_momentum_grid.end() );
-
-    MonteCarlo::convertProfileToInverseMeCUnits( half_profile.begin(),
-						 half_profile.end() );
-
-    half_compton_profiles[shell].reset(
-	 new Utility::TabularDistribution<Utility::LogLin>( half_momentum_grid,
-							    half_profile ) );
-  }
-
-  // Create the scattering distribution
-  distribution.reset( 
-   new MonteCarlo::BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution(
+  // Create the scattering distributions
+  distribution.reset( new MonteCarlo::DetailedWHIncoherentPhotonScatteringDistribution(
 			  scattering_function,
-			  xss_data_extractor->extractSubshellBindingEnergies(),
 			  xss_data_extractor->extractSubshellOccupancies(),
-			  subshell_order,
-			  converter,
-			  half_compton_profiles ) );
+			  subshell_order ) );				       
 
   // Extract the incoherent cross section
   {
@@ -486,5 +426,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstBasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution.cpp
+// end tstWHIncoherentPhotonScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

@@ -117,8 +117,7 @@ TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution,
 TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution, sample )
 {
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
-
+  
   // Set up the random number stream
   std::vector<double> fake_stream( 4 );
   fake_stream[0] = 0.5;
@@ -130,13 +129,11 @@ TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution, sample )
 
   distribution->sample( 0.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
   
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.940007827406442842, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
-
+  
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
@@ -146,7 +143,6 @@ TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution,
 		   sampleAndRecordTrials )
 {
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
   unsigned trials = 0;
   
   // Set up the random number stream
@@ -161,12 +157,10 @@ TEUCHOS_UNIT_TEST( EfficientCoherentScatteringDistribution,
   distribution->sampleAndRecordTrials( 0.1,
 				       outgoing_energy,
 				       scattering_angle_cosine,
-				       shell_of_interaction,
 				       trials );
   
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.940007827406442842, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 1.0/trials, 0.5 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();

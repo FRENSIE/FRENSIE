@@ -30,7 +30,8 @@ void PhotoatomACEFactory::createPhotoatomCore(
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<PhotoatomCore>& photoatom_core,
 	    const unsigned hash_grid_bins,
-	    const bool use_doppler_broadening_data,
+	    const IncoherentModelType incoherent_model,
+	    const double kahn_sampling_cutoff_energy,
 	    const bool use_detailed_pair_production_data,
 	    const bool use_atomic_relaxation_data )
 {
@@ -60,7 +61,8 @@ void PhotoatomACEFactory::createPhotoatomCore(
 						 energy_grid,
 						 grid_searcher,
 						 reaction_pointer,
-						 use_doppler_broadening_data );
+						 incoherent_model,
+						 kahn_sampling_cutoff_energy );
   }
   
   // Create the coherent scattering reaction
@@ -149,7 +151,8 @@ void PhotoatomACEFactory::createPhotoatom(
 	    const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
 	    Teuchos::RCP<Photoatom>& photoatom,
 	    const unsigned hash_grid_bins,
-	    const bool use_doppler_broadening_data,
+	    const IncoherentModelType incoherent_model,
+	    const double kahn_sampling_cutoff_energy,
 	    const bool use_detailed_pair_production_data,
 	    const bool use_atomic_relaxation_data )
 {
@@ -164,7 +167,8 @@ void PhotoatomACEFactory::createPhotoatom(
 					    atomic_relaxation_model,
 					    core,
 					    hash_grid_bins,
-					    use_doppler_broadening_data,
+					    incoherent_model,
+					    kahn_sampling_cutoff_energy,
 					    use_detailed_pair_production_data,
 					    use_atomic_relaxation_data );
 					    

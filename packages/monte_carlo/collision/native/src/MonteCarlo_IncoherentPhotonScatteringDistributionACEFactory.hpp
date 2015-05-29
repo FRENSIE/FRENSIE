@@ -15,6 +15,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionFactory.hpp"
+#include "MonteCarlo_CompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_IncoherentModelType.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_OneDDistribution.hpp"
 
@@ -28,38 +30,38 @@ class IncoherentPhotonScatteringDistributionACEFactory : public IncoherentPhoton
 
 public:
 
-  //! Create a basic incoherent distribution
-  static void createIncoherentDistribution( 
+  //! Create the requested incoherent distribution
+  static void createDistribution( 
 		    const Data::XSSEPRDataExtractor& raw_photoatom_data,
 		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 		    incoherent_distribution,
-		    const double kahn_sampling_cutoff_energy );
-
-  //! Create a basic Doppler broadened incoherent distribution
-  static void createBasicDopplerBroadenedIncoherentDistribution(
-		    const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-		    incoherent_distribution,
-		    const double kahn_sampling_cutoff_energy );
-
-  //! Create an advanced Doppler broadened incoherent distribution
-  static void createAdvancedDopplerBroadenedIncoherentDistribution(
-		    const Data::XSSEPRDataExtractor& raw_photoatom_data,
-		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-		    incoherent_distribution,
+		    const IncoherentModelType incoherent_model,
 		    const double kahn_sampling_cutoff_energy );
 
 protected:
+  
+  //! Create a Waller-Hartree incoherent distribution
+  static void createWallerHartreeDistribution(
+		    const Data::XSSEPRDataExtractor& raw_photoatom_data,
+		    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+		    incoherent_distribution,
+		    const double kahn_sampling_cutoff_energy );
+
+  //! Create a Doppler broadened hybrid incoherent distribution
+  static void createDopplerBroadenedHybridDistribution(
+    const Data::XSSEPRDataExtractor& raw_photoatom_data,
+    const Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
+    doppler_broadened_dist,
+    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+    incoherent_distribution,     
+    const double kahn_sampling_cutoff_energy );
+
+private:
 
   //! Create the scattering function
   static void createScatteringFunction( 
 	  const Data::XSSEPRDataExtractor& raw_photoatom_data,
 	  Teuchos::RCP<const Utility::OneDDistribution>& scattering_function );
-
-  //! Create the subshell order array
-  static void createSubshellOrderArray(
-			   const Data::XSSEPRDataExtractor& raw_photoatom_data,
-			   Teuchos::Array<SubshellType>& subshell_order );
 };
 
 } // end MonteCarlo namespace

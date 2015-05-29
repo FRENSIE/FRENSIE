@@ -107,8 +107,7 @@ double CoherentScatteringDistribution::evaluateIntegratedCrossSection(
 void CoherentScatteringDistribution::sample( 
 				     const double incoming_energy,
 				     double& outgoing_energy,
-				     double& scattering_angle_cosine,
-				     SubshellType& shell_of_interaction ) const
+				     double& scattering_angle_cosine ) const
 {
   // The outgoing energy is always equal to the incoming energy
   outgoing_energy = incoming_energy;
@@ -119,8 +118,6 @@ void CoherentScatteringDistribution::sample(
   this->sampleAndRecordTrialsImpl( incoming_energy,
 				   scattering_angle_cosine,
 				   trial_dummy );
-
-  shell_of_interaction = UNKNOWN_SUBSHELL;
 }
 
 // Sample an outgoing energy and direction and record the number of trials
@@ -128,7 +125,6 @@ void CoherentScatteringDistribution::sampleAndRecordTrials(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
-					    SubshellType& shell_of_interaction,
 					    unsigned& trials ) const
 {
   // The outgoing energy is always equal to the incoming energy
@@ -138,8 +134,6 @@ void CoherentScatteringDistribution::sampleAndRecordTrials(
   this->sampleAndRecordTrialsImpl( incoming_energy,
 				   scattering_angle_cosine,
 				   trials );
-
-  shell_of_interaction = UNKNOWN_SUBSHELL;
 }
 
 // Randomly scatter the photon

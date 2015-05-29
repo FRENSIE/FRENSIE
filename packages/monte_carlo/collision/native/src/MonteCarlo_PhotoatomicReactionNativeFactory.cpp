@@ -27,15 +27,15 @@
 
 namespace MonteCarlo{
 
-// Create the total incoherent photoatomic reaction
-/*! \details This will use the Waller-Hartree incoherent cross section.
- */
-void PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
+// Create the incoherent photoatomic reaction(s)
+void PhotoatomicReactionNativeFactory::createIncoherentReactions(
        const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
        const Teuchos::ArrayRCP<const double>& energy_grid,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::RCP<PhotoatomicReaction>& incoherent_reaction,
-       const bool use_doppler_broadening_data )
+       Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
+       incoherent_reactions,
+       const IncoherentModelType incoherent_model,
+       const double kahn_sampling_cutoff_energy )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
@@ -43,104 +43,77 @@ void PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
 
-  // Extract the cross section
-  Teuchos::ArrayRCP<double> incoherent_cross_section;
-  incoherent_cross_section.assign( 
+  std::string model_name = 
+    convertIncoherentModelTypeToString( incoherent_model );
+
+  // Use Waller-Hartree data
+  if( model_name.find( "Impulse" ) >= model_name.size() )
+  {
+    incoherent_reactions.resize( 1 );
+
+    // Extract the cross section
+    Teuchos::ArrayRCP<double> incoherent_cross_section;
+    incoherent_cross_section.assign( 
 	   raw_photoatom_data.getWallerHartreeIncoherentCrossSection().begin(),
 	   raw_photoatom_data.getWallerHartreeIncoherentCrossSection().end() );
 
-  unsigned threshold_index = 
-    raw_photoatom_data.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex();
+    unsigned threshold_index = 
+      raw_photoatom_data.getWallerHartreeIncoherentCrossSectionThresholdEnergyIndex();
 
-  // Create the scattering distribution
-  Teuchos::RCP<const IncoherentPhotonScatteringDistribution> distribution;
+    // Create the scattering distribution
+    Teuchos::RCP<const IncoherentPhotonScatteringDistribution> distribution;
 
-  if( use_doppler_broadening_data )
-  {
-    IncoherentPhotonScatteringDistributionNativeFactory::createAdvancedDopplerBroadenedIncoherentDistribution( 
-							    raw_photoatom_data,
-							    distribution,
-							    3.0 );
-  }
-  else
-  {
     IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistribution( 
-							    raw_photoatom_data,
-							    distribution,
-							    3.0 );
-  }
-  
-  // Create the incoherent reaction
-  incoherent_reaction.reset(
+						 raw_photoatom_data,
+						 distribution,
+						 incoherent_model,
+						 kahn_sampling_cutoff_energy );
+    
+    // Create the incoherent reaction
+    incoherent_reactions[0].reset(
 		      new IncoherentPhotoatomicReaction<Utility::LinLin,false>(
 						     energy_grid,
 						     incoherent_cross_section,
 						     threshold_index,
 						     grid_searcher,
 						     distribution ) );
-}
-
-// Create the subshell incoherent photoatomic reactions
-/*! \details This will use the impulse approximation incoherent cross sections
- */ 
-void PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
-       const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-       const Teuchos::ArrayRCP<const double>& energy_grid,
-       const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
-       Teuchos::Array<Teuchos::RCP<PhotoatomicReaction> >&
-       subshell_incoherent_reactions,
-       const bool use_doppler_broadening_data )
-{
-  // Make sure the energy grid is valid
-  testPrecondition( raw_photoatom_data.getPhotonEnergyGrid().size() ==
-		    energy_grid.size() );
-  testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
-						      energy_grid.end() ) );
-
-  subshell_incoherent_reactions.clear();
-
-  Teuchos::RCP<PhotoatomicReaction> subshell_incoherent_reaction;
-
-  std::set<unsigned>::const_iterator subshell_it = 
-    raw_photoatom_data.getSubshells().begin();
-
-  while( subshell_it != raw_photoatom_data.getSubshells().end() )
+  }
+  // Create the subshell reactions using the impulse approximation
+  else
   {
-    // Extract the cross section
-    Teuchos::ArrayRCP<double> subshell_incoherent_cross_section;
-    subshell_incoherent_cross_section.assign(
+    incoherent_reactions.clear();
+
+    Teuchos::RCP<PhotoatomicReaction> subshell_incoherent_reaction;
+    
+    std::set<unsigned>::const_iterator subshell_it = 
+      raw_photoatom_data.getSubshells().begin();
+
+    while( subshell_it != raw_photoatom_data.getSubshells().end() )
+    {
+      // Extract the cross section
+      Teuchos::ArrayRCP<double> subshell_incoherent_cross_section;
+      subshell_incoherent_cross_section.assign(
 	   raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSection(*subshell_it).begin(),
 	   raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSection(*subshell_it).end() );
 
-    unsigned subshell_threshold_index = 
-      raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(*subshell_it);
+      unsigned subshell_threshold_index = 
+	raw_photoatom_data.getImpulseApproxSubshellIncoherentCrossSectionThresholdEnergyIndex(*subshell_it);
 
-    // Create the subshell incoherent distribution
-    Teuchos::RCP<const IncoherentPhotonScatteringDistribution> 
-      base_distribution;
-   
-    if( use_doppler_broadening_data )
-    {
-      IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadenedSubshellIncoherentDistribution(
-							    raw_photoatom_data,
-							    *subshell_it,
-							    base_distribution,
-							    3.0 );
-    }
-    // Ignore Doppler broadening
-    else
-    {
-      IncoherentPhotonScatteringDistributionNativeFactory::createSubshellIncoherentDistribution( 
-						            raw_photoatom_data,
-							    *subshell_it,
-							    base_distribution,
-							    3.0 );
-    }
+      // Create the subshell incoherent distribution
+      Teuchos::RCP<const IncoherentPhotonScatteringDistribution> 
+	base_distribution;
 
-    Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution> 
+      IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistribution( 
+						   raw_photoatom_data,
+						   base_distribution,
+						   incoherent_model,
+						   kahn_sampling_cutoff_energy,
+						   *subshell_it );
+      
+      Teuchos::RCP<const SubshellIncoherentPhotonScatteringDistribution> 
       distribution = Teuchos::rcp_dynamic_cast<const SubshellIncoherentPhotonScatteringDistribution>( base_distribution );
 
-    subshell_incoherent_reaction.reset(
+      subshell_incoherent_reaction.reset(
 	   new SubshellIncoherentPhotoatomicReaction<Utility::LinLin,false>(
 		   energy_grid,
 		   subshell_incoherent_cross_section,
@@ -148,9 +121,10 @@ void PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
 		   grid_searcher,
 		   distribution ) );
 
-    subshell_incoherent_reactions.push_back( subshell_incoherent_reaction );
-
-    ++subshell_it;
+      incoherent_reactions.push_back( subshell_incoherent_reaction );
+      
+      ++subshell_it;
+    }
   }
 }
 

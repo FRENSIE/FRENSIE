@@ -9,12 +9,8 @@
 #ifndef MONTE_CARLO_WH_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 #define MONTE_CARLO_WH_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
-// Boost Includes
-#include <boost/scoped_ptr.hpp>
-
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
-#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
@@ -31,9 +27,6 @@ public:
   //! Constructor
   WHIncoherentPhotonScatteringDistribution(
       const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
-      const Teuchos::Array<double>& subshell_binding_energies,
-      const Teuchos::Array<double>& subshell_occupancies,
-      const Teuchos::Array<SubshellType>& subshell_order,
       const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor
@@ -51,26 +44,13 @@ public:
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
 	       double& outgoing_energy,
-	       double& scattering_angle_cosine,
-	       SubshellType& shell_of_interaction ) const;
+	       double& scattering_angle_cosine ) const;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
 			      double& outgoing_energy,
 			      double& scattering_angle_cosine,
-			      SubshellType& shell_of_interaction,
 			      unsigned& trials ) const;
-
-  //! Randomly scatter the photon and return the shell that was interacted with
-  virtual void scatterPhoton( PhotonState& photon,
-			      ParticleBank& bank,
-			      SubshellType& shell_of_interaction ) const;
-
-protected:
-
-  //! Sample the subshell that is interacted with
-  void sampleInteractionSubshell( SubshellType& shell_of_interaction,
-				  double& subshell_binding_energy ) const;
 
 private:
 
@@ -81,16 +61,6 @@ private:
 
   // The scattering function
   Teuchos::RCP<const Utility::OneDDistribution> d_scattering_function;
-
-  // The shell interaction probabilities
-  boost::scoped_ptr<const Utility::TabularOneDDistribution>
-  d_subshell_occupancy_distribution;
-
-  // The subshell binding energy
-  Teuchos::Array<double> d_subshell_binding_energy;
-
-  // The subshell ordering
-  Teuchos::Array<SubshellType> d_subshell_order;
 };
 
 // Evaluate the scattering function 

@@ -12,21 +12,14 @@
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
-
-// Initialize static memeber data
-const double IncoherentPhotonScatteringDistribution::s_min_kahn_sampling_cutoff_energy = (1.0 + sqrt(3.0))*Utility::PhysicalConstants::electron_rest_mass_energy;
-
-// Return the min cutoff energy
-double IncoherentPhotonScatteringDistribution::getMinKahnCutoffEnergy()
-{
-  return s_min_kahn_sampling_cutoff_energy;
-}
 
 // Constructor without doppler broadening
 /*! \details The recoil electron momentum (scattering function independent 
@@ -38,7 +31,7 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
 {
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >= 
-		    s_min_kahn_sampling_cutoff_energy );
+		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 
   // Force the quadrature kernel to throw exceptions
   Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
@@ -57,22 +50,6 @@ double IncoherentPhotonScatteringDistribution::evaluatePDF(
 
   return this->evaluate( incoming_energy, scattering_angle_cosine )/
     this->evaluateIntegratedCrossSection( incoming_energy, 1e-3 );
-}
-
-// Calculate the Compton line energy
-double IncoherentPhotonScatteringDistribution::calculateComptonLineEnergy( 
-				   const double incoming_energy,
-				   const double scattering_angle_cosine ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-  // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-  
-  return incoming_energy/
-    (1.0 + incoming_energy*(1.0 - scattering_angle_cosine)/
-     Utility::PhysicalConstants::electron_rest_mass_energy);
 }
 
 // Evaluate the Klein-Nishina distribution
@@ -108,7 +85,6 @@ void IncoherentPhotonScatteringDistribution::sampleAndRecordTrialsKleinNishina(
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
-					    SubshellType& shell_of_interaction,
 					    unsigned& trials ) const
 {
   // Make sure the incoming energy is valid
@@ -210,9 +186,6 @@ void IncoherentPhotonScatteringDistribution::sampleAndRecordTrialsKleinNishina(
   if( fabs( scattering_angle_cosine ) > 1.0 )
     scattering_angle_cosine = copysign( 1.0, scattering_angle_cosine );
 
-  // The shell is not relevant for free electron scattering
-  shell_of_interaction = UNKNOWN_SUBSHELL;
-  
   // Make sure the sampled inverse energy loss ratio is valid
   testPostcondition( x >= 1.0 );
   testPostcondition( x <= 1.0 + 2.0*alpha );
@@ -242,8 +215,8 @@ void IncoherentPhotonScatteringDistribution::createEjectedElectron(
   
   // Calculate the compton line energy
   const double compton_line_energy = 
-    this->calculateComptonLineEnergy( photon.getEnergy(), 
-				      scattering_angle_cosine );
+    calculateComptonLineEnergy( photon.getEnergy(), 
+				scattering_angle_cosine );
     
   double electron_energy = photon.getEnergy() - compton_line_energy;
 

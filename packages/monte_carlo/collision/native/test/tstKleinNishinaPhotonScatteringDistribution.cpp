@@ -111,8 +111,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution,
 TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, sample )
 {
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
-
+  
   // Left branch of Kahn's method
   std::vector<double> fake_stream( 6 );
   fake_stream[0] = 0.27;
@@ -126,16 +125,14 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, sample )
 
   distribution->sample( Utility::PhysicalConstants::electron_rest_mass_energy,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
 
   TEST_FLOATING_EQUALITY( 
 		       outgoing_energy, 
 		       Utility::PhysicalConstants::electron_rest_mass_energy/2,
 		       1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
-
+  
   // Right branch of Kahn's method
   fake_stream[0] = 0.273;
   fake_stream[1] = 0.5;
@@ -148,16 +145,14 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, sample )
 
   distribution->sample( Utility::PhysicalConstants::electron_rest_mass_energy,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
 
   TEST_FLOATING_EQUALITY( 
 		       outgoing_energy, 
 		       Utility::PhysicalConstants::electron_rest_mass_energy/2,
 		       1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
-
+  
   // Koblinger's Method
   fake_stream.resize( 8 );
   fake_stream[0] = 0.120;
@@ -174,48 +169,40 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution, sample )
   // Sample 1st term
   distribution->sample( 3.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );			
+			scattering_angle_cosine );
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.9046816718380433, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
-  
+    
   // Sample the 2nd term
   distribution->sample( 3.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
   
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.1066615373683126, 1e-15 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 
 			  0.7030902148167004,
 			  1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   
   // Sample the 3rd term
   distribution->sample( 3.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.9544179334621479, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine,
 			  0.9033799968311882,
 			  1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   
   // Sample the 4th term
   distribution->sample( 3.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.4023457957281122, 1e-15 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine,
 			  0.8004496947064347,
 			  1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -227,7 +214,6 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution,
 		   sampleAndRecordTrials )
 {
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
   unsigned trials = 0;
 
   // Left branch of Kahn's method
@@ -245,7 +231,6 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution,
 			 Utility::PhysicalConstants::electron_rest_mass_energy,
 			 outgoing_energy,
 			 scattering_angle_cosine,
-			 shell_of_interaction,
 			 trials );
 
   TEST_FLOATING_EQUALITY( 
@@ -253,7 +238,6 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution,
 		       Utility::PhysicalConstants::electron_rest_mass_energy/2,
 		       1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 1.0/trials, 0.5 );
 
   // Right branch of Kahn's method
@@ -270,7 +254,6 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution,
 			Utility::PhysicalConstants::electron_rest_mass_energy,
 			outgoing_energy,
 			scattering_angle_cosine,
-			shell_of_interaction,
 			trials );
 
   TEST_FLOATING_EQUALITY( 
@@ -278,7 +261,6 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution,
 		       Utility::PhysicalConstants::electron_rest_mass_energy/2,
 		       1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 2.0/trials, 0.5 );
 
   // Koblinger's Method
@@ -300,55 +282,47 @@ TEUCHOS_UNIT_TEST( KleinNishinaPhotonScatteringDistribution,
   distribution->sampleAndRecordTrials( 3.1,
 				       outgoing_energy,
 				       scattering_angle_cosine,
-				       shell_of_interaction,
 				       trials );
 				
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 0.9046816718380433, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.6, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
   
   // Sample the 2nd term
   distribution->sampleAndRecordTrials( 3.1,
 				       outgoing_energy,
 				       scattering_angle_cosine,
-				       shell_of_interaction,
 				       trials );
   
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.1066615373683126, 1e-15 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 
 			  0.7030902148167004,
 			  1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
   
   // Sample the 3rd term
   distribution->sampleAndRecordTrials( 3.1,
 				       outgoing_energy,
 				       scattering_angle_cosine,
-				       shell_of_interaction,
 				       trials );
   
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.9544179334621479, 1e-12 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine,
 			  0.9033799968311882,
 			  1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
   
   // Sample the 4th term
   distribution->sampleAndRecordTrials( 3.1,
 				       outgoing_energy,
 				       scattering_angle_cosine,
-				       shell_of_interaction,
 				       trials );
 
   TEST_FLOATING_EQUALITY( outgoing_energy, 1.4023457957281122, 1e-15 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine,
 			  0.8004496947064347,
 			  1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 4.0/trials, 1.0 );
   
   Utility::RandomNumberGenerator::unsetFakeStream();

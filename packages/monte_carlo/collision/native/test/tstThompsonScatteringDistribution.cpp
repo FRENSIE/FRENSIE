@@ -106,8 +106,7 @@ TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution,
 TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, sample )
 {
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
-
+  
   // Set up the random number stream
   std::vector<double> fake_stream( 8 );
   fake_stream[0] = 0.75;
@@ -124,43 +123,35 @@ TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution, sample )
   // Sample 1st term
   distribution->sample( 0.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
-
+  
   // Sample the 2nd term
   distribution->sample( 0.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.8434326653017492, 1e-15);
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
-
+  
   // Sample the 2nd term
   distribution->sample( 0.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15);
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
-
+  
   // Sample the 2nd term
   distribution->sample( 0.1,
 			outgoing_energy,
-			scattering_angle_cosine,
-			shell_of_interaction );
+			scattering_angle_cosine );
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.8434326653017493, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
-
+  
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 	
@@ -170,7 +161,6 @@ TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution,
 		   sampleAndRecordTrials )   
 {
   double outgoing_energy, scattering_angle_cosine;
-  MonteCarlo::SubshellType shell_of_interaction;
   unsigned trials = 0;
 
   // Set up the random number stream
@@ -190,48 +180,40 @@ TEUCHOS_UNIT_TEST( ThompsonScatteringDistribution,
   distribution->sampleAndRecordTrials( 0.1,
 				       outgoing_energy,
 				       scattering_angle_cosine,
-				       shell_of_interaction,
 				       trials );
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
 
   // Sample the 2nd term
   distribution->sampleAndRecordTrials( 0.1,
 				       outgoing_energy,
 				       scattering_angle_cosine,
-				       shell_of_interaction,
 				       trials );
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, -0.8434326653017492, 1e-15);
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
 
   // Sample the 2nd term
   distribution->sampleAndRecordTrials( 0.1,
 				       outgoing_energy,
 				       scattering_angle_cosine,
-				       shell_of_interaction,
 				       trials );
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   UTILITY_TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.0, 1e-15);
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
 
   // Sample the 2nd term
   distribution->sampleAndRecordTrials( 0.1,
 				       outgoing_energy,
 				       scattering_angle_cosine,
-				       shell_of_interaction,
 				       trials );
 
   TEST_EQUALITY_CONST( outgoing_energy, 0.1 );
   TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.8434326653017493, 1e-15 );
-  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::UNKNOWN_SUBSHELL );
   TEST_EQUALITY_CONST( 4.0/trials, 1.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();

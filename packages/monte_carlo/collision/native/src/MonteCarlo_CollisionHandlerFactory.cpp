@@ -135,8 +135,8 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
 		     SimulationProperties::getNumberOfPhotonHashGridBins(),
-		     SimulationProperties::isImpulseApproximationModeOn(),
-		     SimulationProperties::isPhotonDopplerBroadeningModeOn(),
+		     SimulationProperties::getIncoherentModelType(),
+		     SimulationProperties::getKahnSamplingCutoffEnergy(),
 		     SimulationProperties::isDetailedPairProductionModeOn(),
 		     SimulationProperties::isAtomicRelaxationModeOn(),
 		     SimulationProperties::isPhotonuclearInteractionModeOn() );
@@ -168,8 +168,8 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
 		     SimulationProperties::getNumberOfPhotonHashGridBins(),
-		     SimulationProperties::isImpulseApproximationModeOn(),
-		     SimulationProperties::isPhotonDopplerBroadeningModeOn(),
+		     SimulationProperties::getIncoherentModelType(),
+		     SimulationProperties::getKahnSamplingCutoffEnergy(),
 		     SimulationProperties::isDetailedPairProductionModeOn(),
 		     SimulationProperties::isAtomicRelaxationModeOn(),
 		     SimulationProperties::isPhotonuclearInteractionModeOn() );
@@ -459,8 +459,8 @@ void CollisionHandlerFactory::createPhotonMaterials(
    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
    atomic_relaxation_model_factory,
    const unsigned hash_grid_bins,
-   const bool use_impulse_approximation_data,
-   const bool use_doppler_broadening_data,
+   const IncoherentModelType incoherent_model,
+   const double kahn_sampling_cutoff_energy,
    const bool use_detailed_pair_production_data,
    const bool use_atomic_relaxation_data,
    const bool use_photonuclear_data )
@@ -481,8 +481,8 @@ void CollisionHandlerFactory::createPhotonMaterials(
 					photoatom_aliases,
 					atomic_relaxation_model_factory,
 					hash_grid_bins,
-					use_impulse_approximation_data,
-					use_doppler_broadening_data,
+					incoherent_model,
+					kahn_sampling_cutoff_energy,
 					use_detailed_pair_production_data,
 					use_atomic_relaxation_data );
     

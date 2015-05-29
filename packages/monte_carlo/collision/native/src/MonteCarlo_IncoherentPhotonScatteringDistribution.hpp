@@ -20,9 +20,6 @@ class IncoherentPhotonScatteringDistribution : public PhotonScatteringDistributi
 
 public:
 
-  //! Return the min cutoff energy
-  static double getMinKahnCutoffEnergy();
-  
   //! Constructor
   IncoherentPhotonScatteringDistribution(
 			            const double kahn_sampling_cutoff_energy );
@@ -37,11 +34,6 @@ public:
 
 protected:
 
-  //! Calculate the Compton line energy
-  double calculateComptonLineEnergy( 
-				  const double incoming_energy,
-				  const double scattering_angle_cosine ) const;
-
   //! Evaluate the Klein-Nishina distribution
   double evaluateKleinNishinaDist(const double incoming_energy,
 				  const double scattering_angle_cosine ) const;
@@ -51,7 +43,6 @@ protected:
   void sampleAndRecordTrialsKleinNishina( const double incoming_energy,
 					  double& outgoing_energy,
 					  double& scattering_angle_cosine,
-					  SubshellType& shell_of_interaction,
 					  unsigned& trials ) const;
 
   //! Create ejected electron
@@ -61,9 +52,6 @@ protected:
 			      ParticleBank& bank ) const;
 			      
 private:
-
-  // The min cutoff energy
-  static const double s_min_kahn_sampling_cutoff_energy;
 
   // The Kahn rejection sampling cutoff energy
   double d_kahn_sampling_cutoff_energy;

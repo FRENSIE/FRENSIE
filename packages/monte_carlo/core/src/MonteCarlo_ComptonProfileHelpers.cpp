@@ -16,6 +16,21 @@
 
 namespace MonteCarlo{
 
+// Calculate the Compton line energy
+double calculateComptonLineEnergy( const double initial_energy,
+				   const double scattering_angle_cosine )
+{
+  // Make sure the initial energy is valid
+  testPrecondition( initial_energy > 0.0 );
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+  
+  return initial_energy/
+    (1.0 + initial_energy*(1.0 - scattering_angle_cosine)/
+     Utility::PhysicalConstants::electron_rest_mass_energy);
+}
+
 // Calculate the electron momentum projection
 /*! \details The calculated electron momentum projection will be in me*c units.
  */
@@ -53,7 +68,7 @@ double calculateMaxElectronMomentumProjection(
 				   const double scattering_angle_cosine )
 {
   // Make sure the bindin energy is valid
-  testPrecondition( binding_energy > 0.0 );
+  testPrecondition( binding_energy >= 0.0 );
   // Make sure the initial energy is valid
   testPrecondition( initial_energy >= binding_energy );
   // Make sure the scattering angle cosine is valid

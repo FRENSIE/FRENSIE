@@ -24,6 +24,8 @@
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_PhotoatomFactory.hpp"
 #include "MonteCarlo_CrossSectionsXMLProperties.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
+#include "MonteCarlo_IncoherentModelType.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
@@ -62,9 +64,13 @@ int main( int argc, char** argv )
   // The subshell
   int subshell = 0;
 
+  // The incoherent model
+  MonteCarlo::IncoherentModelType incoherent_model;
+  std::string incoherent_model_name = "Waller-Hartree Model";
+
   // The kahn rejection sampling cutoff energy
   double kahn_cutoff_energy = 
-    MonteCarlo::IncoherentPhotonScatteringDistribution::getMinKahnCutoffEnergy();
+    MonteCarlo::SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy();
 
   // The number of threads
   int threads = 1;
@@ -77,9 +83,8 @@ int main( int argc, char** argv )
 			    true );
   sample_isd_clp.setOption( "cs",
 			    &cross_section_alias,
-			    "The photon cross section table alias. If no "
-			    "alias is specified the Klein-Nishina "
-			    "distribution will be used." );
+			    "The photon cross section table alias.",
+			    true );
   sample_isd_clp.setOption( "cs_dir",
 			    &cross_section_directory,
 			    "The directory containing the desired "
@@ -89,6 +94,10 @@ int main( int argc, char** argv )
 			    &energy_range,
 			    "The initial photon energy (or energy range "
 			    "\"{e0,e1,...,en})\"",
+			    true );
+  sample_isd_clp.setOption( "model",
+			    &incoherent_model_name,
+			    "The incoherent scattering model name",
 			    true );
   sample_isd_clp.setOption( "subshell",
 			    &subshell,
@@ -141,12 +150,17 @@ int main( int argc, char** argv )
     energies = array_string.getConcreteArray<double>();
   }
 
+  // Extract the model type
+  incoherent_model = 
+    MonteCarlo::convertStringToIncoherentModelTypeEnum( incoherent_model_name );
+
   // Check if the kahn cutoff energy is valid
-  if( kahn_cutoff_energy < MonteCarlo::IncoherentPhotonScatteringDistribution::getMinKahnCutoffEnergy() )
+  if( kahn_cutoff_energy < 
+      MonteCarlo::SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() )
   {
     std::cerr << "Error: the Kahn rejection cutoff energy must not be less "
 	      << "than "
-	      << MonteCarlo::IncoherentPhotonScatteringDistribution::getMinKahnCutoffEnergy()
+	      << MonteCarlo::SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy()
 	      << "!" << std::endl;
 
     return 1;
@@ -208,9 +222,10 @@ int main( int argc, char** argv )
 
       std::cerr << "done." << std::endl;
 
-      MonteCarlo::IncoherentPhotonScatteringDistributionACEFactory::createIncoherentDistribution(
+      MonteCarlo::IncoherentPhotonScatteringDistributionACEFactory::createDistribution(
 						          xss_data_extractor,
 							  scattering_dist,
+							  incoherent_model,
 							  kahn_cutoff_energy );
     }
     else if( photoatom_file_type == MonteCarlo::CrossSectionsXMLProperties::native_file )
@@ -224,27 +239,12 @@ int main( int argc, char** argv )
 
       std::cerr << "done." << std::endl;
 
-      if( subshell == 0 )
-      {
-	MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistribution(
+      MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistribution(
 							  data_container,
 							  scattering_dist,
-							  kahn_cutoff_energy );
-      }
-      else if( data_container.getSubshells().count( subshell ) )
-      {
-	MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createSubshellIncoherentDistribution(
-							  data_container,
-							  subshell,
-							  scattering_dist,
-							  kahn_cutoff_energy );
-      }
-      else
-      {
-	THROW_EXCEPTION( std::runtime_error,
-			 "Error: the requested subshell ( " << subshell <<
-			 ") does not exist!" );
-      }
+							  incoherent_model,
+							  kahn_cutoff_energy,
+							  subshell );
     }
     else
     {
@@ -253,13 +253,6 @@ int main( int argc, char** argv )
 		       << photoatom_file_type <<
 		       " is not supported!" );
     }
-  }
-  // Create a Klein-Nishina distribution
-  else
-  {
-    MonteCarlo::IncoherentPhotonScatteringDistributionACEFactory::createKleinNishinaDistribution( 
-							  scattering_dist,
-							  kahn_cutoff_energy );
   }
 
   // Initialize the random number generator

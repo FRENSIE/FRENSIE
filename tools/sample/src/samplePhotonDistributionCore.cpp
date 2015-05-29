@@ -27,8 +27,7 @@ int samplePhotonDistributionCore(
     std::vector<unsigned> trials( 
 	     Utility::GlobalOpenMPSession::getRequestedNumberOfThreads(), 0u );
     std::vector<double> sampled_cosines( samples ), sampled_energies( samples);
-    std::vector<MonteCarlo::SubshellType> sampled_subshells( samples );
-  
+      
     double start_time = Utility::GlobalOpenMPSession::getTime();
     
     #pragma omp parallel for num_threads( Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() )
@@ -38,8 +37,7 @@ int samplePhotonDistributionCore(
                          energies[i],
 			 sampled_energies[j],
 			 sampled_cosines[j],
-			 sampled_subshells[j],
-                         trials[Utility::GlobalOpenMPSession::getThreadId()] );
+			 trials[Utility::GlobalOpenMPSession::getThreadId()] );
     }
   
     double end_time = Utility::GlobalOpenMPSession::getTime();

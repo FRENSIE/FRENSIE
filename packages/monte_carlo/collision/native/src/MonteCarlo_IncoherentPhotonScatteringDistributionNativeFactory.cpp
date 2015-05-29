@@ -12,21 +12,98 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistributionNativeFactory.hpp"
-#include "MonteCarlo_WHIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_DopplerBroadenedPhotonEnergyDistributionNativeFactory.hpp"
+#include "MonteCarlo_DetailedWHIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_DopplerBroadenedHybridIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_VoidComptonProfileSubshellConverter.hpp"
 #include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_SubshellType.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
-// Create a basic incoherent distribution
+// Create an incoherent distribution
 void IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistribution( 
+	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+	 incoherent_distribution,
+	 const IncoherentModelType incoherent_model,
+	 const double kahn_sampling_cutoff_energy,
+	 const unsigned endf_subshell )
+{
+  // Make sure the cutoff energy is valid
+  testPrecondition( kahn_sampling_cutoff_energy >=
+		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+  
+  switch( incoherent_model )
+  {
+    case KN_INCOHERENT_MODEL:
+    {
+      IncoherentPhotonScatteringDistributionNativeFactory::createKleinNishinaDistribution( 
+						 incoherent_distribution,
+						 kahn_sampling_cutoff_energy );
+      break;
+    }
+    case WH_INCOHERENT_MODEL:
+    {
+      IncoherentPhotonScatteringDistributionNativeFactory::createWallerHartreeDistribution(
+						 raw_photoatom_data,
+						 incoherent_distribution,
+						 kahn_sampling_cutoff_energy );
+      break;
+    }
+    case COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL:
+    {
+      Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>
+	doppler_broadened_dist;
+      
+      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledCompleteDistribution(
+					              raw_photoatom_data,
+						      doppler_broadened_dist );
+      break;
+    }
+    case IMPULSE_INCOHERENT_MODEL:
+    {
+      IncoherentPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
+						 raw_photoatom_data,
+						 endf_subshell,
+						 incoherent_distribution,
+						 kahn_sampling_cutoff_energy );
+      break;
+    }
+    case FULL_PROFILE_DB_IMPULSE_INCOHERENT_MODEL:
+    {
+      Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>
+	doppler_broadened_dist;
+      
+      MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createSubshellDistribution(
+					              raw_photoatom_data,
+						      endf_subshell,
+						      doppler_broadened_dist );
+
+      IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadenedSubshellDistribution(
+					         raw_photoatom_data,
+						 endf_subshell,
+						 doppler_broadened_dist,
+						 incoherent_distribution,
+						 kahn_sampling_cutoff_energy );
+      break;
+    }
+    default:
+    {
+      THROW_EXCEPTION( std::logic_error,
+		       "Error: incoherent model " << incoherent_model <<
+		       " cannot be constructed with native data!" );
+    }
+  }
+}
+
+// Create a Waller-Hartree incoherent distribution
+void IncoherentPhotonScatteringDistributionNativeFactory::createWallerHartreeDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
@@ -34,7 +111,7 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistri
 {
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
-		    IncoherentPhotonScatteringDistribution::getMinKahnCutoffEnergy() );
+		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
   
   // Create the scattering function
   Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
@@ -48,15 +125,12 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistri
 
   std::set<unsigned>::const_iterator subshell_it = subshells.begin();
 
-  Teuchos::Array<double> binding_energies, occupancy_numbers;
+  Teuchos::Array<double> occupancy_numbers;
 
   Teuchos::Array<SubshellType> subshell_order;
   
   while( subshell_it != subshells.end() )
   {
-    binding_energies.push_back( 
-		 raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ) );
-    
     occupancy_numbers.push_back(
 		     raw_photoatom_data.getSubshellOccupancy( *subshell_it ) );
 
@@ -66,91 +140,64 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistri
     ++subshell_it;
   }
 
-  incoherent_distribution.reset( new WHIncoherentPhotonScatteringDistribution( 
+  incoherent_distribution.reset( 
+			 new DetailedWHIncoherentPhotonScatteringDistribution( 
 					       scattering_function,
-					       binding_energies,
 					       occupancy_numbers,
 					       subshell_order,
 					       kahn_sampling_cutoff_energy ) );
 }
 
-// Create an advanced Doppler broadened incoherent distribution
-void IncoherentPhotonScatteringDistributionNativeFactory::createAdvancedDopplerBroadenedIncoherentDistribution(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-	 incoherent_distribution,
-	 const double kahn_sampling_cutoff_energy )
+// Create a Doppler broadened hybrid incoherent distribution
+void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadenedHybridDistribution(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+    const Teuchos::RCP<const CompleteDopplerBroadenedPhotonEnergyDistribution>&
+    doppler_broadened_dist,
+    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+    incoherent_distribution,     
+    const double kahn_sampling_cutoff_energy )
 {
+  // Make sure the Doppler broadened distribution is valid
+  testPrecondition( !doppler_broadened_dist.is_null() );
   // Make sure the cutoff energy is valid
   testPrecondition( kahn_sampling_cutoff_energy >=
-		    IncoherentPhotonScatteringDistribution::getMinKahnCutoffEnergy() );
-  
+		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+
   // Create the scattering function
   Teuchos::RCP<const Utility::OneDDistribution> scattering_function;
 
-  IncoherentPhotonScatteringDistributionNativeFactory::createScatteringFunction( 
+  IncoherentPhotonScatteringDistributionNativeFactory::createScatteringFunction(
 							 raw_photoatom_data,
 							 scattering_function );
 
-  // Extract the binding energies, occupancies and order
-  Teuchos::Array<double> subshell_binding_energies, subshell_occupancies;
-  Teuchos::Array<SubshellType> subshell_order;
-
-  std::set<unsigned>::const_iterator subshell_it = 
-    raw_photoatom_data.getSubshells().begin();
-
-  while( subshell_it != raw_photoatom_data.getSubshells().end() )
-  {
-    subshell_order.push_back( 
-			 convertENDFDesignatorToSubshellEnum( *subshell_it ) );
-
-    subshell_binding_energies.push_back( 
-		 raw_photoatom_data.getSubshellBindingEnergy( *subshell_it ) );
-
-    subshell_occupancies.push_back(
-		     raw_photoatom_data.getSubshellOccupancy( *subshell_it ) );
-
-    ++subshell_it;
-  }
-
-  // Create the Compton profile subshell converter
-  Teuchos::RCP<ComptonProfileSubshellConverter> converter(
-				   new VoidComptonProfileSubshellConverter() );
-
-  // Create the compton profile distributions
-  Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
-    compton_profiles( subshell_order.size() );
-
-  Teuchos::Array<SubshellType> subshell_order_copy = subshell_order;
-  std::sort( subshell_order_copy.begin(), subshell_order_copy.end() );
-
-  for( unsigned i = 0; i < subshell_order_copy.size(); ++i )
-  {
-    compton_profiles[i].reset(
-      new Utility::TabularDistribution<Utility::LinLin>(
-      raw_photoatom_data.getComptonProfileMomentumGrid(subshell_order_copy[i]),
-      raw_photoatom_data.getComptonProfile( subshell_order_copy[i] ) ) );
-  }
-
-  incoherent_distribution.reset( 
-	 new AdvancedDopplerBroadenedWHIncoherentPhotonScatteringDistribution( 
-			   scattering_function,
-			   subshell_binding_energies,
-			   subshell_occupancies,
-			   subshell_order,
-			   converter,
-			   compton_profiles,
-			   kahn_sampling_cutoff_energy ) );
+  incoherent_distribution.reset(
+	      new DopplerBroadenedHybridIncoherentPhotonScatteringDistribution(
+					       scattering_function,
+					       doppler_broadened_dist,
+					       kahn_sampling_cutoff_energy ) );
 }
+  
 
 // Create a basic subshell incoherent distribution
-void IncoherentPhotonScatteringDistributionNativeFactory::createSubshellIncoherentDistribution(
+void IncoherentPhotonScatteringDistributionNativeFactory::createSubshellDistribution(
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 const unsigned endf_subshell,
 	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
 	 const double kahn_sampling_cutoff_energy )
 {
+  // Make sure the cutoff energy is valid
+  testPrecondition( kahn_sampling_cutoff_energy >=
+		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+
+  // Convert the endf subshell to a subshell type
+  SubshellType subshell = convertENDFDesignatorToSubshellEnum( endf_subshell );
+  
+  TEST_FOR_EXCEPTION( subshell == INVALID_SUBSHELL,
+		      std::logic_error,
+		      "Error: the requested endf subshell " << 
+		      endf_subshell << " is invalid! " );
+  
   // Create the occupation number distribution
   Teuchos::RCP<Utility::OneDDistribution> occupation_number(
      new Utility::TabularDistribution<Utility::LinLin>( 
@@ -159,40 +206,50 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createSubshellIncohere
 
   incoherent_distribution.reset( 
 	   new SubshellIncoherentPhotonScatteringDistribution(
-		  convertENDFDesignatorToSubshellEnum( endf_subshell ),
+		  subshell,
 		  raw_photoatom_data.getSubshellOccupancy( endf_subshell ),
 		  raw_photoatom_data.getSubshellBindingEnergy( endf_subshell ),
 		  occupation_number,
 		  kahn_sampling_cutoff_energy ) );
-}
+ }
 
 // Create a Doppler broadened subshell incoherent distribution
-void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadenedSubshellIncoherentDistribution(
-	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
-	 const unsigned endf_subshell,
-	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
-	 incoherent_distribution,
-	 const double kahn_sampling_cutoff_energy )
+void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadenedSubshellDistribution(
+    const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
+    const unsigned endf_subshell,
+    const Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
+    doppler_broadened_dist,
+    Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
+    incoherent_distribution,
+    const double kahn_sampling_cutoff_energy )
 {
+  // Make sure the Doppler broadened energy distribution is valid
+  testPrecondition( !doppler_broadened_dist.is_null() );
+  // Make sure the cutoff energy is valid
+  testPrecondition( kahn_sampling_cutoff_energy >=
+		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
+
+  // Convert the endf subshell to a subshell type
+  SubshellType subshell = convertENDFDesignatorToSubshellEnum( endf_subshell );
+  
+  TEST_FOR_EXCEPTION( subshell == INVALID_SUBSHELL,
+		      std::logic_error,
+		      "Error: the requested endf subshell " << 
+		      endf_subshell << " is invalid! " );
+  
   // Create the occupation number distribution
   Teuchos::RCP<Utility::OneDDistribution> occupation_number(
      new Utility::TabularDistribution<Utility::LinLin>( 
 	   raw_photoatom_data.getOccupationNumberMomentumGrid( endf_subshell ),
 	   raw_photoatom_data.getOccupationNumber( endf_subshell ) ) );
 
-  // Create the Compton profile
-  Teuchos::RCP<Utility::TabularOneDDistribution> compton_profile(
-       new Utility::TabularDistribution<Utility::LinLin>(
-	     raw_photoatom_data.getComptonProfileMomentumGrid( endf_subshell ),
-	     raw_photoatom_data.getComptonProfile( endf_subshell ) ) );
-
   incoherent_distribution.reset( 
 	    new DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
-		  convertENDFDesignatorToSubshellEnum( endf_subshell ),
+		  subshell,
 		  raw_photoatom_data.getSubshellOccupancy( endf_subshell ),
 		  raw_photoatom_data.getSubshellBindingEnergy( endf_subshell ),
-		  occupation_number,
-		  compton_profile,
+		  occupation_number, 
+		  doppler_broadened_dist,
 		  kahn_sampling_cutoff_energy ) );
 }
 

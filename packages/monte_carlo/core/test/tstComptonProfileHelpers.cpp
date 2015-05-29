@@ -168,6 +168,35 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers, convertProfileToInverseMeCUnits )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the Compton line energy can be calculated
+TEUCHOS_UNIT_TEST( ComptonProfileHelpers, calculateComptonLineEnergy )
+{
+  double compton_line = MonteCarlo::calculateComptonLineEnergy( 0.1, -1.0 );
+
+  TEST_FLOATING_EQUALITY( compton_line, 0.0718705616632476, 1e-15 );
+
+  compton_line = MonteCarlo::calculateComptonLineEnergy( 0.1, 0.0 );
+
+  TEST_FLOATING_EQUALITY( compton_line, 0.0836333586947441, 1e-15 );
+
+  compton_line = MonteCarlo::calculateComptonLineEnergy( 0.1, 1.0 );
+
+  TEST_FLOATING_EQUALITY( compton_line, 0.1, 1e-15 );
+
+  compton_line = MonteCarlo::calculateComptonLineEnergy( 1.0, -1.0 );
+  
+  TEST_FLOATING_EQUALITY( compton_line, 0.20350423413905203, 1e-15 );
+
+  compton_line = MonteCarlo::calculateComptonLineEnergy( 1.0, 0.0 );
+
+  TEST_FLOATING_EQUALITY( compton_line, 0.3381861540098899, 1e-15 );
+
+  compton_line = MonteCarlo::calculateComptonLineEnergy( 1.0, 1.0 );
+  
+  TEST_FLOATING_EQUALITY( compton_line, 1.0, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the electron momentum projection can be calculated
 TEUCHOS_UNIT_TEST( ComptonProfileHelpers, calculateElectronMomentumProjection )
 {
