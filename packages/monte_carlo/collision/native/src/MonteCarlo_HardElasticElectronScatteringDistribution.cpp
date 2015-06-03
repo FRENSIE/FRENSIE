@@ -67,7 +67,7 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
   double scattering_angle_cosine = 
    HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine( 
                                                          electron.getEnergy() );
-
+/*
   // Calculate the outgoing direction
   double outgoing_electron_direction[3];
 
@@ -83,6 +83,24 @@ void HardElasticElectronScatteringDistribution::scatterElectron(
   
   // Set the new direction
   electron.setDirection( outgoing_electron_direction );
+*/
+  electron.rotateDirection( scattering_angle_cosine,
+                          this->sampleAzimuthalAngle() );
+}
+
+// Randomly scatter the adjoint electron
+void HardElasticElectronScatteringDistribution::scatterAdjointElectron( 
+                                AdjointElectronState& adjoint_electron,
+        		                    ParticleBank& bank,
+                                SubshellType& shell_of_interaction ) const
+{
+  // Sample the scattering angle cosine
+  double scattering_angle_cosine = 
+   HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine( 
+                                                         electron.getEnergy() );
+
+  adjoint_electron.rotateDirection( scattering_angle_cosine,
+                                    this->sampleAzimuthalAngle() );
 }
 
 

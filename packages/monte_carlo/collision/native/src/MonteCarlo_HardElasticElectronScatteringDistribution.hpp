@@ -24,12 +24,14 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
+#include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The scattering distribution base class
 class HardElasticElectronScatteringDistribution : public ElectronScatteringDistribution
+                                                  public AdjointElectronScatteringDistribution
 {
 
 public:
@@ -52,6 +54,15 @@ public:
   void scatterElectron( ElectronState& electron,
 	                    ParticleBank& bank,
                         SubshellType& shell_of_interaction ) const;
+                        
+  //! Randomly scatter the adjoint electron
+  void scatterAdjointElectron( AdjointElectronState& electron,
+                               ParticleBank& bank,
+                               SubshellType& shell_of_interaction ) const;
+
+
+
+protected:
 
   // Evaluate the screening angle at the given electron energy
   double evaluateScreeningFactor( const double energy ) const;
