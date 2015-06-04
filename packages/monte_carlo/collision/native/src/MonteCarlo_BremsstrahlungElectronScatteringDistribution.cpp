@@ -138,9 +138,9 @@ double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle(
                                                double& photon_energy  ) const 
 {
   // get the velocity of the electron divided by the speed of light beta = v/c
-  double beta = Utility::calculateDimensionlessRelativisticSpeed( 
-                  Utility::PhysicalConstants::electron_rest_mass_energy,
-                  incoming_electron_energy );
+  double beta = sqrt ( Utility::calculateDimensionlessRelativisticSpeedSquared( 
+                          Utility::PhysicalConstants::electron_rest_mass_energy,
+                          incoming_electron_energy ) );
 
   double scaled_random_number = 
     2.0 * Utility::RandomNumberGenerator::getRandomNumber<double>();

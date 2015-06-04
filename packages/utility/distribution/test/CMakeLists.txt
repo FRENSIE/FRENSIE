@@ -17,10 +17,10 @@ ADD_EXECUTABLE(tstHistogramDistribution
 TARGET_LINK_LIBRARIES(tstHistogramDistribution utility_core utility_prng utility_dist)
 ADD_TEST(HistogramDistribution_test tstHistogramDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_histogram_distributions.xml")
 
-ADD_EXECUTABLE(tstThirtyTwoEquiprobableBinDistribution 
-  tstThirtyTwoEquiprobableBinDistribution.cpp)
-TARGET_LINK_LIBRARIES(tstThirtyTwoEquiprobableBinDistribution utility_core utility_prng utility_dist)
-ADD_TEST(ThirtyTwoEquiprobableBinDistribution_test tstThirtyTwoEquiprobableBinDistribution)
+ADD_EXECUTABLE(tstEquiprobableBinDistribution 
+  tstEquiprobableBinDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstEquiprobableBinDistribution utility_core utility_prng utility_dist)
+ADD_TEST(EquiprobableBinDistribution_test tstEquiprobableBinDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_equiprobable_bin_distributions.xml")
 
 ADD_EXECUTABLE(tstTabularDistribution 
   tstTabularDistribution.cpp)

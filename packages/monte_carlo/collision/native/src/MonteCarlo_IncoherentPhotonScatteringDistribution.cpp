@@ -61,7 +61,8 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
      const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
      const ElectronMomentumDistArray& electron_momentum_dist_array )
   : d_scattering_function( scattering_function ),
-    d_shell_interaction_data(),
+    d_subshell_occupancy_distribution(),
+    d_subshell_binding_energy( subshell_binding_energies ),
     d_subshell_order( subshell_order ),
     d_subshell_converter( subshell_converter ),
     d_electron_momentum_distribution( electron_momentum_dist_array )
@@ -80,9 +81,11 @@ IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
   testPrecondition( electron_momentum_dist_array.back()->getUpperBoundOfIndepVar() <= 1.0 );
 
   // Create the shell interaction data distribution
-  d_shell_interaction_data.reset(
-	     new Utility::DiscreteDistribution( subshell_binding_energies,
-						subshell_occupancies ) );
+  Teuchos::Array<double> dummy_indep_vals( subshell_occupancies.size() );
+  
+  d_subshell_occupancy_distribution.reset(
+	           new Utility::DiscreteDistribution( dummy_indep_vals,
+						      subshell_occupancies ) );
 
   // Doppler broaden compton lines
   if(d_electron_momentum_distribution.front()->getLowerBoundOfIndepVar() < 0.0)
@@ -149,13 +152,16 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
   // The scaled random number
   double scaled_random_number;
 
+  unsigned trial_dummy;
+
   // Sample a value from the Klein-Nishina distribution, reject with the
   // scattering function
   do{
     inverse_energy_loss_ratio = 
-      Utility::KleinNishinaDistribution::sampleOptimal( photon.getEnergy() );
+      Utility::KleinNishinaDistribution::sampleOptimal( photon.getEnergy(),
+							trial_dummy );
 
-    scattering_angle_cosine = 1.0 - (inverse_energy_loss_ratio - 1.0)/alpha;
+    scattering_angle_cosine = 1.0 + (1.0 - inverse_energy_loss_ratio)/alpha;
 
     double scattering_function_arg = 
       sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength// /1e8
@@ -263,10 +269,11 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
   while( true )
   {
     // Sample the shell that is interacted with
-    double shell_binding_energy;
     unsigned shell_index;
 
-    shell_binding_energy = d_shell_interaction_data->sample( shell_index );
+    d_subshell_occupancy_distribution->sampleAndRecordBinIndex( shell_index );
+
+    double shell_binding_energy = d_subshell_binding_energy[shell_index];
 
     // Convert to a Compton profile shell
     shell_of_interaction = d_subshell_order[shell_index];
@@ -307,7 +314,8 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
     
     // Sample an electron momentum projection
     double pz = 
-      d_electron_momentum_distribution[compton_shell_index]->sample( pz_max );
+      d_electron_momentum_distribution[compton_shell_index]->sampleInSubrange( 
+								      pz_max );
     
     // Calculate the doppler broadened energy
     bool energetically_possible;
@@ -367,10 +375,11 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLineOld(
   while( true )
   {
     // Sample the shell that is interacted with
-    double shell_binding_energy;
     unsigned shell_index;
-    
-    shell_binding_energy = d_shell_interaction_data->sample( shell_index );
+
+    d_subshell_occupancy_distribution->sampleAndRecordBinIndex( shell_index );
+
+    double shell_binding_energy = d_subshell_binding_energy[shell_index];
 
     // Convert to a Compton profile shell
     shell_of_interaction = d_subshell_order[shell_index];
@@ -412,7 +421,8 @@ double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLineOld(
     
     // Sample an electron momentum projection
     double pz = 
-      d_electron_momentum_distribution[compton_shell_index]->sample(pz_max);
+      d_electron_momentum_distribution[compton_shell_index]->sampleInSubrange( 
+								      pz_max );
     
     // Calculate the doppler broadened energy
     bool energetically_possible;

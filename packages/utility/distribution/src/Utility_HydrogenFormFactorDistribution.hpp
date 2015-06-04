@@ -43,13 +43,10 @@ public:
   double evaluatePDF( const double indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  double sample();
-
-  //! Return a random sample from the distribution
   double sample() const;
 
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
+  //! Return a random sample and record the number of trials
+  double sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
@@ -59,6 +56,9 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Test if the distribution is continuous
+  bool isContinuous() const;
 };
 
 } // end Utility namespace

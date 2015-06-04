@@ -117,7 +117,7 @@ void PhotoatomicReactionACEFactory::createIncoherentReaction(
     Teuchos::ArrayView<const double> swd_block = 
       raw_photoatom_data.extractSWDBlock();
 
-    Teuchos::Array<Teuchos::RCP<const Utility::OneDDistribution> >
+    Teuchos::Array<Teuchos::RCP<const Utility::TabularOneDDistribution> >
       compton_profiles( lswd_block.size() );
     
     for( unsigned subshell = 0; subshell < lswd_block.size(); ++subshell )
@@ -224,7 +224,7 @@ void PhotoatomicReactionACEFactory::createCoherentReaction(
   if( form_factor_squared.back() == 0.0 )
     form_factor_squared.back() = std::numeric_limits<double>::min();
 
-  Teuchos::RCP<Utility::OneDDistribution> form_factor(
+  Teuchos::RCP<Utility::TabularOneDDistribution> form_factor(
 			     new Utility::TabularDistribution<Utility::LogLog>(
 						      recoil_momentum_squared,
 						      form_factor_squared ) );

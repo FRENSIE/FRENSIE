@@ -555,7 +555,7 @@ TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution, evaluateEnergyPDF )
 // Check that a random number can be sampled from the distribution
 TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution, sample )
 {
-  Teuchos::RCP<Utility::OneDDistribution>
+  Teuchos::RCP<const Utility::OneDDistribution>
     distribution( new Utility::AdjointKleinNishinaDistribution( 
 		 Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		 Utility::PhysicalConstants::electron_rest_mass_energy/2.0 ) );
@@ -580,31 +580,27 @@ TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution, sample )
   double sample = distribution->sample();
 
   TEST_FLOATING_EQUALITY( sample, 0.95, 1e-15 );
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 0.5 );
-
+  
   sample = distribution->sample();
 
   TEST_FLOATING_EQUALITY( sample, 0.9055385138137417, 1e-15 );
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 2/3.0 );
-  
+    
   sample = distribution->sample();
 
   TEST_FLOATING_EQUALITY( sample, 0.8071682233277445, 1e-15 );
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 3/4.0 );
-
+  
   sample = distribution->sample();
 
   TEST_FLOATING_EQUALITY( sample, 0.9000009536743164, 1e-15 );
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 4/5.0 );
-  
+    
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
 // Check that a random number can be sampled from the distribution
-TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution, sample_const )
+TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution, sampleAndRecordTrials )
 {
-  Teuchos::RCP<const Utility::OneDDistribution>
+  Teuchos::RCP<Utility::OneDDistribution>
     distribution( new Utility::AdjointKleinNishinaDistribution( 
 		 Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
 		 Utility::PhysicalConstants::electron_rest_mass_energy/2.0 ) );
@@ -625,56 +621,30 @@ TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution, sample_const )
   fake_stream[11] = 0.5; // select x = 0.9000009536743164
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned trials = 0;
 
-  double sample = distribution->sample();
+  double sample = distribution->sampleAndRecordTrials( trials );
 
   TEST_FLOATING_EQUALITY( sample, 0.95, 1e-15 );
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  TEST_EQUALITY_CONST( 1.0/trials, 0.5 );
 
-  sample = distribution->sample();
+  sample = distribution->sampleAndRecordTrials( trials );
 
   TEST_FLOATING_EQUALITY( sample, 0.9055385138137417, 1e-15 );
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  TEST_EQUALITY_CONST( 2.0/trials, 2/3.0 );
   
-  sample = distribution->sample();
+  sample = distribution->sampleAndRecordTrials( trials );
 
   TEST_FLOATING_EQUALITY( sample, 0.8071682233277445, 1e-15 );
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  TEST_EQUALITY_CONST( 3.0/trials, 3/4.0 );
 
-  sample = distribution->sample();
+  sample = distribution->sampleAndRecordTrials( trials );
 
   TEST_FLOATING_EQUALITY( sample, 0.9000009536743164, 1e-15 );
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  TEST_EQUALITY_CONST( 4.0/trials, 4/5.0 );
   
   Utility::RandomNumberGenerator::unsetFakeStream();
-}
-
-//---------------------------------------------------------------------------//
-// Check that the sampling efficiency can be returned
-TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution, getSamplingEfficiency )
-{
-  Teuchos::RCP<Utility::OneDDistribution>
-    distribution( new Utility::AdjointKleinNishinaDistribution( 
-		 Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
-		 Utility::PhysicalConstants::electron_rest_mass_energy/2.0 ) );
-
-  for( unsigned i = 0; i < 10; ++i )
-    distribution->sample();
-
-  TEST_ASSERT( distribution->getSamplingEfficiency() < 1.0 );
-  TEST_ASSERT( distribution->getSamplingEfficiency() > 0.0 );
-
-  distribution.reset();
-
-  Teuchos::RCP<const Utility::OneDDistribution>
-    const_distribution( new Utility::AdjointKleinNishinaDistribution( 
-		 Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
-		 Utility::PhysicalConstants::electron_rest_mass_energy/2.0 ) );
-
-  for( unsigned i = 0; i < 10; ++i )
-    const_distribution->sample();
-
-  TEST_EQUALITY_CONST( const_distribution->getSamplingEfficiency(), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -779,6 +749,30 @@ TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution, getLowerBoundOfIndepVar )
   TEST_FLOATING_EQUALITY( base_distribution->getLowerBoundOfIndepVar(), 
 			  0.2,
 			  1e-15 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution is not tabular
+TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution, isTabular )
+{
+  Teuchos::RCP<Utility::OneDDistribution>
+    distribution( new Utility::AdjointKleinNishinaDistribution( 
+		 Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
+		 Utility::PhysicalConstants::electron_rest_mass_energy/2.0 ) );
+  
+  TEST_ASSERT( !distribution->isTabular() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution is continuous
+TEUCHOS_UNIT_TEST( AdjointKleinNishinaDistribution, isContinuous )
+{
+  Teuchos::RCP<Utility::OneDDistribution>
+    distribution( new Utility::AdjointKleinNishinaDistribution( 
+		 Utility::PhysicalConstants::electron_rest_mass_energy/10.0,
+		 Utility::PhysicalConstants::electron_rest_mass_energy/2.0 ) );
+  
+  TEST_ASSERT( distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//

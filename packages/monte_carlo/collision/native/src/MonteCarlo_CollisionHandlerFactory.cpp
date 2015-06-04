@@ -23,6 +23,7 @@
 #include "Geometry_DagMCProperties.hpp"
 #endif
 
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -333,8 +334,19 @@ void CollisionHandlerFactory::createMaterialIdDataMaps(
     const Teuchos::ParameterList& material_rep = 
       Teuchos::any_cast<Teuchos::ParameterList>( it->second.getAny() );
     
-    const Teuchos::Array<double>& material_fractions = 
-      material_rep.get<Teuchos::Array<double> >( "Fractions" );
+    const Utility::ArrayString& array_string = 
+      material_rep.get<Utility::ArrayString>( "Fractions" );
+
+    Teuchos::Array<double> material_fractions;
+
+    try{
+      material_fractions = array_string.getConcreteArray<double>();
+    }
+    EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				InvalidMaterialRepresentation,
+				"Error: The fractions requested for "
+				"material " << material_rep.name() << 
+				" are not valid!" );      
 
     const Teuchos::Array<std::string>& material_isotopes = 
       material_rep.get<Teuchos::Array<std::string> >( "Isotopes" );

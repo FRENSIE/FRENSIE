@@ -26,6 +26,8 @@ TEUCHOS_UNIT_TEST( SimulationProperties, defaults )
                        MonteCarlo::NEUTRON_MODE );
   TEST_EQUALITY_CONST(MonteCarlo::SimulationProperties::getNumberOfHistories(),
                       0 );
+  TEST_EQUALITY_CONST(MonteCarlo::SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
+		      0.001 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getFreeGasThreshold(),
                        400.0 );
   TEST_EQUALITY_CONST( 
@@ -132,6 +134,25 @@ TEUCHOS_UNIT_TEST( SimulationProperties, setNumberOfHistories )
 	       default_value );
   TEST_EQUALITY_CONST(MonteCarlo::SimulationProperties::getNumberOfHistories(),
 		      1000000000 );
+}
+
+//---------------------------------------------------------------------------//
+// Test that the surface flux angle cosine cutoff can be set
+TEUCHOS_UNIT_TEST( SimulationProperties, 
+		   setSurfaceFluxEstimatorAngleCosineCutoff )
+{
+  double default_value = 
+    MonteCarlo::SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff();
+
+  MonteCarlo::SimulationProperties::setSurfaceFluxEstimatorAngleCosineCutoff( 0.1 );
+
+  TEST_ASSERT( MonteCarlo::SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff() !=
+	       default_value );
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
+		       0.1 );
+
+  // Reset to the default
+  MonteCarlo::SimulationProperties::setSurfaceFluxEstimatorAngleCosineCutoff( default_value );
 }
 
 //---------------------------------------------------------------------------//

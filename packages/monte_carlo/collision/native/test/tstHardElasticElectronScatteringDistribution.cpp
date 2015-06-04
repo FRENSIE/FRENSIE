@@ -40,11 +40,11 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   double energy = 1.0;
 
   // Calculate scrrening angle
-  double screening_angle = 
+  double screening_factor = 
     ace_basic_elastic_distribution->evaluateScreeningFactor( energy );
 
   // Test
-  TEST_FLOATING_EQUALITY( screening_angle, 2.195957718728E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( screening_factor, 2.195957718728E-04, 1e-12 );
 
 }
 
@@ -189,7 +189,7 @@ int main( int argc, char** argv )
     xss_data_extractor->extractELASBlock();
 
   // Create the elastic scattering distributions
-  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::OneDDistribution> > >
+  Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
     elastic_scattering_distribution( size );
   
   for( unsigned n = 0; n < size; ++n )

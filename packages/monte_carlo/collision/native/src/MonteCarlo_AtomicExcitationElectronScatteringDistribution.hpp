@@ -47,12 +47,12 @@ public:
 
   //! Randomly scatter the electron
   void scatterElectron( ElectronState& electron,
-	                    ParticleBank& bank,
+	                      ParticleBank& bank,
                         SubshellType& shell_of_interaction ) const;
 
 private:
 
-  // elastic scattering distribution without forward screening data
+  // adjoint atomic excitation energy loss tables
   AtomicDistribution d_energy_loss_distribution;
 
 

@@ -20,6 +20,10 @@
 
 namespace Utility{
 
+// Initialize static member data
+const bool ArrayString::s_initialized = 
+  ArrayString::initialize();
+
 // Replace all occurances of pi with the number
 void ArrayString::locateAndReplacePi( std::string& array_string )
 {
@@ -376,6 +380,14 @@ void ArrayString::fromStream( std::istream& is )
 bool ArrayString::isEqual( const ArrayString& other ) const
 {
   return d_array_string == other.d_array_string;
+}
+
+// Initialize the array string class
+bool ArrayString::initialize()
+{
+  TEUCHOS_ADD_TYPE_CONVERTER( Utility::ArrayString );
+
+  return true;
 }
 
 } // end Utility namespace

@@ -109,12 +109,6 @@ double PolynomialDistribution::evaluatePDF( const double indep_var_value) const
 }
 
 // Return a random sample from the distribution
-double PolynomialDistribution::sample()
-{
-  return (const_cast<const PolynomialDistribution*>(this))->sample();
-}
-
-// Return a random sample from the distribution
 /*! \details The probability mixing technique is used to sample from the
  * polynomial exactly.
  */
@@ -148,10 +142,12 @@ double PolynomialDistribution::sample() const
     return pow( argument, 1.0/(sampled_term+1u) );
 }
 
-// Return the sampling efficiency from the distribution
-double PolynomialDistribution::getSamplingEfficiency() const
+//! Return a random sample and record the number of trials
+double PolynomialDistribution::sampleAndRecordTrials( unsigned& trials ) const
 {
-  return 1.0;
+  ++trials;
+
+  return this->sample();
 }
 
 // Return the upper bound of the distribution independent variable
@@ -170,6 +166,12 @@ double PolynomialDistribution::getLowerBoundOfIndepVar() const
 OneDDistributionType PolynomialDistribution::getDistributionType() const
 {
   return PolynomialDistribution::distribution_type;
+}
+
+// Test if the distribution is continuous
+bool PolynomialDistribution::isContinuous() const
+{
+  return true;
 }
 
 // Method for placing the object in an output stream

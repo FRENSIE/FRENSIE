@@ -63,10 +63,13 @@ double DeltaDistribution::evaluatePDF( const double indep_var_value ) const
     return 0.0;
 }
 
-// Return a random sample from the distribution
-double DeltaDistribution::sample()
+// Evaluate the CDF
+double DeltaDistribution::evaluateCDF( const double indep_var_value ) const
 {
-  return (const_cast<const DeltaDistribution*>(this))->sample();
+  if( indep_var_value < d_location )
+    return 0.0;
+  else
+    return 1.0;
 }
 
 // Return a random sample from the distribution
@@ -75,10 +78,54 @@ double DeltaDistribution::sample() const
   return d_location;
 }
 
-// Return the sampling efficiency from this distribution
-double DeltaDistribution::getSamplingEfficiency() const
+//! Return a random sample from the corresponding CDF and record the number of trials
+double DeltaDistribution::sampleAndRecordTrials( unsigned& trials ) const
 {
-  return 1.0;
+  ++trials;
+  
+  return d_location;
+}
+
+// Return a random sample from the distribution and the sampled index 
+double DeltaDistribution::sampleAndRecordBinIndex( 
+					    unsigned& sampled_bin_index ) const
+{
+  sampled_bin_index = 0;
+
+  return d_location;
+}
+
+// Return a random sample from the distribution at the given CDF value
+/*! \details The random number will be ignored since only a single value can
+ * every be returned
+ */
+double DeltaDistribution::sampleWithRandomNumber( 
+					     const double random_number ) const
+{
+  return d_location;
+}
+
+// Return a random sample from the distribution in a subrange
+double DeltaDistribution::sampleInSubrange( const double max_indep_var ) const
+{
+  // Make sure the max independent variable is valid
+  testPrecondition( max_indep_var >= d_location );
+
+  return d_location;
+}
+
+// Return a random sample from the distribution at the given CDF value in a subrange
+/*! \details The random number will be ignored since only a single value can
+ * every be returned
+ */
+double DeltaDistribution::sampleWithRandomNumberInSubrange( 
+					     const double random_number,
+					     const double max_indep_var ) const
+{
+  // Make sure the max independent variable is valid
+  testPrecondition( max_indep_var >= d_location );
+
+  return d_location;
 }
 
 // Return the maximum point at which the distribution is non-zero
@@ -97,6 +144,16 @@ double DeltaDistribution::getLowerBoundOfIndepVar() const
 OneDDistributionType DeltaDistribution::getDistributionType() const
 {
   return DeltaDistribution::distribution_type;
+}
+
+// Test if the distribution is continuous
+/*! \details Though the delta distribution is technically continuous 
+ * because it is only non-zero at the specified point it will be treated as
+ * a discrete distribution.
+ */
+bool DeltaDistribution::isContinuous() const
+{
+  return false;
 }
 
 // Method for placing the object in an output stream

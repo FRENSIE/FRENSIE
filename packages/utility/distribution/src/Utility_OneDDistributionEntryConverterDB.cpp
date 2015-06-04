@@ -17,6 +17,9 @@ namespace Utility{
 OneDDistributionEntryConverterDB::ConverterMap 
 OneDDistributionEntryConverterDB::master_map;
 
+const bool OneDDistributionEntryConverterDB::initialized = 
+  OneDDistributionEntryConverterDB::initialize();
+
 // Add a converter to the database
 void OneDDistributionEntryConverterDB::addConverter(
 	 const Teuchos::RCP<OneDDistributionEntryConverter>& converter_to_add )
@@ -53,10 +56,12 @@ Teuchos::RCP<OneDDistribution> OneDDistributionEntryConverterDB::convertEntry(
   return converter->getDistribution( entry );
 }
 
-// Standard intitialization
-void OneDDistributionEntryConverterDB::standardInitialization()
+// Initialize the class
+bool OneDDistributionEntryConverterDB::initialize()
 {
   UTILITY_ONE_D_DISTRIBUTION_ENTRY_CONVERTER_DB_SETUP();
+
+  return true;
 }
 
 } // end Utility namespace

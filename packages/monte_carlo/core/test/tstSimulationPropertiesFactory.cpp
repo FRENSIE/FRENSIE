@@ -39,6 +39,8 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
 		       MonteCarlo::NEUTRON_PHOTON_MODE );
   TEST_EQUALITY_CONST(MonteCarlo::SimulationProperties::getNumberOfHistories(),
 		      10 );
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
+		       0.1 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getFreeGasThreshold(),
 		       600.0 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMinNeutronEnergy(),

@@ -41,9 +41,7 @@ double AdjointKleinNishinaDistribution::calculateMinInverseEnergyGainRatio(
 AdjointKleinNishinaDistribution::AdjointKleinNishinaDistribution()
   : d_alpha( 0.0 ),
     d_alpha_max( 0.0 ),
-    d_min_inverse_energy_gain_ratio( 0.0 ),
-    d_trials( 0u ),
-    d_samples( 0u )
+    d_min_inverse_energy_gain_ratio( 0.0 )
 { /* ... */ }
 
 // Constructor
@@ -53,9 +51,7 @@ AdjointKleinNishinaDistribution::AdjointKleinNishinaDistribution(
   : d_alpha( energy/PhysicalConstants::electron_rest_mass_energy ),
     d_alpha_max( max_energy/PhysicalConstants::electron_rest_mass_energy ),
     d_min_inverse_energy_gain_ratio( 
-		   calculateMinInverseEnergyGainRatio( d_alpha, d_alpha_max) ),
-    d_trials( 0u ),
-    d_samples( 0u )
+		   calculateMinInverseEnergyGainRatio( d_alpha, d_alpha_max) )
 {
   // Make sure the energy is valid
   testPrecondition( energy > 0.0 );
@@ -69,9 +65,7 @@ AdjointKleinNishinaDistribution::AdjointKleinNishinaDistribution(
   : d_alpha( dist_instance.d_alpha ),
     d_alpha_max( dist_instance.d_alpha_max ),
     d_min_inverse_energy_gain_ratio( 
-			       dist_instance.d_min_inverse_energy_gain_ratio ),
-    d_trials( 0u ),
-    d_samples( 0u )
+			       dist_instance.d_min_inverse_energy_gain_ratio )
 {
   // Make sure the energy is valid
   testPrecondition( d_alpha > 0.0 );
@@ -89,8 +83,6 @@ AdjointKleinNishinaDistribution& AdjointKleinNishinaDistribution::operator=(
     d_alpha_max = dist_instance.d_alpha_max;
     d_min_inverse_energy_gain_ratio = 
       dist_instance.d_min_inverse_energy_gain_ratio;
-    d_trials = dist_instance.d_trials;
-    d_samples = dist_instance.d_samples;
   }
 
   return *this;
@@ -203,30 +195,16 @@ double AdjointKleinNishinaDistribution::evaluateEnergyPDF(
 }
 
 // Return a random sample from the distribution
-double AdjointKleinNishinaDistribution::sample()
-{
-  unsigned number_of_trials = 0u;
-
-  double energy_loss_ratio_sample = this->sample( number_of_trials );
-
-  // Update the efficiency counters
-  d_trials += number_of_trials;
-  ++d_samples;
-
-  return energy_loss_ratio_sample;  
-}
-
-// Return a random sample from the distribution
 double AdjointKleinNishinaDistribution::sample() const
 {
-  unsigned number_of_trials;
+  unsigned trial_dummy;
 
-  return this->sample( number_of_trials );
+  return this->sampleAndRecordTrials( trial_dummy );
 }
 
 // Sample a value from the distribution, count the number of trials
-double AdjointKleinNishinaDistribution::sample( 
-					     unsigned& number_of_trials ) const
+double AdjointKleinNishinaDistribution::sampleAndRecordTrials( 
+					               unsigned& trials ) const
 {
   double log_min_energy_loss_ratio = log( d_min_inverse_energy_gain_ratio );
   double alpha_squared = d_alpha*d_alpha;
@@ -246,7 +224,7 @@ double AdjointKleinNishinaDistribution::sample(
   
   while( true )
   {
-    ++number_of_trials;
+    ++trials;
     
     double scaled_random_number = 
       RandomNumberGenerator::getRandomNumber<double>()*denom;
@@ -306,15 +284,6 @@ double AdjointKleinNishinaDistribution::sample(
   return sampled_energy_loss_ratio;
 }
 
-// Return the sampling efficiency from the distribution
-double AdjointKleinNishinaDistribution::getSamplingEfficiency() const
-{
-  if( d_trials > 0 )
-    return (double)d_samples/d_trials;
-  else
-    return 1.0;
-}
-
 // Return the upper bound of the distribution independent variable
 double AdjointKleinNishinaDistribution::getUpperBoundOfIndepVar() const
 {
@@ -334,6 +303,11 @@ AdjointKleinNishinaDistribution::getDistributionType() const
   return AdjointKleinNishinaDistribution::distribution_type;
 }
 
+// Test if the distribution is continuous
+bool AdjointKleinNishinaDistribution::isContinuous() const
+{
+  return true;
+}
 
 } // end Utility namespace
 

@@ -39,6 +39,12 @@ public:
   //! Return the number of histories to run
   static unsigned long long getNumberOfHistories();
 
+  //! Set the angle cosine cutoff value for surface flux estimators
+  static void setSurfaceFluxEstimatorAngleCosineCutoff( const double cutoff );
+
+  //! Return the angle cosine cutoff value for surface flux estimators
+  static double getSurfaceFluxEstimatorAngleCosineCutoff();
+
   //! Set the free gas thermal treatment temperature threshold
   static void setFreeGasThreshold( const double threshold );
 
@@ -171,6 +177,9 @@ private:
   // The number of histories to run
   static unsigned long long number_of_histories;
 
+  // The angle cosine cutoff value for surface flux estimators
+  static double surface_flux_estimator_angle_cosine_cutoff;
+
   // The free gas thermal treatment temperature threshold
   // Note: free gas thermal treatment used when energy<threshold*kT (and A > 1)
   static double free_gas_threshold;
@@ -250,6 +259,12 @@ inline ParticleModeType SimulationProperties::getParticleMode()
 inline unsigned long long SimulationProperties::getNumberOfHistories()
 {
   return SimulationProperties::number_of_histories;
+}
+
+// Return the angle cosine cutoff value for surface flux estimators
+inline double SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff()
+{
+  return SimulationProperties::surface_flux_estimator_angle_cosine_cutoff;
 }
 
 // Return the free gas thermal treatment temperature threshold

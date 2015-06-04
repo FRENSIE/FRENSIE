@@ -20,7 +20,7 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -35,8 +35,8 @@ public:
 
   //! Typedef for the  electroionization subshell distribution
   typedef Teuchos::Array<Utility::Pair<double,
-                         Teuchos::RCP<const Utility::OneDDistribution> > >
-                            ElectroionizationSubshellDistribution;
+		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+  ElectroionizationSubshellDistribution;
 
   //! Constructor 
   ElectroionizationSubshellElectronScatteringDistribution(

@@ -25,7 +25,7 @@ std::string convertOneDDistributionTypeToString(
   case DISCRETE_DISTRIBUTION: return "Discrete Distribution";
   case EXPONENTIAL_DISTRIBUTION: return "Exponential Distribution";
   case HISTOGRAM_DISTRIBUTION: return "Histogram Distribution";
-  case THIRTY_TWO_EQUIPROBABLE_BIN_DISTRIBUTION: return "32 Equiprobable Bin Distribution";
+  case EQUIPROBABLE_BIN_DISTRIBUTION: return "32 Equiprobable Bin Distribution";
   case NORMAL_DISTRIBUTION: return "Normal Distribution";
   case POWER_1_DISTRIBUTION: return "Power 1 Distribution";
   case POWER_2_DISTRIBUTION: return "Power 2 Distribution";
