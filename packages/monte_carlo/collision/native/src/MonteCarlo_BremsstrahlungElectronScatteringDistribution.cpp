@@ -116,17 +116,8 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 
   angle_cosine = d_angular_distribution_func( incoming_energy, photon_energy );
 
-  // Sample the photon outgoing direction
-  double outgoing_photon_direction[3];
-
-  Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
-	  					   angle_cosine,
-		  				   sampleAzimuthalAngle(),
-			  			   electron.getDirection(),
-				  		   outgoing_photon_direction );
-
-  // Set photon direction
-  bremsstrahlung_photon->setDirection( outgoing_photon_direction );
+  bremsstrahlung_photon->rotateDirection( angle_cosine,
+			                  sampleAzimuthalAngle() );
 
   // Bank the photon
   bank.push( bremsstrahlung_photon );

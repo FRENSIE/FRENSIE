@@ -22,6 +22,7 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_OneDDistribution.hpp"
+#include "MonteCarlo_ScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 

@@ -30,9 +30,8 @@ public:
 	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
-      const int atomic_number,
-      const HardElasticElectronScatteringDistribution::ElasticDistribution& 
-         elastic_scattering_distribution );
+          const Teuchos::RCP<const HardElasticElectronScatteringDistribution>&
+            scattering_distribution );
 
 
   //! Destructor
@@ -55,8 +54,14 @@ public:
 
 private:
 
+
+  // The hard_elastic scattering distribution
+  Teuchos::RCP<const HardElasticElectronScatteringDistribution> 
+    d_scattering_distribution;
+/*
   // The hard_elastic scattering distribution
   HardElasticElectronScatteringDistribution d_scattering_distribution;
+*/
 };
 
 } // end MonteCarlo namespace

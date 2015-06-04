@@ -22,11 +22,12 @@
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_OneDDistribution.hpp"
+#include "MonteCarlo_ScatteringDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The scattering distribution base class
-class ElectronScatteringDistribution
+class ElectronScatteringDistribution : public virtual ScatteringDistribution
 {
 
 public:
@@ -43,20 +44,8 @@ public:
   virtual void scatterElectron( ElectronState& electron,
 			                    ParticleBank& bank,
                                 SubshellType& shell_of_interaction ) const = 0;
-
-protected:
-
-  //! Sample an azimuthal angle from a uniform distribution
-  double sampleAzimuthalAngle() const;
 };
 
-// Sample an azimuthal angle from a uniform distribution
-inline double 
-ElectronScatteringDistribution::sampleAzimuthalAngle() const
-{
-  return 2*Utility::PhysicalConstants::pi*
-    Utility::RandomNumberGenerator::getRandomNumber<double>();
-}
 
 } // end MonteCarlo namespace
 

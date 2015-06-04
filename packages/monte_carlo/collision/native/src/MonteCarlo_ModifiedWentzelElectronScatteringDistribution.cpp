@@ -104,22 +104,13 @@ void ModifiedWentzelElectronScatteringDistribution::scatterElectron(
   {
 //! \todo Write sampling procedure for modified Wentzel case II (requires a composition method) 
   }
-    // Calculate the outgoing direction
-   double outgoing_electron_direction[3];
-
-    Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
-	  					   scattering_angle_cosine,
-		  				   sampleAzimuthalAngle(),
-			  			   electron.getDirection(),
-				  		   outgoing_electron_direction );
 
     // Make sure the scattering angle cosine is valid
     testPostcondition( scattering_angle_cosine >= -1.0 );
     testPostcondition( scattering_angle_cosine <= 1.0 );
 
-    // Set the new direction
-    electron.setDirection( outgoing_electron_direction );
-
+  electron.rotateDirection( scattering_angle_cosine,
+                            this->sampleAzimuthalAngle() );
 
 }
 

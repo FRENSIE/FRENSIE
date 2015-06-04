@@ -21,15 +21,13 @@ HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HardElas
        const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
        const Teuchos::ArrayRCP<const double>& cross_section,
        const unsigned threshold_energy_index,
-       const int atomic_number,
-       const HardElasticElectronScatteringDistribution::ElasticDistribution& 
-         elastic_scattering_distribution )
+       const Teuchos::RCP<const HardElasticElectronScatteringDistribution>&
+         scattering_distribution )
   : StandardElectroatomicReaction<InterpPolicy,processed_cross_section>(
                                                        incoming_energy_grid,
                                                        cross_section,
                                                        threshold_energy_index ),
-    d_scattering_distribution( atomic_number,
-                               elastic_scattering_distribution )
+    d_scattering_distribution( scattering_distribution )
 {
   // Make sure the incoming energy grid is valid
   testPrecondition( incoming_energy_grid.size() > 0 );
@@ -42,10 +40,8 @@ HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::HardElas
 		    incoming_energy_grid.size() - threshold_energy_index );    
   // Make sure the threshold energy is valid
   testPrecondition( threshold_energy_index < incoming_energy_grid.size() );
-  // Make sure the atomic number data is valid
-  testPrecondition( atomic_number > 0 );
-  // Make sure the elastic scattering distribution data is valid
-  testPrecondition( elastic_scattering_distribution.size() > 0 );
+  // Make sure scattering distribution is valid
+  testPrecondition( !scattering_distribution.is_null() );
 }
 
 // Return the number of photons emitted from the rxn at the given energy
@@ -78,9 +74,9 @@ void HardElasticElectroatomicReaction<InterpPolicy,processed_cross_section>::rea
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution.scatterElectron( electron, 
-                                             bank, 
-                                             shell_of_interaction);
+  d_scattering_distribution->scatterElectron( electron, 
+                                              bank, 
+                                              shell_of_interaction);
 
   electron.incrementCollisionNumber();
 

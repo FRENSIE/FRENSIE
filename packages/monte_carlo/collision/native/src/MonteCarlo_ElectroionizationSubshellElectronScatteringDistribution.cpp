@@ -75,14 +75,9 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   double outgoing_angle_cosine = outgoingAngle( normalized_incoming_energy,
                                                 outgoing_energy_ratio );
 
-  // Sample the electron outgoing direction
-  double outgoing_electron_direction[3];
-
-  Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
-	  					   outgoing_angle_cosine,
-		  				   sampleAzimuthalAngle(),
-			  			   electron.getDirection(),
-				  		   outgoing_electron_direction );
+  // Set the new direction of the primary electron
+  electron.rotateDirection( outgoing_angle_cosine,
+                            this->sampleAzimuthalAngle() );
 
   // The energy ratio of the knock-on electron
   double knock_on_energy_ratio = knock_on_energy/incoming_energy;
@@ -91,20 +86,9 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
   double knock_on_angle_cosine = outgoingAngle( normalized_incoming_energy,
                                                 knock_on_energy_ratio );
 
-  // Sample the knock-on electron outgoing direction
-  double knock_on_electron_direction[3];
-
-  Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
-	  					   knock_on_angle_cosine,
-		  				   sampleAzimuthalAngle(),
-			  			   electron.getDirection(),
-				  		   knock_on_electron_direction );
-
-  // Set outgoing electron direction
-  electron.setDirection( outgoing_electron_direction );
-
-  // Set knock-on direction
-  knock_on_electron->setDirection( knock_on_electron_direction );
+  // Set the direction of the knock-on electron
+  knock_on_electron->rotateDirection( knock_on_angle_cosine,
+			              sampleAzimuthalAngle() );
 
   // Bank the photon
   bank.push( knock_on_electron );

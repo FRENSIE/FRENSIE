@@ -30,7 +30,7 @@
 namespace MonteCarlo{
 
 //! The scattering distribution base class
-class HardElasticElectronScatteringDistribution : public ElectronScatteringDistribution
+class HardElasticElectronScatteringDistribution : public ElectronScatteringDistribution,
                                                   public AdjointElectronScatteringDistribution
 {
 
