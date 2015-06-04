@@ -38,44 +38,6 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
 
-  // Extract the elastic scattering information data block (ELASI)
-  Teuchos::ArrayView<const double> elasi_block(
-				      raw_electroatom_data.extractELASIBlock() );
-  
-  // Extract the number of tabulated distributions
-  int size = elasi_block.size()/3;
-
-  // Extract the energy grid for elastic scattering angular distributions
-  Teuchos::Array<double> angular_energy_grid(elasi_block(0,size));
-
-  // Extract the table lengths for elastic scattering angular distributions
-  Teuchos::Array<double> table_length(elasi_block(size,size));
-
-  // Extract the offsets for elastic scattering angular distributions
-  Teuchos::Array<double> offset(elasi_block(2*size,size));
-
-  // Extract the elastic scattering angular distributions block (elas)
-  Teuchos::ArrayView<const double> elas_block = 
-    raw_electroatom_data.extractELASBlock();
-
-  // Create the elastic scattering distributions
-  HardElasticElectronScatteringDistribution::ElasticDistribution
-    scattering_function( size );
-  
-  for( unsigned n = 0; n < size; ++n )
-  {
-    scattering_function[n].first = angular_energy_grid[n];
-
-    scattering_function[n].second.reset( 
-	  new const Utility::HistogramDistribution(
-		 elas_block( offset[n], table_length[n] ),
-		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
-         true ) );
-  }
-
-  // Get the atomic number 
-  const int atomic_number = raw_electroatom_data.extractAtomicNumber();
-
   // Elastic cross section with zeros removed
   Teuchos::ArrayRCP<double> elastic_cross_section;
   
@@ -88,6 +50,15 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
                               raw_electroatom_data.extractElasticCrossSection(),
                               elastic_cross_section,
                               threshold_energy_index );
+
+
+  // Create the elastic scattering distribution
+  Teuchos::RCP<const HardElasticScatteringDistribution> distribution;
+
+  HardElasticScatteringDistributionACEFactory::createHardElasticDistribution(
+                                                 raw_electrotoatom_data,
+                                                 distribution ); 
+
 
   elastic_reaction.reset(
 	new HardElasticElectroatomicReaction<Utility::LinLin>(
@@ -111,46 +82,20 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
 
-  // Extract the atomic excitation scattering information data block (EXCIT)
-  Teuchos::ArrayView<const double> excit_block(
-				      raw_electroatom_data.extractEXCITBlock() );
-  
-  // Extract the number of tabulated energies
-  int size = excit_block.size()/2;
-
-  // Extract the energy grid for atomic excitation energy loss
-  Teuchos::Array<double> excitation_energy_grid(excit_block(0,size));
-
-  // Extract the energy loss for atomic excitation
-  Teuchos::Array<double> energy_loss(excit_block(size,size));
-
-  // Create the energy loss distributions
-  AtomicExcitationElectronScatteringDistribution::AtomicDistribution
+  // Create the energy loss distribution
+  Teuchos::RCP<const HardElasticScatteringDistribution> 
     energy_loss_distribution;
-  
-  energy_loss_distribution.reset( 
-    new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,
-		                                               energy_loss ) );
 
-  // Atomic Excitation cross section with zeros removed
-  Teuchos::ArrayRCP<double> atomic_excitation_cross_section;
-  
-  // Index of first non zero cross section in the energy grid
-  unsigned threshold_energy_index;
-
-  // Remove all cross sections equal to zero
-  ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
-                           energy_grid,
-                           raw_electroatom_data.extractExcitationCrossSection(),
-                           atomic_excitation_cross_section,
-                           threshold_energy_index );
-
+  AtomicExcitationScatteringDistributionACEFactory::createAtomicExcitationDistribution(
+                                                 raw_electrotoatom_data,
+                                                 energy_loss_distribution ); 
+ 
   atomic_excitation_reaction.reset(
 	new AtomicExcitationElectroatomicReaction<Utility::LinLin>(
-						  energy_grid,
-						  atomic_excitation_cross_section,
-						  threshold_energy_index,				
-                          energy_loss_distribution ) );
+                                                energy_grid,
+                                                atomic_excitation_cross_section,
+                                                threshold_energy_index,				
+                                                energy_loss_distribution ) );
 }
 
 // Create the total electroionization electroatomic reaction

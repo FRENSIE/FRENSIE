@@ -27,14 +27,17 @@ public:
 
   //! Constructor
   ElectroionizationSubshellElectroatomicReaction( 
-	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
-	  const Teuchos::ArrayRCP<const double>& cross_section,
-	  const unsigned threshold_energy_index,
+    const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
+    const Teuchos::ArrayRCP<const double>& cross_section,
+    const unsigned threshold_energy_index,
+    const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
+            electroionization_distribution );
+/*
       const SubshellType interaction_subshell,
       const double binding_energy,   
       const ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution& 
       electroionization_subshell_scattering_distribution );
-
+*/
 
   //! Destructor
   ~ElectroionizationSubshellElectroatomicReaction()
@@ -53,7 +56,10 @@ public:
 
 
 private:
-
+  // The electroionization distribution
+  Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>
+    d_electroionization_distribution
+/*
   // The electroionization subshell scattering distribution
   ElectroionizationSubshellElectronScatteringDistribution
     d_scattering_distribution;
@@ -63,6 +69,7 @@ private:
 
   // The reaction type
   ElectroatomicReactionType d_reaction_type;
+*/
 };
 
 } // end MonteCarlo namespace

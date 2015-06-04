@@ -57,51 +57,130 @@ HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribu
   testPrecondition( d_elastic_scattering_distribution.size() > 0 );
 }
 
-// Randomly scatter the electron
-void HardElasticElectronScatteringDistribution::scatterElectron( 
-                                ElectronState& electron,
-			        ParticleBank& bank,
-                                SubshellType& shell_of_interaction ) const
+// Evaluate the PDF
+double HardElasticScatteringDistribution::evaluatePDF( 
+				   const double incoming_energy,
+				   const double scattering_angle_cosine ) const
 {
-  // Sample the scattering angle cosine
-  double scattering_angle_cosine = 
-   HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine( 
-                                                         electron.getEnergy() );
-/*
-  // Calculate the outgoing direction
-  double outgoing_electron_direction[3];
-
-  Utility::rotateDirectionThroughPolarAndAzimuthalAngle(
-	  					   scattering_angle_cosine,
-		  				   sampleAzimuthalAngle(),
-			  			   electron.getDirection(),
-				  		   outgoing_electron_direction );
-
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
   // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= -1.0 );
-  testPostcondition( scattering_angle_cosine <= 1.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  return this->evaluate( incoming_energy, scattering_angle_cosine )/
+    this->evaluateIntegratedCrossSection( incoming_energy, 1e-3 );
+}
+
+// Evaluate the integrated cross section (b)
+double HardElasticScatteringDistribution::evaluateIntegratedCrossSection( 
+					         const double incoming_energy,
+					         const double precision ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+
+  // Evaluate the integrated cross section
+  boost::function<double (double x)> diff_cs_wrapper = 
+    boost::bind<double>( &HardElasticScatteringDistribution::evaluate,
+			 boost::cref( *this ),
+			 incoming_energy,
+			 _1 );
+
+  double abs_error, integrated_cs;
+
+  Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
+
+  quadrature_kernel.integrateAdaptively<15>( diff_cs_wrapper,
+					     -1.0,
+					     1.0,
+					     integrated_cs,
+					     abs_error );
+
+  // Make sure the integrated cross section is valid
+  testPostcondition( integrated_cs > 0.0 );
+
+  return integrated_cs;
+}
+
+// Sample an outgoing energy and direction from the distribution
+void HardElasticScatteringDistribution::sample( 
+				     const double incoming_energy,
+				     double& outgoing_energy,
+				     double& scattering_angle_cosine ) const
+{
+  // The outgoing energy is always equal to the incoming energy
+  outgoing_energy = incoming_energy;
+
+  unsigned trial_dummy;
+
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( incoming_energy,
+				   scattering_angle_cosine,
+				   trial_dummy );
+}
+
+// Sample an outgoing energy and direction and record the number of trials
+void HardElasticScatteringDistribution::sampleAndRecordTrials( 
+					    const double incoming_energy,
+					    double& outgoing_energy,
+					    double& scattering_angle_cosine,
+					    unsigned& trials ) const
+{
+  // The outgoing energy is always equal to the incoming energy
+  outgoing_energy = incoming_energy;
   
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( incoming_energy,
+				   scattering_angle_cosine,
+				   trials );
+}
+
+// Randomly scatter the electron
+void HardElasticScatteringDistribution::scatterElectron( 
+				     ElectronState& electron,
+				     ParticleBank& bank,
+				     SubshellType& shell_of_interaction ) const
+{
+  double scattering_angle_cosine;
+
+  unsigned trial_dummy;
+
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( electron.getEnergy(),
+				   scattering_angle_cosine,
+				   trial_dummy );
+
+  shell_of_interaction = UNKNOWN_SUBSHELL;
+
   // Set the new direction
-  electron.setDirection( outgoing_electron_direction );
-*/
-  electron.rotateDirection( scattering_angle_cosine,
-                          this->sampleAzimuthalAngle() );
+  electron.rotateDirection( scattering_angle_cosine, 
+			  this->sampleAzimuthalAngle() );
 }
 
 // Randomly scatter the adjoint electron
-void HardElasticElectronScatteringDistribution::scatterAdjointElectron( 
-                                AdjointElectronState& adjoint_electron,
-        		                    ParticleBank& bank,
-                                SubshellType& shell_of_interaction ) const
+void HardElasticScatteringDistribution::scatterAdjointElectron( 
+				     AdjointElectronState& adjoint_electron,
+				     ParticleBank& bank,
+				     SubshellType& shell_of_interaction ) const
 {
-  // Sample the scattering angle cosine
-  double scattering_angle_cosine = 
-   HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine( 
-                                                 adjoint_electron.getEnergy() );
+  double scattering_angle_cosine;
 
-  adjoint_electron.rotateDirection( scattering_angle_cosine,
-                                    this->sampleAzimuthalAngle() );
+  unsigned trial_dummy;
+
+  // Sample an outgoing direction
+  this->sampleAndRecordTrialsImpl( adjoint_electron.getEnergy(),
+				   scattering_angle_cosine,
+				   trial_dummy );
+  
+  shell_of_interaction = UNKNOWN_SUBSHELL;
+
+  // Set the new direction
+  adjoint_electron.rotateDirection( scattering_angle_cosine, 
+				  this->sampleAzimuthalAngle() );
 }
+
+
 
 
 // Evaluate the screening factor at the given electron energy
@@ -143,12 +222,17 @@ double HardElasticElectronScatteringDistribution::evaluateScreenedScatteringAngl
 }
 
 
-// Sample a scattering angle cosine
-double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
-                                                      double const energy) const
+// Sample an outgoing direction from the distribution
+void HardElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl( 
+                                                const double incoming_energy,
+                                                double& scattering_angle_cosine,
+                                                unsigned& trials ) const
 {
-  // angle cosine the electron scatters into
-  double scattering_angle_cosine;
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+
+  // Increment the number of trials
+  ++trials;
 
   // The cutoff CDF for applying the analytical screening function
   double cutoff_cdf_value;
@@ -256,8 +340,6 @@ double HardElasticElectronScatteringDistribution::sampleScatteringAngleCosine(
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
-
-  return scattering_angle_cosine;
 }
 
 } // end MonteCarlo namespace

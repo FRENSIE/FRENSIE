@@ -50,9 +50,32 @@ public:
   virtual ~HardElasticElectronScatteringDistribution()
   { /* ... */ }
 
+  //! Evaluate the distribution
+  virtual double evaluate( const double incoming_energy,
+                           const double scattering_angle_cosine ) const;
+
+  //! Evaluate the PDF
+virtual double evaluatePDF( const double incoming_energy,
+const double scattering_angle_cosine ) const;
+
+  //! Evaluate the integrated cross section (b)
+  virtual double evaluateIntegratedCrossSection( const double incoming_energy,
+                                                 const double precision) const;
+
+  //! Sample an outgoing energy and direction from the distribution
+  void sample( const double incoming_energy,
+               double& outgoing_energy,
+               double& scattering_angle_cosine ) const;
+
+  //! Sample an outgoing energy and direction and record the number of trials
+  void sampleAndRecordTrials( const double incoming_energy,
+                              double& outgoing_energy,
+                              double& scattering_angle_cosine,
+                              unsigned& trials ) const;
+
   //! Randomly scatter the electron
   void scatterElectron( ElectronState& electron,
-	                    ParticleBank& bank,
+                        ParticleBank& bank,
                         SubshellType& shell_of_interaction ) const;
                         
   //! Randomly scatter the adjoint electron
@@ -63,6 +86,11 @@ public:
 
 
 protected:
+
+   //! Sample an outgoing direction from the distribution
+  void sampleAndRecordTrialsImpl( const double incoming_energy,
+                                  double& scattering_angle_cosine,
+                                  unsigned& trials ) const;
 
   // Evaluate the screening angle at the given electron energy
   double evaluateScreeningFactor( const double energy ) const;

@@ -66,18 +66,6 @@ private:
   double outgoingAngle( double& normalized_incoming_energy,
                         double& energy_ratio ) const;
 
-/*
-  // Calculate the outgoing angle cosine of the original electron
-  double polarDeflectionAngle( double& incoming_momentum_squared,
-                               double& outgoing_momentum_squared,
-                               double& knock_on_energy ) const;
-
-  // Calculate the outgoing angle cosine of the knock-on electron
-  double knockOnDeflectionAngle( double& incoming_momentum_squared,
-                                 double& outgoing_momentum_squared,
-                                 double& outgoing_cosine ) const;
-*/
-
 };
 
 } // end MonteCarlo namespace

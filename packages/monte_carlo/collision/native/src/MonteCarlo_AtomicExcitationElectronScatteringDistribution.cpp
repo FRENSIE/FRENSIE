@@ -36,7 +36,6 @@ void AtomicExcitationElectronScatteringDistribution::scatterElectron( ElectronSt
                       SubshellType& shell_of_interaction ) const
 {
   double energy_loss = d_energy_loss_distribution->evaluate( electron.getEnergy() );
-  //std::cout << " atomic excitation called" << std::endl;
 
   double outgoing_energy = electron.getEnergy() - energy_loss;
   // Set the new energy
