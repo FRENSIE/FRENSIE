@@ -21,11 +21,14 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
 	  const Teuchos::ArrayRCP<const double>& incoming_energy_grid,
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
+          const SubshellType interaction_subshell,
           const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
-            electroionization_distribution );
-  : d_electroionization_distribution( electroionization_distribution )
+            electroionization_distribution )
+  : d_interaction_subshell( interaction_subshell ),
+    d_electroionization_distribution( electroionization_distribution ),
+    d_reaction_type( convertSubshellEnumToElectroatomicReactionEnum( 
+                                                        interaction_subshell ) )
 /*
-      const SubshellType interaction_subshell,
       const double binding_energy, 
       const ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution& 
       electroionization_subshell_scattering_distribution )
@@ -33,20 +36,22 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
                                                        incoming_energy_grid,
                                                        cross_section,
                                                        threshold_energy_index ),
-    d_interaction_subshell( interaction_subshell ), 
     d_scattering_distribution( 
          electroionization_subshell_scattering_distribution,
          binding_energy ),
-    d_reaction_type( convertSubshellEnumToElectroatomicReactionEnum( 
-                                                        interaction_subshell ) )
 */
 {
   // Make sure the interaction subshell is valid
   testPrecondition( interaction_subshell != INVALID_SUBSHELL );
   testPrecondition( interaction_subshell != UNKNOWN_SUBSHELL );
 
+  // Make sure the distribution data is valid
+  testPrecondition( !electroionization_distribution.is_null() );
+
+/*
   // Make sure the electroionization subshell scattering distribution data is valid
   testPrecondition( electroionization_subshell_scattering_distribution.size() > 0 );
+*/
 }
 
 // Simulate the reaction
@@ -56,9 +61,9 @@ void ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
 {
-  d_scattering_distribution.scatterElectron( electron, 
-                                             bank, 
-                                             shell_of_interaction);
+  d_electroionization_distribution.scatterElectron( electron, 
+                                                    bank, 
+                                                    shell_of_interaction);
 
   electron.incrementCollisionNumber();
 
