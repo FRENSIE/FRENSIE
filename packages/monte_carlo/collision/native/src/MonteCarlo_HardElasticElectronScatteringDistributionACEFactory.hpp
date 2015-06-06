@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_HardElasticScatteringDistributionACEFactory.hpp
-//! \author Alex Robinson
+//! \file   MonteCarlo_HardElasticElectronScatteringDistributionACEFactory.hpp
+//! \author Luke Kersting
 //! \brief  The hard elastic scattering distribution ACE factory declaration
 //!
 //---------------------------------------------------------------------------//
@@ -13,14 +13,14 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-//#include "MonteCarlo_HardElasticScatteringDistributionFactory.hpp"
-#include "MonteCarlo_HardElasticScatteringDistribution.hpp"
+//#include "MonteCarlo_HardElasticElectronScatteringDistributionFactory.hpp"
+#include "MonteCarlo_HardElasticElectronScatteringDistribution.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 
 namespace MonteCarlo{
 
 //! The hard elastic scattering distribution factory class that uses ACE data
-class HardElasticScatteringDistributionACEFactory //: public HardElasticScatteringDistributionFactory
+class HHardElasticElectronScatteringDistributionACEFactory //: public HardElasticElectronScatteringDistributionFactory
 {
 
 public:
@@ -28,7 +28,7 @@ public:
   //! Create a basic hard elastic distribution
   static void createHardElasticDistribution(
 			const Data::XSSEPRDataExtractor& raw_electroatom_data,
-			Teuchos::RCP<const HardElasticScatteringDistribution>&
+			Teuchos::RCP<const HardElasticElectronScatteringDistribution>&
 			  elastic_distribution );
 
 protected:
@@ -42,9 +42,9 @@ protected:
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_HARD_ELASTIC_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
+#endif // end MONTE_CARLO_HARD_ELASTIC_ELECTRON_SCATTERING_DISTRIBUTION_ACE_FACTORY_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_HardElasticScatteringDistributionACEFactory.hpp
+// end MonteCarlo_HardElasticElectronScatteringDistributionACEFactory.hpp
 //---------------------------------------------------------------------------//
 

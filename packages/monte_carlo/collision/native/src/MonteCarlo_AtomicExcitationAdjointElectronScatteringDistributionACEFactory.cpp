@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_AtomicExcitationScatteringDistributionACEFactory.cpp
-//! \author Alex Robinson
-//! \brief  The atomic excitation scattering distribution ACE factory definition
+//! \file   MonteCarlo_AtomicExcitationAdjointElectronScatteringDistributionACEFactory.cpp
+//! \author Luke Kersting
+//! \brief  The atomic excitation adjoint scattering distribution ACE factory definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -11,8 +11,7 @@
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_AtomicExcitationScatteringDistributionACEFactory.hpp"
-#include "MonteCarlo_ThompsonScatteringDistribution.hpp"
+#include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistributionACEFactory.hpp"
 #include "Utility_TabularDistribution.hpp"
 #include "Utility_ContractException.hpp"
 

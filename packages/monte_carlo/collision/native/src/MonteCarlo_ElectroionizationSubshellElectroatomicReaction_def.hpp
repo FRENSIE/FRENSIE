@@ -23,9 +23,9 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
 	  const unsigned threshold_energy_index,
           const SubshellType interaction_subshell,
           const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
-            electroionization_distribution )
+            subshell_electroionization_distribution )
   : d_interaction_subshell( interaction_subshell ),
-    d_electroionization_distribution( electroionization_distribution ),
+    d_subshell_electroionization_distribution( subshell_electroionization_distribution ),
     d_reaction_type( convertSubshellEnumToElectroatomicReactionEnum( 
                                                         interaction_subshell ) )
 /*
@@ -46,7 +46,7 @@ ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross_sect
   testPrecondition( interaction_subshell != UNKNOWN_SUBSHELL );
 
   // Make sure the distribution data is valid
-  testPrecondition( !electroionization_distribution.is_null() );
+  testPrecondition( !subshell_electroionization_distribution.is_null() );
 
 /*
   // Make sure the electroionization subshell scattering distribution data is valid
@@ -61,9 +61,10 @@ void ElectroionizationSubshellElectroatomicReaction<InterpPolicy,processed_cross
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
 {
-  d_electroionization_distribution.scatterElectron( electron, 
-                                                    bank, 
-                                                    shell_of_interaction);
+  d_subshell_electroionization_distribution.scatterElectron( 
+                                                     electron, 
+                                                     bank, 
+                                                     shell_of_interaction);
 
   electron.incrementCollisionNumber();
 

@@ -30,15 +30,15 @@ public:
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(
-			const Data::XSSEPRDataExtractor& raw_electroatom_data,
-			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<ElectroatomicReaction>& atomic_excitation_reaction );
+	const Data::XSSEPRDataExtractor& raw_electroatom_data,
+	const Teuchos::ArrayRCP<const double>& energy_grid,
+	Teuchos::RCP<ElectroatomicReaction>& atomic_excitation_reaction );
 
   //! Create the total electroionization electroatomic reaction
   static void createTotalElectroionizationReaction(
-		   const Data::XSSEPRDataExtractor& raw_electroatom_data,
-		   const Teuchos::ArrayRCP<const double>& energy_grid,
-		   Teuchos::RCP<ElectroatomicReaction>& electroionization_reaction );
+	   const Data::XSSEPRDataExtractor& raw_electroatom_data,
+	   const Teuchos::ArrayRCP<const double>& energy_grid,
+	   Teuchos::RCP<ElectroatomicReaction>& electroionization_reaction );
 
   //! Create the subshell electroionization electroatomic reactions
   static void createSubshellElectroionizationReactions(
@@ -49,10 +49,10 @@ public:
 
   //! Create the bremsstrahlung electroatomic reaction
   static void createBremsstrahlungReaction(
-		const Data::XSSEPRDataExtractor& raw_electroatom_data,
-		const Teuchos::ArrayRCP<const double>& energy_grid,
-		Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reactions,
-		BremsstrahlungAngularDistributionType photon_distribution_function );
+	const Data::XSSEPRDataExtractor& raw_electroatom_data,
+	const Teuchos::ArrayRCP<const double>& energy_grid,
+	Teuchos::RCP<ElectroatomicReaction>& bremsstrahlung_reactions,
+	BremsstrahlungAngularDistributionType photon_distribution_function );
 
   //! Create a void absorption electroatomic reaction
   static void createVoidAbsorptionReaction(

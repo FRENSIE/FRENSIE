@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_HardElasticScatteringDistributionACEFactory.cpp
-//! \author Alex Robinson
+//! \file   MonteCarlo_HardElasticElectronScatteringDistributionACEFactory.cpp
+//! \author Luke Kersting
 //! \brief  The hard elastic scattering distribution ACE factory definition
 //!
 //---------------------------------------------------------------------------//
@@ -11,24 +11,23 @@
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_HardElasticScatteringDistributionACEFactory.hpp"
-#include "MonteCarlo_ThompsonScatteringDistribution.hpp"
-#include "Utility_TabularDistribution.hpp"
+#include "MonteCarlo_HardElasticElectronScatteringDistributionACEFactory.hpp"
+#include "Utility_HistogramDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Create a hard elastic distribution
-void HardElasticScatteringDistributionACEFactory::createHardElasticDistribution(
+void HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
 			  const Data::XSSEPRDataExtractor& raw_electroatom_data,
-			  Teuchos::RCP<const HardElasticScatteringDistribution>&
+			  Teuchos::RCP<const HardElasticElectronScatteringDistribution>&
 			  elastic_distribution )
 {
   // Create the scattering function
   HardElasticElectronScatteringDistribution::ElasticDistribution 
                                                scattering_function;
 
-  HardElasticScatteringDistributionACEFactory::createScatteringFunction( 
+  HardElasticElectronScatteringDistributionACEFactory::createScatteringFunction( 
 							  raw_electroatom_data,
 							  scattering_function );
 
@@ -36,13 +35,14 @@ void HardElasticScatteringDistributionACEFactory::createHardElasticDistribution(
   const int atomic_number = raw_electroatom_data.extractAtomicNumber();
 
   elastic_distribution.reset( 
-	      new HardElasticScatteringDistribution( scattering_function, 
-                                                     atomic_number ) );
+	      new HardElasticElectronScatteringDistribution( 
+                                                            scattering_function, 
+                                                            atomic_number ) );
 }
 
 
 // Create the scattering function
-void HardElasticScatteringDistributionACEFactory::createScatteringFunction(
+void HardElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
 	   const Data::XSSEPRDataExtractor& raw_electroatom_data,
            HardElasticElectronScatteringDistribution::ElasticDistribution& 
                                                         scattering_function )
