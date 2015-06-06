@@ -18,26 +18,20 @@ namespace MonteCarlo{
  * The Compton profile must be in inverse me*c units.
  */
 DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution::DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
-    const SubshellType interaction_subshell,
-    const double num_electrons_in_subshell,
-    const double binding_energy,
-    const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
     const Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_energy_dist,
+    const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
     const double kahn_sampling_cutoff_energy )
-  : SubshellIncoherentPhotonScatteringDistribution( interaction_subshell,
-						    num_electrons_in_subshell,
-						    binding_energy,
-						    occupation_number,
-						    kahn_sampling_cutoff_energy ),
+  : SubshellIncoherentPhotonScatteringDistribution( 
+	       doppler_broadened_energy_dist->getSubshell(),
+	       doppler_broadened_energy_dist->getNumberOfElectronsInSubshell(),
+	       doppler_broadened_energy_dist->getBindingEnergy(),
+	       occupation_number,
+	       kahn_sampling_cutoff_energy ),
     d_doppler_broadened_energy_dist( doppler_broadened_energy_dist )
 {
   // Make sure the Doppler broadened energy dist is valid
   testPrecondition( !doppler_broadened_energy_dist.is_null() );
-  testPrecondition( doppler_broadened_energy_dist->getSubshell() ==
-		    interaction_subshell );
-  testPrecondition( doppler_broadened_energy_dist->getBindingEnergy() ==
-		    binding_energy );
 }
 
 // Randomly scatter the photon and return the shell that was interacted with

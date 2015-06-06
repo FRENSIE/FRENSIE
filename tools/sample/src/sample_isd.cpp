@@ -239,7 +239,7 @@ int main( int argc, char** argv )
 
       std::cerr << "done." << std::endl;
 
-      MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistribution(
+      MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
 							  data_container,
 							  scattering_dist,
 							  incoherent_model,

@@ -125,8 +125,7 @@ void SubshellDopplerBroadenedPhotonEnergyDistribution::sampleAndRecordTrials(
     // Sample an electron momentum projection
     double pz = d_compton_profile->sampleInSubrange( pz_max );
     
-    double outgoing_energy = calculateDopplerBroadenedEnergy(
-						      pz,
+    outgoing_energy = calculateDopplerBroadenedEnergy(pz,
 						      incoming_energy,
 						      scattering_angle_cosine,
 						      energetically_possible );
@@ -134,6 +133,8 @@ void SubshellDopplerBroadenedPhotonEnergyDistribution::sampleAndRecordTrials(
 
   if( outgoing_energy == 0.0 )
     outgoing_energy = std::numeric_limits<double>::min();
+
+  shell_of_interaction = d_interaction_subshell;
 
   // Make sure the outgoing energy is valid
   testPostcondition( energetically_possible );

@@ -32,14 +32,46 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
-  distribution;
+  half_distribution;
+
+Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
+  full_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
-		   sample )
+		   sample_half )
+{
+  double incoming_energy = 20.0, scattering_angle_cosine = 0.0;
+  double outgoing_energy;
+  MonteCarlo::SubshellType shell_of_interaction;
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 4 );
+  fake_stream[0] = 0.005; // select first shell for collision
+  fake_stream[1] = 6.427713151861e-01; // select pz = 0.291894102792
+  fake_stream[2] = 0.25; // select energy loss
+  fake_stream[3] = 0.5; // select pz = 0.0
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  half_distribution->sample( incoming_energy,
+			     scattering_angle_cosine,
+			     outgoing_energy,
+			     shell_of_interaction );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+
+  TEST_FLOATING_EQUALITY( outgoing_energy, 0.3528040136905526, 1e-12 );
+  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
+		   sample_full )
 {
   double incoming_energy = 20.0, scattering_angle_cosine = 0.0;
   double outgoing_energy;
@@ -52,7 +84,7 @@ TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  distribution->sample( incoming_energy,
+  full_distribution->sample( incoming_energy,
 			scattering_angle_cosine,
 			outgoing_energy,
 			shell_of_interaction );
@@ -158,6 +190,16 @@ int main( int argc, char** argv )
 
     MonteCarlo::convertProfileToInverseMeCUnits( full_profile.begin(),
 						 full_profile.end() );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( half_momentum_grid.begin(),
+					       half_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( half_profile.begin(),
+						 half_profile.end() );
+
+    half_compton_profiles[shell].reset( 
+	 new Utility::TabularDistribution<Utility::LogLin>( half_momentum_grid,
+							    half_profile ) );
     
     full_compton_profiles[shell].reset( 
 	 new Utility::TabularDistribution<Utility::LogLin>( full_momentum_grid,
@@ -165,7 +207,15 @@ int main( int argc, char** argv )
 		 
   }
 
-  distribution.reset(
+  half_distribution.reset(
+      new MonteCarlo::CoupledCompleteDopplerBroadenedPhotonEnergyDistribution( 
+			  xss_data_extractor->extractSubshellBindingEnergies(),
+			  xss_data_extractor->extractSubshellOccupancies(),
+			  subshell_order,
+			  converter,
+			  half_compton_profiles ) );
+
+  full_distribution.reset(
       new MonteCarlo::CoupledCompleteDopplerBroadenedPhotonEnergyDistribution( 
 			  xss_data_extractor->extractSubshellBindingEnergies(),
 			  xss_data_extractor->extractSubshellOccupancies(),
