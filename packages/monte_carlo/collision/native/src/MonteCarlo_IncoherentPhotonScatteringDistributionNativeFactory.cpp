@@ -27,7 +27,7 @@
 namespace MonteCarlo{
 
 // Create an incoherent distribution
-void IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistribution( 
+void IncoherentPhotonScatteringDistributionNativeFactory::createDistribution( 
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
@@ -64,6 +64,12 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistri
       MonteCarlo::DopplerBroadenedPhotonEnergyDistributionNativeFactory::createCoupledCompleteDistribution(
 					              raw_photoatom_data,
 						      doppler_broadened_dist );
+
+      MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadenedHybridDistribution(
+						 raw_photoatom_data,
+						 doppler_broadened_dist,
+						 incoherent_distribution,
+						 kahn_sampling_cutoff_energy );
       break;
     }
     case IMPULSE_INCOHERENT_MODEL:
@@ -245,11 +251,8 @@ void IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadened
 
   incoherent_distribution.reset( 
 	    new DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
-		  subshell,
-		  raw_photoatom_data.getSubshellOccupancy( endf_subshell ),
-		  raw_photoatom_data.getSubshellBindingEnergy( endf_subshell ),
-		  occupation_number, 
 		  doppler_broadened_dist,
+		  occupation_number, 
 		  kahn_sampling_cutoff_energy ) );
 }
 

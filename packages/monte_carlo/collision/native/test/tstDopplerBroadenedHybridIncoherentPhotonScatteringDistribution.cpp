@@ -268,7 +268,7 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
   fake_stream[3] = 0.005; // select first shell for collision
   fake_stream[4] = 6.427713151861e-01; // select pz = 0.291894102792
   fake_stream[5] = 0.25; // select energy loss
-  fake_stream[6] = 0.005; // selec first shell for collision
+  fake_stream[6] = 0.005; // select first shell for collision
   fake_stream[7] = 0.5; // azimuthal_angle = pi
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );

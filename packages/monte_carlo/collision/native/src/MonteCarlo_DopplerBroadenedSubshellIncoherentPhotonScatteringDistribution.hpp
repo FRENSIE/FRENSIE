@@ -29,12 +29,9 @@ public:
 
   //! Constructor
   DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
-    const SubshellType interaction_subshell,
-    const double num_electrons_in_subshell,
-    const double binding_energy,
-    const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
     const Teuchos::RCP<const SubshellDopplerBroadenedPhotonEnergyDistribution>&
     doppler_broadened_energy_dist,
+    const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
     const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor

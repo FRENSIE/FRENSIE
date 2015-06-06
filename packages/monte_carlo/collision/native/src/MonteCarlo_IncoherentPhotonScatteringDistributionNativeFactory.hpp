@@ -32,7 +32,7 @@ class IncoherentPhotonScatteringDistributionNativeFactory : public IncoherentPho
 public:
 
   //! Create an incoherent distribution
-  static void createIncoherentDistribution( 
+  static void createDistribution( 
 	 const Data::ElectronPhotonRelaxationDataContainer& raw_photoatom_data,
 	 Teuchos::RCP<const IncoherentPhotonScatteringDistribution>&
 	 incoherent_distribution,
