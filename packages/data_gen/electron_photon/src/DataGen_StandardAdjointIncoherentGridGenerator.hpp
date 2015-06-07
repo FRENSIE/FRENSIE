@@ -14,8 +14,9 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "DataGen_AdjointIncoherentCrossSectionEvaluator.hpp"
+#include "DataGen_AdjointIncoherentCrossSectionHelpers.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
+#include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
 #include "Utility_GridGenerator.hpp"

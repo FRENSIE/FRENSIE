@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
-#include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
