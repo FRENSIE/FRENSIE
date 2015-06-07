@@ -60,16 +60,6 @@ protected:
 				        LineEnergyIterator& start_energy,
 					LineEnergyIterator& end_energy ) const;
 
-  //! Calculate the minimum scattering angle cosine
-  double calculateMinScatteringAngleCosine( 
-					  const double incoming_energy ) const;
-					     
-
-  //! Calculate the adjoint Compton line energy
-  double calculateAdjointComptonLineEnergy( 
-				  const double incoming_energy,
-				  const double scattering_angle_cosine ) const;
-
   //! Evaluate the adjoint Klein-Nishina distribution
   double evaluateAdjointKleinNishinaDist( 
 				  const double incoming_energy,

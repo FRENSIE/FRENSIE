@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_ComptonProfileHelpers.cpp
+//! \file   MonteCarlo_PhotonKinematicsHelpers.cpp
 //! \author Alex Robinson
-//! \brief  The Compton profile helper function definitions
+//! \brief  Photon kinematics helper function definitions
 //!
 //---------------------------------------------------------------------------//
 
@@ -10,7 +10,7 @@
 #include <Teuchos_ScalarTraits.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 
@@ -62,12 +62,14 @@ double calculateElectronMomentumProjection(
 }
 
 // Calculate the maximum electron momentum projection
+/*! \details The calculated electron momentum projection will be in me*c units.
+ */
 double calculateMaxElectronMomentumProjection(
 				   const double initial_energy,
 				   const double binding_energy,
 				   const double scattering_angle_cosine )
 {
-  // Make sure the bindin energy is valid
+  // Make sure the binding energy is valid
   testPrecondition( binding_energy >= 0.0 );
   // Make sure the initial energy is valid
   testPrecondition( initial_energy >= binding_energy );
@@ -161,5 +163,5 @@ double calculateDopplerBroadenedEnergy(
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_ComptonProfileHelpers.cpp
+// end MonteCarlo_PhotonKinematicsHelpers.cpp
 //---------------------------------------------------------------------------//

@@ -15,7 +15,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
