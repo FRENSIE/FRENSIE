@@ -1,0 +1,9 @@
+<ParameterList name="Watt Distributions">
+
+  <Parameter name="Watt Distribution A" type="Watt Distribution"
+             value="{1.0,1.0,1.0,0.1}"/>
+
+  <Parameter name="Watt Distribution B" type="Watt Distribution"
+             value="{3.0,2.0,1.0,0.0}"/>
+
+</ParameterList>

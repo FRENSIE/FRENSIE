@@ -59,10 +59,10 @@ public:
 
   //! Return a random sample from the distribution
   double sample() const;
-
-  //! Return a random sample from the corresponding CDF and record the number of trials
+  
+  //! Return a random sample from the distribution and record the trials
   double sampleAndRecordTrials( unsigned& trials ) const;
-    
+  
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
 

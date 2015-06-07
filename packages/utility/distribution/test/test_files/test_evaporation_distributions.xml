@@ -1,0 +1,12 @@
+<ParameterList name="Evaporation Distributions">
+
+  <Parameter name="Evaporation Distribution A" type="Evaporation Distribution"
+             value="{1.0,1.0,0.1}"/>
+
+  <Parameter name="Evaporation Distribution B" type="Evaporation Distribution"
+             value="{3.0,2.0,1.0}"/>
+
+  <Parameter name="Evaporation Distribution C" type="Evaporation Distribution"
+             value="{1.0,1.0,0.0}"/>
+
+</ParameterList>
