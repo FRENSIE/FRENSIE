@@ -687,7 +687,7 @@ TEUCHOS_UNIT_TEST( AdjointPhotonKinematicsHelpers,
 
   TEST_ASSERT( possible );
 
-  // Test the absolute minimum pz (lim as e_out -> infinity)
+  // Test the absolute minimum pz
   energy = MonteCarlo::calculateDopplerBroadenedEnergyAdjoint(
 				   -0.9608609732750468, 0.01, -1.0, possible );
 
@@ -695,6 +695,35 @@ TEUCHOS_UNIT_TEST( AdjointPhotonKinematicsHelpers,
   
   energy = MonteCarlo::calculateDopplerBroadenedEnergyAdjoint(
 						  -1.0, 0.01, -1.0, possible );
+
+  TEST_ASSERT( !possible );
+
+  energy = MonteCarlo::calculateDopplerBroadenedEnergyAdjoint( 
+						  0.013, 0.01, 0.0, possible );
+
+  TEST_ASSERT( possible );
+  TEST_FLOATING_EQUALITY( energy, 0.01001197156806066, 1e-14 );
+
+  energy = MonteCarlo::calculateDopplerBroadenedEnergyAdjoint( 
+						    0.0, 0.01, 0.0, possible );
+  
+  TEST_ASSERT( possible );
+  TEST_FLOATING_EQUALITY( energy, 0.0101996012326135629, 1e-15 );
+
+  energy = MonteCarlo::calculateDopplerBroadenedEnergyAdjoint( 
+						   -0.5, 0.01, 0.0, possible );
+
+  TEST_ASSERT( possible );
+  TEST_FLOATING_EQUALITY( energy, 0.022980907267125355, 1e-15 );
+
+  // Test the absolute minimum pz
+  energy = MonteCarlo::calculateDopplerBroadenedEnergyAdjoint( 
+				    -0.9804304866375234, 0.01, 0.0, possible );
+  
+  TEST_ASSERT( !possible );
+
+  energy = MonteCarlo::calculateDopplerBroadenedEnergyAdjoint(
+						    -1.0, 0.1, 0.0, possible );
 
   TEST_ASSERT( !possible );
 }
