@@ -371,7 +371,6 @@ double calculateDopplerBroadenedEnergyAdjoint(
 						   initial_energy,
 						   final_energy,
 						   scattering_angle_cosine )));
-  testPostcondition( final_energy > 0.0 ? (fabs( test_pz - electron_momentum_projection ) <= 1e-6) : true );
 
   return final_energy;
 }
