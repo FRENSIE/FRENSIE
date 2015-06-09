@@ -14,15 +14,14 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
-#include "MonteCarlo_PhysicalConstants.hpp"
+#include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
 
 // Calculate the adjoint Compton line energy
-double calculateAdjointComptonLineEnergy( 
-				  const double incoming_energy,
-				  const double scattering_angle_cosine ) const
+double calculateAdjointComptonLineEnergy(const double incoming_energy,
+				         const double scattering_angle_cosine )
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
@@ -33,10 +32,16 @@ double calculateAdjointComptonLineEnergy(
 				   std::numeric_limits<double>::infinity() ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  const double alpha = 
-    incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
+  const double compton_line_energy = incoming_energy/
+    (1.0 - 
+     incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy*
+     (1.0 - scattering_angle_cosine));
 
-  return incoming_energy/(1.0 - alpha*(1.0 - scattering_angle_cosine));
+  // Make sure the compton line energy is valid
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf(
+						       compton_line_energy ) );
+
+  return compton_line_energy;
 }
 
 // Calculate the minimum scattering angle cosine
@@ -51,7 +56,7 @@ double calculateMinScatteringAngleCosine( const double incoming_energy,
     Utility::PhysicalConstants::electron_rest_mass_energy;
   
   const double threshold_energy = max_energy/(1+2*alpha_max);
-
+  
   double min_scattering_angle_cosine;
 
   if( incoming_energy < threshold_energy )
@@ -67,6 +72,41 @@ double calculateMinScatteringAngleCosine( const double incoming_energy,
   }
 
   // Make sure the min scattering angle cosine is valid
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf(
+					       min_scattering_angle_cosine ) );
+  testPostcondition( 
+		min_scattering_angle_cosine >= 
+		calculateAbsoluteMinScatteringAngleCosine( incoming_energy ) );
+  testPostcondition( min_scattering_angle_cosine <= 1.0 );
+
+  return min_scattering_angle_cosine;
+}
+
+// Calculate the absolute minimum scattering angle cosine
+double calculateAbsoluteMinScatteringAngleCosine(const double incoming_energy )
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+
+  const double threshold_energy = 
+    Utility::PhysicalConstants::electron_rest_mass_energy/2;
+
+  double min_scattering_angle_cosine;
+
+  if( incoming_energy < threshold_energy )
+    min_scattering_angle_cosine = -1.0;
+  else
+  {
+    min_scattering_angle_cosine = 1.0 - 
+      Utility::PhysicalConstants::electron_rest_mass_energy/incoming_energy;
+
+    // Check for roundoff error
+    if( fabs( min_scattering_angle_cosine ) > 1.0 )
+      min_scattering_angle_cosine = copysign(1.0, min_scattering_angle_cosine);
+  }
+  // Make sure the min scattering angle cosine is valid
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf(
+					       min_scattering_angle_cosine ) );
   testPostcondition( min_scattering_angle_cosine >= -1.0 );
   testPostcondition( min_scattering_angle_cosine <= 1.0 );
 
@@ -88,16 +128,48 @@ double calculateMinInverseEnergyGainRatio( const double incoming_energy,
     Utility::PhysicalConstants::electron_rest_mass_energy;
   
   const double threshold_energy = max_energy/(1+2*alpha_max);
-
+  
   double min_inverse_energy_gain_ratio;
 
   if( incoming_energy < threshold_energy )
     min_inverse_energy_gain_ratio = 1.0 - 2.0*alpha;
   else
     min_inverse_energy_gain_ratio = alpha/alpha_max;
-  }
 
   // Make sure the min scattering angle cosine is valid
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf(
+					     min_inverse_energy_gain_ratio ) );
+  testPostcondition( 
+	       min_inverse_energy_gain_ratio >= 
+	       calculateAbsoluteMinInverseEnergyGainRatio( incoming_energy ) );
+  testPostcondition( min_inverse_energy_gain_ratio <= 1.0 );
+
+  return min_inverse_energy_gain_ratio;
+}
+
+// Calculate the absolute min inverse energy gain ratio
+double calculateAbsoluteMinInverseEnergyGainRatio( 
+						 const double incoming_energy )
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+
+  const double alpha = incoming_energy/
+    Utility::PhysicalConstants::electron_rest_mass_energy;
+
+  const double threshold_energy = 
+    Utility::PhysicalConstants::electron_rest_mass_energy/2;
+
+  double min_inverse_energy_gain_ratio;
+
+  if( incoming_energy < threshold_energy )
+    min_inverse_energy_gain_ratio = 1.0 - 2.0*alpha;
+  else
+    min_inverse_energy_gain_ratio = 0.0;
+
+  // Make sure the min scattering angle cosine is valid
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf(
+					     min_inverse_energy_gain_ratio ) );
   testPostcondition( min_inverse_energy_gain_ratio >= 0.0 );
   testPostcondition( min_inverse_energy_gain_ratio <= 1.0 );
 
@@ -116,10 +188,9 @@ double calculateElectronMomentumProjectionAdjoint(
   testPrecondition( final_energy >= 0.0 );
   testPrecondition( initial_energy < final_energy );
   // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine > 
-		    calculateMinScatteringAngleCosine( 
-				   incoming_energy,
-				   std::numeric_limits<double>::infinity() ) );
+  testPrecondition( 
+		scattering_angle_cosine > 
+		calculateAbsoluteMinScatteringAngleCosine( incoming_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   const double numerator = initial_energy - final_energy + 
@@ -132,6 +203,8 @@ double calculateElectronMomentumProjectionAdjoint(
 				   scattering_angle_cosine );
 
   // Make sure the denominator is valid
+  remember( const double pz = numerator/denominator );
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( pz ) );
   testPrecondition( denominator > 0.0 );
 
   return numerator/denominator;
@@ -164,6 +237,7 @@ double calculateMaxElectronMomentumProjectionAdjoint(
     sqrt( 2*arg + binding_energy*binding_energy );
 
   // Make sure the max projection is valid
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( pz_max ) );
   testPostcondition( pz_max >= -1.0 );
 
   return pz_max;
@@ -177,12 +251,37 @@ double calculateMinElectronMomentumProjectionAdjoint(
 					const double max_energy,
 					const double scattering_angle_cosine )
 {
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >= 
+		    calculateMinScatteringAngleCosine( incoming_energy,
+						       max_energy ) );
+  
   double pz_min = calculateElectronMomentumProjectionAdjoint( 
 						     initial_energy,
 						     max_energy,
 						     scattering_angle_cosine );
+  
+  // Make sure the max projection is valid
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( pz_min ) );
+  testPostcondition( pz_min >= 
+		     calculateAbsoluteMinElectronMomentumProjectionAdjoint(
+						   initial_energy,
+						   scattering_angle_cosine ) );
+
+  return pz_min;
+}
+
+// Calculate the absolute minimum electron momentum projection
+double calculateAbsoluteMinElectronMomentumProjectionAdjoint(
+					 const double initial_energy,
+					 const double scattering_angle_cosine )
+{
+  // Take the limit as the max energy approaches infinity
+  double pz_min = -1.0 + initial_energy*(1.0 - scattering_angle_cosine)/
+      Utility::PhysicalConstants::electron_rest_mass_energy;
 
   // Make sure the max projection is valid
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( pz_min ) );
   testPostcondition( pz_min >= -1.0 );
 
   return pz_min;
@@ -196,56 +295,72 @@ double calculateDopplerBroadenedEnergyAdjoint(
 				     bool& energetically_possible )
 {
   // Make sure the electron momentum projection is valid
-  testPrecondition( electron_momentum_projection >= -1.0 );
+  testPrecondition( electron_momentum_projection >=
+		    calculateAbsoluteMinElectronMomentumProjectionAdjoint(
+				                   initial_energy,
+				                   scattering_angle_cosine ) );
   // Make sure the initial energy is valid
   testPrecondition( initial_energy > 0.0 );
   // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >= 
-		    calculateMinScatteringAngleCosine( 
-				   incoming_energy,
-				   std::numeric_limits<double>::infinity() ) );
+  testPrecondition( 
+		scattering_angle_cosine >= 
+		calculateAbsoluteMinScatteringAngleCosine( incoming_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  const double pz_sqr = 
-    electron_momentum_projection*electron_momentum_projection;
-
-  const double adjoint_compton_line_ratio = 
-    1.0 - initial_energy/Utility::PhysicalConstants::electron_rest_mass_energy*
-    (1.0 - scattering_angle_cosine);
-
-  const double a = pz_sqr - 
-    adjoint_compton_line_ratio*adjoint_compton_line_ratio;
-
-  const double b = -2*(pz_sqr*scattering_angle_cosine - 
-		       adjoint_compton_line_ratio);
-
-  const double c = pz_sqr - 1.0;
-
-  const double discriminant = b*b - 4*a*c;
 
   double final_energy;
 
-  double test_pz;
+  const double absolute_min_projection = 
+    calculateAbsoluteMinElectronMomentumProjectionAdjoint( 
+						     initial_energy,
+						     scattering_angle_cosine );
 
-  if( discriminant >= 0.0 && a != 0.0 )
+  if( electron_momentum_projection >= absolute_min_projection )
   {
-    final_energy = 0.5*(-b + sqrt(discriminant))*initial_energy/a;
+    const double pz_sqr = 
+      electron_momentum_projection*electron_momentum_projection;
 
-    test_pz = calculateElectronMomentumProjectionAdjoint( 
+    const double adjoint_compton_line_ratio = 
+      1.0-initial_energy/Utility::PhysicalConstants::electron_rest_mass_energy*
+      (1.0 - scattering_angle_cosine);
+
+    const double a = pz_sqr - 
+      adjoint_compton_line_ratio*adjoint_compton_line_ratio;
+    
+    const double b = -2*(pz_sqr*scattering_angle_cosine - 
+			 adjoint_compton_line_ratio);
+    
+    const double c = pz_sqr - 1.0;
+    
+    const double discriminant = b*b - 4*a*c;
+    
+    double test_pz;
+    
+    if( discriminant >= 0.0 && a != 0.0 )
+    {
+      final_energy = 0.5*(-b + sqrt(discriminant))*initial_energy/a;
+      
+      test_pz = calculateElectronMomentumProjectionAdjoint( 
 						     initial_energy,
 						     final_energy,
 						     scattering_angle_cosine );
 
-    // Check if the other final energy should be used instead
-    if( fabs( test_pz - electron_momentum_projection ) > 1e-6 )
-      final_energy = 0.5*(-b - sqrt(discriminant))*initial_energy/a;
-
-    energetically_possible = true;
+      // Check if the other final energy should be used instead
+      if( fabs( test_pz - electron_momentum_projection ) > 1e-6 )
+	final_energy = 0.5*(-b - sqrt(discriminant))*initial_energy/a;
+      
+      energetically_possible = true;
+    }
+    else
+    {
+      final_energy = 0.0;
+      
+      energetically_possible = false;
+    }
   }
   else
   {
     final_energy = 0.0;
-    
+
     energetically_possible = false;
   }
 

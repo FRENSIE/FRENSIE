@@ -70,7 +70,6 @@ protected:
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
-					    SubshellType& shell_of_interaction,
 					    unsigned& trials ) const;
   
 private:

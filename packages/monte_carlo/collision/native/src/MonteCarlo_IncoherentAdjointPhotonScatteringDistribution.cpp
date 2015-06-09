@@ -96,14 +96,14 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluateAdjointKleinNishin
   double kn_cross_section;
 
   if( scattering_angle_cosine >=
-      this->calculateMinScatteringAngleCosine( incoming_energy ) )
+      calculateMinScatteringAngleCosine( incoming_energy, d_max_energy ) )
   {
     const double mult = Utility::PhysicalConstants::pi*
       Utility::PhysicalConstants::classical_electron_radius*
       Utility::PhysicalConstants::classical_electron_radius*
       Utility::PhysicalConstants::electron_rest_mass_energy*1e24;
 
-    const double outgoing_energy = this->calculateAdjointComptonLineEnergy(
+    const double outgoing_energy = calculateAdjointComptonLineEnergy(
 						     incoming_energy,
 						     scattering_angle_cosine );
       
@@ -149,7 +149,7 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
 
   const double term_3 = alpha*alpha*alpha - term_3_arg*term_3_arg*term_3_arg;
 
-  const double all_terms; = term_1+term_2+term_3;
+  const double all_terms = term_1+term_2+term_3;
     
   double inverse_energy_gain_ratio;
 
@@ -182,7 +182,7 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
     {
       const double arg = 1.0 - min_inverse_energy_gain_ratio;
       
-      inverse_energy_gain_ration = 
+      inverse_energy_gain_ratio = 
 	sqrt( random_number_2*arg*arg + 
 	      min_inverse_energy_gain_ratio*min_inverse_energy_gain_ratio );
 
