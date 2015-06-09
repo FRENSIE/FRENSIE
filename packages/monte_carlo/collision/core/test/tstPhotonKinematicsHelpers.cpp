@@ -20,9 +20,8 @@
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 // Check that the Compton line energy can be calculated
-TEUCHOS_UNIT_TEST( ComptonProfileHelpers, calculateComptonLineEnergy )
+TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers, calculateComptonLineEnergy )
 {
   double compton_line = MonteCarlo::calculateComptonLineEnergy( 0.1, -1.0 );
 
@@ -51,7 +50,7 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers, calculateComptonLineEnergy )
 
 //---------------------------------------------------------------------------//
 // Check that the electron momentum projection can be calculated
-TEUCHOS_UNIT_TEST( ComptonProfileHelpers, calculateElectronMomentumProjection )
+TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers, calculateElectronMomentumProjection )
 {
   double pz = 
     MonteCarlo::calculateElectronMomentumProjection( 1.0, 0.5, -1.0 );
@@ -93,7 +92,7 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers, calculateElectronMomentumProjection )
 
 //---------------------------------------------------------------------------//
 // Check that the max electron momentum projection can be calculated
-TEUCHOS_UNIT_TEST( ComptonProfileHelpers, 
+TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers, 
 		   calculateMaxElectronMomentumProjection )
 {
   double pz_max = 
@@ -124,7 +123,7 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
 
 //---------------------------------------------------------------------------//
 // Check that the Doppler broadened energy can be calculated
-TEUCHOS_UNIT_TEST( ComptonProfileHelpers, calculateDopplerBroadenedEnergy )
+TEUCHOS_UNIT_TEST( PhotonKinematicsHelpers, calculateDopplerBroadenedEnergy )
 {
   bool possible;
   

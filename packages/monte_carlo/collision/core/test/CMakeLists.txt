@@ -15,3 +15,9 @@ ADD_EXECUTABLE(tstPhotonKinematicsHelpers
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
 TARGET_LINK_LIBRARIES(tstPhotonKinematicsHelpers monte_carlo_collision_core)
 ADD_TEST(PhotonKinematicsHelpers_test tstPhotonKinematicsHelpers)
+
+ADD_EXECUTABLE(tstAdjointPhotonKinematicsHelpers
+  tstAdjointPhotonKinematicsHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointPhotonKinematicsHelpers monte_carlo_collision_core)
+ADD_TEST(AdjointPhotonKinematicsHelpers_test tstAdjointPhotonKinematicsHelpers)
