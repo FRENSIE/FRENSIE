@@ -194,13 +194,13 @@ int main( int argc, char** argv )
 
   // Create the elastic scattering distributions
   Teuchos::Array<Utility::Pair<double,Teuchos::RCP<const Utility::TabularOneDDistribution> > >
-    elastic_scattering_distribution( size );
+    elastic_scattering_function( size );
   
   for( unsigned n = 0; n < size; ++n )
   {
-    elastic_scattering_distribution[n].first = elastic_energy_grid[n];
+    elastic_scattering_function[n].first = elastic_energy_grid[n];
 
-    elastic_scattering_distribution[n].second.reset( 
+    elastic_scattering_function[n].second.reset( 
 	  new Utility::HistogramDistribution(
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
@@ -209,14 +209,23 @@ int main( int argc, char** argv )
 
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
+
+  Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>
+    elastic_scattering_distribution;
+
+  elastic_scattering_distribution.reset( 
+	      new MonteCarlo::HardElasticElectronScatteringDistribution( 
+                                                atomic_number, 
+                                                elastic_scattering_function ) );
+
+
   
   // Create the reaction
   ace_elastic_reaction.reset(
-		new MonteCarlo::HardElasticElectroatomicReaction<Utility::LinLin>(
-						      energy_grid,
-						      elastic_cross_section,
-						      elastic_threshold_index,
-						      atomic_number,
+	new MonteCarlo::HardElasticElectroatomicReaction<Utility::LinLin>(
+		              energy_grid,
+			      elastic_cross_section,
+			      elastic_threshold_index,
                               elastic_scattering_distribution ) );
 
   // Clear setup data

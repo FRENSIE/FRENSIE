@@ -32,7 +32,7 @@ public:
     const unsigned threshold_energy_index,
     const SubshellType interaction_subshell,
     const Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
-            subshell_electroionization_distribution );
+            electroionization_subshell_distribution );
 /*
       const SubshellType interaction_subshell,
       const double binding_energy,   
@@ -59,7 +59,7 @@ public:
 private:
   // The electroionization distribution
   Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>
-    d_subshell_electroionization_distribution;
+    d_electroionization_subshell_distribution;
 
   // The interaction subshell
   SubshellType d_interaction_subshell;

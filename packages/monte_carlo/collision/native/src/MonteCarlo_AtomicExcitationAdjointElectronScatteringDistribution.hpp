@@ -38,6 +38,30 @@ public:
   virtual ~AtomicExcitationAdjointElectronScatteringDistribution()
   { /* ... */ }
 
+ //! Evaluate the distribution
+  double evaluate( const double incoming_energy,
+                   const double scattering_angle_cosine ) const;
+
+  //! Evaluate the PDF
+  double evaluatePDF( const double incoming_energy,
+                      const double scattering_angle_cosine ) const;
+
+  //! Evaluate the integrated cross section (b)
+  double evaluateIntegratedCrossSection( const double incoming_energy,
+                                         const double precision) const;
+
+
+  //! Sample an outgoing energy and direction from the distribution
+  void sample( const double incoming_energy,
+               double& outgoing_energy,
+               double& scattering_angle_cosine ) const;
+
+  //! Sample an outgoing energy and direction and record the number of trials
+  void sampleAndRecordTrials( const double incoming_energy,
+                              double& outgoing_energy,
+                              double& scattering_angle_cosine,
+                              unsigned& trials ) const;
+
   //! Randomly scatter the adjoint electron
   void scatterAdjointElectron( AdjointElectronState& electron,
                                ParticleBank& bank,

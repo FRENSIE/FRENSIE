@@ -29,12 +29,12 @@ public:
   static void createAtomicExcitationAdjointDistribution(
 			const Data::XSSEPRDataExtractor& raw_electroatom_data,
 			Teuchos::RCP<const AtomicExcitationAdjointElectronScatteringDistribution>&
-			  energy_loss_distribution );
+			  energy_gain_distribution );
 
 protected:
 
-  //! Create the energy loss function
-  static void createEnergyLossFunction(
+  //! Create the energy gain function
+  static void createEnergyGainFunction(
       const Data::XSSEPRDataExtractor& raw_electroatom_data,
       AtomicExcitationAdjointElectronScatteringDistribution::AtomicDistribution& 
                                                         scattering_function );

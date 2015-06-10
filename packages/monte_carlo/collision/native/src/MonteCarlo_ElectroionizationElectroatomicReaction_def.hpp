@@ -71,11 +71,6 @@ void ElectroionizationElectroatomicReaction<InterpPolicy,processed_cross_section
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
 {
-/*! \todo Finish writing react for non-subshell reaction
-  d_scattering_distribution.scatterElectron( electron, 
-                                             bank, 
-                                             shell_of_interaction);
-*/
   electron.incrementCollisionNumber();
   
   shell_of_interaction = UNKNOWN_SUBSHELL;

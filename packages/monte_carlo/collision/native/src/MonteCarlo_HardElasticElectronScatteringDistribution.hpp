@@ -51,15 +51,15 @@ public:
   { /* ... */ }
 
   //! Evaluate the distribution
-  virtual double evaluate( const double incoming_energy,
-                           const double scattering_angle_cosine ) const;
+  double evaluate( const double incoming_energy,
+                   const double scattering_angle_cosine ) const;
 
   //! Evaluate the PDF
-virtual double evaluatePDF( const double incoming_energy,
-const double scattering_angle_cosine ) const;
+  double evaluatePDF( const double incoming_energy,
+                              const double scattering_angle_cosine ) const;
 
   //! Evaluate the integrated cross section (b)
-  virtual double evaluateIntegratedCrossSection( const double incoming_energy,
+  double evaluateIntegratedCrossSection( const double incoming_energy,
                                                  const double precision) const;
 
   //! Sample an outgoing energy and direction from the distribution
@@ -85,7 +85,7 @@ const double scattering_angle_cosine ) const;
 
 
 
-protected:
+//protected:
 
    //! Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,

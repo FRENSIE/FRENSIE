@@ -278,16 +278,16 @@ int main( int argc, char** argv )
                              first_subshell_info + 2*num_tables[first_subshell],
                              num_tables[first_subshell] ) );
 
-   // Create the electroionization sampling table for the first_subshell
+   // Create the electroionization sampling table for the first subshell
   MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-      first_subshell_distribution( num_tables[first_subshell] );
+      first_subshell_function( num_tables[first_subshell] );
 
 
   for( unsigned n = 0; n < num_tables[first_subshell]; ++n )
   {
-    first_subshell_distribution[n].first = first_energy_grid[n];
+    first_subshell_function[n].first = first_energy_grid[n];
 
-    first_subshell_distribution[n].second.reset( 
+    first_subshell_function[n].second.reset( 
      new Utility::HistogramDistribution(
        eion_block( first_subshell_loc + first_table_offset[n], 
                    first_table_length[n] ),
@@ -296,15 +296,23 @@ int main( int argc, char** argv )
        true ) );
   }
   
+  // Create the subshell distribution from the function
+  Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+    first_subshell_distribution;
+    
+    first_subshell_distribution.reset( 
+      new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution( 
+                                           first_subshell_function, 
+                                           binding_energies[first_subshell] ) );
+
   // Create the reaction
   ace_first_subshell_reaction.reset(
-		new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
-						      energy_grid,
-						      first_subshell_cross_section,
-						      first_subshell_threshold_index,
-                              interaction_first_subshell,
-                              binding_energies[first_subshell],
-						      first_subshell_distribution ) );
+    new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+                      energy_grid,
+                      first_subshell_cross_section,
+                      first_subshell_threshold_index,
+                      interaction_first_subshell,
+                      first_subshell_distribution ) );
 
 //---------------------------------------------------------------------------//
   // Use the last subshell for test
@@ -359,14 +367,14 @@ int main( int argc, char** argv )
 
    // Create the electroionization sampling table for the last_subshell
   MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-      last_subshell_distribution( num_tables[last_subshell] );
+      last_subshell_function( num_tables[last_subshell] );
 
 
   for( unsigned n = 0; n < num_tables[last_subshell]; ++n )
   {
-    last_subshell_distribution[n].first = last_energy_grid[n];
+    last_subshell_function[n].first = last_energy_grid[n];
 
-    last_subshell_distribution[n].second.reset( 
+    last_subshell_function[n].second.reset( 
      new Utility::HistogramDistribution(
        eion_block( last_subshell_loc + last_table_offset[n], 
                    last_table_length[n] ),
@@ -374,16 +382,24 @@ int main( int argc, char** argv )
                    last_table_length[n] - 1),
        true ) );
   }
-  
+
+  // Create the subshell distribution from the function
+  Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+    last_subshell_distribution;
+    
+  last_subshell_distribution.reset( 
+    new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution( 
+                                           last_subshell_function, 
+                                           binding_energies[last_subshell] ) );
+
   // Create the reaction
   ace_last_subshell_reaction.reset(
-		new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
-						      energy_grid,
-						      last_subshell_cross_section,
-						      last_subshell_threshold_index,
-                              interaction_last_subshell,
-                              binding_energies[last_subshell],
-						      last_subshell_distribution ) );
+    new MonteCarlo::ElectroionizationSubshellElectroatomicReaction<Utility::LinLin>(
+                      energy_grid,
+                      last_subshell_cross_section,
+                      last_subshell_threshold_index,
+                      interaction_last_subshell,
+                      last_subshell_distribution ) );
 
 
   // Clear setup data

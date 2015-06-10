@@ -20,7 +20,7 @@
 namespace MonteCarlo{
 
 //! The hard elastic scattering distribution factory class that uses ACE data
-class HHardElasticElectronScatteringDistributionACEFactory //: public HardElasticElectronScatteringDistributionFactory
+class HardElasticElectronScatteringDistributionACEFactory //: public HardElasticElectronScatteringDistributionFactory
 {
 
 public:
@@ -36,6 +36,7 @@ protected:
   //! Create the elastic scattering function
   static void createScatteringFunction(
 	   const Data::XSSEPRDataExtractor& raw_electroatom_data,
+           const int size,
            HardElasticElectronScatteringDistribution::ElasticDistribution& 
                                                         scattering_function );
 };

@@ -562,17 +562,24 @@ int main( int argc, char** argv )
 
     // Create the energy loss distributions
     MonteCarlo::AtomicExcitationElectronScatteringDistribution::AtomicDistribution
-     ae_energy_loss_distribution;
+     ae_energy_loss_function;
   
-    ae_energy_loss_distribution.reset( 
+    ae_energy_loss_function.reset( 
       new Utility::TabularDistribution<Utility::LinLin>( ae_energy_grid,
-		                                                 energy_loss ) );
+                                                         energy_loss ) );
+
+    Teuchos::RCP<const MonteCarlo::AtomicExcitationElectronScatteringDistribution>
+                      ae_energy_loss_distribution;
+
+    ae_energy_loss_distribution.reset( 
+    new MonteCarlo::AtomicExcitationElectronScatteringDistribution( 
+                      ae_energy_loss_function ) );
 
     Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ae_reaction(
 	    new MonteCarlo::AtomicExcitationElectroatomicReaction<Utility::LinLin>(
-						    energy_grid,
-						    ae_cross_section,
-						    ae_threshold_index,
+			    energy_grid,
+			    ae_cross_section,
+			    ae_threshold_index,
                             ae_energy_loss_distribution ) );
     
     Teuchos::ArrayView<const double> raw_b_cross_section = 

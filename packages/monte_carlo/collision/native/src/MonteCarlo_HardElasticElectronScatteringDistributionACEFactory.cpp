@@ -21,14 +21,23 @@ namespace MonteCarlo{
 void HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
 			  const Data::XSSEPRDataExtractor& raw_electroatom_data,
 			  Teuchos::RCP<const HardElasticElectronScatteringDistribution>&
-			  elastic_distribution )
+			    elastic_distribution )
 {
+  // Extract the elastic scattering information data block (ELASI)
+//  Teuchos::ArrayView<const double> elasi_block(
+//				      raw_electroatom_data.extractELASIBlock() );
+  
+  // Extract the number of tabulated distributions
+  int size = raw_electroatom_data.extractELASIBlock().size()/3;
+//  int size = elasi_block.size()/3;
+
   // Create the scattering function
   HardElasticElectronScatteringDistribution::ElasticDistribution 
-                                               scattering_function;
+                                               scattering_function(size);
 
   HardElasticElectronScatteringDistributionACEFactory::createScatteringFunction( 
 							  raw_electroatom_data,
+                                                          size,
 							  scattering_function );
 
   // Get the atomic number 
@@ -36,23 +45,21 @@ void HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistr
 
   elastic_distribution.reset( 
 	      new HardElasticElectronScatteringDistribution( 
-                                                            scattering_function, 
-                                                            atomic_number ) );
+                                                        atomic_number, 
+                                                        scattering_function ) );
 }
 
 
 // Create the scattering function
 void HardElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
 	   const Data::XSSEPRDataExtractor& raw_electroatom_data,
+           const int size,
            HardElasticElectronScatteringDistribution::ElasticDistribution& 
                                                         scattering_function )
 {
   // Extract the elastic scattering information data block (ELASI)
   Teuchos::ArrayView<const double> elasi_block(
-				      raw_electroatom_data.extractELASIBlock() );
-  
-  // Extract the number of tabulated distributions
-  int size = elasi_block.size()/3;
+				     raw_electroatom_data.extractELASIBlock() );
 
   // Extract the energy grid for elastic scattering angular distributions
   Teuchos::Array<double> angular_energy_grid(elasi_block(0,size));
@@ -66,10 +73,6 @@ void HardElasticElectronScatteringDistributionACEFactory::createScatteringFuncti
   // Extract the elastic scattering angular distributions block (elas)
   Teuchos::ArrayView<const double> elas_block = 
     raw_electroatom_data.extractELASBlock();
-
-  // Create the elastic scattering distributions
-  HardElasticElectronScatteringDistribution::ElasticDistribution
-    scattering_function( size );
   
   for( unsigned n = 0; n < size; ++n )
   {

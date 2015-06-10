@@ -25,8 +25,8 @@ class ElectroionizationSubshellElectronScatteringDistributionACEFactory //: publ
 
 public:
 
-  //! Create a basic subshell electroionization distribution
-  static void createSubshellElectroionizationDistribution(
+  //! Create a electroionization subshell distribution
+  static void createElectroionizationSubshellDistribution(
         const unsigned table_info_location,
         const unsigned table_location,
         const unsigned number_of_tables,
@@ -38,8 +38,8 @@ public:
 protected:
 
 
-  //! Create the electroionization subshell distribution
-  static void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSubshellDistribution(
+  //! Create the electroionization subshell distribution function
+  static void createSubshellDistribution(
        const unsigned table_info_location,
        const unsigned table_location,
        const unsigned number_of_tables,

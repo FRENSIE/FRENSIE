@@ -15,6 +15,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_HardElasticElectronScatteringDistribution.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
+#include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 #include "Utility_DirectionHelpers.hpp"
@@ -57,8 +58,17 @@ HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribu
   testPrecondition( d_elastic_scattering_distribution.size() > 0 );
 }
 
+// Evaluate the distribution
+/*! The cross section (b) differential in the scattering angle cosine is
+* returned from this function.
+*/
+double HardElasticElectronScatteringDistribution::evaluate( 
+				   const double incoming_energy,
+				   const double scattering_angle_cosine ) const
+{ /* ... */ }
+
 // Evaluate the PDF
-double HardElasticScatteringDistribution::evaluatePDF( 
+double HardElasticElectronScatteringDistribution::evaluatePDF( 
 				   const double incoming_energy,
 				   const double scattering_angle_cosine ) const
 {
@@ -73,7 +83,7 @@ double HardElasticScatteringDistribution::evaluatePDF(
 }
 
 // Evaluate the integrated cross section (b)
-double HardElasticScatteringDistribution::evaluateIntegratedCrossSection( 
+double HardElasticElectronScatteringDistribution::evaluateIntegratedCrossSection( 
 					         const double incoming_energy,
 					         const double precision ) const
 {
@@ -82,7 +92,7 @@ double HardElasticScatteringDistribution::evaluateIntegratedCrossSection(
 
   // Evaluate the integrated cross section
   boost::function<double (double x)> diff_cs_wrapper = 
-    boost::bind<double>( &HardElasticScatteringDistribution::evaluate,
+    boost::bind<double>( &HardElasticElectronScatteringDistribution::evaluate,
 			 boost::cref( *this ),
 			 incoming_energy,
 			 _1 );
@@ -104,7 +114,7 @@ double HardElasticScatteringDistribution::evaluateIntegratedCrossSection(
 }
 
 // Sample an outgoing energy and direction from the distribution
-void HardElasticScatteringDistribution::sample( 
+void HardElasticElectronScatteringDistribution::sample( 
 				     const double incoming_energy,
 				     double& outgoing_energy,
 				     double& scattering_angle_cosine ) const
@@ -121,7 +131,7 @@ void HardElasticScatteringDistribution::sample(
 }
 
 // Sample an outgoing energy and direction and record the number of trials
-void HardElasticScatteringDistribution::sampleAndRecordTrials( 
+void HardElasticElectronScatteringDistribution::sampleAndRecordTrials( 
 					    const double incoming_energy,
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
@@ -137,7 +147,7 @@ void HardElasticScatteringDistribution::sampleAndRecordTrials(
 }
 
 // Randomly scatter the electron
-void HardElasticScatteringDistribution::scatterElectron( 
+void HardElasticElectronScatteringDistribution::scatterElectron( 
 				     ElectronState& electron,
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
@@ -159,7 +169,7 @@ void HardElasticScatteringDistribution::scatterElectron(
 }
 
 // Randomly scatter the adjoint electron
-void HardElasticScatteringDistribution::scatterAdjointElectron( 
+void HardElasticElectronScatteringDistribution::scatterAdjointElectron( 
 				     AdjointElectronState& adjoint_electron,
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
@@ -240,7 +250,7 @@ void HardElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
   double random_number;
 
   // Energy is below the lowest grid point
-  if( energy < d_elastic_scattering_distribution.front().first )
+  if( incoming_energy < d_elastic_scattering_distribution.front().first )
   {
     cutoff_cdf_value = 
       d_elastic_scattering_distribution.front().second->evaluateCDF( s_mu_cutoff );
@@ -256,10 +266,11 @@ void HardElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
     }
     // Sample from the analytical function
     else
-      scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
+      scattering_angle_cosine = evaluateScreenedScatteringAngle( 
+                                                              incoming_energy );
   }
   // Energy is above the highest grid point
-  else if( energy >= d_elastic_scattering_distribution.back().first )
+  else if( incoming_energy >= d_elastic_scattering_distribution.back().first )
   {
     cutoff_cdf_value = 
       d_elastic_scattering_distribution.back().second->evaluateCDF( s_mu_cutoff );
@@ -275,7 +286,8 @@ void HardElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
     }
     // Sample from the analytical function
     else
-      scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
+      scattering_angle_cosine = evaluateScreenedScatteringAngle( 
+                                                              incoming_energy );
   }
   // Energy is inbetween two grid point
   else
@@ -288,14 +300,14 @@ void HardElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
     lower_dist_boundary = Utility::Search::binaryLowerBound<Utility::FIRST>( 
 							  lower_dist_boundary,
 							  upper_dist_boundary,
-							  energy );
+							  incoming_energy );
 
     upper_dist_boundary = lower_dist_boundary;
     ++upper_dist_boundary;
 
     // Calculate the interpolation fraction
     double interpolation_fraction = 
-       ( energy - lower_dist_boundary->first )/
+       ( incoming_energy - lower_dist_boundary->first )/
        ( upper_dist_boundary->first - lower_dist_boundary->first );
 
     // evaluate the cutoff CDF for applying the analytical screening function
@@ -312,7 +324,7 @@ void HardElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                               s_mu_cutoff );
 
     // evaluate the screening angle at the given electron energy
-    double screening_factor = evaluateScreeningFactor( energy );
+    double screening_factor = evaluateScreeningFactor( incoming_energy );
 
     double analytical_cdf = cutoff_pdf_value/screening_factor*
      ( s_delta_cutoff + screening_factor )*( s_delta_cutoff );
@@ -333,7 +345,7 @@ void HardElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
     // Sample from the analytical function
     else
     {
-      scattering_angle_cosine = evaluateScreenedScatteringAngle( energy );
+      scattering_angle_cosine = evaluateScreenedScatteringAngle( incoming_energy );
     }
   }
 

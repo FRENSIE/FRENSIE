@@ -2,7 +2,7 @@
 //!
 //! \file   MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionACEFactory.cpp
 //! \author Luke Kersting
-//! \brief  The subshell electroionization scattering distribution ACE factory definition
+//! \brief  The electroionization subshell scattering distribution ACE factory definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -17,7 +17,7 @@
 
 namespace MonteCarlo{
 
-// Create a basic subshell electroionization distribution
+// Create a electroionization subshell distribution
 void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
         const unsigned table_info_location,
         const unsigned table_location,
@@ -29,28 +29,28 @@ void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createEl
 {
   // Subshell distribution 
   ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-                                                     subshell_distribution;
+                                      subshell_distribution( number_of_tables );
 
   // Create the subshell distribution
   createSubshellDistribution( table_info_location,
                               table_location,
                               number_of_tables,
 	                      raw_electroionization_data,
-	                      subshell_distribution )
+	                      subshell_distribution );
  
   electroionization_subshell_distribution.reset( 
-    new ElectroionizationSubshellElectronSubshellDistribution( 
+    new ElectroionizationSubshellElectronScatteringDistribution( 
                                                           subshell_distribution, 
                                                           binding_energy ) );
 }
 
 // Create the scattering function
-void SubshellElectroionizationScatteringDistributionACEFactory::createSubshellDistribution(
+void ElectroionizationSubshellElectronScatteringDistributionACEFactory::createSubshellDistribution(
        const unsigned table_info_location,
        const unsigned table_location,
        const unsigned number_of_tables,
        const Teuchos::ArrayView<const double>& raw_electroionization_data,
-       ElectroionizationSubshellElectronScatteringDistribution:ElectroionizationSubshellDistribution&
+       ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution&
 	 subshell_distribution )
 {
   // Extract the energies for which knock-on sampling tables are given
@@ -67,11 +67,6 @@ void SubshellElectroionizationScatteringDistributionACEFactory::createSubshellDi
   Teuchos::Array<double> table_offset( raw_electroionization_data( 
                                        table_info_location + 2*number_of_tables,
                                        number_of_tables ) );
-
-
-  // Create the electroionization sampling table for the subshell
-  ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshellDistribution
-      subshell_distribution( number_of_tables );
   
   for( unsigned n = 0; n < number_of_tables; ++n )
   {
@@ -89,6 +84,6 @@ void SubshellElectroionizationScatteringDistributionACEFactory::createSubshellDi
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_SubshellElectroionizationScatteringDistributionACEFactory.cpp
+// end MonteCarlo_ElectroionizationSubshellScatteringDistributionACEFactory.cpp
 //---------------------------------------------------------------------------//
 

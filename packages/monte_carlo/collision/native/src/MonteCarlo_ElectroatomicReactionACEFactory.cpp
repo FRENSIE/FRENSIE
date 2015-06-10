@@ -11,12 +11,12 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
+#include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
 #include "MonteCarlo_HardElasticElectroatomicReaction.hpp"
 #include "MonteCarlo_HardElasticElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_AtomicExcitationElectroatomicReaction.hpp"
-//#include "MonteCarlo_AtomicExcitationElectronScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_AtomicExcitationElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_BremsstrahlungElectroatomicReaction.hpp"
-#include "MonteCarlo_ElectroionizationElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectroatomicReaction.hpp"
 #include "MonteCarlo_ElectroionizationSubshellElectronScatteringDistributionACEFactory.hpp"
 #include "MonteCarlo_VoidAbsorptionElectroatomicReaction.hpp"
@@ -55,10 +55,10 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
 
 
   // Create the elastic scattering distribution
-  Teuchos::RCP<const HardElasticScatteringDistribution> distribution;
+  Teuchos::RCP<const HardElasticElectronScatteringDistribution> distribution;
 
-  HardElasticScatteringDistributionACEFactory::createHardElasticDistribution(
-                                                 raw_electrotoatom_data,
+  HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
+                                                 raw_electroatom_data,
                                                  distribution ); 
 
 
@@ -67,8 +67,7 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
 						  energy_grid,
 						  elastic_cross_section,
 						  threshold_energy_index,
-						  atomic_number,
-						  scattering_function ) );
+						  distribution ) );
 }
 
 
@@ -84,12 +83,25 @@ void ElectroatomicReactionACEFactory::createAtomicExcitationReaction(
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
 
+  // Atomic Excitation cross section with zeros removed
+  Teuchos::ArrayRCP<double> atomic_excitation_cross_section;
+  
+  // Index of first non zero cross section in the energy grid
+  unsigned threshold_energy_index;
+
+  // Remove all cross sections equal to zero
+  ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
+                           energy_grid,
+                           raw_electroatom_data.extractExcitationCrossSection(),
+                           atomic_excitation_cross_section,
+                           threshold_energy_index );
+
   // Create the energy loss distribution
-  Teuchos::RCP<const HardElasticScatteringDistribution> 
+  Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution> 
     energy_loss_distribution;
 
-  AtomicExcitationScatteringDistributionACEFactory::createAtomicExcitationDistribution(
-                                                 raw_electrotoatom_data,
+  AtomicExcitationElectronScatteringDistributionACEFactory::createAtomicExcitationDistribution(
+                                                 raw_electroatom_data,
                                                  energy_loss_distribution ); 
  
   atomic_excitation_reaction.reset(
@@ -127,9 +139,9 @@ void ElectroatomicReactionACEFactory::createTotalElectroionizationReaction(
 
   total_electroionization_reaction.reset(
 	new ElectroionizationElectroatomicReaction<Utility::LinLin>(
-						  energy_grid,
-						  total_electroionization_cross_section,
-						  threshold_energy_index ) );
+					energy_grid,
+					total_electroionization_cross_section,
+					threshold_energy_index ) );
 }
 
 
@@ -232,7 +244,7 @@ void ElectroatomicReactionACEFactory::createSubshellElectroionizationReactions(
         num_tables[subshell],
         binding_energies[subshell],
 	eion_block,
-	electroionization_subshell_distribution )
+	electroionization_subshell_distribution );
 
 
     // Create the subshell electroelectric reaction
