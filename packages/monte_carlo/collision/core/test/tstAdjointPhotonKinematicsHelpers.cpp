@@ -93,6 +93,26 @@ TEUCHOS_UNIT_TEST( AdjointPhotonKinematicsHelpers,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the adjoint Compton line energy can be calculated
+TEUCHOS_UNIT_TEST( AdjointPhotonKinematicsHelpers, 
+		   calculateScatteringAngleCosineAdjoint )
+{
+  double mu = MonteCarlo::calculateScatteringAngleCosineAdjoint( 0.01, 0.01 );
+
+  TEST_FLOATING_EQUALITY( mu, 1.0, 1e-15 );
+
+  mu = MonteCarlo::calculateScatteringAngleCosineAdjoint(0.01, 
+							 0.010199601232613565);
+
+  UTILITY_TEST_FLOATING_EQUALITY( mu, 0.0, 1e-15 );
+
+  mu = MonteCarlo::calculateScatteringAngleCosineAdjoint(0.01, 
+							 0.010407332879714635);
+  
+  TEST_FLOATING_EQUALITY( mu, -1.0, 1e-15 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the absolute min scattering angle cosine can be calculated
 TEUCHOS_UNIT_TEST( AdjointPhotonKinematicsHelpers,
 		   calculateAbsoluteMinScatteringAngleCosine )

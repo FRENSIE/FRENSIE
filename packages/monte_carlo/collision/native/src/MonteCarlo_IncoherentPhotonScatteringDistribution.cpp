@@ -11,6 +11,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "MonteCarlo_SimulationProperties.hpp"
@@ -70,9 +71,8 @@ double IncoherentPhotonScatteringDistribution::evaluateKleinNishinaDist(
     Utility::PhysicalConstants::classical_electron_radius*
     Utility::PhysicalConstants::classical_electron_radius;
 
-  const double outgoing_energy = incoming_energy/
-    (1.0 + incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy*
-     (1.0-scattering_angle_cosine) );
+  const double outgoing_energy = 
+    calculateComptonLineEnergy( incoming_energy, scattering_angle_cosine );
 
   return mult*1e24*((outgoing_energy*outgoing_energy)/
 	    (incoming_energy*incoming_energy))*

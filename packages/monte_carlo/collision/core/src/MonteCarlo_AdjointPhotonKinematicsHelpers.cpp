@@ -44,6 +44,25 @@ double calculateAdjointComptonLineEnergy(const double incoming_energy,
   return compton_line_energy;
 }
 
+// Calculate the scattering angle cosine
+double calculateScatteringAngleCosineAdjoint( const double incoming_energy,
+					      const double outgoing_energy )
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy >= outgoing_energy/
+		    (1+2*outgoing_energy/
+		     Utility::PhysicalConstants::electron_rest_mass_energy) );
+  testPrecondition( incoming_energy <= outgoing_energy );
+
+  const double scattering_angle_cosine = 1.0 + 
+    Utility::PhysicalConstants::electron_rest_mass_energy/outgoing_energy - 
+    Utility::PhysicalConstants::electron_rest_mass_energy/incoming_energy;
+
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( scattering_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine <= 1.0 );
+}
+
 // Calculate the minimum scattering angle cosine
 double calculateMinScatteringAngleCosine( const double incoming_energy,
 					  const double max_energy )
