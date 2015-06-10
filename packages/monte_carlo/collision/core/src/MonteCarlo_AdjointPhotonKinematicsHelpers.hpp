@@ -16,6 +16,10 @@ double calculateAdjointComptonLineEnergy(
 				        const double incoming_energy,
 				        const double scattering_angle_cosine );
 
+//! Calculate the scattering angle cosine
+double calculateScatteringAngleCosineAdjoint( const double incoming_energy,
+					      const double outgoing_energy );
+
 //! Calculate the minimum scattering angle cosine
 double calculateMinScatteringAngleCosine( const double incoming_energy,
 					  const double max_energy );
