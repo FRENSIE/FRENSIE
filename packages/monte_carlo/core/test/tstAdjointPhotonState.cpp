@@ -62,6 +62,15 @@ TEUCHOS_UNIT_TEST( AdjointPhotonState, advance )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the state is a probe
+TEUCHOS_UNIT_TEST( AdjointPhotonState, isProbe )
+{
+  MonteCarlo::AdjointPhotonState particle( 1ull );
+
+  TEST_ASSERT( !particle.isProbe() );
+}
+
+//---------------------------------------------------------------------------//
 // Create new particles
 TEUCHOS_UNIT_TEST( AdjointPhotonState, copy_constructor )
 {
@@ -99,6 +108,8 @@ TEUCHOS_UNIT_TEST( AdjointPhotonState, copy_constructor )
 		 particle_gen_a.getGenerationNumber() );
   TEST_EQUALITY( particle_gen_a_copy.getWeight(),
 		 particle_gen_a.getWeight() );
+  TEST_ASSERT( !particle_gen_a_copy.isProbe() );
+  TEST_ASSERT( !particle_gen_a.isProbe() );
 
   // Create a second generation particle with the same collision number
   MonteCarlo::AdjointPhotonState particle_gen_b( particle_gen_a, true );
@@ -124,7 +135,9 @@ TEUCHOS_UNIT_TEST( AdjointPhotonState, copy_constructor )
   TEST_EQUALITY( particle_gen_b.getGenerationNumber(),
 		 particle_gen_a.getGenerationNumber()+1u );
   TEST_EQUALITY( particle_gen_b.getWeight(),
-		 particle_gen_a.getWeight() );  
+		 particle_gen_a.getWeight() ); 
+  TEST_ASSERT( !particle_gen_b.isProbe() );
+  TEST_ASSERT( !particle_gen_a.isProbe() );
 
   // Create a third generation particle and reset the collision counter
   MonteCarlo::AdjointPhotonState particle_gen_c( particle_gen_b, true, true );
@@ -150,6 +163,8 @@ TEUCHOS_UNIT_TEST( AdjointPhotonState, copy_constructor )
 		 particle_gen_b.getGenerationNumber()+1u );
   TEST_EQUALITY( particle_gen_c.getWeight(),
 		 particle_gen_b.getWeight() );
+  TEST_ASSERT( !particle_gen_c.isProbe() );
+  TEST_ASSERT( !particle_gen_b.isProbe() );
 }
 
 //---------------------------------------------------------------------------//

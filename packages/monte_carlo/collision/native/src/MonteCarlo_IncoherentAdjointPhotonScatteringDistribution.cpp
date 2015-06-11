@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
+#include "MonteCarlo_AdjointPhotonProbeState.hpp"
 #include "Utility_SortAlgorithms.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
@@ -54,27 +55,6 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluatePDF(
     this->evaluateIntegratedCrossSection( incoming_energy, 1e-3 );
 }
 
-// Evaluate the pdf efficiently
-double IncoherentAdjointPhotonScatteringDistribution::evaluatePDFEfficient(
-			          const double incoming_energy,
-				  const double scattering_angle_cosine,
-			          const double integrated_cross_section ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= d_max_energy );
-  // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >= 
-		    calculateMinScatteringAngleCosine( incoming_energy,
-						       d_max_energy ) );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-  // Make sure the integrated cross section is valid
-  testPrecondition( integrated_cross_section > 0.0 );
-
-  return this->evaluate( incoming_energy, scattering_angle_cosine )/
-    integrated_cross_section;
-}
-
 // Check if an energy is in the scattering window
 bool IncoherentAdjointPhotonScatteringDistribution::isEnergyInScatteringWindow(
 					    const double energy_of_interest,
@@ -97,7 +77,7 @@ bool IncoherentAdjointPhotonScatteringDistribution::isEnergyInScatteringWindow(
     return true;
 }
 
-// Check if an energy is below the scattering window]
+// Check if an energy is below the scattering window
 /*! \details This is the lower boundary of the energy window when binding 
  * effects are ignored.
  */
@@ -120,6 +100,9 @@ bool IncoherentAdjointPhotonScatteringDistribution::isEnergyBelowScatteringWindo
 }
 
 // Check if an energy is above the scattering window
+/*! \details This is the upper boundary of the energy window when binding 
+ * effects are ignored.
+ */
 bool IncoherentAdjointPhotonScatteringDistribution::isEnergyAboveScatteringWindow( 
 					   const double energy_of_interest,
 					   const double initial_energy ) const
@@ -295,23 +278,82 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 
+// Create a probe particle
+/*! \details Energy binding effects will be ignored when creating probe
+ * particles. This procedure will generate a probe particle (if physically
+ * possible) even if the incoming particle is a probe (be careful about
+ * create probe cascades).
+ */
+void IncoherentAdjointPhotonScatteringDistribution::createProbeParticle( 
+				      const double energy_of_interest, 
+				      const AdjointPhotonState& adjoint_photon,
+				      ParticleBank& bank ) const
+{
+  // Make sure the energy of interest is valid
+  testPrecondition( energy_of_interest > 0.0 );
+  testPrecondition( energy_of_interest <= d_max_energy );
+  // Make sure the adjoint photon energy is valid
+  testPrecondition( adjoint_photon.getEnergy() <= d_max_energy );
+  // Make sure the energy of interest is in the scattering window
+  testPrecondition( this->isEnergyInScatteringWindow( 
+						energy_of_interest,
+						adjoint_photon.getEnergy() ) );
+  
+  // Only generate the probe if the energy is in the scattering window
+  if( this->isEnergyInScatteringWindow( energy_of_interest,
+					adjoint_photon.getEnergy() ) )
+  {
+    const double scattering_angle_cosine = 
+      calculateScatteringAngleCosineAdjoint( adjoint_photon.getEnergy(),
+					     energy_of_interest );
+    
+    const double pdf_conversion = 
+      Utility::PhysicalConstants::electron_rest_mass_energy/
+      (energy_of_interest*energy_of_interest);
+
+    const double weight_mult = 
+      this->evaluatePDF( adjoint_photon.getEnergy(), scattering_angle_cosine )*
+      pdf_conversion;
+
+    // Create the probe with the desired energy and modified weight
+    Teuchos::RCP<AdjointPhotonProbeState> probe( 
+			       new AdjointPhotonProbeState( adjoint_photon ) );
+    
+    probe->setEnergy( energy_of_interest );
+    probe->rotateDirection( scattering_angle_cosine, 
+			    this->sampleAzimuthalAngle() );
+    probe->multiplyWeight( weight_mult );
+    probe->activate();
+
+    // Add the probe to the bank
+    bank.push( probe );
+  }
+}
+
 // Create the probe particles
+/*! \details Currently, probe cascades are not allowed (only non-probe states
+ * can generate new probe states).
+ */
 void IncoherentAdjointPhotonScatteringDistribution::createProbeParticles( 
 				      const AdjointPhotonState& adjoint_photon,
 				      ParticleBank& bank ) const
 {
-  // Find the critical line energies in the scattering window
-  LineEnergyIterator line_energy, end_line_energy;
-
-  this->getCriticalLineEnergiesInScatteringWindow( adjoint_photon.getEnergy(),
-						   line_energy,
-						   end_line_energy );
-
-  while( line_energy != end_line_energy )
+  // Avoid probe cascades
+  if( !adjoint_photon.isProbe() )
   {
-    this->createProbeParticle( *line_energy, adjoint_photon, bank );
+    // Find the critical line energies in the scattering window
+    LineEnergyIterator line_energy, end_line_energy;
+    
+    this->getCriticalLineEnergiesInScatteringWindow(adjoint_photon.getEnergy(),
+						    line_energy,
+						    end_line_energy );
 
-    ++line_energy;
+    while( line_energy != end_line_energy )
+    {
+      this->createProbeParticle( *line_energy, adjoint_photon, bank );
+      
+      ++line_energy;
+    }
   }
 }
 

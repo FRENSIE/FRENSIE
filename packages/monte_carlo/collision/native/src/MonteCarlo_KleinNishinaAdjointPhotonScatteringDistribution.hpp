@@ -52,11 +52,6 @@ public:
   void scatterAdjointPhoton( AdjointPhotonState& adjoint_photon,
 			     ParticleBank& bank,
 			     SubshellType& shell_of_interaction ) const;
-
-  //! Create a probe particle
-  void createProbeParticle( const double energy_of_interest, 
-			    const AdjointPhotonState& adjoint_photon,
-			    ParticleBank& bank ) const;
 };
 
 } // end MonteCarlo namespace

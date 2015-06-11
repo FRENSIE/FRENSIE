@@ -69,16 +69,12 @@ public:
 			     MonteCarlo::SubshellType& shell_of_interaction ) const
   { /* ... */ }
 
-  // Create a probe particle
-  void createProbeParticle( 
-			  const double energy_of_interest, 
-			  const MonteCarlo::AdjointPhotonState& adjoint_photon,
-			  MonteCarlo::ParticleBank& bank ) const
-  { /* ... */ }
-
   using MonteCarlo::IncoherentAdjointPhotonScatteringDistribution::LineEnergyIterator;
   using MonteCarlo::IncoherentAdjointPhotonScatteringDistribution::evaluateAdjointKleinNishinaDist;
   using MonteCarlo::IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjointKleinNishina;
+  using MonteCarlo::IncoherentAdjointPhotonScatteringDistribution::isEnergyBelowScatteringWindow;
+  using MonteCarlo::IncoherentAdjointPhotonScatteringDistribution::isEnergyAboveScatteringWindow;
+  using MonteCarlo::IncoherentAdjointPhotonScatteringDistribution::isEnergyInScatteringWindow;
   using MonteCarlo::IncoherentAdjointPhotonScatteringDistribution::getCriticalLineEnergiesInScatteringWindow;
 };
 
@@ -151,7 +147,7 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
   double outgoing_energy, scattering_angle_cosine;
   unsigned trials = 0;
 
-  // 1st branch of rejections scheme
+  // Set the fake stream
   std::vector<double> fake_stream( 12 );
   fake_stream[0] = 0.15; // branch 1
   fake_stream[1] = 0.4721647344828152; // select x = 0.9
