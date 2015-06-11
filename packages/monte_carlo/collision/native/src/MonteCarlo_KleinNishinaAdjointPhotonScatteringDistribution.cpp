@@ -9,7 +9,6 @@
 // FRENSIE Includes
 #include "MonteCarlo_KleinNishinaAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
-#include "MonteCarlo_AdjointPhotonProbeState.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -69,7 +68,7 @@ double KleinNishinaAdjointPhotonScatteringDistribution::evaluateIntegratedCrossS
 
   const double cross_section = 1e24*Utility::PhysicalConstants::pi*
     Utility::PhysicalConstants::classical_electron_radius*
-    Utility::PhysicalConstants::classical_electron_radius*
+    Utility::PhysicalConstants::classical_electron_radius/alpha*
     (term_1 + term_2 + term_3 + term_4);
 
   // Make sure the cross section is valid
@@ -119,6 +118,13 @@ void KleinNishinaAdjointPhotonScatteringDistribution::scatterAdjointPhoton(
 				     ParticleBank& bank,
 				     SubshellType& shell_of_interaction ) const
 {
+  // Make sure the adjoint photon energy is valid
+  testPrecondition( adjoint_photon.getEnergy() <= this->getMaxEnergy() );
+  
+  // Generate probe particles
+  this->createProbeParticles( adjoint_photon, bank );
+
+  // Scattering the adjoint photon
   double outgoing_energy, scattering_angle_cosine;
   
   this->sample( adjoint_photon.getEnergy(),
@@ -131,48 +137,6 @@ void KleinNishinaAdjointPhotonScatteringDistribution::scatterAdjointPhoton(
 
   adjoint_photon.rotateDirection( scattering_angle_cosine,
 				  this->sampleAzimuthalAngle() );
-}
-  
-// Create a probe particle
-void KleinNishinaAdjointPhotonScatteringDistribution::createProbeParticle( 
-				      const double energy_of_interest, 
-				      const AdjointPhotonState& adjoint_photon,
-				      ParticleBank& bank ) const
-{
-  // Make sure the energy of interest is in the scattering window
-  testPrecondition( this->isEnergyInScatteringWindow( 
-						energy_of_interest,
-						adjoint_photon.getEnergy() ) );
-
-  // Only generate the probe if the energy is in the scattering window
-  if( this->isEnergyInScatteringWindow( energy_of_interest,
-					adjoint_photon.getEnergy() ) )
-  {
-    const double scattering_angle_cosine = 
-      calculateScatteringAngleCosineAdjoint( adjoint_photon.getEnergy(),
-					     energy_of_interest );
-    
-    const double pdf_conversion = 
-      Utility::PhysicalConstants::electron_rest_mass_energy/
-      (adjoint_photon.getEnergy()*adjoint_photon.getEnergy());
-
-    const double weight_mult = 
-      this->evaluatePDF( adjoint_photon.getEnergy(), scattering_angle_cosine )*
-      pdf_conversion;
-
-    // Create the probe with the desired energy and modified weight
-    Teuchos::RCP<AdjointPhotonProbeState> probe( 
-			       new AdjointPhotonProbeState( adjoint_photon ) );
-    
-    probe->setEnergy( energy_of_interest );
-    probe->rotateDirection( scattering_angle_cosine, 
-			    this->sampleAzimuthalAngle() );
-    probe->multiplyWeight( weight_mult );
-    probe->activate();
-
-    // Add the probe to the bank
-    bank.push( probe );
-  }
 }
 
 } // end MonteCarlo namespace

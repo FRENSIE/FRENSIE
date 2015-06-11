@@ -66,6 +66,12 @@ void AdjointPhotonProbeState::setEnergy( const energyType energy )
     this->setAsGone();
 }
 
+// Check if this is a probe
+bool AdjointPhotonProbeState::isProbe() const
+{
+  return true;
+}
+
 // Activate the probe
 /*! \details Once a probe has been activated the next call to set energy
  * will cause is to be killed. 

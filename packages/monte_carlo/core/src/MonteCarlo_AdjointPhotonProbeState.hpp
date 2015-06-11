@@ -52,6 +52,9 @@ public:
   //! Set the energy of the particle (MeV)
   void setEnergy( const energyType energy );
 
+  //! Check if this is a probe
+  bool isProbe() const;
+
   //! Activate the probe
   void activate();
 
