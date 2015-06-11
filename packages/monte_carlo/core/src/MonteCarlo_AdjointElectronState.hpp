@@ -10,12 +10,12 @@
 #define MONTE_CARLO_ADJOINT_ELECTRON_STATE_HPP
 
 // FRENSIE Includes
-#include "MonteCarlo_ParticleState.hpp"
+#include "MonteCarlo_MassiveParticleState.hpp"
 
 namespace MonteCarlo{
 
 //! The adjoint electron state class
-class AdjointElectronState : public ParticleState
+class AdjointElectronState : public MassiveParticleState
 {
 
 public:
@@ -45,6 +45,12 @@ public:
   //! Destructor
   virtual ~AdjointElectronState()
   { /* ... */ }
+
+  //! Check if this is a probe
+  virtual bool isProbe() const;
+
+  //! Return the rest mass energy of the electron (MeV)
+  double getRestMassEnergy() const;
 
   //! Print the adjoint electron state
   virtual void print( std::ostream& os ) const;

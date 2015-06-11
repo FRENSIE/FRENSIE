@@ -34,10 +34,29 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
   testPrecondition( d_electroionization_subshell_scattering_distribution.size() > 0 );
 }
 
+// Sample an outgoing energy and direction from the distribution
+void ElectroionizationSubshellElectronScatteringDistribution::sample( 
+               const double incoming_energy,
+               double& outgoing_energy,
+               double& scattering_angle_cosine ) const
+{
+
+}
+
+// Sample an outgoing energy and direction and record the number of trials
+void ElectroionizationSubshellElectronScatteringDistribution::sampleAndRecordTrials( 
+                              const double incoming_energy,
+                              double& outgoing_energy,
+                              double& scattering_angle_cosine,
+                              unsigned& trials ) const
+{
+
+}
+
 // Randomly scatter the electron
 void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron( 
                                 ElectronState& electron,
-			                    ParticleBank& bank,
+		                ParticleBank& bank,
                                 SubshellType& shell_of_interaction ) const
 {
   // energy of the incoming electron

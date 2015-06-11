@@ -58,61 +58,6 @@ HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribu
   testPrecondition( d_elastic_scattering_distribution.size() > 0 );
 }
 
-// Evaluate the distribution
-/*! The cross section (b) differential in the scattering angle cosine is
-* returned from this function.
-*/
-double HardElasticElectronScatteringDistribution::evaluate( 
-				   const double incoming_energy,
-				   const double scattering_angle_cosine ) const
-{ /* ... */ }
-
-// Evaluate the PDF
-double HardElasticElectronScatteringDistribution::evaluatePDF( 
-				   const double incoming_energy,
-				   const double scattering_angle_cosine ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-  // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  return this->evaluate( incoming_energy, scattering_angle_cosine )/
-    this->evaluateIntegratedCrossSection( incoming_energy, 1e-3 );
-}
-
-// Evaluate the integrated cross section (b)
-double HardElasticElectronScatteringDistribution::evaluateIntegratedCrossSection( 
-					         const double incoming_energy,
-					         const double precision ) const
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-
-  // Evaluate the integrated cross section
-  boost::function<double (double x)> diff_cs_wrapper = 
-    boost::bind<double>( &HardElasticElectronScatteringDistribution::evaluate,
-			 boost::cref( *this ),
-			 incoming_energy,
-			 _1 );
-
-  double abs_error, integrated_cs;
-
-  Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
-
-  quadrature_kernel.integrateAdaptively<15>( diff_cs_wrapper,
-					     -1.0,
-					     1.0,
-					     integrated_cs,
-					     abs_error );
-
-  // Make sure the integrated cross section is valid
-  testPostcondition( integrated_cs > 0.0 );
-
-  return integrated_cs;
-}
-
 // Sample an outgoing energy and direction from the distribution
 void HardElasticElectronScatteringDistribution::sample( 
 				     const double incoming_energy,

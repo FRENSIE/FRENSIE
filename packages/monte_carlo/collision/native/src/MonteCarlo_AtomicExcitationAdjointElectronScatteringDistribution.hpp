@@ -12,7 +12,6 @@
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_ArrayRCP.hpp>
-#include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
 #include "MonteCarlo_AdjointElectronScatteringDistribution.hpp"
@@ -31,24 +30,27 @@ public:
 
   //! Constructor
   AtomicExcitationAdjointElectronScatteringDistribution(
-	       const double max_energy,
+//	       const double max_energy,
 	       const AtomicDistribution& energy_gain_distribution );
 
   //! Destructor
   virtual ~AtomicExcitationAdjointElectronScatteringDistribution()
   { /* ... */ }
 
- //! Evaluate the distribution
+  //! Evaluate the distribution
   double evaluate( const double incoming_energy,
-                   const double scattering_angle_cosine ) const;
+                   const double scattering_angle_cosine ) const
+  { /*...*/}
 
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
-                      const double scattering_angle_cosine ) const;
+                      const double scattering_angle_cosine ) const
+  { /*...*/}
 
   //! Evaluate the integrated cross section (b)
   double evaluateIntegratedCrossSection( const double incoming_energy,
-                                         const double precision) const;
+                                         const double precision) const
+  { /*...*/}
 
 
   //! Sample an outgoing energy and direction from the distribution
@@ -66,12 +68,12 @@ public:
   void scatterAdjointElectron( AdjointElectronState& electron,
                                ParticleBank& bank,
                                SubshellType& shell_of_interaction ) const;
-  
+/*  
 protected:
 
   //! Return the max energy
   double getMaxEnergy() const;
-
+*/
   
 private:
 

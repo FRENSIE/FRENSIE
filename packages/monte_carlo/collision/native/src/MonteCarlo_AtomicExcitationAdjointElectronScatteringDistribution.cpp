@@ -20,42 +20,14 @@ namespace MonteCarlo{
 
 // Constructor
 AtomicExcitationAdjointElectronScatteringDistribution::AtomicExcitationAdjointElectronScatteringDistribution(
-          const double max_energy,
-		      const AtomicDistribution& energy_gain_distribution )
-  : d_max_energy( max_energy ),
+//          const double max_energy,
+	      const AtomicDistribution& energy_gain_distribution )
+  : //d_max_energy( max_energy ),
     d_energy_gain_distribution( energy_gain_distribution )
-{
-  // Make sure the max energy is valid
-  testPrecondition( max_energy > 0.0 );
-  
+{  
   // Make sure the array is valid
   testPrecondition( !d_energy_gain_distribution.is_null() );
 }
-
-// Return the max energy
-double AtomicExcitationAdjointElectronScatteringDistribution::getMaxEnergy() const
-{
-  return d_max_energy;
-}
-
-// Evaluate the distribution
-double AtomicExcitationAdjointElectronScatteringDistribution::evaluate( 
-             const double incoming_energy,
-             const double scattering_angle_cosine ) const
-{ /*...*/}
-
-// Evaluate the PDF
-double AtomicExcitationAdjointElectronScatteringDistribution::evaluatePDF( 
-             const double incoming_energy,
-             const double scattering_angle_cosine ) const
-{ /*...*/}
-
-// Evaluate the integrated cross section (b)
-double AtomicExcitationAdjointElectronScatteringDistribution::evaluateIntegratedCrossSection( 
-             const double incoming_energy,
-             const double precision) const
-{ /*...*/}
-
 
 // Sample an outgoing energy and direction from the distribution
 void AtomicExcitationAdjointElectronScatteringDistribution::sample( 
@@ -89,7 +61,7 @@ void AtomicExcitationAdjointElectronScatteringDistribution::sampleAndRecordTrial
                 scattering_angle_cosine ); 
 }
 
-// Randomly scatter the electron
+// Randomly scatter the adjoint electron
 void AtomicExcitationAdjointElectronScatteringDistribution::scatterAdjointElectron( 
                       AdjointElectronState& adjoint_electron,
                       ParticleBank& bank,

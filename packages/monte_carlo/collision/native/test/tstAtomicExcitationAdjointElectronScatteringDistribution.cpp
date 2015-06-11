@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstAtomicExcitationElectronScatteringDistribution.cpp
+//! \file   tstAtomicExcitationAdjointElectronScatteringDistribution.cpp
 //! \author Luke Kersting
-//! \brief  Atomic Excitation electron scattering distribution unit tests
+//! \brief  Atomic Excitation adjoint electron scattering distribution unit tests
 //!
 //---------------------------------------------------------------------------//
 
@@ -15,7 +15,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_AtomicExcitationElectronScatteringDistribution.hpp"
+#include "MonteCarlo_AtomicExcitationAdjointElectronScatteringDistribution.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -26,25 +26,22 @@
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
-Teuchos::RCP<MonteCarlo::AtomicExcitationElectronScatteringDistribution> 
+Teuchos::RCP<MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution> 
   ace_atomic_excitation_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
 // Check that the sample() function
-TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution, 
                    sample )
-{
-
-  MonteCarlo::ParticleBank bank;
-  
-  MonteCarlo::ElectronState electron( 0 );
-  electron.setEnergy( 1.000000000000e-03 );
+{  
+  MonteCarlo::AdjointElectronState electron( 0 );
+  electron.setEnergy( 1.000000000000e-03 - 9.32298000000E-06 );
   electron.setDirection( 0.0, 0.0, 1.0 );
   
   double outgoing_energy,scattering_angle_cosine;
-  double final_energy = (electron.getEnergy() - 9.32298000000E-06);
+  double final_energy = (electron.getEnergy() + 9.32298000000E-06);
 
   // sample distribution
   ace_atomic_excitation_distribution->sample( electron.getEnergy(),
@@ -56,20 +53,17 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistribution,
   TEST_EQUALITY_CONST( scattering_angle_cosine, 1.0 );
 
 }
-
 //---------------------------------------------------------------------------//
 // Check that the sampleAndRecordTrials() function
-TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistribution, 
+TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution, 
                    sampleAndRecordTrials )
 {
-  MonteCarlo::ParticleBank bank;
-  
-  MonteCarlo::ElectronState electron( 0 );
-  electron.setEnergy( 1.000000000000e-03 );
+  MonteCarlo::AdjointElectronState electron( 0 );
+  electron.setEnergy( 1.000000000000e-03 - 9.32298000000E-06 );
   electron.setDirection( 0.0, 0.0, 1.0 );
   
   double outgoing_energy,scattering_angle_cosine;
-  double final_energy = (electron.getEnergy() - 9.32298000000E-06);
+  double final_energy = (electron.getEnergy() + 9.32298000000E-06);
   unsigned trials = 10;
 
   // sample distribution
@@ -86,27 +80,28 @@ TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistribution,
 
 }
 //---------------------------------------------------------------------------//
-// Check that the screening angle can be evaluated
-TEUCHOS_UNIT_TEST( AtomicExcitationElectronScatteringDistribution, 
-                   scatterElectron )
+// Check that the scattering angle can be evaluated
+TEUCHOS_UNIT_TEST( AtomicExcitationAdjointElectronScatteringDistribution, 
+                   scatterAdjointElectron )
 {
   MonteCarlo::ParticleBank bank;
   
-  MonteCarlo::ElectronState electron( 0 );
-  electron.setEnergy( 1.000000000000e-03 );
-  electron.setDirection( 0.0, 0.0, 1.0 );
+  MonteCarlo::AdjointElectronState adjoint_electron( 0 );
+  adjoint_electron.setEnergy( 1.000000000000e-03 - 9.32298000000E-06 );
+  adjoint_electron.setDirection( 0.0, 0.0, 1.0 );
   
   MonteCarlo::SubshellType shell_of_interaction;
-  double final_energy = (electron.getEnergy() - 9.32298000000E-06);
+  double final_energy = ( 1.000000000000e-03 );
 
-  // Scatter the electron
-  ace_atomic_excitation_distribution->scatterElectron( electron,
+  // Scatter the adjoint electron
+  ace_atomic_excitation_distribution->scatterAdjointElectron( 
+                                                       adjoint_electron,
 	                                               bank,
                                                        shell_of_interaction );
 
   // Test
-  TEST_FLOATING_EQUALITY( electron.getEnergy(), final_energy, 1e-12 );
-  TEST_FLOATING_EQUALITY( electron.getZDirection(), 1.0, 1e-12 );
+  TEST_FLOATING_EQUALITY( adjoint_electron.getEnergy(), final_energy, 1e-12 );
+  TEST_EQUALITY_CONST( adjoint_electron.getZDirection(), 1.0 );
 
 }
 
@@ -161,17 +156,26 @@ int main( int argc, char** argv )
   // Extract the energy loss for atomic excitation
   Teuchos::Array<double> energy_loss(excit_block(size,size));
 
-  // Create the energy loss distributions
-  Teuchos::RCP<Utility::OneDDistribution> energy_loss_function;
+  // Evaluate the adjoint energy grid for atomic excitation energy gain
+  Teuchos::Array<double> adjoint_energy_grid( size );  
+
+  // Loop through the energy grid
+  for ( unsigned n = 0; n < size; n++ )
+  {
+    adjoint_energy_grid[n] = energy_grid[n] - energy_loss[n];
+  }
+
+  // Create the energy gain distributions
+  Teuchos::RCP<Utility::OneDDistribution> energy_gain_function;
   
-  energy_loss_function.reset( 
-    new Utility::TabularDistribution<Utility::LinLin>( energy_grid,
-	                                               energy_loss ) );
+  energy_gain_function.reset( 
+    new Utility::TabularDistribution<Utility::LinLin>( adjoint_energy_grid,
+		                                       energy_loss ) );
 
   // Create the distribution
   ace_atomic_excitation_distribution.reset(
-    new MonteCarlo::AtomicExcitationElectronScatteringDistribution(
-						       energy_loss_function ) );
+    new MonteCarlo::AtomicExcitationAdjointElectronScatteringDistribution(
+						       energy_gain_function ) );
 
   // Clear setup data
   ace_file_handler.reset();
@@ -196,5 +200,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstAtomicExcitationElectronScatteringDistribution.cpp
+// end tstAtomicExcitationAdjointElectronScatteringDistribution.cpp
 //---------------------------------------------------------------------------//

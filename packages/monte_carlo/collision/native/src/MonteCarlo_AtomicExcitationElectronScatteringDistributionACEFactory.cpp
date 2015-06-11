@@ -21,7 +21,7 @@ namespace MonteCarlo{
 void AtomicExcitationElectronScatteringDistributionACEFactory::createAtomicExcitationDistribution(
 			  const Data::XSSEPRDataExtractor& raw_electroatom_data,
 			  Teuchos::RCP<const AtomicExcitationElectronScatteringDistribution>&
-			  energy_loss_distribution )
+			    energy_loss_distribution )
 {
   // Create the energy loss function
   AtomicExcitationElectronScatteringDistribution::AtomicDistribution 
@@ -34,7 +34,6 @@ void AtomicExcitationElectronScatteringDistributionACEFactory::createAtomicExcit
   energy_loss_distribution.reset( 
    new AtomicExcitationElectronScatteringDistribution( energy_loss_function ) );
 }
-
 
 // Create the energy loss function
 void AtomicExcitationElectronScatteringDistributionACEFactory::createEnergyLossFunction(
@@ -57,7 +56,7 @@ void AtomicExcitationElectronScatteringDistributionACEFactory::createEnergyLossF
 
   energy_loss_function.reset( 
     new Utility::TabularDistribution<Utility::LinLin>( excitation_energy_grid,
-		                                               energy_loss ) );
+		                                       energy_loss ) );
 }
 
 } // end MonteCarlo namespace

@@ -23,13 +23,8 @@ void HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistr
 			  Teuchos::RCP<const HardElasticElectronScatteringDistribution>&
 			    elastic_distribution )
 {
-  // Extract the elastic scattering information data block (ELASI)
-//  Teuchos::ArrayView<const double> elasi_block(
-//				      raw_electroatom_data.extractELASIBlock() );
-  
   // Extract the number of tabulated distributions
   int size = raw_electroatom_data.extractELASIBlock().size()/3;
-//  int size = elasi_block.size()/3;
 
   // Create the scattering function
   HardElasticElectronScatteringDistribution::ElasticDistribution 
