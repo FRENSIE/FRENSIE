@@ -104,7 +104,7 @@ TEUCHOS_UNIT_TEST( AdjointPhotonKinematicsHelpers,
   mu = MonteCarlo::calculateScatteringAngleCosineAdjoint(0.01, 
 							 0.010199601232613565);
 
-  UTILITY_TEST_FLOATING_EQUALITY( mu, 0.0, 1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( mu, 0.0, 1e-14 );
 
   mu = MonteCarlo::calculateScatteringAngleCosineAdjoint(0.01, 
 							 0.010407332879714635);

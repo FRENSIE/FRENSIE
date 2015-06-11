@@ -76,8 +76,6 @@ double IncoherentAdjointPhotonScatteringDistribution::evaluatePDFEfficient(
 }
 
 // Check if an energy is in the scattering window
-/*! \details This is the energy window when binding effects are ignored.
- */
 bool IncoherentAdjointPhotonScatteringDistribution::isEnergyInScatteringWindow(
 					    const double energy_of_interest,
 					    const double initial_energy ) const
@@ -89,12 +87,51 @@ bool IncoherentAdjointPhotonScatteringDistribution::isEnergyInScatteringWindow(
   testPrecondition( energy_of_interest > 0.0 );
   testPrecondition( energy_of_interest <= d_max_energy );
 
-  const double lower_bound = energy_of_interest/
-    (1.0 + 2*energy_of_interest/
-     Utility::PhysicalConstants::electron_rest_mass_energy);
+  if( this->isEnergyAboveScatteringWindow( energy_of_interest, 
+					   initial_energy ) )
+    return false;
+  else if( this->isEnergyBelowScatteringWindow( energy_of_interest,
+						initial_energy ) )
+    return false;
+  else
+    return true;
+}
 
-  return initial_energy >= lower_bound && 
-    initial_energy <= energy_of_interest;
+// Check if an energy is below the scattering window]
+/*! \details This is the lower boundary of the energy window when binding 
+ * effects are ignored.
+ */
+bool IncoherentAdjointPhotonScatteringDistribution::isEnergyBelowScatteringWindow( 
+					   const double energy_of_interest,
+					   const double initial_energy ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( initial_energy > 0.0 );
+  testPrecondition( initial_energy <= energy_of_interest );
+  // Make sure the energy of interest is valid
+  testPrecondition( energy_of_interest > 0.0 );
+  testPrecondition( energy_of_interest <= d_max_energy );
+  
+  const double lower_energy_boundary = energy_of_interest/
+      (1.0 + 2*energy_of_interest/
+       Utility::PhysicalConstants::electron_rest_mass_energy);
+
+  return initial_energy < lower_energy_boundary;
+}
+
+// Check if an energy is above the scattering window
+bool IncoherentAdjointPhotonScatteringDistribution::isEnergyAboveScatteringWindow( 
+					   const double energy_of_interest,
+					   const double initial_energy ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( initial_energy > 0.0 );
+  testPrecondition( initial_energy <= energy_of_interest );
+  // Make sure the energy of interest is valid
+  testPrecondition( energy_of_interest > 0.0 );
+  testPrecondition( energy_of_interest <= d_max_energy );
+
+  return initial_energy > energy_of_interest;
 }
 
 // Return the max energy
@@ -288,21 +325,42 @@ void IncoherentAdjointPhotonScatteringDistribution::getCriticalLineEnergiesInSca
   testPrecondition( energy > 0.0 );
   testPrecondition( energy < d_max_energy );
 
-  start_energy = d_critical_line_energies.begin();
-
-  while( start_energy != d_critical_line_energies.end() )
+  if( this->isEnergyAboveScatteringWindow( d_critical_line_energies[d_critical_line_energies.size()-1], energy ) )
   {
-    if( this->isEnergyInScatteringWindow( *start_energy, energy ) )
-      break;
+    start_energy = d_critical_line_energies.end();
+    end_energy = start_energy;
   }
-
-  end_energy = start_energy;
-  ++end_energy;
-
-  while( end_energy != d_critical_line_energies.end() )
+  else if( this->isEnergyBelowScatteringWindow( d_critical_line_energies[0], energy ) )
   {
-    if( !this->isEnergyInScatteringWindow( *end_energy, energy ) )
-      break;
+    start_energy = d_critical_line_energies.end();
+    end_energy = start_energy;
+  }
+  else
+  {
+    start_energy = d_critical_line_energies.begin();
+    
+    while( start_energy != d_critical_line_energies.end() )
+    {
+      if( this->isEnergyInScatteringWindow( *start_energy, energy ) )
+	break;
+      
+      ++start_energy;
+    }
+    
+    end_energy = start_energy;
+    
+    if( start_energy != d_critical_line_energies.end() )
+    {
+      ++end_energy;
+      
+      while( end_energy != d_critical_line_energies.end() )
+      {
+	if( !this->isEnergyInScatteringWindow( *end_energy, energy ) )
+	  break;
+	
+	++end_energy;
+      }
+    }
   }
 }
 

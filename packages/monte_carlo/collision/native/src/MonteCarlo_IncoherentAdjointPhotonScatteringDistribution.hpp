@@ -50,19 +50,23 @@ public:
 			       const double integrated_cross_section ) const;
 
   //! Check if an energy is in the scattering window
-  virtual bool isEnergyInScatteringWindow( const double energy_of_interest,
-				           const double initial_energy ) const;
+  bool isEnergyInScatteringWindow( const double energy_of_interest,
+				   const double initial_energy ) const;
+
+  //! Check if an energy is below the scattering window
+  virtual bool isEnergyBelowScatteringWindow( 
+					   const double energy_of_interest,
+					   const double initial_energy ) const;
+
+  //! Check if an energy is above the scattering window
+  virtual bool isEnergyAboveScatteringWindow( 
+					   const double energy_of_interest,
+					   const double initial_energy ) const;
 
   //! Create a probe particle
   virtual void createProbeParticle( const double energy_of_interest, 
 				    const AdjointPhotonState& adjoint_photon,
 				    ParticleBank& bank ) const = 0;
-
-  // Return only the critical line energies that can be scattered into
-  void getCriticalLineEnergiesInScatteringWindow( 
-					const double energy,
-				        LineEnergyIterator& start_energy,
-					LineEnergyIterator& end_energy ) const;
 
   //! Return the max energy
   double getMaxEnergy() const;
@@ -80,6 +84,12 @@ protected:
 					    double& outgoing_energy,
 					    double& scattering_angle_cosine,
 					    unsigned& trials ) const;
+
+  // Return only the critical line energies that can be scattered into
+  void getCriticalLineEnergiesInScatteringWindow( 
+					const double energy,
+				        LineEnergyIterator& start_energy,
+					LineEnergyIterator& end_energy ) const;
 
   //! Create the probe particles
   void createProbeParticles( const AdjointPhotonState& adjoint_photon,

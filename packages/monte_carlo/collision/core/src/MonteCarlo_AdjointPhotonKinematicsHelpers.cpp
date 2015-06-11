@@ -54,13 +54,19 @@ double calculateScatteringAngleCosineAdjoint( const double incoming_energy,
 		     Utility::PhysicalConstants::electron_rest_mass_energy) );
   testPrecondition( incoming_energy <= outgoing_energy );
 
-  const double scattering_angle_cosine = 1.0 + 
+  double scattering_angle_cosine = 1.0 + 
     Utility::PhysicalConstants::electron_rest_mass_energy/outgoing_energy - 
     Utility::PhysicalConstants::electron_rest_mass_energy/incoming_energy;
+
+  // Check for roundoff error
+    if( fabs( scattering_angle_cosine ) > 1.0 )
+      scattering_angle_cosine = copysign(1.0, scattering_angle_cosine);
 
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
+
+  return scattering_angle_cosine;
 }
 
 // Calculate the minimum scattering angle cosine
