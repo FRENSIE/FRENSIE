@@ -9,6 +9,9 @@
 // Std Lib Includes
 #include <limits>
 
+// Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_AdjointPhotonKinematicsHelpers.hpp"
@@ -62,7 +65,6 @@ bool IncoherentAdjointPhotonScatteringDistribution::isEnergyInScatteringWindow(
 {
   // Make sure the incoming energy is valid
   testPrecondition( initial_energy > 0.0 );
-  testPrecondition( initial_energy <= energy_of_interest );
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest > 0.0 );
   testPrecondition( energy_of_interest <= d_max_energy );
@@ -87,7 +89,6 @@ bool IncoherentAdjointPhotonScatteringDistribution::isEnergyBelowScatteringWindo
 {
   // Make sure the incoming energy is valid
   testPrecondition( initial_energy > 0.0 );
-  testPrecondition( initial_energy <= energy_of_interest );
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest > 0.0 );
   testPrecondition( energy_of_interest <= d_max_energy );
@@ -109,7 +110,6 @@ bool IncoherentAdjointPhotonScatteringDistribution::isEnergyAboveScatteringWindo
 {
   // Make sure the incoming energy is valid
   testPrecondition( initial_energy > 0.0 );
-  testPrecondition( initial_energy <= energy_of_interest );
   // Make sure the energy of interest is valid
   testPrecondition( energy_of_interest > 0.0 );
   testPrecondition( energy_of_interest <= d_max_energy );
@@ -265,7 +265,8 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
   testPostcondition( term_3 >= 0.0 );
   testPostcondition( all_terms > 0.0 );
   // Make sure the sampled value is valid
-  testPostcondition( !ST::isnaninf( inverse_energy_gain_ratio ) );
+  testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( 
+						 inverse_energy_gain_ratio ) );
   testPostcondition( inverse_energy_gain_ratio <= 1.0 );
   testPostcondition( inverse_energy_gain_ratio >= 
 		     min_inverse_energy_gain_ratio );
@@ -273,7 +274,7 @@ void IncoherentAdjointPhotonScatteringDistribution::sampleAndRecordTrialsAdjoint
   testPostcondition( outgoing_energy >= incoming_energy );
   // Make sure the scattering angle cosine is valid
   testPostcondition( scattering_angle_cosine >= 
-		    calculateMinScatteringAngleCosine( initial_energy,
+		    calculateMinScatteringAngleCosine( incoming_energy,
 						       d_max_energy ) );
   testPostcondition( scattering_angle_cosine <= 1.0 );
 }

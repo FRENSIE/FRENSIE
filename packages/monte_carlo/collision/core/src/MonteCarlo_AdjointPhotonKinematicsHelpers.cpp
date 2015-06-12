@@ -26,10 +26,9 @@ double calculateAdjointComptonLineEnergy(const double incoming_energy,
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
   // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine > 
-		    calculateMinScatteringAngleCosine( 
-				   incoming_energy,
-				   std::numeric_limits<double>::infinity() ) );
+  testPrecondition( scattering_angle_cosine >= 
+		    calculateAbsoluteMinScatteringAngleCosine( 
+							   incoming_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   const double compton_line_energy = incoming_energy/
@@ -164,9 +163,10 @@ double calculateMinInverseEnergyGainRatio( const double incoming_energy,
   // Make sure the min scattering angle cosine is valid
   testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf(
 					     min_inverse_energy_gain_ratio ) );
-  testPostcondition( 
-	       min_inverse_energy_gain_ratio >= 
-	       calculateAbsoluteMinInverseEnergyGainRatio( incoming_energy ) );
+  remember( const double absolute_min_ratio = 
+	    calculateAbsoluteMinInverseEnergyGainRatio( incoming_energy ) );
+  testPostcondition( min_inverse_energy_gain_ratio >= 
+		     absolute_min_ratio - 1e-9 ); // rounding error issue
   testPostcondition( min_inverse_energy_gain_ratio <= 1.0 );
 
   return min_inverse_energy_gain_ratio;
@@ -210,12 +210,12 @@ double calculateElectronMomentumProjectionAdjoint(
 					const double scattering_angle_cosine )
 {
   // Make sure the energies are valid
+  testPrecondition( initial_energy > 0.0 );
   testPrecondition( final_energy >= 0.0 );
-  testPrecondition( initial_energy < final_energy );
   // Make sure the scattering angle cosine is valid
   testPrecondition( 
-		scattering_angle_cosine > 
-		calculateAbsoluteMinScatteringAngleCosine( incoming_energy ) );
+		scattering_angle_cosine >=
+		calculateAbsoluteMinScatteringAngleCosine( initial_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   const double numerator = initial_energy - final_energy + 
@@ -249,9 +249,8 @@ double calculateMaxElectronMomentumProjectionAdjoint(
   testPrecondition( initial_energy >= 0.0 );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= 
-		    calculateMinScatteringAngleCosine( 
-				   incoming_energy,
-				   std::numeric_limits<double>::infinity() ) );
+		    calculateAbsoluteMinScatteringAngleCosine( 
+							    initial_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 ); 
 
   const double arg = initial_energy*(initial_energy+binding_energy)*
@@ -276,9 +275,13 @@ double calculateMinElectronMomentumProjectionAdjoint(
 					const double max_energy,
 					const double scattering_angle_cosine )
 {
+  // Make sure the initial energy is valid
+  testPrecondition( initial_energy >= 0.0 );
+  // Make sure the max energy is valid
+  testPrecondition( max_energy >= initial_energy );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= 
-		    calculateMinScatteringAngleCosine( incoming_energy,
+		    calculateMinScatteringAngleCosine( initial_energy,
 						       max_energy ) );
   
   double pz_min = calculateElectronMomentumProjectionAdjoint( 
@@ -329,7 +332,7 @@ double calculateDopplerBroadenedEnergyAdjoint(
   // Make sure the scattering angle cosine is valid
   testPrecondition( 
 		scattering_angle_cosine >= 
-		calculateAbsoluteMinScatteringAngleCosine( incoming_energy ) );
+		calculateAbsoluteMinScatteringAngleCosine( initial_energy ) );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   double final_energy;
@@ -391,11 +394,8 @@ double calculateDopplerBroadenedEnergyAdjoint(
 
   // Make sure the final energy is valid
   testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( final_energy ));
-  testPostcondition( final_energy > initial_energy );
-  remember( (test_pz = calculateElectronMomentumProjectionAdjoint( 
-						   initial_energy,
-						   final_energy,
-						   scattering_angle_cosine )));
+  testPostcondition( final_energy > initial_energy ||
+		     !energetically_possible );
 
   return final_energy;
 }
