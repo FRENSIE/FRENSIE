@@ -12,7 +12,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_WHIncoherentPhotonScatteringDistribution.hpp"
-#include "Utility_DiscreteDistribution.hpp"
+#include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_ContractException.hpp"
@@ -145,10 +145,9 @@ void WHIncoherentPhotonScatteringDistribution::sampleAndRecordTrials(
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
   // Make sure the compton line energy is valid
-  testPostcondition( outgoing_energy <= incoming_energy );
-  remember( double alpha = incoming_energy/
-	    Utility::PhysicalConstants::electron_rest_mass_energy );
-  testPostcondition( outgoing_energy >= incoming_energy/(1+2*alpha) );
+  testPostcondition( outgoing_energy ==
+		     calculateComptonLineEnergy( incoming_energy,
+						 scattering_angle_cosine ) );
 }
 
 } // end MonteCarlo namespace

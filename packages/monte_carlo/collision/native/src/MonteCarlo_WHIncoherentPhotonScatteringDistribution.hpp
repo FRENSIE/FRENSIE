@@ -54,7 +54,7 @@ public:
 
 private:
 
-  //! evaluate the scattering function
+  // Evaluate the scattering function
   double evaluateScatteringFunction(
 				  const double incoming_energy,
 				  const double scattering_angle_cosine ) const;
