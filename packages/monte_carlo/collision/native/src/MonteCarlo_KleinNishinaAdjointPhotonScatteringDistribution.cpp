@@ -28,7 +28,7 @@ double KleinNishinaAdjointPhotonScatteringDistribution::evaluate(
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= d_max_energy );
+  testPrecondition( incoming_energy <= this->getMaxEnergy() );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= 
 		    calculateMinScatteringAngleCosine( incoming_energy,
@@ -72,7 +72,7 @@ double KleinNishinaAdjointPhotonScatteringDistribution::evaluateIntegratedCrossS
     (term_1 + term_2 + term_3 + term_4);
 
   // Make sure the cross section is valid
-  testPostcondition( cross_section > 0.0 );
+  testPostcondition( cross_section >= 0.0 );
 
   return cross_section;
 }

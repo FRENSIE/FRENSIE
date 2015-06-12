@@ -464,17 +464,12 @@ TEUCHOS_UNIT_TEST( AdjointPhotonKinematicsHelpers,
     
   TEST_FLOATING_EQUALITY( pz_max, -1.0, 1e-15 );
   
-  pz_max = MonteCarlo::calculateMaxElectronMomentumProjectionAdjoint( 1.0, 
-								      1e-5, 
-								      -1.0 );
+  pz_max = MonteCarlo::calculateMaxElectronMomentumProjectionAdjoint( 
+							       1.0, 
+							       1e-5, 
+							       0.48900108987 );
   
-  TEST_FLOATING_EQUALITY( pz_max, 1.956956120980415, 1e-15 );
-
-  pz_max = MonteCarlo::calculateMaxElectronMomentumProjectionAdjoint( 1.0,
-								      1e-5,
-								      0.0 );
-
-  TEST_FLOATING_EQUALITY( pz_max, 1.3837734080962476, 1e-15 );
+  TEST_FLOATING_EQUALITY( pz_max, 0.9891743442736748, 1e-15 );
 
   pz_max = MonteCarlo::calculateMaxElectronMomentumProjectionAdjoint( 
 							   1.0,
@@ -508,17 +503,12 @@ TEUCHOS_UNIT_TEST( AdjointPhotonKinematicsHelpers,
     
   TEST_FLOATING_EQUALITY( pz_max, -1.0, 1e-15 );
   
-  pz_max = MonteCarlo::calculateMaxElectronMomentumProjectionAdjoint( 1.0, 
-  								      0.09, 
-  								      -1.0 );
+  pz_max = MonteCarlo::calculateMaxElectronMomentumProjectionAdjoint( 
+							       1.0, 
+							       0.09, 
+							       0.48900108987 );
   
-  TEST_FLOATING_EQUALITY( pz_max, 1.9981597669951645, 1e-15 );
-
-  pz_max = MonteCarlo::calculateMaxElectronMomentumProjectionAdjoint( 1.0,
-  								      0.09,
-  								      0.0 );
-
-  TEST_FLOATING_EQUALITY( pz_max, 1.381182739665556, 1e-15 );
+  TEST_FLOATING_EQUALITY( pz_max, 0.9440359846870987, 1e-15 );
 
   pz_max = MonteCarlo::calculateMaxElectronMomentumProjectionAdjoint( 
   							  1.0,
@@ -621,9 +611,9 @@ TEUCHOS_UNIT_TEST( AdjointPhotonKinematicsHelpers,
   TEST_FLOATING_EQUALITY( pz_min, -1.0, 1e-15 );
 
   pz_min = MonteCarlo::calculateMinElectronMomentumProjectionAdjoint( 
-							 0.09,
-							 0.1,
-							 0.4322234331888879 );
+							0.09,
+							0.1,
+							0.432223433188888784 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pz_min, 0.0, 1e-15 );
 
@@ -658,9 +648,9 @@ TEUCHOS_UNIT_TEST( AdjointPhotonKinematicsHelpers,
   TEST_FLOATING_EQUALITY( pz_min, -1.0, 1e-15 );
 
   pz_min = MonteCarlo::calculateMinElectronMomentumProjectionAdjoint( 
-							       0.5,
-							       1.0,
-							       0.48900108987 );
+							0.5,
+							1.0,
+							0.489001089870000127 );
 
   UTILITY_TEST_FLOATING_EQUALITY( pz_min, 0.0, 1e-15 );
 
@@ -706,15 +696,11 @@ TEUCHOS_UNIT_TEST( AdjointPhotonKinematicsHelpers,
 						 -0.96, 0.01, -1.0, possible );
 
   TEST_ASSERT( possible );
+  TEST_FLOATING_EQUALITY( energy, 22.7649342529632719, 1e-15 );
 
   // Test the absolute minimum pz
   energy = MonteCarlo::calculateDopplerBroadenedEnergyAdjoint(
 				   -0.9608609732750468, 0.01, -1.0, possible );
-
-  TEST_ASSERT( !possible );
-  
-  energy = MonteCarlo::calculateDopplerBroadenedEnergyAdjoint(
-						  -1.0, 0.01, -1.0, possible );
 
   TEST_ASSERT( !possible );
 
@@ -740,11 +726,6 @@ TEUCHOS_UNIT_TEST( AdjointPhotonKinematicsHelpers,
   energy = MonteCarlo::calculateDopplerBroadenedEnergyAdjoint( 
 				    -0.9804304866375234, 0.01, 0.0, possible );
   
-  TEST_ASSERT( !possible );
-
-  energy = MonteCarlo::calculateDopplerBroadenedEnergyAdjoint(
-						    -1.0, 0.1, 0.0, possible );
-
   TEST_ASSERT( !possible );
 }
 
