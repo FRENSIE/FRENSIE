@@ -289,7 +289,7 @@ void ElectroatomicReactionACEFactory::createBremsstrahlungReaction(
 			bremsstrahlung_cross_section,
 			threshold_energy_index );
 
-  // Extract the elastic scattering information data block (BREMI)
+  // Extract the bremsstrahlung scattering information data block (BREMI)
   Teuchos::ArrayView<const double> bremi_block(
 				      raw_electroatom_data.extractBREMIBlock() );
 

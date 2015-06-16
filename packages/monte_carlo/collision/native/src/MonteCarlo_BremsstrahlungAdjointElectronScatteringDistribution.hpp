@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_AtomicExcitationAdjointElectronScatteringDistribuiton.hpp
+//! \file   MonteCarlo_BremsstrahlungAdjointElectronScatteringDistribuiton.hpp
 //! \author Luke Kersting
-//! \brief  The atomic excitation adjoint electron scattering distribution declaration.
+//! \brief  The bremsstrahlung adjoint electron scattering distribution declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_ATOMIC_EXCITATION_ADJOINT_ELECTRON_SCATTERING_DISTRIBUTION_HPP
-#define MONTE_CARLO_ATOMIC_EXCITATION_ADJOINT_ELECTRON_SCATTERING_DISTRIBUTION_HPP
+#ifndef MONTE_CARLO_BREMSSTRAHLUNG_ADJOINT_ELECTRON_SCATTERING_DISTRIBUTION_HPP
+#define MONTE_CARLO_BREMSSTRAHLUNG_ADJOINT_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -19,38 +19,36 @@
 
 namespace MonteCarlo{
 
-//! The atomic excitation adjoint electron scattering distribution class
-class AtomicExcitationAdjointElectronScatteringDistribution : public AdjointElectronScatteringDistribution
+//! The bremsstrahlung adjoint electron scattering distribution class
+class BremsstrahlungAdjointElectronScatteringDistribution : public AdjointElectronScatteringDistribution
 {
 
 public:
 
-  //! Typedef for the adjoint atomic excitation distribution
-  typedef Teuchos::RCP<const Utility::OneDDistribution> AtomicDistribution;
+  //! Typedef for the adjoint bremsstrahlung distribution
+  typedef Teuchos::Array<Utility::Pair<double,
+		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
+  BremsstrahlungDistribution;
 
   //! Constructor
-  AtomicExcitationAdjointElectronScatteringDistribution(
-//	       const double max_energy,
-	       const AtomicDistribution& energy_gain_distribution );
+  BremsstrahlungAdjointElectronScatteringDistribution(
+     const BremsstrahlungDistribution& bremsstrahlung_scattering_distribution );
 
   //! Destructor
-  virtual ~AtomicExcitationAdjointElectronScatteringDistribution()
+  virtual ~BremsstrahlungAdjointElectronScatteringDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
-                   const double outgoing_energy ) const
-  { /*...*/}
+                   const double outgoing_energy ) const;
 
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
-                      const double outgoing_energy ) const
-  { /*...*/}
+                      const double outgoing_energy ) const;
 
   //! Evaluate the integrated cross section (b)
   double evaluateIntegratedCrossSection( const double incoming_energy,
-                                         const double precision) const
-  { /*...*/}
+                                         const double precision) const;
 
 
   //! Sample an outgoing energy and direction from the distribution
@@ -68,27 +66,18 @@ public:
   void scatterAdjointElectron( AdjointElectronState& electron,
                                ParticleBank& bank,
                                SubshellType& shell_of_interaction ) const;
-/*  
-protected:
-
-  //! Return the max energy
-  double getMaxEnergy() const;
-*/
   
 private:
 
-  // adjoint atomic excitation energy gain tables
-  AtomicDistribution d_energy_gain_distribution;
-  
-  // The maximum energy
-  double d_max_energy;
+  // bremsstrahlung scattering distribution
+  BremsstrahlungDistribution d_bremsstrahlung_scattering_distribution;
 
 };
 
 } // end MonteCarlo namespace
 
-#endif // end MONTE_CARLO_ATOMIC_EXCITATION_ADJOINT_ELECTRON_SCATTERING_DISTRIBUTION_HPP
+#endif // end MONTE_CARLO_BREMSSTRAHLUNG_ADJOINT_ELECTRON_SCATTERING_DISTRIBUTION_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_AtomicExcitationAdjointElectronScatteringDistribution.hpp
+// end MonteCarlo_BremsstrahlungAdjointElectronScatteringDistribution.hpp
 //---------------------------------------------------------------------------//

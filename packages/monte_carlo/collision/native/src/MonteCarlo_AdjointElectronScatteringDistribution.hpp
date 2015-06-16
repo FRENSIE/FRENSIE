@@ -33,11 +33,11 @@ public:
 
   //! Evaluate the distribution
   virtual double evaluate( const double incoming_energy,
-			   const double scattering_angle_cosine ) const = 0;
+			   const double outgoing_energy ) const = 0;
 
   //! Evaluate the PDF
   virtual double evaluatePDF( const double incoming_energy,
-			      const double scattering_angle_cosine ) const = 0;
+			      const double outgoing_energy ) const = 0;
 
   //! Evaluate the integrated cross section (cm^2)
   virtual double evaluateIntegratedCrossSection(

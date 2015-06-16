@@ -35,10 +35,10 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
   // Use simple analytical photon angular distribution
   d_angular_distribution_func = boost::bind<double>( 
-		    &BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle,
-		    boost::cref( *this ),
-		    _1,
-            _2 );
+           &BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle,
+           boost::cref( *this ),
+           _1,
+           _2 );
 }
 
 // Constructor with detailed tabular photon angular distribution
@@ -82,27 +82,60 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
             _2 );
 }
 
+
+// Sample an outgoing energy and direction from the distribution
+void BremsstrahlungElectronScatteringDistribution::sample( 
+             const double incoming_energy,
+             double& outgoing_energy,
+             double& scattering_angle_cosine ) const
+{
+  // Electron angle scattering is assumed to be negligible
+  scattering_angle_cosine = 1.0;
+
+  outgoing_energy = incoming_energy - 
+                    sampleTwoDDistributionCorrelated( 
+                                     incoming_energy,
+                                     d_bremsstrahlung_scattering_distribution );
+}
+
+// Sample an outgoing energy and direction and record the number of trials
+void BremsstrahlungElectronScatteringDistribution::sampleAndRecordTrials( 
+                            const double incoming_energy,
+                            double& outgoing_energy,
+                            double& scattering_angle_cosine,
+                            unsigned& trials ) const
+{
+  trials++;
+
+  sample( incoming_energy, outgoing_energy, scattering_angle_cosine );
+  
+}
 // Randomly scatter the electron
 void BremsstrahlungElectronScatteringDistribution::scatterElectron( 
                                 ElectronState& electron,
-			                    ParticleBank& bank,
+                                ParticleBank& bank,
                                 SubshellType& shell_of_interaction ) const
 {
-  // energy of the bremsstrahlung photon
-  double photon_energy;
-
   // Incoming electron energy
   double incoming_energy = electron.getEnergy();
 
-  // Sample knock-on electron energy
-  photon_energy = sampleTwoDDistributionCorrelated( electron.getEnergy(),
-                                     d_bremsstrahlung_scattering_distribution );
-  //std::cout << " bremmstrahlung called" << std::endl;
-  // Set the new energy
-  electron.setEnergy( electron.getEnergy() - photon_energy );
+  // outgoing electron energy
+  double outgoing_energy;
 
-  // Increment the electron generation number
-  electron.incrementGenerationNumber();
+  // Scattering angle of the electron
+  double scattering_angle_cosine;
+
+  // energy of the bremsstrahlung photon
+  double photon_energy;
+
+  // photon outgoing angle cosine
+  double photon_angle_cosine;
+
+  // Sample outgoing electron energy
+  sample( incoming_energy, outgoing_energy, scattering_angle_cosine );
+
+  // Calculate the photon energy
+  photon_energy = electron.getEnergy() - outgoing_energy;
 
   // Create new photon
   Teuchos::RCP<PhotonState> bremsstrahlung_photon( 
@@ -112,15 +145,20 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   bremsstrahlung_photon->setEnergy( photon_energy );
 
   // Sample the photon outgoing angle cosine
-  double angle_cosine;
+  photon_angle_cosine = d_angular_distribution_func( incoming_energy, 
+                                                     photon_energy );
 
-  angle_cosine = d_angular_distribution_func( incoming_energy, photon_energy );
-
-  bremsstrahlung_photon->rotateDirection( angle_cosine,
+  bremsstrahlung_photon->rotateDirection( photon_angle_cosine,
 			                  sampleAzimuthalAngle() );
 
   // Bank the photon
   bank.push( bremsstrahlung_photon );
+
+  // Set the new electron energy
+  electron.setEnergy( outgoing_energy );
+
+  // Increment the electron generation number
+  electron.incrementGenerationNumber();
 }
 
 // Sample the outgoing photon direction from the analytical function
