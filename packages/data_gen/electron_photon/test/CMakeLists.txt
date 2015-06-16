@@ -18,6 +18,11 @@ ADD_EXECUTABLE(tstStandardElectronPhotonRelaxationDataGenerator tstStandardElect
 TARGET_LINK_LIBRARIES(tstStandardElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
 ADD_TEST(StandardElectronPhotonRelaxationDataGenerator_test tstStandardElectronPhotonRelaxationDataGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_c_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p")
 
+ADD_EXECUTABLE(tstAdjointBremsstrahlungCrossSectionEvaluator
+  tstAdjointBremsstrahlungCrossSectionEvaluator.cpp)
+TARGET_LINK_LIBRARIES(tstAdjointBremsstrahlungCrossSectionEvaluator data_gen_electron_photon)
+ADD_TEST(AdjointBremsstrahlungCrossSectionEvaluator_test tstAdjointBremsstrahlungCrossSectionEvaluator --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_ace_table="1000.12p")
+
 ADD_EXECUTABLE(tstAdjointIncoherentCrossSectionEvaluator
   tstAdjointIncoherentCrossSectionEvaluator.cpp)
 TARGET_LINK_LIBRARIES(tstAdjointIncoherentCrossSectionEvaluator data_gen_electron_photon)

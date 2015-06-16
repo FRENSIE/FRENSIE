@@ -58,9 +58,9 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
 
   // Use detailed photon angular distribution
   d_angular_distribution_func = boost::bind<double>( 
-		    &BremsstrahlungElectronScatteringDistribution::SampleTabularAngle,
-		    boost::cref( *this ),
-		    _1,
+            &BremsstrahlungElectronScatteringDistribution::SampleTabularAngle,
+            boost::cref( *this ),
+            _1,
             _2 );
 }
 
@@ -78,8 +78,8 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
   d_angular_distribution_func = boost::bind<double>( 
 		    &BremsstrahlungElectronScatteringDistribution::Sample2BSAngle,
 		    boost::cref( *this ),
-		    _1,
-            _2 );
+                   _1,
+                   _2 );
 }
 
 
@@ -119,24 +119,23 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   // Incoming electron energy
   double incoming_energy = electron.getEnergy();
 
-  // outgoing electron energy
-  double outgoing_energy;
-
-  // Scattering angle of the electron
-  double scattering_angle_cosine;
-
   // energy of the bremsstrahlung photon
   double photon_energy;
 
   // photon outgoing angle cosine
   double photon_angle_cosine;
 
-  // Sample outgoing electron energy
-  sample( incoming_energy, outgoing_energy, scattering_angle_cosine );
+  // Sample bremsstrahlung photon energy
+  photon_energy = sampleTwoDDistributionCorrelated( 
+                        electron.getEnergy(),
+                        d_bremsstrahlung_scattering_distribution );
 
-  // Calculate the photon energy
-  photon_energy = electron.getEnergy() - outgoing_energy;
+  // Set the new electron energy
+  electron.setEnergy( incoming_energy - photon_energy );
 
+  // Increment the electron generation number
+  electron.incrementGenerationNumber();
+  
   // Create new photon
   Teuchos::RCP<PhotonState> bremsstrahlung_photon( 
                            new PhotonState( electron, true, true ) );
@@ -153,12 +152,6 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 
   // Bank the photon
   bank.push( bremsstrahlung_photon );
-
-  // Set the new electron energy
-  electron.setEnergy( outgoing_energy );
-
-  // Increment the electron generation number
-  electron.incrementGenerationNumber();
 }
 
 // Sample the outgoing photon direction from the analytical function

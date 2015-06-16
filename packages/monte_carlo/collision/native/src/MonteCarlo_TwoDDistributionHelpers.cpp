@@ -133,7 +133,7 @@ double evaluateTwoDDistributionCorrelatedPDF(
                                   dependent_variable );
   }
   else
-    return lower_bin_boundary->second->evaluatePDF( dependent_value );
+    return lower_bin_boundary->second->evaluatePDF( dependent_variable );
 }
 
 // Sample an upper and lower distribution using a common random variable

@@ -18,20 +18,20 @@
 #include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_ContractException.hpp"
-#include "MonteCarlo_TwoDDistributionHelper.hpp"
+#include "MonteCarlo_TwoDDistributionHelpers.hpp"
 
 namespace DataGen{
 
 // Constructor
 AdjointBremsstrahlungCrossSectionEvaluator::AdjointBremsstrahlungCrossSectionEvaluator(
-    const Teuchos::RCP<const Utility::OneDDistribution>& forward_cross_sections,
-    const BremsstrahlungDistribution& energy_loss_function )
-  : d_forward_cross_sections( forward_cross_sections ),
-    d_energy_loss_function( energy_loss_function )
+    Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& bremsstrahlung_reaction,
+    const BremsstrahlungDistribution& energy_loss_distribution )
+  : d_bremsstrahlung_reaction( bremsstrahlung_reaction ),
+    d_energy_loss_distribution( energy_loss_distribution )
 {
   // Make sure the data is valid
-  testPrecondition( d_forward_cross_sections.size() > 0 );
-  testPrecondition( d_energy_loss_function.size() > 0 );
+  testPrecondition( !d_bremsstrahlung_reaction.is_null() );
+  testPrecondition( d_energy_loss_distribution.size() > 0 );
 }
 
 // Evaluate the differential adjoint bremsstrahlung cross section (dc/dx)
@@ -39,14 +39,18 @@ double AdjointBremsstrahlungCrossSectionEvaluator::evaluateDifferentialCrossSect
 	  const double incoming_energy, 
           const double outgoing_energy ) const
 {
-  // Evaluate the forward cross section at the incoming energy
-  double forward_cs = d_forward_cross_sections.evaluate( incoming_energy );
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( outgoing_energy > 0.0 );
 
-  // Evaluate the energy loss function at a given incoming and outgoing energy
+  // Evaluate the forward cross section at the incoming energy
+  double forward_cs = d_bremsstrahlung_reaction->getCrossSection( incoming_energy );
+
+  // Evaluate the energy loss distribution at a given incoming and outgoing energy
   double forward_pdf = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
                                      incoming_energy,
                                      outgoing_energy,
-                                     d_energy_loss_function );
+                                     d_energy_loss_distribution );
 
   return forward_cs*forward_pdf;
 }
@@ -56,7 +60,28 @@ double AdjointBremsstrahlungCrossSectionEvaluator::evaluateCrossSection(
                                const double energy, 
 			       const double precision ) const
 {
+  // Make sure the energies are valid
+  testPrecondition( energy > 0.0 );
 
+  double cross_section = 0.0;
+
+  // Create boost rapper function for the adjoint Bremsstahlung differential cross section
+  boost::function<double (double x)> diff_adjoint_brem_wrapper = 
+    boost::bind<double>( &AdjointBremsstrahlungCrossSectionEvaluator::evaluateDifferentialCrossSection,
+                         boost::cref( *this ),
+                         _1,
+                         energy );
+
+    double abs_error;
+    
+    Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
+
+    quadrature_kernel.integrateAdaptively<15>(
+					diff_adjoint_brem_wrapper,
+					d_energy_loss_distribution.front().first,
+					d_energy_loss_distribution.back().first,
+					cross_section,
+					abs_error );
 }
 
 } // end DataGen namespace

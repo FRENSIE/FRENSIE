@@ -58,7 +58,7 @@ public:
   static void createVoidAbsorptionReaction(
         Teuchos::RCP<ElectroatomicReaction>& void_absorption_reaction );
 
-protected:
+//protected:
   
   //! Remove the zeros from a cross section
   static void removeZerosFromCrossSection(

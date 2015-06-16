@@ -11,9 +11,23 @@
 
 // Boost Includes
 #include <boost/scoped_ptr.hpp>
+/*
+// Std Lib Includes
+#include <limits>
+
+// Boost Includes
+#include <boost/distribution.hpp>
+#include <boost/bind.hpp>
+*/
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
+#include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
+
 
 namespace DataGen{
 
@@ -30,8 +44,8 @@ public:
 
   //! Constructor
   AdjointBremsstrahlungCrossSectionEvaluator(
-    const Teuchos::RCP<const Utility::OneDDistribution>& forward_cross_sections,
-    const BremsstrahlungDistribution& energy_loss_function );
+    Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& bremsstrahlung_reaction,
+    const BremsstrahlungDistribution& energy_loss_distribution );
 
   //! Destructor
   ~AdjointBremsstrahlungCrossSectionEvaluator()
@@ -49,10 +63,10 @@ public:
 private:
 
   // The forward cross section table ( simga(E) )
-  Teuchos::RCP<const Utility::OneDDistribution> d_forward_cross_sections;
+  Teuchos::RCP<MonteCarlo::ElectroatomicReaction> d_bremsstrahlung_reaction;
 
-  // The energy loss function
-  BremsstrahlungDistribution d_energy_loss_function;
+  // The energy loss distribution
+  BremsstrahlungDistribution d_energy_loss_distribution;
 };
 
 } // end DataGen namespace

@@ -28,31 +28,6 @@ BremsstrahlungAdjointElectronScatteringDistribution::BremsstrahlungAdjointElectr
   testPrecondition( d_bremsstrahlung_scattering_distribution.size() > 0 );
 }
 
-// Evaluate the adjoint distribution
-double BremsstrahlungAdjointElectronScatteringDistribution::evaluate( 
-                   const double incoming_energy,
-                   const double outgoing_energy ) const
-{
-double pdf_value = evaluateTwoDDistributionCorrelatedPDF( 
-                                     incoming_energy,
-                                     outgoing_energy,
-                                     d_bremsstrahlung_scattering_distribution );
-
-
-}
-
-// Evaluate the PDF
-double BremsstrahlungAdjointElectronScatteringDistribution::evaluatePDF( 
-                   const double incoming_energy,
-                   const double outgoing_energy ) const;
-
-// Evaluate the integrated adjoint cross section (b)
-double BremsstrahlungAdjointElectronScatteringDistribution::evaluateIntegratedCrossSection( 
-                   const double incoming_energy,
-                   const double precision) const;
-
-
-
 // Sample an outgoing energy and direction from the distribution
 void BremsstrahlungAdjointElectronScatteringDistribution::sample( 
              const double incoming_energy,
