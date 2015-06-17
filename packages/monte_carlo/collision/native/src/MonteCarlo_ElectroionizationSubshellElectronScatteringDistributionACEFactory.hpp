@@ -35,7 +35,7 @@ public:
 	Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>&
 	  electroionization_subshell_distribution );
 
-protected:
+//protected:
 
 
   //! Create the electroionization subshell distribution function

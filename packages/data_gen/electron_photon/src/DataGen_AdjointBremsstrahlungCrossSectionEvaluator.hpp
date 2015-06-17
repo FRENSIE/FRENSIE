@@ -62,7 +62,7 @@ public:
 
 private:
 
-  // The forward cross section table ( simga(E) )
+  // The forward reaction data
   Teuchos::RCP<MonteCarlo::ElectroatomicReaction> d_bremsstrahlung_reaction;
 
   // The energy loss distribution
