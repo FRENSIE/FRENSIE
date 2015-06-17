@@ -301,7 +301,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  // Generate a probe with energy 0.8
+  // Generate a probe with energy 0.08
   adjoint_photon.setEnergy( 0.07 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
 

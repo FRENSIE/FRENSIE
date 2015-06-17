@@ -66,10 +66,6 @@ protected:
   bool isEnergyAboveScatteringWindow( const double energy_of_interest,
 				      const double initial_energy ) const;
 
-  //! Check if an energy is below the scattering window
-  bool isEnergyBelowScatteringWindow( const double energy_of_interest,
-				      const double initial_energy ) const;
-
 private:
 
   // Evaluate the scattering function

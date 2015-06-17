@@ -93,7 +93,7 @@ double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnit
 					     abs_error );
 
   // Make sure the integrated cross section is valid
-  testPostcondition( integrated_cs > 0.0 );
+  testPostcondition( integrated_cs >= 0.0 );
 
   return integrated_cs;
 }
@@ -165,9 +165,7 @@ void WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitCo
   testPostcondition( scattering_angle_cosine >= min_scattering_angle_cosine );
   testPostcondition( scattering_angle_cosine <= 1.0 );
   // Make sure the adjoint Compton line energy is valid
-  testPostcondition( outgoing_energy == calculateAdjointComptonLineEnergy( 
-						   incoming_energy,
-						   scattering_angle_cosine ) );
+  testPostcondition( outgoing_energy >= incoming_energy );
 }
 
 // Randomly scatter the photon and return the shell that was interacted with
@@ -209,19 +207,6 @@ bool WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitCo
 				            const double initial_energy ) const
 {
   return initial_energy >= energy_of_interest;
-}
-
-// Check if an energy is below the scattering window
-/*! \details Becuase of the scattering function evaluating to zero when 
- * the scattering angle cosine is 1.0, the scattering window lower bound must
- * exclude the energy of interest.
- */
-template<typename ScatteringFunctionArgUnitConversionPolicy>
-bool WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::isEnergyBelowScatteringWindow( 
-				            const double energy_of_interest,
-				            const double initial_energy ) const
-{
-  return initial_energy <= energy_of_interest;
 }
 
 // Evaluate the scattering function
