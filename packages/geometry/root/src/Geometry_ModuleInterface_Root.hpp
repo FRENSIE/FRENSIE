@@ -17,6 +17,7 @@
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
+#include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
 #include "Geometry_ModuleInterfaceDecl.hpp"
@@ -103,6 +104,12 @@ public:
 				const double position[3],
 				double normal[3] );
 
+  //! Assign unique identites to all cells
+  static void assignCellIds();
+  
+  //! Calculate and store the volumes of all cells
+  static void storeCellVolumes();
+
   //! Get the volume of a cell
   static double getCellVolume( const InternalCellHandle cell );
   
@@ -145,8 +152,127 @@ private:
 
   // An instance of TGeoManager
   static TGeoManager* const tgeomanager_instance;
+  
+  // Teuchos array of volumes
+  static Teuchos::Array<double> tvolumes;
+  
+    // The map of cell ids and cell entity handles
+  static boost::unordered_map<InternalCellHandle,ExternalCellHandle> 
+  cell_handle_map;
 
 };
+
+// Set the geometry handler instance
+/*! \details ROOT returns gGeoManager which handles the specific geometry 
+     loaded into ROOT.
+ */
+inline void ModuleInterface<Root>::setHandlerInstance( 
+			    TGeoManager* handler_instance )
+{ /* ... */ }
+
+// Initialize a new ray (after a collision)
+/*! \details ROOT has a class, FindNextBoundary() which takes a position and
+ *  direction to determine where the next boundary crossed is, but strict ray
+ *  creation is not required.
+ */
+inline void ModuleInterface<Root>::newRay()
+{ /* ... */ }
+
+
+// Check if the cell is a termination cell
+inline bool ModuleInterface<Root>::isTerminationCell( 
+						const InternalCellHandle cell )
+{ 
+  ExternalCellHandle cell_external = 
+    ModuleInterface<Root>::getExternalCellHandle( cell );
+
+  return false; // TODO
+}
+
+// Calculate the surface normal at a point on the surface
+/* \details This function will not modify normal[3] if the point is not on a 
+ *  boundary.
+ */
+inline void ModuleInterface<Root>::getSurfaceNormal( 
+					   const InternalSurfaceHandle surface,
+					   const double position[3],
+					   double normal[3] )
+{
+  if tgeomanager_instance->GetCurrentNavigator()->IsOnBoundary()
+  {
+    Root::Double_t* normal_t = tgeomanager_instance->FindNormal();
+    
+    normal[0] = normal_t[0];
+    normal[1] = normal_t[1];
+    normal[2] = normal_t[2];
+  }
+}
+
+// Get the volume of a cell
+inline double ModuleInterface<Root>::getCellVolume( 
+						const InternalCellHandle cell )
+{
+  double volume = 0.0;
+  
+  ExternalCellHandle cell_external = 
+    ModuleInterface<Root>::getExternalCellHandle( cell );
+  
+  return tvolumes[cell_external];
+}
+
+// Get the surface area of a surface bounding a cell
+/*! \details Currently Root cannot calculate the surface area of most bounded
+ *  volumes.
+ */ 
+inline double ModuleInterface<Root>::getCellSurfaceArea( 
+					   const InternalSurfaceHandle surface,
+					   const InternalCellHandle )
+{
+  return 1;
+}
+
+// Check that an external cell handle exists
+inline bool ModuleInterface<Root>::doesCellExist(
+						    const ExternalCellId cell )
+{
+  return true;
+}
+
+// Get the internal surf. handle corresponding to the external surf. handle
+inline ModuleInterface<Root>::InternalSurfaceHandle 
+ModuleInterface<Root>::getInternalSurfaceHandle(
+				 const ExternalSurfaceHandle surface_external )
+{ /* ... */ } // TODO
+
+// Get the internal surf. handle corresponding to the external surf. handle
+inline ModuleInterface<Root>::InternalSurfaceHandle 
+ModuleInterface<Root>::getInternalSurfaceHandle(
+				           const ExternalSurfaceId surface_id )
+{ /* ... */ } // TODO
+
+// Get the internal cell handle corresponding to the external cell handle
+inline ModuleInterface<Root>::InternalCellHandle 
+ModuleInterface<Root>::getInternalCellHandle( 
+				       const ExternalCellHandle cell_external )
+{ /* ... */ } // TODO
+
+// Get the internal cell handle corresponding to the external cell handle
+inline ModuleInterface<Root>::InternalCellHandle 
+ModuleInterface<Root>::getInternalCellHandle( 
+				                 const ExternalCellId cell_id )
+{ /* ... */ } // TODO
+
+// Get the external surf. handle corresponding to the internal surf. handle
+inline ModuleInterface<Root>::ExternalSurfaceHandle 
+ModuleInterface<Root>::getExternalSurfaceHandle(
+					  const InternalSurfaceHandle surface )
+{ /* ... */ } // TODO
+
+// Get the external cell handle corresponding to the internal cell handle
+inline ModuleInterface<Root>::ExternalCellHandle 
+ModuleInterface<Root>::getExternalCellHandle(
+					        const InternalCellHandle cell )
+{ /* ... */ } // TODO
 
 } // end Geometry namespace
 
