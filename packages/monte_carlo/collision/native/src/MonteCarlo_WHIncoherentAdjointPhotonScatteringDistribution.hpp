@@ -20,6 +20,7 @@
 namespace MonteCarlo{
 
 //! The Waller-Hartree incoherent adjoint photon scattering distribution class
+template<typename ScatteringFunctionArgUnitConversionPolicy>
 class WHIncoherentAdjointPhotonScatteringDistribution : public IncoherentAdjointPhotonScatteringDistribution
 {
 
@@ -80,49 +81,15 @@ private:
   Teuchos::RCP<const Utility::OneDDistribution> d_scattering_function;
 };
 
-// Evaluate the scattering function
-inline double
-WHIncoherentAdjointPhotonScatteringDistribution::evaluateScatteringFunction(
-					 const double incoming_energy,
-					 const double scattering_angle_cosine )
-{
-  // Make sure the incoming energy is valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= this->getMaxEnergy() );
-  // Make sure the scattering angle cosine is valid
-  testPrecondition( scattering_angle_cosine >= 
-		    calculateMinScatteringAngleCosine( incoming_energy,
-						       this->getMaxEnergy() ));
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  // Calculate the outgoing energy
-  const double outgoing_energy = 
-    calculateAdjointComptonLineEnergy( incoming_energy,
-				       scattering_angle_cosine );
-
-  // Calculate the inverse wavelength of the outgoing photon (1/cm)
-  const double inverse_wavelength = outgoing_energy/
-    (Utility::PhysicalConstants::planck_constant*
-     Utility::PhysicalConstants::speed_of_light);
-
-  // The scattering function argument
-  double scattering_function_arg = 
-    sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength;
-
-  if( scattering_function_arg >=
-      d_scattering_function->getUpperBoundOfIndepVar() )
-    scattering_function_arg = d_scattering_function->getUpperBoundOfIndepVar();
-
-  // Make sure the scattering function arg is valid
-  testPostcondition( scattering_function_arg >=
-		     d_scattering_function->getLowerBoundOfIndepVar() );
-  testPostcondition( scattering_function_arg <=
-		     d_scattering_function->getUpperBoundOfIndepVar() );
-
-  return d_scattering_function->evaluate( scattering_function_arg );
-}
-
 } // end MonteCarlo namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "MonteCarlo_WHIncoherentAdjointPhotonScatteringDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end MONTE_CARLO_WH_INCOHERENT_ADJOINT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
