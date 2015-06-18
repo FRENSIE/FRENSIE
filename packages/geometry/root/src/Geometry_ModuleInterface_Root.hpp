@@ -40,7 +40,7 @@ namespace Geometry{
 template<>
 class ModuleInterface<Root>
 {
-Public:
+public:
 
   //! The external surface id class (used within the geometry handler)
   typedef Int_t ExternalSurfaceId;
@@ -111,9 +111,6 @@ public:
 
   //! Assign unique identites to all cells
   static void assignCellIds();
-  
-  //! Calculate and store the volumes of all cells
-  static void storeCellVolumes();
 
   //! Get the volume of a cell
   static double getCellVolume( const InternalCellHandle cell );
@@ -132,17 +129,9 @@ public:
   static InternalSurfaceHandle getInternalSurfaceHandle(
 				const ExternalSurfaceHandle surface_external );
 
-  //! Get the internal surf. handle corresponding to the external surf. id
-  static InternalSurfaceHandle getInternalSurfaceHandle(
-					  const ExternalSurfaceId surface_id );
-
   //! Get the internal cell handle corresponding to the external cell handle
   static InternalCellHandle getInternalCellHandle( 
 				      const ExternalCellHandle cell_external );
-
-  //! Get the internal cell handle corresponding to the external cell id
-  static InternalCellHandle getInternalCellHandle(
-						const ExternalCellId cell_id );
 
   //! Get the external surf. handle corresponding to the internal surf. handle
   static ExternalSurfaceHandle getExternalSurfaceHandle(
@@ -154,17 +143,6 @@ public:
 					       const InternalCellHandle cell );
 
 private:
-
-  // An instance of TGeoManager
-  static TGeoManager* const tgeomanager_instance;
-  
-  // Teuchos array of volumes
-  static Teuchos::Array<double> tvolumes;
-  
-  // The map of cell ids and cell entity handles
-  static boost::unordered_map<InternalCellHandle,ExternalCellHandle> 
-  cell_handle_map;
-
 };
 
 // Set the geometry handler instance
@@ -192,7 +170,7 @@ inline bool ModuleInterface<Root>::isTerminationCell(
     ModuleInterface<Root>::getExternalCellHandle( cell );
 
   // Check if cell material is equal to pre-defined terminal material 
-  TGeoVolume* current_volume = tgeomanager_instance->GetVolume( cell_external );
+  TGeoVolume* current_volume = Root::getManager()->GetVolume( cell_external );
   TGeoMaterial* current_material = current_volume->GetMaterial();
   
   return current_material->IsEq( Root::getTerminalMaterial() );
@@ -207,9 +185,9 @@ inline void ModuleInterface<Root>::getSurfaceNormal(
 					   const double position[3],
 					   double normal[3] )
 {
-  if tgeomanager_instance->GetCurrentNavigator()->IsOnBoundary()
+  if( Root::getManager()->GetCurrentNavigator()->IsOnBoundary() )
   {
-    double* normal_t = tgeomanager_instance->FindNormal();
+    double* normal_t = Root::getManager()->FindNormal();
     
     normal[0] = normal_t[0];
     normal[1] = normal_t[1];
@@ -226,7 +204,7 @@ inline double ModuleInterface<Root>::getCellVolume(
   ExternalCellHandle cell_external = 
     ModuleInterface<Root>::getExternalCellHandle( cell );
   
-  return tvolumes[cell_external];
+  return Root::getManager()->GetVolume( cell_external )->Capacity();
 }
 
 // Get the surface area of a surface bounding a cell
@@ -244,44 +222,48 @@ inline double ModuleInterface<Root>::getCellSurfaceArea(
 inline bool ModuleInterface<Root>::doesCellExist(
 						    const ExternalCellId cell )
 {
-  return true;
+  return Root::getManager()->GetVolume( cell ) != NULL;
 }
 
 // Get the internal surf. handle corresponding to the external surf. handle
+/*! \details Root uses integer handles so use implicit casting.
+ */ 
 inline ModuleInterface<Root>::InternalSurfaceHandle 
 ModuleInterface<Root>::getInternalSurfaceHandle(
 				 const ExternalSurfaceHandle surface_external )
-{ /* ... */ } // TODO
-
-// Get the internal surf. handle corresponding to the external surf. handle
-inline ModuleInterface<Root>::InternalSurfaceHandle 
-ModuleInterface<Root>::getInternalSurfaceHandle(
-				           const ExternalSurfaceId surface_id )
-{ /* ... */ } // TODO
+{  
+  return surface_external;
+} 
 
 // Get the internal cell handle corresponding to the external cell handle
+/*! \details Root uses integer handles so use implicit casting.
+ */ 
 inline ModuleInterface<Root>::InternalCellHandle 
 ModuleInterface<Root>::getInternalCellHandle( 
 				       const ExternalCellHandle cell_external )
-{ /* ... */ } // TODO
-
-// Get the internal cell handle corresponding to the external cell handle
-inline ModuleInterface<Root>::InternalCellHandle 
-ModuleInterface<Root>::getInternalCellHandle( 
-				                 const ExternalCellId cell_id )
-{ /* ... */ } // TODO
+{ 
+  return cell_external;
+} 
 
 // Get the external surf. handle corresponding to the internal surf. handle
+/*! \details Root uses integer handles so use implicit casting.
+ */ 
 inline ModuleInterface<Root>::ExternalSurfaceHandle 
 ModuleInterface<Root>::getExternalSurfaceHandle(
 					  const InternalSurfaceHandle surface )
-{ /* ... */ } // TODO
+{ 
+  return surface;
+} 
 
 // Get the external cell handle corresponding to the internal cell handle
+/*! \details Root uses integer handles so use implicit casting.
+ */ 
 inline ModuleInterface<Root>::ExternalCellHandle 
 ModuleInterface<Root>::getExternalCellHandle(
 					        const InternalCellHandle cell )
-{ /* ... */ } // TODO
+{ 
+  return cell;
+} 
 
 } // end Geometry namespace
 

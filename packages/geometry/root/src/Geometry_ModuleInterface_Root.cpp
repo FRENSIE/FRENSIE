@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "Geometry_ModuleInterface_Root.hpp"
+#include "Utility_ExceptionTestMacros.hpp"
 
 namespace Geometry{
 
@@ -18,45 +19,42 @@ ModuleInterface<Root>::invalid_external_surface_handle = 0;
 const ModuleInterface<Root>::ExternalCellHandle
 ModuleInterface<Root>::invalid_external_cell_handle = 0;
 
-Root::TGeoManager* const ModuleInterface<Root>::tgeomanager_instance =
-  Root::getManager();
-  
-boost::unordered_map<ModuleInterface<Root>::InternalCellHandle,
-		     ModuleInterface<Root>::ExternalCellHandle> 
-ModuleInterface<Root>::cell_handle_map;
-
 // Do just in time initialization of interface members
 static void initialize()
 { 
   #pragma omp master
   {
-    // TODO
+    ModuleInterface<Root>::assignCellIds();
   }
   #pragma omp barrier
 }
 
 // Enable support for multiple threads
 static void enableThreadSupport( const unsigned num_threads )
-{ /* ... */ } // TODO
+{  
+  THROW_EXCEPTION( std::logic_error,
+                   "Error: The Root module interface does not support "
+                   "multiple threads yet!");
+}
 
 // Assign unique identities to all volumes in the geometry
 inline void ModuleInterface<Root>::assignCellIds()
 {
-  TObjArray* volume_list = tgeomanager_instance->GetListOfVolumes();
+  TObjArray* volume_list = Root::getManager()->GetListOfVolumes();
   TIterator* volume_list_iterator = volume_list->MakeIterator();
   int number_volumes = volume_list->GetEntries();
   
   for (int i=0; i < number_volumes; i++) 
   {
-    TObject* current_volume = volume_list_iterator->next();
-    current_volume->SetUniqueID(i + 1) 
+    TObject* current_volume = volume_list_iterator->Next();
+    current_volume->SetUniqueID(i + 1); 
   }
 }
 
 // Compute and map all cell volumes
 inline void ModuleInterface<Root>::storeCellVolumes()
 {
-  TObjArray* volume_list = tgeomanager_instance->GetListOfVolumes();
+  TObjArray* volume_list = Root::getManager()->GetListOfVolumes();
   TIterator* volume_list_iterator = volume_list->MakeIterator();
   int number_volumes = volume_list->GetEntries();
   
@@ -74,10 +72,10 @@ inline void ModuleInterface<Root>::storeCellVolumes()
 // Find the cell that contains a given point (start of history)
 static InternalCellHandle findCellContainingPoint( const Ray& ray )
 {
-  tgeomanager_instance->SetCurrentPosition( ray.getPosition() );
-  tgeomanager_instance->SetCurrentDirection( ray.getDirection() );
+  Root::getManager()->SetCurrentPosition( ray.getPosition() );
+  Root::getManager()->SetCurrentDirection( ray.getDirection() );
 
-  TGeoNode* current_node = tgeomanager_instance->GetCurrentNode();
+  TGeoNode* current_node = Root::getManager()->GetCurrentNode();
   TGeoVolume* current_volume = current_node->GetVolume();
   int cell_external = current_volume->GetUniqueID();
   
@@ -91,7 +89,7 @@ static InternalCellHandle findCellContainingPoint(
 				 const InternalSurfaceHandle surface )
 {
   // Find the new node occupied after surface crossing
-  TGeoNode* current_node = tgeomanager_instance->GetCurrentNode();
+  TGeoNode* current_node = Root::getManager()->GetCurrentNode();
   TGeoVolume* current_volume = current_node->GetVolume();
   int cell_external = current_volume->GetUniqueID();
   
@@ -104,13 +102,13 @@ static void fireRay( const Ray& ray,
 	       InternalSurfaceHandle& surface_hit,
 	       double& distance_to_surface_hit )
 {
-  tgeomanager_instance->SetCurrentPosition( ray.getPosition() );
-  tgeomanager_instance->SetCurrentDirection( ray.getDirection() );
+  Root::getManager()->SetCurrentPosition( ray.getPosition() );
+  Root::getManager()->SetCurrentDirection( ray.getDirection() );
   
-  tgeomanager_instance->FindNextBoundaryAndStep();
+  Root::getManager()->FindNextBoundaryAndStep();
   
   distance_to_surface_hit = 
-      tgeomanager_instance->GetCurrentNavigator()->GetStep();
+      Root::getManager()->GetCurrentNavigator()->GetStep();
 }	       
 
 // Get the point location w.r.t. a given cell
@@ -120,7 +118,7 @@ static PointLocation getPointLocation( const Ray& ray,
     ExternalCellHandle cell_external = 
       ModuleInterface<Root>::getExternalCellHandle( cell );
       
-    TGeoVolume* volume = tgeomanager_instance->GetVolume( cell_external );
+    TGeoVolume* volume = Root::getManager()->GetVolume( cell_external );
     
     return volume->Contains(ray.getPosition());
 }				    

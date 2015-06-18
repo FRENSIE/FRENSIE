@@ -12,18 +12,6 @@
 
 namespace Geometry{
 
-// Get the geometry manager instance
-TGeoManager* Root::getManager()
-{
-  return d_manager; 
-}
-
-// Get the terminal material
-TGeoMaterial* Root::getTerminalMaterial()
-{
-  return d_terminal_material;
-}
-
 // Initialize the root geometry manager
 void Root::initialize( const std::string& filename )
 {

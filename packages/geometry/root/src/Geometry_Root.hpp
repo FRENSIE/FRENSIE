@@ -41,19 +41,30 @@ static void initialize( const std::string& filename );
 ~Root()
 {/* ... */}
 
+private:
+
+// Constructor
+Root();
+
 // Root TGeoManager
 static TGeoManager* d_manager;
 
 // Root terminal material
 static TGeoMaterial* d_terminal_material;
 
-private:
-
-// Constructor
-Root();
-
-
 };
+
+// Get the geometry manager instance
+inline TGeoManager* Root::getManager()
+{
+  return d_manager; 
+}
+
+// Get the terminal material
+inline TGeoMaterial* Root::getTerminalMaterial()
+{
+  return d_terminal_material;
+}
 
 } // end Geometry namespace
 
