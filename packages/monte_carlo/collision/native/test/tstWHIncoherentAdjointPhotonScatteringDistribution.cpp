@@ -419,12 +419,16 @@ int main( int argc, char** argv )
     critical_line_energies[1] = 
       Utility::PhysicalConstants::electron_rest_mass_energy;
     critical_line_energies[2] = 1.0;
-    
-    // Create the scattering distribution
-    distribution.reset( new MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution<Utility::InverseAngstromConversionPolicy>( 
+
+    Teuchos::RCP<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
+    incoherent_base_dist( new MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution<Utility::InverseAngstromConversionPolicy>( 
 						       20.0,
-						       critical_line_energies,
 						       scattering_function ) );
+    
+    incoherent_base_dist->setCriticalLineEnergies( critical_line_energies );
+
+    // Create the scattering distribution
+    distribution = incoherent_base_dist;
   }
 
   // Initialize the random number generator

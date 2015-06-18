@@ -28,12 +28,8 @@ class TestIncoherentAdjointPhotonScatteringDistribution : public MonteCarlo::Inc
 public:
   
   // Constructor
-  TestIncoherentAdjointPhotonScatteringDistribution(
-	       const double max_energy,
-	       const Teuchos::ArrayRCP<const double>& critical_line_energies )
-    : MonteCarlo::IncoherentAdjointPhotonScatteringDistribution( 
-						       max_energy,
-						       critical_line_energies )
+  TestIncoherentAdjointPhotonScatteringDistribution( const double max_energy )
+    : MonteCarlo::IncoherentAdjointPhotonScatteringDistribution( max_energy )
   { /* ... */ }
 
   // Destructor
@@ -42,13 +38,19 @@ public:
 
   // Evaluate the distribution
   double evaluate( const double incoming_energy,
+		   const double max_energy,
 		   const double scattering_angle_cosine ) const
-  { /* ... */ }
+  { 
+    return 0.0;
+  }
 
   //! Evaluate the integrated cross section (cm^2)
   double evaluateIntegratedCrossSection( const double incoming_energy,
+					 const double max_energy,
 					 const double precision ) const
-  { /* ... */ }
+  { 
+    return 1.0;
+  }
   
   // Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
@@ -100,41 +102,41 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 		   evaluateAdjointKleinNishinaDist )
 {
   double dist_value = 
-    distribution->evaluateAdjointKleinNishinaDist( 0.1, -1.0 );
+    distribution->evaluateAdjointKleinNishinaDist( 0.1, 20.0, -1.0 );
 
   TEST_FLOATING_EQUALITY( dist_value, 0.5617250013852311, 1e-15 );
 
-  dist_value = distribution->evaluateAdjointKleinNishinaDist( 0.1, 0.0 );
+  dist_value = distribution->evaluateAdjointKleinNishinaDist( 0.1, 20.0, 0.0 );
 
   TEST_FLOATING_EQUALITY( dist_value, 0.2613454621535213, 1e-15 );
 
-  dist_value = distribution->evaluateAdjointKleinNishinaDist( 0.1, 1.0 );
+  dist_value = distribution->evaluateAdjointKleinNishinaDist( 0.1, 20.0, 1.0 );
 
   TEST_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
 
   dist_value = 
-    distribution->evaluateAdjointKleinNishinaDist( 1.0, 0.5145510353765 );
+    distribution->evaluateAdjointKleinNishinaDist( 1.0, 20.0, 0.5145510353765);
 
   TEST_FLOATING_EQUALITY( dist_value, 4.818399835538855, 1e-15 );
 
-  dist_value = distribution->evaluateAdjointKleinNishinaDist( 1.0, 0.9 );
+  dist_value = distribution->evaluateAdjointKleinNishinaDist( 1.0, 20.0, 0.9 );
 
   TEST_FLOATING_EQUALITY( dist_value, 0.4634138962142929, 1e-15 );
 
-  dist_value = distribution->evaluateAdjointKleinNishinaDist( 1.0, 1.0 );
+  dist_value = distribution->evaluateAdjointKleinNishinaDist( 1.0, 20.0, 1.0 );
 
   TEST_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
 
   dist_value = 
-    distribution->evaluateAdjointKleinNishinaDist( 10.0, 0.9744500544935 );
+    distribution->evaluateAdjointKleinNishinaDist(10.0, 20.0, 0.9744500544935);
   
   TEST_FLOATING_EQUALITY( dist_value, 0.6110831116179009, 1e-15 );
 
-  dist_value = distribution->evaluateAdjointKleinNishinaDist( 10.0, 0.99 );
+  dist_value = distribution->evaluateAdjointKleinNishinaDist(10.0, 20.0, 0.99);
 
   TEST_FLOATING_EQUALITY( dist_value, 0.5058482673670551, 1e-15 );
 
-  dist_value = distribution->evaluateAdjointKleinNishinaDist( 10.0, 1.0 );
+  dist_value = distribution->evaluateAdjointKleinNishinaDist( 10.0, 20.0, 1.0);
 
   TEST_FLOATING_EQUALITY( dist_value, 0.4989344050883251, 1e-15 );
 }
@@ -251,6 +253,12 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
   TEST_ASSERT( distribution->isEnergyInScatteringWindow( 0.1, 0.1 ) );
 
   TEST_ASSERT( !distribution->isEnergyInScatteringWindow( 0.1, 0.11 ) );
+  
+  TEST_ASSERT( !distribution->isEnergyInScatteringWindow( 21.0, 1.0 ) );
+
+  TEST_ASSERT( !distribution->isEnergyInScatteringWindow( 21.0, 21.0 ) );
+
+  TEST_ASSERT( !distribution->isEnergyInScatteringWindow( 21.0, 22.0 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -329,17 +337,19 @@ TEUCHOS_UNIT_TEST( IncoherentAdjointPhotonScatteringDistribution,
 int main( int argc, char** argv )
 {
   // Create the scattering distribution
-  Teuchos::ArrayRCP<double> critical_line_energies( 4 );
+  Teuchos::ArrayRCP<double> critical_line_energies( 5 );
 
   critical_line_energies[0] = 0.08;
   critical_line_energies[1] = 
     Utility::PhysicalConstants::electron_rest_mass_energy;
   critical_line_energies[2] = 1.0;
   critical_line_energies[3] = 5.0;
-
+  critical_line_energies[4] = 21.0;
+  
   distribution.reset( new TestIncoherentAdjointPhotonScatteringDistribution(
-						    20.0,
-						    critical_line_energies ) );
+							              20.0 ) );
+
+  distribution->setCriticalLineEnergies( critical_line_energies );
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
