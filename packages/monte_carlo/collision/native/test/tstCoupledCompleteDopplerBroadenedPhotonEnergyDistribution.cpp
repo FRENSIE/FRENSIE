@@ -63,8 +63,8 @@ TEUCHOS_UNIT_TEST( CoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
 			     shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
-
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.3528040136905526, 1e-12 );
+  
+  TEST_FLOATING_EQUALITY( outgoing_energy, 0.352804013048420073, 1e-12 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
 }
 

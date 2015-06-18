@@ -41,7 +41,7 @@ TEUCHOS_UNIT_TEST( HydrogenFormFactorDistribution, evaluate )
 			  3.75577292599516e-08,
 			  1e-15 );
   TEST_FLOATING_EQUALITY( distribution->evaluate( 1e6 ),
-			  0.9292478570683705,
+			  0.929247855858261418,
 			  1e-15 );
   TEST_FLOATING_EQUALITY( distribution->evaluate( 1e17 ),
 			  1.0,

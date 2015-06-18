@@ -222,8 +222,9 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, collideAnalogue )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   material->collideAnalogue( photon, bank );
-
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
+  std::cout.precision( 18 );
+  std::cout << photon.getEnergy() << std::endl;
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -257,7 +258,7 @@ TEUCHOS_UNIT_TEST( PhotonMaterial, collideSurvivalBias )
 
   material->collideSurvivalBias( photon, bank );
   
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getWeight(), 0.99623491442141220986, 1e-12 );
 

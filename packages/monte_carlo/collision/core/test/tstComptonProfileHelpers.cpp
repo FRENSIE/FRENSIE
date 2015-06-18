@@ -56,11 +56,13 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
   TEST_EQUALITY_CONST( full_momentum_grid[3], 0.0 );
 
   TEST_EQUALITY_CONST( full_profile.size(), 7 );
+  std::cout.precision( 18 );
+  std::cout << full_profile.front() << std::endl;
   TEST_FLOATING_EQUALITY( full_profile.front(),
-			  7.290862715882092e-13,
+			  7.2908632235832003e-13,
 			  1e-12 );
   TEST_FLOATING_EQUALITY( full_profile.back(),
-			  7.290862715882092e-13,
+			  7.2908632235832003e-13,
 			  1e-12 );
   TEST_FLOATING_EQUALITY( full_profile[1],
 			  5.177281263934e-11,
@@ -117,10 +119,10 @@ TEUCHOS_UNIT_TEST( ComptonProfileHelpers,
 
   TEST_EQUALITY_CONST( full_profile.size(), 7 );
   TEST_FLOATING_EQUALITY( full_profile.front(),
-			  7.290862715882092e-13/2,
+			  7.2908632235832003e-13/2,
 			  1e-12 );
   TEST_FLOATING_EQUALITY( full_profile.back(),
-			  7.290862715882092e-13/2,
+			  7.2908632235832003e-13/2,
 			  1e-12 );
   TEST_FLOATING_EQUALITY( full_profile[1],
 			  5.177281263934e-11/2,

@@ -658,8 +658,8 @@ TEUCHOS_UNIT_TEST( CollisionHandler, collideWithCellMaterial )
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   MonteCarlo::CollisionHandler::collideWithCellMaterial( photon, bank, true );
-
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
+  
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();

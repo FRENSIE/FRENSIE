@@ -145,9 +145,7 @@ void WHIncoherentPhotonScatteringDistribution::sampleAndRecordTrials(
   testPostcondition( scattering_angle_cosine >= -1.0 );
   testPostcondition( scattering_angle_cosine <= 1.0 );
   // Make sure the compton line energy is valid
-  testPostcondition( outgoing_energy ==
-		     calculateComptonLineEnergy( incoming_energy,
-						 scattering_angle_cosine ) );
+  testPostcondition( outgoing_energy <= incoming_energy );
 }
 
 } // end MonteCarlo namespace
