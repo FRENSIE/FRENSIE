@@ -15,6 +15,7 @@
 #include <TGeoNavigator.h>
 #include <TGeoNode.h>
 #include <TGeoVolume.h>
+#include <TGeoManager.h>
 #include <TGeoMaterial.h>
 #include <TGeoMedium.h>
 #include <RtypesCore.h>
