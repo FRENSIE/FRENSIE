@@ -44,7 +44,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
     ace_basic_elastic_distribution->evaluateScreeningFactor( energy );
 
   // Test
-  TEST_FLOATING_EQUALITY( screening_angle, 2.195957718728E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( screening_angle, 2.19595774923989019e-4, 1e-12 );
 
 }
 
