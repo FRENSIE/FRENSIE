@@ -63,6 +63,9 @@ public:
   double evaluateCrossSection( const double energy, 
 			       const double precision = 1e-6 ) const;
 
+  //! Return the max outgoing adjoint energy for a given energy
+  double getMaxOutgoingEnergyAtEnergy( const double energy );
+
 private:
 
   // The forward reaction data

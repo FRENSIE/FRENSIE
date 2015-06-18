@@ -27,7 +27,10 @@ namespace DataGen{
 // Constructor
 template<typename TwoDInterpPolicy>
 StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::StandardAdjointElectroionizationSubshellGridGenerator(
-      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
+      const double& binding_energy,
+      const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& 
+                                       electroionization_subshell_reaction,
+      const ElectroionizationSubshellDistribution& knock_on_distribution,
       const double convergence_tol,
       const double absolute_diff_tol,
       const double distance_tol )
@@ -39,7 +42,10 @@ StandardAdjointElectroionizationSubshellGridGenerator<TwoDInterpPolicy>::Standar
     d_max_energy_grid_generator( convergence_tol, 
 				 absolute_diff_tol,
 				 distance_tol ),
-  d_adjoint_electroionization_subshell_cross_section( scattering_function )
+  d_adjoint_electroionization_subshell_cross_section( 
+                                            binding_energy,
+                                            electroionization_subshell_reaction,
+                                            knock_on_distribution  )
 {
   // Make sure the scattering function is valid
   testPrecondition( !scattering_function.is_null() );

@@ -15,7 +15,7 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
-#include "DataGen_AdjointElectroionizationSubshellCrossSectionEvaluator.cpp"
+#include "DataGen_AdjointElectroionizationSubshellCrossSectionEvaluator.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -38,7 +38,7 @@ Teuchos::RCP<DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator>
 //---------------------------------------------------------------------------//
 // Check that the hydrogen adjoint differential cross section can be evaluated for the first subshell
 TEUCHOS_UNIT_TEST( AdjointElectroionizationSubshellCrossSectionEvaluator,
-		   evaluateDifferentialCrossSection_h )
+		   evaluateDifferentialCrossSection )
 {
   
   double diff_cross_section = 
@@ -93,7 +93,7 @@ TEUCHOS_UNIT_TEST( AdjointElectroionizationSubshellCrossSectionEvaluator,
 //---------------------------------------------------------------------------//
 // Check that the hydrogen adjoint cross section can be evaluated for the first subshell
 TEUCHOS_UNIT_TEST( AdjointElectroionizationSubshellCrossSectionEvaluator,
-		   evaluateCrossSection_h )
+		   evaluateCrossSection )
 {/*
   double cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 0.001 );
   
@@ -115,6 +115,30 @@ TEUCHOS_UNIT_TEST( AdjointElectroionizationSubshellCrossSectionEvaluator,
 				  8.523,
   				  1e-15 );
   				  */
+}
+
+//---------------------------------------------------------------------------//
+// Check that the max outgoing adjoint energy can be returned for a given energy
+TEUCHOS_UNIT_TEST( AdjointElectroionizationSubshellCrossSectionEvaluator,
+		   getMaxEnergyAtEnergy_h )
+{
+  double max_outgoing_energy = adjoint_h_cs->getMaxOutgoingEnergyAtEnergy( 1.0 );
+  
+  UTILITY_TEST_FLOATING_EQUALITY( max_outgoing_energy,
+				  1e5,
+  				  1e-15 );
+
+  max_outgoing_energy = adjoint_h_cs->getMaxOutgoingEnergyAtEnergy( 1e-8 );
+  
+  UTILITY_TEST_FLOATING_EQUALITY( max_outgoing_energy,
+				  1.416970000000E-05		,
+  				  1e-15 );
+
+  max_outgoing_energy = adjoint_h_cs->getMaxOutgoingEnergyAtEnergy( 0.00000000279860 );
+  
+  UTILITY_TEST_FLOATING_EQUALITY( max_outgoing_energy,
+				  0.0,
+  				  1e-15 );
 }
 
 //---------------------------------------------------------------------------//
@@ -180,8 +204,6 @@ int main( int argc, char** argv )
   // Extract the number of subshells (N_s)
   unsigned num_subshells = subshell_order.size();
   
-std::cout << "number of subshells = " << num_subshells << std::endl;
-
   // Extract the number of points in the energy grid
   unsigned num_energy_points = energy_grid.size();
 

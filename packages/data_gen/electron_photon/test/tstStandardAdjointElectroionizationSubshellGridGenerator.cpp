@@ -47,16 +47,16 @@ Teuchos::RCP<DataGen::AdjointElectroionizationSubshellGridGenerator>
 //---------------------------------------------------------------------------//
 // Check that an max energy grid can be generated at a single energy
 TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, generate_single_h )
-{/*
-  double nudge_factor = 1e-8;
-  DataGen::AdjointElectroionizationSubshellGridGenerator::setMinTableEnergy( 0.001 );
-  DataGen::AdjointElectroionizationSubshellGridGenerator::setMaxTableEnergy( 20.0 );
-  DataGen::AdjointElectroionizationSubshellGridGenerator::setEnergyToMaxEnergyNudgeFactor( 
-							        nudge_factor );
+{
+  DataGen::AdjointElectroionizationSubshellGridGenerator::setMinTableEnergy( 
+                                                                      0.00001 );
+  DataGen::AdjointElectroionizationSubshellGridGenerator::setMaxTableEnergy( 
+                                                                         20.0 );
   
   Teuchos::Array<double> max_energy_grid, cross_section;
 
-  double max_energy_of_max_cs = DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator::getMaxEnergyResultingInMaxCrossSectionValueAtEnergy( 0.1 );
+  double max_outgoing_energy = DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator::getMaxOutgoingEnergyAtEnergy(
+                                                                          0.1 );
 
   // Generate a lin-lin max energy grid at E = 0.1
   linlinlin_grid_generator_h->generate( max_energy_grid,
@@ -65,25 +65,24 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
   
   TEST_EQUALITY_CONST( max_energy_grid.size(), 36 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
-				  0.1*(1.0+nudge_factor),
+				  0.1,
 				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(), 
-				  20.2,
+				  20.0,
 				  1e-15 );
-  TEST_EQUALITY_CONST( 
-		 max_energy_grid[max_energy_grid.size()-2],
-		 max_energy_of_max_cs );
+  TEST_EQUALITY_CONST( max_energy_grid[max_energy_grid.size()-1],
+		       max_outgoing_energy );
   TEST_EQUALITY_CONST( cross_section.size(), 36 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-				  9.34328937465456839e-37/1e-24, 
+				  9.3432, 
 				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-				  7.01235561105173864e-25/1e-24,
+				  7.01235,
 				  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( 
-		     cross_section[cross_section.size()-2],
-		     7.01235561105173864e-25/1e-24,
+		     cross_section[cross_section.size()-1],
+		     7.0123556,
 		     1e-12 );		       
 
   max_energy_grid.clear();
@@ -96,26 +95,26 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
 
   TEST_EQUALITY_CONST( max_energy_grid.size(), 263 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
-  				  0.1*(1.0+nudge_factor), 
+  				  0.1, 
   				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(), 
-  				  20.2, 
+  				  20.0, 
   				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( 
-  		 max_energy_grid[max_energy_grid.size()-2],
-		 max_energy_of_max_cs,
+  		 max_energy_grid[max_energy_grid.size()-1],
+		 max_outgoing_energy,
   		 1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 263 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-				  9.34328937465460475e-37/1e-24, 
+				  9.3432, 
 				  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-  				  7.01235561105173864e-25/1e-24,
+  				  7.0123,
   				  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( 
-  		     cross_section[cross_section.size()-2],
-  		     7.01235561105173864e-25/1e-24,
+  		     cross_section[cross_section.size()-1],
+  		     7.0123,
   		     1e-12 );
 
   max_energy_grid.clear();
@@ -128,26 +127,26 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
   						  
   TEST_EQUALITY_CONST( max_energy_grid.size(), 354 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
-  				  0.1*(1.0+nudge_factor), 
+  				  0.1, 
   				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(), 
-  				  20.2, 
+  				  20.0, 
   				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( 
-  		 max_energy_grid[max_energy_grid.size()-2],
-  		 max_energy_of_max_cs,
+  		 max_energy_grid[max_energy_grid.size()-1],
+  		 max_outgoing_energy,
   		 1e-15 );
   
   TEST_EQUALITY_CONST( cross_section.size(), 354 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-				  9.34328937465460475e-37/1e-24,
+				  9.3432893,
   				  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-  				  7.01235561105173864e-25/1e-24,
+  				  7.01235,
   				  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( 
-  		     cross_section[cross_section.size()-2],
-  		     7.01235561105173864e-25/1e-24,
+  		     cross_section[cross_section.size()-1],
+  		     7.01235,
   		     1e-12 );
 
   max_energy_grid.clear();
@@ -160,18 +159,18 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
   
   TEST_EQUALITY_CONST( max_energy_grid.size(), 62 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
-  				  1.0*(1.0+nudge_factor),
+  				  1.0,
   				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(), 
-  				  20.2,
+  				  20.0,
   				  1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 62 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-  				  9.34328953776123842e-37/1e-24, 
+  				  9.343289, 
   				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-  				  3.97416434130254732e-25/1e-24,
+  				  3.9741,
   				  1e-12 );
 
   max_energy_grid.clear();
@@ -184,18 +183,18 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
   
   TEST_EQUALITY_CONST( max_energy_grid.size(), 33 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
-  				  1.0*(1.0+nudge_factor), 
+  				  1.0, 
   				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(), 
-  				  20.2, 
+  				  20.0, 
   				  1e-15 );
   TEST_EQUALITY_CONST( cross_section.size(), 33 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-  				  9.34328953776123842e-37/1e-24, 
+  				  9.3432895, 
   				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-  				  3.97416434130254732e-25/1e-24,
+  				  3.974164,
   				  1e-15 );
 
   max_energy_grid.clear();
@@ -208,33 +207,31 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
   
   TEST_EQUALITY_CONST( max_energy_grid.size(), 371 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.front(), 
-				  1.0*(1.0+nudge_factor),
+				  1.0,
   				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( max_energy_grid.back(), 
-  				  20.2, 
+  				  20.0, 
   				  1e-15 );
   
   TEST_EQUALITY_CONST( cross_section.size(), 371 );
   
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.front(), 
-  				  9.34328953776123842e-37/1e-24,
+  				  9.343289537,
   				  1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( cross_section.back(), 
-  				  3.97416434130254732e-25/1e-24,
+  				  3.97416434,
   				  1e-15 );
 
   max_energy_grid.clear();
-  cross_section.clear();*/
+  cross_section.clear();
 }
 
 //---------------------------------------------------------------------------//
 // Check that a full 2D grid can be generated
 TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, generate_h )
-{/*
-  DataGen::AdjointElectroionizationSubshellGridGenerator::setMinTableEnergy( 0.001 );
+{
+  DataGen::AdjointElectroionizationSubshellGridGenerator::setMinTableEnergy( 0.00001 );
   DataGen::AdjointElectroionizationSubshellGridGenerator::setMaxTableEnergy( 20.0 );
-  DataGen::AdjointElectroionizationSubshellGridGenerator::setEnergyToMaxEnergyNudgeFactor( 
-									1e-8 );
 
   Teuchos::RCP<DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LogLogLog> > derived_pointer = Teuchos::rcp_dynamic_cast<DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LogLogLog> >( logloglog_grid_generator_h );
 
@@ -248,7 +245,7 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
 					cross_section );
 
   TEST_EQUALITY_CONST( energy_grid.size(), 110 );
-  TEST_FLOATING_EQUALITY( energy_grid.front(), 0.001, 1e-15 );
+  TEST_FLOATING_EQUALITY( energy_grid.front(), 0.00001, 1e-15 );
   TEST_FLOATING_EQUALITY( energy_grid.back(), 20.0, 1e-15 );
 
   energy_grid.clear();
@@ -260,10 +257,8 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
 // Check that a full 2D grid can be generated
 TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, generate_pb )
 {
-  DataGen::AdjointElectroionizationSubshellGridGenerator::setMinTableEnergy( 0.001 );
+  DataGen::AdjointElectroionizationSubshellGridGenerator::setMinTableEnergy( 0.00001 );
   DataGen::AdjointElectroionizationSubshellGridGenerator::setMaxTableEnergy( 20.0 );
-  DataGen::AdjointElectroionizationSubshellGridGenerator::setEnergyToMaxEnergyNudgeFactor( 
-  									1e-8 );
   
   Teuchos::RCP<DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LogLogLog> > derived_pointer = Teuchos::rcp_dynamic_cast<DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LogLogLog> >( logloglog_grid_generator_pb );
 
@@ -277,12 +272,12 @@ TEUCHOS_UNIT_TEST( StandardAdjointElectroionizationSubshellGridGenerator, genera
   					 cross_section );
 
   TEST_EQUALITY_CONST( energy_grid.size(), 121 );
-  TEST_FLOATING_EQUALITY( energy_grid.front(), 0.001, 1e-15 );
+  TEST_FLOATING_EQUALITY( energy_grid.front(), 0.00001, 1e-15 );
   TEST_FLOATING_EQUALITY( energy_grid.back(), 20.0, 1e-15 );
 
   energy_grid.clear();
   max_energy_grids.clear();
-  cross_section.clear();*/
+  cross_section.clear();
 }
 
 //---------------------------------------------------------------------------//
@@ -421,8 +416,10 @@ int main( int argc, char** argv )
     Teuchos::ArrayView<const double> func = 
       jince_block( scatt_func_size, scatt_func_size );
     
-    logloglog_grid_generator_pb.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LogLogLog>( 
-						       scattering_function ) );
+    logloglog_grid_generator_pb.reset( new DataGen::StandardAdjointElectroionizationSubshellGridGenerator<Utility::LogLogLog>(
+                                binding_energy, 
+                                electroionization_subshell_reaction,
+                                knock_on_distribution ) );
   }
   */
   // Run the unit tests

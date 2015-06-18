@@ -98,6 +98,33 @@ double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateCrossSecti
 					abs_error );
 }
 
+// Return the max outgoing adjoint energy for a given energy
+double AdjointElectroionizationSubshellCrossSectionEvaluator::getMaxOutgoingEnergyAtEnergy( 
+                                const double energy )
+{ 
+  // Start at the largest energy grid point
+  unsigned grid_point = d_knock_on_distribution.size();
+
+  while( grid_point > 0 )
+  {
+    grid_point--;
+
+    // Find the minimum knock-on energy for an electron at the grid_point energy
+    double min_energy = 
+      d_knock_on_distribution[grid_point].second->sampleWithRandomNumber( 0.0 );
+
+    /* If the minimum knock-on energy is at or below the given energy then 
+       return the grid_point energy */
+    if ( min_energy <= energy )
+    {
+      return d_knock_on_distribution[grid_point].first;
+    }
+  }
+  // If no max energy is found return a max energy of zero
+  return 0.0;
+}
+
+
 } // end DataGen namespace
 
 //---------------------------------------------------------------------------//

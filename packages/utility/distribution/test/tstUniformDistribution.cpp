@@ -107,14 +107,17 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sampleAndRecordTrials )
   unsigned trials = 0;
 
   double sample = distribution->sampleAndRecordTrials( trials );
+  std::cout << "sample = " << sample << std::endl;
   TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
 
   sample = distribution->sampleAndRecordTrials( trials );
+  std::cout << "sample = " << sample << std::endl;
   TEST_EQUALITY_CONST( sample, 0.0 ); 
   TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
 
   sample = distribution->sampleAndRecordTrials( trials );
+  std::cout << "sample = " << sample << std::endl;
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
   TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
 
@@ -135,6 +138,7 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sampleAndRecordBinIndex )
   unsigned bin_index;
 
   double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
+  std::cout << "sample = " << sample << std::endl;
   TEST_EQUALITY_CONST( sample, -1.0 );
   TEST_EQUALITY_CONST( bin_index, 0.0 );
 
@@ -143,6 +147,7 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sampleAndRecordBinIndex )
   TEST_EQUALITY_CONST( bin_index, 0.0 );
   
   sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
+  std::cout << "sample = " << sample << std::endl;
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
   TEST_EQUALITY_CONST( bin_index, 0.0 );
   
