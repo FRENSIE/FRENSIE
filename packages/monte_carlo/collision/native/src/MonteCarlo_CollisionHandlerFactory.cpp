@@ -23,6 +23,7 @@
 #include "Geometry_DagMCProperties.hpp"
 #endif
 
+#include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 #include "Utility_ContractException.hpp"
@@ -134,8 +135,8 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
 		     SimulationProperties::getNumberOfPhotonHashGridBins(),
-		     SimulationProperties::isImpulseApproximationModeOn(),
-		     SimulationProperties::isPhotonDopplerBroadeningModeOn(),
+		     SimulationProperties::getIncoherentModelType(),
+		     SimulationProperties::getKahnSamplingCutoffEnergy(),
 		     SimulationProperties::isDetailedPairProductionModeOn(),
 		     SimulationProperties::isAtomicRelaxationModeOn(),
 		     SimulationProperties::isPhotonuclearInteractionModeOn() );
@@ -167,8 +168,8 @@ void CollisionHandlerFactory::initializeHandlerUsingDagMC(
 		     cell_id_density_map,
 		     atomic_relaxation_model_factory,
 		     SimulationProperties::getNumberOfPhotonHashGridBins(),
-		     SimulationProperties::isImpulseApproximationModeOn(),
-		     SimulationProperties::isPhotonDopplerBroadeningModeOn(),
+		     SimulationProperties::getIncoherentModelType(),
+		     SimulationProperties::getKahnSamplingCutoffEnergy(),
 		     SimulationProperties::isDetailedPairProductionModeOn(),
 		     SimulationProperties::isAtomicRelaxationModeOn(),
 		     SimulationProperties::isPhotonuclearInteractionModeOn() );
@@ -333,8 +334,19 @@ void CollisionHandlerFactory::createMaterialIdDataMaps(
     const Teuchos::ParameterList& material_rep = 
       Teuchos::any_cast<Teuchos::ParameterList>( it->second.getAny() );
     
-    const Teuchos::Array<double>& material_fractions = 
-      material_rep.get<Teuchos::Array<double> >( "Fractions" );
+    const Utility::ArrayString& array_string = 
+      material_rep.get<Utility::ArrayString>( "Fractions" );
+
+    Teuchos::Array<double> material_fractions;
+
+    try{
+      material_fractions = array_string.getConcreteArray<double>();
+    }
+    EXCEPTION_CATCH_RETHROW_AS( Teuchos::InvalidArrayStringRepresentation,
+				InvalidMaterialRepresentation,
+				"Error: The fractions requested for "
+				"material " << material_rep.name() << 
+				" are not valid!" );      
 
     const Teuchos::Array<std::string>& material_isotopes = 
       material_rep.get<Teuchos::Array<std::string> >( "Isotopes" );
@@ -447,8 +459,8 @@ void CollisionHandlerFactory::createPhotonMaterials(
    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
    atomic_relaxation_model_factory,
    const unsigned hash_grid_bins,
-   const bool use_impulse_approximation_data,
-   const bool use_doppler_broadening_data,
+   const IncoherentModelType incoherent_model,
+   const double kahn_sampling_cutoff_energy,
    const bool use_detailed_pair_production_data,
    const bool use_atomic_relaxation_data,
    const bool use_photonuclear_data )
@@ -469,8 +481,8 @@ void CollisionHandlerFactory::createPhotonMaterials(
 					photoatom_aliases,
 					atomic_relaxation_model_factory,
 					hash_grid_bins,
-					use_impulse_approximation_data,
-					use_doppler_broadening_data,
+					incoherent_model,
+					kahn_sampling_cutoff_energy,
 					use_detailed_pair_production_data,
 					use_atomic_relaxation_data );
     

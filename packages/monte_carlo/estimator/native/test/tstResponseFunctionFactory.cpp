@@ -53,8 +53,6 @@ TEUCHOS_UNIT_TEST( ResponseFunctionFactory, createResponseFunctions )
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  Utility::OneDDistributionEntryConverterDB::standardInitialization();
-  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_resp_func_xml_file",

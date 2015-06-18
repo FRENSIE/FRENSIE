@@ -1,0 +1,8 @@
+<ParameterList name="Equiprobable Bin Distributions">
+
+  <Parameter name="Distribution A" type="Equiprobable Bin Distribution"
+	     value="{0.0, pi, 2pi}"/>
+  <Parameter name="Distribution B" type="Equiprobable Bin Distribution"
+	     value="{-1.0, 31i, 1.0}"/>
+
+</ParameterList>

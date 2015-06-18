@@ -39,6 +39,8 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
 		       MonteCarlo::NEUTRON_PHOTON_MODE );
   TEST_EQUALITY_CONST(MonteCarlo::SimulationProperties::getNumberOfHistories(),
 		      10 );
+  TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff(),
+		       0.1 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getFreeGasThreshold(),
 		       600.0 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMinNeutronEnergy(),
@@ -53,12 +55,16 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
 		      1e-2 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getMaxPhotonEnergy(),
 		       10.0 );
+  TEST_EQUALITY_CONST( 
+	       MonteCarlo::SimulationProperties::getKahnSamplingCutoffEnergy(),
+	       2.5 );
   TEST_EQUALITY_CONST( MonteCarlo::SimulationProperties::getNumberOfPhotonHashGridBins(),
 		       500 );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::displayWarnings() );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isImplicitCaptureModeOn() );
-  TEST_ASSERT( MonteCarlo::SimulationProperties::isImpulseApproximationModeOn() );
-  TEST_ASSERT( !MonteCarlo::SimulationProperties::isPhotonDopplerBroadeningModeOn() );
+  TEST_EQUALITY_CONST( 
+	       MonteCarlo::SimulationProperties::getIncoherentModelType(),
+	       MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL );
   TEST_ASSERT( !MonteCarlo::SimulationProperties::isAtomicRelaxationModeOn() );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isDetailedPairProductionModeOn() );
   TEST_ASSERT( MonteCarlo::SimulationProperties::isPhotonuclearInteractionModeOn() );

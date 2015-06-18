@@ -13,7 +13,7 @@
 #include <Teuchos_Array.hpp>
 
 // FRENSIE Includes
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
 #include "Utility_InterpolationPolicy.hpp"
 #include "Utility_Tuple.hpp"
@@ -22,7 +22,7 @@ namespace Utility{
 
 //! The interpolated distribution class declaration
 template<typename InterpolationPolicy>
-class TabularDistribution : public OneDDistribution,
+class TabularDistribution : public TabularOneDDistribution,
 	  public ParameterListCompatibleObject<TabularDistribution<InterpolationPolicy> >
 {
 
@@ -54,22 +54,23 @@ public:
   double evaluateCDF( const double indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  double sample();
-
-  //! Return a random sample from the distribution
   double sample() const;
 
+  //! Return a random sample and record the number of trials
+  double sampleAndRecordTrials( unsigned& trials ) const;
+
   //! Return a random sample and bin index from the distribution
-  double sample( unsigned& sampled_bin_index ) const;
+  double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
 
-  //! Return a random sample from the corresponding CDF in a subrange
-  double sample( const double max_indep_var ) const;
+  //! Return a random sample from the distribution at the given CDF value
+  double sampleWithRandomNumber( const double random_number ) const;
 
-  //! Return a sample from the distribution at the given CDF value
-  double sampleWithValue( const double cdf_value ) const;
+  //! Return a random sample from the distribution in a subrange
+  double sampleInSubrange( const double max_indep_var ) const;
 
-  //! Return the sampling efficiency from the distribution
-  double getSamplingEfficiency() const;
+  //! Return a random sample from the distribution at the given CDF value in a subrange
+  double sampleWithRandomNumberInSubrange( const double random_number,
+					   const double max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
   double getUpperBoundOfIndepVar() const;
@@ -79,6 +80,9 @@ public:
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
+
+  //! Test if the distribution is continuous
+  bool isContinuous() const;
 
   //! Method for placing the object in an output stream
   void toStream( std::ostream& os ) const;
@@ -94,6 +98,10 @@ private:
   // Initialize the distribution
   void initializeDistribution(const Teuchos::Array<double>& independent_values,
 			      const Teuchos::Array<double>& dependent_values );
+
+  // Return a random sample using the random number and record the bin index
+  double sampleImplementation( double random_number,
+			       unsigned& sampled_bin_index ) const;
 
   // The distribution type
   static const OneDDistributionType distribution_type = TABULAR_DISTRIBUTION;

@@ -35,3 +35,5 @@ ADD_SUBDIRECTORY(listcs)
 ADD_SUBDIRECTORY(facemc)
 
 ADD_SUBDIRECTORY(epr_generator)
+
+ADD_SUBDIRECTORY(sample)

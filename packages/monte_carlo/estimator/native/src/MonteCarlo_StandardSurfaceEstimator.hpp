@@ -33,9 +33,6 @@ public:
   typedef boost::mpl::vector<ParticleCrossingSurfaceEventObserver::EventTag>
   EventTags;
 
-  //! Set the angle cosine cutoff value
-  static void setAngleCosineCutoff( const double angle_cosine_cutoff );
-
   //! Constructor (for flux estimators)
   StandardSurfaceEstimator( const Estimator::idType id,
 			    const double multiplier,
@@ -57,23 +54,7 @@ public:
   //! Export the estimator data
   void exportData( EstimatorHDF5FileHandler& hdf5_file,
 		   const bool process_data ) const;
-
-protected:
-
-  //! Get the angle cosine cutoff value
-  static double getAngleCosineCutoff();
-
-private:
-
-  // Angle cosine cutoff value (default = 0.01)
-  static double angle_cosine_cutoff;
 };
-
-// Get the angle cosine cutoff value
-inline double StandardSurfaceEstimator::getAngleCosineCutoff()
-{
-  return StandardSurfaceEstimator::angle_cosine_cutoff;
-}
 
 } // end MonteCarlo namespace
 

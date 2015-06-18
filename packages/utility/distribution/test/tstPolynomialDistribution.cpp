@@ -99,10 +99,60 @@ TEUCHOS_UNIT_TEST( PolynomialDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the sampling efficiency can be returned
-TEUCHOS_UNIT_TEST( PolynomialDistribution, getSamplingEfficiency )
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( PolynomialDistribution, sampleAndRecordTrials )
 {
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  std::vector<double> fake_stream( 6 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.0;
+  fake_stream[2] = 0.0;
+  fake_stream[3] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  unsigned trials = 0;
+  
+  double sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.5 );
+  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+
+  fake_stream[0] = 0.5;
+  fake_stream[1] = 0.0;
+  fake_stream[2] = 0.5;
+  fake_stream[3] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  trials = 0;
+  
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, sqrt(0.5) );
+  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+
+  fake_stream[0] = 0.7;
+  fake_stream[1] = 0.0;
+  fake_stream[2] = 0.7;
+  fake_stream[3] = 0.5;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  trials = 0;
+  
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.0 );
+  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, pow( 0.5, 1.0/3.0 ) );
+  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -127,6 +177,20 @@ TEUCHOS_UNIT_TEST( PolynomialDistribution, getDistributionType )
 {
   TEST_EQUALITY_CONST( distribution->getDistributionType(),
 		       Utility::POLYNOMIAL_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is tabular
+TEUCHOS_UNIT_TEST( PolynomialDistribution, isTabular )
+{
+  TEST_ASSERT( !distribution->isTabular() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is continuous
+TEUCHOS_UNIT_TEST( PolynomialDistribution, isContinuous )
+{
+  TEST_ASSERT( distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//

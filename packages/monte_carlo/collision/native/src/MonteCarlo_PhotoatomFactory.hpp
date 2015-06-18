@@ -24,6 +24,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_Photoatom.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
+#include "MonteCarlo_IncoherentModelType.hpp"
 
 namespace MonteCarlo{
 
@@ -40,8 +41,8 @@ public:
 		    const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 		    atomic_relaxation_model_factory,
 		    const unsigned hash_grid_bins,
-		    const bool use_impulse_approximation_data,
-		    const bool use_doppler_broadening_data,
+		    const IncoherentModelType incoherent_model,
+		    const double kahn_sampling_cutoff_energy,
 		    const bool use_detailed_pair_production_data,
 		    const bool use_atomic_relaxation_data );
 
@@ -67,8 +68,8 @@ private:
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>& 
 			  atomic_relaxation_model_factory,
 			  const unsigned hash_grid_bins,
-			  const bool use_impulse_approximation_data,
-			  const bool use_doppler_broadening_data,
+			  const IncoherentModelType incoherent_model,
+			  const double kahn_sampling_cutoff_energy,
 			  const bool use_detailed_pair_production_data,
 			  const bool use_atomic_relaxation_data );
 
@@ -81,8 +82,8 @@ private:
 			  const Teuchos::RCP<AtomicRelaxationModelFactory>&
 			  atomic_relaxation_model_factory,
 			  const unsigned hash_grid_bins,
-			  const bool use_impulse_approximation_data,
-			  const bool use_doppler_broadening_data,
+			  const IncoherentModelType incoherent_model,
+			  const double kahn_sampling_cutoff_energy,
 			  const bool use_detailed_pair_production_data,
 			  const bool use_atomic_relaxation_data );
 

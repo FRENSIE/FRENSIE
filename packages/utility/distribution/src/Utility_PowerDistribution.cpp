@@ -197,18 +197,6 @@ double PowerDistribution<1u>::evaluatePDF( const double indep_var_value ) const
 }
 
 // Return a random sample from the distribution
-double PowerDistribution<2u>::sample()
-{
-  return (const_cast<const PowerDistribution<2u>*>(this))->sample();
-}
-
-// Return a random sample from the distribution
-double PowerDistribution<1u>::sample()
-{
-  return (const_cast<const PowerDistribution<1u>*>(this))->sample();
-}
-
-// Return a random sample from the distribution
 double PowerDistribution<2u>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
@@ -232,16 +220,20 @@ double PowerDistribution<1u>::sample() const
   return sqrt( argument );
 }
 
-// Return the sampling efficiency from the distribution
-double PowerDistribution<2u>::getSamplingEfficiency() const
+// Return a random sample and record the number of trials
+double PowerDistribution<2u>::sampleAndRecordTrials( unsigned& trials ) const
 {
-  return 1.0;
+  ++trials;
+
+  return this->sample();
 }
 
-// Return the sampling efficiency from the distribution
-double PowerDistribution<1u>::getSamplingEfficiency() const
+// Return a random sample and record the number of trials
+double PowerDistribution<1u>::sampleAndRecordTrials( unsigned& trials ) const
 {
-  return 1.0;
+  ++trials;
+  
+  return this->sample();
 }
 
 // Return the upper bound of the distribution independent variable
@@ -278,6 +270,18 @@ OneDDistributionType PowerDistribution<2u>::getDistributionType() const
 OneDDistributionType PowerDistribution<1u>::getDistributionType() const
 {
   return PowerDistribution<1u>::distribution_type;
+}
+
+//! Test if the distribution is continuous
+bool PowerDistribution<2u>::isContinuous() const
+{
+  return true;
+}
+
+//! Test if the distribution is continuous
+bool PowerDistribution<1u>::isContinuous() const
+{
+  return true;
 }
 
 // Method for placing the object in an output stream

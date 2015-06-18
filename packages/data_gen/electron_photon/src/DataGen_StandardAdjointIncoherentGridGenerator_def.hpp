@@ -25,8 +25,9 @@
 namespace DataGen{
 
 // Constructor
-template<typename TwoDInterpPolicy>
-StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::StandardAdjointIncoherentGridGenerator(
+template<typename TwoDInterpPolicy,
+	 typename ScatteringFunctionArgUnitConversionPolicy>
+StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy,ScatteringFunctionArgUnitConversionPolicy>::StandardAdjointIncoherentGridGenerator(
       const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
       const double convergence_tol,
       const double absolute_diff_tol,
@@ -39,7 +40,7 @@ StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::StandardAdjointIncoher
     d_max_energy_grid_generator( convergence_tol, 
 				 absolute_diff_tol,
 				 distance_tol ),
-  d_adjoint_incoherent_cross_section( scattering_function )
+    d_adjoint_incoherent_cross_section( 20.0, scattering_function )
 {
   // Make sure the scattering function is valid
   testPrecondition( !scattering_function.is_null() );
@@ -51,22 +52,25 @@ StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::StandardAdjointIncoher
 }
 
 // Set verbose mode to on
-template<typename TwoDInterpPolicy>
-void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::setVerboseModeOn()
+template<typename TwoDInterpPolicy,
+	 typename ScatteringFunctionArgUnitConversionPolicy>
+void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy,ScatteringFunctionArgUnitConversionPolicy>::setVerboseModeOn()
 {
   d_verbose = true;
 }
 
 // Set verbose mode to off
-template<typename TwoDInterpPolicy>
-void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::setVerboseModeOff()
+template<typename TwoDInterpPolicy,
+	 typename ScatteringFunctionArgUnitConversionPolicy>
+void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy,ScatteringFunctionArgUnitConversionPolicy>::setVerboseModeOff()
 {
   d_verbose = false;
 }
 
 // Set the convergence tolerance
-template<typename TwoDInterpPolicy>
-void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::setConvergenceTolerance( const double convergence_tol )
+template<typename TwoDInterpPolicy,
+	 typename ScatteringFunctionArgUnitConversionPolicy>
+void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy,ScatteringFunctionArgUnitConversionPolicy>::setConvergenceTolerance( const double convergence_tol )
 {
   // Make sure the convergence tolerance is valid
   testPrecondition( convergence_tol > 0.0 );
@@ -78,8 +82,9 @@ void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::setConvergenceTol
 }
   
 // Set the absolute difference tolerance
-template<typename TwoDInterpPolicy>
-void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::setAbsoluteDifferenceTolerance( const double absolute_diff_tol )
+template<typename TwoDInterpPolicy,
+	 typename ScatteringFunctionArgUnitConversionPolicy>
+void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy,ScatteringFunctionArgUnitConversionPolicy>::setAbsoluteDifferenceTolerance( const double absolute_diff_tol )
 {
   // Make sure the absolute diff tolerance is valid
   testPrecondition( absolute_diff_tol > 0.0 );
@@ -91,8 +96,9 @@ void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::setAbsoluteDiffer
 }
 
 // Set the distance tolerance
-template<typename TwoDInterpPolicy>
-void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::setDistanceTolerance( const double distance_tol )
+template<typename TwoDInterpPolicy,
+	 typename ScatteringFunctionArgUnitConversionPolicy>
+void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy,ScatteringFunctionArgUnitConversionPolicy>::setDistanceTolerance( const double distance_tol )
 {
   // Make sure the distance tolerance is valid
   testPrecondition( distance_tol > 0.0 );
@@ -103,8 +109,9 @@ void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::setDistanceTolera
 }
 
 // Generate the bilinear grid
-template<typename TwoDInterpPolicy>
-void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::generate( 
+template<typename TwoDInterpPolicy,
+	 typename ScatteringFunctionArgUnitConversionPolicy>
+void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy,ScatteringFunctionArgUnitConversionPolicy>::generate( 
 		 Teuchos::Array<double>& energy_grid,
 		 Teuchos::Array<Teuchos::Array<double> >& max_energy_grids,
 		 Teuchos::Array<Teuchos::Array<double> >& cross_section ) const
@@ -123,8 +130,7 @@ void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::generate(
   
   energy_grid_queue.push_back( getMinTableEnergy() );
 
-  double energy_of_max_cs = 
-    AdjointIncoherentCrossSectionEvaluator::getEnergyOfMaxCrossSection( 
+  double energy_of_max_cs = getEnergyOfMaxCrossSection( 
 						   getNudgedMaxTableEnergy() );
   if( energy_of_max_cs > getMinTableEnergy() )
   {
@@ -199,8 +205,9 @@ void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::generate(
 }
 
 // Generate a max energy grid at the desired energy
-template<typename TwoDInterpPolicy>
-void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::generate( 
+template<typename TwoDInterpPolicy,
+	 typename ScatteringFunctionArgUnitConversionPolicy>
+void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy,ScatteringFunctionArgUnitConversionPolicy>::generate( 
 			               Teuchos::Array<double>& max_energy_grid,
 				       Teuchos::Array<double>& cross_section,
 				       const double energy ) const
@@ -212,9 +219,10 @@ void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::generate(
   
   // Load the initial max energy grid
   
-  if( AdjointIncoherentCrossSectionEvaluator::doesEnergyCorrespondToAMaxCrossSectionValue( energy ) )
+  if( doesEnergyCorrespondToAMaxCrossSectionValue( energy ) )
   {
-    double max_energy_of_max_cs = AdjointIncoherentCrossSectionEvaluator::getMaxEnergyResultingInMaxCrossSectionValueAtEnergy( energy );
+    double max_energy_of_max_cs = 
+      getMaxEnergyResultingInMaxCrossSectionValueAtEnergy( energy );
     
     if( max_energy_of_max_cs < getNudgedMaxTableEnergy() )
     {
@@ -244,7 +252,7 @@ void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::generate(
 
   // Create the boost function that returns the processed cross section
   boost::function<double (double max_energy)> grid_function = 
-    boost::bind( &AdjointIncoherentCrossSectionEvaluator::evaluateCrossSection,
+    boost::bind( &MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::evaluateIntegratedCrossSection,
 		 boost::cref( d_adjoint_incoherent_cross_section ),
 		 energy,
 		 _1,
@@ -256,9 +264,10 @@ void StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::generate(
 }
 
 // Check for 2D grid convergence
-template<typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy,
+	 typename ScatteringFunctionArgUnitConversionPolicy>
 bool 
-StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::hasGridConverged( 
+StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy,ScatteringFunctionArgUnitConversionPolicy>::hasGridConverged( 
 		          const double energy_0,
 			  const double energy_1,
 			  const Teuchos::Array<double>& max_energy_grid_0,
@@ -363,7 +372,7 @@ StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::hasGridConverged(
 					   cross_section_1.end() );
     
 	double true_cross_section = 
-	  d_adjoint_incoherent_cross_section.evaluateCrossSection(
+	  d_adjoint_incoherent_cross_section.evaluateIntegratedCrossSection(
 							intermediate_energy,
 							max_energy_mid_point,
 							d_precision );
@@ -407,8 +416,9 @@ StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::hasGridConverged(
 }
 
 // Calculate the energy midpoint
-template<typename TwoDInterpPolicy>
-double StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::calculateEnergyMidpoint( 
+template<typename TwoDInterpPolicy,
+	 typename ScatteringFunctionArgUnitConversionPolicy>
+double StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy,ScatteringFunctionArgUnitConversionPolicy>::calculateEnergyMidpoint( 
 						  const double energy_0,
 						  const double energy_1 ) const
 {
@@ -417,9 +427,10 @@ double StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::calculateEnergy
 			TwoDInterpPolicy::processFirstIndepVar(energy_1) ) );
 }
 
-// Calculate the max energy midpoint
-template<typename TwoDInterpPolicy>
-double StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy>::calculateMaxEnergyMidpoint( 
+// Calculate the max energy 
+template<typename TwoDInterpPolicy,
+	 typename ScatteringFunctionArgUnitConversionPolicy>
+double StandardAdjointIncoherentGridGenerator<TwoDInterpPolicy,ScatteringFunctionArgUnitConversionPolicy>::calculateMaxEnergyMidpoint( 
 					      const double max_energy_0,
 					      const double max_energy_1 ) const
 {
