@@ -30,6 +30,9 @@ public:
 //! Get the geometry manager instance
 static Teuchos::RCP<TGeoManager> getManager();
 
+//! Get the terminal material properties
+static TGeoMaterial getTerminalMaterial();
+
 //! Initialize the root geometry manager
 static void initialize( const std::string& filename );
 
@@ -44,6 +47,9 @@ Root();
 
 // Root TGeoManager
 static Teuchos::RCP<TGeoManager> d_manager;
+
+// Root terminal material
+static TGeoMaterial* d_terminal_material;
 
 };
 

@@ -11,8 +11,12 @@
 
 // Root Includes
 #include <TObjArray.h>
+#include <TObject.h>
 #include <TGeoNavigator.h>
 #include <TGeoNode.h>
+#include <TGeoVolume.h>
+#include <TGeoMaterial.h>
+#include <TGeoMedium.h>
 #include <RtypesCore.h>
 
 // Trilinos Includes
@@ -156,7 +160,7 @@ private:
   // Teuchos array of volumes
   static Teuchos::Array<double> tvolumes;
   
-    // The map of cell ids and cell entity handles
+  // The map of cell ids and cell entity handles
   static boost::unordered_map<InternalCellHandle,ExternalCellHandle> 
   cell_handle_map;
 
@@ -186,7 +190,11 @@ inline bool ModuleInterface<Root>::isTerminationCell(
   ExternalCellHandle cell_external = 
     ModuleInterface<Root>::getExternalCellHandle( cell );
 
-  return false; // TODO
+  // Check if cell material is equal to pre-defined terminal material 
+  TGeoVolume* current_volume = tgeomanager_instance->GetVolume( cell_external );
+  TGeoMaterial* current_material = current_volume->GetMaterial();
+  
+  return current_material->IsEq( Root::getTerminalMaterial() );
 }
 
 // Calculate the surface normal at a point on the surface
@@ -200,7 +208,7 @@ inline void ModuleInterface<Root>::getSurfaceNormal(
 {
   if tgeomanager_instance->GetCurrentNavigator()->IsOnBoundary()
   {
-    Root::Double_t* normal_t = tgeomanager_instance->FindNormal();
+    double* normal_t = tgeomanager_instance->FindNormal();
     
     normal[0] = normal_t[0];
     normal[1] = normal_t[1];
