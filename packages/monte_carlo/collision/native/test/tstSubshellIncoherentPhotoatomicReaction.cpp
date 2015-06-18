@@ -17,6 +17,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_SubshellIncoherentPhotoatomicReaction.hpp"
 #include "MonteCarlo_ComptonProfileSubshellConverterFactory.hpp"
+#include "MonteCarlo_SubshellIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
@@ -354,25 +356,38 @@ int main( int argc, char** argv )
 						    occupation_number_grid_s1,
 						    occupation_number_s1 ) );
 
+    // Create the subshell incoherent distributions
+    Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
+      basic_distribution( new MonteCarlo::SubshellIncoherentPhotonScatteringDistribution( 
+			  MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
+			  data_container.getSubshellOccupancy( 1 ),
+			  data_container.getSubshellBindingEnergy( 1 ),
+			  occupation_number_s1_dist,
+			  3.0 ) );
+
+    Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>
+      detailed_distribution( new MonteCarlo::DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
+			  MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
+			  data_container.getSubshellOccupancy( 1 ),
+			  data_container.getSubshellBindingEnergy( 1 ),
+			  occupation_number_s1_dist,
+			  compton_profile_s1_dist,
+			  3.0 ) );
+
     // Create the subshell incoherent reaction
     basic_subshell_incoherent_reaction.reset(
          new MonteCarlo::SubshellIncoherentPhotoatomicReaction<Utility::LinLin,false>(
-			  photon_energy_grid,
-			  subshell_incoherent_cs,
-			  threshold_index,
-			  MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
-			  data_container.getSubshellBindingEnergy( 1 ),
-			  occupation_number_s1_dist ) );
+			                                photon_energy_grid,
+			                                subshell_incoherent_cs,
+							threshold_index,
+							basic_distribution ) );
 
     detailed_subshell_incoherent_reaction.reset(
 	 new MonteCarlo::SubshellIncoherentPhotoatomicReaction<Utility::LinLin,false>(
 			  photon_energy_grid,
 			  subshell_incoherent_cs,
 			  threshold_index,
-			  MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
-			  data_container.getSubshellBindingEnergy( 1 ),
-			  occupation_number_s1_dist,
-			  compton_profile_s1_dist ) );
+			  detailed_distribution ) );
   }
 
   // Initialize the random number generator

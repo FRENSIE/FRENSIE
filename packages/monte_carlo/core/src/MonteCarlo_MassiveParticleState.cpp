@@ -126,4 +126,3 @@ MassiveParticleState::calculateTraversalTime( const double distance ) const
 //---------------------------------------------------------------------------//
 // end MonteCarlo_MassiveParticleState.cpp
 //---------------------------------------------------------------------------//
-
