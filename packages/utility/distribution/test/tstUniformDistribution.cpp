@@ -30,8 +30,10 @@
 
 Teuchos::RCP<Teuchos::ParameterList> test_dists_list;
 
-Teuchos::RCP<Utility::OneDDistribution> distribution( 
-			   new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
+Teuchos::RCP<Utility::TabularOneDDistribution> tab_distribution( 
+			  new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
+
+Teuchos::RCP<Utility::OneDDistribution> distribution = tab_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -58,6 +60,17 @@ TEUCHOS_UNIT_TEST( UniformDistribution, evaluatePDF )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the CDF can be evaluated
+TEUCHOS_UNIT_TEST( UniformDistribution, evaluateCDF )
+{
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( -2.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( -1.0 ), 0.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 0.0 ), 0.5 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 2.0 ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( UniformDistribution, sample )
 {
@@ -81,10 +94,110 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the sampling efficiency can be returned
-TEUCHOS_UNIT_TEST( UniformDistribution, getSamplingEfficiency )
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( UniformDistribution, sampleAndRecordTrials )
 {
-  TEST_EQUALITY_CONST( distribution->getSamplingEfficiency(), 1.0 );
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned trials = 0;
+
+  double sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.0 ); 
+  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+  TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( UniformDistribution, sampleAndRecordBinIndex )
+{
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned bin_index;
+
+  double sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  TEST_EQUALITY_CONST( bin_index, 0.0 );
+
+  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, 0.0 ); 
+  TEST_EQUALITY_CONST( bin_index, 0.0 );
+  
+  sample = tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+  TEST_EQUALITY_CONST( bin_index, 0.0 );
+  
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( UniformDistribution, sampleWithRandomNumber )
+{
+  double sample = tab_distribution->sampleWithRandomNumber( 0.0 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  
+  sample = tab_distribution->sampleWithRandomNumber( 0.5 );
+  TEST_EQUALITY_CONST( sample, 0.0 ); 
+    
+  sample = tab_distribution->sampleWithRandomNumber( 1.0 );
+  TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( UniformDistribution, sampleInSubrange )
+{
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  double sample = tab_distribution->sampleInSubrange( 0.0 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  
+  sample = tab_distribution->sampleInSubrange( 0.0 );
+  TEST_EQUALITY_CONST( sample, -0.5 ); 
+    
+  sample = tab_distribution->sampleInSubrange( 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0, 1e-14 );
+    
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( UniformDistribution, sampleWithRandomNumberInSubrange )
+{
+  double sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.0, 0.0 );
+  TEST_EQUALITY_CONST( sample, -1.0 );
+  
+  sample = tab_distribution->sampleWithRandomNumberInSubrange( 0.5, 0.0 );
+  TEST_EQUALITY_CONST( sample, -0.5 ); 
+    
+  sample = tab_distribution->sampleWithRandomNumberInSubrange( 1.0, 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.0, 1e-14 );
 }
 
 //---------------------------------------------------------------------------//
@@ -109,6 +222,20 @@ TEUCHOS_UNIT_TEST( UniformDistribution, getDistributionType )
 {
   TEST_EQUALITY_CONST( distribution->getDistributionType(),
 		       Utility::UNIFORM_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is tabular
+TEUCHOS_UNIT_TEST( UniformDistribution, isTabular )
+{
+  TEST_ASSERT( distribution->isTabular() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is continuous
+TEUCHOS_UNIT_TEST( UniformDistribution, isContinuous )
+{
+  TEST_ASSERT( distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//

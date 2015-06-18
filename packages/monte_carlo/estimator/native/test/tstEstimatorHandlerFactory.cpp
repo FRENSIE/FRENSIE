@@ -44,7 +44,7 @@ TEUCHOS_UNIT_TEST( EstimatorHandlerFactory, initializeHandlerUsingDagMC )
 							     *response_reps,
 							     *estimator_reps );
 
-  TEST_EQUALITY_CONST( MonteCarlo::EstimatorHandler::getNumberOfEstimators(), 12 );
+  TEST_EQUALITY_CONST( MonteCarlo::EstimatorHandler::getNumberOfEstimators(), 17 );
 }
 
 //---------------------------------------------------------------------------//
@@ -52,8 +52,6 @@ TEUCHOS_UNIT_TEST( EstimatorHandlerFactory, initializeHandlerUsingDagMC )
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  Utility::OneDDistributionEntryConverterDB::standardInitialization();
-  
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_geom_xml_file",

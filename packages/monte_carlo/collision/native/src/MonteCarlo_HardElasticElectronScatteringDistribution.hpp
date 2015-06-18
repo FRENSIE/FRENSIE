@@ -24,7 +24,7 @@
 #include "MonteCarlo_ElectronState.hpp"
 #include "MonteCarlo_ParticleBank.hpp"
 #include "MonteCarlo_ElectronScatteringDistribution.hpp"
-#include "Utility_OneDDistribution.hpp"
+#include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -36,7 +36,7 @@ public:
 
   //! Typedef for the  elastic distribution
   typedef Teuchos::Array<Utility::Pair< double,
-                              Teuchos::RCP<const Utility::OneDDistribution> > >
+		       Teuchos::RCP<const Utility::TabularOneDDistribution> > >
   ElasticDistribution;
 
   //! Constructor

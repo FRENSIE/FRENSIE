@@ -2,7 +2,7 @@
 //!
 //! \file   Utility_OneDDistribution.hpp
 //! \author Alex Robinson
-//! \brief  One dimensional distribution class declaration
+//! \brief  One-dimensional distribution class declaration
 //!
 //---------------------------------------------------------------------------//
 
@@ -20,7 +20,7 @@
 
 namespace Utility{
 
-//! The one dimensional probability density function declaration
+//! The one-dimensional distribution declaration
 class OneDDistribution
 {
 
@@ -40,30 +40,11 @@ public:
   //! Evaluate the PDF
   virtual double evaluatePDF( const double indep_var_value ) const = 0;
 
-  //! Evaluate the CDF
-  virtual double evaluateCDF( const double indep_var_value ) const;
-
-  //! Return a random sample from the corresponding CDF (log sampling eff.)
-  virtual double sample() = 0;
-
-  //! Return a random sample from the corresponding CDF (ignore sample eff.)
+  //! Return a random sample from the distribution
   virtual double sample() const = 0;
 
-  //! Return a random sample and sampled index from the corresponding CDF (ignore sample eff.)
-  virtual double sample( unsigned& sampled_bin_index ) const;
-
-  //! Return a random sample from the corresponding CDF in a subrange
-  virtual double sample( const double max_indep_var ) const;
-
-  //! Return a random sample from the distribution at the given CDF value
-  virtual double sampleWithValue( const double CDF_value ) const;
-
-  //! Return a random sample from the distribution at the given CDF value in a subrange
-  virtual double sampleWithValue( const double CDF_value,
-                                  const double max_indep_var ) const;
-
-  //! Return the sampling efficiency from the distribution
-  virtual double getSamplingEfficiency() const = 0;
+  //! Return a random sample and record the number of trials
+  virtual double sampleAndRecordTrials( unsigned& trials ) const = 0;
 
   //! Return the upper bound of the distribution independent variable
   virtual double getUpperBoundOfIndepVar() const = 0;
@@ -74,50 +55,20 @@ public:
   //! Return the distribution type
   virtual OneDDistributionType getDistributionType() const = 0;
 
+  //! Test if the distribution is tabular
+  virtual bool isTabular() const;
+
+  //! Test if the distribution is continuous
+  virtual bool isContinuous() const = 0;
+
   //! Test if the distribution has the same bounds
   bool hasSameBounds( const OneDDistribution& distribution ) const;
 };
 
-// Evaluate the CDF
-inline double OneDDistribution::evaluateCDF( const double indep_var_value ) const
+// Test if the distribution is tabular
+inline bool OneDDistribution::isTabular() const
 {
-  THROW_EXCEPTION( std::logic_error, 
-          "Error! Please implement this function for desired OneDDistribution");
-}
-
-// Return a random sample and sampled index from the corresponding CDF (ignore sample eff.)
-inline double OneDDistribution::sample( unsigned& sampled_bin_index ) const
-{
-  sampled_bin_index = std::numeric_limits<unsigned>::max();
-
-  return this->sample();
-}
-
-// Return a random sample from the corresponding CDF in a subrange
-inline double OneDDistribution::sample( const double max_indep_var ) const
-{
-  OneDDistributionType type = this->getDistributionType();
-  std::cerr << "Warning: A " << convertOneDDistributionTypeToString( type )
-	    << " cannot return a sample from a sub-interval. A sample from "
-	    << "the entire interval will be returned." << std::endl;
-
-  return this->sample();
-}
-
-// Return a random sample from the distribution at the given CDF value
-inline double OneDDistribution::sampleWithValue( const double CDF_value ) const
-{
-  THROW_EXCEPTION( std::logic_error, 
-          "Error! Please implement this function for desired OneDDistribution");
-}
-
-// Return a random sample from the distribution at the given CDF value in a subrange
-inline double OneDDistribution::sampleWithValue( 
-                                              const double CDF_value,
-                                              const double max_indep_var ) const
-{
-  THROW_EXCEPTION( std::logic_error, 
-          "Error! Please implement this function for desired OneDDistribution");
+  return false;
 }
 
 // Test if the distribution has the same bounds

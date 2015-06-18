@@ -14,6 +14,7 @@
 #include "Utility_DataProcessor.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ArrayString.hpp"
+#include "Utility_SortAlgorithms.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 #include "Utility_ExceptionCatchMacros.hpp"
 
@@ -34,11 +35,17 @@ DiscreteDistribution::DiscreteDistribution(
   : d_distribution( independent_values.size() ),
     d_norm_constant( 1.0 )
 {
-  // Make sure that every value has a probability assigned
-  testPrecondition( independent_values.size() == dependent_values.size() );
-  
   if( interpret_dependent_values_as_cdf )
   {
+    // Make sure that every value has a probability assigned
+    testPrecondition( independent_values.size() == dependent_values.size() );
+    // Make sure that the bins are sorted
+    testPrecondition( Sort::isSortedAscending( independent_values.begin(),
+					       independent_values.end() ) );
+    // Make sure that the bin values are sorted
+    testPrecondition( Sort::isSortedAscending( dependent_values.begin(), 
+					       dependent_values.end() ) );
+    
     // Assign the distribution
     for( unsigned i = 0; i < independent_values.size(); ++i )
     {
@@ -90,102 +97,150 @@ DiscreteDistribution& DiscreteDistribution::operator=(
  */
 double DiscreteDistribution::evaluate( const double indep_var_value ) const 
 {
-  for( unsigned i = 0; i < d_distribution.size(); ++i )
-  {
-    if( indep_var_value == d_distribution[i].first )
-      return std::numeric_limits<double>::infinity();
-  }
+  double value = this->evaluatePDF( indep_var_value );
 
-  return 0.0;
+  if( value != 0.0 )
+    value = std::numeric_limits<double>::infinity();
+
+  return value;
 }
 
 // Evaluate the PDF
 double DiscreteDistribution::evaluatePDF( const double indep_var_value ) const
 {
-  for( unsigned i = 0; i < d_distribution.size(); ++i )
+  double pdf = 0.0;
+
+  if( indep_var_value >= d_distribution.front().first &&
+      indep_var_value <= d_distribution.back().first )
   {
-    if( indep_var_value == d_distribution[i].first )
+    Teuchos::Array<Pair<double,double> >::const_iterator bin = 
+      Search::binaryLowerBound<FIRST>( d_distribution.begin(),
+				       d_distribution.end(),
+				       indep_var_value );
+
+    Teuchos::Array<Pair<double,double> >::const_iterator prev_bin = bin;
+    --prev_bin;
+    
+    // The same independent variable may appear multiple times
+    while( bin->first == indep_var_value )
     {
-      if( i == 0 )
-	return d_distribution[i].second;
+      if( bin != d_distribution.begin() )
+      {
+	pdf += bin->second - prev_bin->second;
+	
+	--bin;
+	--prev_bin;
+      }
       else
-	return d_distribution[i].second - d_distribution[i-1].second;
+      {
+	pdf += bin->second;
+	
+	break;
+      }
     }
   }
+  else
+    pdf = 0.0;
   
-  return 0.0;
+  return pdf;
 }
 
-// Return a random sample from the distribution
-double DiscreteDistribution::sample()
+// Evaluate the CDF
+double DiscreteDistribution::evaluateCDF( const double indep_var_value ) const
 {
-  return (const_cast<const DiscreteDistribution*>(this))->sample();
+  double cdf = 0.0;
+
+  if( indep_var_value >= d_distribution.front().first &&
+      indep_var_value <= d_distribution.back().first )
+  {
+    Teuchos::Array<Pair<double,double> >::const_iterator bin = 
+      Search::binaryLowerBound<FIRST>( d_distribution.begin(),
+				       d_distribution.end(),
+				       indep_var_value );
+
+    // The same independent variable may appear multiple times
+    cdf = bin->second;
+  }
+  else if( indep_var_value < d_distribution.front().first )
+    cdf = 0.0;
+  else
+    cdf = 1.0;
+  
+  return cdf;
 }
+
 
 // Return a random sample from the distribution
 double DiscreteDistribution::sample() const
 {
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+  
   unsigned dummy_index;
 
-  return this->sample( dummy_index );
+  return this->sampleImplementation( random_number, dummy_index );
 }
 
-// Return a random sample from the distribution
-double DiscreteDistribution::sample( unsigned& sampled_bin_index ) const
+// Return a random sample and record the number of trials
+double DiscreteDistribution::sampleAndRecordTrials( unsigned& trials ) const
+{
+  ++trials;
+
+  return this->sample();
+}
+
+// Return a random sample and sampled index from the corresponding CDF
+double DiscreteDistribution::sampleAndRecordBinIndex( 
+					    unsigned& sampled_bin_index ) const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
   
-  Teuchos::Array<Pair<double,double> >::const_iterator sample = 
-    Search::binaryUpperBound<SECOND>( d_distribution.begin(),
-				      d_distribution.end(),
-				      random_number );
-
-  // Get the bin index sampled
-  sampled_bin_index = std::distance( d_distribution.begin(), sample );
-
-  return sample->first;
+  return this->sampleImplementation( random_number, sampled_bin_index );
 }
 
-// Return the sampling efficiency from the distribution
-double DiscreteDistribution::getSamplingEfficiency() const
+// Return a random sample and sampled index from the corresponding CDF
+double DiscreteDistribution::sampleWithRandomNumber( 
+					     const double random_number ) const
 {
-  return 1.0;
+  unsigned dummy_index;
+  
+  return this->sampleImplementation( random_number, dummy_index );
+}
+
+// Return a random sample from the corresponding CDF in a subrange
+double DiscreteDistribution::sampleInSubrange( 
+					     const double max_indep_var ) const
+{
+  // Make sure the max independent variable is valid
+  testPrecondition( max_indep_var >= d_distribution.front().first );
+  
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+
+  return this->sampleWithRandomNumberInSubrange( random_number,
+						 max_indep_var );
 }
 
 // Return the upper bound of the distribution independent variable
 double DiscreteDistribution::getUpperBoundOfIndepVar() const
 {
-  double max_value = -std::numeric_limits<double>::infinity();
-  
-  // Find the max value
-  for( unsigned i = 0; i < d_distribution.size(); ++i )
-  {
-    if( d_distribution[i].first > max_value )
-      max_value = d_distribution[i].first;
-  }
-      
-  return max_value;
+  return d_distribution.back().first;
 }
 
 // Return the lower bound of the independent variable
 double DiscreteDistribution::getLowerBoundOfIndepVar() const
 {
-  double min_value = std::numeric_limits<double>::infinity();
-
-  // Find the min value
-  for( unsigned i = 0; i < d_distribution.size(); ++i )
-  {
-    if( d_distribution[i].first < min_value )
-      min_value = d_distribution[i].first;
-  }
-  
-  return min_value;
+  return d_distribution.front().first;
 }
 
 // Return the distribution type
 OneDDistributionType DiscreteDistribution::getDistributionType() const
 {
   return DiscreteDistribution::distribution_type;
+}
+
+// Test if the distribution is continuous
+bool DiscreteDistribution::isContinuous() const
+{
+  return false;
 }
 
 // Method for placing the object in an output stream
@@ -245,6 +300,13 @@ void DiscreteDistribution::fromStream( std::istream& is )
 			      "Error: the discrete distribution cannot be "
 			      "constructed because the independent values are "
 			      "not valid (see details below)!\n" );
+
+  TEST_FOR_EXCEPTION( !Sort::isSortedAscending( independent_values.begin(),
+						independent_values.end() ),
+		      InvalidDistributionStringRepresentation,
+		      "Error: the discrete distribution cannot be constructed "
+		      "because the bin boundaries "
+		      << independent_values_rep << " are not sorted!" );
     
   // Read the ","
   std::string separator;
@@ -302,6 +364,9 @@ void DiscreteDistribution::initializeDistribution(
 {
   // Make sure that every value has a probability assigned
   testPrecondition( independent_values.size() == dependent_values.size() );
+  // Make sure that the bins are sorted
+  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
+					     independent_values.end() ) );
   
   // resize the distribution array
   d_distribution.resize( independent_values.size() );

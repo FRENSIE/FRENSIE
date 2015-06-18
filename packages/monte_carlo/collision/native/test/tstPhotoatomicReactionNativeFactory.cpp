@@ -34,60 +34,67 @@ Teuchos::RCP<MonteCarlo::PhotoatomicReaction> reaction;
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
-// Check that a total incoherent reaction without Doppler data can be created
+// Check that an incoherent reaction without Doppler data can be created
 TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
-		   createTotalIncoherentReaction_no_doppler )
+		   createIncoherentReaction_no_doppler )
 {
-  MonteCarlo::PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
-							       *data_container,
-							       energy_grid,
-							       grid_searcher,
-							       reaction,
-							       false );
+  Teuchos::Array<Teuchos::RCP<MonteCarlo::PhotoatomicReaction> > 
+    reactions;
+  
+  MonteCarlo::PhotoatomicReactionNativeFactory::createIncoherentReactions(
+					       *data_container,
+					       energy_grid,
+					       grid_searcher,
+					       reactions,
+					       MonteCarlo::WH_INCOHERENT_MODEL,
+					       3.0 );
 
   // Test the reaction properties
-  TEST_EQUALITY_CONST( reaction->getReactionType(),
+  TEST_EQUALITY_CONST( reactions.size(), 1 );
+  TEST_EQUALITY_CONST( reactions[0]->getReactionType(),
 		       MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(),
+  TEST_EQUALITY_CONST( reactions[0]->getThresholdEnergy(),
 		       1e-3 );
 
   // Test that the stored cross section is correct
-  double cross_section = reaction->getCrossSection( 0.001 );
+  double cross_section = reactions[0]->getCrossSection( 0.001 );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.23509999999967790e+00, 1e-15 );
   
-  cross_section = reaction->getCrossSection( 20.0 );
+  cross_section = reactions[0]->getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.47834228852720528e+00, 1e-15 );
-
-  // Clear the reaction
-  reaction.reset();
 }
 
 //---------------------------------------------------------------------------//
-// Check that a total incoherent reaction with Doppler data can be created
+// Check that an incoherent reaction with Doppler data can be created
 TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
-		   createTotalIncoherentReaction_doppler )
+		   createIncoherentReaction_doppler )
 {
-  MonteCarlo::PhotoatomicReactionNativeFactory::createTotalIncoherentReaction(
-							       *data_container,
-							       energy_grid,
-							       grid_searcher,
-							       reaction,
-							       true );
+  Teuchos::Array<Teuchos::RCP<MonteCarlo::PhotoatomicReaction> > 
+    reactions;
+  
+  MonteCarlo::PhotoatomicReactionNativeFactory::createIncoherentReactions(
+		 *data_container,
+		 energy_grid,
+		 grid_searcher,
+		 reactions,
+		 MonteCarlo::COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
+		 3.0 );
 
   // Test reaction properties
-  TEST_EQUALITY_CONST( reaction->getReactionType(),
+  TEST_EQUALITY_CONST( reactions.size(), 1 );
+  TEST_EQUALITY_CONST( reactions[0]->getReactionType(),
 		       MonteCarlo::TOTAL_INCOHERENT_PHOTOATOMIC_REACTION );
-  TEST_EQUALITY_CONST( reaction->getThresholdEnergy(),
+  TEST_EQUALITY_CONST( reactions[0]->getThresholdEnergy(),
 		       0.001 );
 
   // Test that the stored cross section is correct
-  double cross_section = reaction->getCrossSection( 0.001 );
+  double cross_section = reactions[0]->getCrossSection( 0.001 );
 
   TEST_FLOATING_EQUALITY( cross_section, 1.23509999999967790e+00, 1e-15 );
   
-  cross_section = reaction->getCrossSection( 20.0 );
+  cross_section = reactions[0]->getCrossSection( 20.0 );
 
   TEST_FLOATING_EQUALITY( cross_section, 2.47834228852720528e+00, 1e-15 );
 
@@ -111,7 +118,7 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
   
-  reaction->react( photon, bank, shell_of_interaction );
+  reactions[0]->react( photon, bank, shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
@@ -141,12 +148,13 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 {
   Teuchos::Array<Teuchos::RCP<MonteCarlo::PhotoatomicReaction> > reactions;
 
-  MonteCarlo::PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
-							       *data_container,
-							       energy_grid,
-							       grid_searcher,
-							       reactions,
-							       false );
+  MonteCarlo::PhotoatomicReactionNativeFactory::createIncoherentReactions(
+					  *data_container,
+					  energy_grid,
+					  grid_searcher,
+					  reactions,
+					  MonteCarlo::IMPULSE_INCOHERENT_MODEL,
+					  3.0 );
 
   TEST_EQUALITY_CONST( reactions.size(), 24 );
 
@@ -187,12 +195,13 @@ TEUCHOS_UNIT_TEST( PhotoatomicReactionNativeFactory,
 {
   Teuchos::Array<Teuchos::RCP<MonteCarlo::PhotoatomicReaction> > reactions;
 
-  MonteCarlo::PhotoatomicReactionNativeFactory::createSubshellIncoherentReactions(
-							       *data_container,
-							       energy_grid,
-							       grid_searcher,
-							       reactions,
-							       true );
+  MonteCarlo::PhotoatomicReactionNativeFactory::createIncoherentReactions(
+			  *data_container,
+			  energy_grid,
+			  grid_searcher,
+			  reactions,
+			  MonteCarlo::FULL_PROFILE_DB_IMPULSE_INCOHERENT_MODEL,
+			  3.0 );
 
   TEST_EQUALITY_CONST( reactions.size(), 24 );
 

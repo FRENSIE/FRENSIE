@@ -92,10 +92,16 @@ double UniformDistribution::evaluatePDF( const double indep_var_value ) const
     return 0.0;
 }
 
-// Return a random sample from the distribution
-double UniformDistribution::sample()
+// Evaluate the CDF
+double UniformDistribution::evaluateCDF( const double indep_var_value ) const
 {
-  return (const_cast<const UniformDistribution*>(this))->sample();
+  if( indep_var_value >= d_min_independent_value &&
+      indep_var_value <= d_max_independent_value )
+    return d_pdf_value*(indep_var_value - d_min_independent_value);
+  else if( indep_var_value < d_min_independent_value )
+    return 0.0;
+  else
+    return 1.0;
 }
 
 // Return a random sample from the distribution
@@ -103,14 +109,37 @@ double UniformDistribution::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  return random_number*(d_max_independent_value - d_min_independent_value) +
-    d_min_independent_value;
+  this->sampleWithRandomNumber( random_number );
 }
 
-// Return the sampling efficiency from the distribution
-double UniformDistribution::getSamplingEfficiency() const
+//! Return a random sample from the corresponding CDF and record the number of trials
+double UniformDistribution::sampleAndRecordTrials( unsigned& trials ) const
 {
-  return 1.0;
+  ++trials;
+
+  return this->sample();
+}
+
+// Return a random sample and sampled index from the corresponding CDF
+double UniformDistribution::sampleAndRecordBinIndex( 
+					    unsigned& sampled_bin_index ) const
+{
+  sampled_bin_index = 0u;
+
+  return this->sample();
+}
+
+// Return a random sample from the corresponding CDF in a subrange
+double UniformDistribution::sampleInSubrange(const double max_indep_var ) const
+{
+  // Make sure the upper bound of the subrange is valid
+  testPrecondition( max_indep_var <= d_max_independent_value );
+  testPrecondition( max_indep_var >= d_min_independent_value );
+
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+
+  return this->sampleWithRandomNumberInSubrange( random_number,
+						 max_indep_var );
 }
 
 // Return the upper bound of the distribution independent variable
@@ -129,6 +158,12 @@ double UniformDistribution::getLowerBoundOfIndepVar() const
 OneDDistributionType UniformDistribution::getDistributionType() const
 {
   return UniformDistribution::distribution_type;
+}
+
+// Test if the distribution is continuous
+bool UniformDistribution::isContinuous() const
+{
+  return true;
 }
 
 // Method for placing the object in an output stream

@@ -10,6 +10,7 @@
 #define MONTE_CARLO_PHOTOATOMIC_REACTION_ACE_FACTORY_HPP
 
 // FRENSIE Includes
+#include "MonteCarlo_IncoherentModelType.hpp"
 #include "MonteCarlo_PhotoatomicReaction.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_HashBasedGridSearcher.hpp"
@@ -28,7 +29,8 @@ public:
        const Teuchos::ArrayRCP<const double>& energy_grid,
        const Teuchos::RCP<const Utility::HashBasedGridSearcher>& grid_searcher,
        Teuchos::RCP<PhotoatomicReaction>& incoherent_reaction,
-       const bool use_doppler_broadening_data );
+       const IncoherentModelType incoherent_model,
+       const double kahn_sampling_cutoff_energy );
 
   //! Create a coherent scattering photoatomic reaction
   static void createCoherentReaction(

@@ -91,11 +91,39 @@ TEUCHOS_UNIT_TEST( NormalDistribution, sample )
 }
 
 //---------------------------------------------------------------------------//
-// Check that the sampling efficiency can be returned
-TEUCHOS_UNIT_TEST( NormalDistribution, getSamplingEfficiency )
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( NormalDistribution, sampleAndRecordTrials )
 {
-  TEST_COMPARE( distribution->getSamplingEfficiency(), >=, 0.0 );
-  TEST_COMPARE( distribution->getSamplingEfficiency(), <=, 1.0 );
+  std::vector<double> fake_stream( 11 );
+  fake_stream[0] = 0.5;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 0.9;
+  fake_stream[3] = 0.5;
+  fake_stream[4] = 0.5;
+  fake_stream[5] = 0.2;
+  fake_stream[6] = 0.049787;
+  fake_stream[7] = 0.449329;
+  fake_stream[8] = 0.5;
+  fake_stream[9] = 0.5;
+  fake_stream[10] = 0.4;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  unsigned trials = 0;
+
+  double sample = distribution->sampleAndRecordTrials( trials );
+  TEST_FLOATING_EQUALITY( sample, 0.69314718055995, 1e-14 );
+  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
+  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+
+  sample = distribution->sampleAndRecordTrials( trials );
+  TEST_FLOATING_EQUALITY( sample, -0.69314718055995, 1e-14 );
+  TEST_EQUALITY_CONST( 3.0/trials, 0.75 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
 }
 
 //---------------------------------------------------------------------------//
@@ -122,6 +150,20 @@ TEUCHOS_UNIT_TEST( NormalDistribution, getDistributionType )
 {
   TEST_EQUALITY_CONST( distribution->getDistributionType(),
 		       Utility::NORMAL_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is tabular
+TEUCHOS_UNIT_TEST( NormalDistribution, isTabular )
+{
+  TEST_ASSERT( !distribution->isTabular() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the distribution is continuous
+TEUCHOS_UNIT_TEST( NormalDistribution, isContinuous )
+{
+  TEST_ASSERT( distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//

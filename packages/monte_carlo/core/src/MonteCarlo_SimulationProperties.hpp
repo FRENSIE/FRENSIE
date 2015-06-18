@@ -12,9 +12,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_ParticleModeType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
-#include "MonteCarlo_NeutronState.hpp"
-#include "MonteCarlo_PhotonState.hpp"
-#include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_IncoherentModelType.hpp"
 
 namespace MonteCarlo{
 
@@ -38,6 +36,12 @@ public:
 
   //! Return the number of histories to run
   static unsigned long long getNumberOfHistories();
+
+  //! Set the angle cosine cutoff value for surface flux estimators
+  static void setSurfaceFluxEstimatorAngleCosineCutoff( const double cutoff );
+
+  //! Return the angle cosine cutoff value for surface flux estimators
+  static double getSurfaceFluxEstimatorAngleCosineCutoff();
 
   //! Set the free gas thermal treatment temperature threshold
   static void setFreeGasThreshold( const double threshold );
@@ -80,6 +84,15 @@ public:
 
   //! Return the absolute maximum photon energy (MeV)
   static double getAbsoluteMaxPhotonEnergy();
+
+  //! Set the Kahn sampling cutoff energy (MeV) 
+  static void setKahnSamplingCutoffEnergy( const double energy );
+
+  //! Return the Kahn sampling cutoff energy (MeV)
+  static double getKahnSamplingCutoffEnergy();
+
+  //! Return the absolute min Kahn sampling cutoff energy (MeV)
+  static double getAbsoluteMinKahnSamplingCutoffEnergy();
 
   //! Set the number of photon hash grid bins
   static void setNumberOfPhotonHashGridBins( const unsigned bins );
@@ -125,17 +138,11 @@ public:
   //! Return if implicit capture mode has been set
   static bool isImplicitCaptureModeOn();
 
-  //! Set impulse approximation mode to on (off by default)
-  static void setImpulseApproximationModeOn();
+  //! Set the incoherent model type
+  static void setIncoherentModelType( const IncoherentModelType model );
 
-  //! Return if impulse approximation mode is on
-  static bool isImpulseApproximationModeOn();
-
-  //! Set photon Doppler broadening mode to off (on by default)
-  static void setPhotonDopplerBroadeningModeOff();
-
-  //! Return if photon Doppler broadening mode is on
-  static bool isPhotonDopplerBroadeningModeOn();
+  //! Return the incohernt model
+  static IncoherentModelType getIncoherentModelType();
 
   //! Set atomic relaxation mode to off (on by default)
   static void setAtomicRelaxationModeOff();
@@ -171,6 +178,9 @@ private:
   // The number of histories to run
   static unsigned long long number_of_histories;
 
+  // The angle cosine cutoff value for surface flux estimators
+  static double surface_flux_estimator_angle_cosine_cutoff;
+
   // The free gas thermal treatment temperature threshold
   // Note: free gas thermal treatment used when energy<threshold*kT (and A > 1)
   static double free_gas_threshold;
@@ -199,6 +209,12 @@ private:
   // The absolute maximum photon energy
   static const double absolute_max_photon_energy;
 
+  // The Kahn sampling cutoff energy (MeV)
+  static double kahn_sampling_cutoff_energy;
+
+  // The absolute min Kahn sampling cutoff energy (MeV)
+  static const double absolute_min_kahn_sampling_cutoff_energy;
+
   // The number of photon hash grid bins
   static unsigned num_photon_hash_grid_bins;
 
@@ -220,11 +236,8 @@ private:
   // The capture mode (true = implicit, false = analogue - default)
   static bool implicit_capture_mode_on;
 
-  // The impulse approximation mode (true = on, false = off - default)
-  static bool impulse_approximation_mode_on;
-
-  // The photon Doppler broadening mode (true = on - default, false = off)
-  static bool doppler_broadening_mode_on;
+  // The incoherent model
+  static IncoherentModelType incoherent_model_type;
 
   // The atomic relaxation mode (true = on - default, false = off)
   static bool atomic_relaxation_mode_on;
@@ -250,6 +263,12 @@ inline ParticleModeType SimulationProperties::getParticleMode()
 inline unsigned long long SimulationProperties::getNumberOfHistories()
 {
   return SimulationProperties::number_of_histories;
+}
+
+// Return the angle cosine cutoff value for surface flux estimators
+inline double SimulationProperties::getSurfaceFluxEstimatorAngleCosineCutoff()
+{
+  return SimulationProperties::surface_flux_estimator_angle_cosine_cutoff;
 }
 
 // Return the free gas thermal treatment temperature threshold
@@ -306,6 +325,18 @@ inline double SimulationProperties::getAbsoluteMaxPhotonEnergy()
   return SimulationProperties::absolute_max_photon_energy;
 }
 
+// Return the Kahn sampling cutoff energy (MeV)
+inline double SimulationProperties::getKahnSamplingCutoffEnergy()
+{
+  return SimulationProperties::kahn_sampling_cutoff_energy;
+}
+
+// Return the absolute min Kahn sampling cutoff energy (MeV)
+inline double SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy()
+{
+  return SimulationProperties::absolute_min_kahn_sampling_cutoff_energy;
+}
+
 // Get the number of photon hash grid bins
 inline unsigned SimulationProperties::getNumberOfPhotonHashGridBins()
 {
@@ -348,16 +379,10 @@ inline bool SimulationProperties::isImplicitCaptureModeOn()
   return SimulationProperties::implicit_capture_mode_on;
 }
 
-// Return if impulse approximation mode has been set
-inline bool SimulationProperties::isImpulseApproximationModeOn()
+// Return the incohernt model
+inline IncoherentModelType SimulationProperties::getIncoherentModelType()
 {
-  return SimulationProperties::impulse_approximation_mode_on;
-}
-
-// Return if photon Doppler broadening mode is on
-inline bool SimulationProperties::isPhotonDopplerBroadeningModeOn()
-{
-  return SimulationProperties::doppler_broadening_mode_on;
+  return SimulationProperties::incoherent_model_type;
 }
 
 // Return if atomic relaxation mode is on

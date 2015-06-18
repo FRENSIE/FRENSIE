@@ -28,8 +28,6 @@ Teuchos::RCP<MonteCarlo::SimulationManager> facemc_manager;
  */
 int facemcCore( int argc, char** argv )
 {
-  Utility::OneDDistributionEntryConverterDB::standardInitialization();
-  
   Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
 

@@ -203,7 +203,7 @@ int main( int argc, char** argv )
 			  new Utility::UniformDistribution( 0.0, 20.0, 1.0 ) );
 
   // Initialize the scattering probability distribution
-  Teuchos::RCP<Utility::OneDDistribution> isotropic_distribution(
+  Teuchos::RCP<Utility::TabularOneDDistribution> isotropic_distribution(
 			  new Utility::UniformDistribution( -1.0, 1.0, 0.5 ) );
 
   // Initialize the scattering distribution
