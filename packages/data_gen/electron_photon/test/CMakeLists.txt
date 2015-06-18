@@ -49,3 +49,10 @@ ADD_EXECUTABLE(tstStandardAdjointIncoherentGridGenerator
   tstStandardAdjointIncoherentGridGenerator.cpp)
 TARGET_LINK_LIBRARIES(tstStandardAdjointIncoherentGridGenerator data_gen_electron_photon)
 ADD_TEST(StandardAdjointIncoherentGridGenerator_test tstStandardAdjointIncoherentGridGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
+
+#ADD_EXECUTABLE(tstStandardAdjointElectroionizationSubshellGridGenerator
+#  tstStandardAdjointElectroionizationSubshellGridGenerator.cpp)
+#TARGET_LINK_LIBRARIES(tstStandardAdjointElectroionizationSubshellGridGenerator data_gen_electron_photon)
+#ADD_TEST(StandardAdjointElectroionizationSubshellGridGenerator_test tstStandardAdjointElectroionizationSubshellGridGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
+
+

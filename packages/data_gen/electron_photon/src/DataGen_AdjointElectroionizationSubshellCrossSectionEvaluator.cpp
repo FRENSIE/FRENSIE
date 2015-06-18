@@ -25,8 +25,9 @@ namespace DataGen{
 // Constructor
 AdjointElectroionizationSubshellCrossSectionEvaluator::AdjointElectroionizationSubshellCrossSectionEvaluator(
     const double& binding_energy,
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& electroionization_subshell_reaction,
-    ElectroionizationSubshellDistribution& knock_on_distribution )
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& 
+                                     electroionization_subshell_reaction,
+    const ElectroionizationSubshellDistribution& knock_on_distribution )
   : d_binding_energy( binding_energy ),
     d_electroionization_subshell_reaction( electroionization_subshell_reaction ),
     d_knock_on_distribution( knock_on_distribution )

@@ -46,8 +46,9 @@ public:
   //! Constructor
   AdjointElectroionizationSubshellCrossSectionEvaluator(
     const double& binding_energy,
-    Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& electroionization_subshell_reaction,
-    ElectroionizationSubshellDistribution& knock_on_distribution );
+    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& 
+                               electroionization_subshell_reaction,
+    const ElectroionizationSubshellDistribution& knock_on_distribution );
 
   //! Destructor
   ~AdjointElectroionizationSubshellCrossSectionEvaluator()
