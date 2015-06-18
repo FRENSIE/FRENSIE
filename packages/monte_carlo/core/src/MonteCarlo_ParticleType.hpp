@@ -67,9 +67,6 @@ struct HDF5TypeTraits<MonteCarlo::ParticleType>
 {
   static inline H5::EnumType dataType()
   {
-    // Make sure all particle types will be converted
-    testPrecondition( MonteCarlo::PARTICLE_end == 10 );
-    
     H5::EnumType hdf5_particle_type( sizeof( MonteCarlo::ParticleType ) );
 
     MonteCarlo::ParticleType particle_type = MonteCarlo::PHOTON;

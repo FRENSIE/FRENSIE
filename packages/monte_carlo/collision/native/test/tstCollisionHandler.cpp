@@ -782,15 +782,15 @@ int main( int argc, char** argv )
 				new MonteCarlo::AtomicRelaxationModelFactory );
     
     MonteCarlo::PhotoatomFactory photoatom_factory( 
-					  test_cross_sections_xml_directory,
-					  cross_section_table_info,
-					  atom_aliases,
-					  atomic_relaxation_model_factory,
-					  1000,
-					  false,
-					  true,
-					  false,
-					  true );
+		 test_cross_sections_xml_directory,
+		 cross_section_table_info,
+		 atom_aliases,
+		 atomic_relaxation_model_factory,
+		 1000,
+		 MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
+		 3.0,
+		 false,
+		 true );
 
     boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Photoatom> >
       photoatom_map;

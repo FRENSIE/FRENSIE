@@ -9,18 +9,14 @@
 // Std Lib Includes
 #include <limits>
 
-// Boost Includes
-#include <boost/bind.hpp>
-
 // FRENSIE Includes
 #include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
-#include "MonteCarlo_ComptonProfileHelpers.hpp"
 #include "MonteCarlo_ElectronState.hpp"
+#include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_SimulationProperties.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_DiscreteDistribution.hpp"
-#include "Utility_KleinNishinaDistribution.hpp"
-#include "Utility_DirectionHelpers.hpp"
+#include "Utility_GaussKronrodQuadratureKernel.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -30,159 +26,198 @@ namespace MonteCarlo{
  * variable) should have units of 1/cm.
  */ 
 IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
-     const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function )
-  : d_scattering_function( scattering_function )
+				     const double kahn_sampling_cutoff_energy )
+  : d_kahn_sampling_cutoff_energy( kahn_sampling_cutoff_energy )
 {
-  // Make sure the scattering function is valid
-  testPrecondition( !scattering_function.is_null() );
+  // Make sure the cutoff energy is valid
+  testPrecondition( kahn_sampling_cutoff_energy >= 
+		    SimulationProperties::getAbsoluteMinKahnSamplingCutoffEnergy() );
 
-  // Ignore Doppler broadening
-  d_doppler_broadening_func = boost::bind<double>( 
-		    &IncoherentPhotonScatteringDistribution::returnComptonLine,
-		    boost::cref( *this ),
-		    _1,
-		    _2,
-		    _3,
-		    _4 );
+  // Force the quadrature kernel to throw exceptions
+  Utility::GaussKronrodQuadratureKernel::throwExceptions( true );
 }
 
-// Constructor for doppler broadening
-/*! \details The recoil electron momentum (scattering function independent 
- * variable) should have units of 1/cm. The Compton profile grids must
- * be in me*c units (not atomic units). The Compton profiles must be in 
- * inverse me*c units (not inverse atomic units). If only half profiles are
- * provided, the old Doppler broadening method will be used.
- */  
-IncoherentPhotonScatteringDistribution::IncoherentPhotonScatteringDistribution(
-     const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function,
-     const Teuchos::Array<double>& subshell_binding_energies,
-     const Teuchos::Array<double>& subshell_occupancies,
-     const Teuchos::Array<SubshellType>& subshell_order,
-     const Teuchos::RCP<ComptonProfileSubshellConverter>& subshell_converter,
-     const ElectronMomentumDistArray& electron_momentum_dist_array )
-  : d_scattering_function( scattering_function ),
-    d_subshell_occupancy_distribution(),
-    d_subshell_binding_energy( subshell_binding_energies ),
-    d_subshell_order( subshell_order ),
-    d_subshell_converter( subshell_converter ),
-    d_electron_momentum_distribution( electron_momentum_dist_array )
+// Evaluate the PDF
+double IncoherentPhotonScatteringDistribution::evaluatePDF( 
+				   const double incoming_energy,
+				   const double scattering_angle_cosine ) const
 {
-  // Make sure the scattering function is valid
-  testPrecondition( !scattering_function.is_null() );
-  // Make sure the shell interaction data is valid
-  testPrecondition( subshell_binding_energies.size() > 0 );
-  testPrecondition( subshell_occupancies.size() ==
-		    subshell_binding_energies.size() );
-  testPrecondition( subshell_order.size() == 
-		    subshell_binding_energies.size() );
-  // Make sure the comptron profile array is valid
-  testPrecondition( electron_momentum_dist_array.size() > 0 );
-  testPrecondition( electron_momentum_dist_array.front()->getUpperBoundOfIndepVar() <= 1.0 );
-  testPrecondition( electron_momentum_dist_array.back()->getUpperBoundOfIndepVar() <= 1.0 );
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  // Create the shell interaction data distribution
-  Teuchos::Array<double> dummy_indep_vals( subshell_occupancies.size() );
+  return this->evaluate( incoming_energy, scattering_angle_cosine )/
+    this->evaluateIntegratedCrossSection( incoming_energy, 1e-3 );
+}
+
+// Evaluate the Klein-Nishina distribution
+/*! The Klein-Nishina cross section (b) differential in the scattering angle 
+ * cosine is returned from this function.
+ */
+double IncoherentPhotonScatteringDistribution::evaluateKleinNishinaDist( 
+				   const double incoming_energy,
+				   const double scattering_angle_cosine ) const
+{
+  // Make sure the energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
   
-  d_subshell_occupancy_distribution.reset(
-	           new Utility::DiscreteDistribution( dummy_indep_vals,
-						      subshell_occupancies ) );
+  const double mult = Utility::PhysicalConstants::pi*
+    Utility::PhysicalConstants::classical_electron_radius*
+    Utility::PhysicalConstants::classical_electron_radius;
 
-  // Doppler broaden compton lines
-  if(d_electron_momentum_distribution.front()->getLowerBoundOfIndepVar() < 0.0)
+  const double outgoing_energy = incoming_energy/
+    (1.0 + incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy*
+     (1.0-scattering_angle_cosine) );
+
+  return mult*1e24*((outgoing_energy*outgoing_energy)/
+	    (incoming_energy*incoming_energy))*
+    (outgoing_energy/incoming_energy + incoming_energy/outgoing_energy - 1.0 +
+     scattering_angle_cosine*scattering_angle_cosine);
+}
+
+// Klein-Nishina sampling implementation
+void IncoherentPhotonScatteringDistribution::sampleAndRecordTrialsKleinNishina(
+					    const double incoming_energy,
+					    double& outgoing_energy,
+					    double& scattering_angle_cosine,
+					    unsigned& trials ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+
+  // The unitless incoming energy
+  const double alpha = 
+      incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
+
+  // The argument used by both sampling schemes
+  const double arg = 1.0 + 2.0*alpha;
+  
+  // The sampled inverse energy loss ratio
+  double x;
+
+  // Use Kahn's rejection scheme
+  if( incoming_energy < d_kahn_sampling_cutoff_energy )
   {
-    // The full profile is required for the new Doppler broadening method
-    d_doppler_broadening_func = boost::bind<double>( 
-	    &IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine,
-	    boost::cref( *this ),
-	    _1,
-	    _2,
-	    _3,
-	    _4 );
+    const double branching_ratio = arg/(8.0 + arg);
+
+    // Three random numbers are required by the rejection scheme
+    double random_number_1, random_number_2, random_number_3;
+
+    while( true )
+    {
+      // Generate new random numbers
+      random_number_1 =
+	Utility::RandomNumberGenerator::getRandomNumber<double>();
+      random_number_2 =
+	Utility::RandomNumberGenerator::getRandomNumber<double>();
+      random_number_3 = 
+	Utility::RandomNumberGenerator::getRandomNumber<double>();
+      
+      // Increment the number of trials
+      ++trials;
+      
+      // Take the first branch
+      if( random_number_1 <= branching_ratio )
+      {
+	x = 1.0 + 2.0*random_number_2*alpha;
+	
+	if( random_number_3 <= 4.0*(1.0/x - 1.0/(x*x)) )
+	  break;
+      }
+      // Take the second branch
+      else
+      {
+	x = (arg)/(1.0 + 2.0*random_number_2*alpha);
+	
+	double branch_arg = (1.0 - x)/alpha + 1.0;
+	
+	if( 2*random_number_3 <= branch_arg*branch_arg + 1.0/x )
+	  break;
+      }
+    }
   }
+  // Use Koblinger's direct sampling scheme
   else
   {
-    // Only half of the profile is required for the old method
-    d_doppler_broadening_func = boost::bind<double>( 
-	 &IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLineOld,
-	 boost::cref( *this ),
-	 _1,
-	 _2,
-	 _3,
-	 _4 );
+    // Increment the number of trials
+    ++trials;
+
+    // The mixing probabilities
+    double p1 = 2.0/alpha;
+    double p2 = (1.0 - (1.0 + arg)/(alpha*alpha))*log(arg);
+    double p3 = p1;
+    double p4 = 0.5*(1.0 - 1.0/(arg*arg));
+
+    const double norm = p1+p2+p3+p4;
+
+    p1 /= norm;
+    p2 /= norm;
+    p3 /= norm;
+    p4 /= norm;
+    
+    // Sample from the individual pdfs
+    double random_number_1 = 
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+    double random_number_2 = 
+      Utility::RandomNumberGenerator::getRandomNumber<double>();
+    
+    if( random_number_1 <= p1 )
+      x = 1.0 + 2.0*alpha*random_number_2;
+    else if( random_number_1 <= p1+p2 )
+      x = pow( arg, random_number_2 );
+    else if( random_number_1 <= p1+p2+p3 )
+      x = arg/(1.0 + 2.0*alpha*random_number_2 );
+    else
+      x = 1.0/sqrt(1.0 - random_number_2*(1.0 - 1.0/(arg*arg)));
   }
+
+  // Calculate the outgoing energy
+  outgoing_energy = incoming_energy/x;
+  
+  // Calculate the outgoing scattering angle cosine
+  scattering_angle_cosine = 1.0 - (x - 1.0)/alpha;
+  
+  // Check for roundoff error
+  if( fabs( scattering_angle_cosine ) > 1.0 )
+    scattering_angle_cosine = copysign( 1.0, scattering_angle_cosine );
+
+  // Make sure the sampled inverse energy loss ratio is valid
+  testPostcondition( x >= 1.0 );
+  testPostcondition( x <= 1.0 + 2.0*alpha );
+  // Make sure the compton line energy is valid
+  testPostcondition( outgoing_energy <= incoming_energy );
+  testPostcondition( outgoing_energy >= incoming_energy/(1+2*alpha) );
+  // Make sure the scattering angle cosine is valid
+  testPostcondition( scattering_angle_cosine >= -1.0 );
+  testPostcondition( scattering_angle_cosine <= 1.0 );
 }
 
-// Randomly scatter the photon
-/*! \details The particle bank is used to store the electron that is emitted
- * from the collision. Whether or not Doppler broadening is done, the 
- * energy and direction of the outgoing electron is calculated as if it were
- * at rest initially (feel free to update this model!). If Doppler broadening 
- * of the compton line is done, the interaction shell (where the void is 
- * located) will also be passed out of the function. If doppler broadening is 
- * not done, the shell of interaction will be set to UNKNOWN_SUBSHELL.
- */ 
-void IncoherentPhotonScatteringDistribution::scatterPhoton( 
-				     PhotonState& photon,
-				     ParticleBank& bank,
-				     SubshellType& shell_of_interaction ) const
+// Create ejected electron
+void IncoherentPhotonScatteringDistribution::createEjectedElectron( 
+					  const PhotonState& photon,
+				          const double scattering_angle_cosine,
+					  const double azimuthal_angle,
+					  ParticleBank& bank ) const
 {
-  // The inverse wavelength of the photon (1/cm)
-  const double inverse_wavelength = photon.getEnergy()/
-    (Utility::PhysicalConstants::planck_constant*
-     Utility::PhysicalConstants::speed_of_light);
-
-  // The maximum scattering function value
-  const double max_scattering_function_value = 
-    d_scattering_function->evaluate( inverse_wavelength// /1e8
-				     );
-
-  // The photon energy relative to the electron rest mass energy
-  const double alpha = photon.getEnergy()/
-    Utility::PhysicalConstants::electron_rest_mass_energy;
+  // Make sure the incoming energy is valid
+  testPrecondition( photon.getEnergy() > 0.0 );
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+  // Make sure the azimuthal angle is valid
+  testPrecondition( azimuthal_angle >= 0.0 );
+  testPrecondition( azimuthal_angle <= 2*Utility::PhysicalConstants::pi );
   
-  // The scattering angle cosine
-  double scattering_angle_cosine;
-
-  // Sample the inverse energy loss ratio
-  double inverse_energy_loss_ratio;
-  
-  // The scattering function value corresponding to the outgoing angle
-  double scattering_function_value;
-
-  // The scaled random number
-  double scaled_random_number;
-
-  unsigned trial_dummy;
-
-  // Sample a value from the Klein-Nishina distribution, reject with the
-  // scattering function
-  do{
-    inverse_energy_loss_ratio = 
-      Utility::KleinNishinaDistribution::sampleOptimal( photon.getEnergy(),
-							trial_dummy );
-
-    scattering_angle_cosine = 1.0 + (1.0 - inverse_energy_loss_ratio)/alpha;
-
-    double scattering_function_arg = 
-      sqrt( (1.0 - scattering_angle_cosine)/2.0 )*inverse_wavelength// /1e8
-      ;
-    
-    scattering_function_value = d_scattering_function->evaluate( 
-						     scattering_function_arg );
-
-    scaled_random_number = max_scattering_function_value*
-      Utility::RandomNumberGenerator::getRandomNumber<double>();
-  }while( scaled_random_number > scattering_function_value );
-    
   // Calculate the compton line energy
-  double compton_line_energy = photon.getEnergy()/inverse_energy_loss_ratio;
-  
-  // Doppler broaden the compton lines
-  double outgoing_energy = d_doppler_broadening_func(photon.getEnergy(),
-						     compton_line_energy,
-						     scattering_angle_cosine,
-						     shell_of_interaction );
-
+  const double compton_line_energy = 
+    calculateComptonLineEnergy( photon.getEnergy(), 
+				scattering_angle_cosine );
+    
   double electron_energy = photon.getEnergy() - compton_line_energy;
 
   double electron_scattering_angle_cosine = 
@@ -197,20 +232,7 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
     electron_scattering_angle_cosine = 
       copysign( 1.0, electron_scattering_angle_cosine );
   }
-
-  // Make sure the scattering angle cosine is valid
-  testPostcondition( scattering_angle_cosine >= -1.0 );
-  testPostcondition( scattering_angle_cosine <= 1.0 );
-  // Make sure the compton line energy is valid
-  testPostcondition( compton_line_energy <= photon.getEnergy() );
-  testPostcondition( compton_line_energy >= photon.getEnergy()/(1+2*alpha) );
-  // Make sure the electron scattering angle cosine is valid
-  testPostcondition( electron_scattering_angle_cosine >= -1.0 );
-  testPostcondition( electron_scattering_angle_cosine <= 1.0 );
-
-  // Sample the azimuthal angle of the outgoing photon
-  double azimuthal_angle = sampleAzimuthalAngle();
-
+  
   // Create the new electron
   if( electron_energy > 0.0 )
   {
@@ -232,250 +254,12 @@ void IncoherentPhotonScatteringDistribution::scatterPhoton(
     bank.push( electron );
   }
   
-  // Set the new energy
-  photon.setEnergy( outgoing_energy );
-
-  // Set the new direction
-  photon.rotateDirection( scattering_angle_cosine, azimuthal_angle );
-}
-
-// Ignore doppler broadening
-double IncoherentPhotonScatteringDistribution::returnComptonLine( 
-				   const double initial_energy,
-				   const double compton_line_energy,
-				   const double scattering_angle_cosine,
-				   SubshellType& shell_of_interaction ) const
-{
-  shell_of_interaction = UNKNOWN_SUBSHELL;
-  
-  return compton_line_energy;
-}
-
-// Doppler broaden a compton line
-/*! \details This procedure is a revision of the commonly used method. It
- * requires the full Compton profile and not just the positive half.
- */
-double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLine(
-				     const double initial_energy,
-				     const double compton_line_energy,
-				     const double scattering_angle_cosine,
-				     SubshellType& shell_of_interaction ) const
-{
-  double outgoing_energy;
-  
-  // Record if a valid Doppler broadening energy is calculated
-  bool valid_doppler_broadening = true;
-
-  while( true )
-  {
-    // Sample the shell that is interacted with
-    unsigned shell_index;
-
-    d_subshell_occupancy_distribution->sampleAndRecordBinIndex( shell_index );
-
-    double shell_binding_energy = d_subshell_binding_energy[shell_index];
-
-    // Convert to a Compton profile shell
-    shell_of_interaction = d_subshell_order[shell_index];
-    
-    unsigned compton_shell_index = 
-      d_subshell_converter->convertSubshellToIndex( shell_of_interaction );
-
-    // Calculate the maximum outgoing photon energy
-    double energy_max = initial_energy - shell_binding_energy;
-
-    // Compton scattering can only occur if there is enough energy to release
-    // the electron from its shell
-    if( energy_max <= 0.0 )
-    {
-      valid_doppler_broadening = false;
-      break;
-    }
-
-    // Calculate the maximum electron momentum projection
-    double pz_max = calculateMaxElectronMomentumProjection( 
-						     initial_energy,
-						     shell_binding_energy,
-						     scattering_angle_cosine );
-
-    // Make sure the maximum electron momentum projection is physical (>-1.0)
-    if( pz_max < d_electron_momentum_distribution[compton_shell_index]->getLowerBoundOfIndepVar() )
-    {
-      valid_doppler_broadening = false;
-
-      break;
-    }
-    
-    double pz_table_max = 
-      d_electron_momentum_distribution[compton_shell_index]->getUpperBoundOfIndepVar();
-    
-    if( pz_max > pz_table_max )
-      pz_max = pz_table_max;
-    
-    // Sample an electron momentum projection
-    double pz = 
-      d_electron_momentum_distribution[compton_shell_index]->sampleInSubrange( 
-								      pz_max );
-    
-    // Calculate the doppler broadened energy
-    bool energetically_possible;
-
-    outgoing_energy = calculateDopplerBroadenedEnergy(pz,
-						      initial_energy,
-						      scattering_angle_cosine,
-						      energetically_possible );
-
-    if( !energetically_possible || outgoing_energy == 0.0 )
-    {
-      valid_doppler_broadening = false;
-	
-      break;
-    }
-    else
-    {
-      valid_doppler_broadening = true;
-
-      break;
-    }
-  }
-
-  if( !valid_doppler_broadening )
-  {
-    // reset the shell of interaction
-    shell_of_interaction = UNKNOWN_SUBSHELL;
-    
-    // reset the outgoing energy
-    outgoing_energy = compton_line_energy;
-  }
-
-  // Make sure the outgoing energy is valid
-  testPostcondition( outgoing_energy <= initial_energy );
-  testPostcondition( outgoing_energy > 0.0 );
-
-  return outgoing_energy;
-}
-
-// Doppler broaden a compton line using the old method
-/*! \details This is the procedure outlined in many papers, which recommend
- * the use of only 1/2 of the Compton profile (0 to 100 in 
- * atomic momentum units). The validity of this approach seems questionable
- * so use the revised version when possible.
- */
-double IncoherentPhotonScatteringDistribution::dopplerBroadenComptonLineOld( 
-				   const double initial_energy,
-				   const double compton_line_energy,
-				   const double scattering_angle_cosine,
-				   SubshellType& shell_of_interaction ) const
-{
-  double outgoing_energy;
-
-  // Record if a valid doppler broadened energy is calculated
-  bool valid_doppler_broadening = true;
-  
-  while( true )
-  {
-    // Sample the shell that is interacted with
-    unsigned shell_index;
-
-    d_subshell_occupancy_distribution->sampleAndRecordBinIndex( shell_index );
-
-    double shell_binding_energy = d_subshell_binding_energy[shell_index];
-
-    // Convert to a Compton profile shell
-    shell_of_interaction = d_subshell_order[shell_index];
-
-    unsigned compton_shell_index = 
-      d_subshell_converter->convertSubshellToIndex( shell_of_interaction );
-    
-    // Calculate the maximum outgoing photon energy
-    double energy_max = initial_energy - shell_binding_energy;
-    
-    // Compton scattering can only occur if there is enough energy to release
-    // the electron from its shell - test to be safe!
-    if( energy_max <= 0.0 )
-    {
-      valid_doppler_broadening = false;
-      break;
-    }
-    
-    // Calculate the maximum electron momentum projection
-    double arg = initial_energy*energy_max*(1.0 - scattering_angle_cosine);
-    
-    double pz_max = calculateMaxElectronMomentumProjection( 
-						     initial_energy,
-						     shell_binding_energy,
-						     scattering_angle_cosine );
-    
-    // Make sure the maximum electron momentum projection is physical
-    if( pz_max <= 0.0 )
-    {
-      valid_doppler_broadening = false;
-      
-      break;
-    }
-    
-    double pz_table_max = 
-      d_electron_momentum_distribution[compton_shell_index]->getUpperBoundOfIndepVar();
-    if( pz_max > pz_table_max )
-      pz_max = pz_table_max;
-    
-    // Sample an electron momentum projection
-    double pz = 
-      d_electron_momentum_distribution[compton_shell_index]->sampleInSubrange( 
-								      pz_max );
-    
-    // Calculate the doppler broadened energy
-    bool energetically_possible;
-
-    double pz_sqr = pz*pz;
-    double compton_line_ratio = initial_energy/compton_line_energy;
-    double a = pz_sqr - compton_line_ratio*compton_line_ratio;
-    double b = 2*(-pz_sqr*scattering_angle_cosine + compton_line_ratio);
-    double c = pz_sqr - 1.0;
-    
-    double discriminant = b*b - 4*a*c;
-    
-    if( discriminant < 0.0 )
-    {
-      valid_doppler_broadening = false;
-      
-      break;
-    }
-    
-    if( Utility::RandomNumberGenerator::getRandomNumber<double>() <= 0.5 )
-      outgoing_energy =0.5*(-b+sqrt(discriminant))*initial_energy/a;
-    else
-      outgoing_energy =0.5*(-b-sqrt(discriminant))*initial_energy/a;
-    
-    // Make sure the doppler broadened energy is valid
-    if( outgoing_energy > 0.0 &&
-	outgoing_energy <= energy_max )
-    {
-      valid_doppler_broadening = true;
-      break;
-    }
-    else
-    {
-      valid_doppler_broadening = false;
-      
-      break;
-    }
-  }
-    
-  // Check if a valid doppler broadened energy was calculated
-  if( !valid_doppler_broadening )
-  {
-    // reset the shell of interaction
-    shell_of_interaction = UNKNOWN_SUBSHELL;
-    
-    // reset the outgoing energy
-    outgoing_energy = compton_line_energy;
-  }
-  
-  // Make sure the outgoing energy is valid
-  testPostcondition( outgoing_energy <= initial_energy );
-
-  return outgoing_energy;
+  // Make sure the electron energy is valid
+  testPostcondition( electron_energy + compton_line_energy ==
+		     photon.getEnergy() );
+  // Make sure the electron scattering angle cosine is valid
+  testPostcondition( electron_scattering_angle_cosine >= -1.0 );
+  testPostcondition( electron_scattering_angle_cosine <= 1.0 );
 }
 
 } // end MonteCarlo namespace

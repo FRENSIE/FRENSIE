@@ -38,6 +38,10 @@ template<typename ProfileIterator>
 void convertProfileToInverseMeCUnits( ProfileIterator profile_start,
 				      ProfileIterator profile_end );
 
+//! Calculate the Compton line energy
+double calculateComptonLineEnergy( const double initial_energy,
+				   const double scattering_angle_cosine );
+
 //! Calculate the electron momentum projection
 double calculateElectronMomentumProjection(
 					const double initial_energy,

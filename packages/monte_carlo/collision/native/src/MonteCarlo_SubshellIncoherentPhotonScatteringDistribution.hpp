@@ -7,24 +7,21 @@
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_SUBSHELL_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
-#define MONTE_CARLO_SUBSHELL_INCOHERENT_PHOTON_SCATTEIRNG_DISTRIBUTION_HPP
-
-// Boost Includes
-#include <boost/function.hpp>
+#define MONTE_CARLO_SUBSHELL_INCOHERENT_PHOTON_SCATTERING_DISTRIBUTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_ArrayView.hpp>
 
 // FRENSIE Includes
-#include "MonteCarlo_PhotonScatteringDistribution.hpp"
+#include "MonteCarlo_IncoherentPhotonScatteringDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
 
 //! The subshell incoherent photon scattering distribution class
-class SubshellIncoherentPhotonScatteringDistribution : public PhotonScatteringDistribution
+class SubshellIncoherentPhotonScatteringDistribution : public IncoherentPhotonScatteringDistribution
 {
 
 public:
@@ -32,63 +29,72 @@ public:
   //! Constructor without Doppler broadening
   SubshellIncoherentPhotonScatteringDistribution(
       const SubshellType interaction_subshell,
+      const double num_electrons_in_subshell,
       const double binding_energy,
-      const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number );
-
-  //! Constructor for Doppler broadening
-  SubshellIncoherentPhotonScatteringDistribution(
-	const SubshellType interaction_subshell,
-	const double binding_energy,
-	const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
-        const Teuchos::RCP<const Utility::TabularOneDDistribution>& 
-	compton_profile );
+      const Teuchos::RCP<const Utility::OneDDistribution>& occupation_number,
+      const double kahn_sampling_cutoff_energy = 3.0 );
 
   //! Destructor
-  ~SubshellIncoherentPhotonScatteringDistribution()
+  virtual ~SubshellIncoherentPhotonScatteringDistribution()
   { /* ... */ }
 
   //! Return the subshell
   SubshellType getSubshell() const;
+  
+  //! Return the number of electrons in the subshell
+  double getNumberOfElectronsInSubshell() const;
 
   //! Return the binding energy
   double getBindingEnergy() const;
 
-  //! Randomly scatter the photon
-  void scatterPhoton( PhotonState& photon,
-		      ParticleBank& bank,
-		      SubshellType& shell_of_interaction ) const;
+  //! Evaluate the distribution
+  double evaluate( const double incoming_energy,
+		   const double scattering_angle_cosine ) const;
+
+  //! Evaluate the integrated cross section (cm^2)
+  double evaluateIntegratedCrossSection( const double incoming_energy,
+					 const double precision) const;
+
+  //! Sample an outgoing energy and direction from the distribution
+  void sample( const double incoming_energy,
+	       double& outgoing_energy,
+	       double& scattering_angle_cosine ) const;
+
+  //! Sample an outgoing energy and direction and record the number of trials
+  void sampleAndRecordTrials( const double incoming_energy,
+			      double& outgoing_energy,
+			      double& scattering_angle_cosine,
+			      unsigned& trials ) const;
+
+  //! Randomly scatter the photon and return the shell that was interacted with
+  virtual void scatterPhoton( PhotonState& photon,
+			      ParticleBank& bank,
+			      SubshellType& shell_of_interaction ) const;
+
+protected:
+
+  // Calculate the occupation number argument (pz max)
+  double calculateOccupationNumberArgument(
+				  const double incoming_energy,
+				  const double scattering_angle_cosine ) const;
+
+  // Evaluate the occupation number 
+  double evaluateOccupationNumber(const double incoming_energy,
+				  const double scattering_angle_cosine ) const;
 
 private:
-
-  // Ignore Doppler broadening
-  double returnComptonLine( 
-			 const double initial_energy,
-			 const double compton_line_energy,
-			 const double scattering_angle_cosine,
-			 const double max_electron_momentum_projection ) const;
-			    
-  // Doppler broaden a compton line
-  double dopplerBroadenComptonLine(
-			 const double initial_energy,
-			 const double compton_line_energy,
-			 const double scattering_angle_cosine,
-			 const double max_electron_momentum_projection ) const;
 
   // The interaction subshell
   SubshellType d_subshell;
 
+  // The number of electrons in the subshell
+  double d_num_electrons_in_subshell;
+
   // The subshell binding energy
   double d_binding_energy;
-
-  // The occupation number distribution
+  
+  // The occupation number
   Teuchos::RCP<const Utility::OneDDistribution> d_occupation_number;
-
-  // The compton profile distribution
-  Teuchos::RCP<const Utility::TabularOneDDistribution> d_compton_profile;
-
-  // The Doppler broadening function pointer
-  boost::function<double (double, double, double, double)>
-  d_doppler_broadening_func;
 };
 
 } // end MonteCarlo namespace
