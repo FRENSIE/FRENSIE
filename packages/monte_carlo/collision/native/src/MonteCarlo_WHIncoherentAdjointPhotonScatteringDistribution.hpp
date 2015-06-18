@@ -29,7 +29,6 @@ public:
   //! Constructor
   WHIncoherentAdjointPhotonScatteringDistribution(
     const double max_energy,
-    const Teuchos::ArrayRCP<const double>& critical_line_energies,
     const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function );
 
   //! Destructor
@@ -38,10 +37,12 @@ public:
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
+		   const double max_energy,
 		   const double scattering_angle_cosine ) const;
 
   //! Evaluate the integrated cross section (b)
   virtual double evaluateIntegratedCrossSection(const double incoming_energy,
+						const double max_energy,
 						const double precision ) const;
   
   //! Sample an outgoing energy and direction from the distribution
@@ -71,8 +72,13 @@ private:
   // Evaluate the scattering function
   double evaluateScatteringFunction( 
 				  const double incoming_energy,
+				  const double max_energy,
 				  const double scattering_angle_cosine ) const;
 
+  // Evaluate the scattering function
+  double evaluateScatteringFunction( 
+				  const double incoming_energy,
+				  const double scattering_angle_cosine ) const;
   // The scattering function
   Teuchos::RCP<const Utility::OneDDistribution> d_scattering_function;
 };

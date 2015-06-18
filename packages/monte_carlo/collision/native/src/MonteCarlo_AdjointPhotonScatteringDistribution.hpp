@@ -39,7 +39,7 @@ public:
   virtual double evaluatePDF( const double incoming_energy,
 			      const double scattering_angle_cosine ) const = 0;
 
-  //! Evaluate the integrated cross section (cm^2)
+  //! Evaluate the integrated cross section (b)
   virtual double evaluateIntegratedCrossSection(
 					    const double incoming_energy,
 					    const double precision ) const = 0;
