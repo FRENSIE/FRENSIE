@@ -14,6 +14,7 @@
 
 // Root Includes
 #include <TGeoManager.h>
+#include <TGeoMaterial.h>
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>

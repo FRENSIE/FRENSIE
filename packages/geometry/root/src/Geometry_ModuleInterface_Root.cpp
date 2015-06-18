@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //! 
 //! \file   Geometry_ModuleInterface_Root.cpp
-//! \author Eli Moll
+//! \author Alex Robinson, Eli Moll
 //! \brief  Root Specialization decl. of the geometry ModuleInterface class
 //!
 //---------------------------------------------------------------------------//
@@ -30,7 +30,7 @@ static void initialize()
 { 
   #pragma omp master
   {
-
+    // TODO
   }
   #pragma omp barrier
 }
@@ -65,7 +65,7 @@ inline void ModuleInterface<Root>::storeCellVolumes()
   for (int i=0; i < number_volumes; i++) 
   {
     TObject* current_volume = volume_list_iterator->next();
-    tvolumes[i] = current_volume->SetUniqueID(i)
+    tvolumes[i] = current_volume->Capacity();
     
     // TODO - correct implementation of cell map
   }
