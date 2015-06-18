@@ -10,24 +10,28 @@
 #include "Geometry_Root.hpp"
 #include "Utility_ContractException.hpp"
 
+namespace Geometry{
+
 // Get the geometry manager instance
-TGeoManager* getManager()
+TGeoManager* Root::getManager()
 {
   return d_manager; 
 }
 
 // Get the terminal material
-TGeoMaterial* getTerminalMaterial()
+TGeoMaterial* Root::getTerminalMaterial()
 {
   return d_terminal_material;
 }
 
 // Initialize the root geometry manager
-void initialize( const std::string& filename )
+void Root::initialize( const std::string& filename )
 {
   d_manager = TGeoManager::Import( filename.c_str() );
   
   d_terminal_material = new TGeoMaterial("Terminal",0,0,0);
+}
+
 }
 
 //---------------------------------------------------------------------------//
