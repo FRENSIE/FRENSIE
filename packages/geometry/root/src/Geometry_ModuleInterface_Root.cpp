@@ -19,7 +19,7 @@ const ModuleInterface<Root>::ExternalCellHandle
 ModuleInterface<Root>::invalid_external_cell_handle = 0;
 
 Root::TGeoManager* const ModuleInterface<Root>::tgeomanager_instance =
-  Root::gGeoManager;
+  Root::getManager();
   
 boost::unordered_map<ModuleInterface<Root>::InternalCellHandle,
 		     ModuleInterface<Root>::ExternalCellHandle> 
@@ -27,7 +27,13 @@ ModuleInterface<Root>::cell_handle_map;
 
 // Do just in time initialization of interface members
 static void initialize()
-{ /* ... */ } // TODO
+{ 
+  #pragma omp master
+  {
+
+  }
+  #pragma omp barrier
+}
 
 // Enable support for multiple threads
 static void enableThreadSupport( const unsigned num_threads )
@@ -36,29 +42,29 @@ static void enableThreadSupport( const unsigned num_threads )
 // Assign unique identities to all volumes in the geometry
 inline void ModuleInterface<Root>::assignCellIds()
 {
-  Root::TObjArray volume_list = tgeomanager_instance->GetListOfVolumes();
-  Root::TIterator volume_list_iterator = volume_list->MakeIterator();
+  TObjArray* volume_list = tgeomanager_instance->GetListOfVolumes();
+  TIterator* volume_list_iterator = volume_list->MakeIterator();
   int number_volumes = volume_list->GetEntries();
   
   for (int i=0; i < number_volumes; i++) 
   {
-    Root::TObject current_volume = volume_list_iterator->next();
+    TObject* current_volume = volume_list_iterator->next();
     current_volume->SetUniqueID(i + 1) 
   }
 }
 
-// Compute and store all cell volumes
-inline void ModuleInterface<Root>::StoreCellVolumes()
+// Compute and map all cell volumes
+inline void ModuleInterface<Root>::storeCellVolumes()
 {
-  volume_list = tgeomanager_instance->GetListOfVolumes();
-  volume_list_iterator = volume_list->MakeIterator();
-  number_volumes = volume_list->GetEntries();
+  TObjArray* volume_list = tgeomanager_instance->GetListOfVolumes();
+  TIterator* volume_list_iterator = volume_list->MakeIterator();
+  int number_volumes = volume_list->GetEntries();
   
   tvolumes.resize(number_volumes,double);
   
   for (int i=0; i < number_volumes; i++) 
   {
-    current_volume = volume_list_iterator->next();
+    TObject* current_volume = volume_list_iterator->next();
     tvolumes[i] = current_volume->SetUniqueID(i)
     
     // TODO - correct implementation of cell map
@@ -71,8 +77,8 @@ static InternalCellHandle findCellContainingPoint( const Ray& ray )
   tgeomanager_instance->SetCurrentPosition( ray.getPosition() );
   tgeomanager_instance->SetCurrentDirection( ray.getDirection() );
 
-  Root::TGeoNode current_node = tgeomanager_instance->GetCurrentNode();
-  Root::TGeoVolume current_volume = current_node->GetVolume();
+  TGeoNode* current_node = tgeomanager_instance->GetCurrentNode();
+  TGeoVolume* current_volume = current_node->GetVolume();
   int cell_external = current_volume->GetUniqueID();
   
   return ModuleInterface<Root>::getInternalCellHandle( cell_external );
@@ -84,14 +90,14 @@ static InternalCellHandle findCellContainingPoint(
 				 const InternalCellHandle current_cell,
 				 const InternalSurfaceHandle surface )
 {
-  // Find the new node occupied at the surface crossing
-  Root::TGeoNode current_node = tgeomanager_instance->GetCurrentNode();
-  Root::TGeoVolume current_volume = current_node->GetVolume();
+  // Find the new node occupied after surface crossing
+  TGeoNode* current_node = tgeomanager_instance->GetCurrentNode();
+  TGeoVolume* current_volume = current_node->GetVolume();
   int cell_external = current_volume->GetUniqueID();
   
   return ModuleInterface<Root>::getInternalCellHandle( cell_external );
-}			
-
+}	
+	
 // Fire a ray through the geometry
 static void fireRay( const Ray& ray,
 	       const InternalCellHandle& current_cell,
@@ -114,7 +120,7 @@ static PointLocation getPointLocation( const Ray& ray,
     ExternalCellHandle cell_external = 
       ModuleInterface<Root>::getExternalCellHandle( cell );
       
-    Root::TGeoVolume volume = tgeomanager_instance->GetVolume( cell_external );
+    TGeoVolume* volume = tgeomanager_instance->GetVolume( cell_external );
     
     return volume->Contains(ray.getPosition());
 }				    
