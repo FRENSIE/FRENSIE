@@ -20,7 +20,7 @@ const ModuleInterface<Root>::ExternalCellHandle
 ModuleInterface<Root>::invalid_external_cell_handle = 0;
 
 // Do just in time initialization of interface members
-void initialize()
+void ModuleInterface<Root>::initialize()
 { 
   #pragma omp master
   {
@@ -30,7 +30,7 @@ void initialize()
 }
 
 // Enable support for multiple threads
-void enableThreadSupport( const unsigned num_threads )
+void ModuleInterface<Root>::enableThreadSupport( const unsigned num_threads )
 {  
   THROW_EXCEPTION( std::logic_error,
                    "Error: The Root module interface does not support "
@@ -52,7 +52,7 @@ void ModuleInterface<Root>::assignCellIds()
 }
 
 // Find the cell that contains a given point (start of history)
-ModuleInterface<Root>::InternalCellHandle findCellContainingPoint( const Ray& ray )
+ModuleInterface<Root>::InternalCellHandle ModuleInterface<Root>::findCellContainingPoint( const Ray& ray )
 {
   // Get current position and direction from ray
   const double* position  = ray.getPosition();
@@ -80,7 +80,7 @@ ModuleInterface<Root>::InternalCellHandle findCellContainingPoint( const Ray& ra
 }
 
 // Find the cell that contains a given point (surface crossing)
-ModuleInterface<Root>::InternalCellHandle findCellContainingPoint( 
+ModuleInterface<Root>::InternalCellHandle ModuleInterface<Root>::findCellContainingPoint( 
 				 const Ray& ray,
 				 const ModuleInterface<Root>::InternalCellHandle current_cell,
 				 const ModuleInterface<Root>::InternalSurfaceHandle surface )

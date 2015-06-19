@@ -14,15 +14,19 @@ MACRO(ENABLE_ROOT_SUPPORT)
   # Set the include paths for ROOT
   INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIRS})
 
+  # Find extra root libraries
+  FIND_LIBRARY(ROOT_EXTRA_LIBS libGeom.so 
+    PATHS ${ROOT_PREFIX}/lib)
+
   # Store ROOT libraries in the ROOT variable
-  SET(ROOT ${ROOT_LIBRARIES})
+  SET(ROOT ${ROOT_LIBRARIES} ${ROOT_EXTRA_LIBS})
 
   # Echo ROOT build info if a verbose configure is requested
   IF(CMAKE_VERBOSE_CONFIGURE)
     MESSAGE("\nFound ROOT!  Here are the details: ")
     MESSAGE("   ROOT_INCLUDE_DIRS = ${ROOT_INCLUDE_DIRS}")
     MESSAGE("   ROOT_LIBRARY_DIR = ${ROOT_LIBRARY_DIR}")
-    MESSAGE("   ROOT_LIBRARIES = ${ROOT_LIBRARIES}")
+    MESSAGE("   ROOT_LIBRARIES = ${ROOT}")
     MESSAGE("   ROOT_CXX_FLAGS = ${ROOT_CXX_FLAGS}")
     MESSAGE("End of ROOT details\n")
   ENDIF()
