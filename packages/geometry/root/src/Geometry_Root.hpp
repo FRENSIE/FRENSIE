@@ -47,23 +47,23 @@ private:
 Root();
 
 // Root TGeoManager
-static TGeoManager* d_manager;
+static TGeoManager* s_manager;
 
 // Root terminal material
-static TGeoMaterial* d_terminal_material;
+static TGeoMaterial* s_terminal_material;
 
 };
 
 // Get the geometry manager instance
 inline TGeoManager* Root::getManager()
 {
-  return d_manager; 
+  return s_manager; 
 }
 
 // Get the terminal material
 inline TGeoMaterial* Root::getTerminalMaterial()
 {
-  return d_terminal_material;
+  return s_terminal_material;
 }
 
 } // end Geometry namespace

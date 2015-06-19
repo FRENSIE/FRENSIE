@@ -12,12 +12,16 @@
 
 namespace Geometry{
 
+// Initialize static member data
+TGeoManager* Root::s_manager = NULL;
+TGeoMaterial* Root::s_terminal_material = NULL;
+
 // Initialize the root geometry manager
 void Root::initialize( const std::string& filename )
 {
-  d_manager = TGeoManager::Import( filename.c_str() );
+  s_manager = TGeoManager::Import( filename.c_str() );
   
-  d_terminal_material = new TGeoMaterial("Terminal",0,0,0);
+  s_terminal_material = new TGeoMaterial("Terminal",0,0,0);
 }
 
 }
