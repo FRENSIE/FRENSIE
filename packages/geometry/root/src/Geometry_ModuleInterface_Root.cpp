@@ -59,12 +59,12 @@ ModuleInterface<Root>::InternalCellHandle ModuleInterface<Root>::findCellContain
   const double* direction = ray.getDirection();
 
   // Assign position and direction to ROOT Double_t arrays
-  Double_t* point;
+  Double_t point[3];
   point[0] = position[0];  
   point[1] = position[1];  
   point[2] = position[2]; 
 
-  Double_t* dir;
+  Double_t dir[3];
   dir[0] = direction[0];
   dir[1] = direction[1];
   dir[2] = direction[2];
@@ -99,12 +99,12 @@ void ModuleInterface<Root>::fireRay( const Ray& ray,
   const double* direction = ray.getDirection();
 
   // Assign position and direction to ROOT Double_t arrays
-  Double_t* point;
+  Double_t point[3];
   point[0] = position[0];  
   point[1] = position[1];  
   point[2] = position[2]; 
 
-  Double_t* dir;
+  Double_t dir[3];
   dir[0] = direction[0];
   dir[1] = direction[1];
   dir[2] = direction[2];
@@ -131,7 +131,7 @@ PointLocation ModuleInterface<Root>::getPointLocation( const Ray& ray,
   const double* position  = ray.getPosition();
 
   // Assign position and direction to ROOT Double_t arrays
-  Double_t* point;
+  Double_t point[3];
   point[0] = position[0];  
   point[1] = position[1];  
   point[2] = position[2]; 
