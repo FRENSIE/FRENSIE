@@ -119,9 +119,6 @@ public:
   static double getCellSurfaceArea( const InternalSurfaceHandle surface,
 				    const InternalCellHandle cell );
 
-  //! Check that an external surface handle exists
-  static bool doesSurfaceExist( const ExternalSurfaceId surface );
-
   //! Check that an external cell handle exists
   static bool doesCellExist( const ExternalCellId cell );
 
