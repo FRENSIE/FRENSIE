@@ -79,7 +79,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface_Root, cellContainingPointBirth )
   // Find cell containing ray
   GMI::InternalCellHandle cell = GMI::findCellContainingPoint( ray );
   
-  TEST_EQUALITY_CONST( cell, 2 );
+  TEST_EQUALITY_CONST( cell, 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -208,8 +208,8 @@ int main( int argc, char** argv )
   Geometry::ModuleInterface<Geometry::Root>::initialize();
 
   // Enable thread support
-  Geometry::ModuleInterface<Geometry::Root>::enableThreadSupport( 
-		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+  // Geometry::ModuleInterface<Geometry::Root>::enableThreadSupport( 
+	//	 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
   mpiSession.barrier();
   
