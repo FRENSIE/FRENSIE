@@ -156,6 +156,89 @@ TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction, react_ace )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the hydrogen adjoint differential cross section can be evaluated for the first subshell
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
+		   evaluateAdjointDifferentialCrossSection )
+{
+ /* 
+  double diff_cross_section = 
+    adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E-04,
+						    1.584900000000E-05 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+				  6.582854525864990E+11,
+				  1e-12 );
+
+  diff_cross_section = 
+    adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E-04,
+						    7.054100000000E-05 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+				  6.582854525864990E+11,
+				  1e-12 );
+
+  diff_cross_section = 
+    adjoint_h_cs->evaluateDifferentialCrossSection( 6.309570000000E-02,
+						    1.009140000000E-03 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+				  9.362881076230510E+05,
+				  1e-12 );
+				  
+  diff_cross_section = 
+    adjoint_h_cs->evaluateDifferentialCrossSection( 6.309570000000E-02,
+						    3.154110000000E-02 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+				  2.802751399940720E+03,
+				  1e-12 );
+
+  diff_cross_section = 
+    adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E+05,
+						    1.042750000000E+01 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+				  1.959197477405080E-03,
+				  1e-12 );
+
+  diff_cross_section = 
+    adjoint_h_cs->evaluateDifferentialCrossSection( 1.000000000000E+05,
+						    9.999999510161E+04 );
+
+  UTILITY_TEST_FLOATING_EQUALITY( diff_cross_section,
+				  9.534573269680380E+03,
+				  1e-12 );	
+*/			  				  
+}
+
+//---------------------------------------------------------------------------//
+// Check that the hydrogen adjoint cross section can be evaluated for the first subshell
+TEUCHOS_UNIT_TEST( ElectroionizationSubshellElectroatomicReaction,
+		   evaluateAdjointCrossSection )
+{/*
+  double cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 0.001 );
+  
+  TEST_EQUALITY_CONST( cross_section, 0.0 );
+
+  cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 1e-4);
+  
+  
+  
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section,
+				  2.050,
+  				  1e-15 );
+
+  cross_section = adjoint_h_cs->evaluateCrossSection( 0.001, 
+  						      0.0010039292814978508 );
+
+  
+  UTILITY_TEST_FLOATING_EQUALITY( cross_section, 
+				  8.523,
+  				  1e-15 );
+  				  */
+}
+
+//---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )

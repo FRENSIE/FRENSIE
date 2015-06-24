@@ -48,7 +48,8 @@ public:
     const double& binding_energy,
     const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& 
                                electroionization_subshell_reaction,
-    const ElectroionizationSubshellDistribution& knock_on_distribution );
+    const Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>&
+                               knock_on_distribution );
 
   //! Destructor
   ~AdjointElectroionizationSubshellCrossSectionEvaluator()
@@ -72,7 +73,8 @@ private:
   Teuchos::RCP<MonteCarlo::ElectroatomicReaction> d_electroionization_subshell_reaction;
 
   // The knock on energy distribution
-  ElectroionizationSubshellDistribution d_knock_on_distribution;
+  Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+                                         d_knock_on_distribution;
   
   // The subshell binding energy
   double d_binding_energy;

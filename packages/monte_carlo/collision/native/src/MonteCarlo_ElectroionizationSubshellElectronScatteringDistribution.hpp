@@ -48,20 +48,43 @@ public:
   virtual ~ElectroionizationSubshellElectronScatteringDistribution()
   { /* ... */ }
 
+  //! Return the binding energy
+  double getBindingEnergy() const;
+
+  //! Return the min incoming energy
+  double getMinEnergy() const;
+
+  //! Return the Max incoming energy
+  double getMaxEnergy() const;
+
+  //! Return the max incoming electron energy for a given knock-on electron energy
+  double getMaxIncomingEnergyAtOutgoingEnergy( const double energy ) const;
+
+  //! Evaluate the PDF value for a given incoming and knock-on energy
+  double evaluatePDF( const double incoming_energy, 
+                      const double knock_on_energy ) const;
+
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
+               double& knock_on_energy,
+               double& knock_on_angle_cosine  ) const;
+
+  // Sample the distribution
+  void sample( const double incoming_energy,
                double& outgoing_energy,
-               double& scattering_angle_cosine ) const;
+               double& knock_on_energy,
+               double& scattering_angle_cosine,
+               double& knock_on_angle_cosine ) const;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
-                              double& outgoing_energy,
-                              double& scattering_angle_cosine,
+                              double& knock_on_energy,
+                              double& knock_on_angle_cosine,
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
   void scatterElectron( ElectronState& electron,
-	                    ParticleBank& bank,
+                        ParticleBank& bank,
                         SubshellType& shell_of_interaction ) const;
                         
 private:
@@ -74,8 +97,8 @@ private:
   double d_binding_energy;
 
   // Calculate the outgoing angle cosine
-  double outgoingAngle( double& normalized_incoming_energy,
-                        double& energy_ratio ) const;
+  double outgoingAngle( const double incoming_energy,
+                        const double energy ) const;
 
 };
 

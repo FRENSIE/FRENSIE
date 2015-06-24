@@ -34,23 +34,136 @@ ElectroionizationSubshellElectronScatteringDistribution::ElectroionizationSubshe
   testPrecondition( d_electroionization_subshell_scattering_distribution.size() > 0 );
 }
 
-// Sample an outgoing energy and direction from the distribution
+// Return the binding energy
+double ElectroionizationSubshellElectronScatteringDistribution::getBindingEnergy() const
+{
+  return d_binding_energy;
+}
+
+// Return the min incoming energy
+double ElectroionizationSubshellElectronScatteringDistribution::getMinEnergy() const
+{
+  return d_electroionization_subshell_scattering_distribution.front().first;
+}
+
+// Return the Max incoming energy
+double ElectroionizationSubshellElectronScatteringDistribution::getMaxEnergy() const
+{
+  return d_electroionization_subshell_scattering_distribution.back().first;
+}
+
+// Return the max incoming electron energy for a given knock-on electron energy
+double ElectroionizationSubshellElectronScatteringDistribution::getMaxIncomingEnergyAtOutgoingEnergy( 
+        const double energy ) const
+{
+  // Start at the largest energy grid point
+  unsigned grid_point = d_electroionization_subshell_scattering_distribution.size();
+
+  MonteCarlo::TwoDDistribution::const_iterator 
+                                        highest_energy_bin, lowest_energy_bin;
+
+  lowest_energy_bin = d_electroionization_subshell_scattering_distribution.begin();
+  highest_energy_bin = d_electroionization_subshell_scattering_distribution.end();
+  highest_energy_bin--;
+
+  // Make sure the knock-on energy is possible
+  testPrecondition( energy < 
+                    highest_energy_bin->second->sampleWithRandomNumber( 1.0 ) );
+
+  for ( highest_energy_bin; highest_energy_bin !=lowest_energy_bin; highest_energy_bin -- ) 
+  {
+    // Find the minimum knock-on energy for an electron at the grid_point energy
+    double min_energy = 
+      highest_energy_bin->second->sampleWithRandomNumber( 0.0 );
+
+    /* If the minimum knock-on energy is at or below the given energy then 
+       return the grid_point energy */
+    if ( min_energy <= energy )
+    {
+      return highest_energy_bin->first;
+    }
+  }
+/*
+  while( grid_point > 0 )
+  {
+    grid_point--;
+
+    // Find the minimum knock-on energy for an electron at the grid_point energy
+    double min_energy = 
+      d_electroionization_subshell_scattering_distribution[grid_point].second->sampleWithRandomNumber( 0.0 );
+
+    /* If the minimum knock-on energy is at or below the given energy then 
+       return the grid_point energy /
+    if ( min_energy <= energy )
+    {
+      return d_electroionization_subshell_scattering_distribution[grid_point].first;
+    }
+  }
+*/
+  // If no max energy is found return a max energy of zero
+  return 0.0;
+}
+
+// Evaluate the PDF value for a given incoming and knock-on energy
+double ElectroionizationSubshellElectronScatteringDistribution::evaluatePDF( 
+                     const double incoming_energy, 
+                     const double knock_on_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( knock_on_energy > 0.0 );
+
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
+                         incoming_energy,
+                         knock_on_energy,
+                         d_electroionization_subshell_scattering_distribution );
+}
+
+// Sample an knock on energy and direction from the distribution
+void ElectroionizationSubshellElectronScatteringDistribution::sample( 
+               const double incoming_energy,
+               double& knock_on_energy,
+               double& knock_on_angle_cosine ) const
+{
+  // Sample knock-on electron energy
+  knock_on_energy = sampleTwoDDistributionCorrelated( 
+                         incoming_energy,
+                         d_electroionization_subshell_scattering_distribution );
+
+  // Calculate the outgoing angle cosine for the knock on electron
+  knock_on_angle_cosine = outgoingAngle( incoming_energy,
+                                         knock_on_energy );
+}
+
+// Sample an knock on energy and direction from the distribution
 void ElectroionizationSubshellElectronScatteringDistribution::sample( 
                const double incoming_energy,
                double& outgoing_energy,
-               double& scattering_angle_cosine ) const
+               double& knock_on_energy,
+               double& scattering_angle_cosine,
+               double& knock_on_angle_cosine ) const
 {
+  // Sample knock-on electron energy and outgoing angle
+  sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
 
+  outgoing_energy = 
+        std::max( 1e-15, incoming_energy - knock_on_energy - d_binding_energy );
+
+  // Calculate the outgoing angle cosine for the primary electron
+  scattering_angle_cosine = outgoingAngle( incoming_energy,
+                                           outgoing_energy );
 }
 
-// Sample an outgoing energy and direction and record the number of trials
+// Sample an knock on energy and direction and record the number of trials
 void ElectroionizationSubshellElectronScatteringDistribution::sampleAndRecordTrials( 
                               const double incoming_energy,
-                              double& outgoing_energy,
-                              double& scattering_angle_cosine,
+                              double& knock_on_energy,
+                              double& knock_on_angle_cosine,
                               unsigned& trials ) const
 {
+  trials++;
 
+  sample( incoming_energy, knock_on_energy, knock_on_angle_cosine );
 }
 
 // Randomly scatter the electron
@@ -59,65 +172,57 @@ void ElectroionizationSubshellElectronScatteringDistribution::scatterElectron(
 		                ParticleBank& bank,
                                 SubshellType& shell_of_interaction ) const
 {
-  // energy of the incoming electron
-  double incoming_energy = electron.getEnergy();
+  // The energy of the outgoing and knock-on electron
+  double outgoing_energy, knock_on_energy;
 
-  // energy of the knock-on electron from electroionization
-  double knock_on_energy;
+  // The angle cosine of the outgoing and knock-on electron
+  double scattering_angle_cosine, knock_on_angle_cosine;
 
-  // Sample knock-on electron energy
-  knock_on_energy = sampleTwoDDistributionCorrelated( 
-                         electron.getEnergy(),
-                         d_electroionization_subshell_scattering_distribution );
-
-  electron.setEnergy( std::max( 1e-15,
-                      incoming_energy - knock_on_energy - d_binding_energy ) );
-
-  // Increment the electron generation number
-  electron.incrementGenerationNumber();
+  // Sample the distribution
+  sample( electron.getEnergy(), 
+          outgoing_energy, 
+          knock_on_energy, 
+          scattering_angle_cosine,
+          knock_on_angle_cosine );
 
   // Create new elecrton
   Teuchos::RCP<ElectronState> knock_on_electron( 
                            new ElectronState( electron, true, true ) );
 
-  // Set electron energy
+  // Set knock-on electron energy
   knock_on_electron->setEnergy( knock_on_energy );
-
-  // The normalized incoming electron energy
-  double normalized_incoming_energy = 
-          incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
-
-  // The energy ratio of the original electron
-  double outgoing_energy_ratio = electron.getEnergy()/incoming_energy;
-
-  // Calculate the outgoing angle cosine for the original electron
-  double outgoing_angle_cosine = outgoingAngle( normalized_incoming_energy,
-                                                outgoing_energy_ratio );
-
-  // Set the new direction of the primary electron
-  electron.rotateDirection( outgoing_angle_cosine,
-                            this->sampleAzimuthalAngle() );
-
-  // The energy ratio of the knock-on electron
-  double knock_on_energy_ratio = knock_on_energy/incoming_energy;
-
-  // Calculate the outgoing angle cosine for the knock on electron
-  double knock_on_angle_cosine = outgoingAngle( normalized_incoming_energy,
-                                                knock_on_energy_ratio );
 
   // Set the direction of the knock-on electron
   knock_on_electron->rotateDirection( knock_on_angle_cosine,
 			              sampleAzimuthalAngle() );
 
-  // Bank the photon
+  // Bank the knock-on electron
   bank.push( knock_on_electron );
+
+
+  // Set the outgoing electron energy
+  electron.setEnergy( outgoing_energy );
+
+  // Set the new direction of the primary electron
+  electron.rotateDirection( scattering_angle_cosine,
+                            this->sampleAzimuthalAngle() );
+
+  // Increment the electron generation number
+  electron.incrementGenerationNumber();
 }
 
 // Calculate the outgoing angle cosine
 double ElectroionizationSubshellElectronScatteringDistribution::outgoingAngle( 
-                                             double& normalized_incoming_energy,
-                                             double& energy_ratio ) const
+                                            const double incoming_energy,
+                                            const double energy ) const
 {
+  // The normalized incoming electron energy
+  double normalized_incoming_energy = 
+          incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
+
+  // The ratio of incoming to outgoing energy
+  double energy_ratio = energy/incoming_energy;
+
   // Randomly select the plane of scattering
   return sqrt( energy_ratio*( normalized_incoming_energy + 2.0 )/
              ( energy_ratio*normalized_incoming_energy + 2.0 ) );

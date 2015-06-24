@@ -55,7 +55,6 @@ public:
   //! Get the interaction subshell (non-standard interface)
   unsigned getSubshell() const;
 
-
 private:
   // The electroionization distribution
   Teuchos::RCP<const ElectroionizationSubshellElectronScatteringDistribution>

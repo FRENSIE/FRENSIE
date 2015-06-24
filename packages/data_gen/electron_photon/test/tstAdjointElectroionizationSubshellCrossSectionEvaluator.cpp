@@ -255,7 +255,7 @@ int main( int argc, char** argv )
                            raw_subshell_cross_section,
                            subshell_cross_section,
                            threshold_energy_index );
-
+/*
   // Subshell distribution 
   DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator::ElectroionizationSubshellDistribution
              subshell_distribution( num_tables[first_subshell] );
@@ -276,9 +276,13 @@ int main( int argc, char** argv )
     new MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution( 
                                 subshell_distribution, 
                                 binding_energies[first_subshell] ) );
-                                                    
+*/                                                    
     // Create the electroionization subshell distribution
-    MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
+   
+  // The electroionization subshell distribution
+  Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>
+    electroionization_subshell_distribution;
+ MonteCarlo::ElectroionizationSubshellElectronScatteringDistributionACEFactory::createElectroionizationSubshellDistribution(
         subshell_info,
         subshell_loc,
         num_tables[first_subshell],
@@ -301,7 +305,7 @@ int main( int argc, char** argv )
   adjoint_h_cs.reset( new DataGen::AdjointElectroionizationSubshellCrossSectionEvaluator(
                                     binding_energies[first_subshell],
                                     electroionization_subshell_reaction,
-                                    subshell_distribution ) );
+                                    electroionization_subshell_distribution ) );
 
   // Run the unit tests
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );

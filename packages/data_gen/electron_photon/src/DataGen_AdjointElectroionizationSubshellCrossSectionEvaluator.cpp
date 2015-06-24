@@ -27,14 +27,16 @@ AdjointElectroionizationSubshellCrossSectionEvaluator::AdjointElectroionizationS
     const double& binding_energy,
     const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& 
                                      electroionization_subshell_reaction,
-    const ElectroionizationSubshellDistribution& knock_on_distribution )
+    const Teuchos::RCP<const MonteCarlo::ElectroionizationSubshellElectronScatteringDistribution>&
+                                     knock_on_distribution )
   : d_binding_energy( binding_energy ),
     d_electroionization_subshell_reaction( electroionization_subshell_reaction ),
     d_knock_on_distribution( knock_on_distribution )
 {
   // Make sure the data is valid
   testPrecondition( !d_electroionization_subshell_reaction.is_null() );
-  testPrecondition( d_knock_on_distribution.size() > 0 );
+  testPrecondition( !d_knock_on_distribution.is_null() );
+ // testPrecondition( d_knock_on_distribution.size() > 0 );
 }
 
 // Evaluate the differential adjoint electroionization subshell cross section (dc/dx)
@@ -51,21 +53,31 @@ double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateDifferenti
                                                               incoming_energy );
 
   // Evaluate the knock on electron pdf value at a given incoming and outgoing energy
+  double knock_on_pdf = d_knock_on_distribution->evaluatePDF( incoming_energy,
+                                                              outgoing_energy );
+
+/*
+  // Evaluate the knock on electron pdf value at a given incoming and outgoing energy
   double knock_on_pdf = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
                                      incoming_energy,
                                      outgoing_energy,
                                      d_knock_on_distribution );
-                               
+*/                               
   /* Calculate the energy of a knock on electron from a primary electron with 
      outgoing energy = outgoing_energy */
-  double knock_on_energy = incoming_energy - outgoing_energy - d_binding_energy;  
-                 
+  double knock_on_energy = incoming_energy - outgoing_energy - d_binding_energy; 
+
+  // Evaluate the primary electron pdf value at a given incoming and outgoing energy
+  double primary_pdf = d_knock_on_distribution->evaluatePDF( incoming_energy,
+                                                             knock_on_energy );
+ 
+/*                 
   // Evaluate the primary electron pdf value at a given incoming and outgoing energy
   double primary_pdf = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
                                      incoming_energy,
                                      knock_on_energy,
                                      d_knock_on_distribution );           
-
+*/
   return forward_cs*( knock_on_pdf + primary_pdf );
 }
 
@@ -92,36 +104,25 @@ double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateCrossSecti
 
     quadrature_kernel.integrateAdaptively<15>(
 					diff_adjoint_subshell_wrapper,
+					d_knock_on_distribution->getMinEnergy(),
+					d_knock_on_distribution->getMaxEnergy(),
+					cross_section,
+					abs_error );
+/*
+    quadrature_kernel.integrateAdaptively<15>(
+					diff_adjoint_subshell_wrapper,
 					d_knock_on_distribution.front().first,
 					d_knock_on_distribution.back().first,
 					cross_section,
 					abs_error );
+*/
 }
 
 // Return the max outgoing adjoint energy for a given energy
 double AdjointElectroionizationSubshellCrossSectionEvaluator::getMaxOutgoingEnergyAtEnergy( 
                                 const double energy )
 { 
-  // Start at the largest energy grid point
-  unsigned grid_point = d_knock_on_distribution.size();
-
-  while( grid_point > 0 )
-  {
-    grid_point--;
-
-    // Find the minimum knock-on energy for an electron at the grid_point energy
-    double min_energy = 
-      d_knock_on_distribution[grid_point].second->sampleWithRandomNumber( 0.0 );
-
-    /* If the minimum knock-on energy is at or below the given energy then 
-       return the grid_point energy */
-    if ( min_energy <= energy )
-    {
-      return d_knock_on_distribution[grid_point].first;
-    }
-  }
-  // If no max energy is found return a max energy of zero
-  return 0.0;
+  return d_knock_on_distribution->getMaxIncomingEnergyAtOutgoingEnergy( energy );
 }
 
 

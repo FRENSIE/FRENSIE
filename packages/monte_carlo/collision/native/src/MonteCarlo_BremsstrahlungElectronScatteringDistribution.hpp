@@ -60,15 +60,28 @@ public:
   virtual ~BremsstrahlungElectronScatteringDistribution()
   { /* ... */ }
 
+  //! Return the min incoming energy
+  double getMinEnergy() const;
+
+  //! Return the Max incoming energy
+  double getMaxEnergy() const;
+
+  //! Return the max incoming electron energy for a given photon energy
+  double getMaxIncomingEnergyAtOutgoingEnergy( const double energy ) const;
+
+  //! Evaluate the PDF value for a given incoming and photon energy
+  double evaluatePDF( const double incoming_energy, 
+                      const double photon_energy ) const;
+
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
-               double& outgoing_energy,
-               double& scattering_angle_cosine ) const;
+               double& photon_energy,
+               double& photon_angle_cosine ) const;
 
   //! Sample an outgoing energy and direction and record the number of trials
   void sampleAndRecordTrials( const double incoming_energy,
-                              double& outgoing_energy,
-                              double& scattering_angle_cosine,
+                              double& photon_energy,
+                              double& photon_angle_cosine,
                               unsigned& trials ) const;
 
   //! Randomly scatter the electron
@@ -94,25 +107,26 @@ private:
   Teuchos::RCP<Utility::OneDDistribution> d_angular_distribution;
 
   // Sample the outgoing photon angle from a tabular distribution 
-  double SampleTabularAngle(  double& incoming_electron_energy, 
-                              double& photon_energy ) const ;
+  double SampleTabularAngle(  const double incoming_electron_energy, 
+                              const double photon_energy ) const ;
 
   // Sample the outgoing photon angle from a dipole distribution
-  double SampleDipoleAngle(  double& incoming_electron_energy, 
-                             double& photon_energy ) const ;
+  double SampleDipoleAngle(  const double incoming_electron_energy, 
+                             const double photon_energy ) const ;
 
   // Sample the outgoing photon angle using the 2BS sampling routine of Kock and Motz
-  double Sample2BSAngle(  double& incoming_electron_energy, 
-                          double& photon_energy ) const ;
+  double Sample2BSAngle(  const double incoming_electron_energy, 
+                          const double photon_energy ) const ;
 
   // Calculate the rejection function for the 2BS sampling routine
-  double Calculate2BSRejection( double& outgoing_electron_energy,
-                                double& two_ratio,
-                                double& parameter1,
-                                double& x ) const;
+  double Calculate2BSRejection( const double outgoing_electron_energy,
+                                const double two_ratio,
+                                const double parameter1,
+                                const double x ) const;
 
   // The doppler broadening function pointer
-  boost::function<double ( double&, double& )> d_angular_distribution_func; 
+  boost::function<double ( const double, const double )> 
+                                        d_angular_distribution_func; 
 
 };
 

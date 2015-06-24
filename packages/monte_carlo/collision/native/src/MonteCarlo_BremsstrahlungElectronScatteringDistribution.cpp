@@ -82,32 +82,96 @@ BremsstrahlungElectronScatteringDistribution::BremsstrahlungElectronScatteringDi
                    _2 );
 }
 
+// Return the min incoming energy
+double BremsstrahlungElectronScatteringDistribution::getMinEnergy() const
+{
+  return d_bremsstrahlung_scattering_distribution.front().first;
+}
 
-// Sample an outgoing energy and direction from the distribution
+// Return the Max incoming energy
+double BremsstrahlungElectronScatteringDistribution::getMaxEnergy() const
+{
+  return d_bremsstrahlung_scattering_distribution.back().first;
+}
+
+// Return the max incoming electron energy for a given outgoing electron energy
+double BremsstrahlungElectronScatteringDistribution::getMaxIncomingEnergyAtOutgoingEnergy( 
+        const double energy ) const
+{
+  // Start at the largest energy grid point
+  unsigned grid_point = d_bremsstrahlung_scattering_distribution.size();
+
+  MonteCarlo::TwoDDistribution::const_iterator 
+                                        highest_energy_bin, lowest_energy_bin;
+
+  lowest_energy_bin = d_bremsstrahlung_scattering_distribution.begin();
+  highest_energy_bin = d_bremsstrahlung_scattering_distribution.end();
+  highest_energy_bin--;
+
+  // Make sure the outgoing energy is possible
+  testPrecondition( energy < highest_energy_bin->first -
+                    highest_energy_bin->second->sampleWithRandomNumber( 0.0 ) );
+
+  for ( highest_energy_bin; highest_energy_bin !=lowest_energy_bin; highest_energy_bin -- ) 
+  {
+    // Find the maximum photon energy for an electron at the grid_point energy
+    double max_photon_energy = 
+      highest_energy_bin->second->sampleWithRandomNumber( 1.0 );
+  
+    // Calculate the corresponding minimum outgoing electron energy
+    double min_energy = highest_energy_bin->first - max_photon_energy;
+
+    /* If the minimum outgoing electron energy is at or below the given energy 
+       then return the grid_point energy */
+    if ( min_energy <= energy )
+    {
+      return highest_energy_bin->first;
+    }
+  }
+  return 0.0;
+}
+
+// Evaluate the PDF value for a given incoming and photon energy
+double BremsstrahlungElectronScatteringDistribution::evaluatePDF( 
+                     const double incoming_energy, 
+                     const double photon_energy ) const
+{
+  // Make sure the energies are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( photon_energy > 0.0 );
+
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
+                         incoming_energy,
+                         photon_energy,
+                         d_bremsstrahlung_scattering_distribution );
+}
+
+// Sample the photon energy and direction from the distribution
 void BremsstrahlungElectronScatteringDistribution::sample( 
              const double incoming_energy,
-             double& outgoing_energy,
-             double& scattering_angle_cosine ) const
+             double& photon_energy,
+             double& photon_angle_cosine ) const
 {
-  // Electron angle scattering is assumed to be negligible
-  scattering_angle_cosine = 1.0;
-
-  outgoing_energy = incoming_energy - 
-                    sampleTwoDDistributionCorrelated( 
+  // Sample the photon energy
+  photon_energy = sampleTwoDDistributionCorrelated( 
                                      incoming_energy,
                                      d_bremsstrahlung_scattering_distribution );
+
+  // Sample the photon outgoing angle cosine
+  photon_angle_cosine = d_angular_distribution_func( incoming_energy, 
+                                                     photon_energy );
 }
 
 // Sample an outgoing energy and direction and record the number of trials
 void BremsstrahlungElectronScatteringDistribution::sampleAndRecordTrials( 
                             const double incoming_energy,
-                            double& outgoing_energy,
-                            double& scattering_angle_cosine,
+                            double& photon_energy,
+                            double& photon_angle_cosine,
                             unsigned& trials ) const
 {
   trials++;
 
-  sample( incoming_energy, outgoing_energy, scattering_angle_cosine );
+  sample( incoming_energy, photon_energy, photon_angle_cosine );
   
 }
 // Randomly scatter the electron
@@ -125,10 +189,8 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   // photon outgoing angle cosine
   double photon_angle_cosine;
 
-  // Sample bremsstrahlung photon energy
-  photon_energy = sampleTwoDDistributionCorrelated( 
-                        electron.getEnergy(),
-                        d_bremsstrahlung_scattering_distribution );
+  // Sample bremsstrahlung photon energy and angle cosine
+  sample( incoming_energy, photon_energy, photon_angle_cosine );
 
   // Set the new electron energy
   electron.setEnergy( incoming_energy - photon_energy );
@@ -143,10 +205,7 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
   // Set photon energy
   bremsstrahlung_photon->setEnergy( photon_energy );
 
-  // Sample the photon outgoing angle cosine
-  photon_angle_cosine = d_angular_distribution_func( incoming_energy, 
-                                                     photon_energy );
-
+  // Set the photon outgoing angle cosine
   bremsstrahlung_photon->rotateDirection( photon_angle_cosine,
 			                  sampleAzimuthalAngle() );
 
@@ -156,8 +215,8 @@ void BremsstrahlungElectronScatteringDistribution::scatterElectron(
 
 // Sample the outgoing photon direction from the analytical function
 double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle( 
-                                               double& incoming_electron_energy, 
-                                               double& photon_energy  ) const 
+                                          const double incoming_electron_energy, 
+                                          const double photon_energy  ) const 
 {
   // get the velocity of the electron divided by the speed of light beta = v/c
   double beta = sqrt ( Utility::calculateDimensionlessRelativisticSpeedSquared( 
@@ -177,8 +236,8 @@ double BremsstrahlungElectronScatteringDistribution::SampleDipoleAngle(
  * Kock and Motz
  */
 double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle( 
-                                        double& incoming_electron_energy, 
-                                        double& photon_energy ) const 
+                                        const double incoming_electron_energy, 
+                                        const double photon_energy ) const 
 {
   double outgoing_electron_energy = incoming_electron_energy - photon_energy;
   double ratio = outgoing_electron_energy/incoming_electron_energy;
@@ -240,10 +299,10 @@ double BremsstrahlungElectronScatteringDistribution::Sample2BSAngle(
 
 // Calculate the rejection function for the 2BS sampling routine
 double BremsstrahlungElectronScatteringDistribution::Calculate2BSRejection( 
-                                               double& outgoing_electron_energy,
-                                               double& two_ratio,
-                                               double& parameter1,
-                                               double& x ) const
+                                          const double outgoing_electron_energy,
+                                          const double two_ratio,
+                                          const double parameter1,
+                                          const double x ) const
 {
   double parameter2 = ( 1.0 + x )*( 1.0 + x );
 
@@ -258,8 +317,8 @@ double BremsstrahlungElectronScatteringDistribution::Calculate2BSRejection(
 
 // Sample the detailed outgoing photon direction
 double BremsstrahlungElectronScatteringDistribution::SampleTabularAngle( 
-                                               double& incoming_electron_energy, 
-                                               double& photon_energy ) const
+                                          const double incoming_electron_energy, 
+                                          const double photon_energy ) const
 {
     if ( incoming_electron_energy > d_upper_cutoff_energy )
   {

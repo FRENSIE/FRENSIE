@@ -9,9 +9,14 @@
 #ifndef MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTROATOMIC_REACTION_DEF_HPP
 #define MONTE_CARLO_ELECTROIONIZATION_SUBSHELL_ELECTROATOMIC_REACTION_DEF_HPP
 
+// Boost Includes
+#include <boost/function.hpp>
+#include <boost/bind.hpp>
+
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionType.hpp"
 #include "Utility_ContractException.hpp"
+#include "Utility_GaussKronrodQuadratureKernel.hpp"
 
 namespace MonteCarlo{
 
