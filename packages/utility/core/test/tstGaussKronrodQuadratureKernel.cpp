@@ -70,6 +70,11 @@ double inv_sqrt_abs_x( const double x )
   return 1/sqrt(fabs(x));
 }
 
+double f_x( const double x )
+{
+  return x*x*x*x*x - x*x*x + 2*x;
+}
+
 //---------------------------------------------------------------------------//
 // Instantiation macros.
 //---------------------------------------------------------------------------//
@@ -290,6 +295,30 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
   double tol = absolute_error/result;
 
   TEST_FLOATING_EQUALITY( result, 4.0, tol );
+}
+
+//---------------------------------------------------------------------------//
+// Check that functions can be integrated over [0,1]
+TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
+                   integrateGuassLegendre )
+{
+  boost::function<double (double x)> function_wrapper = f_x;
+
+  Utility::GaussKronrodQuadratureKernel kernel( 1e-12, 0.0, 3, 3 );
+  
+  Teuchos::Array<double> points( 3 ), weights( 3 );
+
+  double result;
+
+  kernel.integrateGuassLegendre( function_wrapper, 1.0, 3.0, points, weights, result );
+
+
+  TEST_FLOATING_EQUALITY( 1.2254, points[0], 1e-5 );
+  TEST_FLOATING_EQUALITY( 2.0000, points[1], 1e-5 );
+  TEST_FLOATING_EQUALITY( 2.7746, points[2], 1e-5 );
+  TEST_FLOATING_EQUALITY( 0.555556, weights[0], 1e-5 );
+  TEST_FLOATING_EQUALITY( 0.888889, weights[1], 1e-5 );
+  TEST_FLOATING_EQUALITY( 0.555556, weights[2], 1e-5 );
 }
 
 //---------------------------------------------------------------------------//

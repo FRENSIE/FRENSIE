@@ -16,6 +16,7 @@
 
 // Trilinos Includes
 #include <Teuchos_ArrayView.hpp>
+#include <Teuchos_Array.hpp>
 
 namespace Utility{
 
@@ -90,6 +91,16 @@ public:
 			  const Teuchos::ArrayView<double>& points_of_interest,
 			  double& result,
 			  double& absolute_error ) const;
+
+  //! Integrate a function with Guass-Legendre integration
+  template<typename Functor>
+  void integrateGuassLegendre(
+			  Functor& integrand, 
+			  double lower_limit, 
+			  double upper_limit,
+                          Teuchos::Array<double>& points,
+                          Teuchos::Array<double>& weights,
+                          double& result ) const;
 
 private:
 

@@ -499,6 +499,88 @@ void GaussKronrodQuadratureKernel::integrateAdaptivelyWynnEpsilon(
   }
 }
 
+// Integrate a function with Guass-Legendre integration
+/*! \details The fixed-order Gauss-Legendre integration routines are provided 
+ * for fast integration of smooth functions with known polynomial order. The 
+ * n-point Gauss-Legendre rule is exact for polynomials of order 2*n-1 or less. 
+ * For example, these rules are useful when integrating basis functions to form 
+ * mass matrices for the Galerkin method. Unlike other numerical integration 
+ * routines within the library, these routines do not accept absolute or 
+ * relative error bounds. See Gauss-Legendre integration algorithm details in 
+ * GNU Scientific Library documentation.
+ */ 
+template< typename Functor>
+void GaussKronrodQuadratureKernel::integrateGuassLegendre(
+					Functor& integrand, 
+					double lower_limit, 
+					double upper_limit,
+                                        Teuchos::Array<double>& points,
+                                        Teuchos::Array<double>& weights,
+                                        double& result ) const
+{
+  // Make sure the integration limits are valid
+  testPrecondition( lower_limit <= upper_limit );
+  // Make sure the integration limits are bounded
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( lower_limit ) );
+  testPrecondition( !Teuchos::ScalarTraits<double>::isnaninf( upper_limit ) );
+
+  if( lower_limit < upper_limit )
+  {
+    // Just-in-time workspace allocation
+    gsl_integration_glfixed_table* table = 
+      gsl_integration_glfixed_table_alloc( d_workspace_size );
+ 
+    // Create the GSL function
+    gsl_function gsl_function_wrapper;
+    gsl_function_wrapper.function = 
+      &GaussKronrodQuadratureKernel::functorWrapper<Functor>;
+    gsl_function_wrapper.params = const_cast<typename Teuchos::ConstTypeTraits<Functor>::NonConstType*>(&integrand);
+
+
+ /*   
+    double result = gsl_integration_glfixed( 
+			       &gsl_function_wrapper,
+			       lower_limit,
+			       upper_limit,
+			       table );
+*/   
+    double point_i, weight_i;
+    double size = d_workspace_size - 1;
+std::cout << "table size = "<< size << std::endl;
+    for ( int i = 0; i < d_workspace_size; i++ )
+    {
+std::cout << "i = " << i << std::endl;
+      int status = gsl_integration_glfixed_point( 
+                               lower_limit,
+			       upper_limit,
+			       i,
+                               &point_i,
+                               &weight_i,
+                               table );
+     
+      points[i] = point_i;
+      weights[i] = weight_i;
+
+std::cout << "point i = " << point_i << std::endl;
+std::cout << "weight_i = " << weight_i << std::endl;
+    }
+    
+    // Deallocate workspace
+    gsl_integration_glfixed_table_free( table );
+  }
+  else if( lower_limit == upper_limit )
+  {
+      points[0] = 0.0;
+      weights[0] = 0.0;
+  }
+  else // invalid limits
+  {
+    THROW_EXCEPTION( Utility::GSLException,
+		     "Invalid integration limits: " << lower_limit << " !< "
+		     << upper_limit << "." );
+  }
+}
+
 } // end Utility namespace
 
 #endif // end UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_DEF_HPP
