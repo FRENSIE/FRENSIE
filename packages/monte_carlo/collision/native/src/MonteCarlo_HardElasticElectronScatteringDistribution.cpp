@@ -68,10 +68,18 @@ double HardElasticElectronScatteringDistribution::evaluatePDF(
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
+  if ( scattering_angle_cosine <= s_mu_cutoff )
+  {
+    return MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
                          incoming_energy,
                          scattering_angle_cosine,
                          d_elastic_scattering_distribution );
+  }
+  else
+  {
+    return evaluateRutherfordScreenedPDF( incoming_energy, 
+                                          scattering_angle_cosine );
+  }
 }
 
 // Sample an outgoing energy and direction from the distribution
@@ -151,7 +159,27 @@ void HardElasticElectronScatteringDistribution::scatterAdjointElectron(
 				  this->sampleAzimuthalAngle() );
 }
 
+// Evaluate the PDF
+double HardElasticElectronScatteringDistribution::evaluateRutherfordScreenedPDF( 
+                            const double incoming_energy,
+                            const double scattering_angle_cosine ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
 
+  double cutoff_pdf_value = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
+                                incoming_energy,
+                                s_mu_cutoff,
+                                d_elastic_scattering_distribution );
+
+  double screening_factor = evaluateScreeningFactor( incoming_energy );
+ 
+  double denominator = ( screening_factor + 1.0 - scattering_angle_cosine );
+
+  return cutoff_pdf_value/( denominator * denominator );
+}
 
 
 // Evaluate the screening factor at the given electron energy
@@ -186,9 +214,6 @@ double HardElasticElectronScatteringDistribution::evaluateScreenedScatteringAngl
 
   // Calculate the screened scattering angle
   double arg = random_number*s_delta_cutoff;
-
-    double analytical_cdf = cutoff_pdf_value/screening_factor*
-     ( s_delta_cutoff + screening_factor )*( s_delta_cutoff );
 
   return ( screening_factor*s_mu_cutoff + 
            arg*( screening_factor + 1.0 ) ) /

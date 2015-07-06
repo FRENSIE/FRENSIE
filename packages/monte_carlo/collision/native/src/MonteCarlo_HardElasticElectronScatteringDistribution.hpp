@@ -79,6 +79,11 @@ public:
 
 //protected:
 
+  //! Evaluate the analytical Rutherford Screened PDF
+  double evaluateRutherfordScreenedPDF( 
+                                  const double incoming_energy,
+                                  const double scattering_angle_cosine ) const;
+
    //! Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,
                                   double& scattering_angle_cosine,
