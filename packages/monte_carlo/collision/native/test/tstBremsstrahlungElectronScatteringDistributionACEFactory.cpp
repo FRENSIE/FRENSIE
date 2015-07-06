@@ -19,6 +19,7 @@
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_TabularDistribution.hpp"
+#include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_UnitTestHarnessExtensions.hpp"
 
 //---------------------------------------------------------------------------//
@@ -300,10 +301,6 @@ int main( int argc, char** argv )
 
   upper_cutoff_energy = 1000;
   lower_cutoff_energy = 0.001;
- 
-  // Clear setup data
-  ace_file_handler.reset();
-  xss_data_extractor.reset();
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();
