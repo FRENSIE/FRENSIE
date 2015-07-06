@@ -35,9 +35,11 @@ Teuchos::RCP<const MonteCarlo::IncoherentPhotonScatteringDistribution>
 TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 		   createKleinNishinaDistribution )
 {
-  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createKleinNishinaDistribution(
-							          distribution,
-								  3.0 );
+  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
+					       *data_container,
+					       distribution,
+					       MonteCarlo::KN_INCOHERENT_MODEL,
+					       3.0 );
 
   // Test distribution properties
   double dist_value = distribution->evaluate( 
@@ -58,10 +60,11 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 		   createIncoherentDistribution )
 {
-  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistribution( 
-                                                               *data_container,
-							       distribution,
-							       3.0 );
+  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createDistribution( 
+                                               *data_container,
+					       distribution,
+					       MonteCarlo::WH_INCOHERENT_MODEL,
+					       3.0 );
 
   // Test distribution properties
   double dist_value = distribution->evaluate(
@@ -107,15 +110,18 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::M3_SUBSHELL );
 }
 
+
+
 //---------------------------------------------------------------------------//
-// Check that an advanced Doppler broadened incoherent dist. can be created
+// Check that the Doppler broadened incoherent dist. can be created
 TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
-		   createAdvancedDopplerBroadenedIncoherentDistribution )
+		   createCFPDopplerBroadenedIncoherentDistribution )
 {
-  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createAdvancedDopplerBroadenedIncoherentDistribution( 
-							       *data_container,
-							       distribution,
-							       3.0 );
+  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createDistribution( 
+		 *data_container,
+		 distribution,
+		 MonteCarlo::COUPLED_FULL_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
+		 3.0 );
 
   // Test distribution properties
   double dist_value = distribution->evaluate(
@@ -145,8 +151,8 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
   fake_stream[2] = 0.5; // accept x in scattering function rejection loop
   fake_stream[3] = 0.005; // select first shell for collision
   fake_stream[4] = 0.5; // select pz = 0.0
-  fake_stream[5] = 0.0; // azimuthal_angle = pi
-  
+  fake_stream[5] = 0.5; // azimuthal_angle = pi
+    
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
   distribution->scatterPhoton( photon,
@@ -157,7 +163,7 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 
   TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.4982681851517501, 1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getYDirection(), -1.0, 1e-15 );
+  TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
 }
@@ -167,11 +173,12 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 		   createSubshellIncoherentDistribution )
 {
-  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createSubshellIncoherentDistribution(
-							       *data_container,
-							       1,
-							       distribution,
-							       3.0 );
+  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
+					  *data_container,
+					  distribution,
+					  MonteCarlo::IMPULSE_INCOHERENT_MODEL,
+					  3.0,
+					  1 );
 
   // Test distribution properties
   double dist_value = distribution->evaluate(
@@ -221,11 +228,12 @@ TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 TEUCHOS_UNIT_TEST( IncoherentPhotonScatteringDistributionNativeFactory,
 		   createDopplerBroadenedSubshellIncoherentDistribution )
 {
-  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createDopplerBroadenedSubshellIncoherentDistribution(
-							       *data_container,
-							       1,
-							       distribution,
-							       3.0 );
+  MonteCarlo::IncoherentPhotonScatteringDistributionNativeFactory::createDistribution(
+			  *data_container,
+			  distribution,
+			  MonteCarlo::FULL_PROFILE_DB_IMPULSE_INCOHERENT_MODEL,
+			  3.0,
+			  1 );
   
   // Test distribution properties
   double dist_value = distribution->evaluate(

@@ -39,27 +39,54 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, getSpeed )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the adjoint photon probe can be activated
+TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, activate )
+{
+  MonteCarlo::AdjointPhotonProbeState particle( 1ull );
+
+  TEST_ASSERT( !particle.isActive() );
+
+  particle.activate();
+
+  TEST_ASSERT( particle.isActive() );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the adjoint photon probe behaves correctly when its energy is set
 TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, setEnergy )
 {
   MonteCarlo::AdjointPhotonProbeState particle_a( 1ull );
 
+  particle_a.setEnergy( 0.1 );
+
+  TEST_ASSERT( !particle_a.isActive() );
   TEST_ASSERT( !particle_a.isGone() );
 
+  particle_a.activate();
+
+  TEST_ASSERT( particle_a.isActive() );
+  TEST_ASSERT( !particle_a.isGone() );
+  
   particle_a.setEnergy( 1.0 );
 
-  TEST_ASSERT( !particle_a.isGone() );
-
-  particle_a.setEnergy( 2.0 );
-
+  TEST_ASSERT( particle_a.isActive() );
   TEST_ASSERT( particle_a.isGone() );
 
   MonteCarlo::AdjointPhotonProbeState particle_b( particle_a, true );
 
+  particle_b.setEnergy( 2.0 );
+
+  TEST_ASSERT( !particle_b.isActive() );
+  TEST_ASSERT( !particle_b.isGone() );
+
+  particle_b.activate();
+
+  TEST_ASSERT( particle_b.isActive() );
   TEST_ASSERT( !particle_b.isGone() );
 
   particle_b.setEnergy( 10.0 );
 
+  TEST_ASSERT( particle_b.isActive() );
   TEST_ASSERT( particle_b.isGone() );
 }
 
@@ -87,6 +114,15 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, advance )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the particle is a probe
+TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, isProbe )
+{
+  MonteCarlo::AdjointPhotonProbeState particle( 1ull );
+
+  TEST_ASSERT( particle.isProbe() );
+}
+
+//---------------------------------------------------------------------------//
 // Create new particles
 TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, copy_constructor )
 {
@@ -100,6 +136,7 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, copy_constructor )
 
   MonteCarlo::AdjointPhotonProbeState particle_gen_a_copy( particle_gen_a );
   
+  TEST_ASSERT( !particle_gen_a_copy.isActive() );
   TEST_EQUALITY( particle_gen_a_copy.getXPosition(), 
 		 particle_gen_a.getXPosition() );
   TEST_EQUALITY( particle_gen_a_copy.getYPosition(), 
@@ -124,10 +161,12 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, copy_constructor )
 		 particle_gen_a.getGenerationNumber() );
   TEST_EQUALITY( particle_gen_a_copy.getWeight(),
 		 particle_gen_a.getWeight() );
+  TEST_ASSERT( !particle_gen_a_copy.isGone() );
 
   // Create a second generation particle with the same collision number
   MonteCarlo::AdjointPhotonProbeState particle_gen_b( particle_gen_a, true );
 
+  TEST_ASSERT( !particle_gen_b.isActive() );
   TEST_EQUALITY( particle_gen_b.getXPosition(), 
 		 particle_gen_a.getXPosition() );
   TEST_EQUALITY( particle_gen_b.getYPosition(), 
@@ -149,11 +188,13 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, copy_constructor )
   TEST_EQUALITY( particle_gen_b.getGenerationNumber(),
 		 particle_gen_a.getGenerationNumber()+1u );
   TEST_EQUALITY( particle_gen_b.getWeight(),
-		 particle_gen_a.getWeight() );  
+		 particle_gen_a.getWeight() );
+  TEST_ASSERT( !particle_gen_b.isGone() );
 
   // Create a third generation particle and reset the collision counter
   MonteCarlo::AdjointPhotonProbeState particle_gen_c( particle_gen_b, true, true );
 
+  TEST_ASSERT( !particle_gen_c.isActive() );
   TEST_EQUALITY( particle_gen_c.getXPosition(), 
 		 particle_gen_b.getXPosition() );
   TEST_EQUALITY( particle_gen_c.getYPosition(), 
@@ -175,6 +216,77 @@ TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, copy_constructor )
 		 particle_gen_b.getGenerationNumber()+1u );
   TEST_EQUALITY( particle_gen_c.getWeight(),
 		 particle_gen_b.getWeight() );
+  TEST_ASSERT( !particle_gen_c.isGone() );
+}
+
+//---------------------------------------------------------------------------//
+// Check that a probe state can create a non-probe state (and vice versa)
+TEUCHOS_UNIT_TEST( AdjointPhotonProbeState, probe_nonprobe_copy_constructor )
+{
+  MonteCarlo::AdjointPhotonState particle_gen_a( 1ull );
+  particle_gen_a.setPosition( 1.0, 1.0, 1.0 );
+  particle_gen_a.setPosition( 0.0, 0.0, 1.0 );
+  particle_gen_a.setEnergy( 1.0 );
+  particle_gen_a.setTime( 1.0 );
+  particle_gen_a.incrementCollisionNumber();
+  particle_gen_a.setWeight( 0.5 );
+
+  MonteCarlo::AdjointPhotonProbeState probe_gen_a( particle_gen_a );
+
+  TEST_ASSERT( !probe_gen_a.isActive() );
+  TEST_EQUALITY( probe_gen_a.getXPosition(), 
+		 particle_gen_a.getXPosition() );
+  TEST_EQUALITY( probe_gen_a.getYPosition(), 
+		 particle_gen_a.getYPosition() );
+  TEST_EQUALITY( probe_gen_a.getZPosition(), 
+		 particle_gen_a.getZPosition() );
+  TEST_EQUALITY( probe_gen_a.getXDirection(), 
+		 particle_gen_a.getXDirection() );
+  TEST_EQUALITY( probe_gen_a.getYDirection(), 
+		 particle_gen_a.getYDirection() );
+  TEST_EQUALITY( probe_gen_a.getZDirection(), 
+		 particle_gen_a.getZDirection() );
+  TEST_EQUALITY( probe_gen_a.getEnergy(),
+		 particle_gen_a.getEnergy() );
+  TEST_EQUALITY( probe_gen_a.getSpeed(),
+		 particle_gen_a.getSpeed() );
+  TEST_EQUALITY( probe_gen_a.getTime(),
+		 particle_gen_a.getTime() );
+  TEST_EQUALITY( probe_gen_a.getCollisionNumber(),
+		 particle_gen_a.getCollisionNumber() );
+  TEST_EQUALITY( probe_gen_a.getGenerationNumber(),
+		 particle_gen_a.getGenerationNumber() );
+  TEST_EQUALITY( probe_gen_a.getWeight(),
+		 particle_gen_a.getWeight() );
+  TEST_ASSERT( !probe_gen_a.isGone() );
+  TEST_ASSERT( probe_gen_a.isProbe() );
+  TEST_ASSERT( !particle_gen_a.isProbe() );
+
+  MonteCarlo::AdjointPhotonState particle_gen_b( probe_gen_a, true );
+  TEST_EQUALITY( particle_gen_b.getXPosition(), 
+		 probe_gen_a.getXPosition() );
+  TEST_EQUALITY( particle_gen_b.getYPosition(), 
+		 probe_gen_a.getYPosition() );
+  TEST_EQUALITY( particle_gen_b.getZPosition(), 
+		 probe_gen_a.getZPosition() );
+  TEST_EQUALITY( particle_gen_b.getXDirection(), 
+		 probe_gen_a.getXDirection() );
+  TEST_EQUALITY( particle_gen_b.getYDirection(), 
+		 probe_gen_a.getYDirection() );
+  TEST_EQUALITY( particle_gen_b.getZDirection(), 
+		 probe_gen_a.getZDirection() );
+  TEST_EQUALITY( particle_gen_b.getEnergy(),
+		 probe_gen_a.getEnergy() );
+  TEST_EQUALITY( particle_gen_b.getTime(),
+		 probe_gen_a.getTime() );
+  TEST_EQUALITY( particle_gen_b.getCollisionNumber(),
+		 probe_gen_a.getCollisionNumber() );
+  TEST_EQUALITY( particle_gen_b.getGenerationNumber(),
+		 probe_gen_a.getGenerationNumber()+1u );
+  TEST_EQUALITY( particle_gen_b.getWeight(),
+		 probe_gen_a.getWeight() );
+  TEST_ASSERT( !particle_gen_b.isProbe() );
+  TEST_ASSERT( probe_gen_a.isProbe() );
 }
 
 //---------------------------------------------------------------------------//

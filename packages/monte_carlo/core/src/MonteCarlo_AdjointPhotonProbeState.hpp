@@ -52,13 +52,22 @@ public:
   //! Set the energy of the particle (MeV)
   void setEnergy( const energyType energy );
 
+  //! Check if this is a probe
+  bool isProbe() const;
+
+  //! Activate the probe
+  void activate();
+
+  //! Returns if the probe is active
+  bool isActive() const;
+
   //! Print the adjoint photon state
   void print( std::ostream& os ) const;
 
 private:
 
-  // Flag that indicates if the initial energy has been set
-  bool d_initial_energy_set;
+  // Flag that indicates if the probe is active
+  bool d_active;
 };
 
 } // end MonteCarlo namespace

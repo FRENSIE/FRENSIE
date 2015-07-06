@@ -8,7 +8,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
-#include "MonteCarlo_ComptonProfileHelpers.hpp"
+#include "MonteCarlo_PhotonKinematicsHelpers.hpp"
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ContractException.hpp"

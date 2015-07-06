@@ -46,6 +46,9 @@ public:
   virtual ~AdjointPhotonState()
   { /* ... */ }
 
+  //! Check if this is a probe
+  virtual bool isProbe() const;
+
   //! Print the adjoint photon state
   virtual void print( std::ostream& os ) const;
 

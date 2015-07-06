@@ -19,6 +19,7 @@
 // FRENSIE Includes
 #include "MonteCarlo_UnitTestHarnessExtensions.hpp"
 #include "MonteCarlo_DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_SubshellDopplerBroadenedPhotonEnergyDistribution.hpp"
 #include "MonteCarlo_SubshellType.hpp"
 #include "Data_ElectronPhotonRelaxationDataContainer.hpp"
 #include "Utility_TabularDistribution.hpp"
@@ -240,15 +241,20 @@ int main( int argc, char** argv )
 						    occupation_number_grid_s1,
 						    occupation_number_s1 ) );
 
+    // Create the Doppler broadened energy distribution
+    Teuchos::RCP<const MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution>
+      doppler_dist( new MonteCarlo::SubshellDopplerBroadenedPhotonEnergyDistribution(
+		    MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
+		    data_container.getSubshellOccupancy( 1 ),
+		    data_container.getSubshellBindingEnergy( 1 ),
+		    compton_profile_s1_dist ) );
+
     // Create the subshell incoherent distributions
     distribution.reset(
        new MonteCarlo::DopplerBroadenedSubshellIncoherentPhotonScatteringDistribution(
-			  MonteCarlo::convertENDFDesignatorToSubshellEnum( 1 ),
-			  data_container.getSubshellOccupancy( 1 ),
-			  data_container.getSubshellBindingEnergy( 1 ),
-			  occupation_number_s1_dist,
-			  compton_profile_s1_dist,
-			  3.0 ) );
+					             doppler_dist,
+					             occupation_number_s1_dist,
+						     3.0 ) );
   }
 
   // Initialize the random number generator

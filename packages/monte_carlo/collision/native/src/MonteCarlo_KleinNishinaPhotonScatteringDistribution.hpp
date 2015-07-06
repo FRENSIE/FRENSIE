@@ -28,7 +28,7 @@ public:
 				    const double kahn_sampling_cutoff_energy );
 
   //! Destructor
-  virtual ~KleinNishinaPhotonScatteringDistribution()
+  ~KleinNishinaPhotonScatteringDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution

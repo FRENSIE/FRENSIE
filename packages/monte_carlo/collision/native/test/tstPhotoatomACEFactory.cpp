@@ -39,16 +39,18 @@ Teuchos::RCP<MonteCarlo::Photoatom> atom;
 // Check that a basic photoatom can be created
 TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 {
-  MonteCarlo::PhotoatomACEFactory::createPhotoatom( *xss_data_extractor,
-						    photoatom_name,
-						    atomic_weight,
-						    relaxation_model,
-						    atom,
-						    100,
-						    false,
-						    false,
-						    false );
-
+  MonteCarlo::PhotoatomACEFactory::createPhotoatom( 
+					       *xss_data_extractor,
+					       photoatom_name,
+					       atomic_weight,
+					       relaxation_model,
+					       atom,
+					       100,
+					       MonteCarlo::WH_INCOHERENT_MODEL,
+					       3.0,
+					       false,
+					       false );
+					       
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
   TEST_EQUALITY_CONST( atom->getAtomicNumber(), 82 );
@@ -224,15 +226,17 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_basic )
 // Check that a photoatom with Doppler broadening data can be created
 TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 {
-  MonteCarlo::PhotoatomACEFactory::createPhotoatom( *xss_data_extractor,
-						    photoatom_name,
-						    atomic_weight,
-						    relaxation_model,
-						    atom,
-						    100,
-						    true,
-						    false,
-						    false );
+  MonteCarlo::PhotoatomACEFactory::createPhotoatom( 
+		 *xss_data_extractor,
+		 photoatom_name,
+		 atomic_weight,
+		 relaxation_model,
+		 atom,
+		 100,
+		 MonteCarlo::DECOUPLED_HALF_PROFILE_DB_HYBRID_INCOHERENT_MODEL,
+		 3.0,
+		 false,
+		 false );
   
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );
@@ -397,7 +401,7 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 
   atom->collideAnalogue( photon, bank );
 
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
   TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -421,15 +425,17 @@ TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_doppler )
 // Check that a photoatom with subshell photoelectric data can be created
 TEUCHOS_UNIT_TEST( PhotoatomACEFactory, createPhotoatom_pe_subshells )
 {
-  MonteCarlo::PhotoatomACEFactory::createPhotoatom( *xss_data_extractor,
-						    photoatom_name,
-						    atomic_weight,
-						    relaxation_model,
-						    atom,
-						    100,
-						    false,
-						    false,
-						    true );
+  MonteCarlo::PhotoatomACEFactory::createPhotoatom( 
+					       *xss_data_extractor,
+					       photoatom_name,
+					       atomic_weight,
+					       relaxation_model,
+					       atom,
+					       100,
+					       MonteCarlo::WH_INCOHERENT_MODEL,
+					       3.0,
+					       false,
+					       true );
   
   // Test the photoatom properties
   TEST_EQUALITY_CONST( atom->getAtomName(), "82000.12p" );

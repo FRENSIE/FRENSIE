@@ -16,7 +16,7 @@ namespace MonteCarlo{
 AdjointPhotonProbeState::AdjointPhotonProbeState( 
 		       const ParticleState::historyNumberType history_number )
   : AdjointPhotonState( history_number, ADJOINT_PHOTON_PROBE ),
-    d_initial_energy_set( false )
+    d_active( false )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
@@ -28,7 +28,7 @@ AdjointPhotonProbeState::AdjointPhotonProbeState(
 			ADJOINT_PHOTON_PROBE,
 			increment_generation_number,
 			reset_collision_number ),
-    d_initial_energy_set( true )
+    d_active( false )
 { /* ... */ }
 
 // Copy constructor (with possible creation of new generation)
@@ -40,39 +40,64 @@ AdjointPhotonProbeState::AdjointPhotonProbeState(
 			ADJOINT_PHOTON_PROBE,
 			increment_generation_number,
 			reset_collision_number ),
-    d_initial_energy_set( true )
+    d_active( false )
 { /* ... */ }
 
 // Core constructor
 AdjointPhotonProbeState::AdjointPhotonProbeState( 
 					        const ParticleStateCore& core )
   : AdjointPhotonState( core, ADJOINT_PHOTON_PROBE ),
-    d_initial_energy_set( true )
+    d_active( false )
 {
   // Make sure the core is an adjoint photon probe core
   testPrecondition( core.particle_type == ADJOINT_PHOTON_PROBE );
 }
 
 // Set the energy of the particle (MeV)
-/*! \details The probe particle gets killed when its energy changes. This
- * does not include the initial setting of the particles energy (either
- * from a copy constructor, core constructor or the basic constructor 
- * followed by the first call to setEnergy).
+/*! \details An active probe particle gets killed when its energy changes. A
+ * probe particle should only be activated after its initial energy has been
+ * set. 
  */
 void AdjointPhotonProbeState::setEnergy( const energyType energy )
 {
   ParticleState::setEnergy( energy );
 
-  if( d_initial_energy_set )
+  if( d_active )
     this->setAsGone();
-  else
-    d_initial_energy_set = true;
+}
+
+// Check if this is a probe
+bool AdjointPhotonProbeState::isProbe() const
+{
+  return true;
+}
+
+// Activate the probe
+/*! \details Once a probe has been activated the next call to set energy
+ * will cause is to be killed. 
+ */
+void AdjointPhotonProbeState::activate()
+{
+  d_active = true;
+}
+
+// Returns if the probe is active
+bool AdjointPhotonProbeState::isActive() const
+{
+  return d_active;
 }
 
 // Print the adjoint photon state
 void AdjointPhotonProbeState::print( std::ostream& os ) const
 {
-  os << "Particle Type: Adjoint Photon Probe" << std::endl;
+  os << "Particle Type: ";
+  
+  if( d_active )
+    os << "Active ";
+  else
+    os << "Inactive ";
+
+  os << "Adjoint Photon Probe" << std::endl;
   
   this->printImplementation( os );
 }

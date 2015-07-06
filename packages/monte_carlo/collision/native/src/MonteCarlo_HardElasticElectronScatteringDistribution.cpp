@@ -175,10 +175,14 @@ double HardElasticElectronScatteringDistribution::evaluateRutherfordScreenedPDF(
                                 d_elastic_scattering_distribution );
 
   double screening_factor = evaluateScreeningFactor( incoming_energy );
+
+  double numerator = cutoff_pdf_value*
+                     ( screening_factor + s_delta_cutoff )*
+                     ( screening_factor + s_delta_cutoff );
  
   double denominator = ( screening_factor + 1.0 - scattering_angle_cosine );
 
-  return cutoff_pdf_value/( denominator * denominator );
+  return numerator/( denominator * denominator );
 }
 
 

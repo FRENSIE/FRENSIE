@@ -63,7 +63,7 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
     // Create the scattering distribution
     Teuchos::RCP<const IncoherentPhotonScatteringDistribution> distribution;
 
-    IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistribution( 
+    IncoherentPhotonScatteringDistributionNativeFactory::createDistribution( 
 						 raw_photoatom_data,
 						 distribution,
 						 incoherent_model,
@@ -103,7 +103,7 @@ void PhotoatomicReactionNativeFactory::createIncoherentReactions(
       Teuchos::RCP<const IncoherentPhotonScatteringDistribution> 
 	base_distribution;
 
-      IncoherentPhotonScatteringDistributionNativeFactory::createIncoherentDistribution( 
+      IncoherentPhotonScatteringDistributionNativeFactory::createDistribution( 
 						   raw_photoatom_data,
 						   base_distribution,
 						   incoherent_model,

@@ -73,6 +73,12 @@ AdjointPhotonState::AdjointPhotonState( const ParticleStateCore& core,
   : MasslessParticleState( core )
 { /* ... */ }
 
+// Check if this is a probe
+bool AdjointPhotonState::isProbe() const
+{
+  return false;
+}
+
 // Print the adjoint photon state
 void AdjointPhotonState::print( std::ostream& os ) const
 {
