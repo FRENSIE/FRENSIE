@@ -23,6 +23,14 @@ typedef Teuchos::Array<Utility::Pair<double,
                        Teuchos::RCP<const Utility::TabularOneDDistribution> > >
 TwoDDistribution;
 
+//! Find the lower and upper bin boundary
+void findLowerAndUpperBinBoundary( 
+	      const double independent_variable,
+	      const MonteCarlo::TwoDDistribution& dependent_distribution,
+	      MonteCarlo::TwoDDistribution::const_iterator& lower_bin_boundary,
+	      MonteCarlo::TwoDDistribution::const_iterator& upper_bin_boundary,
+	      double& interpolation_fraction );
+
 //! Sample a two dimensional distribution using correlated sampling 
 double sampleTwoDDistributionCorrelated( 
     const double independent_variable,

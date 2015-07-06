@@ -32,6 +32,53 @@ Teuchos::RCP<MonteCarlo::HardElasticElectronScatteringDistribution>
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
+// Check that the pdf can be evaluated
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+                   evaluatePDF )
+{
+  // Set energy in MeV and angle cosine 
+  double energy = 1.0e-3;
+  double scattering_angle_cosine = 0.0;
+
+  // Calculate the pdf
+  double pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy, 
+                                                 scattering_angle_cosine );
+
+  // Test 1
+  TEST_FLOATING_EQUALITY( pdf_value, 4.821797947867E-02, 1e-12 );
+
+
+  scattering_angle_cosine = 9.800000000000E-01;
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy, 
+                                                 scattering_angle_cosine );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( pdf_value, 8.772194880275E+00, 1e-12 );
+
+
+  energy = 1.00E+05;
+  scattering_angle_cosine = -1.000000000000E+00;
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy, 
+                                                 scattering_angle_cosine );
+
+  // Test 3
+  TEST_FLOATING_EQUALITY( pdf_value, 4.704745346116E-09, 1e-12 );
+
+
+  scattering_angle_cosine = 9.999990000000E-01;
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy, 
+                                                 scattering_angle_cosine );
+
+  // Test 4
+  TEST_FLOATING_EQUALITY( pdf_value, 4.487867817661E+05, 1e-12 );
+
+}
+
+//---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
                    evaluateScreeningFactor )

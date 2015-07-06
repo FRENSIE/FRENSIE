@@ -50,20 +50,9 @@ public:
   virtual ~HardElasticElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Evaluate the distribution
-  double evaluate( const double incoming_energy,
-                   const double scattering_angle_cosine ) const
-  { /* ... */ }
-
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
-                              const double scattering_angle_cosine ) const
-  { /* ... */ }
-
-  //! Evaluate the integrated cross section (b)
-  double evaluateIntegratedCrossSection( const double incoming_energy,
-                                                 const double precision) const
-  { /* ... */ }
+                      const double scattering_angle_cosine ) const;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
@@ -95,18 +84,18 @@ public:
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
 
-  // Evaluate the screening angle at the given electron energy
+  //! Evaluate the screening angle at the given electron energy
   double evaluateScreeningFactor( const double energy ) const;
 
-  // Evaluate the scattering angle from the analytical function
+  //! Evaluate the scattering angle from the analytical screened Rutherford function
   double evaluateScreenedScatteringAngle( const double energy ) const; 
 
-  // Sample a scattering angle cosine
+  //! Sample a scattering angle cosine
   double sampleScatteringAngleCosine( const double energy ) const;
 
 private:
 
-  // Cutoff angle cosine between the distribution and analytical function
+  // Cutoff angle cosine between the distribution and analytical screend Rutherford function
   static double s_mu_cutoff;
 
   // Difference btw cutoff angle cosine and forward peak (mu = 1)

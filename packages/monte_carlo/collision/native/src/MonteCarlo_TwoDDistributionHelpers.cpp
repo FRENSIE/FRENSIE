@@ -10,7 +10,8 @@
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "Utility_SearchAlgorithms.hpp"
 
-namespace {
+namespace MonteCarlo{
+//namespace {
 
 // Find the lower and upper bin boundary
 void findLowerAndUpperBinBoundary( 
@@ -52,9 +53,9 @@ void findLowerAndUpperBinBoundary(
   }
 }
 
-} // end Anonymous namespace
+//} // end Anonymous namespace
 
-namespace MonteCarlo{
+//namespace MonteCarlo{
 
 // Sample a two dimensional ditribution
 /*! \details This function is designed for lin-lin unit base interpolation 
@@ -68,10 +69,10 @@ double sampleTwoDDistributionCorrelated(
   double interpolation_fraction;
 
   findLowerAndUpperBinBoundary( independent_variable,
-				dependent_distribution,
-				lower_bin_boundary,
-				upper_bin_boundary,
-				interpolation_fraction );
+                                dependent_distribution,
+                                lower_bin_boundary,
+                                upper_bin_boundary,
+                                interpolation_fraction );
   
   if( lower_bin_boundary != upper_bin_boundary )
   {
@@ -140,9 +141,9 @@ double evaluateTwoDDistributionCorrelatedPDF(
 double correlatedSample(
                     const Teuchos::RCP<const Utility::TabularOneDDistribution>&
 		    upper_distribution,
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
 		    lower_distribution,
-		    const double interpolation_fraction )
+                    const double interpolation_fraction )
 {  
   double random_number = 
       Utility::RandomNumberGenerator::getRandomNumber<double>();
@@ -187,11 +188,11 @@ double correlatedSample(
 // Evaluate a correlated cdf value
 double evaluateCorrelatedCDF(
                     const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    upper_distribution,
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
-		    lower_distribution,
-		    const double interpolation_fraction,
-		    const double independent_value )
+                            upper_distribution,
+                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+                            lower_distribution,
+                    const double interpolation_fraction,
+                    const double independent_value )
 {
   double upper_cdf = 
     upper_distribution->evaluateCDF( independent_value );
