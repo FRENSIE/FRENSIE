@@ -80,7 +80,7 @@ public:
 //protected:
 
   //! Evaluate the analytical Rutherford Screened PDF
-  double evaluateRutherfordScreenedPDF( 
+  double evaluateScreenedRutherfordPDF( 
                                   const double incoming_energy,
                                   const double scattering_angle_cosine ) const;
 

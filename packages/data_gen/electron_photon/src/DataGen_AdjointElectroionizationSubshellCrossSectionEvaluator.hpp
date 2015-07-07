@@ -2,7 +2,7 @@
 //!
 //! \file   DataGen_AdjointElectroionizationSubshellCrossSectionEvaluator.hpp
 //! \author Luke Kersting
-//! \brief  Adjoint electroionization subshell cross section evaluator declaration
+//! \brief  Adjoint electroionization subshell cross section evaluator definition
 //!
 //---------------------------------------------------------------------------//
 
@@ -57,12 +57,12 @@ public:
 
   //! Evaluate the differential adjoint electroionization subshell cross section (dc/dx)
   double evaluateDifferentialCrossSection(
-	  const double incoming_energy, 
-          const double outgoing_energy ) const;
+            const double incoming_energy, 
+            const double outgoing_energy ) const;
 
   //! Return the cross section value at a given energy
   double evaluateCrossSection( const double energy, 
-			       const double precision = 1e-6 ) const;
+                               const double precision = 1e-6 ) const;
 
   //! Return the max outgoing adjoint energy for a given energy
   double getMaxOutgoingEnergyAtEnergy( const double energy );

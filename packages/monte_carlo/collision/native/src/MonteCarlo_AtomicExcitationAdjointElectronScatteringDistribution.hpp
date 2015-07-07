@@ -37,22 +37,6 @@ public:
   virtual ~AtomicExcitationAdjointElectronScatteringDistribution()
   { /* ... */ }
 
-  //! Evaluate the distribution
-  double evaluate( const double incoming_energy,
-                   const double outgoing_energy ) const
-  { /*...*/}
-
-  //! Evaluate the PDF
-  double evaluatePDF( const double incoming_energy,
-                      const double outgoing_energy ) const
-  { /*...*/}
-
-  //! Evaluate the integrated cross section (b)
-  double evaluateIntegratedCrossSection( const double incoming_energy,
-                                         const double precision) const
-  { /*...*/}
-
-
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& outgoing_energy,

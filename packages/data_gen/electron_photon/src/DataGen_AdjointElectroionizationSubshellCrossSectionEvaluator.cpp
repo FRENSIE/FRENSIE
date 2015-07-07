@@ -55,14 +55,7 @@ double AdjointElectroionizationSubshellCrossSectionEvaluator::evaluateDifferenti
   // Evaluate the knock on electron pdf value at a given incoming and outgoing energy
   double knock_on_pdf = d_knock_on_distribution->evaluatePDF( incoming_energy,
                                                               outgoing_energy );
-
-/*
-  // Evaluate the knock on electron pdf value at a given incoming and outgoing energy
-  double knock_on_pdf = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
-                                     incoming_energy,
-                                     outgoing_energy,
-                                     d_knock_on_distribution );
-*/                               
+                   
   /* Calculate the energy of a knock on electron from a primary electron with 
      outgoing energy = outgoing_energy */
   double knock_on_energy = incoming_energy - outgoing_energy - d_binding_energy; 

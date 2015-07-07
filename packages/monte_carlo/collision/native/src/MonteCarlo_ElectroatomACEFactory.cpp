@@ -95,7 +95,6 @@ void ElectroatomACEFactory::createElectroatomCore(
   }
   else
   {
-   //! \todo Get data for Total Electroionization Reaction
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
       scattering_reactions[TOTAL_ELECTROIONIZATION_ELECTROATOMIC_REACTION];
 

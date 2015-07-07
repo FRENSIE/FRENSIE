@@ -31,14 +31,17 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
-  distribution;
+  half_distribution;
+
+Teuchos::RCP<MonteCarlo::DopplerBroadenedPhotonEnergyDistribution> 
+  full_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
-		   sample )
+		   sample_half )
 {
   double incoming_energy = 20.0, scattering_angle_cosine = 0.0;
   double outgoing_energy;
@@ -53,14 +56,42 @@ TEUCHOS_UNIT_TEST( DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
 
-  distribution->sample( incoming_energy,
-			scattering_angle_cosine,
-			outgoing_energy,
-			shell_of_interaction );
+  half_distribution->sample( incoming_energy,
+			     scattering_angle_cosine,
+			     outgoing_energy,
+			     shell_of_interaction );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+  
+  TEST_FLOATING_EQUALITY( outgoing_energy, 0.352804013048420073, 1e-12 );
+  TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the distribution can be sampled
+TEUCHOS_UNIT_TEST( DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution,
+		   sample_full )
+{
+  double incoming_energy = 20.0, scattering_angle_cosine = 0.0;
+  double outgoing_energy;
+  MonteCarlo::SubshellType shell_of_interaction;
+
+  // Set up the random number stream
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.005; // select first shell for collision
+  fake_stream[1] = 0.5; // select pz = 0.0
+  fake_stream[2] = 0.005; // select first shell for collision
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  full_distribution->sample( incoming_energy,
+			     scattering_angle_cosine,
+			     outgoing_energy,
+			     shell_of_interaction );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  TEST_FLOATING_EQUALITY( outgoing_energy, 0.3528040136905526, 1e-12 );
+  TEST_FLOATING_EQUALITY( outgoing_energy, 0.4982681851517501, 1e-12 );
   TEST_EQUALITY_CONST( shell_of_interaction, MonteCarlo::K_SUBSHELL );
 }
 
@@ -138,6 +169,21 @@ int main( int argc, char** argv )
     Teuchos::Array<double> half_profile(
 		   swd_block( shell_index + 1 + num_mom_vals, num_mom_vals ) );
 
+    Teuchos::Array<double> full_momentum_grid, full_profile;
+
+    MonteCarlo::createFullProfileFromHalfProfile( half_momentum_grid.begin(),
+						  half_momentum_grid.end(),
+						  half_profile.begin(),
+						  half_profile.end(),
+						  full_momentum_grid,
+						  full_profile );
+
+    MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
+					       full_momentum_grid.end() );
+
+    MonteCarlo::convertProfileToInverseMeCUnits( full_profile.begin(),
+						 full_profile.end() );
+
     MonteCarlo::convertMomentumGridToMeCUnits( half_momentum_grid.begin(),
 					       half_momentum_grid.end() );
 
@@ -147,16 +193,28 @@ int main( int argc, char** argv )
     half_compton_profiles[shell].reset( 
 	 new Utility::TabularDistribution<Utility::LogLin>( half_momentum_grid,
 							    half_profile ) );
+
+    full_compton_profiles[shell].reset(
+	 new Utility::TabularDistribution<Utility::LogLin>( full_momentum_grid,
+							    full_profile ) );
 		 
   }
 
-  distribution.reset(
+  half_distribution.reset(
      new MonteCarlo::DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
 			  xss_data_extractor->extractSubshellOccupancies(),
 			  subshell_order,
 			  xss_data_extractor->extractLBEPSBlock(),
 			  xss_data_extractor->extractLNEPSBlock(),
 			  half_compton_profiles ) );
+  
+  full_distribution.reset(
+     new MonteCarlo::DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
+			  xss_data_extractor->extractSubshellOccupancies(),
+			  subshell_order,
+			  xss_data_extractor->extractLBEPSBlock(),
+			  xss_data_extractor->extractLNEPSBlock(),
+			  full_compton_profiles ) );
 
   // Clear setup data
   ace_file_handler.reset();

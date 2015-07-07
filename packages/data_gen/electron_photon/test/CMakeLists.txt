@@ -16,6 +16,12 @@ ADD_EXECUTABLE(tstAdjointElectroionizationSubshellCrossSectionEvaluator
 TARGET_LINK_LIBRARIES(tstAdjointElectroionizationSubshellCrossSectionEvaluator data_gen_electron_photon)
 ADD_TEST(AdjointElectroionizationSubshellCrossSectionEvaluator_test tstAdjointElectroionizationSubshellCrossSectionEvaluator --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_ace_table="1000.12p")
 
+ADD_EXECUTABLE(tstAdjointIncoherentCrossSectionHelpers
+  tstAdjointIncoherentCrossSectionHelpers.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstAdjointIncoherentCrossSectionHelpers data_gen_electron_photon)
+ADD_TEST(AdjointIncoherentCrossSectionHelpers_test tstAdjointIncoherentCrossSectionHelpers)
+
 ADD_EXECUTABLE(tstAdjointIncoherentGridGenerator
   tstAdjointIncoherentGridGenerator.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -37,5 +43,10 @@ ADD_TEST(StandardAdjointIncoherentGridGenerator_test tstStandardAdjointIncoheren
 #  tstStandardAdjointElectroionizationSubshellGridGenerator.cpp)
 #TARGET_LINK_LIBRARIES(tstStandardAdjointElectroionizationSubshellGridGenerator data_gen_electron_photon)
 #ADD_TEST(StandardAdjointElectroionizationSubshellGridGenerator_test tstStandardAdjointElectroionizationSubshellGridGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
+
+ADD_EXECUTABLE(tstElasticElectronMomentsEvaluator
+  tstElasticElectronMomentsEvaluator.cpp)
+TARGET_LINK_LIBRARIES(tstElasticElectronMomentsEvaluator data_gen_electron_photon)
+ADD_TEST(ElasticElectronMomentsEvaluator_test tstElasticElectronMomentsEvaluator --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_ace_table="1000.12p")
 
 

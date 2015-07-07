@@ -17,6 +17,18 @@ ADD_EXECUTABLE(tstHistogramDistribution
 TARGET_LINK_LIBRARIES(tstHistogramDistribution utility_core utility_prng utility_dist)
 ADD_TEST(HistogramDistribution_test tstHistogramDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_histogram_distributions.xml")
 
+ADD_EXECUTABLE(tstMaxwellFissionDistribution 
+  tstMaxwellFissionDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstMaxwellFissionDistribution utility_core utility_prng utility_dist)
+ADD_TEST(MaxwellFissionDistribution_test tstMaxwellFissionDistribution
+--test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_maxwell_fission_distributions.xml")
+
+ADD_EXECUTABLE(tstWattDistribution 
+  tstWattDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstWattDistribution utility_core utility_prng utility_dist)
+ADD_TEST(WattDistribution_test tstWattDistribution
+--test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_watt_distributions.xml")
+
 ADD_EXECUTABLE(tstEquiprobableBinDistribution 
   tstEquiprobableBinDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstEquiprobableBinDistribution utility_core utility_prng utility_dist)
@@ -26,6 +38,12 @@ ADD_EXECUTABLE(tstTabularDistribution
   tstTabularDistribution.cpp)
 TARGET_LINK_LIBRARIES(tstTabularDistribution utility_core utility_prng utility_dist)
 ADD_TEST(TabularDistribution_test tstTabularDistribution --test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_tabular_distributions.xml")
+
+ADD_EXECUTABLE(tstEvaporationDistribution 
+  tstEvaporationDistribution.cpp)
+TARGET_LINK_LIBRARIES(tstEvaporationDistribution utility_core utility_prng utility_dist)
+ADD_TEST(EvaporationDistribution_test tstEvaporationDistribution
+--test_dists_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_evaporation_distributions.xml")
 
 ADD_EXECUTABLE(tstExponentialDistribution 
   tstExponentialDistribution.cpp)

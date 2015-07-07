@@ -77,7 +77,7 @@ double HardElasticElectronScatteringDistribution::evaluatePDF(
   }
   else
   {
-    return evaluateRutherfordScreenedPDF( incoming_energy, 
+    return evaluateScreenedRutherfordPDF( incoming_energy, 
                                           scattering_angle_cosine );
   }
 }
@@ -160,7 +160,7 @@ void HardElasticElectronScatteringDistribution::scatterAdjointElectron(
 }
 
 // Evaluate the PDF
-double HardElasticElectronScatteringDistribution::evaluateRutherfordScreenedPDF( 
+double HardElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF( 
                             const double incoming_energy,
                             const double scattering_angle_cosine ) const
 {
@@ -176,13 +176,18 @@ double HardElasticElectronScatteringDistribution::evaluateRutherfordScreenedPDF(
 
   double screening_factor = evaluateScreeningFactor( incoming_energy );
 
-  double numerator = cutoff_pdf_value*
-                     ( screening_factor + s_delta_cutoff )*
-                     ( screening_factor + s_delta_cutoff );
- 
-  double denominator = ( screening_factor + 1.0 - scattering_angle_cosine );
+  double delta_cosine = 1.0 - scattering_angle_cosine;
+  if ( delta_cosine < 1e-10)
+  {
+    delta_cosine = 0.0;
+  }
 
-  return numerator/( denominator * denominator );
+  double ratio = ( screening_factor + s_delta_cutoff )/
+                  ( screening_factor + delta_cosine );
+
+  double ratio_squared = ratio*ratio;
+
+  return cutoff_pdf_value*ratio_squared;
 }
 
 

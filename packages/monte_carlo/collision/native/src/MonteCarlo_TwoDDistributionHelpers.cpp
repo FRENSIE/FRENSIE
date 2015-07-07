@@ -129,8 +129,8 @@ double evaluateTwoDDistributionCorrelatedPDF(
   if( lower_bin_boundary != upper_bin_boundary )
   {
     return evaluateCorrelatedPDF( upper_bin_boundary->second,
-			          lower_bin_boundary->second,
-			          interpolation_fraction,
+                                  lower_bin_boundary->second,
+                                  interpolation_fraction,
                                   dependent_variable );
   }
   else

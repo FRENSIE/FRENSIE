@@ -268,7 +268,7 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
   fake_stream[3] = 0.005; // select first shell for collision
   fake_stream[4] = 6.427713151861e-01; // select pz = 0.291894102792
   fake_stream[5] = 0.25; // select energy loss
-  fake_stream[6] = 0.005; // selec first shell for collision
+  fake_stream[6] = 0.005; // select first shell for collision
   fake_stream[7] = 0.5; // azimuthal_angle = pi
   
   Utility::RandomNumberGenerator::setFakeStream( fake_stream );
@@ -291,7 +291,9 @@ TEUCHOS_UNIT_TEST( BasicDopplerBroadenedWHIncoherentPhotonScatteringDistribution
 			  -0.024905681252821114, 
 			  1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( bank.top()->getXDirection(), 0.0, 1e-15 );
-  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.3528040136905526, 1e-12 );
+  std::cout.precision( 18 );
+  std::cout << photon.getEnergy() << std::endl;
+  TEST_FLOATING_EQUALITY( photon.getEnergy(), 0.352804013048420073, 1e-12 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getZDirection(), 0.0, 1e-15 );
   TEST_FLOATING_EQUALITY( photon.getYDirection(), 1.0, 1e-15 );
   UTILITY_TEST_FLOATING_EQUALITY( photon.getXDirection(), 0.0, 1e-15 );

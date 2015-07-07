@@ -146,6 +146,12 @@ ADD_EXECUTABLE(tstKinematicHelpers
 TARGET_LINK_LIBRARIES(tstKinematicHelpers utility_core)
 ADD_TEST(KinematicHelpers_test tstKinematicHelpers)
 
+ADD_EXECUTABLE(tstLegendrePolynomial 
+  tstLegendrePolynomial.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstLegendrePolynomial utility_core)
+ADD_TEST(LegendrePolynomial_test tstLegendrePolynomial)
+
 ADD_EXECUTABLE(tstGaussKronrodQuadratureKernel 
   tstGaussKronrodQuadratureKernel.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})
@@ -178,3 +184,10 @@ ADD_TEST(StandardHashBasedGridSearcher_test tstStandardHashBasedGridSearcher)
 ADD_EXECUTABLE(tstArrayString tstArrayString.cpp)
 TARGET_LINK_LIBRARIES(tstArrayString utility_core)
 ADD_TEST(ArrayString_test tstArrayString --test_array_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_arrays.xml")
+
+ADD_EXECUTABLE(tstUnitConversionPolicy 
+  tstUnitConversionPolicy.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstUnitConversionPolicy utility_core)
+ADD_TEST(UnitConversionPolicy_test tstUnitConversionPolicy)
+

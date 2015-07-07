@@ -48,7 +48,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
     ace_basic_elastic_distribution->evaluatePDF( energy, 
                                                  scattering_angle_cosine );
 
-  // Test 1
+  // Test 1 energy 1
   TEST_FLOATING_EQUALITY( pdf_value, 4.821797947867E-02, 1e-12 );
 
 
@@ -59,27 +59,6 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
   // Test 2
   TEST_FLOATING_EQUALITY( pdf_value, 8.772194880275E+00, 1e-12 );
-
-
-  energy = 1.00E+05;
-  scattering_angle_cosine = -1.000000000000E+00;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluatePDF( energy, 
-                                                 scattering_angle_cosine );
-
-  // Test 3
-  TEST_FLOATING_EQUALITY( pdf_value, 4.704745346116E-09, 1e-12 );
-
-
-  scattering_angle_cosine = 9.999990000000E-01;
-  pdf_value = 
-    ace_basic_elastic_distribution->evaluatePDF( energy, 
-                                                 scattering_angle_cosine );
-
-  // Test 4
-  TEST_FLOATING_EQUALITY( pdf_value, 4.487867817661E+05, 1e-12 );
-
-
 
 
   // Tests pdf values for the analytical screened Rutherford
@@ -97,7 +76,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
     ace_basic_elastic_distribution->evaluatePDF( energy, 
                                                  scattering_angle_cosine );
 
-  // Test 1
+  // Test 2
   TEST_FLOATING_EQUALITY( pdf_value, 9.077617327851E+01, 1e-12 );
 
   scattering_angle_cosine = 9.999996000000E-01;
@@ -105,7 +84,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
     ace_basic_elastic_distribution->evaluatePDF( energy, 
                                                  scattering_angle_cosine );
 
-  // Test 1
+  // Test 3
   TEST_FLOATING_EQUALITY( pdf_value, 9.077617391905E+01, 1e-12 );
 
   scattering_angle_cosine = 9.999998000000E-01;
@@ -113,7 +92,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
     ace_basic_elastic_distribution->evaluatePDF( energy, 
                                                  scattering_angle_cosine );
 
-  // Test 1
+  // Test 4
   TEST_FLOATING_EQUALITY( pdf_value, 9.077617455959E+01, 1e-12 );
 
   scattering_angle_cosine = 1.000000000000E+00;
@@ -121,9 +100,72 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
     ace_basic_elastic_distribution->evaluatePDF( energy, 
                                                  scattering_angle_cosine );
 
-  // Test 1
+  // Test 5
   TEST_FLOATING_EQUALITY( pdf_value, 9.077617520013E+01, 1e-12 );
 
+
+  // Test with a different energy
+  // Tests pdf values for the distribution
+  energy = 1.00E+05;
+  scattering_angle_cosine = -1.000000000000E+00;
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy, 
+                                                 scattering_angle_cosine );
+
+  // Test 1
+  TEST_FLOATING_EQUALITY( pdf_value, 4.704745346116E-09, 1e-12 );
+
+
+  scattering_angle_cosine = 9.999990000000E-01;
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy, 
+                                                 scattering_angle_cosine );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( pdf_value, 4.487867817661E+05, 1e-12 );
+
+
+  // Tests pdf values for the analytical screened Rutherford
+
+  scattering_angle_cosine = 9.999992000000E-01;
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy, 
+                                                 scattering_angle_cosine );
+
+  // Test 1
+  TEST_FLOATING_EQUALITY( pdf_value, 7.012293319629320E+05, 1e-12 );
+
+  scattering_angle_cosine = 9.999994000000E-01;
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy, 
+                                                 scattering_angle_cosine );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( pdf_value, 1.246629880388650E+06, 1e-12 );
+
+  scattering_angle_cosine = 9.999996000000E-01;
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy, 
+                                                 scattering_angle_cosine );
+
+  // Test 3
+  TEST_FLOATING_EQUALITY( pdf_value, 2.804917036919940E+06, 1e-12 );
+
+  scattering_angle_cosine = 9.999998000000E-01;
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy, 
+                                                 scattering_angle_cosine );
+
+  // Test 4
+  TEST_FLOATING_EQUALITY( pdf_value, 1.121966582022600E+07, 1e-12 );
+
+  scattering_angle_cosine = 1.000000000000E+00;
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy, 
+                                                 scattering_angle_cosine );
+
+  // Test 5
+  TEST_FLOATING_EQUALITY( pdf_value, 2.607220532195160E+20, 1e-10 );
 }
 
 //---------------------------------------------------------------------------//
@@ -132,14 +174,30 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
                    evaluateScreeningFactor )
 {
   // Set energy in MeV
-  double energy = 1.0;
+  double energy = 1.0e-5;
 
   // Calculate scrrening angle
   double screening_factor = 
     ace_basic_elastic_distribution->evaluateScreeningFactor( energy );
 
-  // Test
-  TEST_FLOATING_EQUALITY( screening_factor, 2.195957718728E-04, 1e-12 );
+  // Test 1
+  TEST_FLOATING_EQUALITY( screening_factor, 5.6394786124145900E+05, 1e-12 );
+
+ 
+  energy = 1.0;
+  screening_factor = 
+    ace_basic_elastic_distribution->evaluateScreeningFactor( energy );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( screening_factor, 2.195957749240E-04, 1e-12 );
+
+
+  energy = 1.0e5;
+  screening_factor = 
+    ace_basic_elastic_distribution->evaluateScreeningFactor( energy );
+
+  // Test 3
+  TEST_FLOATING_EQUALITY( screening_factor, 4.1488827612141400E-14, 1e-12 );
 
 }
 
