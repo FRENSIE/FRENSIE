@@ -33,6 +33,24 @@ Teuchos::RCP< const MonteCarlo::HardElasticElectronScatteringDistribution>
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
+// Check that the common angular grid can be created
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
+                   createCommonAngularGrid )
+{
+
+  Teuchos::Array<double> common_angular_grid;
+
+  MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createCommonAngularGrid(
+                                                *xss_data_extractor,
+                                                common_angular_grid );
+
+
+  // Test
+  TEST_FLOATING_EQUALITY( 1.0, 2.0, 1e-12 );
+
+}
+
+//---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
                    evaluateScreeningFactor )

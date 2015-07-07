@@ -47,6 +47,6 @@ ADD_TEST(StandardAdjointIncoherentGridGenerator_test tstStandardAdjointIncoheren
 ADD_EXECUTABLE(tstElasticElectronMomentsEvaluator
   tstElasticElectronMomentsEvaluator.cpp)
 TARGET_LINK_LIBRARIES(tstElasticElectronMomentsEvaluator data_gen_electron_photon)
-ADD_TEST(ElasticElectronMomentsEvaluator_test tstElasticElectronMomentsEvaluator --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_ace_table="1000.12p")
+ADD_TEST(ElasticElectronMomentsEvaluator_test tstElasticElectronMomentsEvaluator --test_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_ace_table="82000.12p")
 
 

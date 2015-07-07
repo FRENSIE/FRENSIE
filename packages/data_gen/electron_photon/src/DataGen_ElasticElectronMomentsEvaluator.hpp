@@ -54,11 +54,6 @@ public:
   ~ElasticElectronMomentsEvaluator()
   { /* ... */ }
 
-  //! Evaluate the differential hard elastic cross section (dc/dx)
-  double evaluateDifferentialCrossSection(
-                                    const double scattering_angle_cosine,
-                                    const double incoming_energy ) const;
-
   //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic cross section (dc/dx)
   double evaluateLegendreExpandedDifferentialCrossSection(
                                     const double scattering_angle_cosine,

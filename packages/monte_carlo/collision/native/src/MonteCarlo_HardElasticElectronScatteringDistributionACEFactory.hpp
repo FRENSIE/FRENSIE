@@ -31,6 +31,11 @@ public:
 			Teuchos::RCP<const HardElasticElectronScatteringDistribution>&
 			  elastic_distribution );
 
+  //! Create common angle cosine grid for interpolation between energies
+  static void createCommonAngularGrid(
+                 const Data::XSSEPRDataExtractor& raw_electroatom_data,
+                 Teuchos::Array<double>& common_angular_grid );
+
 protected:
 
   //! Create the elastic scattering function

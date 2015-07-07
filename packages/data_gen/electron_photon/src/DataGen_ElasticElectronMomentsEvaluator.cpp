@@ -37,27 +37,6 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
   testPrecondition( !d_elastic_distribution.is_null() );
 }
 
-// Evaluate the differential hard elastic cross section (dc/dx)
-double ElasticElectronMomentsEvaluator::evaluateDifferentialCrossSection(
-                                    const double scattering_angle_cosine,
-                                    const double incoming_energy ) const
-{
-  // Make sure the energy and angle are valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  // Evaluate the forward cross section at the incoming energy
-  double cross_section = d_elastic_reaction->getCrossSection( incoming_energy );
-
-  // Evaluate the elastic pdf value at a given energy and scattering angle cosine
-  double pdf_value = 
-            d_elastic_distribution->evaluatePDF( incoming_energy,
-                                                 scattering_angle_cosine );
-                   
-  return cross_section*pdf_value;
-}
-
 // Evaluate the Legnendre Polynomial expansion of the differential hard elastic cross section (dc/dx)
 double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedDifferentialCrossSection(
                                     const double scattering_angle_cosine,
@@ -69,9 +48,6 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedDifferentialCros
   testPrecondition( scattering_angle_cosine >= -1.0 );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  // Evaluate the forward cross section at the incoming energy
-  double cross_section = d_elastic_reaction->getCrossSection( incoming_energy );
-
   // Evaluate the elastic pdf value at a given energy and scattering angle cosine
   double pdf_value = 
             d_elastic_distribution->evaluatePDF( incoming_energy,
@@ -82,7 +58,7 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedDifferentialCros
                                                   scattering_angle_cosine,
                                                   polynomial_order );
                    
-  return cross_section*pdf_value*legendre_value;
+  return pdf_value*legendre_value;
 }
 
 // Return the cross section moment at a given energy and polynomial order
@@ -96,28 +72,22 @@ double ElasticElectronMomentsEvaluator::evaluateCrossSectionMoment(
   testPrecondition( polynomial_order >= 0 );
 
   // Create boost rapper function for the hard elastic differential cross section
-  boost::function<double (double x)> function_wrapper = 
-    boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateDifferentialCrossSection,
+  boost::function<double (double x)> distribution_wrapper = 
+    boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedDifferentialCrossSection,
                          boost::cref( *this ),
                          _1,
-                         energy );
+                         energy,
+                         polynomial_order );
 
   double abs_error, distribution_moment, screened_rutherford_moment;
     
   Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
 
   quadrature_kernel.integrateAdaptively<15>(
-					function_wrapper,
+					distribution_wrapper,
 					-1.0,
-					0.999999,
-					distribution_moment,
-					abs_error );
-
-  quadrature_kernel.integrateAdaptively<15>(
-					function_wrapper,
-					0.999999,
 					1.0,
-					screened_rutherford_moment,
+					distribution_moment,
 					abs_error );
 
   return 2.0*Utility::PhysicalConstants::pi*(distribution_moment+screened_rutherford_moment);

@@ -117,7 +117,7 @@ n = 2;
   UTILITY_TEST_FLOATING_EQUALITY( 
                     diff_cross_section,
                     8.830510000000E-02*2.60722053219516E+20*1.0,
-                    1e-12 );	  				  
+                    6e-11 );	  				  
 }
 
 //---------------------------------------------------------------------------//
@@ -126,25 +126,27 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateCrossSectionMoment )
 {
   double precision = 1e-6;
-  double n = 4;
+  double n = 0;
 
   double moment = 
-           distribution->evaluateCrossSectionMoment( 0.001, n, precision );
+           distribution->evaluateCrossSectionMoment( 1.0e-5, n, precision );
   
-  TEST_EQUALITY_CONST( moment, 0.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( moment,
+                                  2.489240000000E+09,
+                                  1e-15 );	
 
 
   moment = distribution->evaluateCrossSectionMoment( 0.001, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( moment,
-                                  2.050,
+                                  2.902810000000E+08,
                                   1e-15 );
 
 
-  moment = distribution->evaluateCrossSectionMoment( 0.001, n, precision );
+  moment = distribution->evaluateCrossSectionMoment( 1.0e5, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( moment,
-                                  2.050,
+                                  8.830510000000E-02,
                                   1e-15 );				 
 }
 
@@ -158,11 +160,11 @@ int main( int argc, char** argv )
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_ace_file",
-		 &test_ace_file_name,
-		 "Test ACE file name" );
+		         &test_ace_file_name,
+		         "Test ACE file name" );
   clp.setOption( "test_ace_table",
-		 &test_ace_table_name,
-		 "Test ACE table name" );
+		         &test_ace_table_name,
+		         "Test ACE table name" );
 
   const Teuchos::RCP<Teuchos::FancyOStream> out = 
     Teuchos::VerboseObjectBase::getDefaultOStream();
@@ -178,8 +180,8 @@ int main( int argc, char** argv )
   // Create a file handler and data extractor
   Teuchos::RCP<Data::ACEFileHandler> ace_file_handler( 
 				 new Data::ACEFileHandler( test_ace_file_name,
-							   test_ace_table_name,
-							   1u ) );
+							               test_ace_table_name,
+							               1u ) );
   Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
                             new Data::XSSEPRDataExtractor( 
 				      ace_file_handler->getTableNXSArray(),
@@ -241,6 +243,7 @@ int main( int argc, char** argv )
 
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
+std::cout << "atomic_number = "<< atomic_number << std::endl;
 
   Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>
     elastic_scattering_distribution;

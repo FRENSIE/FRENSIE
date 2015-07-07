@@ -79,11 +79,6 @@ public:
 
 //protected:
 
-  //! Evaluate the analytical Rutherford Screened PDF
-  double evaluateScreenedRutherfordPDF( 
-                                  const double incoming_energy,
-                                  const double scattering_angle_cosine ) const;
-
    //! Sample an outgoing direction from the distribution
   void sampleAndRecordTrialsImpl( const double incoming_energy,
                                   double& scattering_angle_cosine,
@@ -99,6 +94,11 @@ public:
   double sampleScatteringAngleCosine( const double energy ) const;
 
 private:
+
+  // Evaluate the analytical Rutherford Screened PDF
+  double evaluateScreenedRutherfordPDF( 
+                                  const double incoming_energy,
+                                  const double scattering_angle_cosine ) const;
 
   // Cutoff angle cosine between the distribution and analytical screend Rutherford function
   static double s_mu_cutoff;
