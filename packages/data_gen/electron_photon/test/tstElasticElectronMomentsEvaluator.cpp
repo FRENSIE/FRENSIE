@@ -30,6 +30,7 @@
 // Testing Variables
 //---------------------------------------------------------------------------//
 
+Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>
   distribution;
 
@@ -46,77 +47,77 @@ bool notEqualZero( double value )
 //---------------------------------------------------------------------------//
 // Check that the hydrogen expanded differential cross section can be evaluated
 TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
-                   evaluateLegendreExpandedDifferentialCrossSection )
+                   evaluateLegendreExpandedPDF )
 {
   double n = 4;
   
   double diff_cross_section = 
-    distribution->evaluateLegendreExpandedDifferentialCrossSection(
+    distribution->evaluateLegendreExpandedPDF(
                                                     9.999990000000E-01,
                                                     1.000000000000E-05,
                                                     n );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
                     diff_cross_section,
-                    4.999999999445E-01*2.489240000000E+09*0.9999900000224990,
+                    4.999999999445E-01*0.9999900000224990,
                     1e-12 );
 
   diff_cross_section = 
-    distribution->evaluateLegendreExpandedDifferentialCrossSection( 
+    distribution->evaluateLegendreExpandedPDF( 
                                                     -1.000000000000,
                                                     1.000000000000E-03,
                                                     n );
 
   UTILITY_TEST_FLOATING_EQUALITY(  
                     diff_cross_section,
-                    5.181320360405E-01*2.902810000000E+08*1.0,
+                    5.181320360405E-01*1.0,
                     1e-12 );
 
   diff_cross_section = 
-    distribution->evaluateLegendreExpandedDifferentialCrossSection( 
+    distribution->evaluateLegendreExpandedPDF( 
                                                     9.999980000000E-01,
                                                     1.000000000000E+05,
                                                     n );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
                     diff_cross_section,
-                    2.572485667358630E+05*8.830510000000E-02*0.9999800000900000,
+                    2.572485667358630E+05*0.9999800000900000,
                     1e-12 );		
 
 
 n = 2;
   
   diff_cross_section = 
-    distribution->evaluateLegendreExpandedDifferentialCrossSection(
+    distribution->evaluateLegendreExpandedPDF(
                                                     -1.0,
                                                     1.000000000000E-05,
                                                     n );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
                     diff_cross_section,
-                    2.489240000000E+09*5.000000000000E-01*1.0000000000000000,
+                    5.000000000000E-01*1.0000000000000000,
                     1e-12 );
 
   diff_cross_section = 
-    distribution->evaluateLegendreExpandedDifferentialCrossSection( 
+    distribution->evaluateLegendreExpandedPDF( 
                                                     9.999994000000E-01,
                                                     1.000000000000E-03,
                                                     n );
 
   UTILITY_TEST_FLOATING_EQUALITY(  
                     diff_cross_section,
-                    2.902810000000E+08*9.07761732785113E+01*0.9999982000005400,
+                    9.07761732785113E+01*0.9999982000005400,
                     1e-12 );
 
   diff_cross_section = 
-    distribution->evaluateLegendreExpandedDifferentialCrossSection( 
+    distribution->evaluateLegendreExpandedPDF( 
                                                     1.0,
                                                     1.000000000000E+05,
                                                     n );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
                     diff_cross_section,
-                    8.830510000000E-02*2.60722053219516E+20*1.0,
+                    2.60722053219516E+20*1.0,
                     6e-11 );	  				  
 }
 
@@ -132,21 +133,21 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
            distribution->evaluateCrossSectionMoment( 1.0e-5, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( moment,
-                                  2.489240000000E+09,
+                                  2.489240000000E+00,
                                   1e-15 );	
 
 
   moment = distribution->evaluateCrossSectionMoment( 0.001, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( moment,
-                                  2.902810000000E+08,
+                                  2.902810000000E+00,
                                   1e-15 );
 
 
   moment = distribution->evaluateCrossSectionMoment( 1.0e5, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( moment,
-                                  8.830510000000E-02,
+                                  8.830510000000E+00,
                                   1e-15 );				 
 }
 
@@ -182,10 +183,10 @@ int main( int argc, char** argv )
 				 new Data::ACEFileHandler( test_ace_file_name,
 							               test_ace_table_name,
 							               1u ) );
-  Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor(
-                            new Data::XSSEPRDataExtractor( 
+
+  xss_data_extractor.reset( new Data::XSSEPRDataExtractor( 
 				      ace_file_handler->getTableNXSArray(),
-				      ace_file_handler->getTableJXSArray(),
+		              ace_file_handler->getTableJXSArray(),
 				      ace_file_handler->getTableXSSArray() ) );
   
   // Extract the energy grid and cross section
@@ -243,7 +244,6 @@ int main( int argc, char** argv )
 
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
-std::cout << "atomic_number = "<< atomic_number << std::endl;
 
   Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>
     elastic_scattering_distribution;
@@ -253,9 +253,9 @@ std::cout << "atomic_number = "<< atomic_number << std::endl;
                                                 atomic_number, 
                                                 elastic_scattering_function ) );
 
-
+/*
   Teuchos::RCP<MonteCarlo::ElectroatomicReaction> elastic_reaction;
-  
+ 
   // Create the reaction
   elastic_reaction.reset(
 	new MonteCarlo::HardElasticElectroatomicReaction<Utility::LinLin>(
@@ -263,10 +263,11 @@ std::cout << "atomic_number = "<< atomic_number << std::endl;
                         elastic_cross_section,
                         elastic_threshold_index,
                         elastic_scattering_distribution ) );
+*/
 
   // Initialize the hydrogen adjoint cross section evaluator
   distribution.reset( new DataGen::ElasticElectronMomentsEvaluator(
-                                    elastic_reaction,
+                                    *xss_data_extractor,
                                     elastic_scattering_distribution ) );
 
   // Run the unit tests

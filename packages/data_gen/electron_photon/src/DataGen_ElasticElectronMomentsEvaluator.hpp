@@ -24,6 +24,8 @@
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
+#include "Data_ACEFileHandler.hpp"
+#include "Data_XSSEPRDataExtractor.hpp"
 #include "MonteCarlo_ElectroatomicReaction.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
@@ -45,8 +47,7 @@ public:
 
   //! Constructor
   ElasticElectronMomentsEvaluator(
-    const Teuchos::RCP<MonteCarlo::ElectroatomicReaction>& 
-                               elatic_reaction,
+    const Data::XSSEPRDataExtractor& raw_ace_data,
     const Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>&
                                elastic_distribution );
 
@@ -55,7 +56,7 @@ public:
   { /* ... */ }
 
   //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic cross section (dc/dx)
-  double evaluateLegendreExpandedDifferentialCrossSection(
+  double evaluateLegendreExpandedPDF(
                                     const double scattering_angle_cosine,
                                     const double incoming_energy, 
                                     const int polynomial_order = 0) const;
@@ -73,6 +74,9 @@ private:
   // The knock on energy distribution
   Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>
                                          d_elastic_distribution;
+
+  // The raw ace electron data extractor
+  Data::XSSEPRDataExtractor d_raw_ace_data;
 };
 
 } // end DataGen namespace

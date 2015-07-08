@@ -36,6 +36,11 @@ public:
                  const Data::XSSEPRDataExtractor& raw_electroatom_data,
                  Teuchos::Array<double>& common_angular_grid );
 
+  //! Return angle cosine grid for given grid energy bin
+  static Teuchos::Array<double> getAngularGrid(
+                 const Data::XSSEPRDataExtractor& raw_electroatom_data,
+                 unsigned energy_bin );
+
 protected:
 
   //! Create the elastic scattering function

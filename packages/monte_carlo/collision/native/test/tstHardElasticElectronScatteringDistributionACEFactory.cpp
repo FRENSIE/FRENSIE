@@ -44,9 +44,42 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
                                                 *xss_data_extractor,
                                                 common_angular_grid );
 
-
   // Test
-  TEST_FLOATING_EQUALITY( 1.0, 2.0, 1e-12 );
+  TEST_EQUALITY_CONST( common_angular_grid.size(), 407 );
+  TEST_EQUALITY_CONST( common_angular_grid.front(), -1.0 );
+  TEST_EQUALITY_CONST( common_angular_grid.back(), 1.0 );
+  common_angular_grid.pop_back();
+  TEST_EQUALITY_CONST( common_angular_grid.back(), 0.999999 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the angular grid can be returned
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
+                   getAngularGrid )
+{
+
+  Teuchos::Array<double> angular_grid =
+    MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::getAngularGrid(
+                                                *xss_data_extractor,
+                                                0 );
+  // Test
+  TEST_EQUALITY_CONST( angular_grid.size(), 3 );
+  TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
+  TEST_EQUALITY_CONST( angular_grid[1], 0.999999 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 1.0 );
+
+  angular_grid.clear();
+
+  angular_grid =
+    MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::getAngularGrid(
+                                                *xss_data_extractor,
+                                                13 );
+  // Test
+  TEST_EQUALITY_CONST( angular_grid.size(), 85 );
+  TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 1.0 );
+  angular_grid.pop_back();
+  TEST_EQUALITY_CONST( angular_grid.back(), 0.999999 );
 
 }
 
@@ -66,8 +99,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
     ace_basic_elastic_distribution->evaluateScreeningFactor( energy );
 
   // Test
-  TEST_FLOATING_EQUALITY( screening_factor, 2.195957718728E-04, 1e-12 );
-
+  TEST_FLOATING_EQUALITY( screening_factor, 2.19595774923989E-04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

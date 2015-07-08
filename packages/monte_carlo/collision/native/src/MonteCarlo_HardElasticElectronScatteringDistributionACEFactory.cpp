@@ -53,14 +53,13 @@ void HardElasticElectronScatteringDistributionACEFactory::createCommonAngularGri
                  const Data::XSSEPRDataExtractor& raw_electroatom_data,
                  Teuchos::Array<double>& common_angular_grid )
 {
-std::cout <<  "got here 0" << std::endl;
   // Extract the elastic scattering information data block (ELASI)
   Teuchos::ArrayView<const double> elasi_block(
 				     raw_electroatom_data.extractELASIBlock() );
-std::cout <<  "got here 1" << std::endl;
+
   // Get the size of the energy grid
   double size = elasi_block.size()/3;
-std::cout <<  "got here 2" << std::endl;
+
   // Extract the energy grid for elastic scattering angular distributions
   Teuchos::Array<double> angular_energy_grid(elasi_block(0,size));
 
@@ -73,23 +72,22 @@ std::cout <<  "got here 2" << std::endl;
   // Extract the elastic scattering angular distributions block (elas)
   Teuchos::ArrayView<const double> elas_block = 
     raw_electroatom_data.extractELASBlock();
-std::cout <<  "got here 3" << std::endl;
-  // Insert first angular bin at -1 and last bin at 0.999999
-  common_angular_grid[0] = -1.0;
-  common_angular_grid[1] = 0.999999;
 
-std::cout <<  "got here 3" << std::endl;
+  // Insert first angular bin at -1 and last bin at 0.999999
+  common_angular_grid.push_back( -1.0 );
+  common_angular_grid.push_back( 0.999999 );
+  common_angular_grid.push_back( 1.0 );
 
   Teuchos::Array<double>::iterator common_bin;
-/*
+
   // Iterate through all energy bins
   for( unsigned n = 0; n < size; ++n )
   {
-    Teuchos::Array<double>angular_grid( elas_block( offset[n], 
-                                                    table_length[n] ) );
+    Teuchos::Array<double>angular_grid( elas_block( offset[n] +1, 
+                                                    table_length[n] - 3 ) );
 
     // insert any new angles into common grid
-    for ( unsigned i = 1; i < angular_grid.size(); i++ )
+    for ( unsigned i = 0; i < angular_grid.size(); i++ )
     {
       common_bin = common_angular_grid.begin();
       for ( unsigned j = 1; j < common_angular_grid.size(); j++ )
@@ -102,14 +100,42 @@ std::cout <<  "got here 3" << std::endl;
       }
     }
   }
-*/
- std::cout <<  "got here 2" << std::endl;
-  for ( int k = 0; k < common_angular_grid.size(); k++ )
-  {
-    std::cout <<  "common_angular_grid[k] = "<< common_angular_grid[k] << std::endl;
-  }
 }
 
+// Return angle cosine grid for given grid energy bin
+Teuchos::Array<double> HardElasticElectronScatteringDistributionACEFactory::getAngularGrid(
+                 const Data::XSSEPRDataExtractor& raw_electroatom_data,
+                 unsigned energy_bin )
+{
+  // Extract the elastic scattering information data block (ELASI)
+  Teuchos::ArrayView<const double> elasi_block(
+				     raw_electroatom_data.extractELASIBlock() );
+
+  // Get the size of the energy grid
+  double size = elasi_block.size()/3;
+
+  // check that energy bin is valid
+  testPrecondition( energy_bin <=  size - 1 );
+
+  // Extract the energy grid for elastic scattering angular distributions
+  Teuchos::Array<double> angular_energy_grid(elasi_block(0,size));
+
+  // Extract the table lengths for elastic scattering angular distributions
+  Teuchos::Array<double> table_length(elasi_block(size,size));
+
+  // Extract the offsets for elastic scattering angular distributions
+  Teuchos::Array<double> offset(elasi_block(2*size,size));
+
+  // Extract the elastic scattering angular distributions block (elas)
+  Teuchos::ArrayView<const double> elas_block = 
+    raw_electroatom_data.extractELASBlock();
+
+  Teuchos::Array<double> grid( elas_block( offset[energy_bin], 
+                                           table_length[energy_bin] ) );
+
+  return grid;
+
+}
 
 
 // Create the scattering function
