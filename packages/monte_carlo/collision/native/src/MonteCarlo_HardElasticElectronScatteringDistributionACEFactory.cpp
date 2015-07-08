@@ -73,7 +73,7 @@ std::cout <<  "got here 2" << std::endl;
   // Extract the elastic scattering angular distributions block (elas)
   Teuchos::ArrayView<const double> elas_block = 
     raw_electroatom_data.extractELASBlock();
-
+std::cout <<  "got here 3" << std::endl;
   // Insert first angular bin at -1 and last bin at 0.999999
   common_angular_grid[0] = -1.0;
   common_angular_grid[1] = 0.999999;
