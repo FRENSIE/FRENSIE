@@ -117,7 +117,9 @@ double UniformDistribution::sampleAndRecordTrials( unsigned& trials ) const
 {
   ++trials;
 
-  return this->sample();
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+
+  this->sampleWithRandomNumber( random_number );
 }
 
 // Return a random sample and sampled index from the corresponding CDF
@@ -126,7 +128,9 @@ double UniformDistribution::sampleAndRecordBinIndex(
 {
   sampled_bin_index = 0u;
 
-  return this->sample();
+  double random_number = RandomNumberGenerator::getRandomNumber<double>();
+
+  this->sampleWithRandomNumber( random_number );
 }
 
 // Return a random sample from the corresponding CDF in a subrange
