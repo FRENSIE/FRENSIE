@@ -535,34 +535,22 @@ void GaussKronrodQuadratureKernel::integrateGuassLegendre(
     gsl_function_wrapper.function = 
       &GaussKronrodQuadratureKernel::functorWrapper<Functor>;
     gsl_function_wrapper.params = const_cast<typename Teuchos::ConstTypeTraits<Functor>::NonConstType*>(&integrand);
-
-
- /*   
-    double result = gsl_integration_glfixed( 
-			       &gsl_function_wrapper,
-			       lower_limit,
-			       upper_limit,
-			       table );
-*/   
+  
     double point_i, weight_i;
     double size = d_workspace_size - 1;
-std::cout << "table size = "<< size << std::endl;
+
     for ( int i = 0; i < d_workspace_size; i++ )
     {
-std::cout << "i = " << i << std::endl;
       int status = gsl_integration_glfixed_point( 
-                               lower_limit,
-			       upper_limit,
-			       i,
-                               &point_i,
-                               &weight_i,
-                               table );
+                                lower_limit,
+                                upper_limit,
+                                i,
+                                &point_i,
+                                &weight_i,
+                                table );
      
       points[i] = point_i;
       weights[i] = weight_i;
-
-std::cout << "point i = " << point_i << std::endl;
-std::cout << "weight_i = " << weight_i << std::endl;
     }
     
     // Deallocate workspace

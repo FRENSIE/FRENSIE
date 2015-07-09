@@ -8,6 +8,7 @@
 
 // FRENSIE Includes
 #include "Utility_LegendrePolynomial.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace Utility{
 
@@ -65,7 +66,6 @@ double getLegendrePolynomialDerivative( const double value,
     return ( value*p_n - p_n_minus_1 )*polynomial_order/( value*value -1.0 );
   }
 }
-
 
 } // end Utility namespace
 

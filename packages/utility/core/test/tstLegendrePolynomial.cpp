@@ -2,16 +2,12 @@
 //!
 //! \file   tstLegendrePolynomial.cpp
 //! \author Luke Kersting
-//! \brief  Gauss-Radau quadrature kernel unit tests.
+//! \brief  Legendre Polynomial unit tests.
 //!
 //---------------------------------------------------------------------------//
 
 // Std Lib Includes
 #include <iostream>
-
-// Boost Includes
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
 
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>

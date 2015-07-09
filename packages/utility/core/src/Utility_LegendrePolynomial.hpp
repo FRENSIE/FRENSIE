@@ -9,6 +9,9 @@
 #ifndef UTILITY_LEGENDRE_POLYNOMIAL_HPP
 #define UTILITY_LEGENDRE_POLYNOMIAL_HPP
 
+// Trilinos Includes
+#include <Teuchos_Array.hpp>
+
 namespace Utility{
 
 //! Evaluate the Legendre Polynomial at the given value and order
