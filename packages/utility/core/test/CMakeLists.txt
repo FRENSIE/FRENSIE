@@ -170,6 +170,12 @@ ADD_EXECUTABLE(tstGaussLegendreQuadratureKernel
 TARGET_LINK_LIBRARIES(tstGaussLegendreQuadratureKernel utility_core)
 ADD_TEST(GaussLegendreQuadratureKernel_test tstGaussLegendreQuadratureKernel)
 
+ADD_EXECUTABLE(tstSloanRadauQuadrature 
+  tstSloanRadauQuadrature.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstSloanRadauQuadrature utility_core)
+ADD_TEST(SloanRadauQuadrature_test tstSloanRadauQuadrature)
+
 ADD_EXECUTABLE(tstGridGenerator 
   tstGridGenerator.cpp
   ${TEUCHOS_STD_UNIT_TEST_MAIN})

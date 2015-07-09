@@ -94,16 +94,17 @@ void getLegendrePowerExpansionCoefficients( Teuchos::Array<double>& coefficients
  *! legendre expansion of x^n multipled by the legendre expansion of f(x).
  *! M_n = integral_(-1)^(1) x^n f(x) dx = sum_(l=0,..n) f_l c_(n,l)
  */
-void getGaussMoments( Teuchos::Array<double>& legendre_expansion_moments,
+void getGaussMoments( const Teuchos::Array<double>& legendre_expansion_moments,
                       Teuchos::Array<double>& gauss_moments )
 {
   // Make sure the arrays are the same size
   testPrecondition( gauss_moments.size() == legendre_expansion_moments.size() );
+  testPrecondition( gauss_moments.size() > 1 );
 
   int number_of_moments = legendre_expansion_moments.size();
-
-  Teuchos::Array<double> coef_n_minus_one( number_of_moments ), 
-                         coef_n( number_of_moments );
+  double moment_n;
+  Teuchos::Array<double> coef_n_minus_one( number_of_moments +1), 
+                         coef_n( number_of_moments +1);
 
   gauss_moments[0] = legendre_expansion_moments[0];
   gauss_moments[1] = legendre_expansion_moments[1];
@@ -115,13 +116,9 @@ void getGaussMoments( Teuchos::Array<double>& legendre_expansion_moments,
    * c_(n,l) = l/(2l-1) * c_(n-1,l-1) + (l+1)/(2l+3) * c_(n-1,l+1) */
   for ( int n = 2; n < number_of_moments; n++ )
   {
-    // Set coefficients n and n+1 to zero for the n-1 coefficients
-    coef_n_minus_one[n] = 0.0;
-    coef_n_minus_one[n+1] = 0.0;
-  
     // Set the 1st coefficient and its contribution to the gauss moment
     coef_n[0] = coef_n_minus_one[1]/3.0;
-    gauss_moments[n] += coef_n[0]*legendre_expansion_moments[0];
+    moment_n = coef_n[0]*legendre_expansion_moments[0];
 
     // Loop through the rest of the coefficients and their contribution to the gauss moment
     for ( int l = 1; l <= n; l++ )
@@ -131,8 +128,10 @@ void getGaussMoments( Teuchos::Array<double>& legendre_expansion_moments,
                       ( l + 1.0 )/( 2.0*l + 3.0 )*coef_n_minus_one[l+1];
 
       // Calculate moment n
-      gauss_moments[n] += coef_n[l]*legendre_expansion_moments[l];   
+      moment_n += coef_n[l]*legendre_expansion_moments[l];   
     }
+    gauss_moments[n] = moment_n;
+
     // Update coefficients
     coef_n_minus_one = coef_n;     
   }

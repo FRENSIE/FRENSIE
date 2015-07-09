@@ -15,7 +15,7 @@
 namespace Utility{
 
 //! Return the Gauss moments of the legendre expansion of a function, f(x)
-void getGaussMoments( Teuchos::Array<double>& legendre_expansion_moments,
+void getGaussMoments( const Teuchos::Array<double>& legendre_expansion_moments,
                       Teuchos::Array<double>& gauss_moments );
 
 //! Return the coefficients of the legendre expansion of x^n

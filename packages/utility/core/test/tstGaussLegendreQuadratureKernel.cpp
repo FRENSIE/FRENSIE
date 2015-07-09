@@ -39,21 +39,18 @@ TEUCHOS_UNIT_TEST( GaussLegendreQuadratureKernel,
   number_of_moments = 4;
   legendre_moments.resize( number_of_moments );
   gauss_moments.resize( number_of_moments );
-  Teuchos::Array<double> legendre_moment( number_of_moments );
-  Teuchos::Array<double> gauss_moment( number_of_moments );
 
-  legendre_moment[0] = 1.0;
-  legendre_moment[1] = 2.0;
-  legendre_moment[2] = 4.0;
-  legendre_moment[3] = 8.0;
+  legendre_moments[0] = 1.0;
+  legendre_moments[1] = 2.0;
+  legendre_moments[2] = 4.0;
+  legendre_moments[3] = 8.0;
 
-  Utility::getGaussMoments( legendre_moment, gauss_moment );
+  Utility::getGaussMoments( legendre_moments, gauss_moments );
 
-  TEST_FLOATING_EQUALITY( gauss_moment[0], 1.0, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moment[1], 2.0, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moment[2], 3.0, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moment[3], 22.0/5.0, 1e-12);
-
+  TEST_FLOATING_EQUALITY( gauss_moments[0], 1.0, 1e-12);
+  TEST_FLOATING_EQUALITY( gauss_moments[1], 2.0, 1e-12);
+  TEST_FLOATING_EQUALITY( gauss_moments[2], 3.0, 1e-12);
+  TEST_FLOATING_EQUALITY( gauss_moments[3], 22.0/5.0, 1e-12);
 }
 
 //---------------------------------------------------------------------------//
