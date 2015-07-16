@@ -92,7 +92,8 @@ void getLegendrePowerExpansionCoefficients( Teuchos::Array<double>& coefficients
 // Return the Gauss moments of the legendre expansion of a function, f(x)
 /*! \details The Gauss moments, M_n, are found by summing the coefficients of a
  *! legendre expansion of x^n multipled by the legendre expansion of f(x).
- *! M_n = integral_(-1)^(1) x^n f(x) dx = sum_(l=0,..n) f_l c_(n,l)
+ *! M_n = integral_(-1)^(1) x^n f(x) dx = sum_(l=0,..n) f_l c_(n,l).
+ *! The zeroth moment should be included
  */
 void getGaussMoments( const Teuchos::Array<double>& legendre_expansion_moments,
                       Teuchos::Array<double>& gauss_moments )
@@ -100,6 +101,9 @@ void getGaussMoments( const Teuchos::Array<double>& legendre_expansion_moments,
   // Make sure the arrays are the same size
   testPrecondition( gauss_moments.size() == legendre_expansion_moments.size() );
   testPrecondition( gauss_moments.size() > 1 );
+
+  // Make sure the zeroth moment is included
+  testPrecondition( legendre_expansion_moments[0] == 1.0 );
 
   int number_of_moments = legendre_expansion_moments.size();
   double moment_n;
