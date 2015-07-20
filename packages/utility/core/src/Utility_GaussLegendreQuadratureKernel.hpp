@@ -11,6 +11,7 @@
 
 // Trilinos Includes
 #include <Teuchos_Array.hpp>
+#include <Teuchos_TwoDArray.hpp>
 
 namespace Utility{
 
@@ -19,8 +20,9 @@ void getGaussMoments( const Teuchos::Array<double>& legendre_expansion_moments,
                       Teuchos::Array<double>& gauss_moments );
 
 //! Return the coefficients of the legendre expansion of x^n
-void getLegendrePowerExpansionCoefficients( Teuchos::Array<double>& coefficients,
-                                            const int power = 0 );
+void getLegendrePowerExpansionCoefficients( 
+                      Teuchos::TwoDArray<long double>& coefficients,
+                      const int power = 0 );
 } // end Utility namespace
 
 #endif // end UTILITY_GAUSS_LEGENDRE_QUADRATURE_KERNEL_HPP

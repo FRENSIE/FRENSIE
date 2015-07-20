@@ -14,6 +14,7 @@
 #include <Teuchos_VerboseObject.hpp>
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_Array.hpp>
+#include <Teuchos_TwoDArray.hpp>
 
 // FRENSIE Includes
 #include "Utility_GaussLegendreQuadratureKernel.hpp"
@@ -44,36 +45,54 @@ TEUCHOS_UNIT_TEST( GaussLegendreQuadratureKernel,
   TEST_EQUALITY_CONST( gauss_moments[0], 1.0);
   TEST_EQUALITY_CONST( gauss_moments[1], 5.0);
 
-  number_of_moments = 4;
+  number_of_moments = 13;
   legendre_moments.resize( number_of_moments );
   gauss_moments.resize( number_of_moments );
 
-  legendre_moments[0] = 1.0;
-  legendre_moments[1] = 2.0;
-  legendre_moments[2] = 4.0;
-  legendre_moments[3] = 8.0;
+  legendre_moments[0] = 20.0/20.0;
+  legendre_moments[1] = 19.0/20.0;
+  legendre_moments[2] = 18.0/20.0;
+  legendre_moments[3] = 17.0/20.0;
+  legendre_moments[4] = 16.0/20.0;
+  legendre_moments[5] = 15.0/20.0;
+  legendre_moments[6] = 14.0/20.0;
+  legendre_moments[7] = 13.0/20.0;
+  legendre_moments[8] = 12.0/20.0;
+  legendre_moments[9] = 11.0/20.0;
+  legendre_moments[10] = 10.0/20.0;
+  legendre_moments[11] = 9.0/20.0;
+  legendre_moments[12] = 8.0/20.0;
 
   Utility::getGaussMoments( legendre_moments, gauss_moments );
 
-  TEST_FLOATING_EQUALITY( gauss_moments[0], 1.0, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moments[1], 2.0, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moments[2], 3.0, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moments[3], 22.0/5.0, 1e-12);
+  TEST_FLOATING_EQUALITY( gauss_moments[0], 1.0, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[1], 19.0/20.0, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[2], 14.0/15.0, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[3], 91.0/100.0, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[4], 157.0/175.0, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[5], 1109.0/1260.0, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[6], 1004.0/1155.0, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[7], 7339.0/8580.0, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[8], 27211.0/32175.0, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[9], 202673.0/243100.0, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[10], 190518.0/230945.0, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[11], 95731.0/117572.0, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[12], 544993.0/676039.0, 1e-15);
 
   number_of_moments = 9;
   gauss_moments.resize( number_of_moments );
 
   Utility::getGaussMoments( legendre_moments_8, gauss_moments );
 
-  TEST_FLOATING_EQUALITY( gauss_moments[0], 1.000000000000000E+00, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moments[1], 9.999999955948290E-01, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moments[2], 9.999999915896570E-01, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moments[3], 9.999999875844880E-01, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moments[4], 9.999999837126500E-01, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moments[5], 9.999999798408140E-01, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moments[6], 9.999999760489760E-01, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moments[7], 9.999999722571400E-01, 1e-12);
-  TEST_FLOATING_EQUALITY( gauss_moments[8], 9.999999685224460E-01, 1e-12);
+  TEST_FLOATING_EQUALITY( gauss_moments[0], 1.000000000000000E+00, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[1], 9.999999955948290E-01, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[2], 9.999999915896570E-01, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[3], 9.999999875844880E-01, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[4], 9.999999837126500E-01, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[5], 9.999999798408140E-01, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[6], 9.999999760489760E-01, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[7], 9.999999722571400E-01, 1e-15);
+  TEST_FLOATING_EQUALITY( gauss_moments[8], 9.999999685224460E-01, 1e-15);
 }
 
 //---------------------------------------------------------------------------//
@@ -81,29 +100,41 @@ TEUCHOS_UNIT_TEST( GaussLegendreQuadratureKernel,
 TEUCHOS_UNIT_TEST( GaussLegendreQuadratureKernel,
 		           getLegendrePowerExpansionCoefficients )
 {
-  int power = 1;
-  Teuchos::Array<double> coef( power+1 );
+  int power = 9;
+  Teuchos::TwoDArray<long double> coef( power+1, power+1 );
 
   Utility::getLegendrePowerExpansionCoefficients( coef, power );
 
-  TEST_EQUALITY_CONST( coef[0], 0.0);
-  TEST_EQUALITY_CONST( coef[1], 1.0);
+  Teuchos::Array<double> coefs( power+1 );
+  for ( int i = 0; i < power+1; i++ )
+  {
+    coefs[i] = coef[power][i];
+  }
 
-  power = 9;
-  coef.resize( power+1 );
+std::printf( "\n coef[0][0] =\t %.10e", coef[0][0]);
+std::printf( "\n coef[1][0] =\t %.10e", coef[1][0]);
+std::printf( "\n coef[1][1] =\t %.10e", coef[1][1]);
+std::printf( "\n coef[power][1] =\t %.10e", coef[power][1]);
+std::printf( "\n coef[power][3] =\t %.10e", coef[power][3]);
+std::printf( "\n coef[power][5] =\t %.10e", coef[power][5]);
+std::printf( "\n coef[power][7] =\t %.10e", coef[power][7]);
 
-  Utility::getLegendrePowerExpansionCoefficients( coef, power );
 
-  TEST_EQUALITY_CONST( coef[0], 0.0);
-  TEST_FLOATING_EQUALITY( coef[1], 3315.0/12155.0, 1e-15);
-  TEST_EQUALITY_CONST( coef[2], 0.0);
-  TEST_FLOATING_EQUALITY( coef[3], 4760.0/12155.0, 1e-15);
-  TEST_EQUALITY_CONST( coef[4], 0.0);
-  TEST_FLOATING_EQUALITY( coef[5], 2992.0/12155.0, 1e-15);
-  TEST_EQUALITY_CONST( coef[6], 0.0);
-  TEST_FLOATING_EQUALITY( coef[7], 960.0/12155.0, 1e-15);
-  TEST_EQUALITY_CONST( coef[8], 0.0);
-  TEST_FLOATING_EQUALITY( coef[9], 128.0/12155.0, 1e-15);
+std::printf( "\n coefs[1] =\t %.10e", coefs[1]);
+std::printf( "\n coefs[3] =\t %.10e", coefs[3]);
+std::printf( "\n coefs[5] =\t %.10e", coefs[5]);
+std::printf( "\n coefs[7] =\t %.10e", coefs[7]);
+
+  TEST_EQUALITY_CONST( coefs[0], 0.0);
+  TEST_FLOATING_EQUALITY( coefs[1], 3315.0/12155.0, 1e-15);
+  TEST_EQUALITY_CONST( coefs[2], 0.0);
+  TEST_FLOATING_EQUALITY( coefs[3], 4760.0/12155.0, 1e-15);
+  TEST_EQUALITY_CONST( coefs[4], 0.0);
+  TEST_FLOATING_EQUALITY( coefs[5], 2992.0/12155.0, 1e-15);
+  TEST_EQUALITY_CONST( coefs[6], 0.0);
+  TEST_FLOATING_EQUALITY( coefs[7], 960.0/12155.0, 1e-15);
+  TEST_EQUALITY_CONST( coefs[8], 0.0);
+  TEST_FLOATING_EQUALITY( coefs[9], 128.0/12155.0, 1e-15);
 }
 //---------------------------------------------------------------------------//
 // Custom main function
