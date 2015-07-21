@@ -201,7 +201,28 @@ inline double ModuleInterface<Root>::getCellVolume(
   ExternalCellHandle cell_external = 
     ModuleInterface<Root>::getExternalCellHandle( cell );
   
-  return Root::getManager()->GetVolume( cell_external )->Capacity();
+  volume = Root::getManager()->GetVolume( cell_external )->Capacity();
+  
+  TObjArray* daughters = Root::getManager()->GetVolume( cell_external )->GetNodes();
+  
+  if ( daughters != NULL )
+  {
+    TIterator* daughter_list_iterator = daughters->MakeIterator();
+    int number_of_daughters = daughters->GetEntries();
+  
+    for (int i=0; i < number_of_daughters; i++) 
+    {
+      TObject* current_daughter = daughter_list_iterator->Next();
+      int id = current_daughter->GetUniqueID();
+      volume = volume - Root::getManager()->GetVolume( id )->Capacity();
+    }
+    return volume;
+  }
+  else
+  {
+    return volume;
+  }
+  
 }
 
 // Get the surface area of a surface bounding a cell
