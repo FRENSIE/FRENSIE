@@ -113,9 +113,12 @@ void ModuleInterface<Root>::fireRay( const Ray& ray,
   Root::getManager()->SetCurrentDirection( dir );
   
   Root::getManager()->FindNextBoundaryAndStep();
+  Root::getManager()->FindNextBoundary();
   
   distance_to_surface_hit = 
-      Root::getManager()->GetCurrentNavigator()->GetStep();
+      Root::getManager()->GetStep();
+      
+  Root::getManager()->Step( distance_to_surface_hit );
 }	       
 
 // Get the point location w.r.t. a given cell
