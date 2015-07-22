@@ -28,6 +28,7 @@ public:
   //! Create a basic hard elastic distribution
   static void createHardElasticDistribution(
 			const Data::XSSEPRDataExtractor& raw_electroatom_data,
+            const double atomic_weight,
 			Teuchos::RCP<const HardElasticElectronScatteringDistribution>&
 			  elastic_distribution );
 

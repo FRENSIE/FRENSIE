@@ -40,7 +40,7 @@ double HardElasticElectronScatteringDistribution::s_fine_structure_const_squared
         Utility::PhysicalConstants::fine_structure_constant *
         Utility::PhysicalConstants::fine_structure_constant;
 
-// A parameter for moliere's screening factor  (1/2*(fsc/0.885)**2)
+// A parameter for moliere's atomic screening constant  (1/2*(fsc/0.885)**2)
 double HardElasticElectronScatteringDistribution::s_screening_param1 = 
       HardElasticElectronScatteringDistribution::s_fine_structure_const_squared/
       ( 2.0*0.885*0.885 );
@@ -48,11 +48,18 @@ double HardElasticElectronScatteringDistribution::s_screening_param1 =
 // Constructor 
 HardElasticElectronScatteringDistribution::HardElasticElectronScatteringDistribution(
     const int atomic_number,
+    const double atomic_weight,
     const ElasticDistribution& elastic_scattering_distribution)
   : d_atomic_number( atomic_number ),
     d_Z_two_thirds_power( pow( atomic_number, 2.0/3.0 ) ),
     d_screening_param2( 3.76*s_fine_structure_const_squared*
                               d_atomic_number*d_atomic_number ),
+    d_rutherford_param1( 2.0*Utility::PhysicalConstants::pi*d_atomic_number*
+        ( d_atomic_number + 1.0 )*
+        ( Utility::PhysicalConstants::avogadro_constant*
+        Utility::PhysicalConstants::classical_electron_radius*
+        Utility::PhysicalConstants::classical_electron_radius* 
+        d_atomic_number/atomic_weight ) ),
     d_elastic_scattering_distribution( elastic_scattering_distribution )
 {
   // Make sure the array is valid
@@ -82,6 +89,56 @@ double HardElasticElectronScatteringDistribution::evaluatePDF(
                                           scattering_angle_cosine );
   }
 }
+
+// Evaluate the screened Rutherford cross section above the cutoff mu
+double HardElasticElectronScatteringDistribution::evaluateScreenedRutherfordCrossSection( 
+                                  const double incoming_energy ) const
+{
+  double eta = evaluateAtomicScreeningConstant( incoming_energy );
+  double unitless_energy = 
+        incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
+
+  return d_rutherford_param1*( 1.0 );
+}
+
+// Evaluate the first n screened Rutherford cross section moments above the cutoff mu
+void HardElasticElectronScatteringDistribution::evaluateScreenedRutherfordCrossSectionMoments( 
+                                  Teuchos::Array<double>& rutherford_moments,
+                                  const double incoming_energy,
+                                  const double n ) const
+{
+  double eta = evaluateAtomicScreeningConstant( incoming_energy );
+
+  rutherford_moments[0] = 
+        evaluateScreenedRutherfordCrossSection( incoming_energy );
+
+  Teuchos::Array<double> coef_one, coef_two;
+
+  coef_one[0] = 0;
+  coef_one[1] = ( log( ( 2.0*eta + s_delta_cutoff )/( 2.0*eta ) ) ) -
+                 s_delta_cutoff/( s_delta_cutoff + 2.0*eta );
+
+  coef_two[0] = s_delta_cutoff;
+  coef_two[1] = ( 1.0 - s_mu_cutoff*s_mu_cutoff )/2.0;
+
+  for ( int i = 2; i < n; i++ )
+  {
+    coef_one[i+1] = ( 2.0 + 1.0/i )*( 1.0*2.0*eta )*coef_one[i] - 
+                                    ( 1.0 + 1.0/i )*coef_one[i-1] -
+                  ( ( 2.0 + 1.0/i )/( s_delta_cutoff + 2.0*eta ) )*
+                                    ( s_delta_cutoff - coef_two[i]);
+
+    coef_two[i+1] = ( 2.0*i + 1.0 )/( i + 2.0 )*s_mu_cutoff*coef_two[i] - 
+                                    ( i - 1.0 )*( i + 2.0 ) *coef_two[i-1];
+  } 
+  double frac_disc = s_delta_cutoff*( 1.0 + eta )/( s_delta_cutoff + 2.0*eta );
+
+  for ( int i = 1; i < n; i++ )
+  {
+    rutherford_moments[i] = 1.0 - 2.0*eta*( 1.0 + eta )*coef_one[i]/frac_disc;
+  }
+}
+
 
 // Sample an outgoing energy and direction from the distribution
 void HardElasticElectronScatteringDistribution::sample( 
@@ -175,7 +232,8 @@ double HardElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF(
                                 s_mu_cutoff,
                                 d_elastic_scattering_distribution );
 
-  double screening_factor = evaluateScreeningFactor( incoming_energy );
+  double screening_constant = 
+        evaluateAtomicScreeningConstant( incoming_energy );
 
   double delta_cosine = 1.0 - scattering_angle_cosine;
   if ( delta_cosine < 1e-10)
@@ -183,8 +241,8 @@ double HardElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF(
     delta_cosine = 0.0;
   }
 
-  double ratio = ( screening_factor + s_delta_cutoff )/
-                  ( screening_factor + delta_cosine );
+  double ratio = ( screening_constant + s_delta_cutoff )/
+                  ( screening_constant + delta_cosine );
 
   double ratio_squared = ratio*ratio;
 
@@ -192,8 +250,8 @@ double HardElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF(
 }
 
 
-// Evaluate the screening factor at the given electron energy
-double HardElasticElectronScatteringDistribution::evaluateScreeningFactor(
+// Evaluate the atomic screening constant at the given electron energy
+double HardElasticElectronScatteringDistribution::evaluateAtomicScreeningConstant(
                                               const double energy ) const
 {
   // get the momentum**2 of the electron in units of electron_rest_mass_energy
@@ -207,7 +265,7 @@ double HardElasticElectronScatteringDistribution::evaluateScreeningFactor(
            Utility::PhysicalConstants::electron_rest_mass_energy,
            energy );
 
- // Calculate the screening factor
+ // Calculate the atomic screening constant
  return s_screening_param1 * 1.0/electron_momentum_squared * 
         d_Z_two_thirds_power * ( 1.13 + d_screening_param2/beta_squared );
 }
@@ -220,14 +278,14 @@ double HardElasticElectronScatteringDistribution::evaluateScreenedScatteringAngl
                       Utility::RandomNumberGenerator::getRandomNumber<double>();
     
   // evaluate the screening angle at the given electron energy
-  double screening_factor = evaluateScreeningFactor( energy );
+  double screening_constant = evaluateAtomicScreeningConstant( energy );
 
   // Calculate the screened scattering angle
   double arg = random_number*s_delta_cutoff;
 
-  return ( screening_factor*s_mu_cutoff + 
-           arg*( screening_factor + 1.0 ) ) /
-         ( screening_factor + arg );
+  return ( screening_constant*s_mu_cutoff + 
+           arg*( screening_constant + 1.0 ) ) /
+         ( screening_constant + arg );
 }
 
 
@@ -315,10 +373,11 @@ void HardElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
                                               s_mu_cutoff );
 
     // evaluate the screening angle at the given electron energy
-    double screening_factor = evaluateScreeningFactor( incoming_energy );
+    double screening_constant = 
+            evaluateAtomicScreeningConstant( incoming_energy );
 /*
-    double analytical_cdf = cutoff_pdf_value/screening_factor*
-     ( s_delta_cutoff + screening_factor )*( s_delta_cutoff );
+    double analytical_cdf = cutoff_pdf_value/screening_constant*
+     ( s_delta_cutoff + screening_constant )*( s_delta_cutoff );
 
     double alternative_cutoff_cdf = cutoff_cdf_value/( cutoff_cdf_value + analytical_cdf );
 */  

@@ -169,16 +169,16 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 }
 
 //---------------------------------------------------------------------------//
-// Check that the screening angle can be evaluated
+// Check that the atomic screening constant can be evaluated
 TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
-                   evaluateScreeningFactor )
+                   evaluateAtomicScreeningConstant )
 {
   // Set energy in MeV
   double energy = 1.0e-5;
 
   // Calculate scrrening angle
   double screening_factor = 
-    ace_basic_elastic_distribution->evaluateScreeningFactor( energy );
+    ace_basic_elastic_distribution->evaluateAtomicScreeningConstant( energy );
 
   // Test 1
   TEST_FLOATING_EQUALITY( screening_factor, 5.6394786124145900E+05, 1e-12 );
@@ -186,7 +186,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
  
   energy = 1.0;
   screening_factor = 
-    ace_basic_elastic_distribution->evaluateScreeningFactor( energy );
+    ace_basic_elastic_distribution->evaluateAtomicScreeningConstant( energy );
 
   // Test 2
   TEST_FLOATING_EQUALITY( screening_factor, 2.195957749240E-04, 1e-12 );
@@ -194,7 +194,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
   energy = 1.0e5;
   screening_factor = 
-    ace_basic_elastic_distribution->evaluateScreeningFactor( energy );
+    ace_basic_elastic_distribution->evaluateAtomicScreeningConstant( energy );
 
   // Test 3
   TEST_FLOATING_EQUALITY( screening_factor, 4.1488827612141400E-14, 1e-12 );
@@ -602,10 +602,14 @@ int main( int argc, char** argv )
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 
+  // Set the atomic weight
+  double atomic_weight = 207.2;
+
   // Create the distributions
   ace_basic_elastic_distribution.reset(
 		new MonteCarlo::HardElasticElectronScatteringDistribution(
 						    atomic_number,
+                            atomic_weight,
 						    elastic_scattering_distribution ) );
 
   // Clear setup data

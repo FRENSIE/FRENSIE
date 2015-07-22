@@ -52,10 +52,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   double n = 4;
   
   double diff_cross_section = 
-    distribution->evaluateLegendreExpandedPDF(
-                                                    9.999990000000E-01,
-                                                    1.000000000000E-05,
-                                                    n );
+    distribution->evaluateLegendreExpandedPDF( 9.999990000000E-01,
+                                               1.000000000000E-05,
+                                               n );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
                     diff_cross_section,
@@ -63,10 +62,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                     1e-12 );
 
   diff_cross_section = 
-    distribution->evaluateLegendreExpandedPDF( 
-                                                    -1.000000000000,
-                                                    1.000000000000E-03,
-                                                    n );
+    distribution->evaluateLegendreExpandedPDF( -1.000000000000,
+                                               1.000000000000E-03,
+                                               n );
 
   UTILITY_TEST_FLOATING_EQUALITY(  
                     diff_cross_section,
@@ -126,29 +124,29 @@ n = 2;
 TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateCrossSectionMoment )
 {
-  double precision = 1e-6;
+  double precision = 1e-13;
   double n = 0;
 
   double moment = 
            distribution->evaluateCrossSectionMoment( 1.0e-5, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( moment,
-                                  2.489240000000E+00,
-                                  1e-15 );	
+                                  9.999995E-01,
+                                  1e-13 );	
 
 
   moment = distribution->evaluateCrossSectionMoment( 0.001, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( moment,
-                                  2.902810000000E+00,
-                                  1e-15 );
+                                  9.99909223828E-01,
+                                  1e-13 );
 
 
   moment = distribution->evaluateCrossSectionMoment( 1.0e5, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( moment,
-                                  8.830510000000E+00,
-                                  1e-15 );				 
+                                  5.51213218221E-01,
+                                  1e-13 );			 
 }
 
 //---------------------------------------------------------------------------//
@@ -245,12 +243,16 @@ int main( int argc, char** argv )
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 
+  // Set the atomic weight
+  double atomic_weight = 207.2;
+
   Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>
     elastic_scattering_distribution;
 
   elastic_scattering_distribution.reset( 
 	      new MonteCarlo::HardElasticElectronScatteringDistribution( 
                                                 atomic_number, 
+                                                atomic_weight,
                                                 elastic_scattering_function ) );
 
 /*

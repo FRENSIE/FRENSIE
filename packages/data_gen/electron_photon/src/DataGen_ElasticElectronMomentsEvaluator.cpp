@@ -74,6 +74,31 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF(
   return pdf_value*legendre_value;
 }
 
+// Evaluate the Legnendre Polynomial expansion of the screened rutherford
+double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedScreenedRutherford(
+                                    const double scattering_angle_cosine,
+                                    const double incoming_energy, 
+                                    const int polynomial_order ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  // Evaluate the elastic pdf value at a given energy and scattering angle cosine
+  double pdf_value = 
+            d_elastic_distribution->evaluateScreenedRutherfordPDF( 
+                                                 incoming_energy,
+                                                 scattering_angle_cosine );
+
+  // Evaluate the Legendre Polynomial at the given angle and order
+  double legendre_value =  Utility::getLegendrePolynomial(
+                                                  scattering_angle_cosine,
+                                                  polynomial_order );
+
+  return pdf_value*legendre_value;
+}
+
 // Return the cross section moment at a given energy and polynomial order
 double ElasticElectronMomentsEvaluator::evaluateCrossSectionMoment( 
                                const double energy, 
@@ -92,7 +117,15 @@ double ElasticElectronMomentsEvaluator::evaluateCrossSectionMoment(
                          energy,
                          polynomial_order );
 
-  double abs_error, total_moment, moment_i;
+  // Create boost rapper function for the screened Rutherford cross section
+  boost::function<double (double x)> rutherford_wrapper = 
+    boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedScreenedRutherford,
+                         boost::cref( *this ),
+                         _1,
+                         energy,
+                         polynomial_order );
+
+  double abs_error = 0.0, total_moment = 0.0, moment_i = 0.0;
     
   // Get common angular grid
   Teuchos::Array<double> common_angular_grid;
@@ -103,6 +136,7 @@ double ElasticElectronMomentsEvaluator::evaluateCrossSectionMoment(
 
   Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
 
+
   for ( unsigned i = 1; i < common_angular_grid.size()-1; i++ )
   {
     quadrature_kernel.integrateAdaptively<15>(
@@ -111,11 +145,12 @@ double ElasticElectronMomentsEvaluator::evaluateCrossSectionMoment(
 					common_angular_grid[i],
 					moment_i,
 					abs_error );
-  
+
+ 
     total_moment += moment_i;
   }
 
-  return 2.0*Utility::PhysicalConstants::pi*( total_moment );
+  return total_moment;
 }
 
 } // end DataGen namespace

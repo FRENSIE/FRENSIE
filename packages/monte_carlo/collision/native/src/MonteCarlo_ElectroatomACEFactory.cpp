@@ -28,6 +28,7 @@ void ElectroatomACEFactory::createElectroatomCore(
             const Data::XSSEPRDataExtractor& raw_electroatom_data,
             const Teuchos::RCP<AtomicRelaxationModel>& atomic_relaxation_model,
             Teuchos::RCP<ElectroatomCore>& electroatom_core,
+            const double atomic_weight,
             const BremsstrahlungAngularDistributionType 
                     photon_distribution_function,
             const bool use_atomic_relaxation_data )
@@ -51,7 +52,8 @@ void ElectroatomACEFactory::createElectroatomCore(
     ElectroatomicReactionACEFactory::createHardElasticReaction(
 					   raw_electroatom_data,
 					   energy_grid,
-					   reaction_pointer );
+					   reaction_pointer,
+                       atomic_weight );
   }
 
   // Create the bremsstrahlung scattering reaction
@@ -140,6 +142,7 @@ void ElectroatomACEFactory::createElectroatom(
   ElectroatomACEFactory::createElectroatomCore(raw_electroatom_data,
                                                atomic_relaxation_model,
                                                core,
+                                               atomic_weight,
                                                photon_distribution_function,
                                                use_atomic_relaxation_data );
 					    

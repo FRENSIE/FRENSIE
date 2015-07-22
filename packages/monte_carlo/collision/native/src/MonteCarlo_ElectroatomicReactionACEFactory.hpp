@@ -26,7 +26,8 @@ public:
   static void createHardElasticReaction(
         const Data::XSSEPRDataExtractor& raw_electroatom_data,
         const Teuchos::ArrayRCP<const double>& energy_grid,
-        Teuchos::RCP<ElectroatomicReaction>& elastic_reaction );
+        Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+        const double atomic_weight );
 
   //! Create an atomic excitation scattering electroatomic reaction
   static void createAtomicExcitationReaction(

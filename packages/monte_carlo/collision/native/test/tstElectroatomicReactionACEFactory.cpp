@@ -38,10 +38,13 @@ Teuchos::RCP<MonteCarlo::ElectroatomicReaction> reaction;
 TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory, 
 		   createElasticReaction )
 {
+  double atomic_weight = 207.2;
+
   MonteCarlo::ElectroatomicReactionACEFactory::createHardElasticReaction(
                 *xss_data_extractor,
                 energy_grid,
-                reaction );
+                reaction,
+                atomic_weight );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),

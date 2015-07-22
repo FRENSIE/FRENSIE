@@ -210,12 +210,16 @@ int main( int argc, char** argv )
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 
+  // Set the atomic weight
+  double atomic_weight = 207.2;
+
   Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>
     elastic_scattering_distribution;
 
   elastic_scattering_distribution.reset( 
 	      new MonteCarlo::HardElasticElectronScatteringDistribution( 
                                                 atomic_number, 
+                                                atomic_weight,
                                                 elastic_scattering_function ) );
 
 

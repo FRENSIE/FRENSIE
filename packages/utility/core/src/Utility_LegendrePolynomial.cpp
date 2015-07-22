@@ -46,6 +46,40 @@ double getLegendrePolynomial( const double value,
   }
 }
 
+// Evaluate the Legendre Polynomial at the given value and order
+long double getLegendrePolynomial( const long double value,
+                                   const int polynomial_order )
+{
+  // The first two legendre polynomials
+  long double P0 = 1.0L;
+  long double P1 = value;
+
+  if ( polynomial_order == 0 )
+  {
+    return P0;
+  }
+  else if ( polynomial_order == 1 )
+  {
+    return P1;
+  }
+  else
+  {
+    long double p_n_minus_2 = P0;
+    long double p_n_minus_1 = P1;
+    long double p_n;
+
+    for ( int i = 2; i <= polynomial_order; i++)
+    {
+      p_n = ( ( 2.0L*i - 1.0L )*value*p_n_minus_1 - ( i - 1.0L )*p_n_minus_2 )/i;
+
+      p_n_minus_2 = p_n_minus_1;
+      p_n_minus_1 = p_n;
+    }
+    
+    return p_n;
+  }
+}
+
 // Evaluate the derivative of the Legendre Polynomial at the given value and order
 double getLegendrePolynomialDerivative( const double value,
                                         const int polynomial_order )

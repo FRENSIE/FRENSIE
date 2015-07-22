@@ -61,6 +61,12 @@ public:
                                     const double incoming_energy, 
                                     const int polynomial_order = 0) const;
 
+  //! Evaluate the Legnendre Polynomial expansion of the screened rutherford
+  double evaluateLegendreExpandedScreenedRutherford(
+                                    const double scattering_angle_cosine,
+                                    const double incoming_energy, 
+                                    const int polynomial_order = 0 ) const;
+
   //! Return the cross section moment at a given energy and polynomial order
   double evaluateCrossSectionMoment( const double energy, 
                                      const int polynomial_order,

@@ -18,7 +18,7 @@ namespace Utility{
 
 // Constructor
 SloanRadauQuadrature::SloanRadauQuadrature( 
-            const Teuchos::Array<long double>& legendre_expansion_moments )
+            const Teuchos::Array<long_float>& legendre_expansion_moments )
   : d_legendre_expansion_moments( legendre_expansion_moments ) 
 { 
   // Make sure there are enough moments to evaluate the number of nodes wanted
@@ -30,15 +30,15 @@ SloanRadauQuadrature::SloanRadauQuadrature(
 
 // Find the Radau nodes including the end point mu = 1
 void SloanRadauQuadrature::getRadauNodesAndWeights( 
-                                Teuchos::Array<long double>& nodes,
-                                Teuchos::Array<long double>& weights,
+                                Teuchos::Array<long_float>& nodes,
+                                Teuchos::Array<long_float>& weights,
                                 const int number_of_angles_wanted ) const
 {
   // Get the Radau moments
-  Teuchos::Array<long double> 
+  Teuchos::Array<long_float> 
                      radau_moments( d_legendre_expansion_moments.size() - 1 );
 
-  getLongRadauMoments( radau_moments );
+  getRadauMoments( radau_moments );
 
   // Calculate max number of roots from the number of radau moments
   int number_of_roots = ( radau_moments.size() - 1 )/2 + 1;
@@ -47,21 +47,22 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
   int number_of_coefficients = radau_moments.size() - number_of_roots + 1;
 
   // Initialize arrays for data needed to calculate the orthogonal polynomials
-  Teuchos::TwoDArray<long double> orthogonal_coefficients( number_of_coefficients,
-                                                      number_of_coefficients,
-                                                      0.0 );
+  Teuchos::TwoDArray<long_float> orthogonal_coefficients( 
+                                    number_of_coefficients,
+                                    number_of_coefficients,
+                                    long_float(0) );
 
-  Teuchos::TwoDArray<long double> roots( number_of_coefficients,
-                                    number_of_roots,
-                                    0.0 );
+  Teuchos::TwoDArray<long_float> roots( number_of_coefficients,
+                                        number_of_roots,
+                                        long_float(0) );
 
-  Teuchos::Array<long double> normalization_ratios( number_of_coefficients ),  
+  Teuchos::Array<long_float> normalization_ratios( number_of_coefficients ),  
                          normalization_factors_N( number_of_coefficients ), 
                          variances( number_of_coefficients ),
                          mean_coefficients( number_of_coefficients );
   
   // Set the i = 0 case
-  orthogonal_coefficients[0][0] = 1.0;
+  orthogonal_coefficients[0][0] = long_float(1);
   evaluateOrthogonalNormalizationFactor( normalization_factors_N,
                                          orthogonal_coefficients,       
                                          radau_moments, 
@@ -96,7 +97,7 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
     variances[i] = evaluateVariance( normalization_factors_N, i );
 
     // If variance is negative it will cause a negative weight
-    if ( variances[i] <= 0.0 )
+    if ( variances[i] <= long_float(0) )
     {
       number_of_roots = i;
       number_of_coefficients = i + 1;
@@ -178,7 +179,7 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
       nodes[k] = roots[number_of_roots][k];
     }
 
-    nodes[number_of_roots] = 1.0;
+    nodes[number_of_roots] = long_float(1);
   }
   else
   {
@@ -190,15 +191,15 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
       nodes[k] = roots[number_of_angles_wanted-1][k];
     }
 
-    nodes[number_of_angles_wanted-1] = 1.0;
+    nodes[number_of_angles_wanted-1] = long_float(1);
   }
-
-  long double polynomial_at_node, variable;
-  double sum_of_weights;
+  long_float var;
+  long_float polynomial_at_node, variable;
+  long_float sum_of_weights = long_float(0);
 
   for ( int i = 0; i < weights.size()-1; i++ )
   {
-    variable = 0.0;
+    var = long_float(0);
 
     for ( int k = 0; k < weights.size()-1; k++ )
     {
@@ -206,7 +207,7 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
                                                          mean_coefficients,
                                                          nodes[i],
                                                          k );
-      variable += polynomial_at_node*polynomial_at_node/
+      var += polynomial_at_node*polynomial_at_node/
                     normalization_factors_N[k];
 /*
 std::printf( "\n i =                        \t %i \n", i );
@@ -217,10 +218,54 @@ std::printf( " variable =                   \t %.10e \n", variable );
 
 std::printf( " diff = \t %.10e \n", (normalization_factors_N[k]-4.4051713388171300E-09)/4.4051713388171300E-09 );*/
     }
-  weights[i] = 1.0/( variable*( 1.0 - nodes[i] ) )/d_legendre_expansion_moments[0];
+  weights[i] =  long_float(1)/( var*( long_float(1) - nodes[i] ) )/
+                d_legendre_expansion_moments[0];
+
   sum_of_weights += weights[i];
   } 
-  weights[weights.size()-1] = 1.0 - sum_of_weights;
+  if ( sum_of_weights > long_float(1) )
+  {
+    std::cout << std::endl << " Error: non-physical weight! " << std::endl;
+  }
+  weights[weights.size()-1] = long_float(1) - sum_of_weights;
+}
+
+// Find the Radau nodes including the end point mu = 1
+void SloanRadauQuadrature::getRadauNodesAndWeights( 
+                                Teuchos::Array<long double>& nodes,
+                                Teuchos::Array<long double>& weights,
+                                const int number_of_angles_wanted ) const
+{
+  Teuchos::Array<long_float> node, weight;
+  getRadauNodesAndWeights( node, weight, number_of_angles_wanted );
+
+  nodes.resize( node.size() );
+  weights.resize( node.size() );
+
+  for ( int i = 0; i < node.size(); i++ )
+  {
+    nodes[i] = node[i].convert_to<long double>();
+  }
+   
+}
+
+// Find the Radau nodes including the end point mu = 1
+void SloanRadauQuadrature::getRadauNodesAndWeights( 
+                                Teuchos::Array<double>& nodes,
+                                Teuchos::Array<double>& weights,
+                                const int number_of_angles_wanted ) const
+{
+  Teuchos::Array<long_float> node, weight;
+  getRadauNodesAndWeights( node, weight, number_of_angles_wanted );
+
+  nodes.resize( node.size() );
+  weights.resize( node.size() );
+
+  for ( int i = 0; i < node.size(); i++ )
+  {
+    nodes[i] = node[i].convert_to<double>();
+  }
+   
 }
 
 // Return the Radau moments of the legendre expansion of a function, f(x)
@@ -231,8 +276,9 @@ std::printf( " diff = \t %.10e \n", (normalization_factors_N[k]-4.40517133881713
  *! see Sloan Eq. (B-79)
  */
 void SloanRadauQuadrature::getRadauMoments(
-            Teuchos::Array<double>& radau_moments ) const
+            Teuchos::Array<long_float>& radau_moments ) const
 {
+
   // Make sure the arrays are the right size
   testPrecondition( d_legendre_expansion_moments.size() >= 
                     radau_moments.size() + 1 );
@@ -241,15 +287,9 @@ void SloanRadauQuadrature::getRadauMoments(
   //testPrecondition( d_legendre_expansion_moments[0] == 1.0 );
 
   // Get the Guass moments
-  Teuchos::Array<double> gauss_moments( d_legendre_expansion_moments.size() );
-  Teuchos::Array<double> legendre_moments( d_legendre_expansion_moments.size() );
+  Teuchos::Array<long_float> gauss_moments( d_legendre_expansion_moments.size() );
 
-  for ( int n = 0; n <= radau_moments.size(); n++ )
-  {
-    legendre_moments[n] = d_legendre_expansion_moments[n];
-  }
-
-  Utility::getGaussMoments( legendre_moments, gauss_moments );
+  Utility::getGaussMoments( d_legendre_expansion_moments, gauss_moments );
 
   for ( int n = 0; n < radau_moments.size(); n++ )
   {
@@ -265,7 +305,7 @@ void SloanRadauQuadrature::getRadauMoments(
  *! see Sloan Eq. (B-79)
  */
 void SloanRadauQuadrature::getLongRadauMoments(
-            Teuchos::Array<long double>& radau_moments ) const
+            Teuchos::Array<long_float>& radau_moments ) const
 {
   int number_of_moments = d_legendre_expansion_moments.size();
 
@@ -277,16 +317,16 @@ void SloanRadauQuadrature::getLongRadauMoments(
   testPrecondition( d_legendre_expansion_moments[0] == 1.0 );
 */
   // Get the coefficients of Guass moments
-  Teuchos::TwoDArray<long double> coefficients( number_of_moments+1,
-                                                number_of_moments+1 ); 
+  Teuchos::TwoDArray<long_float> coefficients( number_of_moments+1,
+                                               number_of_moments+1 ); 
 
   Utility::getLegendrePowerExpansionCoefficients( coefficients, 
                                                   number_of_moments );
 
-  long double moment_n;
+  long_float moment_n;
   for ( int n = 0; n < radau_moments.size(); n++ )
   {
-    moment_n = 0.0;
+    moment_n = 0;
     for ( int l = 0; l <= n; l++ )
     {
       // Calculate moment n
@@ -294,16 +334,8 @@ void SloanRadauQuadrature::getLongRadauMoments(
                   d_legendre_expansion_moments[l];   
     }
   moment_n -= coefficients[n+1][n+1]*d_legendre_expansion_moments[n+1];
-  radau_moments[n] = moment_n;
+  radau_moments[n] = moment_n.convert_to<long_float>();
   }
-/*
-std::cout<< "\n coefficients[0][0] = " << coefficients[0][0] << std::endl;
-std::cout<< "\n coefficients[1][0] = " << coefficients[1][0] << std::endl;
-std::cout<< "\n coefficients[1][1] = " << coefficients[1][1] << std::endl;
-std::printf( "\n legendre moments[0] =\t %.10e", d_legendre_expansion_moments[0] );
-std::printf( "\n legendre moments[1] =\t %.10e", d_legendre_expansion_moments[1] );
-*/
-
 }
 
 // Evaulate the normalization ratio for the orthogonal polynomial, Q and x*Q
@@ -314,31 +346,25 @@ std::printf( "\n legendre moments[1] =\t %.10e", d_legendre_expansion_moments[1]
  *! normalization ratio = L_i/N_(i-1)
  */
 void SloanRadauQuadrature::evaluateOrthogonalNormalizationRatio( 
-        Teuchos::Array<long double>& normalization_ratios,
-        const Teuchos::TwoDArray<long double>& orthogonal_coefficients,
-        const Teuchos::Array<long double>& normalization_factors_N,
-        const Teuchos::Array<long double>& radau_moments,
+        Teuchos::Array<long_float>& normalization_ratios,
+        const Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
+        const Teuchos::Array<long_float>& normalization_factors_N,
+        const Teuchos::Array<long_float>& radau_moments,
         const int i ) const
 {
   // Make sure i is valid
   testPrecondition( i > 0 );
   testPrecondition( 2*i - 1 <= radau_moments.size() );
 
-  long double normalization_factor_L = 0.0;
+  long_float normalization_factor_L = long_float(0);
 
   for ( int k = 0; k <= i-1; k++ )
   {
     normalization_factor_L += orthogonal_coefficients[i-1][k]*
                               radau_moments[k+i];
-/*
-std::printf( "\n i = %i \n", i );
-std::printf( " k = %i \n", k );
-std::printf( " radau_moments[k+i] =            \t %.10e \n", radau_moments[k+i] );
-std::printf( " orthogonal_coefficients[i-1][k] = \t %.10e \n", orthogonal_coefficients[i-1][k] );
-std::printf( " normalization_factor_L =        \t %.10e \n", normalization_factor_L );
-*/
   }
-  normalization_ratios[i] = normalization_factor_L/normalization_factors_N[i-1];
+  normalization_ratios[i] = normalization_factor_L.convert_to<long_float>()
+                            /normalization_factors_N[i-1];
 }
 
 // Evaulate the ith mean coefficients for orthogonal polynomial recursion relation
@@ -346,8 +372,8 @@ std::printf( " normalization_factor_L =        \t %.10e \n", normalization_facto
  *! mean_coefficient_i = L_i/N_(i-1) - L_(i-1)/N_(i-2)
  *! see Sloan Eq. (B-103b)  
  */
-long double SloanRadauQuadrature::evaluateMeanCoefficient( 
-        const Teuchos::Array<long double>& normalization_ratios,
+long_float SloanRadauQuadrature::evaluateMeanCoefficient( 
+        const Teuchos::Array<long_float>& normalization_ratios,
         const int i ) const
 {
   // Make sure i and arrays are valid
@@ -372,20 +398,20 @@ long double SloanRadauQuadrature::evaluateMeanCoefficient(
  *! since all coefficients were k > i are zero. 
  */
 void SloanRadauQuadrature::evaluateOrthogonalCoefficients( 
-        Teuchos::TwoDArray<long double>& orthogonal_coefficients,
-        const Teuchos::Array<long double>& variances,
-        const Teuchos::Array<long double>& mean_coefficients,
+        Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
+        const Teuchos::Array<long_float>& variances,
+        const Teuchos::Array<long_float>& mean_coefficients,
         const int i) const
 {
   // Make sure i is valid
-  testPrecondition( i >= 0.0 );
+  testPrecondition( i >= 0 );
 
   // All terms for k > i are zero
 
   /* For k = i the 2nd and third term will go to zero. Therefore, all c_(i,i) 
    * terms will be equal to the c_(0,0) term, which is set to unity.
    */
-  orthogonal_coefficients[i][i] = 1.0;
+  orthogonal_coefficients[i][i] = long_float(1);
   
   if ( i == 1 )
   {
@@ -419,30 +445,23 @@ void SloanRadauQuadrature::evaluateOrthogonalCoefficients(
  *! N_i = sum_( k=0,...,i ) a_(i,k)*M_(k+i) 
  */
 void SloanRadauQuadrature::evaluateOrthogonalNormalizationFactor( 
-        Teuchos::Array<long double>& normalization_factors_N, 
-        const Teuchos::TwoDArray<long double>& orthogonal_coefficients,
-        const Teuchos::Array<long double>& radau_moments,      
+        Teuchos::Array<long_float>& normalization_factors_N, 
+        const Teuchos::TwoDArray<long_float>& orthogonal_coefficients,
+        const Teuchos::Array<long_float>& radau_moments,      
         const int i ) const
 {
   // Make sure i is valid
   testPrecondition( 2*i < radau_moments.size() );
 
-  long double normalization_factor_N = 0.0;
+  long_float normalization_factor_N = long_float(0);
 
   for ( int k = 0; k <= i; k++ )
   {
     normalization_factor_N += orthogonal_coefficients[i][k]*
                               radau_moments[k+i];
-/*
-std::printf( "\n i = %i \n", i );
-std::printf( " k = %i \n", k );
-std::printf( " radau_moments[k+i] =            \t %.10e \n", radau_moments[k+i] );
-std::printf( " orthogonal_coefficients[i][k] = \t %.10e \n", orthogonal_coefficients[i][k] );
-std::printf( " normalization_factor_N =        \t %.10e \n", normalization_factor_N );
-*/
   }
 
-  normalization_factors_N[i] = normalization_factor_N;
+  normalization_factors_N[i] = normalization_factor_N.convert_to<long_float>();
 }
 
 // Evaulate the variance of the moments of the orthogonal polynomial, Q_i
@@ -450,12 +469,12 @@ std::printf( " normalization_factor_N =        \t %.10e \n", normalization_facto
  *! normalization factor to the i-1 factor: variance = N_i/N_(i-1)
  *! see Sloan Eq. (B-99)
  */
-long double SloanRadauQuadrature::evaluateVariance( 
-        const Teuchos::Array<long double>& normalization_factors_N,
+long_float SloanRadauQuadrature::evaluateVariance( 
+        const Teuchos::Array<long_float>& normalization_factors_N,
         const int i ) const
 {
   // Make sure i is valid
-  testPrecondition( i > 0.0 );
+  testPrecondition( i > 0 );
   testPrecondition( i <= normalization_factors_N.size() );
 
   return normalization_factors_N[i]/normalization_factors_N[i-1];
@@ -466,20 +485,20 @@ long double SloanRadauQuadrature::evaluateVariance(
  *! variance and the mean coefficients in the following recursion relationship: 
  *! Q_n(x) = ( x - mean_coefficient_i )Q_(n-1)(x) - variance_(i-1)Q_(n-2)(x) 
  *! see Sloan Eq. (B-97) */
-long double SloanRadauQuadrature::evaluateOrthogonalPolynomial( 
-        const Teuchos::Array<long double>& variances,
-        const Teuchos::Array<long double>& mean_coefficients,
-        const long double x,
+long_float SloanRadauQuadrature::evaluateOrthogonalPolynomial( 
+        const Teuchos::Array<long_float>& variances,
+        const Teuchos::Array<long_float>& mean_coefficients,
+        const long_float x,
         const int i ) const
 {
   // Make sure i is valid
   testPrecondition( i >= 0 )
 
-  long double q_n, q_n_minus_one, q_n_minus_two;
+  long_float q_n, q_n_minus_one, q_n_minus_two;
 
   if ( i == 0 )
   {
-    return 1.0;
+    return long_float(1);
   }
   else
   {
@@ -487,7 +506,7 @@ long double SloanRadauQuadrature::evaluateOrthogonalPolynomial(
     q_n = x - mean_coefficients[1];
     
     // Update for i > 1 
-    q_n_minus_two = 1.0;
+    q_n_minus_two = long_float(1);
     q_n_minus_one = q_n; 
     for ( int k = 2; k <= i; k++ )
     {
@@ -510,20 +529,20 @@ long double SloanRadauQuadrature::evaluateOrthogonalPolynomial(
  *! Returns true if usable root has been found, else returns false.
  */
 bool SloanRadauQuadrature::evaluateOrthogonalRoots( 
-        Teuchos::TwoDArray<long double>& roots,
-        const Teuchos::Array<long double>& variances,
-        const Teuchos::Array<long double>& mean_coefficients,
+        Teuchos::TwoDArray<long_float>& roots,
+        const Teuchos::Array<long_float>& variances,
+        const Teuchos::Array<long_float>& mean_coefficients,
         const int i ) const
 {
   // Make sure i is valid
   testPrecondition( i > 1 )
 
   bool root_found = false;
-  Teuchos::Array<long double> root_bounds( i+1 ), polynomial_at_bounds( i +1 );
+  Teuchos::Array<long_float> root_bounds( i+1 ), polynomial_at_bounds( i +1 );
  
   // Set the absolute lower and upper bound for cosine angle ( -1, +1 )
-  root_bounds[0] = -1.0;
-  root_bounds[i] = 1.0;
+  root_bounds[0] = -long_float(1);
+  root_bounds[i] = long_float(1);
 
   // Use the (n-1)th roots as bounds for the nth roots
   for ( int k = 1; k < i; k++ )
@@ -532,33 +551,33 @@ bool SloanRadauQuadrature::evaluateOrthogonalRoots(
   }
 
   // Check that the orthogonal polynomial has the correct signs at the end points ( -1, +1 )
-  long double polynomial_at_pos_one = evaluateOrthogonalPolynomial( 
+  long_float polynomial_at_pos_one = evaluateOrthogonalPolynomial( 
                                         variances, 
                                         mean_coefficients, 
-                                        1.0, 
+                                        long_float(1), 
                                         i );
 
   // The Legendre expansion should always be positive at 1.0
-  if ( polynomial_at_pos_one <= 0.0 )
+  if ( polynomial_at_pos_one <= long_float(0) )
   {
     // No root found
     return root_found;
   }
 
-  long double polynomial_at_neg_one = evaluateOrthogonalPolynomial( 
+  long_float polynomial_at_neg_one = evaluateOrthogonalPolynomial( 
                                             variances, 
                                             mean_coefficients, 
-                                            -1.0, 
+                                            -long_float(1), 
                                             i );
 
   // The sign of the Legendre expansion at -1.0 will always be -1.0^i
-  if ( polynomial_at_neg_one*pow( -1.0, i ) < 0.0 )
+  if ( polynomial_at_neg_one*pow( -long_float(1), i ) < long_float(0) )
   {
     // No roots found
     return root_found;
   }
 
-  long double remainder,  lower_bound,          upper_bound, 
+  long_float remainder,  lower_bound,          upper_bound, 
                           polynomial_at_lower,  polynomial_at_upper;
 
   for ( int k = 0; k < i; k++ )
@@ -582,7 +601,7 @@ bool SloanRadauQuadrature::evaluateOrthogonalRoots(
 
     /* The orthogonal polynomial should be zero at the root, therefore one of 
      * the bounds should be below zero and the other above zero. */
-    if ( polynomial_at_upper*polynomial_at_lower > 0.0 )
+    if ( polynomial_at_upper*polynomial_at_lower > long_float(0) )
     {
       // no roots found
       return root_found;
@@ -592,7 +611,7 @@ bool SloanRadauQuadrature::evaluateOrthogonalRoots(
     while ( !root_found )
     {
       // Try the midpoint between bounds as a possible root
-      roots[i][k] = ( lower_bound + upper_bound )/2.0;
+      roots[i][k] = ( lower_bound + upper_bound )/long_float(2);
 
       // If root search range has vanished exit while loop
       if (roots[i][k] == lower_bound || roots[i][k] == upper_bound ) 
@@ -609,13 +628,13 @@ bool SloanRadauQuadrature::evaluateOrthogonalRoots(
 
       //std::cout << "remainder = " << remainder << std::endl;
        
-      if ( remainder*polynomial_at_lower > 0.0 )
+      if ( remainder*polynomial_at_lower > long_float(0) )
       {
         // roots[k] is too low, try a higher value
         lower_bound = roots[i][k];
         polynomial_at_lower = remainder;
       }
-      else if ( remainder*polynomial_at_lower < 0.0)
+      else if ( remainder*polynomial_at_lower < long_float(0) )
       {
         // roots[k] is too high, try a lower value
         upper_bound = roots[i][k];
@@ -636,55 +655,57 @@ bool SloanRadauQuadrature::evaluateOrthogonalRoots(
  *! n+1expansion and increase the number of possible roots by 1. 
  */
 void SloanRadauQuadrature::estimateExtraMeanCoefficient(
-        Teuchos::Array<long double>& mean_coefficients, 
-        const Teuchos::Array<long double>& variances,
-        const Teuchos::Array<long double>& normalization_factors_N,
-        const Teuchos::Array<long double>& radau_moments,
+        Teuchos::Array<long_float>& mean_coefficients, 
+        const Teuchos::Array<long_float>& variances,
+        const Teuchos::Array<long_float>& normalization_factors_N,
+        const Teuchos::Array<long_float>& radau_moments,
         const int number_of_roots ) const
 {
   // evaluate the ratio of the nth and (n-1)th orthogonal polynomial at +1
-  long double ratio_at_pos_one = 
+  long_float ratio_at_pos_one = 
       evaluateOrthogonalPolynomial( variances,
                                     mean_coefficients, 
-                                    1.0, 
+                                    long_float(1), 
                                     number_of_roots )/
       evaluateOrthogonalPolynomial( variances,
                                     mean_coefficients, 
-                                    1.0, 
+                                    long_float(1), 
                                     number_of_roots - 1 );
 
   // evaluate the ratio of the nth and (n-1)th orthogonal polynomial at -1
-  long double ratio_at_neg_one = 
+  long_float ratio_at_neg_one = 
       evaluateOrthogonalPolynomial( variances,
                                     mean_coefficients, 
-                                    -1.0, 
+                                    -long_float(1), 
                                     number_of_roots )/
       evaluateOrthogonalPolynomial( variances,
                                     mean_coefficients, 
-                                    -1.0, 
+                                    -long_float(1), 
                                     number_of_roots - 1 );
 
-  long double poly_n_minus_one;
-  long double poly_n = evaluateOrthogonalPolynomial( variances,
-                                                  mean_coefficients, 
-                                                  1.0, 
-                                                  1 );
-    long double parm = 1.0 - radau_moments[0]/poly_n;
+  long_float poly_n_minus_one;
+  long_float poly_n = evaluateOrthogonalPolynomial( variances,
+                                                     mean_coefficients, 
+                                                     long_float(1), 
+                                                     1 );
+    long_float parm = long_float(1) - radau_moments[0]/poly_n;
 
     for ( int k = 2; k < number_of_roots; k++ )
     {
       poly_n_minus_one = poly_n;
       poly_n = evaluateOrthogonalPolynomial( variances,
                                              mean_coefficients, 
-                                             1.0, 
+                                             long_float(1), 
                                              k );
 
       parm += -normalization_factors_N[k]/( poly_n_minus_one*poly_n );
     }
 
     mean_coefficients[number_of_roots+1] = 
-         -variances[number_of_roots]/2.0*( ratio_at_pos_one + ratio_at_neg_one ) 
-         -normalization_factors_N[number_of_roots]/( 2.0*poly_n*poly_n*parm );
+         -variances[number_of_roots]/long_float(2)*
+         ( ratio_at_pos_one + ratio_at_neg_one ) 
+         -normalization_factors_N[number_of_roots]/
+         ( long_float(2)*poly_n*poly_n*parm.convert_to<long_float>() );
 
 }
 

@@ -12,28 +12,30 @@
 
 namespace Utility{
 void getLegendrePowerExpansionCoefficients( 
-                                  Teuchos::TwoDArray<long double>& coefficients,
+                                  Teuchos::TwoDArray<long_float>& coefficients,
                                   const int power )
 {
-  coefficients[0][0] = 1.0;
+  coefficients[0][0] = long_float(1);
 
   if ( power > 0 )
   {
-    coefficients[1][0] = 0.0;
-    coefficients[1][1] = 1.0;
+    coefficients[1][0] = long_float(0);
+    coefficients[1][1] = long_float(1);
 
     /* use recusion relationship to calculate the coefficients:
      * c_(n,l) = l/(2l-1) * c_(n-1,l-1) + (l+1)/(2l+3) * c_(n-1,l+1) */
     for ( int n = 2; n <= power; n++ )
     {
       // Set the 1st coefficient
-      coefficients[n][0] = coefficients[n-1][1]/3.0;
+      coefficients[n][0] = coefficients[n-1][1]/long_float(3);
 
       // Loop through the rest of the coefficients
       for ( int l = 1; l <= n; l++ )
       {
-        coefficients[n][l] =          l/( 2.0*l - 1.0 )*coefficients[n-1][l-1] + 
-                            ( l + 1.0 )/( 2.0*l + 3.0 )*coefficients[n-1][l+1];
+        coefficients[n][l] = 
+            l/( long_float(2)*l - long_float(1) )*coefficients[n-1][l-1] + 
+            ( l + long_float(1) )/
+            ( long_float(2)*l + long_float(3) )*coefficients[n-1][l+1];
       }
     }
   }
@@ -45,8 +47,8 @@ void getLegendrePowerExpansionCoefficients(
  *! M_n = integral_(-1)^(1) x^n f(x) dx = sum_(l=0,..n) f_l c_(n,l).
  *! The zeroth moment should be included
  */
-void getGaussMoments( const Teuchos::Array<double>& legendre_expansion_moments,
-                      Teuchos::Array<double>& gauss_moments )
+void getGaussMoments( const Teuchos::Array<long_float>& legendre_expansion_moments,
+                      Teuchos::Array<long_float>& gauss_moments )
 {
   // Make sure the arrays are the same size
   testPrecondition( gauss_moments.size() == legendre_expansion_moments.size() );
@@ -56,30 +58,31 @@ void getGaussMoments( const Teuchos::Array<double>& legendre_expansion_moments,
   //testPrecondition( legendre_expansion_moments[0] == 1.0 );
 
   int number_of_moments = legendre_expansion_moments.size();
-  long double moment_n;
-  Teuchos::Array<long double> coef_n_minus_one( number_of_moments +1), 
-                              coef_n( number_of_moments +1);
+  long_float moment_n;
+  Teuchos::Array<long_float> coef_n_minus_one( number_of_moments +1), 
+                             coef_n( number_of_moments +1);
 
   gauss_moments[0] = legendre_expansion_moments[0];
   gauss_moments[1] = legendre_expansion_moments[1];
 
-  coef_n_minus_one[0] = 0.0;
-  coef_n_minus_one[1] = 1.0;
+  coef_n_minus_one[0] = long_float(0);
+  coef_n_minus_one[1] = long_float(1);
 
   /* use recusion relationship to calculate the coefficients:
    * c_(n,l) = l/(2l-1) * c_(n-1,l-1) + (l+1)/(2l+3) * c_(n-1,l+1) */
   for ( int n = 2; n < number_of_moments; n++ )
   {
     // Set the 1st coefficient and its contribution to the gauss moment
-    coef_n[0] = coef_n_minus_one[1]/3.0;
+    coef_n[0] = coef_n_minus_one[1]/long_float(3);
     moment_n = coef_n[0]*legendre_expansion_moments[0];
 
     // Loop through the rest of the coefficients and their contribution to the gauss moment
     for ( int l = 1; l <= n; l++ )
     {
       // Calculate coefficient n
-      coef_n[l] = l/( 2.0*l - 1.0 )*coef_n_minus_one[l-1] + 
-                      ( l + 1.0 )/( 2.0*l + 3.0 )*coef_n_minus_one[l+1];
+      coef_n[l] = l/( long_float(2)*l - long_float(1) )*coef_n_minus_one[l-1] + 
+                  ( l + long_float(1) )/
+                  ( long_float(2)*l + long_float(3) )*coef_n_minus_one[l+1];
 
       // Calculate moment n
       moment_n += coef_n[l]*legendre_expansion_moments[l];   
@@ -87,7 +90,7 @@ void getGaussMoments( const Teuchos::Array<double>& legendre_expansion_moments,
     gauss_moments[n] = moment_n;
 
     // Update coefficients
-    coef_n_minus_one = coef_n;     
+    coef_n_minus_one = coef_n;  
   }
 }
 

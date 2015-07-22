@@ -44,6 +44,7 @@ public:
   //! Constructor
   HardElasticElectronScatteringDistribution(
                  const int atomic_number,
+                 const double atomic_weight,
                  const ElasticDistribution& elastic_scattering_distribution);
 
   //! Destructor 
@@ -53,6 +54,16 @@ public:
   //! Evaluate the PDF
   double evaluatePDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
+
+  //! Evaluate the creened Rutherford cross section above the cutoff mu
+  double evaluateScreenedRutherfordCrossSection( 
+                                  const double incoming_energy ) const;
+
+  //! Evaluate the first n screened Rutherford cross section moments above the cutoff mu
+  void evaluateScreenedRutherfordCrossSectionMoments( 
+                                  Teuchos::Array<double>& rutherford_moments,
+                                  const double incoming_energy,
+                                  const double n ) const;
 
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
@@ -85,7 +96,7 @@ public:
                                   unsigned& trials ) const;
 
   //! Evaluate the screening angle at the given electron energy
-  double evaluateScreeningFactor( const double energy ) const;
+  double evaluateAtomicScreeningConstant( const double energy ) const;
 
   //! Evaluate the scattering angle from the analytical screened Rutherford function
   double evaluateScreenedScatteringAngle( const double energy ) const; 
@@ -93,12 +104,14 @@ public:
   //! Sample a scattering angle cosine
   double sampleScatteringAngleCosine( const double energy ) const;
 
-private:
 
-  // Evaluate the analytical Rutherford Screened PDF
+
+  // Evaluate the analytical Screened Rutherford PDF
   double evaluateScreenedRutherfordPDF( 
                                   const double incoming_energy,
                                   const double scattering_angle_cosine ) const;
+
+private:
 
   // Cutoff angle cosine between the distribution and analytical screend Rutherford function
   static double s_mu_cutoff;
@@ -120,6 +133,9 @@ private:
 
   // A parameter for moliere's screening factor (3.76*fsc**2*Z**2)
   double d_screening_param2;
+
+  // A parameter for the screened rutherford cross section
+  double d_rutherford_param1;
 
   // elastic scattering distribution without forward screening data
   ElasticDistribution d_elastic_scattering_distribution;

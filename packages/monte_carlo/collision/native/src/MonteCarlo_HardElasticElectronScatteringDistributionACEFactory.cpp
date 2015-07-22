@@ -20,6 +20,7 @@ namespace MonteCarlo{
 // Create a hard elastic distribution
 void HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
 			  const Data::XSSEPRDataExtractor& raw_electroatom_data,
+              const double atomic_weight,
 			  Teuchos::RCP<const HardElasticElectronScatteringDistribution>&
 			    elastic_distribution )
 {
@@ -40,8 +41,9 @@ void HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistr
 
   elastic_distribution.reset( 
 	      new HardElasticElectronScatteringDistribution( 
-                                                        atomic_number, 
-                                                        scattering_function ) );
+                                                  atomic_number,
+                                                  atomic_weight,
+                                                  scattering_function ) );
 }
 
 // Create common angle cosine grid for interpolation between energies

@@ -18,6 +18,10 @@ namespace Utility{
 double getLegendrePolynomial( const double value,
                               const int polynomial_order = 0 );
 
+//! Evaluate the Legendre Polynomial at the given value and order
+long double getLegendrePolynomial( const long double value,
+                                   const int polynomial_order = 0 );
+
 //! Evaluate the derivative of the Legendre Polynomial at the given value and order
 double getLegendrePolynomialDerivative( const double value,
                                         const int polynomial_order = 0 );
