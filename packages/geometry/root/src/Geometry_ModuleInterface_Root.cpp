@@ -46,7 +46,8 @@ void ModuleInterface<Root>::assignCellIds()
   
   for (int i=0; i < number_volumes; i++) 
   {
-    TObject* current_volume = volume_list_iterator->Next();
+    TObject* current_object = volume_list_iterator->Next();
+    TGeoVolume* current_volume = dynamic_cast<TGeoVolume*>( current_object );
     current_volume->SetUniqueID(i + 1); 
   }
 }
