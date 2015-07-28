@@ -88,7 +88,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 //---------------------------------------------------------------------------//
 // Check that the screening angle can be evaluated
 TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory, 
-                   evaluateAtomicScreeningConstant )
+                   evaluateMoliereScreeningConstant )
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
                                                 *xss_data_extractor,
@@ -99,10 +99,10 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 
   // Calculate scrrening angle
   double screening_factor = 
-    ace_basic_elastic_distribution->evaluateAtomicScreeningConstant( energy );
+    ace_basic_elastic_distribution->evaluateMoliereScreeningConstant( energy );
 
   // Test
-  TEST_FLOATING_EQUALITY( screening_factor, 2.19595774923989E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( screening_factor, 1.9610611503219500E-04, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -129,7 +129,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
     ace_basic_elastic_distribution->evaluateScreenedScatteringAngle( energy );
 
   // Test
-  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999501136, 1e-12 );
+  TEST_FLOATING_EQUALITY( scattering_angle_cosine, 0.999999501272, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//

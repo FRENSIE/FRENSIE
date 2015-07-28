@@ -55,8 +55,13 @@ public:
   double evaluatePDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
 
-  //! Evaluate the creened Rutherford cross section above the cutoff mu
-  double evaluateScreenedRutherfordCrossSection( 
+  // Evaluate the analytical Screened Rutherford PDF
+  double evaluateScreenedRutherfordPDF( 
+                      const double incoming_energy,
+                      const long double scattering_angle_cosine ) const;
+
+  //! Evaluate the screened Rutherford cross section ratio above the cutoff mu
+  double evaluateScreenedRutherfordCrossSectionRatio( 
                                   const double incoming_energy ) const;
 
   //! Evaluate the first n screened Rutherford cross section moments above the cutoff mu
@@ -95,21 +100,14 @@ public:
                                   double& scattering_angle_cosine,
                                   unsigned& trials ) const;
 
-  //! Evaluate the screening angle at the given electron energy
-  double evaluateAtomicScreeningConstant( const double energy ) const;
+  //! Evaluate Moliere's atomic screening constant at the given electron energy
+  double evaluateMoliereScreeningConstant( const double energy ) const;
 
   //! Evaluate the scattering angle from the analytical screened Rutherford function
   double evaluateScreenedScatteringAngle( const double energy ) const; 
 
   //! Sample a scattering angle cosine
   double sampleScatteringAngleCosine( const double energy ) const;
-
-
-
-  // Evaluate the analytical Screened Rutherford PDF
-  double evaluateScreenedRutherfordPDF( 
-                                  const double incoming_energy,
-                                  const double scattering_angle_cosine ) const;
 
 private:
 

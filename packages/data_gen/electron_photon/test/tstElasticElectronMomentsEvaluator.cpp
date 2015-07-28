@@ -104,7 +104,7 @@ n = 2;
 
   UTILITY_TEST_FLOATING_EQUALITY(  
                     diff_cross_section,
-                    9.07761732785113E+01*0.9999982000005400,
+                    9.07761990732033E+01*0.9999982000005400,
                     1e-12 );
 
   diff_cross_section = 
@@ -115,7 +115,7 @@ n = 2;
 
   UTILITY_TEST_FLOATING_EQUALITY( 
                     diff_cross_section,
-                    2.60722053219516E+20*1.0,
+                    2.60722777551300E+20*1.0,
                     6e-11 );	  				  
 }
 
