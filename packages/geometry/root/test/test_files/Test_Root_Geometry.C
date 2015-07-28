@@ -33,7 +33,7 @@ void Test_Root_Geometry()
   TGeoVolume *sphere = gGeoManager->MakeSphere( "SPHERE",H_med,0.,2.5 );
 
   // Add the sphere as a daughter of the cube
-  cube->AddOverlappingNode( sphere, 1 );
+  cube->AddNodeOverlap( sphere, 1 );
   
   // Close the geometry and draw it for visualization
   gGeoManager->CloseGeometry();

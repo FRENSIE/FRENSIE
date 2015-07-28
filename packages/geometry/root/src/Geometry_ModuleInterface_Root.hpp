@@ -212,9 +212,11 @@ inline double ModuleInterface<Root>::getCellVolume(
   
     for (int i=0; i < number_of_daughters; i++) 
     {
-      TObject* current_daughter = daughter_list_iterator->Next();
-      int id = current_daughter->GetUniqueID();
-      volume = volume - Root::getManager()->GetVolume( id )->Capacity();
+      // Obtain the next object in the array and cast it to its derived class
+      TObject* current_object = daughter_list_iterator->Next();
+      TGeoNode* current_node = dynamic_cast<TGeoNode*>( current_object );
+      TGeoVolume* current_daughter = current_node->GetVolume();
+      volume = volume - current_daughter->Capacity();
     }
     return volume;
   }
