@@ -22,11 +22,7 @@ ModuleInterface<Root>::invalid_external_cell_handle = 0;
 // Do just in time initialization of interface members
 void ModuleInterface<Root>::initialize()
 { 
-  #pragma omp master
-  {
-    ModuleInterface<Root>::assignCellIds();
-  }
-  #pragma omp barrier
+  ModuleInterface<Root>::assignCellIds();
 }
 
 // Enable support for multiple threads
