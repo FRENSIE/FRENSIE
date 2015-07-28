@@ -119,6 +119,9 @@ public:
   static double getCellSurfaceArea( const InternalSurfaceHandle surface,
 				    const InternalCellHandle cell );
 
+  //! Check that an external surface handle exists
+  static bool doesSurfaceExist( const ExternalSurfaceId surface );
+
   //! Check that an external cell handle exists
   static bool doesCellExist( const ExternalCellId cell );
 
@@ -236,6 +239,13 @@ inline double ModuleInterface<Root>::getCellSurfaceArea(
 					   const InternalCellHandle )
 {
   return 1;
+}
+
+// Check that an external surface handle exists
+inline bool ModuleInterface<Root>::doesSurfaceExist(
+                const ExternalSurfaceId surface )
+{
+  return ModuleInterface<Root>::doesCellExist( surface );
 }
 
 // Check that an external cell handle exists

@@ -30,5 +30,13 @@ MACRO(ENABLE_ROOT_SUPPORT)
     MESSAGE("   ROOT_CXX_FLAGS = ${ROOT_CXX_FLAGS}")
     MESSAGE("End of ROOT details\n")
   ENDIF()
+  
+  SET(HAVE_${PROJECT_NAME}_ROOT "1")
+  
+  SET(CMAKEDEFINE \#cmakedefine)
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/root_config.hpp.in
+    ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in)
+  CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in
+    ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp)
 
 ENDMACRO()

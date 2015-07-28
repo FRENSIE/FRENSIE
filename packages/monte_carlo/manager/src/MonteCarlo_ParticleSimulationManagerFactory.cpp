@@ -6,6 +6,9 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Moab Includes
+#include "DagMC.hpp"
+
 // FRENSIE Includes
 #include "FRENSIE_dagmc_config.hpp"
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
@@ -14,7 +17,8 @@
 #include "MonteCarlo_SimulationProperties.hpp"
 #include "MonteCarlo_StandardParticleSourceFactory.hpp"
 #include "MonteCarlo_SourceModuleInterface.hpp"
-#include "MonteCarlo_EstimatorHandlerFactory.hpp"
+#include "MonteCarlo_EstimatorHandlerFactoryDecl.hpp"
+#include "MonteCarlo_EstimatorHandlerFactory_DagMC.hpp"
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
 #include "Geometry_ModuleInterface.hpp"
 
@@ -65,7 +69,7 @@ ParticleSimulationManagerFactory::createManager(
   setSourceHandlerInstance( source );
 
   // Initialize the estimator handler
-  EstimatorHandlerFactory::initializeHandlerUsingDagMC( response_def,
+  EstimatorHandlerFactory<moab::DagMC>::initializeHandler( response_def,
 							estimator_def );
 
   // Initialize the collision handler

@@ -16,9 +16,13 @@
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_ParameterList.hpp>
 
+// Moab Includes
+#include <DagMC.hpp>
+
 // FRENSIE Includes
 #include "FRENSIE_dagmc_config.hpp"
 #include "MonteCarlo_EstimatorHandler.hpp"
+#include "MonteCarlo_EstimatorHandlerFactoryDecl.hpp"
 
 #ifdef HAVE_FRENSIE_DAGMC
 #include "Geometry_DagMCProperties.hpp"
@@ -31,7 +35,7 @@ namespace MonteCarlo{
  * \ingroup estimator_module
  */ 
 template<>
-class EstimatorHandlerFactory<DagMC>
+class EstimatorHandlerFactory<moab::DagMC>
 {
 public:
 
@@ -39,12 +43,9 @@ public:
   //! Initialize the estimator handler using DagMC
   static void initializeHandler(
 			        const Teuchos::ParameterList& response_reps,
-				    const Teuchos::ParameterList& estimator_reps );
+				      const Teuchos::ParameterList& estimator_reps );
 
 private:
-
-  // Constructor
-  EstimatorHandlerFactory();
 
   // Validate an estimator representation
   static void validateEstimatorRep( 
@@ -242,85 +243,74 @@ private:
   static const std::string tet_mesh_track_length_flux_name;
 };
 
-//! The invalid estimator representation error
-class InvalidEstimatorRepresentation : public std::logic_error
-{
-  
-public:
-
-  InvalidEstimatorRepresentation( const std::string& what_arg )
-    : std::logic_error( what_arg )
-  { /* ... */ }
-};
-
 // Test if an estimator type is a cell pulse height estimator
-inline bool EstimatorHandlerFactory::isCellPulseHeightEstimator( 
+inline bool EstimatorHandlerFactory<moab::DagMC>::isCellPulseHeightEstimator( 
 					    const std::string& estimator_name )
 {
 #ifdef HAVE_FRENSIE_DAGMC
   return (estimator_name == 
 	  Geometry::DagMCProperties::getCellPulseHeightName() ||
 	  estimator_name ==
-	  EstimatorHandlerFactory::cell_pulse_height_name);
+	  EstimatorHandlerFactory<moab::DagMC>::cell_pulse_height_name);
 #else
-  return estimator_name == EstimatorHandlerFactory::cell_pulse_height_name;
+  return estimator_name == EstimatorHandlerFactory<moab::DagMC>::cell_pulse_height_name;
 #endif
 }
 
 // Test if an estimator type is a cell track length flux estimator
-inline bool EstimatorHandlerFactory::isCellTrackLengthFluxEstimator( 
+inline bool EstimatorHandlerFactory<moab::DagMC>::isCellTrackLengthFluxEstimator( 
 					    const std::string& estimator_name )
 {
 #ifdef HAVE_FRENSIE_DAGMC
   return (estimator_name == 
 	  Geometry::DagMCProperties::getCellTrackLengthFluxName() ||
 	  estimator_name ==
-	  EstimatorHandlerFactory::cell_track_length_flux_name);
+	  EstimatorHandlerFactory<moab::DagMC>::cell_track_length_flux_name);
 #else
   return estimator_name ==
-    EstimatorHandlerFactory::cell_track_length_flux_name;
+    EstimatorHandlerFactory<moab::DagMC>::cell_track_length_flux_name;
 #endif
 }
 
 // Test if an estimator type is a cell collision flux estimator
-inline bool EstimatorHandlerFactory::isCellCollisionFluxEstimator(
+inline bool EstimatorHandlerFactory<moab::DagMC>::isCellCollisionFluxEstimator(
 					    const std::string& estimator_name )
 {
 #ifdef HAVE_FRENSIE_DAGMC
   return (estimator_name == 
           Geometry::DagMCProperties::getCellCollisionFluxName() ||
           estimator_name ==
-          EstimatorHandlerFactory::cell_collision_flux_name);
+          EstimatorHandlerFactory<moab::DagMC>::cell_collision_flux_name);
 #else
-  return estimator_name == EstimatorHandlerFactory::cell_collision_flux_name;
+  return estimator_name == EstimatorHandlerFactory<moab::DagMC>::cell_collision_flux_name;
 #endif
 }
 
 // Test if an estimator type is a surface flux estimator
-inline bool EstimatorHandlerFactory::isSurfaceFluxEstimator(
+inline bool EstimatorHandlerFactory<moab::DagMC>::isSurfaceFluxEstimator(
 					    const std::string& estimator_name )
 {
 #ifdef HAVE_FRENSIE_DAGMC
   return (estimator_name == 
 	  Geometry::DagMCProperties::getSurfaceFluxName() ||
 	  estimator_name == 
-	  EstimatorHandlerFactory::surface_flux_name);
+	  EstimatorHandlerFactory<moab::DagMC>::surface_flux_name);
 #else
-  return estimator_name == EstimatorHandlerFactory::surface_flux_name;
+  return estimator_name == EstimatorHandlerFactory<moab::DagMC>::surface_flux_name;
 #endif
 }
 
 // Test if an estimator type is a surface current estimator
-inline bool EstimatorHandlerFactory::isSurfaceCurrentEstimator( 
+inline bool EstimatorHandlerFactory<moab::DagMC>::isSurfaceCurrentEstimator( 
 					    const std::string& estimator_name )
 {
 #ifdef HAVE_FRENSIE_DAGMC
   return (estimator_name == 
 	  Geometry::DagMCProperties::getSurfaceCurrentName() ||
 	  estimator_name == 
-	  EstimatorHandlerFactory::surface_current_name);
+	  EstimatorHandlerFactory<moab::DagMC>::surface_current_name);
 #else
-  return estimator_name == EstimatorHandlerFactory::surface_current_name;
+  return estimator_name == EstimatorHandlerFactory<moab::DagMC>::surface_current_name;
 #endif
 }
 

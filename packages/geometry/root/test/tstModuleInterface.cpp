@@ -203,7 +203,7 @@ int main( int argc, char** argv )
   out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
   out->setOutputToRootOnly( 0 );
   
-  // Initialize DagMC
+  // Initialize Root
   Geometry::Root::initialize( test_geom_root_file_name );
 
   // Initialize the Module Interface
