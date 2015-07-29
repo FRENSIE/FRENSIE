@@ -11,6 +11,7 @@
 
 // Boost Includes
 #include <boost/scoped_ptr.hpp>
+#include <boost/multiprecision/cpp_dec_float.hpp>
 /*
 // Std Lib Includes
 #include <limits>
@@ -30,6 +31,7 @@
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 #include "MonteCarlo_HardElasticElectronScatteringDistribution.hpp"
+#include "Utility_SloanRadauQuadrature.hpp"
 
 
 namespace DataGen{
@@ -49,28 +51,34 @@ public:
   ElasticElectronMomentsEvaluator(
     const Data::XSSEPRDataExtractor& raw_ace_data,
     const Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>&
-                               elastic_distribution );
+                               elastic_distribution,
+    const double& cutoff_angle_cosine = 0.9 );
 
   //! Destructor
   ~ElasticElectronMomentsEvaluator()
   { /* ... */ }
 
   //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic cross section (dc/dx)
-  double evaluateLegendreExpandedPDF(
-                                    const double scattering_angle_cosine,
-                                    const double incoming_energy, 
-                                    const int polynomial_order = 0) const;
+  double evaluateLegendreExpandedPDF( const double scattering_angle_cosine,
+                                      const double incoming_energy, 
+                                      const int polynomial_order = 0) const;
 
   //! Evaluate the Legnendre Polynomial expansion of the screened rutherford
   double evaluateLegendreExpandedScreenedRutherford(
-                                    const double scattering_angle_cosine,
-                                    const double incoming_energy, 
-                                    const int polynomial_order = 0 ) const;
+            const double scattering_angle_cosine,
+            const double incoming_energy, 
+            const int polynomial_order = 0 ) const;
 
-  //! Return the cross section moment at a given energy and polynomial order
-  double evaluateCrossSectionMoment( const double energy, 
-                                     const int polynomial_order,
-                                     const double precision ) const;
+  //! Return the moment of the elastic scattering distribution at a given energy and polynomial order
+  double evaluateElasticMoment( const double energy, 
+                                const int polynomial_order,
+                                const double precision ) const;
+
+  //! Evaluate the first n screened Rutherford cross section moments above the cutoff mu
+  void evaluateNormalizedScreenedRutherfordMoments( 
+            Teuchos::Array<Utility::long_float>& rutherford_moments,
+            const double energy,
+            const int n ) const;
 
 private:
 
@@ -83,6 +91,15 @@ private:
 
   // The raw ace electron data extractor
   Data::XSSEPRDataExtractor d_raw_ace_data;
+
+  // The angle cosine cutoff between hard and soft scattering
+  double d_cutoff_angle_cosine;
+
+  // The angle cosine cutoff between the distrubution and screened Rutherford scattering
+  static double s_rutherford_cutoff;
+
+  // Difference btw cutoff angle cosine for analytical peak and foward peak (mu=1)
+  static double s_delta_rutherford;
 };
 
 } // end DataGen namespace

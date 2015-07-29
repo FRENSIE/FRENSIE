@@ -28,14 +28,14 @@ public:
   //! Create a basic hard elastic distribution
   static void createHardElasticDistribution(
 			const Data::XSSEPRDataExtractor& raw_electroatom_data,
-            const double atomic_weight,
 			Teuchos::RCP<const HardElasticElectronScatteringDistribution>&
 			  elastic_distribution );
 
   //! Create common angle cosine grid for interpolation between energies
   static void createCommonAngularGrid(
                  const Data::XSSEPRDataExtractor& raw_electroatom_data,
-                 Teuchos::Array<double>& common_angular_grid );
+                 Teuchos::Array<double>& common_angular_grid,
+                 const double cutoff_mu );
 
   //! Return angle cosine grid for given grid energy bin
   static Teuchos::Array<double> getAngularGrid(

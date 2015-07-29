@@ -19,12 +19,23 @@
 #include "MonteCarlo_ElectroatomFactory.hpp"
 #include "MonteCarlo_ElectronMaterial.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
+#include "MonteCarlo_HardElasticElectronScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_HardElasticElectronScatteringDistribution.hpp"
+#include "Data_ACEFileHandler.hpp"
+#include "Data_XSSEPRDataExtractor.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables.
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::ElectronMaterial> material;
+
+std::string test_cross_sections_xml_directory;
+Teuchos::ParameterList cross_section_table_info;
+boost::unordered_set<std::string> electroatom_aliases;
+Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
+Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution> 
+                    distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -48,15 +59,29 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, getNumberDensity )
 // Check that the macroscopic total cross section can be returned
 TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicTotalCrossSection )
 {
+  double energy = 1.00000e-05;
   double cross_section = 
-    material->getMacroscopicTotalCrossSection( 1.00000e-05 );
+    material->getMacroscopicTotalCrossSection( energy );
+  double ratio = 
+    distribution->evaluateScreenedRutherfordCrossSectionRatio( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 7.641204418336E+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 
+                          7.641204418336E+06 + ratio*7.234825686582E+06, 
+                          1e-12 );
+
+
+  energy = 1.00000e+05;
+  cross_section = 
+    material->getMacroscopicTotalCrossSection( energy );
+  ratio = 
+    distribution->evaluateScreenedRutherfordCrossSectionRatio( energy );
 
   cross_section = 
-    material->getMacroscopicTotalCrossSection( 1.00000e+05 );
+    material->getMacroscopicTotalCrossSection( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.269992326372E+03, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 
+                          8.269992326372E+03 + ratio*2.566534386946E-04, 
+                          1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -157,17 +182,27 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, getMacroscopicReactionCrossSection )
   TEST_FLOATING_EQUALITY( cross_section, 5.296521123591E+02, 1e-12 );
 
   // Test that the hard elastic cross section can be returned
+  double energy = 1.00000e-05;
+  double ratio = 
+    distribution->evaluateScreenedRutherfordCrossSectionRatio( energy );
   cross_section = material->getMacroscopicReactionCrossSection(
-			    1.00000e-05,
-			    MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+			    energy,
+			    MonteCarlo::HARD_ELASTIC_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 7.234825686582E+06, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 
+                          7.234825686582E+06*( 1.0 + ratio ), 
+                          1e-12 );
 
+
+  energy = 1.00000e+05;
+  ratio = distribution->evaluateScreenedRutherfordCrossSectionRatio( energy );
   cross_section = material->getMacroscopicReactionCrossSection( 
-			    1.00000e+05,
-			    MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+			    energy,
+			    MonteCarlo::HARD_ELASTIC_ELECTROATOMIC_REACTION );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.566534386946E-04, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 
+                          2.566534386946E-04*( 1.0 + ratio ), 
+                          1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -234,8 +269,6 @@ TEUCHOS_UNIT_TEST( ElectronMaterial, collideSurvivalBias )
 //---------------------------------------------------------------------------//
 int main( int argc, char** argv )
 {
-  std::string test_cross_sections_xml_directory;
-
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
 
   clp.setOption( "test_cross_sections_xml_directory",
@@ -259,7 +292,6 @@ int main( int argc, char** argv )
     cross_section_xml_file += "/cross_sections.xml";
     
     // Read in the xml file storing the cross section table info
-    Teuchos::ParameterList cross_section_table_info;
     Teuchos::updateParametersFromXmlFile(
 				 cross_section_xml_file,
 				 Teuchos::inoutArg(cross_section_table_info) );
@@ -298,6 +330,53 @@ int main( int argc, char** argv )
                                                       atom_fractions,
                                                       atom_names ) );
   }
+
+  // Create the set of electroatom aliases
+  electroatom_aliases.insert( "Pb" );
+
+  // Create each electroatom in the set
+  boost::unordered_set<std::string>::const_iterator electroatom_name = 
+    electroatom_aliases.begin();
+
+  Teuchos::ParameterList table_info;
+
+  table_info = cross_section_table_info.sublist( *electroatom_name );
+
+
+  // Set the abs. path to the ace library file containing the desired table
+  std::string ace_file_path = test_cross_sections_xml_directory + "/";
+  
+  ace_file_path += 
+      table_info.get<std::string>("electroatomic_file_path");
+
+  // Get the start line
+  int electroatomic_file_start_line;
+  
+  electroatomic_file_start_line = 
+      table_info.get<int>( "electroatomic_file_start_line" );
+  
+  // Get the table name
+  std::string electroatomic_table_name;
+  
+  electroatomic_table_name = 
+      table_info.get<std::string>( "electroatomic_table_name" );
+
+  // Create the ACEFileHandler
+  Data::ACEFileHandler ace_file_handler( ace_file_path,
+					   electroatomic_table_name,
+					   electroatomic_file_start_line,
+					   1u );
+    
+  // Create the XSS data extractor
+  xss_data_extractor.reset( new Data::XSSEPRDataExtractor( 
+					 ace_file_handler.getTableNXSArray(),
+					 ace_file_handler.getTableJXSArray(),
+					 ace_file_handler.getTableXSSArray() ) );
+
+  MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
+                                                 *xss_data_extractor,
+                                                 distribution ); 
+
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

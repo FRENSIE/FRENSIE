@@ -163,10 +163,10 @@ double correlatedSample(
 double correlatedSample(
                     const Teuchos::RCP<const Utility::TabularOneDDistribution>&
 		    upper_distribution,
-		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		            const Teuchos::RCP<const Utility::TabularOneDDistribution>&
 		    lower_distribution,
-		    const double interpolation_fraction,
-		    const double max_indep_var )
+		            const double interpolation_fraction,
+		            const double max_indep_var )
 {  
   // Sample the upper and lower distributions using the same random number
   double random_number = 

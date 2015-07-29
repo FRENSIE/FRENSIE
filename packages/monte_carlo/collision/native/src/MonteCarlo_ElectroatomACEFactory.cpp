@@ -47,13 +47,12 @@ void ElectroatomACEFactory::createElectroatomCore(
   // Create the hard elastic scattering reaction
   {
     Electroatom::ReactionMap::mapped_type& reaction_pointer = 
-      scattering_reactions[ELASTIC_ELECTROATOMIC_REACTION];
+      scattering_reactions[HARD_ELASTIC_ELECTROATOMIC_REACTION];
 
     ElectroatomicReactionACEFactory::createHardElasticReaction(
 					   raw_electroatom_data,
 					   energy_grid,
-					   reaction_pointer,
-                       atomic_weight );
+					   reaction_pointer );
   }
 
   // Create the bremsstrahlung scattering reaction

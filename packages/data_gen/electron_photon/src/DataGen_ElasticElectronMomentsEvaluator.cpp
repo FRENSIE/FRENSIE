@@ -25,11 +25,20 @@
 
 namespace DataGen{
 
+// Initialize static member data
+
+// cutoff angle cosine for analytical peak
+double ElasticElectronMomentsEvaluator::s_rutherford_cutoff = 0.999999;
+
+// Difference btw cutoff angle cosine for analytical peak and foward peak (mu=1)
+double ElasticElectronMomentsEvaluator::s_delta_rutherford = 1.0e-6;
+
 // Constructor
 ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
     const Data::XSSEPRDataExtractor& raw_ace_data,
     const Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>&
-                                     elastic_distribution )
+                                     elastic_distribution,
+    const double& cutoff_angle_cosine )
   : d_raw_ace_data ( raw_ace_data ),
     d_elastic_distribution( elastic_distribution )
 {
@@ -99,8 +108,8 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedScreenedRutherfo
   return pdf_value*legendre_value;
 }
 
-// Return the cross section moment at a given energy and polynomial order
-double ElasticElectronMomentsEvaluator::evaluateCrossSectionMoment( 
+// Return the moment of the elastic scattering distribution at a given energy and polynomial order
+double ElasticElectronMomentsEvaluator::evaluateElasticMoment( 
                                const double energy, 
                                const int polynomial_order,
                                const double precision ) const
@@ -117,14 +126,6 @@ double ElasticElectronMomentsEvaluator::evaluateCrossSectionMoment(
                          energy,
                          polynomial_order );
 
-  // Create boost rapper function for the screened Rutherford cross section
-  boost::function<double (double x)> rutherford_wrapper = 
-    boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedScreenedRutherford,
-                         boost::cref( *this ),
-                         _1,
-                         energy,
-                         polynomial_order );
-
   double abs_error = 0.0, total_moment = 0.0, moment_i = 0.0;
     
   // Get common angular grid
@@ -132,7 +133,8 @@ double ElasticElectronMomentsEvaluator::evaluateCrossSectionMoment(
 
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createCommonAngularGrid(
                                         d_raw_ace_data,
-                                        common_angular_grid );
+                                        common_angular_grid,
+                                        d_cutoff_angle_cosine );
 
   Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
 
@@ -151,6 +153,77 @@ double ElasticElectronMomentsEvaluator::evaluateCrossSectionMoment(
   }
 
   return total_moment;
+}
+
+// Evaluate the first n normalized moments of the screened Rutherford distribution above the cutoff mu
+void ElasticElectronMomentsEvaluator::evaluateNormalizedScreenedRutherfordMoments( 
+            Teuchos::Array<Utility::long_float>& rutherford_moments,
+            const double energy,
+            const int n ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( energy > 0.0 );
+
+  double angle_cosine, delta_cosine;
+
+  if ( d_cutoff_angle_cosine <= s_rutherford_cutoff )
+  { 
+    angle_cosine = 
+        s_rutherford_cutoff;
+    delta_cosine = 
+        s_delta_rutherford;
+  }
+  else
+  {
+    angle_cosine = d_cutoff_angle_cosine;
+    delta_cosine = 1.0 - angle_cosine;
+  }
+
+  double eta = 
+    d_elastic_distribution->evaluateMoliereScreeningConstant( energy );
+
+  rutherford_moments[0] = Utility::long_float(1);
+        //evaluateScreenedRutherfordCrossSectionRatio( energy );
+
+  if ( n > 0 )
+  {
+    Teuchos::Array<Utility::long_float> coef_one( n+1 ), coef_two( n+1 );
+
+    coef_one[0] = Utility::long_float(0);
+    coef_one[1] = ( log( ( eta + delta_cosine )/( eta ) ) ) -
+                   delta_cosine/( delta_cosine + eta );
+
+    coef_two[0] = delta_cosine;
+    coef_two[1] = ( Utility::long_float(1) - angle_cosine*angle_cosine )/
+                    Utility::long_float(2);
+
+    for ( int i = 1; i < n; i++ )
+    {
+      coef_one[i+1] = 
+        ( Utility::long_float(2) + Utility::long_float(1)/i )*
+        ( Utility::long_float(1) + eta )*coef_one[i] - 
+        ( Utility::long_float(1) + Utility::long_float(1)/i )*coef_one[i-1] -
+        ( ( 2.0L + Utility::long_float(1)/i )/( delta_cosine + eta ) )*
+        ( delta_cosine - coef_two[i]);
+
+      coef_two[i+1] = 
+        ( Utility::long_float(2)*i + Utility::long_float(1) )/
+        ( i + Utility::long_float(2) )*angle_cosine*coef_two[i] - 
+        ( i - Utility::long_float(1) )*( i + Utility::long_float(2) )*
+        coef_two[i-1];
+    } 
+    Utility::long_float frac_disc = 
+        delta_cosine*( Utility::long_float(1) + eta/Utility::long_float(2) )/
+        ( delta_cosine + eta );
+
+    for ( int i = 1; i <= n; i++ )
+    {
+      rutherford_moments[i] = 
+        ( Utility::long_float(1) - 
+        eta*( Utility::long_float(1) + eta/Utility::long_float(2) )*
+        coef_one[i]/frac_disc );
+    }
+  }
 }
 
 } // end DataGen namespace

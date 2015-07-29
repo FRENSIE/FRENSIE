@@ -30,8 +30,6 @@ Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::RCP< const MonteCarlo::HardElasticElectronScatteringDistribution> 
   ace_basic_elastic_distribution;
 
-double atomic_weight = 207.2;
-
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -41,10 +39,12 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 {
 
   Teuchos::Array<double> common_angular_grid;
+  double cutoff_angle = 0.9;
 
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createCommonAngularGrid(
                                                 *xss_data_extractor,
-                                                common_angular_grid );
+                                                common_angular_grid,
+                                                cutoff_angle );
 
   // Test
   TEST_EQUALITY_CONST( common_angular_grid.size(), 407 );
@@ -92,7 +92,6 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
                                                 *xss_data_extractor,
-                                                atomic_weight,
                                                 ace_basic_elastic_distribution );
   // Set energy in MeV
   double energy = 1.0;
@@ -112,7 +111,6 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
                                                 *xss_data_extractor,
-                                                atomic_weight,
                                                 ace_basic_elastic_distribution );
 
   // Set fake random number stream
@@ -139,7 +137,6 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
                                                 *xss_data_extractor,
-                                                atomic_weight,
                                                 ace_basic_elastic_distribution );
 
   // Set fake random number stream
@@ -170,7 +167,6 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
                                                 *xss_data_extractor,
-                                                atomic_weight,
                                                 ace_basic_elastic_distribution );
 
   // Set fake random number stream
@@ -203,7 +199,6 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
                                                 *xss_data_extractor,
-                                                atomic_weight,
                                                 ace_basic_elastic_distribution );
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
@@ -231,7 +226,6 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
                                                 *xss_data_extractor,
-                                                atomic_weight,
                                                 ace_basic_elastic_distribution );
 
   // Set fake random number stream
@@ -261,7 +255,6 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
                                                 *xss_data_extractor,
-                                                atomic_weight,
                                                 ace_basic_elastic_distribution );
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );
@@ -292,7 +285,6 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 {
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
                                                 *xss_data_extractor,
-                                                atomic_weight,
                                                 ace_basic_elastic_distribution );
   // Set fake random number stream
   std::vector<double> fake_stream( 2 );

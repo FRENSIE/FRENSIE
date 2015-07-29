@@ -33,6 +33,8 @@
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator>
   distribution;
+Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>
+    elastic_scattering_distribution;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -72,10 +74,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                     1e-12 );
 
   diff_cross_section = 
-    distribution->evaluateLegendreExpandedPDF( 
-                                                    9.999980000000E-01,
-                                                    1.000000000000E+05,
-                                                    n );
+    distribution->evaluateLegendreExpandedPDF( 9.999980000000E-01,
+                                               1.000000000000E+05,
+                                               n );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
                     diff_cross_section,
@@ -95,58 +96,103 @@ n = 2;
                     diff_cross_section,
                     5.000000000000E-01*1.0000000000000000,
                     1e-12 );
-
-  diff_cross_section = 
-    distribution->evaluateLegendreExpandedPDF( 
-                                                    9.999994000000E-01,
-                                                    1.000000000000E-03,
-                                                    n );
-
-  UTILITY_TEST_FLOATING_EQUALITY(  
-                    diff_cross_section,
-                    9.07761990732033E+01*0.9999982000005400,
-                    1e-12 );
-
-  diff_cross_section = 
-    distribution->evaluateLegendreExpandedPDF( 
-                                                    1.0,
-                                                    1.000000000000E+05,
-                                                    n );
-
-  UTILITY_TEST_FLOATING_EQUALITY( 
-                    diff_cross_section,
-                    2.60722777551300E+20*1.0,
-                    6e-11 );	  				  
 }
 
 //---------------------------------------------------------------------------//
 // Check that the hydrogen cross section moments can be evaluated
 TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
-                   evaluateCrossSectionMoment )
+                   evaluateElasticMoment )
 {
   double precision = 1e-13;
   double n = 0;
 
   double moment = 
-           distribution->evaluateCrossSectionMoment( 1.0e-5, n, precision );
+           distribution->evaluateElasticMoment( 1.0e-5, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( moment,
                                   9.999995E-01,
                                   1e-13 );	
 
 
-  moment = distribution->evaluateCrossSectionMoment( 0.001, n, precision );
+  moment = distribution->evaluateElasticMoment( 0.001, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( moment,
                                   9.99909223828E-01,
                                   1e-13 );
 
 
-  moment = distribution->evaluateCrossSectionMoment( 1.0e5, n, precision );
+  moment = distribution->evaluateElasticMoment( 1.0e5, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( moment,
                                   5.51213218221E-01,
                                   1e-13 );			 
+}
+
+//---------------------------------------------------------------------------//
+// Check that the hydrogen cross section moments can be evaluated
+TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
+                   evaluateNormalizedScreenedRutherfordMoments )
+{
+  double n = 6;
+  Teuchos::Array<Utility::long_float> rutherford_moments(n+1), moments(n+1);
+
+  moments[0] = 1.0L;
+  moments[1] = 9.99999999999336E-01L; 
+  moments[2] = 9.99999999998009E-01L; 
+  moments[3] = 9.99999999996018E-01L; 
+  moments[4] = 9.99999999993726E-01L; 
+  moments[5] = 9.99999999992247E-01L; 
+  moments[6] = 9.99999999987942E-01L;
+
+  double energy = 1.0e-5;
+  distribution->
+    evaluateNormalizedScreenedRutherfordMoments( rutherford_moments,
+                                                   energy, 
+                                                   n);
+  
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[0].convert_to<double>(),
+                                  1.0,
+                                  1e-13 );	
+
+
+  energy = 0.001;
+  distribution->
+    evaluateNormalizedScreenedRutherfordMoments( rutherford_moments,
+                                                   energy, 
+                                                   n);
+  
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[0].convert_to<double>(),
+                                  1.0,
+                                  1e-13 );
+
+
+  energy =1.0e5;
+  distribution->
+    evaluateNormalizedScreenedRutherfordMoments( rutherford_moments,
+                                                   energy, 
+                                                   n);
+  
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[0].convert_to<double>(), 
+                                  moments[0].convert_to<double>(),
+                                  1e-13 );	
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[1].convert_to<double>(), 
+                                  moments[1].convert_to<double>(),
+                                  1e-13 );		
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[2].convert_to<double>(), 
+                                  moments[2].convert_to<double>(), 
+                                  1e-13 );
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[3].convert_to<double>(), 
+                                  moments[3].convert_to<double>(),  
+                                  1e-13 );
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[4].convert_to<double>(), 
+                                  moments[4].convert_to<double>(),
+                                  1e-13 ); 
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[5].convert_to<double>(), 
+                                  moments[5].convert_to<double>(),  
+                                  1e-13 ); 
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[6].convert_to<double>(), 
+                                  moments[6].convert_to<double>(),
+                                  1e-13 ); 
 }
 
 //---------------------------------------------------------------------------//
@@ -243,16 +289,9 @@ int main( int argc, char** argv )
   // Get the atomic number 
   const int atomic_number = xss_data_extractor->extractAtomicNumber();
 
-  // Set the atomic weight
-  double atomic_weight = 207.2;
-
-  Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>
-    elastic_scattering_distribution;
-
   elastic_scattering_distribution.reset( 
 	      new MonteCarlo::HardElasticElectronScatteringDistribution( 
                                                 atomic_number, 
-                                                atomic_weight,
                                                 elastic_scattering_function ) );
 
 /*

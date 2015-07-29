@@ -17,6 +17,8 @@
 // FRENSIE Includes
 #include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_HardElasticElectronScatteringDistributionACEFactory.hpp"
+#include "MonteCarlo_HardElasticElectronScatteringDistribution.hpp"
 #include "Data_ACEFileHandler.hpp"
 #include "Data_XSSEPRDataExtractor.hpp"
 #include "Utility_InterpolationPolicy.hpp"
@@ -30,40 +32,52 @@ MonteCarlo::BremsstrahlungAngularDistributionType photon_distribution_function;
 Teuchos::RCP<Data::XSSEPRDataExtractor> xss_data_extractor;
 Teuchos::ArrayRCP<double> energy_grid;
 Teuchos::RCP<MonteCarlo::ElectroatomicReaction> reaction;
+Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution> 
+                    distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that an elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory, 
-		   createElasticReaction )
+		           createElasticReaction )
 {
-  double atomic_weight = 207.2;
+  MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
+                                                 *xss_data_extractor,
+                                                 distribution ); 
 
   MonteCarlo::ElectroatomicReactionACEFactory::createHardElasticReaction(
                 *xss_data_extractor,
                 energy_grid,
-                reaction,
-                atomic_weight );
+                reaction );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),
-		       MonteCarlo::ELASTIC_ELECTROATOMIC_REACTION );
+		       MonteCarlo::HARD_ELASTIC_ELECTROATOMIC_REACTION );
   TEST_EQUALITY_CONST( reaction->getThresholdEnergy(), 1.00000e-5 );
   
   // Test that the stored cross section is correct
+  double energy = 1.00000e-5;
   double cross_section = 
-    reaction->getCrossSection( 1.00000e-5 );
+    reaction->getCrossSection( energy );
+  double ratio = 1.0 + 
+    distribution->evaluateScreenedRutherfordCrossSectionRatio( energy );
   
-  TEST_FLOATING_EQUALITY( cross_section, 2.489240000000e+9, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.489240000000e+9*ratio, 1e-12 );
 
-  cross_section = reaction->getCrossSection( 4.00000e-4 );
+  energy = 4.00000e-4;
+  cross_section = reaction->getCrossSection( energy );
+  ratio = 1.0 + 
+    distribution->evaluateScreenedRutherfordCrossSectionRatio( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e+8, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458e+8*ratio, 1e-12 );
 
-  cross_section = reaction->getCrossSection( 1.00000e+5 );
+  energy = 1.00000e+5;
+  cross_section = reaction->getCrossSection( energy );
+  ratio = 1.0 + 
+    distribution->evaluateScreenedRutherfordCrossSectionRatio( energy );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.830510000000e-2, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.830510000000e-2*ratio, 1e-12 );
 
   // Clear the reaction
   reaction.reset();

@@ -32,8 +32,7 @@ namespace MonteCarlo{
 void ElectroatomicReactionACEFactory::createHardElasticReaction(
 			const Data::XSSEPRDataExtractor& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
-            const double atomic_weight )
+			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
@@ -46,35 +45,20 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
   
   // Index of first non zero cross section in the energy grid
   unsigned threshold_energy_index;
-/*
+
   // Remove all cross sections equal to zero
   ElectroatomicReactionACEFactory::removeZerosFromCrossSection(
                               energy_grid,
                               raw_electroatom_data.extractElasticCrossSection(),
                               elastic_cross_section,
                               threshold_energy_index );
-*/
-  Teuchos::ArrayView<const double> raw_cross_section =
-        raw_electroatom_data.extractElasticCrossSection();
-
-  elastic_cross_section.assign( raw_cross_section.begin(), 
-                                raw_cross_section.end() ); 
 
   // Create the elastic scattering distribution
   Teuchos::RCP<const HardElasticElectronScatteringDistribution> distribution;
 
   HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
                                                  raw_electroatom_data,
-                                                 atomic_weight,
                                                  distribution ); 
-
-  for ( int i = 0; i < energy_grid.size(); i++ )
-  {
-    elastic_cross_section[i] *= ( 1.0 +
-        distribution->evaluateScreenedRutherfordCrossSectionRatio( 
-                                                    energy_grid[i] ) );
-  }
-
 
   elastic_reaction.reset(
 	new HardElasticElectroatomicReaction<Utility::LinLin>(

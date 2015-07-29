@@ -44,7 +44,6 @@ public:
   //! Constructor
   HardElasticElectronScatteringDistribution(
                  const int atomic_number,
-                 const double atomic_weight,
                  const ElasticDistribution& elastic_scattering_distribution);
 
   //! Destructor 
@@ -64,12 +63,6 @@ public:
   double evaluateScreenedRutherfordCrossSectionRatio( 
                                   const double incoming_energy ) const;
 
-  //! Evaluate the first n screened Rutherford cross section moments above the cutoff mu
-  void evaluateScreenedRutherfordCrossSectionMoments( 
-                                  Teuchos::Array<double>& rutherford_moments,
-                                  const double incoming_energy,
-                                  const double n ) const;
-
   //! Sample an outgoing energy and direction from the distribution
   void sample( const double incoming_energy,
                double& outgoing_energy,
@@ -87,7 +80,7 @@ public:
                         SubshellType& shell_of_interaction ) const;
                         
   //! Randomly scatter the adjoint electron
-  void scatterAdjointElectron( AdjointElectronState& electron,
+  void scatterAdjointElectron( AdjointElectronState& adjoint_electron,
                                ParticleBank& bank,
                                SubshellType& shell_of_interaction ) const;
 
@@ -106,13 +99,10 @@ public:
   //! Evaluate the scattering angle from the analytical screened Rutherford function
   double evaluateScreenedScatteringAngle( const double energy ) const; 
 
-  //! Sample a scattering angle cosine
-  double sampleScatteringAngleCosine( const double energy ) const;
-
 private:
 
-  // Cutoff angle cosine between the distribution and analytical screend Rutherford function
-  static double s_mu_cutoff;
+  // Cutoff angle cosine between the distribution and analytical screened Rutherford function
+  static double s_rutherford_cutoff;
 
   // Difference btw cutoff angle cosine and forward peak (mu = 1)
   static double s_delta_cutoff;
@@ -131,9 +121,6 @@ private:
 
   // A parameter for moliere's screening factor (3.76*fsc**2*Z**2)
   double d_screening_param2;
-
-  // A parameter for the screened rutherford cross section
-  double d_rutherford_param1;
 
   // elastic scattering distribution without forward screening data
   ElasticDistribution d_elastic_scattering_distribution;

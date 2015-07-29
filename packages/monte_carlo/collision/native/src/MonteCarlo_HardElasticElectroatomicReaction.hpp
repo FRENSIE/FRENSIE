@@ -7,7 +7,7 @@
 //---------------------------------------------------------------------------//
 
 #ifndef MONTE_CARLO_HARD_ELASTIC_ELECTROATOMIC_REACTION_HPP
-#define MONTE_CARLO_ELECTROIONIZATION_ELECTROATOMIC_REACTION_HPP
+#define MONTE_CARLO_HARD_ELASTIC_ELECTROATOMIC_REACTION_HPP
 
 // Trilinos Includes
 #include <Teuchos_RCP.hpp>
@@ -38,6 +38,9 @@ public:
   ~HardElasticElectroatomicReaction()
   { /* ... */ }
 
+  //! Return the cross section at the given energy
+  double getCrossSection( const double energy ) const;
+
   //! Return the number of electrons emitted from the rxn at the given energy
   unsigned getNumberOfEmittedElectrons( const double energy ) const;
 
@@ -58,10 +61,15 @@ private:
   // The hard_elastic scattering distribution
   Teuchos::RCP<const HardElasticElectronScatteringDistribution> 
     d_scattering_distribution;
-/*
-  // The hard_elastic scattering distribution
-  HardElasticElectronScatteringDistribution d_scattering_distribution;
-*/
+
+  // The incoming energy grid (logarithms)
+  Teuchos::ArrayRCP<const double> d_incoming_energy_grid;
+
+  // The cross section values evaluated on the incoming energy grid
+  Teuchos::ArrayRCP<const double> d_cross_section;
+
+  // The threshold energy
+  const unsigned d_threshold_energy_index;
 };
 
 } // end MonteCarlo namespace
@@ -74,7 +82,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_ELECTROIONIZATION_ELECTROATOMIC_REACTION_HPP
+#endif // end MONTE_CARLO_HARD_ELASTIC_ELECTROATOMIC_REACTION_HPP
 
 //---------------------------------------------------------------------------//
 // end MonteCarlo_HardElasticElectroatomicReaction.hpp

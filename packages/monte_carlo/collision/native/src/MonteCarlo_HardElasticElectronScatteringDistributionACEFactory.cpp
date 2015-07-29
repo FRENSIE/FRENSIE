@@ -20,7 +20,6 @@ namespace MonteCarlo{
 // Create a hard elastic distribution
 void HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
 			  const Data::XSSEPRDataExtractor& raw_electroatom_data,
-              const double atomic_weight,
 			  Teuchos::RCP<const HardElasticElectronScatteringDistribution>&
 			    elastic_distribution )
 {
@@ -42,7 +41,6 @@ void HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistr
   elastic_distribution.reset( 
 	      new HardElasticElectronScatteringDistribution( 
                                                   atomic_number,
-                                                  atomic_weight,
                                                   scattering_function ) );
 }
 
@@ -53,8 +51,13 @@ void HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistr
  * common angle cosine grid must be created. */ 
 void HardElasticElectronScatteringDistributionACEFactory::createCommonAngularGrid(
                  const Data::XSSEPRDataExtractor& raw_electroatom_data,
-                 Teuchos::Array<double>& common_angular_grid )
+                 Teuchos::Array<double>& common_angular_grid,
+                 const double cutoff_mu )
 {
+  // Make sure the atomic weight is valid
+  testPrecondition( cutoff_mu >= -1.0 );
+  testPrecondition( cutoff_mu < 1.0 );
+
   // Extract the elastic scattering information data block (ELASI)
   Teuchos::ArrayView<const double> elasi_block(
 				     raw_electroatom_data.extractELASIBlock() );
