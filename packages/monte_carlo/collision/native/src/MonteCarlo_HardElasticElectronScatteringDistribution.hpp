@@ -54,6 +54,10 @@ public:
   double evaluatePDF( const double incoming_energy,
                       const double scattering_angle_cosine ) const;
 
+  //! Evaluate the CDF
+  double evaluateCDF( const double incoming_energy,
+                      const double scattering_angle_cosine ) const;
+
   // Evaluate the analytical Screened Rutherford PDF
   double evaluateScreenedRutherfordPDF( 
                       const double incoming_energy,

@@ -40,7 +40,8 @@ public:
   //! Return angle cosine grid for given grid energy bin
   static Teuchos::Array<double> getAngularGrid(
                  const Data::XSSEPRDataExtractor& raw_electroatom_data,
-                 unsigned energy_bin );
+                 const unsigned energy_bin,
+                 const double cutoff_mu );
 
 protected:
 

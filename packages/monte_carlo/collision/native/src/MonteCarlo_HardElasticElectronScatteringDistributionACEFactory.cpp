@@ -44,11 +44,12 @@ void HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistr
                                                   scattering_function ) );
 }
 
-// Create common angle cosine grid for interpolation between energies
-/* \details To calculate the moments of the elastic cross section, the elastic 
- * scattering distriution must be piecewise numerically integrated. In order 
- * to calculate moments with energies inbetween the energy grid points a 
- * common angle cosine grid must be created. */ 
+// Create common angle cosine grid for interpolation between energies above cutoff mu
+/*! \details To calculate the moments of the elastic cross section, the elastic 
+ *! scattering distriution must be piecewise numerically integrated. In order 
+ *! to calculate moments with energies inbetween the energy grid points a 
+ *! common angle cosine grid must be created for all angle cosines above the 
+ *! cutoff value "cutoff_mu". */ 
 void HardElasticElectronScatteringDistributionACEFactory::createCommonAngularGrid(
                  const Data::XSSEPRDataExtractor& raw_electroatom_data,
                  Teuchos::Array<double>& common_angular_grid,
@@ -79,7 +80,7 @@ void HardElasticElectronScatteringDistributionACEFactory::createCommonAngularGri
     raw_electroatom_data.extractELASBlock();
 
   // Insert first angular bin at -1 and last bin at 0.999999
-  common_angular_grid.push_back( -1.0 );
+  common_angular_grid.push_back( cutoff_mu );
   common_angular_grid.push_back( 0.999999 );
   common_angular_grid.push_back( 1.0 );
 
@@ -110,7 +111,8 @@ void HardElasticElectronScatteringDistributionACEFactory::createCommonAngularGri
 // Return angle cosine grid for given grid energy bin
 Teuchos::Array<double> HardElasticElectronScatteringDistributionACEFactory::getAngularGrid(
                  const Data::XSSEPRDataExtractor& raw_electroatom_data,
-                 unsigned energy_bin )
+                 const unsigned energy_bin,
+                 const double cutoff_mu )
 {
   // Extract the elastic scattering information data block (ELASI)
   Teuchos::ArrayView<const double> elasi_block(
@@ -135,8 +137,22 @@ Teuchos::Array<double> HardElasticElectronScatteringDistributionACEFactory::getA
   Teuchos::ArrayView<const double> elas_block = 
     raw_electroatom_data.extractELASBlock();
 
-  Teuchos::Array<double> grid( elas_block( offset[energy_bin], 
-                                           table_length[energy_bin] ) );
+  Teuchos::Array<double> raw_grid( elas_block( offset[energy_bin], 
+                                   table_length[energy_bin] ) );
+
+  // Find the first angle cosine above the cutoff mu
+  Teuchos::Array<double>::iterator start;
+  for ( start = raw_grid.begin(); start != raw_grid.end(); start++ )
+  {
+    if ( *start > cutoff_mu )
+    {
+      break;
+    }
+  }
+
+  Teuchos::Array<double> grid( start, raw_grid.end() );
+
+   grid.insert( grid.begin(), cutoff_mu );
 
   return grid;
 

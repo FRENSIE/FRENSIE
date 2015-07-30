@@ -100,6 +100,9 @@ BremsstrahlungAngularDistributionType
   SimulationProperties::bremsstrahlung_angular_distribution_function = 
                              TWOBS_DISTRIBUTION;
 
+// The elastic cutoff angle cosine (default 1.0)
+double SimulationProperties::elastic_cutoff_angle_cosine = 1.0;
+
 // Set the particle mode
 void SimulationProperties::setParticleMode( 
 					 const ParticleModeType particle_mode )
@@ -262,6 +265,13 @@ void SimulationProperties::setBremsstrahlungAngularDistributionFunction(
                           const BremsstrahlungAngularDistributionType function )
 {
   SimulationProperties::bremsstrahlung_angular_distribution_function = function;
+}
+
+// Set the elastic cutoff angle cosine (mu = 1.0 by default)
+void SimulationProperties::setElasticCutoffAngleCosine( 
+                          const double cutoff_angle_cosine )
+{
+  SimulationProperties::elastic_cutoff_angle_cosine = cutoff_angle_cosine;
 }
 
 } // end MonteCarlo namespace

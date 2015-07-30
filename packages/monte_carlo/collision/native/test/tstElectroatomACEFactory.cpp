@@ -53,7 +53,8 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_basic )
                                                         relaxation_model,
                                                         atom,
                                                         photon_distribution_function,
-                                                        false );
+                                                        false,
+                                                        1.0 );
 
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
                                                  *xss_data_extractor,
@@ -236,7 +237,8 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
                                                         relaxation_model,
                                                         atom,
                                                         photon_distribution_function,
-                                                        false );
+                                                        false,
+                                                        1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -253,7 +255,8 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_detailed_brem )
                                                         relaxation_model,
                                                         atom,
                                                         photon_distribution_function,
-                                                        false );
+                                                        false,
+                                                        1.0 );
 }
 */
 
@@ -269,7 +272,8 @@ TEUCHOS_UNIT_TEST( ElectroatomACEFactory, createElectroatom_ionization_subshells
                                                         relaxation_model,
                                                         atom,
                                                         photon_distribution_function,
-                                                        true );
+                                                        true,
+                                                        1.0 );
 
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
                                                  *xss_data_extractor,

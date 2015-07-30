@@ -62,7 +62,8 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_basic )
                                               electroatom_aliases,
 					                          atomic_relaxation_model_factory,
                                               function,
-                                              false ) );
+                                              false,
+                                              1.0 ) );
 
   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
@@ -256,7 +257,8 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_basic )
                                               cross_section_table_info,
                                               atomic_relaxation_model_factory,
                                               function,
-                                              false ) );
+                                              false,
+                                              1.0 ) );
 
   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
@@ -286,7 +288,8 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_2BS_brem )
                                               electroatom_aliases,
 					      atomic_relaxation_model_factory,
                                               function,
-                                              false ) );
+                                              false,
+                                              1.0 ) );
 
   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
@@ -480,7 +483,8 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, createElectroatomMap_ionization_subshells
                                               electroatom_aliases,
 					      atomic_relaxation_model_factory,
                                               function,
-                                              true ) );
+                                              true,
+                                              1.0 ) );
 
   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;
@@ -688,7 +692,8 @@ TEUCHOS_UNIT_TEST( ElectroatomFactory, no_duplicate_tables )
                                               electroatom_aliases,
 					                          atomic_relaxation_model_factory,
                                               function,
-                                              true ) );
+                                              true,
+                                              1.0 ) );
 
   boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> > 
     electroatom_map;

@@ -170,6 +170,12 @@ public:
   static BremsstrahlungAngularDistributionType 
           getBremsstrahlungAngularDistributionFunction();
 
+  //! Set the elastic cutoff angle cosine (mu = 1.0 by default)
+  static void setElasticCutoffAngleCosine( const double cutoff_angle_cosine );
+
+  //! Return the elastic cutoff angle cosine
+  static double getElasticCutoffAngleCosine();
+
 private:
 
   // The particle mode
@@ -251,6 +257,9 @@ private:
   // The bremsstrahlung photon angular distribution function (default is 2BS)
   static BremsstrahlungAngularDistributionType 
            bremsstrahlung_angular_distribution_function;
+
+  // The elastic cutoff angle cosine (default 1.0)
+  static double elastic_cutoff_angle_cosine;
 };
 
 // Return the particle mode type
@@ -403,11 +412,17 @@ inline bool SimulationProperties::isPhotonuclearInteractionModeOn()
   return SimulationProperties::photonuclear_interaction_mode_on;
 }
 
-// Return if detailed bremsstrahlung mode is on
+// Return the bremsstrahlung angular distribution type
 inline BremsstrahlungAngularDistributionType 
   SimulationProperties::getBremsstrahlungAngularDistributionFunction()
 {
   return SimulationProperties::bremsstrahlung_angular_distribution_function;
+}
+
+// Return the elastic cutoff angle cosine
+inline double SimulationProperties::getElasticCutoffAngleCosine()
+{
+  return SimulationProperties::elastic_cutoff_angle_cosine;
 }
 
 } // end MonteCarlo namespace

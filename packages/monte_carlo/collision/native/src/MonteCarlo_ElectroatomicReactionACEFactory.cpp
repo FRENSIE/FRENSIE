@@ -32,13 +32,21 @@ namespace MonteCarlo{
 void ElectroatomicReactionACEFactory::createHardElasticReaction(
 			const Data::XSSEPRDataExtractor& raw_electroatom_data,
 			const Teuchos::ArrayRCP<const double>& energy_grid,
-			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction )
+			Teuchos::RCP<ElectroatomicReaction>& elastic_reaction,
+            const double cutoff_angle_cosine )
 {
   // Make sure the energy grid is valid
   testPrecondition( raw_electroatom_data.extractElectronEnergyGrid().size() == 
 		    energy_grid.size() );
   testPrecondition( Utility::Sort::isSortedAscending( energy_grid.begin(),
 						      energy_grid.end() ) );
+
+  // Create the elastic scattering distribution
+  Teuchos::RCP<const HardElasticElectronScatteringDistribution> distribution;
+
+  HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
+                                                 raw_electroatom_data,
+                                                 distribution ); 
 
   // Elastic cross section with zeros removed
   Teuchos::ArrayRCP<double> elastic_cross_section;
@@ -53,19 +61,13 @@ void ElectroatomicReactionACEFactory::createHardElasticReaction(
                               elastic_cross_section,
                               threshold_energy_index );
 
-  // Create the elastic scattering distribution
-  Teuchos::RCP<const HardElasticElectronScatteringDistribution> distribution;
-
-  HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
-                                                 raw_electroatom_data,
-                                                 distribution ); 
-
   elastic_reaction.reset(
 	new HardElasticElectroatomicReaction<Utility::LinLin>(
 						  energy_grid,
 						  elastic_cross_section,
 						  threshold_energy_index,
-						  distribution ) );
+						  distribution,
+                          cutoff_angle_cosine ) );
 }
 
 

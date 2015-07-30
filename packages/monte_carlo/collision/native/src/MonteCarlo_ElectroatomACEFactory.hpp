@@ -35,7 +35,8 @@ public:
         const double atomic_weight,
         const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
-	    const bool use_atomic_relaxation_data );
+	    const bool use_atomic_relaxation_data,
+        const double cutoff_angle_cosine );
 
   //! Create a electroatom (using the provided atomic relaxation model)
   static void createElectroatom(
@@ -46,7 +47,8 @@ public:
 	    Teuchos::RCP<Electroatom>& electroatom,
         const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
-	    const bool use_atomic_relaxation_data );
+	    const bool use_atomic_relaxation_data,
+        const double cutoff_angle_cosine );
 private:
 
   // Constructor

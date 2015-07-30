@@ -75,6 +75,22 @@ double HardElasticElectronScatteringDistribution::evaluatePDF(
                          d_elastic_scattering_distribution );
 }
 
+// Evaluate the CDF
+double HardElasticElectronScatteringDistribution::evaluateCDF( 
+                            const double incoming_energy,
+                            const double scattering_angle_cosine ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  return MonteCarlo::evaluateTwoDDistributionCorrelatedCDF( 
+                         incoming_energy,
+                         scattering_angle_cosine,
+                         d_elastic_scattering_distribution );
+}
+
 // Evaluate the screened Rutherford PDF
 double HardElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF( 
                             const double incoming_energy,

@@ -21,7 +21,6 @@
 #include "Utility_ContractException.hpp"
 #include "MonteCarlo_TwoDDistributionHelpers.hpp"
 #include "MonteCarlo_HardElasticElectronScatteringDistributionACEFactory.hpp"
-//#include "MonteCarlo_ElectroatomicReactionACEFactory.hpp"
 
 namespace DataGen{
 
@@ -40,7 +39,8 @@ ElasticElectronMomentsEvaluator::ElasticElectronMomentsEvaluator(
                                      elastic_distribution,
     const double& cutoff_angle_cosine )
   : d_raw_ace_data ( raw_ace_data ),
-    d_elastic_distribution( elastic_distribution )
+    d_elastic_distribution( elastic_distribution ),
+    d_cutoff_angle_cosine( cutoff_angle_cosine )
 {
   // Make sure the data is valid
   testPrecondition( !d_elastic_distribution.is_null() );
@@ -108,51 +108,74 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedScreenedRutherfo
   return pdf_value*legendre_value;
 }
 
-// Return the moment of the elastic scattering distribution at a given energy and polynomial order
-double ElasticElectronMomentsEvaluator::evaluateElasticMoment( 
-                               const double energy, 
-                               const int polynomial_order,
-                               const double precision ) const
+// Evaluate the first n moments of the elastic scattering distribution at a given energy
+void ElasticElectronMomentsEvaluator::evaluateElasticMoment( 
+            Teuchos::Array<Utility::long_float>& legendre_moments,
+            const double energy, 
+            const int n,
+            const double precision ) const
 {
   // Make sure the energy and order is valid
   testPrecondition( energy > 0.0 );
-  testPrecondition( polynomial_order >= 0 );
+  testPrecondition( n >= 0 );
+  testPrecondition( legendre_moments.size() >= n+1 );
 
-  // Create boost rapper function for the hard elastic differential cross section
-  boost::function<double (double x)> distribution_wrapper = 
-    boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF,
-                         boost::cref( *this ),
-                         _1,
-                         energy,
-                         polynomial_order );
-
-  double abs_error = 0.0, total_moment = 0.0, moment_i = 0.0;
-    
   // Get common angular grid
+  Teuchos::Array<double>::iterator grid_point, grid_point_minus_one;
   Teuchos::Array<double> common_angular_grid;
 
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createCommonAngularGrid(
                                         d_raw_ace_data,
                                         common_angular_grid,
                                         d_cutoff_angle_cosine );
+/*
+    common_angular_grid =
+      MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::getAngularGrid(
+                d_raw_ace_data,
+                energy_bin );
+*/
+  // remove grid point at 1.0 (outside tabular range)
+  common_angular_grid.pop_back();
 
-  Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
+ // Calucuate the component of the moment from screened Rutherford
+ evaluateNormalizedScreenedRutherfordMoments( legendre_moments, energy, n );
 
-
-  for ( unsigned i = 1; i < common_angular_grid.size()-1; i++ )
+  // Calucuate the component of the moment from the tabular distribution
+  double abs_error, moment_k, tabular_moment;
+  for ( int i = 0; i <= n; i++ )
   {
-    quadrature_kernel.integrateAdaptively<15>(
+    // Create boost rapper function for the hard elastic differential cross section
+    boost::function<double (double x)> distribution_wrapper = 
+      boost::bind<double>( &ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF,
+                         boost::cref( *this ),
+                         _1,
+                         energy,
+                         i );
+
+    Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
+
+    grid_point_minus_one = common_angular_grid.begin();
+    grid_point = common_angular_grid.begin()++;
+
+    tabular_moment = 0.0; 
+    for ( grid_point; grid_point != common_angular_grid.end(); grid_point++ )
+    {
+      moment_k = 0.0;
+      abs_error = 0.0;
+      quadrature_kernel.integrateAdaptively<15>(
 					distribution_wrapper,
-					common_angular_grid[i-1],
-					common_angular_grid[i],
-					moment_i,
+					*grid_point_minus_one,
+					*grid_point,
+					moment_k,
 					abs_error );
 
- 
-    total_moment += moment_i;
-  }
+      grid_point_minus_one = grid_point;
 
-  return total_moment;
+      tabular_moment += moment_k;
+    }
+    //Add the moments of the distribution to that of the normalized screened Rutherford
+    legendre_moments[i] = legendre_moments[i] + tabular_moment;
+  }
 }
 
 // Evaluate the first n normalized moments of the screened Rutherford distribution above the cutoff mu
@@ -182,8 +205,8 @@ void ElasticElectronMomentsEvaluator::evaluateNormalizedScreenedRutherfordMoment
   double eta = 
     d_elastic_distribution->evaluateMoliereScreeningConstant( energy );
 
-  rutherford_moments[0] = Utility::long_float(1);
-        //evaluateScreenedRutherfordCrossSectionRatio( energy );
+  rutherford_moments[0] = d_elastic_distribution->
+                          evaluateScreenedRutherfordCrossSectionRatio( energy );
 
   if ( n > 0 )
   {
@@ -218,10 +241,7 @@ void ElasticElectronMomentsEvaluator::evaluateNormalizedScreenedRutherfordMoment
 
     for ( int i = 1; i <= n; i++ )
     {
-      rutherford_moments[i] = 
-        ( Utility::long_float(1) - 
-        eta*( Utility::long_float(1) + eta/Utility::long_float(2) )*
-        coef_one[i]/frac_disc );
+      rutherford_moments[i] =  rutherford_moments[0] - coef_one[i]/frac_disc;
     }
   }
 }

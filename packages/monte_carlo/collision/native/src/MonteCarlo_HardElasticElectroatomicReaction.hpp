@@ -31,7 +31,8 @@ public:
 	  const Teuchos::ArrayRCP<const double>& cross_section,
 	  const unsigned threshold_energy_index,
           const Teuchos::RCP<const HardElasticElectronScatteringDistribution>&
-            scattering_distribution );
+            scattering_distribution,
+      const double cutoff_angle_cosine );
 
 
   //! Destructor
@@ -70,6 +71,9 @@ private:
 
   // The threshold energy
   const unsigned d_threshold_energy_index;
+
+  // The cutoff angle cosine between hard and soft scattering
+  double d_cutoff_angle_cosine;
 };
 
 } // end MonteCarlo namespace

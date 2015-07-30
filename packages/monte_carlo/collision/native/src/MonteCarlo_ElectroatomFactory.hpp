@@ -43,7 +43,8 @@ public:
 		  atomic_relaxation_model_factory,
 		  const BremsstrahlungAngularDistributionType 
 		  photon_distribution_function,
-		  const bool use_atomic_relaxation_data );
+		  const bool use_atomic_relaxation_data,
+          const double cutoff_angle_cosine );
 
   //! Destructor
   ~ElectroatomFactory()
@@ -65,7 +66,8 @@ private:
 			  atomic_relaxation_model_factory,
               const BremsstrahlungAngularDistributionType 
                      photon_distribution_function,
-              const bool use_atomic_relaxation_data );
+              const bool use_atomic_relaxation_data,
+              const double cutoff_angle_cosine );
 
   // The electroatom map
   boost::unordered_map<std::string,Teuchos::RCP<Electroatom> > 

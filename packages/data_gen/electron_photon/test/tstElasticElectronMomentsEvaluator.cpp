@@ -105,27 +105,52 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 {
   double precision = 1e-13;
   double n = 0;
+  double energy = 1.0e-5;
 
-  double moment = 
-           distribution->evaluateElasticMoment( 1.0e-5, n, precision );
+  Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> full_distribution; 
+
+  full_distribution.reset( new DataGen::ElasticElectronMomentsEvaluator(
+                                    *xss_data_extractor,
+                                    elastic_scattering_distribution,
+                                    -1.0 ) );
+
+  Teuchos::Array<Utility::long_float> total_moments(n+1);
+ 
+  full_distribution->evaluateElasticMoment( total_moments, energy, n, precision );
   
-  UTILITY_TEST_FLOATING_EQUALITY( moment,
-                                  9.999995E-01,
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
+                                  9.999995E-01+5.0000000014344E-07,
                                   1e-13 );	
 
-
-  moment = distribution->evaluateElasticMoment( 0.001, n, precision );
+  energy = 0.001;
+  full_distribution->evaluateElasticMoment( total_moments, energy, n, precision );
   
-  UTILITY_TEST_FLOATING_EQUALITY( moment,
-                                  9.99909223828E-01,
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
+                                  9.99909223828E-01+9.07762058421518E-05,
                                   1e-13 );
 
-
-  moment = distribution->evaluateElasticMoment( 1.0e5, n, precision );
+  energy = 1.0e5;
+  full_distribution->evaluateElasticMoment( total_moments, energy, n, precision );
   
-  UTILITY_TEST_FLOATING_EQUALITY( moment,
-                                  5.51213218221E-01,
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
+                                  5.51213218221E-01+1.08170668977485E+07,
                                   1e-13 );			 
+
+
+ 
+  energy = 0.001;
+  distribution->evaluateElasticMoment( total_moments, energy, n, precision );
+  
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
+                                  7.559416647842E-01+9.07762058421518E-05,
+                                  1e-13 );
+
+  energy = 1.0e5;
+  distribution->evaluateElasticMoment( total_moments, energy, n, precision );
+  
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
+                                  5.51205441587569E-01+1.08170668977485E+07,
+                                  1e-13 );		
 }
 
 //---------------------------------------------------------------------------//
@@ -134,39 +159,18 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateNormalizedScreenedRutherfordMoments )
 {
   double n = 6;
+  double energy = 1.0e5;
   Teuchos::Array<Utility::long_float> rutherford_moments(n+1), moments(n+1);
 
-  moments[0] = 1.0L;
-  moments[1] = 9.99999999999336E-01L; 
-  moments[2] = 9.99999999998009E-01L; 
-  moments[3] = 9.99999999996018E-01L; 
-  moments[4] = 9.99999999993726E-01L; 
-  moments[5] = 9.99999999992247E-01L; 
-  moments[6] = 9.99999999987942E-01L;
+  moments[0] = elastic_scattering_distribution->
+                    evaluateScreenedRutherfordCrossSectionRatio( energy );
+  moments[1] = 1.08170508999047E+07L;//9.99999999999336E-01L; 
+  moments[2] = 1.08170189042186E+07L;//9.99999999998009E-01L; 
+  moments[3] = 1.08169709106932E+07L;//9.99999999996018E-01L;  
+  moments[4] = 1.08169156693286E+07L;//9.99999999993726E-01L;  
+  moments[5] = 1.08168800300841E+07L;//9.99999999992247E-01L;  
+  moments[6] = 1.08167762678433E+07L;//9.99999999987942E-01L; 
 
-  double energy = 1.0e-5;
-  distribution->
-    evaluateNormalizedScreenedRutherfordMoments( rutherford_moments,
-                                                   energy, 
-                                                   n);
-  
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[0].convert_to<double>(),
-                                  1.0,
-                                  1e-13 );	
-
-
-  energy = 0.001;
-  distribution->
-    evaluateNormalizedScreenedRutherfordMoments( rutherford_moments,
-                                                   energy, 
-                                                   n);
-  
-  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[0].convert_to<double>(),
-                                  1.0,
-                                  1e-13 );
-
-
-  energy =1.0e5;
   distribution->
     evaluateNormalizedScreenedRutherfordMoments( rutherford_moments,
                                                    energy, 
@@ -306,7 +310,6 @@ int main( int argc, char** argv )
                         elastic_scattering_distribution ) );
 */
 
-  // Initialize the hydrogen adjoint cross section evaluator
   distribution.reset( new DataGen::ElasticElectronMomentsEvaluator(
                                     *xss_data_extractor,
                                     elastic_scattering_distribution ) );

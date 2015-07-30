@@ -137,6 +137,32 @@ double evaluateTwoDDistributionCorrelatedPDF(
     return lower_bin_boundary->second->evaluatePDF( dependent_variable );
 }
 
+// Evaluate a correlated CDF from a two dimensional distribution
+double evaluateTwoDDistributionCorrelatedCDF( 
+    const double independent_variable,
+    const double dependent_variable,
+    const TwoDDistribution& dependent_distribution )
+{
+  TwoDDistribution::const_iterator lower_bin_boundary, upper_bin_boundary;
+  double interpolation_fraction;
+
+  findLowerAndUpperBinBoundary( independent_variable,
+				dependent_distribution,
+				lower_bin_boundary,
+				upper_bin_boundary,
+				interpolation_fraction );
+  
+  if( lower_bin_boundary != upper_bin_boundary )
+  {
+    return evaluateCorrelatedCDF( upper_bin_boundary->second,
+                                  lower_bin_boundary->second,
+                                  interpolation_fraction,
+                                  dependent_variable );
+  }
+  else
+    return lower_bin_boundary->second->evaluateCDF( dependent_variable );
+}
+
 // Sample an upper and lower distribution using a common random variable
 double correlatedSample(
                     const Teuchos::RCP<const Utility::TabularOneDDistribution>&

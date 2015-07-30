@@ -39,7 +39,7 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 {
 
   Teuchos::Array<double> common_angular_grid;
-  double cutoff_angle = 0.9;
+  double cutoff_angle = -1.0;
 
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createCommonAngularGrid(
                                                 *xss_data_extractor,
@@ -52,6 +52,21 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
   TEST_EQUALITY_CONST( common_angular_grid.back(), 1.0 );
   common_angular_grid.pop_back();
   TEST_EQUALITY_CONST( common_angular_grid.back(), 0.999999 );
+
+
+  cutoff_angle = 0.9;
+  common_angular_grid.clear();
+
+  MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createCommonAngularGrid(
+                                                *xss_data_extractor,
+                                                common_angular_grid,
+                                                cutoff_angle );
+
+  // Test
+  TEST_EQUALITY_CONST( common_angular_grid.front(), cutoff_angle );
+  TEST_EQUALITY_CONST( common_angular_grid.back(), 1.0 );
+  common_angular_grid.pop_back();
+  TEST_EQUALITY_CONST( common_angular_grid.back(), 0.999999 );
 }
 
 //---------------------------------------------------------------------------//
@@ -60,10 +75,12 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
                    getAngularGrid )
 {
 
+  double cutoff_angle = -1.0;
   Teuchos::Array<double> angular_grid =
     MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::getAngularGrid(
                                                 *xss_data_extractor,
-                                                0 );
+                                                0,
+                                                cutoff_angle );
   // Test
   TEST_EQUALITY_CONST( angular_grid.size(), 3 );
   TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );
@@ -72,10 +89,26 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistributionACEFactory,
 
   angular_grid.clear();
 
+  cutoff_angle = 0.9;
   angular_grid =
     MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::getAngularGrid(
                                                 *xss_data_extractor,
-                                                13 );
+                                                0,
+                                                cutoff_angle );
+  // Test
+  TEST_EQUALITY_CONST( angular_grid.size(), 3 );
+  TEST_EQUALITY_CONST( angular_grid.front(), 0.9 );
+  TEST_EQUALITY_CONST( angular_grid[1], 0.999999 );
+  TEST_EQUALITY_CONST( angular_grid.back(), 1.0 );
+
+  angular_grid.clear();
+
+  cutoff_angle = -1.0;
+  angular_grid =
+    MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::getAngularGrid(
+                                                *xss_data_extractor,
+                                                13,
+                                                cutoff_angle );
   // Test
   TEST_EQUALITY_CONST( angular_grid.size(), 85 );
   TEST_EQUALITY_CONST( angular_grid.front(), -1.0 );

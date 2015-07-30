@@ -31,7 +31,8 @@ void ElectroatomACEFactory::createElectroatomCore(
             const double atomic_weight,
             const BremsstrahlungAngularDistributionType 
                     photon_distribution_function,
-            const bool use_atomic_relaxation_data )
+            const bool use_atomic_relaxation_data,
+            const double cutoff_angle_cosine )
 {
   // Make sure the atomic relaxation model is valid
   testPrecondition( !atomic_relaxation_model.is_null() );
@@ -52,7 +53,8 @@ void ElectroatomACEFactory::createElectroatomCore(
     ElectroatomicReactionACEFactory::createHardElasticReaction(
 					   raw_electroatom_data,
 					   energy_grid,
-					   reaction_pointer );
+					   reaction_pointer,
+                       cutoff_angle_cosine );
   }
 
   // Create the bremsstrahlung scattering reaction
@@ -129,7 +131,8 @@ void ElectroatomACEFactory::createElectroatom(
 	    Teuchos::RCP<Electroatom>& electroatom,
         const BremsstrahlungAngularDistributionType 
                 photon_distribution_function,
-	    const bool use_atomic_relaxation_data )
+	    const bool use_atomic_relaxation_data,
+        const double cutoff_angle_cosine )
 {
   // Make sure the atomic weight is valid
   testPrecondition( atomic_weight > 0.0 );
@@ -143,7 +146,8 @@ void ElectroatomACEFactory::createElectroatom(
                                                core,
                                                atomic_weight,
                                                photon_distribution_function,
-                                               use_atomic_relaxation_data );
+                                               use_atomic_relaxation_data,
+                                               cutoff_angle_cosine );
 					    
   // Create the electroatom
   electroatom.reset(

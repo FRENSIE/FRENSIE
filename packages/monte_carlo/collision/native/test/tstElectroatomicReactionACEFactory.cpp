@@ -40,8 +40,9 @@ Teuchos::RCP<const MonteCarlo::HardElasticElectronScatteringDistribution>
 //---------------------------------------------------------------------------//
 // Check that an elastic reaction can be created
 TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory, 
-		           createElasticReaction )
+		           createHardElasticReaction )
 {
+  double cutoff_angle_cosine = 1.0;
   MonteCarlo::HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistribution(
                                                  *xss_data_extractor,
                                                  distribution ); 
@@ -49,7 +50,8 @@ TEUCHOS_UNIT_TEST( ElectroatomicReactionACEFactory,
   MonteCarlo::ElectroatomicReactionACEFactory::createHardElasticReaction(
                 *xss_data_extractor,
                 energy_grid,
-                reaction );
+                reaction,
+                cutoff_angle_cosine );
 
   // Test reaction properties
   TEST_EQUALITY_CONST( reaction->getReactionType(),

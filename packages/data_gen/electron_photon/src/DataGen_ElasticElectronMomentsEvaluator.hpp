@@ -70,9 +70,11 @@ public:
             const int polynomial_order = 0 ) const;
 
   //! Return the moment of the elastic scattering distribution at a given energy and polynomial order
-  double evaluateElasticMoment( const double energy, 
-                                const int polynomial_order,
-                                const double precision ) const;
+  void evaluateElasticMoment( 
+            Teuchos::Array<Utility::long_float>& legendre_moments,
+            const double energy,
+            const int n,
+            const double precision ) const;
 
   //! Evaluate the first n screened Rutherford cross section moments above the cutoff mu
   void evaluateNormalizedScreenedRutherfordMoments( 

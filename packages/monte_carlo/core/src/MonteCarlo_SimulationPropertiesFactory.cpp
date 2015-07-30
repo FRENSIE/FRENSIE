@@ -311,6 +311,26 @@ void SimulationPropertiesFactory::initializeSimulationProperties(
      SimulationProperties::setBremsstrahlungAngularDistributionFunction( 
                                                                      function );
   }
+
+  // Get the elastic cutoff angle cosine - optional
+  if( properties.isParameter( "Elastic Cutoff Angle Cosine" ) )
+  {
+    double cutoff_angle_cosine = 
+            properties.get<double>( "Elastic Cutoff Angle Cosine" );
+
+    if( cutoff_angle_cosine >= -1.0 && cutoff_angle_cosine <= 1.0 )
+    {
+      SimulationProperties::setElasticCutoffAngleCosine( cutoff_angle_cosine );
+    }
+    else
+    {
+      std::cerr << "Warning: the elastic cutoff angle cosine must have a "
+		<< "value between -1 and 1. The default value of "
+		<< SimulationProperties::getElasticCutoffAngleCosine()
+		<< " will be used instead of " << cutoff_angle_cosine << "." 
+		<< std::endl;
+    }
+  }
   
   properties.unused( std::cerr );
 }

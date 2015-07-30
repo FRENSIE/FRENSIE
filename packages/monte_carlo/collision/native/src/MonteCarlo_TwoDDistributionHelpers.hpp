@@ -47,6 +47,12 @@ double evaluateTwoDDistributionCorrelatedPDF(
     const double dependent_variable,
     const TwoDDistribution& dependent_distribution );
 
+//! Evaluate a correlated CDF from a two dimensional distribution
+double evaluateTwoDDistributionCorrelatedCDF( 
+    const double independent_variable,
+    const double dependent_variable,
+    const TwoDDistribution& dependent_distribution );
+
 //! Sample an upper and lower distribution using a common random variable
 double correlatedSample(
                     const Teuchos::RCP<const Utility::TabularOneDDistribution>&

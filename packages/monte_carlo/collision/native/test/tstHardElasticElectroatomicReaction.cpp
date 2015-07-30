@@ -27,6 +27,7 @@
 //---------------------------------------------------------------------------//
 
 Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ace_elastic_reaction;
+Teuchos::RCP<MonteCarlo::ElectroatomicReaction> ace_elastic_reaction_cutoff;
 
 //---------------------------------------------------------------------------//
 // Testing Functions.
@@ -81,19 +82,34 @@ TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, getNumberOfEmittedPhotons_a
 TEUCHOS_UNIT_TEST( HardElasticElectroatomicReaction, getCrossSection_ace )
 {
   double cross_section = 
-    ace_elastic_reaction->getCrossSection( 9.000000000000E-05 );
+    ace_elastic_reaction->getCrossSection( 1.0E-05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 8.887469904554E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.489240000000E+09, 1e-12 );
   
   cross_section =
-    ace_elastic_reaction->getCrossSection( 4.000000000000E-04 );
+    ace_elastic_reaction->getCrossSection( 1.0E-03 );
   
-  TEST_FLOATING_EQUALITY( cross_section, 4.436635458458E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 2.902810000000E+08, 1e-12 );
 
   cross_section = 
-    ace_elastic_reaction->getCrossSection( 2.000000000000E-03 );
+    ace_elastic_reaction->getCrossSection( 1.0E+05 );
 
-  TEST_FLOATING_EQUALITY( cross_section, 2.100574153670E+08, 1e-12 );
+  TEST_FLOATING_EQUALITY( cross_section, 8.830510000000E-02, 1e-12 );
+
+  cross_section = 
+    ace_elastic_reaction_cutoff->getCrossSection( 1.0E-05 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 2.48923875538E+09, 1e-12 );
+  
+  cross_section =
+    ace_elastic_reaction_cutoff->getCrossSection( 1.0E-03 );
+  
+  TEST_FLOATING_EQUALITY( cross_section, 2.90254649402016E+08, 1e-12 );
+
+  cross_section = 
+    ace_elastic_reaction_cutoff->getCrossSection( 1.0E+05 );
+
+  TEST_FLOATING_EQUALITY( cross_section, 4.86749383563272E-02, 1e-12 );
 }
 
 //---------------------------------------------------------------------------//
@@ -223,10 +239,19 @@ int main( int argc, char** argv )
   // Create the reaction
   ace_elastic_reaction.reset(
 	new MonteCarlo::HardElasticElectroatomicReaction<Utility::LinLin>(
-		              energy_grid,
-			      elastic_cross_section,
-			      elastic_threshold_index,
-                              elastic_scattering_distribution ) );
+                energy_grid,
+                elastic_cross_section,
+                elastic_threshold_index,
+                elastic_scattering_distribution,
+                1.0 ) );
+
+  ace_elastic_reaction_cutoff.reset(
+	new MonteCarlo::HardElasticElectroatomicReaction<Utility::LinLin>(
+                energy_grid,
+                elastic_cross_section,
+                elastic_threshold_index,
+                elastic_scattering_distribution,
+                0.999999 ) );
 
   // Clear setup data
   ace_file_handler.reset();

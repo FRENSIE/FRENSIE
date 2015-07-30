@@ -850,7 +850,8 @@ int main( int argc, char** argv )
 					     atom_aliases,
 					     atomic_relaxation_model_factory,
 					     MonteCarlo::TWOBS_DISTRIBUTION,
-					     true );
+					     true,
+                         1.0 );
 
     boost::unordered_map<std::string,Teuchos::RCP<MonteCarlo::Electroatom> >
       electroatom_map;
