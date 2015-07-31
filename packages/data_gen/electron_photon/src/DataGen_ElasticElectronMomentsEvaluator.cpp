@@ -83,31 +83,6 @@ double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedPDF(
   return pdf_value*legendre_value;
 }
 
-// Evaluate the Legnendre Polynomial expansion of the screened rutherford
-double ElasticElectronMomentsEvaluator::evaluateLegendreExpandedScreenedRutherford(
-                                    const double scattering_angle_cosine,
-                                    const double incoming_energy, 
-                                    const int polynomial_order ) const
-{
-  // Make sure the energy and angle are valid
-  testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= -1.0 );
-  testPrecondition( scattering_angle_cosine <= 1.0 );
-
-  // Evaluate the elastic pdf value at a given energy and scattering angle cosine
-  double pdf_value = 
-            d_elastic_distribution->evaluateScreenedRutherfordPDF( 
-                                                 incoming_energy,
-                                                 scattering_angle_cosine );
-
-  // Evaluate the Legendre Polynomial at the given angle and order
-  double legendre_value =  Utility::getLegendrePolynomial(
-                                                  scattering_angle_cosine,
-                                                  polynomial_order );
-
-  return pdf_value*legendre_value;
-}
-
 // Evaluate the first n moments of the elastic scattering distribution at a given energy
 void ElasticElectronMomentsEvaluator::evaluateElasticMoment( 
             Teuchos::Array<Utility::long_float>& legendre_moments,

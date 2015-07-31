@@ -76,3 +76,5 @@ ADD_EXECUTABLE(tstSimulationPropertiesFactory
   tstSimulationPropertiesFactory.cpp)
 TARGET_LINK_LIBRARIES(tstSimulationPropertiesFactory monte_carlo_core)
 ADD_TEST(SimulationPropertiesFactory_test tstSimulationPropertiesFactory --test_properties_xml_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_properties.xml")
+
+

@@ -30,7 +30,7 @@ Teuchos::ParameterList properties;
 //---------------------------------------------------------------------------//
 // Check that the properties can be parsed and set
 TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
-		   initializeSimulationProperties )
+		           initializeSimulationProperties )
 {
   MonteCarlo::SimulationPropertiesFactory::initializeSimulationProperties( 
 								  properties );
@@ -72,6 +72,10 @@ TEUCHOS_UNIT_TEST( SimulationPropertiesFactory,
   TEST_EQUALITY_CONST( 
     MonteCarlo::SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
 	MonteCarlo::DIPOLE_DISTRIBUTION );
+
+  TEST_EQUALITY_CONST(  
+    MonteCarlo::SimulationProperties::getElasticCutoffAngleCosine(),
+	0.9 );
 }
 
 //---------------------------------------------------------------------------//

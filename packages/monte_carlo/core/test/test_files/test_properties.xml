@@ -18,6 +18,7 @@
   <Parameter name="Detailed Pair Production" type="bool" value="true"/>
   <Parameter name="Photonuclear Interaction" type="bool" value="true"/>
   <Parameter name="Bremsstrahlung Angular Distribution" type="string" value="Dipole"/>
+  <Parameter name="Elastic Cutoff Angle Cosine" type="double" value="0.9"/>
   <Parameter name="Warnings" type="bool" value="false"/>
 
 </ParameterList>

@@ -225,7 +225,7 @@ ElectronPhotonRelaxationDataContainer::getAveragePhotonHeatingNumbers() const
   return d_average_photon_heating_numbers;
 }
 
-// Return the Waller-Hartree (WH) incoherent photoncross section 
+// Return the Waller-Hartree (WH) incoherent photon cross section 
 const std::vector<double>& 
 ElectronPhotonRelaxationDataContainer::getWallerHartreeIncoherentCrossSection() const
 {

@@ -63,12 +63,6 @@ public:
                                       const double incoming_energy, 
                                       const int polynomial_order = 0) const;
 
-  //! Evaluate the Legnendre Polynomial expansion of the screened rutherford
-  double evaluateLegendreExpandedScreenedRutherford(
-            const double scattering_angle_cosine,
-            const double incoming_energy, 
-            const int polynomial_order = 0 ) const;
-
   //! Return the moment of the elastic scattering distribution at a given energy and polynomial order
   void evaluateElasticMoment( 
             Teuchos::Array<Utility::long_float>& legendre_moments,
