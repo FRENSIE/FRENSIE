@@ -2,9 +2,15 @@ ADD_EXECUTABLE(tstOccupationNumberEvaluator tstOccupationNumberEvaluator.cpp)
 TARGET_LINK_LIBRARIES(tstOccupationNumberEvaluator data_gen_electron_photon)
 ADD_TEST(OccupatioNumberEvaluator_test tstOccupationNumberEvaluator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
 
-ADD_EXECUTABLE(tstStandardElectronPhotonRelaxationDataGenerator tstStandardElectronPhotonRelaxationDataGenerator.cpp)
+ADD_EXECUTABLE(tstStandardElectronPhotonRelaxationDataGenerator
+    tstStandardElectronPhotonRelaxationDataGenerator.cpp)
 TARGET_LINK_LIBRARIES(tstStandardElectronPhotonRelaxationDataGenerator data_gen_electron_photon)
 ADD_TEST(StandardElectronPhotonRelaxationDataGenerator_test tstStandardElectronPhotonRelaxationDataGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_c_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_c_epr_ace_file.txt" --test_c_ace_table="6000.12p")
+
+ADD_EXECUTABLE(tstStandardSoftElasticElectronDataGenerator 
+    tstStandardSoftElasticElectronDataGenerator.cpp)
+TARGET_LINK_LIBRARIES(tstStandardSoftElasticElectronDataGenerator data_gen_electron_photon)
+ADD_TEST(StandardSoftElasticElectronDataGenerator_test tstStandardSoftElasticElectronDataGenerator --test_h_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_h_epr_ace_file.txt" --test_h_ace_table="1000.12p" --test_pb_ace_file="${CMAKE_CURRENT_SOURCE_DIR}/test_files/test_pb_epr_ace_file.txt" --test_pb_ace_table="82000.12p")
 
 ADD_EXECUTABLE(tstAdjointBremsstrahlungCrossSectionEvaluator
   tstAdjointBremsstrahlungCrossSectionEvaluator.cpp)

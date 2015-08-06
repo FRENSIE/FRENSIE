@@ -42,15 +42,14 @@ TEUCHOS_UNIT_TEST( SoftElasticElectronDataContainer, setAtomicNumber )
 TEUCHOS_UNIT_TEST( SoftElasticElectronDataContainer, 
                    setElasticAngularEnergyGrid )
 {
-  std::set<double> angular_energy_grid;
-  angular_energy_grid.insert( 1.0 );
+  std::vector<double> angular_energy_grid(1), grid(1);
+  angular_energy_grid[0] = 1.0;
 
   soft_elastic_data_container.setElasticAngularEnergyGrid( 
                                     angular_energy_grid );
   
-  TEST_ASSERT( soft_elastic_data_container.getElasticAngularEnergyGrid().count( 1.0 ) );
-  TEST_ASSERT( !soft_elastic_data_container.getElasticAngularEnergyGrid().count( 1.5 ) );
-  TEST_ASSERT( !soft_elastic_data_container.getElasticAngularEnergyGrid().count( 2.0 ) );
+  grid = soft_elastic_data_container.getElasticAngularEnergyGrid();
+  TEST_EQUALITY_CONST( grid[0], 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -58,9 +57,9 @@ TEUCHOS_UNIT_TEST( SoftElasticElectronDataContainer,
 TEUCHOS_UNIT_TEST( SoftElasticElectronDataContainer, 
                    setNumberOfDiscreteAngles )
 {
-  soft_elastic_data_container.setNumberOfDiscreteAngles( 1, 3 );
+  soft_elastic_data_container.setNumberOfDiscreteAngles( 0, 3 );
 
-  TEST_EQUALITY_CONST( soft_elastic_data_container.getNumberOfDiscreteAngles(1), 3 );
+  TEST_EQUALITY_CONST( soft_elastic_data_container.getNumberOfDiscreteAngles(0), 3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -73,10 +72,10 @@ TEUCHOS_UNIT_TEST( SoftElasticElectronDataContainer,
   discrete_angles[1] = 0.95;
   discrete_angles[2] = 0.99;
 
-  soft_elastic_data_container.setSoftElasticDiscreteAngles( 1, 
+  soft_elastic_data_container.setSoftElasticDiscreteAngles( 0, 
                                                             discrete_angles );
 
-  TEST_COMPARE_ARRAYS( soft_elastic_data_container.getSoftElasticDiscreteAngles(1),
+  TEST_COMPARE_ARRAYS( soft_elastic_data_container.getSoftElasticDiscreteAngles(0),
                        discrete_angles );
 }
 
@@ -90,13 +89,12 @@ TEUCHOS_UNIT_TEST( SoftElasticElectronDataContainer,
   weights[1] = 0.2;
   weights[2] = 0.7;
 
-  soft_elastic_data_container.setSoftElasticWeights( 1, 
-                                                     weights );
+  soft_elastic_data_container.setSoftElasticWeights( 0, weights );
 
-  TEST_COMPARE_ARRAYS( soft_elastic_data_container.getSoftElasticWeights(1),
+  TEST_COMPARE_ARRAYS( soft_elastic_data_container.getSoftElasticWeights(0),
                        weights );
 }
-
+/*
 //---------------------------------------------------------------------------//
 // Check that the electron energy grid can be set
 TEUCHOS_UNIT_TEST( SoftElasticElectronDataContainer,
@@ -141,7 +139,7 @@ TEUCHOS_UNIT_TEST( SoftElasticElectronDataContainer,
   TEST_EQUALITY_CONST( soft_elastic_data_container.getMomentPreservingSoftElasticCrossSectionThresholdEnergyIndex(),
                        0 );
 }
-
+*/
 //---------------------------------------------------------------------------//
 // Check that the data can be exported and imported
 TEUCHOS_UNIT_TEST( SoftElasticElectronDataContainer,
@@ -158,26 +156,23 @@ TEUCHOS_UNIT_TEST( SoftElasticElectronDataContainer,
 			     Utility::ArchivableObject::ASCII_ARCHIVE );
 
   TEST_EQUALITY_CONST( soft_elastic_data_container_copy.getAtomicNumber(), 1 );
-  TEST_ASSERT( 
-    soft_elastic_data_container_copy.getElasticAngularEnergyGrid().count( 1 ) );
-  TEST_ASSERT( 
-    !soft_elastic_data_container_copy.getElasticAngularEnergyGrid().count( 0 ) );
-  TEST_ASSERT( 
-    !soft_elastic_data_container_copy.getElasticAngularEnergyGrid().count( 2 ) );
   TEST_EQUALITY_CONST( 
-    soft_elastic_data_container_copy.getNumberOfDiscreteAngles( 1 ), 3 );
+    soft_elastic_data_container_copy.getElasticAngularEnergyGrid().front(), 
+    1.0 );
   TEST_EQUALITY_CONST( 
-    soft_elastic_data_container_copy.getSoftElasticDiscreteAngles(1).size(), 3 );
+    soft_elastic_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
   TEST_EQUALITY_CONST( 
-    soft_elastic_data_container_copy.getSoftElasticWeights(1).size(), 3 );
+    soft_elastic_data_container_copy.getSoftElasticDiscreteAngles(0).size(), 3 );
   TEST_EQUALITY_CONST( 
+    soft_elastic_data_container_copy.getSoftElasticWeights(0).size(), 3 );
+/*  TEST_EQUALITY_CONST( 
     soft_elastic_data_container_copy.getElectronEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
     soft_elastic_data_container_copy.getMomentPreservingSoftElasticCrossSection().size(),
 		       3u );
   TEST_EQUALITY_CONST( 
     soft_elastic_data_container_copy.getMomentPreservingSoftElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
+		       0 );*/
 }
 
 //---------------------------------------------------------------------------//
@@ -196,26 +191,23 @@ TEUCHOS_UNIT_TEST( SoftElasticElectronDataContainer,
 			     Utility::ArchivableObject::BINARY_ARCHIVE );
 
   TEST_EQUALITY_CONST( soft_elastic_data_container_copy.getAtomicNumber(), 1 );
-  TEST_ASSERT( 
-    soft_elastic_data_container_copy.getElasticAngularEnergyGrid().count( 1 ) );
-  TEST_ASSERT( 
-    !soft_elastic_data_container_copy.getElasticAngularEnergyGrid().count( 0 ) );
-  TEST_ASSERT( 
-    !soft_elastic_data_container_copy.getElasticAngularEnergyGrid().count( 2 ) );
   TEST_EQUALITY_CONST( 
-    soft_elastic_data_container_copy.getNumberOfDiscreteAngles( 1 ), 3 );
+    soft_elastic_data_container_copy.getElasticAngularEnergyGrid().front(), 
+    1.0 );
   TEST_EQUALITY_CONST( 
-    soft_elastic_data_container_copy.getSoftElasticDiscreteAngles(1).size(), 3 );
+    soft_elastic_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
   TEST_EQUALITY_CONST( 
-    soft_elastic_data_container_copy.getSoftElasticWeights(1).size(), 3 );
+    soft_elastic_data_container_copy.getSoftElasticDiscreteAngles(0).size(), 3 );
   TEST_EQUALITY_CONST( 
+    soft_elastic_data_container_copy.getSoftElasticWeights(0).size(), 3 );
+/*  TEST_EQUALITY_CONST( 
     soft_elastic_data_container_copy.getElectronEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
     soft_elastic_data_container_copy.getMomentPreservingSoftElasticCrossSection().size(),
 		       3u );
   TEST_EQUALITY_CONST( 
     soft_elastic_data_container_copy.getMomentPreservingSoftElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
+		       0 );*/
 }
 
 //---------------------------------------------------------------------------//
@@ -234,26 +226,23 @@ TEUCHOS_UNIT_TEST( SoftElasticElectronDataContainer,
 			     Utility::ArchivableObject::XML_ARCHIVE );
 
   TEST_EQUALITY_CONST( soft_elastic_data_container_copy.getAtomicNumber(), 1 );
-  TEST_ASSERT( 
-    soft_elastic_data_container_copy.getElasticAngularEnergyGrid().count( 1 ) );
-  TEST_ASSERT( 
-    !soft_elastic_data_container_copy.getElasticAngularEnergyGrid().count( 0 ) );
-  TEST_ASSERT( 
-    !soft_elastic_data_container_copy.getElasticAngularEnergyGrid().count( 2 ) );
   TEST_EQUALITY_CONST( 
-    soft_elastic_data_container_copy.getNumberOfDiscreteAngles( 1 ), 3 );
+    soft_elastic_data_container_copy.getElasticAngularEnergyGrid().front(), 
+    1.0 );
   TEST_EQUALITY_CONST( 
-    soft_elastic_data_container_copy.getSoftElasticDiscreteAngles(1).size(), 3 );
+    soft_elastic_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
   TEST_EQUALITY_CONST( 
-    soft_elastic_data_container_copy.getSoftElasticWeights(1).size(), 3 );
+    soft_elastic_data_container_copy.getSoftElasticDiscreteAngles(0).size(), 3 );
   TEST_EQUALITY_CONST( 
+    soft_elastic_data_container_copy.getSoftElasticWeights(0).size(), 3 );
+/*  TEST_EQUALITY_CONST( 
     soft_elastic_data_container_copy.getElectronEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
     soft_elastic_data_container_copy.getMomentPreservingSoftElasticCrossSection().size(),
 		       3u );
   TEST_EQUALITY_CONST( 
     soft_elastic_data_container_copy.getMomentPreservingSoftElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
+		       0 );*/
 }
 
 //---------------------------------------------------------------------------//
@@ -267,27 +256,24 @@ TEUCHOS_UNIT_TEST( SoftElasticElectronDataContainer,
   
   soft_elastic_data_container_copy.unpackDataFromString( packed_data );
   
-   TEST_EQUALITY_CONST( soft_elastic_data_container_copy.getAtomicNumber(), 1 );
-  TEST_ASSERT( 
-    soft_elastic_data_container_copy.getElasticAngularEnergyGrid().count( 1 ) );
-  TEST_ASSERT( 
-    !soft_elastic_data_container_copy.getElasticAngularEnergyGrid().count( 0 ) );
-  TEST_ASSERT( 
-    !soft_elastic_data_container_copy.getElasticAngularEnergyGrid().count( 2 ) );
+  TEST_EQUALITY_CONST( soft_elastic_data_container_copy.getAtomicNumber(), 1 );
   TEST_EQUALITY_CONST( 
-    soft_elastic_data_container_copy.getNumberOfDiscreteAngles( 1 ), 3 );
+    soft_elastic_data_container_copy.getElasticAngularEnergyGrid().front(), 
+    1.0 );
   TEST_EQUALITY_CONST( 
-    soft_elastic_data_container_copy.getSoftElasticDiscreteAngles(1).size(), 3 );
+    soft_elastic_data_container_copy.getNumberOfDiscreteAngles(0), 3 );
   TEST_EQUALITY_CONST( 
-    soft_elastic_data_container_copy.getSoftElasticWeights(1).size(), 3 );
+    soft_elastic_data_container_copy.getSoftElasticDiscreteAngles(0).size(), 3 );
   TEST_EQUALITY_CONST( 
+    soft_elastic_data_container_copy.getSoftElasticWeights(0).size(), 3 );
+/*  TEST_EQUALITY_CONST( 
     soft_elastic_data_container_copy.getElectronEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
     soft_elastic_data_container_copy.getMomentPreservingSoftElasticCrossSection().size(),
 		       3u );
   TEST_EQUALITY_CONST( 
     soft_elastic_data_container_copy.getMomentPreservingSoftElasticCrossSectionThresholdEnergyIndex(),
-		       0 );
+		       0 );*/
 }
 
 //---------------------------------------------------------------------------//

@@ -50,7 +50,7 @@ public:
   double getCutoffAngleCosine() const;
 
   //! Return the elastic angular energy grid
-  const std::set<double>& getElasticAngularEnergyGrid() const;
+  const std::vector<double>& getElasticAngularEnergyGrid() const;
 
   //! Return the number of discrete angles for an angular energy bin
   unsigned getNumberOfDiscreteAngles( const unsigned angular_energy_bin ) const;
@@ -62,7 +62,7 @@ public:
   //! Return the soft elastic weights for an angular energy bin
   const std::vector<double>& getSoftElasticWeights(
 					       const unsigned angular_energy_bin ) const;
-
+/*
   //! Return the electron energy grid
   const std::vector<double>& getElectronEnergyGrid() const;
 
@@ -73,7 +73,7 @@ public:
   //! Return the MP soft elastic cross section threshold energy bin index
   unsigned 
   getMomentPreservingSoftElasticCrossSectionThresholdEnergyIndex() const;
-
+*/
 protected:
 
   //! Default constructor
@@ -86,10 +86,9 @@ protected:
   //! Set the elastic cutoff angle cosine
   void setCutoffAngleCosine( const double cutoff_angle_cosine );
 
-
   //! Set the elastic angular energy grid
   void setElasticAngularEnergyGrid( 
-            const std::set<double>& angular_energy_grid );
+            const std::vector<double>& angular_energy_grid );
 
   //! Set the number of discrete angles for an angular energy bin
   void setNumberOfDiscreteAngles( 
@@ -105,8 +104,8 @@ protected:
   void setSoftElasticWeights( 
 			 const unsigned angular_energy_bin,
 			 const std::vector<double>& soft_elastic_weights );
-  
-  //! Set the photon energy grid
+  /*
+  //! Set the electron energy grid
   void setElectronEnergyGrid( const std::vector<double>& energy_grid );
 
   //! Set the soft elastic electron cross section using Moment Preserving (MP) theory
@@ -116,7 +115,7 @@ protected:
   //! Set the MP soft elastic cross section threshold energy bin index
   void setMomentPreservingSoftElasticCrossSectionThresholdEnergyIndex(
 						        const unsigned index );
-
+*/
   
 private:
 
@@ -152,7 +151,7 @@ private:
   double d_cutoff_angle_cosine;
 
   // The elastic angular energy grid (MeV)
-  std::set<double> d_angular_energy_grid;
+  std::vector<double> d_angular_energy_grid;
 
   // The number of discrete angles for angular energy bin
   std::map<unsigned,unsigned> d_number_of_discrete_angles;
@@ -162,7 +161,7 @@ private:
 
   // The soft elastic weights
   std::map<unsigned,std::vector<double> > d_soft_elastic_weights;
-
+/*
   // The electron energy grid (MeV)
   std::vector<double> d_electron_energy_grid;
 
@@ -171,7 +170,7 @@ private:
 
   // The Moment Preserving soft elastic electron cross section threshold energy index
   unsigned d_moment_preserving_soft_elastic_cross_section_threshold_index;
-
+*/
 };
 
 } // end Data namespace

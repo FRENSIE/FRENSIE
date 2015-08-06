@@ -499,7 +499,7 @@ void GaussKronrodQuadratureKernel::integrateAdaptivelyWynnEpsilon(
   }
 }
 
-// Integrate a function with Guass-Legendre integration
+// Integrate a function with Gauss-Legendre integration
 /*! \details The fixed-order Gauss-Legendre integration routines are provided 
  * for fast integration of smooth functions with known polynomial order. The 
  * n-point Gauss-Legendre rule is exact for polynomials of order 2*n-1 or less. 
@@ -510,7 +510,7 @@ void GaussKronrodQuadratureKernel::integrateAdaptivelyWynnEpsilon(
  * GNU Scientific Library documentation.
  */ 
 template< typename Functor>
-void GaussKronrodQuadratureKernel::integrateGuassLegendre(
+void GaussKronrodQuadratureKernel::integrateGaussLegendre(
 					Functor& integrand, 
 					double lower_limit, 
 					double upper_limit,

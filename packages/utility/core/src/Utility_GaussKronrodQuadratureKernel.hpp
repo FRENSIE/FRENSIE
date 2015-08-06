@@ -92,15 +92,15 @@ public:
 			  double& result,
 			  double& absolute_error ) const;
 
-  //! Integrate a function with Guass-Legendre integration
+  //! Integrate a function with Gauss-Legendre integration
   template<typename Functor>
-  void integrateGuassLegendre(
+  void integrateGaussLegendre(
 			  Functor& integrand, 
 			  double lower_limit, 
 			  double upper_limit,
-                          Teuchos::Array<double>& points,
-                          Teuchos::Array<double>& weights,
-                          double& result ) const;
+			  Teuchos::Array<double>& points,
+			  Teuchos::Array<double>& weights,
+			  double& result ) const;
 
 private:
 
@@ -111,7 +111,7 @@ private:
     //! Valid rule
     static const bool valid_rule = false;
     
-    //! The Adaptive Guass-Kronrod rule GSL key
+    //! The Adaptive Gauss-Kronrod rule GSL key
     static const int rule_key = 0;
   };
 
@@ -145,7 +145,7 @@ private:
 
 //---------------------------------------------------------------------------//
 
-#endif // end UTILITY_GUASS_KRONROD_QUADRATURE_KERNEL_HPP
+#endif // end UTILITY_GAUSS_KRONROD_QUADRATURE_KERNEL_HPP
 
 //---------------------------------------------------------------------------//
 // end Utility_GaussKronrodQuadratureKernel.hpp

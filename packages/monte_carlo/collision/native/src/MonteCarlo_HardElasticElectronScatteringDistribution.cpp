@@ -75,6 +75,25 @@ double HardElasticElectronScatteringDistribution::evaluatePDF(
                          d_elastic_scattering_distribution );
 }
 
+// Evaluate the PDF
+double HardElasticElectronScatteringDistribution::evaluatePDF( 
+                            const unsigned incoming_energy_bin,
+                            const double scattering_angle_cosine ) const
+{
+  // Make sure the energy and angle are valid
+  testPrecondition( incoming_energy_bin < 
+                    d_elastic_scattering_distribution.size() );
+  testPrecondition( incoming_energy_bin >= 0 );
+  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  double pdf = 
+    d_elastic_scattering_distribution[incoming_energy_bin].second->evaluatePDF( 
+        scattering_angle_cosine );
+
+  return pdf;
+}
+
 // Evaluate the CDF
 double HardElasticElectronScatteringDistribution::evaluateCDF( 
                             const double incoming_energy,
@@ -121,6 +140,17 @@ double HardElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF(
   long double ratio_squared = ratio*ratio;
 
   return cutoff_pdf_value*ratio_squared;
+}
+
+// Return the energy at a given energy bin
+double HardElasticElectronScatteringDistribution::getEnergy( 
+    const unsigned energy_bin ) const
+{
+  // Make sure the energy bin is valid
+  testPrecondition( energy_bin < d_elastic_scattering_distribution.size() );
+  testPrecondition( energy_bin >= 0 );
+
+  return d_elastic_scattering_distribution[energy_bin].first;
 }
 
 // Evaluate the screened Rutherford cross section ratio above the cutoff mu
@@ -216,7 +246,7 @@ void HardElasticElectronScatteringDistribution::scatterAdjointElectron(
 				                    this->sampleAzimuthalAngle() );
 }
 
-// Evaluate Moliere's atomic screening constant at the given electron energy
+// Evaluate Moliere's atomic screening constant (modified by Seltzer) at the given electron energy
 double HardElasticElectronScatteringDistribution::evaluateMoliereScreeningConstant(
                                               const double energy ) const
 {

@@ -502,8 +502,8 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
     for ( int m = 1; m < 9; m++ )
     {
       legendres_double[m] +=
-        Utility::getLegendrePolynomial( nodes[i].convert_to<long double>(), m )
-        *weights[i]*Utility::long_float(259700);
+        Utility::getLegendrePolynomial( node[i], m )
+        *weight[i]*Utility::long_float(259700);
     }
   }
 
@@ -549,8 +549,8 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
     for ( int m = 1; m < 9; m++ )
     {
       legendres_ld[m] +=
-        Utility::getLegendrePolynomial( nodes[i].convert_to<long double>(), m )
-        *weights[i]*Utility::long_float(259700);
+        Utility::getLegendrePolynomial( node_ld[i], m )
+        *weight_ld[i]*Utility::long_float(259700);
     }
   }
 

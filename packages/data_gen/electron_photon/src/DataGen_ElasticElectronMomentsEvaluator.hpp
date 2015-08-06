@@ -58,10 +58,21 @@ public:
   ~ElasticElectronMomentsEvaluator()
   { /* ... */ }
 
-  //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic cross section (dc/dx)
+  //! Evaluate the Legnendre Polynomial expansion of the screened rutherford pdf
+  double evaluateLegendreExpandedRutherford( const double scattering_angle_cosine,
+                                        const double incoming_energy, 
+                                        const int polynomial_order = 0) const;
+
+  //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic pdf
   double evaluateLegendreExpandedPDF( const double scattering_angle_cosine,
                                       const double incoming_energy, 
                                       const int polynomial_order = 0) const;
+
+  //! Evaluate the Legnendre Polynomial expansion of the differential hard elastic pdf
+  double evaluateLegendreExpandedPDFAtEnergyBin( 
+                                const double scattering_angle_cosine,
+                                const unsigned incoming_energy_bin, 
+                                const int polynomial_order = 0) const;
 
   //! Return the moment of the elastic scattering distribution at a given energy and polynomial order
   void evaluateElasticMoment( 
@@ -70,9 +81,16 @@ public:
             const int n,
             const double precision ) const;
 
-  //! Evaluate the first n screened Rutherford cross section moments above the cutoff mu
-  void evaluateNormalizedScreenedRutherfordMoments( 
-            Teuchos::Array<Utility::long_float>& rutherford_moments,
+  //! Return the moment of the elastic scattering distribution at a given energy and polynomial order
+  void evaluateElasticMoment( 
+            Teuchos::Array<Utility::long_float>& legendre_moments,
+            const unsigned energy_bin,
+            const int n,
+            const double precision ) const;
+
+  //! Evaluate the nth normalized moment of the screened Rutherford peak distribution 
+  void evaluateNormalizedScreenedRutherfordMoment( 
+            Utility::long_float rutherford_moments,
             const double energy,
             const int n ) const;
 

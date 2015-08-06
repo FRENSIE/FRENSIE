@@ -35,10 +35,11 @@ public:
   using SoftElasticElectronDataContainer::setNumberOfDiscreteAngles;
   using SoftElasticElectronDataContainer::setSoftElasticDiscreteAngles;
   using SoftElasticElectronDataContainer::setSoftElasticWeights;
+/*
   using SoftElasticElectronDataContainer::setElectronEnergyGrid;
   using SoftElasticElectronDataContainer::setMomentPreservingSoftElasticCrossSection;
   using SoftElasticElectronDataContainer::setMomentPreservingSoftElasticCrossSectionThresholdEnergyIndex;
-
+*/
   // Add the export member function to the public interface
   using SoftElasticElectronDataContainer::exportData;
 

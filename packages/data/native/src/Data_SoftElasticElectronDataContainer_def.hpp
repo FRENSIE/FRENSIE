@@ -34,14 +34,14 @@ void SoftElasticElectronDataContainer::save( Archive& ar,
                                         d_soft_elastic_discrete_angles );
   ar & boost::serialization::make_nvp( "soft_elastic_weights", 
                                         d_soft_elastic_weights );
-  ar & boost::serialization::make_nvp( "electron_energy_grid",
+/*  ar & boost::serialization::make_nvp( "electron_energy_grid",
 				                        d_electron_energy_grid );
   ar & boost::serialization::make_nvp( 
             "moment_preserving_soft_elastic_cross_section", 
             d_moment_preserving_soft_elastic_cross_section );
   ar & boost::serialization::make_nvp( 
             "moment_preserving_soft_elastic_cross_section_threshold_index", 
-            d_moment_preserving_soft_elastic_cross_section_threshold_index );
+            d_moment_preserving_soft_elastic_cross_section_threshold_index );*/
 }
   
 // Load the data from an archive
@@ -60,14 +60,14 @@ void SoftElasticElectronDataContainer::load( Archive& ar,
                                         d_soft_elastic_discrete_angles );
   ar & boost::serialization::make_nvp( "soft_elastic_weights", 
                                         d_soft_elastic_weights );
-  ar & boost::serialization::make_nvp( "electron_energy_grid",
+/*  ar & boost::serialization::make_nvp( "electron_energy_grid",
 				                        d_electron_energy_grid );
   ar & boost::serialization::make_nvp( 
             "moment_preserving_soft_elastic_cross_section", 
             d_moment_preserving_soft_elastic_cross_section );
   ar & boost::serialization::make_nvp( 
             "moment_preserving_soft_elastic_cross_section_threshold_index", 
-            d_moment_preserving_soft_elastic_cross_section_threshold_index );
+            d_moment_preserving_soft_elastic_cross_section_threshold_index );*/
 }
 
 } // end Data namespace

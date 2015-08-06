@@ -43,7 +43,7 @@ bool notEqualZero( double value )
 {
   return value != 0.0;
 }
-
+/*
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
@@ -87,10 +87,9 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
 n = 2;
   
   diff_cross_section = 
-    distribution->evaluateLegendreExpandedPDF(
-                                                    -1.0,
-                                                    1.000000000000E-05,
-                                                    n );
+    distribution->evaluateLegendreExpandedPDF( -1.0,
+                                               1.000000000000E-05,
+                                               n );
 
   UTILITY_TEST_FLOATING_EQUALITY( 
                     diff_cross_section,
@@ -99,13 +98,65 @@ n = 2;
 }
 
 //---------------------------------------------------------------------------//
-// Check that the hydrogen cross section moments can be evaluated
+// Check that the hydrogen expanded differential cross section can be evaluated
+TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
+                   evaluateLegendreExpandedPDFAtEnergyBin )
+{
+  double n = 4;
+  
+  double diff_cross_section = 
+    distribution->evaluateLegendreExpandedPDFAtEnergyBin( 9.999990000000E-01,
+                                                          0,
+                                                          n );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+                    diff_cross_section,
+                    4.999999999445E-01*0.9999900000224990,
+                    1e-12 );
+
+  diff_cross_section = 
+    distribution->evaluateLegendreExpandedPDFAtEnergyBin( -1.000000000000,
+                                                          1,
+                                                          n );
+
+  UTILITY_TEST_FLOATING_EQUALITY(  
+                    diff_cross_section,
+                    5.181320360405E-01*1.0,
+                    1e-12 );
+
+  diff_cross_section = 
+    distribution->evaluateLegendreExpandedPDFAtEnergyBin( 9.999980000000E-01,
+                                                          13,
+                                                          n );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+                    diff_cross_section,
+                    2.572485667358630E+05*0.9999800000900000,
+                    1e-12 );		
+
+
+n = 2;
+  
+  diff_cross_section = 
+    distribution->evaluateLegendreExpandedPDFAtEnergyBin( -1.0,
+                                                          0,
+                                                          n );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+                    diff_cross_section,
+                    5.000000000000E-01*1.0000000000000000,
+                    1e-12 );
+}
+*/
+//---------------------------------------------------------------------------//
+// Check that the moments can be evaluated
 TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                    evaluateElasticMoment )
 {
   double precision = 1e-13;
   double n = 0;
   double energy = 1.0e-5;
+  double tol = 1e-12;
 
   Teuchos::RCP<DataGen::ElasticElectronMomentsEvaluator> full_distribution; 
 
@@ -115,26 +166,26 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
                                     -1.0 ) );
 
   Teuchos::Array<Utility::long_float> total_moments(n+1);
- 
+/*
   full_distribution->evaluateElasticMoment( total_moments, energy, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
                                   9.999995E-01+5.0000000014344E-07,
-                                  1e-13 );	
+                                  tol );	
 
   energy = 0.001;
   full_distribution->evaluateElasticMoment( total_moments, energy, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
                                   9.99909223828E-01+9.07762058421518E-05,
-                                  1e-13 );
-
-  energy = 1.0e5;
+                                  tol );
+*/
+  energy = 5.5e1;
   full_distribution->evaluateElasticMoment( total_moments, energy, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  5.51213218221E-01+1.08170668977485E+07,
-                                  1e-13 );			 
+                                  5.7093654836950E-01+3.62337948943E+00,
+                                  5e-10 );			 
 
 
  
@@ -143,62 +194,187 @@ TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
   
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
                                   7.559416647842E-01+9.07762058421518E-05,
-                                  1e-13 );
+                                  tol );
 
-  energy = 1.0e5;
+  energy = 5.5e1;
   distribution->evaluateElasticMoment( total_moments, energy, n, precision );
   
   UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
-                                  5.51205441587569E-01+1.08170668977485E+07,
-                                  1e-13 );		
-}
+                                  5.70927204446350E-01+3.62337948943E+00,
+                                  5e-11 );		
 
+  unsigned energy_bin = 0;
+
+  full_distribution->evaluateElasticMoment( total_moments, energy_bin, n, precision );
+  
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
+                                  9.999995E-01+5.0000000014344E-07,
+                                  tol );	
+
+  energy_bin = 1;
+  full_distribution->evaluateElasticMoment( total_moments, energy_bin, n, precision );
+  
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
+                                  9.99909223828E-01+9.07762058421518E-05,
+                                  tol );
+
+  energy_bin = 12;
+  full_distribution->evaluateElasticMoment( total_moments, energy_bin, n, precision );
+  
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
+                                  5.7093654836950E-01+3.62337948943E+00,
+                                  tol );			 
+
+
+ 
+  energy_bin = 1;
+  distribution->evaluateElasticMoment( total_moments, energy_bin, n, precision );
+  
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
+                                  7.559416647842E-01+9.07762058421518E-05,
+                                  tol );
+
+  energy_bin = 12;
+  distribution->evaluateElasticMoment( total_moments, energy_bin, n, precision );
+  
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(),
+                                  5.70927204446350E-01+3.62337948943E+00,
+                                  tol );
+
+  distribution->evaluateElasticMoment( total_moments, energy_bin, 6, precision ); 
+
+  precision = 1e-13;
+  n = 8;
+  energy = 1e-5;
+  total_moments.resize(n+1);
+  distribution->evaluateElasticMoment( total_moments, energy, n, precision );
+
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[0].convert_to<double>(), 
+                                  5.000000000000020E-02,
+                                  tol );	
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[1].convert_to<double>(), 
+                                  4.750000000000010E-02,
+                                  tol );		
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[2].convert_to<double>(), 
+                                  4.275000000000010E-02, 
+                                  tol );
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[3].convert_to<double>(), 
+                                  3.621875000000010E-02,  
+                                  tol );
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[4].convert_to<double>(), 
+                                  2.853562500000020E-02,
+                                  tol ); 
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[5].convert_to<double>(), 
+                                  2.041371875000010E-02,  
+                                  tol ); 
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[6].convert_to<double>(), 
+                                  1.256475937499990E-02,
+                                  tol ); 
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[7].convert_to<double>(), 
+                                  5.617386367188300E-03,
+                                  tol ); 
+  UTILITY_TEST_FLOATING_EQUALITY( total_moments[8].convert_to<double>(), 
+                                  4.957330078227900E-05,
+                                  5e-11 ); 
+}
+/*
 //---------------------------------------------------------------------------//
-// Check that the hydrogen cross section moments can be evaluated
+// Check that the screened rutherford moments can be evaluated
 TEUCHOS_UNIT_TEST( ElasticElectronMomentsEvaluator,
-                   evaluateNormalizedScreenedRutherfordMoments )
+                   evaluateNormalizedScreenedRutherfordMoment )
 {
-  double n = 6;
+  unsigned n = 6;
   double energy = 1.0e5;
+  double tol = 1e-13;
   Teuchos::Array<Utility::long_float> rutherford_moments(n+1), moments(n+1);
 
   moments[0] = elastic_scattering_distribution->
                     evaluateScreenedRutherfordCrossSectionRatio( energy );
-  moments[1] = 1.08170508999047E+07L;//9.99999999999336E-01L; 
-  moments[2] = 1.08170189042186E+07L;//9.99999999998009E-01L; 
-  moments[3] = 1.08169709106932E+07L;//9.99999999996018E-01L;  
-  moments[4] = 1.08169156693286E+07L;//9.99999999993726E-01L;  
-  moments[5] = 1.08168800300841E+07L;//9.99999999992247E-01L;  
-  moments[6] = 1.08167762678433E+07L;//9.99999999987942E-01L; 
+  moments[1] = 1.081706689774130E+07L; 
+  moments[2] = 1.081706689772690E+07L; 
+  moments[3] = 1.081706689770540E+07L;  
+  moments[4] = 1.081706689768060E+07L;  
+  moments[5] = 1.081706689766460E+07L;  
+  moments[6] = 1.081706689761800E+07L; 
 
   distribution->
-    evaluateNormalizedScreenedRutherfordMoments( rutherford_moments,
+    evaluateNormalizedScreenedRutherfordMoment( rutherford_moments,
                                                    energy, 
                                                    n);
   
   UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[0].convert_to<double>(), 
                                   moments[0].convert_to<double>(),
-                                  1e-13 );	
+                                  tol );	
   UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[1].convert_to<double>(), 
                                   moments[1].convert_to<double>(),
-                                  1e-13 );		
+                                  tol );		
   UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[2].convert_to<double>(), 
                                   moments[2].convert_to<double>(), 
-                                  1e-13 );
+                                  tol );
   UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[3].convert_to<double>(), 
                                   moments[3].convert_to<double>(),  
-                                  1e-13 );
+                                  tol );
   UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[4].convert_to<double>(), 
                                   moments[4].convert_to<double>(),
-                                  1e-13 ); 
+                                  tol ); 
   UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[5].convert_to<double>(), 
                                   moments[5].convert_to<double>(),  
-                                  1e-13 ); 
+                                  tol ); 
   UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[6].convert_to<double>(), 
                                   moments[6].convert_to<double>(),
-                                  1e-13 ); 
-}
+                                  tol ); 
 
+  tol = 1e-12;
+  energy = 1.0e-5;
+  n = 8;
+  rutherford_moments.clear();
+  moments.resize(n+1);
+
+  moments[0] = elastic_scattering_distribution->
+                    evaluateScreenedRutherfordCrossSectionRatio( energy );
+  moments[1] = 4.99831051546706E-07L; 
+  moments[2] = -7.72416605970237E-07L;  
+  moments[3] = -7.99720468531762E-03L;  
+  moments[4] = -4.69068896975228E+01L;  
+  moments[5] = -2.65347726376627E+05L; 
+  moments[6] = -1.46768998685250E+09L;  
+  moments[7] = -7.99507814226753E+12L;
+  moments[8] = -4.30737032107294E+16L;
+
+  distribution->
+    evaluateNormalizedScreenedRutherfordMoment( rutherford_moments,
+                                                 energy, 
+                                                 n);
+  
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[0].convert_to<double>(), 
+                                  moments[0].convert_to<double>(),
+                                  tol );	
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[1].convert_to<double>(), 
+                                  moments[1].convert_to<double>(),
+                                  tol );		
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[2].convert_to<double>(), 
+                                  moments[2].convert_to<double>(), 
+                                  tol );
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[3].convert_to<double>(), 
+                                  moments[3].convert_to<double>(),  
+                                  tol );
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[4].convert_to<double>(), 
+                                  moments[4].convert_to<double>(),
+                                  tol ); 
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[5].convert_to<double>(), 
+                                  moments[5].convert_to<double>(),  
+                                  tol ); 
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[6].convert_to<double>(), 
+                                  moments[6].convert_to<double>(),
+                                  tol ); 
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[7].convert_to<double>(), 
+                                  moments[7].convert_to<double>(),  
+                                  tol ); 
+  UTILITY_TEST_FLOATING_EQUALITY( rutherford_moments[8].convert_to<double>(), 
+                                  moments[8].convert_to<double>(),
+                                  tol ); 
+}
+*/
 //---------------------------------------------------------------------------//
 // Custom main function
 //---------------------------------------------------------------------------//

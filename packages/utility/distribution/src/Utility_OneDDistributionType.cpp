@@ -23,6 +23,7 @@ std::string convertOneDDistributionTypeToString(
   {
   case DELTA_DISTRIBUTION: return "Delta Distribution";
   case DISCRETE_DISTRIBUTION: return "Discrete Distribution";
+  case ELASTIC_ELECTRON_DISTRIBUTION: return "Elastic Electron Distribution";
   case EXPONENTIAL_DISTRIBUTION: return "Exponential Distribution";
   case EVAPORATION_DISTRIBUTION: return "Evaporation Distribution";
   case HISTOGRAM_DISTRIBUTION: return "Histogram Distribution";

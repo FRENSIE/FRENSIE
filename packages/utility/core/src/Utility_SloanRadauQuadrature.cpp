@@ -193,8 +193,8 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
 
     nodes[number_of_angles_wanted-1] = long_float(1);
   }
-  long_float var;
-  long_float polynomial_at_node, variable;
+
+  long_float polynomial_at_node, var;
   long_float sum_of_weights = long_float(0);
 
   for ( int i = 0; i < weights.size()-1; i++ )
@@ -209,13 +209,13 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
                                                          k );
       var += polynomial_at_node*polynomial_at_node/
                     normalization_factors_N[k];
-/*
-std::printf( "\n i =                        \t %i \n", i );
-std::printf( " k =                          \t %i \n", k );
-std::printf( " polynomial_at_node =         \t %.10e \n", polynomial_at_node );
-std::printf( " normalization_factors_N[k] = \t %.10e \n", normalization_factors_N[k] );
-std::printf( " variable =                   \t %.10e \n", variable );
 
+std::cout << std::setprecision(20)<<"\n i =                        \t " << i <<std::endl;
+std::cout << std::setprecision(20)<<" k =                          \t " << k<<std::endl;
+std::cout << std::setprecision(20)<<" polynomial_at_node =         \t " <<polynomial_at_node <<std::endl;
+std::cout << std::setprecision(20)<< " normalization_factors_N[k] = \t " <<normalization_factors_N[k] <<std::endl;
+std::cout << std::setprecision(20)<< " var =                   \t " <<var <<std::endl;
+/*
 std::printf( " diff = \t %.10e \n", (normalization_factors_N[k]-4.4051713388171300E-09)/4.4051713388171300E-09 );*/
     }
   weights[i] =  long_float(1)/( var*( long_float(1) - nodes[i] ) )/
@@ -245,6 +245,7 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
   for ( int i = 0; i < node.size(); i++ )
   {
     nodes[i] = node[i].convert_to<long double>();
+    weights[i] = weight[i].convert_to<long double>();
   }
    
 }
@@ -258,12 +259,17 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
   Teuchos::Array<long_float> node, weight;
   getRadauNodesAndWeights( node, weight, number_of_angles_wanted );
 
+
   nodes.resize( node.size() );
   weights.resize( node.size() );
 
   for ( int i = 0; i < node.size(); i++ )
-  {
+  {/*
+std::cout << std::endl << "i = \t" << i << std::endl; 
+std::cout << std::setprecision(20) << "node[i] = \t" << node[i] << std::endl;
+std::cout << std::setprecision(20) << "weight[i] = \t" << weight[i] << std::endl;*/
     nodes[i] = node[i].convert_to<double>();
+    weights[i] = weight[i].convert_to<long double>();
   }
    
 }
@@ -661,6 +667,7 @@ void SloanRadauQuadrature::estimateExtraMeanCoefficient(
         const Teuchos::Array<long_float>& radau_moments,
         const int number_of_roots ) const
 {
+std::cout << "this is used " <<std::endl;
   // evaluate the ratio of the nth and (n-1)th orthogonal polynomial at +1
   long_float ratio_at_pos_one = 
       evaluateOrthogonalPolynomial( variances,
@@ -688,7 +695,7 @@ void SloanRadauQuadrature::estimateExtraMeanCoefficient(
                                                      mean_coefficients, 
                                                      long_float(1), 
                                                      1 );
-    long_float parm = long_float(1) - radau_moments[0]/poly_n;
+    long_float parm = d_legendre_expansion_moments[0] - radau_moments[0]/poly_n;
 
     for ( int k = 2; k < number_of_roots; k++ )
     {
@@ -700,12 +707,18 @@ void SloanRadauQuadrature::estimateExtraMeanCoefficient(
 
       parm += -normalization_factors_N[k]/( poly_n_minus_one*poly_n );
     }
-
+std::cout << "mean_coefficients[number_of_roots+1]=\t "<< mean_coefficients[number_of_roots+1]<<std::endl;
     mean_coefficients[number_of_roots+1] = 
          -variances[number_of_roots]/long_float(2)*
          ( ratio_at_pos_one + ratio_at_neg_one ) 
          -normalization_factors_N[number_of_roots]/
-         ( long_float(2)*poly_n*poly_n*parm.convert_to<long_float>() );
+         ( long_float(2)*poly_n*poly_n*parm );
+
+std::cout << "number_of_roots=\t "<< number_of_roots<<std::endl;
+std::cout << "mean_coefficients[0]=\t "<< mean_coefficients[0]<<std::endl;
+std::cout << "mean_coefficients[1]=\t "<< mean_coefficients[1]<<std::endl;
+std::cout << "mean_coefficients[2]=\t "<< mean_coefficients[2]<<std::endl;
+std::cout << "mean_coefficients[3]=\t "<< mean_coefficients[3]<<std::endl;
 
 }
 

@@ -300,7 +300,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
 //---------------------------------------------------------------------------//
 // Check that functions can be integrated over [0,1]
 TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
-                   integrateGuassLegendre )
+                   integrateGaussLegendre )
 {
   boost::function<double (double x)> function_wrapper = f_x;
 
@@ -310,7 +310,7 @@ TEUCHOS_UNIT_TEST( GaussKronrodQuadratureKernel,
 
   double result;
 
-  kernel.integrateGuassLegendre( function_wrapper, 1.0, 3.0, points, weights, result );
+  kernel.integrateGaussLegendre( function_wrapper, 1.0, 3.0, points, weights, result );
 
 
   TEST_FLOATING_EQUALITY( 1.2254, points[0], 1e-5 );

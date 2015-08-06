@@ -49,7 +49,7 @@ double SoftElasticElectronDataContainer::getCutoffAngleCosine() const
 }
 
 // Return the elastic angular energy grid
-const std::set<double>& 
+const std::vector<double>& 
 SoftElasticElectronDataContainer::getElasticAngularEnergyGrid() const
 {
   return d_angular_energy_grid;
@@ -60,8 +60,8 @@ unsigned SoftElasticElectronDataContainer::getNumberOfDiscreteAngles(
                             const unsigned angular_energy_bin ) const
 {
   // Make sure the angular energy bin is valid
-  testPrecondition( d_angular_energy_grid.find( angular_energy_bin ) !=
-                    d_angular_energy_grid.end() );
+  testPrecondition( angular_energy_bin >= 0 );
+  testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
 
   return d_number_of_discrete_angles.find( angular_energy_bin )->second;
 }
@@ -72,8 +72,8 @@ SoftElasticElectronDataContainer::getSoftElasticDiscreteAngles(
 					        const unsigned angular_energy_bin ) const
 {
   // Make sure the angular energy bin is valid
-  testPrecondition( d_angular_energy_grid.find( angular_energy_bin ) !=
-                    d_angular_energy_grid.end() );
+  testPrecondition( angular_energy_bin >= 0 );
+  testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
 
   return d_soft_elastic_discrete_angles.find( angular_energy_bin )->second;
 }
@@ -84,12 +84,12 @@ SoftElasticElectronDataContainer::getSoftElasticWeights(
 					        const unsigned angular_energy_bin ) const
 {
   // Make sure the angular energy bin is valid
-  testPrecondition( d_angular_energy_grid.find( angular_energy_bin ) !=
-                    d_angular_energy_grid.end() );
+  testPrecondition( angular_energy_bin >= 0 );
+  testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
 
   return d_soft_elastic_weights.find( angular_energy_bin )->second;
 }
-
+/*
 // Return the electron energy grid
 const std::vector<double>& 
 SoftElasticElectronDataContainer::getElectronEnergyGrid() const
@@ -110,7 +110,7 @@ SoftElasticElectronDataContainer::getMomentPreservingSoftElasticCrossSectionThre
 {
   return d_moment_preserving_soft_elastic_cross_section_threshold_index;
 }
-
+*/
 // Set the atomic number
 void SoftElasticElectronDataContainer::setAtomicNumber( 
 						 const unsigned atomic_number )
@@ -135,7 +135,7 @@ void SoftElasticElectronDataContainer::setCutoffAngleCosine(
 
 // Set the elastic angular energy grid
 void SoftElasticElectronDataContainer::setElasticAngularEnergyGrid( 
-				       const std::set<double>& angular_energy_grid )
+				       const std::vector<double>& angular_energy_grid )
 {
   // Make sure the angular energy grid is valid
   testPrecondition( angular_energy_grid.size() > 0 );
@@ -157,8 +157,8 @@ void SoftElasticElectronDataContainer::setNumberOfDiscreteAngles(
              const unsigned number_of_discrete_angles )
 {
   // Make sure the angular_energy_bin is valid
-  testPrecondition( d_angular_energy_grid.find( angular_energy_bin ) != 
-                    d_angular_energy_grid.end() );
+  testPrecondition( angular_energy_bin >= 0 );
+  testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
   // Make sure the number of discrete angles is valid
   testPrecondition( number_of_discrete_angles > 0 );
   
@@ -169,10 +169,16 @@ void SoftElasticElectronDataContainer::setNumberOfDiscreteAngles(
 void SoftElasticElectronDataContainer::setSoftElasticDiscreteAngles(
 		     const unsigned angular_energy_bin,
 		     const std::vector<double>& soft_elastic_discrete_angles )
-{
+{/*
+std::cout << "angular_energy_bin =\t" << angular_energy_bin << std::endl;
+std::cout << "angular_energy =\t" << d_angular_energy_grid[angular_energy_bin] << std::endl;
+std::cout << "# of angles =\t" << soft_elastic_discrete_angles.size() << std::endl;
+std::cout << "angle 1 =\t" << soft_elastic_discrete_angles[0] << std::endl;
+std::cout << "angle 2 =\t" << soft_elastic_discrete_angles[1] << std::endl;
+*/
   // Make sure the angular_energy_bin is valid
-  testPrecondition( d_angular_energy_grid.find( angular_energy_bin ) != 
-                    d_angular_energy_grid.end() );
+  testPrecondition( angular_energy_bin >= 0 );
+  testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
   // Make sure the soft elastic discrete angles are valid
   testPrecondition( soft_elastic_discrete_angles.size() ==
                d_number_of_discrete_angles.find( angular_energy_bin )->second );
@@ -193,10 +199,16 @@ void SoftElasticElectronDataContainer::setSoftElasticDiscreteAngles(
 void SoftElasticElectronDataContainer::setSoftElasticWeights( 
 			 const unsigned angular_energy_bin,
 			 const std::vector<double>& soft_elastic_weights )
-{
+{/*
+std::cout << "angular_energy_bin =\t" << angular_energy_bin << std::endl;
+std::cout << "angular_energy =\t" << d_angular_energy_grid[angular_energy_bin] << std::endl;
+std::cout << "# of weights =\t" << soft_elastic_weights.size() << std::endl;
+std::cout << std::setprecision(20) << "weight 1 =\t" << soft_elastic_weights[0] << std::endl;
+std::cout << std::setprecision(20) << "weight 2 =\t" << soft_elastic_weights[1] << std::endl;*/
+
   // Make sure the angular_energy_bin is valid
-  testPrecondition( d_angular_energy_grid.find( angular_energy_bin ) != 
-                    d_angular_energy_grid.end() );
+  testPrecondition( angular_energy_bin >= 0 );
+  testPrecondition( angular_energy_bin < d_angular_energy_grid.size() );
   // Make sure the weight is valid
   testPrecondition( soft_elastic_weights.size() ==
                d_number_of_discrete_angles.find( angular_energy_bin )->second );
@@ -211,7 +223,7 @@ void SoftElasticElectronDataContainer::setSoftElasticWeights(
   
   d_soft_elastic_weights[angular_energy_bin] = soft_elastic_weights;
 }
-
+/*
 // Set the electron energy grid
 void SoftElasticElectronDataContainer::setElectronEnergyGrid( 
 				       const std::vector<double>& energy_grid )
@@ -251,7 +263,7 @@ void SoftElasticElectronDataContainer::setMomentPreservingSoftElasticCrossSectio
   
  d_moment_preserving_soft_elastic_cross_section_threshold_index= index;
 }
-
+*/
 // Test if a value is less than or equal to zero
 bool SoftElasticElectronDataContainer::isValueLessThanOrEqualToZero( 
 							   const double value )
@@ -270,7 +282,7 @@ bool SoftElasticElectronDataContainer::isValueLessThanZero(
 bool SoftElasticElectronDataContainer::isValueGreaterThanOne( 
 							   const double value )
 {
-  return value >= 1.0;
+  return value > 1.0;
 }
 
 // Test if a value is less than the angle cosine cutoff

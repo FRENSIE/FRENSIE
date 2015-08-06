@@ -76,6 +76,46 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
   // Test 2
   TEST_FLOATING_EQUALITY( pdf_value, 4.48786781766095E+05, 1e-15 );
 
+  // Set energy in MeV and angle cosine 
+  unsigned energy_bin = 1;
+  scattering_angle_cosine = 0.0;
+
+  // Calculate the pdf
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy_bin, 
+                                                 scattering_angle_cosine );
+
+  // Test 1 energy_bin 1
+  TEST_FLOATING_EQUALITY( pdf_value, 4.821797947867E-02, 1e-12 );
+
+
+  scattering_angle_cosine = 9.800000000000E-01;
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy_bin, 
+                                                 scattering_angle_cosine );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( pdf_value, 8.772194880275E+00, 1e-12 );
+
+  // Test with a different energy_bin
+  energy_bin = 13;
+  scattering_angle_cosine = -1.000000000000E+00;
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy_bin, 
+                                                 scattering_angle_cosine );
+
+  // Test 1
+  TEST_FLOATING_EQUALITY( pdf_value, 4.704745346116E-09, 1e-12 );
+
+
+  scattering_angle_cosine = 9.999990000000E-01;
+  pdf_value = 
+    ace_basic_elastic_distribution->evaluatePDF( energy_bin, 
+                                                 scattering_angle_cosine );
+
+  // Test 2
+  TEST_FLOATING_EQUALITY( pdf_value, 4.48786781766095E+05, 1e-15 );
+
 }
 
 
@@ -170,6 +210,28 @@ TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution,
 
   // Test 5
   TEST_FLOATING_EQUALITY( pdf_value, 2.60722777551300E+20, 1e-10 );
+
+}
+
+//---------------------------------------------------------------------------//
+// Check that the energy can be returned
+TEUCHOS_UNIT_TEST( HardElasticElectronScatteringDistribution, 
+                   getEnergy )
+{
+  // Set energy bin
+  unsigned energy_bin = 1;
+
+  double energy = 
+    ace_basic_elastic_distribution->getEnergy( energy_bin );
+
+  TEST_FLOATING_EQUALITY( energy, 1.0e-3, 1e-12 );
+
+
+  energy_bin = 13;
+  energy = 
+    ace_basic_elastic_distribution->getEnergy( energy_bin );
+
+  TEST_FLOATING_EQUALITY( energy, 1.0e+5, 1e-12 );
 
 }
 
