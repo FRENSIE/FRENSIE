@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstCollisionHandlerFactoryNeutronMode_DagMC.cpp
+//! \file   tstCollisionHandlerFactoryNeutronMode_Root.cpp
 //! \author Alex Robinson, Eli Moll
 //! \brief  Collision handler factory unit tests
 //!
@@ -34,7 +34,7 @@ std::string test_geom_xml_file_name;
 // Tests.
 //---------------------------------------------------------------------------//
 // Check that the collision handler can be initialize with DagMC
-TEUCHOS_UNIT_TEST( CollisionHandlerFactoryDagMC, initializeHandlerUsingDagMC )
+TEUCHOS_UNIT_TEST( CollisionHandlerFactoryRoot, initializeHandlerUsingRoot )
 {
   // Assign the name of the cross_sections.xml file with path
   std::string cross_section_xml_file = test_cross_sections_xml_directory;
@@ -373,5 +373,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstCollisionHandlerFactoryNeutronMode_DagMC.cpp
+// end tstCollisionHandlerFactoryNeutronMode_Root.cpp
 //---------------------------------------------------------------------------//

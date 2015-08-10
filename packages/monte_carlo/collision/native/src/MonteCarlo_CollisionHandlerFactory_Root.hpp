@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_CollisionHandlerFactory.hpp
-//! \author Alex Robinson
+//! \file   MonteCarlo_CollisionHandlerFactory_Root.hpp
+//! \author Alex Robinson, Eli Moll
 //! \brief  Collision handler factory class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_COLLISION_HANDLER_FACTORY_HPP
-#define MONTE_CARLO_COLLISION_HANDLER_FACTORY_HPP
+#ifndef MONTE_CARLO_COLLISION_HANDLER_FACTORY_ROOT_HPP
+#define MONTE_CARLO_COLLISION_HANDLER_FACTORY_ROOT_HPP
 
 // Std Lib Includes
 #include <stdexcept>
@@ -18,15 +18,20 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_CollisionHandler.hpp"
+#include "MonteCarlo_CollisionHandlerFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "Geometry_Root.hpp"
 
 namespace MonteCarlo{
 
-//! The collision handler factory
-template<typename GeometryHandler>
-class CollisionHandlerFactory
+/*! The specialization of the CollimatorHandlerFactory class for the Root 
+ * geometry handler.
+ * \ingroup estimator_module
+ */ 
+template<>
+class CollisionHandlerFactory<Geometry::Root>
 {
 
 public:
@@ -159,29 +164,18 @@ private:
 			 
 };
 
-//! The invalid material representation error
-class InvalidMaterialRepresentation : public std::logic_error
-{
-  
-public:
-
-  InvalidMaterialRepresentation( const std::string& what_arg )
-    : std::logic_error( what_arg )
-  { /* ... */ }
-};
-
 } // end MonteCarlo namespace
 
 //---------------------------------------------------------------------------//
 // Template includes
 //---------------------------------------------------------------------------//
 
-#include "MonteCarlo_CollisionHandlerFactory_def.hpp"
+// #include "MonteCarlo_CollisionHandlerFactory_def.hpp"
 
 //---------------------------------------------------------------------------//
 
-#endif // end MONTE_CARLO_COLLISION_HANDLER_FACTORY_HPP
+#endif // end MONTE_CARLO_COLLISION_HANDLER_FACTORY_ROOT_HPP
 
 //---------------------------------------------------------------------------//
-// end MonteCarlo_CollisionHandlerFactory.hpp
+// end MonteCarlo_CollisionHandlerFactory_Root.hpp
 //---------------------------------------------------------------------------//
