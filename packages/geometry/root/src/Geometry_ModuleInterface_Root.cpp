@@ -46,6 +46,26 @@ void ModuleInterface<Root>::assignCellIds()
     TGeoVolume* current_volume = dynamic_cast<TGeoVolume*>( current_object );
     current_volume->SetUniqueID(i + 1); 
   }
+  
+  // While we're at it we will also assign unique ids for the materials which
+  // will be necessary for the CollisionHandlerFactory to function properly
+  TList* materials = Geometry::Root::getManager()->GetListOfMaterials();
+  TIterator* it = materials->MakeIterator();
+  int number_materials = materials->GetEntries();
+  
+  for ( int i=0; i < number_materials; i++ )
+  {
+    // Obtain the material data from ROOT
+    TGeoMaterial* mat = dynamic_cast<TGeoMaterial>( it->Next() );
+    if ( mat->IsEq( Geometry::Root::getTerminal Material() ) )
+    {
+      mat->SetUniqueID( 0 );
+    }
+    else
+    {
+      mat->SetUniqueID( i + 1 );
+    }
+  }
 }
 
 // Find the cell that contains a given point (start of history)

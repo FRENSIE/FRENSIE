@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstCollisionHandlerFactoryElectronMode.cpp
-//! \author Luke Kersting
+//! \file   tstCollisionHandlerFactoryElectronMode_DagMC.cpp
+//! \author Luke Kersting, Eli Moll
 //! \brief  Collision handler factory unit tests for electron mode
 //!
 //---------------------------------------------------------------------------//
