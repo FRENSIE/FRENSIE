@@ -25,7 +25,6 @@
 namespace MonteCarlo{
 
 //! The collision handler factory
-template<typename GeometryHandler>
 class CollisionHandlerFactory
 {
 

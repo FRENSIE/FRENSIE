@@ -246,25 +246,18 @@ void CollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
     
     ++it;
   }
-
-  // Get the material ids requested by ROOT
-  std::vector<std::string> requested_material_ids;
   
   int material_counter = 0;
   TGeoMaterial* mat = Geometry::Root::getManager()->GetMaterial(material_counter);
   
   while ( mat != NULL )
   {
-    // Obtain the material data from ROOT
-    requested_material_ids.push_back( mat->GetName() );
-    material_counter = material_counter + 1;
-    mat = Geometry::Root::getManager()->GetMaterial( material_counter );
-  }
-
-  // Check that the material ids requested by ROOT are valid
-  for( unsigned i = 0; i < requested_material_ids.size(); ++i )
-  {
-    std::istringstream iss( requested_material_ids[i] );
+    // TODO: Obtain the material number from ROOT and -> InternalMaterialHandle
+    std::string requested_material_id_name = mat->GetName();
+    
+    
+    // TODO: test how to efficiently extract the number from the "mat_#"
+    std::istringstream iss( requested_material_id_name );
     
     ModuleTraits::InternalMaterialHandle material_id;
     
@@ -276,6 +269,9 @@ void CollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
 			"Error: ROOT has requested material number "
 			<< requested_material_ids[i] << " which is lacking "
 			"a definition!" );
+				
+		material_counter += 1;
+		mat = Geometry::Root::getManager()->GetMaterial( material_counter );
   } 
   #endif // end HAVE_FRENSIE_ROOT
 }
@@ -374,27 +370,30 @@ void CollisionHandlerFactory<Geometry::Root>::createMaterialIdDataMaps(
 // If ROOT has not been enabled this function will be empty
 void CollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
           boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                               std::vector<std::string> >& cell_id_mat_id_map,
+                             unsigned >& cell_id_mat_id_map,
           boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                              std::vector<std::string> >& cell_id_density_map )
+                             double >& cell_id_density_map )
 {
   #ifdef HAVE_FRENSIE_ROOT
   // Get the cell property values (material and density)
   TObjArray* cells = Geometry::Root::getManager()->GetListOfVolumes();
   int number_cells = cells->GetEntries();
   
-  for ( int i=0; i < number_cells; i++ )
+  for ( Geometry::ModuleTraits::InternalCellHandle i=0; i < number_cells; i++ )
   {
     // Obtain the material and density data from ROOT
     TGeoVolume* cell  = Geometry::Root::getManager()->GetVolume( i + 1 );
     TGeoMaterial* mat = cell->GetMaterial();
     std::string mat_id  = mat->GetName();
-    std::string density = "rho_-" + std::to_string( mat->GetDensity() );
     
-// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
+    // TODO Chop off the prior part of the number
+    // Check for the void properties and then IF statement to do nothing
+    
+    double density =  mat->GetDensity();
+    
     // Update the unordered maps
-    //cell_id_mat_id_map[ i + 1 ] = material;
-    //cell_id_density_map[ i + 1 ] = density;
+    cell_id_mat_id_map[ i + 1 ] = material;
+    cell_id_density_map[ i + 1 ] = density;
   }
 
   // Make sure that the maps have the same size
