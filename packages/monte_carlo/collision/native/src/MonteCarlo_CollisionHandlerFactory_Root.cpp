@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   MonteCarlo_CollisionHandlerFactory.cpp
-//! \author Alex Robinson
+//! \author Alex Robinson, Eli Moll
 //! \brief  Collision handler factory class definition.
 //!
 //---------------------------------------------------------------------------//
@@ -12,6 +12,7 @@
 // FRENSIE Includes
 #include "FRENSIE_root_config.hpp"
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
+#include "MonteCarlo_CollisionHandlerFactory_Root.hpp"
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_PhotoatomFactory.hpp"
 #include "MonteCarlo_ElectroatomFactory.hpp"
@@ -249,16 +250,15 @@ void CollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
   // Get the material ids requested by ROOT
   std::vector<std::string> requested_material_ids;
   
-  TList* materials = Geometry::Root::getManager()->GetListOfMaterials();
-  TIterator* it = materials->MakeIterator();
-  int number_materials = materials->GetEntries();
+  int material_counter = 0;
+  TGeoMaterial* mat = Geometry::Root::getManager()->GetMaterial(material_counter);
   
-  for ( int i=0; i < number_materials; i++ )
+  while ( mat != NULL )
   {
     // Obtain the material data from ROOT
-    TGeoMaterial* mat = dynamic_cast<TGeoMaterial>( it->Next() );
-    requested_material_ids.push_back( "mat_" + 
-                                       std::to_string(mat->GetUniqueID()));
+    requested_material_ids.push_back( mat->GetName() );
+    material_counter = material_counter + 1;
+    mat = Geometry::Root::getManager()->GetMaterial( material_counter );
   }
 
   // Check that the material ids requested by ROOT are valid
@@ -387,13 +387,14 @@ void CollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
   {
     // Obtain the material and density data from ROOT
     TGeoVolume* cell  = Geometry::Root::getManager()->GetVolume( i + 1 );
-    TGeoMaterial* mat = dynamic_cast<TGeoMaterial>( it->Next() );
-    std::string mat_id  = "mat_" +  std::to_string(mat->GetUniqueID()));
+    TGeoMaterial* mat = cell->GetMaterial();
+    std::string mat_id  = mat->GetName();
     std::string density = "rho_-" + std::to_string( mat->GetDensity() );
     
+// TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO
     // Update the unordered maps
-    cell_id_mat_id_map[ i + 1 ] = material;
-    cell_id_density_map[ i + 1 ] = density;
+    //cell_id_mat_id_map[ i + 1 ] = material;
+    //cell_id_density_map[ i + 1 ] = density;
   }
 
   // Make sure that the maps have the same size
