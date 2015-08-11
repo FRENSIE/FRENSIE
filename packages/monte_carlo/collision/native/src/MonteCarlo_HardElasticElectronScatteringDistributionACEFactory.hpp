@@ -47,9 +47,10 @@ protected:
 
   //! Create the elastic scattering function
   static void createScatteringFunction(
-	   const Data::XSSEPRDataExtractor& raw_electroatom_data,
-           const int size,
-           HardElasticElectronScatteringDistribution::ElasticDistribution& 
+        const Data::XSSEPRDataExtractor& raw_electroatom_data,
+        const int atomic_number,
+        const int size,
+        HardElasticElectronScatteringDistribution::ElasticDistribution& 
                                                         scattering_function );
 };
 

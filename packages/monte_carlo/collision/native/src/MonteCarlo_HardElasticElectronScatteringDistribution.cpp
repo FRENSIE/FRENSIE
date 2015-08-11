@@ -22,7 +22,7 @@
 #include "Utility_KinematicHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_TabularDistribution.hpp"
-#include "Utility_HistogramDistribution.hpp"
+#include "Utility_ElasticElectronDistribution.hpp"
 
 namespace MonteCarlo{
 
@@ -117,25 +117,19 @@ double HardElasticElectronScatteringDistribution::evaluateScreenedRutherfordPDF(
 {
   // Make sure the energy and angle are valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( scattering_angle_cosine >= -1.0 );
+  testPrecondition( scattering_angle_cosine >= s_rutherford_cutoff );
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
-  long double cutoff_pdf_value = MonteCarlo::evaluateTwoDDistributionCorrelatedPDF( 
-                                incoming_energy,
-                                s_rutherford_cutoff,
-                                d_elastic_scattering_distribution );
+  long double cutoff_pdf_value = 
+        evaluatePDF( incoming_energy, s_rutherford_cutoff );
 
   long double screening_constant = 
         evaluateMoliereScreeningConstant( incoming_energy );
 
   long double delta_cosine = 1.0L - scattering_angle_cosine;
-  if ( delta_cosine < 1e-10)
-  {
-    delta_cosine = 0.0L;
-  }
 
   long double ratio = ( screening_constant + 1.0e-6L )/
-                     ( screening_constant + delta_cosine );
+                      ( screening_constant + delta_cosine );
 
   long double ratio_squared = ratio*ratio;
 

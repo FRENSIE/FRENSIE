@@ -12,7 +12,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_HardElasticElectronScatteringDistributionACEFactory.hpp"
-#include "Utility_HistogramDistribution.hpp"
+#include "Utility_ElasticElectronDistribution.hpp"
 #include "Utility_ContractException.hpp"
 
 namespace MonteCarlo{
@@ -26,17 +26,18 @@ void HardElasticElectronScatteringDistributionACEFactory::createHardElasticDistr
   // Extract the number of tabulated distributions
   int size = raw_electroatom_data.extractELASIBlock().size()/3;
 
+  // Get the atomic number 
+  const int atomic_number = raw_electroatom_data.extractAtomicNumber();
+
   // Create the scattering function
   HardElasticElectronScatteringDistribution::ElasticDistribution 
                                                scattering_function(size);
 
   HardElasticElectronScatteringDistributionACEFactory::createScatteringFunction( 
 							  raw_electroatom_data,
+                              atomic_number,  
                               size,
 							  scattering_function );
-
-  // Get the atomic number 
-  const int atomic_number = raw_electroatom_data.extractAtomicNumber();
 
   elastic_distribution.reset( 
 	      new HardElasticElectronScatteringDistribution( 
@@ -161,9 +162,10 @@ Teuchos::Array<double> HardElasticElectronScatteringDistributionACEFactory::getA
 
 // Create the scattering function
 void HardElasticElectronScatteringDistributionACEFactory::createScatteringFunction(
-	   const Data::XSSEPRDataExtractor& raw_electroatom_data,
-           const int size,
-           HardElasticElectronScatteringDistribution::ElasticDistribution& 
+        const Data::XSSEPRDataExtractor& raw_electroatom_data,
+        const int atomic_number,        
+        const int size,
+        HardElasticElectronScatteringDistribution::ElasticDistribution& 
                                                         scattering_function )
 {
   // Extract the elastic scattering information data block (ELASI)
@@ -188,9 +190,11 @@ void HardElasticElectronScatteringDistributionACEFactory::createScatteringFuncti
     scattering_function[n].first = angular_energy_grid[n];
 
     scattering_function[n].second.reset( 
-	  new const Utility::HistogramDistribution(
+	  new const Utility::ElasticElectronDistribution<Utility::LinLin>(
 		 elas_block( offset[n], table_length[n] ),
-		 elas_block( offset[n] + 1 + table_length[n], table_length[n]-1 ),
+		 elas_block( offset[n] + table_length[n], table_length[n] ),
+         angular_energy_grid[n],
+         atomic_number,
          true ) );
   }
 }
