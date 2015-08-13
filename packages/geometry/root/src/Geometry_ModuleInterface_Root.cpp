@@ -44,9 +44,13 @@ void ModuleInterface<Root>::assignCellIds()
   {
     TObject* current_object = volume_list_iterator->Next();
     TGeoVolume* current_volume = dynamic_cast<TGeoVolume*>( current_object );
-    current_volume->SetUniqueID(i + 1); 
-  }
-  
+    if ( current_volume->GetUniqueID() == 0)
+    {
+      THROW_EXCEPTION( std::logic_error,
+                       "Error: Root contains a cell which has not been "
+                       " assigned a unique cell ID in the input file." );
+    }
+  } 
 }
 
 // Find the cell that contains a given point (start of history)

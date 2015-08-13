@@ -15,9 +15,8 @@
 namespace MonteCarlo{
 
 // Create the material name data maps
-template<typename GeometryHandler>
 template<typename ScatteringCenterType, typename MaterialType>
-void CollisionHandlerFactory<GeometryHandler>::createMaterialNameDataMaps(
+void CollisionHandlerFactory::createMaterialNameDataMaps(
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
                             Teuchos::Array<double> >& material_id_fraction_map,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
