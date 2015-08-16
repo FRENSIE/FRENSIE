@@ -22,11 +22,7 @@ ModuleInterface<Root>::invalid_external_cell_handle = 0;
 // Do just in time initialization of interface members
 void ModuleInterface<Root>::initialize()
 { 
-  #pragma omp master
-  {
-    ModuleInterface<Root>::assignCellIds();
-  }
-  #pragma omp barrier
+  ModuleInterface<Root>::assignCellIds();
 }
 
 // Enable support for multiple threads
@@ -46,9 +42,15 @@ void ModuleInterface<Root>::assignCellIds()
   
   for (int i=0; i < number_volumes; i++) 
   {
-    TObject* current_volume = volume_list_iterator->Next();
-    current_volume->SetUniqueID(i + 1); 
-  }
+    TObject* current_object = volume_list_iterator->Next();
+    TGeoVolume* current_volume = dynamic_cast<TGeoVolume*>( current_object );
+    if ( current_volume->GetUniqueID() == 0)
+    {
+      THROW_EXCEPTION( std::logic_error,
+                       "Error: Root contains a cell which has not been "
+                       " assigned a unique cell ID in the input file." );
+    }
+  } 
 }
 
 // Find the cell that contains a given point (start of history)
@@ -59,12 +61,12 @@ ModuleInterface<Root>::InternalCellHandle ModuleInterface<Root>::findCellContain
   const double* direction = ray.getDirection();
 
   // Assign position and direction to ROOT Double_t arrays
-  Double_t* point;
+  Double_t point[3];
   point[0] = position[0];  
   point[1] = position[1];  
   point[2] = position[2]; 
 
-  Double_t* dir;
+  Double_t dir[3];
   dir[0] = direction[0];
   dir[1] = direction[1];
   dir[2] = direction[2];
@@ -99,12 +101,12 @@ void ModuleInterface<Root>::fireRay( const Ray& ray,
   const double* direction = ray.getDirection();
 
   // Assign position and direction to ROOT Double_t arrays
-  Double_t* point;
+  Double_t point[3];
   point[0] = position[0];  
   point[1] = position[1];  
   point[2] = position[2]; 
 
-  Double_t* dir;
+  Double_t dir[3];
   dir[0] = direction[0];
   dir[1] = direction[1];
   dir[2] = direction[2];
@@ -113,9 +115,12 @@ void ModuleInterface<Root>::fireRay( const Ray& ray,
   Root::getManager()->SetCurrentDirection( dir );
   
   Root::getManager()->FindNextBoundaryAndStep();
+  Root::getManager()->FindNextBoundary();
   
   distance_to_surface_hit = 
-      Root::getManager()->GetCurrentNavigator()->GetStep();
+      Root::getManager()->GetStep();
+      
+  Root::getManager()->Step( distance_to_surface_hit );
 }	       
 
 // Get the point location w.r.t. a given cell
@@ -131,7 +136,7 @@ PointLocation ModuleInterface<Root>::getPointLocation( const Ray& ray,
   const double* position  = ray.getPosition();
 
   // Assign position and direction to ROOT Double_t arrays
-  Double_t* point;
+  Double_t point[3];
   point[0] = position[0];  
   point[1] = position[1];  
   point[2] = position[2]; 

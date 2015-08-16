@@ -22,17 +22,15 @@ void Test_Root_Geometry()
   TGeoMaterial *term_mat = new TGeoMaterial( "Terminal",0,0,0 );
   TGeoMedium   *term_med = new TGeoMedium( "Terminal",1,term_mat );
    
-  TGeoMaterial *H_mat = new TGeoMaterial( "mat_1",1,1,1 );
-  TGeoMedium   *H_med = new TGeoMedium( "med_1",2,H_mat );
+  TGeoMaterial *H_mat = new TGeoMaterial( "Hydrogen",1,1,1 );
+  TGeoMedium   *H_med = new TGeoMedium( "Hydrogen",2,H_mat );
 
   // Define the cube volume and set it to be the highest node
   TGeoVolume *cube = gGeoManager->MakeBox( "CUBE",term_med,5.,5.,5. );
   gGeoManager->SetTopVolume( cube );
-  cube->SetUniqueID(1);
 
   // Define the spherical volume
   TGeoVolume *sphere = gGeoManager->MakeSphere( "SPHERE",H_med,0.,2.5 );
-  sphere->SetUniqueID(2);
 
   // Add the sphere as a daughter of the cube
   cube->AddNodeOverlap( sphere, 1 );

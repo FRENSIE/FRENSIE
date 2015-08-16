@@ -119,6 +119,9 @@ public:
   static double getCellSurfaceArea( const InternalSurfaceHandle surface,
 				    const InternalCellHandle cell );
 
+  //! Check that an external surface handle exists
+  static bool doesSurfaceExist( const ExternalSurfaceId surface );
+
   //! Check that an external cell handle exists
   static bool doesCellExist( const ExternalCellId cell );
 
@@ -201,7 +204,30 @@ inline double ModuleInterface<Root>::getCellVolume(
   ExternalCellHandle cell_external = 
     ModuleInterface<Root>::getExternalCellHandle( cell );
   
-  return Root::getManager()->GetVolume( cell_external )->Capacity();
+  volume = Root::getManager()->GetVolume( cell_external )->Capacity();
+  
+  TObjArray* daughters = Root::getManager()->GetVolume( cell_external )->GetNodes();
+  
+  if ( daughters != NULL )
+  {
+    TIterator* daughter_list_iterator = daughters->MakeIterator();
+    int number_of_daughters = daughters->GetEntries();
+  
+    for (int i=0; i < number_of_daughters; i++) 
+    {
+      // Obtain the next object in the array and cast it to its derived class
+      TObject* current_object = daughter_list_iterator->Next();
+      TGeoNode* current_node = dynamic_cast<TGeoNode*>( current_object );
+      TGeoVolume* current_daughter = current_node->GetVolume();
+      volume = volume - current_daughter->Capacity();
+    }
+    return volume;
+  }
+  else
+  {
+    return volume;
+  }
+  
 }
 
 // Get the surface area of a surface bounding a cell
@@ -213,6 +239,13 @@ inline double ModuleInterface<Root>::getCellSurfaceArea(
 					   const InternalCellHandle )
 {
   return 1;
+}
+
+// Check that an external surface handle exists
+inline bool ModuleInterface<Root>::doesSurfaceExist(
+                const ExternalSurfaceId surface )
+{
+  return ModuleInterface<Root>::doesCellExist( surface );
 }
 
 // Check that an external cell handle exists
