@@ -1,0 +1,5 @@
+ADD_EXECUTABLE(tstElectronVoltUnit
+  tstElectronVoltUnit.cpp
+  ${TEUCHOS_STD_UNIT_TEST_MAIN})
+TARGET_LINK_LIBRARIES(tstElectronVoltUnit utility_core)
+ADD_TEST(ElectronVoltUnit_test tstElectronVoltUnit)
