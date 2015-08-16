@@ -15,6 +15,7 @@
 
 // FRENSIE Includes
 #include "MonteCarlo_SubshellType.hpp"
+#include "Utility_PhysicalConstants.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
@@ -66,7 +67,44 @@ public:
 				double& outgoing_energy,
 				SubshellType& shell_of_interaction,
 				unsigned& trials ) const = 0;
+
+protected:
+
+  //! Evaluate the cross section multiplier
+  double evaluateMultiplier( const double incoming_energy,
+			     const double outgoing_energy,
+			     const double scattering_angle_cosine ) const;
 };
+
+// Evaluate the cross section multiplier
+/*! \details It is assumed that the Compton profiles have been divided by
+ * the average electron momentum in the ground state of hydrogen (atomic 
+ * units). This multiplier term therefore has units of b/MeV.
+ */
+double DopplerBroadenedPhotonEnergyDistribution::evaluateMultiplier(
+				   const double incoming_energy,
+				   const double outgoing_energy,
+				   const double scattering_angle_cosine ) const
+{
+  const double term_1 = 
+    Utility::PhysicalConstants::pi*
+    Utility::PhysicalConstants::classical_electron_radius*
+    Utility::PhysicalConstants::classical_electron_radius*
+    Utility::PhysicalConstants::inverse_fine_structure_constant/
+    Utility::PhysicalConstants::electron_rest_mass_energy*1e24;
+
+  const double term_2 = (incoming_energy/outgoing_energy)*
+    (incoming_energy/compton_line_energy +
+     compton_line_energy/incoming_energy +
+     scattering_angle_cosine*
+     scattering_angle_cosine - 1.0 );
+  
+  const double term_3 = 
+    sqrt(outgoing_energy*outgoing_energy + incoming_energy*incoming_energy - 
+	 2.0*incoming_energy*outgoing_energy*scattering_angle_cosine);
+  
+  return term_1*term_2/term_3;
+}
 
 } // end MonteCarlo namespace
 

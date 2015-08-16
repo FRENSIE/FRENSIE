@@ -32,26 +32,55 @@ protected:
 public:
 
   //! Constructor
-  IncoherentAdjointPhotonScatteringDistribution(
-	       const double max_energy,
-	       const Teuchos::ArrayRCP<const double>& critical_line_energies );
+  IncoherentAdjointPhotonScatteringDistribution( const double max_energy );
 
   //! Destructor
   virtual ~IncoherentAdjointPhotonScatteringDistribution()
   { /* ... */ }
 
+  //! Set the critical line energies
+  void setCriticalLineEnergies( 
+	       const Teuchos::ArrayRCP<const double>& critical_line_energies );
+
+  //! Set the max energy
+  void setMaxEnergy( const double max_energy );
+
+  //! Return the max energy
+  double getMaxEnergy() const;
+
+  //! Evaluate the distribution
+  virtual double evaluate( const double incoming_energy,
+			   const double max_energy,
+			   const double scattering_angle_cosine ) const = 0;
+
+  //! Evaluate the distribution
+  double evaluate( const double incoming_energy,
+		   const double scattering_angle_cosine ) const;
+
+  //! Evaluate the pdf
+  virtual double evaluatePDF( const double incoming_energy,
+			      const double max_energy,
+			      const double scattering_angle_cosine ) const;
+
   //! Evaluate the pdf
   double evaluatePDF( const double incoming_energy,
 		      const double scattering_angle_cosine ) const;
 
-  //! Return the max energy
-  double getMaxEnergy() const;
+  //! Evaluate the integrated cross section (b)
+  virtual double evaluateIntegratedCrossSection( const double incoming_energy,
+						 const double max_energy,
+						 const double precision ) const = 0;
+
+  //! Evaluate the integrated cross section (b)
+  double evaluateIntegratedCrossSection( const double incoming_energy,
+					 const double precision ) const;
   
 protected:
 
   //! Evaluate the adjoint Klein-Nishina distribution
   double evaluateAdjointKleinNishinaDist( 
 				  const double incoming_energy,
+				  const double max_energy,
 				  const double scattering_angle_cosine ) const;
 
   //! Basic sampling implementation

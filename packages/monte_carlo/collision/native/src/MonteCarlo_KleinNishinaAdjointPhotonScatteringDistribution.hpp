@@ -21,9 +21,7 @@ class KleinNishinaAdjointPhotonScatteringDistribution : public IncoherentAdjoint
 public:
 
   //! Constructor
-  KleinNishinaAdjointPhotonScatteringDistribution(
-	       const double max_energy,
-	       const Teuchos::ArrayRCP<const double>& critical_line_energies );
+  KleinNishinaAdjointPhotonScatteringDistribution( const double max_energy );
 
   //! Destructor
   ~KleinNishinaAdjointPhotonScatteringDistribution()
@@ -31,10 +29,12 @@ public:
 
   //! Evaluate the distribution
   double evaluate( const double incoming_energy,
+		   const double max_energy,
 		   const double scattering_angle_cosine ) const;
 
   //! Evaluate the integrated cross section (cm^2)
   double evaluateIntegratedCrossSection( const double incoming_energy,
+					 const double max_energy,
 					 const double precision ) const;
   
   //! Sample an outgoing energy and direction from the distribution

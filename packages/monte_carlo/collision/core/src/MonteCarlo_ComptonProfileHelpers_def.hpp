@@ -39,6 +39,7 @@ void createFullProfileFromHalfProfile(
 			      const ProfileIterator half_profile_end,
 			      STLCompliantArrayA& full_momentum_grid,
 			      STLCompliantArrayB& full_profile,
+			      const bool extend_if_possible,
 			      const bool doubled_half_profile )
 {
   // Make sure the half grid and the half profile have the same size
@@ -58,9 +59,8 @@ void createFullProfileFromHalfProfile(
   full_momentum_grid.clear();
   full_profile.clear();
 
-  // Set the size of the full grid
-  unsigned full_grid_size, middle_index;
-  bool extend_grid;
+  // Check if a grid extension is possible
+  bool grid_extension_possible;
 
   unsigned half_grid_size = 
     std::distance( half_momentum_grid_start, half_momentum_grid_end );
@@ -70,20 +70,24 @@ void createFullProfileFromHalfProfile(
   
   if( *half_momentum_grid_true_end <
       Utility::PhysicalConstants::inverse_fine_structure_constant )
+    grid_extension_possible = true;
+  else
+    grid_extension_possible = false;
+
+  // Calculate the size of the full grid
+  unsigned full_grid_size, middle_index;
+  
+  if( grid_extension_possible && extend_if_possible )
   {
     full_grid_size = (half_grid_size + 1)*2 - 1;
 
     middle_index = half_grid_size;
-
-    extend_grid = true;
   }
   else
   {
     full_grid_size = half_grid_size*2 - 1;
 
     middle_index = half_grid_size - 1;
-
-    extend_grid = false;
   }
 
   full_momentum_grid.resize( full_grid_size );
@@ -130,7 +134,7 @@ void createFullProfileFromHalfProfile(
   }
   
   // Extend the grid if required
-  if( extend_grid )
+  if( grid_extension_possible && extend_if_possible )
   {
     double profile_0 = 
       full_profile[full_profile.size()-3];

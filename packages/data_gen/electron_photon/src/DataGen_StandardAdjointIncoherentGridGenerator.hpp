@@ -16,7 +16,8 @@
 // FRENSIE Includes
 #include "DataGen_AdjointIncoherentCrossSectionHelpers.hpp"
 #include "DataGen_AdjointIncoherentGridGenerator.hpp"
-#include "MonteCarlo_IncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "MonteCarlo_WHIncoherentAdjointPhotonScatteringDistribution.hpp"
+#include "Utility_UnitConversionPolicy.hpp"
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_TwoDInterpolationPolicy.hpp"
 #include "Utility_GridGenerator.hpp"
@@ -24,7 +25,9 @@
 namespace DataGen{
 
 //! The adjoint incoherent cross section grid generator
-template<typename TwoDInterpPolicy>
+template<typename TwoDInterpPolicy,
+	 typename ScatteringFunctionArgUnitConversionPolicy = 
+	 Utility::InverseAngstromConversionPolicy>
 class StandardAdjointIncoherentGridGenerator : public AdjointIncoherentGridGenerator
 {
 
@@ -104,7 +107,7 @@ private:
   d_max_energy_grid_generator;
   
   // The adjoint incoherent cross section evaluator
-  AdjointIncoherentCrossSectionEvaluator d_adjoint_incoherent_cross_section;  
+  MonteCarlo::WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy> d_adjoint_incoherent_cross_section;
 };
 
 } // end DataGen namespace
