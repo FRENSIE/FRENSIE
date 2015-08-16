@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_CollisionHandlerFactory.hpp
-//! \author Alex Robinson
-//! \brief  Collision handler factory class declaration.
+//! \file   MonteCarlo_CollisionHandlerFactory.cpp
+//! \author Alex Robinson, Eli Moll
+//! \brief  Collision handler factory class definition.
 //!
 //---------------------------------------------------------------------------//
 
@@ -10,10 +10,9 @@
 #include <boost/unordered_set.hpp>
 
 // FRENSIE Includes
+#include "FRENSIE_root_config.hpp"
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
-#include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
-#include "MonteCarlo_IncoherentModelType.hpp"
-#include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
+#include "MonteCarlo_CollisionHandlerFactory_Root.hpp"
 #include "MonteCarlo_NuclideFactory.hpp"
 #include "MonteCarlo_PhotoatomFactory.hpp"
 #include "MonteCarlo_ElectroatomFactory.hpp"
@@ -27,15 +26,175 @@
 
 namespace MonteCarlo{
 
-// Initialize the collision handler -
-void CollisionHandlerFactory::initializeHandler( 
+// Initialize the collision handler using Root
+/*! \details Make sure the simulation properties have been set 
+ * (in MonteCarlo::SimulationProperties) before running this factory
+ * method. The properties will influence how this factory method behaves.
+ */
+void CollisionHandlerFactory<Geometry::Root>::initializeHandler( 
 		       const Teuchos::ParameterList& material_reps,
 		       const Teuchos::ParameterList& cross_sections_table_info,
 		       const std::string& cross_sections_xml_directory )
-{ /*...*/ }
+{
+  // Validate the materials
+  Teuchos::ParameterList::ConstIterator it = material_reps.begin();
+
+  boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle> 
+    material_ids;
+  
+  while( it != material_reps.end() )
+  {
+    const Teuchos::ParameterList& material_rep = 
+      Teuchos::any_cast<Teuchos::ParameterList>( it->second.getAny() );
+
+    CollisionHandlerFactory<Geometry::Root>::validateMaterialRep( material_rep,
+						  material_ids );
+
+    ++it;
+  }
+  
+  material_ids.clear();
+
+  // Validate the material ids
+  CollisionHandlerFactory<Geometry::Root>::validateMaterialIds( material_reps );
+  
+  // Extract the cross section table alias map
+  Teuchos::ParameterList alias_map_list;
+  
+  try{
+    alias_map_list = cross_sections_table_info.sublist( "alias map" );
+  }
+  EXCEPTION_CATCH_AND_EXIT( std::exception, 
+			    "Error: The cross_sections.xml file in " 
+			    << cross_sections_xml_directory << 
+			    " is invalid - the 'alias_map' ParameterList "
+			    "is not defined!" );
+  
+  // Create the set of all nuclides/atoms needed to construct materials
+  boost::unordered_set<std::string> aliases;
+
+  CollisionHandlerFactory<Geometry::Root>::createAliasSet( material_reps, 
+                                           alias_map_list,
+                                           aliases );
+
+  // Create the material id data maps
+  boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                       Teuchos::Array<double> > material_id_fraction_map;
+  boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                       Teuchos::Array<std::string> > material_id_component_map;
+  
+  CollisionHandlerFactory<Geometry::Root>::createMaterialIdDataMaps( material_reps,
+                                                     material_id_fraction_map,
+                                                     material_id_component_map );
+
+  // Create the cell id data maps
+  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+		       std::vector<std::string> > cell_id_mat_id_map;
+  
+  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+		       std::vector<std::string> > cell_id_density_map;
+
+  CollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps( 
+							 cell_id_mat_id_map, 
+							 cell_id_density_map );
+
+  // Initialize an atomic relaxation model factory
+  Teuchos::RCP<AtomicRelaxationModelFactory> atomic_relaxation_model_factory(
+					    new AtomicRelaxationModelFactory );
+
+  // Load the cross section data
+  switch( SimulationProperties::getParticleMode() )
+  {
+  case NEUTRON_MODE:
+  {
+    CollisionHandlerFactory<Geometry::Root>::createNeutronMaterials(
+						  cross_sections_table_info,
+						  cross_sections_xml_directory,
+						  material_id_fraction_map,
+						  material_id_component_map,
+						  aliases,
+						  cell_id_mat_id_map,
+						  cell_id_density_map,
+						  false,
+						  false );
+    break;
+  }
+  case PHOTON_MODE:
+  {
+    CollisionHandlerFactory<Geometry::Root>::createPhotonMaterials(
+		     cross_sections_table_info,
+		     cross_sections_xml_directory,
+		     material_id_fraction_map,
+		     material_id_component_map,
+		     aliases,
+		     cell_id_mat_id_map,
+		     cell_id_density_map,
+		     atomic_relaxation_model_factory,
+		     SimulationProperties::getNumberOfPhotonHashGridBins(),
+		     SimulationProperties::getIncoherentModelType(),
+		     SimulationProperties::getKahnSamplingCutoffEnergy(),
+		     SimulationProperties::isDetailedPairProductionModeOn(),
+		     SimulationProperties::isAtomicRelaxationModeOn(),
+		     SimulationProperties::isPhotonuclearInteractionModeOn() );
+    break;
+  }
+  case NEUTRON_PHOTON_MODE:
+  {
+    std::cerr << "Warning: Neutron-Photon mode is not fully supported!" 
+	      << std::endl;
+    
+    CollisionHandlerFactory<Geometry::Root>::createNeutronMaterials(
+						  cross_sections_table_info,
+						  cross_sections_xml_directory,
+						  material_id_fraction_map,
+						  material_id_component_map,
+						  aliases,
+						  cell_id_mat_id_map,
+						  cell_id_density_map,
+						  false,
+						  true );
+
+    CollisionHandlerFactory<Geometry::Root>::createPhotonMaterials(
+		     cross_sections_table_info,
+		     cross_sections_xml_directory,
+		     material_id_fraction_map,
+		     material_id_component_map,
+		     aliases,
+		     cell_id_mat_id_map,
+		     cell_id_density_map,
+		     atomic_relaxation_model_factory,
+		     SimulationProperties::getNumberOfPhotonHashGridBins(),
+		     SimulationProperties::getIncoherentModelType(),
+		     SimulationProperties::getKahnSamplingCutoffEnergy(),
+		     SimulationProperties::isDetailedPairProductionModeOn(),
+		     SimulationProperties::isAtomicRelaxationModeOn(),
+		     SimulationProperties::isPhotonuclearInteractionModeOn() );
+    break;
+  }
+  case ELECTRON_MODE:
+  {
+    CollisionHandlerFactory<Geometry::Root>::createElectronMaterials(
+		     cross_sections_table_info,
+		     cross_sections_xml_directory,
+		     material_id_fraction_map,
+		     material_id_component_map,
+		     aliases,
+		     cell_id_mat_id_map,
+		     cell_id_density_map,
+		     atomic_relaxation_model_factory,
+		     SimulationProperties::getBremsstrahlungAngularDistributionFunction(),
+		     SimulationProperties::isAtomicRelaxationModeOn() );
+    break;
+  }
+  default:
+    THROW_EXCEPTION( std::logic_error,
+		     "Error: " << SimulationProperties::getParticleMode() <<
+		     " is not currently supported!" );
+  }	    
+}
 
 // Validate a material representation
-void CollisionHandlerFactory::validateMaterialRep( 
+void CollisionHandlerFactory<Geometry::Root>::validateMaterialRep( 
 	      const Teuchos::ParameterList& material_rep,
 	      boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>&
 	      material_ids )
@@ -67,8 +226,58 @@ void CollisionHandlerFactory::validateMaterialRep(
 		      "specified!" );
 }
 
+// Validate the material ids
+// If ROOT has not been enabled this function will be empty. 
+void CollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
+				  const Teuchos::ParameterList& material_reps )
+{
+  #ifdef HAVE_FRENSIE_ROOT
+  // Construct the set of material ids
+  boost::unordered_set<ModuleTraits::InternalMaterialHandle> material_ids;
+
+  Teuchos::ParameterList::ConstIterator it = material_reps.begin();
+
+  while( it != material_reps.end() )
+  {
+    const Teuchos::ParameterList& material_rep = 
+      Teuchos::any_cast<Teuchos::ParameterList>( it->second.getAny() );
+
+    material_ids.insert( material_rep.get<unsigned int>( "Id" ) );
+    
+    ++it;
+  }
+  
+  int material_counter = 0;
+  TGeoMaterial* mat = Geometry::Root::getManager()->GetMaterial(material_counter);
+  
+  while ( mat != NULL )
+  {
+    // TODO: Obtain the material number from ROOT and -> InternalMaterialHandle
+    std::string requested_material_id_name = mat->GetName();
+    
+    
+    // TODO: test how to efficiently extract the number from the "mat_#"
+    std::istringstream iss( requested_material_id_name );
+    
+    ModuleTraits::InternalMaterialHandle material_id;
+    
+    iss >> material_id;
+    
+    TEST_FOR_EXCEPTION( material_ids.find( material_id ) ==
+			material_ids.end(),
+			InvalidMaterialRepresentation,
+			"Error: ROOT has requested material number "
+			<< requested_material_ids[i] << " which is lacking "
+			"a definition!" );
+				
+		material_counter += 1;
+		mat = Geometry::Root::getManager()->GetMaterial( material_counter );
+  } 
+  #endif // end HAVE_FRENSIE_ROOT
+}
+
 // Create the set of all nuclides/atoms needed to construct materials
-void CollisionHandlerFactory::createAliasSet( 
+void CollisionHandlerFactory<Geometry::Root>::createAliasSet( 
 		       const Teuchos::ParameterList& material_reps,
 		       const Teuchos::ParameterList& cross_sections_alias_map,
 		       boost::unordered_set<std::string>& nuclides )
@@ -110,7 +319,7 @@ void CollisionHandlerFactory::createAliasSet(
 }
 
 // Create the material id data maps
-void CollisionHandlerFactory::createMaterialIdDataMaps(
+void CollisionHandlerFactory<Geometry::Root>::createMaterialIdDataMaps(
      const Teuchos::ParameterList& material_reps,
      boost::unordered_map<ModuleTraits::InternalMaterialHandle,
                           Teuchos::Array<double> >& material_id_fraction_map,
@@ -157,8 +366,46 @@ void CollisionHandlerFactory::createMaterialIdDataMaps(
   }
 }
 
+// Create the cell id data maps
+// If ROOT has not been enabled this function will be empty
+void CollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
+          boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                             unsigned >& cell_id_mat_id_map,
+          boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                             double >& cell_id_density_map )
+{
+  #ifdef HAVE_FRENSIE_ROOT
+  // Get the cell property values (material and density)
+  TObjArray* cells = Geometry::Root::getManager()->GetListOfVolumes();
+  int number_cells = cells->GetEntries();
+  
+  for ( Geometry::ModuleTraits::InternalCellHandle i=0; i < number_cells; i++ )
+  {
+    // Obtain the material and density data from ROOT
+    TGeoVolume* cell  = Geometry::Root::getManager()->GetVolume( i + 1 );
+    TGeoMaterial* mat = cell->GetMaterial();
+    std::string mat_id  = mat->GetName();
+    
+    // TODO Chop off the prior part of the number
+    // Check for the void properties and then IF statement to do nothing
+    
+    double density =  mat->GetDensity();
+    
+    // Update the unordered maps
+    cell_id_mat_id_map[ i + 1 ] = material;
+    cell_id_density_map[ i + 1 ] = density;
+  }
+
+  // Make sure that the maps have the same size
+  TEST_FOR_EXCEPTION( cell_id_mat_id_map.size() != cell_id_density_map.size(),
+		      InvalidMaterialRepresentation,
+		      "Error: ROOT must specify densities with material "
+		      "ids." );
+  #endif // end HAVE_FRENSIE_ROOT
+}
+
 // Create the neutron materials
-void CollisionHandlerFactory::createNeutronMaterials( 
+void CollisionHandlerFactory<Geometry::Root>::createNeutronMaterials( 
    const Teuchos::ParameterList& cross_sections_table_info,
    const std::string& cross_sections_xml_directory,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
@@ -192,7 +439,7 @@ void CollisionHandlerFactory::createNeutronMaterials(
                    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >
     material_name_cell_ids_map;
 
-  CollisionHandlerFactory::createMaterialNameDataMaps( 
+  CollisionHandlerFactory<Geometry::Root>::createMaterialNameDataMaps( 
 						  material_id_fraction_map,
 						  material_id_component_map,
 						  nuclide_map,
@@ -202,12 +449,12 @@ void CollisionHandlerFactory::createNeutronMaterials(
 						  material_name_cell_ids_map );
 
   // Register materials with the collision handler
-  CollisionHandlerFactory::registerMaterials( material_name_pointer_map,
+  CollisionHandlerFactory<Geometry::Root>::registerMaterials( material_name_pointer_map,
 					      material_name_cell_ids_map );
 }
 
 // Create the photon materials
-void CollisionHandlerFactory::createPhotonMaterials(
+void CollisionHandlerFactory<Geometry::Root>::createPhotonMaterials(
    const Teuchos::ParameterList& cross_sections_table_info,
    const std::string& cross_sections_xml_directory,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
@@ -260,7 +507,7 @@ void CollisionHandlerFactory::createPhotonMaterials(
                    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >
     material_name_cell_ids_map;
 
-  CollisionHandlerFactory::createMaterialNameDataMaps( 
+  CollisionHandlerFactory<Geometry::Root>::createMaterialNameDataMaps( 
 						  material_id_fraction_map,
 						  material_id_component_map,
 						  photoatom_map,
@@ -270,12 +517,12 @@ void CollisionHandlerFactory::createPhotonMaterials(
 						  material_name_cell_ids_map );
 
   // Register materials with the collision handler
-  CollisionHandlerFactory::registerMaterials( material_name_pointer_map,
+  CollisionHandlerFactory<Geometry::Root>::registerMaterials( material_name_pointer_map,
 					      material_name_cell_ids_map );
 }
 
 // Create the electron materials
-void CollisionHandlerFactory::createElectronMaterials(
+void CollisionHandlerFactory<Geometry::Root>::createElectronMaterials(
    const Teuchos::ParameterList& cross_sections_table_info,
    const std::string& cross_sections_xml_directory,
    const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
@@ -311,7 +558,7 @@ void CollisionHandlerFactory::createElectronMaterials(
                    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >
     material_name_cell_ids_map;
 
-  CollisionHandlerFactory::createMaterialNameDataMaps( 
+  CollisionHandlerFactory<Geometry::Root>::createMaterialNameDataMaps( 
 						  material_id_fraction_map,
 						  material_id_component_map,
 						  electroatom_map,
@@ -321,7 +568,7 @@ void CollisionHandlerFactory::createElectronMaterials(
 						  material_name_cell_ids_map );
 
   // Register materials with the collision handler
-  CollisionHandlerFactory::registerMaterials( material_name_pointer_map,
+  CollisionHandlerFactory<Geometry::Root>::registerMaterials( material_name_pointer_map,
                                               material_name_cell_ids_map );
 }
 

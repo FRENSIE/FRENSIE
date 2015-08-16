@@ -1,13 +1,13 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   MonteCarlo_CollisionHandlerFactory.hpp
-//! \author Alex Robinson
+//! \file   MonteCarlo_StandardCollisionHandlerFactory_DagMC.hpp
+//! \author Alex Robinson, Eli Moll
 //! \brief  Collision handler factory class declaration.
 //!
 //---------------------------------------------------------------------------//
 
-#ifndef MONTE_CARLO_COLLISION_HANDLER_FACTORY_HPP
-#define MONTE_CARLO_COLLISION_HANDLER_FACTORY_HPP
+#ifndef MONTE_CARLO_STANDARD_COLLISION_HANDLER_FACTORY_DAGMC_HPP
+#define MONTE_CARLO_STANDARD_COLLISION_HANDLER_FACTORY_DAGMC_HPP
 
 // Std Lib Includes
 #include <stdexcept>
@@ -16,46 +16,99 @@
 #include <Teuchos_RCP.hpp>
 #include <Teuchos_ParameterList.hpp>
 
+// Moab Includes
+#include "DagMC.hpp"
+
 // FRENSIE Includes
 #include "MonteCarlo_CollisionHandler.hpp"
+#include "MonteCarlo_CollisionHandlerFactory.hpp"
+#include "MonteCarlo_StandardCollisionHandlerFactory.hpp"
 #include "MonteCarlo_AtomicRelaxationModelFactory.hpp"
 #include "MonteCarlo_IncoherentModelType.hpp"
 #include "MonteCarlo_BremsstrahlungAngularDistributionType.hpp"
 
 namespace MonteCarlo{
 
-//! The collision handler factory
-class CollisionHandlerFactory
+/*! The specialization of the StandardCollimatorHandlerFactory class for the
+ * DagMC geometry handler.
+ * \ingroup estimator_module
+ */ 
+template<>
+class StandardCollisionHandlerFactory<moab::DagMC> : public CollisionHandlerFactory
 {
 
 public:
 
   //! Initialize the collision handler
-  virtual void initializeHandler( 
+  void initializeHandler( 
 		     const Teuchos::ParameterList& material_reps,
 		     const Teuchos::ParameterList& cross_sections_table_info,
 		     const std::string& cross_sections_xml_directory );
 
+private:
+  
+  // Constructor
+  StandardCollisionHandlerFactory();
+
   // Validate a material representation
-  virtual void validateMaterialRep( 
+  void validateMaterialRep( 
 	      const Teuchos::ParameterList& material_rep,
 	      boost::unordered_set<Geometry::ModuleTraits::InternalCellHandle>&
 	      material_ids );
+  
+  // Validate the material ids
+  void validateMaterialIds( 
+				 const Teuchos::ParameterList& material_reps );
 
   // Create the set of all nuclides/atoms needed to construct materials
-  virtual void createAliasSet( 
+  void createAliasSet( 
 		       const Teuchos::ParameterList& material_reps,
 		       const Teuchos::ParameterList& cross_sections_alias_map,
 		       boost::unordered_set<std::string>& nuclides );
 
   // Create the material id data maps
-  virtual void createMaterialIdDataMaps( 
+  void createMaterialIdDataMaps( 
     const Teuchos::ParameterList& material_reps,
     boost::unordered_map<ModuleTraits::InternalMaterialHandle,
                          Teuchos::Array<double> >& material_id_fraction_map,
     boost::unordered_map<ModuleTraits::InternalMaterialHandle,
                     Teuchos::Array<std::string> >& material_id_component_map );
 
+  // Create the cell id data maps
+  void createCellIdDataMaps(
+         boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                              std::vector<std::string> >& cell_id_mat_id_map,
+	 boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                             std::vector<std::string> >& cell_id_density_map );
+
+  // Create the material name data maps
+  template<typename ScatteringCenterType, typename MaterialType>
+  void createMaterialNameDataMaps(
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                            Teuchos::Array<double> >& material_id_fraction_map,
+   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
+                      Teuchos::Array<std::string> >& material_id_component_map,
+   const boost::unordered_map<std::string,Teuchos::RCP<ScatteringCenterType> >&
+   scattering_center_map,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                              std::vector<std::string> >& cell_id_mat_id_map,
+   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                               std::vector<std::string> >& cell_id_density_map,
+   boost::unordered_map<std::string,Teuchos::RCP<MaterialType> >&
+   material_name_pointer_map,
+   boost::unordered_map<std::string,
+                  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >&
+   material_name_cell_ids_map );  
+
+  // Register materials with the collision handler
+  template<typename MaterialType>
+  void registerMaterials(
+   const boost::unordered_map<std::string,Teuchos::RCP<MaterialType> >&
+   material_name_pointer_map,
+   const boost::unordered_map<std::string,
+                  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >&
+   material_name_cell_ids_map );
+  
   // Create the neutron materials
   virtual void createNeutronMaterials( 
    const Teuchos::ParameterList& cross_sections_table_info,
@@ -111,65 +164,13 @@ public:
    atomic_relaxation_model_factory,
    const BremsstrahlungAngularDistributionType photon_distribution_function,
    const bool use_atomic_relaxation_data );
-
-  // Create the material name data maps
-  template<typename ScatteringCenterType, typename MaterialType>
-  static void createMaterialNameDataMaps(
-   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                            Teuchos::Array<double> >& material_id_fraction_map,
-   const boost::unordered_map<ModuleTraits::InternalMaterialHandle,
-                      Teuchos::Array<std::string> >& material_id_component_map,
-   const boost::unordered_map<std::string,Teuchos::RCP<ScatteringCenterType> >&
-   scattering_center_map,
-   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                              std::vector<std::string> >& cell_id_mat_id_map,
-   const boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
-                               std::vector<std::string> >& cell_id_density_map,
-   boost::unordered_map<std::string,Teuchos::RCP<MaterialType> >&
-   material_name_pointer_map,
-   boost::unordered_map<std::string,
-                  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >&
-   material_name_cell_ids_map );  
-
-  // Register materials with the collision handler
-  template<typename MaterialType>
-  static void registerMaterials(
-   const boost::unordered_map<std::string,Teuchos::RCP<MaterialType> >&
-   material_name_pointer_map,
-   const boost::unordered_map<std::string,
-                  Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >&
-   material_name_cell_ids_map );
-   
-private:
-
-  // Constructor
-  CollisionHandlerFactory();
-  
-};
-
-//! The invalid material representation error
-class InvalidMaterialRepresentation : public std::logic_error
-{
-  
-public:
-
-  InvalidMaterialRepresentation( const std::string& what_arg )
-    : std::logic_error( what_arg )
-  { /* ... */ }
+			 
 };
 
 } // end MonteCarlo namespace
 
-//---------------------------------------------------------------------------//
-// Template includes
-//---------------------------------------------------------------------------//
-
-#include "MonteCarlo_CollisionHandlerFactory_def.hpp"
+#endif // end MONTE_CARLO_STANDARD_COLLISION_HANDLER_FACTORY_DAGMC_HPP
 
 //---------------------------------------------------------------------------//
-
-#endif // end MONTE_CARLO_COLLISION_HANDLER_FACTORY_HPP
-
-//---------------------------------------------------------------------------//
-// end MonteCarlo_CollisionHandlerFactory.hpp
+// end MonteCarlo_StandardCollisionHandlerFactory_DagMC.hpp
 //---------------------------------------------------------------------------//

@@ -79,7 +79,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface_Root, cellContainingPointBirth )
   // Find cell containing ray
   GMI::InternalCellHandle cell = GMI::findCellContainingPoint( ray );
   
-  TEST_EQUALITY_CONST( cell, 2 );
+  TEST_EQUALITY_CONST( cell, 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -153,11 +153,13 @@ TEUCHOS_UNIT_TEST( ModuleInterface_Root, cellIsTerminationCell )
 // Check that a cell volume can be calculated
 TEUCHOS_UNIT_TEST( ModuleInterface_Root, cellVolumeCanBeFound )
 {
+  typedef Geometry::ModuleInterface<Geometry::Root> GMI;
+
   double vol_sphere_calcluated = 65.4498469497874;
   double vol_cube_calculated   = 934.550153050213;
   
-  Double_t vol_sphere = Geometry::Root::getManager()->GetVolume(2)->Capacity();
-  Double_t vol_cube = Geometry::Root::getManager()->GetVolume(1)->Capacity();
+  Double_t vol_sphere = GMI::getCellVolume(2);
+  Double_t vol_cube = GMI::getCellVolume(1);
   
   TEST_FLOATING_EQUALITY( vol_sphere_calcluated, vol_sphere, 1e-9 );
   TEST_FLOATING_EQUALITY( vol_cube_calculated, vol_cube, 1e-9 );
@@ -201,15 +203,15 @@ int main( int argc, char** argv )
   out->setProcRankAndSize( mpiSession.getRank(), mpiSession.getNProc() );
   out->setOutputToRootOnly( 0 );
   
-  // Initialize DagMC
+  // Initialize Root
   Geometry::Root::initialize( test_geom_root_file_name );
 
   // Initialize the Module Interface
   Geometry::ModuleInterface<Geometry::Root>::initialize();
 
   // Enable thread support
-  Geometry::ModuleInterface<Geometry::Root>::enableThreadSupport( 
-		 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
+  // Geometry::ModuleInterface<Geometry::Root>::enableThreadSupport( 
+	//	 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
   mpiSession.barrier();
   
