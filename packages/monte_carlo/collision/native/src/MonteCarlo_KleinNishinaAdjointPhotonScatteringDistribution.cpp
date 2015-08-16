@@ -15,38 +15,39 @@ namespace MonteCarlo{
 
 // Constructor
 KleinNishinaAdjointPhotonScatteringDistribution::KleinNishinaAdjointPhotonScatteringDistribution(
-	        const double max_energy,
-	        const Teuchos::ArrayRCP<const double>& critical_line_energies )
-  : IncoherentAdjointPhotonScatteringDistribution( max_energy,
-						   critical_line_energies )
+						      const double max_energy )
+  : IncoherentAdjointPhotonScatteringDistribution( max_energy )
 { /* ... */ }
 
 // Evaluate the distribution
 double KleinNishinaAdjointPhotonScatteringDistribution::evaluate( 
 				   const double incoming_energy,
+				   const double max_energy,
 				   const double scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= this->getMaxEnergy() );
+  testPrecondition( incoming_energy <= max_energy );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= 
 		    calculateMinScatteringAngleCosine( incoming_energy,
-						       this->getMaxEnergy() ));
+						       max_energy ));
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   return this->evaluateAdjointKleinNishinaDist( incoming_energy,
+						max_energy,
 						scattering_angle_cosine );
 }
   
 // Evaluate the integrated cross section (cm^2)
 double KleinNishinaAdjointPhotonScatteringDistribution::evaluateIntegratedCrossSection( 
 					         const double incoming_energy,
+						 const double max_energy,
 					         const double precision ) const
 {
   // Make sure the energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= this->getMaxEnergy() );
+  testPrecondition( incoming_energy <= max_energy );
 
   const double alpha = 
     incoming_energy/Utility::PhysicalConstants::electron_rest_mass_energy;
@@ -54,7 +55,7 @@ double KleinNishinaAdjointPhotonScatteringDistribution::evaluateIntegratedCrossS
   const double alpha_sqr = alpha*alpha;
   
   const double x_min = 
-    calculateMinInverseEnergyGainRatio( incoming_energy, this->getMaxEnergy());
+    calculateMinInverseEnergyGainRatio( incoming_energy, max_energy );
 
   const double x_min_sqr = x_min*x_min;
 

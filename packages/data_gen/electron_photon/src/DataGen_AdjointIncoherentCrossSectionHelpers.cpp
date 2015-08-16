@@ -6,10 +6,13 @@
 //!
 //---------------------------------------------------------------------------//
 
+// Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
+
 // FRENSIE Includes
 #include "DataGen_AdjointIncoherentCrossSectionHelpers.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "DataGen_ContractException.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace DataGen{
 

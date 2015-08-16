@@ -24,10 +24,8 @@ namespace MonteCarlo{
 template<typename ScatteringFunctionArgUnitConversionPolicy>
 WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::WHIncoherentAdjointPhotonScatteringDistribution(
      const double max_energy,
-     const Teuchos::ArrayRCP<const double>& critical_line_energies,
      const Teuchos::RCP<const Utility::OneDDistribution>& scattering_function )
-  : IncoherentAdjointPhotonScatteringDistribution( max_energy,
-						   critical_line_energies ),
+  : IncoherentAdjointPhotonScatteringDistribution( max_energy ),
     d_scattering_function( scattering_function )
 {
   // Make sure the unit conversion policy is valid
@@ -40,23 +38,26 @@ WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConvers
 template<typename ScatteringFunctionArgUnitConversionPolicy>
 double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::evaluate( 
 				   const double incoming_energy,
+				   const double max_energy,
 				   const double scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= this->getMaxEnergy() );
+  testPrecondition( incoming_energy <= max_energy );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= 
 		    calculateMinScatteringAngleCosine( incoming_energy,
-						       this->getMaxEnergy() ));
+						       max_energy ));
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   const double scattering_function_value = 
     this->evaluateScatteringFunction( incoming_energy,
+				      max_energy,
 				      scattering_angle_cosine );
 
   const double diff_kn_cross_section = 
     this->evaluateAdjointKleinNishinaDist( incoming_energy,
+					   max_energy,
 					   scattering_angle_cosine );
 
   return diff_kn_cross_section*scattering_function_value;
@@ -66,17 +67,19 @@ double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnit
 template<typename ScatteringFunctionArgUnitConversionPolicy>
 double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::evaluateIntegratedCrossSection( 
 						 const double incoming_energy,
+						 const double max_energy,
 						 const double precision ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= this->getMaxEnergy() );
+  testPrecondition( incoming_energy <= max_energy );
 
   // Evaluate the integrated cross section
   boost::function<double (double x)> diff_cs_wrapper = 
     boost::bind<double>( &WHIncoherentAdjointPhotonScatteringDistribution::evaluate,
 			 boost::cref( *this ),
 			 incoming_energy,
+			 max_energy,
 			 _1 );
 
   double abs_error, integrated_cs;
@@ -84,7 +87,7 @@ double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnit
   Utility::GaussKronrodQuadratureKernel quadrature_kernel( precision );
 
   const double min_scattering_angle_cosine = 
-    calculateMinScatteringAngleCosine( incoming_energy, this->getMaxEnergy() );
+    calculateMinScatteringAngleCosine( incoming_energy, max_energy );
 
   quadrature_kernel.integrateAdaptively<15>( diff_cs_wrapper,
 					     min_scattering_angle_cosine,
@@ -93,7 +96,7 @@ double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnit
 					     abs_error );
 
   // Make sure the integrated cross section is valid
-  testPostcondition( integrated_cs > 0.0 );
+  testPostcondition( integrated_cs >= 0.0 );
 
   return integrated_cs;
 }
@@ -165,9 +168,7 @@ void WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitCo
   testPostcondition( scattering_angle_cosine >= min_scattering_angle_cosine );
   testPostcondition( scattering_angle_cosine <= 1.0 );
   // Make sure the adjoint Compton line energy is valid
-  testPostcondition( outgoing_energy == calculateAdjointComptonLineEnergy( 
-						   incoming_energy,
-						   scattering_angle_cosine ) );
+  testPostcondition( outgoing_energy >= incoming_energy );
 }
 
 // Randomly scatter the photon and return the shell that was interacted with
@@ -208,35 +209,28 @@ bool WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitCo
 				            const double energy_of_interest,
 				            const double initial_energy ) const
 {
-  return initial_energy >= energy_of_interest;
-}
+  // Make sure the incoming energy is valid
+  testPrecondition( initial_energy > 0.0 );
+  // Make sure the energy of interest is valid
+  testPrecondition( energy_of_interest >= 0.0 );
 
-// Check if an energy is below the scattering window
-/*! \details Becuase of the scattering function evaluating to zero when 
- * the scattering angle cosine is 1.0, the scattering window lower bound must
- * exclude the energy of interest.
- */
-template<typename ScatteringFunctionArgUnitConversionPolicy>
-bool WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::isEnergyBelowScatteringWindow( 
-				            const double energy_of_interest,
-				            const double initial_energy ) const
-{
-  return initial_energy <= energy_of_interest;
+  return initial_energy >= energy_of_interest;
 }
 
 // Evaluate the scattering function
 template<typename ScatteringFunctionArgUnitConversionPolicy>
 inline double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::evaluateScatteringFunction(
 				   const double incoming_energy,
+				   const double max_energy,
 				   const double scattering_angle_cosine ) const
 {
   // Make sure the incoming energy is valid
   testPrecondition( incoming_energy > 0.0 );
-  testPrecondition( incoming_energy <= this->getMaxEnergy() );
+  testPrecondition( incoming_energy <= max_energy );
   // Make sure the scattering angle cosine is valid
   testPrecondition( scattering_angle_cosine >= 
 		    calculateMinScatteringAngleCosine( incoming_energy,
-						       this->getMaxEnergy() ));
+						       max_energy ));
   testPrecondition( scattering_angle_cosine <= 1.0 );
 
   // Calculate the outgoing energy
@@ -267,6 +261,26 @@ inline double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunction
 		     d_scattering_function->getUpperBoundOfIndepVar() );
 
   return d_scattering_function->evaluate( scattering_function_arg );
+}
+
+// Evaluate the scattering function
+template<typename ScatteringFunctionArgUnitConversionPolicy>
+inline double WHIncoherentAdjointPhotonScatteringDistribution<ScatteringFunctionArgUnitConversionPolicy>::evaluateScatteringFunction(
+				   const double incoming_energy,
+				   const double scattering_angle_cosine ) const
+{
+  // Make sure the incoming energy is valid
+  testPrecondition( incoming_energy > 0.0 );
+  testPrecondition( incoming_energy <= this->getMaxEnergy() );
+  // Make sure the scattering angle cosine is valid
+  testPrecondition( scattering_angle_cosine >= 
+		    calculateMinScatteringAngleCosine( incoming_energy,
+						       this->getMaxEnergy() ));
+  testPrecondition( scattering_angle_cosine <= 1.0 );
+
+  return this->evaluateScatteringFunction( incoming_energy,
+					   this->getMaxEnergy(),
+					   scattering_angle_cosine );
 }
 
 } // end MonteCarlo namespace

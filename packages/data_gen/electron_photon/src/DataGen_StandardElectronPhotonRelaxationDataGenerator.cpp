@@ -241,6 +241,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setComptonProfileData(
 						  half_profile.end(),
 						  full_momentum_grid,
 						  full_profile,
+						  true,
 						  true );
     
     MonteCarlo::convertMomentumGridToMeCUnits( full_momentum_grid.begin(),
@@ -504,7 +505,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
 					   subshell_photoelectric_effect_css );
   
   // Create the impulse approx. incoherent cross section evaluators
-  Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const SubshellIncoherentCrossSectionEvaluator> > > 
+  Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > > 
     impulse_approx_incoherent_cs_evaluators;
   
   this->createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
@@ -577,7 +578,7 @@ void StandardElectronPhotonRelaxationDataGenerator::setPhotonData(
   for( unsigned i = 0; i < impulse_approx_incoherent_cs_evaluators.size(); ++i)
   {
     grid_function = boost::bind(
-	     &SubshellIncoherentCrossSectionEvaluator::evaluateCrossSection,
+	     &MonteCarlo::SubshellIncoherentPhotonScatteringDistribution::evaluateIntegratedCrossSection,
 	     boost::cref( *impulse_approx_incoherent_cs_evaluators[i].second ),
 	     _1,
 	     d_subshell_incoherent_evaluation_tolerance );
@@ -797,7 +798,7 @@ void StandardElectronPhotonRelaxationDataGenerator::extractSubshellPhotoelectric
 // Create the subshell impulse approx incoherent cross section evaluators
 void StandardElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxIncoherentCrossSectionEvaluators(
      const Data::ElectronPhotonRelaxationVolatileDataContainer& data_container,
-     Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const SubshellIncoherentCrossSectionEvaluator> > >& evaluators ) const
+     Teuchos::Array<std::pair<unsigned,Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution> > >& evaluators ) const
 {
   Teuchos::ArrayView<const double> subshell_ordering = 
     d_ace_epr_data->extractSubshellENDFDesignators();
@@ -820,7 +821,7 @@ void StandardElectronPhotonRelaxationDataGenerator::createSubshellImpulseApproxI
        new Utility::TabularDistribution<Utility::LinLin>( momentum_grid,
 							  occupation_number ) );
 
-    evaluators[i].second.reset( new SubshellIncoherentCrossSectionEvaluator( 
+    evaluators[i].second.reset( new MonteCarlo::SubshellIncoherentPhotonScatteringDistribution( 
 		   MonteCarlo::convertENDFDesignatorToSubshellEnum( subshell ),
 		   data_container.getSubshellOccupancy( subshell ),
 		   data_container.getSubshellBindingEnergy( subshell ),
@@ -909,7 +910,7 @@ void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEne
 // Create the cross section on the union energy grid
 void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEnergyGrid(
 	     const std::list<double>& union_energy_grid,
-	     const Teuchos::RCP<const SubshellIncoherentCrossSectionEvaluator>&
+	     const Teuchos::RCP<const MonteCarlo::SubshellIncoherentPhotonScatteringDistribution>&
 	     original_cross_section,
 	     std::vector<double>& cross_section,
 	     unsigned& threshold_index ) const
@@ -922,7 +923,8 @@ void StandardElectronPhotonRelaxationDataGenerator::createCrossSectionOnUnionEne
   
   while( energy_grid_pt != union_energy_grid.end() )
   {
-    raw_cross_section[index] = original_cross_section->evaluateCrossSection( 
+    raw_cross_section[index] = 
+      original_cross_section->evaluateIntegratedCrossSection( 
 				  *energy_grid_pt, 
 				  d_subshell_incoherent_evaluation_tolerance );
     

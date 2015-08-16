@@ -14,6 +14,7 @@
 
 // FRENSE Includes
 #include "MonteCarlo_CompleteDopplerBroadenedPhotonEnergyDistribution.hpp"
+#include "MonteCarlo_ComptonProfileSubshellConverter.hpp"
 #include "Utility_TabularOneDDistribution.hpp"
 
 namespace MonteCarlo{
@@ -28,6 +29,8 @@ public:
   DecoupledCompleteDopplerBroadenedPhotonEnergyDistribution(
 	       const Teuchos::Array<double>& endf_subshell_occupancies,
 	       const Teuchos::Array<SubshellType>& endf_subshell_order,
+	       const Teuchos::RCP<ComptonProfileSubshellConverter>& 
+	       subshell_converter,
 	       const Teuchos::Array<double>& old_subshell_binding_energies,
 	       const Teuchos::Array<double>& old_subshell_occupancies,
 	       const ElectronMomentumDistArray& electron_momentum_dist_array );

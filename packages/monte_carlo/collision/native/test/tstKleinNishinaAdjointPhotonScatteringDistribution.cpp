@@ -301,7 +301,7 @@ TEUCHOS_UNIT_TEST( KleinNishinaAdjointPhotonScatteringDistribution,
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 
-  // Generate a probe with energy 0.8
+  // Generate a probe with energy 0.08
   adjoint_photon.setEnergy( 0.07 );
   adjoint_photon.setDirection( 0.0, 0.0, 1.0 );
 
@@ -370,10 +370,14 @@ int main( int argc, char** argv )
     Utility::PhysicalConstants::electron_rest_mass_energy;
   critical_line_energies[2] = 1.0;
 
-  distribution.reset( 
+  Teuchos::RCP<MonteCarlo::IncoherentAdjointPhotonScatteringDistribution>
+    incoherent_base_dist(
 	      new MonteCarlo::KleinNishinaAdjointPhotonScatteringDistribution(
-						    20.0,
-						    critical_line_energies ) );
+								     20.0 ) );
+
+  incoherent_base_dist->setCriticalLineEnergies( critical_line_energies );
+
+  distribution = incoherent_base_dist;
 
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

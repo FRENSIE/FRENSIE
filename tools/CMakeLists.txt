@@ -24,8 +24,8 @@ INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/packages/utility/units/src"
 "${CMAKE_SOURCE_DIR}/packages/transmutation/src"
 "${CMAKE_SOURCE_DIR}/packages/data/decay/src"
 "${CMAKE_SOURCE_DIR}/packages/data_gen/xsdir/src"
-"${CMAKE_SOURCE_DIR}/packages/data_gen/free_gas_sab/src")
-#"${CMAKE_SOURCE_DIR}/packages/data_gen/electron_photon/src")
+"${CMAKE_SOURCE_DIR}/packages/data_gen/free_gas_sab/src"
+"${CMAKE_SOURCE_DIR}/packages/data_gen/electron_photon/src")
 
 ADD_SUBDIRECTORY(rng_timer)
 
@@ -35,6 +35,6 @@ ADD_SUBDIRECTORY(listcs)
 
 ADD_SUBDIRECTORY(facemc)
 
-#ADD_SUBDIRECTORY(epr_generator)
+ADD_SUBDIRECTORY(epr_generator)
 
 ADD_SUBDIRECTORY(sample)
