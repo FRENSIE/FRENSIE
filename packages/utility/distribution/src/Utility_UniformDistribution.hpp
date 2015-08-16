@@ -21,8 +21,9 @@
 namespace Utility{
 
 //! Uniform distribution class
-class UniformDistribution : public TabularOneDDistribution,
-			    public ParameterListCompatibleObject<UniformDistribution>
+template<typename IndependentUnit, typename DependentUnit>
+class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
+			    public ParameterListCompatibleObject<UnitAwareUniformDistribution<IndependentUnit,DependentUnit> >
 {
 
 private:
@@ -32,57 +33,65 @@ private:
 
 public:
 
+  //! The independent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+
+  //! The dependent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
+
   //! Default constructor
-  UniformDistribution();
+  UnitAwareUniformDistribution();
  
   //! Constructor
-  UniformDistribution( const double min_independent_value, 
-		       const double max_independent_value,
-		       const double dependent_value );
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  UnitAwareUniformDistribution(const InputIndepQuantity& min_independent_value,
+			       const InputIndepQuantity& max_independent_value,
+			       const InputDepQuantity& dependent_value );
 
   //! Copy constructor
-  UniformDistribution( const UniformDistribution& dist_instance );
+  UnitAwareUniformDistribution( const UnitAwareUniformDistribution& dist_instance );
 
   //! Assignment operator
-  UniformDistribution& operator=( const UniformDistribution& dist_instance );
+  UnitAwareUniformDistribution& operator=( const UnitAwareUniformDistribution& dist_instance );
   
   //! Destructor
-  ~UniformDistribution()
+  ~UnitAwareUniformDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
-  double evaluate( const double indep_var_value ) const;  
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;  
 
   //! Evaluate the PDF
-  double evaluatePDF( const double indep_var_value ) const;
+  double evaluatePDF( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the CDF
-  double evaluateCDF( const double indep_var_value ) const;
+  double evaluateCDF( const IndepQuantity indep_var_value ) const;
 
   //! Return a random sample from the distribution
-  double sample() const;
+  IndepQuantity sample() const;
 
   //! Return a random sample from the corresponding CDF and record the number of trials
-  double sampleAndRecordTrials( unsigned& trials ) const;
+  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return a random sample from the distribution at the given CDF value
-  double sampleWithRandomNumber( const double random_number ) const;
+  IndepQuantity sampleWithRandomNumber( const double random_number ) const;
 
   //! Return a random sample and sampled index from the corresponding CDF
-  double sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
+  IndepQuantity sampleAndRecordBinIndex( unsigned& sampled_bin_index ) const;
 
   //! Return a random sample from the corresponding CDF in a subrange
-  double sampleInSubrange( const double max_indep_var ) const;
+  IndepQuantity sampleInSubrange( const IndepQuantity max_indep_var ) const;
 
   //! Return a random sample from the distribution at the given CDF value in a subrange
-  double sampleWithRandomNumberInSubrange( const double random_number,
-					   const double max_indep_var ) const;
+  IndepQuantity sampleWithRandomNumberInSubrange( 
+				     const double random_number,
+				     const IndepQuantity max_indep_var ) const;
 
   //! Return the upper bound of the distribution independent variable
-  double getUpperBoundOfIndepVar() const;
+  IndepQuantity getUpperBoundOfIndepVar() const;
 
   //! Return the lower bound of the distribution independent variable
-  double getLowerBoundOfIndepVar() const;
+  IndepQuantity getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
@@ -97,7 +106,7 @@ public:
   void fromStream( std::istream& is );
 
   //! Method for testing if two objects are equivalent
-  bool isEqual( const UniformDistribution& other ) const;
+  bool isEqual( const UnitAwareUniformDistribution<IndependentUnit,DependentUnit>& other ) const;
 
 private:
 
@@ -105,20 +114,22 @@ private:
   static const OneDDistributionType distribution_type = UNIFORM_DISTRIBUTION;
 
   // The min independent value
-  double d_min_independent_value;
+  IndepQuantity d_min_independent_value;
   
   // The max independent value
-  double d_max_independent_value;
+  IndepQuantity d_max_independent_value;
 
   // The uniform distribution dependent value
-  double d_dependent_value;
+  DepQuantity d_dependent_value;
 
   // The uniform distribution PDF value
   double d_pdf_value;
 };
 
 // Return a random sample from the distribution at the given CDF value
-inline double UniformDistribution::sampleWithRandomNumber( 
+template<typename IndependentUnit, typename DependentUnit>
+inline typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumber( 
 					     const double random_number ) const
 {
   // Make sure the random number is valid
@@ -130,9 +141,11 @@ inline double UniformDistribution::sampleWithRandomNumber(
 }
 
 // Return a random sample from the distribution at the given CDF value in a subrange
-inline double UniformDistribution::sampleWithRandomNumberInSubrange( 
-					     const double random_number,
-					     const double max_indep_var ) const
+template<typename IndependentUnit, typename DependentUnit>
+inline typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange( 
+	    const double random_number,
+	    const typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
 {
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
@@ -144,6 +157,9 @@ inline double UniformDistribution::sampleWithRandomNumberInSubrange(
   return random_number*(max_indep_var - d_min_independent_value) + 
     d_min_independent_value;
 }
+
+//! The unit-agnostic uniform distribution
+typedef UnitAwareUniformDistribution<void,void> UniformDistribution;
 
 } // end Utility namespace
 
@@ -170,6 +186,14 @@ public:
 };
 
 } // end Teuchos namespace 
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_UniformDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_UNIFORM_DISTRIBUTION_HPP
 
