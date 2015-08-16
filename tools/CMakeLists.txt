@@ -1,5 +1,6 @@
 # Set up the directory hierarchy
-INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/packages/utility/core/src" 
+INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/packages/utility/units/src" 
+"${CMAKE_SOURCE_DIR}/packages/utility/core/src" 
 "${CMAKE_SOURCE_DIR}/packages/utility/prng/src"
 "${CMAKE_SOURCE_DIR}/packages/utility/hdf5/src" 
 "${CMAKE_SOURCE_DIR}/packages/utility/distribution/src"

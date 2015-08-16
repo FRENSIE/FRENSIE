@@ -1,13 +1,15 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   Utility_UniformDistribution.cpp
+//! \file   Utility_UniformDistribution_def.hpp
 //! \author Alex Robinson
-//! \brief  Uniform distribution class declaration.
+//! \brief  Uniform distribution class definition
 //!
 //---------------------------------------------------------------------------//
 
+#ifndef UTILITY_UNIFORM_DISTRIBUTION_DEF_HPP
+#define UTILITY_UNIFORM_DISTRIBUTION_DEF_HPP
+
 // FRENSIE Includes
-#include "Utility_UniformDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_ArrayString.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
@@ -16,46 +18,54 @@
 namespace Utility{
 
 // Default constructor
-UniformDistribution::UniformDistribution()
+template<typename IndependentUnit, typename DependentUnit>
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDistribution()
 { /* ... */ }
 
 // Constructor
-UniformDistribution::UniformDistribution( const double min_independent_value, 
-					  const double max_independent_value,
-					  const double dependent_value )
+/*! \details A quantity with a different unit can be used as an input. This
+ * will be explicitly cast to the desired unit during object construction.
+ */
+template<typename IndependentUnit, typename DependentUnit>
+template<typename InputIndepQuantity, typename InputDepQuantity>
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDistribution( 
+	                       const InputIndepQuantity& min_independent_value,
+			       const InputIndepQuantity& max_independent_value,
+			       const InputDepQuantity& dependent_value )
   : d_min_independent_value( min_independent_value ),
     d_max_independent_value( max_independent_value ),
     d_dependent_value( dependent_value ),
-    d_pdf_value( 1.0/(max_independent_value - min_independent_value) )
+    d_pdf_value(1.0/getRawQuantity(max_independent_value - min_independent_value))
 {
   // Make sure that the values are valid
-  testPrecondition( !ST::isnaninf( min_independent_value ) );
-  testPrecondition( !ST::isnaninf( max_independent_value ) );
-  testPrecondition( !ST::isnaninf( dependent_value ) );
+  testPrecondition( !ST::isnaninf( getRawQuantity( min_independent_value ) ) );
+  testPrecondition( !ST::isnaninf( getRawQuantity( max_independent_value ) ) );
+  testPrecondition( !ST::isnaninf( getRawQuantity( dependent_value ) ) );
   // Make sure that the max value is greater than the min value
   testPrecondition( max_independent_value > min_independent_value );
 }
 
 // Copy constructor
-UniformDistribution::UniformDistribution( 
-				     const UniformDistribution& dist_instance )
+template<typename IndependentUnit, typename DependentUnit>
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDistribution( const UnitAwareUniformDistribution<IndependentUnit,DependentUnit>& dist_instance )
   : d_min_independent_value( dist_instance.d_min_independent_value ),
     d_max_independent_value( dist_instance.d_max_independent_value ),
     d_dependent_value( dist_instance.d_dependent_value ),
     d_pdf_value( dist_instance.d_pdf_value )
 {
   // Make sure that the values are valid
-  testPrecondition( !ST::isnaninf( dist_instance.d_min_independent_value ) );
-  testPrecondition( !ST::isnaninf( dist_instance.d_max_independent_value ) );
-  testPrecondition( !ST::isnaninf( dist_instance.d_dependent_value ) );
+  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_min_independent_value ) ) );
+  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_max_independent_value ) ) );
+  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_dependent_value ) ) );
   // Make sure that the max value is greater than the min value
   testPrecondition( dist_instance.d_max_independent_value > 
 		    dist_instance.d_min_independent_value );
 }
 
 // Assignment operator
-UniformDistribution& UniformDistribution::operator=(
-				     const UniformDistribution& dist_instance )
+template<typename IndependentUnit, typename DependentUnit>
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>& UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::operator=(
+       const UnitAwareUniformDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
   // Make sure that the distribution is valid
   testPrecondition( dist_instance.d_max_independent_value > 
@@ -73,7 +83,10 @@ UniformDistribution& UniformDistribution::operator=(
 }
 
 // Evaluate the distribution
-double UniformDistribution::evaluate( const double indep_var_value ) const
+template<typename IndependentUnit, typename DependentUnit>
+typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::DepQuantity
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::evaluate( 
+const typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value >= d_min_independent_value && 
       indep_var_value <= d_max_independent_value )
@@ -83,7 +96,9 @@ double UniformDistribution::evaluate( const double indep_var_value ) const
 }
 
 // Evaluate the PDF
-double UniformDistribution::evaluatePDF( const double indep_var_value ) const
+template<typename IndependentUnit, typename DependentUnit>
+double UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::evaluatePDF(
+const typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value >= d_min_independent_value &&
       indep_var_value <= d_max_independent_value )
@@ -93,11 +108,13 @@ double UniformDistribution::evaluatePDF( const double indep_var_value ) const
 }
 
 // Evaluate the CDF
-double UniformDistribution::evaluateCDF( const double indep_var_value ) const
+template<typename IndependentUnit, typename DependentUnit>
+double UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::evaluateCDF(
+const typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value >= d_min_independent_value &&
       indep_var_value <= d_max_independent_value )
-    return d_pdf_value*(indep_var_value - d_min_independent_value);
+    return d_pdf_value*getRawQuantity(indep_var_value - d_min_independent_value);
   else if( indep_var_value < d_min_independent_value )
     return 0.0;
   else
@@ -105,15 +122,19 @@ double UniformDistribution::evaluateCDF( const double indep_var_value ) const
 }
 
 // Return a random sample from the distribution
-double UniformDistribution::sample() const
+template<typename IndependentUnit, typename DependentUnit>
+typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
   this->sampleWithRandomNumber( random_number );
 }
 
-//! Return a random sample from the corresponding CDF and record the number of trials
-double UniformDistribution::sampleAndRecordTrials( unsigned& trials ) const
+// Return a random sample from the corresponding CDF and record the number of trials
+template<typename IndependentUnit, typename DependentUnit>
+typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
 {
   ++trials;
 
@@ -121,7 +142,9 @@ double UniformDistribution::sampleAndRecordTrials( unsigned& trials ) const
 }
 
 // Return a random sample and sampled index from the corresponding CDF
-double UniformDistribution::sampleAndRecordBinIndex( 
+template<typename IndependentUnit, typename DependentUnit>
+typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleAndRecordBinIndex( 
 					    unsigned& sampled_bin_index ) const
 {
   sampled_bin_index = 0u;
@@ -130,7 +153,9 @@ double UniformDistribution::sampleAndRecordBinIndex(
 }
 
 // Return a random sample from the corresponding CDF in a subrange
-double UniformDistribution::sampleInSubrange(const double max_indep_var ) const
+template<typename IndependentUnit, typename DependentUnit>
+typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity 
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleInSubrange(const UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
 {
   // Make sure the upper bound of the subrange is valid
   testPrecondition( max_indep_var <= d_max_independent_value );
@@ -143,40 +168,48 @@ double UniformDistribution::sampleInSubrange(const double max_indep_var ) const
 }
 
 // Return the upper bound of the distribution independent variable
-double UniformDistribution::getUpperBoundOfIndepVar() const
+template<typename IndependentUnit, typename DependentUnit>
+typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getUpperBoundOfIndepVar() const
 {
   return d_max_independent_value;
 }
 
 // Return the lower bound of the distribution independent variable
-double UniformDistribution::getLowerBoundOfIndepVar() const
+template<typename IndependentUnit, typename DependentUnit>
+typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getLowerBoundOfIndepVar() const
 {
   return d_min_independent_value;
 }
 
 // Return the distribution type
-OneDDistributionType UniformDistribution::getDistributionType() const
+template<typename IndependentUnit, typename DependentUnit>
+OneDDistributionType UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::getDistributionType() const
 {
-  return UniformDistribution::distribution_type;
+  return UnitAwareUniformDistribution::distribution_type;
 }
 
 // Test if the distribution is continuous
-bool UniformDistribution::isContinuous() const
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::isContinuous() const
 {
   return true;
 }
 
 // Method for placing the object in an output stream
-void UniformDistribution::toStream( std::ostream& os ) const
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::toStream( std::ostream& os ) const
 {
-  os << "{" << d_min_independent_value
-     << "," << d_max_independent_value
-     << "," << d_dependent_value
+  os << "{" << getRawQuantity( d_min_independent_value )
+     << "," << getRawQuantity( d_max_independent_value )
+     << "," << getRawQuantity( d_dependent_value )
      << "}";
 }
 
 // Method for initializing the object from an input stream
-void UniformDistribution::fromStream( std::istream& is )
+template<typename IndependentUnit, typename DependentUnit>
+void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromStream( std::istream& is )
 {
   // Read in the distribution representation
   std::string dist_rep;
@@ -209,7 +242,7 @@ void UniformDistribution::fromStream( std::istream& is )
 		      "constructed because the representation is not valid "
 		      "(only three values may be specified)!" );
 
-  d_min_independent_value = distribution[0];
+  setQuantity( d_min_independent_value, distribution[0] );
 
   TEST_FOR_EXCEPTION( ST::isnaninf( d_min_independent_value ),
 		      InvalidDistributionStringRepresentation,
@@ -217,7 +250,7 @@ void UniformDistribution::fromStream( std::istream& is )
 		      "constructed because of an invalid min "
 		      "independent value " << d_min_independent_value );
 
-  d_max_independent_value = distribution[1];
+  setQuantity( d_max_independent_value, distribution[1] );
 
   TEST_FOR_EXCEPTION( ST::isnaninf( d_max_independent_value ),
 		      InvalidDistributionStringRepresentation,
@@ -231,9 +264,9 @@ void UniformDistribution::fromStream( std::istream& is )
 		      "constructed because of invalid independent values!" );
 
   if( distribution.size() == 3 )
-    d_dependent_value = distribution[2];
+    setQuantity( d_dependent_value, distribution[2] );
   else
-    d_dependent_value = 1.0;
+    setQuantity( d_dependent_value, 1.0 );
 
   TEST_FOR_EXCEPTION( ST::isnaninf( d_dependent_value ),
 		      InvalidDistributionStringRepresentation,
@@ -241,11 +274,13 @@ void UniformDistribution::fromStream( std::istream& is )
 		      "constructed because of an invalid dependent "
 		      "value " << d_dependent_value );
 
-  d_pdf_value = 1.0/(d_max_independent_value - d_min_independent_value);
+  d_pdf_value = 
+    1.0/getRawQuantity(d_max_independent_value - d_min_independent_value);
 }
 
 // Method for testing if two objects are equivalent
-bool UniformDistribution::isEqual( const UniformDistribution& other ) const
+template<typename IndependentUnit, typename DependentUnit>
+bool UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::isEqual( const UnitAwareUniformDistribution<IndependentUnit,DependentUnit>& other ) const
 {
   return d_min_independent_value == other.d_min_independent_value &&
     d_max_independent_value == other.d_max_independent_value &&
@@ -255,6 +290,8 @@ bool UniformDistribution::isEqual( const UniformDistribution& other ) const
 
 } // end Utility namespace
 
+#endif // end UTILITY_UNIFORM_DISTRIBUTION_DEF_HPP
+
 //---------------------------------------------------------------------------//
-// end Utility_UniformDistribution.cpp
+// end Utility_UniformDistribution_def.hpp
 //---------------------------------------------------------------------------//

@@ -13,44 +13,64 @@
 #include <limits>
 #include <stdexcept>
 
+// Boost Includes
+#include <boost/units/quantity.hpp>
+
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
 #include "Utility_ComparePolicy.hpp"
+#include "Utility_UnitTraits.hpp"
+#include "Utility_QuantityTraits.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace Utility{
 
-//! The one-dimensional distribution declaration
-class OneDDistribution
+//! The unit-aware one-dimensional distribution declaration
+template<typename IndependentUnit, typename DependentUnit>
+class UnitAwareOneDDistribution
 {
+
+protected:
+
+  //! The independent unit traits typedef
+  typedef UnitTraits<IndependentUnit> IndepUnitTraits;
+
+  //! The dependent unit traits typedef
+  typedef UnitTraits<DependentUnit> DepUnitTraits;
 
 public:
 
+  //! The independent quantity type
+  typedef typename IndepUnitTraits::template GetQuantityType<double>::value IndepQuantity;
+
+  //! The dependent quantity type
+  typedef typename DepUnitTraits::template GetQuantityType<double>::value DepQuantity;
+
   //! Constructor
-  OneDDistribution()
+  UnitAwareOneDDistribution()
   { /* ... */ }
 
   //! Destructor
-  virtual ~OneDDistribution()
+  virtual ~UnitAwareOneDDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
-  virtual double evaluate( const double indep_var_value ) const = 0;
+  virtual DepQuantity evaluate( const IndepQuantity indep_var_value ) const = 0;
 
   //! Evaluate the PDF
-  virtual double evaluatePDF( const double indep_var_value ) const = 0;
+  virtual double evaluatePDF( const IndepQuantity indep_var_value ) const = 0;
 
   //! Return a random sample from the distribution
-  virtual double sample() const = 0;
+  virtual DepQuantity sample() const = 0;
 
   //! Return a random sample and record the number of trials
-  virtual double sampleAndRecordTrials( unsigned& trials ) const = 0;
+  virtual IndepQuantity sampleAndRecordTrials( unsigned& trials ) const = 0;
 
   //! Return the upper bound of the distribution independent variable
-  virtual double getUpperBoundOfIndepVar() const = 0;
+  virtual IndepQuantity getUpperBoundOfIndepVar() const = 0;
 
   //! Return the lower bound of the distribution independent variable
-  virtual double getLowerBoundOfIndepVar() const = 0;
+  virtual IndepQuantity getLowerBoundOfIndepVar() const = 0;
 
   //! Return the distribution type
   virtual OneDDistributionType getDistributionType() const = 0;
@@ -62,25 +82,32 @@ public:
   virtual bool isContinuous() const = 0;
 
   //! Test if the distribution has the same bounds
-  bool hasSameBounds( const OneDDistribution& distribution ) const;
+  bool hasSameBounds( const UnitAwareOneDDistribution<IndependentUnit,DependentUnit>& distribution ) const;
 };
 
 // Test if the distribution is tabular
-inline bool OneDDistribution::isTabular() const
+template<typename IndependentUnit, typename DependentUnit>
+inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::isTabular() const
 {
   return false;
 }
 
 // Test if the distribution has the same bounds
-inline bool OneDDistribution::hasSameBounds( 
-				   const OneDDistribution& distribution ) const
+template<typename IndependentUnit, typename DependentUnit>
+inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::hasSameBounds( 
+	const UnitAwareOneDDistribution<IndependentUnit,DependentUnit>& distribution ) const
 {
   return
-    Policy::relError( this->getUpperBoundOfIndepVar(),
-		      distribution.getUpperBoundOfIndepVar() ) < 1e-9 &&
-    Policy::relError( this->getLowerBoundOfIndepVar(),
-		      distribution.getLowerBoundOfIndepVar() ) < 1e-9;
+    Policy::relError( getRawQuantity( this->getUpperBoundOfIndepVar() ),
+		      getRawQuantity( distribution.getUpperBoundOfIndepVar() ))
+    < 1e-9 &&
+    Policy::relError( getRawQuantity( this->getLowerBoundOfIndepVar() ),
+		      getRawQuantity( distribution.getLowerBoundOfIndepVar() ))
+    < 1e-9;
 }
+
+//! The unit-agnostic one-dimensional distribution declaration
+typedef UnitAwareOneDDistribution<void,void> OneDDistribution;
 
 //! The invalid distribution string name error
 class InvalidDistributionStringName : public std::logic_error
