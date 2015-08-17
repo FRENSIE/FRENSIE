@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   Data_SoftElasticElectronDataContainer_def.hpp
-//! \author Alex Robinson
+//! \author Luke Kersting
 //! \brief  The native soft elastic electron data container template defs.
 //!
 //---------------------------------------------------------------------------//
