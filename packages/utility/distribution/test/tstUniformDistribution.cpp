@@ -23,6 +23,7 @@
 #include "Utility_UniformDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_Units.hpp"
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -34,6 +35,12 @@ Teuchos::RCP<Utility::TabularOneDDistribution> tab_distribution(
 			  new Utility::UniformDistribution( -1.0, 1.0, 2.0 ) );
 
 Teuchos::RCP<Utility::OneDDistribution> distribution = tab_distribution;
+
+Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<si::energy,si::amount> >
+  unit_aware_tab_distribution;
+
+Teuchos::RCP<Utility::UnitAwareOneDDistribution<si::energy,si::amount> >
+  unit_aware_distribution;
 
 //---------------------------------------------------------------------------//
 // Tests.
@@ -49,6 +56,22 @@ TEUCHOS_UNIT_TEST( UniformDistribution, evaluate )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit aware distribution can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, evaluate )
+{
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( -1.0*si::joule ),
+		       0.0*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*si::joule ),
+  		       1.0*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*si::joule ),
+  		       1.0*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*si::joule ),
+  		       1.0*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.0*si::joule ),
+  		       0.0*si::mole );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the PDF can be evaluated
 TEUCHOS_UNIT_TEST( UniformDistribution, evaluatePDF )
 {
@@ -60,6 +83,22 @@ TEUCHOS_UNIT_TEST( UniformDistribution, evaluatePDF )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit aware PDF can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, evaluatePDF )
+{
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( -1.0*si::joule ),
+  		       0.0/si::joule );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.0*si::joule ),
+  		       1.0/si::joule );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 0.5*si::joule ),
+  		       1.0/si::joule );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 1.0*si::joule ),
+  		       1.0/si::joule );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluatePDF( 2.0*si::joule ),
+  		       0.0/si::joule );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the CDF can be evaluated
 TEUCHOS_UNIT_TEST( UniformDistribution, evaluateCDF )
 {
@@ -68,6 +107,22 @@ TEUCHOS_UNIT_TEST( UniformDistribution, evaluateCDF )
   TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 0.0 ), 0.5 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 1.0 ), 1.0 );
   TEST_EQUALITY_CONST( tab_distribution->evaluateCDF( 2.0 ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit aware CDF can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, evaluateCDF )
+{
+  TEST_EQUALITY_CONST(unit_aware_tab_distribution->evaluateCDF(-1.0*si::joule),
+		      0.0 );
+  TEST_EQUALITY_CONST(unit_aware_tab_distribution->evaluateCDF(0.0*si::joule),
+		      0.0 );
+  TEST_EQUALITY_CONST(unit_aware_tab_distribution->evaluateCDF(0.5*si::joule),
+		      0.5 );
+  TEST_EQUALITY_CONST(unit_aware_tab_distribution->evaluateCDF(1.0*si::joule),
+		      1.0 );
+  TEST_EQUALITY_CONST(unit_aware_tab_distribution->evaluateCDF(2.0*si::joule),
+		      1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -89,6 +144,29 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sample )
 
   sample = distribution->sample();
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit aware distribution can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, sample )
+{
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+
+  quantity<si::energy> sample = unit_aware_distribution->sample();
+  TEST_EQUALITY_CONST( sample, 0.0*si::joule );
+
+  sample = unit_aware_distribution->sample();
+  TEST_EQUALITY_CONST( sample, 0.5*si::joule );
+  
+  sample = unit_aware_distribution->sample();
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::joule, 1e-14 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -116,6 +194,35 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sampleAndRecordTrials )
 
   sample = distribution->sampleAndRecordTrials( trials );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+  TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
+
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit aware distribution can be sampled 
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, sampleAndRecordTrials )
+{
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned trials = 0;
+
+  quantity<si::energy> sample = 
+    unit_aware_distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.0*si::joule );
+  TEST_EQUALITY_CONST( 1.0/trials, 1.0 );
+
+  sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  TEST_EQUALITY_CONST( sample, 0.5*si::joule ); 
+  TEST_EQUALITY_CONST( 2.0/trials, 1.0 );
+
+  sample = unit_aware_distribution->sampleAndRecordTrials( trials );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::joule, 1e-14 );
   TEST_EQUALITY_CONST( 3.0/trials, 1.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
@@ -150,6 +257,35 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sampleAndRecordBinIndex )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, sampleAndRecordBinIndex )
+{
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  unsigned bin_index;
+
+  quantity<si::energy> sample = 
+    unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, 0.0*si::joule );
+  TEST_EQUALITY_CONST( bin_index, 0.0 );
+
+  sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
+  TEST_EQUALITY_CONST( sample, 0.5*si::joule ); 
+  TEST_EQUALITY_CONST( bin_index, 0.0 );
+  
+  sample = unit_aware_tab_distribution->sampleAndRecordBinIndex( bin_index );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::joule, 1e-14 );
+  TEST_EQUALITY_CONST( bin_index, 0.0 );
+  
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( UniformDistribution, sampleWithRandomNumber )
 {
@@ -161,6 +297,21 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sampleWithRandomNumber )
     
   sample = tab_distribution->sampleWithRandomNumber( 1.0 );
   TEST_FLOATING_EQUALITY( sample, 1.0, 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit aware distribution can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, sampleWithRandomNumber )
+{
+  quantity<si::energy> sample = 
+    unit_aware_tab_distribution->sampleWithRandomNumber( 0.0 );
+  TEST_EQUALITY_CONST( sample, 0.0*si::joule );
+  
+  sample = unit_aware_tab_distribution->sampleWithRandomNumber( 0.5 );
+  TEST_EQUALITY_CONST( sample, 0.5*si::joule ); 
+    
+  sample = unit_aware_tab_distribution->sampleWithRandomNumber( 1.0 );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 1.0*si::joule, 1e-14 );
 }
 
 //---------------------------------------------------------------------------//
@@ -187,6 +338,30 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sampleInSubrange )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit aware distribution can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, sampleInSubrange )
+{
+  std::vector<double> fake_stream( 3 );
+  fake_stream[0] = 0.0;
+  fake_stream[1] = 0.5;
+  fake_stream[2] = 1.0 - 1e-15;
+  
+  Utility::RandomNumberGenerator::setFakeStream( fake_stream );
+  
+  quantity<si::energy> sample = 
+    unit_aware_tab_distribution->sampleInSubrange( 0.5*si::joule );
+  TEST_EQUALITY_CONST( sample, 0.0*si::joule );
+  
+  sample = unit_aware_tab_distribution->sampleInSubrange( 0.5*si::joule );
+  TEST_EQUALITY_CONST( sample, 0.25*si::joule ); 
+    
+  sample = unit_aware_tab_distribution->sampleInSubrange( 0.5*si::joule );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.5*si::joule, 1e-14 );
+    
+  Utility::RandomNumberGenerator::unsetFakeStream();
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be sampled
 TEUCHOS_UNIT_TEST( UniformDistribution, sampleWithRandomNumberInSubrange )
 {
@@ -201,11 +376,39 @@ TEUCHOS_UNIT_TEST( UniformDistribution, sampleWithRandomNumberInSubrange )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit aware distribution can be sampled
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, 
+		   sampleWithRandomNumberInSubrange )
+{
+  quantity<si::energy> sample = 
+    unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 
+							  0.0, 0.5*si::joule );
+  TEST_EQUALITY_CONST( sample, 0.0*si::joule );
+  
+  sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 
+							  0.5, 0.5*si::joule );
+  TEST_EQUALITY_CONST( sample, 0.25*si::joule ); 
+    
+  sample = unit_aware_tab_distribution->sampleWithRandomNumberInSubrange( 
+							  1.0, 0.5*si::joule );
+  UTILITY_TEST_FLOATING_EQUALITY( sample, 0.5*si::joule, 1e-14 );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the upper bound of the distribution independent variable can be 
 // returned
 TEUCHOS_UNIT_TEST( UniformDistribution, getUpperBoundOfIndepVar )
 {
   TEST_EQUALITY_CONST( distribution->getUpperBoundOfIndepVar(), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the upper bound of the unit-aware distribution independent 
+// variable can be returned
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, getUpperBoundOfIndepVar )
+{
+  TEST_EQUALITY_CONST( unit_aware_distribution->getUpperBoundOfIndepVar(), 
+		       1.0*si::joule );
 }
 
 //---------------------------------------------------------------------------//
@@ -217,10 +420,27 @@ TEUCHOS_UNIT_TEST( UniformDistribution, getLowerBoundOfIndepVar )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the lower bound of the unit-aware distribution independent 
+// variable can be returned
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, getLowerBoundOfIndepVar )
+{
+  TEST_EQUALITY_CONST( unit_aware_distribution->getLowerBoundOfIndepVar(), 
+		       0.0*si::joule );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution type can be returned
 TEUCHOS_UNIT_TEST( UniformDistribution, getDistributionType )
 {
   TEST_EQUALITY_CONST( distribution->getDistributionType(),
+		       Utility::UNIFORM_DISTRIBUTION );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution type can be returned
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, getDistributionType )
+{
+  TEST_EQUALITY_CONST( unit_aware_distribution->getDistributionType(),
 		       Utility::UNIFORM_DISTRIBUTION );
 }
 
@@ -232,10 +452,24 @@ TEUCHOS_UNIT_TEST( UniformDistribution, isTabular )
 }
 
 //---------------------------------------------------------------------------//
+// Check if the unit-aware distribution is tabular
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, isTabular )
+{
+  TEST_ASSERT( unit_aware_distribution->isTabular() );
+}
+
+//---------------------------------------------------------------------------//
 // Check if the distribution is continuous
 TEUCHOS_UNIT_TEST( UniformDistribution, isContinuous )
 {
   TEST_ASSERT( distribution->isContinuous() );
+}
+
+//---------------------------------------------------------------------------//
+// Check if the unit-aware distribution is continuous
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, isContinuous )
+{
+  TEST_ASSERT( unit_aware_distribution->isContinuous() );
 }
 
 //---------------------------------------------------------------------------//
@@ -315,6 +549,15 @@ int main( int argc, char** argv )
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::UniformDistribution );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
+
+  // Initialize the unit-aware distributions
+  unit_aware_tab_distribution.reset(
+	     new Utility::UnitAwareUniformDistribution<si::energy,si::amount>( 
+				      quantity<si::energy>( 0.0*si::joule ),
+				      quantity<si::energy>( 1.0*si::joule ),
+				      quantity<si::amount>( 1.0*si::mole ) ) );
+
+  unit_aware_distribution = unit_aware_tab_distribution;
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

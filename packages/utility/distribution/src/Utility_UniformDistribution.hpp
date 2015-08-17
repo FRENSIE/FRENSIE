@@ -36,6 +36,9 @@ public:
   //! The independent quantity type
   typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
 
+  //! The inverse independent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+
   //! The dependent quantity type
   typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
 
@@ -62,7 +65,7 @@ public:
   DepQuantity evaluate( const IndepQuantity indep_var_value ) const;  
 
   //! Evaluate the PDF
-  double evaluatePDF( const IndepQuantity indep_var_value ) const;
+  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the CDF
   double evaluateCDF( const IndepQuantity indep_var_value ) const;
@@ -123,7 +126,7 @@ private:
   DepQuantity d_dependent_value;
 
   // The uniform distribution PDF value
-  double d_pdf_value;
+  InverseIndepQuantity d_pdf_value;
 };
 
 // Return a random sample from the distribution at the given CDF value
