@@ -503,6 +503,38 @@ TEUCHOS_UNIT_TEST( UniformDistribution, toParameterList )
 }
 
 //---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be written to an xml file
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, toParameterList )
+{
+  typedef Utility::UnitAwareUniformDistribution<si::energy,si::amount> UnitAwareUniformDistribution;
+  
+  Teuchos::RCP<UnitAwareUniformDistribution> true_distribution =
+    Teuchos::rcp_dynamic_cast<UnitAwareUniformDistribution>( unit_aware_distribution );
+  
+  Teuchos::ParameterList parameter_list;
+  
+  parameter_list.set<UnitAwareUniformDistribution>( "test distribution", 
+						    *true_distribution );
+
+  Teuchos::writeParameterListToXmlFile( parameter_list,
+					"unit_aware_uniform_dist_test_list.xml" );
+  
+  Teuchos::RCP<Teuchos::ParameterList> read_parameter_list = 
+    Teuchos::getParametersFromXmlFile( "unit_aware_uniform_dist_test_list.xml" );
+  
+  TEST_EQUALITY( parameter_list, *read_parameter_list );
+
+  Teuchos::RCP<UnitAwareUniformDistribution> 
+    copy_distribution( new UnitAwareUniformDistribution );
+
+  *copy_distribution = 
+    read_parameter_list->get<UnitAwareUniformDistribution>(
+							  "test distribution");
+
+  TEST_EQUALITY( *copy_distribution, *true_distribution );
+}
+
+//---------------------------------------------------------------------------//
 // Check that the distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( UniformDistribution, fromParameterList )
 {
@@ -520,6 +552,28 @@ TEUCHOS_UNIT_TEST( UniformDistribution, fromParameterList )
   TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 
 		       2*Utility::PhysicalConstants::pi );
   TEST_EQUALITY_CONST( distribution.evaluate( 1.0 ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be read from an xml file
+TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, fromParameterList )
+{
+  typedef Utility::UnitAwareUniformDistribution<si::energy,si::amount> UnitAwareUniformDistribution;
+  
+  UnitAwareUniformDistribution distribution = 
+    test_dists_list->get<UnitAwareUniformDistribution>( "Unit-Aware Uniform Distribution A" );
+
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0*si::joule );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 10.0*si::joule);
+  TEST_EQUALITY_CONST( distribution.evaluate( 5.0*si::joule ), 3.0*si::mole );
+  
+  distribution = 
+    test_dists_list->get<UnitAwareUniformDistribution>( "Unit-Aware Uniform Distribution B" );
+
+  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0*si::joule );
+  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 
+		       Utility::PhysicalConstants::pi*si::joule );
+  TEST_EQUALITY_CONST( distribution.evaluate( 1.0*si::joule ), 1.0*si::mole );
 }
 
 //---------------------------------------------------------------------------//
@@ -547,6 +601,8 @@ int main( int argc, char** argv )
   }
 
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::UniformDistribution );
+  typedef Utility::UnitAwareUniformDistribution<si::energy,si::amount> UnitAwareUniformDistribution;
+  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareUniformDistribution );
 
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
 

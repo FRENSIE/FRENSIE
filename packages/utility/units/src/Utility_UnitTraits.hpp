@@ -30,6 +30,12 @@ struct UnitTraits<void>
   template<typename T>
   struct GetQuantityType
   { typedef T value; };
+
+  static inline std::string name()
+  { return "void"; }
+
+  static inline std::string symbol()
+  { return "0"; }
 };
 
 } // end Utility namespace

@@ -13,6 +13,7 @@
 #include <boost/units/unit.hpp>
 #include <boost/units/quantity.hpp>
 #include <boost/units/operators.hpp>
+#include <boost/units/io.hpp>
 #include <boost/units/dimensionless_unit.hpp>
 
 /*! \defgroup unit_traits Unit Traits
@@ -43,6 +44,14 @@ struct UnitTraits
   template<typename T>
   struct GetQuantityType
   { typedef boost::units::quantity<Unit,T> value; };
+
+  //! The name string
+  static inline std::string name()
+  { return boost::units::name_string( Unit() ); }
+
+  //! The symbol string
+  static inline std::string symbol()
+  { return boost::units::symbol_string( Unit() ); }
 };
 
 } // end Utility namespace
