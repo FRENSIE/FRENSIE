@@ -26,8 +26,11 @@
 
 namespace MonteCarlo{
 
-/*! The default initialization of the StandardCollisionHandlerFactory class.
- * \ingroup estimator_module
+/*! The default implementation of the StandardCollisionHandlerFactory class.
+ * \details This class specifies the functions that must be implemented in
+ * specializations of this class. If a GeometryHandler class does not have
+ * a specialization the code will not compile.
+ * \ingroup collision_module
  */ 
 template<typename GeometryHandler>
 class StandardCollisionHandlerFactory : public CollisionHandlerFactory
@@ -35,13 +38,37 @@ class StandardCollisionHandlerFactory : public CollisionHandlerFactory
 
 public:
 
-  //! Initialize the collision handler
-  void initializeHandler( 
-		     const Teuchos::ParameterList& material_reps,
-		     const Teuchos::ParameterList& cross_sections_table_info,
-		     const std::string& cross_sections_xml_directory );
+  // Constructor
+  StandardCollisionHandlerFactory()
+  { /* ... */ }
 
+  // Destructor
+  ~StandardCollisionHandlerFactory()
+  { /* ... */ }
+
+protected:
+
+  //! Validate the material ids using the GeometryHandler
+  inline void validateMaterialIds(
+				  const Teuchos::ParameterList& material_reps )
+  { GeometryHandler::geometry_handler_is_missing_specialization(); }
+
+  //! Create the cell id data maps using the GeometryHandler
+  inline void createCellIdDataMaps(
+	  boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                               std::vector<std::string> >& cell_id_mat_id_map,
+          boost::unordered_map<Geometry::ModuleTraits::InternalCellHandle,
+                              std::vector<std::string> >& cell_id_density_map )
+  { GeometryHandler::geometry_handler_is_missing_specialization(); }
 };
+
+//! Helper function for creating a collision handler instance
+template<typename GeometryHandler>
+inline Teuchos::RCP<CollisionHandlerFactory> 
+getCollisionHandlerFactoryInstance()
+{
+  return Teuchos::rcp( new StandardCollisionHandlerFactory<GeometryHandler>() );
+}
 
 } // end MonteCarlo namespace
 
