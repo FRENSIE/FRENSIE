@@ -22,11 +22,6 @@
 #include "MonteCarlo_EstimatorHandlerFactory_DagMC.hpp"
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
 #include "Geometry_ModuleInterface.hpp"
-
-#ifdef HAVE_FRENSIE_DAGMC
-#include "Geometry_DagMCInstanceFactory.hpp"
-#endif
-
 #include "Utility_ExceptionTestMacros.hpp"
 
 namespace MonteCarlo{
@@ -83,16 +78,16 @@ ParticleSimulationManagerFactory::createManager(
 
     setSourceHandlerInstance( source );
 
-  // Initialize the estimator handler
-  EstimatorHandlerFactory<moab::DagMC>::initializeHandler( response_def,
-							estimator_def );
+    // Initialize the estimator handler
+    EstimatorHandlerFactory<moab::DagMC>::initializeHandler( response_def,
+							     estimator_def );
     
     // Initialize the collision handler
-    CollisionHandlerFactory::initializeHandlerUsingDagMC( 
-							 material_def,
-							 cross_sections_table_info,
-							 cross_sections_xml_directory );
-    
+    getCollisionHandlerFactory<moab::DagMC>()->initializeHandler(
+						material_def,
+						cross_sections_table_info,
+						cross_sections_xml_directory );
+        
     return Teuchos::rcp( 
 	 new ParticleSimulationManager<moab::DagMC,
                                        ParticleSource,

@@ -10,6 +10,11 @@ ${CMAKEDEFINE} HAVE_${PROJECT_NAME}_DAGMC
 #ifdef HAVE_${PROJECT_NAME}_DAGMC
 // MOAB Includes
 #include <DagMC.hpp>
+				   
+// FRENSIE Includes
+#include "Geometry_DagMCHelpers.hpp"
+#include "Geometry_DagMCProperties.hpp"
+#include "Geometry_DagMCInstanceFactory.hpp"
 #endif
 
 #endif // end DAGMC_CONFIGURE_HPP
