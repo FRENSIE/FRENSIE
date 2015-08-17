@@ -188,6 +188,29 @@ public:
   }
 };
 
+/*! \brief Type name traits partial specialization for the 
+ * Utility::UnitAwareUniformDistribution
+ *
+ * \details The name function will set the type name that must be used in
+ * xml files.
+ */
+template<typename U, typename V>
+class TypeNameTraits<Utility::UnitAwareUniformDistribution<U,V> >
+{
+public:
+  static std::string name()
+  {
+    return "Unit-Aware Uniform Distribution (" + 
+      Utility::UnitTraits<U>::symbol() + "," +
+      Utility::UnitTraits<V>::symbol() + ")";
+  }
+  static std::string concreteName(
+		   const Utility::UnitAwareUniformDistribution<U,V>& instance )
+  {
+    return name();
+  }
+};
+
 } // end Teuchos namespace 
 
 //---------------------------------------------------------------------------//
