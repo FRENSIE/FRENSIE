@@ -25,10 +25,11 @@ struct UnitTraits<void>
 {
   typedef void Dimension;
   typedef void System;
+  typedef void InverseUnit;
 
   template<typename T>
   struct GetQuantityType
-  { typedef double value; };
+  { typedef T value; };
 };
 
 } // end Utility namespace

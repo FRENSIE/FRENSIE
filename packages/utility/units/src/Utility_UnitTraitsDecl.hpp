@@ -12,6 +12,8 @@
 // Boost Includes
 #include <boost/units/unit.hpp>
 #include <boost/units/quantity.hpp>
+#include <boost/units/operators.hpp>
+#include <boost/units/dimensionless_unit.hpp>
 
 /*! \defgroup unit_traits Unit Traits
  * \ingroup traits
@@ -33,6 +35,9 @@ struct UnitTraits
 
   //! The unit system that the unit belongs to
   typedef typename Unit::system_type System;
+
+  //! The inverse unit type
+  typedef typename boost::units::divide_typeof_helper<typename boost::units::dimensionless_unit<System>::type,Unit>::type InverseUnit;
 
   //! The wrapped quantity type associated with the unit and value type T
   template<typename T>

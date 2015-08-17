@@ -31,6 +31,14 @@ struct QuantityTraits
   //! The raw quantity type
   typedef typename Quantity::value_type RawType;
 
+  //! Get the zero quantity
+  static inline Quantity zero()
+  { return Quantity::from_value( 0.0 ); }
+
+  //! Get the one quantity
+  static inline Quantity one()
+  { return Quantity::from_value( 1.0 ); }
+
   //! Get the raw value of a quantity
   static inline const RawType& getRawQuantity( const Quantity& quantity )
   { return quantity.value(); }

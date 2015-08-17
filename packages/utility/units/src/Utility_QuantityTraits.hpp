@@ -25,6 +25,12 @@ struct QuantityTraits<double>
   typedef void Unit;
   typedef double RawType;
 
+  static inline double zero()
+  { return 0.0; }
+
+  static inline double one()
+  { return 1.0; }
+
   static inline const RawType& getRawQuantity( const double& quantity )
   { return quantity; }
 

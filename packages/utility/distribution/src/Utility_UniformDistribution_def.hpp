@@ -35,7 +35,7 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::UnitAwareUniformDis
   : d_min_independent_value( min_independent_value ),
     d_max_independent_value( max_independent_value ),
     d_dependent_value( dependent_value ),
-    d_pdf_value(1.0/getRawQuantity(max_independent_value - min_independent_value))
+    d_pdf_value(1.0/(max_independent_value - min_independent_value))
 {
   // Make sure that the values are valid
   testPrecondition( !ST::isnaninf( getRawQuantity( min_independent_value ) ) );
@@ -92,19 +92,20 @@ const typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::Inde
       indep_var_value <= d_max_independent_value )
     return d_dependent_value;
   else
-    return 0.0;
+    return QuantityTraits<DepQuantity>::zero();
 }
 
 // Evaluate the PDF
 template<typename IndependentUnit, typename DependentUnit>
-double UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::evaluatePDF(
+typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity
+UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::evaluatePDF(
 const typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
   if( indep_var_value >= d_min_independent_value &&
       indep_var_value <= d_max_independent_value )
     return d_pdf_value;
   else
-    return 0.0;
+    return QuantityTraits<InverseIndepQuantity>::zero();
 }
 
 // Evaluate the CDF
@@ -114,7 +115,7 @@ const typename UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::Inde
 {
   if( indep_var_value >= d_min_independent_value &&
       indep_var_value <= d_max_independent_value )
-    return d_pdf_value*getRawQuantity(indep_var_value - d_min_independent_value);
+    return d_pdf_value*(indep_var_value - d_min_independent_value);
   else if( indep_var_value < d_min_independent_value )
     return 0.0;
   else
@@ -128,7 +129,7 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sample() const
 {
   double random_number = RandomNumberGenerator::getRandomNumber<double>();
 
-  this->sampleWithRandomNumber( random_number );
+  return this->sampleWithRandomNumber( random_number );
 }
 
 // Return a random sample from the corresponding CDF and record the number of trials
@@ -244,19 +245,21 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromStream( st
 
   setQuantity( d_min_independent_value, distribution[0] );
 
-  TEST_FOR_EXCEPTION( ST::isnaninf( d_min_independent_value ),
+  TEST_FOR_EXCEPTION( ST::isnaninf( getRawQuantity( d_min_independent_value )),
 		      InvalidDistributionStringRepresentation,
 		      "Error: the uniform distribution cannot be "
 		      "constructed because of an invalid min "
-		      "independent value " << d_min_independent_value );
+		      "independent value " << 
+		      getRawQuantity( d_min_independent_value ) );
 
   setQuantity( d_max_independent_value, distribution[1] );
 
-  TEST_FOR_EXCEPTION( ST::isnaninf( d_max_independent_value ),
+  TEST_FOR_EXCEPTION( ST::isnaninf( getRawQuantity( d_max_independent_value )),
 		      InvalidDistributionStringRepresentation,
 		      "Error: the uniform distribution cannot be "
 		      "constructed because of an invalid max "
-		      "independent value " << d_max_independent_value );
+		      "independent value " << 
+		      getRawQuantity( d_max_independent_value ) );
 
   TEST_FOR_EXCEPTION( d_max_independent_value <= d_min_independent_value,
 		      InvalidDistributionStringRepresentation,
@@ -268,14 +271,14 @@ void UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::fromStream( st
   else
     setQuantity( d_dependent_value, 1.0 );
 
-  TEST_FOR_EXCEPTION( ST::isnaninf( d_dependent_value ),
+  TEST_FOR_EXCEPTION( ST::isnaninf( getRawQuantity( d_dependent_value ) ),
 		      InvalidDistributionStringRepresentation,
 		      "Error: the uniform distribution cannot be "
 		      "constructed because of an invalid dependent "
-		      "value " << d_dependent_value );
+		      "value " << 
+		      getRawQuantity( d_dependent_value ) );
 
-  d_pdf_value = 
-    1.0/getRawQuantity(d_max_independent_value - d_min_independent_value);
+  d_pdf_value = 1.0/(d_max_independent_value - d_min_independent_value);
 }
 
 // Method for testing if two objects are equivalent

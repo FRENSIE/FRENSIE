@@ -35,6 +35,9 @@ protected:
   //! The independent unit traits typedef
   typedef UnitTraits<IndependentUnit> IndepUnitTraits;
 
+  //! The inverse independent unit traits typedef
+  typedef UnitTraits<typename UnitTraits<IndependentUnit>::InverseUnit> InverseIndepUnitTraits;
+
   //! The dependent unit traits typedef
   typedef UnitTraits<DependentUnit> DepUnitTraits;
 
@@ -42,6 +45,9 @@ public:
 
   //! The independent quantity type
   typedef typename IndepUnitTraits::template GetQuantityType<double>::value IndepQuantity;
+
+  //! The inverse independent quantity type
+  typedef typename InverseIndepUnitTraits::template GetQuantityType<double>::value InverseIndepQuantity;
 
   //! The dependent quantity type
   typedef typename DepUnitTraits::template GetQuantityType<double>::value DepQuantity;
@@ -58,10 +64,10 @@ public:
   virtual DepQuantity evaluate( const IndepQuantity indep_var_value ) const = 0;
 
   //! Evaluate the PDF
-  virtual double evaluatePDF( const IndepQuantity indep_var_value ) const = 0;
+  virtual InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const = 0;
 
   //! Return a random sample from the distribution
-  virtual DepQuantity sample() const = 0;
+  virtual IndepQuantity sample() const = 0;
 
   //! Return a random sample and record the number of trials
   virtual IndepQuantity sampleAndRecordTrials( unsigned& trials ) const = 0;
