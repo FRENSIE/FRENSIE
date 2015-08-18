@@ -23,6 +23,9 @@
 #include "Utility_DiscreteDistribution.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
+#include "Utility_Units.hpp"
+
+using namespace Utility::Units;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -37,6 +40,17 @@ Teuchos::RCP<Utility::TabularOneDDistribution> tab_cdf_cons_distribution;
 Teuchos::RCP<Utility::OneDDistribution> repeat_vals_distribution;
 Teuchos::RCP<Utility::TabularOneDDistribution> tab_repeat_vals_distribution;
 
+Teuchos::RCP<Utility::UnitAwareOneDDistribution<ElectronVolt,void> >
+  unit_aware_distribution;
+Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<ElectronVolt,void> >
+  unit_aware_tab_distribution;
+
+Teuchos::RCP<Utility::UnitAwareOneDDistribution<ElectronVolt,void> >
+  unit_aware_cdf_cons_distribution;
+Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<ElectronVolt,void> >
+  unit_aware_tab_cdf_cons_distribution;
+
+
 //---------------------------------------------------------------------------//
 // Tests.
 //---------------------------------------------------------------------------//
@@ -44,37 +58,65 @@ Teuchos::RCP<Utility::TabularOneDDistribution> tab_repeat_vals_distribution;
 TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluate )
 {  
   TEST_EQUALITY_CONST( distribution->evaluate( -2.0 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( -1.0 ), 
-		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( distribution->evaluate( -1.0 ), 1.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( -0.5 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), 
-		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), 2.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( 0.5 ), 0.0 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), 
-		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), 1.0 );
   TEST_EQUALITY_CONST( distribution->evaluate( 2.0 ), 0.0 );
 
   TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( -2.0 ), 0.0 );
-  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( -1.0 ), 
-		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( -1.0 ), 0.25 );
   TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( -0.5 ), 0.0 );
-  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( 0.0 ), 
-		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( 0.0 ), 0.5 );
   TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( 0.5 ), 0.0 );
-  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( 1.0 ), 
-		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( 1.0 ), 0.25 );
   TEST_EQUALITY_CONST( cdf_cons_distribution->evaluate( 2.0 ), 0.0 );
 
   TEST_EQUALITY_CONST( repeat_vals_distribution->evaluate( -2.0 ), 0.0 );
-  TEST_EQUALITY_CONST( repeat_vals_distribution->evaluate( -1.0 ), 
-		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( repeat_vals_distribution->evaluate( -1.0 ), 1.0 );
   TEST_EQUALITY_CONST( repeat_vals_distribution->evaluate( -0.5 ), 0.0 );
-  TEST_EQUALITY_CONST( repeat_vals_distribution->evaluate( 0.0 ), 
-		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( repeat_vals_distribution->evaluate( 0.0 ), 2.0 );
   TEST_EQUALITY_CONST( repeat_vals_distribution->evaluate( 0.5 ), 0.0 );
-  TEST_EQUALITY_CONST( repeat_vals_distribution->evaluate( 1.0 ), 
-		       std::numeric_limits<double>::infinity() );
+  TEST_EQUALITY_CONST( repeat_vals_distribution->evaluate( 1.0 ), 1.0 );
   TEST_EQUALITY_CONST( repeat_vals_distribution->evaluate( 2.0 ), 0.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the unit-aware distribution can be evaluated
+TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, evaluate )
+{
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*eV ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.1*eV ), 0.25 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*eV ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*eV ), 1.0 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.5*eV ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 5.0*eV ), 2.7 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 100.0*eV ), 0.0 );
+  TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1e3*eV ), 
+			  0.05,
+			  1e-14 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2e3*eV ), 0.0 );
+
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 0.0*eV ), 
+		       0.0 );
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 0.1*eV ), 
+		       0.0625 );
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 0.5*eV ), 
+		       0.0 );
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 1.0*eV ), 
+		       0.25 );
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 2.5*eV ), 
+		       0.0 );
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 5.0*eV ), 
+		       0.675 );
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 100.0*eV ), 
+		       0.0 );
+  TEST_FLOATING_EQUALITY( unit_aware_cdf_cons_distribution->evaluate( 1e3*eV ),
+			  0.0125,
+			  1e-14 );
+  TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 2e3*eV ), 
+		       0.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -913,6 +955,8 @@ int main( int argc, char** argv )
   }
 
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::DiscreteDistribution );
+  typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt> UnitAwareDiscreteDistribution;
+  TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareDiscreteDistribution );
   
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
 
@@ -966,6 +1010,40 @@ int main( int argc, char** argv )
 							  dependent_values ) );
 
   repeat_vals_distribution = tab_repeat_vals_distribution;
+
+  // Create a unit aware distribution using quantities
+  Teuchos::Array<quantity<ElectronVolt> > independent_quantities( 4 );
+  independent_quantities[0] = 0.1*eV;
+  independent_quantities[1] = 1.0*eV;
+  independent_quantities[2] = 5.0*eV;
+  independent_quantities[3] = quantity<ElectronVolt>( 1.0*keV );
+
+  dependent_values.resize( 4 );
+  dependent_values[0] = 0.25;
+  dependent_values[1] = 1.0;
+  dependent_values[2] = 2.7;
+  dependent_values[3] = 0.05;
+  
+  unit_aware_tab_distribution.reset( 
+  	     new Utility::UnitAwareDiscreteDistribution<ElectronVolt>(
+  							independent_quantities,
+  							dependent_values ) );
+
+  unit_aware_distribution = unit_aware_tab_distribution;
+
+  // Create a unit aware distribution using quantities and the cdf constructor
+  dependent_values[0] = 0.0625;
+  dependent_values[1] = 0.3125;
+  dependent_values[2] = 0.9875;
+  dependent_values[3] = 1.0;
+
+  unit_aware_tab_cdf_cons_distribution.reset(
+  	     new Utility::UnitAwareDiscreteDistribution<ElectronVolt>(
+  							independent_quantities,
+  							dependent_values,
+  							true ) );
+
+  unit_aware_cdf_cons_distribution = unit_aware_tab_cdf_cons_distribution;
   
   // Initialize the random number generator
   Utility::RandomNumberGenerator::createStreams();

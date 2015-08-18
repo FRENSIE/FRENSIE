@@ -14,6 +14,7 @@
 
 // FRENSIE Includes
 #include "Utility_ElectronVoltUnit.hpp"
+#include "Utility_UnitTraits.hpp"
 
 using namespace Utility::Units;
 
@@ -45,6 +46,11 @@ TEUCHOS_UNIT_TEST( ElectronVolt, initialize )
   ev_energy = boost::units::quantity<ElectronVolt>( 1*MeV );
 
   TEST_EQUALITY_CONST( ev_energy.value(), 1e6 );
+  
+  typedef Utility::UnitTraits<ElectronVolt>::InverseUnit InverseElectronVolt;
+  boost::units::quantity<InverseElectronVolt> inverse_ev_energy( 1.0/eV );
+  
+  std::cout << inverse_ev_energy << " " << 1.0/eV << std::endl;
 }
 
 //---------------------------------------------------------------------------//

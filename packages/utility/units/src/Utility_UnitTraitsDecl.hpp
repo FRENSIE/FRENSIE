@@ -38,7 +38,7 @@ struct UnitTraits
   typedef typename Unit::system_type System;
 
   //! The inverse unit type
-  typedef typename boost::units::divide_typeof_helper<typename boost::units::dimensionless_unit<System>::type,Unit>::type InverseUnit;
+  typedef typename boost::units::power_typeof_helper<Unit,boost::units::static_rational<-1> >::type InverseUnit;
 
   //! The wrapped quantity type associated with the unit and value type T
   template<typename T>
