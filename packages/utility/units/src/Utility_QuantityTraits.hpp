@@ -30,6 +30,9 @@ struct QuantityTraits<double>
 
   static inline double one()
   { return 1.0; }
+  
+  static inline double initializeQuantity( const double& raw_quantity )
+  { return raw_quantity; }
 
   static inline const RawType& getRawQuantity( const double& quantity )
   { return quantity; }

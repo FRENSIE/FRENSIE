@@ -39,11 +39,15 @@ struct QuantityTraits
   static inline Quantity one()
   { return Quantity::from_value( 1.0 ); }
 
+  //! Initialize a quantity (potentially dangerous!)
+  static inline Quantity initializeQuantity( const RawType& raw_quantity )
+  { return Quantity::from_value( raw_quantity ); }
+
   //! Get the raw value of a quantity
   static inline const RawType& getRawQuantity( const Quantity& quantity )
   { return quantity.value(); }
 
-  //! Set the value of a quantity
+  //! Set the value of a quantity (potentially dangerous!)
   static inline void setQuantity( Quantity& quantity,
 				  const RawType& raw_quantity )
   { quantity = Quantity::from_value( raw_quantity ); }
