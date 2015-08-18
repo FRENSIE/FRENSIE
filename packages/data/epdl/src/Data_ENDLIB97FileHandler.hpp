@@ -75,12 +75,27 @@ public:
   template<typename T>
   void readTwoColumnTable( Teuchos::Array<T> &data );
 
+  //! Process two column table in ENDLIB file 
+  void processTwoColumnTable(     
+    std::vector<double>& indep_variable,
+    std::vector<double>& dep_variable,
+    double lower_indep_limit = 1.0e-5,
+    double upper_indep_limit = 1.0e5 );
+
   //! Skip three column table in ENDLIB file
   void skipThreeColumnTable();
 
   //! Read three column table in ENDLIB file
   template<typename T>
   void readThreeColumnTable( Teuchos::Array<T> &data );
+
+  //! Process three column table in ENDLIB file
+  void processThreeColumnTable(
+    std::vector<double>& energy_bins,
+    std::map<double,std::vector<double> >& indep_variable,
+    std::map<double,std::vector<double> >& dep_variable,
+    double lower_indep_limit = 1.0e-5,
+    double upper_indep_limit = 1.0e5  );
 
   //! Skip four column table in ENDLIB file
   void skipFourColumnTable();

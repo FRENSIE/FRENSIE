@@ -70,6 +70,38 @@ std::string two_four_column_tables_test_file;
 //---------------------------------------------------------------------------//
 // Testing Functions.
 //---------------------------------------------------------------------------//
+void processTwoColumnTestingArray( std::vector<double>& two_col_indep, 
+                                   std::vector<double>& two_col_dep )
+{
+two_col_indep.resize(12);
+two_col_dep.resize(12);
+
+two_col_indep[0] = 1.0;
+two_col_indep[1] = 3.0;
+two_col_indep[2] = 5.0;
+two_col_indep[3] = 6.0;
+two_col_indep[4] = 8.0;
+two_col_indep[5] = 10.0;
+two_col_indep[6] = 11.0;
+two_col_indep[7] = 13.0;
+two_col_indep[8] = 14.0;
+two_col_indep[9] = 16.0;
+two_col_indep[10] = 18.0;
+two_col_indep[11] = 19.0;
+two_col_dep[0] = 2.0;
+two_col_dep[1] = 2.0;
+two_col_dep[2] = 2.0;
+two_col_dep[3] = 4.0;
+two_col_dep[4] = 2.0;
+two_col_dep[5] = 2.0;
+two_col_dep[6] = 4.0;
+two_col_dep[7] = 4.0;
+two_col_dep[8] = 6.0;
+two_col_dep[9] = 2.0;
+two_col_dep[10] = 2.0;
+two_col_dep[11] = 4.0;
+}
+
 template<typename Tuple, template<typename> class Array>
 void fillTwoColumnTestingArray( Array<Tuple> &data )
 {
@@ -123,6 +155,94 @@ void fillTwoColumnTestingArray( Array<Tuple> &data )
   data_point.first = static_cast<typename Tuple::firstType>( 19 );
   data_point.second = static_cast<typename Tuple::secondType>( 4 );
   data[11] = data_point;
+}
+
+void processThreeColumnTestingArray( 
+        std::vector<double>& energy_bin, 
+        std::map<double,std::vector<double> >& indep_true,
+        std::map<double,std::vector<double> >& dep_true )
+{
+std::pair<double,std::vector<double> > indep_point, dep_point;
+
+  energy_bin.push_back( 5.0 );
+  indep_point.first = ( 5.0 );
+  dep_point.first = ( 5.0 );
+  indep_point.second.push_back( 2.96149e-1 );
+  dep_point.second.push_back( 1.13103e-1 );
+  indep_true.insert( indep_point );
+  dep_true.insert( dep_point );
+  indep_point.second.clear(); 
+  dep_point.second.clear();
+
+  energy_bin.push_back( 6.0 );
+  indep_point.first = ( 6.0 );
+  dep_point.first = ( 6.0 );
+  indep_point.second.push_back( 4.55508e-1 );
+  dep_point.second.push_back( 1.18701e-1 );
+  indep_true.insert( indep_point );
+  dep_true.insert( dep_point );
+  indep_point.second.clear(); 
+  dep_point.second.clear();
+
+  energy_bin.push_back( 10.0 );
+  indep_point.first = ( 10.0 );
+  dep_point.first = ( 10.0 );
+  indep_point.second.push_back( 5.34468e-2 );
+  dep_point.second.push_back( 1.32545e-1 );
+  indep_true.insert( indep_point );
+  dep_true.insert( dep_point );
+  indep_point.second.clear(); 
+  dep_point.second.clear();
+
+  energy_bin.push_back( 11.0 );
+  indep_point.first = ( 11.0 );
+  dep_point.first = ( 11.0 );
+  indep_point.second.push_back( 1.05850e-1 );
+  dep_point.second.push_back( 1.33863e-1 );
+  indep_true.insert( indep_point );
+  dep_true.insert( dep_point );
+  indep_point.second.clear(); 
+  dep_point.second.clear();
+
+  energy_bin.push_back( 13.0 );
+  indep_point.first = ( 13.0 );
+  dep_point.first = ( 13.0 );
+  indep_point.second.push_back( 2.18629e-3 );
+  dep_point.second.push_back( 1.34485e-1 );
+  indep_true.insert( indep_point );
+  dep_true.insert( dep_point );
+  indep_point.second.clear(); 
+  dep_point.second.clear();
+
+  energy_bin.push_back( 14.0 );
+  indep_point.first = ( 14.0 );
+  dep_point.first = ( 14.0 );
+  indep_point.second.push_back( 2.37699e-3 );
+  dep_point.second.push_back( 1.34740e-1 );
+  indep_true.insert( indep_point );
+  dep_true.insert( dep_point );
+  indep_point.second.clear(); 
+  dep_point.second.clear();
+
+  energy_bin.push_back( 18.0 );
+  indep_point.first = ( 18.0 );
+  dep_point.first = ( 18.0 );
+  indep_point.second.push_back( 1.36579e-2 );
+  dep_point.second.push_back( 1.37436e-1 );
+  indep_true.insert( indep_point );
+  dep_true.insert( dep_point );
+  indep_point.second.clear(); 
+  dep_point.second.clear();
+
+  energy_bin.push_back( 19.0 );
+  indep_point.first = ( 19.0 );
+  dep_point.first = ( 19.0 );
+  indep_point.second.push_back( 2.84889e-2 );
+  dep_point.second.push_back( 1.37794e-1 );
+  indep_true.insert( indep_point );
+  dep_true.insert( dep_point );
+  indep_point.second.clear(); 
+  dep_point.second.clear();
 }
 
 template<typename Tuple, template<typename> class Array>
@@ -572,6 +692,48 @@ UNIT_TEST_INSTANTIATION_TRIP( ENDLIB97FileHandler, readTwoColumnTable );
 UNIT_TEST_INSTANTIATION_QUAD( ENDLIB97FileHandler, readTwoColumnTable );
 
 //---------------------------------------------------------------------------//
+// Check that the ENDLIB97FileHandler can process a two column table
+TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, processTwoColumnTable )
+{
+  Data::ENDLIB97FileHandler endlib_file_handler( two_column_table_test_file );
+  
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  endlib_file_handler.readFirstTableHeader( atomic_number,
+					    outgoing_particle_designator,
+					    atomic_weight,
+					    interpolation_flag );
+  
+  endlib_file_handler.readSecondTableHeader( reaction_type,
+					     electron_shell );
+
+  std::vector<double> indep, dep, indep_true, dep_true;
+
+  endlib_file_handler.processTwoColumnTable( indep, dep );
+
+  processTwoColumnTestingArray( indep_true, dep_true );
+
+  UTILITY_TEST_COMPARE_ARRAYS( indep, indep_true );
+  UTILITY_TEST_COMPARE_ARRAYS( dep, dep_true );
+
+  // Check that the entire table was read - attempting to read the first
+  // header again will set the eof bit
+  endlib_file_handler.readFirstTableHeader( atomic_number,
+					    outgoing_particle_designator,
+					    atomic_weight,
+					    interpolation_flag );
+  TEST_ASSERT( endlib_file_handler.endOfFile() );
+
+  // Close the test table file
+  endlib_file_handler.closeENDLIB97File();
+}
+
+//---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can read a three column table 
 TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ENDLIB97FileHandler, 
 				   readThreeColumnTable,
@@ -616,6 +778,56 @@ TEUCHOS_UNIT_TEST_TEMPLATE_1_DECL( ENDLIB97FileHandler,
 
 UNIT_TEST_INSTANTIATION_TRIP( ENDLIB97FileHandler, readThreeColumnTable );
 UNIT_TEST_INSTANTIATION_QUAD( ENDLIB97FileHandler, readThreeColumnTable );
+
+//---------------------------------------------------------------------------//
+// Check that the ENDLIB97FileHandler can process a two column table
+TEUCHOS_UNIT_TEST( ENDLIB97FileHandler, processThreeColumnTable )
+{
+  Data::ENDLIB97FileHandler endlib_file_handler( three_column_table_test_file );
+  
+  unsigned int atomic_number;
+  unsigned int outgoing_particle_designator;
+  double atomic_weight;
+  unsigned int interpolation_flag;
+  unsigned int reaction_type;
+  unsigned int electron_shell;
+
+  endlib_file_handler.readFirstTableHeader( atomic_number,
+					    outgoing_particle_designator,
+					    atomic_weight,
+					    interpolation_flag );
+  
+  endlib_file_handler.readSecondTableHeader( reaction_type,
+					     electron_shell );
+
+  std::vector<double> energy_bin, energy_bin_true;
+  std::map<double,std::vector<double> > indep, dep, indep_true, dep_true;
+
+  endlib_file_handler.processThreeColumnTable( energy_bin, indep, dep );
+
+  processThreeColumnTestingArray( energy_bin_true, indep_true, dep_true );
+
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( energy_bin, energy_bin_true, TOL );
+
+  std::vector<double>::iterator i = energy_bin.begin();
+
+  for ( i; i != energy_bin.end(); ++i )
+  {
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( indep[*i], indep_true[*i], TOL );
+  UTILITY_TEST_COMPARE_FLOATING_ARRAYS( dep[*i], dep_true[*i], TOL );
+  }
+
+  // Check that the entire table was read - attempting to read the first
+  // header again will set the eof bit
+  endlib_file_handler.readFirstTableHeader( atomic_number,
+					    outgoing_particle_designator,
+					    atomic_weight,
+					    interpolation_flag );
+  TEST_ASSERT( endlib_file_handler.endOfFile() );
+
+  // Close the test table file
+  endlib_file_handler.closeENDLIB97File();
+}
 
 //---------------------------------------------------------------------------//
 // Check that the ENDLIB97FileHandler can read a four column table 
