@@ -15,7 +15,7 @@
 namespace Utility{
 
 //! The unit-aware tabular one-dimensional distribution declaration
-template<typename IndependentUnit, typename DependentUnit>
+template<typename IndependentUnit, typename DependentUnit=void>
 class UnitAwareTabularOneDDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
 
