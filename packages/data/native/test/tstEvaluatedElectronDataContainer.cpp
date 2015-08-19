@@ -172,7 +172,7 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the electroionization recoil energy can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
-                   setElectroionizationRecoilEnergy )
+                   setElectroionizationRecoilEnergyAtIncomingEnergy )
 {
   std::vector<double> recoil_energy( 3 );
   recoil_energy[0] = 0.01;
@@ -182,7 +182,7 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   unsigned subshell = 1;
   double energy = 1.0;
 
-  evaluated_electron_data_container.setElectroionizationRecoilEnergy( 
+  evaluated_electron_data_container.setElectroionizationRecoilEnergyAtIncomingEnergy( 
                                 subshell,
                                 energy, 
                                 recoil_energy );
@@ -194,7 +194,7 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the electroionization recoil pdf can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
-                   setElectroionizationRecoilPDF )
+                   setElectroionizationRecoilPDFAtIncomingEnergy )
 {
   std::vector<double> recoil_pdf( 3 );
   recoil_pdf[0] = 1.0;
@@ -204,13 +204,65 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   unsigned subshell = 1;
   double energy = 1.0;
 
-  evaluated_electron_data_container.setElectroionizationRecoilPDF(
+  evaluated_electron_data_container.setElectroionizationRecoilPDFAtIncomingEnergy(
                                 subshell,
                                 energy, 
                                 recoil_pdf );
 
   TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getElectroionizationRecoilPDF( subshell, energy ),
                        recoil_pdf );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization recoil energy can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setElectroionizationRecoilEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.01;
+  energy[1] = 0.001;
+  energy[2] = 0.0001;
+
+  unsigned subshell = 1;
+  double energy_bin = 1.0;
+
+  std::map<double,std::vector<double> > recoil_energy;
+
+  recoil_energy[energy_bin] = energy;
+
+  evaluated_electron_data_container.setElectroionizationRecoilEnergy( 
+                                subshell,
+                                recoil_energy );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getElectroionizationRecoilEnergy(subshell, energy_bin),
+    energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the electroionization recoil pdf can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setElectroionizationRecoilPDF )
+{
+  std::vector<double> pdf( 3 );
+  pdf[0] = 1.0;
+  pdf[1] = 2.0;
+  pdf[2] = 5.0;
+
+  unsigned subshell = 1;
+  double energy_bin = 1.0;
+
+  std::map<double,std::vector<double> > recoil_pdf;
+
+  recoil_pdf[energy_bin] = pdf;
+
+  evaluated_electron_data_container.setElectroionizationRecoilPDF(
+                                subshell,
+                                recoil_pdf );
+
+  TEST_COMPARE_ARRAYS( 
+    evaluated_electron_data_container.getElectroionizationRecoilPDF( subshell, energy_bin ),
+    pdf );
 }
 
 //---------------------------------------------------------------------------//
@@ -230,14 +282,14 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the bremsstrahlung photon energy can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
-                   setBremsstrahlungPhotonEnergy )
+                   setBremsstrahlungPhotonEnergyAtIncomingEnergy )
 {
   std::vector<double> photon_energy( 3 );
   photon_energy[0] = 0.01;
   photon_energy[1] = 0.001;
   photon_energy[2] = 0.0001;
 
-  evaluated_electron_data_container.setBremsstrahlungPhotonEnergy( 1.0, 
+  evaluated_electron_data_container.setBremsstrahlungPhotonEnergyAtIncomingEnergy( 1.0, 
                                                                    photon_energy );
 
   TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getBremsstrahlungPhotonEnergy(1.0),
@@ -247,18 +299,62 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 //---------------------------------------------------------------------------//
 // Check that the bremsstrahlung photon pdf can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
-                   setBremsstrahlungPhotonPDF )
+                   setBremsstrahlungPhotonPDFAtIncomingEnergy )
 {
   std::vector<double> photon_pdf( 3 );
   photon_pdf[0] = 1.0;
   photon_pdf[1] = 2.0;
   photon_pdf[2] = 5.0;
 
-  evaluated_electron_data_container.setBremsstrahlungPhotonPDF( 1.0, 
+  evaluated_electron_data_container.setBremsstrahlungPhotonPDFAtIncomingEnergy( 1.0, 
                                                                 photon_pdf );
 
   TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getBremsstrahlungPhotonPDF(1.0),
                        photon_pdf );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bremsstrahlung photon energy can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setBremsstrahlungPhotonEnergy )
+{
+  std::vector<double> energy( 3 );
+  energy[0] = 0.01;
+  energy[1] = 0.001;
+  energy[2] = 0.0001;
+
+  double energy_bin = 1.0;
+
+  std::map<double,std::vector<double> > photon_energy;
+
+  photon_energy[energy_bin] = energy;
+
+  evaluated_electron_data_container.setBremsstrahlungPhotonEnergy( photon_energy );
+
+  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getBremsstrahlungPhotonEnergy(energy_bin),
+                       energy );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the bremsstrahlung photon pdf can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer, 
+                   setBremsstrahlungPhotonPDF )
+{
+  std::vector<double> pdf( 3 );
+  pdf[0] = 1.0;
+  pdf[1] = 2.0;
+  pdf[2] = 5.0;
+
+  double energy_bin = 1.0;
+
+  std::map<double,std::vector<double> > photon_pdf;
+
+  photon_pdf[energy_bin] = pdf;
+
+  evaluated_electron_data_container.setBremsstrahlungPhotonPDF( photon_pdf );
+
+  TEST_COMPARE_ARRAYS( evaluated_electron_data_container.getBremsstrahlungPhotonPDF(energy_bin),
+                       pdf );
 }
 
 //---------------------------------------------------------------------------//

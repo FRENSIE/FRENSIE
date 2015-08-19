@@ -467,8 +467,8 @@ void EvaluatedElectronDataContainer::setElectroionizationEnergyGrid(
   d_electroionization_energy_grid[subshell]=electroionization_energy_grid;
 }
 
-// Return the electroionization recoil energy for a subshell and energy bin
-void EvaluatedElectronDataContainer::setElectroionizationRecoilEnergy( 
+// Set the electroionization recoil energy for a subshell and energy bin
+void EvaluatedElectronDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy( 
             const unsigned subshell, 
             const double incoming_energy,
             const std::vector<double>& electroionization_recoil_energy )
@@ -488,8 +488,8 @@ void EvaluatedElectronDataContainer::setElectroionizationRecoilEnergy(
     electroionization_recoil_energy;
 }
 
-// Return the electroionization recoil energy pdf for a subshell and energy bin
-void EvaluatedElectronDataContainer::setElectroionizationRecoilPDF(
+// Set the electroionization recoil energy pdf for a subshell and energy bin
+void EvaluatedElectronDataContainer::setElectroionizationRecoilPDFAtIncomingEnergy(
             const unsigned subshell,
             const double incoming_energy,
             const std::vector<double>& electroionization_recoil_pdf )
@@ -509,6 +509,30 @@ void EvaluatedElectronDataContainer::setElectroionizationRecoilPDF(
     electroionization_recoil_pdf;
 }
 
+// Set electroionization recoil energy for all incoming energies in a subshell
+void EvaluatedElectronDataContainer::setElectroionizationRecoilEnergy( 
+    const unsigned subshell, 
+    const std::map<double,std::vector<double> >& electroionization_recoil_energy )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  d_electroionization_recoil_energy[subshell] =
+    electroionization_recoil_energy;
+}
+
+// Set electroionization recoil energy pdf for all incoming energies in a subshell
+void EvaluatedElectronDataContainer::setElectroionizationRecoilPDF(
+    const unsigned subshell,
+    const std::map<double,std::vector<double> >& electroionization_recoil_pdf )
+{
+  // Make sure the subshell is valid
+  testPrecondition( d_subshells.find( subshell ) != d_subshells.end() );
+
+  d_electroionization_recoil_pdf[subshell] =
+    electroionization_recoil_pdf;
+}
+
 // Set the bremsstrahlung energy grid
 void EvaluatedElectronDataContainer::setBremsstrahlungEnergyGrid( 
 				       const std::vector<double>& bremsstrahlung_energy_grid )
@@ -524,7 +548,7 @@ void EvaluatedElectronDataContainer::setBremsstrahlungEnergyGrid(
 }
 
 // Set the bremsstrahlung photon energy for an incoming energy
-void EvaluatedElectronDataContainer::setBremsstrahlungPhotonEnergy(
+void EvaluatedElectronDataContainer::setBremsstrahlungPhotonEnergyAtIncomingEnergy(
 		     const double incoming_energy,
 		     const std::vector<double>&  bremsstrahlung_photon_energy )
 {
@@ -542,7 +566,7 @@ void EvaluatedElectronDataContainer::setBremsstrahlungPhotonEnergy(
 }
 
 // Set the bremsstrahlung photon pdf for an incoming energy
-void EvaluatedElectronDataContainer::setBremsstrahlungPhotonPDF( 
+void EvaluatedElectronDataContainer::setBremsstrahlungPhotonPDFAtIncomingEnergy( 
 			 const double incoming_energy,
 			 const std::vector<double>& bremsstrahlung_photon_pdf )
 {
@@ -556,6 +580,20 @@ void EvaluatedElectronDataContainer::setBremsstrahlungPhotonPDF(
                     bremsstrahlung_photon_pdf.end() );
   
   d_bremsstrahlung_photon_pdf[incoming_energy] = bremsstrahlung_photon_pdf;
+}
+
+// Set all the bremsstrahlung photon energy
+void EvaluatedElectronDataContainer::setBremsstrahlungPhotonEnergy(
+    const std::map<double,std::vector<double> >&  bremsstrahlung_photon_energy )
+{
+  d_bremsstrahlung_photon_energy = bremsstrahlung_photon_energy;
+}
+
+// Set all the bremsstrahlung photon pdf
+void EvaluatedElectronDataContainer::setBremsstrahlungPhotonPDF( 
+    const std::map<double,std::vector<double> >& bremsstrahlung_photon_pdf )
+{
+  d_bremsstrahlung_photon_pdf = bremsstrahlung_photon_pdf;
 }
 
 // Set the atomic excitation energy grid

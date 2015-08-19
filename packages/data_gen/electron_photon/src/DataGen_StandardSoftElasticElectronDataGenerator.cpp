@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   DataGen_StandardSoftElasticElectronDataGenerator.hpp
+//! \file   DataGen_StandardSoftElasticElectronDataGenerator.cpp
 //! \author Luke Kersting
-//! \brief  The standard electron-electron-relaxation data generator class def.
+//! \brief  The standard soft elastic electron data generator class def.
 //!
 //---------------------------------------------------------------------------//
 
@@ -44,7 +44,7 @@ StandardSoftElasticElectronDataGenerator::StandardSoftElasticElectronDataGenerat
   testPrecondition( min_electron_energy < max_electron_energy );
 }
 
-// Populate the electron-electron-relaxation data container
+// Populate the soft elastic electron data container
 void StandardSoftElasticElectronDataGenerator::populateSoftElasticDataContainer(
 			   Data::SoftElasticElectronVolatileDataContainer&
 			   data_container ) const

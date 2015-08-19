@@ -39,9 +39,13 @@ public:
   using EvaluatedElectronDataContainer::setSoftElasticDiscreteAngles;
   using EvaluatedElectronDataContainer::setSoftElasticWeights;
   using EvaluatedElectronDataContainer::setElectroionizationEnergyGrid;
+  using EvaluatedElectronDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy;
+  using EvaluatedElectronDataContainer::setElectroionizationRecoilPDFAtIncomingEnergy;
   using EvaluatedElectronDataContainer::setElectroionizationRecoilEnergy;
   using EvaluatedElectronDataContainer::setElectroionizationRecoilPDF;
   using EvaluatedElectronDataContainer::setBremsstrahlungEnergyGrid;
+  using EvaluatedElectronDataContainer::setBremsstrahlungPhotonEnergyAtIncomingEnergy;
+  using EvaluatedElectronDataContainer::setBremsstrahlungPhotonPDFAtIncomingEnergy;
   using EvaluatedElectronDataContainer::setBremsstrahlungPhotonEnergy;
   using EvaluatedElectronDataContainer::setBremsstrahlungPhotonPDF;
   using EvaluatedElectronDataContainer::setAtomicExcitationEnergyGrid;

@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------//
 //!
 //! \file   DataGen_StandardSoftElasticElectronDataGenerator.hpp
-//! \author Alex Robinson
-//! \brief  The standard electron-electron-relaxation data generator class decl.
+//! \author Luke Kersting
+//! \brief  The standard soft elastic electron data generator class decl.
 //!
 //---------------------------------------------------------------------------//
 
@@ -43,7 +43,7 @@ public:
   ~StandardSoftElasticElectronDataGenerator()
   { /* ... */ }
 
-  //! Populate the electron-electron-relaxation data container
+  //! Populate the soft elastic data container
   void populateSoftElasticDataContainer(
 			   Data::SoftElasticElectronVolatileDataContainer&
 			   data_container ) const;

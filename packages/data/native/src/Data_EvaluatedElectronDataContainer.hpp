@@ -220,31 +220,49 @@ protected:
             const unsigned subshell, 
             const std::vector<double>& electroionization_energy_grid );
 
-  //! Set the electroionization recoil energy for an incoming energy
-  void setElectroionizationRecoilEnergy( 
+  //! Set the electroionization recoil energy for an incoming energy and subshell
+  void setElectroionizationRecoilEnergyAtIncomingEnergy( 
             const unsigned subshell, 
             const double incoming_energy,
             const std::vector<double>& electroionization_recoil_energy );
 
-  //! Set the electroionization recoil energy pdf for an incoming energy
-  void setElectroionizationRecoilPDF(
+  //! Set the electroionization recoil energy pdf for an incoming energy and subshell
+  void setElectroionizationRecoilPDFAtIncomingEnergy(
             const unsigned subshell,
             const double incoming_energy,
             const std::vector<double>& electroionization_recoil_pdf );
+
+  //! Set electroionization recoil energy for all incoming energies in a subshell
+  void setElectroionizationRecoilEnergy(
+    const unsigned subshell,
+    const std::map<double,std::vector<double> >& electroionization_recoil_energy );
+
+  //! Set electroionization recoil energy pdf for all incoming energies in a subshell
+  void setElectroionizationRecoilPDF(
+    const unsigned subshell,
+    const std::map<double,std::vector<double> >& electroionization_recoil_pdf );
 
   //! Set the bremsstrahlung energy grid for the secondary photon spectrum
   void setBremsstrahlungEnergyGrid( 
             const std::vector<double>& bremsstrahlung_energy_grid );
 
   //! Set the bremsstrahlung photon energy for an incoming energy
-  void setBremsstrahlungPhotonEnergy(
+  void setBremsstrahlungPhotonEnergyAtIncomingEnergy(
             const double incoming_energy,
             const std::vector<double>& bremsstrahlung_photon_energy );
 
   //! Set the bremsstrahlung photon energy pdf for an incoming energy
-  void setBremsstrahlungPhotonPDF(
+  void setBremsstrahlungPhotonPDFAtIncomingEnergy(
             const double incoming_energy,
             const std::vector<double>&  bremsstrahlung_photon_pdf );
+
+  //! Set all the bremsstrahlung photon energy data
+  void setBremsstrahlungPhotonEnergy(
+    const std::map<double,std::vector<double> >& bremsstrahlung_photon_energy );
+
+  //! Set all the bremsstrahlung photon energy pdf data
+  void setBremsstrahlungPhotonPDF(
+    const std::map<double,std::vector<double> >&  bremsstrahlung_photon_pdf );
 
   //! Set the atomic excitation average energy loss energy grid
   void setAtomicExcitationEnergyGrid( 
