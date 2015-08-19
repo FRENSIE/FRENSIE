@@ -26,7 +26,7 @@
 namespace Utility{
 
 //! The unit-aware one-dimensional distribution declaration
-template<typename IndependentUnit, typename DependentUnit>
+template<typename IndependentUnit, typename DependentUnit=void>
 class UnitAwareOneDDistribution
 {
 

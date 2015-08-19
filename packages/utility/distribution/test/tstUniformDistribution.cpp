@@ -538,20 +538,20 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, toParameterList )
 // Check that the distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( UniformDistribution, fromParameterList )
 {
-  Utility::UniformDistribution distribution = 
+  Utility::UniformDistribution xml_distribution = 
     test_dists_list->get<Utility::UniformDistribution>( "Uniform Distribution A" );
 
-  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), -1.0 );
-  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 1.0 );
-  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ), 2.0 );
+  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), -1.0 );
+  TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(), 1.0 );
+  TEST_EQUALITY_CONST( xml_distribution.evaluate( 0.0 ), 2.0 );
   
-  distribution = 
+  xml_distribution = 
     test_dists_list->get<Utility::UniformDistribution>( "Uniform Distribution B" );
 
-  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0 );
-  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 0.0 );
+  TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(), 
 		       2*Utility::PhysicalConstants::pi );
-  TEST_EQUALITY_CONST( distribution.evaluate( 1.0 ), 1.0 );
+  TEST_EQUALITY_CONST( xml_distribution.evaluate( 1.0 ), 1.0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -560,20 +560,20 @@ TEUCHOS_UNIT_TEST( UnitAwareUniformDistribution, fromParameterList )
 {
   typedef Utility::UnitAwareUniformDistribution<si::energy,si::amount> UnitAwareUniformDistribution;
   
-  UnitAwareUniformDistribution distribution = 
+  UnitAwareUniformDistribution xml_distribution = 
     test_dists_list->get<UnitAwareUniformDistribution>( "Unit-Aware Uniform Distribution A" );
 
-  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0*si::joule );
-  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 10.0*si::joule);
-  TEST_EQUALITY_CONST( distribution.evaluate( 5.0*si::joule ), 3.0*si::mole );
+  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 0.0*si::joule );
+  TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(), 10.0*si::joule);
+  TEST_EQUALITY_CONST( xml_distribution.evaluate( 5.0*si::joule ), 3.0*si::mole );
   
-  distribution = 
+  xml_distribution = 
     test_dists_list->get<UnitAwareUniformDistribution>( "Unit-Aware Uniform Distribution B" );
 
-  TEST_EQUALITY_CONST( distribution.getLowerBoundOfIndepVar(), 0.0*si::joule );
-  TEST_EQUALITY_CONST( distribution.getUpperBoundOfIndepVar(), 
+  TEST_EQUALITY_CONST( xml_distribution.getLowerBoundOfIndepVar(), 0.0*si::joule );
+  TEST_EQUALITY_CONST( xml_distribution.getUpperBoundOfIndepVar(), 
 		       Utility::PhysicalConstants::pi*si::joule );
-  TEST_EQUALITY_CONST( distribution.evaluate( 1.0*si::joule ), 1.0*si::mole );
+  TEST_EQUALITY_CONST( xml_distribution.evaluate( 1.0*si::joule ), 1.0*si::mole );
 }
 
 //---------------------------------------------------------------------------//
