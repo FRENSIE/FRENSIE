@@ -20,7 +20,7 @@
 
 namespace Utility{
 
-//! Uniform distribution class
+//! The Unit-aware uniform distribution class
 template<typename IndependentUnit, typename DependentUnit>
 class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
 			    public ParameterListCompatibleObject<UnitAwareUniformDistribution<IndependentUnit,DependentUnit> >
@@ -161,7 +161,7 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNum
     d_min_independent_value;
 }
 
-//! The unit-agnostic uniform distribution
+//! The uniform distribution (unit-agnostic)
 typedef UnitAwareUniformDistribution<void,void> UniformDistribution;
 
 } // end Utility namespace

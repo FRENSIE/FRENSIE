@@ -25,8 +25,8 @@
 
 namespace Utility{
 
-//! The unit-aware one-dimensional distribution declaration
-template<typename IndependentUnit, typename DependentUnit=void>
+//! The unit-aware one-dimensional distribution
+template<typename IndependentUnit, typename DependentUnit>
 class UnitAwareOneDDistribution
 {
 
@@ -112,7 +112,7 @@ inline bool UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::hasSameBou
     < 1e-9;
 }
 
-//! The unit-agnostic one-dimensional distribution declaration
+//! The one-dimensional distribution (unit-agnostic)
 typedef UnitAwareOneDDistribution<void,void> OneDDistribution;
 
 //! The invalid distribution string name error
