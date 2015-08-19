@@ -22,10 +22,10 @@
 
 namespace Utility{
 
-//! Discrete distribution class
-template<typename IndependentUnit>
-class UnitAwareDiscreteDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,void>,
-				      public ParameterListCompatibleObject<UnitAwareDiscreteDistribution<IndependentUnit> >
+//! The unit-aware discrete distribution class
+template<typename IndependentUnit,typename DependentUnit>
+class UnitAwareDiscreteDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
+				      public ParameterListCompatibleObject<UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> >
 {
 
 private:
@@ -36,26 +36,35 @@ private:
 public:
 
   //! The independent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,void>::IndepQuantity IndepQuantity;
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
 
   //! The inverse independent quantity type
-  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,void>::InverseIndepQuantity InverseIndepQuantity;
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+
+  //! The dependent quantity type
+  typedef typename UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
 
   //! Default Constructor
   UnitAwareDiscreteDistribution();
 
-  //! Basic Constructor (potentially dangerous) 
-  UnitAwareDiscreteDistribution( 
-		        const Teuchos::Array<double>& independent_values,
+  //! Basic Constructor (potentially dangerous)
+  UnitAwareDiscreteDistribution(
+			const Teuchos::Array<double>& independent_values,
 			const Teuchos::Array<double>& dependent_values,
 			const bool interpret_dependent_values_as_cdf = false );
 
-  //! Constructor
+  //! Hybrid Constructor (implicit unit info potentially dangerous)
   template<typename InputIndepQuantity>
   UnitAwareDiscreteDistribution( 
 	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
 	      const Teuchos::Array<double>& dependent_values,
 	      const bool interpret_dependent_values_as_cdf = false );
+
+  //! Constructor
+  template<typename InputIndepQuantity, typename InputDepQuantity>
+  UnitAwareDiscreteDistribution( 
+	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
+	      const Teuchos::Array<InputDepQuantity>& dependent_quantities );
 			
   
   //! Copy constructor
@@ -69,7 +78,7 @@ public:
   { /* ... */ }
 
   //! Evaluate the distribution
-  double evaluate( const IndepQuantity indep_var_value ) const;
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the PDF
   InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
@@ -126,10 +135,10 @@ private:
 				      unsigned& sampled_bin_index ) const;
 
   // Initialize the distribution
-  template<typename InputIndepQuantity>
+  template<typename InputIndepQuantity,typename InputDepQuantity>
   void initializeDistribution( 
 	      const Teuchos::Array<InputIndepQuantity>& independent_quantities,
-	      const Teuchos::Array<double>& dependent_values,
+	      const Teuchos::Array<InputDepQuantity>& dependent_quantities,
 	      const bool interpret_dependent_values_as_cdf );
 
   // Initialize the distribution independent values
@@ -146,6 +155,12 @@ private:
 				const Teuchos::Array<double>& dependent_values,
 				const bool interpret_dependent_values_as_cdf );
 
+  // Initialize the distribution dependent values
+  template<typename InputDepQuantity>
+  void initializeDistributionDepValues(
+		  const Teuchos::Array<InputDepQuantity>& dependent_quantities,
+		  const bool interpret_dependent_values_as_cdf );
+
   // The distribution type
   static const OneDDistributionType distribution_type = DISCRETE_DISTRIBUTION;
 
@@ -153,13 +168,13 @@ private:
   Teuchos::Array<Pair<IndepQuantity,double> > d_distribution;
 
   // The distribution normalization constant
-  double d_norm_constant;
+  DepQuantity d_norm_constant;
 };
 
 // Return a random sample using the random number and record the bin index
-template<typename IndependentUnit>
-inline typename UnitAwareDiscreteDistribution<IndependentUnit>::IndepQuantity
-UnitAwareDiscreteDistribution<IndependentUnit>::sampleImplementation( 
+template<typename IndependentUnit,typename DependentUnit>
+inline typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleImplementation( 
 					    double random_number,
 					    unsigned& sampled_bin_index ) const
 {
@@ -179,11 +194,11 @@ UnitAwareDiscreteDistribution<IndependentUnit>::sampleImplementation(
 }
 
 // Return a random sample from the distribution at the given CDF value in a subrange
-template<typename IndependentUnit>
-inline typename UnitAwareDiscreteDistribution<IndependentUnit>::IndepQuantity
-UnitAwareDiscreteDistribution<IndependentUnit>::sampleWithRandomNumberInSubrange( 
+template<typename IndependentUnit,typename DependentUnit>
+inline typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNumberInSubrange( 
    const double random_number,
-   const typename UnitAwareDiscreteDistribution<IndependentUnit>::IndepQuantity max_indep_var ) const
+   const typename UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::IndepQuantity max_indep_var ) const
 {
   // Make sure the random number is valid
   testPrecondition( random_number >= 0.0 );
@@ -200,8 +215,8 @@ UnitAwareDiscreteDistribution<IndependentUnit>::sampleWithRandomNumberInSubrange
   return this->sampleImplementation( scaled_random_number, dummy_index );
 }
 
-//! The unit-agnostic discrete distribution
-typedef UnitAwareDiscreteDistribution<void> DiscreteDistribution;
+//! The discrete distribution (unit-agnostic)
+typedef UnitAwareDiscreteDistribution<void,void> DiscreteDistribution;
 
 } // end Utility namespace
 
@@ -233,17 +248,18 @@ public:
  * \details The name function will set the type name that must be used in
  * xml files.
  */
-template<typename U>
-class TypeNameTraits<Utility::UnitAwareDiscreteDistribution<U> >
+template<typename U,typename V>
+class TypeNameTraits<Utility::UnitAwareDiscreteDistribution<U,V> >
 {
 public:
   static std::string name()
   {
     return "Unit-Aware Discrete Distribution (" +
-      Utility::UnitTraits<U>::symbol() + ")";
+      Utility::UnitTraits<U>::symbol() + "," +
+      Utility::UnitTraits<V>::symbol() + ")";
   }
   static std::string concreteName(
-		    const Utility::UnitAwareDiscreteDistribution<U>& instance )
+		  const Utility::UnitAwareDiscreteDistribution<U,V>& instance )
   {
     return name();
   }

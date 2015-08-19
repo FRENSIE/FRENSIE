@@ -41,14 +41,14 @@ Teuchos::RCP<Utility::TabularOneDDistribution> tab_cdf_cons_distribution;
 Teuchos::RCP<Utility::OneDDistribution> repeat_vals_distribution;
 Teuchos::RCP<Utility::TabularOneDDistribution> tab_repeat_vals_distribution;
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<ElectronVolt> >
+Teuchos::RCP<Utility::UnitAwareOneDDistribution<ElectronVolt,si::amount> >
   unit_aware_distribution;
-Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<ElectronVolt> >
+Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<ElectronVolt,si::amount> >
   unit_aware_tab_distribution;
 
-Teuchos::RCP<Utility::UnitAwareOneDDistribution<ElectronVolt> >
+Teuchos::RCP<Utility::UnitAwareOneDDistribution<ElectronVolt,si::amount> >
   unit_aware_cdf_cons_distribution;
-Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<ElectronVolt> >
+Teuchos::RCP<Utility::UnitAwareTabularOneDDistribution<ElectronVolt,si::amount> >
   unit_aware_tab_cdf_cons_distribution;
 
 
@@ -87,37 +87,46 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, evaluate )
 // Check that the unit-aware distribution can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, evaluate )
 {
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*eV ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.1*eV ), 0.25 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*eV ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*eV ), 1.0 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.5*eV ), 0.0 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 5.0*eV ), 2.7 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 100.0*eV ), 0.0 );
-  TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1e3*eV ), 
-			  0.05,
-			  1e-14 );
-  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2e3*eV ), 0.0 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*eV ), 
+		       0.0*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.1*eV ), 
+		       0.25*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.5*eV ), 
+		       0.0*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 1.0*eV ), 
+		       1.0*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2.5*eV ), 
+		       0.0*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 5.0*eV ), 
+		       2.7*si::mole );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 100.0*eV ), 
+		       0.0*si::mole );
+  UTILITY_TEST_FLOATING_EQUALITY( unit_aware_distribution->evaluate( 1e3*eV ), 
+				  0.05*si::mole,
+				  1e-14 );
+  TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 2e3*eV ), 
+		       0.0*si::mole );
 
   TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 0.0*eV ), 
-		       0.0 );
+		       0.0*si::mole );
   TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 0.1*eV ), 
-		       0.0625 );
+		       0.0625*si::mole );
   TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 0.5*eV ), 
-		       0.0 );
+		       0.0*si::mole );
   TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 1.0*eV ), 
-		       0.25 );
+		       0.25*si::mole );
   TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 2.5*eV ), 
-		       0.0 );
+		       0.0*si::mole );
   TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 5.0*eV ), 
-		       0.675 );
+		       0.675*si::mole );
   TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 100.0*eV ), 
-		       0.0 );
-  TEST_FLOATING_EQUALITY( unit_aware_cdf_cons_distribution->evaluate( 1e3*eV ),
-			  0.0125,
+		       0.0*si::mole );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			  unit_aware_cdf_cons_distribution->evaluate( 1e3*eV ),
+			  0.0125*si::mole,
 			  1e-14 );
   TEST_EQUALITY_CONST( unit_aware_cdf_cons_distribution->evaluate( 2e3*eV ), 
-		       0.0 );
+		       0.0*si::mole );
 }
 
 //---------------------------------------------------------------------------//
@@ -1439,7 +1448,7 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, toParameterList )
 // Check that the unit-aware distribution can be written to an xml file
 TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, toParameterList )
 {
-  typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt> UnitAwareDiscreteDistribution;
+  typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> UnitAwareDiscreteDistribution;
   
   Teuchos::RCP<UnitAwareDiscreteDistribution> true_distribution =
     Teuchos::rcp_dynamic_cast<UnitAwareDiscreteDistribution>( unit_aware_distribution );
@@ -1498,7 +1507,7 @@ TEUCHOS_UNIT_TEST( DiscreteDistribution, fromParameterList )
 // Check that the unit-aware distribution can be read from an xml file
 TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromParameterList )
 {
-  typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt> UnitAwareDiscreteDistribution;
+  typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> UnitAwareDiscreteDistribution;
   
   UnitAwareDiscreteDistribution xml_distribution = 
     test_dists_list->get<UnitAwareDiscreteDistribution>( "Unit-Aware Discrete Distribution A" );
@@ -1555,7 +1564,7 @@ int main( int argc, char** argv )
   }
 
   TEUCHOS_ADD_TYPE_CONVERTER( Utility::DiscreteDistribution );
-  typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt> UnitAwareDiscreteDistribution;
+  typedef Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount> UnitAwareDiscreteDistribution;
   TEUCHOS_ADD_TYPE_CONVERTER( UnitAwareDiscreteDistribution );
   
   test_dists_list = Teuchos::getParametersFromXmlFile( test_dists_xml_file );
@@ -1618,27 +1627,28 @@ int main( int argc, char** argv )
   independent_quantities[2] = 5.0*eV;
   independent_quantities[3] = quantity<ElectronVolt>( 1.0*keV );
 
-  dependent_values.resize( 4 );
-  dependent_values[0] = 0.25;
-  dependent_values[1] = 1.0;
-  dependent_values[2] = 2.7;
-  dependent_values[3] = 0.05;
+  Teuchos::Array<quantity<si::amount> > dependent_quantities( 4 );
+  dependent_quantities[0] = 0.25*si::mole;
+  dependent_quantities[1] = 1.0*si::mole;
+  dependent_quantities[2] = 2.7*si::mole;
+  dependent_quantities[3] = 0.05*si::mole;
   
   unit_aware_tab_distribution.reset( 
-  	     new Utility::UnitAwareDiscreteDistribution<ElectronVolt>(
-  							independent_quantities,
-  							dependent_values ) );
+	   new Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>(
+  						      independent_quantities,
+  						      dependent_quantities ) );
 
   unit_aware_distribution = unit_aware_tab_distribution;
 
   // Create a unit aware distribution using quantities and the cdf constructor
+  dependent_values.resize( 4 );
   dependent_values[0] = 0.0625;
   dependent_values[1] = 0.3125;
   dependent_values[2] = 0.9875;
   dependent_values[3] = 1.0;
 
   unit_aware_tab_cdf_cons_distribution.reset(
-  	     new Utility::UnitAwareDiscreteDistribution<ElectronVolt>(
+	   new Utility::UnitAwareDiscreteDistribution<ElectronVolt,si::amount>(
   							independent_quantities,
   							dependent_values,
   							true ) );
