@@ -26,98 +26,85 @@
 
 namespace Utility{
 
+// The cutoff angle above which the screened Rutherford distribution is sampled
+template<typename InterpolationPolicy>
+double ElasticElectronDistribution<InterpolationPolicy>::s_sr_angle = 1.0e-6;
+
 // Default constructor
 template<typename InterpolationPolicy>
 ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution()
 { /* ... */ }
 
-// Constructor
-/*! \details The independent values are assumed to be sorted (lowest to 
- * highest).
+// Constructor for ENDL tables data given as PDF
+/*! \details The independent values, x, are the scattering angle in units of pi
+ * ie: x = (1 - mu), where mu is the scattering angle cosine. 
+ * They range from 0 (forward scattering) to 2 (backscattering) ( 0 <= x <= 2 )
+ * They are assumed to be sorted (lowest to highest).
  */ 
+template<typename InterpolationPolicy>
+ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution( 
+                       const Teuchos::Array<double>& independent_values,
+		               const Teuchos::Array<double>& dependent_values,
+                       const double moliere_screening_constant, 
+                       const double screened_rutherford_normalization_constant )
+  : d_moliere_screening_constant( moliere_screening_constant ),
+    d_screened_rutherford_normalization_constant( screened_rutherford_normalization_constant ),
+    d_distribution( independent_values.size() ),
+    d_norm_constant( 0.0 )
+{
+  // Make sure the screened_rutherford_normalization_constant
+  testPrecondition( screened_rutherford_normalization_constant > 0 );
+  // Make sure that at least two points of the distribution are specified
+  testPrecondition( independent_values.size() > 1 );
+  // Make sure that at least two points of the distribution are specified
+  testPrecondition( independent_values.size() > 1 );
+  // Make sure that for n bin boundaries there are n bin values
+  testPrecondition( independent_values.size() == dependent_values.size() );
+  // Make sure that the bins are sorted
+  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
+			       independent_values.end() ) );
+
+  initializeDistributionENDL( independent_values, dependent_values );
+}
+
+
+// Constructor for ACE tables data given as CDF
+  /*! \details For ACE tables data the independent values must be changed from 
+   * the angle cosine (mu) to angle (x) in units of pi ( x = 1 - mu )
+   * The dependent values must also be changed to be in reverse ascending order
+   * where: cdf(x) = 1 - cdf(mu)
+   */
 template<typename InterpolationPolicy>
 ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution( 
 			      const Teuchos::Array<double>& independent_values,
 			      const Teuchos::Array<double>& dependent_values,
                   const double energy,
-                  const unsigned atomic_number,
-                  const bool interpret_dependent_values_as_cdf )
+                  const int atomic_number )
   : d_energy( energy ),
     d_atomic_number( atomic_number ),
     d_Z_two_thirds_power( pow( atomic_number, 2.0/3.0 ) ),
     d_distribution( independent_values.size() ),
     d_norm_constant( 0.0 )
 {
-  if( interpret_dependent_values_as_cdf )
-  {
-    // Make sure the energy is valid
-    testPrecondition( energy > 0 );
-    // Make sure the atomic number is valid
-    testPrecondition( atomic_number > 0u );
-    testPrecondition( atomic_number <= 100u );
-    // Make sure that at least two points of the distribution are specified
-    testPrecondition( independent_values.size() > 1 );
-    // Make sure that at least two points of the distribution are specified
-    testPrecondition( independent_values.size() > 1 );
-    // Make sure that for n bin boundaries there are n bin values
-    testPrecondition( independent_values.size() == dependent_values.size() );
-    // Make sure that the bins are sorted
-    testPrecondition( Sort::isSortedAscending( independent_values.begin(),
-					       independent_values.end() ) );
-    // Make sure that the bin values are sorted
-    testPrecondition( Sort::isSortedAscending( dependent_values.begin(), 
-					       dependent_values.end() ) );
+  // Make sure the energy is valid
+  testPrecondition( energy > 0 );
+  // Make sure the atomic number is valid
+  testPrecondition( atomic_number > 0u );
+  testPrecondition( atomic_number <= 100u );
+  // Make sure that at least two points of the distribution are specified
+  testPrecondition( independent_values.size() > 1 );
+  // Make sure that at least two points of the distribution are specified
+  testPrecondition( independent_values.size() > 1 );
+  // Make sure that for n bin boundaries there are n bin values
+  testPrecondition( independent_values.size() == dependent_values.size() );
+  // Make sure that the bins are sorted
+  testPrecondition( Sort::isSortedAscending( independent_values.begin(),
+			       independent_values.end() ) );
+  // Make sure that the bin values are sorted
+  testPrecondition( Sort::isSortedAscending( dependent_values.begin(), 
+			        dependent_values.end() ) );
 
-    unsigned size = independent_values.size();
-
-    // Set the last two data bins
-    d_distribution[size-1].first = independent_values[size-1];
-    d_distribution[size-1].second = dependent_values[size-1];
-    d_distribution[size-2].first = independent_values[size-2];
-    d_distribution[size-2].second = dependent_values[size-2];
-    setLastTwoPDFs( dependent_values[size-1], 
-                    dependent_values[size-2] );
-
-    // Assign the distribution
-    for( int i = size-3; i >= 0; --i )
-    {
-      d_distribution[i].first = independent_values[i];
-      d_distribution[i].second = dependent_values[i];
-
-      // Use Lin-Lin interpolation for the pdf and quadratic for the cdf
-      if ( d_distribution[i+1].second != d_distribution[i].second )
-      {
-        // Calculate the pdf from the cdf
-        d_distribution[i].third = -d_distribution[i+1].third + 2.0 *
-          (d_distribution[i+1].second - d_distribution[i].second)/
-          (d_distribution[i+1].first - d_distribution[i].first);
-      }
-      else // If the cdf does not change inbetween angular bins, set the pdf to zero
-      {
-        d_distribution[i].third = 0.0; 
-      }
-    }
-
-    // Set normalization constant
-    d_norm_constant = d_distribution.back().second;
- 
-    // Verify that the CDF is normalized (in event of round-off errors)
-    if( dependent_values.back() != 1.0 )
-    {
-      for( unsigned j = 0; j < d_distribution.size(); ++j )
-      {
-        d_distribution[j].second /= d_norm_constant;
-        d_distribution[j].third /= d_norm_constant;
-      }
-    }
-
-    // Calculate the slopes of the PDF
-    DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_distribution );
-  }
-  else
-  {
-    initializeDistribution( independent_values, dependent_values );
-  }
+  initializeDistributionACE( independent_values, dependent_values );
 }
 
 // Copy constructor
@@ -162,8 +149,14 @@ template<typename InterpolationPolicy>
 double ElasticElectronDistribution<InterpolationPolicy>::evaluatePDF( 
 					   const double indep_var_value ) const
 {
-  if( indep_var_value < d_distribution.front().first )
+  if( indep_var_value < 0.0 )
     return 0.0;
+  else if( indep_var_value < s_sr_angle )
+  {
+    return d_screened_rutherford_normalization_constant/(
+            ( indep_var_value + d_moliere_screening_constant )*
+            ( indep_var_value + d_moliere_screening_constant ) );
+  }
   else if( indep_var_value > d_distribution.back().first )
     return 0.0;
   else if( indep_var_value == d_distribution.back().first )
@@ -200,9 +193,15 @@ template<typename InterpolationPolicy>
 double ElasticElectronDistribution<InterpolationPolicy>::evaluateCDF( 
 					   const double indep_var_value ) const
 {
-  if( indep_var_value < d_distribution.front().first )
+  if( indep_var_value < 0.0 )
     return 0.0;
-  else if( indep_var_value >= d_distribution.back().first )
+  else if( indep_var_value < s_sr_angle )
+  {
+    return indep_var_value*d_screened_rutherford_normalization_constant/(
+            d_moliere_screening_constant*
+            ( indep_var_value + d_moliere_screening_constant ) );
+  }
+  else if( indep_var_value > d_distribution.back().first )
     return 1.0;
   else
   {
@@ -298,6 +297,9 @@ inline double ElasticElectronDistribution<InterpolationPolicy>::sampleWithRandom
 }
 
 // Return a random sample using the random number and record the bin index
+/*! !\details If the screened Rutherford portion is sampled a bin index of 0 
+ *  will be returned
+ */
 template<typename InterpolationPolicy>
 double ElasticElectronDistribution<InterpolationPolicy>::sampleImplementation( 
 					    double random_number,
@@ -307,37 +309,56 @@ double ElasticElectronDistribution<InterpolationPolicy>::sampleImplementation(
   testPrecondition( random_number >= 0.0 );
   testPrecondition( random_number <= 1.0 );
 
-  DistributionArray::const_iterator start, end, lower_bin_boundary;
-  start = d_distribution.begin();
-  end = d_distribution.end();
-
-  lower_bin_boundary = Search::binaryLowerBound<SECOND>( start,
-							 end,
-							 random_number );
-
-  // Calculate the sampled bin index
-  sampled_bin_index = std::distance(d_distribution.begin(),lower_bin_boundary);
-
   // Calculate the sampled independent value
   double sample;
-  
-  double indep_value = lower_bin_boundary->first;
-  double cdf_diff = random_number - lower_bin_boundary->second;
-  double pdf_value = lower_bin_boundary->third;
-  double slope = lower_bin_boundary->fourth;
 
-  // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m 
-  if( slope != 0.0 )
+  if ( random_number >= d_screened_rutherford_cutoff_cdf )
   {
-    sample = indep_value + 
-      (sqrt( pdf_value*pdf_value + 2*slope*cdf_diff ) - pdf_value)/slope;
+    DistributionArray::const_iterator start, end, lower_bin_boundary;
+    start = d_distribution.begin();
+    end = d_distribution.end();
+
+    lower_bin_boundary = Search::binaryLowerBound<SECOND>( start,
+                                                           end,
+                                                           random_number );
+
+    // Calculate the sampled bin index
+    sampled_bin_index = std::distance(d_distribution.begin(),lower_bin_boundary);
+
+    double indep_value = lower_bin_boundary->first;
+    double cdf_diff = random_number - lower_bin_boundary->second;
+    double pdf_value = lower_bin_boundary->third;
+    double slope = lower_bin_boundary->fourth;
+
+    // x = x0 + [sqrt(pdf(x0)^2 + 2m[cdf(x)-cdf(x0)]) - pdf(x0)]/m 
+    if( slope != 0.0 )
+    {
+      sample = indep_value + 
+        (sqrt( pdf_value*pdf_value + 2*slope*cdf_diff ) - pdf_value)/slope;
+    }
+    // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
+    else
+      sample =  indep_value + cdf_diff/pdf_value;
   }
-  // x = x0 + [cdf(x)-cdf(x0)]/pdf(x0) => L'Hopital's rule
+  else if ( random_number > 0.0 )
+  {
+    sampled_bin_index = 0.0;
+    sample = random_number*
+              d_moliere_screening_constant*d_moliere_screening_constant/
+            ( d_screened_rutherford_normalization_constant -
+              d_moliere_screening_constant*random_number );
+  }
   else
-    sample =  indep_value + cdf_diff/pdf_value;
+  {
+    sampled_bin_index = 0.0;
+    sample = 0.0;
+  }
 
   // Make sure the sample is valid
   testPostcondition( !Teuchos::ScalarTraits<double>::isnaninf( sample ) );
+  // Make sure the random number is valid
+  testPrecondition( sample >= 0.0 );
+  testPrecondition( sample <= 2.0 );
 
   return sample;
 }
@@ -355,7 +376,7 @@ template<typename InterpolationPolicy>
 double 
 ElasticElectronDistribution<InterpolationPolicy>::getLowerBoundOfIndepVar() const
 {
-  return d_distribution.front().first;
+  return 0.0;
 }
 
 // Return the distribution type
@@ -384,8 +405,7 @@ void ElasticElectronDistribution<InterpolationPolicy>::toStream(
   for( unsigned i = 0u; i < d_distribution.size(); ++i )
   {
     independent_values[i] = d_distribution[i].first;
-    
-    dependent_values[i] = d_distribution[i].third*d_norm_constant;
+    dependent_values[i] = d_distribution[i].third;
   }
 
   os << "{" << independent_values << "," << dependent_values << "}";
@@ -476,8 +496,8 @@ void ElasticElectronDistribution<InterpolationPolicy>::fromStream( std::istream&
 		      "cannot be constructed because the number of "
 		      "independent values does not equal the number of "
 		      "dependent values" );
-		        
-  initializeDistribution( independent_values, dependent_values );
+		      
+  initializeDistributionENDL( independent_values, dependent_values );
 }
 
 // Method for testing if two objects are equivalent
@@ -489,9 +509,81 @@ bool ElasticElectronDistribution<InterpolationPolicy>::isEqual(
     d_norm_constant == other.d_norm_constant;
 }
 
-// Initialize the distribution
+// Return Moliere's screening constant
 template<typename InterpolationPolicy>
-void ElasticElectronDistribution<InterpolationPolicy>::initializeDistribution(
+double ElasticElectronDistribution<InterpolationPolicy>::getMoliereScreeningConstant() const
+{
+  return d_moliere_screening_constant;
+}
+ 
+// Return the normalization constant for the screened Rutherford component of the distribution
+template<typename InterpolationPolicy>
+double ElasticElectronDistribution<InterpolationPolicy>::getScreenedRutherfordNormalizationConstant() const
+{
+  return d_screened_rutherford_normalization_constant;
+}
+
+// Initialize the distribution for ACE
+template<typename InterpolationPolicy>
+void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionACE(
+			      const Teuchos::Array<double>& independent_values,
+			      const Teuchos::Array<double>& dependent_values )
+{
+  unsigned size = independent_values.size();
+
+  // Resize the distribution
+  d_distribution.resize( size );
+
+  // Set the first two data bins
+  d_distribution[0].first = 1.0 - independent_values[size-1];
+  d_distribution[0].second = 1.0 - dependent_values[size-1];
+  d_distribution[1].first = 1.0 - independent_values[size-2];
+  d_distribution[1].second = 1.0 - dependent_values[size-2];
+  setFirstTwoPDFs( 1.0-dependent_values[size-1], 
+                   1.0-dependent_values[size-2] );
+
+  d_screened_rutherford_cutoff_cdf = d_distribution[1].third;
+
+  // Assign the distribution
+  for( int i = 2; i < size; ++i )
+  {
+    d_distribution[i].first = 1.0 - independent_values[size-i-1];
+    d_distribution[i].second = 1.0 - dependent_values[size-i-1];
+
+    // Use Lin-Lin interpolation for the pdf and quadratic for the cdf
+    if ( d_distribution[i-1].second != d_distribution[i].second )
+    {
+      // Calculate the pdf from the cdf
+      d_distribution[i].third = -d_distribution[i-1].third + 2.0 *
+        (d_distribution[i].second - d_distribution[i-1].second)/
+        (d_distribution[i].first - d_distribution[i-1].first);
+    }
+    else // If the cdf does not change inbetween angular bins, set the pdf to zero
+    {
+       d_distribution[i].third = 0.0; 
+    }
+  }
+
+  // Set normalization constant
+  d_norm_constant = d_distribution.back().second;
+ 
+  // Verify that the CDF is normalized (in event of round-off errors)
+  if( dependent_values.back() != 1.0 )
+  {
+    for( unsigned j = 0; j < d_distribution.size(); ++j )
+    {
+      d_distribution[j].second /= d_norm_constant;
+      d_distribution[j].third /= d_norm_constant;
+    }
+  }
+
+  // Calculate the slopes of the PDF
+  DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_distribution );
+}
+
+// Initialize the distribution for ENDL
+template<typename InterpolationPolicy>
+void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionENDL(
 			      const Teuchos::Array<double>& independent_values,
 			      const Teuchos::Array<double>& dependent_values )
 {
@@ -514,18 +606,28 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistribution(
   }
 
   // Create a CDF from the raw distribution data
-  d_norm_constant = 
+  double max_tabular_cdf = 
     DataProcessor::calculateContinuousCDF<FIRST,THIRD,SECOND>(d_distribution);
+
+  // The cutoff angle above which the screened Rutherford distribution is sampled
+  d_screened_rutherford_cutoff_cdf = 
+    ( s_sr_angle*d_screened_rutherford_normalization_constant )/
+    ( d_moliere_screening_constant*( s_sr_angle+d_moliere_screening_constant ) );
+
+  /* Normalize the CDF by:
+    (the max cutoff cdf) + 
+    (the ratio of the screened Ruthreford to the cutoff distribution ) */
+  d_norm_constant = max_tabular_cdf + d_screened_rutherford_cutoff_cdf;
 
   // Calculate the slopes of the PDF
   DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_distribution );
 }
 
-// Set the last two PDF values
+// Set the first two PDF values
 template<typename InterpolationPolicy>
-void ElasticElectronDistribution<InterpolationPolicy>::setLastTwoPDFs( 
-        const double& last_cdf,
-        const double& second_to_last_cdf )
+void ElasticElectronDistribution<InterpolationPolicy>::setFirstTwoPDFs( 
+        const double& first_cdf,
+        const double& second_cdf )
 {
   // get size of array
   unsigned size = d_distribution.size();
@@ -555,18 +657,24 @@ void ElasticElectronDistribution<InterpolationPolicy>::setLastTwoPDFs(
           ( d_energy + Utility::PhysicalConstants::electron_rest_mass_energy) );
 
   // Calculate Moliere's atomic screening constant
-  double eta = screening_param1 * 1.0/electron_momentum_squared * 
-          d_Z_two_thirds_power * ( 1.13 + screening_param2*screening_param3 );
+  d_moliere_screening_constant = 
+            screening_param1 * 1.0/electron_momentum_squared * 
+            d_Z_two_thirds_power * ( 1.13 + screening_param2*screening_param3 );
  
-  double var = (0.000001 + eta);
+  double var = (s_sr_angle + d_moliere_screening_constant);
 
   // Calculate the normalization constant
-  double norm_const = (last_cdf - second_to_last_cdf)*
-                        eta*var/0.000001;
+  d_screened_rutherford_normalization_constant = 
+            ( second_cdf -first_cdf )*
+            d_moliere_screening_constant*var/s_sr_angle;
 
-
-  d_distribution[size-2].third = norm_const/( var*var );
-  d_distribution[size-1].third = norm_const/( eta*eta );
+  d_distribution[1].third = d_screened_rutherford_normalization_constant/
+            ( var*var );
+  d_distribution[0].third = d_screened_rutherford_normalization_constant/
+            ( d_moliere_screening_constant*d_moliere_screening_constant );
+/*
+std::cout << std::setprecision(20)<<"d_moliere_screening_constant =\t"<<d_moliere_screening_constant<<std::endl;
+std::cout << std::setprecision(20)<<"d_screened_rutherford_normalization_constant =\t"<<d_screened_rutherford_normalization_constant<<std::endl;*/
 }
 				       			    
 } // end Utility namespace

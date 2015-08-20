@@ -194,8 +194,7 @@ void HardElasticElectronScatteringDistributionACEFactory::createScatteringFuncti
 		 elas_block( offset[n], table_length[n] ),
 		 elas_block( offset[n] + table_length[n], table_length[n] ),
          angular_energy_grid[n],
-         atomic_number,
-         true ) );
+         atomic_number ) );
   }
 }
 

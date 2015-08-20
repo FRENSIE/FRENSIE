@@ -58,11 +58,11 @@ public:
   //! Return the number of elastic angular bins for an incoming energy
   unsigned getNumberOfAngularBins( const double incoming_energy ) const;
 */
-  //! Return the elastic angles for an incoming energy
+  //! Return the elastic scattering angles for an incoming energy
   const std::vector<double>& getElasticAngles(
 					       const double incoming_energy ) const;
 
-  //! Return the elastic pdf for an incoming energy
+  //! Return the elastic scatering pdf for an incoming energy
   const std::vector<double>& getElasticPDF(
 					       const double incoming_energy ) const;
 /*
@@ -110,7 +110,7 @@ public:
 
   //! Return the electron energy grid
   const std::vector<double>& getElectronEnergyGrid() const;
-/*
+
   //! Return the elastic electron cross section below mu = 0.999999
   const std::vector<double>& 
   getCutoffElasticCrossSection() const;
@@ -126,18 +126,16 @@ public:
   //! Return the total elastic cross section threshold energy bin index
   unsigned 
   getTotalElasticCrossSectionThresholdEnergyIndex() const;
-*/
-
+/*
   //! Return the hard elastic electron cross section
   const std::vector<double>& 
   getHardElasticCrossSection() const;
 
   //! Return the hard cross section threshold energy bin index
   unsigned getHardElasticCrossSectionThresholdEnergyIndex() const;
-
+*/
   //! Return the Moment Preserving (MP) soft elastic electron cross section
-  const std::vector<double>& 
-  getMomentPreservingCrossSection() const;
+  const std::vector<double>& getMomentPreservingCrossSection() const;
 
   //! Return the MP soft elastic cross section threshold energy bin index
   unsigned getMomentPreservingCrossSectionThresholdEnergyIndex() const;
@@ -177,7 +175,7 @@ protected:
 
   //! set the atomic subshells 
   void setSubshells( const std::set<unsigned>& subshells );
-  
+
   //! Set the elastic cutoff angle cosine
   void setCutoffAngleCosine( const double cutoff_angle_cosine );
 
@@ -190,12 +188,12 @@ protected:
             const double incoming_energy, 
             const unsigned number_of_elastic_angles );
 */
-  //! Set the elastic angles for an incoming energy
+  //! Set the elastic scattering angles for an incoming energy
   void setElasticAngles(
             const double incoming_energy,
             const std::vector<double>& elastic_angles );
 
-  //! Set the elastic pdf for an incoming energy
+  //! Set the elastic scattering pdf for an incoming energy
   void setElasticPDF(
             const double incoming_energy,
             const std::vector<double>& elastic_pdf );
@@ -274,7 +272,7 @@ protected:
   
   //! Set the electron energy grid
   void setElectronEnergyGrid( const std::vector<double>& energy_grid );
-/*
+
   //! Set the elastic electron cross section below mu = 0.999999
   void setCutoffElasticCrossSection( 
     const std::vector<double>& cutoff_elastic_cross_section );
@@ -287,15 +285,15 @@ protected:
     const std::vector<double>& total_elastic_cross_section );
 
   //! Set the total elastic cross section threshold energy bin index
-  setTotalElasticCrossSectionThresholdEnergyIndex( const unsigned index );
-*/
+  void setTotalElasticCrossSectionThresholdEnergyIndex( const unsigned index );
+/*
   //! Set the hard elastic electron cross section 
   void setHardElasticCrossSection(
 			 const std::vector<double>& hard_elastic_cross_section );
 
   //! Set the hard elastic cross section threshold energy bin index
   void setHardElasticCrossSectionThresholdEnergyIndex( const unsigned index );
-
+*/
   //! Set the soft elastic electron cross section using Moment Preserving (MP) theory
   void setMomentPreservingCrossSection(
 			 const std::vector<double>& soft_elastic_cross_section );
@@ -369,16 +367,22 @@ private:
 
   // The elastic angular energy grid (MeV)
   std::vector<double> d_angular_energy_grid;
+
+  // The elastic scattering angles
+  std::map<double,std::vector<double> > d_elastic_angles;
+
+  // The elastic scattering pdf
+  std::map<double,std::vector<double> > d_elastic_pdf;
 /*
   // The number of elastic angles for incoming energy
   std::map<double,unsigned> d_number_of_elastic_angles;
-*/
+
   // The hard elastic angles
   std::map<double,std::vector<double> > d_hard_elastic_angles;
 
   // The hard elastic pdf
   std::map<double,std::vector<double> > d_hard_elastic_pdf;
-/*
+
   // The number of discrete angles for incoming energy
   std::map<double,unsigned> d_number_of_discrete_angles;
 */
@@ -420,7 +424,6 @@ private:
   // The electron energy grid (MeV)
   std::vector<double> d_electron_energy_grid;
 
-/*
   // The cutoff elastic electron cross section (b)
   std::vector<double> d_cutoff_elastic_cross_section;
 
@@ -432,14 +435,14 @@ private:
 
   // The total elastic electron cross section threshold energy index
   unsigned d_total_elastic_cross_section_threshold_index;
-*/
 
+/*
   // The hard elastic electron cross section (b)
   std::vector<double> d_hard_elastic_cross_section;
 
   // The hard elastic electron cross section threshold energy index
   unsigned d_hard_elastic_cross_section_threshold_index;
-
+*/
   // The Moment Preserving soft elastic electron cross section (b)
   std::vector<double> d_moment_preserving_soft_elastic_cross_section;
 

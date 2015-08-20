@@ -33,11 +33,11 @@ public:
   using EvaluatedElectronDataContainer::setSubshells;
   using EvaluatedElectronDataContainer::setCutoffAngleCosine;
   using EvaluatedElectronDataContainer::setElasticAngularEnergyGrid;
-  //using EvaluatedElectronDataContainer::setNumberOfDiscreteAngles;
-  using EvaluatedElectronDataContainer::setElasticAngles;
-  using EvaluatedElectronDataContainer::setElasticPDF;
+//  using EvaluatedElectronDataContainer::setNumberOfDiscreteAngles;
   using EvaluatedElectronDataContainer::setSoftElasticDiscreteAngles;
   using EvaluatedElectronDataContainer::setSoftElasticWeights;
+  using EvaluatedElectronDataContainer::setElasticAngles;
+  using EvaluatedElectronDataContainer::setElasticPDF;
   using EvaluatedElectronDataContainer::setElectroionizationEnergyGrid;
   using EvaluatedElectronDataContainer::setElectroionizationRecoilEnergyAtIncomingEnergy;
   using EvaluatedElectronDataContainer::setElectroionizationRecoilPDFAtIncomingEnergy;
@@ -51,8 +51,12 @@ public:
   using EvaluatedElectronDataContainer::setAtomicExcitationEnergyGrid;
   using EvaluatedElectronDataContainer::setAtomicExcitationEnergyLoss;
   using EvaluatedElectronDataContainer::setElectronEnergyGrid;
+  using EvaluatedElectronDataContainer::setTotalElasticCrossSection;
+  using EvaluatedElectronDataContainer::setTotalElasticCrossSectionThresholdEnergyIndex;
+/*
   using EvaluatedElectronDataContainer::setHardElasticCrossSection;
   using EvaluatedElectronDataContainer::setHardElasticCrossSectionThresholdEnergyIndex;
+*/
   using EvaluatedElectronDataContainer::setMomentPreservingCrossSection;
   using EvaluatedElectronDataContainer::setMomentPreservingCrossSectionThresholdEnergyIndex;
   using EvaluatedElectronDataContainer::setElectroionizationCrossSection;

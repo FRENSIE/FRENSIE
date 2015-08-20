@@ -82,7 +82,7 @@ EvaluatedElectronDataContainer::getElasticAngles(
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
 
-  return d_hard_elastic_angles.find( incoming_energy )->second;
+  return d_elastic_angles.find( incoming_energy )->second;
 }
 
 // Return the elastic pdf for an incoming energy
@@ -94,7 +94,7 @@ EvaluatedElectronDataContainer::getElasticPDF(
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
 
-  return d_hard_elastic_pdf.find( incoming_energy )->second;
+  return d_elastic_pdf.find( incoming_energy )->second;
 }
 
 // Return the soft elastic discrete angles for an incoming energy
@@ -213,7 +213,20 @@ EvaluatedElectronDataContainer::getElectronEnergyGrid() const
 {
   return d_electron_energy_grid;
 }
+// Return the total elastic electron cross section
+const std::vector<double>& 
+EvaluatedElectronDataContainer::getTotalElasticCrossSection() const
+{
+  return d_total_elastic_cross_section;
+}
 
+// Return the total elastic cross section threshold energy bin index
+unsigned
+EvaluatedElectronDataContainer::getTotalElasticCrossSectionThresholdEnergyIndex() const
+{
+  return d_total_elastic_cross_section_threshold_index;
+}
+/*
 // Return the hard elastic electron cross section
 const std::vector<double>& 
 EvaluatedElectronDataContainer::getHardElasticCrossSection() const
@@ -227,7 +240,7 @@ EvaluatedElectronDataContainer::getHardElasticCrossSectionThresholdEnergyIndex()
 {
   return d_hard_elastic_cross_section_threshold_index;
 }
-
+*/
 // Return the Moment Preserving (MP) soft elastic electron cross section
 const std::vector<double>& 
 EvaluatedElectronDataContainer::getMomentPreservingCrossSection() const
@@ -354,7 +367,7 @@ void EvaluatedElectronDataContainer::setNumberOfDiscreteAngles(
   d_number_of_discrete_angles[incoming_energy] = number_of_discrete_angles;
 }
 */
-// Set the hard elastic angles for an incoming energy
+// Set the total elastic angles for an incoming energy
 void EvaluatedElectronDataContainer::setElasticAngles(
 		     const double incoming_energy,
 		     const std::vector<double>& elastic_angles )
@@ -372,10 +385,10 @@ void EvaluatedElectronDataContainer::setElasticAngles(
                                   isValueGreaterThanOne ) ==
                     elastic_angles.end() );
 
-  d_hard_elastic_angles[incoming_energy] = elastic_angles;
+  d_elastic_angles[incoming_energy] = elastic_angles;
 }
 
-// Set the hard elastic pdf for an incoming energy
+// Set the total elastic pdf for an incoming energy
 void EvaluatedElectronDataContainer::setElasticPDF( 
 			 const double incoming_energy,
 			 const std::vector<double>& elastic_pdf )
@@ -389,22 +402,14 @@ void EvaluatedElectronDataContainer::setElasticPDF(
                                   isValueLessThanOrEqualToZero ) ==
                     elastic_pdf.end() );
   
-  d_hard_elastic_pdf[incoming_energy] = elastic_pdf;
+  d_elastic_pdf[incoming_energy] = elastic_pdf;
 }
 
 // Set the soft elastic discrete angles for an incoming energy
 void EvaluatedElectronDataContainer::setSoftElasticDiscreteAngles(
 		     const double incoming_energy,
 		     const std::vector<double>& soft_elastic_discrete_angles )
-{/*
-std::cout << "incoming_energy =\t" << incoming_energy << std::endl;
-std::cout << "d_angular_energy_grid.front() =\t" << d_angular_energy_grid.front() << std::endl;
-std::cout << "d_angular_energy_grid.back() =\t" << d_angular_energy_grid.back() << std::endl;
-std::cout << "angular_energy =\t" << d_angular_energy_grid[incoming_energy] << std::endl;
-std::cout << "# of angles =\t" << soft_elastic_discrete_angles.size() << std::endl;
-std::cout << "angle 1 =\t" << soft_elastic_discrete_angles[0] << std::endl;
-std::cout << "angle 2 =\t" << soft_elastic_discrete_angles[1] << std::endl;*/
-
+{
   // Make sure the incoming_energy is valid
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
@@ -428,13 +433,7 @@ std::cout << "angle 2 =\t" << soft_elastic_discrete_angles[1] << std::endl;*/
 void EvaluatedElectronDataContainer::setSoftElasticWeights( 
 			 const double incoming_energy,
 			 const std::vector<double>& soft_elastic_weights )
-{/*
-std::cout << "incoming_energy =\t" << incoming_energy << std::endl;
-std::cout << "angular_energy =\t" << d_angular_energy_grid[incoming_energy] << std::endl;
-std::cout << "# of weights =\t" << soft_elastic_weights.size() << std::endl;
-std::cout << std::setprecision(20) << "weight 1 =\t" << soft_elastic_weights[0] << std::endl;
-std::cout << std::setprecision(20) << "weight 2 =\t" << soft_elastic_weights[1] << std::endl;*/
-
+{
   // Make sure the incoming_energy is valid
   testPrecondition( incoming_energy >= d_angular_energy_grid.front() );
   testPrecondition( incoming_energy <= d_angular_energy_grid.back() );
@@ -636,7 +635,33 @@ void EvaluatedElectronDataContainer::setElectronEnergyGrid(
 
   d_electron_energy_grid = energy_grid;
 }
+// Set the total elastic electron cross section 
+void EvaluatedElectronDataContainer::setTotalElasticCrossSection(
+			 const std::vector<double>& total_elastic_cross_section )
+{
+  // Make sure the total elastic cross section is valid
+  testPrecondition( total_elastic_cross_section.size() <= 
+                    d_electron_energy_grid.size() );
+  testPrecondition( std::find_if( total_elastic_cross_section.begin(),
+                                  total_elastic_cross_section.end(),
+                                  isValueLessThanOrEqualToZero ) ==
+                    total_elastic_cross_section.end() );
+  
+  d_total_elastic_cross_section = total_elastic_cross_section;
+}
 
+// Set the total elastic cross section threshold energy bin index
+void EvaluatedElectronDataContainer::setTotalElasticCrossSectionThresholdEnergyIndex(
+						        const unsigned index )
+{
+  // Make sure the threshold index is valid
+  testPrecondition( 
+        d_total_elastic_cross_section.size() + index ==
+        d_electron_energy_grid.size() );
+  
+ d_total_elastic_cross_section_threshold_index = index;
+}
+/*
 // Set the hard elastic electron cross section 
 void EvaluatedElectronDataContainer::setHardElasticCrossSection(
 			 const std::vector<double>& hard_elastic_cross_section )
@@ -663,7 +688,7 @@ void EvaluatedElectronDataContainer::setHardElasticCrossSectionThresholdEnergyIn
   
  d_hard_elastic_cross_section_threshold_index = index;
 }
-
+*/
 // Set the soft elastic electron cross section using Moment Preserving (MP) theory
 void EvaluatedElectronDataContainer::setMomentPreservingCrossSection(
 			 const std::vector<double>& soft_elastic_cross_section )

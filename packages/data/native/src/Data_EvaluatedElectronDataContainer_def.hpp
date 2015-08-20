@@ -32,11 +32,15 @@ void EvaluatedElectronDataContainer::save( Archive& ar,
 /*
   ar & boost::serialization::make_nvp( "number_of_discrete_angles", 
                                         d_number_of_discrete_angles );
-*/
   ar & boost::serialization::make_nvp( "hard_elastic_angles", 
                                         d_hard_elastic_angles );
   ar & boost::serialization::make_nvp( "hard_elastic_pdf", 
                                         d_hard_elastic_pdf );
+*/
+  ar & boost::serialization::make_nvp( "elastic_angles", 
+                                        d_elastic_angles );
+  ar & boost::serialization::make_nvp( "elastic_pdf", 
+                                        d_elastic_pdf );
   ar & boost::serialization::make_nvp( "soft_elastic_discrete_angles", 
                                         d_soft_elastic_discrete_angles );
   ar & boost::serialization::make_nvp( "soft_elastic_weights", 
@@ -59,11 +63,18 @@ void EvaluatedElectronDataContainer::save( Archive& ar,
 				                        d_atomic_excitation_energy_loss );
   ar & boost::serialization::make_nvp( "electron_energy_grid",
 				                        d_electron_energy_grid );
+  ar & boost::serialization::make_nvp( "total_elastic_cross_section", 
+                                        d_total_elastic_cross_section );
+  ar & boost::serialization::make_nvp( 
+            "total_elastic_cross_section_threshold_index", 
+            d_total_elastic_cross_section_threshold_index );
+/*
   ar & boost::serialization::make_nvp( "hard_elastic_cross_section", 
                                         d_hard_elastic_cross_section );
   ar & boost::serialization::make_nvp( 
             "hard_elastic_cross_section_threshold_index", 
             d_hard_elastic_cross_section_threshold_index );
+*/
   ar & boost::serialization::make_nvp( 
             "moment_preserving_soft_elastic_cross_section", 
             d_moment_preserving_soft_elastic_cross_section );
@@ -102,11 +113,15 @@ void EvaluatedElectronDataContainer::load( Archive& ar,
 /*
   ar & boost::serialization::make_nvp( "number_of_discrete_angles", 
                                         d_number_of_discrete_angles );
-*/
   ar & boost::serialization::make_nvp( "hard_elastic_angles", 
                                         d_hard_elastic_angles );
   ar & boost::serialization::make_nvp( "hard_elastic_pdf", 
                                         d_hard_elastic_pdf );
+*/
+  ar & boost::serialization::make_nvp( "elastic_angles", 
+                                        d_elastic_angles );
+  ar & boost::serialization::make_nvp( "elastic_pdf", 
+                                        d_elastic_pdf );
   ar & boost::serialization::make_nvp( "soft_elastic_discrete_angles", 
                                         d_soft_elastic_discrete_angles );
   ar & boost::serialization::make_nvp( "soft_elastic_weights", 
@@ -129,11 +144,18 @@ void EvaluatedElectronDataContainer::load( Archive& ar,
 				                        d_atomic_excitation_energy_loss );
   ar & boost::serialization::make_nvp( "electron_energy_grid",
 				                        d_electron_energy_grid );
+  ar & boost::serialization::make_nvp( "total_elastic_cross_section", 
+                                        d_total_elastic_cross_section );
+  ar & boost::serialization::make_nvp( 
+            "total_elastic_cross_section_threshold_index", 
+            d_total_elastic_cross_section_threshold_index );
+/*
   ar & boost::serialization::make_nvp( "hard_elastic_cross_section", 
                                         d_hard_elastic_cross_section );
   ar & boost::serialization::make_nvp( 
             "hard_elastic_cross_section_threshold_index", 
             d_hard_elastic_cross_section_threshold_index );
+*/
   ar & boost::serialization::make_nvp( 
             "moment_preserving_soft_elastic_cross_section", 
             d_moment_preserving_soft_elastic_cross_section );

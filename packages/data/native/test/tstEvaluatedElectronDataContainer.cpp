@@ -408,6 +408,35 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
 }
 
 //---------------------------------------------------------------------------//
+// Check that the elastic electron cross section can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
+                   setTotalElasticCrossSection )
+{
+  std::vector<double> cross_section( 3 );
+  cross_section[0] = 1e-6;
+  cross_section[1] = 1e-1;
+  cross_section[2] = 1.0;
+
+  evaluated_electron_data_container.setTotalElasticCrossSection( 
+                        cross_section );
+
+  TEST_COMPARE_ARRAYS( 
+            evaluated_electron_data_container.getTotalElasticCrossSection(),
+            cross_section );
+}
+
+//---------------------------------------------------------------------------//
+// Check that the elastic cs threshold index can be set
+TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
+		           setTotalElasticCrossSectionThresholdEnergyIndex )
+{
+  evaluated_electron_data_container.setTotalElasticCrossSectionThresholdEnergyIndex( 0 );
+
+  TEST_EQUALITY_CONST( evaluated_electron_data_container.getTotalElasticCrossSectionThresholdEnergyIndex(),
+                       0 );
+}
+/*
+//---------------------------------------------------------------------------//
 // Check that the hard elastic electron cross section can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
                    setHardElasticCrossSection )
@@ -435,7 +464,7 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_EQUALITY_CONST( evaluated_electron_data_container.getHardElasticCrossSectionThresholdEnergyIndex(),
                        0 );
 }
-
+*/
 //---------------------------------------------------------------------------//
 // Check that the Moment Preserving (MP) soft elastic electron cross section can be set
 TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
@@ -628,11 +657,19 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectronEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
+		       3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
+		       0 );
+/*
+  TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getHardElasticCrossSection().size(),
 		       3u );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getHardElasticCrossSectionThresholdEnergyIndex(),
 		       0 );
+*/
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getMomentPreservingCrossSection().size(),
 		       3u );
@@ -729,11 +766,19 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectronEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
+		       3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
+		       0 );
+/*
+  TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getHardElasticCrossSection().size(),
 		       3u );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getHardElasticCrossSectionThresholdEnergyIndex(),
 		       0 );
+*/
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getMomentPreservingCrossSection().size(),
 		       3u );
@@ -830,11 +875,19 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectronEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
+		       3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
+		       0 );
+/*
+  TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getHardElasticCrossSection().size(),
 		       3u );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getHardElasticCrossSectionThresholdEnergyIndex(),
 		       0 );
+*/
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getMomentPreservingCrossSection().size(),
 		       3u );
@@ -927,11 +980,19 @@ TEUCHOS_UNIT_TEST( EvaluatedElectronDataContainer,
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getElectronEnergyGrid().size(), 3 );
   TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getTotalElasticCrossSection().size(),
+		       3u );
+  TEST_EQUALITY_CONST( 
+    evaluated_electron_data_container_copy.getTotalElasticCrossSectionThresholdEnergyIndex(),
+		       0 );
+/*
+  TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getHardElasticCrossSection().size(),
 		       3u );
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getHardElasticCrossSectionThresholdEnergyIndex(),
 		       0 );
+*/
   TEST_EQUALITY_CONST( 
     evaluated_electron_data_container_copy.getMomentPreservingCrossSection().size(),
 		       3u );

@@ -31,12 +31,17 @@ public:
   //! Default constructor
   ElasticElectronDistribution();
 
-  //! Constructor
+  //! Constructor for ENDL tables data
+  ElasticElectronDistribution( const Teuchos::Array<double>& independent_values,
+		               const Teuchos::Array<double>& dependent_values,
+                       const double moliere_screening_constant, 
+                       const double screened_rutherford_normalization_constant );
+
+  //! Constructor for ACE tables data
   ElasticElectronDistribution( const Teuchos::Array<double>& independent_values,
 		               const Teuchos::Array<double>& dependent_values,
                        const double energy, 
-                       const unsigned atomic_number,
-                       const bool interpret_dependent_values_as_cdf = false );
+                       const int atomic_number );
 
   //! Copy constructor
   ElasticElectronDistribution( 
@@ -95,19 +100,31 @@ public:
   //! Method for testing if two objects are equivalent
   bool isEqual( const ElasticElectronDistribution<InterpolationPolicy>& other ) const;
 
+  //! Return Moliere's screening constant
+  double getMoliereScreeningConstant() const;
+ 
+  //! Return the normalization constant for the screened Rutherford component of the distribution
+  double getScreenedRutherfordNormalizationConstant() const;
+
 private:
 
-  // Initialize the distribution
-  void initializeDistribution(const Teuchos::Array<double>& independent_values,
-			      const Teuchos::Array<double>& dependent_values );
+  // Initialize the distribution for ACE tables data
+  void initializeDistributionACE(
+        const Teuchos::Array<double>& independent_values,
+        const Teuchos::Array<double>& dependent_values );
+
+  // Initialize the distribution for ENDL tables data
+  void initializeDistributionENDL(
+        const Teuchos::Array<double>& independent_values,
+        const Teuchos::Array<double>& dependent_values );
 
   // Return a random sample using the random number and record the bin index
   double sampleImplementation( double random_number,
 			       unsigned& sampled_bin_index ) const;
 
-  // Set the last two PDF values
-  void setLastTwoPDFs( const double& last_cdf,
-                       const double& second_to_last_cdf );
+  // Set the first two PDF values
+  void setFirstTwoPDFs( const double& first_cdf,
+                        const double& second_cdf );
 
   // The distribution type
   static const OneDDistributionType distribution_type = 
@@ -129,6 +146,18 @@ private:
 
   // Atomic number (Z) of the target atom to the 2/3 power (Z^2/3)
   double d_Z_two_thirds_power;
+
+  // Moliere's screening constant
+  double d_moliere_screening_constant;
+ 
+  // The normalization constant for the screened Rutherford component of the distribution
+  double d_screened_rutherford_normalization_constant;
+
+  // The cutoff cdf below which the screened Rutherford distribution is sampled
+  double d_screened_rutherford_cutoff_cdf;
+
+  // The cutoff angle below which the screened Rutherford distribution is sampled
+  static double s_sr_angle;
 };
 
 } // end Utility namespace
