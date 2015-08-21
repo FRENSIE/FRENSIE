@@ -12,9 +12,12 @@
 // Std Lib Includes
 #include <limits>
 #include <stdexcept>
+#include <iostream>
 
 // Boost Includes
 #include <boost/units/quantity.hpp>
+#include <boost/mpl/and.hpp>
+#include <boost/utility/enable_if.hpp>
 
 // FRENSIE Includes
 #include "Utility_OneDDistributionType.hpp"
@@ -136,6 +139,32 @@ public:
     : std::logic_error( what_arg ) 
   { /* ... */ }
 };
+
+/*! Macro for defining the unitless copy constructor
+ *
+ * /details This is a convenience macro for defining the unitless copy
+ * constructor, which is a bit messy to define properly (and safely!!!). This
+ * constructor will be defined inline as it is a template function. It will
+ * only compile if the members packDataInString and unpackDataFromString are 
+ * defined for the distribution class of interest (see 
+ * ParameterListCompatibleObject). The constructor defined relies on SFINAE and
+ * the Boost disable_if object to prevent a duplicate copy constructor when the
+ * distribution template parameters are both void (unitless distribution).
+ */
+#define ENABLE_UNITLESS_COPY_CONSTRUCTOR( Distribution, DistIndepUnit, DistDepUnit ) \
+template<typename InputIndepUnit, typename InputDepUnit> \
+Distribution( const Distribution<InputIndepUnit,InputDepUnit>& unitless_dist_instance,	\
+  typename boost::disable_if<boost::mpl::or_<boost::mpl::and_<typename boost::is_same<DistIndepUnit,void>::type,typename boost::is_same<DistDepUnit,void>::type>,boost::mpl::not_<typename boost::is_same<InputIndepUnit,void>::type>,boost::mpl::not_<typename boost::is_same<InputDepUnit,void>::type> > >::type* dummy = 0 ) \
+{ this->unpackDataFromString( unitless_dist_instance.packDataInString() ); } \
+void __need_semicolin__() const
+
+/*! Macro for defining the default unitless copy constructor
+ *
+ * \details This macro is the same as the ENABLE_UNITLESS_COPY_CONSTRUCTOR
+ * macro except that default template parameters are used.
+ */
+#define ENABLE_UNITLESS_COPY_CONSTRUCTOR_DEFAULT( Distribution ) \
+  ENABLE_UNITLESS_COPY_CONSTRUCTOR( Distribution, IndependentUnit, DependentUnit )
 
 } // end Utility namespace
 

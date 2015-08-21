@@ -25,6 +25,8 @@
 #include "Utility_RandomNumberGenerator.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_Units.hpp"
+#include "Utility_UnitTraits.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 using namespace Utility::Units;
 
@@ -1538,6 +1540,87 @@ TEUCHOS_UNIT_TEST( UnitAwareDiscreteDistribution, fromParameterList )
 			  0.2/eV,
 			  1e-15 );
 }
+
+//---------------------------------------------------------------------------//
+// Check that a unit-aware distribution can be constructed from a unitless
+// distribution
+TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( UnitAwareDiscreteDistribution, 
+				   unitless_copy_constructor,
+				   IndepUnit,
+				   DepUnit )
+{
+  typedef typename Utility::UnitTraits<IndepUnit>::template GetQuantityType<double>::value
+    IndepQuantity;
+  typedef typename Utility::UnitTraits<DepUnit>::template GetQuantityType<double>::value
+    DepQuantity;
+  
+  Utility::UnitAwareDiscreteDistribution<IndepUnit,DepUnit> 
+    unit_aware_dist_copy( 
+     *Teuchos::rcp_dynamic_cast<Utility::DiscreteDistribution>(distribution) );
+
+  IndepQuantity indep_quantity = 
+    Utility::QuantityTraits<IndepQuantity>::initializeQuantity( -1.0 );
+  DepQuantity dep_quantity = 
+    Utility::QuantityTraits<DepQuantity>::initializeQuantity( 1.0 );
+
+  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ),
+		       dep_quantity );
+  
+  Utility::setQuantity( indep_quantity, 0.0 );
+  Utility::setQuantity( dep_quantity, 2.0 );
+  
+  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ),
+		       dep_quantity );
+
+  Utility::setQuantity( indep_quantity, 1.0 );
+  Utility::setQuantity( dep_quantity, 1.0 );
+  
+  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ),
+		       dep_quantity );
+}
+
+typedef si::energy si_energy;
+typedef si::length si_length;
+typedef si::area si_area;
+typedef si::mass si_mass;
+typedef si::time si_time;
+typedef si::amount si_amount;
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareDiscreteDistribution,
+				      unitless_copy_constructor,
+				      si_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareDiscreteDistribution,
+				      unitless_copy_constructor,
+				      si_length,
+				      si_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareDiscreteDistribution,
+				      unitless_copy_constructor,
+				      si_time,
+				      si_length );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareDiscreteDistribution,
+				      unitless_copy_constructor,
+				      si_energy,
+				      si_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareDiscreteDistribution,
+				      unitless_copy_constructor,
+				      si_area,
+				      si_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareDiscreteDistribution,
+				      unitless_copy_constructor,
+				      si_time,
+				      si_energy );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareDiscreteDistribution,
+				      unitless_copy_constructor,
+				      si_time,
+				      void );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareDiscreteDistribution,
+				      unitless_copy_constructor,
+				      void,
+				      si_energy );
+TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareDiscreteDistribution,
+				      unitless_copy_constructor,
+				      void,
+				      void );
 
 //---------------------------------------------------------------------------//
 // Custom main function

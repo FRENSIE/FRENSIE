@@ -60,7 +60,13 @@ inline const typename QuantityTraits<Quantity>::RawType& getRawQuantity( const Q
   return QuantityTraits<Quantity>::getRawQuantity( quantity ); 
 }
 
-//! This function allows access to the setQuantity QuantityTraits function
+/*! This function allows access to the setQuantity QuantityTraits function
+ * \details Avoid this function at all costs! It should only be used in very
+ * rare cases where a class template parameter can be either a unit-aware
+ * type (e.g. boost::quantity<unit,double>) or a "raw" type (e.g. double). It
+ * is dangerous because it avoids the type checking that is normally done
+ * with unit-aware types.
+ */
 template<typename Quantity>
 inline void setQuantity( Quantity& quantity,
 			 const typename QuantityTraits<Quantity>::RawType& raw_quantity )

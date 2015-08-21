@@ -20,7 +20,7 @@
 
 namespace Utility{
 
-//! The Unit-aware uniform distribution class
+//! The unit-aware uniform distribution class
 template<typename IndependentUnit, typename DependentUnit>
 class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
 			    public ParameterListCompatibleObject<UnitAwareUniformDistribution<IndependentUnit,DependentUnit> >
@@ -53,6 +53,9 @@ public:
 
   //! Copy constructor
   UnitAwareUniformDistribution( const UnitAwareUniformDistribution& dist_instance );
+
+  //! Copy constructor (copying from unitless distribution only)
+  ENABLE_UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareUniformDistribution );
 
   //! Assignment operator
   UnitAwareUniformDistribution& operator=( const UnitAwareUniformDistribution& dist_instance );

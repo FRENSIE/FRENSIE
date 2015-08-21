@@ -68,8 +68,12 @@ public:
 			
   
   //! Copy constructor
-  UnitAwareDiscreteDistribution( const UnitAwareDiscreteDistribution& dist_instance );
+  UnitAwareDiscreteDistribution( 
+			  const UnitAwareDiscreteDistribution& dist_instance );
 
+  //! Copy constructor (copying from unitless distribution only)
+  ENABLE_UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareDiscreteDistribution );
+  
   //! Assignment operator
   UnitAwareDiscreteDistribution& operator=( const UnitAwareDiscreteDistribution& dist_instance );
 
@@ -222,7 +226,8 @@ typedef UnitAwareDiscreteDistribution<void,void> DiscreteDistribution;
 
 namespace Teuchos{
 
-/*! Type name traits specialization for the Utility::DiscreteDistribution
+/*! \brief Type name traits partial specialization for the 
+ * Utility::DiscreteDistribution
  *
  * \details The name function will set the type name that must be used in
  * xml files.
@@ -235,8 +240,8 @@ public:
   {
     return "Discrete Distribution";
   }
-  static std::string concreteName( 
-				const Utility::DiscreteDistribution& instance )
+  static std::string concreteName(
+		                const Utility::DiscreteDistribution& instance )
   {
     return name();
   }
