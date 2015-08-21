@@ -46,10 +46,13 @@ public:
   
   //! Constructor
   template<typename InputIndepQuantity>
-  UnitAwareDeltaDistribution( const InputIndepQuantity location );
+  explicit UnitAwareDeltaDistribution( const InputIndepQuantity location );
 
   //! Copy constructor
   UnitAwareDeltaDistribution( const UnitAwareDeltaDistribution& dist_instance );
+
+  //! Copy constructor (copying from unitless distribution only)
+  ENABLE_UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareDeltaDistribution );
 
   //! Assignment operator
   UnitAwareDeltaDistribution& operator=( const UnitAwareDeltaDistribution& dist_instance );
@@ -147,7 +150,7 @@ public:
  * Utility::UnitAwareDeltaDistribution
  *
  * \details The name function will set the type name that must be used in
- * xml files
+ * xml files.
  */
 template<typename U,typename V>
 class TypeNameTraits<Utility::UnitAwareDeltaDistribution<U,V> >
