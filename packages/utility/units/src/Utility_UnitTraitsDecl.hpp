@@ -40,6 +40,13 @@ struct UnitTraits
   //! The inverse unit type
   typedef typename boost::units::power_typeof_helper<Unit,boost::units::static_rational<-1> >::type InverseUnit;
 
+  //! The "unit raised to power N" type
+  template<int N>
+  struct GetUnitToPowerType
+  {
+    typedef typename boost::units::power_typeof_helper<Unit,boost::units::static_rational<N> >::type value;
+  };
+
   //! The wrapped quantity type associated with the unit and value type T
   template<typename T>
   struct GetQuantityType

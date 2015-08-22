@@ -22,7 +22,9 @@
 
 namespace Utility{
 
-//! The unit-aware discrete distribution class
+/*! The unit-aware discrete distribution class
+ * \ingroup one_d_distributions
+ */
 template<typename IndependentUnit,typename DependentUnit>
 class UnitAwareDiscreteDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
 				      public ParameterListCompatibleObject<UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit> >
@@ -72,7 +74,7 @@ public:
 			  const UnitAwareDiscreteDistribution& dist_instance );
 
   //! Copy constructor (copying from unitless distribution only)
-  ENABLE_UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareDiscreteDistribution );
+  UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareDiscreteDistribution );
   
   //! Assignment operator
   UnitAwareDiscreteDistribution& operator=( const UnitAwareDiscreteDistribution& dist_instance );
@@ -219,7 +221,9 @@ UnitAwareDiscreteDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNu
   return this->sampleImplementation( scaled_random_number, dummy_index );
 }
 
-//! The discrete distribution (unit-agnostic)
+/*! The discrete distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
 typedef UnitAwareDiscreteDistribution<void,void> DiscreteDistribution;
 
 } // end Utility namespace

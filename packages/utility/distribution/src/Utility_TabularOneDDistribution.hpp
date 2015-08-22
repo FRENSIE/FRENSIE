@@ -14,7 +14,9 @@
 
 namespace Utility{
 
-//! The unit-aware tabular one-dimensional distribution declaration
+/*! The unit-aware tabular one-dimensional distribution declaration
+ * \ingroup one_d_distributions
+ */
 template<typename IndependentUnit, typename DependentUnit>
 class UnitAwareTabularOneDDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>
 {
@@ -67,7 +69,9 @@ inline bool UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>::isT
   return true;
 }
 
-//! The tabular one-dimensional distribution (unit-agnostic)
+/*! The tabular one-dimensional distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
 typedef UnitAwareTabularOneDDistribution<void,void> TabularOneDDistribution;
 
 } // end Utility namespace

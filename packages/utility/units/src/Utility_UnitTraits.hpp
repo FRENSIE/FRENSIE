@@ -27,6 +27,10 @@ struct UnitTraits<void>
   typedef void System;
   typedef void InverseUnit;
 
+  template<int T>
+  struct GetUnitToPowerType
+  { typedef void value; };
+
   template<typename T>
   struct GetQuantityType
   { typedef T value; };

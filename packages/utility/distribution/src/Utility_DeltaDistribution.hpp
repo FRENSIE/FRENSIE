@@ -19,7 +19,9 @@
 
 namespace Utility{
 
-//! The unit-aware delta distribution class
+/*! The unit-aware delta distribution class
+ * \ingroup one_d_distributions
+ */
 template<typename IndependentUnit,typename DependentUnit>
 class UnitAwareDeltaDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
 				   public ParameterListCompatibleObject<UnitAwareDeltaDistribution<IndependentUnit,DependentUnit> >
@@ -52,7 +54,7 @@ public:
   UnitAwareDeltaDistribution( const UnitAwareDeltaDistribution& dist_instance );
 
   //! Copy constructor (copying from unitless distribution only)
-  ENABLE_UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareDeltaDistribution );
+  UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareDeltaDistribution );
 
   //! Assignment operator
   UnitAwareDeltaDistribution& operator=( const UnitAwareDeltaDistribution& dist_instance );
@@ -120,7 +122,9 @@ private:
   IndepQuantity d_location;
 };
 
-//! The delta distribution (unit-agnostic)
+/*! The delta distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
 typedef UnitAwareDeltaDistribution<void,void> DeltaDistribution;
 
 } // end Utility namespace

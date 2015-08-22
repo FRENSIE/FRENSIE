@@ -2,7 +2,8 @@
 //!
 //! \file   Utility_EvaporationDistribution.hpp
 //! \author Aaron Tumulak
-//! \brief  Evaporation distribution class declaration.
+//! \brief  Evaporation distribution class declaration. Modified by Alex
+//!         Robinson to accommodate units.
 //!
 //---------------------------------------------------------------------------//
 
@@ -11,6 +12,9 @@
 
 // Std Lib Includes
 #include <limits>
+
+// Boost Includes
+#include <boost/units/physical_dimensions/energy.hpp>
 
 // Trilinos Includes
 #include <Teuchos_ScalarTraits.hpp>
@@ -21,60 +25,97 @@
 
 namespace Utility{
 
-//! Evaporation distribution class
-class EvaporationDistribution : public OneDDistribution,
-			   public ParameterListCompatibleObject<EvaporationDistribution>
+/*! The unit-aware evaporation distribution class
+ * \ingroup one_d_distributions
+ */
+template<typename IndependentUnit, typename DependentUnit>
+class UnitAwareEvaporationDistribution : public UnitAwareOneDDistribution<IndependentUnit,DependentUnit>,
+					 public ParameterListCompatibleObject<UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit> >
 {
+
+  // Only allow construction when the independent unit corresponds to energy
+  RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, energy_dimension );
 
 private:
 
   // Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
+  // The inverse squared independent unit traits typedef
+  typedef UnitTraits<typename UnitTraits<IndependentUnit>::template GetUnitToPowerType<-2>::value> InverseSquaredIndepUnitTraits;
+
+  // The inverse squared independent quantity type
+  typedef typename InverseSquaredIndepUnitTraits::template GetQuantityType<double>::value InverseSquaredIndepQuantity;
+
 public:
+
+  //! The independent quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity IndepQuantity;
+
+  //! The inverse independent quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity InverseIndepQuantity;
+
+  //! The dependent quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DepQuantity;
  
-  //! Default Constructor
-  EvaporationDistribution( const double incident_energy = 1.0,
-		      const double nuclear_temperature = 1.0,
-		      const double restriction_energy = 0.0 );
+  //! Default constructor
+  UnitAwareEvaporationDistribution( 
+	            const IndepQuantity incident_energy = 
+		    QuantityTraits<IndepQuantity>::initializeQuantity( 1.0 ),
+		    const IndepQuantity nuclear_temperature = 
+		    QuantityTraits<IndepQuantity>::initializeQuantity( 1.0 ),
+		    const IndepQuantity restriction_energy = 
+		    QuantityTraits<IndepQuantity>::initializeQuantity( 0.0 ) );
+
+  //! Constructor
+  template<typename InputIndepQuantityA,
+	   typename InputIndepQuantityB,
+	   typename InputIndepQuantityC>
+  UnitAwareEvaporationDistribution( 
+				const InputIndepQuantityA incident_energy,
+				const InputIndepQuantityB nuclear_temperature,
+				const InputIndepQuantityC restriction_energy );
 
   //! Copy constructor
-  EvaporationDistribution( const EvaporationDistribution& dist_instance );
+  UnitAwareEvaporationDistribution( const UnitAwareEvaporationDistribution& dist_instance );
+
+  //! Copy constructor (copying from unitless distribution only)
+  UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareEvaporationDistribution );
 
   //! Assignment operator
-  EvaporationDistribution& operator=( const EvaporationDistribution& dist_instance );
+  UnitAwareEvaporationDistribution& operator=( const UnitAwareEvaporationDistribution& dist_instance );
 
   //! Destructor
-  ~EvaporationDistribution()
+  ~UnitAwareEvaporationDistribution()
   { /* ... */ }
 
   //! Evaluate the distribution
-  double evaluate( const double indep_var_value ) const;
+  DepQuantity evaluate( const IndepQuantity indep_var_value ) const;
 
   //! Evaluate the PDF
-  double evaluatePDF( const double indep_var_value ) const;
+  InverseIndepQuantity evaluatePDF( const IndepQuantity indep_var_value ) const;
 
   //! Return a sample from the distribution
-  double sample() const;
+  IndepQuantity sample() const;
 
   //! Return a random sample from the distribution, and record the number of trials
-  double sampleAndRecordTrials( unsigned& trials ) const;
+  IndepQuantity sampleAndRecordTrials( unsigned& trials ) const;
 
   //! Return a random sample from the corresponding CDF and record the number of trials
-  static double sampleAndRecordTrials(
-    const double incident_energy,
-    const double nuclear_temperature,
-    const double restriction_energy,
+  static IndepQuantity sampleAndRecordTrials(
+    const IndepQuantity incident_energy,
+    const IndepQuantity nuclear_temperature,
+    const IndepQuantity restriction_energy,
     unsigned& trials );
 
   //! Test if the distribution is continuous
   bool isContinuous() const;
 
   //! Return the upper bound of the distribution independent variable
-  double getUpperBoundOfIndepVar() const;
+  IndepQuantity getUpperBoundOfIndepVar() const;
 
   //! Return the lower bound of the distribution independent variable
-  double getLowerBoundOfIndepVar() const;
+  IndepQuantity getLowerBoundOfIndepVar() const;
 
   //! Return the distribution type
   OneDDistributionType getDistributionType() const;
@@ -86,28 +127,35 @@ public:
   void fromStream( std::istream& is );
 
   //! Method for testing if two objects are equivalent
-  bool isEqual( const EvaporationDistribution& other ) const;
+  bool isEqual( const UnitAwareEvaporationDistribution& other ) const;
+
+protected:
+
+  //! Return the normalization constant of the distribution, pass in parameters
+  static InverseSquaredIndepQuantity getNormalizationConstant(
+				      const IndepQuantity incident_energy,
+				      const IndepQuantity nuclear_temperature,
+				      const IndepQuantity restriction_energy );
 
 private:
-
-  // Return the normalization constant of the distribution, pass in parameters
-  double getNormalizationConstant(
-    const double incident_energy,
-    const double nuclear_temperature,
-    const double restriction_energy ) const;
  
   // The distribution type
   static const OneDDistributionType distribution_type = EVAPORATION_DISTRIBUTION;
 
   // The incident neutron energy of the distribution
-  double d_incident_energy;
+  IndepQuantity d_incident_energy;
 
   // The nuclear temperature of the distribution
-  double d_nuclear_temperature;
+  IndepQuantity d_nuclear_temperature;
   
   // The restriction energy of the distribution
-  double d_restriction_energy;
+  IndepQuantity d_restriction_energy;
 };
+
+/*! The evaporation distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
+typedef UnitAwareEvaporationDistribution<void,void> EvaporationDistribution;
 
 } // end Utility namespace
 
@@ -127,13 +175,44 @@ public:
     return "Evaporation Distribution";
   }
   static std::string concreteName( 
-				const Utility::EvaporationDistribution& instance )
+			     const Utility::EvaporationDistribution& instance )
+  {
+    return name();
+  }
+};
+
+/*! \brief Type name traits partial specialization for the 
+ * Utility::UnitAwareEvaporationDistribution
+ *
+ * \details The name function will set the type name that must be used in
+ * xml files.
+ */
+template<typename U,typename V>
+class TypeNameTraits<Utility::UnitAwareEvaporationDistribution<U,V> >
+{
+public:
+  static std::string name()
+  {
+    return "Unit-Aware Evaporation Distribution (" +
+      Utility::UnitTraits<U>::symbol() + "," +
+      Utility::UnitTraits<V>::symbol() + ")";
+  }
+  static std::string concreteName(
+	       const Utility::UnitAwareEvaporationDistribution<U,V>& instance )
   {
     return name();
   }
 };
 
 } // end Teuchos namespace
+
+//---------------------------------------------------------------------------//
+// Template Includes
+//---------------------------------------------------------------------------//
+
+#include "Utility_EvaporationDistribution_def.hpp"
+
+//---------------------------------------------------------------------------//
 
 #endif // end UTILITY_EVAPORATION_DISTRIBUTION_HPP
 
