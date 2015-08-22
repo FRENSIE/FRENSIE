@@ -21,7 +21,9 @@
 
 namespace Utility{
 
-//! The unit-aware equiprobable bin distribution class
+/*! The unit-aware equiprobable bin distribution class
+ * \ingroup one_d_distributions
+ */
 template<typename IndependentUnit, typename DependentUnit>
 class UnitAwareEquiprobableBinDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
 					     public ParameterListCompatibleObject<UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit> >
@@ -58,7 +60,7 @@ public:
 		   const UnitAwareEquiprobableBinDistribution& dist_instance );
 
   //! Copy constructor (copying from unitless distribution only)
-  ENABLE_UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareEquiprobableBinDistribution );
+  UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareEquiprobableBinDistribution );
 
   //! Assignment operator
   UnitAwareEquiprobableBinDistribution& operator=(
@@ -182,7 +184,9 @@ UnitAwareEquiprobableBinDistribution<IndependentUnit,DependentUnit>::sampleWithR
   return this->sampleImplementation( scaled_random_number, dummy_index );
 }
 
-//! The equiprobable bin distribution (unit-agnostic)
+/*! The equiprobable bin distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
 typedef UnitAwareEquiprobableBinDistribution<void,void> EquiprobableBinDistribution;
   
 } // end Utility namespace

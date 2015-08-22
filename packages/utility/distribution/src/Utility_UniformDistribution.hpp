@@ -20,7 +20,9 @@
 
 namespace Utility{
 
-//! The unit-aware uniform distribution class
+/*! The unit-aware uniform distribution class
+ * \ingroup one_d_distributions
+ */
 template<typename IndependentUnit, typename DependentUnit>
 class UnitAwareUniformDistribution : public UnitAwareTabularOneDDistribution<IndependentUnit,DependentUnit>,
 			    public ParameterListCompatibleObject<UnitAwareUniformDistribution<IndependentUnit,DependentUnit> >
@@ -55,7 +57,7 @@ public:
   UnitAwareUniformDistribution( const UnitAwareUniformDistribution& dist_instance );
 
   //! Copy constructor (copying from unitless distribution only)
-  ENABLE_UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareUniformDistribution );
+  UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareUniformDistribution );
 
   //! Assignment operator
   UnitAwareUniformDistribution& operator=( const UnitAwareUniformDistribution& dist_instance );
@@ -164,7 +166,9 @@ UnitAwareUniformDistribution<IndependentUnit,DependentUnit>::sampleWithRandomNum
     d_min_independent_value;
 }
 
-//! The uniform distribution (unit-agnostic)
+/*! The uniform distribution (unit-agnostic)
+ * \ingroup one_d_distributions
+ */
 typedef UnitAwareUniformDistribution<void,void> UniformDistribution;
 
 } // end Utility namespace
