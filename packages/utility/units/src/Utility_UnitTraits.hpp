@@ -9,6 +9,9 @@
 #ifndef UTILITY_UNIT_TRAITS_HPP
 #define UTILITY_UNIT_TRAITS_HPP
 
+// Boost Includes
+#include <boost/units/make_system.hpp>
+
 // FRENSIE Includes
 #include "Utility_UnitTraitsDecl.hpp"
 
@@ -23,13 +26,24 @@ namespace Utility{
 template<>
 struct UnitTraits<void>
 {
+  //! The dimensionless unit
+  //typedef boost::units::dimensionless_unit<boost::units::make_system<>::type>::type UnitType;
+  
   typedef void Dimension;
   typedef void System;
   typedef void InverseUnit;
 
-  template<int T>
+  template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetUnitToPowerType
-  { typedef void value; };
+  { 
+    typedef void value;
+  };
+
+  template<typename OtherUnit>
+  struct GetMultipliedUnitType
+  { 
+    typedef OtherUnit value;
+  };
 
   template<typename T>
   struct GetQuantityType

@@ -9,6 +9,10 @@
 #ifndef UTILITY_QUANTITY_TRAITS_DECL_HPP
 #define UTILITY_QUANTITY_TRAITS_DECL_HPP
 
+// Boost Includes
+#include <boost/units/cmath.hpp>
+#include <boost/units/static_rational.hpp>
+
 /*! \defgroup quantity_traits Quantity Traits
  * \ingroup traits
  */
@@ -25,11 +29,15 @@ namespace Utility{
 template<typename Quantity>
 struct QuantityTraits
 {
-  //! The unit associated with this quantity
-  typedef typename Quantity::unit_type Unit;
-
   //! The raw quantity type
   typedef typename Quantity::value_type RawType;
+
+  //! The quantity raised to power N/D type
+  template<boost::units::integer_type N, boost::units::integer_type D = 1>
+  struct GetQuantityToPowerType
+  {
+    typedef typename boost::units::power_typeof_helper<Quantity,boost::units::static_rational<N,D> >::type value;
+  };
 
   //! Get the zero quantity
   static inline Quantity zero()
@@ -39,9 +47,26 @@ struct QuantityTraits
   static inline Quantity one()
   { return Quantity::from_value( 1.0 ); }
 
+  //! Take the square root of a quantity (possible bug in boost::units::sqrt)
+  static inline typename GetQuantityToPowerType<1,2>::value sqrt( const Quantity& quantity )
+  { 
+    return GetQuantityToPowerType<1,2>::value::from_value( std::sqrt( quantity.value() ) ); 
+    // return boost::units::sqrt( quantity )
+  }
+
+  //! Take a quantity to the desired rational power
+  template<boost::units::integer_type N, boost::units::integer_type D>
+  static inline typename GetQuantityToPowerType<N,D>::value rpow( const Quantity& quantity )
+  { return boost::units::pow<boost::units::static_rational<N,D> >( quantity ); }
+  
   //! Initialize a quantity (potentially dangerous!)
   static inline Quantity initializeQuantity( const RawType& raw_quantity )
   { return Quantity::from_value( raw_quantity ); }
+
+  //! Initialize a quantity (standard boost::units conversion - safe)
+  template<typename InputQuantity>
+  static inline Quantity initializeQuantity( const InputQuantity& input_quantity )
+  { return Quantity( input_quantity ); }
 
   //! Get the raw value of a quantity
   static inline const RawType& getRawQuantity( const Quantity& quantity )
@@ -52,6 +77,24 @@ struct QuantityTraits
 				  const RawType& raw_quantity )
   { quantity = Quantity::from_value( raw_quantity ); }
 };
+
+//! This function allows access to the sqrt QuantityTraits function
+template<typename Quantity>
+inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<1,2>::value 
+sqrt( const Quantity& quantity )
+{
+  return QuantityTraits<Quantity>::sqrt( quantity );
+}
+
+//! This function allows access to the pow QuantityTraits function (rational pow)
+template<boost::units::integer_type N,
+	 boost::units::integer_type D,
+	 typename Quantity>
+inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N,D>::value
+rpow( const Quantity& quantity )
+{
+  return QuantityTraits<Quantity>::template rpow<N,D>( quantity );
+}
 
 //! This function allows access to the getRawQuantity QuantityTraits function
 template<typename Quantity>
