@@ -541,14 +541,14 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareMaxwellFissionDistribution,
 				   IndepUnitB,
 				   DepUnitB )
 {
-  typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::value IndepQuantityA;
-  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::value InverseIndepQuantityA;
+  typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
   
-  typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::value IndepQuantityB;
-  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::value InverseIndepQuantityB;
+  typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
   
-  typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::value DepQuantityA;
-  typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::value DepQuantityB;
+  typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
+  typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
 
   // Copy from unitless distribution to distribution type A
   Utility::UnitAwareMaxwellFissionDistribution<IndepUnitA,DepUnitA>

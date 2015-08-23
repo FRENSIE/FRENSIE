@@ -42,10 +42,10 @@ private:
   typedef Teuchos::ScalarTraits<double> ST;
 
   // The inverse squared independent unit traits typedef
-  typedef UnitTraits<typename UnitTraits<IndependentUnit>::template GetUnitToPowerType<-2>::value> InverseSquaredIndepUnitTraits;
+  typedef UnitTraits<typename UnitTraits<IndependentUnit>::template GetUnitToPowerType<-2>::type> InverseSquaredIndepUnitTraits;
 
   // The inverse squared independent quantity type
-  typedef typename InverseSquaredIndepUnitTraits::template GetQuantityType<double>::value InverseSquaredIndepQuantity;
+  typedef typename InverseSquaredIndepUnitTraits::template GetQuantityType<double>::type InverseSquaredIndepQuantity;
 
 public:
 

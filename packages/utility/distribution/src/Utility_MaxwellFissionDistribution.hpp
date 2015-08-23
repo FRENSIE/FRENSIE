@@ -43,16 +43,16 @@ private:
   typedef Teuchos::ScalarTraits<double> ST;
 
   // The distribution multiplier unit traits typedef
-  typedef UnitTraits<typename UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::template GetUnitToPowerType<1,-2>::value>::value> DistMultiplierUnitTraits;
+  typedef UnitTraits<typename UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::template GetUnitToPowerType<1,-2>::type>::type> DistMultiplierUnitTraits;
 
   // The distribution multiplier quantity type
-  typedef typename DistMultiplierUnitTraits::template GetQuantityType<double>::value DistMultiplierQuantity;
+  typedef typename DistMultiplierUnitTraits::template GetQuantityType<double>::type DistMultiplierQuantity;
 
   // The distribution normalization unit traits typedef
-  typedef UnitTraits<typename UnitTraits<typename UnitTraits<DependentUnit>::InverseUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::InverseUnit>::value> DistNormUnitTraits;
+  typedef UnitTraits<typename UnitTraits<typename UnitTraits<DependentUnit>::InverseUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::InverseUnit>::type> DistNormUnitTraits;
 
   // The distribution normalization quantity type
-  typedef typename DistNormUnitTraits::template GetQuantityType<double>::value DistNormQuantity;
+  typedef typename DistNormUnitTraits::template GetQuantityType<double>::type DistNormQuantity;
 
 public:
 

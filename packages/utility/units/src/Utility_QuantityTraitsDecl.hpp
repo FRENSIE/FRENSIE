@@ -36,7 +36,7 @@ struct QuantityTraits
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetQuantityToPowerType
   {
-    typedef typename boost::units::power_typeof_helper<Quantity,boost::units::static_rational<N,D> >::type value;
+    typedef typename boost::units::power_typeof_helper<Quantity,boost::units::static_rational<N,D> >::type type;
   };
 
   //! Get the zero quantity
@@ -48,15 +48,15 @@ struct QuantityTraits
   { return Quantity::from_value( 1.0 ); }
 
   //! Take the square root of a quantity (possible bug in boost::units::sqrt)
-  static inline typename GetQuantityToPowerType<1,2>::value sqrt( const Quantity& quantity )
+  static inline typename GetQuantityToPowerType<1,2>::type sqrt( const Quantity& quantity )
   { 
-    return GetQuantityToPowerType<1,2>::value::from_value( std::sqrt( quantity.value() ) ); 
+    return GetQuantityToPowerType<1,2>::type::from_value( std::sqrt( quantity.value() ) ); 
     // return boost::units::sqrt( quantity )
   }
 
   //! Take a quantity to the desired rational power
   template<boost::units::integer_type N, boost::units::integer_type D>
-  static inline typename GetQuantityToPowerType<N,D>::value rpow( const Quantity& quantity )
+  static inline typename GetQuantityToPowerType<N,D>::type rpow( const Quantity& quantity )
   { return boost::units::pow<boost::units::static_rational<N,D> >( quantity ); }
   
   //! Initialize a quantity (potentially dangerous!)
@@ -80,7 +80,7 @@ struct QuantityTraits
 
 //! This function allows access to the sqrt QuantityTraits function
 template<typename Quantity>
-inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<1,2>::value 
+inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<1,2>::type 
 sqrt( const Quantity& quantity )
 {
   return QuantityTraits<Quantity>::sqrt( quantity );
@@ -90,7 +90,7 @@ sqrt( const Quantity& quantity )
 template<boost::units::integer_type N,
 	 boost::units::integer_type D,
 	 typename Quantity>
-inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N,D>::value
+inline typename QuantityTraits<Quantity>::template GetQuantityToPowerType<N,D>::type
 rpow( const Quantity& quantity )
 {
   return QuantityTraits<Quantity>::template rpow<N,D>( quantity );

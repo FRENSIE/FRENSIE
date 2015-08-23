@@ -44,20 +44,20 @@ struct UnitTraits
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetUnitToPowerType
   {
-    typedef typename boost::units::power_typeof_helper<Unit,boost::units::static_rational<N,D> >::type value;
+    typedef typename boost::units::power_typeof_helper<Unit,boost::units::static_rational<N,D> >::type type;
   };
 
   //! The unit multiplied by another unit type
   template<typename OtherUnit>
   struct GetMultipliedUnitType
   {
-    typedef typename boost::units::multiply_typeof_helper<Unit,OtherUnit>::type value;
+    typedef typename boost::units::multiply_typeof_helper<Unit,OtherUnit>::type type;
   };
 
   //! The wrapped quantity type associated with the unit and value type T
   template<typename T>
   struct GetQuantityType
-  { typedef boost::units::quantity<Unit,T> value; };
+  { typedef boost::units::quantity<Unit,T> type; };
 
   //! The name string
   static inline std::string name()

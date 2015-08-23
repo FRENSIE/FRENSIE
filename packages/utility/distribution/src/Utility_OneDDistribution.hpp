@@ -55,13 +55,13 @@ protected:
 public:
 
   //! The independent quantity type
-  typedef typename IndepUnitTraits::template GetQuantityType<double>::value IndepQuantity;
+  typedef typename IndepUnitTraits::template GetQuantityType<double>::type IndepQuantity;
 
   //! The inverse independent quantity type
-  typedef typename InverseIndepUnitTraits::template GetQuantityType<double>::value InverseIndepQuantity;
+  typedef typename InverseIndepUnitTraits::template GetQuantityType<double>::type InverseIndepQuantity;
 
   //! The dependent quantity type
-  typedef typename DepUnitTraits::template GetQuantityType<double>::value DepQuantity;
+  typedef typename DepUnitTraits::template GetQuantityType<double>::type DepQuantity;
 
   //! Constructor
   UnitAwareOneDDistribution()
