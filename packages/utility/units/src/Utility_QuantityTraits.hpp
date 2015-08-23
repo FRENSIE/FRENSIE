@@ -25,11 +25,22 @@ struct QuantityTraits<double>
   typedef void Unit;
   typedef double RawType;
 
+  template<boost::units::integer_type N, boost::units::integer_type D = 1>
+  struct GetQuantityToPowerType
+  { typedef double value; };
+
   static inline double zero()
   { return 0.0; }
 
   static inline double one()
   { return 1.0; }
+
+  static inline double sqrt( const double quantity )
+  { return std::sqrt( quantity ); }
+
+  template<boost::units::integer_type N, boost::units::integer_type D>
+  static inline double rpow( const double quantity )
+  { return boost::units::pow<boost::units::static_rational<N,D> >( quantity ); }
   
   static inline double initializeQuantity( const double& raw_quantity )
   { return raw_quantity; }

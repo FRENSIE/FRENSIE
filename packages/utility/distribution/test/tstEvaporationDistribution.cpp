@@ -10,6 +10,10 @@
 // Std Lib Includes
 #include <iostream>
 
+// Boost Includes
+#include <boost/units/systems/si.hpp>
+#include <boost/units/io.hpp>
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
@@ -24,11 +28,13 @@
 #include "Utility_EvaporationDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
 #include "Utility_RandomNumberGenerator.hpp"
-#include "Utility_Units.hpp"
 #include "Utility_UnitTraits.hpp"
 #include "Utility_QuantityTraits.hpp"
+#include "Utility_ElectronVoltUnit.hpp"
 
+using boost::units::quantity;
 using namespace Utility::Units;
+namespace si = boost::units::si;
 
 //---------------------------------------------------------------------------//
 // Testing Variables

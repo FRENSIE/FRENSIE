@@ -10,6 +10,10 @@
 #include <iostream>
 #include <limits>
 
+// Boost Includes
+#include <boost/units/systems/si.hpp>
+#include <boost/units/io.hpp>
+
 // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_RCP.hpp>
@@ -22,7 +26,11 @@
 #include "Utility_TabularOneDDistribution.hpp"
 #include "Utility_DeltaDistribution.hpp"
 #include "Utility_PhysicalConstants.hpp"
-#include "Utility_Units.hpp"
+#include "Utility_UnitTraits.hpp"
+#include "Utility_QuantityTraits.hpp"
+
+using boost::units::quantity;
+namespace si = boost::units::si;
 
 //---------------------------------------------------------------------------//
 // Testing Variables

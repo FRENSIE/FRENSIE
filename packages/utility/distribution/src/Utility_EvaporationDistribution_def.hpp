@@ -152,7 +152,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sample() const
 
 // Return a random sample and record the number of trials
 template<typename IndependentUnit, typename DependentUnit>
-typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity
+inline typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials( unsigned& trials ) const
 {
   return UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecordTrials(
