@@ -437,9 +437,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( UnitAwareEvaporationDistribution,
 				   IndepUnit,
 				   DepUnit )
 {
-  typedef typename Utility::UnitTraits<IndepUnit>::template GetQuantityType<double>::value
+  typedef typename Utility::UnitTraits<IndepUnit>::template GetQuantityType<double>::type
     IndepQuantity;
-  typedef typename Utility::UnitTraits<DepUnit>::template GetQuantityType<double>::value
+  typedef typename Utility::UnitTraits<DepUnit>::template GetQuantityType<double>::type
     DepQuantity;
 
   Utility::UnitAwareEvaporationDistribution<IndepUnit,DepUnit>

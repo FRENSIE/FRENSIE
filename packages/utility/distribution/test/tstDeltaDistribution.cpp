@@ -424,9 +424,9 @@ TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( UnitAwareDeltaDistribution,
 				   IndepUnit,
 				   DepUnit )
 {
-  typedef typename Utility::UnitTraits<IndepUnit>::template GetQuantityType<double>::value
+  typedef typename Utility::UnitTraits<IndepUnit>::template GetQuantityType<double>::type
     IndepQuantity;
-  typedef typename Utility::UnitTraits<DepUnit>::template GetQuantityType<double>::value
+  typedef typename Utility::UnitTraits<DepUnit>::template GetQuantityType<double>::type
     DepQuantity;
   
   Utility::UnitAwareDeltaDistribution<IndepUnit,DepUnit> 

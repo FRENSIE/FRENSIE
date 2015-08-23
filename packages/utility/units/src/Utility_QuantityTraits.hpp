@@ -27,7 +27,7 @@ struct QuantityTraits<double>
 
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetQuantityToPowerType
-  { typedef double value; };
+  { typedef double type; };
 
   static inline double zero()
   { return 0.0; }

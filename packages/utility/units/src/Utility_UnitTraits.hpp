@@ -36,18 +36,18 @@ struct UnitTraits<void>
   template<boost::units::integer_type N, boost::units::integer_type D = 1>
   struct GetUnitToPowerType
   { 
-    typedef void value;
+    typedef void type;
   };
 
   template<typename OtherUnit>
   struct GetMultipliedUnitType
   { 
-    typedef OtherUnit value;
+    typedef OtherUnit type;
   };
 
   template<typename T>
   struct GetQuantityType
-  { typedef T value; };
+  { typedef T type; };
 
   static inline std::string name()
   { return "void"; }
