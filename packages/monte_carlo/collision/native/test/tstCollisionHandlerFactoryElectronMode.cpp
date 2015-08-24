@@ -59,10 +59,12 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
   // Set the particle mode to ELECTRON_MODE
   MonteCarlo::SimulationProperties::setParticleMode( MonteCarlo::ELECTRON_MODE );
 
-  MonteCarlo::StandardCollisionHandlerFactory<moab::DagMC>::initializeHandler( 
-                                           material_reps,
-                                           cross_section_table_info,
-                                           test_cross_sections_xml_directory );
+  MonteCarlo::CollisionHandlerFactory CHF =
+                MonteCarlo::CollisionHandlerFactory::CollisionHandlerFactory(); 
+  
+  CHF::initializeHandler( material_reps,
+                          cross_section_table_info,
+                          test_cross_sections_xml_directory );
 
   // Electrons
   TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 26, MonteCarlo::ELECTRON ) );
