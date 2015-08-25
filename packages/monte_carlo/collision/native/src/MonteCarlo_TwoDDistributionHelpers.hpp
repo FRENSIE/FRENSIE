@@ -36,6 +36,12 @@ double sampleTwoDDistributionCorrelated(
     const double independent_variable,
     const TwoDDistribution& dependent_distribution );
 
+//! Sample a two dimensional distribution with a random number using correlated sampling 
+double sampleTwoDDistributionCorrelatedWithRandomNumber( 
+    const double independent_variable,
+    const TwoDDistribution& dependent_distribution,
+    const double random_number );
+
 //! Sample a two dimensional distribution using independent sampling
 double sampleTwoDDistributionIndependent(
     const double independent_variable,
@@ -55,14 +61,23 @@ double evaluateTwoDDistributionCorrelatedCDF(
 
 //! Sample an upper and lower distribution using a common random variable
 double correlatedSample(
-                    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+            const Teuchos::RCP<const Utility::TabularOneDDistribution>&
 		    upper_distribution,
 		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
 		    lower_distribution,
 		    const double interpolation_fraction );
 
+//! Sample an upper and lower distribution using a common given random variable
+double correlatedSampleWithRandomNumber(
+            const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    upper_distribution,
+		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
+		    lower_distribution,
+		    const double interpolation_fraction,
+		    const double random_number );
+
 //! Sample an upper and lower distribution using a common random variable in a subrange
-double correlatedSample( 
+double correlatedSampleInSubrange( 
 		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&
 		    upper_distribution,
 		    const Teuchos::RCP<const Utility::TabularOneDDistribution>&

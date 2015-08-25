@@ -63,6 +63,11 @@ ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
   // Make sure that the bins are sorted
   testPrecondition( Sort::isSortedAscending( independent_values.begin(),
 			       independent_values.end() ) );
+  // Make sure that the independent_values are valid
+  testPrecondition( independent_values.front() >= 0.0 );
+  testPrecondition( independent_values.back() <= 2.0 );
+  // Make sure that the dependent values are valid
+  testPrecondition( dependent_values.front() >= 0.0 );
 
   initializeDistributionENDL( independent_values, dependent_values );
 }
@@ -103,6 +108,12 @@ ElasticElectronDistribution<InterpolationPolicy>::ElasticElectronDistribution(
   // Make sure that the bin values are sorted
   testPrecondition( Sort::isSortedAscending( dependent_values.begin(), 
 			        dependent_values.end() ) );
+  // Make sure that the independent values are valid
+  testPrecondition( independent_values.front() >= -1.0 );
+  testPrecondition( independent_values.back() <= 1.0 );
+  // Make sure that the dependent values are valid
+  testPrecondition( dependent_values.front() >= 0.0 );
+  testPrecondition( dependent_values.back() <= 1.0 );
 
   initializeDistributionACE( independent_values, dependent_values );
 }
@@ -141,7 +152,7 @@ template<typename InterpolationPolicy>
 double ElasticElectronDistribution<InterpolationPolicy>::evaluate( 
 					   const double indep_var_value ) const
 {
-  return evaluatePDF( indep_var_value )*d_norm_constant;
+  return evaluatePDF( indep_var_value );
 }
 
 // Evaluate the PDF
@@ -199,7 +210,8 @@ double ElasticElectronDistribution<InterpolationPolicy>::evaluateCDF(
   {
     return indep_var_value*d_screened_rutherford_normalization_constant/(
             d_moliere_screening_constant*
-            ( indep_var_value + d_moliere_screening_constant ) );
+            ( indep_var_value + d_moliere_screening_constant ) )*
+            d_norm_constant;
   }
   else if( indep_var_value > d_distribution.back().first )
     return 1.0;
@@ -618,6 +630,13 @@ void ElasticElectronDistribution<InterpolationPolicy>::initializeDistributionEND
     (the max cutoff cdf) + 
     (the ratio of the screened Ruthreford to the cutoff distribution ) */
   d_norm_constant = max_tabular_cdf + d_screened_rutherford_cutoff_cdf;
+
+  // Normalized the CDF to screened Rutherford peak
+  for( unsigned j = 0; j < d_distribution.size(); ++j )
+  {
+    d_distribution[j].second /= d_norm_constant;
+  }
+  
 
   // Calculate the slopes of the PDF
   DataProcessor::calculateSlopes<FIRST,THIRD,FOURTH>( d_distribution );

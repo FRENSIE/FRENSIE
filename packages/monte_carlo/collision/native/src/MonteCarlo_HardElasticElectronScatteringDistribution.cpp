@@ -384,7 +384,8 @@ void HardElasticElectronScatteringDistribution::sampleAndRecordTrialsImpl(
     // Correlated sample from the distribution
     if( cutoff_cdf_value > random_number )
     {
-    scattering_angle_cosine = correlatedSample( upper_dist_boundary->second,
+    scattering_angle_cosine = 
+                    correlatedSampleInSubrange( upper_dist_boundary->second,
                                                 lower_dist_boundary->second,
                                                 interpolation_fraction,
                                                 s_rutherford_cutoff );
