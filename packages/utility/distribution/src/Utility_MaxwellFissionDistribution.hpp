@@ -48,11 +48,8 @@ private:
   // The distribution multiplier quantity type
   typedef typename DistMultiplierUnitTraits::template GetQuantityType<double>::type DistMultiplierQuantity;
 
-  // The distribution normalization unit traits typedef
-  typedef UnitTraits<typename UnitTraits<typename UnitTraits<DependentUnit>::InverseUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::InverseUnit>::type> DistNormUnitTraits;
-
   // The distribution normalization quantity type
-  typedef typename DistNormUnitTraits::template GetQuantityType<double>::type DistNormQuantity;
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
 
 public:
 
