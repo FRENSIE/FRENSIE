@@ -54,7 +54,7 @@ void StandardCollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
     // Obtain the material number from ROOT
     std::string requested_material_id_name = mat->GetName();
     
-    if ( requested_material_id_name != "void" && requested_material_id_name != "Terminal" )
+    if ( requested_material_id_name != "void" && requested_material_id_name != Geometry::Root::getTerminalMaterialName() )
     { 
       requested_material_id_name = requested_material_id_name.substr(4);
     
@@ -98,7 +98,7 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
     TGeoMaterial* mat = cell->GetMaterial();
     std::string mat_id  = mat->GetName();
     
-    if ( mat_id != "void" && mat_id != "Terminal" )
+    if ( mat_id != "void" && mat_id != Geometry::Root::getTerminalMaterialName() )
     {
       std::vector<std::string> material_names;
       material_names.push_back( mat_id.substr(4) );
