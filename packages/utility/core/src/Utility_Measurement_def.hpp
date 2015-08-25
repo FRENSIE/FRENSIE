@@ -15,9 +15,6 @@
 // Boost Includes
 #include <boost/io/ios_state.hpp>
 
-// FRENSIE Includes
-#include "Utility_ContractException.hpp"
-
 namespace Utility{
 
 // Constructor
@@ -80,7 +77,7 @@ inline const typename Measurement<T>::ValueType
 Measurement<T>::getRelativeUncertainty() const
 {
   if( d_value != 0.0 )
-    return d_uncertainty/d_value;
+    return d_uncertainty/fabs(d_value);
   else
     return 0.0;
 }
@@ -183,6 +180,8 @@ inline Measurement<T>& Measurement<T>::operator*=(
   testPrecondition( !ST::isnaninf( value ) );
   
   d_value *= value;
+  
+  d_uncertainty *= fabs( value );
 
   return *this;
 }
@@ -195,17 +194,15 @@ inline Measurement<T>& Measurement<T>::operator*=(
   // Make sure the other measurement is valid
   testPrecondition( !ST::isnaninf( other_measurement.d_value ) );
   testPrecondition( !ST::isnaninf( other_measurement.d_uncertainty ) );
-  testPrecondition( other_measurement.d_uncertainty >= 0.0 );
-  
-  d_value *= other_measurement.d_value;
 
   // Propagate the uncertainty of the measurements
-  d_uncertainty = 
-    std::sqrt( d_uncertainty*d_uncertainty*
+  d_uncertainty = std::sqrt( d_uncertainty*d_uncertainty*
 	       other_measurement.d_value*other_measurement.d_value +
 	       other_measurement.d_uncertainty*other_measurement.d_uncertainty*
 	       d_value*d_value );
 
+  d_value *= other_measurement.d_value;
+    
   return *this;
 }
 
@@ -216,9 +213,11 @@ inline Measurement<T>& Measurement<T>::operator/=(
 {
   // Make sure the value is valid
   testPrecondition( !ST::isnaninf( value ) );
-  testPrecondition( value > 0.0 );
+  testPrecondition( value != 0.0 );
   
   d_value /= value;
+
+  d_uncertainty /= fabs( value );
 
   return *this;
 }
@@ -231,10 +230,8 @@ inline Measurement<T>& Measurement<T>::operator/=(
   // Make sure the other measurement is valid
   testPrecondition( !ST::isnaninf( other_measurement.d_value ) );
   testPrecondition( !ST::isnaninf( other_measurement.d_uncertainty ) );
-  testPrecondition( other_measurement.d_value > 0.0 );
+  testPrecondition( other_measurement.d_value != 0.0 );
   testPrecondition( other_measurement.d_uncertainty >= 0.0 );
-  
-  d_value /= other_measurement.d_value;
   
   double other_value_sqr = other_measurement.d_value*other_measurement.d_value;
 
@@ -247,6 +244,8 @@ inline Measurement<T>& Measurement<T>::operator/=(
 
   // Propagate the uncertainty of the measurements
   d_uncertainty = std::sqrt( term_1 + term_2 );
+
+  d_value /= other_measurement.d_value;
 
   return *this;
 }

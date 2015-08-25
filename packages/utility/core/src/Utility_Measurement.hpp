@@ -20,6 +20,7 @@
 
 // FRENSIE Includes
 #include "Utility_PrintableObject.hpp"
+#include "Utility_ContractException.hpp"
 
 namespace Utility{
 
@@ -115,14 +116,24 @@ private:
 template<typename T>
 inline Measurement<T> operator+( T lhs, const Measurement<T>& rhs )
 {
+  // Make sure nested conditions are met
+  testNestedConditionsBegin(1);
+  
   return (Measurement<T>( lhs, T(0) ) += rhs);
+  
+  testNestedConditionsEnd(1);
 }
 
 //! Addition operator
 template<typename T>
 inline Measurement<T> operator+( const Measurement<T>& lhs, T rhs )
 {
+  // Make sure nested conditions are met
+  testNestedConditionsBegin(1);
+  
   return (Measurement<T>( lhs ) += Measurement<T>( rhs, T(0) ));
+
+  testNestedConditionsEnd(1);
 }
 
 //! Addition operator
@@ -130,21 +141,36 @@ template<typename T>
 inline Measurement<T> operator+( const Measurement<T>& lhs, 
 				 const Measurement<T>& rhs )
 {
+  // Make sure nested conditions are met
+  testNestedConditionsBegin(1);
+  
   return (Measurement<T>( lhs ) += rhs );
+
+  testNestedConditionsEnd(1);
 }
 
 //! Subtraction operator
 template<typename T>
 inline Measurement<T> operator-( T lhs, const Measurement<T>& rhs )
 {
+  // Make sure nested conditions are met
+  testNestedConditionsBegin(1);
+  
   return (Measurement<T>( lhs, T(0) ) -= rhs);
+
+  testNestedConditionsEnd(1);
 }
 
 //! Subtraction operator
 template<typename T>
 inline Measurement<T> operator-( const Measurement<T>& lhs, T rhs )
 {
+  // Make sure nested conditions are met
+  testNestedConditionsBegin(1);
+  
   return (Measurement<T>( lhs ) -= Measurement<T>( rhs, T(0) ));
+
+  testNestedConditionsEnd(1);
 }
 
 //! Subtraction operator
@@ -152,21 +178,36 @@ template<typename T>
 inline Measurement<T> operator-( const Measurement<T>& lhs, 
 				 const Measurement<T>& rhs )
 {
+  // Make sure nested conditions are met
+  testNestedConditionsBegin(1);
+  
   return (Measurement<T>( lhs ) -= rhs );
+
+  testNestedConditionsEnd(1);
 }
 
 //! Multiplication operator
 template<typename T>
 inline Measurement<T> operator*( T lhs, const Measurement<T>& rhs )
 {
+  // Make sure nested conditions are met
+  testNestedConditionsBegin(1);
+  
   return (Measurement<T>( lhs, T(0) ) *= rhs);
+
+  testNestedConditionsEnd(1);
 }
 
 //! Multiplication operator
 template<typename T>
 inline Measurement<T> operator*( const Measurement<T>& lhs, T rhs )
 {
+  // Make sure nested conditions are met
+  testNestedConditionsBegin(1);
+  
   return (Measurement<T>( lhs ) *= Measurement<T>( rhs, T(0) ));
+
+  testNestedConditionsEnd(1);
 }
 
 //! Multiplication operator
@@ -174,21 +215,37 @@ template<typename T>
 inline Measurement<T> operator*( const Measurement<T>& lhs, 
 				 const Measurement<T>& rhs )
 {
+  // Make sure nested conditions are met
+  testNestedConditionsBegin(1);
+  
   return (Measurement<T>( lhs ) *= rhs );
+
+  testNestedConditionsEnd(1);
 }
 
 //! Division operator
 template<typename T>
 inline Measurement<T> operator/( T lhs, const Measurement<T>& rhs )
 {
+  // Make sure nested conditions are met
+  testNestedConditionsBegin(1);
+  
+  // Make sure nested conditions are met
   return (Measurement<T>( lhs, T(0) ) /= rhs);
+
+  testNestedConditionsEnd(1);
 }
 
 //! Division operator
 template<typename T>
 inline Measurement<T> operator/( const Measurement<T>& lhs, T rhs )
 {
+  // Make sure nested conditions are met
+  testNestedConditionsBegin(1);
+  
   return (Measurement<T>( lhs ) /= Measurement<T>( rhs, T(0) ));
+  
+  testNestedConditionsEnd(1);
 }
 
 //! Division operator
@@ -196,20 +253,28 @@ template<typename T>
 inline Measurement<T> operator/( const Measurement<T>& lhs, 
 				 const Measurement<T>& rhs )
 {
+  // Make sure nested conditions are met
+  testNestedConditionsBegin(1);
+  
   return (Measurement<T>( lhs ) /= rhs );
+
+  testNestedConditionsEnd(1);
 }
 
 //! Overload of sqrt for a measurement
 template<typename T>
 inline Measurement<T> sqrt( const Measurement<T>& x )
 {
+  // Make sure the measurement is valid
+  testPrecondition( x.getValue() >= 0.0 );
+  
   const T new_value = std::sqrt( x.getValue() );
 
   const T propagated_uncertainty = 0.5*(new_value/x.getValue())*
-    x.getUncertianty();
+    x.getUncertainty();
 
   // Make sure reasonable values have been calculated
-  testPostcontition( !Teuchos::ScalarTraits<T>::isnaninf( new_value ) );
+  testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf( new_value ) );
   testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf( 
 						    propagated_uncertainty ) );
 
@@ -223,13 +288,14 @@ inline Measurement<T> pow( const Measurement<T>& x,
 {
   const T new_value = std::pow( x.getValue(), exponent );
 
-  const T propagated_uncertainty = exponent*(new_value/x.getValue())*
+  const T propagated_uncertainty = fabs(exponent*(new_value/x.getValue()))*
     x.getUncertainty();
 
   // Make sure reasonable values have been calculated
-  testPostcontition( !Teuchos::ScalarTraits<T>::isnaninf( new_value ) );
+  testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf( new_value ) );
   testPostcondition( !Teuchos::ScalarTraits<T>::isnaninf( 
 						    propagated_uncertainty ) );
+  testPostcondition( propagated_uncertainty >= 0.0 );
 
   return Measurement<T>( new_value, propagated_uncertainty );
 }
@@ -259,7 +325,7 @@ struct power_typeof_helper<Utility::Measurement<Y>,static_rational<N,D> >
 
 //! Specialization of the boost::units::root_typeof_helper
 template<typename Y, long N, long D>
-struct root_typeof_helper<Y,static_rational<N,D> >
+struct root_typeof_helper<Utility::Measurement<Y>,static_rational<N,D> >
 {
   typedef Utility::Measurement<typename root_typeof_helper<Y,static_rational<N,D> >::type> type;
 
