@@ -15,11 +15,14 @@ MACRO(ENABLE_ROOT_SUPPORT)
   INCLUDE_DIRECTORIES(${ROOT_INCLUDE_DIRS})
 
   # Find extra root libraries
-  FIND_LIBRARY(ROOT_EXTRA_LIBS libGeom.so 
+  FIND_LIBRARY(ROOT_GEOM libGeom.so
+    PATHS ${ROOT_PREFIX}/lib)
+
+  FIND_LIBRARY(ROOT_CORE libCore.so
     PATHS ${ROOT_PREFIX}/lib)
 
   # Store ROOT libraries in the ROOT variable
-  SET(ROOT ${ROOT_LIBRARIES} ${ROOT_EXTRA_LIBS})
+  SET(ROOT ${ROOT_GEOM} ${ROOT_CORE})
 
   # Configure the root_config.hpp header file
   SET(HAVE_${PROJECT_NAME}_ROOT "1")
@@ -35,17 +38,10 @@ MACRO(ENABLE_ROOT_SUPPORT)
     MESSAGE("\nFound ROOT!  Here are the details: ")
     MESSAGE("   ROOT_INCLUDE_DIRS = ${ROOT_INCLUDE_DIRS}")
     MESSAGE("   ROOT_LIBRARY_DIR = ${ROOT_LIBRARY_DIR}")
+    MESSAGE("   DEFAULT_ROOT_LIBRARIES = ${ROOT_LIBRARIES}")
     MESSAGE("   ROOT_LIBRARIES = ${ROOT}")
     MESSAGE("   ROOT_CXX_FLAGS = ${ROOT_CXX_FLAGS}")
     MESSAGE("End of ROOT details\n")
   ENDIF()
-  
-  SET(HAVE_${PROJECT_NAME}_ROOT "1")
-  
-  SET(CMAKEDEFINE \#cmakedefine)
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/cmake/root_config.hpp.in
-    ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in)
-  CONFIGURE_FILE(${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp.in
-    ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_root_config.hpp)
 
 ENDMACRO()

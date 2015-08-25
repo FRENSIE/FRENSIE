@@ -8,11 +8,12 @@
 
 // Std Lib Includes
 #include <iostream>
+#include <string>
 
-// Boost Include
-#include <boost/unordered_map.hpp>
+// // Boost Include
+// #include <boost/unordered_map.hpp>
 
-// Trilinos Includes
+// // Trilinos Includes
 #include <Teuchos_UnitTestHarness.hpp>
 #include <Teuchos_UnitTestRepository.hpp>
 #include <Teuchos_GlobalMPISession.hpp>
@@ -20,7 +21,7 @@
 #include <Teuchos_XMLParameterListCoreHelpers.hpp>
 #include <Teuchos_VerboseObject.hpp>
 
-// FRENSIE Includes
+// // FRENSIE Includes
 #include "Geometry_RootInstanceFactory.hpp"
 #include "Geometry_Root.hpp"
 #include "Geometry_ModuleInterface_Root.hpp"
@@ -44,7 +45,6 @@ TEUCHOS_UNIT_TEST( RootInstanceFactory, initializeRoot )
   
   // Test that all nodes can be read in and numbered
   TEST_EQUALITY_CONST( Geometry::Root::getManager()->GetNNodes(), 2);
-  
 }
 
 //---------------------------------------------------------------------------//
@@ -55,8 +55,8 @@ int main( int argc, char* argv[] )
   Teuchos::CommandLineProcessor& clp = Teuchos::UnitTestRepository::getCLP();
   
   clp.setOption( "test_xml_file",
-		 &test_geom_xml_file_name,
-		 "Test xml geometry file name" );
+  		 &test_geom_xml_file_name,
+  		 "Test xml geometry file name" );
   
   Teuchos::GlobalMPISession mpiSession( &argc, &argv );
   return Teuchos::UnitTestRepository::runUnitTestsFromMain( argc, argv );

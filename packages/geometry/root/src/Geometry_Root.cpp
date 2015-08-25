@@ -24,7 +24,7 @@ void Root::initialize( const std::string& filename )
   s_terminal_material_name = "graveyard";
 }
 
-}
+} // end Geoemtry namespace
 
 //---------------------------------------------------------------------------//
 // end Geometry_Root.cpp
