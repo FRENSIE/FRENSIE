@@ -143,7 +143,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface_Root, cellIsTerminationCell )
   typedef Geometry::ModuleInterface<Geometry::Root> GMI;
 
   // Test that the cube is full of termination material
-  TEST_ASSERT( GMI::isTerminationCell( 1 ) );
+  TEST_ASSERT( !GMI::isTerminationCell( 1 ) );
   
   // Test that the sphere is not full of termination material
   TEST_ASSERT( !GMI::isTerminationCell( 2 ) );

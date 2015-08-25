@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------//
 //!
-//! \file   tstCollisionHandlerFactoryNeutronMode_Root.cpp
+//! \file   tstCollisionHandlerFactoryElectronMode_Root.cpp
 //! \author Eli Moll
 //! \brief  Collision handler factory unit tests for electron mode
 //!
@@ -57,7 +57,7 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
                                         Teuchos::inoutArg(material_reps) );
 
   // Set the particle mode to ELECTRON_MODE
-  MonteCarlo::SimulationProperties::setParticleMode( MonteCarlo::NEUTRON_MODE );
+  MonteCarlo::SimulationProperties::setParticleMode( MonteCarlo::ELECTRON_MODE );
 
   MonteCarlo::getCollisionHandlerFactoryInstance<Geometry::Root>()->initializeHandler( 
 					   material_reps,
@@ -66,7 +66,12 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
 
   // Electrons
   TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 1, MonteCarlo::ELECTRON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 2, MonteCarlo::ELECTRON ) );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellElectronMaterial( 2 )->getId() == 1 );
+  TEST_FLOATING_EQUALITY( 
+	   MonteCarlo::CollisionHandler::getCellElectronMaterial( 2 )->getNumberDensity(),
+	   1.0,
+	   1e-12 );
 
   // Photons
   TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 1, MonteCarlo::PHOTON ) );
@@ -74,12 +79,7 @@ TEUCHOS_UNIT_TEST( CollisionHandlerFactory, initializeHandlerUsingDagMC )
 
   // Neutrons
   TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 1, MonteCarlo::NEUTRON ) );
-  TEST_ASSERT( !MonteCarlo::CollisionHandler::isCellVoid( 2, MonteCarlo::NEUTRON ) );
-  TEST_ASSERT( MonteCarlo::CollisionHandler::getCellNeutronMaterial( 2 )->getId() == 1 );
-  TEST_FLOATING_EQUALITY( 
-	   MonteCarlo::CollisionHandler::getCellNeutronMaterial( 2 )->getNumberDensity(),
-	   1.0,
-	   1e-12 );
+  TEST_ASSERT( MonteCarlo::CollisionHandler::isCellVoid( 2, MonteCarlo::NEUTRON ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -134,5 +134,5 @@ int main( int argc, char** argv )
 }
 
 //---------------------------------------------------------------------------//
-// end tstCollisionHandlerFactoryNeutronMode_Root.cpp
+// end tstCollisionHandlerFactoryElectronMode_Root.cpp
 //---------------------------------------------------------------------------//

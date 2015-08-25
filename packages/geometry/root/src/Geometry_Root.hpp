@@ -32,7 +32,7 @@ public:
 static TGeoManager* getManager();
 
 //! Get the terminal material properties
-static TGeoMaterial* getTerminalMaterial();
+static std::string getTerminalMaterialName();
 
 //! Initialize the root geometry manager
 static void initialize( const std::string& filename );
@@ -50,7 +50,7 @@ Root();
 static TGeoManager* s_manager;
 
 // Root terminal material
-static TGeoMaterial* s_terminal_material;
+static std::string s_terminal_material_name;
 
 };
 
@@ -61,9 +61,9 @@ inline TGeoManager* Root::getManager()
 }
 
 // Get the terminal material
-inline TGeoMaterial* Root::getTerminalMaterial()
+inline std::string Root::getTerminalMaterialName()
 {
-  return s_terminal_material;
+  return s_terminal_material_name;
 }
 
 } // end Geometry namespace

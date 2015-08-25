@@ -11,7 +11,7 @@ SET(SUBPACKAGE_LIB_NAME monte_carlo_manager)
 
 # Create the utilitycore library
 ADD_LIBRARY(${SUBPACKAGE_LIB_NAME} ${FACEMC_MANAGER_SOURCES})
-TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} ${TEUCHOS_CORE} ${TEUCHOS_PARAMETER_LIST} utility_dist data_ace monte_carlo_source_native monte_carlo_estimator_native monte_carlo_collision_native)
+TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} ${TEUCHOS_CORE} ${TEUCHOS_PARAMETER_LIST} geometry_root utility_dist data_ace monte_carlo_source_native monte_carlo_estimator_native monte_carlo_collision_native)
 IF(FRENSIE_ENABLE_DAGMC)
   TARGET_LINK_LIBRARIES(${SUBPACKAGE_LIB_NAME} geometry_dagmc)
 ENDIF()
