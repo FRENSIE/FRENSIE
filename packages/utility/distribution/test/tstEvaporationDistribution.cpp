@@ -406,7 +406,7 @@ TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution, fromParameterList )
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*MeV ), 
 		       0.0*si::mole );
   TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0*MeV ), 
-		       scale_factor*si::mole );
+		       10.0*scale_factor*si::mole );
 
   read_distribution = 
     test_dists_list->get<UnitAwareEvaporationDistribution>( "Unit-Aware Evaporation Distribution B" );

@@ -52,6 +52,12 @@ protected:
   //! The dependent unit traits typedef
   typedef UnitTraits<DependentUnit> DepUnitTraits;
 
+  //! The distribution normalization unit traits typedef
+  typedef UnitTraits<typename UnitTraits<typename UnitTraits<DependentUnit>::InverseUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::InverseUnit>::type> DistNormUnitTraits;
+
+  //! The distribution normalization quantity type
+  typedef typename DistNormUnitTraits::template GetQuantityType<double>::type DistNormQuantity;
+
 public:
 
   //! The independent quantity type

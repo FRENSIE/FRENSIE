@@ -48,6 +48,11 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
 }
 
 // Constructor
+/*! \details This constructor will explicitly cast the input quantities to
+ * the distribution quantity (which includes any unit-conversion). The
+ * dimension type must match and there must be a unit-conversion defined using
+ * the boost methodology.
+ */
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepQuantityA,
 	 typename InputIndepQuantityB,
@@ -80,7 +85,6 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
  * units. If the units are not compatible, this function will not compile. Note
  * that this allows distributions to be scaled safely (unit conversions 
  * are completely taken care of by boost::units)!
- *
  */
 template<typename IndependentUnit, typename DependentUnit>
 template<typename InputIndepUnit, typename InputDepUnit>
@@ -101,7 +105,7 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
   testPrecondition( (dist_instance.d_incident_energy > QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::zero()) );
   testPrecondition( (dist_instance.d_nuclear_temperature > QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::zero()) );
 
-  // Calculate the multiplier (for complex units, boost::units often has
+  // Calculate the scaled multiplier (for complex units, boost::units often has
   // problems doing the conversion so we will do it manually)
   d_multiplier = QuantityTraits<DepQuantity>::initializeQuantity( QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::DepQuantity>::one() )/Utility::sqrt( IndepQuantity( QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::one() ) );
 
@@ -254,8 +258,8 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::sampleAndRec
   return sample;
 }
 
-// Return the normalization constant of the distribution
-/*!
+// Calculate the normalization constant of the distribution
+/*
  * As given by ENDF Law 7
  * c^(-1) = T^(3/2)*[(sqrt(pi)/2)*erf(sqrt((E-U)/T)) - sqrt((E-U)/T)*exp(-(E-U)/T)]
  */
@@ -441,7 +445,7 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
 			distribution[3].size(),
 			InvalidDistributionStringRepresentation,
 			"Error: the Maxwell Fission distribution cannot be "
-			"construcqted because of an invalid restriction energy "
+			"construcqted because of an invalid multiplier "
 			<< distribution[3] );
 
     {
@@ -451,7 +455,7 @@ void UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::fromStr
       Teuchos::extractDataFromISS( iss, multiplier );
 
       setQuantity( d_multiplier, multiplier );
-  }
+    }
 
     TEST_FOR_EXCEPTION( ST::isnaninf( getRawQuantity( d_multiplier ) ),
 			InvalidDistributionStringRepresentation,
@@ -469,8 +473,9 @@ template<typename IndependentUnit, typename DependentUnit>
 bool UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::isEqual( const UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>& other ) const
 {
   return d_incident_energy == other.d_incident_energy &&
-  d_nuclear_temperature == other.d_nuclear_temperature &&
-  d_restriction_energy == other.d_restriction_energy;
+    d_nuclear_temperature == other.d_nuclear_temperature &&
+    d_restriction_energy == other.d_restriction_energy && 
+    d_multiplier == other.d_multiplier;
 }
 
 } // end Utility namespace

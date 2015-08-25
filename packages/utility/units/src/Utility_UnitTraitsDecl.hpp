@@ -15,6 +15,8 @@
 #include <boost/units/operators.hpp>
 #include <boost/units/io.hpp>
 #include <boost/units/dimensionless_unit.hpp>
+#include <boost/mpl/if.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 /*! \defgroup unit_traits Unit Traits
  * \ingroup traits
@@ -51,7 +53,7 @@ struct UnitTraits
   template<typename OtherUnit>
   struct GetMultipliedUnitType
   {
-    typedef typename boost::units::multiply_typeof_helper<Unit,OtherUnit>::type type;
+    typedef typename boost::mpl::if_<boost::is_same<OtherUnit,void>,Unit,typename boost::units::multiply_typeof_helper<Unit,OtherUnit>::type>::type type;
   };
 
   //! The wrapped quantity type associated with the unit and value type T

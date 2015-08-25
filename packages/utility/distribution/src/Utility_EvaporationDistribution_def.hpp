@@ -28,7 +28,9 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
   const UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy )
   : d_incident_energy( incident_energy ),
     d_nuclear_temperature( nuclear_temperature ),
-    d_restriction_energy( restriction_energy )
+    d_restriction_energy( restriction_energy ),
+    d_multiplier( QuantityTraits<DistMultiplierQuantity>::one() ),
+    d_norm_constant()
 {
   // Make sure values are valid
   testPrecondition( !ST::isnaninf( getRawQuantity( incident_energy ) ) );
@@ -37,6 +39,9 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
   // Make sure that incident energy and nuclear temperature are positive
   testPrecondition( incident_energy > QuantityTraits<IndepQuantity>::zero() );
   testPrecondition( nuclear_temperature > QuantityTraits<IndepQuantity>::zero() );
+
+  // Calculate the normalization constant
+  this->calculateNormalizationConstant();
 }
 
 // Constructor
@@ -55,7 +60,9 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
 				 const InputIndepQuantityC restriction_energy )
   : d_incident_energy( incident_energy ),
     d_nuclear_temperature( nuclear_temperature ),
-    d_restriction_energy( restriction_energy )
+    d_restriction_energy( restriction_energy ),
+    d_multiplier( QuantityTraits<DistMultiplierQuantity>::one() ),
+    d_norm_constant()
 {
   // Make sure values are valid
   testPrecondition( !ST::isnaninf( getRawQuantity( incident_energy ) ) );
@@ -64,25 +71,68 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
   // Make sure that incident energy and nuclear temperature are positive
   testPrecondition( incident_energy > QuantityTraits<InputIndepQuantityA>::zero() );
   testPrecondition( nuclear_temperature > QuantityTraits<InputIndepQuantityB>::zero() );
+
+  // Calculate the normalization constant
+  this->calculateNormalizationConstant();
 }
 
 // Copy constructor
+/*! \details Just like boost::units::quantity objects, the unit-aware 
+ * distribution can be explicitly cast to a distribution with compatible
+ * units. If the units are not compatible, this function will not compile. Note
+ * that this allows distributions to be scaled safely (unit conversions 
+ * are completely taken care of by boost::units)!
+ */
 template<typename IndependentUnit, typename DependentUnit>
+template<typename InputIndepUnit, typename InputDepUnit>
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvaporationDistribution(
-  const UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>& dist_instance )
+  const UnitAwareEvaporationDistribution<InputIndepUnit,InputDepUnit>& dist_instance )
   : d_incident_energy( dist_instance.d_incident_energy),
     d_nuclear_temperature( dist_instance.d_nuclear_temperature),
-    d_restriction_energy( dist_instance.d_restriction_energy)
+    d_restriction_energy( dist_instance.d_restriction_energy),
+    d_multiplier(),
+    d_norm_constant()
 {
   // Make sure the multipliers are valid
   testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_incident_energy ) ) );
   testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_nuclear_temperature) ) );
   testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_restriction_energy) ) );
   // Make sure that incident energy and nuclear temperature are positive
-  testPrecondition( dist_instance.d_incident_energy > 
-		    QuantityTraits<IndepQuantity>::zero() );
-  testPrecondition( dist_instance.d_nuclear_temperature > 
-		    QuantityTraits<IndepQuantity>::zero() );
+  testPrecondition( (dist_instance.d_incident_energy > QuantityTraits<typename UnitAwareEvaporationDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::zero()) );
+  testPrecondition( (dist_instance.d_nuclear_temperature > QuantityTraits<typename UnitAwareEvaporationDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::zero()) );
+
+  // Calculate the scaled multiplier (for complex units, boost::units often has
+  // problems doing the conversion so we will do it manually)
+  d_multiplier = QuantityTraits<DepQuantity>::initializeQuantity( QuantityTraits<typename UnitAwareEvaporationDistribution<InputIndepUnit,InputDepUnit>::DepQuantity>::one() )/QuantityTraits<IndepQuantity>::initializeQuantity( QuantityTraits<typename UnitAwareEvaporationDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::one() );
+
+  // Calculate the norm constant
+  this->calculateNormalizationConstant();
+}
+
+// Copy constructor (copying from unitless distribution only)
+/* \details Overload for the unitless distribution, which needs special
+ * treatment.
+ */
+template<typename IndependentUnit, typename DependentUnit>
+UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvaporationDistribution(
+	     const UnitAwareEvaporationDistribution<void,void>& unitless_dist_instance )
+  : d_incident_energy( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_incident_energy ) ),
+    d_nuclear_temperature( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_nuclear_temperature ) ),
+    d_restriction_energy( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_restriction_energy ) ),
+    d_multiplier( QuantityTraits<DistMultiplierQuantity>::one() ),
+    d_norm_constant()
+{
+  // Make sure the multipliers are valid
+  testPrecondition( !ST::isnaninf( unitless_dist_instance.d_incident_energy ) );
+  testPrecondition( !ST::isnaninf( unitless_dist_instance.d_nuclear_temperature) );
+  testPrecondition( !ST::isnaninf( unitless_dist_instance.d_restriction_energy) );
+  testPrecondition( !ST::isnaninf( unitless_dist_instance.d_norm_constant ) );
+  // Make sure that incident energy and nuclear temperature is positive
+  testPrecondition( unitless_dist_instance.d_incident_energy > 0.0 );
+  testPrecondition( unitless_dist_instance.d_nuclear_temperature > 0.0 );
+
+  // Calculate the norm constant
+  this->calculateNormalizationConstant();
 }
 
 // Assignment operator
@@ -95,6 +145,8 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::operator=(
   testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_incident_energy ) ) );
   testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_nuclear_temperature ) ) );
   testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_restriction_energy ) ) );
+  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_multiplier ) ) );
+  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_norm_constant ) ) );
   testPrecondition( dist_instance.d_incident_energy > 
 		    QuantityTraits<IndepQuantity>::zero() );
   testPrecondition( dist_instance.d_nuclear_temperature > 
@@ -105,6 +157,8 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::operator=(
     d_incident_energy = dist_instance.d_incident_energy;
     d_nuclear_temperature = dist_instance.d_nuclear_temperature;
     d_restriction_energy = dist_instance.d_restriction_energy;
+    d_multiplier = dist_instance.d_multiplier;
+    d_norm_constant = dist_instance.d_norm_constant;
   }
   
   return *this;
@@ -116,8 +170,12 @@ typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::DepQua
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::evaluate( 
   const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  return Utility::QuantityTraits<DepQuantity>::initializeQuantity( 
-		      getRawQuantity( this->evaluatePDF( indep_var_value ) ) );
+  if( indep_var_value < QuantityTraits<IndepQuantity>::zero() )
+    return QuantityTraits<DepQuantity>::zero();
+  else
+  {
+    return d_multiplier*indep_var_value*exp( -indep_var_value / d_nuclear_temperature );
+  }
 }
 
 // Evaluate the PDF
@@ -128,12 +186,7 @@ typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::Invers
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::evaluatePDF( 
 const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity indep_var_value ) const
 {
-  if( indep_var_value < QuantityTraits<IndepQuantity>::zero() )
-    return QuantityTraits<InverseIndepQuantity>::zero();
-  else
-  {
-    return UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::getNormalizationConstant( d_incident_energy, d_nuclear_temperature, d_restriction_energy ) * indep_var_value * exp( -indep_var_value / d_nuclear_temperature );
-  }
+  return this->evaluate( indep_var_value )*d_norm_constant;
 }
 
 // Return a random sample from the distribution
@@ -196,22 +249,19 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::sampleAndRecord
   return sample;  
 }
 
-// Return the normalization constant of the distribution, pass in parameters
-/*!
+// Calculate the normalization constant of the distribution
+/*
  * \details As given in LA-UR-14-27694
  * c = T^(-2)*[1-exp(-(E-U)/T)*(1+(E-U)/T)]^-1
  */
 template<typename IndependentUnit, typename DependentUnit>
-typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::InverseSquaredIndepQuantity
-UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::getNormalizationConstant(
-  const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity incident_energy,
-  const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity nuclear_temperature,
-  const typename UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::IndepQuantity restriction_energy )
+void
+UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::calculateNormalizationConstant()
 {
-  double argument = (incident_energy - restriction_energy) / nuclear_temperature;
+  double argument = (d_incident_energy - d_restriction_energy) / d_nuclear_temperature;
 
-  return 1.0/( nuclear_temperature*nuclear_temperature*
-	       (1.0 - exp(-argument)*(1.0 + argument)) );
+  d_norm_constant = 1.0/( d_multiplier*d_nuclear_temperature*d_nuclear_temperature*
+			  (1.0 - exp(-argument)*(1.0 + argument)) );
 }
 
 // Return the upper bound of the distribution independent variable
@@ -251,7 +301,13 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::toStream( 
 {
   os << "{" << getRawQuantity( d_incident_energy ) 
      << "," << getRawQuantity( d_nuclear_temperature ) 
-     << "," << getRawQuantity( d_restriction_energy ) << "}";
+     << "," << getRawQuantity( d_restriction_energy );
+
+  // Only print the multiplier when a scaling has been done
+  if( d_multiplier != QuantityTraits<DistMultiplierQuantity>::one() )
+    os << "," << getRawQuantity( d_multiplier ) << "}";
+  else
+    os << "}";
 }
 
 // Method for initializing the object from an input stream
@@ -277,12 +333,12 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
     throw InvalidDistributionStringRepresentation( message );
   }
   
-  TEST_FOR_EXCEPTION( distribution.size() > 3,
+  TEST_FOR_EXCEPTION( distribution.size() > 4,
                      InvalidDistributionStringRepresentation,
                      "Error: the Evaporation distribution cannot "
                      "be constructed because the representation is "
                      "not valid"
-                     "(only 3 values or fewer  may be specified)!" );
+                     "(only 4 values or fewer  may be specified)!" );
   
   // Set the incient neutron energy
   if( distribution.size() > 0 )
@@ -372,6 +428,34 @@ void UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromStream
 			"constructed because of an invalid restriction energy "
 			<< d_restriction_energy );
   }
+
+  // Set the multiplier
+  if( distribution.size() > 3 )
+  {
+    TEST_FOR_EXCEPTION( distribution[3].find_first_not_of( " 0123456789.e" ) <
+			distribution[3].size(),
+			InvalidDistributionStringRepresentation,
+			"Error: the Evaporation distribution cannot be "
+			"constructed because of an invalid multiplier "
+			<< distribution[3] );
+    {
+      double multiplier;
+
+      std::istringstream iss( distribution[3] );
+      Teuchos::extractDataFromISS( iss, multiplier );
+
+      setQuantity( d_multiplier, multiplier );
+    }
+    
+    TEST_FOR_EXCEPTION( ST::isnaninf( getRawQuantity( d_multiplier ) ),
+			InvalidDistributionStringRepresentation,
+			"Error: the Evaporation distribution cannot be "
+			"constructed because of an invalid multiplier "
+			<< getRawQuantity( d_multiplier ) );
+  }
+  
+  // Calculate the normalization constant
+  this->calculateNormalizationConstant();
 }
 
 // Method for testing if two objects are equivalent
@@ -380,8 +464,9 @@ bool UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::isEqual(
 const UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>& other ) const
 {
   return d_incident_energy == other.d_incident_energy &&
-  d_nuclear_temperature == other.d_nuclear_temperature &&
-  d_restriction_energy == other.d_restriction_energy;
+    d_nuclear_temperature == other.d_nuclear_temperature &&
+    d_restriction_energy == other.d_restriction_energy &&
+    d_multiplier == other.d_multiplier;
 }
 
 } // end Utility namespace

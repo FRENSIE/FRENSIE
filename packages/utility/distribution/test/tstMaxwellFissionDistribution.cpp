@@ -760,7 +760,12 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
 				      si_amount,
 				      KiloElectronVolt,
 				      si_amount );
-
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareMaxwellFissionDistribution,
+				      explicit_conversion,
+				      void,
+				      MegaElectronVolt,
+				      void,
+				      KiloElectronVolt );
 
 //---------------------------------------------------------------------------//
 // Custom main function

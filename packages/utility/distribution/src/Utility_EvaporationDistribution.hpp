@@ -41,11 +41,14 @@ private:
   // Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
 
-  // The inverse squared independent unit traits typedef
-  typedef UnitTraits<typename UnitTraits<IndependentUnit>::template GetUnitToPowerType<-2>::type> InverseSquaredIndepUnitTraits;
-
-  // The inverse squared independent quantity type
-  typedef typename InverseSquaredIndepUnitTraits::template GetQuantityType<double>::type InverseSquaredIndepQuantity;
+  // The distribution multiplier unit traits typedef
+  typedef UnitTraits<typename UnitTraits<DependentUnit>::template GetMultipliedUnitType<typename UnitTraits<IndependentUnit>::InverseUnit>::type> DistMultiplierUnitTraits;
+  
+  // The distribution multiplier quantity type
+  typedef typename DistMultiplierUnitTraits::template GetQuantityType<double>::type DistMultiplierQuantity;
+  
+  // The distribution normalization quantity type
+  typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
 
 public:
 
@@ -77,10 +80,11 @@ public:
 				const InputIndepQuantityC restriction_energy );
 
   //! Copy constructor
-  UnitAwareEvaporationDistribution( const UnitAwareEvaporationDistribution& dist_instance );
+  template<typename InputIndepUnit, typename InputDepUnit>
+  UnitAwareEvaporationDistribution( const UnitAwareEvaporationDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
 
   //! Copy constructor (copying from unitless distribution only)
-  UNITLESS_COPY_CONSTRUCTOR_DEFAULT( UnitAwareEvaporationDistribution );
+  UnitAwareEvaporationDistribution( const UnitAwareEvaporationDistribution<void,void>& unitless_dist_instance );
 
   //! Assignment operator
   UnitAwareEvaporationDistribution& operator=( const UnitAwareEvaporationDistribution& dist_instance );
@@ -129,15 +133,14 @@ public:
   //! Method for testing if two objects are equivalent
   bool isEqual( const UnitAwareEvaporationDistribution& other ) const;
 
-protected:
-
-  //! Return the normalization constant of the distribution, pass in parameters
-  static InverseSquaredIndepQuantity getNormalizationConstant(
-				      const IndepQuantity incident_energy,
-				      const IndepQuantity nuclear_temperature,
-				      const IndepQuantity restriction_energy );
-
 private:
+
+  // Calculate the normalization constant of the distribution
+  void calculateNormalizationConstant();
+
+  // All possible instantiations are friends
+  template<typename FriendIndepUnit, typename FriendDepUnit>
+  friend class UnitAwareEvaporationDistribution;
  
   // The distribution type
   static const OneDDistributionType distribution_type = EVAPORATION_DISTRIBUTION;
@@ -150,6 +153,12 @@ private:
   
   // The restriction energy of the distribution
   IndepQuantity d_restriction_energy;
+
+  // The distribution multiplier
+  DistMultiplierQuantity d_multiplier;
+
+  // The distribution normalization constant
+  DistNormQuantity d_norm_constant;
 };
 
 /*! The evaporation distribution (unit-agnostic)
