@@ -47,30 +47,32 @@ void StandardCollisionHandlerFactory<Geometry::Root>::validateMaterialIds(
   }
   
   int material_counter = 0;
-  TGeoMaterial* mat = Geometry::Root::getManager()->GetMaterial(material_counter);
+  TGeoMaterial* mat = Geometry::Root::getManager()->GetMaterial( material_counter );
   
   while ( mat != NULL )
   {
-    // TODO: Obtain the material number from ROOT and -> InternalMaterialHandle
+    // Obtain the material number from ROOT
     std::string requested_material_id_name = mat->GetName();
     
+    if ( requested_material_id_name != "void" && requested_material_id_name != "Terminal" )
+    { 
+      requested_material_id_name = requested_material_id_name.substr(4);
     
-    // TODO: test how to efficiently extract the number from the "mat_#"
-    std::istringstream iss( requested_material_id_name );
+      std::istringstream iss( requested_material_id_name );
     
-    ModuleTraits::InternalMaterialHandle material_id;
+      ModuleTraits::InternalMaterialHandle material_id;
     
-    iss >> material_id;
+      iss >> material_id;
     
-    TEST_FOR_EXCEPTION( material_ids.find( material_id ) ==
-			material_ids.end(),
-			InvalidMaterialRepresentation,
-			"Error: ROOT has requested material number "
-			<< material_id << " which is lacking "
-			"a definition!" );
-				
-		material_counter += 1;
-		mat = Geometry::Root::getManager()->GetMaterial( material_counter );
+      TEST_FOR_EXCEPTION( material_ids.find( material_id ) ==
+			  material_ids.end(),
+			  InvalidMaterialRepresentation,
+			  "Error: ROOT has requested material number "
+			  << material_id << " which is lacking "
+			  "a definition!" );
+	}
+	material_counter += 1;
+	mat = Geometry::Root::getManager()->GetMaterial( material_counter );
   } 
   #endif // end HAVE_FRENSIE_ROOT
 }
@@ -96,19 +98,20 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
     TGeoMaterial* mat = cell->GetMaterial();
     std::string mat_id  = mat->GetName();
     
-    std::vector<std::string> material_names;
-    material_names.push_back( mat_id.substr(0,3) );
-    material_names.push_back( mat_id.substr(4) );
+    if ( mat_id != "void" && mat_id != "Terminal" )
+    {
+      std::vector<std::string> material_names;
+      material_names.push_back( mat_id.substr(4) );
     
-    double density =  mat->GetDensity();
+      double density =  mat->GetDensity();
     
-    std::vector<std::string> density_names;
-    density_names.push_back( "rho" );
-    density_names.push_back( "-" + std::to_string( density ) );
+      std::vector<std::string> density_names;
+      density_names.push_back( std::to_string( density ) );
     
-    // Update the unordered maps
-    cell_id_mat_id_map[i + 1] = material_names;
-    cell_id_density_map[i + 1] = density_names;
+      // Update the unordered maps
+      cell_id_mat_id_map[i + 1] = material_names;
+      cell_id_density_map[i + 1] = density_names;
+    }
   }
 
   // Make sure that the maps have the same size

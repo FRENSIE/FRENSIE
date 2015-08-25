@@ -171,9 +171,9 @@ inline bool ModuleInterface<Root>::isTerminationCell(
 
   // Check if cell material is equal to pre-defined terminal material 
   TGeoVolume* current_volume = Root::getManager()->GetVolume( cell_external );
-  TGeoMaterial* current_material = current_volume->GetMaterial();
+  std::string current_material = current_volume->GetMaterial()->GetName();
   
-  return current_material->IsEq( Root::getTerminalMaterial() );
+  return ( current_material == Root::getTerminalMaterialName() );
 }
 
 // Calculate the surface normal at a point on the surface

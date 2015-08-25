@@ -10,6 +10,10 @@
 #include "DagMC.hpp"
 
 // FRENSIE Includes
+#include "Geometry_Root.hpp"
+#include "Geometry_RootInstanceFactory.hpp"
+#include "Geometry_ModuleInterface_Root.hpp"
+
 #include "FRENSIE_dagmc_config.hpp"
 #include "FRENSIE_root_config.hpp"
 #include "MonteCarlo_ParticleSimulationManagerFactory.hpp"
@@ -20,7 +24,11 @@
 #include "MonteCarlo_SourceModuleInterface.hpp"
 #include "MonteCarlo_EstimatorHandlerFactoryDecl.hpp"
 #include "MonteCarlo_EstimatorHandlerFactory_DagMC.hpp"
+#include "MonteCarlo_EstimatorHandlerFactory_Root.hpp"
 #include "MonteCarlo_CollisionHandlerFactory.hpp"
+#include "MonteCarlo_StandardCollisionHandlerFactory.hpp"
+#include "MonteCarlo_StandardCollisionHandlerFactory_DagMC.hpp"
+#include "MonteCarlo_StandardCollisionHandlerFactory_Root.hpp"
 #include "Geometry_ModuleInterface.hpp"
 #include "Utility_ExceptionTestMacros.hpp"
 
@@ -83,7 +91,7 @@ ParticleSimulationManagerFactory::createManager(
 							     estimator_def );
     
     // Initialize the collision handler
-    getCollisionHandlerFactory<moab::DagMC>()->initializeHandler(
+    getCollisionHandlerFactoryInstance<moab::DagMC>()->initializeHandler(
 						material_def,
 						cross_sections_table_info,
 						cross_sections_xml_directory );
@@ -101,6 +109,40 @@ ParticleSimulationManagerFactory::createManager(
   else if( geom_handler_name == "ROOT" )
   {
     #ifdef HAVE_FRENSIE_ROOT 
+
+    // Initialize Root 
+    Geometry::RootInstanceFactory::initializeRoot( geom_def );
+
+    // Initialize the geometry handler
+    Geometry::ModuleInterface<Geometry::Root>::initialize();
+
+    // Initialize the source handler
+    Teuchos::RCP<ParticleSourceFactory> source_factory =
+      StandardParticleSourceFactory<Geometry::Root>::getInstance();
+  
+    Teuchos::RCP<ParticleSource> source = 
+      source_factory->createSource( source_def );
+
+    setSourceHandlerInstance( source );
+
+    // Initialize the estimator handler
+    EstimatorHandlerFactory<Geometry::Root>::initializeHandler( response_def,
+							     estimator_def );
+    
+    // Initialize the collision handler
+    getCollisionHandlerFactoryInstance<Geometry::Root>()->initializeHandler(
+						material_def,
+						cross_sections_table_info,
+						cross_sections_xml_directory );
+        
+    return Teuchos::rcp( 
+	 new ParticleSimulationManager<Geometry::Root,
+                                       ParticleSource,
+                                       EstimatorHandler,
+                                       CollisionHandler>(
+                               SimulationProperties::getNumberOfHistories() ) );
+
+
 
     #else
     return Teuchos::RCP<SimulationManager>();
