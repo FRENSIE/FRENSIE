@@ -114,8 +114,7 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
  * treatment.
  */
 template<typename IndependentUnit, typename DependentUnit>
-UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvaporationDistribution(
-	     const UnitAwareEvaporationDistribution<void,void>& unitless_dist_instance )
+UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvaporationDistribution( const UnitAwareEvaporationDistribution<void,void>& unitless_dist_instance, int )
   : d_incident_energy( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_incident_energy ) ),
     d_nuclear_temperature( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_nuclear_temperature ) ),
     d_restriction_energy( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_restriction_energy ) ),
@@ -133,6 +132,20 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
 
   // Calculate the norm constant
   this->calculateNormalizationConstant();
+}
+
+// Construct distribution from a unitless dist. (potentially dangerous)
+/*! \details Constructing a unit-aware distribution from a unitless 
+ * distribution is potentially dangerous. By forcing users to construct objects
+ * using this method instead of a standard constructor we are trying to make
+ * sure users are aware of the danger. This is designed to mimic the interface 
+ * of the boost::units::quantity, which also has to deal with this issue. 
+ */
+template<typename IndependentUnit, typename DependentUnit>
+UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit> 
+UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::fromUnitlessDistribution( const UnitAwareEvaporationDistribution<void,void>& unitless_distribution )
+{
+  return UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>( unitless_distribution, 0 );
 }
 
 // Assignment operator

@@ -12,6 +12,7 @@
 
 // Boost Includes
 #include <boost/units/systems/si.hpp>
+#include <boost/units/systems/cgs.hpp>
 #include <boost/units/io.hpp>
 
 // Trilinos Includes
@@ -35,6 +36,7 @@
 using boost::units::quantity;
 using namespace Utility::Units;
 namespace si = boost::units::si;
+namespace cgs = boost::units::cgs;
 
 //---------------------------------------------------------------------------//
 // Testing Variables
@@ -55,7 +57,7 @@ Teuchos::RCP<Utility::UnitAwareOneDDistribution<MegaElectronVolt,si::amount> >
 TEUCHOS_UNIT_TEST( EvaporationDistribution, evaluate )
 {
   double test_value_1 = 0.0 ;
-  double test_value_2 = pow( 1.0 - exp(-0.9) * (1.0 + 0.9), -1.0 ) * exp( -1.0 ); 
+  double test_value_2 = exp( -1.0 ); 
   
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), test_value_1 );
   TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), test_value_2 );
@@ -65,7 +67,7 @@ TEUCHOS_UNIT_TEST( EvaporationDistribution, evaluate )
 // Check that the unit-aware distribution can be evaluated
 TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution, evaluate )
 {
-  double scale_factor = exp(-1.0)/(1.0 - exp(-0.9)*(1.0+0.9));
+  double scale_factor = exp(-1.0);
 
   TEST_EQUALITY_CONST( unit_aware_distribution->evaluate( 0.0*MeV ), 
 		       0.0*si::mole );
@@ -80,8 +82,8 @@ TEUCHOS_UNIT_TEST( EvaporationDistribution, evaluatePDF )
   double test_value_1 = 0.0 ;
   double test_value_2 = pow( 1.0 - exp(-0.9) * (1.0 + 0.9), -1.0 ) * exp( -1.0 );
 
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), test_value_2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -368,8 +370,8 @@ TEUCHOS_UNIT_TEST( EvaporationDistribution, fromParameterList )
   test_value_1 = 0.0 ;
   test_value_2 = pow( 1.0 - exp(-0.9) * (1.0 + 0.9), -1.0 ) * exp( -1.0 );
 
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0 ), test_value_2 );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0 ), test_value_2 );
 
   read_distribution = 
     test_dists_list->get<Utility::EvaporationDistribution>( "Evaporation Distribution B" );
@@ -378,8 +380,8 @@ TEUCHOS_UNIT_TEST( EvaporationDistribution, fromParameterList )
   test_value_2 = pow( 2.0, 2.0) * ( 1.0 - exp(-1.0) * (1.0 + 1.0) );
   test_value_2 = pow( test_value_2, -1.0 ) * exp( -0.5 );
 
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0 ), test_value_2 );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0 ), test_value_2 );
 
   read_distribution = 
     test_dists_list->get<Utility::EvaporationDistribution>( "Evaporation Distribution C" );
@@ -388,8 +390,8 @@ TEUCHOS_UNIT_TEST( EvaporationDistribution, fromParameterList )
   test_value_2 = 1.0 - exp(-1.0) * (1.0 + 1.0) ;
   test_value_2 = pow( test_value_2, -1.0 ) * exp( -1.0 );
 
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0 ), test_value_2 );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0 ), test_value_2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -406,7 +408,9 @@ TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution, fromParameterList )
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*MeV ), 
 		       0.0*si::mole );
   TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0*MeV ), 
-		       10.0*scale_factor*si::mole );
+		       10.0*exp(-1.0)*si::mole );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0*MeV ), 
+		       scale_factor/MeV );
 
   read_distribution = 
     test_dists_list->get<UnitAwareEvaporationDistribution>( "Unit-Aware Evaporation Distribution B" );
@@ -416,7 +420,9 @@ TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution, fromParameterList )
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*MeV ), 
 		       0.0*si::mole );
   TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0*MeV ), 
-		       scale_factor*si::mole );
+		       exp(-0.5)*si::mole );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0*MeV ), 
+		       scale_factor/MeV );
 
   read_distribution = 
     test_dists_list->get<UnitAwareEvaporationDistribution>( "Unit-Aware Evaporation Distribution C" );
@@ -426,124 +432,241 @@ TEUCHOS_UNIT_TEST( UnitAwareEvaporationDistribution, fromParameterList )
   TEST_EQUALITY_CONST( read_distribution.evaluate( 0.0*MeV ), 
 		       0.0*si::mole );
   TEST_EQUALITY_CONST( read_distribution.evaluate( 1.0*MeV ), 
-		       scale_factor*si::mole );
+		       exp(-1.0)*si::mole );
+  TEST_EQUALITY_CONST( read_distribution.evaluatePDF( 1.0*MeV ), 
+		       scale_factor/MeV );
 }
 
 //---------------------------------------------------------------------------//
 // Check that a unit-aware distribution can be constructed from a unitless
 // distribution
-TEUCHOS_UNIT_TEST_TEMPLATE_2_DECL( UnitAwareEvaporationDistribution,
-				   unitless_copy_constructor,
-				   IndepUnit,
-				   DepUnit )
+TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareEvaporationDistribution,
+				   explicit_conversion,
+				   IndepUnitA,
+				   DepUnitA,
+				   IndepUnitB,
+				   DepUnitB )
 {
-  typedef typename Utility::UnitTraits<IndepUnit>::template GetQuantityType<double>::type
-    IndepQuantity;
-  typedef typename Utility::UnitTraits<DepUnit>::template GetQuantityType<double>::type
-    DepQuantity;
-
-  Utility::UnitAwareEvaporationDistribution<IndepUnit,DepUnit>
-    unit_aware_dist_copy( *Teuchos::rcp_dynamic_cast<Utility::EvaporationDistribution>( distribution ) );
-			 
-  IndepQuantity indep_quantity = 
-    Utility::QuantityTraits<IndepQuantity>::initializeQuantity( 0.0 );
-  DepQuantity dep_quantity = 
-    Utility::QuantityTraits<DepQuantity>::initializeQuantity( 0.0 );
-
-  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ),
-		       dep_quantity );
+  typedef typename Utility::UnitTraits<IndepUnitA>::template GetQuantityType<double>::type IndepQuantityA;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitA>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityA;
   
-  Utility::setQuantity( indep_quantity, 1.0 );
-  Utility::setQuantity( dep_quantity, exp(-1.0)/(1.0 - exp(-0.9)*(1.0+0.9)) );
+  typedef typename Utility::UnitTraits<IndepUnitB>::template GetQuantityType<double>::type IndepQuantityB;
+  typedef typename Utility::UnitTraits<typename Utility::UnitTraits<IndepUnitB>::InverseUnit>::template GetQuantityType<double>::type InverseIndepQuantityB;
   
-  TEST_EQUALITY_CONST( unit_aware_dist_copy.evaluate( indep_quantity ),
-		       dep_quantity );
+  typedef typename Utility::UnitTraits<DepUnitA>::template GetQuantityType<double>::type DepQuantityA;
+  typedef typename Utility::UnitTraits<DepUnitB>::template GetQuantityType<double>::type DepQuantityB;
+
+  // Copy from unitless distribution to distribution type A (static method)
+  Utility::UnitAwareEvaporationDistribution<IndepUnitA,DepUnitA>
+    unit_aware_dist_a_copy = Utility::UnitAwareEvaporationDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::EvaporationDistribution>( distribution ) );
+
+  // Copy from distribution type A to distribution type B (explicit cast)
+  Utility::UnitAwareEvaporationDistribution<IndepUnitB,DepUnitB>
+    unit_aware_dist_b_copy( unit_aware_dist_a_copy );
+
+  IndepQuantityA indep_quantity_a = 
+    Utility::QuantityTraits<IndepQuantityA>::initializeQuantity( 0.0 );
+  InverseIndepQuantityA inv_indep_quantity_a = 
+    Utility::QuantityTraits<InverseIndepQuantityA>::initializeQuantity( 0.0 );
+  DepQuantityA dep_quantity_a = 
+    Utility::QuantityTraits<DepQuantityA>::initializeQuantity( 0.0 );
+
+  IndepQuantityB indep_quantity_b( indep_quantity_a );
+  InverseIndepQuantityB inv_indep_quantity_b( inv_indep_quantity_a );
+  DepQuantityB dep_quantity_b( dep_quantity_a );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
+			   dep_quantity_a,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
+			inv_indep_quantity_a,
+			1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
+			   dep_quantity_b,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
+			inv_indep_quantity_b,
+			1e-15 );
+
+  Utility::setQuantity( indep_quantity_a, 1.0 );
+  Utility::setQuantity( inv_indep_quantity_a, 
+			exp(-1.0)/(1.0 - exp(-0.9)*(1.0+0.9)) );
+  Utility::setQuantity( dep_quantity_a, exp(-1.0) );
+  
+  indep_quantity_b = IndepQuantityB( indep_quantity_a );
+  inv_indep_quantity_b = InverseIndepQuantityB( inv_indep_quantity_a );
+  dep_quantity_b = DepQuantityB( dep_quantity_a );
+
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_a_copy.evaluate( indep_quantity_a ),
+			   dep_quantity_a,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_a_copy.evaluatePDF( indep_quantity_a ),
+			inv_indep_quantity_a,
+			1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			   unit_aware_dist_b_copy.evaluate( indep_quantity_b ),
+			   dep_quantity_b,
+			   1e-15 );
+  UTILITY_TEST_FLOATING_EQUALITY( 
+			unit_aware_dist_b_copy.evaluatePDF( indep_quantity_b ),
+			inv_indep_quantity_b,
+			1e-15 );
 }
 
 typedef si::energy si_energy;
+typedef cgs::energy cgs_energy;
 typedef si::amount si_amount;
 typedef si::length si_length;
+typedef cgs::length cgs_length;
 typedef si::mass si_mass;
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
+typedef cgs::mass cgs_mass;
+typedef si::dimensionless si_dimensionless;
+typedef cgs::dimensionless cgs_dimensionless;
+
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      si_amount,
+				      cgs_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      si_amount,
 				      si_energy,
 				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      si_length,
+				      cgs_energy,
+				      cgs_length );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      cgs_length,
 				      si_energy,
 				      si_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      si_mass,
+				      cgs_energy,
+				      cgs_mass );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      cgs_mass,
 				      si_energy,
 				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      si_dimensionless,
+				      cgs_energy,
+				      cgs_dimensionless );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      cgs_dimensionless,
+				      si_energy,
+				      si_dimensionless );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      si_energy,
+				      void,
+				      cgs_energy,
+				      void );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      cgs_energy,
+				      void,
 				      si_energy,
 				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
 				      ElectronVolt,
+				      si_amount,
+				      si_energy,
 				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
 				      ElectronVolt,
-				      si_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
+				      si_amount,
+				      cgs_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
 				      ElectronVolt,
-				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
-				      ElectronVolt,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
+				      si_amount,
 				      KiloElectronVolt,
 				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
-				      KiloElectronVolt,
-				      si_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
-				      KiloElectronVolt,
-				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
-				      KiloElectronVolt,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      ElectronVolt,
+				      si_amount,
 				      MegaElectronVolt,
 				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
-				      MegaElectronVolt,
-				      si_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
-				      MegaElectronVolt,
-				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
-				      MegaElectronVolt,
-				      void );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
-				      void,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      KiloElectronVolt,
+				      si_amount,
+				      si_energy,
 				      si_amount );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      KiloElectronVolt,
+				      si_amount,
+				      cgs_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      KiloElectronVolt,
+				      si_amount,
+				      ElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      KiloElectronVolt,
+				      si_amount,
+				      MegaElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      MegaElectronVolt,
+				      si_amount,
+				      si_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      MegaElectronVolt,
+				      si_amount,
+				      cgs_energy,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      MegaElectronVolt,
+				      si_amount,
+				      ElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
+				      MegaElectronVolt,
+				      si_amount,
+				      KiloElectronVolt,
+				      si_amount );
+TEUCHOS_UNIT_TEST_TEMPLATE_4_INSTANT( UnitAwareEvaporationDistribution,
+				      explicit_conversion,
 				      void,
-				      si_length );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
+				      MegaElectronVolt,
 				      void,
-				      si_mass );
-TEUCHOS_UNIT_TEST_TEMPLATE_2_INSTANT( UnitAwareEvaporationDistribution,
-				      unitless_copy_constructor,
-				      void,
-				      void );				      
+				      KiloElectronVolt );
 
 //---------------------------------------------------------------------------//
 // Custom main function

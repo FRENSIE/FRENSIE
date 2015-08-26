@@ -552,7 +552,7 @@ TEUCHOS_UNIT_TEST_TEMPLATE_4_DECL( UnitAwareMaxwellFissionDistribution,
 
   // Copy from unitless distribution to distribution type A
   Utility::UnitAwareMaxwellFissionDistribution<IndepUnitA,DepUnitA>
-    unit_aware_dist_a_copy( *Teuchos::rcp_dynamic_cast<Utility::MaxwellFissionDistribution>( distribution ) );
+    unit_aware_dist_a_copy = Utility::UnitAwareMaxwellFissionDistribution<IndepUnitA,DepUnitA>::fromUnitlessDistribution( *Teuchos::rcp_dynamic_cast<Utility::MaxwellFissionDistribution>( distribution ) );
 
   // Copy from distribution type A to distribution type B
   Utility::UnitAwareMaxwellFissionDistribution<IndepUnitB,DepUnitB>

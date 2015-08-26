@@ -84,8 +84,8 @@ public:
   template<typename InputIndepUnit, typename InputDepUnit>
   UnitAwareMaxwellFissionDistribution( const UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>& dist_instance );
 
-  //! Copy constructor (copying from unitless distribution only)
-  UnitAwareMaxwellFissionDistribution( const UnitAwareMaxwellFissionDistribution<void,void>& unitless_dist_instance );
+  //! Construct distribution from a unitless dist. (potentially dangerous)
+  static UnitAwareMaxwellFissionDistribution fromUnitlessDistribution( const UnitAwareMaxwellFissionDistribution<void,void>& unitless_distribution );
 
   //! Assignment operator
   UnitAwareMaxwellFissionDistribution& operator=( const UnitAwareMaxwellFissionDistribution& dist_instance );
@@ -133,6 +133,11 @@ public:
 
   //! Method for testing if two objects are equivalent
   bool isEqual( const UnitAwareMaxwellFissionDistribution& other ) const;
+
+protected:
+
+  //! Copy constructor (copying from unitless distribution only)
+  UnitAwareMaxwellFissionDistribution( const UnitAwareMaxwellFissionDistribution<void,void>& unitless_dist_instance, int );
 
 private:
 
