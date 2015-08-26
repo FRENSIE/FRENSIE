@@ -17,12 +17,12 @@
 #include <boost/units/physical_dimensions/energy.hpp>
 
 // Trilinos Includes
-#include <Teuchos_ScalarTraits.hpp>
 #include <Teuchos_RCP.hpp>
 
 // FRENSIE Includes
 #include "Utility_OneDDistribution.hpp"
 #include "Utility_ParameterListCompatibleObject.hpp"
+#include "Utility_QuantityTraits.hpp"
 
 namespace Utility{
 
@@ -38,15 +38,24 @@ class UnitAwareWattDistribution : public UnitAwareOneDDistribution<IndependentUn
   RESTRICT_UNIT_TO_BOOST_DIMENSION( IndependentUnit, energy_dimension );
 
 private:
-
-  // Typedef for Teuchos::ScalarTraits
-  typedef Teuchos::ScalarTraits<double> ST;
-
+  
   // The distribution multiplier quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DepQuantity DistMultiplierQuantity;
 
   // The distribution normalization quantity type
   typedef typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::DistNormQuantity DistNormQuantity;
+
+  // Typedef for Teuchos::ScalarTraits<double>
+  typedef Teuchos::ScalarTraits<double> ST;
+
+  // Typedef for Teuchos::ScalarTraits<IndepQuantity>
+  typedef Teuchos::ScalarTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::IndepQuantity> IST;
+
+  // Typedef for Teuchos::ScalarTraits<InverseIndepQuantity>
+  typedef Teuchos::ScalarTraits<typename UnitAwareOneDDistribution<IndependentUnit,DependentUnit>::InverseIndepQuantity> IIST;
+
+  // Typedef for Teuchos::ScalarTraits<DistMultiplierQuantity>
+  typedef Teuchos::ScalarTraits<DistMultiplierQuantity> MST;
 
 public:
 

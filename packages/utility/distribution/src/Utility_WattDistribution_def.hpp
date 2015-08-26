@@ -35,10 +35,10 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribut
     d_norm_constant()
 {
   // Make sure values are valid
-  testPrecondition( !ST::isnaninf( getRawQuantity( incident_energy ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( a_parameter ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( b_parameter ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( restriction_energy ) ) );
+  testPrecondition( !IST::isnaninf( incident_energy ) );
+  testPrecondition( !IST::isnaninf( a_parameter ) );
+  testPrecondition( !IIST::isnaninf( b_parameter ) );
+  testPrecondition( !IST::isnaninf( restriction_energy ) );
   // Make sure that incident energy, a_parameter, and b_parameter are positive
   testPrecondition( incident_energy > QuantityTraits<IndepQuantity>::zero() );
   testPrecondition( a_parameter > QuantityTraits<IndepQuantity>::zero() );
@@ -72,10 +72,10 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribut
     d_norm_constant()
 {
   // Make sure values are valid
-  testPrecondition( !ST::isnaninf( getRawQuantity( incident_energy ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( a_parameter ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( b_parameter ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( restriction_energy ) ) );
+  testPrecondition( !IST::isnaninf( incident_energy ) );
+  testPrecondition( !IST::isnaninf( a_parameter ) );
+  testPrecondition( !IIST::isnaninf( b_parameter ) );
+  testPrecondition( !IST::isnaninf( restriction_energy ) );
   // Make sure that incident energy, a_parameter, and b_parameter are positive
   testPrecondition( incident_energy > QuantityTraits<InputIndepQuantityA>::zero() );
   testPrecondition( a_parameter > QuantityTraits<InputIndepQuantityB>::zero() );
@@ -104,10 +104,10 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::UnitAwareWattDistribut
     d_norm_constant()
 {
   // Make sure the multipliers are valid
-  testPrecondition( !ST::isnaninf( getRawQauntity( dist_instance.d_incident_energy ) ) );
-  testPrecondition( !ST::isnaninf( getRawQauntity( dist_instance.d_a_parameter ) ) );
-  testPrecondition( !ST::isnaninf( getRawQauntity( dist_instance.d_b_parameter ) ) );
-  testPrecondition( !ST::isnaninf( getRawQauntity( dist_instance.d_restriction_energy ) ) );
+  testPrecondition( !IST::isnaninf( dist_instance.d_incident_energy ) );
+  testPrecondition( !IST::isnaninf( dist_instance.d_a_parameter ) );
+  testPrecondition( !IIST::isnaninf( dist_instance.d_b_parameter ) );
+  testPrecondition( !IST::isnaninf( dist_instance.d_restriction_energy ) );
   // Make sure that incident energy, a_parameter, and b_parameter are positive
   testPrecondition( (dist_instance.d_incident_energy > QuantityTraits<typename UnitAwareWattDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::zero()) );
   testPrecondition( (dist_instance.d_a_parameter > QuantityTraits<typename UnitAwareWattDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::zero()) );
@@ -162,10 +162,10 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::operator=(
 const UnitAwareWattDistribution<IndependentUnit,DependentUnit>& dist_instance )
 {
   // Make sure the distribution is valid
-  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_incident_energy ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_a_parameter ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_b_parameter ) ) );
-  testPrecondition( !ST::isnaninf( getRawQuantity( dist_instance.d_restriction_energy ) ) );
+  testPrecondition( !IST::isnaninf( dist_instance.d_incident_energy ) );
+  testPrecondition( !IST::isnaninf( dist_instance.d_a_parameter ) );
+  testPrecondition( !IIST::isnaninf( dist_instance.d_b_parameter ) );
+  testPrecondition( !IST::isnaninf( dist_instance.d_restriction_energy ) );
   testPrecondition( dist_instance.d_incident_energy > 
 		    QuantityTraits<IndepQuantity>::zero() );
   testPrecondition( dist_instance.d_a_parameter > 
@@ -397,7 +397,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
       setQuantity( d_incident_energy, incident_energy );
     }
   
-    TEST_FOR_EXCEPTION( ST::isnaninf( getRawQuantity( d_incident_energy ) ),
+    TEST_FOR_EXCEPTION( IST::isnaninf( d_incident_energy ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid incident energy "
@@ -429,7 +429,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
       setQuantity( d_a_parameter, a_parameter );
     }
   
-    TEST_FOR_EXCEPTION( ST::isnaninf( getRawQuantity( d_a_parameter ) ),
+    TEST_FOR_EXCEPTION( IST::isnaninf( d_a_parameter ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid a_parameter "
@@ -461,7 +461,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
       setQuantity( d_b_parameter, b_parameter );
     }
   
-    TEST_FOR_EXCEPTION( ST::isnaninf( d_b_parameter ),
+    TEST_FOR_EXCEPTION( IIST::isnaninf( d_b_parameter ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid b_parameter "
@@ -493,7 +493,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
       setQuantity( d_restriction_energy, restriction_energy );
     }
   
-    TEST_FOR_EXCEPTION( ST::isnaninf( getRawQuantity( d_restriction_energy ) ),
+    TEST_FOR_EXCEPTION( IST::isnaninf( d_restriction_energy ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid restriction energy "
@@ -518,7 +518,7 @@ UnitAwareWattDistribution<IndependentUnit,DependentUnit>::fromStream( std::istre
       setQuantity( d_multiplier, multiplier );
     }
 
-    TEST_FOR_EXCEPTION( ST::isnaninf( getRawQuantity( d_multiplier ) ),
+    TEST_FOR_EXCEPTION( MST::isnaninf( d_multiplier ),
 			InvalidDistributionStringRepresentation,
 			"Error: the Watt distribution cannot be "
 			"constructed because of an invalid multiplier "
