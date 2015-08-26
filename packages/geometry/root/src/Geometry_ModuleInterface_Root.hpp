@@ -9,6 +9,9 @@
 #ifndef GEOMETRY_MODULE_INTERFACE_ROOT_HPP
 #define GEOMETRY_MODULE_INTERFACE_ROOT_HPP
 
+// Boost Includes
+#include <boost/unordered_map.hpp>
+
 // Root Includes
 #include <TObjArray.h>
 #include <TObject.h>
@@ -61,6 +64,10 @@ private:
   
   //! Typedef for Teuchos::ScalarTraits
   typedef Teuchos::ScalarTraits<double> ST;
+  
+  //! Root UniqueID to Root_gGeoManager UID map
+  static boost::unordered_map<ExternalCellHandle, Int_t> 
+                                                    s_root_uniqueid_to_uid_map;
 
 public:
 
@@ -170,7 +177,7 @@ inline bool ModuleInterface<Root>::isTerminationCell(
     ModuleInterface<Root>::getExternalCellHandle( cell );
 
   // Check if cell material is equal to pre-defined terminal material 
-  TGeoVolume* current_volume = Root::getManager()->GetVolume( cell_external );
+  TGeoVolume* current_volume = Root::getManager()->GetVolume( s_root_uniqueid_to_uid_map.find( cell_external )->second );
   std::string current_material = current_volume->GetMaterial()->GetName();
   
   return ( current_material == Root::getTerminalMaterialName() );
@@ -193,6 +200,13 @@ inline void ModuleInterface<Root>::getSurfaceNormal(
     normal[1] = normal_t[1];
     normal[2] = normal_t[2];
   }
+  else
+  {
+    THROW_EXCEPTION( std::logic_error,
+                     "Error: Root has found that the particle is not on "
+                     "a surface, therefore it cannot determine the surface "
+                     "normal." );
+  }
 }
 
 // Get the volume of a cell
@@ -200,13 +214,24 @@ inline double ModuleInterface<Root>::getCellVolume(
 						const InternalCellHandle cell )
 {
   double volume = 0.0;
+  TObjArray* daughters;
   
   ExternalCellHandle cell_external = 
     ModuleInterface<Root>::getExternalCellHandle( cell );
   
-  volume = Root::getManager()->GetVolume( cell_external )->Capacity();
+  if ( s_root_uniqueid_to_uid_map.find( cell_external ) != s_root_uniqueid_to_uid_map.end() )
+  {
+    volume = Root::getManager()->GetVolume( s_root_uniqueid_to_uid_map.find( cell_external )->second )->Capacity();
+    daughters = Root::getManager()->GetVolume( s_root_uniqueid_to_uid_map.find( cell_external )->second )->GetNodes();
+  }
+  else
+  {
+    THROW_EXCEPTION( std::logic_error,
+                     "Error: Root encountered unique id " << cell_external <<
+                     " which was not present in the geometry handler." );
+          
+  }
   
-  TObjArray* daughters = Root::getManager()->GetVolume( cell_external )->GetNodes();
   
   if ( daughters != NULL )
   {

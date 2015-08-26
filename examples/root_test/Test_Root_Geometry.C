@@ -19,7 +19,7 @@ void Test_Root_Geometry()
                    "Geometry for testing root implementation" );
    
   // Define materials and media (space filling materials)
-  TGeoMaterial *void_mat = new TGeoMaterial( "void",1,1,1 );
+  TGeoMaterial *void_mat = new TGeoMaterial( "void",0,0,0 );
   TGeoMedium   *void_med = new TGeoMedium( "void_med",1,void_mat );
    
   TGeoMaterial *mat_1 = new TGeoMaterial( "mat_1",1,1,1 );
@@ -49,8 +49,11 @@ void Test_Root_Geometry()
   
   // Close the geometry and draw it for visualization
   gGeoManager->CloseGeometry();
-  gGeoManager->SetTopVisible();
-  terminal_cube->Draw();
+  // gGeoManager->SetTopVisible();
+  // terminal_cube->Draw();
+
+  gGeoManager->Export("test_root_geometry.root");
+  exit(1);
 
 }  // end Test_Root_Geometry
 
