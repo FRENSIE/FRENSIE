@@ -107,22 +107,19 @@ UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMax
 
   // Calculate the scaled multiplier (for complex units, boost::units often has
   // problems doing the conversion so we will do it manually)
-  d_multiplier = QuantityTraits<DepQuantity>::initializeQuantity( QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::DepQuantity>::one() )/Utility::sqrt( IndepQuantity( QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::one() ) );
+  d_multiplier = getRawQuantity( dist_instance.d_multiplier )*QuantityTraits<DepQuantity>::initializeQuantity( QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::DepQuantity>::one() )/Utility::sqrt( IndepQuantity( QuantityTraits<typename UnitAwareMaxwellFissionDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::one() ) );
 
   // Calculate the norm constant
   this->calculateNormalizationConstant();
 }
 
 // Copy constructor
-/* \details Overload for the unitless distribution, which needs special
- * treatment.
- */
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareMaxwellFissionDistribution<IndependentUnit,DependentUnit>::UnitAwareMaxwellFissionDistribution( const UnitAwareMaxwellFissionDistribution<void,void>& unitless_dist_instance, int )
   : d_incident_energy( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_incident_energy ) ),
     d_nuclear_temperature( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_nuclear_temperature ) ),
     d_restriction_energy( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_restriction_energy ) ),
-    d_multiplier( QuantityTraits<DistMultiplierQuantity>::one() ),
+    d_multiplier( QuantityTraits<DistMultiplierQuantity>::initializeQuantity( unitless_dist_instance.d_multiplier ) ),
     d_norm_constant()
 {
   // Make sure the multipliers are valid

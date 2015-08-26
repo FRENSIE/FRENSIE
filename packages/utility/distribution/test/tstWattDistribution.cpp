@@ -40,8 +40,7 @@ Teuchos::RCP<Utility::OneDDistribution> distribution(
 TEUCHOS_UNIT_TEST( WattDistribution, evaluate )
 {
   double test_value_1 = 0.0 ;
-  double test_value_2 = 0.25 * sqrt( Utility::PhysicalConstants::pi ) * exp( 0.25 ) * ( erf( sqrt(0.9) - sqrt(0.25) ) + erf( sqrt(0.9) + sqrt(0.25) ) ) - exp( -0.9 ) * sinh( sqrt(0.9) );
-  test_value_2 = pow( test_value_2, -1.0 ) * exp( -1.0 ) * sinh( 1.0 );
+  double test_value_2 = exp( -1.0 ) * sinh( 1.0 );
   
   TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), test_value_1 );
   TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), test_value_2 );
@@ -55,8 +54,8 @@ TEUCHOS_UNIT_TEST( WattDistribution, evaluatePDF )
   double test_value_2 = 0.25 * sqrt( Utility::PhysicalConstants::pi ) * exp( 0.25 ) * ( erf( sqrt(0.9) - sqrt(0.25) ) + erf( sqrt(0.9) + sqrt(0.25) ) ) - exp( -0.9 ) * sinh( sqrt(0.9) );
   test_value_2 = pow( test_value_2, -1.0 ) * exp( -1.0 ) * sinh( 1.0 );
 
-  TEST_EQUALITY_CONST( distribution->evaluate( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( distribution->evaluate( 1.0 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution->evaluatePDF( 0.0 ), test_value_1 );
+  TEST_EQUALITY_CONST( distribution->evaluatePDF( 1.0 ), test_value_2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -134,7 +133,7 @@ TEUCHOS_UNIT_TEST( WattDistribution, sampleAndRecordTrials_pass_parameters )
 
   sample = Utility::WattDistribution::sampleAndRecordTrials(incident_energy, a_parameter, b_parameter, restriction_energy, trials);
   TEST_FLOATING_EQUALITY( sample, 0.04844237604136, 1e-13 );
-  TEST_EQUALITY_CONST( trials, 3.0 );
+  TEST_EQUALITY_CONST( trials, 4.0 );
 
   Utility::RandomNumberGenerator::unsetFakeStream();
 }
@@ -220,8 +219,10 @@ TEUCHOS_UNIT_TEST( WattDistribution, fromParameterList )
   test_value_2 = 0.25 * sqrt( Utility::PhysicalConstants::pi ) * exp( 0.25 ) * ( erf( sqrt(0.9) - sqrt(0.25) ) + erf( sqrt(0.9) + sqrt(0.25) ) ) - exp( -0.9 ) * sinh( sqrt(0.9) );
   test_value_2 = pow( test_value_2, -1.0 ) * exp( -1.0 ) * sinh( 1.0 );
   
-  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( distribution.evaluate( 1.0 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution.evaluatePDF( 0.0 ), test_value_1 );
+  TEST_FLOATING_EQUALITY( distribution.evaluatePDF( 1.0 ), 
+			  test_value_2,
+			  1e-15 );
 
    distribution = 
     test_dists_list->get<Utility::WattDistribution>( "Watt Distribution B" );
@@ -233,8 +234,10 @@ TEUCHOS_UNIT_TEST( WattDistribution, fromParameterList )
     - 2.0 * exp( - 1.5 ) * sinh( sqrt( 3.0 ) );
   test_value_2 = pow( test_value_2, -1.0 ) * exp( -0.5 ) * sinh( 1.0 );
  
-  TEST_EQUALITY_CONST( distribution.evaluate( 0.0 ), test_value_1 );
-  TEST_EQUALITY_CONST( distribution.evaluate( 1.0 ), test_value_2 );
+  TEST_EQUALITY_CONST( distribution.evaluatePDF( 0.0 ), test_value_1 );
+  TEST_FLOATING_EQUALITY( distribution.evaluatePDF( 1.0 ), 
+			  test_value_2,
+			  1e-15 );
 
 }
 

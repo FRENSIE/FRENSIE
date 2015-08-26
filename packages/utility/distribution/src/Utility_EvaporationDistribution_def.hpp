@@ -103,22 +103,19 @@ UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvapor
 
   // Calculate the scaled multiplier (for complex units, boost::units often has
   // problems doing the conversion so we will do it manually)
-  d_multiplier = QuantityTraits<DepQuantity>::initializeQuantity( QuantityTraits<typename UnitAwareEvaporationDistribution<InputIndepUnit,InputDepUnit>::DepQuantity>::one() )/QuantityTraits<IndepQuantity>::initializeQuantity( QuantityTraits<typename UnitAwareEvaporationDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::one() );
+  d_multiplier = getRawQuantity( dist_instance.d_multiplier )*QuantityTraits<DepQuantity>::initializeQuantity( QuantityTraits<typename UnitAwareEvaporationDistribution<InputIndepUnit,InputDepUnit>::DepQuantity>::one() )/QuantityTraits<IndepQuantity>::initializeQuantity( QuantityTraits<typename UnitAwareEvaporationDistribution<InputIndepUnit,InputDepUnit>::IndepQuantity>::one() );
 
   // Calculate the norm constant
   this->calculateNormalizationConstant();
 }
 
 // Copy constructor (copying from unitless distribution only)
-/* \details Overload for the unitless distribution, which needs special
- * treatment.
- */
 template<typename IndependentUnit, typename DependentUnit>
 UnitAwareEvaporationDistribution<IndependentUnit,DependentUnit>::UnitAwareEvaporationDistribution( const UnitAwareEvaporationDistribution<void,void>& unitless_dist_instance, int )
   : d_incident_energy( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_incident_energy ) ),
     d_nuclear_temperature( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_nuclear_temperature ) ),
     d_restriction_energy( QuantityTraits<IndepQuantity>::initializeQuantity( unitless_dist_instance.d_restriction_energy ) ),
-    d_multiplier( QuantityTraits<DistMultiplierQuantity>::one() ),
+    d_multiplier( QuantityTraits<DistMultiplierQuantity>::initializeQuantity( unitless_dist_instance.d_multiplier ) ),
     d_norm_constant()
 {
   // Make sure the multipliers are valid
