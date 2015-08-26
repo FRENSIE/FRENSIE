@@ -34,6 +34,8 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
                                 Teuchos::Array<long_float>& weights,
                                 const int number_of_angles_wanted ) const
 {
+  bool was_root_found;
+
   // Get the Radau moments
   Teuchos::Array<long_float> 
                      radau_moments( d_legendre_expansion_moments.size() - 1 );
@@ -45,21 +47,24 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
 
   // Calculate the number of coefficients of the orthogonal polynomials
   int number_of_coefficients = radau_moments.size() - number_of_roots + 1;
-
+/*
+std::cout << std::endl << "number_of_coefficients = " << number_of_coefficients  << std::endl;
+std::cout << std::endl << "number_of_roots = " << number_of_roots  << std::endl;
+*/
   // Initialize arrays for data needed to calculate the orthogonal polynomials
   Teuchos::TwoDArray<long_float> orthogonal_coefficients( 
                                     number_of_coefficients,
                                     number_of_coefficients,
                                     long_float(0) );
 
-  Teuchos::TwoDArray<long_float> roots( number_of_coefficients,
-                                        number_of_roots,
+  Teuchos::TwoDArray<long_float> roots( number_of_coefficients+1,
+                                        number_of_roots+1,
                                         long_float(0) );
 
   Teuchos::Array<long_float> normalization_ratios( number_of_coefficients ),  
                          normalization_factors_N( number_of_coefficients ), 
                          variances( number_of_coefficients ),
-                         mean_coefficients( number_of_coefficients );
+                         mean_coefficients( number_of_coefficients + 1 );
   
   // Set the i = 0 case
   orthogonal_coefficients[0][0] = long_float(1);
@@ -120,49 +125,58 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
       evaluateMeanCoefficient( normalization_ratios, number_of_coefficients-1 );
   }
 
-  // Get the roots of the orthogonal polynomials
-  bool was_root_found;
-
-  // Set one root for i = 1
-  roots[1][0] = mean_coefficients[1];
-
-  // Loop through to get other roots
-  for ( int i = 2; i < number_of_coefficients; i++ )
+  // check to see if first mean coefficient will give a negative weight
+  if ( mean_coefficients[1] >= d_legendre_expansion_moments[1]/d_legendre_expansion_moments[0] )
   {
-    was_root_found = evaluateOrthogonalRoots( roots,
-                                              variances,
-                                              mean_coefficients,
-                                              i );
+    // Only one node
+    number_of_roots = 1;
 
-    // If the i+1 roots cannot be found, use i roots
-    if ( was_root_found == false)
-    {
-      number_of_coefficients = i;
-      number_of_roots = i;
-    }
+    roots[1][0] = -normalization_factors_N[0]/
+                    ( long_float(2) * d_legendre_expansion_moments[0] );
   }
-
-  /* For an odd legendre expansion it may be possible to approcimate the n+1 
-   * expansion and increase the number of possible roots by 1. */
-  if ( number_of_coefficients == number_of_roots )
+  else
   {
-    // Estimate extra mean coefficient
-    estimateExtraMeanCoefficient( mean_coefficients, 
-                                  variances,
-                                  normalization_factors_N,
-                                  radau_moments,
-                                  number_of_roots );
+    // Get the roots of the orthogonal polynomials
+    // Set one root for i = 1
+    roots[1][0] = mean_coefficients[1];
 
-    // evaluate the extra root 
-    was_root_found = evaluateOrthogonalRoots( roots,
-                                              variances,
-                                              mean_coefficients,
-                                              number_of_roots );
-
-    // If the extra root cannot be found, use number_of_roots -1 roots
-    if ( was_root_found == false)
+    // Loop through to get other roots
+    for ( int i = 2; i < number_of_coefficients; i++ )
     {
-      number_of_roots -= 1;
+      was_root_found = evaluateOrthogonalRoots( roots,
+                                                variances,
+                                                mean_coefficients,
+                                                i );
+      // If the i+1 roots cannot be found, use i roots
+      if ( was_root_found == false)
+      {
+        number_of_coefficients = i;
+        number_of_roots = i;
+      }
+    }
+
+    /* For an odd legendre expansion it may be possible to approcimate the n+1 
+     * expansion and increase the number of possible roots by 1. */
+    if ( number_of_coefficients == number_of_roots )
+    {
+      // Estimate extra mean coefficient
+      estimateExtraMeanCoefficient( mean_coefficients, 
+                                    variances,
+                                    normalization_factors_N,
+                                    radau_moments,
+                                    number_of_roots );
+
+      // evaluate the extra root 
+      was_root_found = evaluateOrthogonalRoots( roots,
+                                                variances,
+                                                mean_coefficients,
+                                                number_of_roots );
+
+      // If the extra root cannot be found, use number_of_roots -1 roots
+      if ( was_root_found == false)
+      {
+        number_of_roots -= 1;
+      }
     }
   }
 
@@ -194,12 +208,13 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
     nodes[number_of_angles_wanted-1] = long_float(1);
   }
 
-  long_float polynomial_at_node, var;
+  // Calucalte the weights of the nodes
+  long_float polynomial_at_node, variable;
   long_float sum_of_weights = long_float(0);
 
   for ( int i = 0; i < weights.size()-1; i++ )
   {
-    var = long_float(0);
+    variable = long_float(0);
 
     for ( int k = 0; k < weights.size()-1; k++ )
     {
@@ -207,26 +222,21 @@ void SloanRadauQuadrature::getRadauNodesAndWeights(
                                                          mean_coefficients,
                                                          nodes[i],
                                                          k );
-      var += polynomial_at_node*polynomial_at_node/
+      variable += polynomial_at_node*polynomial_at_node/
                     normalization_factors_N[k];
-
-std::cout << std::setprecision(20)<<"\n i =                        \t " << i <<std::endl;
-std::cout << std::setprecision(20)<<" k =                          \t " << k<<std::endl;
-std::cout << std::setprecision(20)<<" polynomial_at_node =         \t " <<polynomial_at_node <<std::endl;
-std::cout << std::setprecision(20)<< " normalization_factors_N[k] = \t " <<normalization_factors_N[k] <<std::endl;
-std::cout << std::setprecision(20)<< " var =                   \t " <<var <<std::endl;
-/*
-std::printf( " diff = \t %.10e \n", (normalization_factors_N[k]-4.4051713388171300E-09)/4.4051713388171300E-09 );*/
     }
-  weights[i] =  long_float(1)/( var*( long_float(1) - nodes[i] ) )/
+
+  weights[i] =  long_float(1)/( variable*( long_float(1) - nodes[i] ) )/
                 d_legendre_expansion_moments[0];
 
   sum_of_weights += weights[i];
   } 
+  // Make sure weights are valid
   if ( sum_of_weights > long_float(1) )
   {
     std::cout << std::endl << " Error: non-physical weight! " << std::endl;
   }
+  // Calculate the weight of the Mu = 1 node
   weights[weights.size()-1] = long_float(1) - sum_of_weights;
 }
 
@@ -667,13 +677,17 @@ void SloanRadauQuadrature::estimateExtraMeanCoefficient(
         const Teuchos::Array<long_float>& radau_moments,
         const int number_of_roots ) const
 {
-std::cout << "this is used " <<std::endl;
+  // Make sure number_of_roots is valid
+  testPrecondition( number_of_roots > 1 )
+
+  long_float extra_mean_coefficients;
+
   // evaluate the ratio of the nth and (n-1)th orthogonal polynomial at +1
   long_float ratio_at_pos_one = 
       evaluateOrthogonalPolynomial( variances,
                                     mean_coefficients, 
                                     long_float(1), 
-                                    number_of_roots )/
+                                    number_of_roots - 2 )/
       evaluateOrthogonalPolynomial( variances,
                                     mean_coefficients, 
                                     long_float(1), 
@@ -684,7 +698,7 @@ std::cout << "this is used " <<std::endl;
       evaluateOrthogonalPolynomial( variances,
                                     mean_coefficients, 
                                     -long_float(1), 
-                                    number_of_roots )/
+                                    number_of_roots - 2 )/
       evaluateOrthogonalPolynomial( variances,
                                     mean_coefficients, 
                                     -long_float(1), 
@@ -692,34 +706,33 @@ std::cout << "this is used " <<std::endl;
 
   long_float poly_n_minus_one;
   long_float poly_n = evaluateOrthogonalPolynomial( variances,
-                                                     mean_coefficients, 
-                                                     long_float(1), 
-                                                     1 );
-    long_float parm = d_legendre_expansion_moments[0] - radau_moments[0]/poly_n;
+                                                      mean_coefficients, 
+                                                      long_float(1), 
+                                                      1 );
 
-    for ( int k = 2; k < number_of_roots; k++ )
-    {
-      poly_n_minus_one = poly_n;
-      poly_n = evaluateOrthogonalPolynomial( variances,
-                                             mean_coefficients, 
-                                             long_float(1), 
-                                             k );
+  long_float parm = d_legendre_expansion_moments[0] - 
+                    normalization_factors_N[0]/poly_n;
 
-      parm += -normalization_factors_N[k]/( poly_n_minus_one*poly_n );
-    }
-std::cout << "mean_coefficients[number_of_roots+1]=\t "<< mean_coefficients[number_of_roots+1]<<std::endl;
-    mean_coefficients[number_of_roots+1] = 
-         -variances[number_of_roots]/long_float(2)*
+  for ( int k = 2; k < number_of_roots; k++ )
+  {
+    poly_n_minus_one = poly_n;
+    poly_n = evaluateOrthogonalPolynomial( variances,
+                                           mean_coefficients, 
+                                           long_float(1), 
+                                           k );
+
+     parm += -normalization_factors_N[k]/( poly_n_minus_one*poly_n );
+  }
+
+  extra_mean_coefficients = 
+         -variances[number_of_roots-1]/long_float(2)*
          ( ratio_at_pos_one + ratio_at_neg_one ) 
-         -normalization_factors_N[number_of_roots]/
+         -normalization_factors_N[number_of_roots-1]/
          ( long_float(2)*poly_n*poly_n*parm );
 
-std::cout << "number_of_roots=\t "<< number_of_roots<<std::endl;
-std::cout << "mean_coefficients[0]=\t "<< mean_coefficients[0]<<std::endl;
-std::cout << "mean_coefficients[1]=\t "<< mean_coefficients[1]<<std::endl;
-std::cout << "mean_coefficients[2]=\t "<< mean_coefficients[2]<<std::endl;
-std::cout << "mean_coefficients[3]=\t "<< mean_coefficients[3]<<std::endl;
+  mean_coefficients[number_of_roots] = extra_mean_coefficients;
 
+//std::cout << "extra_mean_coefficients=\t "<< extra_mean_coefficients<<std::endl;
 }
 
 } // end Utility namespace

@@ -489,7 +489,7 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
                           tol);
   TEST_EQUALITY_CONST( nodes[4].convert_to<double>(), 1.0 );
 */
-  
+
   Teuchos::Array<double> node, weight;
   number_of_angles_wanted = 5;
   quadrature_8->getRadauNodesAndWeights( node, weight, number_of_angles_wanted );
@@ -598,6 +598,9 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
         Utility::getLegendrePolynomial( nodes[i].convert_to<long double>(), m )
         *weights[i];
     }
+std::cout <<  "i          =\t" << i << std::endl;
+std::cout << std::setprecision(20) << "nodes[i]   =\t" << nodes[i] << std::endl;
+std::cout << std::setprecision(20) << "weights[i] =\t" << weights[i] << std::endl;
   }
 
   TEST_FLOATING_EQUALITY( legendres[0].convert_to<double>(), test_legendre[0].convert_to<double>(), tol);
@@ -619,6 +622,202 @@ TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
   TEST_FLOATING_EQUALITY( legendres[16].convert_to<double>(), test_legendre[16].convert_to<double>(), 1e-10);
 
 
+}
+
+//---------------------------------------------------------------------------//
+// Varify function matches original algorithm
+TEUCHOS_UNIT_TEST( SloanRadauQuadrature,
+		           AlgorithmMatch)
+{
+  double tol = 1e-15;
+  Teuchos::Array<Utility::long_float> nodes, weights, node, weight;
+  int number_of_angles_wanted = 2;
+  node.resize(number_of_angles_wanted);
+  weight.resize(number_of_angles_wanted);
+
+  Teuchos::Array<Utility::long_float> l_moments(3);
+  Teuchos::RCP<Utility::SloanRadauQuadrature> test;
+
+  l_moments[0] =    Utility::long_float(1);
+  l_moments[1] =    Utility::long_float(0);
+  l_moments[2] =    Utility::long_float(0);
+
+  test.reset(
+    new Utility::SloanRadauQuadrature( l_moments ) );
+
+  test->getRadauNodesAndWeights( nodes, weights, number_of_angles_wanted );
+
+  node[0] = -Utility::long_float(1)/Utility::long_float(3);
+  node[1] = Utility::long_float(1);
+
+  weight[0] = Utility::long_float(3)/Utility::long_float(4);
+  weight[1] = Utility::long_float(1)/Utility::long_float(4);
+
+  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),  
+                          weight[0].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),  
+                          weight[1].convert_to<double>(),  
+                          tol);
+
+
+  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),  
+                          node[0].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),  
+                          node[1].convert_to<double>(),  
+                          tol);
+
+
+  number_of_angles_wanted = 4;
+  node.resize(number_of_angles_wanted);
+  weight.resize(number_of_angles_wanted);
+  l_moments.resize(7);
+
+  l_moments[0] =    Utility::long_float(1);
+  l_moments[1] =    Utility::long_float(0);
+  l_moments[2] =    Utility::long_float(0);
+  l_moments[3] =    Utility::long_float(0);
+  l_moments[4] =    Utility::long_float(0);
+  l_moments[5] =    Utility::long_float(0);
+  l_moments[6] =    Utility::long_float(0);
+
+  test.reset(
+    new Utility::SloanRadauQuadrature( l_moments ) );
+
+  test->getRadauNodesAndWeights( nodes, weights, number_of_angles_wanted );
+
+  node[1] = -1.810662711185306E-01L; 
+  node[2] = 5.753189235216941E-01L;
+  node[0] = -8.228240809745921E-01L;
+  node[3] = 1.000000000000000E+00L;
+
+  weight[1] =  3.881934688431719E-01L;
+  weight[2] = 3.288443199800598E-01L;
+  weight[0] = 2.204622111767684E-01L;
+  weight[3] = 6.250000000000000E-02L;
+
+  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),  
+                          weight[0].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),  
+                          weight[1].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),  
+                          weight[2].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( weights[3].convert_to<double>(),  
+                          weight[3].convert_to<double>(),  
+                          tol);
+
+
+  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),  
+                          node[0].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),  
+                          node[1].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( nodes[2].convert_to<double>(),  
+                          node[2].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( nodes[3].convert_to<double>(),  
+                          node[3].convert_to<double>(),  
+                          tol);
+
+  number_of_angles_wanted = 4;
+  node.resize(number_of_angles_wanted);
+  weight.resize(number_of_angles_wanted);
+  l_moments.resize(6);
+
+  l_moments[0] =    Utility::long_float(2);
+  l_moments[1] =    Utility::long_float(0);
+  l_moments[2] =    Utility::long_float(0);
+  l_moments[3] =    Utility::long_float(0);
+  l_moments[4] =    Utility::long_float(0);
+  l_moments[5] =    Utility::long_float(0);
+
+  test.reset(
+    new Utility::SloanRadauQuadrature( l_moments ) );
+
+  test->getRadauNodesAndWeights( nodes, weights, number_of_angles_wanted );
+
+  node[1] = -1.762533480739568E-01L; 
+  node[2] = 5.786796265405898E-01L;
+  node[0] = -8.212296972700518E-01L;
+  node[3] = 1.000000000000000E+00L;
+
+  weight[1] = 3.889162116284768E-01L;
+  weight[2] = 3.269574973959520E-01L;
+  weight[0] = 2.222576041068843E-01L;
+  weight[3] = 6.186868686868687E-02L;
+
+  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),  
+                          weight[0].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),  
+                          weight[1].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( weights[2].convert_to<double>(),  
+                          weight[2].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( weights[3].convert_to<double>(),  
+                          weight[3].convert_to<double>(),  
+                          tol);
+
+
+  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),  
+                          node[0].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),  
+                          node[1].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( nodes[2].convert_to<double>(),  
+                          node[2].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( nodes[3].convert_to<double>(),  
+                          node[3].convert_to<double>(),  
+                          tol);
+/*
+  number_of_angles_wanted = 2;
+  node.resize(number_of_angles_wanted);
+  weight.resize(number_of_angles_wanted);
+  l_moments.resize(3);
+
+  l_moments[0] =    Utility::long_float(1)*1000;
+  l_moments[1] =    9.999998463039E-01L*1000;
+  l_moments[2] =    9.999994981590E-01L*1000;
+
+  test.reset(
+    new Utility::SloanRadauQuadrature( l_moments ) );
+
+  test->getRadauNodesAndWeights( nodes, weights, number_of_angles_wanted );
+
+std::cout << std::setprecision(20)<< " weights[0] =\t " <<weights[0] <<std::endl;
+std::cout << std::setprecision(20)<< " weights[1] =\t " <<weights[1] <<std::endl;
+std::cout << std::setprecision(20)<< " nodes[0] =\t " <<nodes[0] <<std::endl;
+std::cout << std::setprecision(20)<< " nodes[1] =\t " <<nodes[1] <<std::endl;
+
+  node[0] = -7.684804997909467E-08L;
+  node[1] = 1.000000000000000E+00L;
+
+  weight[0] = 1.536960881469447E-07L;
+  weight[1] = 9.999998463039118E-01L;
+
+  TEST_FLOATING_EQUALITY( weights[0].convert_to<double>(),  
+                          weight[0].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( weights[1].convert_to<double>(),  
+                          weight[1].convert_to<double>(),  
+                          tol);
+
+
+  TEST_FLOATING_EQUALITY( nodes[0].convert_to<double>(),  
+                          node[0].convert_to<double>(),  
+                          tol);
+  TEST_FLOATING_EQUALITY( nodes[1].convert_to<double>(),  
+                          node[1].convert_to<double>(),  
+                          tol);
+*/
 }
 
 //---------------------------------------------------------------------------//
