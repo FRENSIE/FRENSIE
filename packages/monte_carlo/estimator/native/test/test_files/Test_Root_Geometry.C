@@ -52,7 +52,7 @@ void Test_Root_Geometry()
   // gGeoManager->SetTopVisible();
   // terminal_cube->Draw();
 
-  gGeoManager->Export("test_root_geometry.root");
+  gGeoManager->Export("Test_Root_Geometry.root");
   exit(1);
 
 }  // end Test_Root_Geometry

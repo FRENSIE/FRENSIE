@@ -24,6 +24,10 @@ MACRO(ENABLE_ROOT_SUPPORT)
   # Store ROOT libraries in the ROOT variable
   SET(ROOT ${ROOT_GEOM} ${ROOT_CORE})
 
+  # Find the root executable
+  FIND_PROGRAM(ROOT_EXE root PATHS ${ROOT_PREFIX}/bin)
+  SET(ROOT_EXE ${ROOT_EXE} -b -l)
+
   # Configure the root_config.hpp header file
   SET(HAVE_${PROJECT_NAME}_ROOT "1")
 
@@ -38,8 +42,8 @@ MACRO(ENABLE_ROOT_SUPPORT)
     MESSAGE("\nFound ROOT!  Here are the details: ")
     MESSAGE("   ROOT_INCLUDE_DIRS = ${ROOT_INCLUDE_DIRS}")
     MESSAGE("   ROOT_LIBRARY_DIR = ${ROOT_LIBRARY_DIR}")
-    MESSAGE("   DEFAULT_ROOT_LIBRARIES = ${ROOT_LIBRARIES}")
     MESSAGE("   ROOT_LIBRARIES = ${ROOT}")
+    MESSAGE("   ROOT_EXECUTABLES = ${ROOT_EXE}")
     MESSAGE("   ROOT_CXX_FLAGS = ${ROOT_CXX_FLAGS}")
     MESSAGE("End of ROOT details\n")
   ENDIF()
