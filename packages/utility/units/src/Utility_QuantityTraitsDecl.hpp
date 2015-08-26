@@ -12,6 +12,11 @@
 // Boost Includes
 #include <boost/units/cmath.hpp>
 #include <boost/units/static_rational.hpp>
+#include <boost/units/limits.hpp>
+#include <boost/units/io.hpp>
+
+// Trilinos Includes
+#include <Teuchos_ScalarTraits.hpp>
 
 /*! \defgroup quantity_traits Quantity Traits
  * \ingroup traits
@@ -41,11 +46,11 @@ struct QuantityTraits
 
   //! Get the zero quantity
   static inline Quantity zero()
-  { return Quantity::from_value( 0.0 ); }
+  { return Quantity::from_value( RawType(0) ); }
 
   //! Get the one quantity
   static inline Quantity one()
-  { return Quantity::from_value( 1.0 ); }
+  { return Quantity::from_value( RawType(1) ); }
 
   //! Take the square root of a quantity (possible bug in boost::units::sqrt)
   static inline typename GetQuantityToPowerType<1,2>::type sqrt( const Quantity& quantity )
@@ -118,6 +123,48 @@ inline void setQuantity( Quantity& quantity,
 }
 
 } // end Utility namespace
+
+namespace Teuchos{
+
+//! Partial specialization of Teuchos::ScalarTraits for boost::units::quantity
+template<typename Unit, typename T>
+struct ScalarTraits<boost::units::quantity<Unit,T> >
+{
+  typedef boost::units::quantity<Unit,T> QuantityT;
+  typedef boost::units::quantity<Unit,T> magnitudeType;
+  typedef boost::units::quantity<Unit,typename ScalarTraits<T>::halfPrecision> haflPrecision;
+  typedef boost::units::quantity<Unit,typename ScalarTraits<T>::doublePrecision> doublePrecision;
+
+  static const bool isComplex = ScalarTraits<T>::isComplex;
+  static const bool isOrdinal = ScalarTraits<T>::isOrdinal;
+  static const bool isComparable = ScalarTraits<T>::isComparable;
+  static const bool hasMachineParameters = ScalarTraits<T>::hasMachineParameters;
+  static inline magnitudeType eps() { return magnitudeType::from_value( ScalarTraits<T>::eps() ); }
+  static inline magnitudeType sfmin() { return magnitudeType::from_value( ScalarTraits<T>::sfmin() ); }
+  static inline magnitudeType base() { return magnitudeType::from_value( ScalarTraits<T>::base() ); }
+  static inline magnitudeType prec() { return magnitudeType::from_value( ScalarTraits<T>::prec() ); }
+  static inline magnitudeType t() { return magnitudeType::from_value( ScalarTraits<T>::t() ); }
+  static inline magnitudeType rnd() { return magnitudeType::from_value( ScalarTraits<T>::rnd() ); }
+  static inline magnitudeType emin() { return magnitudeType::from_value( ScalarTraits<T>::emin() ); }
+  static inline magnitudeType rmin() { return magnitudeType::from_value( ScalarTraits<T>::rmin() ); }
+  static inline magnitudeType emax() { return magnitudeType::from_value( ScalarTraits<T>::emax() ); }
+  static inline magnitudeType rmax() { return magnitudeType::from_value( ScalarTraits<T>::rmax() ); }
+  static magnitudeType magnitude(const QuantityT& a) { return boost::units::fabs(a); }
+  static inline magnitudeType zero() { return Utility::QuantityTraits<magnitudeType>::zero(); }
+  static inline magnitudeType one() { return Utility::QuantityTraits<magnitudeType>::one(); }
+  static inline magnitudeType conjugate(magnitudeType a){ return magnitudeType::from_value( ScalarTraits<T>::conjugate( a.value() ) ); }
+  static inline magnitudeType real(magnitudeType a){ return magnitudeType::from_value( ScalarTraits<T>::real( a.value() ) ); }
+  static inline magnitudeType imag(magnitudeType a){ return magnitudeType::from_value( ScalarTraits<T>::imag( a.value() ) ); }
+  static inline magnitudeType nan() { return magnitudeType::from_value( ScalarTraits<T>::nan() ); }
+  static inline bool isnaninf(magnitudeType a) { return ScalarTraits<T>::isnaninf( a.value() ); }
+  static inline void seedrandom(unsigned int s) { ScalarTraits<T>::seedrandom(s); }
+  static inline magnitudeType random() { return magnitudeType::from_value( ScalarTraits<T>::random() ); }
+  static inline std::string name() { return std::string("boost::units::quantity<")+boost::units::name_string(Unit())+std::string(",")+ScalarTraits<T>::name()+std::string(">"); }
+  static inline typename Utility::QuantityTraits<magnitudeType>::template GetQuantityToPowerType<1,2>::type squareroot(magnitudeType a) { return Utility::sqrt(a); }
+  //pow - incompatible
+};
+
+} // end Teuchos namespace
 
 #endif // end UTILITY_QUANTITY_TRAITS_DECL_HPP
 
