@@ -89,12 +89,13 @@ void StandardCollisionHandlerFactory<Geometry::Root>::createCellIdDataMaps(
 #ifdef HAVE_FRENSIE_ROOT
   // Get the cell property values (material and density)
   TObjArray* cells = Geometry::Root::getManager()->GetListOfVolumes();
+  TIterator* iter  = cells->MakeIterator();
   int number_cells = cells->GetEntries();
   
   for ( Geometry::ModuleTraits::InternalCellHandle i=0; i < number_cells; i++ )
   {
     // Obtain the material and density data from ROOT
-    TGeoVolume* cell  = Geometry::Root::getManager()->GetVolume( i + 1 );
+    TGeoVolume* cell  = dynamic_cast<TGeoVolume*>( iter->Next() );
     TGeoMaterial* mat = cell->GetMaterial();
     std::string mat_id  = mat->GetName();
     

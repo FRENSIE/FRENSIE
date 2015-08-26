@@ -44,7 +44,7 @@ TEUCHOS_UNIT_TEST( RootInstanceFactory, initializeRoot )
   Geometry::RootInstanceFactory::initializeRoot( *geom_rep );
   
   // Test that all nodes can be read in and numbered
-  TEST_EQUALITY_CONST( Geometry::Root::getManager()->GetNNodes(), 2);
+  TEST_EQUALITY_CONST( Geometry::Root::getManager()->GetNNodes(), 3);
 }
 
 //---------------------------------------------------------------------------//

@@ -21,6 +21,7 @@
 #include "MonteCarlo_TetMeshTrackLengthFluxEstimator.hpp"
 
 #ifdef HAVE_FRENSIE_ROOT
+#include "Geometry_Root.hpp"
 #include "Geometry_ModuleInterface.hpp"
 #include "Geometry_ModuleInterface_Root.hpp"
 #endif
@@ -239,6 +240,13 @@ void EstimatorHandlerFactory<Geometry::Root>::initializeHandler(
 							energy_mult,
 							estimator_bins );
       }
+      else
+      {
+        std::cout << "Warning: Estimator type: " << estimator_id_type_map[id] <<
+                  " is not a valid estimator type for the Root geometry " <<
+                  "handler. Therefore, estimator " << id << " will be ignored." <<
+                  std::endl;
+      }
      
       estimator_id_cells_map.erase( id );
     }
@@ -268,7 +276,7 @@ void EstimatorHandlerFactory<Geometry::Root>::initializeHandler(
 							energy_mult,
 							estimator_bins );
       }
-      else
+      else if( EstimatorHandlerFactory<Geometry::Root>::isSurfaceCurrentEstimator( estimator_id_type_map[id] ) )
       {	
 	EstimatorHandlerFactory<Geometry::Root>::createSurfaceCurrentEstimator(
 							id,
@@ -278,6 +286,13 @@ void EstimatorHandlerFactory<Geometry::Root>::initializeHandler(
 							response_functions,
 							energy_mult,
 							estimator_bins );
+      }
+      else
+      {
+        std::cout << "Warning: Estimator type: " << estimator_id_type_map[id] <<
+                  " is not a valid estimator type for the Root geometry " <<
+                  "handler. Therefore, estimator " << id << " will be ignored." <<
+                  std::endl;
       }
 
       estimator_id_surfaces_map.erase( id );
@@ -289,7 +304,11 @@ void EstimatorHandlerFactory<Geometry::Root>::initializeHandler(
      */  
     else if( estimator_id_type_map[id] == 
 	     EstimatorHandlerFactory<Geometry::Root>::tet_mesh_track_length_flux_name )
-    { /* ... */ }
+    {
+      std::cout << "Warning: Root does not currently support the tetrahedral " <<
+                   "mesh track length flux estimator. As such, estimator " <<
+                   id << " will not be implemented." << std::endl;
+    }
 
     // Remove the ids from the maps
     estimator_id_type_map.erase( id );
@@ -600,17 +619,34 @@ void EstimatorHandlerFactory<Geometry::Root>::createCellVolumeMap(
    Teuchos::Array<Geometry::ModuleTraits::InternalCellHandle> >::const_iterator
     it = estimator_id_cells_map.begin();
 
+  TObjArray* volume_list = Geometry::Root::getManager()->GetListOfVolumes();
+  TIterator* volume_list_iterator = volume_list->MakeIterator();
+  int number_volumes = volume_list->GetEntries();
+  
+  for (int i=0; i < number_volumes; i++) 
+  {
+    TObject* current_object = volume_list_iterator->Next();
+    TGeoVolume* current_volume = dynamic_cast<TGeoVolume*>( current_object );
+    if ( current_volume->GetUniqueID() == 0 )
+    {
+      THROW_EXCEPTION( std::runtime_error,
+                       "Error: Root contains a cell which has not been "
+                       " assigned a unique cell ID in the input file." );
+    }
+    std::cout << current_volume->GetName() << " " << current_volume->GetUniqueID() << " " << Geometry::ModuleInterface<Geometry::Root>::getCellVolume(current_volume->GetUniqueID()) << " " << Geometry::Root::getManager()->GetVolume(current_volume->GetUniqueID())->Capacity() << " " << current_volume->Capacity() << std::endl;
+  } 
+
+
   while( it != estimator_id_cells_map.end() )
   {
     for( unsigned i = 0u; i < it->second.size(); ++i )
     {
       if( cell_volume_map.find( it->second[i] ) == cell_volume_map.end() )
       {
-	cell_volume_map[it->second[i]] = 
-	  Geometry::ModuleInterface<Geometry::Root>::getCellVolume(it->second[i]);
+	cell_volume_map[ it->second[i] ] = 
+	  Geometry::ModuleInterface<Geometry::Root>::getCellVolume( it->second[i] );
       }
     }
-
     ++it;
   }
   #endif // end HAVE_FRENSIE_ROOT
@@ -1111,7 +1147,6 @@ void EstimatorHandlerFactory<Geometry::Root>::assignBinsToEstimator(
 
       estimator->setBinBoundaries<COSINE_DIMENSION>( cosine_bins );
     }
-    
     ++it;
   }
 

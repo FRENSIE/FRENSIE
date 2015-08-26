@@ -1,3 +1,4 @@
 <ParameterList name="Simulation Info">
-  <Parameter name="Histories" type="unsigned int" value="10000"/>
+  <Parameter name="Histories" type="unsigned int" value="100"/>
+  <Parameter name="Mode" type="string" value="Photon"/>
 </ParameterList>

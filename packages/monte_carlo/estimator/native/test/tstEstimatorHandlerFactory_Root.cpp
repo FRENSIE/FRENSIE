@@ -49,7 +49,7 @@ TEUCHOS_UNIT_TEST( EstimatorHandlerFactoryRoot, initializeHandlerUsingRoot )
 							     *response_reps,
 							     *estimator_reps );
 
-  TEST_EQUALITY_CONST( MonteCarlo::EstimatorHandler::getNumberOfEstimators(), 7 );
+  TEST_EQUALITY_CONST( MonteCarlo::EstimatorHandler::getNumberOfEstimators(), 5 );
 }
 
 //---------------------------------------------------------------------------//

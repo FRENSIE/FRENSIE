@@ -33,25 +33,6 @@ std::string test_geom_root_file_name;
 //---------------------------------------------------------------------------//
 // Tests
 //---------------------------------------------------------------------------//
-// Check that cell ids can be assigned and accessed properly
-TEUCHOS_UNIT_TEST( ModuleInterface_Root, canIdBeAssigned )
-{
-  typedef Geometry::ModuleInterface<Geometry::Root> GMI;
-  
-  // Test that cell ids are set to what we expect
-  TObjArray* test_volumes = Geometry::Root::getManager()->GetListOfVolumes();
-  TIterator* iterator = test_volumes->MakeIterator();
-  int number_volumes = test_volumes->GetEntries();
-  
-  for (int i=0; i < number_volumes; i++) 
-  {
-    TObject* current_volume = iterator->Next();
-    
-    TEST_ASSERT( current_volume->GetUniqueID() == i + 1 )
-  }
-}
-
-//---------------------------------------------------------------------------//
 // Check that cells can be checked for existence
 TEUCHOS_UNIT_TEST( ModuleInterface_Root, canBeCheckedForExist )
 {
@@ -63,8 +44,11 @@ TEUCHOS_UNIT_TEST( ModuleInterface_Root, canBeCheckedForExist )
   // Test that cell 2 exists
   TEST_ASSERT( GMI::doesCellExist( 2 ) );
   
-  // Test that cell 3 does not exist
-  TEST_ASSERT( !GMI::doesCellExist( 3 ) );
+  // Test that cell 3 does exist
+  TEST_ASSERT( GMI::doesCellExist( 3 ) );
+  
+  // Test that cell 4 does not exist
+  TEST_ASSERT( !GMI::doesCellExist( 4 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -79,7 +63,7 @@ TEUCHOS_UNIT_TEST( ModuleInterface_Root, cellContainingPointBirth )
   // Find cell containing ray
   GMI::InternalCellHandle cell = GMI::findCellContainingPoint( ray );
   
-  TEST_EQUALITY_CONST( cell, 1 );
+  TEST_EQUALITY_CONST( cell, 2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -121,19 +105,9 @@ TEUCHOS_UNIT_TEST( ModuleInterface_Root, cellContainingPointSurfaceCrossing )
 
   GMI::fireRay( ray, cell, surface_hit, distance_to_surface_hit );
   
-  const Double_t* point = Geometry::Root::getManager()->GetCurrentPoint();
-  const Double_t* dir   = Geometry::Root::getManager()->GetCurrentDirection();
-  Geometry::Ray ray_updated( point[0],
-                             point[1],
-                             point[2],
-                             dir[0],
-                             dir[1],
-                             dir[2] );
+  int cell_internal = GMI::findCellContainingPoint( ray, cell, surface_hit );
   
-  // Find cell containing ray
-  cell = GMI::findCellContainingPoint( ray_updated );
-  
-  TEST_EQUALITY_CONST( cell, 1 );
+  TEST_EQUALITY_CONST( cell_internal, 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -157,12 +131,15 @@ TEUCHOS_UNIT_TEST( ModuleInterface_Root, cellVolumeCanBeFound )
 
   double vol_sphere_calcluated = 65.4498469497874;
   double vol_cube_calculated   = 934.550153050213;
+  double vol_term_cube_calculated = 1744.0;
   
-  Double_t vol_sphere = GMI::getCellVolume(2);
-  Double_t vol_cube = GMI::getCellVolume(1);
+  Double_t vol_sphere = GMI::getCellVolume( 2 );
+  Double_t vol_cube   = GMI::getCellVolume( 1 );
+  Double_t vol_term   = GMI::getCellVolume( 3 );
   
   TEST_FLOATING_EQUALITY( vol_sphere_calcluated, vol_sphere, 1e-9 );
   TEST_FLOATING_EQUALITY( vol_cube_calculated, vol_cube, 1e-9 );
+  TEST_FLOATING_EQUALITY( vol_term_cube_calculated, vol_term, 1e-9 );
 }
 
 //---------------------------------------------------------------------------//
@@ -208,10 +185,6 @@ int main( int argc, char** argv )
 
   // Initialize the Module Interface
   Geometry::ModuleInterface<Geometry::Root>::initialize();
-
-  // Enable thread support
-  // Geometry::ModuleInterface<Geometry::Root>::enableThreadSupport( 
-	//	 Utility::GlobalOpenMPSession::getRequestedNumberOfThreads() );
   
   mpiSession.barrier();
   
