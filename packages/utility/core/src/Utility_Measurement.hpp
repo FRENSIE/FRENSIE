@@ -344,6 +344,50 @@ struct root_typeof_helper<Utility::Measurement<Y>,static_rational<N,D> >
 
 } // end boost namespace
 
+namespace Teuchos{
+
+//! Partial specialization of Teuchos::ScalarTraits for the Measurement class
+template<typename T>
+struct ScalarTraits<Utility::Measurement<T> >
+{
+  typedef Utility::Measurement<T> Measurement;
+  typedef T magnitudeType;
+  typedef typename Teuchos::ScalarTraits<T>::halfPrecision halfPrecision;
+  typedef typename Teuchos::ScalarTraits<T>::doublePrecision doublePrecision;
+  
+  static const bool isComplex = Teuchos::ScalarTraits<T>::isComplex;
+  static const bool isOrdinal = Teuchos::ScalarTraits<T>::isOrdinal;
+  static const bool isComparable = Teuchos::ScalarTraits<T>::isComparable;
+  static const bool hasMachineParameters = Teuchos::ScalarTraits<T>::hasMachineParameters;
+
+  static inline magnitudeType eps() { return ScalarTraits<magnitudeType>::eps(); }
+  static inline magnitudeType sfmin() { return ScalarTraits<magnitudeType>::sfmin(); }
+  static inline magnitudeType base() { return ScalarTraits<magnitudeType>::base(); }
+  static inline magnitudeType prec() { return ScalarTraits<magnitudeType>::prec(); }
+  static inline magnitudeType t() { return ScalarTraits<magnitudeType>::t(); }
+  static inline magnitudeType rnd() { return ScalarTraits<magnitudeType>::rnd(); }
+  static inline magnitudeType emin() { return ScalarTraits<magnitudeType>::emin(); }
+  static inline magnitudeType rmin() { return ScalarTraits<magnitudeType>::rmin(); }
+  static inline magnitudeType emax() { return ScalarTraits<magnitudeType>::emax(); }
+  static inline magnitudeType rmax() { return ScalarTraits<magnitudeType>::rmax(); }
+  static inline magnitudeType magnitude(Measurement a) { return ScalarTraits<magnitudeType>::magnitude( a.getValue() ); }
+  static inline Measurement zero() { return Measurement( ScalarTraits<magnitudeType>::zero(), 0.0 ); }
+  static inline Measurement one() { return Measurement( ScalarTraits<magnitudeType>::zero(), 1.0 ); }
+  static inline Measurement conjugate(Measurement a){ return Measurement( ScalarTraits<magnitudeType>::conjugate(a.getValue()), ScalarTraits<magnitudeType>::conjugate(a.getUncertainty()) ); }
+  static inline Measurement real(Measurement a){ return Measurement( ScalarTraits<magnitudeType>::real(a.getValue()), ScalarTraits<magnitudeType>::real(a.getUncertainty()) ); }
+  static inline Measurement imag(Measurement a){ return Measurement( ScalarTraits<magnitudeType>::imag(a.getValue()), ScalarTraits<magnitudeType>::imag(a.getUncertainty()) ); }
+  static inline Measurement nan() { return Measurement( ScalarTraits<magnitudeType>::nan(), ScalarTraits<magnitudeType>::nan() ); }
+  static inline bool isnaninf(Measurement a){ return ScalarTraits<magnitudeType>::isnaninf(a.getValue()) || ScalarTraits<magnitudeType>::isnaninf(a.getUncertainty()); }
+  static inline void seedrandom(unsigned int s) { ScalarTraits<magnitudeType>::seedrandom(s); }
+  static inline Measurement random() { return Measurement( ScalarTraits<magnitudeType>::random(), 0.0 ); }
+  static inline std::string name() { return std::string("Measurement<")+std::string(ScalarTraits<magnitudeType>::name())+std::string(">"); }
+  static inline Measurement squareroot(Measurement a) { return Utility::sqrt(a); }
+  static inline Measurement pow(Measurement a, Measurement b) { return Utility::pow( a, b.getValue() ); }
+
+};
+
+} // end Teuchos namespace
+
 // Register the Measurement class with boost typeof for auto-like type
 // deduction when used with the boost::units library
 #if BOOST_UNITS_HAS_BOOST_TYPEOF
